@@ -69,7 +69,7 @@ echo "Installing RetroArch emulator"
 cd
 git clone git://github.com/ToadKing/RetroArch-Rpi.git
 cd RetroArch-Rpi
-./configure
+./configure --disable-libpng
 make
 sudo make install
 
