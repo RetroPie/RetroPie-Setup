@@ -43,7 +43,7 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 
 # make sure that all needed packages are installed
-sudo apt-get install -y libsdl1.2-dev alsa screen scons libasound2-dev pkg-config libgtk2.0-dev
+sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev
 
 # install latest rpi-update script (to enable firmware update)
 sudo wget http://goo.gl/1BOfJ -O /usr/bin/rpi-update && sudo chmod +x /usr/bin/rpi-update
