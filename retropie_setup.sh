@@ -145,4 +145,4 @@ cd "$rootdir/EmulationStation"
 make
 
 cd
-echo "Finishes with RetroPie setup. Have fun :-)"
+echo "Finished compiling and installation. Have fun :-)"
