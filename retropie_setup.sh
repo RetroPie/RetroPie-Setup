@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #  RetroPie-Setup - Shell script for initializing Raspberry Pi 
-#  with RetroArch and various cores.
+#  with RetroArch, various cores, and a graphical front end.
 # 
 #  (c) Copyright 2012  Florian Müller (petrockblock@gmail.com)
 # 
 #  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
 # 
-#  Permission to use, copy, modify and distribute SNESDev in both binary and
+#  Permission to use, copy, modify and distribute RetroPie-Setup in both binary and
 #  source form, for non-commercial purposes, is hereby granted without fee,
 #  providing that this license information and copyright notice appear with
 #  all copies and any derived work.
@@ -27,31 +27,48 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
+function ask()
+{   
+    echo -e -n "$@" '[y/n] ' ; read ans
+    case "$ans" in
+        y*|Y*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+# install latest rpi-update script (to enable firmware update)
+sudo wget http://goo.gl/1BOfJ -O /usr/bin/rpi-update && sudo chmod +x /usr/bin/rpi-update
+ask "Do you want to perform a firmware upgrade now?\nThis might take some time." && sudo rpi-update
+
+# update APT repositories and update system
+sudo apt-get -y update
+ask "Do you want to perform a system upgrade now?\nThis might take some time." && sudo apt-get -y upgrade
+
 # add user pi to groups "video", "audio", and "input"
+echo -e "Adding user pi to groups video, audio, and input."
 sudo usermod -a -G video pi
 sudo usermod -a -G audio pi
 sudo usermod -a -G input pi
 
-# make sure ALSA soundmodule is active
-echo "Enabling ALSA module"
+# make sure ALSA, uinput, and joydev modules are active
+echo "Enabling ALSA, uinput, and joydev modules permanently"
 sudo modprobe snd_bcm2835
+sudo modprobe uinput
+sudo modprobe joydev
+
+cp /etc/modules ./temp
+sudo mv /etc/modules /etc/modules.old
+sudo echo -e "uinput\njoydev" >> ./temp
+sudo mv ./temp /etc/modules
 
 # needed by SDL for working joypads
+echo "Exporting SDL_MOUSE=1 permanently to .bashrc"
 export SDL_NOMOUSE=1
-
-# make sure that joydev and uinput modules are loaded
-sudo modprobe joydev
-sudo modprobe uinput
-
-# update APT repositories and update system
-sudo apt-get -y update
-sudo apt-get -y upgrade
+cd
+echo -e "\nexport SDL_NOMOUSE=1" >> .bashrc
 
 # make sure that all needed packages are installed
-sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev
-
-# install latest rpi-update script (to enable firmware update)
-sudo wget http://goo.gl/1BOfJ -O /usr/bin/rpi-update && sudo chmod +x /usr/bin/rpi-update
+sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev zip libxml2
 
 # prepare folder structure for emulator, cores, front end, and roms
 rootdir=RetroPie
@@ -63,6 +80,7 @@ mkdir "$rootdir/roms/nes"
 mkdir "$rootdir/roms/megadrive"
 mkdir "$rootdir/roms/gba"
 mkdir "$rootdir/roms/mame"
+mkdir "$rootdir/roms/doom"
 
 mkdir "$rootdir/emulatorcores"
 
@@ -113,7 +131,7 @@ make -f Makefile.libretro
 echo "Installing Gameboy core"
 cd
 git clone git://github.com/libretro/gambatte-libretro.git "$rootdir/emulatorcores/gambatte-libretro"
-cd gambatte-libretro/libgambatte
+cd $rootdir/emulatorcores/gambatte-libretro/libgambatte
 make -f Makefile.libretro 
 
 # install MAME emulator core
@@ -140,9 +158,43 @@ make
 
 # install EmulationStation as graphical front end for the emulators
 cd
+rootdir=RetroPie
 git clone git://github.com/Aloshi/EmulationStation.git "$rootdir/EmulationStation"
 cd "$rootdir/EmulationStation"
+make clean
 make
+echo -e "Generating symbolic link to /home/pi/RetroPie/EmulationStation/emulationstation\n -->>\n /usr/bin/emulationstation"
+sudo ln -s /home/pi/RetroPie/EmulationStation/emulationstation /usr/bin/emulationstation
+
+# generate EmulationStation configuration
+echo -e "Generating configuration file ~/.es_systems.cfg for EmulationStation"
+cat > ~/.es_systems.cfg << EOF
+NAME=MAME
+PATH=~/RetroPie/roms/mame
+EXTENSION=.smd
+COMMAND=retroarch -L ~/RetroPie/emulatorcores/imame4all-libretro/libretro.so %ROM%
+NAME=Nintendo Entertainment System
+PATH=~/RetroPie/roms/nes
+EXTENSION=.nes
+COMMAND=retroarch -L ~/RetroPie/emulatorcores/fceu-next/libretro.so %ROM%
+NAME=Sega Mega Drive
+PATH=~/RetroPie/roms/megadrive
+EXTENSION=.SMD
+COMMAND=retroarch -L ~/RetroPie/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+NAME=Super Nintendo
+PATH=~/RetroPie/roms/snes
+EXTENSION=.smc
+COMMAND=retroarch -L ~/RetroPie/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
+NAME=Doom
+PATH=~/RetroPie/roms/doom
+EXTENSION=.wad
+COMMAND=retroarch -L ~/RetroPie/emulatorcores/libretro-prboom/libretro.so %ROM%
+NAME=Gameboy Advance
+PATH=~/RetroPie/roms/gba
+EXTENSION=.gba
+COMMAND=retroarch -L ~/RetroPie/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
+EOF
 
 cd
-echo "Finished compiling and installation. Have fun :-)"
+echo -e "Finished compiling and installation.\nStart the front end with .emulationstation\nHave fun :-)"
+echo -e "You now have to copy roms to the roms folder:\nSNES to roms/snes,\nNES to roms/nes\nGameboy Advance to roms/gba\nMAME to roms/mame\nMega Drive to roms/megadrive"
