@@ -1,7 +1,7 @@
 RetroPie-Setup
 ==============
 
-Shell script to setup Raspberry Pi (TM) with RetroArch emulator and various cores
+Shell script to setup Raspberry Pi (TM) with RetroArch emulator, various cores, and EmulationStation as graphical front end.
 
 First of all, make sure that Git is installed:
 
