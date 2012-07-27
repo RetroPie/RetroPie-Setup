@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #  RetroPie-Setup - Shell script for initializing Raspberry Pi 
-#  with RetroArch, various cores, and a graphical front end.
+#  with RetroArch, various cores, and EmulationStation (a graphical 
+#  front end).
 # 
 #  (c) Copyright 2012  Florian Müller (petrockblock@gmail.com)
 # 
@@ -23,6 +24,8 @@
 #  The copyright holders request that bug fixes and improvements to the code
 #  should be forwarded to them so everyone can benefit from the modifications
 #  in future versions.
+# 
+# Many, many thanks go to all people that provide the individual packages!!!
 # 
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
