@@ -47,6 +47,7 @@ function addLineToFile()
     fi
     echo "$1" >> ./temp
     sudo mv ./temp "$2"
+    echo "Added $1 to file $2"
 }
 
 function printMsg()
