@@ -87,23 +87,10 @@ mkdir "$rootdir/roms/doom"
 
 mkdir "$rootdir/emulatorcores"
 
-# install BCM library to enable GPIO access by SNESDev-RPi
-echo "Installing BCM2835 library"
-cd
-wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.3.tar.gz
-tar -zxvf bcm2835-1.3.tar.gz
-cd bcm2835-1.3
-./configure
-make
-sudo make install
-cd
-rm bcm2835-1.3.tar.gz
-rm -rf bcm2835-1.3
-
 # install RetroArch emulator
 echo "Installing RetroArch emulator"
 cd
-git clone git://github.com/ToadKing/RetroArch-Rpi.git "$rootdir/RetroArch-Rpi"
+git clone git://github.com/Themaister/RetroArch.git "$rootdir/RetroArch-Rpi"
 cd "$rootdir/RetroArch-Rpi"
 ./configure --disable-libpng
 make
@@ -152,6 +139,19 @@ cd "$rootdir/emulatorcores/libretro-prboom"
 make
 cd
 
+# install BCM library to enable GPIO access by SNESDev-RPi
+echo "Installing BCM2835 library"
+cd
+wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.3.tar.gz
+tar -zxvf bcm2835-1.3.tar.gz
+cd bcm2835-1.3
+./configure
+make
+sudo make install
+cd
+rm bcm2835-1.3.tar.gz
+rm -rf bcm2835-1.3
+
 # install SNESDev as GPIO interface for SNES controllers
 cd
 git clone git://github.com/petrockblog/SNESDev-RPi.git "$rootdir/SNESDev-Rpi"
@@ -161,7 +161,6 @@ make
 
 # install EmulationStation as graphical front end for the emulators
 cd
-rootdir=RetroPie
 git clone git://github.com/Aloshi/EmulationStation.git "$rootdir/EmulationStation"
 cd "$rootdir/EmulationStation"
 make clean
