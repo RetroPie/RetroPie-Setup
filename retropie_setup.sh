@@ -86,16 +86,22 @@ sudo modprobe joydev
 
 if ! grep -q "uinput" /etc/modules; then
 	addLineToFile "uinput" "/etc/modules"
+else
+	echo -e "uinput module already contained in /etc/modules"
 fi
 if ! grep -q "joydev" /etc/modules; then
 	addLineToFile "joydev" "/etc/modules"
+else
+	echo -e "joydev module already contained in /etc/modules"
 fi
 
 # needed by SDL for working joypads
-printMsg "Exporting SDL_MOUSE=1 permanently to .bashrc"
+printMsg "Exporting SDL_MOUSE=1 permanently to ~/.bashrc"
 export SDL_NOMOUSE=1
-if [[ ! grep -Fxq "export SDL_NOMOUSE=1" ~/.bashrc ]]; then
+if ! grep -q "export SDL_NOMOUSE=1" ~/.bashrc; then
     echo -e "\nexport SDL_NOMOUSE=1" >> ~/.bashrc
+else
+	echo -e "SDL_NOMOUSE=1 already contained in ~/.bashrc"
 fi
 
 # make sure that all needed packages are installed
@@ -248,27 +254,27 @@ cat > ~/.es_systems.cfg << EOF
 NAME=MAME
 PATH=~/RetroPie/roms/mame
 EXTENSION=.smd
-COMMAND=retroarch -L ~/RetroPie/emulatorcores/imame4all-libretro/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%
 NAME=Nintendo Entertainment System
 PATH=~/RetroPie/roms/nes
 EXTENSION=.nes
-COMMAND=retroarch -L ~/RetroPie/emulatorcores/fceu-next/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/libretro.so %ROM%
 NAME=Sega Mega Drive
 PATH=~/RetroPie/roms/megadrive
 EXTENSION=.SMD
-COMMAND=retroarch -L ~/RetroPie/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
 NAME=Super Nintendo
 PATH=~/RetroPie/roms/snes
 EXTENSION=.smc
-COMMAND=retroarch -L ~/RetroPie/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
 NAME=Doom
 PATH=~/RetroPie/roms/doom
 EXTENSION=.wad
-COMMAND=retroarch -L ~/RetroPie/emulatorcores/libretro-prboom/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
 NAME=Gameboy Advance
 PATH=~/RetroPie/roms/gba
 EXTENSION=.gba
-COMMAND=retroarch -L ~/RetroPie/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
 EOF
 
 echo -e "Finished compiling and installation.\nStart the front end with .emulationstation\nHave fun :-)"
