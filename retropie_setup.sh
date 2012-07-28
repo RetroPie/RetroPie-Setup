@@ -57,11 +57,14 @@ function printMsg()
 
 if [ $# -ne 1 ]
 then
-    rootdir="~/RetroPie"
+    rootdir=~/RetroPie
 else
     rootdir=$1
 fi
 printMsg "Installing all RetroPie-packages into the directory $rootdir"
+if [[ ! -d $rootdir ]]; then
+    mkdir "$rootdir"
+fi
 
 # install latest rpi-update script (to enable firmware update)
 printMsg "Installing latest rpi-update script"
@@ -109,9 +112,6 @@ printMsg "Making sure that all needed packaged are installed"
 sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev zip libxml2
 
 # prepare folder structure for emulator, cores, front end, and roms
-if [[ ! -d $rootdir ]]; then
-    mkdir $rootdir
-fi
 if [[ ! -d "$rootdir/roms" ]]; then
     mkdir "$rootdir/roms"
 fi
@@ -252,27 +252,27 @@ popd
 printMsg "Generating configuration file ~/.es_systems.cfg for EmulationStation"
 cat > ~/.es_systems.cfg << EOF
 NAME=MAME
-PATH=~/RetroPie/roms/mame
+PATH="$rootdir/roms/mame"
 EXTENSION=.smd
 COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%
 NAME=Nintendo Entertainment System
-PATH=~/RetroPie/roms/nes
+PATH=$rootdir/roms/nes
 EXTENSION=.nes
 COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/libretro.so %ROM%
 NAME=Sega Mega Drive
-PATH=~/RetroPie/roms/megadrive
+PATH=$rootdir/roms/megadrive
 EXTENSION=.SMD
 COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
 NAME=Super Nintendo
-PATH=~/RetroPie/roms/snes
+PATH=$rootdir/roms/snes
 EXTENSION=.smc
 COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
 NAME=Doom
-PATH=~/RetroPie/roms/doom
+PATH=$rootdir/roms/doom
 EXTENSION=.wad
 COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
 NAME=Gameboy Advance
-PATH=~/RetroPie/roms/gba
+PATH=$rootdir/roms/gba
 EXTENSION=.gba
 COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
 EOF

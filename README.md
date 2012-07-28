@@ -25,4 +25,8 @@ chmod +x retropie_setup.sh
 ./retropie_setup.sh
 ```
 
+It takes some hours until everything is compiled, so take your time.
+
+For more information visit the blog at http://petrockblog.wordpress.com or the repository at https://github.com/petrockblog/RetroPie-Setup.
+
 Have fun!
