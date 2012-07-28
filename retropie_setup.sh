@@ -84,10 +84,10 @@ sudo modprobe snd_bcm2835
 sudo modprobe uinput
 sudo modprobe joydev
 
-if [[ ! grep -Fxq "uinput" /etc/modules ]]; then
+if ! grep -q "uinput" /etc/modules; then
 	addLineToFile "uinput" "/etc/modules"
 fi
-if [[ ! grep -Fxq "joydev" /etc/modules ]]; then
+if ! grep -q "joydev" /etc/modules; then
 	addLineToFile "joydev" "/etc/modules"
 fi
 
