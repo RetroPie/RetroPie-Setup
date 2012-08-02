@@ -109,7 +109,7 @@ fi
 
 # make sure that all needed packages are installed
 printMsg "Making sure that all needed packaged are installed"
-sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev zip libxml2
+sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev zip libxml2 libsdl-image1.2-dev
 
 # prepare folder structure for emulator, cores, front end, and roms
 if [[ ! -d "$rootdir/roms" ]]; then
@@ -245,7 +245,7 @@ pushd "$rootdir/EmulationStation"
 make clean
 make
 printMsg "Generating symbolic link to $rootdir/EmulationStation/emulationstation/emulationstation\n -->>\n /usr/bin/emulationstation"
-sudo ln -s "$rootdir/EmulationStation/emulationstation" /usr/bin/emulationstation
+sudo ln -s "$rootdir/EmulationStation/emulationstation" "/usr/bin/emulationstation"
 popd
 
 # generate EmulationStation configuration
