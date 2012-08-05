@@ -346,11 +346,22 @@ generate_esconfig()
 {
     # generate EmulationStation configuration
     printMsg "Generating configuration file ~/.es_systems.cfg for EmulationStation"
+    rootdir=/home/pi/RetroPie
     cat > $rootdir/../.es_systems.cfg << _EOF_
 NAME=Atari 2600
 PATH=$rootdir/roms/atari2600
 EXTENSION=.bin
 COMMAND=retroarch -L $rootdir/emulatorcores/stella-libretro/libretro.so %ROM%
+
+NAME=Game Boy Advance
+PATH=$rootdir/roms/gba
+EXTENSION=.gba
+COMMAND=retroarch -L $rootdir/emulatorcores/vba-next/libretro.so %ROM%
+
+NAME=Game Boy Color
+PATH=$rootdir/roms/gbc
+EXTENSION=.gb
+COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
 
 NAME=Nintendo Entertainment System
 PATH=$rootdir/roms/nes
@@ -363,30 +374,20 @@ EXTENSION=.smc
 COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
 _EOF_
 
-    # NAME=Sega Mega Drive
-    # PATH=$rootdir/roms/megadrive
-    # EXTENSION=.SMD
-    # COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+# NAME=MAME
+# PATH=$rootdir/roms/mame
+# EXTENSION=.zip
+# COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%    
 
-    # NAME=Doom
-    # PATH=$rootdir/roms/doom
-    # EXTENSION=.WAD
-    # COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
+# NAME=Sega Mega Drive
+# PATH=$rootdir/roms/megadrive
+# EXTENSION=.SMD
+# COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
 
-    # NAME=Game Boy Advance
-    # PATH=$rootdir/roms/gba
-    # EXTENSION=.gba
-    # COMMAND=retroarch -L $rootdir/emulatorcores/vba-next/libretro.so %ROM%
-
-    # NAME=Game Boy Color
-    # PATH=$rootdir/roms/gbc
-    # EXTENSION=.gbc
-    # COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
-
-    # NAME=MAME
-    # PATH="$rootdir/roms/mame"
-    # EXTENSION=.smd
-    # COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%    
+# NAME=Doom
+# PATH=$rootdir/roms/doom
+# EXTENSION=.WAD
+# COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
 }
 
 sortromsalphabet()
