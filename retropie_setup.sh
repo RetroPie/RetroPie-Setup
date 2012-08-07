@@ -30,11 +30,13 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
+user=pi
+
+rootdir=/home/$user/RetroPie
 if [ $(id -u) -ne 0 ]; then
   printf "Script must be run as root. Try 'sudo ./retropie_setup'\n"
   exit 1
 fi
-
 
 function ask()
 {   
@@ -95,11 +97,11 @@ upgrade_apt()
 
 add_to_groups()
 {
-    # add user pi to groups "video", "audio", and "input"
-    printMsg "Adding user pi to groups video, audio, and input."
-    sudo usermod -a -G video pi
-    sudo usermod -a -G audio pi
-    sudo usermod -a -G input pi
+    # add user $user to groups "video", "audio", and "input"
+    printMsg "Adding user $user to groups video, audio, and input."
+    sudo usermod -a -G video $user
+    sudo usermod -a -G audio $user
+    sudo usermod -a -G input $user
 }
 
 ensure_modules()
@@ -160,8 +162,8 @@ prepareFolders()
     do
         if [[ ! -d $elem ]]; then
             mkdir $elem
-            chown pi $elem
-            chgrp pi $elem
+            chown $user $elem
+            chgrp $user $elem
         fi
     done    
 }
@@ -446,8 +448,8 @@ main_binaries()
     install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
     rm RetroPie_20120804.tar.bz2
 
-    chgrp -R pi $rootdir
-    chown -R pi $rootdir
+    chgrp -R $user $rootdir
+    chown -R $user $rootdir
 
     dialog --backtitle "RetroPie Setup" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
 }
@@ -459,7 +461,7 @@ main_options()
              2 "Install latest Rasperry Pi firmware" OFF \
              3 "Update APT repositories" ON \
              4 "Perform APT upgrade" ON \
-             5 "Add user pi to groups video, audio, and input" ON \
+             5 "Add user $user to groups video, audio, and input" ON \
              6 "Enable modules ALSA, uinput, and joydev" ON \
              7 "Export SDL_MOUSE=1" ON \
              8 "Install all needed APT packages" ON \
@@ -510,8 +512,8 @@ main_options()
             esac
         done
 
-        chgrp -R pi $rootdir
-        chown -R pi $rootdir
+        chgrp -R $user $rootdir
+        chown -R $user $rootdir
 
         dialog --backtitle "RetroPie Setup" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
     fi
@@ -521,7 +523,7 @@ main_options()
 
 if [ $# -ne 1 ]
 then
-    rootdir=/home/pi/RetroPie
+    rootdir=/home/$user/RetroPie
 else
     rootdir=$1
 fi
