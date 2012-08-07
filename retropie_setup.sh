@@ -30,9 +30,6 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-user=pi
-
-rootdir=/home/$user/RetroPie
 if [ $(id -u) -ne 0 ]; then
   printf "Script must be run as root. Try 'sudo ./retropie_setup'\n"
   exit 1
@@ -521,12 +518,27 @@ main_options()
 
 # here starts the main loop
 
-if [ $# -ne 1 ]
+#determine $username, standard is the second paramameter from the command-line, if there wasn't one we use the user who called
+#sudo, if the programm was directly launched (without sudo) we use the 'whoami' command to determine the user who launched the
+#script
+if [ $# -lt 2 ]
+then
+    user=$SUDO_USER
+    if [ -z "$user" ]
+    then
+      user=$(whoami)
+    fi
+else
+    user=$2
+fi
+
+if [ $# -lt 1 ]
 then
     rootdir=/home/$user/RetroPie
 else
     rootdir=$1
 fi
+
 # printMsg "Installing all RetroPie-packages into the directory $rootdir"
 if [[ ! -d $rootdir ]]; then
     mkdir "$rootdir"
