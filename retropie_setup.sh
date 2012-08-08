@@ -140,7 +140,6 @@ prepareFolders()
     # prepare folder structure for emulator, cores, front end, and roms
     printMsg "Creating folder structure for emulator, front end, cores, and roms"
 
-    rootdir=/home/pi/RetroPie
     pathlist[0]="$rootdir/roms"
     pathlist[1]="$rootdir/roms/atari2600"
     pathlist[2]="$rootdir/roms/doom"
@@ -345,7 +344,6 @@ generate_esconfig()
 {
     # generate EmulationStation configuration
     printMsg "Generating configuration file ~/.emulationstation/es_systems.cfg for EmulationStation"
-    rootdir=/home/pi/RetroPie
     cat > $rootdir/../.emulationstation/es_systems.cfg << _EOF_
 NAME=Atari 2600
 PATH=$rootdir/roms/atari2600
@@ -444,6 +442,7 @@ main_binaries()
     install -m755 $rootdir/RetroArch-Rpi/retroarch /usr/local/bin 
     install -m644 $rootdir/RetroArch-Rpi/retroarch.cfg /etc/retroarch.cfg
     install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
+    prepareFolders
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
@@ -512,7 +511,7 @@ main_options()
         chgrp -R $user $rootdir
         chown -R $user $rootdir
 
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation directory: $rootdir" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installing to $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
     fi
 }
 
@@ -568,7 +567,7 @@ if [[ ! -d $rootdir ]]; then
 fi
 
 while true; do
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation directory: $rootdir" --menu "Choose installation either based on binaries or on sources." 22 76 16)
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installing to $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
     options=(1 "Binaries-based installation (faster, (probably) not the newest)"
              2 "Source-based (custom) installation (slower, newest)")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
