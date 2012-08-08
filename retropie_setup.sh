@@ -549,6 +549,10 @@ fi
     
 if [[ $# -lt 1 ]]; then
     user=$SUDO_USER
+    if [ -z "$user" ]
+    then
+        user=$(whoami)
+    fi
     rootdir=/home/$user/RetroPie
 elif [[ $# -lt 2 ]]; then
     user=$1
