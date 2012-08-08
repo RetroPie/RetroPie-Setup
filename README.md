@@ -32,7 +32,7 @@ Optional arguments can be passed to the script. If called with
 ```shell
 sudo ./retropie_setup.sh
 ```
-the installation directory is /home/pi/RetroPie for user pi. If called with 
+the installation directory is /home/CURRENTUSER/RetroPie for the current user, where CURRENTUSER is the home directory of the current user. If called with 
 ```shell
 sudo ./retropie_setup.sh USERNAME
 ```
