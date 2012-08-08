@@ -527,7 +527,11 @@ else
 fi
 # printMsg "Installing all RetroPie-packages into the directory $rootdir"
 if [[ ! -d $rootdir ]]; then
-    mkdir "$rootdir"
+    mkdir -p "$rootdir"
+    if [[ ! -d $rootdir ]]; then
+      echo "Couldn't make directory $rootdir"
+      exit 1
+    fi
 fi
 
 while true; do
