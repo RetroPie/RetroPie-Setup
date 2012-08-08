@@ -543,12 +543,13 @@ if [ $(id -u) -ne 0 ]; then
   exit 1
 fi
 
-# if called with sudo ./retropie_setup.sh, the installation directory is /home/pi/RetroPie for user pi
+# if called with sudo ./retropie_setup.sh, the installation directory is /home/CURRENTUSER/RetroPie for the current user
 # if called with sudo ./retropie_setup.sh USERNAME, the installation directory is /home/USERNAME/RetroPie for user USERNAME
 # if called with sudo ./retropie_setup.sh USERNAME ABSPATH, the installation directory is ABSPATH for user USERNAME
+    
 if [[ $# -lt 1 ]]; then
-    user=pi
-    rootdir=/home/pi/RetroPie
+    user=$SUDO_USER
+    rootdir=/home/$user/RetroPie
 elif [[ $# -lt 2 ]]; then
     user=$1
     rootdir=/home/$user/RetroPie
