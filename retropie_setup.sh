@@ -30,11 +30,6 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-if [ $(id -u) -ne 0 ]; then
-  printf "Script must be run as root. Try 'sudo ./retropie_setup'\n"
-  exit 1
-fi
-
 function ask()
 {   
     echo -e -n "$@" '[y/n] ' ; read ans
@@ -143,6 +138,9 @@ installAPTPackages()
 prepareFolders()
 {
     # prepare folder structure for emulator, cores, front end, and roms
+    printMsg "Creating folder structure for emulator, front end, cores, and roms"
+
+    rootdir=/home/pi/RetroPie
     pathlist[0]="$rootdir/roms"
     pathlist[1]="$rootdir/roms/atari2600"
     pathlist[2]="$rootdir/roms/doom"
@@ -154,7 +152,6 @@ prepareFolders()
     pathlist[8]="$rootdir/roms/snes"
     pathlist[9]="$rootdir/emulatorcores"
 
-    printMsg "Creating folder structure for emulator, front end, cores, and roms"
     for elem in "${pathlist[@]}"
     do
         if [[ ! -d $elem ]]; then
@@ -205,6 +202,9 @@ install_doom()
     git clone git://github.com/libretro/libretro-prboom.git "$rootdir/emulatorcores/libretro-prboom"
     pushd "$rootdir/emulatorcores/libretro-prboom"
     make
+    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
+    chgrp pi $rootdir/roms/doom/prboom.wad
+    chgown $user $rootdir/roms/doom/prboom.wad
     popd
 }
 
@@ -344,13 +344,18 @@ install_emulationstation()
 generate_esconfig()
 {
     # generate EmulationStation configuration
-    printMsg "Generating configuration file ~/.es_systems.cfg for EmulationStation"
+    printMsg "Generating configuration file ~/.emulationstation/es_systems.cfg for EmulationStation"
     rootdir=/home/pi/RetroPie
-    cat > $rootdir/../.es_systems.cfg << _EOF_
+    cat > $rootdir/../.emulationstation/es_systems.cfg << _EOF_
 NAME=Atari 2600
 PATH=$rootdir/roms/atari2600
 EXTENSION=.bin
 COMMAND=retroarch -L $rootdir/emulatorcores/stella-libretro/libretro.so %ROM%
+
+NAME=Doom
+PATH=$rootdir/roms/doom
+EXTENSION=.WAD
+COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
 
 NAME=Game Boy Advance
 PATH=$rootdir/roms/gba
@@ -383,23 +388,17 @@ _EOF_
 # EXTENSION=.SMD
 # COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
 
-# NAME=Doom
-# PATH=$rootdir/roms/doom
-# EXTENSION=.WAD
-# COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
 }
 
 sortromsalphabet()
 {
-    rootdir=/home/pi/RetroPie
     pathlist[0]="$rootdir/roms/atari2600"
-    pathlist[1]="$rootdir/roms/doom"
-    pathlist[2]="$rootdir/roms/gba"
-    pathlist[3]="$rootdir/roms/gbc"
-    pathlist[4]="$rootdir/roms/mame"
-    pathlist[5]="$rootdir/roms/megadrive"
-    pathlist[6]="$rootdir/roms/nes"
-    pathlist[7]="$rootdir/roms/snes"  
+    pathlist[1]="$rootdir/roms/gba"
+    pathlist[2]="$rootdir/roms/gbc"
+    pathlist[3]="$rootdir/roms/mame"
+    pathlist[4]="$rootdir/roms/megadrive"
+    pathlist[5]="$rootdir/roms/nes"
+    pathlist[6]="$rootdir/roms/snes"  
     printMsg "Sorting roms alphabetically"
     for elem in "${pathlist[@]}"
     do
@@ -420,16 +419,18 @@ sortromsalphabet()
 
 downloadBinaries()
 {
-    wget https://github.com/downloads/petrockblog/RetroPie-Setup/RetroPie_20120804.tar.bz2
-    tar -jxvf RetroPie_20120804.tar.bz2 -C $rootdir
+    wget https://github.com/downloads/petrockblog/RetroPie-Setup/RetroPieSetupBinaries.tar.bz2
+    tar -jxvf RetroPieSetupBinaries.tar.bz2 -C $rootdir
     pushd $rootdir/RetroPie
     mv * ../
     popd
     rm -rf $rootdir/RetroPie
+    rm RetroPieSetupBinaries.tar.bz2
 }
 
 main_binaries()
 {
+    clear
     printMsg "Binaries-based installation"
 
     update_apt
@@ -443,17 +444,16 @@ main_binaries()
     install -m755 $rootdir/RetroArch-Rpi/retroarch /usr/local/bin 
     install -m644 $rootdir/RetroArch-Rpi/retroarch.cfg /etc/retroarch.cfg
     install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
-    rm RetroPie_20120804.tar.bz2
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
 
-    dialog --backtitle "RetroPie Setup" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installing to $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76    
 }
 
 main_options()
 {
-    cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages." 22 76 16)
+    cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installing to $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages." 22 76 16)
     options=(1 "Install latest rpi-update script" ON     # any option can be set to default to "on"
              2 "Install latest Rasperry Pi firmware" OFF \
              3 "Update APT repositories" ON \
@@ -512,31 +512,50 @@ main_options()
         chgrp -R $user $rootdir
         chown -R $user $rootdir
 
-        dialog --backtitle "RetroPie Setup" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation directory: $rootdir" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
     fi
+}
+
+showHelp()
+{
+    echo ""
+    echo "RetroPie Setup script"
+    echo "====================="
+    echo ""
+    echo "The script installs the RetroArch emulator base with various cores and a graphical front end."
+    echo "Because it needs to install some APT packages it has to be run with root priviliges."
+    echo ""
+    echo "Usage:"
+    echo "sudo ./retropie_setup.sh: The installation directory is /home/pi/RetroPie for user pi"
+    echo "sudo ./retropie_setup.sh USERNAME: The installation directory is /home/USERNAME/RetroPie for user USERNAME"
+    echo "sudo ./retropie_setup.sh USERNAME ABSPATH: The installation directory is ABSPATH for user USERNAME"
+    echo ""
 }
 
 # here starts the main loop
 
-#determine $username, standard is the second paramameter from the command-line, if there wasn't one we use the user who called
-#sudo, if the programm was directly launched (without sudo) we use the 'whoami' command to determine the user who launched the
-#script
-if [ $# -lt 2 ]
-then
-    user=$SUDO_USER
-    if [ -z "$user" ]
-    then
-      user=$(whoami)
-    fi
-else
-    user=$2
+if [[ "$1" == "--help" ]]; then
+    showHelp
+    exit 0
 fi
 
-if [ $# -lt 1 ]
-then
+if [ $(id -u) -ne 0 ]; then
+  printf "Script must be run as root. Try 'sudo ./retropie_setup' or ./retropie_setup --help for further information\n"
+  exit 1
+fi
+
+# if called with sudo ./retropie_setup.sh, the installation directory is /home/pi/RetroPie for user pi
+# if called with sudo ./retropie_setup.sh USERNAME, the installation directory is /home/USERNAME/RetroPie for user USERNAME
+# if called with sudo ./retropie_setup.sh USERNAME ABSPATH, the installation directory is ABSPATH for user USERNAME
+if [[ $# -lt 1 ]]; then
+    user=pi
+    rootdir=/home/pi/RetroPie
+elif [[ $# -lt 2 ]]; then
+    user=$1
     rootdir=/home/$user/RetroPie
-else
-    rootdir=$1
+elif [[ $# -lt 3 ]]; then
+    user=$1
+    rootdir=$2
 fi
 
 # printMsg "Installing all RetroPie-packages into the directory $rootdir"
@@ -549,8 +568,8 @@ if [[ ! -d $rootdir ]]; then
 fi
 
 while true; do
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup" --menu "Choose installation either based on binaries or on sources." 22 76 16)
-    options=(1 "Binaries-based installation (faster, from 2012-08-04)"
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation directory: $rootdir" --menu "Choose installation either based on binaries or on sources." 22 76 16)
+    options=(1 "Binaries-based installation (faster, (probably) not the newest)"
              2 "Source-based (custom) installation (slower, newest)")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then

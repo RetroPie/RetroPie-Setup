@@ -28,6 +28,13 @@ chmod +x retropie_setup.sh
 sudo ./retropie_setup.sh
 ```
 
+Optional arguments can be passed to the script:
+If called with sudo ./retropie_setup.sh, the installation directory is /home/pi/RetroPie for user pi
+If called with sudo ./retropie_setup.sh USERNAME, the installation directory is /home/USERNAME/RetroPie for user USERNAME
+If called with sudo ./retropie_setup.sh USERNAME ABSPATH, the installation directory is ABSPATH for user USERNAME
+
+
+
 Binaries and Sources
 --------------------
 
