@@ -91,9 +91,19 @@ add_to_groups()
 {
     # add user $user to groups "video", "audio", and "input"
     printMsg "Adding user $user to groups video, audio, and input."
-    sudo usermod -a -G video $user
-    sudo usermod -a -G audio $user
-    sudo usermod -a -G input $user
+    add_user_to_group $user video
+    add_user_to_group $user audio
+    add_user_to_group $user input
+}
+
+add_user_to_group()
+{
+    # add user $1 to group $2, create the group if it doesn't exist
+    if [ -z $(egrep -i "^$2" /etc/group) ]
+    then
+      sudo addgroup $2
+    fi
+    sudo adduser $1 $2
 }
 
 ensure_modules()
