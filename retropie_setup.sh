@@ -50,7 +50,7 @@ function addLineToFile()
     echo "Added $1 to file $2"
 }
 
-function printMsg()
+printMsg()
 {
 	echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
 }
@@ -72,7 +72,8 @@ install_rpiupdate()
 
 run_rpiupdate()
 {
-    rpi_update
+    printMsg "Starting rpi-update script"
+    /usr/bin/rpi-update
 }
 
 # update APT repositories
@@ -279,6 +280,7 @@ install_megadrive()
     git clone git://github.com/libretro/Genesis-Plus-GX.git "$rootdir/emulatorcores/Genesis-Plus-GX"
     pushd "$rootdir/emulatorcores/Genesis-Plus-GX"
     make -f Makefile.libretro 
+    sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
     popd
 }
 
@@ -375,6 +377,11 @@ PATH=$rootdir/roms/gbc
 EXTENSION=.gb
 COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
 
+NAME=Sega Mega Drive
+PATH=$rootdir/roms/megadrive
+EXTENSION=.smd
+COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+
 NAME=Nintendo Entertainment System
 PATH=$rootdir/roms/nes
 EXTENSION=.nes
@@ -391,10 +398,6 @@ _EOF_
 # EXTENSION=.zip
 # COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%    
 
-# NAME=Sega Mega Drive
-# PATH=$rootdir/roms/megadrive
-# EXTENSION=.SMD
-# COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
 
 }
 
@@ -457,72 +460,7 @@ main_binaries()
     chgrp -R $user $rootdir
     chown -R $user $rootdir
 
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installing to $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76    
-}
-
-main_options()
-{
-    cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installing to $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages." 22 76 16)
-    options=(1 "Install latest rpi-update script" ON     # any option can be set to default to "on"
-             2 "Install latest Rasperry Pi firmware" OFF \
-             3 "Update APT repositories" ON \
-             4 "Perform APT upgrade" ON \
-             5 "Add user $user to groups video, audio, and input" ON \
-             6 "Enable modules ALSA, uinput, and joydev" ON \
-             7 "Export SDL_MOUSE=1" ON \
-             8 "Install all needed APT packages" ON \
-             9 "Generate folder structure" ON \
-             10 "Install RetroArch" ON \
-             11 "Install Atari 2600 core" ON \
-             12 "Install Doom core" ON \
-             13 "Install Game Boy Advance core" ON \
-             14 "Install Game Boy Color core" ON \
-             15 "Install MAME core" ON \
-             16 "Install Mega Drive core" ON \
-             17 "Install NES core" ON \
-             18 "Install Super NES core" ON \
-             19 "Install BCM library" ON \
-             20 "Install SNESDev" ON \
-             21 "Install Emulation Station" ON \
-             22 "Generate config file for Emulation Station" ON \
-             23 "Sort roms alphabetically within folders. *Creates subdirectories*" OFF)
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    clear
-    if [ "$choices" != "" ]; then
-        for choice in $choices
-        do
-            case $choice in
-                1) install_rpiupdate ;;
-                2) run_rpiudate ;;
-                3) update_apt ;;
-                4) upgrade_apt ;;
-                5) add_to_groups ;;
-                6) ensure_modules ;;
-                7) exportSDLNOMOUSE ;;
-                8) installAPTPackages ;;
-                9) prepareFolders ;;
-                10) install_retroarch ;;
-                11) install_atari2600 ;;
-                12) install_doom ;;
-                13) install_gba ;;
-                14) install_gbc ;;
-                15) install_mame ;;
-                16) install_megadrive ;;
-                17) install_nes ;;
-                18) install_snes ;;
-                19) install_bcmlibrary ;;
-                20) install_snesdev ;;
-                21) install_emulationstation ;;
-                22) generate_esconfig ;;
-                23) sortromsalphabet ;;
-            esac
-        done
-
-        chgrp -R $user $rootdir
-        chown -R $user $rootdir
-
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installing to $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
-    fi
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76    
 }
 
 showHelp()
@@ -539,6 +477,114 @@ showHelp()
     echo "sudo ./retropie_setup.sh USERNAME: The installation directory is /home/USERNAME/RetroPie for user USERNAME"
     echo "sudo ./retropie_setup.sh USERNAME ABSPATH: The installation directory is ABSPATH for user USERNAME"
     echo ""
+}
+
+changeBootbehaviour()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 76 16)
+    options=(1 "Original boot behaviour"
+             2 "Start Emulation Station at boot.")
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [ "$choices" != "" ]; then
+        case $choices in
+            1) sed /etc/inittab -i -e "s|1:2345:respawn:/bin/login -f $user tty1 </dev/tty1 >/dev/tty1 2>&1|1:2345:respawn:/sbin/getty --noclear 38400 tty1|g"
+               sed /etc/profile -i -e "s|emulationstation||g"
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled original boot behaviour." 22 76    
+                            ;;
+            2) sed /etc/inittab -i -e "s|1:2345:respawn:/sbin/getty --noclear 38400 tty1|1:2345:respawn:\/bin\/login -f $user tty1 \<\/dev\/tty1 \>\/dev\/tty1 2\>\&1|g"
+               if [ -z $(egrep -i "^emulationstation" /etc/profile) ]
+               then
+                   echo "emulationstation" >> /etc/profile
+               fi
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Emulation Station is now starting on boot." 22 76    
+                            ;;
+        esac
+    else
+        break
+    fi    
+}
+
+main_options()
+{
+    cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages." 22 76 16)
+    options=(1 "Install latest rpi-update script" ON     # any option can be set to default to "on"
+             2 "Update APT repositories" ON \
+             3 "Perform APT upgrade" ON \
+             4 "Add user $user to groups video, audio, and input" ON \
+             5 "Enable modules ALSA, uinput, and joydev" ON \
+             6 "Export SDL_MOUSE=1" ON \
+             7 "Install all needed APT packages" ON \
+             8 "Generate folder structure" ON \
+             9 "Install RetroArch" ON \
+             10 "Install Atari 2600 core" ON \
+             11 "Install Doom core" ON \
+             12 "Install Game Boy Advance core" ON \
+             13 "Install Game Boy Color core" ON \
+             14 "Install MAME core" ON \
+             15 "Install Mega Drive core" ON \
+             16 "Install NES core" ON \
+             17 "Install Super NES core" ON \
+             18 "Install BCM library" ON \
+             19 "Install SNESDev" ON \
+             20 "Install Emulation Station" ON \
+             21 "Generate config file for Emulation Station" ON )
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    clear
+    if [ "$choices" != "" ]; then
+        for choice in $choices
+        do
+            case $choice in
+                1) install_rpiupdate ;;
+                2) update_apt ;;
+                3) upgrade_apt ;;
+                4) add_to_groups ;;
+                5) ensure_modules ;;
+                6) exportSDLNOMOUSE ;;
+                7) installAPTPackages ;;
+                8) prepareFolders ;;
+                9) install_retroarch ;;
+                10) install_atari2600 ;;
+                11) install_doom ;;
+                12) install_gba ;;
+                13) install_gbc ;;
+                14) install_mame ;;
+                15) install_megadrive ;;
+                16) install_nes ;;
+                17) install_snes ;;
+                18) install_bcmlibrary ;;
+                19) install_snesdev ;;
+                20) install_emulationstation ;;
+                21) generate_esconfig ;;
+            esac
+        done
+
+        chgrp -R $user $rootdir
+        chown -R $user $rootdir
+
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
+    fi
+}
+
+main_setup()
+{
+    while true; do
+        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
+        options=(1 "Re-generate config file for Emulation Station" 
+                 2 "Install latest Rasperry Pi firmware" 
+                 3 "Sort roms alphabetically within folders. *Creates subfolders*" 
+                 4 "Start Emulation Station on boot?" )
+        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
+        if [ "$choices" != "" ]; then
+            case $choices in
+                1) generate_esconfig ;;
+                2) run_rpiupdate ;;
+                3) sortromsalphabet ;;
+                4) changeBootbehaviour ;;
+            esac
+        else
+            break
+        fi
+    done    
 }
 
 # here starts the main loop
@@ -572,7 +618,6 @@ elif [[ $# -lt 3 ]]; then
     rootdir=$2
 fi
 
-# printMsg "Installing all RetroPie-packages into the directory $rootdir"
 if [[ ! -d $rootdir ]]; then
     mkdir -p "$rootdir"
     if [[ ! -d $rootdir ]]; then
@@ -582,16 +627,17 @@ if [[ ! -d $rootdir ]]; then
 fi
 
 while true; do
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installing to $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
     options=(1 "Binaries-based installation (faster, (probably) not the newest)"
-             2 "Source-based (custom) installation (slower, newest)")
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+             2 "Source-based (custom) installation (slower, newest)"
+             3 "Setup (only if you already have run one of the installations above)")
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
     if [ "$choices" != "" ]; then
         case $choices in
             1) main_binaries
-               break 
-                            ;;
+               break ;;
             2) main_options ;;
+            3) main_setup ;;
         esac
     else
         break
