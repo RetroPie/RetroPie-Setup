@@ -455,6 +455,7 @@ main_binaries()
     install -m755 $rootdir/RetroArch-Rpi/retroarch /usr/local/bin 
     install -m644 $rootdir/RetroArch-Rpi/retroarch.cfg /etc/retroarch.cfg
     install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
+    sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
     prepareFolders
 
     chgrp -R $user $rootdir
