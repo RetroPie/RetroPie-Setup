@@ -130,12 +130,12 @@ ensure_modules()
 exportSDLNOMOUSE()
 {
     # needed by SDL for working joypads
-    printMsg "Exporting SDL_MOUSE=1 permanently to ~/.bashrc"
+    printMsg "Exporting SDL_NOMOUSE=1 permanently to $home/.bashrc"
     export SDL_NOMOUSE=1
-    if ! grep -q "export SDL_NOMOUSE=1" ~/.bashrc; then
-        echo -e "\nexport SDL_NOMOUSE=1" >> ~/.bashrc
+    if ! grep -q "export SDL_NOMOUSE=1" $home/.bashrc; then
+        echo -e "\nexport SDL_NOMOUSE=1" >> $home/.bashrc
     else
-        echo -e "SDL_NOMOUSE=1 already contained in ~/.bashrc"
+        echo -e "SDL_NOMOUSE=1 already contained in $home/.bashrc"
     fi    
 }
 
@@ -513,7 +513,7 @@ main_options()
              3 "Perform APT upgrade" ON \
              4 "Add user $user to groups video, audio, and input" ON \
              5 "Enable modules ALSA, uinput, and joydev" ON \
-             6 "Export SDL_MOUSE=1" ON \
+             6 "Export SDL_NOMOUSE=1" ON \
              7 "Install all needed APT packages" ON \
              8 "Generate folder structure" ON \
              9 "Install RetroArch" ON \
@@ -618,6 +618,8 @@ elif [[ $# -lt 3 ]]; then
     user=$1
     rootdir=$2
 fi
+
+home=$(eval echo ~$user)
 
 if [[ ! -d $rootdir ]]; then
     mkdir -p "$rootdir"
