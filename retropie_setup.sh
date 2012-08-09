@@ -332,7 +332,7 @@ install_esscript()
 {
     if [[ ! -f /usr/bin/emulationstation.sh ]]; then
         # a work around here, so that EmulationStation can be executed from arbitrary locations
-        echo -e "pushd \"$rootdir/EmulationStation\"\n./emulationstation\npopd\n" > /usr/bin/emulationstation
+        echo -e "#!/bin/bash\npushd \"$rootdir/EmulationStation\"\n./emulationstation\npopd\n" > /usr/bin/emulationstation
         sudo chmod +x /usr/bin/emulationstation
     fi
 }
