@@ -143,7 +143,7 @@ installAPTPackages()
 {
     # make sure that all needed packages are installed
     printMsg "Making sure that all needed packaged are installed"
-    sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev zip libxml2 libsdl-image1.2-dev
+    sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev zip libxml2 libsdl-image1.2-dev libsdl-gfx1.2-dev
 }
 
 prepareFolders()
@@ -505,6 +505,16 @@ changeBootbehaviour()
     fi    
 }
 
+checkNeededPackages()
+{
+    doexit=0
+    type -P git &>/dev/null && echo "Found git command." || { echo "Did not find git. Try 'sudo apt-get install -y git' first."; doexit=1; }
+    type -P dialog &>/dev/null && echo "Found dialog command." || { echo "Did not find dialog. Try 'sudo apt-get install -y dialog' first."; doexit=1; }
+    if [[ doexit -eq 1 ]]; then
+        exit 1
+    fi
+}
+
 main_options()
 {
     cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages." 22 76 16)
@@ -589,6 +599,8 @@ main_setup()
 }
 
 # here starts the main loop
+
+checkNeededPackages
 
 if [[ "$1" == "--help" ]]; then
     showHelp

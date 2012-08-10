@@ -2,5 +2,7 @@ Florian Müller - <petrockblock@gmail.com>
    - Main code, maintainer
 
 Peter Mahlknecht
-   - Rootdir and user handling
+   - Rootdir, user, groups handling, bug fixes
    
+Aloshi (Emulation Station)
+   - Updates for APT packages
