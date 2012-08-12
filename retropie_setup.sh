@@ -50,6 +50,18 @@ function addLineToFile()
     echo "Added $1 to file $2"
 }
 
+function availFreeDiskSpace()
+{
+    local __required=$1
+    local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
+
+    if [[ "$__required" -le "$__avail" ]] || ask "Recommended disk space($__required) not available. Only $__avail available at $rootdir continue anyway?"; then
+        return 0;
+    else
+        exit 0;
+    fi
+}
+
 printMsg()
 {
 	echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
@@ -640,6 +652,8 @@ if [[ ! -d $rootdir ]]; then
       exit 1
     fi
 fi
+
+availFreeDiskSpace 300000
 
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
