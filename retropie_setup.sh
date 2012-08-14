@@ -403,13 +403,13 @@ NAME=Super Nintendo
 PATH=$rootdir/roms/snes
 EXTENSION=.smc
 COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
+
+NAME=MAME
+PATH=$rootdir/roms/mame
+EXTENSION=.zip
+COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%    
+
 _EOF_
-
-# NAME=MAME
-# PATH=$rootdir/roms/mame
-# EXTENSION=.zip
-# COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%    
-
 
 }
 
