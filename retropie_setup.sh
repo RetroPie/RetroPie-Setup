@@ -451,6 +451,28 @@ downloadBinaries()
     rm RetroPieSetupBinaries.tar.bz2
 }
 
+setArmFreq()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the ARM frequency." 22 76 16)
+    options=(700 "(default)"
+             750 "(do this at your own risk!)"
+             800 "(do this at your own risk!)"
+             850 "(do this at your own risk!)"
+             900 "(do this at your own risk!)")
+    armfreqchoice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [ "$armfreqchoice" != "" ]; then                
+        if [[ -z $(egrep -i "#? *arm_freq=[0-9]*" /boot/config.txt) ]]; then
+            # add key-value pair
+            echo "arm_freq=$armfreqchoice" >> /boot/config.txt
+        else
+            # replace existing key-value pair
+            toreplace=`egrep -i "#? *arm_freq=[0-9]*" /boot/config.txt`
+            sed /boot/config.txt -i -e "s|$toreplace|arm_freq=$armfreqchoice|g"
+        fi 
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "ARM frequency set to $armfreqchoice MHz. If you changed the frequency, you need to reboot." 22 76    
+    fi
+}
+
 main_binaries()
 {
     clear
@@ -595,7 +617,8 @@ main_setup()
         options=(1 "Re-generate config file for Emulation Station" 
                  2 "Install latest Rasperry Pi firmware" 
                  3 "Sort roms alphabetically within folders. *Creates subfolders*" 
-                 4 "Start Emulation Station on boot?" )
+                 4 "Start Emulation Station on boot?" 
+                 5 "Change ARM frequency" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -603,6 +626,7 @@ main_setup()
                 2) run_rpiupdate ;;
                 3) sortromsalphabet ;;
                 4) changeBootbehaviour ;;
+                5) setArmFreq ;;
             esac
         else
             break
