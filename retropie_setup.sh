@@ -368,6 +368,9 @@ generate_esconfig()
 {
     # generate EmulationStation configuration
     printMsg "Generating configuration file ~/.emulationstation/es_systems.cfg for EmulationStation"
+    if [[ ! -d "$rootdir/../.emulationstation" ]]; then
+        mkdir $rootdir/../.emulationstation
+    fi
     cat > $rootdir/../.emulationstation/es_systems.cfg << _EOF_
 NAME=Atari 2600
 PATH=$rootdir/roms/atari2600
