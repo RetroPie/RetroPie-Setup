@@ -62,19 +62,19 @@ function availFreeDiskSpace()
     fi
 }
 
-printMsg()
+function printMsg()
 {
 	echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
 }
 
-rel2abs() {
+function rel2abs() {
   cd "$(dirname $1)" && dir="$PWD"
   file="$(basename $1)"
 
   echo $dir/$file
 }
 
-install_rpiupdate()
+function install_rpiupdate()
 {
     # install latest rpi-update script (to enable firmware update)
     printMsg "Installing latest rpi-update script"
@@ -82,25 +82,25 @@ install_rpiupdate()
     # ask "Do you want to perform a firmware upgrade now?\nThis might take some minutes." && sudo rpi-update    
 }
 
-run_rpiupdate()
+function run_rpiupdate()
 {
     printMsg "Starting rpi-update script"
     /usr/bin/rpi-update
 }
 
 # update APT repositories
-update_apt() 
+function update_apt() 
 {
     apt-get -y update
 }
 
 # upgrade APT packages
-upgrade_apt()
+function upgrade_apt()
 {
     apt-get -y upgrade
 }
 
-add_to_groups()
+function add_to_groups()
 {
     # add user $user to groups "video", "audio", and "input"
     printMsg "Adding user $user to groups video, audio, and input."
@@ -109,7 +109,7 @@ add_to_groups()
     add_user_to_group $user input
 }
 
-add_user_to_group()
+function add_user_to_group()
 {
     # add user $1 to group $2, create the group if it doesn't exist
     if [ -z $(egrep -i "^$2" /etc/group) ]
@@ -119,7 +119,7 @@ add_user_to_group()
     sudo adduser $1 $2
 }
 
-ensure_modules()
+function ensure_modules()
 {
     # make sure ALSA, uinput, and joydev modules are active
     printMsg "Enabling ALSA, uinput, and joydev modules permanently"
@@ -139,7 +139,7 @@ ensure_modules()
     fi    
 }
 
-exportSDLNOMOUSE()
+function exportSDLNOMOUSE()
 {
     # needed by SDL for working joypads
     printMsg "Exporting SDL_NOMOUSE=1 permanently to $home/.bashrc"
@@ -151,14 +151,14 @@ exportSDLNOMOUSE()
     fi    
 }
 
-installAPTPackages()
+function installAPTPackages()
 {
     # make sure that all needed packages are installed
     printMsg "Making sure that all needed packaged are installed"
     sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev zip libxml2 libsdl-image1.2-dev libsdl-gfx1.2-dev
 }
 
-prepareFolders()
+function prepareFolders()
 {
     # prepare folder structure for emulator, cores, front end, and roms
     printMsg "Creating folder structure for emulator, front end, cores, and roms"
@@ -184,7 +184,7 @@ prepareFolders()
     done    
 }
 
-install_retroarch()
+function install_retroarch()
 {
     # install RetroArch emulator
     printMsg "Installing RetroArch emulator"
@@ -199,7 +199,7 @@ install_retroarch()
     popd
 }
 
-install_atari2600()
+function install_atari2600()
 {
     # install Atari 2600 core
     printMsg "Installing Atari 2600 core"
@@ -214,7 +214,7 @@ install_atari2600()
     popd    
 }
 
-install_doom()
+function install_doom()
 {
     # install Doom WADs emulator core
     printMsg "Installing Doom core"
@@ -230,7 +230,7 @@ install_doom()
     popd
 }
 
-install_gba()
+function install_gba()
 {
     # install Game Boy Advance emulator core
     printMsg "Installing Game Boy Advancecore"
@@ -243,7 +243,7 @@ install_gba()
     popd    
 }
 
-install_gbc()
+function install_gbc()
 {
     # install Game Boy Color emulator core
     printMsg "Installing Game Boy Color core"
@@ -256,7 +256,7 @@ install_gbc()
     popd
 }
 
-install_mame()
+function install_mame()
 {
     # install MAME emulator core
     printMsg "Installing MAME core"
@@ -269,7 +269,7 @@ install_mame()
     popd
 }
 
-install_nes()
+function install_nes()
 {
     # install NES emulator core
     printMsg "Installing NES core"
@@ -282,7 +282,7 @@ install_nes()
     popd
 }
 
-install_megadrive()
+function install_megadrive()
 {
     # install Sega Mega Drive emulator core
     printMsg "Installing Mega Drive core"
@@ -296,7 +296,7 @@ install_megadrive()
     popd
 }
 
-install_snes()
+function install_snes()
 {
     # install SNES emulator core
     printMsg "Installing SNES core"
@@ -309,7 +309,7 @@ install_snes()
     popd
 }
 
-install_bcmlibrary()
+function install_bcmlibrary()
 {
     # install BCM library to enable GPIO access by SNESDev-RPi
     printMsg "Installing BCM2835 library"
@@ -326,7 +326,7 @@ install_bcmlibrary()
     popd 
 }
 
-install_snesdev()
+function install_snesdev()
 {
     # install SNESDev as GPIO interface for SNES controllers
     printMsg "Installing SNESDev as GPIO interface for SNES controllers"
@@ -340,7 +340,7 @@ install_snesdev()
     popd
 }
 
-install_esscript()
+function install_esscript()
 {
     if [[ ! -f /usr/bin/emulationstation.sh ]]; then
         # a work around here, so that EmulationStation can be executed from arbitrary locations
@@ -349,7 +349,7 @@ install_esscript()
     fi
 }
 
-install_emulationstation()
+function install_emulationstation()
 {
     # install EmulationStation as graphical front end for the emulators
     printMsg "Installing EmulationStation as graphical front end"
@@ -364,7 +364,7 @@ install_emulationstation()
     popd
 }
 
-generate_esconfig()
+function generate_esconfig()
 {
     # generate EmulationStation configuration
     printMsg "Generating configuration file ~/.emulationstation/es_systems.cfg for EmulationStation"
@@ -416,7 +416,7 @@ _EOF_
 
 }
 
-sortromsalphabet()
+function sortromsalphabet()
 {
     pathlist[0]="$rootdir/roms/atari2600"
     pathlist[1]="$rootdir/roms/gba"
@@ -443,7 +443,7 @@ sortromsalphabet()
     done  
 }
 
-downloadBinaries()
+function downloadBinaries()
 {
     wget https://github.com/downloads/petrockblog/RetroPie-Setup/RetroPieSetupBinaries.tar.bz2
     tar -jxvf RetroPieSetupBinaries.tar.bz2 -C $rootdir
@@ -454,7 +454,7 @@ downloadBinaries()
     rm RetroPieSetupBinaries.tar.bz2
 }
 
-setArmFreq()
+function setArmFreq()
 {
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the ARM frequency." 22 76 16)
     options=(700 "(default)"
@@ -476,7 +476,7 @@ setArmFreq()
     fi
 }
 
-main_binaries()
+function main_binaries()
 {
     clear
     printMsg "Binaries-based installation"
@@ -501,7 +501,7 @@ main_binaries()
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76    
 }
 
-showHelp()
+function showHelp()
 {
     echo ""
     echo "RetroPie Setup script"
@@ -517,7 +517,7 @@ showHelp()
     echo ""
 }
 
-changeBootbehaviour()
+function changeBootbehaviour()
 {
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 76 16)
     options=(1 "Original boot behaviour"
@@ -542,7 +542,33 @@ changeBootbehaviour()
     fi    
 }
 
-checkNeededPackages()
+function enableSNESGPIOModule()
+{
+    if [[ -z $(lsmod | grep gamecon_gpio_rpi) ]]; then
+        clear
+        wget https://github.com/downloads/petrockblog/RetroPie-Setup/gamecon_gpio_rpi.zip
+        unzip -o gamecon_gpio_rpi.zip -d $rootdir/gamecon_gpio_rpi
+        if [[ ! -d /lib/modules/`uname -r`/kernel/drivers/input/joystick ]]; then
+            mkdir -p /lib/modules/`uname -r`/kernel/drivers/input/joystick
+        fi
+        cp $rootdir/gamecon_gpio_rpi/gamecon_gpio_rpi.ko /lib/modules/`uname -r`/kernel/drivers/input/joystick/
+        depmod -a    
+        modprobe gamecon_gpio_rpi map=0,1,1,0
+        if [[ -z $(cat /etc/modules | grep gamecon_gpio_rpi) ]]; then
+            addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
+        fi
+        rm "gamecon_gpio_rpi.zip"
+        if [[ -z $(lsmod | grep gamecon_gpio_rpi) ]]; then
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon driver for NES, SNES, N64 GPIO interface could NOT be installed." 22 76    
+        else
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon driver for NES, SNES, N64 GPIO interface could successfully installed." 22 76    
+        fi
+    else
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon driver for NES, SNES, N64 GPIO interface already installed and running." 22 76    
+    fi
+}
+
+function checkNeededPackages()
 {
     doexit=0
     type -P git &>/dev/null && echo "Found git command." || { echo "Did not find git. Try 'sudo apt-get install -y git' first."; doexit=1; }
@@ -552,7 +578,7 @@ checkNeededPackages()
     fi
 }
 
-main_options()
+function main_options()
 {
     cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages." 22 76 16)
     options=(1 "Install latest rpi-update script" ON     # any option can be set to default to "on"
@@ -613,15 +639,16 @@ main_options()
     fi
 }
 
-main_setup()
+function main_setup()
 {
     while true; do
-        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
+        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
         options=(1 "Re-generate config file for Emulation Station" 
                  2 "Install latest Rasperry Pi firmware" 
                  3 "Sort roms alphabetically within folders. *Creates subfolders*" 
                  4 "Start Emulation Station on boot?" 
-                 5 "Change ARM frequency" )
+                 5 "Change ARM frequency" 
+                 6 "Enable kernel module for NES, SNES, N64 controllers" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -630,11 +657,18 @@ main_setup()
                 3) sortromsalphabet ;;
                 4) changeBootbehaviour ;;
                 5) setArmFreq ;;
+                6) enableSNESGPIOModule ;;
             esac
         else
             break
         fi
     done    
+}
+
+function main_reboot()
+{
+    clear
+    sudo shutdown -r now    
 }
 
 # here starts the main loop
@@ -686,7 +720,8 @@ while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
     options=(1 "Binaries-based installation (faster, (probably) not the newest)"
              2 "Source-based (custom) installation (slower, newest)"
-             3 "Setup (only if you already have run one of the installations above)")
+             3 "Setup (only if you already have run one of the installations above)"
+             4 "Perform reboot" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
     if [ "$choices" != "" ]; then
         case $choices in
@@ -694,6 +729,7 @@ while true; do
                break ;;
             2) main_options ;;
             3) main_setup ;;
+            4) main_reboot ;;
         esac
     else
         break
