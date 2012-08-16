@@ -9,3 +9,7 @@ Aloshi (Emulation Station)
 
 Martin Modahl - <mmodahl@gmail.com>
    - Check for free disk space
+
+marqs
+   - gamecon_gpio_rpi module
+   
