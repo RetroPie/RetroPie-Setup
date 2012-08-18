@@ -30,6 +30,8 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
+# HELPER FUNCTION ###
+
 function ask()
 {   
     echo -e -n "$@" '[y/n] ' ; read ans
@@ -50,6 +52,33 @@ function addLineToFile()
     echo "Added $1 to file $2"
 }
 
+# arg 1: key, arg 2: value, arg 3: file
+function ensureKeyValue()
+{
+    if [[ -z $(egrep -i "#? *$1 = ""[+|-]?[0-9]""" $3) ]]; then
+        # add key-value pair
+        echo "$1 = ""$2""" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1 = ""[+|-]?[0-9]""" $3`
+        sed $3 -i -e "s|$toreplace|$1 = ""$2""|g"
+    fi     
+}
+
+function printMsg()
+{
+    echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
+}
+
+function rel2abs() {
+  cd "$(dirname $1)" && dir="$PWD"
+  file="$(basename $1)"
+
+  echo $dir/$file
+}
+
+# END HELPER FUNCTIONS ###
+
 function availFreeDiskSpace()
 {
     local __required=$1
@@ -60,18 +89,6 @@ function availFreeDiskSpace()
     else
         exit 0;
     fi
-}
-
-function printMsg()
-{
-	echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
-}
-
-function rel2abs() {
-  cd "$(dirname $1)" && dir="$PWD"
-  file="$(basename $1)"
-
-  echo $dir/$file
 }
 
 function install_rpiupdate()
@@ -342,11 +359,21 @@ function install_snesdev()
 
 function install_esscript()
 {
-    if [[ ! -f /usr/bin/emulationstation.sh ]]; then
-        # a work around here, so that EmulationStation can be executed from arbitrary locations
-        echo -e "#!/bin/bash\npushd \"$rootdir/EmulationStation\"\n./emulationstation\npopd\n" > /usr/bin/emulationstation
-        sudo chmod +x /usr/bin/emulationstation
-    fi
+    # a work around here, so that EmulationStation can be executed from arbitrary locations
+    rootdir=/home/pi/RetroPie
+    cat > /usr/bin/emulationstation << _EOF_
+#!/bin/bash
+
+if [ -n "\$DISPLAY" ]; then
+    echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
+    exit 1
+fi 
+
+pushd "$rootdir/EmulationStation"
+./emulationstation
+popd
+_EOF_
+    chmod +x /usr/bin/emulationstation
 }
 
 function install_emulationstation()
@@ -376,41 +403,49 @@ NAME=Atari 2600
 PATH=$rootdir/roms/atari2600
 EXTENSION=.bin
 COMMAND=retroarch -L $rootdir/emulatorcores/stella-libretro/libretro.so %ROM%
+PLATFORMID=22
 
 NAME=Doom
 PATH=$rootdir/roms/doom
 EXTENSION=.WAD
 COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
+PLATFORMID=1
 
 NAME=Game Boy Advance
 PATH=$rootdir/roms/gba
 EXTENSION=.gba
 COMMAND=retroarch -L $rootdir/emulatorcores/vba-next/libretro.so %ROM%
+PLATFORMID=5
 
 NAME=Game Boy Color
 PATH=$rootdir/roms/gbc
 EXTENSION=.gb
 COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
+PLATFORMID=41
 
 NAME=Sega Mega Drive
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd
 COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+PLATFORMID=36
 
 NAME=Nintendo Entertainment System
 PATH=$rootdir/roms/nes
 EXTENSION=.nes
 COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/libretro.so %ROM%
+PLATFORMID=7
 
 NAME=Super Nintendo
 PATH=$rootdir/roms/snes
 EXTENSION=.smc
 COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
+PLATFORMID=6
 
 NAME=MAME
 PATH=$rootdir/roms/mame
 EXTENSION=.zip
 COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%    
+PLATFORMID=23
 
 _EOF_
 
@@ -557,6 +592,35 @@ function enableSNESGPIOModule()
         if [[ -z $(cat /etc/modules | grep gamecon_gpio_rpi) ]]; then
             addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
         fi
+
+        ensureKeyValue "input_player1_joypad_index" "0" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_a_btn" "0" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_b_btn" "1" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_x_btn" "2" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_y_btn" "3" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_l_btn" "4" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_r_btn" "5" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_start_btn" "7" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_select_btn" "6" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_left_axis" "-0" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_up_axis" "-1" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_right_axis" "+0" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_down_axis" "+1" "/etc/retroarch.cfg"
+
+        ensureKeyValue "input_player2_joypad_index" "1" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_a_btn" "0" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_b_btn" "1" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_x_btn" "2" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_y_btn" "3" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_l_btn" "4" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_r_btn" "5" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_start_btn" "7" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_select_btn" "6" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_left_axis" "-0" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_up_axis" "-1" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_right_axis" "+0" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_down_axis" "+1" "/etc/retroarch.cfg"
+
         rm "gamecon_gpio_rpi.zip"
         if [[ -z $(lsmod | grep gamecon_gpio_rpi) ]]; then
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon driver for NES, SNES, N64 GPIO interface could NOT be installed." 22 76    
@@ -576,6 +640,63 @@ function checkNeededPackages()
     if [[ doexit -eq 1 ]]; then
         exit 1
     fi
+}
+
+function checkESScraperExists()
+{
+    if [[ ! -d $rootdir/ES-thegamesdb-scraper ]]; then
+        # new download
+        git clone git://github.com/jpzapa/ES-thegamesdb-scraper.git "$rootdir/ES-thegamesdb-scraper"
+    else
+        # update
+        pushd $rootdir/ES-thegamesdb-scraper
+        git pull
+        popd
+    fi
+}
+
+function essc_runnormal()
+{
+    checkESScraperExists
+    python $rootdir/ES-thegamesdb-scraper/scraper.py -w $esscrapimgw
+}
+
+function essc_runforced()
+{
+    checkESScraperExists
+    python $rootdir/ES-thegamesdb-scraper/scraper.py -f -w $esscrapimgw
+}
+
+function essc_setimgw()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the maximum image width in pixels." 22 76 16)
+    choices=$("${cmd[@]}" 2>&1 >/dev/tty)    
+    if [ "$choices" != "" ]; then
+        esscrapimgw=$choices
+    else
+        break
+    fi
+}
+
+function scraperMenu()
+{
+    while true; do
+        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
+        options=(1 "(Re-)scape of the ROMs directory" 
+                 2 "Forced (re-)scrape of the ROMs directory" 
+                 3 "Set maximum width of images (currently: $esscrapimgw px)" )
+        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
+        if [ "$choices" != "" ]; then
+            clear
+            case $choices in
+                1) essc_runnormal ;;
+                2) essc_runforced ;;
+                3) essc_setimgw ;;
+            esac
+        else
+            break
+        fi
+    done        
 }
 
 function main_options()
@@ -648,7 +769,8 @@ function main_setup()
                  3 "Sort roms alphabetically within folders. *Creates subfolders*" 
                  4 "Start Emulation Station on boot?" 
                  5 "Change ARM frequency" 
-                 6 "Enable kernel module for NES, SNES, N64 controllers" )
+                 6 "Enable kernel module for NES, SNES, N64 controllers" 
+                 7 "Run 'The GamesDB scraper for Emulation Station'" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -658,6 +780,7 @@ function main_setup()
                 4) changeBootbehaviour ;;
                 5) setArmFreq ;;
                 6) enableSNESGPIOModule ;;
+                7) scraperMenu ;;
             esac
         else
             break
@@ -703,6 +826,8 @@ elif [[ $# -lt 3 ]]; then
     user=$1
     rootdir=$2
 fi
+
+esscrapimgw=350 # width in pixel for EmulationStation games scraper
 
 home=$(eval echo ~$user)
 
