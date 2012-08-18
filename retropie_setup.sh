@@ -480,13 +480,14 @@ function sortromsalphabet()
 
 function downloadBinaries()
 {
-    wget https://github.com/downloads/petrockblog/RetroPie-Setup/RetroPieSetupBinaries.tar.bz2
-    tar -jxvf RetroPieSetupBinaries.tar.bz2 -C $rootdir
+    local __binariesname="RetroPieSetupBinaries_20120818.tar.bz2"
+    wget https://github.com/downloads/petrockblog/RetroPie-Setup/$__binariesname
+    tar -jxvf $__binariesname -C $rootdir
     pushd $rootdir/RetroPie
     mv * ../
     popd
     rm -rf $rootdir/RetroPie
-    rm RetroPieSetupBinaries.tar.bz2
+    rm $__binariesname
 }
 
 function setArmFreq()

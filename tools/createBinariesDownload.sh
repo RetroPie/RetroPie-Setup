@@ -26,4 +26,6 @@ do
 	tar -r -vf newRetroPieSetupBinaries.tar ${filelist[$i]}
 done
 
+bzip2 newRetroPieSetupBinaries.tar
+
 echo "Done."
