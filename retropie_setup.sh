@@ -84,7 +84,7 @@ function availFreeDiskSpace()
     local __required=$1
     local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
 
-    if [[ "$__required" -le "$__avail" ]] || ask "Recommended disk space($__required) not available. Only $__avail available at $rootdir continue anyway?"; then
+    if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space (500 MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $__avail available at $rootdir continue anyway?"; then
         return 0;
     else
         exit 0;
@@ -172,7 +172,7 @@ function installAPTPackages()
 {
     # make sure that all needed packages are installed
     printMsg "Making sure that all needed packaged are installed"
-    sudo apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev zip libxml2 libsdl-image1.2-dev libsdl-gfx1.2-dev
+    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev libboost-system-dev zip libxml2 libsdl-image1.2-dev libsdl-gfx1.2-dev
 }
 
 function prepareFolders()
@@ -839,7 +839,7 @@ if [[ ! -d $rootdir ]]; then
     fi
 fi
 
-availFreeDiskSpace 300000
+availFreeDiskSpace 500000
 
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
