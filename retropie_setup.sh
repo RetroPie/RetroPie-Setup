@@ -360,7 +360,6 @@ function install_snesdev()
 function install_esscript()
 {
     # a work around here, so that EmulationStation can be executed from arbitrary locations
-    rootdir=/home/pi/RetroPie
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
 
