@@ -6,10 +6,11 @@ General Usage
 
 Shell script to setup Raspberry Pi (TM) with RetroArch emulator, various cores, and EmulationStation as graphical front end.
 
-First of all, make sure that Git and the dialog package are installed:
+First of all, make sure that your APT repositories are up-to-date and that Git and the dialog package are installed:
 
 ```shell
 sudo apt-get update
+sudo apt-get upgrade
 sudo apt-get install -y git dialog
 ```
 
