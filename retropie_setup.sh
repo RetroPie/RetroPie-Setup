@@ -243,7 +243,7 @@ function install_doom()
     make
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
     chgrp pi $rootdir/roms/doom/prboom.wad
-    chgown $user $rootdir/roms/doom/prboom.wad
+    chown $user $rootdir/roms/doom/prboom.wad
     popd
 }
 
@@ -368,9 +368,9 @@ if [ -n "\$DISPLAY" ]; then
     exit 1
 fi 
 
-pushd "$rootdir/EmulationStation"
+pushd "$rootdir/EmulationStation" > /dev/null
 ./emulationstation
-popd
+popd > /dev/null
 _EOF_
     chmod +x /usr/bin/emulationstation
 }
@@ -452,6 +452,7 @@ _EOF_
 
 function sortromsalphabet()
 {
+    clear
     pathlist[0]="$rootdir/roms/atari2600"
     pathlist[1]="$rootdir/roms/gba"
     pathlist[2]="$rootdir/roms/gbc"
@@ -473,6 +474,12 @@ function sortromsalphabet()
                     mv "$line" "$elem/$x/$(basename "${line,,}")"
                 done
             done
+            if [[ ! -d "$elem/#" ]]; then
+                mkdir "$elem/#"
+            fi
+            find $elem -maxdepth 1 -type f -iname "[0-9]*"| while read line; do
+                mv "$line" "$elem/#/$(basename "${line,,}")"
+            done
         fi
     done  
 }
@@ -485,6 +492,12 @@ function downloadBinaries()
     pushd $rootdir/RetroPie
     mv * ../
     popd
+
+    # handle Doom emulator specifics
+    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
+    chgrp pi $rootdir/roms/doom/prboom.wad
+    chown $user $rootdir/roms/doom/prboom.wad
+
     rm -rf $rootdir/RetroPie
     rm $__binariesname
 }
