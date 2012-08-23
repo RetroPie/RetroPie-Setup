@@ -77,6 +77,26 @@ function rel2abs() {
   echo $dir/$file
 }
 
+function checkForInstalledAPTPackage()
+{
+    PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1|grep "install ok installed")
+    echo Checking for somelib: $PKG_OK
+    if [ "" == "$PKG_OK" ]; then
+        echo "NOT INSTALLED: $1"
+    else
+        echo "installed: $1"
+    fi    
+}
+
+function checkFileExistence()
+{
+    if [[ -f "$1" ]]; then
+        ls -lh "$1" >> "$rootdir/debug.log"
+    else
+        echo "$1 does NOT exist." >> "$rootdir/debug.log"
+    fi
+}
+
 # END HELPER FUNCTIONS ###
 
 function availFreeDiskSpace()
@@ -395,9 +415,9 @@ function generate_esconfig()
     # generate EmulationStation configuration
     printMsg "Generating configuration file ~/.emulationstation/es_systems.cfg for EmulationStation"
     if [[ ! -d "$rootdir/../.emulationstation" ]]; then
-        mkdir $rootdir/../.emulationstation
+        mkdir "$rootdir/../.emulationstation"
     fi
-    cat > $rootdir/../.emulationstation/es_systems.cfg << _EOF_
+    cat > "$rootdir/../.emulationstation/es_systems.cfg" << _EOF_
 NAME=Atari 2600
 PATH=$rootdir/roms/atari2600
 EXTENSION=.bin
@@ -691,6 +711,90 @@ function essc_setimgw()
     fi
 }
 
+function main_reboot()
+{
+    clear
+    sudo shutdown -r now    
+}
+
+function createDebugLog()
+{
+    clear
+    printMsg "Generating debug log"
+
+    rootdir=/home/pi/RetroPie
+    echo "RetroArch files:" > "$rootdir/debug.log"
+
+    # existence of files
+    checkFileExistence "/usr/local/bin/retroarch"
+    checkFileExistence "/usr/local/bin/retroarch-zip"
+    checkFileExistence "/etc/retroarch.cfg"
+    echo -e "\nActive lines in /etc/retroarch.cfg:" >> "$rootdir/debug.log"
+    sed '/^$\|^#/d' "/etc/retroarch.cfg"  >>  "$rootdir/debug.log"
+
+    echo -e "\nEmulation Station files:" >> "$rootdir/debug.log"
+    checkFileExistence "$rootdir/EmulationStation/emulationstation"
+    checkFileExistence "$rootdir/../.emulationstation/es_systems.cfg"
+    checkFileExistence "$rootdir/../.emulationstation/es_input.cfg"
+    checkFileExistence "$rootdir/EmulationStation/LinLibertine_R.ttf"
+    echo -e "\nContent of es_systems.cfg:" >> "$rootdir/debug.log"
+    cat "$rootdir/../.emulationstation/es_systems.cfg" >> "$rootdir/debug.log"
+    echo -e "\nContent of es_input.cfg:" >> "$rootdir/debug.log"
+    cat "$rootdir/../.emulationstation/es_input.cfg" >> "$rootdir/debug.log"
+
+    echo -e "\nEmulator cores:" >> "$rootdir/debug.log"
+    checkFileExistence "$rootdir/emulatorcores/fceu-next/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/libretro-prboom/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/libretro-prboom/prboom.wad"
+    checkFileExistence "$rootdir/emulatorcores/stella-libretro/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/imame4all-libretro/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/pocketsnes-libretro/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/vba-next/libretro.so"
+
+    echo -e "\nSNESDev:" >> "$rootdir/debug.log"
+    checkFileExistence "$rootdir/SNESDev-Rpi/bin/SNESDev"
+
+    echo -e "\nSummary of ROMS directory:" >> "$rootdir/debug.log"
+    du -ch --max-depth=1 "$rootdir/roms/" >> "$rootdir/debug.log"
+
+    echo -e "\nUnrecognized ROM extensions:" >> "$rootdir/debug.log"
+    find "$rootdir/roms/atari2600/" -type f ! \( -name "*.bin" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/doom/" -type f ! \( -name "*.WAD" -or -name "*.jpg" -or -name "*.xml" -or -name "*.wad" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/gba/" -type f ! \( -name "*.gba" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/gbc/" -type f ! \( -name "*.gb" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/mame/" -type f ! \( -name "*.zip" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/megadrive/" -type f ! \( -name "*.smd" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/nes/" -type f ! \( -name "*.nes" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/snes/" -type f ! \( -name "*.smc" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
+
+    echo -e "\nCheck for needed APT packages:" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libsdl1.2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "screen" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "scons" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libasound2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "pkg-config" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libgtk2.0-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libsdl-ttf2.0-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libboost-filesystem-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libboost-system-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "zip" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libxml2" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libsdl-image1.2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libsdl-gfx1.2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "python-imaging" >> "$rootdir/debug.log"
+
+    echo -e "\nEnd of log file" >> "$rootdir/debug.log" >> "$rootdir/debug.log"
+
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Debug log was generated in $rootdir/debug.log" 22 76    
+
+}
+
+##################
+## menus #########
+##################
+
 function scraperMenu()
 {
     while true; do
@@ -783,7 +887,8 @@ function main_setup()
                  4 "Start Emulation Station on boot?" 
                  5 "Change ARM frequency" 
                  6 "Enable kernel module for NES, SNES, N64 controllers" 
-                 7 "Run 'The GamesDB scraper for Emulation Station'" )
+                 7 "Run 'The GamesDB scraper for Emulation Station'" 
+                 8 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -794,6 +899,7 @@ function main_setup()
                 5) setArmFreq ;;
                 6) enableSNESGPIOModule ;;
                 7) scraperMenu ;;
+                8) createDebugLog ;;
             esac
         else
             break
@@ -801,13 +907,9 @@ function main_setup()
     done    
 }
 
-function main_reboot()
-{
-    clear
-    sudo shutdown -r now    
-}
-
-# here starts the main loop
+######################################
+# here starts the main loop ##########
+######################################
 
 checkNeededPackages
 
