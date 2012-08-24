@@ -700,12 +700,16 @@ function essc_runnormal()
 {
     checkESScraperExists
     python $rootdir/ES-thegamesdb-scraper/scraper.py -w $esscrapimgw
+    chgrp -R $user "$rootdir/roms"
+    chown -R $user "$rootdir/roms"
 }
 
 function essc_runforced()
 {
     checkESScraperExists
     python $rootdir/ES-thegamesdb-scraper/scraper.py -f -w $esscrapimgw
+    chgrp -R $user "$rootdir/roms"
+    chown -R $user "$rootdir/roms"
 }
 
 function essc_setimgw()
