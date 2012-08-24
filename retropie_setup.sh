@@ -468,6 +468,9 @@ PLATFORMID=23
 
 _EOF_
 
+chown -R $user "$rootdir/../.emulationstation"
+chgrp -R $user "$rootdir/../.emulationstation"
+
 }
 
 function sortromsalphabet()
@@ -494,6 +497,9 @@ function sortromsalphabet()
                     mv "$line" "$elem/$x/$(basename "${line,,}")"
                 done
             done
+            if [[ -f "$elem/g/gamelist.xml" ]]; then
+                mv "$elem/g/gamelist.xml" "$elem/gamelist.xml"
+            fi
             if [[ ! -d "$elem/#" ]]; then
                 mkdir "$elem/#"
             fi
