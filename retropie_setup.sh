@@ -722,7 +722,6 @@ function createDebugLog()
     clear
     printMsg "Generating debug log"
 
-    rootdir=/home/pi/RetroPie
     echo "RetroArch files:" > "$rootdir/debug.log"
 
     # existence of files
