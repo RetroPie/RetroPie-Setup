@@ -502,6 +502,8 @@ function sortromsalphabet()
             done
         fi
     done  
+    chgrp -R $user $rootdir/roms
+    chown -R $user $rootdir/roms
 }
 
 function downloadBinaries()
@@ -515,7 +517,7 @@ function downloadBinaries()
 
     # handle Doom emulator specifics
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
-    chgrp pi $rootdir/roms/doom/prboom.wad
+    chgrp $user $rootdir/roms/doom/prboom.wad
     chown $user $rootdir/roms/doom/prboom.wad
 
     rm -rf $rootdir/RetroPie
