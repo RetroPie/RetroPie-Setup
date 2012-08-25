@@ -712,6 +712,14 @@ function essc_runforced()
     chown -R $user "$rootdir/roms"
 }
 
+function essc_runcrc()
+{
+    checkESScraperExists
+    python $rootdir/ES-scraper/scraper.py -crc -w $esscrapimgw
+    chgrp -R $user "$rootdir/roms"
+    chown -R $user "$rootdir/roms"
+}
+
 function essc_setimgw()
 {
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the maximum image width in pixels." 22 76 16)
@@ -812,14 +820,16 @@ function scraperMenu()
         cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
         options=(1 "(Re-)scape of the ROMs directory" 
                  2 "Forced (re-)scrape of the ROMs directory" 
-                 3 "Set maximum width of images (currently: $esscrapimgw px)" )
+                 3 "(Re-)scrape of the ROMs directory with CRC option" 
+                 4 "Set maximum width of images (currently: $esscrapimgw px)" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             clear
             case $choices in
                 1) essc_runnormal ;;
                 2) essc_runforced ;;
-                3) essc_setimgw ;;
+                3) essc_runcrc ;;
+                4) essc_setimgw ;;
             esac
         else
             break
