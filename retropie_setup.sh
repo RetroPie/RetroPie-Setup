@@ -908,7 +908,7 @@ function main_setup()
                  4 "Start Emulation Station on boot?" 
                  5 "Change ARM frequency" 
                  6 "Enable kernel module for NES, SNES, N64 controllers" 
-                 7 "Run 'The GamesDB scraper for Emulation Station'" 
+                 7 "Run 'ES-scraper'" 
                  8 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
