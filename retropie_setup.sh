@@ -685,12 +685,12 @@ function checkNeededPackages()
 
 function checkESScraperExists()
 {
-    if [[ ! -d $rootdir/ES-thegamesdb-scraper ]]; then
+    if [[ ! -d $rootdir/ES-scraper ]]; then
         # new download
-        git clone git://github.com/jpzapa/ES-thegamesdb-scraper.git "$rootdir/ES-thegamesdb-scraper"
+        git clone git://github.com/elpendor/ES-scraper.git "$rootdir/ES-scraper"
     else
         # update
-        pushd $rootdir/ES-thegamesdb-scraper
+        pushd $rootdir/ES-scraper
         git pull
         popd
     fi
@@ -699,7 +699,7 @@ function checkESScraperExists()
 function essc_runnormal()
 {
     checkESScraperExists
-    python $rootdir/ES-thegamesdb-scraper/scraper.py -w $esscrapimgw
+    python $rootdir/ES-scraper/scraper.py -w $esscrapimgw
     chgrp -R $user "$rootdir/roms"
     chown -R $user "$rootdir/roms"
 }
@@ -707,7 +707,7 @@ function essc_runnormal()
 function essc_runforced()
 {
     checkESScraperExists
-    python $rootdir/ES-thegamesdb-scraper/scraper.py -f -w $esscrapimgw
+    python $rootdir/ES-scraper/scraper.py -f -w $esscrapimgw
     chgrp -R $user "$rootdir/roms"
     chown -R $user "$rootdir/roms"
 }
