@@ -552,6 +552,28 @@ function setArmFreq()
     fi
 }
 
+function setSDRAMFreq()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the ARM frequency." 22 76 16)
+    options=(400 "(default)"
+             425 "(do this at your own risk!)"
+             450 "(do this at your own risk!)"
+             475 "(do this at your own risk!)"
+             500 "(do this at your own risk!)")
+    sdramfreqchoice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [ "$sdramfreqchoice" != "" ]; then                
+        if [[ -z $(egrep -i "#? *sdram_freq=[0-9]*" /boot/config.txt) ]]; then
+            # add key-value pair
+            echo "sdram_freq=$sdramfreqchoice" >> /boot/config.txt
+        else
+            # replace existing key-value pair
+            toreplace=`egrep -i "#? *sdram_freq=[0-9]*" /boot/config.txt`
+            sed /boot/config.txt -i -e "s|$toreplace|sdram_freq=$sdramfreqchoice|g"
+        fi 
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "SDRAM frequency set to $sdramfreqchoice MHz. If you changed the frequency, you need to reboot." 22 76    
+    fi
+}
+
 function main_binaries()
 {
     clear
@@ -622,8 +644,8 @@ function enableSNESGPIOModule()
 {
     if [[ -z $(lsmod | grep gamecon_gpio_rpi) ]]; then
         clear
-        wget https://github.com/downloads/petrockblog/RetroPie-Setup/gamecon_gpio_rpi.zip
-        unzip -o gamecon_gpio_rpi.zip -d $rootdir/gamecon_gpio_rpi
+        wget "https://github.com/downloads/petrockblog/RetroPie-Setup/gamecon_gpio_rpi_$1.zip"
+        unzip -o "gamecon_gpio_rpi_$1.zip" -d $rootdir/gamecon_gpio_rpi
         if [[ ! -d /lib/modules/`uname -r`/kernel/drivers/input/joystick ]]; then
             mkdir -p /lib/modules/`uname -r`/kernel/drivers/input/joystick
         fi
@@ -662,7 +684,7 @@ function enableSNESGPIOModule()
         ensureKeyValue "input_player2_right_axis" "+0" "/etc/retroarch.cfg"
         ensureKeyValue "input_player2_down_axis" "+1" "/etc/retroarch.cfg"
 
-        rm "gamecon_gpio_rpi.zip"
+        rm "gamecon_gpio_rpi_$1.zip"
         if [[ -z $(lsmod | grep gamecon_gpio_rpi) ]]; then
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon driver for NES, SNES, N64 GPIO interface could NOT be installed." 22 76    
         else
@@ -907,20 +929,30 @@ function main_setup()
                  3 "Sort roms alphabetically within folders. *Creates subfolders*" 
                  4 "Start Emulation Station on boot?" 
                  5 "Change ARM frequency" 
+<<<<<<< HEAD
                  6 "Enable kernel module for NES, SNES, N64 controllers" 
                  7 "Run 'ES-scraper'" 
                  8 "Generate debug log" )
+=======
+                 6 "Change SDRAM frequency"
+                 7 "Enable module for NES, SNES, N64 controllers for firmware 3.1.9" 
+                 8 "Enable module for NES, SNES, N64 controllers for firmware 3.2.27" 
+                 9 "Run 'The GamesDB scraper for Emulation Station'" 
+                 10 "Generate debug log" )
+>>>>>>> added option for changing SDRAM frequency, added GPIO controller module for firmware 3.2.27
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
-                1) generate_esconfig ;;
-                2) run_rpiupdate ;;
-                3) sortromsalphabet ;;
-                4) changeBootbehaviour ;;
-                5) setArmFreq ;;
-                6) enableSNESGPIOModule ;;
-                7) scraperMenu ;;
-                8) createDebugLog ;;
+                 1) generate_esconfig ;;
+                 2) run_rpiupdate ;;
+                 3) sortromsalphabet ;;
+                 4) changeBootbehaviour ;;
+                 5) setArmFreq ;;
+                 6) setSDRAMFreq ;;
+                 7) enableSNESGPIOModule "3.1.9" ;;
+                 8) enableSNESGPIOModule "3.2.27" ;;
+                 9) scraperMenu ;;
+                10) createDebugLog ;;
             esac
         else
             break
