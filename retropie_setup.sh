@@ -30,7 +30,10 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-# HELPER FUNCTION ###
+__BINARIESNAME="RetroPieSetupBinaries_20120905.tar.bz2"
+
+
+# HELPER FUNCTIONS ###
 
 function ask()
 {   
@@ -192,7 +195,7 @@ function installAPTPackages()
 {
     # make sure that all needed packages are installed
     printMsg "Making sure that all needed packaged are installed"
-    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev libboost-system-dev zip libxml2 libsdl-image1.2-dev libsdl-gfx1.2-dev python-imaging libfreeimage-dev libfreetype6-dev
+    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libboost-filesystem-dev libboost-system-dev zip libxml2 python-imaging libfreeimage-dev libfreetype6-dev
 }
 
 function prepareFolders()
@@ -514,9 +517,8 @@ function sortromsalphabet()
 
 function downloadBinaries()
 {
-    local __binariesname="RetroPieSetupBinaries_20120818.tar.bz2"
-    wget https://github.com/downloads/petrockblog/RetroPie-Setup/$__binariesname
-    tar -jxvf $__binariesname -C $rootdir
+    wget https://github.com/downloads/petrockblog/RetroPie-Setup/$__BINARIESNAME
+    tar -jxvf $__BINARIESNAME -C $rootdir
     pushd $rootdir/RetroPie
     mv * ../
     popd
@@ -527,7 +529,7 @@ function downloadBinaries()
     chown $user $rootdir/roms/doom/prboom.wad
 
     rm -rf $rootdir/RetroPie
-    rm $__binariesname
+    rm $__BINARIESNAME
 }
 
 function setArmFreq()
@@ -572,31 +574,6 @@ function setSDRAMFreq()
         fi 
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "SDRAM frequency set to $sdramfreqchoice MHz. If you changed the frequency, you need to reboot." 22 76    
     fi
-}
-
-function main_binaries()
-{
-    clear
-    printMsg "Binaries-based installation"
-
-    update_apt
-    installAPTPackages
-    ensure_modules
-    add_to_groups
-    exportSDLNOMOUSE
-    downloadBinaries
-    install_esscript
-    generate_esconfig
-    install -m755 $rootdir/RetroArch-Rpi/retroarch /usr/local/bin 
-    install -m644 $rootdir/RetroArch-Rpi/retroarch.cfg /etc/retroarch.cfg
-    install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
-    sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
-    prepareFolders
-
-    chgrp -R $user $rootdir
-    chown -R $user $rootdir
-
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76    
 }
 
 function showHelp()
@@ -817,19 +794,46 @@ function createDebugLog()
     checkForInstalledAPTPackage "libasound2-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "pkg-config" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libgtk2.0-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libsdl-ttf2.0-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libboost-filesystem-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libboost-system-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "zip" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libxml2" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libsdl-image1.2-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libsdl-gfx1.2-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "python-imaging" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libfreeimage-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libfreetype6-dev" >> "$rootdir/debug.log"
 
     echo -e "\nEnd of log file" >> "$rootdir/debug.log" >> "$rootdir/debug.log"
 
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Debug log was generated in $rootdir/debug.log" 22 76    
 
+}
+
+function main_binaries()
+{
+    clear
+    printMsg "Binaries-based installation"
+
+    update_apt
+    upgrade_apt
+    installAPTPackages
+    ensure_modules
+    add_to_groups
+    exportSDLNOMOUSE
+    downloadBinaries
+    install_esscript
+    generate_esconfig
+    install -m755 $rootdir/RetroArch-Rpi/retroarch /usr/local/bin 
+    install -m644 $rootdir/RetroArch-Rpi/retroarch.cfg /etc/retroarch.cfg
+    install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
+    sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
+    prepareFolders
+
+    chgrp -R $user $rootdir
+    chown -R $user $rootdir
+
+    createDebugLog
+
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76    
 }
 
 ##################
@@ -915,6 +919,8 @@ function main_options()
 
         chgrp -R $user $rootdir
         chown -R $user $rootdir
+
+        createDebugLog
 
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
     fi

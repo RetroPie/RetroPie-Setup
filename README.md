@@ -10,7 +10,7 @@ First of all, make sure that your APT repositories are up-to-date and that Git a
 
 ```shell
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get upgrade -y
 sudo apt-get install -y git dialog
 ```
 
