@@ -192,7 +192,7 @@ function installAPTPackages()
 {
     # make sure that all needed packages are installed
     printMsg "Making sure that all needed packaged are installed"
-    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev libboost-system-dev zip libxml2 libsdl-image1.2-dev libsdl-gfx1.2-dev python-imaging
+    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libsdl-ttf2.0-dev libboost-filesystem-dev libboost-system-dev zip libxml2 libsdl-image1.2-dev libsdl-gfx1.2-dev python-imaging libfreeimage-dev libfreetype6-dev
 }
 
 function prepareFolders()
