@@ -621,17 +621,22 @@ function enableSNESGPIOModule()
 {
     if [[ -z $(lsmod | grep gamecon_gpio_rpi) ]]; then
         clear
-        wget "https://github.com/downloads/petrockblog/RetroPie-Setup/gamecon_gpio_rpi_$1.zip"
-        unzip -o "gamecon_gpio_rpi_$1.zip" -d $rootdir/gamecon_gpio_rpi
-        if [[ ! -d /lib/modules/`uname -r`/kernel/drivers/input/joystick ]]; then
-            mkdir -p /lib/modules/`uname -r`/kernel/drivers/input/joystick
-        fi
-        cp $rootdir/gamecon_gpio_rpi/gamecon_gpio_rpi.ko /lib/modules/`uname -r`/kernel/drivers/input/joystick/
-        depmod -a    
+
+        #install dkms, download headers and gamecon
+        apt-get install -y dkms
+        wget http://www.niksula.hut.fi/~mhiienka/Rpi/linux-headers-rpi/linux-headers-`uname -r`_`uname -r`-1_armhf.deb
+        wget http://www.niksula.hut.fi/~mhiienka/Rpi/gamecon-gpio-rpi-dkms_0.5_all.deb
+
+        #install headers and gamecon (takes some time)
+        dpkg -i linux-headers-`uname -r`_`uname -r`-1_armhf.deb
+        dpkg -i gamecon-gpio-rpi-dkms_0.5_all.deb        
+
         modprobe gamecon_gpio_rpi map=0,1,1,0
         if [[ -z $(cat /etc/modules | grep gamecon_gpio_rpi) ]]; then
             addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
         fi
+
+        rm *.deb   
 
         ensureKeyValue "input_player1_joypad_index" "0" "/etc/retroarch.cfg"
         ensureKeyValue "input_player1_a_btn" "0" "/etc/retroarch.cfg"
@@ -661,7 +666,6 @@ function enableSNESGPIOModule()
         ensureKeyValue "input_player2_right_axis" "+0" "/etc/retroarch.cfg"
         ensureKeyValue "input_player2_down_axis" "+1" "/etc/retroarch.cfg"
 
-        rm "gamecon_gpio_rpi_$1.zip"
         if [[ -z $(lsmod | grep gamecon_gpio_rpi) ]]; then
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon driver for NES, SNES, N64 GPIO interface could NOT be installed." 22 76    
         else
@@ -936,10 +940,9 @@ function main_setup()
                  4 "Start Emulation Station on boot?" 
                  5 "Change ARM frequency" 
                  6 "Change SDRAM frequency"
-                 7 "Enable module for NES, SNES, N64 controllers for firmware 3.1.9" 
-                 8 "Enable module for NES, SNES, N64 controllers for firmware 3.2.27" 
-                 9 "Run 'ES-scraper'" 
-                 10 "Generate debug log" )
+                 7 "Enable module for NES, SNES, N64 controller interface" 
+                 8 "Run 'ES-scraper'" 
+                 9 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -949,10 +952,9 @@ function main_setup()
                  4) changeBootbehaviour ;;
                  5) setArmFreq ;;
                  6) setSDRAMFreq ;;
-                 7) enableSNESGPIOModule "3.1.9" ;;
-                 8) enableSNESGPIOModule "3.2.27" ;;
-                 9) scraperMenu ;;
-                10) createDebugLog ;;
+                 7) enableSNESGPIOModule ;;
+                 8) scraperMenu ;;
+                 9) createDebugLog ;;
             esac
         else
             break
