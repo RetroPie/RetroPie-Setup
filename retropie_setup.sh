@@ -30,8 +30,10 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries_20120905.tar.bz2"
+__BINARIESNAME="RetroPieSetupBinaries220912.tar.bz2"
+__THEMESNAME="RetroPieSetupThemes220912.tar.bz2"
 
+__ERRMSGS=""
 
 # HELPER FUNCTIONS ###
 
@@ -211,8 +213,9 @@ function prepareFolders()
     pathlist[5]="$rootdir/roms/mame"
     pathlist[6]="$rootdir/roms/megadrive"
     pathlist[7]="$rootdir/roms/nes"
-    pathlist[8]="$rootdir/roms/snes"
-    pathlist[9]="$rootdir/emulatorcores"
+    pathlist[8]="$rootdir/roms/psx"
+    pathlist[9]="$rootdir/roms/snes"
+    pathlist[10]="$rootdir/emulatorcores"
 
     for elem in "${pathlist[@]}"
     do
@@ -236,6 +239,9 @@ function install_retroarch()
     ./configure --disable-libpng
     make
     sudo make install
+    if [[ ! -f "/usr/local/bin/retroarch" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
+    fi  
     popd
 }
 
@@ -251,6 +257,9 @@ function install_atari2600()
     # remove msse and msse2 flags from Makefile, just a hack here to make it compile on the Raspberry
     sed 's|-msse2 ||g;s|-msse ||g' Makefile >> Makefile.rpi
     make -f Makefile.rpi
+    if [[ ! -f "$rootdir/emulatorcores/stella-libretro/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 2600 core."
+    fi  
     popd    
 }
 
@@ -267,19 +276,25 @@ function install_doom()
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
     chgrp pi $rootdir/roms/doom/prboom.wad
     chown $user $rootdir/roms/doom/prboom.wad
+    if [[ ! -f "$rootdir/emulatorcores/libretro-prboom/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Doom core."
+    fi  
     popd
 }
 
 function install_gba()
 {
     # install Game Boy Advance emulator core
-    printMsg "Installing Game Boy Advancecore"
+    printMsg "Installing Game Boy Advance core"
     if [[ -d "$rootdir/emulatorcores/vba-next" ]]; then
         rm -rf "$rootdir/emulatorcores/vba-next"
     fi
     git clone git://github.com/libretro/vba-next.git "$rootdir/emulatorcores/vba-next"
     pushd "$rootdir/emulatorcores/vba-next"
     make -f Makefile.libretro
+    if [[ ! -f "$rootdir/emulatorcores/vba-next/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance core."
+    fi      
     popd    
 }
 
@@ -287,12 +302,15 @@ function install_gbc()
 {
     # install Game Boy Color emulator core
     printMsg "Installing Game Boy Color core"
-    if [[ -d "$rootdir/emulatorcores/gambatte-libretro/libgambatte" ]]; then
-        rm -rf "$rootdir/emulatorcores/gambatte-libretro/libgambatte"
+    if [[ -d "$rootdir/emulatorcores/gambatte-libretro" ]]; then
+        rm -rf "$rootdir/emulatorcores/gambatte-libretro"
     fi
     git clone git://github.com/libretro/gambatte-libretro.git "$rootdir/emulatorcores/gambatte-libretro"
     pushd "$rootdir/emulatorcores/gambatte-libretro/libgambatte"
     make -f Makefile.libretro 
+    if [[ ! -f "$rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Color core."
+    fi      
     popd
 }
 
@@ -306,6 +324,9 @@ function install_mame()
     git clone git://github.com/libretro/imame4all-libretro.git "$rootdir/emulatorcores/imame4all-libretro"
     pushd "$rootdir/emulatorcores/imame4all-libretro"
     make -f makefile.libretro ARM=1
+    if [[ ! -f "$rootdir/emulatorcores/imame4all-libretro/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile MAME core."
+    fi      
     popd
 }
 
@@ -319,6 +340,9 @@ function install_nes()
     git clone git://github.com/libretro/fceu-next.git "$rootdir/emulatorcores/fceu-next"
     pushd "$rootdir/emulatorcores/fceu-next"
     make -f Makefile.libretro-fceumm
+    if [[ ! -f "$rootdir/emulatorcores/fceu-next/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile NES core."
+    fi      
     popd
 }
 
@@ -333,6 +357,26 @@ function install_megadrive()
     pushd "$rootdir/emulatorcores/Genesis-Plus-GX"
     make -f Makefile.libretro 
     sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
+    if [[ ! -f "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
+    fi      
+    popd
+}
+
+function install_psx()
+{
+    # install Playstation emulator core
+    printMsg "Installing PSX core"
+    if [[ -d "$rootdir/emulatorcores/pcsx_rearmed" ]]; then
+        rm -rf "$rootdir/emulatorcores/pcsx_rearmed"
+    fi
+    git clone git://github.com/libretro/pcsx_rearmed.git "$rootdir/emulatorcores/pcsx_rearmed"
+    pushd "$rootdir/emulatorcores/pcsx_rearmed"
+    ./configure --platform=libretro
+    make
+    if [[ ! -f "$rootdir/emulatorcores/pcsx_rearmed/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Playstation core."
+    fi      
     popd
 }
 
@@ -346,6 +390,9 @@ function install_snes()
     git clone git://github.com/ToadKing/pocketsnes-libretro.git "$rootdir/emulatorcores/pocketsnes-libretro"
     pushd "$rootdir/emulatorcores/pocketsnes-libretro"
     make
+    if [[ ! -f "$rootdir/emulatorcores/pocketsnes-libretro/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
+    fi      
     popd
 }
 
@@ -377,6 +424,9 @@ function install_snesdev()
     pushd "$rootdir/SNESDev-Rpi"
     make clean
     make
+    if [[ ! -f "$rootdir/SNESDev-Rpi/bin/SNESDev" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
+    fi      
     popd
 }
 
@@ -410,6 +460,9 @@ function install_emulationstation()
     make clean
     make
     install_esscript
+    if [[ ! -f "$rootdir/EmulationStation/emulationstation" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Emulation Station."
+    fi      
     popd
 }
 
@@ -423,51 +476,57 @@ function generate_esconfig()
     cat > "$rootdir/../.emulationstation/es_systems.cfg" << _EOF_
 NAME=Atari 2600
 PATH=$rootdir/roms/atari2600
-EXTENSION=.bin
+EXTENSION=.bin .BIN
 COMMAND=retroarch -L $rootdir/emulatorcores/stella-libretro/libretro.so %ROM%
 PLATFORMID=22
 
 NAME=Doom
 PATH=$rootdir/roms/doom
-EXTENSION=.WAD
+EXTENSION=.WAD .wad
 COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
 PLATFORMID=1
 
 NAME=Game Boy Advance
 PATH=$rootdir/roms/gba
-EXTENSION=.gba
+EXTENSION=.gba .GBA
 COMMAND=retroarch -L $rootdir/emulatorcores/vba-next/libretro.so %ROM%
 PLATFORMID=5
 
 NAME=Game Boy Color
 PATH=$rootdir/roms/gbc
-EXTENSION=.gb
+EXTENSION=.gb .GB
 COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
 PLATFORMID=41
 
+NAME=MAME
+PATH=$rootdir/roms/mame
+EXTENSION=.zip .ZIP
+COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so ROM%  
+PLATFORMID=23
+
 NAME=Sega Mega Drive
 PATH=$rootdir/roms/megadrive
-EXTENSION=.smd
+EXTENSION=.smd .SMD
 COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
 PLATFORMID=36
 
 NAME=Nintendo Entertainment System
 PATH=$rootdir/roms/nes
-EXTENSION=.nes
+EXTENSION=.nes .NES
 COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/libretro.so %ROM%
 PLATFORMID=7
 
+NAME=Sony Playstation 1
+PATH=$rootdir/roms/psx
+EXTENSION=.img .IMG
+COMMAND=retroarch -L $rootdir/emulatorcores/pcsx_rearmed/libretro.so %ROM%
+PLATFORMID=10
+
 NAME=Super Nintendo
 PATH=$rootdir/roms/snes
-EXTENSION=.smc
+EXTENSION=.smc .sfc .fig .swc .SMC .SFC .FIG .SWC
 COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
 PLATFORMID=6
-
-NAME=MAME
-PATH=$rootdir/roms/mame
-EXTENSION=.zip
-COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%    
-PLATFORMID=23
 
 _EOF_
 
@@ -486,6 +545,7 @@ function sortromsalphabet()
     pathlist[4]="$rootdir/roms/megadrive"
     pathlist[5]="$rootdir/roms/nes"
     pathlist[6]="$rootdir/roms/snes"  
+    pathlist[7]="$rootdir/roms/psx"  
     printMsg "Sorting roms alphabetically"
     for elem in "${pathlist[@]}"
     do
@@ -515,6 +575,7 @@ function sortromsalphabet()
     chown -R $user $rootdir/roms
 }
 
+# downloads and installs pre-compiles binaries of all essential programs and libraries
 function downloadBinaries()
 {
     wget https://github.com/downloads/petrockblog/RetroPie-Setup/$__BINARIESNAME
@@ -532,14 +593,32 @@ function downloadBinaries()
     rm $__BINARIESNAME
 }
 
+# downloads and installs theme files for Emulation Station
+function install_esthemes()
+{
+    printMsg "Installing themes for Emulation Station"
+    wget https://github.com/downloads/petrockblog/RetroPie-Setup/$__THEMESNAME
+    tar -jxvf $__THEMESNAME -C /tmp
+    if [[ ! -d $home/.emulationstation/themes ]]; then
+        mkdir $home/.emulationstation/themes
+    fi
+    cp -r /tmp/.emulationstation/themes/* "$home/.emulationstation/themes/"
+    cp -r /tmp/RetroPie/roms/* "$rootdir/roms/"
+    rm -rf /tmp/RetroPie/
+    rm -rf /tmp/.emulationstation/
+    rm $__THEMESNAME
+}
+
+# sets the ARM frequency of the Raspberry to a specific value
 function setArmFreq()
 {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the ARM frequency." 22 76 16)
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the ARM frequency. However, it is suggested that you change this with the raspi-config script!" 22 76 16)
     options=(700 "(default)"
              750 "(do this at your own risk!)"
              800 "(do this at your own risk!)"
              850 "(do this at your own risk!)"
-             900 "(do this at your own risk!)")
+             900 "(do this at your own risk!)"
+             1000 "(do this at your own risk!)")
     armfreqchoice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [ "$armfreqchoice" != "" ]; then                
         if [[ -z $(egrep -i "#? *arm_freq=[0-9]*" /boot/config.txt) ]]; then
@@ -554,9 +633,10 @@ function setArmFreq()
     fi
 }
 
+# sets the SD ram frequency of the Raspberry to a specific value
 function setSDRAMFreq()
 {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the ARM frequency." 22 76 16)
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the ARM frequency. However, it is suggested that you change this with the raspi-config script!" 22 76 16)
     options=(400 "(default)"
              425 "(do this at your own risk!)"
              450 "(do this at your own risk!)"
@@ -576,6 +656,7 @@ function setSDRAMFreq()
     fi
 }
 
+# shows help information in the console
 function showHelp()
 {
     echo ""
@@ -772,6 +853,7 @@ function createDebugLog()
     checkFileExistence "$rootdir/emulatorcores/stella-libretro/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/imame4all-libretro/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/pcsx_rearmed/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/pocketsnes-libretro/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/vba-next/libretro.so"
 
@@ -782,14 +864,15 @@ function createDebugLog()
     du -ch --max-depth=1 "$rootdir/roms/" >> "$rootdir/debug.log"
 
     echo -e "\nUnrecognized ROM extensions:" >> "$rootdir/debug.log"
-    find "$rootdir/roms/atari2600/" -type f ! \( -name "*.bin" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/doom/" -type f ! \( -name "*.WAD" -or -name "*.jpg" -or -name "*.xml" -or -name "*.wad" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/gba/" -type f ! \( -name "*.gba" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/gbc/" -type f ! \( -name "*.gb" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/mame/" -type f ! \( -name "*.zip" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/megadrive/" -type f ! \( -name "*.smd" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/nes/" -type f ! \( -name "*.nes" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/snes/" -type f ! \( -name "*.smc" -or -name "*.jpg" -or -name "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/atari2600/" -type f ! \( -iname "*.bin" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/doom/" -type f ! \( -iname "*.WAD" -or -iname "*.jpg" -or -iname "*.xml" -or -name "*.wad" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/gba/" -type f ! \( -iname "*.gba" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/gbc/" -type f ! \( -iname "*.gb" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/mame/" -type f ! \( -iname "*.zip" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/megadrive/" -type f ! \( -iname "*.smd" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/nes/" -type f ! \( -iname "*.nes" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/psx/" -type f ! \( -iname "*.img" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/snes/" -type f ! \( -iname "*.smc" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
 
     echo -e "\nCheck for needed APT packages:" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libsdl1.2-dev" >> "$rootdir/debug.log"
@@ -817,6 +900,8 @@ function main_binaries()
     clear
     printMsg "Binaries-based installation"
 
+    install_rpiupdate
+    run_rpiupdate
     update_apt
     upgrade_apt
     installAPTPackages
@@ -826,6 +911,7 @@ function main_binaries()
     downloadBinaries
     install_esscript
     generate_esconfig
+    install_esthemes
     install -m755 $rootdir/RetroArch-Rpi/retroarch /usr/local/bin 
     install -m644 $rootdir/RetroArch-Rpi/retroarch.cfg /etc/retroarch.cfg
     install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
@@ -871,53 +957,60 @@ function main_options()
 {
     cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages." 22 76 16)
     options=(1 "Install latest rpi-update script" ON     # any option can be set to default to "on"
-             2 "Update APT repositories" ON \
-             3 "Perform APT upgrade" ON \
-             4 "Add user $user to groups video, audio, and input" ON \
-             5 "Enable modules ALSA, uinput, and joydev" ON \
-             6 "Export SDL_NOMOUSE=1" ON \
-             7 "Install all needed APT packages" ON \
-             8 "Generate folder structure" ON \
-             9 "Install RetroArch" ON \
-             10 "Install Atari 2600 core" ON \
-             11 "Install Doom core" ON \
-             12 "Install Game Boy Advance core" ON \
-             13 "Install Game Boy Color core" ON \
-             14 "Install MAME core" ON \
-             15 "Install Mega Drive core" ON \
-             16 "Install NES core" ON \
-             17 "Install Super NES core" ON \
-             18 "Install BCM library" ON \
-             19 "Install SNESDev" ON \
-             20 "Install Emulation Station" ON \
-             21 "Generate config file for Emulation Station" ON )
+             2 "Update firmware with rpi-update" ON \
+             3 "Update APT repositories" ON \
+             4 "Perform APT upgrade" ON \
+             5 "Add user $user to groups video, audio, and input" ON \
+             6 "Enable modules ALSA, uinput, and joydev" ON \
+             7 "Export SDL_NOMOUSE=1" ON \
+             8 "Install all needed APT packages" ON \
+             9 "Generate folder structure" ON \
+             10 "Install RetroArch" ON \
+             11 "Install Atari 2600 core" ON \
+             12 "Install Doom core" ON \
+             13 "Install Game Boy Advance core" ON \
+             14 "Install Game Boy Color core" ON \
+             15 "Install MAME core" ON \
+             16 "Install Mega Drive core" ON \
+             17 "Install NES core" ON \
+             18 "Install Playstation core" ON \
+             19 "Install Super NES core" ON \
+             20 "Install BCM library" ON \
+             21 "Install SNESDev" ON \
+             22 "Install Emulation Station" ON \
+             23 "Install Emulation Station Themes" ON \
+             24 "Generate config file for Emulation Station" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
+    __ERRMSGS=""
     if [ "$choices" != "" ]; then
         for choice in $choices
         do
             case $choice in
                 1) install_rpiupdate ;;
-                2) update_apt ;;
-                3) upgrade_apt ;;
-                4) add_to_groups ;;
-                5) ensure_modules ;;
-                6) exportSDLNOMOUSE ;;
-                7) installAPTPackages ;;
-                8) prepareFolders ;;
-                9) install_retroarch ;;
-                10) install_atari2600 ;;
-                11) install_doom ;;
-                12) install_gba ;;
-                13) install_gbc ;;
-                14) install_mame ;;
-                15) install_megadrive ;;
-                16) install_nes ;;
-                17) install_snes ;;
-                18) install_bcmlibrary ;;
-                19) install_snesdev ;;
-                20) install_emulationstation ;;
-                21) generate_esconfig ;;
+                2) run_rpiupdate ;;
+                3) update_apt ;;
+                4) upgrade_apt ;;
+                5) add_to_groups ;;
+                6) ensure_modules ;;
+                7) exportSDLNOMOUSE ;;
+                8) installAPTPackages ;;
+                9) prepareFolders ;;
+                10) install_retroarch ;;
+                11) install_atari2600 ;;
+                12) install_doom ;;
+                13) install_gba ;;
+                14) install_gbc ;;
+                15) install_mame ;;
+                16) install_megadrive ;;
+                17) install_nes ;;
+                18) install_psx ;;
+                19) install_snes ;;
+                20) install_bcmlibrary ;;
+                21) install_snesdev ;;
+                22) install_emulationstation ;;
+                23) install_esthemes ;;
+                24) generate_esconfig ;;
             esac
         done
 
@@ -925,6 +1018,10 @@ function main_options()
         chown -R $user $rootdir
 
         createDebugLog
+
+        if [[ ! -z $__ERRMSGS ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__ERRMSGS See debug.log for more details." 20 60    
+        fi
 
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
     fi
@@ -997,7 +1094,7 @@ elif [[ $# -lt 3 ]]; then
     rootdir=$2
 fi
 
-esscrapimgw=350 # width in pixel for EmulationStation games scraper
+esscrapimgw=300 # width in pixel for EmulationStation games scraper
 
 home=$(eval echo ~$user)
 

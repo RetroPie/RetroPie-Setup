@@ -17,15 +17,16 @@ filelist[13]="./RetroPie/RetroArch-Rpi/retroarch-zip"
 filelist[14]="./RetroPie/RetroArch-Rpi/retroarch.cfg"
 filelist[15]="./RetroPie/RetroArch-Rpi/tools/retroarch-joyconfig"
 filelist[16]="./RetroPie/SNESDev-Rpi/bin/SNESDev"
+filelist[17]="./RetroPie/emulatorcores/pcsx_rearmed/libretro.so"
 
-tar -c -vf newRetroPieSetupBinaries.tar ${filelist[0]}
+tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 
 tLen=${#filelist[@]}
 for (( i=1; i<${tLen}; i++ ));
 do
-	tar -r -vf newRetroPieSetupBinaries.tar ${filelist[$i]}
+	tar -r -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[$i]}
 done
 
-bzip2 newRetroPieSetupBinaries.tar
+bzip2 RetroPieSetupBinaries_`date +%d%m%y`.tar
 
 echo "Done."

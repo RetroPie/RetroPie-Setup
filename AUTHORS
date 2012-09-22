@@ -4,8 +4,8 @@ Florian Müller - <petrockblock@gmail.com>
 Peter Mahlknecht
    - Rootdir, user, groups handling, bug fixes
    
-Aloshi (Emulation Station)
-   - Updates for APT packages
+Aloshi
+   - Emulation Station, updates for APT packages
 
 Martin Modahl - <mmodahl@gmail.com>
    - Check for free disk space
@@ -15,3 +15,6 @@ marqs
 
 Juan Pablo Zapata, jpzapa
    - ES-thegamesdb-scraper, script dependencies
+
+Xevin
+  - Themes artwork
