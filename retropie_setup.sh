@@ -370,6 +370,9 @@ function install_megadrive()
 function install_mednafen_pce()
 {
     printMsg "Installing Mednafen core"
+    if [[ -d "$rootdir/emulatorcores/mednafen-pce-libretro" ]]; then
+        rm -rf "$rootdir/emulatorcores/mednafen-pce-libretro"
+    fi    
     git clone git://github.com/libretro/mednafen-pce-libretro.git "$rootdir/emulatorcores/mednafen-pce-libretro"
     pushd "$rootdir/emulatorcores/mednafen-pce-libretro"
     make
