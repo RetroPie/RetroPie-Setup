@@ -369,7 +369,7 @@ function install_megadrive()
 # install PC Engine core
 function install_mednafen_pce()
 {
-    printMsg "Installing Mednafen core"
+    printMsg "Installing Mednafen PC Engine core"
     if [[ -d "$rootdir/emulatorcores/mednafen-pce-libretro" ]]; then
         rm -rf "$rootdir/emulatorcores/mednafen-pce-libretro"
     fi    
