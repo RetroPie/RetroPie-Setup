@@ -526,7 +526,7 @@ PLATFORMID=20
 NAME=MAME
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
-COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so ROM%  
+COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%  
 PLATFORMID=23
 
 NAME=Sega Master System II
