@@ -30,7 +30,7 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries220912.tar.bz2"
+__BINARIESNAME="RetroPieSetupBinaries_230912.tar.bz2"
 __THEMESNAME="RetroPieSetupThemes220912.tar.bz2"
 
 __ERRMSGS=""
@@ -215,9 +215,10 @@ function prepareFolders()
     pathlist[7]="$rootdir/roms/mastersystem"
     pathlist[8]="$rootdir/roms/megadrive"
     pathlist[9]="$rootdir/roms/nes"
-    pathlist[10]="$rootdir/roms/psx"
-    pathlist[11]="$rootdir/roms/snes"
-    pathlist[12]="$rootdir/emulatorcores"
+    pathlist[10]="$rootdir/roms/pcengine"
+    pathlist[11]="$rootdir/roms/psx"
+    pathlist[12]="$rootdir/roms/snes"
+    pathlist[13]="$rootdir/emulatorcores"
 
     for elem in "${pathlist[@]}"
     do
@@ -361,6 +362,19 @@ function install_megadrive()
     sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
     if [[ ! -f "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
+    fi      
+    popd
+}
+
+# install PC Engine core
+function install_mednafen_pce()
+{
+    printMsg "Installing Mednafen core"
+    git clone git://github.com/libretro/mednafen-pce-libretro.git "$rootdir/emulatorcores/mednafen-pce-libretro"
+    pushd "$rootdir/emulatorcores/mednafen-pce-libretro"
+    make
+    if [[ ! -f "$rootdir/emulatorcores/mednafen-pce-libretro/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile PC Engine core."
     fi      
     popd
 }
@@ -530,6 +544,12 @@ EXTENSION=.nes .NES
 COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/libretro.so %ROM%
 PLATFORMID=7
 
+NAME=PC Engine/TurboGrafx 16
+PATH=$rootdir/roms/pcengine
+EXTENSION=.pce
+COMMAND=retroarch -L $rootdir/emulatorcores/mednafen-pce-libretro/libretro.so %ROM%
+PLATFORMID=42
+
 NAME=Sony Playstation 1
 PATH=$rootdir/roms/psx
 EXTENSION=.img .IMG
@@ -561,7 +581,8 @@ function sortromsalphabet()
     pathlist[6]="$rootdir/roms/megadrive"
     pathlist[7]="$rootdir/roms/nes"
     pathlist[8]="$rootdir/roms/snes"  
-    pathlist[9]="$rootdir/roms/psx"  
+    pathlist[9]="$rootdir/roms/pcengine"      
+    pathlist[10]="$rootdir/roms/psx"  
     printMsg "Sorting roms alphabetically"
     for elem in "${pathlist[@]}"
     do
@@ -871,6 +892,7 @@ function createDebugLog()
     checkFileExistence "$rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/imame4all-libretro/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/pcsx_rearmed/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/mednafen-pce-libretro/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/pocketsnes-libretro/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/vba-next/libretro.so"
 
@@ -890,6 +912,7 @@ function createDebugLog()
     find "$rootdir/roms/mastersystem/" -type f ! \( -iname "*.sms" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/megadrive/" -type f ! \( -iname "*.smd" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/nes/" -type f ! \( -iname "*.nes" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/pcengine/" -type f ! \( -iname "*.iso" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/psx/" -type f ! \( -iname "*.img" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/snes/" -type f ! \( -iname "*.smc" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
 
@@ -994,13 +1017,14 @@ function main_options()
              15 "Install MAME core" ON \
              16 "Install Mega Drive/Mastersystem/Game Gear core" ON \
              17 "Install NES core" ON \
-             18 "Install Playstation core" ON \
-             19 "Install Super NES core" ON \
-             20 "Install BCM library" ON \
-             21 "Install SNESDev" ON \
-             22 "Install Emulation Station" ON \
-             23 "Install Emulation Station Themes" ON \
-             24 "Generate config file for Emulation Station" ON )
+             18 "Install PC Engine core" ON \
+             19 "Install Playstation core" ON \
+             20 "Install Super NES core" ON \
+             21 "Install BCM library" ON \
+             22 "Install SNESDev" ON \
+             23 "Install Emulation Station" ON \
+             24 "Install Emulation Station Themes" ON \
+             25 "Generate config file for Emulation Station" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1025,13 +1049,14 @@ function main_options()
                 15) install_mame ;;
                 16) install_megadrive ;;
                 17) install_nes ;;
-                18) install_psx ;;
-                19) install_snes ;;
-                20) install_bcmlibrary ;;
-                21) install_snesdev ;;
-                22) install_emulationstation ;;
-                23) install_esthemes ;;
-                24) generate_esconfig ;;
+                18) install_mednafen_pce ;;
+                19) install_psx ;;
+                20) install_snes ;;
+                21) install_bcmlibrary ;;
+                22) install_snesdev ;;
+                23) install_emulationstation ;;
+                24) install_esthemes ;;
+                25) generate_esconfig ;;
             esac
         done
 
