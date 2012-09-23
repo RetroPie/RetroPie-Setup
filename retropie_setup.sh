@@ -142,18 +142,18 @@ function upgrade_apt()
     apt-get -y upgrade
 }
 
+# add user $user to groups "video", "audio", and "input"
 function add_to_groups()
 {
-    # add user $user to groups "video", "audio", and "input"
     printMsg "Adding user $user to groups video, audio, and input."
     add_user_to_group $user video
     add_user_to_group $user audio
     add_user_to_group $user input
 }
 
+# add user $1 to group $2, create the group if it doesn't exist
 function add_user_to_group()
 {
-    # add user $1 to group $2, create the group if it doesn't exist
     if [ -z $(egrep -i "^$2" /etc/group) ]
     then
       sudo addgroup $2
@@ -161,9 +161,9 @@ function add_user_to_group()
     sudo adduser $1 $2
 }
 
+# make sure ALSA, uinput, and joydev modules are active
 function ensure_modules()
 {
-    # make sure ALSA, uinput, and joydev modules are active
     printMsg "Enabling ALSA, uinput, and joydev modules permanently"
     sudo modprobe snd_bcm2835
     sudo modprobe uinput
@@ -181,9 +181,9 @@ function ensure_modules()
     fi    
 }
 
+# needed by SDL for working joypads
 function exportSDLNOMOUSE()
 {
-    # needed by SDL for working joypads
     printMsg "Exporting SDL_NOMOUSE=1 permanently to $home/.bashrc"
     export SDL_NOMOUSE=1
     if ! grep -q "export SDL_NOMOUSE=1" $home/.bashrc; then
@@ -193,29 +193,31 @@ function exportSDLNOMOUSE()
     fi    
 }
 
+# make sure that all needed packages are installed
 function installAPTPackages()
 {
-    # make sure that all needed packages are installed
     printMsg "Making sure that all needed packaged are installed"
     apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libboost-filesystem-dev libboost-system-dev zip python-imaging libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev
 }
 
+# prepare folder structure for emulator, cores, front end, and roms
 function prepareFolders()
 {
-    # prepare folder structure for emulator, cores, front end, and roms
     printMsg "Creating folder structure for emulator, front end, cores, and roms"
 
     pathlist[0]="$rootdir/roms"
     pathlist[1]="$rootdir/roms/atari2600"
     pathlist[2]="$rootdir/roms/doom"
-    pathlist[3]="$rootdir/roms/gba"
-    pathlist[4]="$rootdir/roms/gbc"
-    pathlist[5]="$rootdir/roms/mame"
-    pathlist[6]="$rootdir/roms/megadrive"
-    pathlist[7]="$rootdir/roms/nes"
-    pathlist[8]="$rootdir/roms/psx"
-    pathlist[9]="$rootdir/roms/snes"
-    pathlist[10]="$rootdir/emulatorcores"
+    pathlist[3]="$rootdir/roms/gamegear"
+    pathlist[4]="$rootdir/roms/gba"
+    pathlist[5]="$rootdir/roms/gbc"
+    pathlist[6]="$rootdir/roms/mame"
+    pathlist[7]="$rootdir/roms/mastersystem"
+    pathlist[8]="$rootdir/roms/megadrive"
+    pathlist[9]="$rootdir/roms/nes"
+    pathlist[10]="$rootdir/roms/psx"
+    pathlist[11]="$rootdir/roms/snes"
+    pathlist[12]="$rootdir/emulatorcores"
 
     for elem in "${pathlist[@]}"
     do
@@ -227,9 +229,9 @@ function prepareFolders()
     done    
 }
 
+# install RetroArch emulator
 function install_retroarch()
 {
-    # install RetroArch emulator
     printMsg "Installing RetroArch emulator"
     if [[ -d "$rootdir/RetroArch-Rpi" ]]; then
         rm -rf "$rootdir/RetroArch-Rpi"
@@ -245,9 +247,9 @@ function install_retroarch()
     popd
 }
 
+# install Atari 2600 core
 function install_atari2600()
 {
-    # install Atari 2600 core
     printMsg "Installing Atari 2600 core"
     if [[ -d "$rootdir/emulatorcores/stella-libretro" ]]; then
         rm -rf "$rootdir/emulatorcores/stella-libretro"
@@ -263,9 +265,9 @@ function install_atari2600()
     popd    
 }
 
+# install Doom WADs emulator core
 function install_doom()
 {
-    # install Doom WADs emulator core
     printMsg "Installing Doom core"
     if [[ -d "$rootdir/emulatorcores/libretro-prboom" ]]; then
         rm -rf "$rootdir/emulatorcores/libretro-prboom"
@@ -282,9 +284,9 @@ function install_doom()
     popd
 }
 
+# install Game Boy Advance emulator core
 function install_gba()
 {
-    # install Game Boy Advance emulator core
     printMsg "Installing Game Boy Advance core"
     if [[ -d "$rootdir/emulatorcores/vba-next" ]]; then
         rm -rf "$rootdir/emulatorcores/vba-next"
@@ -298,9 +300,9 @@ function install_gba()
     popd    
 }
 
+# install Game Boy Color emulator core
 function install_gbc()
 {
-    # install Game Boy Color emulator core
     printMsg "Installing Game Boy Color core"
     if [[ -d "$rootdir/emulatorcores/gambatte-libretro" ]]; then
         rm -rf "$rootdir/emulatorcores/gambatte-libretro"
@@ -314,9 +316,9 @@ function install_gbc()
     popd
 }
 
+# install MAME emulator core
 function install_mame()
 {
-    # install MAME emulator core
     printMsg "Installing MAME core"
     if [[ -d "$rootdir/emulatorcores/imame4all-libretro" ]]; then
         rm -rf "$rootdir/emulatorcores/imame4all-libretro"
@@ -330,9 +332,9 @@ function install_mame()
     popd
 }
 
+# install NES emulator core
 function install_nes()
 {
-    # install NES emulator core
     printMsg "Installing NES core"
     if [[ -d "$rootdir/emulatorcores/fceu-next" ]]; then
         rm -rf "$rootdir/emulatorcores/fceu-next"
@@ -346,10 +348,10 @@ function install_nes()
     popd
 }
 
+# install Sega Mega Drive/Mastersystem/Game Gear emulator core
 function install_megadrive()
 {
-    # install Sega Mega Drive emulator core
-    printMsg "Installing Mega Drive core"
+    printMsg "Installing Mega Drive/Mastersystem/Game Gear core"
     if [[ -d "$rootdir/emulatorcores/Genesis-Plus-GX" ]]; then
         rm -rf "$rootdir/emulatorcores/Genesis-Plus-GX"
     fi
@@ -363,9 +365,9 @@ function install_megadrive()
     popd
 }
 
+# install Playstation emulator core
 function install_psx()
 {
-    # install Playstation emulator core
     printMsg "Installing PSX core"
     if [[ -d "$rootdir/emulatorcores/pcsx_rearmed" ]]; then
         rm -rf "$rootdir/emulatorcores/pcsx_rearmed"
@@ -380,9 +382,9 @@ function install_psx()
     popd
 }
 
+# install SNES emulator core
 function install_snes()
 {
-    # install SNES emulator core
     printMsg "Installing SNES core"
     if [[ -d "$rootdir/emulatorcores/pocketsnes-libretro" ]]; then
         rm -rf "$rootdir/emulatorcores/pocketsnes-libretro"
@@ -396,9 +398,9 @@ function install_snes()
     popd
 }
 
+# install BCM library to enable GPIO access by SNESDev-RPi
 function install_bcmlibrary()
 {
-    # install BCM library to enable GPIO access by SNESDev-RPi
     printMsg "Installing BCM2835 library"
     pushd $rootdir
     wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.3.tar.gz
@@ -413,9 +415,9 @@ function install_bcmlibrary()
     popd 
 }
 
+# install SNESDev as GPIO interface for SNES controllers
 function install_snesdev()
 {
-    # install SNESDev as GPIO interface for SNES controllers
     printMsg "Installing SNESDev as GPIO interface for SNES controllers"
     if [[ -d "$rootdir/SNESDev-Rpi" ]]; then
         rm -rf "$rootdir/SNESDev-Rpi"
@@ -430,9 +432,9 @@ function install_snesdev()
     popd
 }
 
+# a work around here, so that EmulationStation can be executed from arbitrary locations
 function install_esscript()
 {
-    # a work around here, so that EmulationStation can be executed from arbitrary locations
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
 
@@ -448,9 +450,9 @@ _EOF_
     chmod +x /usr/bin/emulationstation
 }
 
+# install EmulationStation as graphical front end for the emulators
 function install_emulationstation()
 {
-    # install EmulationStation as graphical front end for the emulators
     printMsg "Installing EmulationStation as graphical front end"
     if [[ -d "$rootdir/EmulationStation" ]]; then
         rm -rf "$rootdir/EmulationStation"
@@ -466,9 +468,9 @@ function install_emulationstation()
     popd
 }
 
+# generate EmulationStation configuration
 function generate_esconfig()
 {
-    # generate EmulationStation configuration
     printMsg "Generating configuration file ~/.emulationstation/es_systems.cfg for EmulationStation"
     if [[ ! -d "$rootdir/../.emulationstation" ]]; then
         mkdir "$rootdir/../.emulationstation"
@@ -498,11 +500,23 @@ EXTENSION=.gb .GB
 COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
 PLATFORMID=41
 
+NAME=Sega Game Gear
+PATH=$rootdir/roms/gamegear
+EXTENSION=.gg .GG
+COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+PLATFORMID=20
+
 NAME=MAME
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
 COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so ROM%  
 PLATFORMID=23
+
+NAME=Sega Master System II
+PATH=$rootdir/roms/mastersystem
+EXTENSION=.sms .SMS
+COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+PLATFORMID=35
 
 NAME=Sega Mega Drive
 PATH=$rootdir/roms/megadrive
@@ -539,13 +553,15 @@ function sortromsalphabet()
 {
     clear
     pathlist[0]="$rootdir/roms/atari2600"
-    pathlist[1]="$rootdir/roms/gba"
-    pathlist[2]="$rootdir/roms/gbc"
-    pathlist[3]="$rootdir/roms/mame"
-    pathlist[4]="$rootdir/roms/megadrive"
-    pathlist[5]="$rootdir/roms/nes"
-    pathlist[6]="$rootdir/roms/snes"  
-    pathlist[7]="$rootdir/roms/psx"  
+    pathlist[1]="$rootdir/roms/gamegear"
+    pathlist[2]="$rootdir/roms/gba"
+    pathlist[3]="$rootdir/roms/gbc"
+    pathlist[4]="$rootdir/roms/mame"
+    pathlist[5]="$rootdir/roms/mastersystem"
+    pathlist[6]="$rootdir/roms/megadrive"
+    pathlist[7]="$rootdir/roms/nes"
+    pathlist[8]="$rootdir/roms/snes"  
+    pathlist[9]="$rootdir/roms/psx"  
     printMsg "Sorting roms alphabetically"
     for elem in "${pathlist[@]}"
     do
@@ -821,6 +837,7 @@ function main_reboot()
     sudo shutdown -r now    
 }
 
+# checks all kinds of essential files for existence and logs the results into the file debug.log
 function createDebugLog()
 {
     clear
@@ -866,9 +883,11 @@ function createDebugLog()
     echo -e "\nUnrecognized ROM extensions:" >> "$rootdir/debug.log"
     find "$rootdir/roms/atari2600/" -type f ! \( -iname "*.bin" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/doom/" -type f ! \( -iname "*.WAD" -or -iname "*.jpg" -or -iname "*.xml" -or -name "*.wad" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/gamegear/" -type f ! \( -iname "*.gg" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/gba/" -type f ! \( -iname "*.gba" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/gbc/" -type f ! \( -iname "*.gb" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/mame/" -type f ! \( -iname "*.zip" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/mastersystem/" -type f ! \( -iname "*.sms" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/megadrive/" -type f ! \( -iname "*.smd" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/nes/" -type f ! \( -iname "*.nes" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/psx/" -type f ! \( -iname "*.img" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
@@ -885,6 +904,8 @@ function createDebugLog()
     checkForInstalledAPTPackage "libboost-system-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "zip" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libxml2" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libxml2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libbz2-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "python-imaging" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libfreeimage-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libfreetype6-dev" >> "$rootdir/debug.log"
@@ -971,7 +992,7 @@ function main_options()
              13 "Install Game Boy Advance core" ON \
              14 "Install Game Boy Color core" ON \
              15 "Install MAME core" ON \
-             16 "Install Mega Drive core" ON \
+             16 "Install Mega Drive/Mastersystem/Game Gear core" ON \
              17 "Install NES core" ON \
              18 "Install Playstation core" ON \
              19 "Install Super NES core" ON \
