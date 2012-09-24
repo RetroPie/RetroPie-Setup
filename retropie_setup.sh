@@ -197,7 +197,7 @@ function exportSDLNOMOUSE()
 function installAPTPackages()
 {
     printMsg "Making sure that all needed packaged are installed"
-    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libboost-filesystem-dev libboost-system-dev zip python-imaging libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev
+    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libboost-filesystem-dev libboost-system-dev zip python-imaging libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev libaudiofile-dev
 }
 
 # prepare folder structure for emulator, cores, front end, and roms
@@ -218,7 +218,8 @@ function prepareFolders()
     pathlist[10]="$rootdir/roms/pcengine"
     pathlist[11]="$rootdir/roms/psx"
     pathlist[12]="$rootdir/roms/snes"
-    pathlist[13]="$rootdir/emulatorcores"
+    pathlist[13]="$rootdir/roms/zxspectrum"
+    pathlist[14]="$rootdir/emulatorcores"
 
     for elem in "${pathlist[@]}"
     do
@@ -415,6 +416,33 @@ function install_snes()
     popd
 }
 
+function install_zxspectrum()
+{
+    printMsg "Installing ZX Spectrum emulator"
+    if [[ -d "$rootdir/emulatorcores/zxspectrum" ]]; then
+        rm -rf "$rootdir/emulatorcores/zxspectrum"
+    fi    
+    mkdir "$rootdir/emulatorcores/zxspectrum"
+    pushd "$rootdir/emulatorcores/zxspectrum"
+    wget ftp://ftp.worldofspectrum.org/pub/sinclair/emulators/unix/libspectrum-1.0.0.tar.gz
+    wget http://downloads.sourceforge.net/project/fuse-emulator/fuse/1.0.0.1a/fuse-1.0.0.1a.tar.gz
+    tar xvfz libspectrum-1.0.0.tar.gz
+    cd libspectrum-1.0.0
+    ./configure
+    make
+    make install
+    echo "/usr/local/lib" >> /etc/ld.so.conf.d/libspectrum.conf
+    ldconfig
+    cd ..
+
+    tar xvfz fuse-1.0.0.1a.tar.gz
+    cd fuse-1.0.0.1a
+    ./configure --with-sdl
+    make
+    make install
+    popd
+}
+
 # install BCM library to enable GPIO access by SNESDev-RPi
 function install_bcmlibrary()
 {
@@ -586,6 +614,7 @@ function sortromsalphabet()
     pathlist[8]="$rootdir/roms/snes"  
     pathlist[9]="$rootdir/roms/pcengine"      
     pathlist[10]="$rootdir/roms/psx"  
+    pathlist[11]="$rootdir/roms/zxspectrum"  
     printMsg "Sorting roms alphabetically"
     for elem in "${pathlist[@]}"
     do
@@ -935,6 +964,7 @@ function createDebugLog()
     checkForInstalledAPTPackage "python-imaging" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libfreeimage-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libfreetype6-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libaudiofile-dev" >> "$rootdir/debug.log"
 
     echo -e "\nEnd of log file" >> "$rootdir/debug.log" >> "$rootdir/debug.log"
 
@@ -1023,11 +1053,12 @@ function main_options()
              18 "Install PC Engine core" ON \
              19 "Install Playstation core" ON \
              20 "Install Super NES core" ON \
-             21 "Install BCM library" ON \
-             22 "Install SNESDev" ON \
-             23 "Install Emulation Station" ON \
-             24 "Install Emulation Station Themes" ON \
-             25 "Generate config file for Emulation Station" ON )
+             21 "Install ZX Spectrum emulator (Fuse)" ON \
+             22 "Install BCM library" ON \
+             23 "Install SNESDev" ON \
+             24 "Install Emulation Station" ON \
+             25 "Install Emulation Station Themes" ON \
+             26 "Generate config file for Emulation Station" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1055,11 +1086,12 @@ function main_options()
                 18) install_mednafen_pce ;;
                 19) install_psx ;;
                 20) install_snes ;;
-                21) install_bcmlibrary ;;
-                22) install_snesdev ;;
-                23) install_emulationstation ;;
-                24) install_esthemes ;;
-                25) generate_esconfig ;;
+                21) install_zxspectrum ;;
+                22) install_bcmlibrary ;;
+                23) install_snesdev ;;
+                24) install_emulationstation ;;
+                25) install_esthemes ;;
+                26) generate_esconfig ;;
             esac
         done
 
