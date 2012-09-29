@@ -197,7 +197,7 @@ function exportSDLNOMOUSE()
 function installAPTPackages()
 {
     printMsg "Making sure that all needed packaged are installed"
-    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libboost-filesystem-dev libboost-system-dev zip python-imaging libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev libaudiofile-dev
+    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libboost-filesystem-dev libboost-system-dev zip python-imaging libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev
 }
 
 # prepare folder structure for emulator, cores, front end, and roms
@@ -220,6 +220,7 @@ function prepareFolders()
     pathlist[12]="$rootdir/roms/snes"
     pathlist[13]="$rootdir/roms/zxspectrum"
     pathlist[14]="$rootdir/emulatorcores"
+    pathlist[15]="$rootdir/amiga"
 
     for elem in "${pathlist[@]}"
     do
@@ -247,6 +248,28 @@ function install_retroarch()
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
     fi  
     popd
+}
+
+# install Amiga emulator
+install_amiga()
+{
+    printMsg "Installing Amiga emulator"
+    if [[ -d "$rootdir/emulatorcores/uae4all" ]]; then
+        rm -rf "$rootdir/emulatorcores/uae4all"
+    fi
+    wget http://darcelf.free.fr/uae4all-src-rc3.chip.tar.bz2
+    tar -jxvf uae4all-src-rc3.chip.tar.bz2 -C "$rootdir/emulatorcores/"
+    pushd "$rootdir/emulatorcores/uae4all"
+    make
+    chown -R $user "$rootdir/emulatorcores/uae4all"
+    chgrp -R pi "$rootdir/emulatorcores/uae4all"
+    if [[ ! -f "$rootdir/emulatorcores/uae4all/uae4all" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Amiga emulator."
+    fi  
+    mkdir "roms"
+    popd  
+    rm uae4all-src-rc3.chip.tar.bz2  
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The Amiga emulator can be started from command line with '$rootdir/emulatorcores/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulatorcores/uae4all/." 22 76        
 }
 
 # install Atari 2600 core
@@ -416,6 +439,7 @@ function install_snes()
     popd
 }
 
+# install ZX Spectrum emulator
 function install_zxspectrum()
 {
     printMsg "Installing ZX Spectrum emulator"
@@ -603,18 +627,19 @@ chgrp -R $user "$rootdir/../.emulationstation"
 function sortromsalphabet()
 {
     clear
-    pathlist[0]="$rootdir/roms/atari2600"
-    pathlist[1]="$rootdir/roms/gamegear"
-    pathlist[2]="$rootdir/roms/gba"
-    pathlist[3]="$rootdir/roms/gbc"
-    pathlist[4]="$rootdir/roms/mame"
-    pathlist[5]="$rootdir/roms/mastersystem"
-    pathlist[6]="$rootdir/roms/megadrive"
-    pathlist[7]="$rootdir/roms/nes"
-    pathlist[8]="$rootdir/roms/snes"  
-    pathlist[9]="$rootdir/roms/pcengine"      
-    pathlist[10]="$rootdir/roms/psx"  
-    pathlist[11]="$rootdir/roms/zxspectrum"  
+    pathlist[0]="$rootdir/roms/amiga"
+    pathlist[1]="$rootdir/roms/atari2600"
+    pathlist[2]="$rootdir/roms/gamegear"
+    pathlist[3]="$rootdir/roms/gba"
+    pathlist[4]="$rootdir/roms/gbc"
+    pathlist[5]="$rootdir/roms/mame"
+    pathlist[6]="$rootdir/roms/mastersystem"
+    pathlist[7]="$rootdir/roms/megadrive"
+    pathlist[8]="$rootdir/roms/nes"
+    pathlist[9]="$rootdir/roms/snes"  
+    pathlist[10]="$rootdir/roms/pcengine"      
+    pathlist[11]="$rootdir/roms/psx"  
+    pathlist[12]="$rootdir/roms/zxspectrum"  
     printMsg "Sorting roms alphabetically"
     for elem in "${pathlist[@]}"
     do
@@ -915,7 +940,7 @@ function createDebugLog()
     echo -e "\nContent of es_input.cfg:" >> "$rootdir/debug.log"
     cat "$rootdir/../.emulationstation/es_input.cfg" >> "$rootdir/debug.log"
 
-    echo -e "\nEmulator cores:" >> "$rootdir/debug.log"
+    echo -e "\nEmulators and cores:" >> "$rootdir/debug.log"
     checkFileExistence "$rootdir/emulatorcores/fceu-next/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/libretro-prboom/libretro.so"
@@ -927,6 +952,7 @@ function createDebugLog()
     checkFileExistence "$rootdir/emulatorcores/mednafen-pce-libretro/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/pocketsnes-libretro/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/vba-next/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/uae4all/uae4all"
 
     echo -e "\nSNESDev:" >> "$rootdir/debug.log"
     checkFileExistence "$rootdir/SNESDev-Rpi/bin/SNESDev"
@@ -935,6 +961,7 @@ function createDebugLog()
     du -ch --max-depth=1 "$rootdir/roms/" >> "$rootdir/debug.log"
 
     echo -e "\nUnrecognized ROM extensions:" >> "$rootdir/debug.log"
+    find "$rootdir/roms/amiga/" -type f ! \( -iname "*.adf" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/atari2600/" -type f ! \( -iname "*.bin" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/doom/" -type f ! \( -iname "*.WAD" -or -iname "*.jpg" -or -iname "*.xml" -or -name "*.wad" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/gamegear/" -type f ! \( -iname "*.gg" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
@@ -965,6 +992,8 @@ function createDebugLog()
     checkForInstalledAPTPackage "libfreeimage-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libfreetype6-dev" >> "$rootdir/debug.log"
     checkForInstalledAPTPackage "libaudiofile-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libsdl-sound1.2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libsdl-mixer1.2-dev" >> "$rootdir/debug.log"
 
     echo -e "\nEnd of log file" >> "$rootdir/debug.log" >> "$rootdir/debug.log"
 
@@ -1043,22 +1072,23 @@ function main_options()
              8 "Install all needed APT packages" ON \
              9 "Generate folder structure" ON \
              10 "Install RetroArch" ON \
-             11 "Install Atari 2600 core" ON \
-             12 "Install Doom core" ON \
-             13 "Install Game Boy Advance core" ON \
-             14 "Install Game Boy Color core" ON \
-             15 "Install MAME core" ON \
-             16 "Install Mega Drive/Mastersystem/Game Gear core" ON \
-             17 "Install NES core" ON \
-             18 "Install PC Engine core" ON \
-             19 "Install Playstation core" ON \
-             20 "Install Super NES core" ON \
-             21 "Install ZX Spectrum emulator (Fuse)" ON \
-             22 "Install BCM library" ON \
-             23 "Install SNESDev" ON \
-             24 "Install Emulation Station" ON \
-             25 "Install Emulation Station Themes" ON \
-             26 "Generate config file for Emulation Station" ON )
+             11 "Install Amiga emulator" ON \
+             12 "Install Atari 2600 core" ON \
+             13 "Install Doom core" ON \
+             14 "Install Game Boy Advance core" ON \
+             15 "Install Game Boy Color core" ON \
+             16 "Install MAME core" ON \
+             17 "Install Mega Drive/Mastersystem/Game Gear core" ON \
+             18 "Install NES core" ON \
+             19 "Install PC Engine core" ON \
+             20 "Install Playstation core" ON \
+             21 "Install Super NES core" ON \
+             22 "Install ZX Spectrum emulator (Fuse)" ON \
+             23 "Install BCM library" ON \
+             24 "Install SNESDev" ON \
+             25 "Install Emulation Station" ON \
+             26 "Install Emulation Station Themes" ON \
+             27 "Generate config file for Emulation Station" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1076,22 +1106,23 @@ function main_options()
                 8) installAPTPackages ;;
                 9) prepareFolders ;;
                 10) install_retroarch ;;
-                11) install_atari2600 ;;
-                12) install_doom ;;
-                13) install_gba ;;
-                14) install_gbc ;;
-                15) install_mame ;;
-                16) install_megadrive ;;
-                17) install_nes ;;
-                18) install_mednafen_pce ;;
-                19) install_psx ;;
-                20) install_snes ;;
-                21) install_zxspectrum ;;
-                22) install_bcmlibrary ;;
-                23) install_snesdev ;;
-                24) install_emulationstation ;;
-                25) install_esthemes ;;
-                26) generate_esconfig ;;
+                11) install_amiga ;;
+                12) install_atari2600 ;;
+                13) install_doom ;;
+                14) install_gba ;;
+                15) install_gbc ;;
+                16) install_mame ;;
+                17) install_megadrive ;;
+                18) install_nes ;;
+                19) install_mednafen_pce ;;
+                20) install_psx ;;
+                21) install_snes ;;
+                22) install_zxspectrum ;;
+                23) install_bcmlibrary ;;
+                24) install_snesdev ;;
+                25) install_emulationstation ;;
+                26) install_esthemes ;;
+                27) generate_esconfig ;;
             esac
         done
 
