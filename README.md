@@ -4,7 +4,13 @@ RetroPie-Setup
 General Usage
 -------------
 
-Shell script to setup Raspberry Pi (TM) with RetroArch emulator, various cores, and EmulationStation as graphical front end.
+Shell script to setup Raspberry Pi (TM) with several emulators, various cores, and EmulationStation as graphical front end.
+
+This script is tested with the Raspbian distribution. Before using the script, please make sure that you have run the raspi-config script to extend your root file system and that your memory split is set to 192 or 128. You can run the script with
+
+```shell
+sudo raspi-config
+```
 
 First of all, make sure that your APT repositories are up-to-date and that Git and the dialog package are installed:
 
