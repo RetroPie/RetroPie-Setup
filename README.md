@@ -12,7 +12,7 @@ This script is tested with the Raspbian distribution. Before using the script, p
 sudo raspi-config
 ```
 
-First of all, make sure that your APT repositories are up-to-date and that Git and the dialog package are installed:
+To run the RetroPie Setup Script make sure that your APT repositories are up-to-date and that Git and the dialog package are installed:
 
 ```shell
 sudo apt-get update
@@ -57,6 +57,12 @@ Binaries and Sources
 RetroPie Setup offers the possibilities to only install RetroArch, the cores, EmulationStation, and SNESDev either with pre-compiles binaries or by downloading and compiling the sources. The first method is much faster, but does not offer the latest versions of the individual programs. So, to make sure that you are running the latest versions take your time and let RetroPie Setup download and compile the programs from their sources.
 
 For more information visit the blog at http://petrockblog.wordpress.com or the repository at https://github.com/petrockblog/RetroPie-Setup. A forum thread about the RetroPie Setup script in the official Raspberry Pi forum can be found at http://www.raspberrypi.org/phpBB3/viewtopic.php?f=35&t=13600.
+
+Wiki
+----
+
+You can find useful information about several components or for several frequently asked questions in the [wiki](https://github.com/petrockblog/RetroPie-Setup/wiki) of the RetroPie Script. If you think that there is something missing you are invited to add it to the wiki.
+
 
 Thanks
 ------
