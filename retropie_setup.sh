@@ -31,9 +31,11 @@
 # 
 
 __BINARIESNAME="RetroPieSetupBinaries_230912.tar.bz2"
-__THEMESNAME="RetroPieSetupThemes220912.tar.bz2"
+__THEMESNAME="RetroPieSetupThemes_031012.tar.bz2"
 
 __ERRMSGS=""
+
+__INFMSGS=""
 
 # HELPER FUNCTIONS ###
 
@@ -221,6 +223,7 @@ function prepareFolders()
     pathlist[13]="$rootdir/roms/zxspectrum"
     pathlist[14]="$rootdir/emulatorcores"
     pathlist[15]="$rootdir/amiga"
+    pathlist[16]="$rootdir/roms/neogeo"
 
     for elem in "${pathlist[@]}"
     do
@@ -269,7 +272,8 @@ install_amiga()
     mkdir "roms"
     popd  
     rm uae4all-src-rc3.chip.tar.bz2  
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The Amiga emulator can be started from command line with '$rootdir/emulatorcores/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulatorcores/uae4all/." 22 76        
+
+    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulatorcores/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulatorcores/uae4all/."
 }
 
 # install Atari 2600 core
@@ -355,6 +359,28 @@ function install_mame()
         __ERRMSGS="$__ERRMSGS Could not successfully compile MAME core."
     fi      
     popd
+}
+
+# install NeoGeo emulator
+function install_neogeo()
+{
+    printMsg "Installing NeoGeo emulator"
+    if [[ -d "$rootdir/emulatorcores/gngeo" ]]; then
+        rm -rf "$rootdir/emulatorcores/gngeo"
+    fi
+    wget http://gngeo.googlecode.com/files/gngeo-0.7.tar.gz
+    tar xvfz gngeo-0.7.tar.gz -C $rootdir/emulatorcores/
+    pushd "$rootdir/emulatorcores/gngeo-0.7"
+    ./configure --build=i386 --host=arm-linux --target=arm-linux --disable-i386asm --enable-cyclone --enable-drz80
+    make
+    make install
+    if [[ ! -f /usr/local/bin/arm-linux-gngeo ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile NeoGeo emulator."
+    fi          
+    popd
+    rm gngeo-0.7.tar.gz
+    mkdir "$rootdir/emulatorcores/gngeo-0.7/neogeo-bios"
+    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulatorcores/gngeo-0.7/neogeo-bios/'."
 }
 
 # install NES emulator core
@@ -587,9 +613,9 @@ EXTENSION=.sms .SMS
 COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
 PLATFORMID=35
 
-NAME=Sega Mega Drive
+NAME=Sega Mega Drive / Genesis
 PATH=$rootdir/roms/megadrive
-EXTENSION=.smd .SMD
+EXTENSION=.smd .SMD .md .MD
 COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
 PLATFORMID=36
 
@@ -607,7 +633,7 @@ PLATFORMID=42
 
 NAME=Sony Playstation 1
 PATH=$rootdir/roms/psx
-EXTENSION=.img .IMG
+EXTENSION=.img .IMG .7z
 COMMAND=retroarch -L $rootdir/emulatorcores/pcsx_rearmed/libretro.so %ROM%
 PLATFORMID=10
 
@@ -635,11 +661,12 @@ function sortromsalphabet()
     pathlist[5]="$rootdir/roms/mame"
     pathlist[6]="$rootdir/roms/mastersystem"
     pathlist[7]="$rootdir/roms/megadrive"
-    pathlist[8]="$rootdir/roms/nes"
-    pathlist[9]="$rootdir/roms/snes"  
-    pathlist[10]="$rootdir/roms/pcengine"      
-    pathlist[11]="$rootdir/roms/psx"  
-    pathlist[12]="$rootdir/roms/zxspectrum"  
+    pathlist[8]="$rootdir/roms/neogeo"
+    pathlist[9]="$rootdir/roms/nes"
+    pathlist[10]="$rootdir/roms/snes"  
+    pathlist[11]="$rootdir/roms/pcengine"      
+    pathlist[12]="$rootdir/roms/psx"  
+    pathlist[13]="$rootdir/roms/zxspectrum"  
     printMsg "Sorting roms alphabetically"
     for elem in "${pathlist[@]}"
     do
@@ -684,7 +711,7 @@ function downloadBinaries()
     chown $user $rootdir/roms/doom/prboom.wad
 
     rm -rf $rootdir/RetroPie
-    rm $__BINARIESNAME
+    rm $__BINARIESNAME    
 }
 
 # downloads and installs theme files for Emulation Station
@@ -1003,6 +1030,8 @@ function createDebugLog()
 
 function main_binaries()
 {
+    __INFMSGS=""
+
     clear
     printMsg "Binaries-based installation"
 
@@ -1028,6 +1057,13 @@ function main_binaries()
     chown -R $user $rootdir
 
     createDebugLog
+
+    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulatorcores/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulatorcores/uae4all/."
+    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulatorcores/gngeo-0.7/neogeo-bios/'."
+
+    if [[ ! -z $__INFMSGS ]]; then
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
+    fi
 
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76    
 }
@@ -1079,19 +1115,21 @@ function main_options()
              15 "Install Game Boy Color core" ON \
              16 "Install MAME core" ON \
              17 "Install Mega Drive/Mastersystem/Game Gear core" ON \
-             18 "Install NES core" ON \
-             19 "Install PC Engine core" ON \
-             20 "Install Playstation core" ON \
-             21 "Install Super NES core" ON \
-             22 "Install ZX Spectrum emulator (Fuse)" ON \
-             23 "Install BCM library" ON \
-             24 "Install SNESDev" ON \
-             25 "Install Emulation Station" ON \
-             26 "Install Emulation Station Themes" ON \
-             27 "Generate config file for Emulation Station" ON )
+             18 "Install NeoGeo emulator (experimental)" ON \
+             19 "Install NES core" ON \
+             20 "Install PC Engine core" ON \
+             21 "Install Playstation core" ON \
+             22 "Install Super NES core" ON \
+             23 "Install ZX Spectrum emulator (Fuse)" ON \
+             24 "Install BCM library" ON \
+             25 "Install SNESDev" ON \
+             26 "Install Emulation Station" ON \
+             27 "Install Emulation Station Themes" ON \
+             28 "Generate config file for Emulation Station" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
+    __INFMSGS=""
     if [ "$choices" != "" ]; then
         for choice in $choices
         do
@@ -1113,16 +1151,17 @@ function main_options()
                 15) install_gbc ;;
                 16) install_mame ;;
                 17) install_megadrive ;;
-                18) install_nes ;;
-                19) install_mednafen_pce ;;
-                20) install_psx ;;
-                21) install_snes ;;
-                22) install_zxspectrum ;;
-                23) install_bcmlibrary ;;
-                24) install_snesdev ;;
-                25) install_emulationstation ;;
-                26) install_esthemes ;;
-                27) generate_esconfig ;;
+                18) install_neogeo ;;
+                19) install_nes ;;
+                20) install_mednafen_pce ;;
+                21) install_psx ;;
+                22) install_snes ;;
+                23) install_zxspectrum ;;
+                24) install_bcmlibrary ;;
+                25) install_snesdev ;;
+                26) install_emulationstation ;;
+                27) install_esthemes ;;
+                28) generate_esconfig ;;
             esac
         done
 
@@ -1133,6 +1172,10 @@ function main_options()
 
         if [[ ! -z $__ERRMSGS ]]; then
             dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__ERRMSGS See debug.log for more details." 20 60    
+        fi
+
+        if [[ ! -z $__INFMSGS ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
         fi
 
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
