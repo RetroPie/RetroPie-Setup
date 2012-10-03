@@ -702,7 +702,7 @@ function downloadBinaries()
     wget https://github.com/downloads/petrockblog/RetroPie-Setup/$__BINARIESNAME
     tar -jxvf $__BINARIESNAME -C $rootdir
     pushd $rootdir/RetroPie
-    mv * ../
+    cp -r * ../
     popd
 
     # handle Doom emulator specifics
