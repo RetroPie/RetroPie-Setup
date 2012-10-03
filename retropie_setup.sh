@@ -30,7 +30,7 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries_230912.tar.bz2"
+__BINARIESNAME="RetroPieSetupBinaries_031012.tar.bz2"
 __THEMESNAME="RetroPieSetupThemes_031012.tar.bz2"
 
 __ERRMSGS=""
@@ -1115,7 +1115,7 @@ function main_options()
              15 "Install Game Boy Color core" ON \
              16 "Install MAME core" ON \
              17 "Install Mega Drive/Mastersystem/Game Gear core" ON \
-             18 "Install NeoGeo emulator (experimental)" ON \
+             18 "Install NeoGeo emulator (experimental)" OFF \
              19 "Install NES core" ON \
              20 "Install PC Engine core" ON \
              21 "Install Playstation core" ON \
