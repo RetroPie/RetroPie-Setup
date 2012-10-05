@@ -224,6 +224,7 @@ function prepareFolders()
     pathlist[14]="$rootdir/emulatorcores"
     pathlist[15]="$rootdir/amiga"
     pathlist[16]="$rootdir/roms/neogeo"
+    pathlist[17]="$rootdir/roms/scummvm"
 
     for elem in "${pathlist[@]}"
     do
@@ -510,6 +511,18 @@ function install_bcmlibrary()
     popd 
 }
 
+# install ScummVM
+function install_scummvm()
+{
+    printMsg "Installing ScummVM"
+    apt-get install -y scummvm scummvm-data
+    if [[ $? -gt 0 ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully install ScummVM."
+    else
+        __INFMSGS="$__INFMSGS ScummVM has successfully been installed. You can start the ScummVM GUI by typing 'scummvm' in the console. Copy your Scumm games into the directory '$rootdir/roms/scummvm'."
+    fi 
+}
+
 # install SNESDev as GPIO interface for SNES controllers
 function install_snesdev()
 {
@@ -642,6 +655,11 @@ PATH=$rootdir/roms/snes
 EXTENSION=.smc .sfc .fig .swc .SMC .SFC .FIG .SWC
 COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
 PLATFORMID=6
+
+NAME=ZX Spectrum
+PATH=$rootdir/roms/zxspectrum
+EXTENSION=.z80 .Z80
+COMMAND=fuse
 
 _EOF_
 
@@ -1119,13 +1137,14 @@ function main_options()
              19 "Install NES core" ON \
              20 "Install PC Engine core" ON \
              21 "Install Playstation core" ON \
-             22 "Install Super NES core" ON \
-             23 "Install ZX Spectrum emulator (Fuse)" ON \
-             24 "Install BCM library" ON \
-             25 "Install SNESDev" ON \
-             26 "Install Emulation Station" ON \
-             27 "Install Emulation Station Themes" ON \
-             28 "Generate config file for Emulation Station" ON )
+             22 "Install ScummVM" ON \
+             23 "Install Super NES core" ON \
+             24 "Install ZX Spectrum emulator (Fuse)" ON \
+             25 "Install BCM library" ON \
+             26 "Install SNESDev" ON \
+             27 "Install Emulation Station" ON \
+             28 "Install Emulation Station Themes" ON \
+             29 "Generate config file for Emulation Station" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1155,13 +1174,14 @@ function main_options()
                 19) install_nes ;;
                 20) install_mednafen_pce ;;
                 21) install_psx ;;
-                22) install_snes ;;
-                23) install_zxspectrum ;;
-                24) install_bcmlibrary ;;
-                25) install_snesdev ;;
-                26) install_emulationstation ;;
-                27) install_esthemes ;;
-                28) generate_esconfig ;;
+                22) install_scummvm ;;
+                23) install_snes ;;
+                24) install_zxspectrum ;;
+                25) install_bcmlibrary ;;
+                26) install_snesdev ;;
+                27) install_emulationstation ;;
+                28) install_esthemes ;;
+                29) generate_esconfig ;;
             esac
         done
 
