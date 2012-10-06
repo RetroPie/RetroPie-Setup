@@ -47,7 +47,9 @@ the installation directory is /home/USERNAME/RetroPie for user USERNAME. If call
 ```shell
 sudo ./retropie_setup.sh USERNAME ABSPATH
 ```
-the installation directory is ABSPATH for user USERNAME
+the installation directory is ABSPATH for user USERNAME.
+
+Note that you might **need to reboot your Raspberry**, if your firmware was updated during the installation process.
 
 
 
