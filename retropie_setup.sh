@@ -650,7 +650,7 @@ NAME=PC Engine/TurboGrafx 16
 PATH=$rootdir/roms/pcengine
 EXTENSION=.pce
 COMMAND=retroarch -L $rootdir/emulatorcores/mednafen-pce-libretro/libretro.so %ROM%
-PLATFORMID=42
+PLATFORMID=34
 
 NAME=Sony Playstation 1
 PATH=$rootdir/roms/psx
