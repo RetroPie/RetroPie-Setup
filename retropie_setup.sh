@@ -540,6 +540,14 @@ function install_snesdev()
     popd
 }
 
+# install driver for XBox 360 controllers
+function install_xboxdrv()
+{
+    printMsg "Installing xboxdrv"
+    apt-get install -y xboxdrv
+
+}
+
 # a work around here, so that EmulationStation can be executed from arbitrary locations
 function install_esscript()
 {
@@ -1064,12 +1072,12 @@ function main_binaries()
     downloadBinaries
     install_esscript
     generate_esconfig
-    install_esthemes
     install -m755 $rootdir/RetroArch-Rpi/retroarch /usr/local/bin 
     install -m644 $rootdir/RetroArch-Rpi/retroarch.cfg /etc/retroarch.cfg
     install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
     sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
     prepareFolders
+    install_esthemes
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
