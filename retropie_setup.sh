@@ -1086,6 +1086,7 @@ function main_binaries()
     ensure_modules
     add_to_groups
     exportSDLNOMOUSE
+    prepareFolders
     downloadBinaries
     install_esscript
     generate_esconfig
@@ -1093,7 +1094,6 @@ function main_binaries()
     install -m644 $rootdir/RetroArch-Rpi/retroarch.cfg /etc/retroarch.cfg
     install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
     sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
-    prepareFolders
     install_esthemes
 
     chgrp -R $user $rootdir
