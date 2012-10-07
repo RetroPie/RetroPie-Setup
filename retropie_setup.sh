@@ -306,9 +306,8 @@ function install_doom()
     git clone git://github.com/libretro/libretro-prboom.git "$rootdir/emulatorcores/libretro-prboom"
     pushd "$rootdir/emulatorcores/libretro-prboom"
     make
+    mkdir -p $rootdir/roms/doom/
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
-    chgrp pi $rootdir/roms/doom/prboom.wad
-    chown $user $rootdir/roms/doom/prboom.wad
     if [[ ! -f "$rootdir/emulatorcores/libretro-prboom/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Doom core."
     fi  
@@ -483,7 +482,6 @@ function install_zmachine()
     rm zork3.zip
     __INFMSGS="$__INFMSGS The text adventures Zork 1 - 3 have been installed in the directory '$rootdir/roms/zmachine/'. You can start, e.g., Zork 1 with the command 'frotz $rootdir/roms/zmachine/zork1/DATA/ZORK1.DAT'."
 }
-
 
 # install ZX Spectrum emulator
 function install_zxspectrum()
