@@ -225,6 +225,7 @@ function prepareFolders()
     pathlist[15]="$rootdir/amiga"
     pathlist[16]="$rootdir/roms/neogeo"
     pathlist[17]="$rootdir/roms/scummvm"
+    pathlist[18]="$rootdir/roms/zmachine"
 
     for elem in "${pathlist[@]}"
     do
@@ -465,6 +466,24 @@ function install_snes()
     fi      
     popd
 }
+
+# install Z Machine emulator
+function install_zmachine()
+{
+    printMsg "Installing Z Machine emulator"
+    apt-get install -y frotz
+    wget -U firefox http://www.infocom-if.org/downloads/zork1.zip
+    wget -U firefox http://www.infocom-if.org/downloads/zork2.zip
+    wget -U firefox http://www.infocom-if.org/downloads/zork3.zip
+    unzip zork1.zip -n -d /home/pi/RetroPie/roms/zmachine/zork1/
+    unzip zork2.zip -n -d /home/pi/RetroPie/roms/zmachine/zork2/
+    unzip zork3.zip -n -d /home/pi/RetroPie/roms/zmachine/zork3/
+    rm zork1.zip
+    rm zork2.zip
+    rm zork3.zip
+    __INFMSGS="$__INFMSGS The text adventures Zork 1 - 3 have been installed in the directory '$rootdir/roms/zmachine/'. You can start, e.g., Zork 1 with the command 'frotz $rootdir/roms/zmachine/zork1/DATA/ZORK1.DAT'."
+}
+
 
 # install ZX Spectrum emulator
 function install_zxspectrum()
@@ -1147,12 +1166,13 @@ function main_options()
              21 "Install Playstation core" ON \
              22 "Install ScummVM" ON \
              23 "Install Super NES core" ON \
-             24 "Install ZX Spectrum emulator (Fuse)" ON \
-             25 "Install BCM library" ON \
-             26 "Install SNESDev" ON \
-             27 "Install Emulation Station" ON \
-             28 "Install Emulation Station Themes" ON \
-             29 "Generate config file for Emulation Station" ON )
+             24 "Install Z Machine emulator (Frotz)" ON \
+             25 "Install ZX Spectrum emulator (Fuse)" ON \
+             26 "Install BCM library" ON \
+             27 "Install SNESDev" ON \
+             28 "Install Emulation Station" ON \
+             29 "Install Emulation Station Themes" ON \
+             30 "Generate config file for Emulation Station" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1184,12 +1204,13 @@ function main_options()
                 21) install_psx ;;
                 22) install_scummvm ;;
                 23) install_snes ;;
-                24) install_zxspectrum ;;
-                25) install_bcmlibrary ;;
-                26) install_snesdev ;;
-                27) install_emulationstation ;;
-                28) install_esthemes ;;
-                29) generate_esconfig ;;
+                24) install_zmachine ;;
+                25) install_zxspectrum ;;
+                26) install_bcmlibrary ;;
+                27) install_snesdev ;;
+                28) install_emulationstation ;;
+                29) install_esthemes ;;
+                30) generate_esconfig ;;
             esac
         done
 
