@@ -862,27 +862,97 @@ function changeBootbehaviour()
     fi    
 }
 
-function enableSNESGPIOModule()
+function installGameconGPIOModule()
 {
-    if [[ -z $(lsmod | grep gamecon_gpio_rpi) ]]; then
         clear
 
-        #install dkms, download headers and gamecon
-        apt-get install -y dkms
-        wget http://www.niksula.hut.fi/~mhiienka/Rpi/linux-headers-rpi/linux-headers-`uname -r`_`uname -r`-1_armhf.deb
-        wget http://www.niksula.hut.fi/~mhiienka/Rpi/gamecon-gpio-rpi-dkms_0.5_all.deb
+	dialog --title " gamecon_gpio_rpi installation " --clear \
+	--yesno "Gamecon_gpio_rpi requires thats most recent kernel (firmware)\
+	is installed and active. Continue with gamecon_gpio_rpi\
+	installation?" 22 76
+	case $? in
+	  0)
+	    echo "Starting installation.";;
+	  *)
+	    return 0;;
+	esac
 
-        #install headers and gamecon (takes some time)
-        dpkg -i linux-headers-`uname -r`_`uname -r`-1_armhf.deb
-        dpkg -i gamecon-gpio-rpi-dkms_0.5_all.deb        
+	#remove old headers manually to avoid cleanup issues
+	if [ "`dpkg-query -W -f='${Version}' linux-headers-3.2.27+`" = "3.2.27+-1" ]; then
+	    dpkg -r gamecon-gpio-rpi-dkms
+	    dpkg -r linux-headers-3.2.27+
+	fi
+
+        #install dkms
+        apt-get install -y dkms
+
+	#reconfigure / install headers (takes a a while)
+	if [ "`dpkg-query -W -f='${Version}' linux-headers-3.2.27+`" = "3.2.27+-2" ]; then
+		dpkg-reconfigure linux-headers-3.2.27+
+	else
+        	wget http://www.niksula.hut.fi/~mhiienka/Rpi/linux-headers-rpi/linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+	        dpkg -i linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+		rm linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+	fi
+
+	#install gamecon
+	if [ "`dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms`" = "0.5" ]; then
+		#dpkg-reconfigure gamecon-gpio-rpi-dkms
+		echo "gamecon is the newest version"
+	else
+	        wget http://www.niksula.hut.fi/~mhiienka/Rpi/gamecon-gpio-rpi-dkms_0.5_all.deb
+	        dpkg -i gamecon-gpio-rpi-dkms_0.5_all.deb
+		rm gamecon-gpio-rpi-dkms_0.5_all.deb
+	fi
+
+	#test if module installation is OK
+	if [[ -n $(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko) ]]; then
+	        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon GPIO driver successfully installed. \
+		Use 'zless /usr/share/doc/gamecon_gpio_rpi/README.gz' to read how to use it." 22 76
+	else
+		dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon GPIO driver installation FAILED"\
+		22 76
+	fi
+}
+
+function enableGameconSnes()
+{
+	if [ "`dpkg-query -W -f='${Status}' gamecon-gpio-rpi-dkms`" != "install ok installed" ]; then
+		dialog --msgbox "gamecon_gpio_rpi not found, install it first" 22 76
+		return 0
+	fi
+
+dialog --msgbox "\
+__________\n\
+         |          The driver is set to use the following configuration\n\
+    + *  |          for 2 SNES controllers.\n\
+    * *  |\n\
+    1 -  |          NOTE: This configuration is valid only for rev.1\n\
+    2 *  |                Pi boards. Support for rev.2 boards will be\n\
+    * *  |                added to the next gamecon_gpio_rpi version.\n\
+    * *  |\n\
+    * *  |          + = power\n\
+    * *  |          - = ground\n\
+    * *  |          C = clock\n\
+    C *  |          L = latch\n\
+    * *  |          1 = player1 pad\n\
+    L *  |          2 = player2 pad\n\
+    * *  |          * = unconnected\n\
+         |\n\
+         |" 22 76
+
+	if [[ -n $(lsmod | grep gamecon_gpio_rpi) ]]; then
+		rmmod gamecon_gpio_rpi
+	fi
 
         modprobe gamecon_gpio_rpi map=0,1,1,0
-        if [[ -z $(cat /etc/modules | grep gamecon_gpio_rpi) ]]; then
-            addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
-        fi
 
-        rm *.deb   
+	dialog --title " Update /etc/retroarch.cfg " --clear \
+        --yesno "Would you like to update button mappings \
+	to /etc/retroarch.cfg ?" 22 76
 
+      case $? in
+       0)
         ensureKeyValue "input_player1_joypad_index" "0" "/etc/retroarch.cfg"
         ensureKeyValue "input_player1_a_btn" "0" "/etc/retroarch.cfg"
         ensureKeyValue "input_player1_b_btn" "1" "/etc/retroarch.cfg"
@@ -910,15 +980,28 @@ function enableSNESGPIOModule()
         ensureKeyValue "input_player2_up_axis" "-1" "/etc/retroarch.cfg"
         ensureKeyValue "input_player2_right_axis" "+0" "/etc/retroarch.cfg"
         ensureKeyValue "input_player2_down_axis" "+1" "/etc/retroarch.cfg"
+	;;
+       *)
+        ;;
+      esac
 
-        if [[ -z $(lsmod | grep gamecon_gpio_rpi) ]]; then
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon driver for NES, SNES, N64 GPIO interface could NOT be installed." 22 76    
-        else
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon driver for NES, SNES, N64 GPIO interface could successfully installed." 22 76    
-        fi
-    else
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon driver for NES, SNES, N64 GPIO interface already installed and running." 22 76    
-    fi
+	dialog --title " Enable SNES configuration permanently " --clear \
+        --yesno "Would you like to permanently enable SNES configuration?\
+        " 22 76
+
+        case $? in
+          0)
+	    if [[ -z $(cat /etc/modules | grep gamecon_gpio_rpi) ]]; then
+               addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
+	    fi
+	    ;;
+          *)
+            #TODO: delete the line from /etc/modules
+            ;;
+        esac
+
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox \
+	"Gamecon GPIO driver enabled with 2 SNES pads on GPIO1 & GPIO4 (rev.1 board)." 22 76
 }
 
 function checkNeededPackages()
@@ -1239,9 +1322,10 @@ function main_setup()
                  4 "Start Emulation Station on boot?" 
                  5 "Change ARM frequency" 
                  6 "Change SDRAM frequency"
-                 7 "Enable module for NES, SNES, N64 controller interface" 
-                 8 "Run 'ES-scraper'" 
-                 9 "Generate debug log" )
+                 7 "Install/update multi-console gamepad driver for GPIO" 
+                 8 "Enable gamecon_gpio_rpi with SNES-pad config"
+                 9 "Run 'ES-scraper'" 
+                 10 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -1251,9 +1335,10 @@ function main_setup()
                  4) changeBootbehaviour ;;
                  5) setArmFreq ;;
                  6) setSDRAMFreq ;;
-                 7) enableSNESGPIOModule ;;
-                 8) scraperMenu ;;
-                 9) createDebugLog ;;
+                 7) installGameconGPIOModule ;;
+                 8) enableGameconSnes ;;
+                 9) scraperMenu ;;
+                 10) createDebugLog ;;
             esac
         else
             break
