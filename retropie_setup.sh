@@ -222,7 +222,7 @@ function prepareFolders()
     pathlist[12]="$rootdir/roms/snes"
     pathlist[13]="$rootdir/roms/zxspectrum"
     pathlist[14]="$rootdir/emulatorcores"
-    pathlist[15]="$rootdir/amiga"
+    pathlist[15]="$rootdir/roms/amiga"
     pathlist[16]="$rootdir/roms/neogeo"
     pathlist[17]="$rootdir/roms/scummvm"
     pathlist[18]="$rootdir/roms/zmachine"
