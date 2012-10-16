@@ -474,9 +474,9 @@ function install_zmachine()
     wget -U firefox http://www.infocom-if.org/downloads/zork1.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork2.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork3.zip
-    unzip zork1.zip -n -d /home/pi/RetroPie/roms/zmachine/zork1/
-    unzip zork2.zip -n -d /home/pi/RetroPie/roms/zmachine/zork2/
-    unzip zork3.zip -n -d /home/pi/RetroPie/roms/zmachine/zork3/
+    unzip -n zork1.zip -d /home/pi/RetroPie/roms/zmachine/zork1/
+    unzip -n zork2.zip -d /home/pi/RetroPie/roms/zmachine/zork2/
+    unzip -n zork3.zip -d /home/pi/RetroPie/roms/zmachine/zork3/
     rm zork1.zip
     rm zork2.zip
     rm zork3.zip
