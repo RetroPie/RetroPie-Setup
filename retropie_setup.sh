@@ -896,13 +896,13 @@ function installGameconGPIOModule()
 	fi
 
 	#install gamecon
-	if [ "`dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms`" = "0.5" ]; then
+	if [ "`dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms`" = "0.9" ]; then
 		#dpkg-reconfigure gamecon-gpio-rpi-dkms
 		echo "gamecon is the newest version"
 	else
-	        wget http://www.niksula.hut.fi/~mhiienka/Rpi/gamecon-gpio-rpi-dkms_0.5_all.deb
-	        dpkg -i gamecon-gpio-rpi-dkms_0.5_all.deb
-		rm gamecon-gpio-rpi-dkms_0.5_all.deb
+	        wget http://www.niksula.hut.fi/~mhiienka/Rpi/gamecon-gpio-rpi-dkms_0.9_all.deb
+	        dpkg -i gamecon-gpio-rpi-dkms_0.9_all.deb
+		rm gamecon-gpio-rpi-dkms_0.9_all.deb
 	fi
 
 	#test if module installation is OK
@@ -922,14 +922,25 @@ function enableGameconSnes()
 		return 0
 	fi
 
+	REVSTRING=`cat /proc/cpuinfo |grep Revision | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4`
+
+	case "$REVSTRING" in
+          "0002"|"0003")
+             GPIOREV=1 
+             ;;
+          *)
+             GPIOREV=2
+             ;;
+	esac
+
 dialog --msgbox "\
 __________\n\
-         |          The driver is set to use the following configuration\n\
-    + *  |          for 2 SNES controllers.\n\
+         |          ### Board gpio revision $GPIOREV detected ###\n\
+    + *  |\n\
     * *  |\n\
-    1 -  |          NOTE: This configuration is valid only for rev.1\n\
-    2 *  |                Pi boards. Support for rev.2 boards will be\n\
-    * *  |                added to the next gamecon_gpio_rpi version.\n\
+    1 -  |          The driver is set to use the following configuration\n\
+    2 *  |          for 2 SNES controllers:\n\
+    * *  |\n\
     * *  |\n\
     * *  |          + = power\n\
     * *  |          - = ground\n\
@@ -945,7 +956,11 @@ __________\n\
 		rmmod gamecon_gpio_rpi
 	fi
 
-        modprobe gamecon_gpio_rpi map=0,1,1,0
+	if [ $GPIOREV = 1 ]; then
+	        modprobe gamecon_gpio_rpi map=0,1,1,0
+	else
+		modprobe gamecon_gpio_rpi map=0,0,1,0,0,1
+	fi
 
 	dialog --title " Update /etc/retroarch.cfg " --clear \
         --yesno "Would you like to update button mappings \
@@ -953,7 +968,14 @@ __________\n\
 
       case $? in
        0)
-        ensureKeyValue "input_player1_joypad_index" "0" "/etc/retroarch.cfg"
+	if [ $GPIOREV = 1 ]; then
+	        ensureKeyValue "input_player1_joypad_index" "0" "/etc/retroarch.cfg"
+        	ensureKeyValue "input_player2_joypad_index" "1" "/etc/retroarch.cfg"
+	else
+		ensureKeyValue "input_player1_joypad_index" "1" "/etc/retroarch.cfg"
+		ensureKeyValue "input_player2_joypad_index" "0" "/etc/retroarch.cfg"
+	fi
+
         ensureKeyValue "input_player1_a_btn" "0" "/etc/retroarch.cfg"
         ensureKeyValue "input_player1_b_btn" "1" "/etc/retroarch.cfg"
         ensureKeyValue "input_player1_x_btn" "2" "/etc/retroarch.cfg"
@@ -967,7 +989,6 @@ __________\n\
         ensureKeyValue "input_player1_right_axis" "+0" "/etc/retroarch.cfg"
         ensureKeyValue "input_player1_down_axis" "+1" "/etc/retroarch.cfg"
 
-        ensureKeyValue "input_player2_joypad_index" "1" "/etc/retroarch.cfg"
         ensureKeyValue "input_player2_a_btn" "0" "/etc/retroarch.cfg"
         ensureKeyValue "input_player2_b_btn" "1" "/etc/retroarch.cfg"
         ensureKeyValue "input_player2_x_btn" "2" "/etc/retroarch.cfg"
@@ -992,7 +1013,11 @@ __________\n\
         case $? in
           0)
 	    if [[ -z $(cat /etc/modules | grep gamecon_gpio_rpi) ]]; then
-               addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
+		if [ $GPIOREV = 1 ]; then
+                    addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
+		else
+		    addLineToFile "gamecon_gpio_rpi map=0,0,1,0,0,1" "/etc/modules"
+		fi
 	    fi
 	    ;;
           *)
@@ -1001,7 +1026,7 @@ __________\n\
         esac
 
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox \
-	"Gamecon GPIO driver enabled with 2 SNES pads on GPIO1 & GPIO4 (rev.1 board)." 22 76
+	"Gamecon GPIO driver enabled with 2 SNES pads." 22 76
 }
 
 function checkNeededPackages()
