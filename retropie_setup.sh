@@ -30,12 +30,12 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries_031012.tar.bz2"
+__BINARIESNAME="RetroPieSetupBinaries_221012.tar.bz2"
 __THEMESNAME="RetroPieSetupThemes_031012.tar.bz2"
 
 __ERRMSGS=""
-
 __INFMSGS=""
+__doReboot=0
 
 # HELPER FUNCTIONS ###
 
@@ -60,15 +60,29 @@ function addLineToFile()
 }
 
 # arg 1: key, arg 2: value, arg 3: file
+# make sure that a key-value pair is set in file
 function ensureKeyValue()
 {
-    if [[ -z $(egrep -i "#? *$1 = ""[+|-]?[0-9]""" $3) ]]; then
+    if [[ -z $(egrep -i "#? *$1 = ?""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
         # add key-value pair
         echo "$1 = ""$2""" >> $3
     else
         # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1 = ""[+|-]?[0-9]""" $3`
+        toreplace=`egrep -i "#? *$1 = ?""?[+|-]?[0-9]*[a-z]*"""? $3`
         sed $3 -i -e "s|$toreplace|$1 = ""$2""|g"
+    fi     
+}
+
+# make sure that a key-value pair is NOT set in file
+function disableKeyValue()
+{
+    if [[ -z $(egrep -i "#? *$1 = ?""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+        # add key-value pair
+        echo "# $1 = ""$2""" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1 = ?""?[+|-]?[0-9]*[a-z]*"""? $3`
+        sed $3 -i -e "s|$toreplace|# $1 = ""$2""|g"
     fi     
 }
 
@@ -130,6 +144,7 @@ function run_rpiupdate()
 {
     printMsg "Starting rpi-update script"
     /usr/bin/rpi-update
+    __doReboot=1
 }
 
 # update APT repositories
@@ -562,7 +577,7 @@ function install_xboxdrv()
 {
     printMsg "Installing xboxdrv"
     apt-get install -y xboxdrv
-
+    # still to be continued
 }
 
 # a work around here, so that EmulationStation can be executed from arbitrary locations
@@ -818,6 +833,15 @@ function setSDRAMFreq()
         fi 
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "SDRAM frequency set to $sdramfreqchoice MHz. If you changed the frequency, you need to reboot." 22 76    
     fi
+}
+
+# configure sound settings
+function configureSoundsettings()
+{
+    printMsg "Enabling SDL audio driver for RetroArch in /etc/retroarch.cfg"    
+    # RetroArch settings
+    ensureKeyValue "audio\_driver" "sdl" "/etc/retroarch.cfg"
+    ensureKeyValue "audio\_out\_rate" "44100" "/etc/retroarch.cfg"
 }
 
 # shows help information in the console
@@ -1090,7 +1114,7 @@ function essc_setimgw()
 function main_reboot()
 {
     clear
-    sudo shutdown -r now    
+    shutdown -r now    
 }
 
 # checks all kinds of essential files for existence and logs the results into the file debug.log
@@ -1203,6 +1227,7 @@ function main_binaries()
     install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
     sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
     install_esthemes
+    configureSoundsettings
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
@@ -1278,7 +1303,8 @@ function main_options()
              27 "Install SNESDev" ON \
              28 "Install Emulation Station" ON \
              29 "Install Emulation Station Themes" ON \
-             30 "Generate config file for Emulation Station" ON )
+             30 "Generate config file for Emulation Station" ON \
+             31 "Enable SDL sound driver for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1317,6 +1343,7 @@ function main_options()
                 28) install_emulationstation ;;
                 29) install_esthemes ;;
                 30) generate_esconfig ;;
+                31) configureSoundsettings ;;
             esac
         done
 
@@ -1406,7 +1433,7 @@ elif [[ $# -lt 3 ]]; then
     rootdir=$2
 fi
 
-esscrapimgw=300 # width in pixel for EmulationStation games scraper
+esscrapimgw=275 # width in pixel for EmulationStation games scraper
 
 home=$(eval echo ~$user)
 
@@ -1439,4 +1466,18 @@ while true; do
         break
     fi
 done
+
+if [[ $__doReboot -eq 1 ]]; then
+    dialog --title "The firmware has been updated and a reboot is needed." --clear \
+        --yesno "Would you like to reboot now?\
+        " 22 76
+
+        case $? in
+          0)
+            main_reboot
+            ;;
+          *)        
+            ;;
+        esac
+fi
 clear
