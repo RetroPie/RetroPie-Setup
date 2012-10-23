@@ -143,7 +143,7 @@ function install_rpiupdate()
 function run_rpiupdate()
 {
     printMsg "Starting rpi-update script"
-    /usr/bin/rpi-update
+    /usr/bin/rpi-update 192
     __doReboot=1
 }
 
@@ -570,6 +570,100 @@ function install_snesdev()
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
     fi      
     popd
+}
+
+# start SNESDev on boot and configure RetroArch input settings
+function enableSNESDevAtStart()
+{
+    clear
+    printMsg "Enabling SNESDev on boot."
+
+    if [ -z $(egrep -i "^7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev" /etc/inittab) ]
+    then
+       echo "7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev" >> /etc/inittab
+    fi
+
+    ensureKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_y" "a" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_x" "s" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_start" "enter" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_select" "rshift" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_l" "q" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_r" "w" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_left" "left" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_right" "right" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_up" "up" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player1_down" "down"   "/etc/retroarch.cfg" 
+
+    ensureKeyValue "input_player2_a" "e" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_b" "r" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_y" "y" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_x" "t" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_start" "p" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_select" "o" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_l" "u" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_r" "i" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_left" "c" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_right" "b" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_up" "f" "/etc/retroarch.cfg"
+    ensureKeyValue "input_player2_down" "v"   "/etc/retroarch.cfg" 
+}
+
+# disable start SNESDev on boot and remove RetroArch input settings
+function disableSNESDevAtStart()
+{
+    clear
+    printMsg "Disabling SNESDev on boot."
+
+    sed /etc/inittab -i -e "s|7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev||g"
+
+    disableKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_y" "a" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_x" "s" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_start" "enter" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_select" "rshift" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_l" "q" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_r" "w" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_left" "left" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_right" "right" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_up" "up" "/etc/retroarch.cfg"
+    disableKeyValue "input_player1_down" "down"   "/etc/retroarch.cfg" 
+
+    disableKeyValue "input_player2_a" "e" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_b" "r" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_y" "y" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_x" "t" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_start" "p" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_select" "o" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_l" "u" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_r" "i" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_left" "c" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_right" "b" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_up" "f" "/etc/retroarch.cfg"
+    disableKeyValue "input_player2_down" "v"   "/etc/retroarch.cfg" 
+}
+
+# Show dialogue for enabling/disabling SNESDev on boot
+function enableDisableSNESDevStart()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 76 16)
+    options=(1 "Disable SNESDev on boot and SNESDev keyboard mapping."
+             2 "Enable SNESDev on boot and SNESDev keyboard mapping.")
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [ "$choices" != "" ]; then
+        case $choices in
+            1) disableSNESDevAtStart
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Disabled SNESDev on boot." 22 76    
+                            ;;
+            2) enableSNESDevAtStart
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled SNESDev on boot." 22 76    
+                            ;;
+        esac
+    else
+        break
+    fi    
 }
 
 # install driver for XBox 360 controllers
@@ -1343,7 +1437,7 @@ function main_options()
                 28) install_emulationstation ;;
                 29) install_esthemes ;;
                 30) generate_esconfig ;;
-                31) configureSoundsettings ;;
+                32) configureSoundsettings ;;
             esac
         done
 
@@ -1372,12 +1466,13 @@ function main_setup()
                  2 "Install latest Rasperry Pi firmware" 
                  3 "Sort roms alphabetically within folders. *Creates subfolders*" 
                  4 "Start Emulation Station on boot?" 
-                 5 "Change ARM frequency" 
-                 6 "Change SDRAM frequency"
-                 7 "Install/update multi-console gamepad driver for GPIO" 
-                 8 "Enable gamecon_gpio_rpi with SNES-pad config"
-                 9 "Run 'ES-scraper'" 
-                 10 "Generate debug log" )
+                 5 "Start SNESDev on boot?"
+                 6 "Change ARM frequency" 
+                 7 "Change SDRAM frequency"
+                 8 "Install/update multi-console gamepad driver for GPIO" 
+                 9 "Enable gamecon_gpio_rpi with SNES-pad config"
+                 10 "Run 'ES-scraper'" 
+                 11 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -1385,12 +1480,13 @@ function main_setup()
                  2) run_rpiupdate ;;
                  3) sortromsalphabet ;;
                  4) changeBootbehaviour ;;
-                 5) setArmFreq ;;
-                 6) setSDRAMFreq ;;
-                 7) installGameconGPIOModule ;;
-                 8) enableGameconSnes ;;
-                 9) scraperMenu ;;
-                 10) createDebugLog ;;
+                 5) enableDisableSNESDevStart ;;
+                 6) setArmFreq ;;
+                 7) setSDRAMFreq ;;
+                 8) installGameconGPIOModule ;;
+                 9) enableGameconSnes ;;
+                 10) scraperMenu ;;
+                 11) createDebugLog ;;
             esac
         else
             break
@@ -1445,7 +1541,7 @@ if [[ ! -d $rootdir ]]; then
     fi
 fi
 
-availFreeDiskSpace 500000
+availFreeDiskSpace 600000
 
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
