@@ -241,6 +241,7 @@ function prepareFolders()
     pathlist[16]="$rootdir/roms/neogeo"
     pathlist[17]="$rootdir/roms/scummvm"
     pathlist[18]="$rootdir/roms/zmachine"
+    pathlist[19]="$rootdir/emulators"
 
     for elem in "${pathlist[@]}"
     do
@@ -252,15 +253,22 @@ function prepareFolders()
     done    
 }
 
+# settings for RetroArch
+function configureRetroArch()
+{
+    printMsg "Configuring RetroArch in /etc/retroarch.cfg"
+    ensureKeyValue "video_driver" "\"gl\"" "/etc/retroarch.cfg"
+}
+
 # install RetroArch emulator
 function install_retroarch()
 {
     printMsg "Installing RetroArch emulator"
-    if [[ -d "$rootdir/RetroArch-Rpi" ]]; then
-        rm -rf "$rootdir/RetroArch-Rpi"
+    if [[ -d "$rootdir/emulators/RetroArch-Rpi" ]]; then
+        rm -rf "$rootdir/emulators/RetroArch-Rpi"
     fi
-    git clone git://github.com/Themaister/RetroArch.git "$rootdir/RetroArch-Rpi"
-    pushd "$rootdir/RetroArch-Rpi"
+    git clone git://github.com/Themaister/RetroArch.git "$rootdir/emulators/RetroArch-Rpi"
+    pushd "$rootdir/emulators/RetroArch-Rpi"
     ./configure --disable-libpng
     make
     sudo make install
@@ -268,29 +276,30 @@ function install_retroarch()
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
     fi  
     popd
+    configureRetroArch
 }
 
 # install Amiga emulator
 install_amiga()
 {
     printMsg "Installing Amiga emulator"
-    if [[ -d "$rootdir/emulatorcores/uae4all" ]]; then
-        rm -rf "$rootdir/emulatorcores/uae4all"
+    if [[ -d "$rootdir/emulators/uae4all" ]]; then
+        rm -rf "$rootdir/emulators/uae4all"
     fi
     wget http://darcelf.free.fr/uae4all-src-rc3.chip.tar.bz2
-    tar -jxvf uae4all-src-rc3.chip.tar.bz2 -C "$rootdir/emulatorcores/"
-    pushd "$rootdir/emulatorcores/uae4all"
+    tar -jxvf uae4all-src-rc3.chip.tar.bz2 -C "$rootdir/emulators/"
+    pushd "$rootdir/emulators/uae4all"
     make
-    chown -R $user "$rootdir/emulatorcores/uae4all"
-    chgrp -R pi "$rootdir/emulatorcores/uae4all"
-    if [[ ! -f "$rootdir/emulatorcores/uae4all/uae4all" ]]; then
+    chown -R $user "$rootdir/emulators/uae4all"
+    chgrp -R pi "$rootdir/emulators/uae4all"
+    if [[ ! -f "$rootdir/emulators/uae4all/uae4all" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Amiga emulator."
     fi  
     mkdir "roms"
     popd  
     rm uae4all-src-rc3.chip.tar.bz2  
 
-    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulatorcores/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulatorcores/uae4all/."
+    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
 }
 
 # install Atari 2600 core
@@ -309,6 +318,27 @@ function install_atari2600()
         __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 2600 core."
     fi  
     popd    
+}
+
+# install DGEN (Megadrive/Genesis emulator)
+function install_dgen()
+{
+    printMsg "Installing Megadrive/Genesis emulator"
+    if [[ -d "$rootdir/emulators/dgen" ]]; then
+        rm -rf "$rootdir/emulators/dgen"
+    fi   
+    wget http://downloads.sourceforge.net/project/dgen/dgen/1.30/dgen-sdl-1.30.tar.gz
+    tar xvfz dgen-sdl-1.30.tar.gz -C "$rootdir/emulators/"
+    pushd "$rootdir/emulators/dgen-sdl-1.30"
+    ./configure
+    make
+    mkdir $home/.dgen/
+    cp sample.dgenrc $home/.dgen/dgenrc
+    if [[ ! -f "$rootdir/emulators/dgen-sdl-1.30/dgen" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile DGEN emulator."
+    fi  
+    popd
+    rm dgen-sdl-1.30.tar.gz
 }
 
 # install Doom WADs emulator core
@@ -381,12 +411,12 @@ function install_mame()
 function install_neogeo()
 {
     printMsg "Installing NeoGeo emulator"
-    if [[ -d "$rootdir/emulatorcores/gngeo" ]]; then
-        rm -rf "$rootdir/emulatorcores/gngeo"
+    if [[ -d "$rootdir/emulators/gngeo" ]]; then
+        rm -rf "$rootdir/emulators/gngeo"
     fi
     wget http://gngeo.googlecode.com/files/gngeo-0.7.tar.gz
     tar xvfz gngeo-0.7.tar.gz -C $rootdir/emulatorcores/
-    pushd "$rootdir/emulatorcores/gngeo-0.7"
+    pushd "$rootdir/emulators/gngeo-0.7"
     ./configure --build=i386 --host=arm-linux --target=arm-linux --disable-i386asm --enable-cyclone --enable-drz80
     make
     make install
@@ -395,8 +425,8 @@ function install_neogeo()
     fi          
     popd
     rm gngeo-0.7.tar.gz
-    mkdir "$rootdir/emulatorcores/gngeo-0.7/neogeo-bios"
-    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulatorcores/gngeo-0.7/neogeo-bios/'."
+    mkdir "$rootdir/emulators/gngeo-0.7/neogeo-bios"
+    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
 }
 
 # install NES emulator core
@@ -481,6 +511,28 @@ function install_snes()
     popd
 }
 
+function install_wolfenstein3d()
+{
+    printMsg "Installing Wolfenstein3D Engine"    
+    if [[ -d "$rootdir/emulators/Wolf4SDL" ]]; then
+        rm -rf "$rootdir/emulators/Wolf4SDL"
+    fi    
+    wget http://www.alice-dsl.net/mkroll/bins/Wolf4SDL-1.7-src.zip
+    mv Wolf4SDL-1.7-src.zip Wolf4SDL-1.7.zip
+    unzip -n Wolf4SDL-1.7.zip -d "$rootdir/emulators/"
+    pushd "$rootdir/emulators/Wolf4SDL-1.7-src"
+    make
+    mkdir "$rootdir/emulators/Wolf4SDL-1.7-bin"
+    cp wolf3d "$rootdir/emulators/Wolf4SDL-1.7-bin/"
+    popd
+    if [[ ! -f "$rootdir/emulators/Wolf4SDL-1.7-bin/wolf3d" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Wolfenstein3D engine."
+    else
+        __INFMSGS="$__INFMSGS The Wolfenstein3D engine was successfully installed. You have to copy the game files (.wl6) into the directory $rootdir/emulators/Wolf4SDL-1.7-bin. Take care for lowercase extensions!"        
+    fi 
+    rm Wolf4SDL-1.7.zip
+}
+
 # install Z Machine emulator
 function install_zmachine()
 {
@@ -489,9 +541,9 @@ function install_zmachine()
     wget -U firefox http://www.infocom-if.org/downloads/zork1.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork2.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork3.zip
-    unzip -n zork1.zip -d /home/pi/RetroPie/roms/zmachine/zork1/
-    unzip -n zork2.zip -d /home/pi/RetroPie/roms/zmachine/zork2/
-    unzip -n zork3.zip -d /home/pi/RetroPie/roms/zmachine/zork3/
+    unzip -n zork1.zip -d "$rootdir/roms/zmachine/zork1/"
+    unzip -n zork2.zip -d "$rootdir/roms/zmachine/zork2/"
+    unzip -n zork3.zip -d "$rootdir/roms/zmachine/zork3/"
     rm zork1.zip
     rm zork2.zip
     rm zork3.zip
@@ -502,11 +554,11 @@ function install_zmachine()
 function install_zxspectrum()
 {
     printMsg "Installing ZX Spectrum emulator"
-    if [[ -d "$rootdir/emulatorcores/zxspectrum" ]]; then
-        rm -rf "$rootdir/emulatorcores/zxspectrum"
+    if [[ -d "$rootdir/emulators/zxspectrum" ]]; then
+        rm -rf "$rootdir/emulators/zxspectrum"
     fi    
-    mkdir "$rootdir/emulatorcores/zxspectrum"
-    pushd "$rootdir/emulatorcores/zxspectrum"
+    mkdir -p "$rootdir/emulators/zxspectrum"
+    pushd "$rootdir/emulators/zxspectrum"
     wget ftp://ftp.worldofspectrum.org/pub/sinclair/emulators/unix/libspectrum-1.0.0.tar.gz
     wget http://downloads.sourceforge.net/project/fuse-emulator/fuse/1.0.0.1a/fuse-1.0.0.1a.tar.gz
     tar xvfz libspectrum-1.0.0.tar.gz
@@ -578,36 +630,38 @@ function enableSNESDevAtStart()
     clear
     printMsg "Enabling SNESDev on boot."
 
-    if [ -z $(egrep -i "^7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev" /etc/inittab) ]
+    if [ -z $(egrep -i "^7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev ?[0-9]?" /etc/inittab) ]
     then
-       echo "7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev" >> /etc/inittab
+       echo "7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev $1" >> /etc/inittab
     fi
 
-    ensureKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_y" "a" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_x" "s" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_start" "enter" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_select" "rshift" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_l" "q" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_r" "w" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_left" "left" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_right" "right" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_up" "up" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player1_down" "down"   "/etc/retroarch.cfg" 
+    if [[ ($1 -eq 1) || ($1 -eq 3) ]]; then
+        ensureKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_y" "a" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_x" "s" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_start" "enter" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_select" "rshift" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_l" "q" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_r" "w" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_left" "left" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_right" "right" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_up" "up" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_down" "down"   "/etc/retroarch.cfg" 
 
-    ensureKeyValue "input_player2_a" "e" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_b" "r" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_y" "y" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_x" "t" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_start" "p" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_select" "o" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_l" "u" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_r" "i" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_left" "c" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_right" "b" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_up" "f" "/etc/retroarch.cfg"
-    ensureKeyValue "input_player2_down" "v"   "/etc/retroarch.cfg" 
+        ensureKeyValue "input_player2_a" "e" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_b" "r" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_y" "y" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_x" "t" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_start" "p" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_select" "o" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_l" "u" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_r" "i" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_left" "c" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_right" "b" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_up" "f" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_down" "v"   "/etc/retroarch.cfg" 
+    fi
 }
 
 # disable start SNESDev on boot and remove RetroArch input settings
@@ -616,7 +670,7 @@ function disableSNESDevAtStart()
     clear
     printMsg "Disabling SNESDev on boot."
 
-    sed /etc/inittab -i -e "s|7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev||g"
+    sed /etc/inittab -i -e "s|7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev ?[0-9]?||g"
 
     disableKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
     disableKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
@@ -648,17 +702,25 @@ function disableSNESDevAtStart()
 # Show dialogue for enabling/disabling SNESDev on boot
 function enableDisableSNESDevStart()
 {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 76 16)
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 86 16)
     options=(1 "Disable SNESDev on boot and SNESDev keyboard mapping."
-             2 "Enable SNESDev on boot and SNESDev keyboard mapping.")
+             2 "Enable SNESDev on boot and SNESDev keyboard mapping (polling pads and button)."
+             3 "Enable SNESDev on boot and SNESDev keyboard mapping (polling only pads)."
+             4 "Enable SNESDev on boot and SNESDev keyboard mapping (polling only button).")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then
         case $choices in
             1) disableSNESDevAtStart
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Disabled SNESDev on boot." 22 76    
                             ;;
-            2) enableSNESDevAtStart
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled SNESDev on boot." 22 76    
+            2) enableSNESDevAtStart 3
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled SNESDev on boot (polling pads and button)." 22 76    
+                            ;;
+            3) enableSNESDevAtStart 1
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled SNESDev on boot (polling only pads)." 22 76    
+                            ;;
+            4) enableSNESDevAtStart 2
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled SNESDev on boot (polling only button)." 22 76    
                             ;;
         esac
     else
@@ -763,7 +825,7 @@ PLATFORMID=35
 NAME=Sega Mega Drive / Genesis
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .md .MD
-COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+COMMAND=$rootdir/emulators/dgen-sdl-1.30/dgen -g 0 -f %ROM%
 PLATFORMID=36
 
 NAME=Nintendo Entertainment System
@@ -1378,27 +1440,30 @@ function main_options()
              8 "Install all needed APT packages" ON \
              9 "Generate folder structure" ON \
              10 "Install RetroArch" ON \
-             11 "Install Amiga emulator" ON \
-             12 "Install Atari 2600 core" ON \
-             13 "Install Doom core" ON \
-             14 "Install Game Boy Advance core" ON \
-             15 "Install Game Boy Color core" ON \
-             16 "Install MAME core" ON \
-             17 "Install Mega Drive/Mastersystem/Game Gear core" ON \
-             18 "Install NeoGeo emulator (experimental)" OFF \
-             19 "Install NES core" ON \
-             20 "Install PC Engine core" ON \
-             21 "Install Playstation core" ON \
-             22 "Install ScummVM" ON \
-             23 "Install Super NES core" ON \
-             24 "Install Z Machine emulator (Frotz)" ON \
-             25 "Install ZX Spectrum emulator (Fuse)" ON \
-             26 "Install BCM library" ON \
-             27 "Install SNESDev" ON \
-             28 "Install Emulation Station" ON \
-             29 "Install Emulation Station Themes" ON \
-             30 "Generate config file for Emulation Station" ON \
-             31 "Enable SDL sound driver for RetroArch" ON )
+             11 "Configure RetroArch" ON \
+             12 "Install Amiga emulator" ON \
+             13 "Install Atari 2600 core" ON \
+             14 "Install Doom core" ON \
+             15 "Install Game Boy Advance core" ON \
+             16 "Install Game Boy Color core" ON \
+             17 "Install MAME core" ON \
+             18 "Install Mega Drive/Mastersystem/Game Gear (RetroArch) core" ON \
+             19 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
+             20 "Install NeoGeo emulator (experimental)" OFF \
+             21 "Install NES core" ON \
+             22 "Install PC Engine core" ON \
+             23 "Install Playstation core" ON \
+             24 "Install ScummVM" ON \
+             25 "Install Super NES core" ON \
+             26 "Install Wolfenstein3D engine" ON \
+             27 "Install Z Machine emulator (Frotz)" ON \
+             28 "Install ZX Spectrum emulator (Fuse)" ON \
+             29 "Install BCM library" ON \
+             30 "Install SNESDev" ON \
+             31 "Install Emulation Station" ON \
+             32 "Install Emulation Station Themes" ON \
+             33 "Generate config file for Emulation Station" ON \
+             34 "Enable SDL sound driver for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1417,27 +1482,30 @@ function main_options()
                 8) installAPTPackages ;;
                 9) prepareFolders ;;
                 10) install_retroarch ;;
-                11) install_amiga ;;
-                12) install_atari2600 ;;
-                13) install_doom ;;
-                14) install_gba ;;
-                15) install_gbc ;;
-                16) install_mame ;;
-                17) install_megadrive ;;
-                18) install_neogeo ;;
-                19) install_nes ;;
-                20) install_mednafen_pce ;;
-                21) install_psx ;;
-                22) install_scummvm ;;
-                23) install_snes ;;
-                24) install_zmachine ;;
-                25) install_zxspectrum ;;
-                26) install_bcmlibrary ;;
-                27) install_snesdev ;;
-                28) install_emulationstation ;;
-                29) install_esthemes ;;
-                30) generate_esconfig ;;
-                32) configureSoundsettings ;;
+                11) configureRetroArch ;;
+                12) install_amiga ;;
+                13) install_atari2600 ;;
+                14) install_doom ;;
+                15) install_gba ;;
+                16) install_gbc ;;
+                17) install_mame ;;
+                18) install_megadrive ;;
+                19) install_dgen ;;
+                20) install_neogeo ;;
+                21) install_nes ;;
+                22) install_mednafen_pce ;;
+                23) install_psx ;;
+                24) install_scummvm ;;
+                25) install_snes ;;
+                26) install_wolfenstein3d ;;
+                27) install_zmachine ;;
+                28) install_zxspectrum ;;
+                29) install_bcmlibrary ;;
+                30) install_snesdev ;;
+                31) install_emulationstation ;;
+                32) install_esthemes ;;
+                33) generate_esconfig ;;
+                34) configureSoundsettings ;;
             esac
         done
 

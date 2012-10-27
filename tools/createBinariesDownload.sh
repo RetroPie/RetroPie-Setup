@@ -19,6 +19,9 @@ filelist[15]="./RetroPie/RetroArch-Rpi/tools/retroarch-joyconfig"
 filelist[16]="./RetroPie/SNESDev-Rpi/bin/SNESDev"
 filelist[17]="./RetroPie/emulatorcores/pcsx_rearmed/libretro.so"
 filelist[18]="./RetroPie/emulatorcores/mednafen-pce-libretro/libretro.so"
+filelist[19]="./RetroPie/emulators/dgen-sdl-1.30/dgen"
+filelist[20]="./RetroPie/emulators/dgen-sdl-1.30/sample.dgenrc"
+filelist[21]="./RetroPie/emulators/Wolf4SDL-1.7-src/wolf3d"
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 
