@@ -118,6 +118,17 @@ function checkFileExistence()
     fi
 }
 
+function gitPullOrClone()
+{
+    mkdir -p "$1"
+    pushd "$1"
+    if [[ -d ".git" ]]; then
+        git pull
+    else
+        git clone "$2" .
+    fi
+}
+
 # END HELPER FUNCTIONS ###
 
 function availFreeDiskSpace()
@@ -264,11 +275,7 @@ function configureRetroArch()
 function install_retroarch()
 {
     printMsg "Installing RetroArch emulator"
-    if [[ -d "$rootdir/emulators/RetroArch-Rpi" ]]; then
-        rm -rf "$rootdir/emulators/RetroArch-Rpi"
-    fi
-    git clone git://github.com/Themaister/RetroArch.git "$rootdir/emulators/RetroArch-Rpi"
-    pushd "$rootdir/emulators/RetroArch-Rpi"
+    gitPullOrClone "$rootdir/emulators/RetroArch-Rpi" git://github.com/Themaister/RetroArch.git
     ./configure --disable-libpng
     make
     sudo make install
@@ -306,11 +313,7 @@ install_amiga()
 function install_atari2600()
 {
     printMsg "Installing Atari 2600 core"
-    if [[ -d "$rootdir/emulatorcores/stella-libretro" ]]; then
-        rm -rf "$rootdir/emulatorcores/stella-libretro"
-    fi
-    git clone git://github.com/libretro/stella-libretro.git "$rootdir/emulatorcores/stella-libretro"
-    pushd "$rootdir/emulatorcores/stella-libretro"
+    gitPullOrClone "$rootdir/emulatorcores/stella-libretro" git://github.com/libretro/stella-libretro.git
     # remove msse and msse2 flags from Makefile, just a hack here to make it compile on the Raspberry
     sed 's|-msse2 ||g;s|-msse ||g' Makefile >> Makefile.rpi
     make -f Makefile.rpi
@@ -345,11 +348,7 @@ function install_dgen()
 function install_doom()
 {
     printMsg "Installing Doom core"
-    if [[ -d "$rootdir/emulatorcores/libretro-prboom" ]]; then
-        rm -rf "$rootdir/emulatorcores/libretro-prboom"
-    fi
-    git clone git://github.com/libretro/libretro-prboom.git "$rootdir/emulatorcores/libretro-prboom"
-    pushd "$rootdir/emulatorcores/libretro-prboom"
+    gitPullOrClone "$rootdir/emulatorcores/libretro-prboom" git://github.com/libretro/libretro-prboom.git
     make
     mkdir -p $rootdir/roms/doom/
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
@@ -363,11 +362,7 @@ function install_doom()
 function install_gba()
 {
     printMsg "Installing Game Boy Advance core"
-    if [[ -d "$rootdir/emulatorcores/vba-next" ]]; then
-        rm -rf "$rootdir/emulatorcores/vba-next"
-    fi
-    git clone git://github.com/libretro/vba-next.git "$rootdir/emulatorcores/vba-next"
-    pushd "$rootdir/emulatorcores/vba-next"
+    gitPullOrClone "$rootdir/emulatorcores/vba-next" git://github.com/libretro/vba-next.git
     make -f Makefile.libretro
     if [[ ! -f "$rootdir/emulatorcores/vba-next/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance core."
@@ -379,12 +374,8 @@ function install_gba()
 function install_gbc()
 {
     printMsg "Installing Game Boy Color core"
-    if [[ -d "$rootdir/emulatorcores/gambatte-libretro" ]]; then
-        rm -rf "$rootdir/emulatorcores/gambatte-libretro"
-    fi
-    git clone git://github.com/libretro/gambatte-libretro.git "$rootdir/emulatorcores/gambatte-libretro"
-    pushd "$rootdir/emulatorcores/gambatte-libretro/libgambatte"
-    make -f Makefile.libretro 
+    gitPullOrClone "$rootdir/emulatorcores/gambatte-libretro" git://github.com/libretro/gambatte-libretro.git
+    make -C libgambatte -f Makefile.libretro
     if [[ ! -f "$rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Color core."
     fi      
@@ -395,11 +386,7 @@ function install_gbc()
 function install_mame()
 {
     printMsg "Installing MAME core"
-    if [[ -d "$rootdir/emulatorcores/imame4all-libretro" ]]; then
-        rm -rf "$rootdir/emulatorcores/imame4all-libretro"
-    fi
-    git clone git://github.com/libretro/imame4all-libretro.git "$rootdir/emulatorcores/imame4all-libretro"
-    pushd "$rootdir/emulatorcores/imame4all-libretro"
+    gitPullOrClone "$rootdir/emulatorcores/imame4all-libretro" git://github.com/libretro/imame4all-libretro.git
     make -f makefile.libretro ARM=1
     if [[ ! -f "$rootdir/emulatorcores/imame4all-libretro/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile MAME core."
@@ -433,11 +420,7 @@ function install_neogeo()
 function install_nes()
 {
     printMsg "Installing NES core"
-    if [[ -d "$rootdir/emulatorcores/fceu-next" ]]; then
-        rm -rf "$rootdir/emulatorcores/fceu-next"
-    fi
-    git clone git://github.com/libretro/fceu-next.git "$rootdir/emulatorcores/fceu-next"
-    pushd "$rootdir/emulatorcores/fceu-next"
+    gitPullOrClone "$rootdir/emulatorcores/fceu-next" git://github.com/libretro/fceu-next.git
     make -f Makefile.libretro-fceumm
     if [[ ! -f "$rootdir/emulatorcores/fceu-next/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NES core."
@@ -449,11 +432,7 @@ function install_nes()
 function install_megadrive()
 {
     printMsg "Installing Mega Drive/Mastersystem/Game Gear core"
-    if [[ -d "$rootdir/emulatorcores/Genesis-Plus-GX" ]]; then
-        rm -rf "$rootdir/emulatorcores/Genesis-Plus-GX"
-    fi
-    git clone git://github.com/libretro/Genesis-Plus-GX.git "$rootdir/emulatorcores/Genesis-Plus-GX"
-    pushd "$rootdir/emulatorcores/Genesis-Plus-GX"
+    gitPullOrClone "$rootdir/emulatorcores/Genesis-Plus-GX" git://github.com/libretro/Genesis-Plus-GX.git
     make -f Makefile.libretro 
     sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
     if [[ ! -f "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so" ]]; then
@@ -466,11 +445,7 @@ function install_megadrive()
 function install_mednafen_pce()
 {
     printMsg "Installing Mednafen PC Engine core"
-    if [[ -d "$rootdir/emulatorcores/mednafen-pce-libretro" ]]; then
-        rm -rf "$rootdir/emulatorcores/mednafen-pce-libretro"
-    fi    
-    git clone git://github.com/libretro/mednafen-pce-libretro.git "$rootdir/emulatorcores/mednafen-pce-libretro"
-    pushd "$rootdir/emulatorcores/mednafen-pce-libretro"
+    gitPullOrClone "$rootdir/emulatorcores/mednafen-pce-libretro" git://github.com/libretro/mednafen-pce-libretro.git
     make
     if [[ ! -f "$rootdir/emulatorcores/mednafen-pce-libretro/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile PC Engine core."
@@ -482,11 +457,7 @@ function install_mednafen_pce()
 function install_psx()
 {
     printMsg "Installing PSX core"
-    if [[ -d "$rootdir/emulatorcores/pcsx_rearmed" ]]; then
-        rm -rf "$rootdir/emulatorcores/pcsx_rearmed"
-    fi
-    git clone git://github.com/libretro/pcsx_rearmed.git "$rootdir/emulatorcores/pcsx_rearmed"
-    pushd "$rootdir/emulatorcores/pcsx_rearmed"
+    gitPullOrClone "$rootdir/emulatorcores/pcsx_rearmed" git://github.com/libretro/pcsx_rearmed.git
     ./configure --platform=libretro
     make
     if [[ ! -f "$rootdir/emulatorcores/pcsx_rearmed/libretro.so" ]]; then
@@ -499,11 +470,7 @@ function install_psx()
 function install_snes()
 {
     printMsg "Installing SNES core"
-    if [[ -d "$rootdir/emulatorcores/pocketsnes-libretro" ]]; then
-        rm -rf "$rootdir/emulatorcores/pocketsnes-libretro"
-    fi
-    git clone git://github.com/ToadKing/pocketsnes-libretro.git "$rootdir/emulatorcores/pocketsnes-libretro"
-    pushd "$rootdir/emulatorcores/pocketsnes-libretro"
+    gitPullOrClone "$rootdir/emulatorcores/pocketsnes-libretro" git://github.com/ToadKing/pocketsnes-libretro.git
     make
     if [[ ! -f "$rootdir/emulatorcores/pocketsnes-libretro/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
@@ -611,12 +578,7 @@ function install_scummvm()
 function install_snesdev()
 {
     printMsg "Installing SNESDev as GPIO interface for SNES controllers"
-    if [[ -d "$rootdir/SNESDev-Rpi" ]]; then
-        rm -rf "$rootdir/SNESDev-Rpi"
-    fi
-    git clone git://github.com/petrockblog/SNESDev-RPi.git "$rootdir/SNESDev-Rpi"
-    pushd "$rootdir/SNESDev-Rpi"
-    make clean
+    gitCloneOrPull "$rootdir/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
     make
     if [[ ! -f "$rootdir/SNESDev-Rpi/bin/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
@@ -758,12 +720,7 @@ _EOF_
 function install_emulationstation()
 {
     printMsg "Installing EmulationStation as graphical front end"
-    if [[ -d "$rootdir/EmulationStation" ]]; then
-        rm -rf "$rootdir/EmulationStation"
-    fi
-    git clone git://github.com/Aloshi/EmulationStation.git "$rootdir/EmulationStation"
-    pushd "$rootdir/EmulationStation"
-    make clean
+    gitCloneOrPull "$rootdir/EmulationStation" git://github.com/Aloshi/EmulationStation.git
     make
     install_esscript
     if [[ ! -f "$rootdir/EmulationStation/emulationstation" ]]; then
