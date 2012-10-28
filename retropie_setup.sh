@@ -744,7 +744,6 @@ function install_emulationstation()
 {
     printMsg "Installing EmulationStation as graphical front end"
     gitPullOrClone "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
-    make clean
     make
     install_esscript
     if [[ ! -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
