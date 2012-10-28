@@ -1,7 +1,7 @@
 #!/bin/bash
 
-filelist[0]="./RetroPie/EmulationStation/emulationstation"
-filelist[1]="./RetroPie/EmulationStation/LinLibertine_R.ttf"
+filelist[0]="./RetroPie/supplementary/EmulationStation/emulationstation"
+filelist[1]="./RetroPie/supplementary/EmulationStation/LinLibertine_R.ttf"
 filelist[2]="./RetroPie/emulatorcores/fceu-next/libretro.so"
 filelist[3]="./RetroPie/emulatorcores/gambatte-libretro/libgambatte/libretro.so"
 filelist[4]="./RetroPie/emulatorcores/Genesis-Plus-GX/libretro.so"
@@ -16,7 +16,7 @@ filelist[12]="./RetroPie/RetroArch-Rpi/retroarch"
 filelist[13]="./RetroPie/RetroArch-Rpi/retroarch-zip"
 filelist[14]="./RetroPie/RetroArch-Rpi/retroarch.cfg"
 filelist[15]="./RetroPie/RetroArch-Rpi/tools/retroarch-joyconfig"
-filelist[16]="./RetroPie/SNESDev-Rpi/bin/SNESDev"
+filelist[16]="./RetroPie/supplementary/SNESDev-Rpi/bin/SNESDev"
 filelist[17]="./RetroPie/emulatorcores/pcsx_rearmed/libretro.so"
 filelist[18]="./RetroPie/emulatorcores/mednafen-pce-libretro/libretro.so"
 filelist[19]="./RetroPie/emulators/dgen-sdl-1.30/dgen"

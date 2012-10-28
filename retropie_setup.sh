@@ -253,6 +253,7 @@ function prepareFolders()
     pathlist[17]="$rootdir/roms/scummvm"
     pathlist[18]="$rootdir/roms/zmachine"
     pathlist[19]="$rootdir/emulators"
+    pathlist[20]="$rootdir/supplementary"
 
     for elem in "${pathlist[@]}"
     do
@@ -401,17 +402,38 @@ function install_neogeo()
     if [[ -d "$rootdir/emulators/gngeo" ]]; then
         rm -rf "$rootdir/emulators/gngeo"
     fi
+
+    # install and enable GCC-4.7
+    apt-get install -y gcc-4.7
+    export CC=gcc-4.7
+    export GCC=g++-4.7
+
+    # install zlib
+    wget http://zlib.net/zlib-1.2.7.tar.gz    
+    tar xvfz zlib-1.2.7.tar.gz -C $rootdir/supplementary/
+    pushd $rootdir/supplementary/zlib-1.2.7
+    ./configure 
+    make
+    make install
+    popd
+
+    # GnGeo
     wget http://gngeo.googlecode.com/files/gngeo-0.7.tar.gz
-    tar xvfz gngeo-0.7.tar.gz -C $rootdir/emulatorcores/
+    tar xvfz gngeo-0.7.tar.gz -C $rootdir/emulators/
     pushd "$rootdir/emulators/gngeo-0.7"
     ./configure --build=i386 --host=arm-linux --target=arm-linux --disable-i386asm --enable-cyclone --enable-drz80
     make
     make install
+
+    mkdir ~/.gngeo
+    cp sample_gngeorc ~/.gngeo/gngeorc
+    
     if [[ ! -f /usr/local/bin/arm-linux-gngeo ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NeoGeo emulator."
     fi          
     popd
     rm gngeo-0.7.tar.gz
+
     mkdir "$rootdir/emulators/gngeo-0.7/neogeo-bios"
     __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
 }
@@ -578,9 +600,9 @@ function install_scummvm()
 function install_snesdev()
 {
     printMsg "Installing SNESDev as GPIO interface for SNES controllers"
-    gitCloneOrPull "$rootdir/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
+    gitCloneOrPull "$rootdir/supplementary/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
     make
-    if [[ ! -f "$rootdir/SNESDev-Rpi/bin/SNESDev" ]]; then
+    if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
     fi      
     popd
@@ -592,9 +614,9 @@ function enableSNESDevAtStart()
     clear
     printMsg "Enabling SNESDev on boot."
 
-    if [ -z $(egrep -i "^7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev ?[0-9]?" /etc/inittab) ]
+    if [ -z $(egrep -i "^7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev ?[0-9]?" /etc/inittab) ]
     then
-       echo "7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev $1" >> /etc/inittab
+       echo "7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev $1" >> /etc/inittab
     fi
 
     if [[ ($1 -eq 1) || ($1 -eq 3) ]]; then
@@ -632,7 +654,7 @@ function disableSNESDevAtStart()
     clear
     printMsg "Disabling SNESDev on boot."
 
-    sed /etc/inittab -i -e "s|7:2345:once:$rootdir/SNESDev-Rpi/bin/SNESDev ?[0-9]?||g"
+    sed /etc/inittab -i -e "s|7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev ?[0-9]?||g"
 
     disableKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
     disableKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
@@ -709,7 +731,7 @@ if [ -n "\$DISPLAY" ]; then
     exit 1
 fi 
 
-pushd "$rootdir/EmulationStation" > /dev/null
+pushd "$rootdir/supplementary/EmulationStation" > /dev/null
 ./emulationstation
 popd > /dev/null
 _EOF_
@@ -720,10 +742,11 @@ _EOF_
 function install_emulationstation()
 {
     printMsg "Installing EmulationStation as graphical front end"
-    gitCloneOrPull "$rootdir/EmulationStation" git://github.com/Aloshi/EmulationStation.git
+    gitCloneOrPull "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
+    make clean
     make
     install_esscript
-    if [[ ! -f "$rootdir/EmulationStation/emulationstation" ]]; then
+    if [[ ! -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Emulation Station."
     fi      
     popd
@@ -974,6 +997,7 @@ function showHelp()
     echo ""
 }
 
+# Start Emulation Station on boot or not?
 function changeBootbehaviour()
 {
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 76 16)
@@ -1246,10 +1270,10 @@ function createDebugLog()
     sed '/^$\|^#/d' "/etc/retroarch.cfg"  >>  "$rootdir/debug.log"
 
     echo -e "\nEmulation Station files:" >> "$rootdir/debug.log"
-    checkFileExistence "$rootdir/EmulationStation/emulationstation"
+    checkFileExistence "$rootdir/supplementary/EmulationStation/emulationstation"
     checkFileExistence "$rootdir/../.emulationstation/es_systems.cfg"
     checkFileExistence "$rootdir/../.emulationstation/es_input.cfg"
-    checkFileExistence "$rootdir/EmulationStation/LinLibertine_R.ttf"
+    checkFileExistence "$rootdir/supplementary/EmulationStation/LinLibertine_R.ttf"
     echo -e "\nContent of es_systems.cfg:" >> "$rootdir/debug.log"
     cat "$rootdir/../.emulationstation/es_systems.cfg" >> "$rootdir/debug.log"
     echo -e "\nContent of es_input.cfg:" >> "$rootdir/debug.log"
@@ -1270,7 +1294,7 @@ function createDebugLog()
     checkFileExistence "$rootdir/emulatorcores/uae4all/uae4all"
 
     echo -e "\nSNESDev:" >> "$rootdir/debug.log"
-    checkFileExistence "$rootdir/SNESDev-Rpi/bin/SNESDev"
+    checkFileExistence "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev"
 
     echo -e "\nSummary of ROMS directory:" >> "$rootdir/debug.log"
     du -ch --max-depth=1 "$rootdir/roms/" >> "$rootdir/debug.log"
