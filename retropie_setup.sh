@@ -30,7 +30,7 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries_221012.tar.bz2"
+__BINARIESNAME="RetroPieSetupBinaries_281012.tar.bz2"
 __THEMESNAME="RetroPieSetupThemes_221012.tar.bz2"
 
 __ERRMSGS=""
