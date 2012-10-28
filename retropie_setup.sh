@@ -615,7 +615,7 @@ function enableSNESDevAtStart()
     clear
     printMsg "Enabling SNESDev on boot."
 
-    if [ -z $(egrep -i "^7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev ?[0-9]?" /etc/inittab) ]
+    if [ -z $(egrep -i "^7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev [123]" /etc/inittab) ]
     then
        echo "7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev $1" >> /etc/inittab
     fi
@@ -655,7 +655,7 @@ function disableSNESDevAtStart()
     clear
     printMsg "Disabling SNESDev on boot."
 
-    sed /etc/inittab -i -e "s|7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev ?[0-9]?||g"
+    sed /etc/inittab -i -e "s|7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev [123]||g"
 
     disableKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
     disableKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
