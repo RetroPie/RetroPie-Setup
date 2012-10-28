@@ -601,6 +601,7 @@ function install_snesdev()
 {
     printMsg "Installing SNESDev as GPIO interface for SNES controllers"
     gitPullOrClone "$rootdir/supplementary/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
+    make clean
     make
     if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
