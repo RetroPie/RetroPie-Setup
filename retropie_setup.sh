@@ -600,7 +600,7 @@ function install_scummvm()
 function install_snesdev()
 {
     printMsg "Installing SNESDev as GPIO interface for SNES controllers"
-    gitCloneOrPull "$rootdir/supplementary/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
+    gitPullOrClone "$rootdir/supplementary/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
     make
     if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
@@ -742,7 +742,7 @@ _EOF_
 function install_emulationstation()
 {
     printMsg "Installing EmulationStation as graphical front end"
-    gitCloneOrPull "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
+    gitPullOrClone "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
     make clean
     make
     install_esscript
