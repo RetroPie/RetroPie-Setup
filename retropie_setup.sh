@@ -1204,10 +1204,10 @@ function checkESScraperExists()
 {
     if [[ ! -d $rootdir/ES-scraper ]]; then
         # new download
-        git clone git://github.com/elpendor/ES-scraper.git "$rootdir/ES-scraper"
+        git clone git://github.com/elpendor/ES-scraper.git "$rootdir/supplementary/ES-scraper"
     else
         # update
-        pushd $rootdir/ES-scraper
+        pushd $rootdir/supplementary/ES-scraper
         git pull
         popd
     fi
@@ -1216,7 +1216,7 @@ function checkESScraperExists()
 function essc_runnormal()
 {
     checkESScraperExists
-    python $rootdir/ES-scraper/scraper.py -w $esscrapimgw
+    python $rootdir/supplementary/ES-scraper/scraper.py -w $esscrapimgw
     chgrp -R $user "$rootdir/roms"
     chown -R $user "$rootdir/roms"
 }
@@ -1224,7 +1224,7 @@ function essc_runnormal()
 function essc_runforced()
 {
     checkESScraperExists
-    python $rootdir/ES-scraper/scraper.py -f -w $esscrapimgw
+    python $rootdir/supplementary/ES-scraper/scraper.py -f -w $esscrapimgw
     chgrp -R $user "$rootdir/roms"
     chown -R $user "$rootdir/roms"
 }
@@ -1232,7 +1232,7 @@ function essc_runforced()
 function essc_runcrc()
 {
     checkESScraperExists
-    python $rootdir/ES-scraper/scraper.py -crc -w $esscrapimgw
+    python $rootdir/supplementary/ES-scraper/scraper.py -crc -w $esscrapimgw
     chgrp -R $user "$rootdir/roms"
     chown -R $user "$rootdir/roms"
 }
