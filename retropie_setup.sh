@@ -1215,7 +1215,7 @@ function checkNeededPackages()
 
 function checkESScraperExists()
 {
-    if [[ ! -d $rootdir/ES-scraper ]]; then
+    if [[ ! -d $rootdir/supplementary/ES-scraper ]]; then
         # new download
         git clone git://github.com/elpendor/ES-scraper.git "$rootdir/supplementary/ES-scraper"
     else
