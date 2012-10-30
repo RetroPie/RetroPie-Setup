@@ -30,7 +30,7 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries_281012.tar.bz2"
+__BINARIESNAME="RetroPieSetupBinaries_301012.tar.bz2"
 __THEMESNAME="RetroPieSetupThemes_221012.tar.bz2"
 
 __ERRMSGS=""
@@ -118,14 +118,17 @@ function checkFileExistence()
     fi
 }
 
+# clones or updates the sources of a repository $2 into the directory $1
 function gitPullOrClone()
 {
-    mkdir -p "$1"
-    pushd "$1"
-    if [[ -d ".git" ]]; then
+    if [[ -d "$1/.git" ]]; then
+        pushd "$1"
         git pull
     else
-        git clone "$2" .
+        rm -rf "$1" # makes sure that the directory IS empty
+        mkdir -p "$1"
+        git clone "$2" "$1"
+        pushd "$1"
     fi
 }
 
@@ -269,6 +272,7 @@ function prepareFolders()
 function configureRetroArch()
 {
     printMsg "Configuring RetroArch in /etc/retroarch.cfg"
+    ensureKeyValue "system_directory" "$rootdir/emulatorcores/" "/etc/retroarch.cfg"
     ensureKeyValue "video_driver" "\"gl\"" "/etc/retroarch.cfg"
 }
 
@@ -276,7 +280,7 @@ function configureRetroArch()
 function install_retroarch()
 {
     printMsg "Installing RetroArch emulator"
-    gitPullOrClone "$rootdir/emulators/RetroArch-Rpi" git://github.com/Themaister/RetroArch.git
+    gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/Themaister/RetroArch.git
     ./configure --disable-libpng
     make
     sudo make install
@@ -284,7 +288,6 @@ function install_retroarch()
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
     fi  
     popd
-    configureRetroArch
 }
 
 # install Amiga emulator
@@ -425,14 +428,18 @@ function install_neogeo()
     make
     make install
 
+    # configure
     mkdir ~/.gngeo
     cp sample_gngeorc ~/.gngeo/gngeorc
+    # TODO gngeorc has to be adapted
     
-    if [[ ! -f /usr/local/bin/arm-linux-gngeo ]]; then
+    if [[ ! -f "$rootdir/emulators/gngeo-0.7/src/gngeo" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NeoGeo emulator."
     fi          
     popd
     rm gngeo-0.7.tar.gz
+
+    chmod 777 /dev/fb0
 
     mkdir "$rootdir/emulators/gngeo-0.7/neogeo-bios"
     __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
@@ -478,7 +485,7 @@ function install_mednafen_pce()
 # install Playstation emulator core
 function install_psx()
 {
-    printMsg "Installing PSX core"
+    printMsg "Installing PCSX core"
     gitPullOrClone "$rootdir/emulatorcores/pcsx_rearmed" git://github.com/libretro/pcsx_rearmed.git
     ./configure --platform=libretro
     make
@@ -807,6 +814,12 @@ PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .md .MD
 COMMAND=$rootdir/emulators/dgen-sdl-1.30/dgen -g 0 -f %ROM%
 PLATFORMID=36
+
+NAME=NeoGeo
+PATH=$rootdir/roms/neogeo
+EXTENSION=.zip .ZIP
+COMMAND=$rootdir/emulators/gngeo-0.7/src/gngeo -i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-0.7/neogeo-bios %ROM%
+PLATFORMID=24
 
 NAME=Nintendo Entertainment System
 PATH=$rootdir/roms/nes
@@ -1359,10 +1372,10 @@ function main_binaries()
     downloadBinaries
     install_esscript
     generate_esconfig
-    install -m755 $rootdir/RetroArch-Rpi/retroarch /usr/local/bin 
-    install -m644 $rootdir/RetroArch-Rpi/retroarch.cfg /etc/retroarch.cfg
-    install -m755 $rootdir/RetroArch-Rpi/retroarch-zip /usr/local/bin
-    sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
+    install -m755 $rootdir/emulators/RetroArch/retroarch /usr/local/bin
+    install -m644 $rootdir/emulators/RetroArch/retroarch.cfg /etc/retroarch.cfg
+    install -m755 $rootdir/emulators/RetroArch/retroarch-zip /usr/local/bin
+    configureRetroArch
     install_esthemes
     configureSoundsettings
 
@@ -1371,8 +1384,8 @@ function main_binaries()
 
     createDebugLog
 
-    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulatorcores/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulatorcores/uae4all/."
-    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulatorcores/gngeo-0.7/neogeo-bios/'."
+    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
+    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
 
     if [[ ! -z $__INFMSGS ]]; then
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
@@ -1430,7 +1443,7 @@ function main_options()
              17 "Install MAME core" ON \
              18 "Install Mega Drive/Mastersystem/Game Gear (RetroArch) core" ON \
              19 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
-             20 "Install NeoGeo emulator (experimental)" OFF \
+             20 "Install NeoGeo emulator" ON \
              21 "Install NES core" ON \
              22 "Install PC Engine core" ON \
              23 "Install Playstation core" ON \
