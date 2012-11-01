@@ -150,6 +150,8 @@ function install_rpiupdate()
 {
     # install latest rpi-update script (to enable firmware update)
     printMsg "Installing latest rpi-update script"
+    # make sure that certificates are installed
+    apt-get install -y ca-certificates
     sudo wget http://goo.gl/1BOfJ -O /usr/bin/rpi-update && sudo chmod +x /usr/bin/rpi-update
     # ask "Do you want to perform a firmware upgrade now?\nThis might take some minutes." && sudo rpi-update    
 }
