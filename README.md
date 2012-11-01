@@ -6,7 +6,7 @@ General Usage
 
 Shell script to setup Raspberry Pi (TM) with several emulators, various cores, and EmulationStation as graphical front end.
 
-This script is tested with the Raspbian distribution. Before using the script, please **make sure that you have run the raspi-config script to extend your root file system and that your memory split is set to 192 or 128**. You can run the script with
+This script is tested with the Raspbian distribution, but users have reported that it also works with RaspBMC. Before using the script, please **make sure that you have run the raspi-config script to extend your root file system and that your memory split is set to 192 or 128**. You can run the script with
 
 ```shell
 sudo raspi-config
