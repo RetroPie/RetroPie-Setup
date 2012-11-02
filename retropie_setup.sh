@@ -30,7 +30,7 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries_301012.tar.bz2"
+__BINARIESNAME="RetroPieSetupBinaries_021112.tar.bz2"
 __THEMESNAME="RetroPieSetupThemes_311012.tar.bz2"
 
 __ERRMSGS=""
@@ -338,8 +338,11 @@ function install_dgen()
     wget http://downloads.sourceforge.net/project/dgen/dgen/1.30/dgen-sdl-1.30.tar.gz
     tar xvfz dgen-sdl-1.30.tar.gz -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/dgen-sdl-1.30"
-    ./configure
+    mkdir "installdir" # only used for creating the binaries archive
+    ./configure --disable-hqx --disable-opengl
     make
+    make install DESTDIR=$rootdir/emulators/dgen-sdl-1.30/installdir
+    make install
     mkdir $home/.dgen/
     cp sample.dgenrc $home/.dgen/dgenrc
     if [[ ! -f "$rootdir/emulators/dgen-sdl-1.30/dgen" ]]; then
@@ -420,6 +423,7 @@ function install_neogeo()
     make
     make install
     popd
+    rm zlib-1.2.7.tar.gz 
 
     # GnGeo
     wget http://gngeo.googlecode.com/files/gngeo-0.7.tar.gz
@@ -813,7 +817,7 @@ PLATFORMID=35
 NAME=Sega Mega Drive / Genesis
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .md .MD
-COMMAND=$rootdir/emulators/dgen-sdl-1.30/dgen -g 0 -f %ROM%
+COMMAND=dgen -f %ROM%
 PLATFORMID=36
 
 NAME=NeoGeo
@@ -1354,6 +1358,7 @@ function createDebugLog()
 
 }
 
+# download, extract, and install binaries
 function main_binaries()
 {
     __INFMSGS=""
@@ -1373,12 +1378,20 @@ function main_binaries()
     downloadBinaries
     install_esscript
     generate_esconfig
+    # install RetroArch
     install -m755 $rootdir/emulators/RetroArch/retroarch /usr/local/bin
     install -m644 $rootdir/emulators/RetroArch/retroarch.cfg /etc/retroarch.cfg
     install -m755 $rootdir/emulators/RetroArch/retroarch-zip /usr/local/bin
     configureRetroArch
     install_esthemes
     configureSoundsettings
+    # install DGEN
+    test -z "/usr/local/bin" || /bin/mkdir -p "/usr/local/bin"
+    /usr/bin/install -c $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/bin/dgen $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/bin/dgen_tobin '/usr/local/bin'
+    test -z "/usr/local/share/man/man1" || /bin/mkdir -p "/usr/local/share/man/man1"
+    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man1/dgen.1 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man1/dgen_tobin.1 '/usr/local/share/man/man1'
+    test -z "/usr/local/share/man/man5" || /bin/mkdir -p "/usr/local/share/man/man5"
+    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir

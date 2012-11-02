@@ -21,7 +21,12 @@ filelist[17]="./RetroPie/emulatorcores/pcsx_rearmed/libretro.so"
 filelist[18]="./RetroPie/emulatorcores/mednafen-pce-libretro/libretro.so"
 filelist[19]="./RetroPie/emulators/dgen-sdl-1.30/dgen"
 filelist[20]="./RetroPie/emulators/dgen-sdl-1.30/sample.dgenrc"
-filelist[21]="./RetroPie/emulators/Wolf4SDL-1.7-src/wolf3d"
+filelist[21]="./RetroPie/emulators/dgen-sdl-1.30/installdir/usr/local/bin/dgen_tobin"
+filelist[22]="./RetroPie/emulators/dgen-sdl-1.30/installdir/usr/local/bin/dgen"
+filelist[23]="./RetroPie/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man1/dgen_tobin.1"
+filelist[24]="./RetroPie/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man1/dgen.1"
+filelist[25]="./RetroPie/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man5/dgenrc.5"
+filelist[26]="./RetroPie/emulators/Wolf4SDL-1.7-src/wolf3d"
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 
