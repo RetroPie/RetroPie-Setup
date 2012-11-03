@@ -27,6 +27,7 @@ filelist[23]="./RetroPie/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/
 filelist[24]="./RetroPie/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man1/dgen.1"
 filelist[25]="./RetroPie/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man5/dgenrc.5"
 filelist[26]="./RetroPie/emulators/Wolf4SDL-1.7-src/wolf3d"
+filelist[27]="./RetroPie/supplementary/SNESDev-Rpi/scripts/SNESDev"
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 

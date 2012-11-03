@@ -63,26 +63,26 @@ function addLineToFile()
 # make sure that a key-value pair is set in file
 function ensureKeyValue()
 {
-    if [[ -z $(egrep -i "#? *$1 = ?""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+    if [[ -z $(egrep -i "#? *$1\s*=\s*""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
         # add key-value pair
-        echo "$1 = ""$2""" >> $3
+        echo "$1=""$2""" >> $3
     else
         # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1 = ?""?[+|-]?[0-9]*[a-z]*"""? $3`
-        sed $3 -i -e "s|$toreplace|$1 = ""$2""|g"
+        toreplace=`egrep -i "#? *$1\s*=\s*""?[+|-]?[0-9]*[a-z]*"""? $3`
+        sed $3 -i -e "s|$toreplace|$1=""$2""|g"
     fi     
 }
 
 # make sure that a key-value pair is NOT set in file
 function disableKeyValue()
 {
-    if [[ -z $(egrep -i "#? *$1 = ?""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+    if [[ -z $(egrep -i "#? *$1\s*=\s*""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
         # add key-value pair
         echo "# $1 = ""$2""" >> $3
     else
         # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1 = ?""?[+|-]?[0-9]*[a-z]*"""? $3`
-        sed $3 -i -e "s|$toreplace|# $1 = ""$2""|g"
+        toreplace=`egrep -i "#? *$1\s*=\s*""?[+|-]?[0-9]*[a-z]*"""? $3`
+        sed $3 -i -e "s|$toreplace|# $1=""$2""|g"
     fi     
 }
 
@@ -229,7 +229,10 @@ function exportSDLNOMOUSE()
 function installAPTPackages()
 {
     printMsg "Making sure that all needed packaged are installed"
-    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev libboost-filesystem-dev libboost-system-dev zip python-imaging libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev
+    apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev \
+                        libboost-filesystem-dev libboost-system-dev zip python-imaging \
+                        libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
+                        libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev
 }
 
 # prepare folder structure for emulator, cores, front end, and roms
@@ -617,7 +620,11 @@ function install_snesdev()
     make
     if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
-    fi      
+    else
+        chmod +x ./scripts/SNESDev
+        cp ./bin/SNESDev /usr/local/bin/
+        cp ./scripts/SNESDev /etc/init.d/       
+    fi    
     popd
 }
 
@@ -627,10 +634,28 @@ function enableSNESDevAtStart()
     clear
     printMsg "Enabling SNESDev on boot."
 
-    if [ -z $(egrep -i "^7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev [123]" /etc/inittab) ]
-    then
-       echo "7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev $1" >> /etc/inittab
-    fi
+    # if [ -z $(egrep -i "^7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev [123]" /etc/inittab) ]
+    # then
+    #    echo "7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev $1" >> /etc/inittab
+    # fi
+
+    if [[ ! -f "/etc/init.d/SNESDev" ]]; then
+        if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Cannot find SNESDev binary. Please install SNESDev." 22 76    
+            return
+        else
+            chmod +x "$rootdir/supplementary/SNESDev-Rpi/scripts/SNESDev"
+            cp "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" /usr/local/bin/
+            cp "$rootdir/supplementary/SNESDev-Rpi/scripts/SNESDev" /etc/init.d/
+        fi
+    fi    
+
+    ensureKeyValue "DAEMON_ARGS" "\"$1\"" "/etc/init.d/SNESDev"
+
+    # This command installs the init.d script so it automatically starts on boot
+    update-rc.d SNESDev defaults
+    # This command starts the daemon now so no need for a reboot
+    service SNESDev start     
 
     if [[ ($1 -eq 1) || ($1 -eq 3) ]]; then
         ensureKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
@@ -667,7 +692,13 @@ function disableSNESDevAtStart()
     clear
     printMsg "Disabling SNESDev on boot."
 
-    sed /etc/inittab -i -e "s|7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev [123]||g"
+    # sed /etc/inittab -i -e "s|7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev [123]||g"
+
+    # This command stops the daemon now so no need for a reboot
+    service SNESDev stop
+
+    # This command installs the init.d script so it automatically starts on boot
+    update-rc.d SNESDev remove
 
     disableKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
     disableKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
