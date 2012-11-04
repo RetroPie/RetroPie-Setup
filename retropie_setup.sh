@@ -619,11 +619,7 @@ function install_snesdev()
     make clean
     make
     if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
-    else
-        chmod +x ./scripts/SNESDev
-        cp ./bin/SNESDev /usr/local/bin/
-        cp ./scripts/SNESDev /etc/init.d/       
+        __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."  
     fi    
     popd
 }
