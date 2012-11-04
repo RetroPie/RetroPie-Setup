@@ -264,6 +264,9 @@ function installAPTPackages()
                         libboost-filesystem-dev libboost-system-dev zip python-imaging \
                         libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
                         libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev
+
+    # remove PulseAudio since this is slowing down the whole system significantly
+    apt-get remove -y pulseaudio
 }
 
 # prepare folder structure for emulator, cores, front end, and roms
