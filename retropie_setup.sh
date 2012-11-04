@@ -61,27 +61,58 @@ function addLineToFile()
 
 # arg 1: key, arg 2: value, arg 3: file
 # make sure that a key-value pair is set in file
+# key = value
 function ensureKeyValue()
 {
-    if [[ -z $(egrep -i "#? *$1\s*=\s*""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+    if [[ -z $(egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+        # add key-value pair
+        echo "$1 = ""$2""" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3`
+        sed $3 -i -e "s|$toreplace|$1 = ""$2""|g"
+    fi     
+}
+
+# make sure that a key-value pair is NOT set in file
+# # key = value
+function disableKeyValue()
+{
+    if [[ -z $(egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+        # add key-value pair
+        echo "# $1 = ""$2""" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3`
+        sed $3 -i -e "s|$toreplace|# $1 = ""$2""|g"
+    fi     
+}
+
+# arg 1: key, arg 2: value, arg 3: file
+# make sure that a key-value pair is set in file
+# key=value
+function ensureKeyValueShort()
+{
+    if [[ -z $(egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
         # add key-value pair
         echo "$1=""$2""" >> $3
     else
         # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1\s*=\s*""?[+|-]?[0-9]*[a-z]*"""? $3`
+        toreplace=`egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3`
         sed $3 -i -e "s|$toreplace|$1=""$2""|g"
     fi     
 }
 
 # make sure that a key-value pair is NOT set in file
-function disableKeyValue()
+# # key=value
+function disableKeyValueShort()
 {
-    if [[ -z $(egrep -i "#? *$1\s*=\s*""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+    if [[ -z $(egrep -i "#? *$1=""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
         # add key-value pair
-        echo "# $1 = ""$2""" >> $3
+        echo "# $1=""$2""" >> $3
     else
         # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1\s*=\s*""?[+|-]?[0-9]*[a-z]*"""? $3`
+        toreplace=`egrep -i "#? *$1=""?[+|-]?[0-9]*[a-z]*"""? $3`
         sed $3 -i -e "s|$toreplace|# $1=""$2""|g"
     fi     
 }
@@ -630,11 +661,6 @@ function enableSNESDevAtStart()
     clear
     printMsg "Enabling SNESDev on boot."
 
-    # if [ -z $(egrep -i "^7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev [123]" /etc/inittab) ]
-    # then
-    #    echo "7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev $1" >> /etc/inittab
-    # fi
-
     if [[ ! -f "/etc/init.d/SNESDev" ]]; then
         if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
             dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Cannot find SNESDev binary. Please install SNESDev." 22 76    
@@ -646,7 +672,7 @@ function enableSNESDevAtStart()
         fi
     fi    
 
-    ensureKeyValue "DAEMON_ARGS" "\"$1\"" "/etc/init.d/SNESDev"
+    ensureKeyValueShort "DAEMON_ARGS" "\"$1\"" "/etc/init.d/SNESDev"
 
     # This command installs the init.d script so it automatically starts on boot
     update-rc.d SNESDev defaults
@@ -687,8 +713,6 @@ function disableSNESDevAtStart()
 {
     clear
     printMsg "Disabling SNESDev on boot."
-
-    # sed /etc/inittab -i -e "s|7:2345:once:$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev [123]||g"
 
     # This command stops the daemon now so no need for a reboot
     service SNESDev stop
@@ -1021,8 +1045,8 @@ function configureSoundsettings()
 {
     printMsg "Enabling SDL audio driver for RetroArch in /etc/retroarch.cfg"    
     # RetroArch settings
-    ensureKeyValue "audio\_driver" "sdl" "/etc/retroarch.cfg"
-    ensureKeyValue "audio\_out\_rate" "44100" "/etc/retroarch.cfg"
+    ensureKeyValue "audio_driver" "sdl" "/etc/retroarch.cfg"
+    ensureKeyValue "audio_out_rate" "44100" "/etc/retroarch.cfg"
 }
 
 # shows help information in the console
