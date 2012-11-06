@@ -25,7 +25,7 @@
 #  should be forwarded to them so everyone can benefit from the modifications
 #  in future versions.
 # 
-# Many, many thanks go to all people that provide the individual packages!!!
+#  Many, many thanks go to all people that provide the individual packages!!!
 # 
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
@@ -263,7 +263,8 @@ function installAPTPackages()
     apt-get install -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev \
                         libboost-filesystem-dev libboost-system-dev zip python-imaging \
                         libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
-                        libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev
+                        libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev \
+                        joystick
 
     # remove PulseAudio since this is slowing down the whole system significantly
     apt-get remove -y pulseaudio
@@ -365,6 +366,25 @@ function install_atari2600()
     popd    
 }
 
+# configure DGEN
+function configureDGEN()
+{
+    mkdir /home/$user/.dgen/
+    chown -R $user /home/$user/.dgen/
+    chgrp -R $user /home/$user/.dgen/
+    cp sample.dgenrc /home/$user/.dgen/dgenrc 
+    ensureKeyValue "joypad1_b0" "A" /home/$user/.dgen/dgenrc
+    ensureKeyValue "joypad1_b1" "B" /home/$user/.dgen/dgenrc
+    ensureKeyValue "joypad1_b3" "C" /home/$user/.dgen/dgenrc
+    ensureKeyValue "joypad1_b6" "MODE" /home/$user/.dgen/dgenrc
+    ensureKeyValue "joypad1_b7" "START" /home/$user/.dgen/dgenrc
+    ensureKeyValue "joypad2_b0" "A" /home/$user/.dgen/dgenrc
+    ensureKeyValue "joypad2_b1" "B" /home/$user/.dgen/dgenrc
+    ensureKeyValue "joypad2_b3" "C" /home/$user/.dgen/dgenrc
+    ensureKeyValue "joypad2_b6" "MODE" /home/$user/.dgen/dgenrc
+    ensureKeyValue "joypad2_b7" "START" /home/$user/.dgen/dgenrc    
+}
+
 # install DGEN (Megadrive/Genesis emulator)
 function install_dgen()
 {
@@ -380,13 +400,14 @@ function install_dgen()
     make
     make install DESTDIR=$rootdir/emulators/dgen-sdl-1.30/installdir
     make install
-    mkdir $home/.dgen/
-    cp sample.dgenrc $home/.dgen/dgenrc
     if [[ ! -f "$rootdir/emulators/dgen-sdl-1.30/dgen" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile DGEN emulator."
     fi  
     popd
     rm dgen-sdl-1.30.tar.gz
+
+    configureDGEN
+
 }
 
 # install Doom WADs emulator core
@@ -471,10 +492,14 @@ function install_neogeo()
     make install
 
     # configure
-    mkdir ~/.gngeo
-    cp sample_gngeorc ~/.gngeo/gngeorc
-    # TODO gngeorc has to be adapted
-    
+    mkdir /home/$user/.gngeo/
+    cp sample_gngeorc /home/$user/.gngeo/gngeorc
+    chown -R $user /home/$user/.gngeo/
+    chgrp -R $user /home/$user/.gngeo/
+
+    sed -i -e "s/effect none/effect scale2x/g" /home/$user/.gngeo/gngeorc
+    sed -i -e "s/fullscreen false/fullscreen true/g" /home/$user/.gngeo/gngeorc
+
     if [[ ! -f "$rootdir/emulators/gngeo-0.7/src/gngeo" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NeoGeo emulator."
     fi          
@@ -1454,6 +1479,7 @@ function main_binaries()
     /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man1/dgen.1 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man1/dgen_tobin.1 '/usr/local/share/man/man1'
     test -z "/usr/local/share/man/man5" || /bin/mkdir -p "/usr/local/share/man/man5"
     /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
+    configureDGEN
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
