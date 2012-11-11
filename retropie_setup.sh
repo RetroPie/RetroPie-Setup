@@ -313,6 +313,11 @@ function configureRetroArch()
     printMsg "Configuring RetroArch in /etc/retroarch.cfg"
     ensureKeyValue "system_directory" "$rootdir/emulatorcores/" "/etc/retroarch.cfg"
     ensureKeyValue "video_driver" "\"gl\"" "/etc/retroarch.cfg"
+
+    # enable and configure rewind feature
+    ensureKeyValue "rewind_enable" "true" "/etc/retroarch.cfg"
+    ensureKeyValue "rewind_buffer_size" "10" "/etc/retroarch.cfg"
+    ensureKeyValue "rewind_granularity" "2" "/etc/retroarch.cfg"
 }
 
 # install RetroArch emulator
