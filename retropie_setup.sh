@@ -1521,7 +1521,7 @@ function scraperMenu()
                 1) essc_runnormal ;;
                 2) essc_runforced ;;
                 3) essc_runcrc ;;
-                3) essc_runmanual ;;
+                4) essc_runmanual ;;
                 5) essc_setimgw ;;
             esac
         else
