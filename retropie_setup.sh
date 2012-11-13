@@ -1313,6 +1313,8 @@ function checkESScraperExists()
         git pull
         popd
     fi
+    chgrp -R $user "$rootdir/supplementary/ES-scraper"
+    chown -R $user "$rootdir/supplementary/ES-scraper"
 }
 
 function essc_runnormal()
