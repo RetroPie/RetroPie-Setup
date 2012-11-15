@@ -374,6 +374,8 @@ function install_atari2600()
 # configure DGEN
 function configureDGEN()
 {
+    chmod 777 /dev/fb0
+
     mkdir /home/$user/.dgen/
     chown -R $user /home/$user/.dgen/
     chgrp -R $user /home/$user/.dgen/
