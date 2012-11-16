@@ -1026,6 +1026,8 @@ function install_esthemes()
     rm -rf /tmp/RetroPie/
     rm -rf /tmp/.emulationstation/
     rm $__THEMESNAME
+    chgrp -R $user .emulationstation
+    chown -R $user .emulationstation
 }
 
 # sets the ARM frequency of the Raspberry to a specific value
