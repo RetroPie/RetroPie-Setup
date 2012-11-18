@@ -1,58 +1,110 @@
 #!/bin/bash
 
-# theme.xml files
-filelist[0]="./RetroPie/roms/neogeo/theme.xml"
-filelist[1]="./RetroPie/roms/mame/theme.xml"
-filelist[2]="./RetroPie/roms/snes/theme.xml"
-filelist[3]="./RetroPie/roms/psx/theme.xml"
-filelist[4]="./RetroPie/roms/megadrive/theme.xml"
-filelist[5]="./RetroPie/roms/gba/theme.xml"
-filelist[6]="./RetroPie/roms/gb/theme.xml"
-filelist[7]="./RetroPie/roms/gbc/theme.xml"
-filelist[8]="./RetroPie/roms/nes/theme.xml"
-filelist[9]="./RetroPie/roms/ngpc/theme.xml"
-filelist[10]="./RetroPie/roms/mastersystem/theme.xml"
-filelist[11]="./RetroPie/roms/gamegear/theme.xml"
+filelist=()
 
-# art files
-filelist[12]="./.emulationstation/themes/snes_art/snes_bg.png"
-filelist[13]="./.emulationstation/themes/snes_art/snes_logo.png"
-filelist[14]="./.emulationstation/themes/snes_art/snes_bg_grey.jpg"
-filelist[15]="./.emulationstation/themes/mastersystem_art/mastersystem_logo.png"
-filelist[16]="./.emulationstation/themes/mastersystem_art/mastersystem_bg.png"
-filelist[17]="./.emulationstation/themes/megadrive_art/divider.png"
-filelist[18]="./.emulationstation/themes/megadrive_art/megadrive_bg_dark_stripes.png"
-filelist[19]="./.emulationstation/themes/megadrive_art/megadrive_logo.png"
-filelist[20]="./.emulationstation/themes/megadrive_art/megadrive_top_bg.png"
-filelist[21]="./.emulationstation/themes/megadrive_art/megadrive_bg_red_stripes.png"
-filelist[22]="./.emulationstation/themes/neogeo_art/neogeo_bg.jpg"
-filelist[23]="./.emulationstation/themes/neogeo_art/neogeo_logo.png"
-filelist[24]="./.emulationstation/themes/neogeo_art/neogeo_divider.png"
-filelist[25]="./.emulationstation/themes/gbc_art/gbc_bg.jpg"
-filelist[26]="./.emulationstation/themes/gbc_art/plastic_glare.png"
-filelist[27]="./.emulationstation/themes/gbc_art/gbc_logo.png"
-filelist[28]="./.emulationstation/themes/gamegear_art/divider.png"
-filelist[29]="./.emulationstation/themes/gamegear_art/sgg_bg_pink_stripes.png"
-filelist[30]="./.emulationstation/themes/gamegear_art/sgg_logo.png"
-filelist[31]="./.emulationstation/themes/gamegear_art/sgg_bg_dark_stripes.png"
-filelist[32]="./.emulationstation/themes/mame_art/mame_bg_black.jpg"
-filelist[33]="./.emulationstation/themes/mame_art/mame_logo.jpg"
-filelist[34]="./.emulationstation/themes/mame_art/mame_bg.jpg"
-filelist[35]="./.emulationstation/themes/nes_art/nes_bg_grey.jpg"
-filelist[36]="./.emulationstation/themes/nes_art/nes_logo.png"
-filelist[37]="./.emulationstation/themes/nes_art/nes_bg_stripes.png"
-filelist[38]="./.emulationstation/themes/gba_art/gba_bg_stripes.png"
-filelist[39]="./.emulationstation/themes/gba_art/shadow.png"
-filelist[40]="./.emulationstation/themes/gba_art/gba_logo.png"
-filelist[41]="./.emulationstation/themes/gba_art/gba_bg_left.jpg"
-filelist[42]="./.emulationstation/themes/psx_art/psx_logo.png"
-filelist[43]="./.emulationstation/themes/psx_art/psx_divider.png"
-filelist[44]="./.emulationstation/themes/psx_art/psx_bg.jpg"
-filelist[45]="./.emulationstation/themes/gb_art/gb_divider.png"
-filelist[45]="./.emulationstation/themes/gb_art/gb_logo.png"
-filelist[46]="./.emulationstation/themes/gb_art/gb_bg.png"
-filelist[47]="./.emulationstation/themes/ngpc_art/ngpc_logo.png"
-filelist[48]="./.emulationstation/themes/ngpc_art/ngpc_bg.jpg"
+# theme.xml files, show with find ./RetroPie/roms -type f -name "*.xml" ! -name "gamelist.xml"
+filelist+=("./RetroPie/roms/neogeo/theme.xml")
+filelist+=("./RetroPie/roms/gamegear/theme.xml")
+filelist+=("./RetroPie/roms/psx/theme.xml")
+filelist+=("./RetroPie/roms/mastersystem/theme.xml")
+filelist+=("./RetroPie/roms/ngpc/theme.xml")
+filelist+=("./RetroPie/roms/atari2600/theme.xml")
+filelist+=("./RetroPie/roms/gba/theme.xml")
+filelist+=("./RetroPie/roms/pcengine/theme.xml")
+filelist+=("./RetroPie/roms/amiga/theme.xml")
+filelist+=("./RetroPie/roms/snes/theme.xml")
+filelist+=("./RetroPie/roms/gbc/theme.xml")
+filelist+=("./RetroPie/roms/megadrive/theme.xml")
+filelist+=("./RetroPie/roms/nes/theme.xml")
+filelist+=("./RetroPie/roms/gb/theme.xml")
+filelist+=("./RetroPie/roms/doom/theme.xml")
+filelist+=("./RetroPie/roms/mame/theme.xml")
+filelist+=("./RetroPie/roms/scummvm/theme.xml")
+filelist+=("./RetroPie/roms/zxspectrum/theme.xml")
+
+
+# art and sound files, show with find ./.emulationstation/themes -type f -name "*.jpg" -o -name "*.png" -o -name "*.wav"
+filelist+=("./.emulationstation/themes/general_art/darkgrey.png")
+filelist+=("./.emulationstation/themes/general_art/RetroPieProjectLogoSmallGrey.png")
+filelist+=("./.emulationstation/themes/general_art/grey.png")
+filelist+=("./.emulationstation/themes/general_art/blue.png")
+filelist+=("./.emulationstation/themes/general_art/lightred.png")
+filelist+=("./.emulationstation/themes/general_art/green.png")
+filelist+=("./.emulationstation/themes/general_art/blue2.png")
+filelist+=("./.emulationstation/themes/general_art/blue3.png")
+filelist+=("./.emulationstation/themes/general_art/orange.png")
+filelist+=("./.emulationstation/themes/atari2600_art/GS25.wav")
+filelist+=("./.emulationstation/themes/atari2600_art/RetroPieProjectLogoSmallGrey.png")
+filelist+=("./.emulationstation/themes/atari2600_art/atari_logo.png")
+filelist+=("./.emulationstation/themes/atari2600_art/atari_blue.png")
+filelist+=("./.emulationstation/themes/atari2600_art/atari_grey.png")
+filelist+=("./.emulationstation/themes/atari2600_art/GS42.wav")
+filelist+=("./.emulationstation/themes/atari2600_art/atari_case.png")
+filelist+=("./.emulationstation/themes/atari2600_art/GS28.wav")
+filelist+=("./.emulationstation/themes/atari2600_art/SNES5.wav")
+filelist+=("./.emulationstation/themes/atari2600_art/atari_divider.png")
+filelist+=("./.emulationstation/themes/scummvm_art/scummvm_logo.png")
+filelist+=("./.emulationstation/themes/scummvm_art/scummvm_art2.png")
+filelist+=("./.emulationstation/themes/scummvm_art/scummvm_art1.png")
+filelist+=("./.emulationstation/themes/sounds/GS25.wav")
+filelist+=("./.emulationstation/themes/sounds/GS42.wav")
+filelist+=("./.emulationstation/themes/sounds/GS28.wav")
+filelist+=("./.emulationstation/themes/sounds/SNES5.wav")
+filelist+=("./.emulationstation/themes/psx_art/psx_logo.png")
+filelist+=("./.emulationstation/themes/psx_art/psx_bg.jpg")
+filelist+=("./.emulationstation/themes/psx_art/psx_divider.png")
+filelist+=("./.emulationstation/themes/pcengine_art/pcengine_art1.png")
+filelist+=("./.emulationstation/themes/pcengine_art/pcengine_case.png")
+filelist+=("./.emulationstation/themes/pcengine_art/pcengine_logo.png")
+filelist+=("./.emulationstation/themes/intellivision_art/intellivision_art1.png")
+filelist+=("./.emulationstation/themes/intellivision_art/intellivision_case.png")
+filelist+=("./.emulationstation/themes/intellivision_art/intellivision_logo.png")
+filelist+=("./.emulationstation/themes/snes_art/snes_logo.png")
+filelist+=("./.emulationstation/themes/snes_art/snes_bg.png")
+filelist+=("./.emulationstation/themes/snes_art/snes_bg_grey.jpg")
+filelist+=("./.emulationstation/themes/mame_art/mame_logo.jpg")
+filelist+=("./.emulationstation/themes/mame_art/mame_bg.jpg")
+filelist+=("./.emulationstation/themes/mame_art/mame_bg_black.jpg")
+filelist+=("./.emulationstation/themes/zxspectrum_art/zxspectrum_art1.png")
+filelist+=("./.emulationstation/themes/zxspectrum_art/zxspectrum_logo.png")
+filelist+=("./.emulationstation/themes/zxspectrum_art/zxspectrum_case.png")
+filelist+=("./.emulationstation/themes/dos_art/dos_logo.png")
+filelist+=("./.emulationstation/themes/dos_art/dos_art1.png")
+filelist+=("./.emulationstation/themes/dos_art/dos_art2.png")
+filelist+=("./.emulationstation/themes/nes_art/nes_logo.png")
+filelist+=("./.emulationstation/themes/nes_art/nes_bg_grey.jpg")
+filelist+=("./.emulationstation/themes/nes_art/nes_bg_stripes.png")
+filelist+=("./.emulationstation/themes/gbc_art/gbc_logo.png")
+filelist+=("./.emulationstation/themes/gbc_art/plastic_glare.png")
+filelist+=("./.emulationstation/themes/gbc_art/gbc_bg.jpg")
+filelist+=("./.emulationstation/themes/gba_art/gba_logo.png")
+filelist+=("./.emulationstation/themes/gba_art/shadow.png")
+filelist+=("./.emulationstation/themes/gba_art/gba_bg_left.jpg")
+filelist+=("./.emulationstation/themes/gba_art/gba_bg_stripes.png")
+filelist+=("./.emulationstation/themes/doom_art/doom_art.png")
+filelist+=("./.emulationstation/themes/doom_art/doom_logo.png")
+filelist+=("./.emulationstation/themes/ngpc_art/ngpc_logo.png")
+filelist+=("./.emulationstation/themes/ngpc_art/ngpc_bg.jpg")
+filelist+=("./.emulationstation/themes/gb_art/gb_bg.png")
+filelist+=("./.emulationstation/themes/gb_art/gb_logo.png")
+filelist+=("./.emulationstation/themes/neogeo_art/neogeo_divider.png")
+filelist+=("./.emulationstation/themes/neogeo_art/neogeo_logo.png")
+filelist+=("./.emulationstation/themes/neogeo_art/neogeo_bg.jpg")
+filelist+=("./.emulationstation/themes/mastersystem_art/mastersystem_bg.png")
+filelist+=("./.emulationstation/themes/mastersystem_art/mastersystem_logo.png")
+filelist+=("./.emulationstation/themes/gamegear_art/sgg_logo.png")
+filelist+=("./.emulationstation/themes/gamegear_art/sgg_bg_pink_stripes.png")
+filelist+=("./.emulationstation/themes/gamegear_art/divider.png")
+filelist+=("./.emulationstation/themes/gamegear_art/sgg_bg_dark_stripes.png")
+filelist+=("./.emulationstation/themes/amiga_art/amiga_case.png")
+filelist+=("./.emulationstation/themes/amiga_art/amiga_art1.png")
+filelist+=("./.emulationstation/themes/amiga_art/amiga_logo.png")
+filelist+=("./.emulationstation/themes/amiga_art/amiga_art2.png")
+filelist+=("./.emulationstation/themes/megadrive_art/megadrive_bg_dark_stripes.png")
+filelist+=("./.emulationstation/themes/megadrive_art/megadrive_bg_red_stripes.png")
+filelist+=("./.emulationstation/themes/megadrive_art/megadrive_top_bg.png")
+filelist+=("./.emulationstation/themes/megadrive_art/divider.png")
+filelist+=("./.emulationstation/themes/megadrive_art/megadrive_logo.png")
 
 tar -c -vf RetroPieSetupThemes_`date +%d%m%y`.tar ${filelist[0]}
 
@@ -62,6 +114,9 @@ do
 	tar -r -vf RetroPieSetupThemes_`date +%d%m%y`.tar ${filelist[$i]}
 done
 
+if [[ -f RetroPieSetupThemes_`date +%d%m%y`.tar.bz2 ]]; then
+	rm RetroPieSetupThemes_`date +%d%m%y`.tar.bz2
+fi
 bzip2 RetroPieSetupThemes_`date +%d%m%y`.tar
 
 echo "Done."

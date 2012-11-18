@@ -31,7 +31,7 @@
 # 
 
 __BINARIESNAME="RetroPieSetupBinaries_061112.tar.bz2"
-__THEMESNAME="RetroPieSetupThemes_311012.tar.bz2"
+__THEMESNAME="RetroPieSetupThemes_181112.tar.bz2"
 
 __ERRMSGS=""
 __INFMSGS=""
@@ -893,6 +893,12 @@ PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
 COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%  
 PLATFORMID=23
+
+NAME=ScummVM
+PATH=$rootdir/roms/scummvm
+EXTENSION=.exe .EXE
+COMMAND=scummvm
+PLATFORMID=20
 
 NAME=Sega Master System II
 PATH=$rootdir/roms/mastersystem
