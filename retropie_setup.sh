@@ -183,7 +183,7 @@ function install_rpiupdate()
     printMsg "Installing latest rpi-update script"
     # make sure that certificates are installed
     apt-get install -y ca-certificates
-    sudo wget http://goo.gl/1BOfJ -O /usr/bin/rpi-update && sudo chmod +x /usr/bin/rpi-update
+    wget http://goo.gl/1BOfJ -O /usr/bin/rpi-update && chmod +x /usr/bin/rpi-update
 }
 
 function run_rpiupdate()
@@ -191,6 +191,8 @@ function run_rpiupdate()
     printMsg "Starting rpi-update script"
     /usr/bin/rpi-update
     __doReboot=1
+    chmod 777 /dev/fb0
+    ensureKeyValueShort "gpu_mem" "128" "/boot/config.txt"
 }
 
 # update APT repositories
@@ -203,6 +205,8 @@ function update_apt()
 function upgrade_apt()
 {
     apt-get -y upgrade
+    chmod 777 /dev/fb0
+    ensureKeyValueShort "gpu_mem" "128" "/boot/config.txt"
 }
 
 # add user $user to groups "video", "audio", and "input"
