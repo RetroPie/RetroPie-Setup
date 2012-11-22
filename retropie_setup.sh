@@ -435,6 +435,32 @@ function install_doom()
     popd
 }
 
+#install eDuke32
+function install_eduke32()
+{
+	  printMsg "Installing eDuke32"
+    if [[ -d "$rootdir/emulators/eduke32" ]]; then
+        rm -rf "$rootdir/emulators/eduke32"
+    fi
+    mkdir -p $rootdir/emulators/eduke32
+    cd "$rootdir/emulators/eduke32"
+    pushd "$rootdir/emulators/eduke32"
+		printMsg "Downloading eDuke core"
+		wget http://repo.berryboot.com/eduke32_2.0.0rpi+svn2789_armhf.deb		
+		printMsg "Downloading eDuke32 Shareware files"
+		wget http://apt.duke4.net/pool/main/d/duke3d-shareware/duke3d-shareware_1.3d-23_all.deb	
+		if [[ ! -f "$rootdir/emulators/eduke32/eduke32_2.0.0rpi+svn2789_armhf.deb" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile eDuke32 core."
+    fi
+		printMsg "Installing eDuke32"
+		sudo dpkg -i *duke*.deb
+		mkdir -p $rootdir/roms/eduke32/
+		cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/eduke32/
+		cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/eduke32/
+		popd
+		rm -rf "$rootdir/emulators/eduke32"
+}
+
 # install Game Boy Advance emulator core
 function install_gba()
 {
@@ -872,6 +898,12 @@ NAME=Doom
 PATH=$rootdir/roms/doom
 EXTENSION=.WAD .wad
 COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
+PLATFORMID=1
+
+NAME=eDuke32
+PATH=$rootdir/roms/eduke32
+EXTENSION=.grp .GRP
+COMMAND=eduke32 %ROM%
 PLATFORMID=1
 
 NAME=Game Boy Advance
@@ -1563,26 +1595,27 @@ function main_options()
              12 "Install Amiga emulator" ON \
              13 "Install Atari 2600 core" ON \
              14 "Install Doom core" ON \
-             15 "Install Game Boy Advance core" ON \
-             16 "Install Game Boy Color core" ON \
-             17 "Install MAME core" ON \
-             18 "Install Mega Drive/Mastersystem/Game Gear (RetroArch) core" ON \
-             19 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
-             20 "Install NeoGeo emulator" ON \
-             21 "Install NES core" ON \
-             22 "Install PC Engine core" ON \
-             23 "Install Playstation core" ON \
-             24 "Install ScummVM" ON \
-             25 "Install Super NES core" ON \
-             26 "Install Wolfenstein3D engine" ON \
-             27 "Install Z Machine emulator (Frotz)" ON \
-             28 "Install ZX Spectrum emulator (Fuse)" ON \
-             29 "Install BCM library" ON \
-             30 "Install SNESDev" ON \
-             31 "Install Emulation Station" ON \
-             32 "Install Emulation Station Themes" ON \
-             33 "Generate config file for Emulation Station" ON \
-             34 "Enable SDL sound driver for RetroArch" ON )
+             15 "Install eDuke32 core" ON \
+             16 "Install Game Boy Advance core" ON \
+             17 "Install Game Boy Color core" ON \
+             18 "Install MAME core" ON \
+             19 "Install Mega Drive/Mastersystem/Game Gear (RetroArch) core" ON \
+             20 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
+             21 "Install NeoGeo emulator" ON \
+             22 "Install NES core" ON \
+             23 "Install PC Engine core" ON \
+             24 "Install Playstation core" ON \
+             25 "Install ScummVM" ON \
+             26 "Install Super NES core" ON \
+             27 "Install Wolfenstein3D engine" ON \
+             28 "Install Z Machine emulator (Frotz)" ON \
+             29 "Install ZX Spectrum emulator (Fuse)" ON \
+             30 "Install BCM library" ON \
+             31 "Install SNESDev" ON \
+             32 "Install Emulation Station" ON \
+             33 "Install Emulation Station Themes" ON \
+             34 "Generate config file for Emulation Station" ON \
+             35 "Enable SDL sound driver for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1605,26 +1638,27 @@ function main_options()
                 12) install_amiga ;;
                 13) install_atari2600 ;;
                 14) install_doom ;;
-                15) install_gba ;;
-                16) install_gbc ;;
-                17) install_mame ;;
-                18) install_megadrive ;;
-                19) install_dgen ;;
-                20) install_neogeo ;;
-                21) install_nes ;;
-                22) install_mednafen_pce ;;
-                23) install_psx ;;
-                24) install_scummvm ;;
-                25) install_snes ;;
-                26) install_wolfenstein3d ;;
-                27) install_zmachine ;;
-                28) install_zxspectrum ;;
-                29) install_bcmlibrary ;;
-                30) install_snesdev ;;
-                31) install_emulationstation ;;
-                32) install_esthemes ;;
-                33) generate_esconfig ;;
-                34) configureSoundsettings ;;
+                15) install_eduke32 ;;
+                16) install_gba ;;
+                17) install_gbc ;;
+                18) install_mame ;;
+                19) install_megadrive ;;
+                20) install_dgen ;;
+                21) install_neogeo ;;
+                22) install_nes ;;
+                23) install_mednafen_pce ;;
+                24) install_psx ;;
+                25) install_scummvm ;;
+                26) install_snes ;;
+                27) install_wolfenstein3d ;;
+                28) install_zmachine ;;
+                29) install_zxspectrum ;;
+                30) install_bcmlibrary ;;
+                31) install_snesdev ;;
+                32) install_emulationstation ;;
+                33) install_esthemes ;;
+                34) generate_esconfig ;;
+                35) configureSoundsettings ;;
             esac
         done
 
