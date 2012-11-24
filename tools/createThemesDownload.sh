@@ -106,7 +106,7 @@ filelist+=("./.emulationstation/themes/megadrive_art/megadrive_bg_red_stripes.pn
 filelist+=("./.emulationstation/themes/megadrive_art/megadrive_top_bg.png")
 filelist+=("./.emulationstation/themes/megadrive_art/divider.png")
 filelist+=("./.emulationstation/themes/megadrive_art/megadrive_logo.png")
-filelist+=("./.emulationstation/themes/duke3d_artwork/duke3d_artwork1.png")
+filelist+=("./.emulationstation/themes/duke3d_art/duke3d_artwork1.png")
 
 tar -c -vf RetroPieSetupThemes_`date +%d%m%y`.tar ${filelist[0]}
 
