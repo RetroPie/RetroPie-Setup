@@ -18,6 +18,7 @@ filelist+=("./RetroPie/roms/megadrive/theme.xml")
 filelist+=("./RetroPie/roms/nes/theme.xml")
 filelist+=("./RetroPie/roms/gb/theme.xml")
 filelist+=("./RetroPie/roms/doom/theme.xml")
+filelist+=("./RetroPie/roms/eduke32/theme.xml")
 filelist+=("./RetroPie/roms/mame/theme.xml")
 filelist+=("./RetroPie/roms/scummvm/theme.xml")
 filelist+=("./RetroPie/roms/zxspectrum/theme.xml")
@@ -105,6 +106,7 @@ filelist+=("./.emulationstation/themes/megadrive_art/megadrive_bg_red_stripes.pn
 filelist+=("./.emulationstation/themes/megadrive_art/megadrive_top_bg.png")
 filelist+=("./.emulationstation/themes/megadrive_art/divider.png")
 filelist+=("./.emulationstation/themes/megadrive_art/megadrive_logo.png")
+filelist+=("./.emulationstation/themes/duke3d_artwork/duke3d_artwork1.png")
 
 tar -c -vf RetroPieSetupThemes_`date +%d%m%y`.tar ${filelist[0]}
 
