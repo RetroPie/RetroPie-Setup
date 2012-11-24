@@ -31,7 +31,7 @@
 # 
 
 __BINARIESNAME="RetroPieSetupBinaries_061112.tar.bz2"
-__THEMESNAME="RetroPieSetupThemes_181112.tar.bz2"
+__THEMESNAME="RetroPieSetupThemes_241112.tar.bz2"
 
 __ERRMSGS=""
 __INFMSGS=""
