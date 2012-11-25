@@ -322,6 +322,7 @@ function configureRetroArch()
     ensureKeyValue "rewind_enable" "true" "/etc/retroarch.cfg"
     ensureKeyValue "rewind_buffer_size" "10" "/etc/retroarch.cfg"
     ensureKeyValue "rewind_granularity" "2" "/etc/retroarch.cfg"
+    ensureKeyValue "input_rewind" "r" "/etc/retroarch.cfg"
 }
 
 # install RetroArch emulator
