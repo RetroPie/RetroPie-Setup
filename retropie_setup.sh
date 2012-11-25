@@ -717,6 +717,8 @@ function install_snesdev()
     make
     if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."  
+    else
+        cp "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" /usr/local/bin/
     fi    
     popd
 }
