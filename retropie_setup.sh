@@ -555,8 +555,10 @@ function install_nes()
 {
     printMsg "Installing NES core"
     gitPullOrClone "$rootdir/emulatorcores/fceu-next" git://github.com/libretro/fceu-next.git
-    make -f Makefile.libretro-fceumm
-    if [[ ! -f "$rootdir/emulatorcores/fceu-next/libretro.so" ]]; then
+    pushd src-fceumm
+    make -f Makefile.libretro
+    popd
+    if [[ ! -f "$rootdir/emulatorcores/fceu-next/src-fceumm/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NES core."
     fi      
     popd
@@ -960,7 +962,7 @@ PLATFORMID=24
 NAME=Nintendo Entertainment System
 PATH=$rootdir/roms/nes
 EXTENSION=.nes .NES
-COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/src-fceumm/libretro.so %ROM%
 PLATFORMID=7
 
 NAME=PC Engine/TurboGrafx 16
