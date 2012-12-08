@@ -1585,18 +1585,18 @@ function scraperMenu()
 
 function main_options()
 {
-    cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages." 22 76 16)
+    cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
     options=(1 "Install latest rpi-update script" ON     # any option can be set to default to "on"
              2 "Update firmware with rpi-update" ON \
              3 "Update APT repositories" ON \
              4 "Perform APT upgrade" ON \
-             5 "Add user $user to groups video, audio, and input" ON \
-             6 "Enable modules ALSA, uinput, and joydev" ON \
-             7 "Export SDL_NOMOUSE=1" ON \
+             5 "(C) Add user $user to groups video, audio, and input" ON \
+             6 "(C) Enable modules ALSA, uinput, and joydev" ON \
+             7 "(C) Export SDL_NOMOUSE=1" ON \
              8 "Install all needed APT packages" ON \
-             9 "Generate folder structure" ON \
+             9 "(C) Generate folder structure" ON \
              10 "Install RetroArch" ON \
-             11 "Configure RetroArch" ON \
+             11 "(C) Configure RetroArch" ON \
              12 "Install Amiga emulator" ON \
              13 "Install Atari 2600 core" ON \
              14 "Install Doom core" ON \
@@ -1619,8 +1619,8 @@ function main_options()
              31 "Install SNESDev" ON \
              32 "Install Emulation Station" ON \
              33 "Install Emulation Station Themes" ON \
-             34 "Generate config file for Emulation Station" ON \
-             35 "Enable SDL sound driver for RetroArch" ON )
+             34 "(C) Generate config file for Emulation Station" ON \
+             35 "(C) Enable SDL sound driver for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1772,7 +1772,7 @@ availFreeDiskSpace 600000
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
     options=(1 "Binaries-based installation (faster, (probably) not the newest)"
-             2 "Source-based (custom) installation (slower, newest)"
+             2 "Source-based (custom) installation (slower, newest) and update of existing installation"
              3 "Setup (only if you already have run one of the installations above)"
              4 "Perform reboot" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
