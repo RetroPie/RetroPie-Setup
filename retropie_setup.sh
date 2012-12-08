@@ -417,9 +417,6 @@ function install_dgen()
     fi  
     popd
     rm dgen-sdl-1.30.tar.gz
-
-    configureDGEN
-
 }
 
 # install Doom WADs emulator core
@@ -439,7 +436,7 @@ function install_doom()
 #install eDuke32
 function install_eduke32()
 {
-	  printMsg "Installing eDuke32"
+	printMsg "Installing eDuke32"
     if [[ -d "$rootdir/emulators/eduke32" ]]; then
         rm -rf "$rootdir/emulators/eduke32"
     fi
@@ -498,6 +495,23 @@ function install_mame()
     popd
 }
 
+# configure NeoGeo
+function configureNeogeo()
+{
+    mkdir /home/$user/.gngeo/
+    cp sample_gngeorc /home/$user/.gngeo/gngeorc
+    chown -R $user /home/$user/.gngeo/
+    chgrp -R $user /home/$user/.gngeo/
+
+    sed -i -e "s/effect none/effect scale2x/g" /home/$user/.gngeo/gngeorc
+    sed -i -e "s/fullscreen false/fullscreen true/g" /home/$user/.gngeo/gngeorc
+
+    chmod 777 /dev/fb0
+
+    mkdir "$rootdir/emulators/gngeo-0.7/neogeo-bios"
+    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."    
+}
+
 # install NeoGeo emulator
 function install_neogeo()
 {
@@ -530,13 +544,7 @@ function install_neogeo()
     make install
 
     # configure
-    mkdir /home/$user/.gngeo/
-    cp sample_gngeorc /home/$user/.gngeo/gngeorc
-    chown -R $user /home/$user/.gngeo/
-    chgrp -R $user /home/$user/.gngeo/
-
-    sed -i -e "s/effect none/effect scale2x/g" /home/$user/.gngeo/gngeorc
-    sed -i -e "s/fullscreen false/fullscreen true/g" /home/$user/.gngeo/gngeorc
+    configureNeogeo
 
     if [[ ! -f "$rootdir/emulators/gngeo-0.7/src/gngeo" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NeoGeo emulator."
@@ -544,10 +552,6 @@ function install_neogeo()
     popd
     rm gngeo-0.7.tar.gz
 
-    chmod 777 /dev/fb0
-
-    mkdir "$rootdir/emulators/gngeo-0.7/neogeo-bios"
-    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
 }
 
 # install NES emulator core
@@ -1606,21 +1610,23 @@ function main_options()
              18 "Install MAME core" ON \
              19 "Install Mega Drive/Mastersystem/Game Gear (RetroArch) core" ON \
              20 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
-             21 "Install NeoGeo emulator" ON \
-             22 "Install NES core" ON \
-             23 "Install PC Engine core" ON \
-             24 "Install Playstation core" ON \
-             25 "Install ScummVM" ON \
-             26 "Install Super NES core" ON \
-             27 "Install Wolfenstein3D engine" ON \
-             28 "Install Z Machine emulator (Frotz)" ON \
-             29 "Install ZX Spectrum emulator (Fuse)" ON \
-             30 "Install BCM library" ON \
-             31 "Install SNESDev" ON \
-             32 "Install Emulation Station" ON \
-             33 "Install Emulation Station Themes" ON \
-             34 "(C) Generate config file for Emulation Station" ON \
-             35 "(C) Enable SDL sound driver for RetroArch" ON )
+             21 "(C) Configure DGEN" ON \
+             22 "Install NeoGeo emulator" ON \
+             23 "(C) Configure NeoGeo" ON \
+             24 "Install NES core" ON \
+             25 "Install PC Engine core" ON \
+             26 "Install Playstation core" ON \
+             27 "Install ScummVM" ON \
+             28 "Install Super NES core" ON \
+             29 "Install Wolfenstein3D engine" ON \
+             30 "Install Z Machine emulator (Frotz)" ON \
+             31 "Install ZX Spectrum emulator (Fuse)" ON \
+             32 "Install BCM library" ON \
+             33 "Install SNESDev" ON \
+             34 "Install Emulation Station" ON \
+             35 "Install Emulation Station Themes" ON \
+             36 "(C) Generate config file for Emulation Station" ON \
+             37 "(C) Enable SDL sound driver for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1649,21 +1655,23 @@ function main_options()
                 18) install_mame ;;
                 19) install_megadrive ;;
                 20) install_dgen ;;
-                21) install_neogeo ;;
-                22) install_nes ;;
-                23) install_mednafen_pce ;;
-                24) install_psx ;;
-                25) install_scummvm ;;
-                26) install_snes ;;
-                27) install_wolfenstein3d ;;
-                28) install_zmachine ;;
-                29) install_zxspectrum ;;
-                30) install_bcmlibrary ;;
-                31) install_snesdev ;;
-                32) install_emulationstation ;;
-                33) install_esthemes ;;
-                34) generate_esconfig ;;
-                35) configureSoundsettings ;;
+                21) configureDGEN ;;
+                22) install_neogeo ;;
+                23) configureNeogeo ;;
+                24) install_nes ;;
+                25) install_mednafen_pce ;;
+                26) install_psx ;;
+                27) install_scummvm ;;
+                28) install_snes ;;
+                29) install_wolfenstein3d ;;
+                30) install_zmachine ;;
+                31) install_zxspectrum ;;
+                32) install_bcmlibrary ;;
+                33) install_snesdev ;;
+                34) install_emulationstation ;;
+                35) install_esthemes ;;
+                36) generate_esconfig ;;
+                37) configureSoundsettings ;;
             esac
         done
 
@@ -1772,7 +1780,7 @@ availFreeDiskSpace 600000
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
     options=(1 "Binaries-based installation (faster, (probably) not the newest)"
-             2 "Source-based (custom) installation (slower, newest) and update of existing installation"
+             2 "Source-based (custom) installation (slower, newest) and update"
              3 "Setup (only if you already have run one of the installations above)"
              4 "Perform reboot" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
