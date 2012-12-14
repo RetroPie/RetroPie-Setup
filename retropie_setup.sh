@@ -314,15 +314,44 @@ function prepareFolders()
 # settings for RetroArch
 function configureRetroArch()
 {
-    printMsg "Configuring RetroArch in /etc/retroarch.cfg"
-    ensureKeyValue "system_directory" "$rootdir/emulatorcores/" "/etc/retroarch.cfg"
-    ensureKeyValue "video_driver" "\"gl\"" "/etc/retroarch.cfg"
+    printMsg "Configuring RetroArch in $rootdir/configs/all/retroarch.cfg"
+
+    if [[ ! -f "$rootdir/configs/all/retroarch.cfg" ]]; then
+        mkdir -p "$rootdir/configs/all/"
+        mkdir -p "$rootdir/configs/atari2600/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/atari2600/retroarch.cfg
+        mkdir -p "$rootdir/configs/doom/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/doom/retroarch.cfg
+        mkdir -p "$rootdir/configs/gba/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gba/retroarch.cfg
+        mkdir -p "$rootdir/configs/gbc/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gbc/retroarch.cfg
+        mkdir -p "$rootdir/configs/gamegear/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gamegear/retroarch.cfg
+        mkdir -p "$rootdir/configs/mame/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/mame/retroarch.cfg
+        mkdir -p "$rootdir/configs/mastersystem/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/mastersystem/retroarch.cfg
+        mkdir -p "$rootdir/configs/nes/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/nes/retroarch.cfg
+        mkdir -p "$rootdir/configs/pcengine/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/pcengine/retroarch.cfg
+        mkdir -p "$rootdir/configs/psx/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/psx/retroarch.cfg
+        mkdir -p "$rootdir/configs/snes/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/snes/retroarch.cfg
+        cp /etc/retroarch.cfg "$rootdir/configs/all/"
+    fi
+
+    ensureKeyValue "system_directory" "$rootdir/emulatorcores/" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "video_driver" "\"gl\"" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "system_directory" "$rootdir/emulatorcores/" "$rootdir/configs/all/retroarch.cfg"
 
     # enable and configure rewind feature
-    ensureKeyValue "rewind_enable" "true" "/etc/retroarch.cfg"
-    ensureKeyValue "rewind_buffer_size" "10" "/etc/retroarch.cfg"
-    ensureKeyValue "rewind_granularity" "2" "/etc/retroarch.cfg"
-    ensureKeyValue "input_rewind" "r" "/etc/retroarch.cfg"
+    ensureKeyValue "rewind_enable" "true" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "rewind_buffer_size" "10" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "rewind_granularity" "2" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_rewind" "r" "$rootdir/configs/all/retroarch.cfg"
 }
 
 # install RetroArch emulator
@@ -574,7 +603,6 @@ function install_megadrive()
     printMsg "Installing Mega Drive/Mastersystem/Game Gear core"
     gitPullOrClone "$rootdir/emulatorcores/Genesis-Plus-GX" git://github.com/libretro/Genesis-Plus-GX.git
     make -f Makefile.libretro 
-    sed /etc/retroarch.cfg -i -e "s|# system_directory =|system_directory = $rootdir/emulatorcores/|g"
     if [[ ! -f "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
     fi      
@@ -616,6 +644,15 @@ function install_snes()
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
     fi      
     popd
+}
+
+# configure SNES emulator core settings
+function configure_snes()
+{
+    printMsg "Configuring SNES core"
+
+    # DISABLE rewind feature for SNES core due to the speed decrease
+    ensureKeyValue "rewind_enable" "false" "$rootdir/configs/snes/retroarch.cfg"
 }
 
 function install_wolfenstein3d()
@@ -754,31 +791,31 @@ function enableSNESDevAtStart()
     service SNESDev start     
 
     if [[ ($1 -eq 1) || ($1 -eq 3) ]]; then
-        ensureKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_y" "a" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_x" "s" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_start" "enter" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_select" "rshift" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_l" "q" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_r" "w" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_left" "left" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_right" "right" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_up" "up" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_down" "down"   "/etc/retroarch.cfg" 
+        ensureKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_b" "z" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_y" "a" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_x" "s" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_start" "enter" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_select" "rshift" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_l" "q" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_r" "w" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_left" "left" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_right" "right" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_up" "up" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_down" "down"   "$rootdir/configs/all/retroarch.cfg" 
 
-        ensureKeyValue "input_player2_a" "e" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_b" "r" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_y" "y" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_x" "t" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_start" "p" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_select" "o" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_l" "u" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_r" "i" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_left" "c" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_right" "b" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_up" "f" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_down" "v"   "/etc/retroarch.cfg" 
+        ensureKeyValue "input_player2_a" "e" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_b" "r" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_y" "y" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_x" "t" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_start" "p" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_select" "o" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_l" "u" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_r" "i" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_left" "c" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_right" "b" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_up" "f" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_down" "v"   "$rootdir/configs/all/retroarch.cfg" 
     fi
 }
 
@@ -794,31 +831,31 @@ function disableSNESDevAtStart()
     # This command installs the init.d script so it automatically starts on boot
     update-rc.d SNESDev remove
 
-    disableKeyValue "input_player1_a" "x" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_b" "z" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_y" "a" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_x" "s" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_start" "enter" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_select" "rshift" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_l" "q" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_r" "w" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_left" "left" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_right" "right" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_up" "up" "/etc/retroarch.cfg"
-    disableKeyValue "input_player1_down" "down"   "/etc/retroarch.cfg" 
+    disableKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_b" "z" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_y" "a" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_x" "s" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_start" "enter" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_select" "rshift" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_l" "q" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_r" "w" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_left" "left" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_right" "right" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_up" "up" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_down" "down"   "$rootdir/configs/all/retroarch.cfg" 
 
-    disableKeyValue "input_player2_a" "e" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_b" "r" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_y" "y" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_x" "t" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_start" "p" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_select" "o" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_l" "u" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_r" "i" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_left" "c" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_right" "b" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_up" "f" "/etc/retroarch.cfg"
-    disableKeyValue "input_player2_down" "v"   "/etc/retroarch.cfg" 
+    disableKeyValue "input_player2_a" "e" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_b" "r" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_y" "y" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_x" "t" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_start" "p" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_select" "o" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_l" "u" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_r" "i" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_left" "c" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_right" "b" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_up" "f" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_down" "v"   "$rootdir/configs/all/retroarch.cfg" 
 }
 
 # Show dialogue for enabling/disabling SNESDev on boot
@@ -900,13 +937,13 @@ function generate_esconfig()
 NAME=Atari 2600
 PATH=$rootdir/roms/atari2600
 EXTENSION=.bin .BIN
-COMMAND=retroarch -L $rootdir/emulatorcores/stella-libretro/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/stella-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%
 PLATFORMID=22
 
 NAME=Doom
 PATH=$rootdir/roms/doom
 EXTENSION=.WAD .wad
-COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %ROM%
 PLATFORMID=1
 
 NAME=eDuke32
@@ -918,25 +955,25 @@ PLATFORMID=1
 NAME=Game Boy Advance
 PATH=$rootdir/roms/gba
 EXTENSION=.gba .GBA
-COMMAND=retroarch -L $rootdir/emulatorcores/vba-next/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/vba-next/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %ROM%
 PLATFORMID=5
 
 NAME=Game Boy Color
 PATH=$rootdir/roms/gbc
 EXTENSION=.gb .GB
-COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%
 PLATFORMID=41
 
 NAME=Sega Game Gear
 PATH=$rootdir/roms/gamegear
 EXTENSION=.gg .GG
-COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gamegear/retroarch.cfg %ROM%
 PLATFORMID=20
 
 NAME=MAME
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
-COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so %ROM%  
+COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM%  
 PLATFORMID=23
 
 NAME=ScummVM
@@ -948,7 +985,7 @@ PLATFORMID=20
 NAME=Sega Master System II
 PATH=$rootdir/roms/mastersystem
 EXTENSION=.sms .SMS
-COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mastersystem/retroarch.cfg %ROM%
 PLATFORMID=35
 
 NAME=Sega Mega Drive / Genesis
@@ -966,25 +1003,25 @@ PLATFORMID=24
 NAME=Nintendo Entertainment System
 PATH=$rootdir/roms/nes
 EXTENSION=.nes .NES
-COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/src-fceumm/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/src-fceumm/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%
 PLATFORMID=7
 
 NAME=PC Engine/TurboGrafx 16
 PATH=$rootdir/roms/pcengine
 EXTENSION=.pce
-COMMAND=retroarch -L $rootdir/emulatorcores/mednafen-pce-libretro/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/mednafen-pce-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%
 PLATFORMID=34
 
 NAME=Sony Playstation 1
 PATH=$rootdir/roms/psx
 EXTENSION=.img .IMG .7z
-COMMAND=retroarch -L $rootdir/emulatorcores/pcsx_rearmed/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/pcsx_rearmed/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%
 PLATFORMID=10
 
 NAME=Super Nintendo
 PATH=$rootdir/roms/snes
 EXTENSION=.smc .sfc .fig .swc .SMC .SFC .FIG .SWC
-COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %ROM%
 PLATFORMID=6
 
 NAME=ZX Spectrum
@@ -1131,10 +1168,10 @@ function setSDRAMFreq()
 # configure sound settings
 function configureSoundsettings()
 {
-    printMsg "Enabling SDL audio driver for RetroArch in /etc/retroarch.cfg"    
+    printMsg "Enabling SDL audio driver for RetroArch in $rootdir/configs/all/retroarch.cfg"    
     # RetroArch settings
-    ensureKeyValue "audio_driver" "sdl" "/etc/retroarch.cfg"
-    ensureKeyValue "audio_out_rate" "44100" "/etc/retroarch.cfg"
+    ensureKeyValue "audio_driver" "sdl" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "audio_out_rate" "44100" "$rootdir/configs/all/retroarch.cfg"
 }
 
 # shows help information in the console
@@ -1280,45 +1317,45 @@ __________\n\
 		modprobe gamecon_gpio_rpi map=0,0,1,0,0,1
 	fi
 
-	dialog --title " Update /etc/retroarch.cfg " --clear \
+	dialog --title " Update $rootdir/configs/all/retroarch.cfg " --clear \
         --yesno "Would you like to update button mappings \
-	to /etc/retroarch.cfg ?" 22 76
+	to $rootdir/configs/all/retroarch.cfg ?" 22 76
 
       case $? in
        0)
 	if [ $GPIOREV = 1 ]; then
-	        ensureKeyValue "input_player1_joypad_index" "0" "/etc/retroarch.cfg"
-        	ensureKeyValue "input_player2_joypad_index" "1" "/etc/retroarch.cfg"
+	        ensureKeyValue "input_player1_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
+        	ensureKeyValue "input_player2_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
 	else
-		ensureKeyValue "input_player1_joypad_index" "1" "/etc/retroarch.cfg"
-		ensureKeyValue "input_player2_joypad_index" "0" "/etc/retroarch.cfg"
+		ensureKeyValue "input_player1_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
+		ensureKeyValue "input_player2_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
 	fi
 
-        ensureKeyValue "input_player1_a_btn" "0" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_b_btn" "1" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_x_btn" "2" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_y_btn" "3" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_l_btn" "4" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_r_btn" "5" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_start_btn" "7" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_select_btn" "6" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_left_axis" "-0" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_up_axis" "-1" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_right_axis" "+0" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player1_down_axis" "+1" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg"
 
-        ensureKeyValue "input_player2_a_btn" "0" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_b_btn" "1" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_x_btn" "2" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_y_btn" "3" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_l_btn" "4" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_r_btn" "5" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_start_btn" "7" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_select_btn" "6" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_left_axis" "-0" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_up_axis" "-1" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_right_axis" "+0" "/etc/retroarch.cfg"
-        ensureKeyValue "input_player2_down_axis" "+1" "/etc/retroarch.cfg"
+        ensureKeyValue "input_player2_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg"
 	;;
        *)
         ;;
@@ -1432,9 +1469,9 @@ function createDebugLog()
     # existence of files
     checkFileExistence "/usr/local/bin/retroarch"
     checkFileExistence "/usr/local/bin/retroarch-zip"
-    checkFileExistence "/etc/retroarch.cfg"
-    echo -e "\nActive lines in /etc/retroarch.cfg:" >> "$rootdir/debug.log"
-    sed '/^$\|^#/d' "/etc/retroarch.cfg"  >>  "$rootdir/debug.log"
+    checkFileExistence "$rootdir/configs/all/retroarch.cfg"
+    echo -e "\nActive lines in $rootdir/configs/all/retroarch.cfg:" >> "$rootdir/debug.log"
+    sed '/^$\|^#/d' "$rootdir/configs/all/retroarch.cfg"  >>  "$rootdir/debug.log"
 
     echo -e "\nEmulation Station files:" >> "$rootdir/debug.log"
     checkFileExistence "$rootdir/supplementary/EmulationStation/emulationstation"
@@ -1532,6 +1569,7 @@ function main_binaries()
     install -m644 $rootdir/emulators/RetroArch/retroarch.cfg /etc/retroarch.cfg
     install -m755 $rootdir/emulators/RetroArch/retroarch-zip /usr/local/bin
     configureRetroArch
+    configure_snes
     install_esthemes
     configureSoundsettings
     # install DGEN
@@ -1618,15 +1656,16 @@ function main_options()
              26 "Install Playstation core" ON \
              27 "Install ScummVM" ON \
              28 "Install Super NES core" ON \
-             29 "Install Wolfenstein3D engine" ON \
-             30 "Install Z Machine emulator (Frotz)" ON \
-             31 "Install ZX Spectrum emulator (Fuse)" ON \
-             32 "Install BCM library" ON \
-             33 "Install SNESDev" ON \
-             34 "Install Emulation Station" ON \
-             35 "Install Emulation Station Themes" ON \
-             36 "(C) Generate config file for Emulation Station" ON \
-             37 "(C) Enable SDL sound driver for RetroArch" ON )
+             29 "(C) Configure Super NES core" ON \
+             30 "Install Wolfenstein3D engine" ON \
+             31 "Install Z Machine emulator (Frotz)" ON \
+             32 "Install ZX Spectrum emulator (Fuse)" ON \
+             33 "Install BCM library" ON \
+             34 "Install SNESDev" ON \
+             35 "Install Emulation Station" ON \
+             36 "Install Emulation Station Themes" ON \
+             37 "(C) Generate config file for Emulation Station" ON \
+             38 "(C) Enable SDL sound driver for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1663,15 +1702,16 @@ function main_options()
                 26) install_psx ;;
                 27) install_scummvm ;;
                 28) install_snes ;;
-                29) install_wolfenstein3d ;;
-                30) install_zmachine ;;
-                31) install_zxspectrum ;;
-                32) install_bcmlibrary ;;
-                33) install_snesdev ;;
-                34) install_emulationstation ;;
-                35) install_esthemes ;;
-                36) generate_esconfig ;;
-                37) configureSoundsettings ;;
+                29) configure_snes ;;
+                30) install_wolfenstein3d ;;
+                31) install_zmachine ;;
+                32) install_zxspectrum ;;
+                33) install_bcmlibrary ;;
+                34) install_snesdev ;;
+                35) install_emulationstation ;;
+                36) install_esthemes ;;
+                37) generate_esconfig ;;
+                38) configureSoundsettings ;;
             esac
         done
 
