@@ -470,22 +470,22 @@ function install_eduke32()
         rm -rf "$rootdir/emulators/eduke32"
     fi
     mkdir -p $rootdir/emulators/eduke32
-    cd "$rootdir/emulators/eduke32"
     pushd "$rootdir/emulators/eduke32"
-		printMsg "Downloading eDuke core"
-		wget http://repo.berryboot.com/eduke32_2.0.0rpi+svn2789_armhf.deb		
-		printMsg "Downloading eDuke32 Shareware files"
-		wget http://apt.duke4.net/pool/main/d/duke3d-shareware/duke3d-shareware_1.3d-23_all.deb	
-		if [[ ! -f "$rootdir/emulators/eduke32/eduke32_2.0.0rpi+svn2789_armhf.deb" ]]; then
+	printMsg "Downloading eDuke core"
+	wget http://repo.berryboot.com/eduke32_2.0.0rpi+svn2789_armhf.deb		
+	printMsg "Downloading eDuke32 Shareware files"
+	wget http://apt.duke4.net/pool/main/d/duke3d-shareware/duke3d-shareware_1.3d-23_all.deb	
+	if [[ ! -f "$rootdir/emulators/eduke32/eduke32_2.0.0rpi+svn2789_armhf.deb" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile eDuke32 core."
+    else
+    	printMsg "Installing eDuke32"
+    	sudo dpkg -i *duke*.deb
+    	mkdir -p $rootdir/roms/eduke32/
+    	cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/eduke32/
+    	cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/eduke32/
     fi
-		printMsg "Installing eDuke32"
-		sudo dpkg -i *duke*.deb
-		mkdir -p $rootdir/roms/eduke32/
-		cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/eduke32/
-		cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/eduke32/
-		popd
-		rm -rf "$rootdir/emulators/eduke32"
+	popd
+	rm -rf "$rootdir/emulators/eduke32"
 }
 
 # install Game Boy Advance emulator core
