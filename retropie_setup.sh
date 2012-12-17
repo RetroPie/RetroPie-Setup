@@ -1107,7 +1107,7 @@ function install_esthemes()
     wget https://github.com/downloads/petrockblog/RetroPie-Setup/$__THEMESNAME
     tar -jxvf $__THEMESNAME -C /tmp
     if [[ ! -d $home/.emulationstation/themes ]]; then
-        mkdir $home/.emulationstation/themes
+        mkdir -p $home/.emulationstation/themes
     fi
     cp -r /tmp/.emulationstation/themes/* "$home/.emulationstation/themes/"
     cp -r /tmp/RetroPie/roms/* "$rootdir/roms/"
