@@ -597,16 +597,21 @@ function install_nes()
     popd
 }
 
-# install Sega Mega Drive/Mastersystem/Game Gear emulator core
+# install Sega Mega Drive/Mastersystem/Game Gear emulator OsmOse
 function install_megadrive()
 {
-    printMsg "Installing Mega Drive/Mastersystem/Game Gear core"
-    gitPullOrClone "$rootdir/emulatorcores/Genesis-Plus-GX" git://github.com/libretro/Genesis-Plus-GX.git
-    make -f Makefile.libretro 
-    if [[ ! -f "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
+    printMsg "Installing Mega Drive/Mastersystem/Game Gear emulator OsmMose"
+
+    wget https://dl.dropbox.com/s/z6l69wge8q1xq7r/osmose-0.8.1%2Brpi20121122.tar.bz2?dl=1 -O osmose.tar.bz2
+    tar -jxvf osmose.tar.bz2 -C "$rootdir/emulators/"
+    pushd "$rootdir/emulators/osmose-0.8.1+rpi20121122/"
+    make clean
+    make
+    if [[ ! -f "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile OsmMose."
     fi      
     popd
+    rm osmose.tar.bz2
 }
 
 # install PC Engine core
@@ -967,7 +972,7 @@ PLATFORMID=41
 NAME=Sega Game Gear
 PATH=$rootdir/roms/gamegear
 EXTENSION=.gg .GG
-COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gamegear/retroarch.cfg %ROM%
+COMMAND=$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs
 PLATFORMID=20
 
 NAME=MAME
@@ -985,7 +990,7 @@ PLATFORMID=20
 NAME=Sega Master System II
 PATH=$rootdir/roms/mastersystem
 EXTENSION=.sms .SMS
-COMMAND=retroarch -L $rootdir/emulatorcores/Genesis-Plus-GX/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mastersystem/retroarch.cfg %ROM%
+COMMAND=$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs
 PLATFORMID=35
 
 NAME=Sega Mega Drive / Genesis
@@ -1645,7 +1650,7 @@ function main_options()
              16 "Install Game Boy Advance core" ON \
              17 "Install Game Boy Color core" ON \
              18 "Install MAME core" ON \
-             19 "Install Mega Drive/Mastersystem/Game Gear (RetroArch) core" ON \
+             19 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
              20 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
              21 "(C) Configure DGEN" ON \
              22 "Install NeoGeo emulator" ON \
