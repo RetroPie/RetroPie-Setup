@@ -960,7 +960,7 @@ PLATFORMID=5
 
 NAME=Game Boy Color
 PATH=$rootdir/roms/gbc
-EXTENSION=.gb .GB
+EXTENSION=.gb .GB .gbc .GBC
 COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%
 PLATFORMID=41
 
