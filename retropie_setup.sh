@@ -726,17 +726,17 @@ function install_zxspectrum()
 function install_bcmlibrary()
 {
     printMsg "Installing BCM2835 library"
-    pushd $rootdir
-    wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.3.tar.gz
-    tar -zxvf bcm2835-1.3.tar.gz
-    cd bcm2835-1.3
+    wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.14.tar.gz
+    tar -zxvf bcm2835-1.14.tar.gz
+    mkdir -p $rootdir/supplementary/
+    mv bcm2835-1.14 $rootdir/supplementary/
+    pushd $rootdir/supplementary/bcm2835-1.14
     ./configure
+    make clean
     make
-    sudo make install
-    cd ..
-    rm bcm2835-1.3.tar.gz
-    rm -rf bcm2835-1.3
-    popd 
+    make install
+    popd
+    rm bcm2835-1.14.tar.gz 
 }
 
 # install ScummVM
