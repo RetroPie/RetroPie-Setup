@@ -1,0 +1,172 @@
+config save_at_exit
+device_alsa_device default
+device_alsa_mixer channel
+device_color_bgr15 yes
+device_color_bgr16 yes
+device_color_bgr24 yes
+device_color_bgr32 yes
+device_color_bgr8 yes
+device_color_palette8 yes
+device_color_yuy2 yes
+device_joystick auto
+device_keyboard auto
+device_mouse none
+device_raw_firstkeyhack no
+device_raw_mousedev[0] auto
+device_raw_mousedev[1] auto
+device_raw_mousedev[2] auto
+device_raw_mousedev[3] auto
+device_raw_mousetype[0] pnp
+device_raw_mousetype[1] pnp
+device_raw_mousetype[2] pnp
+device_raw_mousetype[3] pnp
+device_sdl_samples 512
+device_sound auto
+device_video auto
+device_video_cursor auto
+device_video_doublescan yes
+device_video_fastchange no
+device_video_interlace yes
+device_video_output auto
+device_video_overlaysize auto
+device_video_singlescan yes
+difficulty none
+display_brightness 1
+display_gamma 1
+display_orientation 
+display_restoreatexit yes
+display_restoreatgame yes
+display_size 1024
+event_alpha yes
+event_assign up up or 8_pad
+event_assign down down or 2_pad
+event_assign left left or 4_pad
+event_assign right right or 6_pad
+event_assign enter enter or enter_pad
+event_assign esc esc
+event_assign space space
+event_assign home home
+event_assign end end
+event_assign pgup pgup
+event_assign pgdn pgdn
+event_assign del del
+event_assign ins insert
+event_assign shutdown lcontrol esc
+event_assign mode tab
+event_assign help f1
+event_assign group f2
+event_assign type f3
+event_assign exclude f4
+event_assign sort f5
+event_assign setgroup f9
+event_assign settype f10
+event_assign runclone f12
+event_assign command f8
+event_assign menu backquote or backslash
+event_assign emulator f6
+event_assign rotate 0_pad
+event_assign lock scrlock
+event_assign preview space
+event_assign mute period_pad
+event_mode fast
+event_repeat 500 50
+group "Very Good"
+group "Good"
+group "Bad"
+group "<undefined>"
+icon_space 43
+idle_screensaver 60 10
+idle_screensaver_preview snap
+idle_start 0 0
+include 
+input_hotkey yes
+lock no
+menu_base 0
+menu_rel 0
+merge differential
+misc_exit normal
+misc_quiet no
+mode list
+mode_skip 
+mouse_delta 100
+preview snap
+preview_default none
+preview_default_cabinet none
+preview_default_flyer none
+preview_default_icon none
+preview_default_marquee none
+preview_default_snap none
+preview_default_title none
+preview_expand 1.15
+sort parent
+sound_background_begin none
+sound_background_end none
+sound_background_loop default
+sound_background_loop_dir "mp3"
+sound_background_start none
+sound_background_stop none
+sound_buffer 0.1
+sound_foreground_begin default
+sound_foreground_end default
+sound_foreground_key default
+sound_foreground_start default
+sound_foreground_stop default
+sound_latency 0.1
+sound_samplerate 44100
+sound_volume -3
+type "Computer"
+type "Console"
+type "Application"
+type "Arcade"
+type "Shot 'em Up"
+type "Bet 'em Up"
+type "Fight"
+type "Gun"
+type "Puzzle"
+type "RPG"
+type "Sport"
+type "Breakout"
+type "Filler"
+type "Racing"
+type "Flipper"
+type "<undefined>"
+ui_background none
+ui_bottombar yes
+ui_clip single
+ui_color help 000000 ffffff
+ui_color help_tag 247ef0 ffffff
+ui_color submenu_bar 247ef0 ffffff
+ui_color submenu_item 000000 ffffff
+ui_color submenu_item_select 000000 afffff
+ui_color submenu_hidden 808080 ffffff
+ui_color submenu_hidden_select 808080 afffff
+ui_color menu_item 000000 ffffff
+ui_color menu_hidden 808080 ffffff
+ui_color menu_tag 247ef0 ffffff
+ui_color menu_item_select 000000 afffff
+ui_color menu_hidden_select 808080 afffff
+ui_color menu_tag_select 247ef0 afffff
+ui_color bar 000000 ffffff
+ui_color bar_tag 247ef0 ffffff
+ui_color bar_hidden 808080 ffffff
+ui_color grid 247ef0 ffffff
+ui_color backdrop 000000 808080
+ui_color icon ffffff ffffff
+ui_color cursor 808080 ffffff
+ui_command_error Error running the command
+ui_command_menu Command...
+ui_console no
+ui_exit none
+ui_font auto
+ui_fontsize auto
+ui_game snap
+ui_gamemsg "Loading"
+ui_help none
+ui_menukey yes
+ui_skipbottom 0
+ui_skipleft 0
+ui_skipright 0
+ui_skiptop 0
+ui_startup none
+ui_topbar yes
+ui_translucency 0.6

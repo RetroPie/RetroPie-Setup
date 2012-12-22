@@ -541,6 +541,101 @@ function configureNeogeo()
     __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."    
 }
 
+# configure AdvanceMenu
+function configure_advancemenu()
+{
+    printMsg "Configuring AdvanceMenu"
+
+    mkdir -p "/home/$user/.advance/"
+    cp "./supplementary/advmenu.rc" "/home/$user/.advance/"
+
+    cat >> "/home/$user/.advance/advmenu.rc" << _EOF_
+
+emulator "Atari 2600" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/stella-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %p"
+emulator_roms "Atari 2600" "$rootdir/roms/atari2600"
+
+emulator "Doom" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/libretro-prboom/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %p"
+emulator_roms "Doom" "$rootdir/roms/doom"
+
+emulator "eDuke32" generic "/usr/local/bin/eduke32" "%p"
+
+emulator "Gameboy Advance" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/vba-next/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %p"
+emulator_roms "Gameboy Advance" "$rootdir/roms/gba"
+
+emulator "Gameboy Color" generic "-L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %p"
+emulator_roms "Gameboy Color" "$rootdir/roms/gbc"
+
+emulator "Sega Game Gear" generic "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose" "%p -joy -tv -fs"
+emulator_roms "Sega Game Gear" "$rootdir/roms/gamegear"
+
+emulator "MAME" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/imame4all-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %p"
+emulator_roms "MAME" "$rootdir/roms/mame"
+
+emulator "ScummVM" generic "scummvm"
+emulator_roms "ScummVM" "$rootdir/roms/scummvm"
+
+emulator "Sega Master System" generic "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose" "%p -joy -tv -fs"
+emulator_roms "Sega Master System" "$rootdir/roms/mastersystem"
+
+emulator "Sega Mega Drive / Genesis" generic "dgen" "-f %p"
+emulator_roms "Sega Mega Drive / Genesis" "$rootdir/roms/megadrive"
+
+emulator "NeoGeo" generic "$rootdir/emulators/gngeo-0.7/src/gngeo" "-i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-0.7/neogeo-bios %p" 
+emulator_roms "NeoGeo" "$rootdir/roms/neogeo"
+
+emulator "Nintendo Entertainment System" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/fceu-next/src-fceumm/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %p"
+emulator_roms "Nintendo Entertainment System" "$rootdir/roms/nes"
+
+emulator "PC Engine/TurboGrafx 16" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/mednafen-pce-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %p"
+emulator_roms "PC Engine/TurboGrafx 16" "$rootdir/roms/pcengine"
+
+emulator "Sony Playstation 1" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/pcsx_rearmed/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %p"
+emulator_roms "Sony Playstation 1" "$rootdir/roms/psx"
+
+emulator "Super Nintendo" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %p"
+emulator_roms "Super Nintendo" "$rootdir/roms/snes"
+
+_EOF_
+
+}
+
+# install AdvanceMenu
+function install_advancemenu()
+{
+    printMsg "Installing Advance Menu"
+
+    dialog --title "AdvanceMenu" --clear \
+    --yesno "It is important that you have set GPU memory to 16 MB (e.g., via the raspi-config script). Do you want to continue?" 22 76
+
+    case $? in
+      0)
+
+        wget http://downloads.sourceforge.net/project/advancemame/advancemenu/2.5.0/advancemenu-2.5.0.tar.gz
+        tar xvfz advancemenu-2.5.0.tar.gz -C "$rootdir/supplementary/"
+
+        apt-get install -y gcc-4.7
+        export CC=gcc-4.7   
+        export GCC=g++-4.7    
+
+        pushd "$rootdir/supplementary/advancemenu-2.5.0/"
+        ./configure
+        sed -i -e "s| -march=native||g" Makefile
+        make
+        make install
+        popd
+
+        configure_advancemenu
+        rm advancemenu-2.5.0.tar.gz
+
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Remember to increase the GPU memory again (e.g., via the raspi-config script)!" 22 76    
+
+     ;;
+      *)
+        ;;
+    esac
+
+}
+
 # install NeoGeo emulator
 function install_neogeo()
 {
@@ -1742,29 +1837,31 @@ function main_setup()
         cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
         options=(1 "Re-generate config file for Emulation Station" 
                  2 "Install latest Rasperry Pi firmware" 
-                 3 "Sort roms alphabetically within folders. *Creates subfolders*" 
-                 4 "Start Emulation Station on boot?" 
-                 5 "Start SNESDev on boot?"
-                 6 "Change ARM frequency" 
-                 7 "Change SDRAM frequency"
-                 8 "Install/update multi-console gamepad driver for GPIO" 
-                 9 "Enable gamecon_gpio_rpi with SNES-pad config"
-                 10 "Run 'ES-scraper'" 
-                 11 "Generate debug log" )
+                 3 "Install AdvanceMenu"
+                 4 "Sort roms alphabetically within folders. *Creates subfolders*" 
+                 5 "Start Emulation Station on boot?" 
+                 6 "Start SNESDev on boot?"
+                 7 "Change ARM frequency" 
+                 8 "Change SDRAM frequency"
+                 9 "Install/update multi-console gamepad driver for GPIO" 
+                 10 "Enable gamecon_gpio_rpi with SNES-pad config"
+                 11 "Run 'ES-scraper'" 
+                 12 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
                  1) generate_esconfig ;;
                  2) run_rpiupdate ;;
-                 3) sortromsalphabet ;;
-                 4) changeBootbehaviour ;;
-                 5) enableDisableSNESDevStart ;;
-                 6) setArmFreq ;;
-                 7) setSDRAMFreq ;;
-                 8) installGameconGPIOModule ;;
-                 9) enableGameconSnes ;;
-                 10) scraperMenu ;;
-                 11) createDebugLog ;;
+                 3) install_advancemenu ;;
+                 4) sortromsalphabet ;;
+                 5) changeBootbehaviour ;;
+                 6) enableDisableSNESDevStart ;;
+                 7) setArmFreq ;;
+                 8) setSDRAMFreq ;;
+                 9) installGameconGPIOModule ;;
+                 10) enableGameconSnes ;;
+                 11) scraperMenu ;;
+                 12) createDebugLog ;;
             esac
         else
             break

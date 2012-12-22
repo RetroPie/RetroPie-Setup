@@ -1,5 +1,7 @@
 #!/bin/bash
 
+filelist=()
+
 filelist+=("./RetroPie/supplementary/EmulationStation/emulationstation")
 filelist+=("./RetroPie/emulatorcores/fceu-next/src-fceumm/libretro.so")
 filelist+=("./RetroPie/emulatorcores/gambatte-libretro/libgambatte/libretro.so")
