@@ -828,7 +828,10 @@ function install_bcmlibrary()
     printMsg "Installing BCM2835 library"
     wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.14.tar.gz
     tar -zxvf bcm2835-1.14.tar.gz
-    mkdir -p $rootdir/supplementary/
+    mkdir -p "$rootdir/supplementary/"
+    if [[ -d "$rootdir/supplementary/bcm2835-1.14/" ]]; then
+        rm -rf "$rootdir/supplementary/bcm2835-1.14/"
+    fi
     mv bcm2835-1.14 $rootdir/supplementary/
     pushd $rootdir/supplementary/bcm2835-1.14
     ./configure
@@ -1652,7 +1655,6 @@ function main_binaries()
     printMsg "Binaries-based installation"
 
     install_rpiupdate
-    run_rpiupdate
     update_apt
     upgrade_apt
     installAPTPackages
@@ -1728,7 +1730,7 @@ function main_options()
 {
     cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
     options=(1 "Install latest rpi-update script" ON     # any option can be set to default to "on"
-             2 "Update firmware with rpi-update" ON \
+             2 "Update firmware with rpi-update" OFF \
              3 "Update APT repositories" ON \
              4 "Perform APT upgrade" ON \
              5 "(C) Add user $user to groups video, audio, and input" ON \
