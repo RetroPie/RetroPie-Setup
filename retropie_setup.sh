@@ -1173,6 +1173,9 @@ function sortromsalphabet()
             if [[ -f "$elem/g/gamelist.xml" ]]; then
                 mv "$elem/g/gamelist.xml" "$elem/gamelist.xml"
             fi
+            if [[ -f "$elem/t/theme.xml" ]]; then
+                mv "$elem/t/theme.xml" "$elem/theme.xml"
+            fi
             if [[ ! -d "$elem/#" ]]; then
                 mkdir "$elem/#"
             fi
