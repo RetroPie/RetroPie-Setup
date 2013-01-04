@@ -1240,18 +1240,17 @@ function install_esthemes()
 {
     printMsg "Installing themes for Emulation Station"
 
-    scriptdir=$(`dirname $0`)
     if [[ ! -d $home/.emulationstation/themes ]]; then
         mkdir -p $home/.emulationstation/themes
     fi
-    cp -r $scriptdir/supplementary/themefiles/themes/* "$home/.emulationstation/themes/"
+    cp -r ./supplementary/themefiles/themes/* "$home/.emulationstation/themes/"
     if [[ ! -d $rootdir/roms/ ]]; then
         mkdir -p $rootdir/roms
     fi
-    cp -r $scriptdir/supplementary/themefiles/roms/* "$rootdir/roms/"
+    cp -r ./supplementary/themefiles/roms/* "$rootdir/roms/"
 
-    chgrp -R $user .emulationstation
-    chown -R $user .emulationstation
+    chgrp -R $user $home/.emulationstation
+    chown -R $user $home/.emulationstation
 }
 
 # sets the ARM frequency of the Raspberry to a specific value
@@ -1773,7 +1772,7 @@ function main_options()
              9 "(C) Generate folder structure" ON \
              10 "Install RetroArch" ON \
              11 "Install RetroArch AlsaThread (Disable the SDL sound driver below!)" OFF \
-             12 "(C) Configure RetroArch" ON \
+             12 "(C) Configure video and rewind for RetroArch" ON \
              13 "Install Amiga emulator" ON \
              14 "Install Atari 2600 core" ON \
              15 "Install Doom core" ON \
