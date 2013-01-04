@@ -1,0 +1,59 @@
+<theme>
+	<listPrimaryColor>EEEEEE</listPrimaryColor>
+	<descColor>000000</descColor>
+	<listSelectorColor>BC241A</listSelectorColor>
+	<hideHeader />
+	<hideDividers />
+	<listLeftAlign />
+
+        <menuScrollSound>~/.emulationstation/themes/sounds/GS25.wav</menuScrollSound>
+        <menuSelectSound>~/.emulationstation/themes/sounds/GS42.wav</menuSelectSound>
+        <menuBackSound>~/.emulationstation/themes/sounds/GS28.wav</menuBackSound>
+        <menuOpenSound>~/.emulationstation/themes/sounds/SNES5.wav</menuOpenSound>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/megadrive_art/megadrive_bg_dark_stripes.png</path>
+                <pos>.5 0</pos>
+                <dim>1 1</dim>
+		<origin>0 0</origin>
+		<tiled />
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/megadrive_art/megadrive_bg_red_stripes.png</path>
+                <pos>0 0</pos>
+                <dim>.45 1</dim>
+		<origin>0 0</origin>
+		<tiled />
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/megadrive_art/divider.png</path>
+                <pos>.5 .5</pos>
+                <dim>.01 1</dim>
+		<origin>.5 .5</origin>
+		<useAlpha />
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/megadrive_art/megadrive_top_bg.png</path>
+                <pos>0 0</pos>
+                <dim>.55 0</dim>
+		<origin>0 0</origin>
+		<useAlpha />
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/megadrive_art/megadrive_logo.png</path>
+                <pos>.25 0</pos>
+                <dim>0 .12</dim>
+		<origin>.5 0</origin>
+		<useAlpha />
+        </component>
+
+</theme>

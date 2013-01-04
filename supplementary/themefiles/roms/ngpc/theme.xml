@@ -1,0 +1,32 @@
+<theme>
+	<listPrimaryColor>FFFFFF</listPrimaryColor>
+	<descColor>FFFFFF</descColor>
+	<listSelectorColor>000000</listSelectorColor>
+	<hideHeader />
+	<hideDividers />
+	<listLeftAlign />
+
+        <menuScrollSound>~/.emulationstation/themes/sounds/GS25.wav</menuScrollSound>
+        <menuSelectSound>~/.emulationstation/themes/sounds/GS42.wav</menuSelectSound>
+        <menuBackSound>~/.emulationstation/themes/sounds/GS28.wav</menuBackSound>
+        <menuOpenSound>~/.emulationstation/themes/sounds/SNES5.wav</menuOpenSound>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/ngpc_art/ngpc_bg.jpg</path>
+                <pos>0 0</pos>
+                <dim>1 1</dim>
+		<origin>0 0</origin>
+		<tiled />
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/ngpc_art/ngpc_logo.png</path>
+                <pos>.25 0</pos>
+                <dim>.45 0</dim>
+		<origin>.5 0</origin>
+		<useAlpha />
+        </component>
+
+</theme>

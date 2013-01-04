@@ -1,0 +1,66 @@
+<theme>
+	<listPrimaryColor>EEEEEE</listPrimaryColor>
+	<descColor>000000</descColor>
+	<listSelectorColor>BC241A</listSelectorColor>
+	<hideHeader />
+	<hideDividers />
+	<listLeftAlign />
+
+        <menuScrollSound>~/.emulationstation/themes/sounds/GS25.wav</menuScrollSound>
+        <menuSelectSound>~/.emulationstation/themes/sounds/GS42.wav</menuSelectSound>
+        <menuBackSound>~/.emulationstation/themes/sounds/GS28.wav</menuBackSound>
+        <menuOpenSound>~/.emulationstation/themes/sounds/SNES5.wav</menuOpenSound>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/general_art/blue.png</path>
+                <pos>0.495 0</pos>
+                <dim>0.51 1</dim>
+                <origin>0 0</origin>
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/general_art/grey.png</path>
+                <pos>0.495 0</pos>
+                <dim>0.005 1</dim>
+                <origin>0 0</origin>
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/amiga_art/amiga_case.png</path>
+                <pos>.4 0.05</pos>
+                <dim>0 .1</dim>
+                <origin>.5 0</origin>
+                <useAlpha />
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/amiga_art/amiga_art1.png</path>
+                <pos>.05 0.01</pos>
+                <dim>0 .12</dim>
+                <origin>.5 0</origin>
+                <useAlpha />
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/amiga_art/amiga_logo.png</path>
+                <pos>.25 0.01</pos>
+                <dim>0 .1</dim>
+                <origin>.5 0</origin>
+                <useAlpha />
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/general_art/RetroPieProjectLogoSmallGrey.png</path>
+                <pos>.99 .99</pos>
+                <dim>0 .08</dim>
+                <origin>1 1</origin>
+                <useAlpha />
+        </component>
+
+</theme>

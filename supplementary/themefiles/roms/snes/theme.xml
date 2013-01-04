@@ -1,0 +1,38 @@
+<theme>
+	<listPrimaryColor>E4E1E5</listPrimaryColor>
+	<descColor>48474D</descColor>
+	<listSelectorColor>3D32A6</listSelectorColor>
+	<hideHeader />
+	<hideDividers />
+	<listLeftAlign />
+
+        <menuScrollSound>~/.emulationstation/themes/sounds/GS25.wav</menuScrollSound>
+        <menuSelectSound>~/.emulationstation/themes/sounds/GS42.wav</menuSelectSound>
+        <menuBackSound>~/.emulationstation/themes/sounds/GS28.wav</menuBackSound>
+        <menuOpenSound>~/.emulationstation/themes/sounds/SNES5.wav</menuOpenSound>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/snes_art/snes_bg.png</path>
+                <pos>0 0</pos>
+                <dim>1 1</dim>
+		<tiled />
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/snes_art/snes_bg_grey.jpg</path>
+                <pos>0 .5</pos>
+                <dim>.5 1</dim>
+		<origin>0 .5</origin>
+        </component>
+
+        <component>
+                <type>image</type>
+                <path>~/.emulationstation/themes/snes_art/snes_logo.png</path>
+                <pos>0 0</pos>
+                <dim>.5 0</dim>
+		<origin>0 0</origin>
+		<useAlpha />
+        </component>
+</theme>

@@ -30,8 +30,8 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries_291112.tar.bz2"
-__THEMESNAME="RetroPieSetupThemes_241112.tar.bz2"
+# __BINARIESNAME="RetroPieSetupBinaries_291112.tar.bz2"
+# __THEMESNAME="RetroPieSetupThemes_241112.tar.bz2"
 
 __ERRMSGS=""
 __INFMSGS=""
@@ -366,6 +366,35 @@ function install_retroarch()
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
     fi  
     popd
+}
+
+# install RetroArch emulator from alsathread branch
+function install_retroarch_alsathread()
+{
+    printMsg "Installing RetroArch emulator from alsathread branch"
+    gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/Themaister/RetroArch.git
+    git checkout alsathread
+    ./configure --disable-libpng
+    make clean
+    make
+    sudo make install
+    if [[ ! -f "/usr/local/bin/retroarch" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
+    fi  
+    popd
+
+    dialog --title "RetroArch Configuration " --clear \
+        --yesno "Should the RetroArch configuration be adapted to make use of this RetroArch version?\
+        " 22 76
+
+    case $? in
+      0)
+        ensureKeyValue "audio_driver" "alsa" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "audio_out_rate" "48000" "$rootdir/configs/all/retroarch.cfg"
+        ;;
+      *)
+        ;;
+    esac    
 }
 
 # install Amiga emulator
@@ -1210,16 +1239,15 @@ function downloadBinaries()
 function install_esthemes()
 {
     printMsg "Installing themes for Emulation Station"
-    wget https://github.com/downloads/petrockblog/RetroPie-Setup/$__THEMESNAME
-    tar -jxvf $__THEMESNAME -C /tmp
     if [[ ! -d $home/.emulationstation/themes ]]; then
         mkdir -p $home/.emulationstation/themes
     fi
-    cp -r /tmp/.emulationstation/themes/* "$home/.emulationstation/themes/"
-    cp -r /tmp/RetroPie/roms/* "$rootdir/roms/"
-    rm -rf /tmp/RetroPie/
-    rm -rf /tmp/.emulationstation/
-    rm $__THEMESNAME
+    cp -r ./themefiles/themes/* "$home/.emulationstation/themes/"
+    if [[ ! -d $rootdir/roms/ ]]; then
+        mkdir -p $rootdir/roms
+    fi
+    cp -r ./themefiles/roms/* "$rootdir/roms/"
+
     chgrp -R $user .emulationstation
     chown -R $user .emulationstation
 }
@@ -1742,34 +1770,35 @@ function main_options()
              8 "Install all needed APT packages" ON \
              9 "(C) Generate folder structure" ON \
              10 "Install RetroArch" ON \
-             11 "(C) Configure RetroArch" ON \
-             12 "Install Amiga emulator" ON \
-             13 "Install Atari 2600 core" ON \
-             14 "Install Doom core" ON \
-             15 "Install eDuke32 core" ON \
-             16 "Install Game Boy Advance core" ON \
-             17 "Install Game Boy Color core" ON \
-             18 "Install MAME core" ON \
-             19 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
-             20 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
-             21 "(C) Configure DGEN" ON \
-             22 "Install NeoGeo emulator" ON \
-             23 "(C) Configure NeoGeo" ON \
-             24 "Install NES core" ON \
-             25 "Install PC Engine core" ON \
-             26 "Install Playstation core" ON \
-             27 "Install ScummVM" ON \
-             28 "Install Super NES core" ON \
-             29 "(C) Configure Super NES core" ON \
-             30 "Install Wolfenstein3D engine" ON \
-             31 "Install Z Machine emulator (Frotz)" ON \
-             32 "Install ZX Spectrum emulator (Fuse)" ON \
-             33 "Install BCM library" ON \
-             34 "Install SNESDev" ON \
-             35 "Install Emulation Station" ON \
-             36 "Install Emulation Station Themes" ON \
-             37 "(C) Generate config file for Emulation Station" ON \
-             38 "(C) Enable SDL sound driver for RetroArch" ON )
+             11 "Install RetroArch from branch alsathread (Disable the SDL sound driver below!)" OFF \
+             12 "(C) Configure RetroArch" ON \
+             13 "Install Amiga emulator" ON \
+             14 "Install Atari 2600 core" ON \
+             15 "Install Doom core" ON \
+             16 "Install eDuke32 core" ON \
+             17 "Install Game Boy Advance core" ON \
+             18 "Install Game Boy Color core" ON \
+             19 "Install MAME core" ON \
+             20 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
+             21 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
+             22 "(C) Configure DGEN" ON \
+             23 "Install NeoGeo emulator" ON \
+             24 "(C) Configure NeoGeo" ON \
+             25 "Install NES core" ON \
+             26 "Install PC Engine core" ON \
+             27 "Install Playstation core" ON \
+             28 "Install ScummVM" ON \
+             29 "Install Super NES core" ON \
+             30 "(C) Configure Super NES core" ON \
+             31 "Install Wolfenstein3D engine" ON \
+             32 "Install Z Machine emulator (Frotz)" ON \
+             33 "Install ZX Spectrum emulator (Fuse)" ON \
+             34 "Install BCM library" ON \
+             35 "Install SNESDev" ON \
+             36 "Install Emulation Station" ON \
+             37 "Install Emulation Station Themes" ON \
+             38 "(C) Generate config file for Emulation Station" ON \
+             39 "(C) Enable SDL sound driver for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1788,34 +1817,35 @@ function main_options()
                 8) installAPTPackages ;;
                 9) prepareFolders ;;
                 10) install_retroarch ;;
-                11) configureRetroArch ;;
-                12) install_amiga ;;
-                13) install_atari2600 ;;
-                14) install_doom ;;
-                15) install_eduke32 ;;
-                16) install_gba ;;
-                17) install_gbc ;;
-                18) install_mame ;;
-                19) install_megadrive ;;
-                20) install_dgen ;;
-                21) configureDGEN ;;
-                22) install_neogeo ;;
-                23) configureNeogeo ;;
-                24) install_nes ;;
-                25) install_mednafen_pce ;;
-                26) install_psx ;;
-                27) install_scummvm ;;
-                28) install_snes ;;
-                29) configure_snes ;;
-                30) install_wolfenstein3d ;;
-                31) install_zmachine ;;
-                32) install_zxspectrum ;;
-                33) install_bcmlibrary ;;
-                34) install_snesdev ;;
-                35) install_emulationstation ;;
-                36) install_esthemes ;;
-                37) generate_esconfig ;;
-                38) configureSoundsettings ;;
+                11) install_retroarch_alsathread ;;
+                12) configureRetroArch ;;
+                13) install_amiga ;;
+                14) install_atari2600 ;;
+                15) install_doom ;;
+                16) install_eduke32 ;;
+                17) install_gba ;;
+                18) install_gbc ;;
+                19) install_mame ;;
+                20) install_megadrive ;;
+                21) install_dgen ;;
+                22) configureDGEN ;;
+                23) install_neogeo ;;
+                24) configureNeogeo ;;
+                25) install_nes ;;
+                26) install_mednafen_pce ;;
+                27) install_psx ;;
+                28) install_scummvm ;;
+                29) install_snes ;;
+                30) configure_snes ;;
+                31) install_wolfenstein3d ;;
+                32) install_zmachine ;;
+                33) install_zxspectrum ;;
+                34) install_bcmlibrary ;;
+                35) install_snesdev ;;
+                36) install_emulationstation ;;
+                37) install_esthemes ;;
+                38) generate_esconfig ;;
+                39) configureSoundsettings ;;
             esac
         done
 
@@ -1925,18 +1955,16 @@ availFreeDiskSpace 600000
 
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
-    options=(1 "Binaries-based installation (faster, (probably) not the newest)"
-             2 "Source-based (custom) installation (slower, newest) and update"
-             3 "Setup (only if you already have run one of the installations above)"
-             4 "Perform reboot" )
+    # options=(1 "Binaries-based installation (faster, (probably) not the newest)"
+    options=(1 "Installation and update"
+             2 "Setup (only if you already have run one of the installations above)"
+             3 "Perform reboot" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
     if [ "$choices" != "" ]; then
         case $choices in
-            1) main_binaries
-               break ;;
-            2) main_options ;;
-            3) main_setup ;;
-            4) main_reboot ;;
+            1) main_options ;;
+            2) main_setup ;;
+            3) main_reboot ;;
         esac
     else
         break
