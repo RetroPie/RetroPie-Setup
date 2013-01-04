@@ -1239,14 +1239,16 @@ function downloadBinaries()
 function install_esthemes()
 {
     printMsg "Installing themes for Emulation Station"
+
+    scriptdir=$(`dirname $0`)
     if [[ ! -d $home/.emulationstation/themes ]]; then
         mkdir -p $home/.emulationstation/themes
     fi
-    cp -r ./themefiles/themes/* "$home/.emulationstation/themes/"
+    cp -r $scriptdir/supplementary/themefiles/themes/* "$home/.emulationstation/themes/"
     if [[ ! -d $rootdir/roms/ ]]; then
         mkdir -p $rootdir/roms
     fi
-    cp -r ./themefiles/roms/* "$rootdir/roms/"
+    cp -r $scriptdir/supplementary/themefiles/roms/* "$rootdir/roms/"
 
     chgrp -R $user .emulationstation
     chown -R $user .emulationstation
@@ -1770,7 +1772,7 @@ function main_options()
              8 "Install all needed APT packages" ON \
              9 "(C) Generate folder structure" ON \
              10 "Install RetroArch" ON \
-             11 "Install RetroArch from branch alsathread (Disable the SDL sound driver below!)" OFF \
+             11 "Install RetroArch AlsaThread (Disable the SDL sound driver below!)" OFF \
              12 "(C) Configure RetroArch" ON \
              13 "Install Amiga emulator" ON \
              14 "Install Atari 2600 core" ON \

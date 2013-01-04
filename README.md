@@ -56,7 +56,7 @@ Note that you might **need to reboot your Raspberry**, if your firmware was upda
 Binaries and Sources
 --------------------
 
-RetroPie Setup offers the possibilities to only install RetroArch, the cores, EmulationStation, and SNESDev either with pre-compiles binaries or by downloading and compiling the sources. The first method is much faster, but does not offer the latest versions of the individual programs. So, to make sure that you are running the latest versions take your time and let RetroPie Setup download and compile the programs from their sources.
+RetroPie Setup offered the possibility to only install RetroArch, the cores, EmulationStation, and SNESDev either with pre-compiled binaries. Since Github has discontinued the download service the option for installing pre-compiled binaried with the RetroPie script was discarded. Take your time and let RetroPie Setup download and compile the programs from their sources!
 
 For more information visit the blog at http://petrockblog.wordpress.com or the repository at https://github.com/petrockblog/RetroPie-Setup. A forum thread about the RetroPie Setup script in the official Raspberry Pi forum can be found at http://www.raspberrypi.org/phpBB3/viewtopic.php?f=35&t=13600.
 
