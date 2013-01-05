@@ -1292,7 +1292,6 @@ ctl.!default {
 type hw
 card 0
 }
-}
 _EOF_
 
 # shows help information in the console
