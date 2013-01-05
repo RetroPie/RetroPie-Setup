@@ -1294,6 +1294,8 @@ card 0
 }
 _EOF_
 
+}
+
 # shows help information in the console
 function showHelp()
 {
