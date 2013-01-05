@@ -1367,21 +1367,15 @@ function installGameconGPIOModule()
 	    return 0;;
 	esac
 
-	#remove old headers manually to avoid cleanup issues
-	if [ "`dpkg-query -W -f='${Version}' linux-headers-3.2.27+`" = "3.2.27+-1" ]; then
-	    dpkg -r gamecon-gpio-rpi-dkms
-	    dpkg -r linux-headers-3.2.27+
-	fi
-
-        #install dkms
-        apt-get install -y dkms
+	#install dkms
+	apt-get install -y dkms
 
 	#reconfigure / install headers (takes a a while)
-	if [ "`dpkg-query -W -f='${Version}' linux-headers-3.2.27+`" = "3.2.27+-2" ]; then
-		dpkg-reconfigure linux-headers-3.2.27+
+	if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then
+		dpkg-reconfigure linux-headers-`uname -r`
 	else
-        	wget http://www.niksula.hut.fi/~mhiienka/Rpi/linux-headers-rpi/linux-headers-`uname -r`_`uname -r`-2_armhf.deb
-	        dpkg -i linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+		wget http://www.niksula.hut.fi/~mhiienka/Rpi/linux-headers-rpi/linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+		dpkg -i linux-headers-`uname -r`_`uname -r`-2_armhf.deb
 		rm linux-headers-`uname -r`_`uname -r`-2_armhf.deb
 	fi
 
