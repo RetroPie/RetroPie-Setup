@@ -1282,7 +1282,7 @@ function configureSoundsettings()
 
     # ALSA settings
     mv /etc/asound.conf /etc/asound.conf.bak
-    cat >> /etc/asound.conf < _EOF_
+    cat >> /etc/asound.conf << _EOF_
 pcm.!default {
 type hw
 card 0
