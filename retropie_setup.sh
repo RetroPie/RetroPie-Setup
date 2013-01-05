@@ -368,35 +368,6 @@ function install_retroarch()
     popd
 }
 
-# install RetroArch emulator from alsathread branch
-function install_retroarch_alsathread()
-{
-    printMsg "Installing RetroArch emulator from alsathread branch"
-    gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/Themaister/RetroArch.git
-    git checkout alsathread
-    ./configure --disable-libpng
-    make clean
-    make
-    sudo make install
-    if [[ ! -f "/usr/local/bin/retroarch" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
-    fi  
-    popd
-
-    dialog --title "RetroArch Configuration " --clear \
-        --yesno "Should the RetroArch configuration be adapted to make use of this RetroArch version?\
-        " 22 76
-
-    case $? in
-      0)
-        ensureKeyValue "audio_driver" "alsa" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "audio_out_rate" "48000" "$rootdir/configs/all/retroarch.cfg"
-        ;;
-      *)
-        ;;
-    esac    
-}
-
 # install Amiga emulator
 install_amiga()
 {
@@ -1303,11 +1274,26 @@ function setSDRAMFreq()
 # configure sound settings
 function configureSoundsettings()
 {
-    printMsg "Enabling SDL audio driver for RetroArch in $rootdir/configs/all/retroarch.cfg"    
+    printMsg "Enabling ALSA thread-based audio driver for RetroArch in $rootdir/configs/all/retroarch.cfg"    
+
     # RetroArch settings
-    ensureKeyValue "audio_driver" "sdl" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "audio_out_rate" "44100" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "audio_driver" "alsathread" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "audio_out_rate" "48000" "$rootdir/configs/all/retroarch.cfg"
+
+    # ALSA settings
+    mv /etc/asound.conf /etc/asound.conf.bak
+    cat >> /etc/asound.conf < _EOF_
+pcm.!default {
+type hw
+card 0
 }
+
+ctl.!default {
+type hw
+card 0
+}
+}
+_EOF_
 
 # shows help information in the console
 function showHelp()
@@ -1765,35 +1751,34 @@ function main_options()
              8 "Install all needed APT packages" ON \
              9 "(C) Generate folder structure" ON \
              10 "Install RetroArch" ON \
-             11 "Install RetroArch AlsaThread (Disable the SDL sound driver below!)" OFF \
-             12 "(C) Configure video and rewind for RetroArch" ON \
-             13 "Install Amiga emulator" ON \
-             14 "Install Atari 2600 core" ON \
-             15 "Install Doom core" ON \
-             16 "Install eDuke32 core" ON \
-             17 "Install Game Boy Advance core" ON \
-             18 "Install Game Boy Color core" ON \
-             19 "Install MAME core" ON \
-             20 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
-             21 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
-             22 "(C) Configure DGEN" ON \
-             23 "Install NeoGeo emulator" ON \
-             24 "(C) Configure NeoGeo" ON \
-             25 "Install NES core" ON \
-             26 "Install PC Engine core" ON \
-             27 "Install Playstation core" ON \
-             28 "Install ScummVM" ON \
-             29 "Install Super NES core" ON \
-             30 "(C) Configure Super NES core" ON \
-             31 "Install Wolfenstein3D engine" ON \
-             32 "Install Z Machine emulator (Frotz)" ON \
-             33 "Install ZX Spectrum emulator (Fuse)" ON \
-             34 "Install BCM library" ON \
-             35 "Install SNESDev" ON \
-             36 "Install Emulation Station" ON \
-             37 "Install Emulation Station Themes" ON \
-             38 "(C) Generate config file for Emulation Station" ON \
-             39 "(C) Enable SDL sound driver for RetroArch" ON )
+             11 "(C) Configure video and rewind for RetroArch" ON \
+             12 "Install Amiga emulator" ON \
+             13 "Install Atari 2600 core" ON \
+             14 "Install Doom core" ON \
+             15 "Install eDuke32 core" ON \
+             16 "Install Game Boy Advance core" ON \
+             17 "Install Game Boy Color core" ON \
+             18 "Install MAME core" ON \
+             19 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
+             20 "Install DGEN (alternative Megadrive/Genesis emulator)" ON \
+             21 "(C) Configure DGEN" ON \
+             22 "Install NeoGeo emulator" ON \
+             23 "(C) Configure NeoGeo" ON \
+             24 "Install NES core" ON \
+             25 "Install PC Engine core" ON \
+             26 "Install Playstation core" ON \
+             27 "Install ScummVM" ON \
+             28 "Install Super NES core" ON \
+             29 "(C) Configure Super NES core" ON \
+             30 "Install Wolfenstein3D engine" ON \
+             31 "Install Z Machine emulator (Frotz)" ON \
+             32 "Install ZX Spectrum emulator (Fuse)" ON \
+             33 "Install BCM library" ON \
+             34 "Install SNESDev" ON \
+             35 "Install Emulation Station" ON \
+             36 "Install Emulation Station Themes" ON \
+             37 "(C) Generate config file for Emulation Station" ON \
+             38 "(C) Configure sound settings for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1812,35 +1797,34 @@ function main_options()
                 8) installAPTPackages ;;
                 9) prepareFolders ;;
                 10) install_retroarch ;;
-                11) install_retroarch_alsathread ;;
-                12) configureRetroArch ;;
-                13) install_amiga ;;
-                14) install_atari2600 ;;
-                15) install_doom ;;
-                16) install_eduke32 ;;
-                17) install_gba ;;
-                18) install_gbc ;;
-                19) install_mame ;;
-                20) install_megadrive ;;
-                21) install_dgen ;;
-                22) configureDGEN ;;
-                23) install_neogeo ;;
-                24) configureNeogeo ;;
-                25) install_nes ;;
-                26) install_mednafen_pce ;;
-                27) install_psx ;;
-                28) install_scummvm ;;
-                29) install_snes ;;
-                30) configure_snes ;;
-                31) install_wolfenstein3d ;;
-                32) install_zmachine ;;
-                33) install_zxspectrum ;;
-                34) install_bcmlibrary ;;
-                35) install_snesdev ;;
-                36) install_emulationstation ;;
-                37) install_esthemes ;;
-                38) generate_esconfig ;;
-                39) configureSoundsettings ;;
+                11) configureRetroArch ;;
+                12) install_amiga ;;
+                13) install_atari2600 ;;
+                14) install_doom ;;
+                15) install_eduke32 ;;
+                16) install_gba ;;
+                17) install_gbc ;;
+                18) install_mame ;;
+                19) install_megadrive ;;
+                20) install_dgen ;;
+                21) configureDGEN ;;
+                22) install_neogeo ;;
+                23) configureNeogeo ;;
+                24) install_nes ;;
+                25) install_mednafen_pce ;;
+                26) install_psx ;;
+                27) install_scummvm ;;
+                28) install_snes ;;
+                29) configure_snes ;;
+                30) install_wolfenstein3d ;;
+                31) install_zmachine ;;
+                32) install_zxspectrum ;;
+                33) install_bcmlibrary ;;
+                34) install_snesdev ;;
+                35) install_emulationstation ;;
+                36) install_esthemes ;;
+                37) generate_esconfig ;;
+                38) configureSoundsettings ;;
             esac
         done
 
