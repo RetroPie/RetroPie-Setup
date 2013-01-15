@@ -1323,13 +1323,13 @@ function changeBootbehaviour()
     if [ "$choices" != "" ]; then
         case $choices in
             1) sed /etc/inittab -i -e "s|1:2345:respawn:/bin/login -f $user tty1 </dev/tty1 >/dev/tty1 2>&1|1:2345:respawn:/sbin/getty --noclear 38400 tty1|g"
-               sed /etc/profile -i -e "s|emulationstation||g"
+               sed /etc/profile -i -e "/emulationstation/d"
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled original boot behaviour." 22 76    
                             ;;
             2) sed /etc/inittab -i -e "s|1:2345:respawn:/sbin/getty --noclear 38400 tty1|1:2345:respawn:\/bin\/login -f $user tty1 \<\/dev\/tty1 \>\/dev\/tty1 2\>\&1|g"
-               if [ -z $(egrep -i "^emulationstation" /etc/profile) ]
+               if [ -z $(egrep -i "emulationstation$" /etc/profile) ]
                then
-                   echo "emulationstation" >> /etc/profile
+                   echo "[ -n \"\${SSH_CONNECTION}\" ] || emulationstation" >> /etc/profile
                fi
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Emulation Station is now starting on boot." 22 76    
                             ;;
