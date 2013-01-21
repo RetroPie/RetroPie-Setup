@@ -359,7 +359,7 @@ function install_retroarch()
 {
     printMsg "Installing RetroArch emulator"
     gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/Themaister/RetroArch.git
-    ./configure --disable-libpng
+    ./configure
     make
     sudo make install
     if [[ ! -f "/usr/local/bin/retroarch" ]]; then
