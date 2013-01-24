@@ -583,7 +583,7 @@ emulator_roms "Sega Mega Drive / Genesis" "$rootdir/roms/megadrive"
 emulator "NeoGeo" generic "$rootdir/emulators/gngeo-0.7/src/gngeo" "-i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-0.7/neogeo-bios %p" 
 emulator_roms "NeoGeo" "$rootdir/roms/neogeo"
 
-emulator "Nintendo Entertainment System" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/fceu-next/src-fceumm/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %p"
+emulator "Nintendo Entertainment System" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/fceu-next/fceumm-code/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %p"
 emulator_roms "Nintendo Entertainment System" "$rootdir/roms/nes"
 
 emulator "PC Engine/TurboGrafx 16" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/mednafen-pce-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %p"
@@ -683,10 +683,10 @@ function install_nes()
 {
     printMsg "Installing NES core"
     gitPullOrClone "$rootdir/emulatorcores/fceu-next" git://github.com/libretro/fceu-next.git
-    pushd src-fceumm
+    pushd fceumm-code
     make -f Makefile.libretro
     popd
-    if [[ ! -f "$rootdir/emulatorcores/fceu-next/src-fceumm/libretro.so" ]]; then
+    if [[ ! -f "$rootdir/emulatorcores/fceu-next/fceumm-code/libretro.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NES core."
     fi      
     popd
@@ -1106,7 +1106,7 @@ PLATFORMID=24
 NAME=Nintendo Entertainment System
 PATH=$rootdir/roms/nes
 EXTENSION=.nes .NES
-COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/src-fceumm/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/fceumm-code/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%
 PLATFORMID=7
 
 NAME=PC Engine/TurboGrafx 16
@@ -1599,7 +1599,7 @@ function createDebugLog()
     cat "$rootdir/../.emulationstation/es_input.cfg" >> "$rootdir/debug.log"
 
     echo -e "\nEmulators and cores:" >> "$rootdir/debug.log"
-    checkFileExistence "$rootdir/emulatorcores/fceu-next/src-fceumm/libretro.so"
+    checkFileExistence "$rootdir/emulatorcores/fceu-next/fceumm-code/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/libretro-prboom/libretro.so"
     checkFileExistence "$rootdir/emulatorcores/libretro-prboom/prboom.wad"
