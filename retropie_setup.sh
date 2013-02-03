@@ -303,7 +303,7 @@ function prepareFolders()
     pathlist+=("$rootdir/emulators")
     pathlist+=("$rootdir/supplementary")
 
-)    for elem in "${pathlist[@]}"
+    for elem in "${pathlist[@]}"
     do
         if [[ ! -d $elem ]]; then
             mkdir -p $elem
