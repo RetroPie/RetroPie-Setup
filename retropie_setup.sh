@@ -279,32 +279,34 @@ function prepareFolders()
 {
     printMsg "Creating folder structure for emulator, front end, cores, and roms"
 
-    pathlist[0]="$rootdir/roms"
-    pathlist[1]="$rootdir/roms/atari2600"
-    pathlist[2]="$rootdir/roms/doom"
-    pathlist[3]="$rootdir/roms/gamegear"
-    pathlist[4]="$rootdir/roms/gba"
-    pathlist[5]="$rootdir/roms/gbc"
-    pathlist[6]="$rootdir/roms/mame"
-    pathlist[7]="$rootdir/roms/mastersystem"
-    pathlist[8]="$rootdir/roms/megadrive"
-    pathlist[9]="$rootdir/roms/nes"
-    pathlist[10]="$rootdir/roms/pcengine"
-    pathlist[11]="$rootdir/roms/psx"
-    pathlist[12]="$rootdir/roms/snes"
-    pathlist[13]="$rootdir/roms/zxspectrum"
-    pathlist[14]="$rootdir/emulatorcores"
-    pathlist[15]="$rootdir/roms/amiga"
-    pathlist[16]="$rootdir/roms/neogeo"
-    pathlist[17]="$rootdir/roms/scummvm"
-    pathlist[18]="$rootdir/roms/zmachine"
-    pathlist[19]="$rootdir/emulators"
-    pathlist[20]="$rootdir/supplementary"
+    pathlist=()
+    pathlist+=("$rootdir/roms")
+    pathlist+=("$rootdir/roms/atari2600")
+    pathlist+=("$rootdir/roms/doom")
+    pathlist+=("$rootdir/roms/gamegear")
+    pathlist+=("$rootdir/roms/gb")
+    pathlist+=("$rootdir/roms/gba")
+    pathlist+=("$rootdir/roms/gbc")
+    pathlist+=("$rootdir/roms/mame")
+    pathlist+=("$rootdir/roms/mastersystem")
+    pathlist+=("$rootdir/roms/megadrive")
+    pathlist+=("$rootdir/roms/nes")
+    pathlist+=("$rootdir/roms/pcengine")
+    pathlist+=("$rootdir/roms/psx")
+    pathlist+=("$rootdir/roms/snes")
+    pathlist+=("$rootdir/roms/zxspectrum")
+    pathlist+=("$rootdir/emulatorcores")
+    pathlist+=("$rootdir/roms/amiga")
+    pathlist+=("$rootdir/roms/neogeo")
+    pathlist+=("$rootdir/roms/scummvm")
+    pathlist+=("$rootdir/roms/zmachine")
+    pathlist+=("$rootdir/emulators")
+    pathlist+=("$rootdir/supplementary")
 
-    for elem in "${pathlist[@]}"
+)    for elem in "${pathlist[@]}"
     do
         if [[ ! -d $elem ]]; then
-            mkdir $elem
+            mkdir -p $elem
             chown $user $elem
             chgrp $user $elem
         fi
@@ -1039,7 +1041,7 @@ function generate_esconfig()
     cat > "$rootdir/../.emulationstation/es_systems.cfg" << _EOF_
 NAME=Atari 2600
 PATH=$rootdir/roms/atari2600
-EXTENSION=.bin .BIN
+EXTENSION=.a26 .A26 .bin .BIN .rom .ROM .zip .ZIP .gz .GZ
 COMMAND=retroarch -L $rootdir/emulatorcores/stella-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%
 PLATFORMID=22
 
@@ -1055,6 +1057,12 @@ EXTENSION=.grp .GRP
 COMMAND=eduke32 %ROM%
 PLATFORMID=1
 
+NAME=Game Boy
+PATH=/home/pi/RetroPie/roms/gb
+EXTENSION=.gb .GB
+COMMAND=retroarch -L /home/pi/RetroPie/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig /home/pi/RetroPie/configs/gb/retroarch.cfg %ROM%
+PLATFORMID=41
+
 NAME=Game Boy Advance
 PATH=$rootdir/roms/gba
 EXTENSION=.gba .GBA
@@ -1063,7 +1071,7 @@ PLATFORMID=5
 
 NAME=Game Boy Color
 PATH=$rootdir/roms/gbc
-EXTENSION=.gb .GB .gbc .GBC
+EXTENSION=.gbc .GBC
 COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%
 PLATFORMID=41
 
@@ -1117,7 +1125,7 @@ PLATFORMID=34
 
 NAME=Sony Playstation 1
 PATH=$rootdir/roms/psx
-EXTENSION=.img .IMG .7z
+EXTENSION=.img .IMG .7z .7Z .pbp .PBP
 COMMAND=retroarch -L $rootdir/emulatorcores/pcsx_rearmed/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%
 PLATFORMID=10
 
@@ -1142,20 +1150,22 @@ chgrp -R $user "$rootdir/../.emulationstation"
 function sortromsalphabet()
 {
     clear
-    pathlist[0]="$rootdir/roms/amiga"
-    pathlist[1]="$rootdir/roms/atari2600"
-    pathlist[2]="$rootdir/roms/gamegear"
-    pathlist[3]="$rootdir/roms/gba"
-    pathlist[4]="$rootdir/roms/gbc"
-    pathlist[5]="$rootdir/roms/mame"
-    pathlist[6]="$rootdir/roms/mastersystem"
-    pathlist[7]="$rootdir/roms/megadrive"
-    pathlist[8]="$rootdir/roms/neogeo"
-    pathlist[9]="$rootdir/roms/nes"
-    pathlist[10]="$rootdir/roms/snes"  
-    pathlist[11]="$rootdir/roms/pcengine"      
-    pathlist[12]="$rootdir/roms/psx"  
-    pathlist[13]="$rootdir/roms/zxspectrum"  
+    pathlist=()
+    pathlist+=("$rootdir/roms/amiga")
+    pathlist+=("$rootdir/roms/atari2600")
+    pathlist+=("$rootdir/roms/gamegear")
+    pathlist+=("$rootdir/roms/gb")
+    pathlist+=("$rootdir/roms/gba")
+    pathlist+=("$rootdir/roms/gbc")
+    pathlist+=("$rootdir/roms/mame")
+    pathlist+=("$rootdir/roms/mastersystem")
+    pathlist+=("$rootdir/roms/megadrive")
+    pathlist+=("$rootdir/roms/neogeo")
+    pathlist+=("$rootdir/roms/nes")
+    pathlist+=("$rootdir/roms/snes")
+    pathlist+=("$rootdir/roms/pcengine")
+    pathlist+=("$rootdir/roms/psx")
+    pathlist+=("$rootdir/roms/zxspectrum")
     printMsg "Sorting roms alphabetically"
     for elem in "${pathlist[@]}"
     do
@@ -1708,6 +1718,20 @@ function main_binaries()
     fi
 
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76    
+}
+
+function main_updatescript()
+{
+  scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  pushd $scriptdir
+  if [[ ! -d .git ]]; then
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup." --msgbox "Cannot find direcotry '.git'. Please clone the RetroPie Setup script via 'git clone git://github.com/petrockblog/RetroPie-Setup.git'" 20 60    
+    popd
+    return
+  fi
+  git pull
+  popd
+  dialog --backtitle "PetRockBlock.com - ORetroPie Setup." --msgbox "Fetched the latest version of the RetroPie Setup script. You need to restart the script." 20 60    
 }
 
 ##################
