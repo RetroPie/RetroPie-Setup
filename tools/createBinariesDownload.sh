@@ -28,6 +28,8 @@ filelist+=("./RetroPie/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/ma
 filelist+=("./RetroPie/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/man5/dgenrc.5")
 filelist+=("./RetroPie/emulators/Wolf4SDL-1.7-src/wolf3d")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/scripts/SNESDev")
+filelist+=("./RetroPie/emulators/osmose-0.8.1+rpi20121122/")
+filelist+=("./RetroPie/emulators/gngeo-0.7/")
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 

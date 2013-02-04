@@ -30,8 +30,8 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries_030213.tar.bz2"
-__THEMESNAME="RetroPieSetupThemes_030213.tar.bz2"
+__BINARIESNAME="RetroPieSetupBinaries_040213.tar.bz2"
+__THEMESNAME="RetroPieSetupThemes_040213.tar.bz2"
 
 __ERRMSGS=""
 __INFMSGS=""
@@ -371,6 +371,8 @@ function configureRetroArch()
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/atari2600/retroarch.cfg
         mkdir -p "$rootdir/configs/doom/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/doom/retroarch.cfg
+        mkdir -p "$rootdir/configs/gb/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gb/retroarch.cfg
         mkdir -p "$rootdir/configs/gba/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gba/retroarch.cfg
         mkdir -p "$rootdir/configs/gbc/"
@@ -940,7 +942,7 @@ function enableSNESDevAtStart()
     # This command installs the init.d script so it automatically starts on boot
     update-rc.d SNESDev defaults
     # This command starts the daemon now so no need for a reboot
-    service SNESDev start     
+    service SNESDev start
 
     if [[ ($1 -eq 1) || ($1 -eq 3) ]]; then
         ensureKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"
@@ -1118,7 +1120,7 @@ DESCNAME=Game Boy
 NAME=gb
 PATH=/home/pi/RetroPie/roms/gb
 EXTENSION=.gb .GB
-COMMAND=retroarch -L /home/pi/RetroPie/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig /home/pi/RetroPie/configs/gb/retroarch.cfg %ROM%
+COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig /home/pi/RetroPie/configs/gb/retroarch.cfg %ROM%
 PLATFORMID=41
 
 DESCNAME=Game Boy Advance
@@ -1752,6 +1754,7 @@ function main_binaries()
     downloadBinaries
     install_esscript
     generate_esconfig
+    
     # install RetroArch
     install -m755 $rootdir/emulators/RetroArch/retroarch /usr/local/bin
     install -m644 $rootdir/emulators/RetroArch/retroarch.cfg /etc/retroarch.cfg
@@ -1760,6 +1763,7 @@ function main_binaries()
     configure_snes
     install_esthemes
     configureSoundsettings
+
     # install DGEN
     test -z "/usr/local/bin" || /bin/mkdir -p "/usr/local/bin"
     /usr/bin/install -c $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/bin/dgen $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/bin/dgen_tobin '/usr/local/bin'
@@ -1768,6 +1772,11 @@ function main_binaries()
     test -z "/usr/local/share/man/man5" || /bin/mkdir -p "/usr/local/share/man/man5"
     /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
     configureDGEN
+
+    # install GnGeo
+    pushd $rootdir/emulators/gngeo-0.7/
+    make install
+    popd
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
