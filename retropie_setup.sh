@@ -281,7 +281,7 @@ function enableSplashscreenAtStart()
     printMsg "Enabling custom splashscreen on boot."
 
     chmod +x "./supplementary/asplashscreen/asplashscreen"
-    cp "$./supplementary/asplashscreen/asplashscreen" /etc/init.d/
+    cp "./supplementary/asplashscreen/asplashscreen" /etc/init.d/
 
     cp "./supplementary/asplashscreen/splashscreen.png" /etc/
 
