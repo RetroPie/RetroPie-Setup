@@ -2040,7 +2040,7 @@ while true; do
     options=(1 "Binaries-based installation (faster, but possibly not up-to-date)"
              2 "Source-based installation/update (slower, but up-to-date versions)"
              3 "Setup (only if you already have run one of the installations above)"
-             5 "Update RetroPie Setup script"
+             4 "Update RetroPie Setup script"
              5 "Perform reboot" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
     if [ "$choices" != "" ]; then
