@@ -286,7 +286,7 @@ function enableSplashscreenAtStart()
     cp "./supplementary/asplashscreen/splashscreen.png" /etc/
 
     # This command installs the init.d script so it automatically starts on boot
-    update-rc.d asplashscreen enable
+    insserv /etc/init.d/asplashscreen
 
 }
 
