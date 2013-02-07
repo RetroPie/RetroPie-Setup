@@ -272,6 +272,7 @@ function installAPTPackages()
 
     # remove PulseAudio since this is slowing down the whole system significantly
     apt-get remove -y pulseaudio
+    apt-get -y autoremove
 }
 
 # start SNESDev on boot and configure RetroArch input settings
