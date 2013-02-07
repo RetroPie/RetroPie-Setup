@@ -948,31 +948,49 @@ function enableSNESDevAtStart()
     service SNESDev start
 
     if [[ ($1 -eq 1) || ($1 -eq 3) ]]; then
-        ensureKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_b" "z" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_y" "a" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_x" "s" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_start" "enter" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_select" "rshift" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_l" "q" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_r" "w" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_left" "left" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_right" "right" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_up" "up" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player1_down" "down"   "$rootdir/configs/all/retroarch.cfg" 
 
-        ensureKeyValue "input_player2_a" "e" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_b" "r" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_y" "y" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_x" "t" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_start" "p" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_select" "o" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_l" "u" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_r" "i" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_left" "c" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_right" "b" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_up" "f" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_player2_down" "v"   "$rootdir/configs/all/retroarch.cfg" 
+        REVSTRING=`cat /proc/cpuinfo |grep Revision | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4`
+        case "$REVSTRING" in
+              "0002"|"0003")
+                 GPIOREV=1 
+                 ;;
+              *)
+                 GPIOREV=2
+                 ;;
+        esac
+        if [ $GPIOREV = 1 ]; then
+            ensureKeyValue "input_player1_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
+            ensureKeyValue "input_player2_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
+        else
+            ensureKeyValue "input_player1_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
+            ensureKeyValue "input_player2_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
+        fi
+
+        ensureKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg" 
+
+        ensureKeyValue "input_player2_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg" 
     fi
 }
 
@@ -988,31 +1006,31 @@ function disableSNESDevAtStart()
     # This command installs the init.d script so it automatically starts on boot
     update-rc.d SNESDev remove
 
-    disableKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_b" "z" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_y" "a" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_x" "s" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_start" "enter" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_select" "rshift" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_l" "q" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_r" "w" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_left" "left" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_right" "right" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_up" "up" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player1_down" "down"   "$rootdir/configs/all/retroarch.cfg" 
+    disableKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player1_down_axis" "+1"   "$rootdir/configs/all/retroarch.cfg" 
 
-    disableKeyValue "input_player2_a" "e" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_b" "r" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_y" "y" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_x" "t" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_start" "p" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_select" "o" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_l" "u" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_r" "i" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_left" "c" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_right" "b" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_up" "f" "$rootdir/configs/all/retroarch.cfg"
-    disableKeyValue "input_player2_down" "v"   "$rootdir/configs/all/retroarch.cfg" 
+    disableKeyValue "input_player2_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_player2_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg" 
 }
 
 # Show dialogue for enabling/disabling SNESDev on boot
@@ -1172,7 +1190,7 @@ DESCNAME=Sega Mega Drive / Genesis
 NAME=megadrive
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .md .MD
-COMMAND=dgen -f %ROM%
+COMMAND=$rootdir/emulators/dgen-sdl-1.31/dgen -f %ROM%
 PLATFORMID=36
 
 DESCNAME=NeoGeo
@@ -1473,7 +1491,6 @@ function enableGameconSnes()
     fi
 
     REVSTRING=`cat /proc/cpuinfo |grep Revision | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4`
-
     case "$REVSTRING" in
           "0002"|"0003")
              GPIOREV=1 
