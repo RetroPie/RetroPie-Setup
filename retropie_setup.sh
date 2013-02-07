@@ -268,7 +268,7 @@ function installAPTPackages()
                         libboost-filesystem-dev libboost-system-dev zip python-imaging \
                         libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
                         libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev \
-                        joystick fbi
+                        joystick fbi gcc-4.7
 
     # remove PulseAudio since this is slowing down the whole system significantly
     apt-get remove -y pulseaudio
@@ -698,26 +698,11 @@ function install_neogeo()
         rm -rf "$rootdir/emulators/gngeo"
     fi
 
-    # install and enable GCC-4.7
-    apt-get install -y gcc-4.7
-    export CC=gcc-4.7
-    export GCC=g++-4.7
-
-    # install zlib
-    wget http://zlib.net/zlib-1.2.7.tar.gz    
-    tar xvfz zlib-1.2.7.tar.gz -C $rootdir/supplementary/
-    pushd $rootdir/supplementary/zlib-1.2.7
-    ./configure 
-    make
-    make install
-    popd
-    rm zlib-1.2.7.tar.gz 
-
     # GnGeo
     wget http://gngeo.googlecode.com/files/gngeo-0.7.tar.gz
     tar xvfz gngeo-0.7.tar.gz -C $rootdir/emulators/
     pushd "$rootdir/emulators/gngeo-0.7"
-    ./configure --build=i386 --host=arm-linux --target=arm-linux --disable-i386asm --enable-cyclone --enable-drz80
+    ./configure
     make
     make install
 
@@ -1794,6 +1779,9 @@ function main_binaries()
     configureDGEN
 
     # install GnGeo
+    pushd $rootdir/supplementary/zlib-1.2.7/
+    make install
+    popd
     pushd $rootdir/emulators/gngeo-0.7/
     make install
     popd
