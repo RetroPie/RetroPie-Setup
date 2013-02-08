@@ -453,7 +453,7 @@ function install_atari2600()
     # remove msse and msse2 flags from Makefile, just a hack here to make it compile on the Raspberry
     sed 's|-msse2 ||g;s|-msse ||g' Makefile >> Makefile.rpi
     make -f Makefile.rpi
-    if [[ ! -f "$rootdir/emulatorcores/stella-libretro/libretro.so" ]]; then
+    if [[ -z `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 2600 core."
     fi  
     popd    
@@ -510,7 +510,7 @@ function install_doom()
     make
     mkdir -p $rootdir/roms/doom/
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
-    if [[ ! -f "$rootdir/emulatorcores/libretro-prboom/libretro.so" ]]; then
+    if [[ -z `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Doom core."
     fi  
     popd
@@ -548,7 +548,7 @@ function install_gba()
     printMsg "Installing Game Boy Advance core"
     gitPullOrClone "$rootdir/emulatorcores/vba-next" git://github.com/libretro/vba-next.git
     make -f Makefile.libretro
-    if [[ ! -f "$rootdir/emulatorcores/vba-next/libretro.so" ]]; then
+    if [[ -z `find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance core."
     fi      
     popd    
@@ -560,7 +560,7 @@ function install_gbc()
     printMsg "Installing Game Boy Color core"
     gitPullOrClone "$rootdir/emulatorcores/gambatte-libretro" git://github.com/libretro/gambatte-libretro.git
     make -C libgambatte -f Makefile.libretro
-    if [[ ! -f "$rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so" ]]; then
+    if [[ -z `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Color core."
     fi      
     popd
@@ -572,7 +572,7 @@ function install_mame()
     printMsg "Installing MAME core"
     gitPullOrClone "$rootdir/emulatorcores/imame4all-libretro" git://github.com/libretro/imame4all-libretro.git
     make -f makefile.libretro ARM=1
-    if [[ ! -f "$rootdir/emulatorcores/imame4all-libretro/libretro.so" ]]; then
+    if [[ -z `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile MAME core."
     fi      
     popd
@@ -725,7 +725,7 @@ function install_nes()
     pushd fceumm-code
     make -f Makefile.libretro
     popd
-    if [[ ! -f "$rootdir/emulatorcores/fceu-next/fceumm-code/libretro.so" ]]; then
+    if [[ -z `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NES core."
     fi      
     popd
@@ -754,7 +754,7 @@ function install_mednafen_pce()
     printMsg "Installing Mednafen PC Engine core"
     gitPullOrClone "$rootdir/emulatorcores/mednafen-pce-libretro" git://github.com/libretro/mednafen-pce-libretro.git
     make
-    if [[ ! -f "$rootdir/emulatorcores/mednafen-pce-libretro/libretro.so" ]]; then
+    if [[ -z `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile PC Engine core."
     fi      
     popd
@@ -767,7 +767,7 @@ function install_psx()
     gitPullOrClone "$rootdir/emulatorcores/pcsx_rearmed" git://github.com/libretro/pcsx_rearmed.git
     ./configure --platform=libretro
     make
-    if [[ ! -f "$rootdir/emulatorcores/pcsx_rearmed/libretro.so" ]]; then
+    if [[ -z `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Playstation core."
     fi      
     popd
@@ -779,7 +779,7 @@ function install_snes()
     printMsg "Installing SNES core"
     gitPullOrClone "$rootdir/emulatorcores/pocketsnes-libretro" git://github.com/ToadKing/pocketsnes-libretro.git
     make
-    if [[ ! -f "$rootdir/emulatorcores/pocketsnes-libretro/libretro.so" ]]; then
+    if [[ -z `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
     fi      
     popd
@@ -1105,14 +1105,14 @@ DESCNAME=Atari 2600
 NAME=atari2600
 PATH=$rootdir/roms/atari2600
 EXTENSION=.a26 .A26 .bin .BIN .rom .ROM .zip .ZIP .gz .GZ
-COMMAND=retroarch -L $rootdir/emulatorcores/stella-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%
 PLATFORMID=22
 
 DESCNAME=Doom
 NAME=doom
 PATH=$rootdir/roms/doom
 EXTENSION=.WAD .wad
-COMMAND=retroarch -L $rootdir/emulatorcores/libretro-prboom/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %ROM%
 PLATFORMID=1
 
 DESCNAME=eDuke32
@@ -1126,21 +1126,21 @@ DESCNAME=Game Boy
 NAME=gb
 PATH=/home/pi/RetroPie/roms/gb
 EXTENSION=.gb .GB
-COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig /home/pi/RetroPie/configs/gb/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig /home/pi/RetroPie/configs/gb/retroarch.cfg %ROM%
 PLATFORMID=41
 
 DESCNAME=Game Boy Advance
 NAME=gba
 PATH=$rootdir/roms/gba
 EXTENSION=.gba .GBA
-COMMAND=retroarch -L $rootdir/emulatorcores/vba-next/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %ROM%
 PLATFORMID=5
 
 DESCNAME=Game Boy Color
 NAME=gbc
 PATH=$rootdir/roms/gbc
 EXTENSION=.gbc .GBC
-COMMAND=retroarch -L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%
 PLATFORMID=41
 
 DESCNAME=Sega Game Gear
@@ -1154,7 +1154,7 @@ DESCNAME=MAME
 NAME=mame
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
-COMMAND=retroarch -L $rootdir/emulatorcores/imame4all-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM%  
+COMMAND=retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM%  
 PLATFORMID=23
 
 DESCNAME=ScummVM
@@ -1189,28 +1189,28 @@ DESCNAME=Nintendo Entertainment System
 NAME=nes
 PATH=$rootdir/roms/nes
 EXTENSION=.nes .NES
-COMMAND=retroarch -L $rootdir/emulatorcores/fceu-next/fceumm-code/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%
 PLATFORMID=7
 
 DESCNAME=PC Engine/TurboGrafx 16
 NAME=pcengine
 PATH=$rootdir/roms/pcengine
 EXTENSION=.pce
-COMMAND=retroarch -L $rootdir/emulatorcores/mednafen-pce-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%
 PLATFORMID=34
 
 DESCNAME=Sony Playstation 1
 NAME=psx
 PATH=$rootdir/roms/psx
 EXTENSION=.img .IMG .7z .7Z .pbp .PBP
-COMMAND=retroarch -L $rootdir/emulatorcores/pcsx_rearmed/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%
 PLATFORMID=10
 
 DESCNAME=Super Nintendo
 NAME=snes
 PATH=$rootdir/roms/snes
 EXTENSION=.smc .sfc .fig .swc .SMC .SFC .FIG .SWC
-COMMAND=retroarch -L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %ROM%
 PLATFORMID=6
 
 DESCNAME=ZX Spectrum
