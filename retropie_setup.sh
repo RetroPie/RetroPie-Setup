@@ -1124,7 +1124,7 @@ NAME=gb
 PATH=$rootdir/roms/gb
 EXTENSION=.gb .GB
 COMMAND=retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%
-PLATFORMID=41
+PLATFORMID=4
 
 DESCNAME=Game Boy Advance
 NAME=gba
