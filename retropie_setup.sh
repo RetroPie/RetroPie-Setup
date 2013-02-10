@@ -30,9 +30,6 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__BINARIESNAME="RetroPieSetupBinaries_040213.tar.bz2"
-__THEMESNAME="RetroPieSetupThemes_040213.tar.bz2"
-
 __ERRMSGS=""
 __INFMSGS=""
 __doReboot=0
@@ -1124,9 +1121,9 @@ PLATFORMID=1
 
 DESCNAME=Game Boy
 NAME=gb
-PATH=/home/pi/RetroPie/roms/gb
+PATH=$rootdir/roms/gb
 EXTENSION=.gb .GB
-COMMAND=retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig /home/pi/RetroPie/configs/gb/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%
 PLATFORMID=41
 
 DESCNAME=Game Boy Advance
@@ -1174,7 +1171,7 @@ PLATFORMID=35
 DESCNAME=Sega Mega Drive / Genesis
 NAME=megadrive
 PATH=$rootdir/roms/megadrive
-EXTENSION=.smd .SMD .md .MD
+EXTENSION=.smd .SMD .md .MD .bin .BIN .zip .ZIP .gz .GZ .bz2 .BZ2
 COMMAND=$rootdir/emulators/dgen-sdl-1.31/dgen -f %ROM%
 PLATFORMID=36
 
@@ -1280,8 +1277,8 @@ function sortromsalphabet()
 # downloads and installs pre-compiles binaries of all essential programs and libraries
 function downloadBinaries()
 {
-    wget http://downloads.petrockblock.com/$__BINARIESNAME
-    tar -jxvf $__BINARIESNAME -C $rootdir
+    wget -O binariesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=3
+    tar -jxvf binariesDownload.tar.bz2 -C $rootdir
     pushd $rootdir/RetroPie
     cp -r * ../
     popd
@@ -1292,18 +1289,20 @@ function downloadBinaries()
     chown $user $rootdir/roms/doom/prboom.wad
 
     rm -rf $rootdir/RetroPie
-    rm $__BINARIESNAME    
+    rm binariesDownload.tar.bz2    
 }
 
 # downloads and installs theme files for Emulation Station
 function install_esthemes()
 {
     printMsg "Installing themes for Emulation Station"
-    wget http://downloads.petrockblock.com/$__THEMESNAME
-    tar -jxvf $__THEMESNAME -C $home/
+    wget -O themesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=2
+    tar -jxvf themesDownload.tar.bz2 -C $home/
 
     chgrp -R $user $home/.emulationstation
     chown -R $user $home/.emulationstation
+
+    rm themesDownload.tar.bz2
 }
 
 # sets the ARM frequency of the Raspberry to a specific value
@@ -1680,18 +1679,17 @@ function createDebugLog()
     cat "$rootdir/../.emulationstation/es_input.cfg" >> "$rootdir/debug.log"
 
     echo -e "\nEmulators and cores:" >> "$rootdir/debug.log"
-    checkFileExistence "$rootdir/emulatorcores/fceu-next/fceumm-code/libretro.so"
-    checkFileExistence "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so"
-    checkFileExistence "$rootdir/emulatorcores/libretro-prboom/libretro.so"
+    checkFileExistence "`find $rootdir/emulatorcores/fceu-next/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"`"
     checkFileExistence "$rootdir/emulatorcores/libretro-prboom/prboom.wad"
-    checkFileExistence "$rootdir/emulatorcores/stella-libretro/libretro.so"
-    checkFileExistence "$rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so"
-    checkFileExistence "$rootdir/emulatorcores/imame4all-libretro/libretro.so"
-    checkFileExistence "$rootdir/emulatorcores/pcsx_rearmed/libretro.so"
-    checkFileExistence "$rootdir/emulatorcores/mednafen-pce-libretro/libretro.so"
-    checkFileExistence "$rootdir/emulatorcores/pocketsnes-libretro/libretro.so"
-    checkFileExistence "$rootdir/emulatorcores/vba-next/libretro.so"
-    checkFileExistence "$rootdir/emulatorcores/uae4all/uae4all"
+    checkFileExistence "`find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/gambatte-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"`"
+    checkFileExistence "$rootdir/emulatorcors/uae4all/uae4all"
 
     echo -e "\nSNESDev:" >> "$rootdir/debug.log"
     checkFileExistence "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev"
