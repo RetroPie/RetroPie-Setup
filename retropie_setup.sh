@@ -429,6 +429,10 @@ install_amiga()
     wget http://darcelf.free.fr/uae4all-src-rc3.chip.tar.bz2
     tar -jxvf uae4all-src-rc3.chip.tar.bz2 -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/uae4all"
+    if [[ ! -f /opt/vc/include/interface/vmcs_host/vchost_config.h ]]; then
+        touch /opt/vc/include/interface/vmcs_host/vchost_config.h
+    fi
+    touch /opt/vc/include/interface/vmcs_host/vchost_config.h
     make
     chown -R $user "$rootdir/emulators/uae4all"
     chgrp -R pi "$rootdir/emulators/uae4all"
