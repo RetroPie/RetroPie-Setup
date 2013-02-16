@@ -349,6 +349,7 @@ function prepareFolders()
     pathlist+=("$rootdir/roms/zmachine")
     pathlist+=("$rootdir/emulators")
     pathlist+=("$rootdir/supplementary")
+    pathlist+=("$rootdir/fba")
 
     for elem in "${pathlist[@]}"
     do
@@ -391,6 +392,8 @@ function configureRetroArch()
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/psx/retroarch.cfg
         mkdir -p "$rootdir/configs/snes/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/snes/retroarch.cfg
+        mkdir -p "$rootdir/configs/fba/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/fba/retroarch.cfg
         cp /etc/retroarch.cfg "$rootdir/configs/all/"
     fi
 
@@ -576,6 +579,23 @@ function install_mame()
     if [[ -z `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile MAME core."
     fi      
+    popd
+}
+
+# install FBA emulator core
+function install_fba()
+{
+    printMsg "Installing FBA core"
+    gitPullOrClone "$rootdir/emulatorcores/fba-libretro" git://github.com/libretro/fba-libretro.git
+    apt-get install -y --force-yes cpp-4.5 gcc-4.5 g++-4.5
+    (
+        cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
+        CC=gcc-4.5 CXX=g++-4.5 make -f makefile.libretro
+    )
+    mv svn-current/trunk/*libretro*.so $rootdir/emulatorcores/fba-libretro/
+    if [[ -z `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile FBA core."
+    fi
     popd
 }
 
@@ -1158,6 +1178,13 @@ EXTENSION=.zip .ZIP
 COMMAND=retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM%  
 PLATFORMID=23
 
+DESCNAME=FinalBurn Alpha
+NAME=fba
+PATH=$rootdir/roms/fba
+EXTENSION=.zip .ZIP
+COMMAND=retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg %ROM%  
+PLATFORMID=23
+
 DESCNAME=ScummVM
 NAME=scummvm
 PATH=$rootdir/roms/scummvm
@@ -1233,6 +1260,7 @@ function sortromsalphabet()
     pathlist=()
     pathlist+=("$rootdir/roms/amiga")
     pathlist+=("$rootdir/roms/atari2600")
+    pathlist+=("$rootdir/roms/fba")
     pathlist+=("$rootdir/roms/gamegear")
     pathlist+=("$rootdir/roms/gb")
     pathlist+=("$rootdir/roms/gba")
@@ -1689,6 +1717,7 @@ function createDebugLog()
     checkFileExistence "`find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/gambatte-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"`"
@@ -1705,6 +1734,7 @@ function createDebugLog()
     find "$rootdir/roms/amiga/" -type f ! \( -iname "*.adf" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/atari2600/" -type f ! \( -iname "*.bin" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/doom/" -type f ! \( -iname "*.WAD" -or -iname "*.jpg" -or -iname "*.xml" -or -name "*.wad" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/fba/" -type f ! \( -iname "*.zip" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/gamegear/" -type f ! \( -iname "*.gg" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/gba/" -type f ! \( -iname "*.gba" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
     find "$rootdir/roms/gbc/" -type f ! \( -iname "*.gb" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
@@ -1868,26 +1898,27 @@ function main_options()
              17 "Install Game Boy Advance core" ON \
              18 "Install Game Boy Color core" ON \
              19 "Install MAME core" ON \
-             20 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
-             21 "Install DGEN (Megadrive/Genesis emulator)" ON \
-             22 "(C) Configure DGEN" ON \
-             23 "Install NeoGeo emulator" ON \
-             24 "(C) Configure NeoGeo" ON \
-             25 "Install NES core" ON \
-             26 "Install PC Engine core" ON \
-             27 "Install Playstation core" ON \
-             28 "Install ScummVM" ON \
-             29 "Install Super NES core" ON \
-             30 "(C) Configure Super NES core" ON \
-             31 "Install Wolfenstein3D engine" ON \
-             32 "Install Z Machine emulator (Frotz)" ON \
-             33 "Install ZX Spectrum emulator (Fuse)" ON \
-             34 "Install BCM library" ON \
-             35 "Install SNESDev" ON \
-             36 "Install Emulation Station" ON \
-             37 "Install Emulation Station Themes" ON \
-             38 "(C) Generate config file for Emulation Station" ON \
-             39 "(C) Configure sound settings for RetroArch" ON )
+             20 "Install FBA core" ON \
+             21 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
+             22 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             23 "(C) Configure DGEN" ON \
+             24 "Install NeoGeo emulator" ON \
+             25 "(C) Configure NeoGeo" ON \
+             26 "Install NES core" ON \
+             27 "Install PC Engine core" ON \
+             28 "Install Playstation core" ON \
+             29 "Install ScummVM" ON \
+             30 "Install Super NES core" ON \
+             31 "(C) Configure Super NES core" ON \
+             32 "Install Wolfenstein3D engine" ON \
+             33 "Install Z Machine emulator (Frotz)" ON \
+             34 "Install ZX Spectrum emulator (Fuse)" ON \
+             35 "Install BCM library" ON \
+             36 "Install SNESDev" ON \
+             37 "Install Emulation Station" ON \
+             38 "Install Emulation Station Themes" ON \
+             39 "(C) Generate config file for Emulation Station" ON \
+             40 "(C) Configure sound settings for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1915,26 +1946,27 @@ function main_options()
                 17) install_gba ;;
                 18) install_gbc ;;
                 19) install_mame ;;
-                20) install_megadrive ;;
-                21) install_dgen ;;
-                22) configureDGEN ;;
-                23) install_neogeo ;;
-                24) configureNeogeo ;;
-                25) install_nes ;;
-                26) install_mednafen_pce ;;
-                27) install_psx ;;
-                28) install_scummvm ;;
-                29) install_snes ;;
-                30) configure_snes ;;
-                31) install_wolfenstein3d ;;
-                32) install_zmachine ;;
-                33) install_zxspectrum ;;
-                34) install_bcmlibrary ;;
-                35) install_snesdev ;;
-                36) install_emulationstation ;;
-                37) install_esthemes ;;
-                38) generate_esconfig ;;
-                39) configureSoundsettings ;;
+                20) install_fba ;;
+                21) install_megadrive ;;
+                22) install_dgen ;;
+                23) configureDGEN ;;
+                24) install_neogeo ;;
+                25) configureNeogeo ;;
+                26) install_nes ;;
+                27) install_mednafen_pce ;;
+                28) install_psx ;;
+                29) install_scummvm ;;
+                30) install_snes ;;
+                31) configure_snes ;;
+                32) install_wolfenstein3d ;;
+                33) install_zmachine ;;
+                34) install_zxspectrum ;;
+                35) install_bcmlibrary ;;
+                36) install_snesdev ;;
+                37) install_emulationstation ;;
+                38) install_esthemes ;;
+                39) generate_esconfig ;;
+                40) configureSoundsettings ;;
             esac
         done
 
