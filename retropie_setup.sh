@@ -349,7 +349,6 @@ function prepareFolders()
     pathlist+=("$rootdir/roms/zmachine")
     pathlist+=("$rootdir/emulators")
     pathlist+=("$rootdir/supplementary")
-    pathlist+=("$rootdir/fba")
 
     for elem in "${pathlist[@]}"
     do
@@ -399,7 +398,8 @@ function configureRetroArch()
 
     ensureKeyValue "system_directory" "$rootdir/emulatorcores/" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_driver" "\"gl\"" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "system_directory" "$rootdir/emulatorcores/" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "video_aspect_ratio" "1.33" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
 
     # enable and configure rewind feature
     ensureKeyValue "rewind_enable" "true" "$rootdir/configs/all/retroarch.cfg"
@@ -420,6 +420,32 @@ function install_retroarch()
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
     fi  
     popd
+}
+
+# install AdvanceMAME emulator
+install_advmame()
+{
+    wget -O advmame.tar.gz http://sourceforge.net/projects/advancemame/files/advancemame/0.106.1/advancemame-0.106.1.tar.gz/download
+
+    apt-get install -y gcc-4.7
+    export CC=gcc-4.7   
+    export GCC=g++-4.7    
+
+    rootdir=/home/pi/RetroPie
+    tar xvfz advmame.tar.gz -C "$rootdir/emulators/"
+    pushd "$rootdir/emulators/advancemame-0.106.1"
+    ./configure --prefix="$rootdir/emulators/advancemame-0.106.1/installdir"
+    make
+    make install
+    if [[ ! -f "$rootdir/emulators/advancemame-0.106.1/installdir/bin/advmame" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile and install AdvMAME."
+    fi     
+    popd
+    rm advmame.tar.gz
+
+    # start AdvanceMAME once to create configuration file
+    $rootdir/emulators/advancemame-0.106.1/installdir/bin/advmame
+    echo "device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60 " >> /home/$user/.advance/advmame.rc
 }
 
 # install Amiga emulator
@@ -984,6 +1010,9 @@ function enableSNESDevAtStart()
         ensureKeyValue "input_player1_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player1_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player1_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg" 
+        
+        ensureKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg" 
+        ensureKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg" 
 
         ensureKeyValue "input_player2_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player2_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
@@ -1175,7 +1204,7 @@ DESCNAME=MAME
 NAME=mame
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
-COMMAND=retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM%  
+COMMAND=$rootdir/emulators/advancemame-0.106.1/installdir/bin/advmame %ROM%  
 PLATFORMID=23
 
 DESCNAME=FinalBurn Alpha
@@ -1897,28 +1926,29 @@ function main_options()
              16 "Install eDuke32 core" ON \
              17 "Install Game Boy Advance core" ON \
              18 "Install Game Boy Color core" ON \
-             19 "Install MAME core" ON \
-             20 "Install FBA core" ON \
-             21 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
-             22 "Install DGEN (Megadrive/Genesis emulator)" ON \
-             23 "(C) Configure DGEN" ON \
-             24 "Install NeoGeo emulator" ON \
-             25 "(C) Configure NeoGeo" ON \
-             26 "Install NES core" ON \
-             27 "Install PC Engine core" ON \
-             28 "Install Playstation core" ON \
-             29 "Install ScummVM" ON \
-             30 "Install Super NES core" ON \
-             31 "(C) Configure Super NES core" ON \
-             32 "Install Wolfenstein3D engine" ON \
-             33 "Install Z Machine emulator (Frotz)" ON \
-             34 "Install ZX Spectrum emulator (Fuse)" ON \
-             35 "Install BCM library" ON \
-             36 "Install SNESDev" ON \
-             37 "Install Emulation Station" ON \
-             38 "Install Emulation Station Themes" ON \
-             39 "(C) Generate config file for Emulation Station" ON \
-             40 "(C) Configure sound settings for RetroArch" ON )
+             19 "Install MAME core" OFF \
+             20 "Install AdvMAME emulator" ON \
+             21 "Install FBA core" ON \
+             22 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
+             23 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             24 "(C) Configure DGEN" ON \
+             25 "Install NeoGeo emulator" ON \
+             26 "(C) Configure NeoGeo" ON \
+             27 "Install NES core" ON \
+             28 "Install PC Engine core" ON \
+             29 "Install Playstation core" ON \
+             30 "Install ScummVM" ON \
+             31 "Install Super NES core" ON \
+             32 "(C) Configure Super NES core" ON \
+             33 "Install Wolfenstein3D engine" ON \
+             34 "Install Z Machine emulator (Frotz)" ON \
+             35 "Install ZX Spectrum emulator (Fuse)" ON \
+             36 "Install BCM library" ON \
+             37 "Install SNESDev" ON \
+             38 "Install Emulation Station" ON \
+             39 "Install Emulation Station Themes" ON \
+             40 "(C) Generate config file for Emulation Station" ON \
+             41 "(C) Configure sound settings for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1946,27 +1976,28 @@ function main_options()
                 17) install_gba ;;
                 18) install_gbc ;;
                 19) install_mame ;;
-                20) install_fba ;;
-                21) install_megadrive ;;
-                22) install_dgen ;;
-                23) configureDGEN ;;
-                24) install_neogeo ;;
-                25) configureNeogeo ;;
-                26) install_nes ;;
-                27) install_mednafen_pce ;;
-                28) install_psx ;;
-                29) install_scummvm ;;
-                30) install_snes ;;
-                31) configure_snes ;;
-                32) install_wolfenstein3d ;;
-                33) install_zmachine ;;
-                34) install_zxspectrum ;;
-                35) install_bcmlibrary ;;
-                36) install_snesdev ;;
-                37) install_emulationstation ;;
-                38) install_esthemes ;;
-                39) generate_esconfig ;;
-                40) configureSoundsettings ;;
+                20) install_advmame ;;
+                21) install_fba ;;
+                22) install_megadrive ;;
+                23) install_dgen ;;
+                24) configureDGEN ;;
+                25) install_neogeo ;;
+                26) configureNeogeo ;;
+                27) install_nes ;;
+                28) install_mednafen_pce ;;
+                29) install_psx ;;
+                30) install_scummvm ;;
+                31) install_snes ;;
+                32) configure_snes ;;
+                33) install_wolfenstein3d ;;
+                34) install_zmachine ;;
+                35) install_zxspectrum ;;
+                36) install_bcmlibrary ;;
+                37) install_snesdev ;;
+                38) install_emulationstation ;;
+                39) install_esthemes ;;
+                40) generate_esconfig ;;
+                41) configureSoundsettings ;;
             esac
         done
 
