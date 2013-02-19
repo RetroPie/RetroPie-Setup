@@ -349,6 +349,7 @@ function prepareFolders()
     pathlist+=("$rootdir/roms/zmachine")
     pathlist+=("$rootdir/emulators")
     pathlist+=("$rootdir/supplementary")
+    pathlist+=("$rootdir/fba")
 
     for elem in "${pathlist[@]}"
     do

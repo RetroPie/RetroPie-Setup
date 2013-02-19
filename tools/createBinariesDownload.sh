@@ -5,7 +5,6 @@ filelist=()
 filelist+=("./RetroPie/supplementary/EmulationStation/emulationstation")
 filelist+=("`find ./RetroPie/emulatorcores/stella-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/gambatte-libretro/ -name "*libretro*.so"`")
-filelist+=("`find ./RetroPie/emulatorcores/imame4all-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/libretro-prboom/ -name "*libretro*.so"`")
 filelist+=("./RetroPie/emulatorcores/libretro-prboom/prboom.wad")
 filelist+=("`find ./RetroPie/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"`")
@@ -31,6 +30,7 @@ filelist+=("./RetroPie/supplementary/SNESDev-Rpi/scripts/SNESDev")
 filelist+=("./RetroPie/emulators/osmose-0.8.1+rpi20121122/")
 filelist+=("./RetroPie/emulators/gngeo-0.7/")
 filelist+=("./RetroPie/emulators/uae4all/")
+filelist+=("./RetroPie/emulators/advancemame-0.106.1/installdir/")
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 
