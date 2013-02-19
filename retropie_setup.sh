@@ -447,6 +447,7 @@ install_advmame()
     # start AdvanceMAME once to create configuration file
     $rootdir/emulators/advancemame-0.106.1/installdir/bin/advmame
     echo "device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60 " >> /home/$user/.advance/advmame.rc
+    echo "misc_quiet yes" >> /home/$user/.advance/advmame.rc
 }
 
 # install Amiga emulator
