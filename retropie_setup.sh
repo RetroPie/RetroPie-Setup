@@ -342,14 +342,14 @@ function prepareFolders()
     pathlist+=("$rootdir/roms/psx")
     pathlist+=("$rootdir/roms/snes")
     pathlist+=("$rootdir/roms/zxspectrum")
-    pathlist+=("$rootdir/emulatorcores")
+    pathlist+=("$rootdir/roms/fba")
     pathlist+=("$rootdir/roms/amiga")
     pathlist+=("$rootdir/roms/neogeo")
     pathlist+=("$rootdir/roms/scummvm")
     pathlist+=("$rootdir/roms/zmachine")
+    pathlist+=("$rootdir/emulatorcores")
     pathlist+=("$rootdir/emulators")
     pathlist+=("$rootdir/supplementary")
-    pathlist+=("$rootdir/fba")
 
     for elem in "${pathlist[@]}"
     do
@@ -398,7 +398,6 @@ function configureRetroArch()
     fi
 
     ensureKeyValue "system_directory" "$rootdir/emulatorcores/" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "video_driver" "\"gl\"" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_aspect_ratio" "1.33" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
 
@@ -797,6 +796,18 @@ function install_megadrive()
     rm osmose.tar.bz2
 }
 
+# install Sega Mega Drive/Mastersystem/Game Gear libretro emulator core
+function install_megadriveLibretro()
+{
+    printMsg "Installing Mega Drive/Mastersystem/Game Gear core (Libretro core)"
+    gitPullOrClone "$rootdir/emulatorcores/Genesis-Plus-GX" git://github.com/libretro/Genesis-Plus-GX.git
+    make -f Makefile.libretro 
+    if [[ ! -f "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
+    fi      
+    popd
+}
+
 # install PC Engine core
 function install_mednafen_pce()
 {
@@ -952,6 +963,7 @@ function install_snesdev()
     if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."  
     else
+        service SNESDev stop
         cp "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" /usr/local/bin/
     fi    
     popd
@@ -1747,7 +1759,7 @@ function createDebugLog()
     checkFileExistence "$rootdir/emulatorcores/libretro-prboom/prboom.wad"
     checkFileExistence "`find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/gambatte-libretro/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`"
@@ -1931,26 +1943,27 @@ function main_options()
              19 "Install MAME core" OFF \
              20 "Install AdvMAME emulator" ON \
              21 "Install FBA core" ON \
-             22 "Install Mastersystem/Game Gear emulator (OsmOse)" ON \
+             22 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
              23 "Install DGEN (Megadrive/Genesis emulator)" ON \
              24 "(C) Configure DGEN" ON \
-             25 "Install NeoGeo emulator" ON \
-             26 "(C) Configure NeoGeo" ON \
-             27 "Install NES core" ON \
-             28 "Install PC Engine core" ON \
-             29 "Install Playstation core" ON \
-             30 "Install ScummVM" ON \
-             31 "Install Super NES core" ON \
-             32 "(C) Configure Super NES core" ON \
-             33 "Install Wolfenstein3D engine" ON \
-             34 "Install Z Machine emulator (Frotz)" ON \
-             35 "Install ZX Spectrum emulator (Fuse)" ON \
-             36 "Install BCM library" ON \
-             37 "Install SNESDev" ON \
-             38 "Install Emulation Station" ON \
-             39 "Install Emulation Station Themes" ON \
-             40 "(C) Generate config file for Emulation Station" ON \
-             41 "(C) Configure sound settings for RetroArch" ON )
+             25 "Install Megadrive/Genesis core (Genesis-Plus-GX)" OFF \
+             26 "Install NeoGeo emulator" ON \
+             27 "(C) Configure NeoGeo" ON \
+             28 "Install NES core" ON \
+             29 "Install PC Engine core" ON \
+             30 "Install Playstation core" ON \
+             31 "Install ScummVM" ON \
+             32 "Install Super NES core" ON \
+             33 "(C) Configure Super NES core" ON \
+             34 "Install Wolfenstein3D engine" ON \
+             35 "Install Z Machine emulator (Frotz)" ON \
+             36 "Install ZX Spectrum emulator (Fuse)" ON \
+             37 "Install BCM library" ON \
+             38 "Install SNESDev" ON \
+             39 "Install Emulation Station" ON \
+             40 "Install Emulation Station Themes" ON \
+             41 "(C) Generate config file for Emulation Station" ON \
+             42 "(C) Configure sound settings for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -1983,23 +1996,24 @@ function main_options()
                 22) install_megadrive ;;
                 23) install_dgen ;;
                 24) configureDGEN ;;
-                25) install_neogeo ;;
-                26) configureNeogeo ;;
-                27) install_nes ;;
-                28) install_mednafen_pce ;;
-                29) install_psx ;;
-                30) install_scummvm ;;
-                31) install_snes ;;
-                32) configure_snes ;;
-                33) install_wolfenstein3d ;;
-                34) install_zmachine ;;
-                35) install_zxspectrum ;;
-                36) install_bcmlibrary ;;
-                37) install_snesdev ;;
-                38) install_emulationstation ;;
-                39) install_esthemes ;;
-                40) generate_esconfig ;;
-                41) configureSoundsettings ;;
+                25) install_megadriveLibretro ;;
+                26) install_neogeo ;;
+                27) configureNeogeo ;;
+                28) install_nes ;;
+                29) install_mednafen_pce ;;
+                30) install_psx ;;
+                31) install_scummvm ;;
+                32) install_snes ;;
+                33) configure_snes ;;
+                34) install_wolfenstein3d ;;
+                35) install_zmachine ;;
+                36) install_zxspectrum ;;
+                37) install_bcmlibrary ;;
+                38) install_snesdev ;;
+                39) install_emulationstation ;;
+                40) install_esthemes ;;
+                41) generate_esconfig ;;
+                42) configureSoundsettings ;;
             esac
         done
 

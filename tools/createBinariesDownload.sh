@@ -12,6 +12,7 @@ filelist+=("`find ./RetroPie/emulatorcores/stella-libretro/ -name "*libretro*.so
 filelist+=("`find ./RetroPie/emulatorcores/vba-next/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`")
+filelist+=("`find ./RetroPie/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"`")
 filelist+=("./RetroPie/emulators/RetroArch/README.md")
 filelist+=("./RetroPie/emulators/RetroArch/retroarch")
 filelist+=("./RetroPie/emulators/RetroArch/retroarch-zip")
