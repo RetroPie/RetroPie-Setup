@@ -334,6 +334,7 @@ function prepareFolders()
     pathlist+=("$rootdir/roms/gb")
     pathlist+=("$rootdir/roms/gba")
     pathlist+=("$rootdir/roms/gbc")
+    pathlist+=("$rootdir/roms/intellivision")
     pathlist+=("$rootdir/roms/mame")
     pathlist+=("$rootdir/roms/mastersystem")
     pathlist+=("$rootdir/roms/megadrive")
@@ -483,12 +484,12 @@ sed '
 
 function ensureEntryInSMBConf()
 {
-    comp=`cat /etc/samba/smb.conf | grep '\[$1\]'`
-    if [ "$comp" == '[$1]' ]; then
-      echo 'Not updating smb.conf. Finished'
+    comp=`cat /etc/samba/smb.conf | grep "\[$1\]"`
+    if [ "$comp" == "[$1]" ]; then
+      echo "$1 already contained in /etc/samba/smb.conf."
     else
         chmod 666 /etc/samba/smb.conf
-    cat > /etc/samba/smb.conf << _EOF_        
+    tee -a /etc/samba/smb.conf <<HDHD
 [$1]
 comment = $1
 path = $rootdir/roms/$2
@@ -500,7 +501,7 @@ read only = no
 browseable = yes
 force user = pi
 public = yes
-_EOF_
+HDHD
     fi
     chmod 644 /etc/samba/smb.conf
 }
@@ -508,26 +509,34 @@ _EOF_
 # install and configure SAMBA shares for each ROM directory of the emulators
 configureSAMBA()
 {
+    printMsg "Installing and configuring SAMBA shares."
     apt-get install -y samba samba-common-bin
 
-    ensureEntryInSMBConf AMIGA amiga
-    ensureEntryInSMBConf ATARI2600 atari2600
-    ensureEntryInSMBConf DOOM doom
-    ensureEntryInSMBConf FBA fba
-    ensureEntryInSMBConf GB gb
-    ensureEntryInSMBConf GAMEGEAR gamegear
-    ensureEntryInSMBConf GBA gba
-    ensureEntryInSMBConf GBC gbc
-    ensureEntryInSMBConf MASTERSYSTEM mastersystem
-    ensureEntryInSMBConf MEGADRIVE megadrive
-    ensureEntryInSMBConf NEOGEO neogeo
-    ensureEntryInSMBConf NES nes
-    ensureEntryInSMBConf PCENGINE pcengine
-    ensureEntryInSMBConf PSX playstation
-    ensureEntryInSMBConf SCUMMVM scummvm
-    ensureEntryInSMBConf SNES snes
+    ensureEntryInSMBConf "ATARI2600" "atari2600"
+    ensureEntryInSMBConf "DOOM" "doom"
+    ensureEntryInSMBConf "GAMEGEAR" "gamegear"
+    ensureEntryInSMBConf "GB" "gb"
+    ensureEntryInSMBConf "GBA" "gba"
+    ensureEntryInSMBConf "GBC" "gbc"
+    ensureEntryInSMBConf "INTELLIVISION" "intellivision"
+    ensureEntryInSMBConf "MAME" "mame"
+    ensureEntryInSMBConf "MASTERSYSTEM" "mastersystem"
+    ensureEntryInSMBConf "MEGADRIVE" "megadrive"
+    ensureEntryInSMBConf "NES" "nes"
+    ensureEntryInSMBConf "PCENGINE" "pcengine"
+    ensureEntryInSMBConf "PSX" "psx"
+    ensureEntryInSMBConf "SNES" "snes"
+    ensureEntryInSMBConf "ZXSPECTRUM" "zxspectrum"
+    ensureEntryInSMBConf "FBA" "fba"
+    ensureEntryInSMBConf "AMIGA" "amiga"
+    ensureEntryInSMBConf "NEOGEO" "neogeo"
+    ensureEntryInSMBConf "SCUMMVM" "scummvm"
+    ensureEntryInSMBConf "ZMACHINE" "zmachine"
 
     /etc/init.d/samba restart
+
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The SAMBA shares can be accessed with username pi, password raspberry" 22 76    
+
 }
 
 # install Amiga emulator
@@ -752,6 +761,9 @@ emulator_roms "Gameboy Color" "$rootdir/roms/gbc"
 emulator "Sega Game Gear" generic "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose" "%p -joy -tv -fs"
 emulator_roms "Sega Game Gear" "$rootdir/roms/gamegear"
 
+emulator "IntelliVision" generic "$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv" "-z1 -f1 -q %p"
+emulator_roms "IntelliVision" "$rootdir/roms/intellivision"
+
 emulator "MAME" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/imame4all-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %p"
 emulator_roms "MAME" "$rootdir/roms/mame"
 
@@ -873,6 +885,32 @@ function install_megadrive()
     fi      
     popd
     rm osmose.tar.bz2
+}
+
+# install Intellivision Emulator jzintv
+function install_intellivision()
+{
+    printMsg "Installing Intellivision emulator jzintv"
+    wget http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip -O jzintv.zip
+    unzip -n jzintv.zip -d "$rootdir/emulators/"
+    pushd "$rootdir/emulators/jzintv-1.0-beta4/src/"
+    mkdir "$rootdir/emulators/jzintv-1.0-beta4/bin"
+    cat > "pi.diff" << _EOF_
+65c
+ OPT_FLAGS = -O3 -fomit-frame-pointer -fprefetch-loop-arrays -march=armv6 -mfloat-abi=hard -mfpu=vfp
+.
+_EOF_
+
+    patch -e Makefile pi.diff
+    make clean
+    make
+    if [[ ! -f "$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile jzintv."
+    else
+        __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
+    fi      
+    popd
+    rm jzintv.zip
 }
 
 # install Sega Mega Drive/Mastersystem/Game Gear libretro emulator core
@@ -1304,6 +1342,13 @@ EXTENSION=.gg .GG
 COMMAND=$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs
 PLATFORMID=20
 
+DESCNAME=Intellivision
+NAME=intellivision
+PATH=$rootdir/roms/intellivision
+EXTENSION=.int .INT .bin .BIN
+COMMAND=$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv -z1 -f1 -q %ROM%
+PLATFORMID=32
+
 DESCNAME=MAME
 NAME=mame
 PATH=$rootdir/roms/mame
@@ -1398,6 +1443,7 @@ function sortromsalphabet()
     pathlist+=("$rootdir/roms/gb")
     pathlist+=("$rootdir/roms/gba")
     pathlist+=("$rootdir/roms/gbc")
+    pathlist+=("$rootdir/roms/intellivision")
     pathlist+=("$rootdir/roms/mame")
     pathlist+=("$rootdir/roms/mastersystem")
     pathlist+=("$rootdir/roms/megadrive")
@@ -1951,6 +1997,7 @@ function main_binaries()
 
     __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
     __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
+    __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
 
     if [[ ! -z $__INFMSGS ]]; then
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
@@ -2023,30 +2070,31 @@ function main_options()
              16 "Install eDuke32 core" ON \
              17 "Install Game Boy Advance core" ON \
              18 "Install Game Boy Color core" ON \
-             19 "Install MAME core" OFF \
-             20 "Install AdvMAME emulator" ON \
-             21 "Install FBA core" ON \
-             22 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
-             23 "Install DGEN (Megadrive/Genesis emulator)" ON \
-             24 "(C) Configure DGEN" ON \
-             25 "Install Megadrive/Genesis core (Genesis-Plus-GX)" OFF \
-             26 "Install NeoGeo emulator" ON \
-             27 "(C) Configure NeoGeo" ON \
-             28 "Install NES core" ON \
-             29 "Install PC Engine core" ON \
-             30 "Install Playstation core" ON \
-             31 "Install ScummVM" ON \
-             32 "Install Super NES core" ON \
-             33 "(C) Configure Super NES core" ON \
-             34 "Install Wolfenstein3D engine" ON \
-             35 "Install Z Machine emulator (Frotz)" ON \
-             36 "Install ZX Spectrum emulator (Fuse)" ON \
-             37 "Install BCM library" ON \
-             38 "Install SNESDev" ON \
-             39 "Install Emulation Station" ON \
-             40 "Install Emulation Station Themes" ON \
-             41 "(C) Generate config file for Emulation Station" ON \
-             42 "(C) Configure sound settings for RetroArch" ON )
+             19 "Install IntelliVision emulator (jzintv)" ON \
+             20 "Install MAME core" OFF \
+             21 "Install AdvMAME emulator" ON \
+             22 "Install FBA core" ON \
+             23 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
+             24 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             25 "(C) Configure DGEN" ON \
+             26 "Install Megadrive/Genesis core (Genesis-Plus-GX)" OFF \
+             27 "Install NeoGeo emulator" ON \
+             28 "(C) Configure NeoGeo" ON \
+             29 "Install NES core" ON \
+             30 "Install PC Engine core" ON \
+             31 "Install Playstation core" ON \
+             32 "Install ScummVM" ON \
+             33 "Install Super NES core" ON \
+             34 "(C) Configure Super NES core" ON \
+             35 "Install Wolfenstein3D engine" ON \
+             36 "Install Z Machine emulator (Frotz)" ON \
+             37 "Install ZX Spectrum emulator (Fuse)" ON \
+             38 "Install BCM library" ON \
+             39 "Install SNESDev" ON \
+             40 "Install Emulation Station" ON \
+             41 "Install Emulation Station Themes" ON \
+             42 "(C) Generate config file for Emulation Station" ON \
+             43 "(C) Configure sound settings for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2073,30 +2121,31 @@ function main_options()
                 16) install_eduke32 ;;
                 17) install_gba ;;
                 18) install_gbc ;;
-                19) install_mame ;;
-                20) install_advmame ;;
-                21) install_fba ;;
-                22) install_megadrive ;;
-                23) install_dgen ;;
-                24) configureDGEN ;;
-                25) install_megadriveLibretro ;;
-                26) install_neogeo ;;
-                27) configureNeogeo ;;
-                28) install_nes ;;
-                29) install_mednafen_pce ;;
-                30) install_psx ;;
-                31) install_scummvm ;;
-                32) install_snes ;;
-                33) configure_snes ;;
-                34) install_wolfenstein3d ;;
-                35) install_zmachine ;;
-                36) install_zxspectrum ;;
-                37) install_bcmlibrary ;;
-                38) install_snesdev ;;
-                39) install_emulationstation ;;
-                40) install_esthemes ;;
-                41) generate_esconfig ;;
-                42) configureSoundsettings ;;
+                19) install_intellivision ;;
+                20) install_mame ;;
+                21) install_advmame ;;
+                22) install_fba ;;
+                23) install_megadrive ;;
+                24) install_dgen ;;
+                25) configureDGEN ;;
+                26) install_megadriveLibretro ;;
+                27) install_neogeo ;;
+                28) configureNeogeo ;;
+                29) install_nes ;;
+                30) install_mednafen_pce ;;
+                31) install_psx ;;
+                32) install_scummvm ;;
+                33) install_snes ;;
+                34) configure_snes ;;
+                35) install_wolfenstein3d ;;
+                36) install_zmachine ;;
+                37) install_zxspectrum ;;
+                38) install_bcmlibrary ;;
+                39) install_snesdev ;;
+                40) install_emulationstation ;;
+                41) install_esthemes ;;
+                42) generate_esconfig ;;
+                43) configureSoundsettings ;;
             esac
         done
 
@@ -2133,7 +2182,8 @@ function main_setup()
                  10 "Install/update multi-console gamepad driver for GPIO" 
                  11 "Enable gamecon_gpio_rpi with SNES-pad config"
                  12 "Run 'ES-scraper'" 
-                 13 "Generate debug log" )
+                 13 "Install and configure SAMBA shares"
+                 14 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -2149,7 +2199,8 @@ function main_setup()
                  10) installGameconGPIOModule ;;
                  11) enableGameconSnes ;;
                  12) scraperMenu ;;
-                 13) createDebugLog ;;
+                 13) configureSAMBA ;;
+                 14) createDebugLog ;;
             esac
         else
             break
