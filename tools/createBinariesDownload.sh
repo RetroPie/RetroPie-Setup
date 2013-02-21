@@ -29,6 +29,7 @@ filelist+=("./RetroPie/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/ma
 filelist+=("./RetroPie/emulators/Wolf4SDL-1.7-src/wolf3d")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/scripts/SNESDev")
 filelist+=("./RetroPie/emulators/osmose-0.8.1+rpi20121122/")
+filelist+=("./RetroPie/emulators/jzintv-1.0-beta4/")
 filelist+=("./RetroPie/emulators/gngeo-0.7/")
 filelist+=("./RetroPie/emulators/uae4all/")
 filelist+=("./RetroPie/emulators/advancemame-0.106.1/installdir/")

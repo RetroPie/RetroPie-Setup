@@ -347,6 +347,7 @@ function prepareFolders()
     pathlist+=("$rootdir/roms/neogeo")
     pathlist+=("$rootdir/roms/scummvm")
     pathlist+=("$rootdir/roms/zmachine")
+    pathlist+=("$rootdir/roms/intellivision")
     pathlist+=("$rootdir/emulatorcores")
     pathlist+=("$rootdir/emulators")
     pathlist+=("$rootdir/supplementary")
@@ -670,6 +671,9 @@ emulator_roms "Gameboy Color" "$rootdir/roms/gbc"
 emulator "Sega Game Gear" generic "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose" "%p -joy -tv -fs"
 emulator_roms "Sega Game Gear" "$rootdir/roms/gamegear"
 
+emulator "IntelliVision" generic "$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv" "-z1 -f1 -q %p"
+emulator_roms "IntelliVision" "$rootdir/roms/intellivision"
+
 emulator "MAME" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/imame4all-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %p"
 emulator_roms "MAME" "$rootdir/roms/mame"
 
@@ -794,6 +798,32 @@ function install_megadrive()
     fi      
     popd
     rm osmose.tar.bz2
+}
+
+# install Intellivision Emulator jzintv
+function install_intellivision()
+{
+    printMsg "Installing Intellivision emulator jzintv"
+    wget http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip -O jzintv.zip
+    unzip -n jzintv.zip -d "$rootdir/emulators/"
+    pushd "$rootdir/emulators/jzintv-1.0-beta4/src/"
+	mkdir "$rootdir/emulators/jzintv-1.0-beta4/bin"
+	cat > "pi.diff" << _EOF_
+65c
+ OPT_FLAGS = -O3 -fomit-frame-pointer -fprefetch-loop-arrays -march=armv6 -mfloat-abi=hard -mfpu=vfp
+.
+_EOF_
+		
+    patch -e Makefile pi.diff
+	make clean
+    make
+    if [[ ! -f "$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile jzintv."
+	else
+		__INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
+    fi      
+    popd
+    rm jzintv.zip
 }
 
 # install Sega Mega Drive/Mastersystem/Game Gear libretro emulator core
@@ -1221,6 +1251,13 @@ EXTENSION=.zip .ZIP
 COMMAND=$rootdir/emulators/advancemame-0.106.1/installdir/bin/advmame %ROM%  
 PLATFORMID=23
 
+DESCNAME=Intellivision
+NAME=intellivision
+PATH=$rootdir/roms/intellivision
+EXTENSION=.int .INT .bin .BIN
+COMMAND=$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv -z1 -f1 -q %ROM%
+PLATFORMID=32
+
 DESCNAME=FinalBurn Alpha
 NAME=fba
 PATH=$rootdir/roms/fba
@@ -1309,6 +1346,7 @@ function sortromsalphabet()
     pathlist+=("$rootdir/roms/gba")
     pathlist+=("$rootdir/roms/gbc")
     pathlist+=("$rootdir/roms/mame")
+	pathlist+=("$rootdir/roms/intellivision")
     pathlist+=("$rootdir/roms/mastersystem")
     pathlist+=("$rootdir/roms/megadrive")
     pathlist+=("$rootdir/roms/neogeo")
@@ -1868,6 +1906,7 @@ function main_binaries()
 
     __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
     __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
+	__INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
 
     if [[ ! -z $__INFMSGS ]]; then
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
@@ -1958,12 +1997,13 @@ function main_options()
              34 "Install Wolfenstein3D engine" ON \
              35 "Install Z Machine emulator (Frotz)" ON \
              36 "Install ZX Spectrum emulator (Fuse)" ON \
-             37 "Install BCM library" ON \
-             38 "Install SNESDev" ON \
-             39 "Install Emulation Station" ON \
-             40 "Install Emulation Station Themes" ON \
-             41 "(C) Generate config file for Emulation Station" ON \
-             42 "(C) Configure sound settings for RetroArch" ON )
+             37 "Install IntelliVision emulator (jzintv)" ON \
+             38 "Install BCM library" ON \
+             39 "Install SNESDev" ON \
+             40 "Install Emulation Station" ON \
+             41 "Install Emulation Station Themes" ON \
+             42 "(C) Generate config file for Emulation Station" ON \
+             43 "(C) Configure sound settings for RetroArch" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2008,12 +2048,13 @@ function main_options()
                 34) install_wolfenstein3d ;;
                 35) install_zmachine ;;
                 36) install_zxspectrum ;;
-                37) install_bcmlibrary ;;
-                38) install_snesdev ;;
-                39) install_emulationstation ;;
-                40) install_esthemes ;;
-                41) generate_esconfig ;;
-                42) configureSoundsettings ;;
+				37) install_intellivision ;;
+                38) install_bcmlibrary ;;
+                39) install_snesdev ;;
+                40) install_emulationstation ;;
+                41) install_esthemes ;;
+                42) generate_esconfig ;;
+                43) configureSoundsettings ;;
             esac
         done
 
