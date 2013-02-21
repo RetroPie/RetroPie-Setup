@@ -265,7 +265,7 @@ function installAPTPackages()
                         libboost-filesystem-dev libboost-system-dev zip python-imaging \
                         libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
                         libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev \
-                        joystick fbi gcc-4.7
+                        joystick fbi gcc-4.7 automake1.4
 
     # remove PulseAudio since this is slowing down the whole system significantly
     apt-get remove -y pulseaudio
@@ -431,7 +431,6 @@ install_advmame()
     export CC=gcc-4.7   
     export GCC=g++-4.7    
 
-    rootdir=/home/pi/RetroPie
     tar xvfz advmame.tar.gz -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/advancemame-0.106.1"
     ./configure --prefix="$rootdir/emulators/advancemame-0.106.1/installdir"
@@ -447,6 +446,88 @@ install_advmame()
     $rootdir/emulators/advancemame-0.106.1/installdir/bin/advmame
     echo "device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60 " >> /home/$user/.advance/advmame.rc
     echo "misc_quiet yes" >> /home/$user/.advance/advmame.rc
+}
+
+install_advmame()
+{
+    printMsg "Installing AdvMAME emulator"
+
+    wget -O advmame.tar.gz http://downloads.sourceforge.net/project/advancemame/advancemame/0.94.0/advancemame-0.94.0.tar.gz
+
+    apt-get -y install libsdl1.2-dev gcc-4.7
+    export CC=gcc-4.7
+    export GCC=g++-4.7
+
+    rootdir=/home/pi/RetroPie
+    tar xzvf advmame.tar.gz -C "$rootdir/emulators/"
+    pushd "$rootdir/emulators/advancemame-0.94.0"
+    sed 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' <advance/linux/vfb.c >advance/linux/temp.c
+    mv advance/linux/temp.c advance/linux/vfb.c
+    sed 's/misc_quiet\", 0/misc_quiet\", 1/' <advance/osd/global.c >advance/osd/temp.c
+    mv advance/osd/temp.c advance/osd/global.c 
+sed '
+/#include <string>/ i\
+#include <stdlib.h>
+' <advance/d2/d2.cc >advance/d2/temp.cc
+    mv advance/d2/temp.cc advance/d2/d2.cc
+    ./configure --prefix="$rootdir/emulators/advancemame-0.94.0/installdir"
+    sed 's/LDFLAGS=-s/LDFLAGS=-s -lm -Wl,--no-as-needed/' <Makefile >Makefile.temp
+    mv Makefile.temp Makefile
+    make
+    make install
+    popd
+    $rootdir/emulators/advancemame-0.94.0/installdir/bin/advmame
+    echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> .advance/advmame.rc
+    chmod -R a+rwX $home/.advance/
+}
+
+function ensureEntryInSMBConf()
+{
+    comp=`cat /etc/samba/smb.conf | grep '\[$1\]'`
+    if [ "$comp" == '[$1]' ]; then
+      echo 'Not updating smb.conf. Finished'
+    else
+        chmod 666 /etc/samba/smb.conf
+    cat > /etc/samba/smb.conf << _EOF_        
+[$1]
+comment = $1
+path = $rootdir/roms/$2
+writeable = yes
+guest ok = yes
+create mask = 0777
+directory mask = 0777
+read only = no
+browseable = yes
+force user = pi
+public = yes
+_EOF_
+    fi
+    chmod 644 /etc/samba/smb.conf
+}
+
+# install and configure SAMBA shares for each ROM directory of the emulators
+configureSAMBA()
+{
+    apt-get install -y samba samba-common-bin
+
+    ensureEntryInSMBConf AMIGA amiga
+    ensureEntryInSMBConf ATARI2600 atari2600
+    ensureEntryInSMBConf DOOM doom
+    ensureEntryInSMBConf FBA fba
+    ensureEntryInSMBConf GB gb
+    ensureEntryInSMBConf GAMEGEAR gamegear
+    ensureEntryInSMBConf GBA gba
+    ensureEntryInSMBConf GBC gbc
+    ensureEntryInSMBConf MASTERSYSTEM mastersystem
+    ensureEntryInSMBConf MEGADRIVE megadrive
+    ensureEntryInSMBConf NEOGEO neogeo
+    ensureEntryInSMBConf NES nes
+    ensureEntryInSMBConf PCENGINE pcengine
+    ensureEntryInSMBConf PSX playstation
+    ensureEntryInSMBConf SCUMMVM scummvm
+    ensureEntryInSMBConf SNES snes
+
+    /etc/init.d/samba restart
 }
 
 # install Amiga emulator
@@ -630,12 +711,13 @@ function install_fba()
 function configureNeogeo()
 {
     mkdir /home/$user/.gngeo/
-    cp sample_gngeorc /home/$user/.gngeo/gngeorc
+    cp $rootdir/emulators/gngeo-0.7/sample_gngeorc /home/$user/.gngeo/gngeorc
     chown -R $user /home/$user/.gngeo/
     chgrp -R $user /home/$user/.gngeo/
 
     sed -i -e "s/effect none/effect scale2x/g" /home/$user/.gngeo/gngeorc
     sed -i -e "s/fullscreen false/fullscreen true/g" /home/$user/.gngeo/gngeorc
+    sed -i -e "s|rompath /usr/games/lib/xmame|rompath $rootdir/RetroPie/emulators/gngeo-0.7/installdir/share/gngeo/romrc.d|g" /home/$user/.gngeo/gngeorc
 
     chmod 777 /dev/fb0
 
@@ -750,12 +832,9 @@ function install_neogeo()
     wget http://gngeo.googlecode.com/files/gngeo-0.7.tar.gz
     tar xvfz gngeo-0.7.tar.gz -C $rootdir/emulators/
     pushd "$rootdir/emulators/gngeo-0.7"
-    ./configure
+    ./configure --prefix="$rootdir/emulators/gngeo-0.7/installdir"
     make
     make install
-
-    # configure
-    configureNeogeo
 
     if [[ ! -f "$rootdir/emulators/gngeo-0.7/src/gngeo" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NeoGeo emulator."
@@ -1150,10 +1229,21 @@ function install_emulationstation()
     printMsg "Installing EmulationStation as graphical front end"
     gitPullOrClone "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
     make
-    install_esscript
+    install_esscript    
     if [[ ! -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Emulation Station."
     fi      
+
+    if [[ ! -f /usr/lib/libEGL.so ]]; then
+        ln -fs /opt/vc/lib/libEGL.so /usr/lib/libEGL.so
+    fi
+    if [[ ! -f /usr/lib/libEGL.so ]]; then
+        ln -fs /opt/vc/lib/libEGL.so /usr/lib/libEGL.so
+    fi
+    if [[ ! -f /usr/lib/libEGL.so ]]; then
+        ln -fs /opt/vc/lib/libEGL.so /usr/lib/libEGL.so
+    fi
+
     popd
 }
 
@@ -1253,7 +1343,7 @@ DESCNAME=NeoGeo
 NAME=neogeo
 PATH=$rootdir/roms/neogeo
 EXTENSION=.zip .ZIP
-COMMAND=$rootdir/emulators/gngeo-0.7/src/gngeo -i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-0.7/neogeo-bios %ROM%
+COMMAND=$rootdir/emulators/gngeo-0.7/installdir/bin/gngeo -i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-0.7/neogeo-bios %ROM%
 PLATFORMID=24
 
 DESCNAME=Nintendo Entertainment System
@@ -1826,6 +1916,7 @@ function main_binaries()
     install_rpiupdate
     update_apt
     upgrade_apt
+    run_rpiupdate
     installAPTPackages
     ensure_modules
     add_to_groups
@@ -1846,20 +1937,12 @@ function main_binaries()
 
     # install DGEN
     test -z "/usr/local/bin" || /bin/mkdir -p "/usr/local/bin"
-    /usr/bin/install -c $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/bin/dgen $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/bin/dgen_tobin '/usr/local/bin'
+    /usr/bin/install -c $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/bin/dgen $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/bin/dgen_tobin '/usr/local/bin'
     test -z "/usr/local/share/man/man1" || /bin/mkdir -p "/usr/local/share/man/man1"
-    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man1/dgen.1 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man1/dgen_tobin.1 '/usr/local/share/man/man1'
+    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/man1/dgen.1 $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/man1/dgen_tobin.1 '/usr/local/share/man/man1'
     test -z "/usr/local/share/man/man5" || /bin/mkdir -p "/usr/local/share/man/man5"
-    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.30/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
+    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
     configureDGEN
-
-    # install GnGeo
-    pushd $rootdir/supplementary/zlib-1.2.7/
-    make install
-    popd
-    pushd $rootdir/emulators/gngeo-0.7/
-    make install
-    popd
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
