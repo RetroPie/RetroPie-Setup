@@ -1987,6 +1987,9 @@ function main_binaries()
     configure_snes
     install_esthemes
     configureSoundsettings
+    install_scummvm
+    install_zmachine
+    install_zxspectrum
 
     # install DGEN
     test -z "/usr/local/bin" || /bin/mkdir -p "/usr/local/bin"
