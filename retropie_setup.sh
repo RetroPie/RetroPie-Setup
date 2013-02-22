@@ -1010,8 +1010,9 @@ function install_zmachine()
     __INFMSGS="$__INFMSGS The text adventures Zork 1 - 3 have been installed in the directory '$rootdir/roms/zmachine/'. You can start, e.g., Zork 1 with the command 'frotz $rootdir/roms/zmachine/zork1/DATA/ZORK1.DAT'."
 }
 
-# install ZX Spectrum emulator
-function install_zxspectrum()
+# Install ZX Spectrum emulator, this function is not used abymore due to segmentation fault errors.
+# However, it is kept here for now as a recipe.
+function install_zxspectrumFromSource()
 {
     printMsg "Installing ZX Spectrum emulator"
     if [[ -d "$rootdir/emulators/zxspectrum" ]]; then
@@ -1023,7 +1024,7 @@ function install_zxspectrum()
     wget http://downloads.sourceforge.net/project/fuse-emulator/fuse/1.0.0.1a/fuse-1.0.0.1a.tar.gz
     tar xvfz libspectrum-1.0.0.tar.gz
     cd libspectrum-1.0.0
-    ./configure
+    ./configure # this yields segmentation fault errors now (20.2.2013)
     make
     make install
     echo "/usr/local/lib" >> /etc/ld.so.conf.d/libspectrum.conf
@@ -1036,6 +1037,12 @@ function install_zxspectrum()
     make
     make install
     popd
+}
+
+function install_zxspectrum()
+{
+    printMsg "Installing ZX Spectrum emulator"
+    apt-get install -y spectrum-roms fuse-emulator-utils fuse-emulator-common
 }
 
 # install BCM library to enable GPIO access by SNESDev-RPi
