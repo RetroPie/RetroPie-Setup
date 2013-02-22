@@ -535,7 +535,7 @@ configureSAMBA()
 
     /etc/init.d/samba restart
 
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The SAMBA shares can be accessed with username pi, password raspberry" 22 76    
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The SAMBA shares can be accessed with a guest account" 22 76    
 
 }
 
@@ -1430,7 +1430,7 @@ DESCNAME=ZX Spectrum
 NAME=zxspectrum
 PATH=$rootdir/roms/zxspectrum
 EXTENSION=.z80 .Z80
-COMMAND=fuse
+COMMAND=xinit fuse
 
 _EOF_
 
@@ -1593,6 +1593,19 @@ card 0
 }
 _EOF_
 
+}
+
+# Disables safe mode (http://www.raspberrypi.org/phpBB3/viewtopic.php?p=129413) in order to make GPIO adapters work
+function setAvoidSafeMode()
+{
+    if [[ -z $(egrep -i "#? *avoid_safe_mode=[0-9]*" /boot/config.txt) ]]; then
+        # add key-value pair
+        echo "avoid_safe_mode=1" >> /boot/config.txt
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *avoid_safe_mode=[0-9]*" /boot/config.txt`
+        sed /boot/config.txt -i -e "s|$toreplace|avoid_safe_mode=1|g"
+    fi     
 }
 
 # shows help information in the console
@@ -1978,6 +1991,7 @@ function main_binaries()
     downloadBinaries
     install_esscript
     generate_esconfig
+    fixForXBian
     
     # install RetroArch
     install -m755 $rootdir/emulators/RetroArch/retroarch /usr/local/bin
@@ -2002,6 +2016,8 @@ function main_binaries()
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
+
+    setAvoidSafeMode
 
     createDebugLog
 
@@ -2066,7 +2082,7 @@ function main_options()
              2 "Update firmware with rpi-update" OFF \
              3 "Update APT repositories" ON \
              4 "Perform APT upgrade" ON \
-             5 "Apply fix for XBian (Neede to make components compile properly)" OFF \
+             5 "Apply fix for XBian (Neede to make components compile properly)" ON \
              6 "(C) Add user $user to groups video, audio, and input" ON \
              7 "(C) Enable modules ALSA, uinput, and joydev" ON \
              8 "(C) Export SDL_NOMOUSE=1" ON \
@@ -2104,7 +2120,8 @@ function main_options()
              40 "Install Emulation Station" ON \
              41 "Install Emulation Station Themes" ON \
              42 "(C) Generate config file for Emulation Station" ON \
-             43 "(C) Configure sound settings for RetroArch" ON )
+             43 "(C) Configure sound settings for RetroArch" ON \
+             44 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2156,6 +2173,7 @@ function main_options()
                 41) install_esthemes ;;
                 42) generate_esconfig ;;
                 43) configureSoundsettings ;;
+                44) setAvoidSafeMode ;;
             esac
         done
 
