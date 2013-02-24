@@ -402,6 +402,14 @@ function configureRetroArch()
     ensureKeyValue "video_aspect_ratio" "1.33" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
 
+    # enable hotkey ("select" button)
+    ensureKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg" 
+    ensureKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg" 
+
+    # configure save/load state
+    ensureKeyValue "input_save_state_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_load_state_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+
     # enable and configure rewind feature
     ensureKeyValue "rewind_enable" "true" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "rewind_buffer_size" "10" "$rootdir/configs/all/retroarch.cfg"
@@ -424,31 +432,6 @@ function install_retroarch()
 }
 
 # install AdvanceMAME emulator
-install_advmame()
-{
-    wget -O advmame.tar.gz http://sourceforge.net/projects/advancemame/files/advancemame/0.106.1/advancemame-0.106.1.tar.gz/download
-
-    apt-get install -y gcc-4.7
-    export CC=gcc-4.7   
-    export GCC=g++-4.7    
-
-    tar xvfz advmame.tar.gz -C "$rootdir/emulators/"
-    pushd "$rootdir/emulators/advancemame-0.106.1"
-    ./configure --prefix="$rootdir/emulators/advancemame-0.106.1/installdir"
-    make
-    make install
-    if [[ ! -f "$rootdir/emulators/advancemame-0.106.1/installdir/bin/advmame" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile and install AdvMAME."
-    fi     
-    popd
-    rm advmame.tar.gz
-
-    # start AdvanceMAME once to create configuration file
-    $rootdir/emulators/advancemame-0.106.1/installdir/bin/advmame
-    echo "device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60 " >> /home/$user/.advance/advmame.rc
-    echo "misc_quiet yes" >> /home/$user/.advance/advmame.rc
-}
-
 install_advmame()
 {
     printMsg "Installing AdvMAME emulator"
@@ -586,9 +569,9 @@ function configureDGEN()
     chmod 777 /dev/fb0
 
     mkdir /home/$user/.dgen/
+    cp sample.dgenrc /home/$user/.dgen/dgenrc 
     chown -R $user /home/$user/.dgen/
     chgrp -R $user /home/$user/.dgen/
-    cp sample.dgenrc /home/$user/.dgen/dgenrc 
     ensureKeyValue "joypad1_b0" "A" /home/$user/.dgen/dgenrc
     ensureKeyValue "joypad1_b1" "B" /home/$user/.dgen/dgenrc
     ensureKeyValue "joypad1_b3" "C" /home/$user/.dgen/dgenrc
@@ -744,18 +727,18 @@ function configure_advancemenu()
 
     cat >> "/home/$user/.advance/advmenu.rc" << _EOF_
 
-emulator "Atari 2600" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/stella-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %p"
+emulator "Atari 2600" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %p"
 emulator_roms "Atari 2600" "$rootdir/roms/atari2600"
 
-emulator "Doom" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/libretro-prboom/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %p"
+emulator "Doom" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %p"
 emulator_roms "Doom" "$rootdir/roms/doom"
 
 emulator "eDuke32" generic "/usr/local/bin/eduke32" "%p"
 
-emulator "Gameboy Advance" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/vba-next/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %p"
+emulator "Gameboy Advance" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %p"
 emulator_roms "Gameboy Advance" "$rootdir/roms/gba"
 
-emulator "Gameboy Color" generic "-L $rootdir/emulatorcores/gambatte-libretro/libgambatte/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %p"
+emulator "Gameboy Color" generic "-L `find $rootdir/emulatorcores/gambatte-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %p"
 emulator_roms "Gameboy Color" "$rootdir/roms/gbc"
 
 emulator "Sega Game Gear" generic "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose" "%p -joy -tv -fs"
@@ -764,7 +747,7 @@ emulator_roms "Sega Game Gear" "$rootdir/roms/gamegear"
 emulator "IntelliVision" generic "$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv" "-z1 -f1 -q %p"
 emulator_roms "IntelliVision" "$rootdir/roms/intellivision"
 
-emulator "MAME" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/imame4all-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %p"
+emulator "MAME" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %p"
 emulator_roms "MAME" "$rootdir/roms/mame"
 
 emulator "ScummVM" generic "scummvm"
@@ -779,16 +762,16 @@ emulator_roms "Sega Mega Drive / Genesis" "$rootdir/roms/megadrive"
 emulator "NeoGeo" generic "$rootdir/emulators/gngeo-0.7/src/gngeo" "-i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-0.7/neogeo-bios %p" 
 emulator_roms "NeoGeo" "$rootdir/roms/neogeo"
 
-emulator "Nintendo Entertainment System" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/fceu-next/fceumm-code/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %p"
+emulator "Nintendo Entertainment System" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/fceu-next/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %p"
 emulator_roms "Nintendo Entertainment System" "$rootdir/roms/nes"
 
-emulator "PC Engine/TurboGrafx 16" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/mednafen-pce-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %p"
+emulator "PC Engine/TurboGrafx 16" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %p"
 emulator_roms "PC Engine/TurboGrafx 16" "$rootdir/roms/pcengine"
 
-emulator "Sony Playstation 1" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/pcsx_rearmed/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %p"
+emulator "Sony Playstation 1" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/pcsx_libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %p"
 emulator_roms "Sony Playstation 1" "$rootdir/roms/psx"
 
-emulator "Super Nintendo" generic "/usr/local/bin/retroarch" "-L $rootdir/emulatorcores/pocketsnes-libretro/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %p"
+emulator "Super Nintendo" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %p"
 emulator_roms "Super Nintendo" "$rootdir/roms/snes"
 
 _EOF_
@@ -919,7 +902,7 @@ function install_megadriveLibretro()
     printMsg "Installing Mega Drive/Mastersystem/Game Gear core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/Genesis-Plus-GX" git://github.com/libretro/Genesis-Plus-GX.git
     make -f Makefile.libretro 
-    if [[ ! -f "$rootdir/emulatorcores/Genesis-Plus-GX/libretro.so" ]]; then
+    if [[ ! -f `find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
     fi      
     popd
@@ -1149,9 +1132,6 @@ function enableSNESDevAtStart()
         ensureKeyValue "input_player1_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player1_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg" 
         
-        ensureKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg" 
-        ensureKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg" 
-
         ensureKeyValue "input_player2_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player2_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player2_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
@@ -1360,7 +1340,7 @@ DESCNAME=MAME
 NAME=mame
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
-COMMAND=$rootdir/emulators/advancemame-0.106.1/installdir/bin/advmame %ROM%  
+COMMAND=retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% 
 PLATFORMID=23
 
 DESCNAME=FinalBurn Alpha
@@ -2097,13 +2077,13 @@ function main_options()
              17 "Install Game Boy Advance core" ON \
              18 "Install Game Boy Color core" ON \
              19 "Install IntelliVision emulator (jzintv)" ON \
-             20 "Install MAME core" OFF \
+             20 "Install MAME (iMAME4All) core" ON \
              21 "Install AdvMAME emulator" ON \
              22 "Install FBA core" ON \
              23 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
              24 "Install DGEN (Megadrive/Genesis emulator)" ON \
              25 "(C) Configure DGEN" ON \
-             26 "Install Megadrive/Genesis core (Genesis-Plus-GX)" OFF \
+             26 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
              27 "Install NeoGeo emulator" ON \
              28 "(C) Configure NeoGeo" ON \
              29 "Install NES core" ON \

@@ -5,6 +5,6 @@ apt-get purge scratch xpdf dillo midori netsurf xarchiver lxterminal lxde lxde-c
 apt-get autoremove
 
 # read and compress image of SD card with
-#   dd if=/dev/disk3 bs=2m | gzip --best > RetroPieImage_ver1.1.img.gz
+#   dd if=/dev/diskX bs=2m | gzip --best > RetroPieImage_verX.img.gz
 # create SHA1 hash with 
-#   shasum RetroPieImage_ver1.1.img.gz
+#   shasum RetroPieImage_verX.img.gz

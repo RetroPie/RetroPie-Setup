@@ -14,6 +14,7 @@ filelist+=("`find ./RetroPie/emulatorcores/vba-next/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"`")
+filelist+=("`find ./RetroPie/emulatorcores/imame4all-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/fba-libretro/ -name "*libretro*.so"`")
 
