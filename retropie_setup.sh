@@ -365,7 +365,7 @@ function prepareFolders()
 # settings for RetroArch
 function configureRetroArch()
 {
-    printMsg "Configuring RetroArch in $rootdir/configs/all/retroarch.cfg"
+    printMsg "Configuring RetroArch"
 
     if [[ ! -f "$rootdir/configs/all/retroarch.cfg" ]]; then
         mkdir -p "$rootdir/configs/all/"
@@ -568,20 +568,24 @@ function configureDGEN()
 {
     chmod 777 /dev/fb0
 
-    mkdir /home/$user/.dgen/
-    cp sample.dgenrc /home/$user/.dgen/dgenrc 
-    chown -R $user /home/$user/.dgen/
-    chgrp -R $user /home/$user/.dgen/
-    ensureKeyValue "joypad1_b0" "A" /home/$user/.dgen/dgenrc
-    ensureKeyValue "joypad1_b1" "B" /home/$user/.dgen/dgenrc
-    ensureKeyValue "joypad1_b3" "C" /home/$user/.dgen/dgenrc
-    ensureKeyValue "joypad1_b6" "MODE" /home/$user/.dgen/dgenrc
-    ensureKeyValue "joypad1_b7" "START" /home/$user/.dgen/dgenrc
-    ensureKeyValue "joypad2_b0" "A" /home/$user/.dgen/dgenrc
-    ensureKeyValue "joypad2_b1" "B" /home/$user/.dgen/dgenrc
-    ensureKeyValue "joypad2_b3" "C" /home/$user/.dgen/dgenrc
-    ensureKeyValue "joypad2_b6" "MODE" /home/$user/.dgen/dgenrc
-    ensureKeyValue "joypad2_b7" "START" /home/$user/.dgen/dgenrc    
+    if [[ ! -f "$rootdir/configs/all/dgenrc" ]]; then
+        mkdir -p "$rootdir/configs/all/"
+        cp sample.dgenrc $rootdir/configs/all/dgenrc 
+    fi
+
+    chown -R $user $rootdir/configs/all/
+    chgrp -R $user $rootdir/configs/all/
+
+    ensureKeyValue "joypad1_b0" "A" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joypad1_b1" "B" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joypad1_b3" "C" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joypad1_b6" "MODE" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joypad1_b7" "START" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joypad2_b0" "A" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joypad2_b1" "B" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joypad2_b3" "C" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joypad2_b6" "MODE" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joypad2_b7" "START" $rootdir/configs/all/dgenrc    
 }
 
 # install DGEN (Megadrive/Genesis emulator)
@@ -1368,7 +1372,7 @@ DESCNAME=Sega Mega Drive / Genesis
 NAME=megadrive
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .md .MD .bin .BIN .zip .ZIP .gz .GZ .bz2 .BZ2
-COMMAND=$rootdir/emulators/dgen-sdl-1.31/dgen -f %ROM%
+COMMAND=$rootdir/emulators/dgen-sdl-1.31/dgen -f -r $rootdir/configs/all/dgenrc %ROM%
 PLATFORMID=36
 
 DESCNAME=NeoGeo
