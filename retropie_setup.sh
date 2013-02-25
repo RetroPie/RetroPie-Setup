@@ -330,6 +330,7 @@ function prepareFolders()
     pathlist+=("$rootdir/roms")
     pathlist+=("$rootdir/roms/atari2600")
     pathlist+=("$rootdir/roms/doom")
+    pathlist+=("$rootdir/roms/duke3d/")
     pathlist+=("$rootdir/roms/gamegear")
     pathlist+=("$rootdir/roms/gb")
     pathlist+=("$rootdir/roms/gba")
@@ -638,13 +639,12 @@ function install_eduke32()
     printMsg "Downloading eDuke32 Shareware files"
     wget http://apt.duke4.net/pool/main/d/duke3d-shareware/duke3d-shareware_1.3d-23_all.deb 
     if [[ ! -f "$rootdir/emulators/eduke32/eduke32_2.0.0rpi+svn2789_armhf.deb" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile eDuke32 core."
+        __ERRMSGS="$__ERRMSGS Could not successfully install eDuke32 core."
     else
         printMsg "Installing eDuke32"
         sudo dpkg -i *duke*.deb
-        mkdir -p $rootdir/roms/eduke32/
-        cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/eduke32/
-        cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/eduke32/
+        cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/duke3d/
+        cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/duke3d/
     fi
     popd
     rm -rf "$rootdir/emulators/eduke32"
@@ -1300,9 +1300,9 @@ PLATFORMID=1
 
 DESCNAME=eDuke32
 NAME=duke3d
-PATH=$rootdir/roms/eduke32
+PATH=$rootdir/roms/duke3d
 EXTENSION=.grp .GRP
-COMMAND=eduke32 %ROM%
+COMMAND=eduke32 -g %ROM% -gamegrp %ROM%
 PLATFORMID=1
 
 DESCNAME=Game Boy
