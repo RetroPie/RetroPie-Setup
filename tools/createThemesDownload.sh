@@ -2,7 +2,8 @@
 
 filelist=()
 
-# XML, art and sound files, show with find ./.emulationstation -type f -name "*.jpg" -o -name "*.png" -o -name "*.wav" -o -name "*.xml"
+# XML, art and sound files, show with find ./.emulationstation -type f -name "*.jpg" -o -name "*.png" -o -name "*.wav" -o -name "*.xml" -o -name "*.ttf"
+filelist+=("./.emulationstation/general_art/pixeljosh6.ttf")
 filelist+=("./.emulationstation/general_art/blue2.png")
 filelist+=("./.emulationstation/general_art/RetroPieProjectLogoSmallGrey.png")
 filelist+=("./.emulationstation/general_art/grey.png")
