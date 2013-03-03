@@ -580,6 +580,9 @@ function install_cavestory()
     if [[ -z `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NXEngine / Cave Story core."
     else
+        if [[ ! -d $rootdir/roms/cavestory ]]; then
+            mkdir -p $rootdir/roms/cavestory
+        fi
         touch $rootdir/roms/cavestory/Start.txt
     fi  
     popd
