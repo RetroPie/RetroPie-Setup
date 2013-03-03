@@ -432,6 +432,13 @@ function install_retroarch()
     popd
 }
 
+function configure_advmame()
+{
+    $rootdir/emulators/advancemame-0.94.0/installdir/bin/advmame
+    echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> .advance/advmame.rc
+    chmod -R a+rwX $home/.advance/    
+}
+
 # install AdvanceMAME emulator
 install_advmame()
 {
@@ -461,9 +468,8 @@ sed '
     make
     make install
     popd
-    $rootdir/emulators/advancemame-0.94.0/installdir/bin/advmame
-    echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> .advance/advmame.rc
-    chmod -R a+rwX $home/.advance/
+
+    configure_advmame
 }
 
 function ensureEntryInSMBConf()
@@ -1373,7 +1379,7 @@ NAME=megadrive
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .md .MD .bin .BIN .zip .ZIP .gz .GZ .bz2 .BZ2
 COMMAND=$rootdir/emulators/dgen-sdl-1.31/dgen -f -r $rootdir/configs/all/dgenrc %ROM%
-PLATFORMID=36
+PLATFORMID=18
 
 DESCNAME=NeoGeo
 NAME=neogeo
@@ -1997,6 +2003,7 @@ function main_binaries()
     test -z "/usr/local/share/man/man5" || /bin/mkdir -p "/usr/local/share/man/man5"
     /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
     configureDGEN
+    configure_advmame
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
