@@ -329,6 +329,7 @@ function prepareFolders()
     pathlist=()
     pathlist+=("$rootdir/roms")
     pathlist+=("$rootdir/roms/atari2600")
+    pathlist+=("$rootdir/roms/cavestory")
     pathlist+=("$rootdir/roms/doom")
     pathlist+=("$rootdir/roms/duke3d/")
     pathlist+=("$rootdir/roms/gamegear")
@@ -568,6 +569,20 @@ function install_atari2600()
         __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 2600 core."
     fi  
     popd    
+}
+
+# install NXEngine / Cave Story core
+function install_cavestory()
+{
+    printMsg "Installing NXEngine / Cave Story"
+    gitPullOrClone "$rootdir/emulatorcores/nxengine-libretro" git://github.com/libretro/nxengine-libretro.git
+    make
+    if [[ -z `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile NXEngine / Cave Story core."
+    else
+        touch $rootdir/roms/cavestory/Start.txt
+    fi  
+    popd
 }
 
 # configure DGEN
@@ -1297,6 +1312,12 @@ EXTENSION=.a26 .A26 .bin .BIN .rom .ROM .zip .ZIP .gz .GZ
 COMMAND=retroarch -L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%
 PLATFORMID=22
 
+DESCNAME=Cave Story
+NAME=cavestory
+PATH=$rootdir/roms/cavestory
+EXTENSION=.txt
+COMMAND=retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg /home/pi/RetroPie/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe
+
 DESCNAME=Doom
 NAME=doom
 PATH=$rootdir/roms/doom
@@ -1904,6 +1925,7 @@ function createDebugLog()
     checkFileExistence "`find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"`"
     checkFileExistence "$rootdir/emulatorcores/libretro-prboom/prboom.wad"
     checkFileExistence "`find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/gambatte-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"`"
@@ -2083,36 +2105,37 @@ function main_options()
              12 "(C) Configure video and rewind for RetroArch" ON \
              13 "Install Amiga emulator" ON \
              14 "Install Atari 2600 core" ON \
-             15 "Install Doom core" ON \
-             16 "Install eDuke32 core" ON \
-             17 "Install Game Boy Advance core" ON \
-             18 "Install Game Boy Color core" ON \
-             19 "Install IntelliVision emulator (jzintv)" ON \
-             20 "Install MAME (iMAME4All) core" ON \
-             21 "Install AdvMAME emulator" ON \
-             22 "Install FBA core" ON \
-             23 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
-             24 "Install DGEN (Megadrive/Genesis emulator)" ON \
-             25 "(C) Configure DGEN" ON \
-             26 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
-             27 "Install NeoGeo emulator" ON \
-             28 "(C) Configure NeoGeo" ON \
-             29 "Install NES core" ON \
-             30 "Install PC Engine core" ON \
-             31 "Install Playstation core" ON \
-             32 "Install ScummVM" ON \
-             33 "Install Super NES core" ON \
-             34 "(C) Configure Super NES core" ON \
-             35 "Install Wolfenstein3D engine" ON \
-             36 "Install Z Machine emulator (Frotz)" ON \
-             37 "Install ZX Spectrum emulator (Fuse)" ON \
-             38 "Install BCM library" ON \
-             39 "Install SNESDev" ON \
-             40 "Install Emulation Station" ON \
-             41 "Install Emulation Station Themes" ON \
-             42 "(C) Generate config file for Emulation Station" ON \
-             43 "(C) Configure sound settings for RetroArch" ON \
-             44 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON )
+             15 "Install NXEngine / Cave Story" ON \
+             16 "Install Doom core" ON \
+             17 "Install eDuke32 core" ON \
+             18 "Install Game Boy Advance core" ON \
+             19 "Install Game Boy Color core" ON \
+             20 "Install IntelliVision emulator (jzintv)" ON \
+             21 "Install MAME (iMAME4All) core" ON \
+             22 "Install AdvMAME emulator" ON \
+             23 "Install FBA core" ON \
+             24 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
+             25 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             26 "(C) Configure DGEN" ON \
+             27 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
+             28 "Install NeoGeo emulator" ON \
+             29 "(C) Configure NeoGeo" ON \
+             30 "Install NES core" ON \
+             31 "Install PC Engine core" ON \
+             32 "Install Playstation core" ON \
+             33 "Install ScummVM" ON \
+             34 "Install Super NES core" ON \
+             35 "(C) Configure Super NES core" ON \
+             36 "Install Wolfenstein3D engine" ON \
+             37 "Install Z Machine emulator (Frotz)" ON \
+             38 "Install ZX Spectrum emulator (Fuse)" ON \
+             39 "Install BCM library" ON \
+             40 "Install SNESDev" ON \
+             41 "Install Emulation Station" ON \
+             42 "Install Emulation Station Themes" ON \
+             43 "(C) Generate config file for Emulation Station" ON \
+             44 "(C) Configure sound settings for RetroArch" ON \
+             45 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2135,36 +2158,37 @@ function main_options()
                 12) configureRetroArch ;;
                 13) install_amiga ;;
                 14) install_atari2600 ;;
-                15) install_doom ;;
-                16) install_eduke32 ;;
-                17) install_gba ;;
-                18) install_gbc ;;
-                19) install_intellivision ;;
-                20) install_mame ;;
-                21) install_advmame ;;
-                22) install_fba ;;
-                23) install_megadrive ;;
-                24) install_dgen ;;
-                25) configureDGEN ;;
-                26) install_megadriveLibretro ;;
-                27) install_neogeo ;;
-                28) configureNeogeo ;;
-                29) install_nes ;;
-                30) install_mednafen_pce ;;
-                31) install_psx ;;
-                32) install_scummvm ;;
-                33) install_snes ;;
-                34) configure_snes ;;
-                35) install_wolfenstein3d ;;
-                36) install_zmachine ;;
-                37) install_zxspectrum ;;
-                38) install_bcmlibrary ;;
-                39) install_snesdev ;;
-                40) install_emulationstation ;;
-                41) install_esthemes ;;
-                42) generate_esconfig ;;
-                43) configureSoundsettings ;;
-                44) setAvoidSafeMode ;;
+                15) install_cavestory ;;
+                16) install_doom ;;
+                17) install_eduke32 ;;
+                18) install_gba ;;
+                19) install_gbc ;;
+                20) install_intellivision ;;
+                21) install_mame ;;
+                22) install_advmame ;;
+                23) install_fba ;;
+                24) install_megadrive ;;
+                25) install_dgen ;;
+                26) configureDGEN ;;
+                27) install_megadriveLibretro ;;
+                28) install_neogeo ;;
+                29) configureNeogeo ;;
+                30) install_nes ;;
+                31) install_mednafen_pce ;;
+                32) install_psx ;;
+                33) install_scummvm ;;
+                34) install_snes ;;
+                35) configure_snes ;;
+                36) install_wolfenstein3d ;;
+                37) install_zmachine ;;
+                38) install_zxspectrum ;;
+                39) install_bcmlibrary ;;
+                40) install_snesdev ;;
+                41) install_emulationstation ;;
+                42) install_esthemes ;;
+                43) generate_esconfig ;;
+                44) configureSoundsettings ;;
+                45) setAvoidSafeMode ;;
             esac
         done
 
