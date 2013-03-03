@@ -407,6 +407,7 @@ function configureRetroArch()
     # enable hotkey ("select" button)
     ensureKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg" 
     ensureKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg" 
+    ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
 
     # configure save/load state
     ensureKeyValue "input_save_state_btn" "4" "$rootdir/configs/all/retroarch.cfg"
