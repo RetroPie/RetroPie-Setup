@@ -2001,10 +2001,10 @@ function main_binaries()
     clear
     printMsg "Binaries-based installation"
 
-    install_rpiupdate
+    # install_rpiupdate, not done anymore, but rely on apt-get upgrade here
     update_apt
     upgrade_apt
-    run_rpiupdate
+    # run_rpiupdate, not done anymore, but rely on apt-get upgrade here
     installAPTPackages
     ensure_modules
     add_to_groups
