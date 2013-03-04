@@ -6,7 +6,7 @@ filelist+=("./RetroPie/supplementary/EmulationStation/emulationstation")
 
 filelist+=("`find ./RetroPie/emulatorcores/stella-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/nxengine-libretro/ -name "*libretro*.so"`")
-filelist+=("./RetroPie/emulatorcores/nxengine-prboom/datafiles/")
+filelist+=("./RetroPie/emulatorcores/nxengine-libretro/datafiles/")
 filelist+=("`find ./RetroPie/emulatorcores/gambatte-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/libretro-prboom/ -name "*libretro*.so"`")
 filelist+=("./RetroPie/emulatorcores/libretro-prboom/prboom.wad")
