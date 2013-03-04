@@ -572,6 +572,15 @@ function install_atari2600()
     popd    
 }
 
+# configure NXEngine / Cave Story core
+function configure_cavestory()
+{
+    if [[ ! -d $rootdir/roms/cavestory ]]; then
+        mkdir -p $rootdir/roms/cavestory
+    fi
+    touch $rootdir/roms/cavestory/Start.txt    
+}
+
 # install NXEngine / Cave Story core
 function install_cavestory()
 {
@@ -581,10 +590,7 @@ function install_cavestory()
     if [[ -z `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NXEngine / Cave Story core."
     else
-        if [[ ! -d $rootdir/roms/cavestory ]]; then
-            mkdir -p $rootdir/roms/cavestory
-        fi
-        touch $rootdir/roms/cavestory/Start.txt
+        configure_cavestory
     fi  
     popd
 }
@@ -2030,6 +2036,7 @@ function main_binaries()
     /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
     configureDGEN
     configure_advmame
+    configure_cavestory
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
