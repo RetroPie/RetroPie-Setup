@@ -405,8 +405,6 @@ function configureRetroArch()
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
 
     # enable hotkey ("select" button)
-    ensureKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg" 
-    ensureKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg" 
     ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
 
     # configure save/load state
@@ -1168,6 +1166,9 @@ function enableSNESDevAtStart()
             ensureKeyValue "input_player2_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
         fi
 
+        ensureKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg" 
+        ensureKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg" 
+
         ensureKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player1_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
@@ -1207,6 +1208,9 @@ function disableSNESDevAtStart()
 
     # This command installs the init.d script so it automatically starts on boot
     update-rc.d SNESDev remove
+
+    disableKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg" 
+    disableKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg" 
 
     disableKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
     disableKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
