@@ -4,6 +4,9 @@
 apt-get purge scratch xpdf dillo midori netsurf xarchiver lxterminal lxde lxde-common lxde-icon-theme omxplayer
 apt-get autoremove
 
+# remove es_input.cfg
+rm ~/.emulationstation/es_input.cfg
+
 # read and compress image of SD card with
 #   dd if=/dev/diskX bs=2m | gzip --best > RetroPieImage_verX.img.gz
 # create SHA1 hash with 

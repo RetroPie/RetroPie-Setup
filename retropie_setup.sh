@@ -418,6 +418,20 @@ function configureRetroArch()
     ensureKeyValue "rewind_buffer_size" "10" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "rewind_granularity" "2" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_rewind" "r" "$rootdir/configs/all/retroarch.cfg"
+
+    # configure keyboard mappings
+    ensureKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_b" "z" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_y" "a" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_x" "s" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_start" "enter" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_select" "rshift" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_l" "q" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_r" "w" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_left" "left" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_right" "right" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_up" "up" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_down" "down" "$rootdir/configs/all/retroarch.cfg"
 }
 
 # install RetroArch emulator
@@ -2113,7 +2127,7 @@ function main_options()
              9 "Install all needed APT packages" ON \
              10 "(C) Generate folder structure" ON \
              11 "Install RetroArch" ON \
-             12 "(C) Configure video and rewind for RetroArch" ON \
+             12 "(C) Configure video, rewind, and keyboard for RetroArch" ON \
              13 "Install Amiga emulator" ON \
              14 "Install Atari 2600 core" ON \
              15 "Install NXEngine / Cave Story" ON \
