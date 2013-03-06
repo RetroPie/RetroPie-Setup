@@ -622,16 +622,23 @@ function configureDGEN()
     chown -R $user $rootdir/configs/all/
     chgrp -R $user $rootdir/configs/all/
 
-    ensureKeyValue "joypad1_b0" "A" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joypad1_b1" "B" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joypad1_b3" "C" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joypad1_b6" "MODE" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joypad1_b7" "START" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joypad2_b0" "A" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joypad2_b1" "B" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joypad2_b3" "C" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joypad2_b6" "MODE" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joypad2_b7" "START" $rootdir/configs/all/dgenrc    
+    ensureKeyValue "joy_pad1_a" "joystick0-button0" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_b" "joystick0-button3" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_c" "joystick0-button1" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_x" "joystick0-button6" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_y" "joystick0-button4" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_z" "joystick0-button5" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_mode" "joystick0-button9" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_start" "joystick0-button8" $rootdir/configs/all/dgenrc
+
+    ensureKeyValue "joy_pad2_a" "joystick1-button0" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_b" "joystick1-button3" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_c" "joystick1-button1" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_x" "joystick1-button6" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_y" "joystick1-button4" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_z" "joystick1-button5" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_mode" "joystick1-button9" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_start" "joystick1-button8" $rootdir/configs/all/dgenrc
 }
 
 # install DGEN (Megadrive/Genesis emulator)
@@ -646,7 +653,7 @@ function install_dgen()
     mv "$rootdir/emulators/dgen-sdl-1.32" "$rootdir/emulators/dgen-sdl"
     pushd "$rootdir/emulators/dgen-sdl"
     mkdir "installdir" # only used for creating the binaries archive
-    ./configure --disable-hqx --disable-opengl
+    ./configure --disable-opengl
     make
     make install DESTDIR=$rootdir/emulators/dgen-sdl/installdir
     make install
