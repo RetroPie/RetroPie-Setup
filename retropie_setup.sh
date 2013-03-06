@@ -1924,7 +1924,7 @@ function essc_setimgw()
 function main_reboot()
 {
     clear
-    shutdown -r now    
+    reboot    
 }
 
 # checks all kinds of essential files for existence and logs the results into the file debug.log
