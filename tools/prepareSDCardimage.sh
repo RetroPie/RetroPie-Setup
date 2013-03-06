@@ -11,6 +11,7 @@ rm -rf ~/python_games/
 rm -rf ~/Desktop/
 
 # read and compress image of SD card with
-#   dd if=/dev/diskX bs=2m | gzip --best > RetroPieImage_verX.img.gz
+#   dd if=/dev/disk2 bs=2m of=RetroPieImage_verX.img
+#   zip -9 RetroPieImage_verX.zip RetroPieImage_verX.img
 # create SHA1 hash with 
-#   shasum RetroPieImage_verX.img.gz
+#   shasum RetroPieImage_verX.zip
