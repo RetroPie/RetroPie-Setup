@@ -373,6 +373,8 @@ function configureRetroArch()
         mkdir -p "$rootdir/configs/all/"
         mkdir -p "$rootdir/configs/atari2600/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/atari2600/retroarch.cfg
+        mkdir -p "$rootdir/configs/cavestory/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/cavestory/retroarch.cfg
         mkdir -p "$rootdir/configs/doom/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/doom/retroarch.cfg
         mkdir -p "$rootdir/configs/gb/"
