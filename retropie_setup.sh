@@ -449,8 +449,10 @@ function install_retroarch()
 function configure_advmame()
 {
     $rootdir/emulators/advancemame-0.94.0/installdir/bin/advmame
-    echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> .advance/advmame.rc
-    chmod -R a+rwX $home/.advance/    
+    mv /root/.advance/ /home/$user/
+    echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> /home/$user/.advance/advmame.rc
+    chmod -R a+rwX /home/$user/.advance/
+    chown -R $user /home/$user/.advance/
 }
 
 # install AdvanceMAME emulator
@@ -639,19 +641,20 @@ function install_dgen()
     if [[ -d "$rootdir/emulators/dgen" ]]; then
         rm -rf "$rootdir/emulators/dgen"
     fi   
-    wget http://downloads.sourceforge.net/project/dgen/dgen/1.31/dgen-sdl-1.31.tar.gz
-    tar xvfz dgen-sdl-1.31.tar.gz -C "$rootdir/emulators/"
-    pushd "$rootdir/emulators/dgen-sdl-1.31"
+    wget http://downloads.sourceforge.net/project/dgen/dgen/1.32/dgen-sdl-1.32.tar.gz
+    tar xvfz dgen-sdl-1.32.tar.gz -C "$rootdir/emulators/"
+    mv "$rootdir/emulators/dgen-sdl-1.32" "$rootdir/emulators/dgen-sdl"
+    pushd "$rootdir/emulators/dgen-sdl"
     mkdir "installdir" # only used for creating the binaries archive
     ./configure --disable-hqx --disable-opengl
     make
-    make install DESTDIR=$rootdir/emulators/dgen-sdl-1.31/installdir
+    make install DESTDIR=$rootdir/emulators/dgen-sdl/installdir
     make install
-    if [[ ! -f "$rootdir/emulators/dgen-sdl-1.31/dgen" ]]; then
+    if [[ ! -f "$rootdir/emulators/dgen-sdl/dgen" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile DGEN emulator."
     fi  
     popd
-    rm dgen-sdl-1.31.tar.gz
+    rm dgen-sdl-1.32.tar.gz
 }
 
 # install Doom WADs emulator core
@@ -803,7 +806,7 @@ emulator_roms "ScummVM" "$rootdir/roms/scummvm"
 emulator "Sega Master System" generic "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose" "%p -joy -tv -fs"
 emulator_roms "Sega Master System" "$rootdir/roms/mastersystem"
 
-emulator "Sega Mega Drive / Genesis" generic "dgen" "-f %p"
+emulator "Sega Mega Drive / Genesis" generic "$rootdir/emulators/dgen-sdl/dgen" "-f %p"
 emulator_roms "Sega Mega Drive / Genesis" "$rootdir/roms/megadrive"
 
 emulator "NeoGeo" generic "$rootdir/emulators/gngeo-0.7/src/gngeo" "-i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-0.7/neogeo-bios %p" 
@@ -1427,7 +1430,7 @@ DESCNAME=Sega Mega Drive / Genesis
 NAME=megadrive
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .md .MD .bin .BIN .zip .ZIP .gz .GZ .bz2 .BZ2
-COMMAND=$rootdir/emulators/dgen-sdl-1.31/dgen -f -r $rootdir/configs/all/dgenrc %ROM%
+COMMAND=$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%
 PLATFORMID=18
 
 DESCNAME=NeoGeo
