@@ -4,8 +4,11 @@
 apt-get purge scratch xpdf dillo midori netsurf xarchiver lxterminal lxde lxde-common lxde-icon-theme omxplayer
 apt-get autoremove
 
-# remove es_input.cfg
+# remove es_input.cfg etc.
 rm ~/.emulationstation/es_input.cfg
+rm ~/ocr_pi.png
+rm -rf ~/python_games/
+rm -rf ~/Desktop/
 
 # read and compress image of SD card with
 #   dd if=/dev/diskX bs=2m | gzip --best > RetroPieImage_verX.img.gz

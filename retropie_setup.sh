@@ -2050,11 +2050,11 @@ function main_binaries()
 
     # install DGEN
     test -z "/usr/local/bin" || /bin/mkdir -p "/usr/local/bin"
-    /usr/bin/install -c $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/bin/dgen $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/bin/dgen_tobin '/usr/local/bin'
+    /usr/bin/install -c $rootdir/emulators/dgen-sdl/installdir/usr/local/bin/dgen $rootdir/emulators/dgen-sdl/installdir/usr/local/bin/dgen_tobin '/usr/local/bin'
     test -z "/usr/local/share/man/man1" || /bin/mkdir -p "/usr/local/share/man/man1"
-    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/man1/dgen.1 $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/man1/dgen_tobin.1 '/usr/local/share/man/man1'
+    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man1/dgen.1 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man1/dgen_tobin.1 '/usr/local/share/man/man1'
     test -z "/usr/local/share/man/man5" || /bin/mkdir -p "/usr/local/share/man/man5"
-    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl-1.31/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
+    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
     configureDGEN
     configure_advmame
     configure_cavestory
