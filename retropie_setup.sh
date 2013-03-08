@@ -1356,7 +1356,7 @@ DESCNAME=Cave Story
 NAME=cavestory
 PATH=$rootdir/roms/cavestory
 EXTENSION=.txt
-COMMAND=retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg /home/pi/RetroPie/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe
+COMMAND=retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe
 
 DESCNAME=Doom
 NAME=doom
@@ -1376,7 +1376,7 @@ DESCNAME=Game Boy
 NAME=gb
 PATH=$rootdir/roms/gb
 EXTENSION=.gb .GB
-COMMAND=retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` --config /home/pi/RetroPie/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%
+COMMAND=retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%
 PLATFORMID=4
 
 DESCNAME=Game Boy Advance
