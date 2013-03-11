@@ -468,7 +468,6 @@ install_advmame()
     export CC=gcc-4.7
     export GCC=g++-4.7
 
-    rootdir=/home/pi/RetroPie
     tar xzvf advmame.tar.gz -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/advancemame-0.94.0"
     sed 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' <advance/linux/vfb.c >advance/linux/temp.c
@@ -507,7 +506,7 @@ create mask = 0777
 directory mask = 0777
 read only = no
 browseable = yes
-force user = pi
+force user = $user
 public = yes
 HDHD
     fi
