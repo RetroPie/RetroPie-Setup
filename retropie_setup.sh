@@ -521,6 +521,7 @@ configureSAMBA()
     apt-get install -y samba samba-common-bin
 
     ensureEntryInSMBConf "ATARI2600" "atari2600"
+    ensureEntryInSMBConf "C64" "c64"
     ensureEntryInSMBConf "DOOM" "doom"
     ensureEntryInSMBConf "GAMEGEAR" "gamegear"
     ensureEntryInSMBConf "GB" "gb"
