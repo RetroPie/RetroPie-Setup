@@ -612,7 +612,7 @@ function install_viceC64()
         apt-get remove -y vice
     fi
     printMsg "Installing vice"
-    pushd "$rootdir/emulators/vice-2.3.dsfg"
+    pushd "$rootdir/emulators"
     echo 'deb-src http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi' >> /etc/apt/sources.list
     apt-get update
     apt-get build-dep -y vice
