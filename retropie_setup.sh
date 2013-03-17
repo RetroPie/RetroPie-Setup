@@ -2249,7 +2249,7 @@ function main_options()
                 12) configureRetroArch ;;
                 13) install_amiga ;;
                 14) install_atari2600 ;;
-                15) install_c64 ;;
+                15) install_viceC64 ;;
                 16) install_cavestory ;;
                 17) install_doom ;;
                 18) install_eduke32 ;;
