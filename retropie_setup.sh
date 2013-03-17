@@ -329,6 +329,7 @@ function prepareFolders()
     pathlist=()
     pathlist+=("$rootdir/roms")
     pathlist+=("$rootdir/roms/atari2600")
+    pathlist+=("$rootdir/roms/c64")
     pathlist+=("$rootdir/roms/cavestory")
     pathlist+=("$rootdir/roms/doom")
     pathlist+=("$rootdir/roms/duke3d/")
@@ -585,6 +586,43 @@ function install_atari2600()
         __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 2600 core."
     fi  
     popd    
+}
+
+# install C64 ROMs
+function install_c64roms()
+{
+    printMsg "Retrieving Commodore 64 ROMs"
+    wget http://www.zimmers.net/anonftp/pub/cbm/crossplatform/emulators/VICE/old/vice-1.5-roms.tar.gz
+    tar -xvzf vice-1.5-roms.tar.gz
+    cp -a vice-1.5-roms/data/* "$rootdir/emulators/vice-2.3.dfsg/installdir/lib/vice/"
+    rm -rf vice-1.5-roms
+    rm -rf vice-1.5-roms.tar.gz    
+}
+
+# Install VICE C64 Emulator
+function install_viceC64()
+{
+    printMsg "Install VICE Commodore 64 core"
+    if [[ -d "$rootdir/emulators/vice-2.3.dsfg" ]]; then
+        rm -rf "$rootdir/emulators/vice-2.3.dsfg"
+    fi
+    if dpkg-query -Wf'${db:Status-abbrev}' vice 2>/dev/null | grep -q '^i'; then
+        printf 'Package vice is already installed - removing package\n' "${1}"
+        apt-get remove -y vice
+    fi
+    printMsg "Installing vice"
+    pushd "$rootdir/emulators/vice-2.3.dsfg"
+    echo 'deb-src http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi' >> /etc/apt/sources.list
+    apt-get update
+    apt-get build-dep -y vice
+    apt-get install -y libxaw7-dev automake checkinstall
+    apt-get source vice
+    cd vice-2.3.dfsg
+    ./configure --prefix="$rootdir/emulators/vice-2.3.dfsg/installdir" --enable-sdlui --with-sdlsound
+    make    
+    make install
+    popd
+    install_c64roms    
 }
 
 # configure NXEngine / Cave Story core
@@ -1918,6 +1956,14 @@ function essc_runcrc()
     chown -R $user "$rootdir/roms"
 }
 
+function essc_runpartial()
+{
+    checkESScraperExists
+    python $rootdir/supplementary/ES-scraper/scraper.py -p -w $esscrapimgw
+    chgrp -R $user "$rootdir/roms"
+    chown -R $user "$rootdir/roms"
+}
+
 function essc_setimgw()
 {
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the maximum image width in pixels." 22 76 16)
@@ -2055,6 +2101,7 @@ function main_binaries()
     install_scummvm
     install_zmachine
     install_zxspectrum
+    install_c64roms
 
     # install DGEN
     test -z "/usr/local/bin" || /bin/mkdir -p "/usr/local/bin"
@@ -2108,10 +2155,11 @@ function scraperMenu()
     while true; do
         cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
         options=(1 "(Re-)scape of the ROMs directory" 
-                 2 "Forced (re-)scrape of the ROMs directory" 
+                 2 "FORCED (re-)scrape of the ROMs directory" 
                  3 "(Re-)scrape of the ROMs directory with CRC option" 
-                 4 "(Re-)scrape of the ROMs directory in manual mode" 
-                 5 "Set maximum width of images (currently: $esscrapimgw px)" )
+                 4 "(Re-)scrape of the ROMs directory in MANUAL mode" 
+                 5 "(Re-)scrape of the ROMs directory in PARTIAL mode"
+                 6 "Set maximum width of images (currently: $esscrapimgw px)" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             clear
@@ -2120,7 +2168,8 @@ function scraperMenu()
                 2) essc_runforced ;;
                 3) essc_runcrc ;;
                 4) essc_runmanual ;;
-                5) essc_setimgw ;;
+                5) essc_runpartial ;;
+                6) essc_setimgw ;;
             esac
         else
             break
@@ -2145,37 +2194,38 @@ function main_options()
              12 "(C) Configure video, rewind, and keyboard for RetroArch" ON \
              13 "Install Amiga emulator" ON \
              14 "Install Atari 2600 core" ON \
-             15 "Install NXEngine / Cave Story" ON \
-             16 "Install Doom core" ON \
-             17 "Install eDuke32 core" ON \
-             18 "Install Game Boy Advance core" ON \
-             19 "Install Game Boy Color core" ON \
-             20 "Install IntelliVision emulator (jzintv)" ON \
-             21 "Install MAME (iMAME4All) core" ON \
-             22 "Install AdvMAME emulator" ON \
-             23 "Install FBA core" ON \
-             24 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
-             25 "Install DGEN (Megadrive/Genesis emulator)" ON \
-             26 "(C) Configure DGEN" ON \
-             27 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
-             28 "Install NeoGeo emulator" ON \
-             29 "(C) Configure NeoGeo" ON \
-             30 "Install NES core" ON \
-             31 "Install PC Engine core" ON \
-             32 "Install Playstation core" ON \
-             33 "Install ScummVM" ON \
-             34 "Install Super NES core" ON \
-             35 "(C) Configure Super NES core" ON \
-             36 "Install Wolfenstein3D engine" ON \
-             37 "Install Z Machine emulator (Frotz)" ON \
-             38 "Install ZX Spectrum emulator (Fuse)" ON \
-             39 "Install BCM library" ON \
-             40 "Install SNESDev" ON \
-             41 "Install Emulation Station" ON \
-             42 "Install Emulation Station Themes" ON \
-             43 "(C) Generate config file for Emulation Station" ON \
-             44 "(C) Configure sound settings for RetroArch" ON \
-             45 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON )
+             15 "Install C64 emulator (Vice)" ON \
+             16 "Install NXEngine / Cave Story" ON \
+             17 "Install Doom core" ON \
+             18 "Install eDuke32 core" ON \
+             19 "Install Game Boy Advance core" ON \
+             20 "Install Game Boy Color core" ON \
+             21 "Install IntelliVision emulator (jzintv)" ON \
+             22 "Install MAME (iMAME4All) core" ON \
+             23 "Install AdvMAME emulator" ON \
+             24 "Install FBA core" ON \
+             25 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
+             26 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             27 "(C) Configure DGEN" ON \
+             28 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
+             29 "Install NeoGeo emulator" ON \
+             30 "(C) Configure NeoGeo" ON \
+             31 "Install NES core" ON \
+             32 "Install PC Engine core" ON \
+             33 "Install Playstation core" ON \
+             34 "Install ScummVM" ON \
+             35 "Install Super NES core" ON \
+             36 "(C) Configure Super NES core" ON \
+             37 "Install Wolfenstein3D engine" ON \
+             38 "Install Z Machine emulator (Frotz)" ON \
+             39 "Install ZX Spectrum emulator (Fuse)" ON \
+             40 "Install BCM library" ON \
+             41 "Install SNESDev" ON \
+             42 "Install Emulation Station" ON \
+             43 "Install Emulation Station Themes" ON \
+             44 "(C) Generate config file for Emulation Station" ON \
+             45 "(C) Configure sound settings for RetroArch" ON \
+             46 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2198,37 +2248,38 @@ function main_options()
                 12) configureRetroArch ;;
                 13) install_amiga ;;
                 14) install_atari2600 ;;
-                15) install_cavestory ;;
-                16) install_doom ;;
-                17) install_eduke32 ;;
-                18) install_gba ;;
-                19) install_gbc ;;
-                20) install_intellivision ;;
-                21) install_mame ;;
-                22) install_advmame ;;
-                23) install_fba ;;
-                24) install_megadrive ;;
-                25) install_dgen ;;
-                26) configureDGEN ;;
-                27) install_megadriveLibretro ;;
-                28) install_neogeo ;;
-                29) configureNeogeo ;;
-                30) install_nes ;;
-                31) install_mednafen_pce ;;
-                32) install_psx ;;
-                33) install_scummvm ;;
-                34) install_snes ;;
-                35) configure_snes ;;
-                36) install_wolfenstein3d ;;
-                37) install_zmachine ;;
-                38) install_zxspectrum ;;
-                39) install_bcmlibrary ;;
-                40) install_snesdev ;;
-                41) install_emulationstation ;;
-                42) install_esthemes ;;
-                43) generate_esconfig ;;
-                44) configureSoundsettings ;;
-                45) setAvoidSafeMode ;;
+                15) install_c64 ;;
+                16) install_cavestory ;;
+                17) install_doom ;;
+                18) install_eduke32 ;;
+                19) install_gba ;;
+                20) install_gbc ;;
+                21) install_intellivision ;;
+                22) install_mame ;;
+                23) install_advmame ;;
+                24) install_fba ;;
+                25) install_megadrive ;;
+                26) install_dgen ;;
+                27) configureDGEN ;;
+                28) install_megadriveLibretro ;;
+                29) install_neogeo ;;
+                30) configureNeogeo ;;
+                31) install_nes ;;
+                32) install_mednafen_pce ;;
+                33) install_psx ;;
+                34) install_scummvm ;;
+                35) install_snes ;;
+                36) configure_snes ;;
+                37) install_wolfenstein3d ;;
+                38) install_zmachine ;;
+                39) install_zxspectrum ;;
+                40) install_bcmlibrary ;;
+                41) install_snesdev ;;
+                42) install_emulationstation ;;
+                43) install_esthemes ;;
+                44) generate_esconfig ;;
+                45) configureSoundsettings ;;
+                46) setAvoidSafeMode ;;
             esac
         done
 
