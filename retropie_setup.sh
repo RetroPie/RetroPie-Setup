@@ -1402,6 +1402,7 @@ NAME=c64
 PATH=$rootdir/roms/c64
 EXTENSION=.tap .TAP
 COMMAND=$rootdir/emulators/vice-2.3.dfsg/installdir/bin/x64 %ROM%
+PLATFORMID=40
 
 DESCNAME=Doom
 NAME=doom
