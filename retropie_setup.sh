@@ -1396,6 +1396,12 @@ PATH=$rootdir/roms/cavestory
 EXTENSION=.txt
 COMMAND=retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe
 
+DESCNAME=C64
+NAME=c64
+PATH=$rootdir/roms/c64
+EXTENSION=.tap .TAP
+COMMAND=$rootdir/emulators/vice-2.3.dfsg/installdir/bin/x64 %ROM%
+
 DESCNAME=Doom
 NAME=doom
 PATH=$rootdir/roms/doom
