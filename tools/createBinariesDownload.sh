@@ -44,6 +44,7 @@ filelist+=("./RetroPie/emulators/vice-2.3.dfsg/installdir/")
 filelist+=("./RetroPie/emulators/uae4all/")
 filelist+=("./RetroPie/emulators/advancemame-0.94.0/installdir/")
 filelist+=("./RetroPie/emulators/jzintv-1.0-beta4/")
+filelist+=("./RetroPie/emulators/linapple-src_2a/")
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 
