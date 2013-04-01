@@ -114,6 +114,19 @@ function disableKeyValueShort()
     fi     
 }
 
+# ensures pair of key ($1)-value ($2) in file $3
+function ensureKeyValueBootconfig()
+{
+    if [[ -z $(egrep -i "#? *$1=[+|-]?[0-9]*[a-z]*" $3) ]]; then
+        # add key-value pair
+        echo "$1=$2" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1=[+|-]?[0-9]*[a-z]*" $3`
+        sed $3 -i -e "s|$toreplace|$1=$2|g"
+    fi     
+}
+
 function printMsg()
 {
     echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
@@ -1016,7 +1029,7 @@ function install_linapple()
         rm -rf "$rootdir/emulators/apple2"
     fi   
     wget http://downloads.sourceforge.net/project/linapple/linapple/linapple-2a/linapple-src_2a.tar.bz2
-    tar -jxvf linapple-src_2a.tar.bz2 -C "/home/pi/RetroPie/emulators/"
+    tar -jxvf linapple-src_2a.tar.bz2 -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/linapple-src_2a/src"
     make
     popd    
@@ -1102,6 +1115,44 @@ function install_wolfenstein3d()
         __INFMSGS="$__INFMSGS The Wolfenstein3D engine was successfully installed. You have to copy the game files (.wl6) into the directory $rootdir/emulators/Wolf4SDL-1.7-bin. Take care for lowercase extensions!"        
     fi 
     rm Wolf4SDL-1.7.zip
+}
+
+function configure_rpix86()
+{
+    ln -s $rootdir/roms/x86 /$rootdir/emulators/rpix86/games
+    cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
+#!/bin/bash
+pushd $rootdir/emulators/rpix86
+./rpix86
+popd
+_EOF_
+    chmod +x "$rootdir/emulators/rpix86/Start.sh"
+    chgrp -R $user $rootdir
+    chown -R $user $rootdir    
+}
+
+# install PC emulator rpix86
+function install_rpix86()
+{
+    printMsg "Installing PC emulator rpix86"
+    
+    # install rpix86
+    wget http://rpix86.patrickaalto.com/rpix86.tar.gz
+    if [[ -d "$rootdir/emulators/rpix86" ]]; then
+        rm -rf "$rootdir/emulators/rpix86"
+    fi  
+    mkdir -p "$rootdir/emulators/rpix86"
+    tar xvfz rpix86.tar.gz -C "$rootdir/emulators/rpix86"
+    rm rpix86.tar.gz
+
+    # install 4DOS.com
+    unzip -n ./supplementary/4dos.zip -d "$rootdir/emulators/rpix86/"
+
+    # configure for use with Emulation Station
+    configure_rpix86
+
+    chgrp -R $user $rootdir
+    chown -R $user $rootdir
 }
 
 # install Z Machine emulator
@@ -1504,6 +1555,13 @@ EXTENSION=.zip .ZIP
 COMMAND=retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg %ROM%  
 PLATFORMID=23
 
+DESCNAME=PC (x86)
+NAME=x86
+PATH=$rootdir/roms/x86
+EXTENSION=.sh
+COMMAND=$rootdir/emulators/rpix86/Start.sh
+PLATFORMID=1
+
 DESCNAME=ScummVM
 NAME=scummvm
 PATH=$rootdir/roms/scummvm
@@ -1731,15 +1789,18 @@ _EOF_
 
 # Disables safe mode (http://www.raspberrypi.org/phpBB3/viewtopic.php?p=129413) in order to make GPIO adapters work
 function setAvoidSafeMode()
+{  
+    printMsg "Setting avoid_safe_mode=1"
+    ensureKeyValueBootconfig "avoid_safe_mode" 1 "/boot/config.txt"
+}
+
+# sets the resolution of HDMI output to VGA mode to increase performance of emulators
+function setHDMIVGAMode()
 {
-    if [[ -z $(egrep -i "#? *avoid_safe_mode=[0-9]*" /boot/config.txt) ]]; then
-        # add key-value pair
-        echo "avoid_safe_mode=1" >> /boot/config.txt
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *avoid_safe_mode=[0-9]*" /boot/config.txt`
-        sed /boot/config.txt -i -e "s|$toreplace|avoid_safe_mode=1|g"
-    fi     
+    printMsg "Setting HDMI output to VGA resolution"
+    ensureKeyValueBootconfig "disable_overscan" 1 "/boot/config.txt"
+    ensureKeyValueBootconfig "hdmi_group" 1 "/boot/config.txt"
+    ensureKeyValueBootconfig "hdmi_mode" 1 "/boot/config.txt"
 }
 
 # shows help information in the console
@@ -2161,6 +2222,7 @@ function main_binaries()
     configure_cavestory
     configure_linapple
     install_eduke32
+    configure_rpix86
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
@@ -2261,20 +2323,22 @@ function main_options()
              31 "(C) Configure NeoGeo" ON \
              32 "Install NES core" ON \
              33 "Install PC Engine core" ON \
-             34 "Install Playstation core" ON \
-             35 "Install ScummVM" ON \
-             36 "Install Super NES core" ON \
-             37 "(C) Configure Super NES core" ON \
-             38 "Install Wolfenstein3D engine" ON \
-             39 "Install Z Machine emulator (Frotz)" ON \
-             40 "Install ZX Spectrum emulator (Fuse)" ON \
-             41 "Install BCM library" ON \
-             42 "Install SNESDev" ON \
-             43 "Install Emulation Station" ON \
-             44 "Install Emulation Station Themes" ON \
-             45 "(C) Generate config file for Emulation Station" ON \
-             46 "(C) Configure sound settings for RetroArch" ON \
-             47 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON )
+             34 "Install PC emulator (RPix86)" ON \
+             35 "Install Playstation core" ON \
+             36 "Install ScummVM" ON \
+             37 "Install Super NES core" ON \
+             38 "(C) Configure Super NES core" ON \
+             39 "Install Wolfenstein3D engine" ON \
+             40 "Install Z Machine emulator (Frotz)" ON \
+             41 "Install ZX Spectrum emulator (Fuse)" ON \
+             42 "Install BCM library" ON \
+             43 "Install SNESDev" ON \
+             44 "Install Emulation Station" ON \
+             45 "Install Emulation Station Themes" ON \
+             46 "(C) Generate config file for Emulation Station" ON \
+             47 "(C) Configure sound settings for RetroArch" ON \
+             48 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             49 "(C) Set HDMI output to VGA resolution" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2316,20 +2380,22 @@ function main_options()
                 31) configureNeogeo ;;
                 32) install_nes ;;
                 33) install_mednafen_pce ;;
-                34) install_psx ;;
-                35) install_scummvm ;;
-                36) install_snes ;;
-                37) configure_snes ;;
-                38) install_wolfenstein3d ;;
-                39) install_zmachine ;;
-                40) install_zxspectrum ;;
-                41) install_bcmlibrary ;;
-                42) install_snesdev ;;
-                43) install_emulationstation ;;
-                44) install_esthemes ;;
-                45) generate_esconfig ;;
-                46) configureSoundsettings ;;
-                47) setAvoidSafeMode ;;
+                34) install_rpix86 ;;
+                35) install_psx ;;
+                36) install_scummvm ;;
+                37) install_snes ;;
+                38) configure_snes ;;
+                39) install_wolfenstein3d ;;
+                40) install_zmachine ;;
+                41) install_zxspectrum ;;
+                42) install_bcmlibrary ;;
+                43) install_snesdev ;;
+                44) install_emulationstation ;;
+                45) install_esthemes ;;
+                46) generate_esconfig ;;
+                47) configureSoundsettings ;;
+                48) setAvoidSafeMode ;;
+                49) setHDMIVGAMode ;;
             esac
         done
 
