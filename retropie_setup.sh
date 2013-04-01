@@ -1488,7 +1488,7 @@ COMMAND=retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*lib
 DESCNAME=C64
 NAME=c64
 PATH=$rootdir/roms/c64
-EXTENSION=.tap .TAP
+EXTENSION=.crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP
 COMMAND=$rootdir/emulators/vice-2.3.dfsg/installdir/bin/x64 %ROM%
 PLATFORMID=40
 
