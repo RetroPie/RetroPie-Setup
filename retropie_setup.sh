@@ -1347,7 +1347,7 @@ if [ \$nb_lock_files -ne 0 ]; then
     exit 1
 fi
 
-\$es_bin \$@
+\$es_bin "\$@"
 _EOF_
     chmod +x /usr/bin/emulationstation
 }
