@@ -1,0 +1,45 @@
+#!/bin/bash -ue
+# Sync ROMS from external drive
+# Christian Bryn <chr.bryn@gmail.com> 2013
+
+## config / defaults
+# XXX: fix for generation from retropie_setup.sh where the install path is known
+retro_user="USERTOBECHOSEN"
+retropie_path=/home/${retro_user}/RetroPie
+# not sure if we should default to true/false with create_romdirs, but defaulting to false feels less intrusive. I'd like it to be configurable. A config file is one option, having it statically generated with retropie_setup.sh upon install is another
+create_romdirs="true"
+
+## internals
+hook_name=${0##*/}
+
+## functions
+# nicked (and modified) this from the main usbmount script
+function log()
+{
+  logger -p user.$1 -t "usbmount-${hook_name}-[$$]" -- "$2"
+}
+
+## some sanity checking
+# this script should probably never 'fail'
+[[ -n "$UM_MOUNTPOINT" ]] || { log err "UM_MOUNTPOINT not set!"; exit 0; }
+[[ -d "$UM_MOUNTPOINT" ]] || { log err "UM_MOUNTPOINT is not a directory"; exit 0; }
+
+## main
+# mirror romdir structure to external drive
+# XXX: skip checking whether <romdir> already exists and let mkdir create missing dirs (if so don't exit here)
+if [ "${create_romdirs}" == "true" -a ! -d "${UM_MOUNTPOINT}/roms" ]
+then
+  log info "Attempting to create directory structure for ROMS in ${UM_MOUNTPOINT} ..."
+  # fetch list of romdirs from current installation and mirror onto external driv
+  find "${retropie_path}/roms" -mindepth 1 -maxdepth 1 -type d -printf "${UM_MOUNTPOINT}/roms/%f\n" | xargs mkdir -p 2>/dev/null || true
+  exit 0
+fi
+
+## sync
+# make sure we have something to sync from
+[ -d "${UM_MOUNTPOINT}/roms" ] || exit 0
+
+# this could probably need some work, but it should 'work for now', so..
+rsync -azu ${UM_MOUNTPOINT}/roms ${retropie_path}/ >/dev/null 2>&1 || log err "rsync failed to sync ROMS, returned error code $?"
+chown -R ${retro_user} ${retropie_path}/
+chgrp -R ${retro_user} ${retropie_path}/
