@@ -1138,7 +1138,7 @@ function install_wolfenstein3d()
 
 function configure_rpix86()
 {
-    ln -s $rootdir/roms/x86 $rootdir/emulators/rpix86/games 
+    ln -s $rootdir/roms/x86/ $rootdir/emulators/rpix86/games 
     cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
 #!/bin/bash
 pushd $rootdir/emulators/rpix86
