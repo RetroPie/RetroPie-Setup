@@ -398,8 +398,6 @@ function configureRetroArch()
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/doom/retroarch.cfg
         mkdir -p "$rootdir/configs/gb/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gb/retroarch.cfg
-        mkdir -p "$rootdir/configs/gba/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gba/retroarch.cfg
         mkdir -p "$rootdir/configs/gbc/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gbc/retroarch.cfg
         mkdir -p "$rootdir/configs/gamegear/"
@@ -767,16 +765,20 @@ function install_eduke32()
 }
 
 
-# install Game Boy Advance emulator core
+# install Game Boy Advance emulator gpSP
 function install_gba()
 {
-    printMsg "Installing Game Boy Advance core"
-    gitPullOrClone "$rootdir/emulatorcores/vba-next" git://github.com/libretro/vba-next.git
-    make -f Makefile.libretro
-    if [[ -z `find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance core."
-    fi      
-    popd    
+    printMsg "Installing Game Boy Advance emulator gpSP"
+    gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/DPRCZ/gpsp.git
+    cd raspberrypi
+    #if we are on the 256mb model, we will never have enough RAM to compile gpSP with compiler optimization
+    #if this is the case, use sed to remove the -O3 in the Makefile (line 20, "CFLAGS     += -O3 -mfpu=vfp")
+    #TODO
+    make
+    if [[ -z `find $rootdir/emulators/gpsp/ -name "gpsp"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance emulator."
+    fi
+    popd
 }
 
 # install Game Boy Color emulator core
@@ -856,7 +858,7 @@ emulator_roms "Doom" "$rootdir/roms/doom"
 
 emulator "eDuke32" generic "/usr/local/bin/eduke32" "%p"
 
-emulator "Gameboy Advance" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %p"
+emulator "Gameboy Advance" generic "$rootdir/emulators/gpsp/gpsp" "%p"
 emulator_roms "Gameboy Advance" "$rootdir/roms/gba"
 
 emulator "Gameboy Color" generic "-L `find $rootdir/emulatorcores/gambatte-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %p"
@@ -1539,7 +1541,7 @@ DESCNAME=Game Boy Advance
 NAME=gba
 PATH=$rootdir/roms/gba
 EXTENSION=.gba .GBA
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %ROM%"
+COMMAND=$rootdir/emulators/gpsp/gpsp %ROM%
 PLATFORMID=5
 
 DESCNAME=Game Boy Color
