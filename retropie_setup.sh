@@ -771,9 +771,18 @@ function install_gba()
     printMsg "Installing Game Boy Advance emulator gpSP"
     gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/DPRCZ/gpsp.git
     cd raspberrypi
+
     #if we are on the 256mb model, we will never have enough RAM to compile gpSP with compiler optimization
     #if this is the case, use sed to remove the -O3 in the Makefile (line 20, "CFLAGS     += -O3 -mfpu=vfp")
-    #TODO
+    local RPiRev=`grep 'Revision' /proc/cpuinfo | cut -d " " -f 2`
+    if [ $RPiRev == "00d" ] || [ $RPiRev == "000e" ] || [ $RPiRev == "000f" ]; then
+	#RAM = 512mb, we're good
+    else
+	#RAM = 256mb, need to compile unoptimized
+	echo "Stripping -O[1..3] from gpSP Makefile to compile unoptimized on 256mb Pi..."
+	sed -i 's/-O[1..3]//g' Makefile
+    fi
+
     make
     if [[ -z `find $rootdir/emulators/gpsp/ -name "gpsp"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance emulator."
