@@ -777,6 +777,7 @@ function install_gba()
     local RPiRev=`grep 'Revision' /proc/cpuinfo | cut -d " " -f 2`
     if [ $RPiRev == "00d" ] || [ $RPiRev == "000e" ] || [ $RPiRev == "000f" ]; then
 	#RAM = 512mb, we're good
+	echo "512mb Pi, no de-optimization fix needed."
     else
 	#RAM = 256mb, need to compile unoptimized
 	echo "Stripping -O[1..3] from gpSP Makefile to compile unoptimized on 256mb Pi..."
