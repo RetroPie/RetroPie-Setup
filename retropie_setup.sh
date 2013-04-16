@@ -1559,7 +1559,7 @@ DESCNAME=Game Boy Advance
 NAME=gba
 PATH=$rootdir/roms/gba
 EXTENSION=.gba .GBA
-COMMAND=$rootdir/emulators/gpsp/gpsp %ROM%
+COMMAND=$rootdir/emulators/gpsp/raspberrypi/gpsp %ROM%
 PLATFORMID=5
 
 DESCNAME=Game Boy Color
