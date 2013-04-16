@@ -398,8 +398,6 @@ function configureRetroArch()
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/doom/retroarch.cfg
         mkdir -p "$rootdir/configs/gb/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gb/retroarch.cfg
-        mkdir -p "$rootdir/configs/gba/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gba/retroarch.cfg
         mkdir -p "$rootdir/configs/gbc/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gbc/retroarch.cfg
         mkdir -p "$rootdir/configs/gamegear/"
@@ -767,16 +765,38 @@ function install_eduke32()
 }
 
 
-# install Game Boy Advance emulator core
+# install Game Boy Advance emulator gpSP
 function install_gba()
 {
-    printMsg "Installing Game Boy Advance core"
-    gitPullOrClone "$rootdir/emulatorcores/vba-next" git://github.com/libretro/vba-next.git
-    make -f Makefile.libretro
-    if [[ -z `find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance core."
-    fi      
-    popd    
+    printMsg "Installing Game Boy Advance emulator gpSP"
+    gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/DPRCZ/gpsp.git
+    cd raspberrypi
+
+    #if we are on the 256mb model, we will never have enough RAM to compile gpSP with compiler optimization
+    #if this is the case, use sed to remove the -O3 in the Makefile (line 20, "CFLAGS     += -O3 -mfpu=vfp")
+    local RPiRev=`grep 'Revision' /proc/cpuinfo | cut -d " " -f 2`
+    if [ $RPiRev == "00d" ] || [ $RPiRev == "000e" ] || [ $RPiRev == "000f" ]; then
+	#RAM = 512mb, we're good
+	echo "512mb Pi, no de-optimization fix needed."
+    else
+	#RAM = 256mb, need to compile unoptimized
+	echo "Stripping -O[1..3] from gpSP Makefile to compile unoptimized on 256mb Pi..."
+	sed -i 's/-O[1..3]//g' Makefile
+    fi
+
+    #gpSP is missing an include in the Makefile
+    if [ grep '-I/opt/vc/include/interface/vmcs_host/linux' Makefile ]; then
+	echo "Skipping adding missing include to gpSP Makefile."
+    else
+	echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
+	sed -i '23iCFLAGS     += -I/opt/vc/include/interface/vmcs_host/linux' Makefile
+    fi
+
+    make
+    if [[ -z `find $rootdir/emulators/gpsp/ -name "gpsp"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance emulator."
+    fi
+    popd
 }
 
 # install Game Boy Color emulator core
@@ -856,7 +876,7 @@ emulator_roms "Doom" "$rootdir/roms/doom"
 
 emulator "eDuke32" generic "/usr/local/bin/eduke32" "%p"
 
-emulator "Gameboy Advance" generic "/usr/local/bin/retroarch" "-L `find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %p"
+emulator "Gameboy Advance" generic "$rootdir/emulators/gpsp/gpsp" "%p"
 emulator_roms "Gameboy Advance" "$rootdir/roms/gba"
 
 emulator "Gameboy Color" generic "-L `find $rootdir/emulatorcores/gambatte-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %p"
@@ -1539,7 +1559,7 @@ DESCNAME=Game Boy Advance
 NAME=gba
 PATH=$rootdir/roms/gba
 EXTENSION=.gba .GBA
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gba/retroarch.cfg %ROM%"
+COMMAND=$rootdir/emulators/gpsp/raspberrypi/gpsp %ROM%
 PLATFORMID=5
 
 DESCNAME=Game Boy Color
@@ -2349,7 +2369,7 @@ function main_options()
              17 "Install NXEngine / Cave Story" ON \
              18 "Install Doom core" ON \
              19 "Install eDuke32 with shareware files" ON \
-             20 "Install Game Boy Advance core" ON \
+             20 "Install Game Boy Advance emulator (gpSP)" ON \
              21 "Install Game Boy Color core" ON \
              22 "Install IntelliVision emulator (jzintv)" ON \
              23 "Install MAME (iMAME4All) core" ON \
