@@ -784,6 +784,14 @@ function install_gba()
 	sed -i 's/-O[1..3]//g' Makefile
     fi
 
+    #gpSP is missing an include in the Makefile
+    if [ grep '-I/opt/vc/include/interface/vmcs_host/linux' Makefile ]; then
+	echo "Skipping adding missing include to gpSP Makefile."
+    else
+	echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
+	sed -i '23iCFLAGS     += -I/opt/vc/include/interface/vmcs_host/linux' Makefile
+    fi
+
     make
     if [[ -z `find $rootdir/emulators/gpsp/ -name "gpsp"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance emulator."
@@ -2361,7 +2369,7 @@ function main_options()
              17 "Install NXEngine / Cave Story" ON \
              18 "Install Doom core" ON \
              19 "Install eDuke32 with shareware files" ON \
-             20 "Install Game Boy Advance core" ON \
+             20 "Install Game Boy Advance emulator (gpSP)" ON \
              21 "Install Game Boy Color core" ON \
              22 "Install IntelliVision emulator (jzintv)" ON \
              23 "Install MAME (iMAME4All) core" ON \
