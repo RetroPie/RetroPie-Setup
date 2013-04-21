@@ -12,7 +12,6 @@ filelist+=("`find ./RetroPie/emulatorcores/libretro-prboom/ -name "*libretro*.so
 filelist+=("./RetroPie/emulatorcores/libretro-prboom/prboom.wad")
 filelist+=("`find ./RetroPie/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/stella-libretro/ -name "*libretro*.so"`")
-filelist+=("`find ./RetroPie/emulatorcores/vba-next/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"`")
@@ -46,6 +45,7 @@ filelist+=("./RetroPie/emulators/advancemame-0.94.0/installdir/")
 filelist+=("./RetroPie/emulators/jzintv-1.0-beta4/")
 filelist+=("./RetroPie/emulators/linapple-src_2a/")
 filelist+=("./RetroPie/emulators/rpix86/")
+filelist+=("./RetroPie/emulators/gpsp/raspberrypi/")
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 

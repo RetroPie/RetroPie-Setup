@@ -426,10 +426,6 @@ function configureRetroArch()
     # enable hotkey ("select" button)
     ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
 
-    # configure save/load state
-    ensureKeyValue "input_save_state_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_load_state_btn" "5" "$rootdir/configs/all/retroarch.cfg"
-
     # enable and configure rewind feature
     ensureKeyValue "rewind_enable" "true" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "rewind_buffer_size" "10" "$rootdir/configs/all/retroarch.cfg"
@@ -535,6 +531,7 @@ configureSAMBA()
 {
     clear
     printMsg "Installing and configuring SAMBA shares."
+    apt-get update
     apt-get install -y samba samba-common-bin
 
     ensureEntryInSMBConf "AMIGA" "amiga"
@@ -684,22 +681,22 @@ function configureDGEN()
     chgrp -R $user $rootdir/configs/all/
 
     ensureKeyValue "joy_pad1_a" "joystick0-button0" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_b" "joystick0-button3" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_c" "joystick0-button1" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_x" "joystick0-button6" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_b" "joystick0-button1" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_c" "joystick0-button2" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_x" "joystick0-button3" $rootdir/configs/all/dgenrc
     ensureKeyValue "joy_pad1_y" "joystick0-button4" $rootdir/configs/all/dgenrc
     ensureKeyValue "joy_pad1_z" "joystick0-button5" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_mode" "joystick0-button9" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_start" "joystick0-button8" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_mode" "joystick0-button6" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad1_start" "joystick0-button7" $rootdir/configs/all/dgenrc
 
     ensureKeyValue "joy_pad2_a" "joystick1-button0" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_b" "joystick1-button3" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_c" "joystick1-button1" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_x" "joystick1-button6" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_b" "joystick1-button1" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_c" "joystick1-button2" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_x" "joystick1-button3" $rootdir/configs/all/dgenrc
     ensureKeyValue "joy_pad2_y" "joystick1-button4" $rootdir/configs/all/dgenrc
     ensureKeyValue "joy_pad2_z" "joystick1-button5" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_mode" "joystick1-button9" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_start" "joystick1-button8" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_mode" "joystick1-button6" $rootdir/configs/all/dgenrc
+    ensureKeyValue "joy_pad2_start" "joystick1-button7" $rootdir/configs/all/dgenrc
 }
 
 # install DGEN (Megadrive/Genesis emulator)
@@ -776,20 +773,20 @@ function install_gba()
     #if this is the case, use sed to remove the -O3 in the Makefile (line 20, "CFLAGS     += -O3 -mfpu=vfp")
     local RPiRev=`grep 'Revision' /proc/cpuinfo | cut -d " " -f 2`
     if [ $RPiRev == "00d" ] || [ $RPiRev == "000e" ] || [ $RPiRev == "000f" ]; then
-	#RAM = 512mb, we're good
-	echo "512mb Pi, no de-optimization fix needed."
+    	#RAM = 512mb, we're good
+    	echo "512mb Pi, no de-optimization fix needed."
     else
 	#RAM = 256mb, need to compile unoptimized
-	echo "Stripping -O[1..3] from gpSP Makefile to compile unoptimized on 256mb Pi..."
-	sed -i 's/-O[1..3]//g' Makefile
+    	echo "Stripping -O[1..3] from gpSP Makefile to compile unoptimized on 256mb Pi..."
+    	sed -i 's/-O[1..3]//g' Makefile
     fi
 
     #gpSP is missing an include in the Makefile
     if [ grep '-I/opt/vc/include/interface/vmcs_host/linux' Makefile ]; then
-	echo "Skipping adding missing include to gpSP Makefile."
+	   echo "Skipping adding missing include to gpSP Makefile."
     else
-	echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
-	sed -i '23iCFLAGS     += -I/opt/vc/include/interface/vmcs_host/linux' Makefile
+	   echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
+	   sed -i '23iCFLAGS     += -I/opt/vc/include/interface/vmcs_host/linux' Makefile
     fi
 
     make
@@ -968,7 +965,7 @@ function install_neogeo()
     wget http://gngeo.googlecode.com/files/gngeo-0.7.tar.gz
     tar xvfz gngeo-0.7.tar.gz -C $rootdir/emulators/
     pushd "$rootdir/emulators/gngeo-0.7"
-    ./configure --prefix="$rootdir/emulators/gngeo-0.7/installdir"
+    ./configure --host=arm-linux --target=arm-linux --disable-i386asm --prefix="$rootdir/emulators/gngeo-0.7/installdir"
     make
     make install
 
@@ -1084,18 +1081,6 @@ function install_megadriveLibretro()
     make -f Makefile.libretro 
     if [[ ! -f `find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
-    fi      
-    popd
-}
-
-# install PC Engine core
-function install_mednafen_pce()
-{
-    printMsg "Installing Mednafen PC Engine core"
-    gitPullOrClone "$rootdir/emulatorcores/mednafen-pce-libretro" git://github.com/libretro/mednafen-pce-libretro.git
-    make
-    if [[ -z `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile PC Engine core."
     fi      
     popd
 }
@@ -1342,6 +1327,10 @@ function enableSNESDevAtStart()
         ensureKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_rewind_btn" "3" "$rootdir/configs/all/retroarch.cfg"
 
+        # configure save/load state
+        ensureKeyValue "input_save_state_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_load_state_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+
         ensureKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player1_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
@@ -1559,7 +1548,7 @@ DESCNAME=Game Boy Advance
 NAME=gba
 PATH=$rootdir/roms/gba
 EXTENSION=.gba .GBA
-COMMAND=$rootdir/emulators/gpsp/raspberrypi/gpsp %ROM%
+COMMAND=/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/gpsp/raspberrypi/gpsp %ROM%"
 PLATFORMID=5
 
 DESCNAME=Game Boy Color
@@ -1622,7 +1611,7 @@ DESCNAME=Sega Mega Drive / Genesis
 NAME=megadrive
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .md .MD .bin .BIN .zip .ZIP .gz .GZ .bz2 .BZ2
-COMMAND=$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"
 PLATFORMID=18
 
 DESCNAME=NeoGeo
@@ -1649,7 +1638,7 @@ PLATFORMID=34
 DESCNAME=Sony Playstation 1
 NAME=psx
 PATH=$rootdir/roms/psx
-EXTENSION=.img .IMG .7z .7Z .pbp .PBP
+EXTENSION=.img .IMG .7z .7Z .pbp .PBP .bin .BIN
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%"
 PLATFORMID=10
 
@@ -2147,6 +2136,26 @@ function main_reboot()
     reboot    
 }
 
+function enableVariableHDMIResolution()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired video output." 22 86 16)
+    options=(1 "Enabled variable HDMI resolution"
+             2 "Disable variable HDMI resolution")
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [ "$choices" != "" ]; then
+        case $choices in
+            1) sed -i -e "s/runcommand.sh [0-9]/runcommand.sh 1/g" /home/$user/.emulationstation/es_systems.cfg
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled variable HDMI resolution." 22 76    
+                            ;;
+            2) sed -i -e "s/runcommand.sh [0-9]/runcommand.sh 2/g" /home/$user/.emulationstation/es_systems.cfg
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Disabled variable HDMI resolution." 22 76    
+                            ;;
+        esac
+    else
+        break
+    fi        
+}
+
 # checks all kinds of essential files for existence and logs the results into the file debug.log
 function createDebugLog()
 {
@@ -2382,23 +2391,22 @@ function main_options()
              30 "Install NeoGeo emulator" ON \
              31 "(C) Configure NeoGeo" ON \
              32 "Install NES core" ON \
-             33 "Install PC Engine core" ON \
-             34 "Install PC emulator (RPix86)" ON \
-             35 "Install Playstation core" ON \
-             36 "Install ScummVM" ON \
-             37 "Install Super NES core" ON \
-             38 "(C) Configure Super NES core" ON \
-             39 "Install Wolfenstein3D engine" ON \
-             40 "Install Z Machine emulator (Frotz)" ON \
-             41 "Install ZX Spectrum emulator (Fuse)" ON \
-             42 "Install BCM library" ON \
-             43 "Install SNESDev" ON \
-             44 "Install Emulation Station" ON \
-             45 "Install Emulation Station Themes" ON \
-             46 "(C) Generate config file for Emulation Station" ON \
-             47 "(C) Configure sound settings for RetroArch" ON \
-             48 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             49 "Install runcommand script" ON )
+             33 "Install PC emulator (RPix86)" ON \
+             34 "Install Playstation core" ON \
+             35 "Install ScummVM" ON \
+             36 "Install Super NES core" ON \
+             37 "(C) Configure Super NES core" ON \
+             38 "Install Wolfenstein3D engine" ON \
+             39 "Install Z Machine emulator (Frotz)" ON \
+             40 "Install ZX Spectrum emulator (Fuse)" ON \
+             41 "Install BCM library" ON \
+             42 "Install SNESDev" ON \
+             43 "Install Emulation Station" ON \
+             44 "Install Emulation Station Themes" ON \
+             45 "(C) Generate config file for Emulation Station" ON \
+             46 "(C) Configure sound settings for RetroArch" ON \
+             47 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             48 "Install runcommand script" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2439,23 +2447,22 @@ function main_options()
                 30) install_neogeo ;;
                 31) configureNeogeo ;;
                 32) install_nes ;;
-                33) install_mednafen_pce ;;
-                34) install_rpix86 ;;
-                35) install_psx ;;
-                36) install_scummvm ;;
-                37) install_snes ;;
-                38) configure_snes ;;
-                39) install_wolfenstein3d ;;
-                40) install_zmachine ;;
-                41) install_zxspectrum ;;
-                42) install_bcmlibrary ;;
-                43) install_snesdev ;;
-                44) install_emulationstation ;;
-                45) install_esthemes ;;
-                46) generate_esconfig ;;
-                47) configureSoundsettings ;;
-                48) setAvoidSafeMode ;;
-                49) install_runcommandscript ;;
+                33) install_rpix86 ;;
+                34) install_psx ;;
+                35) install_scummvm ;;
+                36) install_snes ;;
+                37) configure_snes ;;
+                38) install_wolfenstein3d ;;
+                39) install_zmachine ;;
+                40) install_zxspectrum ;;
+                41) install_bcmlibrary ;;
+                42) install_snesdev ;;
+                43) install_emulationstation ;;
+                44) install_esthemes ;;
+                45) generate_esconfig ;;
+                46) configureSoundsettings ;;
+                47) setAvoidSafeMode ;;
+                48) install_runcommandscript ;;
             esac
         done
 
@@ -2493,7 +2500,8 @@ function main_setup()
                  11 "Run 'ES-scraper'" 
                  12 "Install and configure SAMBA shares"
                  13 "Install USB-ROM-Copy service"
-                 14 "Generate debug log" )
+                 14 "Enable/disable variable HDMI resolution"
+                 15 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -2510,7 +2518,8 @@ function main_setup()
                  11) scraperMenu ;;
                  12) configureSAMBA ;;
                  13) install_USBROMService ;;
-                 14) createDebugLog ;;
+                 14) enableVariableHDMIResolution ;;
+                 15) createDebugLog ;;
             esac
         else
             break
