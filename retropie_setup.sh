@@ -1883,14 +1883,17 @@ function changeBootbehaviour()
     fi    
 }
 
-function installGameconGPIOModule()
+function installGPIOpadModules()
 {
-        clear
+    GAMECON_VER=0.9
+    DB9_VER=0.7
+    DOWNLOAD_LOC=http://www.niksula.hut.fi/~mhiienka/Rpi
 
-    dialog --title " gamecon_gpio_rpi installation " --clear \
-    --yesno "Gamecon_gpio_rpi requires thats most recent kernel (firmware)\
-    is installed and active. Continue with gamecon_gpio_rpi\
-    installation?" 22 76
+    clear
+
+    dialog --title " GPIO gamepad drivers installation " --clear \
+    --yesno "GPIO gamepad drivers require that most recent kernel (firmware)\
+    is installed and active. Continue with installation?" 22 76
     case $? in
       0)
         echo "Starting installation.";;
@@ -1905,27 +1908,45 @@ function installGameconGPIOModule()
     if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then
         dpkg-reconfigure linux-headers-`uname -r`
     else
-        wget http://www.niksula.hut.fi/~mhiienka/Rpi/linux-headers-rpi/linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+        wget ${DOWNLOAD_LOC}/linux-headers-rpi/linux-headers-`uname -r`_`uname -r`-2_armhf.deb
         dpkg -i linux-headers-`uname -r`_`uname -r`-2_armhf.deb
         rm linux-headers-`uname -r`_`uname -r`-2_armhf.deb
     fi
 
     #install gamecon
-    if [ "`dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms`" = "0.9" ]; then
+    if [ "`dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms`" = ${GAMECON_VER} ]; then
         #dpkg-reconfigure gamecon-gpio-rpi-dkms
         echo "gamecon is the newest version"
     else
-            wget http://www.niksula.hut.fi/~mhiienka/Rpi/gamecon-gpio-rpi-dkms_0.9_all.deb
-            dpkg -i gamecon-gpio-rpi-dkms_0.9_all.deb
-        rm gamecon-gpio-rpi-dkms_0.9_all.deb
+        wget ${DOWNLOAD_LOC}/gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
+        dpkg -i gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
+        rm gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
     fi
 
-    #test if module installation is OK
+    #install db9 joystick driver
+    if [ "`dpkg-query -W -f='${Version}' db9-gpio-rpi-dkms`" = ${DB9_VER} ]; then
+        echo "db9 is the newest version"
+    else
+        wget ${DOWNLOAD_LOC}/db9-gpio-rpi-dkms_${DB9_VER}_all.deb
+        dpkg -i db9-gpio-rpi-dkms_${DB9_VER}_all.deb
+        rm db9-gpio-rpi-dkms_${DB9_VER}_all.deb
+    fi
+
+    #test if gamecon installation is OK
     if [[ -n $(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko) ]]; then
             dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon GPIO driver successfully installed. \
         Use 'zless /usr/share/doc/gamecon_gpio_rpi/README.gz' to read how to use it." 22 76
     else
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon GPIO driver installation FAILED"\
+        22 76
+    fi
+
+    #test if db9 installation is OK
+    if [[ -n $(modinfo -n db9_gpio_rpi | grep db9_gpio_rpi.ko) ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Db9 GPIO driver successfully installed. \
+        Use 'zless /usr/share/doc/db9_gpio_rpi/README.gz' to read how to use it." 22 76
+    else
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Db9 GPIO driver installation FAILED"\
         22 76
     fi
 }
@@ -2509,7 +2530,7 @@ function main_setup()
                  6 "Enable/disable RetroPie splashscreen"
                  7 "Change ARM frequency" 
                  8 "Change SDRAM frequency"
-                 9 "Install/update multi-console gamepad driver for GPIO" 
+                 9 "Install/update multi-console gamepad drivers for GPIO" 
                  10 "Enable gamecon_gpio_rpi with SNES-pad config"
                  11 "Run 'ES-scraper'" 
                  12 "Install and configure SAMBA shares"
@@ -2527,7 +2548,7 @@ function main_setup()
                  6) enableDisableSplashscreen ;;
                  7) setArmFreq ;;
                  8) setSDRAMFreq ;;
-                 9) installGameconGPIOModule ;;
+                 9) installGPIOpadModules ;;
                  10) enableGameconSnes ;;
                  11) scraperMenu ;;
                  12) configureSAMBA ;;
