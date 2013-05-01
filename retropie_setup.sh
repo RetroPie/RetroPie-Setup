@@ -282,7 +282,8 @@ function installAPTPackages()
                         libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev \
                         joystick fbi gcc-4.7 automake1.4 libcurl4-openssl-dev  libzip-dev \
                         build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
-                        libvorbis-dev libpng12-dev libvpx-dev freepats subversion
+                        libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
+                        libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev
 
     # remove PulseAudio since this is slowing down the whole system significantly
     apt-get remove -y pulseaudio
@@ -1119,6 +1120,19 @@ function configure_snes()
     ensureKeyValue "rewind_enable" "false" "$rootdir/configs/snes/retroarch.cfg"
 }
 
+function install_snes9x()
+{
+    if [[ -d "$rootdir/emulators/snes9x-rpi" ]]; then
+        rm -rf "$rootdir/emulators/snes9x-rpi"
+    fi        
+    gitPullOrClone "$rootdir/emulators/snes9x-rpi" https://github.com/chep/snes9x-rpi.git
+    make
+    if [[ -z `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
+    fi      
+    popd
+}
+
 function install_wolfenstein3d()
 {
     printMsg "Installing Wolfenstein3D Engine"    
@@ -1323,13 +1337,11 @@ function enableSNESDevAtStart()
             ensureKeyValue "input_player2_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
         fi
 
-        ensureKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_rewind_btn" "3" "$rootdir/configs/all/retroarch.cfg"
-
-        # configure save/load state
-        ensureKeyValue "input_save_state_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-        ensureKeyValue "input_load_state_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+        disableKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg"
+        disableKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg"
+        disableKeyValue "input_rewind_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+        disableKeyValue "input_save_state_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+        disableKeyValue "input_load_state_btn" "5" "$rootdir/configs/all/retroarch.cfg"    
 
         ensureKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
         ensureKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
@@ -1374,6 +1386,8 @@ function disableSNESDevAtStart()
     disableKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg" 
     disableKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg" 
     disableKeyValue "input_rewind_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_save_state_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+    disableKeyValue "input_load_state_btn" "5" "$rootdir/configs/all/retroarch.cfg"    
 
     disableKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
     disableKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
