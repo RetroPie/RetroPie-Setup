@@ -46,6 +46,7 @@ filelist+=("./RetroPie/emulators/jzintv-1.0-beta4/")
 filelist+=("./RetroPie/emulators/linapple-src_2a/")
 filelist+=("./RetroPie/emulators/rpix86/")
 filelist+=("./RetroPie/emulators/gpsp/raspberrypi/")
+filelist+=("./RetroPie/emulators/snes9x-rpi/snes9x")
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 

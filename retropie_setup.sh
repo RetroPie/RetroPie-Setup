@@ -1120,6 +1120,7 @@ function configure_snes()
     ensureKeyValue "rewind_enable" "false" "$rootdir/configs/snes/retroarch.cfg"
 }
 
+# install SNES9X emulator
 function install_snes9x()
 {
     if [[ -d "$rootdir/emulators/snes9x-rpi" ]]; then
@@ -1127,8 +1128,11 @@ function install_snes9x()
     fi        
     gitPullOrClone "$rootdir/emulators/snes9x-rpi" https://github.com/chep/snes9x-rpi.git
     make
-    if [[ -z `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
+    if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
+        echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
+    fi
+    if [[ ! -f "$rootdir/emulators/snes9x-rpi/snes9x" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile SNES9X."
     fi      
     popd
 }
@@ -2430,18 +2434,19 @@ function main_options()
              34 "Install Playstation core" ON \
              35 "Install ScummVM" ON \
              36 "Install Super NES core" ON \
-             37 "(C) Configure Super NES core" ON \
-             38 "Install Wolfenstein3D engine" ON \
-             39 "Install Z Machine emulator (Frotz)" ON \
-             40 "Install ZX Spectrum emulator (Fuse)" ON \
-             41 "Install BCM library" ON \
-             42 "Install SNESDev" ON \
-             43 "Install Emulation Station" ON \
-             44 "Install Emulation Station Themes" ON \
-             45 "(C) Generate config file for Emulation Station" ON \
-             46 "(C) Configure sound settings for RetroArch" ON \
-             47 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             48 "Install runcommand script" ON )
+             37 "Install SNES9X emulator" ON \
+             38 "(C) Configure Super NES core" ON \
+             39 "Install Wolfenstein3D engine" ON \
+             40 "Install Z Machine emulator (Frotz)" ON \
+             41 "Install ZX Spectrum emulator (Fuse)" ON \
+             42 "Install BCM library" ON \
+             43 "Install SNESDev" ON \
+             44 "Install Emulation Station" ON \
+             45 "Install Emulation Station Themes" ON \
+             46 "(C) Generate config file for Emulation Station" ON \
+             47 "(C) Configure sound settings for RetroArch" ON \
+             48 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             49 "Install runcommand script" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2486,18 +2491,19 @@ function main_options()
                 34) install_psx ;;
                 35) install_scummvm ;;
                 36) install_snes ;;
-                37) configure_snes ;;
-                38) install_wolfenstein3d ;;
-                39) install_zmachine ;;
-                40) install_zxspectrum ;;
-                41) install_bcmlibrary ;;
-                42) install_snesdev ;;
-                43) install_emulationstation ;;
-                44) install_esthemes ;;
-                45) generate_esconfig ;;
-                46) configureSoundsettings ;;
-                47) setAvoidSafeMode ;;
-                48) install_runcommandscript ;;
+                37) install_snes9x ;;
+                38) configure_snes ;;
+                39) install_wolfenstein3d ;;
+                40) install_zmachine ;;
+                41) install_zxspectrum ;;
+                42) install_bcmlibrary ;;
+                43) install_snesdev ;;
+                44) install_emulationstation ;;
+                45) install_esthemes ;;
+                46) generate_esconfig ;;
+                47) configureSoundsettings ;;
+                48) setAvoidSafeMode ;;
+                49) install_runcommandscript ;;
             esac
         done
 
