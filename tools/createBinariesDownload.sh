@@ -47,6 +47,11 @@ filelist+=("./RetroPie/emulators/linapple-src_2a/")
 filelist+=("./RetroPie/emulators/rpix86/")
 filelist+=("./RetroPie/emulators/gpsp/raspberrypi/")
 filelist+=("./RetroPie/emulators/snes9x-rpi/snes9x")
+filelist+=("./RetroPie/emulators/pisnes/snes9x")
+filelist+=("./RetroPie/emulators/pisnes/snes9x.gui")
+filelist+=("./RetroPie/emulators/pisnes/zipit")
+filelist+=("./RetroPie/emulators/pisnes/roms/")
+filelist+=("./RetroPie/emulators/pisnes/skins/")
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 

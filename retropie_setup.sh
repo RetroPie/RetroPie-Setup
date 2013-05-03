@@ -1137,6 +1137,23 @@ function install_snes9x()
     popd
 }
 
+# install PiSNES emulator
+function install_pisnes()
+{
+    if [[ -d "$rootdir/emulators/pisnes" ]]; then
+        rm -rf "$rootdir/emulators/pisnes"
+    fi        
+    gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/
+    make
+    if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
+        echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
+    fi
+    if [[ ! -f "$rootdir/emulators/pisnes/snes9x" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile PiSNES."
+    fi      
+    popd
+}
+
 function install_wolfenstein3d()
 {
     printMsg "Installing Wolfenstein3D Engine"    
@@ -1665,6 +1682,8 @@ NAME=snes
 PATH=$rootdir/roms/snes
 EXTENSION=.smc .sfc .fig .swc .SMC .SFC .FIG .SWC
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %ROM%"
+# alternatively: COMMAND=$rootdir/emulators/snes9x-rpi/snes9x %ROM%
+# alternatively: COMMAND=$rootdir/emulators/pisnes/snes9x %ROM%
 PLATFORMID=6
 
 DESCNAME=ZX Spectrum
@@ -2435,18 +2454,19 @@ function main_options()
              35 "Install ScummVM" ON \
              36 "Install Super NES core" ON \
              37 "Install SNES9X emulator" ON \
-             38 "(C) Configure Super NES core" ON \
-             39 "Install Wolfenstein3D engine" ON \
-             40 "Install Z Machine emulator (Frotz)" ON \
-             41 "Install ZX Spectrum emulator (Fuse)" ON \
-             42 "Install BCM library" ON \
-             43 "Install SNESDev" ON \
-             44 "Install Emulation Station" ON \
-             45 "Install Emulation Station Themes" ON \
-             46 "(C) Generate config file for Emulation Station" ON \
-             47 "(C) Configure sound settings for RetroArch" ON \
-             48 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             49 "Install runcommand script" ON )
+             38 "Install PiSNES emulator" ON \
+             39 "(C) Configure Super NES core" ON \
+             40 "Install Wolfenstein3D engine" ON \
+             41 "Install Z Machine emulator (Frotz)" ON \
+             42 "Install ZX Spectrum emulator (Fuse)" ON \
+             43 "Install BCM library" ON \
+             44 "Install SNESDev" ON \
+             45 "Install Emulation Station" ON \
+             46 "Install Emulation Station Themes" ON \
+             47 "(C) Generate config file for Emulation Station" ON \
+             48 "(C) Configure sound settings for RetroArch" ON \
+             49 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             50 "Install runcommand script" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2492,18 +2512,19 @@ function main_options()
                 35) install_scummvm ;;
                 36) install_snes ;;
                 37) install_snes9x ;;
-                38) configure_snes ;;
-                39) install_wolfenstein3d ;;
-                40) install_zmachine ;;
-                41) install_zxspectrum ;;
-                42) install_bcmlibrary ;;
-                43) install_snesdev ;;
-                44) install_emulationstation ;;
-                45) install_esthemes ;;
-                46) generate_esconfig ;;
-                47) configureSoundsettings ;;
-                48) setAvoidSafeMode ;;
-                49) install_runcommandscript ;;
+                38) install_pisnes ;;
+                39) configure_snes ;;
+                40) install_wolfenstein3d ;;
+                41) install_zmachine ;;
+                42) install_zxspectrum ;;
+                43) install_bcmlibrary ;;
+                44) install_snesdev ;;
+                45) install_emulationstation ;;
+                46) install_esthemes ;;
+                47) generate_esconfig ;;
+                48) configureSoundsettings ;;
+                49) setAvoidSafeMode ;;
+                50) install_runcommandscript ;;
             esac
         done
 
