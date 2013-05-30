@@ -168,7 +168,7 @@ function gitPullOrClone()
     else
         rm -rf "$1" # makes sure that the directory IS empty
         mkdir -p "$1"
-        git clone "$2" "$1"
+        git clone --depth=0 "$2" "$1"
         pushd "$1"
     fi
 }
@@ -283,7 +283,8 @@ function installAPTPackages()
                         joystick fbi gcc-4.7 automake1.4 libcurl4-openssl-dev  libzip-dev \
                         build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
                         libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
-                        libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev
+                        libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
+                        cmake libgles2-mesa-dev
 
     # remove PulseAudio since this is slowing down the whole system significantly
     apt-get remove -y pulseaudio
@@ -347,6 +348,7 @@ function prepareFolders()
     pathlist=()
     pathlist+=("$rootdir/roms")
     pathlist+=("$rootdir/roms/atari2600")
+    pathlist+=("$rootdir/roms/basiliskii")
     pathlist+=("$rootdir/roms/c64")
     pathlist+=("$rootdir/roms/cavestory")
     pathlist+=("$rootdir/roms/doom")
@@ -362,6 +364,7 @@ function prepareFolders()
     pathlist+=("$rootdir/roms/nes")
     pathlist+=("$rootdir/roms/pcengine")
     pathlist+=("$rootdir/roms/psx")
+    pathlist+=("$rootdir/roms/psp")
     pathlist+=("$rootdir/roms/snes")
     pathlist+=("$rootdir/roms/zxspectrum")
     pathlist+=("$rootdir/roms/fba")
@@ -501,6 +504,8 @@ sed '
     popd
 
     configure_advmame
+    unset CC
+    unset GCC
 }
 
 function ensureEntryInSMBConf()
@@ -538,6 +543,7 @@ configureSAMBA()
     ensureEntryInSMBConf "AMIGA" "amiga"
     ensureEntryInSMBConf "APPLE2" "apple2"
     ensureEntryInSMBConf "ATARI2600" "atari2600"
+    ensureEntryInSMBConf "BASILISKII" "basiliskii"
     ensureEntryInSMBConf "C64" "c64"
     ensureEntryInSMBConf "DOOM" "doom"
     ensureEntryInSMBConf "DUKE3D" "duke3d"
@@ -555,6 +561,7 @@ configureSAMBA()
     ensureEntryInSMBConf "X86" "x86"
     ensureEntryInSMBConf "PCENGINE" "pcengine"
     ensureEntryInSMBConf "PSX" "psx"
+    ensureEntryInSMBConf "PPSSPP" "ppsspp"
     ensureEntryInSMBConf "SNES" "snes"
     ensureEntryInSMBConf "SCUMMVM" "scummvm"
     ensureEntryInSMBConf "ZMACHINE" "zmachine"
@@ -605,6 +612,24 @@ function install_atari2600()
         __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 2600 core."
     fi  
     popd    
+}
+
+function install_basiliskII()
+{
+    printMsg "Installing Basilisk II"
+    gitPullOrClone "$rootdir/emulators/basiliskii" git://github.com/cebix/macemu.git
+    cd BasiliskII/src/Unix
+    ./autogen.sh
+    ./configure --prefix="$rootdir/emulators/basiliskii/installdir" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler
+    make
+    make install
+    touch $rootdir/roms/basiliskii/Start.txt
+    if [[ -z "$rootdir/emulators/basiliskii/installdir/bin/BasiliskII" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile BasiliskII."
+    else
+        configure_cavestory
+    fi  
+    popd
 }
 
 # install C64 ROMs
@@ -944,6 +969,8 @@ function install_advancemenu()
 
         configure_advancemenu
         rm advancemenu-2.5.0.tar.gz
+        unset CC
+        unset GCC
 
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Remember to increase the GPU memory again (e.g., via the raspi-config script)!" 22 76    
 
@@ -1144,12 +1171,37 @@ function install_pisnes()
         rm -rf "$rootdir/emulators/pisnes"
     fi        
     gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/
+    sed -i -e "s|-lglib-2.0|-lglib-2.0 -lbcm_host|g" Makefile
     make
     if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
         echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
     fi
     if [[ ! -f "$rootdir/emulators/pisnes/snes9x" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile PiSNES."
+    fi      
+    popd
+}
+
+# install PSP emulator PPSSPP
+function install_ppsspp()
+{
+    if [[ -d "$rootdir/emulators/ppsspp" ]]; then
+        rm -rf "$rootdir/emulators/ppsspp"
+    fi        
+    gitPullOrClone "$rootdir/emulators/ppsspp" git://github.com/hrydgard/ppsspp.git
+    git submodule update --init    
+    # generate default Makefile
+    cmake . 
+    sed -i -e "s/ARM:BOOL=OFF/ARM:BOOL=ON/g" CMakeCache.txt
+    sed -i -e "s/X86:BOOL=ON/X86:BOOL=OFF/g" CMakeCache.txt
+    sed -i -e "s/CMAKE_BUILD_TYPE:STRING=/CMAKE_BUILD_TYPE:STRING=Release/g" CMakeCache.txt
+    # enabled arm, disabled x86, built with release flags.
+    cmake .
+    make    
+    mkdir -p "$rootdir/emulators/ppsspp/assets/lang"
+    cp $rootdir/emulators/ppsspp/lang/* $rootdir/emulators/ppsspp/assets/lang/
+    if [[ ! -f "$rootdir/emulators/ppsspp/PPSSPPSDL" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile PPSSPP."
     fi      
     popd
 }
@@ -1174,6 +1226,19 @@ function install_wolfenstein3d()
         __INFMSGS="$__INFMSGS The Wolfenstein3D engine was successfully installed. You have to copy the game files (.wl6) into the directory $rootdir/emulators/Wolf4SDL-1.7-bin. Take care for lowercase extensions!"        
     fi 
     rm Wolf4SDL-1.7.zip
+}
+
+# install Dispmanx library
+function install_dispmanx()
+{
+    gitPullOrClone "$rootdir/supplementary/dispmanx" git://github.com/vanfanel/SDL12-kms-dispmanx.git
+    ./configure
+    sed -i -e "s|CFLAGS  = -g -O2|CFLAGS  = -g -O2 -I/opt/vc/include/interface/vmcs_host/linux|g" Makefile
+    make
+    if [[ ! -f "$rootdir/supplementary/dispmanx/build/.libs/libSDL.so" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Dispmanx."
+    fi    
+    popd
 }
 
 function configure_rpix86()
@@ -1542,14 +1607,21 @@ DESCNAME=Atari 2600
 NAME=atari2600
 PATH=$rootdir/roms/atari2600
 EXTENSION=.a26 .A26 .bin .BIN .rom .ROM .zip .ZIP .gz .GZ
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%"
 PLATFORMID=22
+
+DESCNAME=Basilisk II
+NAME=basiliskii
+PATH=$rootdir/roms/basiliskii
+EXTENSION=.txt
+COMMAND=sudo modprobe snd_pcm_oss && xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII
+# Or possibly just COMMAND=xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII
 
 DESCNAME=Cave Story
 NAME=cavestory
 PATH=$rootdir/roms/cavestory
 EXTENSION=.txt
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"
 
 DESCNAME=C64
 NAME=c64
@@ -1562,7 +1634,7 @@ DESCNAME=Doom
 NAME=doom
 PATH=$rootdir/roms/doom
 EXTENSION=.WAD .wad
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %ROM%"
 PLATFORMID=1
 
 DESCNAME=Duke Nukem 3D
@@ -1576,7 +1648,7 @@ DESCNAME=Game Boy
 NAME=gb
 PATH=$rootdir/roms/gb
 EXTENSION=.gb .GB
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%"
 PLATFORMID=4
 
 DESCNAME=Game Boy Advance
@@ -1590,7 +1662,7 @@ DESCNAME=Game Boy Color
 NAME=gbc
 PATH=$rootdir/roms/gbc
 EXTENSION=.gbc .GBC
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%"
 PLATFORMID=41
 
 DESCNAME=Sega Game Gear
@@ -1611,14 +1683,14 @@ DESCNAME=MAME
 NAME=mame
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
-COMMAND=retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% 
+COMMAND=retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% 
 PLATFORMID=23
 
 DESCNAME=FinalBurn Alpha
 NAME=fba
 PATH=$rootdir/roms/fba
 EXTENSION=.zip .ZIP
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg %ROM%"
 PLATFORMID=23
 
 DESCNAME=PC (x86)
@@ -1647,6 +1719,7 @@ NAME=megadrive
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .md .MD .bin .BIN .zip .ZIP .gz .GZ .bz2 .BZ2
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"
+# alternatively: COMMAND=export LD_LIBRARY_PATH="$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%
 PLATFORMID=18
 
 DESCNAME=NeoGeo
@@ -1660,28 +1733,35 @@ DESCNAME=Nintendo Entertainment System
 NAME=nes
 PATH=$rootdir/roms/nes
 EXTENSION=.nes .NES
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%"
 PLATFORMID=7
 
 DESCNAME=PC Engine/TurboGrafx 16
 NAME=pcengine
 PATH=$rootdir/roms/pcengine
 EXTENSION=.pce
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%"
 PLATFORMID=34
 
 DESCNAME=Sony Playstation 1
 NAME=psx
 PATH=$rootdir/roms/psx
 EXTENSION=.img .IMG .7z .7Z .pbp .PBP .bin .BIN
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%"
 PLATFORMID=10
+
+DESCNAME=Playstation Portable
+NAME=psp
+PATH=$rootdir/roms/psp
+EXTENSION=.iso .ISO .cso .CSO
+COMMAND=$rootdir/emulators/ppsspp/PPSSPPSDL %ROM% en
+PLATFORMID=13
 
 DESCNAME=Super Nintendo
 NAME=snes
 PATH=$rootdir/roms/snes
 EXTENSION=.smc .sfc .fig .swc .SMC .SFC .FIG .SWC
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %ROM%"
 # alternatively: COMMAND=$rootdir/emulators/snes9x-rpi/snes9x %ROM%
 # alternatively: COMMAND=$rootdir/emulators/pisnes/snes9x %ROM%
 PLATFORMID=6
@@ -2194,26 +2274,6 @@ function main_reboot()
     reboot    
 }
 
-function enableVariableHDMIResolution()
-{
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired video output." 22 86 16)
-    options=(1 "Enabled variable HDMI resolution"
-             2 "Disable variable HDMI resolution")
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [ "$choices" != "" ]; then
-        case $choices in
-            1) sed -i -e "s/runcommand.sh [0-9]/runcommand.sh 1/g" /home/$user/.emulationstation/es_systems.cfg
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled variable HDMI resolution." 22 76    
-                            ;;
-            2) sed -i -e "s/runcommand.sh [0-9]/runcommand.sh 2/g" /home/$user/.emulationstation/es_systems.cfg
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Disabled variable HDMI resolution." 22 76    
-                            ;;
-        esac
-    else
-        break
-    fi        
-}
-
 # checks all kinds of essential files for existence and logs the results into the file debug.log
 function createDebugLog()
 {
@@ -2432,41 +2492,44 @@ function main_options()
              13 "Install Amiga emulator" ON \
              14 "Install Apple ][ emulator (Linapple)" ON \
              15 "Install Atari 2600 core" ON \
-             16 "Install C64 emulator (Vice)" ON \
-             17 "Install NXEngine / Cave Story" ON \
-             18 "Install Doom core" ON \
-             19 "Install eDuke32 with shareware files" ON \
-             20 "Install Game Boy Advance emulator (gpSP)" ON \
-             21 "Install Game Boy Color core" ON \
-             22 "Install IntelliVision emulator (jzintv)" ON \
-             23 "Install MAME (iMAME4All) core" ON \
-             24 "Install AdvMAME emulator" ON \
-             25 "Install FBA core" ON \
-             26 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
-             27 "Install DGEN (Megadrive/Genesis emulator)" ON \
-             28 "(C) Configure DGEN" ON \
-             29 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
-             30 "Install NeoGeo emulator" ON \
-             31 "(C) Configure NeoGeo" ON \
-             32 "Install NES core" ON \
-             33 "Install PC emulator (RPix86)" ON \
-             34 "Install Playstation core" ON \
-             35 "Install ScummVM" ON \
-             36 "Install Super NES core" ON \
-             37 "Install SNES9X emulator" ON \
-             38 "Install PiSNES emulator" ON \
-             39 "(C) Configure Super NES core" ON \
-             40 "Install Wolfenstein3D engine" ON \
-             41 "Install Z Machine emulator (Frotz)" ON \
-             42 "Install ZX Spectrum emulator (Fuse)" ON \
-             43 "Install BCM library" ON \
-             44 "Install SNESDev" ON \
-             45 "Install Emulation Station" ON \
-             46 "Install Emulation Station Themes" ON \
-             47 "(C) Generate config file for Emulation Station" ON \
-             48 "(C) Configure sound settings for RetroArch" ON \
-             49 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             50 "Install runcommand script" ON )
+             16 "Install BasiliskII" ON \
+             17 "Install C64 emulator (Vice)" ON \
+             18 "Install NXEngine / Cave Story" ON \
+             19 "Install Doom core" ON \
+             20 "Install eDuke32 with shareware files" ON \
+             21 "Install Game Boy Advance emulator (gpSP)" ON \
+             22 "Install Game Boy Color core" ON \
+             23 "Install IntelliVision emulator (jzintv)" ON \
+             24 "Install MAME (iMAME4All) core" ON \
+             25 "Install AdvMAME emulator" ON \
+             26 "Install FBA core" ON \
+             27 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
+             28 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             29 "(C) Configure DGEN" ON \
+             30 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
+             31 "Install NeoGeo emulator" ON \
+             32 "(C) Configure NeoGeo" ON \
+             33 "Install NES core" ON \
+             34 "Install PC emulator (RPix86)" ON \
+             35 "Install Playstation core" ON \
+             36 "Install PSP emulator PPSSPP" ON \
+             37 "Install ScummVM" ON \
+             38 "Install Super NES core" ON \
+             39 "Install SNES9X emulator" ON \
+             40 "Install PiSNES emulator" ON \
+             41 "(C) Configure Super NES core" ON \
+             42 "Install Wolfenstein3D engine" ON \
+             43 "Install Z Machine emulator (Frotz)" ON \
+             44 "Install ZX Spectrum emulator (Fuse)" ON \
+             45 "Install BCM library" ON \
+             46 "Install Dispmanx library" ON \
+             47 "Install SNESDev" ON \
+             48 "Install Emulation Station" ON \
+             49 "Install Emulation Station Themes" ON \
+             50 "(C) Generate config file for Emulation Station" ON \
+             51 "(C) Configure sound settings for RetroArch" ON \
+             52 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             53 "Install runcommand script" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2490,41 +2553,44 @@ function main_options()
                 13) install_amiga ;;
                 14) install_linapple ;;
                 15) install_atari2600 ;;
-                16) install_viceC64 ;;
-                17) install_cavestory ;;
-                18) install_doom ;;
-                19) install_eduke32 ;;
-                20) install_gba ;;
-                21) install_gbc ;;
-                22) install_intellivision ;;
-                23) install_mame ;;
-                24) install_advmame ;;
-                25) install_fba ;;
-                26) install_megadrive ;;
-                27) install_dgen ;;
-                28) configureDGEN ;;
-                29) install_megadriveLibretro ;;
-                30) install_neogeo ;;
-                31) configureNeogeo ;;
-                32) install_nes ;;
-                33) install_rpix86 ;;
-                34) install_psx ;;
-                35) install_scummvm ;;
-                36) install_snes ;;
-                37) install_snes9x ;;
-                38) install_pisnes ;;
-                39) configure_snes ;;
-                40) install_wolfenstein3d ;;
-                41) install_zmachine ;;
-                42) install_zxspectrum ;;
-                43) install_bcmlibrary ;;
-                44) install_snesdev ;;
-                45) install_emulationstation ;;
-                46) install_esthemes ;;
-                47) generate_esconfig ;;
-                48) configureSoundsettings ;;
-                49) setAvoidSafeMode ;;
-                50) install_runcommandscript ;;
+                16) install_basiliskII ;;
+                17) install_viceC64 ;;
+                18) install_cavestory ;;
+                19) install_doom ;;
+                20) install_eduke32 ;;
+                21) install_gba ;;
+                22) install_gbc ;;
+                23) install_intellivision ;;
+                24) install_mame ;;
+                25) install_advmame ;;
+                26) install_fba ;;
+                27) install_megadrive ;;
+                28) install_dgen ;;
+                29) configureDGEN ;;
+                30) install_megadriveLibretro ;;
+                31) install_neogeo ;;
+                32) configureNeogeo ;;
+                33) install_nes ;;
+                34) install_rpix86 ;;
+                35) install_psx ;;
+                36) install_ppsspp ;;
+                37) install_scummvm ;;
+                38) install_snes ;;
+                39) install_snes9x ;;
+                40) install_pisnes ;;
+                41) configure_snes ;;
+                42) install_wolfenstein3d ;;
+                43) install_zmachine ;;
+                44) install_zxspectrum ;;
+                45) install_bcmlibrary ;;
+                46) install_dispmanx ;;
+                47) install_snesdev ;;
+                48) install_emulationstation ;;
+                49) install_esthemes ;;
+                50) generate_esconfig ;;
+                51) configureSoundsettings ;;
+                52) setAvoidSafeMode ;;
+                53) install_runcommandscript ;;
             esac
         done
 
@@ -2562,8 +2628,7 @@ function main_setup()
                  11 "Run 'ES-scraper'" 
                  12 "Install and configure SAMBA shares"
                  13 "Install USB-ROM-Copy service"
-                 14 "Enable/disable variable HDMI resolution"
-                 15 "Generate debug log" )
+                 14 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -2580,8 +2645,7 @@ function main_setup()
                  11) scraperMenu ;;
                  12) configureSAMBA ;;
                  13) install_USBROMService ;;
-                 14) enableVariableHDMIResolution ;;
-                 15) createDebugLog ;;
+                 14) createDebugLog ;;
             esac
         else
             break
@@ -2636,7 +2700,7 @@ if [[ ! -d $rootdir ]]; then
     fi
 fi
 
-availFreeDiskSpace 600000
+availFreeDiskSpace 800000
 
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)

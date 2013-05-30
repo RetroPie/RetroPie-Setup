@@ -28,6 +28,7 @@ filelist+=("./RetroPie/emulators/RetroArch/tools/retroarch-joyconfig")
 filelist+=("./RetroPie/supplementary/bcm2835-1.14/")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/bin/SNESDev")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/scripts/SNESDev")
+filelist+=("./RetroPie/supplementary/dispmanx/build/.libs/")
 
 filelist+=("./RetroPie/emulators/dgen-sdl/dgen")
 filelist+=("./RetroPie/emulators/dgen-sdl/sample.dgenrc")
@@ -52,6 +53,9 @@ filelist+=("./RetroPie/emulators/pisnes/snes9x.gui")
 filelist+=("./RetroPie/emulators/pisnes/zipit")
 filelist+=("./RetroPie/emulators/pisnes/roms/")
 filelist+=("./RetroPie/emulators/pisnes/skins/")
+filelist+=("./RetroPie/emulators/basiliskii/installdir/")
+filelist+=("./RetroPie/emulators/ppsspp/PPSSPPSDL")
+filelist+=("./RetroPie/emulators/ppsspp/PPSSPPHeadless")
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 
