@@ -2,6 +2,8 @@
 
 # starttype==1: set video mode to VGA ONLY IF tvservice is in HDMI mode, and run command
 # starttype==2: keep existing video mode and run command
+# starttype==3: set video mode to VGA and run command
+
 starttype=$1
 shift
 
