@@ -10,8 +10,9 @@ rm ~/ocr_pi.png
 rm -rf ~/python_games/
 rm -rf ~/Desktop/
 
+# resize partition on SD card to 3200 MB with gparted
 # read and compress image of SD card with
-#   dd if=/dev/disk2 bs=2m of=RetroPieImage_verX.img
+#   dd if=/dev/disk2 bs=2m of=RetroPieImage_verX.img count=1650
 #   zip -9 RetroPieImage_verX.zip RetroPieImage_verX.img
 # create SHA1 hash with 
 #   shasum RetroPieImage_verX.zip
