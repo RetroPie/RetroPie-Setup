@@ -561,7 +561,7 @@ configureSAMBA()
     ensureEntryInSMBConf "X86" "x86"
     ensureEntryInSMBConf "PCENGINE" "pcengine"
     ensureEntryInSMBConf "PSX" "psx"
-    ensureEntryInSMBConf "PPSSPP" "ppsspp"
+    ensureEntryInSMBConf "PPSSPP" "psp"
     ensureEntryInSMBConf "SNES" "snes"
     ensureEntryInSMBConf "SCUMMVM" "scummvm"
     ensureEntryInSMBConf "ZMACHINE" "zmachine"
