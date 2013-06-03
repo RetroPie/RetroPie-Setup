@@ -284,7 +284,8 @@ function installAPTPackages()
                         build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
                         libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
                         libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
-                        cmake libgles2-mesa-dev
+                        cmake 
+                        # libgles2-mesa-dev
 
     # remove PulseAudio since this is slowing down the whole system significantly
     apt-get remove -y pulseaudio
@@ -808,7 +809,7 @@ function install_gba()
     fi
 
     #gpSP is missing an include in the Makefile
-    if [ grep '-I/opt/vc/include/interface/vmcs_host/linux' Makefile ]; then
+    if [[ ! -z `grep '-I/opt/vc/include/interface/vmcs_host/linux' Makefile` ]]; then
 	   echo "Skipping adding missing include to gpSP Makefile."
     else
 	   echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
