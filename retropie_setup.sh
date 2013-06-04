@@ -2513,7 +2513,7 @@ function main_options()
              33 "Install NES core" ON \
              34 "Install PC emulator (RPix86)" ON \
              35 "Install Playstation core" ON \
-             36 "Install PSP emulator PPSSPP" ON \
+             36 "Install PSP emulator PPSSPP" OFF \
              37 "Install ScummVM" ON \
              38 "Install Super NES core" ON \
              39 "Install SNES9X emulator" ON \

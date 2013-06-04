@@ -54,8 +54,6 @@ filelist+=("./RetroPie/emulators/pisnes/zipit")
 filelist+=("./RetroPie/emulators/pisnes/roms/")
 filelist+=("./RetroPie/emulators/pisnes/skins/")
 filelist+=("./RetroPie/emulators/basiliskii/installdir/")
-filelist+=("./RetroPie/emulators/ppsspp/PPSSPPSDL")
-filelist+=("./RetroPie/emulators/ppsspp/PPSSPPHeadless")
 
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 
