@@ -7,7 +7,7 @@
 starttype=$1
 shift
 
-if [[ $starttype -eq 1 && `tvservice --status` == *HDMI* || $starttype -eq 3 ]]; then
+if [[ $starttype -eq 1 && ! -z `tvservice --status | egrep -w "HDMI|DVI"` ]] || [[ $starttype -eq 3 ]]; then
 	tvservice -e "CEA 1"
    	fbset -depth 8 && fbset -depth 16
     eval $@
