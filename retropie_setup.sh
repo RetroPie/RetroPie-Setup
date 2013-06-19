@@ -284,7 +284,7 @@ function installAPTPackages()
                         build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
                         libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
                         libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
-                        cmake 
+                        cmake g++-4.7
                         # libgles2-mesa-dev
 
     # remove PulseAudio since this is slowing down the whole system significantly
@@ -1571,6 +1571,10 @@ function install_emulationstation()
 {
     printMsg "Installing EmulationStation as graphical front end"
     gitPullOrClone "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
+
+    #ES requires C++11 support to build, which means g++ 4.7 or later, which isn't what g++ resolves to right now
+    CXX=g++-4.7
+    cmake .
     make
     install_esscript    
     if [[ ! -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
