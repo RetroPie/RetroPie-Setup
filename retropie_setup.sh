@@ -1002,6 +1002,25 @@ function install_advancemenu()
 
 }
 
+# install NeoGeo emulator GnGeo-Pi
+function install_GnGeoPi()
+{
+    printMsg "Installing GnGeo-Pi emulator"
+    if [[ -d "$rootdir/emulators/gngeo-pi-0.85" ]]; then
+        rm -rf "$rootdir/emulators/gngeo-pi-0.85"
+    fi
+    gitPullOrClone "$rootdir/emulators/gngeo-pi-0.85" https://github.com/ymartel06/GnGeo-Pi.git
+    pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
+    chmod +x configure
+    ./configure --host=arm-linux --target=arm-linux --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
+    make
+    make install
+    if [[ ! -f "$rootdir/emulators/gngeo-pi-0.85/installdir/arm-linux-gngeo" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile GnGeo-Pi emulator."
+    fi      
+    popd
+}
+
 # install NeoGeo emulator
 function install_neogeo()
 {
@@ -1753,7 +1772,7 @@ DESCNAME=NeoGeo
 NAME=neogeo
 PATH=$rootdir/roms/neogeo
 EXTENSION=.zip .ZIP
-COMMAND=$rootdir/emulators/gngeo-0.7/installdir/bin/gngeo -i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-0.7/neogeo-bios %ROM%
+COMMAND=$rootdir/emulators/gngeo-pi-0.85/installdir/arm-linux-gngeo -i $rootdir/roms/neogeo -B $rootdir/roms/neogeo %ROM%
 PLATFORMID=24
 
 DESCNAME=Nintendo Entertainment System
@@ -2534,29 +2553,30 @@ function main_options()
              28 "Install DGEN (Megadrive/Genesis emulator)" ON \
              29 "(C) Configure DGEN" ON \
              30 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
-             31 "Install NeoGeo emulator" ON \
-             32 "(C) Configure NeoGeo" ON \
-             33 "Install NES core" ON \
-             34 "Install PC emulator (RPix86)" ON \
-             35 "Install Playstation core" ON \
-             36 "Install PSP emulator PPSSPP" OFF \
-             37 "Install ScummVM" ON \
-             38 "Install Super NES core" ON \
-             39 "Install SNES9X emulator" ON \
-             40 "Install PiSNES emulator" ON \
-             41 "(C) Configure Super NES core" ON \
-             42 "Install Wolfenstein3D engine" ON \
-             43 "Install Z Machine emulator (Frotz)" ON \
-             44 "Install ZX Spectrum emulator (Fuse)" ON \
-             45 "Install BCM library" ON \
-             46 "Install Dispmanx library" ON \
-             47 "Install SNESDev" ON \
-             48 "Install Emulation Station" ON \
-             49 "Install Emulation Station Themes" ON \
-             50 "(C) Generate config file for Emulation Station" ON \
-             51 "(C) Configure sound settings for RetroArch" ON \
-             52 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             53 "Install runcommand script" ON )
+             31 "Install NeoGeo emulator GnGeo 0.7" ON \
+             32 "Install NeoGeo emulator GnGeo-Pi 0.85" ON \
+             33 "(C) Configure NeoGeo" ON \
+             34 "Install NES core" ON \
+             35 "Install PC emulator (RPix86)" ON \
+             36 "Install Playstation core" ON \
+             37 "Install PSP emulator PPSSPP" OFF \
+             38 "Install ScummVM" ON \
+             39 "Install Super NES core" ON \
+             40 "Install SNES9X emulator" ON \
+             41 "Install PiSNES emulator" ON \
+             42 "(C) Configure Super NES core" ON \
+             43 "Install Wolfenstein3D engine" ON \
+             44 "Install Z Machine emulator (Frotz)" ON \
+             45 "Install ZX Spectrum emulator (Fuse)" ON \
+             46 "Install BCM library" ON \
+             47 "Install Dispmanx library" ON \
+             48 "Install SNESDev" ON \
+             49 "Install Emulation Station" ON \
+             50 "Install Emulation Station Themes" ON \
+             51 "(C) Generate config file for Emulation Station" ON \
+             52 "(C) Configure sound settings for RetroArch" ON \
+             53 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             54 "Install runcommand script" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2596,28 +2616,29 @@ function main_options()
                 29) configureDGEN ;;
                 30) install_megadriveLibretro ;;
                 31) install_neogeo ;;
-                32) configureNeogeo ;;
-                33) install_nes ;;
-                34) install_rpix86 ;;
-                35) install_psx ;;
-                36) install_ppsspp ;;
-                37) install_scummvm ;;
-                38) install_snes ;;
-                39) install_snes9x ;;
-                40) install_pisnes ;;
-                41) configure_snes ;;
-                42) install_wolfenstein3d ;;
-                43) install_zmachine ;;
-                44) install_zxspectrum ;;
-                45) install_bcmlibrary ;;
-                46) install_dispmanx ;;
-                47) install_snesdev ;;
-                48) install_emulationstation ;;
-                49) install_esthemes ;;
-                50) generate_esconfig ;;
-                51) configureSoundsettings ;;
-                52) setAvoidSafeMode ;;
-                53) install_runcommandscript ;;
+                32) install_GnGeoPi ;;
+                33) configureNeogeo ;;
+                34) install_nes ;;
+                35) install_rpix86 ;;
+                36) install_psx ;;
+                37) install_ppsspp ;;
+                38) install_scummvm ;;
+                39) install_snes ;;
+                40) install_snes9x ;;
+                41) install_pisnes ;;
+                42) configure_snes ;;
+                43) install_wolfenstein3d ;;
+                44) install_zmachine ;;
+                45) install_zxspectrum ;;
+                46) install_bcmlibrary ;;
+                47) install_dispmanx ;;
+                48) install_snesdev ;;
+                49) install_emulationstation ;;
+                50) install_esthemes ;;
+                51) generate_esconfig ;;
+                52) configureSoundsettings ;;
+                53) setAvoidSafeMode ;;
+                54) install_runcommandscript ;;
             esac
         done
 
