@@ -17,6 +17,9 @@ rm -rf osmose_files
 # resize partition on SD card to 3200 MB with gparted
 # resize2fs /dev/sdaX 3276800K
 
+# re-check file system for errors
+# e2fsck -f -y -v /dev/sdaX
+
 # read and compress image of SD card with
 #   dd if=/dev/disk2 bs=2m of=RetroPieImage_verX.img count=1650
 #   zip -9 RetroPieImage_verX.zip RetroPieImage_verX.img

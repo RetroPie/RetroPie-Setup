@@ -292,6 +292,26 @@ function installAPTPackages()
     apt-get -y autoremove
 }
 
+# remove all packages that are installed by the RetroPie Setup Script
+function removeAPTPackages()
+{
+    printMsg "Making sure that all packages that are installed by the script are removed."
+    apt-get remove -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev \
+                        libboost-filesystem-dev libboost-system-dev zip python-imaging \
+                        libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
+                        libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev \
+                        joystick fbi gcc-4.7 automake1.4 libcurl4-openssl-dev  libzip-dev \
+                        build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
+                        libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
+                        libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
+                        cmake 
+                        # libgles2-mesa-dev
+
+    apt-get -y autoremove   
+
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Successfully removed APT packages. For a complete uninstall you need to delete the 'RetroPie' folder on your own." 22 76
+}
+
 # start SNESDev on boot and configure RetroArch input settings
 function enableSplashscreenAtStart()
 {
@@ -1233,9 +1253,10 @@ function install_wolfenstein3d()
 function install_dispmanx()
 {
     gitPullOrClone "$rootdir/supplementary/dispmanx" git://github.com/vanfanel/SDL12-kms-dispmanx.git
-    ./configure
-    sed -i -e "s|CFLAGS  = -g -O2|CFLAGS  = -g -O2 -I/opt/vc/include/interface/vmcs_host/linux|g" Makefile
+    export CFLAGS="-I/opt/vc/include/interface/vmcs_host/linux"
+    ./MAC_ConfigureDISPMANX.sh
     make
+
     if [[ ! -f "$rootdir/supplementary/dispmanx/build/.libs/libSDL.so" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Dispmanx."
     fi    
@@ -2712,7 +2733,8 @@ while true; do
              2 "Source-based installation/update (slower, but up-to-date versions)"
              3 "Setup (only if you already have run one of the installations above)"
              4 "Update RetroPie Setup script"
-             5 "Perform reboot" )
+             5 "Uninstall RetroPie installation"
+             6 "Perform reboot" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
     if [ "$choices" != "" ]; then
         case $choices in
@@ -2720,7 +2742,8 @@ while true; do
             2) main_options ;;
             3) main_setup ;;
             4) main_updatescript ;;
-            5) main_reboot ;;
+            5) removeAPTPackages ;;
+            6) main_reboot ;;
         esac
     else
         break
