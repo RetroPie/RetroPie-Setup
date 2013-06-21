@@ -1594,7 +1594,8 @@ function install_emulationstation()
     gitPullOrClone "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
 
     #ES requires C++11 support to build, which means g++ 4.7 or later, which isn't what g++ resolves to right now
-    CXX=g++-4.7 cmake .
+    CXX=g++-4.7 
+    cmake .
     make
     install_esscript    
     if [[ ! -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
