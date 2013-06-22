@@ -284,7 +284,7 @@ function installAPTPackages()
                         build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
                         libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
                         libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
-                        cmake g++-4.7 unrar-free p7zip
+                        cmake g++-4.7 unrar-free p7zip p7zip-full
                         # libgles2-mesa-dev
 
     # remove PulseAudio since this is slowing down the whole system significantly
@@ -304,7 +304,7 @@ function removeAPTPackages()
                         build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
                         libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
                         libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
-                        cmake 
+                        cmake g++-4.7 unrar-free p7zip p7zip-full
                         # libgles2-mesa-dev
 
     apt-get -y autoremove   
