@@ -1763,7 +1763,7 @@ PLATFORMID=35
 DESCNAME=Sega Mega Drive / Genesis
 NAME=megadrive
 PATH=$rootdir/roms/megadrive
-EXTENSION=.smd .SMD .md .MD .bin .BIN .zip .ZIP .gz .GZ .bz2 .BZ2
+EXTENSION=.smd .SMD
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"
 # alternatively: COMMAND=export LD_LIBRARY_PATH="$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%
 PLATFORMID=18
@@ -1772,7 +1772,7 @@ DESCNAME=NeoGeo
 NAME=neogeo
 PATH=$rootdir/roms/neogeo
 EXTENSION=.zip .ZIP
-COMMAND=$rootdir/emulators/gngeo-pi-0.85/installdir/arm-linux-gngeo -i $rootdir/roms/neogeo -B $rootdir/roms/neogeo %ROM%
+COMMAND=$rootdir/emulators/gngeo-pi-0.85/installdir/bin/arm-linux-gngeo -i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-pi-0.85/neogeobios %ROM%
 PLATFORMID=24
 
 DESCNAME=Nintendo Entertainment System
