@@ -1252,7 +1252,7 @@ function install_wolfenstein3d()
     if [[ -d "$rootdir/emulators/Wolf4SDL" ]]; then
         rm -rf "$rootdir/emulators/Wolf4SDL"
     fi    
-    wget http://www.alice-dsl.net/mkroll/bins/Wolf4SDL-1.7-src.zip
+    wget http://chrisballinger.info/wolf4sdl/Wolf4SDL-1.7-src.zip
     mv Wolf4SDL-1.7-src.zip Wolf4SDL-1.7.zip
     unzip -n Wolf4SDL-1.7.zip -d "$rootdir/emulators/"
     pushd "$rootdir/emulators/Wolf4SDL-1.7-src"
