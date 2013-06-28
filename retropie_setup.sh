@@ -1611,11 +1611,9 @@ function install_emulationstation()
 {
     printMsg "Installing EmulationStation as graphical front end"
     gitPullOrClone "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
-    
-    # Temporary hack for circumventing the freezing issue of Emulation Station
-    git checkout d89a1020
-
     #ES requires C++11 support to build, which means g++ 4.7 or later, which isn't what g++ resolves to right now
+    rm -rf CMakeFiles
+    rm CMakeCache.txt
     export CXX=g++-4.7 
     cmake .
     make
