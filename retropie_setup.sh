@@ -1252,7 +1252,7 @@ function install_wolfenstein3d()
     if [[ -d "$rootdir/emulators/Wolf4SDL" ]]; then
         rm -rf "$rootdir/emulators/Wolf4SDL"
     fi    
-    wget http://chrisballinger.info/wolf4sdl/Wolf4SDL-1.7-src.zip
+    wget http://radix-16.com/files/wolf4sdl/Wolf4SDL-1.7-src.zip
     mv Wolf4SDL-1.7-src.zip Wolf4SDL-1.7.zip
     unzip -n Wolf4SDL-1.7.zip -d "$rootdir/emulators/"
     pushd "$rootdir/emulators/Wolf4SDL-1.7-src"
@@ -1428,7 +1428,7 @@ function enableSNESDevAtStart()
     printMsg "Enabling SNESDev on boot."
 
     if [[ ! -f "/etc/init.d/SNESDev" ]]; then
-        if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" ]]; then
+        if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/SNESDev" ]]; then
             dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Cannot find SNESDev binary. Please install SNESDev." 22 76    
             return
         else
