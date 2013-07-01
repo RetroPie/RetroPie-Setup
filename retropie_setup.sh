@@ -1249,8 +1249,8 @@ function install_ppsspp()
 function install_wolfenstein3d()
 {
     printMsg "Installing Wolfenstein3D Engine"    
-    if [[ -d "$rootdir/emulators/Wolf4SDL" ]]; then
-        rm -rf "$rootdir/emulators/Wolf4SDL"
+    if [[ -d "$rootdir/emulators/Wolf4SDL-1.7-src" ]]; then
+        rm -rf "$rootdir/emulators/Wolf4SDL-1.7-src"
     fi    
     wget http://radix-16.com/files/wolf4sdl/Wolf4SDL-1.7-src.zip
     mv Wolf4SDL-1.7-src.zip Wolf4SDL-1.7.zip
