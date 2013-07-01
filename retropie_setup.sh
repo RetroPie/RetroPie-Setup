@@ -1271,6 +1271,10 @@ function install_wolfenstein3d()
 # install Dispmanx library
 function install_dispmanx()
 {
+    printMsg "Installing Dispmanx library"    
+    if [[ -d "$rootdir/supplementary/dispmanx" ]]; then
+        rm -rf "$rootdir/supplementary/dispmanx"
+    fi 
     gitPullOrClone "$rootdir/supplementary/dispmanx" git://github.com/vanfanel/SDL12-kms-dispmanx.git
     export CFLAGS="-I/opt/vc/include/interface/vmcs_host/linux"
     ./MAC_ConfigureDISPMANX.sh
