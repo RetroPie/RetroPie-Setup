@@ -26,7 +26,7 @@ filelist+=("./RetroPie/emulators/RetroArch/retroarch.cfg")
 filelist+=("./RetroPie/emulators/RetroArch/tools/retroarch-joyconfig")
 
 filelist+=("./RetroPie/supplementary/bcm2835-1.14/")
-filelist+=("./RetroPie/supplementary/SNESDev-Rpi/bin/SNESDev")
+filelist+=("./RetroPie/supplementary/SNESDev-Rpi/SNESDev")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/scripts/SNESDev")
 filelist+=("./RetroPie/supplementary/dispmanx/build/.libs/")
 
@@ -55,14 +55,26 @@ filelist+=("./RetroPie/emulators/pisnes/roms/")
 filelist+=("./RetroPie/emulators/pisnes/skins/")
 filelist+=("./RetroPie/emulators/basiliskii/installdir/")
 
+# check if all directories/files exist
+tLen=${#filelist[@]}
+for (( i=0; i<${tLen}; i++ ));
+do
+	if [[ ! -d "${filelist[$i]}" && ! -f "${filelist[$i]}" ]]
+	then
+	  echo "Cannot find directory ${filelist[$i]}."
+	  exit
+	fi
+done
+
+# put everything into an archive file
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 
-tLen=${#filelist[@]}
 for (( i=1; i<${tLen}; i++ ));
 do
 	tar -r -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[$i]}
 done
 
+# compress the archive
 bzip2 RetroPieSetupBinaries_`date +%d%m%y`.tar
 
 echo "Done."
