@@ -374,6 +374,7 @@ function prepareFolders()
     pathlist+=("$rootdir/roms/cavestory")
     pathlist+=("$rootdir/roms/doom")
     pathlist+=("$rootdir/roms/duke3d/")
+    pathlist+=("$rootdir/roms/esconfig/")
     pathlist+=("$rootdir/roms/gamegear")
     pathlist+=("$rootdir/roms/gb")
     pathlist+=("$rootdir/roms/gba")
@@ -1288,7 +1289,8 @@ function install_dispmanx()
 
 function configure_rpix86()
 {
-    ln -s $rootdir/roms/x86/ $rootdir/emulators/rpix86/games 
+    ln -s $rootdir/roms/x86/ $rootdir/emulators/rpix86/games
+    rm $rootdir/roms/x86/x86
     cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
 #!/bin/bash
 pushd $rootdir/emulators/rpix86
@@ -1612,6 +1614,30 @@ _EOF_
     chmod +x /usr/bin/emulationstation
 }
 
+function install_esconfig()
+{
+    printMsg "Installing ES-config"
+    if [[ -d "$rootdir/supplementary/ES-config" ]]; then
+        rm -rf "$rootdir/supplementary/ES-config"
+    fi 
+    gitPullOrClone "$rootdir/supplementary/ES-config" git://github.com/Aloshi/ES-config.git
+    sed -i -e "s/apt-get install/apt-get install -y/g" get_dependencies.sh
+    ./get_dependencies.sh
+    make
+    popd
+
+    # generate start script for ES-config
+    cat > $rootdir/roms/esconfig/Start.sh << _EOF_
+#!/bin/bash
+pushd $rootdir/supplementary/ES-config
+./es-config --settings $user/.emulationstation/es_input.cfg --scriptdir $rootdir/supplementary/ES-config/scripts --configpath $rootdir/congis/all --resourcedir $rootdir/supplementary/ES-config/resources
+popd
+_EOF_
+    if [[ ! -f "$rootdir/supplementary/ES-config/es-config" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile ES-config."
+    fi
+}
+
 # install EmulationStation as graphical front end for the emulators
 function install_emulationstation()
 {
@@ -1825,6 +1851,11 @@ PATH=$rootdir/roms/zxspectrum
 EXTENSION=.z80 .Z80
 COMMAND=xinit fuse
 
+DESCNAME=Input Configuration
+NAME=esconfig
+PATH=$rootdir/roms/esconfig
+EXTENSION=.sh .SH
+COMMAND=$rootdir/roms/esconfig/Start.sh
 _EOF_
 
 chown -R $user "$rootdir/../.emulationstation"
@@ -2581,10 +2612,11 @@ function main_options()
              48 "Install SNESDev" ON \
              49 "Install Emulation Station" ON \
              50 "Install Emulation Station Themes" ON \
-             51 "(C) Generate config file for Emulation Station" ON \
-             52 "(C) Configure sound settings for RetroArch" ON \
-             53 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             54 "Install runcommand script" ON )
+             51 "Install ES-config" ON \
+             52 "(C) Generate config file for Emulation Station" ON \
+             53 "(C) Configure sound settings for RetroArch" ON \
+             54 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             55 "Install runcommand script" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2643,10 +2675,11 @@ function main_options()
                 48) install_snesdev ;;
                 49) install_emulationstation ;;
                 50) install_esthemes ;;
-                51) generate_esconfig ;;
-                52) configureSoundsettings ;;
-                53) setAvoidSafeMode ;;
-                54) install_runcommandscript ;;
+                51) install_esconfig ;;
+                52) generate_esconfig ;;
+                53) configureSoundsettings ;;
+                54) setAvoidSafeMode ;;
+                55) install_runcommandscript ;;
             esac
         done
 
