@@ -39,6 +39,7 @@ filelist+=("./RetroPie/emulators/dgen-sdl/installdir/usr/local/share/man/man1/dg
 filelist+=("./RetroPie/emulators/dgen-sdl/installdir/usr/local/share/man/man5/dgenrc.5")
 filelist+=("./RetroPie/emulators/Wolf4SDL-1.7-src/wolf3d")
 filelist+=("./RetroPie/emulators/osmose-0.8.1+rpi20121122/")
+filelist+=("./RetroPie/emulators/gngeo-pi-0.85/installdir/")
 filelist+=("./RetroPie/emulators/gngeo-0.7/installdir/")
 filelist+=("./RetroPie/emulators/vice-2.3.dfsg/installdir/")
 filelist+=("./RetroPie/emulators/uae4all/")

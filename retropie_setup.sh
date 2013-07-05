@@ -1439,7 +1439,7 @@ function enableSNESDevAtStart()
             chmod +x "$rootdir/supplementary/SNESDev-Rpi/scripts/SNESDev"
             cp "$rootdir/supplementary/SNESDev-Rpi/scripts/SNESDev" /etc/init.d/
         fi
-        cp "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev" /usr/local/bin/
+        cp "$rootdir/supplementary/SNESDev-Rpi/SNESDev" /usr/local/bin/
     fi    
 
     ensureKeyValueShort "DAEMON_ARGS" "\"$1\"" "/etc/init.d/SNESDev"
