@@ -1439,6 +1439,8 @@ function enableSNESDevAtStart()
             chmod +x "$rootdir/supplementary/SNESDev-Rpi/scripts/SNESDev"
             cp "$rootdir/supplementary/SNESDev-Rpi/scripts/SNESDev" /etc/init.d/
         fi
+    fi
+    if [[ ! -f "/usr/local/bin/SNESDev" ]]; then
         cp "$rootdir/supplementary/SNESDev-Rpi/SNESDev" /usr/local/bin/
     fi    
 
