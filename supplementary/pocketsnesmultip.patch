@@ -1,0 +1,19 @@
+*** ppu.cpp	2013-07-08 20:28:27.000000000 +0200
+--- ppu_patched.cpp	2013-07-08 21:25:36.000000000 +0200
+***************
+*** 714,720 ****
+  						}
+  					}
+  					return (
+! 						(IPPU.Joypads[0]
+  							>> (PPU.Joypad2ButtonReadPos++ ^ 15))
+  							& 1);
+  				}
+--- 714,720 ----
+  						}
+  					}
+  					return (
+! 						(IPPU.Joypads[1]
+  							>> (PPU.Joypad2ButtonReadPos++ ^ 15))
+  							& 1);
+  				}
