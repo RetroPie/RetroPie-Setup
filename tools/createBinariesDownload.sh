@@ -3,6 +3,7 @@
 filelist=()
 
 filelist+=("./RetroPie/supplementary/EmulationStation/emulationstation")
+filelist+=("./RetroPie/supplementary/ES-config/")
 
 filelist+=("`find ./RetroPie/emulatorcores/stella-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/nxengine-libretro/ -name "*libretro*.so"`")
