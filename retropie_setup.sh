@@ -318,10 +318,10 @@ function enableSplashscreenAtStart()
     clear
     printMsg "Enabling custom splashscreen on boot."
 
-    chmod +x "./supplementary/asplashscreen/asplashscreen"
-    cp "./supplementary/asplashscreen/asplashscreen" /etc/init.d/
+    chmod +x "$scriptdir/supplementary/asplashscreen/asplashscreen"
+    cp "$scriptdir/supplementary/asplashscreen/asplashscreen" /etc/init.d/
 
-    cp "./supplementary/asplashscreen/splashscreen.png" /etc/
+    cp "$scriptdir/supplementary/asplashscreen/splashscreen.png" /etc/
 
     # This command installs the init.d script so it automatically starts on boot
     insserv /etc/init.d/asplashscreen
@@ -477,10 +477,11 @@ function configureRetroArch()
 function install_retroarch()
 {
     printMsg "Installing RetroArch emulator"
-    gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/Themaister/RetroArch.git
+    gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
     ./configure
     make
     sudo make install
+    cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/"
     if [[ ! -f "/usr/local/bin/retroarch" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
     fi  
@@ -915,7 +916,7 @@ function configure_advancemenu()
     printMsg "Configuring AdvanceMenu"
 
     mkdir -p "/home/$user/.advance/"
-    cp "./supplementary/advmenu.rc" "/home/$user/.advance/"
+    cp "$scriptdir/supplementary/advmenu.rc" "/home/$user/.advance/"
 
     cat >> "/home/$user/.advance/advmenu.rc" << _EOF_
 
@@ -1325,7 +1326,7 @@ function install_rpix86()
     rm rpix86.tar.gz
 
     # install 4DOS.com
-    unzip -n ./supplementary/4dos.zip -d "$rootdir/emulators/rpix86/"
+    unzip -n $scriptdir/supplementary/4dos.zip -d "$rootdir/emulators/rpix86/"
 
     # configure for use with Emulation Station
     configure_rpix86
@@ -2154,7 +2155,7 @@ function install_runcommandscript()
 {
     printMsg "Installing script for setting video mode."
     mkdir -p "$rootdir/supplementary/runcommand/"
-    cp ./supplementary/runcommand.sh "$rootdir/supplementary/runcommand/"
+    cp $scriptdir/supplementary/runcommand.sh "$rootdir/supplementary/runcommand/"
     chmod +x "$rootdir/supplementary/runcommand/runcommand.sh"
     chown -R $user $rootdir
     chgrp -R $user $rootdir
@@ -2282,7 +2283,7 @@ function install_USBROMService()
     apt-get install -y usbmount
 
     # install hook in usbmount sub-directory
-    cp ./supplementary/01_retropie_copyroms /etc/usbmount/mount.d/
+    cp $scriptdir/supplementary/01_retropie_copyroms /etc/usbmount/mount.d/
     sed -i -e "s/USERTOBECHOSEN/$user/g" /etc/usbmount/mount.d/01_retropie_copyroms
     chmod +x /etc/usbmount/mount.d/01_retropie_copyroms
 }
