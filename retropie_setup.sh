@@ -1636,13 +1636,22 @@ function install_esconfig()
     make
     popd
 
+    cp "$scriptdir/supplementary/settings.xml" "$rootdir/supplementary/ES-config/"
+    sed -i -e "s|/home/pi/RetroPie|$rootdir|g" "$rootdir/supplementary/ES-config/settings.xml"
     # generate start script for ES-config
+    if [[ ! -d $rootdir/roms/esconfig ]]; then
+        mkdir -p $rootdir/roms/esconfig
+    fi
     cat > $rootdir/roms/esconfig/Start.sh << _EOF_
 #!/bin/bash
 pushd $rootdir/supplementary/ES-config
-./es-config --settings $user/.emulationstation/es_input.cfg --scriptdir $rootdir/supplementary/ES-config/scripts --configpath $rootdir/congis/all --resourcedir $rootdir/supplementary/ES-config/resources
+#if you don't supply the "--settings [path]" argument, no settings XML file will be loaded!
+./es-config --settings $rootdir/supplementary/ES-config/settings.xml   
 popd
 _EOF_
+chown $user $rootdir/roms/esconfig/Start.sh
+chgrp $user $rootdir/roms/esconfig/Start.sh
+chmod +x $user $rootdir/roms/esconfig/Start.sh
     if [[ ! -f "$rootdir/supplementary/ES-config/es-config" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile ES-config."
     fi
