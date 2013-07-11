@@ -2819,12 +2819,13 @@ availFreeDiskSpace 800000
 
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
-    options=(1 "Binaries-based installation (faster, but possibly not up-to-date)"
-             2 "Source-based installation/update (slower, but up-to-date versions)"
-             3 "Setup (only if you already have run one of the installations above)"
-             4 "Update RetroPie Setup script"
-             5 "Uninstall RetroPie installation"
-             6 "Perform reboot" )
+    options=(1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)"
+             2 "Source-based INSTALLATION (slower, but up-to-date versions)"
+             3 "SETUP (only if you already have run one of the installations above)"
+             4 "UPDATE RetroPie Setup script"
+             5 "UPDATE RetroPie Binaries"
+             6 "UNINSTALL RetroPie installation"
+             7 "Perform REBOOT" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
     if [ "$choices" != "" ]; then
         case $choices in
@@ -2832,8 +2833,9 @@ while true; do
             2) main_options ;;
             3) main_setup ;;
             4) main_updatescript ;;
-            5) removeAPTPackages ;;
-            6) main_reboot ;;
+            5) downloadBinaries ;;
+            6) removeAPTPackages ;;
+            7) main_reboot ;;
         esac
     else
         break
