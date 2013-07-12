@@ -777,18 +777,23 @@ function install_dgen()
     rm dgen-sdl-1.32.tar.gz
 }
 
+function configure_doom()
+{
+    mkdir -p $rootdir/roms/doom/
+    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
+}
+
 # install Doom WADs emulator core
 function install_doom()
 {
     printMsg "Installing Doom core"
     gitPullOrClone "$rootdir/emulatorcores/libretro-prboom" git://github.com/libretro/libretro-prboom.git
     make
-    mkdir -p $rootdir/roms/doom/
-    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
     if [[ -z `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Doom core."
     fi  
     popd
+    configure_doom
 }
 
 #install eDuke32
@@ -2522,6 +2527,7 @@ function main_binaries()
     install_eduke32
     configure_rpix86
     configure_esconfig
+    configure_doom
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
