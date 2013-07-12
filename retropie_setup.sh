@@ -1624,18 +1624,9 @@ _EOF_
     chmod +x /usr/bin/emulationstation
 }
 
-function install_esconfig()
+function configure_esconfig()
 {
-    printMsg "Installing ES-config"
-    if [[ -d "$rootdir/supplementary/ES-config" ]]; then
-        rm -rf "$rootdir/supplementary/ES-config"
-    fi 
-    gitPullOrClone "$rootdir/supplementary/ES-config" git://github.com/Aloshi/ES-config.git
-    sed -i -e "s/apt-get install/apt-get install -y/g" get_dependencies.sh
-    ./get_dependencies.sh
-    make
-    popd
-
+    printMsg "Configuring ES-config"
     cp "$scriptdir/supplementary/settings.xml" "$rootdir/supplementary/ES-config/"
     sed -i -e "s|/home/pi/RetroPie|$rootdir|g" "$rootdir/supplementary/ES-config/settings.xml"
     # generate start script for ES-config
@@ -1652,6 +1643,21 @@ _EOF_
 chown $user $rootdir/roms/esconfig/Start.sh
 chgrp $user $rootdir/roms/esconfig/Start.sh
 chmod +x $user $rootdir/roms/esconfig/Start.sh
+}
+
+function install_esconfig()
+{
+    printMsg "Installing ES-config"
+    if [[ -d "$rootdir/supplementary/ES-config" ]]; then
+        rm -rf "$rootdir/supplementary/ES-config"
+    fi 
+    gitPullOrClone "$rootdir/supplementary/ES-config" git://github.com/Aloshi/ES-config.git
+    sed -i -e "s/apt-get install/apt-get install -y/g" get_dependencies.sh
+    ./get_dependencies.sh
+    make
+    popd
+    configure_esconfig()
+
     if [[ ! -f "$rootdir/supplementary/ES-config/es-config" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile ES-config."
     fi
@@ -2515,6 +2521,7 @@ function main_binaries()
     configure_linapple
     install_eduke32
     configure_rpix86
+    configure_esconfig
 
     chgrp -R $user $rootdir
     chown -R $user $rootdir
