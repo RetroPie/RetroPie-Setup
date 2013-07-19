@@ -15,4 +15,6 @@ if [[ $starttype -eq 1 && ! -z `tvservice --status | egrep -w "HDMI|DVI"` ]] || 
     fbset -depth 8 && fbset -depth 16
 elif [[ $starttype -eq 2 ]]; then
     eval $@
+else
+	eval $@
 fi

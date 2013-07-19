@@ -56,6 +56,9 @@ filelist+=("./RetroPie/emulators/pisnes/zipit")
 filelist+=("./RetroPie/emulators/pisnes/roms/")
 filelist+=("./RetroPie/emulators/pisnes/skins/")
 filelist+=("./RetroPie/emulators/basiliskii/installdir/")
+filelist+=("./RetroPie/emulators/atari800-3.0.0/installdir/")
+filelist+=("./RetroPie/emulators/atari800-3.0.0/README.1ST")
+filelist+=("./RetroPie/emulators/emulators/usp/build/rpi/Release/")
 
 # check if all directories/files exist
 tLen=${#filelist[@]}

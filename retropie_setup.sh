@@ -284,7 +284,7 @@ function installAPTPackages()
                         build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
                         libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
                         libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
-                        cmake g++-4.7 unrar-free p7zip p7zip-full
+                        cmake g++-4.7 unrar-free p7zip p7zip-full libeigen3-dev
                         # libgles2-mesa-dev
 
     # remove PulseAudio since this is slowing down the whole system significantly
@@ -304,7 +304,7 @@ function removeAPTPackages()
                         build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
                         libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
                         libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
-                        cmake g++-4.7 unrar-free p7zip p7zip-full
+                        cmake g++-4.7 unrar-free p7zip p7zip-full libeigen3-dev
                         # libgles2-mesa-dev
 
     apt-get -y autoremove   
@@ -621,6 +621,25 @@ install_amiga()
     rm uae4all-src-rc3.chip.tar.bz2  
 
     __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
+}
+
+# install Atari 800 emulator
+function install_atari800()
+{
+    printMsg "Installing Atari 800 emulator"
+    wget -O atari800-3.0.0.tar.gz http://sourceforge.net/projects/atari800/files/atari800/3.0.0/atari800-3.0.0.tar.gz/download
+    if [[ -d "$rootdir/emulators/atari800-3.0.0" ]]
+        rm -rf "$rootdir/emulators/atari800-3.0.0"
+    fi
+    tar xvfz atari800-3.0.0.tar.gz -C "$rootdir/emulators/"
+    pushd "$rootdir/emulators/atari800-3.0.0/src"
+    ./configure --prefix="$rootdir/emulators/atari800-3.0.0/installdir"
+    make
+    if [[ ! -f "$rootdir/emulators/atari800-3.0.0/installdir/bin/atari800" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 800 emulator."
+    fi  
+    popd
+    rm atari800-3.0.0.tar.gz
 }
 
 # install Atari 2600 core
@@ -1357,6 +1376,25 @@ function install_zmachine()
     __INFMSGS="$__INFMSGS The text adventures Zork 1 - 3 have been installed in the directory '$rootdir/roms/zmachine/'. You can start, e.g., Zork 1 with the command 'frotz $rootdir/roms/zmachine/zork1/DATA/ZORK1.DAT'."
 }
 
+#install ZX Spectrum emulator Unreal Speccy
+function install_unrealspeccy()
+{
+    printMsg "Installing ZX Spectrum emulator"
+    if [[ -d "$rootdir/emulators/usp" ]]; then
+        rm -rf "$rootdir/emulators/usp"
+    fi    
+    pushd $rootdir/emulators/
+    wget -O fbzx-2.10.0.tar.bz2 http://www.rastersoft.com/descargas/fbzx-2.10.0.tar.bz2
+    tar xvfj fbzx-2.10.0.tar.bz2
+    cd fbzx-2.10.0/
+    make
+    cd ..
+    if [[ ! -f "$rootdir/emulators/fbzx-2.10.0/fbzx" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile FBZX."
+    fi    
+    popd
+}
+
 # Install ZX Spectrum emulator, this function is not used abymore due to segmentation fault errors.
 # However, it is kept here for now as a recipe.
 function install_zxspectrumFromSource()
@@ -1712,6 +1750,13 @@ PATH=$rootdir/roms/apple2
 EXTENSION=.txt
 COMMAND=$rootdir/emulators/linapple-src_2a/Start.sh
 
+DESCNAME=Atari 800
+NAME=atari800
+PATH=$rootdir/roms/atari800
+EXTENSION=.xex .XEX
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/atari800-3.0.0/installdir/bin/atari800 %ROM%"
+PLATFORMID=22
+
 DESCNAME=Atari 2600
 NAME=atari2600
 PATH=$rootdir/roms/atari2600
@@ -1881,6 +1926,7 @@ NAME=zxspectrum
 PATH=$rootdir/roms/zxspectrum
 EXTENSION=.z80 .Z80
 COMMAND=xinit fuse
+# alternatively: COMMAND=$rootdir/emulators/usp/build/rpi/Release/unreal_speccy_portable %ROM%
 
 DESCNAME=Input Configuration
 NAME=esconfig
@@ -2610,48 +2656,50 @@ function main_options()
              12 "(C) Configure video, rewind, and keyboard for RetroArch" ON \
              13 "Install Amiga emulator" ON \
              14 "Install Apple ][ emulator (Linapple)" ON \
-             15 "Install Atari 2600 RetroArch core" ON \
-             16 "Install Atari 2600 emulator Stella" ON \
-             17 "Install BasiliskII" ON \
-             18 "Install C64 emulator (Vice)" ON \
-             19 "Install NXEngine / Cave Story" ON \
-             20 "Install Doom core" ON \
-             21 "Install eDuke32 with shareware files" ON \
-             22 "Install Game Boy Advance emulator (gpSP)" ON \
-             23 "Install Game Boy Color core" ON \
-             24 "Install IntelliVision emulator (jzintv)" ON \
-             25 "Install MAME (iMAME4All) core" ON \
-             26 "Install AdvMAME emulator" ON \
-             27 "Install FBA core" ON \
-             28 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
-             29 "Install DGEN (Megadrive/Genesis emulator)" ON \
-             30 "(C) Configure DGEN" ON \
-             31 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
-             32 "Install NeoGeo emulator GnGeo 0.7" ON \
-             33 "Install NeoGeo emulator GnGeo-Pi 0.85" ON \
-             34 "(C) Configure NeoGeo" ON \
-             35 "Install NES core" ON \
-             36 "Install PC emulator (RPix86)" ON \
-             37 "Install Playstation core" ON \
-             38 "Install PSP emulator PPSSPP" OFF \
-             39 "Install ScummVM" ON \
-             40 "Install Super NES core" ON \
-             41 "Install SNES9X emulator" ON \
-             42 "Install PiSNES emulator" ON \
-             43 "(C) Configure Super NES core" ON \
-             44 "Install Wolfenstein3D engine" ON \
-             45 "Install Z Machine emulator (Frotz)" ON \
-             46 "Install ZX Spectrum emulator (Fuse)" ON \
-             47 "Install BCM library" ON \
-             48 "Install Dispmanx library" ON \
-             49 "Install SNESDev" ON \
-             50 "Install Emulation Station" ON \
-             51 "Install Emulation Station Themes" ON \
-             52 "Install ES-config" ON \
-             53 "(C) Generate config file for Emulation Station" ON \
-             54 "(C) Configure sound settings for RetroArch" ON \
-             55 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             56 "Install runcommand script" ON )
+             15 "Install Atari 800 emulator" ON \
+             16 "Install Atari 2600 RetroArch core" ON \
+             17 "Install Atari 2600 emulator Stella" ON \
+             18 "Install BasiliskII" ON \
+             19 "Install C64 emulator (Vice)" ON \
+             20 "Install NXEngine / Cave Story" ON \
+             21 "Install Doom core" ON \
+             22 "Install eDuke32 with shareware files" ON \
+             23 "Install Game Boy Advance emulator (gpSP)" ON \
+             24 "Install Game Boy Color core" ON \
+             25 "Install IntelliVision emulator (jzintv)" ON \
+             26 "Install MAME (iMAME4All) core" ON \
+             27 "Install AdvMAME emulator" ON \
+             28 "Install FBA core" ON \
+             29 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
+             30 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             31 "(C) Configure DGEN" ON \
+             32 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
+             33 "Install NeoGeo emulator GnGeo 0.7" ON \
+             34 "Install NeoGeo emulator GnGeo-Pi 0.85" ON \
+             35 "(C) Configure NeoGeo" ON \
+             36 "Install NES core" ON \
+             37 "Install PC emulator (RPix86)" ON \
+             38 "Install Playstation core" ON \
+             39 "Install PSP emulator PPSSPP" OFF \
+             40 "Install ScummVM" ON \
+             41 "Install Super NES core" ON \
+             42 "Install SNES9X emulator" ON \
+             43 "Install PiSNES emulator" ON \
+             44 "(C) Configure Super NES core" ON \
+             45 "Install Wolfenstein3D engine" ON \
+             46 "Install Z Machine emulator (Frotz)" ON \
+             47 "Install ZX Spectrum emulator (Fuse)" ON \
+             48 "Install ZX Spectrum emulator (Unreal Speccy)" ON \
+             49 "Install BCM library" ON \
+             50 "Install Dispmanx library" ON \
+             51 "Install SNESDev" ON \
+             52 "Install Emulation Station" ON \
+             53 "Install Emulation Station Themes" ON \
+             54 "Install ES-config" ON \
+             55 "(C) Generate config file for Emulation Station" ON \
+             56 "(C) Configure sound settings for RetroArch" ON \
+             57 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             58 "Install runcommand script" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2674,48 +2722,50 @@ function main_options()
                 12) configureRetroArch ;;
                 13) install_amiga ;;
                 14) install_linapple ;;
-                15) install_atari2600 ;;
-                16) install_stella ;;
-                17) install_basiliskII ;;
-                18) install_viceC64 ;;
-                19) install_cavestory ;;
-                20) install_doom ;;
-                21) install_eduke32 ;;
-                22) install_gba ;;
-                23) install_gbc ;;
-                24) install_intellivision ;;
-                25) install_mame ;;
-                26) install_advmame ;;
-                27) install_fba ;;
-                28) install_megadrive ;;
-                29) install_dgen ;;
-                30) configureDGEN ;;
-                31) install_megadriveLibretro ;;
-                32) install_neogeo ;;
-                33) install_GnGeoPi ;;
-                34) configureNeogeo ;;
-                35) install_nes ;;
-                36) install_rpix86 ;;
-                37) install_psx ;;
-                38) install_ppsspp ;;
-                39) install_scummvm ;;
-                40) install_snes ;;
-                41) install_snes9x ;;
-                42) install_pisnes ;;
-                43) configure_snes ;;
-                44) install_wolfenstein3d ;;
-                45) install_zmachine ;;
-                46) install_zxspectrum ;;
-                47) install_bcmlibrary ;;
-                48) install_dispmanx ;;
-                49) install_snesdev ;;
-                50) install_emulationstation ;;
-                51) install_esthemes ;;
-                52) install_esconfig ;;
-                53) generate_esconfig ;;
-                54) configureSoundsettings ;;
-                55) setAvoidSafeMode ;;
-                56) install_runcommandscript ;;
+                15) install_atari800 ;;
+                16) install_atari2600 ;;
+                17) install_stella ;;
+                18) install_basiliskII ;;
+                19) install_viceC64 ;;
+                20) install_cavestory ;;
+                21) install_doom ;;
+                22) install_eduke32 ;;
+                23) install_gba ;;
+                24) install_gbc ;;
+                25) install_intellivision ;;
+                26) install_mame ;;
+                27) install_advmame ;;
+                28) install_fba ;;
+                29) install_megadrive ;;
+                30) install_dgen ;;
+                31) configureDGEN ;;
+                32) install_megadriveLibretro ;;
+                33) install_neogeo ;;
+                34) install_GnGeoPi ;;
+                35) configureNeogeo ;;
+                36) install_nes ;;
+                37) install_rpix86 ;;
+                38) install_psx ;;
+                39) install_ppsspp ;;
+                40) install_scummvm ;;
+                41) install_snes ;;
+                42) install_snes9x ;;
+                43) install_pisnes ;;
+                44) configure_snes ;;
+                45) install_wolfenstein3d ;;
+                46) install_zmachine ;;
+                47) install_zxspectrum ;;
+                48) install_unrealspeccy ;;
+                49) install_bcmlibrary ;;
+                50) install_dispmanx ;;
+                51) install_snesdev ;;
+                52) install_emulationstation ;;
+                53) install_esthemes ;;
+                54) install_esconfig ;;
+                55) generate_esconfig ;;
+                56) configureSoundsettings ;;
+                57) setAvoidSafeMode ;;
+                58) install_runcommandscript ;;
             esac
         done
 
