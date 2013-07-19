@@ -221,6 +221,12 @@ function upgrade_apt()
     ensureKeyValueShort "gpu_mem" "128" "/boot/config.txt"
 }
 
+function configureBootConfig()
+{
+    ensureKeyValueShort "gpu_mem" "128" "/boot/config.txt"
+    ensureKeyValueShort "overscan_scale" "1" "/boot/config.txt"
+}
+
 # add user $user to groups "video", "audio", and "input"
 function add_to_groups()
 {
@@ -628,7 +634,7 @@ function install_atari800()
 {
     printMsg "Installing Atari 800 emulator"
     wget -O atari800-3.0.0.tar.gz http://sourceforge.net/projects/atari800/files/atari800/3.0.0/atari800-3.0.0.tar.gz/download
-    if [[ -d "$rootdir/emulators/atari800-3.0.0" ]]
+    if [[ -d "$rootdir/emulators/atari800-3.0.0" ]]; then 
         rm -rf "$rootdir/emulators/atari800-3.0.0"
     fi
     tar xvfz atari800-3.0.0.tar.gz -C "$rootdir/emulators/"
@@ -2699,7 +2705,8 @@ function main_options()
              55 "(C) Generate config file for Emulation Station" ON \
              56 "(C) Configure sound settings for RetroArch" ON \
              57 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             58 "Install runcommand script" ON )
+             58 "Install runcommand script" ON \
+             59 "(C) Configure /boot/config.txt" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -2766,6 +2773,7 @@ function main_options()
                 56) configureSoundsettings ;;
                 57) setAvoidSafeMode ;;
                 58) install_runcommandscript ;;
+                59) configureBootConfig ;;
             esac
         done
 
