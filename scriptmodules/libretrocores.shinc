@@ -1,0 +1,201 @@
+#!/bin/bash
+
+#  RetroPie-Setup - Shell script for initializing Raspberry Pi 
+#  with RetroArch, various cores, and EmulationStation (a graphical 
+#  front end).
+# 
+#  (c) Copyright 2012-2013  Florian Müller (contact@petrockblock.com)
+# 
+#  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
+# 
+#  Permission to use, copy, modify and distribute RetroPie-Setup in both binary and
+#  source form, for non-commercial purposes, is hereby granted without fee,
+#  providing that this license information and copyright notice appear with
+#  all copies and any derived work.
+# 
+#  This software is provided 'as-is', without any express or implied
+#  warranty. In no event shall the authors be held liable for any damages
+#  arising from the use of this software.
+# 
+#  RetroPie-Setup is freeware for PERSONAL USE only. Commercial users should
+#  seek permission of the copyright holders first. Commercial use includes
+#  charging money for RetroPie-Setup or software derived from RetroPie-Setup.
+# 
+#  The copyright holders request that bug fixes and improvements to the code
+#  should be forwarded to them so everyone can benefit from the modifications
+#  in future versions.
+# 
+#  Many, many thanks go to all people that provide the individual packages!!!
+# 
+#  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
+# 
+
+# install Atari 2600 core
+function lr_install_atari2600()
+{
+    printMsg "Installing Atari 2600 RetroArch core"
+    gitPullOrClone "$rootdir/emulatorcores/stella-libretro" git://github.com/libretro/stella-libretro.git
+    make
+    if [[ -z `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 2600 core."
+    fi  
+    popd    
+}
+
+# configure NXEngine / Cave Story core
+function lr_configure_cavestory()
+{
+    if [[ ! -d $rootdir/roms/cavestory ]]; then
+        mkdir -p $rootdir/roms/cavestory
+    fi
+    touch $rootdir/roms/cavestory/Start.txt    
+}
+
+# install NXEngine / Cave Story core
+function lr_install_cavestory()
+{
+    printMsg "Installing NXEngine / Cave Story"
+    gitPullOrClone "$rootdir/emulatorcores/nxengine-libretro" git://github.com/libretro/nxengine-libretro.git
+    make
+    if [[ -z `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile NXEngine / Cave Story core."
+    else
+        lr_configure_cavestory
+    fi  
+    popd
+}
+
+function lr_configure_doom()
+{
+    mkdir -p $rootdir/roms/doom/
+    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
+}
+
+# install Doom WADs emulator core
+function lr_install_doom()
+{
+    printMsg "Installing Doom core"
+    gitPullOrClone "$rootdir/emulatorcores/libretro-prboom" git://github.com/libretro/libretro-prboom.git
+    make
+    if [[ -z `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Doom core."
+    fi  
+    popd
+    lr_configure_doom
+}
+
+# install Game Boy Color emulator core
+function lr_install_gbc()
+{
+    printMsg "Installing Game Boy Color core"
+    gitPullOrClone "$rootdir/emulatorcores/gambatte-libretro" git://github.com/libretro/gambatte-libretro.git
+    make -C libgambatte -f Makefile.libretro
+    if [[ -z `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Color core."
+    fi      
+    popd
+}
+
+# install MAME emulator core
+function lr_install_mame()
+{
+    printMsg "Installing MAME core"
+    gitPullOrClone "$rootdir/emulatorcores/imame4all-libretro" git://github.com/libretro/imame4all-libretro.git
+    make -f makefile.libretro ARM=1
+    if [[ -z `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile MAME core."
+    fi      
+    popd
+}
+
+# install FBA emulator core
+function lr_install_fba()
+{
+    printMsg "Installing FBA core"
+    gitPullOrClone "$rootdir/emulatorcores/fba-libretro" git://github.com/libretro/fba-libretro.git
+    apt-get install -y --force-yes cpp-4.5 gcc-4.5 g++-4.5
+    (
+        cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
+        CC=gcc-4.5 CXX=g++-4.5 make -f makefile.libretro
+    )
+    mv svn-current/trunk/*libretro*.so $rootdir/emulatorcores/fba-libretro/
+    if [[ -z `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile FBA core."
+    fi
+    popd
+}
+
+# install NES emulator core
+function lr_install_nes()
+{
+    printMsg "Installing NES core"
+    gitPullOrClone "$rootdir/emulatorcores/fceu-next" git://github.com/libretro/fceu-next.git
+    pushd fceumm-code
+    make -f Makefile.libretro
+    popd
+    if [[ -z `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile NES core."
+    fi      
+    popd
+}
+
+# install Sega Mega Drive/Mastersystem/Game Gear libretro emulator core
+function lr_install_megadriveLibretro()
+{
+    printMsg "Installing Mega Drive/Mastersystem/Game Gear core (Libretro core)"
+    gitPullOrClone "$rootdir/emulatorcores/Genesis-Plus-GX" git://github.com/libretro/Genesis-Plus-GX.git
+    make -f Makefile.libretro 
+    if [[ ! -f `find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
+    fi      
+    popd
+}
+
+# install Megadrive/Genesis emulator core Picodrive
+function lr_install_picodrive()
+{
+    printMsg "Installing Megadrive core picodrive"
+    gitPullOrClone "$rootdir/emulatorcores/picodrive" https://github.com/libretro/picodrive.git
+    git submodule init && git submodule update
+    make -f Makefile.libretro platform=armv6    
+    if [[ ! -f `find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
+    fi      
+    popd
+}
+
+# install Playstation emulator core
+function lr_install_psx()
+{
+    printMsg "Installing PCSX core"
+    gitPullOrClone "$rootdir/emulatorcores/pcsx_rearmed" git://github.com/libretro/pcsx_rearmed.git
+    ./configure --platform=libretro
+    make
+    if [[ -z `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Playstation core."
+    fi      
+    popd
+}
+
+# install SNES emulator core
+function lr_install_snes()
+{
+    printMsg "Installing SNES core"
+    gitPullOrClone "$rootdir/emulatorcores/pocketsnes-libretro" git://github.com/ToadKing/pocketsnes-libretro.git
+    patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch $rootdir/emulatorcores/pocketsnes-libretro/src/ppu.cpp
+    make
+    if [[ -z `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
+    fi      
+    popd
+}
+
+# configure SNES emulator core settings
+function lr_configure_snes()
+{
+    printMsg "Configuring SNES core"
+
+    # DISABLE rewind feature for SNES core due to the speed decrease
+    ensureKeyValue "rewind_enable" "false" "$rootdir/configs/snes/retroarch.cfg"
+}
+

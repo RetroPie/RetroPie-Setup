@@ -1,0 +1,535 @@
+#!/bin/bash
+
+#  RetroPie-Setup - Shell script for initializing Raspberry Pi 
+#  with RetroArch, various cores, and EmulationStation (a graphical 
+#  front end).
+# 
+#  (c) Copyright 2012-2013  Florian Müller (contact@petrockblock.com)
+# 
+#  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
+# 
+#  Permission to use, copy, modify and distribute RetroPie-Setup in both binary and
+#  source form, for non-commercial purposes, is hereby granted without fee,
+#  providing that this license information and copyright notice appear with
+#  all copies and any derived work.
+# 
+#  This software is provided 'as-is', without any express or implied
+#  warranty. In no event shall the authors be held liable for any damages
+#  arising from the use of this software.
+# 
+#  RetroPie-Setup is freeware for PERSONAL USE only. Commercial users should
+#  seek permission of the copyright holders first. Commercial use includes
+#  charging money for RetroPie-Setup or software derived from RetroPie-Setup.
+# 
+#  The copyright holders request that bug fixes and improvements to the code
+#  should be forwarded to them so everyone can benefit from the modifications
+#  in future versions.
+# 
+#  Many, many thanks go to all people that provide the individual packages!!!
+# 
+#  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
+# 
+
+# start SNESDev on boot and configure RetroArch input settings
+function set_enableSplashscreenAtStart()
+{
+    clear
+    printMsg "Enabling custom splashscreen on boot."
+
+    chmod +x "$scriptdir/supplementary/asplashscreen/asplashscreen"
+    cp "$scriptdir/supplementary/asplashscreen/asplashscreen" /etc/init.d/
+
+    cp "$scriptdir/supplementary/asplashscreen/splashscreen.png" /etc/
+
+    # This command installs the init.d script so it automatically starts on boot
+    insserv /etc/init.d/asplashscreen
+    # not-so-elegant hack for later re-enabling the splashscreen
+    update-rc.d asplashscreen enable
+
+}
+
+# disable start SNESDev on boot and remove RetroArch input settings
+function set_disableSplashscreenAtStart()
+{
+    clear
+    printMsg "Disabling custom splashscreen on boot."
+
+    update-rc.d asplashscreen disable
+
+}
+
+# Show dialogue for enabling/disabling SNESDev on boot
+function set_enableDisableSplashscreen()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 86 16)
+    options=(1 "Disable custom splashscreen on boot."
+             2 "Enable custom splashscreen on boot")
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [ "$choices" != "" ]; then
+        case $choices in
+            1) set_disableSplashscreenAtStart
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Disabled custom splashscreen on boot." 22 76    
+                            ;;
+            2) set_enableSplashscreenAtStart
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled custom splashscreen on boot." 22 76    
+                            ;;
+        esac
+    else
+        break
+    fi    
+}
+
+function set_ensureEntryInSMBConf()
+{
+    comp=`cat /etc/samba/smb.conf | grep "\[$1\]"`
+    if [ "$comp" == "[$1]" ]; then
+      echo "$1 already contained in /etc/samba/smb.conf."
+    else
+    chmod 666 /etc/samba/smb.conf
+    tee -a /etc/samba/smb.conf <<HDHD
+[$1]
+comment = $1
+path = $rootdir/roms/$2
+writeable = yes
+guest ok = yes
+create mask = 0777
+directory mask = 0777
+read only = no
+browseable = yes
+force user = $user
+public = yes
+HDHD
+    fi
+    chmod 644 /etc/samba/smb.conf
+}
+
+# install and configure SAMBA shares for each ROM directory of the emulators
+function set_configureSAMBA()
+{
+    clear
+    printMsg "Installing and configuring SAMBA shares."
+    apt-get update
+    apt-get install -y samba samba-common-bin
+
+    ensureEntryInSMBConf "AMIGA" "amiga"
+    ensureEntryInSMBConf "APPLE2" "apple2"
+    ensureEntryInSMBConf "ATARI2600" "atari2600"
+    ensureEntryInSMBConf "BASILISKII" "basiliskii"
+    ensureEntryInSMBConf "C64" "c64"
+    ensureEntryInSMBConf "DOOM" "doom"
+    ensureEntryInSMBConf "DUKE3D" "duke3d"
+    ensureEntryInSMBConf "GAMEGEAR" "gamegear"
+    ensureEntryInSMBConf "FBA" "fba"
+    ensureEntryInSMBConf "GB" "gb"
+    ensureEntryInSMBConf "GBA" "gba"
+    ensureEntryInSMBConf "GBC" "gbc"
+    ensureEntryInSMBConf "INTELLIVISION" "intellivision"
+    ensureEntryInSMBConf "MAME" "mame"
+    ensureEntryInSMBConf "MASTERSYSTEM" "mastersystem"
+    ensureEntryInSMBConf "MEGADRIVE" "megadrive"
+    ensureEntryInSMBConf "NEOGEO" "neogeo"
+    ensureEntryInSMBConf "NES" "nes"
+    ensureEntryInSMBConf "X86" "x86"
+    ensureEntryInSMBConf "PCENGINE" "pcengine"
+    ensureEntryInSMBConf "PSX" "psx"
+    ensureEntryInSMBConf "PPSSPP" "psp"
+    ensureEntryInSMBConf "SNES" "snes"
+    ensureEntryInSMBConf "SCUMMVM" "scummvm"
+    ensureEntryInSMBConf "ZMACHINE" "zmachine"
+    ensureEntryInSMBConf "ZXSPECTRUM" "zxspectrum"
+
+    /etc/init.d/samba restart
+
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The SAMBA shares can be accessed with a guest account" 22 76    
+
+}
+
+# sorts ROMs alphabetically. Users reported issues with that, so that it is disbaled in the menu for now. Needs to be debugged
+function set_sortromsalphabet()
+{
+    clear
+    pathlist=()
+    pathlist+=("$rootdir/roms/amiga")
+    pathlist+=("$rootdir/roms/atari2600")
+    pathlist+=("$rootdir/roms/fba")
+    pathlist+=("$rootdir/roms/gamegear")
+    pathlist+=("$rootdir/roms/gb")
+    pathlist+=("$rootdir/roms/gba")
+    pathlist+=("$rootdir/roms/gbc")
+    pathlist+=("$rootdir/roms/intellivision")
+    pathlist+=("$rootdir/roms/mame")
+    pathlist+=("$rootdir/roms/mastersystem")
+    pathlist+=("$rootdir/roms/megadrive")
+    pathlist+=("$rootdir/roms/neogeo")
+    pathlist+=("$rootdir/roms/nes")
+    pathlist+=("$rootdir/roms/snes")
+    pathlist+=("$rootdir/roms/pcengine")
+    pathlist+=("$rootdir/roms/psx")
+    pathlist+=("$rootdir/roms/zxspectrum")
+    printMsg "Sorting roms alphabetically"
+    for elem in "${pathlist[@]}"
+    do
+        echo "Sorting roms in folder $elem"
+        if [[ -d $elem ]]; then
+            for x in {a..z}
+            do
+                if [[ ! -d $elem/$x ]]; then
+                    mkdir $elem/$x
+                fi
+                find $elem -maxdepth 1 -type f -iname "$x*"| while read line; do
+                    mv "$line" "$elem/$x/$(basename "${line,,}")"
+                done
+            done
+            if [[ -f "$elem/g/gamelist.xml" ]]; then
+                mv "$elem/g/gamelist.xml" "$elem/gamelist.xml"
+            fi
+            if [[ -f "$elem/t/theme.xml" ]]; then
+                mv "$elem/t/theme.xml" "$elem/theme.xml"
+            fi
+            if [[ ! -d "$elem/#" ]]; then
+                mkdir "$elem/#"
+            fi
+            find $elem -maxdepth 1 -type f -iname "[0-9]*"| while read line; do
+                mv "$line" "$elem/#/$(basename "${line,,}")"
+            done
+        fi
+    done  
+    chgrp -R $user $rootdir/roms
+    chown -R $user $rootdir/roms
+}
+
+# sets the ARM frequency of the Raspberry to a specific value
+function set_setArmFreq()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the ARM frequency. However, it is suggested that you change this with the raspi-config script!" 22 76 16)
+    options=(700 "(default)"
+             750 "(do this at your own risk!)"
+             800 "(do this at your own risk!)"
+             850 "(do this at your own risk!)"
+             900 "(do this at your own risk!)"
+             1000 "(do this at your own risk!)")
+    armfreqchoice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [ "$armfreqchoice" != "" ]; then                
+        if [[ -z $(egrep -i "#? *arm_freq=[0-9]*" /boot/config.txt) ]]; then
+            # add key-value pair
+            echo "arm_freq=$armfreqchoice" >> /boot/config.txt
+        else
+            # replace existing key-value pair
+            toreplace=`egrep -i "#? *arm_freq=[0-9]*" /boot/config.txt`
+            sed /boot/config.txt -i -e "s|$toreplace|arm_freq=$armfreqchoice|g"
+        fi 
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "ARM frequency set to $armfreqchoice MHz. If you changed the frequency, you need to reboot." 22 76    
+    fi
+}
+
+# sets the SD ram frequency of the Raspberry to a specific value
+function set_setSDRAMFreq()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the ARM frequency. However, it is suggested that you change this with the raspi-config script!" 22 76 16)
+    options=(400 "(default)"
+             425 "(do this at your own risk!)"
+             450 "(do this at your own risk!)"
+             475 "(do this at your own risk!)"
+             500 "(do this at your own risk!)")
+    sdramfreqchoice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [ "$sdramfreqchoice" != "" ]; then                
+        if [[ -z $(egrep -i "#? *sdram_freq=[0-9]*" /boot/config.txt) ]]; then
+            # add key-value pair
+            echo "sdram_freq=$sdramfreqchoice" >> /boot/config.txt
+        else
+            # replace existing key-value pair
+            toreplace=`egrep -i "#? *sdram_freq=[0-9]*" /boot/config.txt`
+            sed /boot/config.txt -i -e "s|$toreplace|sdram_freq=$sdramfreqchoice|g"
+        fi 
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "SDRAM frequency set to $sdramfreqchoice MHz. If you changed the frequency, you need to reboot." 22 76    
+    fi
+}
+
+# Start Emulation Station on boot or not?
+function set_changeBootbehaviour()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 76 16)
+    options=(1 "Original boot behaviour"
+             2 "Start Emulation Station at boot.")
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [ "$choices" != "" ]; then
+        case $choices in
+            1) sed /etc/inittab -i -e "s|1:2345:respawn:/bin/login -f $user tty1 </dev/tty1 >/dev/tty1 2>&1|1:2345:respawn:/sbin/getty --noclear 38400 tty1|g"
+               sed /etc/profile -i -e "/emulationstation/d"
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled original boot behaviour. ATTENTION: If you still have the custom splash screen enabled (via this script), you need to jump between consoles after booting via Ctrl+Alt+F2 and Ctrl+Alt+F1 to see the login prompt. You can restore the original boot behavior of the RPi by disabling the custom splash screen with this script." 22 76    
+                            ;;
+            2) sed /etc/inittab -i -e "s|1:2345:respawn:/sbin/getty --noclear 38400 tty1|1:2345:respawn:\/bin\/login -f $user tty1 \<\/dev\/tty1 \>\/dev\/tty1 2\>\&1|g"
+               update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
+               if [ -z $(egrep -i "emulationstation$" /etc/profile) ]
+               then
+                   echo "[ -n \"\${SSH_CONNECTION}\" ] || emulationstation" >> /etc/profile
+               fi
+               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Emulation Station is now starting on boot." 22 76    
+                            ;;
+        esac
+    else
+        break
+    fi    
+}
+
+function set_installGPIOpadModules()
+{
+    GAMECON_VER=0.9
+    DB9_VER=0.7
+    DOWNLOAD_LOC=http://www.niksula.hut.fi/~mhiienka/Rpi
+
+    clear
+
+    dialog --title " GPIO gamepad drivers installation " --clear \
+    --yesno "GPIO gamepad drivers require that most recent kernel (firmware)\
+    is installed and active. Continue with installation?" 22 76
+    case $? in
+      0)
+        echo "Starting installation.";;
+      *)
+        return 0;;
+    esac
+
+    #install dkms
+    apt-get install -y dkms
+
+    #reconfigure / install headers (takes a a while)
+    if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then
+        dpkg-reconfigure linux-headers-`uname -r`
+    else
+        wget ${DOWNLOAD_LOC}/linux-headers-rpi/linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+        dpkg -i linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+        rm linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+    fi
+
+    #install gamecon
+    if [ "`dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms`" = ${GAMECON_VER} ]; then
+        #dpkg-reconfigure gamecon-gpio-rpi-dkms
+        echo "gamecon is the newest version"
+    else
+        wget ${DOWNLOAD_LOC}/gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
+        dpkg -i gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
+        rm gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
+    fi
+
+    #install db9 joystick driver
+    if [ "`dpkg-query -W -f='${Version}' db9-gpio-rpi-dkms`" = ${DB9_VER} ]; then
+        echo "db9 is the newest version"
+    else
+        wget ${DOWNLOAD_LOC}/db9-gpio-rpi-dkms_${DB9_VER}_all.deb
+        dpkg -i db9-gpio-rpi-dkms_${DB9_VER}_all.deb
+        rm db9-gpio-rpi-dkms_${DB9_VER}_all.deb
+    fi
+
+    #test if gamecon installation is OK
+    if [[ -n $(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko) ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon GPIO driver successfully installed. \
+        Use 'zless /usr/share/doc/gamecon_gpio_rpi/README.gz' to read how to use it." 22 76
+    else
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon GPIO driver installation FAILED"\
+        22 76
+    fi
+
+    #test if db9 installation is OK
+    if [[ -n $(modinfo -n db9_gpio_rpi | grep db9_gpio_rpi.ko) ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Db9 GPIO driver successfully installed. \
+        Use 'zless /usr/share/doc/db9_gpio_rpi/README.gz' to read how to use it." 22 76
+    else
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Db9 GPIO driver installation FAILED"\
+        22 76
+    fi
+}
+
+function set_enableGameconSnes()
+{
+    if [ "`dpkg-query -W -f='${Status}' gamecon-gpio-rpi-dkms`" != "install ok installed" ]; then
+        dialog --msgbox "gamecon_gpio_rpi not found, install it first" 22 76
+        return 0
+    fi
+
+    REVSTRING=`cat /proc/cpuinfo |grep Revision | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4`
+    case "$REVSTRING" in
+          "0002"|"0003")
+             GPIOREV=1 
+             ;;
+          *)
+             GPIOREV=2
+             ;;
+    esac
+
+dialog --msgbox "\
+__________\n\
+         |          ### Board gpio revision $GPIOREV detected ###\n\
+    + *  |\n\
+    * *  |\n\
+    1 -  |          The driver is set to use the following configuration\n\
+    2 *  |          for 2 SNES controllers:\n\
+    * *  |\n\
+    * *  |\n\
+    * *  |          + = power\n\
+    * *  |          - = ground\n\
+    * *  |          C = clock\n\
+    C *  |          L = latch\n\
+    * *  |          1 = player1 pad\n\
+    L *  |          2 = player2 pad\n\
+    * *  |          * = unconnected\n\
+         |\n\
+         |" 22 76
+
+    if [[ -n $(lsmod | grep gamecon_gpio_rpi) ]]; then
+        rmmod gamecon_gpio_rpi
+    fi
+
+    if [ $GPIOREV = 1 ]; then
+        modprobe gamecon_gpio_rpi map=0,1,1,0
+    else
+        modprobe gamecon_gpio_rpi map=0,0,1,0,0,1
+    fi
+
+    dialog --title " Update $rootdir/configs/all/retroarch.cfg " --clear \
+        --yesno "Would you like to update button mappings \
+    to $rootdir/configs/all/retroarch.cfg ?" 22 76
+
+      case $? in
+       0)
+    if [ $GPIOREV = 1 ]; then
+            ensureKeyValue "input_player1_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
+            ensureKeyValue "input_player2_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
+    else
+        ensureKeyValue "input_player1_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
+    fi
+
+        ensureKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player1_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg"
+
+        ensureKeyValue "input_player2_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
+        ensureKeyValue "input_player2_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg"
+    ;;
+       *)
+        ;;
+      esac
+
+    dialog --title " Enable SNES configuration permanently " --clear \
+        --yesno "Would you like to permanently enable SNES configuration?\
+        " 22 76
+
+    case $? in
+      0)
+    if [[ -z $(cat /etc/modules | grep gamecon_gpio_rpi) ]]; then
+    if [ $GPIOREV = 1 ]; then
+                addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
+    else
+        addLineToFile "gamecon_gpio_rpi map=0,0,1,0,0,1" "/etc/modules"
+    fi
+    fi
+    ;;
+      *)
+        #TODO: delete the line from /etc/modules
+        ;;
+    esac
+
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox \
+    "Gamecon GPIO driver enabled with 2 SNES pads." 22 76
+}
+
+function set_install_USBROMService()
+{
+    clear
+    printMsg "Installing USB-ROM Service"
+
+    # install usbmount package
+    apt-get install -y usbmount
+
+    # install hook in usbmount sub-directory
+    cp $scriptdir/supplementary/01_retropie_copyroms /etc/usbmount/mount.d/
+    sed -i -e "s/USERTOBECHOSEN/$user/g" /etc/usbmount/mount.d/01_retropie_copyroms
+    chmod +x /etc/usbmount/mount.d/01_retropie_copyroms
+}
+
+function set_checkESScraperExists()
+{
+    if [[ ! -d $rootdir/supplementary/ES-scraper ]]; then
+        # new download
+        git clone git://github.com/elpendor/ES-scraper.git "$rootdir/supplementary/ES-scraper"
+    else
+        # update
+        pushd $rootdir/supplementary/ES-scraper
+        git pull
+        popd
+    fi
+    chgrp -R $user "$rootdir/supplementary/ES-scraper"
+    chown -R $user "$rootdir/supplementary/ES-scraper"
+}
+
+function set_essc_runnormal()
+{
+    set_checkESScraperExists
+    python $rootdir/supplementary/ES-scraper/scraper.py -w $esscrapimgw
+    chgrp -R $user "$rootdir/roms"
+    chown -R $user "$rootdir/roms"
+}
+
+function set_essc_runforced()
+{
+    set_checkESScraperExists
+    python $rootdir/supplementary/ES-scraper/scraper.py -f -w $esscrapimgw
+    chgrp -R $user "$rootdir/roms"
+    chown -R $user "$rootdir/roms"
+}
+
+function set_essc_runmanual()
+{
+    set_checkESScraperExists
+    python $rootdir/supplementary/ES-scraper/scraper.py -m -w $esscrapimgw
+    chgrp -R $user "$rootdir/roms"
+    chown -R $user "$rootdir/roms"
+}
+
+function set_essc_runcrc()
+{
+    set_checkESScraperExists
+    python $rootdir/supplementary/ES-scraper/scraper.py -crc -w $esscrapimgw
+    chgrp -R $user "$rootdir/roms"
+    chown -R $user "$rootdir/roms"
+}
+
+function set_essc_runpartial()
+{
+    set_checkESScraperExists
+    python $rootdir/supplementary/ES-scraper/scraper.py -p -w $esscrapimgw
+    chgrp -R $user "$rootdir/roms"
+    chown -R $user "$rootdir/roms"
+}
+
+function set_essc_setimgw()
+{
+    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the maximum image width in pixels." 22 76 16)
+    choices=$("${cmd[@]}" 2>&1 >/dev/tty)    
+    if [ "$choices" != "" ]; then
+        esscrapimgw=$choices
+    else
+        break
+    fi
+}
+

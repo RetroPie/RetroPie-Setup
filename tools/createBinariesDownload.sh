@@ -19,6 +19,7 @@ filelist+=("`find ./RetroPie/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so
 filelist+=("`find ./RetroPie/emulatorcores/imame4all-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/fba-libretro/ -name "*libretro*.so"`")
+filelist+=("`find ./RetroPie/emulatorcores/picodrive/ -name "*libretro*.so"`")
 
 filelist+=("./RetroPie/emulators/RetroArch/README.md")
 filelist+=("./RetroPie/emulators/RetroArch/retroarch")
@@ -43,7 +44,7 @@ filelist+=("./RetroPie/emulators/osmose-0.8.1+rpi20121122/")
 filelist+=("./RetroPie/emulators/gngeo-pi-0.85/installdir/")
 filelist+=("./RetroPie/emulators/gngeo-0.7/installdir/")
 filelist+=("./RetroPie/emulators/vice-2.3.dfsg/installdir/")
-filelist+=("./RetroPie/emulators/uae4all/")
+filelist+=("./RetroPie/emulators/uae4rpi/")
 filelist+=("./RetroPie/emulators/advancemame-0.94.0/installdir/")
 filelist+=("./RetroPie/emulators/jzintv-1.0-beta4/")
 filelist+=("./RetroPie/emulators/linapple-src_2a/")
@@ -58,7 +59,7 @@ filelist+=("./RetroPie/emulators/pisnes/skins/")
 filelist+=("./RetroPie/emulators/basiliskii/installdir/")
 filelist+=("./RetroPie/emulators/atari800-3.0.0/installdir/")
 filelist+=("./RetroPie/emulators/atari800-3.0.0/README.1ST")
-filelist+=("./RetroPie/emulators/emulators/usp/build/rpi/Release/")
+filelist+=("./RetroPie/emulators/fbzx-2.10.0/")
 
 # check if all directories/files exist
 tLen=${#filelist[@]}

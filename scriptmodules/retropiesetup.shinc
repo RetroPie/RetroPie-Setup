@@ -1,0 +1,563 @@
+#!/bin/bash
+
+#  RetroPie-Setup - Shell script for initializing Raspberry Pi 
+#  with RetroArch, various cores, and EmulationStation (a graphical 
+#  front end).
+# 
+#  (c) Copyright 2012-2013  Florian Müller (contact@petrockblock.com)
+# 
+#  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
+# 
+#  Permission to use, copy, modify and distribute RetroPie-Setup in both binary and
+#  source form, for non-commercial purposes, is hereby granted without fee,
+#  providing that this license information and copyright notice appear with
+#  all copies and any derived work.
+# 
+#  This software is provided 'as-is', without any express or implied
+#  warranty. In no event shall the authors be held liable for any damages
+#  arising from the use of this software.
+# 
+#  RetroPie-Setup is freeware for PERSONAL USE only. Commercial users should
+#  seek permission of the copyright holders first. Commercial use includes
+#  charging money for RetroPie-Setup or software derived from RetroPie-Setup.
+# 
+#  The copyright holders request that bug fixes and improvements to the code
+#  should be forwarded to them so everyone can benefit from the modifications
+#  in future versions.
+# 
+#  Many, many thanks go to all people that provide the individual packages!!!
+# 
+#  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
+# 
+
+# prepare folder structure for emulator, cores, front end, and roms
+function rps_prepareFolders()
+{
+    printMsg "Creating folder structure for emulator, front end, cores, and roms"
+
+    pathlist=()
+    pathlist+=("$rootdir/roms")
+    pathlist+=("$rootdir/roms/atari2600")
+    pathlist+=("$rootdir/roms/basiliskii")
+    pathlist+=("$rootdir/roms/c64")
+    pathlist+=("$rootdir/roms/cavestory")
+    pathlist+=("$rootdir/roms/doom")
+    pathlist+=("$rootdir/roms/duke3d/")
+    pathlist+=("$rootdir/roms/esconfig/")
+    pathlist+=("$rootdir/roms/gamegear")
+    pathlist+=("$rootdir/roms/gb")
+    pathlist+=("$rootdir/roms/gba")
+    pathlist+=("$rootdir/roms/gbc")
+    pathlist+=("$rootdir/roms/intellivision")
+    pathlist+=("$rootdir/roms/mame")
+    pathlist+=("$rootdir/roms/mastersystem")
+    pathlist+=("$rootdir/roms/megadrive")
+    pathlist+=("$rootdir/roms/nes")
+    pathlist+=("$rootdir/roms/pcengine")
+    pathlist+=("$rootdir/roms/psx")
+    pathlist+=("$rootdir/roms/psp")
+    pathlist+=("$rootdir/roms/snes")
+    pathlist+=("$rootdir/roms/zxspectrum")
+    pathlist+=("$rootdir/roms/fba")
+    pathlist+=("$rootdir/roms/amiga")
+    pathlist+=("$rootdir/roms/neogeo")
+    pathlist+=("$rootdir/roms/scummvm")
+    pathlist+=("$rootdir/roms/x86")
+    pathlist+=("$rootdir/roms/zmachine")
+    pathlist+=("$rootdir/emulatorcores")
+    pathlist+=("$rootdir/emulators")
+    pathlist+=("$rootdir/supplementary")
+
+    for elem in "${pathlist[@]}"
+    do
+        if [[ ! -d $elem ]]; then
+            mkdir -p $elem
+            chown $user $elem
+            chgrp $user $elem
+        fi
+    done    
+}
+
+
+# install driver for XBox 360 controllers
+function rps_install_xboxdrv()
+{
+    printMsg "Installing xboxdrv"
+    apt-get install -y xboxdrv
+    # still to be continued
+}
+
+
+
+# downloads and installs pre-compiles binaries of all essential programs and libraries
+function rps_downloadBinaries()
+{
+    wget -O binariesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=3
+    tar -jxvf binariesDownload.tar.bz2 -C $rootdir
+    pushd $rootdir/RetroPie
+    cp -r * ../
+    popd
+
+    # handle Doom emulator specifics
+    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
+    chgrp $user $rootdir/roms/doom/prboom.wad
+    chown $user $rootdir/roms/doom/prboom.wad
+
+    rm -rf $rootdir/RetroPie
+    rm binariesDownload.tar.bz2    
+}
+
+# downloads and installs theme files for Emulation Station
+function rps_install_esthemes()
+{
+    printMsg "Installing themes for Emulation Station"
+    wget -O themesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=2
+    tar -jxvf themesDownload.tar.bz2 -C $home/
+
+    chgrp -R $user $home/.emulationstation
+    chown -R $user $home/.emulationstation
+
+    rm themesDownload.tar.bz2
+}
+
+# shows help information in the console
+function rps_showHelp()
+{
+    echo ""
+    echo "RetroPie Setup script"
+    echo "====================="
+    echo ""
+    echo "The script installs the RetroArch emulator base with various cores and a graphical front end."
+    echo "Because it needs to install some APT packages it has to be run with root priviliges."
+    echo ""
+    echo "Usage:"
+    echo "sudo ./retropie_setup.sh: The installation directory is /home/pi/RetroPie for user pi"
+    echo "sudo ./retropie_setup.sh USERNAME: The installation directory is /home/USERNAME/RetroPie for user USERNAME"
+    echo "sudo ./retropie_setup.sh USERNAME ABSPATH: The installation directory is ABSPATH for user USERNAME"
+    echo ""
+}
+
+function rps_checkNeededPackages()
+{
+    doexit=0
+    type -P git &>/dev/null && echo "Found git command." || { echo "Did not find git. Try 'sudo apt-get install -y git' first."; doexit=1; }
+    type -P dialog &>/dev/null && echo "Found dialog command." || { echo "Did not find dialog. Try 'sudo apt-get install -y dialog' first."; doexit=1; }
+    if [[ $doexit -eq 1 ]]; then
+        exit 1
+    fi
+}
+
+function rps_main_reboot()
+{
+    clear
+    reboot    
+}
+
+# checks all kinds of essential files for existence and logs the results into the file debug.log
+function rps_createDebugLog()
+{
+    clear
+    printMsg "Generating debug log"
+
+    echo "RetroArch files:" > "$rootdir/debug.log"
+
+    # existence of files
+    checkFileExistence "/usr/local/bin/retroarch"
+    checkFileExistence "/usr/local/bin/retroarch-zip"
+    checkFileExistence "$rootdir/configs/all/retroarch.cfg"
+    echo -e "\nActive lines in $rootdir/configs/all/retroarch.cfg:" >> "$rootdir/debug.log"
+    sed '/^$\|^#/d' "$rootdir/configs/all/retroarch.cfg"  >>  "$rootdir/debug.log"
+
+    echo -e "\nEmulation Station files:" >> "$rootdir/debug.log"
+    checkFileExistence "$rootdir/supplementary/EmulationStation/emulationstation"
+    checkFileExistence "$rootdir/../.emulationstation/es_systems.cfg"
+    checkFileExistence "$rootdir/../.emulationstation/es_input.cfg"
+    echo -e "\nContent of es_systems.cfg:" >> "$rootdir/debug.log"
+    cat "$rootdir/../.emulationstation/es_systems.cfg" >> "$rootdir/debug.log"
+    echo -e "\nContent of es_input.cfg:" >> "$rootdir/debug.log"
+    cat "$rootdir/../.emulationstation/es_input.cfg" >> "$rootdir/debug.log"
+
+    echo -e "\nEmulators and cores:" >> "$rootdir/debug.log"
+    checkFileExistence "`find $rootdir/emulatorcores/fceu-next/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"`"
+    checkFileExistence "$rootdir/emulatorcores/libretro-prboom/prboom.wad"
+    checkFileExistence "`find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/gambatte-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"`"
+    checkFileExistence "`find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"`"
+    checkFileExistence "$rootdir/emulatorcors/uae4all/uae4all"
+
+    echo -e "\nSNESDev:" >> "$rootdir/debug.log"
+    checkFileExistence "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev"
+
+    echo -e "\nSummary of ROMS directory:" >> "$rootdir/debug.log"
+    du -ch --max-depth=1 "$rootdir/roms/" >> "$rootdir/debug.log"
+
+    echo -e "\nUnrecognized ROM extensions:" >> "$rootdir/debug.log"
+    find "$rootdir/roms/amiga/" -type f ! \( -iname "*.adf" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/atari2600/" -type f ! \( -iname "*.bin" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/doom/" -type f ! \( -iname "*.WAD" -or -iname "*.jpg" -or -iname "*.xml" -or -name "*.wad" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/fba/" -type f ! \( -iname "*.zip" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/gamegear/" -type f ! \( -iname "*.gg" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/gba/" -type f ! \( -iname "*.gba" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/gbc/" -type f ! \( -iname "*.gb" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/mame/" -type f ! \( -iname "*.zip" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/mastersystem/" -type f ! \( -iname "*.sms" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/megadrive/" -type f ! \( -iname "*.smd" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/nes/" -type f ! \( -iname "*.nes" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/pcengine/" -type f ! \( -iname "*.iso" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/psx/" -type f ! \( -iname "*.img" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+    find "$rootdir/roms/snes/" -type f ! \( -iname "*.smc" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
+
+    echo -e "\nCheck for needed APT packages:" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libsdl1.2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "screen" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "scons" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libasound2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "pkg-config" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libgtk2.0-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libboost-filesystem-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libboost-system-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "zip" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libxml2" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libxml2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libbz2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "python-imaging" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libfreeimage-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libfreetype6-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libaudiofile-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libsdl-sound1.2-dev" >> "$rootdir/debug.log"
+    checkForInstalledAPTPackage "libsdl-mixer1.2-dev" >> "$rootdir/debug.log"
+
+    echo -e "\nEnd of log file" >> "$rootdir/debug.log" >> "$rootdir/debug.log"
+
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Debug log was generated in $rootdir/debug.log" 22 76    
+
+}
+
+# download, extract, and install binaries
+function rps_main_binaries()
+{
+    __INFMSGS=""
+
+    clear
+    printMsg "Binaries-based installation"
+
+    # install_rpiupdate, not done anymore, but rely on apt-get upgrade here
+    rc_update_apt
+    rc_upgrade_apt
+    # run_rpiupdate, not done anymore, but rely on apt-get upgrade here
+    rc_installAPTPackages
+    rc_ensure_modules
+    rc_add_to_groups
+    rc_exportSDLNOMOUSE
+    rps_prepareFolders
+    rps_downloadBinaries
+    sup_install_esscript
+    sup_generate_esconfig
+    rc_fixForXBian
+    
+    # install RetroArch
+    install -m755 $rootdir/emulators/RetroArch/retroarch /usr/local/bin
+    install -m644 $rootdir/emulators/RetroArch/retroarch.cfg /etc/retroarch.cfg
+    install -m755 $rootdir/emulators/RetroArch/retroarch-zip /usr/local/bin
+    em_configureRetroArch
+    lr_configure_snes
+    rps_install_esthemes
+    em_configureSoundsettings
+    em_install_stella
+    em_install_scummvm
+    em_install_zmachine
+    em_install_zxspectrum
+    em_install_c64roms    
+
+    # install DGEN
+    test -z "/usr/local/bin" || /bin/mkdir -p "/usr/local/bin"
+    /usr/bin/install -c $rootdir/emulators/dgen-sdl/installdir/usr/local/bin/dgen $rootdir/emulators/dgen-sdl/installdir/usr/local/bin/dgen_tobin '/usr/local/bin'
+    test -z "/usr/local/share/man/man1" || /bin/mkdir -p "/usr/local/share/man/man1"
+    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man1/dgen.1 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man1/dgen_tobin.1 '/usr/local/share/man/man1'
+    test -z "/usr/local/share/man/man5" || /bin/mkdir -p "/usr/local/share/man/man5"
+    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
+    em_configureDGEN
+    em_configure_advmame
+    ls_configure_cavestory
+    em_configure_linapple
+    em_install_eduke32
+    em_configure_rpix86
+    sup_configure_esconfig
+    lr_configure_doom
+
+    chgrp -R $user $rootdir
+    chown -R $user $rootdir
+
+    rc_setAvoidSafeMode
+    sup_install_runcommandscript
+
+    rps_createDebugLog
+
+    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
+    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
+    __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
+
+    if [[ ! -z $__INFMSGS ]]; then
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
+    fi
+
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76    
+}
+
+function rps_main_updatescript()
+{
+  printMsg "Fetching latest version of the RetroPie Setup Script."
+  pushd $scriptdir
+  if [[ ! -d ".git" ]]; then
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup." --msgbox "Cannot find direcotry '.git'. Please clone the RetroPie Setup script via 'git clone git://github.com/petrockblog/RetroPie-Setup.git'" 20 60    
+    popd
+    return
+  fi
+  git pull
+  popd
+  dialog --backtitle "PetRockBlock.com - ORetroPie Setup." --msgbox "Fetched the latest version of the RetroPie Setup script. You need to restart the script." 20 60    
+}
+
+##################
+## menus #########
+##################
+
+function rps_scraperMenu()
+{
+    while true; do
+        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
+        options=(1 "(Re-)scape of the ROMs directory" 
+                 2 "FORCED (re-)scrape of the ROMs directory" 
+                 3 "(Re-)scrape of the ROMs directory with CRC option" 
+                 4 "(Re-)scrape of the ROMs directory in MANUAL mode" 
+                 5 "(Re-)scrape of the ROMs directory in PARTIAL mode"
+                 6 "Set maximum width of images (currently: $esscrapimgw px)" )
+        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
+        if [ "$choices" != "" ]; then
+            clear
+            case $choices in
+                1) set_essc_runnormal ;;
+                2) set_essc_runforced ;;
+                3) set_essc_runcrc ;;
+                4) set_essc_runmanual ;;
+                5) set_essc_runpartial ;;
+                6) set_essc_setimgw ;;
+            esac
+        else
+            break
+        fi
+    done        
+}
+
+function rps_main_options()
+{
+    cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
+    options=(1 "Install latest rpi-update script" ON     # any option can be set to default to "on"
+             2 "Update firmware with rpi-update" OFF \
+             3 "Update APT repositories" ON \
+             4 "Perform APT upgrade" ON \
+             5 "Apply fix for XBian (Neede to make components compile properly)" ON \
+             6 "(C) Add user $user to groups video, audio, and input" ON \
+             7 "(C) Enable modules ALSA, uinput, and joydev" ON \
+             8 "(C) Export SDL_NOMOUSE=1" ON \
+             9 "Install all needed APT packages" ON \
+             10 "(C) Generate folder structure" ON \
+             11 "Install RetroArch" ON \
+             12 "(C) Configure video, rewind, and keyboard for RetroArch" ON \
+             13 "Install Amiga emulator" ON \
+             14 "Install Apple ][ emulator (Linapple)" ON \
+             15 "Install Atari 800 emulator" ON \
+             16 "Install Atari 2600 RetroArch core" ON \
+             17 "Install Atari 2600 emulator Stella" ON \
+             18 "Install BasiliskII" ON \
+             19 "Install C64 emulator (Vice)" ON \
+             20 "Install NXEngine / Cave Story" ON \
+             21 "Install Doom core" ON \
+             22 "Install eDuke32 with shareware files" ON \
+             23 "Install Game Boy Advance emulator (gpSP)" ON \
+             24 "Install Game Boy Color core" ON \
+             25 "Install IntelliVision emulator (jzintv)" ON \
+             26 "Install MAME (iMAME4All) core" ON \
+             27 "Install AdvMAME emulator" ON \
+             28 "Install FBA core" ON \
+             29 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
+             30 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             31 "(C) Configure DGEN" ON \
+             32 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
+             33 "Install Megadrive/Genesis core (Picodrive)" ON \
+             34 "Install NeoGeo emulator GnGeo 0.7" ON \
+             35 "Install NeoGeo emulator GnGeo-Pi 0.85" ON \
+             36 "(C) Configure NeoGeo" ON \
+             37 "Install NES core" ON \
+             38 "Install PC emulator (RPix86)" ON \
+             39 "Install Playstation core" ON \
+             40 "Install PSP emulator PPSSPP" OFF \
+             41 "Install ScummVM" ON \
+             42 "Install Super NES core" ON \
+             43 "Install SNES9X emulator" ON \
+             44 "Install PiSNES emulator" ON \
+             45 "(C) Configure Super NES core" ON \
+             46 "Install Wolfenstein3D engine" ON \
+             47 "Install Z Machine emulator (Frotz)" ON \
+             48 "Install ZX Spectrum emulator (Fuse)" ON \
+             49 "Install ZX Spectrum emulator (FBZX)" ON \
+             50 "Install BCM library" ON \
+             51 "Install Dispmanx library" ON \
+             52 "Install SNESDev" ON \
+             53 "Install Emulation Station" ON \
+             54 "Install Emulation Station Themes" ON \
+             55 "Install ES-config" ON \
+             56 "(C) Generate config file for Emulation Station" ON \
+             57 "(C) Configure sound settings for RetroArch" ON \
+             58 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             59 "Install runcommand script" ON \
+             60 "(C) Configure /boot/config.txt" ON )
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    clear
+    __ERRMSGS=""
+    __INFMSGS=""
+    if [ "$choices" != "" ]; then
+        for choice in $choices
+        do
+            case $choice in
+                1) rc_install_rpiupdate ;;
+                2) rc_run_rpiupdate ;;
+                3) rc_update_apt ;;
+                4) rc_upgrade_apt ;;
+                5) rc_fixForXBian ;;
+                6) rc_add_to_groups ;;
+                7) rc_ensure_modules ;;
+                8) rc_exportSDLNOMOUSE ;;
+                9) rc_installAPTPackages ;;
+                10) rps_prepareFolders ;;
+                11) em_install_retroarch ;;
+                12) em_configureRetroArch ;;
+                13) em_install_amiga ;;
+                14) em_install_linapple ;;
+                15) em_install_atari800 ;;
+                16) lr_install_atari2600 ;;
+                17) em_install_stella ;;
+                18) em_install_basiliskII ;;
+                19) em_install_viceC64 ;;
+                20) lr_install_cavestory ;;
+                21) lr_install_doom ;;
+                22) em_install_eduke32 ;;
+                23) em_install_gba ;;
+                24) lr_install_gbc ;;
+                25) em_install_intellivision ;;
+                26) lr_install_mame ;;
+                27) em_install_advmame ;;
+                28) lr_install_fba ;;
+                29) em_install_megadrive ;;
+                30) em_install_dgen ;;
+                31) em_configureDGEN ;;
+                32) lr_install_megadriveLibretro ;;
+                33) lr_install_picodrive ;;
+                34) em_install_neogeo ;;
+                35) em_install_GnGeoPi ;;
+                36) em_configureNeogeo ;;
+                37) lr_install_nes ;;
+                38) em_install_rpix86 ;;
+                39) lr_install_psx ;;
+                40) em_install_ppsspp ;;
+                41) em_install_scummvm ;;
+                42) lr_install_snes ;;
+                43) em_install_snes9x ;;
+                44) em_install_pisnes ;;
+                45) lr_configure_snes ;;
+                46) em_install_wolfenstein3d ;;
+                47) em_install_zmachine ;;
+                48) em_install_zxspectrum ;;
+                49) em_install_fbzx ;;
+                50) sup_install_bcmlibrary ;;
+                51) sup_install_dispmanx ;;
+                52) sup_install_snesdev ;;
+                53) sup_install_emulationstation ;;
+                54) rps_install_esthemes ;;
+                55) sup_install_esconfig ;;
+                56) sup_generate_esconfig ;;
+                57) em_configureSoundsettings ;;
+                58) rc_setAvoidSafeMode ;;
+                59) sup_install_runcommandscript ;;
+                60) rc_configureBootConfig ;;
+            esac
+        done
+
+        chgrp -R $user $rootdir
+        chown -R $user $rootdir
+
+        rps_createDebugLog
+
+        if [[ ! -z $__ERRMSGS ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__ERRMSGS See debug.log for more details." 20 60    
+        fi
+
+        if [[ ! -z $__INFMSGS ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
+        fi
+
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
+    fi
+}
+
+function rps_availFreeDiskSpace()
+{
+    local __required=$1
+    local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
+
+    if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space (500 MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $__avail available at $rootdir continue anyway?"; then
+        return 0;
+    else
+        exit 0;
+    fi
+}
+
+function rps_main_setup()
+{
+    while true; do
+        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
+        options=(1 "Re-generate config file for Emulation Station" 
+                 2 "Install latest Rasperry Pi firmware" 
+                 3 "Install AdvanceMenu"
+                 4 "Start Emulation Station on boot?" 
+                 5 "Start SNESDev on boot?"
+                 6 "Enable/disable RetroPie splashscreen"
+                 7 "Change ARM frequency" 
+                 8 "Change SDRAM frequency"
+                 9 "Install/update multi-console gamepad drivers for GPIO" 
+                 10 "Enable gamecon_gpio_rpi with SNES-pad config"
+                 11 "Run 'ES-scraper'" 
+                 12 "Install and configure SAMBA shares"
+                 13 "Install USB-ROM-Copy service"
+                 14 "Generate debug log" )
+        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
+        if [ "$choices" != "" ]; then
+            case $choices in
+                 1) sup_generate_esconfig ;;
+                 2) rc_run_rpiupdate ;;
+                 3) sup_install_advancemenu ;;
+                 4) rps_changeBootbehaviour ;;
+                 5) rps_enableDisableSNESDevStart ;;
+                 6) rps_enableDisableSplashscreen ;;
+                 7) rps_setArmFreq ;;
+                 8) rps_setSDRAMFreq ;;
+                 9) rps_installGPIOpadModules ;;
+                 10) rps_enableGameconSnes ;;
+                 11) rps_scraperMenu ;;
+                 12) rps_configureSAMBA ;;
+                 13) rps_install_USBROMService ;;
+                 14) rps_createDebugLog ;;
+            esac
+        else
+            break
+        fi
+    done    
+}
+

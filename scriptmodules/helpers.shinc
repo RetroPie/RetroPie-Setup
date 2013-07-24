@@ -1,0 +1,168 @@
+#!/bin/bash
+
+#  RetroPie-Setup - Shell script for initializing Raspberry Pi 
+#  with RetroArch, various cores, and EmulationStation (a graphical 
+#  front end).
+# 
+#  (c) Copyright 2012-2013  Florian Müller (contact@petrockblock.com)
+# 
+#  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
+# 
+#  Permission to use, copy, modify and distribute RetroPie-Setup in both binary and
+#  source form, for non-commercial purposes, is hereby granted without fee,
+#  providing that this license information and copyright notice appear with
+#  all copies and any derived work.
+# 
+#  This software is provided 'as-is', without any express or implied
+#  warranty. In no event shall the authors be held liable for any damages
+#  arising from the use of this software.
+# 
+#  RetroPie-Setup is freeware for PERSONAL USE only. Commercial users should
+#  seek permission of the copyright holders first. Commercial use includes
+#  charging money for RetroPie-Setup or software derived from RetroPie-Setup.
+# 
+#  The copyright holders request that bug fixes and improvements to the code
+#  should be forwarded to them so everyone can benefit from the modifications
+#  in future versions.
+# 
+#  Many, many thanks go to all people that provide the individual packages!!!
+# 
+#  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
+# 
+
+function ask()
+{   
+    echo -e -n "$@" '[y/n] ' ; read ans
+    case "$ans" in
+        y*|Y*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+function addLineToFile()
+{
+    if [[ -f "$2" ]]; then
+        cp "$2" ./temp
+        sudo mv "$2" "$2.old"
+    fi
+    echo "$1" >> ./temp
+    sudo mv ./temp "$2"
+    echo "Added $1 to file $2"
+}
+
+# arg 1: key, arg 2: value, arg 3: file
+# make sure that a key-value pair is set in file
+# key = value
+function ensureKeyValue()
+{
+    if [[ -z $(egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+        # add key-value pair
+        echo "$1 = ""$2""" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3`
+        sed $3 -i -e "s|$toreplace|$1 = ""$2""|g"
+    fi     
+}
+
+# make sure that a key-value pair is NOT set in file
+# # key = value
+function disableKeyValue()
+{
+    if [[ -z $(egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+        # add key-value pair
+        echo "# $1 = ""$2""" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3`
+        sed $3 -i -e "s|$toreplace|# $1 = ""$2""|g"
+    fi     
+}
+
+# arg 1: key, arg 2: value, arg 3: file
+# make sure that a key-value pair is set in file
+# key=value
+function ensureKeyValueShort()
+{
+    if [[ -z $(egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+        # add key-value pair
+        echo "$1=""$2""" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3`
+        sed $3 -i -e "s|$toreplace|$1=""$2""|g"
+    fi     
+}
+
+# make sure that a key-value pair is NOT set in file
+# # key=value
+function disableKeyValueShort()
+{
+    if [[ -z $(egrep -i "#? *$1=""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
+        # add key-value pair
+        echo "# $1=""$2""" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1=""?[+|-]?[0-9]*[a-z]*"""? $3`
+        sed $3 -i -e "s|$toreplace|# $1=""$2""|g"
+    fi     
+}
+
+# ensures pair of key ($1)-value ($2) in file $3
+function ensureKeyValueBootconfig()
+{
+    if [[ -z $(egrep -i "#? *$1=[+|-]?[0-9]*[a-z]*" $3) ]]; then
+        # add key-value pair
+        echo "$1=$2" >> $3
+    else
+        # replace existing key-value pair
+        toreplace=`egrep -i "#? *$1=[+|-]?[0-9]*[a-z]*" $3`
+        sed $3 -i -e "s|$toreplace|$1=$2|g"
+    fi     
+}
+
+function printMsg()
+{
+    echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
+}
+
+function rel2abs() {
+  cd "$(dirname $1)" && dir="$PWD"
+  file="$(basename $1)"
+
+  echo $dir/$file
+}
+
+function checkForInstalledAPTPackage()
+{
+    PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1|grep "install ok installed")
+    echo Checking for somelib: $PKG_OK
+    if [ "" == "$PKG_OK" ]; then
+        echo "NOT INSTALLED: $1"
+    else
+        echo "installed: $1"
+    fi    
+}
+
+function checkFileExistence()
+{
+    if [[ -f "$1" ]]; then
+        ls -lh "$1" >> "$rootdir/debug.log"
+    else
+        echo "$1 does NOT exist." >> "$rootdir/debug.log"
+    fi
+}
+
+# clones or updates the sources of a repository $2 into the directory $1
+function gitPullOrClone()
+{
+    if [[ -d "$1/.git" ]]; then
+        pushd "$1"
+        git pull
+    else
+        rm -rf "$1" # makes sure that the directory IS empty
+        mkdir -p "$1"
+        git clone --depth=0 "$2" "$1"
+        pushd "$1"
+    fi
+}
