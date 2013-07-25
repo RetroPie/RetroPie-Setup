@@ -37,6 +37,7 @@ function rps_prepareFolders()
 
     pathlist=()
     pathlist+=("$rootdir/roms")
+    pathlist+=("$rootdir/roms/atari800")
     pathlist+=("$rootdir/roms/atari2600")
     pathlist+=("$rootdir/roms/basiliskii")
     pathlist+=("$rootdir/roms/c64")
@@ -285,7 +286,7 @@ function rps_main_binaries()
     /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
     em_configureDGEN
     em_configure_advmame
-    ls_configure_cavestory
+    lr_configure_cavestory
     em_configure_linapple
     em_install_eduke32
     em_configure_rpix86
