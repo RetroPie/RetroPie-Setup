@@ -376,7 +376,7 @@ popd
 _EOF_
 chown $user $rootdir/roms/esconfig/Start.sh
 chgrp $user $rootdir/roms/esconfig/Start.sh
-chmod +x $user $rootdir/roms/esconfig/Start.sh
+chmod +x $rootdir/roms/esconfig/Start.sh
 }
 
 function sup_install_esconfig()
