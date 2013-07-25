@@ -543,16 +543,16 @@ function rps_main_setup()
                  1) sup_generate_esconfig ;;
                  2) rc_run_rpiupdate ;;
                  3) sup_install_advancemenu ;;
-                 4) rps_changeBootbehaviour ;;
-                 5) rps_enableDisableSNESDevStart ;;
-                 6) rps_enableDisableSplashscreen ;;
-                 7) rps_setArmFreq ;;
-                 8) rps_setSDRAMFreq ;;
-                 9) rps_installGPIOpadModules ;;
-                 10) rps_enableGameconSnes ;;
+                 4) set_changeBootbehaviour ;;
+                 5) sup_enableDisableSNESDevStart ;;
+                 6) set_enableDisableSplashscreen ;;
+                 7) set_setArmFreq ;;
+                 8) set_setSDRAMFreq ;;
+                 9) set_installGPIOpadModules ;;
+                 10) set_enableGameconSnes ;;
                  11) rps_scraperMenu ;;
-                 12) rps_configureSAMBA ;;
-                 13) rps_install_USBROMService ;;
+                 12) set_configureSAMBA ;;
+                 13) set_install_USBROMService ;;
                  14) rps_createDebugLog ;;
             esac
         else
