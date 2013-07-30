@@ -530,14 +530,15 @@ function rps_main_setup()
                  4 "Start Emulation Station on boot?" 
                  5 "Start SNESDev on boot?"
                  6 "Enable/disable RetroPie splashscreen"
-                 7 "Change ARM frequency" 
-                 8 "Change SDRAM frequency"
-                 9 "Install/update multi-console gamepad drivers for GPIO" 
-                 10 "Enable gamecon_gpio_rpi with SNES-pad config"
-                 11 "Run 'ES-scraper'" 
-                 12 "Install and configure SAMBA shares"
-                 13 "Install USB-ROM-Copy service"
-                 14 "Generate debug log" )
+                 7 "Configure audio settings"
+                 8 "Change ARM frequency" 
+                 9 "Change SDRAM frequency"
+                 10 "Install/update multi-console gamepad drivers for GPIO" 
+                 11 "Enable gamecon_gpio_rpi with SNES-pad config"
+                 12 "Run 'ES-scraper'" 
+                 13 "Install and configure SAMBA shares"
+                 14 "Install USB-ROM-Copy service"
+                 15 "Generate debug log" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
@@ -547,14 +548,15 @@ function rps_main_setup()
                  4) set_changeBootbehaviour ;;
                  5) sup_enableDisableSNESDevStart ;;
                  6) set_enableDisableSplashscreen ;;
-                 7) set_setArmFreq ;;
-                 8) set_setSDRAMFreq ;;
-                 9) set_installGPIOpadModules ;;
-                 10) set_enableGameconSnes ;;
-                 11) rps_scraperMenu ;;
-                 12) set_configureSAMBA ;;
-                 13) set_install_USBROMService ;;
-                 14) rps_createDebugLog ;;
+                 7) set_changeAudioOutput ;;
+                 8) set_setArmFreq ;;
+                 9) set_setSDRAMFreq ;;
+                 10) set_installGPIOpadModules ;;
+                 11) set_enableGameconSnes ;;
+                 12) rps_scraperMenu ;;
+                 13) set_configureSAMBA ;;
+                 14) set_install_USBROMService ;;
+                 15) rps_createDebugLog ;;
             esac
         else
             break

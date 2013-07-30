@@ -158,6 +158,11 @@ elif [[ $# -lt 3 ]]; then
     rootdir=$2
 fi
 
+if [[ $user == "root" ]]; then
+    echo "Please start the RetroPie Setup Script not as user 'root', but, e.g., as user 'pi'."
+    exit
+fi
+
 esscrapimgw=275 # width in pixel for EmulationStation games scraper
 
 home=$(eval echo ~$user)
