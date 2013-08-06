@@ -600,6 +600,7 @@ function set_installps3controller()
     mkdir -p /var/lib/sixad/profiles
     checkinstall -y
     update-rc.d sixad defaults
+    rm QtSixA.tar.gz
     popd
 
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The driver and configuration tools for connecting PS3 controllers have been installed. Please visit https://github.com/petrockblog/RetroPie-Setup/wiki/Setting-up-a-PS3-controller for further information." 22 76    
