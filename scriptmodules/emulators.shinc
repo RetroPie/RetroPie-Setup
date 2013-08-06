@@ -270,7 +270,7 @@ function em_install_gba()
 
     #if we are on the 256mb model, we will never have enough RAM to compile gpSP with compiler optimization
     #if this is the case, use sed to remove the -O3 in the Makefile (line 20, "CFLAGS     += -O3 -mfpu=vfp")
-    local RPiRev=`grep 'Revision' /proc/cpuinfo | cut -d " " -f 2`
+    local RPiRev=`grep 'Revision' "/proc/cpuinfo" | cut -d " " -f 2`
     if [ $RPiRev == "00d" ] || [ $RPiRev == "000e" ] || [ $RPiRev == "000f" ]; then
     	#RAM = 512mb, we're good
     	echo "512mb Pi, no de-optimization fix needed."
@@ -281,7 +281,7 @@ function em_install_gba()
     fi
 
     #gpSP is missing an include in the Makefile
-    if [[ ! -z `grep '-I/opt/vc/include/interface/vmcs_host/linux' Makefile` ]]; then
+    if [[ ! -z `grep "-I/opt/vc/include/interface/vmcs_host/linux" Makefile` ]]; then
 	   echo "Skipping adding missing include to gpSP Makefile."
     else
 	   echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
@@ -289,6 +289,7 @@ function em_install_gba()
     fi
 
     make
+    cp "$rootdir/emulators/gpsp/game_config.txt" "$rootdir/emulators/gpsp/raspberrypi/"
     if [[ -z `find $rootdir/emulators/gpsp/ -name "gpsp"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance emulator."
     fi
@@ -441,6 +442,7 @@ function em_install_neogeo()
 # install SNES9X emulator
 function em_install_snes9x()
 {
+    printMsg "Installing SNES9X-RPi emulator"    
     if [[ -d "$rootdir/emulators/snes9x-rpi" ]]; then
         rm -rf "$rootdir/emulators/snes9x-rpi"
     fi        
@@ -455,9 +457,25 @@ function em_install_snes9x()
     popd
 }
 
+function em_install_pifba()
+{
+    printMsg "Installing PiFBA emulator"    
+    if [[ -d "$rootdir/emulators/pifba" ]]; then
+        rm -rf "$rootdir/emulators/pifba"
+    fi  
+    gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/
+    mkdir ".obj"
+    make
+    if [[ ! -f "$rootdir/emulators/pifba/" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile PiFBA."
+    fi      
+    popd
+}
+
 # install PiSNES emulator
 function em_install_pisnes()
 {
+    printMsg "Installing PiSNES emulator"    
     if [[ -d "$rootdir/emulators/pisnes" ]]; then
         rm -rf "$rootdir/emulators/pisnes"
     fi        
@@ -476,6 +494,7 @@ function em_install_pisnes()
 # install PSP emulator PPSSPP
 function em_install_ppsspp()
 {
+    printMsg "Installing PPSSPP emulator"    
     if [[ -d "$rootdir/emulators/ppsspp" ]]; then
         rm -rf "$rootdir/emulators/ppsspp"
     fi        

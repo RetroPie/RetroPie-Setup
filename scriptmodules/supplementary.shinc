@@ -530,6 +530,7 @@ NAME=mame
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
 COMMAND=retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% 
+# alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" 
 PLATFORMID=23
 
 DESCNAME=FinalBurn Alpha
@@ -537,6 +538,7 @@ NAME=fba
 PATH=$rootdir/roms/fba
 EXTENSION=.zip .ZIP
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg %ROM%"
+# alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" 
 PLATFORMID=23
 
 DESCNAME=PC (x86)
@@ -574,6 +576,7 @@ NAME=neogeo
 PATH=$rootdir/roms/neogeo
 EXTENSION=.zip .ZIP
 COMMAND=$rootdir/emulators/gngeo-pi-0.85/installdir/bin/arm-linux-gngeo -i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-pi-0.85/neogeobios %ROM%
+# alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" 
 PLATFORMID=24
 
 DESCNAME=Nintendo Entertainment System
