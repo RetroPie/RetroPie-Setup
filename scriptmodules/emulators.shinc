@@ -210,6 +210,9 @@ function em_configureDGEN()
     ensureKeyValue "joy_pad2_z" "joystick1-button5" $rootdir/configs/all/dgenrc
     ensureKeyValue "joy_pad2_mode" "joystick1-button6" $rootdir/configs/all/dgenrc
     ensureKeyValue "joy_pad2_start" "joystick1-button7" $rootdir/configs/all/dgenrc
+
+    ensureKeyValue "emu_z80_startup" "drz80" $rootdir/configs/all/dgenrc
+    ensureKeyValue "emu_m68k_startup" "cyclone" $rootdir/configs/all/dgenrc
 }
 
 # install DGEN (Megadrive/Genesis emulator)
@@ -231,8 +234,16 @@ function em_install_dgen()
     if [[ ! -f "$rootdir/emulators/dgen-sdl/dgen" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile DGEN emulator."
     fi  
-    popd
+    popd    
     rm dgen-sdl-1.32.tar.gz
+
+    wget http://projectmd.mdscene.net/download/projmd-20120429.zip
+    unzip projmd-20120429.zip
+    if [[ ! -f $rootdir/roms/megadrive/projmd-20120429.bin ]]; then
+        cp ./projmd-20120429/projmd-20120429.bin $rootdir/roms/megadrive/
+    fi
+    rm -rf projmd-20120429    
+    rm projmd-20120429.zip  
 }
 
 #install eDuke32
@@ -309,9 +320,9 @@ function em_install_GnGeoPi()
     ./configure --host=arm-linux --target=arm-linux --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
     make
     make install
-    if [[ ! -f "$rootdir/emulators/gngeo-pi-0.85/installdir/arm-linux-gngeo" ]]; then
+    if [[ ! -f "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/arm-linux-gngeo" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile GnGeo-Pi emulator."
-    fi      
+    fi
     popd
 }
 
@@ -466,7 +477,7 @@ function em_install_pifba()
     gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/
     mkdir ".obj"
     make
-    if [[ ! -f "$rootdir/emulators/pifba/" ]]; then
+    if [[ ! -d "$rootdir/emulators/pifba/" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile PiFBA."
     fi      
     popd

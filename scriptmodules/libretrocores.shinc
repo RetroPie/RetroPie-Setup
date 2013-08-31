@@ -162,6 +162,14 @@ function lr_install_picodrive()
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core Picodrive."
     fi      
     popd
+
+    wget http://projectmd.mdscene.net/download/projmd-20120429.zip
+    unzip projmd-20120429.zip
+    if [[ ! -f $rootdir/roms/megadrive/projmd-20120429.bin ]]; then
+        cp ./projmd-20120429/projmd-20120429.bin $rootdir/roms/megadrive/
+    fi
+    rm -rf projmd-20120429    
+    rm projmd-20120429.zip  
 }
 
 # install Playstation emulator core

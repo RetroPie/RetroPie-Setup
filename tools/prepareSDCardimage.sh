@@ -3,6 +3,7 @@
 
 sudo apt-get purge scratch xpdf dillo midori netsurf xarchiver omxplayer
 sudo apt-get autoremove
+sudo apt-get clean
 
 # remove es_input.cfg etc.
 rm ~/.emulationstation/es_input.cfg
@@ -10,6 +11,7 @@ rm ~/ocr_pi.png
 rm -rf ~/python_games/
 rm -rf ~/Desktop/
 rm -rf osmose_files
+rm ~/.bash_history
 
 # check file system for errors
 # e2fsck -f -y -v /dev/sdaX

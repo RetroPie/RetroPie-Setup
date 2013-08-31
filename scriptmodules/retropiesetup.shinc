@@ -191,7 +191,7 @@ function rps_createDebugLog()
     checkFileExistence "`find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"`"
-    checkFileExistence "$rootdir/emulatorcors/uae4all/uae4all"
+    checkFileExistence "$rootdir/emulators/uae4rpi/uae4all"
 
     echo -e "\nSNESDev:" >> "$rootdir/debug.log"
     checkFileExistence "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev"
