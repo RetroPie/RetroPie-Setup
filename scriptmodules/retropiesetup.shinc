@@ -190,7 +190,6 @@ function rps_createDebugLog()
     checkFileExistence "`find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`"
     checkFileExistence "`find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/vba-next/ -name "*libretro*.so"`"
     checkFileExistence "$rootdir/emulators/uae4rpi/uae4all"
 
     echo -e "\nSNESDev:" >> "$rootdir/debug.log"
@@ -398,29 +397,31 @@ function rps_main_options()
              36 "Install NeoGeo emulator GnGeo-Pi 0.85" ON \
              37 "(C) Configure NeoGeo" ON \
              38 "Install NES core" ON \
-             39 "Install PC emulator (RPix86)" ON \
-             40 "Install Playstation core" ON \
-             41 "Install PSP emulator PPSSPP" OFF \
-             42 "Install ScummVM" ON \
-             43 "Install Super NES core" ON \
-             44 "Install SNES9X emulator" ON \
-             45 "Install PiSNES emulator" ON \
-             46 "(C) Configure Super NES core" ON \
-             47 "Install Wolfenstein3D engine" ON \
-             48 "Install Z Machine emulator (Frotz)" ON \
-             49 "Install ZX Spectrum emulator (Fuse)" ON \
-             50 "Install ZX Spectrum emulator (FBZX)" ON \
-             51 "Install BCM library" ON \
-             52 "Install Dispmanx library" ON \
-             53 "Install SNESDev" ON \
-             54 "Install Emulation Station" ON \
-             55 "Install Emulation Station Themes" ON \
-             56 "Install ES-config" ON \
-             57 "(C) Generate config file for Emulation Station" ON \
-             58 "(C) Configure sound settings for RetroArch" ON \
-             59 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             60 "Install runcommand script" ON \
-             61 "(C) Configure /boot/config.txt" ON )
+             39 "Install PC Engine core (Mednafen-PCE-Libretro)" ON \
+             40 "Install PC emulator (RPix86)" ON \
+             41 "Install Playstation core" ON \
+             42 "Install PSP emulator PPSSPP" OFF \
+             43 "Install ScummVM" ON \
+             44 "Install Super NES core" ON \
+             45 "Install SNES9X emulator" ON \
+             46 "Install PiSNES emulator" ON \
+             47 "(C) Configure Super NES core" ON \
+             48 "Install Wolfenstein3D engine" ON \
+             49 "Install Z Machine emulator (Frotz)" ON \
+             50 "Install ZX Spectrum emulator (Fuse)" ON \
+             51 "Install ZX Spectrum emulator (FBZX)" ON \
+             52 "Install BCM library" ON \
+             53 "Install Dispmanx library" ON \
+             54 "Install SNESDev" ON \
+             55 "Install Emulation Station" ON \
+             56 "Install Emulation Station Themes" ON \
+             57 "Install ES-config" ON \
+             58 "(C) Generate config file for Emulation Station" ON \
+             59 "(C) Configure sound settings for RetroArch" ON \
+             60 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             61 "Install runcommand script" ON \
+             62 "(C) Configure /boot/config.txt" ON \
+             63 "(C) Disable screen blanking and power down timeout" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -467,29 +468,31 @@ function rps_main_options()
                 36) em_install_GnGeoPi ;;
                 37) em_configureNeogeo ;;
                 38) lr_install_nes ;;
-                39) em_install_rpix86 ;;
-                40) lr_install_psx ;;
-                41) em_install_ppsspp ;;
-                42) em_install_scummvm ;;
-                43) lr_install_snes ;;
-                44) em_install_snes9x ;;
-                45) em_install_pisnes ;;
-                46) lr_configure_snes ;;
-                47) em_install_wolfenstein3d ;;
-                48) em_install_zmachine ;;
-                49) em_install_zxspectrum ;;
-                50) em_install_fbzx ;;
-                51) sup_install_bcmlibrary ;;
-                52) sup_install_dispmanx ;;
-                53) sup_install_snesdev ;;
-                54) sup_install_emulationstation ;;
-                55) rps_install_esthemes ;;
-                56) sup_install_esconfig ;;
-                57) sup_generate_esconfig ;;
-                58) em_configureSoundsettings ;;
-                59) rc_setAvoidSafeMode ;;
-                60) sup_install_runcommandscript ;;
-                61) rc_configureBootConfig ;;
+                39) lc_installPCEngine ;;
+                40) em_install_rpix86 ;;
+                41) lr_install_psx ;;
+                42) em_install_ppsspp ;;
+                43) em_install_scummvm ;;
+                44) lr_install_snes ;;
+                45) em_install_snes9x ;;
+                46) em_install_pisnes ;;
+                47) lr_configure_snes ;;
+                48) em_install_wolfenstein3d ;;
+                49) em_install_zmachine ;;
+                50) em_install_zxspectrum ;;
+                51) em_install_fbzx ;;
+                52) sup_install_bcmlibrary ;;
+                53) sup_install_dispmanx ;;
+                54) sup_install_snesdev ;;
+                55) sup_install_emulationstation ;;
+                56) rps_install_esthemes ;;
+                57) sup_install_esconfig ;;
+                58) sup_generate_esconfig ;;
+                59) em_configureSoundsettings ;;
+                60) rc_setAvoidSafeMode ;;
+                61) sup_install_runcommandscript ;;
+                62) rc_configureBootConfig ;;
+                63) rc_disableTimeouts ;;
             esac
         done
 

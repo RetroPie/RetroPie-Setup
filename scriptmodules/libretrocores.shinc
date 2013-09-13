@@ -33,7 +33,7 @@
 # install Atari 2600 core
 function lr_install_atari2600()
 {
-    printMsg "Installing Atari 2600 RetroArch core"
+    printMsg "Installing Atari 2600 RetroArch core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/stella-libretro" git://github.com/libretro/stella-libretro.git
     make
     if [[ -z `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"` ]]; then
@@ -54,7 +54,7 @@ function lr_configure_cavestory()
 # install NXEngine / Cave Story core
 function lr_install_cavestory()
 {
-    printMsg "Installing NXEngine / Cave Story"
+    printMsg "Installing NXEngine / Cave Story (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/nxengine-libretro" git://github.com/libretro/nxengine-libretro.git
     make
     if [[ -z `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` ]]; then
@@ -74,7 +74,7 @@ function lr_configure_doom()
 # install Doom WADs emulator core
 function lr_install_doom()
 {
-    printMsg "Installing Doom core"
+    printMsg "Installing Doom core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/libretro-prboom" git://github.com/libretro/libretro-prboom.git
     make
     if [[ -z `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` ]]; then
@@ -87,7 +87,7 @@ function lr_install_doom()
 # install Game Boy Color emulator core
 function lr_install_gbc()
 {
-    printMsg "Installing Game Boy Color core"
+    printMsg "Installing Game Boy Color core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/gambatte-libretro" git://github.com/libretro/gambatte-libretro.git
     make -C libgambatte -f Makefile.libretro
     if [[ -z `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` ]]; then
@@ -99,7 +99,7 @@ function lr_install_gbc()
 # install MAME emulator core
 function lr_install_mame()
 {
-    printMsg "Installing MAME core"
+    printMsg "Installing MAME core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/imame4all-libretro" git://github.com/libretro/imame4all-libretro.git
     make -f makefile.libretro ARM=1
     if [[ -z `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` ]]; then
@@ -111,7 +111,7 @@ function lr_install_mame()
 # install FBA emulator core
 function lr_install_fba()
 {
-    printMsg "Installing FBA core"
+    printMsg "Installing FBA core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/fba-libretro" git://github.com/libretro/fba-libretro.git
     apt-get install -y --force-yes cpp-4.5 gcc-4.5 g++-4.5
     (
@@ -128,7 +128,7 @@ function lr_install_fba()
 # install NES emulator core
 function lr_install_nes()
 {
-    printMsg "Installing NES core"
+    printMsg "Installing NES core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/fceu-next" git://github.com/libretro/fceu-next.git
     pushd fceumm-code
     make -f Makefile.libretro
@@ -151,10 +151,22 @@ function lr_install_megadriveLibretro()
     popd
 }
 
+# install Mednafen PC Engine core
+function lc_installPCEngine()
+{
+    printMsg "Installing PC Engine core (Libretro core)"
+    gitPullOrClone "$rootdir/emulatorcores/mednafen-pce-libretro/" https://github.com/petrockblog/mednafen-pce-libretro.git
+    make
+    if [[ ! -f `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile PC Engine core."
+    fi      
+    popd
+}
+
 # install Megadrive/Genesis emulator core Picodrive
 function lr_install_picodrive()
 {
-    printMsg "Installing Megadrive core picodrive"
+    printMsg "Installing Megadrive core picodrive (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/picodrive" https://github.com/libretro/picodrive.git
     git submodule init && git submodule update
     make -f Makefile.libretro platform=armv6    
@@ -175,7 +187,7 @@ function lr_install_picodrive()
 # install Playstation emulator core
 function lr_install_psx()
 {
-    printMsg "Installing PCSX core"
+    printMsg "Installing PCSX core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/pcsx_rearmed" git://github.com/libretro/pcsx_rearmed.git
     ./configure --platform=libretro
     make
@@ -188,7 +200,7 @@ function lr_install_psx()
 # install SNES emulator core
 function lr_install_snes()
 {
-    printMsg "Installing SNES core"
+    printMsg "Installing SNES core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/pocketsnes-libretro" git://github.com/ToadKing/pocketsnes-libretro.git
     patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch $rootdir/emulatorcores/pocketsnes-libretro/src/ppu.cpp
     make

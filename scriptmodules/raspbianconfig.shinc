@@ -176,3 +176,11 @@ function rc_setAvoidSafeMode()
     printMsg "Setting avoid_safe_mode=1"
     ensureKeyValueBootconfig "avoid_safe_mode" 1 "/boot/config.txt"
 }
+
+# Disable timeouts so that Emulation Station does not freeze (https://github.com/Aloshi/EmulationStation/issues/99#issuecomment-24127242)
+function rc_disableTimeouts()
+{
+    printMsg "Disabling blank and powerdown timeouts in /etc/kbd/config"
+    sed -i 's/BLANK_TIME=30/BLANK_TIME=0/g' /etc/kbd/config
+    sed -i 's/POWERDOWN_TIME=30/POWERDOWN_TIME=0/g' /etc/kbd/config
+}
