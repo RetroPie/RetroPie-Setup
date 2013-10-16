@@ -84,18 +84,18 @@ function rc_add_user_to_group()
 {
     if [ -z $(egrep -i "^$2" /etc/group) ]
     then
-      sudo addgroup $2
+      addgroup $2
     fi
-    sudo adduser $1 $2
+    adduser $1 $2
 }
 
 # make sure ALSA, uinput, and joydev modules are active
 function rc_ensure_modules()
 {
     printMsg "Enabling ALSA, uinput, and joydev modules permanently"
-    sudo modprobe snd_bcm2835
-    sudo modprobe uinput
-    sudo modprobe joydev
+    modprobe snd_bcm2835
+    modprobe uinput
+    modprobe joydev
 
     if ! grep -q "uinput" /etc/modules; then
         addLineToFile "uinput" "/etc/modules"

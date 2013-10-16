@@ -41,22 +41,22 @@ function set_changeAudioOutput()
     if [ "$choices" != "" ]; then
         case $choices in
             1) amixer cset numid=3 0
-                 sudo alsactl store
+                 alsactl store
                ###set
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Set audio output to auto" 22 76    
                             ;;
             2) amixer cset numid=3 1
-               sudo alsactl store
+               alsactl store
                ###set
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Set audio output to headphones / 3.5mm jack " 22 76    
                             ;;
             3) amixer cset numid=3 2
-               sudo alsactl store
+               alsactl store
                ###set
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Set audio output to HDMI" 22 76    
                             ;;
-            4) sudo /etc/init.d/alsa-utils reset
-               sudo alsactl store
+            4) /etc/init.d/alsa-utils reset
+               alsactl store
                  ###set
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Audio settings reset to defaults" 22 76    
                             ;;
