@@ -43,10 +43,10 @@ function addLineToFile()
 {
     if [[ -f "$2" ]]; then
         cp "$2" ./temp
-        sudo mv "$2" "$2.old"
+        mv "$2" "$2.old"
     fi
     echo "$1" >> ./temp
-    sudo mv ./temp "$2"
+    mv ./temp "$2"
     echo "Added $1 to file $2"
 }
 

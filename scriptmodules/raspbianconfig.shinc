@@ -84,18 +84,18 @@ function rc_add_user_to_group()
 {
     if [ -z $(egrep -i "^$2" /etc/group) ]
     then
-      sudo addgroup $2
+      addgroup $2
     fi
-    sudo adduser $1 $2
+    adduser $1 $2
 }
 
 # make sure ALSA, uinput, and joydev modules are active
 function rc_ensure_modules()
 {
     printMsg "Enabling ALSA, uinput, and joydev modules permanently"
-    sudo modprobe snd_bcm2835
-    sudo modprobe uinput
-    sudo modprobe joydev
+    modprobe snd_bcm2835
+    modprobe uinput
+    modprobe joydev
 
     if ! grep -q "uinput" /etc/modules; then
         addLineToFile "uinput" "/etc/modules"
@@ -130,11 +130,12 @@ function rc_installAPTPackages()
                         libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
                         libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev \
                         joystick fbi gcc-4.7 automake1.4 libcurl4-openssl-dev  libzip-dev \
-                        build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
+                        build-essential nasm libgl1-mesa-dev libglu1-mesa-dev \
                         libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
                         libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
                         cmake g++-4.7 unrar-free p7zip p7zip-full libeigen3-dev bluez-utils \
-                        bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev
+                        bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev \
+                        mplayer
                         # libgles2-mesa-dev
 
     # remove PulseAudio since this is slowing down the whole system significantly
@@ -151,11 +152,12 @@ function rc_removeAPTPackages()
                         libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
                         libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev \
                         joystick fbi gcc-4.7 automake1.4 libcurl4-openssl-dev  libzip-dev \
-                        build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
+                        build-essential nasm libgl1-mesa-dev libglu1-mesa-dev \
                         libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
                         libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
                         cmake g++-4.7 unrar-free p7zip p7zip-full libeigen3-dev bluez-utils \
-                        bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev
+                        bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev \
+                        mplayer
                         # libgles2-mesa-dev
 
     apt-get -y autoremove   

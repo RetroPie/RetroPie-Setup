@@ -41,22 +41,22 @@ function set_changeAudioOutput()
     if [ "$choices" != "" ]; then
         case $choices in
             1) amixer cset numid=3 0
-                 sudo alsactl store
+               alsactl store
                ###set
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Set audio output to auto" 22 76    
                             ;;
             2) amixer cset numid=3 1
-               sudo alsactl store
+               alsactl store
                ###set
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Set audio output to headphones / 3.5mm jack " 22 76    
                             ;;
             3) amixer cset numid=3 2
-               sudo alsactl store
+               alsactl store
                ###set
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Set audio output to HDMI" 22 76    
                             ;;
-            4) sudo /etc/init.d/alsa-utils reset
-               sudo alsactl store
+            4) /etc/init.d/alsa-utils reset
+               alsactl store
                  ###set
                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Audio settings reset to defaults" 22 76    
                             ;;
@@ -75,7 +75,7 @@ function set_enableSplashscreenAtStart()
     chmod +x "$scriptdir/supplementary/asplashscreen/asplashscreen"
     cp "$scriptdir/supplementary/asplashscreen/asplashscreen" /etc/init.d/
 
-    cp "$scriptdir/supplementary/asplashscreen/splashscreen.png" /etc/
+    echo $(find $scriptdir/supplementary/splashscreens/retropieproject/ -type f) > /etc/splashscreen.list
 
     # This command installs the init.d script so it automatically starts on boot
     insserv /etc/init.d/asplashscreen
@@ -150,6 +150,7 @@ function set_configureSAMBA()
     set_ensureEntryInSMBConf "AMIGA" "amiga"
     set_ensureEntryInSMBConf "APPLE2" "apple2"
     set_ensureEntryInSMBConf "ATARI2600" "atari2600"
+    set_ensureEntryInSMBConf "ATARISTSTEFALCON" "atariStSteFalcon"
     set_ensureEntryInSMBConf "BASILISKII" "basiliskii"
     set_ensureEntryInSMBConf "C64" "c64"
     set_ensureEntryInSMBConf "DOOM" "doom"
@@ -187,6 +188,7 @@ function set_sortromsalphabet()
     pathlist=()
     pathlist+=("$rootdir/roms/amiga")
     pathlist+=("$rootdir/roms/atari2600")
+    pathlist+=("$rootdir/roms/atariStSteFalcon")
     pathlist+=("$rootdir/roms/fba")
     pathlist+=("$rootdir/roms/gamegear")
     pathlist+=("$rootdir/roms/gb")

@@ -13,7 +13,13 @@
 
 do_start () {
 
-    /usr/bin/fbi -T 1 -noverbose -a /etc/splashscreen.png    
+    line=$(head -n 1 /etc/splashscreen.list)
+    isMovie=$(echo $line | grep -o "*.mpg")
+    if [ -z "$isMovie" ]; then
+      /usr/bin/fbi -T 1 -noverbose -a -l /etc/splashscreen.list &
+    else
+      mplayer $line &
+    fi
     exit 0
 }
 

@@ -120,6 +120,12 @@ function em_install_atari800()
     rm atari800-3.0.0.tar.gz
 }
 
+function em_install_dosbox()
+{
+    printMsg "Installing Dosbox"
+    apt-get install -y dosbox
+}
+
 function em_install_stella()
 {
     printMsg "Installing Atari 2600 emulator Stella"
@@ -263,7 +269,7 @@ function em_install_eduke32()
         __ERRMSGS="$__ERRMSGS Could not successfully install eDuke32 core."
     else
         printMsg "Installing eDuke32"
-        sudo dpkg -i *duke*.deb
+        dpkg -i *duke*.deb
         cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/duke3d/
         cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/duke3d/
     fi
@@ -324,6 +330,13 @@ function em_install_GnGeoPi()
         __ERRMSGS="$__ERRMSGS Could not successfully compile GnGeo-Pi emulator."
     fi
     popd
+}
+
+function em_install_hatari()
+{
+    printMsg "Installing Atari emulator Hatari"
+    apt-get update;
+    apt-get install -y hatari
 }
 
 # install Sega Mega Drive/Mastersystem/Game Gear emulator OsmOse
@@ -645,9 +658,9 @@ function em_install_retroarch()
 {
     printMsg "Installing RetroArch emulator"
     gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
-    ./configure
+    ./configure --prefix="$rootdir/emulators/RetroArch/installdir"
     make
-    sudo make install
+    make install
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/"
     if [[ ! -f "/usr/local/bin/retroarch" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."

@@ -28,10 +28,11 @@ filelist+=("`find ./RetroPie/emulatorcores/fba-libretro/ -name "*libretro*.so"`"
 filelist+=("`find ./RetroPie/emulatorcores/picodrive/ -name "*libretro*.so"`")
 
 filelist+=("./RetroPie/emulators/RetroArch/README.md")
-filelist+=("./RetroPie/emulators/RetroArch/retroarch")
-filelist+=("./RetroPie/emulators/RetroArch/retroarch-zip")
-filelist+=("./RetroPie/emulators/RetroArch/retroarch.cfg")
-filelist+=("./RetroPie/emulators/RetroArch/tools/retroarch-joyconfig")
+filelist+=("./RetroPie/emulators/RetroArch/installdir/")
+#filelist+=("./RetroPie/emulators/RetroArch/retroarch")
+#filelist+=("./RetroPie/emulators/RetroArch/retroarch-zip")
+#filelist+=("./RetroPie/emulators/RetroArch/retroarch.cfg")
+#filelist+=("./RetroPie/emulators/RetroArch/tools/retroarch-joyconfig")
 
 filelist+=("./RetroPie/emulators/dgen-sdl/dgen")
 filelist+=("./RetroPie/emulators/dgen-sdl/sample.dgenrc")

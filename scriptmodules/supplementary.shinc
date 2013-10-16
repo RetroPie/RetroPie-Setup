@@ -453,8 +453,14 @@ NAME=atari2600
 PATH=$rootdir/roms/atari2600
 EXTENSION=.a26 .A26 .bin .BIN .rom .ROM .zip .ZIP .gz .GZ
 #alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "stella %ROM%"
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%"
 PLATFORMID=22
+
+DESCNAME=Atari ST/STE/Falcon
+NAME=atariStSteFalcon
+PATH=$rootdir/roms/atariStSteFalcon
+EXTENSION=.st .ST .img .IMG .rom .ROM
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "hatari %ROM%"
 
 DESCNAME=Basilisk II
 NAME=basiliskii
@@ -467,7 +473,7 @@ DESCNAME=Cave Story
 NAME=cavestory
 PATH=$rootdir/roms/cavestory
 EXTENSION=.txt
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"
 
 DESCNAME=C64
 NAME=c64
@@ -480,7 +486,7 @@ DESCNAME=Doom
 NAME=doom
 PATH=$rootdir/roms/doom
 EXTENSION=.WAD .wad
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %ROM%"
 PLATFORMID=1
 
 DESCNAME=Duke Nukem 3D
@@ -494,7 +500,7 @@ DESCNAME=Game Boy
 NAME=gb
 PATH=$rootdir/roms/gb
 EXTENSION=.gb .GB
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%"
 PLATFORMID=4
 
 DESCNAME=Game Boy Advance
@@ -508,7 +514,7 @@ DESCNAME=Game Boy Color
 NAME=gbc
 PATH=$rootdir/roms/gbc
 EXTENSION=.gbc .GBC
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%"
 PLATFORMID=41
 
 DESCNAME=Sega Game Gear
@@ -529,7 +535,7 @@ DESCNAME=MAME
 NAME=mame
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
-COMMAND=retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% 
+COMMAND=$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% 
 # alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" 
 PLATFORMID=23
 
@@ -537,7 +543,7 @@ DESCNAME=FinalBurn Alpha
 NAME=fba
 PATH=$rootdir/roms/fba
 EXTENSION=.zip .ZIP
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg %ROM%"
 # alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" 
 PLATFORMID=23
 
@@ -566,7 +572,7 @@ DESCNAME=Sega Mega Drive / Genesis
 NAME=megadrive
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .bin .BIN
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg %ROM%"
 # alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"
 # alternatively: COMMAND=export LD_LIBRARY_PATH="$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%
 PLATFORMID=18
@@ -583,21 +589,21 @@ DESCNAME=Nintendo Entertainment System
 NAME=nes
 PATH=$rootdir/roms/nes
 EXTENSION=.nes .NES
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%"
 PLATFORMID=7
 
 DESCNAME=PC Engine/TurboGrafx 16
 NAME=pcengine
 PATH=$rootdir/roms/pcengine
 EXTENSION=.pce
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%"
 PLATFORMID=34
 
 DESCNAME=Sony Playstation 1
 NAME=psx
 PATH=$rootdir/roms/psx
 EXTENSION=.img .IMG .7z .7Z .pbp .PBP .bin .BIN
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%"
 PLATFORMID=10
 
 DESCNAME=Playstation Portable
@@ -611,7 +617,7 @@ DESCNAME=Super Nintendo
 NAME=snes
 PATH=$rootdir/roms/snes
 EXTENSION=.smc .sfc .fig .swc .SMC .SFC .FIG .SWC
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %ROM%"
 # alternatively: COMMAND=$rootdir/emulators/snes9x-rpi/snes9x %ROM%
 # alternatively: COMMAND=$rootdir/emulators/pisnes/snes9x %ROM%
 PLATFORMID=6

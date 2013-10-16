@@ -34,6 +34,12 @@ __ERRMSGS=""
 __INFMSGS=""
 __doReboot=0
 
+__default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+
+[[ -z "${CFLAGS}"        ]] && export CFLAGS="${__default_cflags}"
+[[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
+[[ -z "${ASFLAGS}"         ]] && export ASFLAGS="${__default_cflags}"
+
 # HELPER FUNCTIONS ###
 
 #set -o nounset
