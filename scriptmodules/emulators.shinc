@@ -263,7 +263,7 @@ function em_install_eduke32()
         __ERRMSGS="$__ERRMSGS Could not successfully install eDuke32 core."
     else
         printMsg "Installing eDuke32"
-        sudo dpkg -i *duke*.deb
+        dpkg -i *duke*.deb
         cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/duke3d/
         cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/duke3d/
     fi
@@ -647,7 +647,7 @@ function em_install_retroarch()
     gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
     ./configure
     make
-    sudo make install
+    make install
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/"
     if [[ ! -f "/usr/local/bin/retroarch" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
