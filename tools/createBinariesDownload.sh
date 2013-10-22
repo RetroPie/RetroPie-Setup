@@ -66,7 +66,7 @@ filelist+=("./RetroPie/emulators/atari800-3.0.0/installdir/")
 filelist+=("./RetroPie/emulators/atari800-3.0.0/README.1ST")
 filelist+=("./RetroPie/emulators/fbzx-2.10.0/")
 
-# check if all directories/files exist
+echo "Checking, if all directories/files exist"
 tLen=${#filelist[@]}
 for (( i=0; i<${tLen}; i++ ));
 do
@@ -77,7 +77,7 @@ do
 	fi
 done
 
-# put everything into an archive file
+echo "Creating the archive file"
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
 
 for (( i=1; i<${tLen}; i++ ));
@@ -85,7 +85,7 @@ do
 	tar -r -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[$i]}
 done
 
-# compress the archive
+echo "Compressing the archive file"
 bzip2 RetroPieSetupBinaries_`date +%d%m%y`.tar
 
 echo "Done."

@@ -434,6 +434,19 @@ function sup_generate_esconfig()
     if [[ ! -d "$rootdir/../.emulationstation" ]]; then
         mkdir "$rootdir/../.emulationstation"
     fi
+
+    if [[ $__netplayenable == "E" ]]; then
+         local __tmpnetplaymode="-$__netplaymode "
+         local __tmpnetplayhostip_cfile=$__netplayhostip_cfile
+         local __tmpnetplayport="--port $__netplayport "
+         local __tmpnetplayframes="--frames $__netplayframes"
+     else
+         local __tmpnetplaymode=""
+         local __tmpnetplayhostip_cfile=""
+         local __tmpnetplayport=""
+         local __tmpnetplayframes=""
+     fi
+
     cat > "$rootdir/../.emulationstation/es_systems.cfg" << _EOF_
 DESCNAME=Apple ][
 NAME=apple2
@@ -453,7 +466,7 @@ NAME=atari2600
 PATH=$rootdir/roms/atari2600
 EXTENSION=.a26 .A26 .bin .BIN .rom .ROM .zip .ZIP .gz .GZ
 #alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "stella %ROM%"
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
 PLATFORMID=22
 
 DESCNAME=Atari ST/STE/Falcon
@@ -543,7 +556,7 @@ DESCNAME=FinalBurn Alpha
 NAME=fba
 PATH=$rootdir/roms/fba
 EXTENSION=.zip .ZIP
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
 # alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" 
 PLATFORMID=23
 
@@ -572,7 +585,7 @@ DESCNAME=Sega Mega Drive / Genesis
 NAME=megadrive
 PATH=$rootdir/roms/megadrive
 EXTENSION=.smd .SMD .bin .BIN
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
 # alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"
 # alternatively: COMMAND=export LD_LIBRARY_PATH="$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%
 PLATFORMID=18
@@ -589,7 +602,7 @@ DESCNAME=Nintendo Entertainment System
 NAME=nes
 PATH=$rootdir/roms/nes
 EXTENSION=.nes .NES
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
 PLATFORMID=7
 
 DESCNAME=PC Engine/TurboGrafx 16
@@ -617,7 +630,7 @@ DESCNAME=Super Nintendo
 NAME=snes
 PATH=$rootdir/roms/snes
 EXTENSION=.smc .sfc .fig .swc .SMC .SFC .FIG .SWC
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg %ROM%"
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
 # alternatively: COMMAND=$rootdir/emulators/snes9x-rpi/snes9x %ROM%
 # alternatively: COMMAND=$rootdir/emulators/pisnes/snes9x %ROM%
 PLATFORMID=6

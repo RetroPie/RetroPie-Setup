@@ -92,7 +92,7 @@ function import() {
     then
         # import from script directory
         . "$script_absolute_dir/$module.shinc"
-        echo "Loaded $script_absolute_dir/$module.shinc"
+        echo "Loaded module $script_absolute_dir/$module.shinc"
         return
     elif test "x${SHELL_LIBRARY_PATH:-notset}" != "xnotset"
     then
@@ -115,6 +115,22 @@ function import() {
     exit 1
 }
 
+function loadConfig()
+{
+    # @description Routine for loading configuration files that contain key-value pairs in the format KEY="VALUE"
+    # param  $1 Path to the configuration file relate to this file.
+    local configfile=$1
+    if test -e "$script_absolute_dir/$configfile"
+    then
+        . "$script_absolute_dir/$configfile"
+        echo "Loaded configuration file $script_absolute_dir/$configfile"
+        return
+    else
+        echo "Unable to find configuration file $script_absolute_dir/$configfile"
+        exit 1
+    fi
+}
+
 # load script modules
 import "scriptmodules/helpers"
 import "scriptmodules/raspbianconfig"
@@ -123,6 +139,8 @@ import "scriptmodules/libretrocores"
 import "scriptmodules/supplementary"
 import "scriptmodules/setup"
 import "scriptmodules/retropiesetup"
+
+loadConfig "configs/retronetplay.cfg"
 
 # END HELPER FUNCTIONS ###
 
