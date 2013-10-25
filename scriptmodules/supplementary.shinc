@@ -605,6 +605,13 @@ EXTENSION=.nes .NES
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
 PLATFORMID=7
 
+DESCNAME=Nintendo 64
+NAME=nes
+PATH=$rootdir/roms/n64
+EXTENSION=.z64 .ZE64
+COMMAND=$rootdir/emulators/mupen64plus-rpi/test/mupen64plus --configdir $rootdir/emulators/mupen64plus-rpi/ --corelib $rootdir/emulators/mupen64plus-rpi/test/libmupen64plus.so.2.0.0 %ROM%
+PLATFORMID=3
+
 DESCNAME=PC Engine/TurboGrafx 16
 NAME=pcengine
 PATH=$rootdir/roms/pcengine

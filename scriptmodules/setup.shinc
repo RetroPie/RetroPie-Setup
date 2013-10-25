@@ -166,6 +166,7 @@ function set_configureSAMBA()
     set_ensureEntryInSMBConf "MEGADRIVE" "megadrive"
     set_ensureEntryInSMBConf "NEOGEO" "neogeo"
     set_ensureEntryInSMBConf "NES" "nes"
+    set_ensureEntryInSMBConf "N64" "n64"
     set_ensureEntryInSMBConf "X86" "x86"
     set_ensureEntryInSMBConf "PCENGINE" "pcengine"
     set_ensureEntryInSMBConf "PSX" "psx"

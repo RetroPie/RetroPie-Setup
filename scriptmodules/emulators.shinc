@@ -421,6 +421,20 @@ function em_install_linapple()
     rm linapple-src_2a.tar.bz2
 }
 
+function em_install_mupen64plus_rpi()
+{
+    printMsg "Installing N64 emulator Mupen 64 Plus RPi"
+    if [[ -d "$rootdir/emulators/mupen64plus-rpi" ]]; then
+        rm -rf "$rootdir/emulators/mupen64plus-rpi"
+    fi   
+    gitPullOrClone "$rootdir/emulators/mupen64plus-rpi" https://github.com/ricrpi/mupen64plus-rpi
+    ./m64p_build.sh
+    if [[ ! -f "$rootdir/emulators/mupen64plus-rpi/test/mupen64plus" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Mupen 64 Plus RPi."
+    fi      
+    popd
+}
+
 # configure NeoGeo
 function em_configureNeogeo()
 {
