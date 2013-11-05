@@ -606,10 +606,10 @@ COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/Re
 PLATFORMID=7
 
 DESCNAME=Nintendo 64
-NAME=nes
+NAME=n64
 PATH=$rootdir/roms/n64
-EXTENSION=.z64 .ZE64
-COMMAND=$rootdir/emulators/mupen64plus-rpi/test/mupen64plus --configdir $rootdir/emulators/mupen64plus-rpi/ --corelib $rootdir/emulators/mupen64plus-rpi/test/libmupen64plus.so.2.0.0 %ROM%
+EXTENSION=.z64 .Z64 .n64 .N64
+COMMAND=cd $rootdir/emulators/mupen64plus-rpi/test/ && ./mupen64plus %ROM%
 PLATFORMID=3
 
 DESCNAME=PC Engine/TurboGrafx 16

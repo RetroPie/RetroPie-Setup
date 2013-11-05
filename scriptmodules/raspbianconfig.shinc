@@ -146,23 +146,31 @@ function rc_installAPTPackages()
 # remove all packages that are installed by the RetroPie Setup Script
 function rc_removeAPTPackages()
 {
-    printMsg "Making sure that all packages that are installed by the script are removed."
-    apt-get remove -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev \
-                        libboost-filesystem-dev libboost-system-dev zip python-imaging \
-                        libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
-                        libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev \
-                        joystick fbi gcc-4.7 automake1.4 libcurl4-openssl-dev  libzip-dev \
-                        build-essential nasm libgl1-mesa-dev libglu1-mesa-dev \
-                        libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
-                        libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
-                        cmake g++-4.7 unrar-free p7zip p7zip-full libeigen3-dev bluez-utils \
-                        bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev \
-                        mplayer
-                        # libgles2-mesa-dev
+    dialog --title " UNINSTALL RetroPie installation " --clear \
+        --yesno "Do you really want to UNINSTALL RetroPie? WARNING: The RetroPie folder will be DELETED!" 22 76
 
-    apt-get -y autoremove   
-
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Successfully removed APT packages. For a complete uninstall you need to delete the 'RetroPie' folder on your own." 22 76
+      case $? in
+       0)
+        printMsg "Making sure that all packages that are installed by the script are removed."
+        apt-get remove -y libsdl1.2-dev screen scons libasound2-dev pkg-config libgtk2.0-dev \
+                            libboost-filesystem-dev libboost-system-dev zip python-imaging \
+                            libfreeimage-dev libfreetype6-dev libxml2 libxml2-dev libbz2-dev \
+                            libaudiofile-dev libsdl-sound1.2-dev libsdl-mixer1.2-dev \
+                            joystick fbi gcc-4.7 automake1.4 libcurl4-openssl-dev  libzip-dev \
+                            build-essential nasm libgl1-mesa-dev libglu1-mesa-dev \
+                            libvorbis-dev libpng12-dev libvpx-dev freepats subversion \
+                            libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
+                            cmake g++-4.7 unrar-free p7zip p7zip-full libeigen3-dev bluez-utils \
+                            bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev \
+                            mplayer
+                            # libgles2-mesa-dev
+        apt-get -y autoremove   
+        rm -rf $rootdir
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Successfully removed APT packages and the RetroPie folder." 22 76
+        ;;
+       *)
+        ;;
+      esac       
 }
 
 # fix for RaspBMC

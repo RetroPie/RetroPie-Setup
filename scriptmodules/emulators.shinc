@@ -339,6 +339,15 @@ function em_install_hatari()
     apt-get install -y hatari
 }
 
+function em_install_mame4allpi()
+{
+    printMsg "Installing Mame4All-Pi"
+
+    gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/
+    make
+    popd
+}
+
 # install Sega Mega Drive/Mastersystem/Game Gear emulator OsmOse
 function em_install_megadrive()
 {
@@ -676,7 +685,7 @@ function em_install_retroarch()
     make
     make install
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/"
-    if [[ ! -f "/usr/local/bin/retroarch" ]]; then
+    if [[ ! -f "$rootdir/emulators/RetroArch/installdir/bin/retroarch" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
     fi  
     popd

@@ -35,10 +35,11 @@ __INFMSGS=""
 __doReboot=0
 
 __default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+__default_asflags=""
 
 [[ -z "${CFLAGS}"        ]] && export CFLAGS="${__default_cflags}"
 [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
-[[ -z "${ASFLAGS}"         ]] && export ASFLAGS="${__default_cflags}"
+[[ -z "${ASFLAGS}"         ]] && export ASFLAGS="${__default_asflags}"
 
 # HELPER FUNCTIONS ###
 
@@ -199,12 +200,22 @@ if [[ ! -d $rootdir ]]; then
     fi
 fi
 
+if [[ ! -d $scriptdir/logs ]]; then
+    mkdir -p "$scriptdir/logs"
+    chown $user "$scriptdir/logs"
+    chgrp $user "$scriptdir/logs"
+    if [[ ! -d $scriptdir/logs ]]; then
+      echo "Couldn't make directory $scriptdir/logs"
+      exit 1
+    fi
+fi
+
 rps_availFreeDiskSpace 800000
 
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
     options=(1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)"
-             2 "Source-based INSTALLATION (slower, but up-to-date versions)"
+             2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
              3 "SETUP (only if you already have run one of the installations above)"
              4 "UPDATE RetroPie Setup script"
              5 "UPDATE RetroPie Binaries"
@@ -213,7 +224,13 @@ while true; do
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
     if [ "$choices" != "" ]; then
         case $choices in
-            1) rps_main_binaries ;;
+            1) now=$(date +'%d%m%Y_%H%M%S')
+               {
+                    rps_main_binaries
+               } 2>&1 | tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz)
+               chown -R $user $scriptdir/logs/run_$now.log.gz
+               chgrp -R $user $scriptdir/logs/run_$now.log.gz
+               ;;
             2) rps_main_options ;;
             3) rps_main_setup ;;
             4) rps_main_updatescript ;;

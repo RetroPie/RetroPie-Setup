@@ -150,6 +150,7 @@ function rps_checkNeededPackages()
             echo "Successfully installed 'git' and/or 'dialog'."
         else
             echo "Could not install 'git' and/or 'dialog'. Aborting now."
+            exit 1
         fi
     else
         echo "Found needed packages 'git' and 'dialog'."
@@ -397,135 +398,143 @@ function rps_main_options()
              26 "Install IntelliVision emulator (jzintv)" ON \
              27 "Install MAME (iMAME4All) core" ON \
              28 "Install AdvMAME emulator" ON \
-             29 "Install FBA core" ON \
-             30 "Install MAME emulator PiFBA" ON \
-             31 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
-             32 "Install DGEN (Megadrive/Genesis emulator)" ON \
-             33 "(C) Configure DGEN" ON \
-             34 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
-             35 "Install Megadrive/Genesis core (Picodrive)" ON \
-             36 "Install NeoGeo emulator GnGeo 0.7" ON \
-             37 "Install NeoGeo emulator GnGeo-Pi 0.85" ON \
-             38 "(C) Configure NeoGeo" ON \
-             39 "Install NES core" ON \
-             40 "Install N64 emulator Mupen 64 Plus RPi" ON \
-             41 "Install PC Engine core (Mednafen-PCE-Libretro)" ON \
-             42 "Install PC emulator (RPix86)" ON \
-             43 "Install PC emulator (Dosbox)" ON \
-             44 "Install Playstation core" ON \
-             45 "Install PSP emulator PPSSPP" OFF \
-             46 "Install ScummVM" ON \
-             47 "Install Super NES core" ON \
-             48 "Install SNES9X emulator" ON \
-             49 "Install PiSNES emulator" ON \
-             50 "(C) Configure Super NES core" ON \
-             51 "Install Wolfenstein3D engine" ON \
-             52 "Install Z Machine emulator (Frotz)" ON \
-             53 "Install ZX Spectrum emulator (Fuse)" ON \
-             54 "Install ZX Spectrum emulator (FBZX)" ON \
-             55 "Install BCM library" ON \
-             56 "Install Dispmanx library" ON \
-             57 "Install SNESDev" ON \
-             58 "Install Emulation Station" ON \
-             59 "Install Emulation Station Themes" ON \
-             60 "Install ES-config" ON \
-             61 "(C) Generate config file for Emulation Station" ON \
-             62 "(C) Configure sound settings for RetroArch" ON \
-             63 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             64 "Install runcommand script" ON \
-             65 "(C) Configure /boot/config.txt" ON \
-             66 "(C) Disable screen blanking and power down timeout" ON )
+             29 "Install MAME4All-Pi" ON \
+             30 "Install FBA core" ON \
+             31 "Install MAME emulator PiFBA" ON \
+             32 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
+             33 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             34 "(C) Configure DGEN" ON \
+             35 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
+             36 "Install Megadrive/Genesis core (Picodrive)" ON \
+             37 "Install NeoGeo emulator GnGeo 0.7" ON \
+             38 "Install NeoGeo emulator GnGeo-Pi 0.85" ON \
+             39 "(C) Configure NeoGeo" ON \
+             40 "Install NES core" ON \
+             41 "Install N64 emulator Mupen 64 Plus RPi" ON \
+             42 "Install PC Engine core (Mednafen-PCE-Libretro)" ON \
+             43 "Install PC emulator (RPix86)" ON \
+             44 "Install PC emulator (Dosbox)" ON \
+             45 "Install Playstation core" ON \
+             46 "Install PSP emulator PPSSPP" OFF \
+             47 "Install ScummVM" ON \
+             48 "Install Super NES core" ON \
+             49 "Install SNES9X emulator" ON \
+             50 "Install PiSNES emulator" ON \
+             51 "(C) Configure Super NES core" ON \
+             52 "Install Wolfenstein3D engine" ON \
+             53 "Install Z Machine emulator (Frotz)" ON \
+             54 "Install ZX Spectrum emulator (Fuse)" ON \
+             55 "Install ZX Spectrum emulator (FBZX)" ON \
+             56 "Install BCM library" ON \
+             57 "Install Dispmanx library" ON \
+             58 "Install SNESDev" ON \
+             59 "Install Emulation Station" ON \
+             60 "Install Emulation Station Themes" ON \
+             61 "Install ES-config" ON \
+             62 "(C) Generate config file for Emulation Station" ON \
+             63 "(C) Configure sound settings for RetroArch" ON \
+             64 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             65 "Install runcommand script" ON \
+             66 "(C) Configure /boot/config.txt" ON \
+             67 "(C) Disable screen blanking and power down timeout" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
     __INFMSGS=""
     if [ "$choices" != "" ]; then
-        for choice in $choices
-        do
-            case $choice in
-                1) rc_install_rpiupdate ;;
-                2) rc_run_rpiupdate ;;
-                3) rc_update_apt ;;
-                4) rc_upgrade_apt ;;
-                5) rc_fixForXBian ;;
-                6) rc_add_to_groups ;;
-                7) rc_ensure_modules ;;
-                8) rc_exportSDLNOMOUSE ;;
-                9) rc_installAPTPackages ;;
-                10) rps_prepareFolders ;;
-                11) em_install_retroarch ;;
-                12) em_configureRetroArch ;;
-                13) em_install_amiga ;;
-                14) em_install_linapple ;;
-                15) em_install_atari800 ;;
-                16) lr_install_atari2600 ;;
-                17) em_install_stella ;;
-                18) em_install_hatari ;;
-                19) em_install_basiliskII ;;
-                20) em_install_viceC64 ;;
-                21) lr_install_cavestory ;;
-                22) lr_install_doom ;;
-                23) em_install_eduke32 ;;
-                24) em_install_gba ;;
-                25) lr_install_gbc ;;
-                26) em_install_intellivision ;;
-                27) lr_install_mame ;;
-                28) em_install_advmame ;;
-                29) lr_install_fba ;;
-                30) em_install_pifba ;;
-                31) em_install_megadrive ;;
-                32) em_install_dgen ;;
-                33) em_configureDGEN ;;
-                34) lr_install_megadriveLibretro ;;
-                35) lr_install_picodrive ;;
-                36) em_install_neogeo ;;
-                37) em_install_GnGeoPi ;;
-                38) em_configureNeogeo ;;
-                39) lr_install_nes ;;
-                40) em_install_mupen64plus_rpi ;;
-                41) lc_installPCEngine ;;
-                42) em_install_rpix86 ;;
-                43) em_install_dosbox ;;
-                44) lr_install_psx ;;
-                45) em_install_ppsspp ;;
-                46) em_install_scummvm ;;
-                47) lr_install_snes ;;
-                48) em_install_snes9x ;;
-                49) em_install_pisnes ;;
-                50) lr_configure_snes ;;
-                51) em_install_wolfenstein3d ;;
-                52) em_install_zmachine ;;
-                53) em_install_zxspectrum ;;
-                54) em_install_fbzx ;;
-                55) sup_install_bcmlibrary ;;
-                56) sup_install_dispmanx ;;
-                57) sup_install_snesdev ;;
-                58) sup_install_emulationstation ;;
-                59) rps_install_esthemes ;;
-                60) sup_install_esconfig ;;
-                61) sup_generate_esconfig ;;
-                62) em_configureSoundsettings ;;
-                63) rc_setAvoidSafeMode ;;
-                64) sup_install_runcommandscript ;;
-                65) rc_configureBootConfig ;;
-                66) rc_disableTimeouts ;;
-            esac
-        done
+        now=$(date +'%d%m%Y_%H%M')
+        {
+            for choice in $choices
+            do
+                case $choice in
+                    1) rc_install_rpiupdate ;;
+                    2) rc_run_rpiupdate ;;
+                    3) rc_update_apt ;;
+                    4) rc_upgrade_apt ;;
+                    5) rc_fixForXBian ;;
+                    6) rc_add_to_groups ;;
+                    7) rc_ensure_modules ;;
+                    8) rc_exportSDLNOMOUSE ;;
+                    9) rc_installAPTPackages ;;
+                    10) rps_prepareFolders ;;
+                    11) em_install_retroarch ;;
+                    12) em_configureRetroArch ;;
+                    13) em_install_amiga ;;
+                    14) em_install_linapple ;;
+                    15) em_install_atari800 ;;
+                    16) lr_install_atari2600 ;;
+                    17) em_install_stella ;;
+                    18) em_install_hatari ;;
+                    19) em_install_basiliskII ;;
+                    20) em_install_viceC64 ;;
+                    21) lr_install_cavestory ;;
+                    22) lr_install_doom ;;
+                    23) em_install_eduke32 ;;
+                    24) em_install_gba ;;
+                    25) lr_install_gbc ;;
+                    26) em_install_intellivision ;;
+                    27) lr_install_mame ;;
+                    28) em_install_advmame ;;
+                    29) em_install_mame4allpi ;;
+                    30) lr_install_fba ;;
+                    31) em_install_pifba ;;
+                    32) em_install_megadrive ;;
+                    33) em_install_dgen ;;
+                    34) em_configureDGEN ;;
+                    35) lr_install_megadriveLibretro ;;
+                    36) lr_install_picodrive ;;
+                    37) em_install_neogeo ;;
+                    38) em_install_GnGeoPi ;;
+                    39) em_configureNeogeo ;;
+                    40) lr_install_nes ;;
+                    41) em_install_mupen64plus_rpi ;;
+                    42) lc_installPCEngine ;;
+                    43) em_install_rpix86 ;;
+                    44) em_install_dosbox ;;
+                    45) lr_install_psx ;;
+                    46) em_install_ppsspp ;;
+                    47) em_install_scummvm ;;
+                    48) lr_install_snes ;;
+                    49) em_install_snes9x ;;
+                    50) em_install_pisnes ;;
+                    51) lr_configure_snes ;;
+                    52) em_install_wolfenstein3d ;;
+                    53) em_install_zmachine ;;
+                    54) em_install_zxspectrum ;;
+                    55) em_install_fbzx ;;
+                    56) sup_install_bcmlibrary ;;
+                    57) sup_install_dispmanx ;;
+                    58) sup_install_snesdev ;;
+                    59) sup_install_emulationstation ;;
+                    60) rps_install_esthemes ;;
+                    61) sup_install_esconfig ;;
+                    62) sup_generate_esconfig ;;
+                    63) em_configureSoundsettings ;;
+                    64) rc_setAvoidSafeMode ;;
+                    65) sup_install_runcommandscript ;;
+                    66) rc_configureBootConfig ;;
+                    67) rc_disableTimeouts ;;
+                esac
+            done
 
-        chgrp -R $user $rootdir
-        chown -R $user $rootdir
+            chgrp -R $user $rootdir
+            chown -R $user $rootdir
 
-        rps_createDebugLog
+            rps_createDebugLog
 
-        if [[ ! -z $__ERRMSGS ]]; then
-            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__ERRMSGS See debug.log for more details." 20 60    
-        fi
+            if [[ ! -z $__ERRMSGS ]]; then
+                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__ERRMSGS See debug.log for more details." 20 60    
+            fi
 
-        if [[ ! -z $__INFMSGS ]]; then
-            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
-        fi
+            if [[ ! -z $__INFMSGS ]]; then
+                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
+            fi
 
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
+
+        } 2>&1 | tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz)
+        chown -R $user $scriptdir/logs/run_$now.log.gz
+        chgrp -R $user $scriptdir/logs/run_$now.log.gz
     fi
 }
 
@@ -546,52 +555,57 @@ function rps_availFreeDiskSpace()
 
 function rps_main_setup()
 {
-    while true; do
-        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
-        options=(1 "Re-generate config file for Emulation Station" 
-                 2 "Install latest Rasperry Pi firmware" 
-                 3 "Install AdvanceMenu"
-                 4 "Start Emulation Station on boot?" 
-                 5 "Start SNESDev on boot?"
-                 6 "Enable/disable RetroPie splashscreen"
-                 7 "Change RetroPie splashscreen"
-                 8 "Configure audio settings"
-                 9 "Change ARM frequency" 
-                 10 "Change SDRAM frequency"
-                 11 "Install/update multi-console gamepad drivers for GPIO" 
-                 12 "Enable gamecon_gpio_rpi with SNES-pad config"
-                 13 "Run 'ES-scraper'" 
-                 14 "Install and configure SAMBA shares"
-                 15 "Install USB-ROM-Copy service"
-                 16 "Install driver and tools for PS3 controllers"
-                 17 "Configure RetroArch Netplay"
-                 18 "Generate debug log" )
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
-        if [ "$choices" != "" ]; then
-            case $choices in
-                 1) sup_generate_esconfig ;;
-                 2) rc_run_rpiupdate ;;
-                 3) sup_install_advancemenu ;;
-                 4) set_changeBootbehaviour ;;
-                 5) sup_enableDisableSNESDevStart ;;
-                 6) set_enableDisableSplashscreen ;;
-                 7) rps_splashscreen ;;
-                 8) set_changeAudioOutput ;;
-                 9) set_setArmFreq ;;
-                 10) set_setSDRAMFreq ;;
-                 11) set_installGPIOpadModules ;;
-                 12) set_enableGameconSnes ;;
-                 13) rps_scraperMenu ;;
-                 14) set_configureSAMBA ;;
-                 15) set_install_USBROMService ;;
-                 16) set_installps3controller ;;
-                 17) rps_retronetplaysetup ;;
-                 18) rps_createDebugLog ;;
-            esac
-        else
-            break
-        fi
-    done    
+    now=$(date +'%d%m%Y_%H%M%S')
+    {
+        while true; do
+            cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
+            options=(1 "Re-generate config file for Emulation Station" 
+                     2 "Install latest Rasperry Pi firmware" 
+                     3 "Install AdvanceMenu"
+                     4 "Start Emulation Station on boot?" 
+                     5 "Start SNESDev on boot?"
+                     6 "Enable/disable RetroPie splashscreen"
+                     7 "Change RetroPie splashscreen"
+                     8 "Configure audio settings"
+                     9 "Change ARM frequency" 
+                     10 "Change SDRAM frequency"
+                     11 "Install/update multi-console gamepad drivers for GPIO" 
+                     12 "Enable gamecon_gpio_rpi with SNES-pad config"
+                     13 "Run 'ES-scraper'" 
+                     14 "Install and configure SAMBA shares"
+                     15 "Install USB-ROM-Copy service"
+                     16 "Install driver and tools for PS3 controllers"
+                     17 "Configure RetroArch Netplay"
+                     18 "Generate debug log" )
+            choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
+            if [ "$choices" != "" ]; then
+                case $choices in
+                     1) sup_generate_esconfig ;;
+                     2) rc_run_rpiupdate ;;
+                     3) sup_install_advancemenu ;;
+                     4) set_changeBootbehaviour ;;
+                     5) sup_enableDisableSNESDevStart ;;
+                     6) set_enableDisableSplashscreen ;;
+                     7) rps_splashscreen ;;
+                     8) set_changeAudioOutput ;;
+                     9) set_setArmFreq ;;
+                     10) set_setSDRAMFreq ;;
+                     11) set_installGPIOpadModules ;;
+                     12) set_enableGameconSnes ;;
+                     13) rps_scraperMenu ;;
+                     14) set_configureSAMBA ;;
+                     15) set_install_USBROMService ;;
+                     16) set_installps3controller ;;
+                     17) rps_retronetplaysetup ;;
+                     18) rps_createDebugLog ;;
+                esac
+            else
+                break
+            fi
+        done    
+    } 2>&1 | tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz)
+    chown -R $user $scriptdir/logs/run_$now.log.gz
+    chgrp -R $user $scriptdir/logs/run_$now.log.gz
 }
 
 function rps_splashscreen()
