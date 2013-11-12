@@ -270,6 +270,7 @@ function rps_main_binaries()
     sup_install_esscript
     sup_generate_esconfig
     rc_fixForXBian
+    rc_disableTimeouts
     
     # install RetroArch
     install -m755 $rootdir/emulators/RetroArch/retroarch /usr/local/bin
