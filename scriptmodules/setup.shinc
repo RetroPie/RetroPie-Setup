@@ -329,8 +329,9 @@ function set_installGPIOpadModules()
         return 0;;
     esac
 
-    #install dkms
-    apt-get install -y dkms
+    #install dkms and gcc-4.7
+    apt-get update
+    apt-get install -y dkms gcc-4.7
 
     #reconfigure / install headers (takes a a while)
     if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then
