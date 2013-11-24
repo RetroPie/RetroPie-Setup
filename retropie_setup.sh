@@ -44,7 +44,7 @@ __default_asflags=""
 # HELPER FUNCTIONS ###
 
 #set -o nounset
-function getScriptAbsoluteDir {
+function getScriptAbsoluteDir() {
     # @description used to get the script path
     # @param $1 the script $0 parameter
     local script_invoke_path="$1"
@@ -58,11 +58,6 @@ function getScriptAbsoluteDir {
         RESULT=`dirname "$cwd/$script_invoke_path"`
     fi
 }
-
-script_invoke_path="$0"
-script_name=`basename "$0"`
-getScriptAbsoluteDir "$script_invoke_path"
-script_absolute_dir=$RESULT
 
 function import() { 
     # @description importer routine to get external functionality.
@@ -131,6 +126,11 @@ function loadConfig()
         exit 1
     fi
 }
+
+script_invoke_path="$0"
+script_name=`basename "$0"`
+getScriptAbsoluteDir "$script_invoke_path"
+script_absolute_dir=$RESULT
 
 # load script modules
 import "scriptmodules/helpers"

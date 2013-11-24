@@ -345,6 +345,27 @@ function em_install_mame4allpi()
 
     gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/
     make
+    if [[ ! -f "$rootdir/emulators/mame4all-pi/mame" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully mame4all-pi emulator."
+    fi    
+    mkdir "$rootdir/emulators/mame4all-pi/cfg"
+    mkdir "$rootdir/emulators/mame4all-pi/hi"
+    mkdir "$rootdir/emulators/mame4all-pi/sta"
+    ensureKeyValueShort "samplerate" "22050" "$rootdir/emulators/mame4all-pi/mame.cfg"
+    ensureKeyValueShort "rompath" "$rootdir/roms/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"
+    cat > "$rootdir/emulators/mame4all-pi/rungame.sh" << _EOF_
+#!/bin/bash
+rom=\$1
+
+pushd \$rootdir/emulators/mame4all-pi
+for i in `echo \${rom} | tr '/' '\n'` ; do
+    str=\${i}
+done
+IFS="." ; name=(\$str)
+./mame \${name[0]}
+
+popd
+_EOF_    
     popd
 }
 

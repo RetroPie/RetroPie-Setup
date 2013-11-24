@@ -173,8 +173,8 @@ function sup_install_snesdev()
 {
     printMsg "Installing SNESDev as GPIO interface for SNES controllers"
     gitPullOrClone "$rootdir/supplementary/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
-    make clean
-    make
+    ./build.sh
+    cp supplementary/snesdev.cfg /etc/
     if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."  
     else
@@ -205,7 +205,26 @@ function sup_enableSNESDevAtStart()
         cp "$rootdir/supplementary/SNESDev-Rpi/SNESDev" /usr/local/bin/
     fi    
 
-    ensureKeyValueShort "DAEMON_ARGS" "\"$1\"" "/etc/init.d/SNESDev"
+    case $1 in
+      1)
+        ensureKeyValueBootconfig "button_enabled" "0" "/etc/snesdev.cfg"
+        ensureKeyValueBootconfig "gamepad1_enabled" "1" "/etc/snesdev.cfg"
+        ensureKeyValueBootconfig "gamepad2_enabled" "1" "/etc/snesdev.cfg"
+        ;;
+      2)
+        ensureKeyValueBootconfig "button_enabled" "1" "/etc/snesdev.cfg"
+        ensureKeyValueBootconfig "gamepad1_enabled" "0" "/etc/snesdev.cfg"
+        ensureKeyValueBootconfig "gamepad2_enabled" "0" "/etc/snesdev.cfg"
+        ;;
+      3)
+        ensureKeyValueBootconfig "button_enabled" "1" "/etc/snesdev.cfg"
+        ensureKeyValueBootconfig "gamepad1_enabled" "1" "/etc/snesdev.cfg"
+        ensureKeyValueBootconfig "gamepad2_enabled" "1" "/etc/snesdev.cfg"
+        ;;
+      *)
+        echo "[sup_enableSNESDevAtStart] I do not understand what is going on here."
+        ;;
+    esac
 
     # This command installs the init.d script so it automatically starts on boot
     update-rc.d SNESDev defaults
@@ -550,6 +569,7 @@ PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
 COMMAND=$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% 
 # alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" 
+# alternatively: COMMAND=$rootdir/emulators/mame4all-pi/rungame.sh %ROM%
 PLATFORMID=23
 
 DESCNAME=FinalBurn Alpha
