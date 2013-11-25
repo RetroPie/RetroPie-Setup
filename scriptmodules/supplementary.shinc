@@ -168,13 +168,18 @@ function sup_install_bcmlibrary()
     rm bcm2835-1.14.tar.gz 
 }
 
+function sup_configure_snesdev()
+{
+    cp supplementary/snesdev.cfg /etc/
+}
+
 # install SNESDev as GPIO interface for SNES controllers
 function sup_install_snesdev()
 {
     printMsg "Installing SNESDev as GPIO interface for SNES controllers"
     gitPullOrClone "$rootdir/supplementary/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
     ./build.sh
-    cp supplementary/snesdev.cfg /etc/
+    sup_configure_snesdev
     if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."  
     else

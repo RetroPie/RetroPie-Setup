@@ -269,6 +269,7 @@ function rps_main_binaries()
     rps_downloadBinaries
     sup_install_esscript
     sup_generate_esconfig
+    sup_configure_snesdev
     rc_fixForXBian
     rc_disableTimeouts
     
