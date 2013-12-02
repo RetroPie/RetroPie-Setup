@@ -610,3 +610,57 @@ function set_installps3controller()
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The driver and configuration tools for connecting PS3 controllers have been installed. Please visit https://github.com/petrockblog/RetroPie-Setup/wiki/Setting-up-a-PS3-controller for further information." 22 76    
 }
 
+function set_install_xboxdrv() 
+{
+    clear
+    printMsg "Installing xboxdrv"
+    apt-get install -y xboxdrv
+    if [[ -z `cat /etc/rc.local | grep "xboxdrv"` ]]; then
+        sed -i -e '13,$ s|exit 0|xboxdrv --daemon --id 0 --led 2 --deadzone 4000 --silent --trigger-as-button --next-controller --id 1 --led 3 --deadzone 4000 --silent --trigger-as-button --dbus disabled \&\nexit 0|g' /etc/rc.local
+    fi
+    ensureKeyValueBootconfig "dwc_otg.speed" "1" "/boot/config.txt"
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Installed xboxdrv and adapted /etc/rc.local. It will be started on boot." 22 76    
+}
+
+function set_RetroarchJoyconfig()
+{    
+    local configfname
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Connect ONLY the controller to be registered for RetroArch to the Raspberry Pi." 22 76    
+    clear 
+    $rootdir/emulators/RetroArch/installdir/bin/retroarch-joyconfig --autoconfig "$rootdir/emulators/RetroArch/configs/tempconfig.cfg" --timeout 4 --joypad 0
+    configfname=`grep "input_device = \"" $rootdir/emulators/RetroArch/configs/tempconfig.cfg`
+    configfname=`echo ${configfname:16:-1} | tr -d ' '`
+    mv $rootdir/emulators/RetroArch/configs/tempconfig.cfg $rootdir/emulators/RetroArch/configs/$configfname.cfg
+    chown $user:$user $rootdir/emulators/RetroArch/configs/
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The configuration file has been saved as $configfname.cfg and will be used by RetroArch from now on whenever that controller is connected." 22 76    
+}
+
+function set_ES_updateinput()
+{
+    local configfiles
+
+    clear
+    echo -e "<?xml version=\"1.0\"?>\n<inputList>\n    <inputConfig type=\"keyboard\" />" > temp.cfg
+    configfiles=/home/pi/RetroPie/emulators/RetroArch/configs/*.cfg
+    for f in $configfiles
+    do
+      echo "Processing $f file..."
+        tmp=$(cat $f | grep "input_device") && echo "    <inputConfig type=\"joystick\" deviceName=${tmp:16-1}>" >> temp.cfg
+        tmp=$(cat $f | grep "input_a_btn") && echo "        <input name=\"a\" type=\"button\" id=${tmp:15-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_b_btn") && echo "        <input name=\"b\" type=\"button\" id=${tmp:15-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_down_axis") && echo "        <input name=\"down\" type=\"axis\" id=\"1\" value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_left_axis") && echo "        <input name=\"left\" type=\"axis\" id=\"0\" value=\"-1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_start_btn") && echo "        <input name=\"menu\" type=\"button\" id=${tmp:19-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_l_btn") && echo "        <input name=\"pagedown\" type=\"button\" id=${tmp:15-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_r_btn") && echo "        <input name=\"pageup\" type=\"button\" id=${tmp:15-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_right_axis") && echo "        <input name=\"right\" type=\"axis\" id=\"0\" value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_select_btn") && echo "        <input name=\"select\" type=\"button\" id=${tmp:20-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_up_axis") && echo "        <input name=\"up\" type=\"axis\" id=\"1\" value=\"-1\" />" >> temp.cfg
+        echo "    </inputConfig>" >> temp.cfg
+    done
+    echo "</inputList>" >> temp.cfg
+    mv temp.cfg $home/.emulationstation/es_input.cfg
+    chown $user:$user $home/.emulationstation/es_input.cfg
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The input configuration for Emulation Station has been updated." 22 76    
+
+}

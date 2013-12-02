@@ -339,15 +339,8 @@ function em_install_hatari()
     apt-get install -y hatari
 }
 
-function em_install_mame4allpi()
+function em_configure_mame4allpi()
 {
-    printMsg "Installing Mame4All-Pi"
-
-    gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/
-    make
-    if [[ ! -f "$rootdir/emulators/mame4all-pi/mame" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully mame4all-pi emulator."
-    fi    
     mkdir "$rootdir/emulators/mame4all-pi/cfg"
     mkdir "$rootdir/emulators/mame4all-pi/hi"
     mkdir "$rootdir/emulators/mame4all-pi/sta"
@@ -365,7 +358,22 @@ IFS="." ; name=(\$str)
 ./mame \${name[0]}
 
 popd
-_EOF_    
+_EOF_   
+chmod +x "$rootdir/emulators/mame4all-pi/rungame.sh"
+}
+
+function em_install_mame4allpi()
+{
+    printMsg "Installing Mame4All-Pi"
+
+    gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/
+    make
+    if [[ ! -f "$rootdir/emulators/mame4all-pi/mame" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully mame4all-pi emulator."
+    fi    
+
+    em_configure_mame4allpi
+
     popd
 }
 
@@ -636,7 +644,14 @@ function em_configureRetroArch()
 {
     printMsg "Configuring RetroArch"
 
-    if [[ ! -f "$rootdir/configs/all/retroarch.cfg" ]]; then
+    cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
+
+    if [[ ! -d "$rootdir/emulators/RetroArch/configs/" ]]; then
+        mkdir -p "$rootdir/emulators/RetroArch/configs/"
+    fi
+    cp $scriptdir/supplementary/RetroArchConfigs/*.cfg "$rootdir/emulators/RetroArch/configs/"
+
+   if [[ ! -f "$rootdir/configs/all/retroarch.cfg" ]]; then
         mkdir -p "$rootdir/configs/all/"
         mkdir -p "$rootdir/configs/atari2600/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/atari2600/retroarch.cfg
@@ -695,6 +710,11 @@ function em_configureRetroArch()
     ensureKeyValue "input_player1_right" "right" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_player1_up" "up" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_player1_down" "down" "$rootdir/configs/all/retroarch.cfg"
+
+    # input settings
+    ensureKeyValue "input_autodetect_enable" "true" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "joypad_autoconfig_dir" "$rootdir/emulators/RetroArch/configs/" "$rootdir/configs/all/retroarch.cfg"
+
 }
 
 # install RetroArch emulator
@@ -705,10 +725,10 @@ function em_install_retroarch()
     ./configure --prefix="$rootdir/emulators/RetroArch/installdir"
     make
     make install
-    cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/"
     if [[ ! -f "$rootdir/emulators/RetroArch/installdir/bin/retroarch" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
     fi  
+    em_configureRetroArch
     popd
 }
 

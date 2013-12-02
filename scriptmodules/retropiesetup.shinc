@@ -274,9 +274,9 @@ function rps_main_binaries()
     rc_disableTimeouts
     
     # install RetroArch
-    install -m755 $rootdir/emulators/RetroArch/retroarch /usr/local/bin
-    install -m644 $rootdir/emulators/RetroArch/retroarch.cfg /etc/retroarch.cfg
-    install -m755 $rootdir/emulators/RetroArch/retroarch-zip /usr/local/bin
+    # install -m755 $rootdir/emulators/RetroArch/retroarch /usr/local/bin
+    # install -m644 $rootdir/emulators/RetroArch/retroarch.cfg /etc/retroarch.cfg
+    # install -m755 $rootdir/emulators/RetroArch/retroarch-zip /usr/local/bin
     em_configureRetroArch
     lr_configure_snes
     rps_install_esthemes
@@ -288,6 +288,7 @@ function rps_main_binaries()
     em_install_c64roms    
     em_install_hatari
     em_install_dosbox
+    em_configure_mame4allpi
 
     # install DGEN
     test -z "/usr/local/bin" || /bin/mkdir -p "/usr/local/bin"
@@ -524,17 +525,18 @@ function rps_main_options()
 
             rps_createDebugLog
 
-            if [[ ! -z $__ERRMSGS ]]; then
-                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__ERRMSGS See debug.log for more details." 20 60    
-            fi
-
-            if [[ ! -z $__INFMSGS ]]; then
-                dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
-            fi
-
-            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
-
         } 2>&1 | tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz)
+
+        if [[ ! -z $__ERRMSGS ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__ERRMSGS See debug.log for more details." 20 60    
+        fi
+
+        if [[ ! -z $__INFMSGS ]]; then
+            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60    
+        fi
+
+        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
+
         chown -R $user $scriptdir/logs/run_$now.log.gz
         chgrp -R $user $scriptdir/logs/run_$now.log.gz
     fi
@@ -576,9 +578,12 @@ function rps_main_setup()
                      13 "Run 'ES-scraper'" 
                      14 "Install and configure SAMBA shares"
                      15 "Install USB-ROM-Copy service"
-                     16 "Install driver and tools for PS3 controllers"
-                     17 "Configure RetroArch Netplay"
-                     18 "Generate debug log" )
+                     16 "Install drivers for XBox 360 Wired Controllers"
+                     17 "Install driver and tools for PS3 controllers"
+                     18 "Configure RetroArch Netplay"
+                     19 "Register controller for RetroArch emulator"
+                     20 "Update input configuration of Emulation Station"
+                     21 "Generate debug log" )
             choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
             if [ "$choices" != "" ]; then
                 case $choices in
@@ -597,9 +602,12 @@ function rps_main_setup()
                      13) rps_scraperMenu ;;
                      14) set_configureSAMBA ;;
                      15) set_install_USBROMService ;;
-                     16) set_installps3controller ;;
-                     17) rps_retronetplaysetup ;;
-                     18) rps_createDebugLog ;;
+                     16) set_install_xboxdrv ;;
+                     17) set_installps3controller ;;
+                     18) rps_retronetplaysetup ;;
+                     19) set_RetroarchJoyconfig ;;
+                     20) set_ES_updateinput ;;
+                     21) rps_createDebugLog ;;
                 esac
             else
                 break
