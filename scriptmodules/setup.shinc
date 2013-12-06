@@ -640,7 +640,22 @@ function set_ES_updateinput()
     local configfiles
 
     clear
-    echo -e "<?xml version=\"1.0\"?>\n<inputList>\n    <inputConfig type=\"keyboard\" />" > temp.cfg
+    cat > temp.cfg << _EOF_
+<?xml version="1.0"?>
+<inputList>
+        <inputConfig type="keyboard">
+                <input name="a" type="key" id="13" value="1" />
+                <input name="b" type="key" id="8" value="1" />
+                <input name="down" type="key" id="274" value="1" />
+                <input name="left" type="key" id="276" value="1" />
+                <input name="menu" type="key" id="32" value="1" />
+                <input name="pagedown" type="key" id="281" value="1" />
+                <input name="pageup" type="key" id="280" value="1" />
+                <input name="right" type="key" id="275" value="1" />
+                <input name="select" type="key" id="278" value="1" />
+                <input name="up" type="key" id="273" value="1" />
+        </inputConfig>
+_EOF_
     configfiles=/home/pi/RetroPie/emulators/RetroArch/configs/*.cfg
     for f in $configfiles
     do
