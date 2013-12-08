@@ -265,6 +265,7 @@ function rps_main_binaries()
     rc_ensure_modules
     rc_add_to_groups
     rc_exportSDLNOMOUSE
+    rc_configureBootConfig
     rps_prepareFolders
     rps_downloadBinaries
     sup_install_esscript
