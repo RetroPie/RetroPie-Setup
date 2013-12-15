@@ -356,10 +356,11 @@ for i in `echo \${rom} | tr '/' '\n'` ; do
 done
 IFS="." ; name=(\$str)
 ./mame \${name[0]}
-
 popd
-_EOF_   
-chmod +x "$rootdir/emulators/mame4all-pi/rungame.sh"
+
+_EOF_
+
+    chmod +x "$rootdir/emulators/mame4all-pi/rungame.sh"
 }
 
 function em_install_mame4allpi()
@@ -689,7 +690,7 @@ function em_configureRetroArch()
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
 
     # enable hotkey ("select" button)
-    ensureKeyValue "input_enable_hotkey" "alt" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_enable_hotkey" "escape" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
 
     # enable and configure rewind feature
