@@ -135,8 +135,7 @@ function rc_installAPTPackages()
                         libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
                         cmake g++-4.7 unrar-free p7zip p7zip-full libeigen3-dev bluez-utils \
                         bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev \
-                        mplayer
-                        # libgles2-mesa-dev
+                        mplayer libgles2-mesa-dev
 
     # remove PulseAudio since this is slowing down the whole system significantly
     apt-get remove -y pulseaudio
@@ -162,8 +161,8 @@ function rc_removeAPTPackages()
                             libboost-serialization-dev libboost-thread-dev libsdl-ttf2.0-dev \
                             cmake g++-4.7 unrar-free p7zip p7zip-full libeigen3-dev bluez-utils \
                             bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev \
-                            mplayer
-                            # libgles2-mesa-dev
+                            mplayer libgles2-mesa-dev
+                            
         apt-get -y autoremove   
         rm -rf $rootdir
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Successfully removed APT packages and the RetroPie folder." 22 76
