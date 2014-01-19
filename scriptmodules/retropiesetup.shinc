@@ -384,51 +384,51 @@ function rps_main_options()
              8 "(C) Export SDL_NOMOUSE=1" ON \
              9 "Install all needed APT packages" ON \
              10 "(C) Generate folder structure" ON \
-             11 "Install RetroArch" ON \
+             11 "Install RetroArch (7 min)" ON \
              12 "(C) Configure video, rewind, and keyboard for RetroArch" ON \
-             13 "Install Amiga emulator" ON \
-             14 "Install Apple ][ emulator (Linapple)" ON \
-             15 "Install Atari 800 emulator" ON \
-             16 "Install Atari 2600 RetroArch core" ON \
-             17 "Install Atari 2600 emulator Stella" ON \
-             18 "Install Atari ST/STE/TT/Falcon emulator Hatari" ON \
-             19 "Install BasiliskII" ON \
+             13 "Install Amiga emulator UAE4RPi (15 min)" ON \
+             14 "Install Apple ][ emulator (Linapple, 7 min)" ON \
+             15 "Install Atari 800 emulator (6 min)" ON \
+             16 "Install Atari 2600 RetroArch core (15 min)" ON \
+             17 "Install Atari 2600 emulator Stella (1 min)" ON \
+             18 "Install Atari ST/STE/TT/Falcon emulator Hatari (1 min)" ON \
+             19 "Install Apple Macintosh (BasiliskII, 23 min)" ON \
              20 "Install C64 emulator (Vice)" ON \
-             21 "Install NXEngine / Cave Story" ON \
+             21 "Install NXEngine / Cave Story (16 min)" ON \
              22 "Install Doom core" ON \
              23 "Install eDuke32 with shareware files" ON \
-             24 "Install Game Boy Advance emulator (gpSP)" ON \
-             25 "Install Game Boy Color core" ON \
-             26 "Install IntelliVision emulator (jzintv)" ON \
+             24 "Install Game Boy Advance emulator (gpSP, 41 min)" ON \
+             25 "Install Game Boy Color core (7 min)" ON \
+             26 "Install IntelliVision emulator (jzintv, 10 min)" ON \
              27 "Install MAME (iMAME4All) core" ON \
              28 "Install AdvMAME emulator" ON \
-             29 "Install MAME4All-Pi" ON \
-             30 "Install FBA core" ON \
-             31 "Install MAME emulator PiFBA" ON \
-             32 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse)" ON \
-             33 "Install DGEN (Megadrive/Genesis emulator)" ON \
+             29 "Install MAME4All-Pi (84 min)" ON \
+             30 "Install FBA core (130 min)" ON \
+             31 "Install MAME emulator PiFBA (43 min)" ON \
+             32 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse, 7 min)" ON \
+             33 "Install DGEN (Megadrive/Genesis emulator, 32 min)" ON \
              34 "(C) Configure DGEN" ON \
-             35 "Install Megadrive/Genesis core (Genesis-Plus-GX)" ON \
-             36 "Install Megadrive/Genesis core (Picodrive)" ON \
+             35 "Install Megadrive/Genesis core (Genesis-Plus-GX, 16 min)" ON \
+             36 "Install Megadrive/Genesis core (Picodrive, 7 min)" ON \
              37 "Install NeoGeo emulator GnGeo 0.7" ON \
-             38 "Install NeoGeo emulator GnGeo-Pi 0.85" ON \
+             38 "Install NeoGeo emulator GnGeo-Pi 0.85 (21 min)" ON \
              39 "(C) Configure NeoGeo" ON \
-             40 "Install NES core" ON \
-             41 "Install N64 emulator Mupen 64 Plus RPi" ON \
-             42 "Install PC Engine core (Mednafen-PCE-Libretro)" ON \
+             40 "Install NES core (8 min)" ON \
+             41 "Install N64 emulator Mupen 64 Plus RPi (56 min)" ON \
+             42 "Install PC Engine core (Mednafen-PCE-Libretro, 21 min)" ON \
              43 "Install PC emulator (RPix86)" ON \
-             44 "Install PC emulator (Dosbox)" ON \
-             45 "Install Playstation core" ON \
+             44 "Install PC emulator (Dosbox, 1 min)" ON \
+             45 "Install Playstation core (20 min)" ON \
              46 "Install PSP emulator PPSSPP" OFF \
-             47 "Install ScummVM" ON \
-             48 "Install Super NES core" ON \
-             49 "Install SNES9X emulator" ON \
-             50 "Install PiSNES emulator" ON \
+             47 "Install ScummVM (1 min)" ON \
+             48 "Install Super NES core (11 min)" ON \
+             49 "Install SNES9X emulator (15 min)" ON \
+             50 "Install PiSNES emulator (8 min)" ON \
              51 "(C) Configure Super NES core" ON \
-             52 "Install Wolfenstein3D engine" ON \
+             52 "Install Wolfenstein3D engine (3 min)" ON \
              53 "Install Z Machine emulator (Frotz)" ON \
-             54 "Install ZX Spectrum emulator (Fuse)" ON \
-             55 "Install ZX Spectrum emulator (FBZX)" ON \
+             54 "Install ZX Spectrum emulator (Fuse, 1 min)" ON \
+             55 "Install ZX Spectrum emulator (FBZX, 3 min)" ON \
              56 "Install BCM library" ON \
              57 "Install Dispmanx library" ON \
              58 "Install SNESDev" ON \

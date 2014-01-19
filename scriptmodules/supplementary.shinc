@@ -424,7 +424,25 @@ function sup_install_esconfig()
 function sup_install_emulationstation()
 {
     printMsg "Installing EmulationStation as graphical front end"
+
+    # make sure that SDL 2 is installed
+    if [[ ! -f "/usr/local/lib/libSDL2.so" ]]; then
+        wget http://libsdl.org/release/SDL2-2.0.1.tar.gz
+        tar xvfz SDL2-2.0.1.tar.gz -C "$rootdir/supplementary/"
+        pushd "$rootdir/supplementary/SDL2-2.0.1"
+        ./configure
+        make
+        make install
+        popd
+        rm SDL2-2.0.1.tar.gz
+    fi
+
     gitPullOrClone "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
+
+    # # check out unstable branch
+    # git pull
+    # git checkout unstable
+
     #ES requires C++11 support to build, which means g++ 4.7 or later, which isn't what g++ resolves to right now
     rm -rf CMakeFiles
     rm CMakeCache.txt
