@@ -95,9 +95,8 @@ function rps_install_xboxdrv()
 # downloads and installs pre-compiles binaries of all essential programs and libraries
 function rps_downloadBinaries()
 {
-    wget -O - 'http://blog.petrockblock.com/?wpdmdl=3' | tar -jxv -C $rootdir
-	mv $rootdir/RetroPie/* $rootdir
-
+    wget --progress=bar:force -O - 'http://blog.petrockblock.com/?wpdmdl=3' | tar jx --overwrite -C $rootdir RetroPie
+	
     # handle Doom emulator specifics
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
     chgrp $user $rootdir/roms/doom/prboom.wad
@@ -108,7 +107,7 @@ function rps_downloadBinaries()
 function rps_install_esthemes()
 {
     printMsg "Installing themes for Emulation Station"
-    wget -O - 'http://blog.petrockblock.com/?wpdmdl=2' | tar -jxv -C $home/
+    wget --progress=bar:force -O - 'http://blog.petrockblock.com/?wpdmdl=2' | tar jx --overwrite -C $home/
 
     chgrp -R $user $home/.emulationstation
     chown -R $user $home/.emulationstation
