@@ -379,7 +379,7 @@ function rps_main_options()
              12 "(C) Configure video, rewind, and keyboard for RetroArch" ON \
              13 "Install Amiga emulator UAE4RPi (15 min)" ON \
              14 "Install Apple ][ emulator (Linapple, 7 min)" ON \
-             15 "Install Armstrad CPC emulator CPC4Rpi" ON \
+             15 "Install Amstrad CPC emulator CPC4Rpi" ON \
              16 "Install Atari 800 emulator (6 min)" ON \
              17 "Install Atari 2600 RetroArch core (15 min)" ON \
              18 "Install Atari 2600 emulator Stella (1 min)" ON \

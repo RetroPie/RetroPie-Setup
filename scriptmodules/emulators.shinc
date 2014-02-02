@@ -133,7 +133,7 @@ function em_install_cpc4rpi()
     sed -i 's|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o /root/Raspbian/Libs/libSDL.a /root/Raspbian/Libs/libnofun.a $(LIBS)|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o   $(LIBS)|g' makefile
     make RELEASE=TRUE
     if [[ ! -f "$rootdir/emulators/cpc4rpi-1.1/cpc4rpi" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Armstrad CPC emulator CPC4Rpi."
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Amstrad CPC emulator CPC4Rpi."
     fi  
     popd 
     rm cpc4rpi-1.1_src.tar.gz
