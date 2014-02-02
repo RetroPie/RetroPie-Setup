@@ -120,6 +120,25 @@ function em_install_atari800()
     rm atari800-3.0.0.tar.gz
 }
 
+function em_install_cpc4rpi()
+{
+    printMsg "Installing CPC4RPi"
+    wget http://gaming.capsule-sa.co.za/downloads/cpc4rpi-1.1_src.tar.gz
+    if [[ -d "$rootdir/emulators/cpc4rpi-1.1" ]]; then 
+        rm -rf "$rootdir/emulators/cpc4rpi-1.1"
+    fi
+    tar xvfz cpc4rpi-1.1_src.tar.gz -C "$rootdir/emulators/"
+    pushd "$rootdir/emulators/cpc4rpi-1.1"
+    sed -i 's|LIBS = -L/usr/lib/arm-linux-gnueabihf -lz -lts -L/opt/vc/lib -lGLESv2 -lEGL|LIBS = -L/usr/lib/arm-linux-gnueabihf -lX11 -lz -lts -L/opt/vc/lib -lSDL -lpthread -ldl -lGLESv2 -lEGL|g' makefile
+    sed -i 's|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o /root/Raspbian/Libs/libSDL.a /root/Raspbian/Libs/libnofun.a $(LIBS)|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o   $(LIBS)|g' makefile
+    make RELEASE=TRUE
+    if [[ ! -f "$rootdir/emulators/cpc4rpi-1.1/cpc4rpi" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Armstrad CPC emulator CPC4Rpi."
+    fi  
+    popd 
+    rm cpc4rpi-1.1_src.tar.gz
+}
+
 function em_install_dosbox()
 {
     printMsg "Installing Dosbox"
@@ -344,23 +363,9 @@ function em_configure_mame4allpi()
     mkdir "$rootdir/emulators/mame4all-pi/cfg"
     mkdir "$rootdir/emulators/mame4all-pi/hi"
     mkdir "$rootdir/emulators/mame4all-pi/sta"
+    mkdir "$rootdir/emulators/mame4all-pi/roms"
     ensureKeyValueShort "samplerate" "22050" "$rootdir/emulators/mame4all-pi/mame.cfg"
     ensureKeyValueShort "rompath" "$rootdir/roms/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"
-    cat > "$rootdir/emulators/mame4all-pi/rungame.sh" << _EOF_
-#!/bin/bash
-rom=\$1
-
-pushd \$rootdir/emulators/mame4all-pi
-for i in `echo \${rom} | tr '/' '\n'` ; do
-    str=\${i}
-done
-IFS="." ; name=(\$str)
-./mame \${name[0]}
-popd
-
-_EOF_
-
-    chmod +x "$rootdir/emulators/mame4all-pi/rungame.sh"
 }
 
 function em_install_mame4allpi()
@@ -534,6 +539,12 @@ function em_install_snes9x()
     popd
 }
 
+function em_configure_pifba()
+{
+    printMsg "Configuring PiFBA emulator"
+
+}
+
 function em_install_pifba()
 {
     printMsg "Installing PiFBA emulator"    
@@ -698,6 +709,52 @@ function em_configureRetroArch()
     ensureKeyValue "rewind_buffer_size" "10" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "rewind_granularity" "2" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_rewind" "r" "$rootdir/configs/all/retroarch.cfg"
+
+    # enable and configure shaders
+    if [[ ! -d "$rootdir/emulators/RetroArch/shader" ]]; then
+        mkdir -p "$rootdir/emulators/RetroArch/shader"
+    fi
+    cp -r "$scriptdir/supplementary/RetroArchShader/*" "$rootdir/emulators/RetroArch/shader/*"
+    for f in `ls "$rootdir/emulators/RetroArch/shader/*.glslp"`; 
+    do 
+        sed -i "s|/home/pi/RetroPie|$rootdir|g" $f
+    done
+
+    ensureKeyValue "input_shader_next" "m" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_shader_prev" "n" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "video_shader_dir" "$rootdir/emulators/RetroArch/shader/" "$rootdir/configs/all/retroarch.cfg"
+
+    # system-specific shaders, SNES
+    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/snes_phosphor.glslp\"" "$rootdir/configs/snes/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/snes/retroarch.cfg"
+    ensureKeyValue "video_smooth" "true" "$rootdir/configs/snes/retroarch.cfg"
+    ensureKeyValue "video_threaded" "true" "$rootdir/configs/snes/retroarch.cfg"
+
+    # system-specific shaders, NES
+    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq2x_phosphor.glslp\"" "$rootdir/configs/nes/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/nes/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$rootdir/configs/nes/retroarch.cfg"
+    ensureKeyValue "video_threaded" "true" "$rootdir/configs/nes/retroarch.cfg"
+
+    # system-specific shaders, Megadrive
+    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq2x_phosphor.glslp\"" "$rootdir/configs/megadrive/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/megadrive/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$rootdir/configs/megadrive/retroarch.cfg"
+    ensureKeyValue "video_threaded" "true" "$rootdir/configs/megadrive/retroarch.cfg"
+
+    # system-specific shaders, Mastersystem
+    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_threaded" "true" "$rootdir/configs/mastersystem/retroarch.cfg"
+
+    # system-specific shaders, Gameboy
+    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gb/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/gb/retroarch.cfg"
+
+    # system-specific shaders, Gameboy Color
+    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gbc/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/gbc/retroarch.cfg"
 
     # configure keyboard mappings
     ensureKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"

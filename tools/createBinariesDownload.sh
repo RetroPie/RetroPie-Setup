@@ -69,6 +69,10 @@ filelist+=("./RetroPie/emulators/basiliskii/installdir/")
 filelist+=("./RetroPie/emulators/atari800-3.0.0/installdir/")
 filelist+=("./RetroPie/emulators/atari800-3.0.0/README.1ST")
 filelist+=("./RetroPie/emulators/fbzx-2.10.0/")
+filelist+=("./RetroPie/emulators/cpc4rpi-1.1/cpc4rpi")
+filelist+=("./RetroPie/emulators/cpc4rpi-1.1/COPYING.txt")
+filelist+=("./RetroPie/emulators/cpc4rpi-1.1/README.txt")
+filelist+=("./RetroPie/emulators/cpc4rpi-1.1/joy.txt")
 
 echo "Checking, if all directories/files exist"
 tLen=${#filelist[@]}

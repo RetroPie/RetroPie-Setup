@@ -153,6 +153,7 @@ function set_configureSAMBA()
     set_ensureEntryInSMBConf "ATARISTSTEFALCON" "atariStSteFalcon"
     set_ensureEntryInSMBConf "BASILISKII" "basiliskii"
     set_ensureEntryInSMBConf "C64" "c64"
+    set_ensureEntryInSMBConf "CPC" "cpc"
     set_ensureEntryInSMBConf "DOOM" "doom"
     set_ensureEntryInSMBConf "DUKE3D" "duke3d"
     set_ensureEntryInSMBConf "GAMEGEAR" "gamegear"
@@ -616,7 +617,7 @@ function set_install_xboxdrv()
     printMsg "Installing xboxdrv"
     apt-get install -y xboxdrv
     if [[ -z `cat /etc/rc.local | grep "xboxdrv"` ]]; then
-        sed -i -e '13,$ s|exit 0|xboxdrv --daemon --id 0 --led 2 --deadzone 4000 --silent --trigger-as-button --next-controller --id 1 --led 3 --deadzone 4000 --silent --trigger-as-button --dbus disabled \&\nexit 0|g' /etc/rc.local
+        sed -i -e '13,$ s|exit 0|xboxdrv --daemon --id 0 --led 2 --deadzone 4000 --silent --trigger-as-button --next-controller --id 1 --led 3 --deadzone 4000 --silent --trigger-as-button --dbus disabled --detach-kernel-driver \&\nexit 0|g' /etc/rc.local
     fi
     ensureKeyValueBootconfig "dwc_otg.speed" "1" "/boot/config.txt"
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Installed xboxdrv and adapted /etc/rc.local. It will be started on boot." 22 76    

@@ -193,3 +193,12 @@ function rc_disableTimeouts()
     sed -i 's/BLANK_TIME=30/BLANK_TIME=0/g' /etc/kbd/config
     sed -i 's/POWERDOWN_TIME=30/POWERDOWN_TIME=0/g' /etc/kbd/config
 }
+
+function rc_tweakProfile()
+{
+    printMsg "Adding profile tweak"
+
+    if [[ -z `cat "/home/pi/.bashrc" | grep "# RETROPIE PROFILE START"` ]]; then
+        cat $scriptdir/supplementary/ProfileTweak >> "/home/$user/.bashrc"
+    fi
+}

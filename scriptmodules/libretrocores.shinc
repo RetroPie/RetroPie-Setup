@@ -69,12 +69,21 @@ function lr_configure_doom()
 {
     mkdir -p $rootdir/roms/doom/
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
+
+    # download and install Doom 1 shareware
+    if wget "http://distro.ibiblio.org/pub/linux/distributions/slitaz/sources/packages/d/doom1.wad"; then
+        mv doom1.wad "$rootdir/roms/doom/"
+    else
+        __ERRMSGS="$__ERRMSGS Could not successfully download and install Doom 1 shareware."
+    fi
 }
 
 # install Doom WADs emulator core
 function lr_install_doom()
 {
     printMsg "Installing Doom core (Libretro core)"
+
+    # Download and compile Libretro PRBoom core
     gitPullOrClone "$rootdir/emulatorcores/libretro-prboom" git://github.com/libretro/libretro-prboom.git
     make
     if [[ -z `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` ]]; then
