@@ -388,7 +388,7 @@ function em_install_megadrive()
 {
     printMsg "Installing Mega Drive/Mastersystem/Game Gear emulator OsmMose"
 
-    wget https://dl.dropbox.com/s/z6l69wge8q1xq7r/osmose-0.8.1%2Brpi20121122.tar.bz2?dl=1 -O osmose.tar.bz2
+    wget 'https://dl.dropbox.com/s/z6l69wge8q1xq7r/osmose-0.8.1%2Brpi20121122.tar.bz2?dl=1' -O osmose.tar.bz2
     tar -jxvf osmose.tar.bz2 -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/osmose-0.8.1+rpi20121122/"
     make clean
@@ -404,7 +404,7 @@ function em_install_megadrive()
 function em_install_intellivision()
 {
     printMsg "Installing Intellivision emulator jzintv"
-    wget http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip -O jzintv.zip
+    wget 'http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip' -O jzintv.zip
     unzip -n jzintv.zip -d "$rootdir/emulators/"
     pushd "$rootdir/emulators/jzintv-1.0-beta4/src/"
     mkdir "$rootdir/emulators/jzintv-1.0-beta4/bin"

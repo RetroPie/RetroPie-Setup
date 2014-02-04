@@ -86,32 +86,22 @@ function rps_prepareFolders()
 # downloads and installs pre-compiles binaries of all essential programs and libraries
 function rps_downloadBinaries()
 {
-    wget -O binariesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=3
-    tar -jxvf binariesDownload.tar.bz2 -C $rootdir
-    pushd $rootdir/RetroPie
-    cp -r * ../
-    popd
+    wget --progress=bar:force -O - 'http://blog.petrockblock.com/?wpdmdl=3' | tar jx --overwrite -C $rootdir RetroPie
 
     # handle Doom emulator specifics
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
     chgrp $user $rootdir/roms/doom/prboom.wad
     chown $user $rootdir/roms/doom/prboom.wad
-
-    rm -rf $rootdir/RetroPie
-    rm binariesDownload.tar.bz2    
 }
 
 # downloads and installs theme files for Emulation Station
 function rps_install_esthemes()
 {
     printMsg "Installing themes for Emulation Station"
-    wget -O themesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=2
-    tar -jxvf themesDownload.tar.bz2 -C $home/
+    wget --progress=bar:force -O - 'http://blog.petrockblock.com/?wpdmdl=2' | tar jx --overwrite -C $home/
 
     chgrp -R $user $home/.emulationstation
     chown -R $user $home/.emulationstation
-
-    rm themesDownload.tar.bz2
 }
 
 # shows help information in the console
