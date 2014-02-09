@@ -714,7 +714,7 @@ function em_configureRetroArch()
     if [[ ! -d "$rootdir/emulators/RetroArch/shader" ]]; then
         mkdir -p "$rootdir/emulators/RetroArch/shader"
     fi
-    cp -r "$scriptdir/supplementary/RetroArchShader/*" "$rootdir/emulators/RetroArch/shader/*"
+    cp -r $scriptdir/supplementary/RetroArchShader/* $rootdir/emulators/RetroArch/shader/
     for f in `ls "$rootdir/emulators/RetroArch/shader/*.glslp"`; 
     do 
         sed -i "s|/home/pi/RetroPie|$rootdir|g" $f
