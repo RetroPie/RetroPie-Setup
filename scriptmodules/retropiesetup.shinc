@@ -237,7 +237,7 @@ function rps_createDebugLog()
 
     echo -e "\nEnd of log file" >> "$rootdir/debug.log" >> "$rootdir/debug.log"
 
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Debug log was generated in $rootdir/debug.log" 22 76    
+    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Debug log was generated in $rootdir/debug.log. Additional logs can be found in the folder $scriptdir/logs/." 22 76    
 
 }
 
