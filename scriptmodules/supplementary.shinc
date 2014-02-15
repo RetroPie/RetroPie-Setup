@@ -234,58 +234,6 @@ function sup_enableSNESDevAtStart()
     update-rc.d SNESDev defaults
     # This command starts the daemon now so no need for a reboot
     service SNESDev start
-
-    # if [[ ($1 -eq 1) || ($1 -eq 3) ]]; then
-
-    #     REVSTRING=`cat /proc/cpuinfo |grep Revision | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4`
-    #     case "$REVSTRING" in
-    #           "0002"|"0003")
-    #              GPIOREV=1 
-    #              ;;
-    #           *)
-    #              GPIOREV=2
-    #              ;;
-    #     esac
-    #     if [ $GPIOREV = 1 ]; then
-    #         ensureKeyValue "input_player1_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
-    #         ensureKeyValue "input_player2_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
-    #     else
-    #         ensureKeyValue "input_player1_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
-    #         ensureKeyValue "input_player2_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
-    #     fi
-
-    #     disableKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg"
-    #     disableKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg"
-    #     disableKeyValue "input_rewind_btn" "3" "$rootdir/configs/all/retroarch.cfg"
-    #     disableKeyValue "input_save_state_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-    #     disableKeyValue "input_load_state_btn" "5" "$rootdir/configs/all/retroarch.cfg"    
-
-    #     ensureKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player1_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg" 
-        
-    #     ensureKeyValue "input_player2_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
-    #     ensureKeyValue "input_player2_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg" 
-    # fi
 }
 
 # disable start SNESDev on boot and remove RetroArch input settings
@@ -299,38 +247,6 @@ function sup_disableSNESDevAtStart()
 
     # This command installs the init.d script so it automatically starts on boot
     update-rc.d SNESDev remove
-
-    # disableKeyValue "input_enable_hotkey_btn" "6" "$rootdir/configs/all/retroarch.cfg" 
-    # disableKeyValue "input_exit_emulator_btn" "7" "$rootdir/configs/all/retroarch.cfg" 
-    # disableKeyValue "input_rewind_btn" "3" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_save_state_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_load_state_btn" "5" "$rootdir/configs/all/retroarch.cfg"    
-
-    # disableKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player1_down_axis" "+1"   "$rootdir/configs/all/retroarch.cfg" 
-
-    # disableKeyValue "input_player2_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
-    # disableKeyValue "input_player2_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg" 
 }
 
 # Show dialogue for enabling/disabling SNESDev on boot
@@ -624,30 +540,6 @@ EXTENSION=.txt
 COMMAND=$rootdir/emulators/rpix86/Start.sh
 PLATFORMID=1
 
-DESCNAME=ScummVM
-NAME=scummvm
-PATH=$rootdir/roms/scummvm
-EXTENSION=.exe .EXE
-COMMAND=scummvm
-PLATFORMID=20
-
-DESCNAME=Sega Master System II
-NAME=mastersystem
-PATH=$rootdir/roms/mastersystem
-EXTENSION=.sms .SMS
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mastersystem/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
-# alternatively: COMMAND=$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs
-PLATFORMID=35
-
-DESCNAME=Sega Mega Drive / Genesis
-NAME=megadrive
-PATH=$rootdir/roms/megadrive
-EXTENSION=.smd .SMD .bin .BIN
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
-# alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"
-# alternatively: COMMAND=export LD_LIBRARY_PATH="$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%
-PLATFORMID=18
-
 DESCNAME=NeoGeo
 NAME=neogeo
 PATH=$rootdir/roms/neogeo
@@ -677,19 +569,61 @@ EXTENSION=.pce
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%"
 PLATFORMID=34
 
-DESCNAME=Sony Playstation 1
-NAME=psx
-PATH=$rootdir/roms/psx
-EXTENSION=.img .IMG .7z .7Z .pbp .PBP .bin .BIN
-COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%"
-PLATFORMID=10
-
 DESCNAME=Playstation Portable
 NAME=psp
 PATH=$rootdir/roms/psp
 EXTENSION=.iso .ISO .cso .CSO
 COMMAND=$rootdir/emulators/ppsspp/PPSSPPSDL %ROM% en
 PLATFORMID=13
+
+DESCNAME=ScummVM
+NAME=scummvm
+PATH=$rootdir/roms/scummvm
+EXTENSION=.exe .EXE
+COMMAND=scummvm
+PLATFORMID=20
+
+DESCNAME=Sega Master System II
+NAME=mastersystem
+PATH=$rootdir/roms/mastersystem
+EXTENSION=.sms .SMS
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mastersystem/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
+# alternatively: COMMAND=$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs
+PLATFORMID=35
+
+DESCNAME=Sega Mega Drive / Genesis
+NAME=megadrive
+PATH=$rootdir/roms/megadrive
+EXTENSION=.smd .SMD .bin .BIN
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
+# alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"
+# alternatively: COMMAND=export LD_LIBRARY_PATH="$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%
+PLATFORMID=18
+
+DESCNAME=Sega CD
+NAME=segacd
+PATH=$rootdir/roms/segacd
+EXTENSION=.smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO
+COMMAND=/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/RetroArch/installdir/bin/retroarch -L /home/pi/RetroPie/emulatorcores/picodrive/picodrive_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/segacd/retroarch.cfg  %ROM%"
+#COMMAND=/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/dgen-sdl/dgen -f -r /home/pi/RetroPie/configs/all/dgenrc %ROM%"
+#COMMAND=export LD_LIBRARY_PATH="/home/pi/RetroPie/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; /home/pi/RetroPie/emulators/dgen-sdl/dgen %ROM%
+PLATFORMID=21
+
+DESCNAME=Sega 32X
+NAME=sega32x
+PATH=$rootdir/roms/sega32x
+EXTENSION=.32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP
+COMMAND=/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/RetroArch/installdir/bin/retroarch -L /home/pi/RetroPie/emulatorcores/picodrive/picodrive_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/sega32x/retroarch.cfg  %ROM%"
+#COMMAND=/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/dgen-sdl/dgen -f -r /home/pi/RetroPie/configs/all/dgenrc %ROM%"
+#COMMAND=export LD_LIBRARY_PATH="/home/pi/RetroPie/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; /home/pi/RetroPie/emulators/dgen-sdl/dgen %ROM%
+PLATFORMID=33
+
+DESCNAME=Sony Playstation 1
+NAME=psx
+PATH=$rootdir/roms/psx
+EXTENSION=.img .IMG .7z .7Z .pbp .PBP .bin .BIN
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%"
+PLATFORMID=10
 
 DESCNAME=Super Nintendo
 NAME=snes

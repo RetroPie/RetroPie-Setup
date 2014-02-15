@@ -152,6 +152,7 @@ function set_configureSAMBA()
     set_ensureEntryInSMBConf "ATARI2600" "atari2600"
     set_ensureEntryInSMBConf "ATARISTSTEFALCON" "atariStSteFalcon"
     set_ensureEntryInSMBConf "BASILISKII" "basiliskii"
+    set_ensureEntryInSMBConf "BIOSFILES" "../BIOS"
     set_ensureEntryInSMBConf "C64" "c64"
     set_ensureEntryInSMBConf "CPC" "cpc"
     set_ensureEntryInSMBConf "DOOM" "doom"
@@ -625,9 +626,13 @@ function set_install_xboxdrv()
 function set_RetroarchJoyconfig()
 {    
     local configfname
+    local numJoypads
+
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Connect ONLY the controller to be registered for RetroArch to the Raspberry Pi." 22 76    
     clear 
-    $rootdir/emulators/RetroArch/installdir/bin/retroarch-joyconfig --autoconfig "$rootdir/emulators/RetroArch/configs/tempconfig.cfg" --timeout 4 --joypad 0
+    # todo Find number of first joystick device in /dev/input
+    numJoypads=$(ls -1 /dev/input/js* | head -n 1)
+    $rootdir/emulators/RetroArch/installdir/bin/retroarch-joyconfig --autoconfig "$rootdir/emulators/RetroArch/configs/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
     configfname=`grep "input_device = \"" $rootdir/emulators/RetroArch/configs/tempconfig.cfg`
     configfname=`echo ${configfname:16:-1} | tr -d ' '`
     mv $rootdir/emulators/RetroArch/configs/tempconfig.cfg $rootdir/emulators/RetroArch/configs/$configfname.cfg
