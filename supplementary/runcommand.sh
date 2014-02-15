@@ -17,7 +17,7 @@ if [[ $starttype -eq 1 && ! -z `tvservice --status | egrep -w "HDMI|DVI"` ]] || 
 elif [[ $starttype -eq 2 ]]; then
     eval $@
 elif [[ $starttype -eq 4 && ! -z `tvservice --status | egrep -w "HDMI|DVI"` ]] || [[ $starttype -eq 3 ]]; then
-	tvservice -e "CEA 1"
+	tvservice -e "CEA 4"
    	fbset -depth 8 && fbset -depth 16
     eval $@
     tvservice -p
