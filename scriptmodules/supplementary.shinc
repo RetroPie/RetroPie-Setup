@@ -540,6 +540,33 @@ EXTENSION=.txt
 COMMAND=$rootdir/emulators/rpix86/Start.sh
 PLATFORMID=1
 
+<<<<<<< HEAD
+=======
+DESCNAME=ScummVM
+NAME=scummvm
+PATH=$rootdir/roms/scummvm
+EXTENSION=.exe .EXE
+COMMAND=scummvm
+PLATFORMID=20
+
+DESCNAME=Sega Master System II
+NAME=mastersystem
+PATH=$rootdir/roms/mastersystem
+EXTENSION=.sms .SMS
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mastersystem/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
+# alternatively: COMMAND=$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs
+PLATFORMID=35
+
+DESCNAME=Sega Mega Drive / Genesis
+NAME=megadrive
+PATH=$rootdir/roms/megadrive
+EXTENSION=.smd .SMD .bin .BIN .gen .GEN
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
+# alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"
+# alternatively: COMMAND=export LD_LIBRARY_PATH="$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%
+PLATFORMID=18
+
+>>>>>>> 64d9188f53a770bec2184108c7ce2019bd1a1ae1
 DESCNAME=NeoGeo
 NAME=neogeo
 PATH=$rootdir/roms/neogeo
