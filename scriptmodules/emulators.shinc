@@ -729,31 +729,28 @@ function em_configureRetroArch()
 
     ensureKeyValue "input_shader_next" "m" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_shader_prev" "n" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "video_threaded" "true" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_shader_dir" "$rootdir/emulators/RetroArch/shader/" "$rootdir/configs/all/retroarch.cfg"
 
     # system-specific shaders, SNES
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/bsnes_gamma_ramp.glslp\"" "$rootdir/configs/snes/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/snes_phosphor.glslp\"" "$rootdir/configs/snes/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/snes/retroarch.cfg"
-    ensureKeyValue "video_smooth" "true" "$rootdir/configs/snes/retroarch.cfg"
-    ensureKeyValue "video_threaded" "true" "$rootdir/configs/snes/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$rootdir/configs/snes/retroarch.cfg"
 
     # system-specific shaders, NES
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq2x_phosphor.glslp\"" "$rootdir/configs/nes/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/nes/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/nes/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/nes/retroarch.cfg"
-    ensureKeyValue "video_threaded" "true" "$rootdir/configs/nes/retroarch.cfg"
 
     # system-specific shaders, Megadrive
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq2x_phosphor.glslp\"" "$rootdir/configs/megadrive/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/megadrive/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/megadrive/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/megadrive/retroarch.cfg"
-    ensureKeyValue "video_threaded" "true" "$rootdir/configs/megadrive/retroarch.cfg"
 
     # system-specific shaders, Mastersystem
     ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/mastersystem/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/mastersystem/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
-    ensureKeyValue "video_threaded" "true" "$rootdir/configs/mastersystem/retroarch.cfg"
 
     # system-specific shaders, Gameboy
     ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gb/retroarch.cfg"
