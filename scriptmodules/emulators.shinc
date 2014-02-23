@@ -729,7 +729,6 @@ function em_configureRetroArch()
 
     ensureKeyValue "input_shader_next" "m" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_shader_prev" "n" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "video_threaded" "true" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_shader_dir" "$rootdir/emulators/RetroArch/shader/" "$rootdir/configs/all/retroarch.cfg"
 
     # system-specific shaders, SNES
