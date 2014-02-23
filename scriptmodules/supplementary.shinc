@@ -329,7 +329,7 @@ function sup_install_esconfig()
     ./get_dependencies.sh
     make
     popd
-    sup_configure_esconfig()
+    sup_configure_esconfig
 
     if [[ ! -f "$rootdir/supplementary/ES-config/es-config" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile ES-config."
