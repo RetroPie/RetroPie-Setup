@@ -1,3 +1,3 @@
 <changeConfigPath from="retroarch.cfg" to="/home/pi/RetroPie/configs/all/retroarch.cfg" />
-<changeConfigPath from="dgen.cfg" to="/home/pi/RetroPie/configs/dgen/dgenrc" />
-<changeConfigPath from="gngeo.rc" to="/homepi/.gngeo/gngeorc" />
+<changeConfigPath from="dgen.cfg" to="/home/pi/RetroPie/configs/all/dgenrc" />
+<changeConfigPath from="gngeo.rc" to="/home/pi/.gngeo/gngeorc" />
