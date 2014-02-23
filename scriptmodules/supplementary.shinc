@@ -621,7 +621,7 @@ PLATFORMID=33
 DESCNAME=Sony Playstation 1
 NAME=psx
 PATH=$rootdir/roms/psx
-EXTENSION=.img .IMG .7z .7Z .pbp .PBP .bin .BIN
+EXTENSION=.img .IMG .7z .7Z .pbp .PBP .bin .BIN .cue .CUE
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%"
 PLATFORMID=10
 
