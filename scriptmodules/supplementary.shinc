@@ -306,7 +306,7 @@ function sup_configure_esconfig()
         mkdir -p $rootdir/roms/esconfig
     fi
     # generate new startup script for ES-config
-    cp "$scriptdir/supplementary/Start.py" "$rootdir/roms/esconfig"
+    cp "$scriptdir/supplementary/Start.py" "$rootdir/roms/esconfig/"
     chown $user $rootdir/roms/esconfig/Start.py
     chgrp $user $rootdir/roms/esconfig/Start.py
     chmod +x $rootdir/roms/esconfig/Start.py    
