@@ -57,15 +57,16 @@ if os.path.getsize(retroarch_input_cfg) > 0:
 		main_parser.set(section,name,value)
 
 	# set special functions
-	main_parser.set(section,'input_enable_hotkey_button',main_parser.get(section,'input_player1_select_btn'))
+	main_parser.set(section,'input_enable_hotkey_btn',main_parser.get(section,'input_player1_select_btn'))
 	main_parser.set(section,'input_exit_emulator_btn',main_parser.get(section,'input_player1_start_btn'))
-	main_parser.set(section,'input_menu_toggle_btn',main_parser.get(section,'input_player1_r_btn'))
-	main_parser.set(section,'input_load_state_axis',main_parser.get(section,'input_player1_up_axis'))
-	main_parser.set(section,'input_save_state_axis',main_parser.get(section,'input_player1_down_axis'))
+	main_parser.set(section,'input_menu_toggle_btn',main_parser.get(section,'input_player1_x_btn'))
+	main_parser.set(section,'input_load_state_btn',main_parser.get(section,'input_player1_l_btn'))
+	main_parser.set(section,'input_save_state_btn',main_parser.get(section,'input_player1_r_btn'))
 	main_parser.set(section,'input_state_slot_increase_axis',main_parser.get(section,'input_player1_right_axis'))
 	main_parser.set(section,'input_state_slot_decrease_axis',main_parser.get(section,'input_player1_left_axis'))
-	main_parser.set(section,'input_reset_btn',main_parser.get(section,'input_player1_l_btn'))
+	main_parser.set(section,'input_reset_btn',main_parser.get(section,'input_player1_b_btn'))
 
+	# delete wrong ES-config settings
 	main_parser.remove_option(section,'input_player1_l_y_plus')
 	main_parser.remove_option(section,'input_player1_l_y_minus')
 	main_parser.remove_option(section,'input_player1_l_x_plus')
@@ -84,8 +85,11 @@ if os.path.getsize(retroarch_input_cfg) > 0:
 	exit()
 # dgenrcinput.cfg?
 if os.path.getsize(dgen_input_cfg) > 0:
-	# backup current config
-	shutil.copyfile(dgen_main_cfg, '/home/pi/RetroPie/configs/all/dgenrc.bak')
+	# check and backup current config
+	if os.path.exists(dgen_main_cfg) == True:
+		shutil.copyfile(dgen_main_cfg, '/home/pi/RetroPie/configs/all/dgenrc.bak')
+	else:
+		open(dgen_main_cfg,'w').close()	
 
 	# read config files
 	main_config  = open(dgen_main_cfg).read()
@@ -122,9 +126,15 @@ if os.path.getsize(dgen_input_cfg) > 0:
 	exit()
 # gngeorcinput.cfg?
 if os.path.getsize(gngeo_input_cfg) > 0:
-	# print 'backup current config'
-	shutil.copyfile(gngeo_main_cfg, '/home/pi/RetroPie/.config/gngeo/gngeorc.bak')
-	
+	# check and backup current config
+	if os.path.exists(gngeo_main_cfg) == True:
+		shutil.copyfile(gngeo_main_cfg, '/home/pi/.gngeo/gngeorc.bak')
+	else:
+		if os.path.exists('/home/pi/RetroPie/emulators/gngeo-0.7/sample_gngeorc') == True:
+			shutil.copyfile('/home/pi/RetroPie/emulators/gngeo-0.7/sample_gngeorc', gngeo_main_cfg)
+		else:
+			open(gngeo_main_cfg,'w').close()
+			
 	# read configs
 	config = open(gngeo_main_cfg,'r').read()
 	input = open(gngeo_input_cfg,'r').read()
