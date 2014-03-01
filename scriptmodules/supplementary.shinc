@@ -320,6 +320,31 @@ _EOF_
 chown $user $rootdir/roms/esconfig/Start.sh
 chgrp $user $rootdir/roms/esconfig/Start.sh
 chmod +x $rootdir/roms/esconfig/Start.sh
+# add some information
+cat > $rootdir/roms/esconfig/gamelist.xml << _EOF_
+<?xml version="1.0"?>
+<gameList>
+	<game>
+		<path>/home/pi/RetroPie/roms/esconfig/Start.py</path>
+		<name>Start Basic Input Configuration</name>
+		<desc>[DGen]
+Old Genesis/Megadrive emulator
+
+[RetroArch]
+GB,GBC,NES,SNES,MASTERSYSTEM,GENESIS/MEGADRIVE,PSX
+
+[GnGeo]
+Old NeoGeo emulator
+GNGEO 0.7</desc>
+		<rating>0.000000</rating>
+		<userrating>0.000000</userrating>
+		<timesplayed>0</timesplayed>
+		<lastplayed>1393669906</lastplayed>
+	</game>
+</gameList>
+_EOF_
+chown $user $rootdir/roms/esconfig/gamelist.xml
+chgrp $user $rootdir/roms/esconfig/gamelist.xml
 }
 
 function sup_install_esconfig()
