@@ -302,10 +302,14 @@ function sup_configure_esconfig()
     printMsg "Configuring ES-config"
     cp "$scriptdir/supplementary/settings.xml" "$rootdir/supplementary/ES-config/"
     sed -i -e "s|/home/pi/RetroPie|$rootdir|g" "$rootdir/supplementary/ES-config/settings.xml"
-    # generate start script for ES-config
     if [[ ! -d $rootdir/roms/esconfig ]]; then
         mkdir -p $rootdir/roms/esconfig
     fi
+    # generate new startup script for ES-config
+    cp "$scriptdir/supplementary/Start.py" "$rootdir/roms/esconfig/"
+    chown $user $rootdir/roms/esconfig/Start.py
+    chgrp $user $rootdir/roms/esconfig/Start.py
+    chmod +x $rootdir/roms/esconfig/Start.py    
     cat > $rootdir/roms/esconfig/Start.sh << _EOF_
 #!/bin/bash
 pushd $rootdir/supplementary/ES-config
@@ -644,8 +648,8 @@ COMMAND=xinit fuse
 DESCNAME=Input Configuration
 NAME=esconfig
 PATH=$rootdir/roms/esconfig
-EXTENSION=.sh .SH
-COMMAND=$rootdir/roms/esconfig/Start.sh
+EXTENSION=.py .PY
+COMMAND=$rootdir/roms/esconfig/Start.py
 _EOF_
 
 chown -R $user "$rootdir/../.emulationstation"
