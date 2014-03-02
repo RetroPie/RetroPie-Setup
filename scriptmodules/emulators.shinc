@@ -717,6 +717,9 @@ function em_configureRetroArch()
     ensureKeyValue "rewind_granularity" "2" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_rewind" "r" "$rootdir/configs/all/retroarch.cfg"
 
+    # enable gpu screenshots
+    ensureKeyValue "video_gpu_screenshot" "true" "$rootdir/configs/all/retroarch.cfg"
+
     # enable and configure shaders
     if [[ ! -d "$rootdir/emulators/RetroArch/shader" ]]; then
         mkdir -p "$rootdir/emulators/RetroArch/shader"
@@ -758,6 +761,10 @@ function em_configureRetroArch()
     # system-specific shaders, Gameboy Color
     ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gbc/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/gbc/retroarch.cfg"
+
+    # system-specific, PSX
+    ensureKeyValue "rewind_enable" "false" "$rootdir/configs/psx/retroarch.cfg"
+    
 
     # configure keyboard mappings
     ensureKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"
