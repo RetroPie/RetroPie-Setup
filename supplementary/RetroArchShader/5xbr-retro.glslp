@@ -1,5 +1,5 @@
 shaders = "1"
-shader0 = "/home/pi/RetroPie/emulators/RetroArch/shader/5xbr-retro.glsl"
+shader0 = "5xbr-retro.glsl"
 filter_linear0 = "false"
 wrap_mode0 = "clamp_to_border"
 float_framebuffer0 = "false"
