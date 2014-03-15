@@ -305,28 +305,30 @@ function sup_configure_esconfig()
     if [[ ! -d $rootdir/roms/esconfig ]]; then
         mkdir -p $rootdir/roms/esconfig
     fi
-    # generate new startup script for ES-config
-    cp "$scriptdir/supplementary/Start.py" "$rootdir/roms/esconfig/"
-    chown $user $rootdir/roms/esconfig/Start.py
-    chgrp $user $rootdir/roms/esconfig/Start.py
-    chmod +x $rootdir/roms/esconfig/Start.py    
-    cat > $rootdir/roms/esconfig/Start.sh << _EOF_
-#!/bin/bash
-pushd $rootdir/supplementary/ES-config
-#if you don't supply the "--settings [path]" argument, no settings XML file will be loaded!
-./es-config --settings $rootdir/supplementary/ES-config/settings.xml   
-popd
-_EOF_
-chown $user $rootdir/roms/esconfig/Start.sh
-chgrp $user $rootdir/roms/esconfig/Start.sh
-chmod +x $rootdir/roms/esconfig/Start.sh
-# add some information
-cat > $rootdir/roms/esconfig/gamelist.xml << _EOF_
+    # generate new startup scripts for ES-config
+    cp "$scriptdir/supplementary/esconfig.py" "$rootdir/roms/esconfig/"
+    chown $user $rootdir/roms/esconfig/esconfig.py
+    chgrp $user $rootdir/roms/esconfig/esconfig.py
+    chmod +x $rootdir/roms/esconfig/esconfig.py
+    cp "$scriptdir/supplementary/basic.py" "$rootdir/roms/esconfig/"
+    chown $user $rootdir/roms/esconfig/basic.py
+    chgrp $user $rootdir/roms/esconfig/basic.py
+    chmod +x $rootdir/roms/esconfig/basic.py    
+    cp "$scriptdir/supplementary/autooff.py" "$rootdir/roms/esconfig/"
+    chown $user $rootdir/roms/esconfig/autooff.py
+    chgrp $user $rootdir/roms/esconfig/autooff.py
+    chmod +x $rootdir/roms/esconfig/autooff.py    
+    cp "$scriptdir/supplementary/autoon.py" "$rootdir/roms/esconfig/"
+    chown $user $rootdir/roms/esconfig/autoon.py
+    chgrp $user $rootdir/roms/esconfig/autoon.py
+    chmod +x $rootdir/roms/esconfig/autoon.py    
+    # add some information
+    cat > $rootdir/roms/esconfig/gamelist.xml << _EOF_
 <?xml version="1.0"?>
 <gameList>
 	<game>
-		<path>/home/pi/RetroPie/roms/esconfig/Start.py</path>
-		<name>Start Basic Input Configuration</name>
+		<path>$rootdir/roms/esconfig/esconfig.py</path>
+		<name>Start ES-Config</name>
 		<desc>[DGen]
 Old Genesis/Megadrive emulator
 
@@ -336,10 +338,19 @@ GB,GBC,NES,SNES,MASTERSYSTEM,GENESIS/MEGADRIVE,PSX
 [GnGeo]
 Old NeoGeo emulator
 GNGEO 0.7</desc>
-		<rating>0.000000</rating>
-		<userrating>0.000000</userrating>
-		<timesplayed>0</timesplayed>
-		<lastplayed>1393669906</lastplayed>
+	</game>
+	<game>
+		<path>$rootdir/roms/esconfig/basic.py</path>
+		<name>Start basic input configuration</name>
+		<desc>Update Retroarch Autoconfig and Emulationstation</desc>
+	</game>
+	<game>
+		<path>$rootdir/roms/esconfig/autoon.py</path>
+		<name>Enable RetroArch Autoconfig</name>
+	</game>
+	<game>
+		<path>$rootdir/roms/esconfig/autooff.py</path>
+		<name>Disable RetroArch Autoconfig</name>
 	</game>
 </gameList>
 _EOF_
@@ -465,8 +476,9 @@ DESCNAME=Basilisk II
 NAME=basiliskii
 PATH=$rootdir/roms/basiliskii
 EXTENSION=.txt
-COMMAND=sudo modprobe snd_pcm_oss && xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII
-# Or possibly just COMMAND=xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII
+# COMMAND=sudo modprobe snd_pcm_oss && xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII
+# ~/.basilisk_ii_prefs: Setup all and everything under X, enable fullscreen and disable GUI
+COMMAND=xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII
 
 DESCNAME=Cave Story
 NAME=cavestory
@@ -623,7 +635,7 @@ PLATFORMID=35
 DESCNAME=Sega Mega Drive / Genesis
 NAME=megadrive
 PATH=$rootdir/roms/megadrive
-EXTENSION=.smd .SMD .bin .BIN .gen .GEN
+EXTENSION=.smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"
 # alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"
 # alternatively: COMMAND=export LD_LIBRARY_PATH="$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%
@@ -674,7 +686,7 @@ DESCNAME=Input Configuration
 NAME=esconfig
 PATH=$rootdir/roms/esconfig
 EXTENSION=.py .PY
-COMMAND=$rootdir/roms/esconfig/Start.py
+COMMAND=%ROM%
 _EOF_
 
 chown -R $user "$rootdir/../.emulationstation"
