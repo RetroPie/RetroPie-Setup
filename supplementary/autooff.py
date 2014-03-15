@@ -20,7 +20,8 @@ main_config = main_config.replace('[start]','')
 main_config  = '[start]\n' + main_config
 
 # create a configparser opject
-main_parser  = configparser.ConfigParser()
+main_parser = configparser.ConfigParser()
+main_parser.read_string(main_config)
 
 # set special functions
 main_parser.set('start','input_autodetect_enable','"false"')
