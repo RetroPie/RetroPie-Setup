@@ -706,7 +706,6 @@ function em_configureRetroArch()
     ensureKeyValue "video_aspect_ratio" "1.33" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_threaded" "true" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "audio_out_rate" "44100" "$rootdir/configs/all/retroarch.cfg"
     #ensureKeyValue "input_player1_analog_dpad_mode" "1" "$rootdir/configs/all/retroarch.cfg"
     #ensureKeyValue "input_player2_analog_dpad_mode" "1" "$rootdir/configs/all/retroarch.cfg"
     #ensureKeyValue "input_player3_analog_dpad_mode" "1" "$rootdir/configs/all/retroarch.cfg"
