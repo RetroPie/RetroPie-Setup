@@ -13,6 +13,28 @@ gngeo_main_cfg      = home + '/.gngeo/gngeorc'
 gngeo_input_cfg     = home + '/.gngeo/gngeorcinput'
 dgen_main_cfg       = home + '/RetroPie/configs/all/dgenrc'
 dgen_input_cfg      = home + '/RetroPie/configs/all/dgenrcinput'
+es_config_path	    = home + '/RetroPie/supplementary/ES-config'
+section = 'start'
+	
+# 
+def AutoConfigHelper(parser, hotkey, key):
+	if parser.has_option(section,   key + '_axis'):
+		parser.set(section, hotkey  + '_axis', parser.get(section,key + '_axis'))
+	elif parser.has_option(section, key + '_btn'):
+		parser.set(section, hotkey  + '_btn',  parser.get(section,key + '_btn'))
+	return(parser)	
+
+# Disable invalid cuuurent key binding:
+# If we update a already configured retroarch.cfg there can be btn or axis key bindings
+# which interfere with our new key bindings. For example some snes controllers use 
+# axis for up/down/left/right and a PS3 controller uses btn for the same thing.
+def DisableAxisBtnHelper(parser, key, value):
+	parser.set(section,key,value)
+	if key.find('axis') > 0:
+		parser.set(section, key.replace('axis','btn'),'"nul"')
+	elif key.find('btn') > 0:
+		parser.set(section, key.replace('btn','axis'),'"nul"')
+	return(parser)	
 
 if os.path.exists(home + '/.gngeo/') == False:
 	os.system('mkdir ' + home + '.gngeo/')
@@ -28,7 +50,7 @@ open(gngeo_input_cfg,'w').close()
 #<changeConfigPath from="gngeo.rc" to="/home/pi/.gngeo/gngeorcinput" />
 
 # start ES-Config	
-os.system('cd ' + home + '/RetroPie/supplementary/ES-config; ./es-config --settings ' + home + '/RetroPie/supplementary/ES-config/settings.xml')
+os.system('cd ' + es_config_path + '; ./es-config --settings ' + es_config_path + '/settings.xml')
 
 # retroarchinput.cfg?
 if os.path.getsize(retroarch_input_cfg) > 0:
@@ -40,37 +62,42 @@ if os.path.getsize(retroarch_input_cfg) > 0:
 	input_config = open(retroarch_input_cfg).read()
 
 	# Remove section if necessary
-	main_config = main_config.replace('[start]','')	
+	main_config = main_config.replace('[' + section + ']','')
+	# main_config = main_config.replace('input_player','#input_player')	
 
 	# add a section
-	main_config  = '[start]\n' + main_config
-	input_config = '[start]\n' + input_config
+	main_config  = '[' + section + ']\n' + main_config
+	input_config = '[' + section + ']\n' + input_config
 
 	# create a configparser opject
 	main_parser  = configparser.ConfigParser()
 	input_parser = configparser.ConfigParser()
 
-	# merge both configs
+	# read both configs
 	main_parser.read_string(main_config)
 	input_parser.read_string(input_config)
-	section = 'start'
+
+	# add hotkeys
+	AutoConfigHelper(input_parser,'input_enable_hotkey','input_player1_select')
+	AutoConfigHelper(input_parser,'input_exit_emulator','input_player1_start')
+	AutoConfigHelper(input_parser,'input_menu_toggle','input_player1_x')
+	AutoConfigHelper(input_parser,'input_load_state','input_player1_l')
+	AutoConfigHelper(input_parser,'input_save_state','input_player1_r')
+	AutoConfigHelper(input_parser,'input_state_slot_increase','input_player1_right')
+	AutoConfigHelper(input_parser,'input_state_slot_decrease','input_player1_left')
+	AutoConfigHelper(input_parser,'input_reset','input_player1_b')
+
+	# remove unused keys
+	for x in range(0,7): 
+		input_parser.set(section,'input_player' + str(x) + '_l_y_plus','"nul"')
+		input_parser.set(section,'input_player' + str(x) + '_l_y_minus','"nul"')
+		input_parser.set(section,'input_player' + str(x) + '_l_x_plus','"nul"')
+		input_parser.set(section,'input_player' + str(x) + '_l_x_minus','"nul"')
+
+	# merge both configs
 	for name, value in input_parser.items(section):
-		main_parser.set(section,name,value)
-
-	# set special functions
-	main_parser.set(section,'input_enable_hotkey_btn',main_parser.get(section,'input_player1_select_btn'))
-	main_parser.set(section,'input_exit_emulator_btn',main_parser.get(section,'input_player1_start_btn'))
-	main_parser.set(section,'input_menu_toggle_btn',main_parser.get(section,'input_player1_x_btn'))
-	main_parser.set(section,'input_load_state_btn',main_parser.get(section,'input_player1_l_btn'))
-	main_parser.set(section,'input_save_state_btn',main_parser.get(section,'input_player1_r_btn'))
-	main_parser.set(section,'input_state_slot_increase_axis',main_parser.get(section,'input_player1_right_axis'))
-	main_parser.set(section,'input_state_slot_decrease_axis',main_parser.get(section,'input_player1_left_axis'))
-	main_parser.set(section,'input_reset_btn',main_parser.get(section,'input_player1_b_btn'))
-
-	main_parser.remove_option(section,'input_player1_l_y_plus')
-	main_parser.remove_option(section,'input_player1_l_y_minus')
-	main_parser.remove_option(section,'input_player1_l_x_plus')
-	main_parser.remove_option(section,'input_player1_l_x_minus')
+		# main_parser.set(section,name,value)
+		main_parser = DisableAxisBtnHelper(main_parser,name,value)
 
 	# write config
 	with open(retroarch_main_cfg, 'w') as configfile:
@@ -96,11 +123,11 @@ if os.path.getsize(dgen_input_cfg) > 0:
 	input_config = open(dgen_input_cfg).read()
 
 	# Remove section if necessary
-	main_config = main_config.replace('[start]','')	
+	main_config = main_config.replace('[' + section + ']','')	
 
 	# add a section
-	main_config  = '[start]\n' + main_config
-	input_config = '[start]\n' + input_config
+	main_config  = '[' + section + ']\n' + main_config
+	input_config = '[' + section + ']\n' + input_config
 
 	# create a configparser opject
 	main_parser  = configparser.ConfigParser()
@@ -109,7 +136,7 @@ if os.path.getsize(dgen_input_cfg) > 0:
 	# merge both configs
 	main_parser.read_string(main_config)
 	input_parser.read_string(input_config)
-	section = 'start'
+	# section = 'start'
 	for name, value in input_parser.items(section):
 		main_parser.set(section,name,value)
 
