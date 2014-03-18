@@ -301,7 +301,7 @@ function em_install_eduke32()
 function em_install_gba()
 {
     printMsg "Installing Game Boy Advance emulator gpSP"
-    gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/DPRCZ/gpsp.git
+    gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/gizmo98/gpsp.git
     cd raspberrypi
 
     #if we are on the 256mb model, we will never have enough RAM to compile gpSP with compiler optimization
@@ -324,7 +324,7 @@ function em_install_gba()
 	   sed -i '23iCFLAGS     += -I/opt/vc/include/interface/vmcs_host/linux' Makefile
     fi
 
-    # make clean	
+    make clean	
     make
     cp "$rootdir/emulators/gpsp/game_config.txt" "$rootdir/emulators/gpsp/raspberrypi/"
     if [[ -z `find $rootdir/emulators/gpsp/ -name "gpsp"` ]]; then
