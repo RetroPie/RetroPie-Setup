@@ -178,6 +178,7 @@ function lr_install_picodrive()
     printMsg "Installing Megadrive core picodrive (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/picodrive" https://github.com/libretro/picodrive.git
     git submodule init && git submodule update
+    make clean
     make -f Makefile.libretro platform=armv6    
     if [[ ! -f `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core Picodrive."
