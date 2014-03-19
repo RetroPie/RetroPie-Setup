@@ -213,6 +213,7 @@ function lr_install_snes()
     printMsg "Installing SNES core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/pocketsnes-libretro" git://github.com/ToadKing/pocketsnes-libretro.git
     patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch $rootdir/emulatorcores/pocketsnes-libretro/src/ppu.cpp
+    make clean
     make
     if [[ -z `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
