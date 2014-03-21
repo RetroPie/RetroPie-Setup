@@ -158,6 +158,7 @@ function em_install_basiliskII()
     cd BasiliskII/src/Unix
     ./autogen.sh
     ./configure --prefix="$rootdir/emulators/basiliskii/installdir" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler
+    make clean
     make
     make install
     touch $rootdir/roms/basiliskii/Start.txt
@@ -375,6 +376,7 @@ function em_install_mame4allpi()
     printMsg "Installing Mame4All-Pi"
 
     gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/
+    make clean
     make
     if [[ ! -f "$rootdir/emulators/mame4all-pi/mame" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully mame4all-pi emulator."
@@ -531,6 +533,7 @@ function em_install_snes9x()
         rm -rf "$rootdir/emulators/snes9x-rpi"
     fi        
     gitPullOrClone "$rootdir/emulators/snes9x-rpi" https://github.com/chep/snes9x-rpi.git
+    make clean
     make
     if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
         echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
@@ -555,6 +558,7 @@ function em_install_pifba()
     fi  
     gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/
     mkdir ".obj"
+    make clean
     make
     if [[ ! -d "$rootdir/emulators/pifba/" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile PiFBA."
@@ -571,6 +575,7 @@ function em_install_pisnes()
     fi        
     gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/
     sed -i -e "s|-lglib-2.0|-lglib-2.0 -lbcm_host|g" Makefile
+    make clean
     make
     if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
         echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
