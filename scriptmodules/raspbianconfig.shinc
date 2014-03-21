@@ -42,7 +42,7 @@ function rc_install_rpiupdate()
 function rc_run_rpiupdate()
 {
     printMsg "Starting rpi-update script"
-    /usr/bin/rpi-update
+    UPDATE_SELF=0 /usr/bin/rpi-update
     __doReboot=1
     chmod 777 /dev/fb0
     ensureKeyValueShort "gpu_mem" "128" "/boot/config.txt"
