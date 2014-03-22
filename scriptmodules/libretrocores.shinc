@@ -178,6 +178,7 @@ function lr_install_picodrive()
     printMsg "Installing Megadrive core picodrive (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/picodrive" https://github.com/libretro/picodrive.git
     git submodule init && git submodule update
+    make clean
     make -f Makefile.libretro platform=armv6    
     if [[ ! -f `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core Picodrive."
@@ -199,6 +200,7 @@ function lr_install_psx()
     printMsg "Installing PCSX core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/pcsx_rearmed" git://github.com/libretro/pcsx_rearmed.git
     ./configure --platform=libretro
+    make clean
     make
     if [[ -z `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Playstation core."
@@ -212,6 +214,7 @@ function lr_install_snes()
     printMsg "Installing SNES core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/pocketsnes-libretro" git://github.com/ToadKing/pocketsnes-libretro.git
     patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch $rootdir/emulatorcores/pocketsnes-libretro/src/ppu.cpp
+    make clean
     make
     if [[ -z `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
