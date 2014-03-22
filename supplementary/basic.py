@@ -51,8 +51,8 @@ def WriteESConfig(main_parser):
 
 		# build a new input config string
 		inputConfig  = '	<inputConfig type="joystick" deviceName=' + joystick + '>\n'
-		inputConfig += '		<input name="a" ' 	+ ESConfigHelper(main_parser, 'input_a')	+ '\n'
-		inputConfig += '		<input name="b" ' 	+ ESConfigHelper(main_parser, 'input_b')	+ '\n'
+		inputConfig += '		<input name="a" ' 	+ ESConfigHelper(main_parser, 'input_b')	+ '\n'
+		inputConfig += '		<input name="b" ' 	+ ESConfigHelper(main_parser, 'input_a')	+ '\n'
 		inputConfig += '		<input name="down" ' 	+ ESConfigHelper(main_parser, 'input_down')	+ '\n'
 		inputConfig += '		<input name="left" ' 	+ ESConfigHelper(main_parser, 'input_left')	+ '\n' 
 		inputConfig += '		<input name="menu" ' 	+ ESConfigHelper(main_parser, 'input_start')	+ '\n'
