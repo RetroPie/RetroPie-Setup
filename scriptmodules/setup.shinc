@@ -667,10 +667,10 @@ _EOF_
       echo "Processing $f file..."
         tmp=$(cat $f | grep "input_device") && echo "    <inputConfig type=\"joystick\" deviceName=${tmp:16-1}>" >> temp.cfg
 
-        tmp=$(cat $f | grep "input_up_btn") && echo "        <input name=\"a\" type=\"button\" id=${tmp:16-1} value=\"1\" />" >> temp.cfg
-        tmp=$(cat $f | grep "input_down_btn") && echo "        <input name=\"a\" type=\"button\" id=${tmp:18-1} value=\"1\" />" >> temp.cfg
-        tmp=$(cat $f | grep "input_left_btn") && echo "        <input name=\"a\" type=\"button\" id=${tmp:18-1} value=\"1\" />" >> temp.cfg
-        tmp=$(cat $f | grep "input_right_btn") && echo "        <input name=\"a\" type=\"button\" id=${tmp:19-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_up_btn") && echo "        <input name=\"up\" type=\"button\" id=${tmp:16-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_down_btn") && echo "        <input name=\"down\" type=\"button\" id=${tmp:18-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_left_btn") && echo "        <input name=\"left\" type=\"button\" id=${tmp:18-1} value=\"1\" />" >> temp.cfg
+        tmp=$(cat $f | grep "input_right_btn") && echo "        <input name=\"right\" type=\"button\" id=${tmp:19-1} value=\"1\" />" >> temp.cfg
 
         tmp=$(cat $f | grep "input_a_btn") && echo "        <input name=\"a\" type=\"button\" id=${tmp:15-1} value=\"1\" />" >> temp.cfg
         tmp=$(cat $f | grep "input_b_btn") && echo "        <input name=\"b\" type=\"button\" id=${tmp:15-1} value=\"1\" />" >> temp.cfg
