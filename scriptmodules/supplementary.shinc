@@ -322,6 +322,14 @@ function sup_configure_esconfig()
     chown $user $rootdir/roms/esconfig/autoon.py
     chgrp $user $rootdir/roms/esconfig/autoon.py
     chmod +x $rootdir/roms/esconfig/autoon.py    
+    cp "$scriptdir/supplementary/showip.py" "$rootdir/roms/esconfig/"
+    chown $user $rootdir/roms/esconfig/showip.py
+    chgrp $user $rootdir/roms/esconfig/showip.py
+    chmod +x $rootdir/roms/esconfig/showip.py    
+    cp "$scriptdir/supplementary/rgui.py" "$rootdir/roms/esconfig/"
+    chown $user $rootdir/roms/esconfig/rgui.py
+    chgrp $user $rootdir/roms/esconfig/rgui.py
+    chmod +x $rootdir/roms/esconfig/rgui.py    
     # add some information
     cat > $rootdir/roms/esconfig/gamelist.xml << _EOF_
 <?xml version="1.0"?>
@@ -351,6 +359,15 @@ GNGEO 0.7</desc>
 	<game>
 		<path>$rootdir/roms/esconfig/autooff.py</path>
 		<name>Disable RetroArch Autoconfig</name>
+	</game>
+	<game>
+		<path>$rootdir/roms/esconfig/rgui.py</path>
+		<name>Open RGUI</name>
+		<desc>RetroArch Menu. (X = ok, Y/Z = cancel)</desc>
+	</game>
+	<game>
+		<path>$rootdir/roms/esconfig/showip.py</path>
+		<name>Show current IP address</name>
 	</game>
 </gameList>
 _EOF_
