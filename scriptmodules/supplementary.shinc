@@ -550,7 +550,7 @@ DESCNAME=Game Boy Advance
 NAME=gba
 PATH=$rootdir/roms/gba
 EXTENSION=.gba .GBA
-COMMAND=/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/gpsp/raspberrypi/gpsp %ROM%"
+COMMAND=/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/gpsp/raspberrypi/gpsp %ROM%"
 PLATFORMID=5
 
 DESCNAME=Game Boy Color
