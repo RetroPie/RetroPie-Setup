@@ -85,12 +85,13 @@ function lr_install_doom()
 
     # Download and compile Libretro PRBoom core
     gitPullOrClone "$rootdir/emulatorcores/libretro-prboom" git://github.com/libretro/libretro-prboom.git
+    make clean
     make
     if [[ -z `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Doom core."
     fi  
     popd
-    lr_configure_doom
+    lr_configure_doom()
 }
 
 # install Game Boy Color emulator core
@@ -98,6 +99,7 @@ function lr_install_gbc()
 {
     printMsg "Installing Game Boy Color core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/gambatte-libretro" git://github.com/libretro/gambatte-libretro.git
+    make -f Makefile.libretro clean
     make -C libgambatte -f Makefile.libretro
     if [[ -z `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Color core."
@@ -110,6 +112,7 @@ function lr_install_mame()
 {
     printMsg "Installing MAME core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/imame4all-libretro" git://github.com/libretro/imame4all-libretro.git
+    make -f makefile.libretro clean
     make -f makefile.libretro ARM=1
     if [[ -z `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile MAME core."
@@ -125,7 +128,10 @@ function lr_install_fba()
     apt-get install -y --force-yes cpp-4.5 gcc-4.5 g++-4.5
     (
         cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
-        CC=gcc-4.5 CXX=g++-4.5 make -f makefile.libretro
+        make -f makefile.libretro clean
+        #CC=gcc-4.5
+        #CXX=g++-4.5 
+        make -f makefile.libretro -j4 platform=armvhardfloat
     )
     mv svn-current/trunk/*libretro*.so $rootdir/emulatorcores/fba-libretro/
     if [[ -z `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` ]]; then
@@ -140,6 +146,7 @@ function lr_install_nes()
     printMsg "Installing NES core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/fceu-next" git://github.com/libretro/fceu-next.git
     pushd fceumm-code
+    make -f Makefile.libretro clean
     make -f Makefile.libretro
     popd
     if [[ -z `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so"` ]]; then
@@ -153,6 +160,7 @@ function lr_install_megadriveLibretro()
 {
     printMsg "Installing Mega Drive/Mastersystem/Game Gear core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/Genesis-Plus-GX" git://github.com/libretro/Genesis-Plus-GX.git
+    make -f Makefile.libretro clean
     make -f Makefile.libretro 
     if [[ ! -f `find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
