@@ -35,6 +35,7 @@ function lr_install_atari2600()
 {
     printMsg "Installing Atari 2600 RetroArch core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/stella-libretro" git://github.com/libretro/stella-libretro.git
+    make clean
     make
     if [[ -z `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 2600 core."
@@ -91,7 +92,7 @@ function lr_install_doom()
         __ERRMSGS="$__ERRMSGS Could not successfully compile Doom core."
     fi  
     popd
-    lr_configure_doom()
+    lr_configure_doom
 }
 
 # install Game Boy Color emulator core
@@ -173,6 +174,7 @@ function lc_installPCEngine()
 {
     printMsg "Installing PC Engine core (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/mednafen-pce-libretro/" https://github.com/petrockblog/mednafen-pce-libretro.git
+    make clean
     make
     if [[ ! -f `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile PC Engine core."
