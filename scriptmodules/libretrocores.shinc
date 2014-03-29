@@ -130,9 +130,11 @@ function lr_install_fba()
     (
         cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
         make -f makefile.libretro clean
-        #CC=gcc-4.5
-        #CXX=g++-4.5 
+        CC=gcc-4.5
+        CXX=g++-4.5 
         make -f makefile.libretro -j4 platform=armvhardfloat
+        unset CC
+        unset CXX
     )
     mv svn-current/trunk/*libretro*.so $rootdir/emulatorcores/fba-libretro/
     if [[ -z `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` ]]; then
