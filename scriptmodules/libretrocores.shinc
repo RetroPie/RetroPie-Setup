@@ -130,8 +130,8 @@ function lr_install_fba()
     (
         cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
         make -f makefile.libretro clean
-        CC=gcc-4.5
-        CXX=g++-4.5 
+        export CC=gcc-4.5
+        export CXX=g++-4.5 
         make -f makefile.libretro -j4 platform=armvhardfloat
         unset CC
         unset CXX
