@@ -129,12 +129,10 @@ function lr_install_fba()
     apt-get install -y --force-yes cpp-4.5 gcc-4.5 g++-4.5
     (
         cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
+        gcc_version 4.5
         make -f makefile.libretro clean
-        export CC=gcc-4.5
-        export CXX=g++-4.5 
         make -f makefile.libretro -j4 platform=armvhardfloat
-        unset CC
-        unset CXX
+        gcc_version 4.6
     )
     mv svn-current/trunk/*libretro*.so $rootdir/emulatorcores/fba-libretro/
     if [[ -z `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` ]]; then
