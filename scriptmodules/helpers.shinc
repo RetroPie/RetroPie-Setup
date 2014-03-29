@@ -198,6 +198,7 @@ set_default()
 # sets default gcc version
 gcc_version()
 {
+    cd /usr/bin
     for i in gcc cpp g++ gcov gccbug ; do 
         set_default $i $1
     done
