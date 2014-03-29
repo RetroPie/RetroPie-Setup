@@ -72,7 +72,7 @@ function lr_configure_doom()
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
 
     # download and install Doom 1 shareware
-    if wget "http://distro.ibiblio.org/pub/linux/distributions/slitaz/sources/packages/d/doom1.wad"; then
+    if `wget "http://distro.ibiblio.org/pub/linux/distributions/slitaz/sources/packages/d/doom1.wad"`; then
         mv doom1.wad "$rootdir/roms/doom/"
     else
         __ERRMSGS="$__ERRMSGS Could not successfully download and install Doom 1 shareware."
