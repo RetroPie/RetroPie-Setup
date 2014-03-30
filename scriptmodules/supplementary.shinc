@@ -536,7 +536,7 @@ DESCNAME=Duke Nukem 3D
 NAME=duke3d
 PATH=$rootdir/roms/duke3d
 EXTENSION=.grp .GRP
-COMMAND=eduke32 -g %ROM% -gamegrp %ROM%
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -g %ROM% -gamegrp %ROM%"
 PLATFORMID=1
 
 DESCNAME=Game Boy
@@ -578,7 +578,7 @@ DESCNAME=MAME
 NAME=mame
 PATH=$rootdir/roms/mame
 EXTENSION=.zip .ZIP
-COMMAND=$rootdir/emulators/mame4all-pi/mame %BASENAME%
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/mame4all-pi/mame %BASENAME%"
 #alternatively: COMMAND=$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% 
 # alternatively: COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" 
 PLATFORMID=23
@@ -617,7 +617,7 @@ DESCNAME=Nintendo 64
 NAME=n64
 PATH=$rootdir/roms/n64
 EXTENSION=.z64 .Z64 .n64 .N64
-COMMAND=cd $rootdir/emulators/mupen64plus-rpi/test/ && ./mupen64plus %ROM%
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "cd $rootdir/emulators/mupen64plus-rpi/test/ && ./mupen64plus %ROM%"
 PLATFORMID=3
 
 DESCNAME=PC Engine/TurboGrafx 16
