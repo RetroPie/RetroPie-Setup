@@ -57,7 +57,7 @@ function lr_install_cavestory()
 {
     printMsg "Installing NXEngine / Cave Story (Libretro core)"
     gitPullOrClone "$rootdir/emulatorcores/nxengine-libretro" git://github.com/libretro/nxengine-libretro.git
-    make
+    make platform=rpi
     if [[ -z `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NXEngine / Cave Story core."
     else
@@ -77,6 +77,15 @@ function lr_configure_doom()
     else
         __ERRMSGS="$__ERRMSGS Could not successfully download and install Doom 1 shareware."
     fi
+    # download and install midi instruments
+    pushd /usr/local/lib
+    if `wget "http://www.libsdl.org/projects/SDL_mixer/timidity/timidity.tar.gz"`; then
+	tar -xf timidity.tar.gz
+        ln -s /usr/local/lib/timidity/timidity.cfg /etc/timidity.cfg
+    else
+        echo error
+    fi
+    popd
 }
 
 # install Doom WADs emulator core
@@ -129,12 +138,10 @@ function lr_install_fba()
     apt-get install -y --force-yes cpp-4.5 gcc-4.5 g++-4.5
     (
         cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
+        gcc_version 4.5
         make -f makefile.libretro clean
-        export CC=gcc-4.5
-        export CXX=g++-4.5 
         make -f makefile.libretro -j4 platform=armvhardfloat
-        unset CC
-        unset CXX
+        gcc_version 4.6
     )
     mv svn-current/trunk/*libretro*.so $rootdir/emulatorcores/fba-libretro/
     if [[ -z `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` ]]; then
