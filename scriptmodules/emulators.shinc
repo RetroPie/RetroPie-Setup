@@ -799,6 +799,7 @@ function em_install_retroarch()
     printMsg "Installing RetroArch emulator"
     gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
     ./configure --prefix="$rootdir/emulators/RetroArch/installdir" --disable-x11 --disable-oss --disable-pulse --disable-sdl --enable-floathard
+    make clean
     make
     make install
     if [[ ! -f "$rootdir/emulators/RetroArch/installdir/bin/retroarch" ]]; then
