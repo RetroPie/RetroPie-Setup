@@ -36,6 +36,7 @@ __doReboot=0
 
 __default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
 __default_asflags=""
+__default_gcc_version="4.7"
 
 [[ -z "${CFLAGS}"        ]] && export CFLAGS="${__default_cflags}"
 [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
@@ -153,6 +154,7 @@ scriptdir=`dirname $0`
 scriptdir=`cd $scriptdir && pwd`
 
 rps_checkNeededPackages
+gcc_version $__default_gcc_version
 
 if [[ "$1" == "--help" ]]; then
     showHelp
