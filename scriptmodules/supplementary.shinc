@@ -152,20 +152,20 @@ function sup_install_dispmanx()
 function sup_install_bcmlibrary()
 {
     printMsg "Installing BCM2835 library"
-    wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.14.tar.gz
-    tar -zxvf bcm2835-1.14.tar.gz
+    wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.36.tar.gz
+    tar -zxvf bcm2835-1.36.tar.gz
     mkdir -p "$rootdir/supplementary/"
-    if [[ -d "$rootdir/supplementary/bcm2835-1.14/" ]]; then
-        rm -rf "$rootdir/supplementary/bcm2835-1.14/"
+    if [[ -d "$rootdir/supplementary/bcm2835-1.36/" ]]; then
+        rm -rf "$rootdir/supplementary/bcm2835-1.36/"
     fi
-    mv bcm2835-1.14 $rootdir/supplementary/
-    pushd $rootdir/supplementary/bcm2835-1.14
+    mv bcm2835-1.36 $rootdir/supplementary/
+    pushd $rootdir/supplementary/bcm2835-1.36
     ./configure
     make clean
     make
     make install
     popd
-    rm bcm2835-1.14.tar.gz 
+    rm bcm2835-1.36.tar.gz 
 }
 
 function sup_configure_snesdev()
