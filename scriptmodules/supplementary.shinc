@@ -138,7 +138,7 @@ function sup_install_dispmanx()
         rm -rf "$rootdir/supplementary/dispmanx"
     fi 
     gitPullOrClone "$rootdir/supplementary/dispmanx" git://github.com/vanfanel/SDL12-kms-dispmanx.git
-    export CFLAGS="-I/opt/vc/include/interface/vmcs_host/linux"
+    export CFLAGS +=" -I/opt/vc/include/interface/vmcs_host/linux"
     ./MAC_ConfigureDISPMANX.sh
     make
 
@@ -146,6 +146,7 @@ function sup_install_dispmanx()
         __ERRMSGS="$__ERRMSGS Could not successfully compile Dispmanx."
     fi    
     popd
+    export CFLAGS="${__default_cflags}"
 }
 
 # install BCM library to enable GPIO access by SNESDev-RPi
