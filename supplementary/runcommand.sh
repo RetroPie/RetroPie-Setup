@@ -47,7 +47,7 @@ elif [[ $starttype -eq 6 && ! -z `tvservice -m CEA | egrep -w "mode 19"` ]]; the
     tvservice -p
     fbset -depth 8 && fbset -depth 16
 elif [[ $starttype -eq 7 ]]; then
-	tvservice -e "PAL 4:3"
+	tvservice -c "PAL 4:3"
    	fbset -depth 8 && fbset -depth 16
     eval $@
     tvservice -p

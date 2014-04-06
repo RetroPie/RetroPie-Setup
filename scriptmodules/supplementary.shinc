@@ -138,7 +138,7 @@ function sup_install_dispmanx()
         rm -rf "$rootdir/supplementary/dispmanx"
     fi 
     gitPullOrClone "$rootdir/supplementary/dispmanx" git://github.com/vanfanel/SDL12-kms-dispmanx.git
-    export CFLAGS="-I/opt/vc/include/interface/vmcs_host/linux"
+    export CFLAGS +=" -I/opt/vc/include/interface/vmcs_host/linux"
     ./MAC_ConfigureDISPMANX.sh
     make
 
@@ -146,26 +146,27 @@ function sup_install_dispmanx()
         __ERRMSGS="$__ERRMSGS Could not successfully compile Dispmanx."
     fi    
     popd
+    export CFLAGS="${__default_cflags}"
 }
 
 # install BCM library to enable GPIO access by SNESDev-RPi
 function sup_install_bcmlibrary()
 {
     printMsg "Installing BCM2835 library"
-    wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.14.tar.gz
-    tar -zxvf bcm2835-1.14.tar.gz
+    wget http://www.open.com.au/mikem/bcm2835/bcm2835-1.36.tar.gz
+    tar -zxvf bcm2835-1.36.tar.gz
     mkdir -p "$rootdir/supplementary/"
-    if [[ -d "$rootdir/supplementary/bcm2835-1.14/" ]]; then
-        rm -rf "$rootdir/supplementary/bcm2835-1.14/"
+    if [[ -d "$rootdir/supplementary/bcm2835-1.36/" ]]; then
+        rm -rf "$rootdir/supplementary/bcm2835-1.36/"
     fi
-    mv bcm2835-1.14 $rootdir/supplementary/
-    pushd $rootdir/supplementary/bcm2835-1.14
+    mv bcm2835-1.36 $rootdir/supplementary/
+    pushd $rootdir/supplementary/bcm2835-1.36
     ./configure
     make clean
     make
     make install
     popd
-    rm bcm2835-1.14.tar.gz 
+    rm bcm2835-1.36.tar.gz 
 }
 
 function sup_configure_snesdev()
@@ -400,14 +401,14 @@ function sup_install_emulationstation()
 
     # make sure that SDL 2 is installed
     if [[ ! -f "/usr/local/lib/libSDL2.so" ]]; then
-        wget http://libsdl.org/release/SDL2-2.0.1.tar.gz
-        tar xvfz SDL2-2.0.1.tar.gz -C "$rootdir/supplementary/"
-        pushd "$rootdir/supplementary/SDL2-2.0.1"
+        wget http://libsdl.org/release/SDL2-2.0.3.tar.gz
+        tar xvfz SDL2-2.0.3.tar.gz -C "$rootdir/supplementary/"
+        pushd "$rootdir/supplementary/SDL2-2.0.3"
         ./configure
         make
         make install
         popd
-        rm SDL2-2.0.1.tar.gz
+        rm SDL2-2.0.3.tar.gz
     fi
 
     gitPullOrClone "$rootdir/supplementary/EmulationStation" git://github.com/Aloshi/EmulationStation.git
