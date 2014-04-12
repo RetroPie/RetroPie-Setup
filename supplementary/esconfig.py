@@ -37,7 +37,7 @@ def DisableAxisBtnHelper(parser, key, value):
 	return(parser)	
 
 if os.path.exists(home + '/.gngeo/') == False:
-	os.system('mkdir ' + home + '.gngeo/')
+	os.system('mkdir ' + home + '/.gngeo/')
 
 # create or flush input dummy files
 open(retroarch_input_cfg,'w').close()
