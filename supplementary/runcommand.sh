@@ -14,9 +14,7 @@ starttype=$1
 shift
 
 # set cpu governor profile performance 
-pushd /sys/devices/system/cpu/cpu0/cpufreq
-echo "performance" | sudo tee /scaling_governor
-popd
+echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
 if [[ $starttype -eq 1 && ! -z `tvservice -m CEA | egrep -w "mode 1"` ]] || [[ $starttype -eq 3 ]]; then
 	tvservice -e "CEA 1"
@@ -63,8 +61,6 @@ else
 fi
 
 # set cpu governor profile ondemand 
-pushd /sys/devices/system/cpu/cpu0/cpufreq
-echo "ondemand" | sudo tee /scaling_governor
-popd
+echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
 exit 0

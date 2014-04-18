@@ -331,6 +331,10 @@ function sup_configure_esconfig()
     chown $user $rootdir/roms/esconfig/rgui.py
     chgrp $user $rootdir/roms/esconfig/rgui.py
     chmod +x $rootdir/roms/esconfig/rgui.py    
+    cp "$scriptdir/supplementary/scripts/audio/*.py" "$rootdir/roms/exconfig/"
+    chown $user $rootdir/roms/esconfig/*.py
+    chgrp $user $rootdir/roms/esconfig/*.py
+    chmod +x $rootdir/roms/esconfig/*.py
     # add some information
     cat > $rootdir/roms/esconfig/gamelist.xml << _EOF_
 <?xml version="1.0"?>
@@ -508,7 +512,8 @@ DESCNAME=C64
 NAME=c64
 PATH=$rootdir/roms/c64
 EXTENSION=.crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP
-COMMAND=$rootdir/emulators/vice-2.3.dfsg/installdir/bin/x64 %ROM%
+#COMMAND=$rootdir/emulators/vice-2.3.dfsg/installdir/bin/x64 %ROM%
+COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/vice-2.4/installdir/bin/x64 -sdlbitdepth 16 %ROM%"
 PLATFORMID=40
 
 DESCNAME=Capcom
