@@ -722,7 +722,7 @@ function em_configureRetroArch()
     ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
 
     # enable and configure rewind feature
-    ensureKeyValue "rewind_enable" "true" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "rewind_enable" "false" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "rewind_buffer_size" "10" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "rewind_granularity" "2" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_rewind" "r" "$rootdir/configs/all/retroarch.cfg"
