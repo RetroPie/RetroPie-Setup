@@ -4,7 +4,7 @@
 #  with RetroArch, various cores, and EmulationStation (a graphical 
 #  front end).
 # 
-#  (c) Copyright 2012-2013  Florian Müller (contact@petrockblock.com)
+#  (c) Copyright 2012-2013 Florian Müller (contact@petrockblock.com)
 # 
 #  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
 # 
@@ -192,14 +192,17 @@ function em_install_viceC64()
         apt-get remove -y vice
     fi
     printMsg "Installing vice"
-    pushd "$rootdir/emulators"
+    #pushd "$rootdir/emulators"
     echo 'deb-src http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi' >> /etc/apt/sources.list
     apt-get update
-    apt-get build-dep -y vice
+    #apt-get build-dep -y vice
     apt-get install -y libxaw7-dev automake checkinstall
-    apt-get source vice
-    cd vice-2.3.dfsg
-    ./configure --prefix="$rootdir/emulators/vice-2.3.dfsg/installdir" --enable-sdlui --with-sdlsound
+    #apt-get source vice
+    #cd vice-2.3.dfsg
+    wget -O vice-2.4.tar.gz http://downloads.sourceforge.net/project/vice-emu/releases/vice-2.4.tar.gz
+    tar xzvf vice-2.4.tar.gz -C "$rootdir/emulators/"
+    pushd "$rootdir/emulators/vice-2.4"
+    ./configure --prefix="$rootdir/emulators/vice-2.4/installdir" --enable-sdlui --without-pulse --with-sdlsound
     make    
     make install
     popd
