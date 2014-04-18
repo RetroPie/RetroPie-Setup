@@ -331,6 +331,10 @@ function sup_configure_esconfig()
     chown $user $rootdir/roms/esconfig/rgui.py
     chgrp $user $rootdir/roms/esconfig/rgui.py
     chmod +x $rootdir/roms/esconfig/rgui.py    
+    cp "$scriptdir/supplementary/scripts/audio/*.py" "$rootdir/roms/exconfig/"
+    chown $user $rootdir/roms/esconfig/*.py
+    chgrp $user $rootdir/roms/esconfig/*.py
+    chmod +x $rootdir/roms/esconfig/*.py
     # add some information
     cat > $rootdir/roms/esconfig/gamelist.xml << _EOF_
 <?xml version="1.0"?>
