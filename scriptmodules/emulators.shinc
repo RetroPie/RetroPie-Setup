@@ -643,7 +643,7 @@ function em_configureSoundsettings()
 
     # RetroArch settings
     ensureKeyValue "audio_driver" "alsathread" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "audio_out_rate" "48000" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "audio_out_rate" "44100" "$rootdir/configs/all/retroarch.cfg"
 
     # ALSA settings
     mv /etc/asound.conf /etc/asound.conf.bak
