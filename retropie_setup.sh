@@ -194,6 +194,7 @@ esscrapimgw=275 # width in pixel for EmulationStation games scraper
 
 home=$(eval echo ~$user)
 
+# make sure that RetroPie root directory exists
 if [[ ! -d $rootdir ]]; then
     mkdir -p "$rootdir"
     if [[ ! -d $rootdir ]]; then
@@ -202,6 +203,7 @@ if [[ ! -d $rootdir ]]; then
     fi
 fi
 
+# make sure that RetroPie-Setup log directory exists
 if [[ ! -d $scriptdir/logs ]]; then
     mkdir -p "$scriptdir/logs"
     chown $user "$scriptdir/logs"
@@ -212,6 +214,7 @@ if [[ ! -d $scriptdir/logs ]]; then
     fi
 fi
 
+# make sure that enough space is available
 rps_availFreeDiskSpace 800000
 
 while true; do

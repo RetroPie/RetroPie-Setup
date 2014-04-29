@@ -184,8 +184,8 @@ function em_install_c64roms()
 function em_install_viceC64()
 {
     printMsg "Install VICE Commodore 64 core"
-    if [[ -d "$rootdir/emulators/vice-2.3.dsfg" ]]; then
-        rm -rf "$rootdir/emulators/vice-2.3.dsfg"
+    if [[ -d "$rootdir/emulators/vice-2.4" ]]; then
+        rm -rf "$rootdir/emulators/vice-2.4"
     fi
     if dpkg-query -Wf'${db:Status-abbrev}' vice 2>/dev/null | grep -q '^i'; then
         printf 'Package vice is already installed - removing package\n' "${1}"

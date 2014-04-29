@@ -4,7 +4,6 @@ filelist=()
 
 filelist+=("./RetroPie/supplementary/EmulationStation/emulationstation")
 filelist+=("./RetroPie/supplementary/ES-config/")
-filelist+=("./RetroPie/supplementary/bcm2835-1.14/")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/SNESDev")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/supplementary/snesdev.cfg")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/scripts/SNESDev")
@@ -48,7 +47,7 @@ filelist+=("./RetroPie/emulators/gngeo-pi-0.85/installdir/")
 filelist+=("./RetroPie/emulators/gngeo-pi-0.85/gngeo/FAQ")
 filelist+=("./RetroPie/emulators/gngeo-pi-0.85/gngeo/README")
 filelist+=("./RetroPie/emulators/gngeo-0.7/installdir/")
-filelist+=("./RetroPie/emulators/vice-2.3.dfsg/installdir/")
+filelist+=("./RetroPie/emulators/vice-2.4/installdir/")
 filelist+=("./RetroPie/emulators/uae4rpi/")
 filelist+=("./RetroPie/emulators/advancemame-0.94.0/installdir/")
 filelist+=("./RetroPie/emulators/jzintv-1.0-beta4/")
@@ -76,14 +75,19 @@ filelist+=("./RetroPie/emulators/cpc4rpi-1.1/joy.txt")
 
 echo "Checking, if all directories/files exist"
 tLen=${#filelist[@]}
+doAbort=0
 for (( i=0; i<${tLen}; i++ ));
 do
 	if [[ ! -d "${filelist[$i]}" && ! -f "${filelist[$i]}" ]]
 	then
 	  echo "Cannot find directory ${filelist[$i]}."
-	  exit
+	  $doAbort=1
 	fi
 done
+
+if [[ $doAbort -eq 1 ]]; then
+	exit
+fi
 
 echo "Creating the archive file"
 tar -c -vf RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]}
