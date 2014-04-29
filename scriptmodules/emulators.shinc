@@ -253,11 +253,16 @@ function em_install_dgen()
     fi   
     wget http://downloads.sourceforge.net/project/dgen/dgen/1.32/dgen-sdl-1.32.tar.gz
     tar xvfz dgen-sdl-1.32.tar.gz -C "$rootdir/emulators/"
+    if [[ -d "$rootdir/emulators/dgen-sdl" ]]; then
+        rm -rf "$rootdir/emulators/dgen-sdl"
+    fi
     mv "$rootdir/emulators/dgen-sdl-1.32" "$rootdir/emulators/dgen-sdl"
     pushd "$rootdir/emulators/dgen-sdl"
     mkdir "installdir" # only used for creating the binaries archive
+    gcc_version 4.6
     ./configure --disable-opengl
     make
+    gcc_version $__default_gcc_version
     make install DESTDIR=$rootdir/emulators/dgen-sdl/installdir
     make install
     if [[ ! -f "$rootdir/emulators/dgen-sdl/dgen" ]]; then
