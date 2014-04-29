@@ -8,8 +8,6 @@ filelist+=("./RetroPie/supplementary/SNESDev-Rpi/SNESDev")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/supplementary/snesdev.cfg")
 filelist+=("./RetroPie/supplementary/SNESDev-Rpi/scripts/SNESDev")
 filelist+=("./RetroPie/supplementary/dispmanx/build/.libs/")
-filelist+=("./RetroPie/supplementary/QtSixA-1.5.1/")
-filelist+=("./RetroPie/supplementary/sixpair/")
 
 filelist+=("`find ./RetroPie/emulatorcores/stella-libretro/ -name "*libretro*.so"`")
 filelist+=("`find ./RetroPie/emulatorcores/nxengine-libretro/ -name "*libretro*.so"`")
@@ -81,7 +79,7 @@ do
 	if [[ ! -d "${filelist[$i]}" && ! -f "${filelist[$i]}" ]]
 	then
 	  echo "Cannot find directory ${filelist[$i]}."
-	  $doAbort=1
+	  doAbort=1
 	fi
 done
 
