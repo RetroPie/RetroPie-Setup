@@ -424,25 +424,17 @@ function sup_install_emulationstation()
     #ES requires C++11 support to build, which means g++ 4.7 or later, which isn't what g++ resolves to right now
     rm -rf CMakeFiles
     rm CMakeCache.txt
-    export CXX=g++-4.7 
+    export CXX=g++-4.7
     cmake .
     make
     unset CXX
-    sup_install_esscript    
+    sup_install_esscript
     if [[ ! -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Emulation Station."
-    fi      
-
-    if [[ ! -f /usr/lib/libEGL.so ]]; then
-        ln -fs /opt/vc/lib/libEGL.so /usr/lib/libEGL.so
     fi
     if [[ ! -f /usr/lib/libEGL.so ]]; then
         ln -fs /opt/vc/lib/libEGL.so /usr/lib/libEGL.so
     fi
-    if [[ ! -f /usr/lib/libEGL.so ]]; then
-        ln -fs /opt/vc/lib/libEGL.so /usr/lib/libEGL.so
-    fi
-
     popd
 }
 
