@@ -176,10 +176,10 @@ if [[ $# -lt 1 ]]; then
     then
         user=$(whoami)
     fi
-    rootdir=/home/$user/RetroPie
+    rootdir=/opt/retropie
 elif [[ $# -lt 2 ]]; then
     user=$1
-    rootdir=/home/$user/RetroPie
+    rootdir=/opt/retropie
 elif [[ $# -lt 3 ]]; then
     user=$1
     rootdir=$2
