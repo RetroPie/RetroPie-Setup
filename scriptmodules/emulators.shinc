@@ -219,8 +219,9 @@ function em_configureDGEN()
         cp $rootdir/emulators/dgen-sdl/sample.dgenrc $rootdir/configs/all/dgenrc 
     fi
 
-    chown -R $user $rootdir/configs/all/
-    chgrp -R $user $rootdir/configs/all/
+    # TODO can be removed?
+    # chown -R $user $rootdir/configs/all/
+    # chgrp -R $user $rootdir/configs/all/
 
     ensureKeyValue "joy_pad1_a" "joystick0-button0" $rootdir/configs/all/dgenrc
     ensureKeyValue "joy_pad1_b" "joystick0-button1" $rootdir/configs/all/dgenrc
@@ -457,8 +458,9 @@ _EOF_
     sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" linapple.conf
     sed -i -r -e "s|[^I]?Joystick 1[^I]?=[^I]?[0-9]|\tJoystick 1\t=\t1|g" linapple.conf
     popd
-    chgrp -R $user $rootdir
-    chown -R $user $rootdir  
+    # TODO can be removed?
+    # chgrp -R $user $rootdir
+    # chown -R $user $rootdir  
 }
 
 # install Linapple emulator
@@ -831,8 +833,9 @@ popd
 _EOF_
     chmod +x "$rootdir/emulators/rpix86/Start.sh"
     touch $rootdir/roms/x86/Start.txt
-    chgrp -R $user $rootdir
-    chown -R $user $rootdir    
+    # TODO can be removed?
+    # chgrp -R $user $rootdir
+    # chown -R $user $rootdir    
 }
 
 # install PC emulator rpix86
@@ -855,8 +858,9 @@ function em_install_rpix86()
     # configure for use with Emulation Station
     em_configure_rpix86
 
-    chgrp -R $user $rootdir
-    chown -R $user $rootdir
+    # TODO can be removed?
+    # chgrp -R $user $rootdir
+    # chown -R $user $rootdir
 }
 
 # install ScummVM

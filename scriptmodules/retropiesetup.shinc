@@ -79,8 +79,9 @@ function rps_prepareFolders()
     do
         if [[ ! -d $elem ]]; then
             mkdir -p $elem
-            chown $user $elem
-            chgrp $user $elem
+            # TODO Can be removed?
+            # chown $user $elem
+            # chgrp $user $elem
         fi
     done    
 }
@@ -100,21 +101,24 @@ function rps_downloadBinaries()
 
     # handle Doom emulator specifics
     cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
-    chgrp $user $rootdir/roms/doom/prboom.wad
-    chown $user $rootdir/roms/doom/prboom.wad
+    # TODO Can be removed?
+    # chgrp $user $rootdir/roms/doom/prboom.wad
+    # chown $user $rootdir/roms/doom/prboom.wad
 }
 
 # downloads and installs theme files for Emulation Station
 function rps_install_esthemes()
 {
+    # TODO must be adapted to new theming system of ES2
     printMsg "Installing themes for Emulation Station"
     # wget --progress=bar:force -O - 'http://blog.petrockblock.com/?wpdmdl=2' | tar jx --overwrite -C $home/
     wget -O themesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=2
     tar -jxvf themesDownload.tar.bz2 -C $home/   
     rm themesDownload.tar.bz2 
 
-    chgrp -R $user $home/.emulationstation
-    chown -R $user $home/.emulationstation
+    # TODO can be removed?
+    # chgrp -R $user $home/.emulationstation
+    # chown -R $user $home/.emulationstation
 }
 
 # shows help information in the console
@@ -303,8 +307,9 @@ function rps_main_binaries()
     sup_configure_esconfig
     lr_configure_doom
 
-    chgrp -R $user $rootdir
-    chown -R $user $rootdir
+    # TODO can be removed?
+    # chgrp -R $user $rootdir
+    # chown -R $user $rootdir
 
     rc_setAvoidSafeMode
     sup_install_runcommandscript
@@ -519,8 +524,9 @@ function rps_main_options()
                 esac
             done
 
-            chgrp -R $user $rootdir
-            chown -R $user $rootdir
+            # TODO can be removed?
+            # chgrp -R $user $rootdir
+            # chown -R $user $rootdir
 
             rps_createDebugLog
 
@@ -536,8 +542,9 @@ function rps_main_options()
 
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
 
-        chown -R $user $scriptdir/logs/run_$now.log.gz
-        chgrp -R $user $scriptdir/logs/run_$now.log.gz
+        # TODO can be removed?
+        # chown -R $user $scriptdir/logs/run_$now.log.gz
+        # chgrp -R $user $scriptdir/logs/run_$now.log.gz
     fi
 }
 

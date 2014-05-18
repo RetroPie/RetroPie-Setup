@@ -113,12 +113,13 @@ function rc_ensure_modules()
 function rc_exportSDLNOMOUSE()
 {
     printMsg "Exporting SDL_NOMOUSE=1 permanently to $home/.bashrc"
-    export SDL_NOMOUSE=1
-    if ! grep -q "export SDL_NOMOUSE=1" $home/.bashrc; then
-        echo -e "\nexport SDL_NOMOUSE=1" >> $home/.bashrc
-    else
-        echo -e "SDL_NOMOUSE=1 already contained in $home/.bashrc"
-    fi    
+    # export SDL_NOMOUSE=1
+    # if ! grep -q "export SDL_NOMOUSE=1" $home/.bashrc; then
+    #     echo -e "\nexport SDL_NOMOUSE=1" >> $home/.bashrc
+    # else
+    #     echo -e "SDL_NOMOUSE=1 already contained in $home/.bashrc"
+    # fi    
+    # TODO Still needed? Remove otherwise or adapt to new folder structure
 }
 
 # make sure that all needed packages are installed

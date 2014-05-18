@@ -308,32 +308,32 @@ function sup_configure_esconfig()
     fi
     # generate new startup scripts for ES-config
     cp "$scriptdir/supplementary/scripts/input/esconfig.py" "$rootdir/roms/esconfig/"
-    chown $user $rootdir/roms/esconfig/esconfig.py
-    chgrp $user $rootdir/roms/esconfig/esconfig.py
+    # chown $user $rootdir/roms/esconfig/esconfig.py
+    # chgrp $user $rootdir/roms/esconfig/esconfig.py
     chmod +x $rootdir/roms/esconfig/esconfig.py
     cp "$scriptdir/supplementary/scripts/input/basic.py" "$rootdir/roms/esconfig/"
-    chown $user $rootdir/roms/esconfig/basic.py
-    chgrp $user $rootdir/roms/esconfig/basic.py
+    # chown $user $rootdir/roms/esconfig/basic.py
+    # chgrp $user $rootdir/roms/esconfig/basic.py
     chmod +x $rootdir/roms/esconfig/basic.py    
     cp "$scriptdir/supplementary/scripts/input/autooff.py" "$rootdir/roms/esconfig/"
-    chown $user $rootdir/roms/esconfig/autooff.py
-    chgrp $user $rootdir/roms/esconfig/autooff.py
+    # chown $user $rootdir/roms/esconfig/autooff.py
+    # chgrp $user $rootdir/roms/esconfig/autooff.py
     chmod +x $rootdir/roms/esconfig/autooff.py    
     cp "$scriptdir/supplementary/scripts/input/autoon.py" "$rootdir/roms/esconfig/"
-    chown $user $rootdir/roms/esconfig/autoon.py
-    chgrp $user $rootdir/roms/esconfig/autoon.py
+    # chown $user $rootdir/roms/esconfig/autoon.py
+    # chgrp $user $rootdir/roms/esconfig/autoon.py
     chmod +x $rootdir/roms/esconfig/autoon.py    
     cp "$scriptdir/supplementary/scripts/info/showip.py" "$rootdir/roms/esconfig/"
-    chown $user $rootdir/roms/esconfig/showip.py
-    chgrp $user $rootdir/roms/esconfig/showip.py
+    # chown $user $rootdir/roms/esconfig/showip.py
+    # chgrp $user $rootdir/roms/esconfig/showip.py
     chmod +x $rootdir/roms/esconfig/showip.py    
     cp "$scriptdir/supplementary/scripts/input/rgui.py" "$rootdir/roms/esconfig/"
-    chown $user $rootdir/roms/esconfig/rgui.py
-    chgrp $user $rootdir/roms/esconfig/rgui.py
+    # chown $user $rootdir/roms/esconfig/rgui.py
+    # chgrp $user $rootdir/roms/esconfig/rgui.py
     chmod +x $rootdir/roms/esconfig/rgui.py    
     cp "$scriptdir/supplementary/scripts/audio/*.py" "$rootdir/roms/exconfig/"
-    chown $user $rootdir/roms/esconfig/*.py
-    chgrp $user $rootdir/roms/esconfig/*.py
+    # chown $user $rootdir/roms/esconfig/*.py
+    # chgrp $user $rootdir/roms/esconfig/*.py
     chmod +x $rootdir/roms/esconfig/*.py
     # add some information
     cat > $rootdir/roms/esconfig/gamelist.xml << _EOF_
@@ -376,8 +376,8 @@ GNGEO 0.7</desc>
 	</game>
 </gameList>
 _EOF_
-chown $user $rootdir/roms/esconfig/gamelist.xml
-chgrp $user $rootdir/roms/esconfig/gamelist.xml
+# chown $user $rootdir/roms/esconfig/gamelist.xml
+# chgrp $user $rootdir/roms/esconfig/gamelist.xml
 }
 
 function sup_install_esconfig()

@@ -235,8 +235,9 @@ function set_sortromsalphabet()
             done
         fi
     done  
-    chgrp -R $user $rootdir/roms
-    chown -R $user $rootdir/roms
+    # TODO can be removed?
+    # chgrp -R $user $rootdir/roms
+    # chown -R $user $rootdir/roms
 }
 
 # sets the ARM frequency of the Raspberry to a specific value
@@ -519,48 +520,54 @@ function set_checkESScraperExists()
         git pull
         popd
     fi
-    chgrp -R $user "$rootdir/supplementary/ES-scraper"
-    chown -R $user "$rootdir/supplementary/ES-scraper"
+    # TODO can be removed?
+    # chgrp -R $user "$rootdir/supplementary/ES-scraper"
+    # chown -R $user "$rootdir/supplementary/ES-scraper"
 }
 
 function set_essc_runnormal()
 {
     set_checkESScraperExists
     python $rootdir/supplementary/ES-scraper/scraper.py -w $esscrapimgw
-    chgrp -R $user "$rootdir/roms"
-    chown -R $user "$rootdir/roms"
+    # TODO can be removed?
+    # chgrp -R $user "$rootdir/roms"
+    # chown -R $user "$rootdir/roms"
 }
 
 function set_essc_runforced()
 {
     set_checkESScraperExists
     python $rootdir/supplementary/ES-scraper/scraper.py -f -w $esscrapimgw
-    chgrp -R $user "$rootdir/roms"
-    chown -R $user "$rootdir/roms"
+    # TODO can be removed
+    # chgrp -R $user "$rootdir/roms"
+    # chown -R $user "$rootdir/roms"
 }
 
 function set_essc_runmanual()
 {
     set_checkESScraperExists
     python $rootdir/supplementary/ES-scraper/scraper.py -m -w $esscrapimgw
-    chgrp -R $user "$rootdir/roms"
-    chown -R $user "$rootdir/roms"
+    # TODO can be removed
+    # chgrp -R $user "$rootdir/roms"
+    # chown -R $user "$rootdir/roms"
 }
 
 function set_essc_runcrc()
 {
     set_checkESScraperExists
     python $rootdir/supplementary/ES-scraper/scraper.py -crc -w $esscrapimgw
-    chgrp -R $user "$rootdir/roms"
-    chown -R $user "$rootdir/roms"
+    # TODO can be removed
+    # chgrp -R $user "$rootdir/roms"
+    # chown -R $user "$rootdir/roms"
 }
 
 function set_essc_runpartial()
 {
     set_checkESScraperExists
     python $rootdir/supplementary/ES-scraper/scraper.py -p -w $esscrapimgw
-    chgrp -R $user "$rootdir/roms"
-    chown -R $user "$rootdir/roms"
+    # TODO can be removed
+    # chgrp -R $user "$rootdir/roms"
+    # chown -R $user "$rootdir/roms"
 }
 
 function set_essc_setimgw()
@@ -636,7 +643,8 @@ function set_RetroarchJoyconfig()
     configfname=`grep "input_device = \"" $rootdir/emulators/RetroArch/configs/tempconfig.cfg`
     configfname=`echo ${configfname:16:-1} | tr -d ' '`
     mv $rootdir/emulators/RetroArch/configs/tempconfig.cfg $rootdir/emulators/RetroArch/configs/$configfname.cfg
-    chown $user:$user $rootdir/emulators/RetroArch/configs/
+    # TODO can be removed?
+    # chown $user:$user $rootdir/emulators/RetroArch/configs/
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The configuration file has been saved as $configfname.cfg and will be used by RetroArch from now on whenever that controller is connected." 22 76    
 }
 
