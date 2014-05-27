@@ -471,6 +471,8 @@ function sup_generate_esconfig()
          local __tmpnetplayframes=""
      fi
 
+    mkdir /etc/emulationstation
+
     cat > "/etc/emulationstation/es_systems.cfg" << _EOF_
 <systemList>  
 
