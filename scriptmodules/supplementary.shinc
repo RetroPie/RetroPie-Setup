@@ -621,7 +621,7 @@ PLATFORMID=3
 DESCNAME=PC Engine/TurboGrafx 16
 NAME=pcengine
 PATH=$rootdir/roms/pcengine
-EXTENSION=.pce
+EXTENSION=.pce .PCE .bin .BIN .cue .CUE
 COMMAND=$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%"
 PLATFORMID=34
 
@@ -668,7 +668,7 @@ PLATFORMID=21
 DESCNAME=Sega 32X
 NAME=sega32x
 PATH=$rootdir/roms/sega32x
-EXTENSION=.32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP
+EXTENSION=.32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP .bin .BIN .cue .CUE
 COMMAND=/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/RetroArch/installdir/bin/retroarch -L /home/pi/RetroPie/emulatorcores/picodrive/picodrive_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/sega32x/retroarch.cfg  %ROM%"
 #COMMAND=/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/dgen-sdl/dgen -f -r /home/pi/RetroPie/configs/all/dgenrc %ROM%"
 #COMMAND=export LD_LIBRARY_PATH="/home/pi/RetroPie/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; /home/pi/RetroPie/emulators/dgen-sdl/dgen %ROM%
