@@ -601,7 +601,9 @@ function set_installps3controller()
     wget -O QtSixA.tar.gz http://sourceforge.net/projects/qtsixa/files/QtSixA%201.5.1/QtSixA-1.5.1-src.tar.gz
     tar xfvz QtSixA.tar.gz
     cd QtSixA-1.5.1/sixad
+    gcc_version 4.6
     make
+    gcc_version $__default_gcc_version
     mkdir -p /var/lib/sixad/profiles
     checkinstall -y
     update-rc.d sixad defaults
