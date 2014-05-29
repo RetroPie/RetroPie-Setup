@@ -114,6 +114,7 @@ filelist+=("./RetroPie/emulators/cpc4rpi-1.1/cpc4rpi")
 filelist+=("./RetroPie/emulators/cpc4rpi-1.1/COPYING.txt")
 filelist+=("./RetroPie/emulators/cpc4rpi-1.1/README.txt")
 filelist+=("./RetroPie/emulators/cpc4rpi-1.1/joy.txt")
+filelist+=("./RetroPie/emulators/fastdosbox-1.5/installdir/")
 
 echo "Checking, if all directories/files exist"
 tLen=${#filelist[@]}

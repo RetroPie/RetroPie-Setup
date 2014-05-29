@@ -305,6 +305,26 @@ function em_install_eduke32()
     rm -rf "$rootdir/emulators/eduke32"
 }
 
+# install DOS emulator FastDosbox
+function em_install_fastdosbox() {
+    printMsg "Installing Dos emulator FastDosbox"
+    wget http://gaming.capsule-sa.co.za/downloads/fastdosbox-1.5_src.tar.gz
+    tar xvfz fastdosbox-1.5_src.tar.gz -C "$rootdir/emulators/"
+
+    # patch sources
+    sed -i 's|#include "nofun.h"|//#include "nofun.h"|g' "$rootdir/emulators/fastdosbox-1.5/src/gui/sdl_mapper.cpp"
+
+    mkdir -p $rootdir/emulators/fastdosbox-1.5/installdir
+    pushd $rootdir/emulators/fastdosbox-1.5
+    ./configure --prefix=$rootdir/emulators/fastdosbox-1.5/installdir
+    make
+    make install
+    if [[ ! -f $rootdir/emulators/fastdosbox-1.5/installdir/bin/dosbox ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully install FastDosbox."
+    fi
+    popd
+    rm fastdosbox-1.5_src.tar.gz
+}
 
 # install Game Boy Advance emulator gpSP
 function em_install_gba()

@@ -12,6 +12,7 @@ rm -rf ~/python_games/
 rm -rf ~/Desktop/
 rm -rf osmose_files
 rm ~/.bash_history
+rm ~/RetroPie-Setup/logs/*
 
 # check file system for errors
 # e2fsck -f -y -v /dev/sdaX

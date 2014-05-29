@@ -413,29 +413,30 @@ function rps_main_options()
              43 "Install PC Engine core (Mednafen-PCE-Libretro, 21 min)" ON \
              44 "Install PC emulator (RPix86)" ON \
              45 "Install PC emulator (Dosbox, 1 min)" ON \
-             46 "Install Playstation core (20 min)" ON \
-             47 "Install PSP emulator PPSSPP" OFF \
-             48 "Install ScummVM (1 min)" ON \
-             49 "Install Super NES core (11 min)" ON \
-             50 "Install SNES9X emulator (15 min)" ON \
-             51 "Install PiSNES emulator (8 min)" ON \
-             52 "(C) Configure Super NES core" ON \
-             53 "Install Wolfenstein3D engine (3 min)" ON \
-             54 "Install Z Machine emulator (Frotz)" ON \
-             55 "Install ZX Spectrum emulator (Fuse, 1 min)" ON \
-             56 "Install ZX Spectrum emulator (FBZX, 3 min)" ON \
-             57 "Install BCM library" ON \
-             58 "Install Dispmanx library" ON \
-             59 "Install SNESDev" ON \
-             60 "Install Emulation Station" ON \
-             61 "Install Emulation Station Themes" ON \
-             62 "Install ES-config" ON \
-             63 "(C) Generate config file for Emulation Station" ON \
-             64 "(C) Configure sound settings for RetroArch" ON \
-             65 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             66 "Install runcommand script" ON \
-             67 "(C) Configure /boot/config.txt" ON \
-             68 "(C) Disable screen blanking and power down timeout" ON )
+             46 "Install PC emulator (FastDosbox)" ON \
+             47 "Install Playstation core (20 min)" ON \
+             48 "Install PSP emulator PPSSPP" OFF \
+             49 "Install ScummVM (1 min)" ON \
+             50 "Install Super NES core (11 min)" ON \
+             51 "Install SNES9X emulator (15 min)" ON \
+             52 "Install PiSNES emulator (8 min)" ON \
+             53 "(C) Configure Super NES core" ON \
+             54 "Install Wolfenstein3D engine (3 min)" ON \
+             55 "Install Z Machine emulator (Frotz)" ON \
+             56 "Install ZX Spectrum emulator (Fuse, 1 min)" ON \
+             57 "Install ZX Spectrum emulator (FBZX, 3 min)" ON \
+             58 "Install BCM library" ON \
+             59 "Install Dispmanx library" ON \
+             60 "Install SNESDev" ON \
+             61 "Install Emulation Station" ON \
+             62 "Install Emulation Station Themes" ON \
+             63 "Install ES-config" ON \
+             64 "(C) Generate config file for Emulation Station" ON \
+             65 "(C) Configure sound settings for RetroArch" ON \
+             66 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
+             67 "Install runcommand script" ON \
+             68 "(C) Configure /boot/config.txt" ON \
+             69 "(C) Disable screen blanking and power down timeout" ON )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -491,29 +492,30 @@ function rps_main_options()
                     43) lc_installPCEngine ;;
                     44) em_install_rpix86 ;;
                     45) em_install_dosbox ;;
-                    46) lr_install_psx ;;
-                    47) em_install_ppsspp ;;
-                    48) em_install_scummvm ;;
-                    49) lr_install_snes ;;
-                    50) em_install_snes9x ;;
-                    51) em_install_pisnes ;;
-                    52) lr_configure_snes ;;
-                    53) em_install_wolfenstein3d ;;
-                    54) em_install_zmachine ;;
-                    55) em_install_zxspectrum ;;
-                    56) em_install_fbzx ;;
-                    57) sup_install_bcmlibrary ;;
-                    58) sup_install_dispmanx ;;
-                    59) sup_install_snesdev ;;
-                    60) sup_install_emulationstation ;;
-                    61) rps_install_esthemes ;;
-                    62) sup_install_esconfig ;;
-                    63) sup_generate_esconfig ;;
-                    64) em_configureSoundsettings ;;
-                    65) rc_setAvoidSafeMode ;;
-                    66) sup_install_runcommandscript ;;
-                    67) rc_configureBootConfig ;;
-                    68) rc_disableTimeouts ;;
+                    46) em_install_fastdosbox ;;
+                    47) lr_install_psx ;;
+                    48) em_install_ppsspp ;;
+                    49) em_install_scummvm ;;
+                    50) lr_install_snes ;;
+                    51) em_install_snes9x ;;
+                    52) em_install_pisnes ;;
+                    53) lr_configure_snes ;;
+                    54) em_install_wolfenstein3d ;;
+                    55) em_install_zmachine ;;
+                    56) em_install_zxspectrum ;;
+                    57) em_install_fbzx ;;
+                    58) sup_install_bcmlibrary ;;
+                    59) sup_install_dispmanx ;;
+                    60) sup_install_snesdev ;;
+                    61) sup_install_emulationstation ;;
+                    62) rps_install_esthemes ;;
+                    63) sup_install_esconfig ;;
+                    64) sup_generate_esconfig ;;
+                    65) em_configureSoundsettings ;;
+                    66) rc_setAvoidSafeMode ;;
+                    67) sup_install_runcommandscript ;;
+                    68) rc_configureBootConfig ;;
+                    69) rc_disableTimeouts ;;
                 esac
             done
 
