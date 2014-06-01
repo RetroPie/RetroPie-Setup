@@ -219,8 +219,7 @@ rps_availFreeDiskSpace 800000
 
 while true; do
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
-    options=(1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)"
-             2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
+    options=(2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
              3 "SETUP (only if you already have run one of the installations above)"
              4 "UPDATE RetroPie Setup script"
              5 "UPDATE RetroPie Binaries"
