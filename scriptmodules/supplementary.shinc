@@ -482,6 +482,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/apple2</path>
         <extension>.txt</extension>
         <command>$rootdir/emulators/linapple-src_2a/Start.sh</command>
+        <platform>apple2</platform>
     </system>
 
     <system>
@@ -490,7 +491,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/atari800</path>
         <extension>.xex .XEX</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/atari800-3.0.0/installdir/bin/atari800 %ROM%"</command>
-        <platform></platform>
+        <platform>atari800</platform>
     </system>
 
     <system>
@@ -509,7 +510,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/atariStSteFalcon</path>
         <extension>.st .ST .img .IMG .rom .ROM</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "hatari %ROM%"</command>
-        <platform></platform>
+        <platform>atarist</platform>
     </system>
 
     <system>
@@ -538,7 +539,7 @@ function sup_generate_esconfig()
         <extension>.crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP</extension>
         <!-- alternatively: <command>$rootdir/emulators/vice-2.3.dfsg/installdir/bin/x64 %ROM%</command> -->
         <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/vice-2.4/installdir/bin/x64 -sdlbitdepth 16 %ROM%"</command>
-        <platform>commodore64</platform>
+        <platform>c64</platform>
     </system>
 
     <system>
@@ -704,7 +705,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/scummvm</path>
         <extension>.exe .EXE</extension>
         <command>scummvm</command>
-        <platform></platform>
+        <platform>pc</platform>
     </system>
 
     <system>
@@ -725,7 +726,7 @@ function sup_generate_esconfig()
         <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command>
         <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"</command> -->
         <!-- alternatively: <command>export LD_LIBRARY_<path>"$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%</path></command> -->
-        <platform>genesis</platform>
+        <platform>genesis, megadrive</platform>
     </system>
 
     <system>
