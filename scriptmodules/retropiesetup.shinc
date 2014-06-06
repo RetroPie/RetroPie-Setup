@@ -573,24 +573,25 @@ function rps_main_setup()
                      2 "Install latest Rasperry Pi firmware" 
                      3 "Install AdvanceMenu"
                      4 "Start Emulation Station on boot?" 
-                     5 "Start SNESDev on boot?"
-                     6 "Enable/disable RetroPie splashscreen"
-                     7 "Change RetroPie splashscreen"
-                     8 "Configure audio settings"
-                     9 "Change ARM frequency" 
-                     10 "Change SDRAM frequency"
-                     11 "Install/update multi-console gamepad drivers for GPIO" 
-                     12 "Enable gamecon_gpio_rpi with SNES-pad config"
-                     13 "Run 'ES-scraper'" 
-                     14 "Install and configure SAMBA shares"
-                     15 "Install USB-ROM-Copy service"
-                     16 "Install drivers for XBox 360 Wired Controllers"
-                     17 "Install driver and tools for PS3 controllers"
-                     18 "Configure RetroArch Netplay"
-                     19 "Register controller for RetroArch emulator"
-                     20 "Update input configuration of Emulation Station"
-                     21 "Tweak user bash profile"
-                     22 "Generate debug log" )
+                     5 "Configure SNESDev"
+                     6 "Configure Xarcade2Jstick"
+                     7 "Enable/disable RetroPie splashscreen"
+                     8 "Change RetroPie splashscreen"
+                     9 "Configure audio settings"
+                     10 "Change ARM frequency" 
+                     11 "Change SDRAM frequency"
+                     12 "Install/update multi-console gamepad drivers for GPIO" 
+                     13 "Enable gamecon_gpio_rpi with SNES-pad config"
+                     14 "Run 'ES-scraper'" 
+                     15 "Install and configure SAMBA shares"
+                     16 "Install USB-ROM-Copy service"
+                     17 "Install drivers for XBox 360 Wired Controllers"
+                     18 "Install driver and tools for PS3 controllers"
+                     19 "Configure RetroArch Netplay"
+                     20 "Register controller for RetroArch emulator"
+                     21 "Update input configuration of Emulation Station"
+                     22 "Tweak user bash profile"
+                     23 "Generate debug log" )
             choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
             if [ "$choices" != "" ]; then
                 case $choices in
@@ -599,23 +600,24 @@ function rps_main_setup()
                      3) sup_install_advancemenu ;;
                      4) set_changeBootbehaviour ;;
                      5) sup_enableDisableSNESDevStart ;;
-                     6) set_enableDisableSplashscreen ;;
-                     7) rps_splashscreen ;;
-                     8) set_changeAudioOutput ;;
-                     9) set_setArmFreq ;;
-                     10) set_setSDRAMFreq ;;
-                     11) set_installGPIOpadModules ;;
-                     12) set_enableGameconSnes ;;
-                     13) rps_scraperMenu ;;
-                     14) set_configureSAMBA ;;
-                     15) set_install_USBROMService ;;
-                     16) set_install_xboxdrv ;;
-                     17) set_installps3controller ;;
-                     18) rps_retronetplaysetup ;;
-                     19) set_RetroarchJoyconfig ;;
-                     20) set_ES_updateinput ;;
-                     21) rc_tweakProfile ;;
-                     22) rps_createDebugLog ;;
+                     6) sup_enableDisableXarcade2JstickStart ;;
+                     7) set_enableDisableSplashscreen ;;
+                     8) rps_splashscreen ;;
+                     9) set_changeAudioOutput ;;
+                     10) set_setArmFreq ;;
+                     11) set_setSDRAMFreq ;;
+                     12) set_installGPIOpadModules ;;
+                     13) set_enableGameconSnes ;;
+                     14) rps_scraperMenu ;;
+                     15) set_configureSAMBA ;;
+                     16) set_install_USBROMService ;;
+                     17) set_install_xboxdrv ;;
+                     18) set_installps3controller ;;
+                     19) rps_retronetplaysetup ;;
+                     20) set_RetroarchJoyconfig ;;
+                     21) set_ES_updateinput ;;
+                     22) rc_tweakProfile ;;
+                     23) rps_createDebugLog ;;
                 esac
             else
                 break
