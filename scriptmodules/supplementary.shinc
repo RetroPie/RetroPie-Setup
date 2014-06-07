@@ -331,7 +331,7 @@ function sup_configure_esconfig()
     chown $user $rootdir/roms/esconfig/rgui.py
     chgrp $user $rootdir/roms/esconfig/rgui.py
     chmod +x $rootdir/roms/esconfig/rgui.py    
-    cp "$scriptdir/supplementary/scripts/audio/*.py" "$rootdir/roms/exconfig/"
+    cp "$scriptdir/supplementary/scripts/audio/*.py" "$rootdir/roms/esconfig/"
     chown $user $rootdir/roms/esconfig/*.py
     chgrp $user $rootdir/roms/esconfig/*.py
     chmod +x $rootdir/roms/esconfig/*.py
