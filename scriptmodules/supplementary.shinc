@@ -471,6 +471,8 @@ function sup_generate_esconfig()
          local __tmpnetplayframes=""
      fi
 
+    mkdir /etc/emulationstation
+
     cat > "/etc/emulationstation/es_systems.cfg" << _EOF_
 <systemList>  
 
@@ -480,6 +482,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/apple2</path>
         <extension>.txt</extension>
         <command>$rootdir/emulators/linapple-src_2a/Start.sh</command>
+        <platform>apple2</platform>
     </system>
 
     <system>
@@ -488,7 +491,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/atari800</path>
         <extension>.xex .XEX</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/atari800-3.0.0/installdir/bin/atari800 %ROM%"</command>
-        <platformid>22</platformid>
+        <platform>atari800</platform>
     </system>
 
     <system>
@@ -498,7 +501,7 @@ function sup_generate_esconfig()
         <extension>.a26 .A26 .bin .BIN .rom .ROM .zip .ZIP .gz .GZ</extension>
         <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "stella %ROM%"</command> -->
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command>
-        <platformid>22</platformid>
+        <platform>atari2600</platform>
     </system>
 
     <system>
@@ -507,6 +510,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/atariStSteFalcon</path>
         <extension>.st .ST .img .IMG .rom .ROM</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "hatari %ROM%"</command>
+        <platform>atarist</platform>
     </system>
 
     <system>
@@ -520,13 +524,25 @@ function sup_generate_esconfig()
     </system>
 
     <system>
+<<<<<<< HEAD
+=======
+        <fullname>Cave Story</fullname>
+        <name>cavestory</name>
+        <path>$rootdir/roms/cavestory</path>
+        <extension>.txt</extension>
+        <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"</command>
+        <platform>ignore</platform>
+    </system>
+
+    <system>
+>>>>>>> FETCH_HEAD
         <fullname>C64</fullname>
         <name>c64</name>
         <path>$rootdir/roms/c64</path>
         <extension>.crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP</extension>
         <!-- alternatively: <command>$rootdir/emulators/vice-2.3.dfsg/installdir/bin/x64 %ROM%</command> -->
         <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/vice-2.4/installdir/bin/x64 -sdlbitdepth 16 %ROM%"</command>
-        <platformid>40</platformid>
+        <platform>c64</platform>
     </system>
 
     <system>
@@ -536,7 +552,7 @@ function sup_generate_esconfig()
         <extension>.zip .ZIP .fba .FBA</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" </command>
         <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command> -->
-        <platformid>23</platformid>
+        <platform>arcade</platform>
     </system>
 
     <system>
@@ -545,16 +561,36 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/cpc</path>
         <extension>.cpc .CPC .dsk .DSK</extension>
         <command>$rootdir/emulators/cpc4rpi-1.1/cpc4rpi %ROM%</command>
-        <platformid>40</platformid>
     </system>
 
     <system>
+<<<<<<< HEAD
+=======
+        <fullname>Doom</fullname>
+        <name>doom</name>
+        <path>$rootdir/roms/doom</path>
+        <extension>.WAD .wad</extension>
+        <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %ROM%"</command>
+        <platform>ignore</platform>
+    </system>
+
+    <system>
+        <fullname>Duke Nukem 3D</fullname>
+        <name>duke3d</name>
+        <path>$rootdir/roms/duke3d</path>
+        <extension>.grp .GRP</extension>
+        <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -g %ROM% -gamegrp %ROM%"</command>
+        <platform>ignore</platform>
+    </system>
+
+    <system>
+>>>>>>> FETCH_HEAD
         <fullname>Game Boy</fullname>
         <name>gb</name>
         <path>$rootdir/roms/gb</path>
         <extension>.gb .GB</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%"</command>
-        <platformid>4</platformid>
+        <platform>gb</platform>
     </system>
 
     <system>
@@ -563,7 +599,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/gba</path>
         <extension>.gba .GBA</extension>
         <command>/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/gpsp/raspberrypi/gpsp %ROM%"</command>
-        <platformid>5</platformid>
+        <platform>gba</platform>
     </system>
 
     <system>
@@ -572,7 +608,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/gbc</path>
         <extension>.gbc .GBC</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%"</command>
-        <platformid>41</platformid>
+        <platform>gbc</platform>
     </system>
 
     <system>
@@ -581,7 +617,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/gamegear</path>
         <extension>.gg .GG</extension>
         <command>$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs</command>
-        <platformid>20</platformid>
+        <platform>gamegear</platform>
     </system>
 
     <system>
@@ -590,7 +626,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/intellivision</path>
         <extension>.int .INT .bin .BIN</extension>
         <command>$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv -z1 -f1 -q %ROM%</command>
-        <platformid>32</platformid>
+        <platform>intellivision</platform>
     </system>
 
     <system>
@@ -601,7 +637,7 @@ function sup_generate_esconfig()
         <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/mame4all-pi/mame %BASENAME%"</command>
         <!-- alternatively: <command>$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% </command> -->
         <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" </command> -->
-        <platformid>23</platformid>
+        <platform>arcade</platform>
     </system>
 
     <system>
@@ -611,7 +647,7 @@ function sup_generate_esconfig()
         <extension>.zip .ZIP</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" </command>
         <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command> -->
-        <platformid>23</platformid>
+        <platform>arcade</platform>
     </system>
 
     <system>
@@ -620,7 +656,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/x86</path>
         <extension>.txt</extension>
         <command>$rootdir/emulators/rpix86/Start.sh</command>
-        <platformid>1</platformid>
+        <platform>pc</platform>
     </system>
 
     <system>
@@ -630,7 +666,7 @@ function sup_generate_esconfig()
         <extension>.zip .ZIP .fba .FBA</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" </command>
         <!-- alternatively: <command>$rootdir/emulators/gngeo-pi-0.85/installdir/bin/arm-linux-gngeo -i $rootdir/roms/neogeo -B $rootdir/emulators/gngeo-pi-0.85/neogeobios %ROM%</command> -->
-        <platformid>24</platformid>
+        <platform>neogeo</platform>
     </system>
 
     <system>
@@ -639,7 +675,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/nes</path>
         <extension>.nes .NES</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/nes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command>
-        <platformid>7</platformid>
+        <platform>nes</platform>
     </system>
 
     <system>
@@ -648,7 +684,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/n64</path>
         <extension>.z64 .Z64 .n64 .N64</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "cd $rootdir/emulators/mupen64plus-rpi/test/ && ./mupen64plus %ROM%"</command>
-        <platformid>3</platformid>
+        <platform>n64</platform>
     </system>
 
     <system>
@@ -657,7 +693,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/pcengine</path>
         <extension>.pce .PCE</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%"</command>
-        <platformid>34</platformid>
+        <platform>pcengine</platform>
     </system>
 
     <system>
@@ -666,7 +702,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/psp</path>
         <extension>.iso .ISO .cso .CSO</extension>
         <command>$rootdir/emulators/ppsspp/PPSSPPSDL %ROM% en</command>
-        <platformid>13</platformid>
+        <platform>psp</platform>
     </system>
 
     <system>
@@ -684,7 +720,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/scummvm</path>
         <extension>.exe .EXE</extension>
         <command>scummvm</command>
-        <platformid>20</platformid>
+        <platform>pc</platform>
     </system>
 
     <system>
@@ -694,7 +730,7 @@ function sup_generate_esconfig()
         <extension>.sms .SMS</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mastersystem/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command>
         <!-- alternatively: <command>$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs</command> -->
-        <platformid>35</platformid>
+        <platform>mastersystem</platform>
     </system>
 
     <system>
@@ -705,8 +741,12 @@ function sup_generate_esconfig()
         <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/megadrive/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command>
         <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"</command> -->
         <!-- alternatively: <command>export LD_LIBRARY_<path>"$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%</path></command> -->
+<<<<<<< HEAD
         <platformid>18</platformid>
         <platform>genesis,megadrive</platform>
+=======
+        <platform>genesis, megadrive</platform>
+>>>>>>> FETCH_HEAD
     </system>
 
     <system>
@@ -717,7 +757,7 @@ function sup_generate_esconfig()
         <command>/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/RetroArch/installdir/bin/retroarch -L /home/pi/RetroPie/emulatorcores/picodrive/picodrive_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/segacd/retroarch.cfg  %ROM%"</command>
         <!-- <command>/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/dgen-sdl/dgen -f -r /home/pi/RetroPie/configs/all/dgenrc %ROM%"</command> -->
         <!-- <command>export LD_LIBRARY_<path>"/home/pi/RetroPie/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; /home/pi/RetroPie/emulators/dgen-sdl/dgen %ROM%</path></command> -->
-        <platformid>21</platformid>
+        <platform>segacd</platform>
     </system>
 
     <system>
@@ -728,7 +768,7 @@ function sup_generate_esconfig()
         <command>/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/RetroArch/installdir/bin/retroarch -L /home/pi/RetroPie/emulatorcores/picodrive/picodrive_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/sega32x/retroarch.cfg  %ROM%"</command>
         <!-- <command>/home/pi/RetroPie/supplementary/runcommand/runcommand.sh 1 "/home/pi/RetroPie/emulators/dgen-sdl/dgen -f -r /home/pi/RetroPie/configs/all/dgenrc %ROM%"</command> -->
         <!-- <command>export LD_LIBRARY_<path>"/home/pi/RetroPie/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; /home/pi/RetroPie/emulators/dgen-sdl/dgen %ROM%</path></command> -->
-        <platformid>33</platformid>
+        <platform>sega32x</platform>
     </system>
 
     <system>
@@ -737,7 +777,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/psx</path>
         <extension>.img .IMG .7z .7Z .pbp .PBP .bin .BIN .cue .CUE</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/psx/retroarch.cfg %ROM%"</command>
-        <platformid>10</platformid>
+        <platform>psx</platform>
     </system>
 
     <system>
@@ -748,7 +788,7 @@ function sup_generate_esconfig()
         <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%"</command>
         <!-- alternatively: <command>$rootdir/emulators/snes9x-rpi/snes9x %ROM%</command> -->
         <!-- alternatively: <command>$rootdir/emulators/pisnes/snes9x %ROM%</command> -->
-        <platformid>6</platformid>
+        <platform>snes</platform>
     </system>
 
     <system>
@@ -758,6 +798,7 @@ function sup_generate_esconfig()
         <extension>.z80 .Z80</extension>
         <command>xinit fuse</command>
         <!-- alternatively: <command>$rootdir/emulators/fbzx-2.10.0/fbzx %ROM%</command> -->
+        <platform>zxspectrum</platform>
     </system>
 
     <system>
@@ -766,6 +807,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/esconfig</path>
         <extension>.py .PY</extension>
         <command>%ROM%</command>
+        <platform>ignore</platform>
     </system>
 
 </systemList>
