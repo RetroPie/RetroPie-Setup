@@ -46,10 +46,15 @@ function lr_install_atari2600()
 # configure NXEngine / Cave Story core
 function lr_configure_cavestory()
 {
-    if [[ ! -d $rootdir/roms/cavestory ]]; then
-        mkdir -p $rootdir/roms/cavestory
-    fi
-    touch $rootdir/roms/cavestory/Start.txt    
+    if [[ ! -d $rootdir/roms/ports ]]; then
+        mkdir -p $rootdir/roms/ports
+    fi 
+    cat > "$rootdir/roms/ports/Cave Story.sh" << _EOF_
+#!/bin/bash
+$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"
+_EOF_
+    chown +x "$rootdir/roms/ports/Cave Story.sh"
+
 }
 
 # install NXEngine / Cave Story core
@@ -68,12 +73,18 @@ function lr_install_cavestory()
 
 function lr_configure_doom()
 {
-    mkdir -p $rootdir/roms/doom/
-    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
+    mkdir -p $rootdir/roms/ports/
+    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/ports/
+
+    cat > "$rootdir/roms/ports/Doom 1 Shareware.sh" << _EOF_
+#!/bin/bash
+$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg $rootdir/roms/ports/doom1.wad"
+_EOF_
+    chown +x "$rootdir/roms/ports/Doom 1 Shareware.sh"
 
     # download and install Doom 1 shareware
     if `wget "http://distro.ibiblio.org/pub/linux/distributions/slitaz/sources/packages/d/doom1.wad"`; then
-        mv doom1.wad "$rootdir/roms/doom/"
+        mv doom1.wad "$rootdir/roms/ports/"
     else
         __ERRMSGS="$__ERRMSGS Could not successfully download and install Doom 1 shareware."
     fi

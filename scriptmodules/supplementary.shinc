@@ -510,21 +510,13 @@ function sup_generate_esconfig()
     </system>
 
     <system>
-        <fullname>Basilisk II</fullname>
-        <name>basiliskii</name>
+        <fullname>Apple Macintosh</fullname>
+        <name>mac</name>
         <path>$rootdir/roms/basiliskii</path>
         <extension>.txt</extension>
         <!-- alternatively: <command>sudo modprobe snd_pcm_oss && xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII</command> -->
         <!-- ~/.basilisk_ii_prefs: Setup all and everything under X, enable fullscreen and disable GUI -->
         <command>xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII</command>
-    </system>
-
-    <system>
-        <fullname>Cave Story</fullname>
-        <name>cavestory</name>
-        <path>$rootdir/roms/cavestory</path>
-        <extension>.txt</extension>
-        <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"</command>
     </system>
 
     <system>
@@ -554,24 +546,6 @@ function sup_generate_esconfig()
         <extension>.cpc .CPC .dsk .DSK</extension>
         <command>$rootdir/emulators/cpc4rpi-1.1/cpc4rpi %ROM%</command>
         <platformid>40</platformid>
-    </system>
-
-    <system>
-        <fullname>Doom</fullname>
-        <name>doom</name>
-        <path>$rootdir/roms/doom</path>
-        <extension>.WAD .wad</extension>
-        <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg %ROM%"</command>
-        <platformid>1</platformid>
-    </system>
-
-    <system>
-        <fullname>Duke Nukem 3D</fullname>
-        <name>duke3d</name>
-        <path>$rootdir/roms/duke3d</path>
-        <extension>.grp .GRP</extension>
-        <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -g %ROM% -gamegrp %ROM%"</command>
-        <platformid>1</platformid>
     </system>
 
     <system>
@@ -642,7 +616,7 @@ function sup_generate_esconfig()
 
     <system>
         <fullname>PC (x86)</fullname>
-        <name>x86</name>
+        <name>pc</name>
         <path>$rootdir/roms/x86</path>
         <extension>.txt</extension>
         <command>$rootdir/emulators/rpix86/Start.sh</command>
@@ -678,10 +652,10 @@ function sup_generate_esconfig()
     </system>
 
     <system>
-        <fullname>PC Engine/TurboGrafx 16</fullname>
+        <fullname>TurboGrafx 16 (PC Engine)</fullname>
         <name>pcengine</name>
         <path>$rootdir/roms/pcengine</path>
-        <extension>.pce</extension>
+        <extension>.pce .PCE</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%"</command>
         <platformid>34</platformid>
     </system>
@@ -693,6 +667,15 @@ function sup_generate_esconfig()
         <extension>.iso .ISO .cso .CSO</extension>
         <command>$rootdir/emulators/ppsspp/PPSSPPSDL %ROM% en</command>
         <platformid>13</platformid>
+    </system>
+
+    <system>
+        <fullname>Ports</fullname>
+        <name>ports</name>
+        <path>$rootdir/roms/ports</path>
+        <extension>.sh .SH</extension>
+        <command>%ROM%</command>
+        <platformid>1</platformid>
     </system>
 
     <system>
@@ -723,6 +706,7 @@ function sup_generate_esconfig()
         <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%"</command> -->
         <!-- alternatively: <command>export LD_LIBRARY_<path>"$rootdir/supplementary/dispmanx/SDL12-kms-dispmanx/build/.libs"; $rootdir/emulators/dgen-sdl/dgen %ROM%</path></command> -->
         <platformid>18</platformid>
+        <platform>genesis,megadrive</platform>
     </system>
 
     <system>
