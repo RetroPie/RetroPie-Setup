@@ -301,11 +301,11 @@ function em_install_eduke32()
     else
         printMsg "Installing eDuke32"
         dpkg -i *duke*.deb
-        if [[ ! -d $rootdir/roms/ports ]]; then
-            mkdir -p $rootdir/roms/ports
+        if [[ ! -d $rootdir/roms/ports/duke3d ]]; then
+            mkdir -p $rootdir/roms/ports/duke3d
         fi
-        cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/ports/
-        cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/ports/
+        cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/ports/duke3d/
+        cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/ports/duke3d/
     fi
     popd
     rm -rf "$rootdir/emulators/eduke32"
@@ -457,8 +457,8 @@ _EOF_
 # configure Lineapple emulator
 function em_configure_linapple()
 {
-    if [[ ! -d $rootdir/roms/apple2 ]]; then
-        mkdir -p $rootdir/roms/apple2
+    if [[ ! -d $rootdir/roms/macintosh ]]; then
+        mkdir -p $rootdir/roms/macintosh
     fi
     cat > "$rootdir/emulators/linapple-src_2a/Start.sh" << _EOF_
 #!/bin/bash
@@ -467,7 +467,7 @@ pushd $rootdir/emulators/linapple-src_2a
 popd
 _EOF_
     chmod +x "$rootdir/emulators/linapple-src_2a/Start.sh"
-    touch $rootdir/roms/apple2/Start.txt
+    touch $rootdir/roms/macintosh/Start.txt
 
     pushd "$rootdir/emulators/linapple-src_2a"
     sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" linapple.conf
@@ -842,8 +842,8 @@ function em_install_retroarch()
 
 function em_configure_rpix86()
 {
-    ln -s $rootdir/roms/x86/ $rootdir/emulators/rpix86/games
-    rm $rootdir/roms/x86/x86
+    ln -s $rootdir/roms/pc/ $rootdir/emulators/rpix86/games
+    rm $rootdir/roms/pc/pc
     cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
 #!/bin/bash
 pushd $rootdir/emulators/rpix86
@@ -851,7 +851,7 @@ pushd $rootdir/emulators/rpix86
 popd
 _EOF_
     chmod +x "$rootdir/emulators/rpix86/Start.sh"
-    touch $rootdir/roms/x86/Start.txt
+    touch $rootdir/roms/pc/Start.txt
     # TODO can be removed?
     # chgrp -R $user $rootdir
     # chown -R $user $rootdir    

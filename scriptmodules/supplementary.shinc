@@ -477,7 +477,7 @@ function sup_generate_esconfig()
 <systemList>  
 
     <system>
-        <fullname>Apple ][</fullname>
+        <fullname>Apple II</fullname>
         <name>apple2</name>
         <path>$rootdir/roms/apple2</path>
         <extension>.txt</extension>
@@ -515,8 +515,8 @@ function sup_generate_esconfig()
 
     <system>
         <fullname>Apple Macintosh</fullname>
-        <name>mac</name>
-        <path>$rootdir/roms/basiliskii</path>
+        <name>macintosh</name>
+        <path>$rootdir/roms/macintosh</path>
         <extension>.txt</extension>
         <!-- alternatively: <command>sudo modprobe snd_pcm_oss && xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII</command> -->
         <!-- ~/.basilisk_ii_prefs: Setup all and everything under X, enable fullscreen and disable GUI -->
@@ -534,21 +534,21 @@ function sup_generate_esconfig()
     </system>
 
     <system>
-        <fullname>Capcom</fullname>
-        <name>capcom</name>
-        <path>$rootdir/roms/capcom</path>
-        <extension>.zip .ZIP .fba .FBA</extension>
-        <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" </command>
-        <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command> -->
-        <platform>arcade</platform>
-    </system>
-
-    <system>
         <fullname>Amstrad CPC</fullname>
         <name>cpc</name>
         <path>$rootdir/roms/cpc</path>
         <extension>.cpc .CPC .dsk .DSK</extension>
         <command>$rootdir/emulators/cpc4rpi-1.1/cpc4rpi %ROM%</command>
+    </system>
+
+    <system>
+        <fullname>Final Burn Alpha</fullname>
+        <name>fba</name>
+        <path>$rootdir/roms/fba</path>
+        <extension>.zip .ZIP .fba .FBA</extension>
+        <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" </command>
+        <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command> -->
+        <platform>arcade</platform>
     </system>
 
     <system>
@@ -603,24 +603,13 @@ function sup_generate_esconfig()
         <extension>.zip .ZIP</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 4 "$rootdir/emulators/mame4all-pi/mame %BASENAME%"</command>
         <!-- alternatively: <command>$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM% </command> -->
-        <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" </command> -->
-        <platform>arcade</platform>
-    </system>
-
-    <system>
-        <fullname>FinalBurn Alpha</fullname>
-        <name>fba</name>
-        <path>$rootdir/roms/fba</path>
-        <extension>.zip .ZIP</extension>
-        <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/pifba/fba2x %ROM%" </command>
-        <!-- alternatively: <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%"</command> -->
         <platform>arcade</platform>
     </system>
 
     <system>
         <fullname>PC (x86)</fullname>
         <name>pc</name>
-        <path>$rootdir/roms/x86</path>
+        <path>$rootdir/roms/pc</path>
         <extension>.txt</extension>
         <command>$rootdir/emulators/rpix86/Start.sh</command>
         <platform>pc</platform>
@@ -678,7 +667,7 @@ function sup_generate_esconfig()
         <path>$rootdir/roms/ports</path>
         <extension>.sh .SH</extension>
         <command>%ROM%</command>
-        <platformid>1</platformid>
+        <platformid>pc</platformid>
     </system>
 
     <system>
@@ -691,7 +680,7 @@ function sup_generate_esconfig()
     </system>
 
     <system>
-        <fullname>Sega Master System II</fullname>
+        <fullname>Sega Master System / Mark III</fullname>
         <name>mastersystem</name>
         <path>$rootdir/roms/mastersystem</path>
         <extension>.sms .SMS</extension>
