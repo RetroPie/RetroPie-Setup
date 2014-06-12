@@ -145,7 +145,7 @@ function set_configureSAMBA()
     clear
     printMsg "Installing and configuring SAMBA shares."
     apt-get update
-    apt-get install -y samba samba-common-bin
+    apt-get install -y --force-yes samba samba-common-bin
 
     set_ensureEntryInSMBConf "AMIGA" "amiga"
     set_ensureEntryInSMBConf "APPLE2" "apple2"
@@ -335,7 +335,7 @@ function set_installGPIOpadModules()
 
     #install dkms and gcc-4.7
     apt-get update
-    apt-get install -y dkms gcc-4.7
+    apt-get install -y --force-yes dkms gcc-4.7
 
     #reconfigure / install headers (takes a a while)
     if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then
@@ -502,7 +502,7 @@ function set_install_USBROMService()
     printMsg "Installing USB-ROM Service"
 
     # install usbmount package
-    apt-get install -y usbmount
+    apt-get install -y --force-yes usbmount
 
     # install hook in usbmount sub-directory
     cp $scriptdir/supplementary/01_retropie_copyroms /etc/usbmount/mount.d/
@@ -580,7 +580,7 @@ function set_installps3controller()
 {
     clear
     apt-get update
-    apt-get install -y bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
+    apt-get install -y --force-yes bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Please make sure that your Bluetooth dongle is connected to the Raspberry Pi and press ENTER." 22 76    
     if [[ -z `hciconfig | grep BR/EDR` ]]; then
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Cannot find the Bluetooth dongle. Please try to (re-)connect it and try again." 22 76    
@@ -619,7 +619,7 @@ function set_install_xboxdrv()
 {
     clear
     printMsg "Installing xboxdrv"
-    apt-get install -y xboxdrv
+    apt-get install -y --force-yes xboxdrv
     if [[ -z `cat /etc/rc.local | grep "xboxdrv"` ]]; then
         sed -i -e '13,$ s|exit 0|xboxdrv --daemon --id 0 --led 2 --deadzone 4000 --silent --trigger-as-button --next-controller --id 1 --led 3 --deadzone 4000 --silent --trigger-as-button --dbus disabled --detach-kernel-driver \&\nexit 0|g' /etc/rc.local
     fi

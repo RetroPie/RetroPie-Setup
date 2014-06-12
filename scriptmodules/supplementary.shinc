@@ -105,7 +105,7 @@ function sup_install_advancemenu()
         wget http://downloads.sourceforge.net/project/advancemame/advancemenu/2.5.0/advancemenu-2.5.0.tar.gz
         tar xvfz advancemenu-2.5.0.tar.gz -C "$rootdir/supplementary/"
 
-        apt-get install -y gcc-4.7
+        apt-get install -y --force-yes gcc-4.7
         export CC=gcc-4.7   
         export GCC=g++-4.7    
 
@@ -387,7 +387,7 @@ function sup_install_esconfig()
         rm -rf "$rootdir/supplementary/ES-config"
     fi 
     gitPullOrClone "$rootdir/supplementary/ES-config" git://github.com/Aloshi/ES-config.git
-    sed -i -e "s/apt-get install/apt-get install -y/g" get_dependencies.sh
+    sed -i -e "s/apt-get install/apt-get install -y --force-yes/g" get_dependencies.sh
     ./get_dependencies.sh
     make
     popd

@@ -142,13 +142,13 @@ function em_install_cpc4rpi()
 function em_install_dosbox()
 {
     printMsg "Installing Dosbox"
-    apt-get install -y dosbox
+    apt-get install -y --force-yes dosbox
 }
 
 function em_install_stella()
 {
     printMsg "Installing Atari 2600 emulator Stella"
-    apt-get install -y stella
+    apt-get install -y --force-yes stella
 }
 
 function em_install_basiliskII()
@@ -196,7 +196,7 @@ function em_install_viceC64()
     echo 'deb-src http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi' >> /etc/apt/sources.list
     apt-get update
     #apt-get build-dep -y vice
-    apt-get install -y libxaw7-dev automake checkinstall
+    apt-get install -y --force-yes libxaw7-dev automake checkinstall
     #apt-get source vice
     #cd vice-2.3.dfsg
     wget -O vice-2.4.tar.gz http://downloads.sourceforge.net/project/vice-emu/releases/vice-2.4.tar.gz
@@ -386,7 +386,7 @@ function em_install_hatari()
 {
     printMsg "Installing Atari emulator Hatari"
     apt-get update;
-    apt-get install -y hatari
+    apt-get install -y --force-yes hatari
 }
 
 function em_configure_mame4allpi()
@@ -883,7 +883,7 @@ function em_install_rpix86()
 function em_install_scummvm()
 {
     printMsg "Installing ScummVM"
-    apt-get install -y scummvm scummvm-data
+    apt-get install -y --force-yes scummvm scummvm-data
     if [[ $? -gt 0 ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully install ScummVM."
     else
@@ -895,7 +895,7 @@ function em_install_scummvm()
 function em_install_zmachine()
 {
     printMsg "Installing Z Machine emulator"
-    apt-get install -y frotz
+    apt-get install -y --force-yes frotz
     wget -U firefox http://www.infocom-if.org/downloads/zork1.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork2.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork3.zip
@@ -959,6 +959,6 @@ function em_install_zxspectrumFromSource()
 function em_install_zxspectrum()
 {
     printMsg "Installing ZX Spectrum emulator"
-    apt-get install -y spectrum-roms fuse-emulator-utils fuse-emulator-common
+    apt-get install -y --force-yes spectrum-roms fuse-emulator-utils fuse-emulator-common
 }
 
