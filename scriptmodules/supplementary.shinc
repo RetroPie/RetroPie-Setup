@@ -425,14 +425,13 @@ function sup_install_emulationstation()
     git pull
     git checkout unstable
 
-    #ES requires C++11 support to build, which means g++ 4.7 or later, which isn't what g++ resolves to right now
+    # ES requires C++11 support to build, which means g++ 4.7 or later, which isn't what g++ resolves to right now
+    # So, we set CMAKE_CXX_COMPILER to g++-4.7.
     rm -rf CMakeFiles
     rm CMakeCache.txt
-    export CXX=g++-4.7 
-    cmake .
+    cmake -D CMAKE_CXX_COMPILER=g++-4.7 .
     make
-    unset CXX
-    sup_install_esscript    
+    sup_install_esscript
     if [[ ! -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Emulation Station."
     fi
@@ -515,6 +514,7 @@ function sup_generate_esconfig()
         <!-- alternatively: <command>sudo modprobe snd_pcm_oss && xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII</command> -->
         <!-- ~/.basilisk_ii_prefs: Setup all and everything under X, enable fullscreen and disable GUI -->
         <command>xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII</command>
+        <platform>macintosh</platform>
     </system>
 
     <system>
@@ -533,6 +533,7 @@ function sup_generate_esconfig()
         <path>~/retropieroms/cpc</path>
         <extension>.cpc .CPC .dsk .DSK</extension>
         <command>$rootdir/emulators/cpc4rpi-1.1/cpc4rpi %ROM%</command>
+        <platform>amstradcpc</platform>
     </system>
 
     <system>
