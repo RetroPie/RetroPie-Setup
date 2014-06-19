@@ -46,10 +46,6 @@ function em_install_advmame()
 
     wget -O advmame.tar.gz http://downloads.sourceforge.net/project/advancemame/advancemame/0.94.0/advancemame-0.94.0.tar.gz
 
-    apt-get -y install libsdl1.2-dev gcc-4.7
-    export CC=gcc-4.7
-    export GCC=g++-4.7
-
     tar xzvf advmame.tar.gz -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/advancemame-0.94.0"
     sed 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' <advance/linux/vfb.c >advance/linux/temp.c
@@ -69,8 +65,6 @@ sed '
     popd
 
     em_configure_advmame
-    unset CC
-    unset GCC
 }
 
 # install Amiga emulator
@@ -259,10 +253,8 @@ function em_install_dgen()
     mv "$rootdir/emulators/dgen-sdl-1.32" "$rootdir/emulators/dgen-sdl"
     pushd "$rootdir/emulators/dgen-sdl"
     mkdir "installdir" # only used for creating the binaries archive
-    gcc_version 4.6
-    ./configure --disable-opengl
+    ./configure --disable-opengl CC=gcc-4.6 CXX=g++-4.6
     make
-    gcc_version $__default_gcc_version
     make install DESTDIR=$rootdir/emulators/dgen-sdl/installdir
     make install
     if [[ ! -f "$rootdir/emulators/dgen-sdl/dgen" ]]; then
@@ -491,9 +483,7 @@ function em_install_linapple()
     wget http://downloads.sourceforge.net/project/linapple/linapple/linapple-2a/linapple-src_2a.tar.bz2
     tar -jxvf linapple-src_2a.tar.bz2 -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/linapple-src_2a/src"
-    gcc_version 4.6
-    make
-    gcc_version $__default_gcc_version
+    make CC=gcc-4.6 CXX=g++-4.6
     popd    
     em_configure_linapple
     rm linapple-src_2a.tar.bz2
