@@ -187,7 +187,8 @@ es_cfg		= home + '/.emulationstation/es_input.cfg'
 # check paths and mkdir if necessary
 if os.path.exists(home + '/.gngeo/') == False:
 	os.system('mkdir ' + home + '.gngeo/')
-open(gngeo_cfg,'w').close()
+if (os.path.exists(home + '/.gngeo/') == True):
+	open(gngeo_cfg,'w').close()
 if os.path.exists(home + '/RetroPie/configs/all/') == False:
 	os.system('mkdir ' + home + '/RetroPie/configs/all/')
 
