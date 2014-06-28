@@ -26,6 +26,10 @@
 function depen_retroarch() {
     printMsg "Getting depencies of udev/eudev"
     apt-get install -y libudev-dev libxkbcommon-dev
+    cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
+KERNEL=="event*", NAME="input/%k", MODE="666"
+_EOF_
+    sudo chmod 666 /dev/input/event*
 }
 
 function sources_retroarch() {
