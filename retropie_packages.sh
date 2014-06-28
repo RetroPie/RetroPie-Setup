@@ -246,7 +246,7 @@ loadConfig "configs/retronetplay.cfg"
 # rp_registerFunction "" "" "" "" "" "" ""
 
 # Emulator components (emulators.shinc)
-rp_registerFunction "100" "RetroArch                      " ""                       "sources_retroarch"       "build_retroarch"         "install_retroarch"         "configure_retroarch"        ""
+rp_registerFunction "100" "RetroArch                      " "depen_retroarch"        "sources_retroarch"       "build_retroarch"         "install_retroarch"         "configure_retroarch"        ""
 rp_registerFunction "101" "AdvMame                        " "depen_advmame"          "sources_advmame"         "build_advmame"           "install_advmame"           "configure_advmame"          ""
 rp_registerFunction "102" "Amiga emulator UAE4All         " ""                       "sources_uae4all"         "build_uae4all"           "install_uae4all"           "configure_uae4all"          ""
 rp_registerFunction "103" "Atari 800 emulator             " ""                       "sources_atari800"        "build_atari800"          "install_atari800"          "configure_atari800"         ""
