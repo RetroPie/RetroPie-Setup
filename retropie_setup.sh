@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #  RetroPie-Setup - Shell script for initializing Raspberry Pi 
 #  with RetroArch, various cores, and EmulationStation (a graphical 
 #  front end).
 # 
-#  (c) Copyright 2012-2013  Florian Müller (contact@petrockblock.com)
+#  (c) Copyright 2012-2014  Florian Müller (contact@petrockblock.com)
 # 
 #  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
 # 
@@ -30,21 +30,6 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-__ERRMSGS=""
-__INFMSGS=""
-__doReboot=0
-
-__default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
-__default_asflags=""
-__default_gcc_version="4.7"
-
-[[ -z "${CFLAGS}"        ]] && export CFLAGS="${__default_cflags}"
-[[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
-[[ -z "${ASFLAGS}"         ]] && export ASFLAGS="${__default_asflags}"
-
-# HELPER FUNCTIONS ###
-
-#set -o nounset
 function getScriptAbsoluteDir() {
     # @description used to get the script path
     # @param $1 the script $0 parameter
@@ -89,7 +74,7 @@ function import() {
     then
         # import from script directory
         . "$script_absolute_dir/$module.shinc"
-        echo "Loaded module $script_absolute_dir/$module.shinc"
+        # echo "Loaded module $script_absolute_dir/$module.shinc"
         return
     elif test "x${SHELL_LIBRARY_PATH:-notset}" != "xnotset"
     then
@@ -112,109 +97,96 @@ function import() {
     exit 1
 }
 
-function loadConfig()
-{
-    # @description Routine for loading configuration files that contain key-value pairs in the format KEY="VALUE"
-    # param  $1 Path to the configuration file relate to this file.
-    local configfile=$1
-    if test -e "$script_absolute_dir/$configfile"
-    then
-        . "$script_absolute_dir/$configfile"
-        echo "Loaded configuration file $script_absolute_dir/$configfile"
-        return
+function initImport() {
+	script_invoke_path="$0"
+	script_name=`basename "$0"`
+	getScriptAbsoluteDir "$script_invoke_path"
+	script_absolute_dir=$RESULT	
+}
+
+function rps_checkNeededPackages() {
+    if [[ -z $(type -P git) || -z $(type -P dialog) ]]; then
+        echo "Did not find needed packages 'git' and/or 'dialog'. I am trying to install these now."
+        apt-get update
+        apt-get install -y git dialog
+        if [ $? == '0' ]; then
+            echo "Successfully installed 'git' and/or 'dialog'."
+        else
+            echo "Could not install 'git' and/or 'dialog'. Aborting now."
+            exit 1
+        fi
     else
-        echo "Unable to find configuration file $script_absolute_dir/$configfile"
-        exit 1
+        echo "Found needed packages 'git' and 'dialog'."
+    fi 
+}
+
+function rps_availFreeDiskSpace() {
+    local __required=$1
+    local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
+
+    required_MB=`expr $__required / 1024`
+    available_MB=`expr $__avail / 1024`
+
+    if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space ($required_MB MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir continue anyway?"; then
+        return 0;
+    else
+        exit 0;
     fi
 }
 
-script_invoke_path="$0"
-script_name=`basename "$0"`
-getScriptAbsoluteDir "$script_invoke_path"
-script_absolute_dir=$RESULT
+function checkForLogDirectory() {
+	# make sure that RetroPie-Setup log directory exists
+	if [[ ! -d $scriptdir/logs ]]; then
+	    mkdir -p "$scriptdir/logs"
+	    chown $user "$scriptdir/logs"
+	    chgrp $user "$scriptdir/logs"
+	    if [[ ! -d $scriptdir/logs ]]; then
+	      echo "Couldn't make directory $scriptdir/logs"
+	      exit 1
+	    fi
+	fi	
+}
 
-# load script modules
-import "scriptmodules/helpers"
-import "scriptmodules/raspbianconfig"
-import "scriptmodules/emulators"
-import "scriptmodules/libretrocores"
-import "scriptmodules/supplementary"
-import "scriptmodules/setup"
-import "scriptmodules/retropiesetup"
+# =============================================================
+#  START OF THE MAIN SCRIPT
+# =============================================================
 
-loadConfig "configs/retronetplay.cfg"
+user=$SUDO_USER
+if [ -z "$user" ]
+then
+    user=$(whoami)
+fi
+home=$(eval echo ~$user)
 
-# END HELPER FUNCTIONS ###
+rootdir=/opt/retropie
+homedir="$home/RetroPie"
+romdir="$homedir/roms"
+if [[ ! -d $romdir ]]; then
+	mkdir $romdir
+fi
 
-######################################
-# here starts the main loop ##########
-######################################
+# check, if sudo is used
+if [ $(id -u) -ne 0 ]; then
+    printf "Script must be run as root. Try 'sudo ./retropackages'\n"
+    exit 1
+fi   
 
 scriptdir=`dirname $0`
 scriptdir=`cd $scriptdir && pwd`
 
+# load script modules
+initImport
+import "scriptmodules/helpers"
+import "scriptmodules/retropiesetup"
+
+checkForLogDirectory
+
 rps_checkNeededPackages
-gcc_version $__default_gcc_version
-
-if [[ "$1" == "--help" ]]; then
-    showHelp
-    exit 0
-fi
-
-if [ $(id -u) -ne 0 ]; then
-  printf "Script must be run as root. Try 'sudo ./retropie_setup' or ./retropie_setup --help for further information\n"
-  exit 1
-fi
-
-# if called with sudo ./retropie_setup.sh, the installation directory is /home/CURRENTUSER/RetroPie for the current user
-# if called with sudo ./retropie_setup.sh USERNAME, the installation directory is /home/USERNAME/RetroPie for user USERNAME
-# if called with sudo ./retropie_setup.sh USERNAME ABSPATH, the installation directory is ABSPATH for user USERNAME
-    
-if [[ $# -lt 1 ]]; then
-    user=$SUDO_USER
-    if [ -z "$user" ]
-    then
-        user=$(whoami)
-    fi
-    rootdir=/home/$user/RetroPie
-elif [[ $# -lt 2 ]]; then
-    user=$1
-    rootdir=/home/$user/RetroPie
-elif [[ $# -lt 3 ]]; then
-    user=$1
-    rootdir=$2
-fi
-
-if [[ $user == "root" ]]; then
-    echo "Please start the RetroPie Setup Script not as user 'root', but, e.g., as user 'pi'."
-    exit
-fi
-
-esscrapimgw=275 # width in pixel for EmulationStation games scraper
-
-home=$(eval echo ~$user)
-
-# make sure that RetroPie root directory exists
-if [[ ! -d $rootdir ]]; then
-    mkdir -p "$rootdir"
-    if [[ ! -d $rootdir ]]; then
-      echo "Couldn't make directory $rootdir"
-      exit 1
-    fi
-fi
-
-# make sure that RetroPie-Setup log directory exists
-if [[ ! -d $scriptdir/logs ]]; then
-    mkdir -p "$scriptdir/logs"
-    chown $user "$scriptdir/logs"
-    chgrp $user "$scriptdir/logs"
-    if [[ ! -d $scriptdir/logs ]]; then
-      echo "Couldn't make directory $scriptdir/logs"
-      exit 1
-    fi
-fi
 
 # make sure that enough space is available
+if [[ ! -d $rootdir ]]; then
+	mkdir -p $rootdir
+fi
 rps_availFreeDiskSpace 800000
 
 while true; do
@@ -224,23 +196,15 @@ while true; do
              3 "SETUP (only if you already have run one of the installations above)"
              4 "UPDATE RetroPie Setup script"
              5 "UPDATE RetroPie Binaries"
-             6 "UNINSTALL RetroPie installation"
              7 "Perform REBOOT" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
     if [ "$choices" != "" ]; then
         case $choices in
-            1) now=$(date +'%d%m%Y_%H%M%S')
-               {
-                    rps_main_binaries
-               } 2>&1 | tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz)
-               chown -R $user $scriptdir/logs/run_$now.log.gz
-               chgrp -R $user $scriptdir/logs/run_$now.log.gz
-               ;;
+            1) rps_main_binaries ;;
             2) rps_main_options ;;
             3) rps_main_setup ;;
             4) rps_main_updatescript ;;
             5) rps_downloadBinaries ;;
-            6) rc_removeAPTPackages ;;
             7) rps_main_reboot ;;
         esac
     else
@@ -248,17 +212,7 @@ while true; do
     fi
 done
 
-if [[ $__doReboot -eq 1 ]]; then
-    dialog --title "The firmware has been updated and a reboot is needed." --clear \
-        --yesno "Would you like to reboot now?\
-        " 22 76
+# make sure that the user has access to all files in the home folder
+chown -R $user:$user $homedir
 
-        case $? in
-          0)
-            rps_main_reboot
-            ;;
-          *)        
-            ;;
-        esac
-fi
-clear
+

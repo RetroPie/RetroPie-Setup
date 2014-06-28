@@ -4,7 +4,7 @@
 #  with RetroArch, various cores, and EmulationStation (a graphical 
 #  front end).
 # 
-#  (c) Copyright 2012-2013  Florian Müller (contact@petrockblock.com)
+#  (c) Copyright 2012-2014  Florian Müller (contact@petrockblock.com)
 # 
 #  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
 # 
@@ -30,217 +30,18 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 # 
 
-# prepare folder structure for emulator, cores, front end, and roms
-function rps_prepareFolders()
-{
-    printMsg "Creating folder structure for emulator, front end, cores, and roms"
-
-    pathlist=()
-    pathlist+=("$rootdir/roms")
-    pathlist+=("$rootdir/roms/atari800")
-    pathlist+=("$rootdir/roms/atari2600")
-    pathlist+=("$rootdir/roms/atariStSteFalcon")
-    pathlist+=("$rootdir/roms/basiliskii")
-    pathlist+=("$rootdir/roms/c64")
-    pathlist+=("$rootdir/roms/capcom")
-    pathlist+=("$rootdir/roms/cpc")
-    pathlist+=("$rootdir/roms/cavestory")
-    pathlist+=("$rootdir/roms/doom")
-    pathlist+=("$rootdir/roms/duke3d/")
-    pathlist+=("$rootdir/roms/esconfig/")
-    pathlist+=("$rootdir/roms/gamegear")
-    pathlist+=("$rootdir/roms/gb")
-    pathlist+=("$rootdir/roms/gba")
-    pathlist+=("$rootdir/roms/gbc")
-    pathlist+=("$rootdir/roms/intellivision")
-    pathlist+=("$rootdir/roms/mame")
-    pathlist+=("$rootdir/roms/mastersystem")
-    pathlist+=("$rootdir/roms/megadrive")
-    pathlist+=("$rootdir/roms/nes")
-    pathlist+=("$rootdir/roms/n64")
-    pathlist+=("$rootdir/roms/pcengine")
-    pathlist+=("$rootdir/roms/psx")
-    pathlist+=("$rootdir/roms/psp")
-    pathlist+=("$rootdir/roms/snes")
-    pathlist+=("$rootdir/roms/segacd")
-    pathlist+=("$rootdir/roms/sega32x")
-    pathlist+=("$rootdir/roms/zxspectrum")
-    pathlist+=("$rootdir/roms/fba")
-    pathlist+=("$rootdir/roms/amiga")
-    pathlist+=("$rootdir/roms/neogeo")
-    pathlist+=("$rootdir/roms/scummvm")
-    pathlist+=("$rootdir/roms/x86")
-    pathlist+=("$rootdir/roms/zmachine")
-    pathlist+=("$rootdir/emulatorcores")
-    pathlist+=("$rootdir/emulators")
-    pathlist+=("$rootdir/supplementary")
-
-    for elem in "${pathlist[@]}"
-    do
-        if [[ ! -d $elem ]]; then
-            mkdir -p $elem
-            chown $user $elem
-            chgrp $user $elem
-        fi
-    done    
-}
-
 # downloads and installs pre-compiles binaries of all essential programs and libraries
 function rps_downloadBinaries()
 {
     printMsg "Downloading binaries archive"
     # wget --progress=bar:force -O - 'http://blog.petrockblock.com/?wpdmdl=3' | tar jx --overwrite -C $rootdir RetroPie
-    wget -O binariesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=7113
+    wget -O binariesDownload.tar.bz2 http://downloads.petrockblock.com/RetroPieSetupBinaries_240614.tar.bz2
     tar -jxvf binariesDownload.tar.bz2 -C $rootdir
-    pushd $rootdir/RetroPie
+    pushd $rootdir/retropie
     cp -r * ../
     popd    
-    rm -rf $rootdir/RetroPie
+    rm -rf $rootdir/retropie
     rm binariesDownload.tar.bz2   
-
-    # handle Doom emulator specifics
-    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $rootdir/roms/doom/
-    chgrp $user $rootdir/roms/doom/prboom.wad
-    chown $user $rootdir/roms/doom/prboom.wad
-}
-
-# downloads and installs theme files for Emulation Station
-function rps_install_esthemes()
-{
-    printMsg "Installing themes for Emulation Station"
-    # wget --progress=bar:force -O - 'http://blog.petrockblock.com/?wpdmdl=2' | tar jx --overwrite -C $home/
-    wget -O themesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=7118
-    tar -jxvf themesDownload.tar.bz2 -C $home/   
-    rm themesDownload.tar.bz2 
-
-    chgrp -R $user $home/.emulationstation
-    chown -R $user $home/.emulationstation
-}
-
-# shows help information in the console
-function rps_showHelp()
-{
-    echo ""
-    echo "RetroPie Setup script"
-    echo "====================="
-    echo ""
-    echo "The script installs the RetroArch emulator base with various cores and a graphical front end."
-    echo "Because it needs to install some APT packages it has to be run with root priviliges."
-    echo ""
-    echo "Usage:"
-    echo "sudo ./retropie_setup.sh: The installation directory is /home/pi/RetroPie for user pi"
-    echo "sudo ./retropie_setup.sh USERNAME: The installation directory is /home/USERNAME/RetroPie for user USERNAME"
-    echo "sudo ./retropie_setup.sh USERNAME ABSPATH: The installation directory is ABSPATH for user USERNAME"
-    echo ""
-}
-
-function rps_checkNeededPackages()
-{
-    if [[ -z $(type -P git) || -z $(type -P dialog) ]]; then
-        echo "Did not find needed packages 'git' and/or 'dialog'. I am trying to install these now."
-        apt-get update
-        apt-get install -y --force-yes git dialog
-        if [ $? == '0' ]; then
-            echo "Successfully installed 'git' and/or 'dialog'."
-        else
-            echo "Could not install 'git' and/or 'dialog'. Aborting now."
-            exit 1
-        fi
-    else
-        echo "Found needed packages 'git' and 'dialog'."
-    fi 
-}
-
-function rps_main_reboot()
-{
-    clear
-    reboot    
-}
-
-# checks all kinds of essential files for existence and logs the results into the file debug.log
-function rps_createDebugLog()
-{
-    clear
-    printMsg "Generating debug log"
-
-    echo "RetroArch files:" > "$rootdir/debug.log"
-
-    # existence of files
-    checkFileExistence "/usr/local/bin/retroarch"
-    checkFileExistence "/usr/local/bin/retroarch-zip"
-    checkFileExistence "$rootdir/configs/all/retroarch.cfg"
-    echo -e "\nActive lines in $rootdir/configs/all/retroarch.cfg:" >> "$rootdir/debug.log"
-    sed '/^$\|^#/d' "$rootdir/configs/all/retroarch.cfg"  >>  "$rootdir/debug.log"
-
-    echo -e "\nEmulation Station files:" >> "$rootdir/debug.log"
-    checkFileExistence "$rootdir/supplementary/EmulationStation/emulationstation"
-    checkFileExistence "$rootdir/../.emulationstation/es_systems.cfg"
-    checkFileExistence "$rootdir/../.emulationstation/es_input.cfg"
-    echo -e "\nContent of es_systems.cfg:" >> "$rootdir/debug.log"
-    cat "$rootdir/../.emulationstation/es_systems.cfg" >> "$rootdir/debug.log"
-    echo -e "\nContent of es_input.cfg:" >> "$rootdir/debug.log"
-    cat "$rootdir/../.emulationstation/es_input.cfg" >> "$rootdir/debug.log"
-
-    echo -e "\nEmulators and cores:" >> "$rootdir/debug.log"
-    checkFileExistence "`find $rootdir/emulatorcores/fceu-next/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"`"
-    checkFileExistence "$rootdir/emulatorcores/libretro-prboom/prboom.wad"
-    checkFileExistence "`find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/gambatte-libretro/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"`"
-    checkFileExistence "`find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"`"
-    checkFileExistence "$rootdir/emulators/uae4rpi/uae4all"
-
-    echo -e "\nSNESDev:" >> "$rootdir/debug.log"
-    checkFileExistence "$rootdir/supplementary/SNESDev-Rpi/bin/SNESDev"
-
-    echo -e "\nSummary of ROMS directory:" >> "$rootdir/debug.log"
-    du -ch --max-depth=1 "$rootdir/roms/" >> "$rootdir/debug.log"
-
-    echo -e "\nUnrecognized ROM extensions:" >> "$rootdir/debug.log"
-    find "$rootdir/roms/amiga/" -type f ! \( -iname "*.adf" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/atari2600/" -type f ! \( -iname "*.bin" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/doom/" -type f ! \( -iname "*.WAD" -or -iname "*.jpg" -or -iname "*.xml" -or -name "*.wad" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/fba/" -type f ! \( -iname "*.zip" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/gamegear/" -type f ! \( -iname "*.gg" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/gba/" -type f ! \( -iname "*.gba" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/gbc/" -type f ! \( -iname "*.gb" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/mame/" -type f ! \( -iname "*.zip" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/mastersystem/" -type f ! \( -iname "*.sms" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/megadrive/" -type f ! \( -iname "*.smd" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/nes/" -type f ! \( -iname "*.nes" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/pcengine/" -type f ! \( -iname "*.iso" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/psx/" -type f ! \( -iname "*.img" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-    find "$rootdir/roms/snes/" -type f ! \( -iname "*.smc" -or -iname "*.jpg" -or -iname "*.xml" \) >> "$rootdir/debug.log"
-
-    echo -e "\nCheck for needed APT packages:" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libsdl1.2-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "screen" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "scons" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libasound2-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "pkg-config" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libgtk2.0-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libboost-filesystem-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libboost-system-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "zip" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libxml2" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libxml2-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libbz2-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "python-imaging" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libfreeimage-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libfreetype6-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libaudiofile-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libsdl-sound1.2-dev" >> "$rootdir/debug.log"
-    checkForInstalledAPTPackage "libsdl-mixer1.2-dev" >> "$rootdir/debug.log"
-
-    echo -e "\nEnd of log file" >> "$rootdir/debug.log" >> "$rootdir/debug.log"
-
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Debug log was generated in $rootdir/debug.log. Additional logs can be found in the folder $scriptdir/logs/." 22 76    
-
 }
 
 # download, extract, and install binaries
@@ -250,64 +51,57 @@ function rps_main_binaries()
 
     clear
     printMsg "Binaries-based installation"
+    now=$(date +'%d%m%Y_%H%M') 
+    {
+        # install all needed dependencies
+        source $scriptdir/retropie_packages.sh 101 dependencies
+        source $scriptdir/retropie_packages.sh 119 dependencies
+        source $scriptdir/retropie_packages.sh 127 dependencies
+        source $scriptdir/retropie_packages.sh 207 dependencies
+        source $scriptdir/retropie_packages.sh 302 dependencies
+        source $scriptdir/retropie_packages.sh 303 dependencies
 
-    # install_rpiupdate, not done anymore, but rely on apt-get upgrade here
-    rc_update_apt
-    rc_upgrade_apt
-    # run_rpiupdate, not done anymore, but rely on apt-get upgrade here
-    rc_installAPTPackages
-    rc_ensure_modules
-    rc_add_to_groups
-    rc_exportSDLNOMOUSE
-    rc_configureBootConfig
-    rps_prepareFolders
-    rps_downloadBinaries
-    sup_install_esscript
-    sup_generate_esconfig
-    sup_configure_snesdev
-    rc_fixForXBian
-    rc_disableTimeouts
-    
-    # install RetroArch
-    # install -m755 $rootdir/emulators/RetroArch/retroarch /usr/local/bin
-    # install -m644 $rootdir/emulators/RetroArch/retroarch.cfg /etc/retroarch.cfg
-    # install -m755 $rootdir/emulators/RetroArch/retroarch-zip /usr/local/bin
-    em_configureRetroArch
-    lr_configure_snes
-    rps_install_esthemes
-    em_configureSoundsettings
-    em_install_stella
-    em_install_scummvm
-    em_install_zmachine
-    em_install_zxspectrum
-    em_install_c64roms    
-    em_install_hatari
-    em_install_dosbox
-    em_configure_mame4allpi
+        source $scriptdir/retropie_packages.sh 300           # update and upgrade APT packages
+        source $scriptdir/retropie_packages.sh 318           # APT clean up
+        source $scriptdir/retropie_packages.sh 315           # modules
 
-    # install DGEN
-    test -z "/usr/local/bin" || /bin/mkdir -p "/usr/local/bin"
-    /usr/bin/install -c $rootdir/emulators/dgen-sdl/installdir/usr/local/bin/dgen $rootdir/emulators/dgen-sdl/installdir/usr/local/bin/dgen_tobin '/usr/local/bin'
-    test -z "/usr/local/share/man/man1" || /bin/mkdir -p "/usr/local/share/man/man1"
-    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man1/dgen.1 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man1/dgen_tobin.1 '/usr/local/share/man/man1'
-    test -z "/usr/local/share/man/man5" || /bin/mkdir -p "/usr/local/share/man/man5"
-    /usr/bin/install -c -m 644 $rootdir/emulators/dgen-sdl/installdir/usr/local/share/man/man5/dgenrc.5 '/usr/local/share/man/man5'
-    em_configureDGEN
-    em_configure_advmame
-    lr_configure_cavestory
-    em_configure_linapple
-    em_install_eduke32
-    em_configure_rpix86
-    sup_configure_esconfig
-    lr_configure_doom
+        rps_downloadBinaries        # download pre-compiled binaries and extract them
 
-    chgrp -R $user $rootdir
-    chown -R $user $rootdir
+        source $scriptdir/retropie_packages.sh 323           # install SDL 2.0.1 binaries
+        source $scriptdir/retropie_packages.sh 303 install   # ES start script
+        source $scriptdir/retropie_packages.sh 303 install   # ES start script
+        source $scriptdir/retropie_packages.sh 303 configure # ES es_systems
+        source $scriptdir/retropie_packages.sh 306 install   # SNESDev config file
+        source $scriptdir/retropie_packages.sh 317           # disable time outs
+        source $scriptdir/retropie_packages.sh 304           # ES theme 'Simple'
+        source $scriptdir/retropie_packages.sh 308           # RetroArch auto-config files
+        
+        source $scriptdir/retropie_packages.sh 106           # Stella emulator
+        source $scriptdir/retropie_packages.sh 123           # ScummVM
+        source $scriptdir/retropie_packages.sh 124           # ZMachine
+        source $scriptdir/retropie_packages.sh 125           # ZXSpectrum Fuse
+        source $scriptdir/retropie_packages.sh 109           # C64 ROMs
+        source $scriptdir/retropie_packages.sh 113           # Hatari
+        source $scriptdir/retropie_packages.sh 105           # Dosbox
+        source $scriptdir/retropie_packages.sh 110           # eDuke3D
 
-    rc_setAvoidSafeMode
-    sup_install_runcommandscript
+        source $scriptdir/retropie_packages.sh 316           # set avoid safe mode
+        source $scriptdir/retropie_packages.sh 305           # video mode script 'runcommand'
+        source $scriptdir/retropie_packages.sh 310           # Samba ROM Service
+        source $scriptdir/retropie_packages.sh 311           # USB ROM Service
 
-    rps_createDebugLog
+        # configure all emulator and libretro components
+        for (( i = 100; i <= 128; i++ )); do
+            source $scriptdir/retropie_packages.sh $i configure
+        done
+
+        for (( i = 200; i <= 211; i++ )); do
+            source $scriptdir/retropie_packages.sh $i configure
+        done
+
+    } 2>&1 | tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz)
+
+    chown -R $user:$user $scriptdir/logs/run_$now.log.gz
 
     __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
     __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
@@ -334,197 +128,134 @@ function rps_main_updatescript()
   dialog --backtitle "PetRockBlock.com - ORetroPie Setup." --msgbox "Fetched the latest version of the RetroPie Setup script. You need to restart the script." 20 60    
 }
 
-##################
-## menus #########
-##################
-
-function rps_scraperMenu()
-{
-    while true; do
-        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
-        options=(1 "(Re-)scape of the ROMs directory" 
-                 2 "FORCED (re-)scrape of the ROMs directory" 
-                 3 "(Re-)scrape of the ROMs directory with CRC option" 
-                 4 "(Re-)scrape of the ROMs directory in MANUAL mode" 
-                 5 "(Re-)scrape of the ROMs directory in PARTIAL mode"
-                 6 "Set maximum width of images (currently: $esscrapimgw px)" )
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
-        if [ "$choices" != "" ]; then
-            clear
-            case $choices in
-                1) set_essc_runnormal ;;
-                2) set_essc_runforced ;;
-                3) set_essc_runcrc ;;
-                4) set_essc_runmanual ;;
-                5) set_essc_runpartial ;;
-                6) set_essc_setimgw ;;
-            esac
-        else
-            break
-        fi
-    done        
-}
-
 function rps_main_options()
 {
     cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
-    options=(1 "Install latest rpi-update script" ON \
-             2 "Update firmware with rpi-update" OFF \
-             3 "Update APT repositories" ON \
-             4 "Perform APT upgrade" ON \
-             5 "Apply fix for XBian (Neede to make components compile properly)" ON \
-             6 "(C) Add user $user to groups video, audio, and input" ON \
-             7 "(C) Enable modules ALSA, uinput, and joydev" ON \
-             8 "(C) Export SDL_NOMOUSE=1" ON \
-             9 "Install all needed APT packages" ON \
-             10 "(C) Generate folder structure" ON \
-             11 "Install RetroArch (7 min)" ON \
-             12 "(C) Configure video, rewind, and keyboard for RetroArch" ON \
-             13 "Install Amiga emulator UAE4RPi (15 min)" ON \
-             14 "Install Apple ][ emulator (Linapple, 7 min)" ON \
-             15 "Install Amstrad CPC emulator CPC4Rpi" ON \
-             16 "Install Atari 800 emulator (6 min)" ON \
-             17 "Install Atari 2600 RetroArch core (15 min)" ON \
-             18 "Install Atari 2600 emulator Stella (1 min)" ON \
-             19 "Install Atari ST/STE/TT/Falcon emulator Hatari (1 min)" ON \
-             20 "Install Apple Macintosh (BasiliskII, 23 min)" ON \
-             21 "Install C64 emulator (Vice)" ON \
-             22 "Install NXEngine / Cave Story (16 min)" ON \
-             23 "Install Doom core" ON \
-             24 "Install eDuke32 with shareware files" ON \
-             25 "Install Game Boy Advance emulator (gpSP, 41 min)" ON \
-             26 "Install Game Boy Color core (7 min)" ON \
-             27 "Install IntelliVision emulator (jzintv, 10 min)" ON \
-             28 "Install MAME (iMAME4All) core" ON \
-             29 "Install AdvMAME emulator" ON \
-             30 "Install MAME4All-Pi (84 min)" ON \
-             31 "Install FBA core (130 min)" ON \
-             32 "Install MAME emulator PiFBA (43 min)" ON \
-             33 "Install Mastersystem/Game Gear/Megadrive emulator (OsmOse, 7 min)" ON \
-             34 "Install DGEN (Megadrive/Genesis emulator, 32 min)" ON \
-             35 "(C) Configure DGEN" ON \
-             36 "Install Megadrive/Genesis core (Genesis-Plus-GX, 16 min)" ON \
-             37 "Install Megadrive/Genesis core (Picodrive, 7 min)" ON \
-             38 "Install NeoGeo emulator GnGeo 0.7" ON \
-             39 "Install NeoGeo emulator GnGeo-Pi 0.85 (21 min)" ON \
-             40 "(C) Configure NeoGeo" ON \
-             41 "Install NES core (8 min)" ON \
-             42 "Install N64 emulator Mupen 64 Plus RPi (56 min)" ON \
-             43 "Install PC Engine core (Mednafen-PCE-Libretro, 21 min)" ON \
-             44 "Install PC emulator (RPix86)" ON \
-             45 "Install PC emulator (Dosbox, 1 min)" ON \
-             46 "Install PC emulator (FastDosbox)" ON \
-             47 "Install Playstation core (20 min)" ON \
-             48 "Install PSP emulator PPSSPP" OFF \
-             49 "Install ScummVM (1 min)" ON \
-             50 "Install Super NES core (11 min)" ON \
-             51 "Install SNES9X emulator (15 min)" ON \
-             52 "Install PiSNES emulator (8 min)" ON \
-             53 "(C) Configure Super NES core" ON \
-             54 "Install Wolfenstein3D engine (3 min)" ON \
-             55 "Install Z Machine emulator (Frotz)" ON \
-             56 "Install ZX Spectrum emulator (Fuse, 1 min)" ON \
-             57 "Install ZX Spectrum emulator (FBZX, 3 min)" ON \
-             58 "Install BCM library" ON \
-             59 "Install Dispmanx library" ON \
-             60 "Install SNESDev" ON \
-             61 "Install Emulation Station" ON \
-             62 "Install Emulation Station Themes" ON \
-             63 "Install ES-config" ON \
-             64 "(C) Generate config file for Emulation Station" ON \
-             65 "(C) Configure sound settings for RetroArch" ON \
-             66 "(C) Set avoid_safe_mode=1 (for GPIO adapter)" ON \
-             67 "Install runcommand script" ON \
-             68 "(C) Configure /boot/config.txt" ON \
-             69 "(C) Disable screen blanking and power down timeout" ON )
+    options=(100 "RetroArch                      " ON \
+             101 "AdvMame                        " ON \
+             102 "Amiga emulator UAE4All         " ON \
+             103 "Atari 800 emulator             " ON \
+             104 "Armstrad CPC emulator          " ON \
+             105 "DOS Emulator Dosbox            " ON \
+             106 "Atari2600 emulator STELLA      " ON \
+             107 "Macintosh emulator             " ON \
+             108 "C64 emulator VICE              " ON \
+             109 "C64 ROMs                       " ON \
+             110 "Duke3D Port                    " ON \
+             111 "GameBoy Advance emulator       " ON \
+             112 "NeoGeo emulator GnGeoPi        " ON \
+             113 "Atari emulator Hatari          " ON \
+             114 "MAME emulator MAME4All-Pi      " ON \
+             115 "Gamegear emulator Osmose       " ON \
+             116 "Intellivision emulator         " ON \
+             117 "Apple 2 emulator Linapple      " ON \
+             118 "N64 emulator MUPEN64Plus-RPi   " ON \
+             119 "SNES emulator SNES9X-RPi       " ON \
+             120 "FBA emulator PiFBA             " ON \
+             121 "SNES emulator PiSNES           " ON \
+             122 "DOS Emulator rpix86            " ON \
+             123 "ScummVM                        " ON \
+             124 "ZMachine                       " ON \
+             125 "ZXSpectrum emulator Fuse       " ON \
+             126 "ZXSpectrum emulator FBZX       " ON \
+             127 "MSX emulator OpenMSX           " ON \
+             128 "DOS emulator FastDosbox        " ON \
+             200 "SNES LibretroCore PocketSNES   " ON \
+             201 "Genesis LibretroCore Picodrive " ON \
+             202 "Atari 2600 LibretroCore Stella " ON \
+             203 "Cave Story LibretroCore        " ON \
+             204 "Doom LibretroCore              " ON \
+             205 "Gameboy Color LibretroCore     " ON \
+             206 "MAME LibretroCore              " ON \
+             207 "FBA LibretroCore               " ON \
+             208 "NES LibretroCore fceu-next     " ON \
+             209 "Genesis/Megadrive LibretroCore " ON \
+             210 "TurboGrafx 16 LibretroCore     " ON \
+             211 "Playstation 1 LibretroCore     " ON \
+             300 "Update APT packages            " ON \
+             301 "Package Repository             " ON \
+             302 "SDL 2.0.1                      " ON \
+             303 "EmulationStation               " ON \
+             304 "EmulationStation Theme Simple  " ON \
+             305 "Video mode script 'runcommand' " ON \
+             308 "RetroArch-AutoConfigs          " ON \
+             309 "Bash Welcome Tweak             " ON \
+             310 "Samba ROM Shares               " ON \
+             311 "USB ROM Service                " ON \
+             315 "Modules UInput, Joydev, ALSA   " ON \
+             316 "Set avoid_safe_mode            " ON \
+             317 "Disable system timeouts        " ON \
+             318 "Handle APT packages            " ON \
+             323 "Install SDL 2.0.1 binaries     " OFF )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
     __INFMSGS=""
     if [ "$choices" != "" ]; then
         now=$(date +'%d%m%Y_%H%M')
-        {
-            for choice in $choices
-            do
-                case $choice in
-                    1) rc_install_rpiupdate ;;
-                    2) rc_run_rpiupdate ;;
-                    3) rc_update_apt ;;
-                    4) rc_upgrade_apt ;;
-                    5) rc_fixForXBian ;;
-                    6) rc_add_to_groups ;;
-                    7) rc_ensure_modules ;;
-                    8) rc_exportSDLNOMOUSE ;;
-                    9) rc_installAPTPackages ;;
-                    10) rps_prepareFolders ;;
-                    11) em_install_retroarch ;;
-                    12) em_configureRetroArch ;;
-                    13) em_install_amiga ;;
-                    14) em_install_linapple ;;
-                    15) em_install_cpc4rpi ;;
-                    16) em_install_atari800 ;;
-                    17) lr_install_atari2600 ;;
-                    18) em_install_stella ;;
-                    19) em_install_hatari ;;
-                    20) em_install_basiliskII ;;
-                    21) em_install_viceC64 ;;
-                    22) lr_install_cavestory ;;
-                    23) lr_install_doom ;;
-                    24) em_install_eduke32 ;;
-                    25) em_install_gba ;;
-                    26) lr_install_gbc ;;
-                    27) em_install_intellivision ;;
-                    28) lr_install_mame ;;
-                    29) em_install_advmame ;;
-                    30) em_install_mame4allpi ;;
-                    31) lr_install_fba ;;
-                    32) em_install_pifba ;;
-                    33) em_install_megadrive ;;
-                    34) em_install_dgen ;;
-                    35) em_configureDGEN ;;
-                    36) lr_install_megadriveLibretro ;;
-                    37) lr_install_picodrive ;;
-                    38) em_install_neogeo ;;
-                    39) em_install_GnGeoPi ;;
-                    40) em_configureNeogeo ;;
-                    41) lr_install_nes ;;
-                    42) em_install_mupen64plus_rpi ;;
-                    43) lc_installPCEngine ;;
-                    44) em_install_rpix86 ;;
-                    45) em_install_dosbox ;;
-                    46) em_install_fastdosbox ;;
-                    47) lr_install_psx ;;
-                    48) em_install_ppsspp ;;
-                    49) em_install_scummvm ;;
-                    50) lr_install_snes ;;
-                    51) em_install_snes9x ;;
-                    52) em_install_pisnes ;;
-                    53) lr_configure_snes ;;
-                    54) em_install_wolfenstein3d ;;
-                    55) em_install_zmachine ;;
-                    56) em_install_zxspectrum ;;
-                    57) em_install_fbzx ;;
-                    58) sup_install_bcmlibrary ;;
-                    59) sup_install_dispmanx ;;
-                    60) sup_install_snesdev ;;
-                    61) sup_install_emulationstation ;;
-                    62) rps_install_esthemes ;;
-                    63) sup_install_esconfig ;;
-                    64) sup_generate_esconfig ;;
-                    65) em_configureSoundsettings ;;
-                    66) rc_setAvoidSafeMode ;;
-                    67) sup_install_runcommandscript ;;
-                    68) rc_configureBootConfig ;;
-                    69) rc_disableTimeouts ;;
-                esac
-            done
-
-            chgrp -R $user $rootdir
-            chown -R $user $rootdir
-
-            rps_createDebugLog
-
-        } 2>&1 | tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz)
+        logfilename=$scriptdir/logs/run_$now.log.gz
+        touch $logfilename
+        for choice in $choices
+        do
+            case $choice in
+                100) source $scriptdir/retropie_packages.sh 100 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                101) source $scriptdir/retropie_packages.sh 101 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                102) source $scriptdir/retropie_packages.sh 102 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                103) source $scriptdir/retropie_packages.sh 103 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                104) source $scriptdir/retropie_packages.sh 104 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                105) source $scriptdir/retropie_packages.sh 105 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                106) source $scriptdir/retropie_packages.sh 106 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                107) source $scriptdir/retropie_packages.sh 107 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                108) source $scriptdir/retropie_packages.sh 108 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                109) source $scriptdir/retropie_packages.sh 109 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                110) source $scriptdir/retropie_packages.sh 110 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                111) source $scriptdir/retropie_packages.sh 111 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                112) source $scriptdir/retropie_packages.sh 112 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                113) source $scriptdir/retropie_packages.sh 113 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                114) source $scriptdir/retropie_packages.sh 114 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                115) source $scriptdir/retropie_packages.sh 115 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                116) source $scriptdir/retropie_packages.sh 116 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                117) source $scriptdir/retropie_packages.sh 117 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                118) source $scriptdir/retropie_packages.sh 118 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                119) source $scriptdir/retropie_packages.sh 119 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                120) source $scriptdir/retropie_packages.sh 120 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                121) source $scriptdir/retropie_packages.sh 121 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                122) source $scriptdir/retropie_packages.sh 122 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                123) source $scriptdir/retropie_packages.sh 123 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                124) source $scriptdir/retropie_packages.sh 124 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                125) source $scriptdir/retropie_packages.sh 125 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                126) source $scriptdir/retropie_packages.sh 126 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                127) source $scriptdir/retropie_packages.sh 127 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                128) source $scriptdir/retropie_packages.sh 128 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                200) source $scriptdir/retropie_packages.sh 200 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                201) source $scriptdir/retropie_packages.sh 201 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                202) source $scriptdir/retropie_packages.sh 202 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                203) source $scriptdir/retropie_packages.sh 203 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                204) source $scriptdir/retropie_packages.sh 204 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                205) source $scriptdir/retropie_packages.sh 205 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                206) source $scriptdir/retropie_packages.sh 206 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                207) source $scriptdir/retropie_packages.sh 207 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                208) source $scriptdir/retropie_packages.sh 208 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                209) source $scriptdir/retropie_packages.sh 209 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                210) source $scriptdir/retropie_packages.sh 210 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                211) source $scriptdir/retropie_packages.sh 211 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                300) source $scriptdir/retropie_packages.sh 300 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                301) source $scriptdir/retropie_packages.sh 301 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                302) source $scriptdir/retropie_packages.sh 302 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                303) source $scriptdir/retropie_packages.sh 303 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                304) source $scriptdir/retropie_packages.sh 304 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                305) source $scriptdir/retropie_packages.sh 305 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                308) source $scriptdir/retropie_packages.sh 308 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                309) source $scriptdir/retropie_packages.sh 309 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                310) source $scriptdir/retropie_packages.sh 310 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                311) source $scriptdir/retropie_packages.sh 311 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                315) source $scriptdir/retropie_packages.sh 315 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                316) source $scriptdir/retropie_packages.sh 316 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                317) source $scriptdir/retropie_packages.sh 317 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                318) source $scriptdir/retropie_packages.sh 318 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                323) source $scriptdir/retropie_packages.sh 323 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+            esac
+        done
 
         if [[ ! -z $__ERRMSGS ]]; then
             dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__ERRMSGS See debug.log for more details." 20 60    
@@ -536,227 +267,47 @@ function rps_main_options()
 
         dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60    
 
-        chown -R $user $scriptdir/logs/run_$now.log.gz
-        chgrp -R $user $scriptdir/logs/run_$now.log.gz
-    fi
-}
-
-function rps_availFreeDiskSpace()
-{
-    local __required=$1
-    local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
-
-    required_MB=`expr $__required / 1024`
-    available_MB=`expr $__avail / 1024`
-
-    if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space ($required_MB MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir continue anyway?"; then
-        return 0;
-    else
-        exit 0;
+        chown -R $user:$user $logfilename
     fi
 }
 
 function rps_main_setup()
 {
-    now=$(date +'%d%m%Y_%H%M%S')
-    {
-        while true; do
-            cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
-            options=(1 "Re-generate config file for Emulation Station" 
-                     2 "Install latest Rasperry Pi firmware" 
-                     3 "Install AdvanceMenu"
-                     4 "Start Emulation Station on boot?" 
-                     5 "Configure SNESDev"
-                     6 "Configure Xarcade2Jstick"
-                     7 "Enable/disable RetroPie splashscreen"
-                     8 "Change RetroPie splashscreen"
-                     9 "Configure audio settings"
-                     10 "Change ARM frequency" 
-                     11 "Change SDRAM frequency"
-                     12 "Install/update multi-console gamepad drivers for GPIO" 
-                     13 "Enable gamecon_gpio_rpi with SNES-pad config"
-                     14 "Run 'ES-scraper'" 
-                     15 "Install and configure SAMBA shares"
-                     16 "Install USB-ROM-Copy service"
-                     17 "Install drivers for XBox 360 Wired Controllers"
-                     18 "Install driver and tools for PS3 controllers"
-                     19 "Configure RetroArch Netplay"
-                     20 "Register controller for RetroArch emulator"
-                     21 "Update input configuration of Emulation Station"
-                     22 "Tweak user bash profile"
-                     23 "Generate debug log" )
-            choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
-            if [ "$choices" != "" ]; then
-                case $choices in
-                     1) sup_generate_esconfig ;;
-                     2) rc_run_rpiupdate ;;
-                     3) sup_install_advancemenu ;;
-                     4) set_changeBootbehaviour ;;
-                     5) sup_enableDisableSNESDevStart ;;
-                     6) sup_enableDisableXarcade2JstickStart ;;
-                     7) set_enableDisableSplashscreen ;;
-                     8) rps_splashscreen ;;
-                     9) set_changeAudioOutput ;;
-                     10) set_setArmFreq ;;
-                     11) set_setSDRAMFreq ;;
-                     12) set_installGPIOpadModules ;;
-                     13) set_enableGameconSnes ;;
-                     14) rps_scraperMenu ;;
-                     15) set_configureSAMBA ;;
-                     16) set_install_USBROMService ;;
-                     17) set_install_xboxdrv ;;
-                     18) set_installps3controller ;;
-                     19) rps_retronetplaysetup ;;
-                     20) set_RetroarchJoyconfig ;;
-                     21) set_ES_updateinput ;;
-                     22) rc_tweakProfile ;;
-                     23) rps_createDebugLog ;;
-                esac
-            else
-                break
-            fi
-        done    
-    } 2>&1 | tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz)
-    chown -R $user $scriptdir/logs/run_$now.log.gz
-    chgrp -R $user $scriptdir/logs/run_$now.log.gz
-}
-
-function rps_splashscreen()
-{
-    local options
-    local ctr
-
-    ctr=0
-    pushd $scriptdir/supplementary/splashscreens/ > /dev/null
-    options=()
-    dirlist=()
-    for splashdir in $(find . -type d | sort) ; do
-        if [[ $splashdir != "." ]]; then
-            options+=($ctr "${splashdir:2}")
-            dirlist+=(${splashdir:2})
-            ctr=$((ctr + 1))
-        fi
-    done
-    popd > /dev/null
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose splashscreen." 22 76 16)
-    __ERRMSGS=""
-    __INFMSGS=""
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
-    splashdir=${dirlist[$choices]}
-    if [ "$choices" != "" ]; then
-        rm /etc/splashscreen.list
-        find $scriptdir/supplementary/splashscreens/$splashdir/ -type f | sort | while read line; do
-            echo $line >> /etc/splashscreen.list
-        done
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Splashscreen set to '$splashdir'." 20 60  
-    else
-        break
-    fi
-}
-
-function rps_retronetplaysetup()
-{
-    ipaddress_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-    ipaddress_ext=$(curl http://ipecho.net/plain; echo)
+    now=$(date +'%d%m%Y_%H%M')
+    logfilename=$scriptdir/logs/run_$now.log.gz
+    touch $logfilename
     while true; do
-        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Configure RetroArch Netplay.\nInternal IP: $ipaddress_int\nExternal IP: $ipaddress_ext" 22 76 16)
-        options=(1 "(E)nable/(D)isable RetroArch Netplay. Currently: $__netplayenable" 
-                 2 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode" 
-                 3 "Set port. Currently: $__netplayport" 
-                 4 "Set host IP address (for client mode). Currently: $__netplayhostip"
-                 5 "Set delay frames. Currently: $__netplayframes" )
+        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
+
+        options=(306  "SNESDev                        " 
+                 307  "Xarcade2Jstick                 " 
+                 312  "Enable/disable Splashscreen    " 
+                 313  "Select Splashscreen            " 
+                 314  "RetroNetplay                   " 
+                 319  "Auto-start EmulationStation    " 
+                 320  "Install XBox contr. 360 driver " 
+                 321  "Install PS3 controller driver  " 
+                 322  "Register RetroArch controller  " 
+                 324  "Configure Audio Settings" )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
-                 1) rps_retronet_enable ;;
-                 2) rps_retronet_mode ;;
-                 3) rps_retronet_port ;;
-                 4) rps_retronet_hostip ;;
-                 5) rps_retronet_frames ;;
+                306) source $scriptdir/retropie_packages.sh 306 configure 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                307) source $scriptdir/retropie_packages.sh 307 configure 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                312) source $scriptdir/retropie_packages.sh 312           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                313) source $scriptdir/retropie_packages.sh 313           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                314) source $scriptdir/retropie_packages.sh 314           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                319) source $scriptdir/retropie_packages.sh 319           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                320) source $scriptdir/retropie_packages.sh 320           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                321) source $scriptdir/retropie_packages.sh 321           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                322) source $scriptdir/retropie_packages.sh 322           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                324) source $scriptdir/retropie_packages.sh 324           2>&1 | tee >(gzip --stdout >$logfilename) ;;
             esac
         else
             break
         fi
     done    
+
+    chown -R $user:$user $logfilename
 }
 
-function rps_retronet_enable()
-{
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Enable or disable RetroArch's Netplay mode." 22 76 16)
-    options=(1 "ENABLE netplay" 
-             2 "DISABLE netplay" )
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
-    if [ "$choices" != "" ]; then
-        case $choices in
-             1) __netplayenable="E" 
-                ;;
-             2) __netplayenable="D" 
-                ;;
-        esac
-        rps_retronet_saveconfig
-        sup_generate_esconfig
-    fi
-}
-
-function rps_retronet_mode()
-{
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Please set the netplay mode." 22 76 16)
-    options=(1 "Set as HOST" 
-             2 "Set as CLIENT" )
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
-    if [ "$choices" != "" ]; then
-        case $choices in
-             1) __netplaymode="H" 
-                __netplayhostip_cfile=""
-                ;;
-             2) __netplaymode="C" 
-                __netplayhostip_cfile="$__netplayhostip"
-                ;;
-        esac
-        rps_retronet_saveconfig
-        sup_generate_esconfig
-    fi
-}
-
-function rps_retronet_port()
-{
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the port to be used for netplay (default: 55435)." 22 76 $__netplayport)
-    choices=$("${cmd[@]}" 2>&1 >/dev/tty)    
-    if [ "$choices" != "" ]; then
-        __netplayport=$choices
-        rps_retronet_saveconfig
-        sup_generate_esconfig
-    fi  
-}
-
-function rps_retronet_hostip()
-{
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the IP address of the host." 22 76 $__netplayhostip)
-    choices=$("${cmd[@]}" 2>&1 >/dev/tty)    
-    if [ "$choices" != "" ]; then
-        __netplayhostip=$choices
-        if [[ $__netplaymode == "H" ]]; then
-            __netplayhostip_cfile=""
-        else
-            __netplayhostip_cfile="$__netplayhostip"
-        fi
-        rps_retronet_saveconfig
-        sup_generate_esconfig
-    fi  
-}
-
-function rps_retronet_frames()
-{
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the number of delay frames for netplay (default: 15)." 22 76 $__netplayframes)
-    choices=$("${cmd[@]}" 2>&1 >/dev/tty)    
-    if [ "$choices" != "" ]; then
-        __netplayframes=$choices
-        rps_retronet_saveconfig
-        sup_generate_esconfig
-    fi  
-}
-
-function rps_retronet_saveconfig()
-{
-    echo -e "__netplayenable=\"$__netplayenable\"\n__netplaymode=\"$__netplaymode\"\n__netplayport=\"$__netplayport\"\n__netplayhostip=\"$__netplayhostip\"\n__netplayhostip_cfile=\"$__netplayhostip_cfile\"\n__netplayframes=\"$__netplayframes\"" > $scriptdir/configs/retronetplay.cfg
-}

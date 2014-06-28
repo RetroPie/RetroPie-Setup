@@ -1,14 +1,9 @@
-#!/bin/bash
-
-#  RetroPie-Setup - Shell script for initializing Raspberry Pi 
-#  with RetroArch, various cores, and EmulationStation (a graphical 
-#  front end).
 # 
-#  (c) Copyright 2012-2013 Florian Müller (contact@petrockblock.com)
+#  (c) Copyright 2012-2014  Florian Müller (contact@petrockblock.com)
 # 
 #  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
 # 
-#  Permission to use, copy, modify and distribute RetroPie-Setup in both binary and
+#  Permission to use, copy, modify and distribute this work in both binary and
 #  source form, for non-commercial purposes, is hereby granted without fee,
 #  providing that this license information and copyright notice appear with
 #  all copies and any derived work.
@@ -27,670 +22,32 @@
 # 
 #  Many, many thanks go to all people that provide the individual packages!!!
 # 
-#  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
-# 
 
-function em_configure_advmame()
-{
-    $rootdir/emulators/advancemame-0.94.0/installdir/bin/advmame
-    mv /root/.advance/ /home/$user/
-    echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> /home/$user/.advance/advmame.rc
-    chmod -R a+rwX /home/$user/.advance/
-    chown -R $user /home/$user/.advance/
+function sources_retroarch() {
+    printMsg "Getting sources of RetroArch"
+    gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
 }
 
-# install AdvanceMAME emulator
-function em_install_advmame()
-{
-    printMsg "Installing AdvMAME emulator"
-
-    wget -O advmame.tar.gz http://downloads.sourceforge.net/project/advancemame/advancemame/0.94.0/advancemame-0.94.0.tar.gz
-
-    apt-get -y install libsdl1.2-dev gcc-4.7
-    export CC=gcc-4.7
-    export GCC=g++-4.7
-
-    tar xzvf advmame.tar.gz -C "$rootdir/emulators/"
-    pushd "$rootdir/emulators/advancemame-0.94.0"
-    sed 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' <advance/linux/vfb.c >advance/linux/temp.c
-    mv advance/linux/temp.c advance/linux/vfb.c
-    sed 's/misc_quiet\", 0/misc_quiet\", 1/' <advance/osd/global.c >advance/osd/temp.c
-    mv advance/osd/temp.c advance/osd/global.c 
-sed '
-/#include <string>/ i\
-#include <stdlib.h>
-' <advance/d2/d2.cc >advance/d2/temp.cc
-    mv advance/d2/temp.cc advance/d2/d2.cc
-    ./configure --prefix="$rootdir/emulators/advancemame-0.94.0/installdir"
-    sed 's/LDFLAGS=-s/LDFLAGS=-s -lm -Wl,--no-as-needed/' <Makefile >Makefile.temp
-    mv Makefile.temp Makefile
+function build_retroarch() {
+    printMsg "Building RetroArch"
+    pushd "$rootdir/emulators/RetroArch"
+    ./configure --prefix="$rootdir/emulators/RetroArch/installdir" --disable-x11 --disable-oss --disable-pulse --disable-sdl --enable-floathard
+    make clean
     make
+    popd
+}
+
+function install_retroarch() {
+    printMsg "Installing RetroArch"
+    pushd "$rootdir/emulators/RetroArch"
     make install
     popd
-
-    em_configure_advmame
-    unset CC
-    unset GCC
-}
-
-# install Amiga emulator
-function em_install_amiga()
-{
-    printMsg "Installing Amiga emulator"
-    if [[ -d "$rootdir/emulators/uae4all" ]]; then
-        rm -rf "$rootdir/emulators/uae4all"
-    fi
-    wget http://www.gamshi.com/download/uae4rpi.tar.bz2
-    tar -jxvf uae4rpi.tar.bz2 -C "$rootdir/emulators/"
-    pushd "$rootdir/emulators/uae4rpi"
-    if [[ ! -f /opt/vc/include/interface/vmcs_host/vchost_config.h ]]; then
-        touch /opt/vc/include/interface/vmcs_host/vchost_config.h
-    fi
-    make
-    chown -R $user "$rootdir/emulators/uae4rpi"
-    chgrp -R pi "$rootdir/emulators/uae4rpi"
-    if [[ ! -f "$rootdir/emulators/uae4rpi/uae4all" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Amiga emulator."
+    if [[ ! -f "$rootdir/emulators/RetroArch/installdir/bin/retroarch" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
     fi  
-    mkdir "roms"
-    popd  
-    rm uae4rpi.tar.bz2
-
-    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
 }
 
-# install Atari 800 emulator
-function em_install_atari800()
-{
-    printMsg "Installing Atari 800 emulator"
-    wget -O atari800-3.0.0.tar.gz http://sourceforge.net/projects/atari800/files/atari800/3.0.0/atari800-3.0.0.tar.gz/download
-    if [[ -d "$rootdir/emulators/atari800-3.0.0" ]]; then 
-        rm -rf "$rootdir/emulators/atari800-3.0.0"
-    fi
-    tar xvfz atari800-3.0.0.tar.gz -C "$rootdir/emulators/"
-    pushd "$rootdir/emulators/atari800-3.0.0/src"
-    mkdir -p "$rootdir/emulators/atari800-3.0.0/installdir"
-    ./configure --prefix="$rootdir/emulators/atari800-3.0.0/installdir"
-    make
-    make install
-    if [[ ! -f "$rootdir/emulators/atari800-3.0.0/installdir/bin/atari800" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 800 emulator."
-    fi  
-    popd
-    rm atari800-3.0.0.tar.gz
-}
-
-function em_install_cpc4rpi()
-{
-    printMsg "Installing CPC4RPi"
-    wget http://gaming.capsule-sa.co.za/downloads/cpc4rpi-1.1_src.tar.gz
-    if [[ -d "$rootdir/emulators/cpc4rpi-1.1" ]]; then 
-        rm -rf "$rootdir/emulators/cpc4rpi-1.1"
-    fi
-    tar xvfz cpc4rpi-1.1_src.tar.gz -C "$rootdir/emulators/"
-    pushd "$rootdir/emulators/cpc4rpi-1.1"
-    sed -i 's|LIBS = -L/usr/lib/arm-linux-gnueabihf -lz -lts -L/opt/vc/lib -lGLESv2 -lEGL|LIBS = -L/usr/lib/arm-linux-gnueabihf -lX11 -lz -lts -L/opt/vc/lib -lSDL -lpthread -ldl -lGLESv2 -lEGL|g' makefile
-    sed -i 's|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o /root/Raspbian/Libs/libSDL.a /root/Raspbian/Libs/libnofun.a $(LIBS)|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o   $(LIBS)|g' makefile
-    make RELEASE=TRUE
-    if [[ ! -f "$rootdir/emulators/cpc4rpi-1.1/cpc4rpi" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Amstrad CPC emulator CPC4Rpi."
-    fi  
-    popd 
-    rm cpc4rpi-1.1_src.tar.gz
-}
-
-function em_install_dosbox()
-{
-    printMsg "Installing Dosbox"
-    apt-get install -y --force-yes dosbox
-}
-
-function em_install_stella()
-{
-    printMsg "Installing Atari 2600 emulator Stella"
-    apt-get install -y --force-yes stella
-}
-
-function em_install_basiliskII()
-{
-    printMsg "Installing Basilisk II"
-    gitPullOrClone "$rootdir/emulators/basiliskii" git://github.com/cebix/macemu.git
-    cd BasiliskII/src/Unix
-    ./autogen.sh
-    ./configure --prefix="$rootdir/emulators/basiliskii/installdir" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler
-    make clean
-    make
-    make install
-    touch $rootdir/roms/basiliskii/Start.txt
-    if [[ -z "$rootdir/emulators/basiliskii/installdir/bin/BasiliskII" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile BasiliskII."
-    fi  
-    popd
-}
-
-# install C64 ROMs
-function em_install_c64roms()
-{
-    printMsg "Retrieving Commodore 64 ROMs"
-    wget http://www.zimmers.net/anonftp/pub/cbm/crossplatform/emulators/VICE/old/vice-1.5-roms.tar.gz
-    tar -xvzf vice-1.5-roms.tar.gz
-    mkdir -p "$rootdir/emulators/vice-2.3.dfsg/installdir/lib/vice/"
-    cp -a vice-1.5-roms/data/* "$rootdir/emulators/vice-2.3.dfsg/installdir/lib/vice/"
-    rm -rf vice-1.5-roms
-    rm -rf vice-1.5-roms.tar.gz    
-}
-
-# Install VICE C64 Emulator
-function em_install_viceC64()
-{
-    printMsg "Install VICE Commodore 64 core"
-    if [[ -d "$rootdir/emulators/vice-2.4" ]]; then
-        rm -rf "$rootdir/emulators/vice-2.4"
-    fi
-    if dpkg-query -Wf'${db:Status-abbrev}' vice 2>/dev/null | grep -q '^i'; then
-        printf 'Package vice is already installed - removing package\n' "${1}"
-        apt-get remove -y vice
-    fi
-    printMsg "Installing vice"
-    #pushd "$rootdir/emulators"
-    echo 'deb-src http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi' >> /etc/apt/sources.list
-    apt-get update
-    #apt-get build-dep -y vice
-    apt-get install -y --force-yes libxaw7-dev automake checkinstall
-    #apt-get source vice
-    #cd vice-2.3.dfsg
-    wget -O vice-2.4.tar.gz http://downloads.sourceforge.net/project/vice-emu/releases/vice-2.4.tar.gz
-    tar xzvf vice-2.4.tar.gz -C "$rootdir/emulators/"
-    pushd "$rootdir/emulators/vice-2.4"
-    ./configure --prefix="$rootdir/emulators/vice-2.4/installdir" --enable-sdlui --without-pulse --with-sdlsound
-    make    
-    make install
-    popd
-    em_install_c64roms    
-}
-
-# configure DGEN
-function em_configureDGEN()
-{
-    chmod 777 /dev/fb0
-
-    if [[ ! -f "$rootdir/configs/all/dgenrc" ]]; then
-        mkdir -p "$rootdir/configs/all/"
-        cp $rootdir/emulators/dgen-sdl/sample.dgenrc $rootdir/configs/all/dgenrc 
-    fi
-
-    chown -R $user $rootdir/configs/all/
-    chgrp -R $user $rootdir/configs/all/
-
-    ensureKeyValue "joy_pad1_a" "joystick0-button0" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_b" "joystick0-button1" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_c" "joystick0-button2" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_x" "joystick0-button3" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_y" "joystick0-button4" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_z" "joystick0-button5" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_mode" "joystick0-button6" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad1_start" "joystick0-button7" $rootdir/configs/all/dgenrc
-
-    ensureKeyValue "joy_pad2_a" "joystick1-button0" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_b" "joystick1-button1" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_c" "joystick1-button2" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_x" "joystick1-button3" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_y" "joystick1-button4" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_z" "joystick1-button5" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_mode" "joystick1-button6" $rootdir/configs/all/dgenrc
-    ensureKeyValue "joy_pad2_start" "joystick1-button7" $rootdir/configs/all/dgenrc
-
-    ensureKeyValue "emu_z80_startup" "drz80" $rootdir/configs/all/dgenrc
-    ensureKeyValue "emu_m68k_startup" "cyclone" $rootdir/configs/all/dgenrc
-}
-
-# install DGEN (Megadrive/Genesis emulator)
-function em_install_dgen()
-{
-    printMsg "Installing Megadrive/Genesis emulator"
-    if [[ -d "$rootdir/emulators/dgen" ]]; then
-        rm -rf "$rootdir/emulators/dgen"
-    fi   
-    wget http://downloads.sourceforge.net/project/dgen/dgen/1.32/dgen-sdl-1.32.tar.gz
-    tar xvfz dgen-sdl-1.32.tar.gz -C "$rootdir/emulators/"
-    if [[ -d "$rootdir/emulators/dgen-sdl" ]]; then
-        rm -rf "$rootdir/emulators/dgen-sdl"
-    fi
-    mv "$rootdir/emulators/dgen-sdl-1.32" "$rootdir/emulators/dgen-sdl"
-    pushd "$rootdir/emulators/dgen-sdl"
-    mkdir "installdir" # only used for creating the binaries archive
-    gcc_version 4.6
-    ./configure --disable-opengl
-    make
-    gcc_version $__default_gcc_version
-    make install DESTDIR=$rootdir/emulators/dgen-sdl/installdir
-    make install
-    if [[ ! -f "$rootdir/emulators/dgen-sdl/dgen" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile DGEN emulator."
-    fi  
-    popd    
-    rm dgen-sdl-1.32.tar.gz
-
-    wget http://projectmd.mdscene.net/download/projmd-20120429.zip
-    unzip projmd-20120429.zip
-    if [[ ! -f $rootdir/roms/megadrive/projmd-20120429.bin ]]; then
-        cp ./projmd-20120429/projmd-20120429.bin $rootdir/roms/megadrive/
-    fi
-    rm -rf projmd-20120429    
-    rm projmd-20120429.zip  
-}
-
-#install eDuke32
-function em_install_eduke32()
-{
-    printMsg "Installing eDuke32"
-    if [[ -d "$rootdir/emulators/eduke32" ]]; then
-        rm -rf "$rootdir/emulators/eduke32"
-    fi
-    mkdir -p $rootdir/emulators/eduke32
-    pushd "$rootdir/emulators/eduke32"
-    printMsg "Downloading eDuke core"
-    wget http://repo.berryboot.com/eduke32_2.0.0rpi+svn2789_armhf.deb       
-    printMsg "Downloading eDuke32 Shareware files"
-    wget http://apt.duke4.net/pool/main/d/duke3d-shareware/duke3d-shareware_1.3d-23_all.deb 
-    if [[ ! -f "$rootdir/emulators/eduke32/eduke32_2.0.0rpi+svn2789_armhf.deb" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully install eDuke32 core."
-    else
-        printMsg "Installing eDuke32"
-        dpkg -i *duke*.deb
-        cp /usr/share/games/eduke32/DUKE.RTS $rootdir/roms/duke3d/
-        cp /usr/share/games/eduke32/duke3d.grp $rootdir/roms/duke3d/
-    fi
-    popd
-    rm -rf "$rootdir/emulators/eduke32"
-}
-
-# install DOS emulator FastDosbox
-function em_install_fastdosbox() {
-    printMsg "Installing Dos emulator FastDosbox"
-    wget http://gaming.capsule-sa.co.za/downloads/fastdosbox-1.5_src.tar.gz
-    tar xvfz fastdosbox-1.5_src.tar.gz -C "$rootdir/emulators/"
-
-    # patch sources
-    sed -i 's|#include "nofun.h"|//#include "nofun.h"|g' "$rootdir/emulators/fastdosbox-1.5/src/gui/sdl_mapper.cpp"
-
-    mkdir -p $rootdir/emulators/fastdosbox-1.5/installdir
-    pushd $rootdir/emulators/fastdosbox-1.5
-    ./configure --prefix=$rootdir/emulators/fastdosbox-1.5/installdir
-    make
-    make install
-    if [[ ! -f $rootdir/emulators/fastdosbox-1.5/installdir/bin/dosbox ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully install FastDosbox."
-    fi
-    popd
-    rm fastdosbox-1.5_src.tar.gz
-}
-
-# install Game Boy Advance emulator gpSP
-function em_install_gba()
-{
-    printMsg "Installing Game Boy Advance emulator gpSP"
-    gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/gizmo98/gpsp.git
-    cd raspberrypi
-
-    #if we are on the 256mb model, we will never have enough RAM to compile gpSP with compiler optimization
-    #if this is the case, use sed to remove the -O3 in the Makefile (line 20, "CFLAGS     += -O3 -mfpu=vfp")
-    local RPiRev=`grep 'Revision' "/proc/cpuinfo" | cut -d " " -f 2`
-    if [ $RPiRev == "000000d" ] || [ $RPiRev == "000000e" ] || [ $RPiRev == "000000f" ] || [ $RPiRev == "100000d" ]; then
-    	#RAM = 512mb, we're good
-    	echo "512mb Pi, no de-optimization fix needed."
-    else
-	#RAM = 256mb, need to compile unoptimized
-    	echo "Stripping -O[1..3] from gpSP Makefile to compile unoptimized on 256mb Pi..."
-    	sed -i 's/-O[1..3]//g' Makefile
-    	sed -i 's/-Ofast//g' Makefile
-    fi
-
-    #gpSP is missing an include in the Makefile
-    if [[ ! -z `grep "-I/opt/vc/include/interface/vmcs_host/linux" Makefile` ]]; then
-	   echo "Skipping adding missing include to gpSP Makefile."
-    else
-	   echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
-	   sed -i '23iCFLAGS     += -I/opt/vc/include/interface/vmcs_host/linux' Makefile
-    fi
-
-    make clean	
-    make
-    cp "$rootdir/emulators/gpsp/game_config.txt" "$rootdir/emulators/gpsp/raspberrypi/"
-    if [[ -z `find $rootdir/emulators/gpsp/ -name "gpsp"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance emulator."
-    fi
-    popd
-}
-
-# install NeoGeo emulator GnGeo-Pi
-function em_install_GnGeoPi()
-{
-    printMsg "Installing GnGeo-Pi emulator"
-    if [[ -d "$rootdir/emulators/gngeo-pi-0.85" ]]; then
-        rm -rf "$rootdir/emulators/gngeo-pi-0.85"
-    fi
-    gitPullOrClone "$rootdir/emulators/gngeo-pi-0.85" https://github.com/ymartel06/GnGeo-Pi.git
-    pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
-    chmod +x configure
-    ./configure --host=arm-linux --target=arm-linux --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
-    make
-    make install
-    if [[ ! -f "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/arm-linux-gngeo" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile GnGeo-Pi emulator."
-    fi
-    popd
-}
-
-function em_install_hatari()
-{
-    printMsg "Installing Atari emulator Hatari"
-    apt-get update;
-    apt-get install -y --force-yes hatari
-}
-
-function em_configure_mame4allpi()
-{
-    mkdir "$rootdir/emulators/mame4all-pi/cfg"
-    mkdir "$rootdir/emulators/mame4all-pi/hi"
-    mkdir "$rootdir/emulators/mame4all-pi/sta"
-    mkdir "$rootdir/emulators/mame4all-pi/roms"
-    ensureKeyValueShort "samplerate" "22050" "$rootdir/emulators/mame4all-pi/mame.cfg"
-    ensureKeyValueShort "rompath" "$rootdir/roms/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"
-}
-
-function em_install_mame4allpi()
-{
-    printMsg "Installing Mame4All-Pi"
-
-    gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/
-    make clean
-    make
-    if [[ ! -f "$rootdir/emulators/mame4all-pi/mame" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully mame4all-pi emulator."
-    fi    
-
-    em_configure_mame4allpi
-
-    popd
-}
-
-# install Sega Mega Drive/Mastersystem/Game Gear emulator OsmOse
-function em_install_megadrive()
-{
-    printMsg "Installing Mega Drive/Mastersystem/Game Gear emulator OsmMose"
-
-    wget 'https://dl.dropbox.com/s/z6l69wge8q1xq7r/osmose-0.8.1%2Brpi20121122.tar.bz2?dl=1' -O osmose.tar.bz2
-    tar -jxvf osmose.tar.bz2 -C "$rootdir/emulators/"
-    pushd "$rootdir/emulators/osmose-0.8.1+rpi20121122/"
-    make clean
-    make
-    if [[ ! -f "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile OsmMose."
-    fi      
-    popd
-    rm osmose.tar.bz2
-}
-
-# install Intellivision Emulator jzintv
-function em_install_intellivision()
-{
-    printMsg "Installing Intellivision emulator jzintv"
-    wget 'http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip' -O jzintv.zip
-    unzip -n jzintv.zip -d "$rootdir/emulators/"
-    pushd "$rootdir/emulators/jzintv-1.0-beta4/src/"
-    mkdir "$rootdir/emulators/jzintv-1.0-beta4/bin"
-    cat > "pi.diff" << _EOF_
-65c
- OPT_FLAGS = -O3 -fomit-frame-pointer -fprefetch-loop-arrays -march=armv6 -mfloat-abi=hard -mfpu=vfp
-.
-_EOF_
-
-    patch -e Makefile pi.diff
-    make clean
-    make
-    if [[ ! -f "$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile jzintv."
-    else
-        __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
-    fi      
-    popd
-    rm jzintv.zip
-}
-
-# configure Lineapple emulator
-function em_configure_linapple()
-{
-    if [[ ! -d $rootdir/roms/apple2 ]]; then
-        mkdir -p $rootdir/roms/apple2
-    fi
-    cat > "$rootdir/emulators/linapple-src_2a/Start.sh" << _EOF_
-#!/bin/bash
-pushd $rootdir/emulators/linapple-src_2a
-./linapple
-popd
-_EOF_
-    chmod +x "$rootdir/emulators/linapple-src_2a/Start.sh"
-    touch $rootdir/roms/apple2/Start.txt
-
-    pushd "$rootdir/emulators/linapple-src_2a"
-    sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" linapple.conf
-    sed -i -r -e "s|[^I]?Joystick 1[^I]?=[^I]?[0-9]|\tJoystick 1\t=\t1|g" linapple.conf
-    popd
-    chgrp -R $user $rootdir
-    chown -R $user $rootdir  
-}
-
-# install Linapple emulator
-function em_install_linapple()
-{
-    printMsg "Installing Apple II emulator (Linapple)"
-    if [[ -d "$rootdir/emulators/apple2" ]]; then
-        rm -rf "$rootdir/emulators/apple2"
-    fi   
-    wget http://downloads.sourceforge.net/project/linapple/linapple/linapple-2a/linapple-src_2a.tar.bz2
-    tar -jxvf linapple-src_2a.tar.bz2 -C "$rootdir/emulators/"
-    pushd "$rootdir/emulators/linapple-src_2a/src"
-    gcc_version 4.6
-    make
-    gcc_version $__default_gcc_version
-    popd    
-    em_configure_linapple
-    rm linapple-src_2a.tar.bz2
-}
-
-function em_install_mupen64plus_rpi()
-{
-    printMsg "Installing N64 emulator Mupen 64 Plus RPi"
-    if [[ -d "$rootdir/emulators/mupen64plus-rpi" ]]; then
-        rm -rf "$rootdir/emulators/mupen64plus-rpi"
-    fi   
-    gitPullOrClone "$rootdir/emulators/mupen64plus-rpi" https://github.com/ricrpi/mupen64plus-rpi
-    ./m64p_build.sh
-    if [[ ! -f "$rootdir/emulators/mupen64plus-rpi/test/mupen64plus" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Mupen 64 Plus RPi."
-    fi      
-    popd
-}
-
-# configure NeoGeo
-function em_configureNeogeo()
-{
-    mkdir /home/$user/.gngeo/
-    cp $rootdir/emulators/gngeo-0.7/sample_gngeorc /home/$user/.gngeo/gngeorc
-    chown -R $user /home/$user/.gngeo/
-    chgrp -R $user /home/$user/.gngeo/
-
-    sed -i -e "s/effect none/effect scale2x/g" /home/$user/.gngeo/gngeorc
-    sed -i -e "s/fullscreen false/fullscreen true/g" /home/$user/.gngeo/gngeorc
-    sed -i -e "s|rompath /usr/games/lib/xmame|rompath $rootdir/RetroPie/emulators/gngeo-0.7/installdir/share/gngeo/romrc.d|g" /home/$user/.gngeo/gngeorc
-
-    chmod 777 /dev/fb0
-
-    mkdir "$rootdir/emulators/gngeo-0.7/neogeo-bios"
-    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."    
-}
-
-# install NeoGeo emulator
-function em_install_neogeo()
-{
-    printMsg "Installing NeoGeo emulator"
-    if [[ -d "$rootdir/emulators/gngeo" ]]; then
-        rm -rf "$rootdir/emulators/gngeo"
-    fi
-
-    # GnGeo
-    wget http://gngeo.googlecode.com/files/gngeo-0.7.tar.gz
-    tar xvfz gngeo-0.7.tar.gz -C $rootdir/emulators/
-    pushd "$rootdir/emulators/gngeo-0.7"
-    ./configure --host=arm-linux --target=arm-linux --disable-i386asm --prefix="$rootdir/emulators/gngeo-0.7/installdir"
-    make
-    make install
-
-    if [[ ! -f "$rootdir/emulators/gngeo-0.7/installdir/bin/arm-linux-gngeo" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile NeoGeo emulator."
-    fi          
-    popd
-    rm gngeo-0.7.tar.gz
-
-}
-
-# install SNES9X emulator
-function em_install_snes9x()
-{
-    printMsg "Installing SNES9X-RPi emulator"    
-    if [[ -d "$rootdir/emulators/snes9x-rpi" ]]; then
-        rm -rf "$rootdir/emulators/snes9x-rpi"
-    fi        
-    gitPullOrClone "$rootdir/emulators/snes9x-rpi" https://github.com/chep/snes9x-rpi.git
-    make clean
-    make
-    if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
-        echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
-    fi
-    if [[ ! -f "$rootdir/emulators/snes9x-rpi/snes9x" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile SNES9X."
-    fi      
-    popd
-}
-
-function em_configure_pifba()
-{
-    printMsg "Configuring PiFBA emulator"
-
-}
-
-function em_install_pifba()
-{
-    printMsg "Installing PiFBA emulator"    
-    if [[ -d "$rootdir/emulators/pifba" ]]; then
-        rm -rf "$rootdir/emulators/pifba"
-    fi  
-    gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/
-    mkdir ".obj"
-    make clean
-    make
-    if [[ ! -d "$rootdir/emulators/pifba/" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile PiFBA."
-    fi      
-    popd
-}
-
-# install PiSNES emulator
-function em_install_pisnes()
-{
-    printMsg "Installing PiSNES emulator"    
-    if [[ -d "$rootdir/emulators/pisnes" ]]; then
-        rm -rf "$rootdir/emulators/pisnes"
-    fi        
-    gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/
-    sed -i -e "s|-lglib-2.0|-lglib-2.0 -lbcm_host|g" Makefile
-    make clean
-    make
-    if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
-        echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
-    fi
-    if [[ ! -f "$rootdir/emulators/pisnes/snes9x" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile PiSNES."
-    fi      
-    popd
-}
-
-# install PSP emulator PPSSPP
-function em_install_ppsspp()
-{
-    printMsg "Installing PPSSPP emulator"    
-    if [[ -d "$rootdir/emulators/ppsspp" ]]; then
-        rm -rf "$rootdir/emulators/ppsspp"
-    fi        
-    gitPullOrClone "$rootdir/emulators/ppsspp" git://github.com/hrydgard/ppsspp.git
-    git submodule update --init    
-    # generate default Makefile
-    cmake . 
-    sed -i -e "s/ARM:BOOL=OFF/ARM:BOOL=ON/g" CMakeCache.txt
-    sed -i -e "s/X86:BOOL=ON/X86:BOOL=OFF/g" CMakeCache.txt
-    sed -i -e "s/CMAKE_BUILD_TYPE:STRING=/CMAKE_BUILD_TYPE:STRING=Release/g" CMakeCache.txt
-    # enabled arm, disabled x86, built with release flags.
-    cmake .
-    make    
-    mkdir -p "$rootdir/emulators/ppsspp/assets/lang"
-    cp $rootdir/emulators/ppsspp/lang/* $rootdir/emulators/ppsspp/assets/lang/
-    if [[ ! -f "$rootdir/emulators/ppsspp/PPSSPPSDL" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile PPSSPP."
-    fi      
-    popd
-}
-
-function em_install_wolfenstein3d()
-{
-    printMsg "Installing Wolfenstein3D Engine"    
-    if [[ -d "$rootdir/emulators/Wolf4SDL-1.7-src" ]]; then
-        rm -rf "$rootdir/emulators/Wolf4SDL-1.7-src"
-    fi    
-    wget http://radix-16.com/files/wolf4sdl/Wolf4SDL-1.7-src.zip
-    mv Wolf4SDL-1.7-src.zip Wolf4SDL-1.7.zip
-    unzip -n Wolf4SDL-1.7.zip -d "$rootdir/emulators/"
-    pushd "$rootdir/emulators/Wolf4SDL-1.7-src"
-    make
-    mkdir "$rootdir/emulators/Wolf4SDL-1.7-bin"
-    cp wolf3d "$rootdir/emulators/Wolf4SDL-1.7-bin/"
-    popd
-    if [[ ! -f "$rootdir/emulators/Wolf4SDL-1.7-bin/wolf3d" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Wolfenstein3D engine."
-    else
-        __INFMSGS="$__INFMSGS The Wolfenstein3D engine was successfully installed. You have to copy the game files (.wl6) into the directory $rootdir/emulators/Wolf4SDL-1.7-bin. Take care for lowercase extensions!"        
-    fi 
-    rm Wolf4SDL-1.7.zip
-}
-
-# configure sound settings
-function em_configureSoundsettings()
-{
-    printMsg "Enabling ALSA thread-based audio driver for RetroArch in $rootdir/configs/all/retroarch.cfg"    
-
-    # RetroArch settings
-    ensureKeyValue "audio_driver" "alsathread" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "audio_out_rate" "44100" "$rootdir/configs/all/retroarch.cfg"
-
-    # ALSA settings
-    mv /etc/asound.conf /etc/asound.conf.bak
-    cat >> /etc/asound.conf << _EOF_
-pcm.!default {
-type hw
-card 0
-}
-
-ctl.!default {
-type hw
-card 0
-}
-_EOF_
-
-}
-
-# settings for RetroArch
-function em_configureRetroArch()
-{
+function configure_retroarch() {
     printMsg "Configuring RetroArch"
 
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
@@ -698,9 +55,8 @@ function em_configureRetroArch()
     if [[ ! -d "$rootdir/emulators/RetroArch/configs/" ]]; then
         mkdir -p "$rootdir/emulators/RetroArch/configs/"
     fi
-    cp $scriptdir/supplementary/RetroArchConfigs/*.cfg "$rootdir/emulators/RetroArch/configs/"
 
-   if [[ ! -f "$rootdir/configs/all/retroarch.cfg" ]]; then
+    if [[ ! -f "$rootdir/configs/all/retroarch.cfg" ]]; then
         mkdir -p "$rootdir/configs/all/"
         mkdir -p "$rootdir/configs/atari2600/"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/atari2600/retroarch.cfg
@@ -737,8 +93,8 @@ function em_configureRetroArch()
         cp /etc/retroarch.cfg "$rootdir/configs/all/"
     fi
 
-    mkdir -p "$rootdir/BIOS/"
-    ensureKeyValue "system_directory" "$rootdir/BIOS" "$rootdir/configs/all/retroarch.cfg"
+    mkdir -p "$romdir/../BIOS/"
+    ensureKeyValue "system_directory" "$romdir/../BIOS" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "config_save_on_exit" "false" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_aspect_ratio" "1.33" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
@@ -773,31 +129,31 @@ function em_configureRetroArch()
 
     # system-specific shaders, SNES
     ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/snes_phosphor.glslp\"" "$rootdir/configs/snes/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/snes/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/snes/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/snes/retroarch.cfg"
 
     # system-specific shaders, NES
     ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/nes/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/nes/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/nes/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/nes/retroarch.cfg"
 
     # system-specific shaders, Megadrive
     ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/megadrive/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/megadrive/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/megadrive/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/megadrive/retroarch.cfg"
 
     # system-specific shaders, Mastersystem
     ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/mastersystem/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
 
     # system-specific shaders, Gameboy
     ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gb/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/gb/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/gb/retroarch.cfg"
 
     # system-specific shaders, Gameboy Color
     ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gbc/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "true" "$rootdir/configs/gbc/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/gbc/retroarch.cfg"
 
     # system-specific, PSX
     ensureKeyValue "rewind_enable" "false" "$rootdir/configs/psx/retroarch.cfg"
@@ -820,47 +176,630 @@ function em_configureRetroArch()
     # input settings
     ensureKeyValue "input_autodetect_enable" "true" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "joypad_autoconfig_dir" "$rootdir/emulators/RetroArch/configs/" "$rootdir/configs/all/retroarch.cfg"
-
 }
 
-# install RetroArch emulator
-function em_install_retroarch()
-{
-    printMsg "Installing RetroArch emulator"
-    gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
-    ./configure --prefix="$rootdir/emulators/RetroArch/installdir" --disable-x11 --disable-oss --disable-pulse --disable-sdl --enable-floathard
-    make clean
+function package_retroarch() {
+    printMsg "Building package for RetroArch"
+}
+
+# 101, AdvMAME
+function depen_advmame() {
+    printMsg "Getting dependencies of advmame"
+    apt-get -y install libsdl1.2-dev gcc-4.7
+}
+
+function sources_advmame() {
+    printMsg "Getting sources of AdvMAME"
+    wget -O advmame.tar.gz http://downloads.sourceforge.net/project/advancemame/advancemame/0.94.0/advancemame-0.94.0.tar.gz
+}
+
+function build_advmame() {
+    printMsg "Building AdvMAME"
+
+    export CC=gcc-4.7
+    export GCC=g++-4.7
+
+    tar xzvf advmame.tar.gz -C "$rootdir/emulators/"
+    pushd "$rootdir/emulators/advancemame-0.94.0"
+    sed 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' <advance/linux/vfb.c >advance/linux/temp.c
+    mv advance/linux/temp.c advance/linux/vfb.c
+    sed 's/misc_quiet\", 0/misc_quiet\", 1/' <advance/osd/global.c >advance/osd/temp.c
+    mv advance/osd/temp.c advance/osd/global.c 
+sed '
+/#include <string>/ i\
+#include <stdlib.h>
+' <advance/d2/d2.cc >advance/d2/temp.cc
+    mv advance/d2/temp.cc advance/d2/d2.cc
+    ./configure --prefix="$rootdir/emulators/advancemame-0.94.0/installdir"
+    sed 's/LDFLAGS=-s/LDFLAGS=-s -lm -Wl,--no-as-needed/' <Makefile >Makefile.temp
+    mv Makefile.temp Makefile
     make
+    popd
+    rm advmame.tar.gz
+
+    unset CC
+    unset GCC
+}
+
+function install_advmame() {
+    printMsg "Installing AdvMAME"
+
+    pushd "$rootdir/emulators/advancemame-0.94.0"
     make install
-    if [[ ! -f "$rootdir/emulators/RetroArch/installdir/bin/retroarch" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
-    fi  
-    em_configureRetroArch
+    chmod -R 755 "$rootdir/emulators/advancemame-0.94.0"
     popd
 }
 
-function em_configure_rpix86()
-{
-    ln -s $rootdir/roms/x86/ $rootdir/emulators/rpix86/games
-    rm $rootdir/roms/x86/x86
-    cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
-#!/bin/bash
-pushd $rootdir/emulators/rpix86
-./rpix86
-popd
-_EOF_
-    chmod +x "$rootdir/emulators/rpix86/Start.sh"
-    touch $rootdir/roms/x86/Start.txt
-    chgrp -R $user $rootdir
-    chown -R $user $rootdir    
+function configure_advmame() {
+    printMsg "Configuring AdvMAME"
+
+    $rootdir/emulators/advancemame-0.94.0/installdir/bin/advmame
+    mv /root/.advance/ /home/$user/
+    echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> /home/$user/.advance/advmame.rc
+    chmod -R a+rwX /home/$user/.advance/
+    chown -R $user:$user /home/$user/.advance/
 }
 
-# install PC emulator rpix86
-function em_install_rpix86()
+# Amiga emulator UAE4All
+
+function sources_uae4all() {
+    printMsg "Installing Amiga emulator"
+
+    if [[ -d "$rootdir/emulators/uae4rpi" ]]; then
+        rm -rf "$rootdir/emulators/uae4rpi"
+    fi
+    wget http://www.gamshi.com/download/uae4rpi.tar.bz2
+    tar -jxvf uae4rpi.tar.bz2 -C "$rootdir/emulators/"
+    rm uae4rpi.tar.bz2
+}
+
+function build_uae4all() {
+    printMsg "Building UAE4All"
+
+    pushd "$rootdir/emulators/uae4rpi"
+    if [[ ! -f /opt/vc/include/interface/vmcs_host/vchost_config.h ]]; then
+        touch /opt/vc/include/interface/vmcs_host/vchost_config.h
+    fi
+    make
+    if [[ ! -f "$rootdir/emulators/uae4rpi/uae4all" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Amiga emulator."
+    fi  
+    popd  
+}
+
+function install_uae4all() {
+    printMsg "Installing UAE4All"
+}
+
+function configure_uae4all() {
+    mkdir -p "$romdir/amiga"
+}
+
+function sources_atari800() {
+    printMsg "Getting sources of Atari 800 emulator"
+    wget -O atari800-3.0.0.tar.gz http://sourceforge.net/projects/atari800/files/atari800/3.0.0/atari800-3.0.0.tar.gz/download
+    if [[ -d "$rootdir/emulators/atari800-3.0.0" ]]; then 
+        rm -rf "$rootdir/emulators/atari800-3.0.0"
+    fi
+    tar xvfz atari800-3.0.0.tar.gz -C "$rootdir/emulators/"
+    rm atari800-3.0.0.tar.gz
+}
+
+function build_atari800() {
+    pushd "$rootdir/emulators/atari800-3.0.0/src"
+    mkdir -p "$rootdir/emulators/atari800-3.0.0/installdir"
+    ./configure --prefix="$rootdir/emulators/atari800-3.0.0/installdir"
+    make
+    popd
+}
+
+function install_atari800() {
+    pushd "$rootdir/emulators/atari800-3.0.0/src"
+    make install
+    if [[ ! -f "$rootdir/emulators/atari800-3.0.0/installdir/bin/atari800" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 800 emulator."
+    fi  
+    popd
+}
+
+function configure_atari800() {
+    mkdir -p "$romdir/atari800"
+}
+
+function sources_cpc() {
+    printMsg "Getting sources for CPC4RPi"
+    wget http://gaming.capsule-sa.co.za/downloads/cpc4rpi-1.1_src.tar.gz
+    if [[ -d "$rootdir/emulators/cpc4rpi-1.1" ]]; then 
+        rm -rf "$rootdir/emulators/cpc4rpi-1.1"
+    fi
+    tar xvfz cpc4rpi-1.1_src.tar.gz -C "$rootdir/emulators/"
+    rm cpc4rpi-1.1_src.tar.gz    
+}
+
+function build_cpc() {
+    printMsg "Building CPC4RPi"
+    pushd "$rootdir/emulators/cpc4rpi-1.1"
+    sed -i 's|LIBS = -L/usr/lib/arm-linux-gnueabihf -lz -lts -L/opt/vc/lib -lGLESv2 -lEGL|LIBS = -L/usr/lib/arm-linux-gnueabihf -lX11 -lz -lts -L/opt/vc/lib -lSDL -lpthread -ldl -lGLESv2 -lEGL|g' makefile
+    sed -i 's|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o /root/Raspbian/Libs/libSDL.a /root/Raspbian/Libs/libnofun.a $(LIBS)|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o   $(LIBS)|g' makefile
+    make RELEASE=TRUE
+    if [[ ! -f "$rootdir/emulators/cpc4rpi-1.1/cpc4rpi" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Amstrad CPC emulator CPC4Rpi."
+    fi  
+    popd 
+}
+
+function configure_cpc() {
+    printMsg "Configuring CPC4RPi"
+    mkdir -p "$romdir/armstradcpc"
+}
+
+function install_dosbox() {
+    printMsg "Installing Dosbox"
+    apt-get install -y dosbox
+}
+
+function configure_dosbox() {
+    printMsg "Configuring Dosbox"
+    mkdir -p "$romdir/pc"
+}
+
+function install_stella()
 {
-    printMsg "Installing PC emulator rpix86"
+    printMsg "Installing Atari 2600 emulator Stella"
+    apt-get install -y stella
+}
+
+function configure_stella() {
+    mkdir -p "r$omroot/atari2600"
+}
+
+function sources_basilisk() {
+    printMsg "Getting sources of Basilisk II"
+    gitPullOrClone "$rootdir/emulators/basiliskii" git://github.com/cebix/macemu.git
+}
+
+function build_basilisk() {
+    pushd "$rootdir/emulators/basiliskii"
+    cd BasiliskII/src/Unix
+    ./autogen.sh
+    ./configure --prefix="$rootdir/emulators/basiliskii/installdir" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler
+    make clean
+    make
+    popd
+}
+
+function install_basilisk() {
+    pushd "$rootdir/emulators/basiliskii"
+    make install
+    if [[ -z "$rootdir/emulators/basiliskii/installdir/bin/BasiliskII" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile BasiliskII."
+    fi  
+    popd
+}
+
+function configure_basilisk() {
+    touch $rootdir/roms/basiliskii/Start.txt
+    mkdir -p "$romdir/macintosh"
+}  
+
+function sources_vice() {
+    printMsg "Getting VICE Commodore 64 core"
+    if [[ -d "$rootdir/emulators/vice-2.4" ]]; then
+        rm -rf "$rootdir/emulators/vice-2.4"
+    fi
+    wget -O vice-2.4.tar.gz http://downloads.sourceforge.net/project/vice-emu/releases/vice-2.4.tar.gz
+    tar xzvf vice-2.4.tar.gz -C "$rootdir/emulators/"
+    rm vice-2.4.tar.gz
+}
+
+function build_vice() {
+    if dpkg-query -Wf'${db:Status-abbrev}' vice 2>/dev/null | grep -q '^i'; then
+        printf 'Package vice is already installed - removing package\n' "${1}"
+        apt-get remove -y vice
+    fi
+    printMsg "Installing vice"
+    echo 'deb-src http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi' >> /etc/apt/sources.list
+    apt-get update
+    apt-get install -y libxaw7-dev automake checkinstall
+    pushd "$rootdir/emulators/vice-2.4"
+    ./configure --prefix="$rootdir/emulators/vice-2.4/installdir" --enable-sdlui --without-pulse --with-sdlsound
+    make    
+    popd
+}
+
+function install_vice() {
+    pushd "$rootdir/emulators/vice-2.4"
+    make install
+    popd
+}
+
+function configure_vice() {
+    mkdir "$romdir/c64"
+}
+
+function install_c64roms() {
+    printMsg "Installing C64 ROMs"    
+    wget http://www.zimmers.net/anonftp/pub/cbm/crossplatform/emulators/VICE/old/vice-1.5-roms.tar.gz
+    tar -xvzf vice-1.5-roms.tar.gz
+    mkdir -p "$rootdir/emulators/vice-2.3.dfsg/installdir/lib/vice/"
+    cp -a vice-1.5-roms/data/* "$rootdir/emulators/vice-2.3.dfsg/installdir/lib/vice/"
+    rm -rf vice-1.5-roms
+    rm -rf vice-1.5-roms.tar.gz    
+}
+
+function install_eduke32() {
+    printMsg "Installing eDuke32"
+    if [[ -d "$rootdir/emulators/eduke32" ]]; then
+        rm -rf "$rootdir/emulators/eduke32"
+    fi
+    mkdir -p $rootdir/emulators/eduke32
+    pushd "$rootdir/emulators/eduke32"
+    printMsg "Downloading eDuke core"
+    wget http://repo.berryboot.com/eduke32_2.0.0rpi+svn2789_armhf.deb       
+    printMsg "Downloading eDuke32 Shareware files"
+    wget http://apt.duke4.net/pool/main/d/duke3d-shareware/duke3d-shareware_1.3d-23_all.deb 
+    if [[ ! -f "$rootdir/emulators/eduke32/eduke32_2.0.0rpi+svn2789_armhf.deb" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully install eDuke32 core."
+    else
+        dpkg -i *duke*.deb
+        if [[ ! -d $romdir/roms/ports/duke3d ]]; then
+            mkdir -p $romdir/roms/ports/duke3d
+        fi
+        cp /usr/share/games/eduke32/DUKE.RTS $romdir/roms/ports/duke3d/
+        cp /usr/share/games/eduke32/duke3d.grp $romdir/roms/ports/duke3d/
+    fi
+    popd
+    rm -rf "$rootdir/emulators/eduke32"
+
+    cat > "$romdir/roms/ports/Duke3D Shareware.sh" << _EOF_
+#!/bin/bash
+$rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -g %ROM% -gamegrp duke3d.grp"
+_EOF_
+    chown +x "$romdir/roms/ports/Duke3D Shareware.sh"    
+}
+
+# install Game Boy Advance emulator gpSP
+function sources_gpsp() {
+    printMsg "Getting sources for Game Boy Advance emulator gpSP"
+    gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/gizmo98/gpsp.git
+    pushd "$rootdir/emulators/gpsp"
+    cd raspberrypi
+
+    #if we are on the 256mb model, we will never have enough RAM to compile gpSP with compiler optimization
+    #if this is the case, use sed to remove the -O3 in the Makefile (line 20, "CFLAGS     += -O3 -mfpu=vfp")
+    local RPiRev=`grep 'Revision' "/proc/cpuinfo" | cut -d " " -f 2`
+    if [ $RPiRev == "000000d" ] || [ $RPiRev == "000000e" ] || [ $RPiRev == "000000f" ] || [ $RPiRev == "100000d" ]; then
+        #RAM = 512mb, we're good
+        echo "512mb Pi, no de-optimization fix needed."
+    else
+    #RAM = 256mb, need to compile unoptimized
+        echo "Stripping -O[1..3] from gpSP Makefile to compile unoptimized on 256mb Pi..."
+        sed -i 's/-O[1..3]//g' Makefile
+        sed -i 's/-Ofast//g' Makefile
+    fi
+
+    #gpSP is missing an include in the Makefile
+    if [[ ! -z `grep "-I/opt/vc/include/interface/vmcs_host/linux" Makefile` ]]; then
+       echo "Skipping adding missing include to gpSP Makefile."
+    else
+       echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
+       sed -i '23iCFLAGS     += -I/opt/vc/include/interface/vmcs_host/linux' Makefile
+    fi
+    popd
+}
+
+function build_gpsp() {
+    printMsg "Building GPSP"
+    pushd "$rootdir/emulators/gpsp"
+    cd raspberrypi
+    make clean  
+    make
+    cp "$rootdir/emulators/gpsp/game_config.txt" "$rootdir/emulators/gpsp/raspberrypi/"
+    # TODO copy gpsp into /opt/retropie/emulators/gpsp directory
+    if [[ -z `find $rootdir/emulators/gpsp/ -name "gpsp"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance emulator."
+    fi
+    popd
+
+}
+
+function configure_gpsp() {
+    printMsg "Configuring GPSP"
+    mkdir "$romdir/gba"
+}
+
+function sources_gngeopi() {
+    printMsg "Getting sources of GnGeoPi"
+    if [[ -d "$rootdir/emulators/gngeo-pi-0.85" ]]; then
+        rm -rf "$rootdir/emulators/gngeo-pi-0.85"
+    fi
+    gitPullOrClone "$rootdir/emulators/gngeo-pi-0.85" https://github.com/ymartel06/GnGeo-Pi.git
+}
+
+function build_gngeopi() {
+    printMsg "Building GnGeoPi"
+    pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
+    chmod +x configure
+    ./configure --host=arm-linux --target=arm-linux --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
+    make
+    popd
+}
+
+function install_gngeopi() {
+    printMsg "Installing GnGeoPi"
+    pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
+    make install
+    if [[ ! -f "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/arm-linux-gngeo" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile GnGeo-Pi emulator."
+    fi
+    popd
+}
+
+function configure_gngeopi() {
+    printMsg "Configuring GnGeoPi"
+    mkdir "$romdir/mame"
+}
+
+function install_hatari() {
+    printMsg "Installing Hatari"
+    apt-get install -y hatari    
+}
+
+function sources_mame4all() {
+    printMsg "Getting sources of Mame4All-Pi"
+
+    gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/
+}
+
+function build_mame4all() {
+    printMsg "Builing Mame4All-Pi"
+    pushd "$rootdir/emulators/mame4all-pi"
+    make clean
+    make
+    if [[ ! -f "$rootdir/emulators/mame4all-pi/mame" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully mame4all-pi emulator."
+    fi    
+    popd
+}
+
+function configure_mame4all() {
+    printMsg "Configuring Mame4All-Pi"
+    mkdir -p "$romdir/mame"
+    mkdir -p "$rootdir/emulators/mame4all-pi/cfg"
+    mkdir -p "$rootdir/emulators/mame4all-pi/hi"
+    mkdir -p "$rootdir/emulators/mame4all-pi/sta"
+    mkdir -p "$rootdir/emulators/mame4all-pi/roms"
+    ensureKeyValueShort "samplerate" "22050" "$rootdir/emulators/mame4all-pi/mame.cfg"
+    ensureKeyValueShort "rompath" "$rootdir/roms/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"    
+}
+
+function sources_osmose() {
+    printMsg "Installing Mega Drive/Mastersystem/Game Gear emulator OsmMose"
+
+    wget 'https://dl.dropbox.com/s/z6l69wge8q1xq7r/osmose-0.8.1%2Brpi20121122.tar.bz2?dl=1' -O osmose.tar.bz2
+    tar -jxvf osmose.tar.bz2 -C "$rootdir/emulators/"
+    rm osmose.tar.bz2
+}
+
+function build_osmose() {
+    printMsg "Building Osmose"
+    pushd "$rootdir/emulators/osmose-0.8.1+rpi20121122/"
+    make clean
+    make
+    if [[ ! -f "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile OsmMose."
+    fi      
+    popd
+}
+
+function configure_osmose() {
+    printMsg "Configuring Osmose"
+    mkdir -p "$romdir/gamegear"    
+}
+
+function sources_jzint() {
+    printMsg "Installing Intellivision emulator jzintv"
+    wget 'http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip' -O jzintv.zip
+    unzip -n jzintv.zip -d "$rootdir/emulators/"
+    rm jzintv.zip
+}
+
+function build_jzint() {
+    printMsg "Building Jzintv"
+
+    pushd "$rootdir/emulators/jzintv-1.0-beta4/src/"
+    mkdir "$rootdir/emulators/jzintv-1.0-beta4/bin"
+    cat > "pi.diff" << _EOF_
+65c
+ OPT_FLAGS = -O3 -fomit-frame-pointer -fprefetch-loop-arrays -march=armv6 -mfloat-abi=hard -mfpu=vfp
+.
+_EOF_
+
+    patch -e Makefile pi.diff
+    make clean
+    make
+    if [[ ! -f "$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile jzintv."
+    else
+        __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
+    fi      
+    popd
+}
+
+function configure_jzint() {
+    printMsg "Configuring Jzintv"
+    mkdir "$romdir/intellivision"    
+}
+
+function sources_linapple() {
+    printMsg "Installing Apple II emulator (Linapple)"
+    if [[ -d "$rootdir/emulators/apple2" ]]; then
+        rm -rf "$rootdir/emulators/apple2"
+    fi   
+    wget http://downloads.sourceforge.net/project/linapple/linapple/linapple-2a/linapple-src_2a.tar.bz2
+    tar -jxvf linapple-src_2a.tar.bz2 -C "$rootdir/emulators/"
+    rm linapple-src_2a.tar.bz2
+}
+
+function build_linapple() {
+    printMsg "Building Linapple2"
+    pushd "$rootdir/emulators/linapple-src_2a/src"
+    gcc_version 4.6
+    make
+    gcc_version $__default_gcc_version
+    popd    
+}
+
+function configure_linapple() {
+    printMsg "Configuring Linapple2"
+    if [[ ! -d $romdir/macintosh ]]; then
+        mkdir -p $romdir/macintosh
+    fi
+    cat > "$rootdir/emulators/linapple-src_2a/Start.sh" << _EOF_
+#!/bin/bash
+pushd $rootdir/emulators/linapple-src_2a
+./linapple
+popd
+_EOF_
+    chmod +x "$rootdir/emulators/linapple-src_2a/Start.sh"
+    touch $romdir/macintosh/Start.txt
+
+    pushd "$rootdir/emulators/linapple-src_2a"
+    sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" linapple.conf
+    sed -i -r -e "s|[^I]?Joystick 1[^I]?=[^I]?[0-9]|\tJoystick 1\t=\t1|g" linapple.conf
+    popd
+}
+
+function sources_mupen64rpi() {
+    printMsg "Getting sources of N64 emulator Mupen 64 Plus RPi"
+    if [[ -d "$rootdir/emulators/mupen64plus-rpi" ]]; then
+        rm -rf "$rootdir/emulators/mupen64plus-rpi"
+    fi   
+    gitPullOrClone "$rootdir/emulators/mupen64plus-rpi" https://github.com/ricrpi/mupen64plus-rpi
+}
+
+function build_mupen64rpi() {
+    printMsg "Building N64 emulator Mupen 64 Plus RPi"
+    pushd "$rootdir/emulators/mupen64plus-rpi"
+    ./m64p_build.sh
+    if [[ ! -f "$rootdir/emulators/mupen64plus-rpi/test/mupen64plus" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Mupen 64 Plus RPi."
+    fi      
+    popd
+}
+
+function configure_mupen64rpi() {
+    printMsg "Configuring N64 emulator Mupen 64 Plus RPi"
+    mkdir -p "$romdir/n64"
+}
+
+function depen_snes9x() {
+    apt-get update && apt-get install -y libsdl-dev libboost-thread-dev
+}
+
+function sources_snes9x() {
+    printMsg "Getting sources of SNES9X-RPi emulator"    
+    if [[ -d "$rootdir/emulators/snes9x-rpi" ]]; then
+        rm -rf "$rootdir/emulators/snes9x-rpi"
+    fi        
+    gitPullOrClone "$rootdir/emulators/snes9x-rpi" https://github.com/chep/snes9x-rpi.git
+}
+
+function build_snes9x() {
+    printMsg "Building SNES9X-RPi emulator"    
+
+    pushd "$rootdir/emulators/snes9x-rpi"
+    make clean
+    make
+    if [[ ! -f "$rootdir/emulators/snes9x-rpi/snes9x" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile SNES9X."
+    fi      
+    popd
+}
+
+function configure_snes9x() {
+    printMsg "Configuring SNES9X-RPi emulator"    
+    if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
+        echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
+    fi
+
+    mkdir -p "$romdir/snes"
+}
+
+function sources_pifba() {
+    printMsg "Getting sourecs of PiFBA emulator"    
+    if [[ -d "$rootdir/emulators/pifba" ]]; then
+        rm -rf "$rootdir/emulators/pifba"
+    fi  
+    gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/
+}
+
+function build_pifba() {
+    printMsg "Building PiFBA emulator"    
+    pushd "$rootdir/emulators/pifba"
+    mkdir ".obj"
+    make clean
+    make
+    if [[ ! -d "$rootdir/emulators/pifba/" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile PiFBA."
+    fi      
+    popd
+}
+
+function install_pifba() {
+    printMsg "Installing PiFBA"
+
+    mkdir -p "$rootdir/emulators/pifba/installdir"
+
+    install -m 777 "$rootdir/emulators/pifba/fba2x" "$rootdir/emulators/pifba/installdir/"
+    install -m 777 "$rootdir/emulators/pifba/capex.cfg" "$rootdir/emulators/pifba/installdir/"
+    install -m 777 "$rootdir/emulators/pifba/fba2x.cfg" "$rootdir/emulators/pifba/installdir/"
+    install -m 777 "$rootdir/emulators/pifba/zipname.fba" "$rootdir/emulators/pifba/installdir/"
+    install -m 777 "$rootdir/emulators/pifba/rominfo.fba" "$rootdir/emulators/pifba/installdir/"
+    install -m 777 "$rootdir/emulators/pifba/FBACache_windows.zip" "$rootdir/emulators/pifba/installdir/"
+    install -m 777 "$rootdir/emulators/pifba/fba_029671_clrmame_dat.zip" "$rootdir/emulators/pifba/installdir/"
+    mkdir -p "$rootdir/emulators/pifba/roms"
+    mkdir -p "$rootdir/emulators/pifba/skin"
+    mkdir -p "$rootdir/emulators/pifba/preview"
     
-    # install rpix86
+}
+
+function configure_pifba() {
+    printMsg "Configuring PiFBA emulator"    
+    mkdir -p "$romdir/fba"
+}
+
+function sources_pisnes() {
+    printMsg "Getting sources of PiSNES emulator"    
+    if [[ -d "$rootdir/emulators/pisnes" ]]; then
+        rm -rf "$rootdir/emulators/pisnes"
+    fi        
+    gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/
+}
+
+function build_pisnes() {
+    printMsg "Building PiSNES emulator"    
+    pushd "$rootdir/emulators/pisnes"
+    sed -i -e "s|-lglib-2.0|-lglib-2.0 -lbcm_host|g" Makefile
+    make clean
+    make
+    if [[ ! -f "$rootdir/emulators/pisnes/snes9x" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile PiSNES."
+    fi      
+    popd
+}
+
+function configure_pisnes() {
+    printMsg "Configuring PiSNES emulator"    
+    if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
+        echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
+    fi
+
+    mkdir -p "$romdir/snes"
+}
+
+function install_rpix86() {
+    printMsg "Installing rpix86"
     wget http://rpix86.patrickaalto.com/rpix86.tar.gz
     if [[ -d "$rootdir/emulators/rpix86" ]]; then
         rm -rf "$rootdir/emulators/rpix86"
@@ -871,94 +810,152 @@ function em_install_rpix86()
 
     # install 4DOS.com
     unzip -n $scriptdir/supplementary/4dos.zip -d "$rootdir/emulators/rpix86/"
-
-    # configure for use with Emulation Station
-    em_configure_rpix86
-
-    chgrp -R $user $rootdir
-    chown -R $user $rootdir
 }
 
-# install ScummVM
-function em_install_scummvm()
-{
+function configure_rpix86() {
+    printMsg "Configuring rpix86"
+    ln -s $romdir/pc/ $rootdir/emulators/rpix86/games
+    if [[ -d $romdir/pc/pc ]]; then
+        rm $romdir/pc/pc
+    fi
+    cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
+#!/bin/bash
+pushd $rootdir/emulators/rpix86
+./rpix86
+popd
+_EOF_
+    chmod +x "$rootdir/emulators/rpix86/Start.sh"
+    mkdir -p "$romdir/pc"
+    touch $romdir/pc/Start.txt
+}
+
+function install_scummvm() {
     printMsg "Installing ScummVM"
-    apt-get install -y --force-yes scummvm scummvm-data
+    apt-get install -y scummvm scummvm-data
     if [[ $? -gt 0 ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully install ScummVM."
     else
         __INFMSGS="$__INFMSGS ScummVM has successfully been installed. You can start the ScummVM GUI by typing 'scummvm' in the console. Copy your Scumm games into the directory '$rootdir/roms/scummvm'. When you get a blank screen after running scumm for the first time, press CTRL-q. You should not get a blank screen with further runs of scummvm."
-    fi 
+    fi     
 }
 
-# install Z Machine emulator
-function em_install_zmachine()
-{
-    printMsg "Installing Z Machine emulator"
-    apt-get install -y --force-yes frotz
+function install_zmachine() {
+    printMsg "Installing ZMachine"
+    apt-get install -y frotz
     wget -U firefox http://www.infocom-if.org/downloads/zork1.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork2.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork3.zip
-    unzip -n zork1.zip -d "$rootdir/roms/zmachine/zork1/"
-    unzip -n zork2.zip -d "$rootdir/roms/zmachine/zork2/"
-    unzip -n zork3.zip -d "$rootdir/roms/zmachine/zork3/"
+    mkdir -p $romdir/zmachine/zork1
+    mkdir -p $romdir/zmachine/zork2
+    mkdir -p $romdir/zmachine/zork3
+    unzip -n zork1.zip -d "$romdir/zmachine/zork1/"
+    unzip -n zork2.zip -d "$romdir/zmachine/zork2/"
+    unzip -n zork3.zip -d "$romdir/zmachine/zork3/"
     rm zork1.zip
     rm zork2.zip
     rm zork3.zip
-    __INFMSGS="$__INFMSGS The text adventures Zork 1 - 3 have been installed in the directory '$rootdir/roms/zmachine/'. You can start, e.g., Zork 1 with the command 'frotz $rootdir/roms/zmachine/zork1/DATA/ZORK1.DAT'."
+    __INFMSGS="$__INFMSGS The text adventures Zork 1 - 3 have been installed in the directory '$romdir/zmachine/'. You can start, e.g., Zork 1 with the command 'frotz $romdir/roms/zmachine/zork1/DATA/ZORK1.DAT'."
 }
 
-#install ZX Spectrum emulator FBZX
-function em_install_fbzx()
-{
+function install_zxspectrum() {
+    printMsg "Installing ZXSpectrum emulator Fuse"
+    apt-get install -y spectrum-roms fuse-emulator-utils fuse-emulator-common
+}
+
+function sources_fbzx() {
     printMsg "Installing ZX Spectrum emulator FBZX"
     if [[ -d "$rootdir/emulators/fbzx-2.10.0" ]]; then
         rm -rf "$rootdir/emulators/fbzx-2.10.0"
     fi    
-    pushd $rootdir/emulators/
     wget -O fbzx-2.10.0.tar.bz2 http://www.rastersoft.com/descargas/fbzx-2.10.0.tar.bz2
-    tar xvfj fbzx-2.10.0.tar.bz2
-    cd fbzx-2.10.0/
+    tar xvfj fbzx-2.10.0.tar.bz2  -C "$rootdir/emulators"
+    rm fbzx-2.10.0.tar.bz2
+}
+
+function build_fbzx() {
+    pushd "$rootdir/emulators/fbzx-2.10.0"
     make
-    cd ..
     if [[ ! -f "$rootdir/emulators/fbzx-2.10.0/fbzx" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile FBZX."
     fi    
+    popd    
+}
+
+function configure_fbzx() {
+    printMsg "Configuring FBZX"
+    mkdir -p $romdir/zxspectrum
+}
+
+function depen_msx() {
+    printMsg "Getting dependencies of msx"
+    apt-get update && apt-get install -y libsdl1.2-dev libsdl-ttf2.0-dev libglew-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev    
+}
+
+function sources_openmsx() {
+    printMsg "Getting sources of openmsx"
+
+    wget http://downloads.sourceforge.net/project/openmsx/openmsx/0.10.0/openmsx-0.10.0.tar.gz
+    tar xvfz openmsx-0.10.0.tar.gz  -C "$rootdir/emulators"
+    rm openmsx-0.10.0.tar.gz
+}
+
+function build_openmsx() {
+    printMsg "Building openmsx"
+    pushd "$rootdir/emulators/openmsx-0.10.0"
+    ./configure
+    make
     popd
 }
 
-# Install ZX Spectrum emulator, this function is not used abymore due to segmentation fault errors.
-# However, it is kept here for now as a recipe.
-function em_install_zxspectrumFromSource()
-{
-    printMsg "Installing ZX Spectrum emulator"
-    if [[ -d "$rootdir/emulators/zxspectrum" ]]; then
-        rm -rf "$rootdir/emulators/zxspectrum"
-    fi    
-    mkdir -p "$rootdir/emulators/zxspectrum"
-    pushd "$rootdir/emulators/zxspectrum"
-    wget ftp://ftp.worldofspectrum.org/pub/sinclair/emulators/unix/libspectrum-1.0.0.tar.gz
-    wget http://downloads.sourceforge.net/project/fuse-emulator/fuse/1.0.0.1a/fuse-1.0.0.1a.tar.gz
-    tar xvfz libspectrum-1.0.0.tar.gz
-    cd libspectrum-1.0.0
-    ./configure # this yields segmentation fault errors now (20.2.2013)
-    make
-    make install
-    echo "/usr/local/lib" >> /etc/ld.so.conf.d/libspectrum.conf
-    ldconfig
-    cd ..
+function configure_openmsx() {
+    printMsg "Configuring openmsx"
+    mkdir -p $romdir/msx
+}
 
-    tar xvfz fuse-1.0.0.1a.tar.gz
-    cd fuse-1.0.0.1a
-    ./configure --with-sdl
+function sources_fastdosbox() {
+    printMsg "Getting sources of fastdosbox"
+    wget http://gaming.capsule-sa.co.za/downloads/fastdosbox-1.5_src.tar.gz
+    tar xvfz fastdosbox-1.5_src.tar.gz -C "$rootdir/emulators/"
+
+    # patch sources
+    sed -i 's|#include "nofun.h"|//#include "nofun.h"|g' "$rootdir/emulators/fastdosbox-1.5/src/gui/sdl_mapper.cpp"
+
+    mkdir -p $rootdir/emulators/fastdosbox-1.5/installdir
+    rm fastdosbox-1.5_src.tar.gz
+}
+
+function build_fastdosbox() {
+    printMsg "Building fastdosbox"
+    pushd $rootdir/emulators/fastdosbox-1.5
+    ./configure --prefix=$rootdir/emulators/fastdosbox-1.5/installdir
     make
-    make install
     popd
 }
 
-function em_install_zxspectrum()
-{
-    printMsg "Installing ZX Spectrum emulator"
-    apt-get install -y --force-yes spectrum-roms fuse-emulator-utils fuse-emulator-common
+function install_fastdosbox() {
+    printMsg "Installing fastdosbox"
+    pushd $rootdir/emulators/fastdosbox-1.5
+    make install
+    if [[ ! -f $rootdir/emulators/fastdosbox-1.5/installdir/bin/dosbox ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully install FastDosbox."
+    fi
+    popd
 }
 
+# --------------------------
+
+# function sources_XXX() {
+#     printMsg "Getting sources of XXX"
+# }
+
+# function build_XXX() {
+#     printMsg "Building XXX"
+# }
+
+# function install_XXX() {
+#     printMsg "Installing XXX"
+# }
+
+# function configure_XXX() {
+#     printMsg "Configuring XXX"
+# }

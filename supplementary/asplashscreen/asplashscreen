@@ -3,20 +3,18 @@
 # Provides:          asplashscreen
 # Required-Start:
 # Required-Stop:
-# Should-Start:      
 # Default-Start:     S
 # Default-Stop:
 # Short-Description: Show custom splashscreen
 # Description:       Show custom splashscreen
 ### END INIT INFO
 
-
 do_start () {
 
     line=$(head -n 1 /etc/splashscreen.list)
     isMovie=$(echo $line | grep -o "*.mpg")
     if [ -z "$isMovie" ]; then
-      /usr/bin/fbi -T 1 -noverbose -a -l /etc/splashscreen.list &
+      /usr/bin/fbi -T 1 -once -t 20 -noverbose -a -l /etc/splashscreen.list &
     else
       mplayer $line &
     fi

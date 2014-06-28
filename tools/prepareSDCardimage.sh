@@ -12,18 +12,17 @@ rm -rf ~/python_games/
 rm -rf ~/Desktop/
 rm -rf osmose_files
 rm ~/.bash_history
-rm ~/RetroPie-Setup/logs/*
 
 # check file system for errors
 # e2fsck -f -y -v /dev/sdaX
 
-# resize partition on SD card to 3000 MB with gparted
+# resize partition on SD card to 3400 MB with gparted
 
 # re-check file system for errors
 # e2fsck -f -y -v /dev/sdaX
 
 # read and compress image of SD card with
-#   dd if=/dev/disk2 bs=2m of=RetroPieImage_verX.img count=1550
+#   dd if=/dev/disk2 bs=2m of=RetroPieImage_verX.img count=1750
 #   zip -9 RetroPieImage_verX.zip RetroPieImage_verX.img
 
 # create SHA1 hash with 
