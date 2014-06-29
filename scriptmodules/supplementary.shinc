@@ -528,7 +528,7 @@ function package_EmulationStation() {
 # 304, install_ESThemeSimple
 function install_ESThemeSimple() {
     printMsg "Installing EmulationStation theme 'Simple'"
-    wget -O themesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=8033
+    wget -O themesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=7118
 
     tar xvfj themesDownload.tar.bz2
     rm themesDownload.tar.bz2
