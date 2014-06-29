@@ -23,6 +23,15 @@
 #  Many, many thanks go to all people that provide the individual packages!!!
 # 
 
+function depen_retroarch() {
+    printMsg "Getting depencies of udev/eudev"
+    apt-get install -y libudev-dev libxkbcommon-dev
+    cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
+KERNEL=="event*", NAME="input/%k", MODE="666"
+_EOF_
+    sudo chmod 666 /dev/input/event*
+}
+
 function sources_retroarch() {
     printMsg "Getting sources of RetroArch"
     gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
@@ -31,7 +40,7 @@ function sources_retroarch() {
 function build_retroarch() {
     printMsg "Building RetroArch"
     pushd "$rootdir/emulators/RetroArch"
-    ./configure --prefix="$rootdir/emulators/RetroArch/installdir" --disable-x11 --disable-oss --disable-pulse --disable-sdl --enable-floathard
+    ./configure --prefix="$rootdir/emulators/RetroArch/installdir" --disable-x11 --disable-oss --disable-pulse --enable-floathard
     make clean
     make
     popd
