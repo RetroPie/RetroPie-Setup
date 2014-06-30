@@ -6,7 +6,7 @@ sudo apt-get autoremove
 sudo apt-get clean
 
 # remove es_input.cfg etc.
-rm ~/.emulationstation
+rm -rf ~/.emulationstation
 rm ~/ocr_pi.png
 rm -rf ~/python_games/
 rm -rf ~/Desktop/

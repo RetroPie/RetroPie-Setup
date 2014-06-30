@@ -604,6 +604,7 @@ function build_osmose() {
 function configure_osmose() {
     printMsg "Configuring Osmose"
     mkdir -p "$romdir/gamegear"    
+    mkdir -p "$romdir/mastersystem"    
 }
 
 function sources_jzint() {
@@ -640,6 +641,11 @@ function configure_jzint() {
     mkdir "$romdir/intellivision"    
 }
 
+function depen_linapple() {
+    printMsg "Installing dependencies of Linapple"
+    apt-get update && apt-get install -y libzip2
+}
+
 function sources_linapple() {
     printMsg "Installing Apple II emulator (Linapple)"
     if [[ -d "$rootdir/emulators/apple2" ]]; then
@@ -661,8 +667,8 @@ function build_linapple() {
 
 function configure_linapple() {
     printMsg "Configuring Linapple2"
-    if [[ ! -d $romdir/macintosh ]]; then
-        mkdir -p $romdir/macintosh
+    if [[ ! -d $romdir/apple2 ]]; then
+        mkdir -p $romdir/apple2
     fi
     cat > "$rootdir/emulators/linapple-src_2a/Start.sh" << _EOF_
 #!/bin/bash
@@ -671,7 +677,7 @@ pushd $rootdir/emulators/linapple-src_2a
 popd
 _EOF_
     chmod +x "$rootdir/emulators/linapple-src_2a/Start.sh"
-    touch $romdir/macintosh/Start.txt
+    touch $romdir/apple2/Start.txt
 
     pushd "$rootdir/emulators/linapple-src_2a"
     sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" linapple.conf
