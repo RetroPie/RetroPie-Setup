@@ -311,3 +311,8 @@ function rps_main_setup()
     chown -R $user:$user $logfilename
 }
 
+function rps_main_reboot()
+{
+    clear
+    reboot    
+}
