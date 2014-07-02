@@ -532,7 +532,13 @@ function install_ESThemeSimple() {
 
     tar xvfj themesDownload.tar.bz2
     rm themesDownload.tar.bz2
-    mv -f simple/ /etc/emulationstation/themes/
+    if [[ ! -d "/etc/emulationstation/themes" ]]; then
+        mkdir -p "/etc/emulationstation/themes"
+    fi
+    if [[ -d "/etc/emulationstation/themes/simple" ]]; then
+        rm -rf "/etc/emulationstation/themes/simple"
+    fi
+    mv -f simple/ "/etc/emulationstation/themes/"
 
     chmod -R 755 "/etc/emulationstation/themes/"
 }
