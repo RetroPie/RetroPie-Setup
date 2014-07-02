@@ -353,6 +353,26 @@ function configure_psxlibretro() {
     mkdir -p $romdir/psx
 }
 
+function sources_mednafenpcefast() {
+    printMsg "Getting sources of mednafenpcefast"
+    gitPullOrClone "$rootdir/emulatorcores/mednafenpcefast" https://github.com/libretro/beetle-pce-fast-libretro.git
+}
+
+function build_mednafenpcefast() {
+    printMsg "Building mednafenpcefa"
+    pushd "$rootdir/emulatorcores/mednafenpcefast"
+    make
+     if [[ -z `find $rootdir/emulatorcores/mednafenpcefast/ -name "*libretro*.so"` ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile Mednafen PCE Fast core."
+    fi   
+    popd
+}
+
+function configure_mednafenpcefast() {
+    printMsg "Configuring mednafenpcefas"
+    mkdir -p $romdir/pcengine
+}
+
 # function sources_XXX() {
 #     printMsg "Getting sources of XXX"
 # }

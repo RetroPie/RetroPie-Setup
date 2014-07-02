@@ -289,6 +289,7 @@ rp_registerFunction "208" "NES LibretroCore fceu-next     " ""                  
 rp_registerFunction "209" "Genesis/Megadrive LibretroCore " ""                       "sources_genesislibretro"  "build_genesislibretro"  ""                          "configure_genesislibretro"  ""
 rp_registerFunction "210" "TurboGrafx 16 LibretroCore     " ""                       "sources_turbografx16"     "build_turbografx16"     ""                          "configure_turbografx16"     ""
 rp_registerFunction "211" "Playstation 1 LibretroCore     " ""                       "sources_psxlibretro"      "build_psxlibretro"      ""                          "configure_psxlibretro"      ""
+rp_registerFunction "212" "Mednafen PCE FAst LibretroCore " ""                       "sources_mednafenpcefast"  "build_mednafenpcefast"  ""                          "configure_mednafenpcefast"  ""
 
 # Supplementary components (supplementary.shinc)
 rp_registerFunction "300" "Update APT packages            " ""                       ""                         ""                       "install_APTPackages"       ""                           ""
