@@ -172,6 +172,7 @@ function rps_main_options()
              209 "Genesis/Megadrive LibretroCore " ON \
              210 "TurboGrafx 16 LibretroCore     " ON \
              211 "Playstation 1 LibretroCore     " ON \
+             212 "Mednafen PCE Fast LibretroCore " ON \
              300 "Update APT packages            " ON \
              301 "Package Repository             " ON \
              302 "SDL 2.0.1                      " ON \
@@ -239,6 +240,7 @@ function rps_main_options()
                 209) source $scriptdir/retropie_packages.sh 209 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 210) source $scriptdir/retropie_packages.sh 210 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 211) source $scriptdir/retropie_packages.sh 211 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                212) source $scriptdir/retropie_packages.sh 212 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 300) source $scriptdir/retropie_packages.sh 300 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 301) source $scriptdir/retropie_packages.sh 301 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 302) source $scriptdir/retropie_packages.sh 302 2>&1 | tee >(gzip --stdout >$logfilename) ;;
