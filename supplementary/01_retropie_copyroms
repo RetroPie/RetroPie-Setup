@@ -5,7 +5,7 @@
 ## config / defaults
 # XXX: fix for generation from retropie_setup.sh where the install path is known
 retro_user="USERTOBECHOSEN"
-retropie_path=/home/${retro_user}/RetroPie
+retropie_path=/opt/retropie
 # not sure if we should default to true/false with create_romdirs, but defaulting to false feels less intrusive. I'd like it to be configurable. A config file is one option, having it statically generated with retropie_setup.sh upon install is another
 create_romdirs="true"
 
