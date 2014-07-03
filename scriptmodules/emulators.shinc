@@ -579,7 +579,7 @@ function configure_mame4all() {
     mkdir -p "$rootdir/emulators/mame4all-pi/sta"
     mkdir -p "$rootdir/emulators/mame4all-pi/roms"
     ensureKeyValueShort "samplerate" "22050" "$rootdir/emulators/mame4all-pi/mame.cfg"
-    ensureKeyValueShort "rompath" "$rootdir/roms/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"    
+    ensureKeyValueShort "rompath" "$romdir/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"    
 }
 
 function sources_osmose() {

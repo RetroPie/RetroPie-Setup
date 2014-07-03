@@ -161,7 +161,7 @@ function configure_EmulationStation() {
          local __tmpnetplayframes=""
      fi
 
-    mkdir /etc/emulationstation
+    mkdir -p "/etc/emulationstation"
 
     cat > "/etc/emulationstation/es_systems.cfg" << _EOF_
 <systemList>  
