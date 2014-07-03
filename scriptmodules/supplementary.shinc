@@ -739,13 +739,15 @@ function set_ensureEntryInSMBConf()
       echo "$1 already contained in /etc/samba/smb.conf."
     else
     chmod 666 /etc/samba/smb.conf
+    if ["$2" == "BIOS"]; then
+       path = $homedir/$2
+    else
+       path = $romdir/$2
+    fi
     tee -a /etc/samba/smb.conf <<HDHD
 [$1]
 comment = $1
-if [$2 == "BIOS"]; then
-  path = $homedir/$2
-else
-  path = $romdir/$2
+path = $path
 writeable = yes
 guest ok = yes
 create mask = 0777
