@@ -4,8 +4,8 @@ import shutil
 import os
 
 # path variables
-home                = os.path.expanduser("~")
-retroarch_main_cfg  = home + '/RetroPie/configs/all/retroarch.cfg'
+home                = '/opt'
+retroarch_main_cfg  = home + '/retropie/configs/all/retroarch.cfg'
 
 # backup current config
 shutil.copyfile(retroarch_main_cfg, retroarch_main_cfg + '.bak')
