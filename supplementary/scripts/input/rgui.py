@@ -4,10 +4,10 @@ import shutil
 import os
 
 # path variables
-home                = os.path.expanduser("~")
-retroarch_cfg  	    = home + '/RetroPie/configs/all/retroarch.cfg'
+home                = '/opt'
+retroarch_cfg  	    = home + '/retropie/configs/all/retroarch.cfg'
 rgui		    = 'retroarch --menu'
-rgui_path           = home + '/RetroPie/emulators/RetroArch/installdir/bin/'
+rgui_path           = home + '/retropie/emulators/RetroArch/installdir/bin/'
 
 # backup current config
 shutil.copyfile(retroarch_cfg, retroarch_cfg + '.bak')
