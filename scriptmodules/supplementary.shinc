@@ -768,6 +768,8 @@ function configure_sambashares() {
 
     set_ensureEntryInSMBConf "AMIGA" "amiga"
     set_ensureEntryInSMBConf "APPLE2" "apple2"
+    set_ensureEntryInSMBConf "ARMSTRADCPC" "cpc"
+    set_ensureEntryInSMBConf "ATARI800" "atari800"
     set_ensureEntryInSMBConf "ATARI2600" "atari2600"
     set_ensureEntryInSMBConf "ATARISTSTEFALCON" "atariStSteFalcon"
     set_ensureEntryInSMBConf "MAC" "macintosh"
@@ -784,7 +786,6 @@ function configure_sambashares() {
     set_ensureEntryInSMBConf "MAME" "mame"
     set_ensureEntryInSMBConf "MASTERSYSTEM" "mastersystem"
     set_ensureEntryInSMBConf "MEGADRIVE" "megadrive"
-    set_ensureEntryInSMBConf "NEOGEO" "neogeo"
     set_ensureEntryInSMBConf "NES" "nes"
     set_ensureEntryInSMBConf "N64" "n64"
     set_ensureEntryInSMBConf "PC" "pc"
