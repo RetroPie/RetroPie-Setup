@@ -93,7 +93,7 @@ function install_picodrive() {
 
 function configure_picodrive() {
     printMsg "Configuring Megadrive core picodrive"
-    mkdir -p $home/RetroPie/roms/megadrive
+    mkdir -p $romdir/megadrive
     mkdir -p $romdir/segacd
     mkdir -p $romdir/sega32x
 }
