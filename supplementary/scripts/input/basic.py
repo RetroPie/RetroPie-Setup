@@ -176,21 +176,21 @@ def GNGEOHelper(parser, string):
 # main script
 ########################################################################################
 # path variables
-home            = os.path.expanduser("~")
-source_path	= home + '/RetroPie/emulators/RetroArch/installdir/bin/'
+home            = '/opt'
+source_path	= home + '/retropie/emulators/RetroArch/installdir/bin/'
 source_cfg	= source_path + 'config.ini'
-auto_path   	= home + '/RetroPie/emulators/RetroArch/configs/'
+auto_path   	= home + '/retropie/emulators/RetroArch/configs/'
 gngeo_cfg      	= home + '/.gngeo/gngeorc.retropie'
-dgen_cfg       	= home + '/RetroPie/configs/all/dgenrc'
+dgen_cfg       	= home + '/retropie/configs/all/dgenrc'
 es_cfg		= home + '/.emulationstation/es_input.cfg'
 
 # check paths and mkdir if necessary
-if os.path.exists(home + '/.gngeo/') == False:
-	os.system('mkdir ' + home + '.gngeo/')
-if (os.path.exists(home + '/.gngeo/') == True):
-	open(gngeo_cfg,'w').close()
-if os.path.exists(home + '/RetroPie/configs/all/') == False:
-	os.system('mkdir ' + home + '/RetroPie/configs/all/')
+#if os.path.exists(home + '/.gngeo/') == False:
+#	os.system('mkdir ' + home + '.gngeo/')
+#if (os.path.exists(home + '/.gngeo/') == True):
+#	open(gngeo_cfg,'w').close()
+if os.path.exists(home + '/retropie/configs/all/') == False:
+	os.system('mkdir ' + home + '/retropie/configs/all/')
 
 # for joystick 0-7
 for x in range(0, 7):
@@ -217,10 +217,10 @@ for x in range(0, 7):
 		WriteAutoConfig(parser)	
 			
 		# Add config to emulationstation config /.emulationstation/es_input.cfg
-		WriteESConfig(parser)
+		# WriteESConfig(parser)
 			
 		# Add config to gngeo config /.gngeo/gngeorc
-		WriteGNGEO(parser, x)
+		# WriteGNGEO(parser, x)
 
 		# Add config to dgen /RetroPie/emulators/RetroArch/configs/dgenrc
 		# WriteDGEN(parser)
