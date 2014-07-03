@@ -773,7 +773,7 @@ function configure_sambashares() {
     set_ensureEntryInSMBConf "ATARI2600" "atari2600"
     set_ensureEntryInSMBConf "ATARISTSTEFALCON" "atariStSteFalcon"
     set_ensureEntryInSMBConf "MAC" "macintosh"
-    set_ensureEntryInSMBConf "BIOSFILES" "BIOS"
+    set_ensureEntryInSMBConf "BIOSFILES" "../BIOS"
     set_ensureEntryInSMBConf "C64" "c64"
     set_ensureEntryInSMBConf "DOOM" "ports/doom"
     set_ensureEntryInSMBConf "DUKE3D" "ports/duke3d"
