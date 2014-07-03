@@ -792,6 +792,8 @@ function configure_sambashares() {
     set_ensureEntryInSMBConf "PSX" "psx"
     set_ensureEntryInSMBConf "PPSSPP" "psp"
     set_ensureEntryInSMBConf "SNES" "snes"
+    set_ensureEntryInSMBConf "SEGACD" "segacd"
+    set_ensureEntryInSMBConf "SEGA32X" "sega32x"
     set_ensureEntryInSMBConf "SCUMMVM" "scummvm"
     set_ensureEntryInSMBConf "ZMACHINE" "zmachine"
     set_ensureEntryInSMBConf "ZXSPECTRUM" "zxspectrum"
