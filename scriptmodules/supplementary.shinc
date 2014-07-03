@@ -742,7 +742,10 @@ function set_ensureEntryInSMBConf()
     tee -a /etc/samba/smb.conf <<HDHD
 [$1]
 comment = $1
-path = $romdir/$2
+if [$2 == "BIOS"]; then
+  path = $homedir/$2
+else
+  path = $romdir/$2
 writeable = yes
 guest ok = yes
 create mask = 0777
@@ -773,7 +776,7 @@ function configure_sambashares() {
     set_ensureEntryInSMBConf "ATARI2600" "atari2600"
     set_ensureEntryInSMBConf "ATARISTSTEFALCON" "atariStSteFalcon"
     set_ensureEntryInSMBConf "MAC" "macintosh"
-    set_ensureEntryInSMBConf "BIOSFILES" "../BIOS"
+    set_ensureEntryInSMBConf "BIOSFILES" "BIOS"
     set_ensureEntryInSMBConf "C64" "c64"
     set_ensureEntryInSMBConf "DOOM" "ports/doom"
     set_ensureEntryInSMBConf "DUKE3D" "ports/duke3d"
