@@ -185,7 +185,7 @@ function gitPullOrClone()
     else
         rm -rf "$1" # makes sure that the directory IS empty
         mkdir -p "$1"
-        git clone --depth=0 "$2" "$1"
+        git clone --depth=1 "$2" "$1"
     fi
 }
 
