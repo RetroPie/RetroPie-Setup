@@ -1,5 +1,5 @@
 shaders = "1"
-shader0 = "/home/pi/RetroPie/emulators/RetroArch/shader/hq2x.glsl"
+shader0 = "hq2x.glsl"
 filter_linear0 = "true"
 wrap_mode0 = "clamp_to_border"
 float_framebuffer0 = "false"
