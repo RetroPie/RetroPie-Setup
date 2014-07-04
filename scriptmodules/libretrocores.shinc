@@ -94,6 +94,7 @@ function install_picodrive() {
 function configure_picodrive() {
     printMsg "Configuring Megadrive core picodrive"
     mkdir -p $romdir/megadrive
+    mkdir -p $romdir/mastersystem
     mkdir -p $romdir/segacd
     mkdir -p $romdir/sega32x
 }

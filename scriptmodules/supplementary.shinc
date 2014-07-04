@@ -168,6 +168,16 @@ function configure_EmulationStation() {
 <systemList>  
 
     <system>
+        <fullname>Amiga</fullname>
+        <name>amiga</name>
+        <path>~/RetroPie/roms/amiga</path>
+        <extension>.txt</extension>
+        <command>$rootdir/emulators/uae4rpi/uae4rpi %ROM%</command>
+        <platform>amiga</platform>
+        <theme>amiga</theme>
+    </system>
+
+    <system>
         <fullname>Apple II</fullname>
         <name>apple2</name>
         <path>~/RetroPie/roms/apple2</path>
@@ -200,9 +210,9 @@ function configure_EmulationStation() {
 
     <system>
         <fullname>Atari ST/STE/Falcon</fullname>
-        <name>atariStSteFalcon</name>
-        <path>~/RetroPie/roms/atariStSteFalcon</path>
-        <extension>.st .ST .img .IMG .rom .ROM</extension>
+        <name>atariststefalcon</name>
+        <path>~/RetroPie/roms/atariststefalcon</path>
+        <extension>.st .ST .img .IMG .rom .ROM .ipf .IPF</extension>
         <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "hatari %ROM%"</command>
         <platform>atarist</platform>
         <theme>atarist</theme>
@@ -231,11 +241,11 @@ function configure_EmulationStation() {
 
     <system>
         <fullname>Amstrad CPC</fullname>
-        <name>armstradcpc</name>
-        <path>~/RetroPie/roms/cpc</path>
+        <name>amstradcpc</name>
+        <path>~/RetroPie/roms/amstradcpc</path>
         <extension>.cpc .CPC .dsk .DSK</extension>
         <command>$rootdir/emulators/cpc4rpi-1.1/cpc4rpi %ROM%</command>
-        <theme>armstradcpc</theme>
+        <theme>amstradcpc</theme>
     </system>
 
     <system>
@@ -465,7 +475,7 @@ function configure_EmulationStation() {
         <fullname>ZX Spectrum</fullname>
         <name>zxspectrum</name>
         <path>~/RetroPie/roms/zxspectrum</path>
-        <extension>.z80 .Z80</extension>
+        <extension>.z80 .Z80 .ipf .IPF</extension>
         <command>xinit fuse</command>
         <!-- alternatively: <command>$rootdir/emulators/fbzx-2.10.0/fbzx %ROM%</command> -->
         <platform>zxspectrum</platform>

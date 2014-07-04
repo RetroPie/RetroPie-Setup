@@ -339,7 +339,7 @@ function build_cpc() {
 
 function configure_cpc() {
     printMsg "Configuring CPC4RPi"
-    mkdir -p "$romdir/armstradcpc"
+    mkdir -p "$romdir/amstradcpc"
 }
 
 function install_dosbox() {
@@ -552,6 +552,7 @@ function configure_gngeopi() {
 function install_hatari() {
     printMsg "Installing Hatari"
     apt-get install -y hatari    
+    mkdir -p $romdir/atariststefalcon
 }
 
 function sources_mame4all() {
