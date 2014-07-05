@@ -181,8 +181,6 @@ function rps_main_options()
              305 "Video mode script 'runcommand' " ON \
              308 "RetroArch-AutoConfigs          " ON \
              309 "Bash Welcome Tweak             " ON \
-             310 "Samba ROM Shares               " ON \
-             311 "USB ROM Service                " ON \
              315 "Modules UInput, Joydev, ALSA   " ON \
              316 "Set avoid_safe_mode            " ON \
              317 "Disable system timeouts        " ON \
@@ -249,8 +247,6 @@ function rps_main_options()
                 305) source $scriptdir/retropie_packages.sh 305 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 308) source $scriptdir/retropie_packages.sh 308 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 309) source $scriptdir/retropie_packages.sh 309 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                310) source $scriptdir/retropie_packages.sh 310 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                311) source $scriptdir/retropie_packages.sh 311 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 315) source $scriptdir/retropie_packages.sh 315 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 316) source $scriptdir/retropie_packages.sh 316 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 317) source $scriptdir/retropie_packages.sh 317 2>&1 | tee >(gzip --stdout >$logfilename) ;;
@@ -283,6 +279,8 @@ function rps_main_setup()
 
         options=(306  "SNESDev                        " 
                  307  "Xarcade2Jstick                 " 
+                 310  "Samba ROM Shares               " 
+                 311  "USB ROM Service                " 
                  312  "Enable/disable Splashscreen    " 
                  313  "Select Splashscreen            " 
                  314  "RetroNetplay                   " 
@@ -290,12 +288,16 @@ function rps_main_setup()
                  320  "Install XBox contr. 360 driver " 
                  321  "Install PS3 controller driver  " 
                  322  "Register RetroArch controller  " 
-                 324  "Configure Audio Settings" )
+                 324  "Configure Audio Settings       " 
+                 325  "ES-Config                      " 
+                 326  "Gamecon drvier                 " )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
         if [ "$choices" != "" ]; then
             case $choices in
                 306) source $scriptdir/retropie_packages.sh 306 configure 2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 307) source $scriptdir/retropie_packages.sh 307 configure 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                310) source $scriptdir/retropie_packages.sh 310           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                311) source $scriptdir/retropie_packages.sh 311           2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 312) source $scriptdir/retropie_packages.sh 312           2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 313) source $scriptdir/retropie_packages.sh 313           2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 314) source $scriptdir/retropie_packages.sh 314           2>&1 | tee >(gzip --stdout >$logfilename) ;;
@@ -304,6 +306,8 @@ function rps_main_setup()
                 321) source $scriptdir/retropie_packages.sh 321           2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 322) source $scriptdir/retropie_packages.sh 322           2>&1 | tee >(gzip --stdout >$logfilename) ;;
                 324) source $scriptdir/retropie_packages.sh 324           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                325) source $scriptdir/retropie_packages.sh 325           2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                326) source $scriptdir/retropie_packages.sh 326 install   2>&1 | tee >(gzip --stdout >$logfilename) ;;
             esac
         else
             break

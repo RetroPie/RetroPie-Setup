@@ -316,6 +316,8 @@ rp_registerFunction "321" "Install PS3 controller driver  " ""                  
 rp_registerFunction "322" "Register RetroArch controller  " ""                       ""                         ""                       "set_RetroarchJoyconfig"    ""                           ""
 rp_registerFunction "323" "Install SDL 2.0.1 binaries     " ""                       ""                         ""                       "install_libsdlbinaries"    ""                           "" 
 rp_registerFunction "324" "Configure audio settings       " ""                       ""                         ""                       ""                          "configure_audiosettings"    "" 
+rp_registerFunction "325" "ES-Config                      " ""                       ""                         ""                       "install_esconfig"          "configure_esconfig"         "" 
+rp_registerFunction "326" "Gamecon driver                 " ""                       ""                         ""                       "install_gamecondriver"     "configure_gamecondriver"    "" 
 
 # TODO python scripts (es-config)
 

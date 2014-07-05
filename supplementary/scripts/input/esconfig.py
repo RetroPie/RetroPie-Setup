@@ -7,13 +7,13 @@ import os
 
 # path variables
 home                = os.path.expanduser("~")
-retroarch_main_cfg  = home + '/RetroPie/configs/all/retroarch.cfg'
-retroarch_input_cfg = home + '/RetroPie/configs/all/retroarchinput.cfg'
+retroarch_main_cfg  = '/opt/retropie/configs/all/retroarch.cfg'
+retroarch_input_cfg = '/opt/retropie/configs/all/retroarchinput.cfg'
 gngeo_main_cfg      = home + '/.gngeo/gngeorc'
 gngeo_input_cfg     = home + '/.gngeo/gngeorcinput'
-dgen_main_cfg       = home + '/RetroPie/configs/all/dgenrc'
-dgen_input_cfg      = home + '/RetroPie/configs/all/dgenrcinput'
-es_config_path	    = home + '/RetroPie/supplementary/ES-config'
+dgen_main_cfg       = '/opt/retropie/configs/all/dgenrc'
+dgen_input_cfg      = '/opt/retropie/configs/all/dgenrcinput'
+es_config_path	    = '/opt/retropie/supplementary/ES-config'
 section = 'start'
 	
 # 

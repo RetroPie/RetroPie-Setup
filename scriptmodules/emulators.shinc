@@ -68,6 +68,7 @@ function configure_retroarch() {
 
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
     cp $scriptdir/supplementary/retroarch-core-options.cfg "$rootdir/configs/all/"
+    chmod 777 "$rootdir/configs/all/retroarch-core-options.cfg"
 
     if [[ ! -d "$rootdir/emulators/RetroArch/configs/" ]]; then
         mkdir -p "$rootdir/emulators/RetroArch/configs/"
@@ -77,7 +78,7 @@ function configure_retroarch() {
         cp "$rootdir/configs/all/retroarch.cfg" "$rootdir/configs/all/retroarch.cfg.bak"
     fi
     cp $rootdir/emulators/RetroArch/retroarch.cfg "$rootdir/configs/all/"
-    chmod 777 "$rootdir/emulators/RetroArch/retroarch.cfg"
+    chmod 777 "$rootdir/configs/all/retroarch.cfg"
     mkdir -p "$rootdir/configs/all/"
 
     ensureSystemretroconfig "atari2600"
