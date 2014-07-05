@@ -575,6 +575,7 @@ function configure_mame4all() {
     mkdir -p "$rootdir/emulators/mame4all-pi/hi"
     mkdir -p "$rootdir/emulators/mame4all-pi/sta"
     mkdir -p "$rootdir/emulators/mame4all-pi/roms"
+    chmod 777 "$rootdir/emulators/mame4all-pi/mame.cfg"
     ensureKeyValueShort "samplerate" "22050" "$rootdir/emulators/mame4all-pi/mame.cfg"
     ensureKeyValueShort "rompath" "$romdir/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"    
 }
