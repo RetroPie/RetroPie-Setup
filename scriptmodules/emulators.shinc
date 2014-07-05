@@ -77,6 +77,7 @@ function configure_retroarch() {
         cp "$rootdir/configs/all/retroarch.cfg" "$rootdir/configs/all/retroarch.cfg.bak"
     fi
     cp $rootdir/emulators/RetroArch/retroarch.cfg "$rootdir/configs/all/"
+    chmod 777 "$rootdir/emulators/RetroArch/retroarch.cfg"
     mkdir -p "$rootdir/configs/all/"
 
     ensureSystemretroconfig "atari2600"
