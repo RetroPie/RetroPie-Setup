@@ -216,7 +216,6 @@ function rp_printUsageinfo() {
 # -------------------------------------------------------------
 rps_checkNeededPackages
 
-
 # check, if sudo is used
 if [ $(id -u) -ne 0 ]; then
     printf "Script must be run as root. Try 'sudo ./retropackages'\n"
@@ -231,7 +230,6 @@ script_invoke_path="$0"
 script_name=`basename "$0"`
 getScriptAbsoluteDir "$script_invoke_path"
 script_absolute_dir=$RESULT
-
 
 import "scriptmodules/helpers"
 import "scriptmodules/emulators"
