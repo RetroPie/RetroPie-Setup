@@ -51,6 +51,7 @@ function addLineToFile()
 # key = value
 function ensureKeyValue()
 {
+    echo "Setting $1 = $2 in $3"
     if [[ -z $(egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
         # add key-value pair
         echo "$1 = ""$2""" >> $3

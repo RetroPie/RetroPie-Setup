@@ -102,7 +102,7 @@ function configure_retroarch() {
     ensureKeyValue "video_aspect_ratio" "1.33" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_threaded" "true" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "core_options_path" "$rootdir/configs/all/retroarch-core-options.cfg"
+    ensureKeyValue "core_options_path" "$rootdir/configs/all/retroarch-core-options.cfg" "$rootdir/configs/all/retroarch.cfg"
 
     # enable hotkey ("select" button)
     ensureKeyValue "input_enable_hotkey" "escape" "$rootdir/configs/all/retroarch.cfg"
@@ -161,7 +161,6 @@ function configure_retroarch() {
 
     # system-specific, PSX
     ensureKeyValue "rewind_enable" "false" "$rootdir/configs/psx/retroarch.cfg"
-    
 
     # configure keyboard mappings
     ensureKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"
