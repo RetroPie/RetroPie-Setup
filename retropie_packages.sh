@@ -38,6 +38,12 @@ __package=()
 __doPackages=0
 
 rootdir="/opt/retropie"
+user=$SUDO_USER
+if [ -z "$user" ]
+then
+    user=$(whoami)
+fi
+home=$(eval echo ~$user)
 romdir="$home/RetroPie/roms"
 if [[ ! -d $romdir ]]; then
     mkdir -p $romdir
@@ -210,11 +216,6 @@ function rp_printUsageinfo() {
 # -------------------------------------------------------------
 rps_checkNeededPackages
 
-user=$SUDO_USER
-if [ -z "$user" ]
-then
-    user=$(whoami)
-fi
 
 # check, if sudo is used
 if [ $(id -u) -ne 0 ]; then
@@ -230,7 +231,7 @@ script_invoke_path="$0"
 script_name=`basename "$0"`
 getScriptAbsoluteDir "$script_invoke_path"
 script_absolute_dir=$RESULT
-home=$(eval echo ~$user)
+
 
 import "scriptmodules/helpers"
 import "scriptmodules/emulators"

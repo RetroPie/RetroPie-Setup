@@ -795,6 +795,7 @@ function configure_sambashares() {
     set_ensureEntryInSMBConf "GBC" "gbc"
     set_ensureEntryInSMBConf "INTELLIVISION" "intellivision"
     set_ensureEntryInSMBConf "MAME" "mame"
+    set_ensureEntryInSMBConf "MSX" "msx"
     set_ensureEntryInSMBConf "MASTERSYSTEM" "mastersystem"
     set_ensureEntryInSMBConf "MEGADRIVE" "megadrive"
     set_ensureEntryInSMBConf "NES" "nes"
