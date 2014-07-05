@@ -56,51 +56,45 @@ function install_retroarch() {
     fi  
 }
 
+function ensureSystemretroconfig {
+    if [[ ! -d "$rootdir/configs/$1/" ]]; then
+        mkdir -p "$rootdir/configs/$1/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/$1/retroarch.cfg
+    fi
+}
+
 function configure_retroarch() {
     printMsg "Configuring RetroArch"
 
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
+    cp $scriptdir/supplementary/retroarch-core-options.cfg "$rootdir/configs/all/"
 
     if [[ ! -d "$rootdir/emulators/RetroArch/configs/" ]]; then
         mkdir -p "$rootdir/emulators/RetroArch/configs/"
     fi
 
-    if [[ ! -f "$rootdir/configs/all/retroarch.cfg" ]]; then
-        mkdir -p "$rootdir/configs/all/"
-        mkdir -p "$rootdir/configs/atari2600/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/atari2600/retroarch.cfg
-        mkdir -p "$rootdir/configs/cavestory/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/cavestory/retroarch.cfg
-        mkdir -p "$rootdir/configs/doom/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/doom/retroarch.cfg
-        mkdir -p "$rootdir/configs/gb/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gb/retroarch.cfg
-        mkdir -p "$rootdir/configs/gbc/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gbc/retroarch.cfg
-        mkdir -p "$rootdir/configs/gamegear/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/gamegear/retroarch.cfg
-        mkdir -p "$rootdir/configs/mame/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/mame/retroarch.cfg
-        mkdir -p "$rootdir/configs/mastersystem/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/mastersystem/retroarch.cfg
-        mkdir -p "$rootdir/configs/megadrive/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/megadrive/retroarch.cfg
-        mkdir -p "$rootdir/configs/nes/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/nes/retroarch.cfg
-        mkdir -p "$rootdir/configs/pcengine/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/pcengine/retroarch.cfg
-        mkdir -p "$rootdir/configs/psx/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/psx/retroarch.cfg
-        mkdir -p "$rootdir/configs/snes/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/snes/retroarch.cfg
-        mkdir -p "$rootdir/configs/segacd/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/segacd/retroarch.cfg
-        mkdir -p "$rootdir/configs/sega32x/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/sega32x/retroarch.cfg
-        mkdir -p "$rootdir/configs/fba/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/fba/retroarch.cfg
-        cp /etc/retroarch.cfg "$rootdir/configs/all/"
+    if [[ -f "$rootdir/configs/all/retroarch.cfg" ]]; then
+        cp "$rootdir/configs/all/retroarch.cfg" "$rootdir/configs/all/retroarch.cfg.bak"
     fi
+    cp $rootdir/emulators/RetroArch/retroarch.cfg "$rootdir/configs/all/"
+    mkdir -p "$rootdir/configs/all/"
+
+    ensureSystemretroconfig "atari2600"
+    ensureSystemretroconfig "cavestory"
+    ensureSystemretroconfig "doom"
+    ensureSystemretroconfig "gb"
+    ensureSystemretroconfig "gbc"
+    ensureSystemretroconfig "gamegear"
+    ensureSystemretroconfig "mame"
+    ensureSystemretroconfig "mastersystem"
+    ensureSystemretroconfig "megadrive"
+    ensureSystemretroconfig "nes"
+    ensureSystemretroconfig "pcengine"
+    ensureSystemretroconfig "psx"
+    ensureSystemretroconfig "snes"
+    ensureSystemretroconfig "segacd"
+    ensureSystemretroconfig "sega32x"
+    ensureSystemretroconfig "fba"
 
     mkdir -p "$romdir/../BIOS/"
     ensureKeyValue "system_directory" "$romdir/../BIOS" "$rootdir/configs/all/retroarch.cfg"
@@ -108,6 +102,7 @@ function configure_retroarch() {
     ensureKeyValue "video_aspect_ratio" "1.33" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_threaded" "true" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "core_options_path" "$rootdir/configs/all/retroarch-core-options.cfg"
 
     # enable hotkey ("select" button)
     ensureKeyValue "input_enable_hotkey" "escape" "$rootdir/configs/all/retroarch.cfg"
