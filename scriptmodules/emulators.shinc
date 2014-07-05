@@ -179,6 +179,8 @@ function configure_retroarch() {
     # input settings
     ensureKeyValue "input_autodetect_enable" "true" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "joypad_autoconfig_dir" "$rootdir/emulators/RetroArch/configs/" "$rootdir/configs/all/retroarch.cfg"
+
+    chmod -R 777 "$rootdir/emulators/RetroArch/shader/"
 }
 
 function package_retroarch() {
