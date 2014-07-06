@@ -1281,7 +1281,7 @@ function configure_esconfig()
     chown $user:$user $romdir/esconfig/*.py
     chmod +x $romdir/esconfig/*.py
     # add some information
-    cat > $romdir/esconfig/gamelist.xml << _EOF_
+    cat > ~/.emulationstation/gamelists/esconfig/gamelist.xml << _EOF_
 <?xml version="1.0"?>
 <gameList>
     <game>
