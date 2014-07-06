@@ -183,6 +183,9 @@ checkForLogDirectory
 
 rps_checkNeededPackages
 
+# set default gcc version
+gcc_version $__default_gcc_version
+
 # make sure that enough space is available
 if [[ ! -d $rootdir ]]; then
 	mkdir -p $rootdir
