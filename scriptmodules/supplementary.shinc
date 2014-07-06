@@ -1277,7 +1277,7 @@ function configure_esconfig()
     cp "$scriptdir/supplementary/scripts/input/rgui.py" "$romdir/esconfig/"
     chown $user:$user $romdir/esconfig/rgui.py
     chmod +x $romdir/esconfig/rgui.py    
-    cp $scriptdir/supplementary/scripts/audio/*.py "$romdir/esconfig/"
+    cp "$scriptdir/supplementary/scripts/audio/*.py" "$romdir/esconfig/"
     chown $user:$user $romdir/esconfig/*.py
     chmod +x $romdir/esconfig/*.py
     # add some information
