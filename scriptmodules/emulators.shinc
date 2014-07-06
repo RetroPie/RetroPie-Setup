@@ -183,6 +183,7 @@ function configure_retroarch() {
     ensureKeyValue "joypad_autoconfig_dir" "$rootdir/emulators/RetroArch/configs/" "$rootdir/configs/all/retroarch.cfg"
 
     chmod -R 777 "$rootdir/emulators/RetroArch/shader/"
+    chmod -R 777 "$rootdir/configs/"
 }
 
 function package_retroarch() {
