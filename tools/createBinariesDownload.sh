@@ -54,7 +54,7 @@ filelist+=("$(find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.
 filelist+=("$(find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so")")
 filelist+=("$(find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so")")
 filelist+=("$(find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so")")
-filelist+=("$(find $rootdir/emulatorcores/beetle-pce-fast-libretro/ -name "*libretro*.so")")
+filelist+=("$(find $rootdir/emulatorcores/mednafenpcefast/ -name "*libretro*.so")")
 
 filelist+=("$rootdir/emulators/RetroArch/README.md")
 filelist+=("$rootdir/emulators/RetroArch/installdir/")
