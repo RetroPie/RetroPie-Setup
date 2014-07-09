@@ -1281,7 +1281,7 @@ function configure_esconfig()
     chown $user:$user $romdir/esconfig/*.py
     chmod +x $romdir/esconfig/*.py
     # add some information
-    cat > $romdir/esconfig/gamelist.xml << _EOF_
+    cat > ~/.emulationstation/gamelists/esconfig/gamelist.xml << _EOF_
 <?xml version="1.0"?>
 <gameList>
     <game>
@@ -1299,8 +1299,8 @@ GNGEO 0.7</desc>
     </game>
     <game>
         <path>$romdir/esconfig/basic.py</path>
-        <name>Start basic input configuration</name>
-        <desc>Update Retroarch Autoconfig and Emulationstation</desc>
+        <name>Update Retroarch Autoconfig (Keyboard necessary)</name>
+        <desc>Joypad config will be stored under /opt/retropie/emulators/RetroArch/configs.</desc>
     </game>
     <game>
         <path>$romdir/esconfig/autoon.py</path>
@@ -1313,7 +1313,7 @@ GNGEO 0.7</desc>
     <game>
         <path>$romdir/esconfig/rgui.py</path>
         <name>Open RGUI</name>
-        <desc>RetroArch Menu. (X = ok, Y/Z = cancel)</desc>
+        <desc>RetroArch Menu. (X = ok, Y/Z = cancel). Select "Save On Exit" to store changes.</desc>
     </game>
     <game>
         <path>$romdir/esconfig/showip.py</path>

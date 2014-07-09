@@ -514,6 +514,7 @@ function build_gpsp() {
 function configure_gpsp() {
     printMsg "Configuring GPSP"
     mkdir "$romdir/gba"
+    chmod -R 777 "$rootdir/emulators/gpsp/raspberrypi/"
 }
 
 function sources_gngeopi() {
