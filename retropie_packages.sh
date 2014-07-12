@@ -1,29 +1,29 @@
 #!/usr/bin/env bash
 
-# 
+#
 #  (c) Copyright 2012-2014  Florian Müller (contact@petrockblock.com)
-# 
+#
 #  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
-# 
+#
 #  Permission to use, copy, modify and distribute this work in both binary and
 #  source form, for non-commercial purposes, is hereby granted without fee,
 #  providing that this license information and copyright notice appear with
 #  all copies and any derived work.
-# 
+#
 #  This software is provided 'as-is', without any express or implied
 #  warranty. In no event shall the authors be held liable for any damages
 #  arising from the use of this software.
-# 
+#
 #  RetroPie-Setup is freeware for PERSONAL USE only. Commercial users should
 #  seek permission of the copyright holders first. Commercial use includes
 #  charging money for RetroPie-Setup or software derived from RetroPie-Setup.
-# 
+#
 #  The copyright holders request that bug fixes and improvements to the code
 #  should be forwarded to them so everyone can benefit from the modifications
 #  in future versions.
-# 
+#
 #  Many, many thanks go to all people that provide the individual packages!!!
-# 
+#
 
 # global variables ==========================================================
 
@@ -78,7 +78,7 @@ function getScriptAbsoluteDir() {
     fi
 }
 
-function import() { 
+function import() {
     # @description importer routine to get external functionality.
     # @description the first location searched is the script directory.
     # @description if not found, search the module in the paths contained in $SHELL_LIBRARY_PATH environment variable
@@ -158,7 +158,7 @@ function rps_checkNeededPackages() {
         fi
     else
         echo "Found needed packages 'git' and 'dialog'."
-    fi 
+    fi
 }
 
 function rps_availFreeDiskSpace() {
@@ -177,32 +177,32 @@ function rps_availFreeDiskSpace() {
 
 # params: $1=ID, $2=description, $3=sources, $4=build, $5=install, $6=configure, $7=package
 function rp_registerFunction() {
-	__cmdid+=($1)
-	__description[$1]=$2
+    __cmdid+=($1)
+    __description[$1]=$2
     __dependencies[$1]=$3
-	__sources[$1]=$4
-	__build[$1]=$5
-	__install[$1]=$6
-	__configure[$1]=$7
-	__package[$1]=$8
+    __sources[$1]=$4
+    __build[$1]=$5
+    __install[$1]=$6
+    __configure[$1]=$7
+    __package[$1]=$8
 }
 
 function rp_listFunctions() {
-	local id
+    local id
 
     echo -e "Command-ID: Description:\tList of available actions [sources|build|install|configure|package]"
     echo "--------------------------------------------------"
-	for (( i = 0; i < ${#__cmdid[@]}; i++ )); do
-		id=${__cmdid[$i]};
-		echo -e "$id:\t${__description[$id]}:\t\c"
+    for (( i = 0; i < ${#__cmdid[@]}; i++ )); do
+        id=${__cmdid[$i]};
+        echo -e "$id:\t${__description[$id]}:\t\c"
         fn_exists ${__dependencies[$id]} && echo -e "dependencies \c"
         fn_exists ${__sources[$id]} && echo -e "sources \c"
-		fn_exists ${__build[$id]} && echo -e "build \c"
-		fn_exists ${__install[$id]} && echo -e "install \c"
-		fn_exists ${__configure[$id]} && echo -e "configure \c"
-		fn_exists ${__package[$id]} && echo -e "package \c"
-		echo ""
-	done
+        fn_exists ${__build[$id]} && echo -e "build \c"
+        fn_exists ${__install[$id]} && echo -e "install \c"
+        fn_exists ${__configure[$id]} && echo -e "configure \c"
+        fn_exists ${__package[$id]} && echo -e "package \c"
+        echo ""
+    done
     echo "=================================================="
 }
 
@@ -220,7 +220,7 @@ rps_checkNeededPackages
 if [ $(id -u) -ne 0 ]; then
     printf "Script must be run as root. Try 'sudo ./retropackages'\n"
     exit 1
-fi   
+fi
 
 scriptdir=`dirname $0`
 scriptdir=`cd $scriptdir && pwd`
@@ -314,10 +314,10 @@ rp_registerFunction "319" "Auto-start EmulationStation    " ""                  
 rp_registerFunction "320" "Install XBox contr. 360 driver " ""                       ""                         ""                       "set_install_xboxdrv"       ""                           ""
 rp_registerFunction "321" "Install PS3 controller driver  " ""                       ""                         ""                       "set_installps3controller"  ""                           ""
 rp_registerFunction "322" "Register RetroArch controller  " ""                       ""                         ""                       "set_RetroarchJoyconfig"    ""                           ""
-rp_registerFunction "323" "Install SDL 2.0.1 binaries     " ""                       ""                         ""                       "install_libsdlbinaries"    ""                           "" 
-rp_registerFunction "324" "Configure audio settings       " ""                       ""                         ""                       ""                          "configure_audiosettings"    "" 
-rp_registerFunction "325" "ES-Config                      " ""                       ""                         ""                       "install_esconfig"          "configure_esconfig"         "" 
-rp_registerFunction "326" "Gamecon driver                 " ""                       ""                         ""                       "install_gamecondriver"     "configure_gamecondriver"    "" 
+rp_registerFunction "323" "Install SDL 2.0.1 binaries     " ""                       ""                         ""                       "install_libsdlbinaries"    ""                           ""
+rp_registerFunction "324" "Configure audio settings       " ""                       ""                         ""                       ""                          "configure_audiosettings"    ""
+rp_registerFunction "325" "ES-Config                      " ""                       ""                         ""                       "install_esconfig"          "configure_esconfig"         ""
+rp_registerFunction "326" "Gamecon driver                 " ""                       ""                         ""                       "install_gamecondriver"     "configure_gamecondriver"    ""
 
 # TODO python scripts (es-config)
 
@@ -328,13 +328,13 @@ rp_registerFunction "326" "Gamecon driver                 " ""                  
 # ID mode
 if [[ $# -eq 1 ]]; then
     ensureRootdirExists
-	id=$1
+    id=$1
     fn_exists ${__dependencies[$id]} && ${__dependencies[$id]}
     fn_exists ${__sources[$id]} && ${__sources[$id]}
-	fn_exists ${__build[$id]} && ${__build[$id]}
-	fn_exists ${__install[$id]} && ${__install[$id]}
-	fn_exists ${__configure[$id]} && ${__configure[$id]}
-	# fn_exists ${__package[$id]} && ${__package[$id]} packages are not built automatically
+    fn_exists ${__build[$id]} && ${__build[$id]}
+    fn_exists ${__install[$id]} && ${__install[$id]}
+    fn_exists ${__configure[$id]} && ${__configure[$id]}
+    # fn_exists ${__package[$id]} && ${__package[$id]} packages are not built automatically
 elif [[ $# -eq 2 ]]; then
     ensureRootdirExists
     id=$1

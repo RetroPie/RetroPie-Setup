@@ -1,34 +1,34 @@
 #!/usr/bin/env bash
 
-#  RetroPie-Setup - Shell script for initializing Raspberry Pi 
-#  with RetroArch, various cores, and EmulationStation (a graphical 
+#  RetroPie-Setup - Shell script for initializing Raspberry Pi
+#  with RetroArch, various cores, and EmulationStation (a graphical
 #  front end).
-# 
+#
 #  (c) Copyright 2012-2014  Florian Müller (contact@petrockblock.com)
-# 
+#
 #  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
-# 
+#
 #  Permission to use, copy, modify and distribute RetroPie-Setup in both binary and
 #  source form, for non-commercial purposes, is hereby granted without fee,
 #  providing that this license information and copyright notice appear with
 #  all copies and any derived work.
-# 
+#
 #  This software is provided 'as-is', without any express or implied
 #  warranty. In no event shall the authors be held liable for any damages
 #  arising from the use of this software.
-# 
+#
 #  RetroPie-Setup is freeware for PERSONAL USE only. Commercial users should
 #  seek permission of the copyright holders first. Commercial use includes
 #  charging money for RetroPie-Setup or software derived from RetroPie-Setup.
-# 
+#
 #  The copyright holders request that bug fixes and improvements to the code
 #  should be forwarded to them so everyone can benefit from the modifications
 #  in future versions.
-# 
+#
 #  Many, many thanks go to all people that provide the individual packages!!!
-# 
+#
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
-# 
+#
 
 function getScriptAbsoluteDir() {
     # @description used to get the script path
@@ -45,7 +45,7 @@ function getScriptAbsoluteDir() {
     fi
 }
 
-function import() { 
+function import() {
     # @description importer routine to get external functionality.
     # @description the first location searched is the script directory.
     # @description if not found, search the module in the paths contained in $SHELL_LIBRARY_PATH environment variable
@@ -98,10 +98,10 @@ function import() {
 }
 
 function initImport() {
-	script_invoke_path="$0"
-	script_name=`basename "$0"`
-	getScriptAbsoluteDir "$script_invoke_path"
-	script_absolute_dir=$RESULT	
+        script_invoke_path="$0"
+        script_name=`basename "$0"`
+        getScriptAbsoluteDir "$script_invoke_path"
+        script_absolute_dir=$RESULT
 }
 
 function rps_checkNeededPackages() {
@@ -117,7 +117,7 @@ function rps_checkNeededPackages() {
         fi
     else
         echo "Found needed packages 'git' and 'dialog'."
-    fi 
+    fi
 }
 
 function rps_availFreeDiskSpace() {
@@ -135,16 +135,16 @@ function rps_availFreeDiskSpace() {
 }
 
 function checkForLogDirectory() {
-	# make sure that RetroPie-Setup log directory exists
-	if [[ ! -d $scriptdir/logs ]]; then
-	    mkdir -p "$scriptdir/logs"
-	    chown $user "$scriptdir/logs"
-	    chgrp $user "$scriptdir/logs"
-	    if [[ ! -d $scriptdir/logs ]]; then
-	      echo "Couldn't make directory $scriptdir/logs"
-	      exit 1
-	    fi
-	fi	
+        # make sure that RetroPie-Setup log directory exists
+        if [[ ! -d $scriptdir/logs ]]; then
+            mkdir -p "$scriptdir/logs"
+            chown $user "$scriptdir/logs"
+            chgrp $user "$scriptdir/logs"
+            if [[ ! -d $scriptdir/logs ]]; then
+              echo "Couldn't make directory $scriptdir/logs"
+              exit 1
+            fi
+        fi
 }
 
 # =============================================================
@@ -162,14 +162,14 @@ rootdir=/opt/retropie
 homedir="$home/RetroPie"
 romdir="$homedir/roms"
 if [[ ! -d $romdir ]]; then
-	mkdir $romdir
+        mkdir $romdir
 fi
 
 # check, if sudo is used
 if [ $(id -u) -ne 0 ]; then
     printf "Script must be run as root. Try 'sudo ./retropackages'\n"
     exit 1
-fi   
+fi
 
 scriptdir=`dirname $0`
 scriptdir=`cd $scriptdir && pwd`
@@ -185,7 +185,7 @@ rps_checkNeededPackages
 
 # make sure that enough space is available
 if [[ ! -d $rootdir ]]; then
-	mkdir -p $rootdir
+        mkdir -p $rootdir
 fi
 rps_availFreeDiskSpace 800000
 
@@ -197,7 +197,7 @@ while true; do
              4 "UPDATE RetroPie Setup script"
              5 "UPDATE RetroPie Binaries"
              7 "Perform REBOOT" )
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)    
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then
         case $choices in
             1) rps_main_binaries ;;

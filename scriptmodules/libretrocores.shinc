@@ -1,27 +1,27 @@
-# 
+#
 #  (c) Copyright 2012-2014  Florian Müller (contact@petrockblock.com)
-# 
+#
 #  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
-# 
+#
 #  Permission to use, copy, modify and distribute this work in both binary and
 #  source form, for non-commercial purposes, is hereby granted without fee,
 #  providing that this license information and copyright notice appear with
 #  all copies and any derived work.
-# 
+#
 #  This software is provided 'as-is', without any express or implied
 #  warranty. In no event shall the authors be held liable for any damages
 #  arising from the use of this software.
-# 
+#
 #  RetroPie-Setup is freeware for PERSONAL USE only. Commercial users should
 #  seek permission of the copyright holders first. Commercial use includes
 #  charging money for RetroPie-Setup or software derived from RetroPie-Setup.
-# 
+#
 #  The copyright holders request that bug fixes and improvements to the code
 #  should be forwarded to them so everyone can benefit from the modifications
 #  in future versions.
-# 
+#
 #  Many, many thanks go to all people that provide the individual packages!!!
-# 
+#
 
 # SNES emulator Pocketsnes -------------------------------------------------
 function sources_pocketsnes() {
@@ -39,7 +39,7 @@ function build_pocketsnes() {
     make
     if [[ -z `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
-    fi      
+    fi
     popd
 }
 
@@ -47,7 +47,7 @@ function configure_pocketsnes() {
     printMsg "Configuring Pocketsnes"
 
     mkdir -p $romdir/snes
-    
+
     # # look for existing configuration
     # xmlstarlet sel -t -c "/systemList/system[name='snes']" -n -v test.xml
 
@@ -56,7 +56,7 @@ function configure_pocketsnes() {
 
     # # add new system
     # xml ed -s /config -t elem -n sub -v "" -i /config/sub -t attr -n class -v com.foo test.xml
-    
+
     # # append to system
     # xmlstarlet ed -a '/xml/block/el[@name="b"]' \
     #           --type 'elem' -n 'el' -v 0
@@ -80,7 +80,7 @@ function build_picodrive() {
     printMsg "Building Megadrive core picodrive"
     pushd "$rootdir/emulatorcores/picodrive"
     make clean
-    make -f Makefile.libretro platform=armv6    
+    make -f Makefile.libretro platform=armv6
     if [[ ! -f `find $rootdir/emulatorcores/picodrive/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core Picodrive."
     fi
@@ -115,8 +115,8 @@ function build_stellalibretro() {
     make
     if [[ -z `find $rootdir/emulatorcores/stella-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 2600 core."
-    fi  
-    popd   
+    fi
+    popd
 }
 
 function configure_stellalibretro() {
@@ -135,7 +135,7 @@ function build_cavestory() {
     make platform=rpi
     if [[ -z `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NXEngine / Cave Story core."
-    fi  
+    fi
     popd
 }
 
@@ -143,7 +143,7 @@ function configure_cavestory() {
     printMsg "Configuring cavestory"
     if [[ ! -d $romdir/ports ]]; then
         mkdir -p $romdir/ports
-    fi 
+    fi
     cat > "$romdir/ports/Cave Story.sh" << _EOF_
 #!/bin/bash
 $rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"
@@ -164,7 +164,7 @@ function build_doom() {
     make
     if [[ -z `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Doom core."
-    fi  
+    fi
     popd
 }
 
@@ -208,7 +208,7 @@ function build_gbclibretro() {
     make -C libgambatte -f Makefile.libretro
     if [[ -z `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Color core."
-    fi      
+    fi
     popd
 }
 
@@ -230,7 +230,7 @@ function build_mamelibretro() {
     make -f makefile.libretro ARM=1
     if [[ -z `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile MAME core."
-    fi      
+    fi
     popd
 }
 
@@ -241,7 +241,7 @@ function configure_mamelibretro() {
 
 function depen_fbalibretro() {
     printMsg "Getting dependencies for fbalibretro"
-    apt-get update && apt-get install -y --force-yes cpp-4.5 gcc-4.5 g++-4.5    
+    apt-get update && apt-get install -y --force-yes cpp-4.5 gcc-4.5 g++-4.5
 }
 
 function sources_fbalibretro() {
@@ -282,7 +282,7 @@ function build_neslibretro() {
     popd
     if [[ -z `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NES core."
-    fi      
+    fi
     popd
 }
 
@@ -300,10 +300,10 @@ function build_genesislibretro() {
     printMsg "Building genesislibretro"
     pushd "$rootdir/emulatorcores/Genesis-Plus-GX"
     make -f Makefile.libretro clean
-    make -f Makefile.libretro 
+    make -f Makefile.libretro
     if [[ ! -f `find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
-    fi      
+    fi
     popd
 }
 
@@ -324,7 +324,7 @@ function build_turbografx16() {
     make
     if [[ ! -f `find $rootdir/emulatorcores/mednafen-pce-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile PC Engine core."
-    fi      
+    fi
     popd
 }
 
@@ -346,8 +346,8 @@ function build_psxlibretro() {
     make
     if [[ -z `find $rootdir/emulatorcores/pcsx_rearmed/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Playstation core."
-    fi      
-    popd    
+    fi
+    popd
 }
 
 function configure_psxlibretro() {
@@ -366,7 +366,7 @@ function build_mednafenpcefast() {
     make
      if [[ -z `find $rootdir/emulatorcores/mednafenpcefast/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Mednafen PCE Fast core."
-    fi   
+    fi
     popd
 }
 

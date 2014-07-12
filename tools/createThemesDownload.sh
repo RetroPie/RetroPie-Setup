@@ -193,11 +193,11 @@ echo "Checking, if all directories/files exist"
 tLen=${#filelist[@]}
 for (( i=0; i<${tLen}; i++ ));
 do
-	if [[ ! -d "${filelist[$i]}" && ! -f "${filelist[$i]}" ]]
-	then
-	  echo "Cannot find directory ${filelist[$i]}."
-	  exit
-	fi
+    if [[ ! -d "${filelist[$i]}" && ! -f "${filelist[$i]}" ]]
+    then
+      echo "Cannot find directory ${filelist[$i]}."
+      exit
+    fi
 done
 
 tar -c -vf /home/pi/ESThemeSimple_`date +%d%m%y`.tar ${filelist[0]}
@@ -205,11 +205,11 @@ tar -c -vf /home/pi/ESThemeSimple_`date +%d%m%y`.tar ${filelist[0]}
 tLen=${#filelist[@]}
 for (( i=1; i<${tLen}; i++ ));
 do
-	tar -r -vf /home/pi/ESThemeSimple_`date +%d%m%y`.tar ${filelist[$i]}
+    tar -r -vf /home/pi/ESThemeSimple_`date +%d%m%y`.tar ${filelist[$i]}
 done
 
 if [[ -f /home/pi/ESThemeSimple_`date +%d%m%y`.tar.bz2 ]]; then
-	rm /home/pi/ESThemeSimple_`date +%d%m%y`.tar.bz2
+    rm /home/pi/ESThemeSimple_`date +%d%m%y`.tar.bz2
 fi
 echo "Compressing theme archive."
 bzip2 /home/pi/ESThemeSimple_`date +%d%m%y`.tar
