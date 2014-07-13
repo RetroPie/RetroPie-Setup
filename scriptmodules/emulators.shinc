@@ -536,7 +536,7 @@ function install_hatari() {
 function sources_mame4all() {
     printMsg "Getting sources of Mame4All-Pi"
 
-    gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/
+    gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/ NS
 }
 
 function build_mame4all() {
@@ -706,7 +706,7 @@ function configure_snes9x() {
 function sources_pifba() {
     printMsg "Getting sourecs of PiFBA emulator"
     rmDirExists "$rootdir/emulators/pifba"
-    gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/
+    gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/ NS
 }
 
 function build_pifba() {
@@ -747,7 +747,7 @@ function configure_pifba() {
 function sources_pisnes() {
     printMsg "Getting sources of PiSNES emulator"
     rmDirExists "$rootdir/emulators/pisnes"
-    gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/
+    gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/ NS
 }
 
 function build_pisnes() {
