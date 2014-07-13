@@ -613,15 +613,8 @@ function build_jzint() {
 
     pushd "$rootdir/emulators/jzintv-1.0-beta4/src/"
     mkdir "$rootdir/emulators/jzintv-1.0-beta4/bin"
-    cat > "pi.diff" << _EOF_
-65c
- OPT_FLAGS = -O3 -fomit-frame-pointer -fprefetch-loop-arrays -march=armv6 -mfloat-abi=hard -mfpu=vfp
-.
-_EOF_
-
-    patch -e Makefile pi.diff
     make clean
-    make
+    make OPT_FLAGS="-O3 -fomit-frame-pointer -fprefetch-loop-arrays -march=armv6 -mfloat-abi=hard -mfpu=vfp"
     if [[ ! -f "$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile jzintv."
     else
