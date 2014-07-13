@@ -1255,7 +1255,6 @@ function configure_esconfig()
     fi
     # generate new startup scripts for ES-config
     cp "$scriptdir/supplementary/scripts"/*/*.py "$rootdir/roms/esconfig/"
-    chown $user:$user "$rootdir/roms/esconfig"/*.py
     chmod +x "$rootdir/roms/esconfig"/*.py
     # add some information
     cat > ~/.emulationstation/gamelists/esconfig/gamelist.xml << _EOF_
@@ -1298,7 +1297,7 @@ GNGEO 0.7</desc>
     </game>
 </gameList>
 _EOF_
-chown $user:$user $romdir/esconfig/gamelist.xml
+chown $user:$user "$romdir/esconfig/"*
 }
 
 function install_esconfig()
