@@ -138,8 +138,7 @@ function checkForLogDirectory() {
         # make sure that RetroPie-Setup log directory exists
         if [[ ! -d $scriptdir/logs ]]; then
             mkdir -p "$scriptdir/logs"
-            chown $user "$scriptdir/logs"
-            chgrp $user "$scriptdir/logs"
+            chown $user:$user "$scriptdir/logs"
             if [[ ! -d $scriptdir/logs ]]; then
               echo "Couldn't make directory $scriptdir/logs"
               exit 1

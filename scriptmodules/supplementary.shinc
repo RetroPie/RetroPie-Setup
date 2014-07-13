@@ -547,9 +547,7 @@ function install_ESThemeSimple() {
     if [[ ! -d "/etc/emulationstation/themes" ]]; then
         mkdir -p "/etc/emulationstation/themes"
     fi
-    if [[ -d "/etc/emulationstation/themes/simple" ]]; then
-        rm -rf "/etc/emulationstation/themes/simple"
-    fi
+    rmDirExists "/etc/emulationstation/themes/simple"
     mv -f simple/ "/etc/emulationstation/themes/"
 
     chmod -R 755 "/etc/emulationstation/themes/"
@@ -1079,16 +1077,13 @@ function install_modules() {
     modprobe uinput
     modprobe joydev
 
-    if ! grep -q "uinput" /etc/modules; then
-        addLineToFile "uinput" "/etc/modules"
-    else
-        echo -e "uinput module already contained in /etc/modules"
-    fi
-    if ! grep -q "joydev" /etc/modules; then
-        addLineToFile "joydev" "/etc/modules"
-    else
-        echo -e "joydev module already contained in /etc/modules"
-    fi
+    for module in uinput joydev; do
+        if ! grep -q "$module" /etc/modules; then
+            addLineToFile "$module" "/etc/modules"
+        else
+            echo -e "$module module already contained in /etc/modules"
+        fi
+    done
 }
 
 function install_setavoidsafemode() {
@@ -1165,9 +1160,7 @@ function set_installps3controller() {
     wget -O QtSixA.tar.gz http://sourceforge.net/projects/qtsixa/files/QtSixA%201.5.1/QtSixA-1.5.1-src.tar.gz
     tar xfvz QtSixA.tar.gz
     cd QtSixA-1.5.1/sixad
-    gcc_version 4.6
-    make
-    gcc_version $__default_gcc_version
+    make CXX="g++-4.6"
     mkdir -p /var/lib/sixad/profiles
     checkinstall -y
     update-rc.d sixad defaults
@@ -1259,27 +1252,8 @@ function configure_esconfig()
         mkdir -p $romdir/esconfig
     fi
     # generate new startup scripts for ES-config
-    cp "$scriptdir/supplementary/scripts/input/esconfig.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/esconfig.py
-    chmod +x $romdir/esconfig/esconfig.py
-    cp "$scriptdir/supplementary/scripts/input/basic.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/basic.py
-    chmod +x $romdir/esconfig/basic.py
-    cp "$scriptdir/supplementary/scripts/input/autooff.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/autooff.py
-    chmod +x $romdir/esconfig/autooff.py
-    cp "$scriptdir/supplementary/scripts/input/autoon.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/autoon.py
-    chmod +x $romdir/esconfig/autoon.py
-    cp "$scriptdir/supplementary/scripts/info/showip.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/showip.py
-    chmod +x $romdir/esconfig/showip.py
-    cp "$scriptdir/supplementary/scripts/input/rgui.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/rgui.py
-    chmod +x $romdir/esconfig/rgui.py
-    cp $scriptdir/supplementary/scripts/audio/*.py "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/*.py
-    chmod +x $romdir/esconfig/*.py
+    cp "$scriptdir/supplementary/scripts"/*/*.py "$rootdir/roms/esconfig/"
+    chmod +x "$rootdir/roms/esconfig"/*.py
     # add some information
     cat > ~/.emulationstation/gamelists/esconfig/gamelist.xml << _EOF_
 <?xml version="1.0"?>
@@ -1321,15 +1295,13 @@ GNGEO 0.7</desc>
     </game>
 </gameList>
 _EOF_
-chown $user:$user $romdir/esconfig/gamelist.xml
+chown $user:$user "$romdir/esconfig/"*
 }
 
 function install_esconfig()
 {
     printMsg "Installing ES-config"
-    if [[ -d "$rootdir/supplementary/ES-config" ]]; then
-        rm -rf "$rootdir/supplementary/ES-config"
-    fi
+    rmDirExists "$rootdir/supplementary/ES-config"
     gitPullOrClone "$rootdir/supplementary/ES-config" git://github.com/Aloshi/ES-config.git
     pushd "$rootdir/supplementary/ES-config"
     sed -i -e "s/apt-get install/apt-get install -y --force-yes/g" get_dependencies.sh
