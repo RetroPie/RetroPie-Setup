@@ -132,7 +132,7 @@ function sources_cavestory() {
 function build_cavestory() {
     printMsg "Building cavestory"
     pushd "$rootdir/emulatorcores/nxengine-libretro"
-    make platform=rpi
+    make
     if [[ -z `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NXEngine / Cave Story core."
     fi
