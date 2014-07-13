@@ -214,3 +214,10 @@ gcc_version()
 function ensureRootdirExists() {
     mkdir -p $rootdir
 }
+
+function rmDirExists()
+{
+    if [[ -d "$1" ]]; then
+        rm -rf "$1"
+    fi
+}

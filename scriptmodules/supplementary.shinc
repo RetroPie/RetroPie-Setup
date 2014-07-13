@@ -547,9 +547,7 @@ function install_ESThemeSimple() {
     if [[ ! -d "/etc/emulationstation/themes" ]]; then
         mkdir -p "/etc/emulationstation/themes"
     fi
-    if [[ -d "/etc/emulationstation/themes/simple" ]]; then
-        rm -rf "/etc/emulationstation/themes/simple"
-    fi
+    rmDirExists "/etc/emulationstation/themes/simple"
     mv -f simple/ "/etc/emulationstation/themes/"
 
     chmod -R 755 "/etc/emulationstation/themes/"
@@ -1306,9 +1304,7 @@ chown $user:$user $romdir/esconfig/gamelist.xml
 function install_esconfig()
 {
     printMsg "Installing ES-config"
-    if [[ -d "$rootdir/supplementary/ES-config" ]]; then
-        rm -rf "$rootdir/supplementary/ES-config"
-    fi
+    rmDirExists "$rootdir/supplementary/ES-config"
     gitPullOrClone "$rootdir/supplementary/ES-config" git://github.com/Aloshi/ES-config.git
     pushd "$rootdir/supplementary/ES-config"
     sed -i -e "s/apt-get install/apt-get install -y --force-yes/g" get_dependencies.sh

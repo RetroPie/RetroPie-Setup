@@ -253,9 +253,7 @@ function configure_advmame() {
 function sources_uae4all() {
     printMsg "Installing Amiga emulator"
 
-    if [[ -d "$rootdir/emulators/uae4rpi" ]]; then
-        rm -rf "$rootdir/emulators/uae4rpi"
-    fi
+    rmDirExists "$rootdir/emulators/uae4rpi"
     wget http://www.gamshi.com/download/uae4rpi.tar.bz2
     tar -jxvf uae4rpi.tar.bz2 -C "$rootdir/emulators/"
     rm uae4rpi.tar.bz2
@@ -286,9 +284,7 @@ function configure_uae4all() {
 function sources_atari800() {
     printMsg "Getting sources of Atari 800 emulator"
     wget -O atari800-3.0.0.tar.gz http://sourceforge.net/projects/atari800/files/atari800/3.0.0/atari800-3.0.0.tar.gz/download
-    if [[ -d "$rootdir/emulators/atari800-3.0.0" ]]; then
-        rm -rf "$rootdir/emulators/atari800-3.0.0"
-    fi
+    rmDirExists "$rootdir/emulators/atari800-3.0.0"
     tar xvfz atari800-3.0.0.tar.gz -C "$rootdir/emulators/"
     rm atari800-3.0.0.tar.gz
 }
@@ -317,9 +313,7 @@ function configure_atari800() {
 function sources_cpc() {
     printMsg "Getting sources for CPC4RPi"
     wget http://gaming.capsule-sa.co.za/downloads/cpc4rpi-1.1_src.tar.gz
-    if [[ -d "$rootdir/emulators/cpc4rpi-1.1" ]]; then
-        rm -rf "$rootdir/emulators/cpc4rpi-1.1"
-    fi
+    rmDirExists "$rootdir/emulators/cpc4rpi-1.1"
     tar xvfz cpc4rpi-1.1_src.tar.gz -C "$rootdir/emulators/"
     rm cpc4rpi-1.1_src.tar.gz
 }
@@ -392,9 +386,7 @@ function configure_basilisk() {
 
 function sources_vice() {
     printMsg "Getting VICE Commodore 64 core"
-    if [[ -d "$rootdir/emulators/vice-2.4" ]]; then
-        rm -rf "$rootdir/emulators/vice-2.4"
-    fi
+    rmDirExists "$rootdir/emulators/vice-2.4"
     wget -O vice-2.4.tar.gz http://downloads.sourceforge.net/project/vice-emu/releases/vice-2.4.tar.gz
     tar xzvf vice-2.4.tar.gz -C "$rootdir/emulators/"
     rm vice-2.4.tar.gz
@@ -437,9 +429,7 @@ function install_c64roms() {
 
 function install_eduke32() {
     printMsg "Installing eDuke32"
-    if [[ -d "$rootdir/emulators/eduke32" ]]; then
-        rm -rf "$rootdir/emulators/eduke32"
-    fi
+    rmDirExists "$rootdir/emulators/eduke32"
     mkdir -p $rootdir/emulators/eduke32
     pushd "$rootdir/emulators/eduke32"
     printMsg "Downloading eDuke core"
@@ -519,9 +509,7 @@ function configure_gpsp() {
 
 function sources_gngeopi() {
     printMsg "Getting sources of GnGeoPi"
-    if [[ -d "$rootdir/emulators/gngeo-pi-0.85" ]]; then
-        rm -rf "$rootdir/emulators/gngeo-pi-0.85"
-    fi
+    rmDirExists "$rootdir/emulators/gngeo-pi-0.85"
     gitPullOrClone "$rootdir/emulators/gngeo-pi-0.85" https://github.com/ymartel06/GnGeo-Pi.git
 }
 
@@ -654,9 +642,7 @@ function depen_linapple() {
 
 function sources_linapple() {
     printMsg "Installing Apple II emulator (Linapple)"
-    if [[ -d "$rootdir/emulators/apple2" ]]; then
-        rm -rf "$rootdir/emulators/apple2"
-    fi
+    rmDirExists "$rootdir/emulators/apple2"
     wget http://downloads.sourceforge.net/project/linapple/linapple/linapple-2a/linapple-src_2a.tar.bz2
     tar -jxvf linapple-src_2a.tar.bz2 -C "$rootdir/emulators/"
     rm linapple-src_2a.tar.bz2
@@ -693,9 +679,7 @@ _EOF_
 
 function sources_mupen64rpi() {
     printMsg "Getting sources of N64 emulator Mupen 64 Plus RPi"
-    if [[ -d "$rootdir/emulators/mupen64plus-rpi" ]]; then
-        rm -rf "$rootdir/emulators/mupen64plus-rpi"
-    fi
+    rmDirExists "$rootdir/emulators/mupen64plus-rpi"
     gitPullOrClone "$rootdir/emulators/mupen64plus-rpi" https://github.com/ricrpi/mupen64plus-rpi
 }
 
@@ -720,9 +704,7 @@ function depen_snes9x() {
 
 function sources_snes9x() {
     printMsg "Getting sources of SNES9X-RPi emulator"
-    if [[ -d "$rootdir/emulators/snes9x-rpi" ]]; then
-        rm -rf "$rootdir/emulators/snes9x-rpi"
-    fi
+    rmDirExists "$rootdir/emulators/snes9x-rpi"
     gitPullOrClone "$rootdir/emulators/snes9x-rpi" https://github.com/chep/snes9x-rpi.git
 }
 
@@ -749,9 +731,7 @@ function configure_snes9x() {
 
 function sources_pifba() {
     printMsg "Getting sourecs of PiFBA emulator"
-    if [[ -d "$rootdir/emulators/pifba" ]]; then
-        rm -rf "$rootdir/emulators/pifba"
-    fi
+    rmDirExists "$rootdir/emulators/pifba"
     gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/
 }
 
@@ -792,9 +772,7 @@ function configure_pifba() {
 
 function sources_pisnes() {
     printMsg "Getting sources of PiSNES emulator"
-    if [[ -d "$rootdir/emulators/pisnes" ]]; then
-        rm -rf "$rootdir/emulators/pisnes"
-    fi
+    rmDirExists "$rootdir/emulators/pisnes"
     gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/
 }
 
@@ -822,9 +800,7 @@ function configure_pisnes() {
 function install_rpix86() {
     printMsg "Installing rpix86"
     wget http://rpix86.patrickaalto.com/rpix86.tar.gz
-    if [[ -d "$rootdir/emulators/rpix86" ]]; then
-        rm -rf "$rootdir/emulators/rpix86"
-    fi
+    rmDirExists "$rootdir/emulators/rpix86"
     mkdir -p "$rootdir/emulators/rpix86"
     tar xvfz rpix86.tar.gz -C "$rootdir/emulators/rpix86"
     rm rpix86.tar.gz
@@ -836,9 +812,7 @@ function install_rpix86() {
 function configure_rpix86() {
     printMsg "Configuring rpix86"
     ln -s $romdir/pc/ $rootdir/emulators/rpix86/games
-    if [[ -d $romdir/pc/pc ]]; then
-        rm $romdir/pc/pc
-    fi
+    rmDirExists "$romdir/pc/pc"
     cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
 #!/bin/bash
 pushd $rootdir/emulators/rpix86
@@ -885,9 +859,7 @@ function install_zxspectrum() {
 
 function sources_fbzx() {
     printMsg "Installing ZX Spectrum emulator FBZX"
-    if [[ -d "$rootdir/emulators/fbzx-2.10.0" ]]; then
-        rm -rf "$rootdir/emulators/fbzx-2.10.0"
-    fi
+    rmDirExists "$rootdir/emulators/fbzx-2.10.0"
     wget -O fbzx-2.10.0.tar.bz2 http://www.rastersoft.com/descargas/fbzx-2.10.0.tar.bz2
     tar xvfj fbzx-2.10.0.tar.bz2  -C "$rootdir/emulators"
     rm fbzx-2.10.0.tar.bz2
@@ -965,14 +937,10 @@ function install_fastdosbox() {
 
 function sources_dgen() {
     printMsg "Getting sources of dgen"
-    if [[ -d "$rootdir/emulators/dgen" ]]; then
-        rm -rf "$rootdir/emulators/dgen"
-    fi
+    rmDirExists "$rootdir/emulators/dgen"
     wget http://downloads.sourceforge.net/project/dgen/dgen/1.32/dgen-sdl-1.32.tar.gz
     tar xvfz dgen-sdl-1.32.tar.gz -C "$rootdir/emulators/"
-    if [[ -d "$rootdir/emulators/dgen-sdl" ]]; then
-        rm -rf "$rootdir/emulators/dgen-sdl"
-    fi
+    rmDirExists "$rootdir/emulators/dgen-sdl"
     mv "$rootdir/emulators/dgen-sdl-1.32" "$rootdir/emulators/dgen-sdl"
     rm dgen-sdl-1.32.tar.gz
 }
