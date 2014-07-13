@@ -274,6 +274,7 @@ rp_registerFunction "125" "ZXSpectrum emulator Fuse       " ""                  
 rp_registerFunction "126" "ZXSpectrum emulator FBZX       " ""                       "sources_fbzx"            "build_fbzx"              ""                          ""                           ""
 rp_registerFunction "127" "MSX emulator OpenMSX           " "depen_msx"              "sources_openmsx"         "build_openmsx"           ""                          "configure_openmsx"          ""
 rp_registerFunction "128" "DOS emulator FastDosbox        " ""                       "sources_fastdosbox"      "build_fastdosbox"        "install_fastdosbox"        ""                           ""
+rp_registerFunction "129" "Megadrive/Genesis emulat. DGEN " ""                       "sources_dgen"            "build_dgen"              "install_dgen"              "configure_dgen"             ""
 
 # LibretroCore components (libretrocores.shinc)
 rp_registerFunction "200" "SNES LibretroCore PocketSNES   " ""                       "sources_pocketsnes"       "build_pocketsnes"       ""                          "configure_pocketsnes"       ""
