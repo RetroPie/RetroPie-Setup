@@ -204,9 +204,6 @@ function sources_advmame() {
 function build_advmame() {
     printMsg "Building AdvMAME"
 
-    export CC=gcc-4.7
-    export GCC=g++-4.7
-
     tar xzvf advmame.tar.gz -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/advancemame-0.94.0"
     sed 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' <advance/linux/vfb.c >advance/linux/temp.c
@@ -218,15 +215,13 @@ sed '
 #include <stdlib.h>
 ' <advance/d2/d2.cc >advance/d2/temp.cc
     mv advance/d2/temp.cc advance/d2/d2.cc
-    ./configure --prefix="$rootdir/emulators/advancemame-0.94.0/installdir"
+    ./configure CC="gcc-4.7" CXX="g++-4.7"--prefix="$rootdir/emulators/advancemame-0.94.0/installdir"
     sed 's/LDFLAGS=-s/LDFLAGS=-s -lm -Wl,--no-as-needed/' <Makefile >Makefile.temp
     mv Makefile.temp Makefile
     make
     popd
     rm advmame.tar.gz
 
-    unset CC
-    unset GCC
 }
 
 function install_advmame() {
@@ -637,9 +632,7 @@ function sources_linapple() {
 function build_linapple() {
     printMsg "Building Linapple2"
     pushd "$rootdir/emulators/linapple-src_2a/src"
-    gcc_version 4.6
-    make
-    gcc_version $__default_gcc_version
+    make CXX="g++-4.6"
     popd
 }
 
@@ -934,10 +927,8 @@ function sources_dgen() {
 function build_dgen() {
     printMsg "Building dgen"
     pushd "$rootdir/emulators/dgen-sdl"
-    gcc_version 4.6
-    ./configure --disable-opengl --prefix="$rootdir/emulators/dgen-sdl/installdir"
+    ./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$rootdir/emulators/dgen-sdl/installdir"
     make
-    gcc_version $__default_gcc_version
     popd
 }
 
