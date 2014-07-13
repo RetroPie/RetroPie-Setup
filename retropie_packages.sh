@@ -55,11 +55,23 @@ __doReboot=0
 
 __default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
 __default_asflags=""
+__default_makeflags=""
 __default_gcc_version="4.7"
 
 [[ -z "${CFLAGS}"        ]] && export CFLAGS="${__default_cflags}"
 [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
 [[ -z "${ASFLAGS}"         ]] && export ASFLAGS="${__default_asflags}"
+[[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
+
+# test if we are in a chroot
+if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
+  # make chroot identify as arm6l
+  export QEMU_CPU=arm1176
+  __chroot=1
+else
+  __chroot=0
+fi
+
 
 # ==============================================================================
 
