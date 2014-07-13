@@ -61,6 +61,16 @@ __default_gcc_version="4.7"
 [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
 [[ -z "${ASFLAGS}"         ]] && export ASFLAGS="${__default_asflags}"
 
+# test if we are in a chroot
+if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
+  # make chroot identify as arm6l
+  export QEMU_CPU=arm1176
+  __chroot=1
+else
+  __chroot=0
+fi
+
+
 # ==============================================================================
 
 function getScriptAbsoluteDir() {
