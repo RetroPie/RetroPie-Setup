@@ -563,15 +563,8 @@ function build_mame4all() {
 function configure_mame4all() {
     printMsg "Configuring Mame4All-Pi"
     mkdir -p "$romdir/mame"
-    mkdir -p "$rootdir/emulators/mame4all-pi/cfg"
-    mkdir -p "$rootdir/emulators/mame4all-pi/hi"
-    mkdir -p "$rootdir/emulators/mame4all-pi/sta"
-    mkdir -p "$rootdir/emulators/mame4all-pi/roms"
-    chmod a+w "$rootdir/emulators/mame4all-pi/cfg"
-    chmod a+w "$rootdir/emulators/mame4all-pi/hi"
-    chmod a+w "$rootdir/emulators/mame4all-pi/sta"
-    chmod a+w "$rootdir/emulators/mame4all-pi/roms"
-    chmod a+w "$rootdir/emulators/mame4all-pi/mame.cfg"
+    mkdir -p "$rootdir/emulators/mame4all-pi/"{cfg,hi,sta,roms}
+    chown -R $user:$user "$rootdir/emulators/mame4all-pi"
     ensureKeyValueShort "samplerate" "22050" "$rootdir/emulators/mame4all-pi/mame.cfg"
     ensureKeyValueShort "rompath" "$romdir/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"
 }
