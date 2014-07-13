@@ -1259,27 +1259,9 @@ function configure_esconfig()
         mkdir -p $romdir/esconfig
     fi
     # generate new startup scripts for ES-config
-    cp "$scriptdir/supplementary/scripts/input/esconfig.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/esconfig.py
-    chmod +x $romdir/esconfig/esconfig.py
-    cp "$scriptdir/supplementary/scripts/input/basic.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/basic.py
-    chmod +x $romdir/esconfig/basic.py
-    cp "$scriptdir/supplementary/scripts/input/autooff.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/autooff.py
-    chmod +x $romdir/esconfig/autooff.py
-    cp "$scriptdir/supplementary/scripts/input/autoon.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/autoon.py
-    chmod +x $romdir/esconfig/autoon.py
-    cp "$scriptdir/supplementary/scripts/info/showip.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/showip.py
-    chmod +x $romdir/esconfig/showip.py
-    cp "$scriptdir/supplementary/scripts/input/rgui.py" "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/rgui.py
-    chmod +x $romdir/esconfig/rgui.py
-    cp $scriptdir/supplementary/scripts/audio/*.py "$romdir/esconfig/"
-    chown $user:$user $romdir/esconfig/*.py
-    chmod +x $romdir/esconfig/*.py
+    cp "$scriptdir/supplementary/scripts"/*/*.py "$rootdir/roms/esconfig/"
+    chown $user:$user "$rootdir/roms/esconfig"/*.py
+    chmod +x "$rootdir/roms/esconfig"/*.py
     # add some information
     cat > ~/.emulationstation/gamelists/esconfig/gamelist.xml << _EOF_
 <?xml version="1.0"?>
