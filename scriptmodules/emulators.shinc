@@ -206,18 +206,11 @@ function build_advmame() {
 
     tar xzvf advmame.tar.gz -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/advancemame-0.94.0"
-    sed 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' <advance/linux/vfb.c >advance/linux/temp.c
-    mv advance/linux/temp.c advance/linux/vfb.c
-    sed 's/misc_quiet\", 0/misc_quiet\", 1/' <advance/osd/global.c >advance/osd/temp.c
-    mv advance/osd/temp.c advance/osd/global.c
-sed '
-/#include <string>/ i\
-#include <stdlib.h>
-' <advance/d2/d2.cc >advance/d2/temp.cc
-    mv advance/d2/temp.cc advance/d2/d2.cc
+    sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
+    sed -i 's/misc_quiet\", 0/misc_quiet\", 1/' advance/osd/global.c
+    sed -i '/#include <string>/ i\#include <stdlib.h>' advance/d2/d2.cc
     ./configure CC="gcc-4.7" CXX="g++-4.7"--prefix="$rootdir/emulators/advancemame-0.94.0/installdir"
-    sed 's/LDFLAGS=-s/LDFLAGS=-s -lm -Wl,--no-as-needed/' <Makefile >Makefile.temp
-    mv Makefile.temp Makefile
+    sed -i 's/LDFLAGS=-s/LDFLAGS=-s -lm -Wl,--no-as-needed/' Makefile
     make
     popd
     rm advmame.tar.gz
