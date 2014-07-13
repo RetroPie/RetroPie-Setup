@@ -1079,16 +1079,13 @@ function install_modules() {
     modprobe uinput
     modprobe joydev
 
-    if ! grep -q "uinput" /etc/modules; then
-        addLineToFile "uinput" "/etc/modules"
-    else
-        echo -e "uinput module already contained in /etc/modules"
-    fi
-    if ! grep -q "joydev" /etc/modules; then
-        addLineToFile "joydev" "/etc/modules"
-    else
-        echo -e "joydev module already contained in /etc/modules"
-    fi
+    for module in uinput joydev; do
+        if ! grep -q "$module" /etc/modules; then
+            addLineToFile "$module" "/etc/modules"
+        else
+            echo -e "$module module already contained in /etc/modules"
+        fi
+    done
 }
 
 function install_setavoidsafemode() {
