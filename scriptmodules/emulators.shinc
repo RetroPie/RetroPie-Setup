@@ -442,7 +442,7 @@ function install_eduke32() {
 #!/bin/bash
 $rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -g %ROM% -gamegrp duke3d.grp"
 _EOF_
-    chown +x "$romdir/roms/ports/Duke3D Shareware.sh"
+    chmod +x "$romdir/roms/ports/Duke3D Shareware.sh"
 }
 
 # install Game Boy Advance emulator gpSP
