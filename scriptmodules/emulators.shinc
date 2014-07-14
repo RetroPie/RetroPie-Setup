@@ -68,7 +68,7 @@ function configure_retroarch() {
 
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
     cp $scriptdir/supplementary/retroarch-core-options.cfg "$rootdir/configs/all/"
-    chmod 777 "$rootdir/configs/all/retroarch-core-options.cfg"
+    chown $user:$user "$rootdir/configs/all/retroarch-core-options.cfg"
 
     if [[ ! -d "$rootdir/emulators/RetroArch/configs/" ]]; then
         mkdir -p "$rootdir/emulators/RetroArch/configs/"
@@ -78,7 +78,7 @@ function configure_retroarch() {
         cp "$rootdir/configs/all/retroarch.cfg" "$rootdir/configs/all/retroarch.cfg.bak"
     fi
     cp $rootdir/emulators/RetroArch/retroarch.cfg "$rootdir/configs/all/"
-    chmod 777 "$rootdir/configs/all/retroarch.cfg"
+    chown $user:$user "$rootdir/configs/all/retroarch.cfg"
     mkdir -p "$rootdir/configs/all/"
 
     ensureSystemretroconfig "atari2600"
@@ -182,8 +182,8 @@ function configure_retroarch() {
     ensureKeyValue "input_autodetect_enable" "true" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "joypad_autoconfig_dir" "$rootdir/emulators/RetroArch/configs/" "$rootdir/configs/all/retroarch.cfg"
 
-    chmod -R 777 "$rootdir/emulators/RetroArch/shader/"
-    chmod -R 777 "$rootdir/configs/"
+    chown $user:$user -R "$rootdir/emulators/RetroArch/shader/"
+    chown $user:$user -R "$rootdir/configs/"
 }
 
 function package_retroarch() {
@@ -495,7 +495,7 @@ function build_gpsp() {
 function configure_gpsp() {
     printMsg "Configuring GPSP"
     mkdir "$romdir/gba"
-    chmod -R 777 "$rootdir/emulators/gpsp/raspberrypi/"
+    chown $user:$user -R "$rootdir/emulators/gpsp/raspberrypi/"
 }
 
 function sources_gngeopi() {
@@ -727,13 +727,14 @@ function install_pifba() {
 
     mkdir -p "$rootdir/emulators/pifba/installdir"
 
-    install -m 777 "$rootdir/emulators/pifba/fba2x" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/capex.cfg" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/fba2x.cfg" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/zipname.fba" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/rominfo.fba" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/FBACache_windows.zip" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/fba_029671_clrmame_dat.zip" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/fba2x" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/capex.cfg" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/fba2x.cfg" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/zipname.fba" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/rominfo.fba" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/FBACache_windows.zip" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/fba_029671_clrmame_dat.zip" "$rootdir/emulators/pifba/installdir/"
+    chown -R $user:$user "$rootdir/emulators/pifba/installdir/"
     mkdir -p "$rootdir/emulators/pifba/roms"
     mkdir -p "$rootdir/emulators/pifba/skin"
     mkdir -p "$rootdir/emulators/pifba/preview"
