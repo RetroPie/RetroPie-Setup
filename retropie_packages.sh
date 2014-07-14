@@ -372,3 +372,12 @@ elif [[ $# -eq 2 ]]; then
 else
     rp_printUsageinfo
 fi
+
+if [[ ! -z $__ERRMSGS ]]; then
+    echo $__ERRMSGS >&2
+fi
+
+if [[ ! -z $__INFMSGS ]]; then
+    echo $__INFMSGS
+fi
+

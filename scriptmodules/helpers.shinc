@@ -186,7 +186,11 @@ function gitPullOrClone()
     else
         rm -rf "$1" # makes sure that the directory IS empty
         mkdir -p "$1"
-        git clone --depth=1 "$2" "$1"
+        if [ "$3" = "NS" ]; then
+            git clone "$2" "$1"
+        else
+            git clone --depth=1 "$2" "$1"
+        fi
     fi
 }
 

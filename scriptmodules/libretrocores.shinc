@@ -132,7 +132,7 @@ function sources_cavestory() {
 function build_cavestory() {
     printMsg "Building cavestory"
     pushd "$rootdir/emulatorcores/nxengine-libretro"
-    make platform=rpi
+    make
     if [[ -z `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NXEngine / Cave Story core."
     fi
@@ -149,7 +149,7 @@ function configure_cavestory() {
 $rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"
 _EOF_
     chmod +x "$romdir/ports/Cave Story.sh"
-    chmod +777 "$rootdir/emulatorcores/nxengine-libretro/datafiles/"
+    chown -R $user:$user "$rootdir/emulatorcores/nxengine-libretro/datafiles/"
 }
 
 function sources_doom() {

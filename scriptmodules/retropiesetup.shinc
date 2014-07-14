@@ -99,7 +99,7 @@ function rps_main_binaries()
             source $scriptdir/retropie_packages.sh $i configure
         done
 
-    } 2>&1 | tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz)
+    } 2>&1 > >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
 
     chown -R $user:$user $scriptdir/logs/run_$now.log.gz
 
@@ -197,61 +197,61 @@ function rps_main_options()
         for choice in $choices
         do
             case $choice in
-                100) source $scriptdir/retropie_packages.sh 100 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                101) source $scriptdir/retropie_packages.sh 101 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                102) source $scriptdir/retropie_packages.sh 102 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                103) source $scriptdir/retropie_packages.sh 103 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                104) source $scriptdir/retropie_packages.sh 104 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                105) source $scriptdir/retropie_packages.sh 105 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                106) source $scriptdir/retropie_packages.sh 106 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                107) source $scriptdir/retropie_packages.sh 107 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                108) source $scriptdir/retropie_packages.sh 108 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                109) source $scriptdir/retropie_packages.sh 109 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                110) source $scriptdir/retropie_packages.sh 110 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                111) source $scriptdir/retropie_packages.sh 111 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                112) source $scriptdir/retropie_packages.sh 112 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                113) source $scriptdir/retropie_packages.sh 113 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                114) source $scriptdir/retropie_packages.sh 114 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                115) source $scriptdir/retropie_packages.sh 115 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                116) source $scriptdir/retropie_packages.sh 116 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                117) source $scriptdir/retropie_packages.sh 117 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                118) source $scriptdir/retropie_packages.sh 118 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                119) source $scriptdir/retropie_packages.sh 119 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                120) source $scriptdir/retropie_packages.sh 120 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                121) source $scriptdir/retropie_packages.sh 121 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                122) source $scriptdir/retropie_packages.sh 122 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                123) source $scriptdir/retropie_packages.sh 123 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                124) source $scriptdir/retropie_packages.sh 124 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                125) source $scriptdir/retropie_packages.sh 125 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                126) source $scriptdir/retropie_packages.sh 126 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                127) source $scriptdir/retropie_packages.sh 127 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                128) source $scriptdir/retropie_packages.sh 128 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                200) source $scriptdir/retropie_packages.sh 200 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                201) source $scriptdir/retropie_packages.sh 201 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                202) source $scriptdir/retropie_packages.sh 202 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                203) source $scriptdir/retropie_packages.sh 203 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                204) source $scriptdir/retropie_packages.sh 204 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                205) source $scriptdir/retropie_packages.sh 205 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                206) source $scriptdir/retropie_packages.sh 206 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                207) source $scriptdir/retropie_packages.sh 207 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                208) source $scriptdir/retropie_packages.sh 208 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                209) source $scriptdir/retropie_packages.sh 209 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                210) source $scriptdir/retropie_packages.sh 210 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                211) source $scriptdir/retropie_packages.sh 211 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                212) source $scriptdir/retropie_packages.sh 212 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                300) source $scriptdir/retropie_packages.sh 300 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                301) source $scriptdir/retropie_packages.sh 301 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                302) source $scriptdir/retropie_packages.sh 302 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                303) source $scriptdir/retropie_packages.sh 303 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                304) source $scriptdir/retropie_packages.sh 304 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                305) source $scriptdir/retropie_packages.sh 305 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                308) source $scriptdir/retropie_packages.sh 308 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                309) source $scriptdir/retropie_packages.sh 309 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                315) source $scriptdir/retropie_packages.sh 315 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                316) source $scriptdir/retropie_packages.sh 316 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                317) source $scriptdir/retropie_packages.sh 317 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                318) source $scriptdir/retropie_packages.sh 318 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                323) source $scriptdir/retropie_packages.sh 323 2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                100) source $scriptdir/retropie_packages.sh 100 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                101) source $scriptdir/retropie_packages.sh 101 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                102) source $scriptdir/retropie_packages.sh 102 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                103) source $scriptdir/retropie_packages.sh 103 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                104) source $scriptdir/retropie_packages.sh 104 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                105) source $scriptdir/retropie_packages.sh 105 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                106) source $scriptdir/retropie_packages.sh 106 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                107) source $scriptdir/retropie_packages.sh 107 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                108) source $scriptdir/retropie_packages.sh 108 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                109) source $scriptdir/retropie_packages.sh 109 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                110) source $scriptdir/retropie_packages.sh 110 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                111) source $scriptdir/retropie_packages.sh 111 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                112) source $scriptdir/retropie_packages.sh 112 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                113) source $scriptdir/retropie_packages.sh 113 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                114) source $scriptdir/retropie_packages.sh 114 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                115) source $scriptdir/retropie_packages.sh 115 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                116) source $scriptdir/retropie_packages.sh 116 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                117) source $scriptdir/retropie_packages.sh 117 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                118) source $scriptdir/retropie_packages.sh 118 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                119) source $scriptdir/retropie_packages.sh 119 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                120) source $scriptdir/retropie_packages.sh 120 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                121) source $scriptdir/retropie_packages.sh 121 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                122) source $scriptdir/retropie_packages.sh 122 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                123) source $scriptdir/retropie_packages.sh 123 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                124) source $scriptdir/retropie_packages.sh 124 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                125) source $scriptdir/retropie_packages.sh 125 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                126) source $scriptdir/retropie_packages.sh 126 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                127) source $scriptdir/retropie_packages.sh 127 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                128) source $scriptdir/retropie_packages.sh 128 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                200) source $scriptdir/retropie_packages.sh 200 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                201) source $scriptdir/retropie_packages.sh 201 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                202) source $scriptdir/retropie_packages.sh 202 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                203) source $scriptdir/retropie_packages.sh 203 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                204) source $scriptdir/retropie_packages.sh 204 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                205) source $scriptdir/retropie_packages.sh 205 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                206) source $scriptdir/retropie_packages.sh 206 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                207) source $scriptdir/retropie_packages.sh 207 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                208) source $scriptdir/retropie_packages.sh 208 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                209) source $scriptdir/retropie_packages.sh 209 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                210) source $scriptdir/retropie_packages.sh 210 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                211) source $scriptdir/retropie_packages.sh 211 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                212) source $scriptdir/retropie_packages.sh 212 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                300) source $scriptdir/retropie_packages.sh 300 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                301) source $scriptdir/retropie_packages.sh 301 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                302) source $scriptdir/retropie_packages.sh 302 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                303) source $scriptdir/retropie_packages.sh 303 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                304) source $scriptdir/retropie_packages.sh 304 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                305) source $scriptdir/retropie_packages.sh 305 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                308) source $scriptdir/retropie_packages.sh 308 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                309) source $scriptdir/retropie_packages.sh 309 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                315) source $scriptdir/retropie_packages.sh 315 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                316) source $scriptdir/retropie_packages.sh 316 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                317) source $scriptdir/retropie_packages.sh 317 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                318) source $scriptdir/retropie_packages.sh 318 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                323) source $scriptdir/retropie_packages.sh 323 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
             esac
         done
 
@@ -294,20 +294,20 @@ function rps_main_setup()
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
             case $choices in
-                306) source $scriptdir/retropie_packages.sh 306 configure 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                307) source $scriptdir/retropie_packages.sh 307 configure 2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                310) source $scriptdir/retropie_packages.sh 310           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                311) source $scriptdir/retropie_packages.sh 311           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                312) source $scriptdir/retropie_packages.sh 312           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                313) source $scriptdir/retropie_packages.sh 313           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                314) source $scriptdir/retropie_packages.sh 314           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                319) source $scriptdir/retropie_packages.sh 319           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                320) source $scriptdir/retropie_packages.sh 320           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                321) source $scriptdir/retropie_packages.sh 321           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                322) source $scriptdir/retropie_packages.sh 322           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                324) source $scriptdir/retropie_packages.sh 324           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                325) source $scriptdir/retropie_packages.sh 325           2>&1 | tee >(gzip --stdout >$logfilename) ;;
-                326) source $scriptdir/retropie_packages.sh 326 install   2>&1 | tee >(gzip --stdout >$logfilename) ;;
+                306) source $scriptdir/retropie_packages.sh 306 configure 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                307) source $scriptdir/retropie_packages.sh 307 configure 2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                310) source $scriptdir/retropie_packages.sh 310           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                311) source $scriptdir/retropie_packages.sh 311           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                312) source $scriptdir/retropie_packages.sh 312           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                313) source $scriptdir/retropie_packages.sh 313           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                314) source $scriptdir/retropie_packages.sh 314           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                319) source $scriptdir/retropie_packages.sh 319           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                320) source $scriptdir/retropie_packages.sh 320           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                321) source $scriptdir/retropie_packages.sh 321           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                322) source $scriptdir/retropie_packages.sh 322           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                324) source $scriptdir/retropie_packages.sh 324           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                325) source $scriptdir/retropie_packages.sh 325           2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
+                326) source $scriptdir/retropie_packages.sh 326 install   2>&1 > >(tee >(gzip --stdout >$logfilename)) ;;
             esac
         else
             break
