@@ -209,7 +209,7 @@ function build_advmame() {
     sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
     sed -i 's/misc_quiet\", 0/misc_quiet\", 1/' advance/osd/global.c
     sed -i '/#include <string>/ i\#include <stdlib.h>' advance/d2/d2.cc
-    ./configure CC="gcc-4.7" CXX="g++-4.7"--prefix="$rootdir/emulators/advancemame-0.94.0/installdir"
+    ./configure CC="gcc-4.7" CXX="g++-4.7" --prefix="$rootdir/emulators/advancemame-0.94.0/installdir"
     sed -i 's/LDFLAGS=-s/LDFLAGS=-s -lm -Wl,--no-as-needed/' Makefile
     make
     popd
@@ -229,10 +229,11 @@ function install_advmame() {
 function configure_advmame() {
     printMsg "Configuring AdvMAME"
 
+    rmDirExists /root/.advance
+    rmDirExists /home/$user/.advance
     $rootdir/emulators/advancemame-0.94.0/installdir/bin/advmame
-    mv /root/.advance/ /home/$user/
+    mv /root/.advance /home/$user/
     echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> /home/$user/.advance/advmame.rc
-    chmod -R a+rwX /home/$user/.advance/
     chown -R $user:$user /home/$user/.advance/
 }
 
