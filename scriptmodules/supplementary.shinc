@@ -731,10 +731,8 @@ writeable = yes
 guest ok = yes
 create mask = 0777
 directory mask = 0777
-read only = no
 browseable = yes
 force user = $user
-public = yes
 HDHD
     fi
     chmod 644 /etc/samba/smb.conf
