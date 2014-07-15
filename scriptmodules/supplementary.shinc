@@ -746,6 +746,14 @@ function configure_sambashares() {
 
     set_ensureEntryInSMBConf "roms" "$romdir"
 
+    # enforce rom directory permissions - root:$user for roms folder with the sticky bit set,
+    # and root:$user for subfolders with group writable. This allows them to be writable by the
+    # pi user, yet avoid being deleted by accident
+    chown root:$user "$romdir"
+    chown -R root:$user "$romdir"/*
+    chmod g+w "$romdir"/*
+    chmod +t "$romdir"
+
     /etc/init.d/samba restart
 
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The SAMBA shares can be accessed with a guest account" 22 76
