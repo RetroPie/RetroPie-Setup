@@ -62,7 +62,7 @@ function ensureSystemretroconfig {
 function configure_retroarch() {
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
     cp $scriptdir/supplementary/retroarch-core-options.cfg "$rootdir/configs/all/"
-    chmod 777 "$rootdir/configs/all/retroarch-core-options.cfg"
+    chown $user:$user "$rootdir/configs/all/retroarch-core-options.cfg"
 
     if [[ ! -d "$rootdir/emulators/RetroArch/configs/" ]]; then
         mkdir -p "$rootdir/emulators/RetroArch/configs/"
@@ -72,7 +72,7 @@ function configure_retroarch() {
         cp "$rootdir/configs/all/retroarch.cfg" "$rootdir/configs/all/retroarch.cfg.bak"
     fi
     cp $rootdir/emulators/RetroArch/retroarch.cfg "$rootdir/configs/all/"
-    chmod 777 "$rootdir/configs/all/retroarch.cfg"
+    chown $user:$user "$rootdir/configs/all/retroarch.cfg"
     mkdir -p "$rootdir/configs/all/"
 
     ensureSystemretroconfig "atari2600"
@@ -176,8 +176,8 @@ function configure_retroarch() {
     ensureKeyValue "input_autodetect_enable" "true" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "joypad_autoconfig_dir" "$rootdir/emulators/RetroArch/configs/" "$rootdir/configs/all/retroarch.cfg"
 
-    chmod -R 777 "$rootdir/emulators/RetroArch/shader/"
-    chmod -R 777 "$rootdir/configs/"
+    chown $user:$user -R "$rootdir/emulators/RetroArch/shader/"
+    chown $user:$user -R "$rootdir/configs/"
 }
 
 # 101, AdvMAME
@@ -367,7 +367,7 @@ function install_vice() {
 }
 
 function configure_vice() {
-    mkdir "$romdir/c64"
+    mkdir -p "$romdir/c64"
 }
 
 function install_c64roms() {
@@ -404,7 +404,7 @@ function install_eduke32() {
 #!/bin/bash
 $rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -g %ROM% -gamegrp duke3d.grp"
 _EOF_
-    chown +x "$romdir/roms/ports/Duke3D Shareware.sh"
+    chmod +x "$romdir/roms/ports/Duke3D Shareware.sh"
 }
 
 # install Game Boy Advance emulator gpSP
@@ -453,19 +453,18 @@ function build_gpsp() {
 }
 
 function configure_gpsp() {
-    mkdir "$romdir/gba"
-    chmod -R 777 "$rootdir/emulators/gpsp/raspberrypi/"
+    mkdir -p "$romdir/gba"
+    chown $user:$user -R "$rootdir/emulators/gpsp/raspberrypi/"
 }
 
 function sources_gngeopi() {
-    rmDirExists "$rootdir/emulators/gngeo-pi-0.85"
     gitPullOrClone "$rootdir/emulators/gngeo-pi-0.85" https://github.com/ymartel06/GnGeo-Pi.git
 }
 
 function build_gngeopi() {
     pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
     chmod +x configure
-    ./configure --host=arm-linux --target=arm-linux --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
+    ./configure --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
     make
     popd
 }
@@ -480,7 +479,7 @@ function install_gngeopi() {
 }
 
 function configure_gngeopi() {
-    mkdir "$romdir/mame"
+    mkdir -p "$romdir/mame"
 }
 
 function install_hatari() {
@@ -490,6 +489,7 @@ function install_hatari() {
 
 function sources_mame4all() {
     gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/ NS
+    sed -i "s/@mkdir/@mkdir -p/g" "$rootdir/emulators/mame4all-pi/Makefile"
 }
 
 function build_mame4all() {
@@ -551,7 +551,7 @@ function build_jzint() {
 }
 
 function configure_jzint() {
-    mkdir "$romdir/intellivision"
+    mkdir -p "$romdir/intellivision"
 }
 
 function depen_linapple() {
@@ -591,7 +591,6 @@ _EOF_
 }
 
 function sources_mupen64rpi() {
-    rmDirExists "$rootdir/emulators/mupen64plus-rpi"
     gitPullOrClone "$rootdir/emulators/mupen64plus-rpi" https://github.com/ricrpi/mupen64plus-rpi
 }
 
@@ -613,7 +612,6 @@ function depen_snes9x() {
 }
 
 function sources_snes9x() {
-    rmDirExists "$rootdir/emulators/snes9x-rpi"
     gitPullOrClone "$rootdir/emulators/snes9x-rpi" https://github.com/chep/snes9x-rpi.git
 }
 
@@ -636,7 +634,6 @@ function configure_snes9x() {
 }
 
 function sources_pifba() {
-    rmDirExists "$rootdir/emulators/pifba"
     gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/ NS
 }
 
@@ -654,13 +651,14 @@ function build_pifba() {
 function install_pifba() {
     mkdir -p "$rootdir/emulators/pifba/installdir"
 
-    install -m 777 "$rootdir/emulators/pifba/fba2x" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/capex.cfg" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/fba2x.cfg" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/zipname.fba" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/rominfo.fba" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/FBACache_windows.zip" "$rootdir/emulators/pifba/installdir/"
-    install -m 777 "$rootdir/emulators/pifba/fba_029671_clrmame_dat.zip" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/fba2x" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/capex.cfg" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/fba2x.cfg" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/zipname.fba" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/rominfo.fba" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/FBACache_windows.zip" "$rootdir/emulators/pifba/installdir/"
+    cp "$rootdir/emulators/pifba/fba_029671_clrmame_dat.zip" "$rootdir/emulators/pifba/installdir/"
+    chown -R $user:$user "$rootdir/emulators/pifba/installdir/"
     mkdir -p "$rootdir/emulators/pifba/roms"
     mkdir -p "$rootdir/emulators/pifba/skin"
     mkdir -p "$rootdir/emulators/pifba/preview"
@@ -672,7 +670,6 @@ function configure_pifba() {
 }
 
 function sources_pisnes() {
-    rmDirExists "$rootdir/emulators/pisnes"
     gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/ NS
 }
 
