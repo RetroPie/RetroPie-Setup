@@ -367,7 +367,7 @@ function install_vice() {
 }
 
 function configure_vice() {
-    mkdir "$romdir/c64"
+    mkdir -p "$romdir/c64"
 }
 
 function install_c64roms() {
@@ -453,7 +453,7 @@ function build_gpsp() {
 }
 
 function configure_gpsp() {
-    mkdir "$romdir/gba"
+    mkdir -p "$romdir/gba"
     chown $user:$user -R "$rootdir/emulators/gpsp/raspberrypi/"
 }
 
@@ -480,7 +480,7 @@ function install_gngeopi() {
 }
 
 function configure_gngeopi() {
-    mkdir "$romdir/mame"
+    mkdir -p "$romdir/mame"
 }
 
 function install_hatari() {
@@ -551,7 +551,7 @@ function build_jzint() {
 }
 
 function configure_jzint() {
-    mkdir "$romdir/intellivision"
+    mkdir -p "$romdir/intellivision"
 }
 
 function depen_linapple() {
