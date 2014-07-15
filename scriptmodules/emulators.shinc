@@ -489,6 +489,7 @@ function install_hatari() {
 
 function sources_mame4all() {
     gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/ NS
+    sed -i "s/@mkdir/@mkdir -p/g" "$rootdir/emulators/mame4all-pi/Makefile"
 }
 
 function build_mame4all() {
