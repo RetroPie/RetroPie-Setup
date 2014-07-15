@@ -722,7 +722,6 @@ function set_ensureEntryInSMBConf()
     if [ "$comp" == "[$1]" ]; then
       echo "$1 already contained in /etc/samba/smb.conf."
     else
-    chmod 666 /etc/samba/smb.conf
     tee -a /etc/samba/smb.conf <<_EOF_
 [$1]
 comment = $1
@@ -735,7 +734,6 @@ browseable = yes
 force user = $user
 _EOF_
     fi
-    chmod 644 /etc/samba/smb.conf
 }
 
 function install_sambashares() {
