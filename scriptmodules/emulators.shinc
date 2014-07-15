@@ -590,7 +590,6 @@ _EOF_
 }
 
 function sources_mupen64rpi() {
-    rmDirExists "$rootdir/emulators/mupen64plus-rpi"
     gitPullOrClone "$rootdir/emulators/mupen64plus-rpi" https://github.com/ricrpi/mupen64plus-rpi
 }
 
@@ -612,7 +611,6 @@ function depen_snes9x() {
 }
 
 function sources_snes9x() {
-    rmDirExists "$rootdir/emulators/snes9x-rpi"
     gitPullOrClone "$rootdir/emulators/snes9x-rpi" https://github.com/chep/snes9x-rpi.git
 }
 
@@ -635,7 +633,6 @@ function configure_snes9x() {
 }
 
 function sources_pifba() {
-    rmDirExists "$rootdir/emulators/pifba"
     gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/ NS
 }
 
@@ -672,7 +669,6 @@ function configure_pifba() {
 }
 
 function sources_pisnes() {
-    rmDirExists "$rootdir/emulators/pisnes"
     gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/ NS
 }
 
