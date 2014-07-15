@@ -746,39 +746,10 @@ function install_sambashares() {
 }
 
 function configure_sambashares() {
-    set_ensureEntryInSMBConf "AMIGA" "$romdir/amiga"
-    set_ensureEntryInSMBConf "APPLE2" "$romdir/apple2"
-    set_ensureEntryInSMBConf "ARMSTRADCPC" "$romdir/cpc"
-    set_ensureEntryInSMBConf "ATARI800" "$romdir/atari800"
-    set_ensureEntryInSMBConf "ATARI2600" "$romdir/atari2600"
-    set_ensureEntryInSMBConf "ATARISTSTEFALCON" "$romdir/atariStSteFalcon"
-    set_ensureEntryInSMBConf "MAC" "$romdir/macintosh"
-    set_ensureEntryInSMBConf "BIOSFILES" "$home/RetroPie/BIOS"
-    set_ensureEntryInSMBConf "C64" "$romdir/c64"
-    set_ensureEntryInSMBConf "DOOM" "$romdir/ports/doom"
-    set_ensureEntryInSMBConf "DUKE3D" "$romdir/ports/duke3d"
-    set_ensureEntryInSMBConf "GAMEGEAR" "$romdir/gamegear"
-    set_ensureEntryInSMBConf "FBA" "$romdir/fba"
-    set_ensureEntryInSMBConf "GB" "$romdir/gb"
-    set_ensureEntryInSMBConf "GBA" "$romdir/gba"
-    set_ensureEntryInSMBConf "GBC" "$romdir/gbc"
-    set_ensureEntryInSMBConf "INTELLIVISION" "$romdir/intellivision"
-    set_ensureEntryInSMBConf "MAME" "$romdir/mame"
-    set_ensureEntryInSMBConf "MSX" "$romdir/msx"
-    set_ensureEntryInSMBConf "MASTERSYSTEM" "$romdir/mastersystem"
-    set_ensureEntryInSMBConf "MEGADRIVE" "$romdir/megadrive"
-    set_ensureEntryInSMBConf "NES" "$romdir/nes"
-    set_ensureEntryInSMBConf "N64" "$romdir/n64"
-    set_ensureEntryInSMBConf "PC" "$romdir/pc"
-    set_ensureEntryInSMBConf "PCENGINE" "$romdir/pcengine"
-    set_ensureEntryInSMBConf "PSX" "$romdir/psx"
-    set_ensureEntryInSMBConf "PPSSPP" "$romdir/psp"
-    set_ensureEntryInSMBConf "SNES" "$romdir/snes"
-    set_ensureEntryInSMBConf "SEGACD" "$romdir/segacd"
-    set_ensureEntryInSMBConf "SEGA32X" "$romdir/sega32x"
-    set_ensureEntryInSMBConf "SCUMMVM" "$romdir/scummvm"
-    set_ensureEntryInSMBConf "ZMACHINE" "$romdir/zmachine"
-    set_ensureEntryInSMBConf "ZXSPECTRUM" "$romdir/zxspectrum"
+    # remove old configs
+    sed -i '/\[[A-Z]\]*/,$d' /etc/samba/smb.conf
+
+    set_ensureEntryInSMBConf "roms" "$romdir"
 
     /etc/init.d/samba restart
 
