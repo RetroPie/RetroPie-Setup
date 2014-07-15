@@ -723,7 +723,7 @@ function set_ensureEntryInSMBConf()
       echo "$1 already contained in /etc/samba/smb.conf."
     else
     chmod 666 /etc/samba/smb.conf
-    tee -a /etc/samba/smb.conf <<HDHD
+    tee -a /etc/samba/smb.conf <<_EOF_
 [$1]
 comment = $1
 path = $2
@@ -733,7 +733,7 @@ create mask = 0777
 directory mask = 0777
 browseable = yes
 force user = $user
-HDHD
+_EOF_
     fi
     chmod 644 /etc/samba/smb.conf
 }
