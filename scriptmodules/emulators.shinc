@@ -458,14 +458,13 @@ function configure_gpsp() {
 }
 
 function sources_gngeopi() {
-    rmDirExists "$rootdir/emulators/gngeo-pi-0.85"
     gitPullOrClone "$rootdir/emulators/gngeo-pi-0.85" https://github.com/ymartel06/GnGeo-Pi.git
 }
 
 function build_gngeopi() {
     pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
     chmod +x configure
-    ./configure --host=arm-linux --target=arm-linux --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
+    ./configure --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
     make
     popd
 }
