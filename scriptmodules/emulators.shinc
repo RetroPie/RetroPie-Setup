@@ -24,7 +24,6 @@
 #
 
 function depen_retroarch() {
-    printMsg "Getting depencies of udev/eudev"
     apt-get install -y libudev-dev libxkbcommon-dev
     cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
 KERNEL=="event*", NAME="input/%k", MODE="666"
@@ -33,12 +32,10 @@ _EOF_
 }
 
 function sources_retroarch() {
-    printMsg "Getting sources of RetroArch"
     gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
 }
 
 function build_retroarch() {
-    printMsg "Building RetroArch"
     pushd "$rootdir/emulators/RetroArch"
     ./configure --prefix="$rootdir/emulators/RetroArch/installdir" --disable-x11 --disable-oss --disable-pulse --enable-floathard
     make clean
@@ -47,7 +44,6 @@ function build_retroarch() {
 }
 
 function install_retroarch() {
-    printMsg "Installing RetroArch"
     pushd "$rootdir/emulators/RetroArch"
     make install
     popd
@@ -64,8 +60,6 @@ function ensureSystemretroconfig {
 }
 
 function configure_retroarch() {
-    printMsg "Configuring RetroArch"
-
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
     cp $scriptdir/supplementary/retroarch-core-options.cfg "$rootdir/configs/all/"
     chmod 777 "$rootdir/configs/all/retroarch-core-options.cfg"
@@ -186,24 +180,16 @@ function configure_retroarch() {
     chmod -R 777 "$rootdir/configs/"
 }
 
-function package_retroarch() {
-    printMsg "Building package for RetroArch"
-}
-
 # 101, AdvMAME
 function depen_advmame() {
-    printMsg "Getting dependencies of advmame"
     apt-get -y install libsdl1.2-dev gcc-4.7
 }
 
 function sources_advmame() {
-    printMsg "Getting sources of AdvMAME"
     wget -O advmame.tar.gz http://downloads.sourceforge.net/project/advancemame/advancemame/0.94.0/advancemame-0.94.0.tar.gz
 }
 
 function build_advmame() {
-    printMsg "Building AdvMAME"
-
     tar xzvf advmame.tar.gz -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/advancemame-0.94.0"
     sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
@@ -218,8 +204,6 @@ function build_advmame() {
 }
 
 function install_advmame() {
-    printMsg "Installing AdvMAME"
-
     pushd "$rootdir/emulators/advancemame-0.94.0"
     make install
     chmod -R 755 "$rootdir/emulators/advancemame-0.94.0"
@@ -227,8 +211,6 @@ function install_advmame() {
 }
 
 function configure_advmame() {
-    printMsg "Configuring AdvMAME"
-
     rmDirExists /root/.advance
     rmDirExists /home/$user/.advance
     $rootdir/emulators/advancemame-0.94.0/installdir/bin/advmame
@@ -240,8 +222,6 @@ function configure_advmame() {
 # Amiga emulator UAE4All
 
 function sources_uae4all() {
-    printMsg "Installing Amiga emulator"
-
     rmDirExists "$rootdir/emulators/uae4rpi"
     wget http://www.gamshi.com/download/uae4rpi.tar.bz2
     tar -jxvf uae4rpi.tar.bz2 -C "$rootdir/emulators/"
@@ -249,8 +229,6 @@ function sources_uae4all() {
 }
 
 function build_uae4all() {
-    printMsg "Building UAE4All"
-
     pushd "$rootdir/emulators/uae4rpi"
     if [[ ! -f /opt/vc/include/interface/vmcs_host/vchost_config.h ]]; then
         touch /opt/vc/include/interface/vmcs_host/vchost_config.h
@@ -262,16 +240,11 @@ function build_uae4all() {
     popd
 }
 
-function install_uae4all() {
-    printMsg "Installing UAE4All"
-}
-
 function configure_uae4all() {
     mkdir -p "$romdir/amiga"
 }
 
 function sources_atari800() {
-    printMsg "Getting sources of Atari 800 emulator"
     wget -O atari800-3.0.0.tar.gz http://sourceforge.net/projects/atari800/files/atari800/3.0.0/atari800-3.0.0.tar.gz/download
     rmDirExists "$rootdir/emulators/atari800-3.0.0"
     tar xvfz atari800-3.0.0.tar.gz -C "$rootdir/emulators/"
@@ -300,7 +273,6 @@ function configure_atari800() {
 }
 
 function sources_cpc() {
-    printMsg "Getting sources for CPC4RPi"
     wget http://gaming.capsule-sa.co.za/downloads/cpc4rpi-1.1_src.tar.gz
     rmDirExists "$rootdir/emulators/cpc4rpi-1.1"
     tar xvfz cpc4rpi-1.1_src.tar.gz -C "$rootdir/emulators/"
@@ -308,7 +280,6 @@ function sources_cpc() {
 }
 
 function build_cpc() {
-    printMsg "Building CPC4RPi"
     pushd "$rootdir/emulators/cpc4rpi-1.1"
     sed -i 's|LIBS = -L/usr/lib/arm-linux-gnueabihf -lz -lts -L/opt/vc/lib -lGLESv2 -lEGL|LIBS = -L/usr/lib/arm-linux-gnueabihf -lX11 -lz -lts -L/opt/vc/lib -lSDL -lpthread -ldl -lGLESv2 -lEGL|g' makefile
     sed -i 's|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o /root/Raspbian/Libs/libSDL.a /root/Raspbian/Libs/libnofun.a $(LIBS)|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o   $(LIBS)|g' makefile
@@ -320,23 +291,19 @@ function build_cpc() {
 }
 
 function configure_cpc() {
-    printMsg "Configuring CPC4RPi"
     mkdir -p "$romdir/amstradcpc"
 }
 
 function install_dosbox() {
-    printMsg "Installing Dosbox"
     apt-get install -y dosbox
 }
 
 function configure_dosbox() {
-    printMsg "Configuring Dosbox"
     mkdir -p "$romdir/pc"
 }
 
 function install_stella()
 {
-    printMsg "Installing Atari 2600 emulator Stella"
     apt-get install -y stella
 }
 
@@ -345,7 +312,6 @@ function configure_stella() {
 }
 
 function sources_basilisk() {
-    printMsg "Getting sources of Basilisk II"
     gitPullOrClone "$rootdir/emulators/basiliskii" git://github.com/cebix/macemu.git
 }
 
@@ -374,7 +340,6 @@ function configure_basilisk() {
 }
 
 function sources_vice() {
-    printMsg "Getting VICE Commodore 64 core"
     rmDirExists "$rootdir/emulators/vice-2.4"
     wget -O vice-2.4.tar.gz http://downloads.sourceforge.net/project/vice-emu/releases/vice-2.4.tar.gz
     tar xzvf vice-2.4.tar.gz -C "$rootdir/emulators/"
@@ -386,7 +351,6 @@ function build_vice() {
         printf 'Package vice is already installed - removing package\n' "${1}"
         apt-get remove -y vice
     fi
-    printMsg "Installing vice"
     echo 'deb-src http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi' >> /etc/apt/sources.list
     apt-get update
     apt-get install -y libxaw7-dev automake checkinstall
@@ -407,7 +371,6 @@ function configure_vice() {
 }
 
 function install_c64roms() {
-    printMsg "Installing C64 ROMs"
     wget http://www.zimmers.net/anonftp/pub/cbm/crossplatform/emulators/VICE/old/vice-1.5-roms.tar.gz
     tar -xvzf vice-1.5-roms.tar.gz
     mkdir -p "$rootdir/emulators/vice-2.3.dfsg/installdir/lib/vice/"
@@ -417,7 +380,6 @@ function install_c64roms() {
 }
 
 function install_eduke32() {
-    printMsg "Installing eDuke32"
     rmDirExists "$rootdir/emulators/eduke32"
     mkdir -p $rootdir/emulators/eduke32
     pushd "$rootdir/emulators/eduke32"
@@ -447,7 +409,6 @@ _EOF_
 
 # install Game Boy Advance emulator gpSP
 function sources_gpsp() {
-    printMsg "Getting sources for Game Boy Advance emulator gpSP"
     gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/gizmo98/gpsp.git
     pushd "$rootdir/emulators/gpsp"
     cd raspberrypi
@@ -478,7 +439,6 @@ function sources_gpsp() {
 }
 
 function build_gpsp() {
-    printMsg "Building GPSP"
     pushd "$rootdir/emulators/gpsp"
     cd raspberrypi
     make clean
@@ -493,19 +453,16 @@ function build_gpsp() {
 }
 
 function configure_gpsp() {
-    printMsg "Configuring GPSP"
     mkdir "$romdir/gba"
     chmod -R 777 "$rootdir/emulators/gpsp/raspberrypi/"
 }
 
 function sources_gngeopi() {
-    printMsg "Getting sources of GnGeoPi"
     rmDirExists "$rootdir/emulators/gngeo-pi-0.85"
     gitPullOrClone "$rootdir/emulators/gngeo-pi-0.85" https://github.com/ymartel06/GnGeo-Pi.git
 }
 
 function build_gngeopi() {
-    printMsg "Building GnGeoPi"
     pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
     chmod +x configure
     ./configure --host=arm-linux --target=arm-linux --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
@@ -514,7 +471,6 @@ function build_gngeopi() {
 }
 
 function install_gngeopi() {
-    printMsg "Installing GnGeoPi"
     pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
     make install
     if [[ ! -f "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/arm-linux-gngeo" ]]; then
@@ -524,24 +480,19 @@ function install_gngeopi() {
 }
 
 function configure_gngeopi() {
-    printMsg "Configuring GnGeoPi"
     mkdir "$romdir/mame"
 }
 
 function install_hatari() {
-    printMsg "Installing Hatari"
     apt-get install -y hatari
     mkdir -p $romdir/atariststefalcon
 }
 
 function sources_mame4all() {
-    printMsg "Getting sources of Mame4All-Pi"
-
     gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/ NS
 }
 
 function build_mame4all() {
-    printMsg "Builing Mame4All-Pi"
     pushd "$rootdir/emulators/mame4all-pi"
     make clean
     make
@@ -552,7 +503,6 @@ function build_mame4all() {
 }
 
 function configure_mame4all() {
-    printMsg "Configuring Mame4All-Pi"
     mkdir -p "$romdir/mame"
     mkdir -p "$rootdir/emulators/mame4all-pi/"{cfg,hi,sta,roms}
     chown -R $user:$user "$rootdir/emulators/mame4all-pi"
@@ -561,15 +511,12 @@ function configure_mame4all() {
 }
 
 function sources_osmose() {
-    printMsg "Installing Mega Drive/Mastersystem/Game Gear emulator OsmMose"
-
     wget 'https://dl.dropbox.com/s/z6l69wge8q1xq7r/osmose-0.8.1%2Brpi20121122.tar.bz2?dl=1' -O osmose.tar.bz2
     tar -jxvf osmose.tar.bz2 -C "$rootdir/emulators/"
     rm osmose.tar.bz2
 }
 
 function build_osmose() {
-    printMsg "Building Osmose"
     pushd "$rootdir/emulators/osmose-0.8.1+rpi20121122/"
     make clean
     make
@@ -580,21 +527,17 @@ function build_osmose() {
 }
 
 function configure_osmose() {
-    printMsg "Configuring Osmose"
     mkdir -p "$romdir/gamegear"
     mkdir -p "$romdir/mastersystem"
 }
 
 function sources_jzint() {
-    printMsg "Installing Intellivision emulator jzintv"
     wget 'http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip' -O jzintv.zip
     unzip -n jzintv.zip -d "$rootdir/emulators/"
     rm jzintv.zip
 }
 
 function build_jzint() {
-    printMsg "Building Jzintv"
-
     pushd "$rootdir/emulators/jzintv-1.0-beta4/src/"
     mkdir "$rootdir/emulators/jzintv-1.0-beta4/bin"
     make clean
@@ -608,17 +551,14 @@ function build_jzint() {
 }
 
 function configure_jzint() {
-    printMsg "Configuring Jzintv"
     mkdir "$romdir/intellivision"
 }
 
 function depen_linapple() {
-    printMsg "Installing dependencies of Linapple"
     apt-get update && apt-get install -y libzip2
 }
 
 function sources_linapple() {
-    printMsg "Installing Apple II emulator (Linapple)"
     rmDirExists "$rootdir/emulators/apple2"
     wget http://downloads.sourceforge.net/project/linapple/linapple/linapple-2a/linapple-src_2a.tar.bz2
     tar -jxvf linapple-src_2a.tar.bz2 -C "$rootdir/emulators/"
@@ -626,14 +566,12 @@ function sources_linapple() {
 }
 
 function build_linapple() {
-    printMsg "Building Linapple2"
     pushd "$rootdir/emulators/linapple-src_2a/src"
     make CXX="g++-4.6"
     popd
 }
 
 function configure_linapple() {
-    printMsg "Configuring Linapple2"
     if [[ ! -d $romdir/apple2 ]]; then
         mkdir -p $romdir/apple2
     fi
@@ -653,13 +591,11 @@ _EOF_
 }
 
 function sources_mupen64rpi() {
-    printMsg "Getting sources of N64 emulator Mupen 64 Plus RPi"
     rmDirExists "$rootdir/emulators/mupen64plus-rpi"
     gitPullOrClone "$rootdir/emulators/mupen64plus-rpi" https://github.com/ricrpi/mupen64plus-rpi
 }
 
 function build_mupen64rpi() {
-    printMsg "Building N64 emulator Mupen 64 Plus RPi"
     pushd "$rootdir/emulators/mupen64plus-rpi"
     ./m64p_build.sh
     if [[ ! -f "$rootdir/emulators/mupen64plus-rpi/test/mupen64plus" ]]; then
@@ -669,7 +605,6 @@ function build_mupen64rpi() {
 }
 
 function configure_mupen64rpi() {
-    printMsg "Configuring N64 emulator Mupen 64 Plus RPi"
     mkdir -p "$romdir/n64"
 }
 
@@ -678,14 +613,11 @@ function depen_snes9x() {
 }
 
 function sources_snes9x() {
-    printMsg "Getting sources of SNES9X-RPi emulator"
     rmDirExists "$rootdir/emulators/snes9x-rpi"
     gitPullOrClone "$rootdir/emulators/snes9x-rpi" https://github.com/chep/snes9x-rpi.git
 }
 
 function build_snes9x() {
-    printMsg "Building SNES9X-RPi emulator"
-
     pushd "$rootdir/emulators/snes9x-rpi"
     make clean
     make
@@ -696,7 +628,6 @@ function build_snes9x() {
 }
 
 function configure_snes9x() {
-    printMsg "Configuring SNES9X-RPi emulator"
     if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
         echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
     fi
@@ -705,13 +636,11 @@ function configure_snes9x() {
 }
 
 function sources_pifba() {
-    printMsg "Getting sourecs of PiFBA emulator"
     rmDirExists "$rootdir/emulators/pifba"
     gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/ NS
 }
 
 function build_pifba() {
-    printMsg "Building PiFBA emulator"
     pushd "$rootdir/emulators/pifba"
     mkdir ".obj"
     make clean
@@ -723,8 +652,6 @@ function build_pifba() {
 }
 
 function install_pifba() {
-    printMsg "Installing PiFBA"
-
     mkdir -p "$rootdir/emulators/pifba/installdir"
 
     install -m 777 "$rootdir/emulators/pifba/fba2x" "$rootdir/emulators/pifba/installdir/"
@@ -741,18 +668,15 @@ function install_pifba() {
 }
 
 function configure_pifba() {
-    printMsg "Configuring PiFBA emulator"
     mkdir -p "$romdir/fba"
 }
 
 function sources_pisnes() {
-    printMsg "Getting sources of PiSNES emulator"
     rmDirExists "$rootdir/emulators/pisnes"
     gitPullOrClone "$rootdir/emulators/pisnes" https://code.google.com/p/pisnes/ NS
 }
 
 function build_pisnes() {
-    printMsg "Building PiSNES emulator"
     pushd "$rootdir/emulators/pisnes"
     sed -i -e "s|-lglib-2.0|-lglib-2.0 -lbcm_host|g" Makefile
     make clean
@@ -764,7 +688,6 @@ function build_pisnes() {
 }
 
 function configure_pisnes() {
-    printMsg "Configuring PiSNES emulator"
     if [[ -z `grep "mode \"320x240\"" /etc/fb.modes` ]]; then
         echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
     fi
@@ -773,7 +696,6 @@ function configure_pisnes() {
 }
 
 function install_rpix86() {
-    printMsg "Installing rpix86"
     wget http://rpix86.patrickaalto.com/rpix86.tar.gz
     rmDirExists "$rootdir/emulators/rpix86"
     mkdir -p "$rootdir/emulators/rpix86"
@@ -785,7 +707,6 @@ function install_rpix86() {
 }
 
 function configure_rpix86() {
-    printMsg "Configuring rpix86"
     ln -s $romdir/pc/ $rootdir/emulators/rpix86/games
     rmDirExists "$romdir/pc/pc"
     cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
@@ -800,7 +721,6 @@ _EOF_
 }
 
 function install_scummvm() {
-    printMsg "Installing ScummVM"
     apt-get install -y scummvm scummvm-data
     if [[ $? -gt 0 ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully install ScummVM."
@@ -810,7 +730,6 @@ function install_scummvm() {
 }
 
 function install_zmachine() {
-    printMsg "Installing ZMachine"
     apt-get install -y frotz
     wget -U firefox http://www.infocom-if.org/downloads/zork1.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork2.zip
@@ -828,12 +747,10 @@ function install_zmachine() {
 }
 
 function install_zxspectrum() {
-    printMsg "Installing ZXSpectrum emulator Fuse"
     apt-get install -y spectrum-roms fuse-emulator-utils fuse-emulator-common
 }
 
 function sources_fbzx() {
-    printMsg "Installing ZX Spectrum emulator FBZX"
     rmDirExists "$rootdir/emulators/fbzx-2.10.0"
     wget -O fbzx-2.10.0.tar.bz2 http://www.rastersoft.com/descargas/fbzx-2.10.0.tar.bz2
     tar xvfj fbzx-2.10.0.tar.bz2  -C "$rootdir/emulators"
@@ -850,25 +767,20 @@ function build_fbzx() {
 }
 
 function configure_fbzx() {
-    printMsg "Configuring FBZX"
     mkdir -p $romdir/zxspectrum
 }
 
 function depen_msx() {
-    printMsg "Getting dependencies of msx"
     apt-get update && apt-get install -y libsdl1.2-dev libsdl-ttf2.0-dev libglew-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev
 }
 
 function sources_openmsx() {
-    printMsg "Getting sources of openmsx"
-
     wget http://downloads.sourceforge.net/project/openmsx/openmsx/0.10.0/openmsx-0.10.0.tar.gz
     tar xvfz openmsx-0.10.0.tar.gz  -C "$rootdir/emulators"
     rm openmsx-0.10.0.tar.gz
 }
 
 function build_openmsx() {
-    printMsg "Building openmsx"
     pushd "$rootdir/emulators/openmsx-0.10.0"
     ./configure
     make
@@ -876,12 +788,10 @@ function build_openmsx() {
 }
 
 function configure_openmsx() {
-    printMsg "Configuring openmsx"
     mkdir -p $romdir/msx
 }
 
 function sources_fastdosbox() {
-    printMsg "Getting sources of fastdosbox"
     wget http://gaming.capsule-sa.co.za/downloads/fastdosbox-1.5_src.tar.gz
     tar xvfz fastdosbox-1.5_src.tar.gz -C "$rootdir/emulators/"
 
@@ -893,7 +803,6 @@ function sources_fastdosbox() {
 }
 
 function build_fastdosbox() {
-    printMsg "Building fastdosbox"
     pushd $rootdir/emulators/fastdosbox-1.5
     ./configure --prefix=$rootdir/emulators/fastdosbox-1.5/installdir
     make
@@ -901,7 +810,6 @@ function build_fastdosbox() {
 }
 
 function install_fastdosbox() {
-    printMsg "Installing fastdosbox"
     pushd $rootdir/emulators/fastdosbox-1.5
     make install
     if [[ ! -f $rootdir/emulators/fastdosbox-1.5/installdir/bin/dosbox ]]; then
@@ -911,7 +819,6 @@ function install_fastdosbox() {
 }
 
 function sources_dgen() {
-    printMsg "Getting sources of dgen"
     rmDirExists "$rootdir/emulators/dgen"
     wget http://downloads.sourceforge.net/project/dgen/dgen/1.32/dgen-sdl-1.32.tar.gz
     tar xvfz dgen-sdl-1.32.tar.gz -C "$rootdir/emulators/"
@@ -921,7 +828,6 @@ function sources_dgen() {
 }
 
 function build_dgen() {
-    printMsg "Building dgen"
     pushd "$rootdir/emulators/dgen-sdl"
     ./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$rootdir/emulators/dgen-sdl/installdir"
     make
@@ -929,7 +835,6 @@ function build_dgen() {
 }
 
 function install_dgen() {
-    printMsg "Installing dgen"
     pushd "$rootdir/emulators/dgen-sdl"
     if [[ ! -d "$rootdir/emulators/dgen-sdl/installdir" ]]; then
         mkdir -p "$rootdir/emulators/dgen-sdl/installdir"
@@ -972,22 +877,3 @@ function configure_dgen()
     ensureKeyValue "emu_z80_startup" "drz80" $rootdir/configs/all/dgenrc
     ensureKeyValue "emu_m68k_startup" "cyclone" $rootdir/configs/all/dgenrc
 }
-
-
-# --------------------------
-
-# function sources_XXX() {
-#     printMsg "Getting sources of XXX"
-# }
-
-# function build_XXX() {
-#     printMsg "Building XXX"
-# }
-
-# function install_XXX() {
-#     printMsg "Installing XXX"
-# }
-
-# function configure_XXX() {
-#     printMsg "Configuring XXX"
-# }

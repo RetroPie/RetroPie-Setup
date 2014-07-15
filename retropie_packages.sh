@@ -225,6 +225,31 @@ function rp_printUsageinfo() {
     rp_listFunctions
 }
 
+function rp_callFunction() {
+    local __desc
+    local __function=__$1[$2]
+    case $1 in
+        dependencies)
+            __desc="Installing dependencies for"
+            ;;
+        sources)
+            __desc="Getting sources for"
+            ;;
+        build)
+            __desc="Building"
+            ;;
+        install)
+            __desc="Installing"
+            ;;
+        configure)
+            __desc="Configuring"
+            ;;
+    esac
+    fn_exists ${!__function} || return
+    printMsg "$__desc ${__description[$2]}"
+    ${!__function}
+}
+
 # -------------------------------------------------------------
 rps_checkNeededPackages
 
@@ -342,33 +367,13 @@ rp_registerFunction "326" "Gamecon driver                 " ""                  
 if [[ $# -eq 1 ]]; then
     ensureRootdirExists
     id=$1
-    fn_exists ${__dependencies[$id]} && ${__dependencies[$id]}
-    fn_exists ${__sources[$id]} && ${__sources[$id]}
-    fn_exists ${__build[$id]} && ${__build[$id]}
-    fn_exists ${__install[$id]} && ${__install[$id]}
-    fn_exists ${__configure[$id]} && ${__configure[$id]}
-    # fn_exists ${__package[$id]} && ${__package[$id]} packages are not built automatically
+    for mode in dependencies sources build install configure; do
+        rp_callFunction $mode $id
+    done
 elif [[ $# -eq 2 ]]; then
     ensureRootdirExists
     id=$1
-    if [ "$2" == "dependencies" ]; then
-        fn_exists ${__dependencies[$id]} && ${__dependencies[$id]}
-    fi
-    if [ "$2" == "sources" ]; then
-        fn_exists ${__sources[$id]} && ${__sources[$id]}
-    fi
-    if [ "$2" == "build" ]; then
-        fn_exists ${__build[$id]} && ${__build[$id]}
-    fi
-    if [ "$2" == "install" ]; then
-        fn_exists ${__install[$id]} && ${__install[$id]}
-    fi
-    if [ "$2" == "configure" ]; then
-        fn_exists ${__configure[$id]} && ${__configure[$id]}
-    fi
-    if [ "$2" == "install" ]; then
-        fn_exists ${__package[$id]} && ${__package[$id]}
-    fi
+    rp_callFunction $2 $1
 else
     rp_printUsageinfo
 fi

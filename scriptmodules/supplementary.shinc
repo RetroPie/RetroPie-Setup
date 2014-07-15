@@ -36,8 +36,6 @@ function install_APTPackages() {
 # 301, PackageRepository ---------------------
 
 function install_PackageRepository() {
-    printMsg "Installing Package Repository"
-
     # install repository helper package
     apt-get install -y reprepro || return 1
 
@@ -59,13 +57,10 @@ _EOF_
 # 302, SDL 2.0.1
 
 function depen_sdl() {
-    printMsg "Getting depencies of sdl"
     apt-get install -y libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 }
 
 function sources_sdl() {
-    printMsg "Getting sources of SDL 2.0.1"
-
     # These packages are listed in SDL2's "README-raspberrypi.txt" file as build dependencies.
     # If libudev-dev is not installed before compiling, the keyboard will mysteriously not work!
     # The rest should already be installed, but just to be safe, include them all.
@@ -92,14 +87,12 @@ function install_sdl() {
 
 # 303, Emulation Station ----------------------
 function depen_emulationstation() {
-    printMsg "Getting dependencies for emulationstation"
     apt-get install -y libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
                        libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
                        libasound2-dev cmake g++-4.7
 }
 
 function sources_EmulationStation() {
-    printMsg "Getting sources of EmulationStation"
     # sourced of EmulationStation
     gitPullOrClone "$rootdir/supplementary/EmulationStation" "https://github.com/Aloshi/EmulationStation" || return 1
     pushd "$rootdir/supplementary/EmulationStation" || return 1
@@ -109,8 +102,6 @@ function sources_EmulationStation() {
 }
 
 function build_EmulationStation() {
-    printMsg "Building EmulationStation"
-
     # EmulationStation
     pushd "$rootdir/supplementary/EmulationStation" || return 1
     cmake -D CMAKE_CXX_COMPILER=g++-4.7 . || return 1
@@ -119,8 +110,6 @@ function build_EmulationStation() {
 }
 
 function install_EmulationStation() {
-    printMsg "Installing EmulationStation"
-
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
 
@@ -148,8 +137,6 @@ _EOF_
 }
 
 function configure_EmulationStation() {
-    printMsg "Configuring EmulationStation"
-
     if [[ $__netplayenable == "E" ]]; then
          local __tmpnetplaymode="-$__netplaymode "
          local __tmpnetplayhostip_cfile=$__netplayhostip_cfile
@@ -539,7 +526,6 @@ function package_EmulationStation() {
 
 # 304, install_ESThemeSimple
 function install_ESThemeSimple() {
-    printMsg "Installing EmulationStation theme 'Simple'"
     wget -O themesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=7118
 
     tar xvfj themesDownload.tar.bz2
@@ -554,26 +540,22 @@ function install_ESThemeSimple() {
 }
 
 function install_runcommand() {
-    printMsg "Installing script for setting video mode."
     mkdir -p "$rootdir/supplementary/runcommand/"
     cp $scriptdir/supplementary/runcommand.sh "$rootdir/supplementary/runcommand/"
     chmod +x "$rootdir/supplementary/runcommand/runcommand.sh"
 }
 
 function sources_snesdev() {
-    printMsg "Getting sources of snesdev"
     gitPullOrClone "$rootdir/supplementary/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
 }
 
 function build_snesdev() {
-    printMsg "Building snesdev"
     pushd "$rootdir/supplementary/SNESDev-Rpi"
     ./build.sh
     popd
 }
 
 function install_snesdev() {
-    printMsg "Installing snesdev"
     if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/SNESDev" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
     else
@@ -644,7 +626,6 @@ function sup_disableSNESDevAtStart()
 }
 
 function configure_snesdev() {
-    printMsg "Configuring snesdev"
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 86 16)
     options=(1 "Disable SNESDev on boot and SNESDev keyboard mapping."
              2 "Enable SNESDev on boot and SNESDev keyboard mapping (polling pads and button)."
@@ -672,19 +653,16 @@ function configure_snesdev() {
 }
 
 function sources_xarcade2jstick() {
-    printMsg "Getting sources of xarcade2jstick"
     gitPullOrClone "$rootdir/supplementary/Xarcade2Jstick/" https://github.com/petrockblog/Xarcade2Joystick.git
 }
 
 function build_xarcade2jstick() {
-    printMsg "Building xarcade2jstick"
     pushd "$rootdir/supplementary/Xarcade2Jstick/"
     make
     popd
 }
 
 function install_xarcade2jstick() {
-    printMsg "Installing xarcade2jstick"
     pushd "$rootdir/supplementary/Xarcade2Jstick/"
     make install
     popd
@@ -699,7 +677,6 @@ function sup_checkInstallXarcade2Jstick() {
 }
 
 function configure_xarcade2jstick() {
-    printMsg "Configuring xarcade2jstick"
     cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 86 16)
     options=(1 "Disable Xarcade2Jstick service."
              2 "Enable Xarcade2Jstick service." )
@@ -725,8 +702,6 @@ function configure_xarcade2jstick() {
 }
 
 function install_retroarchautoconf() {
-    printMsg "Installing retroarchautoconf"
-
     if [[ ! -d "$rootdir/emulators/RetroArch/configs/" ]]; then
         mkdir -p "$rootdir/emulators/RetroArch/configs/"
     fi
@@ -766,15 +741,11 @@ HDHD
 }
 
 function install_sambashares() {
-    printMsg "Installing sambashares"
-
     apt-get update
     apt-get install -y samba samba-common-bin
 }
 
 function configure_sambashares() {
-    printMsg "Configuring sambashares"
-
     set_ensureEntryInSMBConf "AMIGA" "$romdir/amiga"
     set_ensureEntryInSMBConf "APPLE2" "$romdir/apple2"
     set_ensureEntryInSMBConf "ARMSTRADCPC" "$romdir/cpc"
@@ -815,15 +786,11 @@ function configure_sambashares() {
 }
 
 function install_usbromservice() {
-    printMsg "Installing usbromservice"
-
     # install usbmount package
     apt-get install -y usbmount
 }
 
 function configure_usbromservice() {
-    printMsg "Configuring usbromservice"
-
     # install hook in usbmount sub-directory
     cp $scriptdir/supplementary/01_retropie_copyroms /etc/usbmount/mount.d/
     sed -i -e "s/USERTOBECHOSEN/$user/g" /etc/usbmount/mount.d/01_retropie_copyroms
@@ -970,8 +937,6 @@ function configure_splashscreen() {
 }
 
 function configure_retronetplay() {
-    printMsg "Configuring retronetplay"
-
     ipaddress_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
     ipaddress_ext=$(curl http://ipecho.net/plain; echo)
     while true; do
@@ -1072,8 +1037,6 @@ function rps_retronet_saveconfig() {
 }
 
 function install_modules() {
-    printMsg "Installing modules"
-
     modprobe uinput
     modprobe joydev
 
@@ -1087,21 +1050,15 @@ function install_modules() {
 }
 
 function install_setavoidsafemode() {
-    printMsg "Installing setavoidsafemode"
-
     ensureKeyValueBootconfig "avoid_safe_mode" 1 "/boot/config.txt"
 }
 
 function install_disabletimeouts() {
-    printMsg "Disabling blank and powerdown timeouts in /etc/kbd/config"
-
     sed -i 's/BLANK_TIME=30/BLANK_TIME=0/g' /etc/kbd/config
     sed -i 's/POWERDOWN_TIME=30/POWERDOWN_TIME=0/g' /etc/kbd/config
 }
 
 function install_handleaptpackages() {
-    printMsg "Handling APT packages"
-
     # remove PulseAudio since this is slowing down the whole system significantly. Cups is also not needed
     apt-get remove -y pulseaudio cups wolfram-engine
     apt-get -y autoremove
@@ -1133,7 +1090,6 @@ function configure_autostartemustat() {
 }
 
 function set_installps3controller() {
-    clear
     apt-get update
     apt-get install -y --force-yes bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
     apt-get remove -y cups
@@ -1171,8 +1127,6 @@ function set_installps3controller() {
 }
 
 function set_install_xboxdrv() {
-    clear
-    printMsg "Installing xboxdrv"
     apt-get install -y --force-yes xboxdrv
     if [[ -z `cat /etc/rc.local | grep "xboxdrv"` ]]; then
         sed -i -e '13,$ s|exit 0|xboxdrv --daemon --id 0 --led 2 --deadzone 4000 --silent --trigger-as-button --next-controller --id 1 --led 3 --deadzone 4000 --silent --trigger-as-button --dbus disabled --detach-kernel-driver \&\nexit 0|g' /etc/rc.local
@@ -1198,7 +1152,6 @@ function set_RetroarchJoyconfig() {
 }
 
 function install_libsdlbinaries() {
-    printMsg "Downloading and installing SDL 2.0.1 binaries"
     apt-get install -y libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 
     wget -O libsdlbinaries.tar.gz http://downloads.petrockblock.com/libsdl2.0.1.tar.gz
@@ -1245,7 +1198,6 @@ function configure_audiosettings() {
 
 function configure_esconfig()
 {
-    printMsg "Configuring ES-config"
     cp "$scriptdir/supplementary/settings.xml" "$rootdir/supplementary/ES-config/"
     sed -i -e "s|/home/pi/RetroPie|$rootdir|g" "$rootdir/supplementary/ES-config/settings.xml"
     if [[ ! -d $romdir/esconfig ]]; then
@@ -1300,7 +1252,6 @@ chown $user:$user "$romdir/esconfig/"*
 
 function install_esconfig()
 {
-    printMsg "Installing ES-config"
     rmDirExists "$rootdir/supplementary/ES-config"
     gitPullOrClone "$rootdir/supplementary/ES-config" git://github.com/Aloshi/ES-config.git
     pushd "$rootdir/supplementary/ES-config"
@@ -1492,22 +1443,4 @@ __________\n\
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox \
     "Gamecon GPIO driver enabled with 2 SNES pads." 22 76
 }
-
-# --------------------------------------
-
-# function sources_XXX() {
-#     printMsg "Getting sources of XXX"
-# }
-
-# function build_XXX() {
-#     printMsg "Building XXX"
-# }
-
-# function install_XXX() {
-#     printMsg "Installing XXX"
-# }
-
-# function configure_XXX() {
-#     printMsg "Configuring XXX"
-# }
 
