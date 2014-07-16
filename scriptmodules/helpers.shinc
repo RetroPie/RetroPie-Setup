@@ -170,11 +170,8 @@ function checkFileExistence()
 
 fn_exists()
 {
-    if type -t "$1" | grep -q '^function' 2>/dev/null; then
-        return 0;
-    else
-        return 1;
-    fi
+    declare -f "$1" > /dev/null
+    return $?
 }
 
 # clones or updates the sources of a repository $2 into the directory $1
