@@ -28,20 +28,19 @@
 # 300, APT Update
 
 function install_APTPackages() {
-    apt-get autoremove;
-    apt-get update;
-    apt-get -y upgrade;
+    apt-get autoremove
+    aptUpdate
+    apt-get -y upgrade
 }
 
 # 301, PackageRepository ---------------------
 
 function install_PackageRepository() {
     # install repository helper package
-    apt-get install -y reprepro || return 1
+    aptInstall reprepro
 
     # Create repository
-    mkdir RetroPieRepo || return 1
-    mkdir RetroPieRepo/conf || return 1
+    mkdir -p RetroPieRepo/conf
     cat >> RetroPieRepo/conf/distributions << _EOF_
 Origin: apt.petrockblock.com
 Label: apt repository
@@ -57,7 +56,7 @@ _EOF_
 # 302, SDL 2.0.1
 
 function depen_sdl() {
-    apt-get install -y libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
+    aptInstall libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 }
 
 function sources_sdl() {
@@ -87,7 +86,7 @@ function install_sdl() {
 
 # 303, Emulation Station ----------------------
 function depen_emulationstation() {
-    apt-get install -y libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
+    aptInstall -y libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
                        libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
                        libasound2-dev cmake g++-4.7
 }
@@ -488,7 +487,7 @@ chmod 755 "/etc/emulationstation/es_systems.cfg"
 function package_EmulationStation() {
     local PKGNAME
 
-    apt-get install -y reprepro
+    aptInstall reprepro
 
     printMsg "Building package of EmulationStation"
 
@@ -736,8 +735,7 @@ _EOF_
 }
 
 function install_sambashares() {
-    apt-get update
-    apt-get install -y samba samba-common-bin
+    aptInstall samba samba-common-bin
 }
 
 function configure_sambashares() {
@@ -761,7 +759,7 @@ function configure_sambashares() {
 
 function install_usbromservice() {
     # install usbmount package
-    apt-get install -y usbmount
+    aptInstall usbmount
 }
 
 function configure_usbromservice() {
@@ -776,7 +774,7 @@ function set_enableSplashscreenAtStart()
     clear
     printMsg "Enabling custom splashscreen on boot."
 
-    apt-get install -y fbi
+    aptInstall fbi
 
     chmod +x "$scriptdir/supplementary/asplashscreen/asplashscreen"
     cp "$scriptdir/supplementary/asplashscreen/asplashscreen" "/etc/init.d/"
@@ -1064,8 +1062,7 @@ function configure_autostartemustat() {
 }
 
 function set_installps3controller() {
-    apt-get update
-    apt-get install -y --force-yes bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
+    aptInstall --force-yes bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
     apt-get remove -y cups
     apt-get autoremove -y
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Please make sure that your Bluetooth dongle is connected to the Raspberry Pi and press ENTER." 22 76
@@ -1101,7 +1098,7 @@ function set_installps3controller() {
 }
 
 function set_install_xboxdrv() {
-    apt-get install -y --force-yes xboxdrv
+    aptInstall --force-yes xboxdrv
     if [[ -z `cat /etc/rc.local | grep "xboxdrv"` ]]; then
         sed -i -e '13,$ s|exit 0|xboxdrv --daemon --id 0 --led 2 --deadzone 4000 --silent --trigger-as-button --next-controller --id 1 --led 3 --deadzone 4000 --silent --trigger-as-button --dbus disabled --detach-kernel-driver \&\nexit 0|g' /etc/rc.local
     fi
@@ -1126,7 +1123,7 @@ function set_RetroarchJoyconfig() {
 }
 
 function install_libsdlbinaries() {
-    apt-get install -y libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
+    aptInstall libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 
     wget -O libsdlbinaries.tar.gz http://downloads.petrockblock.com/libsdl2.0.1.tar.gz
     tar xvfz libsdlbinaries.tar.gz
@@ -1256,9 +1253,8 @@ function install_gamecondriver() {
         return 0;;
     esac
 
-    #install dkms and gcc-4.7
-    apt-get update
-    apt-get install -y --force-yes dkms gcc-4.7
+    #install dkms
+    aptInstall dkms
 
     #reconfigure / install headers (takes a a while)
     if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then

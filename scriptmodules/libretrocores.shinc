@@ -206,7 +206,7 @@ function configure_mamelibretro() {
 }
 
 function depen_fbalibretro() {
-    apt-get update && apt-get install -y --force-yes cpp-4.5 gcc-4.5 g++-4.5
+    aptInstall --force-yes cpp-4.5 gcc-4.5 g++-4.5
 }
 
 function sources_fbalibretro() {

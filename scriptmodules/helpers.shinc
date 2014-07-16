@@ -250,3 +250,17 @@ function buildMenu()
         done
     done
 }
+
+function aptUpdate()
+{
+    if [[ "$__apt_update" != "1" ]]; then
+        apt-get update
+        __apt_update="1"
+    fi
+}
+
+function aptInstall()
+{
+    aptUpdate
+    apt-get install -y --no-install-recommends $@
+}
