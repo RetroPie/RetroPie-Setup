@@ -24,7 +24,7 @@
 #
 
 function depen_retroarch() {
-    apt-get install -y libudev-dev libxkbcommon-dev
+    aptInstall libudev-dev libxkbcommon-dev
     cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
 KERNEL=="event*", NAME="input/%k", MODE="666"
 _EOF_
@@ -182,7 +182,7 @@ function configure_retroarch() {
 
 # 101, AdvMAME
 function depen_advmame() {
-    apt-get -y install libsdl1.2-dev gcc-4.7
+    aptInstall libsdl1.2-dev gcc-4.7
 }
 
 function sources_advmame() {
@@ -295,7 +295,7 @@ function configure_cpc() {
 }
 
 function install_dosbox() {
-    apt-get install -y dosbox
+    aptInstall dosbox
 }
 
 function configure_dosbox() {
@@ -304,7 +304,7 @@ function configure_dosbox() {
 
 function install_stella()
 {
-    apt-get install -y stella
+    aptInstall stella
 }
 
 function configure_stella() {
@@ -352,8 +352,7 @@ function build_vice() {
         apt-get remove -y vice
     fi
     echo 'deb-src http://mirrordirector.raspbian.org/raspbian/ wheezy main contrib non-free rpi' >> /etc/apt/sources.list
-    apt-get update
-    apt-get install -y libxaw7-dev automake checkinstall
+    aptInstall libxaw7-dev automake checkinstall
     pushd "$rootdir/emulators/vice-2.4"
     ./configure --prefix="$rootdir/emulators/vice-2.4/installdir" --enable-sdlui --without-pulse --with-sdlsound
     make
@@ -483,7 +482,7 @@ function configure_gngeopi() {
 }
 
 function install_hatari() {
-    apt-get install -y hatari
+    aptInstall hatari
     mkdir -p $romdir/atariststefalcon
 }
 
@@ -555,7 +554,7 @@ function configure_jzint() {
 }
 
 function depen_linapple() {
-    apt-get update && apt-get install -y libzip2
+    aptInstall libzip2
 }
 
 function sources_linapple() {
@@ -608,7 +607,7 @@ function configure_mupen64rpi() {
 }
 
 function depen_snes9x() {
-    apt-get update && apt-get install -y libsdl-dev libboost-thread-dev
+    aptInstall libsdl-dev libboost-thread-dev
 }
 
 function sources_snes9x() {
@@ -718,7 +717,7 @@ _EOF_
 }
 
 function install_scummvm() {
-    apt-get install -y scummvm scummvm-data
+    aptInstall scummvm scummvm-data
     if [[ $? -gt 0 ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully install ScummVM."
     else
@@ -727,7 +726,7 @@ function install_scummvm() {
 }
 
 function install_zmachine() {
-    apt-get install -y frotz
+    aptInstall frotz
     wget -U firefox http://www.infocom-if.org/downloads/zork1.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork2.zip
     wget -U firefox http://www.infocom-if.org/downloads/zork3.zip
@@ -744,7 +743,7 @@ function install_zmachine() {
 }
 
 function install_zxspectrum() {
-    apt-get install -y spectrum-roms fuse-emulator-utils fuse-emulator-common
+    aptInstall spectrum-roms fuse-emulator-utils fuse-emulator-common
 }
 
 function sources_fbzx() {
@@ -768,7 +767,7 @@ function configure_fbzx() {
 }
 
 function depen_msx() {
-    apt-get update && apt-get install -y libsdl1.2-dev libsdl-ttf2.0-dev libglew-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev
+    aptInstall libsdl1.2-dev libsdl-ttf2.0-dev libglew-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev
 }
 
 function sources_openmsx() {
