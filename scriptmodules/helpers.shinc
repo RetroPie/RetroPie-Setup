@@ -131,6 +131,35 @@ function rel2abs() {
   echo $dir/$file
 }
 
+function rps_checkNeededPackages() {
+    if [[ -z $(type -P git) || -z $(type -P dialog) ]]; then
+        echo "Did not find needed packages 'git' and/or 'dialog'. I am trying to install these now."
+        aptInstall git dialog
+        if [ $? == '0' ]; then
+            echo "Successfully installed 'git' and/or 'dialog'."
+        else
+            echo "Could not install 'git' and/or 'dialog'. Aborting now."
+            exit 1
+        fi
+    else
+        echo "Found needed packages 'git' and 'dialog'."
+    fi
+}
+
+function rps_availFreeDiskSpace() {
+    local __required=$1
+    local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
+
+    required_MB=`expr $__required / 1024`
+    available_MB=`expr $__avail / 1024`
+
+    if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space ($required_MB MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir continue anyway?"; then
+        return 0;
+    else
+        exit 0;
+    fi
+}
+
 function checkForInstalledAPTPackage()
 {
     PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1|grep "install ok installed")
