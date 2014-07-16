@@ -182,6 +182,8 @@ checkForLogDirectory
 
 rps_checkNeededPackages
 
+source $scriptdir/retropie_packages.sh init
+
 # set default gcc version
 gcc_version $__default_gcc_version
 

@@ -225,3 +225,27 @@ function rmDirExists()
         rm -rf "$1"
     fi
 }
+
+function buildMenu()
+{
+    options=()
+    command=()
+    local status
+    local id
+    local menu
+    local menus
+    for id in "${__cmdid[@]}"; do
+        menus="${__menus[$id]}"
+        for menu in $menus; do
+            command[$id]="${menu:2}"
+            if [[ "${menu:0:1}" == "$1" ]]; then
+                options=("${options[@]}" "$id" "${__description[$id]}")
+                if [[ "$2" == "bool" ]]; then
+                    status="ON"
+                    [[ "${menu:1:1}" == "-" ]] && status="OFF"
+                    options=("${options[@]}" "$status")
+                fi
+            fi
+        done
+    done
+}
