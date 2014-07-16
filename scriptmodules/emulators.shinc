@@ -61,6 +61,10 @@ function ensureSystemretroconfig {
 
 function configure_retroarch() {
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
+
+    if [[ ! -d "$rootdir/configs/" ]]; then
+        mkdir -p "$rootdir/configs/"
+    fi
     cp $scriptdir/supplementary/retroarch-core-options.cfg "$rootdir/configs/all/"
     chown $user:$user "$rootdir/configs/all/retroarch-core-options.cfg"
 
