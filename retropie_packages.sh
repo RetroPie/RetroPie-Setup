@@ -330,11 +330,11 @@ import "scriptmodules/emulators"
 import "scriptmodules/libretrocores"
 import "scriptmodules/supplementary"
 
+rps_checkNeededPackages
+
 [[ "$1" == "init" ]] && return
 
 loadConfig "configs/retronetplay.cfg"
-
-rps_checkNeededPackages
 
 # ID mode
 if [[ $# -eq 1 ]]; then

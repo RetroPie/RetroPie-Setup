@@ -55,8 +55,6 @@ import "scriptmodules/retropiesetup"
 
 checkForLogDirectory
 
-rps_checkNeededPackages
-
 # set default gcc version
 gcc_version $__default_gcc_version
 
