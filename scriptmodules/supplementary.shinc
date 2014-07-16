@@ -728,8 +728,8 @@ comment = $1
 path = $2
 writeable = yes
 guest ok = yes
-create mask = 0755
-directory mask = 0644
+create mask = 0644
+directory mask = 0755
 force user = $user
 _EOF_
     fi
