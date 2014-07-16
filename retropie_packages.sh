@@ -64,6 +64,12 @@ __default_gcc_version="4.7"
 [[ -z "${ASFLAGS}"         ]] && export ASFLAGS="${__default_asflags}"
 [[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
 
+# check, if sudo is used
+if [ $(id -u) -ne 0 ]; then
+    printf "Script must be run as root. Try 'sudo $0'\n"
+    exit 1
+fi
+
 # test if we are in a chroot
 if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
   # make chroot identify as arm6l
@@ -155,36 +161,6 @@ function loadConfig() {
     else
         echo "Unable to find configuration file $script_absolute_dir/$configfile"
         exit 1
-    fi
-}
-
-function rps_checkNeededPackages() {
-    if [[ -z $(type -P git) || -z $(type -P dialog) ]]; then
-        echo "Did not find needed packages 'git' and/or 'dialog'. I am trying to install these now."
-        apt-get update
-        apt-get install -y git dialog
-        if [ $? == '0' ]; then
-            echo "Successfully installed 'git' and/or 'dialog'."
-        else
-            echo "Could not install 'git' and/or 'dialog'. Aborting now."
-            exit 1
-        fi
-    else
-        echo "Found needed packages 'git' and 'dialog'."
-    fi
-}
-
-function rps_availFreeDiskSpace() {
-    local __required=$1
-    local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
-
-    required_MB=`expr $__required / 1024`
-    available_MB=`expr $__avail / 1024`
-
-    if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space ($required_MB MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir continue anyway?"; then
-        return 0;
-    else
-        exit 0;
     fi
 }
 
@@ -338,15 +314,7 @@ function registerFunctions() {
 
 # -------------------------------------------------------------
 
-# check, if sudo is used
-if [ $(id -u) -ne 0 ]; then
-    printf "Script must be run as root. Try 'sudo ./retropackages'\n"
-    exit 1
-fi
-
 registerFunctions
-
-[[ "$1" == "init" ]] && return
 
 scriptdir=`dirname $0`
 scriptdir=`cd $scriptdir && pwd`
@@ -361,6 +329,8 @@ import "scriptmodules/helpers"
 import "scriptmodules/emulators"
 import "scriptmodules/libretrocores"
 import "scriptmodules/supplementary"
+
+[[ "$1" == "init" ]] && return
 
 loadConfig "configs/retronetplay.cfg"
 
