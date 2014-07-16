@@ -160,10 +160,10 @@ _EOF_
     # download and install midi instruments
     pushd /usr/local/lib
     if `wget "http://www.libsdl.org/projects/SDL_mixer/timidity/timidity.tar.gz"`; then
-    tar -xf timidity.tar.gz
-        ln -s /usr/local/lib/timidity/timidity.cfg /etc/timidity.cfg
+        tar -xf timidity.tar.gz
+        ln -f -s /usr/local/lib/timidity/timidity.cfg /etc/timidity.cfg
     else
-        echo error
+        __ERRMSGS="$__ERRMSGS Could not successfully download and install Timidity patchsets."
     fi
     popd
 }
