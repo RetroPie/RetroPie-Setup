@@ -394,20 +394,20 @@ function install_eduke32() {
         __ERRMSGS="$__ERRMSGS Could not successfully install eDuke32 core."
     else
         dpkg -i *duke*.deb
-        if [[ ! -d $romdir/roms/ports/duke3d ]]; then
-            mkdir -p $romdir/roms/ports/duke3d
+        if [[ ! -d $romdir/ports/duke3d ]]; then
+            mkdir -p $romdir/ports/duke3d
         fi
-        cp /usr/share/games/eduke32/DUKE.RTS $romdir/roms/ports/duke3d/
-        cp /usr/share/games/eduke32/duke3d.grp $romdir/roms/ports/duke3d/
+        cp /usr/share/games/eduke32/DUKE.RTS $romdir/ports/duke3d/
+        cp /usr/share/games/eduke32/duke3d.grp $romdir/ports/duke3d/
     fi
     popd
     rm -rf "$rootdir/emulators/eduke32"
 
-    cat > "$romdir/roms/ports/Duke3D Shareware.sh" << _EOF_
+    cat > "$romdir/ports/Duke3D Shareware.sh" << _EOF_
 #!/bin/bash
 $rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -g %ROM% -gamegrp duke3d.grp"
 _EOF_
-    chmod +x "$romdir/roms/ports/Duke3D Shareware.sh"
+    chmod +x "$romdir/ports/Duke3D Shareware.sh"
 }
 
 # install Game Boy Advance emulator gpSP
