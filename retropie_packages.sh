@@ -330,7 +330,7 @@ import "scriptmodules/emulators"
 import "scriptmodules/libretrocores"
 import "scriptmodules/supplementary"
 
-rps_checkNeededPackages git dialog
+rps_checkNeededPackages git dialog gcc-4.7
 
 [[ "$1" == "init" ]] && return
 
