@@ -37,7 +37,7 @@ function install_APTPackages() {
 
 function install_PackageRepository() {
     # install repository helper package
-    aptInstall reprepro
+    rps_checkNeededPackages reprepro
 
     # Create repository
     mkdir -p RetroPieRepo/conf
@@ -56,7 +56,7 @@ _EOF_
 # 302, SDL 2.0.1
 
 function depen_sdl() {
-    aptInstall libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
+    rps_checkNeededPackages libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 }
 
 function sources_sdl() {
@@ -86,9 +86,10 @@ function install_sdl() {
 
 # 303, Emulation Station ----------------------
 function depen_emulationstation() {
-    aptInstall -y libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
-                       libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
-                       libasound2-dev cmake g++-4.7
+    rps_checkNeededPackages \
+        libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
+        libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
+        libasound2-dev cmake g++-4.7
 }
 
 function sources_EmulationStation() {
@@ -487,7 +488,7 @@ chmod 755 "/etc/emulationstation/es_systems.cfg"
 function package_EmulationStation() {
     local PKGNAME
 
-    aptInstall reprepro
+    rps_checkNeededPackages reprepro
 
     printMsg "Building package of EmulationStation"
 
@@ -735,7 +736,7 @@ _EOF_
 }
 
 function install_sambashares() {
-    aptInstall samba samba-common-bin
+    rps_checkNeededPackages samba samba-common-bin
 }
 
 function configure_sambashares() {
@@ -759,7 +760,7 @@ function configure_sambashares() {
 
 function install_usbromservice() {
     # install usbmount package
-    aptInstall usbmount
+    rps_checkNeededPackages usbmount
 }
 
 function configure_usbromservice() {
@@ -774,7 +775,7 @@ function set_enableSplashscreenAtStart()
     clear
     printMsg "Enabling custom splashscreen on boot."
 
-    aptInstall fbi
+    rps_checkNeededPackages fbi
 
     chmod +x "$scriptdir/supplementary/asplashscreen/asplashscreen"
     cp "$scriptdir/supplementary/asplashscreen/asplashscreen" "/etc/init.d/"
@@ -1062,7 +1063,7 @@ function configure_autostartemustat() {
 }
 
 function set_installps3controller() {
-    aptInstall --force-yes bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
+    rps_checkNeededPackages bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
     apt-get remove -y cups
     apt-get autoremove -y
     dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Please make sure that your Bluetooth dongle is connected to the Raspberry Pi and press ENTER." 22 76
@@ -1098,7 +1099,7 @@ function set_installps3controller() {
 }
 
 function set_install_xboxdrv() {
-    aptInstall --force-yes xboxdrv
+    rps_checkNeededPackages xboxdrv
     if [[ -z `cat /etc/rc.local | grep "xboxdrv"` ]]; then
         sed -i -e '13,$ s|exit 0|xboxdrv --daemon --id 0 --led 2 --deadzone 4000 --silent --trigger-as-button --next-controller --id 1 --led 3 --deadzone 4000 --silent --trigger-as-button --dbus disabled --detach-kernel-driver \&\nexit 0|g' /etc/rc.local
     fi
@@ -1123,7 +1124,7 @@ function set_RetroarchJoyconfig() {
 }
 
 function install_libsdlbinaries() {
-    aptInstall libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
+    rps_checkNeededPackages libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 
     wget -O libsdlbinaries.tar.gz http://downloads.petrockblock.com/libsdl2.0.1.tar.gz
     tar xvfz libsdlbinaries.tar.gz
@@ -1254,7 +1255,7 @@ function install_gamecondriver() {
     esac
 
     #install dkms
-    aptInstall dkms
+    rps_checkNeededPackages dkms
 
     #reconfigure / install headers (takes a a while)
     if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then

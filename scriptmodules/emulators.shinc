@@ -24,7 +24,7 @@
 #
 
 function depen_retroarch() {
-    aptInstall libudev-dev libxkbcommon-dev
+    rps_checkNeededPackages libudev-dev libxkbcommon-dev
     cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
 KERNEL=="event*", NAME="input/%k", MODE="666"
 _EOF_
@@ -186,7 +186,7 @@ function configure_retroarch() {
 
 # 101, AdvMAME
 function depen_advmame() {
-    aptInstall libsdl1.2-dev gcc-4.7
+    rps_checkNeededPackages libsdl1.2-dev
 }
 
 function sources_advmame() {
@@ -558,7 +558,7 @@ function configure_jzint() {
 }
 
 function depen_linapple() {
-    aptInstall libzip2
+    rps_checkNeededPackages libzip2
 }
 
 function sources_linapple() {
@@ -611,7 +611,7 @@ function configure_mupen64rpi() {
 }
 
 function depen_snes9x() {
-    aptInstall libsdl-dev libboost-thread-dev
+    rps_checkNeededPackages libsdl-dev libboost-thread-dev
 }
 
 function sources_snes9x() {
@@ -771,7 +771,7 @@ function configure_fbzx() {
 }
 
 function depen_msx() {
-    aptInstall libsdl1.2-dev libsdl-ttf2.0-dev libglew-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev
+    rps_checkNeededPackages libsdl1.2-dev libsdl-ttf2.0-dev libglew-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev
 }
 
 function sources_openmsx() {
