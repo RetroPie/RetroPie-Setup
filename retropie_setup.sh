@@ -55,9 +55,6 @@ import "scriptmodules/retropiesetup"
 
 checkForLogDirectory
 
-# set default gcc version
-gcc_version $__default_gcc_version
-
 # make sure that enough space is available
 rps_availFreeDiskSpace 800000
 

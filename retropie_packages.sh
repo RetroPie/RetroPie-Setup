@@ -332,6 +332,9 @@ import "scriptmodules/supplementary"
 
 rps_checkNeededPackages git dialog gcc-4.7
 
+# set default gcc version
+gcc_version $__default_gcc_version
+
 [[ "$1" == "init" ]] && return
 
 loadConfig "configs/retronetplay.cfg"
