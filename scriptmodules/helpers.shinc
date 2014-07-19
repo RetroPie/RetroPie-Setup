@@ -131,18 +131,37 @@ function rel2abs() {
   echo $dir/$file
 }
 
+function checkForInstalledAPTPackage()
+{
+    PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1 2>/dev/null|grep "install ok installed")
+    if [ "" == "$PKG_OK" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 function rps_checkNeededPackages() {
-    if [[ -z $(type -P git) || -z $(type -P dialog) ]]; then
-        echo "Did not find needed packages 'git' and/or 'dialog'. I am trying to install these now."
-        aptInstall git dialog
-        if [ $? == '0' ]; then
-            echo "Successfully installed 'git' and/or 'dialog'."
+    local required
+    local packages=()
+    local failed=()
+    for required in $@; do
+        checkForInstalledAPTPackage "$required" && packages+=("$required")
+    done
+    if [[ ${#packages[@]} -ne 0 ]]; then
+        echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
+        aptInstall ${packages[@]}
+        # check the required packages again rather than return code of apt-get, as apt-get
+        # might fail for other reasons (other broken packages, eg samba in a chroot environment)
+        for required in ${packages[@]}; do
+            checkForInstalledAPTPackage "$required" && failed+=("$required")
+        done
+        if [[ ${#failed[@]} -eq 0 ]]; then
+            echo "Successfully installed package(s): ${packages[@]}."
         else
-            echo "Could not install 'git' and/or 'dialog'. Aborting now."
+            echo "Could not install package(s): ${packages[@]}. Aborting now."
             exit 1
         fi
-    else
-        echo "Found needed packages 'git' and 'dialog'."
     fi
 }
 
@@ -165,17 +184,6 @@ function rps_availFreeDiskSpace() {
         return 0;
     else
         exit 0;
-    fi
-}
-
-function checkForInstalledAPTPackage()
-{
-    PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1|grep "install ok installed")
-    echo Checking for somelib: $PKG_OK
-    if [ "" == "$PKG_OK" ]; then
-        echo "NOT INSTALLED: $1"
-    else
-        echo "installed: $1"
     fi
 }
 
@@ -297,4 +305,5 @@ function aptInstall()
 {
     aptUpdate
     apt-get install -y --no-install-recommends $@
+    return $?
 }
