@@ -46,8 +46,8 @@ function checkForLogDirectory() {
 #  START OF THE MAIN SCRIPT
 # =============================================================
 
-scriptdir=`dirname $0`
-scriptdir=`cd $scriptdir && pwd`
+scriptdir=$(dirname $0)
+scriptdir=$(cd $scriptdir && pwd)
 
 source $scriptdir/retropie_packages.sh init
 
@@ -80,5 +80,4 @@ while true; do
         break
     fi
 done
-
-
+clear

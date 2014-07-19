@@ -204,9 +204,8 @@ function rp_printUsageinfo() {
 }
 
 function rp_callFunction() {
-    local __desc
-    local __function=__$1[$2]
-    case $1 in
+    local __function=__$2[$1]
+    case $2 in
         dependencies)
             __desc="Installing dependencies for"
             ;;
@@ -223,14 +222,16 @@ function rp_callFunction() {
             __desc="Configuring"
             ;;
     esac
+    # echo "Checking, if function ${!__function} exists"
     fn_exists ${!__function} || return
-    printMsg "$__desc ${__description[$2]}"
+    # echo "Printing function name"
+    printMsg "$__desc ${__description[$1]}"
+    # echo "Executing function"
     ${!__function}
 }
 
 function registerFunctions() {
     # register script functions
-    # rp_registerFunction "" "" "" "" "" "" "" ""
 
     # Emulator components (emulators.shinc)
     rp_registerFunction "100" "RetroArch                      " "2+"                          "depen_retroarch"        "sources_retroarch"       "build_retroarch"         "install_retroarch"         "configure_retroarch"        ""
@@ -316,8 +317,8 @@ function registerFunctions() {
 
 registerFunctions
 
-scriptdir=`dirname $0`
-scriptdir=`cd $scriptdir && pwd`
+scriptdir=$(dirname $0)
+scriptdir=$(cd $scriptdir && pwd)
 
 # load script modules
 script_invoke_path="$0"
@@ -339,17 +340,20 @@ gcc_version $__default_gcc_version
 
 loadConfig "configs/retronetplay.cfg"
 
-# ID mode
+# ID scriptmode
 if [[ $# -eq 1 ]]; then
     ensureRootdirExists
     id=$1
-    for mode in dependencies sources build install configure; do
-        rp_callFunction $mode $id
+    for scriptmode in dependencies sources build install configure; do
+        rp_callFunction $scriptmode $id
     done
+
+# ID Type mode
 elif [[ $# -eq 2 ]]; then
     ensureRootdirExists
-    id=$1
-    rp_callFunction $2 $1
+    rp_callFunction $1 $2
+
+# show usage information
 else
     rp_printUsageinfo
 fi

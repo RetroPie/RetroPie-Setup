@@ -91,12 +91,13 @@ function rps_main_binaries()
         source $scriptdir/retropie_packages.sh 311           # USB ROM Service
 
         # configure all emulator and libretro components
-        for (( i = 100; i <= 129; i++ )); do
-            source $scriptdir/retropie_packages.sh $i configure
+        local counter
+        for (( counter = 100; counter <= 129; counter++ )); do
+            source $scriptdir/retropie_packages.sh $counter configure
         done
 
-        for (( i = 200; i <= 212; i++ )); do
-            source $scriptdir/retropie_packages.sh $i configure
+        for (( counter = 200; counter <= 212; counter++ )); do
+            source $scriptdir/retropie_packages.sh $counter configure
         done
 
     } 2>&1 > >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
