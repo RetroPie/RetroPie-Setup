@@ -318,7 +318,7 @@ function install_stella()
 }
 
 function configure_stella() {
-    mkdir -p "r$omroot/atari2600"
+    mkdir -p "$romdir/atari2600"
 }
 
 function sources_basilisk() {
