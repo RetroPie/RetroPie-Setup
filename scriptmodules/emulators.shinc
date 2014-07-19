@@ -611,7 +611,7 @@ function configure_mupen64rpi() {
 }
 
 function depen_snes9x() {
-    aptInstall libsdl-dev libboost-thread-dev
+    aptInstall libsdl1.2-dev libboost-thread-dev
 }
 
 function sources_snes9x() {
