@@ -332,7 +332,7 @@ import "scriptmodules/emulators"
 import "scriptmodules/libretrocores"
 import "scriptmodules/supplementary"
 
-rps_checkNeededPackages git dialog gcc-4.7
+rps_checkNeededPackages git dialog gcc-4.7 g++-4.7
 
 # set default gcc version
 gcc_version $__default_gcc_version
