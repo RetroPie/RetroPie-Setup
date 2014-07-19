@@ -167,13 +167,13 @@ function rps_checkNeededPackages() {
 
 function rps_availFreeDiskSpace() {
     local rootdirExists=0
-    if [[ ! -d $rootdir ]]; then
+    if [[ ! -d "$rootdir" ]]; then
         rootdirExists=1
         mkdir -p $rootdir
     fi
     local __required=$1
     local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
-    if [[ $rootdirExists==1 ]]; then
+    if [[ $rootdirExists -eq 1 ]]; then
         rmdir $rootdir
     fi
 
@@ -241,7 +241,7 @@ function gitPullOrClone()
 set_default()
 {
     if [ -e "$1-$2" ] ; then
-        echo $1-$2 is now the default
+        # echo $1-$2 is now the default
         ln -sf $1-$2 $1
     else
         echo $1-$2 is not installed

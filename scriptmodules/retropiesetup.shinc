@@ -65,7 +65,7 @@ function rps_main_binaries()
         source $scriptdir/retropie_packages.sh 318           # APT clean up
         source $scriptdir/retropie_packages.sh 315           # modules
 
-        rps_downloadBinaries        # download pre-compiled binaries and extract them
+        rps_downloadBinaries                                 # download pre-compiled binaries and extract them
 
         source $scriptdir/retropie_packages.sh 323           # install SDL 2.0.1 binaries
         source $scriptdir/retropie_packages.sh 303 install   # ES start script
@@ -91,11 +91,11 @@ function rps_main_binaries()
         source $scriptdir/retropie_packages.sh 311           # USB ROM Service
 
         # configure all emulator and libretro components
-        for (( i = 100; i <= 128; i++ )); do
+        for (( i = 100; i <= 129; i++ )); do
             source $scriptdir/retropie_packages.sh $i configure
         done
 
-        for (( i = 200; i <= 211; i++ )); do
+        for (( i = 200; i <= 212; i++ )); do
             source $scriptdir/retropie_packages.sh $i configure
         done
 

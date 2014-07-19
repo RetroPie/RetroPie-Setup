@@ -156,7 +156,7 @@ function loadConfig() {
     if test -e "$script_absolute_dir/$configfile"
     then
         . "$script_absolute_dir/$configfile"
-        echo "Loaded configuration file $script_absolute_dir/$configfile"
+        # echo "Loaded configuration file $script_absolute_dir/$configfile"
         return
     else
         echo "Unable to find configuration file $script_absolute_dir/$configfile"
