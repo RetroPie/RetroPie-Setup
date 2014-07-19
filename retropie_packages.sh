@@ -204,6 +204,7 @@ function rp_printUsageinfo() {
 }
 
 function rp_callFunction() {
+    local __desc
     local __function=__$2[$1]
     case $2 in
         dependencies)
@@ -345,7 +346,7 @@ if [[ $# -eq 1 ]]; then
     ensureRootdirExists
     id=$1
     for scriptmode in dependencies sources build install configure; do
-        rp_callFunction $scriptmode $id
+        rp_callFunction $id $scriptmode
     done
 
 # ID Type mode
