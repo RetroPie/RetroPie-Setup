@@ -62,15 +62,11 @@ function ensureSystemretroconfig {
 function configure_retroarch() {
     cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
 
-    if [[ ! -d "$rootdir/configs/" ]]; then
-        mkdir -p "$rootdir/configs/"
+    if [[ ! -d "$rootdir/configs/all/" ]]; then
+        mkdir -p "$rootdir/configs/all/"
     fi
     cp $scriptdir/supplementary/retroarch-core-options.cfg "$rootdir/configs/all/"
     chown $user:$user "$rootdir/configs/all/retroarch-core-options.cfg"
-
-    if [[ ! -d "$rootdir/emulators/RetroArch/configs/" ]]; then
-        mkdir -p "$rootdir/emulators/RetroArch/configs/"
-    fi
 
     if [[ -f "$rootdir/configs/all/retroarch.cfg" ]]; then
         cp "$rootdir/configs/all/retroarch.cfg" "$rootdir/configs/all/retroarch.cfg.bak"
@@ -246,6 +242,16 @@ function build_uae4all() {
 
 function configure_uae4all() {
     mkdir -p "$romdir/amiga"
+
+    cat > "$rootdir/emulators/uae4rpi/startAmigaDisk.sh" << _EOF_
+#!/bin/bash
+pushd "$rootdir/emulators/uae4rpi/"
+rm df0.adf
+ln -s "$romdir/amiga/$1" "df0.adf"
+./uae4all    
+popd
+_EOF_
+    chmod +x "$rootdir/emulators/uae4rpi/startAmigaDisk.sh"
 }
 
 function sources_atari800() {
