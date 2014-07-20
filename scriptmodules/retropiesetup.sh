@@ -53,6 +53,8 @@ function rps_main_binaries()
 
     clear
     printMsg "Binaries-based installation"
+
+    ensureRootdirExists
     now=$(date +'%d%m%Y_%H%M')
     {
         # install all needed dependencies
