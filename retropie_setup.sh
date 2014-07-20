@@ -51,7 +51,7 @@ scriptdir=$(cd $scriptdir && pwd)
 
 source $scriptdir/retropie_packages.sh init
 
-import "scriptmodules/retropiesetup"
+source "scriptmodules/retropiesetup.shinc"
 
 checkForLogDirectory
 
