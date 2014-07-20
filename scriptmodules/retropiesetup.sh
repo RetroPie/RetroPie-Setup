@@ -139,7 +139,7 @@ function rps_main_options()
         touch $logfilename
         for choice in $choices
         do
-            source $scriptdir/retropie_packages.sh $choice ${command[$choice]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
+            rp_callModule $choice ${command[$choice]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
         done
 
         if [[ ! -z $__ERRMSGS ]]; then
@@ -166,7 +166,7 @@ function rps_main_setup()
         buildMenu 3
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
-            source $scriptdir/retropie_packages.sh $choices ${command[$choices]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
+            rp_callModule $choices ${command[$choices]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
         else
             break
         fi
