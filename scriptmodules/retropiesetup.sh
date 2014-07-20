@@ -57,42 +57,42 @@ function rps_main_binaries()
     {
         # install all needed dependencies
         for idx in "${__mod_idx[@]}"; do
-            rp_callFunction "$idx" "depen"
+            rp_callModule "$idx" "depen"
         done
 
-        rp_callFunction aptpackages
-        rp_callFunction handleaptpackages
-        rp_callFunction modules
+        rp_callModule aptpackages
+        rp_callModule handleaptpackages
+        rp_callModule modules
 
         rps_downloadBinaries
 
-        rp_callFunction libsdlbinaries
-        rp_callFunction emulationstation install
-        rp_callFunction emulationstation configure
-        rp_callFunction snesdev install
-        rp_callFunction disabletimeouts
-        rp_callFunction esthemesimple
-        rp_callFunction retroarchautoconf
+        rp_callModule libsdlbinaries
+        rp_callModule emulationstation install
+        rp_callModule emulationstation configure
+        rp_callModule snesdev install
+        rp_callModule disabletimeouts
+        rp_callModule esthemesimple
+        rp_callModule retroarchautoconf
 
-        rp_callFunction stella
-        rp_callFunction scummvm
-        rp_callFunction zmachine
-        rp_callFunction fuse
-        rp_callFunction c64roms
-        rp_callFunction hatari
-        rp_callFunction dosbox
-        rp_callFunction eduke32
+        rp_callModule stella
+        rp_callModule scummvm
+        rp_callModule zmachine
+        rp_callModule fuse
+        rp_callModule c64roms
+        rp_callModule hatari
+        rp_callModule dosbox
+        rp_callModule eduke32
 
-        rp_callFunction setavoidsafemode
-        rp_callFunction runcommand
-        rp_callFunction usbromservice
+        rp_callModule setavoidsafemode
+        rp_callModule runcommand
+        rp_callModule usbromservice
 
         # configure all emulator and libretro components
         for idx in "${__mod_idx[@]}"; do
-            [[ $idx < 300 ]] && rp_callFunction "$idx" "configure"
+            [[ $idx < 300 ]] && rp_callModule "$idx" "configure"
         done
 
-        rp_callFunction sambashares
+        rp_callModule sambashares
 
     } 2>&1 > >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
 

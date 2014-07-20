@@ -88,12 +88,12 @@ source "$scriptdir/configs/retronetplay.cfg"
 # ID scriptmode
 if [[ $# -eq 1 ]]; then
     ensureRootdirExists
-    rp_callFunction $1
+    rp_callModule $1
 
 # ID Type mode
 elif [[ $# -eq 2 ]]; then
     ensureRootdirExists
-    rp_callFunction $1 $2
+    rp_callModule $1 $2
 
 # show usage information
 else

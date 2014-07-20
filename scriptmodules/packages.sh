@@ -69,7 +69,7 @@ function rp_printUsageinfo() {
     rp_listFunctions
 }
 
-function rp_callFunction() {
+function rp_callModule() {
     local idx="$1"
     local func="$2"
     local desc
@@ -78,7 +78,7 @@ function rp_callFunction() {
 
     if [[ "$func" == "" ]]; then
         for mode in depen sources build install configure; do
-            rp_callFunction $idx $mode
+            rp_callModule $idx $mode
         done
     fi
     
