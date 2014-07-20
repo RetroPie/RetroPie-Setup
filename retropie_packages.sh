@@ -89,7 +89,7 @@ source "$scriptdir/configs/retronetplay.cfg"
 if [[ $# -eq 1 ]]; then
     ensureRootdirExists
     id=$1
-    for scriptmode in dependencies sources build install configure; do
+    for scriptmode in depen sources build install configure; do
         rp_callFunction $id $scriptmode
     done
 

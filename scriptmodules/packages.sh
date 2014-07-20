@@ -25,84 +25,88 @@
 #  Many, many thanks go to all people that provide the individual packages!!!
 #
 
-__cmdid=()
+__idx=()
+__cmd_id=()
 __description=()
 __menus=()
-__dependencies=()
-__sources=()
-__build=()
-__install=()
-__configure=()
-__package=()
 __doPackages=0
 
 # params: $1=ID, $2=description, $3=sources, $4=build, $5=install, $6=configure, $7=package
 function rp_registerFunction() {
-    __cmdid+=($1)
-    __description[$1]=$2
-    __menus[$1]=$3
-    __dependencies[$1]=$4
-    __sources[$1]=$5
-    __build[$1]=$6
-    __install[$1]=$7
-    __configure[$1]=$8
-    __package[$1]=$9
+    __idx+=($1)
+    __cmd_id[$1]=$2
+    __description[$1]=$3
+    __menus[$1]=$4
 }
 
 function rp_listFunctions() {
-    local id
+    local idx
+    local cmd_id
     local desc
+    local mode
+    local func
 
-    echo -e "Command-ID: Description:\tList of available actions [sources|build|install|configure|package]"
-    echo "--------------------------------------------------"
-    for (( i = 0; i < ${#__cmdid[@]}; i++ )); do
-        id=${__cmdid[$i]};
-        desc=$(printf "%-32s" "${__description[$id]}")
-        echo -e "$id:\t$desc:\t\c"
-        fn_exists ${__dependencies[$id]} && echo -e "dependencies \c"
-        fn_exists ${__sources[$id]} && echo -e "sources \c"
-        fn_exists ${__build[$id]} && echo -e "build \c"
-        fn_exists ${__install[$id]} && echo -e "install \c"
-        fn_exists ${__configure[$id]} && echo -e "configure \c"
-        fn_exists ${__package[$id]} && echo -e "package \c"
+    echo -e "Index/ID:                 Description:                       List of available actions [sources|build|install|configure|package]"
+    echo "-----------------------------------------------------------------------------------------------------------------------------------"
+    echo ${__cmd_id[1]}
+    for (( i = 0; i < ${#__idx[@]}; i++ )); do
+        idx=${__idx[$i]};
+        cmd_id=${__cmd_id[$idx]};
+        printf "%d/%-20s: %-32s : " "$idx" "$cmd_id" "${__description[$idx]}"
+        for mode in depen sources build install configure; do
+            func="${mode}_${cmd_id}"
+            fn_exists $func && echo -e "$mode \c"
+        done
         echo ""
     done
-    echo "=================================================="
+    echo "==================================================================================================================================="
 }
 
 function rp_printUsageinfo() {
-    echo -e "Usage:\n$0 <ID1> [<ID2> ... <IDN>] [sources|build|install|configure|package]\nThis will run the actions sources, build, install, configure, and package automatically.\n"
+    echo -e "Usage:\n$0 <Index # or ID> [depend|sources|build|install|configure|package]\nThis will run the actions sources, build, install, configure, and package automatically.\n"
     echo -e "Alternatively, $0 can be called as\n$0 <ID> [sources|build|install|configure|package]\n"
     echo -e "This is a list of valid commands:\n"
     rp_listFunctions
 }
 
 function rp_callFunction() {
-    local __desc
-    local __function=__$2[$1]
-    case $2 in
-        dependencies)
-            __desc="Installing dependencies for"
+    local idx="$1"
+    local func="$2"
+    local desc
+    local cmd_id
+    # if index get cmd_id from ass array
+    if [[ "$idx" =~ ^[0-9]+$ ]]; then
+        cmd_id=${__cmd_id[$1]}
+    else
+        cmd_id="$idx"
+        for idx in "${!__cmd_id[@]}"; do
+            [[ "$cmd_id" == "${__cmd_id[$idx]}" ]] && break 
+        done
+    fi
+    case "$func" in
+        depen)
+            desc="Installing dependencies for"
             ;;
         sources)
-            __desc="Getting sources for"
+            desc="Getting sources for"
             ;;
         build)
-            __desc="Building"
+            desc="Building"
             ;;
         install)
-            __desc="Installing"
+            desc="Installing"
             ;;
         configure)
-            __desc="Configuring"
+            desc="Configuring"
             ;;
     esac
+    func="${func}_${cmd_id}"
     # echo "Checking, if function ${!__function} exists"
-    fn_exists ${!__function} || return
+    fn_exists $func || return
     # echo "Printing function name"
-    printMsg "$__desc ${__description[$1]}"
+    printMsg "$desc ${__description[$idx]}"
     # echo "Executing function"
-    ${!__function}
+    $func
 }
 
 function registerModule() {
@@ -121,13 +125,7 @@ function registerModule() {
         fi
     done
     [[ $error -eq 1 ]] && exit 1
-    rp_registerFunction "$module_idx" "$rp_module_desc" "$rp_module_menus" \
-        "depen_$rp_module_id" \
-        "sources_$rp_module_id" \
-        "build_$rp_module_id" \
-        "install_$rp_module_id" \
-        "configure_$rp_module_id" \
-        "package_$rp_module_id"
+    rp_registerFunction "$module_idx" "$rp_module_id" "$rp_module_desc" "$rp_module_menus"
 }
 
 function registerModuleDir() {

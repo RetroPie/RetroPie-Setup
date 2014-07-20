@@ -292,7 +292,7 @@ function buildMenu()
     local id
     local menu
     local menus
-    for id in "${__cmdid[@]}"; do
+    for id in "${__idx[@]}"; do
         menus="${__menus[$id]}"
         for menu in $menus; do
             command[$id]="${menu:2}"
