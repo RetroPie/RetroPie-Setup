@@ -9,7 +9,7 @@ function depen_emulationstation() {
         libasound2-dev cmake g++-4.7
 }
 
-function sources_EmulationStation() {
+function sources_emulationstation() {
     # sourced of EmulationStation
     gitPullOrClone "$rootdir/supplementary/EmulationStation" "https://github.com/Aloshi/EmulationStation" || return 1
     pushd "$rootdir/supplementary/EmulationStation" || return 1
@@ -18,7 +18,7 @@ function sources_EmulationStation() {
     popd
 }
 
-function build_EmulationStation() {
+function build_emulationstation() {
     # EmulationStation
     pushd "$rootdir/supplementary/EmulationStation" || return 1
     cmake -D CMAKE_CXX_COMPILER=g++-4.7 . || return 1
@@ -26,7 +26,7 @@ function build_EmulationStation() {
     popd
 }
 
-function install_EmulationStation() {
+function install_emulationstation() {
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
 
@@ -53,7 +53,7 @@ _EOF_
     ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
 }
 
-function configure_EmulationStation() {
+function configure_emulationstation() {
     if [[ $__netplayenable == "E" ]]; then
          local __tmpnetplaymode="-$__netplaymode "
          local __tmpnetplayhostip_cfile=$__netplayhostip_cfile
@@ -402,7 +402,7 @@ chmod 755 "/etc/emulationstation/es_systems.cfg"
 
 }
 
-function package_EmulationStation() {
+function package_emulationstation() {
     local PKGNAME
 
     rps_checkNeededPackages reprepro
