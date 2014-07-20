@@ -72,7 +72,6 @@ scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
 
 source "$scriptdir/scriptmodules/helpers.sh"
-source "$scriptdir/scriptmodules/supplementary.sh"
 source "$scriptdir/scriptmodules/packages.sh"
 
 rps_checkNeededPackages git dialog gcc-4.7 g++-4.7

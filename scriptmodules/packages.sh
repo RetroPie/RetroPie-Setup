@@ -142,40 +142,5 @@ function registerModuleDir() {
 function registerAllModules() {
     registerModuleDir 100 "emulators" 
     registerModuleDir 200 "libretrocores" 
-    #registerModuleDir 300 "supplementary"
-}
-
-
-function registerFunctions() {
-    # register script functions
-
-    # Supplementary components (supplementary.sh)
-    rp_registerFunction "300" "Update APT packages            " "2+"                          ""                       ""                         ""                       "install_APTPackages"       ""                           ""
-    rp_registerFunction "301" "Package Repository             " "2+"                          ""                       ""                         ""                       "install_PackageRepository" ""                           ""
-    rp_registerFunction "302" "SDL 2.0.1                      " "2+"                          "depen_sdl"              "sources_sdl"              "build_sdl"              "install_sdl"               ""                           ""
-    rp_registerFunction "303" "EmulationStation               " "2+"                          "depen_emulationstation" "sources_EmulationStation" "build_EmulationStation" "install_EmulationStation"  "configure_EmulationStation" "package_EmulationStation"
-    rp_registerFunction "304" "EmulationStation Theme Simple  " "2+"                          ""                       ""                         ""                       "install_ESThemeSimple"     ""                           ""
-    rp_registerFunction "305" "Video mode script 'runcommand' " "2+"                          ""                       ""                         ""                       "install_runcommand"        ""                           ""
-    rp_registerFunction "306" "SNESDev                        " "3+configure"                 ""                       "sources_snesdev"          "build_snesdev"          "install_snesdev"           "configure_snesdev"          ""
-    rp_registerFunction "307" "Xarcade2Jstick                 " "3+configure"                 ""                       "sources_xarcade2jstick"   "build_xarcade2jstick"   "install_xarcade2jstick"    "configure_xarcade2jstick"   ""
-    rp_registerFunction "308" "RetroArch-AutoConfigs          " "2+"                          ""                       ""                         ""                       "install_retroarchautoconf" ""                           ""
-    rp_registerFunction "309" "Bash Welcome Tweak             " "2+"                          ""                       ""                         ""                       "install_bashwelcometweak"  ""                           ""
-    rp_registerFunction "310" "Samba ROM Shares               " "3+"                          ""                       ""                         ""                       "install_sambashares"       "configure_sambashares"      ""
-    rp_registerFunction "311" "USB ROM Service                " "3+"                          ""                       ""                         ""                       "install_usbromservice"     "configure_usbromservice"    ""
-    rp_registerFunction "312" "Enable/disable Splashscreen    " "3+"                          ""                       ""                         ""                       ""                          "configure_splashenable"     ""
-    rp_registerFunction "313" "Select Splashscreen            " "3+"                          ""                       ""                         ""                       ""                          "configure_splashscreen"     ""
-    rp_registerFunction "314" "RetroNetplay                   " "3+"                          ""                       ""                         ""                       ""                          "configure_retronetplay"     ""
-    rp_registerFunction "315" "Modules UInput, Joydev, ALSA   " "2+"                          ""                       ""                         ""                       "install_modules"           ""                           ""
-    rp_registerFunction "316" "Set avoid_safe_mode            " "2+"                          ""                       ""                         ""                       "install_setavoidsafemode"  ""                           ""
-    rp_registerFunction "317" "Disable system timeouts        " "2+"                          ""                       ""                         ""                       "install_disabletimeouts"   ""                           ""
-    rp_registerFunction "318" "Handle APT packages            " "2+"                          ""                       ""                         ""                       "install_handleaptpackages" ""                           ""
-    rp_registerFunction "319" "Auto-start EmulationStation    " "3+"                          ""                       ""                         ""                       ""                          "configure_autostartemustat" ""
-    rp_registerFunction "320" "Install XBox contr. 360 driver " "3+"                          ""                       ""                         ""                       "set_install_xboxdrv"       ""                           ""
-    rp_registerFunction "321" "Install PS3 controller driver  " "3+"                          ""                       ""                         ""                       "set_installps3controller"  ""                           ""
-    rp_registerFunction "322" "Register RetroArch controller  " "3+"                          ""                       ""                         ""                       "set_RetroarchJoyconfig"    ""                           ""
-    rp_registerFunction "323" "Install SDL 2.0.1 binaries     " "2-"                          ""                       ""                         ""                       "install_libsdlbinaries"    ""                           ""
-    rp_registerFunction "324" "Configure audio settings       " "3+"                          ""                       ""                         ""                       ""                          "configure_audiosettings"    ""
-    rp_registerFunction "325" "ES-Config                      " "3+"                          ""                       ""                         ""                       "install_esconfig"          "configure_esconfig"         ""
-    rp_registerFunction "326" "Gamecon driver                 " "3+install"                   ""                       ""                         ""                       "install_gamecondriver"     "configure_gamecondriver"    ""
-
+    registerModuleDir 300 "supplementary"
 }
