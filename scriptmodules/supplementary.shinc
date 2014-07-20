@@ -746,12 +746,14 @@ function configure_sambashares() {
     set_ensureEntryInSMBConf "roms" "$romdir"
 
     # enforce rom directory permissions - root:$user for roms folder with the sticky bit set,
-    # and root:$user for subfolders with group writable. This allows them to be writable by the
-    # pi user, yet avoid being deleted by accident
-    chown root:$user "$romdir"
-    chown -R root:$user "$romdir"/*
+    # and root:$user for first level subfolders with group writable. This allows them to be
+    # writable by the pi user, yet avoid being deleted by accident
+    chown root:$user "$romdir" "$romdir"/*
     chmod g+w "$romdir"/*
     chmod +t "$romdir"
+
+    printMsg "Resetting ownershop on existing files to user: $user"
+    chown -R $user:$user "$romdir"/*/*
 
     /etc/init.d/samba restart
 }

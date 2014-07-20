@@ -87,7 +87,6 @@ function rps_main_binaries()
 
         source $scriptdir/retropie_packages.sh 316           # set avoid safe mode
         source $scriptdir/retropie_packages.sh 305           # video mode script 'runcommand'
-        source $scriptdir/retropie_packages.sh 310           # Samba ROM Service
         source $scriptdir/retropie_packages.sh 311           # USB ROM Service
 
         # configure all emulator and libretro components
@@ -99,6 +98,8 @@ function rps_main_binaries()
         for (( counter = 200; counter <= 212; counter++ )); do
             source $scriptdir/retropie_packages.sh $counter configure
         done
+
+        source $scriptdir/retropie_packages.sh 310           # Samba ROM Service
 
     } 2>&1 > >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
 
