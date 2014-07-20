@@ -206,7 +206,7 @@ function configure_mamelibretro() {
 }
 
 function depen_fbalibretro() {
-    aptInstall cpp-4.5 gcc-4.5 g++-4.5
+    rps_checkNeededPackages cpp-4.5 gcc-4.5 g++-4.5
 }
 
 function sources_fbalibretro() {
