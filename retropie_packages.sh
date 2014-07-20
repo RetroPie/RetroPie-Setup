@@ -80,7 +80,6 @@ rps_checkNeededPackages git dialog gcc-4.7 g++-4.7
 gcc_version $__default_gcc_version
 
 registerAllModules
-registerFunctions
 
 [[ "$1" == "init" ]] && return
 
