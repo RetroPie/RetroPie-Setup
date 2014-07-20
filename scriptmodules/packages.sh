@@ -63,8 +63,8 @@ function rp_listFunctions() {
 }
 
 function rp_printUsageinfo() {
-    echo -e "Usage:\n$0 <Index # or ID> [depend|sources|build|install|configure|package]\nThis will run the actions sources, build, install, configure, and package automatically.\n"
-    echo -e "Alternatively, $0 can be called as\n$0 <ID> [sources|build|install|configure|package]\n"
+    echo -e "Usage:\n$0 <Index # or ID>\nThis will run the actions sources, build, install, configure, and package automatically.\n"
+    echo -e "Alternatively, $0 can be called as\n$0 <Index # or ID [depen|sources|build|install|configure|package]\n"
     echo -e "This is a list of valid commands:\n"
     rp_listFunctions
 }
