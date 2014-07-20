@@ -47,6 +47,8 @@ function rps_downloadBinaries()
 # download, extract, and install binaries
 function rps_main_binaries()
 {
+    local idx
+
     __INFMSGS=""
 
     clear
@@ -54,52 +56,43 @@ function rps_main_binaries()
     now=$(date +'%d%m%Y_%H%M')
     {
         # install all needed dependencies
-        source $scriptdir/retropie_packages.sh 101 dependencies
-        source $scriptdir/retropie_packages.sh 119 dependencies
-        source $scriptdir/retropie_packages.sh 127 dependencies
-        source $scriptdir/retropie_packages.sh 207 dependencies
-        source $scriptdir/retropie_packages.sh 302 dependencies
-        source $scriptdir/retropie_packages.sh 303 dependencies
+        for idx in "${__idx[@]}"; do
+            rp_callFunction "$idx" "depen"
+        done
 
-        source $scriptdir/retropie_packages.sh 300           # update and upgrade APT packages
-        source $scriptdir/retropie_packages.sh 318           # APT clean up
-        source $scriptdir/retropie_packages.sh 315           # modules
+        source $scriptdir/retropie_packages.sh aptpackages
+        source $scriptdir/retropie_packages.sh handleaptpackages
+        source $scriptdir/retropie_packages.sh modules
 
-        rps_downloadBinaries                                 # download pre-compiled binaries and extract them
+        rps_downloadBinaries
 
-        source $scriptdir/retropie_packages.sh 323           # install SDL 2.0.1 binaries
-        source $scriptdir/retropie_packages.sh 303 install   # ES start script
-        source $scriptdir/retropie_packages.sh 303 install   # ES start script
-        source $scriptdir/retropie_packages.sh 303 configure # ES es_systems
-        source $scriptdir/retropie_packages.sh 306 install   # SNESDev config file
-        source $scriptdir/retropie_packages.sh 317           # disable time outs
-        source $scriptdir/retropie_packages.sh 304           # ES theme 'Simple'
-        source $scriptdir/retropie_packages.sh 308           # RetroArch auto-config files
+        source $scriptdir/retropie_packages.sh libsdlbinaries
+        source $scriptdir/retropie_packages.sh emulationstation install
+        source $scriptdir/retropie_packages.sh emulationstation configure
+        source $scriptdir/retropie_packages.sh snesdev install
+        source $scriptdir/retropie_packages.sh disabletimeouts
+        source $scriptdir/retropie_packages.sh esthemesimple
+        source $scriptdir/retropie_packages.sh retroarchautoconf
 
-        source $scriptdir/retropie_packages.sh 106           # Stella emulator
-        source $scriptdir/retropie_packages.sh 123           # ScummVM
-        source $scriptdir/retropie_packages.sh 124           # ZMachine
-        source $scriptdir/retropie_packages.sh 125           # ZXSpectrum Fuse
-        source $scriptdir/retropie_packages.sh 109           # C64 ROMs
-        source $scriptdir/retropie_packages.sh 113           # Hatari
-        source $scriptdir/retropie_packages.sh 105           # Dosbox
-        source $scriptdir/retropie_packages.sh 110           # eDuke3D
+        source $scriptdir/retropie_packages.sh stella
+        source $scriptdir/retropie_packages.sh scummvm
+        source $scriptdir/retropie_packages.sh zmachine
+        source $scriptdir/retropie_packages.sh fuse
+        source $scriptdir/retropie_packages.sh c64roms
+        source $scriptdir/retropie_packages.sh hatari
+        source $scriptdir/retropie_packages.sh dosbox
+        source $scriptdir/retropie_packages.sh eduke32
 
-        source $scriptdir/retropie_packages.sh 316           # set avoid safe mode
-        source $scriptdir/retropie_packages.sh 305           # video mode script 'runcommand'
-        source $scriptdir/retropie_packages.sh 311           # USB ROM Service
+        source $scriptdir/retropie_packages.sh setavoidsafemode
+        source $scriptdir/retropie_packages.sh runcommand
+        source $scriptdir/retropie_packages.sh usbromservice
 
         # configure all emulator and libretro components
-        local counter
-        for (( counter = 100; counter <= 129; counter++ )); do
-            source $scriptdir/retropie_packages.sh $counter configure
+        for idx in "${__idx[@]}"; do
+            [[ $idx < 300 ]] && rp_callFunction "$idx" "configure"
         done
 
-        for (( counter = 200; counter <= 212; counter++ )); do
-            source $scriptdir/retropie_packages.sh $counter configure
-        done
-
-        source $scriptdir/retropie_packages.sh 310           # Samba ROM Service
+        source $scriptdir/retropie_packages.sh sambashares
 
     } 2>&1 > >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
 
