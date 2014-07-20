@@ -269,16 +269,10 @@ registerFunctions
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
 
-# load script modules
-script_invoke_path="$0"
-script_name=`basename "$0"`
-getScriptAbsoluteDir "$script_invoke_path"
-script_absolute_dir=$RESULT
-
-source "scriptmodules/helpers.shinc"
-source "scriptmodules/emulators.shinc"
-source "scriptmodules/libretrocores.shinc"
-source "scriptmodules/supplementary.shinc"
+source "$scriptdir/scriptmodules/helpers.shinc"
+source "$scriptdir/scriptmodules/emulators.shinc"
+source "$scriptdir/scriptmodules/libretrocores.shinc"
+source "$scriptdir/scriptmodules/supplementary.shinc"
 
 rps_checkNeededPackages git dialog gcc-4.7 g++-4.7
 
@@ -287,7 +281,7 @@ gcc_version $__default_gcc_version
 
 [[ "$1" == "init" ]] && return
 
-loadConfig "configs/retronetplay.cfg"
+loadConfig "$scriptdir/configs/retronetplay.cfg"
 
 # ID scriptmode
 if [[ $# -eq 1 ]]; then
