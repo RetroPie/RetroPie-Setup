@@ -292,12 +292,12 @@ function buildMenu()
     local id
     local menu
     local menus
-    for id in "${__idx[@]}"; do
-        menus="${__menus[$id]}"
+    for id in "${__mod_idx[@]}"; do
+        menus="${__mod_menus[$id]}"
         for menu in $menus; do
             command[$id]="${menu:2}"
             if [[ "${menu:0:1}" == "$1" ]]; then
-                options=("${options[@]}" "$id" "${__description[$id]}")
+                options=("${options[@]}" "$id" "${__mod_desc[$id]}")
                 if [[ "$2" == "bool" ]]; then
                     status="ON"
                     [[ "${menu:1:1}" == "-" ]] && status="OFF"

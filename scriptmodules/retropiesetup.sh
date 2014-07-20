@@ -56,7 +56,7 @@ function rps_main_binaries()
     now=$(date +'%d%m%Y_%H%M')
     {
         # install all needed dependencies
-        for idx in "${__idx[@]}"; do
+        for idx in "${__mod_idx[@]}"; do
             rp_callFunction "$idx" "depen"
         done
 
@@ -88,7 +88,7 @@ function rps_main_binaries()
         source $scriptdir/retropie_packages.sh usbromservice
 
         # configure all emulator and libretro components
-        for idx in "${__idx[@]}"; do
+        for idx in "${__mod_idx[@]}"; do
             [[ $idx < 300 ]] && rp_callFunction "$idx" "configure"
         done
 

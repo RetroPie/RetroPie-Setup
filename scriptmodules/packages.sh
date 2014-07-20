@@ -25,36 +25,36 @@
 #  Many, many thanks go to all people that provide the individual packages!!!
 #
 
-__idx=()
-__cmd_id=()
-__description=()
-__menus=()
+__mod_idx=()
+__mod_id=()
+__mod_desc=()
+__mod_menus=()
 __doPackages=0
 
 # params: $1=ID, $2=description, $3=sources, $4=build, $5=install, $6=configure, $7=package
 function rp_registerFunction() {
-    __idx+=($1)
-    __cmd_id[$1]=$2
-    __description[$1]=$3
-    __menus[$1]=$4
+    __mod_idx+=($1)
+    __mod_id[$1]=$2
+    __mod_desc[$1]=$3
+    __mod_menus[$1]=$4
 }
 
 function rp_listFunctions() {
     local idx
-    local cmd_id
+    local mod_id
     local desc
     local mode
     local func
 
     echo -e "Index/ID:                 Description:                       List of available actions [sources|build|install|configure|package]"
     echo "-----------------------------------------------------------------------------------------------------------------------------------"
-    echo ${__cmd_id[1]}
-    for (( i = 0; i < ${#__idx[@]}; i++ )); do
-        idx=${__idx[$i]};
-        cmd_id=${__cmd_id[$idx]};
-        printf "%d/%-20s: %-32s : " "$idx" "$cmd_id" "${__description[$idx]}"
+    echo ${__mod_id[1]}
+    for (( i = 0; i < ${#__mod_idx[@]}; i++ )); do
+        idx=${__mod_idx[$i]};
+        mod_id=${__mod_id[$idx]};
+        printf "%d/%-20s: %-32s : " "$idx" "$mod_id" "${__mod_desc[$idx]}"
         for mode in depen sources build install configure; do
-            func="${mode}_${cmd_id}"
+            func="${mode}_${mod_id}"
             fn_exists $func && echo -e "$mode \c"
         done
         echo ""
@@ -73,14 +73,14 @@ function rp_callFunction() {
     local idx="$1"
     local func="$2"
     local desc
-    local cmd_id
-    # if index get cmd_id from ass array
+    local mod_id
+    # if index get mod_id from ass array
     if [[ "$idx" =~ ^[0-9]+$ ]]; then
-        cmd_id=${__cmd_id[$1]}
+        mod_id=${__mod_id[$1]}
     else
-        cmd_id="$idx"
-        for idx in "${!__cmd_id[@]}"; do
-            [[ "$cmd_id" == "${__cmd_id[$idx]}" ]] && break 
+        mod_id="$idx"
+        for idx in "${!__mod_id[@]}"; do
+            [[ "$mod_id" == "${__mod_id[$idx]}" ]] && break 
         done
     fi
     case "$func" in
@@ -100,11 +100,11 @@ function rp_callFunction() {
             desc="Configuring"
             ;;
     esac
-    func="${func}_${cmd_id}"
+    func="${func}_${mod_id}"
     # echo "Checking, if function ${!__function} exists"
     fn_exists $func || return
     # echo "Printing function name"
-    printMsg "$desc ${__description[$idx]}"
+    printMsg "$desc ${__mod_desc[$idx]}"
     # echo "Executing function"
     $func
 }
