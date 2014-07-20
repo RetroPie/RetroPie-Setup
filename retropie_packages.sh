@@ -167,7 +167,7 @@ function rp_callFunction() {
 function registerFunctions() {
     # register script functions
 
-    # Emulator components (emulators.shinc)
+    # Emulator components (emulators.sh)
     rp_registerFunction "100" "RetroArch                      " "2+"                          "depen_retroarch"        "sources_retroarch"       "build_retroarch"         "install_retroarch"         "configure_retroarch"        ""
     rp_registerFunction "101" "AdvMame                        " "2+"                          "depen_advmame"          "sources_advmame"         "build_advmame"           "install_advmame"           "configure_advmame"          ""
     rp_registerFunction "102" "Amiga emulator UAE4All         " "2+"                          ""                       "sources_uae4all"         "build_uae4all"           "install_uae4all"           "configure_uae4all"          ""
@@ -199,7 +199,7 @@ function registerFunctions() {
     rp_registerFunction "128" "DOS emulator FastDosbox        " "2+"                          ""                       "sources_fastdosbox"      "build_fastdosbox"        "install_fastdosbox"        ""                           ""
     rp_registerFunction "129" "Megadrive/Genesis emulat. DGEN " "2+"                          ""                       "sources_dgen"            "build_dgen"              "install_dgen"              "configure_dgen"             ""
 
-    # LibretroCore components (libretrocores.shinc)
+    # LibretroCore components (libretrocores.sh)
     rp_registerFunction "200" "SNES LibretroCore PocketSNES   " "2+"                          ""                       "sources_pocketsnes"       "build_pocketsnes"       ""                          "configure_pocketsnes"       ""
     rp_registerFunction "201" "Genesis LibretroCore Picodrive " "2+"                          ""                       "sources_picodrive"        "build_picodrive"        "install_picodrive"         "configure_picodrive"        ""
     rp_registerFunction "202" "Atari 2600 LibretroCore Stella " "2+"                          ""                       "sources_stellalibretro"   "build_stellalibretro"   ""                          "configure_stellalibretro"   ""
@@ -214,7 +214,7 @@ function registerFunctions() {
     rp_registerFunction "211" "Playstation 1 LibretroCore     " "2+"                          ""                       "sources_psxlibretro"      "build_psxlibretro"      ""                          "configure_psxlibretro"      ""
     rp_registerFunction "212" "Mednafen PCE Fast LibretroCore " "2+"                          ""                       "sources_mednafenpcefast"  "build_mednafenpcefast"  ""                          "configure_mednafenpcefast"  ""
 
-    # Supplementary components (supplementary.shinc)
+    # Supplementary components (supplementary.sh)
     rp_registerFunction "300" "Update APT packages            " "2+"                          ""                       ""                         ""                       "install_APTPackages"       ""                           ""
     rp_registerFunction "301" "Package Repository             " "2+"                          ""                       ""                         ""                       "install_PackageRepository" ""                           ""
     rp_registerFunction "302" "SDL 2.0.1                      " "2+"                          "depen_sdl"              "sources_sdl"              "build_sdl"              "install_sdl"               ""                           ""
@@ -254,11 +254,11 @@ registerFunctions
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
 
-source "$scriptdir/scriptmodules/helpers.shinc"
-source "$scriptdir/scriptmodules/emulators.shinc"
-source "$scriptdir/scriptmodules/libretrocores.shinc"
-source "$scriptdir/scriptmodules/supplementary.shinc"
-source "$scriptdir/scriptmodules/packages.shinc"
+source "$scriptdir/scriptmodules/helpers.sh"
+source "$scriptdir/scriptmodules/emulators.sh"
+source "$scriptdir/scriptmodules/libretrocores.sh"
+source "$scriptdir/scriptmodules/supplementary.sh"
+source "$scriptdir/scriptmodules/packages.sh"
 
 rps_checkNeededPackages git dialog gcc-4.7 g++-4.7
 
