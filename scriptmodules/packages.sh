@@ -51,12 +51,14 @@ function rp_registerFunction() {
 
 function rp_listFunctions() {
     local id
+    local desc
 
     echo -e "Command-ID: Description:\tList of available actions [sources|build|install|configure|package]"
     echo "--------------------------------------------------"
     for (( i = 0; i < ${#__cmdid[@]}; i++ )); do
         id=${__cmdid[$i]};
-        echo -e "$id:\t${__description[$id]}:\t\c"
+        desc=$(printf "%-32s" "${__description[$id]}")
+        echo -e "$id:\t$desc:\t\c"
         fn_exists ${__dependencies[$id]} && echo -e "dependencies \c"
         fn_exists ${__sources[$id]} && echo -e "sources \c"
         fn_exists ${__build[$id]} && echo -e "build \c"
@@ -103,55 +105,49 @@ function rp_callFunction() {
     ${!__function}
 }
 
+function registerModule() {
+    local module_idx="$1"
+    local module_path="$2"
+    local rp_module_id=""
+    local rp_module_desc=""
+    local rp_module_menus=""
+    local var
+    local error=0
+    source $module_path
+    for var in rp_module_id rp_module_desc rp_module_menus; do
+        if [[ "${!var}" == "" ]]; then
+            echo "Module $module_path is missing valid $var"
+            error=1
+        fi
+    done
+    [[ $error -eq 1 ]] && exit 1
+    rp_registerFunction "$module_idx" "$rp_module_desc" "$rp_module_menus" \
+        "depen_$rp_module_id" \
+        "sources_$rp_module_id" \
+        "build_$rp_module_id" \
+        "install_$rp_module_id" \
+        "configure_$rp_module_id" \
+        "package_$rp_module_id"
+}
+
+function registerModuleDir() {
+    local module_idx="$1"
+    local module_dir="$2"
+    for module in `find "$scriptdir/scriptmodules/$2" -maxdepth 1 -name "*.sh" | sort`; do
+        registerModule $module_idx "$module"
+        ((module_idx++))
+    done
+}
+
+function registerAllModules() {
+    registerModuleDir 100 "emulators" 
+    registerModuleDir 200 "libretrocores" 
+    #registerModuleDir 300 "supplementary"
+}
+
+
 function registerFunctions() {
     # register script functions
-
-    # Emulator components (emulators.sh)
-    rp_registerFunction "100" "RetroArch                      " "2+"                          "depen_retroarch"        "sources_retroarch"       "build_retroarch"         "install_retroarch"         "configure_retroarch"        ""
-    rp_registerFunction "101" "AdvMame                        " "2+"                          "depen_advmame"          "sources_advmame"         "build_advmame"           "install_advmame"           "configure_advmame"          ""
-    rp_registerFunction "102" "Amiga emulator UAE4All         " "2+"                          ""                       "sources_uae4all"         "build_uae4all"           "install_uae4all"           "configure_uae4all"          ""
-    rp_registerFunction "103" "Atari 800 emulator             " "2+"                          ""                       "sources_atari800"        "build_atari800"          "install_atari800"          "configure_atari800"         ""
-    rp_registerFunction "104" "Armstrad CPC emulator          " "2+"                          ""                       "sources_cpc"             "build_cpc"               ""                          "configure_cpc"              ""
-    rp_registerFunction "105" "DOS Emulator Dosbox            " "2+"                          ""                       ""                        ""                        "install_dosbox"            "configure_dosbox"           ""
-    rp_registerFunction "106" "Atari2600 emulator STELLA      " "2+"                          ""                       ""                        ""                        "install_stella"            "configure_stella"           ""
-    rp_registerFunction "107" "Macintosh emulator             " "2+"                          ""                       "sources_basilisk"        "build_basilisk"          "install_basilisk"          "configure_basilisk"         ""
-    rp_registerFunction "108" "C64 emulator VICE              " "2+"                          ""                       "sources_vice"            "build_vice"              "install_vice"              "configure_vice"             ""
-    rp_registerFunction "109" "C64 ROMs                       " "2+"                          ""                       ""                        ""                        "install_c64roms"           ""                           ""
-    rp_registerFunction "110" "Duke3D Port                    " "2+"                          ""                       ""                        ""                        "install_eduke32"           ""                           ""
-    rp_registerFunction "111" "GameBoy Advance emulator       " "2+"                          ""                       "sources_gpsp"            "build_gpsp"              ""                          "configure_gpsp"             ""
-    rp_registerFunction "112" "NeoGeo emulator GnGeoPi        " "2+"                          ""                       "sources_gngeopi"         "build_gngeopi"           "install_gngeopi"           "configure_gngeopi"          ""
-    rp_registerFunction "113" "Atari emulator Hatari          " "2+"                          ""                       ""                        ""                        "install_hatari"            ""                           ""
-    rp_registerFunction "114" "MAME emulator MAME4All-Pi      " "2+"                          ""                       "sources_mame4all"        "build_mame4all"          ""                          "configure_mame4all"         ""
-    rp_registerFunction "115" "Gamegear emulator Osmose       " "2+"                          ""                       "sources_osmose"          "build_osmose"            "install_osmose"            "configure_osmose"           ""
-    rp_registerFunction "116" "Intellivision emulator         " "2+"                          ""                       "sources_jzint"           "build_jzint"             ""                          "configure_jzint"            ""
-    rp_registerFunction "117" "Apple 2 emulator Linapple      " "2+"                          "depen_linapple"         "sources_linapple"        "build_linapple"          ""                          "configure_linapple"         ""
-    rp_registerFunction "118" "N64 emulator MUPEN64Plus-RPi   " "2+"                          ""                       "sources_mupen64rpi"      "build_mupen64rpi"        ""                          "configure_mupen64rpi"       ""
-    rp_registerFunction "119" "SNES emulator SNES9X-RPi       " "2+"                          "depen_snes9x"           "sources_snes9x"          "build_snes9x"            ""                          "configure_snes9x"           ""
-    rp_registerFunction "120" "FBA emulator PiFBA             " "2+"                          ""                       "sources_pifba"           "build_pifba"             "install_pifba"             "configure_pifba"            ""
-    rp_registerFunction "121" "SNES emulator PiSNES           " "2+"                          ""                       "sources_pisnes"          "build_pisnes"            ""                          "configure_pisnes"           ""
-    rp_registerFunction "122" "DOS Emulator rpix86            " "2+"                          ""                       ""                        ""                        "install_rpix86"            "configure_rpix86"           ""
-    rp_registerFunction "123" "ScummVM                        " "2+"                          ""                       ""                        ""                        "install_scummvm"           ""                           ""
-    rp_registerFunction "124" "ZMachine                       " "2+"                          ""                       ""                        ""                        "install_zmachine"          ""                           ""
-    rp_registerFunction "125" "ZXSpectrum emulator Fuse       " "2+"                          ""                       ""                        ""                        "install_zxspectrum"        ""                           ""
-    rp_registerFunction "126" "ZXSpectrum emulator FBZX       " "2+"                          ""                       "sources_fbzx"            "build_fbzx"              ""                          ""                           ""
-    rp_registerFunction "127" "MSX emulator OpenMSX           " "2+"                          "depen_msx"              "sources_openmsx"         "build_openmsx"           ""                          "configure_openmsx"          ""
-    rp_registerFunction "128" "DOS emulator FastDosbox        " "2+"                          ""                       "sources_fastdosbox"      "build_fastdosbox"        "install_fastdosbox"        ""                           ""
-    rp_registerFunction "129" "Megadrive/Genesis emulat. DGEN " "2+"                          ""                       "sources_dgen"            "build_dgen"              "install_dgen"              "configure_dgen"             ""
-
-    # LibretroCore components (libretrocores.sh)
-    rp_registerFunction "200" "SNES LibretroCore PocketSNES   " "2+"                          ""                       "sources_pocketsnes"       "build_pocketsnes"       ""                          "configure_pocketsnes"       ""
-    rp_registerFunction "201" "Genesis LibretroCore Picodrive " "2+"                          ""                       "sources_picodrive"        "build_picodrive"        "install_picodrive"         "configure_picodrive"        ""
-    rp_registerFunction "202" "Atari 2600 LibretroCore Stella " "2+"                          ""                       "sources_stellalibretro"   "build_stellalibretro"   ""                          "configure_stellalibretro"   ""
-    rp_registerFunction "203" "Cave Story LibretroCore        " "2+"                          ""                       "sources_cavestory"        "build_cavestory"        ""                          "configure_cavestory"        ""
-    rp_registerFunction "204" "Doom LibretroCore              " "2+"                          ""                       "sources_doom"             "build_doom"             ""                          "configure_doom"             ""
-    rp_registerFunction "205" "Gameboy Color LibretroCore     " "2+"                          ""                       "sources_gbclibretro"      "build_gbclibretro"      ""                          "configure_gbclibretro"      ""
-    rp_registerFunction "206" "MAME LibretroCore              " "2+"                          ""                       "sources_mamelibretro"     "build_mamelibretro"     ""                          "configure_mamelibretro"     ""
-    rp_registerFunction "207" "FBA LibretroCore               " "2+"                          "depen_fbalibretro"      "sources_fbalibretro"      "build_fbalibretro"      ""                          "configure_fbalibretro"      ""
-    rp_registerFunction "208" "NES LibretroCore fceu-next     " "2+"                          ""                       "sources_neslibretro"      "build_neslibretro"      ""                          "configure_neslibretro"      ""
-    rp_registerFunction "209" "Genesis/Megadrive LibretroCore " "2+"                          ""                       "sources_genesislibretro"  "build_genesislibretro"  ""                          "configure_genesislibretro"  ""
-    rp_registerFunction "210" "TurboGrafx 16 LibretroCore     " "2+"                          ""                       "sources_turbografx16"     "build_turbografx16"     ""                          "configure_turbografx16"     ""
-    rp_registerFunction "211" "Playstation 1 LibretroCore     " "2+"                          ""                       "sources_psxlibretro"      "build_psxlibretro"      ""                          "configure_psxlibretro"      ""
-    rp_registerFunction "212" "Mednafen PCE Fast LibretroCore " "2+"                          ""                       "sources_mednafenpcefast"  "build_mednafenpcefast"  ""                          "configure_mednafenpcefast"  ""
 
     # Supplementary components (supplementary.sh)
     rp_registerFunction "300" "Update APT packages            " "2+"                          ""                       ""                         ""                       "install_APTPackages"       ""                           ""

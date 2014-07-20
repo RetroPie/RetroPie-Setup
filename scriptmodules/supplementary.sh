@@ -25,13 +25,7 @@
 #  Many, many thanks go to all people that provide the individual packages!!!
 #
 
-# 300, APT Update
 
-function install_APTPackages() {
-    apt-get autoremove
-    aptUpdate
-    apt-get -y upgrade
-}
 
 # 301, PackageRepository ---------------------
 
