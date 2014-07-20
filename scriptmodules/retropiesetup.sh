@@ -60,39 +60,39 @@ function rps_main_binaries()
             rp_callFunction "$idx" "depen"
         done
 
-        source $scriptdir/retropie_packages.sh aptpackages
-        source $scriptdir/retropie_packages.sh handleaptpackages
-        source $scriptdir/retropie_packages.sh modules
+        rp_callFunction aptpackages
+        rp_callFunction handleaptpackages
+        rp_callFunction modules
 
         rps_downloadBinaries
 
-        source $scriptdir/retropie_packages.sh libsdlbinaries
-        source $scriptdir/retropie_packages.sh emulationstation install
-        source $scriptdir/retropie_packages.sh emulationstation configure
-        source $scriptdir/retropie_packages.sh snesdev install
-        source $scriptdir/retropie_packages.sh disabletimeouts
-        source $scriptdir/retropie_packages.sh esthemesimple
-        source $scriptdir/retropie_packages.sh retroarchautoconf
+        rp_callFunction libsdlbinaries
+        rp_callFunction emulationstation install
+        rp_callFunction emulationstation configure
+        rp_callFunction snesdev install
+        rp_callFunction disabletimeouts
+        rp_callFunction esthemesimple
+        rp_callFunction retroarchautoconf
 
-        source $scriptdir/retropie_packages.sh stella
-        source $scriptdir/retropie_packages.sh scummvm
-        source $scriptdir/retropie_packages.sh zmachine
-        source $scriptdir/retropie_packages.sh fuse
-        source $scriptdir/retropie_packages.sh c64roms
-        source $scriptdir/retropie_packages.sh hatari
-        source $scriptdir/retropie_packages.sh dosbox
-        source $scriptdir/retropie_packages.sh eduke32
+        rp_callFunction stella
+        rp_callFunction scummvm
+        rp_callFunction zmachine
+        rp_callFunction fuse
+        rp_callFunction c64roms
+        rp_callFunction hatari
+        rp_callFunction dosbox
+        rp_callFunction eduke32
 
-        source $scriptdir/retropie_packages.sh setavoidsafemode
-        source $scriptdir/retropie_packages.sh runcommand
-        source $scriptdir/retropie_packages.sh usbromservice
+        rp_callFunction setavoidsafemode
+        rp_callFunction runcommand
+        rp_callFunction usbromservice
 
         # configure all emulator and libretro components
         for idx in "${__mod_idx[@]}"; do
             [[ $idx < 300 ]] && rp_callFunction "$idx" "configure"
         done
 
-        source $scriptdir/retropie_packages.sh sambashares
+        rp_callFunction sambashares
 
     } 2>&1 > >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
 

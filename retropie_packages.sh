@@ -88,10 +88,7 @@ source "$scriptdir/configs/retronetplay.cfg"
 # ID scriptmode
 if [[ $# -eq 1 ]]; then
     ensureRootdirExists
-    id=$1
-    for scriptmode in depen sources build install configure; do
-        rp_callFunction $id $scriptmode
-    done
+    rp_callFunction $1
 
 # ID Type mode
 elif [[ $# -eq 2 ]]; then

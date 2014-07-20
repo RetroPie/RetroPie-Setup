@@ -74,6 +74,14 @@ function rp_callFunction() {
     local func="$2"
     local desc
     local mod_id
+    local mode
+
+    if [[ "$func" == "" ]]; then
+        for mode in depen sources build install configure; do
+            rp_callFunction $idx $mode
+        done
+    fi
+    
     # if index get mod_id from ass array
     if [[ "$idx" =~ ^[0-9]+$ ]]; then
         mod_id=${__mod_id[$1]}
