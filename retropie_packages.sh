@@ -82,21 +82,6 @@ fi
 
 # ==============================================================================
 
-function getScriptAbsoluteDir() {
-    # @description used to get the script path
-    # @param $1 the script $0 parameter
-    local script_invoke_path="$1"
-    local cwd=`pwd`
-
-    # absolute path ? if so, the first character is a /
-    if test "x${script_invoke_path:0:1}" = 'x/'
-    then
-        RESULT=`dirname "$script_invoke_path"`
-    else
-        RESULT=`dirname "$cwd/$script_invoke_path"`
-    fi
-}
-
 function loadConfig() {
     # @description Routine for loading configuration files that contain key-value pairs in the format KEY="VALUE"
     # param  $1 Path to the configuration file relate to this file.
@@ -273,6 +258,7 @@ source "$scriptdir/scriptmodules/helpers.shinc"
 source "$scriptdir/scriptmodules/emulators.shinc"
 source "$scriptdir/scriptmodules/libretrocores.shinc"
 source "$scriptdir/scriptmodules/supplementary.shinc"
+source "$scriptdir/scriptmodules/packages.shinc"
 
 rps_checkNeededPackages git dialog gcc-4.7 g++-4.7
 
