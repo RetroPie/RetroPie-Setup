@@ -47,59 +47,54 @@ function rps_downloadBinaries()
 # download, extract, and install binaries
 function rps_main_binaries()
 {
+    local idx
+
     __INFMSGS=""
 
     clear
     printMsg "Binaries-based installation"
+
+    ensureRootdirExists
     now=$(date +'%d%m%Y_%H%M')
     {
         # install all needed dependencies
-        source $scriptdir/retropie_packages.sh 101 dependencies
-        source $scriptdir/retropie_packages.sh 119 dependencies
-        source $scriptdir/retropie_packages.sh 127 dependencies
-        source $scriptdir/retropie_packages.sh 207 dependencies
-        source $scriptdir/retropie_packages.sh 302 dependencies
-        source $scriptdir/retropie_packages.sh 303 dependencies
+        for idx in "${__mod_idx[@]}"; do
+            rp_callModule "$idx" "depen"
+        done
 
-        source $scriptdir/retropie_packages.sh 300           # update and upgrade APT packages
-        source $scriptdir/retropie_packages.sh 318           # APT clean up
-        source $scriptdir/retropie_packages.sh 315           # modules
+        rp_callModule aptpackages
+        rp_callModule handleaptpackages
+        rp_callModule modules
 
-        rps_downloadBinaries                                 # download pre-compiled binaries and extract them
+        rps_downloadBinaries
 
-        source $scriptdir/retropie_packages.sh 323           # install SDL 2.0.1 binaries
-        source $scriptdir/retropie_packages.sh 303 install   # ES start script
-        source $scriptdir/retropie_packages.sh 303 install   # ES start script
-        source $scriptdir/retropie_packages.sh 303 configure # ES es_systems
-        source $scriptdir/retropie_packages.sh 306 install   # SNESDev config file
-        source $scriptdir/retropie_packages.sh 317           # disable time outs
-        source $scriptdir/retropie_packages.sh 304           # ES theme 'Simple'
-        source $scriptdir/retropie_packages.sh 308           # RetroArch auto-config files
+        rp_callModule libsdlbinaries
+        rp_callModule emulationstation install
+        rp_callModule emulationstation configure
+        rp_callModule snesdev install
+        rp_callModule disabletimeouts
+        rp_callModule esthemesimple
+        rp_callModule retroarchautoconf
 
-        source $scriptdir/retropie_packages.sh 106           # Stella emulator
-        source $scriptdir/retropie_packages.sh 123           # ScummVM
-        source $scriptdir/retropie_packages.sh 124           # ZMachine
-        source $scriptdir/retropie_packages.sh 125           # ZXSpectrum Fuse
-        source $scriptdir/retropie_packages.sh 109           # C64 ROMs
-        source $scriptdir/retropie_packages.sh 113           # Hatari
-        source $scriptdir/retropie_packages.sh 105           # Dosbox
-        source $scriptdir/retropie_packages.sh 110           # eDuke3D
+        rp_callModule stella
+        rp_callModule scummvm
+        rp_callModule zmachine
+        rp_callModule fuse
+        rp_callModule c64roms
+        rp_callModule hatari
+        rp_callModule dosbox
+        rp_callModule eduke32
 
-        source $scriptdir/retropie_packages.sh 316           # set avoid safe mode
-        source $scriptdir/retropie_packages.sh 305           # video mode script 'runcommand'
-        source $scriptdir/retropie_packages.sh 311           # USB ROM Service
+        rp_callModule setavoidsafemode
+        rp_callModule runcommand
+        rp_callModule usbromservice
 
         # configure all emulator and libretro components
-        local counter
-        for (( counter = 100; counter <= 129; counter++ )); do
-            source $scriptdir/retropie_packages.sh $counter configure
+        for idx in "${__mod_idx[@]}"; do
+            [[ $idx < 300 ]] && rp_callModule "$idx" "configure"
         done
 
-        for (( counter = 200; counter <= 212; counter++ )); do
-            source $scriptdir/retropie_packages.sh $counter configure
-        done
-
-        source $scriptdir/retropie_packages.sh 310           # Samba ROM Service
+        rp_callModule sambashares
 
     } 2>&1 > >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
 
@@ -144,7 +139,7 @@ function rps_main_options()
         touch $logfilename
         for choice in $choices
         do
-            source $scriptdir/retropie_packages.sh $choice ${command[$choice]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
+            rp_callModule $choice ${command[$choice]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
         done
 
         if [[ ! -z $__ERRMSGS ]]; then
@@ -171,7 +166,7 @@ function rps_main_setup()
         buildMenu 3
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
-            source $scriptdir/retropie_packages.sh $choices ${command[$choices]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
+            rp_callModule $choices ${command[$choices]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
         else
             break
         fi

@@ -27,17 +27,6 @@
 
 # global variables ==========================================================
 
-__cmdid=()
-__description=()
-__menus=()
-__dependencies=()
-__sources=()
-__build=()
-__install=()
-__configure=()
-__package=()
-__doPackages=0
-
 rootdir="/opt/retropie"
 user=$SUDO_USER
 if [ -z "$user" ]
@@ -79,280 +68,32 @@ else
   __chroot=0
 fi
 
-
-# ==============================================================================
-
-function getScriptAbsoluteDir() {
-    # @description used to get the script path
-    # @param $1 the script $0 parameter
-    local script_invoke_path="$1"
-    local cwd=`pwd`
-
-    # absolute path ? if so, the first character is a /
-    if test "x${script_invoke_path:0:1}" = 'x/'
-    then
-        RESULT=`dirname "$script_invoke_path"`
-    else
-        RESULT=`dirname "$cwd/$script_invoke_path"`
-    fi
-}
-
-function import() {
-    # @description importer routine to get external functionality.
-    # @description the first location searched is the script directory.
-    # @description if not found, search the module in the paths contained in $SHELL_LIBRARY_PATH environment variable
-    # @param $1 the .shinc file to import, without .shinc extension
-    module=$1
-
-    if test "x$module" == "x"
-    then
-        echo "$script_name : Unable to import unspecified module. Dying."
-        exit 1
-    fi
-
-    if test "x${script_absolute_dir:-notset}" == "xnotset"
-    then
-        echo "$script_name : Undefined script absolute dir. Did you remove getScriptAbsoluteDir? Dying."
-        exit 1
-    fi
-
-    if test "x$script_absolute_dir" == "x"
-    then
-        echo "$script_name : empty script path. Dying."
-        exit 1
-    fi
-
-    if test -e "$script_absolute_dir/$module.shinc"
-    then
-        # import from script directory
-        . "$script_absolute_dir/$module.shinc"
-        # echo "Loaded module $script_absolute_dir/$module.shinc"
-        return
-    elif test "x${SHELL_LIBRARY_PATH:-notset}" != "xnotset"
-    then
-        # import from the shell script library path
-        # save the separator and use the ':' instead
-        local saved_IFS="$IFS"
-        IFS=':'
-        for path in $SHELL_LIBRARY_PATH
-        do
-            if test -e "$path/$module.shinc"
-            then
-                . "$path/$module.shinc"
-                return
-            fi
-        done
-        # restore the standard separator
-        IFS="$saved_IFS"
-    fi
-    echo "$script_name : Unable to find module $module."
-    exit 1
-}
-
-function loadConfig() {
-    # @description Routine for loading configuration files that contain key-value pairs in the format KEY="VALUE"
-    # param  $1 Path to the configuration file relate to this file.
-    local configfile=$1
-    if test -e "$script_absolute_dir/$configfile"
-    then
-        . "$script_absolute_dir/$configfile"
-        # echo "Loaded configuration file $script_absolute_dir/$configfile"
-        return
-    else
-        echo "Unable to find configuration file $script_absolute_dir/$configfile"
-        exit 1
-    fi
-}
-
-# params: $1=ID, $2=description, $3=sources, $4=build, $5=install, $6=configure, $7=package
-function rp_registerFunction() {
-    __cmdid+=($1)
-    __description[$1]=$2
-    __menus[$1]=$3
-    __dependencies[$1]=$4
-    __sources[$1]=$5
-    __build[$1]=$6
-    __install[$1]=$7
-    __configure[$1]=$8
-    __package[$1]=$9
-}
-
-function rp_listFunctions() {
-    local id
-
-    echo -e "Command-ID: Description:\tList of available actions [sources|build|install|configure|package]"
-    echo "--------------------------------------------------"
-    for (( i = 0; i < ${#__cmdid[@]}; i++ )); do
-        id=${__cmdid[$i]};
-        echo -e "$id:\t${__description[$id]}:\t\c"
-        fn_exists ${__dependencies[$id]} && echo -e "dependencies \c"
-        fn_exists ${__sources[$id]} && echo -e "sources \c"
-        fn_exists ${__build[$id]} && echo -e "build \c"
-        fn_exists ${__install[$id]} && echo -e "install \c"
-        fn_exists ${__configure[$id]} && echo -e "configure \c"
-        fn_exists ${__package[$id]} && echo -e "package \c"
-        echo ""
-    done
-    echo "=================================================="
-}
-
-function rp_printUsageinfo() {
-    echo -e "Usage:\n$0 <ID1> [<ID2> ... <IDN>] [sources|build|install|configure|package]\nThis will run the actions sources, build, install, configure, and package automatically.\n"
-    echo -e "Alternatively, $0 can be called as\n$0 <ID> [sources|build|install|configure|package]\n"
-    echo -e "This is a list of valid commands:\n"
-    rp_listFunctions
-}
-
-function rp_callFunction() {
-    local __desc
-    local __function=__$2[$1]
-    case $2 in
-        dependencies)
-            __desc="Installing dependencies for"
-            ;;
-        sources)
-            __desc="Getting sources for"
-            ;;
-        build)
-            __desc="Building"
-            ;;
-        install)
-            __desc="Installing"
-            ;;
-        configure)
-            __desc="Configuring"
-            ;;
-    esac
-    # echo "Checking, if function ${!__function} exists"
-    fn_exists ${!__function} || return
-    # echo "Printing function name"
-    printMsg "$__desc ${__description[$1]}"
-    # echo "Executing function"
-    ${!__function}
-}
-
-function registerFunctions() {
-    # register script functions
-
-    # Emulator components (emulators.shinc)
-    rp_registerFunction "100" "RetroArch                      " "2+"                          "depen_retroarch"        "sources_retroarch"       "build_retroarch"         "install_retroarch"         "configure_retroarch"        ""
-    rp_registerFunction "101" "AdvMame                        " "2+"                          "depen_advmame"          "sources_advmame"         "build_advmame"           "install_advmame"           "configure_advmame"          ""
-    rp_registerFunction "102" "Amiga emulator UAE4All         " "2+"                          ""                       "sources_uae4all"         "build_uae4all"           "install_uae4all"           "configure_uae4all"          ""
-    rp_registerFunction "103" "Atari 800 emulator             " "2+"                          ""                       "sources_atari800"        "build_atari800"          "install_atari800"          "configure_atari800"         ""
-    rp_registerFunction "104" "Armstrad CPC emulator          " "2+"                          ""                       "sources_cpc"             "build_cpc"               ""                          "configure_cpc"              ""
-    rp_registerFunction "105" "DOS Emulator Dosbox            " "2+"                          ""                       ""                        ""                        "install_dosbox"            "configure_dosbox"           ""
-    rp_registerFunction "106" "Atari2600 emulator STELLA      " "2+"                          ""                       ""                        ""                        "install_stella"            "configure_stella"           ""
-    rp_registerFunction "107" "Macintosh emulator             " "2+"                          ""                       "sources_basilisk"        "build_basilisk"          "install_basilisk"          "configure_basilisk"         ""
-    rp_registerFunction "108" "C64 emulator VICE              " "2+"                          ""                       "sources_vice"            "build_vice"              "install_vice"              "configure_vice"             ""
-    rp_registerFunction "109" "C64 ROMs                       " "2+"                          ""                       ""                        ""                        "install_c64roms"           ""                           ""
-    rp_registerFunction "110" "Duke3D Port                    " "2+"                          ""                       ""                        ""                        "install_eduke32"           ""                           ""
-    rp_registerFunction "111" "GameBoy Advance emulator       " "2+"                          ""                       "sources_gpsp"            "build_gpsp"              ""                          "configure_gpsp"             ""
-    rp_registerFunction "112" "NeoGeo emulator GnGeoPi        " "2+"                          ""                       "sources_gngeopi"         "build_gngeopi"           "install_gngeopi"           "configure_gngeopi"          ""
-    rp_registerFunction "113" "Atari emulator Hatari          " "2+"                          ""                       ""                        ""                        "install_hatari"            ""                           ""
-    rp_registerFunction "114" "MAME emulator MAME4All-Pi      " "2+"                          ""                       "sources_mame4all"        "build_mame4all"          ""                          "configure_mame4all"         ""
-    rp_registerFunction "115" "Gamegear emulator Osmose       " "2+"                          ""                       "sources_osmose"          "build_osmose"            "install_osmose"            "configure_osmose"           ""
-    rp_registerFunction "116" "Intellivision emulator         " "2+"                          ""                       "sources_jzint"           "build_jzint"             ""                          "configure_jzint"            ""
-    rp_registerFunction "117" "Apple 2 emulator Linapple      " "2+"                          "depen_linapple"         "sources_linapple"        "build_linapple"          ""                          "configure_linapple"         ""
-    rp_registerFunction "118" "N64 emulator MUPEN64Plus-RPi   " "2+"                          ""                       "sources_mupen64rpi"      "build_mupen64rpi"        ""                          "configure_mupen64rpi"       ""
-    rp_registerFunction "119" "SNES emulator SNES9X-RPi       " "2+"                          "depen_snes9x"           "sources_snes9x"          "build_snes9x"            ""                          "configure_snes9x"           ""
-    rp_registerFunction "120" "FBA emulator PiFBA             " "2+"                          ""                       "sources_pifba"           "build_pifba"             "install_pifba"             "configure_pifba"            ""
-    rp_registerFunction "121" "SNES emulator PiSNES           " "2+"                          ""                       "sources_pisnes"          "build_pisnes"            ""                          "configure_pisnes"           ""
-    rp_registerFunction "122" "DOS Emulator rpix86            " "2+"                          ""                       ""                        ""                        "install_rpix86"            "configure_rpix86"           ""
-    rp_registerFunction "123" "ScummVM                        " "2+"                          ""                       ""                        ""                        "install_scummvm"           ""                           ""
-    rp_registerFunction "124" "ZMachine                       " "2+"                          ""                       ""                        ""                        "install_zmachine"          ""                           ""
-    rp_registerFunction "125" "ZXSpectrum emulator Fuse       " "2+"                          ""                       ""                        ""                        "install_zxspectrum"        ""                           ""
-    rp_registerFunction "126" "ZXSpectrum emulator FBZX       " "2+"                          ""                       "sources_fbzx"            "build_fbzx"              ""                          ""                           ""
-    rp_registerFunction "127" "MSX emulator OpenMSX           " "2+"                          "depen_msx"              "sources_openmsx"         "build_openmsx"           ""                          "configure_openmsx"          ""
-    rp_registerFunction "128" "DOS emulator FastDosbox        " "2+"                          ""                       "sources_fastdosbox"      "build_fastdosbox"        "install_fastdosbox"        ""                           ""
-    rp_registerFunction "129" "Megadrive/Genesis emulat. DGEN " "2+"                          ""                       "sources_dgen"            "build_dgen"              "install_dgen"              "configure_dgen"             ""
-
-    # LibretroCore components (libretrocores.shinc)
-    rp_registerFunction "200" "SNES LibretroCore PocketSNES   " "2+"                          ""                       "sources_pocketsnes"       "build_pocketsnes"       ""                          "configure_pocketsnes"       ""
-    rp_registerFunction "201" "Genesis LibretroCore Picodrive " "2+"                          ""                       "sources_picodrive"        "build_picodrive"        "install_picodrive"         "configure_picodrive"        ""
-    rp_registerFunction "202" "Atari 2600 LibretroCore Stella " "2+"                          ""                       "sources_stellalibretro"   "build_stellalibretro"   ""                          "configure_stellalibretro"   ""
-    rp_registerFunction "203" "Cave Story LibretroCore        " "2+"                          ""                       "sources_cavestory"        "build_cavestory"        ""                          "configure_cavestory"        ""
-    rp_registerFunction "204" "Doom LibretroCore              " "2+"                          ""                       "sources_doom"             "build_doom"             ""                          "configure_doom"             ""
-    rp_registerFunction "205" "Gameboy Color LibretroCore     " "2+"                          ""                       "sources_gbclibretro"      "build_gbclibretro"      ""                          "configure_gbclibretro"      ""
-    rp_registerFunction "206" "MAME LibretroCore              " "2+"                          ""                       "sources_mamelibretro"     "build_mamelibretro"     ""                          "configure_mamelibretro"     ""
-    rp_registerFunction "207" "FBA LibretroCore               " "2+"                          "depen_fbalibretro"      "sources_fbalibretro"      "build_fbalibretro"      ""                          "configure_fbalibretro"      ""
-    rp_registerFunction "208" "NES LibretroCore fceu-next     " "2+"                          ""                       "sources_neslibretro"      "build_neslibretro"      ""                          "configure_neslibretro"      ""
-    rp_registerFunction "209" "Genesis/Megadrive LibretroCore " "2+"                          ""                       "sources_genesislibretro"  "build_genesislibretro"  ""                          "configure_genesislibretro"  ""
-    rp_registerFunction "210" "TurboGrafx 16 LibretroCore     " "2+"                          ""                       "sources_turbografx16"     "build_turbografx16"     ""                          "configure_turbografx16"     ""
-    rp_registerFunction "211" "Playstation 1 LibretroCore     " "2+"                          ""                       "sources_psxlibretro"      "build_psxlibretro"      ""                          "configure_psxlibretro"      ""
-    rp_registerFunction "212" "Mednafen PCE Fast LibretroCore " "2+"                          ""                       "sources_mednafenpcefast"  "build_mednafenpcefast"  ""                          "configure_mednafenpcefast"  ""
-
-    # Supplementary components (supplementary.shinc)
-    rp_registerFunction "300" "Update APT packages            " "2+"                          ""                       ""                         ""                       "install_APTPackages"       ""                           ""
-    rp_registerFunction "301" "Package Repository             " "2+"                          ""                       ""                         ""                       "install_PackageRepository" ""                           ""
-    rp_registerFunction "302" "SDL 2.0.1                      " "2+"                          "depen_sdl"              "sources_sdl"              "build_sdl"              "install_sdl"               ""                           ""
-    rp_registerFunction "303" "EmulationStation               " "2+"                          "depen_emulationstation" "sources_EmulationStation" "build_EmulationStation" "install_EmulationStation"  "configure_EmulationStation" "package_EmulationStation"
-    rp_registerFunction "304" "EmulationStation Theme Simple  " "2+"                          ""                       ""                         ""                       "install_ESThemeSimple"     ""                           ""
-    rp_registerFunction "305" "Video mode script 'runcommand' " "2+"                          ""                       ""                         ""                       "install_runcommand"        ""                           ""
-    rp_registerFunction "306" "SNESDev                        " "3+configure"                 ""                       "sources_snesdev"          "build_snesdev"          "install_snesdev"           "configure_snesdev"          ""
-    rp_registerFunction "307" "Xarcade2Jstick                 " "3+configure"                 ""                       "sources_xarcade2jstick"   "build_xarcade2jstick"   "install_xarcade2jstick"    "configure_xarcade2jstick"   ""
-    rp_registerFunction "308" "RetroArch-AutoConfigs          " "2+"                          ""                       ""                         ""                       "install_retroarchautoconf" ""                           ""
-    rp_registerFunction "309" "Bash Welcome Tweak             " "2+"                          ""                       ""                         ""                       "install_bashwelcometweak"  ""                           ""
-    rp_registerFunction "310" "Samba ROM Shares               " "3+"                          ""                       ""                         ""                       "install_sambashares"       "configure_sambashares"      ""
-    rp_registerFunction "311" "USB ROM Service                " "3+"                          ""                       ""                         ""                       "install_usbromservice"     "configure_usbromservice"    ""
-    rp_registerFunction "312" "Enable/disable Splashscreen    " "3+"                          ""                       ""                         ""                       ""                          "configure_splashenable"     ""
-    rp_registerFunction "313" "Select Splashscreen            " "3+"                          ""                       ""                         ""                       ""                          "configure_splashscreen"     ""
-    rp_registerFunction "314" "RetroNetplay                   " "3+"                          ""                       ""                         ""                       ""                          "configure_retronetplay"     ""
-    rp_registerFunction "315" "Modules UInput, Joydev, ALSA   " "2+"                          ""                       ""                         ""                       "install_modules"           ""                           ""
-    rp_registerFunction "316" "Set avoid_safe_mode            " "2+"                          ""                       ""                         ""                       "install_setavoidsafemode"  ""                           ""
-    rp_registerFunction "317" "Disable system timeouts        " "2+"                          ""                       ""                         ""                       "install_disabletimeouts"   ""                           ""
-    rp_registerFunction "318" "Handle APT packages            " "2+"                          ""                       ""                         ""                       "install_handleaptpackages" ""                           ""
-    rp_registerFunction "319" "Auto-start EmulationStation    " "3+"                          ""                       ""                         ""                       ""                          "configure_autostartemustat" ""
-    rp_registerFunction "320" "Install XBox contr. 360 driver " "3+"                          ""                       ""                         ""                       "set_install_xboxdrv"       ""                           ""
-    rp_registerFunction "321" "Install PS3 controller driver  " "3+"                          ""                       ""                         ""                       "set_installps3controller"  ""                           ""
-    rp_registerFunction "322" "Register RetroArch controller  " "3+"                          ""                       ""                         ""                       "set_RetroarchJoyconfig"    ""                           ""
-    rp_registerFunction "323" "Install SDL 2.0.1 binaries     " "2-"                          ""                       ""                         ""                       "install_libsdlbinaries"    ""                           ""
-    rp_registerFunction "324" "Configure audio settings       " "3+"                          ""                       ""                         ""                       ""                          "configure_audiosettings"    ""
-    rp_registerFunction "325" "ES-Config                      " "3+"                          ""                       ""                         ""                       "install_esconfig"          "configure_esconfig"         ""
-    rp_registerFunction "326" "Gamecon driver                 " "3+install"                   ""                       ""                         ""                       "install_gamecondriver"     "configure_gamecondriver"    ""
-
-}
-
-# TODO python scripts (es-config)
-
-# -------------------------------------------------------------
-
-registerFunctions
-
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
 
-# load script modules
-script_invoke_path="$0"
-script_name=`basename "$0"`
-getScriptAbsoluteDir "$script_invoke_path"
-script_absolute_dir=$RESULT
-
-import "scriptmodules/helpers"
-import "scriptmodules/emulators"
-import "scriptmodules/libretrocores"
-import "scriptmodules/supplementary"
+source "$scriptdir/scriptmodules/helpers.sh"
+source "$scriptdir/scriptmodules/packages.sh"
 
 rps_checkNeededPackages git dialog gcc-4.7 g++-4.7
 
 # set default gcc version
 gcc_version $__default_gcc_version
 
+registerAllModules
+
 [[ "$1" == "init" ]] && return
 
-loadConfig "configs/retronetplay.cfg"
+source "$scriptdir/configs/retronetplay.cfg"
 
 # ID scriptmode
 if [[ $# -eq 1 ]]; then
     ensureRootdirExists
-    id=$1
-    for scriptmode in dependencies sources build install configure; do
-        rp_callFunction $id $scriptmode
-    done
+    rp_callModule $1
 
 # ID Type mode
 elif [[ $# -eq 2 ]]; then
     ensureRootdirExists
-    rp_callFunction $1 $2
+    rp_callModule $1 $2
 
 # show usage information
 else

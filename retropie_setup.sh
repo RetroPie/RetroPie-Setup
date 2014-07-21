@@ -49,9 +49,9 @@ function checkForLogDirectory() {
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
 
-source $scriptdir/retropie_packages.sh init
+source "$scriptdir/retropie_packages.sh" init
 
-import "scriptmodules/retropiesetup"
+source "scriptmodules/retropiesetup.sh"
 
 checkForLogDirectory
 
