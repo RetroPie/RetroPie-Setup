@@ -30,6 +30,7 @@ function configure_sambashares() {
     sed -i '/\[[A-Z]\]*/,$d' /etc/samba/smb.conf
 
     set_ensureEntryInSMBConf "roms" "$romdir"
+    set_ensureEntryInSMBConf "bios" "$home/RetroPie/BIOS"
 
     # enforce rom directory permissions - root:$user for roms folder with the sticky bit set,
     # and root:$user for first level subfolders with group writable. This allows them to be
