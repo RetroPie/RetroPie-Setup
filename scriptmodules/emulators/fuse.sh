@@ -5,3 +5,7 @@ rp_module_menus="2+"
 function install_fuse() {
     aptInstall spectrum-roms fuse-emulator-utils fuse-emulator-common
 }
+
+function configure_fuse() {
+	mkdir -p "$romdir/zxspectrum"
+}

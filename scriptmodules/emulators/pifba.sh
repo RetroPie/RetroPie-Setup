@@ -36,4 +36,5 @@ function install_pifba() {
 
 function configure_pifba() {
     mkdir -p "$romdir/fba"
+    mkdir -p "$romdir/neogeo"
 }
