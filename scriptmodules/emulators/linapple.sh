@@ -3,7 +3,7 @@ rp_module_desc="Apple 2 emulator Linapple"
 rp_module_menus="2+"
 
 function depen_linapple() {
-    rps_checkNeededPackages libzip2
+    rps_checkNeededPackages libzip2 libzip-dev
 }
 
 function sources_linapple() {
