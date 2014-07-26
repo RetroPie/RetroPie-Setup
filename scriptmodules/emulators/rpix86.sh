@@ -14,8 +14,6 @@ function install_rpix86() {
 }
 
 function configure_rpix86() {
-    ln -s $romdir/pc/ $rootdir/emulators/rpix86/games
-    rmDirExists "$romdir/pc/pc"
     cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
 #!/bin/bash
 pushd $rootdir/emulators/rpix86
@@ -23,6 +21,9 @@ pushd $rootdir/emulators/rpix86
 popd
 _EOF_
     chmod +x "$rootdir/emulators/rpix86/Start.sh"
+
     mkdir -p "$romdir/pc"
+    ln -s $romdir/pc
+
     touch $romdir/pc/Start.txt
 }
