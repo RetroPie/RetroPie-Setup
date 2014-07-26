@@ -2,6 +2,10 @@ rp_module_id="basilisk"
 rp_module_desc="Macintosh emulator"
 rp_module_menus="2+"
 
+function depen_basilisk() {
+    rps_checkNeededPackages autoconf automake
+}
+
 function sources_basilisk() {
     gitPullOrClone "$rootdir/emulators/basiliskii" git://github.com/cebix/macemu.git
 }
