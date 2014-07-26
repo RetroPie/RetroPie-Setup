@@ -21,7 +21,7 @@ function build_basilisk() {
 }
 
 function install_basilisk() {
-    pushd "$rootdir/emulators/basiliskii"
+    pushd "$rootdir/emulators/basiliskii/BasiliskII/src/Unix"
     make install
     if [[ -z "$rootdir/emulators/basiliskii/installdir/bin/BasiliskII" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile BasiliskII."
@@ -30,6 +30,6 @@ function install_basilisk() {
 }
 
 function configure_basilisk() {
-    touch $rootdir/roms/basiliskii/Start.txt
     mkdir -p "$romdir/macintosh"
+    touch $romdir/macintosh/Start.txt
 }
