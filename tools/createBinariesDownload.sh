@@ -103,6 +103,7 @@ filelist+=("$rootdir/emulators/cpc4rpi-1.1/COPYING.txt")
 filelist+=("$rootdir/emulators/cpc4rpi-1.1/README.txt")
 filelist+=("$rootdir/emulators/cpc4rpi-1.1/joy.txt")
 filelist+=("$rootdir/emulators/openmsx-0.10.0/")
+filelist+=("$rootdir/emulators/quake3/")
 filelist+=("$rootdir/emulators/fastdosbox-1.5/installdir/")
 
 echo "Checking, if all directories/files exist"
