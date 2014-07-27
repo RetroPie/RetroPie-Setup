@@ -398,7 +398,7 @@ function configure_emulationstation() {
 
 </systemList>
 _EOF_
-chmod 755 "/etc/emulationstation/es_systems.cfg"
+chmod 766 "/etc/emulationstation/es_systems.cfg"
 
 }
 
