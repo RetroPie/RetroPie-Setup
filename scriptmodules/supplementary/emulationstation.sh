@@ -270,7 +270,7 @@ function configure_emulationstation() {
         <name>n64</name>
         <path>~/RetroPie/roms/n64</path>
         <extension>.z64 .Z64 .n64 .N64 .v64 .V64</extension>
-        <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "cd $rootdir/emulators/mupen64plus-rpi/test/ && ./mupen64plus %ROM%"</command>
+        <command>$rootdir/supplementary/runcommand/runcommand.sh 1 "cd $rootdir/emulators/mupen64plus-rpi/test/ && sudo ./mupen64plus %ROM%"</command>
         <platform>n64</platform>
         <theme>n64</theme>
     </system>
