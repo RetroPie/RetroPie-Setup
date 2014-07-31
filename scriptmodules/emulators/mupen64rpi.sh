@@ -24,6 +24,9 @@ function build_mupen64rpi() {
     echo "CONF_SWAPSIZE=99" > /etc/dphys-swapfile
     dphys-swapfile setup
     dphys-swapfile swapon
+    
+    # to solve startup problems delete old config file 
+    rm /home/pi/.config/mupen64plus/mupen64plus.cfg
 }
 
 function configure_mupen64rpi() {
