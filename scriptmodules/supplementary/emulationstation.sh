@@ -43,14 +43,13 @@ _EOF_
     chmod +x /usr/bin/emulationstation
 
     if [[ -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
+        # make sure that ES has enough GPU memory
+        ensureKeyValueBootconfig "gpu_mem" 256 "/boot/config.txt"
+        ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
         return 0
     else
         return 1
     fi
-
-    # make sure that ES has enough GPU memory
-    ensureKeyValueBootconfig "gpu_mem" 256 "/boot/config.txt"
-    ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
 }
 
 function configure_emulationstation() {
