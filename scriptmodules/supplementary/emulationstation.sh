@@ -68,7 +68,7 @@ function configure_emulationstation() {
     mkdir -p "/etc/emulationstation"
 
     setESSystem "Input Configuration" "esconfig" "~/RetroPie/roms/esconfig" ".py .PY" "%ROM%" "ignore" "esconfig"
-    chmod 755 "/etc/emulationstation/es_systems.cfg"
+    chmod 644 "/etc/emulationstation/es_systems.cfg"
 }
 
 function package_emulationstation() {
