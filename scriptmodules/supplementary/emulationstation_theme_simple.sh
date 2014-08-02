@@ -12,6 +12,4 @@ function install_esthemesimple() {
     fi
     rmDirExists "/etc/emulationstation/themes/simple"
     mv -f simple/ "/etc/emulationstation/themes/"
-
-    chmod -R 755 "/etc/emulationstation/themes/"
 }
