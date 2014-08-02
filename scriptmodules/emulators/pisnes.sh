@@ -22,5 +22,7 @@ function configure_pisnes() {
         echo -e "mode \"320x240\"\ngeometry 320 240 656 512 16\ntimings 0 0 0 0 0 0 0\nrgba 5/11,6/5,5/0,0/16\nendmode" | cat - /etc/fb.modes > temp && mv temp /etc/fb.modes
     fi
 
-    mkdir -p "$romdir/snes"
+    mkdir -p "$romdir/snes-pisnes"
+
+    setESSystem "Super Nintendo" "snes-pisnes" "~/RetroPie/roms/snes-pisnes" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC" "$rootdir/emulators/pisnes/snes9x %ROM%" "snes" "snes"
 }

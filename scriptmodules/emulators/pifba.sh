@@ -37,4 +37,8 @@ function install_pifba() {
 function configure_pifba() {
     mkdir -p "$romdir/fba"
     mkdir -p "$romdir/neogeo"
+
+    setESSystem "Final Burn Alpha" "fba" "~/RetroPie/roms/fba" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/pifba/fba2x %ROM%\"" "arcade" ""
+    setESSystem "NeoGeo" "neogeo" "~/RetroPie/roms/neogeo" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/pifba/fba2x %ROM%\"" "neogeo" "neogeo"
+
 }

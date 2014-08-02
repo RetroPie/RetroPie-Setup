@@ -22,16 +22,7 @@ function build_pocketsnes() {
 function configure_pocketsnes() {
     mkdir -p $romdir/snes
 
-    # # look for existing configuration
-    # xmlstarlet sel -t -c "/systemList/system[name='snes']" -n -v test.xml
-
-    # # delete system
-    # xmlstarlet ed -d "/systemList/system[name='snes']" -n test.xml
-
-    # # add new system
-    # xml ed -s /config -t elem -n sub -v "" -i /config/sub -t attr -n class -v com.foo test.xml
-
-    # # append to system
-    # xmlstarlet ed -a '/xml/block/el[@name="b"]' \
-    #           --type 'elem' -n 'el' -v 0
+    setESSystem "Super Nintendo" "snes" "~/RetroPie/roms/snes" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "snes" "snes"
+    # <!-- alternatively: <command>$rootdir/emulators/snes9x-rpi/snes9x %ROM%</command> -->
+    # <!-- alternatively: <command>$rootdir/emulators/pisnes/snes9x %ROM%</command> -->
 }

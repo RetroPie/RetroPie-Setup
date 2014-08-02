@@ -23,4 +23,6 @@ function configure_mame4all() {
     chown -R $user:$user "$rootdir/emulators/mame4all-pi"
     ensureKeyValueShort "samplerate" "22050" "$rootdir/emulators/mame4all-pi/mame.cfg"
     ensureKeyValueShort "rompath" "$romdir/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"
+
+    setESSystem "MAME" "mame" "~/RetroPie/roms/mame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$rootdir/emulators/mame4all-pi/mame %BASENAME%\"" "arcade" "mame"
 }

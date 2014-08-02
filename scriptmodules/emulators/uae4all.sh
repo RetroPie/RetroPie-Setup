@@ -35,4 +35,5 @@ ln -s "$romdir/amiga/$1" "df0.adf"
 popd
 _EOF_
     chmod +x "$rootdir/emulators/uae4rpi/startAmigaDisk.sh"
+    setESSystem "Amiga" "amiga" "~/RetroPie/roms/amiga" ".adf .ADF" "$rootdir/emulators/uae4rpi/startAmigaDisk.sh %ROM%" "amiga" "amiga"
 }

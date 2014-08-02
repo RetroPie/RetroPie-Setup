@@ -22,4 +22,7 @@ function build_cpc() {
 
 function configure_cpc() {
     mkdir -p "$romdir/amstradcpc"
+
+    setESSystem "Amstrad CPC" "amstradcpc" "~/RetroPie/roms/amstradcpc" ".cpc .CPC .dsk .DSK" "$rootdir/emulators/cpc4rpi-1.1/cpc4rpi %ROM%" "amstradcpc" ""
+
 }

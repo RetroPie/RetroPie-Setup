@@ -27,18 +27,20 @@ _EOF_
     chmod +x "$romdir/ports/Doom 1 Shareware.sh"
 
     # download and install Doom 1 shareware
-    if `wget "http://distro.ibiblio.org/pub/linux/distributions/slitaz/sources/packages/d/doom1.wad"`; then
+    if `wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad"`; then
         mv doom1.wad "$romdir/ports/doom/"
     else
         __ERRMSGS="$__ERRMSGS Could not successfully download and install Doom 1 shareware."
     fi
     # download and install midi instruments
     pushd /usr/local/lib
-    if `wget "http://www.libsdl.org/projects/SDL_mixer/timidity/timidity.tar.gz"`; then
+    if `wget "http://downloads.petrockblock.com/retropiearchives/timidity.tar.gz"`; then
         tar -xf timidity.tar.gz
         ln -f -s /usr/local/lib/timidity/timidity.cfg /etc/timidity.cfg
     else
         __ERRMSGS="$__ERRMSGS Could not successfully download and install Timidity patchsets."
     fi
     popd
+
+    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'    
 }

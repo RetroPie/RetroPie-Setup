@@ -88,6 +88,7 @@ function rps_main_binaries()
         rp_callModule setavoidsafemode
         rp_callModule runcommand
         rp_callModule usbromservice
+        rp_callModule bashwelcometweak
 
         # configure all emulator and libretro components
         for idx in "${__mod_idx[@]}"; do

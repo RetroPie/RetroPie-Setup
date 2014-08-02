@@ -32,4 +32,7 @@ function install_basilisk() {
 function configure_basilisk() {
     mkdir -p "$romdir/macintosh"
     touch $romdir/macintosh/Start.txt
+
+    setESSystem "Apple Macintosh" "macintosh" "~/RetroPie/roms/macintosh" ".txt" "xinit $rootdir/emulators/basiliskii/installdir/bin/BasiliskII" "macintosh"
+
 }

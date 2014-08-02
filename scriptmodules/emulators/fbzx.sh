@@ -19,5 +19,7 @@ function build_fbzx() {
 }
 
 function configure_fbzx() {
-    mkdir -p $romdir/zxspectrum
+    mkdir -p $romdir/zxspectrum-fbzx
+
+    setESSystem "ZX Spectrum" "zxspectrum-fbzx" "RetroPie/roms/zxspectrum-fbzx" "z80 .Z80 .ipf .IPF" "$rootdir/emulators/fbzx-2.10.0/fbzx %ROM%" "zxspectrum" "zxspectrum"
 }

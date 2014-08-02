@@ -21,4 +21,7 @@ function build_openmsx() {
 
 function configure_openmsx() {
     mkdir -p $romdir/msx
+
+    setESSystem "MSX" "msx" "~/RetroPie/roms/msx" ".rom .ROM" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$rootdir/emulators/openmsx-0.10.0/derived/arm-linux-opt/bin/openmsx %BASENAME%\"" "" "msx"
+
 }

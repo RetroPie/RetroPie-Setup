@@ -28,3 +28,8 @@ function install_fastdosbox() {
     fi
     popd
 }
+
+function configure_fastdosbox() {
+    mkdir -p "$romdir/pc"
+    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$rootdir/emulators/rpix86/Start.sh" "pc" "pc"    
+}

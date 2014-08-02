@@ -25,4 +25,6 @@ $rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/
 _EOF_
     chmod +x "$romdir/ports/Cave Story.sh"
     chown -R $user:$user "$rootdir/emulatorcores/nxengine-libretro/datafiles/"
+
+    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
 }

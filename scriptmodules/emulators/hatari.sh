@@ -4,5 +4,10 @@ rp_module_menus="2+"
 
 function install_hatari() {
     aptInstall hatari
-    mkdir -p $romdir/atariststefalcon
+}
+
+function configure_hatari() {
+    mkdir -p $romdir/atariststefalcon 
+
+    setESSystem "Atari ST/STE/Falcon" "atariststefalcon" "~/RetroPie/roms/atariststefalcon" ".st .ST .img .IMG .rom .ROM .ipf .IPF" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"hatari %ROM%\"" "atarist" "atarist"
 }

@@ -307,3 +307,31 @@ function buildMenu()
         done
     done
 }
+
+function setESSystem() {
+    local fullname=$1
+    local name=$2
+    local rompath=$3
+    local extension=$4
+    local command=$5
+    local platform=$6
+    local theme=$7
+
+    rps_checkNeededPackages python-lxml
+
+    if [[ ! -f $rootdir/supplementary/ESConfigEdit/esconfedit.py ]]; then
+        gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
+    fi
+
+    $rootdir/supplementary/ESConfigEdit/esconfedit.py --dontstop \
+                                                    -f "$fullname" \
+                                                    -n "$name" \
+                                                    -d "$rompath" \
+                                                    -e "$extension" \
+                                                    -c "$command" \
+                                                    -p "$platform" \
+                                                    -t "$theme" \
+                                                    add \
+                                                    "/etc/emulationstation/es_systems.cfg" \
+                                                    "/etc/emulationstation/es_systems.cfg"
+}

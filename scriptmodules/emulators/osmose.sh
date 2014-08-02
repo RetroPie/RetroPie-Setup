@@ -19,6 +19,9 @@ function build_osmose() {
 }
 
 function configure_osmose() {
-    mkdir -p "$romdir/gamegear"
-    mkdir -p "$romdir/mastersystem"
+    mkdir -p "$romdir/gamegear-osmose"
+    mkdir -p "$romdir/mastersystem-osmose"
+
+    setESSystem "Sega Game Gear" "gamegear-osmose" "~/RetroPie/roms/gamegear-osmose" ".gg .GG" "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs" "gamegear" "gamegear"
+    setESSystem "Sega Master System / Mark III" "mastersystem-osmose" "~/RetroPie/roms/mastersystem-osmose" ".sms .SMS" "$rootdir/emulators/osmose-0.8.1+rpi20121122/osmose %ROM% -joy -tv -fs" "mastersystem" "mastersystem"
 }

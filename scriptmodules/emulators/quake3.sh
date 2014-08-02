@@ -58,4 +58,6 @@ LD_LIBRARY_PATH=lib /opt/retropie/emulators/quake3/ioquake3.arm
 _EOF_
 
     chmod +x "$romdir/ports/Quake III Arena.sh"
+
+    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'    
 }

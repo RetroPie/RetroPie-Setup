@@ -50,4 +50,6 @@ function build_gpsp() {
 function configure_gpsp() {
     mkdir -p "$romdir/gba"
     chown $user:$user -R "$rootdir/emulators/gpsp/raspberrypi/"
+
+    setESSystem "Game Boy Advance" "gba" "~/RetroPie/roms/gba" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$rootdir/emulators/gpsp/raspberrypi/gpsp %ROM%\"" "gba" "gba"
 }

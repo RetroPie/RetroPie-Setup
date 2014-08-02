@@ -24,4 +24,6 @@ function build_jzint() {
 
 function configure_jzint() {
     mkdir -p "$romdir/intellivision"
+
+    setESSystem "Intellivision" "intellivision" "~/RetroPie/roms/intellivision" ".int .INT .bin .BIN" "$rootdir/emulators/jzintv-1.0-beta4/bin/jzintv -z1 -f1 -q %ROM%" "intellivision" ""
 }

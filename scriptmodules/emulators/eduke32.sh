@@ -28,4 +28,6 @@ function install_eduke32() {
 $rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -g %ROM% -gamegrp duke3d.grp"
 _EOF_
     chmod +x "$romdir/ports/Duke3D Shareware.sh"
+
+    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'    
 }
