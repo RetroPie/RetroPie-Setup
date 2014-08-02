@@ -32,5 +32,5 @@ function build_mupen64rpi() {
 function configure_mupen64rpi() {
     mkdir -p "$romdir/n64"
 
-    setESSystem "Nintendo 64" "n64" "~/RetroPie/roms/n64" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"cd $rootdir/emulators/mupen64plus-rpi/test/ && ./mupen64plus %ROM%\"" "n64" "n64"
+    setESSystem "Nintendo 64" "n64" "~/RetroPie/roms/n64" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"mupen64plus %ROM%\"" "n64" "n64"
 }
