@@ -6,7 +6,7 @@ function configure_retroarchjoyconfig() {
     local configfname
     local numJoypads
 
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Connect ONLY the controller to be registered for RetroArch to the Raspberry Pi." 22 76
+    dialog --backtitle "$__backtitle" --msgbox "Connect ONLY the controller to be registered for RetroArch to the Raspberry Pi." 22 76
     clear
     # todo Find number of first joystick device in /dev/input
     numJoypads=$(ls -1 /dev/input/js* | head -n 1)
@@ -15,5 +15,5 @@ function configure_retroarchjoyconfig() {
     configfname=`echo ${configfname:16:-1} | tr -d ' '`
     mv $rootdir/emulators/RetroArch/configs/tempconfig.cfg $rootdir/emulators/RetroArch/configs/$configfname.cfg
     chown $user:$user $rootdir/emulators/RetroArch/configs/
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "The configuration file has been saved as $configfname.cfg and will be used by RetroArch from now on whenever that controller is connected." 22 76
+    dialog --backtitle "$__backtitle" --msgbox "The configuration file has been saved as $configfname.cfg and will be used by RetroArch from now on whenever that controller is connected." 22 76
 }

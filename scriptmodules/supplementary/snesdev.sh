@@ -30,7 +30,7 @@ function sup_enableSNESDevAtStart()
 
     if [[ ! -f "/etc/init.d/SNESDev" ]]; then
         if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/SNESDev" ]]; then
-            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Cannot find SNESDev binary. Please install SNESDev." 22 76
+            dialog --backtitle "$__backtitle" --msgbox "Cannot find SNESDev binary. Please install SNESDev." 22 76
             return
         else
             echo "Copying service script for SNESDev to /etc/init.d/ ..."
@@ -83,7 +83,7 @@ function sup_disableSNESDevAtStart()
 }
 
 function configure_snesdev() {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 86 16)
+    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
     options=(1 "Disable SNESDev on boot and SNESDev keyboard mapping."
              2 "Enable SNESDev on boot and SNESDev keyboard mapping (polling pads and button)."
              3 "Enable SNESDev on boot and SNESDev keyboard mapping (polling only pads)."
@@ -92,16 +92,16 @@ function configure_snesdev() {
     if [ "$choices" != "" ]; then
         case $choices in
             1) sup_disableSNESDevAtStart
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Disabled SNESDev on boot." 22 76
+               dialog --backtitle "$__backtitle" --msgbox "Disabled SNESDev on boot." 22 76
                             ;;
             2) sup_enableSNESDevAtStart 3
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled SNESDev on boot (polling pads and button)." 22 76
+               dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling pads and button)." 22 76
                             ;;
             3) sup_enableSNESDevAtStart 1
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled SNESDev on boot (polling only pads)." 22 76
+               dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling only pads)." 22 76
                             ;;
             4) sup_enableSNESDevAtStart 2
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled SNESDev on boot (polling only button)." 22 76
+               dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling only button)." 22 76
                             ;;
         esac
     else

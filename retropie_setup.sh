@@ -58,8 +58,10 @@ checkForLogDirectory
 # make sure that enough space is available
 rps_availFreeDiskSpace 800000
 
+__backtitle="PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user"
+
 while true; do
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose installation either based on binaries or on sources." 22 76 16)
+    cmd=(dialog --backtitle "$__backtitle" --menu "Choose installation either based on binaries or on sources." 22 76 16)
     options=(1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)"
              2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
              3 "SETUP (only if you already have run one of the installations above)"

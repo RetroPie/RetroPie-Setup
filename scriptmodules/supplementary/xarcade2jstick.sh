@@ -27,7 +27,7 @@ function sup_checkInstallXarcade2Jstick() {
 }
 
 function configure_xarcade2jstick() {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 86 16)
+    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
     options=(1 "Disable Xarcade2Jstick service."
              2 "Enable Xarcade2Jstick service." )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -37,13 +37,13 @@ function configure_xarcade2jstick() {
                pushd "$rootdir/supplementary/Xarcade2Jstick/"
                make uninstallservice
                popd
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Disabled Xarcade2Jstick." 22 76
+               dialog --backtitle "$__backtitle" --msgbox "Disabled Xarcade2Jstick." 22 76
                             ;;
             2) sup_checkInstallXarcade2Jstick
                pushd "$rootdir/supplementary/Xarcade2Jstick/"
                make installservice
                popd
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled Xarcade2Jstick service." 22 76
+               dialog --backtitle "$__backtitle" --msgbox "Enabled Xarcade2Jstick service." 22 76
                             ;;
         esac
     else

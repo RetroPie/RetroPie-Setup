@@ -6,7 +6,7 @@ function configure_retronetplay() {
     ipaddress_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
     ipaddress_ext=$(curl http://ipecho.net/plain; echo)
     while true; do
-        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Configure RetroArch Netplay.\nInternal IP: $ipaddress_int\nExternal IP: $ipaddress_ext" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --menu "Configure RetroArch Netplay.\nInternal IP: $ipaddress_int\nExternal IP: $ipaddress_ext" 22 76 16)
         options=(1 "(E)nable/(D)isable RetroArch Netplay. Currently: $__netplayenable"
                  2 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode"
                  3 "Set port. Currently: $__netplayport"
@@ -28,7 +28,7 @@ function configure_retronetplay() {
 }
 
 function rps_retronet_enable() {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Enable or disable RetroArch's Netplay mode." 22 76 16)
+    cmd=(dialog --backtitle "$__backtitle" --menu "Enable or disable RetroArch's Netplay mode." 22 76 16)
     options=(1 "ENABLE netplay"
              2 "DISABLE netplay" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -45,7 +45,7 @@ function rps_retronet_enable() {
 }
 
 function rps_retronet_mode() {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Please set the netplay mode." 22 76 16)
+    cmd=(dialog --backtitle "$__backtitle" --menu "Please set the netplay mode." 22 76 16)
     options=(1 "Set as HOST"
              2 "Set as CLIENT" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -64,7 +64,7 @@ function rps_retronet_mode() {
 }
 
 function rps_retronet_port() {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the port to be used for netplay (default: 55435)." 22 76 $__netplayport)
+    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the port to be used for netplay (default: 55435)." 22 76 $__netplayport)
     choices=$("${cmd[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then
         __netplayport=$choices
@@ -74,7 +74,7 @@ function rps_retronet_port() {
 }
 
 function rps_retronet_hostip() {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the IP address of the host." 22 76 $__netplayhostip)
+    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the IP address of the host." 22 76 $__netplayhostip)
     choices=$("${cmd[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then
         __netplayhostip=$choices
@@ -89,7 +89,7 @@ function rps_retronet_hostip() {
 }
 
 function rps_retronet_frames() {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --inputbox "Please enter the number of delay frames for netplay (default: 15)." 22 76 $__netplayframes)
+    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the number of delay frames for netplay (default: 15)." 22 76 $__netplayframes)
     choices=$("${cmd[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then
         __netplayframes=$choices

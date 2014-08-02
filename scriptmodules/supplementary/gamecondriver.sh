@@ -52,18 +52,18 @@ function install_gamecondriver() {
 
     #test if gamecon installation is OK
     if [[ -n $(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko) ]]; then
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "`cat /usr/share/doc/gamecon_gpio_rpi/README.gz | gzip -d -c`" 22 76
+        dialog --backtitle "$__backtitle" --msgbox "`cat /usr/share/doc/gamecon_gpio_rpi/README.gz | gzip -d -c`" 22 76
     else
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Gamecon GPIO driver installation FAILED"\
+        dialog --backtitle "$__backtitle" --msgbox "Gamecon GPIO driver installation FAILED"\
         22 76
     fi
 
     #test if db9 installation is OK
     if [[ -n $(modinfo -n db9_gpio_rpi | grep db9_gpio_rpi.ko) ]]; then
-            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Db9 GPIO driver successfully installed. \
+            dialog --backtitle "$__backtitle" --msgbox "Db9 GPIO driver successfully installed. \
         Use 'zless /usr/share/doc/db9_gpio_rpi/README.gz' to read how to use it." 22 76
     else
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Db9 GPIO driver installation FAILED"\
+        dialog --backtitle "$__backtitle" --msgbox "Db9 GPIO driver installation FAILED"\
         22 76
     fi
 }
@@ -176,6 +176,6 @@ __________\n\
         ;;
     esac
 
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox \
+    dialog --backtitle "$__backtitle" --msgbox \
     "Gamecon GPIO driver enabled with 2 SNES pads." 22 76
 }

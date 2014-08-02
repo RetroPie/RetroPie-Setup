@@ -91,17 +91,17 @@ function set_disableSplashscreenAtStart()
 }
 
 function configure_splashenable() {
-    cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose the desired boot behaviour." 22 86 16)
+    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
     options=(1 "Disable custom splashscreen on boot."
              2 "Enable custom splashscreen on boot")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then
         case $choices in
             1) set_disableSplashscreenAtStart
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Disabled custom splashscreen on boot." 22 76
+               dialog --backtitle "$__backtitle" --msgbox "Disabled custom splashscreen on boot." 22 76
                             ;;
             2) set_enableSplashscreenAtStart
-               dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Enabled custom splashscreen on boot." 22 76
+               dialog --backtitle "$__backtitle" --msgbox "Enabled custom splashscreen on boot." 22 76
                             ;;
         esac
     else

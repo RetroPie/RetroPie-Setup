@@ -106,10 +106,10 @@ function rps_main_binaries()
     __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
 
     if [[ ! -z $__INFMSGS ]]; then
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60
+        dialog --backtitle "$__backtitle" --msgbox "$__INFMSGS" 20 60
     fi
 
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76
+    dialog --backtitle "$__backtitle" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76
 }
 
 function rps_main_updatescript()
@@ -117,19 +117,19 @@ function rps_main_updatescript()
   printMsg "Fetching latest version of the RetroPie Setup Script."
   pushd $scriptdir
   if [[ ! -d ".git" ]]; then
-    dialog --backtitle "PetRockBlock.com - RetroPie Setup." --msgbox "Cannot find direcotry '.git'. Please clone the RetroPie Setup script via 'git clone git://github.com/petrockblog/RetroPie-Setup.git'" 20 60
+    dialog --backtitle "$__backtitle" --msgbox "Cannot find direcotry '.git'. Please clone the RetroPie Setup script via 'git clone git://github.com/petrockblog/RetroPie-Setup.git'" 20 60
     popd
     return
   fi
   git pull
   popd
-  dialog --backtitle "PetRockBlock.com - ORetroPie Setup." --msgbox "Fetched the latest version of the RetroPie Setup script. You need to restart the script." 20 60
+  dialog --backtitle "$__backtitle" --msgbox "Fetched the latest version of the RetroPie Setup script. You need to restart the script." 20 60
 }
 
 function rps_main_options()
 {
     buildMenu 2 "bool"
-    cmd=(dialog --separate-output --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
+    cmd=(dialog --separate-output --backtitle "$__backtitle" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     __ERRMSGS=""
@@ -144,14 +144,14 @@ function rps_main_options()
         done
 
         if [[ ! -z $__ERRMSGS ]]; then
-            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__ERRMSGS See debug.log for more details." 20 60
+            dialog --backtitle "$__backtitle" --msgbox "$__ERRMSGS See debug.log for more details." 20 60
         fi
 
         if [[ ! -z $__INFMSGS ]]; then
-            dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "$__INFMSGS" 20 60
+            dialog --backtitle "$__backtitle" --msgbox "$__INFMSGS" 20 60
         fi
 
-        dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60
+        dialog --backtitle "$__backtitle" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60
 
         chown -R $user:$user $logfilename
     fi
@@ -163,7 +163,7 @@ function rps_main_setup()
     logfilename=$scriptdir/logs/run_$now.log.gz
     touch $logfilename
     while true; do
-        cmd=(dialog --backtitle "PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user" --menu "Choose task." 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         buildMenu 3
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
