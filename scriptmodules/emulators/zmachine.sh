@@ -4,9 +4,9 @@ rp_module_menus="2+"
 
 function install_zmachine() {
     aptInstall frotz
-    wget -U firefox http://www.infocom-if.org/downloads/zork1.zip
-    wget -U firefox http://www.infocom-if.org/downloads/zork2.zip
-    wget -U firefox http://www.infocom-if.org/downloads/zork3.zip
+    wget -U firefox http://downloads.petrockblock.com/retropiearchives/zork1.zip
+    wget -U firefox http://downloads.petrockblock.com/retropiearchives/zork2.zip
+    wget -U firefox http://downloads.petrockblock.com/retropiearchives/zork3.zip
     mkdir -p $romdir/zmachine/zork1
     mkdir -p $romdir/zmachine/zork2
     mkdir -p $romdir/zmachine/zork3

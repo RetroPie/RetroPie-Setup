@@ -7,10 +7,11 @@ function depen_advmame() {
 }
 
 function sources_advmame() {
-    wget -O advmame.tar.gz http://downloads.sourceforge.net/project/advancemame/advancemame/0.94.0/advancemame-0.94.0.tar.gz
+    wget -O advmame.tar.gz http://downloads.petrockblock.com/retropiearchives/advancemame-0.94.0.tar.gz
 }
 
 function build_advmame() {
+    mkdir -p "$rootdir/emulators/"
     tar xzvf advmame.tar.gz -C "$rootdir/emulators/"
     pushd "$rootdir/emulators/advancemame-0.94.0"
     sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c

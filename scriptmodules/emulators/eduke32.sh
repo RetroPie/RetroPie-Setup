@@ -7,9 +7,9 @@ function install_eduke32() {
     mkdir -p $rootdir/emulators/eduke32
     pushd "$rootdir/emulators/eduke32"
     printMsg "Downloading eDuke core"
-    wget http://repo.berryboot.com/eduke32_2.0.0rpi+svn2789_armhf.deb
+    wget http://downloads.petrockblock.com/retropiearchives/eduke32_2.0.0rpi+svn2789_armhf.deb
     printMsg "Downloading eDuke32 Shareware files"
-    wget http://apt.duke4.net/pool/main/d/duke3d-shareware/duke3d-shareware_1.3d-23_all.deb
+    wget http://downloads.petrockblock.com/retropiearchives/duke3d-shareware_1.3d-23_all.deb
     if [[ ! -f "$rootdir/emulators/eduke32/eduke32_2.0.0rpi+svn2789_armhf.deb" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully install eDuke32 core."
     else

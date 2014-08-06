@@ -8,7 +8,8 @@ function depen_linapple() {
 
 function sources_linapple() {
     rmDirExists "$rootdir/emulators/apple2"
-    wget http://downloads.sourceforge.net/project/linapple/linapple/linapple-2a/linapple-src_2a.tar.bz2
+    mkdir -p "$rootdir/emulators"
+    wget http://downloads.petrockblock.com/retropiearchives/linapple-src_2a.tar.bz2
     tar -jxvf linapple-src_2a.tar.bz2 -C "$rootdir/emulators/"
     rm linapple-src_2a.tar.bz2
 }

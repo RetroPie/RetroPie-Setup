@@ -6,7 +6,8 @@ rp_module_menus="2+"
 
 function sources_uae4all() {
     rmDirExists "$rootdir/emulators/uae4rpi"
-    wget http://www.gamshi.com/download/uae4rpi.tar.bz2
+    mkdir -p "$rootdir/emulators"
+    wget http://downloads.petrockblock.com/retropiearchives/uae4rpi.tar.bz2
     tar -jxvf uae4rpi.tar.bz2 -C "$rootdir/emulators/"
     rm uae4rpi.tar.bz2
 }

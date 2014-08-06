@@ -4,7 +4,8 @@ rp_module_menus="2+"
 
 function sources_fbzx() {
     rmDirExists "$rootdir/emulators/fbzx-2.10.0"
-    wget -O fbzx-2.10.0.tar.bz2 http://www.rastersoft.com/descargas/fbzx-2.10.0.tar.bz2
+    wget -O fbzx-2.10.0.tar.bz2 http://downloads.petrockblock.com/retropiearchives/fbzx-2.10.0.tar.bz2
+    mkdir -p "$rootdir/emulators"
     tar xvfj fbzx-2.10.0.tar.bz2  -C "$rootdir/emulators"
     rm fbzx-2.10.0.tar.bz2
 }

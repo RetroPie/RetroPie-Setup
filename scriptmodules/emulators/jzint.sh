@@ -5,6 +5,7 @@ rp_module_menus="2+"
 function sources_jzint() {
     # wget 'http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip' -O jzintv.zip
     wget http://downloads.petrockblock.com/retropiearchives/jzintv-svn.zip -O jzintv.zip
+    mkdir -p "$rootdir/emulators"
     unzip -n jzintv.zip -d "$rootdir/emulators/"
     rm jzintv.zip
 }

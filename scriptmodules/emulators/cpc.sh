@@ -3,7 +3,8 @@ rp_module_desc="Amstrad CPC emulator"
 rp_module_menus="2+"
 
 function sources_cpc() {
-    wget http://gaming.capsule-sa.co.za/downloads/cpc4rpi-1.1_src.tar.gz
+    wget http://downloads.petrockblock.com/retropiearchives/cpc4rpi-1.1_src.tar.gz
+    mkdir -p "$rootdir/emulators"
     rmDirExists "$rootdir/emulators/cpc4rpi-1.1"
     tar xvfz cpc4rpi-1.1_src.tar.gz -C "$rootdir/emulators/"
     rm cpc4rpi-1.1_src.tar.gz

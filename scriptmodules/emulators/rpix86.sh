@@ -3,7 +3,7 @@ rp_module_desc="DOS Emulator rpix86"
 rp_module_menus="2+"
 
 function install_rpix86() {
-    wget http://rpix86.patrickaalto.com/rpix86.tar.gz
+    wget http://downloads.petrockblock.com/retropiearchives/rpix86.tar.gz
     rmDirExists "$rootdir/emulators/rpix86"
     mkdir -p "$rootdir/emulators/rpix86"
     tar xvfz rpix86.tar.gz -C "$rootdir/emulators/rpix86"

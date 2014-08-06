@@ -9,6 +9,7 @@ function depen_quake3() {
 function sources_quake3() {
     rmDirExists "$rootdir/emulators/quake3src"
     gitPullOrClone "$rootdir/emulators/quake3src" git://github.com/raspberrypi/quake3.git
+    mkdir -p "$rootdir/emulators"
     pushd "$rootdir/emulators/quake3src"
     rm build.sh
     wget "http://downloads.petrockblock.com/retropiearchives/buildQuake3.sh"

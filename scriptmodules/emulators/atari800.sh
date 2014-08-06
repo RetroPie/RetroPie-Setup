@@ -3,8 +3,9 @@ rp_module_desc="Atari 800 emulator"
 rp_module_menus="2+"
 
 function sources_atari800() {
-    wget -O atari800-3.0.0.tar.gz http://sourceforge.net/projects/atari800/files/atari800/3.0.0/atari800-3.0.0.tar.gz/download
+    wget -O atari800-3.0.0.tar.gz http://downloads.petrockblock.com/retropiearchives/atari800-3.0.0.tar.gz
     rmDirExists "$rootdir/emulators/atari800-3.0.0"
+    mkdir -p "$rootdir/emulators/"
     tar xvfz atari800-3.0.0.tar.gz -C "$rootdir/emulators/"
     rm atari800-3.0.0.tar.gz
 }

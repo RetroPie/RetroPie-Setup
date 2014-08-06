@@ -4,8 +4,9 @@ rp_module_menus="2+"
 
 function sources_fastdosbox() {
     wget http://downloads.petrockblock.com/retropiearchives/fastdosbox-1.5_src.tar.gz
+    mkdir -p "$rootdir/emulators"
     tar xvfz fastdosbox-1.5_src.tar.gz -C "$rootdir/emulators/"
-
+    
     # patch sources
     sed -i 's|#include "nofun.h"|//#include "nofun.h"|g' "$rootdir/emulators/fastdosbox-1.5/src/gui/sdl_mapper.cpp"
 

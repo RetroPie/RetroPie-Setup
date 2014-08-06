@@ -9,6 +9,7 @@ function depen_dgen() {
 function sources_dgen() {
     rmDirExists "$rootdir/emulators/dgen"
     wget http://downloads.petrockblock.com/retropiearchives/dgen-sdl-1.32.tar.gz
+    mkdir -p "$rootdir/emulators/"
     tar xvfz dgen-sdl-1.32.tar.gz -C "$rootdir/emulators/"
     rmDirExists "$rootdir/emulators/dgen-sdl"
     mv "$rootdir/emulators/dgen-sdl-1.32" "$rootdir/emulators/dgen-sdl"

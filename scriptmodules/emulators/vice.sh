@@ -4,7 +4,8 @@ rp_module_menus="2+"
 
 function sources_vice() {
     rmDirExists "$rootdir/emulators/vice-2.4"
-    wget -O vice-2.4.tar.gz http://downloads.sourceforge.net/project/vice-emu/releases/vice-2.4.tar.gz
+    mkdir -p "$rootdir/emulators"
+    wget -O vice-2.4.tar.gz http://downloads.petrockblock.com/retropiearchives/vice-2.4.tar.gz
     tar xzvf vice-2.4.tar.gz -C "$rootdir/emulators/"
     rm vice-2.4.tar.gz
 }

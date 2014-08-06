@@ -8,6 +8,7 @@ function depen_openmsx() {
 
 function sources_openmsx() {
     wget http://downloads.petrockblock.com/retropiearchives/openmsx-0.10.0.tar.gz
+    mkdir -p "$rootdir/emulators"
     tar xvfz openmsx-0.10.0.tar.gz  -C "$rootdir/emulators"
     rm openmsx-0.10.0.tar.gz
 }
