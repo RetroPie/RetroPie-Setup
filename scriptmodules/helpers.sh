@@ -319,9 +319,7 @@ function setESSystem() {
 
     rps_checkNeededPackages python-lxml
 
-    if [[ ! -f $rootdir/supplementary/ESConfigEdit/esconfedit.py ]]; then
-        gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
-    fi
+    gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
 
     $rootdir/supplementary/ESConfigEdit/esconfedit.py --dontstop \
                                                     -f "$fullname" \
