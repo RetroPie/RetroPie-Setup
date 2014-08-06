@@ -238,9 +238,9 @@ fn_exists()
 function gitPullOrClone()
 {
     if [ -d "$1/.git" ]; then
-        pushd $1
+        pushd $1 > /dev/null
         git pull
-        popd
+        popd > /dev/null
     else
         rm -rf "$1" # makes sure that the directory IS empty
         mkdir -p "$1"

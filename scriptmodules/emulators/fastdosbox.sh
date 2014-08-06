@@ -3,7 +3,7 @@ rp_module_desc="DOS emulator FastDosbox"
 rp_module_menus="2+"
 
 function sources_fastdosbox() {
-    wget http://gaming.capsule-sa.co.za/downloads/fastdosbox-1.5_src.tar.gz
+    wget http://downloads.petrockblock.com/retropiearchives/fastdosbox-1.5_src.tar.gz
     tar xvfz fastdosbox-1.5_src.tar.gz -C "$rootdir/emulators/"
 
     # patch sources

@@ -2,9 +2,13 @@ rp_module_id="dgen"
 rp_module_desc="Megadrive/Genesis emulat. DGEN"
 rp_module_menus="2+"
 
+function depen_dgen() {
+    rps_checkNeededPackages libsdl1.2-dev
+}
+
 function sources_dgen() {
     rmDirExists "$rootdir/emulators/dgen"
-    wget http://downloads.sourceforge.net/project/dgen/dgen/1.32/dgen-sdl-1.32.tar.gz
+    wget http://downloads.petrockblock.com/retropiearchives/dgen-sdl-1.32.tar.gz
     tar xvfz dgen-sdl-1.32.tar.gz -C "$rootdir/emulators/"
     rmDirExists "$rootdir/emulators/dgen-sdl"
     mv "$rootdir/emulators/dgen-sdl-1.32" "$rootdir/emulators/dgen-sdl"
@@ -24,7 +28,7 @@ function install_dgen() {
         mkdir -p "$rootdir/emulators/dgen-sdl/installdir"
     fi
     make install
-    if [[ ! -f "$rootdir/emulators/dgen-sdl/installdir/dgen" ]]; then
+    if [[ ! -f "$rootdir/emulators/dgen-sdl/installdir/bin/dgen" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile DGEN emulator."
     fi
     popd
