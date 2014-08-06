@@ -7,6 +7,8 @@ function depen_emulationstation() {
         libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
         libasound2-dev cmake g++-4.7
+
+    rp_callModule "libsdlbinaries"
 }
 
 function sources_emulationstation() {

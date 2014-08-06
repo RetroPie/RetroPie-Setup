@@ -11,7 +11,7 @@ function sources_sdl() {
     # If libudev-dev is not installed before compiling, the keyboard will mysteriously not work!
     # The rest should already be installed, but just to be safe, include them all.
 
-    wget http://libsdl.org/release/SDL2-2.0.1.tar.gz
+    wget http://downloads.petrockblock.com/retropiearchives/SDL2-2.0.1.tar.gz
     mkdir -p "$rootdir/supplementary/"
     tar xvfz SDL2-2.0.1.tar.gz -C "$rootdir/supplementary/"
     rm SDL2-2.0.1.tar.gz || return 1

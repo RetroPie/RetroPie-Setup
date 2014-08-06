@@ -5,9 +5,7 @@ rp_module_menus="2-"
 function install_libsdlbinaries() {
     rps_checkNeededPackages libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 
-    wget -O libsdlbinaries.tar.gz http://downloads.petrockblock.com/libsdl2.0.1.tar.gz
-    tar xvfz libsdlbinaries.tar.gz
+    wget -O libsdlbinaries.tar.gz http://downloads.petrockblock.com/retropiearchives/libsdl2.0.1.tar.gz
+    tar -xvzf libsdlbinaries.tar.gz -C /
     rm libsdlbinaries.tar.gz
-    cp libsdl2.0.1/* /usr/local/lib/
-    rm -rf libsdl2.0.1/
 }
