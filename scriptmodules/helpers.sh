@@ -321,6 +321,8 @@ function setESSystem() {
 
     gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
 
+    mkdir -p "/etc/emulationstation"
+
     $rootdir/supplementary/ESConfigEdit/esconfedit.py --dontstop \
                                                     -f "$fullname" \
                                                     -n "$name" \
