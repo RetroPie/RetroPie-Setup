@@ -65,8 +65,9 @@ while true; do
     options=(1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)"
              2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
              3 "SETUP (only if you already have run one of the installations above)"
-             4 "UPDATE RetroPie Setup script"
-             5 "UPDATE RetroPie Binaries"
+             4 "EXPERIMENTAL packages (these are potentially unstable packages)"
+             5 "UPDATE RetroPie Setup script"
+             6 "UPDATE RetroPie Binaries"
              7 "Perform REBOOT" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then
@@ -74,8 +75,9 @@ while true; do
             1) rps_main_binaries ;;
             2) rps_main_options ;;
             3) rps_main_setup ;;
-            4) rps_main_updatescript ;;
-            5) rps_downloadBinaries ;;
+            4) rps_main_experimental ;;
+            5) rps_main_updatescript ;;
+            6) rps_downloadBinaries ;;
             7) rps_main_reboot ;;
         esac
     else

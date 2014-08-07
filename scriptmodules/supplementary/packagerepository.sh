@@ -1,6 +1,6 @@
 rp_module_id="packagerepository"
 rp_module_desc="Package Repository"
-rp_module_menus="2+"
+rp_module_menus="4+"
 
 function install_packagerepository() {
     # install repository helper package
