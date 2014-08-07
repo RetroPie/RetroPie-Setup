@@ -1,6 +1,6 @@
 rp_module_id="mupen64rpi"
 rp_module_desc="N64 emulator MUPEN64Plus-RPi"
-rp_module_menus="2+"
+rp_module_menus="4+"
 
 function sources_mupen64rpi() {
     gitPullOrClone "$rootdir/emulators/mupen64plus" https://github.com/ricrpi/mupen64plus

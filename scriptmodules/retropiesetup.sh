@@ -176,6 +176,25 @@ function rps_main_setup()
     chown -R $user:$user $logfilename
 }
 
+function rps_main_experimental()
+{
+    now=$(date +'%d%m%Y_%H%M')
+    logfilename=$scriptdir/logs/run_$now.log.gz
+    touch $logfilename
+    while true; do
+        cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
+        buildMenu 4
+        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [ "$choices" != "" ]; then
+            rp_callModule $choices ${command[$choices]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
+        else
+            break
+        fi
+    done
+
+    chown -R $user:$user $logfilename
+}
+
 function rps_main_reboot()
 {
     clear
