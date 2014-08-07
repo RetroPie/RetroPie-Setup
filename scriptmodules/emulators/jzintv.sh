@@ -1,8 +1,8 @@
-rp_module_id="jzint"
+rp_module_id="jzintv"
 rp_module_desc="Intellivision emulator"
 rp_module_menus="2+"
 
-function sources_jzint() {
+function sources_jzintv() {
     # wget 'http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip' -O jzintv.zip
     wget http://downloads.petrockblock.com/retropiearchives/jzintv-svn.zip -O jzintv.zip
     mkdir -p "$rootdir/emulators"
@@ -18,7 +18,7 @@ function sources_jzint() {
         "$rootdir/emulators/jzintv/src/joy/subMakefile"
 }
 
-function build_jzint() {
+function build_jzintv() {
     pushd "$rootdir/emulators/jzintv/src/"
     mkdir -p "$rootdir/emulators/jzintv/bin"
     make clean
@@ -31,7 +31,7 @@ function build_jzint() {
     popd
 }
 
-function configure_jzint() {
+function configure_jzintv() {
     mkdir -p "$romdir/intellivision"
 
     setESSystem "Intellivision" "intellivision" "~/RetroPie/roms/intellivision" ".int .INT .bin .BIN" "$rootdir/emulators/jzintv/bin/jzintv -z1 -f1 -q %ROM%" "intellivision" ""
