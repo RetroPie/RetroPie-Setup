@@ -239,7 +239,7 @@ function gitPullOrClone()
 {
     if [ -d "$1/.git" ]; then
         pushd $1 > /dev/null
-        git pull
+        git pull > /dev/null
         popd > /dev/null
     else
         rm -rf "$1" # makes sure that the directory IS empty
