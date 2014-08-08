@@ -34,6 +34,11 @@ function sources_gpsp() {
 }
 
 function build_gpsp() {
+    dphys-swapfile swapoff
+    echo "CONF_SWAPSIZE=512" > /etc/dphys-swapfile
+    dphys-swapfile setup
+    dphys-swapfile swapon
+
     pushd "$rootdir/emulators/gpsp"
     cd raspberrypi
     make clean
@@ -45,6 +50,10 @@ function build_gpsp() {
     fi
     popd
 
+    dphys-swapfile swapoff
+    echo "CONF_SWAPSIZE=99" > /etc/dphys-swapfile
+    dphys-swapfile setup
+    dphys-swapfile swapon
 }
 
 function configure_gpsp() {
