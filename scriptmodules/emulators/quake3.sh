@@ -10,12 +10,8 @@ function sources_quake3() {
     rmDirExists "$rootdir/emulators/quake3src"
     gitPullOrClone "$rootdir/emulators/quake3src" git://github.com/raspberrypi/quake3.git
     mkdir -p "$rootdir/emulators"
-    pushd "$rootdir/emulators/quake3src"
-    rm build.sh
-    wget "http://downloads.petrockblock.com/retropiearchives/buildQuake3.sh"
-    mv buildQuake3.sh build.sh
-    chmod +x build.sh
-    popd
+    sed -i "s#/opt/bcm-rootfs##" "$rootdir/emulators/quake3src/build.sh"
+    sed -i "s/^CROSS_COMPILE/#CROSS_COMPILE/" "$rootdir/emulators/quake3src/build.sh"
 }
 
 function build_quake3() {
@@ -23,12 +19,9 @@ function build_quake3() {
 
     ./build.sh
 
-    # Add user for no sudo run
-    usermod -a -G video $user
-
     # Move the build files to $rootdir/emulators/quake3/
     mkdir -p "$rootdir/emulators/quake3"
-    mv "$rootdir/emulators/quake3src/build/release-linux-arm/*" "$rootdir/emulators/quake3/"
+    cp -R "$rootdir/emulators/quake3src/build/release-linux-arm/"* "$rootdir/emulators/quake3/"
 
     # Delete the build directory
     rm -r "$rootdir/emulators/quake3src/"
@@ -40,19 +33,21 @@ function install_quake3() {
     # Get the demo paks and unzip
     pushd "$rootdir/emulators/quake3/baseq3"
     wget http://downloads.petrockblock.com/retropiearchives/Q3DemoPaks.zip
-    mv Q3DemoPaks.zip Q3pak.zip
-    unzip Q3pak.zip -d "$rootdir/emulators/quake3/"
-    rm "$rootdir/emulators/quake3/baseq3/Q3pak.zip"
+    unzip -o Q3DemoPaks.zip -d "$rootdir/emulators/quake3/"
+    rm "$rootdir/emulators/quake3/baseq3/Q3DemoPaks.zip"
 
     # Apply chmod to the files
-    chmod +x "$rootdir/emulators/quake3/ioq3ded.arm"
-    chmod +x "$rootdir/emulators/quake3/ioquake3.arm"
+    chmod +x "$rootdir/emulators/quake3/"*.arm 
 
     popd
 }
 
 function configure_quake3() {
+    # Add user for no sudo run
+    usermod -a -G video $user
+
     mkdir -p "$romdir/quake3"
+    mkdir -p "$romdir/ports/"
 
     cat > "$romdir/ports/Quake III Arena.sh" << _EOF_
 #!/bin/bash
