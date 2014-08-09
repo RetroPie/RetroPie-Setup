@@ -8,7 +8,7 @@ function sources_gbclibretro() {
 
 function build_gbclibretro() {
     pushd "$rootdir/emulatorcores/gambatte-libretro"
-    make -f Makefile.libretro clean
+    make -C libgambatte -f Makefile.libretro clean
     make -C libgambatte -f Makefile.libretro
     if [[ -z `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Color core."
