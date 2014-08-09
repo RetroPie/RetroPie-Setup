@@ -14,7 +14,6 @@ function build_neslibretro() {
     if [[ -z `find $rootdir/emulatorcores/fceu-next/fceumm-code/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile NES core."
     fi
-    popd
 }
 
 function configure_neslibretro() {
