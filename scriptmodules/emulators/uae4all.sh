@@ -4,6 +4,10 @@ rp_module_menus="2+"
 
 # Amiga emulator UAE4All
 
+function depen_uae4all() {
+    rps_checkNeededPackages libsdl1.2-dev libsdl-mixer1.2-dev
+}
+
 function sources_uae4all() {
     rmDirExists "$rootdir/emulators/uae4rpi"
     mkdir -p "$rootdir/emulators"
