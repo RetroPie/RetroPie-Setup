@@ -38,16 +38,17 @@ function build_quake3() {
 
 function install_quake3() {
     # Get the demo paks and unzip
-    cd "$rootdir/emulators/quake3/baseq3"
+    pushd "$rootdir/emulators/quake3/baseq3"
     wget http://downloads.petrockblock.com/retropiearchives/Q3DemoPaks.zip
     mv Q3DemoPaks.zip Q3pak.zip
     unzip Q3pak.zip -d "$rootdir/emulators/quake3/"
     rm "$rootdir/emulators/quake3/baseq3/Q3pak.zip"
 
     # Apply chmod to the files
-    cd "$rootdir/emulators/quake3"
     chmod +x "$rootdir/emulators/quake3/ioq3ded.arm"
     chmod +x "$rootdir/emulators/quake3/ioquake3.arm"
+
+    popd
 }
 
 function configure_quake3() {
