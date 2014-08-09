@@ -47,7 +47,7 @@ function configure_quake3() {
     usermod -a -G video $user
 
     mkdir -p "$romdir/quake3"
-    mkdir -p "$romdir/ports/"
+    mkdir -p "$romdir/ports"
 
     cat > "$romdir/ports/Quake III Arena.sh" << _EOF_
 #!/bin/bash
