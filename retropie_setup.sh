@@ -51,7 +51,7 @@ scriptdir=$(cd $scriptdir && pwd)
 
 source "$scriptdir/retropie_packages.sh" init
 
-source "scriptmodules/retropiesetup.sh"
+source "$scriptdir/scriptmodules/retropiesetup.sh"
 
 checkForLogDirectory
 
