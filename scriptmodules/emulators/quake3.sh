@@ -10,7 +10,7 @@ function sources_quake3() {
     rmDirExists "$rootdir/emulators/quake3src"
     gitPullOrClone "$rootdir/emulators/quake3src" git://github.com/raspberrypi/quake3.git
     mkdir -p "$rootdir/emulators"
-    sed -i "s#/opt/bcm-rootfs##" "$rootdir/emulators/quake3src/build.sh"
+    sed -i "s#/opt/bcm-rootfs##g" "$rootdir/emulators/quake3src/build.sh"
     sed -i "s/^CROSS_COMPILE/#CROSS_COMPILE/" "$rootdir/emulators/quake3src/build.sh"
 }
 
