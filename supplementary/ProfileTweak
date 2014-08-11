@@ -20,7 +20,7 @@ echo "$(tput setaf 2)
 ( : '~'.~.'~' : ) Uptime.............: ${UPTIME}
  ~ .~       ~. ~  Memory.............: `cat /proc/meminfo | grep MemFree | awk {'print $2'}`kB (Free) / `cat /proc/meminfo | grep MemTotal | awk {'print $2'}`kB (Total)$(tput setaf 7)
   (  $(tput setaf 4) |   | $(tput setaf 7)  )  $(tput setaf 1) Running Processes..: `ps ax | wc -l | tr -d " "`$(tput setaf 7)
-  '~         ~'  $(tput setaf 1) IP Address.........: `ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'` $(tput setaf 7)
+  '~         ~'  $(tput setaf 1) IP Address.........: `ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ printf "%s ", $1}'` $(tput setaf 7)
     *--~-~--*    $(tput setaf 7) The RetroPie Project, www.petrockblock.com
 $(tput sgr0)"
 # RETROPIE PROFILE END   
