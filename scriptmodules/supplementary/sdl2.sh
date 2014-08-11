@@ -2,7 +2,7 @@ rp_module_id="sdl"
 rp_module_desc="SDL 2.0.1"
 rp_module_menus="2+"
 
-function depen_sdl() {
+function depends_sdl() {
     rps_checkNeededPackages libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 }
 

@@ -2,7 +2,7 @@ rp_module_id="advmame"
 rp_module_desc="AdvMame"
 rp_module_menus="2+"
 
-function depen_advmame() {
+function depends_advmame() {
     rps_checkNeededPackages libsdl1.2-dev
 }
 

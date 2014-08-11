@@ -2,7 +2,7 @@ rp_module_id="emulationstation"
 rp_module_desc="EmulationStation"
 rp_module_menus="2+"
 
-function depen_emulationstation() {
+function depends_emulationstation() {
     rps_checkNeededPackages \
         libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \

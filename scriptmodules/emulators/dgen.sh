@@ -2,7 +2,7 @@ rp_module_id="dgen"
 rp_module_desc="Megadrive/Genesis emulat. DGEN"
 rp_module_menus="2+"
 
-function depen_dgen() {
+function depends_dgen() {
     rps_checkNeededPackages libsdl1.2-dev
 }
 

@@ -2,7 +2,7 @@ rp_module_id="fbalibretro"
 rp_module_desc="FBA LibretroCore"
 rp_module_menus="2+"
 
-function depen_fbalibretro() {
+function depends_fbalibretro() {
     rps_checkNeededPackages cpp-4.5 gcc-4.5 g++-4.5
 }
 
