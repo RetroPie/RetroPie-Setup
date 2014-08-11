@@ -2,7 +2,7 @@ rp_module_id="jzintv"
 rp_module_desc="Intellivision emulator"
 rp_module_menus="2+"
 
-function depen_jzintv() {
+function depends_jzintv() {
     rps_checkNeededPackages libsdl1.2-dev
 }
 

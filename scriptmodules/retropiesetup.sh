@@ -59,7 +59,7 @@ function rps_main_binaries()
     {
         # install all needed dependencies
         for idx in "${__mod_idx[@]}"; do
-            rp_callModule "$idx" "depen"
+            rp_callModule "$idx" "depends"
         done
 
         rp_callModule aptpackages

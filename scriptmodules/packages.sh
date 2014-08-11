@@ -53,7 +53,7 @@ function rp_listFunctions() {
         idx=${__mod_idx[$i]};
         mod_id=${__mod_id[$idx]};
         printf "%d/%-20s: %-32s : " "$idx" "$mod_id" "${__mod_desc[$idx]}"
-        for mode in depen sources build install configure; do
+        for mode in depends sources build install configure; do
             func="${mode}_${mod_id}"
             fn_exists $func && echo -e "$mode \c"
         done
@@ -63,8 +63,8 @@ function rp_listFunctions() {
 }
 
 function rp_printUsageinfo() {
-    echo -e "Usage:\n$0 <Index # or ID>\nThis will run the actions sources, build, install, configure, and package automatically.\n"
-    echo -e "Alternatively, $0 can be called as\n$0 <Index # or ID [depen|sources|build|install|configure|package]\n"
+    echo -e "Usage:\n$0 <Index # or ID>\nThis will run the actions depends, sources, build, install, configure, and package automatically.\n"
+    echo -e "Alternatively, $0 can be called as\n$0 <Index # or ID [depends|sources|build|install|configure|package]\n"
     echo -e "This is a list of valid commands:\n"
     rp_listFunctions
 }
@@ -77,7 +77,7 @@ function rp_callModule() {
     local mode
 
     if [[ "$func" == "" ]]; then
-        for mode in depen sources build install configure; do
+        for mode in depends sources build install configure; do
             rp_callModule $idx $mode
         done
     fi
@@ -92,7 +92,7 @@ function rp_callModule() {
         done
     fi
     case "$func" in
-        depen)
+        depends)
             desc="Installing dependencies for"
             ;;
         sources)

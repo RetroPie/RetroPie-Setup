@@ -2,7 +2,7 @@ rp_module_id="quake3"
 rp_module_desc="Quake 3"
 rp_module_menus="2+"
 
-function depen_quake3() {
+function depends_quake3() {
     rps_checkNeededPackages git gcc build-essential libsdl1.2-dev
 }
 
