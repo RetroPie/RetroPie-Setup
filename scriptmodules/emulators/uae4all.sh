@@ -34,11 +34,14 @@ function configure_uae4all() {
     cat > "$rootdir/emulators/uae4rpi/startAmigaDisk.sh" << _EOF_
 #!/bin/bash
 pushd "$rootdir/emulators/uae4rpi/"
-rm df0.adf
+if [[ -f "df0.adf" ]]; then
+     rm df0.adf
+ fi
 ln -s "$romdir/amiga/$1" "df0.adf"
 ./uae4all    
 popd
 _EOF_
+    chown -R $user:$user "$rootdir/emulators/uae4rpi/"
     chmod +x "$rootdir/emulators/uae4rpi/startAmigaDisk.sh"
     setESSystem "Amiga" "amiga" "~/RetroPie/roms/amiga" ".adf .ADF" "$rootdir/emulators/uae4rpi/startAmigaDisk.sh %ROM%" "amiga" "amiga"
 }
