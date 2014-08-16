@@ -3,6 +3,9 @@ rp_module_desc="RetroNetplay"
 rp_module_menus="4+"
 
 function configure_retronetplay() {
+    # load RetronetPlay configuration
+    source "$scriptdir/configs/retronetplay.cfg"
+
     ipaddress_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
     ipaddress_ext=$(curl http://ipecho.net/plain; echo)
     while true; do
@@ -11,7 +14,8 @@ function configure_retronetplay() {
                  2 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode"
                  3 "Set port. Currently: $__netplayport"
                  4 "Set host IP address (for client mode). Currently: $__netplayhostip"
-                 5 "Set delay frames. Currently: $__netplayframes" )
+                 5 "Set delay frames. Currently: $__netplayframes" 
+                 6 "Update EmulationStation configuration")
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
             case $choices in
@@ -20,6 +24,7 @@ function configure_retronetplay() {
                  3) rps_retronet_port ;;
                  4) rps_retronet_hostip ;;
                  5) rps_retronet_frames ;;
+                 6) rps_retronet_updateESConfiguration ;;
             esac
         else
             break
@@ -40,7 +45,6 @@ function rps_retronet_enable() {
                 ;;
         esac
         rps_retronet_saveconfig
-        sup_generate_esconfig
     fi
 }
 
@@ -59,7 +63,6 @@ function rps_retronet_mode() {
                 ;;
         esac
         rps_retronet_saveconfig
-        sup_generate_esconfig
     fi
 }
 
@@ -69,7 +72,6 @@ function rps_retronet_port() {
     if [ "$choices" != "" ]; then
         __netplayport=$choices
         rps_retronet_saveconfig
-        sup_generate_esconfig
     fi
 }
 
@@ -84,7 +86,6 @@ function rps_retronet_hostip() {
             __netplayhostip_cfile="$__netplayhostip"
         fi
         rps_retronet_saveconfig
-        sup_generate_esconfig
     fi
 }
 
@@ -94,10 +95,30 @@ function rps_retronet_frames() {
     if [ "$choices" != "" ]; then
         __netplayframes=$choices
         rps_retronet_saveconfig
-        sup_generate_esconfig
     fi
 }
 
 function rps_retronet_saveconfig() {
     echo -e "__netplayenable=\"$__netplayenable\"\n__netplaymode=\"$__netplaymode\"\n__netplayport=\"$__netplayport\"\n__netplayhostip=\"$__netplayhostip\"\n__netplayhostip_cfile=\"$__netplayhostip_cfile\"\n__netplayframes=\"$__netplayframes\"" > $scriptdir/configs/retronetplay.cfg
+}
+
+function rps_retronet_prepareConfig() {
+    if [[ $__netplayenable == "E" ]]; then
+         __tmpnetplaymode="-$__netplaymode "
+         __tmpnetplayhostip_cfile=$__netplayhostip_cfile
+         __tmpnetplayport="--port $__netplayport "
+         __tmpnetplayframes="--frames $__netplayframes"
+     else
+         __tmpnetplaymode=""
+         __tmpnetplayhostip_cfile=""
+         __tmpnetplayport=""
+         __tmpnetplayframes=""
+     fi    
+}
+
+function rps_retronet_updateESConfiguration() {
+        # configure all libretro components
+        for idx in "${__mod_idx[@]}"; do
+            [[ $idx < 300 ]] && [[ $idx > 199 ]] && rp_callModule "$idx" "configure"
+        done    
 }

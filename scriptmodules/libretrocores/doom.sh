@@ -16,15 +16,9 @@ function build_doom() {
     popd
 }
 
-function configure_doom() {
+function install_doom() {
     mkdir -p $romdir/ports/doom
-    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $romdir/ports/doom
-
-    cat > "$romdir/ports/Doom 1 Shareware.sh" << _EOF_
-#!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
-_EOF_
-    chmod +x "$romdir/ports/Doom 1 Shareware.sh"
+    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $romdir/ports/doom 
 
     # download and install Doom 1 shareware
     if `wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad"`; then
@@ -41,6 +35,17 @@ _EOF_
         __ERRMSGS="$__ERRMSGS Could not successfully download and install Timidity patchsets."
     fi
     popd
+}
+
+function configure_doom() {
+    mkdir -p $romdir/ports/doom
+    cp $rootdir/emulatorcores/libretro-prboom/prboom.wad $romdir/ports/doom
+
+    cat > "$romdir/ports/Doom 1 Shareware.sh" << _EOF_
+#!/bin/bash
+$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
+_EOF_
+    chmod +x "$romdir/ports/Doom 1 Shareware.sh"
 
     setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'    
 }

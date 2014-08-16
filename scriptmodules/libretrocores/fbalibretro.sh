@@ -11,6 +11,11 @@ function sources_fbalibretro() {
 }
 
 function build_fbalibretro() {
+    dphys-swapfile swapoff
+    echo "CONF_SWAPSIZE=512" > /etc/dphys-swapfile
+    dphys-swapfile setup
+    dphys-swapfile swapon
+
     pushd "$rootdir/emulatorcores/fba-libretro"
     cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
     make -f makefile.libretro clean
@@ -20,10 +25,16 @@ function build_fbalibretro() {
         __ERRMSGS="$__ERRMSGS Could not successfully compile FBA core."
     fi
     popd
+
+    dphys-swapfile swapoff
+    echo "CONF_SWAPSIZE=99" > /etc/dphys-swapfile
+    dphys-swapfile setup
+    dphys-swapfile swapon    
 }
 
 function configure_fbalibretro() {
     mkdir -p $romdir/fba-libretro
 
+    rps_retronet_prepareConfig
     setESSystem "Final Burn Alpha" "fba-libretro" "~/RetroPie/roms/fba-libretro" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/fba-libretro/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%\"" "arcade" ""
 }
