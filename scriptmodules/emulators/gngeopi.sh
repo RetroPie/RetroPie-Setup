@@ -17,14 +17,15 @@ function build_gngeopi() {
 function install_gngeopi() {
     pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
     make install
-    if [[ ! -f "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/arm-linux-gngeo" ]]; then
+    if [[ ! -f "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/gngeo" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile GnGeo-Pi emulator."
     fi
     popd
+    mkdir -p "$rootdir/emulators/gngeo-pi-0.85/neogeobios"
 }
 
 function configure_gngeopi() {
     mkdir -p "$romdir/neogeo-gngeopi"
 
-    setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/arm-linux-gngeo -i $romdir/neogeo-gngeopi -B $rootdir/emulators/gngeo-pi-0.85/neogeobios %ROM%" "neogeo" "neogeo"
+    setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/gngeo -i $romdir/neogeo-gngeopi -B $rootdir/emulators/gngeo-pi-0.85/neogeobios %ROM%" "neogeo" "neogeo"
 }
