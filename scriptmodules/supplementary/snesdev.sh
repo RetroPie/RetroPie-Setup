@@ -8,18 +8,22 @@ function sources_snesdev() {
 
 function build_snesdev() {
     pushd "$rootdir/supplementary/SNESDev-Rpi"
-    ./build.sh
+    make
     popd
 }
 
 function install_snesdev() {
-    if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/SNESDev" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile SNESDev."
-    else
-        service SNESDev stop
-        cp "$rootdir/supplementary/SNESDev-Rpi/SNESDev" /usr/local/bin/
+    pushd "$rootdir/supplementary/SNESDev-Rpi"
+    make install
+    popd
+}
+
+function sup_checkInstallSNESDev() {
+    if [[ ! -d "$rootdir/supplementary/SNESDev-Rpi" ]]; then
+        sources_snesdev
+        build_snesdev
+        install_snesdev
     fi
-    cp "$rootdir/supplementary/SNESDev-Rpi/supplementary/snesdev.cfg" /etc/
 }
 
 # start SNESDev on boot and configure RetroArch input settings
@@ -27,20 +31,6 @@ function sup_enableSNESDevAtStart()
 {
     clear
     printMsg "Enabling SNESDev on boot."
-
-    if [[ ! -f "/etc/init.d/SNESDev" ]]; then
-        if [[ ! -f "$rootdir/supplementary/SNESDev-Rpi/SNESDev" ]]; then
-            dialog --backtitle "$__backtitle" --msgbox "Cannot find SNESDev binary. Please install SNESDev." 22 76
-            return
-        else
-            echo "Copying service script for SNESDev to /etc/init.d/ ..."
-            chmod +x "$rootdir/supplementary/SNESDev-Rpi/scripts/SNESDev"
-            cp "$rootdir/supplementary/SNESDev-Rpi/scripts/SNESDev" /etc/init.d/
-        fi
-    fi
-
-    echo "Copying SNESDev to /usr/local/bin/ ..."
-    cp "$rootdir/supplementary/SNESDev-Rpi/SNESDev" /usr/local/bin/
 
     case $1 in
       1)
@@ -63,23 +53,6 @@ function sup_enableSNESDevAtStart()
         ;;
     esac
 
-    # This command installs the init.d script so it automatically starts on boot
-    update-rc.d SNESDev defaults
-    # This command starts the daemon now so no need for a reboot
-    service SNESDev start
-}
-
-# disable start SNESDev on boot and remove RetroArch input settings
-function sup_disableSNESDevAtStart()
-{
-    clear
-    printMsg "Disabling SNESDev on boot."
-
-    # This command stops the daemon now so no need for a reboot
-    service SNESDev stop
-
-    # This command installs the init.d script so it automatically starts on boot
-    update-rc.d SNESDev remove
 }
 
 function configure_snesdev() {
@@ -91,16 +64,31 @@ function configure_snesdev() {
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then
         case $choices in
-            1) sup_disableSNESDevAtStart
+            1) sup_checkInstallSNESDev
+               pushd "$rootdir/supplementary/SNESDev-Rpi/"
+               make uninstallservice
+               popd
                dialog --backtitle "$__backtitle" --msgbox "Disabled SNESDev on boot." 22 76
                             ;;
-            2) sup_enableSNESDevAtStart 3
+            2) sup_checkInstallSNESDev
+               sup_enableSNESDevAtStart 3
+               pushd "$rootdir/supplementary/SNESDev-Rpi/"
+               make installservice
+               popd
                dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling pads and button)." 22 76
                             ;;
-            3) sup_enableSNESDevAtStart 1
+            3) sup_checkInstallSNESDev
+               sup_enableSNESDevAtStart 1
+               pushd "$rootdir/supplementary/SNESDev-Rpi/"
+               make installservice
+               popd
                dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling only pads)." 22 76
                             ;;
-            4) sup_enableSNESDevAtStart 2
+            4) sup_checkInstallSNESDev
+               sup_enableSNESDevAtStart 2
+               pushd "$rootdir/supplementary/SNESDev-Rpi/"
+               make installservice
+               popd
                dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling only button)." 22 76
                             ;;
         esac
