@@ -8,6 +8,7 @@ function sources_snesdev() {
 
 function build_snesdev() {
     pushd "$rootdir/supplementary/SNESDev-Rpi"
+    make clean
     make
     popd
 }
@@ -19,11 +20,9 @@ function install_snesdev() {
 }
 
 function sup_checkInstallSNESDev() {
-    if [[ ! -d "$rootdir/supplementary/SNESDev-Rpi" ]]; then
-        sources_snesdev
-        build_snesdev
-        install_snesdev
-    fi
+    sources_snesdev
+    build_snesdev
+    install_snesdev
 }
 
 # start SNESDev on boot and configure RetroArch input settings
