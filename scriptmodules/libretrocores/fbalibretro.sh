@@ -3,7 +3,7 @@ rp_module_desc="FBA LibretroCore"
 rp_module_menus="2+"
 
 function depends_fbalibretro() {
-    rps_checkNeededPackages cpp-4.5 gcc-4.5 g++-4.5
+    rps_checkNeededPackages cpp-4.8 gcc-4.8 g++-4.8
 }
 
 function sources_fbalibretro() {
@@ -19,7 +19,7 @@ function build_fbalibretro() {
     pushd "$rootdir/emulatorcores/fba-libretro"
     cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
     make -f makefile.libretro clean
-    make -f makefile.libretro CC="gcc-4.5" CXX="g++-4.5" -j4 platform=armvhardfloat
+    make -f makefile.libretro CC="gcc-4.8" CXX="g++-4.8" -j4 platform=armvhardfloat
     mv `find $rootdir/emulatorcores/fba-libretro/svn-current/trunk/ -name "*libretro*.so"` "$rootdir/emulatorcores/fba-libretro/"
     if [[ -z `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile FBA core."
