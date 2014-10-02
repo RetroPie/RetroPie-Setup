@@ -1,4 +1,5 @@
 # Jason Whiteman's first attempt at an install script for RetroPie  
+# This version does not attempt to fix/hack sources. 
 
 rp_module_id="yabause"
 rp_module_desc="Yabause 0.9.13.1 Sega Saturn Emulation"
