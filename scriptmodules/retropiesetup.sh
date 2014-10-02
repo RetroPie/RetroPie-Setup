@@ -137,14 +137,17 @@ function rps_main_options()
     if [ "$choices" != "" ]; then
         now=$(date +'%d%m%Y_%H%M')
         logfilename=$scriptdir/logs/run_$now.log.gz
-        touch $logfilename
-        for choice in $choices
-        do
-            rp_callModule $choice ${command[$choice]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
-        done
+        {
+            touch $logfilename
+            for choice in $choices
+            do
+                rp_callModule $choice ${command[$choice]}
+            done
+        } 2>&1 > >(tee >(gzip --stdout > $logfilename))
+        chown -R $user:$user $logfilename
 
         if [[ ! -z $__ERRMSGS ]]; then
-            dialog --backtitle "$__backtitle" --msgbox "$__ERRMSGS See debug.log for more details." 20 60
+            dialog --backtitle "$__backtitle" --msgbox "$__ERRMSGS See $logfilename for more details." 20 60
         fi
 
         if [[ ! -z $__INFMSGS ]]; then
@@ -153,7 +156,6 @@ function rps_main_options()
 
         dialog --backtitle "$__backtitle" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60
 
-        chown -R $user:$user $logfilename
     fi
 }
 
