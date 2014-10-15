@@ -3,13 +3,21 @@ rp_module_desc="EmulationStation Theme Simple"
 rp_module_menus="2+"
 
 function install_esthemesimple() {
-    wget -O themesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=7118
+	# download themes archive
+    wget -O /tmp/themesDownload.zip http://blog.petrockblock.com/?wpdmdl=7118
 
-    tar xvfj themesDownload.tar.bz2
-    rm themesDownload.tar.bz2
+    # unzip archive to tmp folder
+    unzip /tmp/themesDownload.zip -d /tmp/
     if [[ ! -d "/etc/emulationstation/themes" ]]; then
         mkdir -p "/etc/emulationstation/themes"
     fi
+
+    # remove old simple theme files
     rmDirExists "/etc/emulationstation/themes/simple"
-    mv -f simple/ "/etc/emulationstation/themes/"
+
+    # move new simple theme files to themes folder
+    mv -f /tmp/simple/ "/etc/emulationstation/themes/"
+
+    # delete zi parchive
+    rm /tmp/themesDownload.zip
 }
