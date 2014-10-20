@@ -38,7 +38,7 @@ function rps_downloadBinaries()
     wget -O binariesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=7113
     tar -jxvf binariesDownload.tar.bz2 -C $rootdir
     pushd $rootdir/retropie
-    cp -r * ../
+    rsync --remove-source-files -av . ../
     popd
     rm -rf $rootdir/retropie
     rm binariesDownload.tar.bz2
