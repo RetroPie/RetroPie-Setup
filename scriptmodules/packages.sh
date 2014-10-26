@@ -31,7 +31,7 @@ __mod_desc=()
 __mod_menus=()
 __doPackages=0
 
-# params: $1=ID, $2=description, $3=sources, $4=build, $5=install, $6=configure, $7=package
+# params: $1=index, $2=id, $3=description, $4=menus
 function rp_registerFunction() {
     __mod_idx+=($1)
     __mod_id[$1]=$2
@@ -53,7 +53,7 @@ function rp_listFunctions() {
         idx=${__mod_idx[$i]};
         mod_id=${__mod_id[$idx]};
         printf "%d/%-20s: %-32s : " "$idx" "$mod_id" "${__mod_desc[$idx]}"
-        for mode in depends sources build install configure; do
+        for mode in depends sources build install configure remove; do
             func="${mode}_${mod_id}"
             fn_exists $func && echo -e "$mode \c"
         done
@@ -63,8 +63,8 @@ function rp_listFunctions() {
 }
 
 function rp_printUsageinfo() {
-    echo -e "Usage:\n$0 <Index # or ID>\nThis will run the actions depends, sources, build, install, configure, and package automatically.\n"
-    echo -e "Alternatively, $0 can be called as\n$0 <Index # or ID [depends|sources|build|install|configure|package]\n"
+    echo -e "Usage:\n$0 <Index # or ID>\nThis will run the actions depends, sources, build, install, configure, package and remove automatically.\n"
+    echo -e "Alternatively, $0 can be called as\n$0 <Index # or ID [depends|sources|build|install|configure|package|remove]\n"
     echo -e "This is a list of valid commands:\n"
     rp_listFunctions
 }
@@ -106,6 +106,9 @@ function rp_callModule() {
             ;;
         configure)
             desc="Configuring"
+            ;;
+        remove)
+            desc="Removing"
             ;;
     esac
     func="${func}_${mod_id}"
