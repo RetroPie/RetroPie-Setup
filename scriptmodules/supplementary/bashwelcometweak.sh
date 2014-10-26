@@ -35,3 +35,7 @@ _EOF_
 
     fi
 }
+
+function remove_bashwelcometweak() {
+    sed -i '/RETROPIE PROFILE START/,/RETROPIE PROFILE END/d' "/home/$user/.bashrc"
+}
