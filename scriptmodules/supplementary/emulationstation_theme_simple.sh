@@ -3,7 +3,7 @@ rp_module_desc="EmulationStation Theme Simple"
 rp_module_menus="2+"
 
 function install_esthemesimple() {
-	# download themes archive
+    # download themes archive
     wget -O /tmp/themesDownload.zip http://blog.petrockblock.com/?wpdmdl=7118
 
     # unzip archive to tmp folder

@@ -9,5 +9,5 @@ function install_fuse() {
 function configure_fuse() {
     mkdir -p "$romdir/zxspectrum"
 
-    setESSystem "ZX Spectrum" "zxspectrum" "~/RetroPie/roms/zxspectrum" ".z80 .Z80 .ipf .IPF" "xinit fuse" "zxspectrum" "zxspectrum"	
+    setESSystem "ZX Spectrum" "zxspectrum" "~/RetroPie/roms/zxspectrum" ".z80 .Z80 .ipf .IPF" "xinit fuse" "zxspectrum" "zxspectrum"
 }
