@@ -35,6 +35,7 @@ then
 fi
 home=$(eval echo ~$user)
 romdir="$home/RetroPie/roms"
+emudir="/opt/retropie/emulators"
 if [[ ! -d $romdir ]]; then
     mkdir -p $romdir
 fi
@@ -70,6 +71,7 @@ fi
 
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
+builddir="$scriptdir/build"
 
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/packages.sh"
