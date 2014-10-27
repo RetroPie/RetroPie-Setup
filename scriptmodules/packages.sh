@@ -117,7 +117,7 @@ function rp_callModule() {
     # echo "Printing function name"
     printMsg "$desc ${__mod_desc[$idx]}"
     # echo "Executing function"
-    $func
+    $func "${mod_id}" "${__mod_desc[$idx]}"
 }
 
 function registerModule() {
