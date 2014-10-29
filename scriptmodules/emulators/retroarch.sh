@@ -80,8 +80,9 @@ function configure_retroarch() {
     ensureKeyValue "core_options_path" "$rootdir/configs/all/retroarch-core-options.cfg" "$rootdir/configs/all/retroarch.cfg"
 
     # enable hotkey ("select" button)
-    ensureKeyValue "input_enable_hotkey" "nul" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_enable_hotkey" "escape" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_exit_emulator" "nul" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_menu_toggle" "escape" "$rootdir/configs/all/retroarch.cfg"
 
     # enable and configure rewind feature
     ensureKeyValue "rewind_enable" "false" "$rootdir/configs/all/retroarch.cfg"
