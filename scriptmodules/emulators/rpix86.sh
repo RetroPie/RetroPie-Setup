@@ -17,7 +17,7 @@ function configure_rpix86() {
     cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
 #!/bin/bash
 pushd $rootdir/emulators/rpix86
-./rpix86
+./rpix86 -a0 -f2
 popd
 _EOF_
     chmod +x "$rootdir/emulators/rpix86/Start.sh"
