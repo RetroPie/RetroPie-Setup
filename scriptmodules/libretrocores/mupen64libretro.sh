@@ -25,7 +25,7 @@ function configure_mupen64plus() {
 
     ensureSystemretroconfig "n64"
 
-    ensureKeyValue "mupen64-gfxplugin" "gln64" "$rootdir/configs/all/retroarch-core-options.cfg"
+    ensureKeyValue "mupen64-gfxplugin" "rice" "$rootdir/configs/all/retroarch-core-options.cfg"
     ensureKeyValue "mupen64-gfxplugin-accuracy" "low" "$rootdir/configs/all/retroarch-core-options.cfg"
     ensureKeyValue "mupen64-screensize" "320x240" "$rootdir/configs/all/retroarch-core-options.cfg"
 
