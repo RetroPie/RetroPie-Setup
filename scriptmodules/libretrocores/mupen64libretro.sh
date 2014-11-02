@@ -15,7 +15,7 @@ function build_mupen64plus() {
     make clean
     make platform=rpi 
     if [[ -z `find $rootdir/emulatorcores/mupen64plus/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile GBA core."
+        __ERRMSGS="$__ERRMSGS Could not successfully compile N64 core."
     fi
     popd
 }
