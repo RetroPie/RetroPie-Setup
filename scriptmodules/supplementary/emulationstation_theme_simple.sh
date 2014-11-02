@@ -12,7 +12,7 @@ function install_esthemesimple() {
     rmDirExists "/etc/emulationstation/themes/simple"
 
     # unzip archive to tmp folder
-    unzip themesDownload.zip -d /etc/emulationstation/
+    unzip themesDownload.zip -d /etc/emulationstation/themes/
 
     # delete zi parchive
     rm themesDownload.zip
