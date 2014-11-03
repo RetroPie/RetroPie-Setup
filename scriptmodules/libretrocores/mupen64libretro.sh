@@ -3,8 +3,12 @@ rp_module_desc="N64 LibretroCore Mupen64Plus"
 rp_module_menus="4+"
 
 function sources_mupen64plus() {
+    rmDirExists "$rootdir/emulatorcores/mupen64plus"
     gitPullOrClone "$rootdir/emulatorcores/mupen64plus" git://github.com/libretro/mupen64plus-libretro.git
     pushd "$rootdir/emulatorcores/mupen64plus"
+        # Revert to a working commit. Delete this workaround if HEAD is working again.
+        # https://github.com/libretro/mupen64plus-libretro/commit/c035cf1c7a2514aeb14adf51ad825208ff1a068d
+        sudo git revert --no-commit c035cf1..HEAD
     popd
 }
 
