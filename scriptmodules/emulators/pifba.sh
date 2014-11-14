@@ -2,6 +2,10 @@ rp_module_id="pifba"
 rp_module_desc="FBA emulator PiFBA"
 rp_module_menus="2+"
 
+function depends_pifba() {
+	rps_checkNeededPackages libasound2-dev
+}
+
 function sources_pifba() {
     gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/ NS
 }
