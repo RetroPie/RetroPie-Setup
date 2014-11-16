@@ -41,9 +41,22 @@ function configure_mupen64plus() {
 
     ensureSystemretroconfig "n64"
 
+    # Set core options
     ensureKeyValue "mupen64-gfxplugin" "rice" "$rootdir/configs/all/retroarch-core-options.cfg"
     ensureKeyValue "mupen64-gfxplugin-accuracy" "low" "$rootdir/configs/all/retroarch-core-options.cfg"
     ensureKeyValue "mupen64-screensize" "640x480" "$rootdir/configs/all/retroarch-core-options.cfg"
+
+    # Copy config files
+    cp $rootdir/emulatorcores/mupen64plus/mupen64plus/mupen64plus-core/data/mupen64plus.cht $home/RetroPie/BIOS/mupen64plus.cht
+    cp $rootdir/emulatorcores/mupen64plus/mupen64plus/mupen64plus-core/data/mupencheat.txt $home/RetroPie/BIOS/mupencheat.txt
+    cp $rootdir/emulatorcores/mupen64plus/mupen64plus/mupen64plus-core/data/mupen64plus.ini $home/RetroPie/BIOS/mupen64plus.ini 
+    cp $rootdir/emulatorcores/mupen64plus/mupen64plus/mupen64plus-core/data/font.ttf $home/RetroPie/BIOS/font.ttf
+
+    # Set permissions
+    chmod +x "$home/RetroPie/BIOS/mupen64plus.cht"
+    chmod +x "$home/RetroPie/BIOS/mupencheat.txt"
+    chmod +x "$home/RetroPie/BIOS/mupen64plus.ini"
+    chmod +x "$home/RetroPie/BIOS/font.ttf"
 
     rps_retronet_prepareConfig
     setESSystem "Nintendo 64" "n64" "~/RetroPie/roms/n64" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/mupen64plus/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/n64/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "n64" "n64"
