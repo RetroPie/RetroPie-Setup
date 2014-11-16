@@ -12,6 +12,14 @@ function sources_mupen64plus() {
 
 function build_mupen64plus() {
     pushd "$rootdir/emulatorcores/mupen64plus"
+    
+    # Increase swapfile size to meet memory requirement
+    # mupen64plus needs up to 310MB RAM during compilation
+    dphys-swapfile swapoff
+    echo "CONF_SWAPSIZE=300" > /etc/dphys-swapfile
+    dphys-swapfile setup
+    dphys-swapfile swapon
+    
     # Add missing path --> Fix already merged https://github.com/libretro/mupen64plus-libretro/commit/c035cf1c7a2514aeb14adf51ad825208ff1a068d
     # sed -i 's|GL_LIB := -lGLESv2|GL_LIB := -L/opt/vc/lib -lGLESv2|g' Makefile
     make clean
@@ -19,6 +27,12 @@ function build_mupen64plus() {
     if [[ -z `find $rootdir/emulatorcores/mupen64plus/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile N64 core."
     fi
+    
+    # Set original swapfile size 
+    dphys-swapfile swapoff
+    echo "CONF_SWAPSIZE=100" > /etc/dphys-swapfile
+    dphys-swapfile setup
+    dphys-swapfile swapon
     popd
 }
 
@@ -29,7 +43,7 @@ function configure_mupen64plus() {
 
     ensureKeyValue "mupen64-gfxplugin" "rice" "$rootdir/configs/all/retroarch-core-options.cfg"
     ensureKeyValue "mupen64-gfxplugin-accuracy" "low" "$rootdir/configs/all/retroarch-core-options.cfg"
-    ensureKeyValue "mupen64-screensize" "320x240" "$rootdir/configs/all/retroarch-core-options.cfg"
+    ensureKeyValue "mupen64-screensize" "640x480" "$rootdir/configs/all/retroarch-core-options.cfg"
 
     rps_retronet_prepareConfig
     setESSystem "Nintendo 64" "n64" "~/RetroPie/roms/n64" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/mupen64plus/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/n64/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "n64" "n64"
