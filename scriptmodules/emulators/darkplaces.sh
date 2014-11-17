@@ -17,17 +17,23 @@ function install_darkplaces() {
     
         # Download game file
         wget ftp://ftp.idsoftware.com/idstuff/quake/quake106.zip
-        unzip quake106.zip
-        lhasa e resource.1
+        unzip -o quake106.zip
+        lhasa ef resource.1
         
         # Create ports directory
         mkdir -p $romdir/ports
+        mkdir -p $romdir/ports/quake
     
         # Copy game dir to rom dir
-        cp -rf id1 $romdir/ports/id1
+        cp -rf id1 $romdir/ports/quake/id1
         
         # Set game file permission
-        chmod +x "$romdir/ports/id1/pak0.pak"
+        chmod 666 "$romdir/ports/quake/id1/pak0.pak"
+        chmod 666 "$romdir/ports/quake/id1/autoexec.cfg"
+        chmod 666 "$romdir/ports/quake/id1/config.cfg"
+        chmod 666 "$romdir/ports/quake/id1/default.cfg"
+        chmod 666 "$romdir/ports/quake/id1/quake.rc"
+        chmod 666 "$romdir/ports/quake/id1/textures/quake.tga"
         
         # Remove game file
         rm quake106.zip
@@ -45,7 +51,7 @@ sudo darkplaces-sdl -basedir $romdir/ports -quake
 _EOF_
     
     # Set startup script permissions
-    chmod +x "$romdir/ports/darkplacesquake.sh"
+    chmod 666 "$romdir/ports/darkplacesquake.sh"
     
     # Add darkplaces quake to emulationstation
     setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
