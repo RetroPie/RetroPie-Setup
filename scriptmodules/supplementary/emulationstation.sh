@@ -46,7 +46,8 @@ _EOF_
 
     if [[ -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
         # make sure that ES has enough GPU memory
-        ensureKeyValueBootconfig "gpu_mem" 256 "/boot/config.txt"
+        ensureKeyValueBootconfig "gpu_mem_256" 128 "/boot/config.txt"
+        ensureKeyValueBootconfig "gpu_mem_512" 256 "/boot/config.txt"
         ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
         return 0
     else
