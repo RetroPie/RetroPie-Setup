@@ -4,6 +4,7 @@ rp_module_menus="2+"
 
 function install_bashwelcometweak() {
     cp -y "$scriptdir/supplementary/pytemp.py" "/home/$user/"
+    chmod +x "/home/$user/pytemp.py"
     if [[ -z `cat "/home/$user/.bashrc" | grep "# RETROPIE PROFILE START"` ]]; then
         cat >> "/home/$user/.bashrc" <<\_EOF_
 # RETROPIE PROFILE START
