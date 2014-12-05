@@ -3,8 +3,14 @@ rp_module_desc="Bash Welcome Tweak"
 rp_module_menus="2+"
 
 function install_bashwelcometweak() {
-    cp -y "$scriptdir/supplementary/pytemp.py" "/home/$user/"
-    chmod +x "/home/$user/pytemp.py"
+
+    echo Installing linux basic calculator bc to support temperature calculations and display directly in bash...
+    apt-get -y install bc
+
+    echo Installing pitemp.sh script into user home folder and making it executable...
+    cp -y "$scriptdir/supplementary/pitemp.sh" "/home/$user/"
+    chmod +x "/home/$user/pitemp.sh"
+
     if [[ -z `cat "/home/$user/.bashrc" | grep "# RETROPIE PROFILE START"` ]]; then
         cat >> "/home/$user/.bashrc" <<\_EOF_
 # RETROPIE PROFILE START
@@ -32,7 +38,7 @@ echo "$(tput setaf 2)
   '~         ~'  $(tput setaf 1) IP Address.........: `ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ printf "%s ", $1}'` $(tput setaf 7)
     *--~-~--*    $(tput setaf 7) The RetroPie Project, www.petrockblock.com
 $(tput sgr0)"
-python ~/pytemp.py
+~/pitemp.sh
 # RETROPIE PROFILE END   
 _EOF_
 
