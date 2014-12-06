@@ -2,6 +2,10 @@ rp_module_id="psxlibretro"
 rp_module_desc="Playstation 1 LibretroCore"
 rp_module_menus="2+"
 
+function depends_psxlibretro() {
+    rps_checkNeededPackages libpng12-dev
+}
+
 function sources_psxlibretro() {
     gitPullOrClone "$rootdir/emulatorcores/pcsx_rearmed" git://github.com/libretro/pcsx_rearmed.git
 }
