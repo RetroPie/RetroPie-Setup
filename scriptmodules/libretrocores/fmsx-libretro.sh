@@ -9,7 +9,7 @@ function sources_fmsx-libretro() {
 function build_fmsx-libretro() {
     pushd "$rootdir/emulatorcores/fmsx-libretro"
     make clean
-    make platform=rpihardfloat
+    make
     popd
     if [[ -z `find $rootdir/emulatorcores/fmsx-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile MSX core."
