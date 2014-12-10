@@ -12,6 +12,7 @@ function sources_pifba() {
 
 function build_pifba() {
     pushd "$rootdir/emulators/pifba"
+    sed -i "s/-lglib-2.0$/-lglib-2.0 -lasound -lrt/g" Makefile
     mkdir ".obj"
     make clean
     make
