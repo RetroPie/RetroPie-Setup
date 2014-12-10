@@ -13,6 +13,8 @@ function sources_mame4all() {
 
 function build_mame4all() {
     pushd "$rootdir/emulators/mame4all-pi"
+    sed -i 's|LIBS = -lm|LIBS = -lrt -lasound -lm|g' Makefile
+    sed -i 's|armv6|armv6j|g' Makefile
     make clean
     make
     if [[ ! -f "$rootdir/emulators/mame4all-pi/mame" ]]; then
