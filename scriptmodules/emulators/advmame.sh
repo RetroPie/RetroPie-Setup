@@ -7,9 +7,6 @@ function depends_advmame() {
 }
 
 function sources_advmame() {
-    rmDirExists "$builddir/$1"
-    mkdir -p "$builddir/$1"
-    pushd "$builddir/$1"
     wget -O- -q "http://downloads.petrockblock.com/retropiearchives/advancemame-0.94.0.tar.gz" | tar -xvz --strip-components=1
     sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
     sed -i 's/misc_quiet\", 0/misc_quiet\", 1/' advance/osd/global.c
@@ -18,17 +15,12 @@ function sources_advmame() {
 }
 
 function build_advmame() {
-    pushd "$builddir/$1"
     ./configure LDFLAGS="-s -lm -Wl,--no-as-needed" --prefix="$emudir/$1"
     make
-    popd
 }
 
 function install_advmame() {
-    mkdir -p "$emudir/$1"
-    pushd "$builddir/$1"
     make install
-    popd
 }
 
 function configure_advmame() {
