@@ -126,10 +126,25 @@ function rp_callModule() {
 
     printMsg "$desc ${__mod_desc[$idx]}"
     require=""
+    files=""
     $func_call "$mod_id" "${__mod_desc[$idx]}"
 
     if [ "$require" != "" ] && [ ! -f "$require" ]; then
         __ERRMSGS="$__ERRMSGS Could not successfully $func ${__mod_desc[$idx]} ($require not found)."
+    fi
+
+    if [ "$files" != "" ]; then
+        for file in "${files[@]}"; do
+            if [ ! -e "$builddir/$mod_id/$file" ]; then
+                __ERRMSGS+="$__ERRMSGS Could not successfully install ${__mod_desc[$idx]} ($builddir/$mod_id/$file not found)."
+                break
+            fi
+            cp -Rv "$builddir/$mod_id/$file" "$emudir/$mod_id"
+            if [ ! -e "$emudir/$mod_id/$file" ]; then
+                __ERRMSGS+="$__ERRMSGS Could not successfully install ${__mod_desc[$idx]} ($emudir/$mod_id/$file not found)."
+                break
+            fi
+        done
     fi
 
     case "$func" in
