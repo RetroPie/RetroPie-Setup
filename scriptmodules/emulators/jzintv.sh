@@ -15,11 +15,9 @@ function sources_jzintv() {
     rm jzintv.zip
     # use our default gcc-4.7
     sed -i "s/-4\.8\.0/-4.7/g" "$rootdir/emulators/jzintv/src/Makefile"
+    sed -i "s|LFLAGS   = -L../lib|LFLAGS   = -L../lib -lm|g" "$rootdir/emulators/jzintv/src/Makefile"
     # don't build event_diag.rom/emu_ver.rom/joy_diag.rom/jlp_test.bin due to missing example/library files from zip
-    sed -i '/^PROGS/,$d' \
-        "$rootdir/emulators/jzintv/src/"{event,joy,jlp,util}/subMakefile \
-        "$rootdir/emulators/jzintv/src/util/subMakefile" \
-        "$rootdir/emulators/jzintv/src/joy/subMakefile"
+    sed -i '/^PROGS/,$d' "$rootdir/emulators/jzintv/src/"{event,joy,jlp,util}/subMakefile
 }
 
 function build_jzintv() {
