@@ -7,29 +7,26 @@ function depends_gngeopi() {
 }
 
 function sources_gngeopi() {
-    gitPullOrClone "$rootdir/emulators/gngeo-pi-0.85" https://github.com/ymartel06/GnGeo-Pi.git
+    gitPullOrClone "$builddir/$1" https://github.com/ymartel06/GnGeo-Pi.git
 }
 
 function build_gngeopi() {
-    pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
+    cd gngeo
     chmod +x configure
-    ./configure --disable-i386asm --prefix="$rootdir/emulators/gngeo-pi-0.85/installdir"
+    ./configure --disable-i386asm --prefix="$emudir/$1"
+    make clean
     make
-    popd
 }
 
 function install_gngeopi() {
-    pushd "$rootdir/emulators/gngeo-pi-0.85/gngeo"
+    cd gngeo
     make install
-    if [[ ! -f "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/gngeo" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile GnGeo-Pi emulator."
-    fi
-    popd
-    mkdir -p "$rootdir/emulators/gngeo-pi-0.85/neogeobios"
+    mkdir -p "$emudir/$1/neogeobios"
+    require="$emudir/$1/bin/gngeo"
 }
 
 function configure_gngeopi() {
     mkdir -p "$romdir/neogeo-gngeopi"
 
-    setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$rootdir/emulators/gngeo-pi-0.85/installdir/bin/gngeo -i $romdir/neogeo-gngeopi -B $rootdir/emulators/gngeo-pi-0.85/neogeobios %ROM%" "neogeo" "neogeo"
+    setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$emudir/$1/bin/gngeo -i $romdir/neogeo-gngeopi -B $rootdir/emulators/gngeo-pi-0.85/neogeobios %ROM%" "neogeo" "neogeo"
 }
