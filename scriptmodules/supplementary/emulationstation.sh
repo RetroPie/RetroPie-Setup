@@ -4,7 +4,7 @@ rp_module_menus="2+"
 
 function depends_emulationstation() {
     rps_checkNeededPackages \
-        libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
+        libboost-locale-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
         libasound2-dev cmake g++-4.7
 
@@ -24,7 +24,11 @@ function build_emulationstation() {
     # EmulationStation
     pushd "$rootdir/supplementary/EmulationStation" || return 1
     cmake -D CMAKE_CXX_COMPILER=g++-4.7 . || return 1
-    make || return 1
+    make
+    if [[ ! -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully compile emulationstation."
+        return 1
+    fi
     popd
 }
 
@@ -46,7 +50,8 @@ _EOF_
 
     if [[ -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
         # make sure that ES has enough GPU memory
-        ensureKeyValueBootconfig "gpu_mem" 256 "/boot/config.txt"
+        ensureKeyValueBootconfig "gpu_mem_256" 128 "/boot/config.txt"
+        ensureKeyValueBootconfig "gpu_mem_512" 256 "/boot/config.txt"
         ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
         return 0
     else

@@ -40,6 +40,6 @@ fi
 [ -d "${UM_MOUNTPOINT}/roms" ] || exit 0
 
 # this could probably need some work, but it should 'work for now', so..
-rsync -azu --max-delete=-1 ${UM_MOUNTPOINT}/roms ${retropie_path}/ >/dev/null 2>&1 || log err "rsync failed to sync ROMS, returned error code $?"
+rsync -au --max-delete=-1 ${UM_MOUNTPOINT}/roms ${retropie_path}/ >/dev/null 2>&1 || log err "rsync failed to sync ROMS, returned error code $?"
 chown -R ${retro_user} ${retropie_path}/
 chgrp -R ${retro_user} ${retropie_path}/

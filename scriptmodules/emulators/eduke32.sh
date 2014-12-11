@@ -25,7 +25,7 @@ function install_eduke32() {
 
     cat > "$romdir/ports/Duke3D Shareware.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -g %ROM% -gamegrp duke3d.grp"
+$rootdir/supplementary/runcommand/runcommand.sh 4 "eduke32 -j$romdir/ports/duke3d"
 _EOF_
     chmod +x "$romdir/ports/Duke3D Shareware.sh"
 

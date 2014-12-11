@@ -2,6 +2,10 @@ rp_module_id="mame4all"
 rp_module_desc="MAME emulator MAME4All-Pi"
 rp_module_menus="2+"
 
+function depends_mame4all() {
+    rps_checkNeededPackages libasound2-dev libsdl1.2-dev
+}
+
 function sources_mame4all() {
     gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/ NS
     sed -i "s/@mkdir/@mkdir -p/g" "$rootdir/emulators/mame4all-pi/Makefile"
@@ -9,6 +13,8 @@ function sources_mame4all() {
 
 function build_mame4all() {
     pushd "$rootdir/emulators/mame4all-pi"
+    sed -i 's/-lglib-2.0$/-lglib-2.0 -lrt -lasound/g' Makefile
+    sed -i 's/armv6 /armv6j /g' Makefile
     make clean
     make
     if [[ ! -f "$rootdir/emulators/mame4all-pi/mame" ]]; then

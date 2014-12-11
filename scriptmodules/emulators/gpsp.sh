@@ -2,6 +2,10 @@ rp_module_id="gpsp"
 rp_module_desc="GameBoy Advance emulator"
 rp_module_menus="2+"
 
+function depends_gpsp() {
+    rps_checkNeededPackages libsdl1.2-dev
+}
+
 # install Game Boy Advance emulator gpSP
 function sources_gpsp() {
     gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/gizmo98/gpsp.git
@@ -23,13 +27,6 @@ function sources_gpsp() {
         fi
     fi
 
-    #gpSP is missing an include in the Makefile
-    if [[ ! -z `grep "\-I/opt/vc/include/interface/vmcs_host/linux" Makefile` ]]; then
-       echo "Skipping adding missing include to gpSP Makefile."
-    else
-       echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
-       sed -i '23iCFLAGS     += -I/opt/vc/include/interface/vmcs_host/linux' Makefile
-    fi
     popd
 }
 

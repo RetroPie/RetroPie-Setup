@@ -8,7 +8,8 @@ function sources_pisnes() {
 
 function build_pisnes() {
     pushd "$rootdir/emulators/pisnes"
-    sed -i -e "s|-lglib-2.0|-lglib-2.0 -lbcm_host|g" Makefile
+    sed -i "s/-lglib-2.0$/-lglib-2.0 -lbcm_host -lrt -lasound -lm/g" Makefile
+    sed -i "s/armv6 /armv6j /g" Makefile
     make clean
     make
     if [[ ! -f "$rootdir/emulators/pisnes/snes9x" ]]; then
