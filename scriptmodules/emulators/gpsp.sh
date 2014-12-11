@@ -27,13 +27,6 @@ function sources_gpsp() {
         fi
     fi
 
-    #gpSP is missing an include in the Makefile
-    if [[ ! -z `grep "\-I/opt/vc/include/interface/vmcs_host/linux" Makefile` ]]; then
-       echo "Skipping adding missing include to gpSP Makefile."
-    else
-       echo "Adding -I/opt/vc/include/interface/vmcs_host/linux to Makefile"
-       sed -i '23iCFLAGS     += -I/opt/vc/include/interface/vmcs_host/linux' Makefile
-    fi
     popd
 }
 
