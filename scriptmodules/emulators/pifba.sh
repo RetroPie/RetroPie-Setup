@@ -7,39 +7,32 @@ function depends_pifba() {
 }
 
 function sources_pifba() {
-    gitPullOrClone "$rootdir/emulators/pifba" https://code.google.com/p/pifba/ NS
+    gitPullOrClone "$builddir/$1" https://code.google.com/p/pifba/ NS
+    sed -i "s/-lglib-2.0$/-lglib-2.0 -lasound -lrt/g" Makefile
 }
 
 function build_pifba() {
-    pushd "$rootdir/emulators/pifba"
-    sed -i "s/-lglib-2.0$/-lglib-2.0 -lasound -lrt/g" Makefile
     mkdir ".obj"
     make clean
     make
-    if [[ ! -d "$rootdir/emulators/pifba/" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile PiFBA."
-    fi
-    popd
+    require="$builddir/$1/pifba"
 }
 
 function install_pifba() {
-    mkdir -p "$rootdir/emulators/pifba/installdir"
-
-    cp "$rootdir/emulators/pifba/fba2x" "$rootdir/emulators/pifba/installdir/"
-    cp "$rootdir/emulators/pifba/capex.cfg" "$rootdir/emulators/pifba/installdir/"
-    cp "$rootdir/emulators/pifba/fba2x.cfg" "$rootdir/emulators/pifba/installdir/"
-    cp "$rootdir/emulators/pifba/zipname.fba" "$rootdir/emulators/pifba/installdir/"
-    cp "$rootdir/emulators/pifba/rominfo.fba" "$rootdir/emulators/pifba/installdir/"
-    cp "$rootdir/emulators/pifba/FBACache_windows.zip" "$rootdir/emulators/pifba/installdir/"
-    cp "$rootdir/emulators/pifba/fba_029671_clrmame_dat.zip" "$rootdir/emulators/pifba/installdir/"
-    chown -R $user:$user "$rootdir/emulators/pifba/installdir/"
-    mkdir -p "$rootdir/emulators/pifba/roms"
-    mkdir -p "$rootdir/emulators/pifba/skin"
-    mkdir -p "$rootdir/emulators/pifba/preview"
-
+    mkdir "$emudir/$1/"{roms,skin,preview}
+    files=(
+        'fba2x'
+        'capex.cfg'
+        'fba2x.cfg'
+        'zipname.fba'
+        'rominfo.fba'
+        'FBACache_windows.zip'
+        'fba_029671_clrmame_dat.zip'
+    )
 }
 
 function configure_pifba() {
+    chown -R $user:$user "$emudir/$1"
     mkdir -p "$romdir/fba"
     mkdir -p "$romdir/neogeo"
 
