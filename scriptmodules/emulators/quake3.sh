@@ -7,39 +7,31 @@ function depends_quake3() {
 }
 
 function sources_quake3() {
-    rmDirExists "$rootdir/emulators/quake3src"
-    gitPullOrClone "$rootdir/emulators/quake3src" git://github.com/raspberrypi/quake3.git
-    mkdir -p "$rootdir/emulators"
-    sed -i "s#/opt/bcm-rootfs##g" "$rootdir/emulators/quake3src/build.sh"
-    sed -i "s/^CROSS_COMPILE/#CROSS_COMPILE/" "$rootdir/emulators/quake3src/build.sh"
+    gitPullOrClone "$builddir/$1" git://github.com/raspberrypi/quake3.git
+    sed -i "s#/opt/bcm-rootfs##g" build.sh
+    sed -i "s/^CROSS_COMPILE/#CROSS_COMPILE/" build.sh
 }
 
 function build_quake3() {
-    pushd "$rootdir/emulators/quake3src"
-
     ./build.sh
-
-    # Move the build files to $rootdir/emulators/quake3/
-    mkdir -p "$rootdir/emulators/quake3"
-    cp -R "$rootdir/emulators/quake3src/build/release-linux-arm/"* "$rootdir/emulators/quake3/"
-
-    # Delete the build directory
-    rm -r "$rootdir/emulators/quake3src/"
-
-    popd
 }
 
 function install_quake3() {
-    # Get the demo paks and unzip
-    pushd "$rootdir/emulators/quake3/baseq3"
+    files=(
+        'build/release-linux-arm/baseq3'
+        'build/release-linux-arm/client'
+        'build/release-linux-arm/clientsmp'
+        'build/release-linux-arm/ded'
+        'build/release-linux-arm/ioquake3.arm'
+        'build/release-linux-arm/missionpack'
+        'build/release-linux-arm/tools'
+    )
+
     wget http://downloads.petrockblock.com/retropiearchives/Q3DemoPaks.zip
-    unzip -o Q3DemoPaks.zip -d "$rootdir/emulators/quake3/"
-    rm "$rootdir/emulators/quake3/baseq3/Q3DemoPaks.zip"
+    unzip -o Q3DemoPaks.zip -d "$emudir/$1"
+    rm Q3DemoPaks.zip
 
-    # Apply chmod to the files
-    chmod +x "$rootdir/emulators/quake3/"*.arm 
-
-    popd
+    chmod +x "$emudir/$1/"*.arm 
 }
 
 function configure_quake3() {
@@ -51,7 +43,7 @@ function configure_quake3() {
 
     cat > "$romdir/ports/Quake III Arena.sh" << _EOF_
 #!/bin/bash
-LD_LIBRARY_PATH=lib /opt/retropie/emulators/quake3/ioquake3.arm
+LD_LIBRARY_PATH=lib "$emudir/$1ioquake3.arm"
 _EOF_
 
     chmod +x "$romdir/ports/Quake III Arena.sh"
