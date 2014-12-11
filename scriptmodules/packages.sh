@@ -124,7 +124,12 @@ function rp_callModule() {
     esac
 
     printMsg "$desc ${__mod_desc[$idx]}"
+    require=""
     $func_call "$mod_id" "${__mod_desc[$idx]}"
+
+    if [ "$require" != "" ] && [ ! -f "$require" ]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully $func ${__mod_desc[$idx]} ($require not found)."
+    fi
 
     case "$func" in
         sources|build|install|configure)
