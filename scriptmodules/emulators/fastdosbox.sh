@@ -3,31 +3,20 @@ rp_module_desc="DOS emulator FastDosbox"
 rp_module_menus="2+"
 
 function sources_fastdosbox() {
-    wget http://downloads.petrockblock.com/retropiearchives/fastdosbox-1.5_src.tar.gz
-    mkdir -p "$rootdir/emulators"
-    tar xvfz fastdosbox-1.5_src.tar.gz -C "$rootdir/emulators/"
-    
-    # patch sources
-    sed -i 's|#include "nofun.h"|//#include "nofun.h"|g' "$rootdir/emulators/fastdosbox-1.5/src/gui/sdl_mapper.cpp"
-
-    mkdir -p $rootdir/emulators/fastdosbox-1.5/installdir
-    rm fastdosbox-1.5_src.tar.gz
+    wget -O- -q http://downloads.petrockblock.com/retropiearchives/fastdosbox-1.5_src.tar.gz | tar -xvz --strip-components=1
+    sed -i 's|#include "nofun.h"|//#include "nofun.h"|g' "$builddir/$1/src/gui/sdl_mapper.cpp"
 }
 
 function build_fastdosbox() {
-    pushd $rootdir/emulators/fastdosbox-1.5
-    ./configure --prefix=$rootdir/emulators/fastdosbox-1.5/installdir
+    #./configure --prefix="$emudir/$1"
+    #make clean
     make
-    popd
+    require="$builddir/$1/src/dosbox"
 }
 
 function install_fastdosbox() {
-    pushd $rootdir/emulators/fastdosbox-1.5
     make install
-    if [[ ! -f $rootdir/emulators/fastdosbox-1.5/installdir/bin/dosbox ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully install FastDosbox."
-    fi
-    popd
+    require="$emudir/$1/bin/dosbox"
 }
 
 function configure_fastdosbox() {
