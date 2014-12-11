@@ -7,7 +7,7 @@ function depends_dgen() {
 }
 
 function sources_dgen() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/dgen-sdl-1.32.tar.gz | tar -xvz --strip-components=1 -C "$builddir/$1"
+    wget -O- -q http://downloads.petrockblock.com/retropiearchives/dgen-sdl-1.32.tar.gz | tar -xvz --strip-components=1
 }
 
 function build_dgen() {

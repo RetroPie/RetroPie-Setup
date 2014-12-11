@@ -3,7 +3,7 @@ rp_module_desc="Atari 800 emulator"
 rp_module_menus="2+"
 
 function sources_atari800() {
-    wget -q -O- "http://downloads.petrockblock.com/retropiearchives/atari800-3.0.0.tar.gz" | tar -xvz --strip-components=1 -C "$builddir/$1"
+    wget -q -O- "http://downloads.petrockblock.com/retropiearchives/atari800-3.0.0.tar.gz" | tar -xvz --strip-components=1
 }
 
 function build_atari800() {
