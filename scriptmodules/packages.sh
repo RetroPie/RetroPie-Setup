@@ -91,33 +91,45 @@ function rp_callModule() {
             [[ "$mod_id" == "${__mod_id[$idx]}" ]] && break 
         done
     fi
+
+    func_call="${func}_${mod_id}"
+    fn_exists $func_call || return
+
     case "$func" in
         depends)
             desc="Installing dependencies for"
             ;;
         sources)
             desc="Getting sources for"
+            mkdir -p "$builddir/$mod_id"
+            pushd "$builddir/$mod_id"
             ;;
         build)
             desc="Building"
+            pushd "$builddir/$mod_id"
             ;;
         install)
             desc="Installing"
+            mkdir -p "$builddir/$mod_id"
+            pushd "$builddir/$mod_id"
             ;;
         configure)
             desc="Configuring"
+            pushd "$emudir/$mod_id"
             ;;
         remove)
             desc="Removing"
             ;;
     esac
-    func="${func}_${mod_id}"
-    # echo "Checking, if function ${!__function} exists"
-    fn_exists $func || return
-    # echo "Printing function name"
+
     printMsg "$desc ${__mod_desc[$idx]}"
-    # echo "Executing function"
-    $func "${mod_id}" "${__mod_desc[$idx]}"
+    $func_call "$mod_id" "${__mod_desc[$idx]}"
+
+    case "$func" in
+        sources|build|install|configure)
+            popd
+            ;;
+    esac
 }
 
 function registerModule() {
