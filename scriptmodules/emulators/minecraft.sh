@@ -3,11 +3,7 @@ rp_module_desc="Minecraft"
 rp_module_menus="4+"
 
 function install_minecraft() {
-    mkdir "$rootdir/emulators/minecraft"
-    pushd "$rootdir/emulators/minecraft"
-    wget https://s3.amazonaws.com/assets.minecraft.net/pi/minecraft-pi-0.1.1.tar.gz
-    tar -zxvf minecraft-pi-0.1.1.tar.gz
-    popd
+    wget -O- -q https://s3.amazonaws.com/assets.minecraft.net/pi/minecraft-pi-0.1.1.tar.gz | tar -xvz --strip-components=1 -C "$emudir/$1"
 }
 
 function configure_minecraft() {
@@ -15,7 +11,7 @@ function configure_minecraft() {
 
     cat > "$romdir/ports/Minecraft.sh" << _EOF_
 #!/bin/bash
-xinit /opt/retropie/emulators/minecraft/mcpi/minecraft-pi
+xinit "$emudir/$1/minecraft-pi
 _EOF_
 
     chmod +x "$romdir/ports/Minecraft.sh"
