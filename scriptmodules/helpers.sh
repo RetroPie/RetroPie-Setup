@@ -202,6 +202,30 @@ function rps_availFreeDiskSpace() {
     fi
 }
 
+function rpSwap() {
+    local command=$1
+    local size=$2
+    local limit=$3
+
+    mkdir -p "$__swapdir/"
+    local swapfile="$__swapdir/swap"
+
+    case $command in
+        on)
+            if [ "$__memory" -lt "$limit" ]; then
+                rpSwap off
+                fallocate -l ${size}M "$swapfile"
+                mkswap "$swapfile"
+                swapon "$swapfile"
+            fi
+            ;;
+        off)
+            swapoff "$swapfile" 2>/dev/null
+            rm -f "$swapfile"
+            ;;
+    esac
+}
+
 # This function is not used so far.
 function checkIfPullNeeded()
 {

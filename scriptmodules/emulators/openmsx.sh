@@ -14,20 +14,14 @@ function sources_openmsx() {
 }
 
 function build_openmsx() {
-    dphys-swapfile swapoff
-    echo "CONF_SWAPSIZE=512" > /etc/dphys-swapfile
-    dphys-swapfile setup
-    dphys-swapfile swapon
+    rpSwap on 256 240
 
     pushd "$rootdir/emulators/openmsx-0.10.0"
     ./configure
     make
     popd
 
-    dphys-swapfile swapoff
-    echo "CONF_SWAPSIZE=99" > /etc/dphys-swapfile
-    dphys-swapfile setup
-    dphys-swapfile swapon    
+    rpSwap off
 }
 
 function configure_openmsx() {

@@ -68,8 +68,12 @@ else
   __chroot=0
 fi
 
+__memory=$(free -t -m | awk '/^Total:/{print $2}')
+
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
+
+__swapdir="$scriptdir/tmp/"
 
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/packages.sh"
