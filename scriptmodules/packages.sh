@@ -101,6 +101,7 @@ function rp_callModule() {
             ;;
         sources)
             desc="Getting sources for"
+            rmDirExists "$builddir/$mod_id"
             mkdir -p "$builddir/$mod_id"
             pushd "$builddir/$mod_id"
             ;;
