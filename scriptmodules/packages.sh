@@ -140,10 +140,6 @@ function rp_callModule() {
                 break
             fi
             cp -Rv "$builddir/$mod_id/$file" "$emudir/$mod_id"
-            if [ ! -e "$emudir/$mod_id/$file" ]; then
-                __ERRMSGS+="$__ERRMSGS Could not successfully install ${__mod_desc[$idx]} ($emudir/$mod_id/$file not found)."
-                break
-            fi
         done
     fi
 
