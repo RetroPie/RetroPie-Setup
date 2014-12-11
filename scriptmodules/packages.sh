@@ -112,6 +112,7 @@ function rp_callModule() {
         install)
             desc="Installing"
             mkdir -p "$emudir/$mod_id"
+            mkdir -p "$builddir/$mod_id"
             pushd "$builddir/$mod_id"
             ;;
         configure)
