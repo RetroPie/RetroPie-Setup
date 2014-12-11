@@ -7,10 +7,7 @@ function sources_mupen64rpi() {
 }
 
 function build_mupen64rpi() {
-    dphys-swapfile swapoff
-    echo "CONF_SWAPSIZE=512" > /etc/dphys-swapfile
-    dphys-swapfile setup
-    dphys-swapfile swapon
+    rpSwap on 256 400
 
     pushd "$rootdir/emulators/mupen64plus"
     ./build.sh
@@ -19,14 +16,11 @@ function build_mupen64rpi() {
         __ERRMSGS="$__ERRMSGS Could not successfully compile Mupen 64 Plus RPi."
     fi
     popd
-
-    dphys-swapfile swapoff
-    echo "CONF_SWAPSIZE=99" > /etc/dphys-swapfile
-    dphys-swapfile setup
-    dphys-swapfile swapon
     
     # to solve startup problems delete old config file 
     rm /home/pi/.config/mupen64plus/mupen64plus.cfg
+
+    rpSwap off
 }
 
 function configure_mupen64rpi() {

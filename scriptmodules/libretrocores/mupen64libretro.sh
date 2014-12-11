@@ -11,15 +11,9 @@ function sources_mupen64plus() {
 }
 
 function build_mupen64plus() {
+    rpSwap on 256 240
+    
     pushd "$rootdir/emulatorcores/mupen64plus"
-    
-    # Increase swapfile size to meet memory requirement
-    # mupen64plus needs up to 310MB RAM during compilation
-    dphys-swapfile swapoff
-    echo "CONF_SWAPSIZE=300" > /etc/dphys-swapfile
-    dphys-swapfile setup
-    dphys-swapfile swapon
-    
     # Add missing path --> Fix already merged https://github.com/libretro/mupen64plus-libretro/commit/c035cf1c7a2514aeb14adf51ad825208ff1a068d
     # sed -i 's|GL_LIB := -lGLESv2|GL_LIB := -L/opt/vc/lib -lGLESv2|g' Makefile
     make clean
@@ -28,11 +22,7 @@ function build_mupen64plus() {
         __ERRMSGS="$__ERRMSGS Could not successfully compile N64 core."
     fi
     
-    # Set original swapfile size 
-    dphys-swapfile swapoff
-    echo "CONF_SWAPSIZE=100" > /etc/dphys-swapfile
-    dphys-swapfile setup
-    dphys-swapfile swapon
+    rpSwap off
     popd
 }
 
