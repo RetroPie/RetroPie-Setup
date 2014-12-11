@@ -242,8 +242,6 @@ function gitPullOrClone()
         git pull > /dev/null
         popd > /dev/null
     else
-        rm -rf "$1" # makes sure that the directory IS empty
-        mkdir -p "$1"
         if [ "$3" = "NS" ]; then
             git clone "$2" "$1"
         else
