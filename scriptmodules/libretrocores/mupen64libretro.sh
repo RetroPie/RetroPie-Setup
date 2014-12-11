@@ -11,7 +11,7 @@ function sources_mupen64plus() {
 }
 
 function build_mupen64plus() {
-    rpSwap on 256M 240000
+    rpSwap on 256 240
     
     pushd "$rootdir/emulatorcores/mupen64plus"
     # Add missing path --> Fix already merged https://github.com/libretro/mupen64plus-libretro/commit/c035cf1c7a2514aeb14adf51ad825208ff1a068d

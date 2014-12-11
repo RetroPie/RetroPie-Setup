@@ -214,7 +214,7 @@ function rpSwap() {
         on)
             if [ "$__memory" -le "$limit" ]; then
                 rpSwap off
-                fallocate -l $size "$swapfile"
+                fallocate -l ${size}M "$swapfile"
                 mkswap "$swapfile"
                 swapon "$swapfile"
             fi

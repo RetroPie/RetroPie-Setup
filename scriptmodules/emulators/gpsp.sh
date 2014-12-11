@@ -13,7 +13,7 @@ function sources_gpsp() {
 }
 
 function build_gpsp() {
-    rpSwap on 256M 240000
+    rpSwap on 256 240
 
     pushd "$rootdir/emulators/gpsp"
     cd raspberrypi

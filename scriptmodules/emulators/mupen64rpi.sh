@@ -7,7 +7,7 @@ function sources_mupen64rpi() {
 }
 
 function build_mupen64rpi() {
-    rpSwap on 256M 400000
+    rpSwap on 256 400
 
     pushd "$rootdir/emulators/mupen64plus"
     ./build.sh
