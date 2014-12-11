@@ -10,24 +10,6 @@ function depends_gpsp() {
 function sources_gpsp() {
     gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/gizmo98/gpsp.git
     pushd "$rootdir/emulators/gpsp"
-    cd raspberrypi
-
-    if [ "$__chroot" == "0" ]; then
-        #if we are on the 256mb model, we will never have enough RAM to compile gpSP with compiler optimization
-        #if this is the case, use sed to remove the -O3 in the Makefile (line 20, "CFLAGS     += -O3 -mfpu=vfp")
-        local RPiRev=`grep 'Revision' "/proc/cpuinfo" | cut -d " " -f 2`
-        if [ $RPiRev == "000000d" ] || [ $RPiRev == "000000e" ] || [ $RPiRev == "000000f" ] || [ $RPiRev == "100000d" ]; then
-            #RAM = 512mb, we're good
-            echo "512mb Pi, no de-optimization fix needed."
-        else
-        #RAM = 256mb, need to compile unoptimized
-            echo "Stripping -O[1..3] from gpSP Makefile to compile unoptimized on 256mb Pi..."
-            sed -i 's/-O[1..3]//g' Makefile
-            sed -i 's/-Ofast//g' Makefile
-        fi
-    fi
-
-    popd
 }
 
 function build_gpsp() {
