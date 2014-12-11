@@ -7,37 +7,50 @@ function depends_linapple() {
 }
 
 function sources_linapple() {
-    rmDirExists "$rootdir/emulators/apple2"
-    mkdir -p "$rootdir/emulators"
-    wget http://downloads.petrockblock.com/retropiearchives/linapple-src_2a.tar.bz2
-    tar -jxvf linapple-src_2a.tar.bz2 -C "$rootdir/emulators/"
-    rm linapple-src_2a.tar.bz2
+    wget -O- -q http://downloads.petrockblock.com/retropiearchives/linapple-src_2a.tar.bz2 | tar -xvj --strip-components=1
 }
 
 function build_linapple() {
-    pushd "$rootdir/emulators/linapple-src_2a/src"
+    cd src
+    make clean
     make CXX="g++-4.6"
-    popd
+}
+
+function install_linapple() {
+    files=(
+        'CHANGELOG'
+        'INSTALL'
+        'LICENSE'
+        'linapple'
+        'charset40.bmp'
+        'font.bmp'
+        'icon.bmp'
+        'linapple1.bmp'
+        'linapple2.bmp'
+        'linapple3.bmp'
+        'linapple4.bmp'
+        'linapple5.bmp'
+        'linapple.conf'
+        'splash.bmp'
+        'Master.dsk'
+        'README'
+    )
 }
 
 function configure_linapple() {
-    if [[ ! -d $romdir/apple2 ]]; then
-        mkdir -p $romdir/apple2
-    fi
-    cat > "$rootdir/emulators/linapple-src_2a/Start.sh" << _EOF_
+    mkdir -p $romdir/apple2
+
+    cat > "Start.sh" << _EOF_
 #!/bin/bash
-pushd $rootdir/emulators/linapple-src_2a
+pushd "$emudir/$1"
 ./linapple
 popd
 _EOF_
-    chmod +x "$rootdir/emulators/linapple-src_2a/Start.sh"
-    touch $romdir/apple2/Start.txt
+    chmod +x Start.sh
+    touch "$romdir/apple2/Start.txt"
 
-    pushd "$rootdir/emulators/linapple-src_2a"
     sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" linapple.conf
     sed -i -r -e "s|[^I]?Joystick 1[^I]?=[^I]?[0-9]|\tJoystick 1\t=\t1|g" linapple.conf
-    popd
 
-    setESSystem "Apple II" "apple2" "~/RetroPie/roms/apple2" ".txt" "$rootdir/emulators/linapple-src_2a/Start.sh" "apple2" "apple2"
-
+    setESSystem "Apple II" "apple2" "~/RetroPie/roms/apple2" ".txt" "$emudir/$1/Start.sh" "apple2" "apple2"
 }
