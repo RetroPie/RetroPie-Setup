@@ -11,25 +11,15 @@ function sources_fbalibretro() {
 }
 
 function build_fbalibretro() {
-    dphys-swapfile swapoff
-    echo "CONF_SWAPSIZE=512" > /etc/dphys-swapfile
-    dphys-swapfile setup
-    dphys-swapfile swapon
-
     pushd "$rootdir/emulatorcores/fba-libretro"
     cd $rootdir/emulatorcores/fba-libretro/svn-current/trunk/
     make -f makefile.libretro clean
-    make -f makefile.libretro CC="gcc-4.8" CXX="g++-4.8" -j4 platform=armvhardfloat
+    make -f makefile.libretro CC="gcc-4.8" CXX="g++-4.8" platform=armvhardfloat
     mv `find $rootdir/emulatorcores/fba-libretro/svn-current/trunk/ -name "*libretro*.so"` "$rootdir/emulatorcores/fba-libretro/"
     if [[ -z `find $rootdir/emulatorcores/fba-libretro/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile FBA core."
     fi
     popd
-
-    dphys-swapfile swapoff
-    echo "CONF_SWAPSIZE=99" > /etc/dphys-swapfile
-    dphys-swapfile setup
-    dphys-swapfile swapon    
 }
 
 function configure_fbalibretro() {
