@@ -7,42 +7,27 @@ function depends_dgen() {
 }
 
 function sources_dgen() {
-    rmDirExists "$rootdir/emulators/dgen"
-    wget http://downloads.petrockblock.com/retropiearchives/dgen-sdl-1.32.tar.gz
-    mkdir -p "$rootdir/emulators/"
-    tar xvfz dgen-sdl-1.32.tar.gz -C "$rootdir/emulators/"
-    rmDirExists "$rootdir/emulators/dgen-sdl"
-    mv "$rootdir/emulators/dgen-sdl-1.32" "$rootdir/emulators/dgen-sdl"
-    rm dgen-sdl-1.32.tar.gz
+    wget -O- -q http://downloads.petrockblock.com/retropiearchives/dgen-sdl-1.32.tar.gz | tar -xvz --strip-components=1 -C "$builddir/$1"
 }
 
 function build_dgen() {
-    pushd "$rootdir/emulators/dgen-sdl"
-    ./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$rootdir/emulators/dgen-sdl/installdir"
+    #./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$emudir/$1"
+    #make clean
     make
-    popd
+    require="$builddir/$1/dgen"
 }
 
 function install_dgen() {
-    pushd "$rootdir/emulators/dgen-sdl"
-    if [[ ! -d "$rootdir/emulators/dgen-sdl/installdir" ]]; then
-        mkdir -p "$rootdir/emulators/dgen-sdl/installdir"
-    fi
     make install
-    if [[ ! -f "$rootdir/emulators/dgen-sdl/installdir/bin/dgen" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile DGEN emulator."
-    fi
-    popd
+    require="$emudir/$1/bin/dgen"
 }
 
 function configure_dgen()
 {
-    chmod 777 /dev/fb0
-
     if [[ ! -f "$rootdir/configs/all/dgenrc" ]]; then
         mkdir -p "$rootdir/configs/all/"
-        cp $rootdir/emulators/dgen-sdl/sample.dgenrc $rootdir/configs/all/dgenrc
-        chmod 666 $rootdir/configs/all/dgenrc
+        cp "$emudir/$1/sample.dgenrc" "$rootdir/configs/all/dgenrc"
+        chown $user:$user "$rootdir/configs/all/dgenrc"
     fi
 
     ensureKeyValue "joy_pad1_a" "joystick0-button0" $rootdir/configs/all/dgenrc
@@ -70,8 +55,7 @@ function configure_dgen()
     mkdir -p "$romdir/segacd-dgen"
     mkdir -p "$romdir/sega32x-dgen"
 
-    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/dgen-sdl/installdir/bin/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "genesis,megadrive" "megadrive"
-    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "segacd" "segacd"
-    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/dgen-sdl/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "sega32x" "sega32x"
-
+    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "genesis,megadrive" "megadrive"
+    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "segacd" "segacd"
+    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "sega32x" "sega32x"
 }
