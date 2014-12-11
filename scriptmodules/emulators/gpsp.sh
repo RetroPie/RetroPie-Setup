@@ -3,7 +3,7 @@ rp_module_desc="GameBoy Advance emulator"
 rp_module_menus="2+"
 
 function depends_gpsp() {
-	rps_checkNeededPackages libsdl1.2-dev
+    rps_checkNeededPackages libsdl1.2-dev
 }
 
 # install Game Boy Advance emulator gpSP
