@@ -9,7 +9,6 @@ function depends_gpsp() {
 # install Game Boy Advance emulator gpSP
 function sources_gpsp() {
     gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/gizmo98/gpsp.git
-    pushd "$rootdir/emulators/gpsp"
 }
 
 function build_gpsp() {
