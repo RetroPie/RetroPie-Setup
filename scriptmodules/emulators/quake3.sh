@@ -17,7 +17,7 @@ function build_quake3() {
 }
 
 function install_quake3() {
-    files=(
+    md_ret_files=(
         'build/release-linux-arm/baseq3'
         'build/release-linux-arm/client'
         'build/release-linux-arm/clientsmp'

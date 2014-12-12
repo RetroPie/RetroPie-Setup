@@ -11,12 +11,12 @@ function build_fastdosbox() {
     ./configure --prefix="$md_inst"
     make clean
     make
-    require="$md_build/src/dosbox"
+    md_ret_require="$md_build/src/dosbox"
 }
 
 function install_fastdosbox() {
     make install
-    require="$md_inst/bin/dosbox"
+    md_ret_require="$md_inst/bin/dosbox"
 }
 
 function configure_fastdosbox() {

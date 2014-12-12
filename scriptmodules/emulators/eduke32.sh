@@ -10,7 +10,7 @@ function install_eduke32() {
     dpkg -i *.deb
     rm *.deb
     mkdir -p "$romdir/ports/duke3d"
-    require="/usr/games/eduke32"
+    md_ret_require="/usr/games/eduke32"
 }
 
 function configure_eduke32() {

@@ -19,7 +19,7 @@ function build_basilisk() {
     if [[ -z "BasiliskII" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile BasiliskII."
     fi
-    require="$md_build/BasiliskII/src/Unix/BasiliskII"
+    md_ret_require="$md_build/BasiliskII/src/Unix/BasiliskII"
 }
 
 function install_basilisk() {

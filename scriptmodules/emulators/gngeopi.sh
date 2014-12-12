@@ -22,7 +22,7 @@ function install_gngeopi() {
     cd gngeo
     make install
     mkdir -p "$md_inst/neogeobios"
-    require="$md_inst/bin/gngeo"
+    md_ret_require="$md_inst/bin/gngeo"
 }
 
 function configure_gngeopi() {

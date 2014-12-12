@@ -11,7 +11,7 @@ function build_mupen64rpi() {
     ./build.sh
     rpSwap off
 
-    require="$md_build/mupen64plus"
+    md_ret_require="$md_build/mupen64plus"
 }
 
 function install_mupen64rpi() {

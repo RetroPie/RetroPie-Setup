@@ -11,12 +11,12 @@ function build_cpc() {
     sed -i 's|LIBS = -L/usr/lib/arm-linux-gnueabihf -lz -lts -L/opt/vc/lib -lGLESv2 -lEGL|LIBS = -L/usr/lib/arm-linux-gnueabihf -lX11 -lz -lts -L/opt/vc/lib -lSDL -lpthread -ldl -lGLESv2 -lEGL|g' makefile
     sed -i 's|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o /root/Raspbian/Libs/libSDL.a /root/Raspbian/Libs/libnofun.a $(LIBS)|$(CC) $(CFLAGS) $(IPATHS) -o cpc4rpi cpc4rpi.cpp crtc.o fdc.o psg.o tape.o z80.o   $(LIBS)|g' makefile
     make RELEASE=TRUE
-    require="$md_build/cpc4rpi"
+    md_ret_require="$md_build/cpc4rpi"
 }
 
 function install_cpc() {
     cp -R "$md_build/"{cpc4rpi,*.txt} "$md_inst/"
-    require="$md_inst/cpc4rpi"
+    md_ret_require="$md_inst/cpc4rpi"
 }
 
 function configure_cpc() {

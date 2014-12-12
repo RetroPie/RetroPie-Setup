@@ -15,12 +15,12 @@ function build_pifba() {
     mkdir ".obj"
     make clean
     make
-    require="$md_build/pifba"
+    md_ret_require="$md_build/pifba"
 }
 
 function install_pifba() {
     mkdir "$md_inst/"{roms,skin,preview}
-    files=(
+    md_ret_files=(
         'fba2x'
         'capex.cfg'
         'fba2x.cfg'

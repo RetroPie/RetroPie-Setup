@@ -11,11 +11,11 @@ function sources_pisnes() {
 function build_pisnes() {
     make clean
     make
-    require="$md_build/snes9x"
+    md_ret_require="$md_build/snes9x"
 }
 
 function install_pisnes() {
-    files=(
+    md_ret_files=(
         'changes.txt'
         'hardware.txt'
         'problems.txt'

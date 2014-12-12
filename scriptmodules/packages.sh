@@ -105,6 +105,9 @@ function rp_callModule() {
     local md_type="$type"
     local md_build="$builddir/$mod_id"
     local md_inst="$rootdir/$type/$mod_id"
+    # these can be returned by a module
+    local md_ret_require=""
+    local md_ret_files=""
 
     case "$func" in
         depends)
@@ -134,22 +137,22 @@ function rp_callModule() {
             ;;
     esac
 
-    printMsg "$desc ${__mod_desc[$idx]}"
-    require=""
-    files=""
+    printMsg "$desc $md_desc"
     $func_call
 
-    if [ "$require" != "" ] && [ ! -f "$require" ]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully $func ${__mod_desc[$idx]} ($require not found)."
+    # check if any required files are found
+    if [ "$md_ret_require" != "" ] && [ ! -f "$md_ret_require" ]; then
+        __ERRMSGS="$__ERRMSGS Could not successfully $func $md_desc ($md_ret_require not found)."
     fi
 
-    if [ "$files" != "" ]; then
-        for file in "${files[@]}"; do
-            if [ ! -e "$builddir/$mod_id/$file" ]; then
-                __ERRMSGS+="$__ERRMSGS Could not successfully install ${__mod_desc[$idx]} ($builddir/$mod_id/$file not found)."
+    # check for existance and copy any files/directories returned
+    if [ "$md_ret_files" != "" ]; then
+        for file in "${md_ret_files[@]}"; do
+            if [ ! -e "$md_build/$file" ]; then
+                __ERRMSGS+="$__ERRMSGS Could not successfully install $md_desc ($md_build/$file not found)."
                 break
             fi
-            cp -Rv "$builddir/$mod_id/$file" "$emudir/$mod_id"
+            cp -Rv "$md_build/$file" "$md_inst"
         done
     fi
 

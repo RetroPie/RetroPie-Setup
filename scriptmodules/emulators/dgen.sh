@@ -14,12 +14,12 @@ function build_dgen() {
     #./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$md_inst"
     #make clean
     make
-    require="$md_build/dgen"
+    md_ret_require="$md_build/dgen"
 }
 
 function install_dgen() {
     make install
-    require="$md_inst/bin/dgen"
+    md_ret_require="$md_inst/bin/dgen"
 }
 
 function configure_dgen()

@@ -17,7 +17,7 @@ function build_linapple() {
 }
 
 function install_linapple() {
-    files=(
+    md_ret_files=(
         'CHANGELOG'
         'INSTALL'
         'LICENSE'

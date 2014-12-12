@@ -16,11 +16,11 @@ function build_gpsp() {
     make clean
     make
     rpSwap off
-    require="$md_build/raspberrypi/gpsp"
+    md_ret_require="$md_build/raspberrypi/gpsp"
 }
 
 function install_gpsp() {
-    files=(
+    md_ret_files=(
         'COPYING.DOC'
         'game_config.txt'
         'readme.txt'

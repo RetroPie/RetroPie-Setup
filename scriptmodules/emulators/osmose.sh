@@ -9,11 +9,11 @@ function sources_osmose() {
 function build_osmose() {
     make clean
     make
-    require="$md_build/osmose"
+    md_ret_require="$md_build/osmose"
 }
 
 function install_osmose() {
-    files=(
+    md_ret_files=(
         'changes.txt'
         'license.txt'
         'osmose'

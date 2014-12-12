@@ -15,11 +15,11 @@ function build_uae4all() {
     touch /opt/vc/include/interface/vmcs_host/vchost_config.h
     make clean
     make
-    require="$md_build/uae4all"
+    md_ret_require="$md_build/uae4all"
 }
 
 function install_uae4all() {
-    files=(
+    md_ret_files=(
         'COPYING'
         'docs'
         'uae4all'

@@ -9,11 +9,11 @@ function sources_fbzx() {
 function build_fbzx() {
     make clean
     make
-    require="$md_build/fbzx"
+    md_ret_require="$md_build/fbzx"
 }
 
 function install_fbzx() {
-    files=(
+    md_ret_files=(
         'AMSTRAD'
         'CAPABILITIES'
         'COPYING'

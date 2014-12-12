@@ -13,11 +13,11 @@ function sources_snes9x() {
 function build_snes9x() {
     make clean
     make
-    require="$md_build/snes9x"
+    md_ret_require="$md_build/snes9x"
 }
 
 function install_snes9x() {
-    files=(
+    md_ret_files=(
         'changes.txt'
         'hardware.txt'
         'problems.txt'
