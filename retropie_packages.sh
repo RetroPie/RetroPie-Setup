@@ -80,7 +80,7 @@ __swapdir="$scriptdir/tmp/"
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/packages.sh"
 
-rps_checkNeededPackages git dialog gcc-4.7 g++-4.7
+checkNeededPackages git dialog gcc-4.7 g++-4.7
 
 # set default gcc version
 gcc_version $__default_gcc_version

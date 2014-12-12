@@ -9,7 +9,7 @@ function depends_xbmc() {
 }
 
 function build_xbmc() {
-    rps_checkNeededPackages xbmc
+    checkNeededPackages xbmc
 }
 
 function configure_xbmc() {

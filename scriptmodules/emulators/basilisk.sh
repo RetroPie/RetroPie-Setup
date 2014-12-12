@@ -3,7 +3,7 @@ rp_module_desc="Macintosh emulator"
 rp_module_menus="2+"
 
 function depends_basilisk() {
-    rps_checkNeededPackages autoconf automake
+    checkNeededPackages autoconf automake
 }
 
 function sources_basilisk() {

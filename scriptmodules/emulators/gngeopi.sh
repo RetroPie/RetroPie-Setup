@@ -3,7 +3,7 @@ rp_module_desc="NeoGeo emulator GnGeoPi"
 rp_module_menus="2+"
 
 function depends_gngeopi() {
-    rps_checkNeededPackages libsdl1.2-dev
+    checkNeededPackages libsdl1.2-dev
 }
 
 function sources_gngeopi() {

@@ -149,7 +149,7 @@ function aptInstall()
     return $?
 }
 
-function rps_checkNeededPackages() {
+function checkNeededPackages() {
     local required
     local packages=()
     local failed=()
@@ -254,7 +254,7 @@ function setESSystem() {
     local platform=$6
     local theme=$7
 
-    rps_checkNeededPackages python-lxml
+    checkNeededPackages python-lxml
 
     gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
 

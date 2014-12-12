@@ -4,7 +4,7 @@ rp_module_menus="4+"
 
 function install_packagerepository() {
     # install repository helper package
-    rps_checkNeededPackages reprepro
+    checkNeededPackages reprepro
 
     # Create repository
     mkdir -p RetroPieRepo/conf

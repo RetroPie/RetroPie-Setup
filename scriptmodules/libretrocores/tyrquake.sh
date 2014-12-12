@@ -3,7 +3,7 @@ rp_module_desc="Quake LibretroCore"
 rp_module_menus="4+"
 
 function depends_tyrquake() {
-    rps_checkNeededPackages lhasa
+    checkNeededPackages lhasa
 }
 
 function sources_tyrquake() {

@@ -3,7 +3,7 @@ rp_module_desc="Install PS3 controller driver"
 rp_module_menus="3+"
 
 function install_ps3controller() {
-    rps_checkNeededPackages bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
+    checkNeededPackages bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
     apt-get remove -y cups
     apt-get autoremove -y
     dialog --backtitle "$__backtitle" --msgbox "Please make sure that your Bluetooth dongle is connected to the Raspberry Pi and press ENTER." 22 76

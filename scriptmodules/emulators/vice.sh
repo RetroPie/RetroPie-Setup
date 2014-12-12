@@ -7,7 +7,7 @@ function depends_vice() {
         printf 'Package vice is already installed - removing package\n' "${1}"
         apt-get remove -y vice
     fi
-    rps_checkNeededPackages libxaw7-dev automake checkinstall
+    checkNeededPackages libxaw7-dev automake checkinstall
 }
 
 function sources_vice() {
