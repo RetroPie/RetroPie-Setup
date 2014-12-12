@@ -124,13 +124,6 @@ function printMsg()
     echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
 }
 
-function rel2abs() {
-  cd "$(dirname $1)" && dir="$PWD"
-  file="$(basename $1)"
-
-  echo $dir/$file
-}
-
 function checkForInstalledAPTPackage()
 {
     PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1 2>/dev/null|grep "install ok installed")
@@ -202,32 +195,6 @@ function rpSwap() {
             rm -f "$swapfile"
             ;;
     esac
-}
-
-# This function is not used so far.
-function checkIfPullNeeded()
-{
-    if [[ ! -d "$1/.git" ]]; then
-        return false
-    fi
-
-    if git checkout master &&
-        git fetch origin master &&
-        [ `git rev-list HEAD...origin/master --count` != 0 ]
-    then
-        return 0 # true, update needed
-    else
-        return 1 # false, update, not needed
-    fi
-}
-
-function checkFileExistence()
-{
-    if [[ -f "$1" ]]; then
-        ls -lh "$1" >> "$rootdir/debug.log"
-    else
-        echo "$1 does NOT exist." >> "$rootdir/debug.log"
-    fi
 }
 
 # clones or updates the sources of a repository $2 into the directory $1
