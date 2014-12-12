@@ -7,24 +7,24 @@ function depends_tyrquake() {
 }
 
 function sources_tyrquake() {
-    # rmDirExists "$rootdir/emulatorcores/quake"
-    gitPullOrClone "$rootdir/emulatorcores/quake" git://github.com/libretro/tyrquake.git
-    # pushd "$rootdir/emulatorcores/quake"
+    # rmDirExists "$rootdir/libretrocores/quake"
+    gitPullOrClone "$rootdir/libretrocores/quake" git://github.com/libretro/tyrquake.git
+    # pushd "$rootdir/libretrocores/quake"
     # popd
 }
 
 function build_tyrquake() {
-    pushd "$rootdir/emulatorcores/quake"
+    pushd "$rootdir/libretrocores/quake"
     make -f Makefile.libretro clean
     make -f Makefile.libretro
-    if [[ -z `find $rootdir/emulatorcores/quake/ -name "*libretro*.so"` ]]; then
+    if [[ -z `find $rootdir/libretrocores/quake/ -name "*libretro*.so"` ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile quake core."
     fi
     popd
 }
 
 function install_tyrquake() {
-    pushd "$rootdir/emulatorcores/quake"
+    pushd "$rootdir/libretrocores/quake"
         # Download game file
         wget ftp://ftp.idsoftware.com/idstuff/quake/quake106.zip
         unzip -o quake106.zip
@@ -52,7 +52,7 @@ function configure_tyrquake() {
     # Create startup script
     cat > "$romdir/ports/Quake.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 4 "$emudir/$1/bin/retroarch -L `find $rootdir/emulatorcores/quake/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/quake/retroarch.cfg  $romdir/ports/quake/id1/pak0.pak"
+$rootdir/supplementary/runcommand/runcommand.sh 4 "$emudir/$1/bin/retroarch -L `find $rootdir/libretrocores/quake/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/quake/retroarch.cfg  $romdir/ports/quake/id1/pak0.pak"
 _EOF_
     
     # Set startup script permissions
@@ -62,5 +62,5 @@ _EOF_
     setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
     
     # Quake Shareware: Please copy pak0.pak to rom folder
-    # setESSystem "Quake" "quake" "~/RetroPie/roms/quake" ".PAK .pak" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/bin/retroarch -L `find $rootdir/emulatorcores/quake/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/quake/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "quake" "quake"
+    # setESSystem "Quake" "quake" "~/RetroPie/roms/quake" ".PAK .pak" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/bin/retroarch -L `find $rootdir/libretrocores/quake/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/quake/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "quake" "quake"
 }
