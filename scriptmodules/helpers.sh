@@ -252,12 +252,6 @@ function checkFileExistence()
     fi
 }
 
-fn_exists()
-{
-    declare -f "$1" > /dev/null
-    return $?
-}
-
 # clones or updates the sources of a repository $2 into the directory $1
 function gitPullOrClone()
 {
@@ -304,30 +298,6 @@ function rmDirExists()
     if [[ -d "$1" ]]; then
         rm -rf "$1"
     fi
-}
-
-function buildMenu()
-{
-    options=()
-    command=()
-    local status
-    local id
-    local menu
-    local menus
-    for id in "${__mod_idx[@]}"; do
-        menus="${__mod_menus[$id]}"
-        for menu in $menus; do
-            command[$id]="${menu:2}"
-            if [[ "${menu:0:1}" == "$1" ]]; then
-                options=("${options[@]}" "$id" "${__mod_desc[$id]}")
-                if [[ "$2" == "bool" ]]; then
-                    status="ON"
-                    [[ "${menu:1:1}" == "-" ]] && status="OFF"
-                    options=("${options[@]}" "$status")
-                fi
-            fi
-        done
-    done
 }
 
 function setESSystem() {

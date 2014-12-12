@@ -30,6 +30,30 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 #
 
+function rps_buildMenu()
+{
+    options=()
+    command=()
+    local status
+    local id
+    local menu
+    local menus
+    for id in "${__mod_idx[@]}"; do
+        menus="${__mod_menus[$id]}"
+        for menu in $menus; do
+            command[$id]="${menu:2}"
+            if [[ "${menu:0:1}" == "$1" ]]; then
+                options=("${options[@]}" "$id" "${__mod_desc[$id]}")
+                if [[ "$2" == "bool" ]]; then
+                    status="ON"
+                    [[ "${menu:1:1}" == "-" ]] && status="OFF"
+                    options=("${options[@]}" "$status")
+                fi
+            fi
+        done
+    done
+}
+
 # downloads and installs pre-compiles binaries of all essential programs and libraries
 function rps_downloadBinaries()
 {
@@ -123,7 +147,7 @@ function rps_main_updatescript()
 
 function rps_main_options()
 {
-    buildMenu 2 "bool"
+    rps_buildMenu 2 "bool"
     cmd=(dialog --separate-output --backtitle "$__backtitle" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
@@ -161,7 +185,7 @@ function rps_main_setup()
     touch $logfilename
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
-        buildMenu 3
+        rps_buildMenu 3
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
             rp_callModule $choices ${command[$choices]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
@@ -180,7 +204,7 @@ function rps_main_experimental()
     touch $logfilename
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
-        buildMenu 4
+        rps_buildMenu 4
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
             rp_callModule $choices ${command[$choices]} 2>&1 > >(tee >(gzip --stdout >$logfilename))

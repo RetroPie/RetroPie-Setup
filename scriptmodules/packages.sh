@@ -32,6 +32,11 @@ __mod_type=()
 __mod_menus=()
 __doPackages=0
 
+function fn_exists() {
+    declare -f "$1" > /dev/null
+    return $?
+}
+
 # params: $1=index, $2=id, $3=description, $4=menus
 function rp_registerFunction() {
     __mod_idx+=($1)
