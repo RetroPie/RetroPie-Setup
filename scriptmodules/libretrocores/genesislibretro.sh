@@ -1,5 +1,5 @@
 rp_module_id="genesislibretro"
-rp_module_desc="Genesis/Megadrive LibretroCore"
+rp_module_desc="GameGear LibretroCore"
 rp_module_menus="2+"
 
 function sources_genesislibretro() {
