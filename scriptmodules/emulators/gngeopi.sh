@@ -7,13 +7,13 @@ function depends_gngeopi() {
 }
 
 function sources_gngeopi() {
-    gitPullOrClone "$builddir/$1" https://github.com/ymartel06/GnGeo-Pi.git
+    gitPullOrClone "$md_build" https://github.com/ymartel06/GnGeo-Pi.git
 }
 
 function build_gngeopi() {
     cd gngeo
     chmod +x configure
-    ./configure --disable-i386asm --prefix="$emudir/$1"
+    ./configure --disable-i386asm --prefix="$md_inst"
     make clean
     make
 }
@@ -21,12 +21,12 @@ function build_gngeopi() {
 function install_gngeopi() {
     cd gngeo
     make install
-    mkdir -p "$emudir/$1/neogeobios"
-    require="$emudir/$1/bin/gngeo"
+    mkdir -p "$md_inst/neogeobios"
+    require="$md_inst/bin/gngeo"
 }
 
 function configure_gngeopi() {
     mkdir -p "$romdir/neogeo-gngeopi"
 
-    setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$emudir/$1/bin/gngeo -i $romdir/neogeo-gngeopi -B $emudir/$1/neogeobios %ROM%" "neogeo" "neogeo"
+    setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$md_inst/bin/gngeo -i $romdir/neogeo-gngeopi -B $md_inst/neogeobios %ROM%" "neogeo" "neogeo"
 }

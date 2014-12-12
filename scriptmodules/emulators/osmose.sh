@@ -9,7 +9,7 @@ function sources_osmose() {
 function build_osmose() {
     make clean
     make
-    require="$builddir/$1/osmose"
+    require="$md_build/osmose"
 }
 
 function install_osmose() {
@@ -24,6 +24,6 @@ function configure_osmose() {
     mkdir -p "$romdir/gamegear-osmose"
     mkdir -p "$romdir/mastersystem-osmose"
 
-    setESSystem "Sega Game Gear" "gamegear-osmose" "~/RetroPie/roms/gamegear-osmose" ".gg .GG" "$emudir/$1/osmose %ROM% -joy -tv -fs" "gamegear" "gamegear"
-    setESSystem "Sega Master System / Mark III" "mastersystem-osmose" "~/RetroPie/roms/mastersystem-osmose" ".sms .SMS" "$emudir/$1/osmose %ROM% -joy -tv -fs" "mastersystem" "mastersystem"
+    setESSystem "Sega Game Gear" "gamegear-osmose" "~/RetroPie/roms/gamegear-osmose" ".gg .GG" "$md_inst/osmose %ROM% -joy -tv -fs" "gamegear" "gamegear"
+    setESSystem "Sega Master System / Mark III" "mastersystem-osmose" "~/RetroPie/roms/mastersystem-osmose" ".sms .SMS" "$md_inst/osmose %ROM% -joy -tv -fs" "mastersystem" "mastersystem"
 }

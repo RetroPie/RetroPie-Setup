@@ -14,7 +14,7 @@ function sources_advmame() {
 }
 
 function build_advmame() {
-    ./configure LDFLAGS="-s -lm -Wl,--no-as-needed" --prefix="$emudir/$1"
+    ./configure LDFLAGS="-s -lm -Wl,--no-as-needed" --prefix="$md_inst"
     make
 }
 
@@ -23,6 +23,6 @@ function install_advmame() {
 }
 
 function configure_advmame() {
-    su "$user" -c "$emudir/$1/bin/advmame"
+    su "$user" -c "$md_inst/bin/advmame"
     echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> "/home/$user/.advance/advmame.rc"
 }

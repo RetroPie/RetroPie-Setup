@@ -11,20 +11,20 @@ _EOF_
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$builddir/$1" git://github.com/libretro/RetroArch.git
+    gitPullOrClone "$md_build" git://github.com/libretro/RetroArch.git
 }
 
 function build_retroarch() {
-    ./configure --prefix="$emudir/$1" --disable-x11 --disable-oss --disable-pulse --enable-floathard
+    ./configure --prefix="$md_inst" --disable-x11 --disable-oss --disable-pulse --enable-floathard
     make clean
     make
-    require="$builddir/$1/bin/retroarch"
+    require="$md_build/bin/retroarch"
 }
 
 function install_retroarch() {
     make install
-    require="$emudir/$1/bin/retroarch"
-    cp "$scriptdir/supplementary/RetroArchShader/"* "$emudir/$1/shader/"
+    require="$md_inst/bin/retroarch"
+    cp "$scriptdir/supplementary/RetroArchShader/"* "$md_inst/shader/"
     files=(
         'retroarch.cfg'
     )
@@ -38,7 +38,7 @@ function ensureSystemretroconfig {
 }
 
 function configure_retroarch() {
-    cp $scriptdir/supplementary/retroarch-zip "$emudir/$1"
+    cp $scriptdir/supplementary/retroarch-zip "$md_inst"
 
     if [[ ! -d "$rootdir/configs/all/" ]]; then
         mkdir -p "$rootdir/configs/all/"
@@ -49,7 +49,7 @@ function configure_retroarch() {
         cp "$rootdir/configs/all/retroarch.cfg" "$rootdir/configs/all/retroarch.cfg.bak"
     fi
 
-    cp "$emudir/$1/retroarch.cfg" "$rootdir/configs/all/"
+    cp "$md_inst/retroarch.cfg" "$rootdir/configs/all/"
     mkdir -p "$rootdir/configs/all/"
 
     ensureSystemretroconfig "atari2600"
@@ -91,38 +91,38 @@ function configure_retroarch() {
     ensureKeyValue "video_gpu_screenshot" "true" "$rootdir/configs/all/retroarch.cfg"
 
     # enable and configure shaders
-    mkdir -p "$emudir/$1/shader"
+    mkdir -p "$md_inst/shader"
 
     ensureKeyValue "input_shader_next" "m" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_shader_prev" "n" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "video_shader_dir" "$emudir/$1/shader/" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "video_shader_dir" "$md_inst/shader/" "$rootdir/configs/all/retroarch.cfg"
 
     # system-specific shaders, SNES
-    ensureKeyValue "video_shader" "\"$emudir/$1/shader/snes_phosphor.glslp\"" "$rootdir/configs/snes/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$md_inst/shader/snes_phosphor.glslp\"" "$rootdir/configs/snes/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/snes/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/snes/retroarch.cfg"
 
     # system-specific shaders, NES
-    ensureKeyValue "video_shader" "\"$emudir/$1/shader/phosphor.glslp\"" "$rootdir/configs/nes/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$md_inst/shader/phosphor.glslp\"" "$rootdir/configs/nes/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/nes/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/nes/retroarch.cfg"
 
     # system-specific shaders, Megadrive
-    ensureKeyValue "video_shader" "\"$emudir/$1/shader/phosphor.glslp\"" "$rootdir/configs/megadrive/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$md_inst/shader/phosphor.glslp\"" "$rootdir/configs/megadrive/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/megadrive/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/megadrive/retroarch.cfg"
 
     # system-specific shaders, Mastersystem
-    ensureKeyValue "video_shader" "\"$emudir/$1/shader/phosphor.glslp\"" "$rootdir/configs/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$md_inst/shader/phosphor.glslp\"" "$rootdir/configs/mastersystem/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
 
     # system-specific shaders, Gameboy
-    ensureKeyValue "video_shader" "\"$emudir/$1/shader/hq4x.glslp\"" "$rootdir/configs/gb/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$md_inst/shader/hq4x.glslp\"" "$rootdir/configs/gb/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/gb/retroarch.cfg"
 
     # system-specific shaders, Gameboy Color
-    ensureKeyValue "video_shader" "\"$emudir/$1/shader/hq4x.glslp\"" "$rootdir/configs/gbc/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$md_inst/shader/hq4x.glslp\"" "$rootdir/configs/gbc/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/gbc/retroarch.cfg"
 
     # system-specific, PSX
@@ -144,8 +144,8 @@ function configure_retroarch() {
 
     # input settings
     ensureKeyValue "input_autodetect_enable" "true" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "joypad_autoconfig_dir" "$emudir/$1/configs/" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "joypad_autoconfig_dir" "$md_inst/configs/" "$rootdir/configs/all/retroarch.cfg"
 
-    chown $user:$user -R "$emudir/$1/shader/"
+    chown $user:$user -R "$md_inst/shader/"
     chown $user:$user -R "$rootdir/configs/"
 }

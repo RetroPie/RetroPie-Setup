@@ -7,7 +7,7 @@ function depends_pifba() {
 }
 
 function sources_pifba() {
-    gitPullOrClone "$builddir/$1" https://code.google.com/p/pifba/ NS
+    gitPullOrClone "$md_build" https://code.google.com/p/pifba/ NS
     sed -i "s/-lglib-2.0$/-lglib-2.0 -lasound -lrt/g" Makefile
 }
 
@@ -15,11 +15,11 @@ function build_pifba() {
     mkdir ".obj"
     make clean
     make
-    require="$builddir/$1/pifba"
+    require="$md_build/pifba"
 }
 
 function install_pifba() {
-    mkdir "$emudir/$1/"{roms,skin,preview}
+    mkdir "$md_inst/"{roms,skin,preview}
     files=(
         'fba2x'
         'capex.cfg'
@@ -32,11 +32,11 @@ function install_pifba() {
 }
 
 function configure_pifba() {
-    chown -R $user:$user "$emudir/$1"
+    chown -R $user:$user "$md_inst"
     mkdir -p "$romdir/fba"
     mkdir -p "$romdir/neogeo"
 
-    setESSystem "Final Burn Alpha" "fba" "~/RetroPie/roms/fba" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/fba2x %ROM%\"" "arcade" ""
-    setESSystem "NeoGeo" "neogeo" "~/RetroPie/roms/neogeo" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/fba2x %ROM%\"" "neogeo" "neogeo"
+    setESSystem "Final Burn Alpha" "fba" "~/RetroPie/roms/fba" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/fba2x %ROM%\"" "arcade" ""
+    setESSystem "NeoGeo" "neogeo" "~/RetroPie/roms/neogeo" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/fba2x %ROM%\"" "neogeo" "neogeo"
 
 }

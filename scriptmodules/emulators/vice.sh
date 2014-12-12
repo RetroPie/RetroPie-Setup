@@ -15,7 +15,7 @@ function sources_vice() {
 }
 
 function build_vice() {
-    ./configure --prefix="$emudir/$1" --enable-sdlui --without-pulse --with-sdlsound
+    ./configure --prefix="$md_inst" --enable-sdlui --without-pulse --with-sdlsound
     make
 }
 
@@ -23,13 +23,13 @@ function install_vice() {
     make install
     
     # install c64 roms
-    mkdir -p "$emudir/$1/lib/vice"
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/vice-1.5-roms.tar.gz | tar -xvz --strip-components=2 -C "$emudir/$1/lib/vice"
+    mkdir -p "$md_inst/lib/vice"
+    wget -O- -q http://downloads.petrockblock.com/retropiearchives/vice-1.5-roms.tar.gz | tar -xvz --strip-components=2 -C "$md_inst/lib/vice"
 }
 
 function configure_vice() {
     mkdir -p "$romdir/c64"
 
-    setESSystem "C64" "c64" "~/RetroPie/roms/c64" ".crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/bin/x64 -sdlbitdepth 16 %ROM%\"" "c64" "c64"
+    setESSystem "C64" "c64" "~/RetroPie/roms/c64" ".crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/bin/x64 -sdlbitdepth 16 %ROM%\"" "c64" "c64"
 
 }

@@ -7,7 +7,7 @@ function depends_quake3() {
 }
 
 function sources_quake3() {
-    gitPullOrClone "$builddir/$1" git://github.com/raspberrypi/quake3.git
+    gitPullOrClone "$md_build" git://github.com/raspberrypi/quake3.git
     sed -i "s#/opt/bcm-rootfs##g" build.sh
     sed -i "s/^CROSS_COMPILE/#CROSS_COMPILE/" build.sh
 }
@@ -28,10 +28,10 @@ function install_quake3() {
     )
 
     wget http://downloads.petrockblock.com/retropiearchives/Q3DemoPaks.zip
-    unzip -o Q3DemoPaks.zip -d "$emudir/$1"
+    unzip -o Q3DemoPaks.zip -d "$md_inst"
     rm Q3DemoPaks.zip
 
-    chmod +x "$emudir/$1/"*.arm 
+    chmod +x "$md_inst/"*.arm 
 }
 
 function configure_quake3() {
@@ -43,7 +43,7 @@ function configure_quake3() {
 
     cat > "$romdir/ports/Quake III Arena.sh" << _EOF_
 #!/bin/bash
-LD_LIBRARY_PATH=lib "$emudir/$1ioquake3.arm"
+LD_LIBRARY_PATH=lib "$md_instioquake3.arm"
 _EOF_
 
     chmod +x "$romdir/ports/Quake III Arena.sh"

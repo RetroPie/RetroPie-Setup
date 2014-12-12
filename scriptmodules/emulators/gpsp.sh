@@ -7,7 +7,7 @@ function depends_gpsp() {
 }
 
 function sources_gpsp() {
-    gitPullOrClone "$builddir/$1" git://github.com/gizmo98/gpsp.git
+    gitPullOrClone "$md_build" git://github.com/gizmo98/gpsp.git
 }
 
 function build_gpsp() {
@@ -16,7 +16,7 @@ function build_gpsp() {
     make clean
     make
     rpSwap off
-    require="$builddir/$1/raspberrypi/gpsp"
+    require="$md_build/raspberrypi/gpsp"
 }
 
 function install_gpsp() {
@@ -30,7 +30,7 @@ function install_gpsp() {
 
 function configure_gpsp() {
     mkdir -p "$romdir/gba"
-    chown $user:$user -R "$emudir/$1"
+    chown $user:$user -R "$md_inst"
 
-    setESSystem "Game Boy Advance" "gba" "~/RetroPie/roms/gba" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/gpsp %ROM%\"" "gba" "gba"
+    setESSystem "Game Boy Advance" "gba" "~/RetroPie/roms/gba" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/gpsp %ROM%\"" "gba" "gba"
 }

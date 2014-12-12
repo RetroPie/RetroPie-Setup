@@ -28,6 +28,7 @@
 __mod_idx=()
 __mod_id=()
 __mod_desc=()
+__mod_type=()
 __mod_menus=()
 __doPackages=0
 
@@ -37,6 +38,7 @@ function rp_registerFunction() {
     __mod_id[$1]=$2
     __mod_desc[$1]=$3
     __mod_menus[$1]=$4
+    __mod_type[$1]=$5
 }
 
 function rp_listFunctions() {
@@ -72,6 +74,7 @@ function rp_printUsageinfo() {
 function rp_callModule() {
     local idx="$1"
     local func="$2"
+    local type="$3"
     local desc
     local mod_id
     local mode
@@ -92,8 +95,16 @@ function rp_callModule() {
         done
     fi
 
+    # create function name and check if it exists
     func_call="${func}_${mod_id}"
     fn_exists $func_call || return
+
+    # create variables that can be used in modules
+    local md_id="$mod_id"
+    local md_desc="${__mod_desc[$idx]}"
+    local md_type="$type"
+    local md_build="$builddir/$mod_id"
+    local md_inst="$rootdir/$type/$mod_id"
 
     case "$func" in
         depends)
@@ -101,23 +112,22 @@ function rp_callModule() {
             ;;
         sources)
             desc="Getting sources for"
-            rmDirExists "$builddir/$mod_id"
-            mkdir -p "$builddir/$mod_id"
-            pushd "$builddir/$mod_id"
+            rmDirExists "$md_build"
+            mkdir -p "$md_build"
+            pushd "$md_build"
             ;;
         build)
             desc="Building"
-            pushd "$builddir/$mod_id"
+            pushd "$md_build"
             ;;
         install)
             desc="Installing"
-            mkdir -p "$emudir/$mod_id"
-            mkdir -p "$builddir/$mod_id"
-            pushd "$builddir/$mod_id"
+            mkdir -p "$md_build" "$md_inst" 
+            pushd "$md_build"
             ;;
         configure)
             desc="Configuring"
-            pushd "$emudir/$mod_id"
+            pushd "$md_inst"
             ;;
         remove)
             desc="Removing"
@@ -127,7 +137,7 @@ function rp_callModule() {
     printMsg "$desc ${__mod_desc[$idx]}"
     require=""
     files=""
-    $func_call "$mod_id" "${__mod_desc[$idx]}"
+    $func_call
 
     if [ "$require" != "" ] && [ ! -f "$require" ]; then
         __ERRMSGS="$__ERRMSGS Could not successfully $func ${__mod_desc[$idx]} ($require not found)."
@@ -153,6 +163,7 @@ function rp_callModule() {
 function registerModule() {
     local module_idx="$1"
     local module_path="$2"
+    local module_type="$3"
     local rp_module_id=""
     local rp_module_desc=""
     local rp_module_menus=""
@@ -166,14 +177,14 @@ function registerModule() {
         fi
     done
     [[ $error -eq 1 ]] && exit 1
-    rp_registerFunction "$module_idx" "$rp_module_id" "$rp_module_desc" "$rp_module_menus"
+    rp_registerFunction "$module_idx" "$rp_module_id" "$rp_module_desc" "$rp_module_menus" "$module_type"
 }
 
 function registerModuleDir() {
     local module_idx="$1"
     local module_dir="$2"
     for module in `find "$scriptdir/scriptmodules/$2" -maxdepth 1 -name "*.sh" | sort`; do
-        registerModule $module_idx "$module"
+        registerModule $module_idx "$module" "$module_dir"
         ((module_idx++))
     done
 }

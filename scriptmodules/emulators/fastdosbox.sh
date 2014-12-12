@@ -4,22 +4,22 @@ rp_module_menus="2+"
 
 function sources_fastdosbox() {
     wget -O- -q http://downloads.petrockblock.com/retropiearchives/fastdosbox-1.5_src.tar.gz | tar -xvz --strip-components=1
-    sed -i 's|#include "nofun.h"|//#include "nofun.h"|g' "$builddir/$1/src/gui/sdl_mapper.cpp"
+    sed -i 's|#include "nofun.h"|//#include "nofun.h"|g' "$md_build/src/gui/sdl_mapper.cpp"
 }
 
 function build_fastdosbox() {
-    ./configure --prefix="$emudir/$1"
+    ./configure --prefix="$md_inst"
     make clean
     make
-    require="$builddir/$1/src/dosbox"
+    require="$md_build/src/dosbox"
 }
 
 function install_fastdosbox() {
     make install
-    require="$emudir/$1/bin/dosbox"
+    require="$md_inst/bin/dosbox"
 }
 
 function configure_fastdosbox() {
     mkdir -p "$romdir/pc"
-    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$emudir/$1/dosbox" "pc" "pc"    
+    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$md_inst/dosbox" "pc" "pc"    
 }

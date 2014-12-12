@@ -9,7 +9,7 @@ function sources_fbzx() {
 function build_fbzx() {
     make clean
     make
-    require="$builddir/$1/fbzx"
+    require="$md_build/fbzx"
 }
 
 function install_fbzx() {
@@ -35,5 +35,5 @@ function install_fbzx() {
 function configure_fbzx() {
     mkdir -p $romdir/zxspectrum-fbzx
 
-    setESSystem "ZX Spectrum" "zxspectrum-fbzx" "RetroPie/roms/zxspectrum-fbzx" "z80 .Z80 .ipf .IPF" "$emudir/$1/fbzx %ROM%" "zxspectrum" "zxspectrum"
+    setESSystem "ZX Spectrum" "zxspectrum-fbzx" "RetroPie/roms/zxspectrum-fbzx" "z80 .Z80 .ipf .IPF" "$md_inst/fbzx %ROM%" "zxspectrum" "zxspectrum"
 }

@@ -15,7 +15,7 @@ function build_uae4all() {
     touch /opt/vc/include/interface/vmcs_host/vchost_config.h
     make clean
     make
-    require="$builddir/$1/uae4all"
+    require="$md_build/uae4all"
 }
 
 function install_uae4all() {
@@ -29,9 +29,9 @@ function install_uae4all() {
 function configure_uae4all() {
     mkdir -p "$romdir/amiga"
 
-    cat > "$emudir/$1/startAmigaDisk.sh" << _EOF_
+    cat > "$md_inst/startAmigaDisk.sh" << _EOF_
 #!/bin/bash
-pushd "$emudir/$1"
+pushd "$md_inst"
 if [[ -f "df0.adf" ]]; then
      rm df0.adf
  fi
@@ -39,9 +39,9 @@ ln -s "$romdir/amiga/$1" "df0.adf"
 ./uae4all    
 popd
 _EOF_
-    chmod +x "$emudir/$1/startAmigaDisk.sh"
+    chmod +x "$md_inst/startAmigaDisk.sh"
 
-    chown -R $user:$user "$emudir/$1"
+    chown -R $user:$user "$md_inst"
 
-    setESSystem "Amiga" "amiga" "~/RetroPie/roms/amiga" ".adf .ADF" "$emudir/$1/startAmigaDisk.sh %ROM%" "amiga" "amiga"
+    setESSystem "Amiga" "amiga" "~/RetroPie/roms/amiga" ".adf .ADF" "$md_inst/startAmigaDisk.sh %ROM%" "amiga" "amiga"
 }

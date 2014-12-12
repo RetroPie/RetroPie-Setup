@@ -8,7 +8,7 @@ function depends_openmsx() {
 
 function sources_openmsx() {
     wget -O- -q http://downloads.petrockblock.com/retropiearchives/openmsx-0.10.0.tar.gz | tar -xvz --strip-components=1
-    sed -i "s|INSTALL_BASE:=/opt/openMSX|INSTALL_BASE:=$emudir/$1|" build/custom.mk
+    sed -i "s|INSTALL_BASE:=/opt/openMSX|INSTALL_BASE:=$md_inst|" build/custom.mk
     sed -i "s|SYMLINK_FOR_BINARY:=true|SYMLINK_FOR_BINARY:=false|" build/custom.mk
 }
 
@@ -27,8 +27,8 @@ function install_openmsx() {
 function configure_openmsx() {
     mkdir -p "$romdir/msx"
     wget http://downloads.petrockblock.com/retropiearchives/openmsxroms.zip
-    mkdir -p "$emudir/$1/share/systemroms/"
-    unzip openmsxroms.zip -d "$emudir/$1/share/systemroms/"
+    mkdir -p "$md_inst/share/systemroms/"
+    unzip openmsxroms.zip -d "$md_inst/share/systemroms/"
 
-    setESSystem "MSX / MSX2" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx2 .MX2 .mx1 .MX1" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/bin/openmsx -cart %ROM%\"" "" "msx"
+    setESSystem "MSX / MSX2" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx2 .MX2 .mx1 .MX1" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/bin/openmsx -cart %ROM%\"" "" "msx"
 }

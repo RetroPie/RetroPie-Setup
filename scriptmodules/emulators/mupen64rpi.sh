@@ -3,7 +3,7 @@ rp_module_desc="N64 emulator MUPEN64Plus-RPi"
 rp_module_menus="4+"
 
 function sources_mupen64rpi() {
-    gitPullOrClone "$builddir/$1" https://github.com/ricrpi/mupen64plus
+    gitPullOrClone "$md_build" https://github.com/ricrpi/mupen64plus
 }
 
 function build_mupen64rpi() {
@@ -11,7 +11,7 @@ function build_mupen64rpi() {
     ./build.sh
     rpSwap off
 
-    require="$builddir/$1/mupen64plus"
+    require="$md_build/mupen64plus"
 }
 
 function install_mupen64rpi() {

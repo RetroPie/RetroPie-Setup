@@ -11,22 +11,22 @@ function sources_dgen() {
 }
 
 function build_dgen() {
-    #./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$emudir/$1"
+    #./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$md_inst"
     #make clean
     make
-    require="$builddir/$1/dgen"
+    require="$md_build/dgen"
 }
 
 function install_dgen() {
     make install
-    require="$emudir/$1/bin/dgen"
+    require="$md_inst/bin/dgen"
 }
 
 function configure_dgen()
 {
     if [[ ! -f "$rootdir/configs/all/dgenrc" ]]; then
         mkdir -p "$rootdir/configs/all/"
-        cp "$emudir/$1/sample.dgenrc" "$rootdir/configs/all/dgenrc"
+        cp "$md_inst/sample.dgenrc" "$rootdir/configs/all/dgenrc"
         chown $user:$user "$rootdir/configs/all/dgenrc"
     fi
 
@@ -55,7 +55,7 @@ function configure_dgen()
     mkdir -p "$romdir/segacd-dgen"
     mkdir -p "$romdir/sega32x-dgen"
 
-    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "genesis,megadrive" "megadrive"
-    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "segacd" "segacd"
-    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "sega32x" "sega32x"
+    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "genesis,megadrive" "megadrive"
+    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "segacd" "segacd"
+    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "sega32x" "sega32x"
 }

@@ -8,7 +8,7 @@ function sources_atari800() {
 
 function build_atari800() {
     cd src
-    ./configure --prefix="$emudir/$1"
+    ./configure --prefix="$md_inst"
     make
     if [[ ! -f "atari800" ]]; then
         __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 800 emulator."
@@ -23,5 +23,5 @@ function install_atari800() {
 function configure_atari800() {
     mkdir -p "$romdir/atari800"
 
-    setESSystem "Atari 800" "atari800" "~/RetroPie/roms/atari800" ".xex .XEX" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/atari800 %ROM%\"" "atari800" "atari800"
+    setESSystem "Atari 800" "atari800" "~/RetroPie/roms/atari800" ".xex .XEX" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/atari800 %ROM%\"" "atari800" "atari800"
 }
