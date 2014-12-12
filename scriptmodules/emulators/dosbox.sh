@@ -9,6 +9,6 @@ function install_dosbox() {
 function configure_dosbox() {
     mkdir -p "$romdir/pc"
 
-    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$rootdir/emulators/rpix86/Start.sh" "pc" "pc"    
+    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$emudir/$1/rpix86/Start.sh" "pc" "pc"    
 
 }

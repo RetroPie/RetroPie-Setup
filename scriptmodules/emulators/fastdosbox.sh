@@ -8,8 +8,8 @@ function sources_fastdosbox() {
 }
 
 function build_fastdosbox() {
-    #./configure --prefix="$emudir/$1"
-    #make clean
+    ./configure --prefix="$emudir/$1"
+    make clean
     make
     require="$builddir/$1/src/dosbox"
 }
@@ -21,5 +21,5 @@ function install_fastdosbox() {
 
 function configure_fastdosbox() {
     mkdir -p "$romdir/pc"
-    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$rootdir/emulators/rpix86/Start.sh" "pc" "pc"    
+    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$emudir/$1/dosbox" "pc" "pc"    
 }
