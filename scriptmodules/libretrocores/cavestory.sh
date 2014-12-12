@@ -9,7 +9,7 @@ function sources_cavestory() {
 function build_cavestory() {
     make clean
     make
-    md_ret_require="nxengine_libretro.so"
+    md_ret_require="$md_build/nxengine_libretro.so"
 }
 
 function install_cavestory() {
