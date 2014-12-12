@@ -10,7 +10,7 @@ function sources_armsnes() {
 function build_armsnes() {
     make clean
     make
-    md_ret_require="libpocketsnes.so"
+    md_ret_require="$md_build/libpocketsnes.so"
 }
 
 function install_armsnes() {
