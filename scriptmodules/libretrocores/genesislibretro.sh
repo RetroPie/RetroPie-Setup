@@ -3,21 +3,27 @@ rp_module_desc="GameGear LibretroCore"
 rp_module_menus="2+"
 
 function sources_genesislibretro() {
-    gitPullOrClone "$rootdir/libretrocores/Genesis-Plus-GX" git://github.com/libretro/Genesis-Plus-GX.git
+    gitPullOrClone "$md_build" git://github.com/libretro/Genesis-Plus-GX.git
 }
 
 function build_genesislibretro() {
-    pushd "$rootdir/libretrocores/Genesis-Plus-GX"
     make -f Makefile.libretro clean
     make -f Makefile.libretro
-    if [[ ! -f `find $rootdir/libretrocores/Genesis-Plus-GX/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
-    fi
-    popd
+    md_ret_require="$md_build/genesis_plus_gx_libretro.so"
+}
+
+function install_genesislibretro() {
+    md_ret_files=(
+        'genesis_plus_gx_libretro.so'
+        'HISTORY.txt'
+        'LICENSE.txt'
+        'Makefile.libretro'
+        'README.md'
+    )
 }
 
 function configure_genesislibretro() {
-    mkdir -p $romdir/gamegear
+    mkdir -p "$romdir/gamegear"
     ensureSystemretroconfig "gamegear"
-    setESSystem "Sega Game Gear" "gamegear" "~/RetroPie/roms/gamegear" ".gg .GG" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/libretrocores/Genesis-Plus-GX/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gamegear/retroarch.cfg  %ROM%\"" "gamegear" "gamegear"
+    setESSystem "Sega Game Gear" "gamegear" "~/RetroPie/roms/gamegear" ".gg .GG" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gamegear/retroarch.cfg  %ROM%\"" "gamegear" "gamegear"
 }
