@@ -11,7 +11,6 @@ function sources_advmame() {
     sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
     sed -i 's/misc_quiet\", 0/misc_quiet\", 1/' advance/osd/global.c
     sed -i '/#include <string>/ i\#include <stdlib.h>' advance/d2/d2.cc
-    popd
 }
 
 function build_advmame() {
