@@ -73,19 +73,18 @@ function rp_printUsageinfo() {
 
 function rp_callModule() {
     local idx="$1"
-    local func="$2"
+    local mode="$2"
     local type="$3"
-    local desc
-    local mod_id
-    local mode
 
-    if [[ "$func" == "" ]]; then
+    if [[ "$mode" == "" ]]; then
         for mode in depends sources build install configure; do
             rp_callModule $idx $mode
+            [ "$__ERRMSGS" != "" ] && return 0
         done
     fi
-    
+
     # if index get mod_id from ass array
+    local mod_id
     if [[ "$idx" =~ ^[0-9]+$ ]]; then
         mod_id=${__mod_id[$1]}
     else
@@ -96,8 +95,8 @@ function rp_callModule() {
     fi
 
     # create function name and check if it exists
-    func_call="${func}_${mod_id}"
-    fn_exists $func_call || return
+    function="${mode}_${mod_id}"
+    fn_exists $function || return
 
     # create variables that can be used in modules
     local md_id="$mod_id"
@@ -109,40 +108,44 @@ function rp_callModule() {
     local md_ret_require=""
     local md_ret_files=""
 
-    case "$func" in
+    local action
+    case "$mode" in
         depends)
-            desc="Installing dependencies for"
+            action="Installing dependencies for"
             ;;
         sources)
-            desc="Getting sources for"
+            action="Getting sources for"
             rmDirExists "$md_build"
             mkdir -p "$md_build"
             pushd "$md_build"
             ;;
         build)
-            desc="Building"
+            action="Building"
             pushd "$md_build"
             ;;
         install)
-            desc="Installing"
+            action="Installing"
             mkdir -p "$md_build" "$md_inst" 
             pushd "$md_build"
             ;;
         configure)
-            desc="Configuring"
+            action="Configuring"
             pushd "$md_inst"
             ;;
         remove)
-            desc="Removing"
+            action="Removing"
             ;;
     esac
 
-    printMsg "$desc $md_desc"
-    $func_call
+    # print an action and a description
+    printMsg "$action $md_desc"
+
+    # call the function
+    $function
 
     # check if any required files are found
     if [ "$md_ret_require" != "" ] && [ ! -f "$md_ret_require" ]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully $func $md_desc ($md_ret_require not found)."
+        __ERRMSGS="$__ERRMSGS Could not successfully $function $md_desc ($md_ret_require not found)."
     fi
 
     # check for existance and copy any files/directories returned
@@ -156,11 +159,14 @@ function rp_callModule() {
         done
     fi
 
-    case "$func" in
+    case "$mode" in
         sources|build|install|configure)
             popd
             ;;
     esac
+
+    [ "$__ERRMSGS" != "" ] && return 0
+    return 1
 }
 
 function registerModule() {
