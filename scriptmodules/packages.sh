@@ -74,7 +74,6 @@ function rp_printUsageinfo() {
 function rp_callModule() {
     local idx="$1"
     local mode="$2"
-    local type="$3"
 
     if [[ "$mode" == "" ]]; then
         for mode in depends sources build install configure; do
@@ -101,9 +100,9 @@ function rp_callModule() {
     # create variables that can be used in modules
     local md_id="$mod_id"
     local md_desc="${__mod_desc[$idx]}"
-    local md_type="$type"
+    local md_type="${__mod_type[$idx]}"
     local md_build="$builddir/$mod_id"
-    local md_inst="$rootdir/$type/$mod_id"
+    local md_inst="$rootdir/$md_type/$mod_id"
     # these can be returned by a module
     local md_ret_require=""
     local md_ret_files=""
