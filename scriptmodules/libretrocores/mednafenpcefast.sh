@@ -3,20 +3,24 @@ rp_module_desc="Mednafen PCE Fast LibretroCore"
 rp_module_menus="2+"
 
 function sources_mednafenpcefast() {
-    gitPullOrClone "$rootdir/libretrocores/mednafenpcefast" https://github.com/libretro/beetle-pce-fast-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/beetle-pce-fast-libretro.git
 }
 
 function build_mednafenpcefast() {
-    pushd "$rootdir/libretrocores/mednafenpcefast"
+    make clean
     make
-     if [[ -z `find $rootdir/libretrocores/mednafenpcefast/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Mednafen PCE Fast core."
-    fi
-    popd
+    md_ret_require="$md_build/mednafen_pce_fast_libretro.so"
+}
+
+function install_mednafenpcefast() {
+    md_ret_files=(
+        'mednafen_pce_fast_libretro.so'
+        'README.md'
+    )
 }
 
 function configure_mednafenpcefast() {
-    mkdir -p $romdir/pcengine
+    mkdir -p "$romdir/pcengine"
 
-    setESSystem "TurboGrafx 16 (PC Engine)" "pcengine" "~/RetroPie/roms/pcengine" ".pce .PCE" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/retroarch -L `find $rootdir/libretrocores/mednafenpcefast/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%\"" "pcengine" "pcengine"
+    setESSystem "TurboGrafx 16 (PC Engine)" "pcengine" "~/RetroPie/roms/pcengine" ".pce .PCE" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/retroarch -L $md_inst/mednafen_pce_fast_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%\"" "pcengine" "pcengine"
 }
