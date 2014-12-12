@@ -12,7 +12,7 @@ function sources_fbalibretro() {
 
 function build_fbalibretro() {
     cd svn-current/trunk/
-    #make -f makefile.libretro clean
+    make -f makefile.libretro clean
     make -f makefile.libretro CC="gcc-4.8" CXX="g++-4.8" platform=armvhardfloat
     md_ret_require="$md_build/svn-current/trunk/fb_alpha_libretro.so"
 }
