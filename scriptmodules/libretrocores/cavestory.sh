@@ -21,7 +21,7 @@ function configure_cavestory() {
     fi
     cat > "$romdir/ports/Cave Story.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"
+$rootdir/supplementary/runcommand/runcommand.sh 1 "$emudir/$1/bin/retroarch -L `find $rootdir/emulatorcores/nxengine-libretro/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/emulatorcores/nxengine-libretro/datafiles/Doukutsu.exe"
 _EOF_
     chmod +x "$romdir/ports/Cave Story.sh"
     chown -R $user:$user "$rootdir/emulatorcores/nxengine-libretro/datafiles/"

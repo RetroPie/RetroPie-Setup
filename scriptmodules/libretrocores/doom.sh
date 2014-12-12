@@ -43,7 +43,7 @@ function configure_doom() {
 
     cat > "$romdir/ports/Doom 1 Shareware.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 1 "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
+$rootdir/supplementary/runcommand/runcommand.sh 1 "$emudir/$1/bin/retroarch -L `find $rootdir/emulatorcores/libretro-prboom/ -name "*libretro*.so" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
 _EOF_
     chmod +x "$romdir/ports/Doom 1 Shareware.sh"
 

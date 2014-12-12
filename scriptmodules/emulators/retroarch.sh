@@ -11,24 +11,23 @@ _EOF_
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
+    gitPullOrClone "$builddir/$1" git://github.com/libretro/RetroArch.git
 }
 
 function build_retroarch() {
-    pushd "$rootdir/emulators/RetroArch"
-    ./configure --prefix="$rootdir/emulators/RetroArch/installdir" --disable-x11 --disable-oss --disable-pulse --enable-floathard
+    ./configure --prefix="$emudir/$1" --disable-x11 --disable-oss --disable-pulse --enable-floathard
     make clean
     make
-    popd
+    require="$builddir/$1/bin/retroarch"
 }
 
 function install_retroarch() {
-    pushd "$rootdir/emulators/RetroArch"
     make install
-    popd
-    if [[ ! -f "$rootdir/emulators/RetroArch/installdir/bin/retroarch" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
-    fi
+    require="$emudir/$1/bin/retroarch"
+    cp "$scriptdir/supplementary/RetroArchShader/"* "$emudir/$1/shader/"
+    files=(
+        'retroarch.cfg'
+    )
 }
 
 function ensureSystemretroconfig {
@@ -39,19 +38,18 @@ function ensureSystemretroconfig {
 }
 
 function configure_retroarch() {
-    cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
+    cp $scriptdir/supplementary/retroarch-zip "$emudir/$1"
 
     if [[ ! -d "$rootdir/configs/all/" ]]; then
         mkdir -p "$rootdir/configs/all/"
     fi
     cp $scriptdir/supplementary/retroarch-core-options.cfg "$rootdir/configs/all/"
-    chown $user:$user "$rootdir/configs/all/retroarch-core-options.cfg"
 
     if [[ -f "$rootdir/configs/all/retroarch.cfg" ]]; then
         cp "$rootdir/configs/all/retroarch.cfg" "$rootdir/configs/all/retroarch.cfg.bak"
     fi
-    cp $rootdir/emulators/RetroArch/retroarch.cfg "$rootdir/configs/all/"
-    chown $user:$user "$rootdir/configs/all/retroarch.cfg"
+
+    cp "$emudir/$1/retroarch.cfg" "$rootdir/configs/all/"
     mkdir -p "$rootdir/configs/all/"
 
     ensureSystemretroconfig "atari2600"
@@ -93,45 +91,38 @@ function configure_retroarch() {
     ensureKeyValue "video_gpu_screenshot" "true" "$rootdir/configs/all/retroarch.cfg"
 
     # enable and configure shaders
-    if [[ ! -d "$rootdir/emulators/RetroArch/shader" ]]; then
-        mkdir -p "$rootdir/emulators/RetroArch/shader"
-    fi
-    cp -r $scriptdir/supplementary/RetroArchShader/* $rootdir/emulators/RetroArch/shader/
-    for f in `ls "$rootdir/emulators/RetroArch/shader/*.glslp"`;
-    do
-        sed -i "s|/home/pi/RetroPie|$rootdir|g" $f
-    done
+    mkdir -p "$emudir/$1/shader"
 
     ensureKeyValue "input_shader_next" "m" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "input_shader_prev" "n" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "video_shader_dir" "$rootdir/emulators/RetroArch/shader/" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "video_shader_dir" "$emudir/$1/shader/" "$rootdir/configs/all/retroarch.cfg"
 
     # system-specific shaders, SNES
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/snes_phosphor.glslp\"" "$rootdir/configs/snes/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$emudir/$1/shader/snes_phosphor.glslp\"" "$rootdir/configs/snes/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/snes/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/snes/retroarch.cfg"
 
     # system-specific shaders, NES
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/nes/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$emudir/$1/shader/phosphor.glslp\"" "$rootdir/configs/nes/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/nes/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/nes/retroarch.cfg"
 
     # system-specific shaders, Megadrive
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/megadrive/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$emudir/$1/shader/phosphor.glslp\"" "$rootdir/configs/megadrive/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/megadrive/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/megadrive/retroarch.cfg"
 
     # system-specific shaders, Mastersystem
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$emudir/$1/shader/phosphor.glslp\"" "$rootdir/configs/mastersystem/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
 
     # system-specific shaders, Gameboy
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gb/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$emudir/$1/shader/hq4x.glslp\"" "$rootdir/configs/gb/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/gb/retroarch.cfg"
 
     # system-specific shaders, Gameboy Color
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gbc/retroarch.cfg"
+    ensureKeyValue "video_shader" "\"$emudir/$1/shader/hq4x.glslp\"" "$rootdir/configs/gbc/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/gbc/retroarch.cfg"
 
     # system-specific, PSX
@@ -153,8 +144,8 @@ function configure_retroarch() {
 
     # input settings
     ensureKeyValue "input_autodetect_enable" "true" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "joypad_autoconfig_dir" "$rootdir/emulators/RetroArch/configs/" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "joypad_autoconfig_dir" "$emudir/$1/configs/" "$rootdir/configs/all/retroarch.cfg"
 
-    chown $user:$user -R "$rootdir/emulators/RetroArch/shader/"
+    chown $user:$user -R "$emudir/$1/shader/"
     chown $user:$user -R "$rootdir/configs/"
 }
