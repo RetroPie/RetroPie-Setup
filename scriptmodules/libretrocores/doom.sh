@@ -9,7 +9,7 @@ function sources_doom() {
 function build_doom() {
     make clean
     make
-    md_ret_require="prboom_libretro.so"
+    md_ret_require="$md_build/prboom_libretro.so"
 }
 
 function install_doom() {
