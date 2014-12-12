@@ -7,24 +7,30 @@ function depends_fbalibretro() {
 }
 
 function sources_fbalibretro() {
-    gitPullOrClone "$rootdir/libretrocores/fba-libretro" git://github.com/libretro/fba-libretro.git
+    gitPullOrClone "$md_build" git://github.com/libretro/fba-libretro.git
 }
 
 function build_fbalibretro() {
-    pushd "$rootdir/libretrocores/fba-libretro"
-    cd $rootdir/libretrocores/fba-libretro/svn-current/trunk/
-    make -f makefile.libretro clean
+    cd svn-current/trunk/
+    #make -f makefile.libretro clean
     make -f makefile.libretro CC="gcc-4.8" CXX="g++-4.8" platform=armvhardfloat
-    mv `find $rootdir/libretrocores/fba-libretro/svn-current/trunk/ -name "*libretro*.so"` "$rootdir/libretrocores/fba-libretro/"
-    if [[ -z `find $rootdir/libretrocores/fba-libretro/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile FBA core."
-    fi
-    popd
+    md_ret_require="$md_build/svn-current/trunk/fb_alpha_libretro.so"
+}
+
+function install_fbalibretro() {
+    md_ret_files=(
+        'svn-current/trunk/fba.chm'
+        'svn-current/trunk/fb_alpha_libretro.so'
+        'svn-current/trunk/gamelist-gx.txt'
+        'svn-current/trunk/gamelist.txt'
+        'svn-current/trunk/whatsnew.html'
+        'svn-current/trunk/preset-example.zip'
+    )
 }
 
 function configure_fbalibretro() {
     mkdir -p $romdir/fba-libretro
 
     rps_retronet_prepareConfig
-    setESSystem "Final Burn Alpha" "fba-libretro" "~/RetroPie/roms/fba-libretro" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/retroarch -L `find $rootdir/libretrocores/fba-libretro/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%\"" "arcade" "fba"
+    setESSystem "Final Burn Alpha" "fba-libretro" "~/RetroPie/roms/fba-libretro" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/retroarch -L $md_install/fb_alpha_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/fba/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%\"" "arcade" "fba"
 }
