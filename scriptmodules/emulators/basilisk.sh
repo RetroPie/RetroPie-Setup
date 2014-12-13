@@ -16,9 +16,6 @@ function build_basilisk() {
     ./configure --prefix="$md_inst" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler
     make clean
     make
-    if [[ -z "BasiliskII" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile BasiliskII."
-    fi
     md_ret_require="$md_build/BasiliskII/src/Unix/BasiliskII"
 }
 
