@@ -85,6 +85,7 @@ function rp_callModule() {
             rp_callModule $idx $mode
             [ "$__ERRMSGS" != "" ] && return 0
         done
+        return 1
     fi
 
     # if index get mod_id from ass array
