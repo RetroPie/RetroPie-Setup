@@ -11,8 +11,8 @@ function sources_dgen() {
 }
 
 function build_dgen() {
-    #./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$md_inst"
-    #make clean
+    ./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$md_inst"
+    make clean
     make
     md_ret_require="$md_build/dgen"
 }
