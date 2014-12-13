@@ -16,7 +16,7 @@ function sources_mame4all() {
 function build_mame4all() {
     make clean
     make
-    md_ret_require="$md_inst/mame"
+    md_ret_require="$md_build/mame"
 }
 
 function install_mame4all() {
