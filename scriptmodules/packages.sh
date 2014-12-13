@@ -126,21 +126,22 @@ function rp_callModule() {
             ;;
         build)
             action="Building"
-            pushd "$md_build"
+            pushd "$md_build" 2>/dev/null
             ;;
         install)
             action="Installing"
-            mkdir -p "$md_build" "$md_inst" 
-            pushd "$md_build"
+            mkdir -p "$md_inst"
+            pushd "$md_build" 2>/dev/null
             ;;
         configure)
             action="Configuring"
-            pushd "$md_inst"
+            pushd "$md_inst" 2>/dev/null
             ;;
         remove)
             action="Removing"
             ;;
     esac
+    local pushed=$?
 
     # print an action and a description
     printMsg "$action $md_desc"
@@ -164,9 +165,13 @@ function rp_callModule() {
         done
     fi
 
+    # remove build/install folder if empty
+    [ -d "$md_build" ] && find "$md_build" -maxdepth 0 -empty -exec rmdir {} \;
+    [ -d "$md_inst" ] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
+
     case "$mode" in
         sources|build|install|configure)
-            popd
+            [ ! pushed ] && popd
             ;;
     esac
 
