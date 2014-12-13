@@ -106,7 +106,7 @@ function rp_callModule() {
     local md_id="$mod_id"
     local md_desc="${__mod_desc[$idx]}"
     local md_type="${__mod_type[$idx]}"
-    local md_build="$builddir/$mod_id"
+    local md_build="$__builddir/$mod_id"
     local md_inst="$rootdir/$md_type/$mod_id"
     # these can be returned by a module
     local md_ret_require=""
