@@ -9,10 +9,9 @@ function sources_atari800() {
 function build_atari800() {
     cd src
     ./configure --prefix="$md_inst"
+    make clean
     make
-    if [[ ! -f "atari800" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Atari 800 emulator."
-    fi
+    md_ret_require="$md_build/src/atari800"
 }
 
 function install_atari800() {
