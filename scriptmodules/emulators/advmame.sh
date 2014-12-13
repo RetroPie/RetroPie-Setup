@@ -23,6 +23,7 @@ function install_advmame() {
 }
 
 function configure_advmame() {
+    rmDirExists "/home/$user/.advance"
     su "$user" -c "$md_inst/bin/advmame"
     echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> "/home/$user/.advance/advmame.rc"
 }
