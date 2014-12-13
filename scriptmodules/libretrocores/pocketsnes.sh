@@ -3,24 +3,24 @@ rp_module_desc="SNES LibretroCore PocketSNES"
 rp_module_menus="2+"
 
 function sources_pocketsnes() {
-    gitPullOrClone "$rootdir/libretrocores/pocketsnes-libretro" git://github.com/ToadKing/pocketsnes-libretro.git
-    pushd "$rootdir/libretrocores/pocketsnes-libretro"
+    gitPullOrClone "$md_build" git://github.com/ToadKing/pocketsnes-libretro.git
     patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch $rootdir/libretrocores/pocketsnes-libretro/src/ppu.cpp
-    popd
 }
 
 function build_pocketsnes() {
-    pushd "$rootdir/libretrocores/pocketsnes-libretro"
     make clean
     make
-    if [[ -z `find $rootdir/libretrocores/pocketsnes-libretro/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
-    fi
-    popd
+    md_ret_require="$md_build/fmsx-libretro.so"
+}
+
+function install_pocketsnes() {
+    md_ret_files=(
+        'libff'
+    )
 }
 
 function configure_pocketsnes() {
-    mkdir -p $romdir/snes
+    mkdir -p "$romdir/snes"
 
     rps_retronet_prepareConfig
     setESSystem "Super Nintendo" "snes" "~/RetroPie/roms/snes" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/bin/retroarch -L `find $rootdir/libretrocores/pocketsnes-libretro/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "snes" "snes"
