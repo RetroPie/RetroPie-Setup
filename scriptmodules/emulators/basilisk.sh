@@ -12,8 +12,7 @@ function sources_basilisk() {
 
 function build_basilisk() {
     cd BasiliskII/src/Unix
-    ./autogen.sh
-    ./configure --prefix="$md_inst" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler
+    ./autogen.sh --prefix="$md_inst" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler
     make clean
     make
     md_ret_require="$md_build/BasiliskII/src/Unix/BasiliskII"
