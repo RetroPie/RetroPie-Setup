@@ -18,16 +18,17 @@ function build_retroarch() {
     ./configure --prefix="$md_inst" --disable-x11 --disable-oss --disable-pulse --enable-floathard
     make clean
     make
-    md_ret_require="$md_build/bin/retroarch"
+    md_ret_require="$md_build/retroarch"
 }
 
 function install_retroarch() {
     make install
-    md_ret_require="$md_inst/bin/retroarch"
+    mkdir -p "$md_inst/shader"
     cp "$scriptdir/supplementary/RetroArchShader/"* "$md_inst/shader/"
     md_ret_files=(
         'retroarch.cfg'
     )
+    md_ret_require="$md_inst/bin/retroarch"
 }
 
 function ensureSystemretroconfig {
