@@ -25,7 +25,7 @@ function build_jzintv() {
     make clean
     make OPT_FLAGS="-O3 -fomit-frame-pointer -fprefetch-loop-arrays -march=armv6 -mfloat-abi=hard -mfpu=vfp"
     __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
-    md_ret_require="$md_build/bin/jzintv"
+    md_ret_require="$md_build/jzintv/bin/jzintv"
 }
 
 function install_jzintv() {
