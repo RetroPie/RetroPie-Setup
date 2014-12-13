@@ -179,7 +179,7 @@ function rp_callModule() {
     return 1
 }
 
-function registerModule() {
+function rp_registerModule() {
     local module_idx="$1"
     local module_path="$2"
     local module_type="$3"
@@ -199,17 +199,17 @@ function registerModule() {
     rp_registerFunction "$module_idx" "$rp_module_id" "$rp_module_desc" "$rp_module_menus" "$module_type"
 }
 
-function registerModuleDir() {
+function rp_registerModuleDir() {
     local module_idx="$1"
     local module_dir="$2"
     for module in `find "$scriptdir/scriptmodules/$2" -maxdepth 1 -name "*.sh" | sort`; do
-        registerModule $module_idx "$module" "$module_dir"
+        rp_registerModule $module_idx "$module" "$module_dir"
         ((module_idx++))
     done
 }
 
-function registerAllModules() {
-    registerModuleDir 100 "emulators" 
-    registerModuleDir 200 "libretrocores" 
-    registerModuleDir 300 "supplementary"
+function rp_registerAllModules() {
+    rp_registerModuleDir 100 "emulators" 
+    rp_registerModuleDir 200 "libretrocores" 
+    rp_registerModuleDir 300 "supplementary"
 }
