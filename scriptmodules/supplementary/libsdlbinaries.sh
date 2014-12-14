@@ -7,5 +7,5 @@ function depends_libsdlbinaries() {
 }
 
 function install_libsdlbinaries() {
-    wget -O- http://downloads.petrockblock.com/retropiearchives/libsdl2.0.1.tar.gz | tar -xvz -C /
+    wget -O- -q http://downloads.petrockblock.com/retropiearchives/libsdl2.0.1.tar.gz | tar -xvz -C /
 }
