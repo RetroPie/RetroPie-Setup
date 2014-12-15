@@ -2,18 +2,45 @@ rp_module_id="esconfig"
 rp_module_desc="ES-Config"
 rp_module_menus="3+"
 
+function sources_esconfig() {
+    gitPullOrClone "$md_build" git://github.com/Aloshi/ES-config.git
+    sed -i -e "s/apt-get install/apt-get install -y --force-yes/g" get_dependencies.sh  
+    ./get_dependencies.sh
+}
+
+function build_esconfig()
+{
+    make clean
+    make
+    md_ret_require="$md_build/es-config"
+}
+
+function install_esconfig()
+{
+    md_ret_files=(
+        'CREDITS.md'
+        'es-config'
+        'README.md'
+        'resources'
+        'SCRIPTING.md'
+        'scripts'
+    )
+}
+
 function configure_esconfig()
 {
-    cp "$scriptdir/supplementary/settings.xml" "$rootdir/supplementary/ES-config/"
-    sed -i -e "s|/home/pi/RetroPie|$rootdir|g" "$rootdir/supplementary/ES-config/settings.xml"
-    if [[ ! -d $romdir/esconfig ]]; then
-        mkdir -p $romdir/esconfig
-    fi
+    cp "$scriptdir/supplementary/settings.xml" "$md_inst/"
+    sed -i -e "s|/home/pi/RetroPie|$rootdir|g" "$md_inst/settings.xml"
+    mkdir -p "$romdir/esconfig"
+
     # generate new startup scripts for ES-config
-    cp "$scriptdir/supplementary/scripts"/*/*.py "$rootdir/roms/esconfig/"
-    chmod +x "$rootdir/roms/esconfig"/*.py
+    cp "$scriptdir/supplementary/scripts"/*/*.py "$romdir/esconfig/"
+    chmod +x "$romdir/esconfig"/*.py
+    chown $user:$user "$romdir/esconfig/"*
+
     # add some information
-    cat > ~/.emulationstation/gamelists/esconfig/gamelist.xml << _EOF_
+    mkdir -p "$home/.emulationstation/gamelists/esconfig/"
+    cat > "$home/.emulationstation/gamelists/esconfig/gamelist.xml" << _EOF_
 <?xml version="1.0"?>
 <gameList>
     <game>
@@ -53,20 +80,5 @@ GNGEO 0.7</desc>
     </game>
 </gameList>
 _EOF_
-chown $user:$user "$romdir/esconfig/"*
-}
 
-function install_esconfig()
-{
-    rmDirExists "$rootdir/supplementary/ES-config"
-    gitPullOrClone "$rootdir/supplementary/ES-config" git://github.com/Aloshi/ES-config.git
-    pushd "$rootdir/supplementary/ES-config"
-    sed -i -e "s/apt-get install/apt-get install -y --force-yes/g" get_dependencies.sh
-    ./get_dependencies.sh
-    make
-    popd
-
-    if [[ ! -f "$rootdir/supplementary/ES-config/es-config" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile ES-config."
-    fi
 }
