@@ -13,7 +13,7 @@ gngeo_main_cfg      = home + '/.gngeo/gngeorc'
 gngeo_input_cfg     = home + '/.gngeo/gngeorcinput'
 dgen_main_cfg       = '/opt/retropie/configs/all/dgenrc'
 dgen_input_cfg      = '/opt/retropie/configs/all/dgenrcinput'
-es_config_path	    = '/opt/retropie/supplementary/ES-config'
+es_config_path	    = '/opt/retropie/supplementary/esconfig'
 section = 'start'
 	
 # 
