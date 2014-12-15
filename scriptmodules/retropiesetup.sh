@@ -141,10 +141,6 @@ function rps_main_binaries()
 
     chown -R $user:$user $scriptdir/logs/run_$now.log.gz
 
-    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
-    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
-    __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
-
     if [[ ! -z $__INFMSGS ]]; then
         dialog --backtitle "$__backtitle" --msgbox "$__INFMSGS" 20 60
     fi

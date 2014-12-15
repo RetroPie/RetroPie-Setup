@@ -24,7 +24,6 @@ function build_jzintv() {
     cd jzintv/src
     make clean
     make OPT_FLAGS="-O3 -fomit-frame-pointer -fprefetch-loop-arrays -march=armv6 -mfloat-abi=hard -mfpu=vfp"
-    __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
     md_ret_require="$md_build/jzintv/bin/jzintv"
 }
 
@@ -40,4 +39,6 @@ function configure_jzintv() {
     mkdir -p "$romdir/intellivision"
 
     setESSystem "Intellivision" "intellivision" "~/RetroPie/roms/intellivision" ".int .INT .bin .BIN" "$md_inst/bin/jzintv -z1 -f1 -q %ROM%" "intellivision" ""
+
+    __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
 }

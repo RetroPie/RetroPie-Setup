@@ -44,4 +44,6 @@ _EOF_
     chown -R $user:$user "$md_inst"
 
     setESSystem "Amiga" "amiga" "~/RetroPie/roms/amiga" ".adf .ADF" "$md_inst/startAmigaDisk.sh %ROM%" "amiga" "amiga"
+
+    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$md_inst/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $md_inst/uae4all/."
 }
