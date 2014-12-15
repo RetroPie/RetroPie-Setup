@@ -201,7 +201,7 @@ function rpSwap() {
 function gitPullOrClone()
 {
     if [ -d "$1/.git" ]; then
-        git -C pull
+        git -C "$1" pull
     else
         if [ "$3" = "NS" ]; then
             git clone "$2" "$1"
