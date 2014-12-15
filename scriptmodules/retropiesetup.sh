@@ -110,7 +110,6 @@ function rps_main_binaries()
 
         rps_downloadBinaries
 
-        rp_callModule emulationstation depends
         rp_callModule emulationstation configure
         rp_callModule snesdev install
         rp_callModule disabletimeouts
