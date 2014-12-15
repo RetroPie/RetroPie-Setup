@@ -8,7 +8,7 @@ function depends_emulationstation() {
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
         libasound2-dev cmake g++-4.7
 
-    rp_callModule "libsdlbinaries"
+    rp_callModule "sdl2binaries"
 }
 
 function sources_emulationstation() {
