@@ -27,6 +27,7 @@ function install_retroarch() {
     cp "$scriptdir/supplementary/RetroArchShader/"* "$md_inst/shader/"
     md_ret_files=(
         'retroarch.cfg'
+        'tools/retroarch-joyconfig'
     )
     md_ret_require="$md_inst/bin/retroarch"
 }
