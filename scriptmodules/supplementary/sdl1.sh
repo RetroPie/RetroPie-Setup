@@ -12,7 +12,7 @@ function sources_sdl1() {
 
 function build_sdl1() {
     make clean
-    ./MAC_ConfigureDISPMANX.sh
+    ./configure --prefix=/usr --disable-video-opengl --enable-video-dispmanx --disable-video-fbcon --disable-video-kms --disable-video-directfb --disable-oss --disable-alsatest --disable-pulseaudio --disable-pulseaudio-shared --disable-arts --disable-nas --disable-esd --disable-nas-shared --disable-diskaudio --disable-dummyaudio --disable-mintaudio
 }
 
 function install_sdl1() {
