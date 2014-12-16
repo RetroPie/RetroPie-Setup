@@ -37,6 +37,7 @@ rootdir="./retropie"
 filelist=()
 
 filelist+=("$rootdir/supplementary/emulationstation")
+filelist+=("$rootdir/supplementary/sdl1dispmanx")
 filelist+=("$rootdir/supplementary/snesdev")
 filelist+=("$rootdir/emulators")
 filelist+=("$rootdir/libretrocores")
