@@ -27,33 +27,30 @@
 
 # global variables ==========================================================
 
+# main retropie install location
 rootdir="/opt/retropie"
-user=$SUDO_USER
-if [ -z "$user" ]
-then
-    user=$(whoami)
-fi
-home=$(eval echo ~$user)
+
+user="$SUDO_USER"
+[ -z "$user" ] && user=$(id -un)
+
+home="$(eval echo ~$user)"
 romdir="$home/RetroPie/roms"
-emudir="/opt/retropie/emulators"
+emudir="$rootdir/emulators"
+
+# make initial rom directory
 if [[ ! -d $romdir ]]; then
     mkdir -p $romdir
 fi
 
 __ERRMSGS=""
 __INFMSGS=""
-__doReboot=0
 
 __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
 __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
 __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
-
 # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
-if [ $__memory_phys -ge 256 ]; then
-  __default_cflags+=" -pipe"
-fi
-
+[ $__memory_phys -ge 256 ] && __default_cflags+=" -pipe"
 __default_asflags=""
 __default_makeflags=""
 __default_gcc_version="4.7"
