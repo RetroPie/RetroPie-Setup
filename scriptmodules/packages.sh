@@ -82,10 +82,9 @@ function rp_callModule() {
 
     if [[ "$mode" == "" ]]; then
         for mode in depends sources build install configure; do
-            rp_callModule $idx $mode
-            [ "$__ERRMSGS" != "" ] && return 0
+            rp_callModule $idx $mode || return 1
         done
-        return 1
+        return 0
     fi
 
     # if index get mod_id from ass array
@@ -141,7 +140,8 @@ function rp_callModule() {
             action="Removing"
             ;;
     esac
-    local pushed=$?
+    local push_error=$?
+    local errors=""
 
     # print an action and a description
     printMsg "$action $md_desc"
@@ -151,14 +151,14 @@ function rp_callModule() {
 
     # check if any required files are found
     if [ "$md_ret_require" != "" ] && [ ! -f "$md_ret_require" ]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully $function $md_desc ($md_ret_require not found)."
+        errors+="$__ERRMSGS Could not successfully $function $md_desc ($md_ret_require not found)."
     fi
 
     # check for existance and copy any files/directories returned
     if [ "$md_ret_files" != "" ]; then
         for file in "${md_ret_files[@]}"; do
             if [ ! -e "$md_build/$file" ]; then
-                __ERRMSGS+="$__ERRMSGS Could not successfully install $md_desc ($md_build/$file not found)."
+                errors+="$__ERRMSGS Could not successfully install $md_desc ($md_build/$file not found)."
                 break
             fi
             cp -Rv "$md_build/$file" "$md_inst"
@@ -171,12 +171,16 @@ function rp_callModule() {
 
     case "$mode" in
         sources|build|install|configure)
-            [ ! pushed ] && popd
+            [ ! push_error ] && popd
             ;;
     esac
 
-    [ "$__ERRMSGS" != "" ] && return 0
-    return 1
+    if [ ! -z "$errors" ]; then
+        __ERRMSGS+="$errors"
+        return 1
+    fi
+
+    return 0
 }
 
 function rp_registerModule() {
