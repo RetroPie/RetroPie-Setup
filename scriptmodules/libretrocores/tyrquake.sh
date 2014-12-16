@@ -46,7 +46,7 @@ function configure_tyrquake() {
     # Create startup script
     cat > "$romdir/ports/Quake.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 4 "$emudir/$1/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/quake/retroarch.cfg  $romdir/ports/quake/id1/pak0.pak"
+$rootdir/supplementary/runcommand/runcommand.sh 4 "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/quake/retroarch.cfg  $romdir/ports/quake/id1/pak0.pak"
 _EOF_
 
     chmod +x "$romdir/ports/Quake.sh"
@@ -54,5 +54,5 @@ _EOF_
     setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
     
     # Quake Shareware: Please copy pak0.pak to rom folder
-    # setESSystem "Quake" "quake" "~/RetroPie/roms/quake" ".PAK .pak" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/quake/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "quake" "quake"
+    # setESSystem "Quake" "quake" "~/RetroPie/roms/quake" ".PAK .pak" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/quake/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "quake" "quake"
 }
