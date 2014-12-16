@@ -59,7 +59,7 @@ GNGEO 0.7</desc>
     <game>
         <path>$romdir/esconfig/basic.py</path>
         <name>Update Retroarch Autoconfig (Keyboard necessary)</name>
-        <desc>Joypad config will be stored under /opt/retropie/emulators/RetroArch/configs.</desc>
+        <desc>Joypad config will be stored under /opt/retropie/emulators/retroarch/configs.</desc>
     </game>
     <game>
         <path>$romdir/esconfig/autoon.py</path>
