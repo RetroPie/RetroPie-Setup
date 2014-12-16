@@ -7,7 +7,7 @@ function install_minecraft() {
 }
 
 function configure_minecraft() {
-    mkdir -p "$romdir/ports"
+    mkRomDir "ports"
 
     cat > "$romdir/ports/Minecraft.sh" << _EOF_
 #!/bin/bash

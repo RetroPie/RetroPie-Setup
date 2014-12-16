@@ -23,7 +23,7 @@ function configure_mupen64rpi() {
     # to solve startup problems delete old config file 
     rm /home/$user/.config/mupen64plus/mupen64plus.cfg
 
-    mkdir -p "$romdir/n64"
+    mkRomDir "n64"
 
     setESSystem "Nintendo 64" "n64" "~/RetroPie/roms/n64" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"mupen64plus %ROM%\"" "n64" "n64"
 }

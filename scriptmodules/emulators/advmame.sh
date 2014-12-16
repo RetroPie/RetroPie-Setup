@@ -23,7 +23,7 @@ function install_advmame() {
 }
 
 function configure_advmame() {
-    mkdir -p "$romdir/mame-advmame"
+    mkRomDir "mame-advmame"
 
     rmDirExists "/home/$user/.advance"
     su "$user" -c "$md_inst/bin/advmame"

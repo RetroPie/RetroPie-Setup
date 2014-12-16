@@ -21,7 +21,7 @@ function install_pocketsnes() {
 }
 
 function configure_pocketsnes() {
-    mkdir -p "$romdir/snes"
+    mkRomDir "snes"
 
     rps_retronet_prepareConfig
     setESSystem "Super Nintendo" "snes" "~/RetroPie/roms/snes" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/bin/retroarch -L $md_instlibretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "snes" "snes"

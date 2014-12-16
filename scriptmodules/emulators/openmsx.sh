@@ -25,7 +25,7 @@ function install_openmsx() {
 }
 
 function configure_openmsx() {
-    mkdir -p "$romdir/msx"
+    mkRomDir "msx"
     wget http://downloads.petrockblock.com/retropiearchives/openmsxroms.zip
     mkdir -p "$md_inst/share/systemroms/"
     unzip openmsxroms.zip -d "$md_inst/share/systemroms/"

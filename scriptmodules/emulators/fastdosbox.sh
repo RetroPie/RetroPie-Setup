@@ -24,6 +24,6 @@ function install_fastdosbox() {
 }
 
 function configure_fastdosbox() {
-    mkdir -p "$romdir/pc"
+    mkRomDir "pc"
     setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$md_inst/dosbox" "pc" "pc"    
 }

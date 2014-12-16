@@ -21,8 +21,8 @@ function install_osmose() {
 }
 
 function configure_osmose() {
-    mkdir -p "$romdir/gamegear-osmose"
-    mkdir -p "$romdir/mastersystem-osmose"
+    mkRomDir "gamegear-osmose"
+    mkRomDir "mastersystem-osmose"
 
     setESSystem "Sega Game Gear" "gamegear-osmose" "~/RetroPie/roms/gamegear-osmose" ".gg .GG" "$md_inst/osmose %ROM% -joy -tv -fs" "gamegear" "gamegear"
     setESSystem "Sega Master System / Mark III" "mastersystem-osmose" "~/RetroPie/roms/mastersystem-osmose" ".sms .SMS" "$md_inst/osmose %ROM% -joy -tv -fs" "mastersystem" "mastersystem"

@@ -28,7 +28,7 @@ function install_vice() {
 }
 
 function configure_vice() {
-    mkdir -p "$romdir/c64"
+    mkRomDir "c64"
 
     setESSystem "C64" "c64" "~/RetroPie/roms/c64" ".crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/bin/x64 -sdlbitdepth 16 %ROM%\"" "c64" "c64"
 

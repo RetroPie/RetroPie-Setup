@@ -36,8 +36,8 @@ function configure_quake3() {
     # Add user for no sudo run
     usermod -a -G video $user
 
-    mkdir -p "$romdir/quake3"
-    mkdir -p "$romdir/ports"
+    mkRomDir "quake3"
+    mkRomDir "ports"
 
     cat > "$romdir/ports/Quake III Arena.sh" << _EOF_
 #!/bin/bash

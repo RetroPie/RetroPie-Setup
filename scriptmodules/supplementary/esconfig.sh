@@ -31,7 +31,7 @@ function configure_esconfig()
 {
     cp "$scriptdir/supplementary/settings.xml" "$md_inst/"
     sed -i -e "s|/home/pi/RetroPie|$rootdir|g" "$md_inst/settings.xml"
-    mkdir -p "$romdir/esconfig"
+    mkRomDir "esconfig"
 
     # generate new startup scripts for ES-config
     cp "$scriptdir/supplementary/scripts"/*/*.py "$romdir/esconfig/"

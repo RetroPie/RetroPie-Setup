@@ -27,7 +27,7 @@ function install_uae4all() {
 }
 
 function configure_uae4all() {
-    mkdir -p "$romdir/amiga"
+    mkRomDir "amiga"
 
     cat > "$md_inst/startAmigaDisk.sh" << _EOF_
 #!/bin/bash

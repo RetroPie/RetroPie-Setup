@@ -20,7 +20,7 @@ function install_turbografx16() {
 }
 
 function configure_turbografx16() {
-    mkdir -p "$romdir/pcengine-libretro"
+    mkRomDir "pcengine-libretro"
 
     rps_retronet_prepareConfig
     setESSystem "TurboGrafx 16 (PC Engine)" "pcengine-libretro" "~/RetroPie/roms/pcengine-libretro" ".pce .PCE" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/retroarch -L $md_inst/libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%\"" "pcengine" "pcengine"

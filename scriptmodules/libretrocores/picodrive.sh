@@ -24,7 +24,10 @@ function install_picodrive() {
 }
 
 function configure_picodrive() {
-    mkdir -p "$romdir/"{megadrive,mastersystem,segacd,sega32x}
+    mkRomDir "megadrive"
+    mkRomDir "mastersystem"
+    mkRomDir "segacd"
+    mkRomDir "sega32x"
 
     rps_retronet_prepareConfig
     setESSystem "Sega Master System / Mark III" "mastersystem" "~/RetroPie/roms/mastersystem" ".sms .SMS" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/bin/retroarch -L $md_inst/picodrive_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mastersystem/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%\"" "mastersystem" "mastersystem"

@@ -20,7 +20,7 @@ function install_mednafenpcefast() {
 }
 
 function configure_mednafenpcefast() {
-    mkdir -p "$romdir/pcengine"
+    mkRomDir "pcengine"
 
     setESSystem "TurboGrafx 16 (PC Engine)" "pcengine" "~/RetroPie/roms/pcengine" ".pce .PCE" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/retroarch -L $md_inst/mednafen_pce_fast_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/pcengine/retroarch.cfg %ROM%\"" "pcengine" "pcengine"
 }

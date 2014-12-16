@@ -37,11 +37,6 @@ home="$(eval echo ~$user)"
 romdir="$home/RetroPie/roms"
 emudir="$rootdir/emulators"
 
-# make initial rom directory
-if [[ ! -d $romdir ]]; then
-    mkdir -p $romdir
-fi
-
 __ERRMSGS=""
 __INFMSGS=""
 
@@ -88,6 +83,8 @@ checkNeededPackages git dialog gcc-$__default_gcc_version g++-$__default_gcc_ver
 
 # set default gcc version
 gcc_version $__default_gcc_version
+
+mkRootRomDir "$romdir"
 
 rp_registerAllModules
 

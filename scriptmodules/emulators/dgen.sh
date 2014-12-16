@@ -51,9 +51,9 @@ function configure_dgen()
     ensureKeyValue "emu_z80_startup" "drz80" $rootdir/configs/all/dgenrc
     ensureKeyValue "emu_m68k_startup" "cyclone" $rootdir/configs/all/dgenrc
 
-    mkdir -p "$romdir/megadrive-dgen"
-    mkdir -p "$romdir/segacd-dgen"
-    mkdir -p "$romdir/sega32x-dgen"
+    mkRomDir "megadrive-dgen"
+    mkRomDir "segacd-dgen"
+    mkRomDir "sega32x-dgen"
 
     setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "genesis,megadrive" "megadrive"
     setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $rootdir/configs/all/dgenrc %ROM%\"" "segacd" "segacd"

@@ -22,7 +22,7 @@ function install_fmsx-libretro() {
 }
 
 function configure_fmsx-libretro() {
-    mkdir -p "$romdir/msx"
+    mkRomDir "msx"
     ensureSystemretroconfig "msx"
     rps_retronet_prepareConfig
     setESSystem "MSX" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx1 .MX1 .mx2 .MX2 .col .COL .dsk .DSK" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/$1/bin/retroarch -L $md_inst/fmsx_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/msx/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%\"" "msx" "msx"

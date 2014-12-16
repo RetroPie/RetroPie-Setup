@@ -9,7 +9,7 @@ function install_rpix86() {
 }
 
 function configure_rpix86() {
-    mkdir -p "$romdir/pc"
+    mkRomDir "pc"
 
     cat > "$md_inst/Start.sh" << _EOF_
 #!/bin/bash

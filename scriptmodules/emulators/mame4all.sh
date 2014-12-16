@@ -33,7 +33,7 @@ function install_mame4all() {
 }
 
 function configure_mame4all() {
-    mkdir -p "$romdir/mame"
+    mkRomDir "mame"
     mkdir -p "$md_inst/"{cfg,hi,sta,roms}
     chown -R $user:$user "$md_inst"
     ensureKeyValueShort "samplerate" "22050" "$md_inst/mame.cfg"

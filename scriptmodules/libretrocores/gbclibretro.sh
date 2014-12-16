@@ -22,8 +22,8 @@ function install_gbclibretro() {
 }
 
 function configure_gbclibretro() {
-    mkdir -p "$romdir/gbc"
-    mkdir -p "$romdir/gb"
+    mkRomDir "gbc"
+    mkRomDir "gb"
 
     setESSystem "Game Boy" "gb" "~/RetroPie/roms/gb" ".gb .GB" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/retroarch -L $md_inst/gambatte_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%\"" "gb" "gb"
     setESSystem "Game Boy Color" "gbc" "~/RetroPie/roms/gbc" ".gbc .GBC" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/retroarch -L $md_inst/gambatte_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%\"" "gbc" "gbc"

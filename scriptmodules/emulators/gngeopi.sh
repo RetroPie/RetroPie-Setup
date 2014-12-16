@@ -26,7 +26,7 @@ function install_gngeopi() {
 }
 
 function configure_gngeopi() {
-    mkdir -p "$romdir/neogeo-gngeopi"
+    mkRomDir "neogeo-gngeopi"
 
     setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$md_inst/bin/gngeo -i $romdir/neogeo-gngeopi -B $md_inst/neogeobios %ROM%" "neogeo" "neogeo"
 

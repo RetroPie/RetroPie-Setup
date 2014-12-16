@@ -25,7 +25,7 @@ function install_mupen64plus() {
 }
 
 function configure_mupen64plus() {
-    mkdir -p "$romdir/n64"
+    mkRomDir "n64"
 
     ensureSystemretroconfig "n64"
 

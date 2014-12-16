@@ -36,7 +36,7 @@ function install_jzintv() {
 }
 
 function configure_jzintv() {
-    mkdir -p "$romdir/intellivision"
+    mkRomDir "intellivision"
 
     setESSystem "Intellivision" "intellivision" "~/RetroPie/roms/intellivision" ".int .INT .bin .BIN" "$md_inst/bin/jzintv -z1 -f1 -q %ROM%" "intellivision" ""
 

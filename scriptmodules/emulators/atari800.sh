@@ -20,7 +20,7 @@ function install_atari800() {
 }
 
 function configure_atari800() {
-    mkdir -p "$romdir/atari800"
+    mkRomDir "atari800"
 
     setESSystem "Atari 800" "atari800" "~/RetroPie/roms/atari800" ".xex .XEX" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/atari800 %ROM%\"" "atari800" "atari800"
 }

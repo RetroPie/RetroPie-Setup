@@ -70,7 +70,7 @@ function configure_retroarch() {
     ensureSystemretroconfig "sega32x"
     ensureSystemretroconfig "fba"
 
-    mkdir -p "$romdir/../BIOS/"
+    mkRomDir "../BIOS/"
     ensureKeyValue "system_directory" "$romdir/../BIOS" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "config_save_on_exit" "false" "$rootdir/configs/all/retroarch.cfg"
     ensureKeyValue "video_aspect_ratio" "1.33" "$rootdir/configs/all/retroarch.cfg"

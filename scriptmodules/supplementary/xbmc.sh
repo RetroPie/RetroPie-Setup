@@ -15,7 +15,7 @@ function build_xbmc() {
 function configure_xbmc() {
     echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
 
-    mkdir -p "$romdir/ports"
+    mkRomDir "ports"
 
     cat > "$romdir/ports/xbmc.sh" << _EOF_
 #!/bin/bash

@@ -46,7 +46,6 @@ function addLineToFile()
     echo "Added $1 to file $2"
 }
 
-
 # arg 1: key, arg 2: value, arg 3: file
 # make sure that a key-value pair is set in file
 # key = value
@@ -243,6 +242,21 @@ function rmDirExists()
     if [[ -d "$1" ]]; then
         rm -rf "$1"
     fi
+}
+
+# enforce rom directory permissions - root:$user for roms folder with the sticky bit set,
+# and root:$user for first level subfolders with group writable. This allows them to be
+# writable by the pi user, yet avoid being deleted by accident
+function mkRootRomDir() {
+    mkdir -p "$1"
+    chown root:$user "$1"
+    chmod +t "$1"
+}
+
+function mkRomDir() {
+    mkdir -p "$romdir/$1"
+    chown root:$user "$romdir/$1"
+    chmod g+rw "$romdir/$1"
 }
 
 function setESSystem() {

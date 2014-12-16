@@ -20,7 +20,7 @@ function install_stellalibretro() {
 }
 
 function configure_stellalibretro() {
-    mkdir -p "$romdir/atari2600-libretro"
+    mkRomDir "atari2600-libretro"
 
     rps_retronet_prepareConfig
     setESSystem "Atari 2600" "atari2600-libretro" "~/RetroPie/roms/atari2600-libretro" ".a26 .A26 .bin .BIN .rom .ROM .zip .ZIP .gz .GZ" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/$1/bin/retroarch -L $md_inst/stella_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/atari2600/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%\"" "atari2600" "atari2600"
