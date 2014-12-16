@@ -47,7 +47,7 @@ __doReboot=0
 __default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
 __default_asflags=""
 __default_makeflags=""
-__default_gcc_version="4.8"
+__default_gcc_version="4.7"
 
 [[ -z "${CFLAGS}"        ]] && export CFLAGS="${__default_cflags}"
 [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
