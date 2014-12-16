@@ -183,7 +183,7 @@ function rpSwap() {
 
     case $command in
         on)
-            if [ "$__memory" -lt "$limit" ]; then
+            if [ "$__memory_total" -lt "$limit" ]; then
                 rpSwap off
                 fallocate -l ${size}M "$swapfile"
                 mkswap "$swapfile"

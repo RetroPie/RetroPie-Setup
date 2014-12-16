@@ -44,7 +44,16 @@ __ERRMSGS=""
 __INFMSGS=""
 __doReboot=0
 
-__default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+__memory_phys=$(free -m | awk '/^Mem:/{print $2}')
+__memory_total=$(free -m -t | awk '/^Total:/{print $2}')
+
+__default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+
+# -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
+if [ $__memory_phys -ge 256 ]; then
+  __default_cflags+=" -pipe"
+fi
+
 __default_asflags=""
 __default_makeflags=""
 __default_gcc_version="4.7"
@@ -68,8 +77,6 @@ if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
 else
   __chroot=0
 fi
-
-__memory=$(free -t -m | awk '/^Total:/{print $2}')
 
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
