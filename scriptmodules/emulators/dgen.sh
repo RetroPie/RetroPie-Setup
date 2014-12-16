@@ -3,7 +3,7 @@ rp_module_desc="Megadrive/Genesis emulat. DGEN"
 rp_module_menus="2+"
 
 function depends_dgen() {
-    checkNeededPackages gcc-4.6 g++4.6 libsdl1.2-dev libarchive-dev
+    checkNeededPackages gcc-4.6 g++-4.6 libsdl1.2-dev libarchive-dev
 }
 
 function sources_dgen() {
