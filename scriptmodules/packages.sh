@@ -100,7 +100,7 @@ function rp_callModule() {
 
     # create function name and check if it exists
     function="${mode}_${mod_id}"
-    fn_exists $function || return
+    fn_exists $function || return 0
 
     # create variables that can be used in modules
     local md_id="$mod_id"
