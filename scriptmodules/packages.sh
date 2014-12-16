@@ -171,7 +171,7 @@ function rp_callModule() {
 
     case "$mode" in
         sources|build|install|configure)
-            [ ! push_error ] && popd
+            [ ! $push_error ] && popd
             ;;
     esac
 
