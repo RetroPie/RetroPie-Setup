@@ -30,8 +30,6 @@ function install_quake3() {
     wget http://downloads.petrockblock.com/retropiearchives/Q3DemoPaks.zip
     unzip -o Q3DemoPaks.zip -d "$md_inst"
     rm Q3DemoPaks.zip
-
-    chmod +x "$md_inst/"*.arm 
 }
 
 function configure_quake3() {
