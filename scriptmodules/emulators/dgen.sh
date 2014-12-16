@@ -7,11 +7,11 @@ function depends_dgen() {
 }
 
 function sources_dgen() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/dgen-sdl-1.32.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q http://sourceforge.net/projects/dgen/files/dgen/1.33/dgen-sdl-1.33.tar.gz/download | tar -xvz --strip-components=1
 }
 
 function build_dgen() {
-    ./configure CC="gcc-4.6" CXX="g++-4.6" --disable-opengl --prefix="$md_inst"
+    ./configure --disable-opengl --prefix="$md_inst"
     make clean
     make
     md_ret_require="$md_build/dgen"
@@ -50,8 +50,6 @@ function configure_dgen()
 
     ensureKeyValue "emu_z80_startup" "drz80" $rootdir/configs/all/dgenrc
     ensureKeyValue "emu_m68k_startup" "cyclone" $rootdir/configs/all/dgenrc
-
-    ensureKeyValue "bool_doublebuffer" "no" $rootdir/configs/all/dgenrc
 
     mkdir -p "$romdir/megadrive-dgen"
     mkdir -p "$romdir/segacd-dgen"
