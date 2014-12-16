@@ -13,6 +13,10 @@ function build_cavestory() {
 }
 
 function install_cavestory() {
+    wget http://downloads.petrockblock.com/retropiearchives/nxengine-datafiles.zip -O nxengine-datafiles.zip
+    unzip nxengine-datafiles.zip -d "datafiles"
+    cp -R "datafiles/datafiles" "$md_inst/"
+    rm -rf datafiles nxengine-datafiles.zip
     md_ret_files=(
         'nxengine_libretro.so'
     )
@@ -23,7 +27,7 @@ function configure_cavestory() {
 
     cat > "$romdir/ports/Cave Story.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 1 "$emudir/$1/bin/retroarch -L $md_inst/nxengine_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $rootdir/libretrocores/nxengine-libretro/datafiles/Doukutsu.exe"
+$rootdir/supplementary/runcommand/runcommand.sh 1 "$emudir/$1/bin/retroarch -L $md_inst/nxengine_libretro.so --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/cavestory/retroarch.cfg $md_inst/datafiles/Doukutsu.exe"
 _EOF_
     chmod +x "$romdir/ports/Cave Story.sh"
 
