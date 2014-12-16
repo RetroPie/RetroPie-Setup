@@ -23,7 +23,11 @@ function install_advmame() {
 }
 
 function configure_advmame() {
+    mkdir -p "$romdir/mame-advmame"
+
     rmDirExists "/home/$user/.advance"
     su "$user" -c "$md_inst/bin/advmame"
     echo 'device_video_clock 5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60' >> "/home/$user/.advance/advmame.rc"
+
+    setESSystem "MAME" "mame-advmame" "~/RetroPie/roms/mame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/bin/advmame %BASENAME%\"" "arcade" "mame"
 }
