@@ -2,6 +2,10 @@ rp_module_id="fbalibretro"
 rp_module_desc="FBA LibretroCore"
 rp_module_menus="2+"
 
+function depends_fbalibretro() {
+    checkNeededPackages gcc-4.8 g++-4.8
+}
+
 function sources_fbalibretro() {
     gitPullOrClone "$md_build" git://github.com/libretro/fba-libretro.git
 }
