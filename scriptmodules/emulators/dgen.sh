@@ -51,6 +51,8 @@ function configure_dgen()
     ensureKeyValue "emu_z80_startup" "drz80" $rootdir/configs/all/dgenrc
     ensureKeyValue "emu_m68k_startup" "cyclone" $rootdir/configs/all/dgenrc
 
+    ensureKeyValue "bool_doublebuffer" "no" $rootdir/configs/all/dgenrc
+
     mkdir -p "$romdir/megadrive-dgen"
     mkdir -p "$romdir/segacd-dgen"
     mkdir -p "$romdir/sega32x-dgen"
