@@ -47,7 +47,7 @@ __doReboot=0
 __default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
 __default_asflags=""
 __default_makeflags=""
-__default_gcc_version="4.7"
+__default_gcc_version="4.8"
 
 [[ -z "${CFLAGS}"        ]] && export CFLAGS="${__default_cflags}"
 [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
@@ -80,7 +80,7 @@ __swapdir="$scriptdir/tmp/"
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/packages.sh"
 
-checkNeededPackages git dialog gcc-4.7 g++-4.7
+checkNeededPackages git dialog gcc-$__default_gcc_version g++-$__default_gcc_version
 
 # set default gcc version
 gcc_version $__default_gcc_version
