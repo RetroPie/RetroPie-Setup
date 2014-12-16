@@ -8,12 +8,13 @@ function depends_linapple() {
 
 function sources_linapple() {
     wget -O- -q http://downloads.petrockblock.com/retropiearchives/linapple-src_2a.tar.bz2 | tar -xvj --strip-components=1
+    addLineToFile "#include <unistd.h>" "src/Timer.h"
 }
 
 function build_linapple() {
     cd src
     make clean
-    make CXX="g++-4.6"
+    make
 }
 
 function install_linapple() {
