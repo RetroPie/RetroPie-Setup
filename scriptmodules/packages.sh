@@ -140,7 +140,7 @@ function rp_callModule() {
             action="Removing"
             ;;
     esac
-    local push_error=$?
+    local pushed=$?
     local errors=""
 
     # print an action and a description
@@ -171,7 +171,7 @@ function rp_callModule() {
 
     case "$mode" in
         sources|build|install|configure)
-            [ ! $push_error ] && popd
+            [ $pushed -ne 1 ] && popd
             ;;
     esac
 
