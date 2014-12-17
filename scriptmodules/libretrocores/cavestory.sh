@@ -1,6 +1,6 @@
 rp_module_id="cavestory"
 rp_module_desc="Cave Story LibretroCore"
-rp_module_menus="2+"
+rp_module_menus="4+"
 
 function sources_cavestory() {
     gitPullOrClone "$md_build" git://github.com/libretro/nxengine-libretro.git
@@ -13,10 +13,6 @@ function build_cavestory() {
 }
 
 function install_cavestory() {
-    wget http://downloads.petrockblock.com/retropiearchives/nxengine-datafiles.zip -O nxengine-datafiles.zip
-    unzip nxengine-datafiles.zip -d "datafiles"
-    cp -R "datafiles/datafiles" "$md_inst/"
-    rm -rf datafiles nxengine-datafiles.zip
     md_ret_files=(
         'nxengine_libretro.so'
     )
