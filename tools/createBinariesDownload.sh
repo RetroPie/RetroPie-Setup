@@ -41,6 +41,7 @@ filelist+=("$rootdir/supplementary/sdl1dispmanx")
 filelist+=("$rootdir/supplementary/snesdev")
 filelist+=("$rootdir/emulators")
 filelist+=("$rootdir/libretrocores")
+filelist+=("$rootdir/ports")
 
 echo "Checking, if all directories/files exist"
 tLen=${#filelist[@]}
