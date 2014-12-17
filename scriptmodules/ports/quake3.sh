@@ -41,7 +41,7 @@ function configure_quake3() {
 
     cat > "$romdir/ports/Quake III Arena.sh" << _EOF_
 #!/bin/bash
-LD_LIBRARY_PATH=lib "$md_instioquake3.arm"
+LD_LIBRARY_PATH=lib "$md_inst/ioquake3.arm"
 _EOF_
 
     chmod +x "$romdir/ports/Quake III Arena.sh"
