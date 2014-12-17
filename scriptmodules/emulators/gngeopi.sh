@@ -30,5 +30,5 @@ function configure_gngeopi() {
 
     setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$md_inst/bin/gngeo -i $romdir/neogeo-gngeopi -B $md_inst/neogeobios %ROM%" "neogeo" "neogeo"
 
-    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$md_inst/neogeobios/'."
+    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$md_inst/neogeobios/'"
 }
