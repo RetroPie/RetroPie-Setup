@@ -44,7 +44,7 @@ function configure_linapple() {
     cat > "Start.sh" << _EOF_
 #!/bin/bash
 pushd "$md_inst"
-./linapple
+sudo ./linapple
 popd
 _EOF_
     chmod +x Start.sh
