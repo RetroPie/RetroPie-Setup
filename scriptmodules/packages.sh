@@ -213,7 +213,8 @@ function rp_registerModuleDir() {
 }
 
 function rp_registerAllModules() {
-    rp_registerModuleDir 100 "emulators" 
+    rp_registerModuleDir 100 "emulators"
     rp_registerModuleDir 200 "libretrocores" 
+    rp_registerModuleDir 250 "ports"
     rp_registerModuleDir 300 "supplementary"
 }
