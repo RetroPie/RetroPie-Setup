@@ -28,7 +28,16 @@ function install_gngeopi() {
 function configure_gngeopi() {
     mkRomDir "neogeo-gngeopi"
 
+    # add default controls for keyboard p1/p2
+    mkdir -p "$home/.gngeo"
+    cat > "$home/.gngeo/gngeorc" <<\_EOF_
+p1control A=K122,B=K120,C=K97,D=K115,START=K49,COIN=K51,UP=K273,DOWN=K274,LEFT=K276,RIGHT=K275,MENU=K27
+p2control A=K108,B=K59,C=K111,D=K112,START=K50,COIN=K52,UP=K264,DOWN=K261,LEFT=K260,RIGHT=K262,MENU=K27
+_EOF_
+
+    chown -R $user:$user "$home/.gngeo"
+
     setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$md_inst/bin/gngeo -i $romdir/neogeo-gngeopi -B $md_inst/neogeobios %ROM%" "neogeo" "neogeo"
 
-    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$md_inst/neogeobios/'"
+    __INFMSGS="$__INFMSGS You need to copy the NeoGeo BIOS (neogeo.zip) files to the roms folder '$md_inst/neogeobios/'"
 }
