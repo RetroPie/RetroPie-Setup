@@ -17,8 +17,6 @@ shift
 # set cpu governor profile performance
 echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
-set -x
-
 binary=${1/% */}
 # if we have a dispmanx conf file and the current binary is in it, change the library path to load dispmanx sdl first
 if [ -f "$dispmanx_conf" ] && grep "$binary" "$dispmanx_conf"; then
