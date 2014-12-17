@@ -16,7 +16,7 @@ function install_doom() {
     mkdir -p $romdir/ports/doom
 
     # download doom 1 shareware
-    wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad" -O "$md_inst/doom1.wad"
+    wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
 
     # download and install midi instruments
     wget -O- -q "http://downloads.petrockblock.com/retropiearchives/timidity.tar.gz" | tar -xvz -C /usr/local/lib
