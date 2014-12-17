@@ -1,6 +1,6 @@
 rp_module_id="sdl2"
 rp_module_desc="SDL 2.0.1"
-rp_module_menus="2+"
+rp_module_menus="2-"
 
 function depends_sdl2() {
     # These packages are listed in SDL2's "README-raspberrypi.txt" file as build dependencies.
