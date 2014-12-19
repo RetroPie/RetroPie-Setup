@@ -14,7 +14,7 @@ function sources_openmsx() {
 }
 
 function build_openmsx() {
-    rpSwap on 256 240
+    rpSwap on 512
 
     pushd "$rootdir/emulators/openmsx-0.10.0"
     ./configure
