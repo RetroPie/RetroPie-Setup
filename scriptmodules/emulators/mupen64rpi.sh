@@ -4,11 +4,10 @@ rp_module_menus="4+"
 
 function sources_mupen64rpi() {
     gitPullOrClone "$rootdir/emulators/mupen64plus" https://github.com/ricrpi/mupen64plus
-    sed -i "s/MEM_REQ=[0-9]*/MEM_REQ=0/" build.sh
 }
 
 function build_mupen64rpi() {
-    rpSwap on 700
+    rpSwap on 750
 
     pushd "$rootdir/emulators/mupen64plus"
     ./build.sh
