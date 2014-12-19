@@ -8,7 +8,7 @@ function sources_mupen64rpi() {
 }
 
 function build_mupen64rpi() {
-    rpSwap on 512 700
+    rpSwap on 750
     ./build.sh
     rpSwap off
 

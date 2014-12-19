@@ -10,7 +10,7 @@ function sources_mupen64plus() {
 }
 
 function build_mupen64plus() {
-    rpSwap on 256 240
+    rpSwap on 750
     make clean
     make platform=rpi
     rpSwap off

@@ -13,7 +13,7 @@ function sources_openmsx() {
 }
 
 function build_openmsx() {
-    rpSwap on 256 240
+    rpSwap on 512
     ./configure
     make clean
     make

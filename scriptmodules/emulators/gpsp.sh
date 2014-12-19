@@ -12,7 +12,7 @@ function sources_gpsp() {
 
 function build_gpsp() {
     cd raspberrypi
-    rpSwap on 256 240
+    rpSwap on 512
     make clean
     make
     rpSwap off
