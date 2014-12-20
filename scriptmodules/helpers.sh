@@ -37,12 +37,10 @@ function ask()
 function addLineToFile()
 {
     if [[ -f "$2" ]]; then
-        cp "$2" ./temp
         mv "$2" "$2.old"
     fi
-    sed -i -e '$a\' ./temp
-    echo "$1" >> ./temp
-    mv ./temp "$2"
+    sed -i -e '$a\' "$2"
+    echo "$1" >> "$2"
     echo "Added $1 to file $2"
 }
 
