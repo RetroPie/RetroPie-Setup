@@ -36,6 +36,7 @@ user="$SUDO_USER"
 home="$(eval echo ~$user)"
 romdir="$home/RetroPie/roms"
 emudir="$rootdir/emulators"
+configdir="$rootdir/configs"
 
 __ERRMSGS=""
 __INFMSGS=""
