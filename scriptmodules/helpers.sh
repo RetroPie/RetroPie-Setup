@@ -46,34 +46,45 @@ function addLineToFile()
     echo "Added $1 to file $2"
 }
 
+# arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
+function iniSet()
+{
+    local command="$1"
+    local delim="$2"
+    local quoted="$3"
+    local key="$4"
+    local value="$5"
+    local file="$6"
+
+    local match_re="[\s#]*$key\s*=.*$"
+    local match=$(egrep -i "$match_re" "$file" | tail -1)
+
+    [ "$command" == "unset" ] && key="# $key"
+    local replace="$key$delim$quoted$value$quoted"
+    echo "Setting $replace in $file"
+    if [[ -z  "$match" ]]; then
+        # add key-value pair
+        echo "$replace" >> "$file"
+    else
+        # replace existing key-value pair
+        sed -i -e "s|$match|$replace|g" "$file"
+    fi
+    exit
+}
+
 # arg 1: key, arg 2: value, arg 3: file
 # make sure that a key-value pair is set in file
 # key = value
 function ensureKeyValue()
 {
-    echo "Setting $1 = $2 in $3"
-    if [[ -z $(egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
-        # add key-value pair
-        echo "$1 = ""$2""" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3 | tail -1`
-        sed $3 -i -e "s|$toreplace|$1 = ""$2""|g"
-    fi
+    iniSet "set" " = " "\"" "$1" "$2" "$3"
 }
 
 # make sure that a key-value pair is NOT set in file
 # # key = value
 function disableKeyValue()
 {
-    if [[ -z $(egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
-        # add key-value pair
-        echo "# $1 = ""$2""" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3 `
-        sed $3 -i -e "s|$toreplace|# $1 = ""$2""|g"
-    fi
+    iniSet "unset" " = " "\"" "$1" "$2" "$3"
 }
 
 # arg 1: key, arg 2: value, arg 3: file
@@ -81,41 +92,20 @@ function disableKeyValue()
 # key=value
 function ensureKeyValueShort()
 {
-    if [[ -z $(egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
-        # add key-value pair
-        echo "$1=""$2""" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3 | tail -1`
-        sed $3 -i -e "s|$toreplace|$1=""$2""|g"
-    fi
+    iniSet "set" "=" "\"" "$1" "$2" "$3"
 }
 
 # make sure that a key-value pair is NOT set in file
 # # key=value
 function disableKeyValueShort()
 {
-    if [[ -z $(egrep -i "#? *$1=""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
-        # add key-value pair
-        echo "# $1=""$2""" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1=""?[+|-]?[0-9]*[a-z]*"""? $3`
-        sed $3 -i -e "s|$toreplace|# $1=""$2""|g"
-    fi
+    iniSet "unset" "=" "\"" "$1" "$2" "$3"
 }
 
 # ensures pair of key ($1)-value ($2) in file $3
 function ensureKeyValueBootconfig()
 {
-    if [[ -z $(egrep -i "#? *$1=[+|-]?[0-9]*[a-z]*" $3) ]]; then
-        # add key-value pair
-        echo "$1=$2" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1=[+|-]?[0-9]*[a-z]*" $3`
-        sed $3 -i -e "s|$toreplace|$1=$2|g"
-    fi
+    iniSet "set" "=" "" "$1" "$2" "$3"
 }
 
 function printMsg()
