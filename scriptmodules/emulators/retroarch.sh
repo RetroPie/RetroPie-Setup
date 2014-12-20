@@ -51,8 +51,8 @@ function configure_retroarch() {
         cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
     fi
 
-    cp "$md_inst/retroarch.cfg" "$configdir/all/"
     mkdir -p "$configdir/all/"
+    cp "$md_inst/retroarch.cfg" "$configdir/all/"
 
     ensureSystemretroconfig "atari2600"
     ensureSystemretroconfig "cavestory"
@@ -71,7 +71,8 @@ function configure_retroarch() {
     ensureSystemretroconfig "sega32x"
     ensureSystemretroconfig "fba"
 
-    mkRomDir "../BIOS/"
+    mkdir -p "$romdir/../BIOS/"
+    chown $user:$user "$romdir/../BIOS/"
     ensureKeyValue "system_directory" "$romdir/../BIOS" "$configdir/all/retroarch.cfg"
     ensureKeyValue "config_save_on_exit" "false" "$configdir/all/retroarch.cfg"
     ensureKeyValue "video_aspect_ratio" "1.33" "$configdir/all/retroarch.cfg"
