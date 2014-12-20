@@ -69,7 +69,6 @@ function iniSet()
         # replace existing key-value pair
         sed -i -e "s|$match|$replace|g" "$file"
     fi
-    exit
 }
 
 # arg 1: key, arg 2: value, arg 3: file
