@@ -51,7 +51,7 @@ function iniSet()
 {
     local command="$1"
     local delim="$2"
-    local quoted="$3"
+    local quote="$3"
     local key="$4"
     local value="$5"
     local file="$6"
@@ -60,7 +60,7 @@ function iniSet()
     local match=$(egrep -i "$match_re" "$file" | tail -1)
 
     [ "$command" == "unset" ] && key="# $key"
-    local replace="$key$delim$quoted$value$quoted"
+    local replace="$key$delim$quote$value$quote"
     echo "Setting $replace in $file"
     if [[ -z  "$match" ]]; then
         # add key-value pair
