@@ -14,6 +14,7 @@ function sources_uae4all() {
     wget http://downloads.petrockblock.com/retropiearchives/uae4rpi.tar.bz2
     tar -jxvf uae4rpi.tar.bz2 -C "$rootdir/emulators/"
     rm uae4rpi.tar.bz2
+    sed -i "s/-lstdc++$/-lstdc++ -lm -lz/" "$rootdir/emulators/uae4rpi/Makefile"
 }
 
 function build_uae4all() {

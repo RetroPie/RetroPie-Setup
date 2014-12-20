@@ -3,7 +3,7 @@ rp_module_desc="FBA emulator PiFBA"
 rp_module_menus="2+"
 
 function depends_pifba() {
-	rps_checkNeededPackages libasound2-dev
+    rps_checkNeededPackages libasound2-dev
 }
 
 function sources_pifba() {
@@ -12,6 +12,7 @@ function sources_pifba() {
 
 function build_pifba() {
     pushd "$rootdir/emulators/pifba"
+    sed -i "s/-lglib-2.0$/-lglib-2.0 -lasound -lrt/g" Makefile
     mkdir ".obj"
     make clean
     make

@@ -177,7 +177,7 @@ def GNGEOHelper(parser, string):
 ########################################################################################
 # path variables
 home            = '/opt'
-source_path	= home + '/retropie/emulators/RetroArch/installdir/bin/'
+source_path	= home + '/retropie/emulators/RetroArch/tools/'
 source_cfg	= source_path + 'config.ini'
 auto_path   	= home + '/retropie/emulators/RetroArch/configs/'
 gngeo_cfg      	= home + '/.gngeo/gngeorc.retropie'

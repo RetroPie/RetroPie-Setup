@@ -202,6 +202,32 @@ function rps_availFreeDiskSpace() {
     fi
 }
 
+function rpSwap() {
+    local command=$1
+    local swapfile="$__swapdir/swap"
+    case $command in
+        on)
+            rpSwap off
+            local memory=$(free -t -m | awk '/^Total:/{print $2}')
+            local needed=$2
+            local size=$((needed - memory))
+            mkdir -p "$__swapdir/"
+            if [ $size -ge 0 ]; then
+
+                echo "Adding $size MB of additional swap"
+                fallocate -l ${size}M "$swapfile"
+                mkswap "$swapfile"
+                swapon "$swapfile"
+            fi
+            ;;
+        off)
+            echo "Removing additional swap"
+            swapoff "$swapfile" 2>/dev/null
+            rm -f "$swapfile"
+            ;;
+    esac
+}
+
 # This function is not used so far.
 function checkIfPullNeeded()
 {

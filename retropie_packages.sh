@@ -71,6 +71,8 @@ fi
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
 
+__swapdir="$scriptdir/tmp/"
+
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/packages.sh"
 

@@ -10,7 +10,7 @@ function configure_retroarchjoyconfig() {
     clear
     # todo Find number of first joystick device in /dev/input
     numJoypads=$(ls -1 /dev/input/js* | head -n 1)
-    $rootdir/emulators/RetroArch/installdir/bin/retroarch-joyconfig --autoconfig "$rootdir/emulators/RetroArch/configs/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
+    $rootdir/emulators/RetroArch/tools/retroarch-joyconfig --autoconfig "$rootdir/emulators/RetroArch/configs/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
     configfname=`grep "input_device = \"" $rootdir/emulators/RetroArch/configs/tempconfig.cfg`
     configfname=`echo ${configfname:16:-1} | tr -d ' '`
     mv $rootdir/emulators/RetroArch/configs/tempconfig.cfg $rootdir/emulators/RetroArch/configs/$configfname.cfg
