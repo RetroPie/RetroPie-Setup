@@ -260,6 +260,11 @@ function mkRomDir() {
     chmod g+rw "$romdir/$1"
 }
 
+function mkUserDir() {
+    mkdir -p "$1"
+    chown $user:$user "$1"
+}
+
 function setESSystem() {
     local fullname=$1
     local name=$2
