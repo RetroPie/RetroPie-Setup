@@ -21,7 +21,7 @@ function install_mupen64rpi() {
 
 function configure_mupen64rpi() {
     # to solve startup problems delete old config file 
-    rm "$home/.config/mupen64plus/mupen64plus.cfg"
+    rm -f "$home/.config/mupen64plus/mupen64plus.cfg"
 
     mkRomDir "n64"
 
