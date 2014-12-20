@@ -57,7 +57,7 @@ function ensureKeyValue()
         echo "$1 = ""$2""" >> $3
     else
         # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3`
+        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3 | tail -1`
         sed $3 -i -e "s|$toreplace|$1 = ""$2""|g"
     fi
 }
@@ -71,7 +71,7 @@ function disableKeyValue()
         echo "# $1 = ""$2""" >> $3
     else
         # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3`
+        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3 `
         sed $3 -i -e "s|$toreplace|# $1 = ""$2""|g"
     fi
 }
@@ -86,7 +86,7 @@ function ensureKeyValueShort()
         echo "$1=""$2""" >> $3
     else
         # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3`
+        toreplace=`egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3 | tail -1`
         sed $3 -i -e "s|$toreplace|$1=""$2""|g"
     fi
 }
