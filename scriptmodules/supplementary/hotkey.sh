@@ -10,17 +10,17 @@ function configure_hotkey() {
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [ "$choices" != "" ]; then
         case $choices in
-            1) ensureKeyValue "input_enable_hotkey" "nul" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_menu_toggle" "F1" "$rootdir/configs/all/retroarch.cfg"
+            1) ensureKeyValue "input_enable_hotkey" "nul" "$configdir/all/retroarch.cfg"
+               ensureKeyValue "input_exit_emulator" "escape" "$configdir/all/retroarch.cfg"
+               ensureKeyValue "input_menu_toggle" "F1" "$configdir/all/retroarch.cfg"
                             ;;
-            2) ensureKeyValue "input_enable_hotkey" "alt" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_menu_toggle" "F1" "$rootdir/configs/all/retroarch.cfg"
+            2) ensureKeyValue "input_enable_hotkey" "alt" "$configdir/all/retroarch.cfg"
+               ensureKeyValue "input_exit_emulator" "escape" "$configdir/all/retroarch.cfg"
+               ensureKeyValue "input_menu_toggle" "F1" "$configdir/all/retroarch.cfg"
                             ;;
-            3) ensureKeyValue "input_enable_hotkey" "escape" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_exit_emulator" "nul" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_menu_toggle" "escape" "$rootdir/configs/all/retroarch.cfg"
+            3) ensureKeyValue "input_enable_hotkey" "escape" "$configdir/all/retroarch.cfg"
+               ensureKeyValue "input_exit_emulator" "nul" "$configdir/all/retroarch.cfg"
+               ensureKeyValue "input_menu_toggle" "escape" "$configdir/all/retroarch.cfg"
                             ;;
         esac
     else
