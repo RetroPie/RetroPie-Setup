@@ -100,31 +100,31 @@ function configure_retroarch() {
     ensureKeyValue "video_shader_dir" "$md_inst/shader/" "$configdir/all/retroarch.cfg"
 
     # system-specific shaders, SNES
-    ensureKeyValue "video_shader" "\"$md_inst/shader/snes_phosphor.glslp\"" "$configdir/snes/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/snes_phosphor.glslp" "$configdir/snes/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$configdir/snes/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$configdir/snes/retroarch.cfg"
 
     # system-specific shaders, NES
-    ensureKeyValue "video_shader" "\"$md_inst/shader/phosphor.glslp\"" "$configdir/nes/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/phosphor.glslp" "$configdir/nes/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$configdir/nes/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$configdir/nes/retroarch.cfg"
 
     # system-specific shaders, Megadrive
-    ensureKeyValue "video_shader" "\"$md_inst/shader/phosphor.glslp\"" "$configdir/megadrive/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/phosphor.glslp" "$configdir/megadrive/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$configdir/megadrive/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$configdir/megadrive/retroarch.cfg"
 
     # system-specific shaders, Mastersystem
-    ensureKeyValue "video_shader" "\"$md_inst/shader/phosphor.glslp\"" "$configdir/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/phosphor.glslp" "$configdir/mastersystem/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$configdir/mastersystem/retroarch.cfg"
     ensureKeyValue "video_smooth" "false" "$configdir/mastersystem/retroarch.cfg"
 
     # system-specific shaders, Gameboy
-    ensureKeyValue "video_shader" "\"$md_inst/shader/hq4x.glslp\"" "$configdir/gb/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/hq4x.glslp" "$configdir/gb/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$configdir/gb/retroarch.cfg"
 
     # system-specific shaders, Gameboy Color
-    ensureKeyValue "video_shader" "\"$md_inst/shader/hq4x.glslp\"" "$configdir/gbc/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/hq4x.glslp" "$configdir/gbc/retroarch.cfg"
     ensureKeyValue "video_shader_enable" "false" "$configdir/gbc/retroarch.cfg"
 
     # system-specific, PSX
