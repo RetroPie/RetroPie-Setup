@@ -25,6 +25,7 @@ function install_retroarch() {
     make install
     mkdir -p "$md_inst/shader"
     cp "$scriptdir/supplementary/RetroArchShader/"* "$md_inst/shader/"
+    chown $user:$user -R "$md_inst/shader"
     md_ret_files=(
         'retroarch.cfg'
         'tools/retroarch-joyconfig'
@@ -94,8 +95,6 @@ function configure_retroarch() {
     ensureKeyValue "video_gpu_screenshot" "true" "$configdir/all/retroarch.cfg"
 
     # enable and configure shaders
-    mkdir -p "$md_inst/shader"
-
     ensureKeyValue "input_shader_next" "m" "$configdir/all/retroarch.cfg"
     ensureKeyValue "input_shader_prev" "n" "$configdir/all/retroarch.cfg"
     ensureKeyValue "video_shader_dir" "$md_inst/shader/" "$configdir/all/retroarch.cfg"
@@ -149,6 +148,5 @@ function configure_retroarch() {
     ensureKeyValue "input_autodetect_enable" "true" "$configdir/all/retroarch.cfg"
     ensureKeyValue "joypad_autoconfig_dir" "$md_inst/configs/" "$configdir/all/retroarch.cfg"
 
-    chown $user:$user -R "$md_inst/shader/"
-    chown $user:$user -R "$configdir/"
+    chown $user:$user -R "$configdir"
 }
