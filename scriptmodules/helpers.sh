@@ -54,7 +54,7 @@ function iniSet()
     local value="$5"
     local file="$6"
 
-    local delim_strip=${delim/ //}
+    local delim_strip=${delim// /}
     local match_re="[\s#]*$key\s*$delim_strip.*$"
     local match=$(egrep -i "$match_re" "$file" | tail -1)
 
