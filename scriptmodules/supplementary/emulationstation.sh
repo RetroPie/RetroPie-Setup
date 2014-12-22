@@ -16,9 +16,11 @@ function sources_emulationstation() {
 }
 
 function build_emulationstation() {
+    rpSwap on 512
     cmake .
     make clean
     make
+    rpSwap off
     md_ret_require="$md_build/emulationstation"
 }
 
