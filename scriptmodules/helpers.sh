@@ -37,7 +37,7 @@ function ask()
 function addLineToFile()
 {
     if [[ -f "$2" ]]; then
-        mv "$2" "$2.old"
+        cp "$2" "$2.old"
     fi
     sed -i -e '$a\' "$2"
     echo "$1" >> "$2"
