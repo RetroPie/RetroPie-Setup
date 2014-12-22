@@ -11,9 +11,11 @@ function sources_dgen() {
 }
 
 function build_dgen() {
+    rpSwap on 512
     ./configure --disable-opengl --prefix="$md_inst"
     make clean
     make
+    rpSwap off
     md_ret_require="$md_build/dgen"
 }
 
