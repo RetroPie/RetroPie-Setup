@@ -26,7 +26,7 @@ function configure_dgen()
 {
     if [[ ! -f "$configdir/all/dgenrc" ]]; then
         mkdir -p "$configdir/all/"
-        cp "$md_inst/sample.dgenrc" "$configdir/all/dgenrc"
+        cp "$md_build/sample.dgenrc" "$configdir/all/dgenrc"
         chown $user:$user "$configdir/all/dgenrc"
     fi
 
