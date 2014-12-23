@@ -11,7 +11,7 @@ function sources_dgen() {
 }
 
 function build_dgen() {
-    ./configure --disable-opengl --disable-hqx --prefix="$md_inst" CFLAGS="$CFLAGS --param ggc-min-expand=0 --param ggc-min-heapsize=8192"
+    ./configure --disable-opengl --disable-hqx --prefix="$md_inst"
     make clean
     make
     md_ret_require="$md_build/dgen"
