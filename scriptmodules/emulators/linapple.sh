@@ -18,6 +18,8 @@ function build_linapple() {
 }
 
 function install_linapple() {
+    mkdir -p "$md_inst/ftp/cache"
+    mkdir -p "$md_inst/images"
     md_ret_files=(
         'CHANGELOG'
         'INSTALL'
@@ -26,11 +28,6 @@ function install_linapple() {
         'charset40.bmp'
         'font.bmp'
         'icon.bmp'
-        'linapple1.bmp'
-        'linapple2.bmp'
-        'linapple3.bmp'
-        'linapple4.bmp'
-        'linapple5.bmp'
         'linapple.conf'
         'splash.bmp'
         'Master.dsk'
@@ -41,10 +38,12 @@ function install_linapple() {
 function configure_linapple() {
     mkdir -p $romdir/apple2
 
+    chown -R $user:$user "$md_inst"
+
     cat > "Start.sh" << _EOF_
 #!/bin/bash
 pushd "$md_inst"
-sudo ./linapple
+./linapple
 popd
 _EOF_
     chmod +x Start.sh
