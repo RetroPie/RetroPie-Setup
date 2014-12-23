@@ -30,29 +30,29 @@ function configure_dgen()
         chown $user:$user "$configdir/all/dgenrc"
     fi
 
-    ensureKeyValue "joy_pad1_a" "joystick0-button0" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad1_b" "joystick0-button1" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad1_c" "joystick0-button2" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad1_x" "joystick0-button3" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad1_y" "joystick0-button4" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad1_z" "joystick0-button5" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad1_mode" "joystick0-button6" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad1_start" "joystick0-button7" $configdir/all/dgenrc
+    ensureKeyValue "joy_pad1_a" "joystick0-button0" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad1_b" "joystick0-button1" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad1_c" "joystick0-button2" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad1_x" "joystick0-button3" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad1_y" "joystick0-button4" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad1_z" "joystick0-button5" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad1_mode" "joystick0-button6" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad1_start" "joystick0-button7" "$configdir/all/dgenrc"
 
-    ensureKeyValue "joy_pad2_a" "joystick1-button0" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad2_b" "joystick1-button1" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad2_c" "joystick1-button2" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad2_x" "joystick1-button3" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad2_y" "joystick1-button4" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad2_z" "joystick1-button5" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad2_mode" "joystick1-button6" $configdir/all/dgenrc
-    ensureKeyValue "joy_pad2_start" "joystick1-button7" $configdir/all/dgenrc
+    ensureKeyValue "joy_pad2_a" "joystick1-button0" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad2_b" "joystick1-button1" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad2_c" "joystick1-button2" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad2_x" "joystick1-button3" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad2_y" "joystick1-button4" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad2_z" "joystick1-button5" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad2_mode" "joystick1-button6" "$configdir/all/dgenrc"
+    ensureKeyValue "joy_pad2_start" "joystick1-button7" "$configdir/all/dgenrc"
 
-    ensureKeyValue "emu_z80_startup" "drz80" $configdir/all/dgenrc
-    ensureKeyValue "emu_m68k_startup" "cyclone" $configdir/all/dgenrc
+    ensureKeyValue "emu_z80_startup" "drz80" "$configdir/all/dgenrc"
+    ensureKeyValue "emu_m68k_startup" "cyclone" "$configdir/all/dgenrc"
 
     # we don't have opengl (or build dgen with it)
-    ensureKeyValue "bool_opengl" "no" $configdir/all/dgenrc
+    ensureKeyValue "bool_opengl" "no" "$configdir/all/dgenrc"
 
     # lower sample rate
     ensureKeyValue "int_soundrate" "22050" "$configdir/all/dgenrc"
@@ -66,9 +66,9 @@ function configure_dgen()
     mkRomDir "segacd-dgen"
     mkRomDir "sega32x-dgen"
 
-    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\"" "genesis,megadrive" "megadrive"
-    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\"" "segacd" "segacd"
-    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\"" "sega32x" "sega32x"
+    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r "$configdir/all/dgenrc" %ROM%\"" "genesis,megadrive" "megadrive"
+    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r "$configdir/all/dgenrc" %ROM%\"" "segacd" "segacd"
+    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r "$configdir/all/dgenrc" %ROM%\"" "sega32x" "sega32x"
 }
 
 function configure_standard_dgen() {
