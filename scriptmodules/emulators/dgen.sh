@@ -51,15 +51,16 @@ function configure_dgen()
     ensureKeyValue "emu_z80_startup" "drz80" $configdir/all/dgenrc
     ensureKeyValue "emu_m68k_startup" "cyclone" $configdir/all/dgenrc
 
-    # doublebuffer is disabled on framebuffer by default anyway
-    ensureKeyValue "bool_doublebuffer" "no" $configdir/all/dgenrc
-    # we don't have opengl (or built dgen with it)
+    # we don't have opengl (or build dgen with it)
     ensureKeyValue "bool_opengl" "no" $configdir/all/dgenrc
-    # without dispmanx, scale seems to run the fastest
-    ensureKeyValue "scaling_startup" "scale" $configdir/all/dgenrc
+
+    # lower sample rate
+    ensureKeyValue "int_soundrate" "22050" "$configdir/all/dgenrc"
 
     # if the framebuffer is not the requires resolution dgen seems to give a black screen
     ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
+
+    configure_standard_dgen
 
     mkRomDir "megadrive-dgen"
     mkRomDir "segacd-dgen"
@@ -68,4 +69,30 @@ function configure_dgen()
     setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\"" "genesis,megadrive" "megadrive"
     setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\"" "segacd" "segacd"
     setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\"" "sega32x" "sega32x"
+}
+
+function configure_standard_dgen() {
+    # turn off dispmanx
+    ensureKeyValueShort "dgen" "0" "$configdir/all/dispmanx"
+    # doublebuffer is disabled on framebuffer by default anyway
+    ensureKeyValue "bool_doublebuffer" "no" "$configdir/all/dgenrc"
+    ensureKeyValue "bool_screen_thread" "no" "$configdir/all/dgenrc"
+    # full screen width/height by default
+    ensureKeyValue "int_width" "-1" "configdir/all/dgenrc"
+    ensureKeyValue "int_height" "-1" "$configdir/all/dgenrc"
+    # without dispmanx, scale seems to run the fastest
+    ensureKeyValue "scaling_startup" "scale" "$configdir/all/dgenrc"
+}
+
+function configure_dispmanx_dgen() {
+    # turn on dispmanx
+    ensureKeyValueShort "dgen" "1" "$configdir/all/dispmanx"
+    # turn on double buffer
+    ensureKeyValue "bool_doublebuffer" "yes" "$configdir/all/dgenrc"
+    ensureKeyValue "bool_screen_thread" "yes" "$configdir/all/dgenrc"
+    # set rendering resolution to 320x240
+    ensureKeyValue "int_width" "320" "configdir/all/dgenrc"
+    ensureKeyValue "int_height" "240" "$configdir/all/dgenrc"
+    # no scaling needed
+    ensureKeyValue "scaling_startup" "none" "$configdir/all/dgenrc"
 }
