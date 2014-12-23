@@ -51,6 +51,16 @@ function configure_dgen()
     ensureKeyValue "emu_z80_startup" "drz80" $configdir/all/dgenrc
     ensureKeyValue "emu_m68k_startup" "cyclone" $configdir/all/dgenrc
 
+    # doublebuffer is disabled on framebuffer by default anyway
+    ensureKeyValue "bool_doublebuffer" "no" $configdir/all/dgenrc
+    # we don't have opengl (or built dgen with it)
+    ensureKeyValue "bool_opengl" "no" $configdir/all/dgenrc
+    # without dispmanx, scale seems to run the fastest
+    ensureKeyValue "scaling_startup" "scale" $configdir/all/dgenrc
+
+    # if the framebuffer is not the requires resolution dgen seems to give a black screen
+    ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
+
     mkRomDir "megadrive-dgen"
     mkRomDir "segacd-dgen"
     mkRomDir "sega32x-dgen"
