@@ -3,7 +3,7 @@ rp_module_desc="Megadrive/Genesis emulat. DGEN"
 rp_module_menus="2+"
 
 function depends_dgen() {
-    checkNeededPackages gcc-4.6 g++-4.6 libsdl1.2-dev libarchive-dev
+    checkNeededPackages libsdl1.2-dev libarchive-dev
 }
 
 function sources_dgen() {
@@ -11,11 +11,9 @@ function sources_dgen() {
 }
 
 function build_dgen() {
-    rpSwap on 512
-    ./configure --disable-opengl --prefix="$md_inst"
+    ./configure --disable-opengl --disable-hqx --prefix="$md_inst" CFLAGS="$CFLAGS --param ggc-min-expand=0 --param ggc-min-heapsize=8192"
     make clean
     make
-    rpSwap off
     md_ret_require="$md_build/dgen"
 }
 
