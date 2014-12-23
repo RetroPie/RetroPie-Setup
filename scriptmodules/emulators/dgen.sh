@@ -60,7 +60,7 @@ function configure_dgen()
     # if the framebuffer is not the requires resolution dgen seems to give a black screen
     ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
 
-    configure_standard_dgen
+    configure_dispmanx_off_dgen
 
     mkRomDir "megadrive-dgen"
     mkRomDir "segacd-dgen"
@@ -71,7 +71,7 @@ function configure_dgen()
     setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r "$configdir/all/dgenrc" %ROM%\"" "sega32x" "sega32x"
 }
 
-function configure_standard_dgen() {
+function configure_dispmanx_off_dgen() {
     # turn off dispmanx
     ensureKeyValueShort "dgen" "0" "$configdir/all/dispmanx"
     # doublebuffer is disabled on framebuffer by default anyway
@@ -84,7 +84,7 @@ function configure_standard_dgen() {
     ensureKeyValue "scaling_startup" "scale" "$configdir/all/dgenrc"
 }
 
-function configure_dispmanx_dgen() {
+function configure_dispmanx_on_dgen() {
     # turn on dispmanx
     ensureKeyValueShort "dgen" "1" "$configdir/all/dispmanx"
     # turn on double buffer
