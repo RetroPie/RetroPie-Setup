@@ -78,7 +78,7 @@ function configure_standard_dgen() {
     ensureKeyValue "bool_doublebuffer" "no" "$configdir/all/dgenrc"
     ensureKeyValue "bool_screen_thread" "no" "$configdir/all/dgenrc"
     # full screen width/height by default
-    ensureKeyValue "int_width" "-1" "configdir/all/dgenrc"
+    ensureKeyValue "int_width" "-1" "$configdir/all/dgenrc"
     ensureKeyValue "int_height" "-1" "$configdir/all/dgenrc"
     # without dispmanx, scale seems to run the fastest
     ensureKeyValue "scaling_startup" "scale" "$configdir/all/dgenrc"
@@ -91,7 +91,7 @@ function configure_dispmanx_dgen() {
     ensureKeyValue "bool_doublebuffer" "yes" "$configdir/all/dgenrc"
     ensureKeyValue "bool_screen_thread" "yes" "$configdir/all/dgenrc"
     # set rendering resolution to 320x240
-    ensureKeyValue "int_width" "320" "configdir/all/dgenrc"
+    ensureKeyValue "int_width" "320" "$configdir/all/dgenrc"
     ensureKeyValue "int_height" "240" "$configdir/all/dgenrc"
     # no scaling needed
     ensureKeyValue "scaling_startup" "none" "$configdir/all/dgenrc"
