@@ -1,6 +1,6 @@
 rp_module_id="fmsx-libretro"
 rp_module_desc="MSX LibretroCore fmsx"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_fmsx-libretro() {
     gitPullOrClone "$md_build" git://github.com/libretro/fmsx-libretro.git
