@@ -1,6 +1,6 @@
 rp_module_id="mupen64plus"
 rp_module_desc="N64 LibretroCore Mupen64Plus"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_mupen64plus() {
     # Base repo:
