@@ -75,14 +75,14 @@ function iniSet()
 # key = value
 function ensureKeyValue()
 {
-    iniSet "set" " = " "\"" "$1" "$2" "$3"
+    iniSet "set" " = " "" "$1" "$2" "$3"
 }
 
 # make sure that a key-value pair is NOT set in file
 # # key = value
 function disableKeyValue()
 {
-    iniSet "unset" " = " "\"" "$1" "$2" "$3"
+    iniSet "unset" " = " "" "$1" "$2" "$3"
 }
 
 # arg 1: key, arg 2: value, arg 3: file
@@ -90,14 +90,14 @@ function disableKeyValue()
 # key=value
 function ensureKeyValueShort()
 {
-    iniSet "set" "=" "\"" "$1" "$2" "$3"
+    iniSet "set" "=" "" "$1" "$2" "$3"
 }
 
 # make sure that a key-value pair is NOT set in file
 # # key=value
 function disableKeyValueShort()
 {
-    iniSet "unset" "=" "\"" "$1" "$2" "$3"
+    iniSet "unset" "=" "" "$1" "$2" "$3"
 }
 
 # ensures pair of key ($1)-value ($2) in file $3
