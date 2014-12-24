@@ -74,6 +74,7 @@ function configure_retroarch() {
     ensureSystemretroconfig "lynx"
     ensureSystemretroconfig "msx"
     ensureSystemretroconfig "quake"
+    ensureSystemretroconfig "n64"
 
     mkdir -p "$romdir/../BIOS/"
     chown $user:$user "$romdir/../BIOS/"
