@@ -56,12 +56,18 @@ function iniSet()
 
     local delim_strip=${delim// /}
     local match_re="[\s#]*$key\s*$delim_strip.*$"
-    local match=$(egrep -i "$match_re" "$file" | tail -1)
+
+    local match
+    if [ -f "$file" ]; then
+        match=$(egrep -i "$match_re" "$file" | tail -1)
+    else
+        touch "$file"
+    fi
 
     [ "$command" == "unset" ] && key="# $key"
     local replace="$key$delim$quote$value$quote"
     echo "Setting $replace in $file"
-    if [[ -z  "$match" ]]; then
+    if [[ -z "$match" ]]; then
         # add key-value pair
         echo "$replace" >> "$file"
     else
