@@ -71,6 +71,9 @@ function configure_retroarch() {
     ensureSystemretroconfig "segacd"
     ensureSystemretroconfig "sega32x"
     ensureSystemretroconfig "fba"
+    ensureSystemretroconfig "lynx"
+    ensureSystemretroconfig "msx"
+    ensureSystemretroconfig "quake"
 
     mkdir -p "$romdir/../BIOS/"
     chown $user:$user "$romdir/../BIOS/"
