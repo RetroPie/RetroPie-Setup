@@ -3,18 +3,27 @@ rp_module_desc="SNESDev (Driver for the RetroPie GPIO-Adapter)"
 rp_module_menus="3+configure"
 
 function sources_snesdev() {
-    gitPullOrClone "$md_inst" git://github.com/petrockblog/SNESDev-RPi.git
+    gitPullOrClone "$md_build" git://github.com/petrockblog/SNESDev-RPi.git
 }
 
 function build_snesdev() {
-    cd "$md_inst"
     make clean
     make
+	md_ret_require="$md_build/src/SNESDev"
 }
 
 function install_snesdev() {
-    cd "$md_inst"
+    cd "$md_build"
     make install
+    mkdir -p "$md_inst/src"
+    mkdir -p "$md_inst/supplementary"
+    mkdir -p "$md_inst/scripts"
+    cp -Rv 'src/SNESDev' "$md_inst/src/"
+    cp -Rv 'src/Makefile' "$md_inst/src/"
+    cp -Rv 'Makefile' "$md_inst"
+    cp -Rv 'scripts/Makefile' "$md_inst/scripts/"
+    cp -Rv 'scripts/SNESDev' "$md_inst/scripts/"
+    cp -Rv 'supplementary/snesdev.cfg' "$md_inst/supplementary/"
 }
 
 function sup_checkInstallSNESDev() {
