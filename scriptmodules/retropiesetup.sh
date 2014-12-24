@@ -93,7 +93,7 @@ function rps_main_binaries()
 
         rp_callModule sambashares
 
-    } 2>&1 > >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
+    } &> >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
 
     chown -R $user:$user $scriptdir/logs/run_$now.log.gz
 
@@ -139,7 +139,7 @@ function rps_main_options()
             do
                 rp_callModule $choice ${command[$choice]}
             done
-        } 2>&1 > >(tee >(gzip --stdout > $logfilename))
+        } &> >(tee >(gzip --stdout > $logfilename))
         chown -R $user:$user $logfilename
 
         if [[ ! -z $__ERRMSGS ]]; then
@@ -165,7 +165,7 @@ function rps_main_setup()
         buildMenu 3
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
-            rp_callModule $choices ${command[$choices]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
+            rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))
         else
             break
         fi
@@ -184,7 +184,7 @@ function rps_main_experimental()
         buildMenu 4
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
-            rp_callModule $choices ${command[$choices]} 2>&1 > >(tee >(gzip --stdout >$logfilename))
+            rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))
         else
             break
         fi
