@@ -3,30 +3,24 @@ rp_module_desc="DOS Emulator rpix86"
 rp_module_menus="2+"
 
 function install_rpix86() {
-    wget http://downloads.petrockblock.com/retropiearchives/rpix86.tar.gz
-    rmDirExists "$rootdir/emulators/rpix86"
-    mkdir -p "$rootdir/emulators/rpix86"
-    tar xvfz rpix86.tar.gz -C "$rootdir/emulators/rpix86"
-    rm rpix86.tar.gz
-
+    wget -O- -q http://downloads.petrockblock.com/retropiearchives/rpix86.tar.gz | tar -xvz -C "$md_inst"
     # install 4DOS.com
-    unzip -n $scriptdir/supplementary/4dos.zip -d "$rootdir/emulators/rpix86/"
+    unzip -n $scriptdir/supplementary/4dos.zip -d "$md_inst"
 }
 
 function configure_rpix86() {
-    cat > "$rootdir/emulators/rpix86/Start.sh" << _EOF_
+    mkRomDir "pc"
+
+    cat > "$md_inst/Start.sh" << _EOF_
 #!/bin/bash
-pushd $rootdir/emulators/rpix86
+pushd "$md_inst"
 ./rpix86 -a0 -f2
 popd
 _EOF_
-    chmod +x "$rootdir/emulators/rpix86/Start.sh"
+    chmod +x "$md_inst/Start.sh"
 
-    mkdir -p "$romdir/pc"
-    ln -s $romdir/pc
-
+    ln -s $romdir/pc games
     touch $romdir/pc/Start.txt
 
-    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$rootdir/emulators/rpix86/Start.sh" "pc" "pc"    
-
+    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$md_inst/Start.sh" "pc" "pc"    
 }

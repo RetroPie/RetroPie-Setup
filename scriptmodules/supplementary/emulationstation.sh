@@ -3,40 +3,43 @@ rp_module_desc="EmulationStation"
 rp_module_menus="2+"
 
 function depends_emulationstation() {
-    rps_checkNeededPackages \
+    checkNeededPackages \
         libboost-locale-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
         libasound2-dev cmake g++-4.7
 
-    rp_callModule "libsdlbinaries"
+    rp_callModule "sdl2binaries"
 }
 
 function sources_emulationstation() {
-    # sourced of EmulationStation
-    gitPullOrClone "$rootdir/supplementary/EmulationStation" "https://github.com/Aloshi/EmulationStation" || return 1
-    pushd "$rootdir/supplementary/EmulationStation" || return 1
-    git pull || return 1
-    git checkout unstable || return 1
-    popd
+    gitPullOrClone "$md_build" "https://github.com/Aloshi/EmulationStation" NS
 }
 
 function build_emulationstation() {
-    # EmulationStation
-    pushd "$rootdir/supplementary/EmulationStation" || return 1
-    cmake -D CMAKE_CXX_COMPILER=g++-4.7 . || return 1
+    rpSwap on 512
+    cmake .
+    make clean
     make
-    if [[ ! -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile emulationstation."
-        return 1
-    fi
-    popd
+    rpSwap off
+    md_ret_require="$md_build/emulationstation"
 }
 
 function install_emulationstation() {
+    md_ret_files=(
+        'CREDITS.md'
+        'emulationstation'
+        'GAMELISTS.md'
+        'README.md'
+        'THEMES.md'
+    )
+
+}
+
+function configure_emulationstation() {
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
 
-es_bin="$rootdir/supplementary/EmulationStation/emulationstation"
+es_bin="$md_inst/emulationstation"
 
 nb_lock_files=\$(find /tmp -name ".X?-lock" | wc -l)
 if [ \$nb_lock_files -ne 0 ]; then
@@ -48,18 +51,11 @@ fi
 _EOF_
     chmod +x /usr/bin/emulationstation
 
-    if [[ -f "$rootdir/supplementary/EmulationStation/emulationstation" ]]; then
-        # make sure that ES has enough GPU memory
-        ensureKeyValueBootconfig "gpu_mem_256" 128 "/boot/config.txt"
-        ensureKeyValueBootconfig "gpu_mem_512" 256 "/boot/config.txt"
-        ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
-        return 0
-    else
-        return 1
-    fi
-}
+    # make sure that ES has enough GPU memory
+    ensureKeyValueBootconfig "gpu_mem_256" 128 "/boot/config.txt"
+    ensureKeyValueBootconfig "gpu_mem_512" 256 "/boot/config.txt"
+    ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
 
-function configure_emulationstation() {
     if [[ $__netplayenable == "E" ]]; then
          local __tmpnetplaymode="-$__netplaymode "
          local __tmpnetplayhostip_cfile=$__netplayhostip_cfile
@@ -81,7 +77,7 @@ function configure_emulationstation() {
 function package_emulationstation() {
     local PKGNAME
 
-    rps_checkNeededPackages reprepro
+    checkNeededPackages reprepro
 
     printMsg "Building package of EmulationStation"
 

@@ -20,7 +20,7 @@ function install_gamecondriver() {
     esac
 
     #install dkms
-    rps_checkNeededPackages dkms
+    checkNeededPackages dkms
 
     #reconfigure / install headers (takes a a while)
     if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then
@@ -113,45 +113,45 @@ __________\n\
         modprobe gamecon_gpio_rpi map=0,0,1,0,0,1
     fi
 
-    dialog --title " Update $rootdir/configs/all/retroarch.cfg " --clear \
+    dialog --title " Update $configdir/all/retroarch.cfg " --clear \
         --yesno "Would you like to update button mappings \
-    to $rootdir/configs/all/retroarch.cfg ?" 22 76
+    to $configdir/all/retroarch.cfg ?" 22 76
 
       case $? in
        0)
         if [ $GPIOREV = 1 ]; then
-                ensureKeyValue "input_player1_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
-                ensureKeyValue "input_player2_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
+                ensureKeyValue "input_player1_joypad_index" "0" "$configdir/all/retroarch.cfg"
+                ensureKeyValue "input_player2_joypad_index" "1" "$configdir/all/retroarch.cfg"
         else
-            ensureKeyValue "input_player1_joypad_index" "1" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_joypad_index" "0" "$rootdir/configs/all/retroarch.cfg"
+            ensureKeyValue "input_player1_joypad_index" "1" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_joypad_index" "0" "$configdir/all/retroarch.cfg"
         fi
 
-            ensureKeyValue "input_player1_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player1_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg"
+            ensureKeyValue "input_player1_a_btn" "0" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_b_btn" "1" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_x_btn" "2" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_y_btn" "3" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_l_btn" "4" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_r_btn" "5" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_start_btn" "7" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_select_btn" "6" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_left_axis" "-0" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_up_axis" "-1" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_right_axis" "+0" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player1_down_axis" "+1" "$configdir/all/retroarch.cfg"
 
-            ensureKeyValue "input_player2_a_btn" "0" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_b_btn" "1" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_x_btn" "2" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_y_btn" "3" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_l_btn" "4" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_r_btn" "5" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_start_btn" "7" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_select_btn" "6" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_left_axis" "-0" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_up_axis" "-1" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_right_axis" "+0" "$rootdir/configs/all/retroarch.cfg"
-            ensureKeyValue "input_player2_down_axis" "+1" "$rootdir/configs/all/retroarch.cfg"
+            ensureKeyValue "input_player2_a_btn" "0" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_b_btn" "1" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_x_btn" "2" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_y_btn" "3" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_l_btn" "4" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_r_btn" "5" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_start_btn" "7" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_select_btn" "6" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_left_axis" "-0" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_up_axis" "-1" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_right_axis" "+0" "$configdir/all/retroarch.cfg"
+            ensureKeyValue "input_player2_down_axis" "+1" "$configdir/all/retroarch.cfg"
         ;;
        *)
         ;;

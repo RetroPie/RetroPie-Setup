@@ -3,34 +3,34 @@ rp_module_desc="GameBoy Advance emulator"
 rp_module_menus="2+"
 
 function depends_gpsp() {
-    rps_checkNeededPackages libsdl1.2-dev
+    checkNeededPackages libsdl1.2-dev
 }
 
-# install Game Boy Advance emulator gpSP
 function sources_gpsp() {
-    gitPullOrClone "$rootdir/emulators/gpsp" git://github.com/gizmo98/gpsp.git
+    gitPullOrClone "$md_build" git://github.com/gizmo98/gpsp.git
 }
 
 function build_gpsp() {
-    rpSwap on 512
-
-    pushd "$rootdir/emulators/gpsp"
     cd raspberrypi
+    rpSwap on 512
     make clean
     make
-    cp "$rootdir/emulators/gpsp/game_config.txt" "$rootdir/emulators/gpsp/raspberrypi/"
-    # TODO copy gpsp into /opt/retropie/emulators/gpsp directory
-    if [[ -z `find $rootdir/emulators/gpsp/ -name "gpsp"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Advance emulator."
-    fi
-    popd
-
     rpSwap off
+    md_ret_require="$md_build/raspberrypi/gpsp"
+}
+
+function install_gpsp() {
+    md_ret_files=(
+        'COPYING.DOC'
+        'game_config.txt'
+        'readme.txt'
+        'raspberrypi/gpsp'
+    )
 }
 
 function configure_gpsp() {
-    mkdir -p "$romdir/gba"
-    chown $user:$user -R "$rootdir/emulators/gpsp/raspberrypi/"
+    mkRomDir "gba"
+    chown $user:$user -R "$md_inst"
 
-    setESSystem "Game Boy Advance" "gba" "~/RetroPie/roms/gba" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$rootdir/emulators/gpsp/raspberrypi/gpsp %ROM%\"" "gba" "gba"
+    setESSystem "Game Boy Advance" "gba" "~/RetroPie/roms/gba" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/gpsp %ROM%\"" "gba" "gba"
 }

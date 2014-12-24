@@ -3,26 +3,35 @@ rp_module_desc="SNESDev (Driver for the RetroPie GPIO-Adapter)"
 rp_module_menus="3+configure"
 
 function sources_snesdev() {
-    gitPullOrClone "$rootdir/supplementary/SNESDev-Rpi" git://github.com/petrockblog/SNESDev-RPi.git
+    gitPullOrClone "$md_build" git://github.com/petrockblog/SNESDev-RPi.git
 }
 
 function build_snesdev() {
-    pushd "$rootdir/supplementary/SNESDev-Rpi"
     make clean
     make
-    popd
+	md_ret_require="$md_build/src/SNESDev"
 }
 
 function install_snesdev() {
-    pushd "$rootdir/supplementary/SNESDev-Rpi"
+    cd "$md_build"
     make install
-    popd
+    mkdir -p "$md_inst/src"
+    mkdir -p "$md_inst/supplementary"
+    mkdir -p "$md_inst/scripts"
+    cp -Rv 'src/SNESDev' "$md_inst/src/"
+    cp -Rv 'src/Makefile' "$md_inst/src/"
+    cp -Rv 'Makefile' "$md_inst"
+    cp -Rv 'scripts/Makefile' "$md_inst/scripts/"
+    cp -Rv 'scripts/SNESDev' "$md_inst/scripts/"
+    cp -Rv 'supplementary/snesdev.cfg' "$md_inst/supplementary/"
 }
 
 function sup_checkInstallSNESDev() {
-    sources_snesdev
-    build_snesdev
-    install_snesdev
+    if [[ ! -d "$md_inst" ]]; then
+        sources_snesdev
+        build_snesdev
+        install_snesdev
+    fi
 }
 
 # start SNESDev on boot and configure RetroArch input settings
@@ -75,30 +84,22 @@ function configure_snesdev() {
     if [ "$choices" != "" ]; then
         case $choices in
             1) sup_checkInstallSNESDev
-               pushd "$rootdir/supplementary/SNESDev-Rpi/"
                make uninstallservice
-               popd
                dialog --backtitle "$__backtitle" --msgbox "Disabled SNESDev on boot." 22 76
                             ;;
             2) sup_checkInstallSNESDev
                sup_enableSNESDevAtStart 3
-               pushd "$rootdir/supplementary/SNESDev-Rpi/"
                make installservice
-               popd
                dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling pads and button)." 22 76
                             ;;
             3) sup_checkInstallSNESDev
                sup_enableSNESDevAtStart 1
-               pushd "$rootdir/supplementary/SNESDev-Rpi/"
                make installservice
-               popd
                dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling only pads)." 22 76
                             ;;
             4) sup_checkInstallSNESDev
                sup_enableSNESDevAtStart 2
-               pushd "$rootdir/supplementary/SNESDev-Rpi/"
                make installservice
-               popd
                dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling only button)." 22 76
                             ;;
             5) sup_snesdevAdapterversion 1

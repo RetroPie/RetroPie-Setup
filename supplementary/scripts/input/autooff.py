@@ -14,7 +14,7 @@ shutil.copyfile(retroarch_main_cfg, retroarch_main_cfg + '.bak')
 main_config  = open(retroarch_main_cfg).read()
 
 # Remove section if necessary
-main_config = main_config.replace('[start]','')	
+main_config = main_config.replace('[start]','')
 
 # add a section
 main_config  = '[start]\n' + main_config
@@ -28,12 +28,12 @@ main_parser.set('start','input_autodetect_enable','"false"')
 
 # write config
 with open(retroarch_main_cfg, 'w') as configfile:
-	main_parser.write(configfile)
-	configfile.close()	
+    main_parser.write(configfile)
+    configfile.close()
 
-# read config file, delete section and write config) 
+# read config file, delete section and write config)
 config = open(retroarch_main_cfg).read()
 with open(retroarch_main_cfg,'w') as configfile:
-	configfile.write(config[8:])
-	configfile.close()
+    configfile.write(config[8:])
+    configfile.close()
 exit()

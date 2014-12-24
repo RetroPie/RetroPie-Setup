@@ -30,6 +30,93 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 #
 
+function rps_checkForLogDirectory() {
+    # make sure that RetroPie-Setup log directory exists
+    if [[ ! -d $scriptdir/logs ]]; then
+        if mkdir -p "$scriptdir/logs"; then
+            chown $user:$user "$scriptdir/logs"
+        else
+            echo "Couldn't make directory $scriptdir/logs"
+            exit 1
+        fi
+    fi
+}
+
+function rps_buildMenu()
+{
+    options=()
+    command=()
+    local status
+    local id
+    local menu
+    local menus
+    for id in "${__mod_idx[@]}"; do
+        menus="${__mod_menus[$id]}"
+        for menu in $menus; do
+            command[$id]="${menu:2}"
+            if [[ "${menu:0:1}" == "$1" ]]; then
+                options=("${options[@]}" "$id" "${__mod_desc[$id]}")
+                if [[ "$2" == "bool" ]]; then
+                    status="ON"
+                    [[ "${menu:1:1}" == "-" ]] && status="OFF"
+                    options=("${options[@]}" "$status")
+                fi
+            fi
+        done
+    done
+}
+
+function rps_availFreeDiskSpace() {
+    local rootdirExists=0
+    if [[ ! -d "$rootdir" ]]; then
+        rootdirExists=1
+        mkdir -p $rootdir
+    fi
+    local __required=$1
+    local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
+    if [[ $rootdirExists -eq 1 ]]; then
+        rmdir $rootdir
+    fi
+
+    required_MB=`expr $__required / 1024`
+    available_MB=`expr $__avail / 1024`
+
+    if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space ($required_MB MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir continue anyway?"; then
+        return 0;
+    else
+        exit 0;
+    fi
+}
+
+# retropie-setup main menu
+rps_main_menu() {
+    while true; do
+        cmd=(dialog --backtitle "$__backtitle" --menu "Choose installation either based on binaries or on sources." 22 76 16)
+        options=(1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)"
+                 2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
+                 3 "SETUP (only if you already have run one of the installations above)"
+                 4 "EXPERIMENTAL packages (these are potentially unstable packages)"
+                 5 "UPDATE RetroPie Setup script"
+                 6 "UPDATE RetroPie Binaries"
+                 7 "Perform REBOOT" )
+        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [ "$choices" != "" ]; then
+            case $choices in
+                1) rps_main_binaries ;;
+                2) rps_main_options ;;
+                3) rps_main_setup ;;
+                4) rps_main_experimental ;;
+                5) rps_main_updatescript ;;
+                6) rps_downloadBinaries ;;
+                7) rps_main_reboot ;;
+            esac
+        else
+            break
+        fi
+    done
+    clear
+}
+
 # downloads and installs pre-compiles binaries of all essential programs and libraries
 function rps_downloadBinaries()
 {
@@ -64,8 +151,6 @@ function rps_main_binaries()
 
         rps_downloadBinaries
 
-        rp_callModule libsdlbinaries
-        rp_callModule emulationstation install
         rp_callModule emulationstation configure
         rp_callModule snesdev install
         rp_callModule disabletimeouts
@@ -76,7 +161,6 @@ function rps_main_binaries()
         rp_callModule scummvm
         rp_callModule zmachine
         rp_callModule fuse
-        rp_callModule c64roms
         rp_callModule hatari
         rp_callModule dosbox
         rp_callModule eduke32
@@ -96,10 +180,6 @@ function rps_main_binaries()
     } &> >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
 
     chown -R $user:$user $scriptdir/logs/run_$now.log.gz
-
-    __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$rootdir/emulators/uae4all/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $rootdir/emulators/uae4all/."
-    __INFMSGS="$__INFMSGS You need to copy NeoGeo BIOS files to the folder '$rootdir/emulators/gngeo-0.7/neogeo-bios/'."
-    __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
 
     if [[ ! -z $__INFMSGS ]]; then
         dialog --backtitle "$__backtitle" --msgbox "$__INFMSGS" 20 60
@@ -124,7 +204,7 @@ function rps_main_updatescript()
 
 function rps_main_options()
 {
-    buildMenu 2 "bool"
+    rps_buildMenu 2 "bool"
     cmd=(dialog --separate-output --backtitle "$__backtitle" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
@@ -162,7 +242,7 @@ function rps_main_setup()
     touch $logfilename
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
-        buildMenu 3
+        rps_buildMenu 3
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
             rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))
@@ -181,7 +261,7 @@ function rps_main_experimental()
     touch $logfilename
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
-        buildMenu 4
+        rps_buildMenu 4
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
             rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))

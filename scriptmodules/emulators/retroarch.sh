@@ -3,7 +3,7 @@ rp_module_desc="RetroArch"
 rp_module_menus="2+"
 
 function depends_retroarch() {
-    rps_checkNeededPackages libudev-dev libxkbcommon-dev
+    checkNeededPackages libudev-dev libxkbcommon-dev
     cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
 KERNEL=="event*", NAME="input/%k", MODE="666"
 _EOF_
@@ -11,48 +11,49 @@ _EOF_
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$rootdir/emulators/RetroArch" git://github.com/libretro/RetroArch.git
+    gitPullOrClone "$md_build" git://github.com/libretro/RetroArch.git
 }
 
 function build_retroarch() {
-    pushd "$rootdir/emulators/RetroArch"
-    ./configure --prefix="$rootdir/emulators/RetroArch/installdir" --disable-x11 --disable-oss --disable-pulse --enable-floathard
+    ./configure --prefix="$md_inst" --disable-x11 --disable-oss --disable-pulse --enable-floathard
     make clean
     make
-    popd
+    md_ret_require="$md_build/retroarch"
 }
 
 function install_retroarch() {
-    pushd "$rootdir/emulators/RetroArch"
     make install
-    popd
-    if [[ ! -f "$rootdir/emulators/RetroArch/installdir/bin/retroarch" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile and install RetroArch."
-    fi
+    mkdir -p "$md_inst/shader"
+    cp "$scriptdir/supplementary/RetroArchShader/"* "$md_inst/shader/"
+    chown $user:$user -R "$md_inst/shader"
+    md_ret_files=(
+        'retroarch.cfg'
+        'tools/retroarch-joyconfig'
+    )
+    md_ret_require="$md_inst/bin/retroarch"
 }
 
 function ensureSystemretroconfig {
-    if [[ ! -d "$rootdir/configs/$1/" ]]; then
-        mkdir -p "$rootdir/configs/$1/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $rootdir/configs/$1/retroarch.cfg
+    if [[ ! -d "$configdir/$1/" ]]; then
+        mkdir -p "$configdir/$1/"
+        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $configdir/$1/retroarch.cfg
     fi
 }
 
 function configure_retroarch() {
-    cp $scriptdir/supplementary/retroarch-zip "$rootdir/emulators/RetroArch/installdir/bin/"
+    cp $scriptdir/supplementary/retroarch-zip "$md_inst"
 
-    if [[ ! -d "$rootdir/configs/all/" ]]; then
-        mkdir -p "$rootdir/configs/all/"
+    if [[ ! -d "$configdir/all/" ]]; then
+        mkdir -p "$configdir/all/"
     fi
-    cp $scriptdir/supplementary/retroarch-core-options.cfg "$rootdir/configs/all/"
-    chown $user:$user "$rootdir/configs/all/retroarch-core-options.cfg"
+    cp $scriptdir/supplementary/retroarch-core-options.cfg "$configdir/all/"
 
-    if [[ -f "$rootdir/configs/all/retroarch.cfg" ]]; then
-        cp "$rootdir/configs/all/retroarch.cfg" "$rootdir/configs/all/retroarch.cfg.bak"
+    if [[ -f "$configdir/all/retroarch.cfg" ]]; then
+        cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
     fi
-    cp $rootdir/emulators/RetroArch/retroarch.cfg "$rootdir/configs/all/"
-    chown $user:$user "$rootdir/configs/all/retroarch.cfg"
-    mkdir -p "$rootdir/configs/all/"
+
+    mkdir -p "$configdir/all/"
+    cp "$md_inst/retroarch.cfg" "$configdir/all/"
 
     ensureSystemretroconfig "atari2600"
     ensureSystemretroconfig "cavestory"
@@ -72,89 +73,80 @@ function configure_retroarch() {
     ensureSystemretroconfig "fba"
 
     mkdir -p "$romdir/../BIOS/"
-    ensureKeyValue "system_directory" "$romdir/../BIOS" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "config_save_on_exit" "false" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "video_aspect_ratio" "1.33" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "video_smooth" "false" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "video_threaded" "true" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "core_options_path" "$rootdir/configs/all/retroarch-core-options.cfg" "$rootdir/configs/all/retroarch.cfg"
+    chown $user:$user "$romdir/../BIOS/"
+    ensureKeyValue "system_directory" "$romdir/../BIOS" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "config_save_on_exit" "false" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "video_aspect_ratio" "1.33" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "video_threaded" "true" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "core_options_path" "$configdir/all/retroarch-core-options.cfg" "$configdir/all/retroarch.cfg"
 
     # enable hotkey ("select" button)
-    ensureKeyValue "input_enable_hotkey" "nul" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_enable_hotkey" "nul" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_exit_emulator" "escape" "$configdir/all/retroarch.cfg"
 
     # enable and configure rewind feature
-    ensureKeyValue "rewind_enable" "false" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "rewind_buffer_size" "10" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "rewind_granularity" "2" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_rewind" "r" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "rewind_enable" "false" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "rewind_buffer_size" "10" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "rewind_granularity" "2" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_rewind" "r" "$configdir/all/retroarch.cfg"
 
     # enable gpu screenshots
-    ensureKeyValue "video_gpu_screenshot" "true" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "video_gpu_screenshot" "true" "$configdir/all/retroarch.cfg"
 
     # enable and configure shaders
-    if [[ ! -d "$rootdir/emulators/RetroArch/shader" ]]; then
-        mkdir -p "$rootdir/emulators/RetroArch/shader"
-    fi
-    cp -r $scriptdir/supplementary/RetroArchShader/* $rootdir/emulators/RetroArch/shader/
-    for f in `ls "$rootdir/emulators/RetroArch/shader/*.glslp"`;
-    do
-        sed -i "s|/home/pi/RetroPie|$rootdir|g" $f
-    done
-
-    ensureKeyValue "input_shader_next" "m" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_shader_prev" "n" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "video_shader_dir" "$rootdir/emulators/RetroArch/shader/" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_shader_next" "m" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_shader_prev" "n" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "video_shader_dir" "$md_inst/shader/" "$configdir/all/retroarch.cfg"
 
     # system-specific shaders, SNES
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/snes_phosphor.glslp\"" "$rootdir/configs/snes/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/snes/retroarch.cfg"
-    ensureKeyValue "video_smooth" "false" "$rootdir/configs/snes/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/snes_phosphor.glslp" "$configdir/snes/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$configdir/snes/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$configdir/snes/retroarch.cfg"
 
     # system-specific shaders, NES
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/nes/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/nes/retroarch.cfg"
-    ensureKeyValue "video_smooth" "false" "$rootdir/configs/nes/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/phosphor.glslp" "$configdir/nes/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$configdir/nes/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$configdir/nes/retroarch.cfg"
 
     # system-specific shaders, Megadrive
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/megadrive/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/megadrive/retroarch.cfg"
-    ensureKeyValue "video_smooth" "false" "$rootdir/configs/megadrive/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/phosphor.glslp" "$configdir/megadrive/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$configdir/megadrive/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$configdir/megadrive/retroarch.cfg"
 
     # system-specific shaders, Mastersystem
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/phosphor.glslp\"" "$rootdir/configs/mastersystem/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
-    ensureKeyValue "video_smooth" "false" "$rootdir/configs/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/phosphor.glslp" "$configdir/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$configdir/mastersystem/retroarch.cfg"
+    ensureKeyValue "video_smooth" "false" "$configdir/mastersystem/retroarch.cfg"
 
     # system-specific shaders, Gameboy
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gb/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/gb/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/hq4x.glslp" "$configdir/gb/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$configdir/gb/retroarch.cfg"
 
     # system-specific shaders, Gameboy Color
-    ensureKeyValue "video_shader" "\"$rootdir/emulators/RetroArch/shader/hq4x.glslp\"" "$rootdir/configs/gbc/retroarch.cfg"
-    ensureKeyValue "video_shader_enable" "false" "$rootdir/configs/gbc/retroarch.cfg"
+    ensureKeyValue "video_shader" "$md_inst/shader/hq4x.glslp" "$configdir/gbc/retroarch.cfg"
+    ensureKeyValue "video_shader_enable" "false" "$configdir/gbc/retroarch.cfg"
 
     # system-specific, PSX
-    ensureKeyValue "rewind_enable" "false" "$rootdir/configs/psx/retroarch.cfg"
+    ensureKeyValue "rewind_enable" "false" "$configdir/psx/retroarch.cfg"
 
     # configure keyboard mappings
-    ensureKeyValue "input_player1_a" "x" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_b" "z" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_y" "a" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_x" "s" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_start" "enter" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_select" "rshift" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_l" "q" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_r" "w" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_left" "left" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_right" "right" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_up" "up" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "input_player1_down" "down" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_player1_a" "x" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_b" "z" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_y" "a" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_x" "s" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_start" "enter" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_select" "rshift" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_l" "q" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_r" "w" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_left" "left" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_right" "right" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_up" "up" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "input_player1_down" "down" "$configdir/all/retroarch.cfg"
 
     # input settings
-    ensureKeyValue "input_autodetect_enable" "true" "$rootdir/configs/all/retroarch.cfg"
-    ensureKeyValue "joypad_autoconfig_dir" "$rootdir/emulators/RetroArch/configs/" "$rootdir/configs/all/retroarch.cfg"
+    ensureKeyValue "input_autodetect_enable" "true" "$configdir/all/retroarch.cfg"
+    ensureKeyValue "joypad_autoconfig_dir" "$md_inst/configs/" "$configdir/all/retroarch.cfg"
 
-    chown $user:$user -R "$rootdir/emulators/RetroArch/shader/"
-    chown $user:$user -R "$rootdir/configs/"
+    chown $user:$user -R "$configdir"
 }

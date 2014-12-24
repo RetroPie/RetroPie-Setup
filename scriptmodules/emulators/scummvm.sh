@@ -12,7 +12,7 @@ function install_scummvm() {
 }
 
 function configure_scummvm() {
-    mkdir -p "$romdir/scummvm"
+    mkRomDir "scummvm"
 
     setESSystem "ScummVM" "scummvm" "~/RetroPie/roms/scummvm" ".exe .EXE" "scummvm" "pc" "scummvm"
 }

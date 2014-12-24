@@ -22,7 +22,7 @@ _EOF_
 }
 
 function install_sambashares() {
-    rps_checkNeededPackages samba samba-common-bin
+    checkNeededPackages samba samba-common-bin
 }
 
 function configure_sambashares() {
@@ -32,15 +32,7 @@ function configure_sambashares() {
     set_ensureEntryInSMBConf "roms" "$romdir"
     set_ensureEntryInSMBConf "bios" "$home/RetroPie/BIOS"
 
-    # enforce rom directory permissions - root:$user for roms folder with the sticky bit set,
-    # and root:$user for first level subfolders with group writable. This allows them to be
-    # writable by the pi user, yet avoid being deleted by accident
-    chown root:$user "$romdir" "$romdir"/*
-    chmod g+w "$romdir"/*
-    chmod +t "$romdir"
-
-    printMsg "Resetting ownershop on existing files to user: $user"
-    chown -R $user:$user "$romdir"/*/*
+    rp_callModule resetromdirs configure
 
     /etc/init.d/samba restart
 }

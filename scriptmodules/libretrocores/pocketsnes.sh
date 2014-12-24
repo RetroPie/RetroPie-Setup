@@ -3,27 +3,26 @@ rp_module_desc="SNES LibretroCore PocketSNES"
 rp_module_menus="2+"
 
 function sources_pocketsnes() {
-    gitPullOrClone "$rootdir/emulatorcores/pocketsnes-libretro" git://github.com/ToadKing/pocketsnes-libretro.git
-    pushd "$rootdir/emulatorcores/pocketsnes-libretro"
-    patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch $rootdir/emulatorcores/pocketsnes-libretro/src/ppu.cpp
-    popd
+    gitPullOrClone "$md_build" git://github.com/ToadKing/pocketsnes-libretro.git
+    patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch $rootdir/libretrocores/pocketsnes-libretro/src/ppu.cpp
 }
 
 function build_pocketsnes() {
-    pushd "$rootdir/emulatorcores/pocketsnes-libretro"
     make clean
     make
-    if [[ -z `find $rootdir/emulatorcores/pocketsnes-libretro/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile SNES core."
-    fi
-    popd
+    md_ret_require="$md_build/libretro.so"
+}
+
+function install_pocketsnes() {
+    md_ret_files=(
+        'libretro.so'
+        'README.txt'
+    )
 }
 
 function configure_pocketsnes() {
-    mkdir -p $romdir/snes
+    mkRomDir "snes"
 
     rps_retronet_prepareConfig
-    setESSystem "Super Nintendo" "snes" "~/RetroPie/roms/snes" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/pocketsnes-libretro/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/snes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "snes" "snes"
-    # <!-- alternatively: <command>$rootdir/emulators/snes9x-rpi/snes9x %ROM%</command> -->
-    # <!-- alternatively: <command>$rootdir/emulators/pisnes/snes9x %ROM%</command> -->
+    setESSystem "Super Nintendo" "snes" "~/RetroPie/roms/snes" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/snes/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\"" "snes" "snes"
 }

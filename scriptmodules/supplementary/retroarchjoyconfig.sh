@@ -10,10 +10,10 @@ function configure_retroarchjoyconfig() {
     clear
     # todo Find number of first joystick device in /dev/input
     numJoypads=$(ls -1 /dev/input/js* | head -n 1)
-    $rootdir/emulators/RetroArch/tools/retroarch-joyconfig --autoconfig "$rootdir/emulators/RetroArch/configs/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
-    configfname=`grep "input_device = \"" $rootdir/emulators/RetroArch/configs/tempconfig.cfg`
+    $emudir/retroarch/retroarch-joyconfig --autoconfig "$emudir/retroarch/configs/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
+    configfname=`grep "input_device = \"" "$emudir/retroarch/configs/tempconfig.cfg"`
     configfname=`echo ${configfname:16:-1} | tr -d ' '`
-    mv $rootdir/emulators/RetroArch/configs/tempconfig.cfg $rootdir/emulators/RetroArch/configs/$configfname.cfg
-    chown $user:$user $rootdir/emulators/RetroArch/configs/
+    mv "$emudir/retroarch/configs/tempconfig.cfg" "$emudir/retroarch/configs/$configfname.cfg"
+    chown -R $user:$user "$emudir/retroarch/configs"
     dialog --backtitle "$__backtitle" --msgbox "The configuration file has been saved as $configfname.cfg and will be used by RetroArch from now on whenever that controller is connected." 22 76
 }

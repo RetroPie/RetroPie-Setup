@@ -27,23 +27,26 @@
 
 # global variables ==========================================================
 
+# main retropie install location
 rootdir="/opt/retropie"
-user=$SUDO_USER
-if [ -z "$user" ]
-then
-    user=$(whoami)
-fi
-home=$(eval echo ~$user)
+
+user="$SUDO_USER"
+[ -z "$user" ] && user=$(id -un)
+
+home="$(eval echo ~$user)"
 romdir="$home/RetroPie/roms"
-if [[ ! -d $romdir ]]; then
-    mkdir -p $romdir
-fi
+emudir="$rootdir/emulators"
+configdir="$rootdir/configs"
 
 __ERRMSGS=""
 __INFMSGS=""
-__doReboot=0
 
-__default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+__memory_phys=$(free -m | awk '/^Mem:/{print $2}')
+__memory_total=$(free -m -t | awk '/^Total:/{print $2}')
+
+__default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+# -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
+[ $__memory_phys -ge 256 ] && __default_cflags+=" -pipe"
 __default_asflags=""
 __default_makeflags=""
 __default_gcc_version="4.7"
@@ -71,17 +74,20 @@ fi
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
 
+__builddir="$scriptdir/tmp/build"
 __swapdir="$scriptdir/tmp/"
 
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/packages.sh"
 
-rps_checkNeededPackages git dialog gcc-4.7 g++-4.7
+checkNeededPackages git dialog gcc-$__default_gcc_version g++-$__default_gcc_version
 
 # set default gcc version
 gcc_version $__default_gcc_version
 
-registerAllModules
+mkRootRomDir "$romdir"
+
+rp_registerAllModules
 
 [[ "$1" == "init" ]] && return
 

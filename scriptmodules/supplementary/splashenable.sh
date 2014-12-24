@@ -7,7 +7,7 @@ function set_enableSplashscreenAtStart()
     clear
     printMsg "Enabling custom splashscreen on boot."
 
-    rps_checkNeededPackages fbi
+    checkNeededPackages fbi
 
     chmod +x "$scriptdir/supplementary/asplashscreen/asplashscreen"
     cp "$scriptdir/supplementary/asplashscreen/asplashscreen" "/etc/init.d/"

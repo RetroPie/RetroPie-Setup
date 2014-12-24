@@ -3,8 +3,8 @@ rp_module_desc="Bash Welcome Tweak"
 rp_module_menus="2+"
 
 function install_bashwelcometweak() {
-    if [[ -z `cat "/home/$user/.bashrc" | grep "# RETROPIE PROFILE START"` ]]; then
-        cat >> "/home/$user/.bashrc" <<\_EOF_
+    if [[ -z `cat "$home/.bashrc" | grep "# RETROPIE PROFILE START"` ]]; then
+        cat >> "$home/.bashrc" <<\_EOF_
 # RETROPIE PROFILE START
 # Thanks to http://blog.petrockblock.com/forums/topic/retropie-mushroom-motd/#post-3965
 
@@ -37,5 +37,5 @@ _EOF_
 }
 
 function remove_bashwelcometweak() {
-    sed -i '/RETROPIE PROFILE START/,/RETROPIE PROFILE END/d' "/home/$user/.bashrc"
+    sed -i '/RETROPIE PROFILE START/,/RETROPIE PROFILE END/d' "$home/.bashrc"
 }

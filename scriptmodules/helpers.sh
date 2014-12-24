@@ -37,44 +37,52 @@ function ask()
 function addLineToFile()
 {
     if [[ -f "$2" ]]; then
-        cp "$2" ./temp
-        mv "$2" "$2.old"
+        cp "$2" "$2.old"
     fi
-    sed -i -e '$a\' ./temp
-    echo "$1" >> ./temp
-    mv ./temp "$2"
+    sed -i -e '$a\' "$2"
+    echo "$1" >> "$2"
     echo "Added $1 to file $2"
 }
 
+# arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
+function iniSet()
+{
+    local command="$1"
+    local delim="$2"
+    local quote="$3"
+    local key="$4"
+    local value="$5"
+    local file="$6"
+
+    local delim_strip=${delim// /}
+    local match_re="[\s#]*$key\s*$delim_strip.*$"
+    local match=$(egrep -i "$match_re" "$file" | tail -1)
+
+    [ "$command" == "unset" ] && key="# $key"
+    local replace="$key$delim$quote$value$quote"
+    echo "Setting $replace in $file"
+    if [[ -z  "$match" ]]; then
+        # add key-value pair
+        echo "$replace" >> "$file"
+    else
+        # replace existing key-value pair
+        sed -i -e "s|$match|$replace|g" "$file"
+    fi
+}
 
 # arg 1: key, arg 2: value, arg 3: file
 # make sure that a key-value pair is set in file
 # key = value
 function ensureKeyValue()
 {
-    echo "Setting $1 = $2 in $3"
-    if [[ -z $(egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
-        # add key-value pair
-        echo "$1 = ""$2""" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3`
-        sed $3 -i -e "s|$toreplace|$1 = ""$2""|g"
-    fi
+    iniSet "set" " = " "\"" "$1" "$2" "$3"
 }
 
 # make sure that a key-value pair is NOT set in file
 # # key = value
 function disableKeyValue()
 {
-    if [[ -z $(egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
-        # add key-value pair
-        echo "# $1 = ""$2""" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1 = ""?[+|-]?[0-9]*[a-z]*"""? $3`
-        sed $3 -i -e "s|$toreplace|# $1 = ""$2""|g"
-    fi
+    iniSet "unset" " = " "\"" "$1" "$2" "$3"
 }
 
 # arg 1: key, arg 2: value, arg 3: file
@@ -82,53 +90,25 @@ function disableKeyValue()
 # key=value
 function ensureKeyValueShort()
 {
-    if [[ -z $(egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
-        # add key-value pair
-        echo "$1=""$2""" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1\s?=\s?""?[+|-]?[0-9]*[a-z]*"""? $3`
-        sed $3 -i -e "s|$toreplace|$1=""$2""|g"
-    fi
+    iniSet "set" "=" "\"" "$1" "$2" "$3"
 }
 
 # make sure that a key-value pair is NOT set in file
 # # key=value
 function disableKeyValueShort()
 {
-    if [[ -z $(egrep -i "#? *$1=""?[+|-]?[0-9]*[a-z]*"""? $3) ]]; then
-        # add key-value pair
-        echo "# $1=""$2""" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1=""?[+|-]?[0-9]*[a-z]*"""? $3`
-        sed $3 -i -e "s|$toreplace|# $1=""$2""|g"
-    fi
+    iniSet "unset" "=" "\"" "$1" "$2" "$3"
 }
 
 # ensures pair of key ($1)-value ($2) in file $3
 function ensureKeyValueBootconfig()
 {
-    if [[ -z $(egrep -i "#? *$1=[+|-]?[0-9]*[a-z]*" $3) ]]; then
-        # add key-value pair
-        echo "$1=$2" >> $3
-    else
-        # replace existing key-value pair
-        toreplace=`egrep -i "#? *$1=[+|-]?[0-9]*[a-z]*" $3`
-        sed $3 -i -e "s|$toreplace|$1=$2|g"
-    fi
+    iniSet "set" "=" "" "$1" "$2" "$3"
 }
 
 function printMsg()
 {
     echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
-}
-
-function rel2abs() {
-  cd "$(dirname $1)" && dir="$PWD"
-  file="$(basename $1)"
-
-  echo $dir/$file
 }
 
 function checkForInstalledAPTPackage()
@@ -156,7 +136,7 @@ function aptInstall()
     return $?
 }
 
-function rps_checkNeededPackages() {
+function checkNeededPackages() {
     local required
     local packages=()
     local failed=()
@@ -180,28 +160,6 @@ function rps_checkNeededPackages() {
     fi
 }
 
-function rps_availFreeDiskSpace() {
-    local rootdirExists=0
-    if [[ ! -d "$rootdir" ]]; then
-        rootdirExists=1
-        mkdir -p $rootdir
-    fi
-    local __required=$1
-    local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
-    if [[ $rootdirExists -eq 1 ]]; then
-        rmdir $rootdir
-    fi
-
-    required_MB=`expr $__required / 1024`
-    available_MB=`expr $__avail / 1024`
-
-    if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space ($required_MB MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir continue anyway?"; then
-        return 0;
-    else
-        exit 0;
-    fi
-}
-
 function rpSwap() {
     local command=$1
     local swapfile="$__swapdir/swap"
@@ -213,7 +171,6 @@ function rpSwap() {
             local size=$((needed - memory))
             mkdir -p "$__swapdir/"
             if [ $size -ge 0 ]; then
-
                 echo "Adding $size MB of additional swap"
                 fallocate -l ${size}M "$swapfile"
                 mkswap "$swapfile"
@@ -228,38 +185,6 @@ function rpSwap() {
     esac
 }
 
-# This function is not used so far.
-function checkIfPullNeeded()
-{
-    if [[ ! -d "$1/.git" ]]; then
-        return false
-    fi
-
-    if git checkout master &&
-        git fetch origin master &&
-        [ `git rev-list HEAD...origin/master --count` != 0 ]
-    then
-        return 0 # true, update needed
-    else
-        return 1 # false, update, not needed
-    fi
-}
-
-function checkFileExistence()
-{
-    if [[ -f "$1" ]]; then
-        ls -lh "$1" >> "$rootdir/debug.log"
-    else
-        echo "$1 does NOT exist." >> "$rootdir/debug.log"
-    fi
-}
-
-fn_exists()
-{
-    declare -f "$1" > /dev/null
-    return $?
-}
-
 # clones or updates the sources of a repository $2 into the directory $1
 function gitPullOrClone()
 {
@@ -268,8 +193,6 @@ function gitPullOrClone()
         git pull > /dev/null
         popd > /dev/null
     else
-        rm -rf "$1" # makes sure that the directory IS empty
-        mkdir -p "$1"
         if [ "$3" = "NS" ]; then
             git clone "$2" "$1"
         else
@@ -310,28 +233,24 @@ function rmDirExists()
     fi
 }
 
-function buildMenu()
-{
-    options=()
-    command=()
-    local status
-    local id
-    local menu
-    local menus
-    for id in "${__mod_idx[@]}"; do
-        menus="${__mod_menus[$id]}"
-        for menu in $menus; do
-            command[$id]="${menu:2}"
-            if [[ "${menu:0:1}" == "$1" ]]; then
-                options=("${options[@]}" "$id" "${__mod_desc[$id]}")
-                if [[ "$2" == "bool" ]]; then
-                    status="ON"
-                    [[ "${menu:1:1}" == "-" ]] && status="OFF"
-                    options=("${options[@]}" "$status")
-                fi
-            fi
-        done
-    done
+# enforce rom directory permissions - root:$user for roms folder with the sticky bit set,
+# and root:$user for first level subfolders with group writable. This allows them to be
+# writable by the pi user, yet avoid being deleted by accident
+function mkRootRomDir() {
+    mkdir -p "$1"
+    chown root:$user "$1"
+    chmod +t "$1"
+}
+
+function mkRomDir() {
+    mkdir -p "$romdir/$1"
+    chown root:$user "$romdir/$1"
+    chmod g+rw "$romdir/$1"
+}
+
+function mkUserDir() {
+    mkdir -p "$1"
+    chown $user:$user "$1"
 }
 
 function setESSystem() {
@@ -343,7 +262,7 @@ function setESSystem() {
     local platform=$6
     local theme=$7
 
-    rps_checkNeededPackages python-lxml
+    checkNeededPackages python-lxml
 
     gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
 

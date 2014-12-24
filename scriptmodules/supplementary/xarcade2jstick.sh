@@ -3,23 +3,21 @@ rp_module_desc="Xarcade2Jstick"
 rp_module_menus="3+configure"
 
 function sources_xarcade2jstick() {
-    gitPullOrClone "$rootdir/supplementary/Xarcade2Jstick/" https://github.com/petrockblog/Xarcade2Joystick.git
+    gitPullOrClone "$md_inst" https://github.com/petrockblog/Xarcade2Joystick.git
 }
 
 function build_xarcade2jstick() {
-    pushd "$rootdir/supplementary/Xarcade2Jstick/"
+    cd "$md_inst"
     make
-    popd
 }
 
 function install_xarcade2jstick() {
-    pushd "$rootdir/supplementary/Xarcade2Jstick/"
+    cd "$md_inst"
     make install
-    popd
 }
 
 function sup_checkInstallXarcade2Jstick() {
-    if [[ ! -d $rootdir/supplementary/Xarcade2Jstick ]]; then
+    if [[ ! -d "$md_inst" ]]; then
         sources_xarcade2jstick
         build_xarcade2jstick
         install_xarcade2jstick
@@ -34,15 +32,11 @@ function configure_xarcade2jstick() {
     if [ "$choices" != "" ]; then
         case $choices in
             1) sup_checkInstallXarcade2Jstick
-               pushd "$rootdir/supplementary/Xarcade2Jstick/"
                make uninstallservice
-               popd
                dialog --backtitle "$__backtitle" --msgbox "Disabled Xarcade2Jstick." 22 76
                             ;;
             2) sup_checkInstallXarcade2Jstick
-               pushd "$rootdir/supplementary/Xarcade2Jstick/"
                make installservice
-               popd
                dialog --backtitle "$__backtitle" --msgbox "Enabled Xarcade2Jstick service." 22 76
                             ;;
         esac
