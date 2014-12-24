@@ -82,7 +82,7 @@ function rp_callModule() {
         done
     fi
     
-    # if index get mod_id from ass array
+    # if index get mod_id from array
     if [[ "$idx" =~ ^[0-9]+$ ]]; then
         mod_id=${__mod_id[$1]}
     else
