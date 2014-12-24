@@ -22,13 +22,13 @@ function build_openmsx() {
 
 function install_openmsx() {
     make install
+    wget "http://downloads.petrockblock.com/retropiearchives/openmsxroms.zip"
+    mkdir -p "$md_inst/share/systemroms/"
+    unzip openmsxroms.zip -o -d "$md_inst/share/systemroms/"
 }
 
 function configure_openmsx() {
     mkRomDir "msx"
-    wget http://downloads.petrockblock.com/retropiearchives/openmsxroms.zip
-    mkdir -p "$md_inst/share/systemroms/"
-    unzip openmsxroms.zip -d "$md_inst/share/systemroms/"
 
     setESSystem "MSX / MSX2" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx2 .MX2 .mx1 .MX1" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/bin/openmsx -cart %ROM%\"" "" "msx"
 }
