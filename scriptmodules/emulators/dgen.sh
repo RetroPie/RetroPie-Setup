@@ -19,6 +19,7 @@ function build_dgen() {
 
 function install_dgen() {
     make install
+    cp "sample.dgenrc" "$md_inst/"
     md_ret_require="$md_inst/bin/dgen"
 }
 
@@ -26,7 +27,7 @@ function configure_dgen()
 {
     if [[ ! -f "$configdir/all/dgenrc" ]]; then
         mkdir -p "$configdir/all/"
-        cp "$md_build/sample.dgenrc" "$configdir/all/dgenrc"
+        cp "sample.dgenrc" "$configdir/all/dgenrc"
         chown $user:$user "$configdir/all/dgenrc"
     fi
 
