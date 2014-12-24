@@ -70,6 +70,9 @@ function configure_retroarch() {
     ensureSystemretroconfig "segacd"
     ensureSystemretroconfig "sega32x"
     ensureSystemretroconfig "fba"
+    ensureSystemretroconfig "msx"
+    ensureSystemretroconfig "lynx"
+    ensureSystemretroconfig "quake"
 
     mkdir -p "$romdir/../BIOS/"
     ensureKeyValue "system_directory" "$romdir/../BIOS" "$rootdir/configs/all/retroarch.cfg"

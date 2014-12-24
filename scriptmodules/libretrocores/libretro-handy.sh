@@ -1,6 +1,6 @@
 rp_module_id="libretro-handy"
 rp_module_desc="Atari Lynx LibretroCore handy"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_libretro-handy() {
     gitPullOrClone "$rootdir/emulatorcores/libretro-handy" https://github.com/libretro/libretro-handy.git
