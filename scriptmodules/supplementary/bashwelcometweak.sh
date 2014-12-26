@@ -17,11 +17,11 @@ UPTIME=$(printf "%d days, %02dh%02dm%02ds" "$days" "$hours" "$mins" "$secs")
 
 # calculate rough CPU and GPU temperatures:
 cpuTempC=$(($(cat /sys/class/thermal/thermal_zone0/temp)/1000))
-cpuTempF=$(($cpuTempC*9/5+32))
+cpuTempF=$((cpuTempC*9/5+32))
 
 gpuTempC=$(/opt/vc/bin/vcgencmd measure_temp)
 gpuTempC=${gpuTempC:5:2}
-gpuTempF=$(($gpuTempC*9/5+32))
+gpuTempF=$((gpuTempC*9/5+32))
 
 # get the load averages
 read one five fifteen rest < /proc/loadavg
