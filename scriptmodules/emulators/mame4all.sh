@@ -7,10 +7,7 @@ function depends_mame4all() {
 }
 
 function sources_mame4all() {
-    gitPullOrClone "$md_build" https://code.google.com/p/mame4all-pi/ NS
-    sed -i "s/@mkdir/@mkdir -p/g" "Makefile"
-    sed -i 's/-lglib-2.0$/-lglib-2.0 -lrt -lasound/g' Makefile
-    sed -i 's/armv6 /armv6j /g' Makefile
+    gitPullOrClone "$md_build" https://github.com/joolswills/mame4all-pi.git NS
 }
 
 function build_mame4all() {
