@@ -213,11 +213,16 @@ function rps_main_options()
     if [ "$choices" != "" ]; then
         now=$(date +'%d%m%Y_%H%M')
         logfilename=$scriptdir/logs/run_$now.log.gz
+        choices=($choices)
+        total=${#choices[@]}
+        count=1
         {
             touch $logfilename
-            for choice in $choices
+            for choice in ${choices[@]}
             do
                 rp_callModule $choice ${command[$choice]}
+                printMsg "Module $count of $total processed."
+                ((count++))
             done
         } &> >(tee >(gzip --stdout > $logfilename))
         chown -R $user:$user $logfilename
