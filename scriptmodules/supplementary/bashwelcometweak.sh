@@ -36,10 +36,9 @@ echo "$(tput setaf 2)
  ~ .~       ~. ~  Memory.............: `cat /proc/meminfo | grep MemFree | awk {'print $2'}`kB (Free) / `cat /proc/meminfo | grep MemTotal | awk {'print $2'}`kB (Total)$(tput setaf 7)
   (  $(tput setaf 4) |   | $(tput setaf 7)  )  $(tput setaf 1) Running Processes..: `ps ax | wc -l | tr -d " "`$(tput setaf 7)
   '~         ~'  $(tput setaf 1) IP Address.........: `ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ printf "%s ", $1}'` $(tput setaf 7)
-    *--~-~--*    $(tput setaf 7) The RetroPie Project, www.petrockblock.com
+    *--~-~--*    $(tput setaf 1) Temperature........: CPU: $cpuTempC°C/$cpuTempF°F GPU: $gpuTempC°C/$gpuTempF°F
+                 $(tput setaf 7) The RetroPie Project, www.petrockblock.com
 
-CPU Temperature: $cpuTempCºC or $cpuTempFºF
-GPU Temperature: $gpuTempCºC or $gpuTempFºF
 $(tput sgr0)"
 
 # RETROPIE PROFILE END
