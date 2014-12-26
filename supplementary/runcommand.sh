@@ -22,7 +22,7 @@ binary="`basename ${1/% */}`"
 # if we have a dispmanx conf file and the current binary is in it (as a variable) and set to 1, change the library path to load dispmanx sdl first
 if [ -f "$dispmanx_conf" ]; then
   source "$dispmanx_conf"
-  [ ${!binary} -eq 1 ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $@"
+  [ "${!binary}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $@"
 fi
 
 if [[ $starttype -eq 1 && ! -z `tvservice -m CEA | egrep -w "mode 1"` ]] || [[ $starttype -eq 3 ]]; then

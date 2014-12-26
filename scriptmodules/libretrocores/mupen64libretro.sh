@@ -19,6 +19,7 @@ function build_mupen64plus() {
 
 function install_mupen64plus() {
     md_ret_files=(
+        'mupen64plus-core/data'
         'mupen64plus_libretro.so'
         'README.md'
     )
@@ -35,7 +36,7 @@ function configure_mupen64plus() {
     ensureKeyValue "mupen64-screensize" "640x480" "$configdir/all/retroarch-core-options.cfg"
 
     # Copy config files
-    cp "$md_build/mupen64plus-core/data/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf} "$home/RetroPie/BIOS/"
+    cp "$md_inst/data/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf} "$home/RetroPie/BIOS/"
     chown -R $user:$user "$home/RetroPie/BIOS"
 
     rps_retronet_prepareConfig
