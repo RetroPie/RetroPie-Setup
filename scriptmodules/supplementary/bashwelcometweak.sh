@@ -15,6 +15,14 @@ let hours=$((${upSeconds}/3600%24))
 let days=$((${upSeconds}/86400))
 UPTIME=$(printf "%d days, %02dh%02dm%02ds" "$days" "$hours" "$mins" "$secs")
 
+# calculate rough CPU and GPU temperatures:
+cpuTempC=$(($(cat /sys/class/thermal/thermal_zone0/temp)/1000))
+cpuTempF=$(($cpuTempC*9/5+32))
+
+gpuTempC=$(/opt/vc/bin/vcgencmd measure_temp)
+gpuTempC=${gpuTempC:5:2}
+gpuTempF=$(($gpuTempC*9/5+32))
+
 # get the load averages
 read one five fifteen rest < /proc/loadavg
 
@@ -29,8 +37,12 @@ echo "$(tput setaf 2)
   (  $(tput setaf 4) |   | $(tput setaf 7)  )  $(tput setaf 1) Running Processes..: `ps ax | wc -l | tr -d " "`$(tput setaf 7)
   '~         ~'  $(tput setaf 1) IP Address.........: `ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ printf "%s ", $1}'` $(tput setaf 7)
     *--~-~--*    $(tput setaf 7) The RetroPie Project, www.petrockblock.com
+
+CPU Temperature: $cpuTempCºC or $cpuTempFºF
+GPU Temperature: $gpuTempCºC or $gpuTempFºF
 $(tput sgr0)"
-# RETROPIE PROFILE END   
+
+# RETROPIE PROFILE END
 _EOF_
 
     fi
