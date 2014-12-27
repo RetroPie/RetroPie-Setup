@@ -1,75 +1,92 @@
 #!/bin/bash
 
-# starttype==1: set video mode to VGA ONLY IF tvservice is in HDMI mode, and run command
-# starttype==2: keep existing video mode and run command
-# starttype==3: set video mode to VGA and run command
-# starttype==4: set video mode to 720p60 ONLY IF tvservice is in HDMI mode and run command
-# starttype==5: set video mode to 576p50 ONLY IF tvservice is in HDMI mode and run command
-# starttype==6: set video mode to 720p50 ONLY IF tvservice is in HDMI mode and run command
-# starttype==7: set video mode to sdtv PAL and run command
-# starttype==8: set video mode to sdtv NTSC and run command
+# reqmode==0: run command
+# reqmode==1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz, and run command
+# reqmode==4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz, and run command
 
-dispmanx_conf="/opt/retropie/configs/all/dispmanx"
+# reqmode=="CEA-#": set video mode to CEA mode #
+# reqmode=="DMT-#": set video mode to DMT mode #
+# reqmode=="PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
 
-starttype=$1
+# note that mode switching only happens if the monitor reports the modes as available (via tvservice)
+# and the requested mode differs from the currently active mode
+
+reqmode="$1"
+[[ -z "$reqmode" ]] && exit 1
 shift
 
-# set cpu governor profile performance
-echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-
 command="$@"
+[[ -z "$command" ]] && exit 1
+
+# get current mode / aspect ratio
+status=$(tvservice -s)
+currentmode=$(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)")
+currentmode=${currentmode/\(/}
+currentmode=${currentmode/\)/}
+aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
+
+declare -A mode
+sd=0
+switch=0
+
+mode[1-4:3]="CEA 1"
+mode[1-16:9]="CEA 1"
+mode[4-16:9]="CEA 4"
+mode[4-4:3]="DMT 16"
+
+# if user provided a specific mode, then let's try and use that else use a mode from our array
+if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
+    newmode=(${reqmode//-/ })
+elif [[ "$reqmode" =~ ^(PAL|NTSC)-(4:3|16:10|16:9)$ ]]; then
+    newmode=(${reqmode//-/ })
+    sd=1
+else
+    newmode=(${mode[${reqmode}-${aspect}]})
+fi
+
+# if we have a new mode and it is different from the current mode then switch
+if [ "$newmode" != "" ] && [ "${newmode[*]}" != "$currentmode" ]; then
+    if [ $sd -eq 1 ]; then
+        tvservice -c "${newmode[*]}"
+        switch=1
+    else
+        hasmode=$(tvservice -m ${newmode[0]} | grep -w "mode ${newmode[1]}")
+        if [ "${newmode[*]}" != "" ] && [ "$hasmode" != "" ]; then
+            tvservice -e "${newmode[*]}"
+            switch=1
+        fi
+    fi
+fi
+
+# if we have a dispmanx conf file and the current binary is in it (as a variable) and set to 1,
+# change the library path to load dispmanx sdl first
+dispmanx_conf="/opt/retropie/configs/all/dispmanx"
 binary="`basename ${1/% */}`"
-# if we have a dispmanx conf file and the current binary is in it (as a variable) and set to 1, change the library path to load dispmanx sdl first
 if [ -f "$dispmanx_conf" ]; then
   source "$dispmanx_conf"
   [ "${!binary}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $@"
 fi
 
-if [[ $starttype -eq 1 && ! -z `tvservice -m CEA | egrep -w "mode 1"` ]] || [[ $starttype -eq 3 ]]; then
-    tvservice -e "CEA 1"
-    fbset -depth 8 && fbset -depth 16
-#   fbset -rgba 5,6,5
-    eval $command
-    tvservice -p
-    fbset -depth 8 && fbset -depth 16
-elif [[ $starttype -eq 2 ]]; then
-    eval $command
-elif [[ $starttype -eq 4 && ! -z `tvservice -m CEA | egrep -w "mode 4"` ]]; then
-    tvservice -e "CEA 4"
-    fbset -depth 8 && fbset -depth 16
-#   fbset -rgba 5,6,5
-    eval $command
-    tvservice -p
-    fbset -depth 8 && fbset -depth 16
-elif [[ $starttype -eq 5 && ! -z `tvservice -m CEA | egrep -w "mode 17"` ]]; then
-    tvservice -e "CEA 17"
-    fbset -depth 8 && fbset -depth 16
-    eval $command
-    tvservice -p
-    fbset -depth 8 && fbset -depth 16
-elif [[ $starttype -eq 6 && ! -z `tvservice -m CEA | egrep -w "mode 19"` ]]; then
-    tvservice -e "CEA 19"
-    fbset -depth 8 && fbset -depth 16
-    eval $command
-    tvservice -p
-    fbset -depth 8 && fbset -depth 16
-elif [[ $starttype -eq 7 ]]; then
-    tvservice -c "PAL 4:3"
-    fbset -depth 8 && fbset -depth 16
-    eval $command
-    tvservice -p
-    fbset -depth 8 && fbset -depth 16
-elif [[ $starttype -eq 8 ]]; then
-    tvservice -c "NTSC 4:3"
-    fbset -depth 8 && fbset -depth 16
-    eval $command
-    tvservice -p
-    fbset -depth 8 && fbset -depth 16
-else
-    eval $command
+# if we switched mode - delay 1 sec, then reset framebuffer
+if [ $switch -eq 1 ]; then
+  sleep 1
+  fbset -depth 8 && fbset -depth 16
 fi
 
-# set cpu governor profile ondemand
-echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+# switch to performance cpu governor
+echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
+
+# run command
+eval $command
+
+# switch to ondemand cpu governor
+echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
+
+# if we switched mode - restore preferred mode, delay 1 sec and reset framebuffer
+if [ $switch -eq 1 ]; then
+    tvservice -p
+    sleep 1
+    fbset -depth 8 && fbset -depth 16
+fi
 
 exit 0
