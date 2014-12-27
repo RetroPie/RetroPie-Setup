@@ -3,10 +3,7 @@ rp_module_desc="N64 LibretroCore Mupen64Plus"
 rp_module_menus="2+"
 
 function sources_mupen64plus() {
-    # Base repo:
-    # gitPullOrClone "$rootdir/libretrocores/mupen64plus" git://github.com/libretro/mupen64plus-libretro.git
-    # Freezed fixed repo:
-    gitPullOrClone "$md_build" git://github.com/gizmo98/mupen64plus-libretro.git
+    gitPullOrClone "$md_build" git://github.com/libretro/mupen64plus-libretro.git
 }
 
 function build_mupen64plus() {
