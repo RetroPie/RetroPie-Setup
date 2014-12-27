@@ -4,7 +4,6 @@ rp_module_menus="4+"
 
 function sources_mupen64rpi() {
     gitPullOrClone "$md_build" https://github.com/ricrpi/mupen64plus
-    sed -i "s/MEM_REQ=[0-9]*/MEM_REQ=0/" build.sh
 }
 
 function build_mupen64rpi() {
