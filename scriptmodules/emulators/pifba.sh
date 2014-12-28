@@ -15,7 +15,7 @@ function build_pifba() {
     mkdir ".obj"
     make clean
     make
-    md_ret_require="$md_build/pifba"
+    md_ret_require="$md_build/fba2x"
 }
 
 function install_pifba() {
