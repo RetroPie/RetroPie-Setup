@@ -27,8 +27,7 @@ function get_mode() {
     # get current mode / aspect ratio
     status=$(tvservice -s)
     currentmode=$(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)")
-    currentmode=${currentmode/\(/}
-    currentmode=${currentmode/\)/}
+    currentmode=${currentmode//[()]/}
     currentmode=${currentmode/ /-}
     aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
 
