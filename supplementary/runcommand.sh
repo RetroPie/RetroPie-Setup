@@ -21,7 +21,8 @@ mode[4-16:9]="CEA-4"
 mode[4-4:3]="DMT-16"
 
 function get_mode() {
-    local binary="$1"
+    local emusave="$1"
+    local romsave="$2"
 
     # get current mode / aspect ratio
     status=$(tvservice -s)
@@ -31,13 +32,10 @@ function get_mode() {
     currentmode=${currentmode/ /-}
     aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
 
-    # convert a path to a name usable as a variable in our config file
-    var=${binary//\//_}
-    var=${var//[^a-Z0-9_]/}
-
     if [ -f "$video_conf" ]; then
       source "$video_conf"
-      newmode="${!var}"
+      newmode="${!romsave}"
+      [ "$newmode" == "" ] && newmode="${!emusave}"
     fi
 
     if [ "$newmode" = "" ]; then
@@ -53,11 +51,37 @@ function get_mode() {
 }
 
 function choose_mode() {
-    local binary="$1"
+    local emusave="$1"
+    local romsave="$2"
+    local default="$3"
+    local save
 
     local options=()
+    local cmd
+    local choice
+    options=(
+        1 "Select default video mode for emulator"
+        2 "Select default video mode for rom"
+        3 "Remove default video mode for rom"
+    )
+    cmd=(dialog --menu "Choose which video mode option to set"  22 76 16 )
+    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+
+    if [ "$choice" == "1" ]; then
+        save="$emusave"
+    elif [ "$choice" == "2" ]; then
+        save="$romsave"
+    elif [ "$choice" == "3" ]; then
+        sed -i "/$romsave/d" "$video_conf"
+        get_mode "$emusave"
+        return
+    else
+        return
+    fi
+
     local group
     local line
+    options=()
     for group in CEA DMT; do
         while read -r line; do
             local mode=$(echo $line | grep -oE "mode [0-9]*" | cut -d" " -f2)
@@ -78,10 +102,11 @@ function choose_mode() {
         done
     done
 
-    cmd=(dialog --default-item "$newmode" --menu "Choose video output mode for $binary."  22 76 16 )
+    cmd=(dialog --default-item "$default" --menu "Choose video output mode for $binary"  22 76 16 )
     newmode=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [ "$newmode" = "" ] && return
 
-    iniSet set "=" '"' "$var" "$newmode" "$video_conf"
+    iniSet set "=" '"' "$save" "$newmode" "$video_conf"
 }
 
 function switch_mode() {
@@ -157,13 +182,18 @@ command="$@"
 
 binary="${command/% */}"
 
-get_mode "$binary"
+# convert binary / path to a names usable as variables in our config file
+emusave=${binary//\//_}
+emusave=${emusave//[^a-Z0-9_]/}
+romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
+
+get_mode "$emusave" "$romsave"
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
-clear
+#clear
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
-    choose_mode "$binary"
+    choose_mode "$emusave" "$romsave" "$newmode"
     clear
 fi
 
