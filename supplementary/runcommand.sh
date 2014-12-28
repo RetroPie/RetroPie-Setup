@@ -63,7 +63,7 @@ function choose_mode() {
         2 "Select default video mode for rom"
         3 "Remove default video mode for rom"
     )
-    cmd=(dialog --menu "Choose which video mode option to set"  22 76 16 )
+    cmd=(dialog --menu "Video output configuration"  22 76 16 )
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
     case $choice in
