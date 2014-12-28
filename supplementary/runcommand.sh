@@ -67,17 +67,19 @@ function choose_mode() {
     cmd=(dialog --menu "Choose which video mode option to set"  22 76 16 )
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
-    if [ "$choice" == "1" ]; then
-        save="$emusave"
-    elif [ "$choice" == "2" ]; then
-        save="$romsave"
-    elif [ "$choice" == "3" ]; then
-        sed -i "/$romsave/d" "$video_conf"
-        get_mode "$emusave"
-        return
-    else
-        return
-    fi
+    case $choice in
+        1)
+            save="$emusave"
+            ;;
+        2)
+            save="$romsave"
+            ;;
+        3)
+            sed -i "/$romsave/d" "$video_conf"
+            get_mode "$emusave"
+            return
+            ;;
+    esac
 
     local group
     local line
@@ -190,7 +192,7 @@ romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
 get_mode "$emusave" "$romsave"
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
-#clear
+clear
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
     choose_mode "$emusave" "$romsave" "$newmode"
