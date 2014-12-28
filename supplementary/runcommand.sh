@@ -157,7 +157,7 @@ command="$@"
 
 binary="${command/% */}"
 
-get_mode "$command"
+get_mode "$binary"
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
