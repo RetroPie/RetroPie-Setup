@@ -11,6 +11,142 @@
 # note that mode switching only happens if the monitor reports the modes as available (via tvservice)
 # and the requested mode differs from the currently active mode
 
+video_conf="/opt/retropie/configs/all/videomodes.cfg"
+dispmanx_conf="/opt/retropie/configs/all/dispmanx"
+
+declare -A mode
+mode[1-4:3]="CEA-1"
+mode[1-16:9]="CEA-1"
+mode[4-16:9]="CEA-4"
+mode[4-4:3]="DMT-16"
+
+function get_mode() {
+    local binary="$1"
+
+    # get current mode / aspect ratio
+    status=$(tvservice -s)
+    currentmode=$(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)")
+    currentmode=${currentmode/\(/}
+    currentmode=${currentmode/\)/}
+    currentmode=${currentmode/ /-}
+    aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
+
+    # convert a path to a name usable as a variable in our config file
+    var=${binary//\//_}
+    var=${var//[^a-Z0-9_]/}
+
+    if [ -f "$video_conf" ]; then
+      source "$video_conf"
+      newmode="${!var}"
+    fi
+
+    if [ "$newmode" = "" ]; then
+        # if called with specific mode, use that else choose the best mode from our array
+        if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
+            newmode="$reqmode"
+        elif [[ "$reqmode" =~ ^(PAL|NTSC)-(4:3|16:10|16:9)$ ]]; then
+            newmode="$reqmode"
+        else
+            newmode="${mode[${reqmode}-${aspect}]}"
+        fi
+    fi
+}
+
+function choose_mode() {
+    local binary="$1"
+
+    local options=()
+    local group
+    local line
+    for group in CEA DMT; do
+        while read -r line; do
+            local mode=$(echo $line | grep -oE "mode [0-9]*" | cut -d" " -f2)
+            local info=$(echo $line | cut -d":" -f2-)
+            info=${info/ /}
+            if [ "$mode" != "" ]; then
+                options+=("$group-$mode" "$info")
+            fi
+        done < <(tvservice -m $group)
+    done
+
+    # add PAL / NTSC modes
+    local mode
+    local aspect
+    for mode in "NTSC" "PAL"; do
+        for aspect in "4:3" "16:10" "16:9"; do
+            options+=("$mode-$aspect" "SDTV - $mode-$aspect")
+        done
+    done
+
+    cmd=(dialog --default-item "$newmode" --menu "Choose video output mode for $binary."  22 76 16 )
+    newmode=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+
+    iniSet set "=" '"' "$var" "$newmode" "$video_conf"
+}
+
+function switch_mode() {
+    local mode=(${1//-/ })
+    local switched=0
+    if [ "${mode[0]}" = "PAL" ] || [ "${mode[0]}" = "NTSC" ]; then
+        tvservice -c "${mode[*]}"
+        switched=1
+    else
+        hasmode=$(tvservice -m ${mode[0]} | grep -w "mode ${mode[1]}")
+        if [ "${mode[*]}" != "" ] && [ "$hasmode" != "" ]; then
+            tvservice -e "${mode[*]}"
+            switched=1
+        fi
+    fi
+    [ $switched -eq 1 ] && reset_framebuffer
+    return $switched
+}
+
+function reset_framebuffer() {
+  sleep 1
+  fbset -depth 8 && fbset -depth 16s
+}
+
+function config_dispmanx() {
+    local binary="$1"
+    # if we have a dispmanx conf file and the current binary is in it (as a variable) and set to 1,
+    # change the library path to load dispmanx sdl first
+    binary="`basename ${command/% */}`"
+    if [ -f "$dispmanx_conf" ]; then
+      source "$dispmanx_conf"
+      [ "${!binary}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $@"
+    fi
+}
+
+# arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
+function iniSet() {
+    local command="$1"
+    local delim="$2"
+    local quote="$3"
+    local key="$4"
+    local value="$5"
+    local file="$6"
+
+    local delim_strip=${delim// /}
+    local match_re="[\s#]*$key\s*$delim_strip.*$"
+
+    local match
+    if [ -f "$file" ]; then
+        match=$(egrep -i "$match_re" "$file" | tail -1)
+    else
+        touch "$file"
+    fi
+
+    [ "$command" == "unset" ] && key="# $key"
+    local replace="$key$delim$quote$value$quote"
+    if [[ -z "$match" ]]; then
+        # add key-value pair
+        echo "$replace" >> "$file"
+    else
+        # replace existing key-value pair
+        sed -i -e "s|$match|$replace|g" "$file"
+    fi
+}
+
 reqmode="$1"
 [[ -z "$reqmode" ]] && exit 1
 shift
@@ -18,60 +154,25 @@ shift
 command="$@"
 [[ -z "$command" ]] && exit 1
 
-# get current mode / aspect ratio
-status=$(tvservice -s)
-currentmode=$(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)")
-currentmode=${currentmode/\(/}
-currentmode=${currentmode/\)/}
-aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
+binary="${command/% */}"
 
-declare -A mode
-sd=0
-switch=0
+get_mode "$command"
 
-mode[1-4:3]="CEA 1"
-mode[1-16:9]="CEA 1"
-mode[4-16:9]="CEA 4"
-mode[4-4:3]="DMT 16"
-
-# if user provided a specific mode, then let's try and use that else use a mode from our array
-if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
-    newmode=(${reqmode//-/ })
-elif [[ "$reqmode" =~ ^(PAL|NTSC)-(4:3|16:10|16:9)$ ]]; then
-    newmode=(${reqmode//-/ })
-    sd=1
-else
-    newmode=(${mode[${reqmode}-${aspect}]})
+# check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
+clear
+read -t 1 -N 1 key </dev/tty
+if [[ "$key" =~ [xXmM] ]]; then
+    choose_mode "$binary"
+    clear
 fi
 
-# if we have a new mode and it is different from the current mode then switch
-if [ "$newmode" != "" ] && [ "${newmode[*]}" != "$currentmode" ]; then
-    if [ $sd -eq 1 ]; then
-        tvservice -c "${newmode[*]}"
-        switch=1
-    else
-        hasmode=$(tvservice -m ${newmode[0]} | grep -w "mode ${newmode[1]}")
-        if [ "${newmode[*]}" != "" ] && [ "$hasmode" != "" ]; then
-            tvservice -e "${newmode[*]}"
-            switch=1
-        fi
-    fi
+switched=0
+if [ "$newmode" != "" ] && [ "$newmode" != "$currentmode" ]; then
+    switch_mode "$newmode"
+    switched=$?
 fi
 
-# if we have a dispmanx conf file and the current binary is in it (as a variable) and set to 1,
-# change the library path to load dispmanx sdl first
-dispmanx_conf="/opt/retropie/configs/all/dispmanx"
-binary="`basename ${1/% */}`"
-if [ -f "$dispmanx_conf" ]; then
-  source "$dispmanx_conf"
-  [ "${!binary}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $@"
-fi
-
-# if we switched mode - delay 1 sec, then reset framebuffer
-if [ $switch -eq 1 ]; then
-  sleep 1
-  fbset -depth 8 && fbset -depth 16
-fi
+config_dispmanx "$binary"
 
 # switch to performance cpu governor
 echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
@@ -82,11 +183,10 @@ eval $command
 # switch to ondemand cpu governor
 echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
 
-# if we switched mode - restore preferred mode, delay 1 sec and reset framebuffer
-if [ $switch -eq 1 ]; then
+# if we switched mode - restore preferred mode, and reset framebuffer
+if [ $switched -eq 1 ]; then
     tvservice -p
-    sleep 1
-    fbset -depth 8 && fbset -depth 16
+    reset_framebuffer
 fi
 
 exit 0
