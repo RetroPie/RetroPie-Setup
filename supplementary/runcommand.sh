@@ -78,6 +78,9 @@ function choose_mode() {
             get_mode "$emusave"
             return
             ;;
+        *)
+            return
+            ;;
     esac
 
     local group
