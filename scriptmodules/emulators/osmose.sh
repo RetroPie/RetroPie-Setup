@@ -25,5 +25,5 @@ function configure_osmose() {
     mkRomDir "mastersystem-osmose"
 
     setESSystem "Sega Game Gear" "gamegear-osmose" "~/RetroPie/roms/gamegear-osmose" ".gg .GG" "$md_inst/osmose %ROM% -tv -fs" "gamegear" "gamegear"
-    setESSystem "Sega Master System / Mark III" "mastersystem-osmose" "~/RetroPie/roms/mastersystem-osmose" ".sms .SMS" "$md_inst/osmose %ROM% -tv -fs" "mastersystem" "mastersystem"
+    setESSystem "Sega Master System / Mark III" "mastersystem-osmose" "~/RetroPie/roms/mastersystem-osmose" ".sms .SMS" "$rootdir/supplementary/runcommand/runcommand.sh \"$md_inst/osmose %ROM% -tv -fs\"" "mastersystem" "mastersystem"
 }

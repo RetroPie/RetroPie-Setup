@@ -52,5 +52,5 @@ _EOF_
     sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" linapple.conf
     sed -i -r -e "s|[^I]?Joystick 1[^I]?=[^I]?[0-9]|\tJoystick 1\t=\t1|g" linapple.conf
 
-    setESSystem "Apple II" "apple2" "~/RetroPie/roms/apple2" ".txt" "$md_inst/Start.sh" "apple2" "apple2"
+    setESSystem "Apple II" "apple2" "~/RetroPie/roms/apple2" ".txt" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/Start.sh\"" "apple2" "apple2"
 }
