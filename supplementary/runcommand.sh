@@ -50,20 +50,21 @@ function get_mode() {
 }
 
 function choose_mode() {
-    local emusave="$1"
-    local romsave="$2"
-    local default="$3"
+    local emulator="$1"
+    local emusave="$2"
+    local romsave="$3"
+    local default="$4"
     local save
 
     local options=()
     local cmd
     local choice
     options=(
-        1 "Select default video mode for emulator"
+        1 "Select default video mode for $emulator"
         2 "Select default video mode for rom"
         3 "Remove default video mode for rom"
     )
-    cmd=(dialog --menu "Video output configuration"  22 76 16 )
+    cmd=(dialog --menu "Video output configuration for $emulator"  22 76 16 )
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
     case $choice in
@@ -106,7 +107,7 @@ function choose_mode() {
         done
     done
 
-    cmd=(dialog --default-item "$default" --menu "Choose video output mode for $binary"  22 76 16 )
+    cmd=(dialog --default-item "$default" --menu "Choose video output mode for $emulator"  22 76 16 )
     newmode=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [ "$newmode" = "" ] && return
 
@@ -186,15 +187,17 @@ function iniSet() {
 
 reqmode="$1"
 [[ -z "$reqmode" ]] && exit 1
-shift
 
-command="$@"
+command="$2"
 [[ -z "$command" ]] && exit 1
 
 binary="${command/% */}"
 
+emulator="$3"
+[[ -z "$emulator" ]] && emulator="$binary"
+
 # convert binary / path to a names usable as variables in our config file
-emusave=${binary//\//_}
+emusave=${emulator//\//_}
 emusave=${emusave//[^a-Z0-9_]/}
 romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
 
@@ -204,7 +207,7 @@ get_mode "$emusave" "$romsave"
 clear
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
-    choose_mode "$emusave" "$romsave" "$newmode"
+    choose_mode "$emulator" "$emusave" "$romsave" "$newmode"
     clear
 fi
 

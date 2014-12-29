@@ -36,7 +36,7 @@ function configure_pifba() {
     mkRomDir "fba"
     mkRomDir "neogeo"
 
-    setESSystem "Final Burn Alpha" "fba" "~/RetroPie/roms/fba" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/fba2x %ROM%\"" "arcade" ""
-    setESSystem "NeoGeo" "neogeo" "~/RetroPie/roms/neogeo" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/fba2x %ROM%\"" "neogeo" "neogeo"
+    setESSystem "Final Burn Alpha" "fba" "~/RetroPie/roms/fba" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/fba2x %ROM%\" \"$md_id\"" "arcade" ""
+    setESSystem "NeoGeo" "neogeo" "~/RetroPie/roms/neogeo" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/fba2x %ROM%\" \"$md_id\"" "neogeo" "neogeo"
 
 }

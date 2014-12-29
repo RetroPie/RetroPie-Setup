@@ -36,7 +36,7 @@ function configure_doom() {
 
     cat > "$romdir/ports/Doom 1 Shareware.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 1 "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
+$rootdir/supplementary/runcommand/runcommand.sh 1 "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/doom/retroarch.cfg $romdir/ports/doom/doom1.wad" "$md_id"
 _EOF_
     chmod +x "$romdir/ports/Doom 1 Shareware.sh"
 

@@ -31,5 +31,5 @@ function configure_advmame() {
     iniSet "set" " " "" "dir_artwork" "$romdir/mame-artwork" "$home/.advance/advmame.rc"
     iniSet "set" " " "" "dir_sample" "$romdir/mame-samples" "$home/.advance/advmame.rc"
 
-    setESSystem "MAME" "mame-advmame" "~/RetroPie/roms/mame-advmame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/bin/advmame %BASENAME%\"" "arcade" "mame"
+    setESSystem "MAME" "mame-advmame" "~/RetroPie/roms/mame-advmame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/bin/advmame %BASENAME%\" \"$md_id\"" "arcade" "mame"
 }
