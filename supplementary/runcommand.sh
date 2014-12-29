@@ -138,13 +138,12 @@ function reset_framebuffer() {
 }
 
 function config_dispmanx() {
-    local binary="$1"
-    # if we have a dispmanx conf file and the current binary is in it (as a variable) and set to 1,
+    local name="$1"
+    # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
     # change the library path to load dispmanx sdl first
-    binary="`basename ${command/% */}`"
     if [ -f "$dispmanx_conf" ]; then
       source "$dispmanx_conf"
-      [ "${!binary}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $@"
+      [ "${!name}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $@"
     fi
 }
 
@@ -217,7 +216,7 @@ if [ "$newmode" != "" ] && [ "$newmode" != "$currentmode" ]; then
     switched=$?
 fi
 
-config_dispmanx "$binary"
+config_dispmanx "$emusave"
 
 # switch to performance cpu governor
 echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
