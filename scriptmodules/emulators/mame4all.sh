@@ -50,5 +50,5 @@ function configure_mame4all() {
 
     ensureKeyValueShort "samplerate" "22050" "$md_inst/mame.cfg"
 
-    setESSystem "MAME" "mame" "~/RetroPie/roms/mame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/mame %BASENAME%\"" "arcade" "mame"
+    setESSystem "MAME" "mame" "~/RetroPie/roms/mame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/mame %BASENAME%\" \"$md_id\"" "arcade" "mame"
 }

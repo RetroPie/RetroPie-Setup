@@ -22,5 +22,5 @@ _EOF_
     ln -s $romdir/pc games
     touch $romdir/pc/Start.txt
 
-    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$md_inst/Start.sh" "pc" "pc"    
+    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/Start.sh\" \"$md_id\"" "pc" "pc"
 }

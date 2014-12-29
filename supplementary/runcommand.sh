@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# parameters - reqmode command_to_launch savename
+
 # reqmode==0: run command
 # reqmode==1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz, and run command
 # reqmode==4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz, and run command
@@ -11,8 +13,17 @@
 # note that mode switching only happens if the monitor reports the modes as available (via tvservice)
 # and the requested mode differs from the currently active mode
 
+# if savename is included, that is used for loading and saving of video output modes as well as dispmanx settings
+# for the current command. If omitted, the binary name is used as a key for the loading and saving. The savename is
+# also displayed in the video output menu (detailed below), so for our purposes we send the emulator module id, which
+# is somewhat descriptive yet short.
+
+# on launch this script waits for 1 second for a keypress. If x or m is pressed, a menu is displayed allowing
+# the user to set a screenmode for this particular command. the savename parameter is displayed to the user - we use the module id
+# of the emulator we are launching.
+
 video_conf="/opt/retropie/configs/all/videomodes.cfg"
-dispmanx_conf="/opt/retropie/configs/all/dispmanx"
+dispmanx_conf="/opt/retropie/configs/all/dispmanx.cfg"
 
 declare -A mode
 mode[1-4:3]="CEA-1"
@@ -54,20 +65,21 @@ function get_mode() {
 }
 
 function choose_mode() {
-    local emusave="$1"
-    local romsave="$2"
-    local default="$3"
+    local emulator="$1"
+    local emusave="$2"
+    local romsave="$3"
+    local default="$4"
     local save
 
     local options=()
     local cmd
     local choice
     options=(
-        1 "Select default video mode for emulator"
+        1 "Select default video mode for $emulator"
         2 "Select default video mode for rom"
         3 "Remove default video mode for rom"
     )
-    cmd=(dialog --menu "Video output configuration"  22 76 16 )
+    cmd=(dialog --menu "Video output configuration for $emulator"  22 76 16 )
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
     case $choice in
@@ -110,7 +122,7 @@ function choose_mode() {
         done
     done
 
-    cmd=(dialog --default-item "$default" --menu "Choose video output mode for $binary"  22 76 16 )
+    cmd=(dialog --default-item "$default" --menu "Choose video output mode for $emulator"  22 76 16 )
     newmode=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [ "$newmode" = "" ] && return
 
@@ -150,14 +162,20 @@ function reset_framebuffer() {
 }
 
 function config_dispmanx() {
-    local binary="$1"
-    # if we have a dispmanx conf file and the current binary is in it (as a variable) and set to 1,
+    local name="$1"
+    # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
     # change the library path to load dispmanx sdl first
-    binary="`basename ${command/% */}`"
     if [ -f "$dispmanx_conf" ]; then
       source "$dispmanx_conf"
-      [ "${!binary}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $@"
+      [ "${!name}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $command"
     fi
+}
+
+function retroarch_refresh_config() {
+    [[ ! "$command" =~ "retroarch" ]] && return
+    local rate=$(tvservice -s | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
+    echo "video_refresh_rate = $rate" >/tmp/retroarch-rate.cfg
+    command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg|")
 }
 
 # arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
@@ -192,15 +210,17 @@ function iniSet() {
 
 reqmode="$1"
 [[ -z "$reqmode" ]] && exit 1
-shift
 
-command="$@"
+command="$2"
 [[ -z "$command" ]] && exit 1
 
-binary="${command/% */}"
+emulator="$3"
+# if we have an emulator name (such as module_id) we use that for storing/loading parameters for video output/dispmanx
+# if the parameter is empty we use the name of the binary (to avoid breakage with out of date emulationstation configs)
+[[ -z "$emulator" ]] && emulator="${command/% */}"
 
-# convert binary / path to a names usable as variables in our config file
-emusave=${binary//\//_}
+# convert emulator name / binary to a names usable as variables in our config file
+emusave=${emulator//\//_}
 emusave=${emusave//[^a-Z0-9_]/}
 romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
 
@@ -208,9 +228,10 @@ get_mode "$emusave" "$romsave"
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
+echo "Press 'x' or 'm' to configure video output options for $emulator"
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
-    choose_mode "$emusave" "$romsave" "$newmode"
+    choose_mode "$emulator" "$emusave" "$romsave" "$newmode"
     clear
 fi
 
@@ -220,10 +241,12 @@ if [ "$newmode" != "" ] && [ "$newmode" != "$currentmode" ]; then
     switched=$?
 fi
 
-config_dispmanx "$binary"
+config_dispmanx "$emusave"
 
 # switch to performance cpu governor
 echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
+
+retroarch_refresh_config
 
 # run command
 eval $command

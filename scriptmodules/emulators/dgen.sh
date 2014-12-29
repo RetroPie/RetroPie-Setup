@@ -67,14 +67,14 @@ function configure_dgen()
     mkRomDir "segacd-dgen"
     mkRomDir "sega32x-dgen"
 
-    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r "$configdir/all/dgenrc" %ROM%\"" "genesis,megadrive" "megadrive"
-    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r "$configdir/all/dgenrc" %ROM%\"" "segacd" "segacd"
-    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r "$configdir/all/dgenrc" %ROM%\"" "sega32x" "sega32x"
+    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\" \"$md_id\"" "genesis,megadrive" "megadrive"
+    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\" \"$md_id\"" "segacd" "segacd"
+    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\" \"$md_id\"" "sega32x" "sega32x"
 }
 
 function configure_dispmanx_off_dgen() {
     # turn off dispmanx
-    ensureKeyValueShort "dgen" "0" "$configdir/all/dispmanx"
+    ensureKeyValueShort "$md_id" "0" "$configdir/all/dispmanx.cfg"
     # doublebuffer is disabled on framebuffer by default anyway
     ensureKeyValue "bool_doublebuffer" "no" "$configdir/all/dgenrc"
     ensureKeyValue "bool_screen_thread" "no" "$configdir/all/dgenrc"
@@ -87,7 +87,7 @@ function configure_dispmanx_off_dgen() {
 
 function configure_dispmanx_on_dgen() {
     # turn on dispmanx
-    ensureKeyValueShort "dgen" "1" "$configdir/all/dispmanx"
+    ensureKeyValueShort "$md_id" "1" "$configdir/all/dispmanx.cfg"
     # turn on double buffer
     ensureKeyValue "bool_doublebuffer" "yes" "$configdir/all/dgenrc"
     ensureKeyValue "bool_screen_thread" "yes" "$configdir/all/dgenrc"

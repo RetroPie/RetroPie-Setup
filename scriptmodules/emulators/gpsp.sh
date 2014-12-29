@@ -32,5 +32,5 @@ function configure_gpsp() {
     mkRomDir "gba"
     chown $user:$user -R "$md_inst"
 
-    setESSystem "Game Boy Advance" "gba" "~/RetroPie/roms/gba" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/gpsp %ROM%\"" "gba" "gba"
+    setESSystem "Game Boy Advance" "gba" "~/RetroPie/roms/gba" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/gpsp %ROM%\" \"$md_id\"" "gba" "gba"
 }
