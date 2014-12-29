@@ -34,6 +34,108 @@ function configure_mupen64plus() {
 
     # Copy config files
     cp "$md_inst/data/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf} "$home/RetroPie/BIOS/"
+    cat > $home/RetroPie/BIOS/gles2n64rom.conf << _EOF_
+#rom specific settings
+
+rom name=SUPER MARIO 64
+target FPS=25
+
+rom name=Kirby64
+target FPS=25
+
+rom name=Banjo-Kazooie
+framebuffer enable=1
+update mode=4
+target FPS=25
+
+rom name=BANJO TOOIE
+hack banjo tooie=1
+ignore offscreen rendering=1
+framebuffer enable=1
+update mode=4
+
+rom name=STARFOX64
+window width=864
+window height=520
+target FPS=27
+
+rom name=MARIOKART64
+target FPS=27
+
+rom name=THE LEGEND OF ZELDA
+texture use IA=0
+hack zelda=1
+target FPS=17
+
+rom name=ZELDA MAJORA'S MASK
+texture use IA=0
+hack zelda=1
+rom name=F-ZERO X
+window width=864
+window height=520
+target FPS=55
+rom name=WAVE RACE 64
+window width=864
+window height=520
+target FPS=27
+rom name=SMASH BROTHERS
+framebuffer enable=1
+window width=864
+window height=520
+target FPS=27
+rom name=1080 SNOWBOARDING
+update mode=2
+target FPS=27
+rom name=PAPER MARIO
+update mode=4
+rom name=STAR WARS EP1 RACER
+video force=1
+video width=320
+video height=480
+rom name=JET FORCE GEMINI
+framebuffer enable=1
+update mode=2
+ignore offscreen rendering=1
+target FPS=27
+rom name=RIDGE RACER 64
+window width=864
+window height=520
+enable lighting=0
+target FPS=27
+rom name=Diddy Kong Racing
+target FPS=27
+rom name=MarioParty
+update mode=4
+rom name=MarioParty3
+update mode=4
+rom name=Beetle Adventure Rac
+window width=864
+window height=520
+target FPS=27
+rom name=EARTHWORM JIM 3D
+rom name=LEGORacers
+rom name=GOEMONS GREAT ADV
+window width=864
+window height=520
+rom name=Buck Bumble
+window width=864
+window height=520
+rom name=BOMBERMAN64U2
+window width=864
+window height=520
+rom name=ROCKETROBOTONWHEELS
+window width=864
+window height=520
+rom name=GOLDENEYE
+force screen clear=1
+framebuffer enable=1
+window width=864
+window height=520
+target FPS=25
+rom name=Mega Man 64
+framebuffer enable=1
+target FPS=25
+_EOF_
     chown -R $user:$user "$home/RetroPie/BIOS"
 
     rps_retronet_prepareConfig

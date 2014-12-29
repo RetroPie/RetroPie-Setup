@@ -26,8 +26,12 @@ function get_mode() {
 
     # get current mode / aspect ratio
     status=$(tvservice -s)
-    currentmode=$(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)")
-    currentmode=${currentmode//[()]/}
+    if [[ "$status" =~ (PAL|NTSC) ]]; then
+        currentmode=$(echo "$status" | grep -oE "(PAL|NTSC) (4:3|16:10|16:9)")
+    else
+        currentmode=$(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)")
+        currentmode=${currentmode//[()]/}
+    fi
     currentmode=${currentmode/ /-}
     aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
 
@@ -131,6 +135,15 @@ function switch_mode() {
     return $switched
 }
 
+function restore_mode() {
+    local mode=(${1//-/ })
+    if [ "${mode[0]}" = "PAL" ] || [ "${mode[0]}" = "NTSC" ]; then
+        tvservice -c "${mode[*]}"
+    else
+        tvservice -p
+    fi
+}
+
 function reset_framebuffer() {
   sleep 1
   fbset -depth 8
@@ -231,7 +244,7 @@ echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
 # if we switched mode - restore preferred mode, and reset framebuffer
 if [ $switched -eq 1 ]; then
-    tvservice -p
+    restore_mode "$currentmode"
     reset_framebuffer
 fi
 
