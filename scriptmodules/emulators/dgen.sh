@@ -74,7 +74,7 @@ function configure_dgen()
 
 function configure_dispmanx_off_dgen() {
     # turn off dispmanx
-    ensureKeyValueShort "dgen" "0" "$configdir/all/dispmanx.cfg"
+    ensureKeyValueShort "$md_id" "0" "$configdir/all/dispmanx.cfg"
     # doublebuffer is disabled on framebuffer by default anyway
     ensureKeyValue "bool_doublebuffer" "no" "$configdir/all/dgenrc"
     ensureKeyValue "bool_screen_thread" "no" "$configdir/all/dgenrc"
@@ -87,7 +87,7 @@ function configure_dispmanx_off_dgen() {
 
 function configure_dispmanx_on_dgen() {
     # turn on dispmanx
-    ensureKeyValueShort "dgen" "1" "$configdir/all/dispmanx.cfg"
+    ensureKeyValueShort "$md_id" "1" "$configdir/all/dispmanx.cfg"
     # turn on double buffer
     ensureKeyValue "bool_doublebuffer" "yes" "$configdir/all/dgenrc"
     ensureKeyValue "bool_screen_thread" "yes" "$configdir/all/dgenrc"
