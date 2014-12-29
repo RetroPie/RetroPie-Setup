@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# parameters - reqmode command_to_launch savename
+
 # reqmode==0: run command
 # reqmode==1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz, and run command
 # reqmode==4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz, and run command
@@ -10,6 +12,15 @@
 
 # note that mode switching only happens if the monitor reports the modes as available (via tvservice)
 # and the requested mode differs from the currently active mode
+
+# if savename is included, that is used for loading and saving of video output modes as well as dispmanx settings
+# for the current command. If omitted, the binary name is used as a key for the loading and saving. The savename is
+# also displayed in the video output menu (detailed below), so for our purposes we send the emulator module id, which
+# is somewhat descriptive yet short.
+
+# on launch this script waits for 1 second for a keypress. If x or m is pressed, a menu is displayed allowing
+# the user to set a screenmode for this particular command. the savename parameter is displayed to the user - we use the module id
+# of the emulator we are launching.
 
 video_conf="/opt/retropie/configs/all/videomodes.cfg"
 dispmanx_conf="/opt/retropie/configs/all/dispmanx.cfg"
