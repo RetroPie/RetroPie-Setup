@@ -5,9 +5,11 @@ rp_module_menus="2+"
 function install_modules() {
     modprobe uinput
     modprobe joydev
+    modprobe snd_bcm2835
 
-    for module in uinput joydev; do
+    for module in uinput joydev snd_bcm2835; do
         if ! grep -q "$module" /etc/modules; then
+            echo -e "Adding module $module to /etc/modules"
             addLineToFile "$module" "/etc/modules"
         else
             echo -e "$module module already contained in /etc/modules"
