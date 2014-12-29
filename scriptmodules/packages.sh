@@ -144,21 +144,21 @@ function rp_callModule() {
     local errors=""
 
     # print an action and a description
-    printMsg "$action $md_id"
+    printMsg "$action $md_desc"
 
     # call the function
     $function
 
     # check if any required files are found
     if [ "$md_ret_require" != "" ] && [ ! -f "$md_ret_require" ]; then
-        errors+="$__ERRMSGS Could not successfully $function $md_id ($md_ret_require not found)."
+        errors+="$__ERRMSGS Could not successfully $function $md_desc ($md_ret_require not found)."
     fi
 
     # check for existance and copy any files/directories returned
     if [ "$md_ret_files" != "" ]; then
         for file in "${md_ret_files[@]}"; do
             if [ ! -e "$md_build/$file" ]; then
-                errors+="$__ERRMSGS Could not successfully install $md_id ($md_build/$file not found)."
+                errors+="$__ERRMSGS Could not successfully install $md_desc ($md_build/$file not found)."
                 break
             fi
             cp -Rv "$md_build/$file" "$md_inst"
