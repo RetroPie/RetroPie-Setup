@@ -147,6 +147,13 @@ function config_dispmanx() {
     fi
 }
 
+function retroarch_refresh_config() {
+    [[ ! "$command" =~ "retroarch" ]] && return
+    local rate=$(tvservice -s | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
+    echo "video_refresh_rate = $rate" >/tmp/retroarch-rate.cfg
+    command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg|")
+}
+
 # arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
 function iniSet() {
     local command="$1"
@@ -211,6 +218,8 @@ config_dispmanx "$binary"
 
 # switch to performance cpu governor
 echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
+
+retroarch_refresh_config
 
 # run command
 eval $command
