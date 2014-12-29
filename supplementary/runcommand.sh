@@ -143,7 +143,7 @@ function config_dispmanx() {
     # change the library path to load dispmanx sdl first
     if [ -f "$dispmanx_conf" ]; then
       source "$dispmanx_conf"
-      [ "${!name}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $@"
+      [ "${!name}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $command"
     fi
 }
 
