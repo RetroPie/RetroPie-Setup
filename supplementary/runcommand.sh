@@ -203,12 +203,12 @@ reqmode="$1"
 command="$2"
 [[ -z "$command" ]] && exit 1
 
-binary="${command/% */}"
-
 emulator="$3"
-[[ -z "$emulator" ]] && emulator="$binary"
+# if we have an emulator name (such as module_id) we use that for storing/loading parameters for video output/dispmanx
+# if the parameter is empty we use the name of the binary (to avoid breakage with out of date emulationstation configs)
+[[ -z "$emulator" ]] && emulator="${command/% */}"
 
-# convert binary / path to a names usable as variables in our config file
+# convert emulator name / binary to a names usable as variables in our config file
 emusave=${emulator//\//_}
 emusave=${emusave//[^a-Z0-9_]/}
 romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
