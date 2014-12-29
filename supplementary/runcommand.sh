@@ -228,6 +228,7 @@ get_mode "$emusave" "$romsave"
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
+echo "Press 'x' or 'm' to configure video output options for $emulator"
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
     choose_mode "$emulator" "$emusave" "$romsave" "$newmode"
