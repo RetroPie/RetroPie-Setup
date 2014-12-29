@@ -12,7 +12,7 @@
 # and the requested mode differs from the currently active mode
 
 video_conf="/opt/retropie/configs/all/videomodes.cfg"
-dispmanx_conf="/opt/retropie/configs/all/dispmanx"
+dispmanx_conf="/opt/retropie/configs/all/dispmanx.cfg"
 
 declare -A mode
 mode[1-4:3]="CEA-1"
