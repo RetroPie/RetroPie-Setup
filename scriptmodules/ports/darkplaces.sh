@@ -35,7 +35,7 @@ function configure_darkplaces() {
     # Create startup script
     cat > "$romdir/ports/darkplacesquake.sh" << _EOF_
 #!/bin/bash
-sudo darkplaces-sdl -basedir $romdir/ports -quake
+sudo darkplaces-sdl -basedir $romdir/ports/quake -quake
 _EOF_
     
     # Set startup script permissions
