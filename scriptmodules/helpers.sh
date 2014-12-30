@@ -194,15 +194,27 @@ function rpSwap() {
 # clones or updates the sources of a repository $2 into the directory $1
 function gitPullOrClone()
 {
-    if [ -d "$1/.git" ]; then
-        pushd $1 > /dev/null
+    local dir="$1"
+    local repo="$2"
+    local shallow="$3"
+
+    # to work around a issue with git hanging in a qemu-arm-static chroot we can use a github created archive
+    if [ $__chroot -eq 1 ] && [[ "$repo" =~ "github" ]]; then
+        local archive=${repo/.git/}
+        archive=${archive/git:/https:}/archive/master.tar.gz
+        wget -O- -q "$archive" | tar -xvz --strip-components=1 -C "$dir"
+        return
+    fi
+
+    if [ -d "$dir/.git" ]; then
+        pushd "$dir" > /dev/null
         git pull > /dev/null
         popd > /dev/null
     else
-        if [ "$3" = "NS" ]; then
-            git clone "$2" "$1"
+        if [ "$shallow" = "NS" ]; then
+            git clone "$repo" "$dir"
         else
-            git clone --depth=1 "$2" "$1"
+            git clone --depth=1 "$report" "$dir"
         fi
     fi
 }
