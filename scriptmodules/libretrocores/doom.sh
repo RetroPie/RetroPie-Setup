@@ -13,7 +13,14 @@ function build_doom() {
 }
 
 function install_doom() {
-    mkdir -p $romdir/ports/doom
+    md_ret_files=(
+        'prboom_libretro.so'
+        'prboom.wad'
+    )
+}
+
+function configure_doom() {
+    mkdir -p "$romdir/ports/doom"
 
     # download and install midi instruments
     wget -O- -q "http://downloads.petrockblock.com/retropiearchives/timidity.tar.gz" | tar -xvz -C /usr/local/lib
@@ -24,15 +31,7 @@ function install_doom() {
     # download doom 1 shareware
     wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
 
-    chown $user:$user "romdir/ports/doom/"*
-
-    md_ret_files=(
-        'prboom_libretro.so'
-    )
-}
-
-function configure_doom() {
-    mkdir -p $romdir/ports/doom
+    chown $user:$user "$romdir/ports/doom/"*
 
     cat > "$romdir/ports/Doom 1 Shareware.sh" << _EOF_
 #!/bin/bash
