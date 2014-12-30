@@ -140,9 +140,9 @@ function rps_main_binaries()
     ensureRootdirExists
     now=$(date +'%d%m%Y_%H%M')
     {
-        # install all needed dependencies
+        # install all needed dependencies (except for experimental packages)
         for idx in "${__mod_idx[@]}"; do
-            rp_callModule "$idx" "depends"
+            [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && rp_callModule "$idx" "depends"
         done
 
         rp_callModule aptpackages
@@ -170,9 +170,9 @@ function rps_main_binaries()
         rp_callModule usbromservice
         rp_callModule bashwelcometweak
 
-        # configure all emulator and libretro components
+        # configure all emulator and libretro components (except for experimental packages)
         for idx in "${__mod_idx[@]}"; do
-            [[ $idx < 300 ]] && rp_callModule "$idx" "configure"
+            [[ $idx < 300 ]] && [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && rp_callModule "$idx" "configure"
         done
 
         rp_callModule sambashares
