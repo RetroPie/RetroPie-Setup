@@ -214,7 +214,7 @@ function gitPullOrClone()
         if [ "$shallow" = "NS" ]; then
             git clone "$repo" "$dir"
         else
-            git clone --depth=1 "$report" "$dir"
+            git clone --depth=1 "$repo" "$dir"
         fi
     fi
 }
