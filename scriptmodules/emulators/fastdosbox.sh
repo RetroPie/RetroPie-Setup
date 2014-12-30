@@ -25,5 +25,14 @@ function install_fastdosbox() {
 
 function configure_fastdosbox() {
     mkRomDir "pc"
-    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".txt" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/dosbox\" \"$md_id\"" "pc" "pc"
+
+    cat > "$romdir/pc/Start FastDosBox.sh" << _EOF_
+#!/bin/bash
+pushd "$md_inst"
+$md_inst/bin/dosbox -c "MOUNT C \"$romdir/pc\"" 
+popd
+_EOF_
+    chmod +x "$romdir/pc/Start FastDosBox.sh"
+
+    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".sh" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"%ROM%\" \"$md_id\"" "pc" "pc"
 }
