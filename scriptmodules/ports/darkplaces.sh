@@ -11,27 +11,28 @@ function sources_darkplaces() {
 }
 
 function install_darkplaces() {
-    # Install darkplaces debian package
     dpkg -i darkplaces-rpi.deb
     rm darkplaces-rpi.deb
-
-    # Download game file
-    wget ftp://ftp.idsoftware.com/idstuff/quake/quake106.zip
-    unzip -o quake106.zip
-    rm quake106.zip
-    lhasa ef resource.1
-    
-    # Create ports directory
-    mkdir -p $romdir/ports/quake
-
-    # Copy game dir to rom dir
-    cp -rf id1 $romdir/ports/quake/id1
-    
-    # Set game file permission
-    chown -R $user:$user "$romdir/ports/quake/"
 }
 
 function configure_darkplaces() {
+    mkdir -p "$romdir/ports/quake"
+
+    if [ ! -f "$romdir/ports/quake/id1/pak0.pak" ]; then
+        # download / unpack / install quake shareware files
+        wget "http://downloads.petrockblock.com/retropiearchives/quake106.zip" -O quake106.zip
+        unzip -o quake106.zip -d "quake106"
+        rm quake106.zip
+        pushd quake106
+        lhasa ef resource.1
+        cp -rf id1 "$romdir/ports/quake/"
+        popd
+        rm -rf quake106
+        chown -R $user:$user "$romdir/ports/quake"
+    fi
+
+    ensureSystemretroconfig "quake"
+
     # Create startup script
     cat > "$romdir/ports/darkplacesquake.sh" << _EOF_
 #!/bin/bash
