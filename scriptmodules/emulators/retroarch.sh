@@ -41,8 +41,6 @@ function ensureSystemretroconfig {
 }
 
 function configure_retroarch() {
-    cp $scriptdir/supplementary/retroarch-zip "$md_inst"
-
     if [[ ! -d "$configdir/all/" ]]; then
         mkdir -p "$configdir/all/"
     fi
