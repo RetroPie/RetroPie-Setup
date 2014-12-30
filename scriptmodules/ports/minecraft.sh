@@ -11,7 +11,7 @@ function configure_minecraft() {
 
     cat > "$romdir/ports/Minecraft.sh" << _EOF_
 #!/bin/bash
-xinit "$md_inst/minecraft-pi
+xinit "$md_inst/minecraft-pi"
 _EOF_
 
     chmod +x "$romdir/ports/Minecraft.sh"
