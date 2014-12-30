@@ -18,7 +18,7 @@ function build_tyrquake() {
 
 function install_tyrquake() {
     # Download game file
-    wget ftp://ftp.idsoftware.com/idstuff/quake/quake106.zip
+    wget "http://downloads.petrockblock.com/retropiearchives/quake106.zip"
     unzip -o quake106.zip
     rm quake106.zip
     lhasa ef resource.1
