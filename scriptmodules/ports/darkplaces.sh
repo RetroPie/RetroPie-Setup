@@ -34,14 +34,14 @@ function configure_darkplaces() {
     ensureSystemretroconfig "quake"
 
     # Create startup script
-    cat > "$romdir/ports/darkplacesquake.sh" << _EOF_
+    cat > "$romdir/ports/Darkplaces Quake.sh" << _EOF_
 #!/bin/bash
-sudo darkplaces-sdl -basedir $romdir/ports/quake -quake
+darkplaces-sdl -basedir "$romdir/ports/quake" -quake
 _EOF_
     
     # Set startup script permissions
-    chmod u+x "$romdir/ports/darkplacesquake.sh"
-    chown $user:$user "$romdir/ports/darkplacesquake.sh"
+    chmod u+x "$romdir/ports/Darkplaces Quake.sh"
+    chown $user:$user "$romdir/ports/Darkplaces Quake.sh"
     
     # Add darkplaces quake to emulationstation
     setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
