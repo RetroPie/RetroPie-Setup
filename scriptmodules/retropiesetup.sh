@@ -162,7 +162,6 @@ function rps_main_binaries()
         rp_callModule zmachine
         rp_callModule fuse
         rp_callModule hatari
-        rp_callModule dosbox
         rp_callModule eduke32
 
         rp_callModule setavoidsafemode
