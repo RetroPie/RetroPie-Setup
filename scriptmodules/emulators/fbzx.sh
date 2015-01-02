@@ -37,3 +37,13 @@ function configure_fbzx() {
 
     setESSystem "ZX Spectrum" "zxspectrum-fbzx" "RetroPie/roms/zxspectrum-fbzx" "z80 .Z80 .ipf .IPF" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/fbzx %ROM%\" \"$md_id\"" "zxspectrum" "zxspectrum"
 }
+
+function configure_dispmanx_off_fbzx() {
+    # turn off dispmanx
+    ensureKeyValueShort "$md_id" "0" "$configdir/all/dispmanx.cfg"
+}
+
+function configure_dispmanx_on_fbzx() {
+    # turn on dispmanx
+    ensureKeyValueShort "$md_id" "1" "$configdir/all/dispmanx.cfg"
+}
