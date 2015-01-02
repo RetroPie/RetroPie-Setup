@@ -27,9 +27,10 @@
 
 __mod_idx=()
 __mod_id=()
-__mod_desc=()
 __mod_type=()
+__mod_desc=()
 __mod_menus=()
+__mod_flags=()
 __doPackages=0
 
 function fn_exists() {
@@ -37,13 +38,14 @@ function fn_exists() {
     return $?
 }
 
-# params: $1=index, $2=id, $3=description, $4=menus
+# params: $1=index, $2=id, $3=type, $4=description, $5=menus,  $6=flags
 function rp_registerFunction() {
     __mod_idx+=($1)
     __mod_id[$1]=$2
-    __mod_desc[$1]=$3
-    __mod_menus[$1]=$4
-    __mod_type[$1]=$5
+    __mod_type[$1]=$3
+    __mod_desc[$1]=$4
+    __mod_menus[$1]=$5
+    __mod_flags[$1]=$6
 }
 
 function rp_listFunctions() {
@@ -106,6 +108,7 @@ function rp_callModule() {
     local md_id="$mod_id"
     local md_desc="${__mod_desc[$idx]}"
     local md_type="${__mod_type[$idx]}"
+    local md_flags="${__mod_flags[$idx]}"
     local md_build="$__builddir/$mod_id"
     local md_inst="$rootdir/$md_type/$mod_id"
     # these can be returned by a module
@@ -190,6 +193,7 @@ function rp_registerModule() {
     local rp_module_id=""
     local rp_module_desc=""
     local rp_module_menus=""
+    local rp_module_flags=""
     local var
     local error=0
     source $module_path
@@ -200,7 +204,7 @@ function rp_registerModule() {
         fi
     done
     [[ $error -eq 1 ]] && exit 1
-    rp_registerFunction "$module_idx" "$rp_module_id" "$rp_module_desc" "$rp_module_menus" "$module_type"
+    rp_registerFunction "$module_idx" "$rp_module_id" "$module_type" "$rp_module_desc" "$rp_module_menus"  "$rp_module_flags"
 }
 
 function rp_registerModuleDir() {
