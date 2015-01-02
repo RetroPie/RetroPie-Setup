@@ -1,6 +1,7 @@
 rp_module_id="fuse"
 rp_module_desc="ZXSpectrum emulator Fuse"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function install_fuse() {
     aptInstall fuse-emulator-sdl fuse-emulator-utils fuse-emulator-common spectrum-roms
@@ -10,14 +11,4 @@ function configure_fuse() {
     mkRomDir "zxspectrum"
 
     setESSystem "ZX Spectrum" "zxspectrum" "~/RetroPie/roms/zxspectrum" ".sna .SNA .szx .SZX .z80 .Z80 .ipf .IPF .tap .TAP .tzx .TZX .gz .bz2 .udi .UDI .mgt .MGT .img .IMG .trd .TRD .scl .SCL .dsk .DSK" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"fuse-sdl\" \"$md_id\"" "zxspectrum" "zxspectrum"
-}
-
-function configure_dispmanx_off_fuse() {
-    # turn off dispmanx
-    ensureKeyValueShort "$md_id" "0" "$configdir/all/dispmanx.cfg"
-}
-
-function configure_dispmanx_on_fuse() {
-    # turn on dispmanx
-    ensureKeyValueShort "$md_id" "1" "$configdir/all/dispmanx.cfg"
 }

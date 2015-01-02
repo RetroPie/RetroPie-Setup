@@ -1,6 +1,7 @@
 rp_module_id="dgen"
 rp_module_desc="Megadrive/Genesis emulat. DGEN"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function depends_dgen() {
     checkNeededPackages libsdl1.2-dev libarchive-dev
@@ -73,8 +74,6 @@ function configure_dgen()
 }
 
 function configure_dispmanx_off_dgen() {
-    # turn off dispmanx
-    ensureKeyValueShort "$md_id" "0" "$configdir/all/dispmanx.cfg"
     # doublebuffer is disabled on framebuffer by default anyway
     ensureKeyValue "bool_doublebuffer" "no" "$configdir/all/dgenrc"
     ensureKeyValue "bool_screen_thread" "no" "$configdir/all/dgenrc"
@@ -86,8 +85,6 @@ function configure_dispmanx_off_dgen() {
 }
 
 function configure_dispmanx_on_dgen() {
-    # turn on dispmanx
-    ensureKeyValueShort "$md_id" "1" "$configdir/all/dispmanx.cfg"
     # turn on double buffer
     ensureKeyValue "bool_doublebuffer" "yes" "$configdir/all/dgenrc"
     ensureKeyValue "bool_screen_thread" "yes" "$configdir/all/dgenrc"

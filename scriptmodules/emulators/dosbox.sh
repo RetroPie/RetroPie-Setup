@@ -1,6 +1,7 @@
 rp_module_id="dosbox"
 rp_module_desc="DOS emulator"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function depends_dosbox() {
     checkNeededPackages libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng12-dev automake autoconf zlib1g-dev
@@ -47,16 +48,12 @@ _EOF_
 
 function configure_dispmanx_off_dosbox() {
     local config_path=$("$md_inst/bin/dosbox" -printconf)
-    # turn off dispmanx
-    ensureKeyValueShort "$md_id" "0" "$configdir/all/dispmanx.cfg"
     # scaling
     ensureKeyValueShort "scaler" "normal2x" "$config_path"
 }
 
 function configure_dispmanx_on_dosbox() {
     local config_path=$("$md_inst/bin/dosbox" -printconf)
-    # turn on dispmanx
-    ensureKeyValueShort "$md_id" "1" "$configdir/all/dispmanx.cfg"
     # no scaling
     ensureKeyValueShort "scaler" "none" "$config_path"
 }

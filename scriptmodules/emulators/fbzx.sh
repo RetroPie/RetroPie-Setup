@@ -1,6 +1,7 @@
 rp_module_id="fbzx"
 rp_module_desc="ZXSpectrum emulator FBZX"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function sources_fbzx() {
     wget -O- -q http://downloads.petrockblock.com/retropiearchives/fbzx-2.10.0.tar.bz2 | tar -xvj --strip-components=1 
@@ -36,14 +37,4 @@ function configure_fbzx() {
     mkdir -p $romdir/zxspectrum-fbzx
 
     setESSystem "ZX Spectrum" "zxspectrum-fbzx" "RetroPie/roms/zxspectrum-fbzx" "z80 .Z80 .ipf .IPF" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/fbzx %ROM%\" \"$md_id\"" "zxspectrum" "zxspectrum"
-}
-
-function configure_dispmanx_off_fbzx() {
-    # turn off dispmanx
-    ensureKeyValueShort "$md_id" "0" "$configdir/all/dispmanx.cfg"
-}
-
-function configure_dispmanx_on_fbzx() {
-    # turn on dispmanx
-    ensureKeyValueShort "$md_id" "1" "$configdir/all/dispmanx.cfg"
 }
