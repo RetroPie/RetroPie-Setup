@@ -1,6 +1,7 @@
 rp_module_id="vice"
 rp_module_desc="C64 emulator VICE"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function depends_vice() {
     if ! checkForInstalledAPTPackage vice; then

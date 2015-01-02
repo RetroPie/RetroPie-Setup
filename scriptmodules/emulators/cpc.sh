@@ -1,6 +1,7 @@
 rp_module_id="cpc"
 rp_module_desc="Amstrad CPC emulator"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function sources_cpc() {
     wget -O- -q http://downloads.petrockblock.com/retropiearchives/cpc4rpi-1.1_src.tar.gz | tar -xvz --strip-components=1

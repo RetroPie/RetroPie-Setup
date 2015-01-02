@@ -1,6 +1,7 @@
 rp_module_id="basilisk"
 rp_module_desc="Macintosh emulator"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function depends_basilisk() {
     checkNeededPackages autoconf automake

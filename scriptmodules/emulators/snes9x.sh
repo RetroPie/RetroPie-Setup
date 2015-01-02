@@ -1,6 +1,7 @@
 rp_module_id="snes9x"
 rp_module_desc="SNES emulator SNES9X-RPi"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function depends_snes9x() {
     checkNeededPackages libsdl1.2-dev libboost-thread-dev libboost-system-dev libsdl-ttf2.0-dev libasound2-dev

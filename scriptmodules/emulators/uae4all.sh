@@ -1,6 +1,7 @@
 rp_module_id="uae4all"
 rp_module_desc="Amiga emulator UAE4All"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function depends_uae4all() {
     checkNeededPackages libsdl1.2-dev libsdl-mixer1.2-dev libasound2-dev

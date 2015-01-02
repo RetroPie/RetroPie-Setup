@@ -1,6 +1,7 @@
 rp_module_id="jzintv"
 rp_module_desc="Intellivision emulator"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function depends_jzintv() {
     checkNeededPackages libsdl1.2-dev

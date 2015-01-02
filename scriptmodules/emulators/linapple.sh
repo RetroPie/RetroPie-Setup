@@ -1,6 +1,7 @@
 rp_module_id="linapple"
 rp_module_desc="Apple 2 emulator Linapple"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function depends_linapple() {
     checkNeededPackages libzip2 libzip-dev libsdl1.2-dev libcurl4-openssl-dev

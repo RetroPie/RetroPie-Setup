@@ -1,6 +1,7 @@
 rp_module_id="scummvm"
 rp_module_desc="ScummVM"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function install_scummvm() {
     aptInstall scummvm scummvm-data

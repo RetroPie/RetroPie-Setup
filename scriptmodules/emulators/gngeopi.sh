@@ -1,6 +1,7 @@
 rp_module_id="gngeopi"
 rp_module_desc="NeoGeo emulator GnGeoPi"
 rp_module_menus="2+"
+rp_module_flags="dispmanx"
 
 function depends_gngeopi() {
     checkNeededPackages libsdl1.2-dev
