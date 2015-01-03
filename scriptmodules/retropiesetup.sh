@@ -158,7 +158,6 @@ function rps_main_binaries()
         rp_callModule retroarchautoconf
 
         rp_callModule stella
-        rp_callModule scummvm
         rp_callModule zmachine
         rp_callModule fuse
         rp_callModule hatari
