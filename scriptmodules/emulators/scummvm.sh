@@ -21,7 +21,8 @@ function build_scummvm() {
 
 function install_scummvm() {
     make install
-    cp -v "backends/vkeybd/packs/"vkeybd_*.zip "$md_inst/share/scummvm/"
+    mkdir -p "$md_inst/extra"
+    cp -v "backends/vkeybd/packs/"vkeybd_*.zip "$md_inst/extra"
 }
 
 function configure_scummvm() {
@@ -32,7 +33,7 @@ function configure_scummvm() {
 #!/bin/bash
 game="\$1"
 [[ "\$game" =~ ^\+ ]] && game=""
-$md_inst/bin/scummvm --joystick=0 \$game
+$md_inst/bin/scummvm --joystick=0 --extrapath="$md_inst/extra" \$game
 while read line; do
     id=(\$line);
     touch "$romdir/scummvm/\$id.svm"
