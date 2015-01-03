@@ -52,9 +52,10 @@ _EOF_
     chmod +x /usr/bin/emulationstation
 
     # make sure that ES has enough GPU memory
-    ensureKeyValueBootconfig "gpu_mem_256" 128 "/boot/config.txt"
-    ensureKeyValueBootconfig "gpu_mem_512" 256 "/boot/config.txt"
-    ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
+    iniConfig "=" "" /boot/config.txt
+    iniSet "gpu_mem_256" 128
+    iniSet "gpu_mem_512" 256
+    iniSet "overscan_scale" 1
 
     if [[ $__netplayenable == "E" ]]; then
          local __tmpnetplaymode="-$__netplaymode "

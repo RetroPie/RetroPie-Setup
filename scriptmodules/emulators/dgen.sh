@@ -32,35 +32,37 @@ function configure_dgen()
         chown $user:$user "$configdir/all/dgenrc"
     fi
 
-    ensureKeyValue "joy_pad1_a" "joystick0-button0" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad1_b" "joystick0-button1" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad1_c" "joystick0-button2" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad1_x" "joystick0-button3" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad1_y" "joystick0-button4" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad1_z" "joystick0-button5" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad1_mode" "joystick0-button6" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad1_start" "joystick0-button7" "$configdir/all/dgenrc"
+    iniConfig " = " "" "$configdir/all/dgenrc"
+    iniSet "joy_pad1_a" "joystick0-button0"
+    iniSet "joy_pad1_b" "joystick0-button1"
+    iniSet "joy_pad1_c" "joystick0-button2"
+    iniSet "joy_pad1_x" "joystick0-button3"
+    iniSet "joy_pad1_y" "joystick0-button4"
+    iniSet "joy_pad1_z" "joystick0-button5"
+    iniSet "joy_pad1_mode" "joystick0-button6"
+    iniSet "joy_pad1_start" "joystick0-button7"
 
-    ensureKeyValue "joy_pad2_a" "joystick1-button0" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad2_b" "joystick1-button1" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad2_c" "joystick1-button2" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad2_x" "joystick1-button3" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad2_y" "joystick1-button4" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad2_z" "joystick1-button5" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad2_mode" "joystick1-button6" "$configdir/all/dgenrc"
-    ensureKeyValue "joy_pad2_start" "joystick1-button7" "$configdir/all/dgenrc"
+    iniSet "joy_pad2_a" "joystick1-button0"
+    iniSet "joy_pad2_b" "joystick1-button1"
+    iniSet "joy_pad2_c" "joystick1-button2"
+    iniSet "joy_pad2_x" "joystick1-button3"
+    iniSet "joy_pad2_y" "joystick1-button4"
+    iniSet "joy_pad2_z" "joystick1-button5"
+    iniSet "joy_pad2_mode" "joystick1-button6"
+    iniSet "joy_pad2_start" "joystick1-button7"
 
-    ensureKeyValue "emu_z80_startup" "drz80" "$configdir/all/dgenrc"
-    ensureKeyValue "emu_m68k_startup" "cyclone" "$configdir/all/dgenrc"
+    iniSet "emu_z80_startup" "drz80"
+    iniSet "emu_m68k_startup" "cyclone"
 
     # we don't have opengl (or build dgen with it)
-    ensureKeyValue "bool_opengl" "no" "$configdir/all/dgenrc"
+    iniSet "bool_opengl" "no"
 
     # lower sample rate
-    ensureKeyValue "int_soundrate" "22050" "$configdir/all/dgenrc"
+    iniSet "int_soundrate" "22050"
 
     # if the framebuffer is not the requires resolution dgen seems to give a black screen
-    ensureKeyValueBootconfig "overscan_scale" 1 "/boot/config.txt"
+    iniConfig "=" "" "/boot/config.txt"
+    iniSet "overscan_scale" 1
 
     configure_dispmanx_off_dgen
 
@@ -74,23 +76,25 @@ function configure_dgen()
 }
 
 function configure_dispmanx_off_dgen() {
+    iniConfig " = " "" "$configdir/all/dgenrc"
     # doublebuffer is disabled on framebuffer by default anyway
-    ensureKeyValue "bool_doublebuffer" "no" "$configdir/all/dgenrc"
-    ensureKeyValue "bool_screen_thread" "no" "$configdir/all/dgenrc"
+    iniSet "bool_doublebuffer" "no"
+    iniSet "bool_screen_thread" "no"
     # full screen width/height by default
-    ensureKeyValue "int_width" "-1" "$configdir/all/dgenrc"
-    ensureKeyValue "int_height" "-1" "$configdir/all/dgenrc"
+    iniSet "int_width" "-1"
+    iniSet "int_height" "-1"
     # without dispmanx, scale seems to run the fastest
-    ensureKeyValue "scaling_startup" "scale" "$configdir/all/dgenrc"
+    iniSet "scaling_startup" "scale"
 }
 
 function configure_dispmanx_on_dgen() {
+    iniConfig " = " "" "$configdir/all/dgenrc"
     # turn on double buffer
-    ensureKeyValue "bool_doublebuffer" "yes" "$configdir/all/dgenrc"
-    ensureKeyValue "bool_screen_thread" "yes" "$configdir/all/dgenrc"
+    iniSet "bool_doublebuffer" "yes"
+    iniSet "bool_screen_thread" "yes"
     # set rendering resolution to 320x240
-    ensureKeyValue "int_width" "320" "$configdir/all/dgenrc"
-    ensureKeyValue "int_height" "240" "$configdir/all/dgenrc"
+    iniSet "int_width" "320"
+    iniSet "int_height" "240"
     # no scaling needed
-    ensureKeyValue "scaling_startup" "none" "$configdir/all/dgenrc"
+    iniSet "scaling_startup" "none" "$configdir/all/dgenrc"
 }

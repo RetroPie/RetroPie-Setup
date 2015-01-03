@@ -117,41 +117,43 @@ __________\n\
         --yesno "Would you like to update button mappings \
     to $configdir/all/retroarch.cfg ?" 22 76
 
+    iniConfig " = " "" "$configdir/all/retroarch.cfg"
+
       case $? in
        0)
         if [ $GPIOREV = 1 ]; then
-                ensureKeyValue "input_player1_joypad_index" "0" "$configdir/all/retroarch.cfg"
-                ensureKeyValue "input_player2_joypad_index" "1" "$configdir/all/retroarch.cfg"
+                iniSet "input_player1_joypad_index" "0"
+                iniSet "input_player2_joypad_index" "1"
         else
-            ensureKeyValue "input_player1_joypad_index" "1" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_joypad_index" "0" "$configdir/all/retroarch.cfg"
+            iniSet "input_player1_joypad_index" "1"
+            iniSet "input_player2_joypad_index" "0"
         fi
 
-            ensureKeyValue "input_player1_a_btn" "0" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_b_btn" "1" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_x_btn" "2" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_y_btn" "3" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_l_btn" "4" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_r_btn" "5" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_start_btn" "7" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_select_btn" "6" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_left_axis" "-0" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_up_axis" "-1" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_right_axis" "+0" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player1_down_axis" "+1" "$configdir/all/retroarch.cfg"
+            iniSet "input_player1_a_btn" "0"
+            iniSet "input_player1_b_btn" "1"
+            iniSet "input_player1_x_btn" "2"
+            iniSet "input_player1_y_btn" "3"
+            iniSet "input_player1_l_btn" "4"
+            iniSet "input_player1_r_btn" "5"
+            iniSet "input_player1_start_btn" "7"
+            iniSet "input_player1_select_btn" "6"
+            iniSet "input_player1_left_axis" "-0"
+            iniSet "input_player1_up_axis" "-1"
+            iniSet "input_player1_right_axis" "+0"
+            iniSet "input_player1_down_axis" "+1"
 
-            ensureKeyValue "input_player2_a_btn" "0" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_b_btn" "1" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_x_btn" "2" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_y_btn" "3" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_l_btn" "4" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_r_btn" "5" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_start_btn" "7" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_select_btn" "6" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_left_axis" "-0" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_up_axis" "-1" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_right_axis" "+0" "$configdir/all/retroarch.cfg"
-            ensureKeyValue "input_player2_down_axis" "+1" "$configdir/all/retroarch.cfg"
+            iniSet "input_player2_a_btn" "0"
+            iniSet "input_player2_b_btn" "1"
+            iniSet "input_player2_x_btn" "2"
+            iniSet "input_player2_y_btn" "3"
+            iniSet "input_player2_l_btn" "4"
+            iniSet "input_player2_r_btn" "5"
+            iniSet "input_player2_start_btn" "7"
+            iniSet "input_player2_select_btn" "6"
+            iniSet "input_player2_left_axis" "-0"
+            iniSet "input_player2_up_axis" "-1"
+            iniSet "input_player2_right_axis" "+0"
+            iniSet "input_player2_down_axis" "+1"
         ;;
        *)
         ;;
