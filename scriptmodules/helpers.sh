@@ -56,7 +56,7 @@ function addLineToFile()
     echo "Added $1 to file $2"
 }
 
-# arg 1: set/unset, arg 2: delimiter, arg 3: quote character
+# arg 1: delimiter, arg 2: quote, arg 3: file
 function iniConfig()
 {
     __ini_cfg_delim="$1"
