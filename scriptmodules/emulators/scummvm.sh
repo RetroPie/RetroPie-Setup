@@ -22,7 +22,7 @@ function build_scummvm() {
 function install_scummvm() {
     make install
     mkdir -p "$md_inst/extra"
-    cp -v "backends/vkeybd/packs/"vkeybd_*.zip "$md_inst/extra"
+    cp -v backends/vkeybd/packs/vkeybd_*.zip "$md_inst/extra"
 }
 
 function configure_scummvm() {
