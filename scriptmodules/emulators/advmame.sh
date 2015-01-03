@@ -27,10 +27,12 @@ function configure_advmame() {
     mkRomDir "mame-advmame"
 
     su "$user" -c "$md_inst/bin/advmame"
-    iniSet "set" " " "" "device_video_clock" "5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60" "$home/.advance/advmame.rc"
-    iniSet "set" " " "" "dir_rom" "$romdir/mame-advmame" "$home/.advance/advmame.rc"
-    iniSet "set" " " "" "dir_artwork" "$romdir/mame-artwork" "$home/.advance/advmame.rc"
-    iniSet "set" " " "" "dir_sample" "$romdir/mame-samples" "$home/.advance/advmame.rc"
+
+    iniConfig " " "" "$home/.advance/advmame.rc"
+    iniSet "device_video_clock" "5 - 50 / 15.62 / 50 ; 5 - 50 / 15.73 / 60" 
+    iniSet "dir_rom" "$romdir/mame-advmame"
+    iniSet "dir_artwork" "$romdir/mame-artwork"
+    iniSet "dir_sample" "$romdir/mame-samples"
 
     setESSystem "MAME" "mame-advmame" "~/RetroPie/roms/mame-advmame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/bin/advmame %BASENAME%\" \"$md_id\"" "arcade" "mame"
 }
