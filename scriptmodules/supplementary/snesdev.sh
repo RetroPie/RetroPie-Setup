@@ -36,24 +36,25 @@ function sup_checkInstallSNESDev() {
 
 # start SNESDev on boot and configure RetroArch input settings
 function sup_enableSNESDevAtStart() {
+    iniConfig "=" "" "/etc/snesdev.cfg"
     clear
     printMsg "Enabling SNESDev on boot."
 
     case $1 in
       1)
-        ensureKeyValueBootconfig "button_enabled" "0" "/etc/snesdev.cfg"
-        ensureKeyValueBootconfig "gamepad1_enabled" "1" "/etc/snesdev.cfg"
-        ensureKeyValueBootconfig "gamepad2_enabled" "1" "/etc/snesdev.cfg"
+        iniSet "button_enabled" "0" 
+        iniSet "gamepad1_enabled" "1"
+        iniSet "gamepad2_enabled" "1"
         ;;
       2)
-        ensureKeyValueBootconfig "button_enabled" "1" "/etc/snesdev.cfg"
-        ensureKeyValueBootconfig "gamepad1_enabled" "0" "/etc/snesdev.cfg"
-        ensureKeyValueBootconfig "gamepad2_enabled" "0" "/etc/snesdev.cfg"
+        iniSet "button_enabled" "1"
+        iniSet "gamepad1_enabled" "0"
+        iniSet "gamepad2_enabled" "0"
         ;;
       3)
-        ensureKeyValueBootconfig "button_enabled" "1" "/etc/snesdev.cfg"
-        ensureKeyValueBootconfig "gamepad1_enabled" "1" "/etc/snesdev.cfg"
-        ensureKeyValueBootconfig "gamepad2_enabled" "1" "/etc/snesdev.cfg"
+        iniSet "button_enabled" "1"
+        iniSet "gamepad1_enabled" "1"
+        iniSet "gamepad2_enabled" "1"
         ;;
       *)
         echo "[sup_enableSNESDevAtStart] I do not understand what is going on here."
@@ -63,12 +64,13 @@ function sup_enableSNESDevAtStart() {
 }
 
 function sup_snesdevAdapterversion() {
+  iniConfig "=" "" "/etc/snesdev.cfg"
   if [[ $1 -eq 1 ]]; then
-    ensureKeyValueBootconfig "adapter_version" "1x" "/etc/snesdev.cfg"
+    iniSet "adapter_version" "1x"
   elif [[ $1 -eq 2 ]]; then
-    ensureKeyValueBootconfig "adapter_version" "2x" "/etc/snesdev.cfg"
+    iniSet "adapter_version" "2x"
   else
-    ensureKeyValueBootconfig "adapter_version" "2x" "/etc/snesdev.cfg"
+    iniSet "adapter_version" "2x"
   fi
 }
 

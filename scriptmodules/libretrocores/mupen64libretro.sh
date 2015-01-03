@@ -28,9 +28,10 @@ function configure_mupen64plus() {
     ensureSystemretroconfig "n64"
 
     # Set core options
-    ensureKeyValue "mupen64-gfxplugin" "rice" "$configdir/all/retroarch-core-options.cfg"
-    ensureKeyValue "mupen64-gfxplugin-accuracy" "low" "$configdir/all/retroarch-core-options.cfg"
-    ensureKeyValue "mupen64-screensize" "640x480" "$configdir/all/retroarch-core-options.cfg"
+    iniConfig " = " "" "$configdir/all/retroarch-core-options.cfg"
+    iniSet "mupen64-gfxplugin" "rice"
+    iniSet "mupen64-gfxplugin-accuracy" "low"
+    iniSet "mupen64-screensize" "640x480"
 
     # Copy config files
     cp "$md_inst/data/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf} "$home/RetroPie/BIOS/"

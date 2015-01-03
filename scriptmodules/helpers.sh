@@ -25,6 +25,18 @@
 #  Many, many thanks go to all people that provide the individual packages!!!
 #
 
+function printMsg()
+{
+    echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
+}
+
+function fatalError()
+{
+    printMsg "Fatal Error"
+    echo "$1"
+    exit 1
+}
+
 function ask()
 {
     echo -e -n "$@" '[y/n] ' ; read ans
@@ -44,15 +56,27 @@ function addLineToFile()
     echo "Added $1 to file $2"
 }
 
-# arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
-function iniSet()
+# arg 1: delimiter, arg 2: quote, arg 3: file
+function iniConfig()
 {
-    local command="$1"
-    local delim="$2"
-    local quote="$3"
-    local key="$4"
-    local value="$5"
-    local file="$6"
+    __ini_cfg_delim="$1"
+    __ini_cfg_quote="$2"
+    __ini_cfg_file="$3"
+}
+
+# arg 1: command, arg 2: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+function iniProcess()
+{
+    local cmd="$1"
+    local key="$2"
+    local value="$3"
+    local file="$4"
+    [ "$file" == "" ] && file="$__ini_cfg_file"
+    local delim="$__ini_cfg_delim"
+    local quote="$__ini_cfg_quote"
+
+    [ "$file" == "" ] && fatalError "No file provided for ini/config change"
+    [ "$key" == "" ] && fatalError "No key provided for ini/config change on $file"
 
     local delim_strip=${delim// /}
     local match_re="[\s#]*$key\s*$delim_strip.*$"
@@ -64,7 +88,7 @@ function iniSet()
         touch "$file"
     fi
 
-    [ "$command" == "unset" ] && key="# $key"
+    [ "$cmd" == "unset" ] && key="# $key"
     local replace="$key$delim$quote$value$quote"
     echo "Setting $replace in $file"
     if [[ -z "$match" ]]; then
@@ -76,45 +100,16 @@ function iniSet()
     fi
 }
 
-# arg 1: key, arg 2: value, arg 3: file
-# make sure that a key-value pair is set in file
-# key = value
-function ensureKeyValue()
+# arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+function iniUnset()
 {
-    iniSet "set" " = " "" "$1" "$2" "$3"
+    iniProcess "unset" "$1" "$2" "$3"
 }
 
-# make sure that a key-value pair is NOT set in file
-# # key = value
-function disableKeyValue()
+# arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+function iniSet()
 {
-    iniSet "unset" " = " "" "$1" "$2" "$3"
-}
-
-# arg 1: key, arg 2: value, arg 3: file
-# make sure that a key-value pair is set in file
-# key=value
-function ensureKeyValueShort()
-{
-    iniSet "set" "=" "" "$1" "$2" "$3"
-}
-
-# make sure that a key-value pair is NOT set in file
-# # key=value
-function disableKeyValueShort()
-{
-    iniSet "unset" "=" "" "$1" "$2" "$3"
-}
-
-# ensures pair of key ($1)-value ($2) in file $3
-function ensureKeyValueBootconfig()
-{
-    iniSet "set" "=" "" "$1" "$2" "$3"
-}
-
-function printMsg()
-{
-    echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
+    iniProcess "set" "$1" "$2" "$3"
 }
 
 function checkForInstalledAPTPackage()
