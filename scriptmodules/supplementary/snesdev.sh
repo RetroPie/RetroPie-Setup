@@ -24,8 +24,9 @@ function install_snesdev() {
         cp -v 'supplementary/snesdev.cfg' "$md_inst/supplementary/"
     fi
     # then install from there to system folders
-    cd "$md_inst"
+    pushd "$md_inst"
     make install
+    popd
 }
 
 function sup_checkInstallSNESDev() {
