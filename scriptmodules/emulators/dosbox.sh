@@ -50,7 +50,7 @@ _EOF_
 }
 
 function configure_dispmanx_off_dosbox() {
-    local config_path=$("$md_inst/bin/dosbox" -printconf)
+    local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [ -f "$config_path" ]; then
         iniConfig "=" "" "$config_path"
         # scaling
@@ -59,7 +59,7 @@ function configure_dispmanx_off_dosbox() {
 }
 
 function configure_dispmanx_on_dosbox() {
-    local config_path=$("$md_inst/bin/dosbox" -printconf)
+    local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [ -f "$config_path" ]; then
         iniConfig "=" "" "$config_path"
         # no scaling
