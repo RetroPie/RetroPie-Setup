@@ -32,7 +32,7 @@
 
 pushd "/opt"
 
-rootdir="./retropie"
+rootdir="retropie"
 
 filelist=()
 
@@ -60,16 +60,7 @@ if [[ $doAbort -eq 1 ]]; then
 fi
 
 echo "Creating the archive file"
-tar -c -vf /home/pi/RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[0]} --exclude-vcs --exclude="*.o"
-
-for (( i=1; i<${tLen}; i++ ));
-do
-    tar -r -vf /home/pi/RetroPieSetupBinaries_`date +%d%m%y`.tar ${filelist[$i]} --exclude-vcs --exclude="*.o"
-done
-
-echo "Compressing the archive file"
-bzip2 /home/pi/RetroPieSetupBinaries_`date +%d%m%y`.tar
-
+tar -cvzf /home/pi/RetroPieSetupBinaries_`date +%d%m%y`.tar.gz ${filelist[@]}
 echo "Done."
 
 popd
