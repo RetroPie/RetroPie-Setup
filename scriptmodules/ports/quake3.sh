@@ -18,13 +18,8 @@ function build_quake3() {
 
 function install_quake3() {
     md_ret_files=(
-        'build/release-linux-arm/baseq3'
-        'build/release-linux-arm/client'
-        'build/release-linux-arm/clientsmp'
-        'build/release-linux-arm/ded'
+        'build/release-linux-arm/ioq3ded.arm'
         'build/release-linux-arm/ioquake3.arm'
-        'build/release-linux-arm/missionpack'
-        'build/release-linux-arm/tools'
     )
 
     wget http://downloads.petrockblock.com/retropiearchives/Q3DemoPaks.zip
