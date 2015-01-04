@@ -13,17 +13,19 @@ function build_snesdev() {
 }
 
 function install_snesdev() {
-    cd "$md_build"
+    # if we have built it, copy files to install location
+    if [ -f "$md_build" ]; then
+        mkdir -p "$md_inst/"{src,supplementary,scripts}
+        cp -v 'src/SNESDev' "$md_inst/src/"
+        cp -v 'src/Makefile' "$md_inst/src/"
+        cp -v 'Makefile' "$md_inst"
+        cp -v 'scripts/Makefile' "$md_inst/scripts/"
+        cp -v 'scripts/SNESDev' "$md_inst/scripts/"
+        cp -v 'supplementary/snesdev.cfg' "$md_inst/supplementary/"
+    fi
+    # then install from there to system folders
+    cd "$md_inst"
     make install
-    mkdir -p "$md_inst/src"
-    mkdir -p "$md_inst/supplementary"
-    mkdir -p "$md_inst/scripts"
-    cp -Rv 'src/SNESDev' "$md_inst/src/"
-    cp -Rv 'src/Makefile' "$md_inst/src/"
-    cp -Rv 'Makefile' "$md_inst"
-    cp -Rv 'scripts/Makefile' "$md_inst/scripts/"
-    cp -Rv 'scripts/SNESDev' "$md_inst/scripts/"
-    cp -Rv 'supplementary/snesdev.cfg' "$md_inst/supplementary/"
 }
 
 function sup_checkInstallSNESDev() {
