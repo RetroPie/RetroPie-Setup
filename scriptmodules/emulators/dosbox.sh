@@ -36,7 +36,8 @@ $rootdir/supplementary/runcommand/runcommand.sh 1 "$md_inst/bin/dosbox -c \"MOUN
 _EOF_
     chmod +x "$romdir/pc/Start DOSBox.sh"
 
-    iniConfig "=" "" "$home/.dosbox/dosbox-SVN.conf"
+    local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
+    iniConfig "=" "" "$config_path"
     iniSet "usescancodes" "false"
     iniSet "core" "dynamic"
     iniSet "cycles" "max"
@@ -47,13 +48,15 @@ _EOF_
 }
 
 function configure_dispmanx_off_dosbox() {
-    iniConfig "=" "" "$home/.dosbox/dosbox-SVN.conf"
+    local config_path=$("$md_inst/bin/dosbox" -printconf)
+    iniConfig "=" "" "$config_path"
     # scaling
     iniSet "scaler" "normal2x"
 }
 
 function configure_dispmanx_on_dosbox() {
-    iniConfig "=" "" "$home/.dosbox/dosbox-SVN.conf"
+    local config_path=$("$md_inst/bin/dosbox" -printconf)
+    iniConfig "=" "" "$config_path"
     # no scaling
     iniSet "scaler" "none"
 }
