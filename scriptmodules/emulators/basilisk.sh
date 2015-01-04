@@ -4,7 +4,7 @@ rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
 function depends_basilisk() {
-    checkNeededPackages autoconf automake
+    checkNeededPackages libsdl1.2-dev autoconf automake
 }
 
 function sources_basilisk() {
@@ -13,7 +13,7 @@ function sources_basilisk() {
 
 function build_basilisk() {
     cd BasiliskII/src/Unix
-    ./autogen.sh --prefix="$md_inst" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler
+    ./autogen.sh --prefix="$md_inst" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler --without-x --without-mon --without-esd --without-gtk
     make clean
     make
     md_ret_require="$md_build/BasiliskII/src/Unix/BasiliskII"
