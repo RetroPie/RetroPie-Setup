@@ -17,7 +17,6 @@ function install_genesislibretro() {
         'genesis_plus_gx_libretro.so'
         'HISTORY.txt'
         'LICENSE.txt'
-        'Makefile.libretro'
         'README.md'
     )
 }
