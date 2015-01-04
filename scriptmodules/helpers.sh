@@ -193,6 +193,8 @@ function gitPullOrClone()
     local repo="$2"
     local shallow="$3"
 
+    mkdir -p "$dir"
+
     # to work around a issue with git hanging in a qemu-arm-static chroot we can use a github created archive
     if [ $__chroot -eq 1 ] && [[ "$repo" =~ "github" ]]; then
         local archive=${repo/.git/}
@@ -266,6 +268,10 @@ function mkUserDir() {
     chown $user:$user "$1"
 }
 
+function updateESConfigEdit() {
+    gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
+}
+
 function setESSystem() {
     local fullname=$1
     local name=$2
@@ -275,9 +281,9 @@ function setESSystem() {
     local platform=$6
     local theme=$7
 
-    checkNeededPackages python-lxml
-
-    gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
+    if [ ! -f "$rootdir/supplementary/ESConfigEdit/esconfedit.py" ]; then
+        updateESConfigEdit
+    fi
 
     mkdir -p "/etc/emulationstation"
 

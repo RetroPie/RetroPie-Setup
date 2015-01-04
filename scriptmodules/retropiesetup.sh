@@ -197,6 +197,8 @@ function rps_main_updatescript()
   fi
   git pull
   popd
+  printMsg "Updating ESConfigEdit script."
+  updateESConfigEdit
   dialog --backtitle "$__backtitle" --msgbox "Fetched the latest version of the RetroPie Setup script. You need to restart the script." 20 60
 }
 
