@@ -26,15 +26,6 @@ function install_psxlibretro() {
         'NEWS'
         'README'
         'readme.txt'
-        'plugins/gpu-gles/gpu_gles.so'
-        'plugins/gpu_unai.so'
-        'plugins/gpu_unai/gpu_unai.so'
-        'plugins/gpu_peops.so'
-        'plugins/spunull.so'
-        'plugins/dfxvideo/gpu_peops.so'
-        'plugins/spunull/spunull.so'
-        'plugins/gpu_gles.so'
-        'skin'
     )
 }
 
@@ -42,5 +33,5 @@ function configure_psxlibretro() {
     mkRomDir "psx"
 
     rps_retronet_prepareConfig
-    setESSystem "Sony Playstation 1" "psx" "~/RetroPie/roms/psx" ".img .IMG .7z .7Z .pbp .PBP .bin .BIN .cue .CUE .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/psx/retroarch.cfg %ROM%\" \"$md_id\"" "psx" "psx"
+    setESSystem "Sony Playstation 1" "psx" "~/RetroPie/roms/psx" ".bin .BIN .cue .CUE .cbn .CBN .img .IMG .mdf .MDF .pbp .PBP .toc .TOC .z .Z .znx .ZNX" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/psx/retroarch.cfg %ROM%\" \"$md_id\"" "psx" "psx"
 }
