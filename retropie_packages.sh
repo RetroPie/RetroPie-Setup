@@ -80,7 +80,7 @@ __swapdir="$scriptdir/tmp/"
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/packages.sh"
 
-checkNeededPackages git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_version make
+checkNeededPackages git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_version build-essential
 
 # set default gcc version
 gcc_version $__default_gcc_version
