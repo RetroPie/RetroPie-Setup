@@ -1,7 +1,7 @@
 rp_module_id="gpsp"
 rp_module_desc="GameBoy Advance emulator"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+#rp_module_flags="dispmanx"
 
 function depends_gpsp() {
     checkNeededPackages libsdl1.2-dev
@@ -33,5 +33,5 @@ function configure_gpsp() {
     mkRomDir "gba"
     chown $user:$user -R "$md_inst"
 
-    setESSystem "Game Boy Advance" "gba" "~/RetroPie/roms/gba" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/gpsp %ROM%\" \"$md_id\"" "gba" "gba"
+    setESSystem "Game Boy Advance" "gba" "~/RetroPie/roms/gba" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/gpsp %ROM%\" \"$md_id\"" "gba" "gba"
 }
