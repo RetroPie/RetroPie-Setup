@@ -20,8 +20,8 @@ function install_libretro-handy() {
 }
 
 function configure_libretro-handy() {
-    mkRomDir "lynx"
-    ensureSystemretroconfig "lynx"
+    mkRomDir "atarilynx"
+    ensureSystemretroconfig "atarilynx"
     rps_retronet_prepareConfig
-    setESSystem "Atari Lynx" "lynx" "~/RetroPie/roms/lynx" ".lnx .LNX .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/handy_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/lynx/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%\" \"$md_id\"" "lynx" "lynx"
+    setESSystem "Atari Lynx" "atarilynx" "~/RetroPie/roms/atarilynx" ".lnx .LNX .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/handy_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/atarilynx/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile$__tmpnetplayport$__tmpnetplayframes %ROM%\" \"$md_id\"" "atarilynx" "atarilynx"
 }
