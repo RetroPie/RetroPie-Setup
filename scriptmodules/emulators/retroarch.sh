@@ -69,7 +69,7 @@ function configure_retroarch() {
     ensureSystemretroconfig "segacd"
     ensureSystemretroconfig "sega32x"
     ensureSystemretroconfig "fba"
-    ensureSystemretroconfig "lynx"
+    ensureSystemretroconfig "atarilynx"
     ensureSystemretroconfig "msx"
     ensureSystemretroconfig "quake"
     ensureSystemretroconfig "n64"
