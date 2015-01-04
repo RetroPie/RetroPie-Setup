@@ -4,8 +4,6 @@ rp_module_menus="3+"
 
 function depends_ps3controller() {
     checkNeededPackages bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
-    apt-get -y remove cups
-    apt-get -y autoremove 
 }
 
 function sources_ps3controller() {
