@@ -121,10 +121,7 @@ rps_main_menu() {
 function rps_downloadBinaries()
 {
     printMsg "Downloading binaries archive"
-    # wget --progress=bar:force -O - 'http://blog.petrockblock.com/?wpdmdl=3' | tar jx --overwrite -C $rootdir RetroPie
-    wget -O binariesDownload.tar.bz2 http://blog.petrockblock.com/?wpdmdl=7113
-    tar -jxvf binariesDownload.tar.bz2 --strip-components=2 -C "$rootdir"
-    rm binariesDownload.tar.bz2
+    wget -O- -q http://blog.petrockblock.com/?wpdmdl=7113 | tar -xvz --strip-components=1 -C "$rootdir"
 }
 
 # download, extract, and install binaries
