@@ -37,10 +37,12 @@ _EOF_
     chmod +x "$romdir/pc/Start DOSBox.sh"
 
     local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
-    iniConfig "=" "" "$config_path"
-    iniSet "usescancodes" "false"
-    iniSet "core" "dynamic"
-    iniSet "cycles" "max"
+    if [ -f "$config_path" ]; then
+        iniConfig "=" "" "$config_path"
+        iniSet "usescancodes" "false"
+        iniSet "core" "dynamic"
+        iniSet "cycles" "max"
+    fi
 
     configure_dispmanx_off_dosbox
 
@@ -49,14 +51,18 @@ _EOF_
 
 function configure_dispmanx_off_dosbox() {
     local config_path=$("$md_inst/bin/dosbox" -printconf)
-    iniConfig "=" "" "$config_path"
-    # scaling
-    iniSet "scaler" "normal2x"
+    if [ -f "$config_path" ]; then
+        iniConfig "=" "" "$config_path"
+        # scaling
+        iniSet "scaler" "normal2x"
+    fi
 }
 
 function configure_dispmanx_on_dosbox() {
     local config_path=$("$md_inst/bin/dosbox" -printconf)
-    iniConfig "=" "" "$config_path"
-    # no scaling
-    iniSet "scaler" "none"
+    if [ -f "$config_path" ]; then
+        iniConfig "=" "" "$config_path"
+        # no scaling
+        iniSet "scaler" "none"
+    fi
 }
