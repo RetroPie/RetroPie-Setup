@@ -14,7 +14,7 @@ function build_snesdev() {
 
 function install_snesdev() {
     # if we have built it, copy files to install location
-    if [ -f "$md_build" ]; then
+    if [ -d "$md_build" ]; then
         mkdir -p "$md_inst/"{src,supplementary,scripts}
         cp -v 'src/SNESDev' "$md_inst/src/"
         cp -v 'src/Makefile' "$md_inst/src/"
