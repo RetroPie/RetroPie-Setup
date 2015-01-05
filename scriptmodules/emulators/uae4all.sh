@@ -32,19 +32,21 @@ function configure_uae4all() {
 
     cat > "$md_inst/startAmigaDisk.sh" << _EOF_
 #!/bin/bash
+
+file="\$1"
+[ -z "\$file" ] && exit 1
+
 pushd "$md_inst"
-if [[ -f "df0.adf" ]]; then
-     rm df0.adf
- fi
-ln -s "$romdir/amiga/$1" "df0.adf"
-./uae4all    
+rm -rf df0.adf
+ln -s "$romdir/amiga/\$file" df0.adf
+$rootdir/supplementary/runcommand/runcommand.sh 1 ./uae4all "$md_id"
 popd
 _EOF_
     chmod +x "$md_inst/startAmigaDisk.sh"
 
     chown -R $user:$user "$md_inst"
 
-    setESSystem "Amiga" "amiga" "~/RetroPie/roms/amiga" ".adf .ADF" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/startAmigaDisk.sh %ROM%\" \"$md_id\"" "amiga" "amiga"
+    setESSystem "Amiga" "amiga" "~/RetroPie/roms/amiga" ".adf .ADF" "$md_inst/startAmigaDisk.sh %ROM%" "amiga" "amiga"
 
     __INFMSGS="$__INFMSGS The Amiga emulator can be started from command line with '$md_inst/uae4all'. Note that you must manually copy a Kickstart rom with the name 'kick.rom' to the directory $md_inst/uae4all/."
 }
