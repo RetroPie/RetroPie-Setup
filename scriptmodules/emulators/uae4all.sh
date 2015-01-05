@@ -38,7 +38,7 @@ file="\$1"
 
 pushd "$md_inst"
 rm -rf df0.adf
-ln -s "$romdir/amiga/\$file" df0.adf
+ln -s "\$file" df0.adf
 $rootdir/supplementary/runcommand/runcommand.sh 1 ./uae4all "$md_id"
 popd
 _EOF_
