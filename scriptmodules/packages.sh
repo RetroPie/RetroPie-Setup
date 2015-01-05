@@ -197,7 +197,7 @@ function rp_registerModule() {
     local var
     local error=0
     source $module_path
-    for var in rp_module_id rp_module_desc rp_module_menus; do
+    for var in rp_module_id rp_module_desc; do
         if [[ "${!var}" == "" ]]; then
             echo "Module $module_path is missing valid $var"
             error=1
