@@ -143,7 +143,6 @@ function rps_main_binaries()
         done
 
         rp_callModule aptpackages
-        rp_callModule handleaptpackages
         rp_callModule modules
 
         rps_downloadBinaries
