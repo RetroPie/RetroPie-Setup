@@ -112,13 +112,13 @@ function iniSet()
     iniProcess "set" "$1" "$2" "$3"
 }
 
-function checkForInstalledAPTPackage()
+function hasPackage()
 {
     PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1 2>/dev/null|grep "install ok installed")
     if [ "" == "$PKG_OK" ]; then
-        return 0
-    else
         return 1
+    else
+        return 0
     fi
 }
 
@@ -142,7 +142,7 @@ function checkNeededPackages() {
     local packages=()
     local failed=()
     for required in $@; do
-        checkForInstalledAPTPackage "$required" && packages+=("$required")
+        hasPackage "$required" || packages+=("$required")
     done
     if [[ ${#packages[@]} -ne 0 ]]; then
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
@@ -150,7 +150,7 @@ function checkNeededPackages() {
         # check the required packages again rather than return code of apt-get, as apt-get
         # might fail for other reasons (other broken packages, eg samba in a chroot environment)
         for required in ${packages[@]}; do
-            checkForInstalledAPTPackage "$required" && failed+=("$required")
+            hasPackage "$required" || failed+=("$required")
         done
         if [[ ${#failed[@]} -eq 0 ]]; then
             echo "Successfully installed package(s): ${packages[@]}."
