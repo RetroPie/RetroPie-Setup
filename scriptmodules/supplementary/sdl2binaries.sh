@@ -6,8 +6,9 @@ function install_sdl2binaries() {
     wget http://downloads.petrockblock.com/retropiearchives/libsdl2-dev_2.0.3_armhf.deb
     wget http://downloads.petrockblock.com/retropiearchives/libsdl2_2.0.3_armhf.deb
     remove_old_sdl2
+    # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
     if ! dpkg -i libsdl2_2.0.3_armhf.deb libsdl2-dev_2.0.3_armhf.deb; then
-        apt-get -f install
+        apt-get -y -f install
     fi
     rm *.deb
 }
