@@ -1,7 +1,7 @@
 rp_module_id="gpsp"
 rp_module_desc="GameBoy Advance emulator"
 rp_module_menus="2+"
-#rp_module_flags="dispmanx"
+rp_module_flags=""
 
 function depends_gpsp() {
     checkNeededPackages libsdl1.2-dev
