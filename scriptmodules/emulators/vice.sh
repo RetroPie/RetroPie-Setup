@@ -4,7 +4,7 @@ rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
 function depends_vice() {
-    if ! checkForInstalledAPTPackage vice; then
+    if hasPackage vice; then
         printf 'Package vice is already installed - removing package\n' "${1}"
         apt-get remove -y vice
     fi
