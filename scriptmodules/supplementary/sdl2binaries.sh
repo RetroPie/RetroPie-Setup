@@ -5,7 +5,8 @@ rp_module_menus=""
 function install_sdl2binaries() {
     wget http://downloads.petrockblock.com/retropiearchives/libsdl2-dev_2.0.3_armhf.deb
     wget http://downloads.petrockblock.com/retropiearchives/libsdl2_2.0.3_armhf.deb
-    if ! dpkg -i libsdl2*.deb; then
+    remove_old_sdl2
+    if ! dpkg -i libsdl2_2.0.3_armhf.deb libsdl2-dev_2.0.3_armhf.deb; then
         apt-get -f install
     fi
     rm *.deb

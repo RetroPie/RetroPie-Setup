@@ -1,6 +1,6 @@
 rp_module_id="sdl2"
 rp_module_desc="SDL (Simple DirectMedia Layer) v2.x"
-rp_module_menus="2-"
+rp_module_menus=""
 
 function depends_sdl2() {
     # Depedencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
@@ -20,10 +20,10 @@ function sources_sdl2() {
 }
 
 function build_sdl2() {
-    dpkg-buildpackage
+    dpkg-buildpackage -j8
 }
 
-function install_sdl2() {
+function remove_old_sdl2() {
     # remove old libSDL
     echo "Removing old SDL2 files"
     while read file; do
@@ -106,6 +106,10 @@ function install_sdl2() {
 /usr/local/lib/pkgconfig/sdl2.pc
 _EOF_
 
-    dpkg -i ../libsdl2*.deb
+}
+
+function install_sdl2() {
+    remove_old_sdl2
+    dpkg -i ../libsdl2_2.0.3_armhf.deb ../libsdl2-dev_2.0.3_armhf.deb
     rm ../libsdl2*.deb
 }
