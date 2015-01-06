@@ -10,12 +10,9 @@ function depends_userland() {
 
 function sources_userland() {
     gitPullOrClone "$md_build" "https://github.com/raspberrypi/userland" NS
-    sed -i 's/-mcpu=arm1176jzf-s/-march=armv6j/g' /userland/makefiles/cmake/toolchains/arm-linux-gnueabihf.cmake
+    sed -i 's/-mcpu=arm1176jzf-s/-march=armv6j/g' /makefiles/cmake/toolchains/arm-linux-gnueabihf.cmake
 }
 
 function build_userland() {
-    gcc_version 4.8
-    ./buildme
-    gcc_version $__default_gcc_version
-    sync
+    ./buildme CC="gcc-4.8" CXX="g++-4.8"
 }
