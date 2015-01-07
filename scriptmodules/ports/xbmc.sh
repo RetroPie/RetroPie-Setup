@@ -2,7 +2,7 @@
 rp_module_id="xbmc"
 rp_module_desc="Install XBMC"
 rp_module_menus="4+"
-rp_module_flags="nobindist"
+rp_module_flags="nobin"
 
 function depends_xbmc() {
     echo "deb http://archive.mene.za.net/raspbian wheezy contrib" > /etc/apt/sources.list.d/mene.list

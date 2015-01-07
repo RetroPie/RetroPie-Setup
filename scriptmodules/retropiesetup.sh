@@ -141,7 +141,7 @@ function rps_main_binaries()
 
         # install needed dependencies for all modules with a binary distribution (except for experimental packages)
         for idx in "${__mod_idx[@]}"; do
-            if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobindist ]]; then
+            if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobin ]]; then
                 rp_callModule $idx depends
                 rp_callModule $idx install_bin
                 [ "${__mod_id[$idx]}" != "snesdev" ] && rp_callModule $idx configure

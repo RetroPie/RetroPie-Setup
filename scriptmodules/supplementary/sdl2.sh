@@ -1,7 +1,7 @@
 rp_module_id="sdl2"
 rp_module_desc="SDL (Simple DirectMedia Layer) v2.x"
 rp_module_menus=""
-rp_module_flags="nobindist"
+rp_module_flags="nobin"
 
 function depends_sdl2() {
     # Depedencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are

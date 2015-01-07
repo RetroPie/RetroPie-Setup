@@ -1,7 +1,7 @@
 rp_module_id="xboxdrv"
 rp_module_desc="Install XBox contr. 360 driver"
 rp_module_menus="3+"
-rp_module_flags="nobindist"
+rp_module_flags="nobin"
 
 function install_xboxdrv() {
     checkNeededPackages xboxdrv

@@ -1,7 +1,7 @@
 rp_module_id="retronetplay"
 rp_module_desc="RetroNetplay"
 rp_module_menus="4+"
-rp_module_flags="nobindist"
+rp_module_flags="nobin"
 
 function configure_retronetplay() {
     # load RetronetPlay configuration

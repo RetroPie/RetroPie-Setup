@@ -1,7 +1,7 @@
 rp_module_id="rpix86"
 rp_module_desc="DOS Emulator rpix86"
 rp_module_menus="2+"
-rp_module_flags="nobindist"
+rp_module_flags="nobin"
 
 function install_rpix86() {
     wget -O- -q http://downloads.petrockblock.com/retropiearchives/rpix86.tar.gz | tar -xvz -C "$md_inst"

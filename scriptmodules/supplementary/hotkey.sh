@@ -1,7 +1,7 @@
 rp_module_id="hotkey"
 rp_module_desc="Change hotkey behaviour"
 rp_module_menus="3+"
-rp_module_flags="nobindist"
+rp_module_flags="nobin"
 
 function configure_hotkey() {
     iniConfig " = " "" "$configdir/all/retroarch.cfg"

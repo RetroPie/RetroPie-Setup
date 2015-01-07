@@ -110,12 +110,12 @@ function rp_callModule() {
 
     # create function name
     function="${mode}_${mod_id}"
-    if [ "${mode}" = "install_bin" ] && [[ ! "$md_flags" =~ nobindist ]]; then
+    if [ "${mode}" = "install_bin" ] && [[ ! "$md_flags" =~ nobin ]]; then
         rp_install_bin
         return
     fi
 
-    if [ "${mode}" = "create_bin" ] && [[ ! "$md_flags" =~ nobindist ]]; then
+    if [ "${mode}" = "create_bin" ] && [[ ! "$md_flags" =~ nobin ]]; then
         rp_create_bin
         return
     fi

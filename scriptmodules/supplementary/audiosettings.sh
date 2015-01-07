@@ -1,7 +1,7 @@
 rp_module_id="audiosettings"
 rp_module_desc="Configure audio settings"
 rp_module_menus="3+"
-rp_module_flags="nobindist"
+rp_module_flags="nobin"
 
 function configure_audiosettings() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output." 22 86 16)

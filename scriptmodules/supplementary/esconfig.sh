@@ -1,7 +1,7 @@
 rp_module_id="esconfig"
 rp_module_desc="ES-Config"
 rp_module_menus="3+"
-rp_module_flags="nobindist"
+rp_module_flags="nobin"
 
 function sources_esconfig() {
     gitPullOrClone "$md_build" git://github.com/Aloshi/ES-config.git
