@@ -114,7 +114,7 @@ function rp_callModule() {
         rp_install_bin
     fi
 
-    if [ "${mode}" = "create_bin" ] && [[ ! "$md_flags" =~ nobindist ]];; then
+    if [ "${mode}" = "create_bin" ] && [[ ! "$md_flags" =~ nobindist ]]; then
         rp_create_bin
     fi
 
