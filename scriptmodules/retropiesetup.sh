@@ -144,6 +144,7 @@ function rps_main_binaries()
             if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobindist ]]; then
                 rp_callModule $idx depends
                 rp_callModule $idx install_bin
+                [ "${__mod_id[$idx]}" != "snesdev" ] && rp_callModule $idx configure
             fi
         done
 
