@@ -1,6 +1,7 @@
 rp_module_id="dispmanx"
 rp_module_desc="Configure emulators to use dispmanx SDL"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 function configure_dispmanx() {
     iniConfig "=" "" "$configdir/all/dispmanx.cfg"

@@ -1,6 +1,7 @@
 rp_module_id="runcommand"
 rp_module_desc="Video mode script 'runcommand'"
 rp_module_menus="2+"
+rp_module_flags="nobin"
 
 function install_runcommand() {
     cp "$scriptdir/supplementary/runcommand.sh" "$md_inst/"

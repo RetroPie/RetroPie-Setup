@@ -1,6 +1,7 @@
 rp_module_id="autostartemustat"
 rp_module_desc="Auto-start EmulationStation"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 function configure_autostartemustat() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 76 16)

@@ -1,6 +1,7 @@
 rp_module_id="splashenable"
 rp_module_desc="Enable/disable Splashscreen"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 function set_enableSplashscreenAtStart()
 {

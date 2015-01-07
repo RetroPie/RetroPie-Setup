@@ -1,6 +1,7 @@
 rp_module_id="ps3controller"
 rp_module_desc="Install PS3 controller driver"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 function depends_ps3controller() {
     checkNeededPackages bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick

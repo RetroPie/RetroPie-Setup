@@ -9,7 +9,7 @@ function depends_emulationstation() {
         libasound2-dev cmake g++-4.7
 
     if ! hasPackage libsdl2-dev; then
-        rp_callModule "sdl2binaries"
+        rp_callModule sdl2 install_bin
     fi
 }
 

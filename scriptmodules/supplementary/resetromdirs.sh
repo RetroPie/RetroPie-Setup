@@ -1,6 +1,7 @@
 rp_module_id="resetromdirs"
 rp_module_desc="Reset ownership/permissions of the $romdir structure"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 configure_resetromdirs() {
     printMsg "Resetting main $romdir ownershop/permissions"

@@ -1,6 +1,7 @@
 rp_module_id="gamecondriver"
 rp_module_desc="Gamecon driver"
 rp_module_menus="3+install"
+rp_module_flags="nobin"
 
 function install_gamecondriver() {
     GAMECON_VER=0.9

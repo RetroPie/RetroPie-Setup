@@ -1,6 +1,7 @@
 rp_module_id="sambashares"
 rp_module_desc="Samba ROM Shares"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 function set_ensureEntryInSMBConf()
 {

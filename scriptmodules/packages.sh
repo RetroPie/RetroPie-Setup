@@ -100,10 +100,6 @@ function rp_callModule() {
         done
     fi
 
-    # create function name and check if it exists
-    function="${mode}_${mod_id}"
-    fn_exists $function || return 0
-
     # create variables that can be used in modules
     local md_id="$mod_id"
     local md_desc="${__mod_desc[$idx]}"
@@ -111,6 +107,22 @@ function rp_callModule() {
     local md_flags="${__mod_flags[$idx]}"
     local md_build="$__builddir/$mod_id"
     local md_inst="$rootdir/$md_type/$mod_id"
+
+    # create function name
+    function="${mode}_${mod_id}"
+    if [ "${mode}" = "install_bin" ] && [[ ! "$md_flags" =~ nobin ]]; then
+        rp_install_bin
+        return
+    fi
+
+    if [ "${mode}" = "create_bin" ] && [[ ! "$md_flags" =~ nobin ]]; then
+        rp_create_bin
+        return
+    fi
+
+    # return if function doesn't exist
+    fn_exists $function || return 0
+
     # these can be returned by a module
     local md_ret_require=""
     local md_ret_files=""
@@ -130,7 +142,7 @@ function rp_callModule() {
             action="Building"
             pushd "$md_build" 2>/dev/null
             ;;
-        install)
+        install|install_bin)
             action="Installing"
             mkdir -p "$md_inst"
             pushd "$md_build" 2>/dev/null
@@ -186,6 +198,27 @@ function rp_callModule() {
     return 0
 }
 
+function rp_install_bin() {
+    printMsg "Installing binary archive for $md_desc"
+    local archive="$md_type/$md_id.tar.gz";
+    local dest="$rootdir/$md_type"
+    mkdir -p "$dest"
+    wget -O- -q "http://downloads.petrockblock.com/retropiebinaries/$archive" | tar -xvz -C "$dest"
+    if fn_exists $function; then
+        $function
+    fi
+}
+
+function rp_create_bin() {
+    printMsg "Creating binary archive for $md_desc"
+    local archive="$md_id.tar.gz"
+    local dest="$__tmpdir/archives/$md_type"
+    rm -f "$dest/$archive"
+    mkdir -p "$dest"
+    tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"
+    chown $user:$user "$dest/$archive"
+}
+
 function rp_registerModule() {
     local module_idx="$1"
     local module_path="$2"
@@ -221,4 +254,5 @@ function rp_registerAllModules() {
     rp_registerModuleDir 200 "libretrocores" 
     rp_registerModuleDir 250 "ports"
     rp_registerModuleDir 300 "supplementary"
+    rp_registerModuleDir 900 "admin"
 }

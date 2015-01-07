@@ -1,6 +1,7 @@
 rp_module_id="sdl2"
 rp_module_desc="SDL (Simple DirectMedia Layer) v2.x"
 rp_module_menus=""
+rp_module_flags="nobin"
 
 function depends_sdl2() {
     # Depedencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
@@ -112,4 +113,15 @@ function install_sdl2() {
     remove_old_sdl2
     dpkg -i ../libsdl2_2.0.3_armhf.deb ../libsdl2-dev_2.0.3_armhf.deb
     rm ../libsdl2*.deb
+}
+
+function install_bin_sdl2() {
+    wget http://downloads.petrockblock.com/retropiearchives/libsdl2-dev_2.0.3_armhf.deb
+    wget http://downloads.petrockblock.com/retropiearchives/libsdl2_2.0.3_armhf.deb
+    remove_old_sdl2
+    # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
+    if ! dpkg -i libsdl2_2.0.3_armhf.deb libsdl2-dev_2.0.3_armhf.deb; then
+        apt-get -y -f install
+    fi
+    rm *.deb
 }
