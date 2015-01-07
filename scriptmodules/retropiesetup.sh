@@ -156,11 +156,6 @@ function rps_main_binaries()
         rp_callModule eduke32
         rp_callModule esthemesimple
 
-        # configure all emulator and libretro components (except for experimental packages)
-        for idx in "${__mod_idx[@]}"; do
-            [[ $idx < 300 ]] && [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && rp_callModule "$idx" "configure"
-        done
-
         # required supplementary modules 
         rp_callModule retroarchautoconf
         rp_callModule runcommand
