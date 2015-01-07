@@ -29,6 +29,10 @@ function install_snesdev() {
     popd
 }
 
+function install_bin_snesdev() {
+    rp_callModule snesdev install
+}
+
 function sup_checkInstallSNESDev() {
     if [[ ! -d "$md_inst" ]]; then
         sources_snesdev
