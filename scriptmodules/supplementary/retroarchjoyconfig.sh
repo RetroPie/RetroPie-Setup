@@ -1,6 +1,7 @@
 rp_module_id="retroarchjoyconfig"
 rp_module_desc="Register RetroArch controller"
 rp_module_menus="3+"
+rp_module_flags="nobindist"
 
 function configure_retroarchjoyconfig() {
     local configfname

@@ -1,6 +1,7 @@
 rp_module_id="zmachine"
 rp_module_desc="ZMachine"
 rp_module_menus="2+"
+rp_module_flags="nobindist"
 
 function install_zmachine() {
     aptInstall frotz

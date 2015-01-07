@@ -1,6 +1,7 @@
 rp_module_id="sdl2binaries"
 rp_module_desc="Install SDL 2.0.1 binaries"
 rp_module_menus=""
+rp_module_flags="nobindist"
 
 function install_sdl2binaries() {
     wget http://downloads.petrockblock.com/retropiearchives/libsdl2-dev_2.0.3_armhf.deb

@@ -1,6 +1,7 @@
 rp_module_id="eduke32"
 rp_module_desc="Duke3D Port"
 rp_module_menus="2+"
+rp_module_flags="nobindist"
 
 function install_eduke32() {
     printMsg "Downloading eDuke core"

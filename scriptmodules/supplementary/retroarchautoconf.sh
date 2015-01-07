@@ -1,6 +1,7 @@
 rp_module_id="retroarchautoconf"
 rp_module_desc="RetroArch-AutoConfigs"
 rp_module_menus="2+"
+rp_module_flags="nobindist"
 
 function install_retroarchautoconf() {
     mkdir -p "$emudir/retroarch/configs/"

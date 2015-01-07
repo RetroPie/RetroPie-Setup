@@ -137,38 +137,41 @@ function rps_main_binaries()
     ensureRootdirExists
     now=$(date +'%d%m%Y_%H%M')
     {
-        # install all needed dependencies (except for experimental packages)
+        rp_callModule aptpackages
+
+        # install needed dependencies for all modules with a binary distribution (except for experimental packages)
         for idx in "${__mod_idx[@]}"; do
-            [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && rp_callModule "$idx" "depends"
+            if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobindist ]]; then
+                rp_callModule $idx depends
+                rp_callModule $idx install_bin
+            fi
         done
 
-        rp_callModule aptpackages
-        rp_callModule modules
-
-        rps_downloadBinaries
-
-        rp_callModule emulationstation configure
-        rp_callModule snesdev install
-        rp_callModule disabletimeouts
-        rp_callModule esthemesimple
-        rp_callModule retroarchautoconf
-
+        # modules that have another binary distribution method (deb etc)
         rp_callModule stella
         rp_callModule zmachine
         rp_callModule fuse
         rp_callModule hatari
         rp_callModule eduke32
-
-        rp_callModule setavoidsafemode
-        rp_callModule runcommand
-        rp_callModule usbromservice
-        rp_callModule bashwelcometweak
+        rp_callModule esthemesimple
 
         # configure all emulator and libretro components (except for experimental packages)
         for idx in "${__mod_idx[@]}"; do
             [[ $idx < 300 ]] && [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && rp_callModule "$idx" "configure"
         done
 
+        # required supplementary modules 
+        rp_callModule emulationstation configure
+        rp_callModule snesdev install
+        rp_callModule retroarchautoconf
+        rp_callModule runcommand
+
+        # some additional supplementary modules
+        rp_callModule disabletimeouts
+        rp_callModule modules
+        rp_callModule setavoidsafemode
+        rp_callModule usbromservice
+        rp_callModule bashwelcometweak
         rp_callModule sambashares
 
     } &> >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))

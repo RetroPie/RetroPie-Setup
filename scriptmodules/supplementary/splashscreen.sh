@@ -1,6 +1,7 @@
 rp_module_id="splashscreen"
 rp_module_desc="Select Splashscreen"
 rp_module_menus="3+"
+rp_module_flags="nobindist"
 
 function configure_splashscreen() {
     printMsg "Configuring splashscreen"

@@ -1,6 +1,7 @@
 rp_module_id="xarcade2jstick"
 rp_module_desc="Xarcade2Jstick"
 rp_module_menus="3+configure"
+rp_module_flags="nobindist"
 
 function sources_xarcade2jstick() {
     gitPullOrClone "$md_inst" https://github.com/petrockblog/Xarcade2Joystick.git

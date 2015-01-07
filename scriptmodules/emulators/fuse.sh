@@ -1,7 +1,7 @@
 rp_module_id="fuse"
 rp_module_desc="ZXSpectrum emulator Fuse"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx nobindist"
 
 function install_fuse() {
     aptInstall fuse-emulator-sdl fuse-emulator-utils fuse-emulator-common spectrum-roms
