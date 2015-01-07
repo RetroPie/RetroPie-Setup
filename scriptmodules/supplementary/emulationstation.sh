@@ -37,6 +37,10 @@ function install_emulationstation() {
 
 }
 
+function install_bin_emulationstation() {
+    rp_callModule emulationstation configure
+}
+
 function configure_emulationstation() {
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash

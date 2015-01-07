@@ -161,7 +161,6 @@ function rps_main_binaries()
         done
 
         # required supplementary modules 
-        rp_callModule emulationstation configure
         rp_callModule snesdev install
         rp_callModule retroarchautoconf
         rp_callModule runcommand
