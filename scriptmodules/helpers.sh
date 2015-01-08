@@ -60,6 +60,15 @@ function hasFlag()
     fi
 }
 
+function isPlatform()
+{
+    if [ "$__platform" = "$1" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 function addLineToFile()
 {
     if [[ -f "$2" ]]; then
