@@ -30,46 +30,13 @@
 # main retropie install location
 rootdir="/opt/retropie"
 
-user="$SUDO_USER"
-[ -z "$user" ] && user=$(id -un)
-
 home="$(eval echo ~$user)"
 romdir="$home/RetroPie/roms"
 emudir="$rootdir/emulators"
 configdir="$rootdir/configs"
 
-__ERRMSGS=""
-__INFMSGS=""
-
-__memory_phys=$(free -m | awk '/^Mem:/{print $2}')
-__memory_total=$(free -m -t | awk '/^Total:/{print $2}')
-
-__default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
-# -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
-[ $__memory_phys -ge 256 ] && __default_cflags+=" -pipe"
-__default_asflags=""
-__default_makeflags=""
-__default_gcc_version="4.7"
-
-[[ -z "${CFLAGS}"        ]] && export CFLAGS="${__default_cflags}"
-[[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
-[[ -z "${ASFLAGS}"         ]] && export ASFLAGS="${__default_asflags}"
-[[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
-
-# check, if sudo is used
-if [ $(id -u) -ne 0 ]; then
-    printf "Script must be run as root. Try 'sudo $0'\n"
-    exit 1
-fi
-
-# test if we are in a chroot
-if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
-  # make chroot identify as arm6l
-  export QEMU_CPU=arm1176
-  __chroot=1
-else
-  __chroot=0
-fi
+user="$SUDO_USER"
+[ -z "$user" ] && user=$(id -un)
 
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
@@ -78,8 +45,17 @@ __tmpdir="$scriptdir/tmp"
 __builddir="$__tmpdir/build"
 __swapdir="$__tmpdir"
 
+# check, if sudo is used
+if [ $(id -u) -ne 0 ]; then
+    echo "Script must be run as root. Try 'sudo $0'"
+    exit 1
+fi
+
+source "$scriptdir/scriptmodules/system.sh"
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/packages.sh"
+
+setup_env
 
 checkNeededPackages git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_version build-essential
 
