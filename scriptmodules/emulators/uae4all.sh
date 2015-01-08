@@ -4,25 +4,24 @@ rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
 function depends_uae4all() {
-    checkNeededPackages libsdl1.2-dev libsdl-mixer1.2-dev libasound2-dev
+    checkNeededPackages libsdl1.2-dev libsdl-mixer1.2-dev libasound2-dev libguichan-sdl-0.8.1-1 libguichan-0.8.1-1
 }
 
 function sources_uae4all() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/uae4rpi.tar.bz2 | tar -xvj --strip-components=1
-    sed -i "s/-lstdc++$/-lstdc++ -lm -lz/" Makefile
+    wget -O- -q ftp://researchlab.spdns.de/rpi/uae4all/uae4all-2.5.3.2-1rpi.tgz | tar -xvz --strip-components=1
 }
 
-function build_uae4all() {
-    touch /opt/vc/include/interface/vmcs_host/vchost_config.h
-    make clean
-    make
-    md_ret_require="$md_build/uae4all"
-}
 
 function install_uae4all() {
     md_ret_files=(
-        'COPYING'
-        'docs'
+        'amiga'
+        'conf'
+        'data'
+        'kickstarts'
+        'lib'
+        'license.txt'
+        'readme.txt'
+        'saves'
         'uae4all'
     )
 }
