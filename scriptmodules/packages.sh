@@ -79,25 +79,33 @@ function rp_printUsageinfo() {
 }
 
 function rp_callModule() {
-    local idx="$1"
+    local req_id="$1"
     local mode="$2"
 
     if [[ "$mode" == "" ]]; then
         for mode in depends sources build install configure; do
-            rp_callModule $idx $mode || return 1
+            rp_callModule $req_id $mode || return 1
         done
         return 0
     fi
-    
-    # if index get mod_id from array
+
+    # if index get mod_id from array else try and find it (we should probably use bash associative arrays for efficiency)
     local mod_id
-    if [[ "$idx" =~ ^[0-9]+$ ]]; then
-        mod_id=${__mod_id[$1]}
+    local idx
+    if [[ "$req_id" =~ ^[0-9]+$ ]]; then
+        mod_id=${__mod_id[$req_id]}
+        idx=$req_id
     else
-        mod_id="$idx"
         for idx in "${!__mod_id[@]}"; do
-            [[ "$mod_id" == "${__mod_id[$idx]}" ]] && break 
+            if [[ "$req_id" == "${__mod_id[$idx]}" ]]; then
+                mod_id="$req_id"
+                break
+            fi
         done
+    fi
+
+    if [ "$mod_id" = "" ]; then
+        fatalError "No module '$req_id' found for platform $__platform"
     fi
 
     # create variables that can be used in modules
@@ -237,7 +245,9 @@ function rp_registerModule() {
         fi
     done
     [[ $error -eq 1 ]] && exit 1
-    rp_registerFunction "$module_idx" "$rp_module_id" "$module_type" "$rp_module_desc" "$rp_module_menus"  "$rp_module_flags"
+    if ! hasFlag "$rp_module_flags" "!$__platform"; then
+        rp_registerFunction "$module_idx" "$rp_module_id" "$module_type" "$rp_module_desc" "$rp_module_menus"  "$rp_module_flags"
+    fi
 }
 
 function rp_registerModuleDir() {

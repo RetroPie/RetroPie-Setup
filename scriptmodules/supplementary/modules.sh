@@ -1,7 +1,7 @@
 rp_module_id="modules"
 rp_module_desc="Modules UInput, Joydev, ALSA"
 rp_module_menus="2+"
-rp_module_flags="nobin"
+rp_module_flags="nobin !odroid"
 
 function install_modules() {
     modprobe uinput

@@ -46,6 +46,20 @@ function ask()
     esac
 }
 
+function hasFlag()
+{
+    local string="$1"
+    local flag="$2"
+    [ -z "$string" ] || [ -z "$flag" ] && return 1
+
+    local re="(^| )$flag($| )"
+    if [[ $string =~ $re ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 function addLineToFile()
 {
     if [[ -f "$2" ]]; then

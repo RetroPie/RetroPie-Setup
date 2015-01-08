@@ -1,6 +1,7 @@
 rp_module_id="sdl1dispmanx"
 rp_module_desc="SDL 1.2.15 with dispmanx backend"
 rp_module_menus="2+"
+rp_module_flags="!odroid"
 
 function depends_sdl1dispmanx() {
     getDepends libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
