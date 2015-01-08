@@ -208,10 +208,11 @@ function rp_callModule() {
 
 function rp_install_bin() {
     printMsg "Installing binary archive for $md_desc"
+    [ "$__has_binaries" -eq 0 ] && fatalError "There are no binary archives for platform $__platform"
     local archive="$md_type/$md_id.tar.gz";
     local dest="$rootdir/$md_type"
     mkdir -p "$dest"
-    wget -O- -q "http://downloads.petrockblock.com/retropiebinaries/$archive" | tar -xvz -C "$dest"
+    wget -O- -q "$__binary_url$archive" | tar -xvz -C "$dest"
     if fn_exists $function; then
         $function
     fi

@@ -68,6 +68,10 @@ function platform_rpi() {
     __default_gcc_version="4.7"
     # if building in a chroot, what cpu should be set by qemu
     __qemu_cpu=arm1176
+    # do we have prebuild binaries for this platform
+    __has_binaries=1
+    # binary archive location (with / on end)
+    __binary_url="http://downloads.petrockblock.com/retropiebinaries/"
 }
 
 function platform_odroid() {
@@ -76,4 +80,5 @@ function platform_odroid() {
     __default_makeflags=""
     __default_gcc_version="4.7"
     __qemu_cpu=arm1176
+    __has_binaries=0
 }

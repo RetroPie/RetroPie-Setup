@@ -116,6 +116,7 @@ function install_sdl2() {
 }
 
 function install_bin_sdl2() {
+    isPlatform "rpi" || fatalError "$mod_id is only available as a binary package for platform rpi"
     wget http://downloads.petrockblock.com/retropiearchives/libsdl2-dev_2.0.3_armhf.deb
     wget http://downloads.petrockblock.com/retropiearchives/libsdl2_2.0.3_armhf.deb
     remove_old_sdl2
