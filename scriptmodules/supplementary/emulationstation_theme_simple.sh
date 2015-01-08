@@ -1,6 +1,7 @@
 rp_module_id="esthemesimple"
 rp_module_desc="EmulationStation Theme Simple"
 rp_module_menus="2+"
+rp_module_flags="nobin"
 
 function install_esthemesimple() {
     # download themes archive

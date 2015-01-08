@@ -1,6 +1,7 @@
 rp_module_id="usbromservice"
 rp_module_desc="USB ROM Service"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 function install_usbromservice() {
     # install usbmount package
