@@ -3,7 +3,7 @@ rp_module_desc="EmulationStation"
 rp_module_menus="2+"
 
 function depends_emulationstation() {
-    checkNeededPackages \
+    getDepends \
         libboost-locale-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
         libasound2-dev cmake g++-4.7
@@ -80,7 +80,7 @@ _EOF_
 function package_emulationstation() {
     local PKGNAME
 
-    checkNeededPackages reprepro
+    getDepends reprepro
 
     printMsg "Building package of EmulationStation"
 

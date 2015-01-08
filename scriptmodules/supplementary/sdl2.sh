@@ -6,7 +6,7 @@ rp_module_flags="nobin"
 function depends_sdl2() {
     # Depedencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
     # already covered by the build-essential package retropie relies on.
-    checkNeededPackages debhelper dh-autoreconf libasound2-dev libudev-dev libdbus-1-dev libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
+    getDepends debhelper dh-autoreconf libasound2-dev libudev-dev libdbus-1-dev libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 }
 
 function sources_sdl2() {

@@ -4,7 +4,7 @@ rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
 function depends_dosbox() {
-    checkNeededPackages libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng12-dev automake autoconf zlib1g-dev
+    getDepends libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng12-dev automake autoconf zlib1g-dev
 }
 
 function sources_dosbox() {

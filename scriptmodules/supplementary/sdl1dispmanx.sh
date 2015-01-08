@@ -3,7 +3,7 @@ rp_module_desc="SDL 1.2.15 with dispmanx backend"
 rp_module_menus="2+"
 
 function depends_sdl1dispmanx() {
-    checkNeededPackages libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
+    getDepends libudev-dev libasound2-dev libdbus-1-dev libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 }
 
 function sources_sdl1dispmanx() {

@@ -137,7 +137,7 @@ function aptInstall()
     return $?
 }
 
-function checkNeededPackages() {
+function getDepends() {
     local required
     local packages=()
     local failed=()

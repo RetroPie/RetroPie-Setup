@@ -23,7 +23,7 @@ _EOF_
 }
 
 function install_sambashares() {
-    checkNeededPackages samba samba-common-bin
+    getDepends samba samba-common-bin
 }
 
 function configure_sambashares() {

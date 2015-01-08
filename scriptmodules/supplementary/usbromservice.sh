@@ -5,7 +5,7 @@ rp_module_flags="nobin"
 
 function install_usbromservice() {
     # install usbmount package
-    checkNeededPackages usbmount
+    getDepends usbmount
 }
 
 function configure_usbromservice() {
