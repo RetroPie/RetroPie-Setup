@@ -93,7 +93,7 @@ rps_main_menu() {
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose installation either based on binaries or on sources." 22 76 16)
         options=()
-        if $__has_binaries; then
+        if [ $__has_binaries -eq 1 ]; then
             options+=(
             1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)")
         fi
