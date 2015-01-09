@@ -124,12 +124,24 @@ function configure_retroarch() {
     iniSet "video_smooth" "false" "$configdir/mastersystem/retroarch.cfg"
 
     # system-specific shaders, Gameboy
+    # resolution = 160x144
     iniSet "video_shader" "$md_inst/shader/hq4x.glslp" "$configdir/gb/retroarch.cfg"
     iniSet "video_shader_enable" "false" "$configdir/gb/retroarch.cfg"
+    iniSet "video_aspect_ratio" "1.11" "$configdir/gb/retroarch.cfg"
 
     # system-specific shaders, Gameboy Color
+    # resolution = 160x144
     iniSet "video_shader" "$md_inst/shader/hq4x.glslp" "$configdir/gbc/retroarch.cfg"
     iniSet "video_shader_enable" "false" "$configdir/gbc/retroarch.cfg"
+    iniSet "video_aspect_ratio" "1.11" "$configdir/gbc/retroarch.cfg"
+
+    # system-specific, Atari Lynx
+    # resolution = 160x102
+    iniSet "video_aspect_ratio" "1.568" "$configdir/atarilynx/retroarch.cfg"
+
+    # system-specific, Sega Gamegear
+    # resolution = 160x144
+    iniSet "video_aspect_ratio" "1.11" "$configdir/gamegear/retroarch.cfg"
 
     # system-specific, PSX
     iniSet "rewind_enable" "false" "$configdir/psx/retroarch.cfg"
