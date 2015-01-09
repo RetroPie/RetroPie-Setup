@@ -3,7 +3,7 @@ rp_module_desc="FBA LibretroCore"
 rp_module_menus="2+"
 
 function depends_fbalibretro() {
-    checkNeededPackages gcc-4.8 g++-4.8
+    getDepends gcc-4.8 g++-4.8
 }
 
 function sources_fbalibretro() {

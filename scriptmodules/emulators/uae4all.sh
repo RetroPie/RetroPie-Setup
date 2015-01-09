@@ -4,7 +4,7 @@ rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
 function depends_uae4all() {
-    checkNeededPackages libsdl1.2-dev libsdl-mixer1.2-dev libasound2-dev
+    getDepends libsdl1.2-dev libsdl-mixer1.2-dev libasound2-dev
 }
 
 function sources_uae4all() {

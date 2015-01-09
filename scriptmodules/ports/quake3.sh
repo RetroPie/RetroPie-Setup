@@ -3,7 +3,7 @@ rp_module_desc="Quake 3"
 rp_module_menus="2+"
 
 function depends_quake3() {
-    checkNeededPackages libsdl1.2-dev
+    getDepends libsdl1.2-dev
 }
 
 function sources_quake3() {

@@ -3,7 +3,7 @@ rp_module_desc="Darkplaces Quake"
 rp_module_menus="4+"
 
 function depends_darkplaces() {
-    checkNeededPackages lhasa libtxc-dxtn-s2tc0
+    getDepends lhasa libtxc-dxtn-s2tc0
 }
 
 function sources_darkplaces() {

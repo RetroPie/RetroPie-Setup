@@ -4,7 +4,7 @@ rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
 function depends_dgen() {
-    checkNeededPackages libsdl1.2-dev libarchive-dev
+    getDepends libsdl1.2-dev libarchive-dev
 }
 
 function sources_dgen() {

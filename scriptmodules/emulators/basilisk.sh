@@ -4,7 +4,7 @@ rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
 function depends_basilisk() {
-    checkNeededPackages libsdl1.2-dev autoconf automake
+    getDepends libsdl1.2-dev autoconf automake
 }
 
 function sources_basilisk() {

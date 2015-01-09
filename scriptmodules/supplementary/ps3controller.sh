@@ -4,7 +4,7 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function depends_ps3controller() {
-    checkNeededPackages bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
+    getDepends bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
 }
 
 function sources_ps3controller() {

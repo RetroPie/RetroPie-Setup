@@ -3,7 +3,7 @@ rp_module_desc="Playstation 1 LibretroCore"
 rp_module_menus="2+"
 
 function depends_psxlibretro() {
-    checkNeededPackages libpng12-dev libx11-dev
+    getDepends libpng12-dev libx11-dev
 }
 
 function sources_psxlibretro() {

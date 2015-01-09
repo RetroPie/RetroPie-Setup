@@ -3,7 +3,7 @@ rp_module_desc="FBA emulator PiFBA"
 rp_module_menus="2+"
 
 function depends_pifba() {
-    checkNeededPackages libasound2-dev
+    getDepends libasound2-dev
 }
 
 function sources_pifba() {

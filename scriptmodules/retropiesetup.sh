@@ -92,13 +92,18 @@ function rps_availFreeDiskSpace() {
 rps_main_menu() {
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose installation either based on binaries or on sources." 22 76 16)
-        options=(1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)"
-                 2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
-                 3 "SETUP (only if you already have run one of the installations above)"
-                 4 "EXPERIMENTAL packages (these are potentially unstable packages)"
-                 5 "UPDATE RetroPie Setup script"
-                 6 "UPDATE RetroPie Binaries"
-                 7 "Perform REBOOT" )
+        options=()
+        if $__has_binaries; then
+            options+=(
+            1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)")
+        fi
+        options+=(
+            2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
+            3 "SETUP (only if you already have run one of the installations above)"
+            4 "EXPERIMENTAL packages (these are potentially unstable packages)"
+            5 "UPDATE RetroPie Setup script"
+            6 "UPDATE RetroPie Binaries"
+            7 "Perform REBOOT")
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
             case $choices in

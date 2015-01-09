@@ -4,7 +4,7 @@ rp_module_menus="2+"
 rp_module_flags=""
 
 function depends_gpsp() {
-    checkNeededPackages libsdl1.2-dev
+    getDepends libsdl1.2-dev
 }
 
 function sources_gpsp() {

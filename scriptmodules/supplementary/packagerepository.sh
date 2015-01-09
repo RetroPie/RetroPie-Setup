@@ -5,7 +5,7 @@ rp_module_flags="nobin"
 
 function install_packagerepository() {
     # install repository helper package
-    checkNeededPackages reprepro
+    getDepends reprepro
 
     # Create repository
     mkdir -p RetroPieRepo/conf

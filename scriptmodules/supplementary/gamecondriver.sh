@@ -21,7 +21,7 @@ function install_gamecondriver() {
     esac
 
     #install dkms
-    checkNeededPackages dkms
+    getDepends dkms
 
     #reconfigure / install headers (takes a a while)
     if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then

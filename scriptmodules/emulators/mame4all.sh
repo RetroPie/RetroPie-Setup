@@ -3,7 +3,7 @@ rp_module_desc="MAME emulator MAME4All-Pi"
 rp_module_menus="2+"
 
 function depends_mame4all() {
-    checkNeededPackages libasound2-dev libsdl1.2-dev
+    getDepends libasound2-dev libsdl1.2-dev
 }
 
 function sources_mame4all() {

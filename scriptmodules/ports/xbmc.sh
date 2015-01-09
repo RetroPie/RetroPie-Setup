@@ -10,7 +10,7 @@ function depends_xbmc() {
 }
 
 function build_xbmc() {
-    checkNeededPackages xbmc
+    getDepends xbmc
 }
 
 function configure_xbmc() {
