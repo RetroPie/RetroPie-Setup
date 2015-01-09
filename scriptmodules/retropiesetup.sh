@@ -194,18 +194,18 @@ function rps_main_binaries()
 
 function rps_main_updatescript()
 {
-  printMsg "Fetching latest version of the RetroPie Setup Script."
-  pushd $scriptdir
-  if [[ ! -d ".git" ]]; then
-    dialog --backtitle "$__backtitle" --msgbox "Cannot find direcotry '.git'. Please clone the RetroPie Setup script via 'git clone git://github.com/petrockblog/RetroPie-Setup.git'" 20 60
+    printMsg "Fetching latest version of the RetroPie Setup Script."
+    pushd $scriptdir
+    if [[ ! -d ".git" ]]; then
+        dialog --backtitle "$__backtitle" --msgbox "Cannot find directory '.git'. Please clone the RetroPie Setup script via 'git clone git://github.com/petrockblog/RetroPie-Setup.git'" 20 60
+        popd
+        return
+    fi
+    git pull
     popd
-    return
-  fi
-  git pull
-  popd
-  printMsg "Updating ESConfigEdit script."
-  updateESConfigEdit
-  dialog --backtitle "$__backtitle" --msgbox "Fetched the latest version of the RetroPie Setup script. You need to restart the script." 20 60
+    printMsg "Updating ESConfigEdit script."
+    updateESConfigEdit
+    dialog --backtitle "$__backtitle" --msgbox "Fetched the latest version of the RetroPie Setup script. You need to restart the script." 20 60
 }
 
 function rps_main_options()
