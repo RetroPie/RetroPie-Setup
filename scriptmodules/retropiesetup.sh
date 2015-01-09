@@ -101,8 +101,13 @@ rps_main_menu() {
             2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
             3 "SETUP (only if you already have run one of the installations above)"
             4 "EXPERIMENTAL packages (these are potentially unstable packages)"
-            5 "UPDATE RetroPie Setup script"
+            5 "UPDATE RetroPie Setup script")
+        if [ $__has_binaries -eq 1 ]; then
+            options+=(
             6 "UPDATE RetroPie Binaries"
+            )
+        fi
+        options+=(
             7 "Perform REBOOT")
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [ "$choices" != "" ]; then
