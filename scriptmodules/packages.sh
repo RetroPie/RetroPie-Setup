@@ -119,12 +119,12 @@ function rp_callModule() {
     # create function name
     function="${mode}_${mod_id}"
     if [ "${mode}" = "install_bin" ] && [[ ! "$md_flags" =~ nobin ]]; then
-        rp_install_bin
+        rp_installBin
         return
     fi
 
     if [ "${mode}" = "create_bin" ] && [[ ! "$md_flags" =~ nobin ]]; then
-        rp_create_bin
+        rp_createBin
         return
     fi
 
@@ -206,7 +206,7 @@ function rp_callModule() {
     return 0
 }
 
-function rp_install_bin() {
+function rp_installBin() {
     printMsg "Installing binary archive for $md_desc"
     [ "$__has_binaries" -eq 0 ] && fatalError "There are no binary archives for platform $__platform"
     local archive="$md_type/$md_id.tar.gz";
@@ -218,7 +218,7 @@ function rp_install_bin() {
     fi
 }
 
-function rp_create_bin() {
+function rp_createBin() {
     printMsg "Creating binary archive for $md_desc"
     local archive="$md_id.tar.gz"
     local dest="$__tmpdir/archives/$md_type"
