@@ -36,8 +36,10 @@ file="\$1"
 [ -z "\$file" ] && exit 1
 
 pushd "$md_inst"
-rm -rf df0.adf
-ln -s "\$file" df0.adf
+
+ROMDIR=\$(dirname "\$file")
+echo "path=\"\${ROMDIR}\"" > ./conf/adfdir.conf
+
 $rootdir/supplementary/runcommand/runcommand.sh 1 ./uae4all "$md_id"
 popd
 _EOF_
