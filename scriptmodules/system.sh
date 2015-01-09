@@ -51,7 +51,6 @@ function setup_env() {
 
     # test if we are in a chroot
     if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
-      # make chroot identify as arm6l
       export QEMU_CPU=$__qemu_cpu
       __chroot=1
     else
@@ -67,6 +66,7 @@ function platform_rpi() {
     __default_makeflags=""
     __default_gcc_version="4.7"
     # if building in a chroot, what cpu should be set by qemu
+    # make chroot identify as arm6l
     __qemu_cpu=arm1176
     # do we have prebuild binaries for this platform
     __has_binaries=1
