@@ -30,13 +30,13 @@
 # main retropie install location
 rootdir="/opt/retropie"
 
+user="$SUDO_USER"
+[ -z "$user" ] && user=$(id -un)
+
 home="$(eval echo ~$user)"
 romdir="$home/RetroPie/roms"
 emudir="$rootdir/emulators"
 configdir="$rootdir/configs"
-
-user="$SUDO_USER"
-[ -z "$user" ] && user=$(id -un)
 
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
