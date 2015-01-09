@@ -125,8 +125,11 @@ rps_main_menu() {
 # downloads and installs pre-compiles binaries of all essential programs and libraries
 function rps_downloadBinaries()
 {
-    printMsg "Downloading binaries archive"
-    wget -O- -q http://blog.petrockblock.com/?wpdmdl=7113 | tar -xvz --strip-components=1 -C "$rootdir"
+    for idx in "${__mod_idx[@]}"; do
+        if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobin ]]; then
+            rp_callModule $idx install_bin
+        fi
+    done
 }
 
 # download, extract, and install binaries
