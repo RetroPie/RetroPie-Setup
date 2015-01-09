@@ -79,6 +79,5 @@ function platform_odroid() {
     __default_asflags=""
     __default_makeflags=""
     __default_gcc_version="4.7"
-    __qemu_cpu=arm1176
     __has_binaries=0
 }
