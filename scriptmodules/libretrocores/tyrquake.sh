@@ -1,6 +1,6 @@
 rp_module_id="tyrquake"
 rp_module_desc="Quake LibretroCore"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function depends_tyrquake() {
     getDepends lhasa
