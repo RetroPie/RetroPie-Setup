@@ -8,7 +8,7 @@ function depends_emulationstation() {
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
         libasound2-dev cmake
 
-    if ! hasPackage libsdl2-dev; then
+    if ! hasPackage libsdl2-dev && isPlatform "rpi"; then
         rp_callModule sdl2 install_bin
     fi
 }
