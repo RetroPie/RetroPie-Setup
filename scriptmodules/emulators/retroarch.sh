@@ -80,7 +80,7 @@ function configure_retroarch() {
     iniConfig " = " "" "$configdir/all/retroarch.cfg"
     iniSet "system_directory" "$romdir/../BIOS"
     iniSet "config_save_on_exit" "false"
-    iniSet "video_aspect_ratio" "1.33"
+    iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "false"
     iniSet "video_threaded" "true"
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
