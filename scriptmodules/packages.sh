@@ -82,7 +82,7 @@ function rp_callModule() {
     local req_id="$1"
     local mode="$2"
 
-    if [[ "$mode" == "" ]]; then
+    if [[ -z "$mode" ]]; then
         for mode in depends sources build install configure; do
             rp_callModule $req_id $mode || return 1
         done
@@ -104,7 +104,7 @@ function rp_callModule() {
         done
     fi
 
-    if [[ "$mod_id" == "" ]]; then
+    if [[ -z "$mod_id" ]]; then
         fatalError "No module '$req_id' found for platform $__platform"
     fi
 
@@ -240,7 +240,7 @@ function rp_registerModule() {
     local error=0
     source $module_path
     for var in rp_module_id rp_module_desc; do
-        if [[ "${!var}" == "" ]]; then
+        if [[ -z "${!var}" ]]; then
             echo "Module $module_path is missing valid $var"
             error=1
         fi

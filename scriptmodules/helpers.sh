@@ -94,12 +94,12 @@ function iniProcess()
     local key="$2"
     local value="$3"
     local file="$4"
-    [[ "$file" == "" ]] && file="$__ini_cfg_file"
+    [[ -z "$file" ]] && file="$__ini_cfg_file"
     local delim="$__ini_cfg_delim"
     local quote="$__ini_cfg_quote"
 
-    [[ "$file" == "" ]] && fatalError "No file provided for ini/config change"
-    [[ "$key" == "" ]] && fatalError "No key provided for ini/config change on $file"
+    [[ -z "$file" ]] && fatalError "No file provided for ini/config change"
+    [[ -z "$key" ]] && fatalError "No key provided for ini/config change on $file"
 
     local delim_strip=${delim// /}
     local match_re="[\s#]*$key\s*$delim_strip.*$"

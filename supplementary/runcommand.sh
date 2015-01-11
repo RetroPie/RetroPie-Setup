@@ -49,10 +49,10 @@ function get_mode() {
     if [[ -f "$video_conf" ]]; then
       source "$video_conf"
       newmode="${!romsave}"
-      [[ "$newmode" == "" ]] && newmode="${!emusave}"
+      [[ -z "$newmode" ]] && newmode="${!emusave}"
     fi
 
-    if [[ "$newmode" == "" ]]; then
+    if [[ -z "$newmode" ]]; then
         # if called with specific mode, use that else choose the best mode from our array
         if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
             newmode="$reqmode"
@@ -124,7 +124,7 @@ function choose_mode() {
 
     cmd=(dialog --default-item "$default" --menu "Choose video output mode for $emulator"  22 76 16 )
     newmode=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    [[ "$newmode" == "" ]] && return
+    [[ -z "$newmode" ]] && return
 
     iniSet set "=" '"' "$save" "$newmode" "$video_conf"
 }

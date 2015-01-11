@@ -3,7 +3,7 @@ FROMTO="$1"
 DEVICE="$2"
 DEST="$3"
 MOUNT="/mnt"
-if [[ "$DEVICE" == "" ]] || [[ "$DEST" == "" ]]; then
+if [[ -z "$DEVICE" ]] || [[ -z "$DEST" ]]; then
     echo "$0 from/to DEVICE SOURCE/DEST"
     exit 1
 fi

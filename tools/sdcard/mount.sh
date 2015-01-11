@@ -1,7 +1,7 @@
 #!/bin/bash
 DEVICE="$1"
 DEST="$2"
-if [[ "$DEVICE" == "" ]] || [[ "$DEST" == "" ]]; then
+if [[ -z "$DEVICE" ]] || [[ -z "$DEST" ]]; then
     echo "$0 DEVICE/umount MOUNTPOINT"
     exit 1
 fi

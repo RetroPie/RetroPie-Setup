@@ -17,7 +17,7 @@ mount -o bind /dev $DEST/dev
 export QEMU_CPU=arm1176
 
 cp /usr/bin/qemu-arm-static $DEST/usr/bin
-if [[ "$CMD" == "" ]]; then
+if [[ -z "$CMD" ]]; then
   HOME="/home/pi" chroot --userspec 1000:1000 $DEST
 else
   HOME="/home/pi" chroot --userspec 1000:1000 $DEST $CMD

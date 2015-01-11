@@ -11,7 +11,7 @@ BOOTSZ=60
 # -1 to use the rest of the partition space
 ROOTSZ=-1
 
-[[ "$NAME" == "" ]] || [[ "$ROOTFS" == "" ]] && exit
+[[ -z "$NAME" ]] || [[ -z "$ROOTFS" ]] && exit
 
 ROOTFS="`readlink -f $ROOTFS`"
 

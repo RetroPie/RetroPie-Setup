@@ -25,7 +25,7 @@ function configure_dispmanx() {
                 ((count++))
             fi
         done
-        [[ "${options[*]}" == "" ]] && break
+        [[ -z "${options[*]}" ]] && break
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure emulators to use dispmanx SDL" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ "$choice" != "" ]]; then
