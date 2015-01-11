@@ -185,7 +185,7 @@ function rps_main_binaries()
 
     chown -R $user:$user $scriptdir/logs/run_$now.log.gz
 
-    if [[ ! -z $__INFMSGS ]]; then
+    if [[ -n $__INFMSGS ]]; then
         dialog --backtitle "$__backtitle" --msgbox "$__INFMSGS" 20 60
     fi
 
@@ -233,11 +233,11 @@ function rps_main_options()
         } &> >(tee >(gzip --stdout > $logfilename))
         chown -R $user:$user $logfilename
 
-        if [[ ! -z $__ERRMSGS ]]; then
+        if [[ -n $__ERRMSGS ]]; then
             dialog --backtitle "$__backtitle" --msgbox "$__ERRMSGS See $logfilename for more details." 20 60
         fi
 
-        if [[ ! -z $__INFMSGS ]]; then
+        if [[ -n $__INFMSGS ]]; then
             dialog --backtitle "$__backtitle" --msgbox "$__INFMSGS" 20 60
         fi
 

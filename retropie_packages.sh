@@ -86,11 +86,11 @@ else
     rp_printUsageinfo
 fi
 
-if [[ ! -z $__ERRMSGS ]]; then
+if [[ -n $__ERRMSGS ]]; then
     echo $__ERRMSGS >&2
 fi
 
-if [[ ! -z $__INFMSGS ]]; then
+if [[ -n $__INFMSGS ]]; then
     echo $__INFMSGS
 fi
 

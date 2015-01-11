@@ -198,7 +198,7 @@ function rp_callModule() {
             ;;
     esac
 
-    if [[ ! -z "$errors" ]]; then
+    if [[ -n "$errors" ]]; then
         __ERRMSGS+="$errors"
         return 1
     fi
