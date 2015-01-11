@@ -13,7 +13,7 @@ function set_enableSplashscreenAtStart()
     chmod +x "$scriptdir/supplementary/asplashscreen/asplashscreen"
     cp "$scriptdir/supplementary/asplashscreen/asplashscreen" "/etc/init.d/"
 
-    echo $(find $scriptdir/supplementary/splashscreens/retropieproject2014/ -type f) > /etc/splashscreen.list
+    find $scriptdir/supplementary/splashscreens/retropieproject2014/ -type f > /etc/splashscreen.list
 
     # This command installs the init.d script so it automatically starts on boot
     update-rc.d asplashscreen defaults
@@ -105,7 +105,5 @@ function configure_splashenable() {
                dialog --backtitle "$__backtitle" --msgbox "Enabled custom splashscreen on boot." 22 76
                             ;;
         esac
-    else
-        break
     fi
 }

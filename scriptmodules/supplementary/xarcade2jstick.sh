@@ -41,7 +41,5 @@ function configure_xarcade2jstick() {
                dialog --backtitle "$__backtitle" --msgbox "Enabled Xarcade2Jstick service." 22 76
                             ;;
         esac
-    else
-        break
     fi
 }
