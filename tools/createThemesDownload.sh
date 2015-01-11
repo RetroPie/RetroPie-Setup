@@ -231,19 +231,19 @@ do
     fi
 done
 
-tar -c -vf /home/pi/ESThemeSimple_`date +%d%m%y`.tar ${filelist[0]}
+tar -c -vf /home/pi/ESThemeSimple_$(date +%d%m%y).tar ${filelist[0]}
 
 tLen=${#filelist[@]}
 for (( i=1; i<${tLen}; i++ ));
 do
-    tar -r -vf /home/pi/ESThemeSimple_`date +%d%m%y`.tar ${filelist[$i]}
+    tar -r -vf /home/pi/ESThemeSimple_$(date +%d%m%y).tar ${filelist[$i]}
 done
 
-if [[ -f /home/pi/ESThemeSimple_`date +%d%m%y`.tar.bz2 ]]; then
-    rm /home/pi/ESThemeSimple_`date +%d%m%y`.tar.bz2
+if [[ -f /home/pi/ESThemeSimple_$(date +%d%m%y).tar.bz2 ]]; then
+    rm /home/pi/ESThemeSimple_$(date +%d%m%y).tar.bz2
 fi
 echo "Compressing theme archive."
-bzip2 /home/pi/ESThemeSimple_`date +%d%m%y`.tar
+bzip2 /home/pi/ESThemeSimple_$(date +%d%m%y).tar
 
 echo "Done."
 

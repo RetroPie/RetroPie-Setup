@@ -33,7 +33,7 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
-    [ -z "${__platform}" ] && __platform=rpi
+    [[ -z "${__platform}" ]] && __platform=rpi
 
     if fn_exists "platform_${__platform}"; then
         platform_${__platform}
@@ -42,16 +42,16 @@ function setup_env() {
     fi
 
     # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
-    [ $__memory_phys -ge 256 ] && __default_cflags+=" -pipe"
+    [[ $__memory_phys -ge 256 ]] && __default_cflags+=" -pipe"
 
-    [ -z "${CFLAGS}" ] && export CFLAGS="${__default_cflags}"
-    [ -z "${CXXFLAGS}" ] && export CXXFLAGS="${__default_cflags}"
-    [ -z "${ASFLAGS}" ] && export ASFLAGS="${__default_asflags}"
-    [ -z "${MAKEFLAGS}" ] && export MAKEFLAGS="${__default_makeflags}"
+    [[ -z "${CFLAGS}" ]] && export CFLAGS="${__default_cflags}"
+    [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
+    [[ -z "${ASFLAGS}" ]] && export ASFLAGS="${__default_asflags}"
+    [[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
 
     # test if we are in a chroot
-    if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
-        [ "$__qemu_cpu" != "" ]  &&  export QEMU_CPU=$__qemu_cpu
+    if [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]; then
+        [[ -n "$__qemu_cpu" ]] && export QEMU_CPU=$__qemu_cpu
         __chroot=1
     else
         __chroot=0

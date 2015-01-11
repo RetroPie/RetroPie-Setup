@@ -96,7 +96,7 @@ function configure_splashenable() {
     options=(1 "Disable custom splashscreen on boot."
              2 "Enable custom splashscreen on boot")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [ "$choices" != "" ]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
             1) set_disableSplashscreenAtStart
                dialog --backtitle "$__backtitle" --msgbox "Disabled custom splashscreen on boot." 22 76

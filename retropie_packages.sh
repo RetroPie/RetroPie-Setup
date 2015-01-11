@@ -31,7 +31,7 @@
 rootdir="/opt/retropie"
 
 user="$SUDO_USER"
-[ -z "$user" ] && user=$(id -un)
+[[ -z "$user" ]] && user=$(id -un)
 
 home="$(eval echo ~$user)"
 romdir="$home/RetroPie/roms"
@@ -46,7 +46,7 @@ __builddir="$__tmpdir/build"
 __swapdir="$__tmpdir"
 
 # check, if sudo is used
-if [ $(id -u) -ne 0 ]; then
+if [[ $(id -u) -ne 0 ]]; then
     echo "Script must be run as root. Try 'sudo $0'"
     exit 1
 fi
@@ -86,11 +86,11 @@ else
     rp_printUsageinfo
 fi
 
-if [[ ! -z $__ERRMSGS ]]; then
+if [[ -n $__ERRMSGS ]]; then
     echo $__ERRMSGS >&2
 fi
 
-if [[ ! -z $__INFMSGS ]]; then
+if [[ -n $__INFMSGS ]]; then
     echo $__INFMSGS
 fi
 

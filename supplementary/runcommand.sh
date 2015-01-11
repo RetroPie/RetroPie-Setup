@@ -46,13 +46,13 @@ function get_mode() {
     currentmode=${currentmode/ /-}
     aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
 
-    if [ -f "$video_conf" ]; then
+    if [[ -f "$video_conf" ]]; then
       source "$video_conf"
       newmode="${!romsave}"
-      [ "$newmode" == "" ] && newmode="${!emusave}"
+      [[ -z "$newmode" ]] && newmode="${!emusave}"
     fi
 
-    if [ "$newmode" = "" ]; then
+    if [[ -z "$newmode" ]]; then
         # if called with specific mode, use that else choose the best mode from our array
         if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
             newmode="$reqmode"
@@ -107,7 +107,7 @@ function choose_mode() {
             local mode=$(echo $line | grep -oE "mode [0-9]*" | cut -d" " -f2)
             local info=$(echo $line | cut -d":" -f2-)
             info=${info/ /}
-            if [ "$mode" != "" ]; then
+            if [[ -n "$mode" ]]; then
                 options+=("$group-$mode" "$info")
             fi
         done < <(tvservice -m $group)
@@ -124,7 +124,7 @@ function choose_mode() {
 
     cmd=(dialog --default-item "$default" --menu "Choose video output mode for $emulator"  22 76 16 )
     newmode=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    [ "$newmode" = "" ] && return
+    [[ -z "$newmode" ]] && return
 
     iniSet set "=" '"' "$save" "$newmode" "$video_conf"
 }
@@ -132,23 +132,23 @@ function choose_mode() {
 function switch_mode() {
     local mode=(${1//-/ })
     local switched=0
-    if [ "${mode[0]}" = "PAL" ] || [ "${mode[0]}" = "NTSC" ]; then
+    if [[ "${mode[0]}" == "PAL" ]] || [[ "${mode[0]}" == "NTSC" ]]; then
         tvservice -c "${mode[*]}"
         switched=1
     else
         hasmode=$(tvservice -m ${mode[0]} | grep -w "mode ${mode[1]}")
-        if [ "${mode[*]}" != "" ] && [ "$hasmode" != "" ]; then
+        if [[ -n "${mode[*]}" ]] && [[ -n "$hasmode" ]]; then
             tvservice -e "${mode[*]}"
             switched=1
         fi
     fi
-    [ $switched -eq 1 ] && reset_framebuffer
+    [[ $switched -eq 1 ]] && reset_framebuffer
     return $switched
 }
 
 function restore_mode() {
     local mode=(${1//-/ })
-    if [ "${mode[0]}" = "PAL" ] || [ "${mode[0]}" = "NTSC" ]; then
+    if [[ "${mode[0]}" == "PAL" ]] || [[ "${mode[0]}" == "NTSC" ]]; then
         tvservice -c "${mode[*]}"
     else
         tvservice -p
@@ -156,18 +156,18 @@ function restore_mode() {
 }
 
 function reset_framebuffer() {
-  sleep 1
-  fbset -depth 8
-  fbset -depth 16
+    sleep 1
+    fbset -depth 8
+    fbset -depth 16
 }
 
 function config_dispmanx() {
     local name="$1"
     # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
     # change the library path to load dispmanx sdl first
-    if [ -f "$dispmanx_conf" ]; then
+    if [[ -f "$dispmanx_conf" ]]; then
       source "$dispmanx_conf"
-      [ "${!name}" = "1" ] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $command"
+      [[ "${!name}" == "1" ]] && command="LD_LIBRARY_PATH=/opt/retropie/supplementary/sdl1dispmanx/lib $command"
     fi
 }
 
@@ -191,13 +191,13 @@ function iniSet() {
     local match_re="[\s#]*$key\s*$delim_strip.*$"
 
     local match
-    if [ -f "$file" ]; then
+    if [[ -f "$file" ]]; then
         match=$(egrep -i "$match_re" "$file" | tail -1)
     else
         touch "$file"
     fi
 
-    [ "$command" == "unset" ] && key="# $key"
+    [[ "$command" == "unset" ]] && key="# $key"
     local replace="$key$delim$quote$value$quote"
     if [[ -z "$match" ]]; then
         # add key-value pair
@@ -236,7 +236,7 @@ if [[ "$key" =~ [xXmM] ]]; then
 fi
 
 switched=0
-if [ "$newmode" != "" ] && [ "$newmode" != "$currentmode" ]; then
+if [[ -n "$newmode" ]] && [[ "$newmode" != "$currentmode" ]]; then
     switch_mode "$newmode"
     switched=$?
 fi
@@ -255,7 +255,7 @@ eval $command
 echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
 
 # if we switched mode - restore preferred mode, and reset framebuffer
-if [ $switched -eq 1 ]; then
+if [[ $switched -eq 1 ]]; then
     restore_mode "$currentmode"
     reset_framebuffer
 fi

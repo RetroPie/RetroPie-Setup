@@ -4,7 +4,7 @@ rp_module_menus="2+"
 rp_module_flags="nobin"
 
 function install_bashwelcometweak() {
-    if [[ -z `cat "$home/.bashrc" | grep "# RETROPIE PROFILE START"` ]]; then
+    if [[ -z $(cat "$home/.bashrc" | grep "# RETROPIE PROFILE START") ]]; then
         cat >> "$home/.bashrc" <<\_EOF_
 # RETROPIE PROFILE START
 # Thanks to http://blog.petrockblock.com/forums/topic/retropie-mushroom-motd/#post-3965
@@ -28,15 +28,15 @@ gpuTempF=$((gpuTempC*9/5+32))
 read one five fifteen rest < /proc/loadavg
 
 echo "$(tput setaf 2)
-   .~~.   .~~.    `date +"%A, %e %B %Y, %r"`
-  '. \ ' ' / .'   `uname -srmo`$(tput setaf 1)
+   .~~.   .~~.    $(date +"%A, %e %B %Y, %r")
+  '. \ ' ' / .'   $(uname -srmo)$(tput setaf 1)
    .~ .~~~..~.   
-  : .~.'~'.~. :   $(tput setaf 3)`df -h | grep Filesystem`$(tput setaf 1)
- ~ (   ) (   ) ~  $(tput setaf 7)`df -h|grep rootfs`$(tput setaf 1)
+  : .~.'~'.~. :   $(tput setaf 3)$(df -h | grep Filesystem)$(tput setaf 1)
+ ~ (   ) (   ) ~  $(tput setaf 7)$(df -h|grep rootfs)$(tput setaf 1)
 ( : '~'.~.'~' : ) Uptime.............: ${UPTIME}
- ~ .~       ~. ~  Memory.............: `cat /proc/meminfo | grep MemFree | awk {'print $2'}`kB (Free) / `cat /proc/meminfo | grep MemTotal | awk {'print $2'}`kB (Total)$(tput setaf 7)
-  (  $(tput setaf 4) |   | $(tput setaf 7)  )  $(tput setaf 1) Running Processes..: `ps ax | wc -l | tr -d " "`$(tput setaf 7)
-  '~         ~'  $(tput setaf 1) IP Address.........: `ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ printf "%s ", $1}'` $(tput setaf 7)
+ ~ .~       ~. ~  Memory.............: $(cat /proc/meminfo | grep MemFree | awk {'print $2'})kB (Free) / $(cat /proc/meminfo | grep MemTotal | awk {'print $2'})kB (Total)$(tput setaf 7)
+  (  $(tput setaf 4) |   | $(tput setaf 7)  )  $(tput setaf 1) Running Processes..: $(ps ax | wc -l | tr -d " ")$(tput setaf 7)
+  '~         ~'  $(tput setaf 1) IP Address.........: $(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ printf "%s ", $1}') $(tput setaf 7)
     *--~-~--*    $(tput setaf 1) Temperature........: CPU: $cpuTempC°C/$cpuTempF°F GPU: $gpuTempC°C/$gpuTempF°F
                  $(tput setaf 7) The RetroPie Project, www.petrockblock.com
 
