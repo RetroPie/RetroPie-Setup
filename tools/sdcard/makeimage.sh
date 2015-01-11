@@ -4,7 +4,7 @@ ROOTFS="$2"
 # 7802500 x 512b blocks (5,120,000 bytes less than 4GB for usb sticks that are undersized)
 # SIZE=3994880000
 SIZE=3418357760
-[ "$3" = "small" ] && SIZE=1970000000
+[[ "$3" == "small" ]] && SIZE=1970000000
 # mb sizes
 OFF=4
 BOOTSZ=60
@@ -100,7 +100,7 @@ loop_mount
 echo "Creating filesystems"
 filesystems_create ext4
 
-[ ! -d rootfs ] && mkdir -p rootfs
+[[ ! -d rootfs ]] && mkdir -p rootfs
 
 echo "Mounting"
 mount -t ext4 /dev/loop1 rootfs

@@ -50,7 +50,7 @@ function hasFlag()
 {
     local string="$1"
     local flag="$2"
-    [[ -z "$string" ]] || [[ -z "$flag" ] && return 1
+    [[ -z "$string" ]] || [[ -z "$flag" ]] && return 1
 
     local re="(^| )$flag($| )"
     if [[ $string =~ $re ]]; then

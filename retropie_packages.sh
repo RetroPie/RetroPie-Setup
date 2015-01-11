@@ -31,7 +31,7 @@
 rootdir="/opt/retropie"
 
 user="$SUDO_USER"
-[ -z "$user" ] && user=$(id -un)
+[[ -z "$user" ]] && user=$(id -un)
 
 home="$(eval echo ~$user)"
 romdir="$home/RetroPie/roms"

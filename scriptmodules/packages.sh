@@ -190,7 +190,7 @@ function rp_callModule() {
 
     # remove build/install folder if empty
     [[ -d "$md_build" ]] && find "$md_build" -maxdepth 0 -empty -exec rmdir {} \;
-    [[ -d "$md_inst" ] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
+    [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
 
     case "$mode" in
         sources|build|install|configure)
