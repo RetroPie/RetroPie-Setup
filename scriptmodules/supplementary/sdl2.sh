@@ -21,7 +21,7 @@ function sources_sdl2() {
 }
 
 function build_sdl2() {
-    dpkg-buildpackage -j8
+    dpkg-buildpackage
 }
 
 function remove_old_sdl2() {
