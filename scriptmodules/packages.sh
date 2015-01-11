@@ -173,12 +173,12 @@ function rp_callModule() {
     $function
 
     # check if any required files are found
-    if [[ "$md_ret_require" != "" ]] && [[ ! -f "$md_ret_require" ]]; then
+    if [[ -n "$md_ret_require" ]] && [[ ! -f "$md_ret_require" ]]; then
         errors+="$__ERRMSGS Could not successfully $function $md_desc ($md_ret_require not found)."
     fi
 
     # check for existance and copy any files/directories returned
-    if [[ "$md_ret_files" != "" ]]; then
+    if [[ -n "$md_ret_files" ]]; then
         for file in "${md_ret_files[@]}"; do
             if [[ ! -e "$md_build/$file" ]]; then
                 errors+="$__ERRMSGS Could not successfully install $md_desc ($md_build/$file not found)."

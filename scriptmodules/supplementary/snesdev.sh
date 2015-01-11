@@ -90,7 +90,7 @@ function configure_snesdev() {
              5 "Switch to adapter version 1.X."
              6 "Switch to adapter version 2.X.")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ "$choices" != "" ]]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
             1) sup_checkInstallSNESDev
                make uninstallservice

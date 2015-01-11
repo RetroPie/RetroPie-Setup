@@ -26,7 +26,7 @@ function configure_splashscreen() {
     __INFMSGS=""
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     splashdir=${dirlist[$choices]}
-    if [[ "$choices" != "" ]]; then
+    if [[ -n "$choices" ]]; then
         rm /etc/splashscreen.list
         find $scriptdir/supplementary/splashscreens/$splashdir/ -type f | sort | while read line; do
             echo $line >> /etc/splashscreen.list

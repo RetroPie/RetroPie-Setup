@@ -107,7 +107,7 @@ function choose_mode() {
             local mode=$(echo $line | grep -oE "mode [0-9]*" | cut -d" " -f2)
             local info=$(echo $line | cut -d":" -f2-)
             info=${info/ /}
-            if [[ "$mode" != "" ]]; then
+            if [[ -n "$mode" ]]; then
                 options+=("$group-$mode" "$info")
             fi
         done < <(tvservice -m $group)
@@ -137,7 +137,7 @@ function switch_mode() {
         switched=1
     else
         hasmode=$(tvservice -m ${mode[0]} | grep -w "mode ${mode[1]}")
-        if [[ "${mode[*]}" != "" ]] && [[ "$hasmode" != "" ]]; then
+        if [[ -n "${mode[*]}" ]] && [[ -n "$hasmode" ]]; then
             tvservice -e "${mode[*]}"
             switched=1
         fi
@@ -236,7 +236,7 @@ if [[ "$key" =~ [xXmM] ]]; then
 fi
 
 switched=0
-if [[ "$newmode" != "" ]] && [[ "$newmode" != "$currentmode" ]]; then
+if [[ -n "$newmode" ]] && [[ "$newmode" != "$currentmode" ]]; then
     switch_mode "$newmode"
     switched=$?
 fi

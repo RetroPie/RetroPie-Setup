@@ -18,7 +18,7 @@ function configure_retronetplay() {
                  5 "Set delay frames. Currently: $__netplayframes" 
                  6 "Update EmulationStation configuration")
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ "$choices" != "" ]]; then
+        if [[ -n "$choices" ]]; then
             case $choices in
                  1) rps_retronet_enable ;;
                  2) rps_retronet_mode ;;
@@ -38,7 +38,7 @@ function rps_retronet_enable() {
     options=(1 "ENABLE netplay"
              2 "DISABLE netplay" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ "$choices" != "" ]]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
              1) __netplayenable="E"
                 ;;
@@ -54,7 +54,7 @@ function rps_retronet_mode() {
     options=(1 "Set as HOST"
              2 "Set as CLIENT" )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ "$choices" != "" ]]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
              1) __netplaymode="H"
                 __netplayhostip_cfile=""
@@ -70,7 +70,7 @@ function rps_retronet_mode() {
 function rps_retronet_port() {
     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the port to be used for netplay (default: 55435)." 22 76 $__netplayport)
     choices=$("${cmd[@]}" 2>&1 >/dev/tty)
-    if [[ "$choices" != "" ]]; then
+    if [[ -n "$choices" ]]; then
         __netplayport=$choices
         rps_retronet_saveconfig
     fi
@@ -79,7 +79,7 @@ function rps_retronet_port() {
 function rps_retronet_hostip() {
     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the IP address of the host." 22 76 $__netplayhostip)
     choices=$("${cmd[@]}" 2>&1 >/dev/tty)
-    if [[ "$choices" != "" ]]; then
+    if [[ -n "$choices" ]]; then
         __netplayhostip=$choices
         if [[ $__netplaymode == "H" ]]; then
             __netplayhostip_cfile=""
@@ -93,7 +93,7 @@ function rps_retronet_hostip() {
 function rps_retronet_frames() {
     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the number of delay frames for netplay (default: 15)." 22 76 $__netplayframes)
     choices=$("${cmd[@]}" 2>&1 >/dev/tty)
-    if [[ "$choices" != "" ]]; then
+    if [[ -n "$choices" ]]; then
         __netplayframes=$choices
         rps_retronet_saveconfig
     fi

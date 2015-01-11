@@ -110,7 +110,7 @@ rps_main_menu() {
         options+=(
             7 "Perform REBOOT")
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ "$choices" != "" ]]; then
+        if [[ -n "$choices" ]]; then
             case $choices in
                 1) rps_main_binaries ;;
                 2) rps_main_options ;;
@@ -216,7 +216,7 @@ function rps_main_options()
     clear
     __ERRMSGS=""
     __INFMSGS=""
-    if [[ "$choices" != "" ]]; then
+    if [[ -n "$choices" ]]; then
         now=$(date +'%d%m%Y_%H%M')
         logfilename=$scriptdir/logs/run_$now.log.gz
         choices=($choices)
@@ -255,7 +255,7 @@ function rps_main_setup()
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 3
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ "$choices" != "" ]]; then
+        if [[ -n "$choices" ]]; then
             rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))
         else
             break
@@ -274,7 +274,7 @@ function rps_main_experimental()
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 4
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ "$choices" != "" ]]; then
+        if [[ -n "$choices" ]]; then
             rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))
         else
             break

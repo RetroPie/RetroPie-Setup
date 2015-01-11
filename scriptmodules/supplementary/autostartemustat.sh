@@ -8,7 +8,7 @@ function configure_autostartemustat() {
     options=(1 "Original boot behaviour"
              2 "Start Emulation Station at boot.")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ "$choices" != "" ]]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
             1) sed /etc/inittab -i -e "s|1:2345:respawn:/bin/login -f $user tty1 </dev/tty1 >/dev/tty1 2>&1|1:2345:respawn:/sbin/getty --noclear 38400 tty1|g"
                sed /etc/profile -i -e "/emulationstation/d"
