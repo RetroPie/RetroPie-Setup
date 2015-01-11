@@ -25,20 +25,17 @@
 #  Many, many thanks go to all people that provide the individual packages!!!
 #
 
-function printMsg()
-{
+function printMsg() {
     echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
 }
 
-function fatalError()
-{
+function fatalError() {
     printMsg "Fatal Error"
     echo "$1"
     exit 1
 }
 
-function ask()
-{
+function ask() {
     echo -e -n "$@" '[y/n] ' ; read ans
     case "$ans" in
         y*|Y*) return 0 ;;
@@ -46,8 +43,7 @@ function ask()
     esac
 }
 
-function hasFlag()
-{
+function hasFlag() {
     local string="$1"
     local flag="$2"
     [[ -z "$string" ]] || [[ -z "$flag" ]] && return 1
@@ -60,8 +56,7 @@ function hasFlag()
     fi
 }
 
-function isPlatform()
-{
+function isPlatform() {
     if [[ "$__platform" == "$1" ]]; then
         return 0
     else
@@ -69,8 +64,7 @@ function isPlatform()
     fi
 }
 
-function addLineToFile()
-{
+function addLineToFile() {
     if [[ -f "$2" ]]; then
         cp "$2" "$2.old"
     fi
@@ -80,16 +74,14 @@ function addLineToFile()
 }
 
 # arg 1: delimiter, arg 2: quote, arg 3: file
-function iniConfig()
-{
+function iniConfig() {
     __ini_cfg_delim="$1"
     __ini_cfg_quote="$2"
     __ini_cfg_file="$3"
 }
 
 # arg 1: command, arg 2: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
-function iniProcess()
-{
+function iniProcess() {
     local cmd="$1"
     local key="$2"
     local value="$3"
@@ -124,19 +116,16 @@ function iniProcess()
 }
 
 # arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
-function iniUnset()
-{
+function iniUnset() {
     iniProcess "unset" "$1" "$2" "$3"
 }
 
 # arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
-function iniSet()
-{
+function iniSet() {
     iniProcess "set" "$1" "$2" "$3"
 }
 
-function hasPackage()
-{
+function hasPackage() {
     PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1 2>/dev/null|grep "install ok installed")
     if [[ "" == "$PKG_OK" ]]; then
         return 1
@@ -145,16 +134,14 @@ function hasPackage()
     fi
 }
 
-function aptUpdate()
-{
+function aptUpdate() {
     if [[ "$__apt_update" != "1" ]]; then
         apt-get update
         __apt_update="1"
     fi
 }
 
-function aptInstall()
-{
+function aptInstall() {
     aptUpdate
     apt-get install -y --no-install-recommends $@
     return $?
@@ -210,8 +197,7 @@ function rpSwap() {
 }
 
 # clones or updates the sources of a repository $2 into the directory $1
-function gitPullOrClone()
-{
+function gitPullOrClone() {
     local dir="$1"
     local repo="$2"
     local shallow="$3"
@@ -240,8 +226,7 @@ function gitPullOrClone()
 }
 
 # gcc version helper
-set_default()
-{
+set_default() {
     if [[ -e "$1-$2" ]] ; then
         # echo $1-$2 is now the default
         ln -sf $1-$2 $1
@@ -251,8 +236,7 @@ set_default()
 }
 
 # sets default gcc version
-gcc_version()
-{
+gcc_version() {
     pushd /usr/bin > /dev/null
     for i in gcc cpp g++ gcov ; do
         set_default $i $1
@@ -264,8 +248,7 @@ function ensureRootdirExists() {
     mkdir -p $rootdir
 }
 
-function rmDirExists()
-{
+function rmDirExists() {
     if [[ -d "$1" ]]; then
         rm -rf "$1"
     fi
