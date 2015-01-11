@@ -22,10 +22,6 @@ function install_doom() {
 function configure_doom() {
     mkdir -p "$romdir/ports/doom"
 
-    # download and install midi instruments
-    wget -O- -q "http://downloads.petrockblock.com/retropiearchives/timidity.tar.gz" | tar -xvz -C /usr/local/lib
-    ln -f -s /usr/local/lib/timidity/timidity.cfg /etc/timidity.cfg
-
     cp prboom.wad "$romdir/ports/doom/"
 
     # download doom 1 shareware
