@@ -124,5 +124,5 @@ function install_bin_sdl2() {
     if ! dpkg -i libsdl2_2.0.3_armhf.deb libsdl2-dev_2.0.3_armhf.deb; then
         apt-get -y -f install
     fi
-    rm *.deb
+    rm ./*.deb
 }

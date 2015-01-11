@@ -12,7 +12,7 @@ function configure_dispmanx() {
         local command=()
         source "$configdir/all/dispmanx.cfg"
         for idx in "${__mod_idx[@]}"; do
-            [[ $idx > 200 ]] && break
+            [[ $idx -gt 200 ]] && break
             if [[ "${__mod_flags[$idx]}" =~ dispmanx ]]; then
                 local mod_id=${__mod_id[idx]}
                 if [[ "${!mod_id}" == "1" ]]; then

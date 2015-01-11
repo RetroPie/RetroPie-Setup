@@ -25,7 +25,5 @@ function configure_hotkey() {
                iniSet "input_menu_toggle" "escape"
                             ;;
         esac
-    else
-        break
     fi
 }

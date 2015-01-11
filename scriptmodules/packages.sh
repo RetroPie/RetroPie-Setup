@@ -31,7 +31,6 @@ __mod_type=()
 __mod_desc=()
 __mod_menus=()
 __mod_flags=()
-__doPackages=0
 
 function fn_exists() {
     declare -f "$1" > /dev/null

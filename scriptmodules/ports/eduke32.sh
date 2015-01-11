@@ -8,8 +8,8 @@ function install_eduke32() {
     wget http://downloads.petrockblock.com/retropiearchives/eduke32_2.0.0rpi+svn2789_armhf.deb
     printMsg "Downloading eDuke32 Shareware files"
     wget http://downloads.petrockblock.com/retropiearchives/duke3d-shareware_1.3d-23_all.deb
-    dpkg -i *.deb
-    rm *.deb
+    dpkg -i ./*.deb
+    rm ./*.deb
     mkRomDir "ports/duke3d"
     md_ret_require="/usr/games/eduke32"
 }

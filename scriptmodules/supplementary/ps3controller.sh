@@ -31,13 +31,13 @@ function install_ps3controller() {
 
 function configure_ps3controller() {
     dialog --backtitle "$__backtitle" --msgbox "Please make sure that your Bluetooth dongle is connected to the Raspberry Pi and press ENTER." 22 76
-    if [[ -z $(hciconfig | grep BR/EDR) ]]; then
+    if ! hciconfig | grep -q "BR/EDR"; then
         dialog --backtitle "$__backtitle" --msgbox "Cannot find the Bluetooth dongle. Please try to (re-)connect it and try again." 22 76
         break
     fi
 
     dialog --backtitle "$__backtitle" --msgbox "Please connect your PS3 controller via USB-CABLE and press ENTER." 22 76
-    if [[ -z $(./sixpair | grep "Setting master") ]]; then
+    if ./sixpair | grep -q "Setting master"; then
         dialog --backtitle "$__backtitle" --msgbox "Cannot find the PS3 controller via USB-connection. Please try to (re-)connect it and try again." 22 76
         break
     fi

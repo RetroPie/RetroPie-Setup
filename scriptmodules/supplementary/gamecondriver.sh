@@ -53,7 +53,7 @@ function install_gamecondriver() {
 
     #test if gamecon installation is OK
     if [[ -n $(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko) ]]; then
-        dialog --backtitle "$__backtitle" --msgbox "$(cat /usr/share/doc/gamecon_gpio_rpi/README.gz | gzip -d -c)" 22 76
+        dialog --backtitle "$__backtitle" --msgbox "$(gzip -dc /usr/share/doc/gamecon_gpio_rpi/README.gz)" 22 76
     else
         dialog --backtitle "$__backtitle" --msgbox "Gamecon GPIO driver installation FAILED"\
         22 76
@@ -75,7 +75,7 @@ function configure_gamecondriver() {
         return 0
     fi
 
-    REVSTRING=$(cat /proc/cpuinfo |grep Revision | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4)
+    REVSTRING=$(grep Revision /proc/cpuinfo | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4)
     case "$REVSTRING" in
           "0002"|"0003")
              GPIOREV=1
@@ -166,12 +166,12 @@ __________\n\
 
     case $? in
       0)
-    if [[ -z $(cat /etc/modules | grep gamecon_gpio_rpi) ]]; then
-    if [[ $GPIOREV == 1 ]]; then
-                addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
-    else
-        addLineToFile "gamecon_gpio_rpi map=0,0,1,0,0,1" "/etc/modules"
-    fi
+    if ! grep "gamecon_gpio_rpi" /etc/modules; then
+        if [[ $GPIOREV == 1 ]]; then
+            addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
+        else
+            addLineToFile "gamecon_gpio_rpi map=0,0,1,0,0,1" "/etc/modules"
+        fi
     fi
     ;;
       *)

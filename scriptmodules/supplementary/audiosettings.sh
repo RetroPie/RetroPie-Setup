@@ -33,7 +33,5 @@ function configure_audiosettings() {
                dialog --backtitle "$__backtitle" --msgbox "Audio settings reset to defaults" 22 76
                             ;;
         esac
-    else
-        break
     fi
 }

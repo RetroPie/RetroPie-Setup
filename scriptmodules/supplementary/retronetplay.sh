@@ -3,36 +3,6 @@ rp_module_desc="RetroNetplay"
 rp_module_menus="4+"
 rp_module_flags="nobin"
 
-function configure_retronetplay() {
-    # load RetronetPlay configuration
-    source "$scriptdir/configs/retronetplay.cfg"
-
-    ipaddress_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-    ipaddress_ext=$(curl http://ipecho.net/plain; echo)
-    while true; do
-        cmd=(dialog --backtitle "$__backtitle" --menu "Configure RetroArch Netplay.\nInternal IP: $ipaddress_int\nExternal IP: $ipaddress_ext" 22 76 16)
-        options=(1 "(E)nable/(D)isable RetroArch Netplay. Currently: $__netplayenable"
-                 2 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode"
-                 3 "Set port. Currently: $__netplayport"
-                 4 "Set host IP address (for client mode). Currently: $__netplayhostip"
-                 5 "Set delay frames. Currently: $__netplayframes" 
-                 6 "Update EmulationStation configuration")
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choices" ]]; then
-            case $choices in
-                 1) rps_retronet_enable ;;
-                 2) rps_retronet_mode ;;
-                 3) rps_retronet_port ;;
-                 4) rps_retronet_hostip ;;
-                 5) rps_retronet_frames ;;
-                 6) rps_retronet_updateESConfiguration ;;
-            esac
-        else
-            break
-        fi
-    done
-}
-
 function rps_retronet_enable() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Enable or disable RetroArch's Netplay mode." 22 76 16)
     options=(1 "ENABLE netplay"
@@ -120,6 +90,36 @@ function rps_retronet_prepareConfig() {
 function rps_retronet_updateESConfiguration() {
         # configure all libretro components
         for idx in "${__mod_idx[@]}"; do
-            [[ $idx < 300 ]] && [[ $idx > 199 ]] && rp_callModule "$idx" "configure"
+            [[ $idx -ge 200 ]] && [[ $idx -lt 300 ]] && rp_callModule "$idx" "configure"
         done    
+}
+
+function configure_retronetplay() {
+    # load RetronetPlay configuration
+    source "$scriptdir/configs/retronetplay.cfg"
+
+    ipaddress_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+    ipaddress_ext=$(curl http://ipecho.net/plain; echo)
+    while true; do
+        cmd=(dialog --backtitle "$__backtitle" --menu "Configure RetroArch Netplay.\nInternal IP: $ipaddress_int\nExternal IP: $ipaddress_ext" 22 76 16)
+        options=(1 "(E)nable/(D)isable RetroArch Netplay. Currently: $__netplayenable"
+                 2 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode"
+                 3 "Set port. Currently: $__netplayport"
+                 4 "Set host IP address (for client mode). Currently: $__netplayhostip"
+                 5 "Set delay frames. Currently: $__netplayframes" 
+                 6 "Update EmulationStation configuration")
+        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [[ -n "$choices" ]]; then
+            case $choices in
+                 1) rps_retronet_enable ;;
+                 2) rps_retronet_mode ;;
+                 3) rps_retronet_port ;;
+                 4) rps_retronet_hostip ;;
+                 5) rps_retronet_frames ;;
+                 6) rps_retronet_updateESConfiguration ;;
+            esac
+        else
+            break
+        fi
+    done
 }

@@ -38,8 +38,8 @@ romdir="$home/RetroPie/roms"
 emudir="$rootdir/emulators"
 configdir="$rootdir/configs"
 
-scriptdir=$(dirname $0)
-scriptdir=$(cd $scriptdir && pwd)
+scriptdir=$(dirname "$0")
+scriptdir=$(cd "$scriptdir" && pwd)
 
 __tmpdir="$scriptdir/tmp"
 __builddir="$__tmpdir/build"
