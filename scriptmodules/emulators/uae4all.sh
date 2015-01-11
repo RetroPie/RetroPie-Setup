@@ -34,7 +34,7 @@ function configure_uae4all() {
 #!/bin/bash
 
 file="\$1"
-[ -z "\$file" ] && exit 1
+[[ -z "\$file" ]] && exit 1
 
 pushd "$md_inst"
 rm -rf df0.adf

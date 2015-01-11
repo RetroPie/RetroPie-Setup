@@ -14,7 +14,7 @@ function build_snesdev() {
 
 function install_snesdev() {
     # if we have built it, copy files to install location
-    if [ -d "$md_build" ]; then
+    if [[ -d "$md_build" ]]; then
         mkdir -p "$md_inst/"{src,supplementary,scripts}
         cp -v 'src/SNESDev' "$md_inst/src/"
         cp -v 'src/Makefile' "$md_inst/src/"
@@ -71,14 +71,14 @@ function sup_enableSNESDevAtStart() {
 }
 
 function sup_snesdevAdapterversion() {
-  iniConfig "=" "" "/etc/snesdev.cfg"
-  if [[ $1 -eq 1 ]]; then
-    iniSet "adapter_version" "1x"
-  elif [[ $1 -eq 2 ]]; then
-    iniSet "adapter_version" "2x"
-  else
-    iniSet "adapter_version" "2x"
-  fi
+    iniConfig "=" "" "/etc/snesdev.cfg"
+    if [[ $1 -eq 1 ]]; then
+        iniSet "adapter_version" "1x"
+    elif [[ $1 -eq 2 ]]; then
+        iniSet "adapter_version" "2x"
+    else
+        iniSet "adapter_version" "2x"
+    fi
 }
 
 function configure_snesdev() {
@@ -90,7 +90,7 @@ function configure_snesdev() {
              5 "Switch to adapter version 1.X."
              6 "Switch to adapter version 2.X.")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [ "$choices" != "" ]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
             1) sup_checkInstallSNESDev
                make uninstallservice

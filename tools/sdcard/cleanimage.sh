@@ -1,17 +1,15 @@
 #!/bin/bash
 D="$1"
-if [ ! -d "$D" ]; then
-  echo "Directory doesn't exist"
-  exit 1
+if [[ ! -d "$D" ]]; then
+    echo "Directory doesn't exist"
+    exit 1
 fi
-if [ ! -f "$D/boot/kernel.img" ]; then
-  echo "Directory doesn't seem to be a pi chroot"
-  exit 1
+if [[ ! -f "$D/boot/kernel.img" ]]; then
+    echo "Directory doesn't seem to be a pi chroot"
+    exit 1
 fi
 
 H="$D/home/pi"
-
-PWD=`pwd`
 
 # etc / ssh leys
 rm -f $D/etc/mtab
@@ -48,9 +46,9 @@ rm -f $D/var/log/Xorg*
 rm -rf $D/var/log/hp
 rm -f $D/var/log/*/*
 for file in $D/var/log/*.log; do
-  echo -n "" >$file
+    echo -n "" >$file
 done
 for file in boot faillog dmesg btmp syslog messages udev debug lastlog wtmp; do
-  echo -n "" >$D/var/log/$file
+    echo -n "" >$D/var/log/$file
 done
 

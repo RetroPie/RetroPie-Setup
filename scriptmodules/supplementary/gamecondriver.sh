@@ -24,16 +24,16 @@ function install_gamecondriver() {
     getDepends dkms
 
     #reconfigure / install headers (takes a a while)
-    if [ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" = "$(uname -r)-2" ]; then
-        dpkg-reconfigure linux-headers-`uname -r`
+    if [[ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" == "$(uname -r)-2" ]]; then
+        dpkg-reconfigure linux-headers-$(uname -r)
     else
-        wget ${DOWNLOAD_LOC}/linux-headers-rpi/linux-headers-`uname -r`_`uname -r`-2_armhf.deb
-        dpkg -i linux-headers-`uname -r`_`uname -r`-2_armhf.deb
-        rm linux-headers-`uname -r`_`uname -r`-2_armhf.deb
+        wget ${DOWNLOAD_LOC}/linux-headers-rpi/linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
+        dpkg -i linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
+        rm linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
     fi
 
     #install gamecon
-    if [ "`dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms`" = ${GAMECON_VER} ]; then
+    if [[ "$(dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms)" == ${GAMECON_VER} ]]; then
         #dpkg-reconfigure gamecon-gpio-rpi-dkms
         echo "gamecon is the newest version"
     else
@@ -43,7 +43,7 @@ function install_gamecondriver() {
     fi
 
     #install db9 joystick driver
-    if [ "`dpkg-query -W -f='${Version}' db9-gpio-rpi-dkms`" = ${DB9_VER} ]; then
+    if [[ "$(dpkg-query -W -f='${Version}' db9-gpio-rpi-dkms)" == ${DB9_VER} ]]; then
         echo "db9 is the newest version"
     else
         wget ${DOWNLOAD_LOC}/db9-gpio-rpi-dkms_${DB9_VER}_all.deb
@@ -53,7 +53,7 @@ function install_gamecondriver() {
 
     #test if gamecon installation is OK
     if [[ -n $(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko) ]]; then
-        dialog --backtitle "$__backtitle" --msgbox "`cat /usr/share/doc/gamecon_gpio_rpi/README.gz | gzip -d -c`" 22 76
+        dialog --backtitle "$__backtitle" --msgbox "$(cat /usr/share/doc/gamecon_gpio_rpi/README.gz | gzip -d -c)" 22 76
     else
         dialog --backtitle "$__backtitle" --msgbox "Gamecon GPIO driver installation FAILED"\
         22 76
@@ -70,12 +70,12 @@ function install_gamecondriver() {
 }
 
 function configure_gamecondriver() {
-    if [ "`dpkg-query -W -f='${Status}' gamecon-gpio-rpi-dkms`" != "install ok installed" ]; then
+    if [[ "$(dpkg-query -W -f='${Status}' gamecon-gpio-rpi-dkms)" != "install ok installed" ]]; then
         dialog --msgbox "gamecon_gpio_rpi not found, install it first" 22 76
         return 0
     fi
 
-    REVSTRING=`cat /proc/cpuinfo |grep Revision | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4`
+    REVSTRING=$(cat /proc/cpuinfo |grep Revision | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4)
     case "$REVSTRING" in
           "0002"|"0003")
              GPIOREV=1
@@ -108,7 +108,7 @@ __________\n\
         rmmod gamecon_gpio_rpi
     fi
 
-    if [ $GPIOREV = 1 ]; then
+    if [[ $GPIOREV == 1 ]]; then
         modprobe gamecon_gpio_rpi map=0,1,1,0
     else
         modprobe gamecon_gpio_rpi map=0,0,1,0,0,1
@@ -122,7 +122,7 @@ __________\n\
 
       case $? in
        0)
-        if [ $GPIOREV = 1 ]; then
+        if [[ $GPIOREV == 1 ]]; then
                 iniSet "input_player1_joypad_index" "0"
                 iniSet "input_player2_joypad_index" "1"
         else
@@ -167,7 +167,7 @@ __________\n\
     case $? in
       0)
     if [[ -z $(cat /etc/modules | grep gamecon_gpio_rpi) ]]; then
-    if [ $GPIOREV = 1 ]; then
+    if [[ $GPIOREV == 1 ]]; then
                 addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
     else
         addLineToFile "gamecon_gpio_rpi map=0,0,1,0,0,1" "/etc/modules"

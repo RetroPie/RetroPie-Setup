@@ -30,7 +30,7 @@ function configure_xarcade2jstick() {
     options=(1 "Disable Xarcade2Jstick service."
              2 "Enable Xarcade2Jstick service." )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [ "$choices" != "" ]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
             1) sup_checkInstallXarcade2Jstick
                make uninstallservice
