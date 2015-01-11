@@ -2,7 +2,7 @@
 DEST="$1"
 CMD="$2"
 
-if [ ! -f "$DEST/boot/kernel.img" ]; then
+if [[ ! -f "$DEST/boot/kernel.img" ]]; then
   echo "$DEST doesn't seem to be a pi chroot"
   exit 1
 fi
@@ -17,7 +17,7 @@ mount -o bind /dev $DEST/dev
 export QEMU_CPU=arm1176
 
 cp /usr/bin/qemu-arm-static $DEST/usr/bin
-if [ "$CMD" = "" ]; then
+if [[ "$CMD" == "" ]]; then
   HOME="/home/pi" chroot --userspec 1000:1000 $DEST
 else
   HOME="/home/pi" chroot --userspec 1000:1000 $DEST $CMD
@@ -32,6 +32,6 @@ umount -l $DEST/proc
 umount -l $DEST/dev
 sleep 1
 
-if [ "$DEST" = "/mnt" ]; then
+if [[ "$DEST" == "/mnt" ]]; then
   umount /mnt/boot /mnt
 fi

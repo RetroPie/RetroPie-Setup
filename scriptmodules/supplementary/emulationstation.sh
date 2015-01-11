@@ -44,7 +44,7 @@ function configure_emulationstation() {
 es_bin="$md_inst/emulationstation"
 
 nb_lock_files=\$(find /tmp -name ".X?-lock" | wc -l)
-if [ \$nb_lock_files -ne 0 ]; then
+if [[ \$nb_lock_files -ne 0 ]]; then
     echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
     exit 1
 fi

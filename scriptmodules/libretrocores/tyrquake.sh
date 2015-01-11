@@ -28,7 +28,7 @@ function install_tyrquake() {
 function configure_tyrquake() {
     mkdir -p "$romdir/ports/quake"
 
-    if [ ! -f "$romdir/ports/quake/id1/pak0.pak" ]; then
+    if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then
         # download / unpack / install quake shareware files
         wget "http://downloads.petrockblock.com/retropiearchives/quake106.zip" -O quake106.zip
         unzip -o quake106.zip -d "quake106"

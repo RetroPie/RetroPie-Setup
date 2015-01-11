@@ -10,7 +10,7 @@ function configure_hotkey() {
              2 "Press ALT to enable hotkeys."
              3 "Hotkeys disabled. Press ESCAPE to open RGUI.")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [ "$choices" != "" ]; then
+    if [[ "$choices" != "" ]]; then
         case $choices in
             1) iniSet "input_enable_hotkey" "nul"
                iniSet "input_exit_emulator" "escape"

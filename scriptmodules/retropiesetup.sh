@@ -93,7 +93,7 @@ rps_main_menu() {
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose installation either based on binaries or on sources." 22 76 16)
         options=()
-        if [ $__has_binaries -eq 1 ]; then
+        if [[ $__has_binaries -eq 1 ]]; then
             options+=(
             1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)")
         fi
@@ -102,7 +102,7 @@ rps_main_menu() {
             3 "SETUP (only if you already have run one of the installations above)"
             4 "EXPERIMENTAL packages (these are potentially unstable packages)"
             5 "UPDATE RetroPie Setup script")
-        if [ $__has_binaries -eq 1 ]; then
+        if [[ $__has_binaries -eq 1 ]]; then
             options+=(
             6 "UPDATE RetroPie Binaries"
             )
@@ -110,7 +110,7 @@ rps_main_menu() {
         options+=(
             7 "Perform REBOOT")
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [ "$choices" != "" ]; then
+        if [[ "$choices" != "" ]]; then
             case $choices in
                 1) rps_main_binaries ;;
                 2) rps_main_options ;;
@@ -157,7 +157,7 @@ function rps_main_binaries()
             if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobin ]]; then
                 rp_callModule $idx depends
                 rp_callModule $idx install_bin
-                [ "${__mod_id[$idx]}" != "snesdev" ] && rp_callModule $idx configure
+                [[ "${__mod_id[$idx]}" != "snesdev" ]] && rp_callModule $idx configure
             fi
         done
 
@@ -216,7 +216,7 @@ function rps_main_options()
     clear
     __ERRMSGS=""
     __INFMSGS=""
-    if [ "$choices" != "" ]; then
+    if [[ "$choices" != "" ]]; then
         now=$(date +'%d%m%Y_%H%M')
         logfilename=$scriptdir/logs/run_$now.log.gz
         choices=($choices)
@@ -255,7 +255,7 @@ function rps_main_setup()
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 3
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [ "$choices" != "" ]; then
+        if [[ "$choices" != "" ]]; then
             rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))
         else
             break
@@ -274,7 +274,7 @@ function rps_main_experimental()
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 4
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [ "$choices" != "" ]; then
+        if [[ "$choices" != "" ]]; then
             rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))
         else
             break

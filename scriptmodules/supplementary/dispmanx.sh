@@ -15,7 +15,7 @@ function configure_dispmanx() {
             [[ $idx > 200 ]] && break
             if [[ "${__mod_flags[$idx]}" =~ dispmanx ]]; then
                 local mod_id=${__mod_id[idx]}
-                if [ "${!mod_id}" = "1" ]; then
+                if [[ "${!mod_id}" == "1" ]]; then
                     options+=($count "Disable for $mod_id (currently enabled)")
                     command[$count]="$mod_id off"
                 else
@@ -25,12 +25,12 @@ function configure_dispmanx() {
                 ((count++))
             fi
         done
-        [ "${options[*]}" = "" ] && break
+        [[ "${options[*]}" == "" ]] && break
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure emulators to use dispmanx SDL" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [ "$choice" != "" ]; then
+        if [[ "$choice" != "" ]]; then
             local params=(${command[$choice]})
-            if [ "${params[1]}" = "on" ]; then
+            if [[ "${params[1]}" == "on" ]]; then
                 iniSet "${params[0]}" "1"
             else
                 iniSet "${params[0]}" "0"

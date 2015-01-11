@@ -10,7 +10,7 @@ function configure_audiosettings() {
              3 "HDMI"
              4 "Reset to default")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [ "$choices" != "" ]; then
+    if [[ "$choices" != "" ]]; then
         case $choices in
             1) amixer cset numid=3 0
                alsactl store

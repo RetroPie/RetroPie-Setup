@@ -1,10 +1,10 @@
 #!/bin/bash
 D="$1"
-if [ ! -d "$D" ]; then
+if [[ ! -d "$D" ]]; then
   echo "Directory doesn't exist"
   exit 1
 fi
-if [ ! -f "$D/boot/kernel.img" ]; then
+if [[ ! -f "$D/boot/kernel.img" ]]; then
   echo "Directory doesn't seem to be a pi chroot"
   exit 1
 fi

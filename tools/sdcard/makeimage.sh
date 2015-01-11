@@ -11,7 +11,7 @@ BOOTSZ=60
 # -1 to use the rest of the partition space
 ROOTSZ=-1
 
-[ "$NAME" = "" ] || [ "$ROOTFS" = "" ] && exit
+[[ "$NAME" == "" ]] || [[ "$ROOTFS" == "" ]] && exit
 
 ROOTFS="`readlink -f $ROOTFS`"
 
@@ -25,7 +25,7 @@ get_part_byte_offset()
 partitions_create()
 {
   BOOTEND=$(($OFF+$BOOTSZ))
-  if [ $ROOTSZ = -1 ]; then
+  if [[ $ROOTSZ == -1 ]]; then
     ROOTEND=-1
   else
     ROOTEND=$(($OFF+$BOOTSZ+$ROOTSZ))
@@ -53,7 +53,7 @@ loop_create()
 
 loop_delete()
 {
-  [ -e /dev/loop$1 ] && losetup -d /dev/loop$1 2>/dev/null
+  [[ -e /dev/loop$1 ]] && losetup -d /dev/loop$1 2>/dev/null
 }
 
 loop_mount()
@@ -65,9 +65,9 @@ loop_mount()
 partitions_unmount()
 {
   for MPATH in dev proc boot ""; do
-    [ -d rootfs/$MPATH ] && umount rootfs/$MPATH
+    [[ -d rootfs/$MPATH ]] && umount rootfs/$MPATH
   done
-  [ -d rootfs ] && rmdir rootfs
+  [[ -d rootfs ]] && rmdir rootfs
 }
 
 loop_unmount()
@@ -110,7 +110,7 @@ mount -t vfat /dev/loop0 rootfs/boot
 echo "RSyncing $ROOTFS to the image"
 # if the owner is root use rsync, else assume we are storing ownerships in xattr and so use --fake-super
 OWNER=`stat -c %U $ROOTFS`
-if [ "$OWNER" = "root" ]; then
+if [[ "$OWNER" == "root" ]]; then
   rsync --numeric-ids -a "$ROOTFS/" rootfs/
 else
   rsync -a --numeric-ids --rsync-path="rsync --fake-super" buzz@localhost:$ROOTFS/ rootfs/

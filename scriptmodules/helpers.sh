@@ -50,7 +50,7 @@ function hasFlag()
 {
     local string="$1"
     local flag="$2"
-    [ -z "$string" ] || [ -z "$flag" ] && return 1
+    [[ -z "$string" ]] || [[ -z "$flag" ] && return 1
 
     local re="(^| )$flag($| )"
     if [[ $string =~ $re ]]; then
@@ -62,7 +62,7 @@ function hasFlag()
 
 function isPlatform()
 {
-    if [ "$__platform" = "$1" ]; then
+    if [[ "$__platform" == "$1" ]]; then
         return 0
     else
         return 1
@@ -94,24 +94,24 @@ function iniProcess()
     local key="$2"
     local value="$3"
     local file="$4"
-    [ "$file" == "" ] && file="$__ini_cfg_file"
+    [[ "$file" == "" ]] && file="$__ini_cfg_file"
     local delim="$__ini_cfg_delim"
     local quote="$__ini_cfg_quote"
 
-    [ "$file" == "" ] && fatalError "No file provided for ini/config change"
-    [ "$key" == "" ] && fatalError "No key provided for ini/config change on $file"
+    [[ "$file" == "" ]] && fatalError "No file provided for ini/config change"
+    [[ "$key" == "" ]] && fatalError "No key provided for ini/config change on $file"
 
     local delim_strip=${delim// /}
     local match_re="[\s#]*$key\s*$delim_strip.*$"
 
     local match
-    if [ -f "$file" ]; then
+    if [[ -f "$file" ]]; then
         match=$(egrep -i "$match_re" "$file" | tail -1)
     else
         touch "$file"
     fi
 
-    [ "$cmd" == "unset" ] && key="# $key"
+    [[ "$cmd" == "unset" ]] && key="# $key"
     local replace="$key$delim$quote$value$quote"
     echo "Setting $replace in $file"
     if [[ -z "$match" ]]; then
@@ -138,7 +138,7 @@ function iniSet()
 function hasPackage()
 {
     PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1 2>/dev/null|grep "install ok installed")
-    if [ "" == "$PKG_OK" ]; then
+    if [[ "" == "$PKG_OK" ]]; then
         return 1
     else
         return 0
@@ -194,7 +194,7 @@ function rpSwap() {
             local needed=$2
             local size=$((needed - memory))
             mkdir -p "$__swapdir/"
-            if [ $size -ge 0 ]; then
+            if [[ $size -ge 0 ]]; then
                 echo "Adding $size MB of additional swap"
                 fallocate -l ${size}M "$swapfile"
                 mkswap "$swapfile"
@@ -219,19 +219,19 @@ function gitPullOrClone()
     mkdir -p "$dir"
 
     # to work around a issue with git hanging in a qemu-arm-static chroot we can use a github created archive
-    if [ $__chroot -eq 1 ] && [[ "$repo" =~ "github" ]]; then
+    if [[ $__chroot -eq 1 ]] && [[ "$repo" =~ "github" ]]; then
         local archive=${repo/.git/}
         archive=${archive/git:/https:}/archive/master.tar.gz
         wget -O- -q "$archive" | tar -xvz --strip-components=1 -C "$dir"
         return
     fi
 
-    if [ -d "$dir/.git" ]; then
+    if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
         git pull > /dev/null
         popd > /dev/null
     else
-        if [ "$shallow" = "NS" ]; then
+        if [[ "$shallow" == "NS" ]]; then
             git clone "$repo" "$dir"
         else
             git clone --depth=1 "$repo" "$dir"
@@ -242,7 +242,7 @@ function gitPullOrClone()
 # gcc version helper
 set_default()
 {
-    if [ -e "$1-$2" ] ; then
+    if [[ -e "$1-$2" ]] ; then
         # echo $1-$2 is now the default
         ln -sf $1-$2 $1
     else
@@ -304,7 +304,7 @@ function setESSystem() {
     local platform=$6
     local theme=$7
 
-    if [ ! -f "$rootdir/supplementary/ESConfigEdit/esconfedit.py" ]; then
+    if [[ ! -f "$rootdir/supplementary/ESConfigEdit/esconfedit.py" ]]; then
         updateESConfigEdit
     fi
 

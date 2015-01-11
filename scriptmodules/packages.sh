@@ -104,7 +104,7 @@ function rp_callModule() {
         done
     fi
 
-    if [ "$mod_id" = "" ]; then
+    if [[ "$mod_id" == "" ]]; then
         fatalError "No module '$req_id' found for platform $__platform"
     fi
 
@@ -118,12 +118,12 @@ function rp_callModule() {
 
     # create function name
     function="${mode}_${mod_id}"
-    if [ "${mode}" = "install_bin" ] && [[ ! "$md_flags" =~ nobin ]]; then
+    if [[ "${mode}" == "install_bin" ]] && [[ ! "$md_flags" =~ nobin ]]; then
         rp_installBin
         return
     fi
 
-    if [ "${mode}" = "create_bin" ] && [[ ! "$md_flags" =~ nobin ]]; then
+    if [[ "${mode}" == "create_bin" ]] && [[ ! "$md_flags" =~ nobin ]]; then
         rp_createBin
         return
     fi
@@ -173,14 +173,14 @@ function rp_callModule() {
     $function
 
     # check if any required files are found
-    if [ "$md_ret_require" != "" ] && [ ! -f "$md_ret_require" ]; then
+    if [[ "$md_ret_require" != "" ]] && [[ ! -f "$md_ret_require" ]]; then
         errors+="$__ERRMSGS Could not successfully $function $md_desc ($md_ret_require not found)."
     fi
 
     # check for existance and copy any files/directories returned
-    if [ "$md_ret_files" != "" ]; then
+    if [[ "$md_ret_files" != "" ]]; then
         for file in "${md_ret_files[@]}"; do
-            if [ ! -e "$md_build/$file" ]; then
+            if [[ ! -e "$md_build/$file" ]]; then
                 errors+="$__ERRMSGS Could not successfully install $md_desc ($md_build/$file not found)."
                 break
             fi
@@ -189,16 +189,16 @@ function rp_callModule() {
     fi
 
     # remove build/install folder if empty
-    [ -d "$md_build" ] && find "$md_build" -maxdepth 0 -empty -exec rmdir {} \;
-    [ -d "$md_inst" ] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
+    [[ -d "$md_build" ]] && find "$md_build" -maxdepth 0 -empty -exec rmdir {} \;
+    [[ -d "$md_inst" ] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
 
     case "$mode" in
         sources|build|install|configure)
-            [ $pushed -ne 1 ] && popd
+            [[ $pushed -ne 1 ]] && popd
             ;;
     esac
 
-    if [ ! -z "$errors" ]; then
+    if [[ ! -z "$errors" ]]; then
         __ERRMSGS+="$errors"
         return 1
     fi
@@ -208,7 +208,7 @@ function rp_callModule() {
 
 function rp_installBin() {
     printMsg "Installing binary archive for $md_desc"
-    [ "$__has_binaries" -eq 0 ] && fatalError "There are no binary archives for platform $__platform"
+    [[ "$__has_binaries" -eq 0 ]] && fatalError "There are no binary archives for platform $__platform"
     local archive="$md_type/$md_id.tar.gz";
     local dest="$rootdir/$md_type"
     mkdir -p "$dest"
