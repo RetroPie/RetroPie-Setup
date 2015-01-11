@@ -71,14 +71,14 @@ function sup_enableSNESDevAtStart() {
 }
 
 function sup_snesdevAdapterversion() {
-  iniConfig "=" "" "/etc/snesdev.cfg"
-  if [[ $1 -eq 1 ]]; then
-    iniSet "adapter_version" "1x"
-  elif [[ $1 -eq 2 ]]; then
-    iniSet "adapter_version" "2x"
-  else
-    iniSet "adapter_version" "2x"
-  fi
+    iniConfig "=" "" "/etc/snesdev.cfg"
+    if [[ $1 -eq 1 ]]; then
+        iniSet "adapter_version" "1x"
+    elif [[ $1 -eq 2 ]]; then
+        iniSet "adapter_version" "2x"
+    else
+        iniSet "adapter_version" "2x"
+    fi
 }
 
 function configure_snesdev() {

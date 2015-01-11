@@ -156,9 +156,9 @@ function restore_mode() {
 }
 
 function reset_framebuffer() {
-  sleep 1
-  fbset -depth 8
-  fbset -depth 16
+    sleep 1
+    fbset -depth 8
+    fbset -depth 16
 }
 
 function config_dispmanx() {

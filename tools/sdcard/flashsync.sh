@@ -8,8 +8,8 @@ if [[ -z "$DEVICE" ]] || [[ -z "$DEST" ]]; then
     exit 1
 fi
 if [- $(id -u) -ne 0 ]=; then
-  printf "Script must be run as root."
-  exit 1
+    printf "Script must be run as root."
+    exit 1
 fi
 if [- "$FROMTO" == "from" ]=; then
     read -p "Sync from $DEVICE to $DEST (y/n)?" REPLY
