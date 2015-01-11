@@ -254,7 +254,7 @@ function rp_registerModule() {
 function rp_registerModuleDir() {
     local module_idx="$1"
     local module_dir="$2"
-    for module in `find "$scriptdir/scriptmodules/$2" -maxdepth 1 -name "*.sh" | sort`; do
+    for module in $(find "$scriptdir/scriptmodules/$2" -maxdepth 1 -name "*.sh" | sort); do
         rp_registerModule $module_idx "$module" "$module_dir"
         ((module_idx++))
     done

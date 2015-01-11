@@ -13,7 +13,7 @@ ROOTSZ=-1
 
 [[ -z "$NAME" ]] || [[ -z "$ROOTFS" ]] && exit
 
-ROOTFS="`readlink -f $ROOTFS`"
+ROOTFS="$(readlink -f $ROOTFS)"
 
 get_part_byte_offset()
 {
@@ -109,7 +109,7 @@ mount -t vfat /dev/loop0 rootfs/boot
 
 echo "RSyncing $ROOTFS to the image"
 # if the owner is root use rsync, else assume we are storing ownerships in xattr and so use --fake-super
-OWNER=`stat -c %U $ROOTFS`
+OWNER=$(stat -c %U $ROOTFS)
 if [[ "$OWNER" == "root" ]]; then
   rsync --numeric-ids -a "$ROOTFS/" rootfs/
 else

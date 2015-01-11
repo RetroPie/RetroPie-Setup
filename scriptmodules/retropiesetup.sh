@@ -73,13 +73,13 @@ function rps_availFreeDiskSpace() {
         mkdir -p $rootdir
     fi
     local __required=$1
-    local __avail=`df -P $rootdir | tail -n1 | awk '{print $4}'`
+    local __avail=$(df -P $rootdir | tail -n1 | awk '{print $4}')
     if [[ $rootdirExists -eq 1 ]]; then
         rmdir $rootdir
     fi
 
-    required_MB=`expr $__required / 1024`
-    available_MB=`expr $__avail / 1024`
+    required_MB=$(expr $__required / 1024)
+    available_MB=$(expr $__avail / 1024)
 
     if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space ($required_MB MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir continue anyway?"; then
         return 0;

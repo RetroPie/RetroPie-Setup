@@ -11,8 +11,6 @@ fi
 
 H="$D/home/pi"
 
-PWD=`pwd`
-
 # etc / ssh leys
 rm -f $D/etc/mtab
 rm -f $D/etc/ssh/ssh_host_*

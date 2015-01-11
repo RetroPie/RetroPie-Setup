@@ -5,7 +5,7 @@ rp_module_flags="nobin"
 
 function set_ensureEntryInSMBConf()
 {
-    comp=`cat /etc/samba/smb.conf | grep "\[$1\]"`
+    comp=$(cat /etc/samba/smb.conf | grep "\[$1\]")
     if [[ "$comp" == "[$1]" ]]; then
       echo "$1 already contained in /etc/samba/smb.conf."
     else
