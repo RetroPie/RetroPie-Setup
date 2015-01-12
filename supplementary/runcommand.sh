@@ -80,10 +80,10 @@ function main_menu() {
             1 "Select default video mode for emulator/port"
             2 "Select default video mode for game/rom"
             3 "Remove default video mode for game/rom"
-            X "Launch game/rom")
+            X "Launch")
 
         if [[ "$command" =~ retroarch ]]; then
-            options+=(Z "Launch game with netplay enabled")
+            options+=(Z "Launch with netplay enabled")
         fi
 
         cmd=(dialog --menu "Launch configuration configuration for emulator/port $emulator"  22 76 16 )
