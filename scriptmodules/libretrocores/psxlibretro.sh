@@ -32,6 +32,5 @@ function install_psxlibretro() {
 function configure_psxlibretro() {
     mkRomDir "psx"
 
-    rps_retronet_prepareConfig
     setESSystem "Sony Playstation 1" "psx" "~/RetroPie/roms/psx" ".bin .BIN .cue .CUE .cbn .CBN .img .IMG .mdf .MDF .pbp .PBP .toc .TOC .z .Z .znx .ZNX" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/psx/retroarch.cfg %ROM%\" \"$md_id\"" "psx" "psx"
 }

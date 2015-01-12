@@ -66,10 +66,9 @@ mkRootRomDir "$romdir"
 
 rp_registerAllModules
 
-[[ "$1" == "init" ]] && return
+retronetLoadConfig
 
-# load RetronetPlay configuration
-source "$scriptdir/configs/retronetplay.cfg"
+[[ "$1" == "init" ]] && return
 
 # ID scriptmode
 if [[ $# -eq 1 ]]; then

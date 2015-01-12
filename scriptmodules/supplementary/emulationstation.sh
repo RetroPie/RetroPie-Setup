@@ -59,18 +59,6 @@ _EOF_
     iniSet "gpu_mem_512" 256
     iniSet "overscan_scale" 1
 
-    if [[ $__netplayenable == "E" ]]; then
-         local __tmpnetplaymode="-$__netplaymode "
-         local __tmpnetplayhostip_cfile=$__netplayhostip_cfile
-         local __tmpnetplayport="--port $__netplayport "
-         local __tmpnetplayframes="--frames $__netplayframes"
-     else
-         local __tmpnetplaymode=""
-         local __tmpnetplayhostip_cfile=""
-         local __tmpnetplayport=""
-         local __tmpnetplayframes=""
-     fi
-
     mkdir -p "/etc/emulationstation"
 
     setESSystem "Input Configuration" "esconfig" "~/RetroPie/roms/esconfig" ".py .PY" "%ROM%" "ignore" "esconfig"
