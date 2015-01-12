@@ -21,7 +21,6 @@ function install_4do() {
 function configure_4do() {
     mkRomDir "3do"
 
-    # Place "panafz10.bin" (required) in your RetroArch/libretro "System Directory" folder.
-    rps_retronet_prepareConfig
-    setESSystem "3DO" "3do" "~/RetroPie/roms/3do" ".iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/4do_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/3do/retroarch.cfg $__tmpnetplaymode$__tmpnetplayhostip_cfile $__tmpnetplayport$__tmpnetplayframes %ROM%\" \"$md_id\"" "3do" "3do"
+    # Place "panafz10.bin" (required) in your RetroArch/libretro "System Directory" folder
+    setESSystem "3DO" "3do" "~/RetroPie/roms/3do" ".iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/4do_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/3do/retroarch.cfg %ROM%\" \"$md_id\"" "3do" "3do"
 }
