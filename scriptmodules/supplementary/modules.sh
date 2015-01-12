@@ -4,16 +4,14 @@ rp_module_menus="2+"
 rp_module_flags="nobin !odroid"
 
 function install_modules() {
-    modprobe uinput
-    modprobe joydev
-    modprobe snd_bcm2835
+    sed -i '/snd_bcm2835/d' /etc/modules
 
-    for module in uinput joydev snd_bcm2835; do
+    for module in uinput joydev snd-bcm2835; do
+        modprobe $module
         if ! grep -q "$module" /etc/modules; then
-            echo -e "Adding module $module to /etc/modules"
             addLineToFile "$module" "/etc/modules"
         else
-            echo -e "$module module already contained in /etc/modules"
+            echo "$module module already contained in /etc/modules"
         fi
     done
 }
