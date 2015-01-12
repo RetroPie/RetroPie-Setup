@@ -30,7 +30,7 @@ function printMsg() {
 }
 
 function fatalError() {
-    printMsg "Fatal Error"
+    printMsg "Error"
     echo "$1"
     exit 1
 }
