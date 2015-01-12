@@ -65,41 +65,55 @@ function get_mode() {
     fi
 }
 
-function choose_mode() {
+function main_menu() {
     local emulator="$1"
     local emusave="$2"
     local romsave="$3"
     local default="$4"
     local save
 
-    local options=()
     local cmd
     local choice
-    options=(
-        1 "Select default video mode for $emulator"
-        2 "Select default video mode for rom"
-        3 "Remove default video mode for rom"
-    )
-    cmd=(dialog --menu "Video output configuration for $emulator"  22 76 16 )
-    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
-    case $choice in
-        1)
-            save="$emusave"
-            ;;
-        2)
-            save="$romsave"
-            ;;
-        3)
-            sed -i "/$romsave/d" "$video_conf"
-            get_mode "$emusave"
-            return
-            ;;
-        *)
-            return
-            ;;
-    esac
+    while true; do
+        local options=(
+            1 "Select default video mode for emulator/port"
+            2 "Select default video mode for game/rom"
+            3 "Remove default video mode for game/rom"
+            X "Launch game/rom")
 
+        if [[ "$command" =~ retroarch ]]; then
+            options+=(Z "Launch game with netplay enabled")
+        fi
+
+        cmd=(dialog --menu "Launch configuration configuration for emulator/port $emulator"  22 76 16 )
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        case $choice in
+            1)
+                save="$emusave"
+                choose_mode
+                ;;
+            2)
+                save="$romsave"
+                choose_mode
+                ;;
+            3)
+                sed -i "/$romsave/d" "$video_conf"
+                get_mode "$emusave"
+                return
+                ;;
+            Z)
+                netplay=1
+                break
+                ;;
+            *|X)
+                break
+                ;;
+        esac
+    done
+}
+
+function choose_mode() {
     local group
     local line
     options=()
@@ -176,8 +190,8 @@ function retroarch_append_config() {
     [[ ! "$command" =~ "retroarch" ]] && return
     local rate=$(tvservice -s | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
     echo "video_refresh_rate = $rate" >/tmp/retroarch-rate.cfg
-    [[ -f "$retronetplay_conf" ]] && source "$retronetplay_conf"
-    if [[ "$__netplayenable" == "E" ]]; then
+    if [[ $netplay -eq 1 ]] && [[ -f "$retronetplay_conf" ]]; then
+        source "$retronetplay_conf"
         retronetplay=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes"
     else
         _retronetplay=""
@@ -231,14 +245,16 @@ emusave=${emulator//\//_}
 emusave=${emusave//[^a-Z0-9_]/}
 romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
 
+netplay=0
+
 get_mode "$emusave" "$romsave"
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
-echo "Press 'x' or 'm' to configure video output options for $emulator"
+echo "Press 'x' or 'm' to configure launch options for emulator/port ($emulator)"
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
-    choose_mode "$emulator" "$emusave" "$romsave" "$newmode"
+    main_menu "$emulator" "$emusave" "$romsave" "$newmode"
     clear
 fi
 
