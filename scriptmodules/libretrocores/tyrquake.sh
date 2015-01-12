@@ -46,7 +46,7 @@ function configure_tyrquake() {
     # Create startup script
     cat > "$romdir/ports/Quake.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 4 "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/quake/retroarch.cfg $__retronet_params $romdir/ports/quake/id1/pak0.pak" "$md_id"
+$rootdir/supplementary/runcommand/runcommand.sh 4 "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/quake/retroarch.cfg $romdir/ports/quake/id1/pak0.pak" "$md_id"
 _EOF_
 
     chmod +x "$romdir/ports/Quake.sh"

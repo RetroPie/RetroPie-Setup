@@ -24,6 +24,7 @@
 
 video_conf="/opt/retropie/configs/all/videomodes.cfg"
 dispmanx_conf="/opt/retropie/configs/all/dispmanx.cfg"
+retronetplay_conf="/opt/retropie/configs/all/retronetplay.cfg"
 
 declare -A mode
 mode[1-4:3]="CEA-1"
@@ -171,11 +172,17 @@ function config_dispmanx() {
     fi
 }
 
-function retroarch_refresh_config() {
+function retroarch_append_config() {
     [[ ! "$command" =~ "retroarch" ]] && return
     local rate=$(tvservice -s | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
     echo "video_refresh_rate = $rate" >/tmp/retroarch-rate.cfg
-    command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg|")
+    [[ -f "$retronetplay_conf" ]] && source "$retronetplay_conf"
+    if [[ "$__netplayenable" == "E" ]]; then
+        retronetplay=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes"
+    else
+        _retronetplay=""
+    fi
+    command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg$retronetplay|")
 }
 
 # arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
@@ -246,7 +253,7 @@ config_dispmanx "$emusave"
 # switch to performance cpu governor
 echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
 
-retroarch_refresh_config
+retroarch_append_config
 
 # run command
 eval $command

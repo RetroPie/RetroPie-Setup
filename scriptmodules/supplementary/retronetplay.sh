@@ -13,7 +13,19 @@ __netplayhostip_cfile="$__netplayhostip_cfile"
 __netplayframes="$__netplayframes"
 _EOF_
     chown $user:$user "$rootdir/configs/all/retronetplay.cfg"
-    retronetParams
+}
+
+function rps_retronet_loadconfig() {
+    if [[ -f "$rootdir/configs/all/retronetplay.cfg" ]]; then
+        source "$rootdir/configs/all/retronetplay.cfg"
+    else
+        __netplayenable="D"
+        __netplaymode="H"
+        __netplayport="55435"
+        __netplayhostip=""
+        __netplayhostip_cfile=""
+        __netplayframes="15"
+    fi
 }
 
 function rps_retronet_enable() {
@@ -82,24 +94,20 @@ function rps_retronet_frames() {
     fi
 }
 
-function rps_retronet_updateESConfiguration() {
-        # configure all libretro components (except experimental)
-        for idx in "${__mod_idx[@]}"; do
-            [[ $idx -ge 200 ]] && [[ $idx -lt 300 ]] && [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && rp_callModule "$idx" "configure"
-        done    
-}
-
 function configure_retronetplay() {
-    ipaddress_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-    ipaddress_ext=$(curl http://ipecho.net/plain)
+    rps_retronet_loadconfig
+
+    local ip_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+    local ip_ext=$(wget -O- -q http://ipecho.net/plain)
+    [[ -z "$__netplayhostip" ]] && __netplayhostip="$ip_int"
+
     while true; do
-        cmd=(dialog --backtitle "$__backtitle" --menu "Configure RetroArch Netplay.\nInternal IP: $ipaddress_int External IP: $ipaddress_ext" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --menu "Configure RetroArch Netplay.\nInternal IP: $ip_int External IP: $ip_ext" 22 76 16)
         options=(1 "(E)nable/(D)isable RetroArch Netplay. Currently: $__netplayenable"
                  2 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode"
                  3 "Set port. Currently: $__netplayport"
                  4 "Set host IP address (for client mode). Currently: $__netplayhostip"
-                 5 "Set delay frames. Currently: $__netplayframes" 
-                 6 "Update EmulationStation configuration")
+                 5 "Set delay frames. Currently: $__netplayframes")
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case $choice in
@@ -108,7 +116,6 @@ function configure_retronetplay() {
                  3) rps_retronet_port ;;
                  4) rps_retronet_hostip ;;
                  5) rps_retronet_frames ;;
-                 6) rps_retronet_updateESConfiguration ;;
             esac
         else
             break

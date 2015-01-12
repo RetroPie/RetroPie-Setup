@@ -274,28 +274,6 @@ function mkUserDir() {
     chown $user:$user "$1"
 }
 
-function retronetParams() {
-    if [[ "$__netplayenable" == "E" ]]; then
-        __retronet_params="-$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes"
-    else
-        __retronet_params=""
-    fi
-}
-
-function retronetLoadConfig() {
-    if [[ -f "$rootdir/configs/all/retronetplay.cfg" ]]; then
-        source "$rootdir/configs/all/retronetplay.cfg"
-    else
-        __netplayenable="D"
-        __netplaymode="H"
-        __netplayport="55435"
-        __netplayhostip="192.168.0.1"
-        __netplayhostip_cfile=""
-        __netplayframes="15"
-    fi
-    retronetParams
-}
-
 function updateESConfigEdit() {
     gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
 }

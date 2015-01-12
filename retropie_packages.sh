@@ -66,8 +66,6 @@ mkRootRomDir "$romdir"
 
 rp_registerAllModules
 
-retronetLoadConfig
-
 [[ "$1" == "init" ]] && return
 
 # ID scriptmode

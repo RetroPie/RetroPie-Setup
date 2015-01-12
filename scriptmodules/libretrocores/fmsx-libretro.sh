@@ -25,5 +25,5 @@ function configure_fmsx-libretro() {
     mkRomDir "msx"
     ensureSystemretroconfig "msx"
 
-    setESSystem "MSX" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx1 .MX1 .mx2 .MX2 .col .COL .dsk .DSK .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/fmsx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/msx/retroarch.cfg $__retronet_params %ROM%\" \"$md_id\"" "msx" "msx"
+    setESSystem "MSX" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx1 .MX1 .mx2 .MX2 .col .COL .dsk .DSK .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/fmsx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/msx/retroarch.cfg %ROM%\" \"$md_id\"" "msx" "msx"
 }
