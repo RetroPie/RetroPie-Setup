@@ -68,9 +68,6 @@ rp_registerAllModules
 
 [[ "$1" == "init" ]] && return
 
-# load RetronetPlay configuration
-source "$scriptdir/configs/retronetplay.cfg"
-
 # ID scriptmode
 if [[ $# -eq 1 ]]; then
     ensureRootdirExists
