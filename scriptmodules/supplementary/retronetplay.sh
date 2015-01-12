@@ -21,25 +21,9 @@ function rps_retronet_loadconfig() {
         __netplayenable="D"
         __netplaymode="H"
         __netplayport="55435"
-        __netplayhostip=""
+        __netplayhostip="192.168.0.1"
         __netplayhostip_cfile=""
         __netplayframes="15"
-    fi
-}
-
-function rps_retronet_enable() {
-    cmd=(dialog --backtitle "$__backtitle" --menu "Enable or disable RetroArch's Netplay mode." 22 76 16)
-    options=(1 "ENABLE netplay"
-             2 "DISABLE netplay" )
-    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choice" ]]; then
-        case "$choice" in
-             1) __netplayenable="E"
-                ;;
-             2) __netplayenable="D"
-                ;;
-        esac
-        rps_retronet_saveconfig
     fi
 }
 
@@ -98,7 +82,6 @@ function configure_retronetplay() {
 
     local ip_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
     local ip_ext=$(wget -O- -q http://ipecho.net/plain)
-    [[ -z "$__netplayhostip" ]] && __netplayhostip="$ip_int"
 
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Configure RetroArch Netplay.\nInternal IP: $ip_int External IP: $ip_ext" 22 76 16)
