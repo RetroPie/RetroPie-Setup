@@ -279,7 +279,8 @@ echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 # if we switched mode - restore preferred mode, and reset framebuffer
 if [[ $switched -eq 1 ]]; then
     restore_mode "$currentmode"
-    reset_framebuffer
 fi
+
+reset_framebuffer
 
 exit 0
