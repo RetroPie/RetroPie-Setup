@@ -194,7 +194,7 @@ function retroarch_append_config() {
         source "$retronetplay_conf"
         retronetplay=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes"
     else
-        _retronetplay=""
+        retronetplay=""
     fi
     command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg$retronetplay|")
 }
