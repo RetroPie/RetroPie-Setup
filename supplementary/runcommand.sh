@@ -100,7 +100,6 @@ function main_menu() {
             3)
                 sed -i "/$romsave/d" "$video_conf"
                 get_mode "$emusave"
-                return
                 ;;
             Z)
                 netplay=1
