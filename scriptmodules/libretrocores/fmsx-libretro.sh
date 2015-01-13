@@ -13,17 +13,36 @@ function build_fmsx-libretro() {
 }
 
 function install_fmsx-libretro() {
-    cp -v "$md_build/fMSX/ROMs/"* "$home/RetroPie/BIOS/"
-    chown -R $user:$user "$home/RetroPie/BIOS/"
     md_ret_files=(
         'fmsx_libretro.so'
         'README.md'
+        'fMSX/ROMs/CARTS.SHA'
+        'fMSX/ROMs/CYRILLIC.FNT'
+        'fMSX/ROMs/DISK.ROM'
+        'fMSX/ROMs/FMPAC.ROM'
+        'fMSX/ROMs/FMPAC16.ROM'
+        'fMSX/ROMs/ITALIC.FNT'
+        'fMSX/ROMs/KANJI.ROM'
+        'fMSX/ROMs/MSX.ROM'
+        'fMSX/ROMs/MSX2.ROM'
+        'fMSX/ROMs/MSX2EXT.ROM'
+        'fMSX/ROMs/MSX2P.ROM'
+        'fMSX/ROMs/MSX2PEXT.ROM'
+        'fMSX/ROMs/MSX2DOS.ROM'
+        'fMSX/ROMs/PAINTER.ROM'
+        'fMSX/ROMs/RS232.ROM'
     )
 }
 
 function configure_fmsx-libretro() {
     mkRomDir "msx"
     ensureSystemretroconfig "msx"
+    
+    # Copy bios files
+    cp "$md_inst/"*.ROM "$home/RetroPie/BIOS/"
+    cp "$md_inst/"*.FNT "$home/RetroPie/BIOS/"
+    cp "$md_inst/"*.SHA "$home/RetroPie/BIOS/"
+    chown -R $user:$user "$home/RetroPie/BIOS"
 
     setESSystem "MSX" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx1 .MX1 .mx2 .MX2 .col .COL .dsk .DSK .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/fmsx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/msx/retroarch.cfg %ROM%\" \"$md_id\"" "msx" "msx"
 }
