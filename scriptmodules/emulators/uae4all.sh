@@ -30,6 +30,8 @@ function install_uae4all() {
 function configure_uae4all() {
     mkRomDir "amiga"
 
+    setDispmanx "$md_id" 1
+
     cat > "$md_inst/startAmigaDisk.sh" << _EOF_
 #!/bin/bash
 
