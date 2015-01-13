@@ -274,6 +274,13 @@ function mkUserDir() {
     chown $user:$user "$1"
 }
 
+function setDispmanx() {
+    local mod_id="$1"
+    local status="$2"
+    iniConfig "=" "" "$configdir/all/dispmanx.cfg"
+    iniSet $mod_id "$status"
+}
+
 function updateESConfigEdit() {
     gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
 }

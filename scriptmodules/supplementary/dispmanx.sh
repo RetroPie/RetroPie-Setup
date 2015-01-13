@@ -4,8 +4,6 @@ rp_module_menus="3+"
 rp_module_flags="nobin !odroid"
 
 function configure_dispmanx() {
-    iniConfig "=" "" "$configdir/all/dispmanx.cfg"
-
     while true; do
         local count=1
         local options=()
@@ -31,9 +29,9 @@ function configure_dispmanx() {
         if [[ -n "$choice" ]]; then
             local params=(${command[$choice]})
             if [[ "${params[1]}" == "on" ]]; then
-                iniSet "${params[0]}" "1"
+                setDispmanx "${params[0]}" 1
             else
-                iniSet "${params[0]}" "0"
+                setDispmanx "${params[0]}" "0"
             fi
             rp_callModule "${params[0]}" configure_dispmanx_${params[1]}
         else
