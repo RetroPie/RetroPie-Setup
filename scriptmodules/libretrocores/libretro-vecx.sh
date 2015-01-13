@@ -1,6 +1,6 @@
 rp_module_id="libretro-vecx"
 rp_module_desc="VECTREX LibretroCore VECX"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_libretro-vecx() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-vecx
@@ -28,5 +28,5 @@ function configure_libretro-vecx() {
     cp "$md_inst/"*.bin "$home/RetroPie/BIOS/"
     chown -R $user:$user "$home/RetroPie/BIOS"
 
-    setESSystem "Vectrex" "vectrex" "~/RetroPie/roms/vectrex" ".vec .VEC .gam .GAM .bin .BIN" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/vecx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/vectrex/retroarch.cfg %ROM%\" \"$md_id\"" "vectrex" "vectrex"
+    setESSystem "Vectrex" "vectrex" "~/RetroPie/roms/vectrex" ".vec .VEC .gam .GAM .bin .BIN" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$emudir/retroarch/bin/retroarch -L $md_inst/vecx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/vectrex/retroarch.cfg %ROM%\" \"$md_id\"" "vectrex" "vectrex"
 }

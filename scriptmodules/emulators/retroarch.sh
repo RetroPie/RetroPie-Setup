@@ -73,6 +73,7 @@ function configure_retroarch() {
     ensureSystemretroconfig "msx"
     ensureSystemretroconfig "quake"
     ensureSystemretroconfig "n64"
+    ensureSystemretroconfig "vectrex"
 
     mkdir -p "$romdir/../BIOS/"
     chown $user:$user "$romdir/../BIOS/"
