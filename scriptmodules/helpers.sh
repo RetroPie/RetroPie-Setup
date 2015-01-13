@@ -200,14 +200,15 @@ function rpSwap() {
 function gitPullOrClone() {
     local dir="$1"
     local repo="$2"
-    local shallow="$3"
+    local branch="$3"
+    [[ -z "$branch" ]] && branch="master"
 
     mkdir -p "$dir"
 
     # to work around a issue with git hanging in a qemu-arm-static chroot we can use a github created archive
     if [[ $__chroot -eq 1 ]] && [[ "$repo" =~ github ]]; then
         local archive=${repo/.git/}
-        archive=${archive/git:/https:}/archive/master.tar.gz
+        archive="${archive/git:/https:}/archive/$branch.tar.gz"
         wget -O- -q "$archive" | tar -xvz --strip-components=1 -C "$dir"
         return
     fi
@@ -217,11 +218,11 @@ function gitPullOrClone() {
         git pull > /dev/null
         popd > /dev/null
     else
-        if [[ "$shallow" == "NS" ]]; then
-            git clone "$repo" "$dir"
-        else
-            git clone --depth=1 "$repo" "$dir"
-        fi
+        local git="git clone"
+        [[ "$repo" =~ github ]] && git+=" --depth 1"
+        [[ "$branch" != "master" ]] && git+=" --branch $branch"
+        echo "$git \"$repo\" \"$dir\""
+        $git "$repo" "$dir"
     fi
 }
 

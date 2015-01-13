@@ -7,7 +7,7 @@ function depends_pifba() {
 }
 
 function sources_pifba() {
-    gitPullOrClone "$md_build" https://code.google.com/p/pifba/ NS
+    gitPullOrClone "$md_build" https://code.google.com/p/pifba/
     sed -i "s/-lglib-2.0$/-lglib-2.0 -lasound -lrt/g" Makefile
 }
 
