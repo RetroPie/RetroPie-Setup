@@ -28,7 +28,7 @@ function install_fmsx-libretro() {
         'fMSX/ROMs/MSX2EXT.ROM'
         'fMSX/ROMs/MSX2P.ROM'
         'fMSX/ROMs/MSX2PEXT.ROM'
-        'fMSX/ROMs/MSX2DOS.ROM'
+        'fMSX/ROMs/MSXDOS2.ROM'
         'fMSX/ROMs/PAINTER.ROM'
         'fMSX/ROMs/RS232.ROM'
     )
