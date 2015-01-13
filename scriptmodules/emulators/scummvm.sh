@@ -1,18 +1,21 @@
 rp_module_id="scummvm"
 rp_module_desc="ScummVM"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags=""
 
 function depends_scummvm() {
     getDepends libsdl1.2-dev libjpeg8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
+    isPlatform "rpi" && getDepends libraspberrypi0 libraspberrypi-bin libraspberrypi-dev
 }
 
 function sources_scummvm() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/scummvm-1.7.0.tar.gz | tar -xvz --strip-components=1
+    gitPullOrClone "$md_build" https://github.com/vanfanel/scummvm gles_custom
 }
 
 function build_scummvm() {
-    ./configure --enable-vkeybd --enable-release --disable-debug --enable-keymapper --disable-eventrecorder --prefix="$md_inst"
+    local params
+    isPlatform "rpi" && params+="--enable-gles-rpi"
+    ./configure --disable-opengl --enable-vkeybd --enable-release --disable-debug --enable-keymapper --disable-eventrecorder --prefix="$md_inst" $params
     make clean
     make
     strip "$md_build/scummvm"
@@ -42,5 +45,5 @@ _EOF_
     chown $user:$user "$romdir/scummvm/+Launch GUI.sh"
     chmod u+x "$romdir/scummvm/+Launch GUI.sh"
 
-    setESSystem "ScummVM" "scummvm" "~/RetroPie/roms/scummvm" ".sh .svm" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$romdir/scummvm/+Launch\ GUI.sh %BASENAME%\" \"$md_id\"" "pc" "scummvm"
+    setESSystem "ScummVM" "scummvm" "~/RetroPie/roms/scummvm" ".sh .svm" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$romdir/scummvm/+Launch\ GUI.sh %BASENAME%\" \"$md_id\"" "pc" "scummvm"
 }
