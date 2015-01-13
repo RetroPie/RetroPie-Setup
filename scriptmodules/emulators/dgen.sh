@@ -64,7 +64,8 @@ function configure_dgen()
     iniConfig "=" "" "/boot/config.txt"
     iniSet "overscan_scale" 1
 
-    configure_dispmanx_off_dgen
+    setDispmanx "$md_id" 1
+    configure_dispmanx_on_dgen
 
     mkRomDir "megadrive-dgen"
     mkRomDir "segacd-dgen"
