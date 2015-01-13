@@ -34,17 +34,17 @@ function configure_mame4all() {
     mkRomDir "mame-samples"
     mkRomDir "mame-artwork"
 
-    mkdir -p "$configdir/$md_id/"{cfg,hi,inp,memcard,nvram,snap,sta}
-    chown -R $user:$user "$configdir/$md_id"
+    mkdir -p "$configdir/mame/"{cfg,hi,inp,memcard,nvram,snap,sta}
+    chown -R $user:$user "$configdir/mame"
 
     iniConfig "=" "" "$md_inst/mame.cfg"
-    iniSet "cfg" "$configdir/$md_id/cfg"
-    iniSet "hi" "$configdir/$md_id/hi"
-    iniSet "inp" "$configdir/$md_id/inp"
-    iniSet "memcard" "$configdir/$md_id/memcard"
-    iniSet "nvram" "$configdir/$md_id/nvram"
-    iniSet "snap" "$configdir/$md_id/snap"
-    iniSet "sta" "$configdir/$md_id/sta"
+    iniSet "cfg" "$configdir/mame/cfg"
+    iniSet "hi" "$configdir/mame/hi"
+    iniSet "inp" "$configdir/mame/inp"
+    iniSet "memcard" "$configdir/mame/memcard"
+    iniSet "nvram" "$configdir/mame/nvram"
+    iniSet "snap" "$configdir/mame/snap"
+    iniSet "sta" "$configdir/mame/sta"
 
     iniSet "artwork" "$romdir/mame-artwork"
     iniSet "samplepath" "$romdir/mame-samples"
