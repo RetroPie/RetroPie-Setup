@@ -41,6 +41,7 @@ function configure_vice() {
     iniSet "VICIIVideoCache" "0"
     iniSet "SoundDeviceName" "alsa"
     iniSet "Drive8Type" "1542"
+    iniSet "SidEngine" "0"
 
     configure_dispmanx_on_vice
     setDispmanx "$md_id" 1
