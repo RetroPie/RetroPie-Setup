@@ -17,6 +17,7 @@ function sources_vice() {
 
 function build_vice() {
     ./configure --prefix="$md_inst" --enable-sdlui --without-pulse --with-sdlsound
+    sed -i "s/#define HAVE_HWSCALE/#undef HAVE_HWSCALE/" src/config.h
     make
 }
 
