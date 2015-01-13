@@ -42,7 +42,7 @@ function configure_vice() {
     iniSet "SoundDeviceName" "alsa"
     iniSet "Drive8Type" "1542"
 
-    configure_dispmanx_off_vice
+    configure_dispmanx_on_vice
     setDispmanx "$md_id" 1
 
     setESSystem "C64" "c64" "~/RetroPie/roms/c64" ".crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/x64 -config $rootdir/configs/c64/vice.cfg %ROM%\" \"$md_id\"" "c64" "c64"
