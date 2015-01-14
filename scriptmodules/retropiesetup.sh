@@ -108,7 +108,7 @@ rps_main_menu() {
                 6 "UPDATE RetroPie Binaries"
             )
         else
-            options+=(5 "Install individual emulators from source")
+            options+=(5 "INSTALL individual emulators from source")
         fi
         options+=(
             U "UPDATE RetroPie Setup script"
