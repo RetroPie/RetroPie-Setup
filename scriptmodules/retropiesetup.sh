@@ -101,14 +101,19 @@ rps_main_menu() {
             2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
             3 "SETUP (only if you already have run one of the installations above)"
             4 "EXPERIMENTAL packages (these are potentially unstable packages)"
-            5 "UPDATE RetroPie Setup script")
+        )
         if [[ $__has_binaries -eq 1 ]]; then
             options+=(
-            6 "UPDATE RetroPie Binaries"
+                5 "INSTALL individual emulators from binary or source"
+                6 "UPDATE RetroPie Binaries"
             )
+        else
+            options+=(5 "INSTALL individual emulators from source")
         fi
         options+=(
-            7 "Perform REBOOT")
+            U "UPDATE RetroPie Setup script"
+            R "Perform REBOOT"
+        )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choices" ]]; then
             case $choices in
@@ -116,9 +121,10 @@ rps_main_menu() {
                 2) rps_main_options ;;
                 3) rps_main_setup ;;
                 4) rps_main_experimental ;;
-                5) rps_main_updatescript ;;
+                5) rps_install_individual ;;
                 6) rps_downloadBinaries ;;
-                7) rps_main_reboot ;;
+                U) rps_main_updatescript ;;
+                R) rps_main_reboot ;;
             esac
         else
             break
@@ -282,6 +288,39 @@ function rps_main_experimental()
     done
 
     chown -R $user:$user $logfilename
+}
+
+function rps_install_individual()
+{
+    local options=()
+    for idx in "${__mod_idx[@]}"; do
+        if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobin ]]; then
+            options+=($idx "${__mod_id[$idx]} - ${__mod_desc[$idx]}")
+        fi
+    done
+    while true; do
+        local md_idx=$(dialog --backtitle "$__backtitle" --menu "Select Emulator/Port." 22 76 16 "${options[@]}" 2>&1 >/dev/tty)
+        if [[ -n "$md_idx" ]]; then
+            local choice
+            if [[ $__has_binaries -eq 1 ]]; then
+                choice=$(dialog --backtitle "$__backtitle" --menu "Install ${__mod_id[$md_idx]} - ${__mod_desc[$md_idx]}\nFrom binary or source?" 10 60 10 b Binary s Source 2>&1 >/dev/tty)
+            else
+                choice=s
+            fi
+            case $choice in
+                b)
+                    rp_callModule "$md_idx" depends
+                    rp_callModule "$md_idx" install_bin
+                    rp_callModule "$md_idx" configure
+                    ;;
+                s)
+                    rp_callModule "$md_idx"
+                    ;;
+            esac
+        else
+            break
+        fi
+    done
 }
 
 function rps_main_reboot()
