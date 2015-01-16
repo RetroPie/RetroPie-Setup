@@ -24,7 +24,7 @@ Then you can download the latest RetroPie setup script with
 
 ```shell
 cd
-git clone --depth=0 git://github.com/petrockblog/RetroPie-Setup.git
+git clone --depth=1 git://github.com/petrockblog/RetroPie-Setup.git
 ```
 
 The script is executed with 
