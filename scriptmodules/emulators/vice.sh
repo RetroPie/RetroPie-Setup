@@ -40,8 +40,11 @@ function configure_vice() {
     iniSet "VICIIFilter" "0"
     iniSet "VICIIVideoCache" "0"
     iniSet "SoundDeviceName" "alsa"
+    iniSet "SoundSampleRate" "22050"
     iniSet "Drive8Type" "1542"
     iniSet "SidEngine" "0"
+    iniSet "AutostartWarp" "0"
+    iniSet "WarpMode" "0"
 
     configure_dispmanx_on_vice
     setDispmanx "$md_id" 1
