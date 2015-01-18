@@ -1,6 +1,6 @@
 # http://www.gtkdb.de/index_36_2176.html
 rp_module_id="xbmc"
-rp_module_desc="Install XBMC"
+rp_module_desc="Install Kodi"
 rp_module_menus="4+"
 rp_module_flags="nobin"
 
@@ -18,12 +18,12 @@ function configure_xbmc() {
 
     mkRomDir "ports"
 
-    cat > "$romdir/ports/xbmc.sh" << _EOF_
+    cat > "$romdir/ports/Kodi.sh" << _EOF_
 #!/bin/bash
-xbmc-standalone
+kodi-standalone
 _EOF_
 
-    chmod +x "$romdir/ports/xbmc.sh"
+    chmod +x "$romdir/ports/Kodi.sh"
 
     setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'    
 }
