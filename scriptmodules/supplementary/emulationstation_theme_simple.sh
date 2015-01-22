@@ -5,7 +5,7 @@ rp_module_flags="nobin"
 
 function install_esthemesimple() {
     # download themes archive
-    wget -O themesDownload.zip http://blog.petrockblock.com/?wpdmdl=7118
+    wget -O themesDownload.zip http://blog.petrockblock.com/download/retropie-setup-script-themes-package-simple/
 
     mkdir -p "/etc/emulationstation/themes"
 
