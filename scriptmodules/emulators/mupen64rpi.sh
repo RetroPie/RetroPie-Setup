@@ -58,7 +58,8 @@ function configure_mupen64rpi() {
     # to solve startup problems delete old config file
     rm -f "$home/.config/mupen64plus/mupen64plus.cfg"
 
-    cat > $rootdir/configs/n64/gles2n64.conf << _EOF_
+    mkdir -p "$rootdir/configs/n64/"
+    cat > "$rootdir/configs/n64/gles2n64.conf" << _EOF_
 #gles2n64 Graphics Plugin for N64
 #by Orkin / glN64 developers and Adventus.
 config version=2
@@ -118,7 +119,7 @@ flip vertical=0
 z hack=0
 _EOF_
 
-    cat > $rootdir/configs/n64/gles2n64rom.conf << _EOF_
+    cat > "$rootdir/configs/n64/gles2n64rom.conf" << _EOF_
 #rom specific settings
 
 rom name=SUPER MARIO 64
