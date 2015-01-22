@@ -222,12 +222,17 @@ framebuffer enable=1
 target FPS=25
 _EOF_
 
-    # Copy bios files
+    # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf} "$rootdir/configs/n64/"
 
+    # Enable bilinear filtering for rice
+    iniConfig " = " "" "$rootdir/configs/n64/mupen64plus.cfg"
+    iniSet "Mipmapping" "2"
+    iniSet "ForceTextureFilter" "2"
+    
     chown -R $user:$user "$rootdir/configs/n64"
 
     mkRomDir "n64-mupen64plus"
 
-    setESSystem "Nintendo 64" "n64-mupen64plus" "~/RetroPie/roms/n64-mupen64plus" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64 --osd --windowed %ROM%\" \"$md_id\"" "n64" "n64"
+    setESSystem "Nintendo 64" "n64-mupen64plus" "~/RetroPie/roms/n64-mupen64plus" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64 --osd --windowed %ROM%\" \"$md_id\"" "n64" "n64"
 }
