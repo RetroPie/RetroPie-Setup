@@ -22,8 +22,8 @@ function sources_mupen64rpi() {
     )
     local repo
     for repo in "${repos[@]}"; do
-        item=($repo)
-        gitPullOrClone "$md_build/mupen64plus-${item[1]}" https://github.com/${item[0]}/mupen64plus-${item[1]} ${item[2]}
+        repo=($repo)
+        gitPullOrClone "$md_build/mupen64plus-${repo[1]}" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
 }
 
@@ -38,7 +38,7 @@ function build_mupen64rpi() {
             params=()
             [[ "$dir" == "mupen64plus-core" ]] && params+=("USE_GLES=1" "VFP=1")
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
-            make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS" V=1
+            make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"
         fi
     done
 
