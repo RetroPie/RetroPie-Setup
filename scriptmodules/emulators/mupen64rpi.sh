@@ -1,32 +1,61 @@
 rp_module_id="mupen64rpi"
 rp_module_desc="N64 emulator MUPEN64Plus-RPi"
 rp_module_menus="4+"
+rp_module_flags="!odroid"
+
+function depends_mupen64rpi() {
+    if ! hasPackage libsdl2-dev && isPlatform "rpi"; then
+        rp_callModule sdl2 install_bin
+    fi
+}
 
 function sources_mupen64rpi() {
-    gitPullOrClone "$md_build" https://github.com/ricrpi/mupen64plus
+    local repos=(
+        'ricrpi core ric_dev'
+        'mupen64plus ui-console'
+        'ricrpi audio-omx'
+        'mupen64plus audio-sdl'
+        'mupen64plus input-sdl'
+        'ricrpi rsp-hle'
+        'ricrpi video-gles2rice'
+        'ricrpi video-gles2n64'
+    )
+    local repo
+    for repo in "${repos[@]}"; do
+        item=($repo)
+        gitPullOrClone "$md_build/mupen64plus-${item[1]}" https://github.com/${item[0]}/mupen64plus-${item[1]} ${item[2]}
+    done
 }
 
 function build_mupen64rpi() {
     rpSwap on 750
-    ./build.sh
-    rpSwap off
 
-    md_ret_require="$md_build/mupen64plus"
+    local dir
+    local params
+    for dir in *; do
+        if [[ -f "$dir/projects/unix/Makefile" ]]; then
+            make -C "$dir/projects/unix" clean
+            params=()
+            [[ "$dir" == "mupen64plus-core" ]] && params+=("USE_GLES=1" "VFP=1")
+            [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
+            make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS" V=1
+        fi
+    done
+
+    rpSwap off
 }
 
 function install_mupen64rpi() {
-    ./install.sh
-    md_ret_files=(
-        'mupen64plus/mupen64plus-input-sdl/data/InputAutoCfg.ini'
-        'ricrpi/mupen64plus-video-gles2rice/data/RiceVideoLinux.ini' 
-        'ricrpi/mupen64plus-core/data/mupencheat.txt'
-        'ricrpi/mupen64plus-core/data/mupen64plus.ini' 
-        'ricrpi/mupen64plus-core/data/font.ttf'
-    )
+    for source in *; do
+        if [[ -f "$source/projects/unix/Makefile" ]]; then
+            # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
+            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" install
+        fi
+    done
 }
 
 function configure_mupen64rpi() {
-    # to solve startup problems delete old config file 
+    # to solve startup problems delete old config file
     rm -f "$home/.config/mupen64plus/mupen64plus.cfg"
 
     cat > $rootdir/configs/n64/gles2n64.conf << _EOF_
@@ -57,7 +86,7 @@ framebuffer enable=0
 framebuffer bilinear=0
 framebuffer width=400
 framebuffer height=240
-#VI Settings, useful for forcing certain internal resolutions. 
+#VI Settings, useful for forcing certain internal resolutions.
 video force=0
 video width=320
 video height=240
@@ -193,10 +222,11 @@ target FPS=25
 _EOF_
 
     # Copy bios files
-    cp "$md_inst/"*.* "$rootdir/configs/n64/"
+    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf} "$rootdir/configs/n64/"
+
     chown -R $user:$user "$rootdir/configs/n64"
 
     mkRomDir "n64-mupen64plus"
 
-    setESSystem "Nintendo 64" "n64-mupen64plus" "~/RetroPie/roms/n64-mupen64plus" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64 --osd --windowed %ROM%\" \"$md_id\"" "n64" "n64"
+    setESSystem "Nintendo 64" "n64-mupen64plus" "~/RetroPie/roms/n64-mupen64plus" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64 --osd --windowed %ROM%\" \"$md_id\"" "n64" "n64"
 }
