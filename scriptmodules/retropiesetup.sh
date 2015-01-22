@@ -303,7 +303,7 @@ function rps_install_individual()
         if [[ -n "$md_idx" ]]; then
             local choice
             if [[ $__has_binaries -eq 1 ]]; then
-                choice=$(dialog --backtitle "$__backtitle" --menu "Install ${__mod_id[$md_idx]} - ${__mod_desc[$md_idx]}\nFrom binary or source?" 10 60 10 b Binary s Source 2>&1 >/dev/tty)
+                choice=$(dialog --backtitle "$__backtitle" --menu "Install ${__mod_id[$md_idx]} - ${__mod_desc[$md_idx]}\nFrom binary or source?" 12 60 10 b Binary s Source 2>&1 >/dev/tty)
             else
                 choice=s
             fi
