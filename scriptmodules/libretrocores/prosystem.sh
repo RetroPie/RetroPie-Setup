@@ -30,5 +30,5 @@ function configure_prosystem() {
     
     # Copy optional bios file "7800 BIOS (U).rom" to BIOS folder.
     
-    setESSystem "Atari Prosystem 7800" "atari7800" "~/RetroPie/roms/atari7800" ".A78 .a78" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L $md_inst/prosystem_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/atari7800/retroarch.cfg %ROM%\"" "atari7800" "atari7800"
+    setESSystem "Atari Prosystem 7800" "atari7800" "~/RetroPie/roms/atari7800" ".A78 .a78 .BIN .bin" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/retroarch/bin/retroarch -L $md_inst/prosystem_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/atari7800/retroarch.cfg %ROM%\"" "atari7800" "atari7800"
 }
