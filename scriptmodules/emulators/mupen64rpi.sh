@@ -83,14 +83,14 @@ window height=480
 #image to be upscaled to the window dimensions. The
 #framebuffer dimensions specify the resolution which
 #gles2n64 will render to.
-framebuffer enable=0
+framebuffer enable=1
 framebuffer bilinear=0
-framebuffer width=400
-framebuffer height=240
+framebuffer width=640
+framebuffer height=480
 #VI Settings, useful for forcing certain internal resolutions.
 video force=0
-video width=320
-video height=240
+video width=640
+video height=480
 #Frameskipping allows more CPU time be spent on other
 #tasks than GPU emulation, but at the cost of a lower
 #framerate.
