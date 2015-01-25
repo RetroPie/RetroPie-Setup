@@ -37,7 +37,7 @@ function configure_ps3controller() {
     fi
 
     dialog --backtitle "$__backtitle" --msgbox "Please connect your PS3 controller via USB-CABLE and press ENTER." 22 76
-    if ./sixpair | grep -q "Setting master"; then
+    if $md_inst/sixpair | grep -q "Setting master"; then
         dialog --backtitle "$__backtitle" --msgbox "Cannot find the PS3 controller via USB-connection. Please try to (re-)connect it and try again." 22 76
         break
     fi
