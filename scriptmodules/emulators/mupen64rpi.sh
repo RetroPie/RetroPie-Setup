@@ -225,8 +225,11 @@ _EOF_
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf} "$rootdir/configs/n64/"
 
+    su "$user" -c "$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64"
+    iniConfig " = " "" "$rootdir/configs/n64/mupen64plus.cfg"
+    iniSet "VideoPlugin" "mupen64plus-video-n64"
+    iniSet "AudioPlugin" "mupen64plus-audio-omx"
     # Enable bilinear filtering for rice
-    # iniConfig " = " "" "$rootdir/configs/n64/mupen64plus.cfg"
     # iniSet "Mipmapping" "2"
     # iniSet "ForceTextureFilter" "2"
     
