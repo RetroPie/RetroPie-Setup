@@ -94,7 +94,9 @@ video height=480
 #Frameskipping allows more CPU time be spent on other
 #tasks than GPU emulation, but at the cost of a lower
 #framerate.
-frame render rate=2
+auto frameskip=1
+target FPS=20
+frame render rate=1
 #Vertical Sync Divider (0=No VSYNC, 1=60Hz, 2=30Hz, etc)
 vertical sync=0
 #These options enable different rendering paths, they
@@ -105,18 +107,25 @@ enable lighting=1
 enable alpha test=1
 enable clipping=0
 enable face culling=1
+enable noise=0
 #Texture Bit Depth (0=force 16bit, 1=either 16/32bit, 2=force 32bit)
 texture depth=1
 texture 2xSAI=0
 texture force bilinear=0
 texture max anisotropy=0
 texture use IA=0
+texture fast CRC=1
+texture pow2=1
 #
 update mode=1
 ignore offscreen rendering=0
 force screen clear=1
+tribuffer opt=1
 flip vertical=0
-z hack=0
+hack banjo tooie=0
+hack zelda=0
+hack alpha=0
+hack z=0
 _EOF_
 
     cat > "$rootdir/configs/n64/gles2n64rom.conf" << _EOF_
