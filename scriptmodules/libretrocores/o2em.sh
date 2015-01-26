@@ -1,5 +1,5 @@
 rp_module_id="o2em"
-rp_module_desc="Oddysey 2 / VideoPac LibretroCore O2EM"
+rp_module_desc="Odyssey 2 / VideoPac LibretroCore O2EM"
 rp_module_menus="4+"
 
 function sources_o2em() {
