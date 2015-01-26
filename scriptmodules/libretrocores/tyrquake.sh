@@ -27,6 +27,8 @@ function install_tyrquake() {
 
 function configure_tyrquake() {
     mkRomDir "ports"
+    ensureSystemretroconfig "quake"
+
     mkdir -p "$romdir/ports/quake"
 
     if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then

@@ -33,13 +33,6 @@ function install_retroarch() {
     md_ret_require="$md_inst/bin/retroarch"
 }
 
-function ensureSystemretroconfig {
-    if [[ ! -d "$configdir/$1/" ]]; then
-        mkdir -p "$configdir/$1/"
-        echo -e "# All settings made here will override the global settings for the current emulator core\n" >> $configdir/$1/retroarch.cfg
-    fi
-}
-
 function configure_retroarch() {
     if [[ ! -d "$configdir/all/" ]]; then
         mkdir -p "$configdir/all/"
@@ -52,28 +45,6 @@ function configure_retroarch() {
 
     mkdir -p "$configdir/all/"
     cp "$md_inst/retroarch.cfg" "$configdir/all/"
-
-    ensureSystemretroconfig "atari2600"
-    ensureSystemretroconfig "cavestory"
-    ensureSystemretroconfig "doom"
-    ensureSystemretroconfig "gb"
-    ensureSystemretroconfig "gbc"
-    ensureSystemretroconfig "gamegear"
-    ensureSystemretroconfig "mame"
-    ensureSystemretroconfig "mastersystem"
-    ensureSystemretroconfig "megadrive"
-    ensureSystemretroconfig "nes"
-    ensureSystemretroconfig "pcengine"
-    ensureSystemretroconfig "psx"
-    ensureSystemretroconfig "snes"
-    ensureSystemretroconfig "segacd"
-    ensureSystemretroconfig "sega32x"
-    ensureSystemretroconfig "fba"
-    ensureSystemretroconfig "atarilynx"
-    ensureSystemretroconfig "msx"
-    ensureSystemretroconfig "quake"
-    ensureSystemretroconfig "n64"
-    ensureSystemretroconfig "vectrex"
 
     mkdir -p "$romdir/../BIOS/"
     chown $user:$user "$romdir/../BIOS/"

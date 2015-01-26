@@ -21,6 +21,7 @@ function install_turbografx16() {
 
 function configure_turbografx16() {
     mkRomDir "pcengine-libretro"
+    ensureSystemretroconfig "pcengine"
 
     setESSystem "TurboGrafx 16 (PC Engine)" "pcengine-libretro" "~/RetroPie/roms/pcengine-libretro" ".pce .PCE .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/pcengine/retroarch.cfg %ROM%\" \"$md_id\"" "pcengine" "pcengine"
 }

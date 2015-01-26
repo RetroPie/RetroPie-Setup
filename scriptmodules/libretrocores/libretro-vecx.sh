@@ -23,6 +23,7 @@ function install_libretro-vecx() {
 
 function configure_libretro-vecx() {
     mkRomDir "vectrex"
+    ensureSystemretroconfig "vectrex"
 
     # Copy bios files
     cp "$md_inst/"*.bin "$home/RetroPie/BIOS/"

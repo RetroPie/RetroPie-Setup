@@ -24,7 +24,6 @@ function install_mupen64plus() {
 
 function configure_mupen64plus() {
     mkRomDir "n64"
-
     ensureSystemretroconfig "n64"
 
     # Set core options
