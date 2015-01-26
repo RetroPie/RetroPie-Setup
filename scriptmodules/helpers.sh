@@ -315,9 +315,9 @@ function setESSystem() {
 }
 
 function ensureSystemretroconfig {
-    if [[ ! -d "$configdir/$1/" ]]; then
-        mkdir -p "$configdir/$1/"
-        chown $user:$user "$configdir/$1/"
+    if [[ ! -d "$configdir/$1" ]]; then
+        mkdir -p "$configdir/$1"
         echo -e "# All settings made here will override the global settings for the current emulator core\n" >> "$configdir/$1/retroarch.cfg"
+        chown -R $user:$user "$configdir/$1"
     fi
 }
