@@ -27,7 +27,7 @@ function log()
 ## main
 # mirror romdir structure to external drive
 # XXX: skip checking whether <romdir> already exists and let mkdir create missing dirs (if so don't exit here)
-if [[ "${create_romdirs}" == "true" -a ! -d "${UM_MOUNTPOINT}/roms" ]]; then
+if [[ "${create_romdirs}" == "true" && ! -d "${UM_MOUNTPOINT}/roms" ]]; then
     log info "Attempting to create directory structure for ROMS in ${UM_MOUNTPOINT} ..."
     # fetch list of romdirs from current installation and mirror onto external driv
     find "${retropie_path}/roms" -mindepth 1 -maxdepth 1 -type d -printf "${UM_MOUNTPOINT}/roms/%f\n" | xargs mkdir -p 2>/dev/null || true
