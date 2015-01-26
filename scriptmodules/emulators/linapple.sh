@@ -37,7 +37,7 @@ function install_linapple() {
 }
 
 function configure_linapple() {
-    mkdir -p $romdir/apple2
+    mkRomDir "apple2"
 
     chown -R $user:$user "$md_inst"
 

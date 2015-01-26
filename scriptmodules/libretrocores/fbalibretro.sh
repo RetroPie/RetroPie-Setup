@@ -29,7 +29,7 @@ function install_fbalibretro() {
 }
 
 function configure_fbalibretro() {
-    mkdir -p $romdir/fba-libretro
+    mkRomDir "fba-libretro"
 
     setESSystem "Final Burn Alpha" "fba-libretro" "~/RetroPie/roms/fba-libretro" ".fba .FBA .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/fb_alpha_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/fba/retroarch.cfg %ROM%\" \"$md_id\"" "arcade" "fba"
 }

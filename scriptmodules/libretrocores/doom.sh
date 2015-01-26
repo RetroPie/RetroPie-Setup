@@ -20,6 +20,7 @@ function install_doom() {
 }
 
 function configure_doom() {
+    mkRomDir "ports"
     mkdir -p "$romdir/ports/doom"
 
     cp prboom.wad "$romdir/ports/doom/"

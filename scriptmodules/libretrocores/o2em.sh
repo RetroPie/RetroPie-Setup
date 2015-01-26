@@ -20,7 +20,7 @@ function install_o2em() {
 }
 
 function configure_o2em() {
-    mkdir -p $romdir/videopac
+    mkRomDir "videopac"
 
     # copy o2rom.bin to RetroPie/BIOS path
     setESSystem "Super Nintendo" "videopac" "~/RetroPie/roms/videopac" ".bin .BIN" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/o2em_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/videopac/retroarch.cfg %ROM%\" \"$md_id\"" "videopac" "videopac"

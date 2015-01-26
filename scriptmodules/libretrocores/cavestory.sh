@@ -19,7 +19,7 @@ function install_cavestory() {
 }
 
 function configure_cavestory() {
-    mkdir -p $romdir/ports
+    mkRomDir "ports"
 
     cat > "$romdir/ports/Cave Story.sh" << _EOF_
 #!/bin/bash

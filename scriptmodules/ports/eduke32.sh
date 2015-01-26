@@ -10,11 +10,13 @@ function install_eduke32() {
     wget http://downloads.petrockblock.com/retropiearchives/duke3d-shareware_1.3d-23_all.deb
     dpkg -i ./*.deb
     rm ./*.deb
-    mkRomDir "ports/duke3d"
     md_ret_require="/usr/games/eduke32"
 }
 
 function configure_eduke32() {
+    mkRomDir "ports"
+    mkdir -p "$romdir/ports/duke3d"
+
     cp /usr/share/games/eduke32/DUKE.RTS "$romdir/ports/duke3d/"
     cp /usr/share/games/eduke32/duke3d.grp "$romdir/ports/duke3d/"
 

@@ -8,7 +8,7 @@ function install_hatari() {
 }
 
 function configure_hatari() {
-    mkdir -p $romdir/atariststefalcon 
+    mkRomDir "atariststefalcon"
 
     setESSystem "Atari ST/STE/Falcon" "atariststefalcon" "~/RetroPie/roms/atariststefalcon" ".st .ST .img .IMG .rom .ROM .ipf .IPF" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"hatari %ROM%\" \"$md_id\"" "atarist" "atarist"
 }

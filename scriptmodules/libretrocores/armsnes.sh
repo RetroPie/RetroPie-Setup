@@ -20,7 +20,7 @@ function install_armsnes() {
 }
 
 function configure_armsnes() {
-    mkdir -p $romdir/snes
+    mkRomDir "snes"
 
     setESSystem "Super Nintendo" "snes" "~/RetroPie/roms/snes" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/libpocketsnes.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/snes/retroarch.cfg %ROM%\" \"$md_id\"" "snes" "snes"
     # <!-- alternatively: <command>$emudir/snes9x-rpi/snes9x %ROM%</command> -->
