@@ -20,6 +20,7 @@ function install_catsfc() {
 
 function configure_catsfc() {
     mkRomDir "snes-catsfc"
+    ensureSystemretroconfig "snes"
 
     setESSystem "Super Nintendo" "snes-catsfc" "~/RetroPie/roms/snes-catsfc" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/catsfc_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/snes/retroarch.cfg %ROM%\" \"$md_id\"" "snes" "snes"
 }

@@ -26,6 +26,7 @@ function install_neslibretro() {
 
 function configure_neslibretro() {
     mkRomDir "nes"
+    ensureSystemretroconfig "nes"
 
     setESSystem "Nintendo Entertainment System" "nes" "~/RetroPie/roms/nes" ".nes .NES .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/fceumm_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/nes/retroarch.cfg %ROM%\" \"$md_id\"" "nes" "nes"
 }

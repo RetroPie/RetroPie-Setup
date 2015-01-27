@@ -21,6 +21,7 @@ function install_mamelibretro() {
 
 function configure_mamelibretro() {
     mkRomDir "mame-libretro"
+    ensureSystemretroconfig "mame"
 
     setESSystem "MAME" "mame-libretro" "~/RetroPie/roms/mame-libretro" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mame/retroarch.cfg %ROM%\" \"$md_id\"" "arcade" "mame"
 }

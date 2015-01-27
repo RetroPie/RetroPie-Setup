@@ -28,6 +28,10 @@ function configure_picodrive() {
     mkRomDir "mastersystem"
     mkRomDir "segacd"
     mkRomDir "sega32x"
+    ensureSystemretroconfig "megadrive"
+    ensureSystemretroconfig "mastersystem"
+    ensureSystemretroconfig "segacd"
+    ensureSystemretroconfig "sega32x"
 
     setESSystem "Sega Master System / Mark III" "mastersystem" "~/RetroPie/roms/mastersystem" ".sms .SMS .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/picodrive_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mastersystem/retroarch.cfg %ROM%\" \"$md_id\"" "mastersystem" "mastersystem"
 
