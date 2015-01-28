@@ -62,7 +62,7 @@ getDepends git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_
 # set default gcc version
 gcc_version $__default_gcc_version
 
-mkRootRomDir "$romdir"
+mkUserDir "$romdir"
 
 rp_registerAllModules
 
