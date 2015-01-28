@@ -1,12 +1,12 @@
-rp_module_id="mupen64plus"
-rp_module_desc="N64 LibretroCore Mupen64Plus"
+rp_module_id="mupen64plus-libretro"
+rp_module_desc="N64 LibretroCore MUPEN64Plus"
 rp_module_menus="2+"
 
-function sources_mupen64plus() {
+function sources_mupen64plus-libretro() {
     gitPullOrClone "$md_build" git://github.com/libretro/mupen64plus-libretro.git
 }
 
-function build_mupen64plus() {
+function build_mupen64plus-libretro() {
     rpSwap on 750
     make clean
     make platform=rpi
@@ -14,7 +14,7 @@ function build_mupen64plus() {
     md_ret_require="$md_build/mupen64plus_libretro.so"
 }
 
-function install_mupen64plus() {
+function install_mupen64plus-libretro() {
     md_ret_files=(
         'mupen64plus-core/data'
         'mupen64plus_libretro.so'
@@ -22,7 +22,7 @@ function install_mupen64plus() {
     )
 }
 
-function configure_mupen64plus() {
+function configure_mupen64plus-libretro() {
     mkRomDir "n64"
     ensureSystemretroconfig "n64"
 
