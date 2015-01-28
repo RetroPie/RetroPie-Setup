@@ -182,7 +182,6 @@ function rps_main_binaries()
         # some additional supplementary modules
         rp_callModule disabletimeouts
         rp_callModule modules
-        rp_callModule setavoidsafemode
         rp_callModule usbromservice
         rp_callModule bashwelcometweak
         rp_callModule sambashares
