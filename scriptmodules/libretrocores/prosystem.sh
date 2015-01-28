@@ -25,8 +25,8 @@ function configure_prosystem() {
     ensureSystemretroconfig "atari7800"
 
     # Copy bios files
-    cp "$md_inst/ProSystem.dat" "$home/RetroPie/BIOS/"
-    chown -R $user:$user "$home/RetroPie/BIOS/"
+    cp "$md_inst/ProSystem.dat" "$biosdir/"
+    chown $user:$user "$biosdir/ProSystem.dat"
     
     # Copy optional bios file "7800 BIOS (U).rom" to BIOS folder.
     

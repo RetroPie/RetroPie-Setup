@@ -39,10 +39,8 @@ function configure_fmsx-libretro() {
     ensureSystemretroconfig "msx"
     
     # Copy bios files
-    cp "$md_inst/"*.ROM "$home/RetroPie/BIOS/"
-    cp "$md_inst/"*.FNT "$home/RetroPie/BIOS/"
-    cp "$md_inst/"*.SHA "$home/RetroPie/BIOS/"
-    chown -R $user:$user "$home/RetroPie/BIOS"
+    cp "$md_inst/"{*.ROM,*.FNT,*.SHA} "$biosdir/"
+    chown $user:$user "$biosdir/"{*.ROM,*.FNT,*.SHA}
 
     setESSystem "MSX" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx1 .MX1 .mx2 .MX2 .col .COL .dsk .DSK .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/fmsx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/msx/retroarch.cfg %ROM%\" \"$md_id\"" "msx" "msx"
 }
