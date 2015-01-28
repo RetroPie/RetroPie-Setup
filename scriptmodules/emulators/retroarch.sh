@@ -47,7 +47,7 @@ function configure_retroarch() {
     cp "$md_inst/retroarch.cfg" "$configdir/all/"
 
     iniConfig " = " "" "$configdir/all/retroarch.cfg"
-    iniSet "system_directory" "$romdir/../BIOS"
+    iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "false"
