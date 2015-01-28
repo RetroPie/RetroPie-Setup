@@ -34,6 +34,7 @@ user="$SUDO_USER"
 [[ -z "$user" ]] && user=$(id -un)
 
 home="$(eval echo ~$user)"
+biosdir="$home/RetroPie/BIOS"
 romdir="$home/RetroPie/roms"
 emudir="$rootdir/emulators"
 configdir="$rootdir/configs"
@@ -63,6 +64,7 @@ getDepends git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_
 gcc_version $__default_gcc_version
 
 mkUserDir "$romdir"
+mkUserDir "$biosdir"
 
 rp_registerAllModules
 

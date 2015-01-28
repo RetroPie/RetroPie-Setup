@@ -46,9 +46,6 @@ function configure_retroarch() {
     mkdir -p "$configdir/all/"
     cp "$md_inst/retroarch.cfg" "$configdir/all/"
 
-    mkdir -p "$romdir/../BIOS/"
-    chown $user:$user "$romdir/../BIOS/"
-
     iniConfig " = " "" "$configdir/all/retroarch.cfg"
     iniSet "system_directory" "$romdir/../BIOS"
     iniSet "config_save_on_exit" "false"
