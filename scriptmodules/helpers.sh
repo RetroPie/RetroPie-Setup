@@ -255,13 +255,13 @@ function rmDirExists() {
     fi
 }
 
-function mkRomDir() {
-    mkUserDir "$romdir/$1"
-}
-
 function mkUserDir() {
     mkdir -p "$1"
     chown $user:$user "$1"
+}
+
+function mkRomDir() {
+    mkUserDir "$romdir/$1"
 }
 
 function setDispmanx() {
