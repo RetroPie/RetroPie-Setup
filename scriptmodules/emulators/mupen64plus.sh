@@ -1,15 +1,15 @@
-rp_module_id="mupen64rpi"
-rp_module_desc="N64 emulator MUPEN64Plus-RPi"
-rp_module_menus="4+"
+rp_module_id="mupen64plus"
+rp_module_desc="N64 emulator MUPEN64Plus"
+rp_module_menus="2+"
 rp_module_flags="!odroid"
 
-function depends_mupen64rpi() {
+function depends_mupen64plus() {
     if ! hasPackage libsdl2-dev && isPlatform "rpi"; then
         rp_callModule sdl2 install_bin
     fi
 }
 
-function sources_mupen64rpi() {
+function sources_mupen64plus() {
     local repos=(
         'ricrpi core ric_dev'
         'mupen64plus ui-console'
@@ -27,7 +27,7 @@ function sources_mupen64rpi() {
     done
 }
 
-function build_mupen64rpi() {
+function build_mupen64plus() {
     rpSwap on 750
 
     local dir
@@ -45,7 +45,7 @@ function build_mupen64rpi() {
     rpSwap off
 }
 
-function install_mupen64rpi() {
+function install_mupen64plus() {
     for source in *; do
         if [[ -f "$source/projects/unix/Makefile" ]]; then
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
@@ -54,7 +54,7 @@ function install_mupen64rpi() {
     done
 }
 
-function configure_mupen64rpi() {
+function configure_mupen64plus() {
     # to solve startup problems delete old config file
     rm -f "$home/.config/mupen64plus/mupen64plus.cfg"
 
