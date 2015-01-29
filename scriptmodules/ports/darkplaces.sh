@@ -16,8 +16,7 @@ function install_darkplaces() {
 }
 
 function configure_darkplaces() {
-    mkRomDir "ports"
-    mkdir -p "$romdir/ports/quake"
+    mkRomDir "ports/quake"
 
     if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then
         # download / unpack / install quake shareware files

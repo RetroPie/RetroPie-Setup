@@ -1,14 +1,12 @@
 rp_module_id="resetromdirs"
-rp_module_desc="Reset ownership/permissions of the $romdir structure"
+rp_module_desc="Reset ownership/permissions of $romdir"
 rp_module_menus="3+"
 rp_module_flags="nobin"
 
-configure_resetromdirs() {
-    printMsg "Resetting main $romdir ownershop/permissions"
-    mkRootRomDir "$romdir"
-    chown root:$user "$romdir"/*
-    chmod g+w "$romdir"/*
-
-    printMsg "Resetting ownershop on existing files to user: $user"
-    chown -f -R $user:$user "$romdir"/*/*
+function configure_resetromdirs() {
+    printMsg "Resetting $romdir ownershop/permissions"
+    mkUserDir "$romdir"
+    mkUserDir "$biosdir"
+    chown -R $user:$user "$romdir"
+    chown -R $user:$user "$biosdir"
 }

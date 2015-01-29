@@ -20,10 +20,9 @@ function install_doom() {
 }
 
 function configure_doom() {
-    mkRomDir "ports"
+    mkRomDir "ports/doom"
     ensureSystemretroconfig "doom"
 
-    mkdir -p "$romdir/ports/doom"
     cp prboom.wad "$romdir/ports/doom/"
 
     # download doom 1 shareware

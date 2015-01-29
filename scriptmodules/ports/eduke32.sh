@@ -14,8 +14,7 @@ function install_eduke32() {
 }
 
 function configure_eduke32() {
-    mkRomDir "ports"
-    mkdir -p "$romdir/ports/duke3d"
+    mkRomDir "ports/duke3d"
 
     cp /usr/share/games/eduke32/DUKE.RTS "$romdir/ports/duke3d/"
     cp /usr/share/games/eduke32/duke3d.grp "$romdir/ports/duke3d/"

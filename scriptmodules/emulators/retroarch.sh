@@ -46,11 +46,8 @@ function configure_retroarch() {
     mkdir -p "$configdir/all/"
     cp "$md_inst/retroarch.cfg" "$configdir/all/"
 
-    mkdir -p "$romdir/../BIOS/"
-    chown $user:$user "$romdir/../BIOS/"
-
     iniConfig " = " "" "$configdir/all/retroarch.cfg"
-    iniSet "system_directory" "$romdir/../BIOS"
+    iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "false"
