@@ -80,6 +80,7 @@ function rp_printUsageinfo() {
 function rp_callModule() {
     local req_id="$1"
     local mode="$2"
+    shift 2
 
     if [[ -z "$mode" ]]; then
         for mode in depends sources build install configure; do
@@ -114,6 +115,7 @@ function rp_callModule() {
     local md_flags="${__mod_flags[$idx]}"
     local md_build="$__builddir/$mod_id"
     local md_inst="$rootdir/$md_type/$mod_id"
+    local md_params=("$@")
 
     # create function name
     function="${mode}_${mod_id}"
