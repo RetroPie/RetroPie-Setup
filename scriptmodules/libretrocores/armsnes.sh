@@ -23,6 +23,12 @@ function configure_armsnes() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 
+    # system-specific shaders, SNES
+    iniConfig " = " "" "$configdir/snes/retroarch.cfg"
+    iniSet "video_shader" "$emudir/retroarch/shader/snes_phosphor.glslp"
+    iniSet "video_shader_enable" "false"
+    iniSet "video_smooth" "false"
+
     setESSystem "Super Nintendo" "snes" "~/RetroPie/roms/snes" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/libpocketsnes.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/snes/retroarch.cfg %ROM%\" \"$md_id\"" "snes" "snes"
     # <!-- alternatively: <command>$emudir/snes9x-rpi/snes9x %ROM%</command> -->
     # <!-- alternatively: <command>$emudir/pisnes/snes9x %ROM%</command> -->

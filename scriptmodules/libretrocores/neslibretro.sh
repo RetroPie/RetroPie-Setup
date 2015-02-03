@@ -28,5 +28,11 @@ function configure_neslibretro() {
     mkRomDir "nes"
     ensureSystemretroconfig "nes"
 
+    # system-specific shaders, NES
+    iniConfig " = " "" "$configdir/nes/retroarch.cfg"
+    iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
+    iniSet "video_shader_enable" "false"
+    iniSet "video_smooth" "false"
+
     setESSystem "Nintendo Entertainment System" "nes" "~/RetroPie/roms/nes" ".nes .NES .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/fceumm_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/nes/retroarch.cfg %ROM%\" \"$md_id\"" "nes" "nes"
 }

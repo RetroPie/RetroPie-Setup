@@ -33,6 +33,18 @@ function configure_picodrive() {
     ensureSystemretroconfig "segacd"
     ensureSystemretroconfig "sega32x"
 
+    # system-specific shaders, Megadrive
+    iniConfig " = " "" "$configdir/megadrive/retroarch.cfg"
+    iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
+    iniSet "video_shader_enable" "false"
+    iniSet "video_smooth" "false"
+
+    # system-specific shaders, Mastersystem
+    iniConfig " = " "" "$configdir/mastersystem/retroarch.cfg"
+    iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
+    iniSet "video_shader_enable" "false"
+    iniSet "video_smooth" "false"
+
     setESSystem "Sega Master System / Mark III" "mastersystem" "~/RetroPie/roms/mastersystem" ".sms .SMS .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/picodrive_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mastersystem/retroarch.cfg %ROM%\" \"$md_id\"" "mastersystem" "mastersystem"
 
     setESSystem "Sega Mega Drive / Genesis" "megadrive" "~/RetroPie/roms/megadrive" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/picodrive_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/megadrive/retroarch.cfg %ROM%\" \"$md_id\"" "genesis,megadrive" "megadrive"

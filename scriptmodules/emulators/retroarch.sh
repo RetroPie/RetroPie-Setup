@@ -77,37 +77,6 @@ function configure_retroarch() {
     iniSet "input_shader_prev" "n"
     iniSet "video_shader_dir" "$md_inst/shader/"
 
-    # system-specific shaders, SNES
-    iniSet "video_shader" "$md_inst/shader/snes_phosphor.glslp" "$configdir/snes/retroarch.cfg"
-    iniSet "video_shader_enable" "false" "$configdir/snes/retroarch.cfg"
-    iniSet "video_smooth" "false" "$configdir/snes/retroarch.cfg"
-
-    # system-specific shaders, NES
-    iniSet "video_shader" "$md_inst/shader/phosphor.glslp" "$configdir/nes/retroarch.cfg"
-    iniSet "video_shader_enable" "false" "$configdir/nes/retroarch.cfg"
-    iniSet "video_smooth" "false" "$configdir/nes/retroarch.cfg"
-
-    # system-specific shaders, Megadrive
-    iniSet "video_shader" "$md_inst/shader/phosphor.glslp" "$configdir/megadrive/retroarch.cfg"
-    iniSet "video_shader_enable" "false" "$configdir/megadrive/retroarch.cfg"
-    iniSet "video_smooth" "false" "$configdir/megadrive/retroarch.cfg"
-
-    # system-specific shaders, Mastersystem
-    iniSet "video_shader" "$md_inst/shader/phosphor.glslp" "$configdir/mastersystem/retroarch.cfg"
-    iniSet "video_shader_enable" "false" "$configdir/mastersystem/retroarch.cfg"
-    iniSet "video_smooth" "false" "$configdir/mastersystem/retroarch.cfg"
-
-    # system-specific shaders, Gameboy
-    iniSet "video_shader" "$md_inst/shader/hq4x.glslp" "$configdir/gb/retroarch.cfg"
-    iniSet "video_shader_enable" "false" "$configdir/gb/retroarch.cfg"
-
-    # system-specific shaders, Gameboy Color
-    iniSet "video_shader" "$md_inst/shader/hq4x.glslp" "$configdir/gbc/retroarch.cfg"
-    iniSet "video_shader_enable" "false" "$configdir/gbc/retroarch.cfg"
-
-    # system-specific, PSX
-    iniSet "rewind_enable" "false" "$configdir/psx/retroarch.cfg"
-
     # configure keyboard mappings
     iniSet "input_player1_a" "x"
     iniSet "input_player1_b" "z"
