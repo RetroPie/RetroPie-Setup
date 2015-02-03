@@ -114,6 +114,9 @@ function rp_callModule() {
     local md_flags="${__mod_flags[$idx]}"
     local md_build="$__builddir/$mod_id"
     local md_inst="$rootdir/$md_type/$mod_id"
+    # shift the function parameters left so $@ will contain any additional parameters which we can use in modules
+    shift 2
+    local md_params=("$@")
 
     # create function name
     function="${mode}_${mod_id}"

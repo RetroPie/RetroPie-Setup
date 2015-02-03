@@ -70,17 +70,9 @@ rp_registerAllModules
 
 [[ "$1" == "init" ]] && return
 
-# ID scriptmode
-if [[ $# -eq 1 ]]; then
+if [[ $# -gt 0 ]]; then
     ensureRootdirExists
-    rp_callModule $1
-
-# ID Type mode
-elif [[ $# -eq 2 ]]; then
-    ensureRootdirExists
-    rp_callModule $1 $2
-
-# show usage information
+    rp_callModule "$@"
 else
     rp_printUsageinfo
 fi
