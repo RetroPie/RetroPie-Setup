@@ -233,6 +233,7 @@ _EOF_
 
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf} "$rootdir/configs/n64/"
+    chown -R $user:$user "$rootdir/configs/n64"
 
     su "$user" -c "$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64"
     iniConfig " = " "" "$rootdir/configs/n64/mupen64plus.cfg"
@@ -241,8 +242,6 @@ _EOF_
     # Enable bilinear filtering for rice
     # iniSet "Mipmapping" "2"
     # iniSet "ForceTextureFilter" "2"
-    
-    chown -R $user:$user "$rootdir/configs/n64"
 
     mkRomDir "n64-mupen64plus"
 
