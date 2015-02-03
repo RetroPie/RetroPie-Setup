@@ -19,7 +19,7 @@ function sources_emulationstation() {
 
 function build_emulationstation() {
     rpSwap on 512
-    cmake .
+    cmake . -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype/
     make clean
     make
     rpSwap off
