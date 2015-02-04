@@ -74,6 +74,17 @@ function platform_rpi() {
     __binary_url="http://downloads.petrockblock.com/retropiebinaries/"
 }
 
+function platform_rpi2() {
+    __default_cflags="-O2 -mfpu=neon -march=armv7-a -mfloat-abi=hard"
+    __default_asflags=""
+    __default_makeflags=""
+    __default_gcc_version="4.7"
+    __qemu_cpu=cortex-a8
+    __has_binaries=0
+    # reset platform to rpi for reset of script logic
+    __platform=rpi
+}
+
 function platform_odroid() {
     __default_cflags="-O2 -mfpu=neon -march=armv7-a -mfloat-abi=hard"
     __default_asflags=""
