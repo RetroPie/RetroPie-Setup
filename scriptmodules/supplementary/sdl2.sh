@@ -11,7 +11,8 @@ function depends_sdl2() {
 }
 
 function sources_sdl2() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/SDL2-2.0.3.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q http://downloads.petrockblock.com/retropiearchives/SDL2-2.0.3.tar.gz | tar -xvz
+    cd SDL2-2.0.3
     # we need to add the --host due to dh_auto_configure fiddling with the --build parameter which overrides the config.guess. This
     # would cause it not to find the pi gles development files
     sed -i 's/--disable-x11-shared/--disable-x11-shared --host=armv6l-raspberry-linux-gnueabihf --disable-video-opengl --enable-video-gles --disable-esd --disable-pulseaudio/' debian/rules
@@ -21,6 +22,7 @@ function sources_sdl2() {
 }
 
 function build_sdl2() {
+    cd SDL2-2.0.3
     dpkg-buildpackage
 }
 
@@ -111,14 +113,13 @@ _EOF_
 
 function install_sdl2() {
     remove_old_sdl2
-    dpkg -i ../libsdl2_2.0.3_armhf.deb ../libsdl2-dev_2.0.3_armhf.deb
-    rm ../libsdl2*.deb
+    dpkg -i libsdl2_2.0.3_armhf.deb libsdl2-dev_2.0.3_armhf.deb
 }
 
 function install_bin_sdl2() {
     isPlatform "rpi" || fatalError "$mod_id is only available as a binary package for platform rpi"
-    wget http://downloads.petrockblock.com/retropiearchives/libsdl2-dev_2.0.3_armhf.deb
-    wget http://downloads.petrockblock.com/retropiearchives/libsdl2_2.0.3_armhf.deb
+    wget "${__binary_url}libsdl2-dev_2.0.3_armhf.deb"
+    wget "${__binary_url}libsdl2_2.0.3_armhf.deb"
     remove_old_sdl2
     # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
     if ! dpkg -i libsdl2_2.0.3_armhf.deb libsdl2-dev_2.0.3_armhf.deb; then
