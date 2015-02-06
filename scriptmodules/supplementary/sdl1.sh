@@ -18,8 +18,10 @@ function sources_sdl1() {
     
     # add fixes from pssc https://github.com/raspberrypi/firmware/issues/354
 cat >debian/patches/rpi.diff <<\_EOF_
---- a/src/video/fbcon/SDL_fbvideo.c	2012-01-19 06:30:06.000000000 +0000
-+++ b/src/video/fbcon/SDL_fbvideo.c	2015-02-05 23:23:59.000000000 +0000
+Index: libsdl1.2-1.2.15/src/video/fbcon/SDL_fbvideo.c
+===================================================================
+--- libsdl1.2-1.2.15.orig/src/video/fbcon/SDL_fbvideo.c	2012-01-19 06:30:06.000000000 +0000
++++ libsdl1.2-1.2.15/src/video/fbcon/SDL_fbvideo.c	2015-02-06 13:15:53.000000000 +0000
 @@ -65,22 +65,29 @@
  #endif /* FB_TYPE_VGA_PLANES */
  
@@ -238,7 +240,18 @@ cat >debian/patches/rpi.diff <<\_EOF_
  		}
  	}
  
-@@ -1426,8 +1476,12 @@
+@@ -1409,9 +1459,7 @@
+ 
+ static void FB_WaitVBL(_THIS)
+ {
+-#ifdef FBIOWAITRETRACE /* Heheh, this didn't make it into the main kernel */
+-	ioctl(console_fd, FBIOWAITRETRACE, 0);
+-#endif
++	ioctl(console_fd, FBIO_WAITFORVSYNC, 0);
+ 	return;
+ }
+ 
+@@ -1426,8 +1474,12 @@
  		return -2; /* no hardware access */
  	}
  
