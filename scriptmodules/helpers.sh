@@ -156,6 +156,14 @@ function getDepends() {
     done
     if [[ ${#packages[@]} -ne 0 ]]; then
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
+
+        # workaround to force installation of our fixed libsdl1.2 for rpi
+        if isPlatform "rpi"; then
+            for required in ${packages[@]}; do
+                [[ "$required" == "libsdl1.2-dev" ]] && rp_callModule sdl1 install_bin
+            done
+        fi
+
         aptInstall ${packages[@]}
         # check the required packages again rather than return code of apt-get, as apt-get
         # might fail for other reasons (other broken packages, eg samba in a chroot environment)
