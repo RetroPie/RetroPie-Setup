@@ -1,6 +1,6 @@
 rp_module_id="sdl1"
 rp_module_desc="SDL 1.2.15 with rpi fixes"
-rp_module_menus="2+"
+rp_module_menus=""
 rp_module_flags="!odroid nobin"
 
 function depends_sdl1() {
