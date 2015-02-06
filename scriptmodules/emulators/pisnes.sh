@@ -3,9 +3,7 @@ rp_module_desc="SNES emulator PiSNES"
 rp_module_menus="2+"
 
 function sources_pisnes() {
-    gitPullOrClone "$md_build" https://code.google.com/p/pisnes/
-    sed -i "s/-lglib-2.0$/-lglib-2.0 -lbcm_host -lrt -lasound -lm/g" Makefile
-    sed -i "s/armv6 /armv6j /g" Makefile
+    gitPullOrClone "$md_build" https://github.com/joolswills/pisnes.git
 }
 
 function build_pisnes() {
