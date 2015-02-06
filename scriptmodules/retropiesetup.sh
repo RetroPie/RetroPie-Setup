@@ -157,6 +157,9 @@ function rps_main_binaries()
     now=$(date +'%d%m%Y_%H%M')
     {
         rp_callModule aptpackages
+        # force installation of our sdl1 packages as wheezy package may already be installed. This can be solved later
+        # by adding version number checking to the dependency checking
+        rp_callModule sdl1 install_bin
 
         # install needed dependencies for all modules with a binary distribution (except for experimental packages)
         for idx in "${__mod_idx[@]}"; do
