@@ -265,7 +265,6 @@ function build_sdl1() {
 
 function install_sdl1() {
     dpkg -i libsdl1.2debian_1.2.15-6rpi_armhf.deb libsdl1.2-dev_1.2.15-6rpi_armhf.deb
-    rm *.deb
 }
 
 function install_bin_sdl1() {
