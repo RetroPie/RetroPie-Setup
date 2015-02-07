@@ -5,7 +5,7 @@ rp_module_flags="nobin"
 
 function install_esthemesimple() {
     # download themes archive
-    wget -O themesDownload.zip http://blog.petrockblock.com/download/retropie-setup-script-themes-package-simple/
+    wget -O simple_latest.zip "http://downloads.petrockblock.com/retropiearchives/simple_latest.zip"
 
     mkdir -p "/etc/emulationstation/themes"
 
@@ -13,8 +13,8 @@ function install_esthemesimple() {
     rmDirExists "/etc/emulationstation/themes/simple"
 
     # unzip archive to tmp folder
-    unzip themesDownload.zip -d /etc/emulationstation/themes/
+    unzip simple_latest.zip -d /etc/emulationstation/themes/
 
     # delete zi parchive
-    rm themesDownload.zip
+    rm simple_latest.zip
 }
