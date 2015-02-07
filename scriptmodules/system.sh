@@ -79,7 +79,7 @@ function platform_rpi2() {
     __default_asflags=""
     __default_makeflags=""
     __default_gcc_version="4.7"
-    __qemu_cpu=cortex-a8
+    __qemu_cpu=cortex-a15
     __has_binaries=0
     # reset platform to rpi for rest of script logic
     __platform=rpi
