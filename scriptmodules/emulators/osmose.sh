@@ -3,7 +3,7 @@ rp_module_desc="Gamegear emulator Osmose"
 rp_module_menus="2+"
 
 function sources_osmose() {
-    wget -O- -q 'http://downloads.petrockblock.com/retropiearchives/osmose-0.8.1%2Brpi20121122.tar.bz2?dl=1' | tar -xvj --strip-components=1
+    gitPullOrClone "$md_build" https://github.com/joolswills/osmose-rpi.git
 }
 
 function build_osmose() {
