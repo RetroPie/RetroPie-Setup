@@ -33,7 +33,7 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
-    [[ -z "${__platform}" ]] && __platform=rpi
+    [[ -z "${__platform}" ]] && __platform=rpi1
 
     if fn_exists "platform_${__platform}"; then
         platform_${__platform}
@@ -59,7 +59,7 @@ function setup_env() {
 
 }
 
-function platform_rpi() {
+function platform_rpi1() {
     # values to be used for configure/make
     __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
     __default_asflags=""
@@ -81,8 +81,6 @@ function platform_rpi2() {
     __default_gcc_version="4.7"
     __qemu_cpu=cortex-a15
     __has_binaries=0
-    # reset platform to rpi for rest of script logic
-    __platform=rpi
 }
 
 function platform_odroid() {
