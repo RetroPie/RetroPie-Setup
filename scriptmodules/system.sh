@@ -33,12 +33,21 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
-    [[ -z "${__platform}" ]] && __platform=rpi1
+    if [[ -z "$__platform" ]]; then
+        case `sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo` in
+            BCM2708)
+                __platform="rpi1"
+                ;;
+            BCM2709)
+                __platform="rpi2"
+                ;;
+        esac
+    fi
 
     if fn_exists "platform_${__platform}"; then
         platform_${__platform}
     else
-        fatalError "No such system platform $__platform"
+        fatalError "Unknown platform - please manually set the __platform variable to rpi1 or rpi2"
     fi
 
     # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
@@ -80,7 +89,8 @@ function platform_rpi2() {
     __default_makeflags=""
     __default_gcc_version="4.7"
     __qemu_cpu=cortex-a15
-    __has_binaries=0
+    __has_binaries=1
+    __binary_url="http://downloads.petrockblock.com/retropiebinaries/rpi2/"
 }
 
 function platform_odroid() {
