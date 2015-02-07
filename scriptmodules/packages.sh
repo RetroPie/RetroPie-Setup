@@ -214,7 +214,7 @@ function rp_installBin() {
     local archive="$md_type/$md_id.tar.gz";
     local dest="$rootdir/$md_type"
     mkdir -p "$dest"
-    wget -O- -q "$__binary_url$archive" | tar -xvz -C "$dest"
+    wget -O- -q "$__binary_url/$archive" | tar -xvz -C "$dest"
     if fn_exists $function; then
         $function
     fi

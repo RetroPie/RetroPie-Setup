@@ -79,8 +79,8 @@ function platform_rpi1() {
     __qemu_cpu=arm1176
     # do we have prebuild binaries for this platform
     __has_binaries=1
-    # binary archive location (with / on end)
-    __binary_url="http://downloads.petrockblock.com/retropiebinaries/"
+    # binary archive location (without trailing slash)
+    __binary_url="http://downloads.petrockblock.com/retropiebinaries"
 }
 
 function platform_rpi2() {
@@ -90,7 +90,7 @@ function platform_rpi2() {
     __default_gcc_version="4.7"
     __qemu_cpu=cortex-a15
     __has_binaries=1
-    __binary_url="http://downloads.petrockblock.com/retropiebinaries/rpi2/"
+    __binary_url="http://downloads.petrockblock.com/retropiebinaries/rpi2"
 }
 
 function platform_odroid() {
