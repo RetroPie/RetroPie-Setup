@@ -20,7 +20,9 @@ function sources_retroarch() {
 }
 
 function build_retroarch() {
-    ./configure --prefix="$md_inst" --disable-x11 --disable-oss --disable-pulse --enable-floathard
+    local params=(--disable-x11 --disable-oss --disable-pulse --enable-floathard)
+    isPlatform "rpi2" && params+=(--enable-neon)
+    ./configure --prefix="$md_inst" ${params[@]}
     make clean
     make
     md_ret_require="$md_build/retroarch"
