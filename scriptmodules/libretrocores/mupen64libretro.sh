@@ -3,13 +3,21 @@ rp_module_desc="N64 LibretroCore MUPEN64Plus"
 rp_module_menus="2+"
 
 function sources_mupen64plus-libretro() {
-    gitPullOrClone "$md_build" git://github.com/libretro/mupen64plus-libretro.git
+    if isPlatform "rpi2"; then
+        gitPullOrClone "$md_build" https://github.com/gizmo98/mupen64plus-libretro.git
+    else
+        gitPullOrClone "$md_build" git://github.com/libretro/mupen64plus-libretro.git
+    fi
 }
 
 function build_mupen64plus-libretro() {
     rpSwap on 750
     make clean
-    make platform=rpi
+    if isPlatform "rpi2"; then
+        make platform=rpi2
+    else
+        make platform=rpi
+    fi
     rpSwap off
     md_ret_require="$md_build/mupen64plus_libretro.so"
 }
