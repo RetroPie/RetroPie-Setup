@@ -24,7 +24,7 @@ function build_jzintv() {
     mkdir -p jzintv/bin
     cd jzintv/src
     make clean
-    make OPT_FLAGS="-O3 -fomit-frame-pointer -fprefetch-loop-arrays -march=armv6 -mfloat-abi=hard -mfpu=vfp"
+    make OPT_FLAGS="$CFLAGS"
     md_ret_require="$md_build/jzintv/bin/jzintv"
 }
 
