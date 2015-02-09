@@ -34,7 +34,7 @@ function setup_env() {
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
     if [[ -z "$__platform" ]]; then
-        case `sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo` in
+        case $(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo) in
             BCM2708)
                 __platform="rpi1"
                 ;;
