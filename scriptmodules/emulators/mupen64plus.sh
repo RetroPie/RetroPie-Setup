@@ -35,14 +35,12 @@ function build_mupen64plus() {
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
             make -C "$dir/projects/unix" clean
+            params=()
+            [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             if isPlatform "rpi2"; then
-                params=()
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("USE_GLES=1" "NEON=1")
-                [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             else
-                params=()
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("USE_GLES=1" "VFP=1")
-                [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             fi
             make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"
         fi
