@@ -13,13 +13,13 @@ function sources_mupen64plus-testing() {
     local repos=(
         'mupen64plus core'
         'mupen64plus ui-console'
-        'ricrpi audio-omx'
+        'gizmo98 audio-omx'
         'mupen64plus audio-sdl'
         'mupen64plus input-sdl'
         'mupen64plus rsp-hle'
         'gizmo98 video-gles2rice'
         #'Narann video-rice'
-        'gizmo98 video-gles2n64'
+        'gizmo98 video-gles2n64 testing'
     )
     local repo
     for repo in "${repos[@]}"; do
@@ -40,11 +40,13 @@ function build_mupen64plus-testing() {
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-rice" ]] && params+=("VC=1")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
-            [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1")
+            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
             if isPlatform "rpi2"; then
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "NEON=1")
+                [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1" "NEON=1")
             else
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "VFP_HARD=1")
+                [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1")
             fi
             make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"
         fi
@@ -74,18 +76,18 @@ config version=2
 #These values are the physical pixel dimensions of
 #your screen. They are only used for centering the
 #window.
-screen width=800
+screen width=640
 screen height=480
 #The Window position and dimensions specify how and
 #where the games will appear on the screen. Enabling
 #Centre will ensure that the window is centered
 #within the screen (overriding xpos/ypos).
-window enable x11=1
-window fullscreen=1
+window enable x11=0
+window fullscreen=0
 window centre=1
 window xpos=0
 window ypos=0
-window width=800
+window width=640
 window height=480
 #Enabling offscreen frambuffering allows the resulting
 #image to be upscaled to the window dimensions. The
@@ -107,6 +109,7 @@ target FPS=20
 frame render rate=1
 #Vertical Sync Divider (0=No VSYNC, 1=60Hz, 2=30Hz, etc)
 vertical sync=0
+multisampling=0
 #These options enable different rendering paths, they
 #can relieve pressure on the GPU / CPU.
 enable fog=0
@@ -244,7 +247,7 @@ _EOF_
     su "$user" -c "$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64"
     # iniConfig " = " "" "$rootdir/configs/n64/mupen64plus.cfg"
     # iniSet "VideoPlugin" "mupen64plus-video-n64"
-    # iniSet "AudioPlugin" "mupen64plus-audio-omx"
+    iniSet "AudioPlugin" "mupen64plus-audio-omx"
     # Enable bilinear filtering for rice
     # iniSet "Mipmapping" "2"
     # iniSet "ForceTextureFilter" "2"
