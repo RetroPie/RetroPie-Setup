@@ -21,9 +21,15 @@ function sources_mupen64plus() {
         'ricrpi video-gles2n64'
     )
     local repo
+    local dir
     for repo in "${repos[@]}"; do
         repo=($repo)
-        gitPullOrClone "$md_build/mupen64plus-${repo[1]}" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
+        dir="$md_build/mupen64plus-${repo[1]}"
+        gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
+        # the makefile assumes an armv6l machine is a pi so we need to sed it
+        if isPlatform "rpi2" && [[ -f "$dir/projects/unix/Makefile" ]]; then
+            sed -i "s/armv6l/armv7l/" "$dir/projects/unix/Makefile"
+        fi
     done
 }
 
