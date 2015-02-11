@@ -39,6 +39,8 @@ function build_mupen64plus-testing() {
             params=()
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-rice" ]] && params+=("VC=1")
+            [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
+            [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1")
             if isPlatform "rpi2"; then
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "NEON=1")
             else
