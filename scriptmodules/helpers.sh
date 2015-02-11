@@ -97,7 +97,10 @@ function iniProcess() {
     [[ -z "$file" ]] && fatalError "No file provided for ini/config change"
     [[ -z "$key" ]] && fatalError "No key provided for ini/config change on $file"
 
+    # we strip the delimiter of spaces, so we can "fussy" match existing entries that have the wrong spacing
     local delim_strip=${delim// /}
+    # if the stripped delimiter is empty - such as in the case of a space, just use the delimiter instead
+    [[ -z "$delim_strip" ]] && delim_strip="$delim"
     local match_re="[\s#]*$key\s*$delim_strip.*$"
 
     local match
