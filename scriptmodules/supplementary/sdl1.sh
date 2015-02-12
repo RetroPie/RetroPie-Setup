@@ -787,16 +787,18 @@ function build_sdl1() {
 }
 
 function install_sdl1() {
-    dpkg -i libsdl1.2debian_1.2.15-7rpi_armhf.deb libsdl1.2-dev_1.2.15-7rpi_armhf.deb
+    # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
+    if ! dpkg -i libsdl1.2debian_1.2.15-7rpi_armhf.deb libsdl1.2-dev_1.2.15-7rpi_armhf.deb; then
+        apt-get -y -f install
+    fi
+    # remove unused sdl1dispmanx library
+    rm -rf "$rootdir/supplementary/sdl1dispmanx"
 }
 
 function install_bin_sdl1() {
     isPlatform "rpi" || fatalError "$mod_id is only available as a binary package for platform rpi"
     wget "$__binary_url/libsdl1.2debian_1.2.15-7rpi_armhf.deb"
     wget "$__binary_url/libsdl1.2-dev_1.2.15-7rpi_armhf.deb"
-    # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
-    if ! dpkg -i libsdl1.2debian_1.2.15-7rpi_armhf.deb libsdl1.2-dev_1.2.15-7rpi_armhf.deb; then
-        apt-get -y -f install
-    fi
+    install_sdl1
     rm ./*.deb
 }
