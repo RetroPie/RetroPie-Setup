@@ -16,7 +16,7 @@ function build_ps3controller() {
     gcc -o sixpair sixpair.c -lusb
     cd sixad
     make clean
-    make CXX="g++-4.6"
+    make CXX="g++-4.6" CXXFLAGS="-O2"
 }
 
 function install_ps3controller() {
