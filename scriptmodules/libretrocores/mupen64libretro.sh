@@ -13,11 +13,11 @@ function sources_mupen64plus-libretro() {
 function build_mupen64plus-libretro() {
     rpSwap on 750
     make clean
-    if isPlatform "rpi2"; then
-        make platform=rpi2
-    else
+    #if isPlatform "rpi2"; then
+    #    make platform=rpi2
+    #else
         make platform=rpi
-    fi
+    #fi
     rpSwap off
     md_ret_require="$md_build/mupen64plus_libretro.so"
 }
