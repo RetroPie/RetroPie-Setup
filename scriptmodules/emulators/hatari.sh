@@ -28,5 +28,5 @@ function configure_hatari() {
 
     setDispmanx "$md_id" 1
 
-    setESSystem "Atari ST/STE/Falcon" "atariststefalcon" "~/RetroPie/roms/atariststefalcon" ".st .ST .stx .STX .img .IMG .rom .ROM" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"hatari %ROM%\" \"$md_id\"" "atarist" "atarist"
+    setESSystem "Atari ST/STE/Falcon" "atariststefalcon" "~/RetroPie/roms/atariststefalcon" ".st .ST .stx .STX .img .IMG .rom .ROM" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/hatari %ROM%\" \"$md_id\"" "atarist" "atarist"
 }
