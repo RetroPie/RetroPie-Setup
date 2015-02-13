@@ -98,7 +98,7 @@ function configure_uae4all() {
     cat > "$md_inst/uae4all.sh" << _EOF_
 #!/bin/bash
 pushd "$md_inst"
-./uae4all
+$rootdir/supplementary/runcommand/runcommand.sh 0 ./uae4all "$md_id"
 popd
 _EOF_
     chmod a+x "$md_inst/uae4all.sh"
