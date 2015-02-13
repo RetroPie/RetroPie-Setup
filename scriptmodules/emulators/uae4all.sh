@@ -74,7 +74,7 @@ function build_uae4all() {
 
 function install_uae4all() {
     unzip -o "AndroidData/guichan26032014.zip" -d "$md_inst"
-    unzip -o "AndroidData/guichan26032014.zip" -d "$md_inst"
+    unzip -o "AndroidData/data.zip" -d "$md_inst"
     unzip -o "AndroidData/aros20140110.zip" -d "$md_inst"
     md_ret_files=(
         'copying'
