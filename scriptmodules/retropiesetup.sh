@@ -105,6 +105,7 @@ rps_main_menu() {
         if [[ $__has_binaries -eq 1 ]]; then
             options+=(
                 5 "INSTALL individual emulators from binary or source"
+                6 "UPDATE RetroPie Binaries"
             )
         else
             options+=(5 "INSTALL individual emulators from source")
@@ -121,6 +122,7 @@ rps_main_menu() {
                 3) rps_main_setup ;;
                 4) rps_main_experimental ;;
                 5) rps_install_individual ;;
+                6) rps_downloadBinaries ;;
                 U) rps_main_updatescript ;;
                 R) rps_main_reboot ;;
             esac
@@ -207,7 +209,12 @@ function rps_main_updatescript()
         popd
         return
     fi
-    git pull
+    local error
+    if ! error=$(git pull 2>&1 >/dev/null); then
+        dialog --backtitle "$__backtitle" --msgbox "Update failed:\n\n$error" 20 60
+        popd
+        return
+    fi
     popd
     printMsg "Updating ESConfigEdit script."
     updateESConfigEdit
