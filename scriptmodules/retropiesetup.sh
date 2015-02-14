@@ -105,7 +105,6 @@ rps_main_menu() {
         if [[ $__has_binaries -eq 1 ]]; then
             options+=(
                 5 "INSTALL individual emulators from binary or source"
-                6 "UPDATE RetroPie Binaries"
             )
         else
             options+=(5 "INSTALL individual emulators from source")
@@ -122,7 +121,6 @@ rps_main_menu() {
                 3) rps_main_setup ;;
                 4) rps_main_experimental ;;
                 5) rps_install_individual ;;
-                6) rps_downloadBinaries ;;
                 U) rps_main_updatescript ;;
                 R) rps_main_reboot ;;
             esac
