@@ -8,14 +8,10 @@ function depends_jzintv() {
 }
 
 function sources_jzintv() {
-    # wget 'http://spatula-city.org/~im14u2c/intv/dl/jzintv-1.0-beta4-src.zip' -O jzintv.zip
-    wget http://downloads.petrockblock.com/retropiearchives/jzintv-svn.zip -O jzintv.zip
-    unzip -n jzintv.zip
+    wget http://downloads.petrockblock.com/retropiearchives/jzintv-20141028.zip -O jzintv.zip
+    unzip jzintv.zip
     rm jzintv.zip
     cd jzintv/src
-    # use our default gcc-4.7
-    sed -i "s/-4\.8\.0/-4.7/" Makefile
-    sed -i "s|LFLAGS   = -L../lib|LFLAGS   = -L../lib -lm|" Makefile
     # don't build event_diag.rom/emu_ver.rom/joy_diag.rom/jlp_test.bin due to missing example/library files from zip
     sed -i '/^PROGS/,$d' {event,joy,jlp,util}/subMakefile
 }
@@ -39,7 +35,9 @@ function install_jzintv() {
 function configure_jzintv() {
     mkRomDir "intellivision"
 
-    setESSystem "Intellivision" "intellivision" "~/RetroPie/roms/intellivision" ".int .INT .bin .BIN" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/jzintv -z1 -f1 -q %ROM%\" \"$md_id\"" "intellivision" ""
+    setDispmanx "$md_id" 1
 
-    __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files to the folder '/usr/local/share/jzintv/rom'."
+    setESSystem "Intellivision" "intellivision" "~/RetroPie/roms/intellivision" ".int .INT .bin .BIN" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/jzintv -p $biosdir -q %ROM%\" \"$md_id\"" "intellivision" ""
+
+    __INFMSGS="$__INFMSGS You need to copy Intellivision BIOS files (exec.bin & grom.bin) to the folder $biosdir."
 }
