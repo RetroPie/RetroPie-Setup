@@ -80,7 +80,7 @@ function platform_rpi1() {
     # do we have prebuild binaries for this platform
     __has_binaries=1
     # binary archive location (without trailing slash)
-    __binary_url="http://downloads.petrockblock.com/retropiebinaries"
+    __binary_url="http://downloads.petrockblock.com/retropiebinaries/rpi1"
 }
 
 function platform_rpi2() {
