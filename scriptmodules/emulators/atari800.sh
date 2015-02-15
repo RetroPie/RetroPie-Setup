@@ -17,7 +17,7 @@ patch -p1 <<\_EOF_
  if [[ "$a8_target" = "rpi" ]]; then
 -    CC="${RPI_SDK}/bin/arm-linux-gnueabihf-gcc"
 +    [[ -z "$RPI_SDK" ]] && RPI_SDK="/opt/vc"
-+    CC="arm-linux-gnueabihf-gcc"
++    CC="gcc"
      CFLAGS="$CFLAGS -I${RPI_SDK}/include -I${RPI_SDK}/include/SDL -I${RPI_SDK}/include/interface/vmcs_host/linux -I${RPI_SDK}/include/interface/vcos/pthreads"
      LDFLAGS="$LDFLAGS -Wl,--unresolved-symbols=ignore-in-shared-libs -L${RPI_SDK}/lib"
  fi
@@ -33,6 +33,7 @@ _EOF_
 }
 
 function build_atari800() {
+    set -x
     cd src
     autoreconf -v
     params=()
