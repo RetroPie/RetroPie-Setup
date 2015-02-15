@@ -166,7 +166,7 @@ function rp_callModule() {
             ;;
     esac
     local pushed=$?
-    local errors=()
+    local md_ret_errors=()
 
     # print an action and a description
     printHeading "$action $md_desc"
@@ -174,16 +174,22 @@ function rp_callModule() {
     # call the function
     $function
 
+    # some errors were returned. append to global errors and return
+    if [[ "${#md_ret_errors}" -gt 0 ]]; then
+        __ERRMSGS+=("${md_ret_errors[@]}")
+        return 1
+    fi
+
     # check if any required files are found
     if [[ -n "$md_ret_require" ]] && [[ ! -f "$md_ret_require" ]]; then
-        errors+=("Could not successfully $function $md_desc ($md_ret_require not found).")
+        md_ret_errors+=("Could not successfully $function $md_desc ($md_ret_require not found).")
     fi
 
     # check for existance and copy any files/directories returned
     if [[ -n "$md_ret_files" ]]; then
         for file in "${md_ret_files[@]}"; do
             if [[ ! -e "$md_build/$file" ]]; then
-                errors+=("Could not successfully install $md_desc ($md_build/$file not found).")
+                md_ret_errors+=("Could not successfully install $md_desc ($md_build/$file not found).")
                 break
             fi
             cp -Rv "$md_build/$file" "$md_inst"
@@ -200,8 +206,8 @@ function rp_callModule() {
             ;;
     esac
 
-    if [[ "${#errors[@]}" -gt 0 ]]; then
-        __ERRMSGS+=("${errors[@]}")
+    if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
+        __ERRMSGS+=("${md_ret_errors[@]}")
         return 1
     fi
 

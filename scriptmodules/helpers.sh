@@ -191,6 +191,7 @@ function getDepends() {
             echo "Successfully installed package(s): ${packages[@]}."
         else
             echo "Could not install package(s): ${failed[@]}."
+            md_ret_errors+=("Could not install package(s): ${failed[@]}.")
             return 1
         fi
     fi
