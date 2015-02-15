@@ -58,7 +58,10 @@ source "$scriptdir/scriptmodules/packages.sh"
 
 setup_env
 
-getDepends git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_version build-essential || exit 1
+if ! getDepends git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_version build-essential; then
+    printMsgs "console" "Unable to install packages required by $0" "${md_ret_errors[@]}" >&2
+    exit 1
+fi
 
 # set default gcc version
 gcc_version $__default_gcc_version
@@ -79,5 +82,4 @@ else
     rp_printUsageinfo
 fi
 
-printMsgs "console" "${__ERRMSGS[@]}" >&2
 printMsgs "console" "${__INFMSGS[@]}"
