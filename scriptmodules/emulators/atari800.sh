@@ -33,7 +33,6 @@ _EOF_
 }
 
 function build_atari800() {
-    set -x
     cd src
     autoreconf -v
     params=()
