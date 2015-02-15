@@ -172,7 +172,6 @@ function rps_main_binaries()
         rp_callModule stella
         rp_callModule zmachine
         rp_callModule fuse
-        rp_callModule hatari
         rp_callModule eduke32
         rp_callModule esthemesimple
 
