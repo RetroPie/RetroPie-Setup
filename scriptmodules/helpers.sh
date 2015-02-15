@@ -180,10 +180,11 @@ function getDepends() {
         if [[ ${#failed[@]} -eq 0 ]]; then
             echo "Successfully installed package(s): ${packages[@]}."
         else
-            echo "Could not install package(s): ${packages[@]}. Aborting now."
-            exit 1
+            echo "Could not install package(s): ${failed[@]}."
+            return 1
         fi
     fi
+    return 0
 }
 
 function rpSwap() {

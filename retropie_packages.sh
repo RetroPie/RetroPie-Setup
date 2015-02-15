@@ -58,7 +58,7 @@ source "$scriptdir/scriptmodules/packages.sh"
 
 setup_env
 
-getDepends git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_version build-essential
+getDepends git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_version build-essential || exit 1
 
 # set default gcc version
 gcc_version $__default_gcc_version
