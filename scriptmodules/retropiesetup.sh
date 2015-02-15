@@ -42,6 +42,14 @@ function rps_checkForLogDirectory() {
     fi
 }
 
+function rps_printInfo() {
+    if [[ ${#__ERRMSGS[@]} -gt 0 ]]; then
+        printMsgs "dialog" "${__ERRMSGS[@]}"
+        printMsgs "dialog" "Please see $1 more in depth information regarding the errors."
+    fi
+    printMsgs "dialog" "${__INFMSGS[@]}"
+}
+
 function rps_buildMenu()
 {
     options=()
@@ -91,6 +99,9 @@ function rps_availFreeDiskSpace() {
 # retropie-setup main menu
 rps_main_menu() {
     while true; do
+        __ERRMSGS=()
+        __INFMSGS=()
+
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose installation either based on binaries or on sources." 22 76 16)
         options=()
         if [[ $__has_binaries -eq 1 ]]; then
@@ -146,13 +157,12 @@ function rps_main_binaries()
 {
     local idx
 
-    __INFMSGS=""
-
     clear
-    printMsg "Binaries-based installation"
+    printHeading "Binaries-based installation"
 
     ensureRootdirExists
     now=$(date +'%d%m%Y_%H%M')
+    local logfilename="$scriptdir/logs/run_$now.log.gz"
     {
         rp_callModule aptpackages
         # force installation of our sdl1 packages as wheezy package may already be installed. This can be solved later
@@ -186,36 +196,33 @@ function rps_main_binaries()
         rp_callModule bashwelcometweak
         rp_callModule sambashares
 
-    } &> >(tee >(gzip --stdout > $scriptdir/logs/run_$now.log.gz))
+    } &> >(tee >(gzip --stdout > "$logfilename"))
 
-    chown -R $user:$user $scriptdir/logs/run_$now.log.gz
+    chown -R $user:$user "$logfilename"
 
-    if [[ -n $__INFMSGS ]]; then
-        dialog --backtitle "$__backtitle" --msgbox "$__INFMSGS" 20 60
-    fi
-
-    dialog --backtitle "$__backtitle" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 22 76
+    rps_printInfo "$logfilename"
+    printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
 }
 
 function rps_main_updatescript()
 {
-    printMsg "Fetching latest version of the RetroPie Setup Script."
+    printHeading "Fetching latest version of the RetroPie Setup Script."
     pushd $scriptdir
     if [[ ! -d ".git" ]]; then
-        dialog --backtitle "$__backtitle" --msgbox "Cannot find directory '.git'. Please clone the RetroPie Setup script via 'git clone git://github.com/petrockblog/RetroPie-Setup.git'" 20 60
+        printMsgs "dialog" "Cannot find directory '.git'. Please clone the RetroPie Setup script via 'git clone git://github.com/petrockblog/RetroPie-Setup.git'"
         popd
         return
     fi
     local error
     if ! error=$(git pull 2>&1 >/dev/null); then
-        dialog --backtitle "$__backtitle" --msgbox "Update failed:\n\n$error" 20 60
+        printMsgs "dialog" "Update failed:\n\n$error"
         popd
         return
     fi
     popd
-    printMsg "Updating ESConfigEdit script."
+    printHeading "Updating ESConfigEdit script."
     updateESConfigEdit
-    dialog --backtitle "$__backtitle" --msgbox "Fetched the latest version of the RetroPie Setup script. You need to restart the script." 20 60
+    printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script. You need to restart the script."
 }
 
 function rps_main_options()
@@ -224,11 +231,9 @@ function rps_main_options()
     cmd=(dialog --separate-output --backtitle "$__backtitle" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
-    __ERRMSGS=""
-    __INFMSGS=""
     if [[ -n "$choices" ]]; then
-        now=$(date +'%d%m%Y_%H%M')
-        logfilename=$scriptdir/logs/run_$now.log.gz
+        local now=$(date +'%d%m%Y_%H%M')
+        local logfilename="$scriptdir/logs/run_$now.log.gz"
         choices=($choices)
         total=${#choices[@]}
         count=1
@@ -237,30 +242,22 @@ function rps_main_options()
             for choice in ${choices[@]}
             do
                 rp_callModule $choice ${command[$choice]}
-                printMsg "Module $count of $total processed."
+                printHeading "Module $count of $total processed."
                 ((count++))
             done
-        } &> >(tee >(gzip --stdout > $logfilename))
-        chown -R $user:$user $logfilename
+        } &> >(tee >(gzip --stdout > "$logfilename"))
+        chown -R $user:$user "$logfilename"
 
-        if [[ -n $__ERRMSGS ]]; then
-            dialog --backtitle "$__backtitle" --msgbox "$__ERRMSGS See $logfilename for more details." 20 60
-        fi
-
-        if [[ -n $__INFMSGS ]]; then
-            dialog --backtitle "$__backtitle" --msgbox "$__INFMSGS" 20 60
-        fi
-
-        dialog --backtitle "$__backtitle" --msgbox "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!" 20 60
-
+        rps_printInfo "$logfilename"
+        printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
     fi
 }
 
 function rps_main_setup()
 {
-    now=$(date +'%d%m%Y_%H%M')
-    logfilename=$scriptdir/logs/run_$now.log.gz
-    touch $logfilename
+    local now=$(date +'%d%m%Y_%H%M')
+    local logfilename="$scriptdir/logs/run_$now.log.gz"
+    touch "$logfilename"
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 3
@@ -272,14 +269,15 @@ function rps_main_setup()
         fi
     done
 
-    chown -R $user:$user $logfilename
+    rps_printInfo "$logfilename"
+    chown -R $user:$user "$logfilename"
 }
 
 function rps_main_experimental()
 {
-    now=$(date +'%d%m%Y_%H%M')
-    logfilename=$scriptdir/logs/run_$now.log.gz
-    touch $logfilename
+    local now=$(date +'%d%m%Y_%H%M')
+    local logfilename="$scriptdir/logs/run_$now.log.gz"
+    touch "$logfilename"
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 4
@@ -291,6 +289,7 @@ function rps_main_experimental()
         fi
     done
 
+    rps_printInfo "$logfilename"
     chown -R $user:$user $logfilename
 }
 
@@ -311,6 +310,9 @@ function rps_install_individual()
             else
                 choice=s
             fi
+            clear
+            __ERRMSGS=()
+            __INFMSGS=()
             case $choice in
                 b)
                     rp_callModule "$md_idx" depends
@@ -321,6 +323,7 @@ function rps_install_individual()
                     rp_callModule "$md_idx"
                     ;;
             esac
+            rps_printInfo
         else
             break
         fi

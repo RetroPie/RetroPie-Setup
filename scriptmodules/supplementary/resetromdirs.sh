@@ -4,7 +4,7 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function configure_resetromdirs() {
-    printMsg "Resetting $romdir ownershop/permissions"
+    printHeading "Resetting $romdir ownershop/permissions"
     mkUserDir "$romdir"
     mkUserDir "$biosdir"
     chown -R $user:$user "$romdir"

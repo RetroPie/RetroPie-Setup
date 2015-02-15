@@ -4,7 +4,7 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function configure_splashscreen() {
-    printMsg "Configuring splashscreen"
+    printHeading "Configuring splashscreen"
 
     local options
     local ctr
@@ -22,8 +22,6 @@ function configure_splashscreen() {
     done
     popd > /dev/null
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose splashscreen." 22 76 16)
-    __ERRMSGS=""
-    __INFMSGS=""
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     splashdir=${dirlist[$choices]}
     if [[ -n "$choices" ]]; then

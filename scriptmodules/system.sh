@@ -27,8 +27,8 @@
 
 function setup_env() {
 
-    __ERRMSGS=""
-    __INFMSGS=""
+    __ERRMSGS=()
+    __INFMSGS=()
 
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')

@@ -79,11 +79,5 @@ else
     rp_printUsageinfo
 fi
 
-if [[ -n $__ERRMSGS ]]; then
-    echo $__ERRMSGS >&2
-fi
-
-if [[ -n $__INFMSGS ]]; then
-    echo $__INFMSGS
-fi
-
+printMsgs "console" "${__ERRMSGS[@]}" >&2
+printMsgs "console" "${__INFMSGS[@]}"

@@ -40,5 +40,5 @@ _EOF_
 
     setESSystem "NeoGeo" "neogeo-gngeopi" "~/RetroPie/roms/neogeo-gngeopi" ".zip .ZIP .fba .FBA" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/gngeo -i $romdir/neogeo-gngeopi -B $md_inst/neogeobios %ROM%\" \"$md_id\"" "neogeo" "neogeo"
 
-    __INFMSGS="$__INFMSGS You need to copy the NeoGeo BIOS (neogeo.zip) files to the roms folder '$romdir/neogeo-gngeopi'."
+    __INFMSGS+=("You need to copy the NeoGeo BIOS (neogeo.zip) files to the roms folder '$romdir/neogeo-gngeopi'.")
 }

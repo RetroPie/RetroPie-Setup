@@ -71,7 +71,7 @@ function package_emulationstation() {
 
     getDepends reprepro
 
-    printMsg "Building package of EmulationStation"
+    printHeading "Building package of EmulationStation"
 
 #   # create Raspbian package
 #   $PKGNAME="retropie-supplementary-emulationstation"
