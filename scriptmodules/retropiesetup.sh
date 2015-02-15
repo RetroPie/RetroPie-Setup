@@ -315,9 +315,7 @@ function rps_install_individual()
             __INFMSGS=()
             case $choice in
                 b)
-                    rp_callModule "$md_idx" depends
-                    rp_callModule "$md_idx" install_bin
-                    rp_callModule "$md_idx" configure
+                    rp_callModule "$md_idx" depends && rp_callModule "$md_idx" install_bin && rp_callModule "$md_idx" configure
                     ;;
                 s)
                     rp_callModule "$md_idx"
