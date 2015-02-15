@@ -30,6 +30,13 @@
 #  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
 #
 
+function rps_setLogFilename() {
+    local now=$(date +'%d%m%Y_%H%M')
+    logfilename="$scriptdir/logs/run_$now.log.gz"
+    touch "$logfilename"
+}
+
+
 function rps_checkForLogDirectory() {
     # make sure that RetroPie-Setup log directory exists
     if [[ ! -d $scriptdir/logs ]]; then
@@ -161,8 +168,8 @@ function rps_main_binaries()
     printHeading "Binaries-based installation"
 
     ensureRootdirExists
-    now=$(date +'%d%m%Y_%H%M')
-    local logfilename="$scriptdir/logs/run_$now.log.gz"
+    local logfilename
+    rps_setLogFilename
     {
         rp_callModule aptpackages
         # force installation of our sdl1 packages as wheezy package may already be installed. This can be solved later
@@ -232,13 +239,12 @@ function rps_main_options()
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     clear
     if [[ -n "$choices" ]]; then
-        local now=$(date +'%d%m%Y_%H%M')
-        local logfilename="$scriptdir/logs/run_$now.log.gz"
+        local logfilename
+        rps_setLogFilename
         choices=($choices)
         total=${#choices[@]}
         count=1
         {
-            touch $logfilename
             for choice in ${choices[@]}
             do
                 rp_callModule $choice ${command[$choice]}
@@ -255,9 +261,8 @@ function rps_main_options()
 
 function rps_main_setup()
 {
-    local now=$(date +'%d%m%Y_%H%M')
-    local logfilename="$scriptdir/logs/run_$now.log.gz"
-    touch "$logfilename"
+    local logfilename
+    rps_setLogFilename
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 3
@@ -275,10 +280,9 @@ function rps_main_setup()
 
 function rps_main_experimental()
 {
-    local now=$(date +'%d%m%Y_%H%M')
-    local logfilename="$scriptdir/logs/run_$now.log.gz"
-    touch "$logfilename"
+    local logfilename
     while true; do
+        rps_setLogFilename
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 4
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -295,6 +299,7 @@ function rps_main_experimental()
 
 function rps_install_individual()
 {
+    local logfilename
     local options=()
     for idx in "${__mod_idx[@]}"; do
         if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobin ]]; then
@@ -304,6 +309,7 @@ function rps_install_individual()
     while true; do
         local md_idx=$(dialog --backtitle "$__backtitle" --menu "Select Emulator/Port." 22 76 16 "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$md_idx" ]]; then
+            rps_setLogFilename
             local choice
             if [[ $__has_binaries -eq 1 ]]; then
                 choice=$(dialog --backtitle "$__backtitle" --menu "Install ${__mod_id[$md_idx]} - ${__mod_desc[$md_idx]}\nFrom binary or source?" 12 60 10 b Binary s Source 2>&1 >/dev/tty)
@@ -313,15 +319,17 @@ function rps_install_individual()
             clear
             __ERRMSGS=()
             __INFMSGS=()
-            case $choice in
-                b)
-                    rp_callModule "$md_idx" depends && rp_callModule "$md_idx" install_bin && rp_callModule "$md_idx" configure
-                    ;;
-                s)
-                    rp_callModule "$md_idx"
-                    ;;
-            esac
-            rps_printInfo
+            {
+                case $choice in
+                    b)
+                        rp_callModule "$md_idx" depends && rp_callModule "$md_idx" install_bin && rp_callModule "$md_idx" configure
+                        ;;
+                    s)
+                        rp_callModule "$md_idx"
+                        ;;
+                esac
+            } &> >(tee >(gzip --stdout > "$logfilename"))
+            rps_printInfo $logfilename
         else
             break
         fi
