@@ -109,7 +109,6 @@ target FPS=20
 frame render rate=1
 #Vertical Sync Divider (0=No VSYNC, 1=60Hz, 2=30Hz, etc)
 vertical sync=0
-multisampling=0
 #These options enable different rendering paths, they
 #can relieve pressure on the GPU / CPU.
 enable fog=0
@@ -129,14 +128,24 @@ texture fast CRC=1
 texture pow2=1
 #
 update mode=1
+# Note: Ignore offscreen rendering=1 produces flickering on a raspberry pi 
 ignore offscreen rendering=0
 force screen clear=1
 tribuffer opt=1
 flip vertical=0
 hack banjo tooie=0
-hack zelda=0
+hack zelda=1
 hack alpha=0
 hack z=0
+#
+# Raspberry Pi options:
+# ----------------------------------------------------------------------
+# Use multisampling antialiasing (0=disabled, 2=2x multisampling)
+multisampling=2
+# If auto resolution is enabled gles2n64 will use your current screen
+# resolution instead of window width/height and framebuffer width/height
+# (0=disabled, 1=enabled)
+auto resolution=1
 _EOF_
 
     cat > "$rootdir/configs/n64/gles2n64rom.conf" << _EOF_
@@ -246,7 +255,7 @@ _EOF_
     chown -R $user:$user "$rootdir/configs/n64"
     su "$user" -c "$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64"
     iniConfig " = " "" "$rootdir/configs/n64/mupen64plus.cfg"
-    # iniSet "VideoPlugin" "mupen64plus-video-n64"
+    iniSet "VideoPlugin" "mupen64plus-video-n64"
     iniSet "AudioPlugin" "mupen64plus-audio-omx"
     # Enable bilinear filtering for rice
     # iniSet "Mipmapping" "2"
