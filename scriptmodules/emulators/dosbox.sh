@@ -16,7 +16,12 @@ function build_dosbox() {
     ./configure --prefix="$md_inst" --disable-opengl
     # enable dynamic recompilation for armv4
     sed -i 's|/\* #undef C_DYNREC \*/|#define C_DYNREC 1|' config.h
-    sed -i 's/C_TARGETCPU.*/C_TARGETCPU ARMV4LE/g' config.h
+    if isPlatform "rpi2" || isPlatform "odroid"; then
+        sed -i 's/C_TARGETCPU.*/C_TARGETCPU ARMV7LE/g' config.h
+        sed -i 's|/\* #undef C_UNALIGNED_MEMORY \*/|#define C_UNALIGNED_MEMORY 1|' config.h
+    else
+        sed -i 's/C_TARGETCPU.*/C_TARGETCPU ARMV4LE/g' config.h
+    fi
     make clean
     make
     md_ret_require="$md_build/src/dosbox"
@@ -42,6 +47,7 @@ _EOF_
         iniSet "usescancodes" "false"
         iniSet "core" "dynamic"
         iniSet "cycles" "max"
+        iniSet "scaler" "none"
     fi
 
     configure_dispmanx_off_dosbox
@@ -49,20 +55,3 @@ _EOF_
     setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".sh" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"%ROM%\" \"$md_id\"" "pc" "pc"
 }
 
-function configure_dispmanx_off_dosbox() {
-    local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
-    if [[ -f "$config_path" ]]; then
-        iniConfig "=" "" "$config_path"
-        # scaling
-        iniSet "scaler" "normal2x"
-    fi
-}
-
-function configure_dispmanx_on_dosbox() {
-    local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
-    if [[ -f "$config_path" ]]; then
-        iniConfig "=" "" "$config_path"
-        # no scaling
-        iniSet "scaler" "none"
-    fi
-}
