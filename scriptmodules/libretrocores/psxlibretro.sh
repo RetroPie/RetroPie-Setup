@@ -24,7 +24,7 @@ function install_psxlibretro() {
         'COPYING'
         'libretro.so'
         'NEWS'
-        'README'
+        'README.md'
         'readme.txt'
     )
 }
