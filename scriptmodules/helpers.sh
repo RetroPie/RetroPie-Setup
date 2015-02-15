@@ -326,3 +326,18 @@ function ensureSystemretroconfig {
         chown -R $user:$user "$configdir/$1"
     fi
 }
+
+# make sure we have all the needed modes in /etc/fb.modes - which is currently just the addition of 320x240.
+# without a 320x240 mode in fb.modes many of the emulators that output to framebuffer (stella / snes9x / gngeo)
+# would just show in a small area of the screen
+function ensureFBModes() {
+    if ! grep -q 'mode "320x240"' /etc/fb.modes 2>/dev/null; then
+        cat >> /etc/fb.modes <<_EOF_
+# added by RetroPie-Setup - 320x240 mode for emulators
+mode "320x240"
+    geometry 320 240 640 480 16
+    timings 0 0 0 0 0 0 0
+endmode
+_EOF_
+    fi
+}

@@ -68,6 +68,8 @@ mkUserDir "$biosdir"
 
 rp_registerAllModules
 
+ensureFBModes
+
 [[ "$1" == "init" ]] && return
 
 if [[ $# -gt 0 ]]; then
