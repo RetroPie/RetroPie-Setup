@@ -27,10 +27,14 @@ dispmanx_conf="/opt/retropie/configs/all/dispmanx.cfg"
 retronetplay_conf="/opt/retropie/configs/all/retronetplay.cfg"
 
 declare -A mode
-mode[1-4:3]="CEA-1"
-mode[1-16:9]="CEA-1"
-mode[4-16:9]="CEA-4"
-mode[4-4:3]="DMT-16"
+
+mode[1-CEA-4:3]="CEA-1"
+mode[1-DMT-4:3]="DMT-4"
+mode[1-CEA-16:9]="CEA-1"
+
+mode[4-CEA-4:3]="DMT-16"
+mode[4-DMT-4:3]="DMT-16"
+mode[4-CEA-16:9]="CEA-4"
 
 function get_mode() {
     local emusave="$1"
@@ -40,12 +44,17 @@ function get_mode() {
     status=$(tvservice -s)
     if [[ "$status" =~ (PAL|NTSC) ]]; then
         mode_cur=$(echo "$status" | grep -oE "(PAL|NTSC) (4:3|16:10|16:9)")
+        mode_cur=${mode_cur/ /-}
     else
-        mode_cur=$(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)")
-        mode_cur=${mode_cur//[()]/}
+        mode_cur=($(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)"))
+        mode_cur_type="${mode_cur[0]}"
+        mode_cur_id="${mode_cur[1]//[()]/}"
+        mode_cur="$mode_cur_type-$mode_cur_id"
     fi
-    mode_cur=${mode_cur/ /-}
-    aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
+
+    mode_cur_aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
+    # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
+    [[ -z "$mode_cur_aspect" ]] && mode_cur_aspect="4:3"
 
     if [[ -f "$video_conf" ]]; then
       source "$video_conf"
@@ -60,7 +69,7 @@ function get_mode() {
         elif [[ "$reqmode" =~ ^(PAL|NTSC)-(4:3|16:10|16:9)$ ]]; then
             mode_new="$reqmode"
         else
-            mode_new="${mode[${reqmode}-${aspect}]}"
+            mode_new="${mode[${reqmode}-${mode_cur_type}-${mode_cur_aspect}]}"
         fi
     fi
 }
