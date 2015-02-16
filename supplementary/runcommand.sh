@@ -39,28 +39,28 @@ function get_mode() {
     # get current mode / aspect ratio
     status=$(tvservice -s)
     if [[ "$status" =~ (PAL|NTSC) ]]; then
-        currentmode=$(echo "$status" | grep -oE "(PAL|NTSC) (4:3|16:10|16:9)")
+        mode_cur=$(echo "$status" | grep -oE "(PAL|NTSC) (4:3|16:10|16:9)")
     else
-        currentmode=$(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)")
-        currentmode=${currentmode//[()]/}
+        mode_cur=$(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)")
+        mode_cur=${mode_cur//[()]/}
     fi
-    currentmode=${currentmode/ /-}
+    mode_cur=${mode_cur/ /-}
     aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
 
     if [[ -f "$video_conf" ]]; then
       source "$video_conf"
-      newmode="${!romsave}"
-      [[ -z "$newmode" ]] && newmode="${!emusave}"
+      mode_new="${!romsave}"
+      [[ -z "$mode_new" ]] && mode_new="${!emusave}"
     fi
 
-    if [[ -z "$newmode" ]]; then
+    if [[ -z "$mode_new" ]]; then
         # if called with specific mode, use that else choose the best mode from our array
         if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
-            newmode="$reqmode"
+            mode_new="$reqmode"
         elif [[ "$reqmode" =~ ^(PAL|NTSC)-(4:3|16:10|16:9)$ ]]; then
-            newmode="$reqmode"
+            mode_new="$reqmode"
         else
-            newmode="${mode[${reqmode}-${aspect}]}"
+            mode_new="${mode[${reqmode}-${aspect}]}"
         fi
     fi
 }
@@ -137,10 +137,10 @@ function choose_mode() {
     done
 
     cmd=(dialog --default-item "$default" --menu "Choose video output mode for $emulator"  22 76 16 )
-    newmode=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    [[ -z "$newmode" ]] && return
+    mode_new=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$mode_new" ]] && return
 
-    iniSet set "=" '"' "$save" "$newmode" "$video_conf"
+    iniSet set "=" '"' "$save" "$mode_new" "$video_conf"
 }
 
 function switch_mode() {
@@ -253,13 +253,13 @@ clear
 echo "Press 'x' or 'm' to configure launch options for emulator/port ($emulator)"
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
-    main_menu "$emulator" "$emusave" "$romsave" "$newmode"
+    main_menu "$emulator" "$emusave" "$romsave" "$mode_new"
     clear
 fi
 
 switched=0
-if [[ -n "$newmode" ]] && [[ "$newmode" != "$currentmode" ]]; then
-    switch_mode "$newmode"
+if [[ -n "$mode_new" ]] && [[ "$mode_new" != "$mode_cur" ]]; then
+    switch_mode "$mode_new"
     switched=$?
 fi
 
@@ -278,7 +278,7 @@ echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
 # if we switched mode - restore preferred mode, and reset framebuffer
 if [[ $switched -eq 1 ]]; then
-    restore_mode "$currentmode"
+    restore_mode "$mode_cur"
 fi
 
 reset_framebuffer
