@@ -4,7 +4,7 @@ rp_module_menus="2+"
 
 function sources_mupen64plus-libretro() {
     if isPlatform "rpi2"; then
-        gitPullOrClone "$md_build" https://github.com/gizmo98/mupen64plus-libretro.git
+        gitPullOrClone "$md_build" https://github.com/gizmo98/mupen64plus-libretro.git rpi2_fix
     else
         gitPullOrClone "$md_build" git://github.com/libretro/mupen64plus-libretro.git
     fi
