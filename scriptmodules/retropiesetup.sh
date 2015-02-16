@@ -172,9 +172,12 @@ function rps_main_binaries()
     rps_setLogFilename
     {
         rp_callModule aptpackages
-        # force installation of our sdl1 packages as wheezy package may already be installed. This can be solved later
-        # by adding version number checking to the dependency checking
+        # force installation of our sdl1 packages as wheezy package may already be installed, and so we always get the latest
+        # version. This can be solved later by adding version number checking to the dependency checking
         rp_callModule sdl1 install_bin
+
+        # and force sdl2 - so that any updates will be installed.
+        rp_callModule sdl2 install_bin
 
         # install needed dependencies for all modules with a binary distribution (except for experimental packages)
         for idx in "${__mod_idx[@]}"; do
