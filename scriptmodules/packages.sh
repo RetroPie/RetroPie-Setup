@@ -71,8 +71,8 @@ function rp_listFunctions() {
 }
 
 function rp_printUsageinfo() {
-    echo -e "Usage:\n$0 <Index # or ID>\nThis will run the actions depends, sources, build, install and configure automatically.\n"
-    echo -e "Alternatively, $0 can be called as\n$0 <Index # or ID [depends|sources|build|install|configure|package|remove]\n"
+    echo -e "Usage:\n$0 <Index # or ID>\nThis will run the actions depends, sources, build, install, configure and clean automatically.\n"
+    echo -e "Alternatively, $0 can be called as\n$0 <Index # or ID [depends|sources|build|install|configure|clean|remove]\n"
     echo -e "This is a list of valid commands:\n"
     rp_listFunctions
 }
@@ -82,7 +82,7 @@ function rp_callModule() {
     local mode="$2"
 
     if [[ -z "$mode" ]]; then
-        for mode in depends sources build install configure; do
+        for mode in depends sources build install configure clean; do
             rp_callModule $req_id $mode || return 1
         done
         return 0
@@ -117,6 +117,12 @@ function rp_callModule() {
     # shift the function parameters left so $@ will contain any additional parameters which we can use in modules
     shift 2
     local md_params=("$@")
+
+    # remove source/build files
+    if [[ "${mode}" == "clean" ]]; then
+        rmDirExists "$md_build"
+        return 0
+    fi
 
     # create function name
     function="${mode}_${mod_id}"
