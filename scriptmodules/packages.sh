@@ -54,13 +54,13 @@ function rp_listFunctions() {
     local mode
     local func
 
-    echo -e "Index/ID:                 Description:                       List of available actions [sources|build|install|configure|package]"
+    echo -e "Index/ID:                 Description:                                 List of available actions"
     echo "-----------------------------------------------------------------------------------------------------------------------------------"
     echo ${__mod_id[1]}
     for (( i = 0; i < ${#__mod_idx[@]}; i++ )); do
         idx=${__mod_idx[$i]};
         mod_id=${__mod_id[$idx]};
-        printf "%d/%-20s: %-32s : " "$idx" "$mod_id" "${__mod_desc[$idx]}"
+        printf "%d/%-20s: %-42s : " "$idx" "$mod_id" "${__mod_desc[$idx]}"
         for mode in depends sources build install configure remove; do
             func="${mode}_${mod_id}"
             fn_exists $func && echo -e "$mode \c"
@@ -73,7 +73,14 @@ function rp_listFunctions() {
 function rp_printUsageinfo() {
     echo -e "Usage:\n$0 <Index # or ID>\nThis will run the actions depends, sources, build, install, configure and clean automatically.\n"
     echo -e "Alternatively, $0 can be called as\n$0 <Index # or ID [depends|sources|build|install|configure|clean|remove]\n"
-    echo -e "This is a list of valid commands:\n"
+    echo    "Definitions:"
+    echo    "depends:    install the dependencies for the module"
+    echo    "sources:    install the sources for the module"
+    echo    "build:      build/compile the module"
+    echo    "install:    install the compiled module"
+    echo    "configure:  configure the installed module (es_systems.cfg / launch parameters etc)"
+    echo    "clean:      remove the sources/build folder for the module"
+    echo -e "\nThis is a list of valid modules/packages and supported commands:\n"
     rp_listFunctions
 }
 
