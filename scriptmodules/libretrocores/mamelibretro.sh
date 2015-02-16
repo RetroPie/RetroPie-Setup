@@ -4,6 +4,7 @@ rp_module_menus="2+"
 
 function sources_mamelibretro() {
     gitPullOrClone "$md_build" git://github.com/libretro/imame4all-libretro.git
+    sed -i "s/@mkdir/@mkdir -p/g" makefile.libretro
 }
 
 function build_mamelibretro() {
