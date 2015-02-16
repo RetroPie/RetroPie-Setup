@@ -43,10 +43,14 @@ function build_mupen64plus() {
             make -C "$dir/projects/unix" clean
             params=()
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
+            [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
+            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
             if isPlatform "rpi2"; then
-                [[ "$dir" == "mupen64plus-core" ]] && params+=("USE_GLES=1" "NEON=1")
+                [[ "$dir" == "mupen64plus-core" ]] && params+=("USE_GLES=1" "NEON=1" "VC=1")
+                [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("NEON=1" "VC=1")
             else
-                [[ "$dir" == "mupen64plus-core" ]] && params+=("USE_GLES=1" "VFP=1")
+                [[ "$dir" == "mupen64plus-core" ]] && params+=("USE_GLES=1" "VFP=1" "VFP_HARD=1" "VC=1")
+                [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1")
             fi
             make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"
         fi
@@ -76,18 +80,18 @@ config version=2
 #These values are the physical pixel dimensions of
 #your screen. They are only used for centering the
 #window.
-screen width=800
+screen width=640
 screen height=480
 #The Window position and dimensions specify how and
 #where the games will appear on the screen. Enabling
 #Centre will ensure that the window is centered
 #within the screen (overriding xpos/ypos).
-window enable x11=1
+window enable x11=0
 window fullscreen=1
 window centre=1
 window xpos=0
 window ypos=0
-window width=800
+window width=640
 window height=480
 #Enabling offscreen frambuffering allows the resulting
 #image to be upscaled to the window dimensions. The
@@ -136,6 +140,11 @@ hack banjo tooie=0
 hack zelda=0
 hack alpha=0
 hack z=0
+#
+# Raspberry Pi options:
+# ----------------------------------------------------------------------
+# Use multisampling antialiasing (0=disabled, 2=2x multisampling)
+multisampling=0
 _EOF_
 
     cat > "$rootdir/configs/n64/gles2n64rom.conf" << _EOF_
