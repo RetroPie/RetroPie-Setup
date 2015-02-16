@@ -25,12 +25,22 @@
 #  Many, many thanks go to all people that provide the individual packages!!!
 #
 
-function printMsg() {
-    echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$1\n= = = = = = = = = = = = = = = = = = = = =\n"
+function printMsgs() {
+    local type="$1"
+    shift
+    for msg in "$@"; do
+        [[ "$type" == "dialog" ]] && dialog --backtitle "$__backtitle" --msgbox "$msg" 20 60
+        [[ "$type" == "console" ]] && echo "$msg"
+        [[ "$type" == "heading" ]] && echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$msg\n= = = = = = = = = = = = = = = = = = = = =\n"
+    done
+}
+
+function printHeading() {
+    printMsgs "heading" "$@"
 }
 
 function fatalError() {
-    printMsg "Error"
+    printHeading "Error"
     echo "$1"
     exit 1
 }
@@ -180,7 +190,7 @@ function getDepends() {
         if [[ ${#failed[@]} -eq 0 ]]; then
             echo "Successfully installed package(s): ${packages[@]}."
         else
-            echo "Could not install package(s): ${failed[@]}."
+            md_ret_errors+=("Could not install package(s): ${failed[@]}.")
             return 1
         fi
     fi

@@ -59,5 +59,5 @@ function configure_atari800() {
 
     setESSystem "Atari 800" "atari800" "~/RetroPie/roms/atari800" ".xex .XEX" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/atari800 %ROM%\" \"$md_id\"" "atari800" "atari800"
     
-    __INFMSGS="$__INFMSGS You need to copy the Atari 800 BIOS files (ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)"
+    __INFMSGS+=("You need to copy the Atari 800 BIOS files (ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)")
 }

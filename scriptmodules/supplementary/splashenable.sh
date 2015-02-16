@@ -6,7 +6,7 @@ rp_module_flags="nobin"
 function set_enableSplashscreenAtStart()
 {
     clear
-    printMsg "Enabling custom splashscreen on boot."
+    printHeading "Enabling custom splashscreen on boot."
 
     getDepends fbi
 
@@ -83,7 +83,7 @@ function set_enableSplashscreenAtStart()
 function set_disableSplashscreenAtStart()
 {
     clear
-    printMsg "Disabling custom splashscreen on boot."
+    printHeading "Disabling custom splashscreen on boot."
 
     update-rc.d asplashscreen disable
 

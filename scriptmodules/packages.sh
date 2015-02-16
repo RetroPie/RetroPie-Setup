@@ -166,28 +166,31 @@ function rp_callModule() {
             ;;
     esac
     local pushed=$?
-    local errors=""
+    local md_ret_errors=()
 
     # print an action and a description
-    printMsg "$action $md_desc"
+    printHeading "$action $md_desc"
 
     # call the function
     $function
 
-    # check if any required files are found
-    if [[ -n "$md_ret_require" ]] && [[ ! -f "$md_ret_require" ]]; then
-        errors+="$__ERRMSGS Could not successfully $function $md_desc ($md_ret_require not found)."
-    fi
-
-    # check for existance and copy any files/directories returned
-    if [[ -n "$md_ret_files" ]]; then
-        for file in "${md_ret_files[@]}"; do
-            if [[ ! -e "$md_build/$file" ]]; then
-                errors+="$__ERRMSGS Could not successfully install $md_desc ($md_build/$file not found)."
-                break
+    # some errors were returned. append to global errors and return
+    if [[ "${#md_ret_errors}" -eq 0 ]]; then
+        # check if any required files are found
+        if [[ -n "$md_ret_require" ]] && [[ ! -f "$md_ret_require" ]]; then
+            md_ret_errors+=("Could not successfully $function $md_desc ($md_ret_require not found).")
+        else
+            # check for existance and copy any files/directories returned
+            if [[ -n "$md_ret_files" ]]; then
+                for file in "${md_ret_files[@]}"; do
+                    if [[ ! -e "$md_build/$file" ]]; then
+                        md_ret_errors+=("Could not successfully install $md_desc ($md_build/$file not found).")
+                        break
+                    fi
+                    cp -Rv "$md_build/$file" "$md_inst"
+                done
             fi
-            cp -Rv "$md_build/$file" "$md_inst"
-        done
+        fi
     fi
 
     # remove build/install folder if empty
@@ -200,8 +203,9 @@ function rp_callModule() {
             ;;
     esac
 
-    if [[ -n "$errors" ]]; then
-        __ERRMSGS+="$errors"
+    if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
+        printMsgs "console" "${md_ret_errors[@]}" >&2
+        __ERRMSGS+=("${md_ret_errors[@]}")
         return 1
     fi
 
@@ -209,7 +213,7 @@ function rp_callModule() {
 }
 
 function rp_installBin() {
-    printMsg "Installing binary archive for $md_desc"
+    printHeading "Installing binary archive for $md_desc"
     [[ "$__has_binaries" -eq 0 ]] && fatalError "There are no binary archives for platform $__platform"
     local archive="$md_type/$md_id.tar.gz";
     local dest="$rootdir/$md_type"
@@ -221,7 +225,7 @@ function rp_installBin() {
 }
 
 function rp_createBin() {
-    printMsg "Creating binary archive for $md_desc"
+    printHeading "Creating binary archive for $md_desc"
     local archive="$md_id.tar.gz"
     local dest="$__tmpdir/archives/$md_type"
     rm -f "$dest/$archive"

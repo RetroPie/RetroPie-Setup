@@ -45,7 +45,7 @@ function sup_checkInstallSNESDev() {
 function sup_enableSNESDevAtStart() {
     iniConfig "=" "" "/etc/snesdev.cfg"
     clear
-    printMsg "Enabling SNESDev on boot."
+    printHeading "Enabling SNESDev on boot."
 
     case $1 in
       1)

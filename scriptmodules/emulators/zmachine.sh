@@ -14,5 +14,6 @@ function install_zmachine() {
         rm $file.zip
     done
     chown -R $user:$user "$romdir/zmachine/"*
-    __INFMSGS="$__INFMSGS The text adventures Zork 1 - 3 have been installed in the directory '$romdir/zmachine/'. You can start, e.g., Zork 1 with the command 'frotz $romdir/zmachine/zork1/DATA/ZORK1.DAT'."
+
+    __INFMSGS+=("The text adventures Zork 1 - 3 have been installed in the directory '$romdir/zmachine/'. You can start, e.g., Zork 1 with the command 'frotz $romdir/zmachine/zork1/DATA/ZORK1.DAT'.")
 }
