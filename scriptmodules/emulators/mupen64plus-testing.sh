@@ -53,12 +53,7 @@ function build_mupen64plus-testing() {
                 [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1")
                 [[ "$dir" == "mupen64plus-video-gles2n64-1" ]] && params+=("VC=1")
             fi
-            if isPlatform "rpi2"; then
-                # we can speed up compilation with two threads
-                make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS" -j2
-            else
-                make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"
-            fi
+            make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"
         fi
     done
 
