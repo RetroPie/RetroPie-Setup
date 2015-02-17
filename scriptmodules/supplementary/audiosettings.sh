@@ -1,6 +1,7 @@
 rp_module_id="audiosettings"
 rp_module_desc="Configure audio settings"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 function configure_audiosettings() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output." 22 86 16)
@@ -9,7 +10,7 @@ function configure_audiosettings() {
              3 "HDMI"
              4 "Reset to default")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [ "$choices" != "" ]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
             1) amixer cset numid=3 0
                alsactl store
@@ -32,7 +33,5 @@ function configure_audiosettings() {
                dialog --backtitle "$__backtitle" --msgbox "Audio settings reset to defaults" 22 76
                             ;;
         esac
-    else
-        break
     fi
 }

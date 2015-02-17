@@ -3,21 +3,32 @@ rp_module_desc="GameGear LibretroCore"
 rp_module_menus="2+"
 
 function sources_genesislibretro() {
-    gitPullOrClone "$rootdir/emulatorcores/Genesis-Plus-GX" git://github.com/libretro/Genesis-Plus-GX.git
+    gitPullOrClone "$md_build" git://github.com/libretro/Genesis-Plus-GX.git
 }
 
 function build_genesislibretro() {
-    pushd "$rootdir/emulatorcores/Genesis-Plus-GX"
     make -f Makefile.libretro clean
     make -f Makefile.libretro
-    if [[ ! -f `find $rootdir/emulatorcores/Genesis-Plus-GX/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Genesis core."
-    fi
-    popd
+    md_ret_require="$md_build/genesis_plus_gx_libretro.so"
+}
+
+function install_genesislibretro() {
+    md_ret_files=(
+        'genesis_plus_gx_libretro.so'
+        'HISTORY.txt'
+        'LICENSE.txt'
+        'README.md'
+    )
 }
 
 function configure_genesislibretro() {
-    mkdir -p $romdir/gamegear
+    mkRomDir "gamegear"
+    mkRomDir "mastersystem-genesis"
+    
     ensureSystemretroconfig "gamegear"
-    setESSystem "Sega Game Gear" "gamegear" "~/RetroPie/roms/gamegear" ".gg .GG" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/Genesis-Plus-GX/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gamegear/retroarch.cfg  %ROM%\"" "gamegear" "gamegear"
+    ensureSystemretroconfig "mastersystem-genesis"
+
+    setESSystem "Sega Master System / Mark III" "mastersystem-genesis" "~/RetroPie/roms/mastersystem-genesis" ".sms .SMS .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mastersystem/retroarch.cfg %ROM%\" \"$md_id\"" "mastersystem" "mastersystem"
+
+    setESSystem "Sega Game Gear" "gamegear" "~/RetroPie/roms/gamegear" ".gg .GG .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/gamegear/retroarch.cfg  %ROM%\" \"$md_id\"" "gamegear" "gamegear"
 }

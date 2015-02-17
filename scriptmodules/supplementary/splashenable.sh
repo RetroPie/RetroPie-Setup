@@ -1,18 +1,19 @@
 rp_module_id="splashenable"
 rp_module_desc="Enable/disable Splashscreen"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 function set_enableSplashscreenAtStart()
 {
     clear
-    printMsg "Enabling custom splashscreen on boot."
+    printHeading "Enabling custom splashscreen on boot."
 
-    rps_checkNeededPackages fbi
+    getDepends fbi
 
     chmod +x "$scriptdir/supplementary/asplashscreen/asplashscreen"
     cp "$scriptdir/supplementary/asplashscreen/asplashscreen" "/etc/init.d/"
 
-    echo $(find $scriptdir/supplementary/splashscreens/retropieproject2014/ -type f) > /etc/splashscreen.list
+    find $scriptdir/supplementary/splashscreens/retropieproject2014/ -type f > /etc/splashscreen.list
 
     # This command installs the init.d script so it automatically starts on boot
     update-rc.d asplashscreen defaults
@@ -82,7 +83,7 @@ function set_enableSplashscreenAtStart()
 function set_disableSplashscreenAtStart()
 {
     clear
-    printMsg "Disabling custom splashscreen on boot."
+    printHeading "Disabling custom splashscreen on boot."
 
     update-rc.d asplashscreen disable
 
@@ -95,7 +96,7 @@ function configure_splashenable() {
     options=(1 "Disable custom splashscreen on boot."
              2 "Enable custom splashscreen on boot")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [ "$choices" != "" ]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
             1) set_disableSplashscreenAtStart
                dialog --backtitle "$__backtitle" --msgbox "Disabled custom splashscreen on boot." 22 76
@@ -104,7 +105,5 @@ function configure_splashenable() {
                dialog --backtitle "$__backtitle" --msgbox "Enabled custom splashscreen on boot." 22 76
                             ;;
         esac
-    else
-        break
     fi
 }

@@ -3,23 +3,40 @@ rp_module_desc="Gameboy Color LibretroCore"
 rp_module_menus="2+"
 
 function sources_gbclibretro() {
-    gitPullOrClone "$rootdir/emulatorcores/gambatte-libretro" git://github.com/libretro/gambatte-libretro.git
+    gitPullOrClone "$md_build" git://github.com/libretro/gambatte-libretro.git
 }
 
 function build_gbclibretro() {
-    pushd "$rootdir/emulatorcores/gambatte-libretro"
     make -C libgambatte -f Makefile.libretro clean
     make -C libgambatte -f Makefile.libretro
-    if [[ -z `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile Game Boy Color core."
-    fi
-    popd
+    md_ret_require="$md_build/libgambatte/gambatte_libretro.so"
+}
+
+function install_gbclibretro() {
+    md_ret_files=(
+        'COPYING'
+        'changelog'
+        'README'
+        'libgambatte/gambatte_libretro.so'
+    )
 }
 
 function configure_gbclibretro() {
-    mkdir -p $romdir/gbc
-    mkdir -p $romdir/gb
+    mkRomDir "gbc"
+    mkRomDir "gb"
+    ensureSystemretroconfig "gb"
+    ensureSystemretroconfig "gbc"
 
-    setESSystem "Game Boy" "gb" "~/RetroPie/roms/gb" ".gb .GB" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gb/retroarch.cfg %ROM%\"" "gb" "gb"
-    setESSystem "Game Boy Color" "gbc" "~/RetroPie/roms/gbc" ".gbc .GBC" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/gambatte-libretro/libgambatte/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/gbc/retroarch.cfg %ROM%\"" "gbc" "gbc"
+    # system-specific shaders, Gameboy
+    iniConfig " = " "" "$configdir/gb/retroarch.cfg"
+    iniSet "video_shader" "$emudir/retroarch/shader/hq4x.glslp"
+    iniSet "video_shader_enable" "false"
+
+    # system-specific shaders, Gameboy Color
+    iniConfig " = " "" "$configdir/gbc/retroarch.cfg"
+    iniSet "video_shader" "$emudir/retroarch/shader/hq4x.glslp"
+    iniSet "video_shader_enable" "false"
+
+    setESSystem "Game Boy" "gb" "~/RetroPie/roms/gb" ".gb .GB .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/gambatte_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/gb/retroarch.cfg %ROM%\" \"$md_id\"" "gb" "gb"
+    setESSystem "Game Boy Color" "gbc" "~/RetroPie/roms/gbc" ".gbc .GBC .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/gambatte_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/gbc/retroarch.cfg %ROM%\" \"$md_id\"" "gbc" "gbc"
 }

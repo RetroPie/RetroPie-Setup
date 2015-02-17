@@ -1,10 +1,11 @@
 rp_module_id="esthemesimple"
 rp_module_desc="EmulationStation Theme Simple"
 rp_module_menus="2+"
+rp_module_flags="nobin"
 
 function install_esthemesimple() {
     # download themes archive
-    wget -O themesDownload.zip http://blog.petrockblock.com/?wpdmdl=7118
+    wget -O simple_latest.zip "http://downloads.petrockblock.com/retropiearchives/simple_latest.zip"
 
     mkdir -p "/etc/emulationstation/themes"
 
@@ -12,8 +13,8 @@ function install_esthemesimple() {
     rmDirExists "/etc/emulationstation/themes/simple"
 
     # unzip archive to tmp folder
-    unzip themesDownload.zip -d /etc/emulationstation/themes/
+    unzip simple_latest.zip -d /etc/emulationstation/themes/
 
     # delete zi parchive
-    rm themesDownload.zip
+    rm simple_latest.zip
 }

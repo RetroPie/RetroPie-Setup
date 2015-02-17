@@ -3,32 +3,54 @@ rp_module_desc="MAME emulator MAME4All-Pi"
 rp_module_menus="2+"
 
 function depends_mame4all() {
-    rps_checkNeededPackages libasound2-dev libsdl1.2-dev
+    getDepends libasound2-dev libsdl1.2-dev
 }
 
 function sources_mame4all() {
-    gitPullOrClone "$rootdir/emulators/mame4all-pi" https://code.google.com/p/mame4all-pi/ NS
-    sed -i "s/@mkdir/@mkdir -p/g" "$rootdir/emulators/mame4all-pi/Makefile"
+    gitPullOrClone "$md_build" https://github.com/joolswills/mame4all-pi.git
 }
 
 function build_mame4all() {
-    pushd "$rootdir/emulators/mame4all-pi"
-    sed -i 's/-lglib-2.0$/-lglib-2.0 -lrt -lasound/g' Makefile
-    sed -i 's/armv6 /armv6j /g' Makefile
     make clean
     make
-    if [[ ! -f "$rootdir/emulators/mame4all-pi/mame" ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully mame4all-pi emulator."
-    fi
-    popd
+    md_ret_require="$md_build/mame"
+}
+
+function install_mame4all() {
+    md_ret_files=(
+        'cheat.dat'
+        'clrmame.dat'
+        'folders'
+        'hiscore.dat'
+        'mame'
+        'mame.cfg'
+        'readme.txt'
+        'skins'
+    )
 }
 
 function configure_mame4all() {
-    mkdir -p "$romdir/mame"
-    mkdir -p "$rootdir/emulators/mame4all-pi/"{cfg,hi,sta,roms}
-    chown -R $user:$user "$rootdir/emulators/mame4all-pi"
-    ensureKeyValueShort "samplerate" "22050" "$rootdir/emulators/mame4all-pi/mame.cfg"
-    ensureKeyValueShort "rompath" "$romdir/mame" "$rootdir/emulators/mame4all-pi/mame.cfg"
+    mkRomDir "mame"
+    mkRomDir "mame-samples"
+    mkRomDir "mame-artwork"
 
-    setESSystem "MAME" "mame" "~/RetroPie/roms/mame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$rootdir/emulators/mame4all-pi/mame %BASENAME%\"" "arcade" "mame"
+    mkdir -p "$configdir/mame/"{cfg,hi,inp,memcard,nvram,snap,sta}
+    chown -R $user:$user "$configdir/mame"
+
+    iniConfig "=" "" "$md_inst/mame.cfg"
+    iniSet "cfg" "$configdir/mame/cfg"
+    iniSet "hi" "$configdir/mame/hi"
+    iniSet "inp" "$configdir/mame/inp"
+    iniSet "memcard" "$configdir/mame/memcard"
+    iniSet "nvram" "$configdir/mame/nvram"
+    iniSet "snap" "$configdir/mame/snap"
+    iniSet "sta" "$configdir/mame/sta"
+
+    iniSet "artwork" "$romdir/mame-artwork"
+    iniSet "samplepath" "$romdir/mame-samples"
+    iniSet "rompath" "$romdir/mame"
+
+    iniSet "samplerate" "22050"
+
+    setESSystem "MAME" "mame" "~/RetroPie/roms/mame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/mame %BASENAME%\" \"$md_id\"" "arcade" "mame"
 }

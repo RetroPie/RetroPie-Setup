@@ -3,21 +3,26 @@ rp_module_desc="MAME LibretroCore"
 rp_module_menus="2+"
 
 function sources_mamelibretro() {
-    gitPullOrClone "$rootdir/emulatorcores/imame4all-libretro" git://github.com/libretro/imame4all-libretro.git
+    gitPullOrClone "$md_build" git://github.com/libretro/imame4all-libretro.git
+    sed -i "s/@mkdir/@mkdir -p/g" makefile.libretro
 }
 
 function build_mamelibretro() {
-    pushd "$rootdir/emulatorcores/imame4all-libretro"
     make -f makefile.libretro clean
     make -f makefile.libretro ARM=1
-    if [[ -z `find $rootdir/emulatorcores/imame4all-libretro/ -name "*libretro*.so"` ]]; then
-        __ERRMSGS="$__ERRMSGS Could not successfully compile MAME core."
-    fi
-    popd
+    md_ret_require="$md_build/libretro.so"
+}
+
+function install_mamelibretro() {
+    md_ret_files=(
+        'libretro.so'
+        'Readme.txt'
+    )
 }
 
 function configure_mamelibretro() {
-    mkdir -p $romdir/mame-libretro
+    mkRomDir "mame-libretro"
+    ensureSystemretroconfig "mame"
 
-    setESSystem "MAME" "mame-libretro" "~/RetroPie/roms/mame-libretro" ".zip .ZIP" "$rootdir/emulators/RetroArch/installdir/bin/retroarch -L `find $rootdir/emulatorcores/imame4all-libretro/ -name \"*libretro*.so\" | head -1` --config $rootdir/configs/all/retroarch.cfg --appendconfig $rootdir/configs/mame/retroarch.cfg %ROM%" "arcade" "mame"
+    setESSystem "MAME" "mame-libretro" "~/RetroPie/roms/mame-libretro" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mame/retroarch.cfg %ROM%\" \"$md_id\"" "arcade" "mame"
 }

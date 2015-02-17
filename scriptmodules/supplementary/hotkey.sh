@@ -1,29 +1,29 @@
 rp_module_id="hotkey"
 rp_module_desc="Change hotkey behaviour"
 rp_module_menus="3+"
+rp_module_flags="nobin"
 
 function configure_hotkey() {
+    iniConfig " = " "" "$configdir/all/retroarch.cfg"
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired hotkey behaviour." 22 76 16)
     options=(1 "Hotkeys enabled. (default)"
              2 "Press ALT to enable hotkeys."
              3 "Hotkeys disabled. Press ESCAPE to open RGUI.")
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [ "$choices" != "" ]; then
+    if [[ -n "$choices" ]]; then
         case $choices in
-            1) ensureKeyValue "input_enable_hotkey" "nul" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_menu_toggle" "F1" "$rootdir/configs/all/retroarch.cfg"
+            1) iniSet "input_enable_hotkey" "nul"
+               iniSet "input_exit_emulator" "escape"
+               iniSet "input_menu_toggle" "F1"
                             ;;
-            2) ensureKeyValue "input_enable_hotkey" "alt" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_exit_emulator" "escape" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_menu_toggle" "F1" "$rootdir/configs/all/retroarch.cfg"
+            2) iniSet "input_enable_hotkey" "alt"
+               iniSet "input_exit_emulator" "escape"
+               iniSet "input_menu_toggle" "F1"
                             ;;
-            3) ensureKeyValue "input_enable_hotkey" "escape" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_exit_emulator" "nul" "$rootdir/configs/all/retroarch.cfg"
-               ensureKeyValue "input_menu_toggle" "escape" "$rootdir/configs/all/retroarch.cfg"
+            3) iniSet "input_enable_hotkey" "escape"
+               iniSet "input_exit_emulator" "nul"
+               iniSet "input_menu_toggle" "escape"
                             ;;
         esac
-    else
-        break
     fi
 }

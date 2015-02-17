@@ -27,87 +27,59 @@
 
 # global variables ==========================================================
 
+# main retropie install location
 rootdir="/opt/retropie"
-user=$SUDO_USER
-if [ -z "$user" ]
-then
-    user=$(whoami)
-fi
-home=$(eval echo ~$user)
+
+user="$SUDO_USER"
+[[ -z "$user" ]] && user=$(id -un)
+
+home="$(eval echo ~$user)"
+biosdir="$home/RetroPie/BIOS"
 romdir="$home/RetroPie/roms"
-if [[ ! -d $romdir ]]; then
-    mkdir -p $romdir
-fi
+emudir="$rootdir/emulators"
+configdir="$rootdir/configs"
 
-__ERRMSGS=""
-__INFMSGS=""
-__doReboot=0
+scriptdir=$(dirname "$0")
+scriptdir=$(cd "$scriptdir" && pwd)
 
-__default_cflags="-O2 -pipe -mfpu=vfp -march=armv6j -mfloat-abi=hard"
-__default_asflags=""
-__default_makeflags=""
-__default_gcc_version="4.7"
-
-[[ -z "${CFLAGS}"        ]] && export CFLAGS="${__default_cflags}"
-[[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
-[[ -z "${ASFLAGS}"         ]] && export ASFLAGS="${__default_asflags}"
-[[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
+__tmpdir="$scriptdir/tmp"
+__builddir="$__tmpdir/build"
+__swapdir="$__tmpdir"
 
 # check, if sudo is used
-if [ $(id -u) -ne 0 ]; then
-    printf "Script must be run as root. Try 'sudo $0'\n"
+if [[ $(id -u) -ne 0 ]]; then
+    echo "Script must be run as root. Try 'sudo $0'"
     exit 1
 fi
 
-# test if we are in a chroot
-if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
-  # make chroot identify as arm6l
-  export QEMU_CPU=arm1176
-  __chroot=1
-else
-  __chroot=0
-fi
-
-scriptdir=$(dirname $0)
-scriptdir=$(cd $scriptdir && pwd)
-
-__swapdir="$scriptdir/tmp/"
-
+source "$scriptdir/scriptmodules/system.sh"
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/packages.sh"
 
-rps_checkNeededPackages git dialog gcc-4.7 g++-4.7
+setup_env
+
+if ! getDepends git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_version build-essential; then
+    printMsgs "console" "Unable to install packages required by $0" "${md_ret_errors[@]}" >&2
+    exit 1
+fi
 
 # set default gcc version
 gcc_version $__default_gcc_version
 
-registerAllModules
+mkUserDir "$romdir"
+mkUserDir "$biosdir"
+
+rp_registerAllModules
+
+ensureFBModes
 
 [[ "$1" == "init" ]] && return
 
-# load RetronetPlay configuration
-source "$scriptdir/configs/retronetplay.cfg"
-
-# ID scriptmode
-if [[ $# -eq 1 ]]; then
+if [[ $# -gt 0 ]]; then
     ensureRootdirExists
-    rp_callModule $1
-
-# ID Type mode
-elif [[ $# -eq 2 ]]; then
-    ensureRootdirExists
-    rp_callModule $1 $2
-
-# show usage information
+    rp_callModule "$@"
 else
     rp_printUsageinfo
 fi
 
-if [[ ! -z $__ERRMSGS ]]; then
-    echo $__ERRMSGS >&2
-fi
-
-if [[ ! -z $__INFMSGS ]]; then
-    echo $__INFMSGS
-fi
-
+printMsgs "console" "${__INFMSGS[@]}"
