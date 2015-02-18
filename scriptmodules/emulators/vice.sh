@@ -28,13 +28,24 @@ function install_vice() {
 function configure_vice() {
     mkRomDir "c64"
 
-    mkdir -p "$rootdir/configs/c64/"
-    chown $user:$user "$rootdir/configs/c64/"
+    mkdir -p "$rootdir/configs/c64"
 
-    [[ ! -f "$rootdir/configs/c64/vice.cfg" ]] && echo "[C64]" > "$rootdir/configs/c64/vice.cfg"
-    chown $user:$user "$rootdir/configs/c64/vice.cfg"
+    # copy any existing configs from ~/.vice and symlink the config folder to $rootdir/configs/c64/
+    if [[ -d "$home/.vice" && ! -h "$home/.vice" ]]; then
+        cp -v "$home/.vice/"* "$rootdir/configs/c64/"
+    fi
+    rm -rf "$home/.vice"
+    ln -sf "$rootdir/configs/c64/" "$home/.vice"
 
-    iniConfig "=" "" "$rootdir/configs/c64/vice.cfg"
+    # if we have an old config vice.cfg then move it to sdl-vicerc
+    if [[ -f "$rootdir/configs/c64/vice.cfg" ]]; then
+        mv -v "$rootdir/configs/c64/vice.cfg" "$rootdir/configs/c64/sdl-vicerc"
+    elif [[ ! -f "$rootdir/configs/c64/sdl-vicerc" ]]; then
+        echo "[C64]" > "$rootdir/configs/c64/sdl-vicerc"
+    fi
+    chown -R $user:$user "$rootdir/configs/c64"
+
+    iniConfig "=" "" "$rootdir/configs/c64/sdl-vicerc"
     iniSet "SDLBitdepth" "8"
     iniSet "Mouse" "1"
     iniSet "VICIIFilter" "0"
@@ -49,17 +60,17 @@ function configure_vice() {
     configure_dispmanx_on_vice
     setDispmanx "$md_id" 1
 
-    setESSystem "C64" "c64" "~/RetroPie/roms/c64" ".crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/x64 -config $rootdir/configs/c64/vice.cfg %ROM%\" \"$md_id\"" "c64" "c64"
+    setESSystem "C64" "c64" "~/RetroPie/roms/c64" ".crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/x64 %ROM%\" \"$md_id\"" "c64" "c64"
 }
 
 function configure_dispmanx_off_vice() {
-    iniConfig "=" "" "$rootdir/configs/c64/vice.cfg"
+    iniConfig "=" "" "$rootdir/configs/c64/sdl-vicerc"
     iniSet "VICIIDoubleSize" "1"
     iniSet "VICIIDoubleScan" "1"
 }
 
 function configure_dispmanx_on_vice() {
-    iniConfig "=" "" "$rootdir/configs/c64/vice.cfg"
+    iniConfig "=" "" "$rootdir/configs/c64/sdl-vicerc"
     iniSet "VICIIDoubleSize" "0"
     iniSet "VICIIDoubleScan" "0"
 }
