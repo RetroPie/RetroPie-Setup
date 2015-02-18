@@ -72,8 +72,8 @@ function configure_mupen64plus() {
     # to solve startup problems delete old config file
     rm -f "$home/.config/mupen64plus/mupen64plus.cfg"
 
-    mkdir -p "$rootdir/configs/n64/"
-    cat > "$rootdir/configs/n64/gles2n64.conf" << _EOF_
+    mkdir -p "$configdir/n64/"
+    cat > "$configdir/n64/gles2n64.conf" << _EOF_
 #gles2n64 Graphics Plugin for N64
 #by Orkin / glN64 developers and Adventus.
 config version=2
@@ -147,7 +147,7 @@ hack z=0
 multisampling=0
 _EOF_
 
-    cat > "$rootdir/configs/n64/gles2n64rom.conf" << _EOF_
+    cat > "$configdir/n64/gles2n64rom.conf" << _EOF_
 #rom specific settings
 
 rom name=SUPER MARIO 64
@@ -251,11 +251,11 @@ target FPS=25
 _EOF_
 
     # Copy config files
-    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf} "$rootdir/configs/n64/"
-    chown -R $user:$user "$rootdir/configs/n64"
+    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf} "$configdir/n64/"
+    chown -R $user:$user "$configdir/n64"
 
-    su "$user" -c "$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64"
-    iniConfig " = " "" "$rootdir/configs/n64/mupen64plus.cfg"
+    su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
+    iniConfig " = " "" "$configdir/n64/mupen64plus.cfg"
     iniSet "VideoPlugin" "mupen64plus-video-n64"
     iniSet "AudioPlugin" "mupen64plus-audio-omx"
     # Enable bilinear filtering for rice
@@ -264,5 +264,5 @@ _EOF_
 
     mkRomDir "n64-mupen64plus"
 
-    setESSystem "Nintendo 64" "n64-mupen64plus" "~/RetroPie/roms/n64-mupen64plus" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64 %ROM%\" \"$md_id\"" "n64" "n64"
+    setESSystem "Nintendo 64" "n64-mupen64plus" "~/RetroPie/roms/n64-mupen64plus" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64 %ROM%\" \"$md_id\"" "n64" "n64"
 }

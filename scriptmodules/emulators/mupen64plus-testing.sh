@@ -71,21 +71,21 @@ function install_mupen64plus-testing() {
 
 function configure_mupen64plus-testing() {
     # to solve startup problems delete old config file
-    rm -f "$rootdir/configs/n64/mupen64plus.cfg"
-    mkdir -p "$rootdir/configs/n64/"
+    rm -f "$configdir/n64/mupen64plus.cfg"
+    mkdir -p "$configdir/n64/"
     # Copy config files
-    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$rootdir/configs/n64/"
-    chown -R $user:$user "$rootdir/configs/n64"
-    su "$user" -c "$md_inst/bin/mupen64plus --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64"
+    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$configdir/n64/"
+    chown -R $user:$user "$configdir/n64"
+    su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
 
-    iniConfig " = " "" "$rootdir/configs/n64/mupen64plus.cfg"
+    iniConfig " = " "" "$configdir/n64/mupen64plus.cfg"
     iniSet "AudioPlugin" "\"mupen64plus-audio-omx.so\""
 
     # create romdir for rice plugin
     mkRomDir "n64-gles2n64"
-    setESSystem "Nintendo 64" "n64-gles2n64" "~/RetroPie/roms/n64-gles2n64" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-n64.so --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64 %ROM%\" \"$md_id\"" "n64" "n64"
+    setESSystem "Nintendo 64" "n64-gles2n64" "~/RetroPie/roms/n64-gles2n64" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-n64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%\" \"$md_id\"" "n64" "n64"
 
     # create romdir for n64 plugin
     mkRomDir "n64-gles2rice"
-    setESSystem "Nintendo 64" "n64-gles2rice" "~/RetroPie/roms/n64-gles2rice" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $rootdir/configs/n64 --datadir $rootdir/configs/n64 %ROM%\" \"$md_id\"" "n64" "n64"
+    setESSystem "Nintendo 64" "n64-gles2rice" "~/RetroPie/roms/n64-gles2rice" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%\" \"$md_id\"" "n64" "n64"
 }

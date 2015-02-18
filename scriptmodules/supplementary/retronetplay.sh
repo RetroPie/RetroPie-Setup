@@ -4,19 +4,19 @@ rp_module_menus="4+"
 rp_module_flags="nobin"
 
 function rps_retronet_saveconfig() {
-    cat > "$rootdir/configs/all/retronetplay.cfg" <<_EOF_
+    cat > "$configdir/all/retronetplay.cfg" <<_EOF_
 __netplaymode="$__netplaymode"
 __netplayport="$__netplayport"
 __netplayhostip="$__netplayhostip"
 __netplayhostip_cfile="$__netplayhostip_cfile"
 __netplayframes="$__netplayframes"
 _EOF_
-    chown $user:$user "$rootdir/configs/all/retronetplay.cfg"
+    chown $user:$user "$configdir/all/retronetplay.cfg"
 }
 
 function rps_retronet_loadconfig() {
-    if [[ -f "$rootdir/configs/all/retronetplay.cfg" ]]; then
-        source "$rootdir/configs/all/retronetplay.cfg"
+    if [[ -f "$configdir/all/retronetplay.cfg" ]]; then
+        source "$configdir/all/retronetplay.cfg"
     else
         __netplayenable="D"
         __netplaymode="H"

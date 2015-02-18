@@ -28,24 +28,24 @@ function install_vice() {
 function configure_vice() {
     mkRomDir "c64"
 
-    mkdir -p "$rootdir/configs/c64"
+    mkdir -p "$configdir/c64"
 
-    # copy any existing configs from ~/.vice and symlink the config folder to $rootdir/configs/c64/
+    # copy any existing configs from ~/.vice and symlink the config folder to $configdir/c64/
     if [[ -d "$home/.vice" && ! -h "$home/.vice" ]]; then
-        cp -v "$home/.vice/"* "$rootdir/configs/c64/"
+        cp -v "$home/.vice/"* "$configdir/c64/"
     fi
     rm -rf "$home/.vice"
-    ln -sf "$rootdir/configs/c64/" "$home/.vice"
+    ln -sf "$configdir/c64/" "$home/.vice"
 
     # if we have an old config vice.cfg then move it to sdl-vicerc
-    if [[ -f "$rootdir/configs/c64/vice.cfg" ]]; then
-        mv -v "$rootdir/configs/c64/vice.cfg" "$rootdir/configs/c64/sdl-vicerc"
-    elif [[ ! -f "$rootdir/configs/c64/sdl-vicerc" ]]; then
-        echo "[C64]" > "$rootdir/configs/c64/sdl-vicerc"
+    if [[ -f "$configdir/c64/vice.cfg" ]]; then
+        mv -v "$configdir/c64/vice.cfg" "$configdir/c64/sdl-vicerc"
+    elif [[ ! -f "$configdir/c64/sdl-vicerc" ]]; then
+        echo "[C64]" > "$configdir/c64/sdl-vicerc"
     fi
-    chown -R $user:$user "$rootdir/configs/c64"
+    chown -R $user:$user "$configdir/c64"
 
-    iniConfig "=" "" "$rootdir/configs/c64/sdl-vicerc"
+    iniConfig "=" "" "$configdir/c64/sdl-vicerc"
     iniSet "SDLBitdepth" "8"
     iniSet "Mouse" "1"
     iniSet "VICIIFilter" "0"
@@ -64,13 +64,13 @@ function configure_vice() {
 }
 
 function configure_dispmanx_off_vice() {
-    iniConfig "=" "" "$rootdir/configs/c64/sdl-vicerc"
+    iniConfig "=" "" "$configdir/c64/sdl-vicerc"
     iniSet "VICIIDoubleSize" "1"
     iniSet "VICIIDoubleScan" "1"
 }
 
 function configure_dispmanx_on_vice() {
-    iniConfig "=" "" "$rootdir/configs/c64/sdl-vicerc"
+    iniConfig "=" "" "$configdir/c64/sdl-vicerc"
     iniSet "VICIIDoubleSize" "0"
     iniSet "VICIIDoubleScan" "0"
 }
