@@ -10,5 +10,7 @@ function install_fuse() {
 function configure_fuse() {
     mkRomDir "zxspectrum"
 
-    setESSystem "ZX Spectrum" "zxspectrum" "~/RetroPie/roms/zxspectrum" ".sna .SNA .szx .SZX .z80 .Z80 .ipf .IPF .tap .TAP .tzx .TZX .gz .bz2 .udi .UDI .mgt .MGT .img .IMG .trd .TRD .scl .SCL .dsk .DSK" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"fuse-sdl --machine 128 %ROM%\" \"$md_id\"" "zxspectrum" "zxspectrum"
+    setDispmanx "$md_id" 1
+
+    setESSystem "ZX Spectrum" "zxspectrum" "~/RetroPie/roms/zxspectrum" ".sna .SNA .szx .SZX .z80 .Z80 .ipf .IPF .tap .TAP .tzx .TZX .gz .bz2 .udi .UDI .mgt .MGT .img .IMG .trd .TRD .scl .SCL .dsk .DSK" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"fuse-sdl --machine 128 %ROM%\" \"$md_id\"" "zxspectrum" "zxspectrum"
 }
