@@ -28,6 +28,6 @@ function configure_basilisk() {
     mkRomDir "macintosh"
     touch "$romdir/macintosh/Start.txt"
 
-    setESSystem "Apple Macintosh" "macintosh" "~/RetroPie/roms/macintosh" ".txt" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img\" \"$md_id\"" "macintosh"
+    setESSystem "Apple Macintosh" "macintosh" "~/RetroPie/roms/macintosh" ".txt" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img\" \"$md_id\"" "macintosh"
 
 }
