@@ -26,13 +26,34 @@ function install_dgen() {
 
 function configure_dgen()
 {
-    if [[ ! -f "$configdir/all/dgenrc" ]]; then
-        mkdir -p "$configdir/all/"
-        cp "sample.dgenrc" "$configdir/all/dgenrc"
-        chown $user:$user "$configdir/all/dgenrc"
+    mkdir -p "$configdir/megadrive"
+    chown $user:$user "$configdir/megadrive"
+
+    # move config from previous location
+    if [[ -f "$configdir/all/dgenrc" ]]; then
+        mv -v "$configdir/all/dgenrc" "$configdir/megadrive/dgenrc"
     fi
 
-    iniConfig " = " "" "$configdir/all/dgenrc"
+    if [[ ! -f "$configdir/megadrive/dgenrc" ]]; then
+        mkdir -p "$configdir/megadrive"
+        cp "sample.dgenrc" "$configdir/megadrive/dgenrc"
+        chown $user:$user "$configdir/megadrive/dgenrc"
+    fi
+
+    iniConfig " = " "" "$configdir/megadrive/dgenrc"
+
+    iniSet "int_width" "320"
+    iniSet "int_height" "240"
+    iniSet "bool_doublebuffer" "no"
+    iniSet "bool_screen_thread" "yes"
+    iniSet "scaling_startup" "none"
+
+    # we don't have opengl (or build dgen with it)
+    iniSet "bool_opengl" "no"
+
+    # lower sample rate
+    iniSet "int_soundrate" "22050"
+
     iniSet "joy_pad1_a" "joystick0-button0"
     iniSet "joy_pad1_b" "joystick0-button1"
     iniSet "joy_pad1_c" "joystick0-button2"
@@ -54,49 +75,13 @@ function configure_dgen()
     iniSet "emu_z80_startup" "drz80"
     iniSet "emu_m68k_startup" "cyclone"
 
-    # we don't have opengl (or build dgen with it)
-    iniSet "bool_opengl" "no"
-
-    # lower sample rate
-    iniSet "int_soundrate" "22050"
-
-    # if the framebuffer is not the requires resolution dgen seems to give a black screen
-    iniConfig "=" "" "/boot/config.txt"
-    iniSet "overscan_scale" 1
-
-    configure_dispmanx_on_dgen
-
     setDispmanx "$md_id" 1
 
     mkRomDir "megadrive-dgen"
     mkRomDir "segacd-dgen"
     mkRomDir "sega32x-dgen"
 
-    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\" \"$md_id\"" "genesis,megadrive" "megadrive"
-    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\" \"$md_id\"" "segacd" "segacd"
-    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/dgen -f -r $configdir/all/dgenrc %ROM%\" \"$md_id\"" "sega32x" "sega32x"
-}
-
-function configure_dispmanx_off_dgen() {
-    iniConfig " = " "" "$configdir/all/dgenrc"
-    # doublebuffer is disabled on framebuffer by default anyway
-    iniSet "bool_doublebuffer" "no"
-    iniSet "bool_screen_thread" "no"
-    # full screen width/height by default
-    iniSet "int_width" "-1"
-    iniSet "int_height" "-1"
-    # without dispmanx, scale seems to run the fastest
-    iniSet "scaling_startup" "scale"
-}
-
-function configure_dispmanx_on_dgen() {
-    iniConfig " = " "" "$configdir/all/dgenrc"
-    # turn on double buffer
-    iniSet "bool_doublebuffer" "yes"
-    iniSet "bool_screen_thread" "yes"
-    # set rendering resolution to 320x240
-    iniSet "int_width" "320"
-    iniSet "int_height" "240"
-    # no scaling needed
-    iniSet "scaling_startup" "none" "$configdir/all/dgenrc"
+    setESSystem "Sega Mega Drive / Genesis" "megadrive-dgen" "~/RetroPie/roms/megadrive-dgen" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/dgen -r $configdir/all/dgenrc %ROM%\" \"$md_id\"" "genesis,megadrive" "megadrive"
+    setESSystem "Sega CD" "segacd-dgen" "~/RetroPie/roms/segacd-dgen" ".smd .SMD .bin .BIN .md .MD .zip .ZIP .iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/dgen -r $configdir/all/dgenrc %ROM%\" \"$md_id\"" "segacd" "segacd"
+    setESSystem "Sega 32X" "sega32x-dgen" "~/RetroPie/roms/sega32x-dgen" ".32x .32X .smd .SMD .bin .BIN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/dgen -r $configdir/all/dgenrc %ROM%\" \"$md_id\"" "sega32x" "sega32x"
 }
