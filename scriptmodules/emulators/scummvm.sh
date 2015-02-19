@@ -42,5 +42,5 @@ _EOF_
     chown $user:$user "$romdir/scummvm/+Launch GUI.sh"
     chmod u+x "$romdir/scummvm/+Launch GUI.sh"
 
-    setESSystem "ScummVM" "scummvm" "~/RetroPie/roms/scummvm" ".sh .svm" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$romdir/scummvm/+Launch\ GUI.sh %BASENAME%\" \"$md_id\"" "pc" "scummvm"
+    setESSystem "ScummVM" "scummvm" "~/RetroPie/roms/scummvm" ".sh .svm" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$romdir/scummvm/+Launch\ GUI.sh %BASENAME%\" \"$md_id\"" "pc" "scummvm"
 }
