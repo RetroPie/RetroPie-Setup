@@ -10,8 +10,8 @@ function sources_retroarchautoconf() {
 function install_retroarchautoconf() {
     mkdir -p "$emudir/retroarch/configs/"
     cp "$scriptdir/supplementary/RetroArchConfigs/"*.cfg "$emudir/retroarch/configs/"
-    cp -r $md_build/udev/* $emudir/retroarch/configs/
-    sudo chown -R $user:$user $emudir/retroarch/configs/
+    cp $md_build/udev/* $emudir/retroarch/configs/
+    chown -R $user:$user $emudir/retroarch/configs/
 }
 
 function configure_retroarchautoconf() { 
