@@ -154,7 +154,7 @@ function iniGet() {
     local delim_strip=${delim// /}
     # if the stripped delimiter is empty - such as in the case of a space, just use the delimiter instead
     [[ -z "$delim_strip" ]] && delim_strip="$delim"
-    ini_value=$(sed -rn "s/[\s]*$key\s*$delim_strip\s*$quote(.+)$quote.*/\1/gp" $file)
+    ini_value=$(sed -rn "s/[\s]*$key\s*$delim_strip\s*$quote(.+)$quote.*/\1/p" $file)
 }
 
 function hasPackage() {
