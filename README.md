@@ -4,7 +4,7 @@ RetroPie-Setup
 General Usage
 -------------
 
-Shell script to setup Raspberry Pi (TM) with several emulators, various cores, and EmulationStation as graphical front end.
+Shell script to setup the Raspberry Pi 1 / 2 with several emulators, various cores, and EmulationStation as graphical front end. Bootable pre-made images are available from http://blog.petrockblock.com/retropie/ for those that want a ready to go system.
 
 This script is tested with the Raspbian distribution, but users have reported that it also works with RaspBMC. Before using the script, please **make sure that you have run the raspi-config script to extend your root file system and that your memory split is set to 192 or 128**. You can run the script with
 
@@ -16,8 +16,7 @@ To run the RetroPie Setup Script make sure that your APT repositories are up-to-
 
 ```shell
 sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt-get install -y git dialog
+sudo apt-get upgrade
 ```
 
 Then you can download the latest RetroPie setup script with
@@ -35,28 +34,13 @@ chmod +x retropie_setup.sh
 sudo ./retropie_setup.sh
 ```
 
-Optional arguments can be passed to the script. If called with 
-```shell
-sudo ./retropie_setup.sh
-```
-the installation directory is /home/CURRENTUSER/RetroPie for the current user, where CURRENTUSER is the home directory of the current user. If called with 
-```shell
-sudo ./retropie_setup.sh USERNAME
-```
-the installation directory is /home/USERNAME/RetroPie for user USERNAME. If called with 
-```shell
-sudo ./retropie_setup.sh USERNAME ABSPATH
-```
-the installation directory is ABSPATH for user USERNAME.
-
 Note that you might **need to reboot your Raspberry**, if your firmware was updated during the installation process.
-
 
 
 Binaries and Sources
 --------------------
 
-RetroPie Setup offered the possibility to only install RetroArch, the cores, EmulationStation, and SNESDev with pre-compiled binaries. Since Github has discontinued the download service the option for installing pre-compiled binaried with the RetroPie script was discarded. Take your time and let RetroPie Setup download and compile the programs from their sources!
+RetroPie Setup offers the possibility to install from binaries or build from source. For most users installing from binary should suffice - but for the very latest versions of some software building from source may be preferred. Building from source can take more than a day on a Raspberry Pi.
 
 For more information visit the blog at http://www.petrockblock.com or the repository at https://github.com/petrockblog/RetroPie-Setup. A forum thread about the RetroPie Setup script in the official Raspberry Pi forum can be found at http://www.raspberrypi.org/phpBB3/viewtopic.php?f=35&t=13600.
 
