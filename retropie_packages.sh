@@ -58,7 +58,7 @@ source "$scriptdir/scriptmodules/packages.sh"
 
 setup_env
 
-if ! getDepends git dialog python-lxml gcc-$__default_gcc_version g++-$__default_gcc_version build-essential; then
+if ! getDepends git dialog python-lxml wget gcc-$__default_gcc_version g++-$__default_gcc_version build-essential; then
     printMsgs "console" "Unable to install packages required by $0" "${md_ret_errors[@]}" >&2
     exit 1
 fi
