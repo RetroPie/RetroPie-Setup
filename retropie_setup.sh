@@ -4,7 +4,7 @@
 #  with RetroArch, various cores, and EmulationStation (a graphical
 #  front end).
 #
-#  (c) Copyright 2012-2014  Florian Müller (contact@petrockblock.com)
+#  (c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
 #
 #  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
 #
