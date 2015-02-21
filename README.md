@@ -12,11 +12,12 @@ This script is tested with the Raspbian distribution, but users have reported th
 sudo raspi-config
 ```
 
-To run the RetroPie Setup Script make sure that your APT repositories are up-to-date and that Git and the dialog package are installed:
+To run the RetroPie Setup Script make sure that your APT repositories are up-to-date and that Git is installed:
 
 ```shell
 sudo apt-get update
 sudo apt-get upgrade
+sudo apt-get install git
 ```
 
 Then you can download the latest RetroPie setup script with
@@ -34,7 +35,7 @@ chmod +x retropie_setup.sh
 sudo ./retropie_setup.sh
 ```
 
-Note that you might **need to reboot your Raspberry**, if your firmware was updated during the installation process.
+When you first run the script it may install some additional packages that are needed. Note that you might **need to reboot your Raspberry**, if your firmware was updated during the installation process.
 
 
 Binaries and Sources
