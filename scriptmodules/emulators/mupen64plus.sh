@@ -4,9 +4,7 @@ rp_module_menus="2+"
 rp_module_flags="!odroid"
 
 function depends_mupen64plus() {
-    if ! hasPackage libsdl2-dev && isPlatform "rpi"; then
-        rp_callModule sdl2 install_bin
-    fi
+    getDepends libsdl2-dev
 }
 
 function sources_mupen64plus() {

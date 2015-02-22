@@ -189,10 +189,11 @@ function getDepends() {
     if [[ ${#packages[@]} -ne 0 ]]; then
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
 
-        # workaround to force installation of our fixed libsdl1.2 for rpi
+        # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2 for rpi
         if isPlatform "rpi"; then
             for required in ${packages[@]}; do
                 [[ "$required" == "libsdl1.2-dev" ]] && rp_callModule sdl1 install_bin
+                [[ "$required" == "libsdl2-dev" ]] && rp_callModule sdl2 install_bin
             done
         fi
 

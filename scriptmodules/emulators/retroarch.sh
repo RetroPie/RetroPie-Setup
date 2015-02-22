@@ -3,12 +3,8 @@ rp_module_desc="RetroArch"
 rp_module_menus="2+"
 
 function depends_retroarch() {
-    getDepends libudev-dev libxkbcommon-dev
-    
-    if ! hasPackage libsdl2-dev && isPlatform "rpi"; then
-        rp_callModule sdl2 install_bin
-    fi
-    
+    getDepends libudev-dev libxkbcommon-dev libsdl2-dev
+
     cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
 KERNEL=="event*", NAME="input/%k", MODE="666"
 _EOF_
