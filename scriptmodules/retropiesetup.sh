@@ -191,8 +191,6 @@ function rps_main_binaries()
         # modules that have another binary distribution method (deb etc)
         rp_callModule stella
         rp_callModule zmachine
-        rp_callModule fuse
-        rp_callModule eduke32
         rp_callModule esthemesimple
 
         # required supplementary modules 
