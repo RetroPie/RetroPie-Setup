@@ -4,7 +4,21 @@ rp_module_menus="2+"
 
 function sources_pocketsnes() {
     gitPullOrClone "$md_build" git://github.com/ToadKing/pocketsnes-libretro.git
-    patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch $rootdir/libretrocores/pocketsnes-libretro/src/ppu.cpp
+    patch -p1 <<\_EOF_
+diff --git a/src/ppu.cpp b/src/ppu.cpp
+index 19340fb..6d1af27 100644
+--- a/src/ppu.cpp
++++ b/src/ppu.cpp
+@@ -714,7 +714,7 @@ uint8 S9xGetCPU(uint16 Address)
+ 						}
+ 					}
+ 					return (
+-						(IPPU.Joypads[0]
++						(IPPU.Joypads[1]
+ 							>> (PPU.Joypad2ButtonReadPos++ ^ 15))
+ 							& 1);
+ 				}
+_EOF_
 }
 
 function build_pocketsnes() {
