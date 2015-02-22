@@ -31,6 +31,7 @@ function configure_advmame() {
 
     iniConfig " " "" "$home/.advance/advmame.rc"
     iniSet "device_video" "sdl"
+    iniSet "device_video_cursor" "off"
     iniSet "device_keyboard" "sdl"
     iniSet "device_sound" "alsa"
     iniSet "display_vsync" "no"
