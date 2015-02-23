@@ -16,7 +16,7 @@ function configure_retroarchjoyconfig() {
     configfname=$(echo ${configfname:16:-1} | tr -d ' ')
     mv "$emudir/retroarch/configs/tempconfig.cfg" "$emudir/retroarch/configs/$configfname.cfg"
     # Add hotkeys
-    $scriptdir/supplementary/setAutoconfHotkeys.py
+    rp_callModule retroarchautoconf configure
     chown -R $user:$user "$emudir/retroarch/configs"
     dialog --backtitle "$__backtitle" --msgbox "The configuration file has been saved as $configfname.cfg and will be used by RetroArch from now on whenever that controller is connected." 22 76
 }
