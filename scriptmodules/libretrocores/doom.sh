@@ -23,6 +23,12 @@ function configure_doom() {
     mkRomDir "ports/doom"
     ensureSystemretroconfig "doom"
 
+    # system-specific shaders, doom
+    iniConfig " = " "" "$configdir/doom/retroarch.cfg"
+    iniSet "savefile_directory" "~/RetroPie/roms/ports"
+    iniSet "savestate_directory" "~/RetroPie/roms/ports"
+    iniSet "input_remapping_directory" "$configdir/doom/"
+
     cp prboom.wad "$romdir/ports/doom/"
 
     # download doom 1 shareware

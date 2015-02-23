@@ -24,5 +24,11 @@ function configure_mamelibretro() {
     mkRomDir "mame-libretro"
     ensureSystemretroconfig "mame"
 
+    # system-specific shaders, Mame
+    iniConfig " = " "" "$configdir/mame/retroarch.cfg"
+    iniSet "savefile_directory" "~/RetroPie/roms/mame-libretro"
+    iniSet "savestate_directory" "~/RetroPie/roms/mame-libretro"
+    iniSet "input_remapping_directory" "$configdir/mame/"
+
     setESSystem "MAME" "mame-libretro" "~/RetroPie/roms/mame-libretro" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mame/retroarch.cfg %ROM%\" \"$md_id\"" "arcade" "mame"
 }

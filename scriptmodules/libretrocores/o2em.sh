@@ -23,6 +23,12 @@ function configure_o2em() {
     mkRomDir "videopac"
     ensureSystemretroconfig "videopac"
 
+    # system-specific shaders, PC Engine
+    iniConfig " = " "" "$configdir/videopac/retroarch.cfg"
+    iniSet "savefile_directory" "~/RetroPie/roms/videopac"
+    iniSet "savestate_directory" "~/RetroPie/roms/videopac"
+    iniSet "input_remapping_directory" "$configdir/videopac/"
+
     # copy o2rom.bin to RetroPie/BIOS path
     setESSystem "VideoPac" "videopac" "~/RetroPie/roms/videopac" ".bin .BIN" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/o2em_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/videopac/retroarch.cfg %ROM%\" \"$md_id\"" "videopac" "videopac"
 }
