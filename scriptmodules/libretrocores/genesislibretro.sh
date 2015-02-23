@@ -27,6 +27,18 @@ function configure_genesislibretro() {
     
     ensureSystemretroconfig "gamegear"
     ensureSystemretroconfig "mastersystem-genesis"
+    
+    # system-specific shaders, gamegear
+    iniConfig " = " "" "$configdir/gamegear/retroarch.cfg"
+    iniSet "savefile_directory" "~/RetroPie/roms/gamegear"
+    iniSet "savestate_directory" "~/RetroPie/roms/gamegear"
+    iniSet "input_remapping_directory" "$configdir/gamegear/"
+
+    # system-specific shaders, mastersystem
+    iniConfig " = " "" "$configdir/mastersystem-genesis/retroarch.cfg"
+    iniSet "savefile_directory" "~/RetroPie/roms/mastersystem-genesis"
+    iniSet "savestate_directory" "~/RetroPie/roms/mastersystem-genesis"
+    iniSet "input_remapping_directory" "$configdir/mastersystem-genesis/"
 
     setESSystem "Sega Master System / Mark III" "mastersystem-genesis" "~/RetroPie/roms/mastersystem-genesis" ".sms .SMS .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mastersystem/retroarch.cfg %ROM%\" \"$md_id\"" "mastersystem" "mastersystem"
 

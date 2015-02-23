@@ -22,6 +22,12 @@ function configure_cavestory() {
     mkRomDir "ports"
     ensureSystemretroconfig "cavestory"
 
+    # system-specific shaders, cavestory
+    iniConfig " = " "" "$configdir/cavestory/retroarch.cfg"
+    iniSet "savefile_directory" "~/RetroPie/roms/ports"
+    iniSet "savestate_directory" "~/RetroPie/roms/ports"
+    iniSet "input_remapping_directory" "$configdir/cavestory/"
+
     cat > "$romdir/ports/Cave Story.sh" << _EOF_
 #!/bin/bash
 $rootdir/supplementary/runcommand/runcommand.sh 1 "$emudir/retroarch/bin/retroarch -L $md_inst/nxengine_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/cavestory/retroarch.cfg $md_inst/datafiles/Doukutsu.exe" "$md_id"

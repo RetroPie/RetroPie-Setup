@@ -39,6 +39,12 @@ function configure_mupen64plus-libretro() {
     iniSet "mupen64-gfxplugin" "rice"
     iniSet "mupen64-gfxplugin-accuracy" "low"
     iniSet "mupen64-screensize" "640x480"
+    
+    # system-specific shaders, Mupen64plus
+    iniConfig " = " "" "$configdir/n64/retroarch.cfg"
+    iniSet "savefile_directory" "~/RetroPie/roms/n64"
+    iniSet "savestate_directory" "~/RetroPie/roms/n64"
+    iniSet "input_remapping_directory" "$configdir/n64/"
 
     # Copy config files
     cp "$md_inst/data/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf} "$biosdir/"
