@@ -1,13 +1,10 @@
 rp_module_id="mupen64plus-testing"
 rp_module_desc="N64 emulator MUPEN64Plus (Testing)"
-rp_module_menus="2+"
+rp_module_menus="4+"
 rp_module_flags="!odroid"
 
 function depends_mupen64plus-testing() {
-    if ! hasPackage libsdl2-dev && isPlatform "rpi"; then
-        rp_callModule sdl2 install_bin
-    fi
-    getDepends libsamplerate0-dev libspeexdsp-dev
+    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev
 }
 
 function sources_mupen64plus-testing() {
@@ -76,8 +73,8 @@ function install_mupen64plus-testing() {
 
 function configure_mupen64plus-testing() {
     # to solve startup problems delete old config file
-    rm -f "$rootdir/configs/n64/mupen64plus.cfg"
-    mkdir -p "$rootdir/configs/n64/"
+    rm -f "$configdir/n64/mupen64plus.cfg"
+    mkdir -p "$configdir/n64/"
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$rootdir/configs/n64/"
     cat > "$rootdir/configs/n64/mupen64plus.cfg" << _EOF_
