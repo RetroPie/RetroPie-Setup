@@ -13,6 +13,8 @@ _EOF_
 
 function sources_retroarch() {
     gitPullOrClone "$md_build" git://github.com/libretro/RetroArch.git
+    gitPullOrClone "$md_build/overlays" git://github.com/libretro/common-overlays.git
+    gitPullOrClone "$md_build/assets" git://github.com/libretro/retroarch-assets.git
 }
 
 function build_retroarch() {
@@ -27,8 +29,14 @@ function build_retroarch() {
 function install_retroarch() {
     make install
     mkdir -p "$md_inst/shader"
+    mkdir -p "$md_inst/assets"
+    mkdir -p "$md_inst/overlays"
     cp "$scriptdir/supplementary/RetroArchShader/"* "$md_inst/shader/"
+    cp -a "$md_build/overlays/"* "$md_inst/overlays/"
+    cp -a "$md_build/assets/"* "$md_inst/assets/"
     chown $user:$user -R "$md_inst/shader"
+    chown $user:$user -R "$md_inst/assets"
+    chown $user:$user -R "$md_inst/overlays"
     md_ret_files=(
         'retroarch.cfg'
         'tools/retroarch-joyconfig'
@@ -56,6 +64,8 @@ function configure_retroarch() {
     iniSet "video_smooth" "false"
     iniSet "video_threaded" "true"
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
+    iniSet "assets_directory" "$md_inst/assets"
+    iniSet "overlay_directory" "$md_inst/overlays"
 
     # enable hotkey ("select" button)
     iniSet "input_enable_hotkey" "nul"
