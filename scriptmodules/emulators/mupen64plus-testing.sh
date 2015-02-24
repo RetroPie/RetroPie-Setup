@@ -9,15 +9,19 @@ function depends_mupen64plus-testing() {
 
 function sources_mupen64plus-testing() {
     local repos=(
+        #'ricrpi core ric_dev'
         'mupen64plus core'
         'mupen64plus ui-console'
-        'gizmo98 audio-omx'
+        'ricrpi audio-omx'
         'mupen64plus audio-sdl'
         'mupen64plus input-sdl'
         'mupen64plus rsp-hle'
-        'gizmo98 video-gles2rice'
+        #'ricrpi video-gles2rice'
+        'mupen64plus video-rice'
         #'Narann video-rice'
-        'gizmo98 video-gles2n64 testing'
+        #'Nebuleon video-gles2n64'
+        'ricrpi video-gles2n64'
+        #'gizmo98 video-gles2n64'
         'gizmo98 video-glide64mk2 rpi'
     )
     local repo
@@ -25,6 +29,7 @@ function sources_mupen64plus-testing() {
         repo=($repo)
         gitPullOrClone "$md_build/mupen64plus-${repo[1]}" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
+    gitPullOrClone "$md_build/mupen64plus-video-settings" https://github.com/gizmo98/mupen64plus-video-settings.git
 }
 
 function build_mupen64plus-testing() {
@@ -39,8 +44,8 @@ function build_mupen64plus-testing() {
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-rice" ]] && params+=("VC=1")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
-            [[ "$dir" == "mupen64plus-video-glide64mk2" ]] && params+=("VC=1")
             [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
+            [[ "$dir" == "mupen64plus-video-glide64mk2" ]] && params+=("VC=1")
             if isPlatform "rpi2"; then
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "NEON=1")
                 [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1" "NEON=1")
@@ -64,6 +69,7 @@ function install_mupen64plus-testing() {
             make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" VC=1 install
         fi
     done
+    cp -v "$md_build/mupen64plus-video-settings/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"
 }
 
 function configure_mupen64plus-testing() {
@@ -72,6 +78,28 @@ function configure_mupen64plus-testing() {
     mkdir -p "$configdir/n64/"
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$configdir/n64/"
+    cat > "$configdir/n64/mupen64plus.cfg" << _EOF_
+    [Video-Rice]
+# Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
+ScreenUpdateSetting = 6
+# Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)
+FrameBufferWriteBackControl = 1
+# If this option is enabled, the plugin will skip every other frame
+SkipFrame = False
+# If this option is enabled, the plugin will only draw every other screen update
+SkipScreenUpdate = False
+# Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)
+ForceTextureFilter = 2
+# Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)
+TextureEnhancement = 6
+# Secondary texture enhancement filter (0 = none, 1-4 = filtered)
+TextureEnhancementControl = 0
+
+[Video-Glide64mk2]
+# Wrapper FBO
+wrpFBO = False
+_EOF_
+
     chown -R $user:$user "$configdir/n64"
     su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
 
@@ -85,4 +113,8 @@ function configure_mupen64plus-testing() {
     # create romdir for n64 plugin
     mkRomDir "n64-gles2rice"
     setESSystem "Nintendo 64" "n64-gles2rice" "~/RetroPie/roms/n64-gles2rice" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%\" \"$md_id\"" "n64" "n64"
+
+    # create romdir for n64 plugin
+    mkRomDir "n64-glide64mk2"
+    setESSystem "Nintendo 64" "n64-glide64mk2" "~/RetroPie/roms/n64-glide64mk2" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-glide64mk2.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%\" \"$md_id\"" "n64" "n64"
 }
