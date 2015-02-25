@@ -10,13 +10,26 @@ function depends_ps3controller() {
 function sources_ps3controller() {
     wget -nv http://www.pabr.org/sixlinux/sixpair.c -O "$md_build/sixpair.c"
     wget -O- -q http://sourceforge.net/projects/qtsixa/files/QtSixA%201.5.1/QtSixA-1.5.1-src.tar.gz | tar -xvz --strip-components=1
+    patch -p1 <<\_EOF_
+--- a/sixad/shared.h	2011-10-12 03:37:38.000000000 +0300
++++ b/sixad/shared.h	2012-08-14 19:30:12.190379004 +0300
+@@ -18,6 +18,8 @@
+ #ifndef SHARED_H
+ #define SHARED_H
+ 
++#include <unistd.h>
++
+ struct dev_led {
+     bool enabled;
+     bool anim;
+_EOF_
 }
 
 function build_ps3controller() {
     gcc -o sixpair sixpair.c -lusb
     cd sixad
     make clean
-    make CXX="g++-4.6" CXXFLAGS="-O2"
+    make
 }
 
 function install_ps3controller() {
