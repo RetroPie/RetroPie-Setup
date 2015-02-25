@@ -1,6 +1,6 @@
 rp_module_id="packagerepository"
 rp_module_desc="Package Repository"
-rp_module_menus="4+"
+rp_module_menus=""
 rp_module_flags="nobin"
 
 function install_packagerepository() {
