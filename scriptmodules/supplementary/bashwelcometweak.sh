@@ -4,8 +4,8 @@ rp_module_menus="2+"
 rp_module_flags="nobin"
 
 function install_bashwelcometweak() {
-    if ! grep -q "# RETROPIE PROFILE START" "$home/.bashrc"; then
-        cat >> "$home/.bashrc" <<\_EOF_
+    remove_bashwelcometweak
+    cat >> "$home/.bashrc" <<\_EOF_
 # RETROPIE PROFILE START
 # Thanks to http://blog.petrockblock.com/forums/topic/retropie-mushroom-motd/#post-3965
 
@@ -44,8 +44,6 @@ $(tput sgr0)"
 
 # RETROPIE PROFILE END
 _EOF_
-
-    fi
 }
 
 function remove_bashwelcometweak() {
