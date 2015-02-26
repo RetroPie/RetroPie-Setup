@@ -12,7 +12,7 @@ function install_gamecondriver() {
 
     dialog --title " GPIO gamepad drivers installation " --clear \
     --yesno "GPIO gamepad drivers require that most recent kernel (firmware)\
-    is installed and active. Continue with installation?" 22 76
+    is installed and active. Continue with installation?" 22 76 >/dev/tty
     case $? in
       0)
         echo "Starting installation.";;
@@ -53,25 +53,22 @@ function install_gamecondriver() {
 
     #test if gamecon installation is OK
     if [[ -n $(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko) ]]; then
-        dialog --backtitle "$__backtitle" --msgbox "$(gzip -dc /usr/share/doc/gamecon_gpio_rpi/README.gz)" 22 76
+        printMsgs "dialog" "$(gzip -dc /usr/share/doc/gamecon_gpio_rpi/README.gz)"
     else
-        dialog --backtitle "$__backtitle" --msgbox "Gamecon GPIO driver installation FAILED"\
-        22 76
+        printMsgs "dialog" "Gamecon GPIO driver installation FAILED"
     fi
 
     #test if db9 installation is OK
     if [[ -n $(modinfo -n db9_gpio_rpi | grep db9_gpio_rpi.ko) ]]; then
-            dialog --backtitle "$__backtitle" --msgbox "Db9 GPIO driver successfully installed. \
-        Use 'zless /usr/share/doc/db9_gpio_rpi/README.gz' to read how to use it." 22 76
+            printMsgs "dialog" "Db9 GPIO driver successfully installed. \nUse 'zless /usr/share/doc/db9_gpio_rpi/README.gz' to read how to use it."
     else
-        dialog --backtitle "$__backtitle" --msgbox "Db9 GPIO driver installation FAILED"\
-        22 76
+        printMsgs "dialog" "Db9 GPIO driver installation FAILED"
     fi
 }
 
 function configure_gamecondriver() {
     if [[ "$(dpkg-query -W -f='${Status}' gamecon-gpio-rpi-dkms)" != "install ok installed" ]]; then
-        dialog --msgbox "gamecon_gpio_rpi not found, install it first" 22 76
+        printMsgs "dialog" "gamecon_gpio_rpi not found, install it first"
         return 0
     fi
 
@@ -85,7 +82,7 @@ function configure_gamecondriver() {
              ;;
     esac
 
-dialog --msgbox "\
+printMsgs "dialog" "\
 __________\n\
          |          ### Board gpio revision $GPIOREV detected ###\n\
     + *  |\n\
@@ -102,7 +99,7 @@ __________\n\
     L *  |          2 = player2 pad\n\
     * *  |          * = unconnected\n\
          |\n\
-         |" 22 76
+         |"
 
     if [[ -n $(lsmod | grep gamecon_gpio_rpi) ]]; then
         rmmod gamecon_gpio_rpi
@@ -116,7 +113,7 @@ __________\n\
 
     dialog --title " Update $configdir/all/retroarch.cfg " --clear \
         --yesno "Would you like to update button mappings \
-    to $configdir/all/retroarch.cfg ?" 22 76
+    to $configdir/all/retroarch.cfg ?" 22 76 >/dev/tty
 
     iniConfig " = " "" "$configdir/all/retroarch.cfg"
 
@@ -162,7 +159,7 @@ __________\n\
 
     dialog --title " Enable SNES configuration permanently " --clear \
         --yesno "Would you like to permanently enable SNES configuration?\
-        " 22 76
+        " 22 76 >/dev/tty
 
     case $? in
       0)
@@ -179,6 +176,5 @@ __________\n\
         ;;
     esac
 
-    dialog --backtitle "$__backtitle" --msgbox \
-    "Gamecon GPIO driver enabled with 2 SNES pads." 22 76
+    printMsgs "dialog" "Gamecon GPIO driver enabled with 2 SNES pads."
 }

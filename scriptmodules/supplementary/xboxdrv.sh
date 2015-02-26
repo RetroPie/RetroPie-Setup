@@ -10,5 +10,5 @@ function install_xboxdrv() {
     fi
     iniConfig "=" "" "/boot/config.txt"
     iniSet "dwc_otg.speed" "1"
-    dialog --backtitle "$__backtitle" --msgbox "Installed xboxdrv and adapted /etc/rc.local. It will be started on boot." 22 76
+    printMsgs "dialog" "Installed xboxdrv and adapted /etc/rc.local. It will be started on boot."
 }

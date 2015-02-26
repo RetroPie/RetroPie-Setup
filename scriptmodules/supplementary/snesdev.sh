@@ -94,28 +94,28 @@ function configure_snesdev() {
         case $choices in
             1) sup_checkInstallSNESDev
                make uninstallservice
-               dialog --backtitle "$__backtitle" --msgbox "Disabled SNESDev on boot." 22 76
+               printMsgs "dialog" "Disabled SNESDev on boot."
                             ;;
             2) sup_checkInstallSNESDev
                sup_enableSNESDevAtStart 3
                make installservice
-               dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling pads and button)." 22 76
+               printMsgs "dialog" "Enabled SNESDev on boot (polling pads and button)."
                             ;;
             3) sup_checkInstallSNESDev
                sup_enableSNESDevAtStart 1
                make installservice
-               dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling only pads)." 22 76
+               printMsgs "dialog" "Enabled SNESDev on boot (polling only pads)."
                             ;;
             4) sup_checkInstallSNESDev
                sup_enableSNESDevAtStart 2
                make installservice
-               dialog --backtitle "$__backtitle" --msgbox "Enabled SNESDev on boot (polling only button)." 22 76
+               printMsgs "dialog" "Enabled SNESDev on boot (polling only button)."
                             ;;
             5) sup_snesdevAdapterversion 1
-               dialog --backtitle "$__backtitle" --msgbox "Switched to adapter version 1.X." 22 76
+               printMsgs "dialog" "Switched to adapter version 1.X."
                             ;;
             6) sup_snesdevAdapterversion 2
-               dialog --backtitle "$__backtitle" --msgbox "Switched to adapter version 2.X." 22 76
+               printMsgs "dialog" "Switched to adapter version 2.X."
                             ;;
         esac
     else

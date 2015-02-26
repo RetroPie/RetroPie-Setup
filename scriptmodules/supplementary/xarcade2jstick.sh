@@ -34,11 +34,11 @@ function configure_xarcade2jstick() {
         case $choices in
             1) sup_checkInstallXarcade2Jstick
                make uninstallservice
-               dialog --backtitle "$__backtitle" --msgbox "Disabled Xarcade2Jstick." 22 76
+               printMsgs "dialog" "Disabled Xarcade2Jstick."
                             ;;
             2) sup_checkInstallXarcade2Jstick
                make installservice
-               dialog --backtitle "$__backtitle" --msgbox "Enabled Xarcade2Jstick service." 22 76
+               printMsgs "dialog" "Enabled Xarcade2Jstick service."
                             ;;
         esac
     fi

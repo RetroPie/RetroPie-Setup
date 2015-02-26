@@ -99,10 +99,10 @@ function configure_splashenable() {
     if [[ -n "$choices" ]]; then
         case $choices in
             1) set_disableSplashscreenAtStart
-               dialog --backtitle "$__backtitle" --msgbox "Disabled custom splashscreen on boot." 22 76
+               printMsgs "dialog" "Disabled custom splashscreen on boot."
                             ;;
             2) set_enableSplashscreenAtStart
-               dialog --backtitle "$__backtitle" --msgbox "Enabled custom splashscreen on boot." 22 76
+               printMsgs "dialog" "Enabled custom splashscreen on boot."
                             ;;
         esac
     fi

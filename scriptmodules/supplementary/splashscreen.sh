@@ -29,6 +29,6 @@ function configure_splashscreen() {
         find $scriptdir/supplementary/splashscreens/$splashdir/ -type f | sort | while read line; do
             echo $line >> /etc/splashscreen.list
         done
-        dialog --backtitle "$__backtitle" --msgbox "Splashscreen set to '$splashdir'." 20 60
+        printMsgs "dialog" "Splashscreen set to '$splashdir'." 20 60
     fi
 }
