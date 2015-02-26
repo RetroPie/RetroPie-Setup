@@ -8,8 +8,10 @@ function sources_nestopia() {
 
 function build_nestopia() {
     cd libretro
+    rpSwap on 512
     make clean
     make
+    rpSwap off
     md_ret_require="$md_build/libretro/nestopia_libretro.so"
 }
 
