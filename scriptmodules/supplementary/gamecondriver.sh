@@ -1,6 +1,6 @@
 rp_module_id="gamecondriver"
 rp_module_desc="Gamecon driver"
-rp_module_menus="3+install"
+rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function install_gamecondriver() {
@@ -10,20 +10,23 @@ function install_gamecondriver() {
 
     clear
 
-    dialog --title " GPIO gamepad drivers installation " --clear \
-    --yesno "GPIO gamepad drivers require that most recent kernel (firmware)\
-    is installed and active. Continue with installation?" 22 76 >/dev/tty
+    dialog \
+        --title "GPIO gamepad drivers installation" --clear \
+        --yesno "GPIO gamepad drivers require that most recent kernel (firmware) is installed and active. Continue with installation?" \
+        22 76 >/dev/tty
     case $? in
-      0)
-        echo "Starting installation.";;
-      *)
-        return 0;;
+        0)
+            echo "Starting installation."
+            ;;
+        *)
+            return 0
+            ;;
     esac
 
-    #install dkms
+    # install dkms
     getDepends dkms
 
-    #reconfigure / install headers (takes a a while)
+    # reconfigure / install headers (takes a a while)
     if [[ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" == "$(uname -r)-2" ]]; then
         dpkg-reconfigure linux-headers-$(uname -r)
     else
@@ -32,9 +35,8 @@ function install_gamecondriver() {
         rm linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
     fi
 
-    #install gamecon
+    # install gamecon
     if [[ "$(dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms)" == ${GAMECON_VER} ]]; then
-        #dpkg-reconfigure gamecon-gpio-rpi-dkms
         echo "gamecon is the newest version"
     else
         wget ${DOWNLOAD_LOC}/gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
@@ -42,7 +44,7 @@ function install_gamecondriver() {
         rm gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
     fi
 
-    #install db9 joystick driver
+    # install db9 joystick driver
     if [[ "$(dpkg-query -W -f='${Version}' db9-gpio-rpi-dkms)" == ${DB9_VER} ]]; then
         echo "db9 is the newest version"
     else
@@ -51,14 +53,14 @@ function install_gamecondriver() {
         rm db9-gpio-rpi-dkms_${DB9_VER}_all.deb
     fi
 
-    #test if gamecon installation is OK
+    # test if gamecon installation is OK
     if [[ -n $(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko) ]]; then
         printMsgs "dialog" "$(gzip -dc /usr/share/doc/gamecon_gpio_rpi/README.gz)"
     else
         printMsgs "dialog" "Gamecon GPIO driver installation FAILED"
     fi
 
-    #test if db9 installation is OK
+    # test if db9 installation is OK
     if [[ -n $(modinfo -n db9_gpio_rpi | grep db9_gpio_rpi.ko) ]]; then
             printMsgs "dialog" "Db9 GPIO driver successfully installed. \nUse 'zless /usr/share/doc/db9_gpio_rpi/README.gz' to read how to use it."
     else
@@ -74,15 +76,15 @@ function configure_gamecondriver() {
 
     REVSTRING=$(grep Revision /proc/cpuinfo | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4)
     case "$REVSTRING" in
-          "0002"|"0003")
-             GPIOREV=1
-             ;;
-          *)
-             GPIOREV=2
-             ;;
+        "0002"|"0003")
+            GPIOREV=1
+            ;;
+        *)
+            GPIOREV=2
+            ;;
     esac
 
-printMsgs "dialog" "\
+    printMsgs "dialog" "\
 __________\n\
          |          ### Board gpio revision $GPIOREV detected ###\n\
     + *  |\n\
@@ -112,20 +114,20 @@ __________\n\
     fi
 
     dialog --title " Update $configdir/all/retroarch.cfg " --clear \
-        --yesno "Would you like to update button mappings \
+    --yesno "Would you like to update button mappings \
     to $configdir/all/retroarch.cfg ?" 22 76 >/dev/tty
 
     iniConfig " = " "" "$configdir/all/retroarch.cfg"
 
-      case $? in
-       0)
-        if [[ $GPIOREV == 1 ]]; then
+    case $? in
+        0)
+            if [[ $GPIOREV == 1 ]]; then
                 iniSet "input_player1_joypad_index" "0"
                 iniSet "input_player2_joypad_index" "1"
-        else
-            iniSet "input_player1_joypad_index" "1"
-            iniSet "input_player2_joypad_index" "0"
-        fi
+            else
+                iniSet "input_player1_joypad_index" "1"
+                iniSet "input_player2_joypad_index" "0"
+            fi
 
             iniSet "input_player1_a_btn" "0"
             iniSet "input_player1_b_btn" "1"
@@ -152,28 +154,29 @@ __________\n\
             iniSet "input_player2_up_axis" "-1"
             iniSet "input_player2_right_axis" "+0"
             iniSet "input_player2_down_axis" "+1"
-        ;;
-       *)
-        ;;
-      esac
+            ;;
+        *)
+            ;;
+    esac
 
-    dialog --title " Enable SNES configuration permanently " --clear \
-        --yesno "Would you like to permanently enable SNES configuration?\
-        " 22 76 >/dev/tty
+    dialog \
+        --title " Enable SNES configuration permanently " --clear \
+        --yesno "Would you like to permanently enable SNES configuration?" \
+        22 76 >/dev/tty
 
     case $? in
-      0)
-    if ! grep "gamecon_gpio_rpi" /etc/modules; then
-        if [[ $GPIOREV == 1 ]]; then
-            addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
-        else
-            addLineToFile "gamecon_gpio_rpi map=0,0,1,0,0,1" "/etc/modules"
-        fi
-    fi
-    ;;
-      *)
-        #TODO: delete the line from /etc/modules
-        ;;
+        0)
+            if ! grep "gamecon_gpio_rpi" /etc/modules; then
+                if [[ $GPIOREV == 1 ]]; then
+                    addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
+                else
+                    addLineToFile "gamecon_gpio_rpi map=0,0,1,0,0,1" "/etc/modules"
+                fi
+            fi
+            ;;
+        *)
+            #TODO: delete the line from /etc/modules
+            ;;
     esac
 
     printMsgs "dialog" "Gamecon GPIO driver enabled with 2 SNES pads."
