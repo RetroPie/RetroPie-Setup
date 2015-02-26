@@ -39,8 +39,6 @@ scriptdir=$(cd $scriptdir && pwd)
 source "$scriptdir/retropie_packages.sh" init
 source "$scriptdir/scriptmodules/retropiesetup.sh"
 
-__backtitle="PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir for user $user"
-
 rps_checkForLogDirectory
 # make sure that enough space is available
 rps_availFreeDiskSpace 800000
