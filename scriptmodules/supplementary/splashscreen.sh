@@ -17,7 +17,7 @@ function configure_splashscreen() {
         if [[ $splashdir != "." ]]; then
             options+=($ctr "${splashdir:2}")
             dirlist+=(${splashdir:2})
-            ctr=$((ctr + 1))
+            ((ctr++))
         fi
     done
     popd > /dev/null

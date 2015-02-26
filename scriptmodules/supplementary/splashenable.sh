@@ -93,17 +93,21 @@ function set_disableSplashscreenAtStart()
 
 function configure_splashenable() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
-    options=(1 "Disable custom splashscreen on boot."
-             2 "Enable custom splashscreen on boot")
+    options=(
+        1 "Disable custom splashscreen on boot."
+        2 "Enable custom splashscreen on boot"
+    )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choices" ]]; then
         case $choices in
-            1) set_disableSplashscreenAtStart
-               printMsgs "dialog" "Disabled custom splashscreen on boot."
-                            ;;
-            2) set_enableSplashscreenAtStart
-               printMsgs "dialog" "Enabled custom splashscreen on boot."
-                            ;;
+            1)
+                set_disableSplashscreenAtStart
+                printMsgs "dialog" "Disabled custom splashscreen on boot."
+                ;;
+            2)
+                set_enableSplashscreenAtStart
+                printMsgs "dialog" "Enabled custom splashscreen on boot."
+                ;;
         esac
     fi
 }

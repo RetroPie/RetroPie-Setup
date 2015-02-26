@@ -27,19 +27,23 @@ function sup_checkInstallXarcade2Jstick() {
 
 function configure_xarcade2jstick() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
-    options=(1 "Disable Xarcade2Jstick service."
-             2 "Enable Xarcade2Jstick service." )
+    options=(
+        1 "Disable Xarcade2Jstick service."
+        2 "Enable Xarcade2Jstick service."
+    )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choices" ]]; then
         case $choices in
-            1) sup_checkInstallXarcade2Jstick
-               make uninstallservice
-               printMsgs "dialog" "Disabled Xarcade2Jstick."
-                            ;;
-            2) sup_checkInstallXarcade2Jstick
-               make installservice
-               printMsgs "dialog" "Enabled Xarcade2Jstick service."
-                            ;;
+            1)
+                sup_checkInstallXarcade2Jstick
+                make uninstallservice
+                printMsgs "dialog" "Disabled Xarcade2Jstick."
+                ;;
+            2)
+                sup_checkInstallXarcade2Jstick
+                make installservice
+                printMsgs "dialog" "Enabled Xarcade2Jstick service."
+                ;;
         esac
     fi
 }
