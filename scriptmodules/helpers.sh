@@ -352,6 +352,13 @@ function ensureSystemretroconfig {
         echo -e "#include \"$configdir/all/retroarch.cfg\"\n# All settings made here will override the global settings for the current emulator core\n" >> "$configdir/$1/retroarch.cfg"
         chown -R $user:$user "$configdir/$1"
     fi
+    
+    if ! grep -q "#include \"$configdir/all/retroarch.cfg" $configdir/$1/retroarch.cfg; then
+        addLineToFile "#include \"$configdir/all/retroarch.cfg" $configdir/$1/retroarch.cfg
+    fi
+    
+    iniConfig " = " "" "$configdir/$1/retroarch.cfg"
+    iniSet "input_remapping_directory" "$configdir/$1/retroarch.cfg"
 }
 
 # make sure we have all the needed modes in /etc/fb.modes - which is currently just the addition of 320x240.
