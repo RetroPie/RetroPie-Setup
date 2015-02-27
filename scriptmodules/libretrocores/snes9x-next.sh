@@ -1,19 +1,19 @@
-rp_module_id="libretro_snes9x-next"
+rp_module_id="snes9x-next"
 rp_module_desc="SNES LibretroCore snes9x-next"
 rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
-function sources_libretro_snes9x-next() {
+function sources_snes9x-next() {
     gitPullOrClone "$md_build" https://github.com/libretro/snes9x-next
 }
 
-function build_libretro_snes9x-next() {
+function build_snes9x-next() {
     make -f Makefile.libretro clean
     make -f Makefile.libretro platform=armvneon
     md_ret_require="$md_build/snes9x_next_libretro.so"
 }
 
-function install_libretro_snes9x-next() {
+function install_snes9x-next() {
     md_ret_files=(
         'snes9x_next_libretro.so'
         'docs/changes.txt'  
@@ -27,7 +27,7 @@ function install_libretro_snes9x-next() {
     )
 }
 
-function configure_libretro_snes9x-next() {
+function configure_snes9x-next() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 
