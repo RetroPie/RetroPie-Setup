@@ -1,6 +1,6 @@
 rp_module_id="esconfig"
 rp_module_desc="ES-Config"
-rp_module_menus="3+"
+rp_module_menus=""
 rp_module_flags="nobin"
 
 function sources_esconfig() {
