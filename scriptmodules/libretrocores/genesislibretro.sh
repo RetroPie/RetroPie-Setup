@@ -1,5 +1,5 @@
 rp_module_id="genesislibretro"
-rp_module_desc="GameGear LibretroCore"
+rp_module_desc="GameGear/MasterSystem/Genesis LibretroCore genesis-plus-gx"
 rp_module_menus="2+"
 
 function sources_genesislibretro() {
@@ -24,23 +24,28 @@ function install_genesislibretro() {
 function configure_genesislibretro() {
     mkRomDir "gamegear"
     mkRomDir "mastersystem-genesis"
+    mkRomDir "megadrive-genesis"
     
     ensureSystemretroconfig "gamegear"
     ensureSystemretroconfig "mastersystem-genesis"
+    ensureSystemretroconfig "megadrive-genesis"
     
     # system-specific shaders, gamegear
     iniConfig " = " "" "$configdir/gamegear/retroarch.cfg"
     iniSet "savefile_directory" "~/RetroPie/roms/gamegear"
     iniSet "savestate_directory" "~/RetroPie/roms/gamegear"
-    iniSet "input_remapping_directory" "$configdir/gamegear/"
 
     # system-specific shaders, mastersystem
     iniConfig " = " "" "$configdir/mastersystem-genesis/retroarch.cfg"
     iniSet "savefile_directory" "~/RetroPie/roms/mastersystem-genesis"
     iniSet "savestate_directory" "~/RetroPie/roms/mastersystem-genesis"
-    iniSet "input_remapping_directory" "$configdir/mastersystem-genesis/"
-
-    setESSystem "Sega Master System / Mark III" "mastersystem-genesis" "~/RetroPie/roms/mastersystem-genesis" ".sms .SMS .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mastersystem/retroarch.cfg %ROM%\" \"$md_id\"" "mastersystem" "mastersystem"
-
-    setESSystem "Sega Game Gear" "gamegear" "~/RetroPie/roms/gamegear" ".gg .GG .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/gamegear/retroarch.cfg  %ROM%\" \"$md_id\"" "gamegear" "gamegear"
+    
+    # system-specific shaders, megadrive
+    iniConfig " = " "" "$configdir/megadrive-genesis/retroarch.cfg"
+    iniSet "savefile_directory" "~/RetroPie/roms/megadrive-genesis"
+    iniSet "savestate_directory" "~/RetroPie/roms/megadrive-genesis"
+    
+    setESSystem "Sega Master System / Mark III" "mastersystem-genesis" "~/RetroPie/roms/mastersystem-genesis" ".sms .SMS .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/mastersystem-genesis/retroarch.cfg %ROM%\" \"$md_id\"" "mastersystem" "mastersystem"
+    setESSystem "Sega Game Gear" "gamegear" "~/RetroPie/roms/gamegear" ".gg .GG .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/gamegear/retroarch.cfg  %ROM%\" \"$md_id\"" "gamegear" "gamegear"
+    setESSystem "Sega Mega Drive / Genesis" "megadrive-genesis" "~/RetroPie/roms/megadrive-genesis" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/megadrive-genesis/retroarch.cfg %ROM%\" \"$md_id\"" "genesis,megadrive" "megadrive"
 }
