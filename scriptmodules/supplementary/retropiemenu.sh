@@ -11,7 +11,6 @@ function configure_retropiemenu()
 {
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
-    chown pi:pi "$rpdir"
 
     files=(
         'raspiconfig.rp'
