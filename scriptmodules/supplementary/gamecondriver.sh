@@ -4,8 +4,8 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function install_gamecondriver() {
-    GAMECON_VER=0.9
-    DB9_VER=0.7
+    GAMECON_VER=1.0
+    DB9_VER=1.0
     DOWNLOAD_LOC="http://www.niksula.hut.fi/~mhiienka/Rpi"
 
     clear
