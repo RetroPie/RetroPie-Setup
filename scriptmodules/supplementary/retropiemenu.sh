@@ -27,7 +27,8 @@ function configure_retropiemenu()
     for file in "${files[@]}"; do
         touch "$rpdir/$file"
     done
-    chown -R pi:pi "$rpdir"
+
+    chown -R $user:$user "$rpdir"
 
     # add some information
     mkdir -p "$home/.emulationstation/gamelists/retropie/"
