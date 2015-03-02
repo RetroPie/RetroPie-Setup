@@ -4,21 +4,16 @@ rp_module_menus=""
 rp_module_flags="nobin"
 
 function rps_setLogFilename() {
-    local now=$(date +'%d%m%Y_%H%M')
-    logfilename="$scriptdir/logs/run_$now.log.gz"
-    touch "$logfilename"
-}
-
-function rps_checkForLogDirectory() {
-    # make sure that RetroPie-Setup log directory exists
-    if [[ ! -d $scriptdir/logs ]]; then
-        if mkdir -p "$scriptdir/logs"; then
-            chown $user:$user "$scriptdir/logs"
+    if [[ ! -d "$__logdir" ]]; then
+        if mkdir -p "$__logdir"; then
+            chown $user:$user "$__logdir"
         else
-            echo "Couldn't make directory $scriptdir/logs"
-            exit 1
+            fatalError "Couldn't make directory $__logdir"
         fi
     fi
+    local now=$(date +'%d%m%Y_%H%M')
+    logfilename="$__logdir/run_$now.log.gz"
+    touch "$logfilename"
 }
 
 function rps_printInfo() {
@@ -76,7 +71,6 @@ function rps_availFreeDiskSpace() {
 }
 
 function depends_setup() {
-    rps_checkForLogDirectory
     rps_availFreeDiskSpace 500000
 }
 

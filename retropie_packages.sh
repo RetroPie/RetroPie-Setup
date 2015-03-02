@@ -42,9 +42,11 @@ configdir="$rootdir/configs"
 scriptdir=$(dirname "$0")
 scriptdir=$(cd "$scriptdir" && pwd)
 
+__logdir="$scriptdir/logs"
 __tmpdir="$scriptdir/tmp"
 __builddir="$__tmpdir/build"
 __swapdir="$__tmpdir"
+
 
 # check, if sudo is used
 if [[ $(id -u) -ne 0 ]]; then
