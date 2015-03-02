@@ -120,7 +120,7 @@ function binaries_setup()
 
     } &> >(tee >(gzip --stdout > "$logfilename"))
 
-    chown -R $user:$user "$logfilename"
+    chown $user:$user "$logfilename"
 
     rps_printInfo "$logfilename"
     printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
@@ -167,7 +167,7 @@ function source_setup()
                 ((count++))
             done
         } &> >(tee >(gzip --stdout > "$logfilename"))
-        chown -R $user:$user "$logfilename"
+        chown $user:$user "$logfilename"
 
         rps_printInfo "$logfilename"
         printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
@@ -190,7 +190,7 @@ function supplementary_setup()
     done
 
     rps_printInfo "$logfilename"
-    chown -R $user:$user "$logfilename"
+    chown $user:$user "$logfilename"
 }
 
 function experimental_setup()
@@ -209,7 +209,7 @@ function experimental_setup()
     done
 
     rps_printInfo "$logfilename"
-    chown -R $user:$user $logfilename
+    chown $user:$user $logfilename
 }
 
 function individual_setup()
