@@ -1,41 +1,13 @@
-#!/bin/bash
-
-#  RetroPie-Setup - Shell script for initializing Raspberry Pi
-#  with RetroArch, various cores, and EmulationStation (a graphical
-#  front end).
-#
-#  (c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
-#
-#  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
-#
-#  Permission to use, copy, modify and distribute RetroPie-Setup in both binary and
-#  source form, for non-commercial purposes, is hereby granted without fee,
-#  providing that this license information and copyright notice appear with
-#  all copies and any derived work.
-#
-#  This software is provided 'as-is', without any express or implied
-#  warranty. In no event shall the authors be held liable for any damages
-#  arising from the use of this software.
-#
-#  RetroPie-Setup is freeware for PERSONAL USE only. Commercial users should
-#  seek permission of the copyright holders first. Commercial use includes
-#  charging money for RetroPie-Setup or software derived from RetroPie-Setup.
-#
-#  The copyright holders request that bug fixes and improvements to the code
-#  should be forwarded to them so everyone can benefit from the modifications
-#  in future versions.
-#
-#  Many, many thanks go to all people that provide the individual packages!!!
-#
-#  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
-#
+rp_module_id="setup"
+rp_module_desc="GUI based setup for RetroPie"
+rp_module_menus=""
+rp_module_flags="nobin"
 
 function rps_setLogFilename() {
     local now=$(date +'%d%m%Y_%H%M')
     logfilename="$scriptdir/logs/run_$now.log.gz"
     touch "$logfilename"
 }
-
 
 function rps_checkForLogDirectory() {
     # make sure that RetroPie-Setup log directory exists
@@ -103,50 +75,9 @@ function rps_availFreeDiskSpace() {
     fi
 }
 
-# retropie-setup main menu
-rps_main_menu() {
-    while true; do
-        __ERRMSGS=()
-        __INFMSGS=()
-
-        cmd=(dialog --backtitle "$__backtitle" --menu "Choose installation either based on binaries or on sources." 22 76 16)
-        options=()
-        if [[ $__has_binaries -eq 1 ]]; then
-            options+=(
-            1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)")
-        fi
-        options+=(
-            2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
-            3 "SETUP (only if you already have run one of the installations above)"
-            4 "EXPERIMENTAL packages (these are potentially unstable packages)"
-        )
-        if [[ $__has_binaries -eq 1 ]]; then
-            options+=(
-                5 "INSTALL individual emulators from binary or source"
-            )
-        else
-            options+=(5 "INSTALL individual emulators from source")
-        fi
-        options+=(
-            U "UPDATE RetroPie Setup script"
-            R "Perform REBOOT"
-        )
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choices" ]]; then
-            case $choices in
-                1) rps_main_binaries ;;
-                2) rps_main_options ;;
-                3) rps_main_setup ;;
-                4) rps_main_experimental ;;
-                5) rps_install_individual ;;
-                U) rps_main_updatescript ;;
-                R) rps_main_reboot ;;
-            esac
-        else
-            break
-        fi
-    done
-    clear
+function depends_setup() {
+    rps_checkForLogDirectory
+    rps_availFreeDiskSpace 500000
 }
 
 # downloads and installs pre-compiles binaries of all essential programs and libraries
@@ -160,7 +91,7 @@ function rps_downloadBinaries()
 }
 
 # download, extract, and install binaries
-function rps_main_binaries()
+function binaries_setup()
 {
     local idx
 
@@ -211,7 +142,7 @@ function rps_main_binaries()
     printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
 }
 
-function rps_main_updatescript()
+function updatescript_setup()
 {
     printHeading "Fetching latest version of the RetroPie Setup Script."
     pushd $scriptdir
@@ -232,7 +163,7 @@ function rps_main_updatescript()
     printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script. You need to restart the script."
 }
 
-function rps_main_options()
+function source_setup()
 {
     rps_buildMenu 2 "bool"
     cmd=(dialog --separate-output --backtitle "$__backtitle" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings. The entries marked as (C) denote the configuration steps. For an update of an installation you would deselect these to keep all your settings untouched." 22 76 16)
@@ -259,7 +190,7 @@ function rps_main_options()
     fi
 }
 
-function rps_main_setup()
+function supplementary_setup()
 {
     local logfilename
     rps_setLogFilename
@@ -278,7 +209,7 @@ function rps_main_setup()
     chown -R $user:$user "$logfilename"
 }
 
-function rps_main_experimental()
+function experimental_setup()
 {
     local logfilename
     while true; do
@@ -297,7 +228,7 @@ function rps_main_experimental()
     chown -R $user:$user $logfilename
 }
 
-function rps_install_individual()
+function individual_setup()
 {
     local logfilename
     local options=()
@@ -336,8 +267,54 @@ function rps_install_individual()
     done
 }
 
-function rps_main_reboot()
+function reboot_setup()
 {
     clear
     reboot
+}
+
+# retropie-setup main menu
+function configure_setup() {
+    while true; do
+        __ERRMSGS=()
+        __INFMSGS=()
+
+        cmd=(dialog --backtitle "$__backtitle" --menu "Choose installation either based on binaries or on sources." 22 76 16)
+        options=()
+        if [[ $__has_binaries -eq 1 ]]; then
+            options+=(
+            1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)")
+        fi
+        options+=(
+            2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
+            3 "SETUP (only if you already have run one of the installations above)"
+            4 "EXPERIMENTAL packages (these are potentially unstable packages)"
+        )
+        if [[ $__has_binaries -eq 1 ]]; then
+            options+=(
+                5 "INSTALL individual emulators from binary or source"
+            )
+        else
+            options+=(5 "INSTALL individual emulators from source")
+        fi
+        options+=(
+            U "UPDATE RetroPie Setup script"
+            R "Perform REBOOT"
+        )
+        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [[ -n "$choices" ]]; then
+            case $choices in
+                1) binaries_setup ;;
+                2) source_setup ;;
+                3) supplementary_setup ;;
+                4) experimental_setup ;;
+                5) individual_setup ;;
+                U) updatescript_setup ;;
+                R) reboot_setup ;;
+            esac
+        else
+            break
+        fi
+    done
+    clear
 }
