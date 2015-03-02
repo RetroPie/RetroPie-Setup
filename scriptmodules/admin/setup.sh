@@ -74,16 +74,6 @@ function depends_setup() {
     rps_availFreeDiskSpace 500000
 }
 
-# downloads and installs pre-compiles binaries of all essential programs and libraries
-function rps_downloadBinaries()
-{
-    for idx in "${__mod_idx[@]}"; do
-        if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobin ]]; then
-            rp_callModule $idx install_bin
-        fi
-    done
-}
-
 # download, extract, and install binaries
 function binaries_setup()
 {
