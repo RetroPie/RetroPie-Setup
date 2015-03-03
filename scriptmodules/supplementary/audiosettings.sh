@@ -31,7 +31,7 @@ function configure_audiosettings() {
                 printMsgs "dialog" "Set audio output to HDMI"
                 ;;
             4)
-                alsamixer
+                alsamixer >/dev/tty </dev/tty
                 alsactl store
                 ;;
             R)
