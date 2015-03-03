@@ -52,7 +52,7 @@ _EOF_
     iniConfig "=" "" /boot/config.txt
     iniSet "gpu_mem_256" 128
     iniSet "gpu_mem_512" 256
-    iniSet "gpu_mem_1024" 384
+    iniSet "gpu_mem_1024" 256
     iniSet "overscan_scale" 1
 
     mkdir -p "/etc/emulationstation"
