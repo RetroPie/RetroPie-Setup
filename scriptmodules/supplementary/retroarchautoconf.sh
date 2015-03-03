@@ -9,7 +9,6 @@ function sources_retroarchautoconf() {
 
 function install_retroarchautoconf() {
     mkdir -p "$emudir/retroarch/configs/"
-    cp "$scriptdir/supplementary/RetroArchConfigs/"*.cfg "$emudir/retroarch/configs/"
     # strip CR's from the files
     cd "$md_build/udev/"
     for file in *; do
@@ -18,8 +17,10 @@ function install_retroarchautoconf() {
     done
 }
 
-function configure_retroarchautoconf() {
-    printMsgs "console" "Remapping controller hotkeys"
+function remap_hotkeys_retroarchautoconf() {
+    local file="$1"
+    local ini_value
+
     iniConfig " = " "\""
     local mappings=(
         'input_enable_hotkey input_select'
@@ -31,18 +32,24 @@ function configure_retroarchautoconf() {
         'input_state_slot_increase input_right'
         'input_state_slot_decrease input_left'
     )
-    local file
-    local ini_value
-    for file in "$emudir/retroarch/configs/"*; do
-        printMsgs "console" "Processing $file"
-        for mapping in "${mappings[@]}"; do
-            mapping=($mapping)
-            for suffix in axis btn; do
-                iniGet "${mapping[1]}_${suffix}" "$file"
-                if [[ -n "$ini_value" ]]; then
-                    iniSet "${mapping[0]}_${suffix}" "$ini_value" "$file" >/dev/null
-                fi
-            done
+
+    printMsgs "console" "Processing $file"
+
+    for mapping in "${mappings[@]}"; do
+        mapping=($mapping)
+        for suffix in axis btn; do
+            iniGet "${mapping[1]}_${suffix}" "$file"
+            if [[ -n "$ini_value" ]]; then
+                iniSet "${mapping[0]}_${suffix}" "$ini_value" "$file" >/dev/null
+            fi
         done
+    done
+}
+
+function configure_retroarchautoconf() {
+    printMsgs "console" "Remapping controller hotkeys"
+
+    for file in "$emudir/retroarch/configs/"*; do
+        remap_hotkeys_retroarchautoconf "$file"
     done
 }
