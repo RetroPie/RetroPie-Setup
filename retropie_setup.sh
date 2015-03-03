@@ -36,11 +36,5 @@
 scriptdir=$(dirname $0)
 scriptdir=$(cd $scriptdir && pwd)
 
-source "$scriptdir/retropie_packages.sh" init
-source "$scriptdir/scriptmodules/retropiesetup.sh"
-
-rps_checkForLogDirectory
-# make sure that enough space is available
-rps_availFreeDiskSpace 800000
-rps_main_menu
+"$scriptdir/retropie_packages.sh" setup
 
