@@ -110,7 +110,7 @@ function binaries_setup()
 
         # required supplementary modules 
         rp_callModule retroarchautoconf
-        rp_callModule runcommand
+        rp_callModule runcommand install
 
         # some additional supplementary modules
         rp_callModule disabletimeouts
@@ -166,6 +166,7 @@ function source_setup()
                 printHeading "Module $count of $total processed."
                 ((count++))
             done
+            rp_callModule runcommand install
         } &> >(tee >(gzip --stdout > "$logfilename"))
         chown $user:$user "$logfilename"
 

@@ -22,6 +22,7 @@
 # the user to set a screenmode for this particular command. the savename parameter is displayed to the user - we use the module id
 # of the emulator we are launching.
 
+runcommand_conf="/opt/retropie/configs/all/runcommand.cfg"
 video_conf="/opt/retropie/configs/all/videomodes.cfg"
 dispmanx_conf="/opt/retropie/configs/all/dispmanx.cfg"
 retronetplay_conf="/opt/retropie/configs/all/retronetplay.cfg"
@@ -237,6 +238,26 @@ function iniSet() {
     fi
 }
 
+function set_governor() {
+    governor_old=()
+    for cpu in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_governor; do
+        governor_old+=($(<$cpu))
+        echo "$1" | sudo tee "$cpu" >/dev/null
+    done
+}
+
+function restore_governor() {
+    local i=0
+    for cpu in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_governor; do
+        echo "${governor_old[$i]}" | sudo tee "$cpu" >/dev/null
+        ((i++))
+    done
+}
+
+if [[ -f "$runcommand_conf" ]]; then
+    source "$runcommand_conf"
+fi
+
 reqmode="$1"
 [[ -z "$reqmode" ]] && exit 1
 
@@ -274,16 +295,16 @@ fi
 
 config_dispmanx "$emusave"
 
-# switch to performance cpu governor
-echo "performance" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
+# switch to configured cpu scaling governor
+[[ -n "$governor" ]] && set_governor "$governor"
 
 retroarch_append_config
 
 # run command
 eval $command
 
-# switch to ondemand cpu governor
-echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor >/dev/null
+# restore default cpu scaling governor
+[[ -n "$governor" ]] && restore_governor
 
 # if we switched mode - restore preferred mode, and reset framebuffer
 if [[ $switched -eq 1 ]]; then
