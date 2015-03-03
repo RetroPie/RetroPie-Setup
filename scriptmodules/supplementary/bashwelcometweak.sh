@@ -36,7 +36,7 @@ echo "$(tput setaf 2)
 ( : '~'.~.'~' : ) Uptime.............: ${UPTIME}
  ~ .~       ~. ~  Memory.............: $(grep MemFree /proc/meminfo | awk {'print $2'})kB (Free) / $(grep MemTotal /proc/meminfo | awk {'print $2'})kB (Total)$(tput setaf 7)
   (  $(tput setaf 4) |   | $(tput setaf 7)  )  $(tput setaf 1) Running Processes..: $(ps ax | wc -l | tr -d " ")$(tput setaf 7)
-  '~         ~'  $(tput setaf 1) IP Address.........: $(ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ printf "%s ", $1}') $(tput setaf 7)
+  '~         ~'  $(tput setaf 1) IP Address.........: $(ip route get 8.8.8.8 | head -1 | cut -d' ' -f8) $(tput setaf 7)
     *--~-~--*    $(tput setaf 1) Temperature........: CPU: $cpuTempC°C/$cpuTempF°F GPU: $gpuTempC°C/$gpuTempF°F
                  $(tput setaf 7) The RetroPie Project, www.petrockblock.com
 
