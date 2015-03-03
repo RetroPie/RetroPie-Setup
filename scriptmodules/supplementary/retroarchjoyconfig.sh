@@ -11,12 +11,19 @@ function configure_retroarchjoyconfig() {
     clear
     # todo Find number of first joystick device in /dev/input
     numJoypads=$(ls -1 /dev/input/js* | head -n 1)
-    $emudir/retroarch/retroarch-joyconfig --autoconfig "$emudir/retroarch/configs/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
-    configfname=$(grep "input_device = \"" "$emudir/retroarch/configs/tempconfig.cfg")
-    configfname=$(echo ${configfname:16:-1} | tr -d ' ')
-    mv "$emudir/retroarch/configs/tempconfig.cfg" "$emudir/retroarch/configs/$configfname.cfg"
-    # Add hotkeys
-    rp_callModule retroarchautoconf configure
-    chown -R $user:$user "$emudir/retroarch/configs"
-    printMsgs "dialog" "The configuration file has been saved as $configfname.cfg and will be used by RetroArch from now on whenever that controller is connected."
+    if [[ -n "$numJoypads" ]]; then
+        "$emudir/retroarch/retroarch-joyconfig" --autoconfig "$emudir/retroarch/configs/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
+        configfname=$(grep "input_device = \"" "$emudir/retroarch/configs/tempconfig.cfg")
+        configfname=$(echo ${configfname:16:-1} | tr -d ' ')
+        mv "$emudir/retroarch/configs/tempconfig.cfg" "$emudir/retroarch/configs/$configfname.cfg"
+
+        # Add hotkeys
+        rp_callModule retroarchautoconf remap_hotkeys "$emudir/retroarch/configs/$configfname.cfg"
+
+        chown $user:$user "$emudir/retroarch/configs/$configfname.cfg"
+
+        printMsgs "dialog" "The configuration file has been saved as $configfname.cfg and will be used by RetroArch from now on whenever that controller is connected."
+    else
+        printMsgs "dialog" "Sorry, no joystick detected."
+    fi
 }
