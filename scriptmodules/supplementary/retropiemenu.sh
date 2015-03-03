@@ -78,7 +78,7 @@ _EOF_
 
 function launch_retropiemenu() {
     clear
-    local command="${md_params[0]}"
+    local command="$1"
     local basename="${command##*/}"
     case $basename in
         rpsetup.rp)
