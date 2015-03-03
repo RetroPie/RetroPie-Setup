@@ -21,6 +21,8 @@ function remap_hotkeys_retroarchautoconf() {
     local file="$1"
     local ini_value
 
+    [[ -z "$file" || ! -f "$file" ]] && return 1
+
     iniConfig " = " "\""
     local mappings=(
         'input_enable_hotkey input_select'
