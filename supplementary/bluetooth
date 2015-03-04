@@ -23,7 +23,7 @@
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 DESC=bluetooth
 
-DAEMON=/usr/libexec/bluetooth/bluetoothdh
+DAEMON=/usr/libexec/bluetooth/bluetoothd
 
 SSD_OPTIONS="--background --exec $DAEMON"
 
