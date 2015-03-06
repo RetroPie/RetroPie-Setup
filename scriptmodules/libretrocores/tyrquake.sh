@@ -11,8 +11,8 @@ function sources_tyrquake() {
 }
 
 function build_tyrquake() {
-    make -f Makefile.libretro clean
-    make -f Makefile.libretro
+    make clean
+    make 
     md_ret_require="$md_build/tyrquake_libretro.so"
 }
 
