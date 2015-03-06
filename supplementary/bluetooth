@@ -25,7 +25,7 @@ DESC=bluetooth
 
 DAEMON=/usr/libexec/bluetooth/bluetoothd
 
-SSD_OPTIONS="--background --exec $DAEMON"
+SSD_OPTIONS="--exec $DAEMON"
 
 test -f $DAEMON || exit 0
 
@@ -40,7 +40,7 @@ set -e
 case $1 in
   start)
 	log_daemon_msg "Starting $DESC"
-	start-stop-daemon --start $SSD_OPTIONS
+	start-stop-daemon --start --background $SSD_OPTIONS
 	log_progress_msg "${DAEMON##*/}"
 	log_end_msg 0
   ;;
