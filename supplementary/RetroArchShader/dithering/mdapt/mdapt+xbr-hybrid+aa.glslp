@@ -1,0 +1,36 @@
+shaders = 7
+
+shader0 = passes/mdapt-pass0.glsl
+filter_linear0 = false
+scale_type0 = source
+scale0 = 1.0
+
+shader1 = passes/mdapt-pass1.glsl
+filter_linear1 = false
+scale_type1 = source
+scale1 = 1.0
+
+shader2 = passes/mdapt-pass2.glsl
+filter_linear2 = false
+scale_type2 = source
+scale2 = 1.0
+
+shader3 = passes/mdapt-pass3.glsl
+filter_linear3 = false
+scale_type3 = source
+scale3 = 1.0
+
+shader4 = passes/mdapt-pass4.glsl
+filter_linear4 = false
+scale_type4 = source
+scale4 = 1.0
+
+shader5 = ../../xbr-hybrid/2xbr-hybrid-v5-gamma.glsl
+filter_linear5 = false
+scale_type5 = source
+scale5 = 2.0
+
+shader6 = ../../anti-aliasing/advanced-aa.glsl
+filter_linear6 = true
+scale_type6 = source
+scale6 = 2.0

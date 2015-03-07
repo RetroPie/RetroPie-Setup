@@ -1,0 +1,53 @@
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// DMG Shader v1.2                                                       //
+//                                                                       //
+// Author: Hi-Ban                                                        //
+//                                                                       //
+// This is a modification and mix of other shaders. Although some bits   //
+// of code have been modified to achieve a more realistic look, all the  //
+// original credits and licenses of the various codes have been left     //
+// intact in the shader files.                                           //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
+shaders = 6
+shader0 = shader-4x/gb-pass-0.glsl
+shader1 = shader-4x/gb-pass-1.glsl
+shader2 = shader-4x/gb-pass-2.glsl
+shader3 = shader-4x/gb-pass-3.glsl
+shader4 = shader-4x/gb-pass-4.glsl
+shader5 = shader-4x/gb-pass-5.glsl
+
+scale_type0 = viewport
+scale0 = 1
+
+scale_type1 = source
+scale1 = 1
+
+scale_type2 = source
+scale2 = 1
+
+scale_type3 = source
+scale3 = 1
+
+scale_type4 = source
+scale4 = 1
+
+scale_type5 = source
+scale5 = 1
+
+filter_linear0 = false
+filter_linear1 = false
+filter_linear2 = false
+filter_linear3 = false
+filter_linear4 = false
+filter_linear5 = true
+
+textures = COLOR_PALETTE;BACKGROUND;BORDER
+COLOR_PALETTE = resources/palette.png
+COLOR_PALETTE_linear = false
+BACKGROUND = resources/background.png
+BACKGROUND_linear = true
+BORDER = resources/border-square-4x.png
+BORDER_linear = true

@@ -1,0 +1,44 @@
+shaders = "7" # for now
+
+# Pass0: Upsize to make things slower.  This isn't gamma-correct, but we're just benchmarking.
+shader0 = ../../stock.glsl
+filter_linear0 = "true"
+#scale_type0 = "source"
+scale_type0 = "viewport"
+scale0 = "1.0"
+
+# Pass1: Blur 12x12-ish in both directions.
+shader1 = ../blur12x12shared-gamma-encode-every-fbo.glsl
+filter_linear1 = "true"
+scale_type1 = "source"
+scale1 = "1.0"
+
+# Pass2: Blur 12x12-ish in both directions.
+shader2 = ../blur12x12shared-gamma-encode-every-fbo.glsl
+filter_linear2 = "true"
+scale_type2 = "source"
+scale2 = "1.0"
+
+# Pass3: Blur 12x12-ish in both directions.
+shader3 = ../blur12x12shared-gamma-encode-every-fbo.glsl
+filter_linear3 = "true"
+scale_type3 = "source"
+scale3 = "1.0"
+
+# Pass4: Blur 12x12-ish in both directions.
+shader4 = ../blur12x12shared-gamma-encode-every-fbo.glsl
+filter_linear4 = "true"
+scale_type4 = "source"
+scale4 = "1.0"
+
+# Pass5: Blur 12x12-ish in both directions.
+shader5 = ../blur12x12shared-gamma-encode-every-fbo.glsl
+filter_linear5 = "true"
+scale_type5 = "source"
+scale5 = "1.0"
+
+# Pass6: Blur 12x12-ish in both directions.
+shader6 = ../blur12x12shared-last-pass-gamma-encode-every-fbo.glsl
+filter_linear6 = "true"
+scale_type6 = "source"
+scale6 = "1.0"

@@ -1,0 +1,8 @@
+shaders = 4
+shader0 = ../../stock.glsl
+shader1 = ../resources/bigblur-horiz.glsl
+shader2 = ../resources/bigblur-vert.glsl
+shader3 = ../resources/bigblur-2160p.glsl
+
+textures = bg
+bg = border-2160p.png

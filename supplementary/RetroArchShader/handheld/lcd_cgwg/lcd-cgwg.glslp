@@ -1,0 +1,16 @@
+* LCD shader
+* by cgwg and hunterk
+* This shader is distributed under the General Public License v2.0 or higher
+
+shaders = 2
+shader0 = ../../motionblur/motionblur-simple.glsl
+shader1 = lcd-grid.glsl
+
+scale_type0 = source
+scale0 = 1
+
+scale_type1 = viewport
+scale1 = 1
+
+filter_linear0 = false
+filter_linear1 = false

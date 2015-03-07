@@ -1,0 +1,12 @@
+shaders = 2
+shader0 = cbod-v1-pass1.glsl
+shader1 = cbod-v1-pass2.glsl
+
+filter_linear0 = false
+scale_type0 = source
+scale0 = 1.0
+
+filter_linear1 = false
+scale_type1 = source
+scale1 = 1.0
+

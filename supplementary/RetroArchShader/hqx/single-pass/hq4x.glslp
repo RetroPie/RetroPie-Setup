@@ -1,0 +1,10 @@
+shaders = 1
+shader0 = shader-files/hq4x.glsl
+
+filter_linear0 = false
+scale_type0 = source
+scale0 = 4.0
+
+textures = LUT
+LUT = ../resources/hq4x.png
+LUT_linear = false

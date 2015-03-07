@@ -1,0 +1,49 @@
+shaders = 8
+
+shader0 = ../../ntsc/ntsc-pass1-composite-3phase.glsl
+filter_linear0 = false
+scale_type0 = source
+scale_x0 = 4.0
+scale_y0 = 1.0
+frame_count_mod0 = 2
+float_framebuffer0 = true
+
+shader1 = ../../ntsc/ntsc-pass2-3phase-linear.glsl
+scale_type1 = source
+scale_x1 = 0.5
+scale_y1 = 1.0
+filter_linear1 = false
+srgb_framebuffer1 = true
+
+shader2 = gauss_horiz.glsl
+filter_linear2 = false
+scale_type_x2 = viewport
+scale_type_y2 = source
+scale_x = 1.0
+scale_y = 1.0
+srgb_framebuffer2 = true
+
+shader3 = gauss_vert.glsl
+filter_linear3 = false
+scale_type3 = viewport
+scale3 = 1.0
+srgb_framebuffer3 = true
+
+shader4 = threshold.glsl
+filter_linear4 = false
+srgb_framebuffer4 = true
+
+shader5 = blur_horiz.glsl
+mipmap_input5 = true
+filter_linear5 = true
+scale_type5 = source
+scale5 = 0.25
+srgb_framebuffer5 = true
+
+shader6 = blur_vert.glsl
+filter_linear6 = true
+srgb_framebuffer6 = true
+
+shader7 = resolve.glsl
+filter_linear7 = true
+

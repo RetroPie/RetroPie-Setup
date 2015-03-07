@@ -1,0 +1,11 @@
+shaders = 2
+
+shader0 = passes/gdapt-pass0.glsl
+filter_linear0 = false
+scale_type0 = source
+scale0 = 1.0
+
+shader1 = passes/gdapt-pass1.glsl
+filter_linear1 = false
+scale_type1 = source
+scale1 = 1.0

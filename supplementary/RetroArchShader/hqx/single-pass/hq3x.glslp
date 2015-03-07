@@ -1,0 +1,10 @@
+shaders = 1
+shader0 = shader-files/hq3x.glsl
+
+filter_linear0 = false
+scale_type0 = source
+scale0 = 3.0
+
+textures = LUT
+LUT = ../resources/hq3x.png
+LUT_linear = false

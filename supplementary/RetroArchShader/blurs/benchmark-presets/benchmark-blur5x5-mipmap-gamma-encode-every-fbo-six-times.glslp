@@ -1,0 +1,50 @@
+shaders = "7" # for now
+
+# Pass0: Upsize to make things slower.  This isn't gamma-correct, but we're just benchmarking.
+shader0 = ../../stock.glsl
+filter_linear0 = "true"
+#scale_type0 = "source"
+scale_type0 = "viewport"
+scale0 = "1.0"
+
+# Pass1: Blur 5x5-ish in both directions.
+shader1 = ../blur5x5-gamma-encode-every-fbo.glsl
+filter_linear1 = "true"
+scale_type1 = "source"
+scale1 = "1.0"
+mipmap_input1 = "true"
+
+# Pass2: Blur 5x5-ish in both directions.
+shader2 = ../blur5x5-gamma-encode-every-fbo.glsl
+filter_linear2 = "true"
+scale_type2 = "source"
+scale2 = "1.0"
+mipmap_input2 = "true"
+
+# Pass3: Blur 5x5-ish in both directions.
+shader3 = ../blur5x5-gamma-encode-every-fbo.glsl
+filter_linear3 = "true"
+scale_type3 = "source"
+scale3 = "1.0"
+mipmap_input3 = "true"
+
+# Pass4: Blur 5x5-ish in both directions.
+shader4 = ../blur5x5-gamma-encode-every-fbo.glsl
+filter_linear4 = "true"
+scale_type4 = "source"
+scale4 = "1.0"
+mipmap_input4 = "true"
+
+# Pass5: Blur 5x5-ish in both directions.
+shader5 = ../blur5x5-gamma-encode-every-fbo.glsl
+filter_linear5 = "true"
+scale_type5 = "source"
+scale5 = "1.0"
+mipmap_input5 = "true"
+
+# Pass6: Blur 5x5-ish in both directions.
+shader6 = ../blur5x5-last-pass-gamma-encode-every-fbo.glsl
+filter_linear6 = "true"
+scale_type6 = "source"
+scale6 = "1.0"
+mipmap_input6 = "true"

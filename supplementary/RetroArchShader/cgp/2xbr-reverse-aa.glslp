@@ -1,0 +1,11 @@
+shaders = 2
+shader0 = ../xbr/legacy/2xbr-v3.7c.glsl
+shader1 = ../anti-aliasing/reverse-aa.glsl
+
+filter_linear0 = false
+filter_linear1 = false
+scale_type0 = source
+scale_type1 = source
+scale0 = 2.0
+scale1 = 2.0
+

@@ -1,0 +1,18 @@
+shaders = "3"
+
+# Pass0: Blur 11x vertically
+shader0 = ../blur11fast-vertical-gamma-encode-every-fbo.glsl
+filter_linear0 = "true"
+scale_type0 = "source"
+scale0 = "1.0"
+
+# Pass1: Blur 11x horizontally
+shader1 = ../blur11fast-horizontal-gamma-encode-every-fbo.glsl
+scale_type1 = "source"
+scale1 = "1.0"
+
+# Pass2: Scale to the screen size:
+shader2 = ../../stock.glsl
+filter_linear2 = "true"
+scale_type2 = "viewport"
+scale2 = "1.0"

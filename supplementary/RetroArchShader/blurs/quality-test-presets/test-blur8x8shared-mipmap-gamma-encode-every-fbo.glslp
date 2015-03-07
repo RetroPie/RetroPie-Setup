@@ -1,0 +1,14 @@
+shaders = "2"
+
+# Pass0: Blur 8x8
+shader0 = ../blur8x8shared-gamma-encode-every-fbo.glsl
+filter_linear0 = "true"
+scale_type0 = "source"
+scale0 = "1.0"
+mipmap_input0 = "true" # Pointless, but do it just to test thoroughly
+
+# Pass1: Scale to the screen size:
+shader1 = ../../stock.glsl
+filter_linear1 = "true"
+scale_type1 = "viewport"
+scale1 = "1.0"

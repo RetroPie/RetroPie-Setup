@@ -1,0 +1,19 @@
+shaders = 3
+
+shader0 = pass1.glsl
+scale_type0 = source
+scale0 = 1.0
+float_framebuffer0 = true
+
+shader1 = pass2.glsl
+scale_type_x1 = viewport
+scale_x1 = 1.0
+scale_type_y1 = source
+scale_y1 = 1.0
+filter_linear1 = false
+float_framebuffer1 = true
+
+shader2 = pass3.glsl
+scale_type2 = viewport
+scale_2 = 1.0
+filter_linear2 = false

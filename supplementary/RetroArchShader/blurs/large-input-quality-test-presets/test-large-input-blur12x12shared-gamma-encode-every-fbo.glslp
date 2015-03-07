@@ -1,0 +1,13 @@
+shaders = "2"
+
+# Pass0: Scale to the screen size:
+shader0 = ../../stock.glsl
+filter_linear0 = "true"
+scale_type0 = "viewport"
+scale0 = "1.0"
+
+# Pass1: Blur 12x12
+shader1 = ../blur12x12shared-last-pass-gamma-encode-every-fbo.glsl
+filter_linear1 = "true"
+scale_type1 = "source"
+scale1 = "1.0"

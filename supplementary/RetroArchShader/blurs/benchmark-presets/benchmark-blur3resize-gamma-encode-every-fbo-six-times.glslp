@@ -1,0 +1,80 @@
+shaders = "13" # for now
+
+# Pass0: Upsize to make things slower.  This isn't gamma-correct, but we're just benchmarking.
+shader0 = ../../stock.glsl
+filter_linear0 = "true"
+#scale_type0 = "source"
+scale_type0 = "viewport"
+scale0 = "1.0"
+
+# Pass1: Blur 3x in one direction.
+shader1 = ../blur3resize-vertical-gamma-encode-every-fbo.glsl
+filter_linear1 = "true"
+scale_type1 = "source"
+scale1 = "1.0"
+
+# Pass2: Blur 3x in one direction.
+shader2 = ../blur3resize-horizontal-gamma-encode-every-fbo.glsl
+filter_linear2 = "true"
+scale_type2 = "source"
+scale2 = "1.0"
+
+# Pass3: Blur 3x in one direction.
+shader3 = ../blur3resize-vertical-gamma-encode-every-fbo.glsl
+filter_linear3 = "true"
+scale_type3 = "source"
+scale3 = "1.0"
+
+# Pass4: Blur 3x in one direction.
+shader4 = ../blur3resize-horizontal-gamma-encode-every-fbo.glsl
+filter_linear4 = "true"
+scale_type4 = "source"
+scale4 = "1.0"
+
+# Pass5: Blur 3x in one direction.
+shader5 = ../blur3resize-vertical-gamma-encode-every-fbo.glsl
+filter_linear5 = "true"
+scale_type5 = "source"
+scale5 = "1.0"
+
+# Pass6: Blur 3x in one direction.
+shader6 = ../blur3resize-horizontal-gamma-encode-every-fbo.glsl
+filter_linear6 = "true"
+scale_type6 = "source"
+scale6 = "1.0"
+
+# Pass7: Blur 3x in one direction.
+shader7 = ../blur3resize-vertical-gamma-encode-every-fbo.glsl
+filter_linear7 = "true"
+scale_type7 = "source"
+scale7 = "1.0"
+
+# Pass8: Blur 3x in one direction.
+shader8 = ../blur3resize-horizontal-gamma-encode-every-fbo.glsl
+filter_linear8 = "true"
+scale_type8 = "source"
+scale8 = "1.0"
+
+# Pass9: Blur 3x in one direction.
+shader9 = ../blur3resize-vertical-gamma-encode-every-fbo.glsl
+filter_linear9 = "true"
+scale_type9 = "source"
+scale9 = "1.0"
+
+# Pass10: Blur 3x in one direction.
+shader10 = ../blur3resize-horizontal-gamma-encode-every-fbo.glsl
+filter_linear10 = "true"
+scale_type10 = "source"
+scale10 = "1.0"
+
+# Pass11: Blur 3x in one direction.
+shader11 = ../blur3resize-vertical-gamma-encode-every-fbo.glsl
+filter_linear11 = "true"
+scale_type11 = "source"
+scale11 = "1.0"
+
+# Pass12: Blur 3x in one direction.
+shader12 = ../blur3resize-horizontal-last-pass-gamma-encode-every-fbo.glsl
+filter_linear12 = "true"
+scale_type12 = "source"
+scale12 = "1.0"

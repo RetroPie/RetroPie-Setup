@@ -1,0 +1,11 @@
+shaders = 1
+shader0 = color.glsl
+
+imports = "saturation;brightness"
+saturation_semantic = python
+brightness_semantic = python 
+
+import_script = shader.py
+import_script_class = Test
+
+
