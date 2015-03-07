@@ -1,0 +1,6 @@
+shaders = 1
+
+shader0 = ../resources/water-1440p.glsl
+
+textures = bg
+bg = border-1440p.png

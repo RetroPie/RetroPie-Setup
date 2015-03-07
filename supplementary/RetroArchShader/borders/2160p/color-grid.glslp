@@ -1,0 +1,6 @@
+shaders = 1
+
+shader0 = ../resources/color-grid-2160p.glsl
+
+textures = bg
+bg = border-2160p.png

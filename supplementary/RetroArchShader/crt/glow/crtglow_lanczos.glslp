@@ -1,0 +1,38 @@
+shaders = 7
+
+shader0 = linearize.glsl
+filter_linear0 = false
+srgb_framebuffer0 = true
+
+shader1 = lanczos_horiz.glsl
+filter_linear1 = false
+scale_type_x1 = viewport
+scale_type_y1 = source
+scale_x = 1.0
+scale_y = 1.0
+srgb_framebuffer1 = true
+
+shader2 = gauss_vert.glsl
+filter_linear2 = false
+scale_type2 = viewport
+scale2 = 1.0
+srgb_framebuffer2 = true
+
+shader3 = threshold.glsl
+filter_linear3 = false
+srgb_framebuffer3 = true
+
+shader4 = blur_horiz.glsl
+mipmap_input4 = true
+filter_linear4 = true
+scale_type4 = source
+scale4 = 0.25
+srgb_framebuffer4 = true
+
+shader5 = blur_vert.glsl
+filter_linear5 = true
+srgb_framebuffer5 = true
+
+shader6 = resolve.glsl
+filter_linear6 = true
+

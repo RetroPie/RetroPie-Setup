@@ -1,0 +1,40 @@
+#try to sharpen blended output with Jinc2 set with very low Window Sinc parameter
+
+shaders = "4"
+shader0 = "../../crt/tvout-tweaks.glsl"
+shader1 = "../../misc/image-adjustment.glsl"
+shader2 = "../../windowed/jinc2-sharper.glsl"
+shader3 = "../../misc/interlacing.glsl"
+
+scale_type_x0 = "source"
+scale_x0 = "2.000000"
+scale_type_y0 = "source"
+scale_y0 = "1.000000"
+
+
+scale_type_x2 = "viewport"
+scale_x2 = "1.000000"
+scale_type_y2 = "source"
+scale_y2 = "1.000000"
+
+
+
+parameters = "TVOUT_RESOLUTION;TVOUT_COMPOSITE_CONNECTION;TVOUT_TV_COLOR_LEVELS;target_gamma;monitor_gamma;overscan_percent_x;overscan_percent_y;saturation;contrast;luminance;bright_boost;R;G;B;JINC2_WINDOW_SINC;JINC2_SINC;JINC2_AR_STRENGTH;percent"
+TVOUT_RESOLUTION = "160.000000"
+TVOUT_COMPOSITE_CONNECTION = "0.000000"
+TVOUT_TV_COLOR_LEVELS = "0.000000"
+target_gamma = "2.400000"
+monitor_gamma = "2.200000"
+overscan_percent_x = "0.000000"
+overscan_percent_y = "0.000000"
+saturation = "1.000000"
+contrast = "1.000000"
+luminance = "1.000000"
+bright_boost = "0.000000"
+R = "1.000000"
+G = "1.000000"
+B = "1.000000"
+JINC2_WINDOW_SINC = "0.010000"
+JINC2_SINC = "0.9"
+JINC2_AR_STRENGTH = "0.900000"
+percent = "0.000000"

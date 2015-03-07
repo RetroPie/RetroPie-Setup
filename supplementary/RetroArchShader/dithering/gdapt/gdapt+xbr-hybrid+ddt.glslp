@@ -1,0 +1,21 @@
+shaders = 4
+
+shader0 = passes/gdapt-pass0.glsl
+filter_linear0 = false
+scale_type0 = source
+scale0 = 1.0
+
+shader1 = passes/gdapt-pass1.glsl
+filter_linear1 = false
+scale_type1 = source
+scale1 = 1.0
+
+shader2 = ../../xbr-hybrid/2xbr-hybrid-v5-gamma.glsl
+filter_linear2 = false
+scale_type2 = source
+scale2 = 2.0
+
+shader3 = ../../ddt/ddt-extended.glsl
+filter_linear3 = false
+scale_type3 = source
+scale3 = 2.0

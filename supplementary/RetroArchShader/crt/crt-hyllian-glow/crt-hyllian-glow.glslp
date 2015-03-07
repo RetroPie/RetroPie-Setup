@@ -1,0 +1,30 @@
+shaders = 6
+
+shader0 = ../glow/linearize.glsl
+filter_linear0 = false
+srgb_framebuffer0 = true
+
+shader1 = crt-hyllian.glsl
+filter_linear1 = false
+scale_type1 = viewport
+scale1 = 1.0
+srgb_framebuffer1 = true
+
+shader2 = ../glow/threshold.glsl
+filter_linear2 = false
+srgb_framebuffer2 = true
+
+shader3 = ../glow/blur_horiz.glsl
+mipmap_input3 = true
+filter_linear3 = true
+scale_type3 = source
+scale3 = 0.25
+srgb_framebuffer3 = true
+
+shader4 = ../glow/blur_vert.glsl
+filter_linear4 = true
+srgb_framebuffer4 = true
+
+shader5 = resolve2.glsl
+filter_linear5 = true
+

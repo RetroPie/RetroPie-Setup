@@ -1,0 +1,18 @@
+shaders = 6
+shader0 = 3dfx_pass_0.glsl
+shader1 = 3dfx_pass_1.glsl
+shader2 = 3dfx_pass_1.glsl
+shader3 = 3dfx_pass_1.glsl
+shader4 = 3dfx_pass_1.glsl
+shader5 = 3dfx_pass_2.glsl
+
+filter_linear0 = true
+filter_linear1 = true
+filter_linear2 = true
+filter_linear3 = true
+filter_linear4 = true 
+
+scale_type_x0 = "source"
+scale_x0 = "1.000000"
+scale_type_y0 = "source"
+scale_y0 = "1.000000"

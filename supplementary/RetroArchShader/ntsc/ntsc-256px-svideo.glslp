@@ -1,0 +1,18 @@
+shaders = 2
+shader0 = ntsc-pass1-svideo-3phase.glsl
+shader1 = ntsc-pass2-3phase-gamma.glsl
+
+filter_linear0 = false
+filter_linear1 = false
+
+scale_type_x0 = absolute
+scale_type_y0 = source
+scale_x0 = 1024
+scale_y0 = 1.0
+frame_count_mod0 = 2
+float_framebuffer0 = true
+
+scale_type1 = source
+scale_x1 = 0.5
+scale_y1 = 1.0
+

@@ -1,0 +1,20 @@
+shaders = "3"
+
+# Pass0: Linearize RGB:
+shader0 = ../../srgb-helpers/first-pass-linearize.glsl
+filter_linear0 = "true"
+scale_type0 = "source"
+scale0 = "1.0"
+srgb_framebuffer0 = "true"
+
+# Pass1: Blur 3x3
+shader1 = ../blur3x3resize.glsl
+filter_linear1 = "true"
+scale_type1 = "source"
+scale1 = "1.0"
+srgb_framebuffer1 = "true"
+
+# Pass2: Scale to the screen size and gamma-correct the output:
+shader2 = ../../srgb-helpers/last-pass-gamma-correct.glsl
+filter_linear2 = "true"
+scale_type2 = "source"

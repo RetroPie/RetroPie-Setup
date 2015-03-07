@@ -1,0 +1,59 @@
+/* 
+PhosphorLUT v2.0
+
+Copyright 2013 hunterk
+This shader and all associated files are licensed under the General Public License (GPL) v2 or higher.
+
+USER-EDITABLE VARIABLES (located at the top of the respective files):
+Each of the gaussian blur shaders have a 'blurfactor' variable that can increase or decrease the intensity of the blurring effect.
+They also have a 'wid' variable that effectively controls the brightness of the image. At lower resolutions, the shader can get quite dark, so you 
+can raise this value to compensate.
+
+The 'phosphorlut-pass2' shader has a variable, 'brightness,' which can also increase the brightness some if the image is too dark.
+
+If you are already getting gamma correction from somewhere else (such as another shader or filter), you can comment out (i.e., put two slashes in
+front of it, like this: //) the image-adjustment.glsl shader below and change the 'shaders' line to 4 instead of 5 to remove it.
+*/
+
+shaders = 5
+
+shader0 = ../../stock.glsl
+shader1 = phosphorlut-pass0.glsl // Applies the LUT to the game image
+shader2 = gaussian-horiz.glsl // Blurs the combined LUT/game image horizontally
+shader3 = phosphorlut-pass1.glsl // Combines the LUTed image with the blurred image
+shader4 = ../../misc/image-adjustment.glsl // Adds some gamma correction
+
+scale_type_x0 = absolute
+scale_type_y0 = source
+scale_x0 = 256.0
+scale_y0 = 1.0
+float_framebuffer0 = true
+
+scale_type1 = source
+scale1 = 8.0
+filter_linear1 = true
+
+scale_type2 = source
+filter_linear2 = true
+
+scale_type3 = viewport
+filter_linear3 = true
+
+textures = PHOSPHOR_LUT;BIGGER_LUT
+PHOSPHOR_LUT = luts/cmy.png
+PHOSPHOR_LUT_linear = true
+BIGGER_LUT = luts/magenta-green.png
+BIGGER_LUT_linear = true
+
+parameters = "target_gamma;monitor_gamma;overscan_percent_x;overscan_percent_y;saturation;contrast;luminance;bright_boost;R;G;B"
+target_gamma = "2.400000"
+monitor_gamma = "2.200000"
+overscan_percent_x = "0.000000"
+overscan_percent_y = "0.000000"
+saturation = "1.000000"
+contrast = "1.000000"
+luminance = "1.000000"
+bright_boost = "0.000000"
+R = "1.000000"
+G = "1.000000"
+B = "1.000000"

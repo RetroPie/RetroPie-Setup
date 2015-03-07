@@ -1,0 +1,6 @@
+shaders = 1
+
+shader0 = ../resources/color-grid-1080p.glsl
+
+textures = bg
+bg = border-1080p.png
