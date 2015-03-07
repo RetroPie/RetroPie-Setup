@@ -56,9 +56,7 @@ function rp_listFunctions() {
 
     echo -e "Index/ID:                 Description:                                 List of available actions"
     echo "-----------------------------------------------------------------------------------------------------------------------------------"
-    echo ${__mod_id[1]}
-    for (( i = 0; i < ${#__mod_idx[@]}; i++ )); do
-        idx=${__mod_idx[$i]};
+    for idx in ${__mod_idx[@]}; do
         mod_id=${__mod_id[$idx]};
         printf "%d/%-20s: %-42s : " "$idx" "$mod_id" "${__mod_desc[$idx]}"
         for mode in depends sources build install configure remove; do
