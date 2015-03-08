@@ -15,6 +15,7 @@ function sources_retroarch() {
     gitPullOrClone "$md_build" git://github.com/libretro/RetroArch.git
     gitPullOrClone "$md_build/overlays" git://github.com/libretro/common-overlays.git
     gitPullOrClone "$md_build/assets" git://github.com/libretro/retroarch-assets.git
+    gitPullOrClone "$md_build/shader" https://github.com/gizmo98/common-shaders.git
     sed -i 's| menu_input_search_start|//menu_input_search_start|g' $md_build/menu/menu_entries_cbs_iterate.c
 }
 
@@ -33,6 +34,7 @@ function install_retroarch() {
     mkdir -p "$md_inst/assets"
     mkdir -p "$md_inst/overlays"
     cp "$scriptdir/supplementary/RetroArchShader/"* "$md_inst/shader/"
+    cp -a "$md_build/shader/"* "$md_inst/shader/"
     cp -a "$md_build/overlays/"* "$md_inst/overlays/"
     cp -a "$md_build/assets/"* "$md_inst/assets/"
     chown $user:$user -R "$md_inst/shader"
