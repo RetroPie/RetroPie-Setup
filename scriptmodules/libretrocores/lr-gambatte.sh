@@ -1,18 +1,18 @@
-rp_module_id="gbclibretro"
-rp_module_desc="Gameboy Color LibretroCore"
+rp_module_id="lr-gambatte"
+rp_module_desc="Gameboy Color emu - libgambette port for libretro"
 rp_module_menus="2+"
 
-function sources_gbclibretro() {
+function sources_lr-gambatte() {
     gitPullOrClone "$md_build" git://github.com/libretro/gambatte-libretro.git
 }
 
-function build_gbclibretro() {
+function build_lr-gambatte() {
     make -C libgambatte -f Makefile.libretro clean
     make -C libgambatte -f Makefile.libretro
     md_ret_require="$md_build/libgambatte/gambatte_libretro.so"
 }
 
-function install_gbclibretro() {
+function install_lr-gambatte() {
     md_ret_files=(
         'COPYING'
         'changelog'
@@ -21,7 +21,7 @@ function install_gbclibretro() {
     )
 }
 
-function configure_gbclibretro() {
+function configure_lr-gambatte() {
     mkRomDir "gbc"
     mkRomDir "gb"
     ensureSystemretroconfig "gb"

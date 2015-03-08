@@ -1,25 +1,25 @@
-rp_module_id="doom"
-rp_module_desc="Doom LibretroCore"
+rp_module_id="lr-prboom"
+rp_module_desc="Doom/Doom II engine - PrBoom port for libretro"
 rp_module_menus="2+"
 
-function sources_doom() {
+function sources_lr-prboom() {
     gitPullOrClone "$md_build" git://github.com/libretro/libretro-prboom.git
 }
 
-function build_doom() {
+function build_lr-prboom() {
     make clean
     make
     md_ret_require="$md_build/prboom_libretro.so"
 }
 
-function install_doom() {
+function install_lr-prboom() {
     md_ret_files=(
         'prboom_libretro.so'
         'prboom.wad'
     )
 }
 
-function configure_doom() {
+function configure_lr-prboom() {
     mkRomDir "ports/doom"
     ensureSystemretroconfig "doom"
 

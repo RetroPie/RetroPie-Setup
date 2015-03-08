@@ -1,8 +1,8 @@
-rp_module_id="pocketsnes"
-rp_module_desc="SNES LibretroCore PocketSNES"
+rp_module_id="lr-pocketsnes"
+rp_module_desc="SNES emu - ARM based SNES emulator for libretro"
 rp_module_menus="2+"
 
-function sources_pocketsnes() {
+function sources_lr-pocketsnes() {
     gitPullOrClone "$md_build" git://github.com/ToadKing/pocketsnes-libretro.git
     patch -p1 <<\_EOF_
 diff --git a/src/ppu.cpp b/src/ppu.cpp
@@ -21,20 +21,20 @@ index 19340fb..6d1af27 100644
 _EOF_
 }
 
-function build_pocketsnes() {
+function build_lr-pocketsnes() {
     make clean
     make
     md_ret_require="$md_build/libretro.so"
 }
 
-function install_pocketsnes() {
+function install_lr-pocketsnes() {
     md_ret_files=(
         'libretro.so'
         'README.txt'
     )
 }
 
-function configure_pocketsnes() {
+function configure_lr-pocketsnes() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 

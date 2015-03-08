@@ -1,24 +1,24 @@
-rp_module_id="cavestory"
-rp_module_desc="Cave Story LibretroCore"
+rp_module_id="lr-nxengine"
+rp_module_desc="Cave Story engine clone - NxEngine port for libretro"
 rp_module_menus="4+"
 
-function sources_cavestory() {
+function sources_lr-nxengine() {
     gitPullOrClone "$md_build" git://github.com/libretro/nxengine-libretro.git
 }
 
-function build_cavestory() {
+function build_lr-nxengine() {
     make clean
     make
     md_ret_require="$md_build/nxengine_libretro.so"
 }
 
-function install_cavestory() {
+function install_lr-nxengine() {
     md_ret_files=(
         'nxengine_libretro.so'
     )
 }
 
-function configure_cavestory() {
+function configure_lr-nxengine() {
     mkRomDir "ports"
     ensureSystemretroconfig "cavestory"
 

@@ -1,18 +1,18 @@
-rp_module_id="libretro-vecx"
-rp_module_desc="VECTREX LibretroCore VECX"
+rp_module_id="lr-vecx"
+rp_module_desc="Vectrex emulator - vecx port for libretro"
 rp_module_menus="2+"
 
-function sources_libretro-vecx() {
+function sources_lr-vecx() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-vecx
 }
 
-function build_libretro-vecx() {
+function build_lr-vecx() {
     make clean
     make -f Makefile.libretro
     md_ret_require="$md_build/vecx_libretro.so"
 }
 
-function install_libretro-vecx() {
+function install_lr-vecx() {
     md_ret_files=(
         'vecx_libretro.so'
         'bios/fast.bin'
@@ -21,7 +21,7 @@ function install_libretro-vecx() {
     )
 }
 
-function configure_libretro-vecx() {
+function configure_lr-vecx() {
     mkRomDir "vectrex"
     ensureSystemretroconfig "vectrex"
 

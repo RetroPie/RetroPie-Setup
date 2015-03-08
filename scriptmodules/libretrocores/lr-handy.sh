@@ -1,25 +1,25 @@
-rp_module_id="libretro-handy"
-rp_module_desc="Atari Lynx LibretroCore handy"
+rp_module_id="lr-handy"
+rp_module_desc="Atari Lynx emulator - Handy port for libretro"
 rp_module_menus="2+"
 
-function sources_libretro-handy() {
+function sources_lr-handy() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-handy.git
 }
 
-function build_libretro-handy() {
+function build_lr-handy() {
     make clean
     make
     md_ret_require="$md_build/handy_libretro.so"
 }
 
-function install_libretro-handy() {
+function install_lr-handy() {
     md_ret_files=(
         'handy_libretro.so'
         'README.md'
     )
 }
 
-function configure_libretro-handy() {
+function configure_lr-handy() {
     mkRomDir "atarilynx"
     ensureSystemretroconfig "atarilynx"
 

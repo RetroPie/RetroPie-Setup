@@ -1,25 +1,25 @@
-rp_module_id="vba-next"
-rp_module_desc="GBA LibretroCore VBA-Next"
+rp_module_id="lr-vba-next"
+rp_module_desc="GBA emulator - VBA-M (optimised) port for libretro"
 rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
-function sources_vba-next() {
+function sources_lr-vba-next() {
     gitPullOrClone "$md_build" git://github.com/libretro/vba-next.git
 }
 
-function build_vba-next() {
+function build_lr-vba-next() {
     make -f Makefile.libretro clean
     make -f Makefile.libretro -j2 platform=armvhardfloatunix TILED_RENDERING=1 HAVE_NEON=1
     md_ret_require="$md_build/vba_next_libretro.so"
 }
 
-function install_vba-next() {
+function install_lr-vba-next() {
     md_ret_files=(
         'vba_next_libretro.so'
     )
 }
 
-function configure_vba-next() {
+function configure_lr-vba-next() {
     mkdir -p $romdir/gba-vba-next
     ensureSystemretroconfig "gba"
 

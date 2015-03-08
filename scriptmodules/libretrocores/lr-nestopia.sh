@@ -1,12 +1,12 @@
-rp_module_id="nestopia"
-rp_module_desc="NES LibretroCore nestopia"
+rp_module_id="lr-nestopia"
+rp_module_desc="NES emu - Nestopia (enhanced) port for libretro"
 rp_module_menus="4+"
 
-function sources_nestopia() {
+function sources_lr-nestopia() {
     gitPullOrClone "$md_build" https://github.com/libretro/nestopia.git
 }
 
-function build_nestopia() {
+function build_lr-nestopia() {
     cd libretro
     rpSwap on 512
     make clean
@@ -15,7 +15,7 @@ function build_nestopia() {
     md_ret_require="$md_build/libretro/nestopia_libretro.so"
 }
 
-function install_nestopia() {
+function install_lr-nestopia() {
     md_ret_files=(
         'libretro/nestopia_libretro.so'
         'NstDatabase.xml'
@@ -28,7 +28,7 @@ function install_nestopia() {
     )
 }
 
-function configure_nestopia() {
+function configure_lr-nestopia() {
     mkRomDir "nes-nestopia"
     ensureSystemretroconfig "nes"
 

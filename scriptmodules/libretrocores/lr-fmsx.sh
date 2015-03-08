@@ -1,18 +1,18 @@
-rp_module_id="fmsx-libretro"
-rp_module_desc="MSX LibretroCore fmsx"
+rp_module_id="lr-fmsx"
+rp_module_desc="MSX/MSX2 emu - fMSX port for libretro"
 rp_module_menus="2+"
 
-function sources_fmsx-libretro() {
+function sources_lr-fmsx() {
     gitPullOrClone "$md_build" git://github.com/libretro/fmsx-libretro.git
 }
 
-function build_fmsx-libretro() {
+function build_lr-fmsx() {
     make clean
     make
     md_ret_require="$md_build/fmsx_libretro.so"
 }
 
-function install_fmsx-libretro() {
+function install_lr-fmsx() {
     md_ret_files=(
         'fmsx_libretro.so'
         'README.md'
@@ -34,7 +34,7 @@ function install_fmsx-libretro() {
     )
 }
 
-function configure_fmsx-libretro() {
+function configure_lr-fmsx() {
     mkRomDir "msx"
     ensureSystemretroconfig "msx"
     

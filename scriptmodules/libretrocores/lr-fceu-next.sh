@@ -1,19 +1,19 @@
-rp_module_id="neslibretro"
-rp_module_desc="NES LibretroCore fceu-next"
+rp_module_id="lr-fceu-next"
+rp_module_desc="NES emu - FCEUmm / FCEUX NES port for libretro"
 rp_module_menus="2+"
 
-function sources_neslibretro() {
+function sources_lr-fceu-next() {
     gitPullOrClone "$md_build" git://github.com/libretro/fceu-next.git
 }
 
-function build_neslibretro() {
+function build_lr-fceu-next() {
     cd fceumm-code
     make -f Makefile.libretro clean
     make -f Makefile.libretro
     md_ret_require="$md_build/fceumm-code/fceumm_libretro.so"
 }
 
-function install_neslibretro() {
+function install_lr-fceu-next() {
     md_ret_files=(
         'fceumm-code/Authors'
         'fceumm-code/changelog.txt'
@@ -24,7 +24,7 @@ function install_neslibretro() {
     )
 }
 
-function configure_neslibretro() {
+function configure_lr-fceu-next() {
     mkRomDir "nes"
     ensureSystemretroconfig "nes"
 

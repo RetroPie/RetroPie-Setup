@@ -1,22 +1,22 @@
-rp_module_id="tyrquake"
-rp_module_desc="Quake LibretroCore"
+rp_module_id="lr-tyrquake"
+rp_module_desc="Quake 1 engine - Tyrquake port for libretro"
 rp_module_menus="2+"
 
-function depends_tyrquake() {
+function depends_lr-tyrquake() {
     getDepends lhasa
 }
 
-function sources_tyrquake() {
+function sources_lr-tyrquake() {
     gitPullOrClone "$md_build" git://github.com/libretro/tyrquake.git
 }
 
-function build_tyrquake() {
+function build_lr-tyrquake() {
     make clean
     make 
     md_ret_require="$md_build/tyrquake_libretro.so"
 }
 
-function install_tyrquake() {
+function install_lr-tyrquake() {
     md_ret_files=(
         'gnu.txt'
         'readme-id.txt'
@@ -25,7 +25,7 @@ function install_tyrquake() {
     )
 }
 
-function configure_tyrquake() {
+function configure_lr-tyrquake() {
     mkRomDir "ports/quake"
     ensureSystemretroconfig "quake"
 

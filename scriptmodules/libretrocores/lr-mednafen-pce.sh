@@ -1,25 +1,25 @@
-rp_module_id="turbografx16"
-rp_module_desc="TurboGrafx 16 LibretroCore"
+rp_module_id="lr-mednafen-pce"
+rp_module_desc="PCEngine emu - Mednafen PCE core port for libretro"
 rp_module_menus="2+"
 
-function sources_turbografx16() {
+function sources_lr-mednafen-pce() {
     gitPullOrClone "$md_build" https://github.com/petrockblog/mednafen-pce-libretro.git
 }
 
-function build_turbografx16() {
+function build_lr-mednafen-pce() {
     make clean
     make
     md_ret_require="$md_build/libretro.so"
 }
 
-function install_turbografx16() {
+function install_lr-mednafen-pce() {
     md_ret_files=(
         'README.md'
         'libretro.so'
     )
 }
 
-function configure_turbografx16() {
+function configure_lr-mednafen-pce() {
     mkRomDir "pcengine-libretro"
     ensureSystemretroconfig "pcengine"
 

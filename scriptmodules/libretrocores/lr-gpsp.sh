@@ -1,19 +1,19 @@
-rp_module_id="gpsp-libretro"
-rp_module_desc="GBA LibretroCore gpsp"
+rp_module_id="lr-gpsp"
+rp_module_desc="GBA emu - gpSP port for libretro"
 rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
-function sources_gpsp-libretro() {
+function sources_lr-gpsp() {
     gitPullOrClone "$md_build" https://github.com/libretro/gpsp.git
 }
 
-function build_gpsp-libretro() {
+function build_lr-gpsp() {
     make clean
     make -j2 platform=armv
     md_ret_require="$md_build/gpsp_libretro.so"
 }
 
-function install_gpsp-libretro() {
+function install_lr-gpsp() {
     md_ret_files=(
         'gpsp_libretro.so'
         'COPYING'
@@ -22,7 +22,7 @@ function install_gpsp-libretro() {
     )
 }
 
-function configure_gpsp-libretro() {
+function configure_lr-gpsp() {
     mkdir -p $romdir/gba-gpsp-libretro
     ensureSystemretroconfig "gba"
 

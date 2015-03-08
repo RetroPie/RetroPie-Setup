@@ -1,23 +1,23 @@
-rp_module_id="psxlibretro"
-rp_module_desc="Playstation 1 LibretroCore"
+rp_module_id="lr-pcsx-rearmed"
+rp_module_desc="Playstation emulator - PCSX (arm optimised) port for libretro"
 rp_module_menus="2+"
 
-function depends_psxlibretro() {
+function depends_lr-pcsx-rearmed() {
     getDepends libpng12-dev libx11-dev
 }
 
-function sources_psxlibretro() {
+function sources_lr-pcsx-rearmed() {
     gitPullOrClone "$md_build" git://github.com/libretro/pcsx_rearmed.git
 }
 
-function build_psxlibretro() {
+function build_lr-pcsx-rearmed() {
     ./configure --platform=libretro
     make clean
     make
     md_ret_require="$md_build/libretro.so"
 }
 
-function install_psxlibretro() {
+function install_lr-pcsx-rearmed() {
     md_ret_files=(
         'AUTHORS'
         'ChangeLog.df'
@@ -29,7 +29,7 @@ function install_psxlibretro() {
     )
 }
 
-function configure_psxlibretro() {
+function configure_lr-pcsx-rearmed() {
     mkRomDir "psx"
     ensureSystemretroconfig "psx"
 

@@ -1,18 +1,18 @@
-rp_module_id="genesislibretro"
-rp_module_desc="GameGear/MasterSystem/Genesis LibretroCore genesis-plus-gx"
+rp_module_id="lr-genesis-plus-gx"
+rp_module_desc="Sega 8/16 bit emu - Genesis Plus (enhanced) port for libretro"
 rp_module_menus="2+"
 
-function sources_genesislibretro() {
+function sources_lr-genesis-plus-gx() {
     gitPullOrClone "$md_build" git://github.com/libretro/Genesis-Plus-GX.git
 }
 
-function build_genesislibretro() {
+function build_lr-genesis-plus-gx() {
     make -f Makefile.libretro clean
     make -f Makefile.libretro
     md_ret_require="$md_build/genesis_plus_gx_libretro.so"
 }
 
-function install_genesislibretro() {
+function install_lr-genesis-plus-gx() {
     md_ret_files=(
         'genesis_plus_gx_libretro.so'
         'HISTORY.txt'
@@ -21,7 +21,7 @@ function install_genesislibretro() {
     )
 }
 
-function configure_genesislibretro() {
+function configure_lr-genesis-plus-gx() {
     mkRomDir "gamegear"
     mkRomDir "mastersystem-genesis"
     mkRomDir "megadrive-genesis"

@@ -1,24 +1,24 @@
-rp_module_id="4do"
-rp_module_desc="3DO LibretroCore 4DO (WIP)"
+rp_module_id="lr-4do"
+rp_module_desc="3DO emu - 4DO/libfreedo port for libretro"
 rp_module_menus="4+"
 
-function sources_4do() {
+function sources_lr-4do() {
     gitPullOrClone "$md_build" https://github.com/libretro/4do-libretro.git
 }
 
-function build_4do() {
+function build_lr-4do() {
     make clean
     make
     md_ret_require="$md_build/4do_libretro.so"
 }
 
-function install_4do() {
+function install_lr-4do() {
     md_ret_files=(
         '4do_libretro.so'
     )
 }
 
-function configure_4do() {
+function configure_lr-4do() {
     mkRomDir "3do"
     ensureSystemretroconfig "3do"
 

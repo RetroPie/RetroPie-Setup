@@ -1,20 +1,20 @@
-rp_module_id="picodrive"
-rp_module_desc="Genesis LibretroCore Picodrive"
+rp_module_id="lr-picodrive"
+rp_module_desc="Sega 8/16 bit emu - picodrive arm optimised libretro core"
 rp_module_menus="2+"
 
-function sources_picodrive() {
+function sources_lr-picodrive() {
     gitPullOrClone "$md_build" https://github.com/libretro/picodrive.git
     git submodule init
     git submodule update
 }
 
-function build_picodrive() {
+function build_lr-picodrive() {
     make clean
     make -f Makefile.libretro platform=armv6
     md_ret_require="$md_build/picodrive_libretro.so"
 }
 
-function install_picodrive() {
+function install_lr-picodrive() {
     md_ret_files=(
         'AUTHORS'
         'COPYING'
@@ -23,7 +23,7 @@ function install_picodrive() {
     )
 }
 
-function configure_picodrive() {
+function configure_lr-picodrive() {
     mkRomDir "megadrive"
     mkRomDir "mastersystem"
     mkRomDir "segacd"
