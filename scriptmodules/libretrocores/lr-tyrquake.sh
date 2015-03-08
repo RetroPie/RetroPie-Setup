@@ -26,6 +26,9 @@ function install_lr-tyrquake() {
 }
 
 function configure_lr-tyrquake() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/tyrquake"
+
     mkRomDir "ports/quake"
     ensureSystemretroconfig "quake"
 

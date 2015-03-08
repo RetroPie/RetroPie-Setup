@@ -20,6 +20,9 @@ function install_lr-handy() {
 }
 
 function configure_lr-handy() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/libretro-handy"
+
     mkRomDir "atarilynx"
     ensureSystemretroconfig "atarilynx"
 

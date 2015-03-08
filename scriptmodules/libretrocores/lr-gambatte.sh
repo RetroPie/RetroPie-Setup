@@ -22,6 +22,9 @@ function install_lr-gambatte() {
 }
 
 function configure_lr-gambatte() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/gbclibretro"
+
     mkRomDir "gbc"
     mkRomDir "gb"
     ensureSystemretroconfig "gb"

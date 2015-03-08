@@ -35,6 +35,9 @@ function install_lr-pocketsnes() {
 }
 
 function configure_lr-pocketsnes() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/pocketsnes"
+
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 

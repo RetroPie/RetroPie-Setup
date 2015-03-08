@@ -19,6 +19,9 @@ function install_lr-nxengine() {
 }
 
 function configure_lr-nxengine() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/cavestory"
+
     mkRomDir "ports"
     ensureSystemretroconfig "cavestory"
 

@@ -21,6 +21,9 @@ function install_lr-imame4all() {
 }
 
 function configure_lr-imame4all() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/mamelibretro"
+
     mkRomDir "mame-libretro"
     ensureSystemretroconfig "mame"
 

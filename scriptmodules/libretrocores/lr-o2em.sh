@@ -20,6 +20,9 @@ function install_lr-o2em() {
 }
 
 function configure_lr-o2em() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/o2em"
+
     mkRomDir "videopac"
     ensureSystemretroconfig "videopac"
 

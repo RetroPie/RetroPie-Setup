@@ -35,6 +35,9 @@ function install_lr-fmsx() {
 }
 
 function configure_lr-fmsx() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/fmsx-libretro"
+
     mkRomDir "msx"
     ensureSystemretroconfig "msx"
     

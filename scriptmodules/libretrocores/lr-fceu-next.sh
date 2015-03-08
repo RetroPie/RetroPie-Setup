@@ -25,6 +25,9 @@ function install_lr-fceu-next() {
 }
 
 function configure_lr-fceu-next() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/neslibretro"
+
     mkRomDir "nes"
     ensureSystemretroconfig "nes"
 

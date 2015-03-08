@@ -20,6 +20,9 @@ function install_lr-mednafen-pce-fast() {
 }
 
 function configure_lr-mednafen-pce-fast() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/mednafenpcefast"
+
     mkRomDir "pcengine"
     ensureSystemretroconfig "pcengine"
 

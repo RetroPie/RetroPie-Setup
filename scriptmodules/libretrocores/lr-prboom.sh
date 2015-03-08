@@ -20,6 +20,9 @@ function install_lr-prboom() {
 }
 
 function configure_lr-prboom() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/doom"
+
     mkRomDir "ports/doom"
     ensureSystemretroconfig "doom"
 

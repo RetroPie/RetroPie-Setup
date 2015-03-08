@@ -20,6 +20,9 @@ function install_lr-mednafen-pce() {
 }
 
 function configure_lr-mednafen-pce() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/turbografx16"
+
     mkRomDir "pcengine-libretro"
     ensureSystemretroconfig "pcengine"
 

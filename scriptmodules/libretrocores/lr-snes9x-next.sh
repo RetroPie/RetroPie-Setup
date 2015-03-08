@@ -28,6 +28,9 @@ function install_lr-snes9x-next() {
 }
 
 function configure_lr-snes9x-next() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/snes9x-next"
+
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 

@@ -23,6 +23,9 @@ function install_lr-gpsp() {
 }
 
 function configure_lr-gpsp() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/gpsp-libretro"
+
     mkdir -p $romdir/gba-gpsp-libretro
     ensureSystemretroconfig "gba"
 

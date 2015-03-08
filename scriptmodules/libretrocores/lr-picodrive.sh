@@ -24,6 +24,9 @@ function install_lr-picodrive() {
 }
 
 function configure_lr-picodrive() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/picodrive"
+
     mkRomDir "megadrive"
     mkRomDir "mastersystem"
     mkRomDir "segacd"
