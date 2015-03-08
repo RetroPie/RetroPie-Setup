@@ -24,8 +24,6 @@ function configure_4do() {
 
     # system-specific shaders, 3do
     iniConfig " = " "" "$configdir/3do/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/3do"
-    iniSet "savestate_directory" "~/RetroPie/roms/3do"
     iniSet "input_remapping_directory" "$configdir/3do/"
 
     # Place "panafz10.bin" (required) in your RetroArch/libretro "System Directory" folder

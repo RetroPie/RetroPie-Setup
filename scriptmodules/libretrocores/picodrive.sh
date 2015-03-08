@@ -38,8 +38,6 @@ function configure_picodrive() {
     iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
     iniSet "video_shader_enable" "false"
     iniSet "video_smooth" "false"
-    iniSet "savefile_directory" "~/RetroPie/roms/megadrive"
-    iniSet "savestate_directory" "~/RetroPie/roms/megadrive"
     iniSet "input_remapping_directory" "$configdir/megadrive/"
 
     # system-specific shaders, Mastersystem
@@ -47,20 +45,14 @@ function configure_picodrive() {
     iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
     iniSet "video_shader_enable" "false"
     iniSet "video_smooth" "false"
-    iniSet "savefile_directory" "~/RetroPie/roms/mastersystem"
-    iniSet "savestate_directory" "~/RetroPie/roms/mastersystem"
     iniSet "input_remapping_directory" "$configdir/mastersystem/"
 
     # system-specific shaders, Megadrive
     iniConfig " = " "" "$configdir/segacd/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/segacd"
-    iniSet "savestate_directory" "~/RetroPie/roms/segacd"
     iniSet "input_remapping_directory" "$configdir/segacd/"
 
     # system-specific shaders, Megadrive
     iniConfig " = " "" "$configdir/sega32x/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/sega32x"
-    iniSet "savestate_directory" "~/RetroPie/roms/sega32x"
     iniSet "input_remapping_directory" "$configdir/sega32x/"
 
     setESSystem "Sega Master System / Mark III" "mastersystem" "~/RetroPie/roms/mastersystem" ".sms .SMS .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/picodrive_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mastersystem/retroarch.cfg %ROM%\" \"$md_id\"" "mastersystem" "mastersystem"

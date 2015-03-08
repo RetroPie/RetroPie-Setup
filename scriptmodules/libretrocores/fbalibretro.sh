@@ -34,8 +34,6 @@ function configure_fbalibretro() {
 
     # system-specific shaders, fba
     iniConfig " = " "" "$configdir/fba/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/fba-libretro"
-    iniSet "savestate_directory" "~/RetroPie/roms/fba-libretro"
     iniSet "input_remapping_directory" "$configdir/fba/"
 
     setESSystem "Final Burn Alpha" "fba-libretro" "~/RetroPie/roms/fba-libretro" ".fba .FBA .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/fb_alpha_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/fba/retroarch.cfg %ROM%\" \"$md_id\"" "arcade" "fba"

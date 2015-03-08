@@ -37,8 +37,6 @@ function configure_nestopia() {
     iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
     iniSet "video_shader_enable" "false"
     iniSet "video_smooth" "false"
-    iniSet "savefile_directory" "~/RetroPie/roms/nes-nestopia"
-    iniSet "savestate_directory" "~/RetroPie/roms/nes-nestopia"
     iniSet "input_remapping_directory" "$configdir/nes/"
 
     setESSystem "Nintendo Entertainment System" "nes-nestopia" "~/RetroPie/roms/nes-nestopia" ".nes .NES .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/nestopia_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/nes/retroarch.cfg %ROM%\" \"$md_id\"" "nes" "nes"

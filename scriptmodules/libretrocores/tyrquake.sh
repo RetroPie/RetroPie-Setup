@@ -46,8 +46,6 @@ function configure_tyrquake() {
 
     # system-specific shaders, PC Engine
     iniConfig " = " "" "$configdir/quake/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/ports"
-    iniSet "savestate_directory" "~/RetroPie/roms/ports"
     iniSet "input_remapping_directory" "$configdir/quake/"
 
     # Create startup script

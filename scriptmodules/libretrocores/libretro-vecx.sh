@@ -27,8 +27,6 @@ function configure_libretro-vecx() {
 
     # system-specific shaders, Vectrex
     iniConfig " = " "" "$configdir/vectrex/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/vectrex"
-    iniSet "savestate_directory" "~/RetroPie/roms/vectrex"
     iniSet "input_remapping_directory" "$configdir/vectrex/"
 
     # Copy bios files

@@ -42,8 +42,6 @@ function configure_mupen64plus-libretro() {
     
     # system-specific shaders, Mupen64plus
     iniConfig " = " "" "$configdir/n64/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/n64"
-    iniSet "savestate_directory" "~/RetroPie/roms/n64"
     iniSet "input_remapping_directory" "$configdir/n64/"
 
     # Copy config files

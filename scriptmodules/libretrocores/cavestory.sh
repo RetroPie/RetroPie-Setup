@@ -24,8 +24,6 @@ function configure_cavestory() {
 
     # system-specific shaders, cavestory
     iniConfig " = " "" "$configdir/cavestory/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/ports"
-    iniSet "savestate_directory" "~/RetroPie/roms/ports"
     iniSet "input_remapping_directory" "$configdir/cavestory/"
 
     cat > "$romdir/ports/Cave Story.sh" << _EOF_

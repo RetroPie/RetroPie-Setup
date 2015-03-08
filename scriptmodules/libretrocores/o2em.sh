@@ -25,8 +25,6 @@ function configure_o2em() {
 
     # system-specific shaders, PC Engine
     iniConfig " = " "" "$configdir/videopac/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/videopac"
-    iniSet "savestate_directory" "~/RetroPie/roms/videopac"
     iniSet "input_remapping_directory" "$configdir/videopac/"
 
     # copy o2rom.bin to RetroPie/BIOS path

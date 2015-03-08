@@ -40,8 +40,6 @@ function configure_fmsx-libretro() {
     
     # system-specific shaders, fmsx
     iniConfig " = " "" "$configdir/msx/retroarch.cfg"
-    iniSet "savefile_directory" "~/RetroPie/roms/msx"
-    iniSet "savestate_directory" "~/RetroPie/roms/msx"
     iniSet "input_remapping_directory" "$configdir/msx/"   
     
     # Copy bios files
