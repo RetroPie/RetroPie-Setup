@@ -1,5 +1,5 @@
 rp_module_id="lr-gambatte"
-rp_module_desc="Gameboy Color emu - libgambette port for libretro"
+rp_module_desc="Gameboy Color emu - libgambatte port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-gambatte() {
