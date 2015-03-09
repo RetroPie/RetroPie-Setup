@@ -26,23 +26,17 @@ function configure_lr-genesis-plus-gx() {
     rm -rf "$rootdir/$md_type/genesislibretro"
 
     mkRomDir "gamegear"
-    mkRomDir "mastersystem-genesis"
-    mkRomDir "megadrive-genesis"
+    mkRomDir "mastersystem"
+    mkRomDir "megadrive"
     
     ensureSystemretroconfig "gamegear"
     ensureSystemretroconfig "mastersystem-genesis"
     ensureSystemretroconfig "megadrive-genesis"
-    
-    # system-specific shaders, gamegear
-    iniConfig " = " "" "$configdir/gamegear/retroarch.cfg"
 
-    # system-specific shaders, mastersystem
-    iniConfig " = " "" "$configdir/mastersystem-genesis/retroarch.cfg"
+    delSystem "$md_id" "mastersystem-genesis"
+    delSystem "$md_id" "megadrive-genesis"
     
-    # system-specific shaders, megadrive
-    iniConfig " = " "" "$configdir/megadrive-genesis/retroarch.cfg"
-    
-    setESSystem "Sega Master System / Mark III" "mastersystem-genesis" "~/RetroPie/roms/mastersystem-genesis" ".sms .SMS .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/mastersystem-genesis/retroarch.cfg %ROM%\" \"$md_id\"" "mastersystem" "mastersystem"
-    setESSystem "Sega Game Gear" "gamegear" "~/RetroPie/roms/gamegear" ".gg .GG .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/gamegear/retroarch.cfg  %ROM%\" \"$md_id\"" "gamegear" "gamegear"
-    setESSystem "Sega Mega Drive / Genesis" "megadrive-genesis" "~/RetroPie/roms/megadrive-genesis" ".smd .SMD .bin .BIN .gen .GEN .md .MD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/genesis_plus_gx_libretro.so --config $configdir/megadrive-genesis/retroarch.cfg %ROM%\" \"$md_id\"" "genesis,megadrive" "megadrive"
+    addSystem 1 "$md_id" "gamegear" "$md_inst/genesis_plus_gx_libretro.so"
+    addSystem 0 "$md_id" "mastersystem" "$md_inst/genesis_plus_gx_libretro.so"
+    addSystem 0 "$md_id" "megadrive" "$md_inst/genesis_plus_gx_libretro.so"
 }
