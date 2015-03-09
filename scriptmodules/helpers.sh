@@ -398,7 +398,7 @@ function addSystem() {
     local id="$2"
     local system="$3"
     local cmd="$4"
-    local name="$5"
+    local fullname="$5"
     local exts=($6)
 
     local conf=""
@@ -409,7 +409,7 @@ function addSystem() {
     fi
 
     iniConfig "=" '"' "$conf"
-    iniGet "${system}_name"
+    iniGet "${system}_fullname"
     [[ -n "$ini_value" ]] && name="$ini_value"
     iniGet "${system}_exts"
     [[ -n "$ini_value" ]] && exts+=($ini_value)
@@ -423,7 +423,7 @@ function addSystem() {
         cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $configdir/$system/retroarch.cfg %ROM%"
     fi
 
-    setESSystem "$name" "$system" "~/RetroPie/roms/$system" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%" "$system" "$system"
+    setESSystem "$fullname" "$system" "~/RetroPie/roms/$system" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%" "$system" "$system"
     iniConfig "=" '"' "$configdir/$system/apps.cfg"
     iniSet "$id" "$cmd"
     if [[ "$default" == "1" ]]; then
