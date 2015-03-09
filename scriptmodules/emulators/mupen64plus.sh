@@ -262,5 +262,6 @@ _EOF_
 
     mkRomDir "n64-mupen64plus"
 
-    setESSystem "Nintendo 64" "n64-mupen64plus" "~/RetroPie/roms/n64-mupen64plus" ".z64 .Z64 .n64 .N64 .v64 .V64" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64 %ROM%\" \"$md_id\"" "n64" "n64"
+    delSystem "$md_id" "n64-mupen64plus"
+    addSystem 0 "$md_id" "n64" "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
 }

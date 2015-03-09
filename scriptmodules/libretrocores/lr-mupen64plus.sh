@@ -153,5 +153,5 @@ target FPS=25
 _EOF_
     chown $user:$user "$biosdir/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf,gles2n64rom.conf}
 
-    setESSystem "Nintendo 64" "n64" "~/RetroPie/roms/n64" ".z64 .Z64 .n64 .N64 .v64 .V64 .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/mupen64plus_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/n64/retroarch.cfg %ROM%\" \"$md_id\"" "n64" "n64"
+    addSystem 1 "$md_id" "n64" "$md_inst/mupen64plus_libretro.so"
 }
