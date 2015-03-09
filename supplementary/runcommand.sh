@@ -46,11 +46,10 @@ function get_params() {
     command="$2"
     [[ -z "$command" ]] && exit 1
 
-    # if the command starts with auto, we need to choose the command from our premade configs
-    if [[ "$command" =~ ^SYS_ ]]; then
+    # if the command is _SYS_, arg 3 should be system name, and arg 4 rom/game, and we look up the configured system for that combination
+    if [[ "$command" == "_SYS_" ]]; then
         is_sys=1
-        command_orig="$command"
-        get_sys_command "$command"
+        get_sys_command "$3" "$4"
     else
         is_sys=0
         emulator="$3"
@@ -155,7 +154,7 @@ function main_menu() {
                 ;;
             3)
                 sed -i "/$appsave/d" "$apps_conf"
-                get_sys_command "$command_orig"
+                get_sys_command "$system" "$rom"
                 ;;
             4)
                 choose_mode "$emusave"
@@ -243,7 +242,7 @@ function choose_app() {
         else
             iniSet set "=" '"' "default" "${apps[$choice]}" "$configdir/$system/apps.cfg"
         fi
-        get_sys_command "$command_orig"
+        get_sys_command "$system" "$rom"
     fi
 }
 
@@ -356,10 +355,8 @@ function restore_governor() {
 }
 
 function get_sys_command() {
-    local params=($1)
-    # strip off SYS_
-    system="${params[0]/SYS_/}"
-    rom="${params[1]}"
+    system="$1"
+    rom="$2"
     rom_bn="${rom##*/}"
     appsave=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
 

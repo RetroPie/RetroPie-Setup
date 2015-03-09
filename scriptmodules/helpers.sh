@@ -409,7 +409,7 @@ function addSystem() {
         cmd="$emudir/retroarch/bin/retroarch -L $cmd --appendconfig $configdir/$system/retroarch.cfg %ROM%"
     fi
 
-    setESSystem "$name" "$system" "~/RetroPie/roms/$id" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"SYS_$system %ROM%\"" "$system" "$system"
+    setESSystem "$name" "$system" "~/RetroPie/roms/$id" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%" "$system" "$system"
     iniConfig "=" '"' "$configdir/$system/apps.cfg"
     iniSet "$id" "$cmd"
     if [[ "$default" == "1" ]]; then
