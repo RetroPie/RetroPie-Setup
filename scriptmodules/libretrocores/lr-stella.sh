@@ -23,12 +23,13 @@ function configure_lr-stella() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/stellalibretro"
 
-    mkRomDir "atari2600-libretro"
+    mkRomDir "atari2600"
     ensureSystemretroconfig "atari2600"
 
     # system-specific shaders, Atari2600
     iniConfig " = " "" "$configdir/atari2600/retroarch.cfg"
     iniSet "input_remapping_directory" "$configdir/atari2600/"
 
-    setESSystem "Atari 2600" "atari2600-libretro" "~/RetroPie/roms/atari2600-libretro" ".a26 .A26 .bin .BIN .rom .ROM .zip .ZIP .gz .GZ" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/stella_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/atari2600/retroarch.cfg %ROM%\" \"$md_id\"" "atari2600" "atari2600"
+    delSystem "$md_id" "atari2600-libretro"
+    addSystem 1 "$md_id" "atari2600" "$md_inst/stella_libretro.so"
 }
