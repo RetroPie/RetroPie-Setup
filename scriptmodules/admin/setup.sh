@@ -142,8 +142,6 @@ function updatescript_setup()
         return
     fi
     popd
-    printHeading "Updating ESConfigEdit script."
-    updateESConfigEdit
     printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script. You need to restart the script."
 }
 

@@ -325,36 +325,42 @@ function setDispmanx() {
     iniSet $mod_id "$status"
 }
 
-function updateESConfigEdit() {
-    gitPullOrClone "$rootdir/supplementary/ESConfigEdit" git://github.com/petrockblog/ESConfigEdit
-}
-
 function setESSystem() {
     local fullname=$1
     local name=$2
-    local rompath=$3
+    local path=$3
     local extension=$4
     local command=$5
     local platform=$6
     local theme=$7
 
-    if [[ ! -f "$rootdir/supplementary/ESConfigEdit/esconfedit.py" ]]; then
-        updateESConfigEdit
+    local conf="/etc/emulationstation/es_systems.cfg"
+    mkdir -p "/etc/emulationstation"
+    if [[ ! -f "$conf" ]]; then
+        echo "<systemList />" >"$conf"
     fi
 
-    mkdir -p "/etc/emulationstation"
-
-    $rootdir/supplementary/ESConfigEdit/esconfedit.py --dontstop \
-                                                    -f "$fullname" \
-                                                    -n "$name" \
-                                                    -d "$rompath" \
-                                                    -e "$extension" \
-                                                    -c "$command" \
-                                                    -p "$platform" \
-                                                    -t "$theme" \
-                                                    add \
-                                                    "/etc/emulationstation/es_systems.cfg" \
-                                                    "/etc/emulationstation/es_systems.cfg"
+    cp "$conf" "$conf.bak"
+    if [[ $(xmlstarlet sel -t -v "count(/systemList/system[name='$platform'])" "$conf") -eq 0 ]]; then
+        xmlstarlet ed -L -s "/systemList" -t elem -n "system" -v "" \
+            -s "/systemList/system[last()]" -t elem -n "name" -v "$name" \
+            -s "/systemList/system[last()]" -t elem -n "fullname" -v "$fullname" \
+            -s "/systemList/system[last()]" -t elem -n "path" -v "$path" \
+            -s "/systemList/system[last()]" -t elem -n "extension" -v "$extension" \
+            -s "/systemList/system[last()]" -t elem -n "command" -v "$command" \
+            -s "/systemList/system[last()]" -t elem -n "platform" -v "$platform" \
+            -s "/systemList/system[last()]" -t elem -n "theme" -v "$theme" \
+            "$conf"
+    else
+        xmlstarlet ed -L \
+            -u "/systemList/system[name='$platform']/fullname" -v "$fullname" \
+            -u "/systemList/system[name='$platform']/path" -v "$path" \
+            -u "/systemList/system[name='$platform']/extension" -v "$extension" \
+            -u "/systemList/system[name='$platform']/command" -v "$command" \
+            -u "/systemList/system[name='$platform']/platform" -v "$platform" \
+            -u "/systemList/system[name='$platform']/theme" -v "$theme" \
+            "$conf"
+    fi
 }
 
 function ensureSystemretroconfig {
