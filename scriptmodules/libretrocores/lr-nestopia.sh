@@ -32,7 +32,7 @@ function configure_lr-nestopia() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/nestopia"
 
-    mkRomDir "nes-nestopia"
+    mkRomDir "nes"
     ensureSystemretroconfig "nes"
 
     # system-specific shaders, NES
@@ -42,5 +42,6 @@ function configure_lr-nestopia() {
     iniSet "video_smooth" "false"
     iniSet "input_remapping_directory" "$configdir/nes/"
 
-    setESSystem "Nintendo Entertainment System" "nes-nestopia" "~/RetroPie/roms/nes-nestopia" ".nes .NES .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/nestopia_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/nes/retroarch.cfg %ROM%\" \"$md_id\"" "nes" "nes"
+    delSystem "$md_id" "nes-nestopia"
+    addSystem 0 "$md_id" "nes" "$md_inst/nestopia_libretro.so"
 }
