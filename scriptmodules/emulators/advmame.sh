@@ -37,11 +37,10 @@ function configure_advmame() {
     iniSet "display_vsync" "no"
     iniSet "display_resize" "integer"
     iniSet "dir_rom" "$romdir/mame-advmame"
-    iniSet "dir_artwork" "$romdir/mame-artwork"
-    iniSet "dir_sample" "$romdir/mame-samples"
+    iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
+    iniSet "dir_sample" "$romdir/mame-advmame/samples"
 
     setDispmanx "$md_id" 1
 
-    addSystem 0 "$md_id" "mame-advmame" "$md_inst/libpocketsnes.so"
     setESSystem "MAME" "mame-advmame" "~/RetroPie/roms/mame-advmame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/advmame %BASENAME%\" \"$md_id\"" "arcade" "mame"
 }
