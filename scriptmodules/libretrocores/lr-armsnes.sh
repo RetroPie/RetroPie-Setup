@@ -33,7 +33,5 @@ function configure_lr-armsnes() {
     iniSet "video_smooth" "false"
     iniSet "input_remapping_directory" "$configdir/snes/"
 
-    setESSystem "Super Nintendo" "snes" "~/RetroPie/roms/snes" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/libpocketsnes.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/snes/retroarch.cfg %ROM%\" \"$md_id\"" "snes" "snes"
-    # <!-- alternatively: <command>$emudir/snes9x-rpi/snes9x %ROM%</command> -->
-    # <!-- alternatively: <command>$emudir/pisnes/snes9x %ROM%</command> -->
+    addSystem "$md_id" "snes" "$md_inst/libpocketsnes.so"
 }

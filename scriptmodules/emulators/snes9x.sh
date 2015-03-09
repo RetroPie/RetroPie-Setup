@@ -29,9 +29,10 @@ function install_snes9x() {
 }
 
 function configure_snes9x() {
-    mkRomDir "snes-snes9xrpi"
+    mkRomDir "snes"
 
     setDispmanx "$md_id" 1
 
-    setESSystem "Super Nintendo" "snes-snes9xrpi" "~/RetroPie/roms/snes-snes9xrpi" ".smc .sfc .fig .swc .mgd .SMC .SFC .FIG .SWC .MGD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/snes9x %ROM%\" \"$md_id\"" "snes" "snes"
+    delSystem "$md_id" "snes9x"
+    addSystem "$md_id" "snes" "$md_inst/snes9x %ROM%"
 }

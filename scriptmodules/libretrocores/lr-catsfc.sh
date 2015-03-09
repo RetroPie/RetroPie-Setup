@@ -22,7 +22,7 @@ function configure_lr-catsfc() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/catsfc"
 
-    mkRomDir "snes-catsfc"
+    mkRomDir "snes"
     ensureSystemretroconfig "snes"
 
     # system-specific shaders, SNES
@@ -32,5 +32,6 @@ function configure_lr-catsfc() {
     iniSet "video_smooth" "false"
     iniSet "input_remapping_directory" "$configdir/snes/"
 
-    setESSystem "Super Nintendo" "snes-catsfc" "~/RetroPie/roms/snes-catsfc" ".smc .sfc .fig .swc .SMC .SFC .FIG .SWC .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/catsfc_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/snes/retroarch.cfg %ROM%\" \"$md_id\"" "snes" "snes"
+    delSystem "$md_id" "snes-catsfc"
+    addSystem "$md_id" "snes" "$md_inst/catsfc_libretro.so"
 }
