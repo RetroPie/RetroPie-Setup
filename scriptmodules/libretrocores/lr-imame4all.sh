@@ -24,12 +24,13 @@ function configure_lr-imame4all() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/mamelibretro"
 
-    mkRomDir "mame-libretro"
-    ensureSystemretroconfig "mame"
+    mkRomDir "mame4all"
+    ensureSystemretroconfig "mame4all"
 
     # system-specific shaders, Mame
-    iniConfig " = " "" "$configdir/mame/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/mame/"
+    iniConfig " = " "" "$configdir/mame4all/retroarch.cfg"
+    iniSet "input_remapping_directory" "$configdir/mame4all/"
 
-    setESSystem "MAME" "mame-libretro" "~/RetroPie/roms/mame-libretro" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/mame/retroarch.cfg %ROM%\" \"$md_id\"" "arcade" "mame"
+    delSystem "$md_inst" "mame-libretro"
+    addSystem 0 "$md_inst" "mame4all arcade mame" "$md_inst/libretro.so"
 }
