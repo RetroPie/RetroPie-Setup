@@ -420,7 +420,6 @@ function addSystem() {
         theme="$system"
     fi
 
-    set -x
     local conf=""
     if [[ -f "$configdir/all/platforms.cfg" ]]; then
         conf="$configdir/all/platforms.cfg"
