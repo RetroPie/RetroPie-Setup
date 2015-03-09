@@ -396,10 +396,20 @@ _EOF_
 function addSystem() {
     local default="$1"
     local id="$2"
-    local system="$3"
+    local system=($3)
     local cmd="$4"
     local fullname="$5"
     local exts=($6)
+
+    local platform
+    # if system contains two strings use the first as the name and the second as the platform
+    if [[ -n "${system[1]}" ]]; then
+        platform="${system[1]}"
+        system="${system[0]}"
+    else
+        platform="${system[0]}"
+        system="$platform"
+    fi
 
     local conf=""
     if [[ -f "$configdir/all/platforms.cfg" ]]; then
@@ -423,7 +433,13 @@ function addSystem() {
         cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $configdir/$system/retroarch.cfg %ROM%"
     fi
 
-    setESSystem "$fullname" "$system" "~/RetroPie/roms/$system" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%" "$system" "$system"
+    setESSystem "$fullname" "$system" "~/RetroPie/roms/$system" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%" "$platform" "$system"
+
+    if [[ ! -d "$configdir/$system" ]]; then
+        mkdir "$configdir/$system"
+        chown $user:user "$configdir/$system"
+    fi
+
     iniConfig "=" '"' "$configdir/$system/apps.cfg"
     iniSet "$id" "$cmd"
     if [[ "$default" == "1" ]]; then
