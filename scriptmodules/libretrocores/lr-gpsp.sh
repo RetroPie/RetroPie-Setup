@@ -26,12 +26,13 @@ function configure_lr-gpsp() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/gpsp-libretro"
 
-    mkdir -p $romdir/gba-gpsp-libretro
+    mkRomDir "gba"
     ensureSystemretroconfig "gba"
 
     # system-specific shaders, gpsp
     iniConfig " = " "" "$configdir/gba/retroarch.cfg"
     iniSet "input_remapping_directory" "$configdir/gba/"
 
-    setESSystem "Game Boy Advance" "gba-gpsp-libretro" "~/RetroPie/roms/gba-gpsp-libretro" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/gpsp_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/gba/retroarch.cfg %ROM%\" \"$md_id\""  "gba" "gba"
+    delSystem "$md_id" "gba-gpsp-libretro"
+    addSystem 0 "$md_id" "megadrive" "$md_inst/gpsp_libretro.so"
 }

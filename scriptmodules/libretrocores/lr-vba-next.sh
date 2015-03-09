@@ -23,8 +23,9 @@ function configure_lr-vba-next() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/vba-next"
 
-    mkdir -p $romdir/gba-vba-next
+    mkRomDir "gba"
     ensureSystemretroconfig "gba"
 
-    setESSystem "Game Boy Advance" "gba-vba-next" "~/RetroPie/roms/gba-vba-next" ".gba .GBA" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/vba_next_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/gba/retroarch.cfg %ROM%\" \"$md_id\""  "gba" "gba"
+    delSystem "$md_id" "gba-vba-next"
+    addSystem 0 "$md_id" "gba" "$md_inst/vba_next_libretro.so"
 }
