@@ -42,5 +42,6 @@ function configure_advmame() {
 
     setDispmanx "$md_id" 1
 
+    addSystem 0 "$md_id" "mame-advmame" "$md_inst/libpocketsnes.so"
     setESSystem "MAME" "mame-advmame" "~/RetroPie/roms/mame-advmame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/advmame %BASENAME%\" \"$md_id\"" "arcade" "mame"
 }

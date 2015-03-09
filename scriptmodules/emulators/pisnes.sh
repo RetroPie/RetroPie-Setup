@@ -33,6 +33,5 @@ function configure_pisnes() {
     setDispmanx "$md_id" 1
 
     delSystem "$md_id" "snes-pisnes"
-    #addSystem "$md_id" "snes" "$md_inst/snes9x %ROM%"
-    delSystem "$md_id" "snes"
+    addSystem 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
 }

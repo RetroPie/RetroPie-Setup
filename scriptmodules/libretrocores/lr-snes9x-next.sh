@@ -40,5 +40,5 @@ function configure_lr-snes9x-next() {
     iniSet "video_shader_enable" "false"
     iniSet "video_smooth" "false"
 
-    addSystem "$md_id" "snes" "$md_inst/snes9x_next_libretro.so" 1
+    addSystem 1 "$md_id" "snes" "$md_inst/snes9x_next_libretro.so"
 }

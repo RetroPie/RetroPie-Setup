@@ -394,25 +394,33 @@ _EOF_
 }
 
 function addSystem() {
-    local id="$1"
-    local system="$2"
-    local cmd="$3"
-    local default="$4"
+    local default="$1"
+    local id="$2"
+    local system="$3"
+    local cmd="$4"
+    local name="$5"
+    local exts=($6)
 
-    local exts=""
-    local name=""
-    case "$system" in
-        snes)
-            exts=".smc .sfc .fig .swc .mgd .zip"
-            name="Super Nintendo"
-    esac
+    local conf=""
+    if [[ -f "$configdir/all/platforms.cfg" ]]; then
+        conf="$configdir/all/platforms.cfg"
+    else
+        conf="$scriptdir/supplementary/platforms.cfg"
+    fi
 
+    iniConfig "=" '"' "$conf"
+    iniGet "${system}_name"
+    [[ -n "$ini_value" ]] && name="$ini_value"
+    iniGet "${system}_exts"
+    [[ -n "$ini_value" ]] && exts+=($ini_value)
+
+    exts="${exts[@]}"
     # add the extensions again as uppercase
     exts+=" ${exts^^}"
 
     # automatically add parameters for libretro modules
     if [[ "$id" =~ ^lr- ]]; then
-        cmd="$emudir/retroarch/bin/retroarch -L $cmd --appendconfig $configdir/$system/retroarch.cfg %ROM%"
+        cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $configdir/$system/retroarch.cfg %ROM%"
     fi
 
     setESSystem "$name" "$system" "~/RetroPie/roms/$system" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%" "$system" "$system"

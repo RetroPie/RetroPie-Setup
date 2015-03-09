@@ -33,5 +33,5 @@ function configure_lr-catsfc() {
     iniSet "input_remapping_directory" "$configdir/snes/"
 
     delSystem "$md_id" "snes-catsfc"
-    addSystem "$md_id" "snes" "$md_inst/catsfc_libretro.so"
+    addSystem 0 "$md_id" "snes" "$md_inst/catsfc_libretro.so"
 }

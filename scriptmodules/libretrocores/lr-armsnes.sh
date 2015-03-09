@@ -33,5 +33,5 @@ function configure_lr-armsnes() {
     iniSet "video_smooth" "false"
     iniSet "input_remapping_directory" "$configdir/snes/"
 
-    addSystem "$md_id" "snes" "$md_inst/libpocketsnes.so"
+    addSystem 0 "$md_id" "snes" "$md_inst/libpocketsnes.so"
 }

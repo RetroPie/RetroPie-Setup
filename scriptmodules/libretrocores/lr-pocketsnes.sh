@@ -48,5 +48,7 @@ function configure_lr-pocketsnes() {
     iniSet "video_smooth" "false"
     iniSet "input_remapping_directory" "$configdir/snes/"
 
-    addSystem "$md_id" "snes" "$md_inst/libpocketsnes.so" 1
+    local def=0
+    isPlatform "rpi1" && def=1
+    addSystem $def "$md_id" "snes" "$md_inst/libpocketsnes.so" ""
 }

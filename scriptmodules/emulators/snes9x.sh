@@ -34,5 +34,5 @@ function configure_snes9x() {
     setDispmanx "$md_id" 1
 
     delSystem "$md_id" "snes9x"
-    addSystem "$md_id" "snes" "$md_inst/snes9x %ROM%"
+    addSystem 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
 }
