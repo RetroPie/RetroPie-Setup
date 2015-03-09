@@ -120,7 +120,13 @@ function iniProcess() {
         touch "$file"
     fi
 
+    if [[ "$cmd" == "del" ]]; then
+        [[ -n "$match" ]] && sed -i -e "\|$match|d" "$file"
+        return 0
+    fi
+
     [[ "$cmd" == "unset" ]] && key="# $key"
+
     local replace="$key$delim$quote$value$quote"
     echo "Setting $replace in $file"
     if [[ -z "$match" ]]; then
@@ -142,7 +148,12 @@ function iniSet() {
     iniProcess "set" "$1" "$2" "$3"
 }
 
-# arg 1: key, arg 3: file (optional - uses file from iniConfig if not used)
+# arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+function iniDel() {
+    iniProcess "del" "$1" "$2" "$3"
+}
+
+# arg 1: key, arg 2: file (optional - uses file from iniConfig if not used)
 # value ends up in ini_value variable
 function iniGet() {
     local key="$1"
@@ -373,5 +384,49 @@ mode "320x240"
     timings 0 0 0 0 0 0 0
 endmode
 _EOF_
+    fi
+}
+
+function addSystem() {
+    local id="$1"
+    local system="$2"
+    local cmd="$3"
+    local default="$4"
+
+    local exts=""
+    local name=""
+    case "$system" in
+        snes)
+            exts=".smc .sfc .fig .swc .mgd .zip"
+            name="Super Nintendo"
+    esac
+
+    # add the extensions again as uppercase
+    exts+=" ${exts^^}"
+
+    # automatically add parameters for libretro modules
+    if [[ "$id" =~ ^lr- ]]; then
+        cmd="$emudir/retroarch/bin/retroarch -L $cmd --appendconfig $configdir/$system/retroarch.cfg %ROM%"
+    fi
+
+    setESSystem "$name" "$system" "~/RetroPie/roms/$id" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"SYS_$system %ROM%\"" "$system" "$system"
+    iniConfig "=" '"' "$configdir/$system/apps.cfg"
+    iniSet "$id" "$cmd"
+    if [[ "$default" == "1" ]]; then
+        iniSet "default" "$id"
+    fi
+    chown $user:$user "$configdir/$system/apps.cfg"
+}
+
+function delSystem() {
+    set -x
+    local id="$1"
+    local system="$2"
+    # remove from emulation station
+    xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
+    # remove from apps list for system
+    if [[ -f "$configdir/$system/apps.cfg" ]]; then
+        iniConfig "=" '"' "$configdir/$system/apps.cfg"
+        iniDel "$id"
     fi
 }
