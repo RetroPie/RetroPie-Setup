@@ -425,7 +425,6 @@ function addSystem() {
 }
 
 function delSystem() {
-    set -x
     local id="$1"
     local system="$2"
     # remove from emulation station
