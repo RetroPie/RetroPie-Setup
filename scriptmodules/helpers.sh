@@ -353,12 +353,12 @@ function setESSystem() {
             "$conf"
     else
         xmlstarlet ed -L \
-            -u "/systemList/system[name='$platform']/fullname" -v "$fullname" \
-            -u "/systemList/system[name='$platform']/path" -v "$path" \
-            -u "/systemList/system[name='$platform']/extension" -v "$extension" \
-            -u "/systemList/system[name='$platform']/command" -v "$command" \
-            -u "/systemList/system[name='$platform']/platform" -v "$platform" \
-            -u "/systemList/system[name='$platform']/theme" -v "$theme" \
+            -u "/systemList/system[name='$name']/fullname" -v "$fullname" \
+            -u "/systemList/system[name='$name']/path" -v "$path" \
+            -u "/systemList/system[name='$name']/extension" -v "$extension" \
+            -u "/systemList/system[name='$name']/command" -v "$command" \
+            -u "/systemList/system[name='$name']/platform" -v "$platform" \
+            -u "/systemList/system[name='$name']/theme" -v "$theme" \
             "$conf"
     fi
 }
