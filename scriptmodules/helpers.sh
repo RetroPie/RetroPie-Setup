@@ -341,7 +341,7 @@ function setESSystem() {
     fi
 
     cp "$conf" "$conf.bak"
-    if [[ $(xmlstarlet sel -t -v "count(/systemList/system[name='$platform'])" "$conf") -eq 0 ]]; then
+    if [[ $(xmlstarlet sel -t -v "count(/systemList/system[name='$name'])" "$conf") -eq 0 ]]; then
         xmlstarlet ed -L -s "/systemList" -t elem -n "system" -v "" \
             -s "/systemList/system[last()]" -t elem -n "name" -v "$name" \
             -s "/systemList/system[last()]" -t elem -n "fullname" -v "$fullname" \
@@ -393,24 +393,34 @@ _EOF_
     fi
 }
 
+# arg 1: 0 or 1 to make the emulator default, arg 2: module id, arg 3: "system" or "system platform" or "system platform theme", arg 4: commandline, arg 5 (optional) fullname for es config, arg 6: extensions
 function addSystem() {
     local default="$1"
     local id="$2"
-    local system=($3)
+    local names=($3)
     local cmd="$4"
     local fullname="$5"
     local exts=($6)
 
+    local system
     local platform
-    # if system contains two strings use the first as the name and the second as the platform
-    if [[ -n "${system[1]}" ]]; then
-        platform="${system[1]}"
-        system="${system[0]}"
+    local theme
+
+    if [[ -n "${names[2]}" ]]; then
+        system="${names[0]}"
+        platform="${names[1]}"
+        theme="${names[2]}"
+    elif [[ -n "${names[1]}" ]]; then
+        system="${names[0]}"
+        platform="${names[1]}"
+        theme="$system"
     else
-        platform="${system[0]}"
-        system="$platform"
+        system="${names[0]}"
+        platform="$system"
+        theme="$system"
     fi
 
+    set -x
     local conf=""
     if [[ -f "$configdir/all/platforms.cfg" ]]; then
         conf="$configdir/all/platforms.cfg"
@@ -420,7 +430,7 @@ function addSystem() {
 
     iniConfig "=" '"' "$conf"
     iniGet "${system}_fullname"
-    [[ -n "$ini_value" ]] && name="$ini_value"
+    [[ -n "$ini_value" ]] && fullname="$ini_value"
     iniGet "${system}_exts"
     [[ -n "$ini_value" ]] && exts+=($ini_value)
 
@@ -433,7 +443,7 @@ function addSystem() {
         cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $configdir/$system/retroarch.cfg %ROM%"
     fi
 
-    setESSystem "$fullname" "$system" "~/RetroPie/roms/$system" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%" "$platform" "$system"
+    setESSystem "$fullname" "$system" "~/RetroPie/roms/$system" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%" "$platform" "$theme"
 
     if [[ ! -d "$configdir/$system" ]]; then
         mkdir "$configdir/$system"
