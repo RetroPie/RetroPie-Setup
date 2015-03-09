@@ -260,7 +260,7 @@ _EOF_
     # iniSet "Mipmapping" "2"
     # iniSet "ForceTextureFilter" "2"
 
-    mkRomDir "n64-mupen64plus"
+    mkRomDir "n64"
 
     delSystem "$md_id" "n64-mupen64plus"
     addSystem 0 "$md_id" "n64" "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
