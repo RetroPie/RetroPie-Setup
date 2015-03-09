@@ -57,5 +57,5 @@ function configure_fuse() {
 
     setDispmanx "$md_id" 1
 
-    setESSystem "ZX Spectrum" "zxspectrum" "~/RetroPie/roms/zxspectrum" ".sna .SNA .szx .SZX .z80 .Z80 .ipf .IPF .tap .TAP .tzx .TZX .gz .bz2 .udi .UDI .mgt .MGT .img .IMG .trd .TRD .scl .SCL .dsk .DSK" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/fuse --machine 128 %ROM%\" \"$md_id\"" "zxspectrum" "zxspectrum"
+    addSystem 1 "$md_id" "zxspectrum" "$md_inst/bin/fuse --machine 128 %ROM%"
 }

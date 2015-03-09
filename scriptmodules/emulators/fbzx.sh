@@ -34,7 +34,8 @@ function install_fbzx() {
 }
 
 function configure_fbzx() {
-    mkRomDir "zxspectrum-fbzx"
+    mkRomDir "zxspectrum"
 
-    setESSystem "ZX Spectrum" "zxspectrum-fbzx" "RetroPie/roms/zxspectrum-fbzx" "z80 .Z80 .ipf .IPF" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/fbzx %ROM%\" \"$md_id\"" "zxspectrum" "zxspectrum"
+    delSystem "$md_id" "zxspectrum-fbzx"
+    addSystem 0 "$md_id" "zxspectrum" "$md_inst/fbzx %ROM%"
 }
