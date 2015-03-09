@@ -32,12 +32,13 @@ function configure_lr-fba() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/fbalibretro"
 
-    mkRomDir "fba-libretro"
+    mkRomDir "fba"
     ensureSystemretroconfig "fba"
 
     # system-specific shaders, fba
     iniConfig " = " "" "$configdir/fba/retroarch.cfg"
     iniSet "input_remapping_directory" "$configdir/fba/"
 
-    setESSystem "Final Burn Alpha" "fba-libretro" "~/RetroPie/roms/fba-libretro" ".fba .FBA .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/fb_alpha_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/fba/retroarch.cfg %ROM%\" \"$md_id\"" "arcade" "fba"
+    delSystem "$md_inst" "fba-libretro"
+    addSystem 0 "$md_id" "fba arcade" "$md_inst/fb_alpha_libretro.so"
 }
