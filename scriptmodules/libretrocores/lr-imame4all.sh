@@ -27,10 +27,6 @@ function configure_lr-imame4all() {
     mkRomDir "mame4all"
     ensureSystemretroconfig "mame4all"
 
-    # system-specific shaders, Mame
-    iniConfig " = " "" "$configdir/mame4all/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/mame4all/"
-
     delSystem "$md_inst" "mame-libretro"
     addSystem 0 "$md_inst" "mame4all arcade mame" "$md_inst/libretro.so"
 }

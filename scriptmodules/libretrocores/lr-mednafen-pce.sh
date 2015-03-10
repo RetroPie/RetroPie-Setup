@@ -25,10 +25,6 @@ function configure_lr-mednafen-pce() {
 
     mkRomDir "pcengine"
     ensureSystemretroconfig "pcengine"
-
-    # system-specific shaders, PC Engine
-    iniConfig " = " "" "$configdir/pcengine/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/pcengine/"
     
     delSystem "$md_id" "pcengine-libretro"
     addSystem 1 "$md_id" "pcengine" "$md_inst/libretro.so"

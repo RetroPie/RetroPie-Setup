@@ -35,10 +35,6 @@ function configure_lr-fba() {
     mkRomDir "fba"
     ensureSystemretroconfig "fba"
 
-    # system-specific shaders, fba
-    iniConfig " = " "" "$configdir/fba/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/fba/"
-
     delSystem "$md_inst" "fba-libretro"
     addSystem 0 "$md_id" "fba arcade" "$md_inst/fb_alpha_libretro.so"
 }

@@ -26,9 +26,5 @@ function configure_lr-handy() {
     mkRomDir "atarilynx"
     ensureSystemretroconfig "atarilynx"
 
-    # system-specific shaders, Lynx
-    iniConfig " = " "" "$configdir/atarilynx/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/atarilynx/"
-
     setESSystem "Atari Lynx" "atarilynx" "~/RetroPie/roms/atarilynx" ".lnx .LNX .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/handy_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/atarilynx/retroarch.cfg %ROM%\" \"$md_id\"" "atarilynx" "atarilynx"
 }

@@ -28,10 +28,6 @@ function configure_lr-vecx() {
     mkRomDir "vectrex"
     ensureSystemretroconfig "vectrex"
 
-    # system-specific shaders, Vectrex
-    iniConfig " = " "" "$configdir/vectrex/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/vectrex/"
-
     # Copy bios files
     cp "$md_inst/"{fast.bin,skip.bin,system.bin} "$biosdir/"
     chown $user:$user "$biosdir/"{fast.bin,skip.bin,system.bin}

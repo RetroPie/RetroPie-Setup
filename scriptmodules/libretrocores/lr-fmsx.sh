@@ -40,11 +40,7 @@ function configure_lr-fmsx() {
 
     mkRomDir "msx"
     ensureSystemretroconfig "msx"
-    
-    # system-specific shaders, fmsx
-    iniConfig " = " "" "$configdir/msx/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/msx/"   
-    
+
     # Copy bios files
     cp "$md_inst/"{*.ROM,*.FNT,*.SHA} "$biosdir/"
     chown $user:$user "$biosdir/"{*.ROM,*.FNT,*.SHA}

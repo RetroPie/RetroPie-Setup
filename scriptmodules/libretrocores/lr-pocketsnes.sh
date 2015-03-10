@@ -46,7 +46,6 @@ function configure_lr-pocketsnes() {
     iniSet "video_shader" "$emudir/retroarch/shader/snes_phosphor.glslp"
     iniSet "video_shader_enable" "false"
     iniSet "video_smooth" "false"
-    iniSet "input_remapping_directory" "$configdir/snes/"
 
     local def=0
     isPlatform "rpi1" && def=1

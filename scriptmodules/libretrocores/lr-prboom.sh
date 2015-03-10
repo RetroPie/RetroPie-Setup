@@ -26,10 +26,6 @@ function configure_lr-prboom() {
     mkRomDir "ports/doom"
     ensureSystemretroconfig "doom"
 
-    # system-specific shaders, doom
-    iniConfig " = " "" "$configdir/doom/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/doom/"
-
     cp prboom.wad "$romdir/ports/doom/"
 
     # download doom 1 shareware

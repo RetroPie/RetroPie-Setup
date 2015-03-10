@@ -29,10 +29,6 @@ function configure_lr-gpsp() {
     mkRomDir "gba"
     ensureSystemretroconfig "gba"
 
-    # system-specific shaders, gpsp
-    iniConfig " = " "" "$configdir/gba/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/gba/"
-
     delSystem "$md_id" "gba-gpsp-libretro"
     addSystem 0 "$md_id" "megadrive" "$md_inst/gpsp_libretro.so"
 }

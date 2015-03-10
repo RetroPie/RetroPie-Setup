@@ -31,7 +31,6 @@ function configure_lr-armsnes() {
     iniSet "video_shader" "$emudir/retroarch/shader/snes_phosphor.glslp"
     iniSet "video_shader_enable" "false"
     iniSet "video_smooth" "false"
-    iniSet "input_remapping_directory" "$configdir/snes/"
 
     addSystem 0 "$md_id" "snes" "$md_inst/libpocketsnes.so"
 }

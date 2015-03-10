@@ -36,7 +36,6 @@ function configure_lr-fceu-next() {
     iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
     iniSet "video_shader_enable" "false"
     iniSet "video_smooth" "false"
-    iniSet "input_remapping_directory" "$configdir/nes/"
 
     addSystem 1 "$md_id" "nes" "$md_inst/fceumm_libretro.so"
 }

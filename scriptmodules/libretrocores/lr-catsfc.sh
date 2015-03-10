@@ -30,7 +30,6 @@ function configure_lr-catsfc() {
     iniSet "video_shader" "$emudir/retroarch/shader/snes_phosphor.glslp"
     iniSet "video_shader_enable" "false"
     iniSet "video_smooth" "false"
-    iniSet "input_remapping_directory" "$configdir/snes/"
 
     delSystem "$md_id" "snes-catsfc"
     addSystem 0 "$md_id" "snes" "$md_inst/catsfc_libretro.so"

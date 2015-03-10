@@ -39,7 +39,6 @@ function configure_lr-pcsx-rearmed() {
     # system-specific, PSX
     iniConfig " = " "" "$configdir/psx/retroarch.cfg"
     iniSet "rewind_enable" "false"
-    iniSet "input_remapping_directory" "$configdir/psx/"
 
     setESSystem "Sony Playstation 1" "psx" "~/RetroPie/roms/psx" ".bin .BIN .cue .CUE .cbn .CBN .img .IMG .mdf .MDF .pbp .PBP .toc .TOC .z .Z .znx .ZNX" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/psx/retroarch.cfg %ROM%\" \"$md_id\"" "psx" "psx"
 }

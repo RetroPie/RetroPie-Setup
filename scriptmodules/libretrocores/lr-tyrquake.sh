@@ -47,10 +47,6 @@ function configure_lr-tyrquake() {
 
     ensureSystemretroconfig "quake"
 
-    # system-specific shaders, PC Engine
-    iniConfig " = " "" "$configdir/quake/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/quake/"
-
     # Create startup script
     cat > "$romdir/ports/Quake.sh" << _EOF_
 #!/bin/bash
