@@ -113,7 +113,6 @@ function main_menu() {
 
     local cmd
     local choice
-    local mode
 
     [[ -z "$rom_bn" ]] && rom_bn="game/rom"
     [[ -z "$system" ]] && system="emulator/port"
