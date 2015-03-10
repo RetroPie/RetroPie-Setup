@@ -33,13 +33,7 @@ function configure_lr-nestopia() {
     rm -rf "$rootdir/$md_type/nestopia"
 
     mkRomDir "nes"
-    ensureSystemretroconfig "nes"
-
-    # system-specific shaders, NES
-    iniConfig " = " "" "$configdir/nes/retroarch.cfg"
-    iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
-    iniSet "video_shader_enable" "false"
-    iniSet "video_smooth" "false"
+    ensureSystemretroconfig "nes" "phosphor.glslp"
 
     delSystem "$md_id" "nes-nestopia"
     addSystem 0 "$md_id" "nes" "$md_inst/nestopia_libretro.so"

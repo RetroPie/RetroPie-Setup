@@ -32,13 +32,7 @@ function configure_lr-snes9x-next() {
     rm -rf "$rootdir/$md_type/snes9x-next"
 
     mkRomDir "snes"
-    ensureSystemretroconfig "snes"
-
-    # system-specific shaders, SNES
-    iniConfig " = " "" "$configdir/snes/retroarch.cfg"
-    iniSet "video_shader" "$emudir/retroarch/shader/snes_phosphor.glslp"
-    iniSet "video_shader_enable" "false"
-    iniSet "video_smooth" "false"
+    ensureSystemretroconfig "snes" "snes_phosphor.glslp"
 
     addSystem 1 "$md_id" "snes" "$md_inst/snes9x_next_libretro.so"
 }

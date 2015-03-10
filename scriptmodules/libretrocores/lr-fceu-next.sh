@@ -29,13 +29,7 @@ function configure_lr-fceu-next() {
     rm -rf "$rootdir/$md_type/neslibretro"
 
     mkRomDir "nes"
-    ensureSystemretroconfig "nes"
-
-    # system-specific shaders, NES
-    iniConfig " = " "" "$configdir/nes/retroarch.cfg"
-    iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
-    iniSet "video_shader_enable" "false"
-    iniSet "video_smooth" "false"
+    ensureSystemretroconfig "nes" "phosphor.glslp"
 
     addSystem 1 "$md_id" "nes" "$md_inst/fceumm_libretro.so"
 }

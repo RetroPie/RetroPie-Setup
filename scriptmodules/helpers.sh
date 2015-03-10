@@ -365,6 +365,7 @@ function setESSystem() {
 
 function ensureSystemretroconfig {
     local system="$1"
+    local shader="$2"
     local config="$configdir/$system/retroarch.cfg"
 
     if [[ ! -d "$configdir/$system" ]]; then
@@ -384,6 +385,12 @@ function ensureSystemretroconfig {
 
     iniConfig " = " "" "$config"
     iniSet "input_remapping_directory" "$configdir/$system/"
+
+    if [[ -n "$shader" ]]; then
+        iniSet "video_shader" "$emudir/retroarch/shader/$shader"
+        iniSet "video_shader_enable" "false"
+        iniSet "video_smooth" "false"
+    fi
 }
 
 # make sure we have all the needed modes in /etc/fb.modes - which is currently just the addition of 320x240.

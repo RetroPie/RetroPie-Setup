@@ -31,22 +31,10 @@ function configure_lr-picodrive() {
     mkRomDir "mastersystem"
     mkRomDir "segacd"
     mkRomDir "sega32x"
-    ensureSystemretroconfig "megadrive"
-    ensureSystemretroconfig "mastersystem"
+    ensureSystemretroconfig "megadrive" "phosphor.glslp"
+    ensureSystemretroconfig "mastersystem" "phosphor.glslp"
     ensureSystemretroconfig "segacd"
     ensureSystemretroconfig "sega32x"
-
-    # system-specific shaders, Megadrive
-    iniConfig " = " "" "$configdir/megadrive/retroarch.cfg"
-    iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
-    iniSet "video_shader_enable" "false"
-    iniSet "video_smooth" "false"
-
-    # system-specific shaders, Mastersystem
-    iniConfig " = " "" "$configdir/mastersystem/retroarch.cfg"
-    iniSet "video_shader" "$emudir/retroarch/shader/phosphor.glslp"
-    iniSet "video_shader_enable" "false"
-    iniSet "video_smooth" "false"
 
     addSystem 1 "$md_id" "mastersystem" "$md_inst/picodrive_libretro.so"
     addSystem 1 "$md_id" "megadrive" "$md_inst/picodrive_libretro.so"
