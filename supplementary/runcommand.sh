@@ -385,7 +385,7 @@ function get_sys_command() {
     command="$ini_value"
 
     # replace tokens
-    command="${command/\%ROM\%/$rom}"
+    command="${command/\%ROM\%/\"$rom\"}"
 }
 
 if [[ -f "$runcommand_conf" ]]; then
