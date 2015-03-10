@@ -364,18 +364,26 @@ function setESSystem() {
 }
 
 function ensureSystemretroconfig {
-    if [[ ! -d "$configdir/$1" ]]; then
-        mkdir -p "$configdir/$1"
-        echo -e "#include \"$configdir/all/retroarch.cfg\"\n# All settings made here will override the global settings for the current emulator core\n" >> "$configdir/$1/retroarch.cfg"
-        chown -R $user:$user "$configdir/$1"
+    local system="$1"
+    local config="$configdir/$system/retroarch.cfg"
+
+    if [[ ! -d "$configdir/$system" ]]; then
+        mkdir -p "$configdir/$system"
+        chown $user:$user "$configdir/$system"
     fi
 
-    if ! grep -q "#include \"$configdir/all/retroarch.cfg" $configdir/$1/retroarch.cfg; then
-        addLineToFile "#include \"$configdir/all/retroarch.cfg" $configdir/$1/retroarch.cfg
+    if [[ ! -f "$config" ]]; then
+        echo "#include \"$configdir/all/retroarch.cfg\"" >"$config"
+        echo "# All settings made here will override the global settings for the current emulator core" >>"$config"
+        chown $user:$user "$config"
     fi
 
-    iniConfig " = " "" "$configdir/$1/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/$1/retroarch.cfg"
+    if ! grep -q "#include \"$configdir/all/retroarch.cfg" "$config"; then
+        addLineToFile "#include \"$configdir/all/retroarch.cfg" "$config"
+    fi
+
+    iniConfig " = " "" "$config"
+    iniSet "input_remapping_directory" "$config"
 }
 
 # make sure we have all the needed modes in /etc/fb.modes - which is currently just the addition of 320x240.
