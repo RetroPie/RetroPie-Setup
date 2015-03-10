@@ -383,7 +383,7 @@ function ensureSystemretroconfig {
     fi
 
     iniConfig " = " "" "$config"
-    iniSet "input_remapping_directory" "$config"
+    iniSet "input_remapping_directory" "$configdir/$system/"
 }
 
 # make sure we have all the needed modes in /etc/fb.modes - which is currently just the addition of 320x240.
