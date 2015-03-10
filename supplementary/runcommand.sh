@@ -354,11 +354,11 @@ function restore_governor() {
 }
 
 function get_sys_command() {
-    local emu_conf="$configdir/$system/emulators.cfg"
     system="$1"
     rom="$2"
     rom_bn="${rom##*/}"
     appsave=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
+    local emu_conf="$configdir/$system/emulators.cfg"
 
     if [[ ! -f "$emu_conf" ]]; then
         echo "No config found for system $system"
