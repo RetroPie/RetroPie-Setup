@@ -30,8 +30,8 @@ function configure_lr-genesis-plus-gx() {
     mkRomDir "megadrive"
     
     ensureSystemretroconfig "gamegear"
-    ensureSystemretroconfig "mastersystem-genesis"
-    ensureSystemretroconfig "megadrive-genesis"
+    ensureSystemretroconfig "mastersystem"
+    ensureSystemretroconfig "megadrive"
 
     delSystem "$md_id" "mastersystem-genesis"
     delSystem "$md_id" "megadrive-genesis"
