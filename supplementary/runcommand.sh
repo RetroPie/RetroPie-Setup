@@ -386,6 +386,7 @@ function get_sys_command() {
 
     # replace tokens
     command="${command/\%ROM\%/\"$rom\"}"
+    command="${command/\%BASENAME\%/\"$rom_bn\"}"
 }
 
 if [[ -f "$runcommand_conf" ]]; then
