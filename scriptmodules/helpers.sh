@@ -454,7 +454,7 @@ function addSystem() {
 
     if [[ ! -d "$configdir/$system" ]]; then
         mkdir "$configdir/$system"
-        chown $user:user "$configdir/$system"
+        chown $user:$user "$configdir/$system"
     fi
 
     iniConfig "=" '"' "$configdir/$system/emulators.cfg"
