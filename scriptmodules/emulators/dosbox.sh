@@ -35,11 +35,18 @@ function install_dosbox() {
 function configure_dosbox() {
     mkRomDir "pc"
 
-    cat > "$romdir/pc/Start DOSBox.sh" << _EOF_
+    rm -f "$romdir/pc/Start DOSBox.sh"
+    cat > "$romdir/pc/+Start DOSBox.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 1 "$md_inst/bin/dosbox -c \"MOUNT C $romdir/pc\"" "$md_id"
+params="\$1"
+if [[ "\$params" =~ \.sh$ ]]; then
+    params="-c \"MOUNT C $romdir/pc\""
+else
+    params+=" -exit"
+fi
+$rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/bin/dosbox \$params" "$md_id"
 _EOF_
-    chmod +x "$romdir/pc/Start DOSBox.sh"
+    chmod +x "$romdir/pc/+Start DOSBox.sh"
 
     local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [[ -f "$config_path" ]]; then
@@ -50,8 +57,6 @@ _EOF_
         iniSet "scaler" "none"
     fi
 
-    configure_dispmanx_off_dosbox
-
-    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".sh" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"%ROM%\" \"$md_id\"" "pc" "pc"
+    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".sh .bat .BAT .exe .EXE" "$romdir/pc/+Start\ DOSBox.sh %ROM%" "pc" "pc"
 }
 
