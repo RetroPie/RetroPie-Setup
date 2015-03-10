@@ -25,7 +25,7 @@
 configdir="/opt/retropie/configs"
 runcommand_conf="$configdir/all/runcommand.cfg"
 video_conf="$configdir/all/videomodes.cfg"
-apps_conf="$configdir/all/apps.cfg"
+apps_conf="$configdir/all/emulators.cfg"
 dispmanx_conf="$configdir/all/dispmanx.cfg"
 retronetplay_conf="$configdir/all/retronetplay.cfg"
 
@@ -232,14 +232,14 @@ function choose_app() {
         app="${app#\"}"
         options+=($i "$id")
         ((i++))
-    done <"$configdir/$system/apps.cfg"
+    done <"$configdir/$system/emulators.cfg"
     local cmd=(dialog --default-item "$default" --menu "Choose default emulator for $system"  22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         if [[ -n "$save" ]]; then
             iniSet set "=" '"' "$save" "${apps[$choice]}" "$apps_conf"
         else
-            iniSet set "=" '"' "default" "${apps[$choice]}" "$configdir/$system/apps.cfg"
+            iniSet set "=" '"' "default" "${apps[$choice]}" "$configdir/$system/emulators.cfg"
         fi
         get_sys_command "$system" "$rom"
     fi
@@ -354,17 +354,18 @@ function restore_governor() {
 }
 
 function get_sys_command() {
+    local emu_conf="$configdir/$system/emulators.cfg"
     system="$1"
     rom="$2"
     rom_bn="${rom##*/}"
     appsave=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
 
-    if [[ ! -f "$configdir/$system/apps.cfg" ]]; then
+    if [[ ! -f "$emu_conf" ]]; then
         echo "No config found for system $system"
         exit 1
     fi
 
-    iniGet "default" "$configdir/$system/apps.cfg"
+    iniGet "default" "$emu_conf"
     if [[ -z "$ini_value" ]]; then
         echo "No default app found for system $system"
         exit 1
@@ -380,7 +381,7 @@ function get_sys_command() {
     fi
 
     # get the app commandline
-    iniGet "$emulator" "$configdir/$system/apps.cfg"
+    iniGet "$emulator" "$emu_conf"
     command="$ini_value"
 
     # replace tokens

@@ -457,12 +457,12 @@ function addSystem() {
         chown $user:user "$configdir/$system"
     fi
 
-    iniConfig "=" '"' "$configdir/$system/apps.cfg"
+    iniConfig "=" '"' "$configdir/$system/emulators.cfg"
     iniSet "$id" "$cmd"
     if [[ "$default" == "1" ]]; then
         iniSet "default" "$id"
     fi
-    chown $user:$user "$configdir/$system/apps.cfg"
+    chown $user:$user "$configdir/$system/emulators.cfg"
 }
 
 function delSystem() {
@@ -471,8 +471,8 @@ function delSystem() {
     # remove from emulation station
     xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
     # remove from apps list for system
-    if [[ -f "$configdir/$system/apps.cfg" ]]; then
-        iniConfig "=" '"' "$configdir/$system/apps.cfg"
+    if [[ -f "$configdir/$system/emulators.cfg" ]]; then
+        iniConfig "=" '"' "$configdir/$system/emulators.cfg"
         iniDel "$id"
     fi
 }
