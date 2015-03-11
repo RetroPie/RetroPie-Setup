@@ -27,6 +27,6 @@ function configure_lr-imame4all() {
     mkRomDir "mame4all"
     ensureSystemretroconfig "mame4all"
 
-    delSystem "$md_inst" "mame-libretro"
-    addSystem 0 "$md_inst" "mame4all arcade mame" "$md_inst/libretro.so"
+    delSystem "$md_id" "mame-libretro"
+    addSystem 0 "$md_id" "mame4all arcade mame" "$md_inst/libretro.so"
 }

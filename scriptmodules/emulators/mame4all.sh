@@ -52,5 +52,5 @@ function configure_mame4all() {
 
     iniSet "samplerate" "22050"
 
-    addSystem 1 "$md_inst" "mame-mame4all arcade mame" "$md_inst/mame %BASENAME%"
+    addSystem 1 "$md_id" "mame-mame4all arcade mame" "$md_inst/mame %BASENAME%"
 }
