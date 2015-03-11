@@ -43,5 +43,5 @@ function configure_lr-pocketsnes() {
 
     local def=0
     isPlatform "rpi1" && def=1
-    addSystem $def "$md_id" "snes" "$md_inst/libpocketsnes.so"
+    addSystem $def "$md_id" "snes" "$md_inst/libretro.so"
 }
