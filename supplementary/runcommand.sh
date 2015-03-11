@@ -67,9 +67,6 @@ function get_params() {
 }
 
 function get_mode() {
-    local emusave="$1"
-    local romsave="$2"
-
     # get current mode / aspect ratio
     status=$(tvservice -s)
     if [[ "$status" =~ (PAL|NTSC) ]]; then
@@ -87,9 +84,11 @@ function get_mode() {
     [[ -z "$mode_cur_aspect" ]] && mode_cur_aspect="4:3"
 
     if [[ -f "$video_conf" ]]; then
-      source "$video_conf"
-      mode_new="${!romsave}"
-      [[ -z "$mode_new" ]] && mode_new="${!emusave}"
+        source "$video_conf"
+        mode_def_rom="${!romsave}"
+        mode_def_emu="${!emusave}"
+        [[ -n "$mode_def_rom" ]] && mode_new="$mode_def_rom"
+        [[ -n "$mode_def_emu" ]] && mode_new="$mode_def_emu"
     fi
 
     if [[ -z "$mode_new" ]]; then
@@ -105,12 +104,7 @@ function get_mode() {
 }
 
 function main_menu() {
-    local emulator="$1"
-    local emusave="$2"
-    local romsave="$3"
-    local default="$4"
     local save
-
     local cmd
     local choice
 
@@ -156,14 +150,16 @@ function main_menu() {
                 get_sys_command "$system" "$rom"
                 ;;
             4)
-                choose_mode "$emusave"
+                choose_mode "$emusave" "$mode_def_emu"
+                get_mode
                 ;;
             5)
-                choose_mode "$romsave"
+                choose_mode "$romsave" "$mode_def_rom"
+                get_mode
                 ;;
             6)
                 sed -i "/$romsave/d" "$video_conf"
-                get_mode "$emusave"
+                get_mode
                 ;;
 
             Z)
@@ -179,6 +175,7 @@ function main_menu() {
 
 function choose_mode() {
     local save="$1"
+    local default="$2"
     local group
     local line
     options=()
@@ -201,7 +198,6 @@ function choose_mode() {
             options+=("$mode-$aspect" "SDTV - $mode-$aspect")
         done
     done
-
     cmd=(dialog --default-item "$default" --menu "Choose video output mode for $emulator"  22 76 16 )
     mode_new=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$mode_new" ]] && return
@@ -397,14 +393,14 @@ fi
 
 get_params "$@"
 
-get_mode "$emusave" "$romsave"
+get_mode
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
 echo "Press 'x' or 'm' to configure launch options for emulator/port ($emulator)"
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
-    main_menu "$emulator" "$emusave" "$romsave" "$mode_new"
+    main_menu
     clear
 fi
 
