@@ -49,11 +49,9 @@ function build_mupen64plus-testing() {
             if isPlatform "rpi2"; then
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "NEON=1")
                 [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1" "NEON=1")
-                [[ "$dir" == "mupen64plus-video-gles2n64-1" ]] && params+=("VC=1" "NEON=1")
             else
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "VFP_HARD=1")
-                [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1")
-                [[ "$dir" == "mupen64plus-video-gles2n64-1" ]] && params+=("VC=1")
+                [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1" "VFP=1")
             fi
             make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"
         fi
