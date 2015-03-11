@@ -4,6 +4,7 @@ rp_module_menus="4+"
 
 function sources_lr-catsfc() {
     gitPullOrClone "$md_build" git://github.com/libretro/CATSFC-libretro.git
+    sed -i "s/CFLAGS      :=//" Makefile
 }
 
 function build_lr-catsfc() {
