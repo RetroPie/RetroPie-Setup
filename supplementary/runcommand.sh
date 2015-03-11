@@ -291,13 +291,15 @@ function retroarch_append_config() {
     [[ ! "$command" =~ "retroarch" ]] && return
     local rate=$(tvservice -s | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
     echo "video_refresh_rate = $rate" >/tmp/retroarch-rate.cfg
+    if [[ "$command" =~ "--appendconfig" ]]; then
+        command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg$retronetplay|")
+    else
+        command+=" --appendconfig /tmp/retroarch-rate.cfg"
+    fi
     if [[ $netplay -eq 1 ]] && [[ -f "$retronetplay_conf" ]]; then
         source "$retronetplay_conf"
-        retronetplay=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes"
-    else
-        retronetplay=""
+        command+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes"
     fi
-    command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg$retronetplay|")
 }
 
 # arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
