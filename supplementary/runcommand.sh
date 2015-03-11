@@ -116,18 +116,18 @@ function main_menu() {
         local options=()
         if [[ $is_sys -eq 1 ]]; then
             options+=(
-                1 "Select default emulator for $system"
-                2 "Select emulator for $rom_bn"
-                3 "Remove emulator choice for $rom_bn"
+                1 "Select default emulator for $system ($emulator_def_sys)"
+                2 "Select emulator for $rom_bn ($emulator_def_rom)"
             )
+            [[ -n "$emulator_def_rom" ]] && options+=(3 "Remove emulator choice for $rom_bn")
         fi
 
         if [[ -f /usr/bin/tvservice ]]; then
             options+=(
                 4 "Select default video mode for $emulator"
                 5 "Select video mode for $emulator + $rom_bn"
-                6 "Remove video mode choice for $emulator + $rom_bn"
             )
+            [[ -n "$mode_def_rom" ]] && options+=(6 "Remove video mode choice for $emulator + $rom_bn")
         fi
 
         options+=(X "Launch")
@@ -207,29 +207,28 @@ function choose_mode() {
 
 function choose_app() {
     local save="$1"
+    local default
+    local default_id
+    if [[ -n "$save" ]]; then
+        default="$emulator"
+    else
+        default="$emulator_def_sys"
+    fi
     local options=()
     local i=1
     while read line; do
         # convert key=value to array
         local line=(${line/=/ })
-        # ley
         local id=${line[0]}
         [[ "$id" == "default" ]] && continue
         local apps[$i]="$id"
-        if [[ -n "$save" ]]; then
-            [[ "$id" == "$emulator" ]] && id+=" (default)" 
-        else
-            [[ "$id" == "$emulator_default" ]] && id+=" (default)" 
+        if [[ "$id" == "$default" ]]; then
+            default_id="$i"
         fi
-        # value in index 1-
-        app="${line[@]:1}"
-        # remove quotes
-        app="${app%\"}"
-        app="${app#\"}"
         options+=($i "$id")
         ((i++))
     done <"$configdir/$system/emulators.cfg"
-    local cmd=(dialog --default-item "$default" --menu "Choose default emulator for $system"  22 76 16 )
+    local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator for $system"  22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         if [[ -n "$save" ]]; then
@@ -370,11 +369,12 @@ function get_sys_command() {
     fi
 
     emulator="$ini_value"
-    emulator_default="$emulator"
+    emulator_def_sys="$emulator"
 
     # get system & rom specific app if set
     if [[ -f "$apps_conf" ]]; then
         iniGet "$appsave" "$apps_conf"
+        emulator_def_rom="$ini_value"
         [[ -n "$ini_value" ]] && emulator="$ini_value"
     fi
 
