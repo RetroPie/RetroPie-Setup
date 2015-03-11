@@ -292,7 +292,7 @@ function retroarch_append_config() {
     local rate=$(tvservice -s | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
     echo "video_refresh_rate = $rate" >/tmp/retroarch-rate.cfg
     if [[ "$command" =~ "--appendconfig" ]]; then
-        command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg$retronetplay|")
+        command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg|")
     else
         command+=" --appendconfig /tmp/retroarch-rate.cfg"
     fi
