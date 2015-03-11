@@ -30,27 +30,27 @@ function install_mame4all() {
 }
 
 function configure_mame4all() {
-    mkRomDir "mame4all"
-    mkRomDir "mame4all/artwork"
-    mkRomDir "mame4all/samples"
+    mkRomDir "mame-mame4all"
+    mkRomDir "mame-mame4all/artwork"
+    mkRomDir "mame-mame4all/samples"
 
     mkdir -p "$configdir/mame4all/"{cfg,hi,inp,memcard,nvram,snap,sta}
     chown -R $user:$user "$configdir/mame4all"
 
     iniConfig "=" "" "$md_inst/mame.cfg"
-    iniSet "cfg" "$configdir/mame4all/cfg"
-    iniSet "hi" "$configdir/mame4all/hi"
-    iniSet "inp" "$configdir/mame4all/inp"
-    iniSet "memcard" "$configdir/mame4all/memcard"
-    iniSet "nvram" "$configdir/mame4all/nvram"
-    iniSet "snap" "$configdir/mame4all/snap"
-    iniSet "sta" "$configdir/mame4all/sta"
+    iniSet "cfg" "$configdir/mame-mame4all/cfg"
+    iniSet "hi" "$configdir/mame-mame4all/hi"
+    iniSet "inp" "$configdir/mame-mame4all/inp"
+    iniSet "memcard" "$configdir/mame-mame4all/memcard"
+    iniSet "nvram" "$configdir/mame-mame4all/nvram"
+    iniSet "snap" "$configdir/mame-mame4all/snap"
+    iniSet "sta" "$configdir/mame-mame4all/sta"
 
-    iniSet "artwork" "$romdir/mame4all/artwork"
-    iniSet "samplepath" "$romdir/mame4all/samples"
-    iniSet "rompath" "$romdir/mame4all"
+    iniSet "artwork" "$romdir/mame-mame4all/artwork"
+    iniSet "samplepath" "$romdirmame-mame4all/samples"
+    iniSet "rompath" "$romdir/mame-mame4all"
 
     iniSet "samplerate" "22050"
 
-    addSystem 1 "$md_inst" "mame4all arcade mame" "$md_inst/mame %BASENAME%"
+    addSystem 1 "$md_inst" "mame-mame4all arcade mame" "$md_inst/mame %BASENAME%"
 }
