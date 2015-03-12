@@ -24,9 +24,9 @@ function configure_lr-imame4all() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/mamelibretro"
 
-    mkRomDir "mame4all"
-    ensureSystemretroconfig "mame4all"
+    mkRomDir "mame-mame4all"
+    ensureSystemretroconfig "mame-mame4all"
 
     delSystem "$md_id" "mame-libretro"
-    addSystem 0 "$md_id" "mame4all arcade mame" "$md_inst/libretro.so"
+    addSystem 0 "$md_id" "mame-mame4all arcade mame" "$md_inst/libretro.so"
 }
