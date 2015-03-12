@@ -319,7 +319,9 @@ function mkUserDir() {
 function mkRomDir() {
     mkUserDir "$romdir/$1"
     if [[ "$1" == "megadrive" ]]; then
-        ln -snf "$romdir/$1" "$romdir/genesis"
+        pushd "$romdir"
+        ln -snf "$1" "genesis"
+        popd
     fi
 }
 
