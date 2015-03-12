@@ -29,15 +29,16 @@ apps_conf="$configdir/all/emulators.cfg"
 dispmanx_conf="$configdir/all/dispmanx.cfg"
 retronetplay_conf="$configdir/all/retronetplay.cfg"
 
+declare -A mode_map
 declare -A mode
 
-mode[1-CEA-4:3]="CEA-1"
-mode[1-DMT-4:3]="DMT-4"
-mode[1-CEA-16:9]="CEA-1"
+mode_map[1-CEA-4:3]="CEA-1"
+mode_map[1-DMT-4:3]="DMT-4"
+mode_map[1-CEA-16:9]="CEA-1"
 
-mode[4-CEA-4:3]="DMT-16"
-mode[4-DMT-4:3]="DMT-16"
-mode[4-CEA-16:9]="CEA-4"
+mode_map[4-CEA-4:3]="DMT-16"
+mode_map[4-DMT-4:3]="DMT-16"
+mode_map[4-CEA-16:9]="CEA-4"
 
 function get_params() {
     reqmode="$1"
@@ -66,6 +67,28 @@ function get_params() {
     netplay=0
 }
 
+function get_all_modes() {
+    local group
+    for group in CEA DMT; do
+        while read -r line; do
+            local id=$(echo $line | grep -oE "mode [0-9]*" | cut -d" " -f2)
+            local info=$(echo $line | cut -d":" -f2-)
+            info=${info/ /}
+            if [[ -n "$id" ]]; then
+                mode_id+=($group-$id)
+                mode[$group-$id]="$info"
+            fi
+        done < <(tvservice -m $group)
+    done
+    local aspect
+    for group in "NTSC" "PAL"; do
+        for aspect in "4:3" "16:10" "16:9"; do
+            mode_id+=($group-$aspect)
+            mode[$group-$aspect]="SDTV - $group-$aspect"
+        done
+    done
+}
+
 function get_mode() {
     # get current mode / aspect ratio
     mode_cur_status=$(tvservice -s)
@@ -83,16 +106,20 @@ function get_mode() {
     # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
     [[ -z "$mode_cur_aspect" ]] && mode_cur_aspect="4:3"
 
+    mode_new="$mode_cur"
+
     # if called with specific mode, use that else choose the best mode from our array
     if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
         mode_new="$reqmode"
     elif [[ "$reqmode" =~ ^(PAL|NTSC)-(4:3|16:10|16:9)$ ]]; then
         mode_new="$reqmode"
     else
-        mode_new="${mode[${reqmode}-${mode_cur_type}-${mode_cur_aspect}]}"
+        local map_mode="${mode_map[${reqmode}-${mode_cur_type}-${mode_cur_aspect}]}"
+        [[ -n "$map_mode" ]] && mode_new="$map_mode"
     fi
 
-    mode_def_emu="$mode_new"
+    mode_def_emu=""
+    mode_def_rom=""
 
     if [[ -f "$video_conf" ]]; then
         iniGet "$emusave" "$video_conf"
@@ -104,7 +131,7 @@ function get_mode() {
         iniGet "$romsave" "$video_conf"
         if [[ -n "$ini_value" ]]; then
             mode_def_rom="$ini_value"
-            mode_new="$mode_def_emu"
+            mode_new="$mode_def_rom"
         fi
     fi
 }
@@ -123,17 +150,18 @@ function main_menu() {
         if [[ $is_sys -eq 1 ]]; then
             options+=(
                 1 "Select default emulator for $system ($emulator_def_sys)"
-                2 "Select emulator for $rom_bn ($emulator_def_rom)"
+                2 "Select emulator for rom ($emulator_def_rom)"
             )
-            [[ -n "$emulator_def_rom" ]] && options+=(3 "Remove emulator choice for $rom_bn")
+            [[ -n "$emulator_def_rom" ]] && options+=(3 "Remove emulator choice for rom")
         fi
 
-        if [[ -f /usr/bin/tvservice ]]; then
+        if [[ $has_tvs -eq 1 ]]; then
             options+=(
                 4 "Select default video mode for $emulator ($mode_def_emu)"
-                5 "Select video mode for $emulator + $rom_bn ($mode_def_rom)"
+                5 "Select video mode for $emulator + rom ($mode_def_rom)"
             )
-            [[ -n "$mode_def_rom" ]] && options+=(6 "Remove video mode choice for $emulator + $rom_bn")
+            [[ -n "$mode_def_emu" ]] && options+=(6 "Remove video mode choice for $emulator")
+            [[ -n "$mode_def_rom" ]] && options+=(7 "Remove video mode choice for $emulator + rom")
         fi
 
         options+=(X "Launch")
@@ -142,7 +170,7 @@ function main_menu() {
             options+=(Z "Launch with netplay enabled")
         fi
 
-        cmd=(dialog --menu "Launch configuration - emulator: $emulator, rom: $rom_bn"  22 76 16 )
+        cmd=(dialog --menu "Launch configuration\nSystem: $system\nEmulator: $emulator\nVideo Mode: ${mode[$mode_new]}\nROM: $rom_bn"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         case $choice in
             1)
@@ -164,10 +192,13 @@ function main_menu() {
                 get_mode
                 ;;
             6)
+                sed -i "/$emusave/d" "$video_conf"
+                get_mode
+                ;;
+            7)
                 sed -i "/$romsave/d" "$video_conf"
                 get_mode
                 ;;
-
             Z)
                 netplay=1
                 break
@@ -182,27 +213,10 @@ function main_menu() {
 function choose_mode() {
     local save="$1"
     local default="$2"
-    local group
-    local line
     options=()
-    for group in CEA DMT; do
-        while read -r line; do
-            local mode=$(echo $line | grep -oE "mode [0-9]*" | cut -d" " -f2)
-            local info=$(echo $line | cut -d":" -f2-)
-            info=${info/ /}
-            if [[ -n "$mode" ]]; then
-                options+=("$group-$mode" "$info")
-            fi
-        done < <(tvservice -m $group)
-    done
-
-    # add PAL / NTSC modes
-    local mode
-    local aspect
-    for mode in "NTSC" "PAL"; do
-        for aspect in "4:3" "16:10" "16:9"; do
-            options+=("$mode-$aspect" "SDTV - $mode-$aspect")
-        done
+    local key
+    for key in ${mode_id[@]}; do
+        options+=("$key" "${mode[$key]}")
     done
     cmd=(dialog --default-item "$default" --menu "Choose video output mode for $emulator"  22 76 16 )
     mode_new=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -337,7 +351,7 @@ function iniSet() {
 function iniGet() {
     local key="$1"
     local file="$2"
-    ini_value=$(sed -rn "s/^[\s]*$key\s*=\s*\"(.+)\".*/\1/p" $file)
+    ini_value=$(sed -rn "s|^[\s]*$key\s*=\s*\"(.+)\".*|\1|p" $file)
 }
 
 function set_governor() {
@@ -398,15 +412,22 @@ if [[ -f "$runcommand_conf" ]]; then
     governor="$ini_value"
 fi
 
+if [[ -n "$(which tvservice)" ]]; then
+    has_tvs=1
+else
+    has_tvs=0
+fi
+
 get_params "$@"
 
-get_mode
+[[ $has_tvs -eq 1 ]] && get_mode
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
 echo "Press 'x' or 'm' to configure launch options for emulator/port ($emulator)"
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
+    get_all_modes
     main_menu
     clear
 fi
