@@ -299,7 +299,10 @@ gcc_version() {
 }
 
 function ensureRootdirExists() {
-    mkdir -p $rootdir
+    mkdir -p "$rootdir"
+    mkdir -p "$configdir/all"
+    chown $user:$user "$configdir"
+    chown $user:$user "$configdir/all"
 }
 
 function rmDirExists() {
