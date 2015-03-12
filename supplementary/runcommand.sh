@@ -59,12 +59,14 @@ function get_params() {
         [[ -z "$emulator" ]] && emulator="${command/% */}"
     fi
 
+    netplay=0
+}
+
+function get_save_vars() {
     # convert emulator name / binary to a names usable as variables in our config file
     emusave=${emulator//\//_}
     emusave=${emusave//[^a-Z0-9_]/}
     romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
-
-    netplay=0
 }
 
 function get_all_modes() {
@@ -175,9 +177,13 @@ function main_menu() {
         case $choice in
             1)
                 choose_app
+                get_save_vars
+                get_mode
                 ;;
             2)
                 choose_app "$appsave"
+                get_save_vars
+                get_mode
                 ;;
             3)
                 sed -i "/$appsave/d" "$apps_conf"
@@ -420,6 +426,8 @@ else
 fi
 
 get_params "$@"
+
+get_save_vars
 
 [[ $has_tvs -eq 1 ]] && get_mode
 
