@@ -27,7 +27,7 @@ function configure_lr-nxengine() {
 
     cat > "$romdir/ports/Cave Story.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 1 "$emudir/retroarch/bin/retroarch -L $md_inst/nxengine_libretro.so --config $configdir/all/retroarch.cfg $md_inst/datafiles/Doukutsu.exe" "$md_id"
+$rootdir/supplementary/runcommand/runcommand.sh 1 "$emudir/retroarch/bin/retroarch -L $md_inst/nxengine_libretro.so --config $configdir/cavestory/retroarch.cfg $md_inst/datafiles/Doukutsu.exe" "$md_id"
 _EOF_
     chmod +x "$romdir/ports/Cave Story.sh"
 
