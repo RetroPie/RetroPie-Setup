@@ -68,37 +68,43 @@ function get_params() {
 
 function get_mode() {
     # get current mode / aspect ratio
-    status=$(tvservice -s)
-    if [[ "$status" =~ (PAL|NTSC) ]]; then
-        mode_cur=$(echo "$status" | grep -oE "(PAL|NTSC) (4:3|16:10|16:9)")
+    mode_cur_status=$(tvservice -s)
+    if [[ "$mode_cur_status" =~ (PAL|NTSC) ]]; then
+        mode_cur=$(echo "$mode_cur_status" | grep -oE "(PAL|NTSC) (4:3|16:10|16:9)")
         mode_cur=${mode_cur/ /-}
     else
-        mode_cur=($(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)"))
+        mode_cur=($(echo "$mode_cur_status" | grep -oE "(CEA|DMT) \([0-9]+\)"))
         mode_cur_type="${mode_cur[0]}"
         mode_cur_id="${mode_cur[1]//[()]/}"
         mode_cur="$mode_cur_type-$mode_cur_id"
     fi
 
-    mode_cur_aspect=$(echo "$status" | grep -oE "(16:9|4:3)")
+    mode_cur_aspect=$(echo "$mode_cur_status" | grep -oE "(16:9|4:3)")
     # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
     [[ -z "$mode_cur_aspect" ]] && mode_cur_aspect="4:3"
 
-    if [[ -f "$video_conf" ]]; then
-        source "$video_conf"
-        mode_def_rom="${!romsave}"
-        mode_def_emu="${!emusave}"
-        [[ -n "$mode_def_rom" ]] && mode_new="$mode_def_rom"
-        [[ -n "$mode_def_emu" ]] && mode_new="$mode_def_emu"
+    # if called with specific mode, use that else choose the best mode from our array
+    if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
+        mode_new="$reqmode"
+    elif [[ "$reqmode" =~ ^(PAL|NTSC)-(4:3|16:10|16:9)$ ]]; then
+        mode_new="$reqmode"
+    else
+        mode_new="${mode[${reqmode}-${mode_cur_type}-${mode_cur_aspect}]}"
     fi
 
-    if [[ -z "$mode_new" ]]; then
-        # if called with specific mode, use that else choose the best mode from our array
-        if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
-            mode_new="$reqmode"
-        elif [[ "$reqmode" =~ ^(PAL|NTSC)-(4:3|16:10|16:9)$ ]]; then
-            mode_new="$reqmode"
-        else
-            mode_new="${mode[${reqmode}-${mode_cur_type}-${mode_cur_aspect}]}"
+    mode_def_emu="$mode_new"
+
+    if [[ -f "$video_conf" ]]; then
+        iniGet "$emusave" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            mode_def_emu="$ini_value"
+            mode_new="$mode_def_emu"
+        fi
+
+        iniGet "$romsave" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            mode_def_rom="$ini_value"
+            mode_new="$mode_def_emu"
         fi
     fi
 }
@@ -124,8 +130,8 @@ function main_menu() {
 
         if [[ -f /usr/bin/tvservice ]]; then
             options+=(
-                4 "Select default video mode for $emulator"
-                5 "Select video mode for $emulator + $rom_bn"
+                4 "Select default video mode for $emulator ($mode_def_emu)"
+                5 "Select video mode for $emulator + $rom_bn ($mode_def_rom)"
             )
             [[ -n "$mode_def_rom" ]] && options+=(6 "Remove video mode choice for $emulator + $rom_bn")
         fi
