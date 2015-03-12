@@ -170,7 +170,7 @@ function main_menu() {
             options+=(Z "Launch with netplay enabled")
         fi
 
-        cmd=(dialog --menu "Launch configuration\nSystem: $system\nEmulator: $emulator\nVideo Mode: ${mode[$mode_new]}\nROM: $rom_bn"  22 76 16 )
+        cmd=(dialog --menu "System: $system\nEmulator: $emulator\nVideo Mode: ${mode[$mode_new]}\nROM: $rom_bn"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         case $choice in
             1)
@@ -218,7 +218,7 @@ function choose_mode() {
     for key in ${mode_id[@]}; do
         options+=("$key" "${mode[$key]}")
     done
-    cmd=(dialog --default-item "$default" --menu "Choose video output mode for $emulator"  22 76 16 )
+    cmd=(dialog --default-item "$default" --menu "Choose video output mode"  22 76 16 )
     mode_new=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$mode_new" ]] && return
 
@@ -248,7 +248,7 @@ function choose_app() {
         options+=($i "$id")
         ((i++))
     done <"$configdir/$system/emulators.cfg"
-    local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator for $system"  22 76 16 )
+    local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         if [[ -n "$save" ]]; then
