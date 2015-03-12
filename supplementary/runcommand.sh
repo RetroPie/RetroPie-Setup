@@ -283,8 +283,8 @@ function config_dispmanx() {
     # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
     # change the library path to load dispmanx sdl first
     if [[ -f "$dispmanx_conf" ]]; then
-      source "$dispmanx_conf"
-      [[ "${!name}" == "1" ]] && command="SDL1_VIDEODRIVER=dispmanx $command"
+        iniGet "$name" "$dispmanx_conf"
+        [[ "$ini_value" == "1" ]] && command="SDL1_VIDEODRIVER=dispmanx $command"
     fi
 }
 
@@ -394,7 +394,8 @@ function get_sys_command() {
 }
 
 if [[ -f "$runcommand_conf" ]]; then
-    source "$runcommand_conf"
+    iniGet "governor" "$runcommand_conf"
+    governor="$ini_value"
 fi
 
 get_params "$@"
