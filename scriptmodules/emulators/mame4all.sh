@@ -47,7 +47,7 @@ function configure_mame4all() {
     iniSet "sta" "$configdir/mame-mame4all/sta"
 
     iniSet "artwork" "$romdir/mame-mame4all/artwork"
-    iniSet "samplepath" "$romdirmame-mame4all/samples"
+    iniSet "samplepath" "$romdir/mame-mame4all/samples"
     iniSet "rompath" "$romdir/mame-mame4all"
 
     iniSet "samplerate" "22050"
