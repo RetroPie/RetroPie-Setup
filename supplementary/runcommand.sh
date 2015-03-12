@@ -374,6 +374,7 @@ function get_sys_command() {
     system="$1"
     rom="$2"
     rom_bn="${rom##*/}"
+    rom_bn="${rom_bn%.*}"
     appsave=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
     local emu_conf="$configdir/$system/emulators.cfg"
 
