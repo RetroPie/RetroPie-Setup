@@ -9,7 +9,7 @@ function sources_lr-vba-next() {
 
 function build_lr-vba-next() {
     make -f Makefile.libretro clean
-    make -f Makefile.libretro -j2 platform=armvhardfloatunix TILED_RENDERING=1 HAVE_NEON=1
+    make -f Makefile.libretro platform=armvhardfloatunix TILED_RENDERING=1 HAVE_NEON=1
     md_ret_require="$md_build/vba_next_libretro.so"
 }
 
