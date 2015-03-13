@@ -113,6 +113,7 @@ function binaries_setup()
         rp_callModule runcommand install
 
         # some additional supplementary modules
+        rp_callModule retropiemenu
         rp_callModule disabletimeouts
         rp_callModule modules
         rp_callModule bashwelcometweak
