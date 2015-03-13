@@ -111,7 +111,7 @@ function iniProcess() {
     local delim_strip=${delim// /}
     # if the stripped delimiter is empty - such as in the case of a space, just use the delimiter instead
     [[ -z "$delim_strip" ]] && delim_strip="$delim"
-    local match_re="[\s#]*$key\s*$delim_strip.*$"
+    local match_re="^[\s#]*$key\s*$delim_strip.*$"
 
     local match
     if [[ -f "$file" ]]; then
