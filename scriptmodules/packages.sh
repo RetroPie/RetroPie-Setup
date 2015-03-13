@@ -237,7 +237,7 @@ function rp_installBin() {
 function rp_createBin() {
     printHeading "Creating binary archive for $md_desc"
     local archive="$md_id.tar.gz"
-    local dest="$__tmpdir/archives/$md_type"
+    local dest="$__tmpdir/archives/$__platform/$md_type"
     rm -f "$dest/$archive"
     mkdir -p "$dest"
     tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"
