@@ -37,7 +37,11 @@ function rps_buildMenu()
         for menu in $menus; do
             command[$id]="${menu:2}"
             if [[ "${menu:0:1}" == "$1" ]]; then
-                options=("${options[@]}" "$id" "${__mod_desc[$id]}")
+                if [[ "$1" == "3" ]]; then
+                    options=("${options[@]}" "$id" "${__mod_desc[$id]}")
+                else
+                    options=("${options[@]}" "$id" "${__mod_id[$id]} - ${__mod_desc[$id]}")
+                fi
                 if [[ "$2" == "bool" ]]; then
                     status="ON"
                     [[ "${menu:1:1}" == "-" ]] && status="OFF"
