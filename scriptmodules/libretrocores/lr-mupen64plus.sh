@@ -1,5 +1,5 @@
 rp_module_id="lr-mupen64plus"
-rp_module_desc="N64 emu -  Mupen64 Plus port for libretro"
+rp_module_desc="N64 emu - Mupen64 Plus port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-mupen64plus() {
