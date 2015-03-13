@@ -85,17 +85,27 @@ function configure_retronetplay() {
 
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Configure RetroArch Netplay.\nInternal IP: $ip_int External IP: $ip_ext" 22 76 16)
-        options=(1 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode"
-                 2 "Set port. Currently: $__netplayport"
-                 3 "Set host IP address (for client mode). Currently: $__netplayhostip"
-                 4 "Set delay frames. Currently: $__netplayframes")
+        options=(
+            1 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode"
+            2 "Set port. Currently: $__netplayport"
+            3 "Set host IP address (for client mode). Currently: $__netplayhostip"
+            4 "Set delay frames. Currently: $__netplayframes"
+        )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case $choice in
-                 1) rps_retronet_mode ;;
-                 2) rps_retronet_port ;;
-                 3) rps_retronet_hostip ;;
-                 4) rps_retronet_frames ;;
+                1)
+                    rps_retronet_mode
+                    ;;
+                2)
+                    rps_retronet_port
+                    ;;
+                3)
+                    rps_retronet_hostip
+                    ;;
+                4)
+                    rps_retronet_frames
+                    ;;
             esac
         else
             break
