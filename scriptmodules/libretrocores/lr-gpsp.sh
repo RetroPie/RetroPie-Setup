@@ -9,7 +9,7 @@ function sources_lr-gpsp() {
 
 function build_lr-gpsp() {
     make clean
-    make -j2 platform=armv
+    CFLAGS="$CFLAGS -DARM_MEMORY_DYNAREC" make platform=armv HAVE_DYNAREC=1
     md_ret_require="$md_build/gpsp_libretro.so"
 }
 
