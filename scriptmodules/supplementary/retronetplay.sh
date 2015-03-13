@@ -4,14 +4,16 @@ rp_module_menus="4+"
 rp_module_flags="nobin"
 
 function rps_retronet_saveconfig() {
-    cat > "$configdir/all/retronetplay.cfg" <<_EOF_
+    local conf="$configdir/all/retronetplay.cfg"
+    cat >"$conf"  <<_EOF_
 __netplaymode="$__netplaymode"
 __netplayport="$__netplayport"
 __netplayhostip="$__netplayhostip"
 __netplayhostip_cfile="$__netplayhostip_cfile"
 __netplayframes="$__netplayframes"
 _EOF_
-    chown $user:$user "$configdir/all/retronetplay.cfg"
+    chown $user:$user "$conf"
+    printMsgs "dialog" "Configuration has been saved to $conf"
 }
 
 function rps_retronet_loadconfig() {
@@ -41,7 +43,6 @@ function rps_retronet_mode() {
                 __netplayhostip_cfile="$__netplayhostip"
                 ;;
         esac
-        rps_retronet_saveconfig
     fi
 }
 
@@ -50,7 +51,6 @@ function rps_retronet_port() {
     choice=$("${cmd[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         __netplayport="$choice"
-        rps_retronet_saveconfig
     fi
 }
 
@@ -64,7 +64,6 @@ function rps_retronet_hostip() {
         else
             __netplayhostip_cfile="$__netplayhostip"
         fi
-        rps_retronet_saveconfig
     fi
 }
 
@@ -73,7 +72,6 @@ function rps_retronet_frames() {
     choice=$("${cmd[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         __netplayframes="$choice"
-        rps_retronet_saveconfig
     fi
 }
 
@@ -90,6 +88,7 @@ function configure_retronetplay() {
             2 "Set port. Currently: $__netplayport"
             3 "Set host IP address (for client mode). Currently: $__netplayhostip"
             4 "Set delay frames. Currently: $__netplayframes"
+            5 "Save configuration"
         )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -105,6 +104,9 @@ function configure_retronetplay() {
                     ;;
                 4)
                     rps_retronet_frames
+                    ;;
+                5)
+                    rps_retronet_saveconfig
                     ;;
             esac
         else
