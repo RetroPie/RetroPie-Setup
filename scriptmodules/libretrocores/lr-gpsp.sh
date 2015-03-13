@@ -1,7 +1,6 @@
 rp_module_id="lr-gpsp"
 rp_module_desc="GBA emu - gpSP port for libretro"
 rp_module_menus="2+"
-rp_module_flags="!rpi1"
 
 function sources_lr-gpsp() {
     gitPullOrClone "$md_build" https://github.com/libretro/gpsp.git
