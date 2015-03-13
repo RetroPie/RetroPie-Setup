@@ -1,22 +1,22 @@
-rp_module_id="tyrquake"
-rp_module_desc="Quake LibretroCore"
+rp_module_id="lr-tyrquake"
+rp_module_desc="Quake 1 engine - Tyrquake port for libretro"
 rp_module_menus="2+"
 
-function depends_tyrquake() {
+function depends_lr-tyrquake() {
     getDepends lhasa
 }
 
-function sources_tyrquake() {
+function sources_lr-tyrquake() {
     gitPullOrClone "$md_build" git://github.com/libretro/tyrquake.git
 }
 
-function build_tyrquake() {
+function build_lr-tyrquake() {
     make clean
     make 
     md_ret_require="$md_build/tyrquake_libretro.so"
 }
 
-function install_tyrquake() {
+function install_lr-tyrquake() {
     md_ret_files=(
         'gnu.txt'
         'readme-id.txt'
@@ -25,7 +25,10 @@ function install_tyrquake() {
     )
 }
 
-function configure_tyrquake() {
+function configure_lr-tyrquake() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/tyrquake"
+
     mkRomDir "ports/quake"
     ensureSystemretroconfig "quake"
 
@@ -44,14 +47,10 @@ function configure_tyrquake() {
 
     ensureSystemretroconfig "quake"
 
-    # system-specific shaders, PC Engine
-    iniConfig " = " "" "$configdir/quake/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/quake/"
-
     # Create startup script
     cat > "$romdir/ports/Quake.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 4 "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/quake/retroarch.cfg $romdir/ports/quake/id1/pak0.pak" "$md_id"
+$rootdir/supplementary/runcommand/runcommand.sh 4 "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $configdir/all/retroarch.cfg $romdir/ports/quake/id1/pak0.pak" "$md_id"
 _EOF_
 
     chmod +x "$romdir/ports/Quake.sh"

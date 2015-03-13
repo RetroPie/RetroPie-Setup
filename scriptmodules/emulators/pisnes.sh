@@ -28,7 +28,10 @@ function install_pisnes() {
 }
 
 function configure_pisnes() {
-    mkRomDir "snes-pisnes"
+    mkRomDir "snes"
 
-    setESSystem "Super Nintendo" "snes-pisnes" "~/RetroPie/roms/snes-pisnes" ".smc .sfc .fig .swc .mgd .SMC .SFC .FIG .SWC .MGD .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/snes9x %ROM%\" \"$md_id\"" "snes" "snes"
+    setDispmanx "$md_id" 1
+
+    delSystem "$md_id" "snes-pisnes"
+    addSystem 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
 }

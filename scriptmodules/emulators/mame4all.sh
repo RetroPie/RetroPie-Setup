@@ -30,27 +30,27 @@ function install_mame4all() {
 }
 
 function configure_mame4all() {
-    mkRomDir "mame"
-    mkRomDir "mame-samples"
-    mkRomDir "mame-artwork"
+    mkRomDir "mame-mame4all"
+    mkRomDir "mame-mame4all/artwork"
+    mkRomDir "mame-mame4all/samples"
 
-    mkdir -p "$configdir/mame/"{cfg,hi,inp,memcard,nvram,snap,sta}
-    chown -R $user:$user "$configdir/mame"
+    mkdir -p "$configdir/mame4all/"{cfg,hi,inp,memcard,nvram,snap,sta}
+    chown -R $user:$user "$configdir/mame4all"
 
     iniConfig "=" "" "$md_inst/mame.cfg"
-    iniSet "cfg" "$configdir/mame/cfg"
-    iniSet "hi" "$configdir/mame/hi"
-    iniSet "inp" "$configdir/mame/inp"
-    iniSet "memcard" "$configdir/mame/memcard"
-    iniSet "nvram" "$configdir/mame/nvram"
-    iniSet "snap" "$configdir/mame/snap"
-    iniSet "sta" "$configdir/mame/sta"
+    iniSet "cfg" "$configdir/mame-mame4all/cfg"
+    iniSet "hi" "$configdir/mame-mame4all/hi"
+    iniSet "inp" "$configdir/mame-mame4all/inp"
+    iniSet "memcard" "$configdir/mame-mame4all/memcard"
+    iniSet "nvram" "$configdir/mame-mame4all/nvram"
+    iniSet "snap" "$configdir/mame-mame4all/snap"
+    iniSet "sta" "$configdir/mame-mame4all/sta"
 
-    iniSet "artwork" "$romdir/mame-artwork"
-    iniSet "samplepath" "$romdir/mame-samples"
-    iniSet "rompath" "$romdir/mame"
+    iniSet "artwork" "$romdir/mame-mame4all/artwork"
+    iniSet "samplepath" "$romdir/mame-mame4all/samples"
+    iniSet "rompath" "$romdir/mame-mame4all"
 
     iniSet "samplerate" "22050"
 
-    setESSystem "MAME" "mame" "~/RetroPie/roms/mame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/mame %BASENAME%\" \"$md_id\"" "arcade" "mame"
+    addSystem 1 "$md_id" "mame-mame4all arcade mame" "$md_inst/mame %BASENAME%"
 }

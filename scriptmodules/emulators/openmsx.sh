@@ -30,5 +30,5 @@ function install_openmsx() {
 function configure_openmsx() {
     mkRomDir "msx"
 
-    setESSystem "MSX / MSX2" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx2 .MX2 .mx1 .MX1" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$md_inst/bin/openmsx -cart %ROM%\" \"$md_id\"" "" "msx"
+    addSystem 0 "$md_id" "msx" "$md_inst/bin/openmsx -cart %ROM%"
 }

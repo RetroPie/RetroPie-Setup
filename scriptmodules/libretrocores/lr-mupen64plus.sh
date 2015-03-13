@@ -1,8 +1,8 @@
-rp_module_id="mupen64plus-libretro"
-rp_module_desc="N64 LibretroCore MUPEN64Plus"
+rp_module_id="lr-mupen64plus"
+rp_module_desc="N64 emu -  Mupen64 Plus port for libretro"
 rp_module_menus="2+"
 
-function sources_mupen64plus-libretro() {
+function sources_lr-mupen64plus() {
     if isPlatform "rpi2"; then
         gitPullOrClone "$md_build" https://github.com/gizmo98/mupen64plus-libretro.git rpi2_fix
     else
@@ -10,7 +10,7 @@ function sources_mupen64plus-libretro() {
     fi
 }
 
-function build_mupen64plus-libretro() {
+function build_lr-mupen64plus() {
     rpSwap on 750
     make clean
     if isPlatform "rpi2"; then
@@ -22,7 +22,7 @@ function build_mupen64plus-libretro() {
     md_ret_require="$md_build/mupen64plus_libretro.so"
 }
 
-function install_mupen64plus-libretro() {
+function install_lr-mupen64plus() {
     md_ret_files=(
         'mupen64plus-core/data'
         'mupen64plus_libretro.so'
@@ -30,7 +30,10 @@ function install_mupen64plus-libretro() {
     )
 }
 
-function configure_mupen64plus-libretro() {
+function configure_lr-mupen64plus() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/mupen64plus-libretro"
+
     mkRomDir "n64"
     ensureSystemretroconfig "n64"
 
@@ -39,10 +42,6 @@ function configure_mupen64plus-libretro() {
     iniSet "mupen64-gfxplugin" "rice"
     iniSet "mupen64-gfxplugin-accuracy" "low"
     iniSet "mupen64-screensize" "640x480"
-    
-    # system-specific shaders, Mupen64plus
-    iniConfig " = " "" "$configdir/n64/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/n64/"
 
     # Copy config files
     cp "$md_inst/data/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf} "$biosdir/"
@@ -150,5 +149,5 @@ target FPS=25
 _EOF_
     chown $user:$user "$biosdir/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf,gles2n64rom.conf}
 
-    setESSystem "Nintendo 64" "n64" "~/RetroPie/roms/n64" ".z64 .Z64 .n64 .N64 .v64 .V64 .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 1 \"$emudir/retroarch/bin/retroarch -L $md_inst/mupen64plus_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/n64/retroarch.cfg %ROM%\" \"$md_id\"" "n64" "n64"
+    addSystem 1 "$md_id" "n64" "$md_inst/mupen64plus_libretro.so"
 }

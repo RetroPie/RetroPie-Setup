@@ -37,8 +37,8 @@ function configure_advmame() {
     iniSet "display_vsync" "no"
     iniSet "display_resize" "integer"
     iniSet "dir_rom" "$romdir/mame-advmame"
-    iniSet "dir_artwork" "$romdir/mame-artwork"
-    iniSet "dir_sample" "$romdir/mame-samples"
+    iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
+    iniSet "dir_sample" "$romdir/mame-advmame/samples"
 
     setDispmanx "$md_id" 1
 

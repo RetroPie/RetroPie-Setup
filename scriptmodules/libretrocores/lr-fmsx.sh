@@ -1,18 +1,18 @@
-rp_module_id="fmsx-libretro"
-rp_module_desc="MSX LibretroCore fmsx"
+rp_module_id="lr-fmsx"
+rp_module_desc="MSX/MSX2 emu - fMSX port for libretro"
 rp_module_menus="2+"
 
-function sources_fmsx-libretro() {
+function sources_lr-fmsx() {
     gitPullOrClone "$md_build" git://github.com/libretro/fmsx-libretro.git
 }
 
-function build_fmsx-libretro() {
+function build_lr-fmsx() {
     make clean
     make
     md_ret_require="$md_build/fmsx_libretro.so"
 }
 
-function install_fmsx-libretro() {
+function install_lr-fmsx() {
     md_ret_files=(
         'fmsx_libretro.so'
         'README.md'
@@ -34,17 +34,16 @@ function install_fmsx-libretro() {
     )
 }
 
-function configure_fmsx-libretro() {
+function configure_lr-fmsx() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/fmsx-libretro"
+
     mkRomDir "msx"
     ensureSystemretroconfig "msx"
-    
-    # system-specific shaders, fmsx
-    iniConfig " = " "" "$configdir/msx/retroarch.cfg"
-    iniSet "input_remapping_directory" "$configdir/msx/"   
-    
+
     # Copy bios files
     cp "$md_inst/"{*.ROM,*.FNT,*.SHA} "$biosdir/"
     chown $user:$user "$biosdir/"{*.ROM,*.FNT,*.SHA}
 
-    setESSystem "MSX" "msx" "~/RetroPie/roms/msx" ".rom .ROM .mx1 .MX1 .mx2 .MX2 .col .COL .dsk .DSK .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 4 \"$emudir/retroarch/bin/retroarch -L $md_inst/fmsx_libretro.so --config $configdir/all/retroarch.cfg --appendconfig $configdir/msx/retroarch.cfg %ROM%\" \"$md_id\"" "msx" "msx"
+    addSystem 1 "$md_id" "msx" "$md_inst/fmsx_libretro.so"
 }
