@@ -1,6 +1,6 @@
 rp_module_id="lr-nestopia"
 rp_module_desc="NES emu - Nestopia (enhanced) port for libretro"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_lr-nestopia() {
     gitPullOrClone "$md_build" https://github.com/libretro/nestopia.git
