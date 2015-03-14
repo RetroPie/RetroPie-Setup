@@ -39,6 +39,11 @@ function configure_emulationstation() {
 
 es_bin="$md_inst/emulationstation"
 
+if [[ \$(id -u) -eq 0 ]]; then
+    echo "emulationstation should not be run as root. If you used 'sudo emulationstation' please run without sudo."
+    exit 1
+fi
+
 if [[ -n "\$(pidof X)" ]]; then
     echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
     exit 1
