@@ -271,29 +271,31 @@ function configure_setup() {
         options=()
         if [[ $__has_binaries -eq 1 ]]; then
             options+=(
-            1 "Binaries-based INSTALLATION (faster, but possibly not up-to-date)")
+            1 "Binary-based installation (recommended)")
         fi
         options+=(
-            2 "Source-based INSTALLATION (16-20 hours (!), but up-to-date versions)"
-            3 "SETUP (only if you already have run one of the installations above)"
-            4 "EXPERIMENTAL packages (these are potentially unstable packages)"
+            2 "Source-based installation (bleeding edge - 20h+ build time on rpi1)"
+            3 "Setup / Configuration (to be used post install)"
+            4 "Experimental packages (these are potentially unstable)"
         )
         if [[ $__has_binaries -eq 1 ]]; then
             options+=(
-                5 "INSTALL individual emulators from binary or source"
+                5 "Install individual emulators from binary or source"
             )
         else
-            options+=(5 "INSTALL individual emulators from source")
+            options+=(5 "Install individual emulators from source")
         fi
         options+=(
-            U "UPDATE RetroPie Setup script"
-            R "Perform REBOOT"
+            U "Update RetroPie-Setup script"
+            R "Perform Reboot"
         )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choices" ]]; then
             case $choices in
                 1) binaries_setup ;;
-                2) source_setup ;;
+                2)
+                    printMsgs "dialog" "Please note - Building from source will pull in the very latest releases of many of the emulators. Building could fail or resulting binaries could not work. Only choose this option if you are comfortable in working with the linux console and debugging any issues. The binary option is recommended for most users, as it provides mostly up to date - but more importantly - tested versions of the emulators.\n\nYou can also install from binary and then update any emulators individually later from option 5 on the main menu."
+                    source_setup ;;
                 3) supplementary_setup ;;
                 4) experimental_setup ;;
                 5) individual_setup ;;
