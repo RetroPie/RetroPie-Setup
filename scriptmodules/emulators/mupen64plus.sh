@@ -103,9 +103,9 @@ _EOF_
     iniSet "VideoPlugin" "mupen64plus-video-n64"
     iniSet "AudioPlugin" "mupen64plus-audio-omx"
 
-
     mkRomDir "n64"
 
     delSystem "$md_id" "n64-mupen64plus"
-    addSystem 0 "$md_id" "n64" "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
+    addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-n64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
+    addSystem 0 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
 }
