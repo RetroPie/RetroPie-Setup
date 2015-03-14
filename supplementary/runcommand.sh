@@ -254,6 +254,10 @@ function choose_app() {
         options+=($i "$id")
         ((i++))
     done <"$configdir/$system/emulators.cfg"
+    if [[ -z "${options[*]}" ]]; then
+        dialog --msgbox "No emulator options found for $system - have you installed any snes emulators yet? Do you have a valid $configdir/$system/emulators.cfg ?" 20 60 >/dev/tty
+        exit 1
+    fi
     local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
@@ -391,8 +395,10 @@ function get_sys_command() {
 
     iniGet "default" "$emu_conf"
     if [[ -z "$ini_value" ]]; then
-        echo "No default app found for system $system"
-        exit 1
+        echo "No default emulator found for system $system"
+        choose_app
+        get_sys_command "$1" "$2"
+        return
     fi
 
     emulator="$ini_value"
