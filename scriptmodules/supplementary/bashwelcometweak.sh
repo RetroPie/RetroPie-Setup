@@ -1,6 +1,6 @@
 rp_module_id="bashwelcometweak"
-rp_module_desc="Bash Welcome Tweak"
-rp_module_menus="2+"
+rp_module_desc="Bash Welcome Tweak (shows additional system info on login)"
+rp_module_menus="2+install 3+configure"
 rp_module_flags="nobin"
 
 function install_bashwelcometweak() {
@@ -59,4 +59,25 @@ _EOF_
 
 function remove_bashwelcometweak() {
     sed -i '/RETROPIE PROFILE START/,/RETROPIE PROFILE END/d' "$home/.bashrc"
+}
+
+function configure_bashwelcometweak() {
+    cmd=(dialog --backtitle "$__backtitle" --menu "Bash Welcome Tweak Configuration" 22 86 16)
+    options=(
+        1 "Install Bash Welcome Tweak"
+        2 "Remove Bash Welcome Tweak"
+    )
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choices" ]]; then
+        case $choices in
+            1)
+                install_bashwelcometweak
+                printMsgs "dialog" "Installed Bash Welcome Tweak."
+                ;;
+            2)
+                remove_bashwelcometweak
+                printMsgs "dialog" "Removed Bash Welcome Tweak."
+                ;;
+        esac
+    fi
 }

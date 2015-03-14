@@ -120,7 +120,7 @@ function binaries_setup()
         rp_callModule retropiemenu
         rp_callModule disabletimeouts
         rp_callModule modules
-        rp_callModule bashwelcometweak
+        rp_callModule bashwelcometweak install
         rp_callModule sambashares
 
     } &> >(tee >(gzip --stdout > "$logfilename"))
