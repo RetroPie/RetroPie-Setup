@@ -9,7 +9,7 @@ function sources_lr-gpsp() {
 function build_lr-gpsp() {
     make clean
     rpSwap on 512
-    CFLAGS="$CFLAGS -DARM_MEMORY_DYNAREC" make platform=armv HAVE_DYNAREC=1
+    make platform=armv
     rpSwap off
     md_ret_require="$md_build/gpsp_libretro.so"
 }
