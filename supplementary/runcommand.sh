@@ -66,6 +66,7 @@ function get_save_vars() {
     # convert emulator name / binary to a names usable as variables in our config file
     emusave=${emulator//\//_}
     emusave=${emusave//[^a-Z0-9_]/}
+    rendersave="${emusave}_render"
     romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
 }
 
@@ -122,6 +123,7 @@ function get_mode() {
 
     mode_def_emu=""
     mode_def_rom=""
+    render_res="640x480"
 
     if [[ -f "$video_conf" ]]; then
         iniGet "$emusave" "$video_conf"
@@ -134,6 +136,11 @@ function get_mode() {
         if [[ -n "$ini_value" ]]; then
             mode_def_rom="$ini_value"
             mode_new="$mode_def_rom"
+        fi
+
+        iniGet "$rendersave" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            render_res="$ini_value"
         fi
     fi
 }
@@ -165,6 +172,8 @@ function main_menu() {
             [[ -n "$mode_def_emu" ]] && options+=(6 "Remove video mode choice for $emulator")
             [[ -n "$mode_def_rom" ]] && options+=(7 "Remove video mode choice for $emulator + rom")
         fi
+
+        [[ "$command" =~ retroarch ]] && options+=(8 "Select RetroArch render res for $emulator ($render_res)")
 
         options+=(X "Launch")
 
@@ -205,6 +214,9 @@ function main_menu() {
                 sed -i "/$romsave/d" "$video_conf"
                 get_mode
                 ;;
+            8)
+                choose_render_res "$rendersave"
+                ;;
             Z)
                 netplay=1
                 break
@@ -224,7 +236,7 @@ function choose_mode() {
     for key in ${mode_id[@]}; do
         options+=("$key" "${mode[$key]}")
     done
-    cmd=(dialog --default-item "$default" --menu "Choose video output mode"  22 76 16 )
+    local cmd=(dialog --default-item "$default" --menu "Choose video output mode"  22 76 16 )
     mode_new=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$mode_new" ]] && return
 
@@ -270,6 +282,41 @@ function choose_app() {
     fi
 }
 
+function choose_render_res() {
+    local save="$1"
+    local res=(
+        "320x240"
+        "640x480"
+        "960x720"
+        "1280x960"
+        "Use video output resolution"
+        "Use config file resolution"
+    )
+    local i=1
+    local item
+    local options=()
+    for item in "${res[@]}"; do
+        options+=($i "$item")
+        ((i++))
+    done
+    local cmd=(dialog --menu "Choose RetroArch render resolution" 22 76 16 )
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$choice" ]] && return
+    case "$choice" in
+        [1-4])
+            render_res="${res[$choice-1]}"
+            ;;
+        5)
+            render_res="output"
+            ;;
+        6)
+            render_res="config"
+            ;;
+    esac
+
+    iniSet set "=" '"' "$save" "$render_res" "$video_conf"
+}
+
 function switch_mode() {
     local mode=(${1//-/ })
     local switched=0
@@ -313,13 +360,36 @@ function config_dispmanx() {
 }
 
 function retroarch_append_config() {
+    # only for retroarch emulators
     [[ ! "$command" =~ "retroarch" ]] && return
-    local rate=$(tvservice -s | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
-    echo "video_refresh_rate = $rate" >/tmp/retroarch-rate.cfg
+
+    local conf="/tmp/retroarch.cfg"
+    rm -f "$conf"
+    touch "$conf"
+    if [[ "$has_tvs" -eq 1 ]]; then
+        # set video_refresh_rate in our config to the same as the screen refresh
+        local rate=$(tvservice -s | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
+        [[ -n "$rate" ]] && echo "video_refresh_rate = $rate" >>"$conf"
+    fi
+
+    local dim
+    # if we don't have a saved render resolution use 640x480
+
+    # if our render resolution is "config", then we don't set anything (use the value in the retroarch.cfg)
+    if [[ "$render_res" != "config" ]]; then
+        if [[ "$render_res" == "output" ]]; then
+            dim=(0 0)
+        else
+            dim=(${render_res/x/ })
+        fi
+        echo "video_fullscreen_x = ${dim[0]}" >>"$conf"
+        echo "video_fullscreen_y = ${dim[1]}" >>"$conf"
+    fi
+
     if [[ "$command" =~ "--appendconfig" ]]; then
-        command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,/tmp/retroarch-rate.cfg|")
+        command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,$conf|")
     else
-        command+=" --appendconfig /tmp/retroarch-rate.cfg"
+        command+=" --appendconfig $conf"
     fi
     if [[ $netplay -eq 1 ]] && [[ -f "$retronetplay_conf" ]]; then
         source "$retronetplay_conf"
