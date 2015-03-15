@@ -1,44 +1,81 @@
 #!/bin/bash -ue
 # Sync ROMS from external drive
 # Christian Bryn <chr.bryn@gmail.com> 2013
+# Florian Mueller <contact@petrockblock.com> 2015
 
 ## config / defaults
-# XXX: fix for generation from retropie_setup.sh where the install path is known
 retro_user="USERTOBECHOSEN"
-retropie_path=/home/${retro_user}/RetroPie
-# not sure if we should default to true/false with create_romdirs, but defaulting to false feels less intrusive. I'd like it to be configurable. A config file is one option, having it statically generated with retropie_setup.sh upon install is another
-create_romdirs="true"
+
+retropie_path=/home/"$retro_user"/RetroPie/
+retropie_path_roms="$retropie_path"roms/
+retropie_path_emulationstation="$retropie_path"/../.emulationstation/
+
+usb_path="$UM_MOUNTPOINT"/retropie/
+usb_path_roms="$usb_path"roms/
+usb_path_emulationstation_fromrpi="$usb_path"emulationstation/fromRPi/
+usb_path_emulationstation_torpi="$usb_path"emulationstation/toRPi/
 
 ## internals
 hook_name=${0##*/}
 
 ## functions
-# nicked (and modified) this from the main usbmount script
-function log()
-{
-    logger -p user.$1 -t "usbmount-${hook_name}-[$$]" -- "$2"
+function log() {
+    logger -p user.$1 -t usbmount-"$hook_name"-[$$] -- "$2"
 }
 
 ## some sanity checking
-# this script should probably never 'fail'
-[[ -n "$UM_MOUNTPOINT" ]] || { log err "UM_MOUNTPOINT not set!"; exit 0; }
-[[ -d "$UM_MOUNTPOINT" ]] || { log err "UM_MOUNTPOINT is not a directory"; exit 0; }
+if [[ ! -n "$UM_MOUNTPOINT" ]]; then
+    log err "UM_MOUNTPOINT not set!"
+    exit 0;
+fi
+if [[ ! -d "$UM_MOUNTPOINT" ]]; then
+    log err "UM_MOUNTPOINT is not a directory"
+    exit 0;
+fi
 
-## main
-# mirror romdir structure to external drive
-# XXX: skip checking whether <romdir> already exists and let mkdir create missing dirs (if so don't exit here)
-if [[ "${create_romdirs}" == "true" && ! -d "${UM_MOUNTPOINT}/roms" ]]; then
-    log info "Attempting to create directory structure for ROMS in ${UM_MOUNTPOINT} ..."
-    # fetch list of romdirs from current installation and mirror onto external driv
-    find "${retropie_path}/roms" -mindepth 1 -maxdepth 1 -type d -printf "${UM_MOUNTPOINT}/roms/%f\n" | xargs mkdir -p 2>/dev/null || true
+# make sure we have something to sync from
+if [[ ! -d "$usb_path" ]]; then
     exit 0
 fi
 
-## sync
-# make sure we have something to sync from
-[[ -d "${UM_MOUNTPOINT}/roms" ]] || exit 0
+## main
+# mirror romdir structure to external drive
+if [[ ! -d "$usb_path_roms" ]]; then
+    log info "Attempting to create directory structure for ROMS in '$usb_path_roms' ..."
+    # fetch list of romdirs from current installation and mirror onto external driv
+    find "$retropie_path"/roms -mindepth 1 -maxdepth 1 -type d -printf "$usb_path_roms"%f'\n' | xargs mkdir -p 2>/dev/null || true
+    exit 0
+fi
 
-# this could probably need some work, but it should 'work for now', so..
-rsync -au --exclude '._*' --max-delete=-1 ${UM_MOUNTPOINT}/roms ${retropie_path}/ >/dev/null 2>&1 || log err "rsync failed to sync ROMS, returned error code $?"
-chown -R ${retro_user} ${retropie_path}/
-chgrp -R ${retro_user} ${retropie_path}/
+# directory on USB stick to backup ES configuration
+if [[ ! -d $usb_path_emulationstation_fromrpi ]]; then
+    mkdir -p "$usb_path_emulationstation_fromrpi"
+fi
+
+# directory on USB stick to backup ES configuration
+if [[ ! -d $usb_path_emulationstation_fromrpi ]]; then
+    mkdir -p "$usb_path_emulationstation_fromrpi"
+fi
+
+# directory on USB stick to restore ES configuration
+if [[ ! -d $usb_path_emulationstation_torpi ]]; then
+    mkdir -p "$usb_path_emulationstation_torpi"
+fi
+
+# copy ROMs from USB stick to local SD card
+rsync -au --exclude '._*' --max-delete=-1 "$usb_path_roms" "$retropie_path_roms"/ >/dev/null 2>&1 || log err "rsync failed to sync ROMS, returned error code $?"
+
+# copy EmulationStation configuration to USB stick 
+rsync -au --exclude '._*' --max-delete=-1 "$retropie_path_emulationstation" "$usb_path_emulationstation_fromrpi"/ >/dev/null 2>&1 || log err "rsync failed to sync EMULATIONSTATION configuration, returned error code $?"
+
+# copy EmulationStation configuration from USB stick to local SD card
+rsync -au --exclude '._*' --max-delete=-1 "$usb_path_emulationstation_torpi" "$retropie_path_emulationstation"/ >/dev/null 2>&1 || log err "rsync failed to sync EMULATIONSTATION configuration, returned error code $?"
+
+# make sure that user can access the files
+chown -R "$retro_user" "$retropie_path"
+chgrp -R "$retro_user" "$retropie_path"
+chown -R "$retro_user" "$retropie_path_emulationstation"
+chgrp -R "$retro_user" "$retropie_path_emulationstation"
+
+# unmount USB stick
+umount "$UM_MOUNTPOINT"
