@@ -25,10 +25,11 @@ function log() {
 }
 
 ## some sanity checking
-if [[ ! -n "$UM_MOUNTPOINT" ]]; then
+if [[ -z "$UM_MOUNTPOINT" ]]; then
     log err "UM_MOUNTPOINT not set!"
     exit 0;
 fi
+
 if [[ ! -d "$UM_MOUNTPOINT" ]]; then
     log err "UM_MOUNTPOINT is not a directory"
     exit 0;
