@@ -52,11 +52,6 @@ if [[ ! -d $usb_path_emulationstation_fromrpi ]]; then
     mkdir -p "$usb_path_emulationstation_fromrpi"
 fi
 
-# directory on USB stick to backup ES configuration
-if [[ ! -d $usb_path_emulationstation_fromrpi ]]; then
-    mkdir -p "$usb_path_emulationstation_fromrpi"
-fi
-
 # directory on USB stick to restore ES configuration
 if [[ ! -d $usb_path_emulationstation_torpi ]]; then
     mkdir -p "$usb_path_emulationstation_torpi"
@@ -72,10 +67,7 @@ rsync -au --exclude '._*' --max-delete=-1 "$retropie_path_emulationstation" "$us
 rsync -au --exclude '._*' --max-delete=-1 "$usb_path_emulationstation_torpi" "$retropie_path_emulationstation"/ >/dev/null 2>&1 || log err "rsync failed to sync EMULATIONSTATION configuration, returned error code $?"
 
 # make sure that user can access the files
-chown -R "$retro_user" "$retropie_path"
-chgrp -R "$retro_user" "$retropie_path"
-chown -R "$retro_user" "$retropie_path_emulationstation"
-chgrp -R "$retro_user" "$retropie_path_emulationstation"
+chown -R $retro_user:$retro_user "$retropie_path" "$retropie_path_emulationstation"
 
 # unmount USB stick
 umount "$UM_MOUNTPOINT"
