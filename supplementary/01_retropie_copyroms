@@ -4,16 +4,17 @@
 # Florian Mueller <contact@petrockblock.com> 2015
 
 ## config / defaults
-retro_user="USERTOBECHOSEN"
+user="USERTOBECHOSEN"
 
-retropie_path=/home/"$retro_user"/RetroPie/
-retropie_path_roms="$retropie_path"roms/
-retropie_path_emulationstation="$retropie_path"/../.emulationstation/
+home="$(eval echo ~$user)"
+retropie_path="$home/RetroPie"
+retropie_path_roms="$retropie_path/roms"
+retropie_path_emulationstation="$home/.emulationstation"
 
-usb_path="$UM_MOUNTPOINT"/retropie/
-usb_path_roms="$usb_path"roms/
-usb_path_emulationstation_fromrpi="$usb_path"emulationstation/fromRPi/
-usb_path_emulationstation_torpi="$usb_path"emulationstation/toRPi/
+usb_path="$UM_MOUNTPOINT/retropie"
+usb_path_roms="$usb_path/roms"
+usb_path_emulationstation_fromrpi="$usb_path/emulationstation/fromRPi"
+usb_path_emulationstation_torpi="$usb_path/emulationstation/toRPi"
 
 ## internals
 hook_name=${0##*/}
@@ -47,27 +48,20 @@ if [[ ! -d "$usb_path_roms" ]]; then
     exit 0
 fi
 
-# directory on USB stick to backup ES configuration
-if [[ ! -d $usb_path_emulationstation_fromrpi ]]; then
-    mkdir -p "$usb_path_emulationstation_fromrpi"
-fi
-
-# directory on USB stick to restore ES configuration
-if [[ ! -d $usb_path_emulationstation_torpi ]]; then
-    mkdir -p "$usb_path_emulationstation_torpi"
-fi
+# make folders for config syncing
+mkdir -p "$usb_path_emulationstation_fromrpi" "$usb_path_emulationstation_torpi"
 
 # copy ROMs from USB stick to local SD card
-rsync -au --exclude '._*' --max-delete=-1 "$usb_path_roms" "$retropie_path_roms"/ >/dev/null 2>&1 || log err "rsync failed to sync ROMS, returned error code $?"
+rsync -au --exclude '._*' --max-delete=-1 "$usb_path_roms/" "$retropie_path_roms/" >/dev/null 2>&1 || log err "rsync failed to sync ROMS, returned error code $?"
 
 # copy EmulationStation configuration to USB stick 
-rsync -au --exclude '._*' --max-delete=-1 "$retropie_path_emulationstation" "$usb_path_emulationstation_fromrpi"/ >/dev/null 2>&1 || log err "rsync failed to sync EMULATIONSTATION configuration, returned error code $?"
+rsync -au --exclude '._*' --max-delete=-1 "$retropie_path_emulationstation/" "$usb_path_emulationstation_fromrpi/" >/dev/null 2>&1 || log err "rsync failed to sync EMULATIONSTATION configuration, returned error code $?"
 
 # copy EmulationStation configuration from USB stick to local SD card
-rsync -au --exclude '._*' --max-delete=-1 "$usb_path_emulationstation_torpi" "$retropie_path_emulationstation"/ >/dev/null 2>&1 || log err "rsync failed to sync EMULATIONSTATION configuration, returned error code $?"
+rsync -au --exclude '._*' --max-delete=-1 "$usb_path_emulationstation_torpi/" "$retropie_path_emulationstation/" >/dev/null 2>&1 || log err "rsync failed to sync EMULATIONSTATION configuration, returned error code $?"
 
 # make sure that user can access the files
-chown -R $retro_user:$retro_user "$retropie_path" "$retropie_path_emulationstation"
+chown -R $user:$user "$retropie_path" "$retropie_path_emulationstation"
 
 # unmount USB stick
 umount "$UM_MOUNTPOINT"
