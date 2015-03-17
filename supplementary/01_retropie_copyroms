@@ -45,7 +45,7 @@ fi
 if [[ ! -d "$usb_path_roms" ]]; then
     log info "Attempting to create directory structure for ROMS in '$usb_path_roms' ..."
     # fetch list of romdirs from current installation and mirror onto external driv
-    find "$retropie_path"/roms -mindepth 1 -maxdepth 1 -type d -printf "$usb_path_roms"%f'\n' | xargs mkdir -p 2>/dev/null || true
+    find "$retropie_path"/roms -mindepth 1 -maxdepth 1 -type d -printf "$usb_path_roms/%f\n" | xargs mkdir -p 2>/dev/null || true
     exit 0
 fi
 
