@@ -34,7 +34,7 @@ function configure_mame4all() {
     mkRomDir "mame-mame4all/artwork"
     mkRomDir "mame-mame4all/samples"
 
-    mkdir -p "$configdir/mame4all/"{cfg,hi,inp,memcard,nvram,snap,sta}
+    mkdir -p "$configdir/mame-mame4all/"{cfg,hi,inp,memcard,nvram,snap,sta}
     chown -R $user:$user "$configdir/mame4all"
 
     iniConfig "=" "" "$md_inst/mame.cfg"
