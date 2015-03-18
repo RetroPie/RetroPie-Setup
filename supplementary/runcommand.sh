@@ -431,7 +431,7 @@ function iniSet() {
 function iniGet() {
     local key="$1"
     local file="$2"
-    ini_value=$(sed -rn "s|^[\s]*$key\s*=\s*\"?(.+)\"?.*|\1|p" $file)
+    ini_value=$(sed -rn "s|^[\s]*$key\s*=\s*\"?([^\"]+)\"?.*|\1|p" $file)
 }
 
 function set_governor() {
