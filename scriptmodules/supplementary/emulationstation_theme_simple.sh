@@ -24,5 +24,4 @@ function install_esthemesimple() {
     
     # copy simple-theme-plus themes
     cp -a "$md_build/"* "/etc/emulationstation/themes/simple/"
-    chown $user:$user -R "/etc/emulationstation/themes/simple/"
 }
