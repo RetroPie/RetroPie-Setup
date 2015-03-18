@@ -329,7 +329,7 @@ function setDispmanx() {
     local mod_id="$1"
     local status="$2"
     mkdir -p "$configdir/all"
-    iniConfig "=" "" "$configdir/all/dispmanx.cfg"
+    iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
     iniSet $mod_id "$status"
 }
 
