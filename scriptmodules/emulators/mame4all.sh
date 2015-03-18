@@ -35,7 +35,6 @@ function configure_mame4all() {
     mkRomDir "mame-mame4all/samples"
 
     mkdir -p "$configdir/mame-mame4all/"{cfg,hi,inp,memcard,nvram,snap,sta}
-    chown -R $user:$user "$configdir/mame4all"
 
     iniConfig "=" "" "$md_inst/mame.cfg"
     iniSet "cfg" "$configdir/mame-mame4all/cfg"
@@ -51,6 +50,8 @@ function configure_mame4all() {
     iniSet "rompath" "$romdir/mame-mame4all"
 
     iniSet "samplerate" "22050"
+
+    chown -R $user:$user "$configdir/mame-mame4all"
 
     addSystem 1 "$md_id" "mame-mame4all arcade mame" "$md_inst/mame %BASENAME%"
 }
