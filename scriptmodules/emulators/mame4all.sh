@@ -50,7 +50,7 @@ function configure_mame4all() {
     iniSet "samplepath" "$romdir/$system/samples"
     iniSet "rompath" "$romdir/$system"
 
-    iniSet "samplerate" "22050"
+    iniSet "samplerate" "44100"
 
     chown -R $user:$user "$configdir/$system"
 
