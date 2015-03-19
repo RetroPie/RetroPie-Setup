@@ -48,6 +48,15 @@ $rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/bin/dosbox \$params"
 _EOF_
     chmod +x "$romdir/pc/+Start DOSBox.sh"
 
+    mkdir -p "$configdir/dosbox/"
+
+    # move any old configs to the new location
+    if [[ -d "$home/.dosbox" && ! -h "$home/.dosbox" ]]; then
+        mv "$home/.dosbox/"* "$configdir/dosbox/"
+        rmdir "$home/.dosbox"
+    fi
+    ln -snf "$configdir/dosbox" "$home/.dosbox"
+
     local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [[ -f "$config_path" ]]; then
         iniConfig "=" "" "$config_path"
@@ -56,6 +65,8 @@ _EOF_
         iniSet "cycles" "max"
         iniSet "scaler" "none"
     fi
+
+    chown -R $user:$user "$configdir/dosbox"
 
     setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".sh .bat .BAT .exe .EXE" "$romdir/pc/+Start\ DOSBox.sh %ROM%" "pc" "pc"
 }
