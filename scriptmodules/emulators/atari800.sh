@@ -51,11 +51,14 @@ function install_atari800() {
 function configure_atari800() {
     mkRomDir "atari800"
 
-    # backup old config and remove
-    if [[ -f "$home/.atari800.cfg" ]]; then
-        cp -v "$home/.atari800.cfg" "$home/.atari800.cfg.bak"
-        rm -f "$home/.atari800.cfg"
+    mkdir -p "$configdir/atari800"
+
+    # move old config if exists to new location
+    if [[ -f "$home/.atari800.cfg" && ! -h "$home/.atari800.cfg" ]]; then
+        mv -v "$home/.atari800.cfg" "$configdir/atari800.cfg"
     fi
+    ln -sf "$configdir/atari800/atari800.cfg" "$home/.atari800.cfg"
+    chown -R $user:$user  "$configdir/atari800"
 
     setESSystem "Atari 800" "atari800" "~/RetroPie/roms/atari800" ".xex .XEX" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/atari800 %ROM%\" \"$md_id\"" "atari800" "atari800"
     
