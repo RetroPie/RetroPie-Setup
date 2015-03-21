@@ -86,7 +86,7 @@ function platform_rpi1() {
 function platform_rpi2() {
     __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
-    __default_makeflags=""
+    __default_makeflags="-j4"
     __default_gcc_version="4.7"
     # there is no support in qemu for cortex-a7 it seems, but it does have cortex-a15 which is architecturally
     # aligned with the a7, and allows the a7 targetted code to be run in a chroot/emulated environment
