@@ -1,46 +1,128 @@
 rp_module_id="advmame"
 rp_module_desc="AdvanceMAME"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
 
 function depends_advmame() {
     getDepends libsdl1.2-dev
 }
 
 function sources_advmame() {
-    wget -O- -q "http://downloads.petrockblock.com/retropiearchives/advancemame-0.94.0.tar.gz" | tar -xvz --strip-components=1
-    sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
-    sed -i 's/misc_quiet\", 0/misc_quiet\", 1/' advance/osd/global.c
-    sed -i '/#include <string>/ i\#include <stdlib.h>' advance/d2/d2.cc
+    local version
+    for version in 0.94.0 1.2; do
+        mkdir -p "$version"
+        pushd "$version"
+        wget -O- -q "http://downloads.petrockblock.com/retropiearchives/advancemame-$version.tar.gz" | tar -xvz --strip-components=1
+
+        if [[ "$version" != "1.2" ]]; then
+            sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
+        fi
+
+        if isPlatform "rpi"; then
+            # patch advmame to use a fake generated mode with the exact dimensions for fb - avoids need for configuring monitor / clocks.
+            # the pi framebuffer doesn't use any of the framebuffer timing configs - it hardware scales from chosen dimensions to actual size
+            patch -p1 <<\_EOF_
+--- a/advance/linux/vfb.c
++++ b/advance/linux/vfb.c
+@@ -268,7 +268,7 @@
+ 	var->height = 0;
+ 	var->width = 0;
+ 	var->accel_flags = FB_ACCEL_NONE;
+-	var->pixclock = (unsigned)(1000000000000LL / pixelclock);
++	var->pixclock = pixelclock;
+ 	var->left_margin = ht - hre;
+ 	var->right_margin = hrs - hde;
+ 	var->upper_margin = vt - vre;
+@@ -588,8 +588,7 @@
+ 	}
+ 
+ 	fb_state.flags = VIDEO_DRIVER_FLAGS_MODE_PALETTE8 | VIDEO_DRIVER_FLAGS_MODE_BGR15 | VIDEO_DRIVER_FLAGS_MODE_BGR16 | VIDEO_DRIVER_FLAGS_MODE_BGR24 | VIDEO_DRIVER_FLAGS_MODE_BGR32
+-		| VIDEO_DRIVER_FLAGS_PROGRAMMABLE_ALL
+-		| VIDEO_DRIVER_FLAGS_OUTPUT_FULLSCREEN;
++		| VIDEO_DRIVER_FLAGS_OUTPUT_WINDOW;
+ 
+ 	if (fb_detect() != 0) {
+ 		goto err_close;
+@@ -1120,14 +1119,10 @@
+ {
+ 	assert(fb_is_active());
+ 
+-	if (crtc_is_fake(crtc)) {
+-		error_nolog_set("Not programmable modes are not supported.\n");
++	if (!crtc_is_fake(crtc)) {
+ 		return -1;
+ 	}
+ 
+-	if (video_mode_generate_check("fb", fb_flags(), 8, 2048, crtc, flags)!=0)
+-		return -1;
+-
+ 	mode->crtc = *crtc;
+ 	mode->index = flags & MODE_FLAGS_INDEX_MASK;
+
+_EOF_
+        fi
+        popd
+    done
 }
 
 function build_advmame() {
-    ./configure LDFLAGS="-s -lm -Wl,--no-as-needed" --prefix="$md_inst"
-    make
+    local version
+    for version in *; do
+        pushd "$version"
+        ./configure CFLAGS="$CFLAGS -fsigned-char" LDFLAGS="-s -lm -Wl,--no-as-needed" --prefix="$md_inst/$version"
+        make clean
+        make
+        popd
+    done
 }
 
 function install_advmame() {
-    make install
+    local version
+    for version in *; do
+        pushd "$version"
+        make install
+        popd
+    done
 }
 
 function configure_advmame() {
     mkRomDir "mame-advmame"
 
-    rm -rf "$home/.advance"
-    su "$user" -c "$md_inst/bin/advmame"
+    # delete old install files
+    rm -rf "$md_inst/"{bin,man,share}
 
-    iniConfig " " "" "$home/.advance/advmame.rc"
-    iniSet "device_video" "sdl"
+    mkdir -p "$configdir/mame-advmame"
+
+    # move any old configs to new location
+    if [[ -d "$home/.advance" && ! -h "$home/.advance" ]]; then
+        mv -v "$home/.advance/"* "$configdir/mame-advmame/"
+        rmdir "$home/.advance/"
+    fi
+
+    ln -snf "$configdir/mame-advmame" "$home/.advance"
+    chown -R $user:$user "$configdir/mame-advmame"
+
+    su "$user" -c "$md_inst/0.94.0/bin/advmame --default"
+
+    iniConfig " " "" "$configdir/mame-advmame/advmame.rc"
+    iniSet "misc_quiet" "yes"
+    iniSet "device_video" "fb"
     iniSet "device_video_cursor" "off"
-    iniSet "device_keyboard" "sdl"
+    iniSet "device_keyboard" "raw"
     iniSet "device_sound" "alsa"
     iniSet "display_vsync" "no"
-    iniSet "display_resize" "integer"
+    iniSet "sound_samplerate" "22050"
+    iniSet "sound_latency" "0.2"
+    iniSet "sound_normalize" "no"
     iniSet "dir_rom" "$romdir/mame-advmame"
     iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
     iniSet "dir_sample" "$romdir/mame-advmame/samples"
 
-    setDispmanx "$md_id" 1
-
-    setESSystem "MAME" "mame-advmame" "~/RetroPie/roms/mame-advmame" ".zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/advmame %BASENAME%\" \"$md_id\"" "arcade" "mame"
+    local version
+    local default
+    for version in *; do
+        default=0
+        isPlatform "rpi1" && [[ "$version" == "0.94.0" ]] && default=1
+        isPlatform "rpi2" && [[ "$version" == "1.2" ]] && default=1
+        addSystem $default "$md_id-$version" "mame-advmame arcade mame" "$md_inst/$version/bin/advmame %BASENAME%"
+    done
 }
