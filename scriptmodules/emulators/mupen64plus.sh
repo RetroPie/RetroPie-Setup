@@ -32,6 +32,7 @@ function sources_mupen64plus() {
             sed -i "s/armv6l/armv7l/" "$dir/projects/unix/Makefile"
         fi
     done
+    gitPullOrClone "$md_build/mupen64plus-video-settings" https://github.com/gizmo98/mupen64plus-video-settings.git
 }
 
 function build_mupen64plus() {
@@ -68,6 +69,7 @@ function install_mupen64plus() {
             make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" install
         fi
     done
+    cp -v "$md_build/mupen64plus-video-settings/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"
 }
 
 function configure_mupen64plus() {
@@ -79,7 +81,7 @@ function configure_mupen64plus() {
     cat > "$configdir/n64/mupen64plus.cfg" << _EOF_
     [Video-Rice]
 # Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
-ScreenUpdateSetting = 6
+ScreenUpdateSetting = 7
 # Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)
 FrameBufferWriteBackControl = 1
 # If this option is enabled, the plugin will skip every other frame
@@ -98,11 +100,14 @@ TextureEnhancementControl = 0
 wrpFBO = False
 _EOF_
     chown -R $user:$user "$configdir/n64"
-    su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
+    su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64" --
     iniConfig " = " "" "$configdir/n64/mupen64plus.cfg"
     iniSet "VideoPlugin" "mupen64plus-video-n64"
     iniSet "AudioPlugin" "mupen64plus-audio-omx"
-
+    iniSet "ScreenshotPath" "$romdir/n64"
+    iniSet "SaveStatePath" "$romdir/n64"
+    iniSet "SaveSRAMPath" "$romdir/n64"
+    
     mkRomDir "n64"
 
     delSystem "$md_id" "n64-mupen64plus"
