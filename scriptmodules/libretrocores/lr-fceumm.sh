@@ -1,9 +1,9 @@
-rp_module_id="lr-fceu-next"
-rp_module_desc="NES emu - FCEUmm / FCEUX NES port for libretro"
+rp_module_id="lr-fceumm"
+rp_module_desc="NES emu - FCEUmm port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-fceu-next() {
-    gitPullOrClone "$md_build" git://github.com/libretro/fceu-next.git
+    gitPullOrClone "$md_build" https://github.com/libretro/libretro-fceumm.git
 }
 
 function build_lr-fceu-next() {
@@ -25,8 +25,9 @@ function install_lr-fceu-next() {
 }
 
 function configure_lr-fceu-next() {
-    # remove old install folder
+    # remove old install folders
     rm -rf "$rootdir/$md_type/neslibretro"
+    rm -rf "$rootdir/$md_type/lr-fceu-next"
 
     mkRomDir "nes"
     ensureSystemretroconfig "nes" "phosphor.glslp"
