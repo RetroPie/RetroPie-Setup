@@ -51,7 +51,7 @@ _EOF_
     chown -R $user:$user "$configdir/neogeo"
 
     delSystem "$md_id" "neogeo-gngeopi"
-    addSystem 0 "$md_id" "neogeo" "$md_inst/bin/gngeo -i $romdir/neogeo-gngeopi -B $md_inst/neogeobios %ROM%"
+    addSystem 0 "$md_id" "neogeo" "$md_inst/bin/gngeo -i $romdir/neogeo -B $md_inst/neogeobios %ROM%"
 
     __INFMSGS+=("For emulator $md_id you need to copy the NeoGeo BIOS (neogeo.zip) files to the roms folder '$romdir/neogeo'.")
 }
