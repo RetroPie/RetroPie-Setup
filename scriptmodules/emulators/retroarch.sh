@@ -66,6 +66,7 @@ function configure_retroarch() {
     iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "false"
     iniSet "video_threaded" "true"
+    iniSet "video_font_size" "12"
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     iniSet "assets_directory" "$md_inst/assets"
     iniSet "overlay_directory" "$md_inst/overlays"
