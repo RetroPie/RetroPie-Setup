@@ -16,7 +16,8 @@ function build_gngeopi() {
     chmod +x configure
     ./configure --disable-i386asm --prefix="$md_inst"
     make clean
-    make
+    # not safe for building in parallel
+    make -j1
 }
 
 function install_gngeopi() {
