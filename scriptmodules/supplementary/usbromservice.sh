@@ -4,7 +4,7 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function depends_usbromservice() {
-    getDepends usbmount
+    getDepends usbmount rsync
 }
 
 function enable_usbromservice() {
