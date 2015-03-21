@@ -18,13 +18,13 @@ function build_gngeopi() {
     make clean
     # not safe for building in parallel
     make -j1
+    md_ret_require="$md_build/gngeo/src/gngeo"
 }
 
 function install_gngeopi() {
     cd gngeo
     make install
     mkdir -p "$md_inst/neogeobios"
-    md_ret_require="$md_inst/bin/gngeo"
 }
 
 function configure_gngeopi() {
