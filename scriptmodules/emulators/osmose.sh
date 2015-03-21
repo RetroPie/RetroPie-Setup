@@ -8,7 +8,8 @@ function sources_osmose() {
 
 function build_osmose() {
     make clean
-    make
+    # not safe for building in parallel
+    make -j1
     md_ret_require="$md_build/osmose"
 }
 
