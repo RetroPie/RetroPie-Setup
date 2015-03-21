@@ -23,10 +23,11 @@ function install_mame4all() {
         'folders'
         'hiscore.dat'
         'mame'
-        'mame.cfg'
         'readme.txt'
         'skins'
     )
+    # install mame.cfg under another name as we will copy it
+    cp -v "$md_build/mame.cfg" "$md_inst/mame.cfg.sample"
 }
 
 function configure_mame4all() {
@@ -37,7 +38,19 @@ function configure_mame4all() {
 
     mkdir -p "$configdir/$system/"{cfg,hi,inp,memcard,nvram,snap,sta}
 
-    iniConfig "=" "" "$md_inst/mame.cfg"
+    # move old config
+    if [[ -f "$mame.cfg" && ! -h "$mame.cfg" ]]; then
+        mv "mame.cfg" "$configdir/$system/mame.cfg"
+    fi
+
+    # if the user doesn't already have a config, we will overwrite it.
+    if [[ ! -f "$configdir/$system/mame.cfg" ]]; then
+        cp "mame.cfg.sample" "$configdir/$system/mame.cfg"
+    fi
+
+    ln -sf "$configdir/$system/mame.cfg"
+
+    iniConfig "=" "" "$configdir/$system/mame.cfg"
     iniSet "cfg" "$configdir/$system/cfg"
     iniSet "hi" "$configdir/$system/hi"
     iniSet "inp" "$configdir/$system/inp"
