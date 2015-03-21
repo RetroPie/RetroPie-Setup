@@ -13,11 +13,18 @@ function sources_advmame() {
         pushd "$version"
         wget -O- -q "http://downloads.petrockblock.com/retropiearchives/advancemame-$version.tar.gz" | tar -xvz --strip-components=1
 
+        # update internal names to separate out config files (due to incompatible options)
+        sed -i "s/advmame\.rc/advmame-$version.rc/" advance/v/v.c advance/cfg/cfg.c
         if [[ "$version" != "1.2" ]]; then
-            sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
+            sed -i "s/ADVANCE_NAME \"advmame\"/ADVANCE_NAME \"advmame-$version\"/" advance/osd/emu.h
+        else
+            sed -i "s/ADV_NAME \"advmame\"/ADV_NAME \"advmame-$version\"/" advance/osd/emu.h
         fi
 
         if isPlatform "rpi"; then
+            if [[ "$version" != "1.2" ]]; then
+                sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
+            fi
             # patch advmame to use a fake generated mode with the exact dimensions for fb - avoids need for configuring monitor / clocks.
             # the pi framebuffer doesn't use any of the framebuffer timing configs - it hardware scales from chosen dimensions to actual size
             patch -p1 <<\_EOF_
@@ -94,32 +101,38 @@ function configure_advmame() {
 
     # move any old configs to new location
     if [[ -d "$home/.advance" && ! -h "$home/.advance" ]]; then
+        mv -v "$home/.advance/advmame.rc" "$configdir/mame-advmame/"
         mv -v "$home/.advance/"* "$configdir/mame-advmame/"
         rmdir "$home/.advance/"
     fi
 
     ln -snf "$configdir/mame-advmame" "$home/.advance"
+
     chown -R $user:$user "$configdir/mame-advmame"
-
-    su "$user" -c "$md_inst/0.94.0/bin/advmame --default"
-
-    iniConfig " " "" "$configdir/mame-advmame/advmame.rc"
-    iniSet "misc_quiet" "yes"
-    iniSet "device_video" "fb"
-    iniSet "device_video_cursor" "off"
-    iniSet "device_keyboard" "raw"
-    iniSet "device_sound" "alsa"
-    iniSet "display_vsync" "no"
-    iniSet "sound_samplerate" "22050"
-    iniSet "sound_latency" "0.2"
-    iniSet "sound_normalize" "no"
-    iniSet "dir_rom" "$romdir/mame-advmame"
-    iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
-    iniSet "dir_sample" "$romdir/mame-advmame/samples"
 
     local version
     local default
     for version in *; do
+        su "$user" -c "$md_inst/$version/bin/advmame --default"
+
+        iniConfig " " "" "$configdir/mame-advmame/advmame-$version.rc"
+        iniSet "misc_quiet" "yes"
+        iniSet "device_video" "fb"
+        iniSet "device_video_cursor" "off"
+        iniSet "device_keyboard" "raw"
+        iniSet "device_sound" "alsa"
+        iniSet "display_vsync" "no"
+        if isPlatform "rpi1"; then
+            iniSet "sound_samplerate" "22050"
+        else
+            iniSet "sound_samplerate" "44100"
+        fi
+        iniSet "sound_latency" "0.2"
+        iniSet "sound_normalize" "no"
+        iniSet "dir_rom" "$romdir/mame-advmame"
+        iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
+        iniSet "dir_sample" "$romdir/mame-advmame/samples"
+
         default=0
         isPlatform "rpi1" && [[ "$version" == "0.94.0" ]] && default=1
         isPlatform "rpi2" && [[ "$version" == "1.2" ]] && default=1
