@@ -509,7 +509,7 @@ get_save_vars
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
-echo "Press 'x' or 'm' to configure launch options for emulator/port ($emulator)"
+echo "Press 'x' or 'm' to configure launch options for emulator/port ($emulator). Errors will be logged to /tmp/runcommand.log"
 read -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
     get_all_modes
@@ -531,7 +531,7 @@ config_dispmanx "$emusave"
 retroarch_append_config
 
 # run command
-eval $command </dev/tty
+eval $command </dev/tty &>/tmp/runcommand.log
 
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
