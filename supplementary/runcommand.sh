@@ -531,7 +531,7 @@ config_dispmanx "$emusave"
 retroarch_append_config
 
 # run command
-eval $command
+eval $command </dev/tty
 
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
