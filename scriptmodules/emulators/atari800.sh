@@ -1,5 +1,5 @@
 rp_module_id="atari800"
-rp_module_desc="Atari 800 emulator"
+rp_module_desc="Atari 8-bit/800/5200 emulator"
 rp_module_menus="2+"
 
 function depends_atari800() {
@@ -61,8 +61,8 @@ function configure_atari800() {
     ln -sf "$configdir/atari800/atari800.cfg" "$home/.atari800.cfg"
     chown -R $user:$user  "$configdir/atari800"
 
-    setESSystem "Atari 800" "atari800" "~/RetroPie/roms/atari800" ".xex .XEX" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/atari800 %ROM%\" \"$md_id\"" "atari800" "atari800"
-    setESSystem "Atari 5200" "atari5200" "~/RetroPie/roms/atari5200" ".a52 .A52 .bin .BIN" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/atari800 %ROM%\" \"$md_id\"" "atari5200" "atari5200"
+    addSystem 1 "$md_id" "atari800" "$md_inst/bin/atari800 %ROM%"
+    addSystem 1 "$md_id" "atari5200" "$md_inst/bin/atari800 %ROM%"
     
-    __INFMSGS+=("You need to copy the Atari 800 BIOS files (ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)")
+    __INFMSGS+=("You need to copy the Atari 800/5200 BIOS files (5200.ROM, ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)")
 }
