@@ -56,8 +56,19 @@ function configure_fuse() {
     chown -R $user:$user "$configdir/zxspectrum"
 
     setDispmanx "$md_id" 1
+    configure_dispmanx_on_fuse
 
     delSystem "$md_id" "zxspectrum"
     addSystem 0 "$md_id-48k" "zxspectrum" "$md_inst/bin/fuse --machine 48 %ROM%"
     addSystem 1 "$md_id-128k" "zxspectrum" "$md_inst/bin/fuse --machine 128 %ROM%"
+}
+
+function configure_dispmanx_on_fuse() {
+    setDispmanx "$md_id-48k" 1
+    setDispmanx "$md_id-128k" 1
+}
+
+function configure_dispmanx_off_fuse() {
+    setDispmanx "$md_id-48k" 0
+    setDispmanx "$md_id-128k" 0
 }
