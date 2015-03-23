@@ -65,7 +65,7 @@ function get_params() {
 function get_save_vars() {
     # convert emulator name / binary to a names usable as variables in our config file
     emusave=${emulator//\//_}
-    emusave=${emusave//[^a-Z0-9_]/}
+    emusave=${emusave//[^a-Z0-9_\-]/}
     rendersave="${emusave}_render"
     romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
 }
