@@ -36,7 +36,7 @@ function configure_vice() {
         rm -rf "$home/.vice"
     fi
 
-    ln -snf "$configdir/c64/" "$home/.vice"
+    ln -snf "$configdir/c64" "$home/.vice"
 
     # if we have an old config vice.cfg then move it to sdl-vicerc
     if [[ -f "$configdir/c64/vice.cfg" ]]; then
@@ -61,16 +61,29 @@ function configure_vice() {
     configure_dispmanx_on_vice
     setDispmanx "$md_id" 1
 
-    setESSystem "C64" "c64" "~/RetroPie/roms/c64" ".crt .CRT .d64 .D64 .g64 .G64 .t64 .T64 .tap .TAP .x64 .X64 .zip .ZIP" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/x64 %ROM%\" \"$md_id\"" "c64" "c64"
+    addSystem 1 "$md_id-x64" "c64" "$md_inst/bin/x64 %ROM%"
+    addSystem 0 "$md_id-x64sc" "c64" "$md_inst/bin/x64sc %ROM%" 
+    addSystem 0 "$md_id-x128" "c64" "$md_inst/bin/x128 %ROM%"
+    addSystem 0 "$md_id-xpet" "c64" "$md_inst/bin/xpet %ROM%"
+    addSystem 0 "$md_id-xplus4" "c64" "$md_inst/bin/xplus4 %ROM%"
+    addSystem 0 "$md_id-xvic" "c64" "$md_inst/bin/xvic %ROM%"
 }
 
 function configure_dispmanx_off_vice() {
+    local id
+    for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic; do
+        setDispmanx "id" 0
+    done
     iniConfig "=" "" "$configdir/c64/sdl-vicerc"
     iniSet "VICIIDoubleSize" "1"
     iniSet "VICIIDoubleScan" "1"
 }
 
 function configure_dispmanx_on_vice() {
+    local id
+    for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic; do
+        setDispmanx "$id" 1
+    done
     iniConfig "=" "" "$configdir/c64/sdl-vicerc"
     iniSet "VICIIDoubleSize" "0"
     iniSet "VICIIDoubleScan" "0"
