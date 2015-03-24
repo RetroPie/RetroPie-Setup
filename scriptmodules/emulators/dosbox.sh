@@ -47,15 +47,16 @@ fi
 $rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/bin/dosbox \$params" "$md_id"
 _EOF_
     chmod +x "$romdir/pc/+Start DOSBox.sh"
+    chown $user:$user "$romdir/pc/+Start DOSBox.sh"
 
-    mkdir -p "$configdir/dosbox/"
+    mkdir -p "$configdir/pc/"
 
     # move any old configs to the new location
     if [[ -d "$home/.dosbox" && ! -h "$home/.dosbox" ]]; then
-        mv "$home/.dosbox/"* "$configdir/dosbox/"
+        mv "$home/.dosbox/"* "$configdir/pc/"
         rmdir "$home/.dosbox"
     fi
-    ln -snf "$configdir/dosbox" "$home/.dosbox"
+    ln -snf "$configdir/pc" "$home/.dosbox"
 
     local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [[ -f "$config_path" ]]; then
@@ -66,7 +67,12 @@ _EOF_
         iniSet "scaler" "none"
     fi
 
-    chown -R $user:$user "$configdir/dosbox"
+    chown -R $user:$user "$configdir/pc"
+
+    # slight hack so that we set dosbox as the default emulator for "+Start DOSBox.sh"
+    iniConfig "=" '"' "$configdir/all/emulators.cfg"
+    iniSet "ab19770b84adcb74b0044f78b79000379" "dosbox"
+    chown $user:$user "$configdir/all/emulators.cfg"
 
     addSystem 1 "$md_id" "pc" "$romdir/pc/+Start\ DOSBox.sh %ROM%" "" ".sh"
 }

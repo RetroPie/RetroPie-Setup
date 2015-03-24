@@ -14,15 +14,25 @@ function install_rpix86() {
 function configure_rpix86() {
     mkRomDir "pc"
 
-    cat > "$romdir/pc/Start rpix86.sh" << _EOF_
+    rm -f "$romdir/pc/Start rpix86.sh" "$romdir/pc/+Start.txt"
+    cat > "$romdir/pc/+Start rpix86.sh" << _EOF_
 #!/bin/bash
+params="\$1"
 pushd "$md_inst"
-./rpix86 -a0 -f2
+if [[ "\$params" =~ \.sh$ ]]; then
+    ./rpix86 -a0 -f2
+else
+    ./rpix86 -a0 -f2 "\$params"
+fi
 popd
 _EOF_
-    chmod +x "$romdir/pc/Start rpix86.sh"
+    chmod +x "$romdir/pc/+Start rpix86.sh"
+    chown $user:$user "$romdir/pc/+Start rpix86.sh"
     ln -sfn "$romdir/pc" games
-    rm -f "$romdir/pc/Start.txt"
 
-    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".sh" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"%ROM%\" \"$md_id\"" "pc" "pc"
+    # slight hack so that we set rpix86 as the default emulator for "+Start rpix86.sh"
+    iniConfig "=" '"' "$configdir/all/emulators.cfg"
+    iniSet "ab8b60b52cfe22d5b794c1aef1b0062b7" "rpix86"
+    chown $user:$user "$configdir/all/emulators.cfg"
+    addSystem 0 "$md_id" "pc" "$romdir/pc/+Start\ rpix86.sh %ROM%" "" ".sh"
 }
