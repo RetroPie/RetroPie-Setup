@@ -49,7 +49,12 @@ if [[ -n "\$(pidof X)" ]]; then
     exit 1
 fi
 
-\$es_bin "\$@"
+key=""
+while [[ -z "\$key" ]]; do
+    \$es_bin "\$@"
+    echo "EmulationStation will restart in 5 seconds. Press a key to exit back to console."
+    IFS= read -s -t 5 -N 1 key
+done
 _EOF_
     chmod +x /usr/bin/emulationstation
 
