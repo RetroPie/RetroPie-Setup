@@ -43,7 +43,7 @@ function configure_mame4all() {
         mv "mame.cfg" "$configdir/$system/mame.cfg"
     fi
 
-    # if the user doesn't already have a config, we will overwrite it.
+    # if the user doesn't already have a config, we will copy the default.
     if [[ ! -f "$configdir/$system/mame.cfg" ]]; then
         cp "mame.cfg.sample" "$configdir/$system/mame.cfg"
     fi
