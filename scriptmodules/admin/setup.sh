@@ -111,6 +111,7 @@ function binaries_setup()
         rp_callModule stella
         rp_callModule zmachine
         rp_callModule esthemesimple
+        rp_callModule rpix86
 
         # required supplementary modules 
         rp_callModule retroarchautoconf
