@@ -29,8 +29,8 @@ function configure_lr-vecx() {
     ensureSystemretroconfig "vectrex"
 
     # Copy bios files
-    cp "$md_inst/"{fast.bin,skip.bin,system.bin} "$biosdir/"
+    cp -v "$md_inst/"{fast.bin,skip.bin,system.bin} "$biosdir/"
     chown $user:$user "$biosdir/"{fast.bin,skip.bin,system.bin}
 
-    setESSystem "Vectrex" "vectrex" "~/RetroPie/roms/vectrex" ".vec .VEC .gam .GAM .bin .BIN" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$emudir/retroarch/bin/retroarch -L $md_inst/vecx_libretro.so --config $configdir/vectrex/retroarch.cfg %ROM%\" \"$md_id\"" "vectrex" "vectrex"
+    addSystem 1 "$md_id" "vectrex" "$md_inst/vecx_libretro.so"
 }
