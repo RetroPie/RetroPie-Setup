@@ -25,5 +25,5 @@ function install_cpc() {
 function configure_cpc() {
     mkRomDir "amstradcpc"
 
-    setESSystem "Amstrad CPC" "amstradcpc" "~/RetroPie/roms/amstradcpc" ".cpc .CPC .dsk .DSK" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/cpc4rpi %ROM%\" \"$md_id\"" "amstradcpc" ""
+    addSystem 1 "$md_id" "amstradcpc" "$md_inst/cpc4rpi %ROM%"
 }

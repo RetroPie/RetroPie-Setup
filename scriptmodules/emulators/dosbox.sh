@@ -68,6 +68,6 @@ _EOF_
 
     chown -R $user:$user "$configdir/dosbox"
 
-    setESSystem "PC (x86)" "pc" "~/RetroPie/roms/pc" ".sh .bat .BAT .exe .EXE" "$romdir/pc/+Start\ DOSBox.sh %ROM%" "pc" "pc"
+    addSystem 1 "$md_id" "pc" "$romdir/pc/+Start\ DOSBox.sh %ROM%" "" ".sh"
 }
 
