@@ -8,6 +8,7 @@ function configure_autostartemustat() {
     options=(
         1 "Original boot behaviour"
         2 "Start Emulation Station at boot."
+        3 "Start Emulation Station at boot, closing Emulation Station will restart it."
     )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choices" ]]; then
@@ -21,7 +22,17 @@ function configure_autostartemustat() {
                 sed /etc/inittab -i -e "s|1:2345:respawn:/sbin/getty --noclear 38400 tty1|1:2345:respawn:\/bin\/login -f $user tty1 \<\/dev\/tty1 \>\/dev\/tty1 2\>\&1|g"
                 update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
                 if ! egrep -i -q "emulationstation$" /etc/profile; then
-                    echo "[ -n \"\${SSH_CONNECTION}\" ] || emulationstation" >> /etc/profile
+                    # prevents emulationstation from starting from remote sessions.
+                    echo "if [ -z \"\$DISPLAY\" ] && [ \$(tty) == /dev/tty1 ]; then emulationstation; fi" >> /etc/profile
+                fi
+                printMsgs "dialog" "Emulation Station is now starting on boot."
+                ;;
+            3)
+                sed /etc/inittab -i -e "s|1:2345:respawn:/sbin/getty --noclear 38400 tty1|1:2345:respawn:\/bin\/login -f $user tty1 \<\/dev\/tty1 \>\/dev\/tty1 2\>\&1|g"
+                update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
+                if ! egrep -i -q "emulationstation$" /etc/profile; then
+                    # emulationstation will restart after being quit, useful to quickly refresh games list.
+                    echo "if [ -z \"\$DISPLAY\" ] && [ \$(tty) == /dev/tty1 ]; then while true; do emulationstation; done; fi" >> /etc/profile
                 fi
                 printMsgs "dialog" "Emulation Station is now starting on boot."
                 ;;
