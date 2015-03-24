@@ -24,17 +24,18 @@ function install_hatari() {
 }
 
 function configure_hatari() {
-    mkRomDir "atariststefalcon"
+    mkRomDir "atarist"
 
     # move any old configs to new location
     if [[ -d "$home/.hatari" && ! -h "$home/.hatari" ]]; then
-        mv -v "$home/.hatari/"* "$configdir/atariststefalcon/"
+        mv -v "$home/.hatari/"* "$configdir/atarist/"
         rmdir "$home/.hatari"
     fi
 
-    ln -snf "$configdir/atariststefalcon" "$home/.hatari"
+    ln -snf "$configdir/atarist" "$home/.hatari"
 
     setDispmanx "$md_id" 1
 
-    setESSystem "Atari ST/STE/Falcon" "atariststefalcon" "~/RetroPie/roms/atariststefalcon" ".st .ST .stx .STX .img .IMG .rom .ROM" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/hatari %ROM%\" \"$md_id\"" "atarist" "atarist"
+    delSystem "$md_id" "atariststefalcon"
+    addSystem 1 "$md_id" "atarist" "$md_inst/bin/hatari %ROM%"
 }
