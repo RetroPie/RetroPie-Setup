@@ -29,7 +29,7 @@ function configure_basilisk() {
     touch "$romdir/macintosh/Start.txt"
     
     mkdir -p "$configdir/macintosh"
-    chown $pi:$pi "$configdir/macintosh"
+    chown $user:$user "$configdir/macintosh"
 
     setESSystem "Apple Macintosh" "macintosh" "~/RetroPie/roms/macintosh" ".txt" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img --config $configdir/macintosh/basiliskii.cfg\" \"$md_id\"" "macintosh"
 
