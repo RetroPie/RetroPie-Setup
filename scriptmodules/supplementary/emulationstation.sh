@@ -61,46 +61,4 @@ _EOF_
     iniSet "overscan_scale" 1
 
     mkdir -p "/etc/emulationstation"
-
-    setESSystem "Input Configuration" "esconfig" "~/RetroPie/roms/esconfig" ".py .PY" "%ROM%" "ignore" "esconfig"
-    chmod 644 "/etc/emulationstation/es_systems.cfg"
-}
-
-function package_emulationstation() {
-    local PKGNAME
-
-    getDepends reprepro
-
-    printHeading "Building package of EmulationStation"
-
-#   # create Raspbian package
-#   $PKGNAME="retropie-supplementary-emulationstation"
-#   mkdir $PKGNAME
-#   mkdir $PKGNAME/DEBIAN
-#   cat >> $PKGNAME/DEBIAN/control << _EOF_
-# Package: $PKGNAME
-# Priority: optional
-# Section: devel
-# Installed-Size: 1
-# Maintainer: Florian Mueller
-# Architecture: armhf
-# Version: 1.0
-# Depends: libboost-system-dev libboost-filesystem-dev libboost-date-time-dev libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev libasound2-dev cmake g++-4.7
-# Description: This package contains the front-end EmulationStation.
-# _EOF_
-
-#   mkdir -p $PKGNAME/usr/share/RetroPie/supplementary/EmulationStation
-#   cd
-#   cp -r $rootdir/supplementary/EmulationStation/emulationstation $PKGNAME$rootdir/supplementary/EmulationStation/
-
-#   # create package
-#   dpkg-deb -z8 -Zgzip --build $PKGNAME
-
-#   # sign Raspbian package
-#   dpkg-sig --sign builder $PKGNAME.deb
-
-#   # add package to repository
-#   cd RetroPieRepo
-#   reprepro --ask-passphrase -Vb . includedeb wheezy /home/pi/$PKGNAME.deb
-
 }
