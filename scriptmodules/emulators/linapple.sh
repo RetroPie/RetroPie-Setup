@@ -1,5 +1,5 @@
 rp_module_id="linapple"
-rp_module_desc="Apple 2 emulator Linapple"
+rp_module_desc="Apple 2 emulator LinApple"
 rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
@@ -29,11 +29,12 @@ function install_linapple() {
         'charset40.bmp'
         'font.bmp'
         'icon.bmp'
-        'linapple.conf'
         'splash.bmp'
         'Master.dsk'
         'README'
     )
+    # install linapple.conf under another name as we will copy it
+    cp -v "$md_build/linapple.conf" "$md_inst/linapple.conf.sample"
 }
 
 function configure_linapple() {
@@ -41,17 +42,26 @@ function configure_linapple() {
 
     chown -R $user:$user "$md_inst"
 
-    cat > "Start.sh" << _EOF_
+    rm -f "$romdir/apple2/Start.txt"
+    cat > "$romdir/apple2/+Start LinApple.sh" << _EOF_
 #!/bin/bash
 pushd "$md_inst"
 ./linapple
 popd
 _EOF_
-    chmod +x Start.sh
-    touch "$romdir/apple2/Start.txt"
+    chmod +x "$romdir/apple2/+Start LinApple.sh"
 
-    sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" linapple.conf
-    sed -i -r -e "s|[^I]?Joystick 1[^I]?=[^I]?[0-9]|\tJoystick 1\t=\t1|g" linapple.conf
+    mkUserDir "$configdir/apple2"
 
-    setESSystem "Apple II" "apple2" "~/RetroPie/roms/apple2" ".txt" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$md_inst/Start.sh\" \"$md_id\"" "apple2" "apple2"
+    # if the user doesn't already have a config, we will copy the default.
+    if [[ ! -f "$configdir/apple2/linapple.conf" ]]; then
+        cp -v "linapple.conf.sample" "$configdir/apple2/linapple.conf"
+        iniConfig "=" "" "$configdir/apple2/linapple.conf"
+        sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" "$configdir/apple2/linapple.conf"
+        sed -i -r -e "s|[^I]?Joystick 1[^I]?=[^I]?[0-9]|\tJoystick 1\t=\t1|g" "$configdir/apple2/linapple.conf"
+    fi
+    ln -sf "$configdir/apple2/linapple.conf"
+    chown $user:$user "$configdir/apple2/linapple.conf"
+
+    addSystem 1 "$md_id" "apple2" "$romdir/apple2/+Start\ LinApple.sh" "Apple II" ".sh"
 }
