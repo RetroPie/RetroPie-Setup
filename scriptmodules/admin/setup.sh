@@ -109,11 +109,11 @@ function binaries_setup()
 
         # modules that have another binary distribution method (deb etc)
         rp_callModule stella
-        rp_callModule zmachine
-        rp_callModule esthemesimple
+        rp_callModule frotz
         rp_callModule rpix86
 
         # required supplementary modules 
+        rp_callModule esthemesimple
         rp_callModule retroarchautoconf
         rp_callModule runcommand install
 
