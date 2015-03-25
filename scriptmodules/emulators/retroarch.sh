@@ -51,7 +51,6 @@ function configure_retroarch() {
     if [[ ! -d "$configdir/all/" ]]; then
         mkdir -p "$configdir/all/"
     fi
-    cp $scriptdir/supplementary/retroarch-core-options.cfg "$configdir/all/"
 
     if [[ -f "$configdir/all/retroarch.cfg" ]]; then
         cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
