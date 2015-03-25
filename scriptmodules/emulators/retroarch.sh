@@ -48,18 +48,21 @@ function install_retroarch() {
 }
 
 function configure_retroarch() {
-    if [[ ! -d "$configdir/all/" ]]; then
-        mkdir -p "$configdir/all/"
-    fi
+    mkUserDir "$configdir/all"
 
+    local config="$configdir/all/retroarch.cfg"
+    # if the user has an existing config we will not overwrite it, but instead copy the
+    # default configuration to retroarch.cfg.rp-dist so any new options can be manually
+    # copied across as needed without destroying users changes
     if [[ -f "$configdir/all/retroarch.cfg" ]]; then
-        cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
+        config="$configdir/all/retroarch.cfg.rp-dist"
+        cp -v "$md_inst/retroarch.cfg" "$config"
+    else
+        cp -v "$md_inst/retroarch.cfg" "$config"
     fi
 
-    mkdir -p "$configdir/all/"
-    cp "$md_inst/retroarch.cfg" "$configdir/all/"
-
-    iniConfig " = " "" "$configdir/all/retroarch.cfg"
+    # configure default options
+    iniConfig " = " "" "$config"
     iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
@@ -106,5 +109,5 @@ function configure_retroarch() {
     iniSet "input_autodetect_enable" "true"
     iniSet "joypad_autoconfig_dir" "$md_inst/configs/"
 
-    chown $user:$user -R "$configdir"
+    chown $user:$user "$config"
 }
