@@ -56,9 +56,9 @@ _EOF_
     # if the user doesn't already have a config, we will copy the default.
     if [[ ! -f "$configdir/apple2/linapple.conf" ]]; then
         cp -v "linapple.conf.sample" "$configdir/apple2/linapple.conf"
-        iniConfig "=" "" "$configdir/apple2/linapple.conf"
-        sed -i -r -e "s|[^I]?Joystick 0[^I]?=[^I]?[0-9]|\tJoystick 0\t=\t1|g" "$configdir/apple2/linapple.conf"
-        sed -i -r -e "s|[^I]?Joystick 1[^I]?=[^I]?[0-9]|\tJoystick 1\t=\t1|g" "$configdir/apple2/linapple.conf"
+        iniConfig " = " "" "$configdir/apple2/linapple.conf"
+        iniSet "Joystick 0" "1"
+        iniSet "Joystick 1" "1"
     fi
     ln -sf "$configdir/apple2/linapple.conf"
     chown $user:$user "$configdir/apple2/linapple.conf"
