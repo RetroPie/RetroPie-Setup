@@ -31,5 +31,5 @@ function configure_lr-gpsp() {
     ensureSystemretroconfig "gba"
 
     delSystem "$md_id" "gba-gpsp-libretro"
-    addSystem 0 "$md_id" "gba" "$md_inst/gpsp_libretro.so"
+    addSystem 1 "$md_id" "gba" "$md_inst/gpsp_libretro.so"
 }

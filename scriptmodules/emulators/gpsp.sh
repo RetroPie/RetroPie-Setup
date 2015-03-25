@@ -37,5 +37,5 @@ function configure_gpsp() {
     # symlink the rom so so it can be installed with the other bios files
     ln -snf "$biosdir/gba_bios.bin" "$md_inst"
 
-    addSystem 1 "$md_id" "gba" "$md_inst/gpsp %ROM%"
+    addSystem 0 "$md_id" "gba" "$md_inst/gpsp %ROM%"
 }
