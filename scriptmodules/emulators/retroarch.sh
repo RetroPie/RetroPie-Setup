@@ -30,21 +30,16 @@ function build_retroarch() {
 
 function install_retroarch() {
     make install
-    mkdir -p "$md_inst/shader"
-    mkdir -p "$md_inst/assets"
-    mkdir -p "$md_inst/overlays"
-    cp "$scriptdir/supplementary/RetroArchShader/"* "$md_inst/shader/"
-    cp -a "$md_build/shader/"* "$md_inst/shader/"
-    cp -a "$md_build/overlays/"* "$md_inst/overlays/"
-    cp -a "$md_build/assets/"* "$md_inst/assets/"
-    chown $user:$user -R "$md_inst/shader"
-    chown $user:$user -R "$md_inst/assets"
-    chown $user:$user -R "$md_inst/overlays"
+    mkdir -p "$md_inst/"{shader,assets,overlays}
+    cp -v "$scriptdir/supplementary/RetroArchShader/"* "$md_inst/shader/"
+    cp -v -a "$md_build/shader/"* "$md_inst/shader/"
+    cp -v -a "$md_build/overlays/"* "$md_inst/overlays/"
+    cp -v -a "$md_build/assets/"* "$md_inst/assets/"
+    chown $user:$user -R "$md_inst/"{shader,assets,overlays}
     md_ret_files=(
         'retroarch.cfg'
         'tools/retroarch-joyconfig'
     )
-    md_ret_require="$md_inst/bin/retroarch"
 }
 
 function configure_retroarch() {
