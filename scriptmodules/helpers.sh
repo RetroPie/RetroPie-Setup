@@ -369,6 +369,17 @@ function setESSystem() {
             -u "/systemList/system[name='$name']/theme" -v "$theme" \
             "$conf"
     fi
+
+    sortESSystems "name"
+}
+
+function sortESSystems() {
+    local field="$1"
+    cp "/etc/emulationstation/es_systems.cfg" "/etc/emulationstation/es_systems.cfg.bak"
+    xmlstarlet sel -D -I \
+        -t -m "/" -e "systemList" \
+        -m "//system" -s A:T:U "$1" -c "." \
+        "/etc/emulationstation/es_systems.cfg.bak" >"/etc/emulationstation/es_systems.cfg"
 }
 
 function ensureSystemretroconfig {
