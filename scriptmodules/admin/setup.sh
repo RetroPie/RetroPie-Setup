@@ -190,9 +190,9 @@ function source_setup()
                 ((count++))
             done
             rp_callModule runcommand install
+            rps_logEnd
         } &> >(tee >(gzip --stdout > "$logfilename"))
 
-        rps_logEnd
         rps_printInfo "$logfilename"
 
         printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
