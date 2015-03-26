@@ -22,18 +22,32 @@ function install_pifba() {
     md_ret_files=(
         'fba2x'
         'capex.cfg'
-        'fba2x.cfg'
         'zipname.fba'
         'rominfo.fba'
         'FBACache_windows.zip'
         'fba_029671_clrmame_dat.zip'
     )
+    # install fba2x.cfg under another name as we will copy it
+    cp -v "$md_build/fba2x.cfg" "$md_inst/fba2x.cfg.sample"
 }
 
 function configure_pifba() {
-    chown -R $user:$user "$md_inst"
     mkRomDir "fba"
     mkRomDir "neogeo"
+
+    mkUserDir "$configdir/fba"
+
+    # move old config
+    if [[ -f "$fba2x.cfg" && ! -h "$fba2x.cfg" ]]; then
+        mv "fba2x.cfg" "$configdir/fba/fba2x.cfg"
+    fi
+
+    # if the user doesn't already have a config, we will copy the default.
+    if [[ ! -f "$configdir/fba/fba2x.cfg" ]]; then
+        cp "fba2x.cfg.sample" "$configdir/fba/fba2x.cfg"
+    fi
+
+    ln -sf "$configdir/fba/fba2x.cfg"
 
     addSystem 1 "$md_id" "neogeo" "$md_inst/fba2x %ROM%"
     addSystem 1 "$md_id" "fba arcade" "$md_inst/fba2x %ROM%"
