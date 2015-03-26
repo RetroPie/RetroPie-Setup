@@ -300,6 +300,7 @@ gcc_version() {
 
 function ensureRootdirExists() {
     mkdir -p "$rootdir"
+    mkUserDir "$datadir"
     mkUserDir "$configdir"
     mkUserDir "$configdir/all"
 }

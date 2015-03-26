@@ -34,8 +34,9 @@ user="$SUDO_USER"
 [[ -z "$user" ]] && user=$(id -un)
 
 home="$(eval echo ~$user)"
-biosdir="$home/RetroPie/BIOS"
-romdir="$home/RetroPie/roms"
+datadir="$home/RetroPie"
+biosdir="$datadir/BIOS"
+romdir="$datadir/roms"
 emudir="$rootdir/emulators"
 configdir="$rootdir/configs"
 
@@ -46,7 +47,6 @@ __logdir="$scriptdir/logs"
 __tmpdir="$scriptdir/tmp"
 __builddir="$__tmpdir/build"
 __swapdir="$__tmpdir"
-
 
 # check, if sudo is used
 if [[ $(id -u) -ne 0 ]]; then
