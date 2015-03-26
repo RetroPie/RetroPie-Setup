@@ -179,7 +179,7 @@ function rp_callModule() {
     local md_ret_errors=()
 
     # print an action and a description
-    [[ -n "$action" ]] && printHeading "$action $md_desc"
+    [[ -n "$action" ]] && printHeading "$action '$md_id' : $md_desc"
 
     # call the function with parameters
     $function "$@"
