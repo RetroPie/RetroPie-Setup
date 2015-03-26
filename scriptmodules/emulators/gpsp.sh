@@ -32,7 +32,6 @@ function install_gpsp() {
 
 function configure_gpsp() {
     mkRomDir "gba"
-    chown $user:$user -R "$md_inst"
 
     # symlink the rom so so it can be installed with the other bios files
     ln -snf "$biosdir/gba_bios.bin" "$md_inst"
