@@ -53,7 +53,7 @@ key=""
 while [[ -z "\$key" ]]; do
     \$es_bin "\$@"
     echo "EmulationStation will restart in 5 seconds. Press a key to exit back to console."
-    IFS= read -s -t 5 -N 1 key
+    IFS= read -s -t 5 -N 1 key </dev/tty
 done
 _EOF_
     chmod +x /usr/bin/emulationstation
