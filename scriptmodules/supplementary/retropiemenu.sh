@@ -15,7 +15,7 @@ function configure_retropiemenu()
     files=(
         'raspiconfig.rp'
         'rpsetup.rp'
-        'retroarchjoyconfig.rp'
+        'retroarchinput.rp'
         'audiosettings.rp'
         'dispmanx.rp'
         'retronetplay.rp'
@@ -48,8 +48,8 @@ function configure_retropiemenu()
         <name>File Manager</name>
     </game>
     <game>
-        <path>$rpdir/retroarchjoyconfig.rp</path>
-        <name>Register RetroArch controller</name>
+        <path>$rpdir/retroarchinput.rp</path>
+        <name>Configure RetroArch keyboard/joystick</name>
     </game>
     <game>
         <path>$rpdir/audiosettings.rp</path>
