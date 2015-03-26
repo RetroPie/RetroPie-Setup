@@ -202,7 +202,7 @@ function source_setup()
 function supplementary_setup()
 {
     local logfilename
-    rps_logStart
+    rps_logInit
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 3
@@ -225,7 +225,7 @@ function experimental_setup()
 {
     local logfilename
     while true; do
-        rps_logStart
+        rps_logInit
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 4
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
