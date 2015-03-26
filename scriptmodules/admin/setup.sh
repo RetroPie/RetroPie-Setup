@@ -3,7 +3,7 @@ rp_module_desc="GUI based setup for RetroPie"
 rp_module_menus=""
 rp_module_flags="nobin"
 
-function rps_setLogFilename() {
+function rps_logInit() {
     if [[ ! -d "$__logdir" ]]; then
         if mkdir -p "$__logdir"; then
             chown $user:$user "$__logdir"
@@ -14,6 +14,23 @@ function rps_setLogFilename() {
     local now=$(date +'%d%m%Y_%H%M')
     logfilename="$__logdir/run_$now.log.gz"
     touch "$logfilename"
+    chown $user:$user "$logfilename"
+    time_start=$(date +"%s")
+}
+
+function rps_logStart() {
+    echo "Log started at: $(date -d @$time_start)"
+}
+
+function rps_logEnd() {
+    time_end=$(date +"%s")
+    echo
+    echo "Log ended at: $(date -d @$time_end)"
+    date_total=$((time_end-time_start))
+    local hours=$((date_total / 60 / 60 % 24))
+    local mins=$((date_total / 60 % 60))
+    local secs=$((date_total % 60))
+    echo "Total running time: $hours hours, $mins mins, $secs secs"
 }
 
 function rps_printInfo() {
@@ -88,8 +105,9 @@ function binaries_setup()
 
     ensureRootdirExists
     local logfilename
-    rps_setLogFilename
+    rps_logInit
     {
+        rps_logStart
         rp_callModule aptpackages
         # force installation of our sdl1 packages as wheezy package may already be installed, and so we always get the latest
         # version. This can be solved later by adding version number checking to the dependency checking
@@ -124,11 +142,11 @@ function binaries_setup()
         rp_callModule bashwelcometweak install
         rp_callModule sambashares
 
+        rps_logEnd
     } &> >(tee >(gzip --stdout > "$logfilename"))
 
-    chown $user:$user "$logfilename"
-
     rps_printInfo "$logfilename"
+
     printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
 }
 
@@ -159,11 +177,12 @@ function source_setup()
     clear
     if [[ -n "$choices" ]]; then
         local logfilename
-        rps_setLogFilename
+        rps_logInit
         choices=($choices)
         total=${#choices[@]}
         count=1
         {
+            rps_logStart
             for choice in ${choices[@]}
             do
                 rp_callModule $choice ${command[$choice]}
@@ -172,9 +191,10 @@ function source_setup()
             done
             rp_callModule runcommand install
         } &> >(tee >(gzip --stdout > "$logfilename"))
-        chown $user:$user "$logfilename"
 
+        rps_logEnd
         rps_printInfo "$logfilename"
+
         printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
     fi
 }
@@ -182,39 +202,45 @@ function source_setup()
 function supplementary_setup()
 {
     local logfilename
-    rps_setLogFilename
+    rps_logStart
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 3
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choices" ]]; then
-            rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))
+            {
+                rps_logStart
+                rp_callModule $choices ${command[$choices]}
+                rps_logEnd
+            } &> >(tee >(gzip --stdout >$logfilename))
         else
             break
         fi
     done
 
     rps_printInfo "$logfilename"
-    chown $user:$user "$logfilename"
 }
 
 function experimental_setup()
 {
     local logfilename
     while true; do
-        rps_setLogFilename
+        rps_logStart
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
         rps_buildMenu 4
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choices" ]]; then
-            rp_callModule $choices ${command[$choices]} &> >(tee >(gzip --stdout >$logfilename))
+            {
+                rps_logStart
+                rp_callModule $choices ${command[$choices]}
+                rps_logEnd
+            } &> >(tee >(gzip --stdout >$logfilename))
         else
             break
         fi
     done
 
     rps_printInfo "$logfilename"
-    chown $user:$user $logfilename
 }
 
 function individual_setup()
@@ -229,7 +255,7 @@ function individual_setup()
     while true; do
         local md_idx=$(dialog --backtitle "$__backtitle" --menu "Select Emulator/Port." 22 76 16 "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$md_idx" ]]; then
-            rps_setLogFilename
+            rps_logInit
             local choice
             if [[ $__has_binaries -eq 1 ]]; then
                 choice=$(dialog --backtitle "$__backtitle" --menu "Install ${__mod_id[$md_idx]} - ${__mod_desc[$md_idx]}\nFrom binary or source?" 12 60 10 b Binary s Source 2>&1 >/dev/tty)
@@ -240,6 +266,7 @@ function individual_setup()
             __ERRMSGS=()
             __INFMSGS=()
             {
+                rps_logStart
                 case $choice in
                     b)
                         rp_callModule "$md_idx" depends && rp_callModule "$md_idx" install_bin && rp_callModule "$md_idx" configure
@@ -248,8 +275,10 @@ function individual_setup()
                         rp_callModule "$md_idx"
                         ;;
                 esac
+                rps_logEnd
             } &> >(tee >(gzip --stdout > "$logfilename"))
-            rps_printInfo $logfilename
+
+            rps_printInfo "$logfilename"
         else
             break
         fi
