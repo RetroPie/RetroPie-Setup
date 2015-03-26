@@ -11,8 +11,8 @@ function rps_logInit() {
             fatalError "Couldn't make directory $__logdir"
         fi
     fi
-    local now=$(date +'%d%m%Y_%H%M')
-    logfilename="$__logdir/run_$now.log.gz"
+    local now=$(date +'%Y-%m-%d_%H%M%S')
+    logfilename="$__logdir/rps_$now.log.gz"
     touch "$logfilename"
     chown $user:$user "$logfilename"
     time_start=$(date +"%s")
