@@ -88,7 +88,7 @@ function install_mupen64plus() {
     for source in *; do
         if [[ -f "$source/projects/unix/Makefile" ]]; then
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
-            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" install
+            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" VC=1 install
         fi
     done
     cp -v "$md_build/mupen64plus-video-settings/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"
