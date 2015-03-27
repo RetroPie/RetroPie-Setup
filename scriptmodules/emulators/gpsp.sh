@@ -45,8 +45,18 @@ function install_gpsp() {
 function configure_gpsp() {
     mkRomDir "gba"
 
+    mkUserDir "$configdir/gba"
+
     # symlink the rom so so it can be installed with the other bios files
-    ln -snf "$biosdir/gba_bios.bin" "$md_inst"
+    ln -sf "$biosdir/gba_bios.bin" "$md_inst/gba_bios.bin"
+
+    # move old config
+    if [[ -f "gpsp.cfg" && ! -h "gpsp.cfg" ]]; then
+        mv "gpsp.cfg" "$configdir/gba/gpsp.cfg"
+    fi
+
+    ln -sf "$configdir/gba/gpsp.cfg" "$md_inst/gpsp.cfg"
+
 
     addSystem 0 "$md_id" "gba" "$md_inst/gpsp %ROM%"
 }
