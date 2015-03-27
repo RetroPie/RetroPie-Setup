@@ -384,7 +384,7 @@ function ensureSystemretroconfig {
     fi
 
     if ! grep -q "#include \"$configdir/all/retroarch.cfg" "$config"; then
-        addLineToFile "#include \"$configdir/all/retroarch.cfg" "$config"
+        sed -i "1i#include \"$configdir/all/retroarch.cfg\"" "$config"
     fi
 
     iniConfig " = " "" "$config"
