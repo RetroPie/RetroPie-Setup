@@ -1,34 +1,46 @@
 #!/usr/bin/env bash
 
-#  RetroPie-Setup - Shell script for initializing Raspberry Pi
-#  with RetroArch, various cores, and EmulationStation (a graphical
-#  front end).
+# This file is part of RetroPie.
+# 
+# # RetroPie Legal Information
+# 
+# ## License
+# Redistribution and use of the RetroPie code or any derivative works are permitted 
+# provided that the following conditions are met:
+# 
+# Redistributions may not be sold, nor may they be used in a commercial product or 
+# activity.
+# Redistributions that are modified from the original source must include the complete 
+# source code, including the source code for all components used by a binary built from 
+# the modified sources. However, as a special exception, the source code distributed 
+# need not include anything that is normally distributed (in either source or binary 
+# form) with the major components (compiler, kernel, and so on) of the operating system 
+# on which the executable runs, unless that component itself accompanies the executable.
+# Redistributions must reproduce the above copyright notice, this list of conditions and 
+# the following disclaimer in the documentation and/or other materials provided with the 
+# distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
+# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
+# SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED 
+# TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR 
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH 
+# DAMAGE.
+# 
+# ## Copyright
+# The code in RetroPie is the work of many developers, each of whom owns the copyright 
+# to the code they wrote. There is no central copyright authority you can license the 
+# code from. The proper way to use the RetroPie source code is to examine it, using it 
+# to understand how the code works, and then write your own code. Sorry, there is no 
+# free lunch here.
 #
-#  (c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
+#  Many, many thanks go to all people that provide the individual modules!!!
 #
-#  RetroPie-Setup homepage: https://github.com/petrockblog/RetroPie-Setup
-#
-#  Permission to use, copy, modify and distribute RetroPie-Setup in both binary and
-#  source form, for non-commercial purposes, is hereby granted without fee,
-#  providing that this license information and copyright notice appear with
-#  all copies and any derived work.
-#
-#  This software is provided 'as-is', without any express or implied
-#  warranty. In no event shall the authors be held liable for any damages
-#  arising from the use of this software.
-#
-#  RetroPie-Setup is freeware for PERSONAL USE only. Commercial users should
-#  seek permission of the copyright holders first. Commercial use includes
-#  charging money for RetroPie-Setup or software derived from RetroPie-Setup.
-#
-#  The copyright holders request that bug fixes and improvements to the code
-#  should be forwarded to them so everyone can benefit from the modifications
-#  in future versions.
-#
-#  Many, many thanks go to all people that provide the individual packages!!!
-#
-#  Raspberry Pi is a trademark of the Raspberry Pi Foundation.
-#
+
 # =============================================================
 #  START OF THE MAIN SCRIPT
 # =============================================================
