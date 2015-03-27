@@ -72,6 +72,16 @@ function build_mupen64plus() {
     done
 
     rpSwap off
+    md_ret_require=(
+        'mupen64plus-ui-console/projects/unix/mupen64plus'
+        'mupen64plus-core/projects/unix/libmupen64plus.so.2.0.0'
+        'mupen64plus-audio-sdl/projects/unix/mupen64plus-audio-sdl.so'
+        'mupen64plus-input-sdl/projects/unix/mupen64plus-input-sdl.so'
+        'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
+        'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
+        'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
+        'mupen64plus-video-rice/projects/unix/mupen64plus-video-rice.so'
+    )
 }
 
 function install_mupen64plus() {
