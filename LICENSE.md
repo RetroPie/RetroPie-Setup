@@ -25,23 +25,11 @@ A. No. Using the logo in your advertising makes it appear that the product is so
 **Q. Can I use the term „RetroPie“ in the name of my software?**
 A. Generally, no, especially if it is something that is sold. However, if you are producing a free RetroPie-related piece of software, it is common that permission is granted. Send a query to double-check first, please.
 
-**Q. Can I put an arcade cabinet running RetroPie in a public location?**
-A. No. This this a commercial use of RetroPie and is prohibited by the license. Even if you don't charge money, putting a machine in a public location is "operating" an arcade machine and falls under commercial rules in most locations.
-
-**Q. Can my non-profit use of RetroPie or an arcade cabinet running RetroPie help to raise money?**
-A. No, sorry. Even for the most worthwhile cause, this still is a commercial use of RetroPie and is prohibited by the license.
-
 **Q. How do I obtain a license to the RetroPie source code?**
 A. You can't. See the Copyright section above.
 
 **Q. Is it legal to download ROMs for a game when I own the PCB?**
 A. This is unclear and depends on where you live. In most cases you would need to obtain permission from the original manufacturer to do so.
-
-**Q. If I obtain a license from an original manufacturer to distribute the ROMs can I use RetroPie to run them?**
-A. Generally, no, because it constitutes a commercial use of RetroPie. However, we have in the past made a couple of exceptions for this particular case. We will not consider making any further exceptions without proof that such a license has already been obtained.
-
-**Q. Can I use a PC or system-on-chip running RetroPie to replace a real arcade PCB?**
-A. In order to do this you would have to use a copy of the original ROMs, which would require obtaining permission from the original manufacturer. Once you had permission from them, if it was used for non-commercial purposes, then you would not technically be violating the RetroPie license. However we still do not explicitly give permission to use RetroPie in this way because of the possibility of the game being sold sometime later, which would constitute commercial use of RetroPie. If you sell your game later you must sell it without RetroPie included.
 
 **Q. Can I ask for donations for the work I did on my port of RetroPie to platform X?**
 A. No. You would be earning money from the RetroPie copyrights, and that would be a commercial use, which is prohibited by the license. It is our wish that RetroPie remains free.
