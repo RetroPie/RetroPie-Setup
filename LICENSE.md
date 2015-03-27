@@ -10,7 +10,9 @@ Redistributions must reproduce the above copyright notice, this list of conditio
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## Copyright
-The code in RetroPie is the work of many developers, each of whom owns the copyright to the code they wrote. There is no central copyright authority you can license the code from. The proper way to use the RetroPie source code is to examine it, using it to understand how the code works, and then write your own code. Sorry, there is no free lunch here.
+
+(c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
+
 
 ## Common Questions
 **Q. Can I include RetroPie with my product?**
@@ -30,9 +32,6 @@ A. You can't. See the Copyright section above.
 
 **Q. Is it legal to download ROMs for a game when I own the PCB?**
 A. This is unclear and depends on where you live. In most cases you would need to obtain permission from the original manufacturer to do so.
-
-**Q. Can I ask for donations for the work I did on my port of RetroPie to platform X?**
-A. No. You would be earning money from the RetroPie copyrights, and that would be a commercial use, which is prohibited by the license. It is our wish that RetroPie remains free.
 
 **Q. Is this license similar to the MAME license?**
 A. Yes. Even though MAME and RetroPie are quite different things from a technical point of view both projects are strongly related to gaming and possible ROMs usage. We believe that that license is very suitable for RetroPie.
