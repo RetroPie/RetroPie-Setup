@@ -1,6 +1,7 @@
 # RetroPie Legal Information
 
 ## License
+
 Redistribution and use of the RetroPie code or any derivative works are permitted provided that the following conditions are met:
 
 Redistributions may not be sold, nor may they be used in a commercial product or activity.
@@ -26,9 +27,6 @@ A. No. Using the logo in your advertising makes it appear that the product is so
 
 **Q. Can I use the term „RetroPie“ in the name of my software?**
 A. Generally, no, especially if it is something that is sold. However, if you are producing a free RetroPie-related piece of software, it is common that permission is granted. Send a query to double-check first, please.
-
-**Q. How do I obtain a license to the RetroPie source code?**
-A. You can't. See the Copyright section above.
 
 **Q. Is it legal to download ROMs for a game when I own the PCB?**
 A. This is unclear and depends on where you live. In most cases you would need to obtain permission from the original manufacturer to do so.

@@ -1,3 +1,15 @@
+#!/usr/bin/env bash
+
+# This file is part of RetroPie.
+# 
+# (c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
+# 
+# See the LICENSE.md file at the top-level directory of this distribution and 
+# at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
+#
+#  Many, many thanks go to all people that provide the individual modules!!!
+#
+
 rp_module_id="packagecleanup"
 rp_module_desc="Remove raspbian packages that are not needed for RetroPie"
 rp_module_menus="3+"
