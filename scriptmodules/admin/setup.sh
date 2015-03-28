@@ -178,6 +178,7 @@ function updatescript_setup()
         return
     fi
     popd
+    rp_callModule runcommand install
     printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script. You need to restart the script."
 }
 
