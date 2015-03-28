@@ -16,16 +16,17 @@ rp_module_menus="3+"
 rp_module_flags="nobin !odroid"
 
 function configure_dispmanx() {
+    iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
     while true; do
         local count=1
         local options=()
         local command=()
-        source "$configdir/all/dispmanx.cfg"
         for idx in "${__mod_idx[@]}"; do
             [[ $idx -gt 200 ]] && break
             if [[ "${__mod_flags[$idx]}" =~ dispmanx ]]; then
                 local mod_id=${__mod_id[idx]}
-                if [[ "${!mod_id}" == "1" ]]; then
+                iniGet "$mod_id"
+                if [[ "$ini_value" == "1" ]]; then
                     options+=($count "Disable for $mod_id (currently enabled)")
                     command[$count]="$mod_id off"
                 else
