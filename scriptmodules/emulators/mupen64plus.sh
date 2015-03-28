@@ -52,7 +52,7 @@ function build_mupen64plus() {
     local params
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
-            #make -C "$dir/projects/unix" clean
+            make -C "$dir/projects/unix" clean
             params=()
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
