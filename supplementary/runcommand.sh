@@ -173,8 +173,12 @@ function main_menu() {
             [[ -n "$mode_def_rom" ]] && options+=(7 "Remove video mode choice for $emulator + rom")
         fi
 
-        [[ "$command" =~ retroarch ]] && options+=(8 "Select RetroArch render res for $emulator ($render_res)")
-        [[ "$command" =~ retroarch ]] && options+=(9 "Edit custom config for this rom")
+        if [[ "$command" =~ retroarch ]]; then
+            options+=(
+                8 "Select RetroArch render res for $emulator ($render_res)"
+                9 "Edit custom RetroArch config for this rom"
+            )
+        fi
 
         options+=(X "Launch")
 
@@ -219,7 +223,11 @@ function main_menu() {
                 choose_render_res "$rendersave"
                 ;;
             9)
-                eval 'nano "$rom.cfg"' </dev/tty
+                touch "$rom.cfg"
+                cmd=(dialog --editbox "$rom.cfg" 22 76)
+                choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+                [[ -n "$choice" ]] && echo "$choice" >"$rom.cfg"
+                [[ ! -s "$rom.cfg" ]] && rm "$rom.cfg"
                 ;;
             Z)
                 netplay=1
