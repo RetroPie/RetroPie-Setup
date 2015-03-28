@@ -54,7 +54,7 @@ function build_mupen64plus() {
     local params
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
-            make -C "$dir/projects/unix" clean
+            #make -C "$dir/projects/unix" clean
             params=()
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
@@ -80,7 +80,7 @@ function build_mupen64plus() {
         'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
         'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
         'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
-        'mupen64plus-video-rice/projects/unix/mupen64plus-video-rice.so'
+        'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
     )
 }
 
