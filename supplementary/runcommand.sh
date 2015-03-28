@@ -530,7 +530,7 @@ get_save_vars
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
 echo "Press 'x' or 'm' to configure launch options for emulator/port ($emulator). Errors will be logged to /tmp/runcommand.log"
-read -t 1 -N 1 key </dev/tty
+read -s -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
     get_all_modes
     main_menu
