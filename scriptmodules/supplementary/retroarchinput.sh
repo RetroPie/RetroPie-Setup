@@ -51,8 +51,8 @@ function keyboard_retroarchinput() {
     local key=()
     while read input; do
         local parts=($input)
-        local key+=("${parts[0]}")
-        options+=("${parts[0]}" $i 2 "${parts[2]}" $i 26 16 0)
+        key+=("${parts[0]}")
+        options+=("${parts[0]}" $i 2 "${parts[*]:2}" $i 26 16 0)
         ((i++))
     done < <(grep "^[[:space:]]*input_player[0-9]_[a-z]*" "$configdir/all/retroarch.cfg")
     local cmd=(dialog --backtitle "$__backtitle" --form "RetroArch keyboard configuration" 22 48 16)
