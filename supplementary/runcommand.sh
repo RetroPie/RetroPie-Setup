@@ -173,7 +173,12 @@ function main_menu() {
             [[ -n "$mode_def_rom" ]] && options+=(7 "Remove video mode choice for $emulator + rom")
         fi
 
-        [[ "$command" =~ retroarch ]] && options+=(8 "Select RetroArch render res for $emulator ($render_res)")
+        if [[ "$command" =~ retroarch ]]; then
+            options+=(
+                8 "Select RetroArch render res for $emulator ($render_res)"
+                9 "Edit custom RetroArch config for this rom"
+            )
+        fi
 
         options+=(X "Launch")
 
@@ -216,6 +221,13 @@ function main_menu() {
                 ;;
             8)
                 choose_render_res "$rendersave"
+                ;;
+            9)
+                touch "$rom.cfg"
+                cmd=(dialog --editbox "$rom.cfg" 22 76)
+                choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+                [[ -n "$choice" ]] && echo "$choice" >"$rom.cfg"
+                [[ ! -s "$rom.cfg" ]] && rm "$rom.cfg"
                 ;;
             Z)
                 netplay=1
@@ -386,11 +398,19 @@ function retroarch_append_config() {
         echo "video_fullscreen_y = ${dim[1]}" >>"$conf"
     fi
 
+    # if the rom has a custom configuration then append that too
+    if [[ -f "$rom.cfg" ]]; then
+        conf+=",\"$rom.cfg\""
+    fi
+
+    # if we already have an existing appendconfig parameter, we need to add our configs to that 
     if [[ "$command" =~ "--appendconfig" ]]; then
         command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,$conf|")
     else
         command+=" --appendconfig $conf"
     fi
+
+    # append any netplay configuration
     if [[ $netplay -eq 1 ]] && [[ -f "$retronetplay_conf" ]]; then
         source "$retronetplay_conf"
         command+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes"
@@ -510,7 +530,7 @@ get_save_vars
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
 echo "Press 'x' or 'm' to configure launch options for emulator/port ($emulator). Errors will be logged to /tmp/runcommand.log"
-read -t 1 -N 1 key </dev/tty
+read -s -t 1 -N 1 key </dev/tty
 if [[ "$key" =~ [xXmM] ]]; then
     get_all_modes
     main_menu

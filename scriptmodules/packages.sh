@@ -167,11 +167,17 @@ function rp_callModule() {
     # call the function with parameters
     $function "$@"
 
+    local file
     # some errors were returned. append to global errors and return
     if [[ "${#md_ret_errors}" -eq 0 ]]; then
         # check if any required files are found
-        if [[ -n "$md_ret_require" ]] && [[ ! -f "$md_ret_require" ]]; then
-            md_ret_errors+=("Could not successfully $function $md_desc ($md_ret_require not found).")
+        if [[ -n "$md_ret_require" ]]; then
+            for file in "${md_ret_require[@]}"; do
+                if [[ ! -e "$file" ]]; then
+                    md_ret_errors+=("Could not successfully $function $md_desc ($file not found).")
+                    break
+                fi
+            done
         else
             # check for existance and copy any files/directories returned
             if [[ -n "$md_ret_files" ]]; then

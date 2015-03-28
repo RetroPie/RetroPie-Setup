@@ -27,8 +27,8 @@ function sources_mupen64plus() {
         'mupen64plus input-sdl'
         #'ricrpi rsp-hle'
         'mupen64plus rsp-hle'
-        #'ricrpi video-gles2rice'
-        'mupen64plus video-rice'
+        'ricrpi video-gles2rice'
+        #'joolswills video-rice rpi'
         'ricrpi video-gles2n64'
     )
     local repo
@@ -52,7 +52,7 @@ function build_mupen64plus() {
     local params
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
-            make -C "$dir/projects/unix" clean
+            #make -C "$dir/projects/unix" clean
             params=()
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
@@ -70,13 +70,23 @@ function build_mupen64plus() {
     done
 
     rpSwap off
+    md_ret_require=(
+        'mupen64plus-ui-console/projects/unix/mupen64plus'
+        'mupen64plus-core/projects/unix/libmupen64plus.so.2.0.0'
+        'mupen64plus-audio-sdl/projects/unix/mupen64plus-audio-sdl.so'
+        'mupen64plus-input-sdl/projects/unix/mupen64plus-input-sdl.so'
+        'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
+        'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
+        'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
+        'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
+    )
 }
 
 function install_mupen64plus() {
     for source in *; do
         if [[ -f "$source/projects/unix/Makefile" ]]; then
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
-            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" install
+            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" VC=1 install
         fi
     done
     cp -v "$md_build/mupen64plus-video-settings/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"

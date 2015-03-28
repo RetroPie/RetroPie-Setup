@@ -49,7 +49,7 @@ function configure_mame4all() {
     mkdir -p "$configdir/$system/"{cfg,hi,inp,memcard,nvram,snap,sta}
 
     # move old config
-    if [[ -f "$mame.cfg" && ! -h "$mame.cfg" ]]; then
+    if [[ -f "mame.cfg" && ! -h "mame.cfg" ]]; then
         mv "mame.cfg" "$configdir/$system/mame.cfg"
     fi
 
