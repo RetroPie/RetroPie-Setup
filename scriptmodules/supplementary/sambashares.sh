@@ -44,6 +44,7 @@ function configure_sambashares() {
 
     set_ensureEntryInSMBConf "roms" "$romdir"
     set_ensureEntryInSMBConf "bios" "$home/RetroPie/BIOS"
+    set_ensureEntryInSMBConf "configs" "$configdir"
 
     rp_callModule resetromdirs configure
 
