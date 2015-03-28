@@ -174,6 +174,7 @@ function main_menu() {
         fi
 
         [[ "$command" =~ retroarch ]] && options+=(8 "Select RetroArch render res for $emulator ($render_res)")
+        [[ "$command" =~ retroarch ]] && options+=(9 "Edit custom config for this rom")
 
         options+=(X "Launch")
 
@@ -216,6 +217,9 @@ function main_menu() {
                 ;;
             8)
                 choose_render_res "$rendersave"
+                ;;
+            9)
+                eval 'nano "$rom.cfg"' </dev/tty
                 ;;
             Z)
                 netplay=1
@@ -390,6 +394,10 @@ function retroarch_append_config() {
         command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,$conf|")
     else
         command+=" --appendconfig $conf"
+    fi
+    if [[ -f "$rom.cfg" ]];
+    then
+        command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,\"$rom.cfg\"|")
     fi
     if [[ $netplay -eq 1 ]] && [[ -f "$retronetplay_conf" ]]; then
         source "$retronetplay_conf"
