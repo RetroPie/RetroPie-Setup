@@ -398,15 +398,16 @@ function retroarch_append_config() {
         echo "video_fullscreen_y = ${dim[1]}" >>"$conf"
     fi
 
+    if [[ -f "$rom.cfg" ]]; then
+        conf+=",\"$rom.cfg\""
+    fi
+
     if [[ "$command" =~ "--appendconfig" ]]; then
         command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,$conf|")
     else
         command+=" --appendconfig $conf"
     fi
-    if [[ -f "$rom.cfg" ]];
-    then
-        command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,\"$rom.cfg\"|")
-    fi
+
     if [[ $netplay -eq 1 ]] && [[ -f "$retronetplay_conf" ]]; then
         source "$retronetplay_conf"
         command+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes"
