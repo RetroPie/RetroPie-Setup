@@ -1,5 +1,0 @@
-shaders = "1"
-shader0 = "phosphor-normalgamma.glsl"
-filter_linear0 = "true"
-wrap_mode0 = "clamp_to_border"
-float_framebuffer0 = "false"
