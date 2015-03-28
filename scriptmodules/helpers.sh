@@ -144,6 +144,10 @@ function iniGet() {
     local key="$1"
     local file="$2"
     [[ -z "$file" ]] && file="$__ini_cfg_file"
+    if [[ ! -f "$file" ]]; then
+        ini_value=""
+        return 1
+    fi
     local delim="$__ini_cfg_delim"
     local quote="$__ini_cfg_quote"
     # we strip the delimiter of spaces, so we can "fussy" match existing entries that have the wrong spacing
