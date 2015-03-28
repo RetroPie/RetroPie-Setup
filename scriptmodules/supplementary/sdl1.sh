@@ -7,8 +7,6 @@
 # See the LICENSE.md file at the top-level directory of this distribution and 
 # at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
 #
-#  Many, many thanks go to all people that provide the individual modules!!!
-#
 
 rp_module_id="sdl1"
 rp_module_desc="SDL 1.2.15 with rpi fixes and dispmanx"

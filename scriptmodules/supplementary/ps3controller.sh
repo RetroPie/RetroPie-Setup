@@ -7,8 +7,6 @@
 # See the LICENSE.md file at the top-level directory of this distribution and 
 # at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
 #
-#  Many, many thanks go to all people that provide the individual modules!!!
-#
 
 rp_module_id="ps3controller"
 rp_module_desc="Install PS3 controller driver"

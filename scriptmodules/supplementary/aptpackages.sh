@@ -7,8 +7,6 @@
 # See the LICENSE.md file at the top-level directory of this distribution and 
 # at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
 #
-#  Many, many thanks go to all people that provide the individual modules!!!
-#
 
 rp_module_id="aptpackages"
 rp_module_desc="Update APT packages"

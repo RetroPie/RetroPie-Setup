@@ -7,8 +7,6 @@
 # See the LICENSE.md file at the top-level directory of this distribution and 
 # at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
 #
-#  Many, many thanks go to all people that provide the individual modules!!!
-#
 
 rp_module_id="lr-imame4all"
 rp_module_desc="Arcade emu - iMAME4all (based on MAME 0.37b5) port for libretro"
