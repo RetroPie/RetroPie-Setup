@@ -27,10 +27,11 @@ function sources_mupen64plus-testing() {
         'mupen64plus input-sdl'
         'mupen64plus rsp-hle'
         #'ricrpi video-gles2rice'
-        'mupen64plus video-rice'
+        #'mupen64plus video-rice'
+        'ricrpi video-gles2rice pandora-backport'
         #'Narann video-rice'
         #'Nebuleon video-gles2n64'
-        'ricrpi video-gles2n64'
+        'gizmo98 video-gles2n64 pandora-backport'
         #'gizmo98 video-gles2n64'
         'gizmo98 video-glide64mk2 rpi'
     )
@@ -89,7 +90,7 @@ function configure_mupen64plus-testing() {
     cat > "$configdir/n64/mupen64plus.cfg" << _EOF_
     [Video-Rice]
 # Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
-ScreenUpdateSetting = 6
+ScreenUpdateSetting = 7
 # Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)
 FrameBufferWriteBackControl = 1
 # If this option is enabled, the plugin will skip every other frame
