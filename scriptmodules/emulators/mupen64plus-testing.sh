@@ -112,9 +112,14 @@ _EOF_
     chown -R $user:$user "$configdir/n64"
     su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
 
-    iniConfig " = " "" "$configdir/n64/mupen64plus.cfg"
-    iniSet "AudioPlugin" "\"mupen64plus-audio-omx.so\""
-
+    iniConfig " = " '"' "$configdir/n64/mupen64plus.cfg"
+    iniSet "AudioPlugin" "mupen64plus-audio-omx.so"
+    iniSet "ScreenshotPath" "$romdir/n64"
+    iniSet "SaveStatePath" "$romdir/n64"
+    iniSet "SaveSRAMPath" "$romdir/n64"
+    
+    mkRomDir "n64"
+    
     addSystem 0 "${md_id}-gles2n64-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-n64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
     addSystem 0 "${md_id}-gles2rice-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
     addSystem 0 "${md_id}-glide64mk2-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-glide64mk2.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
