@@ -121,8 +121,8 @@ wrpFBO = False
 _EOF_
     chown -R $user:$user "$configdir/n64"
     su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
-    iniConfig " = " "" "$configdir/n64/mupen64plus.cfg"
-    iniSet "AudioPlugin" "\"mupen64plus-audio-omx.so\""
+    iniConfig " = " '"' "$configdir/n64/mupen64plus.cfg"
+    iniSet "AudioPlugin" "mupen64plus-audio-omx.so"
     iniSet "ScreenshotPath" "$romdir/n64"
     iniSet "SaveStatePath" "$romdir/n64"
     iniSet "SaveSRAMPath" "$romdir/n64"
