@@ -9,7 +9,7 @@
 #
 
 rp_module_id="gamecondriver"
-rp_module_desc="Gamecon driver"
+rp_module_desc="Gamecon & db9 drivers"
 rp_module_menus="3+"
 rp_module_flags="nobin"
 
@@ -36,14 +36,10 @@ function install_gamecondriver() {
     # install dkms
     getDepends dkms
 
-    # reconfigure / install headers (takes a a while)
-    if [[ "$(dpkg-query -W -f='${Version}' linux-headers-$(uname -r))" == "$(uname -r)-2" ]]; then
-        dpkg-reconfigure linux-headers-$(uname -r)
-    else
-        wget ${DOWNLOAD_LOC}/linux-headers-rpi/linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
-        dpkg -i linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
-        rm linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
-    fi
+    # install kernel headers (takes a a while)
+    wget ${DOWNLOAD_LOC}/linux-headers-rpi/linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
+    dpkg -i linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
+    rm linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
 
     # install gamecon
     if [[ "$(dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms)" == ${GAMECON_VER} ]]; then
@@ -65,24 +61,54 @@ function install_gamecondriver() {
 
     # test if gamecon installation is OK
     if [[ -n $(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko) ]]; then
-        printMsgs "dialog" "$(gzip -dc /usr/share/doc/gamecon_gpio_rpi/README.gz)"
+        dialog --clear --yesno "Gamecon GPIO driver successfully installed. Would you like to see README?" \
+            22 76 >/dev/tty
+        case $? in
+            0)
+                dialog --msgbox "$(gzip -dc /usr/share/doc/gamecon_gpio_rpi/README.gz)" 22 76 >/dev/tty
+                ;;
+            *)
+                ;;
+        esac
     else
         printMsgs "dialog" "Gamecon GPIO driver installation FAILED"
+	return 0
     fi
 
     # test if db9 installation is OK
     if [[ -n $(modinfo -n db9_gpio_rpi | grep db9_gpio_rpi.ko) ]]; then
-            printMsgs "dialog" "Db9 GPIO driver successfully installed. \nUse 'zless /usr/share/doc/db9_gpio_rpi/README.gz' to read how to use it."
+         dialog --clear --yesno "Db9 GPIO driver successfully installed. Would you like to see README?" \
+            22 76 >/dev/tty
+        case $? in
+            0)
+                dialog --msgbox "$(gzip -dc /usr/share/doc/db9_gpio_rpi/README.gz)" 22 76 >/dev/tty
+                ;;
+            *)
+                ;;
+        esac
     else
         printMsgs "dialog" "Db9 GPIO driver installation FAILED"
+	return 0
     fi
 }
 
 function configure_gamecondriver() {
     if [[ "$(dpkg-query -W -f='${Status}' gamecon-gpio-rpi-dkms)" != "install ok installed" ]]; then
-        printMsgs "dialog" "gamecon_gpio_rpi not found, install it first"
         return 0
     fi
+
+    dialog \
+        --title "Configuration for SNES controllers" --clear \
+        --yesno "Gamecon driver supports RetroPie GPIO adapter board for 2 SNES controllers. Do you want to configure gamecon for 2 SNES controllers?" \
+        22 76 >/dev/tty
+    case $? in
+        0)
+            echo "Configuring gamecon for 2 SNES controllers."
+            ;;
+        *)
+            return 0
+            ;;
+    esac
 
     REVSTRING=$(grep Revision /proc/cpuinfo | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4)
     case "$REVSTRING" in
@@ -94,25 +120,6 @@ function configure_gamecondriver() {
             ;;
     esac
 
-    printMsgs "dialog" "\
-__________\n\
-         |          ### Board gpio revision $GPIOREV detected ###\n\
-    + *  |\n\
-    * *  |\n\
-    1 -  |          The driver is set to use the following configuration\n\
-    2 *  |          for 2 SNES controllers:\n\
-    * *  |\n\
-    * *  |\n\
-    * *  |          + = power\n\
-    * *  |          - = ground\n\
-    * *  |          C = clock\n\
-    C *  |          L = latch\n\
-    * *  |          1 = player1 pad\n\
-    L *  |          2 = player2 pad\n\
-    * *  |          * = unconnected\n\
-         |\n\
-         |"
-
     if [[ -n $(lsmod | grep gamecon_gpio_rpi) ]]; then
         rmmod gamecon_gpio_rpi
     fi
@@ -123,11 +130,31 @@ __________\n\
         modprobe gamecon_gpio_rpi map=0,0,1,0,0,1
     fi
 
-    dialog --title " Update $configdir/all/retroarch.cfg " --clear \
-    --yesno "Would you like to update button mappings \
-    to $configdir/all/retroarch.cfg ?" 22 76 >/dev/tty
+    dialog --clear --msgbox "\
+__________\n\
+         |          ### Board gpio revision $GPIOREV detected ###\n\
+    + *  |\n\
+    * *  |\n\
+    1 -  |          The driver is now set to use the following\n\
+    2 *  |          configuration for 2 SNES controllers:\n\
+    * *  |          (compatible with RetroPie GPIO adapter)\n\
+    * *  |\n\
+    * *  |          + = power\n\
+    * *  |          - = ground\n\
+    * *  |          C = clock\n\
+    C *  |          L = latch\n\
+    * *  |          1 = player1 pad\n\
+    L *  |          2 = player2 pad\n\
+    * *  |          * = unconnected\n\
+         |\n\
+         |" 22 76 >/dev/tty
 
     iniConfig " = " "" "$configdir/all/retroarch.cfg"
+
+    dialog --title " Update $configdir/all/retroarch.cfg " --clear \
+    --yesno "Would you like to update button mappings \
+    in $configdir/all/retroarch.cfg \
+    for 2 SNES controllers?" 22 76 >/dev/tty
 
     case $? in
         0)
@@ -171,7 +198,7 @@ __________\n\
 
     dialog \
         --title " Enable SNES configuration permanently " --clear \
-        --yesno "Would you like to permanently enable SNES configuration?" \
+        --yesno "Would you like to permanently enable the SNES configuration?" \
         22 76 >/dev/tty
 
     case $? in
@@ -183,11 +210,10 @@ __________\n\
                     addLineToFile "gamecon_gpio_rpi map=0,0,1,0,0,1" "/etc/modules"
                 fi
             fi
+            printMsgs "dialog" "Gamecon GPIO driver is now permanently enabled with SNES configuration."
             ;;
         *)
             #TODO: delete the line from /etc/modules
             ;;
     esac
-
-    printMsgs "dialog" "Gamecon GPIO driver enabled with 2 SNES pads."
 }
