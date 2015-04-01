@@ -8,13 +8,13 @@ function depends_bluez() {
 }
 
 function sources_bluez() {
-    wget https://www.kernel.org/pub/linux/bluetooth/bluez-5.27.tar.xz
-    tar xJvf bluez-5.27.tar.xz
-    cd bluez-5.27
+    wget https://www.kernel.org/pub/linux/bluetooth/bluez-5.29.tar.xz
+    tar xJvf bluez-5.29.tar.xz
+    cd bluez-5.29
 }
 
 function build_bluez() {
-    cd bluez-5.27
+    cd bluez-5.29
     ./configure --prefix=/usr --mandir=/usr/share/man --sysconfdir=/etc --localstatedir=/var --disable-systemd --enable-sixaxis
     make
 
