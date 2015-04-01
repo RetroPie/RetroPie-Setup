@@ -72,7 +72,7 @@ function install_gamecondriver() {
         esac
     else
         printMsgs "dialog" "Gamecon GPIO driver installation FAILED"
-	return 0
+        return 0
     fi
 
     # test if db9 installation is OK
@@ -88,7 +88,7 @@ function install_gamecondriver() {
         esac
     else
         printMsgs "dialog" "Db9 GPIO driver installation FAILED"
-	return 0
+        return 0
     fi
 }
 
