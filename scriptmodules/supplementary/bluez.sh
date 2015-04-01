@@ -32,7 +32,7 @@ function configure_bluez() {
 
     cat > /etc/udev/rules.d/10-local.rules << _EOF_  
 # Set bluetooth power up
-ACTION=="add", KERNEL=="hci0", RUN+="/usr/bin/hciconfig hci0 up"
+ACTION=="add", KERNEL=="hci0", RUN+="/usr/bin/hciconfig hci0 up pscan"
 _EOF_
 
     /etc/init.d/bluetooth start
