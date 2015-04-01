@@ -8,13 +8,13 @@ function depends_bluezps3() {
 }
 
 function configure_bluezps3() {  
-  printMsgs "dialog" "Please connect your PS3 controller via USB-CABLE, press PS button and ENTER."
-  # Wait max 60s until directories appear
-  inotifywait -e create -r -t 60 /var/lib/bluetooth
-  # Trust every ps3 controller
-  for file in $(grep -l "Name=PLAYSTATION(R)3 Controller" /var/lib/bluetooth/*/*/info); do
-    sed -i "s/Trusted=false/Trusted=true/g" $file
-  done
-  
-  printMsgs "dialog" "Please restart."
+    printMsgs "dialog" "Please connect your PS3 controller via USB-CABLE, press PS button and ENTER."
+    # Wait max 60s until directories appear
+    inotifywait -e create -r -t 60 /var/lib/bluetooth
+    # Trust every ps3 controller
+    for file in $(grep -l "Name=PLAYSTATION(R)3 Controller" /var/lib/bluetooth/*/*/info); do
+        sed -i "s/Trusted=false/Trusted=true/g" $file
+    done
+
+    printMsgs "dialog" "Please restart."
 }
