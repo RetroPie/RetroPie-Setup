@@ -22,6 +22,7 @@ function build_bluez() {
     sudo make install
     sudo install -v -dm755 /etc/bluetooth
     sudo install -v -m644 src/main.conf /etc/bluetooth/main.conf
+    sudo install -v -m644 profiles/input/input.conf /etc/bluetooth/input.conf
 }
 
 function configure_bluez() {
