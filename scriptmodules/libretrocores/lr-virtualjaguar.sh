@@ -9,7 +9,7 @@
 #
 
 rp_module_id="lr-virtualjaguar"
-rp_module_desc="Atari Jaguar emu - Virtual Jaguar port for libretro"
+rp_module_desc="Atari Jaguar emu - Virtual Jaguar (optimised) port for libretro"
 rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
