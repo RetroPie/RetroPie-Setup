@@ -19,7 +19,7 @@ function sources_lr-beetle-vb() {
 
 function build_lr-beetle-vb() {
     make clean
-    make platform=armvneon NEED_THREADING=1 NEED_STEREO_SOUND=1 FRONTEND_SUPPORTS_RGB565=1
+    make platform=armvneon NEED_STEREO_SOUND=1 FRONTEND_SUPPORTS_RGB565=1
     md_ret_require="$md_build/mednafen_vb_libretro.so"
 }
 
