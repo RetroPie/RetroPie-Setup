@@ -18,7 +18,7 @@ function sources_lr-yabause() {
 }
 
 function build_lr-yabause() {
-	cd libretro
+    cd libretro
     make clean
     make platform=armvneonhardfloat
     md_ret_require="$md_build/libretro/yabause_libretro.so"
