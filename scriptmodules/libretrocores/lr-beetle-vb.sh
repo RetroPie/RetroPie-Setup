@@ -34,5 +34,5 @@ function configure_lr-beetle-vb() {
     mkRomDir "virtualboy"
     ensureSystemretroconfig "virtualboy"
 
-    addSystem 0 "$md_id" "virtualboy" "$md_inst/mednafen_vb_libretro.so"
+    addSystem 1 "$md_id" "virtualboy" "$md_inst/mednafen_vb_libretro.so"
 }
