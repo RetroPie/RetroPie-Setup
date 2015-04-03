@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# parameters - reqmode command_to_launch savename
+# parameters - mode_req command_to_launch savename
 
-# reqmode==0: run command
-# reqmode==1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz, and run command
-# reqmode==4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz, and run command
+# mode_req==0: run command
+# mode_req==1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz, and run command
+# mode_req==4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz, and run command
 
-# reqmode=="CEA-#": set video mode to CEA mode #
-# reqmode=="DMT-#": set video mode to DMT mode #
-# reqmode=="PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
+# mode_req=="CEA-#": set video mode to CEA mode #
+# mode_req=="DMT-#": set video mode to DMT mode #
+# mode_req=="PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
 
 # note that mode switching only happens if the monitor reports the modes as available (via tvservice)
 # and the requested mode differs from the currently active mode
@@ -41,8 +41,8 @@ mode_map[4-DMT-4:3]="DMT-16"
 mode_map[4-CEA-16:9]="CEA-4"
 
 function get_params() {
-    reqmode="$1"
-    [[ -z "$reqmode" ]] && exit 1
+    mode_req="$1"
+    [[ -z "$mode_req" ]] && exit 1
 
     command="$2"
     [[ -z "$command" ]] && exit 1
@@ -63,11 +63,13 @@ function get_params() {
 }
 
 function get_save_vars() {
-    # convert emulator name / binary to a names usable as variables in our config file
-    emusave=${emulator//\//_}
-    emusave=${emusave//[^a-Z0-9_\-]/}
-    rendersave="${emusave}_render"
-    romsave=r$(echo "$command" | md5sum | cut -d" " -f1)
+    # convert emulator name / binary to a names usable as variables in our config files
+    save_emu=${emulator//\//_}
+    save_emu=${save_emu//[^a-Z0-9_\-]/}
+    save_emu_render="${save_emu}_render"
+    fb_save_emu="${save_emu}_fb"
+    save_rom=r$(echo "$command" | md5sum | cut -d" " -f1)
+    fb_save_rom="${save_rom}_fb"
 }
 
 function get_all_modes() {
@@ -92,53 +94,94 @@ function get_all_modes() {
     done
 }
 
-function get_mode() {
-    # get current mode / aspect ratio
-    mode_cur_status=$(tvservice -s)
-    if [[ "$mode_cur_status" =~ (PAL|NTSC) ]]; then
-        mode_cur=$(echo "$mode_cur_status" | grep -oE "(PAL|NTSC) (4:3|16:10|16:9)")
-        mode_cur=${mode_cur/ /-}
+function get_mode_info() {
+    local status="$1"
+    local temp
+    local mode_info=()
+
+    # get mode type / id
+    if [[ "$status" =~ (PAL|NTSC) ]]; then
+        temp=($(echo "$status" | grep -oE "(PAL|NTSC) (4:3|16:10|16:9)"))
     else
-        mode_cur=($(echo "$mode_cur_status" | grep -oE "(CEA|DMT) \([0-9]+\)"))
-        mode_cur_type="${mode_cur[0]}"
-        mode_cur_id="${mode_cur[1]//[()]/}"
-        mode_cur="$mode_cur_type-$mode_cur_id"
+        temp=($(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)"))
     fi
+    mode_info[0]="${temp[0]}"
+    mode_info[1]="${temp[1]//[()]/}"
 
-    mode_cur_aspect=$(echo "$mode_cur_status" | grep -oE "(16:9|4:3)")
-    # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
-    [[ -z "$mode_cur_aspect" ]] && mode_cur_aspect="4:3"
+    # get mode resolution
+    temp=$(echo "$status" | cut -d"," -f2 | grep -oE "[0-9]+x[0-9]+")
+    temp=(${temp/x/ })
+    mode_info[2]="${temp[0]}"
+    mode_info[3]="${temp[1]}"
 
-    mode_new="$mode_cur"
+    # get aspect ratio
+    temp=$(echo "$status" | grep -oE "([0-9]+:[0-9]+)")
+    mode_info[4]="$temp"
 
-    # if called with specific mode, use that else choose the best mode from our array
-    if [[ "$reqmode" =~ ^(DMT|CEA)-[0-9]+$ ]]; then
-        mode_new="$reqmode"
-    elif [[ "$reqmode" =~ ^(PAL|NTSC)-(4:3|16:10|16:9)$ ]]; then
-        mode_new="$reqmode"
-    else
-        local map_mode="${mode_map[${reqmode}-${mode_cur_type}-${mode_cur_aspect}]}"
-        [[ -n "$map_mode" ]] && mode_new="$map_mode"
+    # get refresh rate
+    temp=$(echo "$status" | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
+    mode_info[5]="$temp"
+
+    echo "${mode_info[@]}"
+}
+
+function load_mode_defaults() {
+    local temp
+    mode_orig=()
+
+    if [[ $has_tvs -eq 1 ]]; then
+        # get current mode / aspect ratio
+        mode_orig=($(get_mode_info "$(tvservice -s)"))
+        mode_new=("${mode_orig[@]}")
+
+        # get default mode for requested mode of 1 or 4
+        if [[ "$mode_req" == "0" ]]; then
+            mode_new_id="${mode_orig[0]}-${mode_orig[1]}"
+        elif [[ $mode_req =~ (1|4) ]]; then
+            # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
+            local aspect="${mode_orig[4]}"
+            [[ "$aspect" =~ (4:3|16:9) ]] || aspect="4:3"
+            temp="${mode_req}-${mode_orig[0]}-$aspect"
+            mode_new_id="${mode_map[$temp]}"
+        else
+            mode_new_id="$mode_req"
+        fi
     fi
 
     mode_def_emu=""
     mode_def_rom=""
+    fb_def_emu=""
+    fb_def_rom=""
     render_res="640x480"
 
     if [[ -f "$video_conf" ]]; then
-        iniGet "$emusave" "$video_conf"
+        # local default video modes for emulator / rom
+        iniGet "$save_emu" "$video_conf"
         if [[ -n "$ini_value" ]]; then
             mode_def_emu="$ini_value"
-            mode_new="$mode_def_emu"
+            mode_new_id="$mode_def_emu"
         fi
 
-        iniGet "$romsave" "$video_conf"
+        iniGet "$save_rom" "$video_conf"
         if [[ -n "$ini_value" ]]; then
             mode_def_rom="$ini_value"
-            mode_new="$mode_def_rom"
+            mode_new_id="$mode_def_rom"
         fi
 
-        iniGet "$rendersave" "$video_conf"
+        # load default framebuffer res for emulator / rom
+        iniGet "$fb_save_emu" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            fb_def_emu="$ini_value"
+            fb_new="$fb_def_emu"
+        fi
+
+        iniGet "$fb_save_rom" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            fb_def_rom="$ini_value"
+            fb_new="$fb_def_rom"
+        fi
+
+        iniGet "$save_emu_render" "$video_conf"
         if [[ -n "$ini_value" ]]; then
             render_res="$ini_value"
         fi
@@ -178,6 +221,13 @@ function main_menu() {
                 8 "Select RetroArch render res for $emulator ($render_res)"
                 9 "Edit custom RetroArch config for this rom"
             )
+        else
+            options+=(
+                10 "Select framebuffer res for $emulator ($fb_def_emu)"
+                11 "Select framebuffer res for $emulator + rom ($fb_def_rom)"
+            )
+            [[ -n "$fb_def_emu" ]] && options+=(12 "Remove framebuffer res choice for $emulator")
+            [[ -n "$fb_def_rom" ]] && options+=(13 "Remove framebuffer res choice for $emulator + rom")
         fi
 
         options+=(X "Launch")
@@ -186,41 +236,41 @@ function main_menu() {
             options+=(Z "Launch with netplay enabled")
         fi
 
-        cmd=(dialog --menu "System: $system\nEmulator: $emulator\nVideo Mode: ${mode[$mode_new]}\nROM: $rom_bn"  22 76 16 )
+        cmd=(dialog --menu "System: $system\nEmulator: $emulator\nVideo Mode: ${mode[$mode_new_id]}\nROM: $rom_bn"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         case $choice in
             1)
                 choose_app
                 get_save_vars
-                get_mode
+                load_mode_defaults
                 ;;
             2)
                 choose_app "$appsave"
                 get_save_vars
-                get_mode
+                load_mode_defaults
                 ;;
             3)
                 sed -i "/$appsave/d" "$apps_conf"
                 get_sys_command "$system" "$rom"
                 ;;
             4)
-                choose_mode "$emusave" "$mode_def_emu"
-                get_mode
+                choose_mode "$save_emu" "$mode_def_emu"
+                load_mode_defaults
                 ;;
             5)
-                choose_mode "$romsave" "$mode_def_rom"
-                get_mode
+                choose_mode "$save_rom" "$mode_def_rom"
+                load_mode_defaults
                 ;;
             6)
-                sed -i "/$emusave/d" "$video_conf"
-                get_mode
+                sed -i "/$save_emu/d" "$video_conf"
+                load_mode_defaults
                 ;;
             7)
-                sed -i "/$romsave/d" "$video_conf"
-                get_mode
+                sed -i "/$save_rom/d" "$video_conf"
+                load_mode_defaults
                 ;;
             8)
-                choose_render_res "$rendersave"
+                choose_render_res "$save_emu_render"
                 ;;
             9)
                 touch "$rom.cfg"
@@ -228,6 +278,22 @@ function main_menu() {
                 choice=$("${cmd[@]}" 2>&1 >/dev/tty)
                 [[ -n "$choice" ]] && echo "$choice" >"$rom.cfg"
                 [[ ! -s "$rom.cfg" ]] && rm "$rom.cfg"
+                ;;
+            10)
+                choose_fb_res "$fb_save_emu" "$fb_def_emu"
+                load_mode_defaults
+                ;;
+            11)
+                choose_fb_res "$fb_save_rom" "$fb_def_rom"
+                load_mode_defaults
+                ;;
+            12)
+                sed -i "/$fb_save_emu/d" "$video_conf"
+                load_mode_defaults
+                ;;
+            13)
+                sed -i "/$fb_save_rom/d" "$video_conf"
+                load_mode_defaults
                 ;;
             Z)
                 netplay=1
@@ -249,10 +315,10 @@ function choose_mode() {
         options+=("$key" "${mode[$key]}")
     done
     local cmd=(dialog --default-item "$default" --menu "Choose video output mode"  22 76 16 )
-    mode_new=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    [[ -z "$mode_new" ]] && return
+    mode_new_id=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$mode_new_id" ]] && return
 
-    iniSet set "=" '"' "$save" "$mode_new" "$video_conf"
+    iniSet set "=" '"' "$save" "$mode_new_id" "$video_conf"
 }
 
 function choose_app() {
@@ -329,20 +395,74 @@ function choose_render_res() {
     iniSet set "=" '"' "$save" "$render_res" "$video_conf"
 }
 
+function choose_fb_res() {
+    local save="$1"
+    local default="$2"
+    local res=(
+        "320x240"
+        "640x480"
+        "960x720"
+        "1280x960"
+    )
+    local i=1
+    local item
+    local options=()
+    for item in "${res[@]}"; do
+        options+=($i "$item")
+        ((i++))
+    done
+    local cmd=(dialog --default-item "$default" --menu "Choose framebuffer resolution (Useful for X and console apps)" 22 76 16 )
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$choice" ]] && return
+    case "$choice" in
+        [1-4])
+            fb_res="${res[$choice-1]}"
+            ;;
+    esac
+
+    iniSet set "=" '"' "$save" "$fb_res" "$video_conf"
+}
+
+function switch_fb_res() {
+    local res=(${1//x/ })
+    local res_x=${res[0]}
+    local res_y=${res[1]}
+    if [[ -z "$res_x" || -z "$res_y" ]]; then
+        fbset --all -depth 8
+        fbset --all -depth 16
+    else
+        fbset --all -depth 8
+        fbset --all --geometry $res_x $res_y $res_x $res_y 16
+    fi
+}
+
 function switch_mode() {
-    local mode=(${1//-/ })
+    local mode_id="$1"
+
+    # if the requested mode is the same as the current mode don't switch
+    [[ "$mode_id" == "${mode_orig[0]}-${mode_orig[1]}" ]] && return 0
+
+    local mode_id=(${mode_id//-/ })
+
     local switched=0
-    if [[ "${mode[0]}" == "PAL" ]] || [[ "${mode[0]}" == "NTSC" ]]; then
-        tvservice -c "${mode[*]}"
+    if [[ "${mode_id[0]}" == "PAL" ]] || [[ "${mode_id[0]}" == "NTSC" ]]; then
+        tvservice -c "${mode_id[*]}"
         switched=1
     else
-        hasmode=$(tvservice -m ${mode[0]} | grep -w "mode ${mode[1]}")
-        if [[ -n "${mode[*]}" ]] && [[ -n "$hasmode" ]]; then
-            tvservice -e "${mode[*]}"
+        local has_mode=$(tvservice -m ${mode_id[0]} | grep -w "mode ${mode_id[1]}")
+        if [[ -n "${mode_id[*]}" ]] && [[ -n "$has_mode" ]]; then
+            tvservice -e "${mode_id[*]}"
             switched=1
         fi
     fi
-    [[ $switched -eq 1 ]] && reset_framebuffer
+
+    # if we have switched mode, switch the framebuffer resolution also
+    if [[ $switched -eq 1 ]]; then
+        sleep 1
+        mode_new=($(get_mode_info "$(tvservice -s)"))
+        [[ -z "$fb_new" ]] && fb_new="${mode_new[2]}x${mode_new[3]}"
+    fi
+
     return $switched
 }
 
@@ -355,10 +475,9 @@ function restore_mode() {
     fi
 }
 
-function reset_framebuffer() {
+function restore_fb() {
     sleep 1
-    fbset -depth 8
-    fbset -depth 16
+    switch_fb_res "${mode_orig[2]}x${mode_orig[3]}"
 }
 
 function config_dispmanx() {
@@ -380,8 +499,7 @@ function retroarch_append_config() {
     touch "$conf"
     if [[ "$has_tvs" -eq 1 ]]; then
         # set video_refresh_rate in our config to the same as the screen refresh
-        local rate=$(tvservice -s | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
-        [[ -n "$rate" ]] && echo "video_refresh_rate = $rate" >>"$conf"
+        [[ -n "${mode_new[5]}" ]] && echo "video_refresh_rate = ${mode_new[5]}" >>"$conf"
     fi
 
     local dim
@@ -403,7 +521,7 @@ function retroarch_append_config() {
         conf+=",\"$rom.cfg\""
     fi
 
-    # if we already have an existing appendconfig parameter, we need to add our configs to that 
+    # if we already have an existing appendconfig parameter, we need to add our configs to that
     if [[ "$command" =~ "--appendconfig" ]]; then
         command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,$conf|")
     else
@@ -525,7 +643,7 @@ get_params "$@"
 
 get_save_vars
 
-[[ $has_tvs -eq 1 ]] && get_mode
+load_mode_defaults
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
@@ -537,13 +655,12 @@ if [[ "$key" =~ [xXmM] ]]; then
     clear
 fi
 
-switched=0
-if [[ -n "$mode_new" ]] && [[ "$mode_new" != "$mode_cur" ]]; then
-    switch_mode "$mode_new"
-    switched=$?
-fi
+switch_mode "$mode_new_id"
+switched=$?
 
-config_dispmanx "$emusave"
+[[ -n "$fb_new" ]] && switch_fb_res "$fb_new"
+
+config_dispmanx "$save_emu"
 
 # switch to configured cpu scaling governor
 [[ -n "$governor" ]] && set_governor "$governor"
@@ -556,11 +673,12 @@ eval $command </dev/tty 2>/tmp/runcommand.log
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
 
-# if we switched mode - restore preferred mode, and reset framebuffer
+# if we switched mode - restore preferred mode
 if [[ $switched -eq 1 ]]; then
     restore_mode "$mode_cur"
 fi
 
-reset_framebuffer
+# reset/restore framebuffer res
+restore_fb
 
 exit 0
