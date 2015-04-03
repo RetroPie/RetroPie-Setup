@@ -18,12 +18,15 @@ function build_bluez() {
     ./configure --prefix=/usr --mandir=/usr/share/man --sysconfdir=/etc --localstatedir=/var --disable-systemd --enable-sixaxis
     make
     # Sixad might be installed from a previous RetroPie installation
-    dpkg -s sixad 2> /dev/null > /dev/null
     if hasPackage sixad; then 
         SIXAD="sixad"
     fi
 
     sudo apt-get remove -y --purge bluez $SIXAD
+    if [[ -n $SIXAD ]]; then
+        # Sometimes the services don't get removed by apt-get
+        update-rc.d sixad remove
+    fi
     sudo make install
     sudo install -v -dm755 /etc/bluetooth
     sudo install -v -m644 src/main.conf /etc/bluetooth/main.conf
