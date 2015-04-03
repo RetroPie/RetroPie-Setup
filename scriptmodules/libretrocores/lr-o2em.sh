@@ -10,7 +10,7 @@
 
 rp_module_id="lr-o2em"
 rp_module_desc="Odyssey 2 emulator - O2EM port for libretro"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_lr-o2em() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-o2em
