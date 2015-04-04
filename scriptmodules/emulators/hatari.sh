@@ -44,8 +44,16 @@ function configure_hatari() {
 
     ln -snf "$configdir/atarist" "$home/.hatari"
 
-    setDispmanx "$md_id" 1
+    setDispmanx "$md_id" 0
+
+    # add sdl mode for when borders are on
+    ensureFBMode 416 288
 
     delSystem "$md_id" "atariststefalcon"
-    addSystem 1 "$md_id" "atarist" "$md_inst/bin/hatari %ROM%"
+    delSystem "$md_id" "atarist"
+
+    addSystem 1 "$md_id-fast" "atarist" "$md_inst/bin/hatari --zoom 1 --compatible 0 --timer-d 1 -w --borders 0 %ROM%"
+    addSystem 0 "$md_id-fast-borders" "atarist" "$md_inst/bin/hatari --zoom 1 --compatible 0 --timer-d 1 -w --borders 1 %ROM%"
+    addSystem 0 "$md_id-compatible" "atarist" "$md_inst/bin/hatari --zoom 1 -w --borders 0 %ROM%"
+    addSystem 0 "$md_id-compatible-borders" "atarist" "$md_inst/bin/hatari --zoom 1 -w --borders 1 %ROM%"
 }
