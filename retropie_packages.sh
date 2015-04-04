@@ -45,13 +45,13 @@ source "$scriptdir/scriptmodules/packages.sh"
 
 setup_env
 
-if ! getDepends git dialog wget gcc-$__default_gcc_version g++-$__default_gcc_version build-essential xmlstarlet; then
+if [[ ! getDepends git dialog wget gcc-$__default_gcc_version g++-$__default_gcc_version build-essential xmlstarlet ]]; then
     printMsgs "console" "Unable to install packages required by $0" "${md_ret_errors[@]}" >&2
     exit 1
 fi
 
 # set default gcc version
-gcc_version $__default_gcc_version
+gcc_version "$__default_gcc_version"
 
 mkUserDir "$romdir"
 mkUserDir "$biosdir"
