@@ -75,11 +75,14 @@ chmod +x "$md_inst/ps3pair.sh"
 ACTION=="add", KERNEL=="hci0", RUN+="$md_inst/bluetooth.sh"
 _EOF_
 
-#udev rule for ps3 controller usb connection
+# udev rule for ps3 controller usb connection
     cat > /etc/udev/rules.d/99-sixpair.rules << _EOF_
 # Pair if PS3 controller is connected
 DRIVER=="usb", SUBSYSTEM=="usb", ATTR{idVendor}=="054c", ATTR{idProduct}=="0268", RUN+="$md_inst/ps3pair.sh"
 _EOF_
+
+# Start sixad daemon
+/etc/init.d/sixad start
 
     md_ret_files=(
         'sixpair'
