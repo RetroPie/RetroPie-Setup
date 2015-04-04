@@ -16,6 +16,7 @@
 # LSB 3.0 compilance and enhancements by Filippo Giunchedi <filippo@debian.org>
 #
 # Updated for bluez 4.7 by Mario Limonciello <mario_limonciello@dell.com>
+# Updated for bluez 5.5 by Nobuhiro Iwamatsu <iwamatsu@debian.org>
 #
 # Note: older daemons like dund pand hidd are now shipped inside the
 # bluez-compat package
@@ -40,12 +41,23 @@ set -e
 case $1 in
   start)
 	log_daemon_msg "Starting $DESC"
+
+	if test "$BLUETOOTH_ENABLED" = 0; then
+		log_progress_msg "disabled. see /etc/default/bluetooth"
+		log_end_msg 0
+		exit 0
+	fi
 	start-stop-daemon --start --background $SSD_OPTIONS
 	log_progress_msg "${DAEMON##*/}"
 	log_end_msg 0
   ;;
   stop)
 	log_daemon_msg "Stopping $DESC"
+	if test "$BLUETOOTH_ENABLED" = 0; then
+		log_progress_msg "disabled."
+		log_end_msg 0
+		exit 0
+	fi
 	start-stop-daemon --stop $SSD_OPTIONS
 	log_progress_msg "${DAEMON}"
 	log_end_msg 0
