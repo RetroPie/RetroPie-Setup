@@ -77,6 +77,20 @@ function sources_advmame() {
  	mode->crtc = *crtc;
  	mode->index = flags & MODE_FLAGS_INDEX_MASK;
 
+--- a/advance/osd/frame.c
++++ b/advance/osd/frame.c
+@@ -1298,9 +1299,9 @@
+ 		best_vclock = context->state.game_fps;
+ 
+ 		video_init_crtc_make_fake(context, "generate", best_size_x, best_size_y);
++		video_init_crtc_make_fake(context, "generate-double-y", best_size_x, best_size_2y);
++		video_init_crtc_make_fake(context, "generate-double-x", best_size_2x, best_size_y);
+ 		video_init_crtc_make_fake(context, "generate-double", best_size_2x, best_size_2y);
+-		video_init_crtc_make_fake(context, "generate-triple", best_size_3x, best_size_3y);
+-		video_init_crtc_make_fake(context, "generate-quad", best_size_4x, best_size_4y);
+ 	} else {
+ 		unsigned long long factor_x;
+ 		unsigned long long factor_y;
 _EOF_
         fi
         popd

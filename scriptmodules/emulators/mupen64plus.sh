@@ -52,7 +52,7 @@ function build_mupen64plus() {
     local params
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
-            #make -C "$dir/projects/unix" clean
+            make -C "$dir/projects/unix" clean
             params=()
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
@@ -119,11 +119,12 @@ TextureEnhancementControl = 0
 # Wrapper FBO
 wrpFBO = False
 _EOF_
+
     chown -R $user:$user "$configdir/n64"
     su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
-    iniConfig " = " "" "$configdir/n64/mupen64plus.cfg"
-    iniSet "VideoPlugin" "mupen64plus-video-n64"
-    iniSet "AudioPlugin" "mupen64plus-audio-omx"
+    
+    iniConfig " = " '"' "$configdir/n64/mupen64plus.cfg"
+    iniSet "AudioPlugin" "mupen64plus-audio-omx.so"
     iniSet "ScreenshotPath" "$romdir/n64"
     iniSet "SaveStatePath" "$romdir/n64"
     iniSet "SaveSRAMPath" "$romdir/n64"

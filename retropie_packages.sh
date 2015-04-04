@@ -58,7 +58,7 @@ mkUserDir "$biosdir"
 
 rp_registerAllModules
 
-ensureFBModes
+ensureFBMode 320 240
 
 [[ "$1" == "init" ]] && return
 

@@ -45,12 +45,18 @@ function retropie_welcome() {
         fi
     fi
 
+    local df_out=()
+    local line
+    while read line; do
+        df_out+=("$line")
+    done < <(df -h /)
+
 echo "$(tput setaf 2)
    .~~.   .~~.    $(date +"%A, %e %B %Y, %r")
   '. \ ' ' / .'   $(uname -srmo)$(tput setaf 1)
    .~ .~~~..~.   
-  : .~.'~'.~. :   $(tput setaf 3)$(df -h | grep Filesystem)$(tput setaf 1)
- ~ (   ) (   ) ~  $(tput setaf 7)$(df -h / | tail -1)$(tput setaf 1)
+  : .~.'~'.~. :   $(tput setaf 3)${df_out[0]}$(tput setaf 1)
+ ~ (   ) (   ) ~  $(tput setaf 7)${df_out[1]}$(tput setaf 1)
 ( : '~'.~.'~' : ) Uptime.............: ${UPTIME}
  ~ .~       ~. ~  Memory.............: $(grep MemFree /proc/meminfo | awk {'print $2'})kB (Free) / $(grep MemTotal /proc/meminfo | awk {'print $2'})kB (Total)$(tput setaf 7)
   (  $(tput setaf 4) |   | $(tput setaf 7)  )  $(tput setaf 1) Running Processes..: $(ps ax | wc -l | tr -d " ")$(tput setaf 7)

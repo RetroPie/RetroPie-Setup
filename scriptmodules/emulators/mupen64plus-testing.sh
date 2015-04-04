@@ -27,10 +27,11 @@ function sources_mupen64plus-testing() {
         'mupen64plus input-sdl'
         'mupen64plus rsp-hle'
         #'ricrpi video-gles2rice'
-        'mupen64plus video-rice'
+        #'mupen64plus video-rice'
+        'ricrpi video-gles2rice pandora-backport'
         #'Narann video-rice'
         #'Nebuleon video-gles2n64'
-        'ricrpi video-gles2n64'
+        'gizmo98 video-gles2n64 pandora-backport'
         #'gizmo98 video-gles2n64'
         'gizmo98 video-glide64mk2 rpi'
     )
@@ -89,7 +90,7 @@ function configure_mupen64plus-testing() {
     cat > "$configdir/n64/mupen64plus.cfg" << _EOF_
     [Video-Rice]
 # Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
-ScreenUpdateSetting = 6
+ScreenUpdateSetting = 7
 # Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)
 FrameBufferWriteBackControl = 1
 # If this option is enabled, the plugin will skip every other frame
@@ -111,10 +112,15 @@ _EOF_
     chown -R $user:$user "$configdir/n64"
     su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
 
-    iniConfig " = " "" "$configdir/n64/mupen64plus.cfg"
-    iniSet "AudioPlugin" "\"mupen64plus-audio-omx.so\""
-
-    addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-n64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
-    addSystem 0 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
-    addSystem 0 "${md_id}-glide64mk2" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-glide64mk2.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
+    iniConfig " = " '"' "$configdir/n64/mupen64plus.cfg"
+    iniSet "AudioPlugin" "mupen64plus-audio-omx.so"
+    iniSet "ScreenshotPath" "$romdir/n64"
+    iniSet "SaveStatePath" "$romdir/n64"
+    iniSet "SaveSRAMPath" "$romdir/n64"
+    
+    mkRomDir "n64"
+    
+    addSystem 0 "${md_id}-gles2n64-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-n64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
+    addSystem 0 "${md_id}-gles2rice-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
+    addSystem 0 "${md_id}-glide64mk2-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-glide64mk2.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
 }
