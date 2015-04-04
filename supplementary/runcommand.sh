@@ -106,7 +106,7 @@ function get_mode_info() {
         temp=($(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)"))
     fi
     mode_info[0]="${temp[0]}"
-    mode_info[1]="${temp[1]//[()]/}"
+    mode_info[1]="${temp[1]/[()]/}"
 
     # get mode resolution
     temp=$(echo "$status" | cut -d"," -f2 | grep -oE "[0-9]+x[0-9]+")
@@ -424,7 +424,7 @@ function choose_fb_res() {
 }
 
 function switch_fb_res() {
-    local res=(${1//x/ })
+    local res=(${1/x/ })
     local res_x=${res[0]}
     local res_y=${res[1]}
     if [[ -z "$res_x" || -z "$res_y" ]]; then
@@ -442,7 +442,7 @@ function switch_mode() {
     # if the requested mode is the same as the current mode don't switch
     [[ "$mode_id" == "${mode_orig[0]}-${mode_orig[1]}" ]] && return 0
 
-    local mode_id=(${mode_id//-/ })
+    local mode_id=(${mode_id/-/ })
 
     local switched=0
     if [[ "${mode_id[0]}" == "PAL" ]] || [[ "${mode_id[0]}" == "NTSC" ]]; then
@@ -467,7 +467,7 @@ function switch_mode() {
 }
 
 function restore_mode() {
-    local mode=(${1//-/ })
+    local mode=(${1/-/ })
     if [[ "${mode[0]}" == "PAL" ]] || [[ "${mode[0]}" == "NTSC" ]]; then
         tvservice -c "${mode[*]}"
     else
