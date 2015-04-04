@@ -18,7 +18,7 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git skmp/rapi2
+    gitPullOrClone "$md_build" https://github.com/gizmo98/reicast-emulator.git skmp/rapi2-audiofix
 }
 
 function build_reicast() {
@@ -46,7 +46,7 @@ function configure_reicast() {
     cat > $md_inst/reicast.sh << _EOF_
 #!/bin/bash
 pushd $md_inst
-sudo ./reicast.elf -config config:image="\$1"
+sudo aoss ./reicast.elf -config config:image="\$1"
 popd
 _EOF_
 
