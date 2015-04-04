@@ -343,7 +343,7 @@ function choose_app() {
         fi
         options+=($i "$id")
         ((i++))
-    done <"$configdir/$system/emulators.cfg"
+    done < <(sort "$configdir/$system/emulators.cfg")
     if [[ -z "${options[*]}" ]]; then
         dialog --msgbox "No emulator options found for $system - have you installed any snes emulators yet? Do you have a valid $configdir/$system/emulators.cfg ?" 20 60 >/dev/tty
         exit 1
