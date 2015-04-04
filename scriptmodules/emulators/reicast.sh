@@ -46,7 +46,7 @@ function configure_reicast() {
     cat > $md_inst/reicast.sh << _EOF_
 #!/bin/bash
 cd /opt/retropie/emulators/reicast
-sudo ./reicast.elf -config config:image=$1
+sudo ./reicast.elf -config config:image="$1"
 _EOF_
 
     chmod +x "$md_inst/reicast.sh"
