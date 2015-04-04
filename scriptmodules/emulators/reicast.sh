@@ -42,7 +42,15 @@ function configure_reicast() {
 
     # create bios dir. Copy dc_boot.bin and dc_flash.bin there.
     mkdir $md_inst/data
+
+    cat > $md_inst/reicast.sh << _EOF_
+#!/bin/bash
+cd /opt/retropie/emulators/reicast
+sudo ./reicast.elf -config config:image=$1
+_EOF_
+
+    chmod +x "$md_inst/reicast.sh"
     
     # add system
-    addSystem 1 "$md_id" "dreamcast" "$md_inst/reicast.elf -config config:image=%ROM%"
+    addSystem 1 "$md_id" "dreamcast" "$md_inst/reicast.sh %ROM%"
 }
