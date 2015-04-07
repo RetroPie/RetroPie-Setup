@@ -38,8 +38,7 @@ function configure_basilisk() {
     mkRomDir "macintosh"
     touch "$romdir/macintosh/Start.txt"
     
-    mkdir -p "$configdir/macintosh"
-    chown $user:$user "$configdir/macintosh"
+    mkUserDir "$configdir/macintosh"
 
     addSystem 1 "$md_id" "macintosh" "$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img --config $configdir/macintosh/basiliskii.cfg" "Apple Macintosh" ".txt"
 }

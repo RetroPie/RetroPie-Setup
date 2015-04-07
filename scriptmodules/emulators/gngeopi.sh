@@ -40,7 +40,7 @@ function install_gngeopi() {
 function configure_gngeopi() {
     mkRomDir "neogeo"
 
-    mkdir -p "$configdir/neogeo"
+    mkUserDir "$configdir/neogeo"
 
     # move old config to new location
     if [[ -d "$home/.gngeo" && ! -h "$home/.gngeo" ]]; then

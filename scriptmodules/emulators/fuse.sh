@@ -57,7 +57,7 @@ function install_fuse() {
 function configure_fuse() {
     mkRomDir "zxspectrum"
 
-    mkdir -p "$configdir/zxspectrum"
+    mkUserDir "$configdir/zxspectrum"
     if [[ -f "$home/.fuserc" && ! -h "$home/.fuserc" ]]; then
         mv "$home/.fuserc" "$configdir/zxspectrum/"
     fi

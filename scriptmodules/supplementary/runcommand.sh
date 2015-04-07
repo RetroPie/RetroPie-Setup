@@ -19,10 +19,8 @@ function install_runcommand() {
 }
 
 function configure_runcommand() {
-    if [[ ! -d "$configdir/all" ]]; then
-        mkdir -p "$configdir/all"
-        chown $user:$user "$configdir/all"
-    fi
+    mkUserDir "$configdir/all"
+
     cmd=(dialog --backtitle "$__backtitle" --menu "Configure CPU Governor on command launch" 22 86 16)
     local governors
     local governor

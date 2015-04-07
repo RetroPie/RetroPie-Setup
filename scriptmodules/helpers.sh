@@ -315,7 +315,7 @@ function mkRomDir() {
 function setDispmanx() {
     local mod_id="$1"
     local status="$2"
-    mkdir -p "$configdir/all"
+    mkUserDir "$configdir/all"
     iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
     iniSet $mod_id "$status"
 }
@@ -375,8 +375,7 @@ function ensureSystemretroconfig {
     local config="$configdir/$system/retroarch.cfg"
 
     if [[ ! -d "$configdir/$system" ]]; then
-        mkdir -p "$configdir/$system"
-        chown $user:$user "$configdir/$system"
+        mkUserDir "$configdir/$system"
     fi
 
     if [[ ! -f "$config" ]]; then

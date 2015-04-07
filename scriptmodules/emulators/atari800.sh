@@ -62,7 +62,7 @@ function configure_atari800() {
     mkRomDir "atari800"
     mkRomDir "atari5200"
 
-    mkdir -p "$configdir/atari800"
+    mkUserDir "$configdir/atari800"
 
     # move old config if exists to new location
     if [[ -f "$home/.atari800.cfg" && ! -h "$home/.atari800.cfg" ]]; then

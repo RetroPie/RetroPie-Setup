@@ -40,8 +40,7 @@ function configure_dgen()
     mkRomDir "segacd"
     mkRomDir "sega32x"
 
-    mkdir -p "$configdir/megadrive"
-    chown $user:$user "$configdir/megadrive"
+    mkUserDir "$configdir/megadrive"
 
     # move config from previous location
     if [[ -f "$configdir/all/dgenrc" ]]; then
@@ -49,7 +48,6 @@ function configure_dgen()
     fi
 
     if [[ ! -f "$configdir/megadrive/dgenrc" ]]; then
-        mkdir -p "$configdir/megadrive"
         cp "sample.dgenrc" "$configdir/megadrive/dgenrc"
         chown $user:$user "$configdir/megadrive/dgenrc"
     fi
