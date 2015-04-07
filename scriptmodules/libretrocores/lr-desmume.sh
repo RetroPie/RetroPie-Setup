@@ -21,7 +21,7 @@ function build_lr-desmume() {
 	cd desmume
     make -f Makefile.libretro clean
     make -f Makefile.libretro platform=armvhardfloat
-    md_ret_require="$md_build/desmume_libretro.so"
+    md_ret_require="$md_build/desmume/desmume_libretro.so"
 }
 
 function install_lr-desmume() {
