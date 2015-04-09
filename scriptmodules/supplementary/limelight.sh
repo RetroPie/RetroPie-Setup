@@ -72,7 +72,7 @@ _EOF_
     # pair pi with geforce experience
     java -jar limelight.jar pair $ip
     read -p "Press any key to continue after you have given the passcode to the Host PC... `echo $'\n> '`" -n1 -s
-    read -p "Please ensure that your gamepad is connected to the PI for device selection (number only!), press any key to continue... `echo $'\n> '`" -n1 -s	
+    read -p "Please ensure that your gamepad is connected to the PI for device selection (number only!), press any key to continue... `echo $'\n> '`" -n1 -s
     clear
     # print eventID-numbers and device names with lsinput
     lsinput|grep -e dev.input.event -e name
