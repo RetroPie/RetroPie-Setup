@@ -48,7 +48,7 @@ function install_ps3controller() {
     update-rc.d sixad defaults
 
     # If a bluetooth dongle is connected set state up and enable pscan
-    cat > $md_inst/bluetooth.sh << _EOF_
+    cat > "$md_inst/bluetooth.sh" << _EOF_
 #!/bin/bash
 /usr/bin/hciconfig hci0 up
 if hciconfig | grep -q "BR/EDR"; then
@@ -59,7 +59,7 @@ _EOF_
     chmod +x "$md_inst/bluetooth.sh"
 
     # If a PS3 controller is connected over usb check if bluetooth dongle exits and start sixpair
-    cat > $md_inst/ps3pair.sh << _EOF_  
+    cat > "$md_inst/ps3pair.sh" << _EOF_  
 #!/bin/bash
 if hciconfig | grep -q "BR/EDR"; then
     hciconfig hci0 pscan
