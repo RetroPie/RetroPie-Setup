@@ -54,8 +54,7 @@ $scriptdir/retropie_packages.sh limelight configure
 _EOF_
 
     # Install limelight simple theme
-    mkdir /etc/emulationstation/themes/simple/limelight
-    mkdir /etc/emulationstation/themes/simple/limelight/art
+    mkdir -p /etc/emulationstation/themes/simple/limelight/art
     cp -v "$md_inst/theme.xml" /etc/emulationstation/themes/simple/limelight/
     cp -v "$md_inst/limelight.png" /etc/emulationstation/themes/simple/limelight/art/
     cp -v "$md_inst/limelight_art.png" /etc/emulationstation/themes/simple/limelight/art/
