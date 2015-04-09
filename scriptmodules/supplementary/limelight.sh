@@ -56,13 +56,13 @@ _EOF_
     # Install limelight simple theme
     mkdir /etc/emulationstation/themes/simple/limelight
     mkdir /etc/emulationstation/themes/simple/limelight/art
-    cp $md_inst/theme.xml /etc/emulationstation/themes/simple/limelight/
-    cp $md_inst/limelight.png /etc/emulationstation/themes/simple/limelight/art/
-    cp $md_inst/limelight_art.png /etc/emulationstation/themes/simple/limelight/art/
-    cp $md_inst/limelight_art_blur.png /etc/emulationstation/themes/simple/limelight/art/
+    cp -v "$md_inst/theme.xml" /etc/emulationstation/themes/simple/limelight/
+    cp -v "$md_inst/limelight.png" /etc/emulationstation/themes/simple/limelight/art/
+    cp -v "$md_inst/limelight_art.png" /etc/emulationstation/themes/simple/limelight/art/
+    cp -v "$md_inst/limelight_art_blur.png" /etc/emulationstation/themes/simple/limelight/art/
 
     # Run limelight configuration
-    pushd $md_inst
+    pushd "$md_inst"
     clear
     echo -e "\nDiscovering GeForce PC:s, when found you can press ctrl+c to stop the search, or it will take a long time \n"
     # discover IP-addresses of Geforce pc:s
@@ -107,10 +107,7 @@ popd
 _EOF_
 
     # Chmod scripts to be runnable
-    chmod +x $romdir/limelight/limelight720p60fps.sh
-    chmod +x $romdir/limelight/limelight1080p30fps.sh
-    chmod +x $romdir/limelight/limelight1080p60fps.sh
-    chmod +x $romdir/limelight/limelightconfig.sh
+    chmod +x "$romdir/limelight/"*.sh
 
     # Add System to es_system.cfg
     setESSystem 'Limelight Game Streaming' 'limelight' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'limelight'
