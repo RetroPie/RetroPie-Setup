@@ -63,44 +63,47 @@ _EOF_
     # Run limelight configuration
     pushd "$md_inst"
     clear
-    echo -e "\nDiscovering GeForce PC:s, when found you can press ctrl+c to stop the search, or it will take a long time \n"
+    echo "Discovering GeForce PCs, when found you can press ctrl+c to stop the search, or it will take a long time"
     # discover IP-addresses of Geforce pc:s
     java -jar limelight.jar discover
-    echo -e "\n"
+    echo
     # ask user for IP-number input for pairing
-    read -p "Input ip-address given above (if no IP is shown, press CTRL+C and check host connection) :`echo $'\n> '`" ip
+    local ip
+    read -p $'Input ip-address given above (if no IP is shown, press CTRL+C and check host connection) :\n> ' ip
     # pair pi with geforce experience
     java -jar limelight.jar pair $ip
-    read -p "Press any key to continue after you have given the passcode to the Host PC... `echo $'\n> '`" -n1 -s
-    read -p "Please ensure that your gamepad is connected to the PI for device selection (number only!), press any key to continue... `echo $'\n> '`" -n1 -s
+    read -n1 -s -p "Press any key to continue after you have given the passcode to the Host PC..."
+    read -n1 -s -p "Please ensure that your gamepad is connected to the PI for device selection (number only!), press any key to continue..."
     clear
     # print eventID-numbers and device names with lsinput
-    lsinput|grep -e dev.input.event -e name
+    lsinput | grep -e "/dev/input/event" -e "name"
     # ask user for eventID number for keymapping
-    echo -e "\nInput device event ID-number that corresponds with your gamepad from above for keymapping \n"
-    read -p "(if the gamepad is missing, press CTRL+C and reboot the PI with the game pad attached) :`echo $'\n> '`" USBID
+    local usbid
+    echo
+    echo "Input device event ID-number that corresponds with your gamepad from above for keymapping"
+    read -p $'(if the gamepad is missing, press CTRL+C and reboot the PI with the game pad attached) :\n> ' usbid
     # run limelight keymapping
-    java -jar limelight.jar map -input /dev/input/event$USBID mapfile.map
+    java -jar limelight.jar map -input /dev/input/event$usbid mapfile.map
     popd
 
     # Remove existing scripts if they exist & Create scripts for running limelight from emulation station
     cat > "$romdir/limelight/limelight720p60fps.sh" << _EOF_
 #!/bin/bash
-pushd cd $md_inst 
+pushd "$md_inst"
 java -jar limelight.jar stream -720 -60fps "$ip" -app Steam -mapping mapfile.map
 popd
 _EOF_
 
     cat > "$romdir/limelight/limelight1080p30fps.sh" << _EOF_
 #!/bin/bash
-pushd cd $md_inst  
+pushd "$md_inst"
 java -jar limelight.jar stream -1080 -30fps "$ip" -app Steam -mapping mapfile.map
 popd
 _EOF_
 
     cat > "$romdir/limelight/limelight1080p60fps.sh" << _EOF_
 #!/bin/bash
-pushd cd $md_inst
+pushd "$md_inst"
 java -jar limelight.jar stream -1080 -60fps "$ip" -app Steam -mapping mapfile.map
 popd
 _EOF_
