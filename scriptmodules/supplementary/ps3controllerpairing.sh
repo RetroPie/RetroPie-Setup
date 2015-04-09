@@ -20,5 +20,5 @@ function configure_ps3controllerpairing() {
     else
         # Install PS3 controller driver
         rp_callModule ps3controller	
-	  fi
+    fi
 }
