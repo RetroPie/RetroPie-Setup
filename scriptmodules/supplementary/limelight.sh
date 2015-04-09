@@ -20,7 +20,7 @@ function sources_limelight() {
     gitPullOrClone "$md_build" "https://github.com/stsfin/RetropieLimelightInstaller.git"
     
     wget https://github.com/irtimmer/limelight-embedded/releases/download/v1.2.2/libopus.so
-    wget https://github.com/irtimmer/limelight-embedded/releases/download/v1.2.2/limelight.jar	
+    wget https://github.com/irtimmer/limelight-embedded/releases/download/v1.2.2/limelight.jar
     
     # Download limelight simple theme
     wget https://github.com/stsfin/RetropieLimelightInstaller/releases/download/1.3.1/theme.xml
@@ -31,8 +31,8 @@ function sources_limelight() {
 
 function install_limelight() {
     md_ret_files=(
-    	'libopus.so'
-    	'limelight.jar'
+        'libopus.so'
+        'limelight.jar'
         'README.md'
         'limelightRetroInstall.sh'
         'limelightconfig.sh'
@@ -44,16 +44,16 @@ function install_limelight() {
 }
 
 function configure_limelight() { 
-    #Create romdir limelight
+    # Create romdir limelight
     mkRomDir "limelight"
 
-    #Create limelight config script
+    # Create limelight config script
     cat > "$romdir/limelight/limelightconfig.sh" << _EOF_
 #!/bin/bash
 $scriptdir/retropie_packages.sh limelight configure
 _EOF_
 
-    #Install limelight simple theme
+    # Install limelight simple theme
     mkdir /etc/emulationstation/themes/simple/limelight
     mkdir /etc/emulationstation/themes/simple/limelight/art
     cp $md_inst/theme.xml /etc/emulationstation/themes/simple/limelight/
@@ -61,30 +61,30 @@ _EOF_
     cp $md_inst/limelight_art.png /etc/emulationstation/themes/simple/limelight/art/
     cp $md_inst/limelight_art_blur.png /etc/emulationstation/themes/simple/limelight/art/
 
-    #Run limelight configuration
-pushd $md_inst
+    # Run limelight configuration
+    pushd $md_inst
     clear
     echo -e "\nDiscovering GeForce PC:s, when found you can press ctrl+c to stop the search, or it will take a long time \n"
-    #discover IP-addresses of Geforce pc:s
+    # discover IP-addresses of Geforce pc:s
     java -jar limelight.jar discover
     echo -e "\n"
-    #ask user for IP-number input for pairing
+    # ask user for IP-number input for pairing
     read -p "Input ip-address given above (if no IP is shown, press CTRL+C and check host connection) :`echo $'\n> '`" ip
-    #pair pi with geforce experience
+    # pair pi with geforce experience
     java -jar limelight.jar pair $ip
     read -p "Press any key to continue after you have given the passcode to the Host PC... `echo $'\n> '`" -n1 -s
     read -p "Please ensure that your gamepad is connected to the PI for device selection (number only!), press any key to continue... `echo $'\n> '`" -n1 -s	
     clear
-    #print eventID-numbers and device names with lsinput
+    # print eventID-numbers and device names with lsinput
     lsinput|grep -e dev.input.event -e name
-    #ask user for eventID number for keymapping
+    # ask user for eventID number for keymapping
     echo -e "\nInput device event ID-number that corresponds with your gamepad from above for keymapping \n"
     read -p "(if the gamepad is missing, press CTRL+C and reboot the PI with the game pad attached) :`echo $'\n> '`" USBID
-    #run limelight keymapping
+    # run limelight keymapping
     java -jar limelight.jar map -input /dev/input/event$USBID mapfile.map
-popd
+    popd
 
-    #Remove existing scripts if they exist & Create scripts for running limelight from emulation station
+    # Remove existing scripts if they exist & Create scripts for running limelight from emulation station
     cat > "$romdir/limelight/limelight720p60fps.sh" << _EOF_
 #!/bin/bash
 pushd cd $md_inst 
@@ -106,13 +106,13 @@ java -jar limelight.jar stream -1080 -60fps "$ip" -app Steam -mapping mapfile.ma
 popd
 _EOF_
 
-    #Chmod scripts to be runnable
+    # Chmod scripts to be runnable
     chmod +x $romdir/limelight/limelight720p60fps.sh
     chmod +x $romdir/limelight/limelight1080p30fps.sh
     chmod +x $romdir/limelight/limelight1080p60fps.sh
     chmod +x $romdir/limelight/limelightconfig.sh
-	
-    #Add System to es_system.cfg
+
+    # Add System to es_system.cfg
     setESSystem 'Limelight Game Streaming' 'limelight' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'limelight'
 
     echo -e "\nEverything done! Now reboot the Pi and you are all set \n"
