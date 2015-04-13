@@ -84,7 +84,7 @@ function install_mupen64plus-testing() {
 function configure_mupen64plus-testing() {
     # to solve startup problems delete old config file
     rm -f "$configdir/n64/mupen64plus.cfg"
-    mkdir -p "$configdir/n64/"
+    mkUserDir "$configdir/n64/"
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$configdir/n64/"
     cat > "$configdir/n64/mupen64plus.cfg" << _EOF_

@@ -59,7 +59,7 @@ _EOF_
     chmod +x "$romdir/pc/+Start DOSBox.sh"
     chown $user:$user "$romdir/pc/+Start DOSBox.sh"
 
-    mkdir -p "$configdir/pc/"
+    mkUserDir "$configdir/pc/"
 
     # move any old configs to the new location
     if [[ -d "$home/.dosbox" && ! -h "$home/.dosbox" ]]; then
@@ -76,8 +76,6 @@ _EOF_
         iniSet "cycles" "max"
         iniSet "scaler" "none"
     fi
-
-    chown -R $user:$user "$configdir/pc"
 
     # slight hack so that we set dosbox as the default emulator for "+Start DOSBox.sh"
     iniConfig "=" '"' "$configdir/all/emulators.cfg"

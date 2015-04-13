@@ -123,7 +123,7 @@ function configure_advmame() {
     # delete old install files
     rm -rf "$md_inst/"{bin,man,share}
 
-    mkdir -p "$configdir/mame-advmame"
+    mkUserDir "$configdir/mame-advmame"
 
     # move any old configs to new location
     if [[ -d "$home/.advance" && ! -h "$home/.advance" ]]; then
