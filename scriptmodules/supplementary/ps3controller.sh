@@ -33,7 +33,11 @@ function sources_ps3controller() {
      bool enabled;
      bool anim;
 _EOF_
-}
+
+    sed -i 's/strcpy(dev_name, "PLAYSTATION(R)3 Controller (");/strcpy(dev_name, "PLAYSTATION(R)3 Controller");/g' $md_build/sixad/uinput.cpp
+    sed -i 's/strcat(dev_name, mac);//g' $md_build/sixad/uinput.cpp
+    sed -i 's/strcat(dev_name, ")");//g' $md_build/sixad/uinput.cpp
+ }
 
 function build_ps3controller() {
     gcc -o sixpair sixpair.c -lusb
