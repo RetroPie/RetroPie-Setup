@@ -9,7 +9,7 @@
 #
 
 rp_module_id="lr-o2em"
-rp_module_desc="Odyssey 2 emulator - O2EM port for libretro"
+rp_module_desc="Odyssey 2 / Videopac emu - O2EM port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-o2em() {
@@ -36,6 +36,7 @@ function configure_lr-o2em() {
     mkRomDir "videopac"
     ensureSystemretroconfig "videopac"
 
-    # copy o2rom.bin to RetroPie/BIOS path
-    setESSystem "VideoPac" "videopac" "~/RetroPie/roms/videopac" ".bin .BIN" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$emudir/retroarch/bin/retroarch -L $md_inst/o2em_libretro.so --config $configdir/videopac/retroarch.cfg %ROM%\" \"$md_id\"" "videopac" "videopac"
+    addSystem 1 "$md_id" "videopac" "$md_inst/o2em_libretro.so"
+
+    __INFMSGS+=("For the Odyssey 2 / Videopac emulator you need to copy o2rom.bin to the folder $biosdir.")
 }
