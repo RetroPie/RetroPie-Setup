@@ -33,7 +33,11 @@ function sources_ps3controller() {
      bool enabled;
      bool anim;
 _EOF_
-}
+
+    sed -i 's/strcpy(dev_name, "PLAYSTATION(R)3 Controller (");/strcpy(dev_name, "PLAYSTATION(R)3 Controller");/g' "$md_build/sixad/uinput.cpp"
+    sed -i 's/strcat(dev_name, mac);//g' "$md_build/sixad/uinput.cpp"
+    sed -i 's/strcat(dev_name, ")");//g' "$md_build/sixad/uinput.cpp"
+ }
 
 function build_ps3controller() {
     gcc -o sixpair sixpair.c -lusb
@@ -70,17 +74,37 @@ _EOF_
     chmod +x "$md_inst/ps3pair.sh"
 
     # udev rule for bluetooth dongle
-    cat > /etc/udev/rules.d/10-local.rules << _EOF_  
+    cat > "/etc/udev/rules.d/10-local.rules" << _EOF_  
 # Set bluetooth power up
 ACTION=="add", KERNEL=="hci0", RUN+="$md_inst/bluetooth.sh"
 _EOF_
 
     # udev rule for ps3 controller usb connection
-    cat > /etc/udev/rules.d/99-sixpair.rules << _EOF_
+    cat > "/etc/udev/rules.d/99-sixpair.rules" << _EOF_
 # Pair if PS3 controller is connected
 DRIVER=="usb", SUBSYSTEM=="usb", ATTR{idVendor}=="054c", ATTR{idProduct}=="0268", RUN+="$md_inst/ps3pair.sh"
 _EOF_
-
+    
+    # add default sixad settings
+    cat > "/var/lib/sixad/profiles/default" << _EOF_
+enable_leds 1
+enable_joystick 1
+enable_input 0
+enable_remote 0
+enable_rumble 1
+enable_timeout 0
+led_n_auto 0
+led_n_number 0
+led_anim 1
+enable_buttons 1
+enable_sbuttons 0
+enable_axis 1
+enable_accel 0
+enable_accon 0
+enable_speed 0
+enable_pos 0
+_EOF_
+    
     # Start sixad daemon
     /etc/init.d/sixad start
 
