@@ -20,7 +20,8 @@ function depends_emulationstation() {
 }
 
 function sources_emulationstation() {
-    gitPullOrClone "$md_build" "https://github.com/Aloshi/EmulationStation"
+    gitPullOrClone "$md_build" "https://github.com/petrockblog/EmulationStation"
+    git checkout unstable
 }
 
 function build_emulationstation() {
@@ -40,7 +41,6 @@ function install_emulationstation() {
         'README.md'
         'THEMES.md'
     )
-
 }
 
 function configure_emulationstation() {
@@ -76,4 +76,25 @@ _EOF_
     iniSet "overscan_scale" 1
 
     mkdir -p "/etc/emulationstation"
+
+    emustation_configureInputConfigScripts
+}
+
+function emustation_configureInputConfigScripts() {
+    mkdir -p "$home"/.emulationstation/
+    cat > "$home"/.emulationstation/es_input.cfg << _EOF_
+<?xml version="1.0"?>
+<inputList>
+  <inputAction type="onfinish">
+    <command>sudo /opt/retropie/supplementary/emulationstation/scripts/inputconfiguration.sh</command>
+  </inputAction>    
+</inputList>
+_EOF_
+    chown $user:$user "$home"/.emulationstation/es_input.cfg
+    if [[ ! -d "$md_inst/scripts/" ]]; then
+        mkdir "$md_inst/scripts/"
+    fi
+    chmod +x "$scriptdir/supplementary/moduledata/supplementary/emulationstation/inputconfiguration.sh"
+    cp -r "$scriptdir"/supplementary/moduledata/supplementary/emulationstation/* "$md_inst/scripts/"
+    chown -R $user:$user "$md_inst/scripts/"
 }
