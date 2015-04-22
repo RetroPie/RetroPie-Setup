@@ -93,7 +93,7 @@ enable_input 0
 enable_remote 0
 enable_rumble 1
 enable_timeout 0
-led_n_auto 0
+led_n_auto 1
 led_n_number 0
 led_anim 1
 enable_buttons 1
