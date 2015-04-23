@@ -112,7 +112,7 @@ _EOF_
     chmod +x "$romdir/limelight/"*.sh
 
     # Add System to es_system.cfg
-    setESSystem 'Limelight Game Streaming' 'limelight' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'limelight'
+    setESSystem 'Limelight Game Streaming' 'limelight' '~/RetroPie/roms/limelight' '.sh .SH' '%ROM%' 'pc' 'limelight'
 
     echo -e "\nEverything done! Now reboot the Pi and you are all set \n"
 }
