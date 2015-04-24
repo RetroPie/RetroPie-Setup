@@ -29,7 +29,7 @@ function install_esthemesimple() {
     # unzip archive to tmp folder
     unzip simple_latest.zip -d /etc/emulationstation/themes/
 
-    # delete zi parchive
+    # delete zip archive
     rm simple_latest.zip
     
     # copy simple-theme-plus themes
