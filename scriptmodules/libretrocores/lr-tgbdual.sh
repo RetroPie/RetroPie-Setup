@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# This file is part of RetroPie.
+# 
+# (c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
+# 
+# See the LICENSE.md file at the top-level directory of this distribution and 
+# at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
+#
+
+rp_module_id="lr-tgbdual"
+rp_module_desc="Gameboy Color emu - TGB Dual port for libretro"
+rp_module_menus="4+"
+
+function sources_lr-tgbdual() {
+    gitPullOrClone "$md_build" git://github.com/libretro/tgbdual-libretro.git
+}
+
+function build_lr-tgbdual() {
+    make clean
+    make
+    md_ret_require="$md_build/tgbdual_libretro.so"
+}
+
+function install_lr-tgbdual() {
+    md_ret_files=(
+        'tgbdual_libretro.so'
+    )
+}
+
+function configure_lr-tgbdual() {
+    mkRomDir "gbc"
+    mkRomDir "gb"
+    ensureSystemretroconfig "gb" "hq4x.glslp"
+    ensureSystemretroconfig "gbc" "hq4x.glslp"
+
+    # enable dual / link by default
+    iniConfig " = " "" "$configdir/all/retroarch-core-options.cfg"
+    iniSet "tgbdual_gblink_enable" "enabled"
+
+    addSystem 0 "$md_id" "gb" "$md_inst/tgbdual_libretro.so"
+    addSystem 0 "$md_id" "gbc" "$md_inst/tgbdual_libretro.so"
+}
