@@ -14,7 +14,7 @@ rp_module_menus="2+ 3+"
 rp_module_flags="nobin"
 
 function depends_retropiemenu() {
-    getDepends mc
+    getDepends mc wicd-curses
 }
 
 function configure_retropiemenu()
@@ -33,6 +33,7 @@ function configure_retropiemenu()
         'splashscreen.rp'
         'filemanager.rp'
         'showip.rp'
+        'wifi.rp'
     )
 
     for file in "${files[@]}"; do
@@ -86,6 +87,10 @@ function configure_retropiemenu()
         <path>$rpdir/showip.rp</path>
         <name>Show IP address</name>
     </game>
+    <game>
+        <path>$rpdir/wifi.rp</path>
+        <name>Configure Wifi</name>
+    </game>
 </gameList>
 _EOF_
     chown -R $user:$user "$home/.emulationstation"
@@ -112,6 +117,9 @@ function launch_retropiemenu() {
         showip.rp)
             ip addr show
             sleep 5
+            ;;
+        wifi.rp)
+            wicd-curses >/dev/tty </dev/tty 
             ;;
         *.rp)
             local no_ext=${basename%.rp}
