@@ -54,7 +54,7 @@ function install_ps3controller() {
     # If a bluetooth dongle is connected set state up and enable pscan
     cat > "$md_inst/bluetooth.sh" << _EOF_
 #!/bin/bash
-/usr/bin/hciconfig hci0 up
+hciconfig hci0 up
 if hciconfig | grep -q "BR/EDR"; then
     hciconfig hci0 pscan
 fi
