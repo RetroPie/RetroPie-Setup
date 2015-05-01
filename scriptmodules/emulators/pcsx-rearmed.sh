@@ -35,7 +35,7 @@ function install_pcsx-rearmed() {
         'COPYING'
         'ChangeLog'
         'ChangeLog.df'
-        'News'
+        'NEWS'
         'README.md'
         'readme.txt'
         'pcsx'
