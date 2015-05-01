@@ -40,7 +40,7 @@ function install_pcsx-rearmed() {
         'readme.txt'
         'pcsx'
     )
-    mkRomDir "$md_inst/plugins"
+    mkDir "$md_inst/plugins"
     cp "$md_build/plugins/spunull/spunull.so" "$md_inst/plugins/spunull.so"
     cp "$md_build/plugins/gpu_unai/gpu_unai.so" "$md_inst/plugins/gpu_unai.so"
     cp "$md_build/plugins/gpu_gles/gpu_gles.so" "$md_inst/plugins/gpu_gles.so"
@@ -51,7 +51,7 @@ function install_pcsx-rearmed() {
 function configure_pcsx-rearmed() {
     mkRomDir "psx"
     mkUserDir "$configdir/psx"
-	mkRomDir "$md_inst/bios"
+	mkDir "$md_inst/bios"
 	
     # symlink the rom so so it can be installed with the other bios files
     ln -sf "$biosdir/SCPH1001.BIN" "$md_inst/bios/SCPH1001.BIN"
