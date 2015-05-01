@@ -23,7 +23,11 @@ function sources_pcsx-rearmed() {
 }
 
 function build_pcsx-rearmed() {
-	./configure --sound-drivers=alsa --enable-neon
+	if isPlatform "rpi2"; then
+		./configure --sound-drivers=alsa --enable-neon
+    else
+    	./configure --sound-drivers=alsa
+    fi
     make clean
     make
     md_ret_require="$md_build/pcsx"
