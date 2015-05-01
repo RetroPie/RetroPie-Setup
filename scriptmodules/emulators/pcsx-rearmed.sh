@@ -53,7 +53,7 @@ function configure_pcsx-rearmed() {
 	mkdir "$md_inst/bios"
 	
     # symlink the rom so so it can be installed with the other bios files
-    ln -sf "$biosdir/SCPH1001.BIN" "$md_inst/bios/SCPH1001.BIN"
+    ln -sf "$biosdir/scph1001.bin" "$md_inst/bios/scph1001.bin"
 
     setDispmanx "$md_id" 1
 
