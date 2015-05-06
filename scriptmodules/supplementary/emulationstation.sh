@@ -81,8 +81,8 @@ _EOF_
 }
 
 function emustation_configureInputConfigScripts() {
-    mkUserDir "$home"/.emulationstation/
-    cat > "$home"/.emulationstation/es_input.cfg << _EOF_
+    mkUserDir "$home/.emulationstation"
+    cat > "$home/.emulationstation/es_input.cfg" << _EOF_
 <?xml version="1.0"?>
 <inputList>
   <inputAction type="onfinish">
@@ -90,11 +90,11 @@ function emustation_configureInputConfigScripts() {
   </inputAction>    
 </inputList>
 _EOF_
-    chown $user:$user "$home"/.emulationstation/es_input.cfg
+    chown $user:$user "$home/.emulationstation/es_input.cfg"
     if [[ ! -d "$md_inst/scripts/" ]]; then
         mkdir "$md_inst/scripts/"
     fi
     chmod +x "$scriptdir/supplementary/moduledata/supplementary/emulationstation/inputconfiguration.sh"
-    cp -r "$scriptdir"/supplementary/moduledata/supplementary/emulationstation/* "$md_inst/scripts/"
+    cp -r "$scriptdir/supplementary/moduledata/supplementary/emulationstation/"* "$md_inst/scripts/"
     chown -R $user:$user "$md_inst/scripts/"
 }
