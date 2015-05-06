@@ -81,7 +81,7 @@ _EOF_
 }
 
 function emustation_configureInputConfigScripts() {
-    mkdir -p "$home"/.emulationstation/
+    mkUserDir "$home"/.emulationstation/
     cat > "$home"/.emulationstation/es_input.cfg << _EOF_
 <?xml version="1.0"?>
 <inputList>
