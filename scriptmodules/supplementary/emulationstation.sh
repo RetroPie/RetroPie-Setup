@@ -54,12 +54,11 @@ function configure_inputconfig_emulationstation() {
 </inputList>
 _EOF_
     chown $user:$user "$home/.emulationstation/es_input.cfg"
-    if [[ ! -d "$md_inst/scripts/" ]]; then
-        mkdir "$md_inst/scripts/"
-    fi
+    mkdir -p "$md_inst/scripts"
+
     chmod +x "$scriptdir/supplementary/moduledata/supplementary/emulationstation/inputconfiguration.sh"
     cp -r "$scriptdir/supplementary/moduledata/supplementary/emulationstation/"* "$md_inst/scripts/"
-    chown -R $user:$user "$md_inst/scripts/"
+    chown -R $user:$user "$md_inst/scripts"
 }
 
 function configure_emulationstation() {
