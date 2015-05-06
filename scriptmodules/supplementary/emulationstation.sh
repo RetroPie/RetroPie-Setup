@@ -50,7 +50,7 @@ function configure_inputconfig_emulationstation() {
 <inputList>
   <inputAction type="onfinish">
     <command>sudo /opt/retropie/supplementary/emulationstation/scripts/inputconfiguration.sh</command>
-  </inputAction>    
+  </inputAction>
 </inputList>
 _EOF_
     chown $user:$user "$home/.emulationstation/es_input.cfg"
