@@ -43,6 +43,25 @@ function install_emulationstation() {
     )
 }
 
+function configure_inputconfig_emulationstation() {
+    mkUserDir "$home/.emulationstation"
+    cat > "$home/.emulationstation/es_input.cfg" << _EOF_
+<?xml version="1.0"?>
+<inputList>
+  <inputAction type="onfinish">
+    <command>sudo /opt/retropie/supplementary/emulationstation/scripts/inputconfiguration.sh</command>
+  </inputAction>    
+</inputList>
+_EOF_
+    chown $user:$user "$home/.emulationstation/es_input.cfg"
+    if [[ ! -d "$md_inst/scripts/" ]]; then
+        mkdir "$md_inst/scripts/"
+    fi
+    chmod +x "$scriptdir/supplementary/moduledata/supplementary/emulationstation/inputconfiguration.sh"
+    cp -r "$scriptdir/supplementary/moduledata/supplementary/emulationstation/"* "$md_inst/scripts/"
+    chown -R $user:$user "$md_inst/scripts/"
+}
+
 function configure_emulationstation() {
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
@@ -77,24 +96,5 @@ _EOF_
 
     mkdir -p "/etc/emulationstation"
 
-    emustation_configureInputConfigScripts
-}
-
-function emustation_configureInputConfigScripts() {
-    mkUserDir "$home/.emulationstation"
-    cat > "$home/.emulationstation/es_input.cfg" << _EOF_
-<?xml version="1.0"?>
-<inputList>
-  <inputAction type="onfinish">
-    <command>sudo /opt/retropie/supplementary/emulationstation/scripts/inputconfiguration.sh</command>
-  </inputAction>    
-</inputList>
-_EOF_
-    chown $user:$user "$home/.emulationstation/es_input.cfg"
-    if [[ ! -d "$md_inst/scripts/" ]]; then
-        mkdir "$md_inst/scripts/"
-    fi
-    chmod +x "$scriptdir/supplementary/moduledata/supplementary/emulationstation/inputconfiguration.sh"
-    cp -r "$scriptdir/supplementary/moduledata/supplementary/emulationstation/"* "$md_inst/scripts/"
-    chown -R $user:$user "$md_inst/scripts/"
+    configure_inputconfig_emulationstation
 }
