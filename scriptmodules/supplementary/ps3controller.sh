@@ -14,11 +14,11 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function depends_ps3controller() {
-    getDepends bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick
+    getDepends bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick libusb-1.0-0-dev
 }
 
 function sources_ps3controller() {
-    wget -nv http://www.pabr.org/sixlinux/sixpair.c -O "$md_build/sixpair.c"
+    gitPullOrClone "$md_build" https://github.com/kLeZ/SixPair.git
     wget -O- -q http://sourceforge.net/projects/qtsixa/files/QtSixA%201.5.1/QtSixA-1.5.1-src.tar.gz | tar -xvz --strip-components=1
     patch -p1 <<\_EOF_
 --- a/sixad/shared.h	2011-10-12 03:37:38.000000000 +0300
@@ -40,7 +40,7 @@ _EOF_
  }
 
 function build_ps3controller() {
-    gcc -o sixpair sixpair.c -lusb
+    g++ -o sixpair main.cpp -lusb-1.0
     cd sixad
     make clean
     make
