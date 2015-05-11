@@ -3,7 +3,6 @@
 # This file is part of RetroPie.
 # 
 # (c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
-# Author: Matt Watt (https://github.com/MattWatt)
 # 
 # See the LICENSE.md file at the top-level directory of this distribution and 
 # at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
