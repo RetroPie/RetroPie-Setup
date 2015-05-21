@@ -55,7 +55,7 @@ function build_mupen64plus-testing() {
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-rice" ]] && params+=("VC=1")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
-            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
+            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1" "EXT_CFG=1")
             [[ "$dir" == "mupen64plus-video-glide64mk2" ]] && params+=("VC=1")
             if isPlatform "rpi2"; then
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "NEON=1")
@@ -107,6 +107,12 @@ TextureEnhancementControl = 0
 [Video-Glide64mk2]
 # Wrapper FBO
 wrpFBO = False
+
+[Audio-OMX]
+# Number of output samples per Audio callback. This is for hardware buffers.
+BUFFER_SIZE = 4096
+# Underrun Mode, 0 = Ignore, 1 = Report, 2 = repeat audio when latency < LATENCY/2
+UNDERRUN_MODE = 0
 _EOF_
 
     chown -R $user:$user "$configdir/n64"
