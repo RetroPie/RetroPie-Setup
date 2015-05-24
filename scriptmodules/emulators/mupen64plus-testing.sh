@@ -93,7 +93,7 @@ function configure_mupen64plus-testing() {
 # Mupen64Plus OMX Audio Plugin config parameter version number
 Version = 1
 # Frequency which is used if rom doesn't want to change it
-DEFAULT_FREQUENCY = 33600
+DEFAULT_FREQUENCY = 32000
 # Swaps left and right channels
 SWAP_CHANNELS = False
 # Audio output to go to (0) Analogue jack, (1) HDMI
