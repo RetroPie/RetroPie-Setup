@@ -23,10 +23,10 @@ function sources_pcsx-rearmed() {
 }
 
 function build_pcsx-rearmed() {
-	if isPlatform "rpi2"; then
-		./configure --sound-drivers=alsa --enable-neon
+    if isPlatform "rpi2"; then
+        ./configure --sound-drivers=alsa --enable-neon
     else
-    	./configure --sound-drivers=alsa
+        ./configure --sound-drivers=alsa
     fi
     make clean
     make
@@ -54,8 +54,8 @@ function install_pcsx-rearmed() {
 function configure_pcsx-rearmed() {
     mkRomDir "psx"
     mkUserDir "$configdir/psx"
-	mkdir "$md_inst/bios"
-	
+    mkdir "$md_inst/bios"
+
     # symlink the rom so so it can be installed with the other bios files
     ln -sf "$biosdir/scph1001.bin" "$md_inst/bios/scph1001.bin"
 
