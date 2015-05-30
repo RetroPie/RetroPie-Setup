@@ -55,7 +55,7 @@ function build_mupen64plus-testing() {
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-rice" ]] && params+=("VC=1")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
-            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
+            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1" "EXT_CFG=1")
             [[ "$dir" == "mupen64plus-video-glide64mk2" ]] && params+=("VC=1")
             if isPlatform "rpi2"; then
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "NEON=1")
@@ -88,7 +88,28 @@ function configure_mupen64plus-testing() {
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$configdir/n64/"
     cat > "$configdir/n64/mupen64plus.cfg" << _EOF_
-    [Video-Rice]
+[Audio-OMX]
+
+# Mupen64Plus OMX Audio Plugin config parameter version number
+Version = 1
+# Frequency which is used if rom doesn't want to change it
+DEFAULT_FREQUENCY = 32000
+# Swaps left and right channels
+SWAP_CHANNELS = False
+# Audio output to go to (0) Analogue jack, (1) HDMI
+OUTPUT_PORT = 1
+# Point OMX to the raw N64 audio data region instead of copying audio int$
+NATIVE_MODE = False
+# Number of output samples per Audio callback. This is for hardware buffe$
+BUFFER_SIZE = 4096
+# Audio Output Frequncy mode (when NATIVE_MODE=false): 0 = Rom Frequency,$
+DEFAULT_MODE = 0
+# Desired Latency in ms
+LATENCY = 300
+# Underrun Mode, 0 = Ignore, 1 = Report, 2 = repeat audio when latency < $
+UNDERRUN_MODE = 0
+
+[Video-Rice]
 # Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
 ScreenUpdateSetting = 7
 # Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)
