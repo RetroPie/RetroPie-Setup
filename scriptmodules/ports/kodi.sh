@@ -30,7 +30,11 @@ function configure_kodi() {
 
     cat > "$romdir/ports/Kodi.sh" << _EOF_
 #!/bin/bash
-kodi-standalone
+
+kodi-standalone 
+
+fbset -depth 8 && fbset -depth 16
+ 
 _EOF_
 
     chmod +x "$romdir/ports/Kodi.sh"
