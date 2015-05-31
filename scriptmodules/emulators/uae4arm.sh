@@ -39,7 +39,7 @@ function configure_uae4arm() {
     chown -R $user:$user "$md_inst/conf"
 
     mkdir -p "$md_inst/kickstarts"
-    chown -R $user:$user "md_inst/conf"
+    chown -R $user:$user "$md_inst/conf"
     
     # symlinks to optional kickstart roms in our BIOS dir
     for rom in kick12.rom kick13.rom kick20.rom kick31.rom; do
