@@ -372,20 +372,28 @@ function sortESSystems() {
 function ensureSystemretroconfig {
     local system="$1"
     local shader="$2"
-    local config="$configdir/$system/retroarch.cfg"
 
     if [[ ! -d "$configdir/$system" ]]; then
         mkUserDir "$configdir/$system"
     fi
 
+    local config="$configdir/$system/retroarch.cfg"
+    # if the user has an existing config we will not overwrite it, but instead
+    # create the default config as retroarch.cfg.rp-dist (apart from the very
+    # important #include addition
+    if [[ -f "$config" ]]; then
+        # if the file exists, add the #include at the start if missing
+        if ! grep -q "#include \"$configdir/all/retroarch.cfg" "$config"; then
+            sed -i "1i#include \"$configdir/all/retroarch.cfg\"" "$config"
+        fi
+        # but use retroarch.cfg.rp-dist for further config changes
+        config="$configdir/$system/retroarch.cfg.rp-dist"
+    fi
+
+    # include the main retroarch config
     if [[ ! -f "$config" ]]; then
         echo "#include \"$configdir/all/retroarch.cfg\"" >"$config"
         echo "# All settings made here will override the global settings for the current emulator core" >>"$config"
-        chown $user:$user "$config"
-    fi
-
-    if ! grep -q "#include \"$configdir/all/retroarch.cfg" "$config"; then
-        sed -i "1i#include \"$configdir/all/retroarch.cfg\"" "$config"
     fi
 
     iniConfig " = " "" "$config"
@@ -396,6 +404,8 @@ function ensureSystemretroconfig {
         iniSet "video_shader_enable" "false"
         iniSet "video_smooth" "false"
     fi
+
+    chown $user:$user "$config"
 }
 
 # add a framebuffer mode to /etc/fb.modes - useful for adding specific resolutions used by emulators so SDL
