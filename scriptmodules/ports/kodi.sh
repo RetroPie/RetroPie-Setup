@@ -30,7 +30,7 @@ function configure_kodi() {
 
     cat > "$romdir/ports/Kodi.sh" << _EOF_
 #!/bin/bash
-kodi-standalone
+/opt/retropie/supplementary/runcommand/runcommand.sh 0 "kodi-standalone" "kodi"
 _EOF_
 
     chmod +x "$romdir/ports/Kodi.sh"
