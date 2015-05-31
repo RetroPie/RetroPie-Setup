@@ -29,8 +29,6 @@ function install_uae4arm() {
     cp data "$md_inst" -r
     md_ret_files=(
         'uae4arm'
-  #      'uae4all'
-  #      'Readme.txt'
     )
 }
 
@@ -38,7 +36,6 @@ function configure_uae4arm() {
     mkRomDir "amiga"
 
     mkdir -p "$md_inst/conf"
-   #   echo "path=$romdir/amiga" >"$md_inst/conf/adfdir.conf"
     chown -R $user:$user "$md_inst/conf"
 
     mkdir -p "$md_inst/kickstarts"
@@ -49,7 +46,6 @@ function configure_uae4arm() {
         ln -sf "$biosdir/$rom" "$md_inst/kickstarts/$rom"
     done
 
-    #rm -f "$md_inst/uae4all.sh" "$romdir/amiga/Start.txt"
     cat > "$romdir/amiga/+Start UAE4Arm.sh" << _EOF_
 #!/bin/bash
 pushd "$md_inst"
@@ -58,8 +54,6 @@ popd
 _EOF_
     chmod a+x "$romdir/amiga/+Start UAE4Arm.sh"
     chown $user:$user "$romdir/amiga/+Start UAE4Arm.sh"
-
-    #setDispmanx "$md_id" 1
 
     addSystem 1 "$md_id" "amiga" "$romdir/amiga/+Start\ UAE4Arm.sh" "AmigaARM" ".sh"
 }
