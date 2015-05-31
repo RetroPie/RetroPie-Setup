@@ -30,26 +30,7 @@ function configure_kodi() {
 
     cat > "$romdir/ports/Kodi.sh" << _EOF_
 #!/bin/bash
-LOG_FILE=$HOME/.kodi/temp/kodi.log
- 
-rm $LOG_FILE 2> /dev/null
- 
-/usr/lib/kodi/kodi.bin --standalone &
- 
-while [[ ! -f $LOG_FILE ]] ; do
-  sleep 1s
-done
- 
-while read line ; do
-  if [[ ${line} =~ "application stopped" ]] ; then
-    echo "Killing kodi"
-    break
-  fi
-done < <(tail --pid=$$ -f -n0 $LOG_FILE)
- 
-killall kodi.bin
- 
-fbset -depth 8 && fbset -depth 16
+kodi-standalone
 _EOF_
 
     chmod +x "$romdir/ports/Kodi.sh"
