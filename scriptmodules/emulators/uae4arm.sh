@@ -26,8 +26,8 @@ function build_uae4arm() {
 
 }
 function install_uae4arm() {
- 	cp data "$md_inst" -r
-	md_ret_files=(
+    cp data "$md_inst" -r
+    md_ret_files=(
         'uae4arm'
   #      'uae4all'
   #      'Readme.txt'
@@ -41,9 +41,9 @@ function configure_uae4arm() {
    #   echo "path=$romdir/amiga" >"$md_inst/conf/adfdir.conf"
     chown -R $user:$user "$md_inst/conf"
 
-	mkdir -p "$md_inst/kickstarts"
-	chown -R $user:$user "md_inst/conf"
-	
+    mkdir -p "$md_inst/kickstarts"
+    chown -R $user:$user "md_inst/conf"
+    
     # symlinks to optional kickstart roms in our BIOS dir
     for rom in kick12.rom kick13.rom kick20.rom kick31.rom; do
         ln -sf "$biosdir/$rom" "$md_inst/kickstarts/$rom"
