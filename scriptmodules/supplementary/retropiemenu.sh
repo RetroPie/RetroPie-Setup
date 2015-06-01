@@ -25,7 +25,6 @@ function configure_retropiemenu()
     files=(
         'raspiconfig.rp'
         'rpsetup.rp'
-        'inputstation.rp'
         'retroarchinput.rp'
         'audiosettings.rp'
         'dispmanx.rp'
@@ -40,7 +39,7 @@ function configure_retropiemenu()
         touch "$rpdir/$file"
     done
 
-    chown -R "$user":"$user" "$rpdir"
+    chown -R $user:$user "$rpdir"
 
     # add some information
     mkdir -p "$home/.emulationstation/gamelists/retropie/"
@@ -58,10 +57,6 @@ function configure_retropiemenu()
     <game>
         <path>$rpdir/filemanager.rp</path>
         <name>File Manager</name>
-    </game>
-    <game>
-        <path>$rpdir/inputstation.rp</path>
-        <name>Controller Configuration</name>
     </game>
     <game>
         <path>$rpdir/retroarchinput.rp</path>
@@ -107,9 +102,6 @@ function launch_retropiemenu() {
             ;;
         raspiconfig.rp)
             raspi-config
-            ;;
-        inputstation.rp)
-            bash "/opt/retropie/supplementary/inputstation/script/inputconfiguration.sh"
             ;;
         filemanager.rp)
             mc
