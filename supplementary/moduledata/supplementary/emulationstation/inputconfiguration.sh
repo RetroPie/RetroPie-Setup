@@ -81,7 +81,8 @@ function inputconfiguration() {
         for module in $(find "$inputscriptdir/configscripts/" -maxdepth 1 -name "*.sh" | sort); do
 
             source "$module"  # register functions from emulatorconfigs folder
-            local module_id=$(basename -s .sh "$module")
+            local module_id=${module##*/}
+            local module_id=${module_id%.sh}
             echo "Configuring '$module_id'"
 
             # at the start, the onstart_inputconfig_X function is called
