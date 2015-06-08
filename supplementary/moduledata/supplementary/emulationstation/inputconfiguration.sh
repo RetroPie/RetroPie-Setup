@@ -5,6 +5,58 @@
 # See the LICENSE.md file at the top-level directory of this distribution
 #
 
+###### input configuration interface functions for scripts in configscripts ######
+
+#######################################
+# Interface functions
+# All interface functions get the same arguments. The naming scheme of the interface
+# functions is defined as following:
+#
+# function <button name>_inputconfig_<filename without extension>(),
+#
+# where <button name> is one of [
+#       "onstart"
+#       "up",
+#       "right",
+#       "down",
+#       "left",
+#       "a",
+#       "b",
+#       "x",
+#       "y",
+#       "leftbottom",
+#       "rightbottom",
+#       "lefttop",
+#       "righttop",
+#       "leftthumb",
+#       "rightthumb",
+#       "start",
+#       "select",
+#       "leftanalogright",
+#       "leftanalogleft",
+#       "leftanalogdown",
+#       "leftanalogup",
+#       "rightanalogright",
+#       "rightanalogleft",
+#       "rightanalogdown",
+#       "rightanalogup",
+#       "onend"
+#       ]
+# Globals:
+#   $home - the home directory of the user
+#
+# Arguments:
+#   $1 - device type
+#   $2 - device name
+#   $3 - input name
+#   $4 - input type
+#   $5 - input ID
+#   $6 - input value
+#
+# Returns:
+#   None
+#######################################
+
 function inputconfiguration() {
 
     declare -a inputConfigButtonList=("up" "right" "down" "left" "a" "b" "x" "y" "leftbottom" "rightbottom" "lefttop" "righttop" "leftthumb" "rightthumb" "start" "select" "leftanalogright" "leftanalogleft" "leftanalogdown" "leftanalogup" "rightanalogright" "rightanalogleft" "rightanalogdown" "rightanalogup")
@@ -12,7 +64,7 @@ function inputconfiguration() {
     local inputscriptdir=$(dirname "$0")
     local inputscriptdir=$(cd "$inputscriptdir" && pwd)
 
-    # get input configuration from 
+    # get input configuration from
     pushd "$inputscriptdir"
 
     # now should have the file "$home"/.emulationstation/es_temporaryinput.cfg"

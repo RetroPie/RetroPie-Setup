@@ -8,56 +8,6 @@
 # at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
 #
 
-###### input configuration interface functions ######
-
-#######################################
-# Interface functions
-# All interface functions get the same arguments. The naming scheme of the interface 
-# functions is defined as following:
-#
-# function <button name>_inputconfig_<filename without extension>(),
-#
-# where <button name> is one of [ "up", 
-#                                 "right", 
-#                                 "down", 
-#                                 "left", 
-#                                 "a", 
-#                                 "b", 
-#                                 "x", 
-#                                 "y", 
-#                                 "leftbottom", 
-#                                 "rightbottom", 
-#                                 "lefttop", 
-#                                 "righttop", 
-#                                 "leftthumb", 
-#                                 "rightthumb", 
-#                                 "start", 
-#                                 "select", 
-#                                 "leftanalogright", 
-#                                 "leftanalogleft", 
-#                                 "leftanalogdown", 
-#                                 "leftanalogup", 
-#                                 "rightanalogright", 
-#                                 "rightanalogleft", 
-#                                 "rightanalogdown", 
-#                                 "rightanalogup",
-#                                 "onleave" ].
-#
-# Globals:
-#   $home - the home directory of the user
-#
-# Arguments:
-#   $1 - device type
-#   $2 - device name
-#   $3 - input name
-#   $4 - input type
-#   $5 - input ID
-#   $6 - input value
-#
-# Returns:
-#   None
-#######################################
-
 function onstart_inputconfig_retroarch_joystick() {
     inputconfig_retroarch_iniConfig " = " "\"" "./tempconfig.cfg"
 }
