@@ -58,55 +58,92 @@
 #   None
 #######################################
 
-function up_inputconfig_emulationstation() {
+
+#### input type: Joystick ###
+
+function up_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "up" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "up" "key" "1073741906" "1"
 }
 
-function right_inputconfig_emulationstation() {
+function right_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "right" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "right" "key" "1073741903" "1"
 }
 
-function down_inputconfig_emulationstation() {
+function down_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "down" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "down" "key" "1073741905" "1"
 }
 
-function left_inputconfig_emulationstation() {
+function left_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "left" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "left" "key" "1073741904" "1"
 }
 
-function a_inputconfig_emulationstation() {
+function a_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "a" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "a" "key" "97" "1"
 }
 
-function b_inputconfig_emulationstation() {
+function b_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "b" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "b" "key" "115" "1"
 }
 
-function leftbottom_inputconfig_emulationstation() {
+function leftbottom_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "pagedown" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "pagedown" "key" "1073741902" "1"
 }
 
-function rightbottom_inputconfig_emulationstation() {
+function rightbottom_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "pageup" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "pageup" "key" "1073741899" "1"
 }
 
-function start_inputconfig_emulationstation() {
+function start_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "start" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "start" "key" "13" "1"
 }
 
-function select_inputconfig_emulationstation() {
+function select_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "select" "$4" "$5" "$6"
-    setESInputConfig_inputconfig_emulationstation "keyboard" "Keyboard" "select" "key" "32" "1"
 }
+
+
+#### input type: Keyboard ###
+
+function up_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "up" "$4" "$5" "$6"
+}
+
+function right_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "right" "$4" "$5" "$6"
+}
+
+function down_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "down" "$4" "$5" "$6"
+}
+
+function left_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "left" "$4" "$5" "$6"
+}
+
+function a_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "a" "$4" "$5" "$6"
+}
+
+function b_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "b" "$4" "$5" "$6"
+}
+
+function leftbottom_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pagedown" "$4" "$5" "$6"
+}
+
+function rightbottom_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pageup" "$4" "$5" "$6"
+}
+
+function start_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "start" "$4" "$5" "$6"
+}
+
+function select_inputconfig_emulationstation_keyboard() {
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "select" "$4" "$5" "$6"
+}
+
 
 ###### helper functions ######
 # to circumvent name collisions we use quite long function names in the following

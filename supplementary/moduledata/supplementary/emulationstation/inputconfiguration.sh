@@ -13,7 +13,7 @@ function inputconfiguration() {
     local inputscriptdir=$(cd "$inputscriptdir" && pwd)
 
     # get input configuration from 
-    pushd $inputscriptdir
+    pushd "$inputscriptdir"
 
     # now should have the file "$home"/.emulationstation/es_temporaryinput.cfg"
     if [[ -f "$home"/.emulationstation/es_temporaryinput.cfg ]]; then
@@ -21,7 +21,12 @@ function inputconfiguration() {
         deviceType=$(getDeviceType)
         deviceName=$(getDeviceName)
 
+        local userInputType=$(grep -o -e "inputConfig type=\"[a-z]*\"" "$home"/.emulationstation/es_temporaryinput.cfg)
+        local userInputType=${userInputType:18:-1}
+        echo -e "Input type is '$userInputType'."
+
         # now we have the file ./userinput/inputconfig.xml and we use this information to configure all registered emulators
+        # therefore the input type specific modules are called (if they exist)
         for module in $(find "$inputscriptdir/configscripts/" -maxdepth 1 -name "*.sh" | sort); do
 
             source "$module"  # register functions from emulatorconfigs folder
@@ -30,11 +35,10 @@ function inputconfiguration() {
 
             # loop through all buttons and use corresponding config function if it exists
             for button in "${inputConfigButtonList[@]}"; do
-                funcname=$button"_inputconfig_"${onlyFilename::-3}
+                funcname=$button"_inputconfig_"${onlyFilename::-3}"_"$userInputType
 
                 # if interface function is implemented
                 if fn_exists "$funcname"; then
-
                     inputName=$(getInputAttribute "$button" "name")
                     inputType=$(getInputAttribute "$button" "type")
                     inputID=$(getInputAttribute "$button" "id")
@@ -48,7 +52,7 @@ function inputconfiguration() {
             done
 
             # at the end, the onleave_inputconfig_X function is called
-            funcname="onleave_inputconfig_"${onlyFilename::-3}
+            funcname="onleave_inputconfig_"${onlyFilename::-3}"_"$userInputType
 
             # if interface function is implemented
             fn_exists "$funcname" && "$funcname" "$deviceType" "$deviceName"
