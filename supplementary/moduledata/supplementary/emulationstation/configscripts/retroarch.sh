@@ -9,18 +9,17 @@
 #
 
 function onstart_inputconfig_retroarch_joystick() {
+    local deviceName=$2
     inputconfig_retroarch_iniConfig " = " "\"" "./tempconfig.cfg"
+    inputconfig_retroarch_iniSet "input_device" "$deviceName"
+    inputconfig_retroarch_iniSet "input_driver" "udev"
 }
 
 function up_inputconfig_retroarch_joystick() {
-    local deviceName=$2
     local inputName=$3
     local inputType=$4
     local inputID=$5
     local inputValue=$6
-
-    inputconfig_retroarch_iniSet "input_device" "$deviceName"
-    inputconfig_retroarch_iniSet "input_driver" "udev"
 
     inputconfig_retroarch_iniSet "input_up_btn" "$(inputconfig_retroarch_getButtonString "up" "$inputType" "$inputID" "$inputValue")"
 }
