@@ -73,8 +73,7 @@ function inputconfiguration() {
         deviceType=$(getDeviceType)
         deviceName=$(getDeviceName)
 
-        local userInputType=$(grep -o -e "inputConfig type=\"[a-z]*\"" "$home/.emulationstation/es_temporaryinput.cfg")
-        local userInputType=${userInputType:18:-1}
+        local userInputType=$(xmlstarlet sel -t -v "//inputConfig/@type" "$home/.emulationstation/es_temporaryinput.cfg")
         echo -e "Input type is '$userInputType'."
 
         # now we have the file ./userinput/inputconfig.xml and we use this information to configure all registered emulators
