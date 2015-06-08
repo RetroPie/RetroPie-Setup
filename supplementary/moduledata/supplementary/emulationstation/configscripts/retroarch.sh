@@ -156,179 +156,8 @@ function onend_inputconfig_retroarch_joystick() {
 
 function onstart_inputconfig_retroarch_keyboard() {
     inputconfig_retroarch_iniConfig " = " "" "/opt/retropie/configs/all/retroarch.cfg"
-}
 
-function up_inputconfig_retroarch_keyboard() {
-    local deviceName=$2
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    inputconfig_retroarch_iniSet "input_player1_up" "$(inputconfig_retroarch_getRetroarchKeystring "$inputID")"
-}
-
-function right_inputconfig_retroarch_keyboard() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    inputconfig_retroarch_iniSet "input_player1_right" "$(inputconfig_retroarch_getRetroarchKeystring "$inputID")"
-}
-
-function down_inputconfig_retroarch_keyboard() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    inputconfig_retroarch_iniSet "input_player1_down" "$(inputconfig_retroarch_getRetroarchKeystring "$inputID")"
-}
-
-function left_inputconfig_retroarch_keyboard() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    inputconfig_retroarch_iniSet "input_player1_left" "$(inputconfig_retroarch_getRetroarchKeystring "$inputID")"
-}
-
-# the following functions are kept a bit shorter than above, but they still follow the the mechanism
-
-function a_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_a" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function b_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_b" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function x_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_x" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function y_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_y" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function leftbottom_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_l" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function rightbottom_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_r" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function lefttop_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_l2" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function righttop_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_r2" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function leftthumb_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_l3" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function rightthumb_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_r3" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function start_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_start" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-function select_inputconfig_retroarch_keyboard() {
-    inputconfig_retroarch_iniSet "input_player1_select" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
-}
-
-
-###### helper functions ######
-# to circumvent name collisions we use quite long function names in the following.
-# all the following functions should have no dependencies to other shell scripts.
-
-# arg 1: delimiter, arg 2: quote, arg 3: file
-function inputconfig_retroarch_iniConfig() {
-    __ini_cfg_delim="$1"
-    __ini_cfg_quote="$2"
-    __ini_cfg_file="$3"
-}
-
-# arg 1: command, arg 2: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
-function inputconfig_retroarch_iniProcess() {
-    local cmd="$1"
-    local key="$2"
-    local value="$3"
-    local file="$4"
-    [[ -z "$file" ]] && file="$__ini_cfg_file"
-    local delim="$__ini_cfg_delim"
-    local quote="$__ini_cfg_quote"
-
-    [[ -z "$file" ]] && fatalError "No file provided for ini/config change"
-    [[ -z "$key" ]] && fatalError "No key provided for ini/config change on $file"
-
-    # we strip the delimiter of spaces, so we can "fussy" match existing entries that have the wrong spacing
-    local delim_strip=${delim// /}
-    # if the stripped delimiter is empty - such as in the case of a space, just use the delimiter instead
-    [[ -z "$delim_strip" ]] && delim_strip="$delim"
-    local match_re="^[[:space:]#]*$key[[:space:]]*$delim_strip.*$"
-
-    local match
-    if [[ -f "$file" ]]; then
-        match=$(egrep -i "$match_re" "$file" | tail -1)
-    else
-        touch "$file"
-    fi
-
-    if [[ "$cmd" == "del" ]]; then
-        [[ -n "$match" ]] && sed -i -e "\|$match|d" "$file"
-        return 0
-    fi
-
-    [[ "$cmd" == "unset" ]] && key="# $key"
-
-    local replace="$key$delim$quote$value$quote"
-    # echo "Setting $replace in $file"
-    if [[ -z "$match" ]]; then
-        # add key-value pair
-        echo "$replace" >> "$file"
-    else
-        # replace existing key-value pair
-        sed -i -e "s|$match|$replace|g" "$file"
-    fi
-}
-
-# arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
-function inputconfig_retroarch_iniSet() {
-    inputconfig_retroarch_iniProcess "set" "$1" "$2" "$3"
-}
-
-function inputconfig_retroarch_getButtonString() {
-    local inputName=$1
-    local inputType=$2
-    local inputID=$3
-    local inputValue=$4
-
-    if [[ "$inputType" == "hat" ]]; then
-        btnString="h"$inputID$inputName
-    elif [[ "$inputType" == "axis" ]]; then
-        if [[ "$inputValue" == "1" ]]; then
-            btnString="+"$inputID
-        else
-            btnString="-"$inputID
-        fi
-    else
-        btnString=$inputID
-    fi
-    echo "$btnString"
-}
-
-function inputconfig_retroarch_getRetroarchKeystring() {
-    local queryString=$1
-    declare -A retroarchkeymap
+    declare -Ag retroarchkeymap
     # SDL codes from https://wiki.libsdl.org/SDLKeycodeLookup
     retroarchkeymap["1073741904"]="left"
     retroarchkeymap["1073741903"]="right"
@@ -434,5 +263,172 @@ function inputconfig_retroarch_getRetroarchKeystring() {
     retroarchkeymap["120"]="x"
     retroarchkeymap["121"]="y"
     retroarchkeymap["122"]="z"
-    echo ${retroarchkeymap[$queryString]}
+}
+
+function up_inputconfig_retroarch_keyboard() {
+    local deviceName=$2
+    local inputName=$3
+    local inputType=$4
+    local inputID=$5
+    local inputValue=$6
+
+    inputconfig_retroarch_iniSet "input_player1_up" "${retroarchkeymap[$inputID]}"
+}
+
+function right_inputconfig_retroarch_keyboard() {
+    local inputName=$3
+    local inputType=$4
+    local inputID=$5
+    local inputValue=$6
+
+    inputconfig_retroarch_iniSet "input_player1_right" "${retroarchkeymap[$inputID]}"
+}
+
+function down_inputconfig_retroarch_keyboard() {
+    local inputName=$3
+    local inputType=$4
+    local inputID=$5
+    local inputValue=$6
+
+    inputconfig_retroarch_iniSet "input_player1_down" "${retroarchkeymap[$inputID]}"
+}
+
+function left_inputconfig_retroarch_keyboard() {
+    local inputName=$3
+    local inputType=$4
+    local inputID=$5
+    local inputValue=$6
+
+    inputconfig_retroarch_iniSet "input_player1_left" "${retroarchkeymap[$inputID]}"
+}
+
+# the following functions are kept a bit shorter than above, but they still follow the the mechanism
+
+function a_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_a" "${retroarchkeymap[$5]}"
+}
+
+function b_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_b" "${retroarchkeymap[$5]}"
+}
+
+function x_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_x" "${retroarchkeymap[$5]}"
+}
+
+function y_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_y" "${retroarchkeymap[$5]}"
+}
+
+function leftbottom_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_l" "${retroarchkeymap[$5]}"
+}
+
+function rightbottom_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_r" "${retroarchkeymap[$5]}"
+}
+
+function lefttop_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_l2" "${retroarchkeymap[$5]}"
+}
+
+function righttop_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_r2" "${retroarchkeymap[$5]}"
+}
+
+function leftthumb_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_l3" "${retroarchkeymap[$5]}"
+}
+
+function rightthumb_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_r3" "${retroarchkeymap[$5]}"
+}
+
+function start_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_start" "${retroarchkeymap[$5]}"
+}
+
+function select_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniSet "input_player1_select" "${retroarchkeymap[$5]}"
+}
+
+
+###### helper functions ######
+# to circumvent name collisions we use quite long function names in the following.
+# all the following functions should have no dependencies to other shell scripts.
+
+# arg 1: delimiter, arg 2: quote, arg 3: file
+function inputconfig_retroarch_iniConfig() {
+    __ini_cfg_delim="$1"
+    __ini_cfg_quote="$2"
+    __ini_cfg_file="$3"
+}
+
+# arg 1: command, arg 2: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+function inputconfig_retroarch_iniProcess() {
+    local cmd="$1"
+    local key="$2"
+    local value="$3"
+    local file="$4"
+    [[ -z "$file" ]] && file="$__ini_cfg_file"
+    local delim="$__ini_cfg_delim"
+    local quote="$__ini_cfg_quote"
+
+    [[ -z "$file" ]] && fatalError "No file provided for ini/config change"
+    [[ -z "$key" ]] && fatalError "No key provided for ini/config change on $file"
+
+    # we strip the delimiter of spaces, so we can "fussy" match existing entries that have the wrong spacing
+    local delim_strip=${delim// /}
+    # if the stripped delimiter is empty - such as in the case of a space, just use the delimiter instead
+    [[ -z "$delim_strip" ]] && delim_strip="$delim"
+    local match_re="^[[:space:]#]*$key[[:space:]]*$delim_strip.*$"
+
+    local match
+    if [[ -f "$file" ]]; then
+        match=$(egrep -i "$match_re" "$file" | tail -1)
+    else
+        touch "$file"
+    fi
+
+    if [[ "$cmd" == "del" ]]; then
+        [[ -n "$match" ]] && sed -i -e "\|$match|d" "$file"
+        return 0
+    fi
+
+    [[ "$cmd" == "unset" ]] && key="# $key"
+
+    local replace="$key$delim$quote$value$quote"
+    # echo "Setting $replace in $file"
+    if [[ -z "$match" ]]; then
+        # add key-value pair
+        echo "$replace" >> "$file"
+    else
+        # replace existing key-value pair
+        sed -i -e "s|$match|$replace|g" "$file"
+    fi
+}
+
+# arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+function inputconfig_retroarch_iniSet() {
+    inputconfig_retroarch_iniProcess "set" "$1" "$2" "$3"
+}
+
+function inputconfig_retroarch_getButtonString() {
+    local inputName=$1
+    local inputType=$2
+    local inputID=$3
+    local inputValue=$4
+
+    if [[ "$inputType" == "hat" ]]; then
+        btnString="h"$inputID$inputName
+    elif [[ "$inputType" == "axis" ]]; then
+        if [[ "$inputValue" == "1" ]]; then
+            btnString="+"$inputID
+        else
+            btnString="-"$inputID
+        fi
+    else
+        btnString=$inputID
+    fi
+    echo "$btnString"
 }
