@@ -142,6 +142,62 @@ function getInputAttribute() {
     xmlstarlet sel -t -v "/inputList/inputConfig[@deviceName=$deviceName]/input[@name=$inputName]/@$attribute" "$home"/.emulationstation/es_temporaryinput.cfg
 }
 
+# arg 1: delimiter, arg 2: quote, arg 3: file
+function iniConfig() {
+    __ini_cfg_delim="$1"
+    __ini_cfg_quote="$2"
+    __ini_cfg_file="$3"
+}
+
+# arg 1: command, arg 2: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+function iniProcess() {
+    local cmd="$1"
+    local key="$2"
+    local value="$3"
+    local file="$4"
+    [[ -z "$file" ]] && file="$__ini_cfg_file"
+    local delim="$__ini_cfg_delim"
+    local quote="$__ini_cfg_quote"
+
+    [[ -z "$file" ]] && fatalError "No file provided for ini/config change"
+    [[ -z "$key" ]] && fatalError "No key provided for ini/config change on $file"
+
+    # we strip the delimiter of spaces, so we can "fussy" match existing entries that have the wrong spacing
+    local delim_strip=${delim// /}
+    # if the stripped delimiter is empty - such as in the case of a space, just use the delimiter instead
+    [[ -z "$delim_strip" ]] && delim_strip="$delim"
+    local match_re="^[[:space:]#]*$key[[:space:]]*$delim_strip.*$"
+
+    local match
+    if [[ -f "$file" ]]; then
+        match=$(egrep -i "$match_re" "$file" | tail -1)
+    else
+        touch "$file"
+    fi
+
+    if [[ "$cmd" == "del" ]]; then
+        [[ -n "$match" ]] && sed -i -e "\|$match|d" "$file"
+        return 0
+    fi
+
+    [[ "$cmd" == "unset" ]] && key="# $key"
+
+    local replace="$key$delim$quote$value$quote"
+    # echo "Setting $replace in $file"
+    if [[ -z "$match" ]]; then
+        # add key-value pair
+        echo "$replace" >> "$file"
+    else
+        # replace existing key-value pair
+        sed -i -e "s|$match|$replace|g" "$file"
+    fi
+}
+
+# arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+function iniSet() {
+    iniProcess "set" "$1" "$2" "$3"
+}
+
 ###### main ######
 
 user="$SUDO_USER"
