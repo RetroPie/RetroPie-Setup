@@ -33,6 +33,12 @@ function inputconfiguration() {
             local onlyFilename=$(basename "$module")
             echo "Configuring '$onlyFilename'"
 
+            # at the start, the onstart_inputconfig_X function is called
+            funcname="onstart_inputconfig_"${onlyFilename::-3}"_"$userInputType
+
+            # if interface function is implemented
+            fn_exists "$funcname" && "$funcname" "$deviceType" "$deviceName"
+
             # loop through all buttons and use corresponding config function if it exists
             for button in "${inputConfigButtonList[@]}"; do
                 funcname=$button"_inputconfig_"${onlyFilename::-3}"_"$userInputType
@@ -51,8 +57,8 @@ function inputconfiguration() {
                 fi
             done
 
-            # at the end, the onleave_inputconfig_X function is called
-            funcname="onleave_inputconfig_"${onlyFilename::-3}"_"$userInputType
+            # at the end, the onend_inputconfig_X function is called
+            funcname="onend_inputconfig_"${onlyFilename::-3}"_"$userInputType
 
             # if interface function is implemented
             fn_exists "$funcname" && "$funcname" "$deviceType" "$deviceName"

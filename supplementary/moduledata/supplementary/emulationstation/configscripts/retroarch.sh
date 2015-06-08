@@ -58,15 +58,16 @@
 #   None
 #######################################
 
+function onstart_inputconfig_retroarch_joystick() {
+    inputconfig_retroarch_iniConfig " = " "\"" "./tempconfig.cfg"
+}
+
 function up_inputconfig_retroarch_joystick() {
     local deviceName=$2
     local inputName=$3
     local inputType=$4
     local inputID=$5
     local inputValue=$6
-
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
 
     inputconfig_retroarch_iniSet "input_device" "$deviceName"
     inputconfig_retroarch_iniSet "input_driver" "udev"
@@ -80,9 +81,6 @@ function right_inputconfig_retroarch_joystick() {
     local inputID=$5
     local inputValue=$6
 
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
-
     inputconfig_retroarch_iniSet "input_right_btn" "$(inputconfig_retroarch_getButtonString "right" "$inputType" "$inputID" "$inputValue")"
     inputconfig_retroarch_iniSet "input_state_slot_increase_btn" "$(inputconfig_retroarch_getButtonString "right" "$inputType" "$inputID" "$inputValue")"
 }
@@ -93,9 +91,6 @@ function down_inputconfig_retroarch_joystick() {
     local inputID=$5
     local inputValue=$6
 
-    configfile="tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
-
     inputconfig_retroarch_iniSet "input_down_btn" "$(inputconfig_retroarch_getButtonString "down" "$inputType" "$inputID" "$inputValue")"
 }
 
@@ -105,140 +100,97 @@ function left_inputconfig_retroarch_joystick() {
     local inputID=$5
     local inputValue=$6
 
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
-
     inputconfig_retroarch_iniSet "input_left_btn" "$(inputconfig_retroarch_getButtonString "left" "$inputType" "$inputID" "$inputValue")"
     inputconfig_retroarch_iniSet "input_state_slot_decrease_btn" "$(inputconfig_retroarch_getButtonString "left" "$inputType" "$inputID" "$inputValue")"
 }
 
 function a_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_a_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function b_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_b_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
     inputconfig_retroarch_iniSet "input_reset_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function x_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_x_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
     inputconfig_retroarch_iniSet "input_menu_toggle_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function y_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_y_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function leftbottom_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_l_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
     inputconfig_retroarch_iniSet "input_load_state_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function rightbottom_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_r_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
     inputconfig_retroarch_iniSet "input_save_state_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function lefttop_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_l2_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function righttop_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_r2_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function leftthumb_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_l3_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function rightthumb_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_r3_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function start_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_start_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
     inputconfig_retroarch_iniSet "input_exit_emulator_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function select_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_select_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
     inputconfig_retroarch_iniSet "input_enable_hotkey_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function leftanalogright_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_l_x_plus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function leftanalogleft_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_l_x_minus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function leftanalogdown_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_l_y_plus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function leftanalogup_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_l_y_minus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function rightanalogright_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_r_x_plus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function rightanalogleft_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_r_x_minus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function rightanalogdown_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_r_y_plus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
 function rightanalogup_inputconfig_retroarch_joystick() {
-    configfile="./tempconfig.cfg"
-    inputconfig_retroarch_iniConfig " = " "\"" "$configfile"
     inputconfig_retroarch_iniSet "input_r_y_minus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
 }
 
-function onleave_inputconfig_retroarch_joystick() {
+function onend_inputconfig_retroarch_joystick() {
     local deviceType=$1
     local deviceName=$2
     newFilename=$(echo "$deviceName" | sed -e 's/ /_/g')".cfg"
@@ -253,6 +205,10 @@ function onleave_inputconfig_retroarch_joystick() {
 
 ### input type: Keyboard ###
 
+function onstart_inputconfig_retroarch_keyboard() {
+    inputconfig_retroarch_iniConfig " = " "" "/opt/retropie/configs/all/retroarch.cfg"
+}
+
 function up_inputconfig_retroarch_keyboard() {
     local deviceName=$2
     local inputName=$3
@@ -260,8 +216,6 @@ function up_inputconfig_retroarch_keyboard() {
     local inputID=$5
     local inputValue=$6
 
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_up" "$(inputconfig_retroarch_getRetroarchKeystring "$inputID")"
 }
 
@@ -271,8 +225,6 @@ function right_inputconfig_retroarch_keyboard() {
     local inputID=$5
     local inputValue=$6
 
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_right" "$(inputconfig_retroarch_getRetroarchKeystring "$inputID")"
 }
 
@@ -282,8 +234,6 @@ function down_inputconfig_retroarch_keyboard() {
     local inputID=$5
     local inputValue=$6
 
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_down" "$(inputconfig_retroarch_getRetroarchKeystring "$inputID")"
 }
 
@@ -293,82 +243,56 @@ function left_inputconfig_retroarch_keyboard() {
     local inputID=$5
     local inputValue=$6
 
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_left" "$(inputconfig_retroarch_getRetroarchKeystring "$inputID")"
 }
 
 # the following functions are kept a bit shorter than above, but they still follow the the mechanism
 
 function a_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_a" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function b_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_b" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function x_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_x" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function y_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_y" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function leftbottom_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_l" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function rightbottom_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_r" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function lefttop_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_l2" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function righttop_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_r2" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function leftthumb_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_l3" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function rightthumb_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_r3" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function start_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_start" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
 function select_inputconfig_retroarch_keyboard() {
-    configfile="/opt/retropie/configs/all/retroarch.cfg"
-    inputconfig_retroarch_iniConfig " = " "" "$configfile"
     inputconfig_retroarch_iniSet "input_player1_select" "$(inputconfig_retroarch_getRetroarchKeystring "$5")"
 }
 
