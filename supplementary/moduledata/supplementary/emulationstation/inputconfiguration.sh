@@ -126,18 +126,18 @@ function fn_exists() {
 }
 
 function getDeviceType() {
-    xmlstarlet sel -t -v /inputList/inputConfig/@type "$home"/.emulationstation/es_temporaryinput.cfg
+    xmlstarlet sel -t -v "/inputList/inputConfig/@type" "$home/.emulationstation/es_temporaryinput.cfg"
 }
 
 function getDeviceName() {
-    xmlstarlet sel -t -v /inputList/inputConfig/@deviceName "$home"/.emulationstation/es_temporaryinput.cfg
+    xmlstarlet sel -t -v "/inputList/inputConfig/@deviceName" "$home/.emulationstation/es_temporaryinput.cfg"
 }
 
 function getInputAttribute() {
-    inputName=\'$1\'
+    inputName="'$1'"
     attribute=$2
     deviceName=\'$(getDeviceName)\'
-    xmlstarlet sel -t -v "/inputList/inputConfig[@deviceName=$deviceName]/input[@name=$inputName]/@$attribute" "$home"/.emulationstation/es_temporaryinput.cfg
+    xmlstarlet sel -t -v "/inputList/inputConfig[@deviceName=$deviceName]/input[@name=$inputName]/@$attribute" "$home/.emulationstation/es_temporaryinput.cfg"
 }
 
 # arg 1: delimiter, arg 2: quote, arg 3: file
