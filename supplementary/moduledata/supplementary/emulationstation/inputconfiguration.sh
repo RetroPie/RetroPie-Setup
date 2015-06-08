@@ -70,11 +70,12 @@ function inputconfiguration() {
     # now should have the file "$home/.emulationstation/es_temporaryinput.cfg"
     if [[ -f "$home/.emulationstation/es_temporaryinput.cfg" ]]; then
 
-        deviceType=$(getDeviceType)
-        deviceName=$(getDeviceName)
+        local deviceType=$(getDeviceType)
+        local deviceName=$(getDeviceName)
 
         echo "Input type is '$deviceType'."
 
+        local module
         # now we have the file ./userinput/inputconfig.xml and we use this information to configure all registered emulators
         # therefore the input type specific modules are called (if they exist)
         for module in $(find "$inputscriptdir/configscripts/" -maxdepth 1 -name "*.sh" | sort); do
@@ -84,21 +85,22 @@ function inputconfiguration() {
             echo "Configuring '$module_id'"
 
             # at the start, the onstart_inputconfig_X function is called
-            funcname="onstart_inputconfig_${module_id}_$userInputType"
+            local funcname="onstart_inputconfig_${module_id}_$deviceType"
 
             # if interface function is implemented
             fn_exists "$funcname" && "$funcname" "$deviceType" "$deviceName"
 
+            local button
             # loop through all buttons and use corresponding config function if it exists
             for button in "${inputConfigButtonList[@]}"; do
-                funcname="${button}_inputconfig_${module_id}_$userInputType"
+                funcname="${button}_inputconfig_${module_id}_$deviceType"
 
                 # if interface function is implemented
                 if fn_exists "$funcname"; then
-                    inputName=$(getInputAttribute "$button" "name")
-                    inputType=$(getInputAttribute "$button" "type")
-                    inputID=$(getInputAttribute "$button" "id")
-                    inputValue=$(getInputAttribute "$button" "value")
+                    local inputName=$(getInputAttribute "$button" "name")
+                    local inputType=$(getInputAttribute "$button" "type")
+                    local inputID=$(getInputAttribute "$button" "id")
+                    local inputValue=$(getInputAttribute "$button" "value")
 
                     # if input was defined
                     if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName='$deviceName']/input[@name='$inputName'])" "$home/.emulationstation/es_temporaryinput.cfg") -ne 0 ]]; then
@@ -108,7 +110,7 @@ function inputconfiguration() {
             done
 
             # at the end, the onend_inputconfig_X function is called
-            funcname="onend_inputconfig_${module_id}_$userInputType"
+            funcname="onend_inputconfig_${module_id}_$deviceType"
 
             # if interface function is implemented
             fn_exists "$funcname" && "$funcname" "$deviceType" "$deviceName"
@@ -134,9 +136,9 @@ function getDeviceName() {
 }
 
 function getInputAttribute() {
-    inputName="'$1'"
-    attribute=$2
-    deviceName=\'$(getDeviceName)\'
+    local inputName="'$1'"
+    local attribute=$2
+    local deviceName=\'$(getDeviceName)\'
     xmlstarlet sel -t -v "/inputList/inputConfig[@deviceName=$deviceName]/input[@name=$inputName]/@$attribute" "$home/.emulationstation/es_temporaryinput.cfg"
 }
 
