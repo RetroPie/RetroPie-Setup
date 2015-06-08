@@ -124,9 +124,9 @@ function setESInputConfig_inputconfig_emulationstation() {
             "$confFile"
     else
         xmlstarlet ed -L \
-                      -u "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceType" -v "$deviceType" \
-                      -d "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceGUID" \
-                      "$confFile"
+            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceType" -v "$deviceType" \
+            -d "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceGUID" \
+            "$confFile"
     fi
 
     # add or update element
@@ -141,9 +141,9 @@ function setESInputConfig_inputconfig_emulationstation() {
             "$confFile"
     else  # if device already exists, update it
         xmlstarlet ed -L \
-                      -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@type" -v "$inputType" \
-                      -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@id" -v "$inputID" \
-                      -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@value" -v "$inputValue" \
-                      "$confFile"
+            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@type" -v "$inputType" \
+            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@id" -v "$inputID" \
+            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@value" -v "$inputValue" \
+            "$confFile"
     fi
 }
