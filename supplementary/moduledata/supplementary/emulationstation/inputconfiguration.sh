@@ -67,13 +67,13 @@ function inputconfiguration() {
     # get input configuration from
     pushd "$inputscriptdir"
 
-    # now should have the file "$home"/.emulationstation/es_temporaryinput.cfg"
-    if [[ -f "$home"/.emulationstation/es_temporaryinput.cfg ]]; then
+    # now should have the file "$home/.emulationstation/es_temporaryinput.cfg"
+    if [[ -f "$home/.emulationstation/es_temporaryinput.cfg" ]]; then
 
         deviceType=$(getDeviceType)
         deviceName=$(getDeviceName)
 
-        local userInputType=$(grep -o -e "inputConfig type=\"[a-z]*\"" "$home"/.emulationstation/es_temporaryinput.cfg)
+        local userInputType=$(grep -o -e "inputConfig type=\"[a-z]*\"" "$home/.emulationstation/es_temporaryinput.cfg")
         local userInputType=${userInputType:18:-1}
         echo -e "Input type is '$userInputType'."
 
@@ -86,14 +86,14 @@ function inputconfiguration() {
             echo "Configuring '$onlyFilename'"
 
             # at the start, the onstart_inputconfig_X function is called
-            funcname="onstart_inputconfig_"${onlyFilename::-3}"_"$userInputType
+            funcname="onstart_inputconfig_${onlyFilename::-3}_$userInputType"
 
             # if interface function is implemented
             fn_exists "$funcname" && "$funcname" "$deviceType" "$deviceName"
 
             # loop through all buttons and use corresponding config function if it exists
             for button in "${inputConfigButtonList[@]}"; do
-                funcname=$button"_inputconfig_"${onlyFilename::-3}"_"$userInputType
+                funcname="${button}_inputconfig_${onlyFilename::-3}_$userInputType"
 
                 # if interface function is implemented
                 if fn_exists "$funcname"; then
@@ -103,14 +103,14 @@ function inputconfiguration() {
                     inputValue=$(getInputAttribute "$button" "value")
 
                     # if input was defined
-                    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName='$deviceName']/input[@name='$inputName'])" "$home"/.emulationstation/es_temporaryinput.cfg) -ne 0 ]]; then
+                    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName='$deviceName']/input[@name='$inputName'])" "$home/.emulationstation/es_temporaryinput.cfg") -ne 0 ]]; then
                         "$funcname" "$deviceType" "$deviceName" "$inputName" "$inputType" "$inputID" "$inputValue"
                     fi
                 fi
             done
 
             # at the end, the onend_inputconfig_X function is called
-            funcname="onend_inputconfig_"${onlyFilename::-3}"_"$userInputType
+            funcname="onend_inputconfig_${onlyFilename::-3}_$userInputType"
 
             # if interface function is implemented
             fn_exists "$funcname" && "$funcname" "$deviceType" "$deviceName"

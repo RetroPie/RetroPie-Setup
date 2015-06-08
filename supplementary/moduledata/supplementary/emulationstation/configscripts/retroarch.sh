@@ -364,12 +364,12 @@ function inputconfig_retroarch_getButtonString() {
     local inputValue=$4
 
     if [[ "$inputType" == "hat" ]]; then
-        btnString="h"$inputID$inputName
+        btnString="h$inputID$inputName"
     elif [[ "$inputType" == "axis" ]]; then
         if [[ "$inputValue" == "1" ]]; then
-            btnString="+"$inputID
+            btnString="+$inputID"
         else
-            btnString="-"$inputID
+            btnString="-$inputID"
         fi
     else
         btnString=$inputID
