@@ -80,18 +80,18 @@ function inputconfiguration() {
         for module in $(find "$inputscriptdir/configscripts/" -maxdepth 1 -name "*.sh" | sort); do
 
             source "$module"  # register functions from emulatorconfigs folder
-            local module=$(basename -s .sh "$module")
-            echo "Configuring '$module'"
+            local module_id=$(basename -s .sh "$module")
+            echo "Configuring '$module_id'"
 
             # at the start, the onstart_inputconfig_X function is called
-            funcname="onstart_inputconfig_${module}_$userInputType"
+            funcname="onstart_inputconfig_${module_id}_$userInputType"
 
             # if interface function is implemented
             fn_exists "$funcname" && "$funcname" "$deviceType" "$deviceName"
 
             # loop through all buttons and use corresponding config function if it exists
             for button in "${inputConfigButtonList[@]}"; do
-                funcname="${button}_inputconfig_${module}_$userInputType"
+                funcname="${button}_inputconfig_${module_id}_$userInputType"
 
                 # if interface function is implemented
                 if fn_exists "$funcname"; then
@@ -108,7 +108,7 @@ function inputconfiguration() {
             done
 
             # at the end, the onend_inputconfig_X function is called
-            funcname="onend_inputconfig_${module}_$userInputType"
+            funcname="onend_inputconfig_${module_id}_$userInputType"
 
             # if interface function is implemented
             fn_exists "$funcname" && "$funcname" "$deviceType" "$deviceName"
