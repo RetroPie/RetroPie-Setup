@@ -8,57 +8,6 @@
 # at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
 #
 
-###### input configuration interface functions ######
-
-#######################################
-# Interface functions
-# All interface functions get the same arguments. The naming scheme of the interface 
-# functions is defined as following:
-#
-# function <button name>_inputconfig_<filename without extension>(),
-#
-# where <button name> is one of [ "up", 
-#                                 "right", 
-#                                 "down", 
-#                                 "left", 
-#                                 "a", 
-#                                 "b", 
-#                                 "x", 
-#                                 "y", 
-#                                 "leftbottom", 
-#                                 "rightbottom", 
-#                                 "lefttop", 
-#                                 "righttop", 
-#                                 "leftthumb", 
-#                                 "rightthumb", 
-#                                 "start", 
-#                                 "select", 
-#                                 "leftanalogright", 
-#                                 "leftanalogleft", 
-#                                 "leftanalogdown", 
-#                                 "leftanalogup", 
-#                                 "rightanalogright", 
-#                                 "rightanalogleft", 
-#                                 "rightanalogdown", 
-#                                 "rightanalogup",
-#                                 "onleave" ].
-#
-# Globals:
-#   $home - the home directory of the user
-#
-# Arguments:
-#   $1 - device type
-#   $2 - device name
-#   $3 - input name
-#   $4 - input type
-#   $5 - input ID
-#   $6 - input value
-#
-# Returns:
-#   None
-#######################################
-
-
 #### input type: Joystick ###
 
 function up_inputconfig_emulationstation_joystick() {
@@ -175,9 +124,9 @@ function setESInputConfig_inputconfig_emulationstation() {
             "$confFile"
     else
         xmlstarlet ed -L \
-                      -u "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceType" -v "$deviceType" \
-                      -d "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceGUID" \
-                      "$confFile"
+            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceType" -v "$deviceType" \
+            -d "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceGUID" \
+            "$confFile"
     fi
 
     # add or update element
@@ -192,9 +141,9 @@ function setESInputConfig_inputconfig_emulationstation() {
             "$confFile"
     else  # if device already exists, update it
         xmlstarlet ed -L \
-                      -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@type" -v "$inputType" \
-                      -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@id" -v "$inputID" \
-                      -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@value" -v "$inputValue" \
-                      "$confFile"
+            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@type" -v "$inputType" \
+            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@id" -v "$inputID" \
+            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/input[@name=$inputNameString]/@value" -v "$inputValue" \
+            "$confFile"
     fi
 }
