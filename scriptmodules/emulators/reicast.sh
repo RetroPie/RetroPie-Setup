@@ -52,7 +52,7 @@ sudo mkdir tmpfs
 sudo mount -o size=450M -t tmpfs none tmpfs/
 sudo cp -v * tmpfs/
 cd tmpfs
-sudo aoss ./reicast.elf -config config:homedir="$home" -config config:image="$1"
+sudo aoss ./reicast.elf -config config:homedir="$home" -config config:image="\$1"
 cd ..
 echo Ensuring any freshly-created VMUs are owned by pi and not root...
 sudo chown -R pi:pi "$home/.reicast"
