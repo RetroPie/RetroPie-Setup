@@ -49,7 +49,7 @@ pushd "$md_inst"
 echo Reading the entire Reicast emulator into memory to execute from there...
 sudo mkdir tmpfs
 #TODO: Find optimal smaller tmpfs size, I do not believe anywhere near this much is required.  I have only ever seen 54MB utilized during a game of Rush 2049.
-sudo mount -o size=450M -t tmpfs none tmpfs/
+sudo mount -o size=150M -t tmpfs none tmpfs/
 sudo cp -v * tmpfs/
 cd tmpfs
 sudo aoss ./reicast.elf -config config:homedir="$home" -config config:image="\$1"
@@ -63,7 +63,11 @@ popd
 _EOF_
 
     chmod +x "$md_inst/reicast.sh"
-    
+
+    # Link to file that does not exist as this results in the Dreamcast System Manager launching (as if one turned on the Dreamcast without a disc inserted)
+    # This is required to fix broken / corrupted VMU files.
+    ln -sv fileThatDoesNotExist "$home/RetroPie/roms/dreamcast/systemManager.cdi"
+
     # add system
     addSystem 1 "$md_id" "dreamcast" "$md_inst/reicast.sh %ROM%"
 
