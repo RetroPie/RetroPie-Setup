@@ -10,6 +10,34 @@
 
 #### input type: Joystick ###
 
+function onstart_inputconfig_emulationstation_joystick() {
+    local deviceType=$1
+    local deviceName=$2
+    local confFile="$home/.emulationstation/es_input.cfg"
+    mkdir -p "$home/.emulationstation"
+    if [[ ! -f "$confFile" ]]; then
+        echo "<inputList />" >"$confFile"
+    fi
+
+    cp "$confFile" "$confFile.bak"
+
+    # make sure that device exists
+    deviceNameString=\'$deviceName\'
+    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName=$deviceNameString])" "$confFile") -eq 0 ]]; then
+        xmlstarlet ed -L -s "/inputList" -t elem -n newInputConfig -v "" \
+            -i //newInputConfig -t attr -n "type" -v "$deviceType" \
+            -i //newInputConfig -t attr -n "deviceName" -v "$deviceName" \
+            -r //newInputConfig -v inputConfig \
+            "$confFile"
+    else
+        xmlstarlet ed -L \
+            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceType" -v "$deviceType" \
+            -d "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceGUID" \
+            "$confFile"
+    fi
+
+}
+
 function up_inputconfig_emulationstation_joystick() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "up" "$4" "$5" "$6"
 }
@@ -52,6 +80,10 @@ function select_inputconfig_emulationstation_joystick() {
 
 
 #### input type: Keyboard ###
+
+function onstart_inputconfig_emulationstation_keyboard() {
+    onstart_inputconfig_emulationstation_joystick
+}
 
 function up_inputconfig_emulationstation_keyboard() {
     setESInputConfig_inputconfig_emulationstation "$1" "$2" "up" "$4" "$5" "$6"
@@ -107,27 +139,6 @@ function setESInputConfig_inputconfig_emulationstation() {
     local inputValue=$6
 
     local confFile="$home/.emulationstation/es_input.cfg"
-    mkdir -p "$home/.emulationstation"
-    if [[ ! -f "$confFile" ]]; then
-        echo "<inputList />" >"$confFile"
-    fi
-
-    cp "$confFile" "$confFile.bak"
-
-    # make sure that device exists
-    deviceNameString=\'$deviceName\'
-    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName=$deviceNameString])" "$confFile") -eq 0 ]]; then
-        xmlstarlet ed -L -s "/inputList" -t elem -n newInputConfig -v "" \
-            -i //newInputConfig -t attr -n "type" -v "$deviceType" \
-            -i //newInputConfig -t attr -n "deviceName" -v "$deviceName" \
-            -r //newInputConfig -v inputConfig \
-            "$confFile"
-    else
-        xmlstarlet ed -L \
-            -u "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceType" -v "$deviceType" \
-            -d "/inputList/inputConfig[@deviceName=$deviceNameString]/@deviceGUID" \
-            "$confFile"
-    fi
 
     # add or update element
     inputNameString=\'$inputName\'
