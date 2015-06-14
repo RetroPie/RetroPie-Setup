@@ -25,7 +25,6 @@ function sources_retroarch() {
     gitPullOrClone "$md_build" git://github.com/libretro/RetroArch.git
     gitPullOrClone "$md_build/overlays" git://github.com/libretro/common-overlays.git
     gitPullOrClone "$md_build/shader" https://github.com/gizmo98/common-shaders.git
-    sed -i 's| menu_input_search_start|//menu_input_search_start|g' $md_build/menu/menu_entries_cbs_iterate.c
 }
 
 function build_retroarch() {
