@@ -21,7 +21,7 @@ function up_inputconfig_retroarch_joystick() {
     local inputID=$5
     local inputValue=$6
 
-    iniSet "input_up_btn" "$(inputconfig_retroarch_getButtonString "up" "$inputType" "$inputID" "$inputValue")"
+    inputconfig_retroarch_addControl "input_up" "$inputName" "$inputType" "$inputID" "$inputValue"
 }
 
 function right_inputconfig_retroarch_joystick() {
@@ -30,8 +30,8 @@ function right_inputconfig_retroarch_joystick() {
     local inputID=$5
     local inputValue=$6
 
-    iniSet "input_right_btn" "$(inputconfig_retroarch_getButtonString "right" "$inputType" "$inputID" "$inputValue")"
-    iniSet "input_state_slot_increase_btn" "$(inputconfig_retroarch_getButtonString "right" "$inputType" "$inputID" "$inputValue")"
+    inputconfig_retroarch_addControl "input_right" "$inputName" "$inputType" "$inputID" "$inputValue"
+    inputconfig_retroarch_addControl "input_state_slot_increase" "$inputName" "$inputType" "$inputID" "$inputValue"
 }
 
 function down_inputconfig_retroarch_joystick() {
@@ -40,7 +40,7 @@ function down_inputconfig_retroarch_joystick() {
     local inputID=$5
     local inputValue=$6
 
-    iniSet "input_down_btn" "$(inputconfig_retroarch_getButtonString "down" "$inputType" "$inputID" "$inputValue")"
+    inputconfig_retroarch_addControl "input_down" "$inputName" "$inputType" "$inputID" "$inputValue"
 }
 
 function left_inputconfig_retroarch_joystick() {
@@ -49,94 +49,94 @@ function left_inputconfig_retroarch_joystick() {
     local inputID=$5
     local inputValue=$6
 
-    iniSet "input_left_btn" "$(inputconfig_retroarch_getButtonString "left" "$inputType" "$inputID" "$inputValue")"
-    iniSet "input_state_slot_decrease_btn" "$(inputconfig_retroarch_getButtonString "left" "$inputType" "$inputID" "$inputValue")"
+    inputconfig_retroarch_addControl "input_left_btn" "$inputName" "$inputType" "$inputID" "$inputValue"
+    inputconfig_retroarch_addControl "input_state_slot_decrease_btn" "$inputName" "$inputType" "$inputID" "$inputValue"
 }
 
 function a_inputconfig_retroarch_joystick() {
-    iniSet "input_a_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_a" "$3" "$4" "$5" "$6"
 }
 
 function b_inputconfig_retroarch_joystick() {
-    iniSet "input_b_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
-    iniSet "input_reset_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_b" "$3" "$4" "$5" "$6"
+    inputconfig_retroarch_addControl "input_reset" "$3" "$4" "$5" "$6"
 }
 
 function x_inputconfig_retroarch_joystick() {
-    iniSet "input_x_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
-    iniSet "input_menu_toggle_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_x" "$3" "$4" "$5" "$6"
+    inputconfig_retroarch_addControl "input_menu_toggle" "$3" "$4" "$5" "$6"
 }
 
 function y_inputconfig_retroarch_joystick() {
-    iniSet "input_y_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_y" "$3" "$4" "$5" "$6"
 }
 
 function leftbottom_inputconfig_retroarch_joystick() {
-    iniSet "input_l_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
-    iniSet "input_load_state_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_l" "$3" "$4" "$5" "$6"
+    inputconfig_retroarch_addControl "input_load_state" "$3" "$4" "$5" "$6"
 }
 
 function rightbottom_inputconfig_retroarch_joystick() {
-    iniSet "input_r_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
-    iniSet "input_save_state_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_r" "$3" "$4" "$5" "$6"
+    inputconfig_retroarch_addControl "input_save_state" "$3" "$4" "$5" "$6"
 }
 
 function lefttop_inputconfig_retroarch_joystick() {
-    iniSet "input_l2_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_l2" "$3" "$4" "$5" "$6"
 }
 
 function righttop_inputconfig_retroarch_joystick() {
-    iniSet "input_r2_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_r2" "$3" "$4" "$5" "$6"
 }
 
 function leftthumb_inputconfig_retroarch_joystick() {
-    iniSet "input_l3_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_l3" "$3" "$4" "$5" "$6"
 }
 
 function rightthumb_inputconfig_retroarch_joystick() {
-    iniSet "input_r3_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_r3" "$3" "$4" "$5" "$6"
 }
 
 function start_inputconfig_retroarch_joystick() {
-    iniSet "input_start_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
-    iniSet "input_exit_emulator_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_start" "$3" "$4" "$5" "$6"
+    inputconfig_retroarch_addControl "input_exit_emulator" "$3" "$4" "$5" "$6"
 }
 
 function select_inputconfig_retroarch_joystick() {
-    iniSet "input_select_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
-    iniSet "input_enable_hotkey_btn" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_select" "$3" "$4" "$5" "$6"
+    inputconfig_retroarch_addControl "input_enable_hotkey" "$3" "$4" "$5" "$6"
 }
 
 function leftanalogright_inputconfig_retroarch_joystick() {
-    iniSet "input_l_x_plus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_l_x_plus" "$3" "$4" "$5" "$6"
 }
 
 function leftanalogleft_inputconfig_retroarch_joystick() {
-    iniSet "input_l_x_minus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_l_x_minus" "$3" "$4" "$5" "$6"
 }
 
 function leftanalogdown_inputconfig_retroarch_joystick() {
-    iniSet "input_l_y_plus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_l_y_plus" "$3" "$4" "$5" "$6"
 }
 
 function leftanalogup_inputconfig_retroarch_joystick() {
-    iniSet "input_l_y_minus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_l_y_minus" "$3" "$4" "$5" "$6"
 }
 
 function rightanalogright_inputconfig_retroarch_joystick() {
-    iniSet "input_r_x_plus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_r_x_plus" "$3" "$4" "$5" "$6"
 }
 
 function rightanalogleft_inputconfig_retroarch_joystick() {
-    iniSet "input_r_x_minus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_r_x_minus" "$3" "$4" "$5" "$6"
 }
 
 function rightanalogdown_inputconfig_retroarch_joystick() {
-    iniSet "input_r_y_plus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_r_y_plus" "$3" "$4" "$5" "$6"
 }
 
 function rightanalogup_inputconfig_retroarch_joystick() {
-    iniSet "input_r_y_minus_axis" "$(inputconfig_retroarch_getButtonString "$3" "$4" "$5" "$6")"
+    inputconfig_retroarch_addControl "input_r_y_minus" "$3" "$4" "$5" "$6"
 }
 
 function onend_inputconfig_retroarch_joystick() {
@@ -357,22 +357,26 @@ function select_inputconfig_retroarch_keyboard() {
 # to circumvent name collisions we use quite long function names in the following.
 # all the following functions should have no dependencies to other shell scripts.
 
-function inputconfig_retroarch_getButtonString() {
-    local inputName=$1
-    local inputType=$2
-    local inputID=$3
-    local inputValue=$4
+function inputconfig_retroarch_addControl() {
+    local control=$1
+    local inputName=$2
+    local inputType=$3
+    local inputID=$4
+    local inputValue=$5
 
     if [[ "$inputType" == "hat" ]]; then
         btnString="h$inputID$inputName"
     elif [[ "$inputType" == "axis" ]]; then
+        control+="_axis"
         if [[ "$inputValue" == "1" ]]; then
             btnString="+$inputID"
         else
             btnString="-$inputID"
         fi
     else
+        control+="_btn"
         btnString=$inputID
     fi
-    echo "$btnString"
+
+    iniSet "$control" "$btnString"
 }
