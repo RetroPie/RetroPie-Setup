@@ -9,12 +9,12 @@
 #
 
 rp_module_id="runcommand"
-rp_module_desc="Configure "runcommand" - Launch script"
+rp_module_desc="Configure the 'runcommand' - Launch script"
 rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function install_runcommand() {
-    cp "$scriptdir/supplementary/runcommand.sh" "$md_inst/"
+    cp "$scriptdir/scriptmodules/$md_type/$md_id/runcommand.sh" "$md_inst/"
     chmod +x "$md_inst/runcommand.sh"
 }
 
