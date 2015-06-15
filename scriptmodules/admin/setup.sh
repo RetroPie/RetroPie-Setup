@@ -142,7 +142,6 @@ function binaries_setup()
 
         # required supplementary modules 
         rp_callModule esthemesimple
-        rp_callModule retroarchautoconf
         rp_callModule runcommand install
 
         # some additional supplementary modules

@@ -10,7 +10,7 @@
 
 function onstart_inputconfig_retroarch_joystick() {
     local deviceName=$2
-    iniConfig " = " "\"" "./tempconfig.cfg"
+    iniConfig " = " "\"" "/tmp/tempconfig.cfg"
     iniSet "input_device" "$deviceName"
     iniSet "input_driver" "udev"
 }
@@ -143,12 +143,11 @@ function onend_inputconfig_retroarch_joystick() {
     local deviceType=$1
     local deviceName=$2
     newFilename=$(echo "$deviceName" | sed -e 's/ /_/g')".cfg"
-    mv "./tempconfig.cfg" "$newFilename"
-    if [[ -f "/opt/retropie/emulators/retroarch/configs/$newFilename" ]]; then
-        mv "/opt/retropie/emulators/retroarch/configs/$newFilename" "/opt/retropie/emulators/retroarch/configs/$newFilename.bak"
+    if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$newFilename" ]]; then
+        mv "/opt/retropie/configs/all/retroarch-joypads/$newFilename" "/opt/retropie/configs/all/retroarch-joypads/$newFilename.bak"
     fi
-    mv "$newFilename" "/opt/retropie/emulators/retroarch/configs/$newFilename"
-    chown $user:$user "/opt/retropie/emulators/retroarch/configs/$newFilename"
+    mv "/tmp/tempconfig.cfg" "/opt/retropie/configs/all/retroarch-joypads/$newFilename"
+    chown $user:$user "/opt/retropie/configs/all/retroarch-joypads/$newFilename"
 }
 
 
