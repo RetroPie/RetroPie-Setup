@@ -108,7 +108,7 @@ function configure_retroarch() {
 
     # input settings
     iniSet "input_autodetect_enable" "true"
-    iniSet "joypad_autoconfig_dir" "$md_inst/configs/"
+    iniSet "joypad_autoconfig_dir" "$configdir/all/retroarch-joypads/"
 
     chown $user:$user "$config"
 }

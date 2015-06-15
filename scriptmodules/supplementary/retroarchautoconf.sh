@@ -9,8 +9,8 @@
 #
 
 rp_module_id="retroarchautoconf"
-rp_module_desc="RetroArch-AutoConfigs"
-rp_module_menus="2+"
+rp_module_desc="Install RetroArch joypad autoconfigs"
+rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function sources_retroarchautoconf() {
@@ -18,13 +18,13 @@ function sources_retroarchautoconf() {
 }
 
 function install_retroarchautoconf() {
-    mkdir -p "$emudir/retroarch/configs/"
+    mkUserDir "$configdir/all/retroarch-joypads"
     # strip CR's from the files
     cd "$md_build/udev/"
     for file in *; do
-        tr -d '\015' <"$file" >"$emudir/retroarch/configs/$file"
-        chown $user:$user "$emudir/retroarch/configs/$file"
+        tr -d '\015' <"$file" >"$configdir/all/retroarch-joypads/$file"
     done
+    chown -R $user:$user "$configdir/all/retroarch-joypads"
 }
 
 function remap_hotkeys_retroarchautoconf() {
