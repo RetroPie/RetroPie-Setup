@@ -54,7 +54,7 @@ _EOF_
     chown $user:$user "$home/.emulationstation/es_input.cfg"
     mkdir -p "$md_inst/scripts"
 
-    cp -r "$scriptdir/supplementary/moduledata/supplementary/emulationstation/"* "$md_inst/scripts/"
+    cp -rv "$scriptdir/scriptmodules/$md_type/$md_id/"* "$md_inst/scripts/"
     chmod +x "$md_inst/scripts/inputconfiguration.sh"
     chown -R $user:$user "$md_inst/scripts"
 }
