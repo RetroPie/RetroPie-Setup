@@ -18,7 +18,7 @@ function depends_usbromservice() {
 }
 
 function enable_usbromservice() {
-    cp -v $scriptdir/supplementary/01_retropie_copyroms /etc/usbmount/mount.d/
+    cp -v "$scriptdir/scriptmodules/$md_type/$md_id/01_retropie_copyroms" /etc/usbmount/mount.d/
     sed -i -e "s/USERTOBECHOSEN/$user/g" /etc/usbmount/mount.d/01_retropie_copyroms
     chmod +x /etc/usbmount/mount.d/01_retropie_copyroms
 }
