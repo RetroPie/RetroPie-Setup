@@ -49,8 +49,8 @@ function left_inputconfig_retroarch_joystick() {
     local inputID=$5
     local inputValue=$6
 
-    inputconfig_retroarch_addControl "input_left_btn" "$inputName" "$inputType" "$inputID" "$inputValue"
-    inputconfig_retroarch_addControl "input_state_slot_decrease_btn" "$inputName" "$inputType" "$inputID" "$inputValue"
+    inputconfig_retroarch_addControl "input_left" "$inputName" "$inputType" "$inputID" "$inputValue"
+    inputconfig_retroarch_addControl "input_state_slot_decrease" "$inputName" "$inputType" "$inputID" "$inputValue"
 }
 
 function a_inputconfig_retroarch_joystick() {
