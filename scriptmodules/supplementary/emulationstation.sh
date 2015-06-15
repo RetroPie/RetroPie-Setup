@@ -18,9 +18,8 @@ function depends_emulationstation() {
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
         libasound2-dev cmake libsdl2-dev
 }
-
 function sources_emulationstation() {
-    gitPullOrClone "$md_build" "https://github.com/petrockblog/EmulationStation"
+    gitPullOrClone "$md_build" "https://github.com/retropie/EmulationStation"
 }
 
 function build_emulationstation() {
