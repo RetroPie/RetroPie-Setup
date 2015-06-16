@@ -28,7 +28,7 @@ function sources_mupen64plus() {
         #'ricrpi rsp-hle'
         'mupen64plus rsp-hle'
         'ricrpi video-gles2rice'
-        #'joolswills video-rice rpi'
+        #'RetroPie video-rice rpi'
         'ricrpi video-gles2n64'
     )
     local repo
