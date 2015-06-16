@@ -13,7 +13,7 @@ rp_module_desc="SNES emulator PiSNES"
 rp_module_menus="2+"
 
 function sources_pisnes() {
-    gitPullOrClone "$md_build" https://github.com/joolswills/pisnes.git
+    gitPullOrClone "$md_build" https://github.com/RetroPie/pisnes.git
 }
 
 function build_pisnes() {

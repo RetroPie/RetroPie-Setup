@@ -17,7 +17,7 @@ function depends_pifba() {
 }
 
 function sources_pifba() {
-    gitPullOrClone "$md_build" https://github.com/joolswills/pifba.git
+    gitPullOrClone "$md_build" https://github.com/RetroPie/pifba.git
 }
 
 function build_pifba() {

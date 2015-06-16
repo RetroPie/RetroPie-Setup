@@ -26,10 +26,10 @@ function sources_sdl1() {
     apt-get source libsdl1.2-dev
     cd libsdl1.2-1.2.15
     
-    # add fixes from https://github.com/joolswills/sdl1/compare/master...rpi
-    wget https://github.com/joolswills/sdl1/compare/master...rpi.diff -O debian/patches/rpi.diff
+    # add fixes from https://github.com/RetroPie/sdl1/compare/master...rpi
+    wget https://github.com/RetroPie/sdl1/compare/master...rpi.diff -O debian/patches/rpi.diff
     echo "rpi.diff" >>debian/patches/series
-    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v 1.2.15-8rpi "Added rpi fixes and dispmanx support from https://github.com/joolswills/sdl1/compare/master...rpi"
+    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v 1.2.15-8rpi "Added rpi fixes and dispmanx support from https://github.com/RetroPie/sdl1/compare/master...rpi"
 }
 
 function build_sdl1() {

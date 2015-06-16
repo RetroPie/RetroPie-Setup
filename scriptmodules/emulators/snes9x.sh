@@ -18,7 +18,7 @@ function depends_snes9x() {
 }
 
 function sources_snes9x() {
-    gitPullOrClone "$md_build" https://github.com/joolswills/snes9x-rpi.git retropie
+    gitPullOrClone "$md_build" https://github.com/RetroPie/snes9x-rpi.git retropie
 }
 
 function build_snes9x() {

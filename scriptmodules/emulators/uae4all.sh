@@ -18,7 +18,7 @@ function depends_uae4all() {
 }
 
 function sources_uae4all() {
-    gitPullOrClone "$md_build" https://github.com/joolswills/uae4all2.git retropie
+    gitPullOrClone "$md_build" https://github.com/RetroPie/uae4all2.git retropie
     mkdir guichan
     wget -O- -q https://guichan.googlecode.com/files/guichan-0.8.2.tar.gz | tar -xvz --strip-components=1 -C "guichan"
     cd guichan

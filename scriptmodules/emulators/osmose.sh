@@ -13,7 +13,7 @@ rp_module_desc="Gamegear emulator Osmose"
 rp_module_menus="2+"
 
 function sources_osmose() {
-    gitPullOrClone "$md_build" https://github.com/joolswills/osmose-rpi.git
+    gitPullOrClone "$md_build" https://github.com/RetroPie/osmose-rpi.git
 }
 
 function build_osmose() {

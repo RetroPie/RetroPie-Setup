@@ -17,7 +17,7 @@ function depends_mame4all() {
 }
 
 function sources_mame4all() {
-    gitPullOrClone "$md_build" https://github.com/joolswills/mame4all-pi.git
+    gitPullOrClone "$md_build" https://github.com/RetroPie/mame4all-pi.git
 }
 
 function build_mame4all() {
