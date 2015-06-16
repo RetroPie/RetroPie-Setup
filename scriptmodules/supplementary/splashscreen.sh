@@ -22,8 +22,8 @@ function enable_splashscreen()
     clear
     printHeading "Enabling custom splashscreen on boot."
 
-    chmod +x "$scriptdir/supplementary/asplashscreen/asplashscreen"
-    cp "$scriptdir/supplementary/asplashscreen/asplashscreen" "/etc/init.d/"
+    cp "$scriptdir/scriptmodules/$md_type/$md_id/asplashscreen" "/etc/init.d/"
+    chmod +x "/etc/init.d/asplashscreen"
 
     find $scriptdir/supplementary/splashscreens/retropie2015-blue/ -type f > /etc/splashscreen.list
 
