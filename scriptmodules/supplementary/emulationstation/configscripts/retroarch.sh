@@ -147,7 +147,6 @@ function onend_inputconfig_retroarch_joystick() {
         mv "/opt/retropie/configs/all/retroarch-joypads/$newFilename" "/opt/retropie/configs/all/retroarch-joypads/$newFilename.bak"
     fi
     mv "/tmp/tempconfig.cfg" "/opt/retropie/configs/all/retroarch-joypads/$newFilename"
-    chown $user:$user "/opt/retropie/configs/all/retroarch-joypads/$newFilename"
 }
 
 

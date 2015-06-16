@@ -201,8 +201,7 @@ function iniSet() {
 
 ###### main ######
 
-user="$SUDO_USER"
-[[ -z "$user" ]] && user=$(id -un)
+user=$(id -un)
 home="$(eval echo ~$user)"
 
 inputconfiguration
