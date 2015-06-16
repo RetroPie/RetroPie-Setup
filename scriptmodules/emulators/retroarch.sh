@@ -49,7 +49,7 @@ function install_retroarch() {
 }
 
 function configure_retroarch() {
-    mkUserDir "$configdir/all"
+    mkUserDir "$configdir/all/retroarch-joypads"
 
     local config="$configdir/all/retroarch.cfg"
     # if the user has an existing config we will not overwrite it, but instead copy the
