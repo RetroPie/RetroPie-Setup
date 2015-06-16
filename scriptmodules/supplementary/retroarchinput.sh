@@ -19,20 +19,21 @@ function joystick_retroarchinput() {
 
     printMsgs "dialog" "Connect ONLY the controller to be registered for RetroArch to the Raspberry Pi."
     clear
+    local dest="$configdir/all/retroarch-joypads"
     # todo Find number of first joystick device in /dev/input
     numJoypads=$(ls -1 /dev/input/js* | head -n 1)
     if [[ -n "$numJoypads" ]]; then
         "$emudir/retroarch/retroarch-joyconfig" --autoconfig "/tmp/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
         configfname=$(grep "input_device = \"" "/tmp/tempconfig.cfg")
         configfname=$(echo ${configfname:16:-1} | tr -d ' ')
-        mv "/tmp/tempconfig.cfg" "$configdir/all/retroarch-joypads/$configfname.cfg"
+        mv "/tmp/tempconfig.cfg" "$dest/$configfname.cfg"
 
         # Add hotkeys
-        rp_callModule retroarchautoconf remap_hotkeys "$configdir/all/retroarch-joypads/$configfname.cfg"
+        rp_callModule retroarchautoconf remap_hotkeys "$dest/$configfname.cfg"
 
-        chown $user:$user "$configdir/all/retroarch-joypads/$configfname.cfg"
+        chown $user:$user "$dest/$configfname.cfg"
 
-        printMsgs "dialog" "The configuration file has been saved as $configfname.cfg and will be used by RetroArch from now on whenever that controller is connected."
+        printMsgs "dialog" "The configuration file has been saved as '$dest/$configfname.cfg' and will be used by RetroArch from now on whenever that controller is connected."
     else
         printMsgs "dialog" "Sorry, no joystick detected."
     fi
