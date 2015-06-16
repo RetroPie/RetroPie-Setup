@@ -82,7 +82,7 @@ function select_inputconfig_emulationstation_joystick() {
 #### input type: Keyboard ###
 
 function onstart_inputconfig_emulationstation_keyboard() {
-    onstart_inputconfig_emulationstation_joystick
+    onstart_inputconfig_emulationstation_joystick "$1" "$2"
 }
 
 function up_inputconfig_emulationstation_keyboard() {
