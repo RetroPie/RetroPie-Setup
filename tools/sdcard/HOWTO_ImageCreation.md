@@ -34,7 +34,7 @@ fakeroot debootstrap --foreign --include=ca-certificates --arch=armhf testing ro
 Download RetroPie-Setup Script, which also contains helper scripts for creating and maintaining the SD-card image:
 
 ``` bash
-git clone git://github.com/petrockblog/RetroPie-Setup
+git clone git://github.com/RetroPie/RetroPie-Setup
 ```
 
 Temporarily add some arm binaries to the root directory:

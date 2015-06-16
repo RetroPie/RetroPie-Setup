@@ -24,7 +24,7 @@ Then you can download the latest RetroPie setup script with
 
 ```shell
 cd
-git clone --depth=1 git://github.com/petrockblog/RetroPie-Setup.git
+git clone --depth=1 git://github.com/RetroPie/RetroPie-Setup.git
 ```
 
 The script is executed with 
@@ -43,12 +43,12 @@ Binaries and Sources
 
 RetroPie Setup offers the possibility to install from binaries or build from source. For most users installing from binary should suffice - but for the very latest versions of some software building from source may be preferred. Building from source can take more than a day on a Raspberry Pi.
 
-For more information visit the blog at http://www.petrockblock.com or the repository at https://github.com/petrockblog/RetroPie-Setup. A forum thread about the RetroPie Setup script in the official Raspberry Pi forum can be found at http://www.raspberrypi.org/phpBB3/viewtopic.php?f=35&t=13600.
+For more information visit the blog at http://www.petrockblock.com or the repository at https://github.com/RetroPie/RetroPie-Setup. A forum thread about the RetroPie Setup script in the official Raspberry Pi forum can be found at http://www.raspberrypi.org/phpBB3/viewtopic.php?f=35&t=13600.
 
 Wiki
 ----
 
-You can find useful information about several components or for several frequently asked questions in the [wiki](https://github.com/petrockblog/RetroPie-Setup/wiki) of the RetroPie Script. If you think that there is something missing you are invited to add it to the wiki.
+You can find useful information about several components or for several frequently asked questions in the [wiki](https://github.com/RetroPie/RetroPie-Setup/wiki) of the RetroPie Script. If you think that there is something missing you are invited to add it to the wiki.
 
 
 Thanks
