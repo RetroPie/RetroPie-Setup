@@ -13,7 +13,7 @@ rp_module_desc="MSX/MSX2 emu - fMSX port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-fmsx() {
-    gitPullOrClone "$md_build" git://github.com/libretro/fmsx-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/fmsx-libretro.git
 }
 
 function build_lr-fmsx() {

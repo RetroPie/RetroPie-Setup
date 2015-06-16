@@ -17,7 +17,7 @@ function depends_darkplaces() {
 }
 
 function sources_darkplaces() {
-    gitPullOrClone "$md_build" git://github.com/autonomous1/darkplacesrpi.git
+    gitPullOrClone "$md_build" https://github.com/autonomous1/darkplacesrpi.git
 }
 
 function install_darkplaces() {

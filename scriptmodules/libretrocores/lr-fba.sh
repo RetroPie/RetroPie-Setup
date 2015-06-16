@@ -17,7 +17,7 @@ function depends_lr-fba() {
 }
 
 function sources_lr-fba() {
-    gitPullOrClone "$md_build" git://github.com/libretro/fba-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/fba-libretro.git
 }
 
 function build_lr-fba() {

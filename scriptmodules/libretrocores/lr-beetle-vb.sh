@@ -14,7 +14,7 @@ rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
 function sources_lr-beetle-vb() {
-    gitPullOrClone "$md_build" git://github.com/libretro/beetle-vb-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/beetle-vb-libretro.git
 }
 
 function build_lr-beetle-vb() {

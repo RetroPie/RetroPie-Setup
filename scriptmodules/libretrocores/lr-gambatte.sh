@@ -13,7 +13,7 @@ rp_module_desc="Gameboy Color emu - libgambatte port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-gambatte() {
-    gitPullOrClone "$md_build" git://github.com/libretro/gambatte-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/gambatte-libretro.git
 }
 
 function build_lr-gambatte() {

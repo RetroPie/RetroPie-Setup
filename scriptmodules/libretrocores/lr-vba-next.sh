@@ -14,7 +14,7 @@ rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
 function sources_lr-vba-next() {
-    gitPullOrClone "$md_build" git://github.com/libretro/vba-next.git
+    gitPullOrClone "$md_build" https://github.com/libretro/vba-next.git
 }
 
 function build_lr-vba-next() {

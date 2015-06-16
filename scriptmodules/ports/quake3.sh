@@ -17,7 +17,7 @@ function depends_quake3() {
 }
 
 function sources_quake3() {
-    gitPullOrClone "$md_build" git://github.com/raspberrypi/quake3.git
+    gitPullOrClone "$md_build" https://github.com/raspberrypi/quake3.git
     sed -i "s#/opt/bcm-rootfs##g" build.sh
     sed -i "s/^CROSS_COMPILE/#CROSS_COMPILE/" build.sh
 }

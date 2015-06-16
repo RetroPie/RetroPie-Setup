@@ -13,7 +13,7 @@ rp_module_desc="Atari 2600 emulator - Stella port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-stella() {
-    gitPullOrClone "$md_build" git://github.com/libretro/stella-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/stella-libretro.git
 }
 
 function build_lr-stella() {

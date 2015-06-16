@@ -17,7 +17,7 @@ function depends_lr-pcsx-rearmed() {
 }
 
 function sources_lr-pcsx-rearmed() {
-    gitPullOrClone "$md_build" git://github.com/libretro/pcsx_rearmed.git
+    gitPullOrClone "$md_build" https://github.com/libretro/pcsx_rearmed.git
 }
 
 function build_lr-pcsx-rearmed() {

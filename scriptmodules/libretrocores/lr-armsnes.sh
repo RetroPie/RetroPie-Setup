@@ -13,7 +13,7 @@ rp_module_desc="SNES emu - forked from pocketsnes focused on performance"
 rp_module_menus="2+"
 
 function sources_lr-armsnes() {
-    gitPullOrClone "$md_build" git://github.com/rmaz/ARMSNES-libretro
+    gitPullOrClone "$md_build" https://github.com/rmaz/ARMSNES-libretro
     patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch src/ppu.cpp
 }
 

@@ -13,7 +13,7 @@ rp_module_desc="SNES emu - CATSFC based on Snes9x / NDSSFC / BAGSFC"
 rp_module_menus="2+"
 
 function sources_lr-catsfc() {
-    gitPullOrClone "$md_build" git://github.com/libretro/CATSFC-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/CATSFC-libretro.git
 }
 
 function build_lr-catsfc() {

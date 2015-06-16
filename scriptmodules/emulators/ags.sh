@@ -17,7 +17,7 @@ function depends_ags() {
 }
 
 function sources_ags() {
-    gitPullOrClone "$md_build" git://github.com/adventuregamestudio/ags.git
+    gitPullOrClone "$md_build" https://github.com/adventuregamestudio/ags.git
 }
 
 function build_ags() {

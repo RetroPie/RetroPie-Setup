@@ -13,7 +13,7 @@ rp_module_desc="Doom/Doom II engine - PrBoom port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-prboom() {
-    gitPullOrClone "$md_build" git://github.com/libretro/libretro-prboom.git
+    gitPullOrClone "$md_build" https://github.com/libretro/libretro-prboom.git
 }
 
 function build_lr-prboom() {

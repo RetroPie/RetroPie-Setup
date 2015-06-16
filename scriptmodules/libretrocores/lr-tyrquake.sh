@@ -17,7 +17,7 @@ function depends_lr-tyrquake() {
 }
 
 function sources_lr-tyrquake() {
-    gitPullOrClone "$md_build" git://github.com/libretro/tyrquake.git
+    gitPullOrClone "$md_build" https://github.com/libretro/tyrquake.git
 }
 
 function build_lr-tyrquake() {

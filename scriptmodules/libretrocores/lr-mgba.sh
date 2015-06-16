@@ -14,7 +14,7 @@ rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
 function sources_lr-mgba() {
-    gitPullOrClone "$md_build" git://github.com/libretro/mgba.git
+    gitPullOrClone "$md_build" https://github.com/libretro/mgba.git
 }
 
 function build_lr-mgba() {

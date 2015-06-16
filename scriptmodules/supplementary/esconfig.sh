@@ -14,7 +14,7 @@ rp_module_menus=""
 rp_module_flags="nobin"
 
 function sources_esconfig() {
-    gitPullOrClone "$md_build" git://github.com/Aloshi/ES-config.git
+    gitPullOrClone "$md_build" https://github.com/Aloshi/ES-config.git
     sed -i -e "s/apt-get install/apt-get install -y --force-yes/g" get_dependencies.sh  
     ./get_dependencies.sh
 }

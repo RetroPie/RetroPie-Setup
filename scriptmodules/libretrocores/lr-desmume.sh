@@ -13,7 +13,7 @@ rp_module_desc="NDS emu - DESMUME"
 rp_module_menus="4+"
 
 function sources_lr-desmume() {
-    gitPullOrClone "$md_build" git://github.com/libretro/desmume.git
+    gitPullOrClone "$md_build" https://github.com/libretro/desmume.git
     sed -i 's/CXXFLAGS =/CXXFLAGS +=/g' $md_build/desmume/Makefile.libretro
 }
 

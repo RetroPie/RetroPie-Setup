@@ -13,7 +13,7 @@ rp_module_desc="Sega 8/16 bit emu - Genesis Plus (enhanced) port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-genesis-plus-gx() {
-    gitPullOrClone "$md_build" git://github.com/libretro/Genesis-Plus-GX.git
+    gitPullOrClone "$md_build" https://github.com/libretro/Genesis-Plus-GX.git
 }
 
 function build_lr-genesis-plus-gx() {

@@ -23,7 +23,7 @@ _EOF_
 
 function sources_retroarch() {
     gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git
-    gitPullOrClone "$md_build/overlays" git://github.com/libretro/common-overlays.git
+    gitPullOrClone "$md_build/overlays" https://github.com/libretro/common-overlays.git
     gitPullOrClone "$md_build/shader" https://github.com/gizmo98/common-shaders.git
 }
 

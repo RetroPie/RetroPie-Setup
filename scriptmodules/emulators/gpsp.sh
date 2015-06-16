@@ -18,7 +18,7 @@ function depends_gpsp() {
 }
 
 function sources_gpsp() {
-    gitPullOrClone "$md_build" git://github.com/gizmo98/gpsp.git
+    gitPullOrClone "$md_build" https://github.com/gizmo98/gpsp.git
     sed -i 's/-mfpu=vfp -mfloat-abi=hard -march=armv6j//' raspberrypi/Makefile
 }
 

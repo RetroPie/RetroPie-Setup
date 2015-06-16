@@ -18,7 +18,7 @@ function depends_basilisk() {
 }
 
 function sources_basilisk() {
-    gitPullOrClone "$md_build" git://github.com/cebix/macemu.git
+    gitPullOrClone "$md_build" https://github.com/cebix/macemu.git
 }
 
 function build_basilisk() {

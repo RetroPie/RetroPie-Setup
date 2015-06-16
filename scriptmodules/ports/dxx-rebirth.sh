@@ -25,7 +25,7 @@ function depends_dxx-rebirth() {
 }
 
 function sources_dxx-rebirth() {
-    gitPullOrClone "$md_build" git://github.com/dxx-rebirth/dxx-rebirth "unification/master"
+    gitPullOrClone "$md_build" https://github.com/dxx-rebirth/dxx-rebirth "unification/master"
 }
 
 function build_dxx-rebirth() {
