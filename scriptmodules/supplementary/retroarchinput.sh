@@ -22,10 +22,10 @@ function joystick_retroarchinput() {
     # todo Find number of first joystick device in /dev/input
     numJoypads=$(ls -1 /dev/input/js* | head -n 1)
     if [[ -n "$numJoypads" ]]; then
-        "$emudir/retroarch/retroarch-joyconfig" --autoconfig "$__tmpdir/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
-        configfname=$(grep "input_device = \"" "$__tmpdir/tempconfig.cfg")
+        "$emudir/retroarch/retroarch-joyconfig" --autoconfig "/tmp/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
+        configfname=$(grep "input_device = \"" "/tmp/tempconfig.cfg")
         configfname=$(echo ${configfname:16:-1} | tr -d ' ')
-        mv "$__tmpdir/tempconfig.cfg" "$configdir/all/retroarch-joypads/$configfname.cfg"
+        mv "/tmp/tempconfig.cfg" "$configdir/all/retroarch-joypads/$configfname.cfg"
 
         # Add hotkeys
         rp_callModule retroarchautoconf remap_hotkeys "$configdir/all/retroarch-joypads/$configfname.cfg"
