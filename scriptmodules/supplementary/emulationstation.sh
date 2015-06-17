@@ -47,7 +47,7 @@ function configure_inputconfig_emulationstation() {
 <?xml version="1.0"?>
 <inputList>
   <inputAction type="onfinish">
-    <command>sudo /opt/retropie/supplementary/emulationstation/scripts/inputconfiguration.sh</command>
+    <command>/opt/retropie/supplementary/emulationstation/scripts/inputconfiguration.sh</command>
   </inputAction>
 </inputList>
 _EOF_
