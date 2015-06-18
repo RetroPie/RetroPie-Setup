@@ -1,3 +1,0 @@
-<changeConfigPath from="retroarch.cfg" to="/opt/retropie/configs/all/retroarchinput.cfg" />
-<changeConfigPath from="dgen.cfg" to="/opt/retropie/configs/all/dgenrcinput" />
-<changeConfigPath from="gngeo.rc" to="/home/pi/.gngeo/gngeorcinput" />
