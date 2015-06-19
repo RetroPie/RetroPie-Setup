@@ -22,7 +22,8 @@
 # the user to set a screenmode for this particular command. the savename parameter is displayed to the user - we use the module id
 # of the emulator we are launching.
 
-configdir="/opt/retropie/configs"
+rootdir="/opt/retropie"
+configdir="$rootdir/configs"
 runcommand_conf="$configdir/all/runcommand.cfg"
 video_conf="$configdir/all/videomodes.cfg"
 apps_conf="$configdir/all/emulators.cfg"
@@ -645,14 +646,26 @@ get_save_vars
 
 load_mode_defaults
 
+
+# if joy2key is installed run it with a default configuration in background with axis mapps to cursor
+# keys and buttons mapped to enter and tab
+if [[ -f "$rootdir/supplementary/joy2key/bin/joy2key" ]] && ! pgrep joy2key; then
+    "$rootdir/supplementary/joy2key/bin/joy2key" -terminal -thresh 0 0 0 0 -axis 0x1b5b44 0x1b5b43 0x1b5b41 0x1b5b42  -buttons 0x0a 0x09 >/dev/null &
+    __joy2key_pid=$!
+fi
+
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 clear
-echo "Press 'x' or 'm' to configure launch options for emulator/port ($emulator). Errors will be logged to /tmp/runcommand.log"
-read -s -t 1 -N 1 key </dev/tty
-if [[ "$key" =~ [xXmM] ]]; then
+echo "Press a key (or joypad button 0) to configure launch options for emulator/port ($emulator). Errors will be logged to /tmp/runcommand.log"
+IFS= read -s -t 1 -N 1 key </dev/tty
+if [[ -n "$key" ]]; then
     get_all_modes
     main_menu
     clear
+fi
+
+if [[ -n $__joy2key_pid ]]; then
+    kill $__joy2key_pid
 fi
 
 switch_mode "$mode_new_id"
