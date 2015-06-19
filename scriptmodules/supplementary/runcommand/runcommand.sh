@@ -649,7 +649,7 @@ load_mode_defaults
 
 # if joy2key is installed run it with a default configuration in background with axis mapps to cursor
 # keys and buttons mapped to enter and tab
-if [[ -f "$rootdir/supplementary/joy2key/bin/joy2key" ]] && ! pgrep joy2key; then
+if [[ -f "$rootdir/supplementary/joy2key/bin/joy2key" && -a /dev/input/js0 ]] && ! pgrep joy2key; then
     "$rootdir/supplementary/joy2key/bin/joy2key" -terminal -thresh 0 0 0 0 -axis 0x1b5b44 0x1b5b43 0x1b5b41 0x1b5b42  -buttons 0x0a 0x09 >/dev/null &
     __joy2key_pid=$!
 fi
