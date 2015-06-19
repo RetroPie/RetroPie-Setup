@@ -11,7 +11,7 @@
 rp_module_id="joy2key"
 rp_module_desc="joy2key - send keyboard presses with a joystick"
 rp_module_menus="2+ 3+"
-rp_module_flags="nobin"
+rp_module_flags=""
 
 function sources_joy2key() {
     gitPullOrClone "$md_build" "https://github.com/RetroPie/joy2key.git"
