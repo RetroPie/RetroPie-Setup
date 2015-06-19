@@ -50,6 +50,13 @@ if ! getDepends git dialog wget gcc-$__default_gcc_version g++-$__default_gcc_ve
     exit 1
 fi
 
+# if joy2key is installed run it with a default configuration in background with axis mapps to cursor
+# keys and first two buttons mapped to enter and space
+if [[ -f "$rootdir/supplementary/joy2key/bin/joy2key" ]] && ! pgrep joy2key; then
+    "$rootdir/supplementary/joy2key/bin/joy2key" -terminal -thresh 0 0 0 0 -axis 0x1b5b44 0x1b5b43 0x1b5b41 0x1b5b42  -buttons 0x0a 0x20 >/dev/null & 
+    __joy2key_pid=$!
+fi
+
 # set default gcc version
 gcc_version "$__default_gcc_version"
 
@@ -70,3 +77,7 @@ else
 fi
 
 printMsgs "console" "${__INFMSGS[@]}"
+
+if [[ -n $__joy2key_pid ]]; then
+    kill $__joy2key_pid
+fi
