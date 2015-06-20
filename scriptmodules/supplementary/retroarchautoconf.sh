@@ -61,7 +61,7 @@ function remap_hotkeys_retroarchautoconf() {
 function configure_retroarchautoconf() {
     printMsgs "console" "Remapping controller hotkeys"
 
-    for file in "$emudir/retroarch/configs/"*; do
+    for file in "$configdir/all/retroarch-joypads/"*; do
         remap_hotkeys_retroarchautoconf "$file"
     done
 }
