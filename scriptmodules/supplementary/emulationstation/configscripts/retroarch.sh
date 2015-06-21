@@ -363,6 +363,7 @@ function inputconfig_retroarch_addControl() {
     local inputValue=$5
 
     if [[ "$inputType" == "hat" ]]; then
+        control+="_btn"
         btnString="h$inputID$inputName"
     elif [[ "$inputType" == "axis" ]]; then
         control+="_axis"
