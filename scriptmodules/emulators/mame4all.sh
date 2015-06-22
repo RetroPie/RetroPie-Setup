@@ -36,8 +36,6 @@ function install_mame4all() {
         'readme.txt'
         'skins'
     )
-    # install mame.cfg under another name as we will copy it
-    cp -v "$md_build/mame.cfg" "$md_inst/mame.cfg.sample"
 }
 
 function configure_mame4all() {
@@ -55,7 +53,7 @@ function configure_mame4all() {
 
     # if the user doesn't already have a config, we will copy the default.
     if [[ ! -f "$configdir/$system/mame.cfg" ]]; then
-        cp "mame.cfg.sample" "$configdir/$system/mame.cfg"
+        cp "mame.cfg.template" "$configdir/$system/mame.cfg"
     fi
 
     ln -sf "$configdir/$system/mame.cfg"
