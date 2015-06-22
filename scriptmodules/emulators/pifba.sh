@@ -37,8 +37,6 @@ function install_pifba() {
         'FBACache_windows.zip'
         'fba_029671_clrmame_dat.zip'
     )
-    # install fba2x.cfg under another name as we will copy it
-    cp -v "$md_build/fba2x.cfg" "$md_inst/fba2x.cfg.sample"
 }
 
 function configure_pifba() {
@@ -54,7 +52,7 @@ function configure_pifba() {
 
     # if the user doesn't already have a config, we will copy the default.
     if [[ ! -f "$configdir/fba/fba2x.cfg" ]]; then
-        cp "fba2x.cfg.sample" "$configdir/fba/fba2x.cfg"
+        cp "fba2x.cfg.template" "$configdir/fba/fba2x.cfg"
     fi
 
     ln -sf "$configdir/fba/fba2x.cfg"
