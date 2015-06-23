@@ -63,11 +63,11 @@ function b_inputconfig_emulationstation_joystick() {
 }
 
 function leftbottom_inputconfig_emulationstation_joystick() {
-    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pagedown" "$4" "$5" "$6"
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pageup" "$4" "$5" "$6"
 }
 
 function rightbottom_inputconfig_emulationstation_joystick() {
-    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pageup" "$4" "$5" "$6"
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pagedown" "$4" "$5" "$6"
 }
 
 function start_inputconfig_emulationstation_joystick() {
@@ -110,11 +110,11 @@ function b_inputconfig_emulationstation_keyboard() {
 }
 
 function leftbottom_inputconfig_emulationstation_keyboard() {
-    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pagedown" "$4" "$5" "$6"
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pageup" "$4" "$5" "$6"
 }
 
 function rightbottom_inputconfig_emulationstation_keyboard() {
-    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pageup" "$4" "$5" "$6"
+    setESInputConfig_inputconfig_emulationstation "$1" "$2" "pagedown" "$4" "$5" "$6"
 }
 
 function start_inputconfig_emulationstation_keyboard() {
