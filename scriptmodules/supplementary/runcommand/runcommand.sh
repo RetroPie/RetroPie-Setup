@@ -646,9 +646,9 @@ get_save_vars
 
 load_mode_defaults
 
-# if joy2key.py is installed run it with cursor keys for axis, and enter + space for buttons 0 and 1
+# if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
 if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -a /dev/input/js0 ]] && ! pgrep -f joy2key.py >/dev/null; then
-    "$rootdir/supplementary/runcommand/joy2key.py" 1b5b44 1b5b43 1b5b41 1b5b42 0a 20 &
+    "$rootdir/supplementary/runcommand/joy2key.py" 1b5b44 1b5b43 1b5b41 1b5b42 0a 09 &
     __joy2key_pid=$!
 fi
 
