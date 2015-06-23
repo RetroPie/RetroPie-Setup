@@ -646,11 +646,9 @@ get_save_vars
 
 load_mode_defaults
 
-
-# if joy2key is installed run it with a default configuration in background with axis mapps to cursor
-# keys and buttons mapped to enter and tab
-if [[ -f "$rootdir/supplementary/joy2key/bin/joy2key" && -a /dev/input/js0 ]] && ! pgrep joy2key; then
-    "$rootdir/supplementary/joy2key/bin/joy2key" -terminal -thresh 0 0 0 0 -axis 0x1b5b44 0x1b5b43 0x1b5b41 0x1b5b42  -buttons 0x0a 0x09 >/dev/null &
+# if joy2key.py is installed run it with cursor keys for axis, and enter + space for buttons 0 and 1
+if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -a /dev/input/js0 ]] && ! pgrep -f joy2key.py >/dev/null; then
+    "$rootdir/supplementary/runcommand/joy2key.py" 1b5b44 1b5b43 1b5b41 1b5b42 0a 20 &
     __joy2key_pid=$!
 fi
 
@@ -665,7 +663,7 @@ if [[ -n "$key" ]]; then
 fi
 
 if [[ -n $__joy2key_pid ]]; then
-    kill $__joy2key_pid
+    kill -INT $__joy2key_pid
 fi
 
 switch_mode "$mode_new_id"

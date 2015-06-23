@@ -13,9 +13,15 @@ rp_module_desc="Configure the 'runcommand' - Launch script"
 rp_module_menus="3+"
 rp_module_flags="nobin"
 
+function depends_runcommand() {
+    getDepends python
+}
+
 function install_runcommand() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/runcommand.sh" "$md_inst/"
-    chmod +x "$md_inst/runcommand.sh"
+    cp "$scriptdir/scriptmodules/$md_type/$md_id/joy2key.py" "$md_inst/"
+    chmod a+x "$md_inst/runcommand.sh"
+    chmod a+x "$md_inst/joy2key.py"
 }
 
 function configure_runcommand() {
