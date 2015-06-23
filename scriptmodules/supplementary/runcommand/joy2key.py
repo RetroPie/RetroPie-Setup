@@ -46,7 +46,6 @@ js_fd = open("/dev/input/js0", "rb")
 buttons_state = 0
 last_press = 0
 while True:
-    hex_chars = ""
     event = js_fd.read(event_size)
 
     if time.time() - last_press < JS_REP:
@@ -57,7 +56,9 @@ while True:
     # ignore init events
     if js_type & JS_EVENT_INIT:
         continue
-    
+
+    hex_chars = ""
+
     if js_type == JS_EVENT_BUTTON:
         if js_number < len(button_codes) and js_value == 1:
             hex_chars = button_codes[js_number]
