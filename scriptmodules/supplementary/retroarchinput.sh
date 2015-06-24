@@ -23,7 +23,7 @@ function joystick_retroarchinput() {
     # todo Find number of first joystick device in /dev/input
     numJoypads=$(ls -1 /dev/input/js* | head -n 1)
     if [[ -n "$numJoypads" ]]; then
-        "$emudir/retroarch/retroarch-joyconfig" --autoconfig "/tmp/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
+        "$emudir/retroarch/bin/retroarch-joyconfig" --autoconfig "/tmp/tempconfig.cfg" --timeout 4 --joypad ${numJoypads:13}
         configfname=$(grep "input_device = \"" "/tmp/tempconfig.cfg")
         configfname=$(echo ${configfname:16:-1} | tr -d ' ')
         mv "/tmp/tempconfig.cfg" "$dest/$configfname.cfg"

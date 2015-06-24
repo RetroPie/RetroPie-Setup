@@ -46,7 +46,6 @@ function install_retroarch() {
     chown $user:$user -R "$md_inst/"{shader,assets,overlays}
     md_ret_files=(
         'retroarch.cfg'
-        'tools/retroarch-joyconfig'
     )
 }
 
