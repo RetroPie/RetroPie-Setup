@@ -21,6 +21,18 @@ function build_lr-nestopia() {
     # remove unneeded gtk3 stuff from Makefile,
     # this speeds up compilation, uses less RAM and no need to enable swap. 
     # compiles using all 4 cores on the RPi2, using less than 500MB of RAM.
+    sed -i '\|CFLAGS += $(shell pkg-config --cflags gtk+-3.0)|d' Makefile
+    sed -i '\|LIBS += $(shell pkg-config --libs gtk+-3.0)|d' Makefile
+    sed -i '\|DEFINES += -D_GTK|d' Makefile
+    sed -i '\|IOBJS += objs/unix/gtkui/gtkui.o|d' Makefile
+    sed -i '\|IOBJS += objs/unix/gtkui/gtkui_archive.o|d' Makefile
+    sed -i '\|IOBJS += objs/unix/gtkui/gtkui_callbacks.o|d' Makefile
+    sed -i '\|IOBJS += objs/unix/gtkui/gtkui_cheats.o|d' Makefile
+    sed -i '\|IOBJS += objs/unix/gtkui/gtkui_config.o|d' Makefile
+    sed -i '\|IOBJS += objs/unix/gtkui/gtkui_dialogs.o|d' Makefile
+    sed -i '\|OBJDIRS += objs/unix/gtkui|d' Makefile
+    sed -i '\|WARNINGS += -Wno-deprecated-declarations|d' Makefile
+
     make clean
     make
     md_ret_require="$md_build/libretro/nestopia_libretro.so"
