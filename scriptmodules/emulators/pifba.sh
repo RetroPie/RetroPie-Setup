@@ -31,9 +31,9 @@ function install_pifba() {
     mkdir "$md_inst/"{roms,skin,preview}
     md_ret_files=(
         'fba2x'
-        'capex.cfg'
+        'FBAcapex_src/capex.cfg'
         'zipname.fba'
-        'rominfo.fba'
+        'FBAcapex_src/rominfo.fba'
         'FBACache_windows.zip'
         'fba_029671_clrmame_dat.zip'
     )
