@@ -18,10 +18,11 @@ function sources_lr-nestopia() {
 
 function build_lr-nestopia() {
     cd libretro
-    rpSwap on 512
+    # remove unneeded gtk3 stuff from Makefile,
+    # this speeds up compilation, uses less RAM and no need to enable swap. 
+    # compiles using all 4 cores on the RPi2, using less than 500MB of RAM.
     make clean
     make
-    rpSwap off
     md_ret_require="$md_build/libretro/nestopia_libretro.so"
 }
 
