@@ -84,7 +84,7 @@ _EOF_
 # Pair if PS3 controller is connected
 DRIVER=="usb", SUBSYSTEM=="usb", ATTR{idVendor}=="054c", ATTR{idProduct}=="0268", RUN+="$md_inst/ps3pair.sh"
 _EOF_
-    
+
     # add default sixad settings
     cat > "/var/lib/sixad/profiles/default" << _EOF_
 enable_leds 1
@@ -104,7 +104,7 @@ enable_accon 0
 enable_speed 0
 enable_pos 0
 _EOF_
-    
+
     # Start sixad daemon
     /etc/init.d/sixad start
 
@@ -123,7 +123,7 @@ function configure_ps3controller() {
     fi
 
     printMsgs "dialog" "Please connect your PS3 controller via USB-CABLE and press ENTER."
-    if $md_inst/sixpair | grep -q "Setting master"; then
+    if "$md_inst/sixpair" | grep -q "Setting master"; then
         printMsgs "dialog" "Cannot find the PS3 controller via USB-connection. Please try to (re-)connect it and try again."
         break
     fi
