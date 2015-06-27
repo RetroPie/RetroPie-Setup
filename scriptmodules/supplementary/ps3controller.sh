@@ -9,8 +9,8 @@
 #
 
 rp_module_id="ps3controller"
-rp_module_desc="Install PS3 controller driver"
-rp_module_menus="3+"
+rp_module_desc="Install/Pair PS3 controller"
+rp_module_menus="3+configure"
 rp_module_flags="nobin"
 
 function depends_ps3controller() {
@@ -114,10 +114,15 @@ _EOF_
 }
 
 function configure_ps3controller() {
+    if [[ ! -f "$rootdir/supplementary/ps3controller/sixpair" ]]; then
+        rp_callModule ps3controller
+        return
+    fi
+
     printMsgs "dialog" "Please make sure that your Bluetooth dongle is connected to the Raspberry Pi and press ENTER."
     if ! hciconfig | grep -q "BR/EDR"; then
         printMsgs "dialog" "Cannot find the Bluetooth dongle. Please try to (re-)connect it and try again."
-        break
+        return
     else
         hciconfig hci0 pscan
     fi
@@ -125,7 +130,7 @@ function configure_ps3controller() {
     printMsgs "dialog" "Please connect your PS3 controller via USB-CABLE and press ENTER."
     if "$md_inst/sixpair" | grep -q "Setting master"; then
         printMsgs "dialog" "Cannot find the PS3 controller via USB-connection. Please try to (re-)connect it and try again."
-        break
+        return
     fi
 
     printMsgs "dialog" "The driver and configuration tools for connecting PS3 controllers have been installed. Please visit https://github.com/petrockblog/RetroPie-Setup/wiki/Setting-up-a-PS3-controller for further information."
