@@ -8,151 +8,16 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-function onstart_inputconfig_retroarch_joystick() {
-    local deviceName=$2
+function onstart_retroarch_joystick() {
+    local device_type=$1
+    local device_name=$2
+
     iniConfig " = " "\"" "/tmp/tempconfig.cfg"
-    iniSet "input_device" "$deviceName"
+    iniSet "input_device" "$device_name"
     iniSet "input_driver" "udev"
 }
 
-function up_inputconfig_retroarch_joystick() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    inputconfig_retroarch_addControl "input_up" "$inputName" "$inputType" "$inputID" "$inputValue"
-}
-
-function right_inputconfig_retroarch_joystick() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    inputconfig_retroarch_addControl "input_right" "$inputName" "$inputType" "$inputID" "$inputValue"
-    inputconfig_retroarch_addControl "input_state_slot_increase" "$inputName" "$inputType" "$inputID" "$inputValue"
-}
-
-function down_inputconfig_retroarch_joystick() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    inputconfig_retroarch_addControl "input_down" "$inputName" "$inputType" "$inputID" "$inputValue"
-}
-
-function left_inputconfig_retroarch_joystick() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    inputconfig_retroarch_addControl "input_left" "$inputName" "$inputType" "$inputID" "$inputValue"
-    inputconfig_retroarch_addControl "input_state_slot_decrease" "$inputName" "$inputType" "$inputID" "$inputValue"
-}
-
-function a_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_a" "$3" "$4" "$5" "$6"
-}
-
-function b_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_b" "$3" "$4" "$5" "$6"
-    inputconfig_retroarch_addControl "input_reset" "$3" "$4" "$5" "$6"
-}
-
-function x_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_x" "$3" "$4" "$5" "$6"
-    inputconfig_retroarch_addControl "input_menu_toggle" "$3" "$4" "$5" "$6"
-}
-
-function y_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_y" "$3" "$4" "$5" "$6"
-}
-
-function leftbottom_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_l" "$3" "$4" "$5" "$6"
-    inputconfig_retroarch_addControl "input_load_state" "$3" "$4" "$5" "$6"
-}
-
-function rightbottom_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_r" "$3" "$4" "$5" "$6"
-    inputconfig_retroarch_addControl "input_save_state" "$3" "$4" "$5" "$6"
-}
-
-function lefttop_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_l2" "$3" "$4" "$5" "$6"
-}
-
-function righttop_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_r2" "$3" "$4" "$5" "$6"
-}
-
-function leftthumb_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_l3" "$3" "$4" "$5" "$6"
-}
-
-function rightthumb_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_r3" "$3" "$4" "$5" "$6"
-}
-
-function start_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_start" "$3" "$4" "$5" "$6"
-    inputconfig_retroarch_addControl "input_exit_emulator" "$3" "$4" "$5" "$6"
-}
-
-function select_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_select" "$3" "$4" "$5" "$6"
-    inputconfig_retroarch_addControl "input_enable_hotkey" "$3" "$4" "$5" "$6"
-}
-
-function leftanalogright_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_l_x_plus" "$3" "$4" "$5" "$6"
-}
-
-function leftanalogleft_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_l_x_minus" "$3" "$4" "$5" "$6"
-}
-
-function leftanalogdown_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_l_y_plus" "$3" "$4" "$5" "$6"
-}
-
-function leftanalogup_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_l_y_minus" "$3" "$4" "$5" "$6"
-}
-
-function rightanalogright_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_r_x_plus" "$3" "$4" "$5" "$6"
-}
-
-function rightanalogleft_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_r_x_minus" "$3" "$4" "$5" "$6"
-}
-
-function rightanalogdown_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_r_y_plus" "$3" "$4" "$5" "$6"
-}
-
-function rightanalogup_inputconfig_retroarch_joystick() {
-    inputconfig_retroarch_addControl "input_r_y_minus" "$3" "$4" "$5" "$6"
-}
-
-function onend_inputconfig_retroarch_joystick() {
-    local deviceType=$1
-    local deviceName=$2
-    newFilename="${deviceName// /}.cfg"
-    if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$newFilename" ]]; then
-        mv "/opt/retropie/configs/all/retroarch-joypads/$newFilename" "/opt/retropie/configs/all/retroarch-joypads/$newFilename.bak"
-    fi
-    mv "/tmp/tempconfig.cfg" "/opt/retropie/configs/all/retroarch-joypads/$newFilename"
-}
-
-
-### input type: Keyboard ###
-
-function onstart_inputconfig_retroarch_keyboard() {
+function onstart_retroarch_keyboard() {
     iniConfig " = " "" "/opt/retropie/configs/all/retroarch.cfg"
 
     declare -Ag retroarchkeymap
@@ -263,119 +128,170 @@ function onstart_inputconfig_retroarch_keyboard() {
     retroarchkeymap["122"]="z"
 }
 
-function up_inputconfig_retroarch_keyboard() {
-    local deviceName=$2
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
+function map_retroarch_joystick() {
+    local device_type="$1"
+    local device_name="$2"
+    local input_name="$3"
+    local input_type="$4"
+    local input_id="$5"
+    local input_value="$6"
 
-    iniSet "input_player1_up" "${retroarchkeymap[$inputID]}"
-}
+    local keys
+    case "$input_name" in
+        up)
+            keys=("input_up")
+            ;;
+        down)
+            keys=("input_down")
+            ;;
+        left)
+            keys=("input_left" "input_state_slot_decrease")
+            ;;
+        right)
+            keys=("input_right" "input_state_slot_increase")
+            ;;
+        a)
+            keys=("input_a")
+            ;;
+        b)
+            keys=("input_b" "input_reset")
+            ;;
+        x)
+            keys=("input_x" "input_menu_toggle")
+            ;;
+        y)
+            keys=("input_y")
+            ;;
+        leftbottom)
+            keys=("input_l" "input_load_state")
+            ;;
+        rightbottom)
+            keys=("input_r" "input_save_state")
+            ;;
+        lefttop)
+            keys=("input_l2")
+            ;;
+        righttop)
+            keys=("input_r2")
+            ;;
+        leftthumb)
+            keys=("input_l3")
+            ;;
+        rightthumb)
+            keys=("input_r3")
+            ;;
+        start)
+            keys=("input_start" "input_exit_emulator")
+            ;;
+        select)
+            keys=("input_select" "input_enable_hotkey")
+            ;;
+        leftanalogleft)
+            keys=("input_l_x_minus")
+            ;;
+        leftanalogright)
+            keys=("input_l_x_plus")
+            ;;
+        leftanalogup)
+            keys=("input_l_y_minus")
+            ;;
+        leftanalogdown)
+            keys=("input_l_y_plus")
+            ;;
+        rightanalogleft)
+            keys=("input_r_x_minus")
+            ;;
+        rightanalogright)
+            keys=("input_r_x_plus")
+            ;;
+        rightanalogup)
+            keys=("input_r_y_minus")
+            ;;
+        rightanalogdown)
+            keys=("input_r_y_plus")
+            ;;
+        *)
+            return
+            ;;
+    esac
 
-function right_inputconfig_retroarch_keyboard() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    iniSet "input_player1_right" "${retroarchkeymap[$inputID]}"
-}
-
-function down_inputconfig_retroarch_keyboard() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    iniSet "input_player1_down" "${retroarchkeymap[$inputID]}"
-}
-
-function left_inputconfig_retroarch_keyboard() {
-    local inputName=$3
-    local inputType=$4
-    local inputID=$5
-    local inputValue=$6
-
-    iniSet "input_player1_left" "${retroarchkeymap[$inputID]}"
-}
-
-# the following functions are kept a bit shorter than above, but they still follow the the mechanism
-
-function a_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_a" "${retroarchkeymap[$5]}"
-}
-
-function b_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_b" "${retroarchkeymap[$5]}"
-}
-
-function x_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_x" "${retroarchkeymap[$5]}"
-}
-
-function y_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_y" "${retroarchkeymap[$5]}"
-}
-
-function leftbottom_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_l" "${retroarchkeymap[$5]}"
-}
-
-function rightbottom_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_r" "${retroarchkeymap[$5]}"
-}
-
-function lefttop_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_l2" "${retroarchkeymap[$5]}"
-}
-
-function righttop_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_r2" "${retroarchkeymap[$5]}"
-}
-
-function leftthumb_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_l3" "${retroarchkeymap[$5]}"
-}
-
-function rightthumb_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_r3" "${retroarchkeymap[$5]}"
-}
-
-function start_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_start" "${retroarchkeymap[$5]}"
-}
-
-function select_inputconfig_retroarch_keyboard() {
-    iniSet "input_player1_select" "${retroarchkeymap[$5]}"
-}
-
-
-###### helper functions ######
-# to circumvent name collisions we use quite long function names in the following.
-# all the following functions should have no dependencies to other shell scripts.
-
-function inputconfig_retroarch_addControl() {
-    local control=$1
-    local inputName=$2
-    local inputType=$3
-    local inputID=$4
-    local inputValue=$5
-
-    if [[ "$inputType" == "hat" ]]; then
-        control+="_btn"
-        btnString="h$inputID$inputName"
-    elif [[ "$inputType" == "axis" ]]; then
-        control+="_axis"
-        if [[ "$inputValue" == "1" ]]; then
-            btnString="+$inputID"
+    local key
+    local value
+    for key in "${keys[@]}"; do
+        if [[ "$input_type" == "hat" ]]; then
+            key+="_btn"
+            value="h$input_id$input_name"
+        elif [[ "$input_type" == "axis" ]]; then
+            key+="_axis"
+            if [[ "$input_value" == "1" ]]; then
+                value="+$input_id"
+            else
+                value="-$input_id"
+            fi
         else
-            btnString="-$inputID"
+            key+="_btn"
+            value="$input_id"
         fi
-    else
-        control+="_btn"
-        btnString=$inputID
-    fi
 
-    iniSet "$control" "$btnString"
+        iniSet "$key" "$value"
+    done
+}
+
+function onend_retroarch_joystick() {
+    local device_type=$1
+    local device_name=$2
+    local file="${device_name// /}.cfg"
+    if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$file" ]]; then
+        mv "/opt/retropie/configs/all/retroarch-joypads/$file" "/opt/retropie/configs/all/retroarch-joypads/$file.bak"
+    fi
+    mv "/tmp/tempconfig.cfg" "/opt/retropie/configs/all/retroarch-joypads/$file"
+}
+
+function map_retroarch_keyboard() {
+    local device_type="$1"
+    local device_name="$2"
+    local input_name="$3"
+    local input_type="$4"
+    local input_id="$5"
+    local input_value="$6"
+
+    local key
+    case "$input_name" in
+        up|down|left|right|a|b|x|y|start|select)
+            key="input_player1_$input_name"
+            ;;
+        leftbottom)
+            key="input_player1_l"
+            ;;
+        rightbottom)
+            key="input_player1_r"
+            ;;
+        lefttop)
+            key="input_player1_l2"
+            ;;
+        righttop)
+            key="input_player1_2"
+            ;;
+        leftthumb)
+            key="input_player1_l3"
+            ;;
+        rightthumb)
+            key="input_player1_r3"
+            ;;
+        *)
+            return
+            ;;
+    esac
+
+    iniSet "$key" "${retroarchkeymap[$input_id]}"
+}
+
+function onend_retroarch_joystick() {
+    local device_type=$1
+    local device_name=$2
+    local file="${device_name// /}.cfg"
+    if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$file" ]]; then
+        mv "/opt/retropie/configs/all/retroarch-joypads/$file" "/opt/retropie/configs/all/retroarch-joypads/$file.bak"
+    fi
+    mv "/tmp/tempconfig.cfg" "/opt/retropie/configs/all/retroarch-joypads/$file"
 }
