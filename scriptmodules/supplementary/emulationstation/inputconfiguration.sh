@@ -35,6 +35,7 @@
 #   $5 - input ID
 #   $6 - input value
 #
+# $1 - device type is currently either joystick or keyboard
 # $2 - input name is one of the following
 #   up, down, left, right
 #   a, b, x, y
@@ -43,6 +44,7 @@
 #   start, select
 #   leftanalogup, leftanalogdown, leftanalogleft, leftanalogright
 #   rightanalogup, rightanalogdown, rightanalogleft, rightanalogright
+# $3 - input type is button, axis, or hat
 #
 # Returns:
 #   None
