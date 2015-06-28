@@ -142,7 +142,7 @@ function rightanalogup_inputconfig_retroarch_joystick() {
 function onend_inputconfig_retroarch_joystick() {
     local deviceType=$1
     local deviceName=$2
-    newFilename=$(echo "$deviceName" | sed -e 's/ /_/g')".cfg"
+    newFilename="${deviceName// /}.cfg"
     if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$newFilename" ]]; then
         mv "/opt/retropie/configs/all/retroarch-joypads/$newFilename" "/opt/retropie/configs/all/retroarch-joypads/$newFilename.bak"
     fi
