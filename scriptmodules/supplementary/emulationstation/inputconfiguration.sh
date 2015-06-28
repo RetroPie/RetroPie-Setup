@@ -24,7 +24,7 @@
 # Returns:
 #   None
 #
-# function map_<filename without extension>()_<inputtype>()
+# function map_<filename without extension>_<inputtype>()
 # is run for each of the inputs - with the following arguments
 #
 # Arguments:
