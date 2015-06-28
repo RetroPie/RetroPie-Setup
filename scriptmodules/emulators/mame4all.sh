@@ -33,6 +33,7 @@ function install_mame4all() {
         'folders'
         'hiscore.dat'
         'mame'
+        'mame.cfg.template'
         'readme.txt'
         'skins'
     )
@@ -50,12 +51,10 @@ function configure_mame4all() {
     if [[ -f "mame.cfg" && ! -h "mame.cfg" ]]; then
         mv "mame.cfg" "$configdir/$system/mame.cfg"
     fi
-
     # if the user doesn't already have a config, we will copy the default.
     if [[ ! -f "$configdir/$system/mame.cfg" ]]; then
         cp "mame.cfg.template" "$configdir/$system/mame.cfg"
     fi
-
     ln -sf "$configdir/$system/mame.cfg"
 
     iniConfig "=" "" "$configdir/$system/mame.cfg"
