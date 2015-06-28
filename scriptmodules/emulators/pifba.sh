@@ -28,10 +28,11 @@ function build_pifba() {
 }
 
 function install_pifba() {
-    mkdir "$md_inst/"{roms,skin,preview}
+    mkdir -p "$md_inst/"{roms,skin,preview}
     md_ret_files=(
         'fba2x'
-        'capex.cfg'
+        'fba2x.cfg.template'
+        'capex.cfg.template'
         'zipname.fba'
         'rominfo.fba'
         'FBACache_windows.zip'
@@ -45,17 +46,18 @@ function configure_pifba() {
 
     mkUserDir "$configdir/fba"
 
-    # move old config
-    if [[ -f "$fba2x.cfg" && ! -h "$fba2x.cfg" ]]; then
-        mv "fba2x.cfg" "$configdir/fba/fba2x.cfg"
-    fi
-
-    # if the user doesn't already have a config, we will copy the default.
-    if [[ ! -f "$configdir/fba/fba2x.cfg" ]]; then
-        cp "fba2x.cfg.template" "$configdir/fba/fba2x.cfg"
-    fi
-
-    ln -sf "$configdir/fba/fba2x.cfg"
+    local config
+    for config in fba2x.cfg capex.cfg; do
+        # move old config
+        if [[ -f "$config" && ! -h "$config" ]]; then
+            mv "$config" "$configdir/fba/$config"
+        fi
+        # if the user doesn't already have a config, we will copy the default.
+        if [[ ! -f "$configdir/fba/$config" ]]; then
+            cp "$config.template" "$configdir/fba/$config"
+        fi
+        ln -sf "$configdir/fba/$config"
+    done
 
     addSystem 1 "$md_id" "neogeo" "$md_inst/fba2x %ROM%"
     addSystem 1 "$md_id" "fba arcade" "$md_inst/fba2x %ROM%"
