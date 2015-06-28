@@ -56,7 +56,7 @@
 function inputconfiguration() {
 
     local es_conf="$home/.emulationstation/es_temporaryinput.cfg"
-    declare -Ag __mapping
+    declare -A mapping
 
     # check if we have the temporary input file
     [[ ! -f "$es_conf" ]] && return
@@ -65,7 +65,7 @@ function inputconfiguration() {
     while read line; do
         if [[ -n "$line" ]]; then
             local input=($line)
-            __mapping["${input[0]}"]=${input[@]:1}
+            mapping["${input[0]}"]=${input[@]:1}
         fi
     done < <(xmlstarlet sel  -t -m "/inputList/inputConfig/input"  -v "concat(@name,' ',@type,' ',@id,' ',@value)" -n "$es_conf")
 
@@ -92,11 +92,11 @@ function inputconfiguration() {
 
         local input_name
         # loop through all buttons and use corresponding config function if it exists
-        for input_name in "${!__mapping[@]}"; do
+        for input_name in "${!mapping[@]}"; do
             funcname="map_${module_id}_${device_type}"
 
             if fn_exists "$funcname"; then
-                local params=(${__mapping[$input_name]})
+                local params=(${mapping[$input_name]})
                 local input_type=${params[0]}
                 local input_id=${params[1]}
                 local input_value=${params[2]}
