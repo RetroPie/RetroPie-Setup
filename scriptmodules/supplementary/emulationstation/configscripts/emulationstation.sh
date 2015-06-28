@@ -16,7 +16,7 @@ function onstart_emulationstation_joystick() {
 
     mkdir -p "$home/.emulationstation"
 
-    if [[ ! -f "$conf" ]]; then
+    if [[ ! -f "$es_conf" ]]; then
         echo "<inputList />" >"$es_conf"
     fi
 
