@@ -233,7 +233,7 @@ function rp_createBin() {
         tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"
         chown $user:$user "$dest/$archive"
     else
-        printMsgs "console" "No install directory $rootdir/$md_type - no archive created"
+        printMsgs "console" "No install directory $rootdir/$md_type/$md_id - no archive created"
     fi
 }
 
