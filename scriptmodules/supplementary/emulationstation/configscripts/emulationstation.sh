@@ -18,9 +18,9 @@ function onstart_emulationstation_joystick() {
 
     if [[ ! -f "$es_conf" ]]; then
         echo "<inputList />" >"$es_conf"
+    else
+        cp "$es_conf" "$es_conf.bak"
     fi
-
-    cp "$es_conf" "$es_conf.bak"
 
     # make sure that device exists
     if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName='$device_name'])" "$es_conf") -eq 0 ]]; then
