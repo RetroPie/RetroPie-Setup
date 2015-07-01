@@ -30,7 +30,7 @@ button_codes = []
 axis_codes = []
 
 i = 0
-for arg in sys.argv[1:]:
+for arg in sys.argv[2:]:
     if i < 4:
         axis_codes.append(arg)
     else:
@@ -41,7 +41,7 @@ event_format = 'IhBB'
 event_size = struct.calcsize(event_format)
 
 tty_fd = open("/dev/tty", "w")
-js_fd = open("/dev/input/js0", "rb")
+js_fd = open(sys.argv[1], "rb")
 
 buttons_state = 0
 last_press = 0
