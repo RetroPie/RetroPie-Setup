@@ -52,6 +52,7 @@ function configure_lr-mupen64plus() {
     iniSet "mupen64-gfxplugin" "rice"
     iniSet "mupen64-gfxplugin-accuracy" "low"
     iniSet "mupen64-screensize" "640x480"
+    chown $user:$user "$configdir/all/retroarch-core-options.cfg"
 
     # Copy config files
     cp "$md_inst/data/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf} "$biosdir/"

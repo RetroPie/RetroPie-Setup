@@ -37,6 +37,7 @@ function configure_lr-tgbdual() {
     # enable dual / link by default
     iniConfig " = " "" "$configdir/all/retroarch-core-options.cfg"
     iniSet "tgbdual_gblink_enable" "enabled"
+    chown $user:$user "$configdir/all/retroarch-core-options.cfg"
 
     addSystem 0 "$md_id" "gb" "$md_inst/tgbdual_libretro.so"
     addSystem 0 "$md_id" "gbc" "$md_inst/tgbdual_libretro.so"
