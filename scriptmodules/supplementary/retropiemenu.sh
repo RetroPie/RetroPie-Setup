@@ -14,7 +14,7 @@ rp_module_menus="2+ 3+"
 rp_module_flags="nobin"
 
 function depends_retropiemenu() {
-    getDepends mc wicd-curses
+    getDepends mc
 }
 
 function configure_retropiemenu()
@@ -111,6 +111,7 @@ function launch_retropiemenu() {
             sleep 5
             ;;
         wifi.rp)
+            getDepends wicd-curses
             wicd-curses >/dev/tty </dev/tty 
             ;;
         *.rp)
