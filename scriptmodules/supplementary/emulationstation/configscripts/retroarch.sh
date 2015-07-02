@@ -270,7 +270,7 @@ function map_retroarch_keyboard() {
             key="input_player1_l2"
             ;;
         righttop)
-            key="input_player1_2"
+            key="input_player1_r2"
             ;;
         leftthumb)
             key="input_player1_l3"
