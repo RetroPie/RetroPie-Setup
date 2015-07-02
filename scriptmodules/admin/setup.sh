@@ -161,6 +161,7 @@ function binaries_setup()
 
 function updatescript_setup()
 {
+    chown -R $user:$user "$scriptdir"
     printHeading "Fetching latest version of the RetroPie Setup Script."
     pushd $scriptdir
     if [[ ! -d ".git" ]]; then
@@ -169,7 +170,7 @@ function updatescript_setup()
         return
     fi
     local error
-    if ! error=$(git pull 2>&1 >/dev/null); then
+    if ! error=$(su $user -c "git pull 2>&1 >/dev/null"); then
         printMsgs "dialog" "Update failed:\n\n$error"
         popd
         return
