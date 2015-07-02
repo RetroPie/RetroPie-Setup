@@ -94,10 +94,8 @@ function rps_availFreeDiskSpace() {
     required_MB=$((__required/1024))
     available_MB=$((__avail/1024))
 
-    if [[ "$__required" -le "$__avail" ]] || ask "Minimum recommended disk space ($required_MB MB) not available. Try 'sudo raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir continue anyway?"; then
-        return 0;
-    else
-        exit 0;
+    if [[ "$__avail" -lt "$__required" ]]; then
+        dialog --yesno "Minimum recommended disk space ($required_MB MB) not available. Try 'raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir continue anyway?" 22 76 2>&1 >/dev/tty || exit 0
     fi
 }
 
