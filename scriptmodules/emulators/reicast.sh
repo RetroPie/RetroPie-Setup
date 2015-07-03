@@ -22,7 +22,7 @@ function sources_reicast() {
 }
 
 function build_reicast() {
-    cd $md_build/shell/rapi2
+    cd "$md_build/shell/rapi2"
     make clean
     make 
     md_ret_require="$md_build/shell/rapi2/reicast.elf"
@@ -41,9 +41,13 @@ function configure_reicast() {
     mkRomDir "dreamcast"
 
     # Create home VMU, cfg, and data folders. Copy dc_boot.bin and dc_flash.bin to the ~/.reicast/data/ folder.
-    mkdir -p "$home/.reicast/data"
+    mkUserDir "$home/.reicast"
+    mkUserDir "$home/.reicast/data"
 
-    cat > $md_inst/reicast.sh << _EOF_
+    ln -sn "$biodsir/dc_boot.bin" "$home/.reicast/data/"
+    ln -sn "$biodsir/dc_flash.bin" "$home/.reicast/data/"
+
+    cat > "$md_inst/reicast.sh" << _EOF_
 #!/bin/bash
 pushd "$md_inst"
 echo Reading the entire Reicast emulator into memory to execute from there...
@@ -71,6 +75,5 @@ _EOF_
     # add system
     addSystem 1 "$md_id" "dreamcast" "$md_inst/reicast.sh %ROM%"
 
-    __INFMSGS+=("You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $home/.reicast/data/ to boot the Dreamcast emulator.")
-
+    __INFMSGS+=("You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $romdir to boot the Dreamcast emulator.")
 }
