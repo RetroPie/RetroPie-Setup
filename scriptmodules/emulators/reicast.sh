@@ -55,11 +55,10 @@ sudo mkdir tmpfs
 #TODO: Find optimal smaller tmpfs size, I do not believe anywhere near this much is required.  I have only ever seen 54MB utilized during a game of Rush 2049.
 sudo mount -o size=150M -t tmpfs none tmpfs/
 sudo cp -v * tmpfs/
+chown -R $user:$user tmpfs
 cd tmpfs
-sudo aoss ./reicast.elf -config config:homedir="$home" -config config:image="\$1"
+aoss ./reicast.elf -config config:homedir="$home" -config config:image="\$1"
 cd ..
-echo Ensuring any freshly-created VMUs are owned by pi and not root...
-sudo chown -R pi:pi "$home/.reicast"
 echo Freeing up memory...
 sudo umount "$md_inst/tmpfs"
 sudo rm -rf tmpfs
