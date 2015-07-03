@@ -69,11 +69,40 @@ function keyboard_retroarchinput() {
     fi
 }
 
+function hotkey_retroarchinput() {
+    iniConfig " = " "" "$configdir/all/retroarch.cfg"
+    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired hotkey behaviour." 22 76 16)
+    options=(1 "Hotkeys enabled. (default)"
+             2 "Press ALT to enable hotkeys."
+             3 "Hotkeys disabled. Press ESCAPE to open RGUI.")
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choices" ]]; then
+        case $choices in
+            1)
+                iniSet "input_enable_hotkey" "nul"
+                iniSet "input_exit_emulator" "escape"
+                iniSet "input_menu_toggle" "F1"
+                ;;
+            2)
+                iniSet "input_enable_hotkey" "alt"
+                iniSet "input_exit_emulator" "escape"
+                iniSet "input_menu_toggle" "F1"
+                ;;
+            3)
+                iniSet "input_enable_hotkey" "escape"
+                iniSet "input_exit_emulator" "nul"
+                iniSet "input_menu_toggle" "escape"
+                ;;
+        esac
+    fi
+}
+
 function configure_retroarchinput() {
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose which input device to configure." 22 76 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 76 16)
     local options=(
         1 "Configure joystick/controller for use with RetroArch"
         2 "Configure keyboard for use with RetroArch"
+        3 "Configure keyboard hotkey behaviour for RetroArch"
     )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
@@ -83,6 +112,9 @@ function configure_retroarchinput() {
                 ;;
             2)
                 keyboard_retroarchinput
+                ;;
+            3)
+                hotkey_retroarchinput
                 ;;
         esac
     fi
