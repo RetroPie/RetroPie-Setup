@@ -55,7 +55,7 @@ sudo mkdir tmpfs
 #TODO: Find optimal smaller tmpfs size, I do not believe anywhere near this much is required.  I have only ever seen 54MB utilized during a game of Rush 2049.
 sudo mount -o size=150M -t tmpfs none tmpfs/
 sudo cp -v * tmpfs/
-chown -R $user:$user tmpfs
+sudo chown -R $user:$user tmpfs
 cd tmpfs
 aoss ./reicast.elf -config config:homedir="$home" -config config:image="\$1"
 cd ..
