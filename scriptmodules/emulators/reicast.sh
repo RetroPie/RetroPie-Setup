@@ -44,8 +44,8 @@ function configure_reicast() {
     mkUserDir "$home/.reicast"
     mkUserDir "$home/.reicast/data"
 
-    ln -sn "$biodsir/dc_boot.bin" "$home/.reicast/data/"
-    ln -sn "$biodsir/dc_flash.bin" "$home/.reicast/data/"
+    ln -sn "$biosdir/dc_boot.bin" "$home/.reicast/data/"
+    ln -sn "$biosdir/dc_flash.bin" "$home/.reicast/data/"
 
     cat > "$md_inst/reicast.sh" << _EOF_
 #!/bin/bash
@@ -75,5 +75,5 @@ _EOF_
     # add system
     addSystem 1 "$md_id" "dreamcast" "$md_inst/reicast.sh %ROM%"
 
-    __INFMSGS+=("You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $romdir to boot the Dreamcast emulator.")
+    __INFMSGS+=("You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator.")
 }
