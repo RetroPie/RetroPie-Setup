@@ -44,8 +44,8 @@ function configure_reicast() {
     mkUserDir "$home/.reicast"
     mkUserDir "$home/.reicast/data"
 
-    ln -sn "$biosdir/dc_boot.bin" "$home/.reicast/data/"
-    ln -sn "$biosdir/dc_flash.bin" "$home/.reicast/data/"
+    ln -sf "$biosdir/dc_boot.bin" "$home/.reicast/data/"
+    ln -sf "$biosdir/dc_flash.bin" "$home/.reicast/data/"
 
     cat > "$md_inst/reicast.sh" << _EOF_
 #!/bin/bash
@@ -70,7 +70,7 @@ _EOF_
 
     # Link to file that does not exist as this results in the Dreamcast System Manager launching (as if one turned on the Dreamcast without a disc inserted)
     # This is required to fix broken / corrupted VMU files.
-    ln -sv fileThatDoesNotExist "$home/RetroPie/roms/dreamcast/systemManager.cdi"
+    ln -sf fileThatDoesNotExist "$home/RetroPie/roms/dreamcast/systemManager.cdi"
 
     # add system
     addSystem 1 "$md_id" "dreamcast" "$md_inst/reicast.sh %ROM%"
