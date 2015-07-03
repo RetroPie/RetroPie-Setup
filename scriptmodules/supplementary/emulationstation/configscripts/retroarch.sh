@@ -257,33 +257,62 @@ function map_retroarch_keyboard() {
 
     local key
     case "$input_name" in
-        up|down|left|right|a|b|x|y|start|select)
-            key="input_player1_$input_name"
+        up)
+            keys=("input_player1_up")
+            ;;
+        down)
+            keys=("input_player1_down")
+            ;;
+        left)
+            keys=("input_player1_left" "input_state_slot_decrease")
+            ;;
+        right)
+            keys=("input_player1_right" "input_state_slot_increase")
+            ;;
+        a)
+            keys=("input_player1_a")
+            ;;
+        b)
+            keys=("input_player1_b" "input_reset")
+            ;;
+        x)
+            keys=("input_player1_x" "input_menu_toggle")
+            ;;
+        y)
+            keys=("input_player1_y")
             ;;
         leftbottom)
-            key="input_player1_l"
+            keys=("input_player1_l")
             ;;
         rightbottom)
-            key="input_player1_r"
+            keys=("input_player1_r")
             ;;
         lefttop)
-            key="input_player1_l2"
+            keys=("input_player1_l2")
             ;;
         righttop)
-            key="input_player1_r2"
+            keys=("input_player1_r2")
             ;;
         leftthumb)
-            key="input_player1_l3"
+            keys=("input_player1_l3")
             ;;
         rightthumb)
-            key="input_player1_r3"
+            keys=("input_player1_r3")
+            ;;
+        start)
+            keys=("input_player1_start" "input_exit_emulator")
+            ;;
+        select)
+            keys=("input_player1_select" "input_enable_hotkey")
             ;;
         *)
             return
             ;;
     esac
 
-    iniSet "$key" "${retroarchkeymap[$input_id]}"
+    for key in "${keys[@]}"; do
+        iniSet "$key" "${retroarchkeymap[$input_id]}"
+    done
 }
 
 function onend_retroarch_joystick() {
