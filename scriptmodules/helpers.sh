@@ -11,6 +11,9 @@
 function printMsgs() {
     local type="$1"
     shift
+    if [[ "$__nodialog" == "1" && "$type" == "dialog" ]]; then
+        type="console"
+    fi
     for msg in "$@"; do
         [[ "$type" == "dialog" ]] && dialog --backtitle "$__backtitle" --msgbox "$msg" 20 60 >/dev/tty
         [[ "$type" == "console" ]] && echo "$msg"

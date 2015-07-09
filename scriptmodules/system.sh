@@ -49,6 +49,9 @@ function setup_env() {
         __chroot=0
     fi
 
+    if [[ -z "$__nodialog" ]]; then
+        __nodialog=0
+    fi
 }
 
 function platform_rpi1() {
