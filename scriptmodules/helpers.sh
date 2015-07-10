@@ -380,33 +380,38 @@ function ensureSystemretroconfig {
         mkUserDir "$configdir/$system"
     fi
 
+    local include_comment="# Settings made here will only override settings in the global retroarch.cfg if placed above the #include line"
+    local include="#include \"$configdir/all/retroarch.cfg\""
+
     local config="$configdir/$system/retroarch.cfg"
-    # if the user has an existing config we will not overwrite it, but instead
-    # create the default config as retroarch.cfg.rp-dist (apart from the very
-    # important #include addition
+    # if the user has an existing config we will not overwrite it, but instead create the 
+    # default config as retroarch.cfg.rp-dist (apart from the very important #include addition)
     if [[ -f "$config" ]]; then
-        # if the file exists, add the #include at the start if missing
-        if ! grep -q "#include \"$configdir/all/retroarch.cfg" "$config"; then
-            sed -i "1i#include \"$configdir/all/retroarch.cfg\"" "$config"
+        if ! grep -q "$include" "$config"; then
+            sed -i "1i$include_comment\n" "$config"
+            echo -e "\n$include" >>"$config"
         fi
-        # but use retroarch.cfg.rp-dist for further config changes
         config="$configdir/$system/retroarch.cfg.rp-dist"
+        rm -f "$config"
     fi
 
-    # include the main retroarch config
+    # add the initial comment regarding include order
     if [[ ! -f "$config" ]]; then
-        echo "#include \"$configdir/all/retroarch.cfg\"" >"$config"
-        echo "# All settings made here will override the global settings for the current emulator core" >>"$config"
+        echo -e "$include_comment\n" >"$config"
     fi
 
+    # add the per system default settings
     iniConfig " = " "" "$config"
     iniSet "input_remapping_directory" "$configdir/$system/"
 
     if [[ -n "$shader" ]]; then
+        iniSet "video_smooth" "false"
         iniSet "video_shader" "$emudir/retroarch/shader/$shader"
         iniSet "video_shader_enable" "false"
-        iniSet "video_smooth" "false"
     fi
+
+    # include the main retroarch config
+    echo -e "\n$include" >>"$config"
 
     chown $user:$user "$config"
 }
