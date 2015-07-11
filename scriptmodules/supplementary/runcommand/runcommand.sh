@@ -519,12 +519,12 @@ function retroarch_append_config() {
 
     # if the rom has a custom configuration then append that too
     if [[ -f "$rom.cfg" ]]; then
-        conf+=",\"$rom.cfg\""
+        conf+="'|'\"$rom.cfg\""
     fi
 
     # if we already have an existing appendconfig parameter, we need to add our configs to that
     if [[ "$command" =~ "--appendconfig" ]]; then
-        command=$(echo "$command" | sed "s|\(--appendconfig *[^ $]*\)|\1,$conf|")
+        command=$(echo "$command" | sed "s#\(--appendconfig *[^ $]*\)#\1'|'$conf#")
     else
         command+=" --appendconfig $conf"
     fi
