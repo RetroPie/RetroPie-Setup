@@ -68,7 +68,7 @@ _EOF_
 ;--joystickevent 3 Fire
 _EOF_
 
-    chown $user:$user "$configdir/zxspectrum/zesaruxrc"
+    chown $user:$user "$configdir/zxspectrum/.zesaruxrc"
 
     addSystem 1 "$md_id" "zxspectrum" "$romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%" "" ".sh"
 }
