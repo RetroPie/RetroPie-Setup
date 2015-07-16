@@ -13,8 +13,7 @@ rp_module_desc="Arcade emu - iMAME4all (based on MAME 0.37b5) port for libretro"
 rp_module_menus="2+"
 
 function sources_lr-imame4all() {
-    gitPullOrClone "$md_build" https://github.com/libretro/imame4all-libretro.git
-    sed -i "s/@mkdir/@mkdir -p/g" makefile.libretro
+    gitPullOrClone "$md_build" https://github.com/RetroPie/imame4all-libretro.git
 }
 
 function build_lr-imame4all() {
