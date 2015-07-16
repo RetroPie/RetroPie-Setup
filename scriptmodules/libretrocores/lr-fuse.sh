@@ -10,7 +10,7 @@
 
 rp_module_id="lr-fuse"
 rp_module_desc="ZX Spectrum emu - Fuse port for libretro"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_lr-fuse() {
     gitPullOrClone "$md_build" https://github.com/libretro/fuse-libretro.git
@@ -34,5 +34,10 @@ function configure_lr-fuse() {
     mkRomDir "zxspectrum"
     ensureSystemretroconfig "zxspectrum"
 
-    addSystem 0 "$md_id" "zxspectrum" "$md_inst/fuse_libretro.so"
+    # default to 128k spectrum
+    iniConfig " = " "" "$configdir/all/retroarch-core-options.cfg"
+    iniSet "fuse_machine" "Spectrum 128K"
+    chown $user:$user "$configdir/all/retroarch-core-options.cfg"
+
+    addSystem 1 "$md_id" "zxspectrum" "$md_inst/fuse_libretro.so"
 }
