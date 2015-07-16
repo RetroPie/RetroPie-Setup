@@ -25,6 +25,7 @@ function configure_retropiemenu()
     files=(
         'raspiconfig.rp'
         'rpsetup.rp'
+        'retroarch.rp'
         'retroarchinput.rp'
         'audiosettings.rp'
         'dispmanx.rp'
@@ -63,6 +64,10 @@ function configure_retropiemenu()
         <name>Configure RetroArch keyboard/joystick</name>
     </game>
     <game>
+        <path>$rpdir/retroarch.rp</path>
+        <name>Configure RetroArch / Launch RetroArch RGUI</name>
+    </game>
+    <game>
         <path>$rpdir/audiosettings.rp</path>
         <name>Configure audio settings</name>
     </game>
@@ -97,6 +102,11 @@ function launch_retropiemenu() {
     local command="$1"
     local basename="${command##*/}"
     case $basename in
+        retroarch.rp)
+            cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
+            chown $user:$user "$configdir/all/retroarch.cfg.bak"
+            su $user -c "\"$emudir/retroarch/bin/retroarch\" --menu --config \"$configdir/all/retroarch.cfg\""
+            ;;
         rpsetup.rp)
             "$scriptdir/retropie_setup.sh"
             ;;
