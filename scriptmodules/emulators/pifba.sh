@@ -57,6 +57,7 @@ function configure_pifba() {
             cp "$config.template" "$configdir/fba/$config"
         fi
         ln -sf "$configdir/fba/$config"
+        chown $user:$user "$configdir/fba/$config"
     done
 
     addSystem 1 "$md_id" "neogeo" "$md_inst/fba2x %ROM%"
