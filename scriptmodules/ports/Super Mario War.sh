@@ -19,7 +19,6 @@ function sources_smw() {
 
 function build_smw() {
     cd smw
-    chmod +x configure
     ./configure
     make clean
 }
