@@ -36,8 +36,8 @@ function configure_lr-bluemsx() {
     mkRomDir "msx"
     ensureSystemretroconfig "msx"
 
-    cp "$md_inst/system/bluemsx/Machines/Shared Roms"{*.ROM,*.rom} "$biosdir/system/bluemsx/Machines/Shared Roms"
-    chown $user:$user "$biosdir/system/bluemsx/Machines/Shared Roms"{*.ROM,*.rom}
+    cp -rv "$md_inst/"{Databases,Machines} "$biosdir/"
+    chown -R $user:$user "$biosdir/"{Databases,Machines}
 
     # default to MSX2+ core
     iniConfig " = " "" "$configdir/all/retroarch-core-options.cfg"
