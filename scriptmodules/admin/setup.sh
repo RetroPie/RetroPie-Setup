@@ -175,7 +175,8 @@ function updatescript_setup()
     fi
     popd
     rp_callModule runcommand install
-    printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script. You need to restart the script."
+    printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script."
+    exec "$scriptdir/retropie_setup.sh"
 }
 
 function source_setup()
