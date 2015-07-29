@@ -35,14 +35,18 @@ function install_zesarux() {
 function configure_zesarux() {
     mkRomDir "zxspectrum"
 
+    mkUserDir "$romdir/zxspectrum"
+
     cat > "$romdir/zxspectrum/+Start ZEsarUX.sh" << _EOF_
 #!/bin/bash
 params="\$1"
+pushd "$md_inst/bin"
 if [[ "\$params" =~ \.sh$ ]]; then
-    bash "\$params"
+    ./zesarux
 else
-    $rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/bin/zesarux \$params" "$md_id"
+    ./zesarux "\$params"
 fi
+popd
 _EOF_
     chmod +x "$romdir/zxspectrum/+Start ZEsarUX.sh"
     chown $user:$user "$romdir/zxspectrum/+Start ZEsarUX.sh"
@@ -54,13 +58,14 @@ _EOF_
 ;
 ;Lines beginning with ; or # are ignored
 
-
 ;Run zesarux with --help or --experthelp to see all the options
 --disableborder
 --disablefooter
 --vo sdl
 --ao alsa
 --hidemousepointer
+
+--smartloadpath $romdir/zxspectrum
 
 --joystickemulated Kempston
 
