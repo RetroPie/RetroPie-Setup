@@ -19,6 +19,8 @@ function depends_xroar() {
 
 function sources_xroar() {
     gitPullOrClone "$md_build" http://www.6809.org.uk/git/xroar.git rasppi
+    # fix up missing includes/libraries
+    sed -i "s|-I/opt/vc/include/interface/vcos/pthreads|-I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux|g" configure
     sed -i "s/-lopenmaxil/-lopenmaxil -lpthread -lm/g" configure
 }
 
