@@ -10,7 +10,7 @@
 
 rp_module_id="lr-mednafen-wswan"
 rp_module_desc="Wonderswan emu - Mednafen WonderSwan core port for libretro"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_lr-mednafen-wswan() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-wswan-libretro.git
