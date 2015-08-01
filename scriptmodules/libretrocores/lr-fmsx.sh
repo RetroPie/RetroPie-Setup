@@ -51,6 +51,9 @@ function configure_lr-fmsx() {
     mkRomDir "msx"
     ensureSystemretroconfig "msx"
 
+    # default to MSX2+ core
+    setRetroArchCoreOption "fmsx_mode" "MSX2+"
+
     # Copy bios files
     cp "$md_inst/"{*.ROM,*.FNT,*.SHA} "$biosdir/"
     chown $user:$user "$biosdir/"{*.ROM,*.FNT,*.SHA}
