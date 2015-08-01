@@ -321,6 +321,7 @@ function setDispmanx() {
     mkUserDir "$configdir/all"
     iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
     iniSet $mod_id "$status"
+    chown $user:$user "$configdir/all/dispmanx.cfg"
 }
 
 function setESSystem() {
