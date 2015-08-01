@@ -232,12 +232,13 @@ function main_menu() {
         fi
 
         options+=(X "Launch")
+        options+=(Q "Exit (without launching)")
 
         if [[ "$command" =~ retroarch ]]; then
             options+=(Z "Launch with netplay enabled")
         fi
 
-        cmd=(dialog --menu "System: $system\nEmulator: $emulator\nVideo Mode: ${mode[$mode_new_id]}\nROM: $rom_bn"  22 76 16 )
+        cmd=(dialog --nocancel --menu "System: $system\nEmulator: $emulator\nVideo Mode: ${mode[$mode_new_id]}\nROM: $rom_bn"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         case $choice in
             1)
@@ -300,11 +301,15 @@ function main_menu() {
                 netplay=1
                 break
                 ;;
-            *|X)
-                break
+            X)
+                return 0
+                ;;
+            Q)
+                return 1
                 ;;
         esac
     done
+    return 0
 }
 
 function choose_mode() {
@@ -646,6 +651,8 @@ get_save_vars
 
 load_mode_defaults
 
+dont_launch=0
+
 # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
 __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
 if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
@@ -661,11 +668,16 @@ IFS= read -s -t 1 -N 1 key </dev/tty
 if [[ -n "$key" ]]; then
     get_all_modes
     main_menu
+    dont_launch=$?
     clear
 fi
 
 if [[ -n $__joy2key_pid ]]; then
     kill -INT $__joy2key_pid
+fi
+
+if [[ $dont_launch -eq 1 ]]; then
+    exit 0
 fi
 
 switch_mode "$mode_new_id"
