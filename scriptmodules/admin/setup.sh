@@ -314,7 +314,7 @@ function configure_setup() {
             1 "Binary-based installation (recommended)")
         fi
         options+=(
-            2 "Source-based installation (bleeding edge - 20h+ build time on rpi1)"
+            2 "Source-based installation (bleeding edge - 24h+ build time on rpi1)"
             3 "Setup / Configuration (to be used post install)"
             4 "Experimental packages (these are potentially unstable)"
         )
