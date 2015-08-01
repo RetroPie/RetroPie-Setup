@@ -10,7 +10,7 @@
 
 rp_module_id="lr-bluemsx"
 rp_module_desc="MSX/MSX2 emu - blueMSX port for libretro"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_lr-bluemsx() {
     gitPullOrClone "$md_build" https://github.com/HerbFargus/blueMSX-libretro.git
