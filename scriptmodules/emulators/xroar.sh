@@ -11,7 +11,6 @@
 rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_menus="4+"
-rp_module_flags="dispmanx"
 
 function depends_xroar() {
     getDepends libraspberrypi-dev libraspberrypi-doc
