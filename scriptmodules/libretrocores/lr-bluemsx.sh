@@ -40,9 +40,7 @@ function configure_lr-bluemsx() {
     chown -R $user:$user "$biosdir/"{Databases,Machines}
 
     # default to MSX2+ core
-    iniConfig " = " "" "$configdir/all/retroarch-core-options.cfg"
-    iniSet "bluemsx_msxtype" "MSX2+"
-    chown $user:$user "$configdir/all/retroarch-core-options.cfg"
+    setRetroArchCoreOption "bluemsx_msxtype" "MSX2+"
 
     addSystem 1 "$md_id" "msx" "$md_inst/bluemsx_libretro.so"
 }

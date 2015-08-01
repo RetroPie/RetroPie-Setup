@@ -35,9 +35,7 @@ function configure_lr-fuse() {
     ensureSystemretroconfig "zxspectrum"
 
     # default to 128k spectrum
-    iniConfig " = " "" "$configdir/all/retroarch-core-options.cfg"
-    iniSet "fuse_machine" "Spectrum 128K"
-    chown $user:$user "$configdir/all/retroarch-core-options.cfg"
+    setRetroArchCoreOption "fuse_machine" "Spectrum 128K"
 
     addSystem 1 "$md_id" "zxspectrum" "$md_inst/fuse_libretro.so"
 }

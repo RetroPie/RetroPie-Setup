@@ -416,6 +416,14 @@ function ensureSystemretroconfig {
     chown $user:$user "$config"
 }
 
+function setRetroArchCoreOption() {
+    local option="$1"
+    local value="$2"
+    iniConfig " = " "\"" "$configdir/all/retroarch-core-options.cfg"
+    iniSet "$option" "$value"
+    chown $user:$user "$configdir/all/retroarch-core-options.cfg"
+}
+
 # add a framebuffer mode to /etc/fb.modes - useful for adding specific resolutions used by emulators so SDL
 # can use them and utilise the rpi hardware scaling
 # without a 320x240 mode in fb.modes many of the emulators that output to framebuffer (stella / snes9x / gngeo)
