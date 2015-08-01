@@ -58,5 +58,5 @@ function configure_lr-fmsx() {
     cp "$md_inst/"{*.ROM,*.FNT,*.SHA} "$biosdir/"
     chown $user:$user "$biosdir/"{*.ROM,*.FNT,*.SHA}
 
-    addSystem 1 "$md_id" "msx" "$md_inst/fmsx_libretro.so"
+    addSystem 0 "$md_id" "msx" "$md_inst/fmsx_libretro.so"
 }
