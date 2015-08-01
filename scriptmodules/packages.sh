@@ -42,10 +42,10 @@ function rp_listFunctions() {
     for idx in ${__mod_idx[@]}; do
         mod_id=${__mod_id[$idx]};
         printf "%d/%-20s: %-42s : " "$idx" "$mod_id" "${__mod_desc[$idx]}"
-        for mode in depends sources build install configure remove; do
-            func="${mode}_${mod_id}"
-            fn_exists $func && echo -e "$mode \c"
-        done
+        while read mode; do
+            mode=${mode//_$mod_id/}
+            echo -e "$mode \c"
+        done < <(compgen -A function -X \!*_$mod_id)
         echo ""
     done
     echo "==================================================================================================================================="
