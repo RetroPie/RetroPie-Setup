@@ -32,7 +32,6 @@ function install_lr-bluemsx() {
 }
 
 function configure_lr-bluemsx() {
-
     mkRomDir "msx"
     ensureSystemretroconfig "msx"
 
