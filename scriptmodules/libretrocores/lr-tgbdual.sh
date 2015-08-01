@@ -10,7 +10,7 @@
 
 rp_module_id="lr-tgbdual"
 rp_module_desc="Gameboy Color emu - TGB Dual port for libretro"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_lr-tgbdual() {
     gitPullOrClone "$md_build" https://github.com/libretro/tgbdual-libretro.git
