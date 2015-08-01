@@ -10,7 +10,7 @@
 
 rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function depends_xroar() {
     getDepends libraspberrypi-dev libraspberrypi-doc
@@ -45,8 +45,8 @@ function configure_xroar() {
     mkdir -p "$md_inst/share/xroar"
     ln -snf "$biosdir" "$md_inst/share/xroar/roms"
 
-    addSystem 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar -machine dragon32 -run %ROM%" "Dragon 32" ".cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna"
-    addSystem 0 "$md_id-coco" "coco" "$md_inst/bin/xroar -machine coco -run %ROM%" "CoCo" ".cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna"
+    addSystem 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar -machine dragon32 -run %ROM%"
+    addSystem 1 "$md_id-coco" "coco" "$md_inst/bin/xroar -machine coco -run %ROM%"
 
     __INFMSGS+=("For emulator $md_id you need to copy system/basic roms such as d32.rom (Dragon 32) and bas13.rom (CoCo) to '$biosdir'.")
 }
