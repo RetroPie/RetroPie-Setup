@@ -120,10 +120,6 @@ function launch_retropiemenu() {
             ip addr show
             sleep 5
             ;;
-        wifi.rp)
-            getDepends wicd-curses
-            wicd-curses >/dev/tty </dev/tty 
-            ;;
         *.rp)
             local no_ext=${basename%.rp}
             rp_callModule $no_ext
