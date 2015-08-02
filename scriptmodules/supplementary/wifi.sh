@@ -20,6 +20,7 @@ function wifi_list() {
 }
 
 function wifi_wpa() {
+    ifconfig wlan0 up
     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please Enter the SSID of the Network You Would Like to Connect to:" 10 60 "$ssid")
     choice=$("${cmd[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
@@ -35,11 +36,13 @@ function wifi_wpa() {
     echo -e 'auto lo\n\niface lo inet loopback\niface eth0 inet dhcp\n\nallow-hotplug wlan0\nauto wlan0\n\niface wlan0 inet manual\nwpa-roam /etc/wpa_supplicant/wpa_supplicant.conf\n\niface default inet dhcp' > "/etc/network/interfaces"
 
     echo -e 'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\n\nnetwork={\n\tssid="'$ssid'"\n\tpsk="'$psk'"\n}' > "/etc/wpa_supplicant/wpa_supplicant.conf"
-  
-    printMsgs "dialog" "Configurations have been saved to /etc/network/interfaces and /etc/wpa_supplicant/wpa_supplicant.conf"
+    ifdown wlan0
+    ifup wlan0
+    printMsgs "dialog" "You are now connected to: $ssid\n\nConfigurations have been saved to /etc/network/interfaces and /etc/wpa_supplicant/wpa_supplicant.conf"
 }
 
 function wifi_wep() {
+    ifconfig wlan0 up
     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please Enter the SSID of the Network You Would Like to Connect to" 10 60 "$ssid")
     choice=$("${cmd[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
@@ -55,11 +58,13 @@ function wifi_wep() {
     echo -e 'auto lo\n\niface lo inet loopback\niface eth0 inet dhcp\n\nallow-hotplug wlan0\nauto wlan0\n\niface wlan0 inet manual\nwpa-roam /etc/wpa_supplicant/wpa_supplicant.conf\n\niface default inet dhcp' > "/etc/network/interfaces"
 
     echo -e 'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\n\nnetwork={\n\tssid="'$ssid'"\n\tkey_mgmt=NONE\n\twep_tx_keyidx=0\n\tpsk='"$psk"'\n}' > "/etc/wpa_supplicant/wpa_supplicant.conf"
-  
-    printMsgs "dialog" "Configurations have been saved to /etc/network/interfaces and /etc/wpa_supplicant/wpa_supplicant.conf"
+    ifdown wlan0
+    ifup wlan0
+    printMsgs "dialog" "You are now connected to: $ssid\n\nConfigurations have been saved to /etc/network/interfaces and /etc/wpa_supplicant/wpa_supplicant.conf"
 }
 
 function wifi_open() {
+    ifconfig wlan0 up
     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please Enter the SSID of the Network You Would Like to Connect to" 10 60 "$ssid")
     choice=$("${cmd[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
@@ -69,8 +74,9 @@ function wifi_open() {
     echo -e 'auto lo\n\niface lo inet loopback\niface eth0 inet dhcp\n\nallow-hotplug wlan0\nauto wlan0\n\niface wlan0 inet manual\nwpa-roam /etc/wpa_supplicant/wpa_supplicant.conf\n\niface default inet dhcp' > "/etc/network/interfaces"
 
     echo -e 'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\n\nnetwork={\n\tssid="'$ssid'"\n\tkey_mgmt=NONE\n}' > "/etc/wpa_supplicant/wpa_supplicant.conf"
-  
-    printMsgs "dialog" "Configurations have been saved to /etc/network/interfaces and /etc/wpa_supplicant/wpa_supplicant.conf"
+    ifdown wlan0
+    ifup wlan0
+    printMsgs "dialog" "You are now connected to: $ssid\n\nConfigurations have been saved to /etc/network/interfaces and /etc/wpa_supplicant/wpa_supplicant.conf"
 }
 
 function configure_wifi() {
