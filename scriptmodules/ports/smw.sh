@@ -10,7 +10,7 @@
 
 rp_module_id="smw"
 rp_module_desc="Super Mario War"
-rp_module_menus="2+"
+rp_module_menus="4+"
 
 function sources_smw() {
     gitPullOrClone "$md_build" https://github.com/HerbFargus/smw.git
