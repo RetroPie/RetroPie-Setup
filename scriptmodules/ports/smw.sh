@@ -17,13 +17,12 @@ function sources_smw() {
 }
 
 function build_smw() {
-    cd smw
     ./configure
     make clean
+    make
 }
 
 function install_smw() {
-    cd smw
     make install
 }
 
@@ -32,7 +31,7 @@ function configure_smw() {
 
     cat > "$romdir/ports/Super Mario War.sh" << _EOF_
 #!/bin/bash
-/opt/retropie/supplementary/runcommand/runcommand.sh 0 "smw" "smw"
+$rootdir/supplementary/runcommand/runcommand.sh 0 "smw" "$md_id"
 _EOF_
 
     chmod +x "$romdir/ports/Super Mario War.sh"
