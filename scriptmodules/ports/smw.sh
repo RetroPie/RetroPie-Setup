@@ -30,12 +30,12 @@ function install_smw() {
 function configure_smw() {
     mkRomDir "ports"
 
-     cat > "$romdir/ports/Super Mario War.sh" << _EOF_
+    cat > "$romdir/ports/Super Mario War.sh" << _EOF_
 #!/bin/bash
 /opt/retropie/supplementary/runcommand/runcommand.sh 0 "smw" "smw"
 _EOF_
 
-  chmod +x "$romdir/ports/Super Mario War.sh"
+    chmod +x "$romdir/ports/Super Mario War.sh"
 
     setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
 }
