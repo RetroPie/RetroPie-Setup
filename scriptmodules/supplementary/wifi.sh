@@ -129,12 +129,12 @@ _EOF_
 function configure_wifi() {
     while true; do
         local ip_int=$(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)
-        cmd=(dialog --backtitle "$__backtitle" --menu "Configure WiFi\nCurrent IP: $ip_int\nWireless ESSID: $(iwgetid -r)" 22 76 16)
-        options=(
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Configure WiFi\nCurrent IP: $ip_int\nWireless ESSID: $(iwgetid -r)" 22 76 16)
+        local options=(
             1 "Connect to WiFi network"
             2 "Disconnect/Remove WiFi config"
         )
-        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case $choice in
                 1)
