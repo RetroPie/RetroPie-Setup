@@ -127,9 +127,8 @@ _EOF_
 }
 
 function configure_wifi() {
-    local ip_int=$(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)
-
     while true; do
+        local ip_int=$(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)
         cmd=(dialog --backtitle "$__backtitle" --menu "Configure WiFi\nCurrent IP: $ip_int\nWireless ESSID: $(iwgetid -r)" 22 76 16)
         options=(
             1 "Connect to WiFi network"
