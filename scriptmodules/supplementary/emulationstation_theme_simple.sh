@@ -14,26 +14,15 @@ rp_module_menus="2+"
 rp_module_flags="nobin"
 
 function sources_esthemesimple() {
-    gitPullOrClone "$md_build" https://github.com/gizmo98/simple-theme-plus.git
+    gitPullOrClone "$md_build" https://github.com/RetroPie/es-theme-simple
 }
 
 function install_esthemesimple() {
-    # download themes archive
-    wget -O simple_latest.zip "http://downloads.petrockblock.com/retropiearchives/simple_latest.zip"
-
-    mkdir -p "/etc/emulationstation/themes"
-
     # remove old simple theme files
     rmDirExists "/etc/emulationstation/themes/simple"
 
-    # unzip archive to tmp folder
-    unzip simple_latest.zip -d /etc/emulationstation/themes/
-
-    # delete zip archive
-    rm simple_latest.zip
+    mkdir -p "/etc/emulationstation/themes/simple"
     
-    # copy simple-theme-plus themes
-    cp -a "$md_build/"* "/etc/emulationstation/themes/simple/"
-
-    chmod -R go+xr /etc/emulationstation/themes/
+    # copy theme
+    cp -r "$md_build/"* "/etc/emulationstation/themes/simple/"
 }
