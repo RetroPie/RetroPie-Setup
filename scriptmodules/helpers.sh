@@ -413,9 +413,9 @@ function ensureSystemretroconfig {
     iniSet "input_remapping_directory" "$configdir/$system/"
 
     if [[ -n "$shader" ]]; then
-        iniSet "video_smooth" "false"
+        iniUnset "video_smooth" "false"
         iniSet "video_shader" "$emudir/retroarch/shader/$shader"
-        iniSet "video_shader_enable" "false"
+        iniUnset "video_shader_enable" "true"
     fi
 
     # include the main retroarch config
