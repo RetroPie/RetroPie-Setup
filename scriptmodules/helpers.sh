@@ -158,6 +158,13 @@ function iniGet() {
     ini_value=$(sed -rn "s/^[[:space:]]*$key[[:space:]]*$delim_strip[[:space:]]*$quote(.+)$quote.*/\1/p" $file)
 }
 
+function editFile() {
+    local file="$1"
+    local cmd=(dialog --backtitle "$__backtitle" --editbox "$file" 22 76)
+    local choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+    [[ -n "$choice" ]] && echo "$choice" >"$file"
+}
+
 function hasPackage() {
     PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1 2>/dev/null|grep "install ok installed")
     if [[ "" == "$PKG_OK" ]]; then
