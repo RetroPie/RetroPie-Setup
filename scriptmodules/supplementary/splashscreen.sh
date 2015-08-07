@@ -14,7 +14,7 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function depends_splashscreen() {
-    getDepends fbi
+    getDepends fbi omxplayer
 }
 
 function enable_splashscreen()
@@ -22,16 +22,16 @@ function enable_splashscreen()
     clear
     printHeading "Enabling custom splashscreen on boot."
 
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/asplashscreen" "/etc/init.d/"
-    chmod +x "/etc/init.d/asplashscreen"
+    cp "$scriptdir/scriptmodules/$md_type/$md_id/splashscreen" "/etc/init.d/"
+    chmod +x "/etc/init.d/splashscreen"
 
     find $scriptdir/supplementary/splashscreens/retropie2015-blue/ -type f > /etc/splashscreen.list
 
     # This command installs the init.d script so it automatically starts on boot
-    update-rc.d asplashscreen defaults
+    update-rc.d splashscreen defaults
 
     # not-so-elegant hack for later re-enabling the splashscreen
-    update-rc.d asplashscreen enable
+    update-rc.d splashscreen enable
 }
 
 function disable_splashscreen()
@@ -39,9 +39,8 @@ function disable_splashscreen()
     clear
     printHeading "Disabling custom splashscreen on boot."
 
-    update-rc.d asplashscreen disable
+    update-rc.d splashscreen disable
 }
-
 
 function choose_splashscreen() {
     printHeading "Configuring splashscreen"
@@ -72,7 +71,6 @@ function choose_splashscreen() {
         printMsgs "dialog" "Splashscreen set to '$splashdir'."
     fi
 }
-
 
 function configure_splashscreen() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
