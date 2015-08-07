@@ -25,6 +25,7 @@ function configure_retropiemenu()
     files=(
         'raspiconfig.rp'
         'rpsetup.rp'
+        'configedit.rp'
         'retroarch.rp'
         'retroarchinput.rp'
         'audiosettings.rp'
@@ -54,6 +55,10 @@ function configure_retropiemenu()
     <game>
         <path>$rpdir/rpsetup.rp</path>
         <name>RetroPie-Setup</name>
+    </game>
+    <game>
+        <path>$rpdir/configedit.rp</path>
+        <name>Edit RetroPie/RetroArch configurations</name>
     </game>
     <game>
         <path>$rpdir/filemanager.rp</path>

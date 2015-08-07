@@ -9,7 +9,7 @@
 #
 
 rp_module_id="configedit"
-rp_module_desc="Edit RetroPie configurations"
+rp_module_desc="Edit RetroPie/RetroArch configurations"
 rp_module_menus="3+"
 rp_module_flags="nobin"
 
