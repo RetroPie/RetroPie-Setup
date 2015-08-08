@@ -537,7 +537,7 @@ function retroarch_append_config() {
     # append any netplay configuration
     if [[ $netplay -eq 1 ]] && [[ -f "$retronetplay_conf" ]]; then
         source "$retronetplay_conf"
-        command+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes"
+        command+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes --nick $__netplaynickname"
     fi
 }
 
