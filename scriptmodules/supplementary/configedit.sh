@@ -173,7 +173,7 @@ function configure_configedit() {
                         editFile "$configdir/$file"
                         ;;
                     3)
-                        file=$(choose_config_configedit "$configdir/all" ".*")
+                        file=$(choose_config_configedit "$configdir" ".*/all/.*")
                         editFile "$configdir/$file"
                         ;;
                     4)
