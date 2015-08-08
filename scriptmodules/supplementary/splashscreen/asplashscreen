@@ -1,7 +1,7 @@
 #! /bin/sh
 ### BEGIN INIT INFO
 # Provides:          asplashscreen
-# Required-Start:
+# Required-Start:    dbus
 # Required-Stop:
 # Default-Start:     S
 # Default-Stop:
@@ -11,19 +11,23 @@
 
 do_start () {
 
-    line=$(head -n 1 /etc/splashscreen.list)
-    isMovie=$(echo $line | grep -o "*.mpg")
-    if [ -z "$isMovie" ]; then
-      /usr/bin/fbi -T 2 -once -t 20 -noverbose -a -l /etc/splashscreen.list &
-    else
-      mplayer $line &
-    fi
+    while read splashline; do
+        echo Playing splash video or image $splashline
+        isMovie=$(echo $splashline | grep -o ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg")
+        if [ -z "$isMovie" ]; then
+            /usr/bin/fbi -T 2 -once -t 10 -noverbose -a $splashline
+            sleep 12
+        else
+           sleep 5
+           omxplayer $splashline
+        fi
+    done </etc/splashscreen.list
     exit 0
 }
 
 case "$1" in
   start|"")
-    do_start
+    do_start &
     ;;
   restart|reload|force-reload)
     echo "Error: argument '$1' not supported" >&2

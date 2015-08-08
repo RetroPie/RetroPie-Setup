@@ -14,7 +14,7 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function depends_splashscreen() {
-    getDepends fbi
+    getDepends fbi omxplayer
 }
 
 function enable_splashscreen()
@@ -28,7 +28,7 @@ function enable_splashscreen()
     find $scriptdir/supplementary/splashscreens/retropie2015-blue/ -type f > /etc/splashscreen.list
 
     # This command installs the init.d script so it automatically starts on boot
-    update-rc.d asplashscreen defaults
+    update-rc.d asplashscreen start 00 S
 
     # not-so-elegant hack for later re-enabling the splashscreen
     update-rc.d asplashscreen enable
