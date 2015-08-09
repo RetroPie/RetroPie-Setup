@@ -66,8 +66,9 @@ function configure_splashscreen() {
     local options=(
         1 "Enable custom splashscreen on boot"
         2 "Disable custom splashscreen on boot"
-        3 "Choose splashscreen"
-        4 "Manually edit splashscreen list"
+        3 "Use default splashscreen"
+        4 "Choose splashscreen"
+        5 "Manually edit splashscreen list"
     )
     while true; do
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -83,9 +84,13 @@ function configure_splashscreen() {
                     printMsgs "dialog" "Disabled custom splashscreen on boot."
                     ;;
                 3)
-                    choose_splashscreen
+                    default_splashscreen
+                    printMsgs "dialog" "Splashscreen set to RetroPie default."
                     ;;
                 4)
+                    choose_splashscreen
+                    ;;
+                5)
                     editFile /etc/splashscreen.list
                     ;;
             esac
