@@ -10,16 +10,14 @@
 ### END INIT INFO
 
 do_start () {
-
     while read splashline; do
-        echo Playing splash video or image $splashline
-        isMovie=$(echo $splashline | grep -o ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg")
-        if [ -z "$isMovie" ]; then
-            /usr/bin/fbi -T 2 -once -t 10 -noverbose -a $splashline
-            sleep 12
+        echo "Playing splash video or image $splashline"
+        if $(echo "$splashline" | grep -q ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg"); then
+            sleep 5
+            omxplayer "$splashline"
         else
-           sleep 5
-           omxplayer $splashline
+            /usr/bin/fbi -T 2 -once -t 10 -noverbose -a "$splashline"
+            sleep 12
         fi
     done </etc/splashscreen.list
     exit 0
