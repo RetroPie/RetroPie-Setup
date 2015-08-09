@@ -27,8 +27,7 @@ function default_splashscreen() {
 }
 
 function enable_splashscreen() {
-    # This command installs the init.d script so it automatically starts on boot
-    update-rc.d asplashscreen start 00 S &>/dev/null
+    insserv asplashscreen
 
     # not-so-elegant hack for later re-enabling the splashscreen
     update-rc.d asplashscreen enable >/dev/null

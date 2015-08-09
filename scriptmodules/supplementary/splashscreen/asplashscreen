@@ -1,7 +1,7 @@
 #! /bin/sh
 ### BEGIN INIT INFO
 # Provides:          asplashscreen
-# Required-Start:    dbus
+# Required-Start:    $local_fs
 # Required-Stop:
 # Default-Start:     S
 # Default-Stop:
@@ -10,16 +10,17 @@
 ### END INIT INFO
 
 do_start () {
-    while read splashline; do
-        echo "Playing splash video or image $splashline"
-        if $(echo "$splashline" | grep -q ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg"); then
-            sleep 5
-            omxplayer "$splashline"
-        else
-            /usr/bin/fbi -T 2 -once -t 10 -noverbose -a "$splashline"
-            sleep 12
-        fi
-    done </etc/splashscreen.list
+    local config="/etc/splashscreen.list"
+    local line="$(head -1 "$config")"
+    if $(echo "$line" | grep -q ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg"); then
+        omxplayer -b "$line"
+    else
+        local count=$(wc -l <"$config")
+        [ $count -eq 0 ] && count=1
+        [ $count -gt 20 ] && count=20
+        local delay=$((20/count))
+        fbi -T 2 -once -t $delay -noverbose -a -l "$config" >/dev/null 2>&1
+    fi
     exit 0
 }
 
