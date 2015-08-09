@@ -35,7 +35,7 @@ function enable_splashscreen() {
 }
 
 function disable_splashscreen() {
-    update-rc.d asplashscreen disable >/dev/null
+    update-rc.d asplashscreen disable &>/dev/null
 }
 
 function choose_splashscreen() {
