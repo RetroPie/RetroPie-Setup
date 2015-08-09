@@ -67,6 +67,7 @@ function configure_splashscreen() {
         1 "Enable custom splashscreen on boot"
         2 "Disable custom splashscreen on boot"
         3 "Choose splashscreen"
+        4 "Manually edit splashscreen list"
     )
     while true; do
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -83,6 +84,9 @@ function configure_splashscreen() {
                     ;;
                 3)
                     choose_splashscreen
+                    ;;
+                4)
+                    editFile /etc/splashscreen.list
                     ;;
             esac
         else
