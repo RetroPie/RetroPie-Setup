@@ -28,13 +28,10 @@ function default_splashscreen() {
 
 function enable_splashscreen() {
     insserv asplashscreen
-
-    # not-so-elegant hack for later re-enabling the splashscreen
-    update-rc.d asplashscreen enable >/dev/null
 }
 
 function disable_splashscreen() {
-    update-rc.d asplashscreen disable &>/dev/null
+    insserv -r asplashscreen
 }
 
 function choose_splashscreen() {
