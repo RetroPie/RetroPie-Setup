@@ -34,6 +34,15 @@ function disable_splashscreen() {
     insserv -r asplashscreen
 }
 
+function enable_randomiser() {
+    find /opt/retropie/supplementary/splashscreen -regex ".*\.\(jpg\|gif\|png\|jpeg\)" > /etc/splashscreen.list
+    grep -q -e 'splashscreen.list' /etc/rc.local || sed -i -e '$i \sudo shuf /etc/splashscreen.list -o /etc/splashscreen.list \n' /etc/rc.local
+}
+
+function disable_randomiser() {
+    sed -i '/splashscreen.list/{N;d;}' /etc/rc.local 
+}
+
 function choose_splashscreen() {
     local options=()
     local i=0
@@ -64,7 +73,9 @@ function configure_splashscreen() {
         2 "Disable custom splashscreen on boot"
         3 "Use default splashscreen"
         4 "Choose splashscreen"
-        5 "Manually edit splashscreen list"
+        5 "Enable Randomiser"
+        6 "Disable Randomiser"
+        7 "Manually edit splashscreen list"
     )
     while true; do
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -87,6 +98,14 @@ function configure_splashscreen() {
                     choose_splashscreen
                     ;;
                 5)
+                    enable_randomiser
+                    printMsgs "dialog" "Splashscreen Randomiser Enabled"
+                    ;;
+                6)
+                    disable_randomiser
+                    printMsgs "dialog" "Splashscreen Randomiser Disabled"
+                    ;;
+                7)
                     editFile /etc/splashscreen.list
                     ;;
             esac
