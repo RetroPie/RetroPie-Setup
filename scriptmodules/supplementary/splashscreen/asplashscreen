@@ -1,9 +1,11 @@
-#! /bin/sh
+#!/bin/sh
+
 ### BEGIN INIT INFO
 # Provides:          asplashscreen
-# Required-Start:    $local_fs
+# Required-Start:    mountdevsubfs
 # Required-Stop:
 # Default-Start:     S
+# X-Start-Before:    checkroot
 # Default-Stop:
 # Short-Description: Show custom splashscreen
 # Description:       Show custom splashscreen
@@ -13,7 +15,11 @@ do_start () {
     local config="/etc/splashscreen.list"
     local line="$(head -1 "$config")"
     if $(echo "$line" | grep -q ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg"); then
+        while ! touch /tmp/writable; do
+            sleep 1
+        done
         omxplayer -b "$line"
+        rm /tmp/writable
     else
         local count=$(wc -l <"$config")
         [ $count -eq 0 ] && count=1
