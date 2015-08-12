@@ -15,6 +15,8 @@ rp_module_flags="!rpi1"
 
 function sources_lr-snes9x-next() {
     gitPullOrClone "$md_build" https://github.com/libretro/snes9x-next
+    # some games crash when it is compiled with -O3
+    sed -i "s/CFLAGS += -O3/CFLAGS += -O2/" Makefile.libretro
 }
 
 function build_lr-snes9x-next() {
