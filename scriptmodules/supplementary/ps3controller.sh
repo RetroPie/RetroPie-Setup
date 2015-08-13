@@ -49,13 +49,13 @@ function build_ps3controller() {
 function install_ps3controller() {
     cd sixad
     checkinstall -y --fstrans=no
-    update-rc.d sixad defaults
+    insserv sixad
 
     # If a bluetooth dongle is connected set state up and enable pscan
     cat > "$md_inst/bluetooth.sh" << _EOF_
 #!/bin/bash
-hciconfig hci0 up
-if hciconfig | grep -q "BR/EDR"; then
+if hcitool dev | grep -q "hci0"; then
+    hciconfig hci0 up
     hciconfig hci0 pscan
 fi
 _EOF_
@@ -65,8 +65,7 @@ _EOF_
     # If a PS3 controller is connected over usb check if bluetooth dongle exits and start sixpair
     cat > "$md_inst/ps3pair.sh" << _EOF_  
 #!/bin/bash
-if hciconfig | grep -q "BR/EDR"; then
-    hciconfig hci0 pscan
+if hcitool dev | grep -q "hci0"; then
     $md_inst/sixpair
 fi
 _EOF_
@@ -113,25 +112,83 @@ _EOF_
     )
 }
 
-function configure_ps3controller() {
+function remove_ps3controller() {
+    service sixad stop
+    insserv -r sixad
+    dpkg --purge sixad
+    rm -rf /var/lib/sixad/
+    rm -f /etc/udev/rules.d/99-sixpair.rules
+    rm -f /etc/udev/rules.d/10-local.rules
+    rm -rf "$md_inst"
+}
+
+function pair_ps3controller() {
     if [[ ! -f "$rootdir/supplementary/ps3controller/sixpair" ]]; then
-        rp_callModule ps3controller
-        return
+        local mode
+        for mode in depends sources build install; do
+            rp_callModule ps3controller $mode
+        done
     fi
 
     printMsgs "dialog" "Please make sure that your Bluetooth dongle is connected to the Raspberry Pi and press ENTER."
-    if ! hciconfig | grep -q "BR/EDR"; then
-        printMsgs "dialog" "Cannot find the Bluetooth dongle. Please try to (re-)connect it and try again."
-        return
-    else
-        hciconfig hci0 pscan
-    fi
+    while true; do
+        if hcitool dev | grep -q "hci0"; then
+            hciconfig hci0 pscan
+            break
+        else
+            dialog --backtitle "$__backtitle" --yesno "Can't find your Bluetooth dongle. Try again?" 22 76 2>&1 >/dev/tty
+            case $? in
+                0)
+                    continue
+                    ;;
+                *)
+                    return
+                    ;;  
+            esac
+        fi
+    done
 
     printMsgs "dialog" "Please connect your PS3 controller via USB-CABLE and press ENTER."
-    if ! "$md_inst/sixpair" | grep -q "Setting master"; then
-        printMsgs "dialog" "Cannot find the PS3 controller via USB-connection. Please try to (re-)connect it and try again."
-        return
-    fi
+    while true; do
+        if "$md_inst/sixpair" | grep -q "Setting master"; then
+            break
+        else
+            dialog --backtitle "$__backtitle" --yesno "Can't find your PS3 Controller. Please check it is connected via USB. \n\nTry again?" 22 76 2>&1 >/dev/tty
+            case $? in
+                0)
+                    continue
+                    ;;
+                *)
+                    return
+                    ;;  
+            esac
+        fi
+    done
 
-    printMsgs "dialog" "The driver and configuration tools for connecting PS3 controllers have been installed. Please visit https://github.com/petrockblog/RetroPie-Setup/wiki/Setting-up-a-PS3-controller for further information."
+    printMsgs "dialog" "The driver and configuration tools for connecting PS3 controllers have been installed. \n\nPlease disconnect your PS3 controller from its USB connection, and press the PS button to connect via Bluetooth."
+}
+
+function configure_ps3controller() {
+    while true; do
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+        local options=(
+            1 "Install/Pair PS3 controller"
+            2 "Remove PS3 controller configurations"
+        )
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [[ -n "$choice" ]]; then
+            case $choice in
+                1)
+                    rp_callModule "$md_id" pair
+                    ;;
+                2)
+                    rp_callModule "$md_id" remove
+                    printMsgs "dialog" "Removed PS3 controller configurations"
+                    ;;
+            esac
+        else
+            break
+        fi
+    done
+
 }
