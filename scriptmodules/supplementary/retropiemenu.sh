@@ -10,7 +10,7 @@
 
 rp_module_id="retropiemenu"
 rp_module_desc="RetroPie configuration menu for EmulationStation"
-rp_module_menus="2+ 3+"
+rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function depends_retropiemenu() {
