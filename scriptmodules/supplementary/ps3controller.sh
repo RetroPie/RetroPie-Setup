@@ -128,7 +128,7 @@ function configure_ps3controller() {
     fi
 
     printMsgs "dialog" "Please connect your PS3 controller via USB-CABLE and press ENTER."
-    if "$md_inst/sixpair" | grep -q "Setting master"; then
+    if ! "$md_inst/sixpair" | grep -q "Setting master"; then
         printMsgs "dialog" "Cannot find the PS3 controller via USB-connection. Please try to (re-)connect it and try again."
         return
     fi
