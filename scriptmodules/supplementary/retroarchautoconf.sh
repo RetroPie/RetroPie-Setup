@@ -10,7 +10,7 @@
 
 rp_module_id="retroarchautoconf"
 rp_module_desc="Install RetroArch joypad autoconfigs"
-rp_module_menus="3+"
+rp_module_menus=""
 rp_module_flags="nobin"
 
 function sources_retroarchautoconf() {
