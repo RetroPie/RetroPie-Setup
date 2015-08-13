@@ -34,6 +34,7 @@ function configure_esthemes() {
         'color-pi'
         'simplified-static-canela'
         'zoid'
+        'nbba'
     )
     while true; do
         local theme
