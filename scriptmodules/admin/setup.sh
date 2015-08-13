@@ -116,7 +116,7 @@ function binaries_setup()
     rps_logInit
     {
         rps_logStart
-        rp_callModule aptpackages
+        rp_callModule raspbiantools apt_upgrade
         # force installation of our sdl1 packages as wheezy package may already be installed, and so we always get the latest
         # version. This can be solved later by adding version number checking to the dependency checking
         rp_callModule sdl1 install_bin
