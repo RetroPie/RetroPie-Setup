@@ -139,13 +139,12 @@ function binaries_setup()
         rp_callModule rpix86
 
         # required supplementary modules 
+        rp_callModule raspbiantools enable_modules
         rp_callModule esthemesimple
         rp_callModule runcommand install
 
         # some additional supplementary modules
         rp_callModule retropiemenu
-        rp_callModule disabletimeouts
-        rp_callModule modules
         rp_callModule bashwelcometweak install
         rp_callModule sambashares
 
