@@ -52,7 +52,6 @@ function configure_raspbiantools() {
             4 "Enable needed kernel modules (uinput joydev snd-bcm2835)"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        local file="-"
         if [[ -n "$choice" ]]; then
             case $choice in
                 1)
