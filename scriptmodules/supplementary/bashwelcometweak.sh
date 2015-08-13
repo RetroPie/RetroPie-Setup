@@ -10,7 +10,7 @@
 
 rp_module_id="bashwelcometweak"
 rp_module_desc="Bash Welcome Tweak (shows additional system info on login)"
-rp_module_menus="2+install 3+configure"
+rp_module_menus="3+configure"
 rp_module_flags="nobin"
 
 function install_bashwelcometweak() {
