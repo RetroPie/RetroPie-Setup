@@ -13,11 +13,11 @@ rp_module_desc="Super Mario War"
 rp_module_menus="4+"
 
 function sources_smw() {
-    gitPullOrClone "$md_build" https://github.com/HerbFargus/smw.git
+    gitPullOrClone "$md_build" https://github.com/HerbFargus/Super-Mario-War.git
 }
 
 function build_smw() {
-    ./configure
+    ./configure --prefix="$md_inst"
     make clean
     make
 }
@@ -31,7 +31,7 @@ function configure_smw() {
 
     cat > "$romdir/ports/Super Mario War.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 0 "smw" "$md_id"
+$rootdir/supplementary/runcommand/runcommand.sh 0 "$rootdir/ports/smw/smw" "$md_id"
 _EOF_
 
     chmod +x "$romdir/ports/Super Mario War.sh"
