@@ -31,7 +31,7 @@ function configure_smw() {
 
     cat > "$romdir/ports/Super Mario War.sh" << _EOF_
 #!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 0 "$rootdir/ports/smw/smw" "$md_id"
+$rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/smw" "$md_id"
 _EOF_
 
     chmod +x "$romdir/ports/Super Mario War.sh"
