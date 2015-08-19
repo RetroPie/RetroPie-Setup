@@ -32,7 +32,7 @@ function configure_autostartemustat() {
                 sed /etc/inittab -i -e "s|1:2345:respawn:/sbin/getty --noclear 38400 tty1|1:2345:respawn:\/bin\/login -f $user tty1 \<\/dev\/tty1 \>\/dev\/tty1 2\>\&1|g"
                 update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
                 sed -i "/emulationstation/d" /etc/profile
-                echo '[ "`tty`" = "/dev/tty1" ] && emulationstation' >/etc/profile.d/10-emulationstation.sh
+                echo -e 'while pgrep omxplayer &>/dev/null; do sleep 1; done\n[ "`tty`" = "/dev/tty1" ] && emulationstation' >/etc/profile.d/10-emulationstation.sh
                 printMsgs "dialog" "Emulation Station is now starting on boot."
                 ;;
         esac
