@@ -22,7 +22,7 @@ function sources_mame4all() {
 
 function build_mame4all() {
     make clean
-    make
+    make -j 4
     md_ret_require="$md_build/mame"
 }
 
