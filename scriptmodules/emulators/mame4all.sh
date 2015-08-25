@@ -22,7 +22,11 @@ function sources_mame4all() {
 
 function build_mame4all() {
     make clean
-    make -j 4
+    if isPlatform "rpi2"; then
+        make PLATFORM=rpi2 -j 4
+    else
+        make PLATFORM=rpi1
+    fi
     md_ret_require="$md_build/mame"
 }
 
