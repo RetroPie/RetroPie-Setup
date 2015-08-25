@@ -482,7 +482,7 @@ function addSystem() {
     if [[ -f "$configdir/all/platforms.cfg" ]]; then
         conf="$configdir/all/platforms.cfg"
     else
-        conf="$scriptdir/supplementary/platforms.cfg"
+        conf="$scriptdir/platforms.cfg"
     fi
 
     iniConfig "=" '"' "$conf"
