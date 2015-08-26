@@ -15,10 +15,8 @@ rp_module_flags="nobin"
 
 function set_ensureEntryInSMBConf()
 {
-    if grep -q "\[$1\]" /etc/samba/smb.conf; then
-        echo "$1 already contained in /etc/samba/smb.conf."
-    else
-        tee -a /etc/samba/smb.conf <<_EOF_
+    sed -i "/^\[$1\]/,/^force user/d" /etc/samba/smb.conf
+    cat >>/etc/samba/smb.conf <<_EOF_
 [$1]
 comment = $1
 path = $2
@@ -28,7 +26,6 @@ create mask = 0644
 directory mask = 0755
 force user = $user
 _EOF_
-    fi
 }
 
 function install_sambashares() {
@@ -46,5 +43,5 @@ function configure_sambashares() {
 
     rp_callModule resetromdirs configure
 
-    /etc/init.d/samba restart
+    service samba restart
 }
