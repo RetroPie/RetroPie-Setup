@@ -10,7 +10,7 @@
 
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
-rp_module_menus="3+"
+rp_module_menus="3+configure"
 rp_module_flags="nobin"
 
 function depends_splashscreen() {
@@ -35,59 +35,77 @@ function disable_splashscreen() {
 }
 
 function choose_splashscreen() {
+    local path="$1"
     local options=()
     local i=0
     local splashdir
     while read splashdir; do
-        splashdir=${splashdir/$md_inst\//}
+        splashdir=${splashdir/$path\//}
         options+=("$i" "$splashdir")
         ((i++))
-    done < <(find "$md_inst" -mindepth 1 -maxdepth 1 -type d | sort)
+    done < <(find "$path" -mindepth 1 -maxdepth 1 -type d -not -path "*/.git" | sort)
+    if [[ ${#options[@]} -eq 0 ]]; then
+        printMsgs "dialog" "There are no splashscreens installed in $path"
+        return
+    fi
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose splashscreen." 22 76 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         choice=$((choice*2+1))
         splashdir=${options[choice]}
-        find "$md_inst/$splashdir" -type f >/etc/splashscreen.list
+        find "$path/$splashdir" -type f >/etc/splashscreen.list
         printMsgs "dialog" "Splashscreen set to '$splashdir'."
     fi
 }
-
 
 function configure_splashscreen() {
     if [[ ! -d "$md_inst" ]]; then
         rp_callModule splashscreen install
     fi
+
+    mkUserDir "$datadir/splashscreens"
+    echo "Place your own splashscreen in here, each one with its own folder" >"$datadir/splashscreens/README.txt"
+    chown $user:$user "$datadir/splashscreens/README.txt"
+
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
     local options=(
-        1 "Enable custom splashscreen on boot"
-        2 "Disable custom splashscreen on boot"
-        3 "Use default splashscreen"
-        4 "Choose splashscreen"
-        5 "Manually edit splashscreen list"
+        1 "Choose RetroPie splashscreen"
+        2 "Choose own splashscreen (from configs/$md_id)"
+        3 "Enable custom splashscreen on boot"
+        4 "Disable custom splashscreen on boot"
+        5 "Use default splashscreen"
+        6 "Manually edit splashscreen list"
+        7 "Update RetroPie splashscreens"
     )
     while true; do
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case $choice in
                 1)
+                    choose_splashscreen "$md_inst"
+                    ;;
+                2)
+                    choose_splashscreen "$datadir/splashscreens"
+                    ;;
+                3)
                     [[ ! -f /etc/splashscreen.list ]] && rp_CallModule splashscreen default
                     enable_splashscreen
                     printMsgs "dialog" "Enabled custom splashscreen on boot."
                     ;;
-                2)
+                4)
                     disable_splashscreen
                     printMsgs "dialog" "Disabled custom splashscreen on boot."
                     ;;
-                3)
+                5)
                     default_splashscreen
                     printMsgs "dialog" "Splashscreen set to RetroPie default."
                     ;;
-                4)
-                    choose_splashscreen
-                    ;;
-                5)
+
+                6)
                     editFile /etc/splashscreen.list
+                    ;;
+                7)
+                    rp_callModule splashscreen install
                     ;;
             esac
         else
