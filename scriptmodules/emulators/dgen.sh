@@ -89,7 +89,7 @@ function configure_dgen()
 
     setDispmanx "$md_id" 1
 
-    addSystem 0 "$md_id" "megadrive" "$md_inst/bin/dgen -r $configdir/all/dgenrc %ROM%"
-    addSystem 0 "$md_id" "segacd" "$md_inst/bin/dgen -r $configdir/all/dgenrc %ROM%"
-    addSystem 0 "$md_id" "sega32x" "$md_inst/bin/dgen -r $configdir/all/dgenrc %ROM%"
+    addSystem 0 "$md_id" "megadrive" "$md_inst/bin/dgen -r $configdir/megadrive/dgenrc %ROM%"
+    addSystem 0 "$md_id" "segacd" "$md_inst/bin/dgen -r $configdir/megadrive/dgenrc %ROM%"
+    addSystem 0 "$md_id" "sega32x" "$md_inst/bin/dgen -r $configdir/megadrive/dgenrc %ROM%"
 }
