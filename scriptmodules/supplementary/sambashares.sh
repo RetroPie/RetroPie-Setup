@@ -33,9 +33,7 @@ function install_sambashares() {
 }
 
 function configure_sambashares() {
-    # remove old configs
-    sed -i '/\[[A-Z]\]*/,$d' /etc/samba/smb.conf
-
+    cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
     set_ensureEntryInSMBConf "roms" "$romdir"
     set_ensureEntryInSMBConf "bios" "$home/RetroPie/BIOS"
     set_ensureEntryInSMBConf "configs" "$configdir"
