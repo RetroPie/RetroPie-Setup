@@ -145,8 +145,6 @@ function binaries_setup()
 
         # some additional supplementary modules
         rp_callModule retropiemenu
-        rp_callModule bashwelcometweak install
-        rp_callModule sambashares
 
         rps_logEnd
     } &> >(tee >(gzip --stdout > "$logfilename"))
