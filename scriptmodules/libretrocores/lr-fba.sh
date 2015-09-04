@@ -9,7 +9,7 @@
 #
 
 rp_module_id="lr-fba"
-rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.24) port for libretro"
+rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.30) port for libretro"
 rp_module_menus="2+"
 
 function depends_lr-fba() {
