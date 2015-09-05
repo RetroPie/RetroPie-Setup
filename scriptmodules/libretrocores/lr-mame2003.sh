@@ -34,7 +34,7 @@ function install_lr-mame2003() {
 
 function configure_lr-mame2003() {
     mkRomDir "mame-libretro"
-    ensureSystemretroconfig "mame"
+    ensureSystemretroconfig "mame-libretro"
 
     addSystem 1 "$md_id" "mame-libretro arcade mame" "$md_inst/mame078_libretro.so"
 }
