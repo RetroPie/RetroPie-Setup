@@ -34,7 +34,7 @@ function install_lr-mame2010() {
 
 function configure_lr-mame2010() {
     mkRomDir "mame-libretro"
-    ensureSystemretroconfig "mame"
+    ensureSystemretroconfig "mame-libretro"
 
     addSystem 0 "$md_id" "mame-libretro arcade mame" "$md_inst/mame2010_libretro.so"
 }
