@@ -12,6 +12,10 @@ rp_module_id="lr-mame2003"
 rp_module_desc="Arcade emu - MAME 0.78 port for libretro"
 rp_module_menus="4+"
 
+function depends_lr-mame2003() {
+    getDepends gcc-4.8 g++-4.8
+}
+
 function sources_lr-mame2003() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2003-libretro.git
     sed -i "s/MD = -mkdir/MD = -mkdir -p" Makefile
@@ -19,7 +23,7 @@ function sources_lr-mame2003() {
 
 function build_lr-mame2003() {
     make clean
-    make ARCH="$CFLAGS -fsigned-char"
+    make ARCH="$CFLAGS -fsigned-char" CC="gcc-4.8" CXX="g++-4.8"
 }
 
 function install_lr-mame2003() {

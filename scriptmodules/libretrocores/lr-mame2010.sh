@@ -12,6 +12,10 @@ rp_module_id="lr-mame2010"
 rp_module_desc="Arcade emu - MAME 0.139 port for libretro"
 rp_module_menus="4+"
 
+function depends_lr-mame2010() {
+    getDepends gcc-4.8 g++-4.8
+}
+
 function sources_lr-mame2010() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2010-libretro.git
     sed -i "s/MD = -mkdir/MD = -mkdir -p" Makefile
@@ -20,7 +24,7 @@ function sources_lr-mame2010() {
 function build_lr-mame2010() {
     make clean
     make -f Makefile.libretro VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS" buildtools
-    make -f Makefile.libretro VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS"
+    make -f Makefile.libretro VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS" CC="gcc-4.8" CXX="g++-4.8"
 }
 
 function install_lr-mame2010() {
