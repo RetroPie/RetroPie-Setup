@@ -318,7 +318,8 @@ function map_retroarch_keyboard() {
 function onend_retroarch_joystick() {
     local device_type=$1
     local device_name=$2
-    local file="${device_name// /}.cfg"
+    # sanitise filename
+    local file="${device_name//[ \?\<\>\\\/:\*\|]/}.cfg"
     if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$file" ]]; then
         mv "/opt/retropie/configs/all/retroarch-joypads/$file" "/opt/retropie/configs/all/retroarch-joypads/$file.bak"
     fi
