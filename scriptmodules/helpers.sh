@@ -166,7 +166,7 @@ function editFile() {
 }
 
 function hasPackage() {
-    PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1 2>/dev/null|grep "install ok installed")
+    PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1 2>/dev/null | grep -o "ok installed")
     if [[ "" == "$PKG_OK" ]]; then
         return 1
     else
