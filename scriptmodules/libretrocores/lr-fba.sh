@@ -13,7 +13,7 @@ rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.30) port for libretro"
 rp_module_menus="2+"
 
 function depends_lr-fba() {
-    getDepends gcc-4.8 g++-4.8
+    [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
 }
 
 function sources_lr-fba() {
@@ -23,7 +23,11 @@ function sources_lr-fba() {
 function build_lr-fba() {
     cd svn-current/trunk/
     make -f makefile.libretro clean
-    make -f makefile.libretro CC="gcc-4.8" CXX="g++-4.8" platform=armv
+    if [[ "$__default_gcc_version" == "4.7" ]]; then
+        make -f makefile.libretro CC="gcc-4.8" CXX="g++-4.8" platform=armv
+    else
+        make -f makefile.libretro platform=armv
+    fi
     md_ret_require="$md_build/svn-current/trunk/fb_alpha_libretro.so"
 }
 

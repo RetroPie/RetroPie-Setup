@@ -13,7 +13,7 @@ rp_module_desc="Arcade emu - MAME 0.78 port for libretro"
 rp_module_menus="4+"
 
 function depends_lr-mame2003() {
-    getDepends gcc-4.8 g++-4.8
+    [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
 }
 
 function sources_lr-mame2003() {
@@ -23,7 +23,11 @@ function sources_lr-mame2003() {
 
 function build_lr-mame2003() {
     make clean
-    make ARCH="$CFLAGS -fsigned-char" CC="gcc-4.8" CXX="g++-4.8"
+    if [[ "$__default_gcc_version" == "4.7" ]]; then
+        make ARCH="$CFLAGS -fsigned-char" CC="gcc-4.8" CXX="g++-4.8"
+    else
+        make ARCH="$CFLAGS -fsigned-char"
+    fi
 }
 
 function install_lr-mame2003() {
