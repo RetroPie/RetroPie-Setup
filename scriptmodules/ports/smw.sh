@@ -12,6 +12,10 @@ rp_module_id="smw"
 rp_module_desc="Super Mario War"
 rp_module_menus="4+"
 
+function depends_smw() {
+    getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev
+}
+
 function sources_smw() {
     gitPullOrClone "$md_build" https://github.com/HerbFargus/Super-Mario-War.git
 }
