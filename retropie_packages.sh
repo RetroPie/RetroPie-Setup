@@ -45,20 +45,12 @@ source "$scriptdir/scriptmodules/packages.sh"
 
 setup_env
 
-if ! getDepends git dialog wget gcc gcc-$__default_gcc_version g++-$__default_gcc_version build-essential xmlstarlet; then
-    printMsgs "console" "Unable to install packages required by $0" "${md_ret_errors[@]}" >&2
-    exit 1
-fi
-
 # if joy2key.py is installed run it with cursor keys for axis, and enter + space for buttons 0 and 1
 __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
 if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
     "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 1b5b44 1b5b43 1b5b41 1b5b42 0a 20 & 2>/dev/null
     __joy2key_pid=$!
 fi
-
-# set default gcc version
-gcc_version "$__default_gcc_version"
 
 mkUserDir "$romdir"
 mkUserDir "$biosdir"

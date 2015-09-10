@@ -276,25 +276,6 @@ function gitPullOrClone() {
     fi
 }
 
-# gcc version helper
-set_default() {
-    if [[ -e "$1-$2" ]] ; then
-        # echo $1-$2 is now the default
-        ln -sf $1-$2 $1
-    else
-        echo $1-$2 is not installed
-    fi
-}
-
-# sets default gcc version
-gcc_version() {
-    pushd /usr/bin > /dev/null
-    for i in gcc cpp g++ gcov ; do
-        set_default $i $1
-    done
-    popd > /dev/null
-}
-
 function ensureRootdirExists() {
     mkdir -p "$rootdir"
     mkUserDir "$datadir"

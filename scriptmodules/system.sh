@@ -27,13 +27,17 @@ function setup_env() {
         esac
     fi
 
-    get_default_gcc
-
     if fn_exists "platform_${__platform}"; then
         platform_${__platform}
     else
         fatalError "Unknown platform - please manually set the __platform variable to rpi1 or rpi2"
     fi
+
+    get_os_version
+    get_default_gcc
+    # set default gcc version
+    set_default_gcc "$__default_gcc_version"
+    get_retropie_depends
 
     # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
     [[ $__memory_phys -ge 256 ]] && __default_cflags+=" -pipe"
@@ -56,7 +60,7 @@ function setup_env() {
     fi
 }
 
-function get_default_gcc() {
+function get_os_version() {
     if [[ -f /etc/debian_version ]]; then
         local ver=$(</etc/debian_version)
         # check for debian major.minor version
@@ -66,19 +70,67 @@ function get_default_gcc() {
             local ver_min=${ver[1]}
             case $ver_maj in
                 7)
-                    __default_gcc_version="4.7"
+                    __raspbian_ver="7"
+                    __raspbian_name="wheezy"
                     return
                     ;;
                 8)
-                    __default_gcc_version="4.9"
+                    __raspbian_ver="8"
+                    __raspbian_name="jessie"
                     return
                     ;;
                 *)
                     fatalError "Unsupported OS - /etc/debian_version $(cat /etc/debian_version)"
+                    ;;
             esac
         fi
     else
         fatalError "Unsupported OS (no /etc/debian_version)"
+    fi
+}
+
+function get_default_gcc() {
+    case $__raspbian_ver in
+        7)
+            __default_gcc_version="4.7"
+            ;;
+        8)
+            __default_gcc_version="4.9"
+            ;;
+        *)
+            __default_gcc_version="4.7"
+            ;;
+    esac
+}
+
+# gcc version helper
+function set_default() {
+    if [[ -e "$1-$2" ]] ; then
+        # echo $1-$2 is now the default
+        ln -sf $1-$2 $1
+    else
+        echo $1-$2 is not installed
+    fi
+}
+
+# sets default gcc version
+function set_default_gcc() {
+    pushd /usr/bin > /dev/null
+    for i in gcc cpp g++ gcov; do
+        set_default $i $1
+    done
+    popd > /dev/null
+}
+
+function get_retropie_depends() {
+    # add rasberrypi repository if it's missing (needed for libraspberrypi-dev etc
+    local config="/etc/apt/sources.list.d/raspi.list"
+    if [[ ! -f "$config" ]]; then
+        echo "deb http://archive.raspberrypi.org/debian/ $__raspbian_name main" >>$config
+    fi
+
+    if ! getDepends git dialog wget gcc gcc-$__default_gcc_version g++-$__default_gcc_version build-essential xmlstarlet; then
+        fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
     fi
 }
 
