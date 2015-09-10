@@ -153,6 +153,7 @@ function load_mode_defaults() {
     mode_def_rom=""
     fb_def_emu=""
     fb_def_rom=""
+    # default render res to 640x480
     render_res="640x480"
 
     if [[ -f "$video_conf" ]]; then
@@ -509,8 +510,6 @@ function retroarch_append_config() {
     fi
 
     local dim
-    # if we don't have a saved render resolution use 640x480
-
     # if our render resolution is "config", then we don't set anything (use the value in the retroarch.cfg)
     if [[ "$render_res" != "config" ]]; then
         if [[ "$render_res" == "output" ]]; then
