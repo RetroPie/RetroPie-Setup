@@ -13,7 +13,7 @@ rp_module_desc="RetroArch"
 rp_module_menus="2+"
 
 function depends_retroarch() {
-    getDepends libudev-dev libxkbcommon-dev libsdl2-dev
+    getDepends libudev-dev libxkbcommon-dev libsdl2-dev libraspberrypi-dev
 
     cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
 KERNEL=="event*", NAME="input/%k", MODE="666"
