@@ -282,6 +282,7 @@ function individual_setup()
                         rp_callModule "$md_idx"
                         ;;
                 esac
+                rp_callModule runcommand install
                 rps_logEnd
             } &> >(tee >(gzip --stdout > "$logfilename"))
 
