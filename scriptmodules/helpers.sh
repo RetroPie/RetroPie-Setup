@@ -232,9 +232,9 @@ function getDepends() {
             hasPackage "$required" || failed+=("$required")
         done
         if [[ ${#failed[@]} -eq 0 ]]; then
-            echo "Successfully installed package(s): ${packages[@]}."
+            printMsgs "console" "Successfully installed package(s): ${packages[*]}."
         else
-            md_ret_errors+=("Could not install package(s): ${failed[@]}.")
+            md_ret_errors+=("Could not install package(s): ${failed[*]}.")
             return 1
         fi
     fi
