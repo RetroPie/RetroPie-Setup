@@ -214,6 +214,9 @@ function getDepends() {
                         rp_callModule sdl2
                     fi
                 fi
+                if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage rbp-bootloader-osmc; then
+                    getDepends rbp-userland-dev-osmc
+                fi
             done
         fi
 
