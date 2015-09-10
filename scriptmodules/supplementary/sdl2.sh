@@ -29,6 +29,8 @@ function sources_sdl2() {
     # remove pulse / libgl1 dependencies
     sed -i '/libpulse-dev,/d' debian/control
     sed -i '/libgl1-mesa-dev,/d' debian/control
+    # be happy with libudev0 or libudev1
+    sed -i 's/libudev0/libudev0 | libudev1/g' debian/control
 }
 
 function build_sdl2() {
