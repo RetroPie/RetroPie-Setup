@@ -20,8 +20,7 @@ D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
 
 function depends_dxx-rebirth() {
     getDepends libphysfs1 libphysfs-dev libsdl1.2-dev libsdl-mixer1.2-dev scons
-    if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
-    if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+    [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
 }
 
 function sources_dxx-rebirth() {
@@ -30,8 +29,11 @@ function sources_dxx-rebirth() {
 
 function build_dxx-rebirth() {
     scons -c
-    scons raspberrypi=1 debug=1
-    
+    if [[ "$__default_gcc_version" == "4.7" ]]; then
+        scons -Q raspberrypi=1 debug=1 CXX="g++-4.8" CC="gcc-4.8"
+    else
+        scons -Q raspberrypi=1 debug=1
+    fi
     md_ret_require=(
         "$md_build/d1x-rebirth/d1x-rebirth"
         "$md_build/d2x-rebirth/d2x-rebirth"
