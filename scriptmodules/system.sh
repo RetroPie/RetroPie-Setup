@@ -27,6 +27,8 @@ function setup_env() {
         esac
     fi
 
+    get_default_gcc
+
     if fn_exists "platform_${__platform}"; then
         platform_${__platform}
     else
@@ -54,12 +56,37 @@ function setup_env() {
     fi
 }
 
+function get_default_gcc() {
+    if [[ -f /etc/debian_version ]]; then
+        local ver=$(</etc/debian_version)
+        # check for debian major.minor version
+        if [[ "$ver" =~ [0-9]+\.[0-9]+ ]]; then
+            ver=(${ver/./ })
+            local ver_maj=${ver[0]}
+            local ver_min=${ver[1]}
+            case $ver_maj in
+                7)
+                    __default_gcc_version="4.7"
+                    return
+                    ;;
+                8)
+                    __default_gcc_version="4.9"
+                    return
+                    ;;
+                *)
+                    fatalError "Unsupported OS - /etc/debian_version $(cat /etc/debian_version)"
+            esac
+        fi
+    else
+        fatalError "Unsupported OS (no /etc/debian_version)"
+    fi
+}
+
 function platform_rpi1() {
     # values to be used for configure/make
     __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags=""
-    __default_gcc_version="4.7"
     # if building in a chroot, what cpu should be set by qemu
     # make chroot identify as arm6l
     __qemu_cpu=arm1176
@@ -73,7 +100,6 @@ function platform_rpi2() {
     __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
-    __default_gcc_version="4.7"
     # there is no support in qemu for cortex-a7 it seems, but it does have cortex-a15 which is architecturally
     # aligned with the a7, and allows the a7 targetted code to be run in a chroot/emulated environment
     __qemu_cpu=cortex-a15
@@ -85,6 +111,5 @@ function platform_odroid() {
     __default_cflags="-O2 -mfpu=neon -march=armv7-a -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags=""
-    __default_gcc_version="4.7"
     __has_binaries=0
 }
