@@ -305,7 +305,7 @@ function configure_setup() {
         __ERRMSGS=()
         __INFMSGS=()
 
-        cmd=(dialog --backtitle "$__backtitle" --menu "Choose installation either based on binaries or on sources." 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         options=()
         if [[ $__has_binaries -eq 1 ]]; then
             options+=(
