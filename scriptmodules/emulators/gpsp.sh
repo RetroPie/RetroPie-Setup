@@ -14,7 +14,7 @@ rp_module_menus="2+"
 rp_module_flags=""
 
 function depends_gpsp() {
-    getDepends libsdl1.2-dev
+    getDepends libsdl1.2-dev libraspberrypi-dev
 }
 
 function sources_gpsp() {

@@ -13,6 +13,10 @@ rp_module_desc="ZXSpectrum emulator FBZX"
 rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
+function depends_fbzx() {
+    getDepends libasound2-dev libsdl1.2-dev
+}
+
 function sources_fbzx() {
     wget -O- -q http://downloads.petrockblock.com/retropiearchives/fbzx-2.10.0.tar.bz2 | tar -xvj --strip-components=1 
 }

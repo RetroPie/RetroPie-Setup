@@ -13,7 +13,7 @@ rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_menus="2+"
 
 function depends_xroar() {
-    getDepends libraspberrypi-dev libraspberrypi-doc
+    getDepends libsdl1.2-dev libraspberrypi-dev libraspberrypi-doc
 }
 
 function sources_xroar() {

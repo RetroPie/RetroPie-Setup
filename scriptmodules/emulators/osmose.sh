@@ -12,6 +12,10 @@ rp_module_id="osmose"
 rp_module_desc="Gamegear emulator Osmose"
 rp_module_menus="2+"
 
+function depends_osmose() {
+    getDepends libsdl1.2-dev
+}
+
 function sources_osmose() {
     gitPullOrClone "$md_build" https://github.com/RetroPie/osmose-rpi.git
 }

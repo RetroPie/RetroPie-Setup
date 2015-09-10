@@ -13,7 +13,7 @@ rp_module_desc="Atari 8-bit/800/5200 emulator"
 rp_module_menus="2+"
 
 function depends_atari800() {
-    getDepends libsdl1.2-dev autoconf
+    getDepends libsdl1.2-dev autoconf libraspberrypi-dev
 }
 
 function sources_atari800() {

@@ -14,7 +14,7 @@ rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
 function depends_reicast() {
-    getDepends alsa-oss
+    getDepends libsdl1.2-dev alsa-oss
 }
 
 function sources_reicast() {
