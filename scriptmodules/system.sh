@@ -126,6 +126,8 @@ function get_retropie_depends() {
     # add rasberrypi repository if it's missing (needed for libraspberrypi-dev etc
     local config="/etc/apt/sources.list.d/raspi.list"
     if [[ ! -f "$config" ]]; then
+        # add key
+        wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O- | apt-key add - >/dev/null
         echo "deb http://archive.raspberrypi.org/debian/ $__raspbian_name main" >>$config
     fi
 
