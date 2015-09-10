@@ -207,6 +207,7 @@ function getDepends() {
 
         # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2 for rpi
         if isPlatform "rpi"; then
+            local temp=()
             for required in ${packages[@]}; do
                 if [[ "$required" == "libsdl1.2-dev" ]]; then
                     if [[ "$__raspbian_ver" == "7" ]]; then
@@ -214,15 +215,17 @@ function getDepends() {
                     else
                         rp_callModule sdl1
                     fi
-                fi
-                if [[ "$required" == "libsdl2-dev" ]]; then
+                elif [[ "$required" == "libsdl2-dev" ]]; then
                     if [[ "$__raspbian_ver" == "7" ]]; then
                         rp_callModule sdl2 install_bin
                     else
                         rp_callModule sdl2
                     fi
+                else
+                    temp+=("$required")
                 fi
             done
+            packages=("${temp[@]}")
         fi
 
         aptInstall ${packages[@]}
