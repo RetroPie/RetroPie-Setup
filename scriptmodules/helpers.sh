@@ -192,6 +192,11 @@ function getDepends() {
     local packages=()
     local failed=()
     for required in $@; do
+        # force replacement of jessie sdl2 with ours
+        if [[ "$required" == "libsdl1.2-dev" ]] && hasPackage libsdl2-2.0-0; then
+            packages+=("$required")
+            continue
+        fi
         hasPackage "$required" || packages+=("$required")
     done
     if [[ ${#packages[@]} -ne 0 ]]; then
