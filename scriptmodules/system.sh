@@ -35,9 +35,9 @@ function setup_env() {
 
     get_os_version
     get_default_gcc
+    get_retropie_depends
     # set default gcc version
     set_default_gcc "$__default_gcc_version"
-    get_retropie_depends
 
     # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
     [[ $__memory_phys -ge 256 ]] && __default_cflags+=" -pipe"
