@@ -38,10 +38,11 @@ function build_sdl2() {
 
 function remove_old_sdl2() {
     # remove old libSDL
-    echo "Removing old SDL2 files"
-    while read file; do
-        rm -f $file
-    done << _EOF_
+    if [[ -f /usr/local/bin/sdl2-config ]]; then
+        echo "Removing old SDL2 files"
+        while read file; do
+            rm -f $file
+        done << _EOF_
 /usr/local/bin/sdl2-config
 /usr/local/include/SDL2/SDL.h
 /usr/local/include/SDL2/SDL_assert.h
@@ -118,7 +119,9 @@ function remove_old_sdl2() {
 /usr/local/share/aclocal/sdl2.m4
 /usr/local/lib/pkgconfig/sdl2.pc
 _EOF_
-
+    fi
+    # remove debian jessie+ distribution sdl2
+    hasPackage libsdl2-2.0-0 && dpkg --remove libsdl2-2.0-0
 }
 
 function install_sdl2() {
@@ -127,6 +130,7 @@ function install_sdl2() {
     if ! dpkg -i libsdl2_2.0.3_armhf.deb libsdl2-dev_2.0.3_armhf.deb; then
         apt-get -y -f install
     fi
+    echo "libsdl2-dev hold" | dpkg --set-selections
 }
 
 function install_bin_sdl2() {

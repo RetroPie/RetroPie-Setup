@@ -42,6 +42,7 @@ function install_sdl1() {
     if ! dpkg -i libsdl1.2debian_1.2.15-8rpi_armhf.deb libsdl1.2-dev_1.2.15-8rpi_armhf.deb; then
         apt-get -y -f install
     fi
+    echo "libsdl1.2-dev hold" | dpkg --set-selections
     # remove unused sdl1dispmanx library
     rm -rf "$rootdir/supplementary/sdl1dispmanx"
 }
