@@ -18,7 +18,7 @@ function sources_lr-pocketsnes() {
 
 function build_lr-pocketsnes() {
     make clean
-    make
+    CFLAGS="$CFLAGS -Wa,-mimplicit-it=thumb" make
     md_ret_require="$md_build/libretro.so"
 }
 
