@@ -1,0 +1,4 @@
+if [[ -f "$runcommand_conf" ]]; then
+    iniGet "governor" "$runcommand_conf"
+    governor="$ini_value"
+fi

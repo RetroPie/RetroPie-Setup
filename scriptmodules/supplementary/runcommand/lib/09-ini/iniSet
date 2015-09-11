@@ -1,0 +1,29 @@
+# arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
+function iniSet() {
+    local command="$1"
+    local delim="$2"
+    local quote="$3"
+    local key="$4"
+    local value="$5"
+    local file="$6"
+
+    local delim_strip=${delim// /}
+    local match_re="[[:space:]#]*$key[[:space:]]*$delim_strip.*$"
+
+    local match
+    if [[ -f "$file" ]]; then
+        match=$(egrep -i "$match_re" "$file" | tail -1)
+    else
+        touch "$file"
+    fi
+
+    [[ "$command" == "unset" ]] && key="# $key"
+    local replace="$key$delim$quote$value$quote"
+    if [[ -z "$match" ]]; then
+        # add key-value pair
+        echo "$replace" >> "$file"
+    else
+        # replace existing key-value pair
+        sed -i -e "s|$match|$replace|g" "$file"
+    fi
+}

@@ -1,0 +1,38 @@
+function choose_app() {
+    local save="$1"
+    local default
+    local default_id
+    if [[ -n "$save" ]]; then
+        default="$emulator"
+    else
+        default="$emulator_def_sys"
+    fi
+    local options=()
+    local i=1
+    while read line; do
+        # convert key=value to array
+        local line=(${line/=/ })
+        local id=${line[0]}
+        [[ "$id" == "default" ]] && continue
+        local apps[$i]="$id"
+        if [[ "$id" == "$default" ]]; then
+            default_id="$i"
+        fi
+        options+=($i "$id")
+        ((i++))
+    done < <(sort "$configdir/$system/emulators.cfg")
+    if [[ -z "${options[*]}" ]]; then
+        dialog --msgbox "No emulator options found for $system - have you installed any snes emulators yet? Do you have a valid $configdir/$system/emulators.cfg ?" 20 60 >/dev/tty
+        exit 1
+    fi
+    local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        if [[ -n "$save" ]]; then
+            iniSet set "=" '"' "$save" "${apps[$choice]}" "$apps_conf"
+        else
+            iniSet set "=" '"' "default" "${apps[$choice]}" "$configdir/$system/emulators.cfg"
+        fi
+        get_sys_command "$system" "$rom"
+    fi
+}

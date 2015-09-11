@@ -1,0 +1,7 @@
+function set_governor() {
+    governor_old=()
+    for cpu in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_governor; do
+        governor_old+=($(<$cpu))
+        echo "$1" | sudo tee "$cpu" >/dev/null
+    done
+}

@@ -1,0 +1,63 @@
+function load_mode_defaults() {
+    local temp
+    mode_orig=()
+
+    if [[ $has_tvs -eq 1 ]]; then
+        # get current mode / aspect ratio
+        mode_orig=($(get_mode_info "$(tvservice -s)"))
+        mode_new=("${mode_orig[@]}")
+
+        # get default mode for requested mode of 1 or 4
+        if [[ "$mode_req" == "0" ]]; then
+            mode_new_id="${mode_orig[0]}-${mode_orig[1]}"
+        elif [[ $mode_req =~ (1|4) ]]; then
+            # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
+            local aspect="${mode_orig[4]}"
+            [[ "$aspect" =~ (4:3|16:9) ]] || aspect="4:3"
+            temp="${mode_req}-${mode_orig[0]}-$aspect"
+            mode_new_id="${mode_map[$temp]}"
+        else
+            mode_new_id="$mode_req"
+        fi
+    fi
+
+    mode_def_emu=""
+    mode_def_rom=""
+    fb_def_emu=""
+    fb_def_rom=""
+    # default render res to 640x480
+    render_res="640x480"
+
+    if [[ -f "$video_conf" ]]; then
+        # local default video modes for emulator / rom
+        iniGet "$save_emu" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            mode_def_emu="$ini_value"
+            mode_new_id="$mode_def_emu"
+        fi
+
+        iniGet "$save_rom" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            mode_def_rom="$ini_value"
+            mode_new_id="$mode_def_rom"
+        fi
+
+        # load default framebuffer res for emulator / rom
+        iniGet "$fb_save_emu" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            fb_def_emu="$ini_value"
+            fb_new="$fb_def_emu"
+        fi
+
+        iniGet "$fb_save_rom" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            fb_def_rom="$ini_value"
+            fb_new="$fb_def_rom"
+        fi
+
+        iniGet "$save_emu_render" "$video_conf"
+        if [[ -n "$ini_value" ]]; then
+            render_res="$ini_value"
+        fi
+    fi
+}

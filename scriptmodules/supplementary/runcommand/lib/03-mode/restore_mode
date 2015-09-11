@@ -1,0 +1,8 @@
+function restore_mode() {
+    local mode=(${1/-/ })
+    if [[ "${mode[0]}" == "PAL" ]] || [[ "${mode[0]}" == "NTSC" ]]; then
+        tvservice -c "${mode[*]}"
+    else
+        tvservice -p
+    fi
+}

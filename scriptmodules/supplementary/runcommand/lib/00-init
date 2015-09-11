@@ -1,0 +1,13 @@
+rootdir="$(realpath "$runcommandhome/../..")"
+configdir="$rootdir/configs"
+runcommand_conf="$configdir/all/runcommand.cfg"
+video_conf="$configdir/all/videomodes.cfg"
+apps_conf="$configdir/all/emulators.cfg"
+dispmanx_conf="$configdir/all/dispmanx.cfg"
+retronetplay_conf="$configdir/all/retronetplay.cfg"
+
+if [[ -n "$(which tvservice)" ]]; then
+    has_tvs=1
+else
+    has_tvs=0
+fi

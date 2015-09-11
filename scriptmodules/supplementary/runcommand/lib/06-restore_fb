@@ -1,0 +1,4 @@
+function restore_fb() {
+    sleep 1
+    switch_fb_res "${mode_orig[2]}x${mode_orig[3]}"
+}

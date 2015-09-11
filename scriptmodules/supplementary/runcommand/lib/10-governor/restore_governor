@@ -1,0 +1,7 @@
+function restore_governor() {
+    local i=0
+    for cpu in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_governor; do
+        echo "${governor_old[$i]}" | sudo tee "$cpu" >/dev/null
+        ((i++))
+    done
+}

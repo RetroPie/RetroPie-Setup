@@ -1,0 +1,14 @@
+function choose_mode() {
+    local save="$1"
+    local default="$2"
+    options=()
+    local key
+    for key in ${mode_id[@]}; do
+        options+=("$key" "${mode[$key]}")
+    done
+    local cmd=(dialog --default-item "$default" --menu "Choose video output mode"  22 76 16 )
+    mode_new_id=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$mode_new_id" ]] && return
+
+    iniSet set "=" '"' "$save" "$mode_new_id" "$video_conf"
+}

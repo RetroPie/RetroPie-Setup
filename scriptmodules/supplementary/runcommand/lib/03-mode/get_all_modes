@@ -1,0 +1,21 @@
+function get_all_modes() {
+    local group
+    for group in CEA DMT; do
+        while read -r line; do
+            local id=$(echo $line | grep -oE "mode [0-9]*" | cut -d" " -f2)
+            local info=$(echo $line | cut -d":" -f2-)
+            info=${info/ /}
+            if [[ -n "$id" ]]; then
+                mode_id+=($group-$id)
+                mode[$group-$id]="$info"
+            fi
+        done < <(tvservice -m $group)
+    done
+    local aspect
+    for group in "NTSC" "PAL"; do
+        for aspect in "4:3" "16:10" "16:9"; do
+            mode_id+=($group-$aspect)
+            mode[$group-$aspect]="SDTV - $group-$aspect"
+        done
+    done
+}
