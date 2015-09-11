@@ -14,7 +14,6 @@ rp_module_menus="2+"
 
 function sources_lr-armsnes() {
     gitPullOrClone "$md_build" https://github.com/rmaz/ARMSNES-libretro
-    patch -N -i $scriptdir/supplementary/pocketsnesmultip.patch src/ppu.cpp
     patch -p1 <<\_EOF_
 diff --git a/src/ppu.cpp b/src/ppu.cpp
 index 19340fb..6d1af27 100644
