@@ -69,7 +69,7 @@ function configure_retroarch() {
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "true"
-    iniSet "video_threaded" "false"
+    iniSet "video_threaded" "true"
     iniSet "video_font_size" "12"
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     iniSet "assets_directory" "$md_inst/assets"
