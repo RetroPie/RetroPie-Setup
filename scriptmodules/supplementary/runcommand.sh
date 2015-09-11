@@ -18,10 +18,11 @@ function depends_runcommand() {
 }
 
 function install_runcommand() {
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/runcommand.sh" "$md_inst/"
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/joy2key.py" "$md_inst/"
+	cp -dpR "$scriptdir/scriptmodules/$md_type/$md_id/*" "$md_inst"
     chmod a+x "$md_inst/runcommand.sh"
+    chmod a+x "$md_inst/console-config.sh"
     chmod a+x "$md_inst/joy2key.py"
+    ln -s "$md_inst/console-config.sh" "/usr/bin/console-config"
 }
 
 function configure_runcommand() {
