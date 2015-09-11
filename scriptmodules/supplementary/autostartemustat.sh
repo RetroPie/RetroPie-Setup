@@ -14,6 +14,10 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function configure_autostartemustat() {
+    if [[ "$__raspbian_ver" != "7" ]]; then
+        printMsgs "dialog" "Sorry, this is only available on Raspbian Wheezy for now"
+        return
+    fi
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 76 16)
     options=(
         1 "Original boot behaviour"
