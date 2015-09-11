@@ -60,6 +60,7 @@ function choose_splashscreen() {
 
 function configure_splashscreen() {
     if [[ ! -d "$md_inst" ]]; then
+        rp_callModule splashscreen depends
         rp_callModule splashscreen install
     fi
 
