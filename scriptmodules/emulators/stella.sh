@@ -15,10 +15,12 @@ rp_module_flags="dispmanx nobin"
 
 function install_stella()
 {
-    aptInstall stella
+    [[ "$__raspbian_ver" == "7" ]] && aptInstall stella
 }
 
 function configure_stella() {
+    [[ "$__raspbian_ver" != "7" ]] && return
+
     mkRomDir "atari2600"
 
     setDispmanx "$md_id" 1
