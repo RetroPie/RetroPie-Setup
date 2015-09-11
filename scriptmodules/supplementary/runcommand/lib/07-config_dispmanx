@@ -1,0 +1,9 @@
+function config_dispmanx() {
+    local name="$1"
+    # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
+    # change the library path to load dispmanx sdl first
+    if [[ -f "$dispmanx_conf" ]]; then
+        iniGet "$name" "$dispmanx_conf"
+        [[ "$ini_value" == "1" ]] && command="SDL1_VIDEODRIVER=dispmanx $command"
+    fi
+}

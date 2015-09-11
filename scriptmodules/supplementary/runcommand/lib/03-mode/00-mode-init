@@ -1,0 +1,10 @@
+declare -A mode_map
+declare -A mode
+
+mode_map[1-CEA-4:3]="CEA-1"
+mode_map[1-DMT-4:3]="DMT-4"
+mode_map[1-CEA-16:9]="CEA-1"
+
+mode_map[4-CEA-4:3]="DMT-16"
+mode_map[4-DMT-4:3]="DMT-16"
+mode_map[4-CEA-16:9]="CEA-4"

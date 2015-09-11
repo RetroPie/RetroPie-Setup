@@ -1,0 +1,29 @@
+function switch_mode() {
+    local mode_id="$1"
+
+    # if the requested mode is the same as the current mode don't switch
+    [[ "$mode_id" == "${mode_orig[0]}-${mode_orig[1]}" ]] && return 0
+
+    local mode_id=(${mode_id/-/ })
+
+    local switched=0
+    if [[ "${mode_id[0]}" == "PAL" ]] || [[ "${mode_id[0]}" == "NTSC" ]]; then
+        tvservice -c "${mode_id[*]}"
+        switched=1
+    else
+        local has_mode=$(tvservice -m ${mode_id[0]} | grep -w "mode ${mode_id[1]}")
+        if [[ -n "${mode_id[*]}" ]] && [[ -n "$has_mode" ]]; then
+            tvservice -e "${mode_id[*]}"
+            switched=1
+        fi
+    fi
+
+    # if we have switched mode, switch the framebuffer resolution also
+    if [[ $switched -eq 1 ]]; then
+        sleep 1
+        mode_new=($(get_mode_info "$(tvservice -s)"))
+        [[ -z "$fb_new" ]] && fb_new="${mode_new[2]}x${mode_new[3]}"
+    fi
+
+    return $switched
+}

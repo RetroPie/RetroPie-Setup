@@ -1,0 +1,27 @@
+function choose_fb_res() {
+    local save="$1"
+    local default="$2"
+    local res=(
+        "320x240"
+        "640x480"
+        "960x720"
+        "1280x960"
+    )
+    local i=1
+    local item
+    local options=()
+    for item in "${res[@]}"; do
+        options+=($i "$item")
+        ((i++))
+    done
+    local cmd=(dialog --default-item "$default" --menu "Choose framebuffer resolution (Useful for X and console apps)" 22 76 16 )
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$choice" ]] && return
+    case "$choice" in
+        [1-4])
+            fb_res="${res[$choice-1]}"
+            ;;
+    esac
+
+    iniSet set "=" '"' "$save" "$fb_res" "$video_conf"
+}

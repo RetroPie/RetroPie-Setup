@@ -1,0 +1,42 @@
+function retroarch_append_config() {
+    # only for retroarch emulators
+    [[ ! "$command" =~ "retroarch" ]] && return
+
+    local conf="/tmp/retroarch.cfg"
+    rm -f "$conf"
+    touch "$conf"
+    if [[ "$has_tvs" -eq 1 ]]; then
+        # set video_refresh_rate in our config to the same as the screen refresh
+        [[ -n "${mode_new[5]}" ]] && echo "video_refresh_rate = ${mode_new[5]}" >>"$conf"
+    fi
+
+    local dim
+    # if our render resolution is "config", then we don't set anything (use the value in the retroarch.cfg)
+    if [[ "$render_res" != "config" ]]; then
+        if [[ "$render_res" == "output" ]]; then
+            dim=(0 0)
+        else
+            dim=(${render_res/x/ })
+        fi
+        echo "video_fullscreen_x = ${dim[0]}" >>"$conf"
+        echo "video_fullscreen_y = ${dim[1]}" >>"$conf"
+    fi
+
+    # if the rom has a custom configuration then append that too
+    if [[ -f "$rom.cfg" ]]; then
+        conf+="'|'\"$rom.cfg\""
+    fi
+
+    # if we already have an existing appendconfig parameter, we need to add our configs to that
+    if [[ "$command" =~ "--appendconfig" ]]; then
+        command=$(echo "$command" | sed "s#\(--appendconfig *[^ $]*\)#\1'|'$conf#")
+    else
+        command+=" --appendconfig $conf"
+    fi
+
+    # append any netplay configuration
+    if [[ $netplay -eq 1 ]] && [[ -f "$retronetplay_conf" ]]; then
+        source "$retronetplay_conf"
+        command+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes --nick $__netplaynickname"
+    fi
+}

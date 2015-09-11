@@ -1,0 +1,12 @@
+function switch_fb_res() {
+    local res=(${1/x/ })
+    local res_x=${res[0]}
+    local res_y=${res[1]}
+    if [[ -z "$res_x" || -z "$res_y" ]]; then
+        fbset --all -depth 8
+        fbset --all -depth 16
+    else
+        fbset --all -depth 8
+        fbset --all --geometry $res_x $res_y $res_x $res_y 16
+    fi
+}

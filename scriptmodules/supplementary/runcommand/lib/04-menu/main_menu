@@ -1,0 +1,135 @@
+function main_menu() {
+    local save
+    local cmd
+    local choice
+	local have_rom
+	have_rom=0
+    if [[ -z "$rom_bn" ]]; then
+		rom_bn="game/rom"
+	else
+		have_rom=1
+	fi
+    [[ -z "$system" ]] && system="emulator/port"
+	
+    while true; do
+
+        local options=()
+        local preamble=
+        
+        if [[ $is_sys -eq 1 ]]; then
+            options+=(1 "Select default emulator for $system ($emulator_def_sys)")
+            if [[ $have_rom -eq 1 ]]; then
+				options+=(2 "Select emulator for rom ($emulator_def_rom)")
+			fi
+            [[ -n "$emulator_def_rom" ]] && options+=(3 "Remove emulator choice for rom")
+        fi
+
+        if [[ $has_tvs -eq 1 ]]; then
+            options+=(4 "Select default video mode for $emulator ($mode_def_emu)")
+			if [[ $have_rom -eq 1 ]]; then
+				options+=(5 "Select video mode for $emulator + rom ($mode_def_rom)")
+			fi
+            [[ -n "$mode_def_emu" ]] && options+=(6 "Remove video mode choice for $emulator")
+            [[ -n "$mode_def_rom" && $have_rom -eq 1 ]] && options+=(7 "Remove video mode choice for $emulator + rom")
+        fi
+
+        if [[ "$command" =~ retroarch ]]; then
+            options+=(8 "Select RetroArch render res for $emulator ($render_res)")
+            if [[ $have_rom -eq 1 ]]; then
+				options+=(9 "Edit custom RetroArch config for this rom")
+			fi
+        else
+            options+=(10 "Select framebuffer res for $emulator ($fb_def_emu)")
+            if [[ $have_rom -eq 1 ]]; then
+				options+=(11 "Select framebuffer res for $emulator + rom ($fb_def_rom)")
+            fi
+            [[ -n "$fb_def_emu" ]] && options+=(12 "Remove framebuffer res choice for $emulator")
+            [[ -n "$fb_def_rom" && $have_rom -eq 1 ]] && options+=(13 "Remove framebuffer res choice for $emulator + rom")
+        fi
+		if [[ $have_rom -eq 1 ]]; then
+			options+=(X "Launch")
+		fi
+        options+=(Q "Exit (without launching)")
+
+        if [[ "$command" =~ retroarch && $have_rom -eq 1 ]]; then
+            options+=(Z "Launch with netplay enabled")
+        fi
+		preamble="System: $system"
+		preamble="$preamble\nEmulator: $emulator"
+		preamble="$preamble\nVideo Mode: ${mode[$mode_new_id]}"
+		if [[ $have_rom -eq 1 ]]; then
+			preamble="$preamble\nROM: $rom_bn"
+		fi
+        cmd=(dialog --nocancel --menu "$preamble"  22 76 16 )
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        case $choice in
+            1)
+                choose_app
+                get_save_vars
+                load_mode_defaults
+                ;;
+            2)
+                choose_app "$appsave"
+                get_save_vars
+                load_mode_defaults
+                ;;
+            3)
+                sed -i "/$appsave/d" "$apps_conf"
+                get_sys_command "$system" "$rom"
+                ;;
+            4)
+                choose_mode "$save_emu" "$mode_def_emu"
+                load_mode_defaults
+                ;;
+            5)
+                choose_mode "$save_rom" "$mode_def_rom"
+                load_mode_defaults
+                ;;
+            6)
+                sed -i "/$save_emu/d" "$video_conf"
+                load_mode_defaults
+                ;;
+            7)
+                sed -i "/$save_rom/d" "$video_conf"
+                load_mode_defaults
+                ;;
+            8)
+                choose_render_res "$save_emu_render"
+                ;;
+            9)
+                touch "$rom.cfg"
+                cmd=(dialog --editbox "$rom.cfg" 22 76)
+                choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+                [[ -n "$choice" ]] && echo "$choice" >"$rom.cfg"
+                [[ ! -s "$rom.cfg" ]] && rm "$rom.cfg"
+                ;;
+            10)
+                choose_fb_res "$fb_save_emu" "$fb_def_emu"
+                load_mode_defaults
+                ;;
+            11)
+                choose_fb_res "$fb_save_rom" "$fb_def_rom"
+                load_mode_defaults
+                ;;
+            12)
+                sed -i "/$fb_save_emu/d" "$video_conf"
+                load_mode_defaults
+                ;;
+            13)
+                sed -i "/$fb_save_rom/d" "$video_conf"
+                load_mode_defaults
+                ;;
+            Z)
+                netplay=1
+                break
+                ;;
+            X)
+                return 0
+                ;;
+            Q)
+                return 1
+                ;;
+        esac
+    done
+    return 0
+}

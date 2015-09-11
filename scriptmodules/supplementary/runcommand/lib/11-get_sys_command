@@ -1,0 +1,40 @@
+function get_sys_command() {
+    system="$1"
+    rom="$2"
+    rom_bn="${rom##*/}"
+    rom_bn="${rom_bn%.*}"
+    appsave=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
+    
+    local emu_conf="$configdir/$system/emulators.cfg"
+	echo $emu_conf
+    if [[ ! -f "$emu_conf" ]]; then
+        echo "No config found for system $system"
+        exit 1
+    fi
+
+    iniGet "default" "$emu_conf"
+    if [[ -z "$ini_value" ]]; then
+        echo "No default emulator found for system $system"
+        choose_app
+        get_sys_command "$1" "$2"
+        return
+    fi
+
+    emulator="$ini_value"
+    emulator_def_sys="$emulator"
+
+    # get system & rom specific app if set
+    if [[ -f "$apps_conf" ]]; then
+        iniGet "$appsave" "$apps_conf"
+        emulator_def_rom="$ini_value"
+        [[ -n "$ini_value" ]] && emulator="$ini_value"
+    fi
+
+    # get the app commandline
+    iniGet "$emulator" "$emu_conf"
+    command="$ini_value"
+
+    # replace tokens
+    command="${command/\%ROM\%/\"$rom\"}"
+    command="${command/\%BASENAME\%/\"$rom_bn\"}"
+}

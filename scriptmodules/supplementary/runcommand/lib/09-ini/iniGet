@@ -1,0 +1,6 @@
+# arg 1: key, arg 2: file - value ends up in ini_value variable
+function iniGet() {
+    local key="$1"
+    local file="$2"
+    ini_value=$(sed -rn "s|^[[:space:]]*$key[[:space:]]*=[[:space:]]*\"?([^\"]+)\"?.*|\1|p" $file)
+}

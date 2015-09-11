@@ -1,0 +1,9 @@
+function get_save_vars() {
+    # convert emulator name / binary to a names usable as variables in our config files
+    save_emu=${emulator//\//_}
+    save_emu=${save_emu//[^a-Z0-9_\-]/}
+    save_emu_render="${save_emu}_render"
+    fb_save_emu="${save_emu}_fb"
+    save_rom=r$(echo "$command" | md5sum | cut -d" " -f1)
+    fb_save_rom="${save_rom}_fb"
+}

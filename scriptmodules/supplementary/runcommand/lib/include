@@ -1,0 +1,5 @@
+libdir="$runcommandhome/lib"
+
+for i in $(find "$libdir" -type f -wholename "$libdir/??-*" | sort); do 
+	. "$i"; 
+done

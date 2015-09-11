@@ -1,0 +1,30 @@
+function get_mode_info() {
+    local status="$1"
+    local temp
+    local mode_info=()
+
+    # get mode type / id
+    if [[ "$status" =~ (PAL|NTSC) ]]; then
+        temp=($(echo "$status" | grep -oE "(PAL|NTSC) (4:3|16:10|16:9)"))
+    else
+        temp=($(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)"))
+    fi
+    mode_info[0]="${temp[0]}"
+    mode_info[1]="${temp[1]/[()]/}"
+
+    # get mode resolution
+    temp=$(echo "$status" | cut -d"," -f2 | grep -oE "[0-9]+x[0-9]+")
+    temp=(${temp/x/ })
+    mode_info[2]="${temp[0]}"
+    mode_info[3]="${temp[1]}"
+
+    # get aspect ratio
+    temp=$(echo "$status" | grep -oE "([0-9]+:[0-9]+)")
+    mode_info[4]="$temp"
+
+    # get refresh rate
+    temp=$(echo "$status" | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
+    mode_info[5]="$temp"
+
+    echo "${mode_info[@]}"
+}

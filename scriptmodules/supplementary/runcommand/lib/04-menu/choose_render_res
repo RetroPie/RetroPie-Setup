@@ -1,0 +1,34 @@
+function choose_render_res() {
+    local save="$1"
+    local res=(
+        "320x240"
+        "640x480"
+        "960x720"
+        "1280x960"
+        "Use video output resolution"
+        "Use config file resolution"
+    )
+    local i=1
+    local item
+    local options=()
+    for item in "${res[@]}"; do
+        options+=($i "$item")
+        ((i++))
+    done
+    local cmd=(dialog --menu "Choose RetroArch render resolution" 22 76 16 )
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$choice" ]] && return
+    case "$choice" in
+        [1-4])
+            render_res="${res[$choice-1]}"
+            ;;
+        5)
+            render_res="output"
+            ;;
+        6)
+            render_res="config"
+            ;;
+    esac
+
+    iniSet set "=" '"' "$save" "$render_res" "$video_conf"
+}
