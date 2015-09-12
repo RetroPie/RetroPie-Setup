@@ -13,6 +13,10 @@ rp_module_desc="SDL (Simple DirectMedia Layer) v2.x"
 rp_module_menus=""
 rp_module_flags="nobin"
 
+function get_ver_sdl2() {
+    echo "2.0.3+1rpi"
+}
+
 function depends_sdl2() {
     # Depedencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
     # already covered by the build-essential package retropie relies on.
@@ -21,21 +25,15 @@ function depends_sdl2() {
 }
 
 function sources_sdl2() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/SDL2-2.0.3.tar.gz | tar -xvz
-    cd SDL2-2.0.3
-    # we need to add the --host due to dh_auto_configure fiddling with the --build parameter which overrides the config.guess. This
-    # would cause it not to find the pi gles development files
-    sed -i 's/--disable-x11-shared/--disable-x11-shared --host=armv6l-raspberry-linux-gnueabihf --disable-video-opengl --enable-video-gles --disable-esd --disable-pulseaudio/' debian/rules
-    # remove pulse / libgl1 dependencies
-    sed -i '/libpulse-dev,/d' debian/control
-    sed -i '/libgl1-mesa-dev,/d' debian/control
-    # be happy with libudev0 or libudev1
-    sed -i 's/libudev0/libudev0 | libudev1/g' debian/control
+    gitPullOrClone "$md_build/$(get_ver_sdl2)" https://github.com/RetroPie/SDL-mirror.git retropie-2.0.3
+    cd $(get_ver_sdl2)
+    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v $(get_ver_sdl2) "SDL 2.0.3 configured for the RPI"
 }
 
 function build_sdl2() {
-    cd SDL2-2.0.3
+    cd $(get_ver_sdl2)
     dpkg-buildpackage
+    md_ret_require="$md_build/libsdl2-dev_$(get_ver_sdl2)_armhf.deb"
 }
 
 function remove_old_sdl2() {
@@ -122,14 +120,14 @@ function remove_old_sdl2() {
 /usr/local/lib/pkgconfig/sdl2.pc
 _EOF_
     fi
-    # remove debian jessie+ distribution sdl2
-    hasPackage libsdl2-2.0-0 && dpkg --remove libsdl2-2.0-0
+    # remove our old libsdl2 packages
+    hasPackage libsdl2 && dpkg --remove libsdl2 libsdl2-dev
 }
 
 function install_sdl2() {
     remove_old_sdl2
     # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
-    if ! dpkg -i libsdl2_2.0.3_armhf.deb libsdl2-dev_2.0.3_armhf.deb; then
+    if ! dpkg -i libsdl2-2.0-0_$(get_ver_sdl2)_armhf.deb libsdl2-dev_$(get_ver_sdl2)_armhf.deb; then
         apt-get -y -f install
     fi
     echo "libsdl2-dev hold" | dpkg --set-selections
@@ -137,8 +135,8 @@ function install_sdl2() {
 
 function install_bin_sdl2() {
     isPlatform "rpi" || fatalError "$mod_id is only available as a binary package for platform rpi"
-    wget "$__binary_url/libsdl2-dev_2.0.3_armhf.deb"
-    wget "$__binary_url/libsdl2_2.0.3_armhf.deb"
+    wget -c "$__binary_url/libsdl2-dev_$(get_ver_sdl2)_armhf.deb"
+    wget -c "$__binary_url/libsdl2-2.0-0_$(get_ver_sdl2)_armhf.deb"
     install_sdl2
     rm ./*.deb
 }
