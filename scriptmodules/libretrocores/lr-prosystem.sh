@@ -27,7 +27,6 @@ function build_lr-prosystem() {
 function install_lr-prosystem() {
     md_ret_files=(
         'prosystem_libretro.so'
-        'ProSystem.dat'
         'README.md'
     )
 }
@@ -36,9 +35,6 @@ function configure_lr-prosystem() {
     mkRomDir "atari7800"
 
     ensureSystemretroconfig "atari7800"
-
-    # symlink ProSystem.dat
-    ln -sf "$md_inst/ProSystem.dat" "$biosdir/ProSystem.dat"
 
     addSystem 1 "$md_id" "atari7800" "$md_inst/prosystem_libretro.so"
 }
