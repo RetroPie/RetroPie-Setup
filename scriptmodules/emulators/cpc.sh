@@ -16,6 +16,7 @@ rp_module_flags="dispmanx"
 function sources_cpc() {
     wget -O- -q http://downloads.petrockblock.com/retropiearchives/cpc4rpi-1.1_src.tar.gz | tar -xvz --strip-components=1
     sed -i 's|-lEGL|-lEGL -lSDL|g' makefile
+    sed -i 's|-lts||g' makefile
     sed -i 's|/root/Raspbian/Libs/libSDL.a /root/Raspbian/Libs/libnofun.a||g' makefile
     sed -i 's|= $(GFLAGS) -mcpu=arm1176jzf-s -march=armv6zk -O2 -funroll-loops -ffast-math -fomit-frame-pointer -fno-strength-reduce -finline-functions -s|+= $(GFLAGS) -ffast-math -s|g' makefile
 }
