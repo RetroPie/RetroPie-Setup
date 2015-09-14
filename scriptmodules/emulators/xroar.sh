@@ -13,7 +13,16 @@ rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_menus="2+"
 
 function depends_xroar() {
-    getDepends libsdl1.2-dev libraspberrypi-dev libraspberrypi-doc
+    getDepends libsdl1.2-dev libraspberrypi-dev
+    # ilclient is part of libraspberrypi-doc, but not included on all distros - eg OSMC on rpi2
+    if hasPackage rbp-bootloader-osmc; then
+        if [[ ! -d "/opt/vc/src/hello_pi" ]]; then
+            mkdir -p "/opt/vc/src"
+            wget -q -O- "http://downloads.petrockblock.com/retropiearchives/hello_pi.tar.gz" | tar -xvz -C "/opt/vc/src"
+        fi
+    else
+        getDepends libraspberrypi-doc
+    fi
 }
 
 function sources_xroar() {
