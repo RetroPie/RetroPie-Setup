@@ -210,13 +210,13 @@ function getDepends() {
             local temp=()
             for required in ${packages[@]}; do
                 if [[ "$required" == "libsdl1.2-dev" ]]; then
-                    if [[ "$__raspbian_ver" == "7" ]]; then
+                    if [[ "$__raspbian_ver" -eq "7" ]]; then
                         rp_callModule sdl1 install_bin
                     else
                         rp_callModule sdl1
                     fi
                 elif [[ "$required" == "libsdl2-dev" ]]; then
-                    if [[ "$__raspbian_ver" == "7" ]]; then
+                    if [[ "$__raspbian_ver" -eq "7" ]]; then
                         rp_callModule sdl2 install_bin
                     else
                         rp_callModule sdl2

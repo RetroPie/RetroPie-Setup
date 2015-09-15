@@ -14,7 +14,7 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function configure_autostartemustat() {
-    if [[ "$__raspbian_ver" != "7" ]]; then
+    if [[ "$__raspbian_ver" -ne "7" ]]; then
         printMsgs "dialog" "Sorry, this is only available on Raspbian Wheezy for now"
         return
     fi

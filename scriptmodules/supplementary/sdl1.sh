@@ -14,13 +14,16 @@ rp_module_menus=""
 rp_module_flags="!odroid nobin"
 
 function get_ver_sdl1() {
-    [[ "$__raspbian_ver" == "7" ]] && echo "8"
-    [[ "$__raspbian_ver" == "8" ]] && echo "11"
+    if [[ "$__raspbian_ver" -lt "8" ]]; then
+        echo "8"
+    else
+        echo "11"
+    fi
 }
 
 function depends_sdl1() {
     getDepends debhelper dh-autoreconf devscripts libx11-dev libxext-dev libxt-dev libxv-dev x11proto-core-dev libaudiofile-dev libpulse-dev libgl1-mesa-dev libasound2-dev libcaca-dev libdirectfb-dev libglu1-mesa-dev libraspberrypi-dev
-    [[ "$__raspbian_ver" == "7" ]] && getDepends libts-dev
+    [[ "$__raspbian_ver" -lt "8" ]] && getDepends libts-dev
 }
 
 function sources_sdl1() {

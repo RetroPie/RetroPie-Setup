@@ -70,12 +70,12 @@ function get_os_version() {
             local ver_min=${ver[1]}
             case $ver_maj in
                 7)
-                    __raspbian_ver="7"
+                    __raspbian_ver=7
                     __raspbian_name="wheezy"
                     return
                     ;;
                 8)
-                    __raspbian_ver="8"
+                    __raspbian_ver=8
                     __raspbian_name="jessie"
                     # we don't ship binaries for jessie (yet)
                     __has_binaries=0

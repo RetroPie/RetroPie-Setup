@@ -15,7 +15,7 @@ rp_module_flags="dispmanx"
 
 function depends_scummvm() {
     getDepends libsdl1.2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
-    if [[ "$__raspbian_ver" == "7" ]]; then
+    if [[ "$__raspbian_ver" -lt "8" ]]; then
         getDepends libjpeg8-dev
     else
         getDepends libjpeg-dev
