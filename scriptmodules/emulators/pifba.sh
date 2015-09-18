@@ -60,6 +60,8 @@ function configure_pifba() {
         chown $user:$user "$configdir/fba/$config"
     done
 
-    addSystem 1 "$md_id" "neogeo" "$md_inst/fba2x %ROM%"
-    addSystem 1 "$md_id" "fba arcade" "$md_inst/fba2x %ROM%"
+    local def=0
+    isPlatform "rpi1" && def=1
+    addSystem $def "$md_id" "neogeo" "$md_inst/fba2x %ROM%"
+    addSystem $def "$md_id" "fba arcade" "$md_inst/fba2x %ROM%"
 }

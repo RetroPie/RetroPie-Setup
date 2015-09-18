@@ -10,7 +10,7 @@
 
 rp_module_id="lr-fba-next"
 rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.36) port for libretro"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function depends_lr-fba-next() {
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
@@ -44,6 +44,8 @@ function configure_lr-fba-next() {
     mkRomDir "fba"
     ensureSystemretroconfig "fba"
 
-    addSystem 1 "$md_id" "neogeo" "$md_inst/fba_libretro.so"
-    addSystem 1 "$md_id" "fba arcade" "$md_inst/fba_libretro.so"
+    local def=1
+    isPlatform "rpi1" && def=0
+    addSystem $def "$md_id" "neogeo" "$md_inst/fba_libretro.so"
+    addSystem $def "$md_id" "fba arcade" "$md_inst/fba_libretro.so"
 }
