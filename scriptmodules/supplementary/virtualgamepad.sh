@@ -13,9 +13,9 @@ rp_module_desc="Virtual Gamepad for Smartphone"
 rp_module_menus="4+"
 
 function install_virtualgamepad() {
-    wget http://node-arm.herokuapp.com/node_latest_armhf.deb
-    dpkg -i node_latest_armhf.deb
-    rm node_latest_armhf.deb
+    wget http://node-arm.herokuapp.com/node_archive_armhf.deb
+    dpkg -i node_archive_armhf.deb
+    rm node_archive_armhf.deb
     gitPullOrClone $md_inst https://github.com/miroof/node-virtual-gamepads.git
     cd $md_inst
     npm install --unsafe-perm
