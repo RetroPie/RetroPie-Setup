@@ -16,8 +16,8 @@ function install_virtualgamepad() {
     wget http://node-arm.herokuapp.com/node_archive_armhf.deb
     dpkg -i node_archive_armhf.deb
     rm node_archive_armhf.deb
-    gitPullOrClone $md_inst https://github.com/miroof/node-virtual-gamepads.git
-    cd $md_inst
+    gitPullOrClone "$md_inst" https://github.com/miroof/node-virtual-gamepads.git
+    cd "$md_inst"
     npm install --unsafe-perm
     npm install --unsafe-perm pm2 -g
     pm2 start main.js
