@@ -157,6 +157,9 @@ function rp_callModule() {
         remove)
             action="Removing"
             ;;
+        *)
+            action="Running action '$mode' for"
+            ;;
     esac
     local pushed=$?
     local md_ret_errors=()
