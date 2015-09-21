@@ -80,9 +80,11 @@ function configure_samba() {
                 1)
                     rp_callModule "$md_id" depends
                     rp_callModule "$md_id" install_shares
+                    printMsgs "dialog" "Enabled shares"
                     ;;
                 2)
                     rp_callModule "$md_id" remove_shares
+                    printMsgs "dialog" "Removed shares"
                     ;;
                 3)
                     editFile /etc/samba/smb.conf
@@ -92,6 +94,7 @@ function configure_samba() {
                     ;;
                 5)
                     rp_callModule "$md_id" remove
+                    printMsgs "dialog" "Removed Samba service"
                     ;;
             esac
         else
