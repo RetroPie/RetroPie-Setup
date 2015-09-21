@@ -39,6 +39,9 @@ function configure_esthemes() {
         'RetroPie nbba'
         'robertybob space'
         'robertybob simplebigart'
+        'HerbFargus carbon'
+        'HerbFargus carbon-centered'
+        'HerbFargus clean-look'
     )
     while true; do
         local theme
