@@ -80,7 +80,7 @@ function configure_samba() {
                 1)
                     rp_callModule "$md_id" depends
                     rp_callModule "$md_id" install_shares
-                    printMsgs "dialog" "Enabled shares"
+                    printMsgs "dialog" "Installed and enabled shares"
                     ;;
                 2)
                     rp_callModule "$md_id" remove_shares
