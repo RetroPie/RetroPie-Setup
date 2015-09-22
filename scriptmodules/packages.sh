@@ -41,10 +41,14 @@ function rp_listFunctions() {
     echo "-----------------------------------------------------------------------------------------------------------------------------------"
     for idx in ${__mod_idx[@]}; do
         mod_id=${__mod_id[$idx]};
-        printf "%d/%-20s: %-42s : " "$idx" "$mod_id" "${__mod_desc[$idx]}"
+        printf "%d/%-20s: %-42s :" "$idx" "$mod_id" "${__mod_desc[$idx]}"
         while read mode; do
             mode=${mode//_$mod_id/}
-            echo -e "$mode \c"
+            echo -n " $mode"
+            # if not experimental and has no nobin flag, we have an install_bin call also
+            if [[ "$mode" == "install" ]] && ! hasFlag "${__mod_flags[$idx]}" "nobin" && ! [[ "${__mod_menus[$idx]}" =~ "4+" ]]; then
+                echo -n " install_bin"
+            fi
         done < <(compgen -A function -X \!*_$mod_id)
         echo ""
     done
