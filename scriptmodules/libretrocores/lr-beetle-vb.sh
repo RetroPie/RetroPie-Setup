@@ -26,7 +26,6 @@ function build_lr-beetle-vb() {
 function install_lr-beetle-vb() {
     md_ret_files=(
         'mednafen_vb_libretro.so'
-        'README.md'
     )
 }
 
