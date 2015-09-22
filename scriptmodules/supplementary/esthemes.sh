@@ -14,7 +14,7 @@ rp_module_menus="3"
 rp_module_flags="nobin"
 
 function install_theme_esthemes() {
-    local theme"$1"
+    local theme="$1"
     local repo="$2"
     [[ -z "$repo" ]] && repo="RetroPie"
     [[ -z "$theme" ]] && theme="simple"
