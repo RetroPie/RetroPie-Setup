@@ -18,7 +18,6 @@ function depends_lr-mame2010() {
 
 function sources_lr-mame2010() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2010-libretro.git
-    sed -i "s/MD = -mkdir/MD = -mkdir -p" Makefile
 }
 
 function build_lr-mame2010() {
