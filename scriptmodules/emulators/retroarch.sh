@@ -27,23 +27,6 @@ function sources_retroarch() {
     gitPullOrClone "$md_build/shader" https://github.com/gizmo98/common-shaders.git
     # disable the search dialog which doesn't work - https://github.com/libretro/RetroArch/issues/1432
     sed -i 's|menu_input_search_start|//menu_input_search_start|g' $md_build/menu/menu_entry.c
-    # build fix until https://github.com/libretro/RetroArch/issues/2144 is resolved
-    patch -p1 <<_EOF_
---- a/frontend/drivers/platform_linux.c
-+++ b/frontend/drivers/platform_linux.c
-@@ -30,10 +30,10 @@
-
- #ifdef ANDROID
- #include <sys/system_properties.h>
--#endif
- #ifdef __arm__
- #include <machine/cpu-features.h>
- #endif
-+#endif
-
- #include <boolean.h>
- #include <retro_dirent.h>
-_EOF_
 
 }
 
