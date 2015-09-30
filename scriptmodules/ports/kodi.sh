@@ -15,6 +15,7 @@ rp_module_menus="4+"
 rp_module_flags="nobin"
 
 function depends_kodi() {
+    getDepends libcec1 libcec2
     echo "deb http://archive.mene.za.net/raspbian wheezy contrib" > /etc/apt/sources.list.d/mene.list
     apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5243CDED
 }
