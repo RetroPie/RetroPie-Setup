@@ -40,7 +40,7 @@ function build_fuse() {
     make clean
     make
     popd
-    CFLAGS+="-I$md_build/libspectrum" LDFLAGS+="-L$md_build/libspectrum/.libs" ./configure --prefix="$md_inst"  --without-libao --without-gpm --without-gtk --without-libxml2 --with-sdl
+    CFLAGS+=" -I$md_build/libspectrum" LDFLAGS+=" -L$md_build/libspectrum/.libs" ./configure --prefix="$md_inst" --without-libao --without-gpm --without-gtk --without-libxml2 --with-sdl
     make clean
     make
 }
