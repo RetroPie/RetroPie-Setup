@@ -10,7 +10,7 @@
 
 rp_module_id="esthemes"
 rp_module_desc="Install themes for Emulation Station"
-rp_module_menus="3"
+rp_module_menus="3+configure"
 rp_module_flags="nobin"
 
 function install_theme_esthemes() {
@@ -31,6 +31,8 @@ function uninstall_theme_esthemes() {
 
 function configure_esthemes() {
     local themes=(
+        'HerbFargus carbon'
+        'HerbFargus carbon-centered'
         'RetroPie simple'
         'RetroPie simple-dark'
         'RetroPie color-pi'
@@ -39,8 +41,6 @@ function configure_esthemes() {
         'RetroPie nbba'
         'robertybob space'
         'robertybob simplebigart'
-        'HerbFargus carbon'
-        'HerbFargus carbon-centered'
         'HerbFargus clean-look'
     )
     while true; do
