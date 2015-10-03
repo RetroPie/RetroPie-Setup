@@ -34,7 +34,6 @@ function build_lr-mupen64plus() {
 
 function install_lr-mupen64plus() {
     md_ret_files=(
-        'mupen64plus-core/data'
         'mupen64plus_libretro.so'
         'README.md'
     )
