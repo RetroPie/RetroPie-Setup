@@ -52,7 +52,6 @@ function configure_lr-mupen64plus() {
     setRetroArchCoreOption "mupen64-screensize" "640x480"
 
     # Copy config files
-    cp "$md_inst/data/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf} "$biosdir/"
     cat > $home/RetroPie/BIOS/gles2n64rom.conf << _EOF_
 #rom specific settings
 
