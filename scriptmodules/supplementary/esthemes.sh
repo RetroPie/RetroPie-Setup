@@ -16,8 +16,13 @@ rp_module_flags="nobin"
 function install_theme_esthemes() {
     local theme="$1"
     local repo="$2"
-    [[ -z "$repo" ]] && repo="RetroPie"
-    [[ -z "$theme" ]] && theme="simple"
+    if [[ -z "$repo" ]]; then
+        repo="RetroPie"
+    fi
+    if [[ -z "$theme" ]]; then
+        theme="carbon"
+        repo="HerbFargus"
+    fi
     mkdir -p "/etc/emulationstation/themes"
     gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git"
 }
