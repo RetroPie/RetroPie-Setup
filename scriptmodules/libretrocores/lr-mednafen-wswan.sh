@@ -24,7 +24,6 @@ function build_lr-mednafen-wswan() {
 
 function install_lr-mednafen-wswan() {
     md_ret_files=(
-        'README.md'
         'mednafen_wswan_libretro.so'
     )
 }
