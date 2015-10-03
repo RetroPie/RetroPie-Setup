@@ -42,6 +42,7 @@ function install_gpsp() {
 
 function configure_gpsp() {
     mkRomDir "gba"
+    chown $user:$user -R "$md_inst"
 
     mkUserDir "$configdir/gba"
 
