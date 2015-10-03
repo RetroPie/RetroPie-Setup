@@ -66,6 +66,7 @@ _EOF_
     cat > "$md_inst/ps3pair.sh" << _EOF_  
 #!/bin/bash
 if hcitool dev | grep -q "hci0"; then
+    hciconfig hci0 pscan
     $md_inst/sixpair
 fi
 _EOF_
