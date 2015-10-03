@@ -99,7 +99,7 @@ function configure_retropiemenu()
 </gameList>
 _EOF_
     chown -R $user:$user "$home/.emulationstation"
-    setESSystem "RetroPie" "retropie" "~/RetroPie/retropiemenu" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM%" "" "retropie"
+    setESSystem "RetroPie" "retropie" "~/RetroPie/retropiemenu" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
 }
 
 function launch_retropiemenu() {
