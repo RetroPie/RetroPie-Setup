@@ -24,7 +24,6 @@ function build_lr-mednafen-ngp() {
 
 function install_lr-mednafen-ngp() {
     md_ret_files=(
-        'README.md'
         'mednafen_ngp_libretro.so'
     )
 }
