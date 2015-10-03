@@ -43,6 +43,9 @@ function sources_sdl1() {
 function build_sdl1() {
     cd libsdl1.2-1.2.15
     dpkg-buildpackage
+    local dest="$__tmpdir/archives/$__platform"
+    mkdir -p "$dest"
+    cp ../*.deb "$dest/"
 }
 
 function install_sdl1() {
