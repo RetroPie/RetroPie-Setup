@@ -10,7 +10,7 @@
 
 rp_module_id="retronetplay"
 rp_module_desc="RetroNetplay"
-rp_module_menus="4+"
+rp_module_menus="3+configure"
 rp_module_flags="nobin"
 
 function rps_retronet_saveconfig() {
