@@ -33,6 +33,7 @@ function configure_esthemes() {
     local themes=(
         'HerbFargus carbon'
         'HerbFargus carbon-centered'
+        'HerbFargus carbon-nometa'
         'RetroPie simple'
         'RetroPie simple-dark'
         'RetroPie color-pi'
