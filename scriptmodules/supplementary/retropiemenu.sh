@@ -27,7 +27,6 @@ function configure_retropiemenu()
         'rpsetup.rp'
         'configedit.rp'
         'retroarch.rp'
-        'retroarchinput.rp'
         'audiosettings.rp'
         'dispmanx.rp'
         'retronetplay.rp'
@@ -63,10 +62,6 @@ function configure_retropiemenu()
     <game>
         <path>$rpdir/filemanager.rp</path>
         <name>File Manager</name>
-    </game>
-    <game>
-        <path>$rpdir/retroarchinput.rp</path>
-        <name>Configure RetroArch keyboard/joystick</name>
     </game>
     <game>
         <path>$rpdir/retroarch.rp</path>
