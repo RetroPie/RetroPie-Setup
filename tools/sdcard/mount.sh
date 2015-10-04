@@ -13,6 +13,7 @@ if [[ "$DEVICE" == "umount" ]]; then
     umount "$DEST/boot"
     umount "$DEST"
 else
+    DEVICE=$(readlink -f "$DEVICE")
     mount ${DEVICE}2 "$DEST"
     mount ${DEVICE}1 "$DEST/boot"
 fi

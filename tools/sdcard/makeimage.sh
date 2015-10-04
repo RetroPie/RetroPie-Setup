@@ -1,10 +1,8 @@
 #!/bin/bash
 NAME="$1"
 ROOTFS="$2"
-# 7802500 x 512b blocks (5,120,000 bytes less than 4GB for usb sticks that are undersized)
-# SIZE=3994880000
-SIZE=3418357760
-[[ "$3" == "small" ]] && SIZE=1970000000
+SIZE="$3"
+[[ -z "$SIZE" ]] && SIZE = 2200000000
 # mb sizes
 OFF=4
 BOOTSZ=60
