@@ -36,8 +36,12 @@ function setup_env() {
     get_os_version
     get_default_gcc
     get_retropie_depends
+
     # set default gcc version
     set_default_gcc "$__default_gcc_version"
+
+    # set location of binary downloads
+    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://downloads.petrockblock.com/retropiebinaries/$__raspbian_name/$__platform"
 
     # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
     [[ $__memory_phys -ge 256 ]] && __default_cflags+=" -pipe"
@@ -148,8 +152,6 @@ function platform_rpi1() {
     __qemu_cpu=arm1176
     # do we have prebuild binaries for this platform
     __has_binaries=1
-    # binary archive location (without trailing slash)
-    __binary_url="http://downloads.petrockblock.com/retropiebinaries/rpi1"
 }
 
 function platform_rpi2() {
@@ -160,7 +162,6 @@ function platform_rpi2() {
     # aligned with the a7, and allows the a7 targetted code to be run in a chroot/emulated environment
     __qemu_cpu=cortex-a15
     __has_binaries=1
-    __binary_url="http://downloads.petrockblock.com/retropiebinaries/rpi2"
 }
 
 function platform_odroid() {
