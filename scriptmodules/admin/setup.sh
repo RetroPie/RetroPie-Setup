@@ -129,7 +129,7 @@ function binaries_setup()
             if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobin ]]; then
                 rp_callModule $idx depends
                 rp_callModule $idx install_bin
-                [[ "${__mod_id[$idx]}" != "snesdev" ]] && rp_callModule $idx configure
+                rp_callModule $idx configure
             fi
         done
 
