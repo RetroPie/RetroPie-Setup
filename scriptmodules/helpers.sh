@@ -16,7 +16,7 @@ function printMsgs() {
     fi
     for msg in "$@"; do
         [[ "$type" == "dialog" ]] && dialog --backtitle "$__backtitle" --msgbox "$msg" 20 60 >/dev/tty
-        [[ "$type" == "console" ]] && echo "$msg"
+        [[ "$type" == "console" ]] && echo -e "$msg"
         [[ "$type" == "heading" ]] && echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$msg\n= = = = = = = = = = = = = = = = = = = = =\n"
     done
 }
