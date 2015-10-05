@@ -172,9 +172,9 @@ function hasPackage() {
     if [[ $? -eq 0 ]]; then
         # if version is blank $pkg isnt installed
         [[ -z "$ver" ]] && return 1
-        # if we didn't request a vesrion number, be happy with any
+        # if we didn't request a version number, be happy with any
         [[ -z "$req_ver" ]] && return 0
-        dpkg --compare-versions $req_ver ge $ver && return 0
+        dpkg --compare-versions "$ver" ge "$req_ver" && return 0
     fi
     return 1
 }
@@ -198,7 +198,7 @@ function getDepends() {
     local failed=()
     for required in $@; do
         # make sure we have our sdl1 / sdl2 installed
-        if [[ "$required" == "libsdl1-dev" ]] && ! hasPackage libsdl1-dev $(get_ver_sdl1); then
+        if [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev 1.2.15-$(get_ver_sdl1)rpi; then
             packages+=("$required")
             continue
         fi
