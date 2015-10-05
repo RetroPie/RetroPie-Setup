@@ -8,7 +8,6 @@ if [[ -z "$SRC" || -z "$DEST" || -z "$VER" ]]; then
     echo "$0 SRC DEST VERSION"
     exit 1
 fi
-SRC="/home/pi/dists/retropie-rpi"
 for __platform in rpi1 rpi2; do
 
     cat >"$SRC/home/pi/install.sh" <<_EOF_
