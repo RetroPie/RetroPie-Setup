@@ -53,6 +53,6 @@ _EOF_
     mv "$SRC/etc/fstab" "$SRC/etc/fstab.orig"
     echo "proc            /proc           proc    defaults          0       0" >"$SRC/etc/fstab"
     # generate berryboot squashfs from filesystem
-    mksquashfs "$SRC" "$DEST/${img}-berryboot.img256" -comp lzo -e boot -e lib/modules -e etc/fstab
+    mksquashfs "$SRC" "$DEST/${img}-berryboot.img256" -comp lzo -e boot -e lib/modules
     mv "$SRC/etc/fstab.orig" "$SRC/etc/fstab"
 done
