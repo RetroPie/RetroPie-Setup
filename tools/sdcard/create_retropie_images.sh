@@ -29,9 +29,10 @@ _EOF_
     rm -rf "$SRC/home/pi/"{.dosbox,.gngeo,.advance,.pulse-cookie}
 
     # we clone these repositories from outside of the chroot due to qemu chroot deadlocks with git
+    set -x
     pushd "$SRC/home/pi"
     git clone --depth 1 https://github.com/RetroPie/RetroPie-Setup.git
-    chown -R 1000:1000 "$SRC/home/pi/RetroPie-Setup"
+    chown -R 1000:1000 "RetroPie-Setup"
     popd
 
     # checkout splashscreens
