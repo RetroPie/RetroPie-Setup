@@ -2,7 +2,7 @@
 NAME="$1"
 ROOTFS="$2"
 SIZE="$3"
-[[ -z "$SIZE" ]] && SIZE = 2200000000
+[[ -z "$SIZE" ]] && SIZE=2200000000
 # mb sizes
 OFF=4
 BOOTSZ=60
