@@ -166,12 +166,17 @@ function editFile() {
 }
 
 function hasPackage() {
-    PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $1 2>/dev/null | grep -o "ok installed")
-    if [[ "" == "$PKG_OK" ]]; then
-        return 1
-    else
-        return 0
+    local pkg="$1"
+    local req_ver="$2"
+    ver=$(dpkg-query -W --showformat='${Version}' $1 2>/dev/null)
+    if [[ $? -eq 0 ]]; then
+        # if version is blank $pkg isnt installed
+        [[ -z "$ver" ]] && return 1
+        # if we didn't request a vesrion number, be happy with any
+        [[ -z "$req_ver" ]] && return 0
+        dpkg --compare-versions $req_ver ge $ver && return 0
     fi
+    return 1
 }
 
 function aptUpdate() {
@@ -192,8 +197,12 @@ function getDepends() {
     local packages=()
     local failed=()
     for required in $@; do
-        # force replacement of jessie sdl2 with ours
-        if [[ "$required" == "libsdl2-dev" ]] && hasPackage libsdl2-2.0-0; then
+        # make sure we have our sdl1 / sdl2 installed
+        if [[ "$required" == "libsdl1-dev" ]] && ! hasPackage libsdl1-dev $(get_ver_sdl1); then
+            packages+=("$required")
+            continue
+        fi
+        if [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_ver_sdl2); then
             packages+=("$required")
             continue
         fi
