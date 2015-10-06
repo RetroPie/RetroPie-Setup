@@ -14,7 +14,7 @@ rp_module_menus="4+"
 rp_module_flags="!odroid"
 
 function depends_mupen64plus-testing() {
-    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev
+    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev gcc-4.8
 }
 
 function sources_mupen64plus-testing() {
@@ -42,6 +42,7 @@ function sources_mupen64plus-testing() {
         gitPullOrClone "$md_build/mupen64plus-${repo[1]}" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
     gitPullOrClone "$md_build/mupen64plus-video-settings" https://github.com/gizmo98/mupen64plus-video-settings.git
+    gitPullOrClone "$md_build/GLideN64" https://github.com/gizmo98/GLideN64.git rpi-patch
 }
 
 function build_mupen64plus-testing() {
@@ -68,7 +69,15 @@ function build_mupen64plus-testing() {
             make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"
         fi
     done
-
+    
+    chmod +x $md_build/GLideN64/src/getRevision.sh
+    $md_build/GLideN64/src/getRevision.sh
+    pushd $md_build/GLideN64/projects/cmake
+    # this plugin needs at least gcc-4.8
+    cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On -DBCMHOST=On ../../src/
+    make
+    popd
+    
     rpSwap off
 }
 
@@ -80,6 +89,8 @@ function install_mupen64plus-testing() {
         fi
     done
     cp -v "$md_build/mupen64plus-video-settings/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"
+    cp -v "$md_build/GLideN64/ini/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"
+    cp "$md_build/GLideN64/projects/cmake/plugins/release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
 }
 
 function configure_mupen64plus-testing() {
@@ -145,4 +156,5 @@ _EOF_
     addSystem 0 "${md_id}-gles2n64-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-n64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
     addSystem 0 "${md_id}-gles2rice-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
     addSystem 0 "${md_id}-glide64mk2-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-glide64mk2.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
+    addSystem 0 "${md_id}-GLideN64-testing" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-GLideN64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
 }
