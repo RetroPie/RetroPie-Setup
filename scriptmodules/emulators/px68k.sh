@@ -45,6 +45,8 @@ function configure_px68k() {
         ln -sf "$biosdir/$bios" "$configdir/x68000/$bios"
     done
 
+    setDispmanx "$md_id" 0
+
     addSystem 1 "$md_id" "x68000" "$md_inst/px68k %ROM%" "X68000" ".dim"
 
     __INFMSGS+=("You need to copy the X68000 bios files plrom30.dat, iplromco.dat, iplrom.dat, iplromxv.dat, and the font file cgrom.dat to $romdir/BIOS. Use F12 to access the in emulator menu.")
