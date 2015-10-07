@@ -48,6 +48,7 @@ function configure_esthemes() {
         'robertybob space'
         'robertybob simplebigart'
         'HerbFargus clean-look'
+        'HerbFargus turtle-pi'
     )
     while true; do
         local theme
