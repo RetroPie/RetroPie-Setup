@@ -29,7 +29,7 @@ function depends_sdl1() {
 function sources_sdl1() {
     local file
     for file in libsdl1.2_1.2.15.orig.tar.gz libsdl1.2_1.2.15-10.dsc libsdl1.2_1.2.15-10.debian.tar.xz; do
-        wget -O "$file" "http://ftp.debian.org/debian/pool/main/libs/libsdl1.2/$file"
+        wget -q -O "$file" "http://ftp.debian.org/debian/pool/main/libs/libsdl1.2/$file"
     done
     dpkg-source -x libsdl1.2_1.2.15-10.dsc
 
