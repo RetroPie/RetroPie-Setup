@@ -31,7 +31,6 @@ The script is executed with
 
 ```shell
 cd RetroPie-Setup
-chmod +x retropie_setup.sh
 sudo ./retropie_setup.sh
 ```
 
