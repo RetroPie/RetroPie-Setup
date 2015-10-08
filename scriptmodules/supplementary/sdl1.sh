@@ -27,13 +27,13 @@ function depends_sdl1() {
 }
 
 function sources_sdl1() {
-    local src="deb-src http://ftp.debian.org/debian $__raspbian_name main"
-    echo "$src" >"/etc/apt/sources.list.d/src.list"
-    apt-get update
-    apt-get source -y --allow-unauthenticated libsdl1.2-dev
-    rm "/etc/apt/sources.list.d/src.list"
+    local file
+    for file in libsdl1.2_1.2.15.orig.tar.gz libsdl1.2_1.2.15-10.dsc libsdl1.2_1.2.15-10.debian.tar.xz; do
+        wget -O "$file" "http://ftp.debian.org/debian/pool/main/libs/libsdl1.2/$file"
+    done
+    dpkg-source -x libsdl1.2_1.2.15-10.dsc
+
     cd libsdl1.2-1.2.15
-    
     # add fixes from https://github.com/RetroPie/sdl1/compare/master...rpi
     wget https://github.com/RetroPie/sdl1/compare/master...rpi.diff -O debian/patches/rpi.diff
     echo "rpi.diff" >>debian/patches/series
