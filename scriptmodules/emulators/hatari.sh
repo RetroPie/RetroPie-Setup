@@ -20,10 +20,39 @@ function depends_hatari() {
 
 function sources_hatari() {
     wget -q -O- "http://downloads.petrockblock.com/retropiearchives/hatari-1.8.0.tar.bz2" | tar -xvj --strip-components=1
+    wget -q -O spsdeclib.zip "http://downloads.petrockblock.com/retropiearchives/spsdeclib_5.1_source.zip"
+    unzip -o spsdeclib.zip
+    unzip -o capsimg_source_linux_macosx.zip
+    chmod u+x capsimg_source_linux_macosx/CAPSImg/configure
+    # we need to use capsimage 5, as there is no source for 4.2
+    sed -i "s/CAPSIMAGE_VERSION 4/CAPSIMAGE_VERSION 5/" cmake/FindCapsImage.cmake
+    # capsimage 5.1 misses these types that were defined in 4.2
+    sed -i "s/CapsLong/Sint32/g" src/floppy_ipf.c
+    sed -i "s/CapsULong/Uint32/g" src/floppy_ipf.c
 }
 
 function build_hatari() {
-    ./configure --prefix="$md_inst"
+    # build libcapsimage
+    cd capsimg_source_linux_macosx/CAPSImg
+    ./configure --prefix="$md_build"
+    make clean
+    make
+    make install
+    mkdir -p "$md_build/src/includes/caps5/"
+    cp -R "../LibIPF/"*.h "$md_build/src/includes/caps5/"
+    cp "../Core/CommonTypes.h" "$md_build/src/includes/caps5/"
+
+    # build hatari
+    cd "$md_build"
+    rm -f CMakeCache.txt
+    # capsimage headers includes contain __cdecl which we don't want
+    # also add $md_inst to library search path for loading capsimage library
+    CFLAGS+=" -D__cdecl=''" LDFLAGS+="-Wl,-rpath='$md_inst'" \
+        cmake . \
+        -DCMAKE_SKIP_RPATH=ON \
+        -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" \
+        -DCAPSIMAGE_INCLUDE_DIR="$md_build/src/include" \
+        -DCAPSIMAGE_LIBRARY="$md_build/lib/libcapsimage.so.5.1"
     make clean
     make
     md_ret_require="$md_build/src/hatari"
@@ -31,6 +60,9 @@ function build_hatari() {
 
 function install_hatari() {
     make install
+    cp "$md_build/lib/libcapsimage.so.5.1" "$md_inst"
+    cd "$md_inst"
+    ln -sf libcapsimage.so.5.1 libcapsimage.so.5
 }
 
 function configure_hatari() {
