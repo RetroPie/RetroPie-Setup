@@ -14,7 +14,7 @@ rp_module_menus="2+"
 rp_module_flags="!odroid"
 
 function depends_mupen64plus() {
-    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev
+    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev gcc-4.8
 }
 
 function sources_mupen64plus() {
@@ -27,7 +27,7 @@ function sources_mupen64plus() {
         'mupen64plus input-sdl'
         #'ricrpi rsp-hle'
         'mupen64plus rsp-hle'
-        'ricrpi video-gles2rice'
+        'ricrpi video-gles2rice pandora-backport'
         #'RetroPie video-rice rpi'
         'ricrpi video-gles2n64'
     )
@@ -43,6 +43,7 @@ function sources_mupen64plus() {
         fi
     done
     gitPullOrClone "$md_build/mupen64plus-video-settings" https://github.com/gizmo98/mupen64plus-video-settings.git
+    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
 }
 
 function build_mupen64plus() {
@@ -69,6 +70,15 @@ function build_mupen64plus() {
         fi
     done
 
+# build GLideN64
+    chmod +x $md_build/GLideN64/src/getRevision.sh
+    $md_build/GLideN64/src/getRevision.sh
+    pushd $md_build/GLideN64/projects/cmake
+    # this plugin needs at least gcc-4.8
+    cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On ../../src/
+    make
+    popd
+
     rpSwap off
     md_ret_require=(
         'mupen64plus-ui-console/projects/unix/mupen64plus'
@@ -79,6 +89,7 @@ function build_mupen64plus() {
         'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
         'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
         'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
+        'GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so'
     )
 }
 
@@ -90,6 +101,8 @@ function install_mupen64plus() {
         fi
     done
     cp -v "$md_build/mupen64plus-video-settings/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"
+    cp -v "$md_build/GLideN64/ini/"{*.ini} "$md_inst/share/mupen64plus/"
+    cp "$md_build/GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
 }
 
 function configure_mupen64plus() {
@@ -134,4 +147,5 @@ _EOF_
     delSystem "$md_id" "n64-mupen64plus"
     addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-n64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
     addSystem 0 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
+    addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-GLideN64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
 }
