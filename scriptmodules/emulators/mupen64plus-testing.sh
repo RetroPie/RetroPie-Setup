@@ -42,7 +42,7 @@ function sources_mupen64plus-testing() {
         gitPullOrClone "$md_build/mupen64plus-${repo[1]}" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
     gitPullOrClone "$md_build/mupen64plus-video-settings" https://github.com/gizmo98/mupen64plus-video-settings.git
-    gitPullOrClone "$md_build/GLideN64" https://github.com/gizmo98/GLideN64.git rpi-patch
+    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
 }
 
 function build_mupen64plus-testing() {
@@ -74,7 +74,7 @@ function build_mupen64plus-testing() {
     $md_build/GLideN64/src/getRevision.sh
     pushd $md_build/GLideN64/projects/cmake
     # this plugin needs at least gcc-4.8
-    cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On -DBCMHOST=On ../../src/
+    cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On ../../src/
     make
     popd
     
@@ -90,7 +90,7 @@ function install_mupen64plus-testing() {
     done
     cp -v "$md_build/mupen64plus-video-settings/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"
     cp -v "$md_build/GLideN64/ini/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"
-    cp "$md_build/GLideN64/projects/cmake/plugins/release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
+    cp "$md_build/GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
 }
 
 function configure_mupen64plus-testing() {
