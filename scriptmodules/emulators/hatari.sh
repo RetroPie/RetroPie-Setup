@@ -11,15 +11,14 @@
 rp_module_id="hatari"
 rp_module_desc="Atari emulator Hatari"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
 
 function depends_hatari() {
-    getDepends libsdl1.2-dev zlib1g-dev libpng12-dev cmake libreadline-dev portaudio19-dev
+    getDepends libsdl2-dev zlib1g-dev libpng12-dev cmake libreadline-dev portaudio19-dev
     apt-get remove -y hatari
 }
 
 function sources_hatari() {
-    wget -q -O- "http://downloads.petrockblock.com/retropiearchives/hatari-1.8.0.tar.bz2" | tar -xvj --strip-components=1
+    wget -q -O- "http://downloads.petrockblock.com/retropiearchives/hatari-1.9.0.tar.bz2" | tar -xvj --strip-components=1
     wget -q -O spsdeclib.zip "http://downloads.petrockblock.com/retropiearchives/spsdeclib_5.1_source.zip"
     unzip -o spsdeclib.zip
     unzip -o capsimg_source_linux_macosx.zip
@@ -52,7 +51,8 @@ function build_hatari() {
         -DCMAKE_SKIP_RPATH=ON \
         -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" \
         -DCAPSIMAGE_INCLUDE_DIR="$md_build/src/include" \
-        -DCAPSIMAGE_LIBRARY="$md_build/lib/libcapsimage.so.5.1"
+        -DCAPSIMAGE_LIBRARY="$md_build/lib/libcapsimage.so.5.1" \
+        -DENABLE_SDL2:BOOL=1
     make clean
     make
     md_ret_require="$md_build/src/hatari"
@@ -75,11 +75,6 @@ function configure_hatari() {
     fi
 
     ln -snf "$configdir/atarist" "$home/.hatari"
-
-    setDispmanx "$md_id" 0
-
-    # add sdl mode for when borders are on
-    ensureFBMode 416 288
 
     delSystem "$md_id" "atariststefalcon"
     delSystem "$md_id" "atarist"
