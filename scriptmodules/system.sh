@@ -81,8 +81,6 @@ function get_os_version() {
                 8)
                     __raspbian_ver=8
                     __raspbian_name="jessie"
-                    # we don't ship binaries for jessie (yet)
-                    __has_binaries=0
                     return
                     ;;
                 *)
