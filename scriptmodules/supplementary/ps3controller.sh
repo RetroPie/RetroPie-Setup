@@ -15,7 +15,12 @@ rp_module_menus="3+configure"
 rp_module_flags="nobin"
 
 function depends_ps3controller() {
-    getDepends bluez-utils bluez-compat bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick libusb-1.0-0-dev
+    getDepends bluez-hcidump checkinstall libusb-dev libbluetooth-dev joystick libusb-1.0-0-dev
+    if [[ "$__raspbian_ver" -lt "8" ]]; then
+        getDepends bluez-utils bluez-compat
+    else
+        getDepends bluez
+    fi
 }
 
 function sources_ps3controller() {
