@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-# This file is part of RetroPie.
+# This file is part of The RetroPie Project
 # 
-# (c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed wit this distribution.
 # 
 # See the LICENSE.md file at the top-level directory of this distribution and 
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
@@ -14,8 +15,7 @@ rp_module_menus="4+"
 rp_module_flags="!odroid"
 
 function depends_mupen64plus-testing() {
-    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev
-    [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
+    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev gcc-4.8
 }
 
 function sources_mupen64plus-testing() {
@@ -75,11 +75,7 @@ function build_mupen64plus-testing() {
     $md_build/GLideN64/src/getRevision.sh
     pushd $md_build/GLideN64/projects/cmake
     # this plugin needs at least gcc-4.8
-    if [[ "$__default_gcc_version" == "4.7" ]]; then
-        cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On ../../src/
-    else
-        cmake -DMUPENPLUSAPI=On ../../src/
-    fi
+    cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On ../../src/
     make
     popd
     
