@@ -43,7 +43,9 @@ function install_lr-fba-next() {
 
 function configure_lr-fba-next() {
     mkRomDir "fba"
+    mkRomDir "neogeo"
     ensureSystemretroconfig "fba"
+    ensureSystemretroconfig "neogeo"
 
     local def=1
     isPlatform "rpi1" && def=0

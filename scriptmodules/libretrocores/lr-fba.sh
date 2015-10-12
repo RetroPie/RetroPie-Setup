@@ -48,7 +48,9 @@ function configure_lr-fba() {
     rm -rf "$rootdir/$md_type/fbalibretro"
 
     mkRomDir "fba"
+    mkRomDir "neogeo"
     ensureSystemretroconfig "fba"
+    ensureSystemretroconfig "neogeo"
 
     delSystem "$md_inst" "fba-libretro"
     addSystem 0 "$md_id" "neogeo" "$md_inst/fb_alpha_libretro.so"
