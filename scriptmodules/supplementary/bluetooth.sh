@@ -15,7 +15,10 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function depends_bluetooth() {
-    getDepends bluez-utils bluez-compat bluez-hcidump bluetooth
+    getDepends bluez-hcidump bluetooth
+    if [[ "$__raspbian_ver" -lt "8" ]]; then
+        getDepends bluez-utils bluez-compat
+    fi
 }
 
 function list_available_bluetooth() {
