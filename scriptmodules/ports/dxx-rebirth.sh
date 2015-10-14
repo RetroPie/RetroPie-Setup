@@ -31,7 +31,7 @@ function sources_dxx-rebirth() {
 function build_dxx-rebirth() {
     scons -c
     if [[ "$__default_gcc_version" == "4.7" ]]; then
-        scons raspberrypi=1 debug=1 CXX="g++-4.8" CC="gcc-4.8"
+        scons raspberrypi=1 debug=1 CXX="g++-4.8"
     else
         scons raspberrypi=1 debug=1
     fi
