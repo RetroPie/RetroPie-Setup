@@ -20,7 +20,11 @@ function sources_lr-mgba() {
 
 function build_lr-mgba() {
     make -f Makefile.libretro clean
-    make -f Makefile.libretro platform=armvhardfloat
+    if isPlatform "rpi1"; then
+        make -f Makefile.libretro
+    else
+        make -f Makefile.libretro HAVE_NEON=1
+    fi
     md_ret_require="$md_build/mgba_libretro.so"
 }
 
