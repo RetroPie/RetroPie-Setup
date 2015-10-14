@@ -10,11 +10,11 @@
 #
 
 rp_module_id="uae4arm"
-rp_module_desc="Amiga emulator RPI2 with JIT support"
+rp_module_desc="Amiga emulator with JIT support"
 rp_module_menus="4+"
 
 function depends_uae4arm() {
-    getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev libguichan-dev
+    getDepends libsdl1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev libguichan-dev
 }
 
 function sources_uae4arm() {
@@ -22,7 +22,11 @@ function sources_uae4arm() {
 }
 
 function build_uae4arm() {
-    make
+    if isPlatform "rpi"; then
+        make PLATFORM=rpi1 CPU_FLAGS=""
+    else
+        make PLATFORM=rpi2 CPU_FLAGS="-mfpu=neon"
+    fi
     md_ret_require="$md_build/uae4arm"
 }
 
