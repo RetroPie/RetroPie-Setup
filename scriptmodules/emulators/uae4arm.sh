@@ -54,7 +54,7 @@ function configure_uae4arm() {
     cat > "$romdir/amiga/+Start UAE4Arm.sh" << _EOF_
 #!/bin/bash
 pushd "$md_inst"
-$rootdir/supplementary/runcommand/runcommand.sh 0 ./uae4arm "$md_id"
+./uae4arm
 popd
 _EOF_
     chmod a+x "$romdir/amiga/+Start UAE4Arm.sh"

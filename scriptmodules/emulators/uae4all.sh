@@ -110,7 +110,7 @@ function configure_uae4all() {
     cat > "$romdir/amiga/+Start UAE4All.sh" << _EOF_
 #!/bin/bash
 pushd "$md_inst"
-$rootdir/supplementary/runcommand/runcommand.sh 0 ./uae4all "$md_id"
+./uae4all
 popd
 _EOF_
     chmod a+x "$romdir/amiga/+Start UAE4All.sh"
