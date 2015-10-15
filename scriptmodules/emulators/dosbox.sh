@@ -81,11 +81,6 @@ _EOF_
         iniSet "scaler" "none"
     fi
 
-    # slight hack so that we set dosbox as the default emulator for "+Start DOSBox.sh"
-    iniConfig "=" '"' "$configdir/all/emulators.cfg"
-    iniSet "ab19770b84adcb74b0044f78b79000379" "dosbox"
-    chown $user:$user "$configdir/all/emulators.cfg"
-
-    addSystem 1 "$md_id" "pc" "$romdir/pc/+Start\ DOSBox.sh %ROM%" "" ".sh"
+    addSystem 1 "$md_id" "pc" "$romdir/pc/+Start\ DOSBox.sh %ROM%"
 }
 

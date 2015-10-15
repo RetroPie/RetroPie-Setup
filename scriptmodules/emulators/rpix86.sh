@@ -41,9 +41,5 @@ _EOF_
     chown $user:$user "$romdir/pc/+Start rpix86.sh"
     ln -sfn "$romdir/pc" games
 
-    # slight hack so that we set rpix86 as the default emulator for "+Start rpix86.sh"
-    iniConfig "=" '"' "$configdir/all/emulators.cfg"
-    iniSet "ab8b60b52cfe22d5b794c1aef1b0062b7" "rpix86"
-    chown $user:$user "$configdir/all/emulators.cfg"
-    addSystem 0 "$md_id" "pc" "$romdir/pc/+Start\ rpix86.sh %ROM%" "" ".sh"
+    addSystem 0 "$md_id" "pc" "$romdir/pc/+Start\ rpix86.sh %ROM%"
 }
