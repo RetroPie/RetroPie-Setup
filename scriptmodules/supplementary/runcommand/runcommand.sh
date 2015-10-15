@@ -50,8 +50,17 @@ function get_params() {
 
     # if the command is _SYS_, arg 3 should be system name, and arg 4 rom/game, and we look up the configured system for that combination
     if [[ "$command" == "_SYS_" ]]; then
-        is_sys=1
-        get_sys_command "$3" "$4"
+        # if the rom is actually a special +Start System.sh script, we should launch the script directly.
+        if [[ "$4" =~ \/\+Start\ (.+)\.sh$ ]]; then
+            # extract emulator from the name (and lowercase it)
+            emulator=${BASH_REMATCH[1],,}
+            is_sys=0
+            command="$4"
+            system="$3"
+        else
+            is_sys=1
+            get_sys_command "$3" "$4"
+        fi
     else
         is_sys=0
         emulator="$3"
