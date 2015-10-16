@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
-# This file is part of RetroPie.
+# This file is part of The RetroPie Project
 # 
-# (c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
 # 
 # See the LICENSE.md file at the top-level directory of this distribution and 
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="lr-ppsspp"
-rp_module_desc="PSP emu - PPSSPP"
+rp_module_desc="PlayStation Portable emu - PPSSPP port for libretro"
 rp_module_menus="4+"
+rp_module_flags="!rpi1"
 
 function sources_lr-ppsspp() {
-    gitPullOrClone "$md_build" https://github.com/gizmo98/ppsspp.git rpi-fix
+    gitPullOrClone "$md_build" https://github.com/gizmo98/ppsspp.git rpi-test
     git submodule update --init
 }
 
@@ -26,11 +28,18 @@ function build_lr-ppsspp() {
 function install_lr-ppsspp() {
     md_ret_files=(
         'libretro/ppsspp_libretro.so'
+        'assets'
+        'flash0'
     )
 }
 
 function configure_lr-ppsspp() {
     mkRomDir "psp"
+    ensureSystemretroconfig "psp"
+
+    mkUserDir "$biosdir/PPSSPP"
+    cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
+    cp -Rv "$md_inst/flash0" "$biosdir/PPSSPP/"
 
     delSystem "$md_id" "psp-ppsspp"
     addSystem 0 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"
