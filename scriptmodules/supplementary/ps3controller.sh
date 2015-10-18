@@ -69,15 +69,50 @@ _EOF_
     chmod +x "$md_inst/bluetooth.sh"
 
     # If a PS3 controller is connected over usb check if bluetooth dongle exits and start sixpair
-    cat > "$md_inst/ps3pair.sh" << _EOF_  
+    cat > "$md_inst/ps3pair.sh" << _EOF_
 #!/bin/bash
 if hcitool dev | grep -q "hci0"; then
-    hciconfig hci0 pscan
-    $md_inst/sixpair
+    # Check if sixad is running
+    if service sixad status | grep -q "sixad is running"; then
+        # activate bt dongle if necessary
+        if !(hciconfig | grep -q "RUNNING"); then
+            hciconfig hci0 up
+        fi
+        # Make bt dongle discoverable
+        if !(hciconfig | grep -q "PSCAN"); then
+            hciconfig hci0 pscan
+        fi
+        # Write bt dongle's mac address into controller
+        $md_inst/sixpair
+    else
+        echo "sixad is not running!"
+    fi
 fi
 _EOF_
 
     chmod +x "$md_inst/ps3pair.sh"
+
+    # If a PS3 controller is paired for the first time pscan will be disabled. Enable again.
+    cat > "$md_inst/ps3helper.sh" << _EOF_
+#!/bin/bash
+if hcitool dev | grep -q "hci0"; then
+    # Check if sixad is running
+    if service sixad status | grep -q "sixad is running"; then
+        # activate bt dongle if necessary
+        if !(hciconfig | grep -q "RUNNING"); then
+            hciconfig hci0 up
+        fi
+        # make bt dongle discoverable if necessary
+        if !(hciconfig | grep -q "PSCAN"); then
+            hciconfig hci0 pscan
+        fi
+    else
+        echo "sixad is not running!"
+    fi
+fi
+_EOF_
+
+    chmod +x "$md_inst/ps3helper.sh"
 
     # udev rule for bluetooth dongle
     cat > "/etc/udev/rules.d/10-local.rules" << _EOF_  
@@ -89,6 +124,7 @@ _EOF_
     cat > "/etc/udev/rules.d/99-sixpair.rules" << _EOF_
 # Pair if PS3 controller is connected
 DRIVER=="usb", SUBSYSTEM=="usb", ATTR{idVendor}=="054c", ATTR{idProduct}=="0268", RUN+="$md_inst/ps3pair.sh"
+SUBSYSTEM=="input", ATTR{name}=="PLAYSTATION(R)3 Controller", RUN+="/opt/retropie/supplementary/ps3controller/ps3helper.sh"
 _EOF_
 
     # add default sixad settings
@@ -138,40 +174,6 @@ function pair_ps3controller() {
     fi
 
     printMsgs "dialog" "Please make sure that your Bluetooth dongle is connected to the Raspberry Pi and press ENTER."
-    while true; do
-        if hcitool dev | grep -q "hci0"; then
-            hciconfig hci0 pscan
-            break
-        else
-            dialog --backtitle "$__backtitle" --yesno "Can't find your Bluetooth dongle. Try again?" 22 76 2>&1 >/dev/tty
-            case $? in
-                0)
-                    continue
-                    ;;
-                *)
-                    return
-                    ;;  
-            esac
-        fi
-    done
-
-    printMsgs "dialog" "Please connect your PS3 controller via USB-CABLE and press ENTER."
-    while true; do
-        if "$md_inst/sixpair" | grep -q "Setting master"; then
-            break
-        else
-            dialog --backtitle "$__backtitle" --yesno "Can't find your PS3 Controller. Please check it is connected via USB. \n\nTry again?" 22 76 2>&1 >/dev/tty
-            case $? in
-                0)
-                    continue
-                    ;;
-                *)
-                    return
-                    ;;  
-            esac
-        fi
-    done
-
     printMsgs "dialog" "The driver and configuration tools for connecting PS3 controllers have been installed. \n\nPlease disconnect your PS3 controller from its USB connection, and press the PS button to connect via Bluetooth."
 }
 
