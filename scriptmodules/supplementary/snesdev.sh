@@ -19,8 +19,7 @@ function sources_snesdev() {
 }
 
 function build_snesdev() {
-    make clean
-    make
+    make -j1
     md_ret_require="$md_build/src/SNESDev"
 }
 
