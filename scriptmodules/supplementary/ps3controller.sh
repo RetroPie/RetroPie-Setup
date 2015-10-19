@@ -173,8 +173,7 @@ function pair_ps3controller() {
         done
     fi
 
-    printMsgs "dialog" "Please make sure that your Bluetooth dongle is connected to the Raspberry Pi and press ENTER."
-    printMsgs "dialog" "The driver and configuration tools for connecting PS3 controllers have been installed. \n\nPlease disconnect your PS3 controller from its USB connection, and press the PS button to connect via Bluetooth."
+    printMsgs "dialog" "The driver and configuration tools for connecting PS3 controllers have been installed. \n\nPlease connect your PS3 controller anytime to its USB connection, to setup Bluetooth connection. \n\nAfterwards disconnect your PS3 controller from its USB connection, and press the PS button to connect via Bluetooth."
 }
 
 function configure_ps3controller() {
