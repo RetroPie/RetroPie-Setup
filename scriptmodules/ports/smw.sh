@@ -39,6 +39,7 @@ function configure_smw() {
 $rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/smw" "$md_id"
 _EOF_
 
+    chown $user:$user "$romdir/ports/Super Mario War.sh"
     chmod +x "$romdir/ports/Super Mario War.sh"
 
     setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
