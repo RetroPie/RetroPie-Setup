@@ -15,10 +15,7 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function depends_bluetooth() {
-    getDepends bluez-hcidump bluetooth
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        getDepends bluez-utils bluez-compat
-    fi
+    getDepends bluetooth
 }
 
 function list_available_bluetooth() {
@@ -43,9 +40,9 @@ function list_registered_bluetooth() {
 
 function display_active_and_registered_bluetooth() {
     local registered_devices="There are no registered devices"
-    [[ "$(bluez-test-device list)" != "" ]] && registered_devices=$(bluez-test-device list)
+    [[ "$(bluez-test-device list)" != "" ]] && registered_devices="$(bluez-test-device list)"
     local active_connections="There are no active connections"
-    [[ "$(hcitool con)" != "Connections:" ]] && active_connections=$(hcitool con | sed -e 1d)
+    [[ "$(hcitool con)" != "Connections:" ]] && active_connections="$(hcitool con | sed -e 1d)"
 
     printMsgs "dialog" "Registered Devices:\n\n$registered_devices\n\n\nActive Connections:\n\n$active_connections"
 }
@@ -92,36 +89,90 @@ function connect_bluetooth() {
 
     if [[ ${#mac_addresses[@]} -eq 0 ]] ; then
         printMsgs "dialog" "No devices were found. Ensure device is on and try again"
-    else
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the bluetooth device you would like to connect to" 22 76 16)
-        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        [[ -z "$choice" ]] && return
+        return
+    fi
 
-        exec 5>&1
-        local ret
-        ret=$(bluez-simple-agent hci0 "$choice" >&5)
-        if [[ -z "$ret" ]] || [[ "$ret" != "Creating device filed: org.bluez.Error.AlreadyExists: Already Exists" ]] ; then
-            ret=$(bluez-test-device trusted "$choice" yes >&5)
-            if [[ -z "$ret" ]] ; then
-                ret=$(bluez-test-input connect "$choice" >&5)
-                if [[ -z "$ret" ]]; then
-                    printMsgs "dialog" "Bluetooth device has been connected"
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the bluetooth device you would like to connect to" 22 76 16)
+    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$choice" ]] && return
+
+    mac_address="$choice"
+
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the security mode - Try the first one, then second if that fails" 22 76 16)
+    options=(
+        1 "DisplayYesNo"
+        2 "KeyboardDisplay"
+    )
+    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$choice" ]] && return
+
+    local opts=""
+    [[ "$choice" == "1" ]] && opts="-c DisplayYesNo"
+
+    # create a named pipe & fd for input for bluez-simple-agent
+    local fifo="$(mktemp -u)"
+    mkfifo "$fifo"
+    exec 3<>"$fifo"
+    local line
+    local pin
+    local error=""
+    while read -r line; do
+        case "$line" in
+            "RequestPinCode"*)
+                cmd=(dialog --nocancel --backtitle "$__backtitle" --menu "Please choose a pin" 22 76 16)
+                options=(
+                    1 "Pin 0000"
+                    2 "Enter own Pin"
+                )
+                choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+                pin="0000"
+                if [[ "$choice" == "2" ]]; then
+                    pin=$(dialog --backtitle "$__backtitle" --inputbox "Please enter a pin" 10 60 2>&1 >/dev/tty)
                 fi
+                dialog --backtitle "$__backtitle" --infobox "Please enter pin $pin on your bluetooth device" 10 60
+                echo "$pin" >&3
+                # read "Enter PIN Code:"
+                read -n 15 line
+                ;;
+            "DisplayPasskey"*)
+                # extract key from end of line
+                # DisplayPasskey (/org/bluez/1284/hci0/dev_01_02_03_04_05_06, 123456)
+                [[ "$line" =~ ,\ (.+)\) ]] && pin=${BASH_REMATCH[1]}
+                dialog --backtitle "$__backtitle" --infobox "Please enter pin $pin on your bluetooth device" 10 60
+                ;;
+            "Release")
+                success=1
+                ;;
+            "Creating device failed"*)
+                error="$line"
+                ;;
+        esac
+    # read from bluez-simple-agent buffered line by line
+    done < <(stdbuf -oL bluez-simple-agent $opts hci0 "$mac_address" <&3)
+    exec 3>&-
+    rm -f "$fifo"
+
+    if [[ -z "$error" ]]; then
+        error=$(bluez-test-device trusted "$mac_address" yes)
+        if [[ -z "$error" ]] ; then
+            error=$(bluez-test-input connect "$mac_address")
+            if [[ -z "$error" ]]; then
+                printMsgs "dialog" "Successfully registered and connected to $mac_address"
+                return 0
             fi
         fi
-
-        if ! [[ -z "$ret" ]] ; then
-            printMsgs "dialog" "An error occurred connecting to the bluetooth device"
-        fi
     fi
+
+    printMsgs "dialog" "An error occurred connecting to the bluetooth device ($error)"
+    return 1
 }
 
 function configure_bluetooth() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Devices" 22 76 16)
         local options=(
-            1 "Connect to Bluetooth Device"
-            2 "Remove Bluetooth Device"
+            1 "Register and Connect to Bluetooth Device"
+            2 "Unregister and Remove Bluetooth Device"
             3 "Display Registered & Connected Bluetooth Devices"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
