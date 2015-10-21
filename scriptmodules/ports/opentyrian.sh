@@ -25,8 +25,10 @@ function sources_opentyrian() {
 }
 
 function build_opentyrian() {
+    rpSwap on 512
     make clean
     make
+    rpSwap off
     md_ret_require="$md_build/opentyrian"
 }
 
