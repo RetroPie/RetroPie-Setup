@@ -39,7 +39,7 @@ function configure_opentyrian() {
 
     # get Tyrian 2.1 (freeware game data)
     wget -q -O tyrian21.zip http://www.camanis.net/tyrian/tyrian21.zip
-    unzip -j tyrian21.zip -d "$romdir/ports/opentyrian/data"
+    unzip -j -o tyrian21.zip -d "$romdir/ports/opentyrian/data"
     rm -f tyrian21.zip
 
     cat > "$romdir/ports/OpenTyrian.sh" << _EOF_
