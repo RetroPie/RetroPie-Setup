@@ -52,5 +52,5 @@ _EOF_
 
     chmod +x "$romdir/ports/Quake III Arena.sh"
 
-    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'    
+    addPorts
 }

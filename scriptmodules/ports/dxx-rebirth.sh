@@ -146,5 +146,5 @@ _EOF_
     chown $user:$user "$romdir/ports/Descent 2 Rebirth.sh"
     
     # Add descent1 to emulationstation
-    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
+    addPorts
 }

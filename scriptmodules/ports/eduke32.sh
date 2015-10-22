@@ -58,5 +58,5 @@ $rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/eduke32 -j$romdir/po
 _EOF_
     chmod +x "$romdir/ports/Duke3D Shareware.sh"
 
-    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports' 
+    addPorts
 }

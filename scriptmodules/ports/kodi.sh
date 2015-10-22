@@ -37,5 +37,5 @@ _EOF_
 
     chmod +x "$romdir/ports/Kodi.sh"
 
-    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
+    addPorts
 }

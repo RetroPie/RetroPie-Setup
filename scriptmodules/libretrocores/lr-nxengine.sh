@@ -48,7 +48,7 @@ fi
 _EOF_
     chmod +x "$romdir/ports/Cave Story.sh"
 
-    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
+    addPorts
 
     __INFMSGS+=("$msg")
 }

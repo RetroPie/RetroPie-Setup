@@ -540,3 +540,7 @@ function delSystem() {
         iniDel "$id"
     fi
 }
+
+function addPorts() {
+    setESSystem "Ports" "ports" "$romdir/ports" ".sh .SH" "%ROM%" "pc" "ports"
+}

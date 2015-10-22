@@ -50,5 +50,5 @@ $rootdir/supplementary/runcommand/runcommand.sh 0 "$emudir/retroarch/bin/retroar
 _EOF_
     chmod +x "$romdir/ports/Doom 1 Shareware.sh"
 
-    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'    
+    addPorts
 }

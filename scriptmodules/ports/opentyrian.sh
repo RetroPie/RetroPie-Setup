@@ -57,5 +57,5 @@ _EOF_
     setDispmanx "$md_id" 1
 
     # Add OpenTyrian to EmulationStation
-    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
+    addPorts
 }

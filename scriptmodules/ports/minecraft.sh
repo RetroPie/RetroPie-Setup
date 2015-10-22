@@ -39,5 +39,5 @@ $rootdir/supplementary/runcommand/runcommand.sh 0 "xinit \"$md_inst/Minecraft.sh
 _EOF_
     chmod +x "$romdir/ports/Minecraft.sh"
 
-    setESSystem 'Ports' 'ports' '~/RetroPie/roms/ports' '.sh .SH' '%ROM%' 'pc' 'ports'
+    addPorts
 }
