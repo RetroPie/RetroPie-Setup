@@ -36,7 +36,7 @@ function configure_lr-4do() {
     mkRomDir "3do"
     ensureSystemretroconfig "3do"
 
-    setESSystem "3DO" "3do" "~/RetroPie/roms/3do" ".iso .ISO" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$emudir/retroarch/bin/retroarch -L $md_inst/4do_libretro.so --config $configdir/3do/retroarch.cfg %ROM%\" \"$md_id\"" "3do" "3do"
+    addSystem 1 "$md_id" "3do" "$md_inst/4do_libretro.so"
 
     __INFMSGS+=("For the 3DO emulator you need to copy panazf10.bin to the folder $biosdir.")
 }
