@@ -30,11 +30,7 @@ function configure_rpix86() {
 #!/bin/bash
 params="\$1"
 pushd "$md_inst"
-if [[ "\$params" =~ \.sh$ ]]; then
-    ./rpix86 -a0 -f2
-else
-    ./rpix86 -a0 -f2 "\$params"
-fi
+./rpix86 -a0 -f2 "\$params"
 popd
 _EOF_
     chmod +x "$romdir/pc/+Start rpix86.sh"

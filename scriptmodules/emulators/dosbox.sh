@@ -50,7 +50,7 @@ function configure_dosbox() {
     cat > "$romdir/pc/+Start DOSBox.sh" << _EOF_
 #!/bin/bash
 params="\$1"
-if [[ "\$params" =~ "+Start DOSBox.sh" ]]; then
+if [[ -z "\$params" ]]; then
     params="-c \"MOUNT C $romdir/pc\""
 elif [[ "\$params" =~ \.sh$ ]]; then
     bash "\$params"
