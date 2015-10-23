@@ -41,7 +41,7 @@ function install_snesdev() {
 }
 
 function sup_checkInstallSNESDev() {
-    if [[ ! -d "$md_inst" ]]; then
+    if [[ ! -f "$md_inst/src/SNESDev" ]]; then
         rp_callModule snesdev sources
         rp_callModule snesdev build
         rp_callModule snesdev install
