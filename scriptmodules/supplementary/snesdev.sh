@@ -46,9 +46,9 @@ function install_bin_snesdev() {
 
 function sup_checkInstallSNESDev() {
     if [[ ! -d "$md_inst" ]]; then
-        sources_snesdev
-        build_snesdev
-        install_snesdev
+        rp_callModule snesdev sources
+        rp_callModule snesdev build
+        rp_callModule snesdev install
     fi
 }
 
