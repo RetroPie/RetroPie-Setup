@@ -44,18 +44,11 @@ function configure_opentyrian() {
     unzip -j -o tyrian21.zip -d "$romdir/ports/opentyrian/data"
     rm -f tyrian21.zip
 
-    cat > "$romdir/ports/OpenTyrian.sh" << _EOF_
-#!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/bin/opentyrian --data $romdir/ports/opentyrian/data" "$md_id"
-_EOF_
-
-    # Set startup script permissions
-    chmod +x "$romdir/ports/OpenTyrian.sh"
-    chown $user:$user "$romdir/ports/OpenTyrian.sh"
-
     # Enable dispmanx by default.
     setDispmanx "$md_id" 1
 
-    # Add OpenTyrian to EmulationStation
-    addPorts
+    addPort "OpenTyrian" << _EOF_
+#!/bin/bash
+$rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/bin/opentyrian --data $romdir/ports/opentyrian/data" "$md_id"
+_EOF_
 }

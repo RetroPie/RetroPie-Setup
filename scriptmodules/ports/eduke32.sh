@@ -52,11 +52,8 @@ function configure_eduke32() {
         ln -snv "$file" "$romdir/ports/duke3d/$file_bn"
     done
 
-    cat > "$romdir/ports/Duke3D Shareware.sh" << _EOF_
+    addPort "Duke3D Shareware" << _EOF_
 #!/bin/bash
 $rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/eduke32 -j$romdir/ports/duke3d" "$md_id"
 _EOF_
-    chmod +x "$romdir/ports/Duke3D Shareware.sh"
-
-    addPorts
 }

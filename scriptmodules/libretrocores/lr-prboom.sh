@@ -44,11 +44,8 @@ function configure_lr-prboom() {
 
     chown $user:$user "$romdir/ports/doom/"*
 
-    cat > "$romdir/ports/Doom 1 Shareware.sh" << _EOF_
+    addPort "Doom 1 Shareware" << _EOF_
 #!/bin/bash
 $rootdir/supplementary/runcommand/runcommand.sh 0 "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $configdir/doom/retroarch.cfg $romdir/ports/doom/doom1.wad" "$md_id"
 _EOF_
-    chmod +x "$romdir/ports/Doom 1 Shareware.sh"
-
-    addPorts
 }

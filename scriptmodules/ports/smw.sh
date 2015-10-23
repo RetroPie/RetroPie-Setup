@@ -34,13 +34,8 @@ function install_smw() {
 function configure_smw() {
     mkRomDir "ports"
 
-    cat > "$romdir/ports/Super Mario War.sh" << _EOF_
+    addPort "Super Mario War" << _EOF_
 #!/bin/bash
 $rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/smw" "$md_id"
 _EOF_
-
-    chown $user:$user "$romdir/ports/Super Mario War.sh"
-    chmod +x "$romdir/ports/Super Mario War.sh"
-
-    addPorts
 }

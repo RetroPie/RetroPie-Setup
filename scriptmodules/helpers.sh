@@ -541,6 +541,11 @@ function delSystem() {
     fi
 }
 
-function addPorts() {
+function addPort() {
+    local file="$romdir/ports/$1.sh"
+    cat >"$file"
+    chown $user:$user "$file"
+    chmod +x "$file"
+
     setESSystem "Ports" "ports" "$romdir/ports" ".sh .SH" "%ROM%" "pc" "ports"
 }

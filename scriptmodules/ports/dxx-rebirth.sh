@@ -99,15 +99,10 @@ function configure_dxx-rebirth() {
 
     chown -R $user:$user "$romdir/ports/descent1"
 
-    # Create startup script
-    cat > "$romdir/ports/Descent Rebirth.sh" << _EOF_
+    addPort "Descent Rebirth" << _EOF_
 #!/bin/bash
 $md_inst/d1x-rebirth -hogdir $romdir/ports/descent1
 _EOF_
-    
-    # Set startup script permissions
-    chmod u+x "$romdir/ports/Descent Rebirth.sh"
-    chown $user:$user "$romdir/ports/Descent Rebirth.sh"
     
     # Descent 2
     mkRomDir "ports/descent2"
@@ -135,16 +130,8 @@ _EOF_
 
     chown -R $user:$user "$romdir/ports/descent2"
 
-    # Create startup script
-    cat > "$romdir/ports/Descent 2 Rebirth.sh" << _EOF_
+    addPort "Descent 2 Rebirth" << _EOF_
 #!/bin/bash
 $md_inst/d2x-rebirth -hogdir $romdir/ports/descent2
 _EOF_
-
-    # Set startup script permissions
-    chmod u+x "$romdir/ports/Descent 2 Rebirth.sh"
-    chown $user:$user "$romdir/ports/Descent 2 Rebirth.sh"
-    
-    # Add descent1 to emulationstation
-    addPorts
 }
