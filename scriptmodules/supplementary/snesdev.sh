@@ -137,7 +137,5 @@ function configure_snesdev() {
                 printMsgs "dialog" "Switched to adapter version 2.X."
                 ;;
         esac
-    else
-        break
     fi
 }
