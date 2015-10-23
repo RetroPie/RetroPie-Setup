@@ -68,6 +68,8 @@ function install_dxx-rebirth() {
 }
 
 function configure_dxx-rebirth() {
+    mkRomDir "ports"
+
     # Descent 1
     mkRomDir "ports/descent1"
     mkUserDir "$configdir/descent1"

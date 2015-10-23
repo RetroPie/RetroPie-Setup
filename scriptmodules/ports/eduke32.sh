@@ -42,6 +42,7 @@ function install_eduke32() {
 }
 
 function configure_eduke32() {
+    mkRomDir "ports"
     mkRomDir "ports/duke3d"
 
     local file

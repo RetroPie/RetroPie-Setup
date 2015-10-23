@@ -37,6 +37,7 @@ function install_opentyrian() {
 }
 
 function configure_opentyrian() {
+    mkRomDir "ports"
     mkRomDir "ports/opentyrian"
 
     # get Tyrian 2.1 (freeware game data)

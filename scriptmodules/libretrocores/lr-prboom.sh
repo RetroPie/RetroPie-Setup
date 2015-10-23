@@ -34,6 +34,7 @@ function configure_lr-prboom() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/doom"
 
+    mkRomDir "ports"
     mkRomDir "ports/doom"
     ensureSystemretroconfig "doom"
 
