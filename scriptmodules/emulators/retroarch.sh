@@ -26,9 +26,6 @@ function sources_retroarch() {
     gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git
     gitPullOrClone "$md_build/overlays" https://github.com/libretro/common-overlays.git
     gitPullOrClone "$md_build/shader" https://github.com/gizmo98/common-shaders.git
-    # disable the search dialog which doesn't work - https://github.com/libretro/RetroArch/issues/1432
-    sed -i 's|menu_input_search_start|//menu_input_search_start|g' $md_build/menu/menu_entry.c
-
 }
 
 function build_retroarch() {
@@ -113,6 +110,12 @@ function configure_retroarch() {
     iniSet "input_autodetect_enable" "true"
     iniSet "joypad_autoconfig_dir" "$configdir/all/retroarch-joypads/"
     iniSet "auto_remaps_enable" "true"
+
+    # use analog sticks as dpad
+    for i in {1..8}
+    do
+        iniSet "input_player${i}_analog_dpad_mode" "1"
+    done 
 
     chown $user:$user "$config"
 }
