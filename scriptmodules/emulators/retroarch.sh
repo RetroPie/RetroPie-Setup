@@ -111,5 +111,11 @@ function configure_retroarch() {
     iniSet "joypad_autoconfig_dir" "$configdir/all/retroarch-joypads/"
     iniSet "auto_remaps_enable" "true"
 
+    # use analog sticks as dpads
+    local i
+    for i in {1..8}; do
+        iniSet "input_player${i}_analog_dpad_mode" "1"
+    done 
+
     chown $user:$user "$config"
 }
