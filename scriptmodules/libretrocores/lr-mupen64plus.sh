@@ -151,7 +151,7 @@ rom name=Mega Man 64
 framebuffer enable=1
 target FPS=25
 _EOF_
-    chown $user:$user "$biosdir/"{mupen64plus.cht,mupencheat.txt,mupen64plus.ini,font.ttf,gles2n64rom.conf}
+    chown $user:$user "$biosdir/gles2n64rom.conf"
 
     addSystem 1 "$md_id" "n64" "$md_inst/mupen64plus_libretro.so"
 }
