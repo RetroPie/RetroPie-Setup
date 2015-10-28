@@ -20,7 +20,7 @@ function depends_ppsspp() {
 }
 
 function sources_ppsspp() {
-    gitPullOrClone "$md_build" https://github.com/hrydgard/ppsspp
+    gitPullOrClone "$md_build" https://github.com/joolswills/ppsspp.git raspbian_fix
     git submodule update --init
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
@@ -72,9 +72,9 @@ function build_ppsspp() {
     # build ppsspp - we override CFLAGS, as currently ppsspp only works on pi2 when built for armv6
     rm -f CMakeCache.txt
     if [[ "$__default_gcc_version" == "4.7" ]]; then
-        CXXFLAGS="" CFLAGS="" cmake -DCMAKE_CXX_COMPILER=g++-4.8 -DCMAKE_C_COMPILER=gcc-4.8 .
+        cmake -DCMAKE_CXX_COMPILER=g++-4.8 -DCMAKE_C_COMPILER=gcc-4.8 -DRASPIAN=ON .
     else
-        CXXFLAGS="" CFLAGS="" cmake .
+        cmake -DRASPIAN=ON .
     fi
     make clean
     make

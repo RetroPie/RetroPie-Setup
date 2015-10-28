@@ -32,13 +32,11 @@ function build_lr-ppsspp() {
     build_ffmpeg_ppsspp
     cd "$md_build"
     
-    # build lr-ppsspp - we override CFLAGS, as currently ppsspp only works on pi2 when built for armv6 
-    local cpu_flags="-mfpu=vfp -march=armv6j -mfloat-abi=hard"
     make -C libretro clean
     if [[ "$__default_gcc_version" == "4.7" ]]; then
-        CFLAGS="$cpu_flags" CXXFLAGS="$cpu_flags" make -C libretro platform=rpi2 CC=gcc-4.8 CXX=g++-4.8
+        make -C libretro platform=rpi2 CC=gcc-4.8 CXX=g++-4.8
     else
-        CFLAGS="$cpu_flags" CXXFLAGS="$cpu_flags" make -C libretro platform=rpi2
+        make -C libretro platform=rpi2
     fi
     md_ret_require="$md_build/libretro/ppsspp_libretro.so"
 }
