@@ -54,7 +54,7 @@ function configure_lr-ppsspp() {
     ensureSystemretroconfig "psp"
 
     mkUserDir "$biosdir/PPSSPP"
-    cp -Rv "$md_inst/assets" "$biosdir/PPSSPP/"
+    cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
     cp -Rv "$md_inst/flash0" "$biosdir/PPSSPP/"
     chown -R $user:$user "$biosdir/PPSSPP"
 
