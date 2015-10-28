@@ -55,7 +55,7 @@ function install_ps3controller() {
     # If a bluetooth dongle is connected set state up and enable pscan
     cat > "$md_inst/bluetooth.sh" << _EOF_
 #!/bin/bash
-if hcitool dev | grep -q "hci0"; then
+if hciconfig | grep -q "hci0"; then
     hciconfig hci0 up
     hciconfig hci0 pscan
 fi
@@ -67,7 +67,7 @@ _EOF_
     cat > "$md_inst/ps3helper.sh" << _EOF_
 #!/bin/bash
 params="\$1"
-if hcitool dev | grep -q "hci0"; then
+if hciconfig | grep -q "hci0"; then
     # Check if sixad is running
     if service sixad status | grep -q "sixad is running"; then
         # activate bt dongle if necessary
