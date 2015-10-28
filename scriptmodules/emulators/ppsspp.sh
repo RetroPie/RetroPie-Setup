@@ -72,9 +72,9 @@ function build_ppsspp() {
     # build ppsspp - we override CFLAGS, as currently ppsspp only works on pi2 when built for armv6
     rm -f CMakeCache.txt
     if [[ "$__default_gcc_version" == "4.7" ]]; then
-        cmake -DCMAKE_CXX_COMPILER=g++-4.8 -DCMAKE_C_COMPILER=gcc-4.8 -DRASPIAN=ON .
+        cmake -DCMAKE_CXX_COMPILER=g++-4.8 -DCMAKE_C_COMPILER=gcc-4.8 -DRASPBIAN=ON .
     else
-        cmake -DRASPIAN=ON .
+        cmake -DRASPBIAN=ON .
     fi
     make clean
     make
