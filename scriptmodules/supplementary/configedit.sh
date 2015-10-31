@@ -29,6 +29,14 @@ function common_configedit() {
         'video_aspect_ratio_auto true false'
         'video_shader_enable true false'
         'video_rotation _string_'
+        'input_player1_analog_dpad_mode 0 1 2'
+        'input_player2_analog_dpad_mode 0 1 2'
+        'input_player3_analog_dpad_mode 0 1 2'
+        'input_player4_analog_dpad_mode 0 1 2'
+        'input_player5_analog_dpad_mode 0 1 2'
+        'input_player6_analog_dpad_mode 0 1 2'
+        'input_player7_analog_dpad_mode 0 1 2'
+        'input_player8_analog_dpad_mode 0 1 2'
     )
     
     local descs=(
@@ -42,6 +50,14 @@ function common_configedit() {
         'A floating point value for video aspect ratio (width / height). If this is not set, aspect ratio is assumed to be automatic. Behavior then is defined by video_aspect_ratio_auto.'
         'If this is true and video_aspect_ratio is not set, aspect ratio is decided by libretro implementation. If this is false, 1:1 PAR will always be assumed if video_aspect_ratio is not set.'
         'Forces a certain rotation of the screen. The rotation is added to rotations which the libretro core sets (see video_allow_rotate). The angle is <value> * 90 degrees counter-clockwise.'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
     )
 
     [[ ! -f "$config" ]] && return
