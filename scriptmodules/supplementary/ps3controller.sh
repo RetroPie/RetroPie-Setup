@@ -52,7 +52,19 @@ function install_ps3controller() {
     checkinstall -y --fstrans=no
     insserv sixad
 
-    # If a bluetooth dongle is connected set state up and enable pscan
+    # If a bluetooth dongle is present "at startup" set state up and enable pscan
+    sed -i 's/exit 0//g' "/etc/rc.local"
+    cat >> "/etc/rc.local" <<\_EOF_
+# PS3 PROFILE START
+if hciconfig | grep -q "hci0"; then
+    hciconfig hci0 up
+    hciconfig hci0 pscan
+fi
+# PS3 PROFILE END
+exit 0
+_EOF_
+
+    # If a bluetooth dongle is connected "at runtime" set state up and enable pscan
     cat > "$md_inst/bluetooth.sh" << _EOF_
 #!/bin/bash
 if hciconfig | grep -q "hci0"; then
@@ -69,7 +81,7 @@ _EOF_
 params="\$1"
 if hciconfig | grep -q "hci0"; then
     # Check if sixad is running
-    if service sixad status | grep -q "sixad is running"; then
+    if service sixad status | grep -q -e "sixad is running" -e "active (running)"; then
         # activate bt dongle if necessary
         if !(hciconfig | grep -q "RUNNING"); then
             hciconfig hci0 up
@@ -139,6 +151,7 @@ function remove_ps3controller() {
     rm -f /etc/udev/rules.d/99-sixpair.rules
     rm -f /etc/udev/rules.d/10-local.rules
     rm -rf "$md_inst"
+    sed -i '/PS3 PROFILE START/,/PS3 PROFILE END/d' "/etc/rc.local"
 }
 
 function pair_ps3controller() {
