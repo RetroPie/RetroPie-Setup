@@ -15,7 +15,8 @@ rp_module_menus="2+"
 rp_module_flags="!odroid"
 
 function depends_mupen64plus() {
-    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev gcc-4.8
+    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev
+    [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
 }
 
 function sources_mupen64plus() {
@@ -75,7 +76,11 @@ function build_mupen64plus() {
     $md_build/GLideN64/src/getRevision.sh
     pushd $md_build/GLideN64/projects/cmake
     # this plugin needs at least gcc-4.8
-    cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On ../../src/
+    if [[ "$__default_gcc_version" == "4.7" ]]; then
+        cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On ../../src/
+    else
+        cmake -DMUPENPLUSAPI=On ../../src/
+    fi
     make
     popd
 
