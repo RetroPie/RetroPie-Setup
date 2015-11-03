@@ -71,8 +71,7 @@ function build_mupen64plus() {
         fi
     done
 
-# build GLideN64
-    chmod +x $md_build/GLideN64/src/getRevision.sh
+    # build GLideN64
     $md_build/GLideN64/src/getRevision.sh
     pushd $md_build/GLideN64/projects/cmake
     # this plugin needs at least gcc-4.8
