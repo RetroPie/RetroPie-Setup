@@ -40,7 +40,6 @@ function sources_mupen64plus() {
         dir="$md_build/mupen64plus-${repo[1]}"
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
-    gitPullOrClone "$md_build/mupen64plus-video-settings" https://github.com/gizmo98/mupen64plus-video-settings.git
     gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
 }
 
@@ -101,7 +100,6 @@ function install_mupen64plus() {
             make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" VC=1 install
         fi
     done
-    cp -v "$md_build/mupen64plus-video-settings/"{*.ini,*.conf} "$md_inst/share/mupen64plus/"
     cp "$md_build/GLideN64/ini/GLideN64.custom.ini" "$md_inst/share/mupen64plus/"
     cp "$md_build/GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
 }
