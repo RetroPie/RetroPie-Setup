@@ -39,10 +39,6 @@ function sources_mupen64plus() {
         repo=($repo)
         dir="$md_build/mupen64plus-${repo[1]}"
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
-        # the makefile assumes an armv6l machine is a pi so we need to sed it
-        if isPlatform "rpi2" && [[ -f "$dir/projects/unix/Makefile" ]]; then
-            sed -i "s/armv6l/armv7l/" "$dir/projects/unix/Makefile"
-        fi
     done
     gitPullOrClone "$md_build/mupen64plus-video-settings" https://github.com/gizmo98/mupen64plus-video-settings.git
     gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
