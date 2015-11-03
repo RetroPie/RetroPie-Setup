@@ -110,49 +110,6 @@ function configure_mupen64plus() {
     mkUserDir "$configdir/n64/"
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$configdir/n64/"
-    cat > "$configdir/n64/mupen64plus.cfg" << _EOF_
-[Audio-OMX]
-
-# Mupen64Plus OMX Audio Plugin config parameter version number
-Version = 1
-# Frequency which is used if rom doesn't want to change it
-DEFAULT_FREQUENCY = 32000
-# Swaps left and right channels
-SWAP_CHANNELS = False
-# Audio output to go to (0) Analogue jack, (1) HDMI
-OUTPUT_PORT = 1
-# Point OMX to the raw N64 audio data region instead of copying audio int$
-NATIVE_MODE = False
-# Number of output samples per Audio callback. This is for hardware buffe$
-BUFFER_SIZE = 4096
-# Audio Output Frequncy mode (when NATIVE_MODE=false): 0 = Rom Frequency,$
-DEFAULT_MODE = 0
-# Desired Latency in ms
-LATENCY = 300
-# Underrun Mode, 0 = Ignore, 1 = Report, 2 = repeat audio when latency < $
-UNDERRUN_MODE = 0
-    
-[Video-Rice]
-# Control when the screen will be updated (0=ROM default, 1=VI origin update, 2=VI origin change, 3=CI change, 4=first CI change, 5=first primitive draw, 6=before screen clear, 7=after screen drawn)
-ScreenUpdateSetting = 7
-# Frequency to write back the frame buffer (0=every frame, 1=every other frame, etc)
-FrameBufferWriteBackControl = 1
-# If this option is enabled, the plugin will skip every other frame
-SkipFrame = False
-# If this option is enabled, the plugin will only draw every other screen update
-SkipScreenUpdate = False
-# Force to use texture filtering or not (0=auto: n64 choose, 1=force no filtering, 2=force filtering)
-ForceTextureFilter = 2
-# Primary texture enhancement filter (0=None, 1=2X, 2=2XSAI, 3=HQ2X, 4=LQ2X, 5=HQ4X, 6=Sharpen, 7=Sharpen More, 8=External, 9=Mirrored)
-TextureEnhancement = 6
-# Secondary texture enhancement filter (0 = none, 1-4 = filtered)
-TextureEnhancementControl = 0
-
-[Video-Glide64mk2]
-# Wrapper FBO
-wrpFBO = False
-_EOF_
-
     chown -R $user:$user "$configdir/n64"
     su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
     
