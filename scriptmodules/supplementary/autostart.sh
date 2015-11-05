@@ -29,8 +29,8 @@ _EOF_
     fi
     cat >/etc/profile.d/10-emulationstation.sh <<_EOF_
 # wait for omxplayer to finish playing startup video (if running)
-while pgrep omxplayer >/dev/null;
-    do sleep 1;
+while pgrep omxplayer >/dev/null; do
+    sleep 1;
 done
 
 # launch emulationstation (if we are on the correct tty)
