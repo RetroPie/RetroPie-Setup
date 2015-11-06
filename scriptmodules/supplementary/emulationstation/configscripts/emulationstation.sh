@@ -24,7 +24,7 @@ function onstart_emulationstation_joystick() {
     fi
 
     # make sure that device exists
-    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName='$device_name'])" "$es_conf") -eq 0 ]]; then
+    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName=\"$device_name\"])" "$es_conf") -eq 0 ]]; then
         xmlstarlet ed -L -s "/inputList" -t elem -n newInputConfig -v "" \
             -i //newInputConfig -t attr -n "type" -v "$device_type" \
             -i //newInputConfig -t attr -n "deviceName" -v "$device_name" \
@@ -32,8 +32,8 @@ function onstart_emulationstation_joystick() {
             "$es_conf"
     else
         xmlstarlet ed -L \
-            -u "/inputList/inputConfig[@deviceName='$device_name']/@device_type" -v "$device_type" \
-            -d "/inputList/inputConfig[@deviceName='$device_name']/@deviceGUID" \
+            -u "/inputList/inputConfig[@deviceName=\"$device_name\"]/@device_type" -v "$device_type" \
+            -d "/inputList/inputConfig[@deviceName=\"$device_name\"]/@deviceGUID" \
             "$es_conf"
     fi
 }
@@ -65,8 +65,8 @@ function map_emulationstation_joystick() {
     local es_conf="$home/.emulationstation/es_input.cfg"
 
     # add or update element
-    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName='$device_name']/input[@name='$key'])" "$es_conf") -eq 0 ]]; then
-        xmlstarlet ed -L -s "/inputList/inputConfig[@deviceName='$device_name']" -t elem -n newinput -v "" \
+    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputConfig[@deviceName=\"$device_name\"]/input[@name='$key'])" "$es_conf") -eq 0 ]]; then
+        xmlstarlet ed -L -s "/inputList/inputConfig[@deviceName=\"$device_name\"]" -t elem -n newinput -v "" \
             -i //newinput -t attr -n "name" -v "$key" \
             -i //newinput -t attr -n "type" -v "$input_type" \
             -i //newinput -t attr -n "id" -v "$input_id" \
@@ -75,9 +75,9 @@ function map_emulationstation_joystick() {
             "$es_conf"
     else  # if device already exists, update it
         xmlstarlet ed -L \
-            -u "/inputList/inputConfig[@deviceName='$device_name']/input[@name='$key']/@type" -v "$input_type" \
-            -u "/inputList/inputConfig[@deviceName='$device_name']/input[@name='$key']/@id" -v "$input_id" \
-            -u "/inputList/inputConfig[@deviceName='$device_name']/input[@name='$key']/@value" -v "$input_value" \
+            -u "/inputList/inputConfig[@deviceName=\"$device_name_q\"]/input[@name=\"$key\"]/@type" -v "$input_type" \
+            -u "/inputList/inputConfig[@deviceName=\"$device_name_q\"]/input[@name=\"$key\"]/@id" -v "$input_id" \
+            -u "/inputList/inputConfig[@deviceName=\"$device_name_q\"]/input[@name=\"$key\"]/@value" -v "$input_value" \
             "$es_conf"
     fi
 }
