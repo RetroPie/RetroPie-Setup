@@ -49,5 +49,5 @@ function configure_lr-prboom() {
     # remove old launch script
     rm -f "$romdir/ports/Doom 1 Shareware.sh"
 
-    addPort "$md_id" "doom" "Doom" "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $configdir/doom/retroarch.cfg %ROM%" "$romdir/ports/doom/doom1.wad"
+    addPort "$md_id" "doom" "Doom" "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $configdir/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
 }
