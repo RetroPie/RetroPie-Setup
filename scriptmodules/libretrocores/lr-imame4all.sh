@@ -25,7 +25,7 @@ function build_lr-imame4all() {
 
 function install_lr-imame4all() {
     md_ret_files=(
-        'libretro.so'
+        'imame4all_libretro.so'
         'Readme.txt'
     )
 }
@@ -38,5 +38,5 @@ function configure_lr-imame4all() {
     ensureSystemretroconfig "mame-mame4all"
 
     delSystem "$md_id" "mame-libretro"
-    addSystem 0 "$md_id" "mame-mame4all arcade mame" "$md_inst/libretro.so"
+    addSystem 0 "$md_id" "mame-mame4all arcade mame" "$md_inst/imame4all_libretro.so"
 }

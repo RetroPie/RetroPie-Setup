@@ -101,10 +101,7 @@ function configure_dxx-rebirth() {
 
     chown -R $user:$user "$romdir/ports/descent1"
 
-    addPort "Descent Rebirth" << _EOF_
-#!/bin/bash
-$md_inst/d1x-rebirth -hogdir $romdir/ports/descent1
-_EOF_
+    addPort "$md_id" "descent1" "Descent Rebirth" "$md_inst/d1x-rebirth -hogdir $romdir/ports/descent1"
     
     # Descent 2
     mkRomDir "ports/descent2"
@@ -132,8 +129,5 @@ _EOF_
 
     chown -R $user:$user "$romdir/ports/descent2"
 
-    addPort "Descent 2 Rebirth" << _EOF_
-#!/bin/bash
-$md_inst/d2x-rebirth -hogdir $romdir/ports/descent2
-_EOF_
+    addPort "$md_id" "descent2" "Descent 2 Rebirth" "$md_inst/d2x-rebirth -hogdir $romdir/ports/descent2"
 }

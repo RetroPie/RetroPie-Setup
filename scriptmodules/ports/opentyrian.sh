@@ -48,8 +48,5 @@ function configure_opentyrian() {
     # Enable dispmanx by default.
     setDispmanx "$md_id" 1
 
-    addPort "OpenTyrian" << _EOF_
-#!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/bin/opentyrian --data $romdir/ports/opentyrian/data" "$md_id"
-_EOF_
+    addPort "$md_id" "opentyrian" "OpenTyrian" "$md_inst/bin/opentyrian --data $romdir/ports/opentyrian/data"
 }
