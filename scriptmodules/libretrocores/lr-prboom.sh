@@ -41,9 +41,10 @@ function configure_lr-prboom() {
     cp prboom.wad "$romdir/ports/doom/"
 
     # download doom 1 shareware
-    wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
-
-    chown $user:$user "$romdir/ports/doom/"*
+    if [[ ! -f "$romdir/ports/doom/doom1.wad" ]]; then
+        wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
+    fi
+    chown $user:$user "$romdir/ports/doom/"{doom1.wad,prboom.wad}
 
     # remove old launch script
     rm -f "$romdir/ports/Doom 1 Shareware.sh"
