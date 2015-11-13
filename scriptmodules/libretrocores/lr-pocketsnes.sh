@@ -20,12 +20,12 @@ function sources_lr-pocketsnes() {
 function build_lr-pocketsnes() {
     make clean
     CFLAGS="$CFLAGS -Wa,-mimplicit-it=thumb" make ARM_ASM=1
-    md_ret_require="$md_build/libretro.so"
+    md_ret_require="$md_build/pocketsnes_libretro.so"
 }
 
 function install_lr-pocketsnes() {
     md_ret_files=(
-        'libretro.so'
+        'pocketsnes_libretro.so'
         'README.txt'
     )
 }
@@ -33,11 +33,13 @@ function install_lr-pocketsnes() {
 function configure_lr-pocketsnes() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/pocketsnes"
+    # remove old core library
+    rm -f "$md_inst/libretro.so"
 
     mkRomDir "snes"
     ensureSystemretroconfig "snes" "snes_phosphor.glslp"
 
     local def=0
     isPlatform "rpi1" && def=1
-    addSystem $def "$md_id" "snes" "$md_inst/libretro.so"
+    addSystem $def "$md_id" "snes" "$md_inst/pocketsnes_libretro.so"
 }
