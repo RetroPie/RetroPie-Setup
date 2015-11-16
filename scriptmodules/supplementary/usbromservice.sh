@@ -25,7 +25,7 @@ function enable_usbromservice() {
 }
 
 function disable_usbromservice() {
-    rm -f etc/usbmount/mount.d/01_retropie_copyroms
+    rm -f /etc/usbmount/mount.d/01_retropie_copyroms
 }
 
 function remove_usbromservice() {
