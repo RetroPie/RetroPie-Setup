@@ -238,16 +238,6 @@ function map_retroarch_joystick() {
     done
 }
 
-function onend_retroarch_joystick() {
-    local device_type=$1
-    local device_name=$2
-    local file="${device_name// /}.cfg"
-    if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$file" ]]; then
-        mv "/opt/retropie/configs/all/retroarch-joypads/$file" "/opt/retropie/configs/all/retroarch-joypads/$file.bak"
-    fi
-    mv "/tmp/tempconfig.cfg" "/opt/retropie/configs/all/retroarch-joypads/$file"
-}
-
 function map_retroarch_keyboard() {
     local device_type="$1"
     local device_name="$2"
@@ -319,6 +309,26 @@ function map_retroarch_keyboard() {
 function onend_retroarch_joystick() {
     local device_type=$1
     local device_name=$2
+    
+    # hotkey sanity check
+    # remove hotkeys if there is no hotkey enable button
+    if ! grep -q "input_enable_hotkey" /tmp/tempconfig.cfg; then
+        iniSet "input_state_slot_decrease_btn" ""
+        iniSet "input_state_slot_increase_btn" ""
+        iniSet "input_reset_btn" ""
+        iniSet "input_menu_toggle_btn" ""
+        iniSet "input_load_state_btn" ""
+        iniSet "input_save_state_btn" ""
+        iniSet "input_exit_emulator_btn" ""
+        iniSet "input_state_slot_decrease_axis" ""
+        iniSet "input_state_slot_increase_axis" ""
+        iniSet "input_reset_axis" ""
+        iniSet "input_menu_toggle_axis" ""
+        iniSet "input_load_state_axis" ""
+        iniSet "input_save_state_axis" ""
+        iniSet "input_exit_emulator_axis" ""
+    fi
+    
     # sanitise filename
     local file="${device_name//[ \?\<\>\\\/:\*\|]/}.cfg"
     if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$file" ]]; then
