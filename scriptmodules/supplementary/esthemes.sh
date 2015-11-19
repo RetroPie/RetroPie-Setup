@@ -50,6 +50,9 @@ function configure_esthemes() {
         'robertybob simplebigart'
         'HerbFargus clean-look'
         'HerbFargus turtle-pi'
+        'InsecureSpike retroplay-clean-canela'
+        'InsecureSpike retroplay-clean-detail-canela'
+        'HerbFargus tronkyfran'
     )
     while true; do
         local theme
