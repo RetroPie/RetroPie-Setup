@@ -53,6 +53,9 @@ function configure_esthemes() {
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
         'HerbFargus tronkyfran'
+        'AmadhiX eudora'
+        'AmadhiX eudora-bigshot'
+        'AmadhiX eudora-concise'
     )
     while true; do
         local theme
