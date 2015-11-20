@@ -179,6 +179,30 @@ function iniSet() {
     iniProcess "set" "$1" "$2" "$3"
 }
 
+# arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+function iniDel() {
+    iniProcess "del" "$1" "$2" "$3"
+}
+
+# arg 1: key, arg 2: file (optional - uses file from iniConfig if not used)
+# value ends up in ini_value variable
+function iniGet() {
+    local key="$1"
+    local file="$2"
+    [[ -z "$file" ]] && file="$__ini_cfg_file"
+    if [[ ! -f "$file" ]]; then
+        ini_value=""
+        return 1
+    fi
+    local delim="$__ini_cfg_delim"
+    local quote="$__ini_cfg_quote"
+    # we strip the delimiter of spaces, so we can "fussy" match existing entries that have the wrong spacing
+    local delim_strip=${delim// /}
+    # if the stripped delimiter is empty - such as in the case of a space, just use the delimiter instead
+    [[ -z "$delim_strip" ]] && delim_strip="$delim"
+    ini_value=$(sed -rn "s/^[[:space:]]*$key[[:space:]]*$delim_strip[[:space:]]*$quote(.+)$quote.*/\1/p" $file)
+}
+
 ###### main ######
 
 user=$(id -un)
