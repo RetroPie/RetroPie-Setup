@@ -57,10 +57,5 @@ function configure_lr-tyrquake() {
         chown -R $user:$user "$romdir/ports/quake"
     fi
 
-    ensureSystemretroconfig "quake"
-
-    addPort "Quake" << _EOF_
-#!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 0 "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $configdir/quake/retroarch.cfg $romdir/ports/quake/id1/pak0.pak" "$md_id"
-_EOF_
+    addPort "$md_id" "quake" "Quake" "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $configdir/quake/retroarch.cfg $romdir/ports/quake/id1/pak0.pak"
 }

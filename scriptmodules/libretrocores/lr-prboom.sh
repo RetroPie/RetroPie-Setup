@@ -41,12 +41,13 @@ function configure_lr-prboom() {
     cp prboom.wad "$romdir/ports/doom/"
 
     # download doom 1 shareware
-    wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
+    if [[ ! -f "$romdir/ports/doom/doom1.wad" ]]; then
+        wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
+    fi
+    chown $user:$user "$romdir/ports/doom/"{doom1.wad,prboom.wad}
 
-    chown $user:$user "$romdir/ports/doom/"*
+    # remove old launch script
+    rm -f "$romdir/ports/Doom 1 Shareware.sh"
 
-    addPort "Doom 1 Shareware" << _EOF_
-#!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 0 "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $configdir/doom/retroarch.cfg $romdir/ports/doom/doom1.wad" "$md_id"
-_EOF_
+    addPort "$md_id" "doom" "Doom" "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $configdir/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
 }

@@ -23,11 +23,11 @@ function sources_lr-mame2010() {
 
 function build_lr-mame2010() {
     make clean
-    make -f Makefile.libretro VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS" buildtools
+    make VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS" buildtools
     if [[ "$__default_gcc_version" == "4.7" ]]; then
-        make -f Makefile.libretro VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS" CC="gcc-4.8" CXX="g++-4.8"
+        make VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS" CC="gcc-4.8" CXX="g++-4.8"
     else
-        make -f Makefile.libretro VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS"
+        make VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS"
     fi
 }
 

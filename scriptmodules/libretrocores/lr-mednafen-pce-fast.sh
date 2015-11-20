@@ -37,5 +37,5 @@ function configure_lr-mednafen-pce-fast() {
     mkRomDir "pcengine"
     ensureSystemretroconfig "pcengine"
 
-    addSystem 0 "$md_id" "pcengine" "$md_inst/mednafen_pce_fast_libretro.so"
+    addSystem 1 "$md_id" "pcengine" "$md_inst/mednafen_pce_fast_libretro.so"
 }

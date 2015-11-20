@@ -53,8 +53,8 @@ function configure_eduke32() {
         ln -snv "$file" "$romdir/ports/duke3d/$file_bn"
     done
 
-    addPort "Duke3D Shareware" << _EOF_
-#!/bin/bash
-$rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/eduke32 -j$romdir/ports/duke3d" "$md_id"
-_EOF_
+    # remove old launch script
+    rm -f "$romdir/ports/Duke3D Shareware.sh"
+
+    addPort "$md_id" "duke3d" "Duke Nukem 3D" "$md_inst/eduke32 -j$romdir/ports/duke3d"
 }

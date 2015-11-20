@@ -32,7 +32,7 @@ function build_lr-mame2003() {
 
 function install_lr-mame2003() {
     md_ret_files=(
-        'mame078_libretro.so'
+        'mame2003_libretro.so'
         'README'
         'changed.txt'
         'whatsnew.txt'
@@ -41,8 +41,11 @@ function install_lr-mame2003() {
 }
 
 function configure_lr-mame2003() {
+    # remove old core library
+    rm -f "$md_inst/mame078_libretro.so"
+
     mkRomDir "mame-libretro"
     ensureSystemretroconfig "mame-libretro"
 
-    addSystem 1 "$md_id" "mame-libretro arcade mame" "$md_inst/mame078_libretro.so"
+    addSystem 1 "$md_id" "mame-libretro arcade mame" "$md_inst/mame2003_libretro.so"
 }

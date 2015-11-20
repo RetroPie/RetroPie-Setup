@@ -30,8 +30,5 @@ function configure_kodi() {
 
     mkRomDir "ports"
 
-    addPort "Kodi" << _EOF_
-#!/bin/bash
-/opt/retropie/supplementary/runcommand/runcommand.sh 0 "kodi-standalone" "kodi"
-_EOF_
+    addPort "$md_id" "kodi" "Kodi" "kodi-standalone"
 }

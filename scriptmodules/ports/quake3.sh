@@ -45,8 +45,5 @@ function configure_quake3() {
     mkRomDir "quake3"
     mkRomDir "ports"
 
-    addPort "Quake III Arena"  << _EOF_
-#!/bin/bash
-LD_LIBRARY_PATH=lib "$md_inst/ioquake3.arm"
-_EOF_
+    addPort "$md_id" "quake3" "Quake III Arena" "LD_LIBRARY_PATH=lib $md_inst/ioquake3.arm"
 }

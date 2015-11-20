@@ -478,6 +478,7 @@ function addSystem() {
     local platform
     local theme
 
+    # set system / platform / theme for configuration based on data in names field
     if [[ -n "${names[2]}" ]]; then
         system="${names[0]}"
         platform="${names[1]}"
@@ -492,41 +493,57 @@ function addSystem() {
         theme="$system"
     fi
 
-    local conf=""
-    if [[ -f "$configdir/all/platforms.cfg" ]]; then
-        conf="$configdir/all/platforms.cfg"
+    # for the ports section, we will handle launching from a separate script and hardcode exts etc
+    local es_cmd="$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%"
+    local es_path="$romdir/$system"
+    local es_name="$system"
+    if [[ "$theme" == "ports" ]]; then
+        es_cmd="%ROM%"
+        es_path="$romdir/ports"
+        es_name="ports"
+        exts=(".sh")
+        fullname="Ports"
     else
-        conf="$scriptdir/platforms.cfg"
-    fi
+        local conf=""
+        if [[ -f "$configdir/all/platforms.cfg" ]]; then
+            conf="$configdir/all/platforms.cfg"
+        else
+            conf="$scriptdir/platforms.cfg"
+        fi
 
-    iniConfig "=" '"' "$conf"
-    iniGet "${system}_fullname"
-    [[ -n "$ini_value" ]] && fullname="$ini_value"
-    iniGet "${system}_exts"
-    [[ -n "$ini_value" ]] && exts+=($ini_value)
+        # get extensions to show
+        iniConfig "=" '"' "$conf"
+        iniGet "${system}_fullname"
+        [[ -n "$ini_value" ]] && fullname="$ini_value"
+        iniGet "${system}_exts"
+        [[ -n "$ini_value" ]] && exts+=($ini_value)
+
+        # automatically add parameters for libretro modules
+        if [[ "$id" =~ ^lr- ]]; then
+            cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $configdir/$system/retroarch.cfg %ROM%"
+        fi
+    fi
 
     exts="${exts[@]}"
     # add the extensions again as uppercase
     exts+=" ${exts^^}"
 
-    # automatically add parameters for libretro modules
-    if [[ "$id" =~ ^lr- ]]; then
-        cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $configdir/$system/retroarch.cfg %ROM%"
-    fi
+    setESSystem "$fullname" "$es_name" "$es_path" "$exts" "$es_cmd" "$platform" "$theme"
 
-    setESSystem "$fullname" "$system" "~/RetroPie/roms/$system" "$exts" "$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%" "$platform" "$theme"
-
+    # create a config folder for the system
     if [[ ! -d "$configdir/$system" ]]; then
-        mkdir "$configdir/$system"
-        chown $user:$user "$configdir/$system"
+        mkUserDir "$configdir/$system"
     fi
 
-    iniConfig "=" '"' "$configdir/$system/emulators.cfg"
-    iniSet "$id" "$cmd"
-    if [[ "$default" == "1" ]]; then
-        iniSet "default" "$id"
+    # add the emulator to the $system/emulators.cfg if a commandline exists (not used for some ports)
+    if [[ -n "$cmd" ]]; then
+        iniConfig "=" '"' "$configdir/$system/emulators.cfg"
+        iniSet "$id" "$cmd"
+        if [[ "$default" == "1" ]]; then
+            iniSet "default" "$id"
+        fi
+        chown $user:$user "$configdir/$system/emulators.cfg"
     fi
-    chown $user:$user "$configdir/$system/emulators.cfg"
 }
 
 function delSystem() {
@@ -542,10 +559,23 @@ function delSystem() {
 }
 
 function addPort() {
-    local file="$romdir/ports/$1.sh"
-    cat >"$file"
+    local id="$1"
+    local port="$2"
+    local file="$romdir/ports/$3.sh"
+    local cmd="$4"
+    local rom="$5"
+
+    if [ -t 0 ]; then
+        cat >"$file" << _EOF_
+#!/bin/bash
+"$rootdir/supplementary/runcommand/runcommand.sh" 0 _SYS_ $port "$rom"
+_EOF_
+    else
+        cat >"$file"
+    fi
+
     chown $user:$user "$file"
     chmod +x "$file"
 
-    setESSystem "Ports" "ports" "$romdir/ports" ".sh .SH" "%ROM%" "pc" "ports"
+    addSystem 1 "$id" "$port pc ports" "$cmd"
 }
