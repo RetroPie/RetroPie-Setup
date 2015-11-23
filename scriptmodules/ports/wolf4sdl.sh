@@ -15,7 +15,7 @@ rp_module_menus="4+"
 rp_module_flags="dispmanx"
 
 function depends_wolf4sdl() {
-    getDepends libsdl1.2-dev
+    getDepends libsdl1.2-dev libsdl-mixer1.2-dev
 }
 
 function sources_wolf4sdl() {
