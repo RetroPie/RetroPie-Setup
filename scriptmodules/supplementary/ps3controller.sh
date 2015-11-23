@@ -19,7 +19,8 @@ function depends_ps3controller() {
 }
 
 function sources_ps3controller() {
-    gitPullOrClone "$md_build/sixad" https://github.com/RetroPie/sixad.git
+    local branch="$1"
+    gitPullOrClone "$md_build/sixad" https://github.com/RetroPie/sixad.git $branch
     #----------------------------------------------------------------
     # If you have a ps3 gamepad clone comment out the following line.
     # Branch gasia does not support leds. Leds blink all the time. 
@@ -57,8 +58,9 @@ function remove_ps3controller() {
 function pair_ps3controller() {
     if [[ ! -f "/usr/sbin/sixpair" ]]; then
         local mode
+        local branch="$1"
         for mode in depends sources build install; do
-            rp_callModule ps3controller $mode
+            rp_callModule ps3controller $mode $branch
         done
     fi
 
@@ -72,7 +74,8 @@ function configure_ps3controller() {
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(
             1 "Install/Pair PS3 controller"
-            2 "Remove PS3 controller configurations"
+            2 "Install/Pair PS3 controller (clone support)"
+            3 "Remove PS3 controller configurations"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -81,6 +84,9 @@ function configure_ps3controller() {
                     rp_callModule "$md_id" pair
                     ;;
                 2)
+                    rp_callModule "$md_id" pair gasia
+                    ;;
+                3)
                     rp_callModule "$md_id" remove
                     printMsgs "dialog" "Removed PS3 controller configurations"
                     ;;
