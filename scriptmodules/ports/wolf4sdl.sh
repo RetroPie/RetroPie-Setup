@@ -10,7 +10,7 @@
 #
 
 rp_module_id="wolf4sdl"
-rp_module_desc="Wolf4SDL, port of Wolfenstein 3D Shareware 1.4 version"
+rp_module_desc="Wolf4SDL - port of Wolfenstein 3D / Spear of Destiny engine"
 rp_module_menus="4+"
 rp_module_flags="dispmanx"
 
@@ -20,26 +20,32 @@ function depends_wolf4sdl() {
 
 function sources_wolf4sdl() {
     gitPullOrClone "$md_build" https://github.com/mozzwald/wolf4sdl.git
-    # Define Shareware version
-    sed -i 's|#define GOODTIMES|//#define GOODTIMES|g' version.h
-    
-    # Define Steam version
-    # sed -i 's|#define UPLOAD|//#define UPLOAD|g' version.h
-    
-    # Define 3D Realms version
-    # sed -i 's|#define GOODTIMES|//#define GOODTIMES|g' version.h
-    # sed -i 's|#define UPLOAD|//#define UPLOAD|g' version.h
+}
+
+function get_opts_wolf4sdl() {
+    echo 'wolf3d-3dr-v1.4 -DCARMACIZED' # 3d realms / apogee v1.4 full
+    echo 'wolf3d-gt-v1.4 -DCARMACIZED -DGOODTIMES' # gt / id / activision v1.4 full
+    echo 'wolf3d-spear -DCARMACIZED -DSPEAR' # spear of destiny
+    echo 'wolf3d-sw-v1.4 -DCARMACIZED -DUPLOAD' # shareware v1.4
 }
 
 function build_wolf4sdl() {
-    make clean
-    make DATADIR="$romdir/ports/wolf3d/"
-    md_ret_require="$md_build"
+    mkdir "bin"
+    local opt
+    while read -r opt; do
+        local bin="${opt%% *}"
+        local defs="${opt#* }"
+        make clean
+        CFLAGS+=" -DVERSIONALREADYCHOSEN $defs" make DATADIR="$romdir/ports/wolf3d/"
+        mv wolf3d "bin/$bin"
+        md_ret_require+=("bin/$bin")
+    done < <(get_opts_wolf4sdl)
 }
 
 function install_wolf4sdl() {
-     mkdir -p "$md_inst/share/man/man6"
-     make install PREFIX="$md_inst" MANPREFIX="$md_inst/share/man"
+    mkdir -p "$md_inst/share/man"
+    cp -Rv "$md_build/man6" "$md_inst/share/man/"
+    md_ret_files=('bin')
 }
 
 function configure_wolf4sdl() {
@@ -48,10 +54,19 @@ function configure_wolf4sdl() {
 
     # Get shareware game data
     wget -q -O wolf3d14.zip http://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip
-    unzip -j -o -LL wolf3d14.zip -d "$romdir/ports/wolf3d"
+    unzip -j -o -L wolf3d14.zip -d "$romdir/ports/wolf3d"
     rm -f wolf3d14.zip
 
-    setDispmanx "$md_id" 1
+    local opt
+    local bin
+    local bins
+    while read -r opt; do
+        bins+=("${opt%% *}")
+    done < <(get_opts_wolf4sdl)
 
-    addPort "$md_id" "wolf4sdl" "Wolfenstein 3D" "$md_inst/bin/wolf3d"
+    # called outside of above loop to avoid problems with addPort and stdin
+    for bin in "${bins[@]}"; do
+        setDispmanx "$bin" 1
+        addPort "$bin" "wolf4sdl" "Wolfenstein 3D" "$md_inst/bin/$bin"
+    done
 }
