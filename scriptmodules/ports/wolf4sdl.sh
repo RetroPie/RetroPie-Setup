@@ -23,10 +23,17 @@ function sources_wolf4sdl() {
 }
 
 function get_opts_wolf4sdl() {
-    echo 'wolf3d-3dr-v1.4 -DCARMACIZED' # 3d realms / apogee v1.4 full
-    echo 'wolf3d-gt-v1.4 -DCARMACIZED -DGOODTIMES' # gt / id / activision v1.4 full
-    echo 'wolf3d-spear -DCARMACIZED -DSPEAR' # spear of destiny
-    echo 'wolf3d-sw-v1.4 -DCARMACIZED -DUPLOAD' # shareware v1.4
+    echo 'wolf4sdl-3dr-v14 -DCARMACIZED' # 3d realms / apogee v1.4 full
+    echo 'wolf4sdl-gt-v14 -DCARMACIZED -DGOODTIMES' # gt / id / activision v1.4 full
+    echo 'wolf4sdl-spear -DCARMACIZED -DSPEAR' # spear of destiny
+    echo 'wolf4sdl-sw-v14 -DCARMACIZED -DUPLOAD' # shareware v1.4
+}
+
+function get_bins_wolf4sdl() {
+    local opt
+    while read -r opt; do
+        echo ${opt%% *}
+    done < <(get_opts_wolf4sdl)
 }
 
 function build_wolf4sdl() {
@@ -57,16 +64,31 @@ function configure_wolf4sdl() {
     unzip -j -o -LL wolf3d14.zip -d "$romdir/ports/wolf3d"
     rm -f wolf3d14.zip
 
-    local opt
-    local bin
     local bins
-    while read -r opt; do
-        bins+=("${opt%% *}")
-    done < <(get_opts_wolf4sdl)
+    while read -r bin; do
+        bins+=("$bin")
+    done < <(get_bins_wolf4sdl)
 
+    setDispmanx "$md_id" 1
+    configure_dispmanx_on_wolf4sdl
+
+    local bin
     # called outside of above loop to avoid problems with addPort and stdin
     for bin in "${bins[@]}"; do
-        setDispmanx "$bin" 1
         addPort "$bin" "wolf4sdl" "Wolfenstein 3D" "$md_inst/bin/$bin"
     done
+}
+
+function configure_dispmanx_off_wolf4sdl() {
+    local bin
+    while read -r bin; do
+        setDispmanx "$bin" 0
+    done < <(get_bins_wolf4sdl)
+}
+
+function configure_dispmanx_on_wolf4sdl() {
+    local bin
+    while read -r bin; do
+        setDispmanx "$bin" 1
+    done < <(get_bins_wolf4sdl)
 }
