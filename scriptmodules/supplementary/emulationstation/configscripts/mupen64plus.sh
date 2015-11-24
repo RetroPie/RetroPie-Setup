@@ -260,8 +260,7 @@ Y Axis = key(273,274)
 _EOF_
     fi
 
-    # read temp device configuration and append to InputAutoCfg.ini
-    local deviceconfig=`cat /tmp/mp64tempconfig.cfg`
-    echo "$deviceconfig" >> "$file"
+    # append temp device configuration to InputAutoCfg.ini
+    cat /tmp/mp64tempconfig.cfg >> "$file"
     rm /tmp/mp64tempconfig.cfg
 }
