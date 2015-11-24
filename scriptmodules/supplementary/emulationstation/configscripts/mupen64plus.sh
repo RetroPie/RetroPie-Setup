@@ -154,7 +154,7 @@ function map_mupen64plus_joystick() {
                         value="${dir})"
                     fi
                 else
-                    if ! [[ "$dir" == "" ]]; then 
+                    if [[ -n "$dir" ]]; then
                         value="hat(${input_id} ${dir}) ${ini_value}"
                     fi
                 fi
