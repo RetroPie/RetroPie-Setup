@@ -38,7 +38,7 @@ function configure_lr-nxengine() {
 
     local msg="You need the original Cave Story game files to use $md_id. Please unpack the game to $romdir/ports/CaveStory so you have the file $romdir/ports/CaveStory/Doukutsu.exe present."
 
-    addPort "$md_id" "cavestory" "Cave Story" "$emudir/retroarch/bin/retroarch -L $md_inst/nxengine_libretro.so --config $configdir/cavestory/retroarch.cfg $romdir/ports/CaveStory/Doukutsu.exe" "custom" << _EOF_
+    addPort "$md_id" "cavestory" "Cave Story" "$emudir/retroarch/bin/retroarch -L $md_inst/nxengine_libretro.so --config $configdir/cavestory/retroarch.cfg $romdir/ports/CaveStory/Doukutsu.exe" << _EOF_
 #!/bin/bash
 if [[ ! -f "$romdir/ports/CaveStory/Doukutsu.exe" ]]; then
     dialog --msgbox "$msg" 22 76
