@@ -10,7 +10,7 @@
 #
 
 rp_module_id="opentyrian"
-rp_module_desc="Open Tyrian, port of the DOS shoot-em-up Tyrian"
+rp_module_desc="Open Tyrian - port of the DOS shoot-em-up Tyrian"
 rp_module_menus="4+"
 rp_module_flags="dispmanx"
 
