@@ -201,16 +201,16 @@ function onend_mupen64plus_joystick() {
         # replace Axis values with DPAD values if there is no Axis 
         # device setup
         if ! grep -q "$axis" /tmp/mp64tempconfig.cfg ; then
-          iniGet "${axis_neg}"
-          bind=${ini_value//)/,}
-          iniGet "${axis_pos}"
-          ini_value=${ini_value//axis(/}
-          ini_value=${ini_value//hat(/}
-          ini_value=${ini_value//button(/}
-          bind="${bind}${ini_value}"
-          iniSet "$axis" "$bind"
-          iniDel "${axis_neg}"
-          iniDel "${axis_pos}"
+            iniGet "${axis_neg}"
+            bind=${ini_value//)/,}
+            iniGet "${axis_pos}"
+            ini_value=${ini_value//axis(/}
+            ini_value=${ini_value//hat(/}
+            ini_value=${ini_value//button(/}
+            bind="${bind}${ini_value}"
+            iniSet "$axis" "$bind"
+            iniDel "${axis_neg}"
+            iniDel "${axis_pos}"
         fi
     done
 
