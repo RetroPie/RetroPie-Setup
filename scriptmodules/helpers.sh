@@ -563,12 +563,11 @@ function addPort() {
     local port="$2"
     local file="$romdir/ports/$3.sh"
     local cmd="$4"
-    local rom="$5"
 
     if [ -t 0 ]; then
         cat >"$file" << _EOF_
 #!/bin/bash
-"$rootdir/supplementary/runcommand/runcommand.sh" 0 _SYS_ $port "$rom"
+"$rootdir/supplementary/runcommand/runcommand.sh" 0 _SYS_ $port
 _EOF_
     else
         cat >"$file"
