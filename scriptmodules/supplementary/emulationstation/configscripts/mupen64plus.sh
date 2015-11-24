@@ -121,7 +121,7 @@ function map_mupen64plus_joystick() {
         # read key value. Axis takes two key/axis values.
         iniGet "$key"
         case "$input_type" in
-            axis) 
+            axis)
                 # key "X/Y Axis" needs different button naming
                 if [[ "$key" == *Axis* ]]; then
                     # if there is already a "-" axis add "+" axis value
@@ -133,7 +133,7 @@ function map_mupen64plus_joystick() {
                     # if there is no ini_value add "+" axis value
                     elif [[ "$input_value" == "1" ]]; then
                         value="${input_id}+)"
-                    else 
+                    else
                         value="axis(${input_id}-,"
                     fi
                 elif [[ "$input_value" == "1" ]]; then
@@ -198,7 +198,7 @@ function onend_mupen64plus_joystick() {
         fi
 
         # analog stick sanity check
-        # replace Axis values with DPAD values if there is no Axis 
+        # replace Axis values with DPAD values if there is no Axis
         # device setup
         if ! grep -q "$axis" /tmp/mp64tempconfig.cfg ; then
             iniGet "${axis_neg}"

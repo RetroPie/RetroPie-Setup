@@ -309,7 +309,7 @@ function map_retroarch_keyboard() {
 function onend_retroarch_joystick() {
     local device_type=$1
     local device_name=$2
-    
+
     # hotkey sanity check
     # remove hotkeys if there is no hotkey enable button
     if ! grep -q "input_enable_hotkey" /tmp/tempconfig.cfg; then
@@ -328,7 +328,7 @@ function onend_retroarch_joystick() {
         iniSet "input_save_state_axis" ""
         iniSet "input_exit_emulator_axis" ""
     fi
-    
+
     # sanitise filename
     local file="${device_name//[ \?\<\>\\\/:\*\|]/}.cfg"
     if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$file" ]]; then
