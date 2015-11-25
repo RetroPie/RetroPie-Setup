@@ -19,21 +19,21 @@ function depends_advmame() {
 
 function sources_advmame() {
     local version
-    for version in 0.94.0 1.2; do
+    for version in 0.94.0 1.4; do
         mkdir -p "$version"
         pushd "$version"
         wget -O- -q "http://downloads.petrockblock.com/retropiearchives/advancemame-$version.tar.gz" | tar -xvz --strip-components=1
 
         # update internal names to separate out config files (due to incompatible options)
         sed -i "s/advmame\.rc/advmame-$version.rc/" advance/v/v.c advance/cfg/cfg.c
-        if [[ "$version" != "1.2" ]]; then
+        if [[ "$version" == "0.94.0" ]]; then
             sed -i "s/ADVANCE_NAME \"advmame\"/ADVANCE_NAME \"advmame-$version\"/" advance/osd/emu.h
         else
             sed -i "s/ADV_NAME \"advmame\"/ADV_NAME \"advmame-$version\"/" advance/osd/emu.h
         fi
 
         if isPlatform "rpi"; then
-            if [[ "$version" != "1.2" ]]; then
+            if [[ "$version" == "0.94.0" ]]; then
                 sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
             fi
             # patch advmame to use a fake generated mode with the exact dimensions for fb - avoids need for configuring monitor / clocks.
@@ -161,8 +161,7 @@ function configure_advmame() {
         iniSet "dir_sample" "$romdir/mame-advmame/samples"
 
         default=0
-        isPlatform "rpi1" && [[ "$version" == "0.94.0" ]] && default=1
-        isPlatform "rpi2" && [[ "$version" == "1.2" ]] && default=1
+        [[ "$version" == "0.94.0" ]] && default=1
         addSystem $default "$md_id-$version" "mame-advmame arcade mame" "$md_inst/$version/bin/advmame %BASENAME%"
     done
 }
