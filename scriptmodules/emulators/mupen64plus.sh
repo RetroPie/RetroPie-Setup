@@ -105,6 +105,10 @@ function install_mupen64plus() {
 }
 
 function configure_mupen64plus() {
+    # copy hotkey remapping start script
+    cp "$scriptdir/scriptmodules/$md_type/$md_id/mupen64plus.sh" "$md_inst/bin/"
+    chmod +x "$md_inst/bin/mupen64plus.sh"
+    
     # to solve startup problems delete old config file
     rm -f "$configdir/n64/mupen64plus.cfg"
     # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
@@ -124,7 +128,7 @@ function configure_mupen64plus() {
     mkRomDir "n64"
 
     delSystem "$md_id" "n64-mupen64plus"
-    addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-n64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
-    addSystem 0 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-rice.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
-    addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus --noosd --fullscreen --gfx mupen64plus-video-GLideN64.so --configdir $configdir/n64 --datadir $configdir/n64 %ROM%"
+    addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
+    addSystem 0 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"
+    addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
 }
