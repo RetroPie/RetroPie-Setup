@@ -25,7 +25,7 @@ function sources_wolf4sdl() {
 function get_opts_wolf4sdl() {
     echo 'wolf4sdl-3dr-v14 -DCARMACIZED' # 3d realms / apogee v1.4 full
     echo 'wolf4sdl-gt-v14 -DCARMACIZED -DGOODTIMES' # gt / id / activision v1.4 full
-    echo 'wolf4sdl-spear -DCARMACIZED -DSPEAR' # spear of destiny
+    echo 'wolf4sdl-spear -DCARMACIZED -DGOODTIMES -DSPEAR' # spear of destiny
     echo 'wolf4sdl-sw-v14 -DCARMACIZED -DUPLOAD' # shareware v1.4
 }
 
