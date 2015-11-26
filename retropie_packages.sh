@@ -42,6 +42,7 @@ __backtitle="PetRockBlock.com - RetroPie Setup. Installation folder: $rootdir fo
 
 source "$scriptdir/scriptmodules/system.sh"
 source "$scriptdir/scriptmodules/helpers.sh"
+source "$scriptdir/scriptmodules/inifuncs.sh"
 source "$scriptdir/scriptmodules/packages.sh"
 
 setup_env

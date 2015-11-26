@@ -41,6 +41,8 @@ mode_map[4-CEA-4:3]="DMT-16"
 mode_map[4-DMT-4:3]="DMT-16"
 mode_map[4-CEA-16:9]="CEA-4"
 
+source "$rootdir/lib/inifuncs.sh"
+
 function get_params() {
     mode_req="$1"
     [[ -z "$mode_req" ]] && exit 1
@@ -167,32 +169,33 @@ function load_mode_defaults() {
 
     if [[ -f "$video_conf" ]]; then
         # local default video modes for emulator / rom
-        iniGet "$save_emu" "$video_conf"
+        iniConfig "=" '"' "$video_conf"
+        iniGet "$save_emu"
         if [[ -n "$ini_value" ]]; then
             mode_def_emu="$ini_value"
             mode_new_id="$mode_def_emu"
         fi
 
-        iniGet "$save_rom" "$video_conf"
+        iniGet "$save_rom"
         if [[ -n "$ini_value" ]]; then
             mode_def_rom="$ini_value"
             mode_new_id="$mode_def_rom"
         fi
 
         # load default framebuffer res for emulator / rom
-        iniGet "$fb_save_emu" "$video_conf"
+        iniGet "$fb_save_emu"
         if [[ -n "$ini_value" ]]; then
             fb_def_emu="$ini_value"
             fb_new="$fb_def_emu"
         fi
 
-        iniGet "$fb_save_rom" "$video_conf"
+        iniGet "$fb_save_rom"
         if [[ -n "$ini_value" ]]; then
             fb_def_rom="$ini_value"
             fb_new="$fb_def_rom"
         fi
 
-        iniGet "$save_emu_render" "$video_conf"
+        iniGet "$save_emu_render"
         if [[ -n "$ini_value" ]]; then
             render_res="$ini_value"
         fi
@@ -334,7 +337,8 @@ function choose_mode() {
     mode_new_id=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$mode_new_id" ]] && return
 
-    iniSet set "=" '"' "$save" "$mode_new_id" "$video_conf"
+    iniConfig "=" '"' "$video_conf"
+    iniSet "$save" "$mode_new_id"
 }
 
 function choose_app() {
@@ -368,9 +372,11 @@ function choose_app() {
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         if [[ -n "$save" ]]; then
-            iniSet set "=" '"' "$save" "${apps[$choice]}" "$apps_conf"
+            iniConfig "=" '"' "$apps_conf"
+            iniSet "$save" "${apps[$choice]}"
         else
-            iniSet set "=" '"' "default" "${apps[$choice]}" "$configdir/$system/emulators.cfg"
+            iniConfig "=" '"' "$configdir/$system/emulators.cfg"
+            iniSet "default" "${apps[$choice]}"
         fi
         get_sys_command "$system" "$rom"
     fi
@@ -408,7 +414,8 @@ function choose_render_res() {
             ;;
     esac
 
-    iniSet set "=" '"' "$save" "$render_res" "$video_conf"
+    iniConfig "=" '"' "$video_conf"
+    iniSet "$save" "$render_res"
 }
 
 function choose_fb_res() {
@@ -436,7 +443,8 @@ function choose_fb_res() {
             ;;
     esac
 
-    iniSet set "=" '"' "$save" "$fb_res" "$video_conf"
+    iniConfig "=" '"' "$video_conf"
+    iniSet "$save" "$fb_res"
 }
 
 function switch_fb_res() {
@@ -501,7 +509,8 @@ function config_dispmanx() {
     # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
     # change the library path to load dispmanx sdl first
     if [[ -f "$dispmanx_conf" ]]; then
-        iniGet "$name" "$dispmanx_conf"
+        iniConfig "=" '"' "$dispmanx_conf"
+        iniGet "$name"
         [[ "$ini_value" == "1" ]] && command="SDL1_VIDEODRIVER=dispmanx $command"
     fi
 }
@@ -549,43 +558,6 @@ function retroarch_append_config() {
     fi
 }
 
-# arg 1: set/unset, arg 2: delimiter, arg 3: quote character, arg 4: key, arg 5: value, arg 6: file
-function iniSet() {
-    local command="$1"
-    local delim="$2"
-    local quote="$3"
-    local key="$4"
-    local value="$5"
-    local file="$6"
-
-    local delim_strip=${delim// /}
-    local match_re="[[:space:]#]*$key[[:space:]]*$delim_strip.*$"
-
-    local match
-    if [[ -f "$file" ]]; then
-        match=$(egrep -i "$match_re" "$file" | tail -1)
-    else
-        touch "$file"
-    fi
-
-    [[ "$command" == "unset" ]] && key="# $key"
-    local replace="$key$delim$quote$value$quote"
-    if [[ -z "$match" ]]; then
-        # add key-value pair
-        echo "$replace" >> "$file"
-    else
-        # replace existing key-value pair
-        sed -i -e "s|$match|$replace|g" "$file"
-    fi
-}
-
-# arg 1: key, arg 2: file - value ends up in ini_value variable
-function iniGet() {
-    local key="$1"
-    local file="$2"
-    ini_value=$(sed -rn "s|^[[:space:]]*$key[[:space:]]*=[[:space:]]*\"?([^\"]+)\"?.*|\1|p" $file)
-}
-
 function set_governor() {
     governor_old=()
     for cpu in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_governor; do
@@ -615,7 +587,8 @@ function get_sys_command() {
         exit 1
     fi
 
-    iniGet "default" "$emu_conf"
+    iniConfig "=" '"' "$emu_conf"
+    iniGet "default"
     if [[ -z "$ini_value" ]]; then
         echo "No default emulator found for system $system"
         choose_app
@@ -628,13 +601,15 @@ function get_sys_command() {
 
     # get system & rom specific app if set
     if [[ -f "$apps_conf" ]]; then
-        iniGet "$appsave" "$apps_conf"
+        iniConfig "=" '"' "$apps_conf"
+        iniGet "$appsave"
         emulator_def_rom="$ini_value"
         [[ -n "$ini_value" ]] && emulator="$ini_value"
     fi
 
     # get the app commandline
-    iniGet "$emulator" "$emu_conf"
+    iniConfig "=" '"' "$emu_conf"
+    iniGet "$emulator"
     command="$ini_value"
 
     # replace tokens
@@ -643,7 +618,8 @@ function get_sys_command() {
 }
 
 if [[ -f "$runcommand_conf" ]]; then
-    iniGet "governor" "$runcommand_conf"
+    iniConfig "=" '"' "$runcommand_conf"
+    iniGet "governor"
     governor="$ini_value"
 fi
 
