@@ -55,7 +55,6 @@ function iniProcess() {
     [[ "$cmd" == "unset" ]] && key="# $key"
 
     local replace="$key$delim$quote$value$quote"
-    echo "Setting $replace in $file"
     if [[ -z "$match" ]]; then
         # add key-value pair
         echo "$replace" >> "$file"
