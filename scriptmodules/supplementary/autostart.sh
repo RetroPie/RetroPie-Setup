@@ -28,11 +28,6 @@ ExecStart=-/sbin/agetty --autologin $user --noclear %I 38400 linux
 _EOF_
     fi
     cat >/etc/profile.d/10-emulationstation.sh <<_EOF_
-# wait for omxplayer to finish playing startup video (if running)
-while pgrep omxplayer >/dev/null; do
-    sleep 1
-done
-
 # launch emulationstation (if we are on the correct tty)
 [ "\`tty\`" = "/dev/tty1" ] && emulationstation
 _EOF_

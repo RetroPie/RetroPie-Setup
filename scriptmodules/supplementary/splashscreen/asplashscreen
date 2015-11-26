@@ -18,7 +18,7 @@ do_start () {
         while ! touch /tmp/writable; do
             sleep 1
         done
-        omxplayer -b "$line"
+        omxplayer -b --layer 10000 "$line"
         rm /tmp/writable
     else
         local count=$(wc -l <"$config")
