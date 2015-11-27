@@ -87,6 +87,7 @@ function scrape_chosen_scraper() {
 }
 
 function configure_scraper() {
+    printMsgs "dialog" "Before running this scraper, make sure all EmulationStation processes are killed  with \"sudo killall emulationstation\" so that the gamelist.xml is written properly, otherwise the scraper changes may not be saved."
     if [[ ! -d "$md_inst" ]]; then
         rp_callModule "$md_id" install
     fi
