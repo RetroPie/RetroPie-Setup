@@ -145,5 +145,18 @@ function remap() {
     done
 }
 
+function setAudio() {
+    audio_device=$(amixer cget numid=3)
+    iniConfig " = " "\"" "/opt/retropie/configs/n64/mupen64plus.cfg"
+    if [[ "$audio_device" == *": values=1"* ]]; then
+        # echo "audio jack"
+        iniSet "OUTPUT_PORT" "0"
+    elif [[ "$audio_device" == *": values=2"* ]]; then
+        # echo "hdmi"
+        iniSet "OUTPUT_PORT" "1"
+    fi
+}
+
 remap
+setAudio
 /opt/retropie/emulators/mupen64plus/bin/mupen64plus --noosd --fullscreen --gfx ${VIDEO_PLUGIN}.so --configdir $configdir/n64 --datadir $configdir/n64 "$ROM"
