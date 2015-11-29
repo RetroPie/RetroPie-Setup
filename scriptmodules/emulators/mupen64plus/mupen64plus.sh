@@ -146,12 +146,19 @@ function remap() {
 }
 
 function setAudio() {
-    audio_device=$(amixer cget numid=3)
+    local audio_device=$(amixer cget numid=3)
     iniConfig " = " "\"" "/opt/retropie/configs/n64/mupen64plus.cfg"
-    if [[ "$audio_device" == *": values=1"* ]]; then
+    if [[ "$audio_device" == *": values=0"* ]]; then
+        local video_device=$(tvservice -s)
+        if [[ "$video_device" == *HDMI* ]]; then
+            iniSet "OUTPUT_PORT" "1"
+        else
+            iniSet "OUTPUT_PORT" "0"
+        fi
+    elif [[ "$audio_device" == *": values=1"* ]]; then
         # echo "audio jack"
         iniSet "OUTPUT_PORT" "0"
-    elif [[ "$audio_device" == *": values=2"* ]]; then
+    else
         # echo "hdmi"
         iniSet "OUTPUT_PORT" "1"
     fi
