@@ -115,8 +115,7 @@ function map_reicast_joystick() {
                     iniSet "button.$input_id" "DPad2_Left"
                 elif [[ "$key" == "Axis_RT" ]] ; then
                     iniSet "button.$input_id" "DPad2_Right"
-                elif [[ "$key" == "Axis_X" || "$key" == "Axis_Y" ]] ; then
-                else
+                elif [[ "$key" != *Axis* ]] ; then
                     iniSet "button.$input_id" "$key"
                 fi
                 ;;
