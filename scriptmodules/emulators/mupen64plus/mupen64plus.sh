@@ -133,7 +133,7 @@ function remap() {
             # get name of retroarch auto config file
             file=$(grep --exclude=*.bak -rl "/opt/retropie/configs/all/retroarch-joypads/" -e "\"${devices[$device_num]}\"")
             if [[ -f "$file" ]]; then
-                if [[ -n "$bind" ]]; then
+                if [[ -n "$bind"  && "$bind" != *, ]]; then
                     bind+=","
                 fi
                 bind+=$(getBind "${hotkeys_rp[$i]}" "${device_num}" "$file")
