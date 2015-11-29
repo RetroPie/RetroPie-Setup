@@ -27,7 +27,7 @@ function sources_retroarch() {
     gitPullOrClone "$md_build/overlays" https://github.com/libretro/common-overlays.git
     gitPullOrClone "$md_build/shader" https://github.com/RetroPie/common-shaders.git
     # disable the search dialog
-    sed -i 's|menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|//menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|g' $md_build/menu/menu_entry.c
+    sed -i 's|menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|//menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|g' menu/menu_entry.c
 }
 
 function build_retroarch() {
