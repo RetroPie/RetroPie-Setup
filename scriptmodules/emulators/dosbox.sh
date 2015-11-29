@@ -49,16 +49,16 @@ function configure_dosbox() {
     rm -f "$romdir/pc/Start DOSBox.sh"
     cat > "$romdir/pc/+Start DOSBox.sh" << _EOF_
 #!/bin/bash
-params="\$1"
-if [[ -z "\$params" ]]; then
-    params="-c \"MOUNT C $romdir/pc\""
-elif [[ "\$params" =~ \.sh$ ]]; then
-    bash "\$params"
+params=("\$@")
+if [[ -z "\${params[0]}" ]]; then
+    params=(-c "MOUNT C $romdir/pc")
+elif [[ "\${params[0]}" == *.sh ]]; then
+    bash "\${params[@]}"
     exit
 else
-    params+=" -exit"
+    params+=(-exit)
 fi
-$rootdir/supplementary/runcommand/runcommand.sh 0 "$md_inst/bin/dosbox \$params" "$md_id"
+"$md_inst/bin/dosbox" "\${params[@]}"
 _EOF_
     chmod +x "$romdir/pc/+Start DOSBox.sh"
     chown $user:$user "$romdir/pc/+Start DOSBox.sh"
