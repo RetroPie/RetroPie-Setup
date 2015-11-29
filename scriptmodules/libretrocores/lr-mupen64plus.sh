@@ -153,5 +153,5 @@ target FPS=25
 _EOF_
     chown $user:$user "$biosdir/gles2n64rom.conf"
 
-    addSystem 1 "$md_id" "n64" "$md_inst/mupen64plus_libretro.so"
+    addSystem 0 "$md_id" "n64" "$md_inst/mupen64plus_libretro.so"
 }
