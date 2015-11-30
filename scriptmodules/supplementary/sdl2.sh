@@ -35,7 +35,7 @@ function build_sdl2() {
     cd $(get_ver_sdl2)
     dpkg-buildpackage
     md_ret_require="$md_build/libsdl2-dev_$(get_ver_sdl2)_armhf.deb"
-    local dest="$__tmpdir/archives/$__platform"
+    local dest="$__tmpdir/archives/$__raspbian_name/$__platform"
     mkdir -p "$dest"
     cp ../*.deb "$dest/"
 }
