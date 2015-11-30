@@ -38,6 +38,10 @@ function sources_sdl1() {
     # add fixes from https://github.com/RetroPie/sdl1/compare/master...rpi
     wget https://github.com/RetroPie/sdl1/compare/master...rpi.diff -O debian/patches/rpi.diff
     echo "rpi.diff" >>debian/patches/series
+    # force building without tslib on Jessie (as Raspbian Jessie as tslib, but Debian Jessie doesn't and we want cross compatibility
+    if [[ "$__raspbian_ver" -gt "7" ]]; then
+        sed -i "s/--enable-video-caca/--enable-video-caca --disable-input-tslib/" debian/rules
+    fi
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v 1.2.15-$(get_ver_sdl1)rpi "Added rpi fixes and dispmanx support from https://github.com/RetroPie/sdl1/compare/master...rpi"
 }
 
