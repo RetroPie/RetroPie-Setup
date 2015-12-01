@@ -14,7 +14,8 @@ rp_module_desc="RetroArch"
 rp_module_menus="2+"
 
 function depends_retroarch() {
-    getDepends libudev-dev libxkbcommon-dev libsdl2-dev libraspberrypi-dev libusb-1.0-0-dev
+    getDepends libudev-dev libxkbcommon-dev libsdl2-dev libraspberrypi-dev
+    [[ "$__raspbian_ver" -ge "8" ]] && getDepends libusb-1.0-0-dev
 
     cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
 KERNEL=="event*", NAME="input/%k", MODE="666"
@@ -31,7 +32,7 @@ function sources_retroarch() {
 }
 
 function build_retroarch() {
-    local params=(--disable-x11 --enable-dispmanx --disable-oss --disable-pulse --disable-al --enable-floathard)
+    local params=(--disable-x11 --enable-dispmanx --disable-oss --disable-pulse --disable-al --disable-jack --enable-sdl2 --enable-floathard)
     isPlatform "rpi2" && params+=(--enable-neon)
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
