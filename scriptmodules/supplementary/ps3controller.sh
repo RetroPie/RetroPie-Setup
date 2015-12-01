@@ -21,12 +21,6 @@ function depends_ps3controller() {
 function sources_ps3controller() {
     local branch="$1"
     gitPullOrClone "$md_build/sixad" https://github.com/RetroPie/sixad.git $branch
-    #----------------------------------------------------------------
-    # If you have a ps3 gamepad clone comment out the following line.
-    # Branch gasia does not support leds. Leds blink all the time. 
-    # Led/rumble connection animation does not work.
-    #-----------------------------------------------------------------
-    #gitPullOrClone "$md_build/sixad" https://github.com/gizmo98/sixad.git gasia
 }
 
 function build_ps3controller() {
