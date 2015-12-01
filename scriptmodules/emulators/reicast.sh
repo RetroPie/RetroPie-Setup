@@ -15,65 +15,69 @@ rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
 function depends_reicast() {
-    getDepends libsdl1.2-dev alsa-oss
+    getDepends libsdl1.2-dev python-dev python-pip alsa-oss
 }
 
 function sources_reicast() {
-    gitPullOrClone "$md_build" https://github.com/free5ty1e/reicast-emulator.git free5ty1e/rpi2/retropie-reicast-updated
+    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
+    # tune flags
+    sed -i 's/-mtune=cortex-a9//g' $md_build/shell/linux/Makefile
+    sed -i 's/-mfpu=neon/-mfpu=neon-vfpv4/g' $md_build/shell/linux/Makefile
+    sed -i 's/-mfloat-abi=softfp/-mfloat-abi=hard/g' $md_build/shell/linux/Makefile
+    # don't use precompiled stuff. use system libs
+    sed -i 's|-L../linux-deps/lib||g' $md_build/shell/linux/Makefile
+    sed -i 's|-I../linux-deps/include||g' $md_build/shell/linux/Makefile
+    # fix reicast-joyconfig script
+    sed -i 's|"dreamcast", "btn_escape"|"emulator", "btn_escape"|g' $md_build/shell/linux/tools/reicast-joyconfig.py
 }
 
 function build_reicast() {
-    cd "$md_build/shell/rapi2"
+    pushd "$md_build/shell/linux"
     make clean
-    make 
-    md_ret_require="$md_build/shell/rapi2/reicast.elf"
+    make platform=rpi2
+    popd
+    md_ret_require="$md_build/shell/linux/reicast.elf"
 }
 
 function install_reicast() {
+    pushd "$md_build/shell/linux"
+    make PREFIX="$md_inst" install
+    popd
+    pip install evdev
     md_ret_files=(
-        'shell/rapi2/reicast.elf'
-        'shell/rapi2/nosym-reicast.elf'
         'LICENSE'
         'README.md'
     )
 }
 
 function configure_reicast() {
+    # copy hotkey remapping start script
+    cp "$scriptdir/scriptmodules/$md_type/$md_id/reicast.sh" "$md_inst/bin/"
+    chmod +x "$md_inst/bin/reicast.sh"
+
     mkRomDir "dreamcast"
 
     # Create home VMU, cfg, and data folders. Copy dc_boot.bin and dc_flash.bin to the ~/.reicast/data/ folder.
     mkUserDir "$home/.reicast"
     mkUserDir "$home/.reicast/data"
+    mkUserDir "$home/.reicast/mappings"
 
     ln -sf "$biosdir/dc_boot.bin" "$home/.reicast/data/"
     ln -sf "$biosdir/dc_flash.bin" "$home/.reicast/data/"
-
-    cat > "$md_inst/reicast.sh" << _EOF_
-#!/bin/bash
-pushd "$md_inst"
-echo Reading the entire Reicast emulator into memory to execute from there...
-sudo mkdir tmpfs
-#TODO: Find optimal smaller tmpfs size, I do not believe anywhere near this much is required.  I have only ever seen 54MB utilized during a game of Rush 2049.
-sudo mount -o size=150M -t tmpfs none tmpfs/
-sudo cp -v * tmpfs/
-sudo chown -R $user:$user tmpfs
-cd tmpfs
-aoss ./reicast.elf -config config:homedir="$home" -config config:image="\$1"
-cd ..
-echo Freeing up memory...
-sudo umount "$md_inst/tmpfs"
-sudo rm -rf tmpfs
-popd
-_EOF_
-
-    chmod +x "$md_inst/reicast.sh"
+    # add links to retropie config dir
+    ln -s "$home/.reicast/mappings" "$configdir/dreamcast/"
+    ln -sf "$home/.reicast/emu.cfg" "$configdir/dreamcast/"
+    #copy default mappings
+    pushd $md_inst/share/reicast/mappings
+    cp *.cfg "$home/.reicast/mappings/"
+    popd
 
     # Link to file that does not exist as this results in the Dreamcast System Manager launching (as if one turned on the Dreamcast without a disc inserted)
     # This is required to fix broken / corrupted VMU files.
     ln -sf fileThatDoesNotExist "$home/RetroPie/roms/dreamcast/systemManager.cdi"
 
     # add system
-    addSystem 1 "$md_id" "dreamcast" "$md_inst/reicast.sh %ROM%"
+    addSystem 1 "$md_id" "dreamcast" "$md_inst/bin/reicast.sh OSS %ROM%"
 
     __INFMSGS+=("You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator.")
 }

@@ -12,11 +12,66 @@
 function onstart_reicast_joystick() {
     local device_type=$1
     local device_name=$2
+    local file="/home/pi/.reicast/mappings/controller_${device_name}.cfg"
+    file=${file// /}
+
+    # create mapping dir if necessary.
+    if [[ ! -d "/home/pi/.reicast" ]]; then
+        mkdir /home/pi/.reicast
+    fi
+    if [[ ! -d "/home/pi/.reicast/mappings" ]]; then
+        mkdir /home/pi/.reicast/mappings
+    fi
+
+    # remove old config file
+    if [[ -f "$file" ]]; then
+        rm "$file"
+    fi
+
+    # write config template
+    cat > "$file" << _EOF_
+[emulator]
+mapping_name =
+btn_escape =
+
+[dreamcast]
+btn_a =
+btn_b =
+btn_c =
+btn_d =
+btn_x =
+btn_y =
+btn_z =
+btn_start =
+btn_dpad1_left =
+btn_dpad1_right =
+btn_dpad1_up =
+btn_dpad1_down =
+btn_dpad2_left =
+btn_dpad2_right =
+btn_dpad2_up =
+btn_dpad2_down =
+axis_x =
+axis_y =
+axis_trigger_left =
+axis_trigger_right =
+
+[compat]
+btn_trigger_left =
+btn_trigger_right =
+axis_dpad1_x =
+axis_dpad1_y =
+axis_dpad2_x =
+axis_dpad2_y =
+axis_x_inverted =
+axis_y_inverted =
+axis_trigger_left_inverted =
+axis_trigger_right_inverted =
+_EOF_
 
     # write temp file header
-    echo "; ${device_name}_START " > /tmp/reicasttempconfig.cfg
-    echo "[${device_name}]" >> /tmp/reicasttempconfig.cfg
-    iniConfig " = " "" "/tmp/reicasttempconfig.cfg"
+    iniConfig " = " "" "$file"
+    iniSet "mapping_name" "$device_name"
 }
 
 function map_reicast_joystick() {
@@ -31,58 +86,70 @@ function map_reicast_joystick() {
     local dir
     case "$input_name" in
         up)
-            keys=("DPad_Up")
+            keys=("btn_dpad1_up")
             ;;
         down)
-            keys=("DPad_Down")
+            keys=("btn_dpad1_down")
             ;;
         left)
-            keys=("DPad_Left")
+            keys=("btn_dpad1_left")
             ;;
         right)
-            keys=("DPad_Right")
+            keys=("btn_dpad1_right")
             ;;
         a)
-            keys=("Btn_B")
+            keys=("btn_b")
             ;;
         b)
-            keys=("Btn_A")
+            keys=("btn_a")
             ;;
         x)
-            keys=("Btn_Y")
+            keys=("btn_y")
             ;;
         y)
-            keys=("Btn_X")
+            keys=("btn_x")
             ;;
         leftbottom)
-            keys=("Axis_LT")
+            keys=("btn_trigger_left")
             ;;
         rightbottom)
-            keys=("Axis_RT")
+            keys=("btn_trigger_right")
             ;;
         lefttop)
-            keys=("DPad2_Left")
+            keys=("axis_trigger_left")
             ;;
         righttop)
-            keys=("DPad2_Right")
+            keys=("axis_trigger_right")
             ;;
         start)
-            keys=("Btn_Start")
+            keys=("btn_start")
             ;;
         select)
-            keys=("Quit")
+            keys=("btn_escape")
             ;;
         leftanalogleft)
-            keys=("Axis_X")
+            keys=("axis_x")
             ;;
         leftanalogright)
-            keys=("Axis_X")
+            keys=("axis_x")
             ;;
         leftanalogup)
-            keys=("Axis_Y")
+            keys=("axis_y")
             ;;
         leftanalogdown)
-            keys=("Axis_Y")
+            keys=("axis_y")
+            ;;
+        rightanalogleft)
+            keys=("axis_dpad1_x")
+            ;;
+        rightanalogright)
+            keys=("axis_dpad1_x")
+            ;;
+        rightanalogup)
+            keys=("axis_dpad1_y")
+            ;;
+        rightanalogdown)
+            keys=("axis_dpad1_y")
             ;;
         *)
             return
@@ -96,27 +163,30 @@ function map_reicast_joystick() {
         case "$input_type" in
             axis) 
                 # key "X/Y Axis" needs different button naming
-                if [[ "$key" == "DPad2_Left" ]] ; then
-                    iniSet "button.$input_id" "Axis_LT"
-                elif [[ "$key" == "DPad2_Right" ]] ; then
-                    iniSet "button.$input_id" "Axis_RT"
-                elif [[ "$key" == "DPad_Up" || "$key" == "DPad_Down" ]]; then
-                    iniSet "axis.$input_id" "Axis_Y" 
-                elif [[ "$key" == "DPad_Right" || "$key" == "DPad_Left" ]]; then
-                    iniSet "axis.$input_id" "Axis_X" 
-                elif [[ "$key" == *Axis* ]] ; then
-                    iniSet "axis.$input_id" "${key}" 
+                if [[ "$key" == "btn_trigger_left" ]] ; then
+                    iniSet "axis_trigger_left" "$input_id"
+                    iniSet "axis_trigger_left_inverted" "no"
+                elif [[ "$key" == "btn_trigger_right" ]] ; then
+                    iniSet "axis_trigger_right" "$input_id"
+                    iniSet "axis_trigger_right_inverted" "no"
+                elif [[ "$key" == "btn_dpad1_up" || "$key" == "btn_dpad1_down" ]]; then
+                    iniSet "axis_y" "$input_id"
+                    iniSet "axis_y_inverted" "no"
+                elif [[ "$key" == "btn_dpad1_left" || "$key" == "btn_dpad1_right" ]]; then
+                    iniSet "axis_x" "$input_id"
+                    iniSet "axis_x_inverted" "no"
+                elif [[ "$key" == *axis* ]] ; then
+                    iniSet "${key}" "$input_id"
+                    iniSet "${key}_inverted" "no"
                 fi
                 ;;
             hat)
                 ;;
             *)
-                if [[ "$key" == "Axis_LT" ]] ; then
-                    iniSet "button.$input_id" "DPad2_Left"
-                elif [[ "$key" == "Axis_RT" ]] ; then
-                    iniSet "button.$input_id" "DPad2_Right"
-                elif [[ "$key" != *Axis* ]] ; then
-                    iniSet "button.$input_id" "$key"
+                if [[ "$key" != *axis* ]] ; then
+                    # input_id must be recalculated: 288d = button 0
+                    input_id=$(($input_id+288))
+                    iniSet "$key" "$input_id"
                 fi
                 ;;
         esac
@@ -126,32 +196,9 @@ function map_reicast_joystick() {
 function onend_reicast_joystick() {
     local device_type=$1
     local device_name=$2
-
-    echo "; ${device_name}_END " >> /tmp/reicasttempconfig.cfg
-    echo "" >> /tmp/reicasttempconfig.cfg
-
-    # abort if old device config cannot be deleted.
-    local file="/home/pi/.reicast/emu.cfg"
-    if [[ ! -d "/home/pi/.reicast" ]]; then
-        mkdir /home/pi/.reicast
-    fi
-    if [[ -f "$file" ]]; then
-        # backup current config file
-        cp "$file" "${file}.bak"
-        # if reicast did not run frames are there
-        if grep -q "${device_name}_END" "$file" ; then
-            sed -i /"${device_name}_START"/,/"${device_name}_END"/d "$file"
-        # reicast removes frames after first run but adds axis.31
-        else
-            sed -i /"${device_name}"/,/"axis.31="/d "$file"
-        fi
-        if grep -q "$device_name" "$file" ; then
-            rm /tmp/reicasttempconfig.cfg
-            return
-        fi
-    fi
-
-    # read temp device configuration and append to emu.cfg
-    cat /tmp/reicasttempconfig.cfg >> "$file"
-    rm /tmp/reicasttempconfig.cfg
+    local file="/home/pi/.reicast/mappings/controller_${device_name}.cfg"
+    file=${file// /}
+    
+    # add empty end line
+    echo "" >> "$file"
 }
