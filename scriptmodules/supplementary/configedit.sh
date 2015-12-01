@@ -19,6 +19,7 @@ function common_configedit() {
     
     # key + values
     local common=(
+        'video_driver gl dispmanx sdl2 vg'
         'video_fullscreen_x _string_'
         'video_fullscreen_y _string_'
         'video_threaded true false'
@@ -40,6 +41,7 @@ function common_configedit() {
     )
     
     local descs=(
+        'Video driver to use (default is gl)'
         'Fullscreen resolution. Resolution of 0 uses the resolution of the desktop.'
         'Fullscreen resolution. Resolution of 0 uses the resolution of the desktop.'
         'Use threaded video driver. Using this might improve performance at possible cost of latency and more video stuttering.'
