@@ -14,6 +14,10 @@ rp_module_desc="Configure audio settings"
 rp_module_menus="3+"
 rp_module_flags="nobin"
 
+function depends_audiosettings() {
+    getDepends alsa-utils
+}
+
 function configure_audiosettings() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output." 22 86 16)
     options=(
