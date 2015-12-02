@@ -20,28 +20,19 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
-    # tune flags
-    sed -i 's/-mtune=cortex-a9//g' shell/linux/Makefile
-    sed -i 's/-mfpu=neon/-mfpu=neon-vfpv4/g' shell/linux/Makefile
-    sed -i 's/-mfloat-abi=softfp/-mfloat-abi=hard/g' shell/linux/Makefile
-    # don't use precompiled stuff. use system libs
-    sed -i 's|-L../linux-deps/lib||g' shell/linux/Makefile
-    sed -i 's|-I../linux-deps/include||g' shell/linux/Makefile
-    # fix reicast-joyconfig script
-    sed -i 's|"dreamcast", "btn_escape"|"emulator", "btn_escape"|g' shell/linux/tools/reicast-joyconfig.py
+    gitPullOrClone "$md_build" https://github.com/RetroPie/reicast-emulator.git retropie
 }
 
 function build_reicast() {
-    cd "$md_build/shell/linux"
-    make clean
+    cd shell/linux
+    make platform=rpi2 clean
     make platform=rpi2
     md_ret_require="$md_build/shell/linux/reicast.elf"
 }
 
 function install_reicast() {
-    cd "$md_build/shell/linux"
-    make PREFIX="$md_inst" install
+    cd shell/linux
+    make platform=rpi2 PREFIX="$md_inst" install
     md_ret_files=(
         'LICENSE'
         'README.md'
@@ -55,18 +46,23 @@ function configure_reicast() {
     mkRomDir "dreamcast"
     mkUserDir "$configdir/dreamcast/"
 
-    # Create home VMU, cfg, and data folders. Copy dc_boot.bin and dc_flash.bin to the ~/.reicast/data/ folder.
-    mkUserDir "$home/.reicast"
-    mkUserDir "$home/.reicast/data"
-    mkUserDir "$home/.reicast/mappings"
+    # move any old configs to the new location
+    if [[ -d "$home/.reicast" && ! -h "$home/.reicast" ]]; then
+        mv "$home/.reicast/"* "$configdir/dreamcast/"
+        rmdir "$home/.reicast"
+    fi
+    ln -snf "$configdir/dreamcast" "$home/.reicast"
 
-    ln -sf "$biosdir/dc_boot.bin" "$home/.reicast/data/"
-    ln -sf "$biosdir/dc_flash.bin" "$home/.reicast/data/"
-    # add links to retropie config dir
-    ln -s "$home/.reicast/mappings" "$configdir/dreamcast/"
-    ln -sf "$home/.reicast/emu.cfg" "$configdir/dreamcast/"
+    # Create home VMU, cfg, and data folders. Copy dc_boot.bin and dc_flash.bin to the ~/.reicast/data/ folder.
+    mkdir -p "$configdir/dreamcast/"{data,mappings}
+
+    # symlink bios
+    ln -sf "$biosdir/"{dc_boot.bin,dc_flash.bin} "$configdir/dreamcast/data"
+
     # copy default mappings
-    cp "$md_inst/share/reicast/mappings/"*.cfg "$home/.reicast/mappings/"
+    cp "$md_inst/share/reicast/mappings/"*.cfg "$configdir/dreamcast/mappings/"
+
+    chown -R $user:$user "$configdir/dreamcast"
 
     # Link to file that does not exist as this results in the Dreamcast System Manager launching (as if one turned on the Dreamcast without a disc inserted)
     # This is required to fix broken / corrupted VMU files.
