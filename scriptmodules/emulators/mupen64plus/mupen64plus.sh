@@ -164,6 +164,48 @@ function setAudio() {
     fi
 }
 
+function testCompatibility() {
+    # fallback for glesn64 and rice plugin
+    # some roms lead to a black screen of death
+    local game
+    local glesn64_blacklist=( zelda
+                              Zelda
+                              ZELDA
+                              paper
+                              Paper
+                              PAPER
+                              kazooie
+                              Kazooie
+                              KAZOOIE
+                              tooie
+                              Tooie
+                              TOOIE
+                              instinct
+                              Instinct
+                              INSTINCT )
+
+    local glesn64rice_blacklist=( yoshi
+                                  Yoshi
+                                  YOSHI )
+
+    if [[ "$VIDEO_PLUGIN" == "mupen64plus-video-n64" ]];then
+        for game in "${glesn64_blacklist[@]}"; do
+            if [[ "$ROM" == *"$game"* ]]; then
+                VIDEO_PLUGIN="mupen64plus-video-rice"
+            fi
+        done
+    fi
+
+    if [[ "$VIDEO_PLUGIN" != "mupen64plus-video-GLideN64" ]];then
+        for game in "${glesn64rice_blacklist[@]}"; do
+            if [[ "$ROM" == *"$game"* ]]; then
+                VIDEO_PLUGIN="mupen64plus-video-GLideN64"
+            fi
+        done
+    fi
+}
+
 remap
+testCompatibility
 setAudio
 /opt/retropie/emulators/mupen64plus/bin/mupen64plus --noosd --fullscreen --gfx ${VIDEO_PLUGIN}.so --configdir $configdir/n64 --datadir $configdir/n64 "$ROM"
