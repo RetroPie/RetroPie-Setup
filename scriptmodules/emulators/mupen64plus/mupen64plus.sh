@@ -133,7 +133,7 @@ function remap() {
             # get name of retroarch auto config file
             file=$(grep --exclude=*.bak -rl "$configdir/all/retroarch-joypads/" -e "\"${devices[$device_num]}\"")
             if [[ -f "$file" ]]; then
-                if [[ -n "$bind"  && "$bind" != *, ]]; then
+                if [[ -n "$bind" && "$bind" != *, ]]; then
                     bind+=","
                 fi
                 bind+=$(getBind "${hotkeys_rp[$i]}" "${device_num}" "$file")
@@ -168,25 +168,29 @@ function testCompatibility() {
     # fallback for glesn64 and rice plugin
     # some roms lead to a black screen of death
     local game
-    local glesn64_blacklist=( zelda
-                              Zelda
-                              ZELDA
-                              paper
-                              Paper
-                              PAPER
-                              kazooie
-                              Kazooie
-                              KAZOOIE
-                              tooie
-                              Tooie
-                              TOOIE
-                              instinct
-                              Instinct
-                              INSTINCT )
+    local glesn64_blacklist=(
+        zelda
+        Zelda
+        ZELDA
+        paper
+        Paper
+        PAPER
+        kazooie
+        Kazooie
+        KAZOOIE
+        tooie
+        Tooie
+        TOOIE
+        instinct
+        Instinct
+        INSTINCT
+    )
 
-    local glesn64rice_blacklist=( yoshi
-                                  Yoshi
-                                  YOSHI )
+    local glesn64rice_blacklist=(
+        yoshi
+        Yoshi
+        YOSHI
+    )
 
     if [[ "$VIDEO_PLUGIN" == "mupen64plus-video-n64" ]];then
         for game in "${glesn64_blacklist[@]}"; do

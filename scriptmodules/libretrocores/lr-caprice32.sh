@@ -11,7 +11,7 @@
 
 rp_module_id="lr-caprice32"
 rp_module_desc="Amstrad CPC emu - Caprice32 port for libretro"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_lr-caprice32() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-cap32.git
