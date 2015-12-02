@@ -13,7 +13,7 @@ function mapInput() {
     local ev_devices
     local ev_device_num
     local device_counter
-    local conf="/home/pi/.reicast/emu.cfg"
+    local conf="$HOME/.reicast/emu.cfg"
     
     # cleanup "$home/.reicast/emu.cfg"
     sed -i '/input/,/joystick_device_id/d' "$conf"
@@ -26,7 +26,7 @@ function mapInput() {
         for ev_device in /dev/input/event*; do
             ev_device_num=${ev_device/\/dev\/input\/event/}
             if [[ -d "/sys/class/input/event${ev_device_num}/device/js${js_device_num}" ]]; then
-                file[$ev_device_num]=$(grep --exclude=*.bak -rl "/home/pi/.reicast/mappings/" -e "= $(</sys/class/input/event${ev_device_num}/device/name)")
+                file[$ev_device_num]=$(grep --exclude=*.bak -rl "$HOME/.reicast/mappings/" -e "= $(</sys/class/input/event${ev_device_num}/device/name)")
                 if [[ -f "${file[$ev_device_num]}" ]]; then
                     #file[$ev_device_num]="${file[$ev_device_num]##*/}"
                     ev_devices[$ev_device_num]=$(</sys/class/input/event${ev_device_num}/device/name)
@@ -58,21 +58,21 @@ function mapInput() {
     echo "" >> "$conf"
 }
 
-if [[ -f "/home/pi/RetroPie/BIOS/dc_boot.bin" ]]; then
+if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
     mapInput
-    conf="/home/pi/.reicast/emu.cfg"
+    conf="$HOME/.reicast/emu.cfg"
     sed -i '/audio/,/disable/d' "$conf"
     echo "[audio]" >> "$conf"
     if [[ "$AUDIO" == "OSS" ]]; then
         echo "backend = oss" >> "$conf"
         echo "disable = 0" >> "$conf"
         echo "" >> "$conf"
-        aoss "$rootdir/emulators/reicast/bin/reicast" -config config:homedir=/home/pi/ -config config:image="$ROM" >> /dev/null
+        aoss "$rootdir/emulators/reicast/bin/reicast" -config config:homedir="$HOME" -config config:image="$ROM" >> /dev/null
     else
         echo "backend = alsa" >> "$conf"
         echo "disable = 0" >> "$conf"
         echo "" >> "$conf"
-        "$rootdir/emulators/reicast/bin/reicast" -config config:homedir=/home/pi/ -config config:image="$ROM" >> /dev/null
+        "$rootdir/emulators/reicast/bin/reicast" -config config:homedir="$HOME" -config config:image="$ROM" >> /dev/null
     fi
 else
     __INFMSGS+=("You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator.")
