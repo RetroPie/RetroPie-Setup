@@ -131,7 +131,7 @@ function remap() {
         bind=""
         for device_num in "${!devices[@]}"; do
             # get name of retroarch auto config file
-            file=$(grep --exclude=*.bak -rl "/opt/retropie/configs/all/retroarch-joypads/" -e "\"${devices[$device_num]}\"")
+            file=$(grep --exclude=*.bak -rl "$configdir/all/retroarch-joypads/" -e "\"${devices[$device_num]}\"")
             if [[ -f "$file" ]]; then
                 if [[ -n "$bind"  && "$bind" != *, ]]; then
                     bind+=","
@@ -140,14 +140,14 @@ function remap() {
             fi
         done
         # write hotkey to mupen64plus.cfg
-        iniConfig " = " "\"" "/opt/retropie/configs/n64/mupen64plus.cfg"
+        iniConfig " = " "\"" "$configdir/n64/mupen64plus.cfg"
         iniSet "${hotkeys_m64p[$i]}" "$bind"
     done
 }
 
 function setAudio() {
     local audio_device=$(amixer cget numid=3)
-    iniConfig " = " "\"" "/opt/retropie/configs/n64/mupen64plus.cfg"
+    iniConfig " = " "\"" "$configdir/n64/mupen64plus.cfg"
     if [[ "$audio_device" == *": values=0"* ]]; then
         local video_device=$(tvservice -s)
         if [[ "$video_device" == *HDMI* ]]; then
@@ -208,4 +208,4 @@ function testCompatibility() {
 remap
 testCompatibility
 setAudio
-/opt/retropie/emulators/mupen64plus/bin/mupen64plus --noosd --fullscreen --gfx ${VIDEO_PLUGIN}.so --configdir $configdir/n64 --datadir $configdir/n64 "$ROM"
+"$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --gfx ${VIDEO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
