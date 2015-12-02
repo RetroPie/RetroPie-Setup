@@ -39,6 +39,8 @@ apps_conf="$configdir/all/emulators.cfg"
 dispmanx_conf="$configdir/all/dispmanx.cfg"
 retronetplay_conf="$configdir/all/retronetplay.cfg"
 
+tvservice="/opt/vc/bin/tvservice"
+
 declare -A mode_map
 declare -A mode
 
@@ -104,7 +106,7 @@ function get_all_modes() {
                 mode_id+=($group-$id)
                 mode[$group-$id]="$info"
             fi
-        done < <(tvservice -m $group)
+        done < <($tvservice -m $group)
     done
     local aspect
     for group in "NTSC" "PAL"; do
@@ -152,7 +154,7 @@ function load_mode_defaults() {
 
     if [[ $has_tvs -eq 1 ]]; then
         # get current mode / aspect ratio
-        mode_orig=($(get_mode_info "$(tvservice -s)"))
+        mode_orig=($(get_mode_info "$($tvservice -s)"))
         mode_new=("${mode_orig[@]}")
 
         # get default mode for requested mode of 1 or 4
@@ -479,12 +481,12 @@ function switch_mode() {
 
     local switched=0
     if [[ "${mode_id[0]}" == "PAL" ]] || [[ "${mode_id[0]}" == "NTSC" ]]; then
-        tvservice -c "${mode_id[*]}"
+        $tvservice -c "${mode_id[*]}"
         switched=1
     else
-        local has_mode=$(tvservice -m ${mode_id[0]} | grep -w "mode ${mode_id[1]}")
+        local has_mode=$($tvservice -m ${mode_id[0]} | grep -w "mode ${mode_id[1]}")
         if [[ -n "${mode_id[*]}" ]] && [[ -n "$has_mode" ]]; then
-            tvservice -e "${mode_id[*]}"
+            $tvservice -e "${mode_id[*]}"
             switched=1
         fi
     fi
@@ -492,7 +494,7 @@ function switch_mode() {
     # if we have switched mode, switch the framebuffer resolution also
     if [[ $switched -eq 1 ]]; then
         sleep 1
-        mode_new=($(get_mode_info "$(tvservice -s)"))
+        mode_new=($(get_mode_info "$($tvservice -s)"))
         [[ -z "$fb_new" ]] && fb_new="${mode_new[2]}x${mode_new[3]}"
     fi
 
@@ -502,9 +504,9 @@ function switch_mode() {
 function restore_mode() {
     local mode=(${1/-/ })
     if [[ "${mode[0]}" == "PAL" ]] || [[ "${mode[0]}" == "NTSC" ]]; then
-        tvservice -c "${mode[*]}"
+        $tvservice -c "${mode[*]}"
     else
-        tvservice -p
+        $tvservice -p
     fi
 }
 
@@ -632,7 +634,7 @@ if [[ -f "$runcommand_conf" ]]; then
     governor="$ini_value"
 fi
 
-if [[ -n "$(which tvservice)" ]]; then
+if [[ -f "$tvservice" ]]; then
     has_tvs=1
 else
     has_tvs=0
