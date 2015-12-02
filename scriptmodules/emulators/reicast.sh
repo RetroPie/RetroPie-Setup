@@ -53,6 +53,7 @@ function configure_reicast() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/reicast.sh" "$md_inst/bin/"
 
     mkRomDir "dreamcast"
+    mkUserDir "$configdir/dreamcast/"
 
     # Create home VMU, cfg, and data folders. Copy dc_boot.bin and dc_flash.bin to the ~/.reicast/data/ folder.
     mkUserDir "$home/.reicast"
