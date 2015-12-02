@@ -12,21 +12,14 @@
 function onstart_reicast_joystick() {
     local device_type=$1
     local device_name=$2
-    local file="/home/pi/.reicast/mappings/controller_${device_name}.cfg"
+    local file="$configdir/dreamcast/mappings/controller_${device_name}.cfg"
     file=${file// /}
 
     # create mapping dir if necessary.
-    if [[ ! -d "/home/pi/.reicast" ]]; then
-        mkdir /home/pi/.reicast
-    fi
-    if [[ ! -d "/home/pi/.reicast/mappings" ]]; then
-        mkdir /home/pi/.reicast/mappings
-    fi
+    mkdir -p "$configdir/dreamcast/mappings"
 
     # remove old config file
-    if [[ -f "$file" ]]; then
-        rm "$file"
-    fi
+    rm -f "$file"
 
     # write config template
     cat > "$file" << _EOF_
@@ -196,7 +189,7 @@ function map_reicast_joystick() {
 function onend_reicast_joystick() {
     local device_type=$1
     local device_name=$2
-    local file="/home/pi/.reicast/mappings/controller_${device_name}.cfg"
+    local file="$configdir/dreamcast/mappings/controller_${device_name}.cfg"
     file=${file// /}
     
     # add empty end line
