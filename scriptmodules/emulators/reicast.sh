@@ -21,14 +21,14 @@ function depends_reicast() {
 function sources_reicast() {
     gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
     # tune flags
-    sed -i 's/-mtune=cortex-a9//g' $md_build/shell/linux/Makefile
-    sed -i 's/-mfpu=neon/-mfpu=neon-vfpv4/g' $md_build/shell/linux/Makefile
-    sed -i 's/-mfloat-abi=softfp/-mfloat-abi=hard/g' $md_build/shell/linux/Makefile
+    sed -i 's/-mtune=cortex-a9//g' shell/linux/Makefile
+    sed -i 's/-mfpu=neon/-mfpu=neon-vfpv4/g' shell/linux/Makefile
+    sed -i 's/-mfloat-abi=softfp/-mfloat-abi=hard/g' shell/linux/Makefile
     # don't use precompiled stuff. use system libs
-    sed -i 's|-L../linux-deps/lib||g' $md_build/shell/linux/Makefile
-    sed -i 's|-I../linux-deps/include||g' $md_build/shell/linux/Makefile
+    sed -i 's|-L../linux-deps/lib||g' shell/linux/Makefile
+    sed -i 's|-I../linux-deps/include||g' shell/linux/Makefile
     # fix reicast-joyconfig script
-    sed -i 's|"dreamcast", "btn_escape"|"emulator", "btn_escape"|g' $md_build/shell/linux/tools/reicast-joyconfig.py
+    sed -i 's|"dreamcast", "btn_escape"|"emulator", "btn_escape"|g' shell/linux/tools/reicast-joyconfig.py
 }
 
 function build_reicast() {
@@ -67,10 +67,8 @@ function configure_reicast() {
     # add links to retropie config dir
     ln -s "$home/.reicast/mappings" "$configdir/dreamcast/"
     ln -sf "$home/.reicast/emu.cfg" "$configdir/dreamcast/"
-    #copy default mappings
-    pushd $md_inst/share/reicast/mappings
-    cp *.cfg "$home/.reicast/mappings/"
-    popd
+    # copy default mappings
+    cp "$md_inst/share/reicast/mappings/"*.cfg "$home/.reicast/mappings/"
 
     # Link to file that does not exist as this results in the Dreamcast System Manager launching (as if one turned on the Dreamcast without a disc inserted)
     # This is required to fix broken / corrupted VMU files.
