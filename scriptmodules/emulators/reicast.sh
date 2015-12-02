@@ -16,6 +16,7 @@ rp_module_flags="!rpi1"
 
 function depends_reicast() {
     getDepends libsdl1.2-dev python-dev python-pip alsa-oss
+    pip install evdev
 }
 
 function sources_reicast() {
@@ -32,18 +33,15 @@ function sources_reicast() {
 }
 
 function build_reicast() {
-    pushd "$md_build/shell/linux"
+    cd "$md_build/shell/linux"
     make clean
     make platform=rpi2
-    popd
     md_ret_require="$md_build/shell/linux/reicast.elf"
 }
 
 function install_reicast() {
-    pushd "$md_build/shell/linux"
+    cd "$md_build/shell/linux"
     make PREFIX="$md_inst" install
-    popd
-    pip install evdev
     md_ret_files=(
         'LICENSE'
         'README.md'
