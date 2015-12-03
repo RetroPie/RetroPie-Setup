@@ -13,12 +13,6 @@ rp_module_id="dxx-rebirth"
 rp_module_desc="DXX-Rebirth (Descent & Descent 2) build from source"
 rp_module_menus="4+"
 
-D1X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
-D2X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
-D1X_HIGH_TEXTURE_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
-D1X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
-D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
-
 function depends_dxx-rebirth() {
     getDepends libphysfs1 libphysfs-dev libsdl1.2-dev libsdl-mixer1.2-dev scons
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
@@ -68,6 +62,12 @@ function install_dxx-rebirth() {
 }
 
 function configure_dxx-rebirth() {
+    local D1X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
+    local D2X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
+    local D1X_HIGH_TEXTURE_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
+    local D1X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
+    local D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
+
     mkRomDir "ports"
 
     # Descent 1
