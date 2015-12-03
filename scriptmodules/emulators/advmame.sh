@@ -126,16 +126,7 @@ function configure_advmame() {
 
     mkUserDir "$configdir/mame-advmame"
 
-    # move any old configs to new location
-    if [[ -d "$home/.advance" && ! -h "$home/.advance" ]]; then
-        mv -v "$home/.advance/advmame.rc" "$configdir/mame-advmame/"
-        mv -v "$home/.advance/"* "$configdir/mame-advmame/"
-        rmdir "$home/.advance/"
-    fi
-
-    ln -snf "$configdir/mame-advmame" "$home/.advance"
-
-    chown -R $user:$user "$configdir/mame-advmame"
+    moveConfigDir "$home/.advance" "$configdir/mame-advmame"
 
     local version
     local default
