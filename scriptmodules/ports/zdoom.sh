@@ -48,14 +48,10 @@ function configure_zdoom() {
     mkRomDir "ports"
     mkRomDir "ports/doom"
 
-    mkUserDir "doom"
-
-    if [[ -d "$home/.config/zdoom" && ! -h "$home/.config/zdoom" ]]; then
-        mv -v "$home/.config/zdoom"* "$home/.config/zdoom"
-        rm -rf "$home/.config/zdoom"
-    fi
+    mkUserDir "$configdir/doom"
     mkUserDir "$home/.config"
-    ln -snf "$configdir/doom" "$home/.config/zdoom"
+    
+    moveConfigDir "$home/.config/zdoom" "$configdir/doom"
 
     # download doom 1 shareware
     if [[ ! -f "$romdir/ports/doom/doom1.wad" ]]; then
