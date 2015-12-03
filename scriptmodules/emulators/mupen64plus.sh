@@ -111,7 +111,7 @@ function configure_mupen64plus() {
     # to solve startup problems delete old config file
     rm -f "$configdir/n64/mupen64plus.cfg"
     # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
-    rm "$md_inst/share/mupen64plus/InputAutoCfg.ini"
+    rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
     mkUserDir "$configdir/n64/"
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$configdir/n64/"
