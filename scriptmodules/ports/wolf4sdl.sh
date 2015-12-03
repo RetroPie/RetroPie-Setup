@@ -59,6 +59,9 @@ function configure_wolf4sdl() {
     mkRomDir "ports"
     mkRomDir "ports/wolf3d"
 
+    mkUserDir "$configdir/wolf3d"
+    moveConfigDir "$home/.wolf4sdl" "$configdir/wolf3d"
+
     # Get shareware game data
     wget -q -O wolf3d14.zip http://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip
     unzip -j -o -LL wolf3d14.zip -d "$romdir/ports/wolf3d"
