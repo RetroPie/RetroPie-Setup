@@ -37,5 +37,5 @@ function install_cpc() {
 function configure_cpc() {
     mkRomDir "amstradcpc"
 
-    addSystem 1 "$md_id" "amstradcpc" "$md_inst/cpc4rpi %ROM%"
+    addSystem 0 "$md_id" "amstradcpc" "$md_inst/cpc4rpi %ROM%"
 }
