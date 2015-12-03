@@ -118,8 +118,8 @@ function launch_retropiemenu() {
             mc
             ;;
         showip.rp)
-            ip addr show
-            sleep 5
+            local ip="$(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)"
+            printMsgs "dialog" "Your IP is: $ip\n\nOutput of 'ip addr show':\n\n$(ip addr show)"
             ;;
         *.rp)
             local no_ext=${basename%.rp}
