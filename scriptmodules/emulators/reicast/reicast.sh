@@ -75,5 +75,5 @@ if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
         "$rootdir/emulators/reicast/bin/reicast" -config config:homedir="$HOME" -config config:image="$ROM" >> /dev/null
     fi
 else
-    __INFMSGS+=("You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator.")
+    dialog --msgbox "You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator." 22 76
 fi
