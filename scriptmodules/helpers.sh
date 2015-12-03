@@ -264,7 +264,9 @@ function moveConfigDir() {
     if [[ -d "$from" && ! -h "$from" ]]; then
         # also match hidden files
         shopt -s dotglob
-        mv "$from/"* "$to"
+        if [[ -n "$(ls -A $from)" ]]; then
+            mv -f "$from/"* "$to"
+        fi
         shopt -u dotglob
         rmdir "$from"
     fi
