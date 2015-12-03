@@ -45,6 +45,8 @@ function configure_eduke32() {
     mkRomDir "ports"
     mkRomDir "ports/duke3d"
 
+    moveConfigDir "$home/.eduke32" "$configdir/duke3d"
+
     local file
     local file_bn
     for file in "$md_inst/shareware/"*; do

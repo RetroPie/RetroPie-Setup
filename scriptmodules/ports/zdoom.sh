@@ -48,9 +48,7 @@ function configure_zdoom() {
     mkRomDir "ports"
     mkRomDir "ports/doom"
 
-    mkUserDir "$configdir/doom"
     mkUserDir "$home/.config"
-
     moveConfigDir "$home/.config/zdoom" "$configdir/doom"
 
     # download doom 1 shareware

@@ -44,7 +44,6 @@ function install_scummvm() {
 function configure_scummvm() {
     mkRomDir "scummvm"
 
-    mkUserDir "$configdir/scummvm"
     moveConfigDir "$home/.scummvm" "$configdir/scummvm"
 
     # Create startup script

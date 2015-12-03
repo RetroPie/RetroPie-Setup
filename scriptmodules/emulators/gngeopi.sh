@@ -41,8 +41,6 @@ function install_gngeopi() {
 function configure_gngeopi() {
     mkRomDir "neogeo"
 
-    mkUserDir "$configdir/neogeo"
-
     # move old config to new location
     moveConfigDir "$home/.gngeo" "$configdir/neogeo"
     

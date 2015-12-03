@@ -44,7 +44,6 @@ function configure_reicast() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/reicast.sh" "$md_inst/bin/"
 
     mkRomDir "dreamcast"
-    mkUserDir "$configdir/dreamcast/"
 
     # move any old configs to the new location
     moveConfigDir "$home/.reicast" "$configdir/dreamcast/"

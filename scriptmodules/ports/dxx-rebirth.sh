@@ -72,7 +72,6 @@ function configure_dxx-rebirth() {
 
     # Descent 1
     mkRomDir "ports/descent1"
-    mkUserDir "$configdir/descent1"
     
     # copy any existing configs from ~/.d1x-rebirth and symlink the config folder to $configdir/descent1/
     moveConfigDir "$home/.d1x-rebirth" "$configdir/descent1/"
@@ -100,7 +99,6 @@ function configure_dxx-rebirth() {
     
     # Descent 2
     mkRomDir "ports/descent2"
-    mkUserDir "$configdir/descent2"
     
     # copy any existing configs from ~/.d2x-rebirth and symlink the config folder to $configdir/descent2/
     moveConfigDir "$home/.d1x-rebirth" "$configdir/descent1/"

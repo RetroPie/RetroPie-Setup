@@ -37,8 +37,6 @@ function install_px68k() {
 function configure_px68k() {
     mkRomDir "x68000"
 
-    mkUserDir "$configdir/x68000"
-
     moveConfigDir "$home/.keropi" "$configdir/x68000"
 
     local bios

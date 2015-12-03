@@ -92,11 +92,10 @@ function install_ppsspp() {
 
 function configure_ppsspp() {
     mkRomDir "psp"
-    mkUserDir "$configdir/psp"
-    mkUserDir "$configdir/psp/PSP"
-    mkUserDir "$home/.config"
 
+    mkUserDir "$home/.config"
     moveConfigDir "$home/.config/ppsspp" "$configdir/psp"
+    mkUserDir "$configdir/psp/PSP"
     ln -snf "$romdir/psp" "$configdir/psp/PSP/GAME"
 
     addSystem 1 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"

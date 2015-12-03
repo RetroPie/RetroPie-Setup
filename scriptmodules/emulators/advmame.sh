@@ -124,8 +124,6 @@ function configure_advmame() {
     # delete old install files
     rm -rf "$md_inst/"{bin,man,share}
 
-    mkUserDir "$configdir/mame-advmame"
-
     moveConfigDir "$home/.advance" "$configdir/mame-advmame"
 
     local version

@@ -59,7 +59,6 @@ function configure_wolf4sdl() {
     mkRomDir "ports"
     mkRomDir "ports/wolf3d"
 
-    mkUserDir "$configdir/wolf3d"
     moveConfigDir "$home/.wolf4sdl" "$configdir/wolf3d"
 
     # Get shareware game data

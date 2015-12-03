@@ -39,8 +39,6 @@ function install_vice() {
 function configure_vice() {
     mkRomDir "c64"
 
-    mkUserDir "$configdir/c64"
-
     # copy any existing configs from ~/.vice and symlink the config folder to $configdir/c64/
     moveConfigDir "$home/.vice" "$configdir/c64"
 
