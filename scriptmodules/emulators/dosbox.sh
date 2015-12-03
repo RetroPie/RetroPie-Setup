@@ -65,12 +65,7 @@ _EOF_
 
     mkUserDir "$configdir/pc/"
 
-    # move any old configs to the new location
-    if [[ -d "$home/.dosbox" && ! -h "$home/.dosbox" ]]; then
-        mv "$home/.dosbox/"* "$configdir/pc/"
-        rmdir "$home/.dosbox"
-    fi
-    ln -snf "$configdir/pc" "$home/.dosbox"
+    moveConfigDir "$home/.dosbox" "$configdir/pc"
 
     local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [[ -f "$config_path" ]]; then

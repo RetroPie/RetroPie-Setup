@@ -66,11 +66,7 @@ function configure_atari800() {
     mkUserDir "$configdir/atari800"
 
     # move old config if exists to new location
-    if [[ -f "$home/.atari800.cfg" && ! -h "$home/.atari800.cfg" ]]; then
-        mv -v "$home/.atari800.cfg" "$configdir/atari800.cfg"
-    fi
-    ln -sf "$configdir/atari800/atari800.cfg" "$home/.atari800.cfg"
-    chown -R $user:$user  "$configdir/atari800"
+    moveConfigFile "$home/.atari800.cfg" "$configdir/atari800.cfg"
 
     addSystem 1 "$md_id" "atari800" "$md_inst/bin/atari800 %ROM%"
     addSystem 1 "$md_id" "atari5200" "$md_inst/bin/atari800 %ROM%"

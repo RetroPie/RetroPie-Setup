@@ -51,12 +51,7 @@ function configure_gpsp() {
     ln -sf "$biosdir/gba_bios.bin" "$md_inst/gba_bios.bin"
 
     # move old config
-    if [[ -f "gpsp.cfg" && ! -h "gpsp.cfg" ]]; then
-        mv "gpsp.cfg" "$configdir/gba/gpsp.cfg"
-    fi
-
-    ln -sf "$configdir/gba/gpsp.cfg" "$md_inst/gpsp.cfg"
-
+    moveConfigFile "gpsp.cfg" "$configdir/gba/gpsp.cfg"
 
     addSystem 0 "$md_id" "gba" "$md_inst/gpsp %ROM%"
 }

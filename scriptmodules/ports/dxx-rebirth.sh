@@ -75,12 +75,7 @@ function configure_dxx-rebirth() {
     mkUserDir "$configdir/descent1"
     
     # copy any existing configs from ~/.d1x-rebirth and symlink the config folder to $configdir/descent1/
-    if [[ -d "$home/.d1x-rebirth" && ! -h "$home/.d1x-rebirth" ]]; then
-        mv -v "$home/.d1x-rebirth/"* "$configdir/descent1/"
-        rm -rf "$home/.d1x-rebirth"
-    fi
-    
-    ln -snf "$configdir/descent1" "$home/.d1x-rebirth"
+    moveConfigDir "$home/.d1x-rebirth" "$configdir/descent1/"
     
     # Download / unpack / install Descent shareware files
     if [[ ! -f "$romdir/ports/descent1/descent.hog" ]]; then
@@ -108,12 +103,7 @@ function configure_dxx-rebirth() {
     mkUserDir "$configdir/descent2"
     
     # copy any existing configs from ~/.d2x-rebirth and symlink the config folder to $configdir/descent2/
-    if [[ -d "$home/.d2x-rebirth" && ! -h "$home/.d2x-rebirth" ]]; then
-        mv -v "$home/.d2x-rebirth/"* "$configdir/descent2/"
-        rm -rf "$home/.d2x-rebirth"
-    fi
-    
-    ln -snf "$configdir/descent2" "$home/.d2x-rebirth"
+    moveConfigDir "$home/.d1x-rebirth" "$configdir/descent1/"
     
     # Download / unpack / install Descent 2 shareware files
     if [[ ! -f "$romdir/ports/descent2/D2DEMO.HOG" ]]; then

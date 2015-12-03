@@ -49,14 +49,12 @@ function configure_mame4all() {
     mkdir -p "$configdir/$system/"{cfg,hi,inp,memcard,nvram,snap,sta}
 
     # move old config
-    if [[ -f "mame.cfg" && ! -h "mame.cfg" ]]; then
-        mv "mame.cfg" "$configdir/$system/mame.cfg"
-    fi
+    moveConfigFile "mame.cfg" "$configdir/$system/mame.cfg"
+
     # if the user doesn't already have a config, we will copy the default.
     if [[ ! -f "$configdir/$system/mame.cfg" ]]; then
         cp "mame.cfg.template" "$configdir/$system/mame.cfg"
     fi
-    ln -sf "$configdir/$system/mame.cfg"
 
     iniConfig "=" "" "$configdir/$system/mame.cfg"
     iniSet "cfg" "$configdir/$system/cfg"

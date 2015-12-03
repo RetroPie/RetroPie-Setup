@@ -70,12 +70,7 @@ function configure_hatari() {
     mkRomDir "atarist"
 
     # move any old configs to new location
-    if [[ -d "$home/.hatari" && ! -h "$home/.hatari" ]]; then
-        mv -v "$home/.hatari/"* "$configdir/atarist/"
-        rmdir "$home/.hatari"
-    fi
-
-    ln -snf "$configdir/atarist" "$home/.hatari"
+    moveConfigDir "$home/.hatari" "$configdir/atarist"
 
     delSystem "$md_id" "atariststefalcon"
     delSystem "$md_id" "atarist"

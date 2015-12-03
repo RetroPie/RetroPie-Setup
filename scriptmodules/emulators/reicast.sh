@@ -47,11 +47,7 @@ function configure_reicast() {
     mkUserDir "$configdir/dreamcast/"
 
     # move any old configs to the new location
-    if [[ -d "$home/.reicast" && ! -h "$home/.reicast" ]]; then
-        mv "$home/.reicast/"* "$configdir/dreamcast/"
-        rmdir "$home/.reicast"
-    fi
-    ln -snf "$configdir/dreamcast" "$home/.reicast"
+    moveConfigDir "$home/.reicast" "$configdir/dreamcast/"
 
     # Create home VMU, cfg, and data folders. Copy dc_boot.bin and dc_flash.bin to the ~/.reicast/data/ folder.
     mkdir -p "$configdir/dreamcast/"{data,mappings}

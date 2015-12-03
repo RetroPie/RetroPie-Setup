@@ -42,12 +42,7 @@ function configure_vice() {
     mkUserDir "$configdir/c64"
 
     # copy any existing configs from ~/.vice and symlink the config folder to $configdir/c64/
-    if [[ -d "$home/.vice" && ! -h "$home/.vice" ]]; then
-        mv -v "$home/.vice/"* "$configdir/c64/"
-        rm -rf "$home/.vice"
-    fi
-
-    ln -snf "$configdir/c64" "$home/.vice"
+    moveConfigDir "$home/.vice" "$home/.vice"
 
     # if we have an old config vice.cfg then move it to sdl-vicerc
     if [[ -f "$configdir/c64/vice.cfg" ]]; then

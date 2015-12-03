@@ -256,6 +256,35 @@ function mkRomDir() {
     fi
 }
 
+function moveConfigDir() {
+    local from="$1"
+    local to="$2"
+    mkUserDir "$to"
+    # move any old configs to the new location
+    if [[ -d "$from" && ! -h "$from" ]]; then
+        # also match hidden files
+        shopt -s dotglob
+        mv "$from/"* "$to"
+        shopt -u dotglob
+        rmdir "$from"
+    fi
+    ln -snf "$to" "$from"
+    # set ownership of the actual link to $user
+    chown -h $user:$user "$from"
+}
+
+function moveConfigFile() {
+    local from="$1"
+    local to="$2"
+    # move old file
+    if [[ -f "from" && ! -h "from" ]]; then
+        mv "from" "$to"
+    fi
+    ln -sf "$to" "$from"
+    # set ownership of the actual link to $user
+    chown -h $user:$user "$from"
+}
+
 function setDispmanx() {
     local mod_id="$1"
     local status="$2"

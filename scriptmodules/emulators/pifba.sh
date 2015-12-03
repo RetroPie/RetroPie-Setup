@@ -50,14 +50,12 @@ function configure_pifba() {
     local config
     for config in fba2x.cfg capex.cfg; do
         # move old config
-        if [[ -f "$config" && ! -h "$config" ]]; then
-            mv "$config" "$configdir/fba/$config"
-        fi
+        moveConfigFile "$md_inst/$config" "$configdir/fba/$config"
+
         # if the user doesn't already have a config, we will copy the default.
         if [[ ! -f "$configdir/fba/$config" ]]; then
             cp "$config.template" "$configdir/fba/$config"
         fi
-        ln -sf "$configdir/fba/$config"
         chown $user:$user "$configdir/fba/$config"
     done
 
