@@ -50,7 +50,7 @@ function configure_zdoom() {
 
     mkUserDir "$configdir/doom"
     mkUserDir "$home/.config"
-    
+
     moveConfigDir "$home/.config/zdoom" "$configdir/doom"
 
     # download doom 1 shareware
