@@ -53,9 +53,9 @@ _EOF_
     chmod +x "$romdir/zxspectrum/+Start ZEsarUX.sh"
     chown $user:$user "$romdir/zxspectrum/+Start ZEsarUX.sh"
 
-    ln -sf "$configdir/zxspectrum/.zesaruxrc" "$home/.zesaruxrc"
-
-    cat > "$configdir/zxspectrum/.zesaruxrc" << _EOF_
+    moveConfigFile "$home/.zesaruxrc" "$configdir/zxspectrum/.zesaruxrc"
+    if [[ ! -f "$configdir/zxspectrum/.zesaruxrc" ]]; then
+        cat > "$configdir/zxspectrum/.zesaruxrc" << _EOF_
 ;ZEsarUX sample configuration file
 ;
 ;Lines beginning with ; or # are ignored
@@ -74,8 +74,8 @@ _EOF_
 ;Remap Fire Event. Uncomment and amend if you wish to change the default button 3.
 ;--joystickevent 3 Fire
 _EOF_
-
-    chown $user:$user "$configdir/zxspectrum/.zesaruxrc"
+        chown $user:$user "$configdir/zxspectrum/.zesaruxrc"
+    fi
 
     setDispmanx "$md_id" 1
 
