@@ -96,7 +96,7 @@ function configure_ppsspp() {
     mkUserDir "$configdir/psp/PSP"
     mkUserDir "$home/.config"
 
-    ln -snf "$configdir/psp" "$home/.config/ppsspp"
+    moveConfigDir "$home/.config/ppsspp" "$configdir/psp"
     ln -snf "$romdir/psp" "$configdir/psp/PSP/GAME"
 
     addSystem 1 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
