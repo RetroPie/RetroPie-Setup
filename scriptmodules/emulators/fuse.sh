@@ -60,12 +60,8 @@ function configure_fuse() {
     mkRomDir "zxspectrum"
 
     mkUserDir "$configdir/zxspectrum"
-    if [[ -f "$home/.fuserc" && ! -h "$home/.fuserc" ]]; then
-        mv "$home/.fuserc" "$configdir/zxspectrum/"
-    fi
-    rm -f "$home/.fuserc"
-    ln -sf "$configdir/zxspectrum/.fuserc" "$home/.fuserc"
-    chown -R $user:$user "$configdir/zxspectrum"
+
+    moveConfigFile "$home/.fuserc" "$configdir/zxspectrum/.fuserc"
 
     setDispmanx "$md_id" 1
     configure_dispmanx_on_fuse
