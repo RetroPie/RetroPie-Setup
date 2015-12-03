@@ -13,7 +13,7 @@ function mapInput() {
     local ev_devices
     local ev_device_num
     local device_counter
-    local conf="$HOME/.reicast/emu.cfg"
+    local conf="$configdir/dreamcast/emu.cfg"
     
     # cleanup "$home/.reicast/emu.cfg"
     sed -i '/input/,/joystick_device_id/d' "$conf"
@@ -26,7 +26,7 @@ function mapInput() {
         for ev_device in /dev/input/event*; do
             ev_device_num=${ev_device/\/dev\/input\/event/}
             if [[ -d "/sys/class/input/event${ev_device_num}/device/js${js_device_num}" ]]; then
-                file[$ev_device_num]=$(grep --exclude=*.bak -rl "$HOME/.reicast/mappings/" -e "= $(</sys/class/input/event${ev_device_num}/device/name)")
+                file[$ev_device_num]=$(grep --exclude=*.bak -rl "$configdir/dreamcast/mappings/" -e "= $(</sys/class/input/event${ev_device_num}/device/name)")
                 if [[ -f "${file[$ev_device_num]}" ]]; then
                     #file[$ev_device_num]="${file[$ev_device_num]##*/}"
                     ev_devices[$ev_device_num]=$(</sys/class/input/event${ev_device_num}/device/name)
@@ -60,7 +60,7 @@ function mapInput() {
 
 if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
     mapInput
-    conf="$HOME/.reicast/emu.cfg"
+    conf="$configdir/dreamcast/emu.cfg"
     sed -i '/audio/,/disable/d' "$conf"
     echo "[audio]" >> "$conf"
     if [[ "$AUDIO" == "OSS" ]]; then
