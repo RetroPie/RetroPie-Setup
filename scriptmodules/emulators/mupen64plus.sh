@@ -130,4 +130,8 @@ function configure_mupen64plus() {
     addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
     addSystem 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"
     addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
+
+    addAutoConf mupen64plus_audio 1
+    addAutoConf mupen64plus_hotkeys 1
+    addAutoConf mupen64plus_compatibility_check 1
 }
