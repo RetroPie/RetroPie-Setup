@@ -12,8 +12,19 @@
 function onstart_reicast_joystick() {
     local device_type=$1
     local device_name=$2
-    local file="$configdir/dreamcast/mappings/controller_${device_name}.cfg"
-    file=${file// /}
+    local file
+    
+    case "$device_name" in
+        "Xbox 360 Controller (xpad driver)")
+            file="$configdir/dreamcast/mappings/controller_xpad.cfg"
+            ;;
+        "Xbox 360 Controller (xboxdrv userspace driver)")
+            file="$configdir/dreamcast/mappings/controller_xboxdrv.cfg"
+            ;;
+        *)
+            file="$configdir/dreamcast/mappings/controller_${device_name// /}.cfg"
+            ;;
+    esac
 
     # create mapping dir if necessary.
     mkdir -p "$configdir/dreamcast/mappings"
@@ -189,8 +200,19 @@ function map_reicast_joystick() {
 function onend_reicast_joystick() {
     local device_type=$1
     local device_name=$2
-    local file="$configdir/dreamcast/mappings/controller_${device_name}.cfg"
-    file=${file// /}
+    local file
+    
+    case "$device_name" in
+        "Xbox 360 Controller (xpad driver)")
+            file="$configdir/dreamcast/mappings/controller_xpad.cfg"
+            ;;
+        "Xbox 360 Controller (xboxdrv userspace driver)")
+            file="$configdir/dreamcast/mappings/controller_xboxdrv.cfg"
+            ;;
+        *)
+            file="$configdir/dreamcast/mappings/controller_${device_name// /}.cfg"
+            ;;
+    esac
     
     # add empty end line
     echo "" >> "$file"
