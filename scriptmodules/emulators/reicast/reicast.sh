@@ -59,7 +59,7 @@ function mapInput() {
 }
 
 if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
-    mapInput
+    getAutoConf reicast_input || mapInput
     conf="$configdir/dreamcast/emu.cfg"
     sed -i '/audio/,/disable/d' "$conf"
     echo "[audio]" >> "$conf"

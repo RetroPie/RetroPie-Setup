@@ -209,7 +209,7 @@ function testCompatibility() {
     fi
 }
 
-remap
-testCompatibility
-setAudio
+getAutoConf mupen64plus_hotkeys || remap
+getAutoConf mupen64plus_compatibility_check || testCompatibility
+getAutoConf mupen64plus_audio || setAudio
 "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --gfx ${VIDEO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"

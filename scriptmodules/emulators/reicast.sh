@@ -66,5 +66,7 @@ function configure_reicast() {
     # add system
     addSystem 1 "$md_id" "dreamcast" "$md_inst/bin/reicast.sh OSS %ROM%"
 
+    addAutoConf reicast_input 1
+
     __INFMSGS+=("You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator.")
 }
