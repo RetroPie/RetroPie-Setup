@@ -14,7 +14,7 @@
 do_start () {
     local config="/etc/splashscreen.list"
     local line="$(head -1 "$config")"
-    if $(echo "$line" | grep -q ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg\|.mp3\|.wav\|.m4a\|.aac\|.ogg\|.flac\|"); then
+    if $(echo "$line" | grep -q ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg\|.mp3\|.wav\|.m4a\|.aac\|.ogg\|.flac"); then
         while ! touch /tmp/writable; do
             sleep 1
         done
