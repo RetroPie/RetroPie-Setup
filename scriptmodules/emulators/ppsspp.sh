@@ -11,7 +11,6 @@
 
 rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
-rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
 function depends_ppsspp() {
@@ -98,5 +97,5 @@ function configure_ppsspp() {
     mkUserDir "$configdir/psp/PSP"
     ln -snf "$romdir/psp" "$configdir/psp/PSP/GAME"
 
-    addSystem 1 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
+    addSystem 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
 }

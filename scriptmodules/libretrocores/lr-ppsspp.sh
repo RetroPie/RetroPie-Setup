@@ -11,7 +11,6 @@
 
 rp_module_id="lr-ppsspp"
 rp_module_desc="PlayStation Portable emu - PPSSPP port for libretro"
-rp_module_menus="4+"
 rp_module_flags="!rpi1"
 
 function depends_lr-ppsspp() {
