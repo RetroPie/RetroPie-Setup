@@ -24,7 +24,7 @@ function sources_mupen64plus() {
         #'ricrpi core ric_dev'
         'mupen64plus core'
         'mupen64plus ui-console'
-        'ricrpi audio-omx'
+        'gizmo98 audio-omx'
         'mupen64plus audio-sdl'
         'mupen64plus input-sdl'
         #'ricrpi rsp-hle'
@@ -55,7 +55,7 @@ function build_mupen64plus() {
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
             [[ "$dir" == "mupen64plus-video-rice" ]] && params+=("VC=1")
-            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1" "EXT_CFG=1")
+            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
             if isPlatform "rpi2"; then
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "NEON=1")
                 [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1" "NEON=1")
