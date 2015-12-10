@@ -10,7 +10,7 @@
 #
 
 rp_module_id="lr-fba-next"
-rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.36) port for libretro"
+rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.37) port for libretro"
 rp_module_menus="2+"
 
 function depends_lr-fba-next() {
