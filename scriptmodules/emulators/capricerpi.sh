@@ -27,7 +27,7 @@ function build_capricerpi() {
 }
 
 function install_capricerpi() {
-    cp -Rv "$md_build/"README*.txt "$md_inst/"
+    cp -Rv "$md_build/"{README*.txt,COPYING.txt} "$md_inst/"
     cp -Rv "$md_build/src/capriceRPI" "$md_inst/"
 }
 
