@@ -11,7 +11,7 @@
 
 rp_module_id="reicast"
 rp_module_desc="Dreamcast emulator Reicast"
-rp_module_menus="4+"
+rp_module_menus="2+"
 rp_module_flags="!rpi1"
 
 function depends_reicast() {
