@@ -14,6 +14,10 @@ rp_module_desc="Amstrad CPC emulator - port of Caprice32 for the RPI"
 rp_module_menus="2+"
 rp_module_flags="dispmanx"
 
+function depends_capricerpi() {
+    getDepends libsdl1.2-dev zlib1g-dev
+}
+
 function sources_capricerpi() {
     gitPullOrClone "$md_build" https://github.com/KaosOverride/CapriceRPI.git
 }
