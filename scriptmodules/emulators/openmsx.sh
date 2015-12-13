@@ -18,7 +18,7 @@ function depends_openmsx() {
 }
 
 function sources_openmsx() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/openmsx-0.10.0.tar.gz | tar -xvz --strip-components=1
+    gitPullOrClone "$md_build" https://github.com/openMSX/openMSX.git
     sed -i "s|INSTALL_BASE:=/opt/openMSX|INSTALL_BASE:=$md_inst|" build/custom.mk
     sed -i "s|SYMLINK_FOR_BINARY:=true|SYMLINK_FOR_BINARY:=false|" build/custom.mk
 }
