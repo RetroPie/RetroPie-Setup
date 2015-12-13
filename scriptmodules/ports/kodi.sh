@@ -9,19 +9,14 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-# http://www.gtkdb.de/index_36_2176.html
 rp_module_id="kodi"
-rp_module_desc="Install Kodi"
+rp_module_desc="Kodi - Open source home theatre software"
 rp_module_menus="4+"
 rp_module_flags="nobin"
 
-function depends_kodi() {
-    getDepends libcec1 libcec2
-    echo "deb http://archive.mene.za.net/raspbian wheezy contrib" > /etc/apt/sources.list.d/mene.list
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5243CDED
-}
-
 function install_kodi() {
+    # remove old repository - we will use Kodi from the Raspbian repositories
+    rm -f /etc/apt/sources.list.d/mene.list
     aptInstall kodi
 }
 
