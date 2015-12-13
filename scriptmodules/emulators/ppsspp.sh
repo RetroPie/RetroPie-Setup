@@ -14,7 +14,7 @@ rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_flags="!rpi1"
 
 function depends_ppsspp() {
-    getDepends libraspberrypi-dev libsdl2-dev
+    getDepends cmake libraspberrypi-dev libsdl2-dev
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
 }
 

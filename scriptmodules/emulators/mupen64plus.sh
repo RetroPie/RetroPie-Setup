@@ -15,7 +15,7 @@ rp_module_menus="2+"
 rp_module_flags="!odroid"
 
 function depends_mupen64plus() {
-    getDepends cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev
+    getDepends cmake libgl1-mesa-dev libsamplerate0-dev libspeexdsp-dev libsdl2-dev
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
 }
 
