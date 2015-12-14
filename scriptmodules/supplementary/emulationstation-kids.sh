@@ -96,5 +96,5 @@ _EOF_
 
     mkdir -p "/etc/emulationstation"
 
-    configure_inputconfig_emulationstation
+    configure_inputconfig_emulationstation-kids
 }
