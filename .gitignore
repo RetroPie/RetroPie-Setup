@@ -9,3 +9,7 @@ Icon?
 ehthumbs.db
 Thumbs.db
 
+# Generated files
+logs/
+tmp/
+
