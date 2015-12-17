@@ -20,6 +20,7 @@ function depends_splashscreen() {
 
 function install_splashscreen() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/asplashscreen" "/etc/init.d/"
+    chmod +x /etc/init.d/asplashscreen
     gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
 }
 
