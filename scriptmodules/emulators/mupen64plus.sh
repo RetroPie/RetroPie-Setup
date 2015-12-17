@@ -107,6 +107,7 @@ function install_mupen64plus() {
 function configure_mupen64plus() {
     # copy hotkey remapping start script
     cp "$scriptdir/scriptmodules/$md_type/$md_id/mupen64plus.sh" "$md_inst/bin/"
+    chmod +x "$md_inst/bin/mupen64plus.sh"
     
     # to solve startup problems delete old config file
     rm -f "$configdir/n64/mupen64plus.cfg"
