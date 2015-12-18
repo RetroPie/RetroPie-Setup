@@ -47,7 +47,7 @@ For more information visit the blog at http://www.petrockblock.com or the reposi
 Wiki
 ----
 
-You can find useful information about several components or for several frequently asked questions in the [wiki](https://github.com/RetroPie/RetroPie-Setup/wiki) of the RetroPie Script. If you think that there is something missing you are invited to add it to the wiki.
+You can find useful information about several components or for several frequently asked questions in the [wiki](https://github.com/RetroPie/RetroPie-Setup/wiki) of the RetroPie Script. If you think that there is something missing, you are invited to add it to the wiki.
 
 
 Thanks
