@@ -89,7 +89,7 @@ function sup_snesdevAdapterversion() {
 }
 
 function configure_snesdev() {
-    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
+    cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     options=(
         1 "Disable SNESDev on boot and SNESDev keyboard mapping."
         2 "Enable SNESDev on boot and SNESDev keyboard mapping (polling pads and button)."

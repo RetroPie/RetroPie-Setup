@@ -37,7 +37,7 @@ function sup_checkInstallXarcade2Jstick() {
 }
 
 function configure_xarcade2jstick() {
-    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
+    cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     options=(
         1 "Disable Xarcade2Jstick service."
         2 "Enable Xarcade2Jstick service."
