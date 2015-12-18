@@ -39,8 +39,5 @@ function configure_lr-bluemsx() {
     cp -rv "$md_inst/"{Databases,Machines} "$biosdir/"
     chown -R $user:$user "$biosdir/"{Databases,Machines}
 
-    # default to MSX2+ core
-    setRetroArchCoreOption "bluemsx_msxtype" "MSX2+"
-
     addSystem 1 "$md_id" "msx" "$md_inst/bluemsx_libretro.so"
 }
