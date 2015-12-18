@@ -70,7 +70,7 @@ function configure_splashscreen() {
     echo "Place your own splashscreen in here, each one with its own folder" >"$datadir/splashscreens/README.txt"
     chown $user:$user "$datadir/splashscreens/README.txt"
 
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local options=(
         1 "Choose RetroPie splashscreen"
         2 "Choose own splashscreen (from configs/$md_id)"
