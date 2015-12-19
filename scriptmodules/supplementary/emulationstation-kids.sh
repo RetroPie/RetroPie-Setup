@@ -21,8 +21,6 @@ function depends_emulationstation-kids() {
 }
 function sources_emulationstation-kids() {
     gitPullOrClone "$md_build" "https://github.com/zigurana/EmulationStation" "UI_modes_Kiosk_Kid_Full"
-    #add some fixes
-    sed -i 's/function, use overrides instead!\"/function, use overrides instead!\";/g' $md_build/es-core/src/GuiComponent.cpp
 }
 
 function build_emulationstation-kids() {
