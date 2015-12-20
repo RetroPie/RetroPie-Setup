@@ -19,8 +19,8 @@ function depends_hatari() {
 }
 
 function sources_hatari() {
-    wget -q -O- "http://downloads.petrockblock.com/retropiearchives/hatari-1.9.0.tar.bz2" | tar -xvj --strip-components=1
-    wget -q -O spsdeclib.zip "http://downloads.petrockblock.com/retropiearchives/spsdeclib_5.1_source.zip"
+    wget -q -O- "$__archive_url/hatari-1.9.0.tar.bz2" | tar -xvj --strip-components=1
+    wget -q -O spsdeclib.zip "$__archive_url/spsdeclib_5.1_source.zip"
     unzip -o spsdeclib.zip
     unzip -o capsimg_source_linux_macosx.zip
     chmod u+x capsimg_source_linux_macosx/CAPSImg/configure

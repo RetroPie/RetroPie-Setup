@@ -24,7 +24,7 @@ function depends_scummvm() {
 }
 
 function sources_scummvm() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/scummvm-1.7.0.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q $__archive_url/scummvm-1.7.0.tar.gz | tar -xvz --strip-components=1
 }
 
 function build_scummvm() {

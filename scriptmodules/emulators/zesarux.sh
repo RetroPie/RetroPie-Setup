@@ -19,7 +19,7 @@ function depends_zesarux() {
 }
 
 function sources_zesarux() {
-    wget -O- -q "http://downloads.petrockblock.com/retropiearchives/ZEsarUX_src-3.0.tar.gz" | tar -xvz --strip-components=1
+    wget -O- -q "$__archive_url/ZEsarUX_src-3.0.tar.gz" | tar -xvz --strip-components=1
 }
 
 function build_zesarux() {

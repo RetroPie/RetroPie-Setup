@@ -22,7 +22,7 @@ function sources_advmame() {
     for version in 0.94.0 1.4; do
         mkdir -p "$version"
         pushd "$version"
-        wget -O- -q "http://downloads.petrockblock.com/retropiearchives/advancemame-$version.tar.gz" | tar -xvz --strip-components=1
+        wget -O- -q "$__archive_url/advancemame-$version.tar.gz" | tar -xvz --strip-components=1
 
         # update internal names to separate out config files (due to incompatible options)
         sed -i "s/advmame\.rc/advmame-$version.rc/" advance/v/v.c advance/cfg/cfg.c

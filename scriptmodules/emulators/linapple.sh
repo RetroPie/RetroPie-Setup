@@ -19,7 +19,7 @@ function depends_linapple() {
 }
 
 function sources_linapple() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/linapple-src_2a.tar.bz2 | tar -xvj --strip-components=1
+    wget -O- -q $__archive_url/linapple-src_2a.tar.bz2 | tar -xvj --strip-components=1
     addLineToFile "#include <unistd.h>" "src/Timer.h"
 }
 

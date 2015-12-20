@@ -19,7 +19,7 @@ function depends_dosbox() {
 }
 
 function sources_dosbox() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/dosbox-r3876.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q $__archive_url/dosbox-r3876.tar.gz | tar -xvz --strip-components=1
 }
 
 function build_dosbox() {

@@ -19,7 +19,7 @@ function depends_fbzx() {
 }
 
 function sources_fbzx() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/fbzx-2.10.0.tar.bz2 | tar -xvj --strip-components=1 
+    wget -O- -q $__archive_url/fbzx-2.10.0.tar.bz2 | tar -xvj --strip-components=1 
 }
 
 function build_fbzx() {

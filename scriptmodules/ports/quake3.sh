@@ -33,7 +33,7 @@ function install_quake3() {
         'build/release-linux-arm/ioquake3.arm'
     )
 
-    wget http://downloads.petrockblock.com/retropiearchives/Q3DemoPaks.zip
+    wget $__archive_url/Q3DemoPaks.zip
     unzip -o Q3DemoPaks.zip -d "$md_inst"
     rm Q3DemoPaks.zip
 }

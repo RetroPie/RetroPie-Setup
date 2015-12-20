@@ -21,7 +21,7 @@ function depends_eduke32() {
 }
 
 function sources_eduke32() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/eduke32.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q $__archive_url/eduke32.tar.gz | tar -xvz --strip-components=1
 }
 
 function build_eduke32() {
@@ -31,7 +31,7 @@ function build_eduke32() {
 }
 
 function install_eduke32() {
-    wget http://downloads.petrockblock.com/retropiearchives/3dduke13.zip -O 3dduke13.zip
+    wget $__archive_url/3dduke13.zip -O 3dduke13.zip
     unzip -L -o 3dduke13.zip dn3dsw13.shr
     mkdir -p "$md_inst/shareware"
     unzip -L -o dn3dsw13.shr -d "$md_inst/shareware" duke3d.grp duke.rts

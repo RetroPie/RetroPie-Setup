@@ -19,9 +19,9 @@ function depends_fuse() {
 }
 
 function sources_fuse() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/fuse-1.1.1.tar.gz | tar -xvz --strip-components=1  
+    wget -O- -q $__archive_url/fuse-1.1.1.tar.gz | tar -xvz --strip-components=1  
     mkdir libspectrum
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/libspectrum-1.1.1.tar.gz | tar -xvz --strip-components=1 -C libspectrum
+    wget -O- -q $__archive_url/libspectrum-1.1.1.tar.gz | tar -xvz --strip-components=1 -C libspectrum
     patch -p1 <<\_EOF_
 --- a/ui/sdl/sdldisplay.c	2015-02-18 22:39:05.631516602 +0000
 +++ b/ui/sdl/sdldisplay.c	2015-02-18 22:39:08.407506296 +0000

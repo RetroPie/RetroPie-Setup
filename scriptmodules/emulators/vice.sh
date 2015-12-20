@@ -23,7 +23,7 @@ function depends_vice() {
 }
 
 function sources_vice() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/vice-2.4.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q $__archive_url/vice-2.4.tar.gz | tar -xvz --strip-components=1
 }
 
 function build_vice() {

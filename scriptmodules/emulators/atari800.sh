@@ -18,7 +18,7 @@ function depends_atari800() {
 }
 
 function sources_atari800() {
-    wget -q -O- "http://downloads.petrockblock.com/retropiearchives/atari800-3.1.0.tar.gz" | tar -xvz --strip-components=1
+    wget -q -O- "$__archive_url/atari800-3.1.0.tar.gz" | tar -xvz --strip-components=1
 patch -p1 <<\_EOF_
 --- a/src/configure.ac	2014-04-12 13:58:16.000000000 +0000
 +++ b/src/configure.ac	2015-02-14 22:39:42.000000000 +0000

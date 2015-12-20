@@ -53,7 +53,7 @@ function configure_zdoom() {
 
     # download doom 1 shareware
     if [[ ! -f "$romdir/ports/doom/doom1.wad" ]]; then
-        wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
+        wget "$__archive_url/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
     fi
     chown $user:$user "$romdir/ports/doom/doom1.wad"
 
