@@ -24,17 +24,15 @@ function sources_ps3controller() {
 }
 
 function build_ps3controller() {
-    pushd $md_build/sixad
+    cd sixad
     make clean
     make DEVICE_SHORT_NAME=1
-    popd
 }
 
 function install_ps3controller() {
-    pushd $md_build/sixad
+    cd sixad
     checkinstall -y --fstrans=no
     insserv sixad
-    popd
 
     # Start sixad daemon
     /etc/init.d/sixad start
