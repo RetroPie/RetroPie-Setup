@@ -22,6 +22,10 @@ function install_splashscreen() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/asplashscreen" "/etc/init.d/"
     chmod +x /etc/init.d/asplashscreen
     gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
+
+    mkUserDir "$datadir/splashscreens"
+    echo "Place your own splashscreen in here, each one with its own folder" >"$datadir/splashscreens/README.txt"
+    chown $user:$user "$datadir/splashscreens/README.txt"
 }
 
 function default_splashscreen() {
@@ -65,10 +69,6 @@ function configure_splashscreen() {
         rp_callModule splashscreen depends
         rp_callModule splashscreen install
     fi
-
-    mkUserDir "$datadir/splashscreens"
-    echo "Place your own splashscreen in here, each one with its own folder" >"$datadir/splashscreens/README.txt"
-    chown $user:$user "$datadir/splashscreens/README.txt"
 
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local options=(
