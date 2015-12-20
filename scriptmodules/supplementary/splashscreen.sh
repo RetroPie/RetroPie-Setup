@@ -73,7 +73,7 @@ function configure_splashscreen() {
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local options=(
         1 "Choose RetroPie splashscreen"
-        2 "Choose own splashscreen (from configs/$md_id)"
+        2 "Choose own splashscreen (from $datadir/splashscreens)"
         3 "Enable custom splashscreen on boot"
         4 "Disable custom splashscreen on boot"
         5 "Use default splashscreen"
