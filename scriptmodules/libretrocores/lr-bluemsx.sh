@@ -39,5 +39,7 @@ function configure_lr-bluemsx() {
     cp -rv "$md_inst/"{Databases,Machines} "$biosdir/"
     chown -R $user:$user "$biosdir/"{Databases,Machines}
 
+    wget -q -O- "http://downloads.petrockblock.com/retropiearchives/bluemsxroms.tar.gz" | tar -xvz -C "$biosdir/Machines/Shared Roms/"
+
     addSystem 1 "$md_id" "msx" "$md_inst/bluemsx_libretro.so"
 }
