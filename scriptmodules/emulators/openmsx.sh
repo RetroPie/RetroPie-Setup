@@ -33,9 +33,8 @@ function build_openmsx() {
 
 function install_openmsx() {
     make install
-    wget "http://downloads.petrockblock.com/retropiearchives/openmsxroms.zip"
     mkdir -p "$md_inst/share/systemroms/"
-    unzip openmsxroms.zip -o -d "$md_inst/share/systemroms/"
+    wget -q -O- "http://downloads.petrockblock.com/retropiearchives/openmsxroms.tar.gz" | tar -xvz -C "$md_inst/share/systemroms/"
 }
 
 function configure_openmsx() {
