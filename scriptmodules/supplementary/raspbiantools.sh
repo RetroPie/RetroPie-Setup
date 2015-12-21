@@ -16,7 +16,7 @@ rp_module_flags="nobin"
 
 function apt_upgrade_raspbiantools() {
     aptUpdate
-    apt-get -y upgrade
+    apt-get -y dist-upgrade
 }
 
 function package_cleanup_raspbiantools() {
