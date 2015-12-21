@@ -11,7 +11,7 @@
 
 rp_module_id="xboxdrv"
 rp_module_desc="Xbox / Xbox 360 gamepad driver"
-rp_module_menus="3+configure"
+rp_module_menus="3+gui"
 
 function depends_xboxdrv() {
     hasPackage xboxdrv && apt-get remove -y xboxdrv
@@ -47,7 +47,7 @@ function disable_xboxdrv() {
     printMsgs "dialog" "xboxdrv configuration in /etc/rc.local has been removed."
 }
 
-function configure_xboxdrv() {
+function gui_xboxdrv() {
     if [[ ! -f "$md_inst/bin/xboxdrv" ]]; then
         rp_callModule "$md_id" depends
         rp_callModule "$md_id" install_bin
