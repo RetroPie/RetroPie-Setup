@@ -36,8 +36,6 @@ function enable_xboxdrv() {
         sed -i "s|^exit 0$|${config}\\nexit 0|" /etc/rc.local
         printMsgs "dialog" "xbodrv enabled in /etc/rc.local with the following config\n\n$config\n\nIt will be started on next boot."
     else
-        # make sure existing configs will point to the new xboxdrv
-        sed -i "s|^xboxdrv|\"$md_inst/bin/xboxdrv\"|" /etc/rc.local
         printMsgs "dialog" "xbodrv is already enabled in /etc/rc.local with the following config\n\n$(grep "xboxdrv" /etc/rc.local)"
     fi
 }
@@ -47,10 +45,17 @@ function disable_xboxdrv() {
     printMsgs "dialog" "xboxdrv configuration in /etc/rc.local has been removed."
 }
 
+function configure_xboxdrv() {
+    enable_xboxdrv
+    # make sure existing configs will point to the new xboxdrv
+    sed -i "s|^xboxdrv|\"$md_inst/bin/xboxdrv\"|" /etc/rc.local
+}
+
 function gui_xboxdrv() {
     if [[ ! -f "$md_inst/bin/xboxdrv" ]]; then
         rp_callModule "$md_id" depends
         rp_callModule "$md_id" install_bin
+        rp_callModule "$md_id" configure
     fi
     iniConfig "=" "" "/boot/config.txt"
 
