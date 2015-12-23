@@ -46,7 +46,6 @@ function disable_xboxdrv() {
 }
 
 function configure_xboxdrv() {
-    enable_xboxdrv
     # make sure existing configs will point to the new xboxdrv
     sed -i "s|^xboxdrv|\"$md_inst/bin/xboxdrv\"|" /etc/rc.local
 }
