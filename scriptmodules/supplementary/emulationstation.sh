@@ -12,7 +12,6 @@
 rp_module_id="emulationstation"
 rp_module_desc="EmulationStation"
 rp_module_menus="2+"
-rp_module_flags="!x86"
 
 function depends_emulationstation() {
     getDepends \
