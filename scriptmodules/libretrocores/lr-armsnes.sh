@@ -12,6 +12,7 @@
 rp_module_id="lr-armsnes"
 rp_module_desc="SNES emu - forked from pocketsnes focused on performance"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function sources_lr-armsnes() {
     gitPullOrClone "$md_build" https://github.com/rmaz/ARMSNES-libretro

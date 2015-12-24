@@ -12,6 +12,7 @@
 rp_module_id="pisnes"
 rp_module_desc="SNES emulator PiSNES"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function depends_pisnes() {
     getDepends libasound2-dev libsdl1.2-dev libraspberrypi-dev

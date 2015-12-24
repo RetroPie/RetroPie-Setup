@@ -12,7 +12,7 @@
 rp_module_id="dgen"
 rp_module_desc="Megadrive/Genesis emulat. DGEN"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_dgen() {
     getDepends libsdl1.2-dev libarchive-dev

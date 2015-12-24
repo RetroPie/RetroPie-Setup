@@ -12,7 +12,7 @@
 rp_module_id="rpix86"
 rp_module_desc="DOS Emulator rpix86"
 rp_module_menus="2+"
-rp_module_flags="nobin"
+rp_module_flags="nobin !x86"
 
 function install_rpix86() {
     wget -O- -q $__archive_url/rpix86.tar.gz | tar -xvz -C "$md_inst"

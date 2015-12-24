@@ -25,6 +25,14 @@ function setup_env() {
             BCM2709)
                 __platform="rpi2"
                 ;;
+            *)
+                local architecture=$(uname --machine)
+                case $architecture in
+                    i686|x86_64)
+                        __platform="x86"
+                        ;;
+                esac
+                ;;
         esac
     fi
 
@@ -169,5 +177,12 @@ function platform_odroid() {
     __default_cflags="-O2 -mfpu=neon -march=armv7-a -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags=""
+    __has_binaries=0
+}
+
+function platform_x86() {
+    __default_cflags="-O2"
+    __default_asflags=""
+    __default_makeflags="-j$(nproc)"
     __has_binaries=0
 }

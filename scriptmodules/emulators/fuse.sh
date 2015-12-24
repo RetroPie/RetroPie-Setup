@@ -12,7 +12,7 @@
 rp_module_id="fuse"
 rp_module_desc="ZX Spectrum emulator Fuse"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_fuse() {
     getDepends libsdl1.2-dev libpng12-dev zlib1g-dev libbz2-dev libaudiofile-dev bison flex 

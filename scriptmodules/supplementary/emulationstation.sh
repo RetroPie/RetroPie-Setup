@@ -71,9 +71,11 @@ if [[ \$(id -u) -eq 0 ]]; then
     exit 1
 fi
 
-if [[ -n "\$(pidof X)" ]]; then
-    echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
-    exit 1
+if [[ "\$(uname --machine)" != *86* ]]; then
+    if [[ -n "\$(pidof X)" ]]; then
+        echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
+        exit 1
+    fi
 fi
 
 key=""
@@ -83,14 +85,28 @@ while [[ -z "\$key" ]]; do
     IFS= read -s -t 5 -N 1 key </dev/tty
 done
 _EOF_
-    chmod +x /usr/bin/emulationstation
+    if [[ "$__platform" == *rpi* ]]; then
+        # make sure that ES has enough GPU memory
+        iniConfig "=" "" /boot/config.txt
+        iniSet "gpu_mem_256" 128
+        iniSet "gpu_mem_512" 256
+        iniSet "gpu_mem_1024" 256
+        iniSet "overscan_scale" 1
+    else
+        cat > /usr/share/applications/retropie.desktop << _EOF_
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=RetroPie
+Comment=RetroPie
+Path=/usr/bin
+Exec=emulationstation
+Terminal=true
+Categories=Game
+_EOF_
+    fi
 
-    # make sure that ES has enough GPU memory
-    iniConfig "=" "" /boot/config.txt
-    iniSet "gpu_mem_256" 128
-    iniSet "gpu_mem_512" 256
-    iniSet "gpu_mem_1024" 256
-    iniSet "overscan_scale" 1
+    chmod +x /usr/bin/emulationstation
 
     mkdir -p "/etc/emulationstation"
 
