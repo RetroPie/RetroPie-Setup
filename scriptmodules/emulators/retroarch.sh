@@ -14,7 +14,8 @@ rp_module_desc="RetroArch"
 rp_module_menus="2+"
 
 function depends_retroarch() {
-    getDepends libudev-dev libxkbcommon-dev libsdl2-dev libraspberrypi-dev
+    getDepends libudev-dev libxkbcommon-dev libsdl2-dev 
+    [[ "$__platform" == *rpi* ]] && getDepends libraspberrypi-dev
     [[ "$__raspbian_ver" -ge "8" ]] && getDepends libusb-1.0-0-dev
 
     cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
