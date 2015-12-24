@@ -12,6 +12,7 @@
 rp_module_id="lr-picodrive"
 rp_module_desc="Sega 8/16 bit emu - picodrive arm optimised libretro core"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function sources_lr-picodrive() {
     gitPullOrClone "$md_build" https://github.com/libretro/picodrive.git

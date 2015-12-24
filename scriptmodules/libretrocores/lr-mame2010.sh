@@ -12,6 +12,7 @@
 rp_module_id="lr-mame2010"
 rp_module_desc="Arcade emu - MAME 0.139 port for libretro"
 rp_module_menus="4+"
+rp_module_flags="!x86"
 
 function depends_lr-mame2010() {
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8

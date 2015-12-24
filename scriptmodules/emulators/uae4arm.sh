@@ -12,6 +12,7 @@
 rp_module_id="uae4arm"
 rp_module_desc="Amiga emulator with JIT support"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function depends_uae4arm() {
     getDepends libsdl1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev libguichan-dev

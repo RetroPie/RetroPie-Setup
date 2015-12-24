@@ -183,6 +183,6 @@ function platform_odroid() {
 function platform_x86() {
     __default_cflags="-O2"
     __default_asflags=""
-    __default_makeflags=""
+    __default_makeflags="-j2"
     __has_binaries=0
 }

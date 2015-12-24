@@ -12,6 +12,7 @@
 rp_module_id="emulationstation"
 rp_module_desc="EmulationStation"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function depends_emulationstation() {
     getDepends \
@@ -61,10 +62,7 @@ _EOF_
 }
 
 function configure_emulationstation() {
-    if isPlatform "x86"; then
-        ln -sf "$md_inst/emulationstation" "/usr/bin/emulationstation"
-    else
-        cat > /usr/bin/emulationstation << _EOF_
+    cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
 
 es_bin="$md_inst/emulationstation"
@@ -74,9 +72,11 @@ if [[ \$(id -u) -eq 0 ]]; then
     exit 1
 fi
 
-if [[ -n "\$(pidof X)" ]]; then
-    echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
-    exit 1
+if [[ "$(uname --machine)" != "x86" ]]; then
+    if [[ -n "\$(pidof X)" ]]; then
+        echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
+        exit 1
+    fi
 fi
 
 key=""
@@ -86,6 +86,7 @@ while [[ -z "\$key" ]]; do
     IFS= read -s -t 5 -N 1 key </dev/tty
 done
 _EOF_
+    if [[ isPlatform "rpi1" || isPlatform "rpi2" ]]; then
         # make sure that ES has enough GPU memory
         iniConfig "=" "" /boot/config.txt
         iniSet "gpu_mem_256" 128

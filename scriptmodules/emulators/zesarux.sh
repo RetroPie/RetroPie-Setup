@@ -12,7 +12,7 @@
 rp_module_id="zesarux"
 rp_module_desc="ZX Spectrum emulator ZEsarUX"
 rp_module_menus="4+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_zesarux() {
     getDepends libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev

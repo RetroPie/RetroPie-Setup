@@ -12,6 +12,7 @@
 rp_module_id="lr-pocketsnes"
 rp_module_desc="SNES emu - ARM based SNES emulator for libretro"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function sources_lr-pocketsnes() {
     gitPullOrClone "$md_build" https://github.com/libretro/pocketsnes-libretro.git
