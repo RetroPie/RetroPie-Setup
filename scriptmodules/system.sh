@@ -31,6 +31,7 @@ function setup_env() {
                     i686)
                         __platform="x86"
                         ;;
+                esac
                 ;;
         esac
     fi
