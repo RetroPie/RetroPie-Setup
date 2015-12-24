@@ -71,7 +71,7 @@ if [[ \$(id -u) -eq 0 ]]; then
     exit 1
 fi
 
-if [[ "\$(uname --machine)" != "x86" ]]; then
+if [[ "\$(uname --machine)" != "i686" ]]; then
     if [[ -n "\$(pidof X)" ]]; then
         echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
         exit 1
@@ -85,7 +85,7 @@ while [[ -z "\$key" ]]; do
     IFS= read -s -t 5 -N 1 key </dev/tty
 done
 _EOF_
-    if [[ isPlatform "rpi1" || isPlatform "rpi2" ]]; then
+    if [[ "$__platform" == *rpi* ]]; then
         # make sure that ES has enough GPU memory
         iniConfig "=" "" /boot/config.txt
         iniSet "gpu_mem_256" 128
