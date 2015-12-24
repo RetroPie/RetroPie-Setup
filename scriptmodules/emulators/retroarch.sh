@@ -35,6 +35,7 @@ function sources_retroarch() {
 function build_retroarch() {
     local params=(--disable-x11 --enable-dispmanx --disable-oss --disable-pulse --disable-al --disable-jack --enable-sdl2 --enable-floathard)
     isPlatform "rpi2" && params+=(--enable-neon)
+    isPlatform "x86" && params=(--enable-sdl2)
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
     make
