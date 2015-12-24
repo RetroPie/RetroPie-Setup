@@ -12,7 +12,7 @@
 rp_module_id="autostart"
 rp_module_desc="Auto-start EmulationStation"
 rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_flags="nobin !x86"
 
 function enable_autostart() {
     if [[ "$__raspbian_ver" -lt "8" ]]; then
