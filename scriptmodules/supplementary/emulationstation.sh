@@ -61,7 +61,10 @@ _EOF_
 }
 
 function configure_emulationstation() {
-    cat > /usr/bin/emulationstation << _EOF_
+    if isPlatform "x86"; then
+        ln -sf "$md_inst/emulationstation" "/usr/bin/emulationstation"
+    else
+        cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
 
 es_bin="$md_inst/emulationstation"
@@ -83,14 +86,15 @@ while [[ -z "\$key" ]]; do
     IFS= read -s -t 5 -N 1 key </dev/tty
 done
 _EOF_
-    chmod +x /usr/bin/emulationstation
+        # make sure that ES has enough GPU memory
+        iniConfig "=" "" /boot/config.txt
+        iniSet "gpu_mem_256" 128
+        iniSet "gpu_mem_512" 256
+        iniSet "gpu_mem_1024" 256
+        iniSet "overscan_scale" 1
+    fi
 
-    # make sure that ES has enough GPU memory
-    iniConfig "=" "" /boot/config.txt
-    iniSet "gpu_mem_256" 128
-    iniSet "gpu_mem_512" 256
-    iniSet "gpu_mem_1024" 256
-    iniSet "overscan_scale" 1
+    chmod +x /usr/bin/emulationstation
 
     mkdir -p "/etc/emulationstation"
 
