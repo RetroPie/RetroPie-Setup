@@ -23,7 +23,7 @@ function configure_retropiemenu()
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
 
-    if [[ isPlatform "x86" ]]; then
+    if isPlatform "x86"; then
         files=(
             'rpsetup.rp'
             'configedit.rp'
