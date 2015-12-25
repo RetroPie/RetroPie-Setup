@@ -28,7 +28,7 @@ function setup_env() {
             *)
                 local architecture=$(uname --machine)
                 case $architecture in
-                    i686 x86_64)
+                    i686|x86_64)
                         __platform="x86"
                         ;;
                 esac
