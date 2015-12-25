@@ -71,7 +71,7 @@ if [[ \$(id -u) -eq 0 ]]; then
     exit 1
 fi
 
-if [[ "\$(uname --machine)" != "i686" ]]; then
+if [[ "\$(uname --machine)" != *86* ]]; then
     if [[ -n "\$(pidof X)" ]]; then
         echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
         exit 1
@@ -92,6 +92,18 @@ _EOF_
         iniSet "gpu_mem_512" 256
         iniSet "gpu_mem_1024" 256
         iniSet "overscan_scale" 1
+    else
+        cat > /usr/share/applications/retropie.desktop << _EOF_
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=RetroPie
+Comment=RetroPie
+Path=/usr/bin
+Exec=emulationstation
+Terminal=true
+Categories=Game
+_EOF_
     fi
 
     chmod +x /usr/bin/emulationstation
