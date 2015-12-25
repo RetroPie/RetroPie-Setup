@@ -12,7 +12,7 @@
 rp_module_id="retropiemenu"
 rp_module_desc="RetroPie configuration menu for EmulationStation"
 rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_flags="nobin !x86"
 
 function depends_retropiemenu() {
     getDepends mc
