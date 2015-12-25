@@ -12,7 +12,7 @@
 rp_module_id="lr-mupen64plus"
 rp_module_desc="N64 emu - Mupen64 Plus port for libretro"
 rp_module_menus="2+"
-rp_module_flags="!x86"
+rp_module_flags=""
 
 function sources_lr-mupen64plus() {
     gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
@@ -21,11 +21,14 @@ function sources_lr-mupen64plus() {
 function build_lr-mupen64plus() {
     rpSwap on 750
     make clean
-    if isPlatform "rpi2"; then
-        make platform=rpi2
-    else
-        make platform=rpi
-    fi
+    case "$__platform" in
+        rpi|rpi2)
+            make platform="$__platform"
+            ;;
+        *)
+            make
+            ;;
+    esac
     rpSwap off
     md_ret_require="$md_build/mupen64plus_libretro.so"
 }
