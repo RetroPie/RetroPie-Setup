@@ -22,7 +22,14 @@ function sources_lr-picodrive() {
 
 function build_lr-picodrive() {
     make clean
-    make -f Makefile.libretro platform=armv6
+    case "$__platform" in
+        rpi|rpi2)
+            make -f Makefile.libretro platform=raspberrypi
+            ;;
+        *)
+            make
+            ;;
+    esac
     md_ret_require="$md_build/picodrive_libretro.so"
 }
 
