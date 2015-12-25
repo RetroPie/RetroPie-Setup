@@ -27,7 +27,7 @@ function build_lr-picodrive() {
             make -f Makefile.libretro platform=raspberrypi
             ;;
         *)
-            make
+            make -f Makefile.libretro
             ;;
     esac
     md_ret_require="$md_build/picodrive_libretro.so"
