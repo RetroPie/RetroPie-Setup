@@ -12,7 +12,7 @@
 rp_module_id="lr-yabause"
 rp_module_desc="Sega Saturn emu - Yabause (optimised) port for libretro"
 rp_module_menus="4+"
-rp_module_flags="!rpi1 !x86"
+rp_module_flags="!rpi1"
 
 function sources_lr-yabause() {
     gitPullOrClone "$md_build" https://github.com/libretro/yabause.git
@@ -21,7 +21,14 @@ function sources_lr-yabause() {
 function build_lr-yabause() {
     cd libretro
     make clean
-    make platform=armvneonhardfloat
+    case "$__platform" in
+        rpi2)
+            make platform=armvneonhardfloat
+            ;;
+        *)
+            make
+            ;;
+    esac
     md_ret_require="$md_build/libretro/yabause_libretro.so"
 }
 
