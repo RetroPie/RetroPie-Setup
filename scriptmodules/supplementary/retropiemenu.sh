@@ -12,7 +12,7 @@
 rp_module_id="retropiemenu"
 rp_module_desc="RetroPie configuration menu for EmulationStation"
 rp_module_menus="3+"
-rp_module_flags="nobin !x86"
+rp_module_flags="nobin"
 
 function depends_retropiemenu() {
     getDepends mc
@@ -23,19 +23,29 @@ function configure_retropiemenu()
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
 
-    files=(
-        'raspiconfig.rp'
-        'rpsetup.rp'
-        'configedit.rp'
-        'retroarch.rp'
-        'audiosettings.rp'
-        'dispmanx.rp'
-        'retronetplay.rp'
-        'splashscreen.rp'
-        'filemanager.rp'
-        'showip.rp'
-        'wifi.rp'
-    )
+    if [[ isPlatform "x86" ]]; then
+        files=(
+            'rpsetup.rp'
+            'configedit.rp'
+            'retroarch.rp'
+            'retronetplay.rp'
+            'filemanager.rp'
+        )
+    else
+        files=(
+            'raspiconfig.rp'
+            'rpsetup.rp'
+            'configedit.rp'
+            'retroarch.rp'
+            'audiosettings.rp'
+            'dispmanx.rp'
+            'retronetplay.rp'
+            'splashscreen.rp'
+            'filemanager.rp'
+            'showip.rp'
+            'wifi.rp'
+        )
+    fi
 
     for file in "${files[@]}"; do
         touch "$rpdir/$file"
