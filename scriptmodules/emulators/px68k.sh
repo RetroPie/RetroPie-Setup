@@ -12,6 +12,7 @@
 rp_module_id="px68k"
 rp_module_desc="SHARP X68000 Emulator"
 rp_module_menus="4+"
+rp_module_flags="!x86"
 
 function depends_px68k() {
     getDepends libsdl1.2-dev libsdl-gfx1.2-dev

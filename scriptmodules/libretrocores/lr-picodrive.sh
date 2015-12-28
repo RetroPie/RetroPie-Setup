@@ -12,6 +12,7 @@
 rp_module_id="lr-picodrive"
 rp_module_desc="Sega 8/16 bit emu - picodrive arm optimised libretro core"
 rp_module_menus="2+"
+rp_module_flags=""
 
 function sources_lr-picodrive() {
     gitPullOrClone "$md_build" https://github.com/libretro/picodrive.git
@@ -21,7 +22,14 @@ function sources_lr-picodrive() {
 
 function build_lr-picodrive() {
     make clean
-    make -f Makefile.libretro platform=armv6
+    case "$__platform" in
+        rpi|rpi2)
+            make -f Makefile.libretro platform=raspberrypi
+            ;;
+        *)
+            make -f Makefile.libretro
+            ;;
+    esac
     md_ret_require="$md_build/picodrive_libretro.so"
 }
 

@@ -22,7 +22,11 @@ function sources_lr-snes9x-next() {
 
 function build_lr-snes9x-next() {
     make -f Makefile.libretro clean
-    make -f Makefile.libretro platform=armvneon
+    if isPlatform "x86"; then
+        make -f Makefile.libretro
+    else
+        make -f Makefile.libretro platform=armvneon
+    fi
     md_ret_require="$md_build/snes9x_next_libretro.so"
 }
 

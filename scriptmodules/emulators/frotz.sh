@@ -12,7 +12,7 @@
 rp_module_id="frotz"
 rp_module_desc="Z-Machine Interpreter for Infocom games"
 rp_module_menus="2+"
-rp_module_flags="nobin"
+rp_module_flags="nobin !x86"
 
 function install_frotz() {
     aptInstall frotz

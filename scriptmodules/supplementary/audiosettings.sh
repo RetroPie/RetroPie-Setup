@@ -12,7 +12,7 @@
 rp_module_id="audiosettings"
 rp_module_desc="Configure audio settings"
 rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_flags="nobin !x86"
 
 function depends_audiosettings() {
     getDepends alsa-utils

@@ -12,6 +12,7 @@
 rp_module_id="ags"
 rp_module_desc="Adventure Game Studio - Adventure game engine"
 rp_module_menus="4+"
+rp_module_flags="!x86"
 
 function depends_ags() {
     getDepends pkg-config liballegro4.2-dev libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev

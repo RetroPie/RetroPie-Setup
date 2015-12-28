@@ -12,7 +12,7 @@
 rp_module_id="gngeopi"
 rp_module_desc="NeoGeo emulator GnGeoPi"
 rp_module_menus="2+"
-rp_module_flags=""
+rp_module_flags="!x86"
 
 function depends_gngeopi() {
     getDepends libsdl1.2-dev

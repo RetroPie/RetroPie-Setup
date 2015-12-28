@@ -12,7 +12,7 @@
 rp_module_id="raspbiantools"
 rp_module_desc="Raspbian related tools"
 rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_flags="nobin !x86"
 
 function apt_upgrade_raspbiantools() {
     aptUpdate
