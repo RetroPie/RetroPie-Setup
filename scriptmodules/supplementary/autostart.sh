@@ -34,7 +34,19 @@ _EOF_
 _EOF_
     else
         mkdir "$home/.config/autostart"
-        cp "/usr/share/applications/retropie.desktop" "$home/.config/autostart/"
+        cat >"$home/.config/autostart/retropie.desktop" <<_EOF_
+[Desktop Entry]
+Type=Application
+Exec=/opt/retropie/supplementary/emulationstation/emulationstation
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[de_DE]=RetroPie
+Name=rpie
+Comment[de_DE]=RetroPie
+Comment=retropie
+X-GNOME-Autostart-Delay=25
+_EOF_
     fi
 }
 
