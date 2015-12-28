@@ -14,8 +14,7 @@ rp_module_desc="Atari2600 emulator STELLA"
 rp_module_menus="2+"
 rp_module_flags="dispmanx nobin"
 
-function install_stella()
-{
+function install_stella() {
     aptInstall stella
 }
 
