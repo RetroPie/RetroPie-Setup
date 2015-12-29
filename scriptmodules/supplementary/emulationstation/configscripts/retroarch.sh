@@ -13,9 +13,16 @@ function onstart_retroarch_joystick() {
     local device_type=$1
     local device_name=$2
 
+    iniConfig " = " "" "/opt/retropie/configs/all/retroarch.cfg"
+    iniGet "input_joypad_driver"
+    local input_joypad_driver="$ini_value"
+    if [[ -z "$input_joypad_driver" ]]; then
+        input_joypad_driver="udev"
+    fi
+
     iniConfig " = " "\"" "/tmp/tempconfig.cfg"
     iniSet "input_device" "$device_name"
-    iniSet "input_driver" "udev"
+    iniSet "input_driver" "$input_joypad_driver"
 }
 
 function onstart_retroarch_keyboard() {
@@ -216,24 +223,37 @@ function map_retroarch_joystick() {
             ;;
     esac
 
+    
     local key
     local value
     for key in "${keys[@]}"; do
-        if [[ "$input_type" == "hat" ]]; then
-            key+="_btn"
-            value="h$input_id$input_name"
-        elif [[ "$input_type" == "axis" ]]; then
-            key+="_axis"
-            if [[ "$input_value" == "1" ]]; then
-                value="+$input_id"
-            else
-                value="-$input_id"
-            fi
-        else
-            key+="_btn"
-            value="$input_id"
-        fi
-
+        case "$input_type" in
+            hat)
+                key+="_btn"
+                value="h$input_id$input_name"
+                ;;
+            axis)
+                key+="_axis"
+                if [[ "$input_value" == "1" ]]; then
+                    value="+$input_id"
+                else
+                    value="-$input_id"
+                fi
+                ;;
+            *)
+                # workaround for mismatched controller mappings
+                iniGet "input_driver"
+                if [[ "$ini_value" == "udev" ]]; then
+                    case "$device_name" in 
+                        "8Bitdo FC30 Pro")
+                            input_id=$(($input_id+11))
+                            ;;
+                    esac
+                fi
+                key+="_btn"
+                value="$input_id"
+                ;;
+        esac
         iniSet "$key" "$value"
     done
 }
@@ -335,4 +355,19 @@ function onend_retroarch_joystick() {
         mv "/opt/retropie/configs/all/retroarch-joypads/$file" "/opt/retropie/configs/all/retroarch-joypads/$file.bak"
     fi
     mv "/tmp/tempconfig.cfg" "/opt/retropie/configs/all/retroarch-joypads/$file"
+}
+
+function onend_retroarch_keyboard() {
+    # hotkey sanity check
+    # remove hotkeys if there is no hotkey enable button
+    iniGet "input_enable_hotkey"
+    if [[ -z "$ini_value" ]]; then
+        iniSet "input_state_slot_decrease" ""
+        iniSet "input_state_slot_increase" ""
+        iniSet "input_reset" ""
+        iniSet "input_menu_toggle" "f1"
+        iniSet "input_load_state" ""
+        iniSet "input_save_state" ""
+        iniSet "input_exit_emulator" "escape"
+    fi
 }

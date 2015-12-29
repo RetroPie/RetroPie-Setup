@@ -190,6 +190,12 @@ function map_reicast_joystick() {
                 if [[ "$key" != *axis* ]] ; then
                     # input_id must be recalculated: 288d = button 0
                     input_id=$(($input_id+288))
+                    # workaround for specific controller button mismatch
+                    case "$device_name" in 
+                        "Xbox 360 Controller (xpad driver)"|"Xbox 360 Controller (xboxdrv userspace driver)"|"Microsoft X-Box 360 pad"|"Xbox Gamepad (userspace driver)"|"Xbox 360 Wireless Receiver (XBOX)")
+                            input_id=$(($input_id+15))
+                            ;;
+                    esac
                     iniSet "$key" "$input_id"
                 fi
                 ;;
