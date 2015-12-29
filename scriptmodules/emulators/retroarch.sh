@@ -78,6 +78,7 @@ function configure_retroarch() {
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     iniSet "assets_directory" "$md_inst/assets"
     iniSet "overlay_directory" "$md_inst/overlays"
+    isPlatform "x86" && iniSet "video_fullscreen" "true"
 
     # enable hotkey ("select" button)
     iniSet "input_enable_hotkey" "nul"
