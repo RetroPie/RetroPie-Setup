@@ -12,7 +12,7 @@
 rp_module_id="reicast"
 rp_module_desc="Dreamcast emulator Reicast"
 rp_module_menus="2+"
-rp_module_flags="!rpi1 !x86"
+rp_module_flags="!rpi1"
 
 function depends_reicast() {
     getDepends libsdl1.2-dev python-dev python-pip alsa-oss
@@ -21,7 +21,11 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    gitPullOrClone "$md_build" https://github.com/RetroPie/reicast-emulator.git retropie
+    if isPlatform "x86"; then
+        gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git fix/softrend-fugly-casts
+    else
+        gitPullOrClone "$md_build" https://github.com/RetroPie/reicast-emulator.git retropie
+    fi
 }
 
 function build_reicast() {
