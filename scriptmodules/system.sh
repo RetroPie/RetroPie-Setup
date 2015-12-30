@@ -149,7 +149,7 @@ function set_default_gcc() {
 function get_retropie_depends() {
     # add rasberrypi repository if it's missing (needed for libraspberrypi-dev etc) - not used on osmc
     local config="/etc/apt/sources.list.d/raspi.list"
-    if [[ ! -f "$config" ]] && ! hasPackage rbp-bootloader-osmc; then
+    if [[ ! -f "$config" ]] && hasPackage raspberrypi-bootloader; then
         # add key
         wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O- | apt-key add - >/dev/null
         echo "deb http://archive.raspberrypi.org/debian/ $__raspbian_name main" >>$config
