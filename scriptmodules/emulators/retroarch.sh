@@ -116,7 +116,7 @@ function configure_retroarch() {
     iniSet "input_autodetect_enable" "true"
     iniSet "joypad_autoconfig_dir" "$configdir/all/retroarch-joypads/"
     iniSet "auto_remaps_enable" "true"
-    iniSet "input_joypad_driver" "sdl2"
+    iniSet "input_joypad_driver" "udev"
 
     chown $user:$user "$config"
 }
