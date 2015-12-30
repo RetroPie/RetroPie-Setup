@@ -16,6 +16,7 @@ rp_module_flags="!rpi1 !x86"
 
 function depends_reicast() {
     getDepends libsdl1.2-dev python-dev python-pip alsa-oss
+    [[ "$__raspbian_ver" -ge "8" ]] && getDepends libevdev-dev
     pip install evdev
 }
 
@@ -25,14 +26,23 @@ function sources_reicast() {
 
 function build_reicast() {
     cd shell/linux
-    make platform=rpi2 clean
-    make platform=rpi2
+    if isPlatform "rpi2"; then
+        make platform=rpi2 clean
+        make platform=rpi2
+    else
+        make clean
+        make
+    fi
     md_ret_require="$md_build/shell/linux/reicast.elf"
 }
 
 function install_reicast() {
     cd shell/linux
-    make platform=rpi2 PREFIX="$md_inst" install
+    if isPlatform "rpi2"; then
+        make platform=rpi2 PREFIX="$md_inst" install
+    else
+        make PREFIX="$md_inst" install
+    fi
     md_ret_files=(
         'LICENSE'
         'README.md'
