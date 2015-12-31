@@ -245,7 +245,7 @@ function map_retroarch_joystick() {
                 iniGet "input_driver"
                 if [[ "$ini_value" == "udev" ]]; then
                     case "$device_name" in 
-                        "8Bitdo FC30 Pro")
+                        "8Bitdo FC30 Pro"|"8Bitdo FC30 GamePad"|"8Bitdo FC30 II"|"8Bitdo NES30 GamePad"|"8Bitdo SFC30 GamePad"|"8Bitdo SNES30 GamePad"|"8Bitdo Zero GamePad")
                             input_id=$(($input_id+11))
                             ;;
                     esac
