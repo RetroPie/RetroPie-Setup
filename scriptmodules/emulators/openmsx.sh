@@ -12,13 +12,14 @@
 rp_module_id="openmsx"
 rp_module_desc="MSX emulator OpenMSX"
 rp_module_menus="4+"
+rp_module_flags="!x86"
 
 function depends_openmsx() {
     getDepends libsdl1.2-dev libsdl-ttf2.0-dev libglew-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev
 }
 
 function sources_openmsx() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/openmsx-0.10.0.tar.gz | tar -xvz --strip-components=1
+    gitPullOrClone "$md_build" https://github.com/openMSX/openMSX.git
     sed -i "s|INSTALL_BASE:=/opt/openMSX|INSTALL_BASE:=$md_inst|" build/custom.mk
     sed -i "s|SYMLINK_FOR_BINARY:=true|SYMLINK_FOR_BINARY:=false|" build/custom.mk
 }
@@ -33,9 +34,8 @@ function build_openmsx() {
 
 function install_openmsx() {
     make install
-    wget "http://downloads.petrockblock.com/retropiearchives/openmsxroms.zip"
     mkdir -p "$md_inst/share/systemroms/"
-    unzip openmsxroms.zip -o -d "$md_inst/share/systemroms/"
+    wget -q -O- "$__archive_url/openmsxroms.tar.gz" | tar -xvz -C "$md_inst/share/systemroms/"
 }
 
 function configure_openmsx() {

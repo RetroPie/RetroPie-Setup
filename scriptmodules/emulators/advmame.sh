@@ -12,6 +12,7 @@
 rp_module_id="advmame"
 rp_module_desc="AdvanceMAME"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function depends_advmame() {
     getDepends libsdl1.2-dev
@@ -22,7 +23,7 @@ function sources_advmame() {
     for version in 0.94.0 1.4; do
         mkdir -p "$version"
         pushd "$version"
-        wget -O- -q "http://downloads.petrockblock.com/retropiearchives/advancemame-$version.tar.gz" | tar -xvz --strip-components=1
+        wget -O- -q "$__archive_url/advancemame-$version.tar.gz" | tar -xvz --strip-components=1
 
         # update internal names to separate out config files (due to incompatible options)
         sed -i "s/advmame\.rc/advmame-$version.rc/" advance/v/v.c advance/cfg/cfg.c
@@ -124,18 +125,7 @@ function configure_advmame() {
     # delete old install files
     rm -rf "$md_inst/"{bin,man,share}
 
-    mkUserDir "$configdir/mame-advmame"
-
-    # move any old configs to new location
-    if [[ -d "$home/.advance" && ! -h "$home/.advance" ]]; then
-        mv -v "$home/.advance/advmame.rc" "$configdir/mame-advmame/"
-        mv -v "$home/.advance/"* "$configdir/mame-advmame/"
-        rmdir "$home/.advance/"
-    fi
-
-    ln -snf "$configdir/mame-advmame" "$home/.advance"
-
-    chown -R $user:$user "$configdir/mame-advmame"
+    moveConfigDir "$home/.advance" "$configdir/mame-advmame"
 
     local version
     local default

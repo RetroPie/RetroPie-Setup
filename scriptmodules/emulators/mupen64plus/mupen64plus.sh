@@ -131,23 +131,23 @@ function remap() {
         bind=""
         for device_num in "${!devices[@]}"; do
             # get name of retroarch auto config file
-            file=$(grep --exclude=*.bak -rl "/opt/retropie/configs/all/retroarch-joypads/" -e "\"${devices[$device_num]}\"")
+            file=$(grep --exclude=*.bak -rl "$configdir/all/retroarch-joypads/" -e "\"${devices[$device_num]}\"")
             if [[ -f "$file" ]]; then
-                if [[ -n "$bind"  && "$bind" != *, ]]; then
+                if [[ -n "$bind" && "$bind" != *, ]]; then
                     bind+=","
                 fi
                 bind+=$(getBind "${hotkeys_rp[$i]}" "${device_num}" "$file")
             fi
         done
         # write hotkey to mupen64plus.cfg
-        iniConfig " = " "\"" "/opt/retropie/configs/n64/mupen64plus.cfg"
+        iniConfig " = " "\"" "$configdir/n64/mupen64plus.cfg"
         iniSet "${hotkeys_m64p[$i]}" "$bind"
     done
 }
 
 function setAudio() {
     local audio_device=$(amixer cget numid=3)
-    iniConfig " = " "\"" "/opt/retropie/configs/n64/mupen64plus.cfg"
+    iniConfig " = " "\"" "$configdir/n64/mupen64plus.cfg"
     if [[ "$audio_device" == *": values=0"* ]]; then
         local video_device=$(tvservice -s)
         if [[ "$video_device" == *HDMI* ]]; then
@@ -168,25 +168,29 @@ function testCompatibility() {
     # fallback for glesn64 and rice plugin
     # some roms lead to a black screen of death
     local game
-    local glesn64_blacklist=( zelda
-                              Zelda
-                              ZELDA
-                              paper
-                              Paper
-                              PAPER
-                              kazooie
-                              Kazooie
-                              KAZOOIE
-                              tooie
-                              Tooie
-                              TOOIE
-                              instinct
-                              Instinct
-                              INSTINCT )
+    local glesn64_blacklist=(
+        zelda
+        Zelda
+        ZELDA
+        paper
+        Paper
+        PAPER
+        kazooie
+        Kazooie
+        KAZOOIE
+        tooie
+        Tooie
+        TOOIE
+        instinct
+        Instinct
+        INSTINCT
+    )
 
-    local glesn64rice_blacklist=( yoshi
-                                  Yoshi
-                                  YOSHI )
+    local glesn64rice_blacklist=(
+        yoshi
+        Yoshi
+        YOSHI
+    )
 
     if [[ "$VIDEO_PLUGIN" == "mupen64plus-video-n64" ]];then
         for game in "${glesn64_blacklist[@]}"; do
@@ -205,7 +209,7 @@ function testCompatibility() {
     fi
 }
 
-remap
-testCompatibility
-setAudio
-/opt/retropie/emulators/mupen64plus/bin/mupen64plus --noosd --fullscreen --gfx ${VIDEO_PLUGIN}.so --configdir $configdir/n64 --datadir $configdir/n64 "$ROM"
+getAutoConf mupen64plus_hotkeys || remap
+getAutoConf mupen64plus_compatibility_check || testCompatibility
+getAutoConf mupen64plus_audio || setAudio
+"$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --gfx ${VIDEO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"

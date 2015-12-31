@@ -12,14 +12,14 @@
 rp_module_id="dgen"
 rp_module_desc="Megadrive/Genesis emulat. DGEN"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_dgen() {
     getDepends libsdl1.2-dev libarchive-dev
 }
 
 function sources_dgen() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/dgen-sdl-1.33.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q $__archive_url/dgen-sdl-1.33.tar.gz | tar -xvz --strip-components=1
 }
 
 function build_dgen() {

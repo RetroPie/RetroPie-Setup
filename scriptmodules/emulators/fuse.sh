@@ -12,16 +12,16 @@
 rp_module_id="fuse"
 rp_module_desc="ZX Spectrum emulator Fuse"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_fuse() {
     getDepends libsdl1.2-dev libpng12-dev zlib1g-dev libbz2-dev libaudiofile-dev bison flex 
 }
 
 function sources_fuse() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/fuse-1.1.1.tar.gz | tar -xvz --strip-components=1  
+    wget -O- -q $__archive_url/fuse-1.1.1.tar.gz | tar -xvz --strip-components=1  
     mkdir libspectrum
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/libspectrum-1.1.1.tar.gz | tar -xvz --strip-components=1 -C libspectrum
+    wget -O- -q $__archive_url/libspectrum-1.1.1.tar.gz | tar -xvz --strip-components=1 -C libspectrum
     patch -p1 <<\_EOF_
 --- a/ui/sdl/sdldisplay.c	2015-02-18 22:39:05.631516602 +0000
 +++ b/ui/sdl/sdldisplay.c	2015-02-18 22:39:08.407506296 +0000
@@ -60,12 +60,8 @@ function configure_fuse() {
     mkRomDir "zxspectrum"
 
     mkUserDir "$configdir/zxspectrum"
-    if [[ -f "$home/.fuserc" && ! -h "$home/.fuserc" ]]; then
-        mv "$home/.fuserc" "$configdir/zxspectrum/"
-    fi
-    rm -f "$home/.fuserc"
-    ln -sf "$configdir/zxspectrum/.fuserc" "$home/.fuserc"
-    chown -R $user:$user "$configdir/zxspectrum"
+
+    moveConfigFile "$home/.fuserc" "$configdir/zxspectrum/.fuserc"
 
     setDispmanx "$md_id" 1
     configure_dispmanx_on_fuse

@@ -45,6 +45,8 @@ function configure_opentyrian() {
     unzip -j -o tyrian21.zip -d "$romdir/ports/opentyrian/data"
     rm -f tyrian21.zip
 
+    moveConfigDir "$home/.config/opentyrian" "$configdir/opentyrian"
+
     # Enable dispmanx by default.
     setDispmanx "$md_id" 1
 

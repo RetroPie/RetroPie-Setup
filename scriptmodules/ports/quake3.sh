@@ -12,6 +12,7 @@
 rp_module_id="quake3"
 rp_module_desc="Quake 3"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function depends_quake3() {
     getDepends libsdl1.2-dev
@@ -33,7 +34,7 @@ function install_quake3() {
         'build/release-linux-arm/ioquake3.arm'
     )
 
-    wget http://downloads.petrockblock.com/retropiearchives/Q3DemoPaks.zip
+    wget $__archive_url/Q3DemoPaks.zip
     unzip -o Q3DemoPaks.zip -d "$md_inst"
     rm Q3DemoPaks.zip
 }

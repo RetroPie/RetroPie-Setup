@@ -12,7 +12,7 @@
 rp_module_id="scummvm"
 rp_module_desc="ScummVM"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_scummvm() {
     getDepends libsdl1.2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
@@ -24,7 +24,7 @@ function depends_scummvm() {
 }
 
 function sources_scummvm() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/scummvm-1.7.0.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q $__archive_url/scummvm-1.7.0.tar.gz | tar -xvz --strip-components=1
 }
 
 function build_scummvm() {
@@ -43,6 +43,8 @@ function install_scummvm() {
 
 function configure_scummvm() {
     mkRomDir "scummvm"
+
+    moveConfigDir "$home/.scummvm" "$configdir/scummvm"
 
     # Create startup script
     rm -f "$romdir/scummvm/+Launch GUI.sh"

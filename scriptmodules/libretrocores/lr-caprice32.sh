@@ -11,7 +11,7 @@
 
 rp_module_id="lr-caprice32"
 rp_module_desc="Amstrad CPC emu - Caprice32 port for libretro"
-rp_module_menus="4+"
+rp_module_menus="2+"
 
 function sources_lr-caprice32() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-cap32.git
@@ -33,5 +33,9 @@ function configure_lr-caprice32() {
     mkRomDir "amstradcpc"
     ensureSystemretroconfig "amstradcpc"
 
-    addSystem 0 "$md_id" "amstradcpc" "$md_inst/cap32_libretro.so"
+    setRetroArchCoreOption "cap32_autorun" "enabled"
+    setRetroArchCoreOption "cap32_Model" "6128"
+    setRetroArchCoreOption "cap32_Ram" "128"
+
+    addSystem 1 "$md_id" "amstradcpc" "$md_inst/cap32_libretro.so"
 }

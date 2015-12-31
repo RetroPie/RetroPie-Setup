@@ -12,6 +12,7 @@
 rp_module_id="hatari"
 rp_module_desc="Atari emulator Hatari"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function depends_hatari() {
     getDepends libsdl2-dev zlib1g-dev libpng12-dev cmake libreadline-dev portaudio19-dev
@@ -19,8 +20,8 @@ function depends_hatari() {
 }
 
 function sources_hatari() {
-    wget -q -O- "http://downloads.petrockblock.com/retropiearchives/hatari-1.9.0.tar.bz2" | tar -xvj --strip-components=1
-    wget -q -O spsdeclib.zip "http://downloads.petrockblock.com/retropiearchives/spsdeclib_5.1_source.zip"
+    wget -q -O- "$__archive_url/hatari-1.9.0.tar.bz2" | tar -xvj --strip-components=1
+    wget -q -O spsdeclib.zip "$__archive_url/spsdeclib_5.1_source.zip"
     unzip -o spsdeclib.zip
     unzip -o capsimg_source_linux_macosx.zip
     chmod u+x capsimg_source_linux_macosx/CAPSImg/configure
@@ -70,12 +71,7 @@ function configure_hatari() {
     mkRomDir "atarist"
 
     # move any old configs to new location
-    if [[ -d "$home/.hatari" && ! -h "$home/.hatari" ]]; then
-        mv -v "$home/.hatari/"* "$configdir/atarist/"
-        rmdir "$home/.hatari"
-    fi
-
-    ln -snf "$configdir/atarist" "$home/.hatari"
+    moveConfigDir "$home/.hatari" "$configdir/atarist"
 
     delSystem "$md_id" "atariststefalcon"
     delSystem "$md_id" "atarist"

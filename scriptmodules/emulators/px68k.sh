@@ -12,6 +12,7 @@
 rp_module_id="px68k"
 rp_module_desc="SHARP X68000 Emulator"
 rp_module_menus="4+"
+rp_module_flags="!x86"
 
 function depends_px68k() {
     getDepends libsdl1.2-dev libsdl-gfx1.2-dev
@@ -37,10 +38,8 @@ function install_px68k() {
 function configure_px68k() {
     mkRomDir "x68000"
 
-    mkUserDir "$configdir/x68000"
-    
-    # symlink .keropi configuration folder / bios files to $configdir
-    ln -sfn "$configdir/x68000" "$home/.keropi"
+    moveConfigDir "$home/.keropi" "$configdir/x68000"
+
     local bios
     for bios in cgrom.dat plrom30.dat iplromco.dat iplrom.dat iplromxv.dat; do
         ln -sf "$biosdir/$bios" "$configdir/x68000/$bios"

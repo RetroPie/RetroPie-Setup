@@ -12,14 +12,14 @@
 rp_module_id="linapple"
 rp_module_desc="Apple 2 emulator LinApple"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_linapple() {
     getDepends libzip2 libzip-dev libsdl1.2-dev libcurl4-openssl-dev
 }
 
 function sources_linapple() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/linapple-src_2a.tar.bz2 | tar -xvj --strip-components=1
+    wget -O- -q $__archive_url/linapple-src_2a.tar.bz2 | tar -xvj --strip-components=1
     addLineToFile "#include <unistd.h>" "src/Timer.h"
 }
 

@@ -12,7 +12,7 @@
 rp_module_id="pcsx-rearmed"
 rp_module_desc="Playstation emulator - PCSX (arm optimised)"
 rp_module_menus="4+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_pcsx-rearmed() {
     getDepends libsdl1.2-dev libasound2-dev libpng12-dev libx11-dev
@@ -55,7 +55,7 @@ function install_pcsx-rearmed() {
 function configure_pcsx-rearmed() {
     mkRomDir "psx"
     mkUserDir "$configdir/psx"
-    mkdir "$md_inst/bios"
+    mkdir -p "$md_inst/bios"
 
     # symlink the rom so so it can be installed with the other bios files
     ln -sf "$biosdir/scph1001.bin" "$md_inst/bios/scph1001.bin"

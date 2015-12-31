@@ -46,7 +46,10 @@ js_fd = open(sys.argv[1], "rb")
 buttons_state = 0
 last_press = 0
 while True:
-    event = js_fd.read(event_size)
+    try:
+        event = js_fd.read(event_size)
+    except:
+        break
 
     if time.time() - last_press < JS_REP:
         continue

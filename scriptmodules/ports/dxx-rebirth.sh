@@ -13,12 +13,6 @@ rp_module_id="dxx-rebirth"
 rp_module_desc="DXX-Rebirth (Descent & Descent 2) build from source"
 rp_module_menus="4+"
 
-D1X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
-D2X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
-D1X_HIGH_TEXTURE_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
-D1X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
-D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
-
 function depends_dxx-rebirth() {
     getDepends libphysfs1 libphysfs-dev libsdl1.2-dev libsdl-mixer1.2-dev scons
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
@@ -68,19 +62,19 @@ function install_dxx-rebirth() {
 }
 
 function configure_dxx-rebirth() {
+    local D1X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
+    local D2X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
+    local D1X_HIGH_TEXTURE_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
+    local D1X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
+    local D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
+
     mkRomDir "ports"
 
     # Descent 1
     mkRomDir "ports/descent1"
-    mkUserDir "$configdir/descent1"
     
     # copy any existing configs from ~/.d1x-rebirth and symlink the config folder to $configdir/descent1/
-    if [[ -d "$home/.d1x-rebirth" && ! -h "$home/.d1x-rebirth" ]]; then
-        mv -v "$home/.d1x-rebirth/"* "$configdir/descent1/"
-        rm -rf "$home/.d1x-rebirth"
-    fi
-    
-    ln -snf "$configdir/descent1" "$home/.d1x-rebirth"
+    moveConfigDir "$home/.d1x-rebirth" "$configdir/descent1/"
     
     # Download / unpack / install Descent shareware files
     if [[ ! -f "$romdir/ports/descent1/descent.hog" ]]; then
@@ -105,15 +99,9 @@ function configure_dxx-rebirth() {
     
     # Descent 2
     mkRomDir "ports/descent2"
-    mkUserDir "$configdir/descent2"
     
     # copy any existing configs from ~/.d2x-rebirth and symlink the config folder to $configdir/descent2/
-    if [[ -d "$home/.d2x-rebirth" && ! -h "$home/.d2x-rebirth" ]]; then
-        mv -v "$home/.d2x-rebirth/"* "$configdir/descent2/"
-        rm -rf "$home/.d2x-rebirth"
-    fi
-    
-    ln -snf "$configdir/descent2" "$home/.d2x-rebirth"
+    moveConfigDir "$home/.d1x-rebirth" "$configdir/descent1/"
     
     # Download / unpack / install Descent 2 shareware files
     if [[ ! -f "$romdir/ports/descent2/D2DEMO.HOG" ]]; then

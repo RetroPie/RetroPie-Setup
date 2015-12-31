@@ -12,7 +12,7 @@
 rp_module_id="sdl2"
 rp_module_desc="SDL (Simple DirectMedia Layer) v2.x"
 rp_module_menus=""
-rp_module_flags="nobin"
+rp_module_flags="nobin !x86"
 
 function get_ver_sdl2() {
     echo "2.0.3+1rpi"

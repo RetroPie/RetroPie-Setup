@@ -12,14 +12,14 @@
 rp_module_id="jzintv"
 rp_module_desc="Intellivision emulator"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_jzintv() {
     getDepends libsdl1.2-dev
 }
 
 function sources_jzintv() {
-    wget http://downloads.petrockblock.com/retropiearchives/jzintv-20141028.zip -O jzintv.zip
+    wget $__archive_url/jzintv-20141028.zip -O jzintv.zip
     unzip jzintv.zip
     rm jzintv.zip
     cd jzintv/src

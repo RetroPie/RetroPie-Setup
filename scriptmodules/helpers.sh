@@ -16,7 +16,7 @@ function printMsgs() {
         type="console"
     fi
     for msg in "$@"; do
-        [[ "$type" == "dialog" ]] && dialog --backtitle "$__backtitle" --msgbox "$msg" 20 60 >/dev/tty
+        [[ "$type" == "dialog" ]] && dialog --backtitle "$__backtitle" --cr-wrap --no-collapse --msgbox "$msg" 20 60 >/dev/tty
         [[ "$type" == "console" ]] && echo -e "$msg"
         [[ "$type" == "heading" ]] && echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$msg\n= = = = = = = = = = = = = = = = = = = = =\n"
     done
@@ -254,6 +254,37 @@ function mkRomDir() {
         ln -snf "$1" "genesis"
         popd
     fi
+}
+
+function moveConfigDir() {
+    local from="$1"
+    local to="$2"
+    mkUserDir "$to"
+    # move any old configs to the new location
+    if [[ -d "$from" && ! -h "$from" ]]; then
+        # also match hidden files
+        shopt -s dotglob
+        if [[ -n "$(ls -A $from)" ]]; then
+            mv -f "$from/"* "$to"
+        fi
+        shopt -u dotglob
+        rmdir "$from"
+    fi
+    ln -snf "$to" "$from"
+    # set ownership of the actual link to $user
+    chown -h $user:$user "$from"
+}
+
+function moveConfigFile() {
+    local from="$1"
+    local to="$2"
+    # move old file
+    if [[ -f "from" && ! -h "from" ]]; then
+        mv "from" "$to"
+    fi
+    ln -sf "$to" "$from"
+    # set ownership of the actual link to $user
+    chown -h $user:$user "$from"
 }
 
 function setDispmanx() {

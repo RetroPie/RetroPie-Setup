@@ -12,6 +12,7 @@
 rp_module_id="mame4all"
 rp_module_desc="MAME emulator MAME4All-Pi"
 rp_module_menus="2+"
+rp_module_flags="!x86"
 
 function depends_mame4all() {
     getDepends libasound2-dev libsdl1.2-dev libraspberrypi-dev
@@ -49,14 +50,12 @@ function configure_mame4all() {
     mkdir -p "$configdir/$system/"{cfg,hi,inp,memcard,nvram,snap,sta}
 
     # move old config
-    if [[ -f "mame.cfg" && ! -h "mame.cfg" ]]; then
-        mv "mame.cfg" "$configdir/$system/mame.cfg"
-    fi
+    moveConfigFile "mame.cfg" "$configdir/$system/mame.cfg"
+
     # if the user doesn't already have a config, we will copy the default.
     if [[ ! -f "$configdir/$system/mame.cfg" ]]; then
         cp "mame.cfg.template" "$configdir/$system/mame.cfg"
     fi
-    ln -sf "$configdir/$system/mame.cfg"
 
     iniConfig "=" "" "$configdir/$system/mame.cfg"
     iniSet "cfg" "$configdir/$system/cfg"

@@ -11,11 +11,11 @@
 
 rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
-rp_module_menus="4+"
-rp_module_flags="!rpi1"
+rp_module_menus="2+"
+rp_module_flags="!rpi1 !x86"
 
 function depends_ppsspp() {
-    getDepends libraspberrypi-dev libsdl2-dev
+    getDepends cmake libraspberrypi-dev libsdl2-dev
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
 }
 
@@ -92,12 +92,11 @@ function install_ppsspp() {
 
 function configure_ppsspp() {
     mkRomDir "psp"
-    mkUserDir "$configdir/psp"
-    mkUserDir "$configdir/psp/PSP"
-    mkUserDir "$home/.config"
 
-    ln -snf "$configdir/psp" "$home/.config/ppsspp"
+    mkUserDir "$home/.config"
+    moveConfigDir "$home/.config/ppsspp" "$configdir/psp"
+    mkUserDir "$configdir/psp/PSP"
     ln -snf "$romdir/psp" "$configdir/psp/PSP/GAME"
 
-    addSystem 1 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
+    addSystem 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
 }

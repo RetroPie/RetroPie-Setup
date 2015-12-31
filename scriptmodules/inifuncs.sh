@@ -97,3 +97,36 @@ function iniGet() {
     [[ -z "$delim_strip" ]] && delim_strip="$delim"
     ini_value=$(sed -rn "s/^[[:space:]]*$key[[:space:]]*$delim_strip[[:space:]]*$quote(.+)$quote.*/\1/p" $file)
 }
+
+# arg 1: key, arg 2: default value (optional - is 1 if not used)
+function addAutoConf() {
+    local key="$1"
+    local default="$2"
+    local file="$configdir/all/autoconf.cfg"
+
+    if [[ -z "$default" ]]; then
+       default="1"
+    fi
+
+    if [ ! -f "$file" ]; then
+        echo "# this file can be used to enable/disable retropie autoconfiguration features" >> "$file"
+    fi
+
+    iniConfig " = " "" "$file"
+    iniGet "$key"
+    ini_value="${ini_value// /}"
+    if [[ -z "$ini_value" ]]; then
+        iniSet "$key" "$default"
+    fi
+}
+
+# arg 1: key
+function getAutoConf(){
+    local key="$1"
+
+    iniConfig " = " "" "$configdir/all/autoconf.cfg"
+    iniGet "$key"
+
+    [[ "$ini_value" == "1" ]] && return 1
+    return 0
+}

@@ -12,7 +12,7 @@
 rp_module_id="uae4all"
 rp_module_desc="Amiga emulator UAE4All"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_uae4all() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev

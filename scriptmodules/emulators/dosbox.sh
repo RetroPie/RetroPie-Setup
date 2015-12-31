@@ -12,14 +12,14 @@
 rp_module_id="dosbox"
 rp_module_desc="DOS emulator"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_dosbox() {
     getDepends libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng12-dev automake autoconf zlib1g-dev
 }
 
 function sources_dosbox() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/dosbox-r3876.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q $__archive_url/dosbox-r3876.tar.gz | tar -xvz --strip-components=1
 }
 
 function build_dosbox() {
@@ -63,14 +63,7 @@ _EOF_
     chmod +x "$romdir/pc/+Start DOSBox.sh"
     chown $user:$user "$romdir/pc/+Start DOSBox.sh"
 
-    mkUserDir "$configdir/pc/"
-
-    # move any old configs to the new location
-    if [[ -d "$home/.dosbox" && ! -h "$home/.dosbox" ]]; then
-        mv "$home/.dosbox/"* "$configdir/pc/"
-        rmdir "$home/.dosbox"
-    fi
-    ln -snf "$configdir/pc" "$home/.dosbox"
+    moveConfigDir "$home/.dosbox" "$configdir/pc"
 
     local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [[ -f "$config_path" ]]; then

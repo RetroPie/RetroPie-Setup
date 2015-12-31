@@ -12,7 +12,7 @@
 rp_module_id="vice"
 rp_module_desc="C64 emulator VICE"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !x86"
 
 function depends_vice() {
     if hasPackage vice; then
@@ -23,7 +23,7 @@ function depends_vice() {
 }
 
 function sources_vice() {
-    wget -O- -q http://downloads.petrockblock.com/retropiearchives/vice-2.4.tar.gz | tar -xvz --strip-components=1
+    wget -O- -q $__archive_url/vice-2.4.tar.gz | tar -xvz --strip-components=1
 }
 
 function build_vice() {
@@ -39,15 +39,8 @@ function install_vice() {
 function configure_vice() {
     mkRomDir "c64"
 
-    mkUserDir "$configdir/c64"
-
     # copy any existing configs from ~/.vice and symlink the config folder to $configdir/c64/
-    if [[ -d "$home/.vice" && ! -h "$home/.vice" ]]; then
-        mv -v "$home/.vice/"* "$configdir/c64/"
-        rm -rf "$home/.vice"
-    fi
-
-    ln -snf "$configdir/c64" "$home/.vice"
+    moveConfigDir "$home/.vice" "$configdir/c64"
 
     # if we have an old config vice.cfg then move it to sdl-vicerc
     if [[ -f "$configdir/c64/vice.cfg" ]]; then

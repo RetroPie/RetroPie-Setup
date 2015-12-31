@@ -12,7 +12,7 @@
 rp_module_id="lr-beetle-vb"
 rp_module_desc="Virtual Boy emulator - Mednafen VB (optimised) port for libretro"
 rp_module_menus="4+"
-rp_module_flags="!rpi1"
+rp_module_flags="!rpi1 !x86"
 
 function sources_lr-beetle-vb() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-vb-libretro.git

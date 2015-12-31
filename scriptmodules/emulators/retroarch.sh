@@ -14,7 +14,8 @@ rp_module_desc="RetroArch"
 rp_module_menus="2+"
 
 function depends_retroarch() {
-    getDepends libudev-dev libxkbcommon-dev libsdl2-dev libraspberrypi-dev
+    getDepends libudev-dev libxkbcommon-dev libsdl2-dev 
+    [[ "$__platform" == *rpi* ]] && getDepends libraspberrypi-dev
     [[ "$__raspbian_ver" -ge "8" ]] && getDepends libusb-1.0-0-dev
 
     cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
@@ -34,6 +35,7 @@ function sources_retroarch() {
 function build_retroarch() {
     local params=(--disable-x11 --enable-dispmanx --disable-oss --disable-pulse --disable-al --disable-jack --enable-sdl2 --enable-floathard)
     isPlatform "rpi2" && params+=(--enable-neon)
+    isPlatform "x86" && params=(--enable-sdl2)
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
     make
@@ -76,6 +78,7 @@ function configure_retroarch() {
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     iniSet "assets_directory" "$md_inst/assets"
     iniSet "overlay_directory" "$md_inst/overlays"
+    isPlatform "x86" && iniSet "video_fullscreen" "true"
 
     # enable hotkey ("select" button)
     iniSet "input_enable_hotkey" "nul"
@@ -113,6 +116,7 @@ function configure_retroarch() {
     iniSet "input_autodetect_enable" "true"
     iniSet "joypad_autoconfig_dir" "$configdir/all/retroarch-joypads/"
     iniSet "auto_remaps_enable" "true"
+    iniSet "input_joypad_driver" "udev"
 
     chown $user:$user "$config"
 }

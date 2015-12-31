@@ -12,7 +12,7 @@
 rp_module_id="sdl1"
 rp_module_desc="SDL 1.2.15 with rpi fixes and dispmanx"
 rp_module_menus=""
-rp_module_flags="!odroid nobin"
+rp_module_flags="!odroid nobin !x86"
 
 function get_ver_sdl1() {
     if [[ "$__raspbian_ver" -lt "8" ]]; then

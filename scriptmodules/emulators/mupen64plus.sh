@@ -12,10 +12,10 @@
 rp_module_id="mupen64plus"
 rp_module_desc="N64 emulator MUPEN64Plus"
 rp_module_menus="2+"
-rp_module_flags="!odroid"
+rp_module_flags="!odroid !x86"
 
 function depends_mupen64plus() {
-    getDepends libsamplerate0-dev libspeexdsp-dev libsdl2-dev
+    getDepends cmake libgl1-mesa-dev libsamplerate0-dev libspeexdsp-dev libsdl2-dev
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
 }
 
@@ -24,7 +24,7 @@ function sources_mupen64plus() {
         #'ricrpi core ric_dev'
         'mupen64plus core'
         'mupen64plus ui-console'
-        'ricrpi audio-omx'
+        'gizmo98 audio-omx'
         'mupen64plus audio-sdl'
         'mupen64plus input-sdl'
         #'ricrpi rsp-hle'
@@ -55,7 +55,7 @@ function build_mupen64plus() {
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             [[ "$dir" == "mupen64plus-video-gles2rice" ]] && params+=("VC=1")
             [[ "$dir" == "mupen64plus-video-rice" ]] && params+=("VC=1")
-            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1" "EXT_CFG=1")
+            [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
             if isPlatform "rpi2"; then
                 [[ "$dir" == "mupen64plus-core" ]] && params+=("VC=1" "NEON=1")
                 [[ "$dir" == "mupen64plus-video-gles2n64" ]] && params+=("VC=1" "NEON=1")
@@ -107,11 +107,12 @@ function install_mupen64plus() {
 function configure_mupen64plus() {
     # copy hotkey remapping start script
     cp "$scriptdir/scriptmodules/$md_type/$md_id/mupen64plus.sh" "$md_inst/bin/"
+    chmod +x "$md_inst/bin/mupen64plus.sh"
     
     # to solve startup problems delete old config file
     rm -f "$configdir/n64/mupen64plus.cfg"
     # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
-    rm "$md_inst/share/mupen64plus/InputAutoCfg.ini"
+    rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
     mkUserDir "$configdir/n64/"
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$configdir/n64/"
@@ -130,4 +131,8 @@ function configure_mupen64plus() {
     addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
     addSystem 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"
     addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
+
+    addAutoConf mupen64plus_audio 1
+    addAutoConf mupen64plus_hotkeys 1
+    addAutoConf mupen64plus_compatibility_check 1
 }

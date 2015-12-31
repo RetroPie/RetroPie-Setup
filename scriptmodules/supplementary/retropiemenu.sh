@@ -23,19 +23,29 @@ function configure_retropiemenu()
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
 
-    files=(
-        'raspiconfig.rp'
-        'rpsetup.rp'
-        'configedit.rp'
-        'retroarch.rp'
-        'audiosettings.rp'
-        'dispmanx.rp'
-        'retronetplay.rp'
-        'splashscreen.rp'
-        'filemanager.rp'
-        'showip.rp'
-        'wifi.rp'
-    )
+    if isPlatform "x86"; then
+        files=(
+            'rpsetup.rp'
+            'configedit.rp'
+            'retroarch.rp'
+            'retronetplay.rp'
+            'filemanager.rp'
+        )
+    else
+        files=(
+            'raspiconfig.rp'
+            'rpsetup.rp'
+            'configedit.rp'
+            'retroarch.rp'
+            'audiosettings.rp'
+            'dispmanx.rp'
+            'retronetplay.rp'
+            'splashscreen.rp'
+            'filemanager.rp'
+            'showip.rp'
+            'wifi.rp'
+        )
+    fi
 
     for file in "${files[@]}"; do
         touch "$rpdir/$file"
@@ -118,8 +128,8 @@ function launch_retropiemenu() {
             mc
             ;;
         showip.rp)
-            ip addr show
-            sleep 5
+            local ip="$(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)"
+            printMsgs "dialog" "Your IP is: $ip\n\nOutput of 'ip addr show':\n\n$(ip addr show)"
             ;;
         *.rp)
             local no_ext=${basename%.rp}

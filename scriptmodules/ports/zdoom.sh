@@ -48,18 +48,12 @@ function configure_zdoom() {
     mkRomDir "ports"
     mkRomDir "ports/doom"
 
-    mkUserDir "doom"
-
-    if [[ -d "$home/.config/zdoom" && ! -h "$home/.config/zdoom" ]]; then
-        mv -v "$home/.config/zdoom"* "$home/.config/zdoom"
-        rm -rf "$home/.config/zdoom"
-    fi
     mkUserDir "$home/.config"
-    ln -snf "$configdir/doom" "$home/.config/zdoom"
+    moveConfigDir "$home/.config/zdoom" "$configdir/doom"
 
     # download doom 1 shareware
     if [[ ! -f "$romdir/ports/doom/doom1.wad" ]]; then
-        wget "http://downloads.petrockblock.com/retropiearchives/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
+        wget "$__archive_url/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
     fi
     chown $user:$user "$romdir/ports/doom/doom1.wad"
 

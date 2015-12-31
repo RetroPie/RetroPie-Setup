@@ -15,32 +15,58 @@ rp_module_menus="3+"
 rp_module_flags="nobin"
 
 function enable_autostart() {
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        sed -i "s|^1:2345:.*|1:2345:respawn:/bin/login -f $user tty1 </dev/tty1 >/dev/tty1 2>\&1|g" /etc/inittab
-        update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
-        sed -i "/emulationstation/d" /etc/profile
-    else
-        mkdir -p /etc/systemd/system/getty@tty1.service.d/
-        cat >/etc/systemd/system/getty@tty1.service.d/autologin.conf <<_EOF_
+    if [[ "$__platform" == *rpi* ]]; then
+        if [[ "$__raspbian_ver" -lt "8" ]]; then
+            sed -i "s|^1:2345:.*|1:2345:respawn:/bin/login -f $user tty1 </dev/tty1 >/dev/tty1 2>\&1|g" /etc/inittab
+            update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
+            sed -i "/emulationstation/d" /etc/profile
+        else
+            mkdir -p /etc/systemd/system/getty@tty1.service.d/
+            cat >/etc/systemd/system/getty@tty1.service.d/autologin.conf <<_EOF_
 [Service]
 ExecStart=
 ExecStart=-/sbin/agetty --autologin $user --noclear %I 38400 linux
 _EOF_
-    fi
-    cat >/etc/profile.d/10-emulationstation.sh <<_EOF_
+        fi
+        cat >/etc/profile.d/10-emulationstation.sh <<_EOF_
 # launch emulationstation (if we are on the correct tty)
 [ "\`tty\`" = "/dev/tty1" ] && emulationstation
 _EOF_
+    else
+        # autologin and autostart for a X11 session 
+        iniConfig " = " "" "/etc/lightdm/lightdm.conf"
+        iniSet "autologin-user" "$user"
+        iniSet "autologin-user-timeout" "0"
+        
+        mkdir "$home/.config/autostart"
+        cat >"$home/.config/autostart/retropie.desktop" <<_EOF_
+[Desktop Entry]
+Type=Application
+Exec=/opt/retropie/supplementary/emulationstation/emulationstation
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[de_DE]=RetroPie
+Name=rpie
+Comment[de_DE]=RetroPie
+Comment=retropie
+X-GNOME-Autostart-Delay=25
+_EOF_
+    fi
 }
 
 function disable_autostart() {
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        sed -i "s|^1:2345:.*|1:2345:respawn:/sbin/getty --noclear 38400 tty1|g" /etc/inittab
-        sed -i "/emulationstation/d" /etc/profile
+    if [[ "$__platform" == *rpi* ]]; then
+        if [[ "$__raspbian_ver" -lt "8" ]]; then
+            sed -i "s|^1:2345:.*|1:2345:respawn:/sbin/getty --noclear 38400 tty1|g" /etc/inittab
+            sed -i "/emulationstation/d" /etc/profile
+        else
+            rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf
+        fi
+        rm -f /etc/profile.d/10-emulationstation.sh
     else
-        rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf
+        rm "$home/.config/autostart/retropie.desktop"
     fi
-    rm -f /etc/profile.d/10-emulationstation.sh
 }
 
 function configure_autostart() {
