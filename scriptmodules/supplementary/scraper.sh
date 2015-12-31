@@ -47,7 +47,7 @@ function scrape_scraper() {
     params+=(-output_file "$gamelist")
     params+=(-rom_dir "$romdir/$system")
     params+=(-workers "4")
-    [[ "$system" =~ ^mame- ]] && params+=(-mame -mame_img t,m,s)
+    [[ "$system" =~ ^mame- ]] || [[ "$system" =~ ^fba ]] || [[ "$system" =~ ^neogeo ]] || "$system" =~ ^arcade ]] && params+=(-mame -mame_img t,m,s)
     sudo -u $user "$md_inst/scraper" ${params[@]} -thumb_only -skip_check
 }
 
