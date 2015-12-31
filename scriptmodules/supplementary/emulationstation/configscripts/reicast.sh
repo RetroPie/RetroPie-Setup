@@ -192,7 +192,7 @@ function map_reicast_joystick() {
                     input_id=$(($input_id+288))
                     # workaround for specific controller button mismatch
                     case "$device_name" in 
-                        "Xbox 360 Controller (xpad driver)"|"Xbox 360 Controller (xboxdrv userspace driver)"|"Microsoft X-Box 360 pad"|"Xbox Gamepad (userspace driver)"|"Xbox 360 Wireless Receiver (XBOX)")
+                        "Xbox 360 Controller (xpad driver)"|"Xbox 360 Controller (xboxdrv userspace driver)"|"Microsoft X-Box 360 pad"|"Xbox Gamepad (userspace driver)"|"Xbox 360 Wireless Receiver (XBOX)"|"Microsoft X-Box One pad"|"Microsoft X-Box pad (Japan)")
                             input_id=$(($input_id+15))
                             ;;
                     esac
