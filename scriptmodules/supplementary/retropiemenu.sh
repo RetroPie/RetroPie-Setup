@@ -23,27 +23,22 @@ function configure_retropiemenu()
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
 
-    if isPlatform "x86"; then
-        files=(
-            'rpsetup.rp'
-            'configedit.rp'
-            'retroarch.rp'
-            'retronetplay.rp'
-            'filemanager.rp'
-        )
-    else
-        files=(
+    files=(
+        'rpsetup.rp'
+        'configedit.rp'
+        'retroarch.rp'
+        'retronetplay.rp'
+        'filemanager.rp'
+        'showip.rp'
+        'wifi.rp'
+    )
+
+    if isPlatform "rpi"; then
+        files+=(
             'raspiconfig.rp'
-            'rpsetup.rp'
-            'configedit.rp'
-            'retroarch.rp'
             'audiosettings.rp'
             'dispmanx.rp'
-            'retronetplay.rp'
             'splashscreen.rp'
-            'filemanager.rp'
-            'showip.rp'
-            'wifi.rp'
         )
     fi
 
