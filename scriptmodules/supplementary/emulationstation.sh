@@ -55,7 +55,7 @@ function configure_inputconfig_emulationstation() {
     if [[ $(xmlstarlet sel -t -v "count(/inputList/inputAction[@type='onfinish'])" "$config") -eq 0 ]]; then
         xmlstarlet ed -L -S \
             -s "/inputList" -t elem -n "inputActionTMP" -v "" \
-            -s "//inputActionTMP" -t attr -n 'type' -v "onfinish" \
+            -s "//inputActionTMP" -t attr -n "type" -v "onfinish" \
             -s "//inputActionTMP" -t elem -n "command" -v "$md_inst/scripts/inputconfiguration.sh" \
             -r "//inputActionTMP" -v "inputAction" "$es_config"
     fi
