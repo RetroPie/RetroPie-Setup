@@ -47,7 +47,9 @@ function setup_env() {
     get_retropie_depends
 
     # set default gcc version
-    set_default_gcc "$__default_gcc_version"
+    if [[ -n "$__default_gcc_version" ]]; then
+        set_default_gcc "$__default_gcc_version"
+    fi
 
     # set location of binary downloads
     [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://downloads.petrockblock.com/retropiebinaries/$__raspbian_name/$__platform"
@@ -109,11 +111,8 @@ function get_default_gcc() {
         7)
             __default_gcc_version="4.7"
             ;;
-        8)
-            __default_gcc_version="4.9"
-            ;;
         *)
-            __default_gcc_version="4.7"
+            __default_gcc_version=""
             ;;
     esac
 }
@@ -146,7 +145,11 @@ function get_retropie_depends() {
         echo "deb http://archive.raspberrypi.org/debian/ $__raspbian_name main" >>$config
     fi
 
-    if ! getDepends git dialog wget gcc gcc-$__default_gcc_version g++-$__default_gcc_version build-essential xmlstarlet; then
+    local depends=(git dialog wget gcc g++ build-essential xmlstarlet)
+    if [[ -n "$__default_gcc_version" ]]; then
+        depends+=(gcc-$__default_gcc_version g++-$__default_gcc_version)
+    fi
+    if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
     fi
 }
