@@ -93,7 +93,7 @@ while [[ -z "\$key" ]]; do
     IFS= read -s -t 5 -N 1 key </dev/tty
 done
 _EOF_
-    if [[ "$__platform" == *rpi* ]]; then
+    if isPlatform "rpi"; then
         # make sure that ES has enough GPU memory
         iniConfig "=" "" /boot/config.txt
         iniSet "gpu_mem_256" 128
