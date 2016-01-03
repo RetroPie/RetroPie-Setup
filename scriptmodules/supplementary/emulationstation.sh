@@ -43,16 +43,24 @@ function install_emulationstation() {
 }
 
 function configure_inputconfig_emulationstation() {
+    local es_config="$home/.emulationstation/es_input.cfg"
     mkUserDir "$home/.emulationstation"
-    cat > "$home/.emulationstation/es_input.cfg" << _EOF_
-<?xml version="1.0"?>
-<inputList>
-  <inputAction type="onfinish">
-    <command>/opt/retropie/supplementary/emulationstation/scripts/inputconfiguration.sh</command>
-  </inputAction>
-</inputList>
-_EOF_
-    chown $user:$user "$home/.emulationstation/es_input.cfg"
+
+    # if there is no ES config (or empty file) create it with initial inputList element
+    if [[ ! -s "$config" ]]; then
+        echo "<inputList />" >"$es_config"
+    fi
+
+    # add our inputconfiguration.sh inputAction if it is missing
+    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputAction[@type='onfinish'])" "$config") -eq 0 ]]; then
+        xmlstarlet ed -L -S \
+            -s "/inputList" -t elem -n "inputActionTMP" -v "" \
+            -s "//inputActionTMP" -t attr -n 'type' -v "onfinish" \
+            -s "//inputActionTMP" -t elem -n "command" -v "$md_inst/scripts/inputconfiguration.sh" \
+            -r "//inputActionTMP" -v "inputAction" "$es_config"
+    fi
+
+    chown $user:$user "$es_config"
     mkdir -p "$md_inst/scripts"
 
     cp -rv "$scriptdir/scriptmodules/$md_type/$md_id/"* "$md_inst/scripts/"
