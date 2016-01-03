@@ -47,7 +47,7 @@ function configure_inputconfig_emulationstation() {
     mkUserDir "$home/.emulationstation"
 
     # if there is no ES config (or empty file) create it with initial inputList element
-    if [[ ! -s "$config" ]]; then
+    if [[ ! -s "$es_config" ]]; then
         echo "<inputList />" >"$es_config"
     fi
 
