@@ -52,7 +52,7 @@ function configure_inputconfig_emulationstation() {
     fi
 
     # add our inputconfiguration.sh inputAction if it is missing
-    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputAction[@type='onfinish'])" "$config") -eq 0 ]]; then
+    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputAction[@type='onfinish'])" "$es_config") -eq 0 ]]; then
         xmlstarlet ed -L -S \
             -s "/inputList" -t elem -n "inputActionTMP" -v "" \
             -s "//inputActionTMP" -t attr -n "type" -v "onfinish" \
