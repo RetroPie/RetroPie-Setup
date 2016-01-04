@@ -12,7 +12,7 @@
 rp_module_id="eduke32"
 rp_module_desc="Duke3D Port"
 rp_module_menus="2+"
-rp_module_flags="dispmanx"
+rp_module_flags="dispmanx !odroid"
 
 function depends_eduke32() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats
