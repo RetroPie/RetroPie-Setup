@@ -34,6 +34,13 @@ function install_ps3controller() {
     checkinstall -y --fstrans=no
     insserv sixad
 
+    if [[ "$__raspbian_ver" -ge "8" ]]; then
+        # Disable timeouts
+        iniConfig " = " "" "/etc/bluetooth/main.conf"
+        iniSet "DiscoverableTimeout" "0"
+        iniSet "PairableTimeout" "0"
+    fi
+
     # Start sixad daemon
     /etc/init.d/sixad start
 }
