@@ -12,7 +12,7 @@
 rp_module_id="supertux"
 rp_module_desc="SuperTux 2d scrolling platform"
 rp_module_menus="4+"
-rp_module_flags="nobin"
+rp_module_flags="nobin !odroid"
  
 function install_supertux() {
     aptInstall supertux

@@ -263,8 +263,17 @@ function rp_registerModule() {
         fi
     done
     [[ $error -eq 1 ]] && exit 1
-    if ! hasFlag "$rp_module_flags" "!$__platform"; then
-        rp_registerFunction "$module_idx" "$rp_module_id" "$module_type" "$rp_module_desc" "$rp_module_menus"  "$rp_module_flags"
+    local flag
+    local valid=1
+    rp_module_flags=($rp_module_flags)
+    for flag in "${rp_module_flags[@]}"; do
+        if [[ "$flag" =~ ^\!(.+) ]] && isPlatform "${BASH_REMATCH[1]}"; then
+            valid=0
+            break
+        fi
+    done
+    if [[ "$valid" -eq 1 ]]; then
+        rp_registerFunction "$module_idx" "$rp_module_id" "$module_type" "$rp_module_desc" "$rp_module_menus"  "${rp_module_flags[*]}"
     fi
 }
 

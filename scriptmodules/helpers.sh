@@ -54,10 +54,17 @@ function hasFlag() {
 }
 
 function isPlatform() {
+
     # isPlatform "rpi" matches both rpi1 and rpi2
     if [[ "$1" == "rpi" ]] && [[ "$__platform" == "rpi1" || "$__platform" == "rpi2" ]]; then
         return 0
     fi
+
+    # isPlatform "odroid" matches any odroid platform
+    if [[ "$1" == "odroid" ]] && [[ "$__platform" == odroid* ]]; then
+        return 0
+    fi
+
     if [[ "$__platform" == "$1" ]]; then
         return 0
     else
@@ -131,10 +138,10 @@ function getDepends() {
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
 
         # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2 for rpi
-        if isPlatform "rpi"; then
+        if isPlatform "rpi" || isPlatform "odroid"; then
             local temp=()
             for required in ${packages[@]}; do
-                if [[ "$required" == "libsdl1.2-dev" ]]; then
+                if isPlatform "rpi" && [[ "$required" == "libsdl1.2-dev" ]]; then
                     if [[ "$__has_binaries" -eq 1 ]]; then
                         rp_callModule sdl1 install_bin
                     else

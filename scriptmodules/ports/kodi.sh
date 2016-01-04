@@ -12,7 +12,7 @@
 rp_module_id="kodi"
 rp_module_desc="Kodi - Open source home theatre software"
 rp_module_menus="4+"
-rp_module_flags="nobin"
+rp_module_flags="nobin !odroid"
 
 function install_kodi() {
     # remove old repository - we will use Kodi from the Raspbian repositories

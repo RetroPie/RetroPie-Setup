@@ -15,20 +15,27 @@ rp_module_menus=""
 rp_module_flags="nobin !x86"
 
 function get_ver_sdl2() {
-    echo "2.0.3+1rpi"
+    local ver="2.0.3+1"
+    isPlatform "rpi" && ver+="rpi"
+    isPlatform "odroid" && ver+="mali"
+    echo "$ver"
 }
 
 function depends_sdl2() {
-    # Depedencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
+    # Dependencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
     # already covered by the build-essential package retropie relies on.
-    getDepends devscripts debhelper dh-autoreconf libasound2-dev libudev-dev libdbus-1-dev libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev
-    isPlatform "rpi" && getDepends libraspberrypi-dev
+    local depends=(devscripts debhelper dh-autoreconf libasound2-dev libudev-dev libdbus-1-dev libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "odroid" && depends+=(mali-fbdev)
+    getDepends "${depends[@]}"
 }
 
 function sources_sdl2() {
-    gitPullOrClone "$md_build/$(get_ver_sdl2)" https://github.com/RetroPie/SDL-mirror.git retropie-2.0.3
+    local branch="retropie-2.0.3"
+    isPlatform "odroid" && branch="mali-2.0.3"
+    gitPullOrClone "$md_build/$(get_ver_sdl2)" https://github.com/RetroPie/SDL-mirror.git "$branch"
     cd $(get_ver_sdl2)
-    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v $(get_ver_sdl2) "SDL 2.0.3 configured for the RPI"
+    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v $(get_ver_sdl2) "SDL 2.0.3 configured for the $__platform"
 }
 
 function build_sdl2() {

@@ -25,6 +25,9 @@ function setup_env() {
             BCM2709)
                 __platform="rpi2"
                 ;;
+            ODROIDC)
+                __platform="odroid-c1"
+                ;;
             *)
                 local architecture=$(uname --machine)
                 case $architecture in
@@ -96,14 +99,21 @@ function get_os_version() {
                     __raspbian_name="jessie"
                     return
                     ;;
-                *)
-                    fatalError "Unsupported OS - /etc/debian_version $(cat /etc/debian_version)"
+            esac
+        else
+            case "$ver" in
+                jessie/sid)
+                    __raspbian_ver=8
+                    __raspbian_name="ubuntu"
+                    return
                     ;;
             esac
         fi
     else
         fatalError "Unsupported OS (no /etc/debian_version)"
+        return
     fi
+    fatalError "Unsupported OS - /etc/debian_version $(cat /etc/debian_version)"
 }
 
 function get_default_gcc() {
@@ -139,7 +149,7 @@ function set_default_gcc() {
 function get_retropie_depends() {
     # add rasberrypi repository if it's missing (needed for libraspberrypi-dev etc) - not used on osmc
     local config="/etc/apt/sources.list.d/raspi.list"
-    if [[ ! -f "$config" ]] && ! hasPackage rbp-bootloader-osmc; then
+    if [[ ! -f "$config" ]] && hasPackage raspberrypi-bootloader; then
         # add key
         wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O- | apt-key add - >/dev/null
         echo "deb http://archive.raspberrypi.org/debian/ $__raspbian_name main" >>$config
@@ -176,10 +186,11 @@ function platform_rpi2() {
     __has_binaries=1
 }
 
-function platform_odroid() {
-    __default_cflags="-O2 -mfpu=neon -march=armv7-a -mfloat-abi=hard"
+function platform_odroid-c1() {
+    __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
-    __default_makeflags=""
+    __default_makeflags="-j2"
+    __qemu_cpu=cortex-a5
     __has_binaries=0
 }
 
