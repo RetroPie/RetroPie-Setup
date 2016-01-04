@@ -36,6 +36,7 @@ function uninstall_theme_esthemes() {
 }
 
 function configure_esthemes() {
+    printMsgs "dialog" "If you wish to run more than ~10 systems on themes other than Carbon, Eudora, Turtle-pi, and Canela variants, you run the risk of getting the white screen of death (you may be able to get more systems by increasing your GPU/CPU split)."
     local themes=(
         'HerbFargus carbon'
         'HerbFargus carbon-centered'
