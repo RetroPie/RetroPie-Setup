@@ -141,8 +141,8 @@ function getDepends() {
         if isPlatform "rpi" || isPlatform "odroid"; then
             local temp=()
             for required in ${packages[@]}; do
-                if [[ "$required" == "libsdl1.2-dev" ]]; then
-                    if isPlatform "rpi" && [[ "$__has_binaries" -eq 1 ]]; then
+                if isPlatform "rpi" && [[ "$required" == "libsdl1.2-dev" ]]; then
+                    if [[ "$__has_binaries" -eq 1 ]]; then
                         rp_callModule sdl1 install_bin
                     else
                         rp_callModule sdl1
