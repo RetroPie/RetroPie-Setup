@@ -14,14 +14,18 @@ rp_module_desc="RetroArch"
 rp_module_menus="2+"
 
 function depends_retroarch() {
-    getDepends libudev-dev libxkbcommon-dev libsdl2-dev 
-    [[ "$__platform" == *rpi* ]] && getDepends libraspberrypi-dev
-    [[ "$__raspbian_ver" -ge "8" ]] && getDepends libusb-1.0-0-dev
+    local depends=(libudev-dev libxkbcommon-dev libsdl2-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    [[ "$__raspbian_ver" -ge "8" ]] && depends+=(libusb-1.0-0-dev)
 
-    cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
-KERNEL=="event*", NAME="input/%k", MODE="666"
-_EOF_
-    sudo chmod 666 /dev/input/event*
+    getDepends "${depends[@]}"
+
+    if [[ ! -f /etc/udev/rules.d/99-input.rules ]]; then
+        echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
+    fi
+
+    # remove old 99-evdev.rules
+    rm -f /etc/udev/rules.d/99-evdev.rules
 }
 
 function sources_retroarch() {
@@ -30,11 +34,15 @@ function sources_retroarch() {
     gitPullOrClone "$md_build/shader" https://github.com/RetroPie/common-shaders.git
     # disable the search dialog
     sed -i 's|menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|//menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|g' menu/menu_entry.c
+    if isPlatform "odroid"; then
+        sed -i 's|struct mali_native_window native_window|fbdev_window native_window|' gfx/drivers_context/mali_fbdev_ctx.c
+    fi
 }
 
 function build_retroarch() {
-    local params=(--disable-x11 --enable-dispmanx --disable-oss --disable-pulse --disable-al --disable-jack --enable-sdl2 --enable-floathard)
-    isPlatform "rpi2" && params+=(--enable-neon)
+    local params=(--disable-x11 --disable-ffmpeg --disable-sdl --disable-oss --disable-pulse --disable-al --disable-jack --enable-floathard)
+    isPlatform "rpi2" && params+=(--enable-dispmanx --enable-sdl2 --enable-neon)
+    isPlatform "odroid" && params+=(--enable-mali_fbdev --enable-gles --enable-sdl2 --enable-neon)
     isPlatform "x86" && params=(--enable-sdl2)
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
