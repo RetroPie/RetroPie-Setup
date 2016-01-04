@@ -42,7 +42,8 @@ function sources_retroarch() {
 
 function build_retroarch() {
     local params=(--disable-x11 --disable-ffmpeg --disable-sdl --disable-oss --disable-pulse --disable-al --disable-jack --enable-floathard)
-    isPlatform "rpi2" && params+=(--enable-dispmanx --enable-sdl2 --enable-neon)
+    isPlatform "rpi" && params+=(--enable-dispmanx --enable-sdl2)
+    isPlatform "rpi2" && params+=(--enable-neon)
     isPlatform "odroid" && params+=(--enable-mali_fbdev --enable-gles --enable-sdl2 --enable-neon)
     isPlatform "x86" && params=(--enable-sdl2)
     ./configure --prefix="$md_inst" "${params[@]}"
