@@ -12,7 +12,7 @@
 rp_module_id="capricerpi"
 rp_module_desc="Amstrad CPC emulator - port of Caprice32 for the RPI"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86"
+rp_module_flags="dispmanx !x86 !odroid"
 
 function depends_capricerpi() {
     getDepends libsdl1.2-dev zlib1g-dev

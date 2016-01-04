@@ -12,7 +12,7 @@
 rp_module_id="fbzx"
 rp_module_desc="ZXSpectrum emulator FBZX"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86"
+rp_module_flags="dispmanx !x86 !odroid"
 
 function depends_fbzx() {
     getDepends libasound2-dev libsdl1.2-dev

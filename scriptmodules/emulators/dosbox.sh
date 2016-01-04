@@ -12,7 +12,7 @@
 rp_module_id="dosbox"
 rp_module_desc="DOS emulator"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86"
+rp_module_flags="dispmanx !x86 !odroid"
 
 function depends_dosbox() {
     getDepends libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng12-dev automake autoconf zlib1g-dev
