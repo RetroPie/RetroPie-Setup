@@ -262,13 +262,13 @@ function main_menu() {
             options+=(Z "Launch with netplay enabled")
         fi
 
-        local mode
+        local temp_mode
         if [[ $has_tvs -eq 1 ]]; then
-            mode="${mode[$mode_new_id]}"
+            temp_mode="${mode[$mode_new_id]}"
         else
-            mode="n/a"
+            temp_mode="n/a"
         fi
-        cmd=(dialog --nocancel --menu "System: $system\nEmulator: $emulator\nVideo Mode: ${mode[$mode_new_id]}\nROM: $rom_bn"  22 76 16 )
+        cmd=(dialog --nocancel --menu "System: $system\nEmulator: $emulator\nVideo Mode: $temp_mode\nROM: $rom_bn"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         case $choice in
             1)
