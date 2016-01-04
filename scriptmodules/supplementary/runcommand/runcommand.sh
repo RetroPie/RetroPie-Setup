@@ -710,7 +710,7 @@ if [[ $switched -eq 1 ]]; then
     restore_mode "$mode_cur"
 fi
 
-# reset/restore framebuffer res
-restore_fb
+# reset/restore framebuffer res (if it was changed)
+[[ -n "$fb_new" ]] && restore_fb
 
 exit 0
