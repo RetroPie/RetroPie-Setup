@@ -26,7 +26,7 @@ function setup_env() {
                 __platform="rpi2"
                 ;;
             ODROIDC)
-                __platform="odroidc1"
+                __platform="odroid-c1"
                 ;;
             *)
                 local architecture=$(uname --machine)
@@ -186,7 +186,7 @@ function platform_rpi2() {
     __has_binaries=1
 }
 
-function platform_odroidc1() {
+function platform_odroid-c1() {
     __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
