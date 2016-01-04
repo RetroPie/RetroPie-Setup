@@ -262,6 +262,12 @@ function main_menu() {
             options+=(Z "Launch with netplay enabled")
         fi
 
+        local mode
+        if [[ $has_tvs -eq 1 ]]; then
+            mode="${mode[$mode_new_id]}"
+        else
+            mode="n/a"
+        fi
         cmd=(dialog --nocancel --menu "System: $system\nEmulator: $emulator\nVideo Mode: ${mode[$mode_new_id]}\nROM: $rom_bn"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         case $choice in
@@ -661,7 +667,9 @@ clear
 echo "Press a key (or joypad button 0) to configure launch options for emulator/port ($emulator). Errors will be logged to /tmp/runcommand.log"
 IFS= read -s -t 1 -N 1 key </dev/tty
 if [[ -n "$key" ]]; then
-    get_all_modes
+    if [[ $has_tvs -eq 1 ]]; then
+        get_all_modes
+    fi
     main_menu
     dont_launch=$?
     clear
