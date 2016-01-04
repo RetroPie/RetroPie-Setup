@@ -31,7 +31,10 @@ function install_lr-mednafen-ngp() {
 
 function configure_lr-mednafen-ngp() {
     mkRomDir "ngp"
+    mkRomDir "ngpc"
     ensureSystemretroconfig "ngp"
+    ensureSystemretroconfig "ngpc"
     
     addSystem 1 "$md_id" "ngp" "$md_inst/mednafen_ngp_libretro.so"
+    addSystem 1 "$md_id" "ngpc" "$md_inst/mednafen_ngp_libretro.so"
 }
