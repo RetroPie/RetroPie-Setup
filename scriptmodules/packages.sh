@@ -253,7 +253,6 @@ function rp_registerModule() {
     local rp_module_desc=""
     local rp_module_menus=""
     local rp_module_flags=""
-    local rp_module_plat=""
     local var
     local error=0
     source $module_path
