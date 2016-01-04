@@ -675,8 +675,12 @@ if [[ $dont_launch -eq 1 ]]; then
     exit 0
 fi
 
-switch_mode "$mode_new_id"
-switched=$?
+if [[ $has_tvs -eq 1 ]]; then
+    switch_mode "$mode_new_id"
+    switched=$?
+else
+    switched=0
+fi
 
 [[ -n "$fb_new" ]] && switch_fb_res "$fb_new"
 
