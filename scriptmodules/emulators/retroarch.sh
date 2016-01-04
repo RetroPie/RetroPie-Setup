@@ -16,6 +16,7 @@ rp_module_menus="2+"
 function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "odroid" && depends+=(mali-fbdev)
     [[ "$__raspbian_ver" -ge "8" ]] && depends+=(libusb-1.0-0-dev)
 
     getDepends "${depends[@]}"
