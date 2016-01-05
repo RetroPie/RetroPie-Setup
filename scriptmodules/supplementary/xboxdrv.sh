@@ -34,9 +34,9 @@ function enable_xboxdrv() {
     local config="\"$md_inst/bin/xboxdrv\" --daemon --detach --dbus disabled --detach-kernel-driver --id 0 --led 2 --deadzone 4000 --silent --trigger-as-button --next-controller --id 1 --led 3 --deadzone 4000 --silent --trigger-as-button"
     if ! grep -q "xboxdrv" /etc/rc.local; then
         sed -i "s|^exit 0$|${config}\\nexit 0|" /etc/rc.local
-        printMsgs "dialog" "xbodrv enabled in /etc/rc.local with the following config\n\n$config\n\nIt will be started on next boot."
+        printMsgs "dialog" "xboxdrv enabled in /etc/rc.local with the following config\n\n$config\n\nIt will be started on next boot."
     else
-        printMsgs "dialog" "xbodrv is already enabled in /etc/rc.local with the following config\n\n$(grep "xboxdrv" /etc/rc.local)"
+        printMsgs "dialog" "xboxdrv is already enabled in /etc/rc.local with the following config\n\n$(grep "xboxdrv" /etc/rc.local)"
     fi
 }
 
