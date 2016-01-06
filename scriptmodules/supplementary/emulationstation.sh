@@ -17,7 +17,7 @@ function depends_emulationstation() {
     getDepends \
         libboost-locale-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
-        libasound2-dev cmake libsdl2-dev
+        libasound2-dev cmake libsdl2-dev libsm-dev
 }
 
 function sources_emulationstation() {
