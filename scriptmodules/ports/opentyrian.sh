@@ -15,7 +15,7 @@ rp_module_menus="4+"
 rp_module_flags="dispmanx !odroid"
 
 function depends_opentyrian() {
-    getDepends libsdl1.2-dev libsdl-net1.2-dev mercurial
+    getDepends libsdl1.2-dev libsdl-net1.2-dev mercurial unzip
 }
 
 function sources_opentyrian() {
