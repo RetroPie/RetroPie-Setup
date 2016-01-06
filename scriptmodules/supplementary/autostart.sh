@@ -33,16 +33,11 @@ _EOF_
 [ "\`tty\`" = "/dev/tty1" ] && emulationstation
 _EOF_
     else
-        # autologin and autostart for a X11 session 
-        iniConfig " = " "" "/etc/lightdm/lightdm.conf"
-        iniSet "autologin-user" "$user"
-        iniSet "autologin-user-timeout" "0"
-        
         mkdir "$home/.config/autostart"
         cat >"$home/.config/autostart/retropie.desktop" <<_EOF_
 [Desktop Entry]
 Type=Application
-Exec=/opt/retropie/supplementary/emulationstation/emulationstation
+Exec=gnome-terminal -e emulationstation
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
@@ -50,7 +45,6 @@ Name[de_DE]=RetroPie
 Name=rpie
 Comment[de_DE]=RetroPie
 Comment=retropie
-X-GNOME-Autostart-Delay=25
 _EOF_
     fi
 }
