@@ -124,4 +124,8 @@ _EOF_
     mkdir -p "/etc/emulationstation"
 
     configure_inputconfig_emulationstation
+    
+    # run sudo without password so emulationstation can shutdown and restart system
+    local file="/etc/sudoers"
+    grep -q "$user" $file || echo "$user ALL=(ALL) NOPASSWD:ALL" >> $file
 }
