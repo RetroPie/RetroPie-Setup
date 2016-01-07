@@ -17,6 +17,7 @@ function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "odroid" && depends+=(mali-fbdev)
+    isPlatform "x86" && depends+=(nvidia-cg-toolkit)
     [[ "$__raspbian_ver" -ge "8" ]] && depends+=(libusb-1.0-0-dev)
 
     getDepends "${depends[@]}"
@@ -32,7 +33,8 @@ function depends_retroarch() {
 function sources_retroarch() {
     gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git
     gitPullOrClone "$md_build/overlays" https://github.com/libretro/common-overlays.git
-    gitPullOrClone "$md_build/shader" https://github.com/RetroPie/common-shaders.git
+    isPlatform "rpi" && gitPullOrClone "$md_build/shader" https://github.com/RetroPie/common-shaders.git
+    isPlatform "x86" && gitPullOrClone "$md_build/shader" https://github.com/libretro/common-shaders.git
     # disable the search dialog
     sed -i 's|menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|//menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|g' menu/menu_entry.c
     if isPlatform "odroid"; then
