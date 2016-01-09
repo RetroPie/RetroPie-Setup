@@ -13,6 +13,14 @@ rp_module_id="xboxdrv"
 rp_module_desc="Xbox / Xbox 360 gamepad driver"
 rp_module_menus="3+gui"
 
+function def_controllers_xboxdrv() {
+    echo "2"
+}
+
+function def_deadzone_xboxdrv() {
+    echo "4000"
+}
+
 function depends_xboxdrv() {
     hasPackage xboxdrv && apt-get remove -y xboxdrv
     getDepends libboost-dev libusb-1.0-0-dev libudev-dev libx11-dev scons pkg-config x11proto-core-dev libdbus-glib-1-dev
@@ -34,8 +42,8 @@ function enable_xboxdrv() {
     local controllers="$1"
     local deadzone="$2"
 
-    [[ -z "$controllers" ]] && controllers="2"
-    [[ -z "$deadzone" ]] && deadzone="4000"
+    [[ -z "$controllers" ]] && controllers="$(def_controllers_xboxdrv)"
+    [[ -z "$deadzone" ]] && deadzone="$(def_deadzone_xboxdrv)"
 
     local config="\"$md_inst/bin/xboxdrv\" --daemon --detach --dbus disabled --detach-kernel-driver"
 
@@ -61,7 +69,7 @@ function disable_xboxdrv() {
 function controllers_xboxdrv() {
     local controllers="$1"
 
-    [[ -z "$controllers" ]] && controllers="2"
+    [[ -z "$controllers" ]] && controllers="$(def_controllers_xboxdrv)"
 
     local cmd=(dialog --backtitle "$__backtitle" --default-item "$controllers" --menu "Select the number of controllers to enable" 22 86 16)
     local options=(
@@ -82,7 +90,7 @@ function controllers_xboxdrv() {
 function deadzone_xboxdrv() {
     local deadzone="$1"
 
-    [[ -z "$deadzone" ]] && deadzone="4000"
+    [[ -z "$deadzone" ]] && deadzone="$(def_deadzone_xboxdrv)"
 
     local zones=()
     local options=()
@@ -107,7 +115,6 @@ function deadzone_xboxdrv() {
     echo "$deadzone"
 }
 
-
 function configure_xboxdrv() {
     # make sure existing configs will point to the new xboxdrv
     sed -i "s|^xboxdrv|\"$md_inst/bin/xboxdrv\"|" /etc/rc.local
@@ -121,20 +128,20 @@ function gui_xboxdrv() {
     fi
     iniConfig "=" "" "/boot/config.txt"
 
-    local controllers
-    local deadzone
+    local controllers="$(def_controllers_xboxdrv)"
+    local deadzone="$(def_deadzone_xboxdrv)"
 
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
-    local options=(
-        1 "Enable xboxdrv"
-        2 "Disable xboxdrv"
-        3 "Set number of controllers to enable"
-        4 "Set analog stick deadzone"
-        5 "Set dwc_otg.speed=1 in /boot/config.txt"
-        6 "Remove dwc_otg.speed=1 from /boot/config.txt"
-    )
 
     while true; do
+        local options=(
+            1 "Enable xboxdrv"
+            2 "Disable xboxdrv"
+            3 "Set number of controllers to enable (currently $controllers)"
+            4 "Set analog stick deadzone (currently $deadzone)"
+            5 "Set dwc_otg.speed=1 in /boot/config.txt"
+            6 "Remove dwc_otg.speed=1 from /boot/config.txt"
+        )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
 
