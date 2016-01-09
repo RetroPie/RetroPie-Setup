@@ -53,12 +53,13 @@ function enable_xboxdrv() {
         config+=" --id $i --led $((i+2)) --deadzone $deadzone --silent --trigger-as-button"
     done
 
-    if ! grep -q "xboxdrv" /etc/rc.local; then
-        sed -i "s|^exit 0$|${config}\\nexit 0|" /etc/rc.local
-        printMsgs "dialog" "xboxdrv enabled in /etc/rc.local with the following config\n\n$config\n\nIt will be started on next boot."
-    else
-        printMsgs "dialog" "xboxdrv is already enabled in /etc/rc.local with the following config\n\n$(grep "xboxdrv" /etc/rc.local)"
+    if grep -q "xboxdrv" /etc/rc.local; then
+        dialog --yesno "xboxdrv is already enabled in /etc/rc.local with the following config. Do you want to update it ?\n\n$(grep "xboxdrv" /etc/rc.local)" 22 76 2>&1 >/dev/tty || return
     fi
+
+    sed -i "/xboxdrv/d" /etc/rc.local
+    sed -i "s|^exit 0$|${config}\\nexit 0|" /etc/rc.local
+    printMsgs "dialog" "xboxdrv enabled in /etc/rc.local with the following config\n\n$config\n\nIt will be started on next boot."
 }
 
 function disable_xboxdrv() {
