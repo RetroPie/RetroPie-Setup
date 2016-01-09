@@ -71,15 +71,11 @@ function controllers_xboxdrv() {
         4 "4 controllers"
     )
 
-    while true; do
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            controllers="$choice"
-            break
-        else
-            break
-        fi
-    done
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        controllers="$choice"
+    fi
+
     echo "$controllers"
 }
 
