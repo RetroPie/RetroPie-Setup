@@ -36,11 +36,10 @@ function enable_xboxdrv() {
         # Because function return codes are limited to 0-255 range, we could not leave this calculation in the deadzone_xboxdrv routine or we'd get weird results.
         local deadzone="$((($2-1) * 500))"
 
-	local config="\"$md_inst/bin/xboxdrv\" --daemon --detach --dbus disabled --detach-kernel-driver --id 0 --led 2 --deadzone $deadzone --silent --trigger-as-button"
+        local config="\"$md_inst/bin/xboxdrv\" --daemon --detach --dbus disabled --detach-kernel-driver --id 0 --led 2 --deadzone $deadzone --silent --trigger-as-button"
         local loop="1"
 
-	while [ "$loop" -lt "$1" ]
-        do
+        while [ "$loop" -lt "$1" ]; do
             config+=" --next-controller --id $loop --led $(($loop+2)) --deadzone $deadzone --silent --trigger-as-button"
             loop=$(($loop+1))
         done
