@@ -37,12 +37,12 @@ function enable_xboxdrv() {
     [[ -z "$controllers" ]] && controllers="2"
     [[ -z "$deadzone" ]] && deadzone="4000"
 
-    local config="\"$md_inst/bin/xboxdrv\" --daemon --detach --dbus disabled --detach-kernel-driver --id 0 --led 2 --deadzone $deadzone --silent --trigger-as-button"
-    local loop="1"
+    local config="\"$md_inst/bin/xboxdrv\" --daemon --detach --dbus disabled --detach-kernel-driver"
 
-    while [[ "$loop" -lt "$1" ]]; do
-        config+=" --next-controller --id $loop --led $(($loop+2)) --deadzone $deadzone --silent --trigger-as-button"
-        loop=$(($loop+1))
+    local i
+    for (( i=0; i<$controllers; i++)); do
+        [[ $i -gt 0 ]] && config+=" --next-controller"
+        config+=" --id $i --led $((i+2)) --deadzone $deadzone --silent --trigger-as-button"
     done
 
     if ! grep -q "xboxdrv" /etc/rc.local; then
