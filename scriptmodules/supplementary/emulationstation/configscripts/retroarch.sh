@@ -13,7 +13,7 @@ function onstart_retroarch_joystick() {
     local device_type=$1
     local device_name=$2
 
-    iniConfig " = " "" "/opt/retropie/configs/all/retroarch.cfg"
+    iniConfig " = " "" "$configdir/all/retroarch.cfg"
     iniGet "input_joypad_driver"
     local input_joypad_driver="$ini_value"
     if [[ -z "$input_joypad_driver" ]]; then
@@ -26,7 +26,7 @@ function onstart_retroarch_joystick() {
 }
 
 function onstart_retroarch_keyboard() {
-    iniConfig " = " "" "/opt/retropie/configs/all/retroarch.cfg"
+    iniConfig " = " "" "$configdir/all/retroarch.cfg"
 
     declare -Ag retroarchkeymap
     # SDL codes from https://wiki.libsdl.org/SDLKeycodeLookup
@@ -357,10 +357,10 @@ function onend_retroarch_joystick() {
 
     # sanitise filename
     local file="${device_name//[ \?\<\>\\\/:\*\|]/}.cfg"
-    if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$file" ]]; then
-        mv "/opt/retropie/configs/all/retroarch-joypads/$file" "/opt/retropie/configs/all/retroarch-joypads/$file.bak"
+    if [[ -f "$configdir/all/retroarch-joypads/$file" ]]; then
+        mv "$configdir/all/retroarch-joypads/$file" "$configdir/all/retroarch-joypads/$file.bak"
     fi
-    mv "/tmp/tempconfig.cfg" "/opt/retropie/configs/all/retroarch-joypads/$file"
+    mv "/tmp/tempconfig.cfg" "$configdir/all/retroarch-joypads/$file"
 }
 
 function onend_retroarch_keyboard() {

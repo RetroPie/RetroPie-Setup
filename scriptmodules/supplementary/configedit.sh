@@ -20,7 +20,7 @@ function common_configedit() {
     # create a list of all present shader presets
     local shader
     local video_shader="video_shader "
-    for shader in /opt/retropie/emulators/retroarch/shader/*.glslp; do
+    for shader in "$rootdir/emulators/retroarch/shader/"*.glslp; do
         # Do not add presets with whitespace
         if [[ "$shader" != *" "* ]]; then
             video_shader+="$shader "
