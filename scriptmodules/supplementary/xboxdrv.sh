@@ -31,20 +31,20 @@ function install_xboxdrv() {
 }
 
 function enable_xboxdrv() {
-    if [[ -n "$1" ]]; then
+    local controllers="$1"
+    local deadzone="$2"
 
-        # Because function return codes are limited to 0-255 range, we could not leave this calculation in the deadzone_xboxdrv routine or we'd get weird results.
-        local deadzone="$((($2-1) * 500))"
+    [[ -z "$controllers" ]] && controllers="2"
+    [[ -z "$deadzone" ]] && deadzone="4000"
 
-        local config="\"$md_inst/bin/xboxdrv\" --daemon --detach --dbus disabled --detach-kernel-driver --id 0 --led 2 --deadzone $deadzone --silent --trigger-as-button"
-        local loop="1"
+    local config="\"$md_inst/bin/xboxdrv\" --daemon --detach --dbus disabled --detach-kernel-driver --id 0 --led 2 --deadzone $deadzone --silent --trigger-as-button"
+    local loop="1"
 
-        while [ "$loop" -lt "$1" ]; do
-            config+=" --next-controller --id $loop --led $(($loop+2)) --deadzone $deadzone --silent --trigger-as-button"
-            loop=$(($loop+1))
-        done
-    fi
-    
+    while [[ "$loop" -lt "$1" ]]; do
+        config+=" --next-controller --id $loop --led $(($loop+2)) --deadzone $deadzone --silent --trigger-as-button"
+        loop=$(($loop+1))
+    done
+
     if ! grep -q "xboxdrv" /etc/rc.local; then
         sed -i "s|^exit 0$|${config}\\nexit 0|" /etc/rc.local
         printMsgs "dialog" "xboxdrv enabled in /etc/rc.local with the following config\n\n$config\n\nIt will be started on next boot."
@@ -58,9 +58,12 @@ function disable_xboxdrv() {
     printMsgs "dialog" "xboxdrv configuration in /etc/rc.local has been removed."
 }
 
-function numcontrollers_xboxdrv() {
+function controllers_xboxdrv() {
     local controllers="$1"
-    local cmd=(dialog --backtitle "$__backtitle" --default-item "2" --menu "Select the number of controllers to enable" 22 86 16)
+
+    [[ -z "$controllers" ]] && controllers="2"
+
+    local cmd=(dialog --backtitle "$__backtitle" --default-item "$controllers" --menu "Select the number of controllers to enable" 22 86 16)
     local options=(
         1 "1 controller"
         2 "2 controllers"
@@ -77,38 +80,35 @@ function numcontrollers_xboxdrv() {
             break
         fi
     done
-    return "$controllers"
+    echo "$controllers"
 }
 
 function deadzone_xboxdrv() {
     local deadzone="$1"
-    local cmd=(dialog --backtitle "$__backtitle" --default-item "9" --menu "Select range of your analog stick deadzone" 22 86 16)
-    local options=(
-        1 "No Deadzone"
-        2 "0-500"
-        3 "0-1000"
-        4 "0-1500"
-        5 "0-2000"
-        6 "0-2500"
-        7 "0-3000"
-        8 "0-3500"
-        9 "0-4000"
-       10 "0-4500"
-       11 "0-5000"
-       12 "0-5500"
-       13 "0-6000"
-    )
 
-    while true; do
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            deadzone="$choice"
-            break
-        else
-            break
-        fi
+    [[ -z "$deadzone" ]] && deadzone="4000"
+
+    local zones=()
+    local options=()
+    local i
+    local label
+    local default
+    for i in {0..12}; do
+        zones[i]=$((i*500))
+        [[ ${zones[i]} -eq $deadzone ]] && default=$i
+        label="0-${zones[i]}"
+        [[ "$i" -eq 0 ]] && label="No Deadzone"
+        options+=($i "$label")
     done
-    return "$deadzone"
+
+    local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Select range of your analog stick deadzone" 22 86 16)
+
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        deadzone="${zones[$choice]}"
+    fi
+
+    echo "$deadzone"
 }
 
 
@@ -124,8 +124,9 @@ function gui_xboxdrv() {
         rp_callModule "$md_id" configure
     fi
     iniConfig "=" "" "/boot/config.txt"
-    local controllers_wanted="2"
-    local deadzone_wanted="9"
+
+    local controllers
+    local deadzone
 
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local options=(
@@ -143,18 +144,16 @@ function gui_xboxdrv() {
 
             case $choice in
                 1)
-                    enable_xboxdrv "$controllers_wanted" "$deadzone_wanted"
+                    enable_xboxdrv "$controllers" "$deadzone"
                     ;;
                 2)
                     disable_xboxdrv
                     ;;
                 3)
-                    numcontrollers_xboxdrv "$controllers_wanted"
-                    controllers_wanted="$?"
+                    controllers=$(controllers_xboxdrv $controllers)
                     ;;
                 4)
-                    deadzone_xboxdrv "$deadzone_wanted"
-                    deadzone_wanted="$?"
+                    deadzone=$(deadzone_xboxdrv $deadzone)
                     ;;
                 5)
                     iniSet "dwc_otg.speed" "1"
