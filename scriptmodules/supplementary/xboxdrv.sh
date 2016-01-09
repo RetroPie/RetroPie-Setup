@@ -122,9 +122,13 @@ function configure_xboxdrv() {
 
 function gui_xboxdrv() {
     if [[ ! -f "$md_inst/bin/xboxdrv" ]]; then
-        rp_callModule "$md_id" depends
-        rp_callModule "$md_id" install_bin
-        rp_callModule "$md_id" configure
+        if [[ $__has_binaries -eq 1 ]]; then
+            rp_callModule "$md_id" depends
+            rp_callModule "$md_id" install_bin
+            rp_callModule "$md_id" configure
+        else
+            rp_callModule "$md_id"
+        fi
     fi
     iniConfig "=" "" "/boot/config.txt"
 
