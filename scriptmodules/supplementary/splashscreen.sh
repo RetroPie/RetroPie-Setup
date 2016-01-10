@@ -12,7 +12,7 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_flags="nobin !x86"
 
 function depends_splashscreen() {
     getDepends fbi omxplayer
