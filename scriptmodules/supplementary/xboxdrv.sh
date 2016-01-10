@@ -27,7 +27,7 @@ function depends_xboxdrv() {
 }
 
 function sources_xboxdrv() {
-    gitPullOrClone "$md_build" https://github.com/xboxdrv/xboxdrv.git stable
+    gitPullOrClone "$md_build" https://github.com/zerojay/xboxdrv.git stable
 }
 
 function build_xboxdrv() {
