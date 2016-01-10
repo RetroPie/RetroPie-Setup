@@ -29,6 +29,7 @@ function common_configedit() {
 
     # key + values
     local common=(
+        'audio_driver alsa alsa_thread sdl2'
         'video_driver gl dispmanx sdl2 vg'
         'video_fullscreen_x _string_'
         'video_fullscreen_y _string_'
@@ -41,6 +42,10 @@ function common_configedit() {
         'video_shader_enable true false'
         "$video_shader"
         'video_rotation _string_'
+        'custom_viewport_width _string_'
+        'custom_viewport_height _string_'
+        'custom_viewport_x _string_'
+        'custom_viewport_y _string_'
         'fps_show true false'
         'input_joypad_driver udev sdl2 linuxraw'
         'input_player1_analog_dpad_mode 0 1 2'
@@ -54,6 +59,7 @@ function common_configedit() {
     )
     
     local descs=(
+        'Audio driver to use (default is alsa_thread)'
         'Video driver to use (default is gl)'
         'Fullscreen resolution. Resolution of 0 uses the resolution of the desktop.'
         'Fullscreen resolution. Resolution of 0 uses the resolution of the desktop.'
@@ -66,6 +72,10 @@ function common_configedit() {
         'A floating point value for video aspect ratio (width / height). If this is not set, aspect ratio is assumed to be automatic. Behavior then is defined by video_aspect_ratio_auto.'
         'If this is true and video_aspect_ratio is not set, aspect ratio is decided by libretro implementation. If this is false, 1:1 PAR will always be assumed if video_aspect_ratio is not set.'
         'Forces a certain rotation of the screen. The rotation is added to rotations which the libretro core sets (see video_allow_rotate). The angle is <value> * 90 degrees counter-clockwise.'
+        'Viewport resolution.'
+        'Viewport resolution.'
+        'Viewport position x.'
+        'Viewport position y.'
         'Show current frames per second.'
         'Input joypad driver to use (default is udev)'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
