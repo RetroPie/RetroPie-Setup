@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-#
+# 
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-#
+# 
 # See the LICENSE.md file at the top-level directory of this distribution and 
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
@@ -62,6 +62,7 @@ function build_mupen64plus() {
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
             make -C "$dir/projects/unix" clean
+            params=()
             isPlatform "rpi1" && params+=("VC=1" "VFP=1" "VFP_HARD=1")
             isPlatform "rpi2" && params+=("VC=1" "NEON=1")
             isPlatform "x86" && params+=("OSD=1")

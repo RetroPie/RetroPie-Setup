@@ -34,7 +34,7 @@ _EOF_
 _EOF_
     else
         mkdir "$home/.config/autostart"
-        cp "/usr/share/applications/retropie.desktop" "$home/.config/autostart/"
+        cp "/usr/local/share/applications/retropie.desktop" "$home/.config/autostart/"
     fi
 }
 
