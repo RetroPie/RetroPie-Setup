@@ -31,7 +31,7 @@ function setup_env() {
             *)
                 local architecture=$(uname --machine)
                 case $architecture in
-                    i686|x86_64)
+                    i686|x86_64|amd64)
                         __platform="x86"
                         ;;
                 esac
@@ -195,7 +195,7 @@ function platform_odroid-c1() {
 }
 
 function platform_x86() {
-    __default_cflags="-O2"
+    __default_cflags="-O2 -march=native"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __has_binaries=0
