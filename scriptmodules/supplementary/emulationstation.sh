@@ -18,6 +18,7 @@ function depends_emulationstation() {
         libboost-locale-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
         libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
         libasound2-dev cmake libsdl2-dev libsm-dev
+    isPlatform "x86" && getDepends gnome-terminal
 }
 
 function sources_emulationstation() {
@@ -106,15 +107,21 @@ _EOF_
         iniSet "gpu_mem_1024" 256
         iniSet "overscan_scale" 1
     else
-        cat > /usr/share/applications/retropie.desktop << _EOF_
+        mkdir -p /usr/local/share/icons
+        mkdir -p /usr/local/share/applications
+        cp "$scriptdir/scriptmodules/$md_type/$md_id/retropie.svg" "/usr/local/share/icons/"
+        cat > /usr/local/share/applications/retropie.desktop << _EOF_
 [Desktop Entry]
 Type=Application
-Version=1.0
-Name=RetroPie
-Comment=RetroPie
-Path=/usr/bin
-Exec=emulationstation
-Terminal=true
+Exec=gnome-terminal --full-screen -e emulationstation
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[de_DE]=RetroPie
+Name=rpie
+Comment[de_DE]=RetroPie
+Comment=retropie
+Icon=/usr/local/share/icons/retropie.svg
 Categories=Game
 _EOF_
     fi

@@ -12,7 +12,7 @@
 rp_module_id="lr-desmume"
 rp_module_desc="NDS emu - DESMUME"
 rp_module_menus="4+"
-rp_module_flags="!x86"
+rp_module_flags=""
 
 function sources_lr-desmume() {
     gitPullOrClone "$md_build" https://github.com/libretro/desmume.git
@@ -20,8 +20,10 @@ function sources_lr-desmume() {
 
 function build_lr-desmume() {
     cd desmume
+    local params=("platform=armvhardfloat")
+    isPlatform "x86" && params=()
     make -f Makefile.libretro clean
-    make -f Makefile.libretro platform=armvhardfloat
+    make -f Makefile.libretro "${params[@]}" 
     md_ret_require="$md_build/desmume/desmume_libretro.so"
 }
 
