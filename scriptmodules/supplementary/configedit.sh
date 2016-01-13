@@ -19,11 +19,19 @@ function common_configedit() {
 
     # create a list of all present shader presets
     local shader
+    local overlay
     local video_shader="video_shader "
+    local input_overlay="input_overlay "
     for shader in "$rootdir/emulators/retroarch/shader/"*.*p "$rootdir/emulators/retroarch/shader/"*/*.*p; do
         # Do not add presets with whitespace
         if [[ "$shader" != *" "* ]]; then
             video_shader+="$shader "
+        fi
+    done
+    for overlay in "$rootdir/emulators/retroarch/overlays/"*/*.cfg "$rootdir/emulators/retroarch/overlays/"*/*/*.cfg; do
+        # Do not add overlays with whitespace
+        if [[ "$overlay" != *" "* ]]; then
+            input_overlay+="$overlay "
         fi
     done
 
@@ -47,6 +55,10 @@ function common_configedit() {
         'custom_viewport_x _string_'
         'custom_viewport_y _string_'
         'fps_show true false'
+        'input_overlay_enable true false'
+        "$input_overlay"
+        'input_overlay_opacity _string_'
+        'input_overlay_scale _string_'
         'input_joypad_driver udev sdl2 linuxraw'
         'input_player1_analog_dpad_mode 0 1 2'
         'input_player2_analog_dpad_mode 0 1 2'
@@ -77,6 +89,10 @@ function common_configedit() {
         'Viewport position x.'
         'Viewport position y.'
         'Show current frames per second.'
+        'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
+        'Input overlay to use (default none)'
+        'Opacity of overlay. Float value 1.000000.'
+        'Scale of overlay. Float value 1.000000.'
         'Input joypad driver to use (default is udev)'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
