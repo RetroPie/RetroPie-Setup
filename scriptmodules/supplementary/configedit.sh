@@ -17,23 +17,8 @@ rp_module_flags="nobin"
 function common_configedit() {
     local config="$1"
 
-    # create a list of all present shader presets
-    local shader
-    local overlay
-    local video_shader="video_shader "
-    local input_overlay="input_overlay "
-    for shader in "$rootdir/emulators/retroarch/shader/"*.*p "$rootdir/emulators/retroarch/shader/"*/*.*p; do
-        # Do not add presets with whitespace
-        if [[ "$shader" != *" "* ]]; then
-            video_shader+="$shader "
-        fi
-    done
-    for overlay in "$rootdir/emulators/retroarch/overlays/"*/*.cfg "$rootdir/emulators/retroarch/overlays/"*/*/*.cfg; do
-        # Do not add overlays with whitespace
-        if [[ "$overlay" != *" "* ]]; then
-            input_overlay+="$overlay "
-        fi
-    done
+    # disable globbing
+    set -f
 
     # key + values
     local common=(
@@ -48,7 +33,7 @@ function common_configedit() {
         'video_aspect_ratio _string_'
         'video_aspect_ratio_auto true false'
         'video_shader_enable true false'
-        "$video_shader"
+        "video_shader _file_ *.glslp $rootdir/emulators/retroarch/shader"
         'video_rotation _string_'
         'custom_viewport_width _string_'
         'custom_viewport_height _string_'
@@ -56,7 +41,7 @@ function common_configedit() {
         'custom_viewport_y _string_'
         'fps_show true false'
         'input_overlay_enable true false'
-        "$input_overlay"
+        "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
         'input_overlay_opacity _string_'
         'input_overlay_scale _string_'
         'input_joypad_driver udev sdl2 linuxraw'
@@ -69,7 +54,7 @@ function common_configedit() {
         'input_player7_analog_dpad_mode 0 1 2'
         'input_player8_analog_dpad_mode 0 1 2'
     )
-    
+
     local descs=(
         'Audio driver to use (default is alsa_thread)'
         'Video driver to use (default is gl)'
@@ -114,6 +99,7 @@ function common_configedit() {
         local keys=()
         local i=0
         # generate menu from options
+        local option
         for option in "${common[@]}"; do
             option=($option)
             keys+=("${option[0]}")
@@ -131,22 +117,35 @@ function common_configedit() {
             printMsgs "dialog" "${key[@]:5}"
             continue
         fi
+
         if [[ -n "$key" ]]; then
-            options=()
-            local default
-            params=(${params[$key]})
             i=0
-            for option in "${params[@]}"; do
-                # handle case where the value type is _string_
-                if [[ "$option" == "_string_" ]]; then
+            options=("U" "unset")
+            local default
+
+            params=(${params[$key]})
+
+            case "${params[0]}" in
+                _string_)
                     options+=("E" "Edit (Currently ${values[key]})")
-                    continue
-                fi
-                [[ "${values[key]}" == "$option" ]] && default="$i"
-                options+=("$i" "$option")
-                ((i++))
-            done
-            options+=("U" "unset")
+                    ;;
+                _file_)
+                    local match="${params[1]}"
+                    local path="${params[*]:2}"
+                    local file
+                    while read file; do
+                        options+=("$i" "$file")
+                        ((i++))
+                    done < <(find "$path" -type f -name "$match")
+                    ;;
+                *)
+                    for option in "${params[@]}"; do
+                        [[ "${values[key]}" == "$option" ]] && default="$i"
+                        options+=("$i" "$option")
+                        ((i++))
+                    done
+                    ;;
+            esac
 
             # display values
             cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Please choose the value for " 12 76 06)
@@ -186,6 +185,9 @@ function common_configedit() {
             break
         fi
     done
+
+    # enable globbing
+    set +f
 }
 
 function choose_config_configedit() {
