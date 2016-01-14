@@ -131,4 +131,6 @@ _EOF_
     mkdir -p "/etc/emulationstation"
 
     configure_inputconfig_emulationstation
+    
+    addAutoConf es_swap_a_b 0
 }
