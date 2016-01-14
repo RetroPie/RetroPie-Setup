@@ -148,7 +148,7 @@ function common_configedit() {
             esac
 
             # display values
-            cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Please choose the value for " 12 76 06)
+            cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Please choose the value for ${keys[$key]}" 22 76 16)
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
             # if it is a _string_ type we will open an inputbox dialog to get a manual value
