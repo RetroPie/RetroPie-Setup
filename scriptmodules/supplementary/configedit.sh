@@ -33,7 +33,7 @@ function common_configedit() {
         'video_aspect_ratio _string_'
         'video_aspect_ratio_auto true false'
         'video_shader_enable true false'
-        "video_shader _file_ *.glslp $rootdir/emulators/retroarch/shader"
+        "video_shader _file_ *.*p $rootdir/emulators/retroarch/shader"
         'video_rotation _string_'
         'custom_viewport_width _string_'
         'custom_viewport_height _string_'
@@ -64,10 +64,10 @@ function common_configedit() {
         'Smoothens picture with bilinear filtering. Should be disabled if using pixel shaders.'
         'Forces rendering area to stay equal to content aspect ratio or as defined in video_aspect_ratio.'
         'Only scales video in integer steps. The base size depends on system-reported geometry and aspect ratio. If video_force_aspect is not set, X/Y will be integer scaled independently.'
-        'Load video_shader on startup. Other shaders can still be loaded later in runtime.'
-        'Video shader to use (default none)'
         'A floating point value for video aspect ratio (width / height). If this is not set, aspect ratio is assumed to be automatic. Behavior then is defined by video_aspect_ratio_auto.'
         'If this is true and video_aspect_ratio is not set, aspect ratio is decided by libretro implementation. If this is false, 1:1 PAR will always be assumed if video_aspect_ratio is not set.'
+        'Load video_shader on startup. Other shaders can still be loaded later in runtime.'
+        'Video shader to use (default none)'
         'Forces a certain rotation of the screen. The rotation is added to rotations which the libretro core sets (see video_allow_rotate). The angle is <value> * 90 degrees counter-clockwise.'
         'Viewport resolution.'
         'Viewport resolution.'
@@ -162,7 +162,7 @@ function common_configedit() {
                 value="$default"
             else
                 # get the actual value from the options array
-                local index=$((choice*2+1))
+                local index=$((choice*2+3))
                 value="${options[index]}"
             fi
 
