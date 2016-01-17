@@ -139,7 +139,7 @@ function configure_advmame() {
         iniSet "device_keyboard" "raw"
         iniSet "device_sound" "alsa"
         iniSet "display_vsync" "no"
-        if isPlatform "rpi1"; then
+        if isPlatform "armv6"; then
             iniSet "sound_samplerate" "22050"
         else
             iniSet "sound_samplerate" "44100"
