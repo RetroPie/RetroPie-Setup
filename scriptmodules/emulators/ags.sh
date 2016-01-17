@@ -15,7 +15,13 @@ rp_module_menus="4+"
 rp_module_flags="!x86 !mali"
 
 function depends_ags() {
-    getDepends pkg-config liballegro4.2-dev libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev
+    local depends=(pkg-config  libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev)
+    if [[ "$__raspbian_ver" -lt 8 ]]; then
+        depends+=(liballegro4.2-dev)
+    else
+        depends+=(liballegro4-dev)
+    fi
+    getDepends ${depends[@]}
 }
 
 function sources_ags() {
