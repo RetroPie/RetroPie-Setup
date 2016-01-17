@@ -58,6 +58,7 @@ function isPlatform() {
     if hasFlag "$__platform $__platform_flags" "$flag"; then
         return 0
     fi
+    return 1
 }
 
 function addLineToFile() {
