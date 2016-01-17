@@ -42,7 +42,7 @@ function setup_env() {
     if fn_exists "platform_${__platform}"; then
         platform_${__platform}
     else
-        fatalError "Unknown platform - please manually set the __platform variable to rpi1 or rpi2"
+        fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
     fi
 
     get_os_version
@@ -169,6 +169,7 @@ function platform_rpi1() {
     __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags=""
+    __platform_flags="arm armv6 rpi"
     # if building in a chroot, what cpu should be set by qemu
     # make chroot identify as arm6l
     __qemu_cpu=arm1176
@@ -180,6 +181,7 @@ function platform_rpi2() {
     __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
+    __platform_flags="arm armv7 rpi"
     # there is no support in qemu for cortex-a7 it seems, but it does have cortex-a15 which is architecturally
     # aligned with the a7, and allows the a7 targetted code to be run in a chroot/emulated environment
     __qemu_cpu=cortex-a15
@@ -190,6 +192,7 @@ function platform_odroid-c1() {
     __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
+    __platform_flags="arm armv7 mali"
     __qemu_cpu=cortex-a5
     __has_binaries=0
 }
@@ -198,5 +201,22 @@ function platform_x86() {
     __default_cflags="-O2 -march=native"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
+    __platform_flags="x11"
+    __has_binaries=0
+}
+
+function platform_x11() {
+    __default_cflags="-O2"
+    __default_asflags=""
+    __default_makeflags="-j$(nproc)"
+    __platform_flags="x11"
+    __has_binaries=0
+}
+
+function platform_armv7-mali() {
+    __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_asflags=""
+    __default_makeflags="-j$(nproc)"
+    __platform_flags="arm armv7 mali"
     __has_binaries=0
 }

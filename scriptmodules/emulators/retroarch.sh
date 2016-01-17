@@ -16,7 +16,7 @@ rp_module_menus="2+"
 function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
-    isPlatform "odroid" && depends+=(mali-fbdev)
+    isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x86" && depends+=(nvidia-cg-toolkit)
     [[ "$__raspbian_ver" -ge "8" ]] && depends+=(libusb-1.0-0-dev)
 
@@ -37,7 +37,7 @@ function sources_retroarch() {
     isPlatform "x86" && gitPullOrClone "$md_build/shader" https://github.com/libretro/common-shaders.git
     # disable the search dialog
     sed -i 's|menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|//menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|g' menu/menu_entry.c
-    if isPlatform "odroid"; then
+    if isPlatform "mali"; then
         sed -i 's|struct mali_native_window native_window|fbdev_window native_window|' gfx/drivers_context/mali_fbdev_ctx.c
     fi
 }
@@ -46,7 +46,7 @@ function build_retroarch() {
     local params=(--disable-x11 --disable-ffmpeg --disable-sdl --disable-oss --disable-pulse --disable-al --disable-jack --enable-floathard)
     isPlatform "rpi" && params+=(--enable-dispmanx --enable-sdl2)
     isPlatform "rpi2" && params+=(--enable-neon)
-    isPlatform "odroid" && params+=(--enable-mali_fbdev --enable-gles --enable-sdl2 --enable-neon)
+    isPlatform "mali" && params+=(--enable-mali_fbdev --enable-gles --enable-sdl2 --enable-neon)
     isPlatform "x86" && params=(--enable-sdl2)
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean

@@ -12,7 +12,7 @@
 rp_module_id="scummvm"
 rp_module_desc="ScummVM"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86 !odroid"
+rp_module_flags="dispmanx !x86 !mali"
 
 function depends_scummvm() {
     getDepends libsdl1.2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev

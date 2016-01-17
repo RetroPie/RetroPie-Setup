@@ -41,6 +41,6 @@ function configure_lr-pocketsnes() {
     ensureSystemretroconfig "snes" "snes_phosphor.glslp"
 
     local def=0
-    isPlatform "rpi1" && def=1
+    isPlatform "armv6" && def=1
     addSystem $def "$md_id" "snes" "$md_inst/pocketsnes_libretro.so"
 }

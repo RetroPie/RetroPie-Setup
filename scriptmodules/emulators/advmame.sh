@@ -12,7 +12,7 @@
 rp_module_id="advmame"
 rp_module_desc="AdvanceMAME"
 rp_module_menus="2+"
-rp_module_flags="!x86 !odroid"
+rp_module_flags="!x86 !mali"
 
 function depends_advmame() {
     getDepends libsdl1.2-dev
@@ -139,7 +139,7 @@ function configure_advmame() {
         iniSet "device_keyboard" "raw"
         iniSet "device_sound" "alsa"
         iniSet "display_vsync" "no"
-        if isPlatform "rpi1"; then
+        if isPlatform "armv6"; then
             iniSet "sound_samplerate" "22050"
         else
             iniSet "sound_samplerate" "44100"

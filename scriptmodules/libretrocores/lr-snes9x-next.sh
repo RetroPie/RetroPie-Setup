@@ -12,7 +12,7 @@
 rp_module_id="lr-snes9x-next"
 rp_module_desc="SNES emulator - Snes9x 1.52+ (optimised) port for libretro"
 rp_module_menus="2+"
-rp_module_flags="!rpi1"
+rp_module_flags="!armv6"
 
 function sources_lr-snes9x-next() {
     gitPullOrClone "$md_build" https://github.com/libretro/snes9x-next

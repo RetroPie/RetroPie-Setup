@@ -12,7 +12,7 @@
 rp_module_id="lr-virtualjaguar"
 rp_module_desc="Atari Jaguar emu - Virtual Jaguar (optimised) port for libretro"
 rp_module_menus="4+"
-rp_module_flags="!rpi1"
+rp_module_flags="!armv6"
 
 function sources_lr-virtualjaguar() {
     gitPullOrClone "$md_build" https://github.com/libretro/virtualjaguar-libretro.git

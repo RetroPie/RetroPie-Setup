@@ -49,7 +49,7 @@ function configure_lr-fba-next() {
     ensureSystemretroconfig "neogeo"
 
     local def=1
-    isPlatform "rpi1" && def=0
+    isPlatform "armv6" && def=0
     addSystem $def "$md_id" "neogeo" "$md_inst/fba_libretro.so"
     addSystem $def "$md_id" "fba arcade" "$md_inst/fba_libretro.so"
 }

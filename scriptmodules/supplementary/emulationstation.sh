@@ -24,7 +24,7 @@ function depends_emulationstation() {
 function sources_emulationstation() {
     gitPullOrClone "$md_build" "https://github.com/retropie/EmulationStation"
     # make sure libMali.so can be found so we use OpenGL ES
-    if isPlatform "odroid"; then
+    if isPlatform "mali"; then
         sed -i 's|/usr/lib/libMali.so|/usr/lib/arm-linux-gnueabihf/libMali.so|g' CMakeLists.txt
     fi
 }

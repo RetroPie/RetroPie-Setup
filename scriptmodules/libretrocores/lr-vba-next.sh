@@ -12,7 +12,7 @@
 rp_module_id="lr-vba-next"
 rp_module_desc="GBA emulator - VBA-M (optimised) port for libretro"
 rp_module_menus="2+"
-rp_module_flags="!rpi1"
+rp_module_flags="!armv6"
 
 function sources_lr-vba-next() {
     gitPullOrClone "$md_build" https://github.com/libretro/vba-next.git
@@ -20,14 +20,11 @@ function sources_lr-vba-next() {
 
 function build_lr-vba-next() {
     make -f Makefile.libretro clean
-    case "$__platform" in
-        rpi2)
-            make -f Makefile.libretro platform=armvhardfloatunix TILED_RENDERING=1 HAVE_NEON=1
-            ;;
-        *)
-            make -f Makefile.libretro
-            ;;
-    esac
+    if isPlatform "armv7"; then
+        make -f Makefile.libretro platform=armvhardfloatunix TILED_RENDERING=1 HAVE_NEON=1
+    else
+        make -f Makefile.libretro
+    fi
     md_ret_require="$md_build/vba_next_libretro.so"
 }
 

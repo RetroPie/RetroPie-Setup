@@ -12,7 +12,7 @@
 rp_module_id="openttd"
 rp_module_desc="Open Source Simulator Based On Transport Tycoon Deluxe"
 rp_module_menus="4+"
-rp_module_flags="nobin !odroid"
+rp_module_flags="nobin !mali"
  
 function install_openttd() {
     aptInstall openttd
