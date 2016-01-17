@@ -295,6 +295,7 @@ function moveConfigFile() {
 }
 
 function setDispmanx() {
+    isPlatform "rpi" || return
     local mod_id="$1"
     local status="$2"
     mkUserDir "$configdir/all"
