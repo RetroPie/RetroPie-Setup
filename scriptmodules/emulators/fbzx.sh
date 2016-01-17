@@ -52,5 +52,5 @@ function configure_fbzx() {
     mkRomDir "zxspectrum"
 
     delSystem "$md_id" "zxspectrum-fbzx"
-    addSystem 0 "$md_id" "zxspectrum" "$md_inst/fbzx %ROM%"
+    addSystem 0 "$md_id" "zxspectrum" "pushd $md_inst; ./fbzx %ROM%; popd"
 }
