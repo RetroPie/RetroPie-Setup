@@ -12,7 +12,7 @@
 rp_module_id="zdoom"
 rp_module_desc="ZDoom - Enhanced port of the official DOOM source"
 rp_module_menus="4+"
-rp_module_flags="dispmanx !odroid"
+rp_module_flags="dispmanx !mali"
 
 function depends_zdoom() {
     getDepends libev-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev timidity cmake

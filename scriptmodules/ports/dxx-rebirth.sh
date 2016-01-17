@@ -12,7 +12,7 @@
 rp_module_id="dxx-rebirth"
 rp_module_desc="DXX-Rebirth (Descent & Descent 2) build from source"
 rp_module_menus="4+"
-rp_module_flags="!odroid"
+rp_module_flags="!mali"
 
 function depends_dxx-rebirth() {
     getDepends libphysfs1 libphysfs-dev libsdl1.2-dev libsdl-mixer1.2-dev scons
