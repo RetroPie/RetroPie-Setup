@@ -204,3 +204,19 @@ function platform_x86() {
     __platform_flags="x11"
     __has_binaries=0
 }
+
+function platform_x11() {
+    __default_cflags="-O2"
+    __default_asflags=""
+    __default_makeflags="-j$(nproc)"
+    __platform_flags="x11"
+    __has_binaries=0
+}
+
+function platform_armv7-mali() {
+    __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_asflags=""
+    __default_makeflags="-j$(nproc)"
+    __platform_flags="arm armv7 mali"
+    __has_binaries=0
+}
