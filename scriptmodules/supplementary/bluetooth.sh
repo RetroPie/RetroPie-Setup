@@ -18,13 +18,47 @@ function depends_bluetooth() {
     getDepends bluetooth
 }
 
+function get_script_bluetooth() {
+    name="$1"
+    if ! which "$name"; then
+        [[ "$name" == "bluez-test-input" ]] && name="bluez-test-device"
+        name="$scriptdir/scriptmodules/supplementary/$md_id/$name"
+    fi
+    echo "$name"
+}
+
 function list_available_bluetooth() {
     local mac_address
     local device_name
-    while read; read mac_address; read device_name; do
-        echo "$mac_address"
-        echo "$device_name"
-    done < <(hcitool scan --flush | tail -n +2 | sed 's/\t/\n/g')
+    if hasPackage bluez 5; then
+        # create a named pipe & fd for input for bluetoothctl
+        local fifo="$(mktemp -u)"
+        mkfifo "$fifo"
+        exec 3<>"$fifo"
+        local line
+        while read -r -n12 line; do
+            if [[ "$line" == *"[bluetooth]"* ]]; then
+                echo "scan on" >&3
+                read -r line
+                sleep 5
+                break
+            fi
+        # read from bluetoothctl buffered line by line
+        done < <(stdbuf -oL bluetoothctl <&3)
+        exec 3>&-
+        rm -f "$fifo"
+
+        while read mac_address; read device_name; do
+            echo "$mac_address"
+            echo "$device_name"
+        done < <(echo "devices" | bluetoothctl 2>/dev/null | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/g')
+
+    else
+        while read; read mac_address; read device_name; do
+            echo "$mac_address"
+            echo "$device_name"
+        done < <(hcitool scan --flush | tail -n +2 | sed 's/\t/\n/g')
+    fi
 }
 
 function list_registered_bluetooth() {
@@ -35,7 +69,7 @@ function list_registered_bluetooth() {
         mac_address=$(echo $line | sed 's/ /,/g' | cut -d, -f1)
         device_name=$(echo $line | sed -e 's/'"$mac_address"' //g')
         echo -e "$mac_address\n$device_name"
-    done < <(bluez-test-device list)
+    done < <($(get_script_bluetooth bluez-test-device) list)
 }
 
 function display_active_and_registered_bluetooth() {
@@ -66,7 +100,7 @@ function remove_bluetooth() {
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && return
 
-        remove_bluetooth_device=$(bluez-test-device remove $choice)
+        remove_bluetooth_device=$($(get_script_bluetooth bluez-test-device) remove $choice)
         if [[ -z "$remove_bluetooth_device" ]] ; then
             printMsgs "dialog" "Device removed"
         else
@@ -81,6 +115,7 @@ function connect_bluetooth() {
     local device_names=()
     local device_name
     local options=()
+
     while read mac_address; read device_name; do
         mac_addresses+=("$mac_address")
         device_names+=("$device_name")
@@ -134,7 +169,7 @@ function connect_bluetooth() {
                 # read "Enter PIN Code:"
                 read -n 15 line
                 ;;
-            "DisplayPasskey"*)
+            "DisplayPasskey"*|"DisplayPinCode"*)
                 # extract key from end of line
                 # DisplayPasskey (/org/bluez/1284/hci0/dev_01_02_03_04_05_06, 123456)
                 [[ "$line" =~ ,\ (.+)\) ]] && pin=${BASH_REMATCH[1]}
@@ -148,14 +183,14 @@ function connect_bluetooth() {
                 ;;
         esac
     # read from bluez-simple-agent buffered line by line
-    done < <(stdbuf -oL bluez-simple-agent $opts hci0 "$mac_address" <&3)
+    done < <(stdbuf -oL $(get_script_bluetooth bluez-simple-agent) $opts hci0 "$mac_address" <&3)
     exec 3>&-
     rm -f "$fifo"
 
     if [[ -z "$error" ]]; then
-        error=$(bluez-test-device trusted "$mac_address" yes)
+        error=$($(get_script_bluetooth bluez-test-device) trusted "$mac_address" yes 2>&1)
         if [[ -z "$error" ]] ; then
-            error=$(bluez-test-input connect "$mac_address")
+            error=$($(get_script_bluetooth bluez-test-input) connect "$mac_address" 2>&1)
             if [[ -z "$error" ]]; then
                 printMsgs "dialog" "Successfully registered and connected to $mac_address"
                 return 0
