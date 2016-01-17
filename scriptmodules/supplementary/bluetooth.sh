@@ -51,7 +51,7 @@ function list_available_bluetooth() {
         while read mac_address; read device_name; do
             echo "$mac_address"
             echo "$device_name"
-        done < <(echo "devices" | bluetoothctl 2>/dev/null | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/g')
+        done < <(echo "devices" | bluetoothctl 2>/dev/null | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/')
 
     else
         while read; read mac_address; read device_name; do
