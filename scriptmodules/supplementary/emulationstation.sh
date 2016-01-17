@@ -42,6 +42,7 @@ function install_emulationstation() {
     md_ret_files=(
         'CREDITS.md'
         'emulationstation'
+        'emulationstation.sh'
         'GAMELISTS.md'
         'README.md'
         'THEMES.md'
@@ -78,8 +79,6 @@ function configure_emulationstation() {
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
 
-es_bin="$md_inst/emulationstation"
-
 if [[ \$(id -u) -eq 0 ]]; then
     echo "emulationstation should not be run as root. If you used 'sudo emulationstation' please run without sudo."
     exit 1
@@ -92,12 +91,10 @@ if [[ "\$(uname --machine)" != *86* ]]; then
     fi
 fi
 
-key=""
-while [[ -z "\$key" ]]; do
-    \$es_bin "\$@"
-    echo "EmulationStation will restart in 5 seconds. Press a key to exit back to console."
-    IFS= read -s -t 5 -N 1 key </dev/tty
-done
+pushd "$md_inst" >/dev/null
+./emulationstation.sh "\$@"
+popd >/dev/null
+
 _EOF_
     if isPlatform "rpi"; then
         # make sure that ES has enough GPU memory
