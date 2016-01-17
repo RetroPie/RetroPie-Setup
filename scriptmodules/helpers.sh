@@ -54,21 +54,9 @@ function hasFlag() {
 }
 
 function isPlatform() {
-
-    # isPlatform "rpi" matches both rpi1 and rpi2
-    if [[ "$1" == "rpi" ]] && [[ "$__platform" == "rpi1" || "$__platform" == "rpi2" ]]; then
+    local flag="$1"
+    if hasFlag "$__platform $__platform_flags" "$flag"; then
         return 0
-    fi
-
-    # isPlatform "odroid" matches any odroid platform
-    if [[ "$1" == "odroid" ]] && [[ "$__platform" == odroid* ]]; then
-        return 0
-    fi
-
-    if [[ "$__platform" == "$1" ]]; then
-        return 0
-    else
-        return 1
     fi
 }
 
