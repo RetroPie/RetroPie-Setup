@@ -28,20 +28,17 @@ function sources_mupen64plus() {
         'mupen64plus input-sdl'
         'mupen64plus rsp-hle'
     )
-    case "$__platform" in
-        rpi1|rpi2)
-            repos+=(
-                'gizmo98 audio-omx'
-                'ricrpi video-gles2rice pandora-backport'
-                'ricrpi video-gles2n64'
-            )
-            ;;
-        x86)
-            repos+=(
-                'mupen64plus video-glide64mk2'
-            )
-            ;;
-    esac
+    if isPlatform "rpi"; then
+        repos+=(
+            'gizmo98 audio-omx'
+            'ricrpi video-gles2rice pandora-backport'
+            'ricrpi video-gles2n64'
+        )
+    else
+        repos+=(
+            'mupen64plus video-glide64mk2'
+        )
+    fi
     local repo
     local dir
     for repo in "${repos[@]}"; do
@@ -51,7 +48,7 @@ function sources_mupen64plus() {
     done
     gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
     # fix for static x86_64 libs found in repo which are not usefull if target is i686 
-    isPlatform "x86" && sed -i "s/BCMHOST/UNIX/g" GLideN64/src/GLideNHQ/CMakeLists.txt
+    ! isPlatform "rpi" && sed -i "s/BCMHOST/UNIX/g" GLideN64/src/GLideNHQ/CMakeLists.txt
 }
 
 function build_mupen64plus() {
@@ -92,20 +89,17 @@ function build_mupen64plus() {
         'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
         'GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so'
     )
-    case "$__platform" in
-        rpi1|rpi2)
-            md_ret_require+=(
-                'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
-                'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
-                'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
-            )
-            ;;
-        x86)
-            md_ret_require+=(
-                'mupen64plus-video-glide64mk2/projects/unix/mupen64plus-video-glide64mk2.so'
-            )
-            ;;
-    esac
+    if isPlatform "rpi"; then
+        md_ret_require+=(
+            'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
+            'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
+            'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
+        )
+    else
+        md_ret_require+=(
+            'mupen64plus-video-glide64mk2/projects/unix/mupen64plus-video-glide64mk2.so'
+        )
+    fi
 }
 
 function install_mupen64plus() {
@@ -146,15 +140,12 @@ function configure_mupen64plus() {
 
     delSystem "$md_id" "n64-mupen64plus"
     addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
-    case "$__platform" in
-        rpi1|rpi2)
-            addSystem 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"
-            addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
-            ;;
-        x86)
-            addSystem 1 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM%"
-            ;;
-    esac
+    if isPlatform "rpi"; then
+        addSystem 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"
+        addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
+    else
+        addSystem 1 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM%"
+    fi
 
     addAutoConf mupen64plus_audio 1
     addAutoConf mupen64plus_hotkeys 1

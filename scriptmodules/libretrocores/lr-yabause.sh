@@ -21,14 +21,11 @@ function sources_lr-yabause() {
 function build_lr-yabause() {
     cd libretro
     make clean
-    case "$__platform" in
-        rpi2)
-            make platform=armvneonhardfloat
-            ;;
-        *)
-            make
-            ;;
-    esac
+    if isPlatform "armv7"; then
+        make platform=armvneonhardfloat
+    else
+        make
+    fi
     md_ret_require="$md_build/libretro/yabause_libretro.so"
 }
 
