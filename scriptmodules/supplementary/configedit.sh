@@ -134,6 +134,7 @@ function common_configedit() {
                     local path="${params[*]:2}"
                     local file
                     while read file; do
+                        [[ "${values[key]}" == "$file" ]] && default="$i"
                         options+=("$i" "$file")
                         ((i++))
                     done < <(find "$path" -type f -name "$match")
