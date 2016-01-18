@@ -12,7 +12,7 @@
 rp_module_id="lr-beetle-vb"
 rp_module_desc="Virtual Boy emulator - Mednafen VB (optimised) port for libretro"
 rp_module_menus="4+"
-rp_module_flags="!armv6 !x86"
+rp_module_flags="!armv6"
 
 function sources_lr-beetle-vb() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-vb-libretro.git
@@ -20,7 +20,9 @@ function sources_lr-beetle-vb() {
 
 function build_lr-beetle-vb() {
     make clean
-    make platform=armvneon NEED_STEREO_SOUND=1 FRONTEND_SUPPORTS_RGB565=1
+    local params=()
+    isPlatform "arm" && params+=("platform=armvneon" "FRONTEND_SUPPORTS_RGB565=1")
+    make "${params[@]}" NEED_STEREO_SOUND=1
     md_ret_require="$md_build/mednafen_vb_libretro.so"
 }
 
