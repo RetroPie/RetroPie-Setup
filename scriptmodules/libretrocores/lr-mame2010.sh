@@ -12,7 +12,7 @@
 rp_module_id="lr-mame2010"
 rp_module_desc="Arcade emu - MAME 0.139 port for libretro"
 rp_module_menus="4+"
-rp_module_flags="!x86"
+rp_module_flags=""
 
 function depends_lr-mame2010() {
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
@@ -24,11 +24,13 @@ function sources_lr-mame2010() {
 
 function build_lr-mame2010() {
     make clean
-    make VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS" buildtools
+    local params=()
+    isPlatform "arm" && params+=("VRENDER=soft" "ARM_ENABLED=1")
+    make "${params[@]}" ARCHOPTS="$CFLAGS" buildtools
     if [[ "$__default_gcc_version" == "4.7" ]]; then
-        make VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS" CC="gcc-4.8" CXX="g++-4.8"
+        make "${params[@]}" ARCHOPTS="$CFLAGS" CC="gcc-4.8" CXX="g++-4.8"
     else
-        make VRENDER=soft ARM_ENABLED=1 ARCHOPTS="$CFLAGS"
+        make "${params[@]}" ARCHOPTS="$CFLAGS"
     fi
 }
 
