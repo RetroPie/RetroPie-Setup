@@ -20,7 +20,7 @@ function sources_lr-pocketsnes() {
 
 function build_lr-pocketsnes() {
     make clean
-    CFLAGS="$CFLAGS -Wa,-mimplicit-it=thumb" make ARM_ASM=1
+    CFLAGS="$CFLAGS" make ARM_ASM=1
     md_ret_require="$md_build/pocketsnes_libretro.so"
 }
 
