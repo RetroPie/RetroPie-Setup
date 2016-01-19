@@ -42,5 +42,5 @@ function configure_lr-pocketsnes() {
 
     local def=0
     isPlatform "armv6" && def=1
-    addSystem $def "$md_id" "snes" "$md_inst/pocketsnes_libretro.so"
+    addSystem $def "$md_id" "snes" "$md_inst/libretro.so"
 }
