@@ -17,7 +17,7 @@ rp_module_flags="!mali"
 function depends_mupen64plus() {
     getDepends cmake libgl1-mesa-dev libsamplerate0-dev libspeexdsp-dev libsdl2-dev
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
-    isPlatform "x86" && getDepends libglew-dev libglu1-mesa-dev
+    isPlatform "x86" && getDepends libglew-dev libglu1-mesa-dev libboost-filesystem-dev
 }
 
 function sources_mupen64plus() {
