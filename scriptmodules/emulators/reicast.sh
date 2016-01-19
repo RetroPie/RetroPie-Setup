@@ -21,7 +21,7 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    if isPlatform "x86"; then
+    if isPlatform "x11"; then
         gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git fix/softrend-fugly-casts
     else
         gitPullOrClone "$md_build" https://github.com/RetroPie/reicast-emulator.git retropie
