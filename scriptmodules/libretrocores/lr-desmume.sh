@@ -20,8 +20,8 @@ function sources_lr-desmume() {
 
 function build_lr-desmume() {
     cd desmume
-    local params=("platform=armvhardfloat")
-    isPlatform "x86" && params=()
+    local params=()
+    isPlatform "arm" && params+=("platform=armvhardfloat")
     make -f Makefile.libretro clean
     make -f Makefile.libretro "${params[@]}" 
     md_ret_require="$md_build/desmume/desmume_libretro.so"
