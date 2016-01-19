@@ -51,7 +51,9 @@ function install_emulationstation() {
 
 function configure_inputconfig_emulationstation() {
     local es_config="$home/.emulationstation/es_input.cfg"
-    mkUserDir "$home/.emulationstation"
+
+    # move the $home/emulationstation configuration dir and symlink it
+    moveConfigDir "$home/.emulationstation"  "$configdir/all/emulationstation"
 
     # if there is no ES config (or empty file) create it with initial inputList element
     if [[ ! -s "$es_config" ]]; then
