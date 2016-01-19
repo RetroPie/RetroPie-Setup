@@ -205,7 +205,7 @@ function platform_x86() {
     __has_binaries=0
 }
 
-function platform_generic-11() {
+function platform_generic-x11() {
     __default_cflags="-O2"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
