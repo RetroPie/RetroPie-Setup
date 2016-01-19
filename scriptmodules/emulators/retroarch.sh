@@ -34,7 +34,7 @@ function sources_retroarch() {
     gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git
     gitPullOrClone "$md_build/overlays" https://github.com/libretro/common-overlays.git
     isPlatform "rpi" && gitPullOrClone "$md_build/shader" https://github.com/RetroPie/common-shaders.git
-    isPlatform "x86" && gitPullOrClone "$md_build/shader" https://github.com/libretro/common-shaders.git
+    isPlatform "x11" && gitPullOrClone "$md_build/shader" https://github.com/libretro/common-shaders.git
     # disable the search dialog
     sed -i 's|menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|//menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|g' menu/menu_entry.c
     if isPlatform "mali"; then
@@ -47,7 +47,7 @@ function build_retroarch() {
     isPlatform "rpi" && params+=(--enable-dispmanx --enable-sdl2)
     isPlatform "rpi2" && params+=(--enable-neon)
     isPlatform "mali" && params+=(--enable-mali_fbdev --enable-gles --enable-sdl2 --enable-neon)
-    isPlatform "x86" && params=(--enable-sdl2)
+    isPlatform "x11" && params=(--enable-sdl2)
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
     make
@@ -90,7 +90,7 @@ function configure_retroarch() {
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     iniSet "assets_directory" "$md_inst/assets"
     iniSet "overlay_directory" "$md_inst/overlays"
-    isPlatform "x86" && iniSet "video_fullscreen" "true"
+    isPlatform "x11" && iniSet "video_fullscreen" "true"
 
     # enable hotkey ("select" button)
     iniSet "input_enable_hotkey" "nul"
