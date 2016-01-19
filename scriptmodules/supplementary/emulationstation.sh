@@ -105,7 +105,9 @@ _EOF_
         iniSet "gpu_mem_512" 256
         iniSet "gpu_mem_1024" 256
         iniSet "overscan_scale" 1
-    else
+    fi
+
+    if isPlatform "x11"; then
         mkdir -p /usr/local/share/icons
         mkdir -p /usr/local/share/applications
         cp "$scriptdir/scriptmodules/$md_type/$md_id/retropie.svg" "/usr/local/share/icons/"
