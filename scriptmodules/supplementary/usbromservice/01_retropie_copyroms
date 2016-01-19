@@ -7,6 +7,7 @@
 user="USERTOBECHOSEN"
 
 home="$(eval echo ~$user)"
+rootdir="/opt/retropie"
 retropie_path="$home/RetroPie"
 retropie_path_roms="$retropie_path/roms"
 
@@ -18,7 +19,7 @@ usb_path_to_rp="$usb_path/configs/to_retropie"
 declare -A path_mapping
 
 # mapping from usb_path_to_rp/* to retropie location
-path_mapping["emulationstation"]="$home/.emulationstation"
+path_mapping["configs"]="$rootdir/configs"
 
 ## internals
 hook_name=${0##*/}
