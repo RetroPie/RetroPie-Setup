@@ -17,7 +17,7 @@ rp_module_flags="!mali"
 function depends_mupen64plus() {
     getDepends cmake libgl1-mesa-dev libsamplerate0-dev libspeexdsp-dev libsdl2-dev
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
-    isPlatform "x86" && getDepends libglew-dev libglu1-mesa-dev libboost-filesystem-dev
+    isPlatform "x11" && getDepends libglew-dev libglu1-mesa-dev libboost-filesystem-dev
 }
 
 function sources_mupen64plus() {
@@ -48,7 +48,7 @@ function sources_mupen64plus() {
     done
     gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
     # fix for static x86_64 libs found in repo which are not usefull if target is i686 
-    ! isPlatform "rpi" && sed -i "s/BCMHOST/UNIX/g" GLideN64/src/GLideNHQ/CMakeLists.txt
+    isPlatform "x11" && sed -i "s/BCMHOST/UNIX/g" GLideN64/src/GLideNHQ/CMakeLists.txt
 }
 
 function build_mupen64plus() {
