@@ -15,7 +15,7 @@ rp_module_menus="3+"
 rp_module_flags="nobin !x86"
 
 function depends_bluetooth() {
-    getDepends bluetooth python-dbus
+    getDepends bluetooth python-dbus python-gobject
 }
 
 function get_script_bluetooth() {
