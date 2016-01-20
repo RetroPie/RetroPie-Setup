@@ -43,9 +43,10 @@ function sources_retroarch() {
 }
 
 function build_retroarch() {
-    local params=(--disable-x11 --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
-    isPlatform "rpi" && params+=(--enable-dispmanx --enable-gles)
-    isPlatform "mali" && params+=(--enable-mali_fbdev --enable-gles)
+    local params=(--enable-sdl2)
+    ! isPlatform "x11" && params+=(--disable-x11 --enable-gles --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
+    isPlatform "rpi" && params+=(--enable-dispmanx)
+    isPlatform "mali" && params+=(--enable-mali_fbdev)
     isPlatform "arm" && params+=(--enable-floathard)
     isPlatform "armv7" && params+=(--enable-neon)
     ./configure --prefix="$md_inst" "${params[@]}"
