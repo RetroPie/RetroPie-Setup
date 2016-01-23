@@ -12,7 +12,7 @@
 rp_module_id="minecraft"
 rp_module_desc="Minecraft"
 rp_module_menus="4+"
-rp_module_flags="nobin !mali"
+rp_module_flags="nobin !mali !x86"
 
 function depends_minecraft() {
     getDepends matchbox
