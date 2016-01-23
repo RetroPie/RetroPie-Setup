@@ -36,6 +36,12 @@ function configure_lr-gambatte() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/gbclibretro"
 
+    # add default green yellow palette for gameboy classic
+    mkUserDir "$biosdir/palettes"
+    cp "$scriptdir/scriptmodules/$md_type/$md_id/default.pal" "$biosdir/palettes/"
+    chown $user:$user "$biosdir/palettes/default.pal"
+    setRetroArchCoreOption "gambatte_gb_colorization" "custom"
+
     mkRomDir "gbc"
     mkRomDir "gb"
     ensureSystemretroconfig "gb" "hq4x.glslp"
