@@ -24,12 +24,11 @@ function sources_dxx-rebirth() {
 }
 
 function build_dxx-rebirth() {
+    local params=()
+    isPlatform "rpi" && params+=(raspberrypi=1)
+    [[ "$__default_gcc_version" == "4.7" ]] && params+=(CXX=g++-4.8)
     scons -c
-    if [[ "$__default_gcc_version" == "4.7" ]]; then
-        scons raspberrypi=1 debug=1 CXX="g++-4.8"
-    else
-        scons raspberrypi=1 debug=1
-    fi
+    scons "${params[@]}"
     md_ret_require=(
         "$md_build/d1x-rebirth/d1x-rebirth"
         "$md_build/d2x-rebirth/d2x-rebirth"
