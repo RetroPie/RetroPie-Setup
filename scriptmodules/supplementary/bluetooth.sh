@@ -73,12 +73,19 @@ function list_registered_bluetooth() {
 }
 
 function display_active_and_registered_bluetooth() {
-    local registered_devices="There are no registered devices"
-    [[ "$(bluez-test-device list)" != "" ]] && registered_devices="$(bluez-test-device list)"
-    local active_connections="There are no active connections"
-    [[ "$(hcitool con)" != "Connections:" ]] && active_connections="$(hcitool con | sed -e 1d)"
+    local registered
+    local active
 
-    printMsgs "dialog" "Registered Devices:\n\n$registered_devices\n\n\nActive Connections:\n\n$active_connections"
+    registered="$($(get_script_bluetooth bluez-test-device) list 2>&1)"
+    [[ -z "$registered" ]] && registered="There are no registered devices"
+
+    if [[ "$(hcitool con)" != "Connections:" ]]; then
+        active="$(hcitool con 2>&1 | sed -e 1d)"
+    else
+        active="There are no active connections"
+    fi
+
+    printMsgs "dialog" "Registered Devices:\n\n$registered\n\n\nActive Connections:\n\n$active"
 }
 
 function remove_bluetooth() {
