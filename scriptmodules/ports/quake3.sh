@@ -15,7 +15,7 @@ rp_module_menus="2+"
 rp_module_flags="!x86 !mali"
 
 function depends_quake3() {
-    getDepends libsdl1.2-dev
+    getDepends libsdl1.2-dev libraspberrypi-dev
 }
 
 function sources_quake3() {
