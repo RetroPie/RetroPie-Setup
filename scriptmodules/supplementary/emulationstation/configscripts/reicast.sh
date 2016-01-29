@@ -180,6 +180,13 @@ function map_reicast_joystick() {
                     iniSet "axis_x" "$input_id"
                     iniSet "axis_x_inverted" "no"
                 elif [[ "$key" == *axis* ]] ; then
+                    case "$device_name" in 
+                        "Xbox 360 Controller (xpad driver)"|"Xbox 360 Controller (xboxdrv userspace driver)"|"Microsoft X-Box 360 pad"|"Xbox Gamepad (userspace driver)"|"Xbox 360 Wireless Receiver (XBOX)"|"Microsoft X-Box One pad"|"Microsoft X-Box pad (Japan)"|"Chinese-made Xbox Controller")
+                            if [[ "$input_id" -gt 2 && "$input_id" -lt 5 ]]; then
+                                input_id=$(($input_id+13))
+                            fi
+                            ;;
+                    esac
                     iniSet "${key}" "$input_id"
                     iniSet "${key}_inverted" "no"
                 fi
@@ -192,8 +199,12 @@ function map_reicast_joystick() {
                     input_id=$(($input_id+288))
                     # workaround for specific controller button mismatch
                     case "$device_name" in 
-                        "Xbox 360 Controller (xpad driver)"|"Xbox 360 Controller (xboxdrv userspace driver)"|"Microsoft X-Box 360 pad"|"Xbox Gamepad (userspace driver)"|"Xbox 360 Wireless Receiver (XBOX)"|"Microsoft X-Box One pad"|"Microsoft X-Box pad (Japan)")
-                            input_id=$(($input_id+18))
+                        "Xbox 360 Controller (xpad driver)"|"Xbox 360 Controller (xboxdrv userspace driver)"|"Microsoft X-Box 360 pad"|"Xbox Gamepad (userspace driver)"|"Xbox 360 Wireless Receiver (XBOX)"|"Microsoft X-Box One pad"|"Microsoft X-Box pad (Japan)"|"Chinese-made Xbox Controller")
+                            if [[ "$input_id" -lt "294" ]]; then
+                                input_id=$(($input_id+16))
+                            else
+                                input_id=$(($input_id+20))
+                            fi
                             ;;
                     esac
                     iniSet "$key" "$input_id"
