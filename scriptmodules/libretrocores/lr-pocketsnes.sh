@@ -38,7 +38,7 @@ function configure_lr-pocketsnes() {
     rm -f "$md_inst/libretro.so"
 
     mkRomDir "snes"
-    ensureSystemretroconfig "snes" "snes_phosphor.glslp"
+    ensureSystemretroconfig "snes"
 
     local def=0
     isPlatform "armv6" && def=1

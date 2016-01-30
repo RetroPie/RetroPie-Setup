@@ -49,7 +49,7 @@ function configure_lr-snes9x-next() {
     rm -rf "$rootdir/$md_type/snes9x-next"
 
     mkRomDir "snes"
-    ensureSystemretroconfig "snes" "snes_phosphor.glslp"
+    ensureSystemretroconfig "snes"
 
     addSystem 1 "$md_id" "snes" "$md_inst/snes9x_next_libretro.so"
 }

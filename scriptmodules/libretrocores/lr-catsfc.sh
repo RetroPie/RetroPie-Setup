@@ -34,7 +34,7 @@ function configure_lr-catsfc() {
     rm -rf "$rootdir/$md_type/catsfc"
 
     mkRomDir "snes"
-    ensureSystemretroconfig "snes" "snes_phosphor.glslp"
+    ensureSystemretroconfig "snes"
 
     delSystem "$md_id" "snes-catsfc"
     addSystem 0 "$md_id" "snes" "$md_inst/catsfc_libretro.so"

@@ -50,7 +50,7 @@ function configure_lr-armsnes() {
     rm -rf "$rootdir/$md_type/armsnes"
 
     mkRomDir "snes"
-    ensureSystemretroconfig "snes" "snes_phosphor.glslp"
+    ensureSystemretroconfig "snes"
 
     addSystem 0 "$md_id" "snes" "$md_inst/libpocketsnes.so"
 }
