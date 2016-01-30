@@ -40,7 +40,7 @@ function configure_lr-fceumm() {
     rm -rf "$rootdir/$md_type/lr-fceu-next"
 
     mkRomDir "nes"
-    ensureSystemretroconfig "nes" "phosphor.glslp"
+    ensureSystemretroconfig "nes"
 
     delSystem "lr-fceu-next" "nes"
     addSystem 1 "$md_id" "nes" "$md_inst/fceumm_libretro.so"

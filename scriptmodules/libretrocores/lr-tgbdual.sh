@@ -32,8 +32,8 @@ function install_lr-tgbdual() {
 function configure_lr-tgbdual() {
     mkRomDir "gbc"
     mkRomDir "gb"
-    ensureSystemretroconfig "gb" "hq4x.glslp"
-    ensureSystemretroconfig "gbc" "hq4x.glslp"
+    ensureSystemretroconfig "gb"
+    ensureSystemretroconfig "gbc"
 
     # enable dual / link by default
     setRetroArchCoreOption "tgbdual_gblink_enable" "enabled"

@@ -47,8 +47,8 @@ function configure_lr-picodrive() {
     mkRomDir "mastersystem"
     mkRomDir "segacd"
     mkRomDir "sega32x"
-    ensureSystemretroconfig "megadrive" "phosphor.glslp"
-    ensureSystemretroconfig "mastersystem" "phosphor.glslp"
+    ensureSystemretroconfig "megadrive"
+    ensureSystemretroconfig "mastersystem"
     ensureSystemretroconfig "segacd"
     ensureSystemretroconfig "sega32x"
 
