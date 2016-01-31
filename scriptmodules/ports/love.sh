@@ -53,7 +53,7 @@ function configure_love() {
 
     # get Mari0 10.0 (freeware game data)
     if [[ ! -f "$romdir/love/mari0.love" ]]; then
-        wget "https://github.com/radgeRayden/future-mari0/releases/download/v0.1/mari0.love" -O "$romdir/love/mari0.love"
+        wget "https://github.com/radgeRayden/future-mari0/releases/download/v0.2/mari0.love" -O "$romdir/love/mari0.love"
         chown $user:$user "$romdir/love/mari0.love"
     fi
 
