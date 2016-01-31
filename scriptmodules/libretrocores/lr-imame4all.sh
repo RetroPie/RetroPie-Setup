@@ -34,9 +34,9 @@ function install_lr-imame4all() {
 }
 
 function configure_lr-imame4all() {
-    # remove old install folder  / es config
+    # remove old install folder
     rm -rf "$rootdir/$md_type/mamelibretro"
-    delSystem "$md_id" "mame-libretro"
+
     # remove old core library
     rm -f "$md_inst/libretro.so"
 
