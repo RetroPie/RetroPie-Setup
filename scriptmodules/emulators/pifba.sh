@@ -43,6 +43,7 @@ function install_pifba() {
 }
 
 function configure_pifba() {
+    mkRomDir "arcade"
     mkRomDir "fba"
     mkRomDir "neogeo"
 
@@ -62,6 +63,7 @@ function configure_pifba() {
 
     local def=0
     isPlatform "rpi1" && def=1
+    addSystem 0 "$md_id" "arcade" "$md_inst/fba2x %ROM%"
     addSystem $def "$md_id" "neogeo" "$md_inst/fba2x %ROM%"
     addSystem $def "$md_id" "fba arcade" "$md_inst/fba2x %ROM%"
 }

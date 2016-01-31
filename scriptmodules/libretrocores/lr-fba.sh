@@ -50,12 +50,15 @@ function configure_lr-fba() {
     # remove old install folder
     rm -rf "$rootdir/$md_type/fbalibretro"
 
+    mkRomDir "arcade"
     mkRomDir "fba"
     mkRomDir "neogeo"
+    ensureSystemretroconfig "arcade"
     ensureSystemretroconfig "fba"
     ensureSystemretroconfig "neogeo"
 
     delSystem "$md_inst" "fba-libretro"
+    addSystem 0 "$md_id" "arcade" "$md_inst/fb_alpha_libretro.so"
     addSystem 0 "$md_id" "neogeo" "$md_inst/fb_alpha_libretro.so"
     addSystem 0 "$md_id" "fba arcade" "$md_inst/fb_alpha_libretro.so"
 }

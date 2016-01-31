@@ -44,8 +44,11 @@ function configure_lr-mame2003() {
     # remove old core library
     rm -f "$md_inst/mame078_libretro.so"
 
+    mkRomDir "arcade"
     mkRomDir "mame-libretro"
+    ensureSystemretroconfig "arcade"
     ensureSystemretroconfig "mame-libretro"
 
+    addSystem 0 "$md_id" "arcade" "$md_inst/mame2003_libretro.so"
     addSystem 1 "$md_id" "mame-libretro arcade mame" "$md_inst/mame2003_libretro.so"
 }

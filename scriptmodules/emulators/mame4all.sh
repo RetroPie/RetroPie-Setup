@@ -43,6 +43,7 @@ function install_mame4all() {
 
 function configure_mame4all() {
     local system="mame-mame4all"
+    mkRomDir "arcade"
     mkRomDir "$system"
     mkRomDir "$system/artwork"
     mkRomDir "$system/samples"
@@ -74,5 +75,6 @@ function configure_mame4all() {
 
     chown -R $user:$user "$configdir/$system"
 
+    addSystem 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
     addSystem 1 "$md_id" "$system arcade mame" "$md_inst/mame %BASENAME%"
 }

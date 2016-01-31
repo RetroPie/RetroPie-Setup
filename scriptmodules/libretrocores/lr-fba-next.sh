@@ -45,13 +45,16 @@ function install_lr-fba-next() {
 }
 
 function configure_lr-fba-next() {
+    mkRomDir "arcade"
     mkRomDir "fba"
     mkRomDir "neogeo"
+    ensureSystemretroconfig "arcade"
     ensureSystemretroconfig "fba"
     ensureSystemretroconfig "neogeo"
 
     local def=1
     isPlatform "armv6" && def=0
+    addSystem 0 "$md_id" "arcade" "$md_inst/fba_libretro.so"
     addSystem $def "$md_id" "neogeo" "$md_inst/fba_libretro.so"
     addSystem $def "$md_id" "fba arcade" "$md_inst/fba_libretro.so"
 }
