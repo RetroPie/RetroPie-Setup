@@ -20,13 +20,19 @@ function depends_ps3controller() {
 
 function sources_ps3controller() {
     local branch="$1"
+    [[ "$branch" == "gasia-only" ]] && branch="master"
+    
     gitPullOrClone "$md_build/sixad" https://github.com/RetroPie/sixad.git $branch
 }
 
 function build_ps3controller() {
+    local branch="$1"
+    local params=("DEVICE_SHORT_NAME=1")
+    [[ "$branch" == "gasia-only" ]] && params+=("GASIA_GAMEPAD_HACKS=1")
+    
     cd sixad
     make clean
-    make DEVICE_SHORT_NAME=1
+    make "${params[@]}"
 }
 
 function install_ps3controller() {
@@ -73,8 +79,10 @@ function configure_ps3controller() {
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(
             1 "Install/Pair PS3 controller"
-            2 "Install/Pair PS3 controller (clone support)"
-            3 "Remove PS3 controller configurations"
+            2 "Install/Pair PS3 controller (clone support gasia)"
+            3 "Install/Pair PS3 controller (gasia only)"
+            4 "Install/Pair PS3 controller (clone support shanwan)"
+            5 "Remove PS3 controller configurations"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -86,6 +94,12 @@ function configure_ps3controller() {
                     rp_callModule "$md_id" pair gasia
                     ;;
                 3)
+                    rp_callModule "$md_id" pair gasia-only
+                    ;;
+                4)
+                    rp_callModule "$md_id" pair shanwan
+                    ;;
+                5)
                     rp_callModule "$md_id" remove
                     printMsgs "dialog" "Removed PS3 controller configurations"
                     ;;
