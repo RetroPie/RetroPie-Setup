@@ -39,6 +39,7 @@ function install_gngeopi() {
 }
 
 function configure_gngeopi() {
+    mkRomDir "arcade"
     mkRomDir "neogeo"
 
     # move old config to new location
@@ -54,6 +55,7 @@ _EOF_
     fi
 
     delSystem "$md_id" "neogeo-gngeopi"
+    addSystem 0 "$md_id" "arcade" "$md_inst/bin/gngeo -i $romdir/neogeo -B $md_inst/neogeobios %ROM%"
     addSystem 0 "$md_id" "neogeo" "$md_inst/bin/gngeo -i $romdir/neogeo -B $md_inst/neogeobios %ROM%"
 
     __INFMSGS+=("For emulator $md_id you need to copy the NeoGeo BIOS (neogeo.zip) files to the roms folder '$romdir/neogeo'.")

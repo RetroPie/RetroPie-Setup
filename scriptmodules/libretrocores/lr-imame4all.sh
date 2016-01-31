@@ -40,8 +40,11 @@ function configure_lr-imame4all() {
     # remove old core library
     rm -f "$md_inst/libretro.so"
 
+    mkRomDir "arcade"
     mkRomDir "mame-mame4all"
+    ensureSystemretroconfig "arcade"
     ensureSystemretroconfig "mame-mame4all"
 
+    addSystem 0 "$md_id" "arcade" "$md_inst/mame2000_libretro.so"
     addSystem 0 "$md_id" "mame-mame4all arcade mame" "$md_inst/mame2000_libretro.so"
 }

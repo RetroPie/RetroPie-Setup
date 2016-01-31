@@ -120,6 +120,7 @@ function install_advmame() {
 }
 
 function configure_advmame() {
+    mkRomDir "arcade"
     mkRomDir "mame-advmame"
 
     # delete old install files
@@ -152,6 +153,7 @@ function configure_advmame() {
 
         default=0
         [[ "$version" == "0.94.0" ]] && default=1
+        addSystem 0 "$md_id-$version" "arcade" "$md_inst/$version/bin/advmame %BASENAME%"
         addSystem $default "$md_id-$version" "mame-advmame arcade mame" "$md_inst/$version/bin/advmame %BASENAME%"
     done
 }
