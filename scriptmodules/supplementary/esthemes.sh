@@ -38,16 +38,16 @@ function uninstall_theme_esthemes() {
 function configure_esthemes() {
     printMsgs "dialog" "If you wish to run more than ~10 systems on themes other than Carbon, Pixel, Eudora, Turtle-pi, and Canela variants, you run the risk of getting the white screen of death (you may be able to get more systems by increasing your GPU/CPU split)."
     local themes=(
-        'HerbFargus carbon'
-        'HerbFargus carbon-centered'
-        'HerbFargus carbon-nometa'
-        'HerbFargus pixel'
+        'RetroPie carbon'
+        'RetroPie carbon-centered'
+        'RetroPie carbon-nometa'
+        'RetroPie pixel'
         'AmadhiX eudora'
         'AmadhiX eudora-bigshot'
         'AmadhiX eudora-concise'
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
-        'HerbFargus turtle-pi'
+        'RetroPie turtle-pi'
         'RetroPie simple'
         'RetroPie simple-dark'
         'RetroPie color-pi'
@@ -56,7 +56,7 @@ function configure_esthemes() {
         'RetroPie nbba'
         'robertybob space'
         'robertybob simplebigart'
-        'HerbFargus clean-look'
+        'RetroPie clean-look'
         'HerbFargus tronkyfran'
     )
     while true; do
