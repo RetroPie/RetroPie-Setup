@@ -22,12 +22,7 @@ function depends_dxx-rebirth() {
 }
 
 function sources_dxx-rebirth() {
-    # older revision to fix a problem building on the rpi - https://github.com/dxx-rebirth/dxx-rebirth/issues/176
-    if isPlatform "rpi"; then
-        gitPullOrClone "$md_build" https://github.com/joolswills/dxx-rebirth "unification/rpi_fix"
-    else
-        gitPullOrClone "$md_build" https://github.com/dxx-rebirth/dxx-rebirth "unification/master"
-    fi
+    gitPullOrClone "$md_build" https://github.com/dxx-rebirth/dxx-rebirth "unification/master"
 }
 
 function build_dxx-rebirth() {
