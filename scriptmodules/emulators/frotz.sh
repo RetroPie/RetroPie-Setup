@@ -33,5 +33,5 @@ function configure_frotz() {
 
     chown -R $user:$user "$romdir/zmachine/"*
 
-    addSystem 1 "$md_id" "zmachine" "frotz %ROM%" "Z-machine" ".dat .z5"
+    addSystem 1 "$md_id" "zmachine" "pushd $romdir/zmachine; frotz %ROM%; popd" "Z-machine" ".dat .z5"
 }
