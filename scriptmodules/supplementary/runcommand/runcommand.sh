@@ -653,6 +653,7 @@ if [[ -f "$runcommand_conf" ]]; then
     disable_joystick="$ini_value"
     iniGet "disable_menu"
     disable_menu="$ini_value"
+    [[ "$disable_menu" -eq 1 ]] && disable_joystick=1
 fi
 
 if [[ -f "$tvservice" ]]; then
