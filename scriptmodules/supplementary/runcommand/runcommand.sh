@@ -647,6 +647,8 @@ if [[ -f "$runcommand_conf" ]]; then
     iniConfig "=" '"' "$runcommand_conf"
     iniGet "governor"
     governor="$ini_value"
+    iniGet "use_art"
+    use_art="$ini_value"
 fi
 
 if [[ -f "$tvservice" ]]; then
@@ -672,7 +674,13 @@ if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]
 fi
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
-dialog --infobox "\nLaunching $emulator ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
+image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
+if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
+    sudo fbi -T 1 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
+else
+    use_art=0
+    dialog --infobox "\nLaunching $emulator ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
+fi
 IFS= read -s -t 1 -N 1 key </dev/tty
 if [[ -n "$key" ]]; then
     if [[ $has_tvs -eq 1 ]]; then
@@ -716,6 +724,8 @@ if [[ "$emulator" == frotz || "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
 else
     eval $command </dev/tty &>/tmp/runcommand.log
 fi
+
+[[ "$use_art" -eq 1 ]] && sudo killall fbi
 
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
