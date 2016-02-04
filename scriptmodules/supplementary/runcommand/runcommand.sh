@@ -632,12 +632,28 @@ function get_sys_command() {
     # replace tokens
     command="${command/\%ROM\%/\"$rom\"}"
     command="${command/\%BASENAME\%/\"$rom_bn\"}"
+
+    # if it starts with CON: it is a console application (so we don't redirect stdout later)
+    if [[ "$command" == CON:* ]]; then
+        # remove CON:
+        command="${command:4}"
+        is_console=1
+    else
+        is_console=0
+    fi
 }
 
 if [[ -f "$runcommand_conf" ]]; then
     iniConfig "=" '"' "$runcommand_conf"
     iniGet "governor"
     governor="$ini_value"
+    iniGet "use_art"
+    use_art="$ini_value"
+    iniGet "disable_joystick"
+    disable_joystick="$ini_value"
+    iniGet "disable_menu"
+    disable_menu="$ini_value"
+    [[ "$disable_menu" -eq 1 ]] && disable_joystick=1
 fi
 
 if [[ -f "$tvservice" ]]; then
@@ -656,23 +672,35 @@ dont_launch=0
 
 # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
 __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
-if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
+if [[ "$disable_joystick" -ne 1 && -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
     __joy2key_dev=$(ls -1 /dev/input/js* | head -n1)
     "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 1b5b44 1b5b43 1b5b41 1b5b42 0a 09 &
     __joy2key_pid=$!
 fi
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
-clear
-echo "Press a key (or joypad button 0) to configure launch options for emulator/port ($emulator). Errors will be logged to /tmp/runcommand.log"
-IFS= read -s -t 1 -N 1 key </dev/tty
-if [[ -n "$key" ]]; then
-    if [[ $has_tvs -eq 1 ]]; then
-        get_all_modes
+image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
+if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
+    sudo fbi -T 1 -1 -t 5 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" </dev/null &>/dev/null
+elif [[ "$disable_menu" -ne 1 ]]; then
+    if [[ -n "$rom_bn" ]]; then
+        launch_name="$rom_bn ($emulator)"
+    else
+        launch_name="$emulator"
     fi
-    main_menu
-    dont_launch=$?
-    clear
+    dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
+fi
+
+if [[ "$disable_menu" -ne 1 ]]; then
+    IFS= read -s -t 2 -N 1 key </dev/tty
+    if [[ -n "$key" ]]; then
+        if [[ $has_tvs -eq 1 ]]; then
+            get_all_modes
+        fi
+        main_menu
+        dont_launch=$?
+        clear
+    fi
 fi
 
 if [[ -n $__joy2key_pid ]]; then
@@ -699,8 +727,15 @@ config_dispmanx "$save_emu"
 
 retroarch_append_config
 
-# run command
-eval $command </dev/tty 2>/tmp/runcommand.log
+clear
+
+# launch the command - don't redirect stdout for frotz,  when using console output or when not using _SYS_
+# frotz is included in case its emulators.cfg is out of date and missing CON: - can be removed in the future
+if [[ "$emulator" == frotz || "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
+    eval $command </dev/tty 2>/tmp/runcommand.log
+else
+    eval $command </dev/tty &>/tmp/runcommand.log
+fi
 
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
@@ -712,5 +747,7 @@ fi
 
 # reset/restore framebuffer res (if it was changed)
 [[ -n "$fb_new" ]] && restore_fb
+
+reset
 
 exit 0

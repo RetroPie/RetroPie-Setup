@@ -33,5 +33,6 @@ function configure_frotz() {
 
     chown -R $user:$user "$romdir/zmachine/"*
 
-    addSystem 1 "$md_id" "zmachine" "pushd $romdir/zmachine; frotz %ROM%; popd" "Z-machine" ".dat .z5"
+    # CON: to stop runcommand from redirecting stdout to log
+    addSystem 1 "$md_id" "zmachine" "CON:pushd $romdir/zmachine; frotz %ROM%; popd" "Z-machine" ".dat .z5"
 }
