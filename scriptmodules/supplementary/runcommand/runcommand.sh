@@ -682,7 +682,12 @@ image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-ima
 if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
     sudo fbi -T 1 -1 -t 5 -noverbose -a -e "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" &>/dev/null
 elif [[ "$disable_menu" -ne 1 ]]; then
-    dialog --infobox "\nLaunching $emulator ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
+    if [[ -n "$rom_bn" ]]; then
+        launch_name="$rom_bn ($emulator)"
+    else
+        launch_name="$emulator"
+    fi
+    dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
 fi
 
 if [[ "$disable_menu" -ne 1 ]]; then
