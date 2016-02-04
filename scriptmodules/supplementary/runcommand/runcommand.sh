@@ -643,6 +643,8 @@ function get_sys_command() {
     fi
 }
 
+clear
+
 if [[ -f "$runcommand_conf" ]]; then
     iniConfig "=" '"' "$runcommand_conf"
     iniGet "governor"
@@ -681,7 +683,7 @@ fi
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
 if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
-    sudo fbi -T 1 -1 -t 5 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" </dev/null &>/dev/null
+    fbi -1 -t 2 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" </dev/tty &>/dev/null
 elif [[ "$disable_menu" -ne 1 ]]; then
     if [[ -n "$rom_bn" ]]; then
         launch_name="$rom_bn ($emulator)"
@@ -727,8 +729,6 @@ config_dispmanx "$save_emu"
 [[ -n "$governor" ]] && set_governor "$governor"
 
 retroarch_append_config
-
-clear
 
 # launch the command - don't redirect stdout for frotz,  when using console output or when not using _SYS_
 # frotz is included in case its emulators.cfg is out of date and missing CON: - can be removed in the future
