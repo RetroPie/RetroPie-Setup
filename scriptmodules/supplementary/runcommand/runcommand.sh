@@ -676,7 +676,7 @@ fi
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
 if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
-    sudo fbi -T 1 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" &>/dev/null
+    sudo fbi -T 1 -1 -t 5 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" &>/dev/null
 else
     use_art=0
     dialog --infobox "\nLaunching $emulator ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
@@ -724,8 +724,6 @@ if [[ "$emulator" == frotz || "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
 else
     eval $command </dev/tty &>/tmp/runcommand.log
 fi
-
-[[ "$use_art" -eq 1 ]] && sudo killall fbi
 
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
