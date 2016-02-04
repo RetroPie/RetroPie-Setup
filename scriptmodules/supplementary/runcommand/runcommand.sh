@@ -688,7 +688,8 @@ elif [[ "$disable_menu" -ne 1 ]]; then
     else
         launch_name="$emulator"
     fi
-    dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
+    DIALOGRC="$configdir/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
+
 fi
 
 if [[ "$disable_menu" -ne 1 ]]; then

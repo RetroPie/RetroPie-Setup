@@ -32,6 +32,11 @@ function install_runcommand() {
         iniSet "disable_menu" "0"
         chown $user:$user "$configdir/all/runcommand.cfg"
     fi
+    if [[ ! -f "$configdir/all/runcommand-launch-dialog.cfg" ]]; then
+        dialog --create-rc "$configdir/all/runcommand-launch-dialog.cfg"
+        iniConfig " = " "" "$configdir/all/runcommand-launch-dialog.cfg"
+        chown $user:$user "$configdir/all/runcommand-launch-dialog.cfg"
+    fi
 }
 
 function governor_runcommand() {
