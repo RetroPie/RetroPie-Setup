@@ -663,8 +663,7 @@ if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]
 fi
 
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
-clear
-echo "Press a key (or joypad button 0) to configure launch options for emulator/port ($emulator). Errors will be logged to /tmp/runcommand.log"
+dialog --infobox "\nLaunching $emulator ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
 IFS= read -s -t 1 -N 1 key </dev/tty
 if [[ -n "$key" ]]; then
     if [[ $has_tvs -eq 1 ]]; then
@@ -699,8 +698,10 @@ config_dispmanx "$save_emu"
 
 retroarch_append_config
 
+clear
+
 # run command
-eval $command </dev/tty 2>/tmp/runcommand.log
+eval $command </dev/tty &>/tmp/runcommand.log
 
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
@@ -712,5 +713,7 @@ fi
 
 # reset/restore framebuffer res (if it was changed)
 [[ -n "$fb_new" ]] && restore_fb
+
+clear
 
 exit 0
