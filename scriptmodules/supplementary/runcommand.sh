@@ -11,7 +11,7 @@
 
 rp_module_id="runcommand"
 rp_module_desc="Configure the 'runcommand' - Launch script"
-rp_module_menus="3+"
+rp_module_menus="3+gui"
 rp_module_flags="nobin"
 
 function depends_runcommand() {
@@ -25,9 +25,7 @@ function install_runcommand() {
     chmod a+x "$md_inst/joy2key.py"
 }
 
-function configure_runcommand() {
-    mkUserDir "$configdir/all"
-
+function governor_runcommand() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Configure CPU Governor on command launch" 22 86 16)
     local governors
     local governor
@@ -42,9 +40,43 @@ function configure_runcommand() {
     fi
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choices" ]]; then
-        iniConfig "=" '"' "$configdir/all/runcommand.cfg"
         governor="${governors[$choices]}"
         iniSet "governor" "$governor"
-        chown $user:$user "$configdir/all/runcommand.cfg"
     fi
+}
+
+function gui_runcommand() {
+    mkUserDir "$configdir/all"
+    iniConfig "=" '"' "$configdir/all/runcommand.cfg"
+    chown $user:$user "$configdir/all/runcommand.cfg"
+
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
+    while true; do
+
+        iniGet "use_art"
+        local use_art="$ini_value"
+        [[ "$use_art" != 1 ]] && use_art=0
+
+        local options=(
+            1 "Configure CPU governor to use during emulation"
+        )
+        if [[ "$use_art" -eq 1 ]]; then
+            options+=(2 "Turn off showing ES art during launch (currently on)")
+        else
+            options+=(2 "Turn on showing ES art during launch (currently off)")
+        fi
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [[ -n "$choice" ]]; then
+            case $choice in
+                1)
+                    governor_runcommand
+                    ;;
+                2)
+                    iniSet "use_art" "$((use_art ^ 1))"
+                    ;;
+            esac
+        else
+            break
+        fi
+    done
 }
