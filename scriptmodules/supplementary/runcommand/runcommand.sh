@@ -651,6 +651,8 @@ if [[ -f "$runcommand_conf" ]]; then
     use_art="$ini_value"
     iniGet "disable_joystick"
     disable_joystick="$ini_value"
+    iniGet "disable_menu"
+    disable_menu="$ini_value"
 fi
 
 if [[ -f "$tvservice" ]]; then
@@ -679,18 +681,20 @@ fi
 image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
 if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
     sudo fbi -T 1 -1 -t 5 -noverbose -a -e "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" &>/dev/null
-else
-    use_art=0
+elif [[ "$disable_menu" -ne 1 ]]; then
     dialog --infobox "\nLaunching $emulator ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
 fi
-IFS= read -s -t 2 -N 1 key </dev/tty
-if [[ -n "$key" ]]; then
-    if [[ $has_tvs -eq 1 ]]; then
-        get_all_modes
+
+if [[ "$disable_menu" -ne 1 ]]; then
+    IFS= read -s -t 2 -N 1 key </dev/tty
+    if [[ -n "$key" ]]; then
+        if [[ $has_tvs -eq 1 ]]; then
+            get_all_modes
+        fi
+        main_menu
+        dont_launch=$?
+        clear
     fi
-    main_menu
-    dont_launch=$?
-    clear
 fi
 
 if [[ -n $__joy2key_pid ]]; then

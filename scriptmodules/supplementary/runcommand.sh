@@ -29,6 +29,7 @@ function install_runcommand() {
         iniSet "use_art" "0"
         iniSet "disable_joystick" "0"
         iniSet "governor" ""
+        iniSet "disable_menu" "0"
         chown $user:$user "$configdir/all/runcommand.cfg"
     fi
 }
@@ -82,6 +83,15 @@ function gui_runcommand() {
             options+=(3 "Turn on joystick control in pre launch menu (currently off)")
         fi
 
+        iniGet "disable_menu"
+        local disable_menu="$ini_value"
+        [[ "$disable_menu" != 1 ]] && disable_joystick=0
+        if [[ "$disable_menu" -eq 0 ]]; then
+            options+=(4 "Turn off pre launch menu (currently on)")
+        else
+            options+=(4 "Turn on pre launch menu (currently off)")
+        fi
+
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case $choice in
@@ -93,6 +103,9 @@ function gui_runcommand() {
                     ;;
                 3)
                     iniSet "disable_joystick" "$((disable_joystick ^ 1))"
+                    ;;
+                4)
+                    iniSet "disable_menu" "$((disable_menu ^ 1))"
                     ;;
             esac
         else
