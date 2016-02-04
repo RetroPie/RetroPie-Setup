@@ -632,6 +632,15 @@ function get_sys_command() {
     # replace tokens
     command="${command/\%ROM\%/\"$rom\"}"
     command="${command/\%BASENAME\%/\"$rom_bn\"}"
+
+    # if it starts with CON: it is a console application (so we don't redirect stdout later)
+    if [[ "$command" == CON:* ]]; then
+        # remove CON:
+        command="${command:4}"
+        is_console=1
+    else
+        is_console=0
+    fi
 }
 
 if [[ -f "$runcommand_conf" ]]; then
@@ -700,8 +709,13 @@ retroarch_append_config
 
 clear
 
-# run command
-eval $command </dev/tty &>/tmp/runcommand.log
+# launch the command - don't redirect stdout for frotz,  when using console output or when not using _SYS_
+# frotz is included in case its emulators.cfg is out of date and missing CON: - can be removed in the future
+if [[ "$emulator" == frotz || "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
+    eval $command </dev/tty 2>/tmp/runcommand.log
+else
+    eval $command </dev/tty &>/tmp/runcommand.log
+fi
 
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
