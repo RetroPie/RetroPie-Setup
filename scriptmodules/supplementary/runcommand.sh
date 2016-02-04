@@ -23,6 +23,14 @@ function install_runcommand() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/joy2key.py" "$md_inst/"
     chmod a+x "$md_inst/runcommand.sh"
     chmod a+x "$md_inst/joy2key.py"
+    if [[ ! -f "$configdir/all/runcommand.cfg" ]]; then
+        mkUserDir "$configdir/all"
+        iniConfig "=" '"' "$configdir/all/runcommand.cfg"
+        iniSet "use_art" "0"
+        iniSet "disable_joystick" "0"
+        iniSet "governor" ""
+        chown $user:$user "$configdir/all/runcommand.cfg"
+    fi
 }
 
 function governor_runcommand() {
@@ -47,24 +55,33 @@ function governor_runcommand() {
 }
 
 function gui_runcommand() {
-    mkUserDir "$configdir/all"
     iniConfig "=" '"' "$configdir/all/runcommand.cfg"
 
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     while true; do
 
-        iniGet "use_art"
-        local use_art="$ini_value"
-        [[ "$use_art" != 1 ]] && use_art=0
-
         local options=(
             1 "Configure CPU governor to use during emulation"
         )
+
+        iniGet "use_art"
+        local use_art="$ini_value"
+        [[ "$use_art" != 1 ]] && use_art=0
         if [[ "$use_art" -eq 1 ]]; then
             options+=(2 "Turn off showing ES art during launch (currently on)")
         else
             options+=(2 "Turn on showing ES art during launch (currently off)")
         fi
+
+        iniGet "disable_joystick"
+        local disable_joystick="$ini_value"
+        [[ "$disable_joystick" != 1 ]] && disable_joystick=0
+        if [[ "$disable_joystick" -eq 0 ]]; then
+            options+=(3 "Turn off joystick control in pre launch menu (currently on)")
+        else
+            options+=(3 "Turn on joystick control in pre launch menu (currently off)")
+        fi
+
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case $choice in
@@ -73,7 +90,9 @@ function gui_runcommand() {
                     ;;
                 2)
                     iniSet "use_art" "$((use_art ^ 1))"
-                    chown $user:$user "$configdir/all/runcommand.cfg"
+                    ;;
+                3)
+                    iniSet "disable_joystick" "$((disable_joystick ^ 1))"
                     ;;
             esac
         else
