@@ -45,6 +45,7 @@ function configure_scummvm() {
     mkRomDir "scummvm"
 
     moveConfigDir "$home/.scummvm" "$configdir/scummvm"
+    moveConfigFile "$home/.scummvmrc" "$configdir/scummvm/scummvmrc"
 
     # Create startup script
     rm -f "$romdir/scummvm/+Launch GUI.sh"
@@ -52,11 +53,13 @@ function configure_scummvm() {
 #!/bin/bash
 game="\$1"
 [[ "\$game" =~ ^\+ ]] && game=""
+pushd "$romdir/scummvm" >/dev/null
 $md_inst/bin/scummvm --joystick=0 --extrapath="$md_inst/extra" \$game
 while read line; do
     id=(\$line);
     touch "$romdir/scummvm/\$id.svm"
 done < <($md_inst/bin/scummvm --list-targets | tail -n +3)
+popd >/dev/null
 _EOF_
     chown $user:$user "$romdir/scummvm/+Start ScummVM.sh"
     chmod u+x "$romdir/scummvm/+Start ScummVM.sh"
