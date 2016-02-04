@@ -42,13 +42,13 @@ function governor_runcommand() {
     if [[ -n "$choices" ]]; then
         governor="${governors[$choices]}"
         iniSet "governor" "$governor"
+        chown $user:$user "$configdir/all/runcommand.cfg"
     fi
 }
 
 function gui_runcommand() {
     mkUserDir "$configdir/all"
     iniConfig "=" '"' "$configdir/all/runcommand.cfg"
-    chown $user:$user "$configdir/all/runcommand.cfg"
 
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     while true; do
@@ -73,6 +73,7 @@ function gui_runcommand() {
                     ;;
                 2)
                     iniSet "use_art" "$((use_art ^ 1))"
+                    chown $user:$user "$configdir/all/runcommand.cfg"
                     ;;
             esac
         else
