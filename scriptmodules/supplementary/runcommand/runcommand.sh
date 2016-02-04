@@ -683,7 +683,7 @@ else
     use_art=0
     dialog --infobox "\nLaunching $emulator ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
 fi
-IFS= read -s -t 1 -N 1 key </dev/tty
+IFS= read -s -t 2 -N 1 key </dev/tty
 if [[ -n "$key" ]]; then
     if [[ $has_tvs -eq 1 ]]; then
         get_all_modes
