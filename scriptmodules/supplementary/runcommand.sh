@@ -66,42 +66,41 @@ function gui_runcommand() {
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     while true; do
 
-        local options=(
-            1 "Configure CPU governor to use during emulation"
-        )
+        local options=()
+        iniGet "disable_menu"
+        local disable_menu="$ini_value"
+        [[ "$disable_menu" != 1 ]] && disable_joystick=0
+        if [[ "$disable_menu" -eq 0 ]]; then
+            options+=(1 "Launch menu (Enabled)")
+        else
+            options+=(1 "Launch menu (Disabled)")
+        fi
 
         iniGet "use_art"
         local use_art="$ini_value"
         [[ "$use_art" != 1 ]] && use_art=0
         if [[ "$use_art" -eq 1 ]]; then
-            options+=(2 "Turn off showing ES art during launch (currently on)")
+            options+=(2 "Launch menu art (Enabled)")
         else
-            options+=(2 "Turn on showing ES art during launch (currently off)")
+            options+=(2 "Launch menu art (Disabled)")
         fi
 
         iniGet "disable_joystick"
         local disable_joystick="$ini_value"
         [[ "$disable_joystick" != 1 ]] && disable_joystick=0
         if [[ "$disable_joystick" -eq 0 ]]; then
-            options+=(3 "Turn off joystick control in pre launch menu (currently on)")
+            options+=(3 "Launch menu joystick control (Enabled)")
         else
-            options+=(3 "Turn on joystick control in pre launch menu (currently off)")
+            options+=(3 "Launch menu joystick control (Disabled)")
         fi
 
-        iniGet "disable_menu"
-        local disable_menu="$ini_value"
-        [[ "$disable_menu" != 1 ]] && disable_joystick=0
-        if [[ "$disable_menu" -eq 0 ]]; then
-            options+=(4 "Turn off pre launch menu (currently on)")
-        else
-            options+=(4 "Turn on pre launch menu (currently off)")
-        fi
+        options+=(4 "CPU configuration")
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case $choice in
                 1)
-                    governor_runcommand
+                    iniSet "disable_menu" "$((disable_menu ^ 1))"
                     ;;
                 2)
                     iniSet "use_art" "$((use_art ^ 1))"
@@ -110,7 +109,7 @@ function gui_runcommand() {
                     iniSet "disable_joystick" "$((disable_joystick ^ 1))"
                     ;;
                 4)
-                    iniSet "disable_menu" "$((disable_menu ^ 1))"
+                    governor_runcommand
                     ;;
             esac
         else
