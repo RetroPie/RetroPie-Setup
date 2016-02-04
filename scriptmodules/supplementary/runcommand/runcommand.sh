@@ -681,7 +681,7 @@ fi
 # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
 image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
 if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
-    sudo fbi -T 1 -1 -t 5 -noverbose -a -e "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" &>/dev/null
+    sudo fbi -T 1 -1 -t 5 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" </dev/null &>/dev/null
 elif [[ "$disable_menu" -ne 1 ]]; then
     if [[ -n "$rom_bn" ]]; then
         launch_name="$rom_bn ($emulator)"
