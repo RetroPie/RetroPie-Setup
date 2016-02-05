@@ -11,11 +11,35 @@
 
 rp_module_id="usbromservice"
 rp_module_desc="USB ROM Service"
-rp_module_menus="3+configure"
+rp_module_menus="3+gui"
 rp_module_flags="nobin"
 
 function depends_usbromservice() {
-    getDepends usbmount rsync
+    local depends=(rsync)
+    if [[ "$__raspbian_ver" -gt 7 ]]; then
+        if ! hasPackage usbmount 0.0.24; then
+            depends+=(debhelper devscripts)
+            getDepends "${depends[@]}"
+            rp_callModule usbromservice sources
+            rp_callModule usbromservice build
+            rp_callModule usbromservice install
+        fi
+    else
+        depends+=(usbmount)
+        getDepends "${depends[@]}"
+    fi
+}
+
+function sources_usbromservice() {
+    gitPullOrClone "$md_build" https://github.com/RetroPie/usbmount.git systemd
+}
+
+function build_usbromservice() {
+    dpkg-buildpackage
+}
+
+function install_usbromservice() {
+    dpkg -i ../*_all.deb
 }
 
 function enable_usbromservice() {
@@ -33,7 +57,7 @@ function remove_usbromservice() {
     apt-get remove -y usbmount
 }
 
-function configure_usbromservice() {
+function gui_usbromservice() {
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose from an option below." 22 86 16)
         options=(
