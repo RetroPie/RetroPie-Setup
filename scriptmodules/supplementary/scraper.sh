@@ -88,7 +88,10 @@ function scrape_chosen_scraper() {
 }
 
 function configure_scraper() {
-    printMsgs "dialog" "Before running this scraper, make sure all EmulationStation processes are killed  with \"sudo killall emulationstation\" so that the gamelist.xml is written properly, otherwise the scraper changes may not be saved."
+    if pgrep "emulationstatio" >/dev/null; then
+        printMsgs "dialog" "This scraper must not be run while Emulation Station is running or the scraped data will be overwritten. \n\nPlease quit from Emulation Station, and run RetroPie-Setup from the terminal"
+        return
+    fi
     if [[ ! -d "$md_inst" ]]; then
         rp_callModule "$md_id" install
     fi
