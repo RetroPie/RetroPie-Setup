@@ -707,10 +707,11 @@ function check_menu() {
             get_all_modes
         fi
         main_menu
-        dont_launch=$?
+        local dont_launch=$?
         stop_joy2key
         clear
     fi
+    return $dont_launch
 }
 
 # turn off cursor and clear screen
@@ -727,8 +728,12 @@ load_mode_defaults
 
 show_launch
 
-[[ "$disable_menu" -ne 1 ]] && check_menu
-[[ "$dont_launch" -eq 1 ]] && exit 0
+if [[ "$disable_menu" -ne 1 ]]; then
+    if ! check_menu; then
+        tput cnorm
+        exit 0
+    fi
+fi
 
 if [[ $has_tvs -eq 1 ]]; then
     switch_mode "$mode_new_id"
@@ -767,6 +772,6 @@ fi
 # reset/restore framebuffer res (if it was changed)
 [[ -n "$fb_new" ]] && restore_fb
 
-reset
+tput cnorm
 
 exit 0
