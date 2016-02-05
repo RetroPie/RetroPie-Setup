@@ -51,6 +51,12 @@ function enable_usbromservice() {
     if [[ "$ini_value" != *ntfs* ]]; then
         iniSet "FILESYSTEMS" "$ini_value ntfs"
     fi
+    iniGet "MOUNTOPTIONS"
+    local uid=$(id -u $user)
+    local gid=$(id -g $user)
+    if [[ ! "$ini_value" =~ uid|gid ]]; then
+        iniSet "MOUNTOPTIONS" "$ini_value,uid=$uid,gid=$gid"
+    fi
 }
 
 function disable_usbromservice() {
