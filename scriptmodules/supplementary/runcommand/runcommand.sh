@@ -761,6 +761,8 @@ else
     eval $command </dev/tty &>/tmp/runcommand.log
 fi
 
+clear
+
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
 
