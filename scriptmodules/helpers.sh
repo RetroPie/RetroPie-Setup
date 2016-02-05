@@ -85,13 +85,16 @@ function editFile() {
 function hasPackage() {
     local pkg="$1"
     local req_ver="$2"
-    ver=$(dpkg-query -W --showformat='${Version}' $1 2>/dev/null)
+    local status=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
     if [[ $? -eq 0 ]]; then
-        # if version is blank $pkg isnt installed
-        [[ -z "$ver" ]] && return 1
-        # if we didn't request a version number, be happy with any
-        [[ -z "$req_ver" ]] && return 0
-        dpkg --compare-versions "$ver" ge "$req_ver" && return 0
+        local ver="${status##* }"
+        local status="${status% *}"
+        # if status doesn't contain "ok installed" package is not installed
+        if [[ "$status" == *"ok installed" ]]; then
+            # if we didn't request a version number, be happy with any
+            [[ -z "$req_ver" ]] && return 0
+            dpkg --compare-versions "$ver" ge "$req_ver" && return 0
+        fi
     fi
     return 1
 }
