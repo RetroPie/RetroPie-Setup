@@ -93,6 +93,7 @@ if [[ "\$(uname --machine)" != *86* ]]; then
     fi
 fi
 
+clear
 pushd "$md_inst" >/dev/null
 ./emulationstation.sh "\$@"
 popd >/dev/null
