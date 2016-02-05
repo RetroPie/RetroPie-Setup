@@ -76,18 +76,18 @@ function get_config() {
 }
 
 function start_joy2key() {
+    [[ "$disable_joystick" -eq 1 ]] && return
     # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
     __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
     if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
-        __joy2key_dev=$(ls -1 /dev/input/js* | head -n1)
         "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 1b5b44 1b5b43 1b5b41 1b5b42 0a 09 &
         __joy2key_pid=$!
     fi
 }
 
 function stop_joy2key() {
-    if [[ -n $__joy2key_pid ]]; then
-        kill -INT $__joy2key_pid
+    if [[ -n "$__joy2key_pid" ]]; then
+        kill -INT "$__joy2key_pid"
     fi
 }
 
@@ -700,7 +700,7 @@ function show_launch() {
 }
 
 function check_menu() {
-    [[ "$disable_joystick" -ne 1 ]] && start_joy2key
+    start_joy2key
     IFS= read -s -t 2 -N 1 key </dev/tty
     if [[ -n "$key" ]]; then
         if [[ $has_tvs -eq 1 ]]; then
@@ -708,9 +708,9 @@ function check_menu() {
         fi
         main_menu
         local dont_launch=$?
-        stop_joy2key
         clear
     fi
+    stop_joy2key
     return $dont_launch
 }
 
