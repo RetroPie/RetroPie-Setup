@@ -15,7 +15,7 @@ rp_module_menus="3+gui"
 rp_module_flags="nobin"
 
 function depends_usbromservice() {
-    local depends=(rsync)
+    local depends=(rsync ntfs-3g)
     if [[ "$__raspbian_ver" -gt 7 ]]; then
         if ! hasPackage usbmount 0.0.24; then
             depends+=(debhelper devscripts)
@@ -46,6 +46,11 @@ function enable_usbromservice() {
     cp -v "$scriptdir/scriptmodules/$md_type/$md_id/01_retropie_copyroms" /etc/usbmount/mount.d/
     sed -i -e "s/USERTOBECHOSEN/$user/g" /etc/usbmount/mount.d/01_retropie_copyroms
     chmod +x /etc/usbmount/mount.d/01_retropie_copyroms
+    iniConfig "=" '"' /etc/usbmount/usbmount.conf
+    iniGet "FILESYSTEMS"
+    if [[ "$ini_value" != *ntfs* ]]; then
+        iniSet "FILESYSTEMS" "$ini_value ntfs"
+    fi
 }
 
 function disable_usbromservice() {
