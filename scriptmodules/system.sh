@@ -39,7 +39,7 @@ function setup_env() {
         esac
     fi
 
-    if fn_exists "platform_${__platform}"; then
+    if fnExists "platform_${__platform}"; then
         platform_${__platform}
     else
         fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"

@@ -32,6 +32,11 @@ function fatalError() {
     exit 1
 }
 
+function fnExists() {
+    declare -f "$1" > /dev/null
+    return $?
+}
+
 function ask() {
     echo -e -n "$@" '[y/n] ' ; read ans
     case "$ans" in

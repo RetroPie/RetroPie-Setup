@@ -16,11 +16,6 @@ __mod_desc=()
 __mod_menus=()
 __mod_flags=()
 
-function fn_exists() {
-    declare -f "$1" > /dev/null
-    return $?
-}
-
 # params: $1=index, $2=id, $3=type, $4=description, $5=menus,  $6=flags
 function rp_registerFunction() {
     __mod_idx+=($1)
@@ -129,7 +124,7 @@ function rp_callModule() {
     fi
 
     # return if function doesn't exist
-    fn_exists $function || return 0
+    fnExists $function || return 0
 
     # these can be returned by a module
     local md_ret_require=""
@@ -226,7 +221,7 @@ function rp_installBin() {
     local dest="$rootdir/$md_type"
     mkdir -p "$dest"
     wget -O- -q "$__binary_url/$archive" | tar -xvz -C "$dest"
-    if fn_exists $function; then
+    if fnExists $function; then
         $function
     fi
 }
