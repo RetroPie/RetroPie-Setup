@@ -122,7 +122,7 @@ function getDepends() {
             packages+=("$required")
             continue
         fi
-        if [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_ver_sdl2); then
+        if ! isPlatform "x11" && [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_ver_sdl2); then
             packages+=("$required")
             continue
         fi
