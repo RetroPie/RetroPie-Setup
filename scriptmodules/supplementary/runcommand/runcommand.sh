@@ -646,7 +646,9 @@ function get_sys_command() {
     iniGet "default"
     if [[ -z "$ini_value" ]]; then
         echo "No default emulator found for system $system"
+        start_joy2key
         choose_app
+        stop_joy2key
         get_sys_command "$1" "$2"
         return
     fi
