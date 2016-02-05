@@ -12,7 +12,7 @@
 rp_module_id="bluetooth"
 rp_module_desc="Configure Bluetooth Devices"
 rp_module_menus="3+"
-rp_module_flags="nobin !x86"
+rp_module_flags="nobin"
 
 function depends_bluetooth() {
     getDepends bluetooth python-dbus python-gobject

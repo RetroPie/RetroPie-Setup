@@ -32,6 +32,8 @@ function configure_retropiemenu()
         'showip.rp'
         'wifi.rp'
         'runcommand.rp'
+        'bluetooth.rp'
+        'esthemes.rp'
     )
 
     if isPlatform "rpi"; then
@@ -101,6 +103,14 @@ function configure_retropiemenu()
     <game>
         <path>$rpdir/runcommand.rp</path>
         <name>Configure 'runcommand' launch script</name>
+    </game>
+    <game>
+        <path>$rpdir/bluetooth.rp</path>
+        <name>Register / Pair Bluetooth devices</name>
+    </game>
+    <game>
+        <path>$rpdir/esthemes.rp</path>
+        <name>Install themes for Emulation Station</name>
     </game>
 </gameList>
 _EOF_
