@@ -54,6 +54,44 @@ mode_map[4-CEA-16:9]="CEA-4"
 
 source "$rootdir/lib/inifuncs.sh"
 
+function get_config() {
+    if [[ -f "$runcommand_conf" ]]; then
+        iniConfig "=" '"' "$runcommand_conf"
+        iniGet "governor"
+        governor="$ini_value"
+        iniGet "use_art"
+        use_art="$ini_value"
+        iniGet "disable_joystick"
+        disable_joystick="$ini_value"
+        iniGet "disable_menu"
+        disable_menu="$ini_value"
+        [[ "$disable_menu" -eq 1 ]] && disable_joystick=1
+    fi
+
+    if [[ -f "$tvservice" ]]; then
+        has_tvs=1
+    else
+        has_tvs=0
+    fi
+}
+
+function start_joy2key() {
+    # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
+    __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
+    if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
+        __joy2key_dev=$(ls -1 /dev/input/js* | head -n1)
+        "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 1b5b44 1b5b43 1b5b41 1b5b42 0a 09 &
+        __joy2key_pid=$!
+    fi
+}
+
+function stop_joy2key() {
+    if [[ -n $__joy2key_pid ]]; then
+        kill -INT $__joy2key_pid
+    fi
+}
+
+
 function get_params() {
     mode_req="$1"
     [[ -z "$mode_req" ]] && exit 1
@@ -643,58 +681,24 @@ function get_sys_command() {
     fi
 }
 
-clear
-
-if [[ -f "$runcommand_conf" ]]; then
-    iniConfig "=" '"' "$runcommand_conf"
-    iniGet "governor"
-    governor="$ini_value"
-    iniGet "use_art"
-    use_art="$ini_value"
-    iniGet "disable_joystick"
-    disable_joystick="$ini_value"
-    iniGet "disable_menu"
-    disable_menu="$ini_value"
-    [[ "$disable_menu" -eq 1 ]] && disable_joystick=1
-fi
-
-if [[ -f "$tvservice" ]]; then
-    has_tvs=1
-else
-    has_tvs=0
-fi
-
-get_params "$@"
-
-get_save_vars
-
-load_mode_defaults
-
-dont_launch=0
-
-# if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
-__joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
-if [[ "$disable_joystick" -ne 1 && -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
-    __joy2key_dev=$(ls -1 /dev/input/js* | head -n1)
-    "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 1b5b44 1b5b43 1b5b41 1b5b42 0a 09 &
-    __joy2key_pid=$!
-fi
-
-# check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
-image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
-if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
-    fbi -1 -t 2 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" </dev/tty &>/dev/null
-elif [[ "$disable_menu" -ne 1 ]]; then
-    if [[ -n "$rom_bn" ]]; then
-        launch_name="$rom_bn ($emulator)"
-    else
-        launch_name="$emulator"
+function show_launch() {
+    # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
+    local image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
+    if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
+        fbi -1 -t 2 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" </dev/tty &>/dev/null
+    elif [[ "$disable_menu" -ne 1 ]]; then
+        local launch_name
+        if [[ -n "$rom_bn" ]]; then
+            launch_name="$rom_bn ($emulator)"
+        else
+            launch_name="$emulator"
+        fi
+        DIALOGRC="$configdir/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
     fi
-    DIALOGRC="$configdir/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
+}
 
-fi
-
-if [[ "$disable_menu" -ne 1 ]]; then
+function check_menu() {
+    [[ "$disable_joystick" -ne 1 ]] && start_joy2key
     IFS= read -s -t 2 -N 1 key </dev/tty
     if [[ -n "$key" ]]; then
         if [[ $has_tvs -eq 1 ]]; then
@@ -702,17 +706,25 @@ if [[ "$disable_menu" -ne 1 ]]; then
         fi
         main_menu
         dont_launch=$?
+        stop_joy2key
         clear
     fi
-fi
+}
 
-if [[ -n $__joy2key_pid ]]; then
-    kill -INT $__joy2key_pid
-fi
+clear
 
-if [[ $dont_launch -eq 1 ]]; then
-    exit 0
-fi
+get_config
+
+get_params "$@"
+
+get_save_vars
+
+load_mode_defaults
+
+show_launch
+
+[[ "$disable_menu" -ne 1 ]] && check_menu
+[[ "$dont_launch" -eq 1 ]] && exit 0
 
 if [[ $has_tvs -eq 1 ]]; then
     switch_mode "$mode_new_id"
