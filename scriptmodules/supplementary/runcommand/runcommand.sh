@@ -713,6 +713,8 @@ function check_menu() {
     fi
 }
 
+# turn off cursor and clear screen
+tput civis
 clear
 
 get_config
@@ -747,6 +749,8 @@ retroarch_append_config
 # launch the command - don't redirect stdout for frotz,  when using console output or when not using _SYS_
 # frotz is included in case its emulators.cfg is out of date and missing CON: - can be removed in the future
 if [[ "$emulator" == frotz || "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
+    # turn cursor on
+    tput cnorm
     eval $command </dev/tty 2>/tmp/runcommand.log
 else
     eval $command </dev/tty &>/tmp/runcommand.log
