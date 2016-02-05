@@ -31,6 +31,7 @@ function configure_retropiemenu()
         'filemanager.rp'
         'showip.rp'
         'wifi.rp'
+        'runcommand.rp'
     )
 
     if isPlatform "rpi"; then
@@ -97,6 +98,10 @@ function configure_retropiemenu()
         <path>$rpdir/wifi.rp</path>
         <name>Configure Wifi</name>
     </game>
+    <game>
+        <path>$rpdir/runcommand.rp</path>
+        <name>Configure 'runcommand' launch script</name>
+    </game>
 </gameList>
 _EOF_
     chown -RL $user:$user "$home/.emulationstation"
@@ -107,6 +112,7 @@ function launch_retropiemenu() {
     clear
     local command="$1"
     local basename="${command##*/}"
+    local no_ext=${basename%.rp}
     case $basename in
         retroarch.rp)
             cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
@@ -127,8 +133,12 @@ function launch_retropiemenu() {
             printMsgs "dialog" "Your IP is: $ip\n\nOutput of 'ip addr show':\n\n$(ip addr show)"
             ;;
         *.rp)
-            local no_ext=${basename%.rp}
-            rp_callModule $no_ext
+            rp_callModule $no_ext depends
+            if fnExists gui_$no_ext; then
+                rp_callModule $no_ext gui
+            else
+                rp_callModule $no_ext configure
+            fi
             ;;
         *.sh)
             cd "$home/RetroPie/retropiemenu"
