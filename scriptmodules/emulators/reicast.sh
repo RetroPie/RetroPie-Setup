@@ -79,7 +79,7 @@ function configure_reicast() {
     ln -sf fileThatDoesNotExist "$home/RetroPie/roms/dreamcast/systemManager.cdi"
 
     # add system
-    addSystem 1 "$md_id" "dreamcast" "$md_inst/bin/reicast.sh OSS %ROM%"
+    addSystem 1 "$md_id" "dreamcast" "CON:$md_inst/bin/reicast.sh OSS %ROM%"
 
     addAutoConf reicast_input 1
 
