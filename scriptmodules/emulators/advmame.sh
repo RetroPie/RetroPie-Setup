@@ -12,7 +12,7 @@
 rp_module_id="advmame"
 rp_module_desc="AdvanceMAME"
 rp_module_menus="2+"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!mali"
 
 function depends_advmame() {
     getDepends libsdl1.2-dev
@@ -134,25 +134,38 @@ function configure_advmame() {
         su "$user" -c "$md_inst/$version/bin/advmame --default"
 
         iniConfig " " "" "$configdir/mame-advmame/advmame-$version.rc"
+
         iniSet "misc_quiet" "yes"
-        iniSet "device_video" "fb"
-        iniSet "device_video_cursor" "off"
-        iniSet "device_keyboard" "raw"
-        iniSet "device_sound" "alsa"
-        iniSet "display_vsync" "no"
+        iniSet "dir_rom" "$romdir/mame-advmame"
+        iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
+        iniSet "dir_sample" "$romdir/mame-advmame/samples"
+
+        if isPlatform "rpi"; then
+            iniSet "device_video" "fb"
+            iniSet "device_video_cursor" "off"
+            iniSet "device_keyboard" "raw"
+            iniSet "device_sound" "alsa"
+            iniSet "display_vsync" "no"
+            iniSet "sound_latency" "0.2"
+            iniSet "sound_normalize" "no"
+        else
+            iniSet "device_video_output" "overlay"
+            iniSet "display_aspectx" 16
+            iniSet "display_aspecty" 9
+        fi
+
         if isPlatform "armv6"; then
             iniSet "sound_samplerate" "22050"
         else
             iniSet "sound_samplerate" "44100"
         fi
-        iniSet "sound_latency" "0.2"
-        iniSet "sound_normalize" "no"
-        iniSet "dir_rom" "$romdir/mame-advmame"
-        iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
-        iniSet "dir_sample" "$romdir/mame-advmame/samples"
 
         default=0
-        [[ "$version" == "0.94.0" ]] && default=1
+        if isPlatform "rpi"; then
+            [[ "$version" == "0.94.0" ]] && default=1
+        else
+            [[ "$version" == "1.4" ]] && default=1
+        fi
         addSystem 0 "$md_id-$version" "arcade" "$md_inst/$version/bin/advmame %BASENAME%"
         addSystem $default "$md_id-$version" "mame-advmame arcade mame" "$md_inst/$version/bin/advmame %BASENAME%"
     done
