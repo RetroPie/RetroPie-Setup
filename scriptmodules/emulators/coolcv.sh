@@ -12,6 +12,7 @@
 rp_module_id="coolcv"
 rp_module_desc="CoolCV Colecovision Emulator"
 rp_module_menus="4+"
+rp_module_flags="!x86 !x11 !mali"
 
 function install_coolcv() {    
     wget -O- -q $__archive_url/coolcv.tar.gz | tar -xvz -C "$md_inst"
