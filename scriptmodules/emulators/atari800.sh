@@ -12,14 +12,17 @@
 rp_module_id="atari800"
 rp_module_desc="Atari 8-bit/800/5200 emulator"
 rp_module_menus="2+"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!mali"
 
 function depends_atari800() {
-    getDepends libsdl1.2-dev autoconf libraspberrypi-dev zlib1g-dev libpng12-dev
+    local depends=(libsdl1.2-dev autoconf zlib1g-dev libpng12-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_atari800() {
     wget -q -O- "$__archive_url/atari800-3.1.0.tar.gz" | tar -xvz --strip-components=1
+    if isPlatform "rpi"; then
 patch -p1 <<\_EOF_
 --- a/src/configure.ac	2014-04-12 13:58:16.000000000 +0000
 +++ b/src/configure.ac	2015-02-14 22:39:42.000000000 +0000
@@ -42,6 +45,7 @@ patch -p1 <<\_EOF_
          A8_NEED_LIB(EGL)
          A8_NEED_LIB(SDL)
 _EOF_
+    fi
 }
 
 function build_atari800() {
