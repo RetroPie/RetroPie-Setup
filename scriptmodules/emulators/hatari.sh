@@ -12,7 +12,7 @@
 rp_module_id="hatari"
 rp_module_desc="Atari emulator Hatari"
 rp_module_menus="2+"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!!mali"
 
 function depends_hatari() {
     getDepends libsdl2-dev zlib1g-dev libpng12-dev cmake libreadline-dev portaudio19-dev
