@@ -12,17 +12,18 @@
 rp_module_id="fuse"
 rp_module_desc="ZX Spectrum emulator Fuse"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !mali"
 
 function depends_fuse() {
-    getDepends libsdl1.2-dev libpng12-dev zlib1g-dev libbz2-dev libaudiofile-dev bison flex 
+    getDepends libsdl1.2-dev libpng12-dev zlib1g-dev libbz2-dev libaudiofile-dev bison flex
 }
 
 function sources_fuse() {
     wget -O- -q $__archive_url/fuse-1.1.1.tar.gz | tar -xvz --strip-components=1  
     mkdir libspectrum
     wget -O- -q $__archive_url/libspectrum-1.1.1.tar.gz | tar -xvz --strip-components=1 -C libspectrum
-    patch -p1 <<\_EOF_
+    if ! isPlatform "x11"; then
+        patch -p1 <<\_EOF_
 --- a/ui/sdl/sdldisplay.c	2015-02-18 22:39:05.631516602 +0000
 +++ b/ui/sdl/sdldisplay.c	2015-02-18 22:39:08.407506296 +0000
 @@ -411,7 +411,7 @@
@@ -33,6 +34,7 @@ function sources_fuse() {
 +    SDL_ShowCursor( SDL_DISABLE );
    }
 _EOF_
+    fi
 }
 
 function build_fuse() {
