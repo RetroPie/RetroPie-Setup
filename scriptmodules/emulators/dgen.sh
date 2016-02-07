@@ -12,7 +12,7 @@
 rp_module_id="dgen"
 rp_module_desc="Megadrive/Genesis emulat. DGEN"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !mali"
 
 function depends_dgen() {
     getDepends libsdl1.2-dev libarchive-dev
@@ -23,7 +23,9 @@ function sources_dgen() {
 }
 
 function build_dgen() {
-    ./configure --disable-opengl --disable-hqx --prefix="$md_inst"
+    local params=()
+    isPlatform "rpi" && params+=(--disable-opengl --disable-hqx)
+    ./configure  --prefix="$md_inst"
     make clean
     make
     md_ret_require="$md_build/dgen"
@@ -55,17 +57,22 @@ function configure_dgen()
 
     iniConfig " = " "" "$configdir/megadrive/dgenrc"
 
-    iniSet "int_width" "320"
-    iniSet "int_height" "240"
-    iniSet "bool_doublebuffer" "no"
-    iniSet "bool_screen_thread" "yes"
-    iniSet "scaling_startup" "none"
+    if isPlatform "rpi"; then
+        iniSet "int_width" "320"
+        iniSet "int_height" "240"
+        iniSet "bool_doublebuffer" "no"
+        iniSet "bool_screen_thread" "yes"
+        iniSet "scaling_startup" "none"
 
-    # we don't have opengl (or build dgen with it)
-    iniSet "bool_opengl" "no"
+        # we don't have opengl (or build dgen with it)
+        iniSet "bool_opengl" "no"
 
-    # lower sample rate
-    iniSet "int_soundrate" "22050"
+        # lower sample rate
+        iniSet "int_soundrate" "22050"
+
+        iniSet "emu_z80_startup" "drz80"
+        iniSet "emu_m68k_startup" "cyclone"
+    fi
 
     iniSet "joy_pad1_a" "joystick0-button0"
     iniSet "joy_pad1_b" "joystick0-button1"
@@ -84,9 +91,6 @@ function configure_dgen()
     iniSet "joy_pad2_z" "joystick1-button5"
     iniSet "joy_pad2_mode" "joystick1-button6"
     iniSet "joy_pad2_start" "joystick1-button7"
-
-    iniSet "emu_z80_startup" "drz80"
-    iniSet "emu_m68k_startup" "cyclone"
 
     setDispmanx "$md_id" 1
 
