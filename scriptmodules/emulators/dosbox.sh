@@ -12,7 +12,7 @@
 rp_module_id="dosbox"
 rp_module_desc="DOS emulator"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !mali"
 
 function depends_dosbox() {
     getDepends libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng12-dev automake autoconf zlib1g-dev
@@ -23,15 +23,19 @@ function sources_dosbox() {
 }
 
 function build_dosbox() {
+    local params=()
+    ! isPlatform "x11" && params+=(--disable-opengl)
     ./autogen.sh
-    ./configure --prefix="$md_inst" --disable-opengl
-    # enable dynamic recompilation for armv4
-    sed -i 's|/\* #undef C_DYNREC \*/|#define C_DYNREC 1|' config.h
-    if isPlatform "rpi2"; then
-        sed -i 's/C_TARGETCPU.*/C_TARGETCPU ARMV7LE/g' config.h
-        sed -i 's|/\* #undef C_UNALIGNED_MEMORY \*/|#define C_UNALIGNED_MEMORY 1|' config.h
-    else
-        sed -i 's/C_TARGETCPU.*/C_TARGETCPU ARMV4LE/g' config.h
+    ./configure --prefix="$md_inst" "${params[@]}"
+    if isPlatform "arm"; then
+        # enable dynamic recompilation for armv4
+        sed -i 's|/\* #undef C_DYNREC \*/|#define C_DYNREC 1|' config.h
+        if isPlatform "armv6"; then
+            sed -i 's/C_TARGETCPU.*/C_TARGETCPU ARMV4LE/g' config.h
+        else
+            sed -i 's/C_TARGETCPU.*/C_TARGETCPU ARMV7LE/g' config.h
+            sed -i 's|/\* #undef C_UNALIGNED_MEMORY \*/|#define C_UNALIGNED_MEMORY 1|' config.h
+        fi
     fi
     make clean
     make
