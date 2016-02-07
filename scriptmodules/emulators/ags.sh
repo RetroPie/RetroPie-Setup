@@ -12,7 +12,7 @@
 rp_module_id="ags"
 rp_module_desc="Adventure Game Studio - Adventure game engine"
 rp_module_menus="4+"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!mali"
 
 function depends_ags() {
     local depends=(pkg-config  libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev)
@@ -39,6 +39,10 @@ function install_ags() {
 
 function configure_ags() {
     mkRomDir "ags"
-    
-    addSystem 1 "$md_id" "ags" "xinit $md_inst/bin/ags --fullscreen %ROM%" "Adventure Game Studio" ".exe"
+
+    if isPlatform "x11"; then
+        addSystem 1 "$md_id" "ags" "$md_inst/bin/ags --fullscreen %ROM%" "Adventure Game Studio" ".exe"
+    else
+       addSystem 1 "$md_id" "ags" "xinit $md_inst/bin/ags --fullscreen %ROM%" "Adventure Game Studio" ".exe"
+    fi
 }
