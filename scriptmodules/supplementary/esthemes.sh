@@ -48,6 +48,7 @@ function configure_esthemes() {
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
         'RetroPie turtle-pi'
+        'Omnija simpler-turtlepi'
         'RetroPie simple'
         'RetroPie simple-dark'
         'RetroPie color-pi'
