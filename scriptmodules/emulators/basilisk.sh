@@ -12,10 +12,12 @@
 rp_module_id="basilisk"
 rp_module_desc="Macintosh emulator"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !mali"
 
 function depends_basilisk() {
-    getDepends libsdl1.2-dev autoconf automake
+    local depends=(libsdl1.2-dev autoconf automake)
+    isPlatform "x11" && depends+=(libgtk2.0-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_basilisk() {
@@ -24,7 +26,10 @@ function sources_basilisk() {
 
 function build_basilisk() {
     cd BasiliskII/src/Unix
-    ./autogen.sh --prefix="$md_inst" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler --without-x --without-mon --without-esd --without-gtk
+    local params=(--enable-sdl-video --enable-sdl-audio --disable-vosf --without-mon --without-esd)
+    ! isPlatform "x86" && params+=(--disable-jit-compiler)
+    ! isPlatform "x11" && params+=(--without-x --without-gtk)
+    ./autogen.sh --prefix="$md_inst" "${params[@]}"
     make clean
     make
     md_ret_require="$md_build/BasiliskII/src/Unix/BasiliskII"
