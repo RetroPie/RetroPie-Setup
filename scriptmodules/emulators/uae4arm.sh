@@ -23,7 +23,7 @@ function sources_uae4arm() {
 }
 
 function build_uae4arm() {
-    if isPlatform "rpi"; then
+    if isPlatform "rpi1"; then
         make PLATFORM=rpi1 CPU_FLAGS=""
     else
         make PLATFORM=rpi2 CPU_FLAGS="-mfpu=neon"
