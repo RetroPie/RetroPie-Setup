@@ -28,9 +28,13 @@ function configure_rpix86() {
     rm -f "$romdir/pc/Start rpix86.sh" "$romdir/pc/+Start.txt"
     cat > "$romdir/pc/+Start rpix86.sh" << _EOF_
 #!/bin/bash
-params="\$1"
+params=("\$@")
 pushd "$md_inst"
-./rpix86 -a0 -f2 "\$params"
+if [[ "\${params[0]}" == *.sh ]]; then
+    bash "\${params[@]}"
+else
+    ./rpix86 -a0 -f2 "\${params[@]}"
+fi
 popd
 _EOF_
     chmod +x "$romdir/pc/+Start rpix86.sh"
