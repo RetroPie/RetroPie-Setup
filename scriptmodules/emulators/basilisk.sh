@@ -46,5 +46,5 @@ function configure_basilisk() {
     
     mkUserDir "$configdir/macintosh"
 
-    addSystem 1 "$md_id" "macintosh" "$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img --config $configdir/macintosh/basiliskii.cfg" "Apple Macintosh" ".txt"
+    addSystem 1 "$md_id" "macintosh" "$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img -- extfs $romdir/macintosh --config $configdir/macintosh/basiliskii.cfg" "Apple Macintosh" ".txt"
 }
