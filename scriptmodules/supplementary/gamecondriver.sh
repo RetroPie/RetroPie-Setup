@@ -31,7 +31,7 @@ function install_gamecondriver() {
         22 76 >/dev/tty
     case $? in
         0)
-            echo "Starting installation."
+            printMsgs "console" "Starting installation."
             ;;
         *)
             return 0
@@ -45,7 +45,7 @@ function install_gamecondriver() {
 
     # install gamecon
     if [[ "$(dpkg-query -W -f='${Version}' gamecon-gpio-rpi-dkms)" == ${GAMECON_VER} ]]; then
-        echo "gamecon is the newest version"
+        printMsgs "console" "gamecon is the newest version"
     else
         wget ${DOWNLOAD_LOC}/gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
         dpkg -i gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb
@@ -54,7 +54,7 @@ function install_gamecondriver() {
 
     # install db9 joystick driver
     if [[ "$(dpkg-query -W -f='${Version}' db9-gpio-rpi-dkms)" == ${DB9_VER} ]]; then
-        echo "db9 is the newest version"
+        printMsgs "console" "db9 is the newest version"
     else
         wget ${DOWNLOAD_LOC}/db9-gpio-rpi-dkms_${DB9_VER}_all.deb
         dpkg -i db9-gpio-rpi-dkms_${DB9_VER}_all.deb
@@ -105,7 +105,7 @@ function configure_gamecondriver() {
         22 76 >/dev/tty
     case $? in
         0)
-            echo "Configuring gamecon for 2 SNES controllers."
+            printMsgs "console" "Configuring gamecon for 2 SNES controllers."
             ;;
         *)
             return 0
@@ -205,11 +205,17 @@ __________\n\
 
     case $? in
         0)
-            if ! grep "gamecon_gpio_rpi" /etc/modules; then
+            if ! grep -q "gamecon_gpio_rpi" /etc/modules; then
+                addLineToFile "gamecon_gpio_rpi" "/etc/modules"
+            else
+                # replace old config with option in /etc/modules
+                sed -i "s/gamecon_gpio_rpi.*/gamecon_gpio_rpi/" /etc/modules
+            fi
+            if [[ ! -f /etc/modprobe.d/gamecon.conf ]]; then
                 if [[ $GPIOREV == 1 ]]; then
-                    addLineToFile "gamecon_gpio_rpi map=0,1,1,0" "/etc/modules"
+                    echo "options gamecon_gpio_rpi map=0,1,1,0" >/etc/modprobe.d/gamecon.conf
                 else
-                    addLineToFile "gamecon_gpio_rpi map=0,0,1,0,0,1" "/etc/modules"
+                    echo "options gamecon_gpio_rpi map=0,0,1,0,0,1" >/etc/modprobe.d/gamecon.conf
                 fi
             fi
             printMsgs "dialog" "Gamecon GPIO driver is now permanently enabled with SNES configuration."
