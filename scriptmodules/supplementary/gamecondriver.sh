@@ -14,6 +14,10 @@ rp_module_desc="Gamecon & db9 drivers"
 rp_module_menus="3+"
 rp_module_flags="nobin"
 
+function depends_gamecondriver() {
+    getDepends dkms gcc-4.7
+}
+
 function install_gamecondriver() {
     GAMECON_VER=1.0
     DB9_VER=1.0
@@ -33,9 +37,6 @@ function install_gamecondriver() {
             return 0
             ;;
     esac
-
-    # install dkms
-    getDepends dkms
 
     # install kernel headers (takes a a while)
     wget ${DOWNLOAD_LOC}/linux-headers-rpi/linux-headers-$(uname -r)_$(uname -r)-2_armhf.deb
