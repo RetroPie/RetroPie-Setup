@@ -136,9 +136,9 @@ function configure_advmame() {
         iniConfig " " "" "$configdir/mame-advmame/advmame-$version.rc"
 
         iniSet "misc_quiet" "yes"
-        iniSet "dir_rom" "$romdir/mame-advmame"
-        iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
-        iniSet "dir_sample" "$romdir/mame-advmame/samples"
+        iniSet "dir_rom" "$romdir/mame-advmame:$romdir/arcade"
+        iniSet "dir_artwork" "$romdir/mame-advmame/artwork:$romdir/arcade/artwork"
+        iniSet "dir_sample" "$romdir/mame-advmame/samples:$romdir/arcade/sample"
 
         if isPlatform "rpi"; then
             iniSet "device_video" "fb"

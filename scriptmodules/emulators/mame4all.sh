@@ -67,9 +67,9 @@ function configure_mame4all() {
     iniSet "snap" "$configdir/$system/snap"
     iniSet "sta" "$configdir/$system/sta"
 
-    iniSet "artwork" "$romdir/$system/artwork"
-    iniSet "samplepath" "$romdir/$system/samples"
-    iniSet "rompath" "$romdir/$system"
+    iniSet "artwork" "$romdir/$system/artwork;$romdir/arcade/artwork"
+    iniSet "samplepath" "$romdir/$system/samples;$romdir/arcade/samples"
+    iniSet "rompath" "$romdir/$system;$romdir/arcade"
 
     iniSet "samplerate" "44100"
 
