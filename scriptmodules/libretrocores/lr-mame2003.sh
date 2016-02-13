@@ -47,5 +47,9 @@ function configure_lr-mame2003() {
     mkRomDir "mame-libretro"
     ensureSystemretroconfig "mame-libretro"
 
+    # Set core options
+    setRetroArchCoreOption "mame2003-skip_disclaimer" "enabled"
+    setRetroArchCoreOption "mame2003-dcs-speedhack" "enabled"
+
     addSystem 1 "$md_id" "mame-libretro arcade mame" "$md_inst/mame2003_libretro.so"
 }
