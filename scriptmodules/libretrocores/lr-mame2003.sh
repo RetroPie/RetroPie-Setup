@@ -44,12 +44,18 @@ function configure_lr-mame2003() {
     # remove old core library
     rm -f "$md_inst/mame078_libretro.so"
 
+    mkRomDir "arcade"
     mkRomDir "mame-libretro"
+    ensureSystemretroconfig "arcade"
     ensureSystemretroconfig "mame-libretro"
 
+<<<<<<< HEAD
     # Set core options
     setRetroArchCoreOption "mame2003-skip_disclaimer" "enabled"
     setRetroArchCoreOption "mame2003-dcs-speedhack" "enabled"
 
+=======
+    addSystem 0 "$md_id" "arcade" "$md_inst/mame2003_libretro.so"
+>>>>>>> RetroPie/master
     addSystem 1 "$md_id" "mame-libretro arcade mame" "$md_inst/mame2003_libretro.so"
 }
