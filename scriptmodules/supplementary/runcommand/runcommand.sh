@@ -706,7 +706,9 @@ function check_menu() {
         if [[ $has_tvs -eq 1 ]]; then
             get_all_modes
         fi
+        tput cnorm
         main_menu
+        tput civis
         local dont_launch=$?
         clear
     fi
