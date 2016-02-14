@@ -71,13 +71,13 @@ function inputconfiguration() {
             local input=($line)
             mapping["${input[0]}"]=${input[@]:1}
         fi
-    done < <(xmlstarlet sel  -t -m "/inputList/inputConfig/input"  -v "concat(@name,' ',@type,' ',@id,' ',@value)" -n "$es_conf")
+    done < <(xmlstarlet sel --text -t -m "/inputList/inputConfig/input"  -v "concat(@name,' ',@type,' ',@id,' ',@value)" -n "$es_conf")
 
     local inputscriptdir=$(dirname "$0")
     local inputscriptdir=$(cd "$inputscriptdir" && pwd)
 
-    local device_type=$(xmlstarlet sel -t -v "/inputList/inputConfig/@type" "$es_conf")
-    local device_name=$(xmlstarlet sel -t -v "/inputList/inputConfig/@deviceName" "$es_conf")
+    local device_type=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@type" "$es_conf")
+    local device_name=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceName" "$es_conf")
 
     echo "Input type is '$device_type'."
 
