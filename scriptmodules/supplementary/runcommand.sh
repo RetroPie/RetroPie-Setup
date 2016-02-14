@@ -34,7 +34,6 @@ function install_runcommand() {
     fi
     if [[ ! -f "$configdir/all/runcommand-launch-dialog.cfg" ]]; then
         dialog --create-rc "$configdir/all/runcommand-launch-dialog.cfg"
-        iniConfig " = " "" "$configdir/all/runcommand-launch-dialog.cfg"
         chown $user:$user "$configdir/all/runcommand-launch-dialog.cfg"
     fi
 }
