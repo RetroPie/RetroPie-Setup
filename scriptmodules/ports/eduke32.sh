@@ -14,7 +14,7 @@ rp_module_desc="Duke3D Port"
 rp_module_menus="2+"
 
 function depends_eduke32() {
-    local depends=(flac libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats)
+    local depends=(subversion flac libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats)
     if [[ "$__raspbian_ver" -lt 8 ]]; then
         depends+=(libsdl1.2-dev libsdl-mixer1.2-dev)
     else
