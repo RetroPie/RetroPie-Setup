@@ -303,10 +303,12 @@ function reboot_setup()
 # retropie-setup main menu
 function configure_setup() {
     while true; do
+        local ver=$(git describe --abbrev=0 --tags)
+        local commit=$(git log -1 --pretty=format:"%cr (%h)")
         __ERRMSGS=()
         __INFMSGS=()
 
-        cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --title "Choose an option" --menu "Script Version: $ver\nLast Commit: $commit" 22 76 16)
         options=()
         if [[ $__has_binaries -eq 1 ]]; then
             options+=(
