@@ -61,6 +61,7 @@ function get_config() {
         governor="$ini_value"
         iniGet "use_art"
         use_art="$ini_value"
+        [[ -z "$(which fbi)" ]] && use_art=0
         iniGet "disable_joystick"
         disable_joystick="$ini_value"
         iniGet "disable_menu"
@@ -701,7 +702,7 @@ function show_launch() {
     done
 
     # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
-    if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -n "$image" ]]; then
+    if [[ "$use_art" -eq 1 && -n "$image" ]]; then
         fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
     elif [[ "$disable_menu" -ne 1 ]]; then
         local launch_name
