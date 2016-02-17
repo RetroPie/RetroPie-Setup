@@ -12,26 +12,41 @@
 rp_module_id="eduke32"
 rp_module_desc="Duke3D Port"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !mali"
 
 function depends_eduke32() {
-    getDepends libsdl1.2-dev libsdl-mixer1.2-dev libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats
+    local depends=(flac libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats)
+    if [[ "$__raspbian_ver" -lt 8 ]]; then
+        depends+=(libsdl1.2-dev libsdl-mixer1.2-dev)
+    else
+        depends+=(libsdl2-dev libsdl2-mixer-dev)
+    fi
+    isPlatform "x86" && depends+=(nasm)
+    isPlatform "x11" && depends+=(libgl1-mesa-dev libglu1-mesa-dev libgtk2.0-dev)
+    getDepends "${depends[@]}"
     # remove old eduke packages
     hasPackage eduke32 && apt-get remove -y eduke32 duke3d-shareware
 }
 
 function sources_eduke32() {
-    wget -O- -q $__archive_url/eduke32.tar.gz | tar -xvz --strip-components=1
+    svn checkout http://svn.eduke32.com/eduke32/polymer/eduke32/ "$md_build"
 }
 
 function build_eduke32() {
+    local params=(LTO=0)
+    ! isPlatform "x86" && params+=(NOASM=1)
+    ! isPlatform "x11" && params+=(USE_OPENGL=0)
+    if [[ "$__raspbian_ver" -lt 8 ]]; then
+        params+=(SDL_TARGET=1)
+    else
+        params+=(SDL_TARGET=2)
+    fi
     make veryclean
-    make NOASM=1 LTO=0 USE_OPENGL=0 SDL_TARGET=1
+    make "${params[@]}"
     md_ret_require="$md_build/eduke32"
 }
 
 function install_eduke32() {
-    wget $__archive_url/3dduke13.zip -O 3dduke13.zip
+    wget "$__archive_url/3dduke13.zip" -O 3dduke13.zip
     unzip -L -o 3dduke13.zip dn3dsw13.shr
     mkdir -p "$md_inst/shareware"
     unzip -L -o dn3dsw13.shr -d "$md_inst/shareware" duke3d.grp duke.rts
