@@ -61,6 +61,7 @@ function list_systems_scraper() {
 function scrape_scraper() {
     local system="$1"
     local use_thumbs="$2"
+    local max_width="$3"
     [[ -z "$system" ]] && return
     local gamelist="$home/.emulationstation/gamelists/$system/gamelist.xml"
     local img_path="$home/.emulationstation/downloaded_images/$system"
@@ -74,6 +75,9 @@ function scrape_scraper() {
     if [[ "$use_thumbs" -eq 1 ]]; then
         params+=(-thumb_only)
     fi
+    if [[ -n "$max_width" ]]; then
+        params+=(-max_width "$max_width")
+    fi
     [[ "$system" =~ ^mame-|arcade|fba|neogeo ]] && params+=(-mame -mame_img t,m,s)
     sudo -u $user "$md_inst/scraper" ${params[@]}
 }
@@ -82,12 +86,11 @@ function scrape_all_scraper() {
     local system
     while read system; do
         system=${system/$romdir\//}
-        scrape_scraper "$system" "$1"
+        scrape_scraper "$system" "$@"
     done < <(list_systems_scraper)
 }
 
 function scrape_chosen_scraper() {
-    local use_thumbs="$1"
     local options=()
     local system
     local i=1
@@ -111,7 +114,7 @@ function scrape_chosen_scraper() {
     for choice in ${choices[@]}; do
         local index=$((choice*3-2))
         choice=${options[index]}
-        scrape_scraper "$choice" "$use_thumbs"
+        scrape_scraper "$choice" "$@"
     done
 }
 
@@ -126,6 +129,7 @@ function gui_scraper() {
     fi
 
     local use_thumbs=1
+    local max_width=400
 
     while true; do
         local ver=$(get_ver_scraper)
@@ -142,22 +146,27 @@ function gui_scraper() {
             options+=(3 "Thumbnails only (Disabled)")
         fi
 
-        options+=(4 "Update scraper to the latest version")
+        options+=(4 "Max image width ($max_width)")
+        options+=(U "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty) 
         if [[ -n "$choice" ]]; then 
             case $choice in 
                 1) 
-                    rp_callModule "$md_id" scrape_all $use_thumbs
+                    rp_callModule "$md_id" scrape_all $use_thumbs $max_width
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 2) 
-                    rp_callModule "$md_id" scrape_chosen $use_thumbs
+                    rp_callModule "$md_id" scrape_chosen $use_thumbs $max_width
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 3)
                     use_thumbs="$((use_thumbs ^ 1))"
                     ;;
-                3)
+                4)
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
+                    max_width=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    ;;
+                U)
                     rp_callModule "$md_id"
                     ;;
             esac 
