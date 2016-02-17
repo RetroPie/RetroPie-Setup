@@ -11,7 +11,7 @@
 
 rp_module_id="scraper"
 rp_module_desc="Scraper for EmulationStation by Steven Selph" 
-rp_module_menus="4+gui"
+rp_module_menus="3+gui"
 rp_module_flags="nobin"
 
 function depends_scraper() {
