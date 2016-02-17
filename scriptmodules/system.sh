@@ -193,7 +193,7 @@ function platform_odroid-c1() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 mali"
-    __qemu_cpu=cortex-a5
+    __qemu_cpu=cortex-a9
     __has_binaries=0
 }
 
