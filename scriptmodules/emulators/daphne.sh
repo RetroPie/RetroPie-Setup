@@ -44,8 +44,10 @@ function configure_daphne() {
     mkRomDir "daphne"
     mkRomDir "daphne/roms"
 
-    if [[ ! -f "$configdir/dapinput.ini" ]]; then
-        cp -v "$scriptdir/scriptmodules/$md_type/$md_id/dapinput.ini" "$configdir/daphne"
+    mkUserDir "$configdir/daphne"
+
+    if [[ ! -f "$configdir/daphne/dapinput.ini" ]]; then
+        cp -v "$scriptdir/scriptmodules/$md_type/$md_id/dapinput.ini" "$configdir/daphne/dapinput.ini"
     fi
     ln -snf "$romdir/daphne/roms" "$md_inst/roms"
     ln -sf "$configdir/$md_id/dapinput.ini" "$md_inst/dapinput.ini" 
@@ -65,6 +67,7 @@ _EOF_
     chmod +x "$md_inst/daphne.sh"
 
     chown -R $user:$user "$md_inst"
+    chown -R $user:$user "$configdir/daphne/dapinput.ini"
 
     addSystem 1 "$md_id" "daphne" "$md_inst/daphne.sh %ROM%" "Daphne" ".daphne"
 }
