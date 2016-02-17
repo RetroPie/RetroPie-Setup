@@ -15,18 +15,19 @@ rp_module_menus="2+"
 rp_module_flags="dispmanx !mali"
 
 function depends_eduke32() {
-    getDepends libsdl1.2-dev libsdl-mixer1.2-dev libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats
+    getDepends build-essential nasm libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl2-dev libsdl2-mixer-dev flac libflac-dev libvorbis-dev libpng12-dev libvpx-dev libgtk2.0-dev freepats
     # remove old eduke packages
     hasPackage eduke32 && apt-get remove -y eduke32 duke3d-shareware
 }
 
 function sources_eduke32() {
-    wget -O- -q $__archive_url/eduke32.tar.gz | tar -xvz --strip-components=1
+    svn checkout http://svn.eduke32.com/eduke32/polymer/ $md_build
 }
 
 function build_eduke32() {
+    cd $md_build/eduke32
     make veryclean
-    make NOASM=1 LTO=0 USE_OPENGL=0 SDL_TARGET=1
+    make NOASM=1 LTO=0 USE_OPENGL=0 SDL_TARGET=2
     md_ret_require="$md_build/eduke32"
 }
 
@@ -36,8 +37,8 @@ function install_eduke32() {
     mkdir -p "$md_inst/shareware"
     unzip -L -o dn3dsw13.shr -d "$md_inst/shareware" duke3d.grp duke.rts
     md_ret_files=(
-        'eduke32'
-        'mapster32'
+        '/eduke32/eduke32'
+        '/eduke32/mapster32'
     )
 }
 
