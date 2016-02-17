@@ -60,6 +60,7 @@ function list_systems_scraper() {
 
 function scrape_scraper() {
     local system="$1"
+    local use_thumbs="$2"
     [[ -z "$system" ]] && return
     local gamelist="$home/.emulationstation/gamelists/$system/gamelist.xml"
     local img_path="$home/.emulationstation/downloaded_images/$system"
@@ -69,19 +70,24 @@ function scrape_scraper() {
     params+=(-output_file "$gamelist")
     params+=(-rom_dir "$romdir/$system")
     params+=(-workers "4")
+    params+=(-skip_check)
+    if [[ "$use_thumbs" -eq 1 ]]; then
+        params+=(-thumb_only)
+    fi
     [[ "$system" =~ ^mame-|arcade|fba|neogeo ]] && params+=(-mame -mame_img t,m,s)
-    sudo -u $user "$md_inst/scraper" ${params[@]} -thumb_only -skip_check
+    sudo -u $user "$md_inst/scraper" ${params[@]}
 }
 
 function scrape_all_scraper() {
     local system
     while read system; do
         system=${system/$romdir\//}
-        scrape_scraper "$system"
+        scrape_scraper "$system" "$1"
     done < <(list_systems_scraper)
 }
 
 function scrape_chosen_scraper() {
+    local use_thumbs="$1"
     local options=()
     local system
     local i=1
@@ -105,7 +111,7 @@ function scrape_chosen_scraper() {
     for choice in ${choices[@]}; do
         local index=$((choice*3-2))
         choice=${options[index]}
-        scrape_scraper "$choice"
+        scrape_scraper "$choice" "$use_thumbs"
     done
 }
 
@@ -119,6 +125,8 @@ function gui_scraper() {
         rp_callModule "$md_id"
     fi
 
+    local use_thumbs=1
+
     while true; do
         local ver=$(get_ver_scraper)
         [[ -z "$ver" ]] && ver="v(Git)"
@@ -126,18 +134,28 @@ function gui_scraper() {
         local options=( 
             1 "Scrape all systems" 
             2 "Scrape chosen systems"
-            3 "Update scraper to the latest version"
-        ) 
+        )
+
+        if [[ "$use_thumbs" -eq 1 ]]; then
+            options+=(3 "Thumbnails only (Enabled)")
+        else
+            options+=(3 "Thumbnails only (Disabled)")
+        fi
+
+        options+=(4 "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty) 
         if [[ -n "$choice" ]]; then 
             case $choice in 
                 1) 
-                    rp_callModule "$md_id" scrape_all
+                    rp_callModule "$md_id" scrape_all $use_thumbs
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 2) 
-                    rp_callModule "$md_id" scrape_chosen
+                    rp_callModule "$md_id" scrape_chosen $use_thumbs
                     printMsgs "dialog" "ROMS have been scraped."
+                    ;;
+                3)
+                    use_thumbs="$((use_thumbs ^ 1))"
                     ;;
                 3)
                     rp_callModule "$md_id"
