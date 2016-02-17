@@ -11,17 +11,39 @@
 
 rp_module_id="scraper"
 rp_module_desc="Scraper for EmulationStation by Steven Selph" 
-rp_module_menus="4+configure"
+rp_module_menus="4+gui"
 rp_module_flags="nobin"
 
+function depends_scraper() {
+    if [[ "$__raspbian_ver" -gt "7" ]]; then
+        getDepends golang
+    fi
+}
+
+function sources_scraper() {
+    if [[ "$__raspbian_ver" -gt "7" ]]; then
+        GOPATH="$md_build" go get github.com/sselph/scraper
+    fi
+}
+
+function build_scraper() {
+    if [[ "$__raspbian_ver" -gt "7" ]]; then
+        GOPATH="$md_build" go build github.com/sselph/scraper
+    fi
+}
+
 function install_scraper() {
-    local ver=$(latest_ver_scraper)  
-    mkdir -p "$md_build"
-    local name="scraper_rpi.zip"
-    isPlatform "rpi2" && name="scraper_rpi2.zip"
-    wget -O "$md_build/scraper.zip" "https://github.com/sselph/scraper/releases/download/$ver/$name"
-    unzip -o "$md_build/scraper.zip" -d "$md_inst"
-    rm -f "$md_build/scraper.zip"
+    if [[ "$__raspbian_ver" -gt "7" ]]; then
+        md_ret_files=(scraper)
+    elif isPlatform "arm"; then
+        local ver="$(latest_ver_scraper)"
+        mkdir -p "$md_build"
+        local name="scraper_rpi.zip"
+        isPlatform "armv7" && name="scraper_rpi2.zip"
+        wget -O "$md_build/scraper.zip" "https://github.com/sselph/scraper/releases/download/$ver/$name"
+        unzip -o "$md_build/scraper.zip" -d "$md_inst"
+        rm -f "$md_build/scraper.zip"
+    fi
 }
 
 function get_ver_scraper() {
@@ -87,17 +109,19 @@ function scrape_chosen_scraper() {
     done
 }
 
-function configure_scraper() {
+function gui_scraper() {
     if pgrep "emulationstatio" >/dev/null; then
         printMsgs "dialog" "This scraper must not be run while Emulation Station is running or the scraped data will be overwritten. \n\nPlease quit from Emulation Station, and run RetroPie-Setup from the terminal"
         return
     fi
+
     if [[ ! -d "$md_inst" ]]; then
-        rp_callModule "$md_id" install
+        rp_callModule "$md_id"
     fi
 
     while true; do
         local ver=$(get_ver_scraper)
+        [[ -z "$ver" ]] && ver="v(Git)"
         local cmd=(dialog --backtitle "$__backtitle" --menu "Scraper $ver by Steven Selph" 22 76 16) 
         local options=( 
             1 "Scrape all systems" 
@@ -116,7 +140,7 @@ function configure_scraper() {
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 3)
-                    rp_callModule "$md_id" install
+                    rp_callModule "$md_id"
                     ;;
             esac 
         else 
