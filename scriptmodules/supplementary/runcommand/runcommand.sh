@@ -684,10 +684,25 @@ function get_sys_command() {
 }
 
 function show_launch() {
+    local image_paths=(
+        "$HOME/RetroPie/roms/$system/images"
+        "$HOME/.emulationstation/downloaded_images/$system"
+    )
+
+    local path
+    local image
+    for path in "${image_paths[@]}"; do
+        if [[ -f "$path/${rom_bn}-image.jpg" ]]; then
+            image="$path/${rom_bn}-image.jpg"
+            break
+        else
+            image=""
+        fi
+    done
+
     # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
-    local image="$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg"
-    if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -f "$image" ]]; then
-        fbi -1 -t 2 -noverbose -a "$configdir/all/emulationstation/downloaded_images/${system}/${rom_bn}-image.jpg" </dev/tty &>/dev/null
+    if [[ "$use_art" -eq 1 && -n "$(which fbi)" && -n "$image" ]]; then
+        fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
     elif [[ "$disable_menu" -ne 1 ]]; then
         local launch_name
         if [[ -n "$rom_bn" ]]; then
