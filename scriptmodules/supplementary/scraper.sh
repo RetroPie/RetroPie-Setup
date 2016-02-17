@@ -33,7 +33,7 @@ function latest_ver_scraper() {
 }
 
 function list_systems_scraper() {
-    find "$romdir" -mindepth 1 -maxdepth 1 -not -empty -type d
+    find -L "$romdir" -mindepth 1 -maxdepth 1 -not -empty -type d
 }
 
 function scrape_scraper() {
