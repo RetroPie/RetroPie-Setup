@@ -33,7 +33,7 @@ function depends_retroarch() {
 function sources_retroarch() {
     gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git
     gitPullOrClone "$md_build/overlays" https://github.com/libretro/common-overlays.git
-    isPlatform "rpi" && gitPullOrClone "$md_build/shader" https://github.com/RetroPie/common-shaders.git
+    isPlatform "rpi" && gitPullOrClone "$md_build/shader" https://github.com/RetroPie/common-shaders.git rpi
     isPlatform "x11" && gitPullOrClone "$md_build/shader" https://github.com/libretro/common-shaders.git
     # disable the search dialog
     sed -i 's|menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|//menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|g' menu/menu_entry.c
