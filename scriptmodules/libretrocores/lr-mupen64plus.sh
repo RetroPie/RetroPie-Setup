@@ -15,7 +15,11 @@ rp_module_menus="2+"
 rp_module_flags=""
 
 function sources_lr-mupen64plus() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
+    if isPlatform "rpi"; then
+        gitPullOrClone "$md_build" https://github.com/gizmo98/mupen64plus-libretro.git rpi2_fix
+    else
+        gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
+    fi
 }
 
 function build_lr-mupen64plus() {
