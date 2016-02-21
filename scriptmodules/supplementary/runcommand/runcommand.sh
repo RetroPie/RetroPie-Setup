@@ -210,6 +210,12 @@ function load_mode_defaults() {
         fi
     fi
 
+    # get default fb_res
+    fb_orig=""
+    fb_orig=$(fbset)
+    fb_orig=${fb_orig##*mode \"}
+    fb_orig=${fb_orig%%\"*}
+
     mode_def_emu=""
     mode_def_rom=""
     fb_def_emu=""
@@ -557,7 +563,7 @@ function restore_mode() {
 
 function restore_fb() {
     sleep 1
-    switch_fb_res "${mode_orig[2]}x${mode_orig[3]}"
+    switch_fb_res "$fb_orig"
 }
 
 function config_dispmanx() {
