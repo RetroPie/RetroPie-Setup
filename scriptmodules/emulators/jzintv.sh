@@ -12,7 +12,7 @@
 rp_module_id="jzintv"
 rp_module_desc="Intellivision emulator"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !mali"
 
 function depends_jzintv() {
     getDepends libsdl1.2-dev
@@ -46,7 +46,9 @@ function install_jzintv() {
 function configure_jzintv() {
     mkRomDir "intellivision"
 
-    setDispmanx "$md_id" 1
+    if ! isPlatform "x11"; then
+        setDispmanx "$md_id" 1
+    fi
 
     addSystem 1 "$md_id" "intellivision" "$md_inst/bin/jzintv -p $biosdir -q %ROM%"
 
