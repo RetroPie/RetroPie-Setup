@@ -15,7 +15,7 @@ rp_module_menus="4+"
 rp_module_flags=""
 
 function depends_love() {
-    local depends=(mercurial build-essential autotools-dev automake libtool pkg-config libdevil-dev libfreetype6-dev libluajit-5.1-dev libphysfs-dev libsdl2-dev libopenal-dev libogg-dev libtheora-dev libvorbis-dev libflac-dev libflac++-dev libmodplug-dev libmpg123-dev libmng-dev)
+    local depends=(mercurial autotools-dev automake libtool pkg-config libdevil-dev libfreetype6-dev libluajit-5.1-dev libphysfs-dev libsdl2-dev libopenal-dev libogg-dev libtheora-dev libvorbis-dev libflac-dev libflac++-dev libmodplug-dev libmpg123-dev libmng-dev)
 
     if [[ "$__raspbian_ver" -lt "8" ]]; then
         depends+=(libjpeg8-dev )
