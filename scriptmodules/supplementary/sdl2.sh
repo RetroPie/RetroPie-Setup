@@ -151,3 +151,8 @@ function install_bin_sdl2() {
     install_sdl2
     rm ./*.deb
 }
+
+function remove_sdl2() {
+    apt-get remove -y --force-yes libsdl2-dev
+    apt-get autoremove -y
+}
