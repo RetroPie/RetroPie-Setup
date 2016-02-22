@@ -12,7 +12,7 @@
 rp_module_id="scummvm"
 rp_module_desc="ScummVM"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !mali"
 
 function depends_scummvm() {
     getDepends libsdl1.2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
@@ -54,7 +54,7 @@ function configure_scummvm() {
 game="\$1"
 [[ "\$game" =~ ^\+ ]] && game=""
 pushd "$romdir/scummvm" >/dev/null
-$md_inst/bin/scummvm --joystick=0 --extrapath="$md_inst/extra" \$game
+$md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" \$game
 while read line; do
     id=(\$line);
     touch "$romdir/scummvm/\$id.svm"
