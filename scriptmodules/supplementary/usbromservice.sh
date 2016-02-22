@@ -20,9 +20,11 @@ function depends_usbromservice() {
         if ! hasPackage usbmount 0.0.24; then
             depends+=(debhelper devscripts)
             getDepends "${depends[@]}"
-            rp_callModule usbromservice sources
-            rp_callModule usbromservice build
-            rp_callModule usbromservice install
+            if [[ "$__depends_mode" == "install" ]]; then
+                rp_callModule usbromservice sources
+                rp_callModule usbromservice build
+                rp_callModule usbromservice install
+            fi
         fi
     else
         depends+=(usbmount)
