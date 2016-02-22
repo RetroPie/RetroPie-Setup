@@ -353,6 +353,7 @@ function configure_setup() {
         )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choices" ]]; then
+            clear
             case $choices in
                 1) binaries_setup ;;
                 2)
