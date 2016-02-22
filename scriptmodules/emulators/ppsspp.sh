@@ -12,54 +12,57 @@
 rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_menus="2+"
-rp_module_flags="!armv6 !x86 !mali"
+rp_module_flags="!armv6 !mali"
 
 function depends_ppsspp() {
-    local depends=(cmake libraspberrypi-dev libsdl2-dev)
+    local depends=(cmake libsdl2-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
     [[ "$__default_gcc_version" == "4.7" ]] && depends+=(gcc-4.8 g++-4.8)
     getDepends "${depends[@]}"
 }
 
 function sources_ppsspp() {
     gitPullOrClone "$md_build" https://github.com/hrydgard/ppsspp.git
-    git submodule update --init
+    git submodule update --init --recursive
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
 }
 
 function build_ffmpeg_ppsspp() {
-    local MODULES
-    local VIDEO_DECODERS
-    local AUDIO_DECODERS
-    local VIDEO_ENCODERS
-    local AUDIO_ENCODERS
-    local DEMUXERS
-    local MUXERS
-    local PARSERS
-    local OPTS
-    if [[ "$__default_gcc_version" == "4.7" ]]; then
-        OPTS="--cc=gcc-4.8"
+    if isPlatform "arm"; then
+        local MODULES
+        local VIDEO_DECODERS
+        local AUDIO_DECODERS
+        local VIDEO_ENCODERS
+        local AUDIO_ENCODERS
+        local DEMUXERS
+        local MUXERS
+        local PARSERS
+        local OPTS
+        if [[ "$__default_gcc_version" == "4.7" ]]; then
+            OPTS="--cc=gcc-4.8"
+        fi
+        # get the ffmpeg configure variables from the ppsspp ffmpeg distributed script
+        source linux_arm.sh
+        ./configure \
+            ${OPTS} \
+            --cpu="cortex-a7" \
+            --prefix="./linux/arm" \
+            --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
+            --disable-shared \
+            --enable-static \
+            --enable-zlib \
+            --enable-pic \
+            --disable-everything \
+            ${MODULES} \
+            ${VIDEO_DECODERS} \
+            ${AUDIO_DECODERS} \
+            ${VIDEO_ENCODERS} \
+            ${AUDIO_ENCODERS} \
+            ${DEMUXERS} \
+            ${MUXERS} \
+            ${PARSERS}
     fi
-    # get the ffmpeg configure variables from the ppsspp ffmpeg distributed script
-    source linux_arm.sh
-    ./configure \
-        ${OPTS} \
-        --cpu="cortex-a7" \
-        --prefix="./linux/arm" \
-        --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
-        --disable-shared \
-        --enable-static \
-        --enable-zlib \
-        --enable-pic \
-        --disable-everything \
-        ${MODULES} \
-        ${VIDEO_DECODERS} \
-        ${AUDIO_DECODERS} \
-        ${VIDEO_ENCODERS} \
-        ${AUDIO_ENCODERS} \
-        ${DEMUXERS} \
-        ${MUXERS} \
-        ${PARSERS}
     make clean
     make install
 }
