@@ -210,6 +210,8 @@ function rp_callModule() {
         sources|build|install|configure)
             [[ $pushed -ne 1 ]] && popd
             ;;
+        remove)
+            rm -rvf "$md_inst"
     esac
 
     if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
