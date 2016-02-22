@@ -15,7 +15,7 @@ rp_module_menus="2+"
 rp_module_flags="!x86 !mali"
 
 function depends_xroar() {
-    depends=(libsdl1.2-dev libraspberrypi-dev)
+    local depends=(libsdl1.2-dev libraspberrypi-dev)
     # ilclient is part of libraspberrypi-doc, but not included on all distros
     if hasPackage rbp-bootloader-osmc; then
         depends+=(rbp-userland-src-osmc)
