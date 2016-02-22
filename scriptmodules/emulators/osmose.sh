@@ -12,7 +12,7 @@
 rp_module_id="osmose"
 rp_module_desc="Gamegear emulator Osmose"
 rp_module_menus="2+"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!mali"
 
 function depends_osmose() {
     getDepends libsdl1.2-dev
