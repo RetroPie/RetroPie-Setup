@@ -36,7 +36,7 @@ function enable_splashscreen() {
     insserv asplashscreen
 }
 
-function disable_splashscreen() {
+function remove_splashscreen() {
     insserv -r asplashscreen
 }
 
@@ -96,7 +96,7 @@ function configure_splashscreen() {
                     printMsgs "dialog" "Enabled custom splashscreen on boot."
                     ;;
                 4)
-                    disable_splashscreen
+                    remove_splashscreen
                     printMsgs "dialog" "Disabled custom splashscreen on boot."
                     ;;
                 5)

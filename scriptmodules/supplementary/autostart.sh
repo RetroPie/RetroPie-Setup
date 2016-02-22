@@ -11,7 +11,7 @@
 
 rp_module_id="autostart"
 rp_module_desc="Auto-start EmulationStation"
-rp_module_menus="3+"
+rp_module_menus="3+gui"
 rp_module_flags="nobin"
 
 function enable_autostart() {
@@ -52,7 +52,11 @@ function disable_autostart() {
     fi
 }
 
-function configure_autostart() {
+function remove_autostart() {
+    disable_autostart
+}
+
+function gui_autostart() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 76 16)
     options=(
         1 "Original boot behaviour"

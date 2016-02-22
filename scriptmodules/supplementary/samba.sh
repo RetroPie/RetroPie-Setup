@@ -61,10 +61,6 @@ function remove_shares_samba() {
     done
 }
 
-function remove_samba() {
-    apt-get remove -y samba
-}
-
 function configure_samba() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
@@ -73,7 +69,7 @@ function configure_samba() {
             2 "Remove RetroPie Samba shares"
             3 "Manually edit /etc/samba/smb.conf"
             4 "Restart Samba service"
-            5 "Remove Samba service"
+            5 "Remove Samba + configuration"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -94,7 +90,7 @@ function configure_samba() {
                     rp_callModule "$md_id" restart
                     ;;
                 5)
-                    rp_callModule "$md_id" remove
+                    rp_callModule "$md_id" depends remove
                     printMsgs "dialog" "Removed Samba service"
                     ;;
             esac

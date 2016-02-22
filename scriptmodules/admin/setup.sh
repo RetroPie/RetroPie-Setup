@@ -294,6 +294,28 @@ function individual_setup()
     done
 }
 
+function uninstall_setup()
+{
+    dialog --yesno "Are you sure you want to uninstall RetroPie?" 22 76 2>&1 >/dev/tty || return 0
+    printMsgs "dialog" "This feature is new, and you still may need to remove some files manually, such as symlinks for some emulators created in $home"
+    dialog --yesno "Are you REALLY sure you want to uninstall RetroPie?\n\n$rootdir and $datadir will be removed - this includes your RetroPie configurations and ROMs." 22 76 2>&1 >/dev/tty || return 0
+    clear
+    printHeading "Uninstalling RetroPie"
+    for idx in "${__mod_idx[@]}"; do
+        rp_callModule $idx remove
+    done
+    rm -rfv "/opt/retropie"
+    rm -rfv "$home/RetroPie"
+    if dialog --yesno "Do you want to remove all the system packages that RetroPie depends on? \n\nWARNING: this will remove packages like SDL even if they were installed before you installed RetroPie - it will also remove any package configurations - such as those in /etc/samba for Samba." 22 76 2>&1 >/dev/tty; then
+        clear
+        # remove all dependencies
+        for idx in "${__mod_idx[@]}"; do
+            rp_callModule $idx depends remove
+        done
+    fi
+    exit 0
+}
+
 function reboot_setup()
 {
     clear
@@ -327,11 +349,13 @@ function configure_setup() {
             options+=(5 "Install individual emulators from source")
         fi
         options+=(
+            6 "Uninstall RetroPie"
             U "Update RetroPie-Setup script"
             R "Perform Reboot"
         )
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choices" ]]; then
+            clear
             case $choices in
                 1) binaries_setup ;;
                 2)
@@ -340,6 +364,7 @@ function configure_setup() {
                 3) supplementary_setup ;;
                 4) experimental_setup ;;
                 5) individual_setup ;;
+                6) uninstall_setup;;
                 U) updatescript_setup ;;
                 R) reboot_setup ;;
             esac

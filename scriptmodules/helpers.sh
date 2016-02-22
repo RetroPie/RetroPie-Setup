@@ -117,14 +117,16 @@ function getDepends() {
     local packages=()
     local failed=()
     for required in $@; do
-        # make sure we have our sdl1 / sdl2 installed
-        if [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev 1.2.15-$(get_ver_sdl1)rpi; then
-            packages+=("$required")
-            continue
-        fi
-        if ! isPlatform "x11" && [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_ver_sdl2); then
-            packages+=("$required")
-            continue
+        if [[ "$__depends_mode" == "install" ]]; then
+            # make sure we have our sdl1 / sdl2 installed
+            if [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev 1.2.15-$(get_ver_sdl1)rpi; then
+                packages+=("$required")
+                continue
+            fi
+            if ! isPlatform "x11" && [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_ver_sdl2); then
+                packages+=("$required")
+                continue
+            fi
         fi
         if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage rbp-bootloader-osmc; then
             required="rbp-userland-dev-osmc"
@@ -135,12 +137,12 @@ function getDepends() {
             hasPackage "$required" || packages+=("$required")
         fi
     done
-    if [[ "$__depends_mode" == "remove" ]]; then
-        apt-get remove --purge -y "${packages[@]}"
-        apt-get autoremove --purge -y
-        return 0
-    fi
     if [[ ${#packages[@]} -ne 0 ]]; then
+        if [[ "$__depends_mode" == "remove" ]]; then
+            apt-get remove --purge -y "${packages[@]}"
+            apt-get autoremove --purge -y
+            return 0
+        fi
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
 
         # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2 for rpi
