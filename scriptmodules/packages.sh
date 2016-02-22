@@ -126,8 +126,7 @@ function rp_callModule() {
     # return if function doesn't exist
     if ! fnExists $function; then
         if [[ "$mode" != "remove" ]]; then
-            printMsgs "console" "No such action '$mode' for module '$md_id'"
-            return 1
+            return 0
         else
             function=""
         fi
