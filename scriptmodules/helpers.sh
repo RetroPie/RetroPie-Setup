@@ -137,12 +137,12 @@ function getDepends() {
             hasPackage "$required" || packages+=("$required")
         fi
     done
-    if [[ "$__depends_mode" == "remove" ]]; then
-        apt-get remove --purge -y "${packages[@]}"
-        apt-get autoremove --purge -y
-        return 0
-    fi
     if [[ ${#packages[@]} -ne 0 ]]; then
+        if [[ "$__depends_mode" == "remove" ]]; then
+            apt-get remove --purge -y "${packages[@]}"
+            apt-get autoremove --purge -y
+            return 0
+        fi
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
 
         # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2 for rpi
