@@ -129,8 +129,17 @@ function getDepends() {
         if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage rbp-bootloader-osmc; then
             required="rbp-userland-dev-osmc"
         fi
-        hasPackage "$required" || packages+=("$required")
+        if [[ "$__depends_mode" == "remove" ]]; then
+            hasPackage "$required" && packages+=("$required")
+        else
+            hasPackage "$required" || packages+=("$required")
+        fi
     done
+    if [[ "$__depends_mode" == "remove" ]]; then
+        apt-get remove --purge -y "${packages[@]}"
+        apt-get autoremove --purge -y
+        return 0
+    fi
     if [[ ${#packages[@]} -ne 0 ]]; then
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
 

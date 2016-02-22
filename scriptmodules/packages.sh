@@ -134,6 +134,11 @@ function rp_callModule() {
     case "$mode" in
         depends)
             action="Installing dependencies for"
+            if [[ "$1" == "remove" ]]; then
+                __depends_mode="remove"
+            else
+                __depends_mode="install"
+            fi
             ;;
         sources)
             action="Getting sources for"
