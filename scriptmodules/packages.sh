@@ -124,7 +124,14 @@ function rp_callModule() {
     fi
 
     # return if function doesn't exist
-    fnExists $function || return 0
+    if ! fnExists $function; then
+        if [[ "$mode" != "remove" ]]; then
+            printMsgs "console" "No such action '$mode' for module '$md_id'"
+            return 1
+        else
+            function=""
+        fi
+    fi
 
     # these can be returned by a module
     local md_ret_require=""
@@ -175,7 +182,7 @@ function rp_callModule() {
     [[ -n "$action" ]] && printHeading "$action '$md_id' : $md_desc"
 
     # call the function with parameters
-    $function "$@"
+    [[ -n "$function" ]] && "$function" "$@"
 
     local file
     # some errors were returned. append to global errors and return
