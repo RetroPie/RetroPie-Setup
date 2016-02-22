@@ -15,13 +15,14 @@ rp_module_menus="4+"
 rp_module_flags="dispmanx !mali"
 
 function depends_zdoom() {
-    getDepends libev-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev timidity cmake
-    [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
+    local depends=(libev-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev timidity cmake)
+    [[ "$__default_gcc_version" == "4.7" ]] && depends+=(gcc-4.8 g++-4.8)
     if [[ "$__raspbian_ver" -lt "8" ]]; then
-        getDepends libjpeg8-dev
+        depends+=(libjpeg8-dev)
     else
-        getDepends libjpeg-dev
+        depends+=(libjpeg-dev)
     fi
+    getDepends "${depends[@]}"
 }
 
 function sources_zdoom() {

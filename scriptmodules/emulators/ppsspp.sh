@@ -15,8 +15,9 @@ rp_module_menus="2+"
 rp_module_flags="!armv6 !x86 !mali"
 
 function depends_ppsspp() {
-    getDepends cmake libraspberrypi-dev libsdl2-dev
-    [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
+    local depends=(cmake libraspberrypi-dev libsdl2-dev)
+    [[ "$__default_gcc_version" == "4.7" ]] && depends+=(gcc-4.8 g++-4.8)
+    getDepends "${depends[@]}"
 }
 
 function sources_ppsspp() {

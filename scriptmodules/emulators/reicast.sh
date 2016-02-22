@@ -15,8 +15,9 @@ rp_module_menus="2+"
 rp_module_flags="!armv6 !mali"
 
 function depends_reicast() {
-    getDepends libsdl1.2-dev python-dev python-pip alsa-oss
-    [[ "$__raspbian_ver" -ge "8" ]] && getDepends libevdev-dev
+    local depends=(libsdl1.2-dev python-dev python-pip alsa-oss)
+    [[ "$__raspbian_ver" -ge "8" ]] && depends+=(libevdev-dev)
+    getDepends "${depends[@]}"
     pip install evdev
 }
 
