@@ -136,3 +136,10 @@ _EOF_
     
     addAutoConf es_swap_a_b 0
 }
+
+function remove_emulationstation() {
+    rm -rfv "/etc/emulationstation" "$home/.emulationstation" "/usr/bin/emulationstation"
+    if isPlatform "x11"; then
+        rm -rfv "/usr/local/share/icons/retropie.svg" "/usr/local/share/applications/retropie.desktop"
+    fi
+}
