@@ -15,7 +15,9 @@ rp_module_menus="3+"
 rp_module_flags="nobin !x86 !mali"
 
 function depends_audiosettings() {
-    getDepends alsa-utils
+    if [[ "$__depends_mode" == "install" ]]; then
+        getDepends alsa-utils
+    fi
 }
 
 function configure_audiosettings() {
