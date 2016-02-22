@@ -14,11 +14,14 @@ rp_module_desc="EmulationStation"
 rp_module_menus="2+"
 
 function depends_emulationstation() {
-    getDepends \
-        libboost-locale-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
-        libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
-        libasound2-dev cmake libsdl2-dev libsm-dev
-    isPlatform "x11" && getDepends gnome-terminal
+    local depends=(
+        libboost-locale-dev libboost-system-dev libboost-filesystem-dev
+        libboost-date-time-dev libfreeimage-dev libfreetype6-dev libeigen3-dev
+        libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
+        )
+
+    isPlatform "x11" && depends+=(gnome-terminal)
+    getDepends "${depends[@]}"
 }
 
 function sources_emulationstation() {
