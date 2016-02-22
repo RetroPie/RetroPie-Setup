@@ -88,7 +88,7 @@ function display_active_and_registered_bluetooth() {
     printMsgs "dialog" "Registered Devices:\n\n$registered\n\n\nActive Connections:\n\n$active"
 }
 
-function remove_bluetooth() {
+function remove_device_bluetooth() {
     local mac_addresses=()
     local mac_address
     local device_names=()
@@ -224,7 +224,7 @@ function configure_bluetooth() {
                     connect_bluetooth
                     ;;
                 2)
-                    remove_bluetooth
+                    remove_device_bluetooth
                     ;;
                 3)
                     display_active_and_registered_bluetooth
