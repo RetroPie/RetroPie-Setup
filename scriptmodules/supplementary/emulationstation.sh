@@ -138,7 +138,7 @@ _EOF_
 }
 
 function remove_emulationstation() {
-    rm -rfv "/etc/emulationstation" "$home/.emulationstation" "/usr/bin/emulationstation"
+    rm -rfv "/etc/emulationstation" "$home/.emulationstation" "/usr/bin/emulationstation" "$configdir/emulationstation"
     if isPlatform "x11"; then
         rm -rfv "/usr/local/share/icons/retropie.svg" "/usr/local/share/applications/retropie.desktop"
     fi
