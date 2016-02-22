@@ -12,7 +12,7 @@
 rp_module_id="vice"
 rp_module_desc="C64 emulator VICE"
 rp_module_menus="2+"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !mali"
 
 function depends_vice() {
     if hasPackage vice; then
@@ -27,8 +27,12 @@ function sources_vice() {
 }
 
 function build_vice() {
-    ./configure --prefix="$md_inst" --enable-sdlui --without-pulse --with-sdlsound
-    sed -i "s/#define HAVE_HWSCALE/#undef HAVE_HWSCALE/" src/config.h
+    local params=(--enable-sdlui)
+    ! isPlatform "x11" && params+=(--without-pulse --with-sdlsound)
+    ./configure --prefix="$md_inst" --prefix="$md_inst/lib" "${params[@]}"
+    if ! isPlatform "x11"; then
+        sed -i "s/#define HAVE_HWSCALE/#undef HAVE_HWSCALE/" src/config.h
+    fi
     make
 }
 
@@ -42,6 +46,11 @@ function configure_vice() {
     # copy any existing configs from ~/.vice and symlink the config folder to $configdir/c64/
     moveConfigDir "$home/.vice" "$configdir/c64"
 
+    # on 64bit platforms lib64 is used and vice cannot find the roms there.
+    if [[ -d "$md_inst/lib64" ]]; then
+        ln -snf "$md_inst/lib64" "$md_inst/lib"
+    fi
+
     # if we have an old config vice.cfg then move it to sdl-vicerc
     if [[ -f "$configdir/c64/vice.cfg" ]]; then
         mv -v "$configdir/c64/vice.cfg" "$configdir/c64/sdl-vicerc"
@@ -51,19 +60,23 @@ function configure_vice() {
     chown -R $user:$user "$configdir/c64"
 
     iniConfig "=" "" "$configdir/c64/sdl-vicerc"
-    iniSet "SDLBitdepth" "8"
-    iniSet "Mouse" "1"
-    iniSet "VICIIFilter" "0"
-    iniSet "VICIIVideoCache" "0"
-    iniSet "SoundDeviceName" "alsa"
-    iniSet "SoundSampleRate" "22050"
-    iniSet "Drive8Type" "1542"
-    iniSet "SidEngine" "0"
-    iniSet "AutostartWarp" "0"
-    iniSet "WarpMode" "0"
+    if ! isPlatform "x11"; then
+        iniSet "SDLBitdepth" "8"
+        iniSet "Mouse" "1"
+        iniSet "VICIIFilter" "0"
+        iniSet "VICIIVideoCache" "0"
+        iniSet "SoundDeviceName" "alsa"
+        iniSet "SoundSampleRate" "22050"
+        iniSet "Drive8Type" "1542"
+        iniSet "SidEngine" "0"
+        iniSet "AutostartWarp" "0"
+        iniSet "WarpMode" "0"
+    fi
 
-    configure_dispmanx_on_vice
-    setDispmanx "$md_id" 1
+    if isPlatform "rpi"; then
+        configure_dispmanx_on_vice
+        setDispmanx "$md_id" 1
+    fi
 
     addSystem 1 "$md_id-x64" "c64" "$md_inst/bin/x64 %ROM%"
     addSystem 0 "$md_id-x64sc" "c64" "$md_inst/bin/x64sc %ROM%" 
