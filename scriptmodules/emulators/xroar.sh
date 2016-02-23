@@ -12,35 +12,26 @@
 rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_menus="2+"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!mali"
 
 function depends_xroar() {
-    local depends=(libsdl1.2-dev libraspberrypi-dev)
-    # ilclient is part of libraspberrypi-doc, but not included on all distros
-    if hasPackage rbp-bootloader-osmc; then
-        depends+=(rbp-userland-src-osmc)
-    else
-        depends+=(libraspberrypi-doc)
-    fi
-    getDepends "${depends[@]}"
+    getDepends libsdl1.2-dev automake
 }
 
 function sources_xroar() {
-    gitPullOrClone "$md_build" http://www.6809.org.uk/git/xroar.git rasppi
-    # fix up missing includes/libraries
-    sed -i "s|-I/opt/vc/include/interface/vcos/pthreads|-I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux|g" configure
-    sed -i "s/-lopenmaxil/-lopenmaxil -lpthread -lm/g" configure
+    gitPullOrClone "$md_build" http://www.6809.org.uk/git/xroar.git 0.33.2
 }
 
 function build_xroar() {
-    cd /opt/vc/src/hello_pi/libs/ilclient
+    local params=(--without-gtk2 --without-gtkgl)
+    if ! isPlatform "x11"; then
+        params+=(--without-pulse)
+    fi
+    ./autogen.sh
+    ./configure --prefix="$md_inst" "${params[@]}"
     make clean
     make
-    cd "$md_build"
-    ./configure --enable-rasppi --prefix="$md_inst"
-    make clean
-    make
-    md_ret_require="$md_build/xroar"
+    md_ret_require="$md_build/src/xroar"
 }
 
 function install_xroar() {
@@ -54,8 +45,11 @@ function configure_xroar() {
     mkdir -p "$md_inst/share/xroar"
     ln -snf "$biosdir" "$md_inst/share/xroar/roms"
 
-    addSystem 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar -machine dragon32 -run %ROM%"
-    addSystem 1 "$md_id-coco" "coco" "$md_inst/bin/xroar -machine coco -run %ROM%"
+    local params=(-fs)
+    ! isPlatform "x11" && params+=(-vo sdl --ccr simple)
+    addSystem 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar ${params[@]} -machine dragon32 -run %ROM%"
+    addSystem 1 "$md_id-cocous" "coco" "$md_inst/bin/xroar ${params[@]} -machine cocous -run %ROM%"
+    addSystem 0 "$md_id-coco" "coco" "$md_inst/bin/xroar ${params[@]} -machine coco -run %ROM%"
 
     __INFMSGS+=("For emulator $md_id you need to copy system/basic roms such as d32.rom (Dragon 32) and bas13.rom (CoCo) to '$biosdir'.")
 }
