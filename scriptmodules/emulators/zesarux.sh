@@ -12,10 +12,12 @@
 rp_module_id="zesarux"
 rp_module_desc="ZX Spectrum emulator ZEsarUX"
 rp_module_menus="4+"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !mali"
 
 function depends_zesarux() {
-    getDepends libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev
+    local depends=(libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev)
+    isPlatform "x11" && depends+=(libpulse-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_zesarux() {
@@ -23,7 +25,9 @@ function sources_zesarux() {
 }
 
 function build_zesarux() {
-    ./configure --enable-raspberry --prefix "$md_inst"
+    local params=()
+    isPlatform "rpi" && params+=(--enable-raspberry --disable-pulse)
+    ./configure --prefix "$md_inst" "${params[@]}"
     make clean
     make
     md_ret_require="$md_build/zesarux"
@@ -37,7 +41,7 @@ function install_zesarux() {
 function configure_zesarux() {
     mkRomDir "zxspectrum"
 
-    mkUserDir "$romdir/zxspectrum"
+    mkUserDir "$configdir/zxspectrum"
 
     cat > "$romdir/zxspectrum/+Start ZEsarUX.sh" << _EOF_
 #!/bin/bash
@@ -54,6 +58,9 @@ _EOF_
     chown $user:$user "$romdir/zxspectrum/+Start ZEsarUX.sh"
 
     moveConfigFile "$home/.zesaruxrc" "$configdir/zxspectrum/.zesaruxrc"
+
+    local ao="alsa"
+    isPlatform "x11" && ao="pulse"
     if [[ ! -f "$configdir/zxspectrum/.zesaruxrc" ]]; then
         cat > "$configdir/zxspectrum/.zesaruxrc" << _EOF_
 ;ZEsarUX sample configuration file
@@ -64,8 +71,9 @@ _EOF_
 --disableborder
 --disablefooter
 --vo sdl
---ao alsa
+--ao $ao
 --hidemousepointer
+--fullscreen
 
 --smartloadpath $romdir/zxspectrum
 
@@ -77,7 +85,9 @@ _EOF_
         chown $user:$user "$configdir/zxspectrum/.zesaruxrc"
     fi
 
-    setDispmanx "$md_id" 1
+    if isPlatform "rpi"; then
+        setDispmanx "$md_id" 1
+    fi
 
     addSystem 1 "$md_id" "zxspectrum" "$romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%" "" ".sh"
 }
