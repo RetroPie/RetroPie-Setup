@@ -47,9 +47,9 @@ function configure_xroar() {
 
     local params=(-fs)
     ! isPlatform "x11" && params+=(-vo sdl --ccr simple)
-    addSystem 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar ${params[@]} -machine dragon32 -run %ROM%"
-    addSystem 1 "$md_id-cocous" "coco" "$md_inst/bin/xroar ${params[@]} -machine cocous -run %ROM%"
-    addSystem 0 "$md_id-coco" "coco" "$md_inst/bin/xroar ${params[@]} -machine coco -run %ROM%"
+    addSystem 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar ${params[*]} -machine dragon32 -run %ROM%"
+    addSystem 1 "$md_id-cocous" "coco" "$md_inst/bin/xroar ${params[*]} -machine cocous -run %ROM%"
+    addSystem 0 "$md_id-coco" "coco" "$md_inst/bin/xroar ${params[*]} -machine coco -run %ROM%"
 
     __INFMSGS+=("For emulator $md_id you need to copy system/basic roms such as d32.rom (Dragon 32) and bas13.rom (CoCo) to '$biosdir'.")
 }
