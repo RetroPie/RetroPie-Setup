@@ -730,8 +730,8 @@ function check_menu() {
         fi
         tput cnorm
         main_menu
-        tput civis
         local dont_launch=$?
+        tput civis
         clear
     fi
     stop_joy2key
