@@ -15,13 +15,13 @@ rp_module_menus="4+"
 rp_module_flags="!mali"
 
 function depends_ags() {
-    local depends=(xinit pkg-config  libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev)
+    local depends=(xinit pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev)
     if [[ "$__raspbian_ver" -lt 8 ]]; then
         depends+=(liballegro4.2-dev)
     else
         depends+=(liballegro4-dev)
     fi
-    getDepends ${depends[@]}
+    getDepends "${depends[@]}"
 }
 
 function sources_ags() {
