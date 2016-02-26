@@ -325,8 +325,10 @@ function reboot_setup()
 # retropie-setup main menu
 function configure_setup() {
     while true; do
+        pushd "$scriptdir" >/dev/null
         local ver=$(git describe --abbrev=0 --tags --first-parent)
         local commit=$(git log -1 --pretty=format:"%cr (%h)")
+        popd >/dev/null
         __ERRMSGS=()
         __INFMSGS=()
 
