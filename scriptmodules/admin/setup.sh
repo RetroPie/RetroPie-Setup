@@ -159,7 +159,7 @@ function updatescript_setup()
 {
     chown -R $user:$user "$scriptdir"
     printHeading "Fetching latest version of the RetroPie Setup Script."
-    pushd $scriptdir
+    pushd "$scriptdir" >/dev/null
     if [[ ! -d ".git" ]]; then
         printMsgs "dialog" "Cannot find directory '.git'. Please clone the RetroPie Setup script via 'git clone https://github.com/RetroPie/RetroPie-Setup.git'"
         popd
@@ -171,7 +171,7 @@ function updatescript_setup()
         popd
         return
     fi
-    popd
+    popd >/dev/null
     "$scriptdir/retropie_packages.sh" runcommand install
     printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script."
     exec "$scriptdir/retropie_setup.sh"
