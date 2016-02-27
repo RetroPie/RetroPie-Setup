@@ -78,6 +78,12 @@ function scrape_scraper() {
     if [[ -n "$max_width" ]]; then
         params+=(-max_width "$max_width")
     fi
+    if [[ "$use_gdb_scraper" -eq 1 ]]; then
+        params+=(-use_gdb)
+    else
+        params+=(-use_ovgdb)
+    fi
+    
     [[ "$system" =~ ^mame-|arcade|fba|neogeo ]] && params+=(-mame -mame_img t,m,s)
     sudo -u $user "$md_inst/scraper" ${params[@]}
 }
@@ -130,6 +136,7 @@ function gui_scraper() {
 
     local use_thumbs=1
     local max_width=400
+    local use_gdb_scraper=1
 
     while true; do
         local ver=$(get_ver_scraper)
@@ -147,6 +154,13 @@ function gui_scraper() {
         fi
 
         options+=(4 "Max image width ($max_width)")
+        
+        if [[ "$use_gdb_scraper" -eq 1 ]]; then
+            options+=(5 "Scraper (thegamesdb)")
+        else
+            options+=(5 "Scraper (OpenVGDB)")
+        fi
+        
         options+=(U "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty) 
         if [[ -n "$choice" ]]; then 
@@ -165,6 +179,9 @@ function gui_scraper() {
                 4)
                     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
                     max_width=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    ;;
+                5)
+                    use_gdb_scraper="$((use_gdb_scraper ^ 1))"
                     ;;
                 U)
                     rp_callModule "$md_id"
