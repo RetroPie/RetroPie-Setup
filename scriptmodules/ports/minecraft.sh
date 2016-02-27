@@ -15,7 +15,7 @@ rp_module_menus="4+"
 rp_module_flags="nobin !mali !x86"
 
 function depends_minecraft() {
-    getDepends xinit matchbox
+    getDepends xorg matchbox
 }
 
 function install_minecraft() {
