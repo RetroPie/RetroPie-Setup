@@ -42,7 +42,7 @@ function configure_lr-mess() {
     setRetroArchCoreOption "mame_boot_from_cli" "enabled"
 
     mkdir "$biosdir/mame/hash"
-    cp -rv "$md_build/hash" "$biosdir/mame"
+    cp -rv "$md_build/hash/*" "$biosdir/mame/hash/"
     chown -R $user:$user "$biosdir/mame"
     addSystem 0 "$md_id" "nes" "$md_inst/mess_libretro.so"
     addSystem 0 "$md_id" "gameboy" "$md_inst/mess_libretro.so"
