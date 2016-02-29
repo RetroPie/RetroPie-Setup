@@ -15,11 +15,11 @@ rp_module_menus="4+"
 rp_module_flags=""
 
 function depends_gemrb() {
-    getDepends python-dev libopenal-dev 
+    getDepends python-dev libopenal-dev libsdl1.2-dev cmake libpng12-dev libfreetype6-dev
 }
 
 function sources_gemrb() {
-    gitPullOrClone "$md_build" git://github.com/gemrb/gemrb.git
+    gitPullOrClone "$md_build" https://github.com/gemrb/gemrb.git
 }
 
 function build_gemrb() {
@@ -35,18 +35,18 @@ function install_gemrb() {
 }
 
 function configure_gemrb() {
-    addPort "$md_id" "BaldursGate1" "Baldurs Gate 1" "$md_inst/bin/gemrb -C $configdir/BaldursGate1/GemRB.cfg"
-    addPort "$md_id" "BaldursGate2" "Baldurs Gate 2" "$md_inst/bin/gemrb -C $configdir/BaldursGate2/GemRB.cfg"
-    addPort "$md_id" "Icewind1" "Icewind Dale 1" "$md_inst/bin/gemrb -C $configdir/Icewind1/GemRB.cfg"
-    addPort "$md_id" "Icewind2" "Icewind Dale 2" "$md_inst/bin/gemrb -C $configdir/Icewind2/GemRB.cfg"
-    addPort "$md_id" "Planescape" "Planescape Torment" "$md_inst/bin/gemrb -C $configdir/Planescape/GemRB.cfg"
-
     mkRomDir "ports/baldurs1"
     mkRomDir "ports/baldurs2"
     mkRomDir "ports/icewind1"
     mkRomDir "ports/icewind2"
     mkRomDir "ports/planescape"
     mkRomDir "ports/cache"
+
+    addPort "$md_id" "BaldursGate1" "Baldurs Gate 1" "$md_inst/bin/gemrb -C $configdir/BaldursGate1/GemRB.cfg"
+    addPort "$md_id" "BaldursGate2" "Baldurs Gate 2" "$md_inst/bin/gemrb -C $configdir/BaldursGate2/GemRB.cfg"
+    addPort "$md_id" "Icewind1" "Icewind Dale 1" "$md_inst/bin/gemrb -C $configdir/Icewind1/GemRB.cfg"
+    addPort "$md_id" "Icewind2" "Icewind Dale 2" "$md_inst/bin/gemrb -C $configdir/Icewind2/GemRB.cfg"
+    addPort "$md_id" "Planescape" "Planescape Torment" "$md_inst/bin/gemrb -C $configdir/Planescape/GemRB.cfg"
 
     #create Baldurs Gate 1 configuration
     cat > "$configdir/BaldursGate1/GemRB.cfg" << _EOF_
