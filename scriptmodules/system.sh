@@ -17,33 +17,7 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
-    if [[ -z "$__platform" ]]; then
-        case $(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo) in
-            BCM2708)
-                __platform="rpi1"
-                ;;
-            BCM2709)
-                __platform="rpi2"
-                ;;
-            ODROIDC)
-                __platform="odroid-c1"
-                ;;
-            *)
-                local architecture=$(uname --machine)
-                case $architecture in
-                    i686|x86_64|amd64)
-                        __platform="x86"
-                        ;;
-                esac
-                ;;
-        esac
-    fi
-
-    if fnExists "platform_${__platform}"; then
-        platform_${__platform}
-    else
-        fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
-    fi
+    get_platform
 
     get_os_version
     get_default_gcc
@@ -162,6 +136,36 @@ function get_retropie_depends() {
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
     fi
+}
+
+function get_platform() {
+    if [[ -z "$__platform" ]]; then
+        case $(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo) in
+            BCM2708)
+                __platform="rpi1"
+                ;;
+            BCM2709)
+                __platform="rpi2"
+                ;;
+            ODROIDC)
+                __platform="odroid-c1"
+                ;;
+            *)
+                local architecture=$(uname --machine)
+                case $architecture in
+                    i686|x86_64|amd64)
+                        __platform="x86"
+                        ;;
+                esac
+                ;;
+        esac
+    fi
+
+    if ! fnExists "platform_${__platform}"; then
+        fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
+    fi
+
+    platform_${__platform}
 }
 
 function platform_rpi1() {
