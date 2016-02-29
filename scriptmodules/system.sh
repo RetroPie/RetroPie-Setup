@@ -181,7 +181,7 @@ function platform_rpi2() {
     __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv7 rpi"
+    __platform_flags="arm armv7 neon rpi"
     # there is no support in qemu for cortex-a7 it seems, but it does have cortex-a15 which is architecturally
     # aligned with the a7, and allows the a7 targetted code to be run in a chroot/emulated environment
     __qemu_cpu=cortex-a15
@@ -192,7 +192,7 @@ function platform_odroid-c1() {
     __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv7 mali"
+    __platform_flags="arm armv7 neon mali"
     __qemu_cpu=cortex-a9
     __has_binaries=0
 }
@@ -217,6 +217,6 @@ function platform_armv7-mali() {
     __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
-    __platform_flags="arm armv7 mali"
+    __platform_flags="arm armv7 neon mali"
     __has_binaries=0
 }

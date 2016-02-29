@@ -21,7 +21,7 @@ function sources_lr-yabause() {
 function build_lr-yabause() {
     cd libretro
     make clean
-    if isPlatform "armv7"; then
+    if isPlatform "neon"; then
         make platform=armvneonhardfloat
     else
         make

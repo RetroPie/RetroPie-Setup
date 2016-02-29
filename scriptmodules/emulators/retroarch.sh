@@ -49,7 +49,7 @@ function build_retroarch() {
     isPlatform "rpi" && params+=(--enable-dispmanx)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
     isPlatform "arm" && params+=(--enable-floathard)
-    isPlatform "armv7" && params+=(--enable-neon)
+    isPlatform "neon" && params+=(--enable-neon)
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
     make
