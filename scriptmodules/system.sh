@@ -188,6 +188,14 @@ function platform_rpi2() {
     __has_binaries=1
 }
 
+function platform_rpi3() {
+    __default_cflags="-O2 -mcpu=cortex-a53 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv8 neon rpi"
+    __has_binaries=0
+}
+
 function platform_odroid-c1() {
     __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
