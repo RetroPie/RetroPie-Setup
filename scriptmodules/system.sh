@@ -139,19 +139,28 @@ function get_retropie_depends() {
 }
 
 function get_platform() {
+    local architecture=$(uname --machine)
     if [[ -z "$__platform" ]]; then
         case $(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo) in
             BCM2708)
                 __platform="rpi1"
                 ;;
             BCM2709)
-                __platform="rpi2"
+                local revision=$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)
+                if [[ "$revision" == "a02082" ]]; then
+                    if [[ "$architecture" == "aarch64" ]]; then
+                        __platform="rpi3-64"
+                    else
+                        __platform="rpi3"
+                    fi
+                else
+                    __platform="rpi2"
+                fi
                 ;;
             ODROIDC)
                 __platform="odroid-c1"
                 ;;
             *)
-                local architecture=$(uname --machine)
                 case $architecture in
                     i686|x86_64|amd64)
                         __platform="x86"
@@ -193,6 +202,10 @@ function platform_rpi2() {
 }
 
 function platform_rpi3() {
+    platform_rpi2
+}
+
+function platform_rpi3-64() {
     __default_cflags="-O2 -mcpu=cortex-a53 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
