@@ -702,6 +702,9 @@ function show_launch() {
         if [[ -f "$path/${rom_bn}-image.jpg" ]]; then
             image="$path/${rom_bn}-image.jpg"
             break
+        elif [[ -f "$path/${rom_bn}-image.png" ]]; then
+            image="$path/${rom_bn}-image.png"
+            break
         else
             image=""
         fi
