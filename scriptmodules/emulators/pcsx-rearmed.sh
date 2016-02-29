@@ -24,7 +24,7 @@ function sources_pcsx-rearmed() {
 }
 
 function build_pcsx-rearmed() {
-    if isPlatform "rpi2"; then
+    if isPlatform "neon"; then
         ./configure --sound-drivers=alsa --enable-neon
     else
         ./configure --sound-drivers=alsa
