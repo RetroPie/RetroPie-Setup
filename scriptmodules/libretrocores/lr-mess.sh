@@ -33,10 +33,12 @@ function configure_lr-mess() {
     mkRomDir "nes"
     mkRomDir "gameboy"
     mkRomDir "coleco"
+    mkRomDir "arcadia"
     ensureSystemretroconfig "nes"
     ensureSystemretroconfig "gameboy"
     ensureSystemretroconfig "coleco"
-
+    ensureSystemretroconfig "arcadia"
+    
     setRetroArchCoreOption "mame_softlists_enable" "enabled"
     setRetroArchCoreOption "mame_softlists_auto_media" "enabled"
     setRetroArchCoreOption "mame_boot_from_cli" "enabled"
@@ -47,4 +49,5 @@ function configure_lr-mess() {
     addSystem 0 "$md_id" "nes" "$md_inst/mess_libretro.so"
     addSystem 0 "$md_id" "gameboy" "$md_inst/mess_libretro.so"
     addSystem 0 "$md_id" "coleco" "$md_inst/mess_libretro.so"
+    addSystem 0 "$md_id" "arcadia" "$md_inst/mess_libretro.so"
 }
