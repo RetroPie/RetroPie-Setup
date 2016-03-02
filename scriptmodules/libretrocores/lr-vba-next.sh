@@ -20,7 +20,7 @@ function sources_lr-vba-next() {
 
 function build_lr-vba-next() {
     make -f Makefile.libretro clean
-    if isPlatform "armv7"; then
+    if isPlatform "neon"; then
         make -f Makefile.libretro platform=armvhardfloatunix TILED_RENDERING=1 HAVE_NEON=1
     else
         make -f Makefile.libretro

@@ -21,7 +21,7 @@ function build_lr-beetle-supergrafx() {
     make clean
     local params=()
     isPlatform "armv6" && params=("platform=armv")
-    isPlatform "armv7" && params=("platform=armvneon")
+    isPlatform "neon" && params=("platform=armvneon")
     make "${params[@]}"
     md_ret_require="$md_build/mednafen_supergrafx_libretro.so"
 }

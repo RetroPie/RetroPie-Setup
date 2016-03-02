@@ -20,7 +20,7 @@ function sources_lr-mgba() {
 
 function build_lr-mgba() {
     make -f Makefile.libretro clean
-    if isPlatform "armv7"; then
+    if isPlatform "neon"; then
         make -f Makefile.libretro HAVE_NEON=1
     else
         make -f Makefile.libretro

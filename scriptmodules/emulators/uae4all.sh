@@ -75,7 +75,7 @@ function build_uae4all() {
     make
     popd
     make -f Makefile.pi clean
-    if isPlatform "rpi2"; then
+    if isPlatform "neon"; then
         make -f Makefile.pi NEON=1 DEFS="-DUSE_ARMV7 -DUSE_ARMNEON"
     else
         make -f Makefile.pi

@@ -31,7 +31,7 @@ function sources_reicast() {
 
 function build_reicast() {
     cd shell/linux
-    if isPlatform "rpi2"; then
+    if isPlatform "rpi"; then
         make platform=rpi2 clean
         make platform=rpi2
     else
@@ -43,7 +43,7 @@ function build_reicast() {
 
 function install_reicast() {
     cd shell/linux
-    if isPlatform "rpi2"; then
+    if isPlatform "rpi"; then
         make platform=rpi2 PREFIX="$md_inst" install
     else
         make PREFIX="$md_inst" install

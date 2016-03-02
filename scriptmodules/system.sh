@@ -17,33 +17,7 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
-    if [[ -z "$__platform" ]]; then
-        case $(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo) in
-            BCM2708)
-                __platform="rpi1"
-                ;;
-            BCM2709)
-                __platform="rpi2"
-                ;;
-            ODROIDC)
-                __platform="odroid-c1"
-                ;;
-            *)
-                local architecture=$(uname --machine)
-                case $architecture in
-                    i686|x86_64|amd64)
-                        __platform="x86"
-                        ;;
-                esac
-                ;;
-        esac
-    fi
-
-    if fnExists "platform_${__platform}"; then
-        platform_${__platform}
-    else
-        fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
-    fi
+    get_platform
 
     get_os_version
     get_default_gcc
@@ -164,6 +138,45 @@ function get_retropie_depends() {
     fi
 }
 
+function get_platform() {
+    local architecture=$(uname --machine)
+    if [[ -z "$__platform" ]]; then
+        case $(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo) in
+            BCM2708)
+                __platform="rpi1"
+                ;;
+            BCM2709)
+                local revision=$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)
+                if [[ "$revision" == "a02082" ]]; then
+                    if [[ "$architecture" == "aarch64" ]]; then
+                        __platform="rpi3-64"
+                    else
+                        __platform="rpi3"
+                    fi
+                else
+                    __platform="rpi2"
+                fi
+                ;;
+            ODROIDC)
+                __platform="odroid-c1"
+                ;;
+            *)
+                case $architecture in
+                    i686|x86_64|amd64)
+                        __platform="x86"
+                        ;;
+                esac
+                ;;
+        esac
+    fi
+
+    if ! fnExists "platform_${__platform}"; then
+        fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
+    fi
+
+    platform_${__platform}
+}
+
 function platform_rpi1() {
     # values to be used for configure/make
     __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
@@ -181,18 +194,33 @@ function platform_rpi2() {
     __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv7 rpi"
+    __platform_flags="arm armv7 neon rpi"
     # there is no support in qemu for cortex-a7 it seems, but it does have cortex-a15 which is architecturally
     # aligned with the a7, and allows the a7 targetted code to be run in a chroot/emulated environment
     __qemu_cpu=cortex-a15
     __has_binaries=1
 }
 
+# note the rpi3 currently uses the rpi2 binaries - for ease of maintenance - rebuilding from source
+# could improve performance with the compiler options below but needs further testing
+function platform_rpi3() {
+    __default_cflags="-O2 -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv8 neon rpi"
+    __has_binaries=1
+}
+
+function platform_rpi3-64() {
+    platform_rpi3
+    __has_binaries=0
+}
+
 function platform_odroid-c1() {
     __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv7 mali"
+    __platform_flags="arm armv7 neon mali"
     __qemu_cpu=cortex-a9
     __has_binaries=0
 }
@@ -217,6 +245,6 @@ function platform_armv7-mali() {
     __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
-    __platform_flags="arm armv7 mali"
+    __platform_flags="arm armv7 neon mali"
     __has_binaries=0
 }

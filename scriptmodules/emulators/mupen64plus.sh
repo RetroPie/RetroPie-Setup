@@ -62,7 +62,7 @@ function build_mupen64plus() {
             make -C "$dir/projects/unix" clean
             params=()
             isPlatform "rpi1" && params+=("VC=1" "VFP=1" "VFP_HARD=1")
-            isPlatform "rpi2" && params+=("VC=1" "NEON=1")
+            isPlatform "neon" && params+=("VC=1" "NEON=1")
             isPlatform "x11" && params+=("OSD=1")
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"

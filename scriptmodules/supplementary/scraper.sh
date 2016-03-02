@@ -39,7 +39,7 @@ function install_scraper() {
         local ver="$(latest_ver_scraper)"
         mkdir -p "$md_build"
         local name="scraper_rpi.zip"
-        isPlatform "armv7" && name="scraper_rpi2.zip"
+        isPlatform "neon" && name="scraper_rpi2.zip"
         wget -O "$md_build/scraper.zip" "https://github.com/sselph/scraper/releases/download/$ver/$name"
         unzip -o "$md_build/scraper.zip" -d "$md_inst"
         rm -f "$md_build/scraper.zip"
