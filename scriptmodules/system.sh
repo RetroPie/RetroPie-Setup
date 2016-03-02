@@ -201,15 +201,18 @@ function platform_rpi2() {
     __has_binaries=1
 }
 
+# note the rpi3 currently uses the rpi2 binaries - for ease of maintenance - rebuilding from source
+# could improve performance with the compiler options below but needs further testing
 function platform_rpi3() {
-    platform_rpi2
-}
-
-function platform_rpi3-64() {
-    __default_cflags="-O2 -mcpu=cortex-a53 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cflags="-O2 -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi"
+    __has_binaries=1
+}
+
+function platform_rpi3-64() {
+    platform_rpi3
     __has_binaries=0
 }
 
