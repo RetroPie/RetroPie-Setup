@@ -15,7 +15,11 @@ rp_module_menus="3+configure"
 rp_module_flags="nobin"
 
 function depends_ps3controller() {
-    getDepends checkinstall libusb-dev bluetooth libbluetooth-dev joystick
+    local depends=(checkinstall libusb-dev bluetooth libbluetooth-dev joystick)
+    if isPlatform "rpi3" && hasPackage raspberrypi-bootloader && [[ "$__raspbian_ver" -ge "8" ]]; then
+        depends+=(pi-bluetooth)
+    fi
+    getDepends "${depends[@]}"
 }
 
 function sources_ps3controller() {
