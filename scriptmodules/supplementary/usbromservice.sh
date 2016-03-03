@@ -18,7 +18,7 @@ function depends_usbromservice() {
     local depends=(rsync ntfs-3g)
     if [[ "$__raspbian_ver" -gt 7 ]]; then
         if ! hasPackage usbmount 0.0.24; then
-            depends+=(debhelper devscripts)
+            depends+=(debhelper devscripts pmount lockfile-progs)
             getDepends "${depends[@]}"
             if [[ "$__depends_mode" == "install" ]]; then
                 rp_callModule usbromservice sources
