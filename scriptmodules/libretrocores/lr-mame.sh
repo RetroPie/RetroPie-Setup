@@ -19,13 +19,13 @@ function sources_lr-mame() {
 
 function build_lr-mame() {
     make -f Makefile.libretro clean
-    make -f Makefile.libretro
-    md_ret_require="$md_build/mame_libretro.so"
+    make -f Makefile.libretro SUBTARGET=arcade
+    md_ret_require="$md_build/mamearcade_libretro.so"
 }
 
 function install_lr-mame() {
     md_ret_files=(
-        'mame_libretro.so'
+        'mamearcade_libretro.so'
     )
 }
 
@@ -35,6 +35,6 @@ function configure_lr-mame() {
     ensureSystemretroconfig "arcade"
     ensureSystemretroconfig "mame-libretro"
 
-    addSystem 0 "$md_id" "arcade" "$md_inst/mame_libretro.so"
-    addSystem 0 "$md_id" "mame-libretro arcade mame" "$md_inst/mame_libretro.so"
+    addSystem 0 "$md_id" "arcade" "$md_inst/mamearcade_libretro.so"
+    addSystem 0 "$md_id" "mame-libretro arcade mame" "$md_inst/mamearcade_libretro.so"
 }
