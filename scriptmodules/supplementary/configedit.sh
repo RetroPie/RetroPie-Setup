@@ -17,11 +17,8 @@ rp_module_flags="nobin"
 function common_configedit() {
     local config="$1"
 
-    # disable globbing
-    set -f
-
     # key + values
-    local common=(
+    local ini_options=(
         'audio_driver alsa alsa_thread sdl2'
         'video_driver gl dispmanx sdl2 vg'
         'video_fullscreen_x _string_'
@@ -55,7 +52,7 @@ function common_configedit() {
         'input_player8_analog_dpad_mode 0 1 2'
     )
 
-    local descs=(
+    local ini_descs=(
         'Audio driver to use (default is alsa_thread)'
         'Video driver to use (default is gl)'
         'Fullscreen resolution. Resolution of 0 uses the resolution of the desktop.'
@@ -89,106 +86,7 @@ function common_configedit() {
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
     )
 
-    [[ ! -f "$config" ]] && return
-
-    iniConfig " = " "" "$config"
-    while true; do
-        local options=()
-        local params=()
-        local values=()
-        local keys=()
-        local i=0
-        # generate menu from options
-        local option
-        for option in "${common[@]}"; do
-            option=($option)
-            keys+=("${option[0]}")
-            params+=("${option[*]:1}")
-            iniGet "${option[0]}"
-            [[ -z "$ini_value" ]] && ini_value="unset"
-            values+=("$ini_value")
-            options+=("$i" "${option[0]} ($ini_value)" "${descs[i]}")
-            ((i++))
-        done
-        local key
-        local cmd=(dialog --backtitle "$__backtitle" --default-item "$key" --item-help --help-button --menu "Please choose the setting to modify in $config" 22 76 16)
-        key=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ "${key[@]:0:4}" == "HELP" ]]; then
-            printMsgs "dialog" "${key[@]:5}"
-            continue
-        fi
-
-        if [[ -n "$key" ]]; then
-            i=0
-            options=("U" "unset")
-            local default
-
-            params=(${params[$key]})
-
-            case "${params[0]}" in
-                _string_)
-                    options+=("E" "Edit (Currently ${values[key]})")
-                    ;;
-                _file_)
-                    local match="${params[1]}"
-                    local path="${params[*]:2}"
-                    local file
-                    while read file; do
-                        [[ "${values[key]}" == "$file" ]] && default="$i"
-                        options+=("$i" "$file")
-                        ((i++))
-                    done < <(find "$path" -type f -name "$match")
-                    ;;
-                *)
-                    for option in "${params[@]}"; do
-                        [[ "${values[key]}" == "$option" ]] && default="$i"
-                        options+=("$i" "$option")
-                        ((i++))
-                    done
-                    ;;
-            esac
-
-            # display values
-            cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Please choose the value for ${keys[$key]}" 22 76 16)
-            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-
-            # if it is a _string_ type we will open an inputbox dialog to get a manual value
-            if [[ -z "$choice" ]]; then
-                continue
-            elif [[ "$choice" == "E" ]]; then
-                [[ "${values[key]}" == "unset" ]] && values[key]=""
-                cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the value for ${keys[key]}" 10 60 "${values[key]}")
-                value=$("${cmd[@]}" 2>&1 >/dev/tty)
-            elif [[ "$choice" == "U" ]]; then
-                value="$default"
-            else
-                # get the actual value from the options array
-                local index=$((choice*2+3))
-                value="${options[index]}"
-            fi
-
-            # save the #include line and remove it, so we can add our ini values and re-add the include line(s) at the end
-            local include=$(grep "^#include" "$config")
-            sed -i "/^#include/d" "$config"
-
-            if [[ "$choice" == "U" ]]; then
-                iniUnset "${keys[key]}" "$value"
-            else
-                iniSet "${keys[key]}" "$value"
-            fi
-
-            # re-add the include line(s)
-            if [[ -n "$include" ]]; then
-                echo "" >>"$config"
-                echo "$include" >>"$config"
-            fi
-        else
-            break
-        fi
-    done
-
-    # enable globbing
-    set +f
+    iniFileEditor "$config"
 }
 
 function choose_config_configedit() {
