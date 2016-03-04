@@ -449,6 +449,7 @@ function choose_render_res() {
     local res=(
         "320x240"
         "640x480"
+        "800x600"
         "960x720"
         "1280x960"
         "Use video output resolution"
