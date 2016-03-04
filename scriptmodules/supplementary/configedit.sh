@@ -21,6 +21,8 @@ function common_configedit() {
     # key + values
     local ini_options=(
         'video_smooth true false'
+        'aspect_ratio_index _id_ 4:3 16:19 16:10 16:15 1:1 2:1 3:2 3:4 4:1 4:4 5:4 6:5 7:9 8:3 8:7 19:12 19:14 30:17 32:9 config square core custom'
+        'video_aspect_ratio_auto true false'
         'video_shader_enable true false'
         "video_shader _file_ *.*p $rootdir/emulators/retroarch/shader"
         'input_overlay_enable true false'
@@ -29,6 +31,8 @@ function common_configedit() {
 
     local ini_descs=(
         'Smoothens picture with bilinear filtering. Should be disabled if using pixel shaders.'
+        'Aspect ratio to use (default core - set aspect_ratio_auto to false to use this)'
+        'If this is true and video_aspect_ratio or video_aspect_ratio_index is not set, aspect ratio is decided by libretro implementation. If this is false, 1:1 PAR will always be assumed if video_aspect_ratio is not set.'
         'Load video_shader on startup. Other shaders can still be loaded later in runtime.'
         'Video shader to use (default none)'
         'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
@@ -45,7 +49,6 @@ function common_configedit() {
             'video_force_aspect true false'
             'video_scale_integer true false'
             'video_aspect_ratio _string_'
-            'video_aspect_ratio_auto true false'
             'video_rotation _string_'
             'custom_viewport_width _string_'
             'custom_viewport_height _string_'
@@ -74,7 +77,6 @@ function common_configedit() {
             'Forces rendering area to stay equal to content aspect ratio or as defined in video_aspect_ratio.'
             'Only scales video in integer steps. The base size depends on system-reported geometry and aspect ratio. If video_force_aspect is not set, X/Y will be integer scaled independently.'
             'A floating point value for video aspect ratio (width / height). If this is not set, aspect ratio is assumed to be automatic. Behavior then is defined by video_aspect_ratio_auto.'
-            'If this is true and video_aspect_ratio is not set, aspect ratio is decided by libretro implementation. If this is false, 1:1 PAR will always be assumed if video_aspect_ratio is not set.'
             'Forces a certain rotation of the screen. The rotation is added to rotations which the libretro core sets (see video_allow_rotate). The angle is <value> * 90 degrees counter-clockwise.'
             'Viewport resolution.'
             'Viewport resolution.'

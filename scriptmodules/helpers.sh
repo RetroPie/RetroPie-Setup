@@ -352,8 +352,9 @@ function iniFileEditor() {
             local default
 
             params=(${params[$key]})
-
-            case "${params[0]}" in
+            local values=()
+            local mode="${params[0]}"
+            case "$mode" in
                 _string_)
                     options+=("E" "Edit (Currently ${values[key]})")
                     ;;
@@ -367,7 +368,8 @@ function iniFileEditor() {
                         ((i++))
                     done < <(find "$path" -type f -name "$match")
                     ;;
-                *)
+                _id_|*)
+                    [[ "$mode" == "_id_" ]] && params=("${params[@]:1}")
                     for option in "${params[@]}"; do
                         [[ "${values[key]}" == "$option" ]] && default="$i"
                         options+=("$i" "$option")
@@ -390,9 +392,13 @@ function iniFileEditor() {
             elif [[ "$choice" == "U" ]]; then
                 value="$default"
             else
-                # get the actual value from the options array
-                local index=$((choice*2+3))
-                value="${options[index]}"
+                if [[ "$mode" == "_id_" ]]; then
+                    value="$choice"
+                else
+                    # get the actual value from the options array
+                    local index=$((choice*2+3))
+                    value="${options[index]}"
+                fi
             fi
 
             # save the #include line and remove it, so we can add our ini values and re-add the include line(s) at the end
