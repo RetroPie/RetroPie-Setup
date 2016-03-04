@@ -364,6 +364,7 @@ function iniFileEditor() {
                     local file
                     while read file; do
                         [[ "${values[key]}" == "$file" ]] && default="$i"
+                        file="${file//$path\//}"
                         options+=("$i" "$file")
                         ((i++))
                     done < <(find "$path" -type f -name "$match")
@@ -397,7 +398,11 @@ function iniFileEditor() {
                 else
                     # get the actual value from the options array
                     local index=$((choice*2+3))
-                    value="${options[index]}"
+                    if [[ "$mode" == "_file_" ]]; then
+                        value="$path/${options[index]}"
+                    else
+                        value="${options[index]}"
+                    fi
                 fi
             fi
 
