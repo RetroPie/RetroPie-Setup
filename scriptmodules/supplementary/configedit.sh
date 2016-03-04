@@ -68,7 +68,7 @@ function common_configedit() {
             'input_player8_analog_dpad_mode 0 1 2'
         )
 
-        local ini_descs+=(
+        ini_descs+=(
             'Audio driver to use (default is alsa_thread)'
             'Video driver to use (default is gl)'
             'Fullscreen resolution. Resolution of 0 uses the resolution of the desktop.'
