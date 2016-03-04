@@ -36,14 +36,7 @@ function install_lr-tyrquake() {
     )
 }
 
-function configure_lr-tyrquake() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/tyrquake"
-
-    mkRomDir "ports"
-    mkRomDir "ports/quake"
-    ensureSystemretroconfig "quake"
-
+function download_quake_lr-tyrquake() {
     if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then
         # download / unpack / install quake shareware files
         wget "$__archive_url/quake106.zip" -O quake106.zip
@@ -56,6 +49,17 @@ function configure_lr-tyrquake() {
         rm -rf quake106
         chown -R $user:$user "$romdir/ports/quake"
     fi
+}
+
+function configure_lr-tyrquake() {
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/tyrquake"
+
+    mkRomDir "ports"
+    mkRomDir "ports/quake"
+    ensureSystemretroconfig "quake"
+
+    download_quake_lr-tyrquake
 
     addPort "$md_id" "quake" "Quake" "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $configdir/quake/retroarch.cfg $romdir/ports/quake/id1/pak0.pak"
 }
