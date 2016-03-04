@@ -4,7 +4,7 @@ RetroPie-Setup
 General Usage
 -------------
 
-Shell script to setup the Raspberry Pi 1 / 2 with several emulators, various cores, and EmulationStation as graphical front end. Bootable pre-made images are available from http://blog.petrockblock.com/retropie/ for those that want a ready to go system.
+Shell script to setup the Raspberry Pi 1 / 2 / 3 with several emulators, various cores, and EmulationStation as graphical front end. Bootable pre-made images are available from http://blog.petrockblock.com/retropie/ for those that want a ready to go system.
 
 This script is designed for use on Raspbian Jessie and Wheezy for the Raspberry Pi. Before using the script, please **make sure that you have run the raspi-config script to extend your root file system **. You can run the script with
 
