@@ -58,7 +58,7 @@ function configure_cannonball() {
     moveConfigFile "config.xml" "$configdir/$md_id/config.xml"
     moveConfigFile "hiscores.xml" "$configdir/$md_id/hiscores.xml"
 
-    if [[ ! -f "$configdir/config.xml" ]]; then
+    if [[ ! -f "$configdir/$md_id/config.xml" ]]; then
         cp -v "$md_inst/config.xml.def" "$configdir/$md_id/config.xml"
     fi
 
