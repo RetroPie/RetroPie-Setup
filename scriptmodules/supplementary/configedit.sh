@@ -72,6 +72,7 @@ function _video_fullscreen_configedit() {
                 if [[ "$choice" == "C" ]]; then
                     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the render resolution as WIDTHxHEIGHT" 10 60)
                     res=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    [[ -z "$res" || ! "$res" =~ ^[0-9]+x[0-9]+$ ]] && return
                 else
                     res="${res[$choice-1]}"
                 fi

@@ -354,6 +354,11 @@ function iniFileEditor() {
 
             values+=("$value")
 
+            # add the matching value to our id in _id_ lists
+            if [[ "${option[1]}" == "_id_" && "$value" != "unset" ]]; then
+                value+=" - ${option[value+2]}"
+            fi
+
             # use custom title if provided
             if [[ -n "${ini_titles[i]}" ]]; then
                 title="${ini_titles[i]}"
@@ -387,8 +392,8 @@ function iniFileEditor() {
         local default
 
         params=(${params[$key]})
-        local values=()
         local mode="${params[0]}"
+
         case "$mode" in
             _string_)
                 options+=("E" "Edit (Currently ${values[key]})")
@@ -407,13 +412,17 @@ function iniFileEditor() {
             _id_|*)
                 [[ "$mode" == "_id_" ]] && params=("${params[@]:1}")
                 for option in "${params[@]}"; do
-                    [[ "${values[key]}" == "$option" ]] && default="$i"
+                    if [[ "$mode" == "_id_" ]]; then
+                        [[ "${values[$key]}" == "$i" ]] && default="$i"
+                    else
+                        [[ "${values[$key]}" == "$option" ]] && default="$i"
+                    fi
                     options+=("$i" "$option")
                     ((i++))
                 done
                 ;;
         esac
-
+        [[ -z "$default" ]] && default="U"
         # display values
         cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Please choose the value for ${keys[$key]}" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
