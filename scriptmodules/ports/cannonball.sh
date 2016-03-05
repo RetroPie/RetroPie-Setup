@@ -12,10 +12,9 @@
 rp_module_id="cannonball"
 rp_module_desc="Cannonball - An Enhanced OutRun Engine"
 rp_module_menus="4+"
-rp_module_flags="!x11 !mali"
 
 function depends_cannonball() {
-    getDepends libsdl2-dev libboost-dev
+    getDepends cmake libsdl2-dev libboost-dev
 }
 
 function sources_cannonball() {
@@ -24,32 +23,52 @@ function sources_cannonball() {
 }
 
 function build_cannonball() {
+    local target
     mkdir build
     cd build
-    cmake -G "Unix Makefiles" -DTARGET=sdl2gles_rpi -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" ../cmake/
+    if isPlatform "rpi"; then
+        target="sdl2gles_rpi"
+    elif isPlatform "mali"; then
+        target="sdl2gles"
+    else
+        target="sdl2gl"
+    fi
+    cmake -G "Unix Makefiles" -DTARGET=sdl2gles_rpi ../cmake/
+    make clean
     make
     md_ret_require="$md_build/build/cannonball"
 }
 
 function install_cannonball() {
-    mkRomDir "ports"
-    mkRomDir "ports/cannonball"
-    cp build/cannonball "$md_inst"
-    ln -s "$romdir/ports/cannonball" "$md_inst/roms"
-    mkdir "$md_inst/res/"
-    cp -R roms/* "$romdir/ports/cannonball/"
-    cp res/tilemap.bin "$md_inst/res/"
-    cp res/tilepatch.bin "$md_inst/res/"
+    md_ret_files=(
+        'build/cannonball'
+        'roms/roms.txt'
+    )
+
+    mkdir "$md_inst/res"
+    cp -v res/*.bin "$md_inst/res/"
+    cp -v res/config_sdl2.xml "$md_inst/config.xml.def"
 }
 
 function configure_cannonball() {
-    addPort "$md_id" "cannonball" "Cannonball - OutRun Engine" "pushd $md_inst; $md_inst/cannonball; popd"
-    cp "$md_build/res/config.xml" "$configdir/$md_id"
-    touch "$configdir/$md_id/hiscores.xml"
-    chown $user:$user "$configdir/$md_id/config.xml"
-    chown $user:$user "$configdir/$md_id/hiscores.xml"
-    ln -s "$configdir/$md_id/config.xml" "$md_inst/config.xml"
-    ln -s "$configdir/$md_id/hiscores.xml" "$md_inst/hiscores.xml"
+    mkRomDir "ports"
+    mkRomDir "ports/$md_id"
+    mkUserDir "$configdir/$md_id"
 
-    __INFMSGS+=("You need to unzip your OutRun set B from latest MAME (outrun.zip) to $romdir/ports/cannonball/. They should match the file names listed in the roms.txt file found in the roms folder. You will also need to rename the epr-10381a.132 file to epr-10381b.132 before it will work.")
+    moveConfigFile "config.xml" "$configdir/$md_id/config.xml"
+    moveConfigFile "hiscores.xml" "$configdir/$md_id/hiscores.xml"
+
+    if [[ ! -f "$configdir/config.xml" ]]; then
+        cp -v "$md_inst/config.xml.def" "$configdir/$md_id/config.xml"
+    fi
+
+    cp -v roms.txt "$romdir/ports/$md_id/"
+
+    chown -R $user:$user "$romdir/ports/$md_id" "$configdir/$md_id"
+
+    ln -snf "$romdir/ports/$md_id" "$md_inst/roms"
+
+    addPort "$md_id" "cannonball" "Cannonball - OutRun Engine" "pushd $md_inst; $md_inst/cannonball; popd"
+
+    __INFMSGS+=("You need to unzip your OutRun set B from latest MAME (outrun.zip) to $romdir/ports/$md_id. They should match the file names listed in the roms.txt file found in the roms folder. You will also need to rename the epr-10381a.132 file to epr-10381b.132 before it will work.")
 }
