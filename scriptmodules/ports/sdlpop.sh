@@ -30,18 +30,26 @@ function build_sdlpop() {
 function install_sdlpop() {
     md_ret_files=(
         'prince'
-        'SDLPoP.ini'
-        '/data'
-        '/doc/Readme.txt'
-        '/doc/gpl-3.0.txt'
+        'data'
+        'doc/Readme.txt'
+        'doc/gpl-3.0.txt'
     )
-    cp *.DAT "$md_inst"
+    cp -v "SDLPoP.ini" "$md_inst/SDLPoP.ini.def"
+    sed -i "s/use_correct_aspect_ratio = false/use_correct_aspect_ratio = true/" "$md_inst/SDLPoP.ini.def"
+    cp -v *.DAT "$md_inst"
 }
  
 function configure_sdlpop() {
     mkRomDir "ports"
-    moveConfigFile "$md_inst/SDLPoP.ini" "$configdir/$md_id/SDLPoP.ini"
-    sed -i "s/use_correct_aspect_ratio = false/use_correct_aspect_ratio = true/" "$configdir/$md_id/SDLPoP.ini"
-    addPort "$md_id" "SDLPoP" "Prince of Persia" "pushd $md_inst; $md_inst/prince full; popd"
 
+    mkUserDir "$configdir/$md_id"
+
+    moveConfigFile "$md_inst/SDLPoP.ini" "$configdir/$md_id/SDLPoP.ini"
+
+    if [[ ! -f "$configdir/$md_id/SDLPoP.ini" ]]; then
+        cp -v "$md_inst/SDLPoP.ini.def" "$configdir/$md_id/SDLPoP.ini"
+    fi
+    chown -R $user:$user "$configdir/$md_id"
+
+    addPort "$md_id" "SDLPoP" "Prince of Persia" "pushd $md_inst; $md_inst/prince full; popd"
 }
