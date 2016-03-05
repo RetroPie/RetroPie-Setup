@@ -14,11 +14,127 @@ rp_module_desc="Edit RetroPie/RetroArch configurations"
 rp_module_menus="3+"
 rp_module_flags="nobin"
 
-function common_configedit() {
-    local config="$1"
-    local mode="$2"
+function _video_fullscreen_configedit() {
+    local mode="$1"
+    local value="$2"
+    case "$mode" in
+        get)
+            iniGet "video_fullscreen_x"
+            local res_x="$ini_value"
 
-    # key + values
+            iniGet "video_fullscreen_y"
+            local res_y="$ini_value"
+
+            if [[ -z "$res_x" && -z "$res_y" ]]; then
+                echo "unset"
+            elif [[ "$res_x" == "0" && "$res_y" == "0" ]]; then
+                echo "Video output resolution"
+            else
+                echo "${res_x}x${res_y}"
+            fi
+            ;;
+        set)
+            local save="$1"
+            local res=(
+                "320x240"
+                "640x480"
+                "800x600"
+                "960x720"
+                "1280x960"
+            )
+            local i=1
+            local item
+            local options=(U "unset")
+            local default
+            for item in "${res[@]}"; do
+                [[ "$item" == "$value" ]] && default="$i"
+                options+=($i "$item")
+                ((i++))
+            done
+            options+=(
+                O "Video output resolution"
+                C "Custom"
+            )
+            [[ "$value" == "Video output resolution" ]] && default="O"
+            [[ "$value" == "unset" ]] && default="U"
+            [[ -z "$default" ]] && default="C"
+            local cmd=(dialog --default-item "$default" --menu "Choose RetroArch render resolution" 22 76 16 )
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            [[ -z "$choice" ]] && return
+            local res
+            if [[ "$choice" == "U" ]]; then
+                iniUnset "video_fullscreen_x"
+                iniUnset "video_fullscreen_y"
+            elif [[ "$choice" == "O" ]]; then
+                iniSet "video_fullscreen_x" "0"
+                iniSet "video_fullscreen_y" "0"
+            else
+                if [[ "$choice" == "C" ]]; then
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the render resolution as WIDTHxHEIGHT" 10 60)
+                    res=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    [[ -z "$res" || ! "$res" =~ ^[0-9]+x[0-9]+$ ]] && return
+                else
+                    res="${res[$choice-1]}"
+                fi
+                res=(${res/x/ })
+                iniSet "video_fullscreen_x" "${res[0]}"
+                iniSet "video_fullscreen_y" "${res[1]}"
+            fi
+            ;;
+    esac
+}
+
+function basic_configedit() {
+    local config="$1"
+
+    local ini_options=(
+        'video_smooth true false'
+        'aspect_ratio_index _id_ 4:3 16:9 16:10 16:15 1:1 2:1 3:2 3:4 4:1 4:4 5:4 6:5 7:9 8:3 8:7 19:12 19:14 30:17 32:9 config square core custom'
+        '_function_ _video_fullscreen_configedit'
+        'video_shader_enable true false'
+        "video_shader _file_ *.*p $rootdir/emulators/retroarch/shader"
+        'input_overlay_enable true false'
+        "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
+        'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player4_analog_dpad_mode _id_ disabled left-stick right-stick'
+    )
+
+    local ini_titles=(
+        'Video Smoothing'
+        'Aspect Ratio'
+        'Render Resolution'
+        'Video Shader Enable'
+        "Video Shader File"
+        'Overlay Enable'
+        'Overlay File'
+        'Player 1 - use analogue stick as d-pad'
+        'Player 2 - use analogue stick as d-pad'
+        'Player 3 - use analogue stick as d-pad'
+        'Player 4 - use analogue stick as d-pad'
+    )
+
+    local ini_descs=(
+        'Smoothens picture with bilinear filtering. Should be disabled if using pixel shaders.'
+        'Aspect ratio to use (default unset - will use core aspect if video_aspect_ratio_auto is true)'
+        'Configure the resolution to render the emulator output at - for better performance on full HD displays choose a lower resolution and it will be upscaled in hardware'
+        'Load video_shader on startup. Other shaders can still be loaded later in runtime.'
+        'Video shader to use (default none)'
+        'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
+        'Input overlay to use (default none)'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+    )
+
+    iniFileEditor "$config"
+}
+
+function advanced_configedit() {
+    local config="$1"
+
     local ini_options=(
         'video_smooth true false'
         'aspect_ratio_index _id_ 4:3 16:9 16:10 16:15 1:1 2:1 3:2 3:4 4:1 4:4 5:4 6:5 7:9 8:3 8:7 19:12 19:14 30:17 32:9 config square core custom'
@@ -26,6 +142,35 @@ function common_configedit() {
         "video_shader _file_ *.*p $rootdir/emulators/retroarch/shader"
         'input_overlay_enable true false'
         "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
+        'audio_driver alsa alsa_thread sdl2'
+        'video_driver gl dispmanx sdl2 vg'
+        'video_fullscreen_x _string_'
+        'video_fullscreen_y _string_'
+        'video_frame_delay _string_'
+        'video_threaded true false'
+        'video_force_aspect true false'
+        'video_scale_integer true false'
+        'video_aspect_ratio_auto true false'
+        'video_aspect_ratio _string_'
+        'video_allow_rotate _string_'
+        'video_rotation _string_'
+        'custom_viewport_width _string_'
+        'custom_viewport_height _string_'
+        'custom_viewport_x _string_'
+        'custom_viewport_y _string_'
+        'video_font_size _string_'
+        'fps_show true false'
+        'input_overlay_opacity _string_'
+        'input_overlay_scale _string_'
+        'input_joypad_driver udev sdl2 linuxraw'
+        'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player4_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player5_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player6_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player7_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player8_analog_dpad_mode _id_ disabled left-stick right-stick'
     )
 
     local ini_descs=(
@@ -35,67 +180,36 @@ function common_configedit() {
         'Video shader to use (default none)'
         'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
         'Input overlay to use (default none)'
+        'Audio driver to use (default is alsa_thread)'
+        'Video driver to use (default is gl)'
+        'Fullscreen x resolution. Resolution of 0 uses the resolution of the desktop. (defaults to 0 if unset)'
+        'Fullscreen y resolution. Resolution of 0 uses the resolution of the desktop. (defaults to 0 if unset)'
+        'Sets how many milliseconds to delay after VSync before running the core. Can reduce latency at cost of higher risk of stuttering. Maximum is 15'
+        'Use threaded video driver. Using this might improve performance at possible cost of latency and more video stuttering.'
+        'Forces rendering area to stay equal to content aspect ratio or as defined in video_aspect_ratio.'
+        'Only scales video in integer steps. The base size depends on system-reported geometry and aspect ratio. If video_force_aspect is not set, X/Y will be integer scaled independently.'
+        'If this is true and video_aspect_ratio or video_aspect_ratio_index is not set, aspect ratio is decided by libretro implementation. If this is false, 1:1 PAR will always be assumed if video_aspect_ratio or  video_aspect_ratio_index is not set.'
+        'A floating point value for video aspect ratio (width / height). If this is not set, aspect ratio is assumed to be automatic. Behavior then is defined by video_aspect_ratio_auto.'
+        'Allows libretro cores to set rotation modes. Setting this to false will honor, but ignore this request. This is useful for vertically oriented content where one manually rotates the monitor. (defaults to true)'
+        'Forces a certain rotation of the screen. The rotation is added to rotations which the libretro core sets (see video_allow_rotate). The angle is <value> * 90 degrees counter-clockwise.'
+        'Viewport resolution.'
+        'Viewport resolution.'
+        'Viewport position x.'
+        'Viewport position y.'
+        'Size of the OSD font.'
+        'Show current frames per second.'
+        'Opacity of overlay. Float value 1.000000.'
+        'Scale of overlay. Float value 1.000000.'
+        'Input joypad driver to use (default is udev)'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
     )
-    
-    if [[ "$mode" == "2" ]]; then
-        ini_options+=(
-            'audio_driver alsa alsa_thread sdl2'
-            'video_driver gl dispmanx sdl2 vg'
-            'video_fullscreen_x _string_'
-            'video_fullscreen_y _string_'
-            'video_threaded true false'
-            'video_force_aspect true false'
-            'video_scale_integer true false'
-            'video_aspect_ratio_auto true false'
-            'video_aspect_ratio _string_'
-            'video_rotation _string_'
-            'custom_viewport_width _string_'
-            'custom_viewport_height _string_'
-            'custom_viewport_x _string_'
-            'custom_viewport_y _string_'
-            'fps_show true false'
-            'input_overlay_opacity _string_'
-            'input_overlay_scale _string_'
-            'input_joypad_driver udev sdl2 linuxraw'
-            'input_player1_analog_dpad_mode 0 1 2'
-            'input_player2_analog_dpad_mode 0 1 2'
-            'input_player3_analog_dpad_mode 0 1 2'
-            'input_player4_analog_dpad_mode 0 1 2'
-            'input_player5_analog_dpad_mode 0 1 2'
-            'input_player6_analog_dpad_mode 0 1 2'
-            'input_player7_analog_dpad_mode 0 1 2'
-            'input_player8_analog_dpad_mode 0 1 2'
-        )
-
-        ini_descs+=(
-            'Audio driver to use (default is alsa_thread)'
-            'Video driver to use (default is gl)'
-            'Fullscreen resolution. Resolution of 0 uses the resolution of the desktop.'
-            'Fullscreen resolution. Resolution of 0 uses the resolution of the desktop.'
-            'Use threaded video driver. Using this might improve performance at possible cost of latency and more video stuttering.'
-            'Forces rendering area to stay equal to content aspect ratio or as defined in video_aspect_ratio.'
-            'Only scales video in integer steps. The base size depends on system-reported geometry and aspect ratio. If video_force_aspect is not set, X/Y will be integer scaled independently.'
-            'If this is true and video_aspect_ratio or video_aspect_ratio_index is not set, aspect ratio is decided by libretro implementation. If this is false, 1:1 PAR will always be assumed if video_aspect_ratio or  video_aspect_ratio_index is not set.'
-            'A floating point value for video aspect ratio (width / height). If this is not set, aspect ratio is assumed to be automatic. Behavior then is defined by video_aspect_ratio_auto.'
-            'Forces a certain rotation of the screen. The rotation is added to rotations which the libretro core sets (see video_allow_rotate). The angle is <value> * 90 degrees counter-clockwise.'
-            'Viewport resolution.'
-            'Viewport resolution.'
-            'Viewport position x.'
-            'Viewport position y.'
-            'Show current frames per second.'
-            'Opacity of overlay. Float value 1.000000.'
-            'Scale of overlay. Float value 1.000000.'
-            'Input joypad driver to use (default is udev)'
-            'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-            'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-            'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-            'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-            'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-            'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-            'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-            'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        )
-    fi
 
     iniFileEditor "$config"
 }
@@ -122,7 +236,7 @@ function choose_config_configedit() {
     fi
 }
 
-function basic_configedit() {
+function basic_menu_configedit() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Which platform do you want to adjust" 22 76 16)
         local configs=()
@@ -145,14 +259,14 @@ function basic_configedit() {
         done < <(find "$configdir" -type f -regex ".*/retroarch.cfg" | sort)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
-            common_configedit "${configs[choice]}"
+            basic_configedit "${configs[choice]}"
         else
             break
         fi
     done
 }
 
-function advanced_configedit() {
+function advanced_menu_configedit() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(
@@ -169,23 +283,23 @@ function advanced_configedit() {
                 case $choice in
                     1)
                         file=$(choose_config_configedit "$configdir" ".*/retroarch.cfg")
-                        common_configedit "$configdir/$file" 2
+                        advanced_configedit "$configdir/$file" 2
                         ;;
                     2)
                         file=$(choose_config_configedit "$configdir" ".*/retroarch.*")
-                        editFile "$configdir/$file" 2
+                        editFile "$configdir/$file"
                         ;;
                     3)
                         file=$(choose_config_configedit "$configdir" ".*/all/.*")
-                        editFile "$configdir/$file" 2
+                        editFile "$configdir/$file"
                         ;;
                     4)
                         file=$(choose_config_configedit "$configdir" ".*" ".*retroarch.*")
-                        editFile "$configdir/$file" 2
+                        editFile "$configdir/$file"
                         ;;
                     5)
                         file=$(choose_config_configedit "$configdir" ".*")
-                        editFile "$configdir/$file" 2
+                        editFile "$configdir/$file"
                         ;;
                 esac
             done
@@ -207,10 +321,10 @@ function configure_configedit() {
         if [[ -n "$choice" ]]; then
             case $choice in
                 1)
-                    basic_configedit
+                    basic_menu_configedit
                     ;;
                 2)
-                    advanced_configedit
+                    advanced_menu_configedit
                     ;;
             esac
         else
