@@ -30,7 +30,7 @@ function common_configedit() {
 
     local ini_descs=(
         'Smoothens picture with bilinear filtering. Should be disabled if using pixel shaders.'
-        'Aspect ratio to use (default core - set aspect_ratio_auto to false to use this)'
+        'Aspect ratio to use (default unset - will use core aspect if video_aspect_ratio_auto is true)'
         'Load video_shader on startup. Other shaders can still be loaded later in runtime.'
         'Video shader to use (default none)'
         'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
