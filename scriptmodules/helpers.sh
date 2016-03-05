@@ -320,6 +320,10 @@ function iniFileEditor() {
     set -f
 
     iniConfig " = " "" "$config"
+    local sel
+    local value
+    local option
+    local title
     while true; do
         local options=()
         local params=()
@@ -327,10 +331,6 @@ function iniFileEditor() {
         local keys=()
         local i=0
 
-        local key
-        local value
-        local option
-        local title
         # generate menu from options
         for option in "${ini_options[@]}"; do
             option=($option)
@@ -371,18 +371,18 @@ function iniFileEditor() {
             ((i++))
         done
 
-        local cmd=(dialog --backtitle "$__backtitle" --default-item "$key" --item-help --help-button --menu "Please choose the setting to modify in $config" 22 76 16)
-        key=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ "${key[@]:0:4}" == "HELP" ]]; then
-            printMsgs "dialog" "${key[@]:5}"
+        local cmd=(dialog --backtitle "$__backtitle" --default-item "$sel" --item-help --help-button --menu "Please choose the setting to modify in $config" 22 76 16)
+        sel=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [[ "${sel[@]:0:4}" == "HELP" ]]; then
+            printMsgs "dialog" "${sel[@]:5}"
             continue
         fi
 
-        [[ -z "$key" ]] && break
+        [[ -z "$sel" ]] && break
 
         # if the key is _function_ we handle the option with a custom function
-        if [[ "${keys[$key]}" == "_function_" ]]; then
-            "${params[$key]}" set "${values[$key]}"
+        if [[ "${keys[sel]}" == "_function_" ]]; then
+            "${params[sel]}" set "${values[sel]}"
             continue
         fi
 
@@ -391,19 +391,19 @@ function iniFileEditor() {
         options=("U" "unset")
         local default
 
-        params=(${params[$key]})
+        params=(${params[sel]})
         local mode="${params[0]}"
 
         case "$mode" in
             _string_)
-                options+=("E" "Edit (Currently ${values[key]})")
+                options+=("E" "Edit (Currently ${values[sel]})")
                 ;;
             _file_)
                 local match="${params[1]}"
                 local path="${params[*]:2}"
                 local file
                 while read file; do
-                    [[ "${values[key]}" == "$file" ]] && default="$i"
+                    [[ "${values[sel]}" == "$file" ]] && default="$i"
                     file="${file//$path\//}"
                     options+=("$i" "$file")
                     ((i++))
@@ -413,9 +413,9 @@ function iniFileEditor() {
                 [[ "$mode" == "_id_" ]] && params=("${params[@]:1}")
                 for option in "${params[@]}"; do
                     if [[ "$mode" == "_id_" ]]; then
-                        [[ "${values[$key]}" == "$i" ]] && default="$i"
+                        [[ "${values[sel]}" == "$i" ]] && default="$i"
                     else
-                        [[ "${values[$key]}" == "$option" ]] && default="$i"
+                        [[ "${values[sel]}" == "$option" ]] && default="$i"
                     fi
                     options+=("$i" "$option")
                     ((i++))
@@ -424,15 +424,15 @@ function iniFileEditor() {
         esac
         [[ -z "$default" ]] && default="U"
         # display values
-        cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Please choose the value for ${keys[$key]}" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Please choose the value for ${keys[sel]}" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
         # if it is a _string_ type we will open an inputbox dialog to get a manual value
         if [[ -z "$choice" ]]; then
             continue
         elif [[ "$choice" == "E" ]]; then
-            [[ "${values[key]}" == "unset" ]] && values[key]=""
-            cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the value for ${keys[key]}" 10 60 "${values[key]}")
+            [[ "${values[sel]}" == "unset" ]] && values[sel]=""
+            cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the value for ${keys[sel]}" 10 60 "${values[sel]}")
             value=$("${cmd[@]}" 2>&1 >/dev/tty)
         elif [[ "$choice" == "U" ]]; then
             value="$default"
@@ -455,9 +455,9 @@ function iniFileEditor() {
         sed -i "/^#include/d" "$config"
 
         if [[ "$choice" == "U" ]]; then
-            iniUnset "${keys[key]}" "$value"
+            iniUnset "${keys[sel]}" "$value"
         else
-            iniSet "${keys[key]}" "$value"
+            iniSet "${keys[sel]}" "$value"
         fi
 
         # re-add the include line(s)
