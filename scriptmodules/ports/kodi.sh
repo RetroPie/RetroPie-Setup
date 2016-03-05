@@ -21,9 +21,12 @@ function install_kodi() {
 }
 
 function configure_kodi() {
-    echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
+    if [[ ! -f /etc/udev/rules.d/99-input.rules ]]; then
+        echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
+    fi
 
-    mkRomDir "ports"
+    # we launch directly rather than from roms section now
+    rm -f "$romdir/ports/Kodi.sh"
 
-    addPort "$md_id" "kodi" "Kodi" "kodi-standalone"
+    addDirectLaunch "$md_id" "Kodi" "kodi-standalone"
 }

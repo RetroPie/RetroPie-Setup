@@ -616,7 +616,7 @@ function addSystem() {
     # add the extensions again as uppercase
     exts+=" ${exts^^}"
 
-    setESSystem "$fullname" "$es_name" "$es_path" "$exts" "$es_cmd" "$platform" "$theme" "$directlaunch"
+    setESSystem "$fullname" "$es_name" "$es_path" "$exts" "$es_cmd" "$platform" "$theme"
 
     # create a config folder for the system
     if [[ ! -d "$configdir/$system" ]]; then
@@ -665,4 +665,12 @@ _EOF_
     chmod +x "$file"
 
     addSystem 1 "$id" "$port pc ports" "$cmd"
+}
+
+function addDirectLaunch() {
+    local name="$1"
+    local fullname="$2"
+    local cmd="$3"
+
+    setESSystem "$fullname" "$name" "" "" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$cmd\"" "" "$name" "true"
 }
