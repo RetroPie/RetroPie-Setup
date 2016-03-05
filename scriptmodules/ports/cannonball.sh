@@ -12,43 +12,39 @@
 rp_module_id="cannonball"
 rp_module_desc="cannonball - An Enhanced OutRun Engine"
 rp_module_menus="4+"
-rp_module_flags=""
+rp_module_flags="!x11 !mali"
 
 function depends_cannonball() {
     getDepends libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libboost-dev
 }
 
 function sources_cannonball() {
-    gitPullOrClone "$md_build" https://github.com/VanFanel/cannonball.git
+    gitPullOrClone "$md_build" https://github.com/djyt/cannonball.git
+    sed -i "s/-march=armv6 -mfpu=vfp -mfloat-abi=hard//" $md_build/cmake/sdl2_rpi.cmake $md_build/cmake/sdl2gles_rpi.cmake
 }
 
 function build_cannonball() {
+    
     mkdir build
     cd build
-    cmake -DTARGET=sdl2_rpi -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" ../cmake
+    cmake -G "Unix Makefiles" -DTARGET=sdl2gles_rpi -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" ../cmake/
     make
+    md_ret_require="$md_build/build/cannonball"
 }
 
 function install_cannonball() {
+    mkRomDir "ports/cannonball"
     cp build/cannonball "$md_inst"
-    mkdir "$md_inst/roms/"
+    ln -s "$romdir/ports/cannonball" "$md_inst/roms"
     mkdir "$md_inst/res/"
-    cp -R roms/* "$md_inst/roms/"
+    cp -R roms/* "$romdir/ports/cannonball/"
     cp res/tilemap.bin "$md_inst/res/"
     cp res/tilepatch.bin "$md_inst/res/"
     cp res/config.xml "$md_inst"
     touch "$md_inst/hiscores.xml"
-    chown pi:pi "$md_inst/"
-    chown pi:pi "$md_inst/cannonball"
-    chown pi:pi "$md_inst/config.xml"
-    chown pi:pi "$md_inst/hiscores.xml"
-    chown pi:pi "$md_inst/res"
-    chown pi:pi "$md_inst/roms"
-    chown pi:pi "$md_inst/res/tilemap.bin"
-    chown pi:pi "$md_inst/res/tilepatch.bin"
 }
 
 function configure_cannonball() {
-    addPort "$md_id" "cannonball" "Cannonball - OutRun Engine" "$md_inst/cannonball"
-    __INFMSGS+=("You need to unzip your OutRun set B from latest MAME (outrun.zip) to $md_inst/cannonball/roms. They should match the file names listed in the roms.txt file found in the roms folder. You will also need to rename the epr-10381a.132 file to epr-10381b.132 before it will work.")
+    addPort "$md_id" "cannonball" "Cannonball - OutRun Engine" "pushd $md_inst; $md_inst/cannonball; popd"
+    __INFMSGS+=("You need to unzip your OutRun set B from latest MAME (outrun.zip) to $romdir/ports/cannonball/. They should match the file names listed in the roms.txt file found in the roms folder. You will also need to rename the epr-10381a.132 file to epr-10381b.132 before it will work.")
 }
