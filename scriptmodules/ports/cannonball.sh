@@ -15,7 +15,7 @@ rp_module_menus="4+"
 rp_module_flags="!x11 !mali"
 
 function depends_cannonball() {
-    getDepends libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libboost-dev
+    getDepends libsdl2-dev libboost-dev
 }
 
 function sources_cannonball() {
@@ -24,7 +24,6 @@ function sources_cannonball() {
 }
 
 function build_cannonball() {
-    
     mkdir build
     cd build
     cmake -G "Unix Makefiles" -DTARGET=sdl2gles_rpi -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" ../cmake/
@@ -33,6 +32,7 @@ function build_cannonball() {
 }
 
 function install_cannonball() {
+    mkRomDir "ports"
     mkRomDir "ports/cannonball"
     cp build/cannonball "$md_inst"
     ln -s "$romdir/ports/cannonball" "$md_inst/roms"
@@ -40,11 +40,16 @@ function install_cannonball() {
     cp -R roms/* "$romdir/ports/cannonball/"
     cp res/tilemap.bin "$md_inst/res/"
     cp res/tilepatch.bin "$md_inst/res/"
-    cp res/config.xml "$md_inst"
-    touch "$md_inst/hiscores.xml"
 }
 
 function configure_cannonball() {
     addPort "$md_id" "cannonball" "Cannonball - OutRun Engine" "pushd $md_inst; $md_inst/cannonball; popd"
+    cp "$md_build/res/config.xml" "$configdir/$md_id"
+    touch "$configdir/$md_id/hiscores.xml"
+    chown $user:$user "$configdir/$md_id/config.xml"
+    chown $user:$user "$configdir/$md_id/hiscores.xml"
+    ln -s "$configdir/$md_id/config.xml" "$md_inst/config.xml"
+    ln -s "$configdir/$md_id/hiscores.xml" "$md_inst/hiscores.xml"
+
     __INFMSGS+=("You need to unzip your OutRun set B from latest MAME (outrun.zip) to $romdir/ports/cannonball/. They should match the file names listed in the roms.txt file found in the roms folder. You will also need to rename the epr-10381a.132 file to epr-10381b.132 before it will work.")
 }
