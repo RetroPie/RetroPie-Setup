@@ -10,7 +10,7 @@
 #
 
 rp_module_id="cannonball"
-rp_module_desc="cannonball - An Enhanced OutRun Engine"
+rp_module_desc="Cannonball - An Enhanced OutRun Engine"
 rp_module_menus="4+"
 rp_module_flags="!x11 !mali"
 
