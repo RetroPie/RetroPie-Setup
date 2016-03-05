@@ -83,6 +83,7 @@ function configure_retroarch() {
 
     # configure default options
     iniConfig " = " "" "$config"
+    iniSet "cache_directory" "/tmp/retroarch"
     iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
