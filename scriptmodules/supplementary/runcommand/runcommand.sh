@@ -33,6 +33,7 @@
 
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
+
 runcommand_conf="$configdir/all/runcommand.cfg"
 video_conf="$configdir/all/videomodes.cfg"
 apps_conf="$configdir/all/emulators.cfg"
@@ -584,6 +585,9 @@ function retroarch_append_config() {
     # only for retroarch emulators
     [[ ! "$command" =~ "retroarch" ]] && return
 
+    # make sure tmp folder exists for unpacking archives
+    mkdir -p "/tmp/retroarch"
+
     local conf="/tmp/retroarch.cfg"
     rm -f "$conf"
     touch "$conf"
@@ -792,6 +796,9 @@ else
 fi
 
 clear
+
+# remove tmp folder for unpacked archives if it exists
+rm -rf "/tmp/retroarch"
 
 # restore default cpu scaling governor
 [[ -n "$governor" ]] && restore_governor
