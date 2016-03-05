@@ -503,11 +503,7 @@ function choose_fb_res() {
     local cmd=(dialog --default-item "$default" --menu "Choose framebuffer resolution (Useful for X and console apps)" 22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
-    case "$choice" in
-        [1-4])
-            fb_res="${res[$choice-1]}"
-            ;;
-    esac
+    fb_res="${res[$choice-1]}"
 
     iniConfig "=" '"' "$video_conf"
     iniSet "$save" "$fb_res"
