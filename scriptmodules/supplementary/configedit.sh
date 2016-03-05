@@ -95,6 +95,10 @@ function basic_configedit() {
         "video_shader _file_ *.*p $rootdir/emulators/retroarch/shader"
         'input_overlay_enable true false'
         "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
+        'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player4_analog_dpad_mode _id_ disabled left-stick right-stick'
     )
 
     local ini_titles=(
@@ -105,6 +109,10 @@ function basic_configedit() {
         "Video Shader File"
         'Overlay Enable'
         'Overlay File'
+        'Player 1 - use analogue stick as d-pad'
+        'Player 2 - use analogue stick as d-pad'
+        'Player 3 - use analogue stick as d-pad'
+        'Player 4 - use analogue stick as d-pad'
     )
 
     local ini_descs=(
@@ -115,6 +123,10 @@ function basic_configedit() {
         'Video shader to use (default none)'
         'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
         'Input overlay to use (default none)'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
     )
 
     iniFileEditor "$config"
@@ -148,14 +160,14 @@ function advanced_configedit() {
         'input_overlay_opacity _string_'
         'input_overlay_scale _string_'
         'input_joypad_driver udev sdl2 linuxraw'
-        'input_player1_analog_dpad_mode 0 1 2'
-        'input_player2_analog_dpad_mode 0 1 2'
-        'input_player3_analog_dpad_mode 0 1 2'
-        'input_player4_analog_dpad_mode 0 1 2'
-        'input_player5_analog_dpad_mode 0 1 2'
-        'input_player6_analog_dpad_mode 0 1 2'
-        'input_player7_analog_dpad_mode 0 1 2'
-        'input_player8_analog_dpad_mode 0 1 2'
+        'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player4_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player5_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player6_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player7_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player8_analog_dpad_mode _id_ disabled left-stick right-stick'
     )
 
     local ini_descs=(
