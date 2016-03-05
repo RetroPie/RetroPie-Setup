@@ -326,19 +326,46 @@ function iniFileEditor() {
         local values=()
         local keys=()
         local i=0
-        # generate menu from options
+
+        local key
+        local value
         local option
+        local title
+        # generate menu from options
         for option in "${ini_options[@]}"; do
             option=($option)
-            keys+=("${option[0]}")
+            key="${option[0]}"
+            keys+=("$key")
             params+=("${option[*]:1}")
-            iniGet "${option[0]}"
-            [[ -z "$ini_value" ]] && ini_value="unset"
-            values+=("$ini_value")
-            options+=("$i" "${option[0]} ($ini_value)" "${ini_descs[i]}")
+
+            # if the first parameter is _function_ we call the second parameter as a function
+            # so we can handle some options with a custom menu etc
+            if [[ "$key" == "_function_" ]]; then
+                value="$(${option[1]} get)"
+            else
+                # get current value
+                iniGet "$key"
+                if [[ -n "$ini_value" ]]; then
+                    value="$ini_value"
+                else
+                    value="unset"
+                fi
+            fi
+
+            values+=("$value")
+
+            # use custom title if provided
+            if [[ -n "${ini_titles[i]}" ]]; then
+                title="${ini_titles[i]}"
+            else
+                title="$key"
+            fi
+
+            options+=("$i" "$title ($value)" "${ini_descs[i]}")
+
             ((i++))
         done
-        local key
+
         local cmd=(dialog --backtitle "$__backtitle" --default-item "$key" --item-help --help-button --menu "Please choose the setting to modify in $config" 22 76 16)
         key=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ "${key[@]:0:4}" == "HELP" ]]; then
@@ -346,84 +373,90 @@ function iniFileEditor() {
             continue
         fi
 
-        if [[ -n "$key" ]]; then
-            i=0
-            options=("U" "unset")
-            local default
+        [[ -z "$key" ]] && break
 
-            params=(${params[$key]})
-            local values=()
-            local mode="${params[0]}"
-            case "$mode" in
-                _string_)
-                    options+=("E" "Edit (Currently ${values[key]})")
-                    ;;
-                _file_)
-                    local match="${params[1]}"
-                    local path="${params[*]:2}"
-                    local file
-                    while read file; do
-                        [[ "${values[key]}" == "$file" ]] && default="$i"
-                        file="${file//$path\//}"
-                        options+=("$i" "$file")
-                        ((i++))
-                    done < <(find "$path" -type f -name "$match")
-                    ;;
-                _id_|*)
-                    [[ "$mode" == "_id_" ]] && params=("${params[@]:1}")
-                    for option in "${params[@]}"; do
-                        [[ "${values[key]}" == "$option" ]] && default="$i"
-                        options+=("$i" "$option")
-                        ((i++))
-                    done
-                    ;;
-            esac
+        # if the key is _function_ we handle the option with a custom function
+        if [[ "${keys[$key]}" == "_function_" ]]; then
+            "${params[$key]}" set "${values[$key]}"
+            continue
+        fi
 
-            # display values
-            cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Please choose the value for ${keys[$key]}" 22 76 16)
-            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        # process the editing of the option
+        i=0
+        options=("U" "unset")
+        local default
 
-            # if it is a _string_ type we will open an inputbox dialog to get a manual value
-            if [[ -z "$choice" ]]; then
-                continue
-            elif [[ "$choice" == "E" ]]; then
-                [[ "${values[key]}" == "unset" ]] && values[key]=""
-                cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the value for ${keys[key]}" 10 60 "${values[key]}")
-                value=$("${cmd[@]}" 2>&1 >/dev/tty)
-            elif [[ "$choice" == "U" ]]; then
-                value="$default"
+        params=(${params[$key]})
+        local values=()
+        local mode="${params[0]}"
+        case "$mode" in
+            _string_)
+                options+=("E" "Edit (Currently ${values[key]})")
+                ;;
+            _file_)
+                local match="${params[1]}"
+                local path="${params[*]:2}"
+                local file
+                while read file; do
+                    [[ "${values[key]}" == "$file" ]] && default="$i"
+                    file="${file//$path\//}"
+                    options+=("$i" "$file")
+                    ((i++))
+                done < <(find "$path" -type f -name "$match")
+                ;;
+            _id_|*)
+                [[ "$mode" == "_id_" ]] && params=("${params[@]:1}")
+                for option in "${params[@]}"; do
+                    [[ "${values[key]}" == "$option" ]] && default="$i"
+                    options+=("$i" "$option")
+                    ((i++))
+                done
+                ;;
+        esac
+
+        # display values
+        cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Please choose the value for ${keys[$key]}" 22 76 16)
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+
+        # if it is a _string_ type we will open an inputbox dialog to get a manual value
+        if [[ -z "$choice" ]]; then
+            continue
+        elif [[ "$choice" == "E" ]]; then
+            [[ "${values[key]}" == "unset" ]] && values[key]=""
+            cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the value for ${keys[key]}" 10 60 "${values[key]}")
+            value=$("${cmd[@]}" 2>&1 >/dev/tty)
+        elif [[ "$choice" == "U" ]]; then
+            value="$default"
+        else
+            if [[ "$mode" == "_id_" ]]; then
+                value="$choice"
             else
-                if [[ "$mode" == "_id_" ]]; then
-                    value="$choice"
+                # get the actual value from the options array
+                local index=$((choice*2+3))
+                if [[ "$mode" == "_file_" ]]; then
+                    value="$path/${options[index]}"
                 else
-                    # get the actual value from the options array
-                    local index=$((choice*2+3))
-                    if [[ "$mode" == "_file_" ]]; then
-                        value="$path/${options[index]}"
-                    else
-                        value="${options[index]}"
-                    fi
+                    value="${options[index]}"
                 fi
             fi
-
-            # save the #include line and remove it, so we can add our ini values and re-add the include line(s) at the end
-            local include=$(grep "^#include" "$config")
-            sed -i "/^#include/d" "$config"
-
-            if [[ "$choice" == "U" ]]; then
-                iniUnset "${keys[key]}" "$value"
-            else
-                iniSet "${keys[key]}" "$value"
-            fi
-
-            # re-add the include line(s)
-            if [[ -n "$include" ]]; then
-                echo "" >>"$config"
-                echo "$include" >>"$config"
-            fi
-        else
-            break
         fi
+
+        # save the #include line and remove it, so we can add our ini values and re-add the include line(s) at the end
+        local include=$(grep "^#include" "$config")
+        sed -i "/^#include/d" "$config"
+
+        if [[ "$choice" == "U" ]]; then
+            iniUnset "${keys[key]}" "$value"
+        else
+            iniSet "${keys[key]}" "$value"
+        fi
+
+        # re-add the include line(s)
+        if [[ -n "$include" ]]; then
+            echo "" >>"$config"
+            echo "$include" >>"$config"
+        fi
+
     done
 
     # enable globbing
