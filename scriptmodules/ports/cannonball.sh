@@ -33,7 +33,7 @@ function build_cannonball() {
     else
         target="sdl2gl"
     fi
-    cmake -G "Unix Makefiles" -DTARGET=sdl2gles_rpi ../cmake/
+    cmake -G "Unix Makefiles" -DTARGET=$target ../cmake/
     make clean
     make
     md_ret_require="$md_build/build/cannonball"
@@ -45,7 +45,7 @@ function install_cannonball() {
         'roms/roms.txt'
     )
 
-    mkdir "$md_inst/res"
+    mkdir -p "$md_inst/res"
     cp -v res/*.bin "$md_inst/res/"
     cp -v res/config_sdl2.xml "$md_inst/config.xml.def"
 }
