@@ -52,6 +52,9 @@ function configure_lr-fba-next() {
     ensureSystemretroconfig "fba"
     ensureSystemretroconfig "neogeo"
 
+    # Set core options
+    setRetroArchCoreOption "fba-diagnostic-input" "Hold Start"
+
     local def=1
     isPlatform "armv6" && def=0
     addSystem 0 "$md_id" "arcade" "$md_inst/fba_libretro.so"
