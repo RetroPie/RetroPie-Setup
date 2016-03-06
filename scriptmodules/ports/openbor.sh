@@ -15,7 +15,7 @@ rp_module_menus="4+"
 rp_module_flags="!x11 !mali"
 
 function depends_openbor() {
-    getDepends libsdl1.2-dev libsdl-gfx1.2-dev libogg-dev libvorbisidec-dev libvorbis-dev libpng-dev libz-dev
+    getDepends libsdl1.2-dev libsdl-gfx1.2-dev libogg-dev libvorbisidec-dev libvorbis-dev libpng12-dev zlib1g-dev
 }
 
 function sources_openbor() {
