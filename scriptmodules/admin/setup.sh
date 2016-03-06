@@ -296,9 +296,9 @@ function individual_setup()
 
 function uninstall_setup()
 {
-    dialog --yesno "Are you sure you want to uninstall RetroPie?" 22 76 2>&1 >/dev/tty || return 0
+    dialog --defaultno --yesno "Are you sure you want to uninstall RetroPie?" 22 76 2>&1 >/dev/tty || return 0
     printMsgs "dialog" "This feature is new, and you still may need to remove some files manually, such as symlinks for some emulators created in $home"
-    dialog --yesno "Are you REALLY sure you want to uninstall RetroPie?\n\n$rootdir and $datadir will be removed - this includes your RetroPie configurations and ROMs." 22 76 2>&1 >/dev/tty || return 0
+    dialog --defaultno --yesno "Are you REALLY sure you want to uninstall RetroPie?\n\n$rootdir and $datadir will be removed - this includes your RetroPie configurations and ROMs." 22 76 2>&1 >/dev/tty || return 0
     clear
     printHeading "Uninstalling RetroPie"
     for idx in "${__mod_idx[@]}"; do
