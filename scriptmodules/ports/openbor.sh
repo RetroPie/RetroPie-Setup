@@ -36,7 +36,6 @@ function install_openbor() {
        'tools/borpak/borpak'
        'tools/unpack.sh'
     )
-
 }
 
 function configure_openbor() {
@@ -74,6 +73,6 @@ _EOF_
     ln -snf "$configdir/$md_id/Saves/" "$md_inst/Saves"
 
     ln -snf "$romdir/ports/$md_id/" "$md_inst/Paks"
-    addPort "$md_id" "OpenBOR" "OpenBOR - Beats of Rage Engine" "pushd $md_inst; $md_inst/OpenBOR; popd"
+    addPort "$md_id" "openbor" "OpenBOR - Beats of Rage Engine" "pushd $md_inst; $md_inst/OpenBOR; popd"
      __INFMSGS+=("OpenBOR games need to be extracted to function properly. Place your pak files in $romdir/ports/$md_id/ and then run $md_inst/extract.sh. When the script is done, your original pak files will be found in $romdir/ports/$md_id/originals/ and can be deleted.")
 }
