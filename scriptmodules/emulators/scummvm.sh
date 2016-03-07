@@ -45,7 +45,7 @@ _EOF_
 }
 
 function build_scummvm() {
-    local params=(--enable-all-engines --enable-vkeybd --enable-release --disable-debug --enable-keymapper --disable-eventrecorder --prefix="$md_inst")
+    local params=(--enable-all-engines --enable-vkeybd --enable-release --disable-debug --enable-keymapper --prefix="$md_inst")
     isPlatform "rpi" && params+=(--host=raspberrypi)
     # stop scummvm using arm-linux-gnueabihf-g++ which is v4.6 on wheezy and doesn't like rpi2 cpu flags
     if isPlatform "rpi"; then
