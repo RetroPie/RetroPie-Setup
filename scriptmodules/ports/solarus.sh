@@ -53,6 +53,8 @@ function install_solarus() {
 }
 
 function configure_solarus() {
+    mkRomDir "ports"
+    moveConfigDir "$home/.solarus" "$configdir/solarus"
     addPort "$md_id" "zsdx" "Solarus Engine - Zelda Mystery of Solarus DX" "LD_LIBRARY_PATH=$md_inst/lib/arm-linux-gnueabihf/ $md_inst/bin/solarus_run $md_inst/share/solarus/zsdx/"
     addPort "$md_id" "zsxd" "Solarus Engine - Zelda Mystery of Solarus XD" "LD_LIBRARY_PATH=$md_inst/lib/arm-linux-gnueabihf/ $md_inst/bin/solarus_run $md_inst/share/solarus/zsxd/"
     addPort "$md_id" "zelda_roth_se" "Solarus Engine - Zelda Return of the Hylian SE" "LD_LIBRARY_PATH=$md_inst/lib/arm-linux-gnueabihf/ $md_inst/bin/solarus_run $md_inst/share/solarus/zelda_roth_se/"
