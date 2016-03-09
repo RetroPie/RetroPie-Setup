@@ -12,7 +12,7 @@
 rp_module_id="micropolis"
 rp_module_desc="Micropolis - Open Source City Building Game"
 rp_module_menus="4+"
-rp_module_flags="nobin !mali !x86"
+rp_module_flags="nobin !mali"
 
 function depends_micropolis() {
     getDepends xorg matchbox

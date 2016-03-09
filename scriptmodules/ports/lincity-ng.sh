@@ -12,14 +12,13 @@
 rp_module_id="lincity-ng"
 rp_module_desc="lincity-ng - Open Source City Building Game"
 rp_module_menus="4+"
-rp_module_flags="nobin !mali !x86"
+rp_module_flags="nobin !mali"
 
 function depends_lincity-ng() {
     getDepends xorg
 }
 
 function install_lincity-ng() {
-    
     aptInstall lincity-ng
 }
 
