@@ -23,7 +23,7 @@ function install_giana() {
 function configure_giana() {
     mkRomDir "ports"
 
-    chmod +x $md_inst/giana_rpi
+    chmod +x "$md_inst/giana_rpi"
 
     addPort "$md_id" "giana" "Giana's Return" "pushd $md_inst; $md_inst/giana_rpi; popd"
 }
