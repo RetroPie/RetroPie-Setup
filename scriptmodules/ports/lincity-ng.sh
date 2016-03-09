@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# This file is part of The RetroPie Project
+# 
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
+# 
+# See the LICENSE.md file at the top-level directory of this distribution and 
+# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
+#
+
+rp_module_id="lincity-ng"
+rp_module_desc="lincity-ng - Open Source City Building Game"
+rp_module_menus="4+"
+rp_module_flags="nobin !mali !x86"
+
+function depends_lincity-ng() {
+    getDepends xorg
+}
+
+function install_lincity-ng() {
+    
+    aptInstall lincity-ng
+}
+
+function configure_lincity-ng() {
+    mkRomDir "ports"
+    moveConfigDir "$home/.lincity-ng" "$configDir/lincity-ng"
+
+    addPort "$md_id" "lincity-ng" "LinCity-NG" "xinit lincity-ng"
+    __INFMSGS+=("For lincity-ng to run properly, you will need to execute 'sudo dpkg-reconfigure x11-common' and allow anyone to run X11 if you haven't done so already.")
+}
