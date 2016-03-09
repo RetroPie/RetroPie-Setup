@@ -28,5 +28,4 @@ function configure_lincity-ng() {
     moveConfigDir "$home/.lincity-ng" "$configDir/lincity-ng"
 
     addPort "$md_id" "lincity-ng" "LinCity-NG" "xinit lincity-ng"
-    __INFMSGS+=("For lincity-ng to run properly, you will need to execute 'sudo dpkg-reconfigure x11-common' and allow anyone to run X11 if you haven't done so already.")
 }

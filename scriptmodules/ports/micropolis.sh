@@ -26,5 +26,4 @@ function configure_micropolis() {
     mkRomDir "ports"
 
     addPort "$md_id" "micropolis" "Micropolis" "xset -dpms s off s noblank; matchbox-window-manager \&; xinit micropolis"
-    __INFMSGS+=("For micropolis to run properly, you will need to execute 'sudo dpkg-reconfigure x11-common' and allow anyone to run X11.")
 }
