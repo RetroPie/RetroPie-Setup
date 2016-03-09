@@ -19,7 +19,7 @@ function depends_cannonball() {
 
 function sources_cannonball() {
     gitPullOrClone "$md_build" https://github.com/djyt/cannonball.git
-    sed -i "s/-march=armv6 -mfpu=vfp -mfloat-abi=hard//" $md_build/cmake/sdl2_rpi.cmake $md_build/cmake/sdl2gles_rpi.cmake
+    sed -i "s/-march=armv6 -mfpu=vfp -mfloat-abi=hard//" "$md_build/cmake/sdl2_rpi.cmake" "$md_build/cmake/sdl2gles_rpi.cmake"
 }
 
 function build_cannonball() {
