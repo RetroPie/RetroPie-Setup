@@ -58,7 +58,31 @@ function configure_zdoom() {
     if [[ ! -f "$romdir/ports/doom/doom1.wad" ]]; then
         wget "$__archive_url/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
     fi
-    chown $user:$user "$romdir/ports/doom/doom1.wad"
 
-    addPort "$md_id" "doom" "Doom" "$md_inst/zdoom -iwad $romdir/ports/doom/doom1.wad"
+    if [[ -f "$romdir/ports/doom/doom1.wad" ]]; then
+        chown $user:$user "$romdir/ports/doom/doom1.wad"
+        addPort "$md_id" "zdoom-doom1" "ZDOOM - DOOM Shareware" "$md_inst/zdoom -iwad $romdir/ports/doom/doom1.wad"
+    fi
+
+    if [[ -f "$romdir/ports/doom/doom.wad" ]]; then
+        chown $user:$user "$romdir/ports/doom/doom.wad"
+        addPort "$md_id" "zdoom-doom" "ZDOOM - Doom Registered" "$md_inst/zdoom -iwad $romdir/ports/doom/doom.wad"
+    fi
+
+    if [[ -f "$romdir/ports/doom/doom2.wad" ]]; then
+        chown $user:$user "$romdir/ports/doom/doom2.wad"
+        addPort "$md_id" "zdoom-doom2" "ZDOOM - DOOM 2: Hell on Earth" "$md_inst/zdoom -iwad $romdir/ports/doom/doom2.wad"
+    fi
+
+    if [[ -f "$romdir/ports/doom/tnt.wad" ]]; then
+        chown $user:$user "$romdir/ports/doom/tnt.wad"
+        addPort "$md_id" "zdoom-tnt" "ZDOOM - Final Doom: TNT Evilution" "$md_inst/zdoom -iwad $romdir/ports/doom/tnt.wad"
+    fi
+
+    if [[ -f "$romdir/ports/doom/plutonia.wad" ]]; then
+        chown $user:$user "$romdir/ports/doom/plutonia.wad"
+        addPort "$md_id" "zdoom-plutonia" "ZDOOM - Final Doom: The Plutonia Experiment" "$md_inst/zdoom -iwad $romdir/ports/doom/plutonia.wad"
+    fi
+
+    __INFMSGS+=("If you have any other iWADs for ZDOOM, place them in $romdir/ports/doom/ and rerun the ZDOOM installation so that they can be added to EmulationStation.")
 }
