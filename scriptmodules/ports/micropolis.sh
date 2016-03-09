@@ -25,5 +25,14 @@ function install_micropolis() {
 function configure_micropolis() {
     mkRomDir "ports"
 
-    addPort "$md_id" "micropolis" "Micropolis" "xset -dpms s off s noblank; matchbox-window-manager \&; xinit micropolis"
+    mkdir -p "$md_inst"
+    cat >"$md_inst/micropolis.sh" << _EOF_
+#!/bin/bash
+xset -dpms s off s noblank
+matchbox-window-manager &
+/usr/games/micropolis
+_EOF_
+    chmod +x "$md_inst/micropolis.sh"
+
+    addPort "$md_id" "micropolis" "Micropolis" "xinit $md_inst/micropolis.sh"
 }
