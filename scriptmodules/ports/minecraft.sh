@@ -33,5 +33,5 @@ $md_inst/minecraft-pi
 _EOF_
     chmod +x "$md_inst/Minecraft.sh"
 
-    addPort "$md_id" "minecraft" "Minecraft" "xinit \"$md_inst/Minecraft.sh\""
+    addPort "$md_id" "minecraft" "Minecraft" "xinit $md_inst/Minecraft.sh"
 }
