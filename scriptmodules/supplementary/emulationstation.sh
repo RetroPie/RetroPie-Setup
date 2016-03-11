@@ -25,7 +25,11 @@ function depends_emulationstation() {
 }
 
 function sources_emulationstation() {
-    gitPullOrClone "$md_build" "https://github.com/retropie/EmulationStation"
+    local repo="$1"
+    local branch="$2"
+    [[ -z "$repo" ]] && repo="https://github.com/retropie/EmulationStation"
+    [[ -z "$branch" ]] && branch="master"
+    gitPullOrClone "$md_build" "$repo" "$branch"
     # make sure libMali.so can be found so we use OpenGL ES
     if isPlatform "mali"; then
         sed -i 's|/usr/lib/libMali.so|/usr/lib/arm-linux-gnueabihf/libMali.so|g' CMakeLists.txt
@@ -75,7 +79,7 @@ function configure_inputconfig_emulationstation() {
     chown $user:$user "$es_config"
     mkdir -p "$md_inst/scripts"
 
-    cp -rv "$scriptdir/scriptmodules/$md_type/$md_id/"* "$md_inst/scripts/"
+    cp -rv "$scriptdir/scriptmodules/$md_type/emulationstation/"* "$md_inst/scripts/"
     chmod +x "$md_inst/scripts/inputconfiguration.sh"
     chown -R $user:$user "$md_inst/scripts"
 }
@@ -114,7 +118,7 @@ _EOF_
     if isPlatform "x11"; then
         mkdir -p /usr/local/share/icons
         mkdir -p /usr/local/share/applications
-        cp "$scriptdir/scriptmodules/$md_type/$md_id/retropie.svg" "/usr/local/share/icons/"
+        cp "$scriptdir/scriptmodules/$md_type/emulationstation/retropie.svg" "/usr/local/share/icons/"
         cat > /usr/local/share/applications/retropie.desktop << _EOF_
 [Desktop Entry]
 Type=Application
