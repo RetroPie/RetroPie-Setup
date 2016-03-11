@@ -147,7 +147,7 @@ function get_platform() {
                 ;;
             BCM2709)
                 local revision=$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)
-                if [[ "$revision" == "a02082" ]]; then
+                if [[ "$revision" == "a02082" || "$revision" == "a22082" ]]; then
                     if [[ "$architecture" == "aarch64" ]]; then
                         __platform="rpi3-64"
                     else
