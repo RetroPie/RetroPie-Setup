@@ -85,6 +85,8 @@ function editFile() {
 function hasPackage() {
     local pkg="$1"
     local req_ver="$2"
+    local comp="$3"
+    [[ -z "$comp" ]] && comp="ge"
     local status=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
     if [[ $? -eq 0 ]]; then
         local ver="${status##* }"
@@ -93,7 +95,7 @@ function hasPackage() {
         if [[ "$status" == *"ok installed" ]]; then
             # if we didn't request a version number, be happy with any
             [[ -z "$req_ver" ]] && return 0
-            dpkg --compare-versions "$ver" ge "$req_ver" && return 0
+            dpkg --compare-versions "$ver" "$comp" "$req_ver" && return 0
         fi
     fi
     return 1
@@ -119,11 +121,11 @@ function getDepends() {
     for required in $@; do
         if [[ "$__depends_mode" == "install" ]]; then
             # make sure we have our sdl1 / sdl2 installed
-            if [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev 1.2.15-$(get_ver_sdl1)rpi; then
+            if [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev 1.2.15-$(get_ver_sdl1)rpi "eq"; then
                 packages+=("$required")
                 continue
             fi
-            if ! isPlatform "x11" && [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_ver_sdl2); then
+            if ! isPlatform "x11" && [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_ver_sdl2) "eq"; then
                 packages+=("$required")
                 continue
             fi
