@@ -15,7 +15,7 @@ rp_module_menus=""
 rp_module_flags="nobin !x86"
 
 function get_ver_sdl2() {
-    local ver="2.0.4+1"
+    local ver="2.0.3+1"
     isPlatform "rpi" && ver+="rpi"
     isPlatform "mali" && ver+="mali"
     echo "$ver"
@@ -31,11 +31,11 @@ function depends_sdl2() {
 }
 
 function sources_sdl2() {
-    local branch="retropie-2.0.4"
-    isPlatform "mali" && branch="mali-2.0.4"
+    local branch="retropie-2.0.3"
+    isPlatform "mali" && branch="mali-2.0.3"
     gitPullOrClone "$md_build/$(get_ver_sdl2)" https://github.com/RetroPie/SDL-mirror.git "$branch"
     cd $(get_ver_sdl2)
-    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v $(get_ver_sdl2) "SDL 2.0.4 configured for the $__platform"
+    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v $(get_ver_sdl2) "SDL 2.0.3 configured for the $__platform"
 }
 
 function build_sdl2() {
