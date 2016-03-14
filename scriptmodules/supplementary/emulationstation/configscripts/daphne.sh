@@ -172,7 +172,6 @@ function map_daphne_joystick() {
         if [[ "$line" =~ $key_regex ]]; then
           key1="${BASH_REMATCH[1]}"
           key2="${BASH_REMATCH[2]}"
-          echo "$key1 $key2"
         fi
     done < "$force_key_file"
 
@@ -183,7 +182,6 @@ function map_daphne_joystick() {
         if [[ "$line" =~ $full_regex ]]; then
           key1="${BASH_REMATCH[1]}"
           key2="${BASH_REMATCH[2]}"
-          echo "$key1 $key2"
         fi
       done < "$mapping_file"
     fi
@@ -192,24 +190,18 @@ function map_daphne_joystick() {
     while read -r line; do
         if [[ "$line" =~ $button_regex ]]; then
           button="${BASH_REMATCH[1]}"
-          echo "$button"
         fi
     done < "$force_joy_file"
 
     # ...otherwise, use the config sent to this function.
     if [[ -z "$button" ]]; then
-      echo "Buttonmap not found in $force_joy_file"
       while read -r line; do
         if [[ "$line" =~ $key_regex ]]; then
-          button=$(expr "$input_id" + 1)
-          echo "$button"
+          button=$((input_id+1))
         fi
       done < "$mapping_file"
     fi
 
     # Write new button config
-    echo "Mapping $key to $key1, $key2, $button"
-    local sedexpr="s/^$key = .* .* .*\$/$key = $key1 $key2 $button/g"
-    echo "$sedexpr"
-    sed -i "$sedexpr" "$mapping_file"
+    sed -i "s/^$key = .* .* .*\$/$key = $key1 $key2 $button/g" "$mapping_file"
 }
