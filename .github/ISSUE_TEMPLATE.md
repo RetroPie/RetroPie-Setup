@@ -1,0 +1,1 @@
+- [ ] I have read the [contributers guidelines](https://github.com/RetroPie/RetroPie-Setup/blob/master/CONTRIBUTING.md) before filing this issue and acknowledge that support requests go to http://blog.petrockblock.com/retropie/
