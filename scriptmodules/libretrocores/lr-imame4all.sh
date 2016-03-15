@@ -21,13 +21,8 @@ function sources_lr-imame4all() {
 function build_lr-imame4all() {
     make clean
     local params=()
-    isPlatform "arm" && params+=("ARM=1")
-    # drz80 contains obsoleted arm assembler that gcc/as will not like for arm8 cpu targets
-    if isPlatform "armv8"; then
-        CFLAGS="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard" make "${params[@]}"
-    else
-        make "${params[@]}"
-    fi
+    isPlatform "arm" && params+=("ARM=1" "USE_CYCLONE=1")
+    make "${params[@]}"
     md_ret_require="$md_build/mame2000_libretro.so"
 }
 
