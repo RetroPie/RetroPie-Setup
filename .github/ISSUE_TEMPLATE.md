@@ -1,3 +1,2 @@
-Please make sure the following checkbox is checked (via the preview tab) before submitting your issue - thanks.
-
-- [ ] I have read the [contributers guidelines](https://github.com/RetroPie/RetroPie-Setup/blob/master/CONTRIBUTING.md) before filing this issue and acknowledge that support requests go to http://blog.petrockblock.com/retropie/
+Please make sure you read the "guidelines for contributing" above before opening an issue. This tracker is for bugs and feature requests only.
+Support questions should go to the forum. Please remove this text before posting.
