@@ -75,7 +75,7 @@ function connect_wifi() {
         cmd=(dialog --backtitle "$__backtitle" --insecure --passwordbox "Please enter the WiFi key/password for $essid" 10 63)
         local key_ok=0
         while [[ $key_ok -eq 0 ]]; do
-            key=$("${cmd[@]}" 2>&1 >/dev/tty)
+            key=$("${cmd[@]}" 2>&1 >/dev/tty) || return
             key_ok=1
             if [[ ${#key} -lt 8 || ${#key} -gt 63 ]] && [[ "$type" == "wpa" ]]; then
                 printMsgs "dialog" "Password must be between 8 and 63 characters"
