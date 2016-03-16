@@ -221,8 +221,9 @@ function load_mode_defaults() {
     mode_def_rom=""
     fb_def_emu=""
     fb_def_rom=""
-    # default render res to 640x480
-    render_res="640x480"
+
+    # default retroarch render res to config file
+    render_res="config"
 
     if [[ -f "$video_conf" ]]; then
         # local default video modes for emulator / rom
