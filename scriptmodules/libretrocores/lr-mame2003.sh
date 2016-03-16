@@ -20,7 +20,7 @@ function depends_lr-mame2003() {
 function sources_lr-mame2003() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2003-libretro.git
     # some games crash (eg pacmania) when built with -mfpu=neon-vfpv4 / -O3 on arm
-    isPlatform "arm" && sed -i "s/-O3/-O2/" makefile
+    isPlatform "arm" && sed -i "s/-O3/-O2/" Makefile
 }
 
 function build_lr-mame2003() {
