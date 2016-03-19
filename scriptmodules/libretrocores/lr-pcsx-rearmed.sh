@@ -47,9 +47,5 @@ function configure_lr-pcsx-rearmed() {
     mkRomDir "psx"
     ensureSystemretroconfig "psx"
 
-    # system-specific, PSX
-    iniConfig " = " "" "$configdir/psx/retroarch.cfg"
-    iniSet "rewind_enable" "false"
-
     addSystem 1 "$md_id" "psx" "$md_inst/libretro.so"
 }

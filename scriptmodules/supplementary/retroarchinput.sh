@@ -45,7 +45,7 @@ function keyboard_retroarchinput() {
 }
 
 function hotkey_retroarchinput() {
-    iniConfig " = " "" "$configdir/all/retroarch.cfg"
+    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired hotkey behaviour." 22 76 16)
     options=(1 "Hotkeys enabled. (default)"
              2 "Press ALT to enable hotkeys."
