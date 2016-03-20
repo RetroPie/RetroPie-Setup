@@ -19,18 +19,18 @@ function depends_lr-mame2003() {
 
 function sources_lr-mame2003() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2003-libretro.git
-    # some games crash (eg pacmania) when built with -mfpu=neon-vfpv4 / -O3 on arm
-    isPlatform "arm" && sed -i "s/-O3/-O2/" Makefile
     # quieter build
     sed -i "s/-Wcast-align//" Makefile
 }
 
 function build_lr-mame2003() {
     make clean
+    local params=()
+    isPlatform "arm" && params+=("ARM=1")
     if [[ "$__default_gcc_version" == "4.7" ]]; then
-        make ARCH="$CFLAGS -fsigned-char" CC="gcc-4.8" CXX="g++-4.8"
+        make ARCH="$CFLAGS" CC="gcc-4.8" CXX="g++-4.8" "${params[@]}"
     else
-        make ARCH="$CFLAGS -fsigned-char"
+        make ARCH="$CFLAGS" "${params[@]}"
     fi
 }
 
