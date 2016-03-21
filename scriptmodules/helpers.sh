@@ -315,13 +315,15 @@ function setDispmanx() {
 }
 
 function iniFileEditor() {
-    local config="$1"
+    local delim="$1"
+    local quote="$2"
+    local config="$3"
     [[ ! -f "$config" ]] && return
 
     # disable globbing
     set -f
 
-    iniConfig " = " "" "$config"
+    iniConfig "$delim" "$quote" "$config"
     local sel
     local value
     local option
@@ -555,7 +557,7 @@ function ensureSystemretroconfig {
     fi
 
     # add the per system default settings
-    iniConfig " = " "" "$config"
+    iniConfig " = " '"' "$config"
     iniSet "input_remapping_directory" "$configdir/$system/"
 
     if [[ -n "$shader" ]]; then

@@ -13,7 +13,7 @@ function onstart_retroarch_joystick() {
     local device_type=$1
     local device_name=$2
 
-    iniConfig " = " "" "$configdir/all/retroarch.cfg"
+    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
     iniGet "input_joypad_driver"
     local input_joypad_driver="$ini_value"
     if [[ -z "$input_joypad_driver" ]]; then
@@ -26,7 +26,7 @@ function onstart_retroarch_joystick() {
 }
 
 function onstart_retroarch_keyboard() {
-    iniConfig " = " "" "$configdir/all/retroarch.cfg"
+    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
 
     declare -Ag retroarchkeymap
     # SDL codes from https://wiki.libsdl.org/SDLKeycodeLookup

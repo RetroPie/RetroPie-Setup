@@ -82,7 +82,7 @@ function configure_retroarch() {
     fi
 
     # configure default options
-    iniConfig " = " "" "$config"
+    iniConfig " = " '"' "$config"
     iniSet "cache_directory" "/tmp/retroarch"
     iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"

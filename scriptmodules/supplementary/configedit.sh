@@ -129,7 +129,7 @@ function basic_configedit() {
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
     )
 
-    iniFileEditor "$config"
+    iniFileEditor " = " '"' "$config"
 }
 
 function advanced_configedit() {
@@ -211,7 +211,7 @@ function advanced_configedit() {
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
     )
 
-    iniFileEditor "$config"
+    iniFileEditor " = " '"' "$config"
 }
 
 function choose_config_configedit() {
