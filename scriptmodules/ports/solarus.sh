@@ -15,7 +15,7 @@ rp_module_menus="4+"
 rp_module_flags=""
 
 function depends_solarus() {
-    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libmodplug-dev libvorbis-dev zip
+    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libmodplug-dev libvorbis-dev unzip
 }
 
 function sources_solarus() {
