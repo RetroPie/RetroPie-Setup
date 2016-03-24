@@ -102,6 +102,9 @@ function rps_availFreeDiskSpace() {
 
 function depends_setup() {
     rps_availFreeDiskSpace 500000
+    if [[ "$__raspbian_ver" -eq 7 ]]; then
+        printMsgs "dialog" "Raspbian Wheezy is no longer supported. Binaries are no longer updated and new emulators may fail to build, install or run.\n\nPlease backup your system and start from the latest image."
+    fi
 }
 
 # download, extract, and install binaries
