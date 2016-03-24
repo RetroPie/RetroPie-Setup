@@ -93,6 +93,44 @@ function sources_advmame() {
  	} else {
  		unsigned long long factor_x;
  		unsigned long long factor_y;
+--- a/advance/osd/frame.c
++++ b/advance/osd/frame.c
+@@ -2425,6 +2425,7 @@ void advance_video_mode_preinit(struct advance_video_context* context, struct ma
+ 	}
+ 	log_std(("emu:video: suggested debugger size %dx%d\n", option->debug_width, option->debug_height));
+ 
++#if 0
+ 	/* set the vector game size */
+ 	if (mame_is_game_vector(option->game)) {
+ 		unsigned mode_size_x;
+@@ -2484,6 +2485,7 @@ void advance_video_mode_preinit(struct advance_video_context* context, struct ma
+ 		option->vector_width = 0;
+ 		option->vector_height = 0;
+ 	}
++#endif
+ }
+ 
+ /**
+--- a/advance/osd/glue.c
++++ b/advance/osd/glue.c
+@@ -2866,6 +2866,9 @@ adv_error mame_init(struct advance_context* context)
+ 	conf_float_register_limit_default(context->cfg, "display_gamma", 0.5, 2.0, 1.0);
+ 	conf_float_register_limit_default(context->cfg, "display_brightness", 0.1, 10.0, 1.0);
+ 
++	conf_int_register_default(context->cfg, "display_width", 640);
++	conf_int_register_default(context->cfg, "display_height", 480);
++
+ 	conf_bool_register_default(context->cfg, "misc_cheat", 0);
+ 	conf_string_register_default(context->cfg, "misc_languagefile", "english.lng");
+ 	conf_string_register_default(context->cfg, "misc_cheatfile", "cheat.dat");
+@@ -2915,6 +2918,8 @@ adv_error mame_config_load(adv_conf* cfg_context, struct mame_option* option)
+ 
+ 	option->gamma = conf_float_get_default(cfg_context, "display_gamma");
+ 	option->brightness = conf_float_get_default(cfg_context, "display_brightness");
++	option->vector_width = conf_int_get_default(cfg_context, "display_width");
++	option->vector_height = conf_int_get_default(cfg_context, "display_height");
+ 
+ 	option->cheat_flag = conf_bool_get_default(cfg_context, "misc_cheat");
 _EOF_
         fi
         popd
