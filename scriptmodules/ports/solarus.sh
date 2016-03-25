@@ -39,6 +39,12 @@ function build_solarus() {
     cd ../zelda-roth-se-1.0.8/
     cmake . -DCMAKE_INSTALL_PREFIX:PATH="$md_inst"
     make
+    md_ret_require=(
+        "$md_build/build/solarus_run"
+        "$md_build/zsdx-1.10.3/data.solarus"
+        "$md_build/zsxd-1.10.3/data.solarus"
+        "$md_build/zelda-roth-se-1.0.8/data.solarus"
+    )
 }
 
 function install_solarus() {
