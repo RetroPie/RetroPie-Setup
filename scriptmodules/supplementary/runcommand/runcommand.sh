@@ -101,8 +101,8 @@ function get_params() {
     command="$2"
     [[ -z "$command" ]] && exit 1
 
-    # if the command is _SYS_, arg 3 should be system name, and arg 4 rom/game, and we look up the configured system for that combination
-    if [[ "$command" == "_SYS_" ]]; then
+    # if the command is _SYS_, or _PORT_ arg 3 should be system name, and arg 4 rom/game, and we look up the configured system for that combination
+    if [[ "$command" == "_SYS_" || "$command" == "_PORT_" ]]; then
         # if the rom is actually a special +Start System.sh script, we should launch the script directly.
         if [[ "$4" =~ \/\+Start\ (.+)\.sh$ ]]; then
             # extract emulator from the name (and lowercase it)
@@ -112,7 +112,14 @@ function get_params() {
             system="$3"
         else
             is_sys=1
-            get_sys_command "$3" "$4"
+            system="$3"
+            rom="$4"
+            if [[ "$command" == "_PORT_" ]]; then
+                emu_conf="$configdir/ports/$system/emulators.cfg"
+            else
+                emu_conf="$configdir/$system/emulators.cfg"
+            fi
+            get_sys_command "$system" "$rom"
         fi
     else
         is_sys=0
@@ -427,9 +434,9 @@ function choose_app() {
         fi
         options+=($i "$id")
         ((i++))
-    done < <(sort "$configdir/$system/emulators.cfg")
+    done < <(sort "$emu_conf")
     if [[ -z "${options[*]}" ]]; then
-        dialog --msgbox "No emulator options found for $system - have you installed any snes emulators yet? Do you have a valid $configdir/$system/emulators.cfg ?" 20 60 >/dev/tty
+        dialog --msgbox "No emulator options found for $system - have you installed any snes emulators yet? Do you have a valid $emu_conf ?" 20 60 >/dev/tty
         exit 1
     fi
     local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
@@ -439,7 +446,7 @@ function choose_app() {
             iniConfig "=" '"' "$apps_conf"
             iniSet "$save" "${apps[$choice]}"
         else
-            iniConfig "=" '"' "$configdir/$system/emulators.cfg"
+            iniConfig "=" '"' "$emu_conf"
             iniSet "default" "${apps[$choice]}"
         fi
         get_sys_command "$system" "$rom"
@@ -641,12 +648,12 @@ function restore_governor() {
 }
 
 function get_sys_command() {
-    system="$1"
-    rom="$2"
+    local system="$1"
+    local rom="$2"
+
     rom_bn="${rom##*/}"
     rom_bn="${rom_bn%.*}"
     appsave=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
-    local emu_conf="$configdir/$system/emulators.cfg"
 
     if [[ ! -f "$emu_conf" ]]; then
         echo "No config found for system $system"
@@ -660,7 +667,7 @@ function get_sys_command() {
         start_joy2key
         choose_app
         stop_joy2key
-        get_sys_command "$1" "$2"
+        get_sys_command "$system" "$rom"
         return
     fi
 
