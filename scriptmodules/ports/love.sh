@@ -49,6 +49,8 @@ function install_love() {
 }
 
 function configure_love() {
+    setConfigRoot ""
+
     mkRomDir "love"
 
     # get Mari0 10.0 (freeware game data)
