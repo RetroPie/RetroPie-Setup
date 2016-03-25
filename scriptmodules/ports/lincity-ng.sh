@@ -15,7 +15,7 @@ rp_module_menus="4+"
 rp_module_flags="nobin !mali"
 
 function depends_lincity-ng() {
-    getDepends xorg
+    ! isPlatform "x11" && getDepends xorg
 }
 
 function install_lincity-ng() {
@@ -23,6 +23,10 @@ function install_lincity-ng() {
 }
 
 function configure_lincity-ng() {
-    addPort "$md_id" "lincity-ng" "LinCity-NG" "xinit lincity-ng"
+    if isPlatform "x11"; then
+        addPort "$md_id" "lincity-ng" "LinCity-NG" "lincity-ng"
+    else
+        addPort "$md_id" "lincity-ng" "LinCity-NG" "xinit lincity-ng"
+    fi
     moveConfigDir "$home/.lincity-ng" "$configDir/lincity-ng"
 }
