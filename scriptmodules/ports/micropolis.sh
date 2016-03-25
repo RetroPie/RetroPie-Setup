@@ -15,7 +15,7 @@ rp_module_menus="4+"
 rp_module_flags="nobin !mali"
 
 function depends_micropolis() {
-    getDepends xorg matchbox
+    ! isPlatform "x11" getDepends xorg matchbox
 }
 
 function install_micropolis() {
@@ -23,7 +23,11 @@ function install_micropolis() {
 }
 
 function configure_micropolis() {
-    addPort "$md_id" "micropolis" "Micropolis" "xinit $md_inst/micropolis.sh"
+    if isPlatform "x11"; then
+        addPort "$md_id" "micropolis" "Micropolis" "xinit $md_inst/micropolis.sh"
+    else
+        addPort "$md_id" "micropolis" "Micropolis" "/usr/games/micropolis"
+    fi
 
     mkdir -p "$md_inst"
     cat >"$md_inst/micropolis.sh" << _EOF_
