@@ -37,7 +37,8 @@ function install_opentyrian() {
 }
 
 function configure_opentyrian() {
-    mkRomDir "ports"
+    addPort "$md_id" "opentyrian" "OpenTyrian" "$md_inst/bin/opentyrian --data $romdir/ports/opentyrian/data"
+
     mkRomDir "ports/opentyrian"
 
     # get Tyrian 2.1 (freeware game data)
@@ -45,10 +46,8 @@ function configure_opentyrian() {
     unzip -j -o tyrian21.zip -d "$romdir/ports/opentyrian/data"
     rm -f tyrian21.zip
 
-    moveConfigDir "$home/.config/opentyrian" "$configdir/opentyrian"
+    moveConfigDir "$home/.config/opentyrian" "$md_conf_root/opentyrian"
 
     # Enable dispmanx by default.
     setDispmanx "$md_id" 1
-
-    addPort "$md_id" "opentyrian" "OpenTyrian" "$md_inst/bin/opentyrian --data $romdir/ports/opentyrian/data"
 }

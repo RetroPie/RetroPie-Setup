@@ -33,7 +33,5 @@ function install_smw() {
 }
 
 function configure_smw() {
-    mkRomDir "ports"
-
     addPort "$md_id" "smw" "Super Mario War" "$md_inst/smw"
 }

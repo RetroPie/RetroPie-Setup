@@ -58,4 +58,5 @@ function configure_love() {
     fi
 
     addSystem 1 "$md_id" "love" "$md_inst/bin/love %ROM%" "Love" ".love"
+
 }

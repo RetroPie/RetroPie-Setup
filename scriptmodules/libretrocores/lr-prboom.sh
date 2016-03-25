@@ -31,12 +31,12 @@ function install_lr-prboom() {
 }
 
 function configure_lr-prboom() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/doom"
+    setConfigRoot "ports"
 
-    mkRomDir "ports"
+    addPort "$md_id" "doom" "Doom" "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $md_conf_root/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
+
     mkRomDir "ports/doom"
-    ensureSystemretroconfig "doom"
+    ensureSystemretroconfig "ports/doom"
 
     cp prboom.wad "$romdir/ports/doom/"
 
@@ -49,5 +49,6 @@ function configure_lr-prboom() {
     # remove old launch script
     rm -f "$romdir/ports/Doom 1 Shareware.sh"
 
-    addPort "$md_id" "doom" "Doom" "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $configdir/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
+    # remove old install folder
+    rm -rf "$rootdir/$md_type/doom"
 }

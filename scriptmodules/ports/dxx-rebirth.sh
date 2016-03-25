@@ -70,13 +70,13 @@ function configure_dxx-rebirth() {
     local D1X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
     local D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
 
-    mkRomDir "ports"
-
     # Descent 1
+    addPort "$md_id" "descent1" "Descent Rebirth" "$md_inst/d1x-rebirth -hogdir $romdir/ports/descent1"
+
     mkRomDir "ports/descent1"
     
-    # copy any existing configs from ~/.d1x-rebirth and symlink the config folder to $configdir/descent1/
-    moveConfigDir "$home/.d1x-rebirth" "$configdir/descent1/"
+    # copy any existing configs from ~/.d1x-rebirth and symlink the config folder to $md_conf_root/descent1/
+    moveConfigDir "$home/.d1x-rebirth" "$md_conf_root/descent1/"
     
     # Download / unpack / install Descent shareware files
     if [[ ! -f "$romdir/ports/descent1/descent.hog" ]]; then
@@ -96,14 +96,14 @@ function configure_dxx-rebirth() {
     fi
 
     chown -R $user:$user "$romdir/ports/descent1"
-
-    addPort "$md_id" "descent1" "Descent Rebirth" "$md_inst/d1x-rebirth -hogdir $romdir/ports/descent1"
     
     # Descent 2
+    addPort "$md_id" "descent2" "Descent 2 Rebirth" "$md_inst/d2x-rebirth -hogdir $romdir/ports/descent2"
+
     mkRomDir "ports/descent2"
     
-    # copy any existing configs from ~/.d2x-rebirth and symlink the config folder to $configdir/descent2/
-    moveConfigDir "$home/.d1x-rebirth" "$configdir/descent1/"
+    # copy any existing configs from ~/.d2x-rebirth and symlink the config folder to $md_conf_root/descent2/
+    moveConfigDir "$home/.d1x-rebirth" "$md_conf_root/descent1/"
     
     # Download / unpack / install Descent 2 shareware files
     if [[ ! -f "$romdir/ports/descent2/D2DEMO.HOG" ]]; then
@@ -118,6 +118,4 @@ function configure_dxx-rebirth() {
     fi
 
     chown -R $user:$user "$romdir/ports/descent2"
-
-    addPort "$md_id" "descent2" "Descent 2 Rebirth" "$md_inst/d2x-rebirth -hogdir $romdir/ports/descent2"
 }

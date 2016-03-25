@@ -39,13 +39,12 @@ function install_tyrquake() {
 }
 
 function configure_tyrquake() {
-    mkRomDir "ports"
-    mkRomDir "ports/quake"
-
-    download_quake_lr-tyrquake
-
     addPort "$md_id" "quake" "Quake" "$md_inst/bin/tyr-quake -path $romdir/ports/quake/id1/pak0.pak"
     if isPlatform "x11"; then
         addPort "$md_id-gl" "quake" "Quake" "$md_inst/bin/tyr-glquake -path $romdir/ports/quake/id1/pak0.pak"
     fi
+
+    mkRomDir "ports/quake"
+
+    download_quake_lr-tyrquake
 }

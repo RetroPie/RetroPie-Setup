@@ -23,8 +23,6 @@ function install_lincity-ng() {
 }
 
 function configure_lincity-ng() {
-    mkRomDir "ports"
-    moveConfigDir "$home/.lincity-ng" "$configDir/lincity-ng"
-
     addPort "$md_id" "lincity-ng" "LinCity-NG" "xinit lincity-ng"
+    moveConfigDir "$home/.lincity-ng" "$configDir/lincity-ng"
 }

@@ -57,10 +57,11 @@ function install_eduke32() {
 }
 
 function configure_eduke32() {
-    mkRomDir "ports"
+    addPort "$md_id" "duke3d" "Duke Nukem 3D" "$md_inst/eduke32 -j$romdir/ports/duke3d"
+
     mkRomDir "ports/duke3d"
 
-    moveConfigDir "$home/.eduke32" "$configdir/duke3d"
+    moveConfigDir "$home/.eduke32" "$md_conf_root/duke3d"
 
     local file
     local file_bn
@@ -72,6 +73,4 @@ function configure_eduke32() {
 
     # remove old launch script
     rm -f "$romdir/ports/Duke3D Shareware.sh"
-
-    addPort "$md_id" "duke3d" "Duke Nukem 3D" "$md_inst/eduke32 -j$romdir/ports/duke3d"
 }

@@ -42,14 +42,14 @@ function configure_gemrb() {
     mkRomDir "ports/planescape"
     mkRomDir "ports/cache"
 
-    addPort "$md_id" "baldursgate1" "Baldurs Gate 1" "$md_inst/bin/gemrb -C $configdir/baldursgate1/GemRB.cfg"
-    addPort "$md_id" "baldursgate2" "Baldurs Gate 2" "$md_inst/bin/gemrb -C $configdir/baldursgate2/GemRB.cfg"
-    addPort "$md_id" "icewind1" "Icewind Dale 1" "$md_inst/bin/gemrb -C $configdir/icewind1/GemRB.cfg"
-    addPort "$md_id" "icewind2" "Icewind Dale 2" "$md_inst/bin/gemrb -C $configdir/icewind2/GemRB.cfg"
-    addPort "$md_id" "planescape" "Planescape Torment" "$md_inst/bin/gemrb -C $configdir/planescape/GemRB.cfg"
+    addPort "$md_id" "baldursgate1" "Baldurs Gate 1" "$md_inst/bin/gemrb -C $md_conf_root/baldursgate1/GemRB.cfg"
+    addPort "$md_id" "baldursgate2" "Baldurs Gate 2" "$md_inst/bin/gemrb -C $md_conf_root/baldursgate2/GemRB.cfg"
+    addPort "$md_id" "icewind1" "Icewind Dale 1" "$md_inst/bin/gemrb -C $md_conf_root/icewind1/GemRB.cfg"
+    addPort "$md_id" "icewind2" "Icewind Dale 2" "$md_inst/bin/gemrb -C $md_conf_root/icewind2/GemRB.cfg"
+    addPort "$md_id" "planescape" "Planescape Torment" "$md_inst/bin/gemrb -C $md_conf_root/planescape/GemRB.cfg"
 
     #create Baldurs Gate 1 configuration
-    cat > "$configdir/baldursgate1/GemRB.cfg" << _EOF_
+    cat > "$md_conf_root/baldursgate1/GemRB.cfg" << _EOF_
 GameType=bg1
 GameName=Baldurs Gate 1
 Width=640
@@ -67,7 +67,7 @@ CachePath=$romdir/ports/cache/
 _EOF_
 
     #create Baldurs Gate 2 configuration
-    cat > "$configdir/baldursgate2/GemRB.cfg" << _EOF_
+    cat > "$md_conf_root/baldursgate2/GemRB.cfg" << _EOF_
 GameType=bg2
 GameName=Baldurs Gate 2
 Width=640
@@ -85,7 +85,7 @@ CachePath=$romdir/ports/cache/
 _EOF_
 
     #create Icewind 1 configuration
-    cat > "$configdir/icewind1/GemRB.cfg" << _EOF_
+    cat > "$md_conf_root/icewind1/GemRB.cfg" << _EOF_
 GameType=auto
 GameName=Icewind Dale 1
 Width=640
@@ -105,7 +105,7 @@ CachePath=$romdir/ports/cache/
 _EOF_
 
     #create Icewind2 configuration
-    cat > "$configdir/icewind2/GemRB.cfg" << _EOF_
+    cat > "$md_conf_root/icewind2/GemRB.cfg" << _EOF_
 GameType=iwd2
 GameName=Icewind Dale 2
 Width=800
@@ -123,7 +123,7 @@ CachePath=$romdir/ports/cache/
 _EOF_
 
     #create Planescape configuration
-    cat > "$configdir/planescape/GemRB.cfg" << _EOF_
+    cat > "$md_conf_root/planescape/GemRB.cfg" << _EOF_
 GameType=pst
 GameName=Planescape Torment
 Width=640
@@ -140,9 +140,9 @@ CD1=$romdir/ports/planescape/data/
 CachePath=$romdir/ports/cache/
 _EOF_
 
-    chown $user:$user "$configdir/baldursgate1/GemRB.cfg"
-    chown $user:$user "$configdir/baldursgate2/GemRB.cfg"
-    chown $user:$user "$configdir/icewind1/GemRB.cfg"
-    chown $user:$user "$configdir/icewind2/GemRB.cfg"
-    chown $user:$user "$configdir/planescape/GemRB.cfg"
+    chown $user:$user "$md_conf_root/baldursgate1/GemRB.cfg"
+    chown $user:$user "$md_conf_root/baldursgate2/GemRB.cfg"
+    chown $user:$user "$md_conf_root/icewind1/GemRB.cfg"
+    chown $user:$user "$md_conf_root/icewind2/GemRB.cfg"
+    chown $user:$user "$md_conf_root/planescape/GemRB.cfg"
 }

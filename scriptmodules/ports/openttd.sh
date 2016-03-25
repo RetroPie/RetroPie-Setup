@@ -19,7 +19,5 @@ function install_openttd() {
 }
  
 function configure_openttd() {
-    mkRomDir "ports"
-
     addPort "$md_id" "openttd" "OpenTTD" "openttd"
 }

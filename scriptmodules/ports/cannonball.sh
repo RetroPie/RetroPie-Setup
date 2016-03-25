@@ -51,24 +51,22 @@ function install_cannonball() {
 }
 
 function configure_cannonball() {
-    mkRomDir "ports"
+    addPort "$md_id" "cannonball" "Cannonball - OutRun Engine" "pushd $md_inst; $md_inst/cannonball; popd"
+
     mkRomDir "ports/$md_id"
-    mkUserDir "$configdir/$md_id"
 
-    moveConfigFile "config.xml" "$configdir/$md_id/config.xml"
-    moveConfigFile "hiscores.xml" "$configdir/$md_id/hiscores.xml"
+    moveConfigFile "config.xml" "$md_conf_root/$md_id/config.xml"
+    moveConfigFile "hiscores.xml" "$md_conf_root/$md_id/hiscores.xml"
 
-    if [[ ! -f "$configdir/$md_id/config.xml" ]]; then
-        cp -v "$md_inst/config.xml.def" "$configdir/$md_id/config.xml"
+    if [[ ! -f "$md_conf_root/$md_id/config.xml" ]]; then
+        cp -v "$md_inst/config.xml.def" "$md_conf_root/$md_id/config.xml"
     fi
 
     cp -v roms.txt "$romdir/ports/$md_id/"
 
-    chown -R $user:$user "$romdir/ports/$md_id" "$configdir/$md_id"
+    chown -R $user:$user "$romdir/ports/$md_id" "$md_conf_root/$md_id"
 
     ln -snf "$romdir/ports/$md_id" "$md_inst/roms"
-
-    addPort "$md_id" "cannonball" "Cannonball - OutRun Engine" "pushd $md_inst; $md_inst/cannonball; popd"
 
     __INFMSGS+=("You need to unzip your OutRun set B from latest MAME (outrun.zip) to $romdir/ports/$md_id. They should match the file names listed in the roms.txt file found in the roms folder. You will also need to rename the epr-10381a.132 file to epr-10381b.132 before it will work.")
 }

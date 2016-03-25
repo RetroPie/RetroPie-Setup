@@ -23,7 +23,7 @@ function install_minecraft() {
 }
 
 function configure_minecraft() {
-    mkRomDir "ports"
+    addPort "$md_id" "minecraft" "Minecraft" "xinit $md_inst/Minecraft.sh"
 
     cat >"$md_inst/Minecraft.sh" << _EOF_
 #!/bin/bash
@@ -33,5 +33,5 @@ $md_inst/minecraft-pi
 _EOF_
     chmod +x "$md_inst/Minecraft.sh"
 
-    addPort "$md_id" "minecraft" "Minecraft" "xinit $md_inst/Minecraft.sh"
+
 }
