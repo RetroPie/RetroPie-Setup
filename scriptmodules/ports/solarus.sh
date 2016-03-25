@@ -59,13 +59,14 @@ function install_solarus() {
 }
 
 function configure_solarus() {
-    addPort "$md_id" "zsdx" "Solarus Engine - Zelda Mystery of Solarus DX" "LD_LIBRARY_PATH=$md_inst/lib/arm-linux-gnueabihf/ $md_inst/bin/solarus_run $md_inst/share/solarus/zsdx/"
-    addPort "$md_id" "zsxd" "Solarus Engine - Zelda Mystery of Solarus XD" "LD_LIBRARY_PATH=$md_inst/lib/arm-linux-gnueabihf/ $md_inst/bin/solarus_run $md_inst/share/solarus/zsxd/"
-    addPort "$md_id" "zelda_roth_se" "Solarus Engine - Zelda Return of the Hylian SE" "LD_LIBRARY_PATH=$md_inst/lib/arm-linux-gnueabihf/ $md_inst/bin/solarus_run $md_inst/share/solarus/zelda_roth_se/"
+    addPort "$md_id" "zsdx" "Solarus Engine - Zelda Mystery of Solarus DX" "LD_LIBRARY_PATH=$md_inst/lib $md_inst/bin/solarus_run $md_inst/share/solarus/zsdx/"
+    addPort "$md_id" "zsxd" "Solarus Engine - Zelda Mystery of Solarus XD" "LD_LIBRARY_PATH=$md_inst/lib $md_inst/bin/solarus_run $md_inst/share/solarus/zsxd/"
+    addPort "$md_id" "zelda_roth_se" "Solarus Engine - Zelda Return of the Hylian SE" "LD_LIBRARY_PATH=$md_inst/lib $md_inst/bin/solarus_run $md_inst/share/solarus/zelda_roth_se/"
+
+    # symlink the library so it can be found on all platforms
+    ln -sf "$md_inst"/lib/*/libsolarus.so "$md_inst/lib"
 
     moveConfigDir "$home/.solarus" "$md_conf_root/solarus"
 
-    chown -R $user:$user "$md_inst/share/solarus/zsdx/data.solarus"
-    chown -R $user:$user "$md_inst/share/solarus/zsxd/data.solarus"
-    chown -R $user:$user "$md_inst/share/solarus/zelda_roth_se/data.solarus"
+    chown -R $user:$user "$md_inst"/share/solarus/*/data.solarus
 }
