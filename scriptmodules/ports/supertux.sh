@@ -19,7 +19,5 @@ function install_supertux() {
 }
  
 function configure_supertux() {
-    mkRomDir "ports"
-
     addPort "$md_id" "supertux" "SuperTux" "supertux"
 }

@@ -580,6 +580,14 @@ function setRetroArchCoreOption() {
     chown $user:$user "$configdir/all/retroarch-core-options.cfg"
 }
 
+# sets module config root to subfolder from $configdir - used for ports that are not actually in the ports etc
+function setConfigRoot() {
+    local dir="$1"
+    md_conf_root="$configdir"
+    [[ -n "$dir" ]] && md_conf_root+="/$dir"
+    mkUserDir "$md_conf_root"
+}
+
 # add a framebuffer mode to /etc/fb.modes - useful for adding specific resolutions used by emulators so SDL
 # can use them and utilise the rpi hardware scaling
 # without a 320x240 mode in fb.modes many of the emulators that output to framebuffer (stella / snes9x / gngeo)
@@ -654,7 +662,7 @@ function addSystem() {
 
         # automatically add parameters for libretro modules
         if [[ "$id" =~ ^lr- ]]; then
-            cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $configdir/$system/retroarch.cfg %ROM%"
+            cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $md_conf_root/$system/retroarch.cfg %ROM%"
         fi
     fi
 
@@ -664,19 +672,17 @@ function addSystem() {
 
     setESSystem "$fullname" "$es_name" "$es_path" "$exts" "$es_cmd" "$platform" "$theme"
 
-    # create a config folder for the system
-    if [[ ! -d "$configdir/$system" ]]; then
-        mkUserDir "$configdir/$system"
-    fi
+    # create a config folder for the system / port
+    mkUserDir "$md_conf_root/$system"
 
-    # add the emulator to the $system/emulators.cfg if a commandline exists (not used for some ports)
+    # add the emulator to the $conf_dir/emulators.cfg if a commandline exists (not used for some ports)
     if [[ -n "$cmd" ]]; then
-        iniConfig "=" '"' "$configdir/$system/emulators.cfg"
+        iniConfig "=" '"' "$md_conf_root/$system/emulators.cfg"
         iniSet "$id" "$cmd"
         if [[ "$default" == "1" ]]; then
             iniSet "default" "$id"
         fi
-        chown $user:$user "$configdir/$system/emulators.cfg"
+        chown $user:$user "$md_conf_root/$system/emulators.cfg"
     fi
 }
 
@@ -698,10 +704,17 @@ function addPort() {
     local file="$romdir/ports/$3.sh"
     local cmd="$4"
 
+    mkUserDir "$romdir/ports"
+
+    # move configurations from old ports location
+    if [[ -d "$configdir/$port" ]]; then
+        mv "$configdir/$port" "$md_conf_root/"
+    fi
+
     if [ -t 0 ]; then
         cat >"$file" << _EOF_
 #!/bin/bash
-"$rootdir/supplementary/runcommand/runcommand.sh" 0 _SYS_ $port
+"$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ $port
 _EOF_
     else
         cat >"$file"

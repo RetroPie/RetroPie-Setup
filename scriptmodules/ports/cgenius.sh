@@ -38,11 +38,11 @@ function install_cgenius() {
 }
 
 function configure_cgenius() {
-    mkRomDir "ports"
-    mkRomDir "ports/$md_id"
-    mkUserDir "$configdir/$md_id"
+    addPort "$md_id" "cgenius" "Commander Genius" "pushd $md_inst; ./CGeniusExe; popd"
 
-    moveConfigDir "$home/.CommanderGenius"  "$configdir/$md_id"
+    mkRomDir "ports/$md_id"
+
+    moveConfigDir "$home/.CommanderGenius"  "$md_conf_root/$md_id"
 
     mv "$md_inst/games" "$romdir/ports/$md_id/"
     mv "$md_inst/hqp" "$romdir/ports/$md_id/"
@@ -50,6 +50,4 @@ function configure_cgenius() {
     ln -snf "$romdir/ports/$md_id/games" "$md_inst"
 
     chown -R $user:$user "$romdir/ports/$md_id"
-
-    addPort "$md_id" "cgenius" "Commander Genius" "pushd $md_inst; ./CGeniusExe; popd"
 }

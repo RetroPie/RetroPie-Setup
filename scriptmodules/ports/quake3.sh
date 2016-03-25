@@ -40,11 +40,10 @@ function install_quake3() {
 }
 
 function configure_quake3() {
+    addPort "$md_id" "quake3" "Quake III Arena" "LD_LIBRARY_PATH=lib $md_inst/ioquake3.arm"
+
+    mkRomDir "ports/quake3"
+
     # Add user for no sudo run
     usermod -a -G video $user
-
-    mkRomDir "quake3"
-    mkRomDir "ports"
-
-    addPort "$md_id" "quake3" "Quake III Arena" "LD_LIBRARY_PATH=lib $md_inst/ioquake3.arm"
 }

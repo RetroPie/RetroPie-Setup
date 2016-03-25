@@ -45,7 +45,5 @@ function install_uqm() {
 }
 
 function configure_uqm() {
-    mkRomDir "ports"
- 
     addPort "$md_id" "uqm" "Ur-quan Masters" "uqm -f"
 }

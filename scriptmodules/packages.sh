@@ -105,6 +105,15 @@ function rp_callModule() {
     local md_build="$__builddir/$mod_id"
     local md_inst="$rootdir/$md_type/$mod_id"
 
+    # set md_conf_root to $configdir and to $configdir/ports for ports
+    # ports in libretrocores or systems (as ES sees them) in ports will need to change it manually with setConfigRoot
+    local md_conf_root
+    if [[ "$md_type" == "ports" ]]; then
+        setConfigRoot "ports"
+    else
+        setConfigRoot ""
+    fi
+
     # remove source/build files
     if [[ "${mode}" == "clean" ]]; then
         rmDirExists "$md_build"

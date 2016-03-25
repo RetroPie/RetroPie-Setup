@@ -56,10 +56,19 @@ function install_wolf4sdl() {
 }
 
 function configure_wolf4sdl() {
-    mkRomDir "ports"
+    local bin
+    local bins
+    while read -r bin; do
+        bins+=("$bin")
+    done < <(get_bins_wolf4sdl)
+    # called outside of above loop to avoid problems with addPort and stdin
+    for bin in "${bins[@]}"; do
+        addPort "$bin" "wolf3d" "Wolfenstein 3D" "$md_inst/bin/$bin"
+    done
+
     mkRomDir "ports/wolf3d"
 
-    moveConfigDir "$home/.wolf4sdl" "$configdir/wolf3d"
+    moveConfigDir "$home/.wolf4sdl" "$md_conf_root/wolf3d"
 
     # Get shareware game data
     wget -q -O wolf3d14.zip http://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip
@@ -67,19 +76,8 @@ function configure_wolf4sdl() {
     chown -R $user:$user "$romdir/ports/wolf3d"
     rm -f wolf3d14.zip
 
-    local bins
-    while read -r bin; do
-        bins+=("$bin")
-    done < <(get_bins_wolf4sdl)
-
     setDispmanx "$md_id" 1
     configure_dispmanx_on_wolf4sdl
-
-    local bin
-    # called outside of above loop to avoid problems with addPort and stdin
-    for bin in "${bins[@]}"; do
-        addPort "$bin" "wolf4sdl" "Wolfenstein 3D" "$md_inst/bin/$bin"
-    done
 }
 
 function configure_dispmanx_off_wolf4sdl() {

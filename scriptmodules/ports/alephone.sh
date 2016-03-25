@@ -33,8 +33,12 @@ function install_alephone() {
 }
 
 function configure_alephone() {
-    mkRomDir "ports"
-    mkRomDir "ports/$md_id/"
+    addPort "$md_id" "marathon" "Aleph One Engine - Marathon" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon/'"
+    addPort "$md_id" "marathon2" "Aleph One Engine - Marathon 2" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon 2/'"
+    addPort "$md_id" "marathoninfinity" "Aleph One Engine - Marathon Infinity" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon Infinity/'"
+
+    mkRomDir "ports/$md_id"
+
     moveConfigDir "$home/.alephone" "$configDir/alephone"
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon/Shapes.shps" ]]; then
@@ -61,9 +65,5 @@ function configure_alephone() {
         rm MarathonInfinity-20150620-Data.zip
     fi
 
-    addPort "$md_id" "marathon" "Aleph One Engine - Marathon" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon/'"
-    addPort "$md_id" "marathon2" "Aleph One Engine - Marathon 2" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon 2/'"
-    addPort "$md_id" "marathoninfinity" "Aleph One Engine - Marathon Infinity" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon Infinity/'"
     __INFMSGS+=("To get the games running, make sure to set each game to use the software renderer and disable the enhanced HUD from the Plugins menu. For Marathon 1, disable both HUDs from the Plugins menu, start a game, quit back to the title screen and enable Enhanced HUD and it will work and properly.")
-
 }

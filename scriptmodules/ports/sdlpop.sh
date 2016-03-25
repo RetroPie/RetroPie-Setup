@@ -40,16 +40,12 @@ function install_sdlpop() {
 }
  
 function configure_sdlpop() {
-    mkRomDir "ports"
+    addPort "$md_id" "sdlpop" "Prince of Persia" "pushd $md_inst; $md_inst/prince full; popd"
 
-    mkUserDir "$configdir/$md_id"
+    moveConfigFile "$md_inst/SDLPoP.ini" "$md_conf_root/$md_id/SDLPoP.ini"
 
-    moveConfigFile "$md_inst/SDLPoP.ini" "$configdir/$md_id/SDLPoP.ini"
-
-    if [[ ! -f "$configdir/$md_id/SDLPoP.ini" ]]; then
-        cp -v "$md_inst/SDLPoP.ini.def" "$configdir/$md_id/SDLPoP.ini"
+    if [[ ! -f "$md_conf_root/$md_id/SDLPoP.ini" ]]; then
+        cp -v "$md_inst/SDLPoP.ini.def" "$md_conf_root/$md_id/SDLPoP.ini"
     fi
-    chown -R $user:$user "$configdir/$md_id"
-
-    addPort "$md_id" "SDLPoP" "Prince of Persia" "pushd $md_inst; $md_inst/prince full; popd"
+    chown -R $user:$user "$md_conf_root/$md_id"
 }

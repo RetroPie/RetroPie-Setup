@@ -35,7 +35,5 @@ function install_xrick() {
 }
  
 function configure_xrick() {
-    mkRomDir "ports"
-
     addPort "$md_id" "xrick" "XRick" "pushd $md_inst; $md_inst/xrick -fullscreen; popd"
 }
