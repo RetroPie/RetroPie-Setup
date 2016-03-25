@@ -24,9 +24,9 @@ function install_micropolis() {
 
 function configure_micropolis() {
     if isPlatform "x11"; then
-        addPort "$md_id" "micropolis" "Micropolis" "xinit $md_inst/micropolis.sh"
-    else
         addPort "$md_id" "micropolis" "Micropolis" "/usr/games/micropolis"
+    else
+        addPort "$md_id" "micropolis" "Micropolis" "xinit $md_inst/micropolis.sh"
     fi
 
     mkdir -p "$md_inst"
