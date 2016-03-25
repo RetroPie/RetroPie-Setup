@@ -12,7 +12,7 @@
 rp_module_id="openbor"
 rp_module_desc="OpenBOR - Beat 'em Up Game Engine"
 rp_module_menus="4+"
-rp_module_flags="!x11 !mali"
+rp_module_flags="!mali"
 
 function depends_openbor() {
     getDepends libsdl1.2-dev libsdl-gfx1.2-dev libogg-dev libvorbisidec-dev libvorbis-dev libpng12-dev zlib1g-dev
@@ -23,8 +23,10 @@ function sources_openbor() {
 }
 
 function build_openbor() {
+    local params=()
+    ! isPlatform "x11" && params+=(NO_GL=1)
     make clean
-    NO_GL=1 make
+    make "${params[@]}"
     cd "$md_build/tools/borpak/"
     ./build-linux.sh
     md_ret_require="$md_build/OpenBOR"
@@ -65,12 +67,12 @@ done
 echo "Your games are extracted and ready to be played. Your originals are stored safely in $BORROMDIR/original/ but they won't be needed anymore. Everything within it can be deleted."
 _EOF_
     chmod +x "$md_inst/extract.sh"
-    mkdir "$md_conf_root/$md_id/ScreenShots"
-    mkdir "$md_conf_root/$md_id/Logs"
-    mkdir "$md_conf_root/$md_id/Saves"
-    ln -snf "$md_conf_root/$md_id/ScreenShots" "$md_inst/ScreenShots"
-    ln -snf "$md_conf_root/$md_id/Logs" "$md_inst/Logs"
-    ln -snf "$md_conf_root/$md_id/Saves" "$md_inst/Saves"
+
+    local dir
+    for dir in ScreenShots Logs Saves; do
+        mkUserDir "$md_conf_root/$md_id/$dir"
+        ln -snf "$md_conf_root/$md_id/$dir" "$md_inst/$dir"
+    done
 
     ln -snf "$romdir/ports/$md_id" "$md_inst/Paks"
 
