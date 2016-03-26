@@ -211,7 +211,7 @@ function rp_callModule() {
                         md_ret_errors+=("Could not successfully install $md_desc ($md_build/$file not found).")
                         break
                     fi
-                    cp -Rv "$md_build/$file" "$md_inst"
+                    cp -Rvf "$md_build/$file" "$md_inst"
                 done
             fi
         fi
