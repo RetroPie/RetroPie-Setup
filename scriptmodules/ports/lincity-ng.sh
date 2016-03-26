@@ -24,9 +24,9 @@ function install_lincity-ng() {
 
 function configure_lincity-ng() {
     if isPlatform "x11"; then
-        addPort "$md_id" "lincity-ng" "LinCity-NG" "lincity-ng"
+        addPort "$md_id" "lincity-ng" "LinCity-NG" "/usr/games/lincity-ng"
     else
-        addPort "$md_id" "lincity-ng" "LinCity-NG" "xinit lincity-ng"
+        addPort "$md_id" "lincity-ng" "LinCity-NG" "xinit /usr/games/lincity-ng"
     fi
     moveConfigDir "$home/.lincity-ng" "$configDir/lincity-ng"
 }
