@@ -41,7 +41,7 @@ function install_zesarux() {
 function configure_zesarux() {
     mkRomDir "zxspectrum"
 
-    mkUserDir "$configdir/zxspectrum"
+    mkUserDir "$md_conf_root/zxspectrum"
 
     cat > "$romdir/zxspectrum/+Start ZEsarUX.sh" << _EOF_
 #!/bin/bash
@@ -57,12 +57,12 @@ _EOF_
     chmod +x "$romdir/zxspectrum/+Start ZEsarUX.sh"
     chown $user:$user "$romdir/zxspectrum/+Start ZEsarUX.sh"
 
-    moveConfigFile "$home/.zesaruxrc" "$configdir/zxspectrum/.zesaruxrc"
+    moveConfigFile "$home/.zesaruxrc" "$md_conf_root/zxspectrum/.zesaruxrc"
 
     local ao="alsa"
     isPlatform "x11" && ao="pulse"
-    if [[ ! -f "$configdir/zxspectrum/.zesaruxrc" ]]; then
-        cat > "$configdir/zxspectrum/.zesaruxrc" << _EOF_
+    if [[ ! -f "$md_conf_root/zxspectrum/.zesaruxrc" ]]; then
+        cat > "$md_conf_root/zxspectrum/.zesaruxrc" << _EOF_
 ;ZEsarUX sample configuration file
 ;
 ;Lines beginning with ; or # are ignored
@@ -82,7 +82,7 @@ _EOF_
 ;Remap Fire Event. Uncomment and amend if you wish to change the default button 3.
 ;--joystickevent 3 Fire
 _EOF_
-        chown $user:$user "$configdir/zxspectrum/.zesaruxrc"
+        chown $user:$user "$md_conf_root/zxspectrum/.zesaruxrc"
     fi
 
     if isPlatform "rpi"; then

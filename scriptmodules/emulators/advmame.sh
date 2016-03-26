@@ -164,14 +164,14 @@ function configure_advmame() {
     # delete old install files
     rm -rf "$md_inst/"{bin,man,share}
 
-    moveConfigDir "$home/.advance" "$configdir/mame-advmame"
+    moveConfigDir "$home/.advance" "$md_conf_root/mame-advmame"
 
     local version
     local default
     for version in *; do
         su "$user" -c "$md_inst/$version/bin/advmame --default"
 
-        iniConfig " " "" "$configdir/mame-advmame/advmame-$version.rc"
+        iniConfig " " "" "$md_conf_root/mame-advmame/advmame-$version.rc"
 
         iniSet "misc_quiet" "yes"
         iniSet "dir_rom" "$romdir/mame-advmame:$romdir/arcade"

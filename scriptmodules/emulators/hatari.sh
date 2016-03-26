@@ -71,7 +71,7 @@ function configure_hatari() {
     mkRomDir "atarist"
 
     # move any old configs to new location
-    moveConfigDir "$home/.hatari" "$configdir/atarist"
+    moveConfigDir "$home/.hatari" "$md_conf_root/atarist"
 
     delSystem "$md_id" "atariststefalcon"
     delSystem "$md_id" "atarist"

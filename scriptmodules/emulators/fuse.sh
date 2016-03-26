@@ -61,9 +61,9 @@ function install_fuse() {
 function configure_fuse() {
     mkRomDir "zxspectrum"
 
-    mkUserDir "$configdir/zxspectrum"
+    mkUserDir "$md_conf_root/zxspectrum"
 
-    moveConfigFile "$home/.fuserc" "$configdir/zxspectrum/.fuserc"
+    moveConfigFile "$home/.fuserc" "$md_conf_root/zxspectrum/.fuserc"
 
     setDispmanx "$md_id" 1
     configure_dispmanx_on_fuse

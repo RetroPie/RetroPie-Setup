@@ -54,7 +54,7 @@ function install_pcsx-rearmed() {
 
 function configure_pcsx-rearmed() {
     mkRomDir "psx"
-    mkUserDir "$configdir/psx"
+    mkUserDir "$md_conf_root/psx"
     mkdir -p "$md_inst/bios"
 
     # symlink the rom so so it can be installed with the other bios files
@@ -62,5 +62,5 @@ function configure_pcsx-rearmed() {
 
     setDispmanx "$md_id" 1
 
-    addSystem 0 "$md_id" "psx" "$md_inst/pcsx -cfg $configdir/psx/pcsx.cfg -cdfile %ROM%"
+    addSystem 0 "$md_id" "psx" "$md_inst/pcsx -cfg $md_conf_root/psx/pcsx.cfg -cdfile %ROM%"
 }

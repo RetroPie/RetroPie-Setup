@@ -43,19 +43,19 @@ function configure_dgen()
     mkRomDir "segacd"
     mkRomDir "sega32x"
 
-    mkUserDir "$configdir/megadrive"
+    mkUserDir "$md_conf_root/megadrive"
 
     # move config from previous location
     if [[ -f "$configdir/all/dgenrc" ]]; then
-        mv -v "$configdir/all/dgenrc" "$configdir/megadrive/dgenrc"
+        mv -v "$configdir/all/dgenrc" "$md_conf_root/megadrive/dgenrc"
     fi
 
-    if [[ ! -f "$configdir/megadrive/dgenrc" ]]; then
-        cp "sample.dgenrc" "$configdir/megadrive/dgenrc"
-        chown $user:$user "$configdir/megadrive/dgenrc"
+    if [[ ! -f "$md_conf_root/megadrive/dgenrc" ]]; then
+        cp "sample.dgenrc" "$md_conf_root/megadrive/dgenrc"
+        chown $user:$user "$md_conf_root/megadrive/dgenrc"
     fi
 
-    iniConfig " = " "" "$configdir/megadrive/dgenrc"
+    iniConfig " = " "" "$md_conf_root/megadrive/dgenrc"
 
     if isPlatform "rpi"; then
         iniSet "int_width" "320"
@@ -94,7 +94,7 @@ function configure_dgen()
 
     setDispmanx "$md_id" 1
 
-    addSystem 0 "$md_id" "megadrive" "$md_inst/bin/dgen -r $configdir/megadrive/dgenrc %ROM%"
-    addSystem 0 "$md_id" "segacd" "$md_inst/bin/dgen -r $configdir/megadrive/dgenrc %ROM%"
-    addSystem 0 "$md_id" "sega32x" "$md_inst/bin/dgen -r $configdir/megadrive/dgenrc %ROM%"
+    addSystem 0 "$md_id" "megadrive" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
+    addSystem 0 "$md_id" "segacd" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
+    addSystem 0 "$md_id" "sega32x" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
 }

@@ -43,8 +43,8 @@ function install_vice() {
 function configure_vice() {
     mkRomDir "c64"
 
-    # copy any existing configs from ~/.vice and symlink the config folder to $configdir/c64/
-    moveConfigDir "$home/.vice" "$configdir/c64"
+    # copy any existing configs from ~/.vice and symlink the config folder to $md_conf_root/c64/
+    moveConfigDir "$home/.vice" "$md_conf_root/c64"
 
     # on 64bit platforms lib64 is used and vice cannot find the roms there.
     if [[ -d "$md_inst/lib64" ]]; then
@@ -52,14 +52,14 @@ function configure_vice() {
     fi
 
     # if we have an old config vice.cfg then move it to sdl-vicerc
-    if [[ -f "$configdir/c64/vice.cfg" ]]; then
-        mv -v "$configdir/c64/vice.cfg" "$configdir/c64/sdl-vicerc"
-    elif [[ ! -f "$configdir/c64/sdl-vicerc" ]]; then
-        echo "[C64]" > "$configdir/c64/sdl-vicerc"
+    if [[ -f "$md_conf_root/c64/vice.cfg" ]]; then
+        mv -v "$md_conf_root/c64/vice.cfg" "$md_conf_root/c64/sdl-vicerc"
+    elif [[ ! -f "$md_conf_root/c64/sdl-vicerc" ]]; then
+        echo "[C64]" > "$md_conf_root/c64/sdl-vicerc"
     fi
-    chown -R $user:$user "$configdir/c64"
+    chown -R $user:$user "$md_conf_root/c64"
 
-    iniConfig "=" "" "$configdir/c64/sdl-vicerc"
+    iniConfig "=" "" "$md_conf_root/c64/sdl-vicerc"
     if ! isPlatform "x11"; then
         iniSet "SDLBitdepth" "8"
         iniSet "Mouse" "1"
@@ -91,7 +91,7 @@ function configure_dispmanx_off_vice() {
     for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic; do
         setDispmanx "id" 0
     done
-    iniConfig "=" "" "$configdir/c64/sdl-vicerc"
+    iniConfig "=" "" "$md_conf_root/c64/sdl-vicerc"
     iniSet "VICIIDoubleSize" "1"
     iniSet "VICIIDoubleScan" "1"
 }
@@ -101,7 +101,7 @@ function configure_dispmanx_on_vice() {
     for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic; do
         setDispmanx "$id" 1
     done
-    iniConfig "=" "" "$configdir/c64/sdl-vicerc"
+    iniConfig "=" "" "$md_conf_root/c64/sdl-vicerc"
     iniSet "VICIIDoubleSize" "0"
     iniSet "VICIIDoubleScan" "0"
 }

@@ -44,8 +44,8 @@ function install_residualvm() {
 function configure_residualvm() {
     mkRomDir "residualvm"
 
-    moveConfigDir "$home/.residualvm" "$configdir/residualvm"
-    moveConfigFile "$home/.residualvmrc" "$configdir/residualvm/residualvmrc"
+    moveConfigDir "$home/.residualvm" "$md_conf_root/residualvm"
+    moveConfigFile "$home/.residualvmrc" "$md_conf_root/residualvm/residualvmrc"
 
     # Create startup script
     rm -f "$romdir/residualvm/+Launch GUI.sh"

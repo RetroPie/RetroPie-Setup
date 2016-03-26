@@ -62,17 +62,17 @@ popd
 _EOF_
     chmod +x "$romdir/apple2/+Start LinApple.sh"
 
-    mkUserDir "$configdir/apple2"
+    mkUserDir "$md_conf_root/apple2"
 
     # if the user doesn't already have a config, we will copy the default.
-    if [[ ! -f "$configdir/apple2/linapple.conf" ]]; then
-        cp -v "linapple.conf.sample" "$configdir/apple2/linapple.conf"
-        iniConfig " = " "" "$configdir/apple2/linapple.conf"
+    if [[ ! -f "$md_conf_root/apple2/linapple.conf" ]]; then
+        cp -v "linapple.conf.sample" "$md_conf_root/apple2/linapple.conf"
+        iniConfig " = " "" "$md_conf_root/apple2/linapple.conf"
         iniSet "Joystick 0" "1"
         iniSet "Joystick 1" "1"
     fi
-    ln -sf "$configdir/apple2/linapple.conf"
-    chown $user:$user "$configdir/apple2/linapple.conf"
+    ln -sf "$md_conf_root/apple2/linapple.conf"
+    chown $user:$user "$md_conf_root/apple2/linapple.conf"
 
     addSystem 1 "$md_id" "apple2" "$romdir/apple2/+Start\ LinApple.sh" "Apple II" ".sh"
 }

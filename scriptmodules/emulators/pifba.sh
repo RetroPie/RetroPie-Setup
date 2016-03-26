@@ -47,18 +47,18 @@ function configure_pifba() {
     mkRomDir "fba"
     mkRomDir "neogeo"
 
-    mkUserDir "$configdir/fba"
+    mkUserDir "$md_conf_root/fba"
 
     local config
     for config in fba2x.cfg capex.cfg; do
         # move old config
-        moveConfigFile "$md_inst/$config" "$configdir/fba/$config"
+        moveConfigFile "$md_inst/$config" "$md_conf_root/fba/$config"
 
         # if the user doesn't already have a config, we will copy the default.
-        if [[ ! -f "$configdir/fba/$config" ]]; then
-            cp "$config.template" "$configdir/fba/$config"
+        if [[ ! -f "$md_conf_root/fba/$config" ]]; then
+            cp "$config.template" "$md_conf_root/fba/$config"
         fi
-        chown $user:$user "$configdir/fba/$config"
+        chown $user:$user "$md_conf_root/fba/$config"
     done
 
     local def=0

@@ -122,16 +122,16 @@ function configure_mupen64plus() {
     chmod +x "$md_inst/bin/mupen64plus.sh"
 
     # to solve startup problems delete old config file
-    rm -f "$configdir/n64/mupen64plus.cfg"
+    rm -f "$md_conf_root/n64/mupen64plus.cfg"
     # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
     rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
-    mkUserDir "$configdir/n64/"
+    mkUserDir "$md_conf_root/n64/"
     # Copy config files
-    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$configdir/n64/"
-    chown -R $user:$user "$configdir/n64"
-    su "$user" -c "$md_inst/bin/mupen64plus --configdir $configdir/n64 --datadir $configdir/n64"
+    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$md_conf_root/n64/"
+    chown -R $user:$user "$md_conf_root/n64"
+    su "$user" -c "$md_inst/bin/mupen64plus --md_conf_root $md_conf_root/n64 --datadir $md_conf_root/n64"
 
-    iniConfig " = " '"' "$configdir/n64/mupen64plus.cfg"
+    iniConfig " = " '"' "$md_conf_root/n64/mupen64plus.cfg"
     iniSet "ScreenshotPath" "$romdir/n64"
     iniSet "SaveStatePath" "$romdir/n64"
     iniSet "SaveSRAMPath" "$romdir/n64"

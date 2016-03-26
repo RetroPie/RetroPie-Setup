@@ -70,7 +70,7 @@ function configure_scummvm() {
 
     local dir
     for dir in .config .local/share .cache; do
-        moveConfigDir "$home/$dir/scummvm" "$configdir/scummvm"
+        moveConfigDir "$home/$dir/scummvm" "$md_conf_root/scummvm"
     done
 
     # Create startup script

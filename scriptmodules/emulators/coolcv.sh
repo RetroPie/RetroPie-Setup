@@ -21,7 +21,7 @@ function install_coolcv() {
 function configure_coolcv() {
     mkRomDir "coleco"
 
-    moveConfigFile "$home/coolcv_mapping.txt" "$configdir/coleco/coolcv_mapping.txt"
+    moveConfigFile "$home/coolcv_mapping.txt" "$md_conf_root/coleco/coolcv_mapping.txt"
 
     addSystem 1 "$md_id" "coleco colecovision colecovision" "$md_inst/coolcv/coolcv_pi %ROM%"
 }

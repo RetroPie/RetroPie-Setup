@@ -62,18 +62,18 @@ function configure_reicast() {
     mkRomDir "dreamcast"
 
     # move any old configs to the new location
-    moveConfigDir "$home/.reicast" "$configdir/dreamcast/"
+    moveConfigDir "$home/.reicast" "$md_conf_root/dreamcast/"
 
     # Create home VMU, cfg, and data folders. Copy dc_boot.bin and dc_flash.bin to the ~/.reicast/data/ folder.
-    mkdir -p "$configdir/dreamcast/"{data,mappings}
+    mkdir -p "$md_conf_root/dreamcast/"{data,mappings}
 
     # symlink bios
-    ln -sf "$biosdir/"{dc_boot.bin,dc_flash.bin} "$configdir/dreamcast/data"
+    ln -sf "$biosdir/"{dc_boot.bin,dc_flash.bin} "$md_conf_root/dreamcast/data"
 
     # copy default mappings
-    cp "$md_inst/share/reicast/mappings/"*.cfg "$configdir/dreamcast/mappings/"
+    cp "$md_inst/share/reicast/mappings/"*.cfg "$md_conf_root/dreamcast/mappings/"
 
-    chown -R $user:$user "$configdir/dreamcast"
+    chown -R $user:$user "$md_conf_root/dreamcast"
 
     # Link to file that does not exist as this results in the Dreamcast System Manager launching (as if one turned on the Dreamcast without a disc inserted)
     # This is required to fix broken / corrupted VMU files.

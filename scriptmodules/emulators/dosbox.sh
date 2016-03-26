@@ -67,7 +67,7 @@ _EOF_
     chmod +x "$romdir/pc/+Start DOSBox.sh"
     chown $user:$user "$romdir/pc/+Start DOSBox.sh"
 
-    moveConfigDir "$home/.dosbox" "$configdir/pc"
+    moveConfigDir "$home/.dosbox" "$md_conf_root/pc"
 
     local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [[ -f "$config_path" ]]; then

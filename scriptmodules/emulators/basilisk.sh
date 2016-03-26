@@ -44,7 +44,7 @@ function configure_basilisk() {
     mkRomDir "macintosh"
     touch "$romdir/macintosh/Start.txt"
     
-    mkUserDir "$configdir/macintosh"
+    mkUserDir "$md_conf_root/macintosh"
 
-    addSystem 1 "$md_id" "macintosh" "$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img --extfs $romdir/macintosh --config $configdir/macintosh/basiliskii.cfg" "Apple Macintosh" ".txt"
+    addSystem 1 "$md_id" "macintosh" "$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img --extfs $romdir/macintosh --config $md_conf_root/macintosh/basiliskii.cfg" "Apple Macintosh" ".txt"
 }

@@ -53,24 +53,24 @@ function configure_mame4all() {
     mkRomDir "$system/artwork"
     mkRomDir "$system/samples"
 
-    mkdir -p "$configdir/$system/"{cfg,hi,inp,memcard,nvram,snap,sta}
+    mkdir -p "$md_conf_root/$system/"{cfg,hi,inp,memcard,nvram,snap,sta}
 
     # move old config
-    moveConfigFile "mame.cfg" "$configdir/$system/mame.cfg"
+    moveConfigFile "mame.cfg" "$md_conf_root/$system/mame.cfg"
 
     # if the user doesn't already have a config, we will copy the default.
-    if [[ ! -f "$configdir/$system/mame.cfg" ]]; then
-        cp "mame.cfg.template" "$configdir/$system/mame.cfg"
+    if [[ ! -f "$md_conf_root/$system/mame.cfg" ]]; then
+        cp "mame.cfg.template" "$md_conf_root/$system/mame.cfg"
     fi
 
-    iniConfig "=" "" "$configdir/$system/mame.cfg"
-    iniSet "cfg" "$configdir/$system/cfg"
-    iniSet "hi" "$configdir/$system/hi"
-    iniSet "inp" "$configdir/$system/inp"
-    iniSet "memcard" "$configdir/$system/memcard"
-    iniSet "nvram" "$configdir/$system/nvram"
-    iniSet "snap" "$configdir/$system/snap"
-    iniSet "sta" "$configdir/$system/sta"
+    iniConfig "=" "" "$md_conf_root/$system/mame.cfg"
+    iniSet "cfg" "$md_conf_root/$system/cfg"
+    iniSet "hi" "$md_conf_root/$system/hi"
+    iniSet "inp" "$md_conf_root/$system/inp"
+    iniSet "memcard" "$md_conf_root/$system/memcard"
+    iniSet "nvram" "$md_conf_root/$system/nvram"
+    iniSet "snap" "$md_conf_root/$system/snap"
+    iniSet "sta" "$md_conf_root/$system/sta"
 
     iniSet "artwork" "$romdir/$system/artwork"
     iniSet "samplepath" "$romdir/$system/samples;$romdir/arcade/samples"
@@ -78,7 +78,7 @@ function configure_mame4all() {
 
     iniSet "samplerate" "44100"
 
-    chown -R $user:$user "$configdir/$system"
+    chown -R $user:$user "$md_conf_root/$system"
 
     addSystem 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
     addSystem 1 "$md_id" "$system arcade mame" "$md_inst/mame %BASENAME%"

@@ -38,11 +38,11 @@ function install_px68k() {
 function configure_px68k() {
     mkRomDir "x68000"
 
-    moveConfigDir "$home/.keropi" "$configdir/x68000"
+    moveConfigDir "$home/.keropi" "$md_conf_root/x68000"
 
     local bios
     for bios in cgrom.dat plrom30.dat iplromco.dat iplrom.dat iplromxv.dat; do
-        ln -sf "$biosdir/$bios" "$configdir/x68000/$bios"
+        ln -sf "$biosdir/$bios" "$md_conf_root/x68000/$bios"
     done
 
     setDispmanx "$md_id" 0

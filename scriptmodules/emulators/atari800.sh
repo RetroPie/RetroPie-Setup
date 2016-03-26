@@ -68,10 +68,10 @@ function configure_atari800() {
     mkRomDir "atari800"
     mkRomDir "atari5200"
 
-    mkUserDir "$configdir/atari800"
+    mkUserDir "$md_conf_root/atari800"
 
     # move old config if exists to new location
-    moveConfigFile "$home/.atari800.cfg" "$configdir/atari800.cfg"
+    moveConfigFile "$home/.atari800.cfg" "$md_conf_root/atari800.cfg"
 
     addSystem 1 "$md_id" "atari800" "$md_inst/bin/atari800 %ROM%"
     addSystem 1 "$md_id" "atari5200" "$md_inst/bin/atari800 %ROM%"
