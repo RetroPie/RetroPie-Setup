@@ -484,7 +484,6 @@ function setESSystem() {
     local command=$5
     local platform=$6
     local theme=$7
-    local directlaunch=$8
 
     local conf="/etc/emulationstation/es_systems.cfg"
     mkdir -p "/etc/emulationstation"
@@ -502,7 +501,6 @@ function setESSystem() {
             -s "/systemList/system[last()]" -t elem -n "command" -v "$command" \
             -s "/systemList/system[last()]" -t elem -n "platform" -v "$platform" \
             -s "/systemList/system[last()]" -t elem -n "theme" -v "$theme" \
-            -s "/systemList/system[last()]" -t elem -n "directlaunch" -v "$directlaunch" \
             "$conf"
     else
         xmlstarlet ed -L \
@@ -512,7 +510,6 @@ function setESSystem() {
             -u "/systemList/system[name='$name']/command" -v "$command" \
             -u "/systemList/system[name='$name']/platform" -v "$platform" \
             -u "/systemList/system[name='$name']/theme" -v "$theme" \
-            -u "/systemList/system[name='$name']/directlaunch" -v "$directlaunch" \
             "$conf"
     fi
 
@@ -726,10 +723,3 @@ _EOF_
     addSystem 1 "$id" "$port pc ports" "$cmd"
 }
 
-function addDirectLaunch() {
-    local name="$1"
-    local fullname="$2"
-    local cmd="$3"
-
-    setESSystem "$fullname" "$name" "" "" "$rootdir/supplementary/runcommand/runcommand.sh 0 \"$cmd\"" "" "$name" "true"
-}
