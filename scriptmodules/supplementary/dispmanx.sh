@@ -21,7 +21,6 @@ function configure_dispmanx() {
         local options=()
         local command=()
         for idx in "${__mod_idx[@]}"; do
-            [[ $idx -gt 250 ]] && break
             if [[ "${__mod_flags[$idx]}" =~ dispmanx ]]; then
                 local mod_id=${__mod_id[idx]}
                 iniGet "$mod_id"
