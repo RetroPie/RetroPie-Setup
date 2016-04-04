@@ -29,9 +29,9 @@ function setup_env() {
     fi
 
     # set location of binary downloads
-    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://downloads.petrockblock.com/retropiebinaries/$__raspbian_name/$__platform"
+    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://files.retropie.org.uk/binaries/$__raspbian_name/$__platform"
 
-    __archive_url="http://downloads.petrockblock.com/retropiearchives"
+    __archive_url="http://files.retropie.org.uk/archives"
 
     # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
     [[ $__memory_phys -ge 256 ]] && __default_cflags+=" -pipe"
