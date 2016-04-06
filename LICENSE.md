@@ -627,4 +627,4 @@ END OF TERMS AND CONDITIONS
 
 ## Copyright
 
-(c) Copyright 2012-2015  Florian Müller (contact@petrockblock.com)
+(c) Copyright 2012-2015 RetroPie Project (See COPYRIGHT.md)
