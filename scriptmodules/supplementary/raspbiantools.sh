@@ -21,7 +21,7 @@ function apt_upgrade_raspbiantools() {
 
 
 function lxde_raspbiantools() {
-    aptInstall lxde xorg raspberrypi-ui-mods
+    aptInstall lxde xorg raspberrypi-ui-mods epiphany-browser
     addPort "$md_id" "lxde" "DESKTOP" "startx"
     enable_autostart
 }
