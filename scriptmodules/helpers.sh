@@ -110,7 +110,7 @@ function aptUpdate() {
 
 function aptInstall() {
     aptUpdate
-    apt-get install -y --no-install-recommends $@
+    apt-get install -y "$@"
     return $?
 }
 
@@ -170,7 +170,7 @@ function getDepends() {
             packages=("${temp[@]}")
         fi
 
-        aptInstall ${packages[@]}
+        aptInstall --no-install-recommends "${packages[@]}"
         # check the required packages again rather than return code of apt-get, as apt-get
         # might fail for other reasons (other broken packages, eg samba in a chroot environment)
         for required in ${packages[@]}; do
