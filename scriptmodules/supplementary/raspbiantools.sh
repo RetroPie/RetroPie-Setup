@@ -21,7 +21,7 @@ function apt_upgrade_raspbiantools() {
 
 
 function lxde_raspbiantools() {
-    aptInstall lxde xorg policykit-1 raspberrypi-ui-mods
+    aptInstall lxde xorg raspberrypi-ui-mods
     addPort "$md_id" "lxde" "DESKTOP" "startx"
     enable_autostart
 }
