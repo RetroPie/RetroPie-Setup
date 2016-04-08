@@ -19,7 +19,7 @@ function depends_sdlpop() {
 }
  
 function sources_sdlpop() {
-    gitPullOrClone "$md_build" https://github.com/NagyD/SDLPoP.git
+    gitPullOrClone "$md_build" https://github.com/NagyD/SDLPoP.git v1.16
 }
  
 function build_sdlpop() {
