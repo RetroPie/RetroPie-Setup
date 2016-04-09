@@ -40,7 +40,6 @@ function configure_retropiemenu()
         files+=(
             'raspiconfig.rp'
             'audiosettings.rp'
-            'dispmanx.rp'
             'splashscreen.rp'
         )
     fi
@@ -49,72 +48,14 @@ function configure_retropiemenu()
         touch "$rpdir/$file"
     done
 
-    chown -R $user:$user "$rpdir"
-
-    # add some information
+    # add the gameslist / icons
     mkdir -p "$home/.emulationstation/gamelists/retropie/"
-    cat > "$home/.emulationstation/gamelists/retropie/gamelist.xml" <<_EOF_
-<?xml version="1.0"?>
-<gameList>
-    <game>
-        <path>$rpdir/raspiconfig.rp</path>
-        <name>Raspberry Pi configuration tool raspi-config</name>
-    </game>
-    <game>
-        <path>$rpdir/rpsetup.rp</path>
-        <name>RetroPie-Setup</name>
-    </game>
-    <game>
-        <path>$rpdir/configedit.rp</path>
-        <name>Edit RetroPie/RetroArch configurations</name>
-    </game>
-    <game>
-        <path>$rpdir/filemanager.rp</path>
-        <name>File Manager</name>
-    </game>
-    <game>
-        <path>$rpdir/retroarch.rp</path>
-        <name>Configure RetroArch / Launch RetroArch RGUI</name>
-    </game>
-    <game>
-        <path>$rpdir/audiosettings.rp</path>
-        <name>Configure audio settings</name>
-    </game>
-    <game>
-        <path>$rpdir/dispmanx.rp</path>
-        <name>Enable/Disable dispmanx SDL driver for SDL1.x emulators</name>
-    </game>
-    <game>
-        <path>$rpdir/retronetplay.rp</path>
-        <name>Configure RetroArch netplay</name>
-    </game>
-    <game>
-        <path>$rpdir/splashscreen.rp</path>
-        <name>Configure Splashscreen</name>
-    </game>
-    <game>
-        <path>$rpdir/showip.rp</path>
-        <name>Show IP address</name>
-    </game>
-    <game>
-        <path>$rpdir/wifi.rp</path>
-        <name>Configure Wifi</name>
-    </game>
-    <game>
-        <path>$rpdir/runcommand.rp</path>
-        <name>Configure 'runcommand' launch script</name>
-    </game>
-    <game>
-        <path>$rpdir/bluetooth.rp</path>
-        <name>Register / Pair Bluetooth devices</name>
-    </game>
-    <game>
-        <path>$rpdir/esthemes.rp</path>
-        <name>Install themes for Emulation Station</name>
-    </game>
-</gameList>
-_EOF_
+    cp -v "$scriptdir/scriptmodules/$md_type/retropiemenu/gamelist.xml" "$home/.emulationstation/gamelists/retropie/gamelist.xml"
+    cp -Rv "$scriptdir/scriptmodules/$md_type/retropiemenu/icons" "$rpdir/"
+
+    chown -R $user:$user "$rpdir"
     chown -RL $user:$user "$home/.emulationstation"
+
     setESSystem "RetroPie" "retropie" "~/RetroPie/retropiemenu" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
 }
 
