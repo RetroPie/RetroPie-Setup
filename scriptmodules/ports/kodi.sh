@@ -14,10 +14,26 @@ rp_module_desc="Kodi - Open source home theatre software"
 rp_module_menus="4+"
 rp_module_flags="nobin !mali"
 
+function depends_kodi() {
+    if isPlatform "rpi"; then
+        if [[ "$__depends_mode" == "install" ]]; then
+            # remove old repository
+            rm -f /etc/apt/sources.list.d/mene.list
+            echo "deb http://dl.bintray.com/pipplware/dists/jessie/main/binary/ ./" >/etc/apt/sources.list.d/pipplware.list
+            wget -q -O- http://pipplware.pplware.pt/pipplware/key.asc | apt-key add - >/dev/null
+        else
+            rm -f /etc/apt/sources.list.d/pipplware.list
+            apt-key del 4096R/BAA567BB >/dev/null
+        fi
+    fi
+}
+
 function install_kodi() {
-    # remove old repository - we will use Kodi from the Raspbian repositories
-    rm -f /etc/apt/sources.list.d/mene.list
     aptInstall kodi
+}
+
+function remove_kodi() {
+    aptRemove kodi
 }
 
 function configure_kodi() {

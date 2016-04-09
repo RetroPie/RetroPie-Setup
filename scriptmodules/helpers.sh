@@ -114,6 +114,12 @@ function aptInstall() {
     return $?
 }
 
+function aptRemove() {
+    aptUpdate
+    apt-get remove -y "$@"
+    return $?
+}
+
 function getDepends() {
     local required
     local packages=()
