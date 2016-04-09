@@ -76,7 +76,7 @@ function get_os_version() {
             esac
         else
             case "$ver" in
-                jessie/sid)
+                jessie/sid|stretch/sid)
                     __raspbian_ver=8
                     __raspbian_name="ubuntu"
                     return
