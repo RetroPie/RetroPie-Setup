@@ -191,7 +191,7 @@ function platform_rpi1() {
 }
 
 function platform_rpi2() {
-    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_cflags="-O3 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon rpi"
@@ -204,7 +204,7 @@ function platform_rpi2() {
 # note the rpi3 currently uses the rpi2 binaries - for ease of maintenance - rebuilding from source
 # could improve performance with the compiler options below but needs further testing
 function platform_rpi3() {
-    __default_cflags="-O2 -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_cflags="-O3 -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi"
@@ -217,7 +217,7 @@ function platform_rpi3-64() {
 }
 
 function platform_odroid-c1() {
-    __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_cflags="-O3 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon mali"
@@ -226,7 +226,7 @@ function platform_odroid-c1() {
 }
 
 function platform_x86() {
-    __default_cflags="-O2 -march=native"
+    __default_cflags="-O3 -march=native"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="x11"
@@ -234,7 +234,7 @@ function platform_x86() {
 }
 
 function platform_generic-x11() {
-    __default_cflags="-O2"
+    __default_cflags="-O3"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="x11"
@@ -242,7 +242,7 @@ function platform_generic-x11() {
 }
 
 function platform_armv7-mali() {
-    __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_cflags="-O3 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="arm armv7 neon mali"
