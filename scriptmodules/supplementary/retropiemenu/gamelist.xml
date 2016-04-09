@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<gameList>
+    <game>
+        <path>./audiosettings.rp</path>
+        <name>Audio</name>
+        <desc>Configure audio settings. Choose default of 'auto', 3.5mm jack, or HDMI. Mixer controls, and apply default settings.</desc>
+        <image>~/RetroPie/retropiemenu/icons/audiosettings.png</image>
+    </game>
+    <game>
+        <path>./bluetooth.rp</path>
+        <name>Bluetooth</name>
+        <desc>Register and connect to bluetooth devices. Unregister and remove devices, and display registered and connected devices..</desc>
+        <image>~/RetroPie/retropiemenu/icons/bluetooth.png</image>
+    </game>
+    <game>
+        <path>./configedit.rp</path>
+        <name>Configuration Editor</name>
+        <desc>Change common RetroArch options, and manually edit RetroArch configs, global configs, and non-RetroArch configs.</desc>
+        <image>~/RetroPie/retropiemenu/icons/configedit.png</image>
+    </game>
+    <game>
+        <path>./esthemes.rp</path>
+        <name>ES Themes</name>
+        <desc>Install, uninstall, or update EmulationStation themes. Most themes can be previewed at https://github.com/retropie/ RetroPie-Setup/wiki/themes.</desc>
+        <image>~/RetroPie/retropiemenu/icons/esthemes.png</image>
+    </game>
+    <game>
+        <path>./filemanager.rp</path>
+        <name>File Manager</name>
+        <desc>Basic ascii file manager for linux allowing you to browse, copy, delete, and move files. </desc>
+        <image>~/RetroPie/retropiemenu/icons/filemanager.png</image>
+    </game>
+    <game>
+        <path>./raspiconfig.rp</path>
+        <name>Raspi-Config</name>
+        <desc>Change user password, boot options, internationalization, camera, add your pi to Rastrack, overclock, overscan, memory split, SSH and more.</desc>
+        <image>~/RetroPie/retropiemenu/icons/raspiconfig.png</image>
+    </game>
+    <game>
+        <path>./retroarch.rp</path>
+        <name>Retroarch</name>
+        <desc>Launches RetroArch with the GUI raised so you can change RetroArch options. Note: changes will not be saved unless you have enabled writing to the retroarch.cfg file.</desc>
+        <image>~/RetroPie/retropiemenu/icons/retroarch.png</image>
+    </game>
+    <game>
+        <path>./retronetplay.rp</path>
+        <name>RetroArch Net Play</name>
+        <desc>Set up RetroArch Netplay options, choose host or client, port, host IP, delay frames, and your nickname.</desc>
+        <image>~/RetroPie/retropiemenu/icons/retronetplay.png</image>
+    </game>
+    <game>
+        <path>./rpsetup.rp</path>
+        <name>RetroPie Setup</name>
+        <desc>Install RetroPie from binary or source, install experimental packages, additional drivers, edit samba shares, custom scraper, as well as other RetroPie-related configurations.</desc>
+        <image>~/RetroPie/retropiemenu/icons/rpsetup.png</image>
+    </game>
+    <game>
+        <path>./runcommand.rp</path>
+        <name>Run Command Editor</name>
+        <desc>Change what appears on the runcommand screen. Enable or disable the menu, enable or disable box art, and change CPU configuration.</desc>
+        <image>~/RetroPie/retropiemenu/icons/runcommand.png</image>
+    </game>
+    <game>
+        <path>./showip.rp</path>
+        <name>Show IP</name>
+        <desc>Displays your current IP address, as well as other information provided by the command, "ip addr show."</desc>
+        <image>~/RetroPie/retropiemenu/icons/showip.png</image>
+    </game>
+    <game>
+        <path>./splashscreen.rp</path>
+        <name>Splash Screens</name>
+        <desc>Enable or disable the splashscreen on RetroPie boot. Choose a splashscreen, download new splashscreens, and return splashscreen to default.</desc>
+        <image>~/RetroPie/retropiemenu/icons/splashscreen.png</image>
+    </game>
+    <game>
+        <path>./wifi.rp</path>
+        <name>WiFi</name>
+        <desc>Connect to or disconnect from a wifi network and configure wifi settings.</desc>
+        <image>~/RetroPie/retropiemenu/icons/wifi.png</image>
+    </game>
+</gameList>
