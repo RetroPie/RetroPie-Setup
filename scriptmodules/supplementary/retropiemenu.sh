@@ -42,6 +42,8 @@ function configure_retropiemenu()
             'audiosettings.rp'
             'splashscreen.rp'
         )
+        # remove the dispmanx.rp menu entry
+        rm -f "$rpdir/dispmanx.rp"
     fi
 
     for file in "${files[@]}"; do
