@@ -95,16 +95,10 @@ function configure_retroarch() {
     iniSet "overlay_directory" "$md_inst/overlays"
     isPlatform "x11" && iniSet "video_fullscreen" "true"
 
-    # set default render resolution to 640x480 for rpi1 if video output res is higher
-    local tvservice="/opt/vc/bin/tvservice"
-    if isPlatform "rpi1" && [[ -f "$tvservice" ]]; then
-        # calculate w*h
-        local pixels="$(($(tvservice -s | cut -d"," -f2 | grep -oE "[0-9]+x[0-9]+" | sed "s/x/*/")))"
-        # if number of pixels > 640x480 we will lower default render res to 640x480
-        if [[ "$pixels" -gt 307200 ]]; then
-            iniSet "video_fullscreen_x" "640"
-            iniSet "video_fullscreen_y" "480"
-        fi
+    # set default render resolution to 640x480 for rpi1
+    if isPlatform "rpi1"; then
+        iniSet "video_fullscreen_x" "640"
+        iniSet "video_fullscreen_y" "480"
     fi
 
     # enable hotkey ("select" button)
