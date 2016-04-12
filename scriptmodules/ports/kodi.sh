@@ -37,6 +37,7 @@ function remove_kodi() {
 }
 
 function configure_kodi() {
+    delSystem "kodi"
     addPort "$md_id" "kodi" "Kodi" "kodi-standalone"
 
     if [[ ! -f /etc/udev/rules.d/99-input.rules ]]; then
