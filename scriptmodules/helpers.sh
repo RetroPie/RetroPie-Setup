@@ -695,8 +695,8 @@ function delSystem() {
     # remove from emulation station
     xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
     # remove from apps list for system
-    if [[ -f "$configdir/$system/emulators.cfg" ]]; then
-        iniConfig "=" '"' "$configdir/$system/emulators.cfg"
+    if [[ -f "$md_conf_root/$system/emulators.cfg" ]]; then
+        iniConfig "=" '"' "$md_conf_root/$system/emulators.cfg"
         iniDel "$id"
     fi
 }
