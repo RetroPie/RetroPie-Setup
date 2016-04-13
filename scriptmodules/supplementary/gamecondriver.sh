@@ -28,15 +28,10 @@ function install_gamecondriver() {
     dialog \
         --title "GPIO gamepad drivers installation" --clear \
         --yesno "GPIO gamepad drivers require that most recent kernel (firmware) is installed and active. Continue with installation?" \
-        22 76 >/dev/tty
-    case $? in
-        0)
-            printMsgs "console" "Starting installation."
-            ;;
-        *)
-            return 0
-            ;;
-    esac
+        22 76 >/dev/tty || return 0
+
+    clear
+    printMsgs "console" "Starting installation."
 
     # install kernel headers (takes a a while)
     local kernel_ver="$(uname -r)"
@@ -71,15 +66,10 @@ function install_gamecondriver() {
 
     # test if gamecon installation is OK
     if [[ -n "$(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko)" ]]; then
-        dialog --clear --yesno "Gamecon GPIO driver successfully installed. Would you like to see README?" \
-            22 76 >/dev/tty
-        case $? in
-            0)
-                dialog --msgbox "$(gzip -dc /usr/share/doc/gamecon_gpio_rpi/README.gz)" 22 76 >/dev/tty
-                ;;
-            *)
-                ;;
-        esac
+        if dialog --clear --yesno "Gamecon GPIO driver successfully installed. Would you like to see README?" \
+            22 76 >/dev/tty; then
+            dialog --msgbox "$(gzip -dc /usr/share/doc/gamecon_gpio_rpi/README.gz)" 22 76 >/dev/tty
+        fi
     else
         printMsgs "dialog" "Gamecon GPIO driver installation FAILED"
         return 0
@@ -87,15 +77,10 @@ function install_gamecondriver() {
 
     # test if db9 installation is OK
     if [[ -n "$(modinfo -n db9_gpio_rpi | grep db9_gpio_rpi.ko)" ]]; then
-         dialog --clear --yesno "Db9 GPIO driver successfully installed. Would you like to see README?" \
-            22 76 >/dev/tty
-        case $? in
-            0)
-                dialog --msgbox "$(gzip -dc /usr/share/doc/db9_gpio_rpi/README.gz)" 22 76 >/dev/tty
-                ;;
-            *)
-                ;;
-        esac
+        if dialog --clear --yesno "Db9 GPIO driver successfully installed. Would you like to see README?" \
+            22 76 >/dev/tty; then
+            dialog --msgbox "$(gzip -dc /usr/share/doc/db9_gpio_rpi/README.gz)" 22 76 >/dev/tty
+        fi
     else
         printMsgs "dialog" "Db9 GPIO driver installation FAILED"
         return 0
@@ -108,16 +93,10 @@ function configure_gamecondriver() {
     dialog \
         --title "Configuration for SNES controllers" --clear \
         --yesno "Gamecon driver supports RetroPie GPIO adapter board for 2 SNES controllers. Do you want to configure gamecon for 2 SNES controllers?" \
-        22 76 >/dev/tty
+        22 76 >/dev/tty || return 0
 
-    case $? in
-        0)
-            printMsgs "console" "Configuring gamecon for 2 SNES controllers."
-            ;;
-        *)
-            return 0
-            ;;
-    esac
+    clear
+    printMsgs "console" "Configuring gamecon for 2 SNES controllers."
 
     REVSTRING=$(grep Revision /proc/cpuinfo | cut -d ':' -f 2 | tr -d ' \n' | tail -c 4)
     case "$REVSTRING" in
@@ -160,50 +139,44 @@ __________\n\
 
     iniConfig " = " "" "$configdir/all/retroarch.cfg"
 
-    dialog --title " Update $configdir/all/retroarch.cfg " --clear \
+    if dialog --title " Update $configdir/all/retroarch.cfg " --clear \
     --yesno "Would you like to update button mappings \
     in $configdir/all/retroarch.cfg \
-    for 2 SNES controllers?" 22 76 >/dev/tty
+    for 2 SNES controllers?" 22 76 >/dev/tty; then
+        if [[ "$GPIOREV" == 1 ]]; then
+            iniSet "input_player1_joypad_index" "0"
+            iniSet "input_player2_joypad_index" "1"
+        else
+            iniSet "input_player1_joypad_index" "1"
+            iniSet "input_player2_joypad_index" "0"
+        fi
 
-    case $? in
-        0)
-            if [[ "$GPIOREV" == 1 ]]; then
-                iniSet "input_player1_joypad_index" "0"
-                iniSet "input_player2_joypad_index" "1"
-            else
-                iniSet "input_player1_joypad_index" "1"
-                iniSet "input_player2_joypad_index" "0"
-            fi
+        iniSet "input_player1_a_btn" "0"
+        iniSet "input_player1_b_btn" "1"
+        iniSet "input_player1_x_btn" "2"
+        iniSet "input_player1_y_btn" "3"
+        iniSet "input_player1_l_btn" "4"
+        iniSet "input_player1_r_btn" "5"
+        iniSet "input_player1_start_btn" "7"
+        iniSet "input_player1_select_btn" "6"
+        iniSet "input_player1_left_axis" "-0"
+        iniSet "input_player1_up_axis" "-1"
+        iniSet "input_player1_right_axis" "+0"
+        iniSet "input_player1_down_axis" "+1"
 
-            iniSet "input_player1_a_btn" "0"
-            iniSet "input_player1_b_btn" "1"
-            iniSet "input_player1_x_btn" "2"
-            iniSet "input_player1_y_btn" "3"
-            iniSet "input_player1_l_btn" "4"
-            iniSet "input_player1_r_btn" "5"
-            iniSet "input_player1_start_btn" "7"
-            iniSet "input_player1_select_btn" "6"
-            iniSet "input_player1_left_axis" "-0"
-            iniSet "input_player1_up_axis" "-1"
-            iniSet "input_player1_right_axis" "+0"
-            iniSet "input_player1_down_axis" "+1"
-
-            iniSet "input_player2_a_btn" "0"
-            iniSet "input_player2_b_btn" "1"
-            iniSet "input_player2_x_btn" "2"
-            iniSet "input_player2_y_btn" "3"
-            iniSet "input_player2_l_btn" "4"
-            iniSet "input_player2_r_btn" "5"
-            iniSet "input_player2_start_btn" "7"
-            iniSet "input_player2_select_btn" "6"
-            iniSet "input_player2_left_axis" "-0"
-            iniSet "input_player2_up_axis" "-1"
-            iniSet "input_player2_right_axis" "+0"
-            iniSet "input_player2_down_axis" "+1"
-            ;;
-        *)
-            ;;
-    esac
+        iniSet "input_player2_a_btn" "0"
+        iniSet "input_player2_b_btn" "1"
+        iniSet "input_player2_x_btn" "2"
+        iniSet "input_player2_y_btn" "3"
+        iniSet "input_player2_l_btn" "4"
+        iniSet "input_player2_r_btn" "5"
+        iniSet "input_player2_start_btn" "7"
+        iniSet "input_player2_select_btn" "6"
+        iniSet "input_player2_left_axis" "-0"
+        iniSet "input_player2_up_axis" "-1"
+        iniSet "input_player2_right_axis" "+0"
+        iniSet "input_player2_down_axis" "+1"
+    fi
 
     dialog \
         --title " Enable SNES configuration permanently " --clear \
