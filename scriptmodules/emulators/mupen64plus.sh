@@ -117,6 +117,8 @@ function install_mupen64plus() {
 }
 
 function configure_mupen64plus() {
+    mkRomDir "n64"
+
     # copy hotkey remapping start script
     cp "$scriptdir/scriptmodules/$md_type/$md_id/mupen64plus.sh" "$md_inst/bin/"
     chmod +x "$md_inst/bin/mupen64plus.sh"
@@ -128,7 +130,6 @@ function configure_mupen64plus() {
     mkUserDir "$md_conf_root/n64/"
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$md_conf_root/n64/"
-    chown -R $user:$user "$md_conf_root/n64"
     su "$user" -c "$md_inst/bin/mupen64plus --md_conf_root $md_conf_root/n64 --datadir $md_conf_root/n64"
 
     iniConfig " = " '"' "$md_conf_root/n64/mupen64plus.cfg"
@@ -136,7 +137,7 @@ function configure_mupen64plus() {
     iniSet "SaveStatePath" "$romdir/n64"
     iniSet "SaveSRAMPath" "$romdir/n64"
 
-    mkRomDir "n64"
+    chown -R $user:$user "$md_conf_root/n64"
 
     delSystem "$md_id" "n64-mupen64plus"
     addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
