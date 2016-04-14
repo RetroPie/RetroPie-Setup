@@ -41,7 +41,14 @@ function disable_blanker_raspbiantools() {
 function enable_modules_raspbiantools() {
     sed -i '/snd_bcm2835/d' /etc/modules
 
-    for module in uinput joydev snd-bcm2835; do
+    local modules=(uinput)
+    # joydev and snd-bcm2835 get loaded automatically on Jessie
+    if [[ "$__raspbian_ver" -lt "8" ]]; then
+        modules+=(joydev snd-bcm2835)
+    fi
+
+    local module
+    for module in "${modules[@]}"; do
         modprobe $module
         if ! grep -q "$module" /etc/modules; then
             addLineToFile "$module" "/etc/modules"
