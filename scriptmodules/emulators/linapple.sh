@@ -19,8 +19,7 @@ function depends_linapple() {
 }
 
 function sources_linapple() {
-    wget -O- -q $__archive_url/linapple-src_2a.tar.bz2 | tar -xvj --strip-components=1
-    addLineToFile "#include <unistd.h>" "src/Timer.h"
+    gitPullOrClone "$md_build" https://github.com/dabonetn/linapple-pie.git
 }
 
 function build_linapple() {
@@ -37,31 +36,18 @@ function install_linapple() {
         'INSTALL'
         'LICENSE'
         'linapple'
-        'charset40.bmp'
-        'font.bmp'
-        'icon.bmp'
-        'splash.bmp'
         'Master.dsk'
         'README'
+        'README-linapple-pie'
+        'linapple.conf'
     )
     # install linapple.conf under another name as we will copy it
     cp -v "$md_build/linapple.conf" "$md_inst/linapple.conf.sample"
+    cp -vf "$md_build/Master.dsk" "$md_conf_root/apple2/Master.dsk"
 }
 
 function configure_linapple() {
     mkRomDir "apple2"
-
-    chown -R $user:$user "$md_inst"
-
-    rm -f "$romdir/apple2/Start.txt"
-    cat > "$romdir/apple2/+Start LinApple.sh" << _EOF_
-#!/bin/bash
-pushd "$md_inst"
-./linapple
-popd
-_EOF_
-    chmod +x "$romdir/apple2/+Start LinApple.sh"
-
     mkUserDir "$md_conf_root/apple2"
 
     # if the user doesn't already have a config, we will copy the default.
@@ -71,8 +57,11 @@ _EOF_
         iniSet "Joystick 0" "1"
         iniSet "Joystick 1" "1"
     fi
-    ln -sf "$md_conf_root/apple2/linapple.conf"
-    chown $user:$user "$md_conf_root/apple2/linapple.conf"
+    moveConfigFile "linapple.conf" "$md_conf_root/apple2/linapple.conf"
+    moveConfigFile "Master.dsk" "$md_conf_root/apple2/Master.dsk"
 
-    addSystem 1 "$md_id" "apple2" "$romdir/apple2/+Start\ LinApple.sh" "Apple II" ".sh"
+    addSystem 1 "$md_id" "apple2" "$md_inst/linapple -1 %ROM%" "Apple II" ".po .dsk .nib"
+
+    moveConfigDir "$home/.linapple" "$md_conf_root/apple2"
+    chown -R $user:$user "$md_conf_root/apple2"
 }
