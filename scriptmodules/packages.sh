@@ -16,16 +16,6 @@ __mod_desc=()
 __mod_menus=()
 __mod_flags=()
 
-# params: $1=index, $2=id, $3=type, $4=description, $5=menus,  $6=flags
-function rp_registerFunction() {
-    __mod_idx+=($1)
-    __mod_id[$1]=$2
-    __mod_type[$1]=$3
-    __mod_desc[$1]=$4
-    __mod_menus[$1]=$5
-    __mod_flags[$1]=$6
-}
-
 function rp_listFunctions() {
     local idx
     local mod_id
@@ -294,7 +284,12 @@ function rp_registerModule() {
         fi
     done
     if [[ "$valid" -eq 1 ]]; then
-        rp_registerFunction "$module_idx" "$rp_module_id" "$module_type" "$rp_module_desc" "$rp_module_menus"  "${rp_module_flags[*]}"
+        __mod_idx+=("$module_idx")
+        __mod_id["$module_idx"]="$rp_module_id"
+        __mod_type["$module_idx"]="$module_type"
+        __mod_desc["$module_idx"]="$rp_module_desc"
+        __mod_menus["$module_idx"]="$rp_module_menus"
+        __mod_flags["$module_idx"]="${rp_module_flags[*]}" 
     fi
 }
 
