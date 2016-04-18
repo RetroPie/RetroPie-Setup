@@ -40,7 +40,11 @@ for arg in sys.argv[2:]:
 event_format = 'IhBB'
 event_size = struct.calcsize(event_format)
 
-tty_fd = open("/dev/tty", "w")
+try:
+    tty_fd = open('/dev/tty', 'w')
+except:
+    print 'Unable to access /dev/tty, exiting'
+    sys.exit(0)
 js_fd = open(sys.argv[1], "rb")
 
 buttons_state = 0
@@ -65,7 +69,7 @@ while True:
     if js_type == JS_EVENT_BUTTON:
         if js_number < len(button_codes) and js_value == 1:
             hex_chars = button_codes[js_number]
-    
+
     if js_type == JS_EVENT_AXIS:
         if js_number % 2 == 0:
             if js_value <= JS_MIN * JS_THRESH:
