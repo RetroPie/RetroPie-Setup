@@ -41,14 +41,15 @@ function install_linapple() {
         'README-linapple-pie'
         'linapple.conf'
     )
-    # install linapple.conf under another name as we will copy it
-    cp -v "$md_build/linapple.conf" "$md_inst/linapple.conf.sample"
-    cp -vf "$md_build/Master.dsk" "$md_conf_root/apple2/Master.dsk"
 }
 
 function configure_linapple() {
     mkRomDir "apple2"
     mkUserDir "$md_conf_root/apple2"
+
+    # install linapple.conf under another name as we will copy it
+    cp -v "$md_build/linapple.conf" "$md_inst/linapple.conf.sample"
+    cp -vf "$md_build/Master.dsk" "$md_conf_root/apple2/Master.dsk"
 
     # if the user doesn't already have a config, we will copy the default.
     if [[ ! -f "$md_conf_root/apple2/linapple.conf" ]]; then
