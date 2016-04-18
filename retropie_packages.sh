@@ -73,5 +73,5 @@ fi
 printMsgs "console" "${__INFMSGS[@]}"
 
 if [[ -n $__joy2key_pid ]]; then
-    kill -INT $__joy2key_pid 2>/dev/null
+    kill -INT $__joy2key_pid 2>/dev/null || echo "Failed to kill joy2key"
 fi
