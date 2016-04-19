@@ -1,5 +1,14 @@
 #!/usr/bin/python
 
+# This file is part of The RetroPie Project
+# 
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
+# 
+# See the LICENSE.md file at the top-level directory of this distribution and 
+# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
+#
+
 import sys, struct, time, fcntl, termios, signal
 
 #    struct js_event {
@@ -65,7 +74,7 @@ while True:
     if js_type == JS_EVENT_BUTTON:
         if js_number < len(button_codes) and js_value == 1:
             hex_chars = button_codes[js_number]
-    
+
     if js_type == JS_EVENT_AXIS:
         if js_number % 2 == 0:
             if js_value <= JS_MIN * JS_THRESH:
