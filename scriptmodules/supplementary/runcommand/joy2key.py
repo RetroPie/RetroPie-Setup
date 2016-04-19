@@ -49,8 +49,17 @@ for arg in sys.argv[2:]:
 event_format = 'IhBB'
 event_size = struct.calcsize(event_format)
 
-tty_fd = open("/dev/tty", "w")
-js_fd = open(sys.argv[1], "rb")
+try:
+    tty_fd = open('/dev/tty', 'w')
+except:
+    print 'Unable to open /dev/tty'
+    sys.exit(1)
+
+try:
+    js_fd = open(sys.argv[1], "rb")
+except:
+    print 'Unable to open device %s' % sys.argv[1]
+    sys.exit(1)
 
 buttons_state = 0
 last_press = 0
