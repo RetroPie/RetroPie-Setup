@@ -9,7 +9,7 @@
     <game>
         <path>./bluetooth.rp</path>
         <name>Bluetooth</name>
-        <desc>Register and connect to bluetooth devices. Unregister and remove devices, and display registered and connected devices..</desc>
+        <desc>Register and connect to bluetooth devices. Unregister and remove devices, and display registered and connected devices.</desc>
         <image>~/RetroPie/retropiemenu/icons/bluetooth.png</image>
     </game>
     <game>
