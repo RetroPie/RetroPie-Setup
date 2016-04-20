@@ -101,9 +101,7 @@ if [[ "\$(uname --machine)" != *86* ]]; then
 fi
 
 clear
-pushd "$md_inst" >/dev/null
-./emulationstation.sh "\$@"
-popd >/dev/null
+"$md_inst/emulationstation.sh" "\$@"
 
 _EOF_
     if isPlatform "rpi"; then
