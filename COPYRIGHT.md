@@ -14,10 +14,10 @@ Juan Pablo Zapata, jpzapa
 Xevin
 James Le Cuirot
 Ewan Meadows
-Adam "adskiremote"  
+Adam "adskiremote"
 Hyperspin
-Claudio Cesar Sanchez Tejeda,  
-cdu13a  
+Claudio Cesar Sanchez Tejeda,
+cdu13a
 Christian Bryn
 Adam Smith
 Adrian Moisey
