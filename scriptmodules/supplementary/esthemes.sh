@@ -14,6 +14,14 @@ rp_module_desc="Install themes for Emulation Station"
 rp_module_menus="3+configure"
 rp_module_flags="nobin"
 
+function depends_esthemes() {
+    if isPlatform "x11"; then
+        getDepends feh
+    else
+        getDepends fbi
+    fi
+}
+
 function install_theme_esthemes() {
     local theme="$1"
     local repo="$2"
@@ -116,7 +124,11 @@ function configure_esthemes() {
                 case "$choice" in
                     1)
                         cd "$gallerydir"
-                        fbi --timeout 6 --once --autozoom --list images.list
+                        if isPlatform "x11"; then
+                            feh --info "echo %f" --slideshow-delay 6 --fullscreen --auto-zoom --filelist images.list
+                        else
+                            fbi --timeout 6 --once --autozoom --list images.list
+                        fi
                         ;;
                     2)
                         gitPullOrClone "$gallerydir" "http://github.com/wetriner/es-theme-gallery"
