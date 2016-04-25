@@ -682,7 +682,9 @@ function addSystem() {
     if [[ -n "$cmd" ]]; then
         iniConfig "=" '"' "$md_conf_root/$system/emulators.cfg"
         iniSet "$id" "$cmd"
-        if [[ "$default" == "1" ]]; then
+        # set a default unless there is one already set
+        iniGet "default"
+        if [[ -z "$ini_value" && "$default" -eq 1 ]]; then
             iniSet "default" "$id"
         fi
         chown $user:$user "$md_conf_root/$system/emulators.cfg"
