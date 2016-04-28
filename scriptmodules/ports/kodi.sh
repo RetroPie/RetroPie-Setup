@@ -19,7 +19,13 @@ function depends_kodi() {
         if [[ "$__depends_mode" == "install" ]]; then
             # remove old repository
             rm -f /etc/apt/sources.list.d/mene.list
-            echo "deb http://dl.bintray.com/pipplware/dists/jessie/main/binary/ ./" >/etc/apt/sources.list.d/pipplware.list
+            local repo
+            if isPlatform "armv6"; then
+                repo="http://dl.bintray.com/pipplware/dists/jessie/main/binary/"
+            else
+                repo="http://dl.bintray.com/pipplware/dists/jessie/armv7/binary/"
+            fi
+            echo "deb $repo ./" >/etc/apt/sources.list.d/pipplware.list
             wget -q -O- http://pipplware.pplware.pt/pipplware/key.asc | apt-key add - >/dev/null
         else
             rm -f /etc/apt/sources.list.d/pipplware.list
