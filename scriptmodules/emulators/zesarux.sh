@@ -45,14 +45,7 @@ function configure_zesarux() {
 
     cat > "$romdir/zxspectrum/+Start ZEsarUX.sh" << _EOF_
 #!/bin/bash
-params="\$1"
-pushd "$md_inst/bin"
-if [[ "\$params" =~ \.sh$ ]]; then
-    ./zesarux
-else
-    ./zesarux "\$params"
-fi
-popd
+"$md_inst/bin/zesarux" "\$@"
 _EOF_
     chmod +x "$romdir/zxspectrum/+Start ZEsarUX.sh"
     chown $user:$user "$romdir/zxspectrum/+Start ZEsarUX.sh"
