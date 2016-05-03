@@ -78,7 +78,6 @@ function configure_scummvm() {
     cat > "$romdir/scummvm/+Start ScummVM.sh" << _EOF_
 #!/bin/bash
 game="\$1"
-[[ "\$game" =~ ^\+ ]] && game=""
 pushd "$romdir/scummvm" >/dev/null
 $md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" \$game
 while read line; do
