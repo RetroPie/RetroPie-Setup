@@ -37,7 +37,7 @@ function build_lr-mame2003() {
 function install_lr-mame2003() {
     md_ret_files=(
         'mame2003_libretro.so'
-        'README'
+        'README.md'
         'changed.txt'
         'whatsnew.txt'
         'whatsold.txt'
@@ -56,6 +56,7 @@ function configure_lr-mame2003() {
     # Set core options
     setRetroArchCoreOption "mame2003-skip_disclaimer" "enabled"
     setRetroArchCoreOption "mame2003-dcs-speedhack" "enabled"
+    setRetroArchCoreOption "mame2003-samples" "enabled"
 
     addSystem 0 "$md_id" "arcade" "$md_inst/mame2003_libretro.so"
     addSystem 1 "$md_id" "mame-libretro arcade mame" "$md_inst/mame2003_libretro.so"
