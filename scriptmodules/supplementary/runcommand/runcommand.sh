@@ -633,8 +633,13 @@ function retroarch_append_config() {
 
 function set_governor() {
     governor_old=()
+    # we save the previous states first, as setting any cpuX on the RPI will also set the value for the other cores
+    # which would cause us to save the wrong state for cpu1/2/3 after setting cpu0. On the RPI we could just process
+    # cpu0, but this code needs to work on other platforms that do support a "per core" CPU governor.
     for cpu in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_governor; do
         governor_old+=($(<$cpu))
+    done
+    for cpu in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_governor; do
         echo "$1" | sudo tee "$cpu" >/dev/null
     done
 }
