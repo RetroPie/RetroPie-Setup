@@ -15,7 +15,7 @@ rp_module_menus="2+"
 rp_module_flags="dispmanx !mali"
 
 function depends_linapple() {
-    getDepends libzip-dev libsdl1.2-dev libcurl4-openssl-dev
+    getDepends libzip-dev libsdl1.2-dev libsdl-image1.2-dev libcurl4-openssl-dev
 }
 
 function sources_linapple() {
@@ -54,9 +54,6 @@ function configure_linapple() {
     # if the user doesn't already have a config, we will copy the default.
     if [[ ! -f "$md_conf_root/apple2/linapple.conf" ]]; then
         cp -v "linapple.conf.sample" "$md_conf_root/apple2/linapple.conf"
-        iniConfig " = " "" "$md_conf_root/apple2/linapple.conf"
-        iniSet "Joystick 0" "1"
-        iniSet "Joystick 1" "1"
     fi
     moveConfigFile "linapple.conf" "$md_conf_root/apple2/linapple.conf"
     moveConfigFile "Master.dsk" "$md_conf_root/apple2/Master.dsk"
