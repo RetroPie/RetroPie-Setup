@@ -27,9 +27,9 @@ function sources_vice() {
 }
 
 function build_vice() {
-    local params=(--enable-sdlui)
+    local params=(--enable-sdlui --disable-ffmpeg)
     ! isPlatform "x11" && params+=(--without-pulse --with-sdlsound)
-    ./configure --prefix="$md_inst" --prefix="$md_inst/lib" "${params[@]}"
+    ./configure --prefix="$md_inst" "${params[@]}"
     if ! isPlatform "x11"; then
         sed -i "s/#define HAVE_HWSCALE/#undef HAVE_HWSCALE/" src/config.h
     fi
