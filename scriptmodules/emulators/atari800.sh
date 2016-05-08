@@ -80,7 +80,7 @@ function configure_atari800() {
     addSystem 0 "atari800-320xe" "atari800" "$md_inst/bin/atari800 -320xe %ROM%"
     addSystem 0 "atari800-rambo" "atari800" "$md_inst/bin/atari800 -rambo %ROM%"
 
-    addSystem 1 "atari800-5200" "atari5200" "$md_inst/bin/atari800 -5200 %ROM%"
+    addSystem 1 "atari800" "atari5200" "$md_inst/bin/atari800 -5200 %ROM%"
     
     __INFMSGS+=("You need to copy the Atari 800/5200 BIOS files (5200.ROM, ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)")
 }
