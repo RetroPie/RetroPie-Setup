@@ -27,6 +27,7 @@ function sources_reicast() {
     else
         gitPullOrClone "$md_build" https://github.com/RetroPie/reicast-emulator.git retropie
     fi
+    sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
 }
 
 function build_reicast() {
