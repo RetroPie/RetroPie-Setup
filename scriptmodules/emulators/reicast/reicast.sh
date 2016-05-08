@@ -56,6 +56,9 @@ function mapInput() {
     fi
     echo "joystick_device_id = -1" >> "$conf"
     echo "" >> "$conf"
+    echo "[players]" >> "$conf"
+    echo "nb = $device_counter" >> "$conf"
+    echo "" >> "$conf"
 }
 
 if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
