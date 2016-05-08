@@ -67,12 +67,12 @@ if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
         echo "backend = oss" >> "$conf"
         echo "disable = 0" >> "$conf"
         echo "" >> "$conf"
-        aoss "$rootdir/emulators/reicast/bin/reicast" -config config:homedir="$HOME" -config config:image="$ROM" >> /dev/null
+        aoss "$rootdir/emulators/reicast/bin/reicast" -config config:homedir="$HOME" -config config:image="$ROM" -config x11:fullscreen=1 >> /dev/null
     else
         echo "backend = alsa" >> "$conf"
         echo "disable = 0" >> "$conf"
         echo "" >> "$conf"
-        "$rootdir/emulators/reicast/bin/reicast" -config config:homedir="$HOME" -config config:image="$ROM" >> /dev/null
+        "$rootdir/emulators/reicast/bin/reicast" -config config:homedir="$HOME" -config config:image="$ROM" -config x11:fullscreen=1 >> /dev/null
     fi
 else
     dialog --msgbox "You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator." 22 76
