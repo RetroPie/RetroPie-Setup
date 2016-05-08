@@ -151,7 +151,11 @@ function configure_mupen64plus() {
         addSystem 1 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM%"
     fi
 
-    addAutoConf mupen64plus_audio 1
+    if isPlatform "rpi"; then
+        addAutoConf mupen64plus_audio 1
+    else
+        addAutoConf mupen64plus_audio 0
+    fi
     addAutoConf mupen64plus_hotkeys 1
     addAutoConf mupen64plus_compatibility_check 1
 }
