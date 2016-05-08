@@ -121,6 +121,9 @@ function get_default_gcc() {
         7)
             __default_gcc_version="4.7"
             ;;
+        8)
+            __default_gcc_version="4.9"
+            ;;
         *)
             __default_gcc_version=""
             ;;
