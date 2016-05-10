@@ -15,11 +15,10 @@ do_start () {
     local config="/etc/splashscreen.list"
     local line="$(head -1 "$config")"
     if $(echo "$line" | grep -q ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg\|.mp3\|.wav\|.m4a\|.aac\|.ogg\|.flac"); then
-        # wait for /tmp to become writable
-        while ! touch /tmp/writable 2>/dev/null; do
+        # wait for dbus
+        while ! pgrep "dbus" >/dev/null; do
             sleep 1
         done
-        rm -f /tmp/writable
         omxplayer -b --layer 10000 "$line"
     else
         local count=$(wc -l <"$config")
