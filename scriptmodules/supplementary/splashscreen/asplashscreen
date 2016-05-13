@@ -11,9 +11,23 @@
 # Description:       Show custom splashscreen
 ### END INIT INFO
 
+RANDOMIZE="disabled"
+
 do_start () {
     local config="/etc/splashscreen.list"
-    local line="$(head -1 "$config")"
+    local rootdir="/opt/retropie"
+    local datadir="/home/pi"
+    if [ "$RANDOMIZE" = "disabled" ]; then
+        local line="$(head -1 "$config")"
+    elif [ "$RANDOMIZE" = "retropie" ]; then
+        local line="$(find "$rootdir/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" | shuf -n1)"
+    elif [ "$RANDOMIZE" = "custom" ]; then
+        local line="$(find "$datadir/RetroPie/splashscreens" -type f ! -regex ".*README.*" | shuf -n1)"
+    elif [ "$RANDOMIZE" = "all" ]; then
+        local line="$( (find "$rootdir/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" && find "$datadir/RetroPie/splashscreens" -type f ! -regex ".*README.*") | shuf -n1)"
+    elif [ "$RANDOMIZE" = "list" ]; then
+        local line="$(cat "$config" | shuf -n1)"
+    fi
     if $(echo "$line" | grep -q ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg\|.mp3\|.wav\|.m4a\|.aac\|.ogg\|.flac"); then
         # wait for dbus
         while ! pgrep "dbus" >/dev/null; do
@@ -21,11 +35,19 @@ do_start () {
         done
         omxplayer -b --layer 10000 "$line"
     else
-        local count=$(wc -l <"$config")
+        if [ "$RANDOMIZE" = "disabled" ]; then
+            local count=$(wc -l <"$config")
+        else
+            local count=1
+        fi
         [ $count -eq 0 ] && count=1
         [ $count -gt 20 ] && count=20
         local delay=$((20/count))
-        fbi -T 2 -once -t $delay -noverbose -a -l "$config" >/dev/null 2>&1
+        if [ "$RANDOMIZE" = "disabled" ]; then
+            fbi -T 2 -once -t $delay -noverbose -a -l "$config" >/dev/null 2>&1
+        else
+            fbi -T 2 -once -t $delay -noverbose -a "$line" >/dev/null 2>&1
+        fi
     fi
     exit 0
 }
