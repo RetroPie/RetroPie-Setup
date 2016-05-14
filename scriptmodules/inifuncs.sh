@@ -54,6 +54,10 @@ function iniProcess() {
 
     [[ "$cmd" == "unset" ]] && key="# $key"
 
+    # escape backslashes and pipes for sed
+    value="${value//\\/\\\\}"
+    value="${value//|/\\|}"
+
     local replace="$key$delim$quote$value$quote"
     if [[ -z "$match" ]]; then
         # add key-value pair
