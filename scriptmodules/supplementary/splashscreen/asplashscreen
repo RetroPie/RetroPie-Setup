@@ -12,6 +12,8 @@
 ### END INIT INFO
 
 RANDOMIZE="disabled"
+REGEX_VIDEO=""
+REGEX_IMAGE=""
 
 do_start () {
     local config="/etc/splashscreen.list"
@@ -28,13 +30,13 @@ do_start () {
     elif [ "$RANDOMIZE" = "list" ]; then
         local line="$(cat "$config" | shuf -n1)"
     fi
-    if $(echo "$line" | grep -q ".avi\|.mov\|.mp4\|.mkv\|.3gp\|.mpg\|.mp3\|.wav\|.m4a\|.aac\|.ogg\|.flac"); then
+    if $(echo "$line" | grep -q "$REGEX_VIDEO"); then
         # wait for dbus
         while ! pgrep "dbus" >/dev/null; do
             sleep 1
         done
         omxplayer -b --layer 10000 "$line"
-    else
+    elif $(echo "$line" | grep -q "$REGEX_IMAGE"); then
         if [ "$RANDOMIZE" = "disabled" ]; then
             local count=$(wc -l <"$config")
         else
