@@ -39,6 +39,8 @@ function rp_listFunctions() {
         mod_id=${__mod_id[$idx]};
         printf "%d/%-20s: %-42s :" "$idx" "$mod_id" "${__mod_desc[$idx]}"
         while read mode; do
+            # skip private module functions (start with an underscore)
+            [[ "$mode" = _* ]] && continue
             mode=${mode//_$mod_id/}
             echo -n " $mode"
             # if not experimental and has no nobin flag, we have an install_bin call also
