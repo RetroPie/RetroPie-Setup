@@ -30,6 +30,8 @@ function install_splashscreen() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/asplashscreen" "/etc/init.d/"
 
     iniConfig "=" '"' /etc/init.d/asplashscreen
+    iniSet "ROOTDIR" "$rootdir"
+    iniSet "DATADIR" "$datadir"
     iniSet "REGEX_IMAGE" "$(_image_exts_splashscreen)"
     iniSet "REGEX_VIDEO" "$(_video_exts_splashscreen)"
 

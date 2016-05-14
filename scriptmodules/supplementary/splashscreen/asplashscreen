@@ -11,24 +11,25 @@
 # Description:       Show custom splashscreen
 ### END INIT INFO
 
+ROOTDIR=""
+DATADIR=""
 RANDOMIZE="disabled"
 REGEX_VIDEO=""
 REGEX_IMAGE=""
 
 do_start () {
     local config="/etc/splashscreen.list"
-    local rootdir="/opt/retropie"
-    local datadir="/home/pi"
+    local line
     if [ "$RANDOMIZE" = "disabled" ]; then
-        local line="$(head -1 "$config")"
+        line="$(head -1 "$config")"
     elif [ "$RANDOMIZE" = "retropie" ]; then
-        local line="$(find "$rootdir/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" | shuf -n1)"
+        line="$(find "$ROOTDIR/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" | shuf -n1)"
     elif [ "$RANDOMIZE" = "custom" ]; then
-        local line="$(find "$datadir/RetroPie/splashscreens" -type f ! -regex ".*README.*" | shuf -n1)"
+        line="$(find "$DATADIR/splashscreens" -type f ! -regex ".*README.*" | shuf -n1)"
     elif [ "$RANDOMIZE" = "all" ]; then
-        local line="$( (find "$rootdir/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" && find "$datadir/RetroPie/splashscreens" -type f ! -regex ".*README.*") | shuf -n1)"
+        line="$( (find "$ROOTDIR/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" && find "$DATADIR/splashscreens" -type f ! -regex ".*README.*") | shuf -n1)"
     elif [ "$RANDOMIZE" = "list" ]; then
-        local line="$(cat "$config" | shuf -n1)"
+        line="$(cat "$config" | shuf -n1)"
     fi
     if $(echo "$line" | grep -q "$REGEX_VIDEO"); then
         # wait for dbus
