@@ -84,11 +84,12 @@ function configure_vice() {
     addSystem 0 "$md_id-xpet" "c64" "$md_inst/bin/xpet %ROM%"
     addSystem 0 "$md_id-xplus4" "c64" "$md_inst/bin/xplus4 %ROM%"
     addSystem 0 "$md_id-xvic" "c64" "$md_inst/bin/xvic %ROM%"
+    addSystem 0 "$md_id-xvic-cart" "c64" "$md_inst/bin/xvic -cartgeneric %ROM%"
 }
 
 function configure_dispmanx_off_vice() {
     local id
-    for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic; do
+    for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic $md_id-xvic-cart; do
         setDispmanx "id" 0
     done
     iniConfig "=" "" "$md_conf_root/c64/sdl-vicerc"
@@ -98,7 +99,7 @@ function configure_dispmanx_off_vice() {
 
 function configure_dispmanx_on_vice() {
     local id
-    for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic; do
+    for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic $md_id-xvic-cart; do
         setDispmanx "$id" 1
     done
     iniConfig "=" "" "$md_conf_root/c64/sdl-vicerc"
