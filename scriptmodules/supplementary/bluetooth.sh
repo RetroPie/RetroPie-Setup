@@ -17,7 +17,7 @@ rp_module_flags="nobin"
 function depends_bluetooth() {
     local depends=(bluetooth python-dbus python-gobject)
     if isPlatform "rpi3" && hasPackage raspberrypi-bootloader && [[ "$__raspbian_ver" -ge "8" ]]; then
-        depends+=(pi-bluetooth)
+        depends+=(pi-bluetooth raspberrypi-sys-mods)
     fi
     getDepends "${depends[@]}"
 }
