@@ -1,0 +1,20 @@
+rp_module_id="userland"
+rp_module_desc="Raspberry Pi userland libs"
+rp_module_menus="2+"
+
+function depen_userland() {
+}
+
+function sources_userland() {
+    rm $rootdir/supplementary/userland
+    gitPullOrClone "$rootdir/supplementary/userland" https://github.com/raspberrypi/userland.git || return 1
+}
+
+function build_userland() {
+    pushd "$rootdir/supplementary/userland" || return 1
+    ./buildme.sh || return 1
+    popd || return 1
+}
+
+function install_userland() {
+}
