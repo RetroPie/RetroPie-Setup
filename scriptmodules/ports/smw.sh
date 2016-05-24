@@ -34,4 +34,6 @@ function install_smw() {
 
 function configure_smw() {
     addPort "$md_id" "smw" "Super Mario War" "$md_inst/smw"
+
+    moveConfigFile "$home/.smw.options.bin" "$md_conf_root/smw/.smw.options.bin"
 }
