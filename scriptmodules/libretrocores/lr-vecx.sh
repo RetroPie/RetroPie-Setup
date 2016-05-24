@@ -11,7 +11,7 @@
 
 rp_module_id="lr-vecx"
 rp_module_desc="Vectrex emulator - vecx port for libretro"
-rp_module_menus="2+"
+rp_module_section="main"
 
 function sources_lr-vecx() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-vecx

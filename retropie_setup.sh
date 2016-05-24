@@ -22,5 +22,5 @@ if [[ $(id -u) -ne 0 ]]; then
     exit 1
 fi
 
-"$scriptdir/retropie_packages.sh" setup
+"$scriptdir/retropie_packages.sh" setup gui
 

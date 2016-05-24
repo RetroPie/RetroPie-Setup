@@ -11,7 +11,7 @@
 
 rp_module_id="reicast"
 rp_module_desc="Dreamcast emulator Reicast"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="!armv6 !mali"
 
 function depends_reicast() {

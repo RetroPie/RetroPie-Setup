@@ -11,7 +11,7 @@
 
 rp_module_id="lr-beetle-supergrafx"
 rp_module_desc="SuperGrafx TG-16 emulator - Mednafen PCE Fast port for libretro"
-rp_module_menus="4+"
+rp_module_section="main"
 
 function sources_lr-beetle-supergrafx() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-supergrafx-libretro.git

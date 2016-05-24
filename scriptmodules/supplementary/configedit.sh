@@ -11,8 +11,7 @@
 
 rp_module_id="configedit"
 rp_module_desc="Edit RetroPie/RetroArch configurations"
-rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_section="conf"
 
 function _video_fullscreen_configedit() {
     local mode="$1"
@@ -309,7 +308,7 @@ function advanced_menu_configedit() {
     done
 }
 
-function configure_configedit() {
+function gui_configedit() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(

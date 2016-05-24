@@ -11,7 +11,7 @@
 
 rp_module_id="ags"
 rp_module_desc="Adventure Game Studio - Adventure game engine"
-rp_module_menus="4+"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_ags() {

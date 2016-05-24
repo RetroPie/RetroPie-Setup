@@ -11,10 +11,10 @@
 
 rp_module_id="dispmanx"
 rp_module_desc="Configure emulators to use dispmanx SDL"
-rp_module_menus="3+"
-rp_module_flags="nobin !mali !x86"
+rp_module_section="conf"
+rp_module_flags="!mali !x86"
 
-function configure_dispmanx() {
+function gui_dispmanx() {
     iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
     while true; do
         local count=1

@@ -11,7 +11,7 @@
 
 rp_module_id="alephone"
 rp_module_desc="AlephOne - Marathon Engine"
-rp_module_menus="4+"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_alephone() {

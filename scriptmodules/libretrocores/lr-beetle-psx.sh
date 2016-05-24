@@ -11,7 +11,7 @@
 
 rp_module_id="lr-beetle-psx"
 rp_module_desc="PlayStation emulator - Mednafen PSX Port for libretro"
-rp_module_menus="4+"
+rp_module_section="opt"
 rp_module_flags="!arm"
 
 function sources_lr-beetle-psx() {

@@ -11,7 +11,7 @@
 
 rp_module_id="lr-fuse"
 rp_module_desc="ZX Spectrum emu - Fuse port for libretro"
-rp_module_menus="2+"
+rp_module_section="main"
 
 function sources_lr-fuse() {
     gitPullOrClone "$md_build" https://github.com/libretro/fuse-libretro.git

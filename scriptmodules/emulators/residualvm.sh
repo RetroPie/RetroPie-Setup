@@ -11,7 +11,7 @@
 
 rp_module_id="residualvm"
 rp_module_desc="ResidualVM - A 3D Game Interpreter"
-rp_module_menus="4+"
+rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
 function depends_residualvm() {

@@ -11,7 +11,7 @@
 
 rp_module_id="lr-vba-next"
 rp_module_desc="GBA emulator - VBA-M (optimised) port for libretro"
-rp_module_menus="2+"
+rp_module_section="main"
 rp_module_flags="!armv6"
 
 function sources_lr-vba-next() {

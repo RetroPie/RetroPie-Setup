@@ -11,7 +11,7 @@
 
 rp_module_id="limelight"
 rp_module_desc="Limelight Game Streaming"
-rp_module_menus="4+"
+rp_module_section="exp"
 
 function depends_limelight() {
     getDepends oracle-java8-jdk input-utils

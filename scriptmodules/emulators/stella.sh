@@ -11,11 +11,15 @@
 
 rp_module_id="stella"
 rp_module_desc="Atari2600 emulator STELLA"
-rp_module_menus="2+"
-rp_module_flags="dispmanx nobin !mali"
+rp_module_section="opt"
+rp_module_flags="dispmanx !mali"
 
-function install_stella() {
+function install_bin_stella() {
     aptInstall stella
+}
+
+function remove_stella() {
+    aptRemove stella
 }
 
 function configure_stella() {

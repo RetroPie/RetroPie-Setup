@@ -11,8 +11,7 @@
 
 rp_module_id="solarus"
 rp_module_desc="solarus - An Open Source Zelda LttP Engine"
-rp_module_menus="4+"
-rp_module_flags=""
+rp_module_section="opt"
 
 function depends_solarus() {
     getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libmodplug-dev libvorbis-dev zip unzip

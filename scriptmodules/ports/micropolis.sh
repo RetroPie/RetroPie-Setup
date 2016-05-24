@@ -11,14 +11,14 @@
 
 rp_module_id="micropolis"
 rp_module_desc="Micropolis - Open Source City Building Game"
-rp_module_menus="4+"
-rp_module_flags="nobin !mali"
+rp_module_section="opt"
+rp_module_flags="!mali"
 
 function depends_micropolis() {
     ! isPlatform "x11" getDepends xorg matchbox
 }
 
-function install_micropolis() {
+function install_bin_micropolis() {
     aptInstall micropolis
 }
 

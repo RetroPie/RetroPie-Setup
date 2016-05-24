@@ -11,8 +11,7 @@
 
 rp_module_id="retroarchautoconf"
 rp_module_desc="Install RetroArch joypad autoconfigs"
-rp_module_menus=""
-rp_module_flags="nobin"
+rp_module_section=""
 
 function sources_retroarchautoconf() {
     gitPullOrClone "$md_build" https://github.com/libretro/retroarch-joypad-autoconfig

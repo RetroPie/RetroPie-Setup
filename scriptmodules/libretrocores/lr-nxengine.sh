@@ -11,7 +11,7 @@
 
 rp_module_id="lr-nxengine"
 rp_module_desc="Cave Story engine clone - NxEngine port for libretro"
-rp_module_menus="2+"
+rp_module_section="opt"
 
 function sources_lr-nxengine() {
     gitPullOrClone "$md_build" https://github.com/libretro/nxengine-libretro.git

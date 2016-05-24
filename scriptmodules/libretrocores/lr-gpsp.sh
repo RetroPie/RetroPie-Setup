@@ -11,7 +11,7 @@
 
 rp_module_id="lr-gpsp"
 rp_module_desc="GBA emu - gpSP port for libretro"
-rp_module_menus="2+"
+rp_module_section="main"
 rp_module_flags="!x86"
 
 function sources_lr-gpsp() {

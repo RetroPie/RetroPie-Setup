@@ -11,8 +11,7 @@
 
 rp_module_id="retronetplay"
 rp_module_desc="RetroNetplay"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="conf"
 
 function rps_retronet_saveconfig() {
     local conf="$configdir/all/retronetplay.cfg"
@@ -96,7 +95,7 @@ function rps_retronet_nickname() {
     fi
 }
 
-function configure_retronetplay() {
+function gui_retronetplay() {
     rps_retronet_loadconfig
 
     local ip_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')

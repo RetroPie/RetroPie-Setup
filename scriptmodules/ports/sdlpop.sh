@@ -11,8 +11,7 @@
  
 rp_module_id="sdlpop"
 rp_module_desc="SDLPoP - Port of Prince of Persia"
-rp_module_menus="4+"
-rp_module_flags=""
+rp_module_section="opt"
 
 function depends_sdlpop() {
     getDepends libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev

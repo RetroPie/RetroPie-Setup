@@ -11,7 +11,7 @@
 
 rp_module_id="fuse"
 rp_module_desc="ZX Spectrum emulator Fuse"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_fuse() {

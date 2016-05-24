@@ -11,8 +11,7 @@
 
 rp_module_id="lr-imame4all"
 rp_module_desc="Arcade emu - iMAME4all (based on MAME 0.37b5) port for libretro"
-rp_module_menus="2+"
-rp_module_flags=""
+rp_module_section="main"
 
 function sources_lr-imame4all() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2000-libretro.git

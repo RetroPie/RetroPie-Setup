@@ -11,7 +11,7 @@
 
 rp_module_id="vice"
 rp_module_desc="C64 emulator VICE"
-rp_module_menus="2+"
+rp_module_section="main"
 rp_module_flags="dispmanx !mali"
 
 function depends_vice() {

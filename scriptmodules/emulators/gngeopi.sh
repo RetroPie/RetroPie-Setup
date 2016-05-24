@@ -11,7 +11,7 @@
 
 rp_module_id="gngeopi"
 rp_module_desc="NeoGeo emulator GnGeoPi"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="!x86 !mali"
 
 function depends_gngeopi() {

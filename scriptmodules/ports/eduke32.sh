@@ -11,7 +11,7 @@
 
 rp_module_id="eduke32"
 rp_module_desc="Duke3D Port"
-rp_module_menus="2+"
+rp_module_section="opt"
 
 function depends_eduke32() {
     local depends=(subversion flac libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats)

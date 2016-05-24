@@ -11,14 +11,15 @@
 
 rp_module_id="minecraft"
 rp_module_desc="Minecraft"
-rp_module_menus="4+"
-rp_module_flags="nobin !mali !x86"
+rp_module_section="exp"
+rp_module_flags="!mali !x86"
 
 function depends_minecraft() {
     getDepends xorg matchbox
 }
 
-function install_minecraft() {
+function install_bin_minecraft() {
+    mkdir -p "$md_inst"
     wget -O- -q https://s3.amazonaws.com/assets.minecraft.net/pi/minecraft-pi-0.1.1.tar.gz | tar -xvz --strip-components=1 -C "$md_inst"
 }
 

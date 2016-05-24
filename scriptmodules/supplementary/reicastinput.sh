@@ -11,8 +11,7 @@
 
 rp_module_id="reicastinput"
 rp_module_desc="Configure input devices for Reicast"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="conf"
 
 function configure_reicastinput() {
     clear

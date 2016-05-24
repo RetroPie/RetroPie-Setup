@@ -11,8 +11,7 @@
 
 rp_module_id="samba"
 rp_module_desc="Configure Samba ROM Shares"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="conf"
 
 function depends_samba() {
     getDepends samba
@@ -61,7 +60,7 @@ function remove_shares_samba() {
     done
 }
 
-function configure_samba() {
+function gui_samba() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(

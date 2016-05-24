@@ -11,7 +11,7 @@
 
 rp_module_id="openbor"
 rp_module_desc="OpenBOR - Beat 'em Up Game Engine"
-rp_module_menus="4+"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_openbor() {

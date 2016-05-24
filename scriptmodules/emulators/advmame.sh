@@ -11,7 +11,7 @@
 
 rp_module_id="advmame"
 rp_module_desc="AdvanceMAME"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_advmame() {

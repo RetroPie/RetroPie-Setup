@@ -11,7 +11,7 @@
 
 rp_module_id="pcsx-rearmed"
 rp_module_desc="Playstation emulator - PCSX (arm optimised)"
-rp_module_menus="4+"
+rp_module_section="opt"
 rp_module_flags="dispmanx !x86 !mali"
 
 function depends_pcsx-rearmed() {

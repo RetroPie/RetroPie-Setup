@@ -11,7 +11,7 @@
 
 rp_module_id="dxx-rebirth"
 rp_module_desc="DXX-Rebirth (Descent & Descent 2) build from source"
-rp_module_menus="4+"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_dxx-rebirth() {

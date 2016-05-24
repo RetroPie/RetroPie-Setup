@@ -11,8 +11,8 @@
 
 rp_module_id="audiosettings"
 rp_module_desc="Configure audio settings"
-rp_module_menus="3+"
-rp_module_flags="nobin !x86 !mali"
+rp_module_section="conf"
+rp_module_flags="!x86 !mali"
 
 function depends_audiosettings() {
     if [[ "$__depends_mode" == "install" ]]; then
@@ -20,7 +20,7 @@ function depends_audiosettings() {
     fi
 }
 
-function configure_audiosettings() {
+function gui_audiosettings() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output." 22 86 16)
     options=(
         1 "Auto"

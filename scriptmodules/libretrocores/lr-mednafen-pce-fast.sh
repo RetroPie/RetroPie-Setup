@@ -11,7 +11,7 @@
 
 rp_module_id="lr-mednafen-pce-fast"
 rp_module_desc="PCEngine emu - Mednafen PCE Fast port for libretro"
-rp_module_menus="2+"
+rp_module_section="main"
 
 function sources_lr-mednafen-pce-fast() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-pce-fast-libretro.git

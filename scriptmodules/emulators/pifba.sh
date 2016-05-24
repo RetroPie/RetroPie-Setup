@@ -11,7 +11,7 @@
 
 rp_module_id="pifba"
 rp_module_desc="FBA emulator PiFBA"
-rp_module_menus="2+"
+rp_module_section="main"
 rp_module_flags="!x86 !mali"
 
 function depends_pifba() {

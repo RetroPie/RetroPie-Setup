@@ -11,8 +11,7 @@
 
 rp_module_id="retroarchinput"
 rp_module_desc="Configure input devices for RetroArch"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="conf"
 
 function keyboard_retroarchinput() {
     if [[ ! -f "$configdir/all/retroarch.cfg" ]]; then
@@ -72,7 +71,7 @@ function hotkey_retroarchinput() {
     fi
 }
 
-function configure_retroarchinput() {
+function gui_retroarchinput() {
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 76 16)
     local options=(
         1 "Configure keyboard for use with RetroArch"

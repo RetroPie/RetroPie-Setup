@@ -10,8 +10,8 @@
 #
 
 rp_module_id="retroarch"
-rp_module_desc="RetroArch"
-rp_module_menus="2+"
+rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
+rp_module_section="core"
 
 function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev)

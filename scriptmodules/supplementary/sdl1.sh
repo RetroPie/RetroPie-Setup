@@ -11,8 +11,8 @@
 
 rp_module_id="sdl1"
 rp_module_desc="SDL 1.2.15 with rpi fixes and dispmanx"
-rp_module_menus=""
-rp_module_flags="!mali nobin !x86"
+rp_module_section=""
+rp_module_flags="!mali !x86"
 
 function get_ver_sdl1() {
     echo "12"

@@ -11,10 +11,10 @@
  
 rp_module_id="supertux"
 rp_module_desc="SuperTux 2d scrolling platform"
-rp_module_menus="4+"
-rp_module_flags="nobin !mali"
+rp_module_section="opt"
+rp_module_flags="!mali"
  
-function install_supertux() {
+function install_bin_supertux() {
     aptInstall supertux
 }
  

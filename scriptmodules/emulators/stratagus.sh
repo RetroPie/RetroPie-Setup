@@ -11,7 +11,7 @@
 
 rp_module_id="stratagus"
 rp_module_desc="Stratagus - A strategy game engine to play Warcraft I or II, Starcraft, and some similar open-source games"
-rp_module_menus="4+"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_stratagus() {

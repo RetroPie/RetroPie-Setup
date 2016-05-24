@@ -11,11 +11,15 @@
 
 rp_module_id="frotz"
 rp_module_desc="Z-Machine Interpreter for Infocom games"
-rp_module_menus="2+"
-rp_module_flags="nobin !mali"
+rp_module_section="opt"
+rp_module_flags="!mali"
 
-function install_frotz() {
+function install_bin_frotz() {
     aptInstall frotz
+}
+
+function remove_frotz() {
+    aptRemove frotz
 }
 
 function configure_frotz() {

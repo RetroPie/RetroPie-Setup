@@ -11,7 +11,7 @@
 
 rp_module_id="lr-mgba"
 rp_module_desc="GBA emulator - MGBA (optimised) port for libretro"
-rp_module_menus="2+"
+rp_module_section="main"
 rp_module_flags="!armv6"
 
 function sources_lr-mgba() {

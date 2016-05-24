@@ -11,7 +11,7 @@
 
 rp_module_id="lr-beetle-lynx"
 rp_module_desc="Atari Lynx emulator - Mednafen Lynx Port for libretro, itself a fork of Handy"
-rp_module_menus="4+"
+rp_module_section="opt"
 
 function sources_lr-beetle-lynx() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-lynx-libretro.git

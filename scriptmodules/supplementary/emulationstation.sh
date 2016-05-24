@@ -10,8 +10,8 @@
 #
 
 rp_module_id="emulationstation"
-rp_module_desc="EmulationStation"
-rp_module_menus="2+"
+rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emulators"
+rp_module_section="core"
 
 function depends_emulationstation() {
     local depends=(
@@ -138,6 +138,9 @@ _EOF_
     mkdir -p "/etc/emulationstation"
 
     configure_inputconfig_emulationstation
+    
+    # ensure we have a default theme
+    rp_callModule esthemes install_theme
     
     addAutoConf es_swap_a_b 0
 }
