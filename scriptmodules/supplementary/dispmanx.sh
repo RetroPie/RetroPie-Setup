@@ -12,7 +12,7 @@
 rp_module_id="dispmanx"
 rp_module_desc="Configure emulators to use dispmanx SDL"
 rp_module_section="conf"
-rp_module_flags="!mali !x86"
+rp_module_flags="!mali !x11"
 
 function gui_dispmanx() {
     iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
@@ -21,7 +21,7 @@ function gui_dispmanx() {
         local options=()
         local command=()
         for idx in "${__mod_idx[@]}"; do
-            if [[ "${__mod_flags[$idx]}" =~ dispmanx ]]; then
+            if [[ "${__mod_flags[$idx]}" =~ dispmanx ]] && rp_isInstalled "$idx"; then
                 local mod_id=${__mod_id[idx]}
                 iniGet "$mod_id"
                 if [[ "$ini_value" == "1" ]]; then
