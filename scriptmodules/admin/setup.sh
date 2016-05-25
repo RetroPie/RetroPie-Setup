@@ -95,9 +95,7 @@ function updatescript_setup()
         return
     fi
     popd >/dev/null
-    "$scriptdir/retropie_packages.sh" runcommand install
     printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script."
-    exec "$scriptdir/retropie_setup.sh"
 }
 
 function package_setup() {
@@ -274,9 +272,13 @@ function settings_setup() {
 }
 
 function update_packages_setup() {
-    dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
-    if dialog --yesno "It is advisable to update the RetroPie-Setup script before updating packages - may I do this now ?" 22 76 2>&1 >/dev/tty; then
-        updatescript_setup
+    local update="$1"
+    if [[ "$update" != "update" ]]; then
+        dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
+        if dialog --defaultno --yesno "It is advisable to update the RetroPie-Setup script before updating packages - may I do this now ?" 22 76 2>&1 >/dev/tty; then
+            updatescript_setup
+            exec "$scriptdir/retropie_packages.sh" setup update_packages update
+        fi
     fi
 
     local logfilename
@@ -381,6 +383,7 @@ function gui_setup() {
                     ;;
                 U)
                     updatescript_setup
+                    exec "$scriptdir/retropie_packages.sh" setup gui
                     ;;
                 R)
                     reboot_setup
