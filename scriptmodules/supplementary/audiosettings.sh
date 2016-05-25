@@ -11,7 +11,7 @@
 
 rp_module_id="audiosettings"
 rp_module_desc="Configure audio settings"
-rp_module_section="conf"
+rp_module_section="config"
 rp_module_flags="!x86 !mali"
 
 function depends_audiosettings() {

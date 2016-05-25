@@ -11,7 +11,7 @@
 
 rp_module_id="resetromdirs"
 rp_module_desc="Reset ownership/permissions of $romdir"
-rp_module_section="conf"
+rp_module_section="config"
 
 function gui_resetromdirs() {
     printHeading "Resetting $romdir ownershop/permissions"

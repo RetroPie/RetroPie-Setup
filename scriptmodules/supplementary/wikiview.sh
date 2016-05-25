@@ -11,7 +11,7 @@
 
 rp_module_id="wikiview"
 rp_module_desc="RetroPie-Setup Wiki Viewer"
-rp_module_section="conf"
+rp_module_section="config"
 
 function depends_wikiview() {
     getDepends pandoc lynx-cur

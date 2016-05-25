@@ -11,7 +11,7 @@
 
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
-rp_module_section="conf"
+rp_module_section="config"
 rp_module_flags="!x86"
 
 function _image_exts_splashscreen() {

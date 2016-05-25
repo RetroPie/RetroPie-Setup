@@ -11,7 +11,7 @@
 
 rp_module_id="raspbiantools"
 rp_module_desc="Raspbian related tools"
-rp_module_section="conf"
+rp_module_section="config"
 rp_module_flags="!x86 !mali"
 
 function apt_upgrade_raspbiantools() {

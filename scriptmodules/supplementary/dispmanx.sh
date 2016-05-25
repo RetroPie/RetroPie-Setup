@@ -11,7 +11,7 @@
 
 rp_module_id="dispmanx"
 rp_module_desc="Configure emulators to use dispmanx SDL"
-rp_module_section="conf"
+rp_module_section="config"
 rp_module_flags="!mali !x11"
 
 function gui_dispmanx() {

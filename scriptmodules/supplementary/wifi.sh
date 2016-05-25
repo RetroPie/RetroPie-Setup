@@ -11,7 +11,7 @@
 
 rp_module_id="wifi"
 rp_module_desc="Configure Wifi"
-rp_module_section="conf"
+rp_module_section="config"
 rp_module_flags="!x86"
 
 function remove_wifi() {

@@ -11,7 +11,7 @@
 
 rp_module_id="retroarchinput"
 rp_module_desc="Configure input devices for RetroArch"
-rp_module_section="conf"
+rp_module_section="config"
 
 function keyboard_retroarchinput() {
     if [[ ! -f "$configdir/all/retroarch.cfg" ]]; then

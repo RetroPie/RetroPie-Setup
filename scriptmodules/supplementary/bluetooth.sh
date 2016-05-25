@@ -11,7 +11,7 @@
 
 rp_module_id="bluetooth"
 rp_module_desc="Configure Bluetooth Devices"
-rp_module_section="conf"
+rp_module_section="config"
 
 function depends_bluetooth() {
     local depends=(bluetooth python-dbus python-gobject)

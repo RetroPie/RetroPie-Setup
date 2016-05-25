@@ -241,7 +241,7 @@ function settings_setup() {
     while true; do
         local options=()
         local idx
-        for idx in $(rp_getSectionIds "conf"); do
+        for idx in $(rp_getSectionIds "config"); do
             options+=("$idx" "${__mod_id[$idx]}  - ${__mod_desc[$idx]}" "${__mod_desc[$idx]}")
         done
 

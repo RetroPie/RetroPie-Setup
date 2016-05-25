@@ -11,7 +11,7 @@
 
 rp_module_id="retronetplay"
 rp_module_desc="RetroNetplay"
-rp_module_section="conf"
+rp_module_section="config"
 
 function rps_retronet_saveconfig() {
     local conf="$configdir/all/retronetplay.cfg"

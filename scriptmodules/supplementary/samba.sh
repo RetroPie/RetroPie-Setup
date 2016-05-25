@@ -11,7 +11,7 @@
 
 rp_module_id="samba"
 rp_module_desc="Configure Samba ROM Shares"
-rp_module_section="conf"
+rp_module_section="config"
 
 function depends_samba() {
     getDepends samba

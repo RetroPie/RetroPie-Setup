@@ -11,7 +11,7 @@
 
 rp_module_id="autostart"
 rp_module_desc="Auto-start EmulationStation"
-rp_module_section="conf"
+rp_module_section="config"
 
 function enable_autostart() {
     if isPlatform x11; then

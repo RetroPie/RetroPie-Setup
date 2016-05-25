@@ -11,7 +11,7 @@
 
 rp_module_id="esthemes"
 rp_module_desc="Install themes for Emulation Station"
-rp_module_section="conf"
+rp_module_section="config"
 
 function depends_esthemes() {
     if isPlatform "x11"; then

@@ -11,7 +11,7 @@
 
 rp_module_id="scraper"
 rp_module_desc="Scraper for EmulationStation by Steven Selph" 
-rp_module_section="conf"
+rp_module_section="config"
 
 function depends_scraper() {
     if [[ "$__raspbian_ver" -gt "7" ]]; then

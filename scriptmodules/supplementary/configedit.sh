@@ -11,7 +11,7 @@
 
 rp_module_id="configedit"
 rp_module_desc="Edit RetroPie/RetroArch configurations"
-rp_module_section="conf"
+rp_module_section="config"
 
 function _video_fullscreen_configedit() {
     local mode="$1"
