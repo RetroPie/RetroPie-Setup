@@ -39,7 +39,7 @@
     <game>
         <path>./retroarch.rp</path>
         <name>Retroarch</name>
-        <desc>Launches RetroArch with the GUI raised so you can change RetroArch options. Note: changes will not be saved unless you have enabled writing to the retroarch.cfg file.</desc>
+        <desc>Launches the RetroArch GUI so you can change RetroArch options. Note: Changes will not be saved unless you have enabled the "Save Configuration On Exit" option.</desc>
         <image>~/RetroPie/retropiemenu/icons/retroarch.png</image>
     </game>
     <game>
