@@ -169,6 +169,7 @@ function configure_advmame() {
     local version
     local default
     for version in *; do
+        [[ -f "$md_conf_root/mame-advmame/advmame-$version.rc" ]] && continue
         su "$user" -c "$md_inst/$version/bin/advmame --default"
 
         iniConfig " " "" "$md_conf_root/mame-advmame/advmame-$version.rc"
