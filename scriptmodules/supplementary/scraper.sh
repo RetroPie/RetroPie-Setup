@@ -83,6 +83,12 @@ function scrape_scraper() {
     else
         params+=(-use_ovgdb)
     fi
+    if [[ "$use_nointro_name" -eq 0 ]]; then
+        params+=(-use_nointro_name=false)
+    fi
+    if [[ "$append_only" -eq 1 ]]; then
+        params+=(-append)
+    fi
     
     [[ "$system" =~ ^mame-|arcade|fba|neogeo ]] && params+=(-mame -mame_img t,m,s)
     sudo -u $user "$md_inst/scraper" ${params[@]}
@@ -137,6 +143,8 @@ function gui_scraper() {
     local use_thumbs=1
     local max_width=400
     local use_gdb_scraper=1
+    local use_nointro_name=1
+    local append_only=0
 
     while true; do
         local ver=$(get_ver_scraper)
@@ -161,6 +169,18 @@ function gui_scraper() {
             options+=(5 "Scraper (OpenVGDB)")
         fi
         
+        if [[ "$use_nointro_name" -eq 1 ]]; then
+            options+=(6 "ROM Names (No-Intro)")
+        else
+            options+=(6 "ROM Names (theGamesDB)")
+        fi
+
+        if [[ "$append_only" -eq 1 ]]; then
+            options+=(7 "Gamelist (Append)")
+        else
+            options+=(7 "Gamelist (Overwrite)")
+        fi
+
         options+=(U "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty) 
         if [[ -n "$choice" ]]; then 
@@ -182,6 +202,12 @@ function gui_scraper() {
                     ;;
                 5)
                     use_gdb_scraper="$((use_gdb_scraper ^ 1))"
+                    ;;
+                6)
+                    use_nointro_name="$((use_nointro_name ^ 1))"
+                    ;;
+                7)
+                    append_only="$((append_only ^ 1))"
                     ;;
                 U)
                     rp_callModule "$md_id"
