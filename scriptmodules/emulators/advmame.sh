@@ -185,7 +185,6 @@ function configure_advmame() {
             iniSet "device_keyboard" "raw"
             iniSet "device_sound" "alsa"
             iniSet "display_vsync" "no"
-            iniSet "sound_latency" "0.2"
             iniSet "sound_normalize" "no"
         else
             iniSet "device_video_output" "overlay"
@@ -195,6 +194,7 @@ function configure_advmame() {
 
         if isPlatform "armv6"; then
             iniSet "sound_samplerate" "22050"
+            iniSet "sound_latency" "0.2"
         else
             iniSet "sound_samplerate" "44100"
         fi
