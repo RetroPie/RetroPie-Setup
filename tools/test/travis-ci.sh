@@ -67,7 +67,7 @@ if [ -e "/.chroot_is_done" ]; then
   echo "Environment: $(uname -a)"
 
   # Commands used to run the tests
-  sudo ./retropie_packages.sh lr-pocketsnes
+  sudo __platform=rpi3 ./retropie_packages.sh lr-pocketsnes
 
 else
   if [ "${ARCH}" = "arm" ]; then
