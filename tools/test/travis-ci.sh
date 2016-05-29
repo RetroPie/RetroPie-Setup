@@ -34,6 +34,7 @@ function setup_arm_chroot {
     sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
     sudo mount -o bind /proc "${CHROOT_DIR}/proc"
     sudo mount -o bind /dev "${CHROOT_DIR}/dev"
+    sudo mount -o bind /dev/pts "${CHROOT_DIR}/dev/pts"
 
     # Create file with environment variables which will be used inside chrooted
     # environment
@@ -67,7 +68,24 @@ if [ -e "/.chroot_is_done" ]; then
   echo "Environment: $(uname -a)"
 
   # Commands used to run the tests
-  sudo __platform=rpi3 ./retropie_packages.sh lr-pocketsnes
+
+  # emulators
+  for i in {100..150}
+  do
+    sudo __platform=rpi3 ./retropie_packages.sh $i
+  done
+
+  # RetroArch cores
+  for i in {200..250}
+  do
+    sudo __platform=rpi3 ./retropie_packages.sh $i
+  done
+
+  # ports
+  for i in {300..350}
+  do
+    sudo __platform=rpi3 ./retropie_packages.sh $i
+  done
 
 else
   if [ "${ARCH}" = "arm" ]; then
