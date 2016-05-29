@@ -31,6 +31,7 @@ function setup_arm_chroot {
     sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
         ${VERSION} ${CHROOT_DIR} ${MIRROR}
 
+    sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
     sudo mount -o bind /proc "${CHROOT_DIR}/proc"
     sudo mount -o bind /dev "${CHROOT_DIR}/dev"
 
@@ -53,14 +54,12 @@ function setup_arm_chroot {
     sudo touch ${CHROOT_DIR}/.chroot_is_done
 
     # Call ourselves again which will cause tests to run
-    sudo chroot --userspec 1000:1000 ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./tools/test/travis-ci.sh"
+    sudo chroot ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./tools/test/travis-ci.sh"
 }
 
 if [ -e "/.chroot_is_done" ]; then
   # We are inside ARM chroot
   echo "Running inside chrooted environment"
-
-  sudo echo "nameserver 8.8.8.8" >"/etc/resolv.conf"
 
   . ./envvars.sh
 
