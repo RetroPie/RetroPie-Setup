@@ -28,12 +28,12 @@ function setup_arm_chroot {
     sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
         ${VERSION} ${CHROOT_DIR} ${MIRROR}
 
-    mkdir -p "${CHROOT_DIR}/run/resolvconf"
-    echo "nameserver 8.8.8.8" >"${CHROOT_DIR}/etc/resolv.conf"
-    rm -f "${CHROOT_DIR}/etc/ld.so.preload"
+    sudo mkdir -p "${CHROOT_DIR}/run/resolvconf"
+    sudo echo "nameserver 8.8.8.8" >"${CHROOT_DIR}/etc/resolv.conf"
+    sudo rm -f "${CHROOT_DIR}/etc/ld.so.preload"
 
-    mount -o bind /proc "${CHROOT_DIR}/proc"
-    mount -o bind /dev "${CHROOT_DIR}/dev"
+    sudo mount -o bind /proc "${CHROOT_DIR}/proc"
+    sudo mount -o bind /dev "${CHROOT_DIR}/dev"
 
     export QEMU_CPU=cortex-a15
 
