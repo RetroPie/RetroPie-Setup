@@ -1,0 +1,23 @@
+# Use new trusty images, should yield newer compilers and packages
+sudo: required
+dist: precise
+language: cpp
+
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env: 
+       - COMPILER=g++-4.9
+       - ARCH=arm
+
+before_install:
+  - sudo apt-get update -qq
+
+script:
+  - "bash -ex ./test/travis-ci.sh"
