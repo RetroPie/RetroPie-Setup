@@ -66,6 +66,7 @@ function get_os_version() {
                 7)
                     __raspbian_ver=7
                     __raspbian_name="wheezy"
+                    __has_binaries=0
                     return
                     ;;
                 8)
