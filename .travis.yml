@@ -3,6 +3,9 @@ sudo: required
 dist: precise
 language: cpp
 
+git:
+  depth: 3
+
 matrix:
   include:
     - compiler: gcc
@@ -20,4 +23,4 @@ before_install:
   - sudo apt-get update -qq
 
 script:
-  - "bash -ex ./test/travis-ci.sh"
+  - "bash -ex ./tools/test/travis-ci.sh"
