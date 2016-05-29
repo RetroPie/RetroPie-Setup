@@ -28,6 +28,15 @@ function setup_arm_chroot {
     sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
         ${VERSION} ${CHROOT_DIR} ${MIRROR}
 
+    mkdir -p "${CHROOT_DIR}/run/resolvconf"
+    echo "nameserver 8.8.8.8" >"${CHROOT_DIR}/etc/resolv.conf"
+    rm -f "${CHROOT_DIR}/etc/ld.so.preload"
+
+    mount -o bind /proc "${CHROOT_DIR}/proc"
+    mount -o bind /dev "${CHROOT_DIR}/dev"
+
+    export QEMU_CPU=cortex-a15
+
     # Create file with environment variables which will be used inside chrooted
     # environment
     echo "export ARCH=${ARCH}" > envvars.sh
