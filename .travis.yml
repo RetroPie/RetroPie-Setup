@@ -19,8 +19,8 @@ matrix:
          - COMPILER=g++-4.9
          - ARCH=arm
          - env:
-          PKGID=100
-          PKGID=200
+             - PKGID=100
+             - PKGID=200
 
 before_install:
   - sudo apt-get update -qq
