@@ -2,6 +2,8 @@
 # Based on a test script from avsm/ocaml repo https://github.com/avsm/ocaml
 # based on the script from https://www.tomaz.me/2013/12/02/running-travis-ci-tests-on-arm.html
 
+PKGID=$1
+
 CHROOT_DIR=$HOME/arm-chroot
 MIRROR=http://archive.raspbian.org/raspbian
 
@@ -55,7 +57,7 @@ function setup_arm_chroot {
     sudo touch ${CHROOT_DIR}/.chroot_is_done
 
     # Call ourselves again which will cause tests to run
-    sudo chroot ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./tools/test/travis-ci.sh"
+    sudo chroot ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./tools/test/travis-ci.sh $PKGID"
 }
 
 if [ -e "/.chroot_is_done" ]; then
@@ -70,22 +72,7 @@ if [ -e "/.chroot_is_done" ]; then
   # Commands used to run the tests
 
   # emulators
-  for i in {100..150}
-  do
-    sudo __platform=rpi3 ./retropie_packages.sh $i
-  done
-
-  # RetroArch cores
-  for i in {200..250}
-  do
-    sudo __platform=rpi3 ./retropie_packages.sh $i
-  done
-
-  # ports
-  for i in {300..350}
-  do
-    sudo __platform=rpi3 ./retropie_packages.sh $i
-  done
+  sudo __platform=rpi3 ./retropie_packages.sh $PKGID binaries
 
 else
   if [ "${ARCH}" = "arm" ]; then
