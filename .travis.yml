@@ -14,7 +14,6 @@ git:
   depth: 3
 
 env:
-  global:
   - COMPILER=g++-4.9
   - ARCH=arm
   matrix:
