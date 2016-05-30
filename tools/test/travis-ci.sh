@@ -71,7 +71,7 @@ if [ -e "/.chroot_is_done" ]; then
   # Commands used to run the tests
 
   # emulators
-  for index in {100..150}
+  for (( index=100; i <= 150; index++ ))
   do
     sudo ./retropie_packages.sh $index depends
     sudo ./retropie_packages.sh $index install_bin
@@ -79,15 +79,15 @@ if [ -e "/.chroot_is_done" ]; then
   done
 
   # RetroArch cores
-  for index in {200..250}
+  for (( index=200; i <= 250; index++ ))
   do
-    sudo ./retropie_packages.sh $index depends
+    sudo ./retropie_packages.sh ${index} depends
     sudo ./retropie_packages.sh $index install_bin
     sudo ./retropie_packages.sh $index configure
   done
 
   # ports
-  for index in {300..350}
+  for (( index=300; i <= 350; index++ ))
   do
     sudo ./retropie_packages.sh $index depends
     sudo ./retropie_packages.sh $index install_bin

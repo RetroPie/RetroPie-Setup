@@ -8,24 +8,6 @@ env:
   - __platform=rpi1
   - __platform=rpi2
 
-# matrix:
-#   include:
-#     - compiler: gcc
-#       addons:
-#         apt:
-#           sources:
-#             - ubuntu-toolchain-r-test
-#       env: 
-#        - __platform=rpi1
-
-#     - compiler: gcc
-#       addons:
-#         apt:
-#           sources:
-#             - ubuntu-toolchain-r-test
-#       env: 
-#        - __platform=rpi2
-
 before_install:
   - sudo apt-get update -qq
 
