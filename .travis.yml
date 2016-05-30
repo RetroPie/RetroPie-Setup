@@ -20,6 +20,18 @@ matrix:
        - ARCH=arm
        - PKGID=100
 
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env: 
+       - COMPILER=g++-4.9
+       - ARCH=arm
+       - PKGID=200
+
 before_install:
   - sudo apt-get update -qq
 
