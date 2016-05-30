@@ -72,7 +72,9 @@ if [ -e "/.chroot_is_done" ]; then
   # Commands used to run the tests
 
   # emulators
-  sudo __platform=rpi3 ./retropie_packages.sh ${PKGID} binaries
+  sudo __platform=rpi3 ./retropie_packages.sh ${PKGID} depends
+  sudo __platform=rpi3 ./retropie_packages.sh ${PKGID} install_bin
+  sudo __platform=rpi3 ./retropie_packages.sh ${PKGID} configure
 
 else
   if [ "${ARCH}" = "arm" ]; then
