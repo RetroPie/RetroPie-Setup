@@ -2,49 +2,32 @@
 sudo: required
 dist: precise
 language: cpp
-compiler: gcc
+
+matrix:
+  include:
+    - compiler: gcc
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
+      env: 
+       - COMPILER=g++-4.9
+       - ARCH=arm
+       - __platform=rpi1
 
-git:
-  depth: 3
-
-env:
-  - COMPILER=g++-4.9
-  - ARCH=arm
-  matrix:
-    - __platform=rpi3
-    - __platform=rpi1
-
-# matrix:
-#   include:
-#     - compiler: gcc
-#       addons:
-#         apt:
-#           sources:
-#             - ubuntu-toolchain-r-test
-#           packages:
-#             - g++-4.9
-#       env: 
-#        - COMPILER=g++-4.9
-#        - ARCH=arm
-#        - PKGID=100
-
-#     - compiler: gcc
-#       addons:
-#         apt:
-#           sources:
-#             - ubuntu-toolchain-r-test
-#           packages:
-#             - g++-4.9
-#       env: 
-#        - COMPILER=g++-4.9
-#        - ARCH=arm
-#        - PKGID=200
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env: 
+       - COMPILER=g++-4.9
+       - ARCH=arm
+       - __platform=rpi2
 
 before_install:
   - sudo apt-get update -qq

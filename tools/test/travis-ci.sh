@@ -2,8 +2,6 @@
 # Based on a test script from avsm/ocaml repo https://github.com/avsm/ocaml
 # based on the script from https://www.tomaz.me/2013/12/02/running-travis-ci-tests-on-arm.html
 
-PKGID=$1
-
 CHROOT_DIR=$HOME/arm-chroot
 MIRROR=http://archive.raspbian.org/raspbian
 
@@ -42,6 +40,7 @@ function setup_arm_chroot {
     # environment
     echo "export ARCH=${ARCH}" > envvars.sh
     echo "export TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR}" >> envvars.sh
+    echo "export __platform=${__platform}" >> envvars.sh
     chmod a+x envvars.sh
 
     # Install dependencies inside chroot
@@ -57,7 +56,7 @@ function setup_arm_chroot {
     sudo touch ${CHROOT_DIR}/.chroot_is_done
 
     # Call ourselves again which will cause tests to run
-    sudo chroot ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./tools/test/travis-ci.sh ${PKGID}"
+    sudo chroot ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./tools/test/travis-ci.sh"
 }
 
 if [ -e "/.chroot_is_done" ]; then
@@ -72,9 +71,28 @@ if [ -e "/.chroot_is_done" ]; then
   # Commands used to run the tests
 
   # emulators
-  sudo __platform=rpi3 ./retropie_packages.sh 100 depends
-  sudo __platform=rpi3 ./retropie_packages.sh 100 install_bin
-  sudo __platform=rpi3 ./retropie_packages.sh 100 configure
+  for index in {100..150}
+  do
+    sudo ./retropie_packages.sh $index depends
+    sudo ./retropie_packages.sh $index install_bin
+    sudo ./retropie_packages.sh $index configure
+  done
+
+  # RetroArch cores
+  for index in {200..250}
+  do
+    sudo ./retropie_packages.sh $index depends
+    sudo ./retropie_packages.sh $index install_bin
+    sudo ./retropie_packages.sh $index configure
+  done
+
+  # ports
+  for index in {300..350}
+  do
+    sudo ./retropie_packages.sh $index depends
+    sudo ./retropie_packages.sh $index install_bin
+    sudo ./retropie_packages.sh $index configure
+  done
 
 else
   if [ "${ARCH}" = "arm" ]; then
