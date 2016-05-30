@@ -2,14 +2,20 @@
 sudo: required
 dist: precise
 language: cpp
+compiler: gcc
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.9
 
 git:
   depth: 3
 
 env:
-  matrix:
-   - PKGID=100
-   - PKGID=200
+  - PKGID=100
+  - PKGID=200
 
 matrix:
   include:

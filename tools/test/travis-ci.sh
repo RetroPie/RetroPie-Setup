@@ -57,7 +57,7 @@ function setup_arm_chroot {
     sudo touch ${CHROOT_DIR}/.chroot_is_done
 
     # Call ourselves again which will cause tests to run
-    sudo chroot ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./tools/test/travis-ci.sh $PKGID"
+    sudo chroot ${CHROOT_DIR} bash -c "cd ${TRAVIS_BUILD_DIR} && ./tools/test/travis-ci.sh ${PKGID}"
 }
 
 if [ -e "/.chroot_is_done" ]; then
@@ -72,7 +72,7 @@ if [ -e "/.chroot_is_done" ]; then
   # Commands used to run the tests
 
   # emulators
-  sudo __platform=rpi3 ./retropie_packages.sh $PKGID binaries
+  sudo __platform=rpi3 ./retropie_packages.sh ${PKGID} binaries
 
 else
   if [ "${ARCH}" = "arm" ]; then
