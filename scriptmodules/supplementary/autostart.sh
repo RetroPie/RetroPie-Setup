@@ -24,7 +24,7 @@ function enable_autostart() {
             update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
             sed -i "/emulationstation/d" /etc/profile
         else
-            raspi-config nonint do_boot_behaviour_new B2
+            raspi-config nonint do_boot_behaviour B2
         fi
         cat >/etc/profile.d/10-emulationstation.sh <<_EOF_
 # launch emulationstation (if we are on the correct tty)
@@ -45,7 +45,7 @@ function disable_autostart() {
         else
             # remove any old autologin.conf - we use raspi-config now
             rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf
-            raspi-config nonint do_boot_behaviour_new "$login_type"
+            raspi-config nonint do_boot_behaviour "$login_type"
         fi
         rm -f /etc/profile.d/10-emulationstation.sh
     fi
