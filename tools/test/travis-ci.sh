@@ -95,9 +95,7 @@ if [ -e "/.chroot_is_done" ]; then
   done
 
 else
-  if [ "${ARCH}" = "arm" ]; then
-    # ARM test run, need to set up chrooted environment first
-    echo "Setting up chrooted ARM environment"
-    setup_arm_chroot
-  fi
+  # ARM test run, need to set up chrooted environment first
+  echo "Setting up chrooted ARM environment"
+  setup_arm_chroot
 fi
