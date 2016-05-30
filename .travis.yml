@@ -10,8 +10,6 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
       env: 
        - COMPILER=g++-4.9
        - ARCH=arm
@@ -22,8 +20,6 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
       env: 
        - COMPILER=g++-4.9
        - ARCH=arm
