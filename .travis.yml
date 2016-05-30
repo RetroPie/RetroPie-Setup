@@ -20,7 +20,7 @@ matrix:
        - ARCH=arm
          matrix:
          - PKGID=100
-         - PKGID=200
+         - PKGID=200 
 
 before_install:
   - sudo apt-get update -qq
