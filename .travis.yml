@@ -19,7 +19,7 @@ env:
   - ARCH=arm
   matrix:
     - __platform=rpi3
-    - __platform=rpi1
+    - __platform=rpi1 
 
 # matrix:
 #   include:
