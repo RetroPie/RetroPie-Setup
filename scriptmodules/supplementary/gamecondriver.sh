@@ -15,13 +15,18 @@ rp_module_menus="3+"
 rp_module_flags="nobin !x86 !mali"
 
 function depends_gamecondriver() {
-    getDepends dkms gcc-4.7
+    # remove any old kernel headers for current kernel
+    local kernel_ver="$(uname -r)"
+    if hasPackage linux-headers-"${kernel_ver}" "${kernel_ver}-2" "eq"; then
+        aptRemove "linux-headers-${kernel_ver}"
+    fi
+    getDepends dkms raspberrypi-kernel-headers
 }
 
 function install_gamecondriver() {
-    local GAMECON_VER="1.0"
+    local GAMECON_VER="1.2"
     local DB9_VER="1.0"
-    local DOWNLOAD_LOC="http://www.niksula.hut.fi/~mhiienka/Rpi"
+    local DOWNLOAD_LOC="https://www.niksula.hut.fi/~mhiienka/Rpi"
 
     clear
 
@@ -33,21 +38,8 @@ function install_gamecondriver() {
     clear
     printMsgs "console" "Starting installation."
 
-    # install kernel headers (takes a a while)
-    local kernel_ver="$(uname -r)"
-    if ! hasPackage linux-headers-"${kernel_ver}" "${kernel_ver}-2" "eq"; then
-        local package_file="linux-headers-${kernel_ver}_${kernel_ver}-2_armhf.deb"
-        if wget -nv "${DOWNLOAD_LOC}/linux-headers-rpi/$package_file"; then
-            dpkg -i "$package_file"
-            rm -f "$package_file"
-        else
-            printMsgs "dialog" "No linux-headers package could be found for your kernel version at ${DOWNLOAD_LOC} - this could be due to you running a new kernel that is not yet supported, or if you are using the BerryBoot image, which shares the BerryBoot kernel between all OSes - in which case you will need to manually set this up"
-            return 0
-        fi
-    fi
-
     # install gamecon
-    if hasPackage gamecon-gpio-rpi-dkms "${DB9_VER}" "eq"; then
+    if hasPackage gamecon-gpio-rpi-dkms "${GAMECON_VER}" "eq"; then
         printMsgs "console" "gamecon is the newest version"
     else
         wget "${DOWNLOAD_LOC}/gamecon-gpio-rpi-dkms_${GAMECON_VER}_all.deb"
