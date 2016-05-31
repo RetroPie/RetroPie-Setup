@@ -63,6 +63,7 @@ function configure_esthemes() {
         'RetroPie simplified-static-canela'
         'RetroPie zoid'
         'RetroPie nbba'
+        'lilbud material'
         'robertybob space'
         'robertybob simplebigart'
         'RetroPie clean-look'
