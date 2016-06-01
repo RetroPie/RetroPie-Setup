@@ -14,6 +14,7 @@ rp_module_desc="The 'runcommand' launch script - needed for launching the emulat
 rp_module_section="core"
 
 function install_bin_runcommand() {
+    mkdir -p "$md_inst"
     cp "$scriptdir/scriptmodules/$md_type/$md_id/runcommand.sh" "$md_inst/"
     cp "$scriptdir/scriptmodules/$md_type/$md_id/joy2key.py" "$md_inst/"
     chmod a+x "$md_inst/runcommand.sh"
@@ -31,6 +32,7 @@ function install_bin_runcommand() {
         dialog --create-rc "$configdir/all/runcommand-launch-dialog.cfg"
         chown $user:$user "$configdir/all/runcommand-launch-dialog.cfg"
     fi
+    md_ret_require="$md_inst/runcommand.sh"
 }
 
 function governor_runcommand() {
