@@ -73,25 +73,25 @@ if [ -e "/.chroot_is_done" ]; then
   # emulators
   for (( index=100; i <= 150; index++ ))
   do
-    sudo ./retropie_packages.sh $index depends
-    sudo ./retropie_packages.sh $index install_bin
-    sudo ./retropie_packages.sh $index configure
+    sudo __platform=${__platform} ./retropie_packages.sh $index depends
+    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin
+    sudo __platform=${__platform} ./retropie_packages.sh $index configure
   done
 
   # RetroArch cores
   for (( index=200; i <= 250; index++ ))
   do
-    sudo ./retropie_packages.sh ${index} depends
-    sudo ./retropie_packages.sh $index install_bin
-    sudo ./retropie_packages.sh $index configure
+    sudo __platform=${__platform} ./retropie_packages.sh ${index} depends
+    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin
+    sudo __platform=${__platform} ./retropie_packages.sh $index configure
   done
 
   # ports
   for (( index=300; i <= 350; index++ ))
   do
-    sudo ./retropie_packages.sh $index depends
-    sudo ./retropie_packages.sh $index install_bin
-    sudo ./retropie_packages.sh $index configure
+    sudo __platform=${__platform} ./retropie_packages.sh $index depends
+    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin
+    sudo __platform=${__platform} ./retropie_packages.sh $index configure
   done
 
 else
