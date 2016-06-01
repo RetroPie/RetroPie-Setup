@@ -131,6 +131,7 @@ function getAutoConf(){
     return 0
 }
 
+# escape backslashes and pipes for sed
 function sedQuote() {
     local string="$1"
     string="${string//\\/\\\\}"
