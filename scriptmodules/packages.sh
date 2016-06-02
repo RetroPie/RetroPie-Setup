@@ -103,6 +103,7 @@ function rp_callModule() {
     local md_flags="${__mod_flags[$md_idx]}"
     local md_build="$__builddir/$md_id"
     local md_inst="$rootdir/$md_type/$md_id"
+    local md_mode="install"
 
     # set md_conf_root to $configdir and to $configdir/ports for ports
     # ports in libretrocores or systems (as ES sees them) in ports will need to change it manually with setConfigRoot
@@ -144,10 +145,9 @@ function rp_callModule() {
     case "$mode" in
         depends)
             if [[ "$1" == "remove" ]]; then
-                __depends_mode="remove"
+                md_mode="remove"
                 action="Removing"
             else
-                __depends_mode="install"
                 action="Installing"
             fi
             action+=" dependencies for"
@@ -190,6 +190,8 @@ function rp_callModule() {
     case "$mode" in
         remove)
             fnExists "$function" && "$function" "$@"
+            md_mode="remove"
+            fnExists "configure_${md_id}" && "configure_${md_id}" remove
             rm -rvf "$md_inst"
             ;;
         install)

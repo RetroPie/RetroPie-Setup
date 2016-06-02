@@ -125,7 +125,7 @@ function getDepends() {
     local packages=()
     local failed=()
     for required in $@; do
-        if [[ "$__depends_mode" == "install" ]]; then
+        if [[ "$md_mode" == "install" ]]; then
             # make sure we have our sdl1 / sdl2 installed
             if [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev 1.2.15-$(get_ver_sdl1)rpi "eq"; then
                 packages+=("$required")
@@ -139,14 +139,14 @@ function getDepends() {
         if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage rbp-bootloader-osmc; then
             required="rbp-userland-dev-osmc"
         fi
-        if [[ "$__depends_mode" == "remove" ]]; then
+        if [[ "$md_mode" == "remove" ]]; then
             hasPackage "$required" && packages+=("$required")
         else
             hasPackage "$required" || packages+=("$required")
         fi
     done
     if [[ ${#packages[@]} -ne 0 ]]; then
-        if [[ "$__depends_mode" == "remove" ]]; then
+        if [[ "$md_mode" == "remove" ]]; then
             apt-get remove --purge -y "${packages[@]}"
             apt-get autoremove --purge -y
             return 0
@@ -282,6 +282,13 @@ function mkRomDir() {
 function moveConfigDir() {
     local from="$1"
     local to="$2"
+
+    # if we are in remove mode - remove the symlink
+    if [[ "$md_mode" == "remove" && -h "$from" ]]; then
+        rm -f "$from"
+        return
+    fi
+
     mkUserDir "$to"
     # move any old configs to the new location
     if [[ -d "$from" && ! -h "$from" ]]; then
@@ -301,6 +308,13 @@ function moveConfigDir() {
 function moveConfigFile() {
     local from="$1"
     local to="$2"
+
+    # if we are in remove mode - remove the symlink
+    if [[ "$md_mode" == "remove" && -h "$from" ]]; then
+        rm -f "$from"
+        return
+    fi
+
     # move old file
     if [[ -f "from" && ! -h "from" ]]; then
         mv "from" "$to"
@@ -638,6 +652,12 @@ function addSystem() {
         theme="$system"
     fi
 
+    # check if we are removing the system
+    if [[ "$md_mode" == "remove" ]]; then
+        delSystem "$id" "$system"
+        return
+    fi
+
     # for the ports section, we will handle launching from a separate script and hardcode exts etc
     local es_cmd="$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%"
     local es_path="$romdir/$system"
@@ -673,8 +693,6 @@ function addSystem() {
     # add the extensions again as uppercase
     exts+=" ${exts^^}"
 
-    setESSystem "$fullname" "$es_name" "$es_path" "$exts" "$es_cmd" "$platform" "$theme"
-
     # create a config folder for the system / port
     mkUserDir "$md_conf_root/$system"
 
@@ -689,17 +707,29 @@ function addSystem() {
         fi
         chown $user:$user "$md_conf_root/$system/emulators.cfg"
     fi
+
+    setESSystem "$fullname" "$es_name" "$es_path" "$exts" "$es_cmd" "$platform" "$theme"
 }
 
 function delSystem() {
     local id="$1"
     local system="$2"
-    # remove from emulation station
-    xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
+    local config="$md_conf_root/$system/emulators.cfg"
     # remove from apps list for system
-    if [[ -f "$md_conf_root/$system/emulators.cfg" ]]; then
-        iniConfig "=" '"' "$md_conf_root/$system/emulators.cfg"
+    if [[ -f "$config" ]]; then
+        # delete emulator entry
+        iniConfig "=" '"' "$config"
         iniDel "$id"
+        # if it is the default - remove it - runcommand will prompt to select a new default
+        iniGet "default"
+        [[ "$ini_value" == "$id" ]] && iniDel "default"
+        # if we no longer have any entries in the emulators.cfg file we can remove it
+        grep -q "=" "$config" || rm -f "$config"
+    fi
+
+    # if we don't have an emulators.cfg we can remove the system from emulation station
+    if [[ ! -f "$config" ]]; then
+        xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
     fi
 }
 
