@@ -11,7 +11,7 @@
 
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
-rp_module_section="config"
+rp_module_section="main"
 rp_module_flags="!x86"
 
 function _image_exts_splashscreen() {
@@ -26,7 +26,7 @@ function depends_splashscreen() {
     getDepends fbi omxplayer
 }
 
-function install_splashscreen() {
+function install_bin_splashscreen() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/asplashscreen" "/etc/init.d/"
 
     iniConfig "=" '"' /etc/init.d/asplashscreen
