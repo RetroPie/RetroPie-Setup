@@ -9,27 +9,30 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="lr-mednafen-wswan"
+rp_module_id="lr-beetle-wswan"
 rp_module_desc="Wonderswan emu - Mednafen WonderSwan core port for libretro"
 rp_module_section="opt"
 
-function sources_lr-mednafen-wswan() {
+function sources_lr-beetle-wswan() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-wswan-libretro.git
 }
 
-function build_lr-mednafen-wswan() {
+function build_lr-beetle-wswan() {
     make clean
     make
     md_ret_require="$md_build/mednafen_wswan_libretro.so"
 }
 
-function install_lr-mednafen-wswan() {
+function install_lr-beetle-wswan() {
     md_ret_files=(
         'mednafen_wswan_libretro.so'
     )
 }
 
-function configure_lr-mednafen-wswan() {
+function configure_lr-beetle-wswan() {
+    # remove old install
+    rm -rf "$rootdir/$md_type/lr-mednafen-wswan"
+
     mkRomDir "wonderswan"
     mkRomDir "wonderswancolor"
     ensureSystemretroconfig "wonderswan"

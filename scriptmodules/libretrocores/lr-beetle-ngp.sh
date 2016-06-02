@@ -9,32 +9,35 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="lr-mednafen-ngp"
+rp_module_id="lr-beetle-ngp"
 rp_module_desc="Neo Geo Pocket(Color)emu - Mednafen Neo Geo Pocket core port for libretro"
 rp_module_section="main"
 
-function sources_lr-mednafen-ngp() {
+function sources_lr-beetle-ngp() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-ngp-libretro.git
 }
 
-function build_lr-mednafen-ngp() {
+function build_lr-beetle-ngp() {
     make clean
     make
     md_ret_require="$md_build/mednafen_ngp_libretro.so"
 }
 
-function install_lr-mednafen-ngp() {
+function install_lr-beetle-ngp() {
     md_ret_files=(
         'mednafen_ngp_libretro.so'
     )
 }
 
-function configure_lr-mednafen-ngp() {
+function configure_lr-beetle-ngp() {
+    # remove old install
+    rm -rf "$rootdir/$md_type/lr-mednafen-ngp"
+
     mkRomDir "ngp"
     mkRomDir "ngpc"
     ensureSystemretroconfig "ngp"
     ensureSystemretroconfig "ngpc"
-    
+
     addSystem 1 "$md_id" "ngp" "$md_inst/mednafen_ngp_libretro.so"
     addSystem 1 "$md_id" "ngpc" "$md_inst/mednafen_ngp_libretro.so"
 }
