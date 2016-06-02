@@ -147,7 +147,9 @@ function package_setup() {
                 rps_printInfo "$logfilename"
                 ;;
             X)
-                dialog --defaultno --yesno "Are you sure you want to remove $md_id?" 22 76 2>&1 >/dev/tty || continue
+                local text="Are you sure you want to remove $md_id?"
+                [[ "${__mod_section[$idx]}" == "core" ]] && text+="\n\nWARNING - core packages are needed for RetroPie to function!"
+                dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     rp_callModule "$idx" remove
@@ -220,7 +222,9 @@ function section_setup() {
                 ;;
 
             X)
-                dialog --defaultno --yesno "Are you sure you want to remove all $section packages?" 22 76 2>&1 >/dev/tty || continue
+                local text="Are you sure you want to remove all $section packages?"
+                [[ "$section" == "core" ]] && text+="\n\nWARNING - core packages are needed for RetroPie to function!"
+                dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     for idx in $(rp_getSectionIds $section); do
