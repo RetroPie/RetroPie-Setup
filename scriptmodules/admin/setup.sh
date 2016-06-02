@@ -245,8 +245,11 @@ function settings_setup() {
     while true; do
         local options=()
         local idx
-        for idx in $(rp_getSectionIds "config"); do
-            options+=("$idx" "${__mod_id[$idx]}  - ${__mod_desc[$idx]}" "${__mod_desc[$idx]}")
+        for idx in "${__mod_idx[@]}"; do
+            # show all configuration modules and any installed packages with a gui function
+            if [[ "${__mod_section[idx]}" == "config" ]] || rp_isInstalled "$idx" && fnExists "gui_${__mod_id[idx]}"; then
+                options+=("$idx" "${__mod_id[$idx]}  - ${__mod_desc[$idx]}" "${__mod_desc[$idx]}")
+            fi
         done
 
         local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --menu "Choose an option" 22 76 16)
