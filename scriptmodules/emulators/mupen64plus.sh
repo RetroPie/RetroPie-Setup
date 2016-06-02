@@ -132,7 +132,7 @@ function configure_mupen64plus() {
     mkUserDir "$md_conf_root/n64/"
     # Copy config files
     cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$md_conf_root/n64/"
-    su "$user" -c "$md_inst/bin/mupen64plus --md_conf_root $md_conf_root/n64 --datadir $md_conf_root/n64"
+    su "$user" -c "$md_inst/bin/mupen64plus --configdir $md_conf_root/n64 --datadir $md_conf_root/n64"
 
     iniConfig " = " '"' "$md_conf_root/n64/mupen64plus.cfg"
     iniSet "ScreenshotPath" "$romdir/n64"
