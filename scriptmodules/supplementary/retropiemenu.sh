@@ -11,13 +11,13 @@
 
 rp_module_id="retropiemenu"
 rp_module_desc="RetroPie configuration menu for EmulationStation"
-rp_module_section="config"
+rp_module_section="core"
 
 function depends_retropiemenu() {
     getDepends mc
 }
 
-function configure_retropiemenu()
+function install_bin_retropiemenu()
 {
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
