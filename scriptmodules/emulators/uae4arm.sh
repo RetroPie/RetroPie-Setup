@@ -11,7 +11,7 @@
 
 rp_module_id="uae4arm"
 rp_module_desc="Amiga emulator with JIT support"
-rp_module_section="main"
+rp_module_section="opt"
 rp_module_flags="!x86 !mali"
 
 function depends_uae4arm() {
