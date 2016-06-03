@@ -12,7 +12,7 @@ CHROOT_ARCH=armhf
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES="build-essential git m4 sudo cmake g++-4.9 gcc-4.9 python"
+GUEST_DEPENDENCIES="build-essential git m4 sudo cmake g++-4.9 gcc-4.9 python locales"
 
 function setup_arm_chroot {
     # Host dependencies
@@ -44,7 +44,7 @@ function setup_arm_chroot {
     echo "export TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR}" >> envvars.sh
     echo "export __platform=${__platform}" >> envvars.sh
 
-    sudo echo -e "echo \"en_US.UTF-8 UTF-8\" > \${CHROOT_DIR}/etc/locale.gen" >> envvars.sh
+    sudo echo -e "echo \"en_US.UTF-8 UTF-8\" > /etc/locale.gen" >> envvars.sh
     sudo echo "/usr/sbin/locale-gen" >> envvars.sh
 
     chmod a+x envvars.sh
