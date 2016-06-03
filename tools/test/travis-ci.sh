@@ -43,6 +43,9 @@ function setup_arm_chroot {
     echo "export __platform=${__platform}" >> envvars.sh
     chmod a+x envvars.sh
 
+    sudo echo "en_US.UTF-8 UTF-8" > ${CHROOT_DIR}/etc/locale.gen
+    sudo chroot ${CHROOT_DIR} /usr/sbin/locale-gen
+
     # Install dependencies inside chroot
     sudo chroot ${CHROOT_DIR} apt-get update
     sudo chroot ${CHROOT_DIR} apt-get --allow-unauthenticated install \
