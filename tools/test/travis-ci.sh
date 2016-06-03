@@ -35,16 +35,19 @@ function setup_arm_chroot {
     sudo mount -o bind /proc "${CHROOT_DIR}/proc"
     sudo mount -o bind /dev "${CHROOT_DIR}/dev"
     sudo mount -o bind /dev/pts "${CHROOT_DIR}/dev/pts"
+    sudo mount -o bind /sys "${CHROOT_DIR}/sys"
+    sudo mount -o bind /run "${CHROOT_DIR}/run"
 
     # Create file with environment variables which will be used inside chrooted
     # environment
     echo "export ARCH=${ARCH}" > envvars.sh
     echo "export TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR}" >> envvars.sh
     echo "export __platform=${__platform}" >> envvars.sh
-    chmod a+x envvars.sh
 
-    sudo echo "en_US.UTF-8 UTF-8" > ${CHROOT_DIR}/etc/locale.gen
-    sudo chroot ${CHROOT_DIR} /usr/sbin/locale-gen
+    sudo echo -e "echo \"en_US.UTF-8 UTF-8\" > \${CHROOT_DIR}/etc/locale.gen" >> envvars.sh
+    sudo echo "/usr/sbin/locale-gen" >> envvars.sh
+
+    chmod a+x envvars.sh
 
     # Install dependencies inside chroot
     sudo chroot ${CHROOT_DIR} apt-get update
