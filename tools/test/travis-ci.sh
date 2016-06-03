@@ -32,6 +32,20 @@ function setup_arm_chroot {
         ${VERSION} ${CHROOT_DIR} ${MIRROR}
 
     sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
+
+cat << EOF > "${CHROOT_DIR}/etc/resolv.conf"
+# KEYBOARD CONFIGURATION FILE
+
+# Consult the keyboard(5) manual page.
+
+XKBMODEL="pc105"
+XKBLAYOUT="gb"
+XKBVARIANT=""
+XKBOPTIONS="lv3:ralt_switch"
+
+BACKSPACE="guess"
+EOF
+
     sudo mount -o bind /proc "${CHROOT_DIR}/proc"
     sudo mount -o bind /dev "${CHROOT_DIR}/dev"
     sudo mount -o bind /dev/pts "${CHROOT_DIR}/dev/pts"
