@@ -24,7 +24,7 @@ function sources_px68k() {
 
 function build_px68k() {
     make clean
-    make MOPT="" CDEBUGFLAGS="$CFLAGS -DUSE_SDLGFX -DNO_MERCURY"
+    make MOPT="" CDEBUGFLAGS="$CFLAGS -O2 -DUSE_SDLGFX -DNO_MERCURY"
     md_ret_require="$md_build/px68k"
 }
 
