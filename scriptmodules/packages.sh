@@ -191,7 +191,11 @@ function rp_callModule() {
         remove)
             fnExists "$function" && "$function" "$@"
             md_mode="remove"
-            fnExists "configure_${md_id}" && "configure_${md_id}" remove
+            if fnExists "configure_${md_id}"; then
+                pushd "$md_inst" 2>/dev/null
+                "configure_${md_id}" remove
+                popd >/dev/null
+            fi
             rm -rvf "$md_inst"
             ;;
         install)
