@@ -31,13 +31,11 @@ function setup_arm_chroot {
     sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
         ${VERSION} ${CHROOT_DIR} ${MIRROR}
 
-    sudo "cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf""
+    sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
 
-    sudo "cat << EOF > \"${CHROOT_DIR}/etc/default/keyboard\""
+    sudo cat << EOF > "${CHROOT_DIR}/etc/default/keyboard"
 # KEYBOARD CONFIGURATION FILE
-
 # Consult the keyboard(5) manual page.
-
 XKBMODEL="pc105"
 XKBLAYOUT="gb"
 XKBVARIANT=""
