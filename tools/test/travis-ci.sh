@@ -33,17 +33,6 @@ function setup_arm_chroot {
 
     sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
 
-    sudo cat << EOF > "${CHROOT_DIR}/etc/default/keyboard"
-# KEYBOARD CONFIGURATION FILE
-# Consult the keyboard(5) manual page.
-XKBMODEL="pc105"
-XKBLAYOUT="gb"
-XKBVARIANT=""
-XKBOPTIONS="lv3:ralt_switch"
-
-BACKSPACE="guess"
-EOF
-
     sudo mount -o bind /proc "${CHROOT_DIR}/proc"
     sudo mount -o bind /dev "${CHROOT_DIR}/dev"
     sudo mount -o bind /dev/pts "${CHROOT_DIR}/dev/pts"
@@ -57,6 +46,11 @@ EOF
     echo "export __platform=${__platform}" >> envvars.sh
 
     sudo echo -e "echo \"en_US.UTF-8 UTF-8\" > /etc/locale.gen" >> envvars.sh
+    sudo echo -e "XKBMODEL=\"pc105\" > /etc/default/keyboard" >> envvars.sh
+    sudo echo -e "XKBLAYOUT=\"gb\" >> /etc/default/keyboard" >> envvars.sh
+    sudo echo -e "XKBVARIANT=\"\" >> /etc/default/keyboard" >> envvars.sh
+    sudo echo -e "XKBOPTIONS=\"lv3:ralt_switch\" >> /etc/default/keyboard" >> envvars.sh
+    sudo echo -e "BACKSPACE=\"guess\" >> /etc/default/keyboard" >> envvars.sh
     sudo echo "/usr/sbin/locale-gen" >> envvars.sh
 
     chmod a+x envvars.sh
@@ -88,7 +82,7 @@ if [ -e "/.chroot_is_done" ]; then
 
   # Commands used to run the tests
 
-  # emulators
+  # RetroArch as exemplary emulator
   sudo __platform=${__platform} ./retropie_packages.sh retroarch depends || return 1
   sudo __platform=${__platform} ./retropie_packages.sh retroarch install_bin || return 1
   sudo __platform=${__platform} ./retropie_packages.sh retroarch configure || return 1
