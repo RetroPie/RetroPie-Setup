@@ -33,7 +33,7 @@ function setup_arm_chroot {
 
     sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
 
-cat << EOF > "${CHROOT_DIR}/etc/resolv.conf"
+sudo cat << EOF > "${CHROOT_DIR}/etc/default/keyboard"
 # KEYBOARD CONFIGURATION FILE
 
 # Consult the keyboard(5) manual page.
