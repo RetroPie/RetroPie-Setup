@@ -89,28 +89,9 @@ if [ -e "/.chroot_is_done" ]; then
   # Commands used to run the tests
 
   # emulators
-  for (( index=100; i <= 150; index++ ))
-  do
-    sudo __platform=${__platform} ./retropie_packages.sh $index depends || return 1
-    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin || return 1
-    sudo __platform=${__platform} ./retropie_packages.sh $index configure || return 1
-  done
-
-  # RetroArch cores
-  for (( index=200; i <= 250; index++ ))
-  do
-    sudo __platform=${__platform} ./retropie_packages.sh ${index} depends || return 1
-    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin || return 1
-    sudo __platform=${__platform} ./retropie_packages.sh $index configure || return 1
-  done
-
-  # ports
-  for (( index=300; i <= 350; index++ ))
-  do
-    sudo __platform=${__platform} ./retropie_packages.sh $index depends || return 1
-    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin || return 1
-    sudo __platform=${__platform} ./retropie_packages.sh $index configure || return 1
-  done
+  sudo __platform=${__platform} ./retropie_packages.sh retroarch depends || return 1
+  sudo __platform=${__platform} ./retropie_packages.sh retroarch install_bin || return 1
+  sudo __platform=${__platform} ./retropie_packages.sh retroarch configure || return 1
 
 else
   # ARM test run, need to set up chrooted environment first
