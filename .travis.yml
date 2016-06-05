@@ -5,7 +5,6 @@ language: cpp
 compiler: gcc
 
 env:
-  - __platform=rpi1
   - __platform=rpi2
 
 before_install:
