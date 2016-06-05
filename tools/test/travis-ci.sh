@@ -12,7 +12,7 @@ CHROOT_ARCH=armhf
 HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 
 # Debian package dependencies for the chrooted environment
-GUEST_DEPENDENCIES="build-essential git m4 sudo cmake g++-4.9 gcc-4.9 python locales"
+GUEST_DEPENDENCIES="build-essential git m4 sudo cmake g++-4.9 gcc-4.9 python"
 
 function setup_arm_chroot {
     # Host dependencies
@@ -45,14 +45,6 @@ function setup_arm_chroot {
     echo "export TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR}" >> envvars.sh
     echo "export __platform=${__platform}" >> envvars.sh
 
-    sudo echo -e "echo \"en_US.UTF-8 UTF-8\" > /etc/locale.gen" >> envvars.sh
-    sudo echo -e "XKBMODEL=\"pc105\" > /etc/default/keyboard" >> envvars.sh
-    sudo echo -e "XKBLAYOUT=\"gb\" >> /etc/default/keyboard" >> envvars.sh
-    sudo echo -e "XKBVARIANT=\"\" >> /etc/default/keyboard" >> envvars.sh
-    sudo echo -e "XKBOPTIONS=\"lv3:ralt_switch\" >> /etc/default/keyboard" >> envvars.sh
-    sudo echo -e "BACKSPACE=\"guess\" >> /etc/default/keyboard" >> envvars.sh
-    sudo echo "/usr/sbin/locale-gen" >> envvars.sh
-
     chmod a+x envvars.sh
 
     # Install dependencies inside chroot
@@ -82,10 +74,15 @@ if [ -e "/.chroot_is_done" ]; then
 
   # Commands used to run the tests
 
-  # RetroArch as exemplary emulator
+  # RetroArch
   sudo __platform=${__platform} ./retropie_packages.sh retroarch depends || return 1
   sudo __platform=${__platform} ./retropie_packages.sh retroarch install_bin || return 1
   sudo __platform=${__platform} ./retropie_packages.sh retroarch configure || return 1
+
+  # EmulationStation
+  sudo __platform=${__platform} ./retropie_packages.sh emulationstation depends || return 1
+  sudo __platform=${__platform} ./retropie_packages.sh emulationstation install_bin || return 1
+  sudo __platform=${__platform} ./retropie_packages.sh emulationstation configure || return 1
 
 else
   # ARM test run, need to set up chrooted environment first
