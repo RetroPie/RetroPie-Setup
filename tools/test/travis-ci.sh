@@ -75,14 +75,14 @@ if [ -e "/.chroot_is_done" ]; then
   # Commands used to run the tests
 
   # RetroArch
-  sudo __platform=${__platform} ./retropie_packages.sh retroarch depends || return 1
-  sudo __platform=${__platform} ./retropie_packages.sh retroarch install_bin || return 1
-  sudo __platform=${__platform} ./retropie_packages.sh retroarch configure || return 1
+  sudo __platform=${__platform} ./retropie_packages.sh retroarch depends || exit 1
+  sudo __platform=${__platform} ./retropie_packages.sh retroarch install_bin || exit 1
+  sudo __platform=${__platform} ./retropie_packages.sh retroarch configure || exit 1
 
   # EmulationStation
-  sudo __platform=${__platform} ./retropie_packages.sh emulationstation depends || return 1
-  sudo __platform=${__platform} ./retropie_packages.sh emulationstation install_bin || return 1
-  sudo __platform=${__platform} ./retropie_packages.sh emulationstation configure || return 1
+  sudo __platform=${__platform} ./retropie_packages.sh emulationstation depends || exit 1
+  sudo __platform=${__platform} ./retropie_packages.sh emulationstation install_bin || exit 1
+  sudo __platform=${__platform} ./retropie_packages.sh emulationstation configure || exit 1
 
 else
   # ARM test run, need to set up chrooted environment first
