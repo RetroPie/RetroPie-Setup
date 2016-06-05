@@ -31,9 +31,9 @@ function setup_arm_chroot {
     sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
         ${VERSION} ${CHROOT_DIR} ${MIRROR}
 
-    sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
+    sudo 'cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"'
 
-sudo cat << EOF > "${CHROOT_DIR}/etc/default/keyboard"
+    sudo 'cat << EOF > "${CHROOT_DIR}/etc/default/keyboard"'
 # KEYBOARD CONFIGURATION FILE
 
 # Consult the keyboard(5) manual page.
@@ -93,25 +93,25 @@ if [ -e "/.chroot_is_done" ]; then
   # emulators
   for (( index=100; i <= 150; index++ ))
   do
-    sudo __platform=${__platform} ./retropie_packages.sh $index depends
-    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin
-    sudo __platform=${__platform} ./retropie_packages.sh $index configure
+    sudo __platform=${__platform} ./retropie_packages.sh $index depends || return 1
+    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin || return 1
+    sudo __platform=${__platform} ./retropie_packages.sh $index configure || return 1
   done
 
   # RetroArch cores
   for (( index=200; i <= 250; index++ ))
   do
-    sudo __platform=${__platform} ./retropie_packages.sh ${index} depends
-    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin
-    sudo __platform=${__platform} ./retropie_packages.sh $index configure
+    sudo __platform=${__platform} ./retropie_packages.sh ${index} depends || return 1
+    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin || return 1
+    sudo __platform=${__platform} ./retropie_packages.sh $index configure || return 1
   done
 
   # ports
   for (( index=300; i <= 350; index++ ))
   do
-    sudo __platform=${__platform} ./retropie_packages.sh $index depends
-    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin
-    sudo __platform=${__platform} ./retropie_packages.sh $index configure
+    sudo __platform=${__platform} ./retropie_packages.sh $index depends || return 1
+    sudo __platform=${__platform} ./retropie_packages.sh $index install_bin || return 1
+    sudo __platform=${__platform} ./retropie_packages.sh $index configure || return 1
   done
 
 else
