@@ -1,6 +1,6 @@
 #!/bin/bash
 # Based on a test script from avsm/ocaml repo https://github.com/avsm/ocaml
-# based on the script from https://www.tomaz.me/2013/12/02/running-travis-ci-tests-on-arm.html
+# Based on the script from https://www.tomaz.me/2013/12/02/running-travis-ci-tests-on-arm.html
 
 CHROOT_DIR=$HOME/arm-chroot
 MIRROR=http://archive.raspbian.org/raspbian
@@ -15,7 +15,7 @@ HOST_DEPENDENCIES="debootstrap qemu-user-static binfmt-support sbuild"
 GUEST_DEPENDENCIES="build-essential git m4 sudo cmake g++-4.9 gcc-4.9 python"
 
 function setup_arm_chroot {
-    # Host dependencies
+    # Install host dependencies
     sudo apt-get install -qq -y ${HOST_DEPENDENCIES}
 
     # Create chrooted environment
@@ -42,11 +42,9 @@ function setup_arm_chroot {
     echo "export ARCH=${ARCH}" > envvars.sh
     echo "export TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR}" >> envvars.sh
     echo "export __platform=${__platform}" >> envvars.sh
-
     chmod a+x envvars.sh
 
     # Install dependencies inside chroot
-    sudo chroot ${CHROOT_DIR} "echo \"deb http://archive.raspberrypi.org/debian/ ${VERSION} main\" >> /etc/apt/sources.list"
     sudo chroot ${CHROOT_DIR} apt-get update
     sudo chroot ${CHROOT_DIR} apt-get --allow-unauthenticated install -qq -y ${GUEST_DEPENDENCIES}
 
@@ -71,11 +69,6 @@ if [ -e "/.chroot_is_done" ]; then
   echo "Environment: $(uname -a)"
 
   # Commands used to run the tests
-
-  # RetroArch
-  sudo __platform=${__platform} ./retropie_packages.sh retroarch depends || exit 1
-  sudo __platform=${__platform} ./retropie_packages.sh retroarch install_bin || exit 1
-  sudo __platform=${__platform} ./retropie_packages.sh retroarch configure || exit 1
 
   # EmulationStation
   sudo __platform=${__platform} ./retropie_packages.sh emulationstation depends || exit 1
