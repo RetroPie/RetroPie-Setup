@@ -1,6 +1,10 @@
 RetroPie-Setup
 ==============
 
+| Status ||
+| --- | --- |
+| Core Components | [![Build Status](https://travis-ci.org/RetroPie/RetroPie-Setup.svg?branch=travisci-test)](https://travis-ci.org/RetroPie/RetroPie-Setup) |
+
 General Usage
 -------------
 
