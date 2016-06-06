@@ -138,10 +138,12 @@ function rp_callModule() {
     fi
 
     # these can be returned by a module
-    local md_ret_require=""
-    local md_ret_files=""
+    local md_ret_require=()
+    local md_ret_files=()
+    local md_ret_errors=()
 
     local action
+    local pushed=1
     case "$mode" in
         depends)
             if [[ "$1" == "remove" ]]; then
@@ -157,15 +159,18 @@ function rp_callModule() {
             rmDirExists "$md_build"
             mkdir -p "$md_build"
             pushd "$md_build"
+            pushed=$?
             ;;
         build)
             action="Building"
             pushd "$md_build" 2>/dev/null
+            pushed=$?
             ;;
         install)
             action="Installing"
             mkdir -p "$md_inst"
             pushd "$md_build" 2>/dev/null
+            pushed=$?
             ;;
         install_bin)
             action="Installing"
@@ -173,6 +178,7 @@ function rp_callModule() {
         configure)
             action="Configuring"
             pushd "$md_inst" 2>/dev/null
+            pushed=$?
             ;;
         remove)
             action="Removing"
@@ -181,8 +187,6 @@ function rp_callModule() {
             action="Running action '$mode' for"
             ;;
     esac
-    local pushed=$?
-    local md_ret_errors=()
 
     # print an action and a description
     printHeading "$action '$md_id' : $md_desc"
@@ -193,8 +197,8 @@ function rp_callModule() {
             md_mode="remove"
             if fnExists "configure_${md_id}"; then
                 pushd "$md_inst" 2>/dev/null
+                pushed=$?
                 "configure_${md_id}" remove
-                popd >/dev/null
             fi
             rm -rvf "$md_inst"
             ;;
@@ -257,11 +261,7 @@ function rp_callModule() {
     # remove build folder if empty
     [[ -d "$md_build" ]] && find "$md_build" -maxdepth 0 -empty -exec rmdir {} \;
 
-    case "$mode" in
-        sources|build|install|configure)
-            [[ $pushed -ne 1 ]] && popd
-            ;;
-    esac
+    [[ "$pushed" -eq 0 ]] && popd
 
     if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
         # remove install folder if there is an error
