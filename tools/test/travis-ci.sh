@@ -22,8 +22,6 @@ function setup_arm_chroot {
     sudo mkdir -p ${CHROOT_DIR}
     pushd /usr/share/debootstrap/scripts; sudo ln -s sid jessie; popd
 
-    export QEMU_CPU=cortex-a15
-
     sudo debootstrap --foreign --no-check-gpg --include=fakeroot,build-essential --arch=${CHROOT_ARCH} ${VERSION} ${CHROOT_DIR} ${MIRROR}
     sudo cp /usr/bin/qemu-arm-static ${CHROOT_DIR}/usr/bin/
     sudo chroot ${CHROOT_DIR} ./debootstrap/debootstrap --second-stage
@@ -39,8 +37,7 @@ function setup_arm_chroot {
 
     # Create file with environment variables which will be used inside chrooted
     # environment
-    echo "export ARCH=${ARCH}" > envvars.sh
-    echo "export TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR}" >> envvars.sh
+    echo "export TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR}" > envvars.sh
     echo "export __platform=${__platform}" >> envvars.sh
     chmod a+x envvars.sh
 
@@ -69,6 +66,11 @@ if [ -e "/.chroot_is_done" ]; then
   echo "Environment: $(uname -a)"
 
   # Commands used to run the tests
+
+  # RetroArch
+  sudo __platform=${__platform} ./retropie_packages.sh retroarch depends || exit 1
+  sudo __platform=${__platform} ./retropie_packages.sh retroarch install_bin || exit 1
+  sudo __platform=${__platform} ./retropie_packages.sh retroarch configure || exit 1
 
   # EmulationStation
   sudo __platform=${__platform} ./retropie_packages.sh emulationstation depends || exit 1
