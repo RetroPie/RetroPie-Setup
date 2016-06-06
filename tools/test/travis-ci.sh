@@ -24,12 +24,10 @@ function setup_arm_chroot {
 
     export QEMU_CPU=cortex-a15
 
-    sudo debootstrap --foreign --no-check-gpg --include=fakeroot,build-essential \
-        --arch=${CHROOT_ARCH} ${VERSION} ${CHROOT_DIR} ${MIRROR}
+    sudo debootstrap --foreign --no-check-gpg --include=fakeroot,build-essential --arch=${CHROOT_ARCH} ${VERSION} ${CHROOT_DIR} ${MIRROR}
     sudo cp /usr/bin/qemu-arm-static ${CHROOT_DIR}/usr/bin/
     sudo chroot ${CHROOT_DIR} ./debootstrap/debootstrap --second-stage
-    sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only \
-        ${VERSION} ${CHROOT_DIR} ${MIRROR}
+    sudo sbuild-createchroot --arch=${CHROOT_ARCH} --foreign --setup-only ${VERSION} ${CHROOT_DIR} ${MIRROR}
 
     sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
 
@@ -48,10 +46,9 @@ function setup_arm_chroot {
     chmod a+x envvars.sh
 
     # Install dependencies inside chroot
-    sudo chroot ${CHROOT_DIR} echo "deb http://archive.raspberrypi.org/debian/ ${VERSION} main" >> /etc/apt/sources.list
+    sudo chroot ${CHROOT_DIR} "echo \"deb http://archive.raspberrypi.org/debian/ ${VERSION} main\" >> /etc/apt/sources.list"
     sudo chroot ${CHROOT_DIR} apt-get update
-    sudo chroot ${CHROOT_DIR} apt-get --allow-unauthenticated install \
-        -qq -y ${GUEST_DEPENDENCIES}
+    sudo chroot ${CHROOT_DIR} apt-get --allow-unauthenticated install -qq -y ${GUEST_DEPENDENCIES}
 
     # Create build dir and copy travis build files to our chroot environment
     sudo mkdir -p ${CHROOT_DIR}/${TRAVIS_BUILD_DIR}
