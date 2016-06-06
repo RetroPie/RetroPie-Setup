@@ -19,6 +19,13 @@ function depends_builder() {
 
 function module_builder() {
     local id="$1"
+
+    if [[ "$id" =~ ^[0-9]+$ ]]; then
+        id="${__mod_id[$id]}"
+    fi
+
+    ! fnExists "install_$id" && return
+
     rp_callModule "$id" remove
     for mode in depends sources build install clean; do
         rp_callModule "$id" "$mode"
