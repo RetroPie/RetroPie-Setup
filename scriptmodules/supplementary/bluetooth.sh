@@ -213,6 +213,38 @@ function connect_bluetooth() {
     return 1
 }
 
+function udev_rule_bluetooth() {
+    local mac_addresses=()
+    local mac_address
+    local device_names=()
+    local device_name
+    local options=()
+    local i=1
+    while read mac_address; read device_name; do
+        mac_addresses+=("$mac_address")
+        device_names+=("$device_name")
+        options+=("$i" "$device_name")
+        ((i++))
+    done < <(list_registered_bluetooth)
+
+    if [[ ${#mac_addresses[@]} -eq 0 ]] ; then
+        printMsgs "dialog" "There are no registered bluetooth devices."
+    else
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the bluetooth device you would like to create a udev rule for" 22 76 16)
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        [[ -z "$choice" ]] && return
+        device_name="${device_names[choice-1]}"
+        local config="/etc/udev/rules.d/99-bluetooth.rules"
+        if ! grep -q "$device_name" "$config"; then
+            local line="SUBSYSTEM==\"input\", ATTRS{name}==\"$device_name\", MODE=\"0666\", ENV{ID_INPUT_JOYSTICK}=\"1\""
+            addLineToFile "$line" "$config"
+            printMsgs "dialog" "Added $line to $config\n\nPlease reboot for the configuration to take effect."
+        else
+            printMsgs "dialog" "An entry already exists for $device_name in $config"
+        fi
+    fi
+}
+
 function configure_bluetooth() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Devices" 22 76 16)
@@ -220,6 +252,7 @@ function configure_bluetooth() {
             1 "Register and Connect to Bluetooth Device"
             2 "Unregister and Remove Bluetooth Device"
             3 "Display Registered & Connected Bluetooth Devices"
+            4 "Set up udev rule for Joypad (required for joypads from 8Bitdo)"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -232,6 +265,9 @@ function configure_bluetooth() {
                     ;;
                 3)
                     display_active_and_registered_bluetooth
+                    ;;
+                4)
+                    udev_rule_bluetooth
                     ;;
             esac
         else
