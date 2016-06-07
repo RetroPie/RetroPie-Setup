@@ -19,7 +19,7 @@ function depends_sdltrs() {
 }
 
 function sources_sdltrs() {
-    gitPullOrClone "$md_build" https://github.com/HerbFargus/sdltrs.git
+    gitPullOrClone "$md_build" https://github.com/RetroPie/sdltrs.git
 }
 
 function build_sdltrs() {
@@ -47,7 +47,7 @@ function configure_sdltrs() {
 
 
     addSystem 1 "$md_id-sdltrs-model1" "trs-80" "$md_inst/sdltrs -model 1 -romfile $biosdir/level2.rom  -showled -diskdir \"$romdir/trs-80\" -disk0 %ROM%" "trs-80" ".dsk"
-   addSystem 0 "$md_id-sdltrs-model3" "trs-80" "$md_inst/sdltrs -model 3 -romfile3 $biosdir/level3.rom  -showled -diskdir \"$romdir/trs-80\" -disk0 %ROM%" "trs-80" ".dsk"
+    addSystem 0 "$md_id-sdltrs-model3" "trs-80" "$md_inst/sdltrs -model 3 -romfile3 $biosdir/level3.rom  -showled -diskdir \"$romdir/trs-80\" -disk0 %ROM%" "trs-80" ".dsk"
     addSystem 0 "$md_id-sdltrs-model4" "trs-80" "$md_inst/sdltrs -model 4 -romfile3 $biosdir/level4.rom  -showled -diskdir \"$romdir/trs-80\" -disk0 %ROM%" "trs-80" ".dsk"
     addSystem 0 "$md_id-sdltrs-model4" "trs-80" "$md_inst/sdltrs -model 4p -romfile4p $biosdir/level4p.rom  -showled -diskdir \"$romdir/trs-80\" -disk0 %ROM%" "trs-80" ".dsk"
     
