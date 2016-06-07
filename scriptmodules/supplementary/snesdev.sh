@@ -11,8 +11,7 @@
 
 rp_module_id="snesdev"
 rp_module_desc="SNESDev (Driver for the RetroPie GPIO-Adapter)"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="driver"
 
 function sources_snesdev() {
     gitPullOrClone "$md_build" https://github.com/petrockblog/SNESDev-RPi.git
@@ -88,7 +87,7 @@ function sup_snesdevAdapterversion() {
     fi
 }
 
-function configure_snesdev() {
+function gui_snesdev() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     options=(
         1 "Disable SNESDev on boot and SNESDev keyboard mapping."

@@ -11,7 +11,7 @@
 
 rp_module_id="lr-fceumm"
 rp_module_desc="NES emu - FCEUmm port for libretro"
-rp_module_menus="2+"
+rp_module_section="main"
 
 function sources_lr-fceumm() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-fceumm.git

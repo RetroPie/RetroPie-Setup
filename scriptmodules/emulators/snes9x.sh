@@ -11,7 +11,7 @@
 
 rp_module_id="snes9x"
 rp_module_desc="SNES emulator SNES9X-RPi"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="dispmanx !x86 !mali"
 
 function depends_snes9x() {

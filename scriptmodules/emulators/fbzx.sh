@@ -11,7 +11,7 @@
 
 rp_module_id="fbzx"
 rp_module_desc="ZXSpectrum emulator FBZX"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_fbzx() {

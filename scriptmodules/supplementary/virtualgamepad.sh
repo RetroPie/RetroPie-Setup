@@ -11,7 +11,7 @@
 
 rp_module_id="virtualgamepad"
 rp_module_desc="Virtual Gamepad for Smartphone"
-rp_module_menus="4+"
+rp_module_section="exp"
 
 function install_virtualgamepad() {
     wget http://node-arm.herokuapp.com/node_archive_armhf.deb

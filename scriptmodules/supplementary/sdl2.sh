@@ -11,8 +11,8 @@
 
 rp_module_id="sdl2"
 rp_module_desc="SDL (Simple DirectMedia Layer) v2.x"
-rp_module_menus=""
-rp_module_flags="nobin !x86"
+rp_module_section=""
+rp_module_flags="!x86"
 
 function get_ver_sdl2() {
     local ver="2.0.4+3"

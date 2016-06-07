@@ -11,7 +11,7 @@
 
 rp_module_id="emulationstation-kids"
 rp_module_desc="EmulationStation with additional UI modes (kids / kiosk)"
-rp_module_menus="4+"
+rp_module_section="exp"
 
 function depends_emulationstation-kids() {
     depends_emulationstation

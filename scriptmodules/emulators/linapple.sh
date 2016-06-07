@@ -11,7 +11,7 @@
 
 rp_module_id="linapple"
 rp_module_desc="Apple 2 emulator LinApple"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_linapple() {

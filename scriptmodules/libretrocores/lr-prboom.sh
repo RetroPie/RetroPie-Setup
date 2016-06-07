@@ -11,7 +11,7 @@
 
 rp_module_id="lr-prboom"
 rp_module_desc="Doom/Doom II engine - PrBoom port for libretro"
-rp_module_menus="2+"
+rp_module_section="opt"
 
 function sources_lr-prboom() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-prboom.git

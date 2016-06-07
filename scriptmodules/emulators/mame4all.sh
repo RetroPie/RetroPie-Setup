@@ -11,7 +11,7 @@
 
 rp_module_id="mame4all"
 rp_module_desc="MAME emulator MAME4All-Pi"
-rp_module_menus="2+"
+rp_module_section="main"
 rp_module_flags="!x86 !mali"
 
 function depends_mame4all() {

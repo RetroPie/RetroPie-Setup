@@ -11,7 +11,7 @@
 
 rp_module_id="xboxdrv"
 rp_module_desc="Xbox / Xbox 360 gamepad driver"
-rp_module_menus="3+gui"
+rp_module_section="driver"
 
 function def_controllers_xboxdrv() {
     echo "2"

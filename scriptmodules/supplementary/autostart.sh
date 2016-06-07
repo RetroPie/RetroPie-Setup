@@ -11,8 +11,7 @@
 
 rp_module_id="autostart"
 rp_module_desc="Auto-start EmulationStation"
-rp_module_menus="3+gui"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function enable_autostart() {
     if isPlatform x11; then

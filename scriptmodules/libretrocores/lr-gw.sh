@@ -11,7 +11,7 @@
 
 rp_module_id="lr-gw"
 rp_module_desc="Game and Watch simulator"
-rp_module_menus="4+"
+rp_module_section="opt"
 
 function sources_lr-gw() {
     gitPullOrClone "$md_build" https://github.com/libretro/gw-libretro.git

@@ -11,7 +11,7 @@
 
 rp_module_id="lr-mess"
 rp_module_desc="MESS emulator - MESS Port for libretro"
-rp_module_menus="4+"
+rp_module_section="exp"
 
 function sources_lr-mess() {
     gitPullOrClone "$md_build" https://github.com/libretro/MAME.git

@@ -11,7 +11,7 @@
 
 rp_module_id="atari800"
 rp_module_desc="Atari 8-bit/800/5200 emulator"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_atari800() {

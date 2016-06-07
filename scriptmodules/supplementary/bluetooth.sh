@@ -11,8 +11,7 @@
 
 rp_module_id="bluetooth"
 rp_module_desc="Configure Bluetooth Devices"
-rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function depends_bluetooth() {
     local depends=(bluetooth python-dbus python-gobject)
@@ -245,7 +244,7 @@ function udev_rule_bluetooth() {
     fi
 }
 
-function configure_bluetooth() {
+function gui_bluetooth() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Devices" 22 76 16)
         local options=(

@@ -11,7 +11,7 @@
 
 rp_module_id="lr-mame"
 rp_module_desc="MAME emulator - MAME (current) port for libretro"
-rp_module_menus="4+"
+rp_module_section="exp"
 
 function sources_lr-mame() {
     gitPullOrClone "$md_build" https://github.com/libretro/MAME.git

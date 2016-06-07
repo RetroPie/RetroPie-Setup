@@ -11,8 +11,7 @@
 
 rp_module_id="lr-fba-next"
 rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.38) port for libretro"
-rp_module_menus="2+"
-rp_module_flags=""
+rp_module_section="main"
 
 function depends_lr-fba-next() {
     [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8

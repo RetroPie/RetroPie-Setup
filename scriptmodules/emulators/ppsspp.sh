@@ -11,7 +11,7 @@
 
 rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="!armv6 !mali"
 
 function depends_ppsspp() {

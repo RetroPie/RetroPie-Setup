@@ -11,14 +11,13 @@
 
 rp_module_id="retropiemenu"
 rp_module_desc="RetroPie configuration menu for EmulationStation"
-rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_section="core"
 
 function depends_retropiemenu() {
     getDepends mc
 }
 
-function configure_retropiemenu()
+function install_bin_retropiemenu()
 {
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
@@ -59,6 +58,11 @@ function configure_retropiemenu()
     chown -RL $user:$user "$home/.emulationstation"
 
     setESSystem "RetroPie" "retropie" "~/RetroPie/retropiemenu" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
+}
+
+function remove_retropiemenu() {
+    rm -rf "$home/RetroPie/retropiemenu"
+    delSystem "" retropie
 }
 
 function launch_retropiemenu() {

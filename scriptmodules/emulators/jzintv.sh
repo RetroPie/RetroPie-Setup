@@ -11,7 +11,7 @@
 
 rp_module_id="jzintv"
 rp_module_desc="Intellivision emulator"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_jzintv() {

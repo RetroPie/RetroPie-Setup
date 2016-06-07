@@ -11,14 +11,13 @@
 
 rp_module_id="raspbiantools"
 rp_module_desc="Raspbian related tools"
-rp_module_menus="3+"
-rp_module_flags="nobin !x86 !mali"
+rp_module_section="config"
+rp_module_flags="!x86 !mali"
 
 function apt_upgrade_raspbiantools() {
     aptUpdate
     apt-get -y dist-upgrade
 }
-
 
 function lxde_raspbiantools() {
     aptInstall lxde xorg raspberrypi-ui-mods epiphany-browser
@@ -58,7 +57,7 @@ function enable_modules_raspbiantools() {
     done
 }
 
-function configure_raspbiantools() {
+function gui_raspbiantools() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(

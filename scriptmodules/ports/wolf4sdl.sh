@@ -11,7 +11,7 @@
 
 rp_module_id="wolf4sdl"
 rp_module_desc="Wolf4SDL - port of Wolfenstein 3D / Spear of Destiny engine"
-rp_module_menus="4+"
+rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_wolf4sdl() {

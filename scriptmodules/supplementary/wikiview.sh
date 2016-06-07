@@ -11,8 +11,7 @@
 
 rp_module_id="wikiview"
 rp_module_desc="RetroPie-Setup Wiki Viewer"
-rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function depends_wikiview() {
     getDepends pandoc lynx-cur
@@ -39,7 +38,7 @@ function choose_wikipage_wikiview() {
     fi
 }
 
-function configure_wikiview() {
+function gui_wikiview() {
     local wikidir="$rootdir/RetroPie-Setup.wiki"
     __joy2key_pid=$(pgrep -f joy2key.py)
     __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)

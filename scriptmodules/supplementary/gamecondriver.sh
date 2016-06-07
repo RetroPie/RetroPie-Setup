@@ -11,8 +11,8 @@
 
 rp_module_id="gamecondriver"
 rp_module_desc="Gamecon & db9 drivers"
-rp_module_menus="3+"
-rp_module_flags="nobin !x86 !mali"
+rp_module_section="driver"
+rp_module_flags="!x86 !mali"
 
 function depends_gamecondriver() {
     # remove any old kernel headers for current kernel
@@ -23,7 +23,7 @@ function depends_gamecondriver() {
     getDepends dkms raspberrypi-kernel-headers
 }
 
-function install_gamecondriver() {
+function install_bin_gamecondriver() {
     local GAMECON_VER="1.2"
     local DB9_VER="1.0"
     local DOWNLOAD_LOC="https://www.niksula.hut.fi/~mhiienka/Rpi"
@@ -33,7 +33,7 @@ function install_gamecondriver() {
     dialog \
         --title "GPIO gamepad drivers installation" --clear \
         --yesno "GPIO gamepad drivers require that most recent kernel (firmware) is installed and active. Continue with installation?" \
-        22 76 >/dev/tty || return 0
+        22 76 >/dev/tty || return 1
 
     clear
     printMsgs "console" "Starting installation."
@@ -64,7 +64,7 @@ function install_gamecondriver() {
         fi
     else
         printMsgs "dialog" "Gamecon GPIO driver installation FAILED"
-        return 0
+        return 1
     fi
 
     # test if db9 installation is OK
@@ -75,11 +75,11 @@ function install_gamecondriver() {
         fi
     else
         printMsgs "dialog" "Db9 GPIO driver installation FAILED"
-        return 0
+        return 1
     fi
 }
 
-function configure_gamecondriver() {
+function gui_gamecondriver() {
     ! hasPackage gamecon-gpio-rpi-dkms && return 0
 
     dialog \

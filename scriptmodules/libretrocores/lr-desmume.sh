@@ -11,8 +11,7 @@
 
 rp_module_id="lr-desmume"
 rp_module_desc="NDS emu - DESMUME"
-rp_module_menus="4+"
-rp_module_flags=""
+rp_module_section="exp"
 
 function sources_lr-desmume() {
     gitPullOrClone "$md_build" https://github.com/libretro/desmume.git

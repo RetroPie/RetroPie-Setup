@@ -11,8 +11,7 @@
 
 rp_module_id="esthemes"
 rp_module_desc="Install themes for Emulation Station"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function depends_esthemes() {
     if isPlatform "x11"; then
@@ -45,7 +44,7 @@ function uninstall_theme_esthemes() {
     fi
 }
 
-function configure_esthemes() {
+function gui_esthemes() {
     printMsgs "dialog" "If you wish to run more than ~10 systems on themes other than Carbon, Pixel, Eudora, Turtle-pi, and Canela variants, you run the risk of getting the white screen of death (you may be able to get more systems by increasing your GPU/CPU split)."
     local themes=(
         'RetroPie carbon'

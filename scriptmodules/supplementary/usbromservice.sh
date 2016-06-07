@@ -11,8 +11,7 @@
 
 rp_module_id="usbromservice"
 rp_module_desc="USB ROM Service"
-rp_module_menus="3+gui"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function depends_usbromservice() {
     local depends=(rsync ntfs-3g)

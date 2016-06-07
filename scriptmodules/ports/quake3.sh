@@ -11,7 +11,7 @@
 
 rp_module_id="quake3"
 rp_module_desc="Quake 3"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="!x86 !mali"
 
 function depends_quake3() {

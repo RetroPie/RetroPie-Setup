@@ -11,7 +11,7 @@
 
 rp_module_id="lr-reicast"
 rp_module_desc="Dremcast emu - Reicast port for libretro"
-rp_module_menus="4+"
+rp_module_section="exp"
 rp_module_flags="!arm"
 
 function sources_lr-reicast() {

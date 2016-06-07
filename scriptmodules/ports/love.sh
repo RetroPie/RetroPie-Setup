@@ -11,8 +11,7 @@
 
 rp_module_id="love"
 rp_module_desc="Love - 2d Game Engine"
-rp_module_menus="4+"
-rp_module_flags=""
+rp_module_section="opt"
 
 function depends_love() {
     local depends=(mercurial autotools-dev automake libtool pkg-config libdevil-dev libfreetype6-dev libluajit-5.1-dev libphysfs-dev libsdl2-dev libopenal-dev libogg-dev libtheora-dev libvorbis-dev libflac-dev libflac++-dev libmodplug-dev libmpg123-dev libmng-dev)

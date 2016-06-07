@@ -11,8 +11,12 @@
 
 rp_module_id="advmame"
 rp_module_desc="AdvanceMAME"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="!mali"
+
+function _get_vers_advmame() {
+    echo 0.94.0 1.4
+}
 
 function depends_advmame() {
     getDepends libsdl1.2-dev
@@ -20,7 +24,7 @@ function depends_advmame() {
 
 function sources_advmame() {
     local version
-    for version in 0.94.0 1.4; do
+    for version in $(_get_vers_advmame); do
         mkdir -p "$version"
         pushd "$version"
         wget -O- -q "$__archive_url/advancemame-$version.tar.gz" | tar -xvz --strip-components=1
@@ -139,7 +143,7 @@ _EOF_
 
 function build_advmame() {
     local version
-    for version in *; do
+    for version in $(_get_vers_advmame); do
         pushd "$version"
         ./configure CFLAGS="$CFLAGS -fsigned-char" LDFLAGS="-s -lm -Wl,--no-as-needed" --prefix="$md_inst/$version"
         make clean
@@ -150,7 +154,7 @@ function build_advmame() {
 
 function install_advmame() {
     local version
-    for version in *; do
+    for version in $(_get_vers_advmame); do
         pushd "$version"
         make install
         popd
@@ -168,7 +172,7 @@ function configure_advmame() {
 
     local version
     local default
-    for version in *; do
+    for version in $(_get_vers_advmame); do
         [[ -f "$md_conf_root/mame-advmame/advmame-$version.rc" ]] && continue
         su "$user" -c "$md_inst/$version/bin/advmame --default"
 

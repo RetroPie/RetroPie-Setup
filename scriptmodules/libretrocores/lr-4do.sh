@@ -11,7 +11,7 @@
 
 rp_module_id="lr-4do"
 rp_module_desc="3DO emu - 4DO/libfreedo port for libretro"
-rp_module_menus="4+"
+rp_module_section="exp"
 
 function sources_lr-4do() {
     gitPullOrClone "$md_build" https://github.com/libretro/4do-libretro.git

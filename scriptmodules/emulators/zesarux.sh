@@ -11,7 +11,7 @@
 
 rp_module_id="zesarux"
 rp_module_desc="ZX Spectrum emulator ZEsarUX"
-rp_module_menus="4+"
+rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_zesarux() {

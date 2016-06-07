@@ -11,7 +11,7 @@
 
 rp_module_id="smw"
 rp_module_desc="Super Mario War"
-rp_module_menus="2+"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_smw() {

@@ -29,7 +29,8 @@ function setup_env() {
     fi
 
     # set location of binary downloads
-    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://files.retropie.org.uk/binaries/$__raspbian_name/$__platform"
+    __binary_host="files.retropie.org.uk"
+    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://$__binary_host/binaries/$__raspbian_name/$__platform"
 
     __archive_url="http://files.retropie.org.uk/archives"
 

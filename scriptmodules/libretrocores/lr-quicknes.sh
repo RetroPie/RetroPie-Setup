@@ -11,7 +11,7 @@
 
 rp_module_id="lr-quicknes"
 rp_module_desc="NES emulator - QuickNES Port for libretro"
-rp_module_menus="4+"
+rp_module_section="opt"
 
 function sources_lr-quicknes() {
     gitPullOrClone "$md_build" https://github.com/libretro/QuickNES_Core.git

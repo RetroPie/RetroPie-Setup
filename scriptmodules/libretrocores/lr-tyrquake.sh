@@ -11,7 +11,7 @@
 
 rp_module_id="lr-tyrquake"
 rp_module_desc="Quake 1 engine - Tyrquake port for libretro"
-rp_module_menus="2+"
+rp_module_section="opt"
 
 function depends_lr-tyrquake() {
     getDepends lhasa

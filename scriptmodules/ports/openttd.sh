@@ -11,10 +11,10 @@
  
 rp_module_id="openttd"
 rp_module_desc="Open Source Simulator Based On Transport Tycoon Deluxe"
-rp_module_menus="4+"
-rp_module_flags="nobin !mali"
+rp_module_section="opt"
+rp_module_flags="!mali"
  
-function install_openttd() {
+function install_bin_openttd() {
     aptInstall openttd
 }
  

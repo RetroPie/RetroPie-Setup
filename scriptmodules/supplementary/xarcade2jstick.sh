@@ -11,8 +11,7 @@
 
 rp_module_id="xarcade2jstick"
 rp_module_desc="Xarcade2Jstick"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="driver"
 
 function sources_xarcade2jstick() {
     gitPullOrClone "$md_inst" https://github.com/petrockblog/Xarcade2Joystick.git
@@ -36,7 +35,7 @@ function sup_checkInstallXarcade2Jstick() {
     fi
 }
 
-function configure_xarcade2jstick() {
+function gui_xarcade2jstick() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     options=(
         1 "Disable Xarcade2Jstick service."
