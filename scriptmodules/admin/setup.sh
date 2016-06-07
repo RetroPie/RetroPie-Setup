@@ -363,11 +363,10 @@ function reboot_setup()
 function gui_setup() {
     while true; do
         pushd "$scriptdir" >/dev/null
-        local ver=$(git describe --abbrev=0 --tags --first-parent)
         local commit=$(git log -1 --pretty=format:"%cr (%h)")
         popd >/dev/null
 
-        cmd=(dialog --backtitle "$__backtitle" --title "Choose an option" --cancel-label "Exit" --menu "Script Version: $ver\nLast Commit: $commit" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --title "Choose an option" --cancel-label "Exit" --menu "Script Version: $__version\nLast Commit: $commit" 22 76 16)
         options=(
             P "Manage Packages"
             S "Setup / Tools"
