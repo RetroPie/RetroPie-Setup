@@ -35,8 +35,21 @@ function build_uqm() {
 }
  
 function install_uqm() {
+    cp -v *.deb "$md_inst"
     # uqm is missing on raspbian jessie
     if hasPackage raspberrypi-bootloader; then
+        dpkg -i *.deb
+        aptInstall uqm-content uqm-music uqm-voice
+    else
+        aptInstall uqm uqm-content uqm-music uqm-voice
+    fi
+}
+
+function install_bin_uqm() {
+    rp_installBin
+    # uqm is missing on raspbian jessie
+    if hasPackage raspberrypi-bootloader; then
+        cd "$md_inst"
         dpkg -i *.deb
         aptInstall uqm-content uqm-music uqm-voice
     else
