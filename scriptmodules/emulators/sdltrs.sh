@@ -11,7 +11,7 @@
 
 rp_module_id="sdltrs"
 rp_module_desc="Radio Shack TRS-80 Model I/III/4/4P emulator"
-rp_module_section="opt"
+rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
 function depends_sdltrs() {
