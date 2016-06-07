@@ -716,7 +716,7 @@ function delSystem() {
     local system="$2"
     local config="$md_conf_root/$system/emulators.cfg"
     # remove from apps list for system
-    if [[ -f "$config" ]]; then
+    if [[ -f "$config" && -n "$id" ]]; then
         # delete emulator entry
         iniConfig "=" '"' "$config"
         iniDel "$id"

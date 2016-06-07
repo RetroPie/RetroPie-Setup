@@ -60,6 +60,11 @@ function install_bin_retropiemenu()
     setESSystem "RetroPie" "retropie" "~/RetroPie/retropiemenu" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
 }
 
+function remove_retropiemenu() {
+    rm -rf "$home/RetroPie/retropiemenu"
+    delSystem "" retropie
+}
+
 function launch_retropiemenu() {
     clear
     local command="$1"
