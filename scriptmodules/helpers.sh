@@ -486,7 +486,6 @@ function iniFileEditor() {
 
         # re-add the include line(s)
         if [[ -n "$include" ]]; then
-            echo "" >>"$config"
             echo "$include" >>"$config"
         fi
 
