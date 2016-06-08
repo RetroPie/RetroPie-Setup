@@ -19,7 +19,7 @@ function sources_lr-dinothawr() {
 
 function build_lr-dinothawr() {
     make clean
-    make
+    make DEBUG=1
     md_ret_require="$md_build/dinothawr_libretro.so"
 }
 
@@ -44,5 +44,3 @@ function configure_lr-dinothawr() {
     chown $user:$user -R "$romdir/ports/dinothawr/"
 
 }
-
-
