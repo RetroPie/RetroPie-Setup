@@ -82,8 +82,10 @@ function scrape_scraper() {
     else
         params+=(-use_ovgdb)
     fi
-    if [[ "$use_nointro_name" -eq 0 ]]; then
+    if [[ "$rom_name" -eq 1 ]]; then
         params+=(-use_nointro_name=false)
+    elif [[ "$rom_name" -eq 2 ]]; then
+        params+=(-use_filename=true)
     fi
     if [[ "$append_only" -eq 1 ]]; then
         params+=(-append)
@@ -142,7 +144,7 @@ function gui_scraper() {
     local use_thumbs=1
     local max_width=400
     local use_gdb_scraper=1
-    local use_nointro_name=1
+    local rom_name=0
     local append_only=0
 
     while true; do
@@ -168,10 +170,12 @@ function gui_scraper() {
             options+=(5 "Scraper (OpenVGDB)")
         fi
         
-        if [[ "$use_nointro_name" -eq 1 ]]; then
+        if [[ "$rom_name" -eq 0 ]]; then
             options+=(6 "ROM Names (No-Intro)")
-        else
+        elif [[ "$rom_name" -eq 1 ]]; then
             options+=(6 "ROM Names (theGamesDB)")
+        else
+            options+=(6 "ROM Names (Filename)")
         fi
 
         if [[ "$append_only" -eq 1 ]]; then
@@ -203,7 +207,7 @@ function gui_scraper() {
                     use_gdb_scraper="$((use_gdb_scraper ^ 1))"
                     ;;
                 6)
-                    use_nointro_name="$((use_nointro_name ^ 1))"
+                    rom_name="$((( rom_name + 1 ) % 3))"
                     ;;
                 7)
                     append_only="$((append_only ^ 1))"
