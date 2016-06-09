@@ -338,6 +338,10 @@ function packages_gui_setup() {
         local choice
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
+        if [[ "${choice[@]:0:4}" == "HELP" ]]; then
+            printMsgs "dialog" "${choice[@]:5}"
+            continue
+        fi
         case "$choice" in
             I)
                 dialog --defaultno --yesno "Are you sure you want to do a quick install?" 22 76 2>&1 >/dev/tty || continue
