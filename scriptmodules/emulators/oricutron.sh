@@ -12,7 +12,6 @@
 rp_module_id="oricutron"
 rp_module_desc="Oricutron Oric 1/Oric Atmos emulator"
 rp_module_section="exp"
-rp_module_flags="dispmanx"
 
 function depends_oricutron() {
     local depends=(cmake libsdl2-dev)
