@@ -164,7 +164,7 @@ function package_setup() {
     done
 }
 
-function section_setup() {
+function section_gui_setup() {
     local section="$1"
 
     while true; do
@@ -241,7 +241,7 @@ function section_setup() {
     done
 }
 
-function settings_setup() {
+function settings_gui_setup() {
     while true; do
         local options=()
         local idx
@@ -279,12 +279,21 @@ function settings_setup() {
 }
 
 function update_packages_setup() {
+    local idx
+    for idx in ${__mod_idx[@]}; do
+        if rp_isInstalled "$idx"; then
+            rp_installModule "$idx"
+        fi
+    done
+}
+
+function update_packages_gui_setup() {
     local update="$1"
     if [[ "$update" != "update" ]]; then
         dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
-        if dialog --defaultno --yesno "It is advisable to update the RetroPie-Setup script before updating packages - may I do this now ?" 22 76 2>&1 >/dev/tty; then
+        if dialog --yesno "It is advisable to update the RetroPie-Setup script before updating packages - may I do this now ?" 22 76 2>&1 >/dev/tty; then
             updatescript_setup
-            exec "$scriptdir/retropie_packages.sh" setup update_packages update
+            exec "$scriptdir/retropie_packages.sh" setup update_packages_gui update
         fi
     fi
 
@@ -293,17 +302,13 @@ function update_packages_setup() {
     __INFMSGS=()
     rps_logInit
     {
-        for idx in ${__mod_idx[@]}; do
-            if rp_isInstalled "$idx"; then
-                rp_installModule "$idx"
-            fi
-        done
+        update_packages_setup
     } &> >(tee >(gzip --stdout >"$logfilename"))
 
     rps_printInfo "$logfilename"
 }
 
-function packages_setup() {
+function packages_gui_setup() {
     local section
     local options=()
 
@@ -322,10 +327,10 @@ function packages_setup() {
         [[ -z "$choice" ]] && break
         case "$choice" in
             U)
-                update_packages_setup
+                update_packages_gui_setup
                 ;;
             *)
-                section_setup "$choice"
+                section_gui_setup "$choice"
                 ;;
         esac
 
@@ -392,10 +397,10 @@ function gui_setup() {
             clear
             case "$choice" in
                 P)
-                    packages_setup
+                    packages_gui_setup
                     ;;
                 S)
-                    settings_setup
+                    settings_gui_setup
                     ;;
                 X)
                     uninstall_setup
