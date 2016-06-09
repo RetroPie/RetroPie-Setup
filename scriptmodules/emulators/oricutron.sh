@@ -48,8 +48,6 @@ function configure_oricutron() {
     # copy demo disks
     cp -v "$md_inst/disks/"* "$romdir/oric/"
     chown -R $user:$user "$romdir/oric"
-
-    setDispmanx "$md_id-atmos-sdl1" 1
     
     local machine
     local default
