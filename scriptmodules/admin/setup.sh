@@ -427,6 +427,7 @@ function gui_setup() {
                     exec "$scriptdir/retropie_packages.sh" setup gui
                     ;;
                 R)
+                    dialog --defaultno --yesno "Are you sure you want to reboot?" 22 76 2>&1 >/dev/tty || continue
                     reboot_setup
                     ;;
             esac
