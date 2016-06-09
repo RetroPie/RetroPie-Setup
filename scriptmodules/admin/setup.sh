@@ -378,7 +378,7 @@ function gui_setup() {
             "Uninstall RetroPie completely."
 
             U "Update RetroPie-Setup script"
-            "Update this RetroPie-Setup script."
+            "Update this RetroPie-Setup script. Note that RetroPie-Setup is constantly updated - the version numbers were introduced primarily for the pre-made images we provided, but we now display a version in this menu as a guide. If you update the RetroPie-Setup script after downloading a pre-made image, you may get a higher version number or a -dev release. This does not mean the software is unstable, it just means we are working on changes for the next version, when we will create a new image."
 
             R "Perform Reboot"
             "Reboot your machine."
