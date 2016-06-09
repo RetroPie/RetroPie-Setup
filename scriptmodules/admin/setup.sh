@@ -385,6 +385,10 @@ function gui_setup() {
         )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
+            if [[ "${choice[@]:0:4}" == "HELP" ]]; then
+                printMsgs "dialog" "${choice[@]:5}"
+                continue
+            fi
             clear
             case "$choice" in
                 P)
