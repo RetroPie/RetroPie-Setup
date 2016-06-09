@@ -366,13 +366,22 @@ function gui_setup() {
         local commit=$(git log -1 --pretty=format:"%cr (%h)")
         popd >/dev/null
 
-        cmd=(dialog --backtitle "$__backtitle" --title "Choose an option" --cancel-label "Exit" --menu "Script Version: $__version\nLast Commit: $commit" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --title "Choose an option" --cancel-label "Exit" --item-help --help-button --menu "Script Version: $__version\nLast Commit: $commit" 22 76 16)
         options=(
             P "Manage Packages"
+            "Install/Remove and Configure the various components of RetroPie, including emulators, ports, and controller drivers."
+
             S "Setup / Tools"
+            "Configuration Tools and additional setup. Any components of RetroPie that have configuration will also appear here after install."
+
             X "Uninstall RetroPie"
+            "Uninstall RetroPie completely."
+
             U "Update RetroPie-Setup script"
+            "Update this RetroPie-Setup script."
+
             R "Perform Reboot"
+            "Reboot your machine."
         )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
