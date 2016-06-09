@@ -308,24 +308,41 @@ function update_packages_gui_setup() {
     rps_printInfo "$logfilename"
 }
 
+function quick_install_setup() {
+    for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
+        if rp_hasBinaries; then
+            rp_installModule "$idx"
+        else
+            rp_callModule "$idx"
+        fi
+    done
+}
+
 function packages_gui_setup() {
     local section
     local options=()
 
-    for section in core main opt driver exp; do
-        options+=($section "Manage ${__sections[$section]} packages")
-    done
+    options+=(
+        I "Quick install" "This will install all packages from Core and Main which gives a basic RetroPie install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
+        U "Update all installed packages" "Update all currently installed packages"
+    )
 
-    options+=(U "Update all installed packages")
+    for section in core main opt driver exp; do
+        options+=($section "Manage ${__sections[$section]} packages" "Choose top install/update/configure packages from the ${__sections[$section]}")
+    done
 
     local cmd
     while true; do
-        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --menu "Choose an option" 22 76 16)
 
         local choice
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
         case "$choice" in
+            I)
+                dialog --defaultno --yesno "Are you sure you want to do a quick install?" 22 76 2>&1 >/dev/tty || continue
+                quick_install_setup
+                ;;
             U)
                 update_packages_gui_setup
                 ;;
