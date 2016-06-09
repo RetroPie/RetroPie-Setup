@@ -281,8 +281,8 @@ function rp_hasBinaries() {
 
 function rp_hasBinary() {
     local idx="$1"
+    fnExists "install_bin_${__mod_id[$idx]}" && return 0
     if rp_hasBinaries; then
-        fnExists "install_bin_${__mod_id[$idx]}" && return 0
         wget --spider -q "$__binary_url/${__mod_type[$idx]}/${__mod_id[$idx]}.tar.gz"
         return $?
     fi
