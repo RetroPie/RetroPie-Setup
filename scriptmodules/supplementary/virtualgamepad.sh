@@ -13,14 +13,27 @@ rp_module_id="virtualgamepad"
 rp_module_desc="Virtual Gamepad for Smartphone"
 rp_module_section="exp"
 
-function install_virtualgamepad() {
-    wget http://node-arm.herokuapp.com/node_archive_armhf.deb
-    dpkg -i node_archive_armhf.deb
-    rm node_archive_armhf.deb
-    gitPullOrClone "$md_inst" https://github.com/miroof/node-virtual-gamepads.git
+rp_module_id="virtualgamepad"
+rp_module_desc="Virtual Gamepad for Smartphone"
+rp_module_section="exp"
+
+function depends_virtualgamepad() {
+    getDepends nodejs npm
+    if isPlatform "arm"; then
+        wget -qO "$__tmpdir/node_latest_armhf.deb" http://node-arm.herokuapp.com/node_latest_armhf.deb
+        dpkg -i "$__tmpdir/node_latest_armhf.deb"
+        rm "$__tmpdir/node_latest_armhf.deb"
+    fi
+}
+
+function sources_virtualgamepad() {
+    gitPullOrClone "$md_inst" https://github.com/RetroPie/node-virtual-gamepads.git retropie
     cd "$md_inst"
     npm install --unsafe-perm
     npm install --unsafe-perm pm2 -g
+}
+
+function configure_virtualgamepad() {
     pm2 start main.js
     pm2 startup
     pm2 save
