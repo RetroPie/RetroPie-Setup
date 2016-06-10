@@ -60,7 +60,7 @@ function rp_printUsageinfo() {
     echo    "install:    install the compiled module"
     echo    "configure:  configure the installed module (es_systems.cfg / launch parameters etc)"
     echo    "clean:      remove the sources/build folder for the module"
-    echo    "help :      get additional help on the module"
+    echo    "help:       get additional help on the module"
     echo -e "\nThis is a list of valid modules/packages and supported commands:\n"
     rp_listFunctions
 }
