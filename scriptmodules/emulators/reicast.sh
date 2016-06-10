@@ -11,7 +11,7 @@
 
 rp_module_id="reicast"
 rp_module_desc="Dreamcast emulator Reicast"
-rp_module_help="Copy your Dremcast roms to $romdir/dreamcast Copy the required BIOS files dc_boot.bin, dc_flash.bin to $biosdir"
+rp_module_help="Copy your Dremcast roms to $romdir/dreamcast Copy the required BIOS files dc_boot.bin and dc_flash.bin to $biosdir"
 rp_module_section="opt"
 rp_module_flags="!armv6 !mali"
 

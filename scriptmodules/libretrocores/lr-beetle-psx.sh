@@ -11,7 +11,7 @@
 
 rp_module_id="lr-beetle-psx"
 rp_module_desc="PlayStation emulator - Mednafen PSX Port for libretro"
-rp_module_help="Copy your PlayStation roms to $romdir/psx. Copy the required BIOS files scph5500.bin scph5501.bin scph5502.bin to $biosdir"
+rp_module_help="Copy your PlayStation roms to $romdir/psx Copy the required BIOS files scph5500.bin scph5501.bin scph5502.bin to $biosdir"
 rp_module_section="opt"
 rp_module_flags="!arm"
 
