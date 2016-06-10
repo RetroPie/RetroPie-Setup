@@ -125,19 +125,53 @@ function configure_mupen64plus() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/mupen64plus.sh" "$md_inst/bin/"
     chmod +x "$md_inst/bin/mupen64plus.sh"
 
-    # to solve startup problems delete old config file
-    rm -f "$md_conf_root/n64/mupen64plus.cfg"
-    # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
-    rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
     mkUserDir "$md_conf_root/n64/"
-    # Copy config files
-    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$md_conf_root/n64/"
-    su "$user" -c "$md_inst/bin/mupen64plus --configdir $md_conf_root/n64 --datadir $md_conf_root/n64"
 
-    iniConfig " = " '"' "$md_conf_root/n64/mupen64plus.cfg"
+    # Copy config files
+    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf} "$md_conf_root/n64/"
+    isPlatform "rpi" && cp -v "$md_inst/share/mupen64plus/"*.conf "$md_conf_root/n64/"
+
+    local config="$md_conf_root/n64/mupen64plus.cfg"
+    local cmd="$md_inst/bin/mupen64plus --configdir $md_conf_root/n64 --datadir $md_conf_root/n64"
+
+    # if the user has an existing mupen64plus config we back it up, generate a new configuration
+    # copy that to rp-dist and put the original config back again. We then make any ini changes
+    # on the rp-dist file. This preserves any user configs from modification and allows us to have
+    # a default config for reference
+    if [[ -f "$config" ]]; then
+        mv "$config" "$config.user"
+        su "$user" -c "$cmd"
+        mv "$config" "$config.rp-dist"
+        mv "$config.user" "$config"
+        config+=".rp-dist"
+    else
+        su "$user" -c "$cmd"
+    fi
+
+    iniConfig " = " '"' "$config"
     iniSet "ScreenshotPath" "$romdir/n64"
     iniSet "SaveStatePath" "$romdir/n64"
     iniSet "SaveSRAMPath" "$romdir/n64"
+
+    # RPI GLideN64 settings
+    if isPlatform "rpi"; then
+        # Create GlideN64 section in .cfg
+        if ! grep -q "\[Video-GLideN64\]" "$config"; then
+            echo "[Video-GLideN64]" >> "$config"
+        fi
+
+        # Settings version. Don't touch it.
+        iniSet "configVersion" "10"
+
+        # Bilinear filtering mode (0=N64 3point, 1=standard)
+        iniSet "bilinearMode" "0"
+
+        # Size of texture cache in megabytes. Good value is VRAM*3/4
+        iniSet "CacheSize" "192"
+    fi
+
+    # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
+    rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
 
     chown -R $user:$user "$md_conf_root/n64"
 
