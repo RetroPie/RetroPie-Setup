@@ -13,6 +13,7 @@ __mod_idx=()
 __mod_id=()
 __mod_type=()
 __mod_desc=()
+__mod_help=()
 __mod_section=()
 __mod_flags=()
 
@@ -99,6 +100,7 @@ function rp_callModule() {
 
     # create variables that can be used in modules
     local md_desc="${__mod_desc[$md_idx]}"
+    local md_help="${__mod_help[$md_idx]}"
     local md_type="${__mod_type[$md_idx]}"
     local md_flags="${__mod_flags[$md_idx]}"
     local md_build="$__builddir/$md_id"
@@ -330,6 +332,7 @@ function rp_registerModule() {
     local module_type="$3"
     local rp_module_id=""
     local rp_module_desc=""
+    local rp_module_help=""
     local rp_module_section=""
     local rp_module_flags=""
     local var
@@ -361,6 +364,7 @@ function rp_registerModule() {
         __mod_id["$module_idx"]="$rp_module_id"
         __mod_type["$module_idx"]="$module_type"
         __mod_desc["$module_idx"]="$rp_module_desc"
+        __mod_help["$module_idx"]="$rp_module_help"
         __mod_section["$module_idx"]="$rp_module_section"
         __mod_flags["$module_idx"]="$rp_module_flags" 
     fi

@@ -11,6 +11,7 @@
 
 rp_module_id="atari800"
 rp_module_desc="Atari 8-bit/800/5200 emulator"
+rp_module_help="You need to copy the Atari 800/5200 BIOS files (5200.ROM, ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)"
 rp_module_section="opt"
 rp_module_flags="!mali"
 
@@ -78,6 +79,4 @@ function configure_atari800() {
 
     addSystem 1 "atari800" "atari800" "$md_inst/bin/atari800 %ROM%"
     addSystem 1 "atari800" "atari5200" "$md_inst/bin/atari800 %ROM%"
-    
-    __INFMSGS+=("You need to copy the Atari 800/5200 BIOS files (5200.ROM, ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)")
 }

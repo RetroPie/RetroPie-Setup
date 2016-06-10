@@ -11,6 +11,7 @@
 
 rp_module_id="cannonball"
 rp_module_desc="Cannonball - An Enhanced OutRun Engine"
+rp_module_help="You need to unzip your OutRun set B from latest MAME (outrun.zip) to $romdir/ports/cannonball. They should match the file names listed in the roms.txt file found in the roms folder. You will also need to rename the epr-10381a.132 file to epr-10381b.132 before it will work."
 rp_module_section="opt"
 
 function depends_cannonball() {
@@ -67,6 +68,4 @@ function configure_cannonball() {
     chown -R $user:$user "$romdir/ports/$md_id" "$md_conf_root/$md_id"
 
     ln -snf "$romdir/ports/$md_id" "$md_inst/roms"
-
-    __INFMSGS+=("You need to unzip your OutRun set B from latest MAME (outrun.zip) to $romdir/ports/$md_id. They should match the file names listed in the roms.txt file found in the roms folder. You will also need to rename the epr-10381a.132 file to epr-10381b.132 before it will work.")
 }
