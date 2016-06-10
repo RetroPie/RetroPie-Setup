@@ -74,12 +74,9 @@ function configure_retroarch() {
     # if the user has an existing config we will not overwrite it, but instead copy the
     # default configuration to retroarch.cfg.rp-dist so any new options can be manually
     # copied across as needed without destroying users changes
-    if [[ -f "$configdir/all/retroarch.cfg" ]]; then
-        config="$configdir/all/retroarch.cfg.rp-dist"
-        cp -v "$md_inst/retroarch.cfg" "$config"
-    else
-        cp -v "$md_inst/retroarch.cfg" "$config"
-    fi
+    [[ -f "$config" ]] && config+=".rp-dist"
+
+    cp -v "$md_inst/retroarch.cfg" "$config"
 
     # configure default options
     iniConfig " = " '"' "$config"
