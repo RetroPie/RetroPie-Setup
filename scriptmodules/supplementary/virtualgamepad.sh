@@ -20,13 +20,16 @@ function depends_virtualgamepad() {
         dpkg -i "$__tmpdir/node_latest_armhf.deb"
         rm "$__tmpdir/node_latest_armhf.deb"
     fi
+    npm install --unsafe-perm pm2 -g
 }
 
 function sources_virtualgamepad() {
-    gitPullOrClone "$md_inst" https://github.com/RetroPie/node-virtual-gamepads.git retropie
+    gitPullOrClone "$md_inst" https://github.com/miroof/node-virtual-gamepads.git
+}
+
+function build__virtualgamepad() {
     cd "$md_inst"
     npm install --unsafe-perm
-    npm install --unsafe-perm pm2 -g
 }
 
 function configure_virtualgamepad() {
