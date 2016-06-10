@@ -13,10 +13,6 @@ rp_module_id="virtualgamepad"
 rp_module_desc="Virtual Gamepad for Smartphone"
 rp_module_section="exp"
 
-rp_module_id="virtualgamepad"
-rp_module_desc="Virtual Gamepad for Smartphone"
-rp_module_section="exp"
-
 function depends_virtualgamepad() {
     getDepends nodejs npm
     if isPlatform "arm"; then
