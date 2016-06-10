@@ -13,6 +13,7 @@ __mod_idx=()
 __mod_id=()
 __mod_type=()
 __mod_desc=()
+__mod_help=()
 __mod_section=()
 __mod_flags=()
 
@@ -43,6 +44,7 @@ function rp_listFunctions() {
             echo -n " $mode"
         done < <(compgen -A function -X \!*_$mod_id)
         fnExists "install_${mod_id}" || fnExists "install_bin_${mod_id}" && ! fnExists "remove_${mod_id}" && echo -n " remove"
+        echo -n " help"
         echo ""
     done
     echo "==================================================================================================================================="
@@ -58,6 +60,7 @@ function rp_printUsageinfo() {
     echo    "install:    install the compiled module"
     echo    "configure:  configure the installed module (es_systems.cfg / launch parameters etc)"
     echo    "clean:      remove the sources/build folder for the module"
+    echo    "help :      get additional help on the module"
     echo -e "\nThis is a list of valid modules/packages and supported commands:\n"
     rp_listFunctions
 }
@@ -99,6 +102,7 @@ function rp_callModule() {
 
     # create variables that can be used in modules
     local md_desc="${__mod_desc[$md_idx]}"
+    local md_help="${__mod_help[$md_idx]}"
     local md_type="${__mod_type[$md_idx]}"
     local md_flags="${__mod_flags[$md_idx]}"
     local md_build="$__builddir/$md_id"
@@ -114,19 +118,26 @@ function rp_callModule() {
         setConfigRoot ""
     fi
 
-    # remove source/build files
-    if [[ "${mode}" == "clean" ]]; then
-        rmDirExists "$md_build"
-        return 0
-    fi
+    case "$mode" in
+        # remove sources
+        clean)
+            rmDirExists "$md_build"
+            return 0
+            ;;
+        # create binary archive
+        create_bin)
+            rp_createBin
+            return 0
+            ;;
+        # echo module help to console
+        help)
+            printMsgs "console" "$md_desc\n\n$md_help"
+            return 0;
+            ;;
+    esac
 
     # create function name
     function="${mode}_${md_id}"
-
-    if [[ "${mode}" == "create_bin" ]]; then
-        rp_createBin
-        return
-    fi
 
     # handle our  cases where we have automatic module functions like remove
     if ! fnExists "$function"; then
@@ -330,6 +341,7 @@ function rp_registerModule() {
     local module_type="$3"
     local rp_module_id=""
     local rp_module_desc=""
+    local rp_module_help=""
     local rp_module_section=""
     local rp_module_flags=""
     local var
@@ -361,6 +373,7 @@ function rp_registerModule() {
         __mod_id["$module_idx"]="$rp_module_id"
         __mod_type["$module_idx"]="$module_type"
         __mod_desc["$module_idx"]="$rp_module_desc"
+        __mod_help["$module_idx"]="$rp_module_help"
         __mod_section["$module_idx"]="$rp_module_section"
         __mod_flags["$module_idx"]="$rp_module_flags" 
     fi

@@ -11,6 +11,7 @@
 
 rp_module_id="lr-4do"
 rp_module_desc="3DO emu - 4DO/libfreedo port for libretro"
+rp_module_help="For the 3DO emulator you need to copy panazf10.bin to the folder $biosdir."
 rp_module_section="exp"
 
 function sources_lr-4do() {
@@ -37,6 +38,4 @@ function configure_lr-4do() {
     ensureSystemretroconfig "3do"
 
     addSystem 1 "$md_id" "3do" "$md_inst/4do_libretro.so"
-
-    __INFMSGS+=("For the 3DO emulator you need to copy panazf10.bin to the folder $biosdir.")
 }

@@ -11,6 +11,7 @@
 
 rp_module_id="reicast"
 rp_module_desc="Dreamcast emulator Reicast"
+rp_module_help="You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator."
 rp_module_section="opt"
 rp_module_flags="!armv6 !mali"
 
@@ -84,6 +85,4 @@ function configure_reicast() {
     addSystem 1 "$md_id" "dreamcast" "CON:$md_inst/bin/reicast.sh OSS %ROM%"
 
     addAutoConf reicast_input 1
-
-    __INFMSGS+=("You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator.")
 }

@@ -11,6 +11,7 @@
 
 rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
+rp_module_help="For emulator $md_id you need to copy system/basic roms such as d32.rom (Dragon 32) and bas13.rom (CoCo) to $biosdir"
 rp_module_section="opt"
 rp_module_flags="!mali"
 
@@ -50,6 +51,4 @@ function configure_xroar() {
     addSystem 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar ${params[*]} -machine dragon32 -run %ROM%"
     addSystem 1 "$md_id-cocous" "coco" "$md_inst/bin/xroar ${params[*]} -machine cocous -run %ROM%"
     addSystem 0 "$md_id-coco" "coco" "$md_inst/bin/xroar ${params[*]} -machine coco -run %ROM%"
-
-    __INFMSGS+=("For emulator $md_id you need to copy system/basic roms such as d32.rom (Dragon 32) and bas13.rom (CoCo) to '$biosdir'.")
 }

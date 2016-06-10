@@ -11,6 +11,7 @@
 
 rp_module_id="px68k"
 rp_module_desc="SHARP X68000 Emulator"
+rp_module_help="You need to copy the X68000 bios files plrom30.dat, iplromco.dat, iplrom.dat, iplromxv.dat, and the font file cgrom.dat to $romdir/BIOS. Use F12 to access the in emulator menu."
 rp_module_section="exp"
 rp_module_flags="!mali"
 
@@ -48,6 +49,4 @@ function configure_px68k() {
     setDispmanx "$md_id" 0
 
     addSystem 1 "$md_id" "x68000" "$md_inst/px68k %ROM%" "X68000" ".dim"
-
-    __INFMSGS+=("You need to copy the X68000 bios files plrom30.dat, iplromco.dat, iplrom.dat, iplromxv.dat, and the font file cgrom.dat to $romdir/BIOS. Use F12 to access the in emulator menu.")
 }

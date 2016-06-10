@@ -11,6 +11,7 @@
 
 rp_module_id="jzintv"
 rp_module_desc="Intellivision emulator"
+rp_module_help="You need to copy Intellivision BIOS files (exec.bin & grom.bin) to the folder $biosdir."
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
@@ -51,6 +52,4 @@ function configure_jzintv() {
     fi
 
     addSystem 1 "$md_id" "intellivision" "$md_inst/bin/jzintv -p $biosdir -q %ROM%"
-
-    __INFMSGS+=("You need to copy Intellivision BIOS files (exec.bin & grom.bin) to the folder $biosdir.")
 }

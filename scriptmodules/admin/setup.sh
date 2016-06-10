@@ -117,6 +117,11 @@ function package_setup() {
             options+=(X "Remove")
         fi
 
+        local help="${__mod_desc[$idx]}\n\n${__mod_help[$idx]}"
+        if [[ -n "$help" ]]; then
+            options+=(H "Package Help")
+        fi
+
         cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]}" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
@@ -156,6 +161,9 @@ function package_setup() {
                 } &> >(tee >(gzip --stdout >"$logfilename"))
                 rps_printInfo "$logfilename"
                 ;;
+            H)
+                printMsgs "dialog" "$help"
+                ;;
             *)
                 break
                 ;;
@@ -184,7 +192,7 @@ function section_gui_setup() {
             else
                 installed=""
             fi
-            options+=("$idx" "${__mod_id[$idx]} $installed" "${__mod_desc[$idx]}")
+            options+=("$idx" "${__mod_id[$idx]} $installed" "${__mod_desc[$idx]}"$'\n\n'"${__mod_help[$idx]}")
         done
 
         local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --menu "Choose an option" 22 76 16)
