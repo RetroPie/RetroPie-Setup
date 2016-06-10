@@ -11,6 +11,7 @@
 
 rp_module_id="lr-picodrive"
 rp_module_desc="Sega 8/16 bit emu - picodrive arm optimised libretro core"
+rp_module_help="Copy your Megadrive / Genesis roms to $romdir/megadrive, MasterSystem roms to $romdir/mastersystem, Sega 32X roms to $romdir/sega32x, and SegaCD roms to $romdir/segacd The Sega CD requires the BIOS files us_scd1_9210.bin, eu_mcd1_9210.bin, jp_mcd1_9112.bin copied to $biosdir"
 rp_module_section="main"
 
 function sources_lr-picodrive() {

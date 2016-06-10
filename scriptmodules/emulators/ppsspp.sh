@@ -11,6 +11,7 @@
 
 rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
+rp_module_help="Copy your PlayStation Portable roms to $romdir/psp"
 rp_module_section="opt"
 rp_module_flags="!armv6 !mali"
 

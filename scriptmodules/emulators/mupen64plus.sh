@@ -11,6 +11,7 @@
 
 rp_module_id="mupen64plus"
 rp_module_desc="N64 emulator MUPEN64Plus"
+rp_module_help="Copy your N64 roms to $romdir/n64"
 rp_module_section="main"
 rp_module_flags="!mali"
 

@@ -11,6 +11,7 @@
 
 rp_module_id="lr-mame2003"
 rp_module_desc="Arcade emu - MAME 0.78 port for libretro"
+rp_module_help="Copy your MAME roms to either $romdir/mame-libretro or $romdir/arcade"
 rp_module_section="main"
 
 function depends_lr-mame2003() {

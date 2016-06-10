@@ -11,6 +11,7 @@
 
 rp_module_id="lr-vba-next"
 rp_module_desc="GBA emulator - VBA-M (optimised) port for libretro"
+rp_module_help="Copy your GameBoy Advance roms to $romdir/gba. Copy the required BIOS file gba_bios.bin to $biosdir"
 rp_module_section="main"
 rp_module_flags="!armv6"
 

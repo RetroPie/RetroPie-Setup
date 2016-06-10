@@ -13,6 +13,7 @@
 
 rp_module_id="lr-prosystem"
 rp_module_desc="Atari 7800 ProSystem emu - ProSystem port for libretro"
+rp_module_help="Copy your Atari 7800 roms to $romdir/atari7800 Copy the optional BIOS file 7800 BIOS (U).rom to $biosdir"
 rp_module_section="main"
 
 function sources_lr-prosystem() {

@@ -11,6 +11,7 @@
 
 rp_module_id="ags"
 rp_module_desc="Adventure Game Studio - Adventure game engine"
+rp_module_help="Copy your Adventure Game Studio roms to $romdir/ags"
 rp_module_section="opt"
 rp_module_flags="!mali"
 

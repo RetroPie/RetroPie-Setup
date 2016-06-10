@@ -11,6 +11,7 @@
 
 rp_module_id="lr-beetle-wswan"
 rp_module_desc="Wonderswan emu - Mednafen WonderSwan core port for libretro"
+rp_module_help="Copy your Wonderswan roms to $romdir/wonderswan and Copy your Wonderswan Color roms to $romdir/wonderswancolor"
 rp_module_section="opt"
 
 function sources_lr-beetle-wswan() {

@@ -11,6 +11,7 @@
 
 rp_module_id="frotz"
 rp_module_desc="Z-Machine Interpreter for Infocom games"
+rp_module_help="Copy your Infocom roms to $romdir/zmachine"
 rp_module_section="opt"
 rp_module_flags="!mali"
 

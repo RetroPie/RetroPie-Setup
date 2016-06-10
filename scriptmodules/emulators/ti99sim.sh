@@ -11,7 +11,7 @@
 
 rp_module_id="ti99sim"
 rp_module_desc="TI-99/SIM - Texas Instruments Home Computer Emulator"
-rp_module_help="You will need to place your BIOS ROMs/carts into $romdir/ti99. Make sure that your TI-994A.ctg file is cased as shown here as the emulator is case-sensitive."
+rp_module_help="Copy your TI-99 roms to $romdir/ti99. Copy the required BIOS file TI-994A.ctg (case sensitive) to $biosdir"
 rp_module_section="exp"
 rp_module_flags="!mali"
 

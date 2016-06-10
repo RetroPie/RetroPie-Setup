@@ -12,6 +12,7 @@
 rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_help="For emulator $md_id you need to copy system/basic roms such as d32.rom (Dragon 32) and bas13.rom (CoCo) to $biosdir"
+rp_module_help="Copy your Dragon roms to $romdir/dragon32 Copy your CoCo roms to $romdir/coco Copy the required BIOS files d32.rom (Dragon 32) and bas13.rom (CoCo) to $biosdir"
 rp_module_section="opt"
 rp_module_flags="!mali"
 

@@ -11,6 +11,7 @@
 
 rp_module_id="lr-mupen64plus"
 rp_module_desc="N64 emu - Mupen64 Plus port for libretro"
+rp_module_help="Copy your N64 roms to $romdir/n64"
 rp_module_section="main"
 
 function sources_lr-mupen64plus() {

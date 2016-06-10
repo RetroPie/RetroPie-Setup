@@ -11,6 +11,7 @@
 
 rp_module_id="lr-fba"
 rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.30) port for libretro"
+rp_module_help="Copy your FBA roms to either $romdir/fba $romdir/neogeo or $romdir/arcade For NeoGeo games the neogeo.zip BIOS is required and must be placed in the same directory as your FBA roms."
 rp_module_section="opt"
 
 function depends_lr-fba() {

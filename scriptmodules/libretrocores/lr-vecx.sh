@@ -11,6 +11,7 @@
 
 rp_module_id="lr-vecx"
 rp_module_desc="Vectrex emulator - vecx port for libretro"
+rp_module_help="Copy your Vectrex roms to $romdir/vectrex"
 rp_module_section="main"
 
 function sources_lr-vecx() {

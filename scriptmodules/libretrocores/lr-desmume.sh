@@ -11,6 +11,7 @@
 
 rp_module_id="lr-desmume"
 rp_module_desc="NDS emu - DESMUME"
+rp_module_help="Copy your Nintendo DS roms to $romdir/nds"
 rp_module_section="exp"
 
 function sources_lr-desmume() {

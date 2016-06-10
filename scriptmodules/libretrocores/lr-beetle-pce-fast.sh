@@ -11,6 +11,7 @@
 
 rp_module_id="lr-beetle-pce-fast"
 rp_module_desc="PCEngine emu - Mednafen PCE Fast port for libretro"
+rp_module_help="Copy your PC Engine / TurboGrafx roms to $romdir/pcengine. Copy the required BIOS file syscard3.pce to $biosdir"
 rp_module_section="main"
 
 function sources_lr-beetle-pce-fast() {

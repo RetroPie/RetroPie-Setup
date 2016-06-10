@@ -11,6 +11,7 @@
 
 rp_module_id="pisnes"
 rp_module_desc="SNES emulator PiSNES"
+rp_module_help="Copy your SNES roms to $romdir/snes"
 rp_module_section="opt"
 rp_module_flags="!x86 !mali"
 

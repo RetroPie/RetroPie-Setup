@@ -11,6 +11,7 @@
 
 rp_module_id="lr-quicknes"
 rp_module_desc="NES emulator - QuickNES Port for libretro"
+rp_module_help="Copy your NES roms to $romdir/nes"
 rp_module_section="opt"
 
 function sources_lr-quicknes() {

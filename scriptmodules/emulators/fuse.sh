@@ -11,6 +11,7 @@
 
 rp_module_id="fuse"
 rp_module_desc="ZX Spectrum emulator Fuse"
+rp_module_help="Copy your ZX Spectrum roms to $romdir/zxspectrum"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 

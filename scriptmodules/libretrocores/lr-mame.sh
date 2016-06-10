@@ -11,6 +11,7 @@
 
 rp_module_id="lr-mame"
 rp_module_desc="MAME emulator - MAME (current) port for libretro"
+rp_module_help="Copy your MAME roms to either $romdir/mame-libretro or $romdir/arcade"
 rp_module_section="exp"
 
 function sources_lr-mame() {

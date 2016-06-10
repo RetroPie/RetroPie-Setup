@@ -11,6 +11,7 @@
 
 rp_module_id="lr-ppsspp"
 rp_module_desc="PlayStation Portable emu - PPSSPP port for libretro"
+rp_module_help="Copy your PlayStation Portable roms to $romdir/psp"
 rp_module_section="main"
 rp_module_flags="!armv6"
 

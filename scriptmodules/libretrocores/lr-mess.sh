@@ -11,6 +11,7 @@
 
 rp_module_id="lr-mess"
 rp_module_desc="MESS emulator - MESS Port for libretro"
+rp_module_help="see wiki for detailed explanation"
 rp_module_section="exp"
 
 function sources_lr-mess() {

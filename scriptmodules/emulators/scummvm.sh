@@ -11,6 +11,7 @@
 
 rp_module_id="scummvm"
 rp_module_desc="ScummVM"
+rp_module_help="Copy your ScummVM roms to $romdir/scummvm"
 rp_module_section="opt"
 rp_module_flags="!mali"
 

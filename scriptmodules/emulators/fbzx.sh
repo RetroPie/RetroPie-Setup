@@ -11,6 +11,7 @@
 
 rp_module_id="fbzx"
 rp_module_desc="ZXSpectrum emulator FBZX"
+rp_module_help="Copy your ZX Spectrum roms to $romdir/zxspectrum"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 

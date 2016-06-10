@@ -11,6 +11,7 @@
 
 rp_module_id="uae4all"
 rp_module_desc="Amiga emulator UAE4All"
+rp_module_help="Copy your Amiga roms to $romdir/amiga Copy the required BIOS files kick13.rom, kick20.rom, kick31.rom to $biosdir"
 rp_module_section="opt"
 rp_module_flags="dispmanx !x86 !mali"
 

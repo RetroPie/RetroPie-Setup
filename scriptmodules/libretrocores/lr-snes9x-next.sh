@@ -11,6 +11,7 @@
 
 rp_module_id="lr-snes9x-next"
 rp_module_desc="SNES emulator - Snes9x 1.52+ (optimised) port for libretro"
+rp_module_help="Copy your SNES roms to $romdir/snes"
 rp_module_section="main"
 rp_module_flags="!armv6"
 

@@ -11,6 +11,7 @@
 
 rp_module_id="lr-tgbdual"
 rp_module_desc="Gameboy Color emu - TGB Dual port for libretro"
+rp_module_help="Copy your GameBoy roms to $romdir/gb and Copy your GameBoy Color roms to $romdir/gbc"
 rp_module_section="opt"
 
 function sources_lr-tgbdual() {

@@ -11,6 +11,7 @@
 
 rp_module_id="lr-fmsx"
 rp_module_desc="MSX/MSX2 emu - fMSX port for libretro"
+rp_module_help="Copy your MSX/MSX2 roms to $romdir/msx"
 rp_module_section="opt"
 
 function sources_lr-fmsx() {

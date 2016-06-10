@@ -11,7 +11,7 @@
 
 rp_module_id="sdltrs"
 rp_module_desc="Radio Shack TRS-80 Model I/III/4/4P emulator"
-rp_module_help="You need to copy your requires TRS-80 bios files called level2.rom, level3.rom or level4.rom or level4p.rom to $biosdir"
+rp_module_help="Copy your TRS-80 roms to $romdir/trs-80. Copy the required BIOS file level2.rom, level3.rom, level4.rom or level4p.rom to $biosdir"
 rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 

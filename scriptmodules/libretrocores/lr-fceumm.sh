@@ -11,6 +11,7 @@
 
 rp_module_id="lr-fceumm"
 rp_module_desc="NES emu - FCEUmm port for libretro"
+rp_module_help="Copy your NES roms to $romdir/nes"
 rp_module_section="main"
 
 function sources_lr-fceumm() {
