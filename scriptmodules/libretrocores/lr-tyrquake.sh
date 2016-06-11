@@ -49,6 +49,7 @@ function game_data_lr-tyrquake() {
         popd
         rm -rf quake106
         chown -R $user:$user "$romdir/ports/quake"
+        chmod 644 "$romdir/ports/quake/id1/"*
     fi
 }
 
