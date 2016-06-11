@@ -11,6 +11,7 @@
 
 rp_module_id="hatari"
 rp_module_desc="Atari emulator Hatari"
+rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr\n\nCopy your Hatari roms to $romdir/atarist"
 rp_module_section="opt"
 rp_module_flags="!mali"
 

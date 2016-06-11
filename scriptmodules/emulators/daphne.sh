@@ -11,7 +11,7 @@
 
 rp_module_id="daphne"
 rp_module_desc="Daphne - Laserdisc Emulator"
-rp_module_help="Copy your Daphne roms to $romdir/daphne"
+rp_module_help="ROM Extension: .daphne\n\nCopy your Daphne roms to $romdir/daphne"
 rp_module_section="opt"
 rp_module_flags="!x86 !mali"
 

@@ -10,8 +10,8 @@
 #
 
 rp_module_id="dgen"
-rp_module_desc="Megadrive/Genesis emulat. DGEN"
-rp_module_help="Copy your  Megadrive / Genesis roms to $romdir/megadrive, Sega 32X roms to $romdir/sega32x, and SegaCD roms to $romdir/segacd The Sega CD requires the BIOS files bios_CD_U.bin, bios_CD_E.bin, and bios_CD_J.bin copied to $biosdir"
+rp_module_desc="Megadrive/Genesis emulator DGEN"
+rp_module_help="ROM Extensions: .32x .iso .cue .smd .bin .gen .md .sg .zip\n\nCopy your  Megadrive / Genesis roms to $romdir/megadrive\nSega 32X roms to $romdir/sega32x\nand SegaCD roms to $romdir/segacd\nThe Sega CD requires the BIOS files bios_CD_U.bin, bios_CD_E.bin, and bios_CD_J.bin copied to $biosdir"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 

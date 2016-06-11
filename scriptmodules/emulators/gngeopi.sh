@@ -11,7 +11,7 @@
 
 rp_module_id="gngeopi"
 rp_module_desc="NeoGeo emulator GnGeoPi"
-rp_module_help="Copy your GnGeoPi roms to $romdir/neogeo Copy the required BIOS file neogeo.zip BIOS to $romdir/neogeo"
+rp_module_help="ROM Extension: .zip\n\nCopy your GnGeoPi roms to $romdir/neogeo\n\nCopy the required BIOS file neogeo.zip BIOS to $romdir/neogeo"
 rp_module_section="opt"
 rp_module_flags="!x86 !mali"
 

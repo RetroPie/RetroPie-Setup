@@ -11,7 +11,7 @@
 
 rp_module_id="dosbox"
 rp_module_desc="DOS emulator"
-rp_module_help="Copy your DOS games to $romdir/pc"
+rp_module_help="ROM Extensions: .bat .com .exe .sh\n\nCopy your DOS games to $romdir/pc"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 

@@ -11,7 +11,7 @@
 
 rp_module_id="uae4arm"
 rp_module_desc="Amiga emulator with JIT support"
-rp_module_help="Copy your Amiga roms to $romdir/amiga Copy the required BIOS files kick13.rom, kick20.rom, kick31.rom to $biosdir"
+rp_module_help="ROM Extensions: .adf\n\nCopy your Amiga roms to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir"
 rp_module_section="opt"
 rp_module_flags="!x86 !mali"
 
