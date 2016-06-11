@@ -46,5 +46,5 @@ function configure_tyrquake() {
 
     mkRomDir "ports/quake"
 
-    download_quake_lr-tyrquake
+    [[ "$md_mode" == "install" ]] && game_data_lr-tyrquake
 }
