@@ -11,7 +11,7 @@
 
 rp_module_id="lr-gambatte"
 rp_module_desc="Gameboy Color emu - libgambatte port for libretro"
-rp_module_help="Copy your GameBoy roms to $romdir/gb and Copy your GameBoy Color roms to $romdir/gbc"
+rp_module_help="ROM Extensions: .gb .gbc .zip\n\nCopy your GameBoy roms to $romdir/gb\n\nCopy your GameBoy Color roms to $romdir/gbc"
 rp_module_section="main"
 
 function sources_lr-gambatte() {

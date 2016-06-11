@@ -11,7 +11,7 @@
 
 rp_module_id="lr-stella"
 rp_module_desc="Atari 2600 emulator - Stella port for libretro"
-rp_module_help="Copy your Atari 2600 roms to $romdir/atari2600"
+rp_module_help="ROM Extensions: .a26 .bin .rom .zip .gz\n\nCopy your Atari 2600 roms to $romdir/atari2600"
 rp_module_section="main"
 
 function sources_lr-stella() {

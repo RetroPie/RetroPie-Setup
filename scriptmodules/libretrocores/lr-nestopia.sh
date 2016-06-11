@@ -11,7 +11,7 @@
 
 rp_module_id="lr-nestopia"
 rp_module_desc="NES emu - Nestopia (enhanced) port for libretro"
-rp_module_help="Copy your NES roms to $romdir/nes For the Famicom Disk System copy your roms to $romdir/fds and copy the required BIOS file disksys.rom to $biosdir"
+rp_module_help="ROM Extensions: .nes .zip\n\nCopy your NES roms to $romdir/nes\n\nFor the Famicom Disk System copy your roms to $romdir/fds\n\nFor the Famicom Disk System copy the required BIOS file disksys.rom to $biosdir"
 rp_module_section="opt"
 
 function sources_lr-nestopia() {

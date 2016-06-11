@@ -11,7 +11,7 @@
 
 rp_module_id="lr-caprice32"
 rp_module_desc="Amstrad CPC emu - Caprice32 port for libretro"
-rp_module_help="Copy your Amstrad CPC roms to $romdir/amstradcpc"
+rp_module_help="ROM Extensions: .cdt .cpc .dsk\n\nCopy your Amstrad CPC roms to $romdir/amstradcpc"
 rp_module_section="main"
 
 function sources_lr-caprice32() {

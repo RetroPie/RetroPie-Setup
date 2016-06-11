@@ -11,7 +11,7 @@
 
 rp_module_id="lr-catsfc"
 rp_module_desc="SNES emu - CATSFC based on Snes9x / NDSSFC / BAGSFC"
-rp_module_help="Copy your SNES roms to $romdir/snes"
+rp_module_help="ROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
 rp_module_section="main"
 
 function sources_lr-catsfc() {
