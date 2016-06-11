@@ -121,7 +121,7 @@ function gui_autostart() {
                     ;;
                 2)
                     enable_autostart kodi
-                    printMsgs "dialog" "Emulation Station is set to launch at boot."
+                    printMsgs "dialog" "Kodi is set to launch at boot."
                     ;;
                 C)
                     disable_autostart
