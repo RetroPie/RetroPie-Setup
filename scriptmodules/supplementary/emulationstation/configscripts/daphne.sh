@@ -170,36 +170,36 @@ function map_daphne_joystick() {
     # See if this key is specified in the override file...
     while read -r line; do
         if [[ "$line" =~ $key_regex ]]; then
-          key1="${BASH_REMATCH[1]}"
-          key2="${BASH_REMATCH[2]}"
+            key1="${BASH_REMATCH[1]}"
+            key2="${BASH_REMATCH[2]}"
         fi
     done < "$force_key_file"
 
     # ...otherwise, use the defaults file.
     if [[ -z "$key1" || -z "$key2" ]]; then
-      echo "Keymap not found in $force_key_file"
-      while read -r line; do
-        if [[ "$line" =~ $full_regex ]]; then
-          key1="${BASH_REMATCH[1]}"
-          key2="${BASH_REMATCH[2]}"
-        fi
-      done < "$mapping_file"
+        echo "Keymap not found in $force_key_file"
+        while read -r line; do
+            if [[ "$line" =~ $full_regex ]]; then
+                key1="${BASH_REMATCH[1]}"
+                key2="${BASH_REMATCH[2]}"
+            fi
+        done < "$mapping_file"
     fi
 
     # See if this button is specified in the override file...
     while read -r line; do
         if [[ "$line" =~ $button_regex ]]; then
-          button="${BASH_REMATCH[1]}"
+            button="${BASH_REMATCH[1]}"
         fi
     done < "$force_joy_file"
 
     # ...otherwise, use the config sent to this function.
     if [[ -z "$button" ]]; then
-      while read -r line; do
-        if [[ "$line" =~ $key_regex ]]; then
-          button=$((input_id+1))
-        fi
-      done < "$mapping_file"
+        while read -r line; do
+            if [[ "$line" =~ $key_regex ]]; then
+                button=$((input_id+1))
+            fi
+        done < "$mapping_file"
     fi
 
     # Write new button config
