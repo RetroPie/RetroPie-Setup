@@ -46,10 +46,10 @@ _EOF_
         sed -i -e '$a\' "$script"
         case "$mode" in
             es)
-                echo >> "emulationstation #auto" >>"$script"
+                echo "emulationstation #auto" >>"$script"
                 ;;
             kodi)
-                echo -e "kodi #auto\nemulationstation #auto" >>"$script"
+                echo "kodi #auto\nemulationstation #auto" >>"$script"
                 ;;
         esac
         chown $user:$user "$script"
@@ -95,6 +95,7 @@ function gui_autostart() {
             options=(
                 1 "Start Emulation Station at boot"
                 2 "Start Kodi at boot (exit for Emulation Station)"
+                E "Manually edit $configdir/autostart.sh"
                 C "Boot to text console (auto login)"
             )
             if [[ "$__raspbian_ver" -gt "7" ]]; then
@@ -122,6 +123,9 @@ function gui_autostart() {
                 2)
                     enable_autostart kodi
                     printMsgs "dialog" "Kodi is set to launch at boot."
+                    ;;
+                E)
+                    editFile "$configdir/all/autostart.sh"
                     ;;
                 C)
                     disable_autostart
