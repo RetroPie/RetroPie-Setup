@@ -43,6 +43,7 @@ function game_data_opentyrian() {
         wget -nv -O tyrian21.zip http://www.camanis.net/tyrian/tyrian21.zip
         unzip -j -o tyrian21.zip -d "$romdir/ports/opentyrian/data"
         rm -f tyrian21.zip
+        chown -R $user:$user "$romdir/ports/opentyrian"
     fi
 }
 
