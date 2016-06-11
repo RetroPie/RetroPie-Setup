@@ -15,8 +15,8 @@ function onstart_daphne_joystick() {
     local -r force_key_file="$configdir/daphne/dapinput-forcekey.ini"
 
     if [[ ! -f "$mapping_file" ]]; then
-      cat > "$mapping_file" << _EOF_
-# Daphne cutom keyboard and joystick mapping
+        cat > "$mapping_file" << _EOF_
+# Daphne custom keyboard and joystick mapping
 #
 # Each input is mapped to 2 keyboard keys and one joystick button.
 # A joystick's first analog stick is also automatically mapped.
@@ -57,7 +57,7 @@ _EOF_
     fi
 
     if [[ ! -f "$force_joy_file" ]]; then
-      cat > "$force_joy_file" << _EOF_
+        cat > "$force_joy_file" << _EOF_
 # Daphne custom joystick mapping
 #
 # Any inputs defined below will map a joystick button to
@@ -80,7 +80,7 @@ _EOF_
     fi
 
     if [[ ! -f "$force_key_file" ]]; then
-      cat > "$force_key_file" << _EOF_
+        cat > "$force_key_file" << _EOF_
 # Daphne custom keyboard mapping
 #
 # Any inputs defined below will map keyboard keys to
