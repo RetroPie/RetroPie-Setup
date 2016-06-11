@@ -36,18 +36,25 @@ function install_opentyrian() {
     make install prefix="$md_inst"
 }
 
+function game_data_opentyrian() {
+    if [[ ! -d "$romdir/ports/opentyrian/data" ]]; then
+        cd "$__tmpdir"
+        # get Tyrian 2.1 (freeware game data)
+        wget -nv -O tyrian21.zip http://www.camanis.net/tyrian/tyrian21.zip
+        unzip -j -o tyrian21.zip -d "$romdir/ports/opentyrian/data"
+        rm -f tyrian21.zip
+    fi
+}
+
 function configure_opentyrian() {
     addPort "$md_id" "opentyrian" "OpenTyrian" "$md_inst/bin/opentyrian --data $romdir/ports/opentyrian/data"
 
     mkRomDir "ports/opentyrian"
 
-    # get Tyrian 2.1 (freeware game data)
-    wget -q -O tyrian21.zip http://www.camanis.net/tyrian/tyrian21.zip
-    unzip -j -o tyrian21.zip -d "$romdir/ports/opentyrian/data"
-    rm -f tyrian21.zip
-
     moveConfigDir "$home/.config/opentyrian" "$md_conf_root/opentyrian"
 
     # Enable dispmanx by default.
     setDispmanx "$md_id" 1
+    
+    [[ "$md_mode" == "install" ]] && game_data_opentyrian
 }
