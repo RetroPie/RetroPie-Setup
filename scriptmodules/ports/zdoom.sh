@@ -55,9 +55,5 @@ function configure_zdoom() {
     mkUserDir "$home/.config"
     moveConfigDir "$home/.config/zdoom" "$md_conf_root/doom"
 
-    # download doom 1 shareware
-    if [[ ! -f "$romdir/ports/doom/doom1.wad" ]]; then
-        wget "$__archive_url/doom1.wad" -O "$romdir/ports/doom/doom1.wad"
-    fi
-    chown $user:$user "$romdir/ports/doom/doom1.wad"
+    [[ "$md_mode" == "install" ]] && game_data_lr-prboom
 }

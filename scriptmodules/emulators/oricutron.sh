@@ -43,12 +43,16 @@ function install_oricutron() {
     )
 }
 
+function game_data_oricutron() {
+    if [[ -d "$md_inst/disks" && ! -f "$romdir/oric/barbitoric.dsk" ]]; then
+        # copy demo disks
+        cp -v "$md_inst/disks/"* "$romdir/oric/"
+        chown -R $user:$user "$romdir/oric"
+    fi
+}
+
 function configure_oricutron() {
     mkRomDir "oric"
-
-    # copy demo disks
-    cp -v "$md_inst/disks/"* "$romdir/oric/"
-    chown -R $user:$user "$romdir/oric"
     
     local machine
     local default
@@ -57,4 +61,6 @@ function configure_oricutron() {
         [[ "$machine" == "atmos" ]] && default=1
         addSystem 1 "$md_id-$machine" "oric" "pushd $md_inst; $md_inst/oricutron --machine $machine %ROM% --fullscreen; popd" "Oric 1/Atmos" ".dsk .tap"
     done
+
+    [[ "$md_mode" == "install" ]] && game_data_oricutron
 }
