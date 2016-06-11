@@ -39,6 +39,7 @@ if [ "\`tty\`" = "/dev/tty1" ]; then
 fi
 _EOF_
 
+        touch "$script"
         # delete any previous entries for emulationstation / kodi in autostart.sh
         sed -i '/#auto/d' "$script"
         # make sure there is a newline
