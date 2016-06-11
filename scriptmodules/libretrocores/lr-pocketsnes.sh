@@ -11,6 +11,7 @@
 
 rp_module_id="lr-pocketsnes"
 rp_module_desc="SNES emu - ARM based SNES emulator for libretro"
+rp_module_help="ROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
 rp_module_section="main"
 rp_module_flags="!x86"
 

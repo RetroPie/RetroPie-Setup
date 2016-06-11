@@ -11,6 +11,7 @@
 
 rp_module_id="lr-imame4all"
 rp_module_desc="Arcade emu - iMAME4all (based on MAME 0.37b5) port for libretro"
+rp_module_help="ROM Extension: .zip\n\nCopy your iMAME4all roms to either $romdir/mame-mame4all or\n$romdir/arcade"
 rp_module_section="main"
 
 function sources_lr-imame4all() {

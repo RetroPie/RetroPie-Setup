@@ -11,6 +11,7 @@
 
 rp_module_id="lr-virtualjaguar"
 rp_module_desc="Atari Jaguar emu - Virtual Jaguar (optimised) port for libretro"
+rp_module_help="ROM Extensions: .j64 .jag .zip\n\nCopy your Atari Jaguar roms to $romdir/atarijaguar"
 rp_module_section="exp"
 rp_module_flags="!armv6"
 

@@ -11,6 +11,7 @@
 
 rp_module_id="advmame"
 rp_module_desc="AdvanceMAME"
+rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $romdir/mame-advmame or\n$romdir/arcade"
 rp_module_section="opt"
 rp_module_flags="!mali"
 

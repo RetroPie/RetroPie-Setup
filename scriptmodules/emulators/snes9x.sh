@@ -11,6 +11,7 @@
 
 rp_module_id="snes9x"
 rp_module_desc="SNES emulator SNES9X-RPi"
+rp_module_help="ROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
 rp_module_section="opt"
 rp_module_flags="dispmanx !x86 !mali"
 

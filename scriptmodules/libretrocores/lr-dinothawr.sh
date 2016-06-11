@@ -11,6 +11,7 @@
 
 rp_module_id="lr-dinothawr"
 rp_module_desc="Dinothawr - standalone libretro puzzle game"
+rp_module_help="Dinothawr game assets are automatically installed to $romdir/ports/dinothawr/"
 rp_module_section="exp"
 
 function sources_lr-dinothawr() {
