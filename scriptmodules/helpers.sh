@@ -68,7 +68,7 @@ function isPlatform() {
 
 function addLineToFile() {
     if [[ -f "$2" ]]; then
-        cp -p "$2" "$2.old"
+        cp -p "$2" "$2.bak"
     fi
     sed -i -e '$a\' "$2"
     echo "$1" >> "$2"
