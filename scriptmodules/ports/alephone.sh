@@ -37,7 +37,7 @@ function install_alephone() {
     make install
 }
 
-function install_games_alephone() {
+function game_data_alephone() {
     cd "$__tmpdir"
     local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-20150620"
     if [[ ! -f "$romdir/ports/$md_id/Marathon/Shapes.shps" ]]; then
@@ -69,5 +69,5 @@ function configure_alephone() {
 
     moveConfigDir "$home/.alephone" "$configDir/alephone"
 
-    [[ "$md_mode" == "install" ]] && install_games_alephone
+    [[ "$md_mode" == "install" ]] && game_data_alephone
 }
