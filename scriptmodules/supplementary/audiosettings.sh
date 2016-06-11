@@ -15,7 +15,7 @@ rp_module_section="config"
 rp_module_flags="!x86 !mali"
 
 function depends_audiosettings() {
-    if [[ "$__depends_mode" == "install" ]]; then
+    if [[ "$md_mode" == "install" ]]; then
         getDepends alsa-utils
     fi
 }

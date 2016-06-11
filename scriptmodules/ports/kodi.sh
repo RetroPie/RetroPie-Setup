@@ -16,7 +16,7 @@ rp_module_flags="!mali"
 
 function depends_kodi() {
     if isPlatform "rpi"; then
-        if [[ "$__depends_mode" == "install" ]]; then
+        if [[ "$md_mode" == "install" ]]; then
             # remove old repository
             rm -f /etc/apt/sources.list.d/mene.list
             echo "deb http://dl.bintray.com/pipplware/dists/jessie/main/binary/ ./" >/etc/apt/sources.list.d/pipplware.list
@@ -33,6 +33,8 @@ function depends_kodi() {
 }
 
 function install_bin_kodi() {
+    # force aptInstall to get a fresh list before installing
+    $__apt_update=0
     aptInstall kodi
 }
 
