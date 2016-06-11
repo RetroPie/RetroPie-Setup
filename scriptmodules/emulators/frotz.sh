@@ -23,21 +23,26 @@ function remove_frotz() {
     aptRemove frotz
 }
 
+function game_data_frotz() {
+    if [[ ! -f "$romdir/zmachine/zork1.dat" ]]; then
+        cd "$__tmpdir"
+        local file
+        for file in zork1 zork2 zork3; do
+            wget -nv -O "$file.zip" "$__archive_url/$file.zip"
+            unzip -L -n "$file.zip" "data/$file.dat"
+            mv "data/$file.dat" "$romdir/zmachine/"
+            chown $user:$user "$romdir/zmachine/$file.dat"
+            rm "$file.zip"
+        done
+        rmdir data
+    fi
+}
+
 function configure_frotz() {
     mkRomDir "zmachine"
 
-    rm -rf "$romdir/zmachine/zork"[1-3]
-    local file
-    for file in zork1 zork2 zork3; do
-        wget $__archive_url/$file.zip
-        unzip -L -n "$file.zip" "data/$file.dat"
-        mv "data/$file.dat" "$romdir/zmachine/"
-        rm $file.zip
-    done
-    rmdir data
-
-    chown -R $user:$user "$romdir/zmachine/"*
-
     # CON: to stop runcommand from redirecting stdout to log
     addSystem 1 "$md_id" "zmachine" "CON:pushd $romdir/zmachine; frotz %ROM%; popd" "Z-machine" ".dat .zip .z1 .z2 .z3 .z4 .z5 .z6 .z7 .z8"
+
+    [[ "$md_mode" == "install" ]] && game_data_frotz
 }
