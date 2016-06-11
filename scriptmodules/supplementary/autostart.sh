@@ -49,7 +49,7 @@ _EOF_
                 echo "emulationstation #auto" >>"$script"
                 ;;
             kodi)
-                echo -e "kodi #auto\nemulationstation #auto" >>"$script"
+                echo -e "kodi-standalone #auto\nemulationstation #auto" >>"$script"
                 ;;
         esac
         chown $user:$user "$script"
