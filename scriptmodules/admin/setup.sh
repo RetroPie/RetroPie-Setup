@@ -236,7 +236,7 @@ function section_gui_setup() {
                 rps_logInit
                 {
                     for idx in $(rp_getSectionIds $section); do
-                        rp_callModule "$idx" remove
+                        rp_isInstalled "$idx" && rp_callModule "$idx" remove
                     done
                 } &> >(tee >(gzip --stdout >"$logfilename"))
                 rps_printInfo "$logfilename"
