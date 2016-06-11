@@ -46,14 +46,21 @@ function build_eduke32() {
 }
 
 function install_eduke32() {
-    wget "$__archive_url/3dduke13.zip" -O 3dduke13.zip
-    unzip -L -o 3dduke13.zip dn3dsw13.shr
-    mkdir -p "$md_inst/shareware"
-    unzip -L -o dn3dsw13.shr -d "$md_inst/shareware" duke3d.grp duke.rts
     md_ret_files=(
         'eduke32'
         'mapster32'
     )
+}
+
+function game_data_eduke32() {
+    cd "$_tmpdir"
+    if [[ ! -f "$romdir/ports/duke3d/duke3d.grp" ]]; then
+        wget -O 3dduke13.zip "$__archive_url/3dduke13.zip"
+        unzip -L -o 3dduke13.zip dn3dsw13.shr
+        unzip -L -o dn3dsw13.shr -d "$romdir/ports/duke3d" duke3d.grp duke.rts
+        rm 3dduke13.zip dn3dsw13.shr
+        chown -R $user:$user "$romdir/ports/duke3d"
+    fi
 }
 
 function configure_eduke32() {
@@ -63,14 +70,8 @@ function configure_eduke32() {
 
     moveConfigDir "$home/.eduke32" "$md_conf_root/duke3d"
 
-    local file
-    local file_bn
-    for file in "$md_inst/shareware/"*; do
-        file_bn=${file##*/}
-        rm -f "$romdir/ports/duke3d/$file_bn"
-        ln -snv "$file" "$romdir/ports/duke3d/$file_bn"
-    done
-
     # remove old launch script
     rm -f "$romdir/ports/Duke3D Shareware.sh"
+    
+    [[ "$md_mode" == "install" ]] && game_data_eduke32
 }
