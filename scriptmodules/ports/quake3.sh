@@ -33,10 +33,17 @@ function install_quake3() {
         'build/release-linux-arm/ioq3ded.arm'
         'build/release-linux-arm/ioquake3.arm'
     )
+}
 
-    wget $__archive_url/Q3DemoPaks.zip
-    unzip -o Q3DemoPaks.zip -d "$md_inst"
-    rm Q3DemoPaks.zip
+function game_data_quake3() {
+    if [[ ! -f "$romdir/ports/quake3/pak0.pk3" ]]; then
+        cd "$__tmpdir"
+        wget -O Q3DemoPaks.zip "$__archive_url/Q3DemoPaks.zip"
+        unzip -o Q3DemoPaks.zip -d "$romdir/ports/quake3"
+        rm Q3DemoPaks.zip
+    fi
+    # always chown as moveConfigDir in the configure_ script would move the root owned demo files
+    chown -R $user:$user "$romdir/ports/quake3"
 }
 
 function configure_quake3() {
@@ -44,6 +51,10 @@ function configure_quake3() {
 
     mkRomDir "ports/quake3"
 
+    moveConfigDir "$md_inst/baseq3" "$romdir/ports/quake3"
+
     # Add user for no sudo run
     usermod -a -G video $user
+
+    [[ "$md_mode" == "install" ]] && game_data_quake3
 }
