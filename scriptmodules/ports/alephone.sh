@@ -37,6 +37,29 @@ function install_alephone() {
     make install
 }
 
+function install_games_alephone() {
+    cd "$__tmpdir"
+    local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-20150620"
+    if [[ ! -f "$romdir/ports/$md_id/Marathon/Shapes.shps" ]]; then
+        wget -O Marathon-20150620-Data.zip "$release_url/Marathon-20150620-Data.zip"
+        unzip Marathon-20150620-Data.zip -d "$romdir/ports/$md_id"
+        rm Marathon-20150620-Data.zip
+    fi
+
+    if [[ ! -f "$romdir/ports/$md_id/Marathon 2/Shapes.shpA" ]]; then
+        wget -O Marathon2-20150620-Data.zip "$release_url/Marathon2-20150620-Data.zip"
+        unzip Marathon2-20150620-Data.zip -d "$romdir/ports/$md_id"
+        rm Marathon2-20150620-Data.zip
+    fi
+
+    if [[ ! -f "$romdir/ports/$md_id/Marathon Infinity/Shapes.shpA" ]]; then
+        wget -O MarathonInfinity-20150620-Data.zip "$release_url/MarathonInfinity-20150620-Data.zip"
+        unzip MarathonInfinity-20150620-Data.zip -d "$romdir/ports/$md_id"
+        rm MarathonInfinity-20150620-Data.zip
+    fi
+    chown -R $user:$user "$romdir/ports/$md_id"
+}
+
 function configure_alephone() {
     addPort "$md_id" "marathon" "Aleph One Engine - Marathon" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon/'"
     addPort "$md_id" "marathon2" "Aleph One Engine - Marathon 2" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon 2/'"
@@ -46,24 +69,5 @@ function configure_alephone() {
 
     moveConfigDir "$home/.alephone" "$configDir/alephone"
 
-    local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-20150620"
-    if [[ ! -f "$romdir/ports/$md_id/Marathon/Shapes.shps" ]]; then
-        wget "$release_url/Marathon-20150620-Data.zip"
-        unzip Marathon-20150620-Data.zip -d "$romdir/ports/$md_id"
-        rm Marathon-20150620-Data.zip
-    fi
-
-    if [[ ! -f "$romdir/ports/$md_id/Marathon 2/Shapes.shpA" ]]; then
-        wget "$release_url/Marathon2-20150620-Data.zip"
-        unzip Marathon2-20150620-Data.zip -d "$romdir/ports/$md_id"
-        rm Marathon2-20150620-Data.zip
-    fi
-
-    if [[ ! -f "$romdir/ports/$md_id/Marathon Infinity/Shapes.shpA" ]]; then
-        wget https://github.com/Aleph-One-Marathon/alephone/releases/download/release-20150620/MarathonInfinity-20150620-Data.zip
-        unzip MarathonInfinity-20150620-Data.zip -d "$romdir/ports/$md_id"
-        rm MarathonInfinity-20150620-Data.zip
-    fi
-
-    chown -R $user:$user "$romdir/ports/$md_id"
+    [[ "$md_mode" == "install" ]] && install_games_alephone
 }
