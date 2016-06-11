@@ -10,10 +10,11 @@
 #
 
 rp_module_id="autostart"
-rp_module_desc="Auto-start EmulationStation"
+rp_module_desc="Auto-start Emulation Station / Kodi on boot"
 rp_module_section="config"
 
 function enable_autostart() {
+    local mode="$1"
     if isPlatform x11; then
         mkUserDir "$home/.config/autostart"
         ln -sf "/usr/local/share/applications/retropie.desktop" "$home/.config/autostart/"
@@ -25,10 +26,32 @@ function enable_autostart() {
         else
             raspi-config nonint do_boot_behaviour B2
         fi
-        cat >/etc/profile.d/10-emulationstation.sh <<_EOF_
-# launch emulationstation (if we are on the correct tty)
-[ "\`tty\`" = "/dev/tty1" ] && emulationstation
+
+        # delete old startup script
+        rm -f /etc/profile.d/10-emulationstation.sh
+
+        local script="$configdir/all/autostart.sh"
+
+        cat >/etc/profile.d/10-retropie.sh <<_EOF_
+# launch our autostart apps (if we are on the correct tty)
+if [ "\`tty\`" = "/dev/tty1" ]; then
+    bash "$script"
+fi
 _EOF_
+
+        # delete any previous entries for emulationstation / kodi in autostart.sh
+        sed -i '/#auto/d' "$script"
+        # make sure there is a newline
+        sed -i -e '$a\' "$script"
+        case "$mode" in
+            es)
+                echo >> "emulationstation #auto" >>"$script"
+                ;;
+            kodi)
+                echo -e "kodi #auto\nemulationstation #auto" >>"$script"
+                ;;
+        esac
+        chown $user:$user "$script"
     fi
 }
 
@@ -47,6 +70,7 @@ function disable_autostart() {
             raspi-config nonint do_boot_behaviour "$login_type"
         fi
         rm -f /etc/profile.d/10-emulationstation.sh
+        rm -f /etc/profile.d/10-retropie.sh
     fi
 }
 
@@ -69,10 +93,11 @@ function gui_autostart() {
         else
             options=(
                 1 "Start Emulation Station at boot"
-                2 "Boot to text console (auto login)"
+                2 "Start Kodi at boot (exit for Emulation Station)"
+                C "Boot to text console (auto login)"
             )
             if [[ "$__raspbian_ver" -gt "7" ]]; then
-                options+=(3 "Boot to desktop (auto login)")
+                options+=(D "Boot to desktop (auto login)")
             fi
         fi
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -85,19 +110,23 @@ function gui_autostart() {
                             printMsgs "dialog" "Emulation Station is set to autostart after login."
                         else
                             disable_autostart
-                            printMsgs "dialog" "Autostating of Emulation Station is disabled."
+                            printMsgs "dialog" "Autostarting of Emulation Station is disabled."
                         fi
                         x11_autostart=$((x11_autostart ^ 1))
                     else
-                        enable_autostart
+                        enable_autostart es
                         printMsgs "dialog" "Emulation Station is set to launch at boot."
                     fi
                     ;;
                 2)
+                    enable_autostart kodi
+                    printMsgs "dialog" "Emulation Station is set to launch at boot."
+                    ;;
+                C)
                     disable_autostart
                     printMsgs "dialog" "Booting to text console."
                     ;;
-                3)
+                D)
                     disable_autostart B4
                     printMsgs "dialog" "Booting to desktop."
                     ;;
