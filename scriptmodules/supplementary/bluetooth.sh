@@ -277,11 +277,11 @@ _EOF_
 }
 
 function gui_bluetooth() {
-    local reconnect=0
-    if systemctl is-enabled connect-bluetooth | grep -q "enabled"; then
-        reconnect=1
-    fi
     while true; do
+        local reconnect=0
+        if systemctl is-enabled connect-bluetooth 2>&1 | grep -q "enabled"; then
+            reconnect=1
+        fi
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Devices" 22 76 16)
         local options=(
             1 "Register and Connect to Bluetooth Device"
@@ -314,7 +314,6 @@ function gui_bluetooth() {
                     ;;
                 5)
                     connect_bluetooth
-                    printMsgs "dialog" "Bluetooth devices will be re-connected to on boot"
                     ;;
                 6)
                     if [[ "$reconnect" -eq 0 ]]; then
