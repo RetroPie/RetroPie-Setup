@@ -14,7 +14,7 @@ rp_module_desc="Commander Genius - Modern Interpreter for the Commander Keen Gam
 rp_module_section="opt"
 
 function depends_cgenius() {
-    getDepends build-essential libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libgl1-mesa-dev libboost1.55-dev libboost-dev 
+    getDepends build-essential libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libgl1-mesa-dev libboost-dev
 }
 
 function sources_cgenius() {
