@@ -244,15 +244,59 @@ function udev_rule_bluetooth() {
     fi
 }
 
+function connect_bluetooth() {
+    local mac_address
+    local device_name
+    while read mac_address; read device_name; do
+        $($(get_script_bluetooth bluez-test-input) connect "$mac_address" 2>&1)
+    done < <(list_registered_bluetooth)
+}
+
+function connect_boot_bluetooth() {
+    local mode="$1"
+    local config="/etc/systemd/system/connect-bluetooth.service"
+    case "$mode" in
+        enable)
+            cat > "$config" << _EOF_
+[Unit]
+Description=Connect Bluetooth
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash "$scriptdir/retropie_packages.sh" bluetooth connect
+
+[Install]
+WantedBy=multi-user.target
+_EOF_
+            systemctl enable "$config"
+            ;;
+        disable)
+            systemctl disable "$config"
+            ;;
+    esac
+}
+
 function gui_bluetooth() {
+    local reconnect=0
+    if systemctl is-enabled connect-bluetooth | grep -q "enabled"; then
+        reconnect=1
+    fi
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Devices" 22 76 16)
         local options=(
             1 "Register and Connect to Bluetooth Device"
             2 "Unregister and Remove Bluetooth Device"
             3 "Display Registered & Connected Bluetooth Devices"
-            4 "Set up udev rule for Joypad (required for joypads from 8Bitdo)"
+            4 "Set up udev rule for Joypad (required for joypads from 8Bitdo etc)"
+            5 "Connect to all registered devices"
         )
+
+        if [[ "$reconnect" -eq 0 ]]; then
+            options+=(6 "Connect to all registered devices on boot (Disabled)")
+        else
+            options+=(6 "Connect to all registered devices on boot (Enabled)")
+        fi
+
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case $choice in
@@ -267,6 +311,17 @@ function gui_bluetooth() {
                     ;;
                 4)
                     udev_rule_bluetooth
+                    ;;
+                5)
+                    connect_bluetooth
+                    printMsgs "dialog" "Bluetooth devices will be re-connected to on boot"
+                    ;;
+                6)
+                    if [[ "$reconnect" -eq 0 ]]; then
+                        connect_boot_bluetooth enable
+                    else
+                        connect_boot_bluetooth disable
+                    fi
                     ;;
             esac
         else
