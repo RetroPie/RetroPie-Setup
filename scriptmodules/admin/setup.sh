@@ -278,6 +278,7 @@ function settings_gui_setup() {
         rps_logInit
         {
             if fnExists "gui_${__mod_id[choice]}"; then
+                rp_callModule "$choice" depends
                 rp_callModule "$choice" gui
             else
                 rp_callModule "$choice"
