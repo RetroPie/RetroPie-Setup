@@ -119,7 +119,7 @@ function remove_device_bluetooth() {
     fi
 }
 
-function connect_bluetooth() {
+function register_bluetooth() {
     local mac_addresses=()
     local mac_address
     local device_names=()
@@ -301,7 +301,7 @@ function gui_bluetooth() {
         if [[ -n "$choice" ]]; then
             case $choice in
                 1)
-                    connect_bluetooth
+                    register_bluetooth
                     ;;
                 2)
                     remove_device_bluetooth
