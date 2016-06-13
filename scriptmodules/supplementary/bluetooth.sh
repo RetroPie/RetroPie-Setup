@@ -13,6 +13,17 @@ rp_module_id="bluetooth"
 rp_module_desc="Configure Bluetooth Devices"
 rp_module_section="config"
 
+function _get_connect_mode() {
+    # get bluetooth config
+    iniConfig "=" '"' "$configdir/bluetooth.cfg"
+    iniGet "connect_mode"
+    if [[ -n "$ini_value" ]]; then
+        echo "$ini_value"
+    else
+        echo "default"
+    fi
+}
+
 function depends_bluetooth() {
     local depends=(bluetooth python-dbus python-gobject)
     if isPlatform "rpi3" && hasPackage raspberrypi-bootloader && [[ "$__raspbian_ver" -ge "8" ]]; then
@@ -212,7 +223,7 @@ function register_bluetooth() {
     return 1
 }
 
-function udev_rule_bluetooth() {
+function udev_bluetooth() {
     local mac_addresses=()
     local mac_address
     local device_names=()
@@ -248,79 +259,108 @@ function connect_bluetooth() {
     local mac_address
     local device_name
     while read mac_address; read device_name; do
-        $($(get_script_bluetooth bluez-test-input) connect "$mac_address" 2>&1)
+        $($(get_script_bluetooth bluez-test-input) connect "$mac_address" 2>/dev/null)
     done < <(list_registered_bluetooth)
 }
 
-function connect_boot_bluetooth() {
-    local mode="$1"
+function boot_bluetooth() {
+    connect_mode="$(_get_connect_mode)"
+    case "$connect_mode" in
+        boot)
+            connect_bluetooth
+            ;;
+        background)
+            local script=""
+            local macs=()
+            local mac_address
+            local device_name
+            while read mac_address; read device_name; do
+                macs+=($mac_address)
+            done < <(list_registered_bluetooth)
+            local script="while true; do for mac in ${macs[@]}; do $(get_script_bluetooth bluez-test-input) connect \"\$mac\" 2>/dev/null; sleep 10; done; done"
+            nohup nice -n19 /bin/sh -c "$script" >/dev/null &
+            ;;
+    esac
+}
+
+function connect_mode_bluetooth() {
+    local connect_mode="$(_get_connect_mode)"
+
+    local cmd=(dialog --backtitle "$__backtitle" --default-item "$connect_mode" --menu "Choose a connect mode" 22 76 16)
+    echo $__ini_cfg_file
+    local options=(
+        default "Bluetooth stack default behaviour"
+        boot "Connect to devices once at boot"
+        background "Connect to devices in the background"
+    )
+
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$choice" ]] && return
+
     local config="/etc/systemd/system/connect-bluetooth.service"
-    case "$mode" in
-        enable)
+    case "$choice" in
+        boot|background)
+            local type="simple"
+            [[ "$choice" == "background" ]] && type="forking"
             cat > "$config" << _EOF_
 [Unit]
 Description=Connect Bluetooth
 
 [Service]
-Type=oneshot
-ExecStart=/bin/bash "$scriptdir/retropie_packages.sh" bluetooth connect
+Type=$type
+ExecStart=/bin/bash "$scriptdir/retropie_packages.sh" bluetooth boot
 
 [Install]
 WantedBy=multi-user.target
 _EOF_
             systemctl enable "$config"
             ;;
-        disable)
-            systemctl disable "$config"
+        default)
+            if systemctl is-enabled connect-bluetooth | grep -q "enabled"; then
+               systemctl disable "$config"
+            fi
+            rm -f "$config"
             ;;
     esac
+    iniConfig "=" '"' "$configdir/bluetooth.cfg"
+    iniSet "connect_mode" "$choice"
+    chown $user:$user "$configdir/bluetooth.cfg"
 }
 
 function gui_bluetooth() {
     while true; do
-        local reconnect=0
-        if systemctl is-enabled connect-bluetooth 2>&1 | grep -q "enabled"; then
-            reconnect=1
-        fi
+        local connect_mode="$(_get_connect_mode)"
+
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Devices" 22 76 16)
         local options=(
-            1 "Register and Connect to Bluetooth Device"
-            2 "Unregister and Remove Bluetooth Device"
-            3 "Display Registered & Connected Bluetooth Devices"
-            4 "Set up udev rule for Joypad (required for joypads from 8Bitdo etc)"
-            5 "Connect to all registered devices"
+            R "Register and Connect to Bluetooth Device"
+            X "Remove Bluetooth Device"
+            D "Display Registered & Connected Bluetooth Devices"
+            U "Set up udev rule for Joypad (required for joypads from 8Bitdo etc)"
+            C "Connect now to all registered devices"
+            M "Configure bluetooth connect mode (currently: $connect_mode)"
         )
-
-        if [[ "$reconnect" -eq 0 ]]; then
-            options+=(6 "Connect to all registered devices on boot (Disabled)")
-        else
-            options+=(6 "Connect to all registered devices on boot (Enabled)")
-        fi
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case $choice in
-                1)
+                R)
                     register_bluetooth
                     ;;
-                2)
+                X)
                     remove_device_bluetooth
                     ;;
-                3)
+                D)
                     display_active_and_registered_bluetooth
                     ;;
-                4)
-                    udev_rule_bluetooth
+                U)
+                    udev_bluetooth
                     ;;
-                5)
+                C)
                     connect_bluetooth
                     ;;
-                6)
-                    if [[ "$reconnect" -eq 0 ]]; then
-                        connect_boot_bluetooth enable
-                    else
-                        connect_boot_bluetooth disable
-                    fi
+                M)
+                    connect_mode_bluetooth
                     ;;
             esac
         else
