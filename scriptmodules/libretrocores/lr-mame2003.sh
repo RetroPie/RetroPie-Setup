@@ -49,10 +49,24 @@ function configure_lr-mame2003() {
     # remove old core library
     rm -f "$md_inst/mame078_libretro.so"
 
-    mkRomDir "arcade"
-    mkRomDir "mame-libretro"
-    ensureSystemretroconfig "arcade"
-    ensureSystemretroconfig "mame-libretro"
+    mkUserDir "$biosdir/mame2003/"
+    mkUserDir "$biosdir/mame2003/samples/"
+
+    local mame_dir
+    for mame_dir in arcade mame-libretro
+    do
+        mkRomDir "$mame_dir"
+        ensureSystemretroconfig "$mame_dir"
+
+        mkUserDir "$romdir/$mame_dir/mame2003/cfg/"
+        mkUserDir "$romdir/$mame_dir/mame2003/ctrlr/"
+        mkUserDir "$romdir/$mame_dir/mame2003/diff/"
+        mkUserDir "$romdir/$mame_dir/mame2003/hi/"
+        mkUserDir "$romdir/$mame_dir/mame2003/inp/"
+        mkUserDir "$romdir/$mame_dir/mame2003/memcard/"
+        mkUserDir "$romdir/$mame_dir/mame2003/nvram/"
+        mkUserDir "$romdir/$mame_dir/mame2003/snap/"
+    done
 
     # Set core options
     setRetroArchCoreOption "mame2003-skip_disclaimer" "enabled"
