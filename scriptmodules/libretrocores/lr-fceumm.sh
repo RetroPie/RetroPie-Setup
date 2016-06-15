@@ -11,7 +11,7 @@
 
 rp_module_id="lr-fceumm"
 rp_module_desc="NES emu - FCEUmm port for libretro"
-rp_module_help="ROM Extensions: .nes .zip\n\nCopy your NES roms to $romdir/nes"
+rp_module_help="ROM Extensions: .nes .zip\n\nCopy your NES roms to $romdir/nes\n\nFor the Famicom Disk System copy your roms to $romdir/fds\n\nFor the Famicom Disk System copy the required BIOS file disksys.rom to $biosdir"
 rp_module_section="main"
 
 function sources_lr-fceumm() {
@@ -41,8 +41,11 @@ function configure_lr-fceumm() {
     rm -rf "$rootdir/$md_type/lr-fceu-next"
 
     mkRomDir "nes"
+    mkRomDir "fds"
     ensureSystemretroconfig "nes"
+    ensureSystemretroconfig "fds"
 
     delSystem "lr-fceu-next" "nes"
-    addSystem 1 "$md_id" "nes" "$md_inst/fceumm_libretro.so"
+    addSystem 0 "$md_id" "nes" "$md_inst/fceumm_libretro.so"
+    addSystem 1 "$md_id" "fds" "$md_inst/fceumm_libretro.so"
 }
