@@ -58,14 +58,11 @@ function configure_lr-mame2003() {
         mkRomDir "$mame_dir"
         ensureSystemretroconfig "$mame_dir"
 
-        mkUserDir "$romdir/$mame_dir/mame2003/cfg/"
-        mkUserDir "$romdir/$mame_dir/mame2003/ctrlr/"
-        mkUserDir "$romdir/$mame_dir/mame2003/diff/"
-        mkUserDir "$romdir/$mame_dir/mame2003/hi/"
-        mkUserDir "$romdir/$mame_dir/mame2003/inp/"
-        mkUserDir "$romdir/$mame_dir/mame2003/memcard/"
-        mkUserDir "$romdir/$mame_dir/mame2003/nvram/"
-        mkUserDir "$romdir/$mame_dir/mame2003/snap/"
+        local mame_sub_dir
+        for mame_sub_dir in cfg ctrlr diff hi inp memcard nvram snap
+        do
+            mkRomDir "$mame_dir/mame2003/$mame_sub_dir"
+        done
     done
 
     # Set core options
