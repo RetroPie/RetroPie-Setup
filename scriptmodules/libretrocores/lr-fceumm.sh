@@ -36,10 +36,6 @@ function install_lr-fceumm() {
 }
 
 function configure_lr-fceumm() {
-    # remove old install folders
-    rm -rf "$rootdir/$md_type/neslibretro"
-    rm -rf "$rootdir/$md_type/lr-fceu-next"
-
     mkRomDir "nes"
     mkRomDir "fds"
     ensureSystemretroconfig "nes"

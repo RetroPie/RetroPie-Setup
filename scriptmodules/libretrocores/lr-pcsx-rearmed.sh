@@ -42,9 +42,6 @@ function install_lr-pcsx-rearmed() {
 }
 
 function configure_lr-pcsx-rearmed() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/psxlibretro"
-
     mkRomDir "psx"
     ensureSystemretroconfig "psx"
 

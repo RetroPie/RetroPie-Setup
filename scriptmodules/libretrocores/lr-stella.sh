@@ -32,9 +32,6 @@ function install_lr-stella() {
 }
 
 function configure_lr-stella() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/stellalibretro"
-
     mkRomDir "atari2600"
     ensureSystemretroconfig "atari2600"
 

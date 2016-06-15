@@ -47,9 +47,6 @@ function install_lr-fba() {
 }
 
 function configure_lr-fba() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/fbalibretro"
-
     mkRomDir "arcade"
     mkRomDir "fba"
     mkRomDir "neogeo"

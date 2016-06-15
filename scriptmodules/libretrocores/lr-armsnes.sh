@@ -47,9 +47,6 @@ function install_lr-armsnes() {
 }
 
 function configure_lr-armsnes() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/armsnes"
-
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 

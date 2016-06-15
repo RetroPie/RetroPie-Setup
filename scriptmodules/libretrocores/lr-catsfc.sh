@@ -31,9 +31,6 @@ function install_lr-catsfc() {
 }
 
 function configure_lr-catsfc() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/catsfc"
-
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 

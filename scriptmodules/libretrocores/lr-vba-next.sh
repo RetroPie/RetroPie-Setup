@@ -36,9 +36,6 @@ function install_lr-vba-next() {
 }
 
 function configure_lr-vba-next() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/vba-next"
-
     mkRomDir "gba"
     ensureSystemretroconfig "gba"
 

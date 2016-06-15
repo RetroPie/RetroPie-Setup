@@ -33,11 +33,6 @@ function install_lr-pocketsnes() {
 }
 
 function configure_lr-pocketsnes() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/pocketsnes"
-    # remove old core library
-    rm -f "$md_inst/libretro.so"
-
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 
