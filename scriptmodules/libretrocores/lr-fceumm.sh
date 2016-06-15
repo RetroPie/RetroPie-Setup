@@ -46,6 +46,6 @@ function configure_lr-fceumm() {
     ensureSystemretroconfig "fds"
 
     delSystem "lr-fceu-next" "nes"
-    addSystem 0 "$md_id" "nes" "$md_inst/fceumm_libretro.so"
-    addSystem 1 "$md_id" "fds" "$md_inst/fceumm_libretro.so"
+    addSystem 1 "$md_id" "nes" "$md_inst/fceumm_libretro.so"
+    addSystem 0 "$md_id" "fds" "$md_inst/fceumm_libretro.so"
 }
