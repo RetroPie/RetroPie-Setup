@@ -9,6 +9,7 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
+declare -A __mod_id_to_idx
 __mod_idx=()
 __mod_id=()
 __mod_type=()
@@ -78,12 +79,8 @@ function rp_callModule() {
         md_id="${__mod_id[$req_id]}"
         md_idx="$req_id"
     else
-        for md_idx in "${!__mod_id[@]}"; do
-            if [[ "$req_id" == "${__mod_id[$md_idx]}" ]]; then
-                md_id="$req_id"
-                break
-            fi
-        done
+        md_idx="$(rp_getIdxFromId $req_id)"
+        [[ -n md_idx ]] && md_id="$req_id"
     fi
 
     if [[ -z "$md_id" ]]; then
@@ -373,6 +370,9 @@ function rp_registerModule() {
         __mod_help["$module_idx"]="$rp_module_help"
         __mod_section["$module_idx"]="$rp_module_section"
         __mod_flags["$module_idx"]="$rp_module_flags" 
+
+        # id to idx mapping via associative array
+        __mod_id_to_idx["$rp_module_id"]="$module_idx"
     fi
 }
 
@@ -391,6 +391,10 @@ function rp_registerAllModules() {
     rp_registerModuleDir 300 "ports"
     rp_registerModuleDir 800 "supplementary"
     rp_registerModuleDir 900 "admin"
+}
+
+function rp_getIdxFromId() {
+    echo "${__mod_id_to_idx[$1]}"
 }
 
 function rp_getSectionIds() {
