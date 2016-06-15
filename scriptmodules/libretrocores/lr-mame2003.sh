@@ -57,8 +57,8 @@ function configure_lr-mame2003() {
         done
     done
 
-    mkUserDir "$biosdir/mame2003/"
-    mkUserDir "$biosdir/mame2003/samples/"
+    mkUserDir "$biosdir/mame2003"
+    mkUserDir "$biosdir/mame2003/samples"
 
     # Set core options
     setRetroArchCoreOption "mame2003-skip_disclaimer" "enabled"

@@ -45,16 +45,15 @@ function install_lr-fba-next() {
 }
 
 function configure_lr-fba-next() {
-    mkRomDir "arcade"
-    mkRomDir "fba"
-    mkRomDir "neogeo"
-    ensureSystemretroconfig "arcade"
-    ensureSystemretroconfig "fba"
-    ensureSystemretroconfig "neogeo"
+    local dir
+    for dir in arcade fba neogeo; do
+        mkRomDir "$dir"
+        ensureSystemretroconfig "$dir"
+    done
 
     # Create samples directory
-    mkUserDir "$biosdir/fba/"
-    mkUserDir "$biosdir/fba/samples/"
+    mkUserDir "$biosdir/fba"
+    mkUserDir "$biosdir/fba/samples"
 
     # Set core options
     setRetroArchCoreOption "fba-diagnostic-input" "Hold Start"
