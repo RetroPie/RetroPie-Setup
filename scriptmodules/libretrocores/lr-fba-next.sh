@@ -52,6 +52,10 @@ function configure_lr-fba-next() {
     ensureSystemretroconfig "fba"
     ensureSystemretroconfig "neogeo"
 
+    # Create samples directory
+    mkUserDir "$biosdir/fba/"
+    mkUserDir "$biosdir/fba/samples/"
+
     # Set core options
     setRetroArchCoreOption "fba-diagnostic-input" "Hold Start"
 
