@@ -46,21 +46,19 @@ function install_lr-mame2003() {
 }
 
 function configure_lr-mame2003() {
-    mkUserDir "$biosdir/mame2003/"
-    mkUserDir "$biosdir/mame2003/samples/"
-
     local mame_dir
-    for mame_dir in arcade mame-libretro
-    do
+    local mame_sub_dir
+    for mame_dir in arcade mame-libretro; do
         mkRomDir "$mame_dir"
         ensureSystemretroconfig "$mame_dir"
 
-        local mame_sub_dir
-        for mame_sub_dir in cfg ctrlr diff hi inp memcard nvram snap
-        do
+        for mame_sub_dir in cfg ctrlr diff hi inp memcard nvram snap; do
             mkRomDir "$mame_dir/mame2003/$mame_sub_dir"
         done
     done
+
+    mkUserDir "$biosdir/mame2003/"
+    mkUserDir "$biosdir/mame2003/samples/"
 
     # Set core options
     setRetroArchCoreOption "mame2003-skip_disclaimer" "enabled"
