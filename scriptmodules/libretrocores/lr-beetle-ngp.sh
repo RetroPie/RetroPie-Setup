@@ -14,6 +14,14 @@ rp_module_desc="Neo Geo Pocket(Color)emu - Mednafen Neo Geo Pocket core port for
 rp_module_help="ROM Extensions: .ngc .ngp .zip\n\nCopy your Neo Geo Pocket roms to $romdir/ngp\n\nCopy your Neo Geo Pocket Color roms to $romdir/ngpc"
 rp_module_section="main"
 
+function _update_hook_lr-beetle-ngp() {
+    # move from old location and update emulators.cfg
+    if [[ -d "$rootdir/$md_type/lr-mednafen-ngp" ]]; then
+        mv "$rootdir/$md_type/lr-mednafen-ngp" "$md_inst"
+        sed -i "s/lr-mednafen-ngp/lr-beetle-ngp/g" "$configdir"/*/emulators.cfg
+    fi
+}
+
 function sources_lr-beetle-ngp() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-ngp-libretro.git
 }
@@ -31,9 +39,6 @@ function install_lr-beetle-ngp() {
 }
 
 function configure_lr-beetle-ngp() {
-    # remove old install
-    rm -rf "$rootdir/$md_type/lr-mednafen-ngp"
-
     mkRomDir "ngp"
     mkRomDir "ngpc"
     ensureSystemretroconfig "ngp"

@@ -14,6 +14,14 @@ rp_module_desc="Wonderswan emu - Mednafen WonderSwan core port for libretro"
 rp_module_help="ROM Extensions: .ws .wsc .zip\n\nCopy your Wonderswan roms to $romdir/wonderswan\n\nCopy your Wonderswan Color roms to $romdir/wonderswancolor"
 rp_module_section="opt"
 
+function _update_hook_lr-beetle-wswan() {
+    # move from old location and update emulators.cfg
+    if [[ -d "$rootdir/$md_type/lr-mednafen-wswan" ]]; then
+        mv "$rootdir/$md_type/lr-mednafen-wswan" "$md_inst"
+        sed -i "s/lr-mednafen-wswan/lr-beetle-wswan/g" "$configdir"/*/emulators.cfg
+    fi
+}
+
 function sources_lr-beetle-wswan() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-wswan-libretro.git
 }
@@ -31,9 +39,6 @@ function install_lr-beetle-wswan() {
 }
 
 function configure_lr-beetle-wswan() {
-    # remove old install
-    rm -rf "$rootdir/$md_type/lr-mednafen-wswan"
-
     mkRomDir "wonderswan"
     mkRomDir "wonderswancolor"
     ensureSystemretroconfig "wonderswan"
