@@ -312,6 +312,7 @@ function update_packages_gui_setup() {
     __INFMSGS=()
     rps_logInit
     {
+        dialog --yesno "Would you like to update the underlying OS packages (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && apt_upgrade_raspbiantools
         update_packages_setup
     } &> >(tee >(gzip --stdout >"$logfilename"))
 
