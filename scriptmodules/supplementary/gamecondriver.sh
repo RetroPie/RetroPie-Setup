@@ -14,6 +14,11 @@ rp_module_desc="Gamecon & db9 drivers"
 rp_module_section="driver"
 rp_module_flags="!x86 !mali"
 
+function _update_hook_gamecondriver() {
+    # to show as installed in retropie-setup 4.x
+    hasPackage gamecon-gpio-rpi-dkms && mkdir -p "$md_inst"
+}
+
 function depends_gamecondriver() {
     # remove any old kernel headers for current kernel
     local kernel_ver="$(uname -r)"

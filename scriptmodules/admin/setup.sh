@@ -95,6 +95,10 @@ function updatescript_setup()
         return
     fi
     popd >/dev/null
+
+    # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
+    rp_updateHooks
+
     printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script."
     printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nIt has come to our attention that some people are profiting from selling RetroPie SD cards, some including copyrighted games. This is illegal.\n\nIf you have been sold this software on its own or including games, you can let us know about it by emailing retropieproject@gmail.com"
 }

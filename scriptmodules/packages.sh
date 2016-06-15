@@ -415,3 +415,12 @@ function rp_isInstalled() {
     [[ -d "$md_inst" ]] && return 0
     return 1
 }
+
+function rp_updateHooks() {
+    local function
+    local mod_idx
+    for function in $(compgen -A function _update_hook_); do
+        mod_idx="$(rp_getIdxFromId "${function/_update_hook_/}")"
+        [[ -n "$mod_idx" ]] && rp_callModule "$mod_idx" _update_hook
+    done
+}

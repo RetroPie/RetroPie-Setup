@@ -13,7 +13,12 @@ rp_module_id="openttd"
 rp_module_desc="Open Source Simulator Based On Transport Tycoon Deluxe"
 rp_module_section="opt"
 rp_module_flags="!mali"
- 
+
+function _update_hook_openttd() {
+    # to show as installed in retropie-setup 4.x
+    hasPackage openttd && mkdir -p "$md_inst"
+}
+
 function install_bin_openttd() {
     aptInstall openttd
 }

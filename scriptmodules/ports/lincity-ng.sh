@@ -14,6 +14,11 @@ rp_module_desc="lincity-ng - Open Source City Building Game"
 rp_module_section="opt"
 rp_module_flags="!mali"
 
+function _update_hook_lincity-ng() {
+    # to show as installed in retropie-setup 4.x
+    hasPackage lincity-ng && mkdir -p "$md_inst"
+}
+
 function depends_lincity-ng() {
     ! isPlatform "x11" && getDepends xorg
 }
