@@ -42,9 +42,6 @@ function install_lr-mupen64plus() {
 }
 
 function configure_lr-mupen64plus() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/mupen64plus-libretro"
-
     mkRomDir "n64"
     ensureSystemretroconfig "n64"
 

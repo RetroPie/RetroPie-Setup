@@ -13,6 +13,11 @@ rp_module_id="retropiemenu"
 rp_module_desc="RetroPie configuration menu for EmulationStation"
 rp_module_section="core"
 
+function _update_hook_retropiemenu() {
+    # to show as installed in retropie-setup 4.x
+    [[ -f "$home/.emulationstation/gamelists/retropie/gamelist.xml" ]] && mkdir -p "$md_inst"
+}
+
 function depends_retropiemenu() {
     getDepends mc
 }

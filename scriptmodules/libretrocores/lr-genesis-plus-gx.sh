@@ -34,9 +34,6 @@ function install_lr-genesis-plus-gx() {
 }
 
 function configure_lr-genesis-plus-gx() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/genesislibretro"
-
     mkRomDir "gamegear"
     mkRomDir "mastersystem"
     mkRomDir "megadrive"

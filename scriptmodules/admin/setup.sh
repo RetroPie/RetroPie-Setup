@@ -85,17 +85,25 @@ function updatescript_setup()
     pushd "$scriptdir" >/dev/null
     if [[ ! -d ".git" ]]; then
         printMsgs "dialog" "Cannot find directory '.git'. Please clone the RetroPie Setup script via 'git clone https://github.com/RetroPie/RetroPie-Setup.git'"
-        popd
-        return
+        popd >/dev/null
+        return 1
     fi
     local error
     if ! error=$(su $user -c "git pull 2>&1 >/dev/null"); then
         printMsgs "dialog" "Update failed:\n\n$error"
-        popd
-        return
+        popd >/dev/null
+        return 1
     fi
     popd >/dev/null
+
     printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script."
+    return 0
+}
+
+function post_update_setup() {
+    # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
+    rp_updateHooks
+
     printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nIt has come to our attention that some people are profiting from selling RetroPie SD cards, some including copyrighted games. This is illegal.\n\nIf you have been sold this software on its own or including games, you can let us know about it by emailing retropieproject@gmail.com"
 }
 
@@ -312,6 +320,7 @@ function update_packages_gui_setup() {
     __INFMSGS=()
     rps_logInit
     {
+        dialog --yesno "Would you like to update the underlying OS packages (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && apt_upgrade_raspbiantools
         update_packages_setup
     } &> >(tee >(gzip --stdout >"$logfilename"))
 
@@ -437,8 +446,7 @@ function gui_setup() {
                     uninstall_setup
                     ;;
                 U)
-                    updatescript_setup
-                    exec "$scriptdir/retropie_packages.sh" setup gui
+                    updatescript_setup && exec "$scriptdir/retropie_packages.sh" setup post_update
                     ;;
                 R)
                     dialog --defaultno --yesno "Are you sure you want to reboot?" 22 76 2>&1 >/dev/tty || continue

@@ -15,6 +15,11 @@ rp_module_help="ROM Extensions: .dat .zip .z1 .z2 .z3 .z4 .z5 .z6 .z7 .z8\n\nCop
 rp_module_section="opt"
 rp_module_flags="!mali"
 
+function _update_hook_frotz() {
+    # to show as installed in retropie-setup 4.x
+    hasPackage frotz && mkdir -p "$md_inst"
+}
+
 function install_bin_frotz() {
     aptInstall frotz
 }

@@ -34,12 +34,6 @@ function install_lr-imame4all() {
 }
 
 function configure_lr-imame4all() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/mamelibretro"
-
-    # remove old core library
-    rm -f "$md_inst/libretro.so"
-
     mkRomDir "arcade"
     mkRomDir "mame-mame4all"
     ensureSystemretroconfig "arcade"

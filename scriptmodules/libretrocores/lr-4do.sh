@@ -31,9 +31,6 @@ function install_lr-4do() {
 }
 
 function configure_lr-4do() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/4do"
-
     mkRomDir "3do"
     ensureSystemretroconfig "3do"
 

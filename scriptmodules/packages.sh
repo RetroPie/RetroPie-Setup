@@ -9,6 +9,7 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
+declare -A __mod_id_to_idx
 __mod_idx=()
 __mod_id=()
 __mod_type=()
@@ -78,12 +79,8 @@ function rp_callModule() {
         md_id="${__mod_id[$req_id]}"
         md_idx="$req_id"
     else
-        for md_idx in "${!__mod_id[@]}"; do
-            if [[ "$req_id" == "${__mod_id[$md_idx]}" ]]; then
-                md_id="$req_id"
-                break
-            fi
-        done
+        md_idx="$(rp_getIdxFromId $req_id)"
+        [[ -n md_idx ]] && md_id="$req_id"
     fi
 
     if [[ -z "$md_id" ]]; then
@@ -139,7 +136,7 @@ function rp_callModule() {
     # create function name
     function="${mode}_${md_id}"
 
-    # handle our  cases where we have automatic module functions like remove
+    # handle cases where we have automatic module functions like remove
     if ! fnExists "$function"; then
         if [[ "$mode" == "install" ]] && fnExists "install_bin_${md_id}"; then
             function="install_bin_${md_id}"
@@ -185,6 +182,7 @@ function rp_callModule() {
             ;;
         install_bin)
             action="Installing"
+            mkdir -p "$md_inst"
             ;;
         configure)
             action="Configuring"
@@ -222,11 +220,7 @@ function rp_callModule() {
             ;;
         install_bin)
             if fnExists "install_bin_${md_id}"; then
-                if "$function" "$@"; then
-                    # install succeeded, but we need to make an $md_inst folder if one doesn't exist
-                    # (eg for apt installed games), so the system knows it is installed
-                    mkdir -p "$md_inst"
-                else
+                if ! "$function" "$@"; then
                     # if it failed to install remove the install folder if it exists
                     rm -rf "$md_inst"
                 fi
@@ -376,6 +370,9 @@ function rp_registerModule() {
         __mod_help["$module_idx"]="$rp_module_help"
         __mod_section["$module_idx"]="$rp_module_section"
         __mod_flags["$module_idx"]="$rp_module_flags" 
+
+        # id to idx mapping via associative array
+        __mod_id_to_idx["$rp_module_id"]="$module_idx"
     fi
 }
 
@@ -396,6 +393,10 @@ function rp_registerAllModules() {
     rp_registerModuleDir 900 "admin"
 }
 
+function rp_getIdxFromId() {
+    echo "${__mod_id_to_idx[$1]}"
+}
+
 function rp_getSectionIds() {
     local section
     local id
@@ -413,4 +414,13 @@ function rp_isInstalled() {
     local md_inst="$rootdir/${__mod_type[$md_idx]}/${__mod_id[$md_idx]}"
     [[ -d "$md_inst" ]] && return 0
     return 1
+}
+
+function rp_updateHooks() {
+    local function
+    local mod_idx
+    for function in $(compgen -A function _update_hook_); do
+        mod_idx="$(rp_getIdxFromId "${function/_update_hook_/}")"
+        [[ -n "$mod_idx" ]] && rp_callModule "$mod_idx" _update_hook
+    done
 }

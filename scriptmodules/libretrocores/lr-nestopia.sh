@@ -41,9 +41,6 @@ function install_lr-nestopia() {
 }
 
 function configure_lr-nestopia() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/nestopia"
-
     mkRomDir "nes"
     mkRomDir "fds"
     ensureSystemretroconfig "nes"

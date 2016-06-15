@@ -48,12 +48,6 @@ function configure_lr-prboom() {
 
     cp prboom.wad "$romdir/ports/doom/"
     chown $user:$user "$romdir/ports/doom/prboom.wad"
-
-    # remove old launch script
-    rm -f "$romdir/ports/Doom 1 Shareware.sh"
-
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/doom"
     
     [[ "$md_mode" == "install" ]] && game_data_lr-prboom
 }

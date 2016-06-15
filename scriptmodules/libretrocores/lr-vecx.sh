@@ -34,9 +34,6 @@ function install_lr-vecx() {
 }
 
 function configure_lr-vecx() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/libretro-vecx"
-
     mkRomDir "vectrex"
     ensureSystemretroconfig "vectrex"
 

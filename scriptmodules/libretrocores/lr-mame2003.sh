@@ -46,9 +46,6 @@ function install_lr-mame2003() {
 }
 
 function configure_lr-mame2003() {
-    # remove old core library
-    rm -f "$md_inst/mame078_libretro.so"
-
     mkUserDir "$biosdir/mame2003/"
     mkUserDir "$biosdir/mame2003/samples/"
 

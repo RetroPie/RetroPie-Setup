@@ -43,7 +43,4 @@ fi
 _EOF_
 
     ensureSystemretroconfig "ports/cavestory"
-
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/cavestory"
 }

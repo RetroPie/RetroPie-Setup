@@ -15,7 +15,6 @@ rp_module_section="opt"
 rp_module_flags="!x86 !mali"
 
 function install_bin_giana() {
-    mkdir -p "$md_inst"
     wget http://www.retroguru.com/gianas-return/gianas-return-v.latest-raspberrypi.zip -O "$md_inst/giana.zip"
     unzip -n "$md_inst/giana.zip" -d "$md_inst"
     rm "$md_inst/giana.zip"
