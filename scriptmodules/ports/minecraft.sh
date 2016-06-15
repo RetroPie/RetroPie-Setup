@@ -19,7 +19,6 @@ function depends_minecraft() {
 }
 
 function install_bin_minecraft() {
-    mkdir -p "$md_inst"
     wget -O- -q https://s3.amazonaws.com/assets.minecraft.net/pi/minecraft-pi-0.1.1.tar.gz | tar -xvz --strip-components=1 -C "$md_inst"
 }
 

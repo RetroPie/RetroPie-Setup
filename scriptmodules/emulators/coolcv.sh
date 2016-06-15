@@ -16,7 +16,6 @@ rp_module_section="opt"
 rp_module_flags="!x86 !x11 !mali"
 
 function install_bin_coolcv() {
-    mkdir -p "$md_inst"
     wget -O- -q "$__archive_url/coolcv.tar.gz" | tar -xvz -C "$md_inst"
 }
 

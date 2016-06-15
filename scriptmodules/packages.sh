@@ -139,7 +139,7 @@ function rp_callModule() {
     # create function name
     function="${mode}_${md_id}"
 
-    # handle our  cases where we have automatic module functions like remove
+    # handle cases where we have automatic module functions like remove
     if ! fnExists "$function"; then
         if [[ "$mode" == "install" ]] && fnExists "install_bin_${md_id}"; then
             function="install_bin_${md_id}"
@@ -185,6 +185,7 @@ function rp_callModule() {
             ;;
         install_bin)
             action="Installing"
+            mkdir -p "$md_inst"
             ;;
         configure)
             action="Configuring"
@@ -222,11 +223,7 @@ function rp_callModule() {
             ;;
         install_bin)
             if fnExists "install_bin_${md_id}"; then
-                if "$function" "$@"; then
-                    # install succeeded, but we need to make an $md_inst folder if one doesn't exist
-                    # (eg for apt installed games), so the system knows it is installed
-                    mkdir -p "$md_inst"
-                else
+                if ! "$function" "$@"; then
                     # if it failed to install remove the install folder if it exists
                     rm -rf "$md_inst"
                 fi

@@ -16,7 +16,6 @@ rp_module_section="opt"
 rp_module_flags="!x86 !mali"
 
 function install_bin_rpix86() {
-    mkdir -p "$md_inst"
     wget -O- -q $__archive_url/rpix86.tar.gz | tar -xvz -C "$md_inst"
     # install 4DOS.com
     wget $__archive_url/4dos.zip -O "$md_inst/4dos.zip"

@@ -14,7 +14,6 @@ rp_module_desc="The 'runcommand' launch script - needed for launching the emulat
 rp_module_section="core"
 
 function install_bin_runcommand() {
-    mkdir -p "$md_inst"
     cp "$scriptdir/scriptmodules/$md_type/$md_id/runcommand.sh" "$md_inst/"
     cp "$scriptdir/scriptmodules/$md_type/$md_id/joy2key.py" "$md_inst/"
     chmod a+x "$md_inst/runcommand.sh"
