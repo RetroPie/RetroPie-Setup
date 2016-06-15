@@ -41,7 +41,7 @@ function build_eduke32() {
         params+=(SDL_TARGET=2)
     fi
     make veryclean
-    make "${params[@]}"
+    CFLAGS+=" -DSDL_USEFOLDER" make "${params[@]}"
     md_ret_require="$md_build/eduke32"
 }
 
