@@ -80,7 +80,7 @@ function rp_callModule() {
         md_idx="$req_id"
     else
         md_idx="$(rp_getIdxFromId $req_id)"
-        [[ -n md_idx ]] && md_id="$req_id"
+        [[ -n "$md_idx" ]] && md_id="$req_id"
     fi
 
     if [[ -z "$md_id" ]]; then
