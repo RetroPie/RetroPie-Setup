@@ -158,12 +158,14 @@ function register_bluetooth() {
     options=(
         1 "DisplayYesNo"
         2 "KeyboardDisplay"
+        3 "NoInputNoOutput"
+        4 "DisplayOnly"
+        5 "KeyboardOnly"
     )
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
-    local opts=""
-    [[ "$choice" == "1" ]] && opts="-c DisplayYesNo"
+    local mode="${options[choice*2-1]}"
 
     # create a named pipe & fd for input for bluez-simple-agent
     local fifo="$(mktemp -u)"
@@ -204,7 +206,7 @@ function register_bluetooth() {
                 ;;
         esac
     # read from bluez-simple-agent buffered line by line
-    done < <(stdbuf -oL $(get_script_bluetooth bluez-simple-agent) $opts hci0 "$mac_address" <&3)
+    done < <(stdbuf -oL $(get_script_bluetooth bluez-simple-agent) -c "$mode" hci0 "$mac_address" <&3)
     exec 3>&-
     rm -f "$fifo"
 
