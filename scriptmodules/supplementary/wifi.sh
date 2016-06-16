@@ -117,9 +117,10 @@ $wpa_config
 _EOF_
 
     ifup wlan0 &>/dev/null
+    dialog --backtitle "$__backtitle" --infobox "\nConnecting ..." 5 40 >/dev/tty
     local id=""
     i=0
-    while [[ -z "$id" && $i -lt 20 ]]; do
+    while [[ -z "$id" && $i -lt 30 ]]; do
         sleep 1
         id=$(iwgetid -r)
         ((i++))
