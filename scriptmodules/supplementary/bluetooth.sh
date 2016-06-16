@@ -44,6 +44,7 @@ function get_script_bluetooth() {
 function list_available_bluetooth() {
     local mac_address
     local device_name
+    dialog --backtitle "$__backtitle" --infobox "\nSearching ..." 5 40 >/dev/tty
     if hasPackage bluez 5; then
         # create a named pipe & fd for input for bluetoothctl
         local fifo="$(mktemp -u)"
@@ -54,7 +55,7 @@ function list_available_bluetooth() {
             if [[ "$line" == *"[bluetooth]"* ]]; then
                 echo "scan on" >&3
                 read -r line
-                sleep 5
+                sleep 10
                 break
             fi
         # read from bluetoothctl buffered line by line
