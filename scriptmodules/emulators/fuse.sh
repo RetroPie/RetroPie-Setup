@@ -69,7 +69,6 @@ function configure_fuse() {
     setDispmanx "$md_id" 1
     configure_dispmanx_on_fuse
 
-    delSystem "$md_id" "zxspectrum"
     addSystem 0 "$md_id-48k" "zxspectrum" "$md_inst/bin/fuse --machine 48 %ROM%"
     addSystem 0 "$md_id-128k" "zxspectrum" "$md_inst/bin/fuse --machine 128 %ROM%"
 }

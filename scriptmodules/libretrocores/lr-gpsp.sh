@@ -40,6 +40,5 @@ function configure_lr-gpsp() {
     mkRomDir "gba"
     ensureSystemretroconfig "gba"
 
-    delSystem "$md_id" "gba-gpsp-libretro"
     addSystem 1 "$md_id" "gba" "$md_inst/gpsp_libretro.so"
 }

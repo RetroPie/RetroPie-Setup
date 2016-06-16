@@ -46,7 +46,6 @@ function configure_lr-nestopia() {
     ensureSystemretroconfig "nes"
     ensureSystemretroconfig "fds"
 
-    delSystem "$md_id" "nes-nestopia"
     addSystem 0 "$md_id" "nes" "$md_inst/nestopia_libretro.so"
     addSystem 1 "$md_id" "fds" "$md_inst/nestopia_libretro.so"
 }

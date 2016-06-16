@@ -42,8 +42,6 @@ function configure_osmose() {
     mkRomDir "gamegear"
     mkRomDir "mastersystem"
 
-    delSystem "$md_id" "gamegear-osmose"
-    delSystem "$md_id" "mastersystem-osmose"
     addSystem 0 "$md_id" "gamegear" "$md_inst/osmose %ROM% -tv -fs"
     addSystem 0 "$md_id" "mastersystem" "$md_inst/osmose %ROM% -tv -fs"
 }

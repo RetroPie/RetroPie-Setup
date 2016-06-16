@@ -39,6 +39,5 @@ function configure_lr-vba-next() {
     mkRomDir "gba"
     ensureSystemretroconfig "gba"
 
-    delSystem "$md_id" "gba-vba-next"
     addSystem 0 "$md_id" "gba" "$md_inst/vba_next_libretro.so"
 }

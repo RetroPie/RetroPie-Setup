@@ -47,6 +47,5 @@ function install_fbzx() {
 function configure_fbzx() {
     mkRomDir "zxspectrum"
 
-    delSystem "$md_id" "zxspectrum-fbzx"
     addSystem 0 "$md_id" "zxspectrum" "pushd $md_inst/share; $md_inst/bin/fbzx %ROM%; popd"
 }

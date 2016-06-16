@@ -35,6 +35,5 @@ function configure_lr-stella() {
     mkRomDir "atari2600"
     ensureSystemretroconfig "atari2600"
 
-    delSystem "$md_id" "atari2600-libretro"
     addSystem 1 "$md_id" "atari2600" "$md_inst/stella_libretro.so"
 }

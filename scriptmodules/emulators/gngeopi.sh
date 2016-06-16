@@ -55,7 +55,6 @@ _EOF_
         chown -R $user:$user "$md_conf_root/gngeo/gngeorc"
     fi
 
-    delSystem "$md_id" "neogeo-gngeopi"
     addSystem 0 "$md_id" "arcade" "$md_inst/bin/gngeo -i $romdir/neogeo -B $md_inst/neogeobios %ROM%"
     addSystem 0 "$md_id" "neogeo" "$md_inst/bin/gngeo -i $romdir/neogeo -B $md_inst/neogeobios %ROM%"
 }

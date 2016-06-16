@@ -54,7 +54,6 @@ function configure_lr-fba() {
     ensureSystemretroconfig "fba"
     ensureSystemretroconfig "neogeo"
 
-    delSystem "$md_inst" "fba-libretro"
     addSystem 0 "$md_id" "arcade" "$md_inst/fb_alpha_libretro.so"
     addSystem 0 "$md_id" "neogeo" "$md_inst/fb_alpha_libretro.so"
     addSystem 0 "$md_id" "fba arcade" "$md_inst/fb_alpha_libretro.so"

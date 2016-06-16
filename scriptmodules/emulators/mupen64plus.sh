@@ -176,7 +176,6 @@ function configure_mupen64plus() {
 
     chown -R $user:$user "$md_conf_root/n64"
 
-    delSystem "$md_id" "n64-mupen64plus"
     addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
     if isPlatform "rpi"; then
         addSystem 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"

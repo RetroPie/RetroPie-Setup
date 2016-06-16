@@ -74,9 +74,6 @@ function configure_hatari() {
     # move any old configs to new location
     moveConfigDir "$home/.hatari" "$md_conf_root/atarist"
 
-    delSystem "$md_id" "atariststefalcon"
-    delSystem "$md_id" "atarist"
-
     addSystem 1 "$md_id-fast" "atarist" "$md_inst/bin/hatari --zoom 1 --compatible 0 --timer-d 1 -w --borders 0 %ROM%"
     addSystem 0 "$md_id-fast-borders" "atarist" "$md_inst/bin/hatari --zoom 1 --compatible 0 --timer-d 1 -w --borders 1 %ROM%"
     addSystem 0 "$md_id-compatible" "atarist" "$md_inst/bin/hatari --zoom 1 --compatible 1 --timer-d 0 -w --borders 0 %ROM%"
