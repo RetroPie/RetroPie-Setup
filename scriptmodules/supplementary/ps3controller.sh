@@ -61,6 +61,8 @@ function remove_ps3controller() {
     rm -f /etc/udev/rules.d/99-sixpair.rules
     rm -f /etc/udev/rules.d/10-local.rules
     rm -rf "$md_inst"
+    # just incase permissions were not restored
+    [[ -f /usr/sbin/bluetoothd ]] && chmod 755 /usr/sbin/bluetoothd
 }
 
 function pair_ps3controller() {
