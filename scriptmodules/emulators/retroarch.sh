@@ -83,6 +83,8 @@ function remove_overlays_retroarch() {
 }
 
 function configure_retroarch() {
+    [[ "$md_mode" == "remove" ]] && return
+
     mkUserDir "$configdir/all/retroarch-joypads"
 
     mkUserDir "$md_inst/assets"
