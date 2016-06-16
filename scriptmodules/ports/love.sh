@@ -38,7 +38,14 @@ function build_love() {
     ./platform/unix/automagic
     local params=(--prefix="$md_inst")
     [[ "$__default_gcc_version" == "4.7" ]] && params+=(CC="gcc-4.8" CXX="g++-4.8")
-    ./configure "${params[@]}"
+
+    # workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65612 on gcc 5.x+
+    if isPlatform "x86"; then
+        CXXFLAGS+=" -lgcc_s -lgcc" ./configure "${params[@]}"
+    else
+        ./configure "${params[@]}"
+    fi
+
     make clean
     make
     md_ret_require="$md_build/src/love"
