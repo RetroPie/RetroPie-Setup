@@ -34,21 +34,13 @@ function install_lr-genesis-plus-gx() {
 }
 
 function configure_lr-genesis-plus-gx() {
-    mkRomDir "gamegear"
-    mkRomDir "mastersystem"
-    mkRomDir "megadrive"
-    mkRomDir "sg-1000"
-    mkRomDir "segacd"
-
-    ensureSystemretroconfig "gamegear"
-    ensureSystemretroconfig "mastersystem"
-    ensureSystemretroconfig "megadrive"
-    ensureSystemretroconfig "sg-1000"
-    ensureSystemretroconfig "segacd"
-
-    addSystem 1 "$md_id" "gamegear" "$md_inst/genesis_plus_gx_libretro.so"
-    addSystem 0 "$md_id" "mastersystem" "$md_inst/genesis_plus_gx_libretro.so"
-    addSystem 0 "$md_id" "megadrive" "$md_inst/genesis_plus_gx_libretro.so"
-    addSystem 1 "$md_id" "sg-1000" "$md_inst/genesis_plus_gx_libretro.so"
-    addSystem 0 "$md_id" "segacd" "$md_inst/genesis_plus_gx_libretro.so"
+    local system
+    local def
+    for system in gamegear mastersystem megadrive sg-1000 segacd; do
+        def=0
+        [[ "$system" == "gamegear" || "$system" == "sg-1000" ]] && def=1
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addSystem "$def" "$md_id" "gamegear" "$md_inst/genesis_plus_gx_libretro.so"
+    done
 }
