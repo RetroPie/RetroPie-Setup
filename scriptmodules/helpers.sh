@@ -224,16 +224,6 @@ function gitPullOrClone() {
     local branch="$3"
     [[ -z "$branch" ]] && branch="master"
 
-    mkdir -p "$dir"
-
-    # to work around a issue with git hanging in a qemu-arm-static chroot we can use a github created archive
-    if [[ $__chroot -eq 1 && "$repo" =~ github && ! "$md_id" =~ lr-picodrive|splashscreen|esthemes|ppsspp ]]; then
-        local archive=${repo/.git/}
-        archive="${archive/git:/https:}/archive/$branch.tar.gz"
-        wget -O- -q "$archive" | tar -xvz --strip-components=1 -C "$dir"
-        return
-    fi
-
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
         git pull > /dev/null
