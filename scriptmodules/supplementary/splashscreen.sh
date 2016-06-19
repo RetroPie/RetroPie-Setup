@@ -45,7 +45,7 @@ function install_bin_splashscreen() {
 }
 
 function default_splashscreen() {
-    echo retropie-default.png >/etc/splashscreen.list
+    echo "$md_inst/retropie-default.png" >/etc/splashscreen.list
 }
 
 function enable_splashscreen() {
