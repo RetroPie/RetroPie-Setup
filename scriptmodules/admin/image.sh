@@ -31,7 +31,7 @@ function chroot_image() {
     fi
 
     # mount image
-    kpartx -s -f -a "$image"
+    kpartx -s -a "$image"
 
     mount /dev/mapper/loop0p2 mnt
     mount /dev/mapper/loop0p1 mnt/boot
@@ -149,7 +149,7 @@ function create_image() {
 
     # format
     printMsgs "console" "Formatting $image ..."
-    kpartx -s -f -a "$image"
+    kpartx -s -a "$image"
 
     mkfs.vfat -F 16 -n boot /dev/mapper/loop0p1
     mkfs.ext4 -L retropie /dev/mapper/loop0p2
