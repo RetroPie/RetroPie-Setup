@@ -47,7 +47,7 @@ _EOF_
         sed -i -e '$a\' "$script"
         case "$mode" in
             kodi)
-                echo -e "kodi-standalone #auto\nemulationstation #auto" >>"$script"
+                echo -e "kodi #auto\nemulationstation #auto" >>"$script"
                 ;;
             es|*)
                 echo "emulationstation #auto" >>"$script"
