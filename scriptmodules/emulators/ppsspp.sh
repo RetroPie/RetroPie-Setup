@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags="!armv6 !mali"
 
 function depends_ppsspp() {
-    local depends=(cmake libsdl2-dev)
+    local depends=(cmake libsdl2-dev libzip-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     [[ "$__default_gcc_version" == "4.7" ]] && depends+=(gcc-4.8 g++-4.8)
     getDepends "${depends[@]}"
