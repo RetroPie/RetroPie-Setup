@@ -15,6 +15,7 @@ rp_module_section="config"
 
 function enable_autostart() {
     local mode="$1"
+
     if isPlatform x11; then
         mkUserDir "$home/.config/autostart"
         ln -sf "/usr/local/share/applications/retropie.desktop" "$home/.config/autostart/"
@@ -45,7 +46,7 @@ _EOF_
         # make sure there is a newline
         sed -i -e '$a\' "$script"
         case "$mode" in
-            es)
+            *)
                 echo "emulationstation #auto" >>"$script"
                 ;;
             kodi)
@@ -116,7 +117,7 @@ function gui_autostart() {
                         fi
                         x11_autostart=$((x11_autostart ^ 1))
                     else
-                        enable_autostart es
+                        enable_autostart
                         printMsgs "dialog" "Emulation Station is set to launch at boot."
                     fi
                     ;;
