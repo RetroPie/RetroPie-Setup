@@ -91,7 +91,6 @@ modules=(
     'setup quick_install'
     'bluetooth depends'
     'raspbiantools enable_modules'
-    'autostart enable'
     'usbromservice'
     'usbromservice enable'
     'samba depends'
@@ -104,6 +103,9 @@ for module in "\${modules[@]}"; do
     # rpi1 platform would use QEMU_CPU set to arm1176, but it seems buggy currently (lots of segfaults)
     sudo QEMU_CPU=cortex-a15 __platform=$platform __nodialog=1 ./retropie_packages.sh \$module
 done
+# enable auto login manually, as raspi-config systemd check fails in a chroot
+sudo systemctl set-default multi-user.target
+sudo ln -fs /etc/systemd/system/autologin@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
 sudo apt-get clean
 _EOF_
 
@@ -133,7 +135,9 @@ function create_image() {
     mkdir -p "$md_build"
     pushd "$md_build"
 
-    local mb_size=2500
+    # make image size 300mb larger than contents of chroot
+    local mb_size=$(du -s --block-size 1048576 chroot 2>/dev/null | cut -f1)
+    ((mb_size+=300))
 
     # create image
     printMsgs "console" "Creating image $image ..."
