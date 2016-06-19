@@ -40,7 +40,7 @@ function chroot_image() {
     rsync -a --numeric-ids --delete mnt/ chroot/
 
     umount mnt/boot mnt
-    rmdir -rf mnt
+    rm -rf mnt
     kpartx -d "$image"
 
     popd
