@@ -82,6 +82,7 @@ function install_rp_image() {
     cat > chroot/home/pi/install.sh <<_EOF_
 #!/bin/bash
 cd
+sudo apt-get update
 sudo apt-get -y install git dialog xmlstarlet joystick
 git clone https://github.com/RetroPie/RetroPie-Setup.git
 cd RetroPie-Setup
