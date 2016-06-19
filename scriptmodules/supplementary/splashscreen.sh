@@ -45,7 +45,7 @@ function install_bin_splashscreen() {
 }
 
 function default_splashscreen() {
-    find "$md_inst/retropie2015-blue" -type f >/etc/splashscreen.list
+    echo retropie-default.png >/etc/splashscreen.list
 }
 
 function enable_splashscreen() {
