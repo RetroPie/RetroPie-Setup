@@ -59,7 +59,7 @@ function remove_splashscreen() {
 function choose_path_splashscreen() {
     local options=(
         1 "RetroPie splashscreens"
-        2 "Own splashscreens (from $datadir/splashscreens)"
+        2 "Own/Extra splashscreens (from $datadir/splashscreens)"
     )
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -106,7 +106,7 @@ function choose_splashscreen() {
             options+=("$i" "$splashdir")
             ((i++))
         fi
-    done < <(find "$path" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort)
+    done < <(find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort)
     if [[ "${#options[@]}" -eq 0 ]]; then
         printMsgs "dialog" "There are no splashscreens installed in $path"
         return
@@ -170,7 +170,7 @@ function preview_splashscreen() {
                     ;;
                 2)
                     file=$(mktemp)
-                    find "$path" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort > "$file"
+                    find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort > "$file"
                     if [[ -s "$file" ]]; then
                         fbi --timeout 6 --once --autozoom --list "$file"
                     else
@@ -187,6 +187,11 @@ function preview_splashscreen() {
             esac
         done
     done
+}
+
+function download_extra_splashscreen() {
+    gitPullOrClone "$datadir/splashscreens/retropie-extra" https://github.com/HerbFargus/retropie-splashscreens-extra
+    chown -R $user:$user https://github.com/HerbFargus/retropie-splashscreens-extra
 }
 
 function gui_splashscreen() {
@@ -220,6 +225,7 @@ function gui_splashscreen() {
             6 "Append splashscreen to list (for multiple entries)"
             7 "Preview splashscreens"
             8 "Update RetroPie splashscreens"
+            9 "Download RetroPie-Extra splashscreens"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -260,6 +266,10 @@ function gui_splashscreen() {
                     ;;
                 8)
                     rp_callModule splashscreen install
+                    ;;
+                9)
+                    rp_callModule splashscreen download_extra
+                    printMsgs "dialog" "The RetroPie-Extra splashscreens have been downloaded to $datadir/splashscreens/retropie-extra"
                     ;;
             esac
         else
