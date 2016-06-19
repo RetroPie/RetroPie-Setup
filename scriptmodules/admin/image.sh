@@ -90,7 +90,7 @@ modules=(
     'setup quick_install'
     'bluetooth depends'
     'raspbiantools enable_modules'
-    'autostart enable es'
+    'autostart enable'
     'usbromservice'
     'usbromservice enable'
     'samba depends'
