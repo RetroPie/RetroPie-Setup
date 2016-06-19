@@ -46,11 +46,11 @@ _EOF_
         # make sure there is a newline
         sed -i -e '$a\' "$script"
         case "$mode" in
-            *)
-                echo "emulationstation #auto" >>"$script"
-                ;;
             kodi)
                 echo -e "kodi-standalone #auto\nemulationstation #auto" >>"$script"
+                ;;
+            es|*)
+                echo "emulationstation #auto" >>"$script"
                 ;;
         esac
         chown $user:$user "$script"
