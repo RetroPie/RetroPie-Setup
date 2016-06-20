@@ -11,7 +11,7 @@
 
 # global variables ==========================================================
 
-__version="4.0-dev"
+__version="4.0-beta1"
 
 # main retropie install location
 rootdir="/opt/retropie"
