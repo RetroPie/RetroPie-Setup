@@ -41,6 +41,6 @@ function configure_lr-genesis-plus-gx() {
         [[ "$system" == "gamegear" || "$system" == "sg-1000" ]] && def=1
         mkRomDir "$system"
         ensureSystemretroconfig "$system"
-        addSystem "$def" "$md_id" "gamegear" "$md_inst/genesis_plus_gx_libretro.so"
+        addSystem "$def" "$md_id" "$system" "$md_inst/genesis_plus_gx_libretro.so"
     done
 }
