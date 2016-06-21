@@ -177,10 +177,23 @@ function getDepends() {
         fi
 
         aptInstall --no-install-recommends "${packages[@]}"
-        # check the required packages again rather than return code of apt-get, as apt-get
-        # might fail for other reasons (other broken packages, eg samba in a chroot environment)
+
+        # check the required packages again rather than return code of apt-get,
+        # as apt-get might fail for other reasons (eg other half installed packages)
         for required in ${packages[@]}; do
-            hasPackage "$required" || failed+=("$required")
+            if ! hasPackage "$required"; then
+                # workaround for installing samba in a chroot (fails due to failed smbd service restart)
+                # we replace the init.d script with an empty script so the install completes
+                if [[ "$required" == "samba" && "$__chroot" -eq 1 ]]; then
+                    mv /etc/init.d/smbd /etc/init.d/smbd.old
+                    echo "#!/bin/sh" >/etc/init.d/smbd
+                    chmod u+x /etc/init.d/smbd
+                    apt-get -f install
+                    mv /etc/init.d/smbd.old /etc/init.d/smbd
+                else
+                    failed+=("$required")
+                fi
+            fi
         done
         if [[ ${#failed[@]} -eq 0 ]]; then
             printMsgs "console" "Successfully installed package(s): ${packages[*]}."
