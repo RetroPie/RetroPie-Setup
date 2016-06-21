@@ -91,6 +91,7 @@ modules=(
     'setup quick_install'
     'bluetooth depends'
     'raspbiantools enable_modules'
+    'autostart enable'
     'usbromservice'
     'usbromservice enable'
     'samba depends'
@@ -103,9 +104,6 @@ for module in "\${modules[@]}"; do
     # rpi1 platform would use QEMU_CPU set to arm1176, but it seems buggy currently (lots of segfaults)
     sudo QEMU_CPU=cortex-a15 __platform=$platform __nodialog=1 ./retropie_packages.sh \$module
 done
-# enable auto login manually, as raspi-config systemd check fails in a chroot
-sudo systemctl set-default multi-user.target
-sudo ln -fs /etc/systemd/system/autologin@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
 sudo apt-get clean
 _EOF_
 

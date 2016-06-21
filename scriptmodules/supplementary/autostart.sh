@@ -25,7 +25,13 @@ function enable_autostart() {
             update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
             sed -i "/emulationstation/d" /etc/profile
         else
-            raspi-config nonint do_boot_behaviour B2
+            # enable auto login manually in a chroot, as raspi-config systemd check fails
+            if [[ "$__chroot" -eq 1 ]]; then
+                systemctl set-default multi-user.target
+                ln -fs /etc/systemd/system/autologin@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
+            else
+                raspi-config nonint do_boot_behaviour B2
+            fi
         fi
 
         # delete old startup script
