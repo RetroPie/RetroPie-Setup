@@ -123,7 +123,6 @@ function _umount_chroot() {
     trap INT
 }
 
-
 function create_image() {
     local image="$1"
     [[ -z "$image" ]] && return 1
@@ -209,14 +208,23 @@ function all_image() {
     local platform
     local image
     for platform in rpi1 rpi2; do
-        if [[ "$platform" == "rpi1" ]]; then
-            image="retropie-${__version}-rpi1_zero"
-        else
-            image="retropie-${__version}-rpi2_rpi3"
-        fi
-        rp_callModule image chroot
-        rp_callModule image install_rp "$platform"
-        rp_callModule image create "$image"
-        rp_callModule image create_bb "$image"
+        platform_image "$platform"
     done
+}
+
+function platform_image() {
+    local platform="$1"
+    [[ -z "$platform" ]] && exit
+
+    local image
+    if [[ "$platform" == "rpi1" ]]; then
+        image="retropie-${__version}-rpi1_zero"
+    else
+        image="retropie-${__version}-rpi2_rpi3"
+    fi
+
+    rp_callModule image chroot
+    rp_callModule image install_rp "$platform"
+    rp_callModule image create "$image"
+    rp_callModule image create_bb "$image"
 }
