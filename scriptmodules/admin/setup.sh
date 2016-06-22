@@ -407,6 +407,7 @@ function reboot_setup()
 
 # retropie-setup main menu
 function gui_setup() {
+    depends_setup
     while true; do
         pushd "$scriptdir" >/dev/null
         local commit=$(git log -1 --pretty=format:"%cr (%h)")
