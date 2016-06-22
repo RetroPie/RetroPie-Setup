@@ -170,6 +170,7 @@ function advanced_configedit() {
         'input_player6_analog_dpad_mode _id_ disabled left-stick right-stick'
         'input_player7_analog_dpad_mode _id_ disabled left-stick right-stick'
         'input_player8_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'game_specific_options true false'
     )
 
     local ini_descs=(
@@ -208,6 +209,7 @@ function advanced_configedit() {
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Game specific core options in retroarch-core-options.cfg, rather than for all games via that core.'
     )
 
     iniFileEditor " = " '"' "$config"
