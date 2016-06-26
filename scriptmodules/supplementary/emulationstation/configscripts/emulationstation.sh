@@ -10,8 +10,8 @@
 #
 
 function onstart_emulationstation_joystick() {
-    local device_type=$1
-    local device_name=$2
+    local device_type="$1"
+    local device_name="$2"
 
     local es_conf="$home/.emulationstation/es_input.cfg"
 

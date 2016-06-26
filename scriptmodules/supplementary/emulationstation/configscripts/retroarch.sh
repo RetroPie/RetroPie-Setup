@@ -10,8 +10,8 @@
 #
 
 function onstart_retroarch_joystick() {
-    local device_type=$1
-    local device_name=$2
+    local device_type="$1"
+    local device_name="$2"
 
     iniConfig " = " '"' "$configdir/all/retroarch.cfg"
     iniGet "input_joypad_driver"
@@ -333,8 +333,8 @@ function map_retroarch_keyboard() {
 }
 
 function onend_retroarch_joystick() {
-    local device_type=$1
-    local device_name=$2
+    local device_type="$1"
+    local device_name="$2"
 
     # hotkey sanity check
     # remove hotkeys if there is no hotkey enable button

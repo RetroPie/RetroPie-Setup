@@ -10,8 +10,8 @@
 #
 
 function onstart_reicast_joystick() {
-    local device_type=$1
-    local device_name=$2
+    local device_type="$1"
+    local device_name="$2"
     local file
     
     case "$device_name" in
@@ -215,8 +215,8 @@ function map_reicast_joystick() {
 }
 
 function onend_reicast_joystick() {
-    local device_type=$1
-    local device_name=$2
+    local device_type="$1"
+    local device_name="$2"
     local file
     
     case "$device_name" in
