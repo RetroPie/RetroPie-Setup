@@ -17,14 +17,12 @@ rp_module_flags="!armv6"
 
 function sources_lr-snes9x-next() {
     gitPullOrClone "$md_build" https://github.com/libretro/snes9x-next
-    # some games crash when it is compiled with -O3
-    sed -i "s/CFLAGS += -O3/CFLAGS += -O2/" Makefile.libretro
 }
 
 function build_lr-snes9x-next() {
     make -f Makefile.libretro clean
     if isPlatform "neon"; then
-        make -f Makefile.libretro platform=armvneon
+        make -f Makefile.libretro platform=armvneon PREF_OPTIMIZATION=O2
     else
         make -f Makefile.libretro
     fi
