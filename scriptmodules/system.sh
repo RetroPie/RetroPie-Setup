@@ -93,14 +93,16 @@ function get_os_version() {
 }
 
 function get_default_gcc() {
-    case $__raspbian_ver in
-        7)
-            __default_gcc_version="4.7"
-            ;;
-        *)
-            __default_gcc_version=""
-            ;;
-    esac
+    if [[ -z "$__default_gcc_version" ]]; then
+        case $__raspbian_ver in
+            7)
+                __default_gcc_version="4.7"
+                ;;
+            8)
+                __default_gcc_version="4.9"
+                ;;
+        esac
+    fi
 }
 
 # gcc version helper
