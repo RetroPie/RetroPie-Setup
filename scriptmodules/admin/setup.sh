@@ -115,20 +115,15 @@ function package_setup() {
     while true; do
         local options=()
 
+        local install="Install"
+        rp_isInstalled "$idx" && install="Update"
+
         if rp_hasBinary "$idx"; then
-            if rp_isInstalled "$idx"; then
-                options+=(B "Update from binary")
-            else
-                options+=(B "Install from binary")
-            fi
+            options+=(B "$install from binary")
         fi
 
         if fnExists "sources_${md_id}"; then
-            if rp_isInstalled "$idx"; then
-                options+=(S "Update from source")
-            else
-                options+=(S "Install from source")
-            fi
+            options+=(S "$install from source")
         fi
 
         if rp_isInstalled "$idx"; then
