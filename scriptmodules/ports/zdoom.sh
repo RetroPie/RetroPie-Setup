@@ -16,7 +16,6 @@ rp_module_flags="dispmanx !mali"
 
 function depends_zdoom() {
     local depends=(libev-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev timidity cmake)
-    [[ "$__default_gcc_version" == "4.7" ]] && depends+=(gcc-4.8 g++-4.8)
     if [[ "$__raspbian_ver" -lt "8" ]]; then
         depends+=(libjpeg8-dev)
     else
@@ -34,7 +33,6 @@ function build_zdoom() {
     mkdir -p release
     cd release
     local params=()
-    [[ "$__default_gcc_version" == "4.7" ]] && params+=(-DCMAKE_CXX_COMPILER=g++-4.8 -DCMAKE_C_COMPILER=gcc-4.8)
     cmake -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DNO_ASM=1 "${params[@]}" ..
     make
     md_ret_require="$md_build/release/zdoom"

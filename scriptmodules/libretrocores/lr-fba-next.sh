@@ -14,10 +14,6 @@ rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.38) port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your FBA roms to\n$romdir/fba or\n$romdir/neogeo or\n$romdir/arcade\n\nFor NeoGeo games the neogeo.zip BIOS is required and must be placed in the same directory as your FBA roms."
 rp_module_section="main"
 
-function depends_lr-fba-next() {
-    [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
-}
-
 function sources_lr-fba-next() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-fba.git
 }
@@ -26,11 +22,7 @@ function build_lr-fba-next() {
     make -f makefile.libretro clean
     local params=()
     isPlatform "arm" && params+=("platform=armv")
-    if [[ "$__default_gcc_version" == "4.7" ]]; then
-        make -f makefile.libretro CC="gcc-4.8" CXX="g++-4.8" "${params[@]}" profile=performance
-    else
-        make -f makefile.libretro "${params[@]}" profile=performance
-    fi
+    make -f makefile.libretro "${params[@]}" profile=performance
     md_ret_require="$md_build/fba_libretro.so"
 }
 

@@ -23,10 +23,6 @@ function depends_love() {
         depends+=(libjpeg-dev)
     fi
 
-    if [[ "$__default_gcc_version" == "4.7" ]]; then
-        depends+=(gcc-4.8 g++-4.8)
-    fi
-
     getDepends "${depends[@]}"
 }
 
@@ -37,7 +33,6 @@ function sources_love() {
 function build_love() {
     ./platform/unix/automagic
     local params=(--prefix="$md_inst")
-    [[ "$__default_gcc_version" == "4.7" ]] && params+=(CC="gcc-4.8" CXX="g++-4.8")
 
     # workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65612 on gcc 5.x+
     if isPlatform "x86"; then

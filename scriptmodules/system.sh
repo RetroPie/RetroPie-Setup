@@ -96,7 +96,7 @@ function get_default_gcc() {
     if [[ -z "$__default_gcc_version" ]]; then
         case $__raspbian_ver in
             7)
-                __default_gcc_version="4.7"
+                __default_gcc_version="4.8"
                 ;;
             8)
                 __default_gcc_version="4.9"

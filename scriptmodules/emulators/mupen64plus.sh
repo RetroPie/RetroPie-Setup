@@ -17,7 +17,6 @@ rp_module_flags="!mali"
 
 function depends_mupen64plus() {
     local depends=(cmake libgl1-mesa-dev libsamplerate0-dev libspeexdsp-dev libsdl2-dev)
-    [[ "$__default_gcc_version" == "4.7" ]] && depends+=(gcc-4.8 g++-4.8)
     isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev libboost-filesystem-dev)
     getDepends "${depends[@]}"
 }
@@ -74,12 +73,7 @@ function build_mupen64plus() {
     # build GLideN64
     $md_build/GLideN64/src/getRevision.sh
     pushd $md_build/GLideN64/projects/cmake
-    # this plugin needs at least gcc-4.8
-    if [[ "$__default_gcc_version" == "4.7" ]]; then
-        cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On ../../src/
-    else
-        cmake -DMUPENPLUSAPI=On ../../src/
-    fi
+    cmake -DMUPENPLUSAPI=On ../../src/
     make
     popd
 
