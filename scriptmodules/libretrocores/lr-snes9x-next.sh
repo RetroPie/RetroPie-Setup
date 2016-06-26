@@ -32,14 +32,7 @@ function build_lr-snes9x-next() {
 function install_lr-snes9x-next() {
     md_ret_files=(
         'snes9x_next_libretro.so'
-        'docs/changes.txt'  
-        'docs/control-inputs.txt'  
-        'docs/controls.txt'  
-        'docs/gpl-2.0.txt'  
-        'docs/lgpl-2.1.txt'  
-        'docs/porting.html' 
-        'docs/snapshots.txt' 
-        'docs/snes9x-license.txt'
+        'docs'
     )
 }
 
