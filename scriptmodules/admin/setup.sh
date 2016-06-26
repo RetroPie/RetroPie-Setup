@@ -115,8 +115,15 @@ function package_setup() {
     while true; do
         local options=()
 
-        local install="Install"
-        rp_isInstalled "$idx" && install="Update"
+        local install
+        local status
+        if rp_isInstalled "$idx"; then
+            install="Update"
+            status="Installed"
+        else
+            install="Install"
+            status="Not installed"
+        fi
 
         if rp_hasBinary "$idx"; then
             options+=(B "$install from binary")
@@ -138,7 +145,7 @@ function package_setup() {
             options+=(H "Package Help")
         fi
 
-        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]}" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]} ($status)" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
         local logfilename
