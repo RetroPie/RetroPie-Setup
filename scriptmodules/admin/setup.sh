@@ -54,28 +54,7 @@ function rps_printInfo() {
     fi
 }
 
-function rps_availFreeDiskSpace() {
-    local rootdirExists=0
-    if [[ ! -d "$rootdir" ]]; then
-        rootdirExists=1
-        mkdir -p $rootdir
-    fi
-    local __required=$1
-    local __avail=$(df -P $rootdir | tail -n1 | awk '{print $4}')
-    if [[ $rootdirExists -eq 1 ]]; then
-        rmdir $rootdir
-    fi
-
-    required_MB=$((__required/1024))
-    available_MB=$((__avail/1024))
-
-    if [[ "$__avail" -lt "$__required" ]]; then
-        dialog --yesno "Minimum recommended disk space ($required_MB MB) not available.\n\nTry 'raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir.\n\nContinue anyway?" 22 76 2>&1 >/dev/tty || exit 0
-    fi
-}
-
 function depends_setup() {
-    rps_availFreeDiskSpace 500000
     if [[ "$__raspbian_ver" -eq 7 ]]; then
         printMsgs "dialog" "Raspbian Wheezy is no longer supported. Binaries are no longer updated and new emulators may fail to build, install or run.\n\nPlease backup your system and start from the latest image."
     fi
