@@ -48,7 +48,9 @@ function rps_printInfo() {
         printMsgs "dialog" "${__ERRMSGS[@]}"
         printMsgs "dialog" "Please see $1 for more in depth information regarding the errors."
     fi
-    printMsgs "dialog" "${__INFMSGS[@]}"
+    if [[ ${#__INFMSGS[@]} -gt 0 ]]; then
+        printMsgs "dialog" "${__INFMSGS[@]}"
+    fi
 }
 
 function rps_availFreeDiskSpace() {
@@ -156,21 +158,27 @@ function package_setup() {
             B|I)
                 rps_logInit
                 {
+                    rps_logStart
                     rp_installModule "$idx"
+                    rps_logEnd
                 } &> >(tee >(gzip --stdout >"$logfilename"))
                 rps_printInfo "$logfilename"
                 ;;
             S)
                 rps_logInit
                 {
+                    rps_logStart
                     rp_callModule "$idx"
+                    rps_logEnd
                 } &> >(tee >(gzip --stdout >"$logfilename"))
                 rps_printInfo "$logfilename"
                 ;;
             C)
                 rps_logInit
                 {
+                    rps_logStart
                     rp_callModule "$idx" gui
+                    rps_logEnd
                 } &> >(tee >(gzip --stdout >"$logfilename"))
                 rps_printInfo "$logfilename"
                 ;;
@@ -180,7 +188,9 @@ function package_setup() {
                 dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
+                    rps_logStart
                     rp_callModule "$idx" remove
+                    rps_logEnd
                 } &> >(tee >(gzip --stdout >"$logfilename"))
                 rps_printInfo "$logfilename"
                 ;;
@@ -247,9 +257,11 @@ function section_gui_setup() {
                 dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from binary?" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
+                    rps_logStart
                     for idx in $(rp_getSectionIds $section); do
                         rp_installModule "$idx"
                     done
+                    rps_logEnd
                 } &> >(tee >(gzip --stdout >"$logfilename"))
                 rps_printInfo "$logfilename"
                 ;;
@@ -257,9 +269,11 @@ function section_gui_setup() {
                 dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from source?" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
+                    rps_logStart
                     for idx in $(rp_getSectionIds $section); do
                         rp_callModule "$idx"
                     done
+                    rps_logEnd
                 } &> >(tee >(gzip --stdout >"$logfilename"))
                 rps_printInfo "$logfilename"
                 ;;
@@ -270,9 +284,11 @@ function section_gui_setup() {
                 dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
+                    rps_logStart
                     for idx in $(rp_getSectionIds $section); do
                         rp_isInstalled "$idx" && rp_callModule "$idx" remove
                     done
+                    rps_logEnd
                 } &> >(tee >(gzip --stdout >"$logfilename"))
                 rps_printInfo "$logfilename"
                 ;;
@@ -317,12 +333,14 @@ function settings_gui_setup() {
         __INFMSGS=()
         rps_logInit
         {
+            rps_logStart
             if fnExists "gui_${__mod_id[choice]}"; then
                 rp_callModule "$choice" depends
                 rp_callModule "$choice" gui
             else
                 rp_callModule "$choice"
             fi
+            rps_logEnd
         } &> >(tee >(gzip --stdout >"$logfilename"))
         rps_printInfo "$logfilename"
     done
@@ -352,8 +370,10 @@ function update_packages_gui_setup() {
     __INFMSGS=()
     rps_logInit
     {
+        rps_logStart
         dialog --yesno "Would you like to update the underlying OS packages (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && apt_upgrade_raspbiantools
         update_packages_setup
+        rps_logEnd
     } &> >(tee >(gzip --stdout >"$logfilename"))
 
     rps_printInfo "$logfilename"
