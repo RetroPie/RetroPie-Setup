@@ -81,7 +81,6 @@ function configure_inputconfig_emulationstation() {
 
     cp -rv "$scriptdir/scriptmodules/$md_type/emulationstation/"* "$md_inst/scripts/"
     chmod +x "$md_inst/scripts/inputconfiguration.sh"
-    chown -R $user:$user "$md_inst/scripts"
 }
 
 function configure_emulationstation() {
