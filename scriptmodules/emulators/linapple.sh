@@ -30,17 +30,15 @@ function build_linapple() {
 }
 
 function install_linapple() {
-    mkdir -p "$md_inst/ftp/cache"
-    mkdir -p "$md_inst/images"
     md_ret_files=(
         'CHANGELOG'
         'INSTALL'
         'LICENSE'
         'linapple'
+        'linapple.conf'
         'Master.dsk'
         'README'
         'README-linapple-pie'
-        'linapple.conf'
     )
 }
 
@@ -48,19 +46,15 @@ function configure_linapple() {
     mkRomDir "apple2"
     mkUserDir "$md_conf_root/apple2"
 
-    # install linapple.conf under another name as we will copy it
-    cp -v "$md_inst/linapple.conf" "$md_inst/linapple.conf.sample"
-    cp -vf "$md_inst/Master.dsk" "$md_conf_root/apple2/Master.dsk"
+    moveConfigDir "$home/.linapple" "$md_conf_root/apple2"
 
-    # if the user doesn't already have a config, we will copy the default.
-    if [[ ! -f "$md_conf_root/apple2/linapple.conf" ]]; then
-        cp -v "linapple.conf.sample" "$md_conf_root/apple2/linapple.conf"
-    fi
-    moveConfigFile "linapple.conf" "$md_conf_root/apple2/linapple.conf"
-    moveConfigFile "Master.dsk" "$md_conf_root/apple2/Master.dsk"
+    # copy default config/disk if user doesn't have them installed
+    local file
+    for file in Master.dsk linapple.conf; do
+        if [[ ! -f "$md_conf_root/apple2/$file" ]]; then
+            cp -v "$file.sample" "$md_conf_root/apple2/$file"
+        fi
+    done
 
     addSystem 1 "$md_id" "apple2" "$md_inst/linapple -1 %ROM%" "Apple II" ".po .dsk .nib"
-
-    moveConfigDir "$home/.linapple" "$md_conf_root/apple2"
-    chown -R $user:$user "$md_conf_root/apple2"
 }
