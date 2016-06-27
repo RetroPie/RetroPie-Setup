@@ -202,7 +202,10 @@ function section_gui_setup() {
     while true; do
         local options=()
 
-        rp_hasBinaries && options+=(B "Install/Update all ${__sections[$section]} packages from binary" "This will install all $section packages from binary archives (if available). If a binary archive is missing a source install will be performed.")
+        # we don't build binaries for experimental packages
+        if rp_hasBinaries && [[ "$section" != "exp" ]]; then
+            options+=(B "Install/Update all ${__sections[$section]} packages from binary" "This will install all ${__sections[$section]} packages from binary archives (if available). If a binary archive is missing a source install will be performed.")
+        fi
 
         options+=(
             S "Install/Update all ${__sections[$section]} packages from source" "S This will build and install all the packages from $section from source. Building from source will pull in the very latest releases of many of the emulators. Building could fail or resulting binaries could not work. Only choose this option if you are comfortable in working with the linux console and debugging any issues."
