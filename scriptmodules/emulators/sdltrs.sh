@@ -16,7 +16,7 @@ rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
 function depends_sdltrs() {
-    getDepends libsdl1.2-dev
+    getDepends libsdl1.2-dev libxt-dev
 }
 
 function sources_sdltrs() {
