@@ -173,7 +173,7 @@ function gui_retroarch() {
             if [[ -d "$md_inst/$dir/.git" ]]; then
                 options+=("$i" "Manage $name (installed)")
             else
-                options+=("$i" "Manage $name (uninstalled)")
+                options+=("$i" "Manage $name (not installed)")
             fi
             ((i++))
         done
