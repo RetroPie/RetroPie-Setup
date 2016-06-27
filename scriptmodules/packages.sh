@@ -174,15 +174,12 @@ function rp_callModule() {
             pushd "$md_build" 2>/dev/null
             pushed=$?
             ;;
-        install)
+        install|install_bin)
             action="Installing"
+            rm -rf "$md_inst"
             mkdir -p "$md_inst"
             pushd "$md_build" 2>/dev/null
             pushed=$?
-            ;;
-        install_bin)
-            action="Installing"
-            mkdir -p "$md_inst"
             ;;
         configure)
             action="Configuring"
