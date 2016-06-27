@@ -52,7 +52,7 @@ function configure_linapple() {
     local file
     for file in Master.dsk linapple.conf; do
         if [[ ! -f "$md_conf_root/apple2/$file" ]]; then
-            cp -v "$file.sample" "$md_conf_root/apple2/$file"
+            cp -v "$file" "$md_conf_root/apple2/$file"
         fi
     done
 
