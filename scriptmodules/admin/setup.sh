@@ -392,7 +392,7 @@ function uninstall_setup()
     clear
     printHeading "Uninstalling RetroPie"
     for idx in "${__mod_idx[@]}"; do
-        rp_callModule $idx remove
+        rp_isInstalled "$idx" && rp_callModule $idx remove
     done
     rm -rfv "$rootdir"
     rm -rfv "$datadir"
@@ -400,7 +400,7 @@ function uninstall_setup()
         clear
         # remove all dependencies
         for idx in "${__mod_idx[@]}"; do
-            rp_callModule "$idx" depends remove
+            rp_isInstalled "$idx" && rp_callModule "$idx" depends remove
         done
     fi
 }
