@@ -13,6 +13,36 @@ rp_module_id="setup"
 rp_module_desc="GUI based setup for RetroPie"
 rp_module_section=""
 
+function rps_logInit() {
+    if [[ ! -d "$__logdir" ]]; then
+        if mkdir -p "$__logdir"; then
+            chown $user:$user "$__logdir"
+        else
+            fatalError "Couldn't make directory $__logdir"
+        fi
+    fi
+    local now=$(date +'%Y-%m-%d_%H%M%S')
+    logfilename="$__logdir/rps_$now.log.gz"
+    touch "$logfilename"
+    chown $user:$user "$logfilename"
+    time_start=$(date +"%s")
+}
+
+function rps_logStart() {
+    echo "Log started at: $(date -d @$time_start)"
+}
+
+function rps_logEnd() {
+    time_end=$(date +"%s")
+    echo
+    echo "Log ended at: $(date -d @$time_end)"
+    date_total=$((time_end-time_start))
+    local hours=$((date_total / 60 / 60 % 24))
+    local mins=$((date_total / 60 % 60))
+    local secs=$((date_total % 60))
+    echo "Total running time: $hours hours, $mins mins, $secs secs"
+}
+
 function rps_printInfo() {
     reset
     if [[ ${#__ERRMSGS[@]} -gt 0 ]]; then
