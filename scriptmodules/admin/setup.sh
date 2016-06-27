@@ -44,6 +44,7 @@ function rps_logEnd() {
 }
 
 function rps_printInfo() {
+    reset
     if [[ ${#__ERRMSGS[@]} -gt 0 ]]; then
         printMsgs "dialog" "${__ERRMSGS[@]}"
         printMsgs "dialog" "Please see $1 for more in depth information regarding the errors."
