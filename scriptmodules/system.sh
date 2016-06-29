@@ -99,7 +99,9 @@ function get_default_gcc() {
                 __default_gcc_version="4.8"
                 ;;
             8)
-                __default_gcc_version="4.9"
+                if [[ "$__raspbian_name" == "jessie" ]]; then
+                    __default_gcc_version="4.9"
+                fi
                 ;;
         esac
     fi
