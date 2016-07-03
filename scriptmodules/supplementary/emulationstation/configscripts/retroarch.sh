@@ -170,16 +170,16 @@ function map_retroarch_joystick() {
         y)
             keys=("input_y")
             ;;
-        leftbottom)
+        leftbottom|leftshoulder)
             keys=("input_l" "input_load_state")
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             keys=("input_r" "input_save_state")
             ;;
-        lefttop)
+        lefttop|lefttrigger)
             keys=("input_l2")
             ;;
-        righttop)
+        righttop|righttrigger)
             keys=("input_r2")
             ;;
         leftthumb)
@@ -298,16 +298,16 @@ function map_retroarch_keyboard() {
         y)
             keys=("input_player1_y")
             ;;
-        leftbottom)
+        leftbottom|leftshoulder)
             keys=("input_player1_l")
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             keys=("input_player1_r")
             ;;
-        lefttop)
+        lefttop|lefttrigger)
             keys=("input_player1_l2")
             ;;
-        righttop)
+        righttop|righttrigger)
             keys=("input_player1_r2")
             ;;
         leftthumb)

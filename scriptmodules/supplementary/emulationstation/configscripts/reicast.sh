@@ -113,16 +113,16 @@ function map_reicast_joystick() {
         y)
             keys=("btn_x")
             ;;
-        leftbottom)
+        leftbottom|leftshoulder)
             keys=("btn_trigger_left")
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             keys=("btn_trigger_right")
             ;;
-        lefttop)
+        lefttop|lefttrigger)
             keys=("axis_trigger_left")
             ;;
-        righttop)
+        righttop|righttrigger)
             keys=("axis_trigger_right")
             ;;
         start)

@@ -65,13 +65,13 @@ function map_mupen64plus_joystick() {
         x)
             keys=("C Button U")
             ;;
-        leftbottom)
+        leftbottom|leftshoulder)
             keys=("Z Trig")
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             keys=("R Trig")
             ;;
-        lefttop)
+        lefttop|lefttrigger)
             keys=("L Trig")
             ;;
         start)

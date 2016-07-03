@@ -48,10 +48,10 @@ function map_emulationstation_joystick() {
 
     local key
     case "$input_name" in
-        leftbottom)
+        leftbottom|leftshoulder)
             key="pageup"
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             key="pagedown"
             ;;
         up|right|down|left|start|select)

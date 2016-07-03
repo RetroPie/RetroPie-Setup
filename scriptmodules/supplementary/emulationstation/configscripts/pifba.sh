@@ -129,10 +129,10 @@ function map_pifba_keyboard() {
         y)
             key="Y_1"
             ;;
-        leftbottom)
+        leftbottom|leftshoulder)
             key="L_1"
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             key="R_1"
             ;;
         start)
@@ -177,10 +177,10 @@ function map_pifba_joystick() {
         y)
             key="Y_1"
             ;;
-        leftbottom)
+        leftbottom|leftshoulder)
             key="L_1"
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             key="R_1"
             ;;
         start)
