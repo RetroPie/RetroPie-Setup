@@ -47,8 +47,6 @@ function install_pisnes() {
 function configure_pisnes() {
     mkRomDir "snes"
 
-    setDispmanx "$md_id" 1
-
     moveConfigFile "$md_inst/snes9x.cfg" "$md_conf_root/snes/snes9x.cfg"
 
     # if the user doesn't already have a config, we will copy the default.
