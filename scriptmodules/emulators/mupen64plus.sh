@@ -111,6 +111,8 @@ function install_mupen64plus() {
     done
     cp "$md_build/GLideN64/ini/GLideN64.custom.ini" "$md_inst/share/mupen64plus/"
     cp "$md_build/GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
+    # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
+    rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
 }
 
 function configure_mupen64plus() {
@@ -175,9 +177,6 @@ function configure_mupen64plus() {
         # Size of texture cache in megabytes. Good value is VRAM*3/4
         iniSet "CacheSize" "192"
     fi
-
-    # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
-    rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
 
     chown -R $user:$user "$md_conf_root/n64"
 
