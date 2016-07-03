@@ -170,31 +170,19 @@ function testCompatibility() {
     local game
     local glesn64_blacklist=(
         zelda
-        Zelda
-        ZELDA
         paper
-        Paper
-        PAPER
         kazooie
-        Kazooie
-        KAZOOIE
         tooie
-        Tooie
-        TOOIE
         instinct
-        Instinct
-        INSTINCT
     )
 
     local glesn64rice_blacklist=(
         yoshi
-        Yoshi
-        YOSHI
     )
 
     if [[ "$VIDEO_PLUGIN" == "mupen64plus-video-n64" ]];then
         for game in "${glesn64_blacklist[@]}"; do
-            if [[ "$ROM" == *"$game"* ]]; then
+            if [[ "${ROM,,}" == *"$game"* ]]; then
                 VIDEO_PLUGIN="mupen64plus-video-rice"
             fi
         done
@@ -202,7 +190,7 @@ function testCompatibility() {
 
     if [[ "$VIDEO_PLUGIN" != "mupen64plus-video-GLideN64" ]];then
         for game in "${glesn64rice_blacklist[@]}"; do
-            if [[ "$ROM" == *"$game"* ]]; then
+            if [[ "${ROM,,}" == *"$game"* ]]; then
                 VIDEO_PLUGIN="mupen64plus-video-GLideN64"
             fi
         done
