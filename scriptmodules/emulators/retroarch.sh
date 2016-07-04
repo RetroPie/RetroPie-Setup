@@ -200,6 +200,4 @@ function gui_retroarch() {
 
         esac
     done
-
-
 }
