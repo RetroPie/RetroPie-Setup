@@ -164,17 +164,14 @@ function install_advmame() {
 
 function configure_advmame() {
     mkRomDir "arcade"
+    mkRomDir "arcade/advmame"
+    mkRomDir "mame-advmame"
 
-    local mame_dir
-    for mame_dir in arcade/advmame mame-advmame
+    local mame_sub_dir
+    for mame_sub_dir in artwork diff hi inp memcard nvram sample snap sta
     do
-        mkRomDir "$mame_dir"
-
-        local mame_sub_dir
-        for mame_sub_dir in artwork diff hi inp memcard nvram sample snap sta
-        do
-            mkRomDir "$mame_dir/$mame_sub_dir"
-        done
+         mkRomDir "mame-advmame/$mame_sub_dir"
+         ln -sf "$romdir/mame-advmame/$mame_sub_dir" "$romdir/arcade/advmame/$mame_sub_dir"
     done
 
     # delete old install files
@@ -191,17 +188,17 @@ function configure_advmame() {
         iniConfig " " "" "$md_conf_root/mame-advmame/advmame-$version.rc"
 
         iniSet "misc_quiet" "yes"
-        iniSet "dir_rom" "$romdir/mame-advmame:$romdir/arcade"
-        iniSet "dir_artwork" "$romdir/mame-advmame/artwork:$romdir/arcade/advmame/artwork"
-        iniSet "dir_sample" "$romdir/mame-advmame/samples:$romdir/arcade/advmame/sample"
-        iniSet "dir_diff" "$romdir/mame-advmame/diff:$romdir/arcade/advmame/diff"
-        iniSet "dir_hi" "$romdir/mame-advmame/hi:$romdir/arcade/advmame/hi"
-        iniSet "dir_image" "$romdir/mame-advmame:$romdir/arcade"
-        iniSet "dir_inp" "$romdir/mame-advmame/inp:$romdir/arcade/advmame/inp"
-        iniSet "dir_memcard" "$romdir/mame-advmame/memcard:$romdir/arcade/advmame/memcard"
-        iniSet "dir_nvram" "$romdir/mame-advmame/nvram:$romdir/arcade/advmame/nvram"
-        iniSet "dir_snap" "$romdir/mame-advmame/snap:$romdir/arcade/advmame/snap"
-        iniSet "dir_sta" "$romdir/mame-advmame/nvram:$romdir/arcade/advmame/sta"
+        iniSet "dir_rom" "$romdir/mame-advmame"
+        iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
+        iniSet "dir_sample" "$romdir/mame-advmame/samples"
+        iniSet "dir_diff" "$romdir/mame-advmame/diff"
+        iniSet "dir_hi" "$romdir/mame-advmame/hi"
+        iniSet "dir_image" "$romdir/mame-advmame"
+        iniSet "dir_inp" "$romdir/mame-advmame/inp"
+        iniSet "dir_memcard" "$romdir/mame-advmame/memcard"
+        iniSet "dir_nvram" "$romdir/mame-advmame/nvram"
+        iniSet "dir_snap" "$romdir/mame-advmame/snap"
+        iniSet "dir_sta" "$romdir/mame-advmame/nvram"
 
         if isPlatform "rpi"; then
             iniSet "device_video" "fb"
@@ -221,13 +218,6 @@ function configure_advmame() {
             iniSet "sound_latency" "0.2"
         else
             iniSet "sound_samplerate" "44100"
-        fi
-
-        # if multicore system, use smp
-        if [[ "$(nproc)" -gt "1" ]]; then
-            iniSet "misc_smp" "yes"
-        else
-            iniSet "misc_smp" "no"
         fi
 
         default=0
