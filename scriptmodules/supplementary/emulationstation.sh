@@ -13,6 +13,10 @@ rp_module_id="emulationstation"
 rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emulators"
 rp_module_section="core"
 
+function _get_input_cfg_emulationstation() {
+    echo "$configdir/all/emulationstation/es_input.cfg"
+}
+
 function depends_emulationstation() {
     local depends=(
         libboost-locale-dev libboost-system-dev libboost-filesystem-dev
@@ -56,11 +60,8 @@ function install_emulationstation() {
     )
 }
 
-function configure_inputconfig_emulationstation() {
-    local es_config="$home/.emulationstation/es_input.cfg"
-
-    # move the $home/emulationstation configuration dir and symlink it
-    moveConfigDir "$home/.emulationstation"  "$configdir/all/emulationstation"
+function init_input_emulationstation() {
+    local es_config="$(_get_input_cfg_emulationstation)"
 
     # if there is no ES config (or empty file) create it with initial inputList element
     if [[ ! -s "$es_config" ]]; then
@@ -77,13 +78,33 @@ function configure_inputconfig_emulationstation() {
     fi
 
     chown $user:$user "$es_config"
+}
+
+function clear_input_emulationstation() {
+    rm "$(_get_input_cfg_emulationstation)"
+    init_input_emulationstation
+}
+
+function remove_emulationstation() {
+    rm -rfv "/etc/emulationstation" "/usr/bin/emulationstation" "$configdir/all/emulationstation/"*.cfg "$configdir/all/emulationstation/"*.txt
+    if isPlatform "x11"; then
+        rm -rfv "/usr/local/share/icons/retropie.svg" "/usr/local/share/applications/retropie.desktop"
+    fi
+}
+
+function configure_emulationstation() {
+    # move the $home/emulationstation configuration dir and symlink it
+    moveConfigDir "$home/.emulationstation" "$configdir/all/emulationstation"
+
+    [[ "$mode" == "remove" ]] && return
+
+    init_input_emulationstation
+
     mkdir -p "$md_inst/scripts"
 
     cp -rv "$scriptdir/scriptmodules/$md_type/emulationstation/"* "$md_inst/scripts/"
     chmod +x "$md_inst/scripts/inputconfiguration.sh"
-}
 
-function configure_emulationstation() {
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
 
@@ -103,6 +124,7 @@ clear
 "$md_inst/emulationstation.sh" "\$@"
 
 _EOF_
+
     if isPlatform "rpi"; then
         # make sure that ES has enough GPU memory
         iniConfig "=" "" /boot/config.txt
@@ -136,7 +158,7 @@ _EOF_
 
     mkdir -p "/etc/emulationstation"
 
-    configure_inputconfig_emulationstation
+    inputconfig_emulationstation
     
     # ensure we have a default theme
     rp_callModule esthemes install_theme
@@ -144,9 +166,17 @@ _EOF_
     addAutoConf es_swap_a_b 0
 }
 
-function remove_emulationstation() {
-    rm -rfv "/etc/emulationstation" "$home/.emulationstation" "/usr/bin/emulationstation" "$configdir/emulationstation"
-    if isPlatform "x11"; then
-        rm -rfv "/usr/local/share/icons/retropie.svg" "/usr/local/share/applications/retropie.desktop"
-    fi
+function gui_emulationstation() {
+    local options=(
+        1 "Clear/Reset Emulation Station input configuration"
+    )
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+
+    case "$choice" in
+        1)
+            clear_input_emulationstation
+            printMsgs "dialog" "$(_get_input_cfg_emulationstation) has been reset to default values."
+            ;;
+    esac
 }
