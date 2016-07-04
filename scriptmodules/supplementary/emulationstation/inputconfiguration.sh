@@ -65,56 +65,58 @@ function inputconfiguration() {
     # check if we have the temporary input file
     [[ ! -f "$es_conf" ]] && return
 
-    local line
-    while read line; do
-        if [[ -n "$line" ]]; then
-            local input=($line)
-            mapping["${input[0]}"]=${input[@]:1}
-        fi
-    done < <(xmlstarlet sel --text -t -m "/inputList/inputConfig/input"  -v "concat(@name,' ',@type,' ',@id,' ',@value)" -n "$es_conf")
-
-    local inputscriptdir=$(dirname "$0")
-    local inputscriptdir=$(cd "$inputscriptdir" && pwd)
-
-    local device_type=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@type" "$es_conf")
-    local device_name=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceName" "$es_conf")
-
-    echo "Input type is '$device_type'."
-
-    local module
-    # call all configuration modules with the
-    for module in $(find "$inputscriptdir/configscripts/" -maxdepth 1 -name "*.sh" | sort); do
-
-        source "$module"  # register functions from emulatorconfigs folder
-        local module_id=${module##*/}
-        local module_id=${module_id%.sh}
-        echo "Configuring '$module_id'"
-
-        # at the start, the onstart_module function is called
-        local funcname="onstart_${module_id}_${device_type}"
-        fn_exists "$funcname" && "$funcname" "$device_type" "$device_name"
-
-        local input_name
-        # loop through all buttons and use corresponding config function if it exists
-        for input_name in "${!mapping[@]}"; do
-            funcname="map_${module_id}_${device_type}"
-
-            if fn_exists "$funcname"; then
-                local params=(${mapping[$input_name]})
-                local input_type=${params[0]}
-                local input_id=${params[1]}
-                local input_value=${params[2]}
-
-                "$funcname" "$device_type" "$device_name" "$input_name" "$input_type" "$input_id" "$input_value"
+    local num_input_configs=`xmlstarlet sel --text -t -c "count(/inputList/inputConfig)" -n "$es_conf"`
+    for ((input_config_index=1; input_config_index<=num_input_configs; input_config_index++)); do
+	local line
+	while read line; do
+            if [[ -n "$line" ]]; then
+		local input=($line)
+		mapping["${input[0]}"]=${input[@]:1}
             fi
-        done
+	done < <(xmlstarlet sel --text -t -m "/inputList/inputConfig[${input_config_index}]/input"  -v "concat(@name,' ',@type,' ',@id,' ',@value)" -n "$es_conf")
 
-        # at the end, the onend_module function is called
-        funcname="onend_${module_id}_${device_type}"
-        fn_exists "$funcname" && "$funcname" "$device_type" "$device_name"
+	local inputscriptdir=$(dirname "$0")
+	local inputscriptdir=$(cd "$inputscriptdir" && pwd)
 
+	local device_type=$(xmlstarlet sel --text -t -v "/inputList/inputConfig[${input_config_index}]/@type" "$es_conf")
+	local device_name=$(xmlstarlet sel --text -t -v "/inputList/inputConfig[${input_config_index}]/@deviceName" "$es_conf")
+
+	echo "Input type is '$device_type'."
+
+	local module
+	# call all configuration modules with the
+	for module in $(find "$inputscriptdir/configscripts/" -maxdepth 1 -name "*.sh" | sort); do
+
+            source "$module"  # register functions from emulatorconfigs folder
+            local module_id=${module##*/}
+            local module_id=${module_id%.sh}
+            echo "Configuring '$module_id'"
+
+            # at the start, the onstart_module function is called
+            local funcname="onstart_${module_id}_${device_type}"
+            fn_exists "$funcname" && "$funcname" "$device_type" "$device_name"
+
+            local input_name
+            # loop through all buttons and use corresponding config function if it exists
+            for input_name in "${!mapping[@]}"; do
+		funcname="map_${module_id}_${device_type}"
+
+		if fn_exists "$funcname"; then
+                    local params=(${mapping[$input_name]})
+                    local input_type=${params[0]}
+                    local input_id=${params[1]}
+                    local input_value=${params[2]}
+
+                    "$funcname" "$device_type" "$device_name" "$input_name" "$input_type" "$input_id" "$input_value"
+		fi
+            done
+
+            # at the end, the onend_module function is called
+            funcname="onend_${module_id}_${device_type}"
+            fn_exists "$funcname" && "$funcname" "$device_type" "$device_name"
+
+	done
     done
-
 }
 
 function fn_exists() {
