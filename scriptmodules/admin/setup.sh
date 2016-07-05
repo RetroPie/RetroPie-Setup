@@ -83,11 +83,14 @@ function updatescript_setup()
 }
 
 function post_update_setup() {
+    local return_func=("$@")
     # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
     rp_updateHooks
 
     printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nIt has come to our attention that some people are profiting from selling RetroPie SD cards, some including copyrighted games. This is illegal.\n\nIf you have been sold this software on its own or including games, you can let us know about it by emailing retropieproject@gmail.com"
-    gui_setup
+
+    # return to set return function
+    "${return_func[@]}"
 }
 
 function package_setup() {
@@ -341,7 +344,8 @@ function update_packages_gui_setup() {
         dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
         if dialog --yesno "It is advisable to update the RetroPie-Setup script before updating packages - may I do this now ?" 22 76 2>&1 >/dev/tty; then
             updatescript_setup
-            exec "$scriptdir/retropie_packages.sh" setup update_packages_gui update
+            # restart at post_update and then call "update_packages_gui_setup update" afterwards
+            exec "$scriptdir/retropie_packages.sh" setup post_update update_packages_gui_setup update
         fi
     fi
 
@@ -490,7 +494,7 @@ function gui_setup() {
                 uninstall_setup
                 ;;
             U)
-                updatescript_setup && exec "$scriptdir/retropie_packages.sh" setup post_update
+                updatescript_setup && exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
                 ;;
             R)
                 dialog --defaultno --yesno "Are you sure you want to reboot?" 22 76 2>&1 >/dev/tty || continue
