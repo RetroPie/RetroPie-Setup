@@ -61,10 +61,8 @@ function depends_setup() {
     # check for VERSION file - if it doesn't exist we will run the post_update script as it won't be triggered
     # on first upgrade to 4.x
     if [[ ! -f "$rootdir/VERSION" ]]; then
-        echo "$__version" >"$rootdir/VERSION"
         exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
     fi
-    echo "$__version" >"$rootdir/VERSION"
 }
 
 function updatescript_setup()
@@ -91,6 +89,9 @@ function updatescript_setup()
 
 function post_update_setup() {
     local return_func=("$@")
+
+    echo "$__version" >"$rootdir/VERSION"
+
     # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
     rp_updateHooks
 
