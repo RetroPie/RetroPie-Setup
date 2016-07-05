@@ -43,7 +43,7 @@
 # $2 - input name is one of the following
 #   up, down, left, right
 #   a, b, x, y
-#   leftbottom, rightbottom, lefttop, righttop
+#   leftshoulder, rightshoulder, lefttrigger, righttrigger
 #   leftthumb. rightthumb
 #   start, select
 #   leftanalogup, leftanalogdown, leftanalogleft, leftanalogright
