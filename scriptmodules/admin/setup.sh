@@ -58,6 +58,13 @@ function depends_setup() {
     if [[ "$__raspbian_ver" -eq 7 ]]; then
         printMsgs "dialog" "Raspbian Wheezy is no longer supported. Binaries are no longer updated and new emulators may fail to build, install or run.\n\nPlease backup your system and start from the latest image."
     fi
+    # check for VERSION file - if it doesn't exist we will run the post_update script as it won't be triggered
+    # on first upgrade to 4.x
+    if [[ ! -f "$rootdir/VERSION" ]]; then
+        echo "$__version" >"$rootdir/VERSION"
+        exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
+    fi
+    echo "$__version" >"$rootdir/VERSION"
 }
 
 function updatescript_setup()
