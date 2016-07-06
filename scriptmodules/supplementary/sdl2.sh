@@ -15,7 +15,7 @@ rp_module_section=""
 rp_module_flags="!x86"
 
 function get_ver_sdl2() {
-    local ver="2.0.4+3"
+    local ver="2.0.4+4"
     isPlatform "rpi" && ver+="rpi"
     isPlatform "mali" && ver+="mali"
     echo "$ver"
