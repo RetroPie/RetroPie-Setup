@@ -23,7 +23,7 @@ function depends_lr-ppsspp() {
 
 function sources_lr-ppsspp() {
     if isPlatform "rpi"; then
-        gitPullOrClone "$md_build" https://github.com/joolswills/ppsspp.git libretro_rpi_fix
+        gitPullOrClone "$md_build" https://github.com/RetroPie/ppsspp.git libretro_rpi_fix
     else
         gitPullOrClone "$md_build" https://github.com/libretro/libretro-ppsspp.git
     fi
