@@ -26,8 +26,8 @@ function module_builder() {
 
     ! fnExists "install_$id" && return
 
-    rp_callModule "$id" remove
-    for mode in depends sources build install clean; do
+    # initial clean in case anything was in the build folder when calling
+    for mode in clean remove depends sources build install clean; do
         rp_callModule "$id" "$mode"
     done
     rp_callModule "$id" create_bin
