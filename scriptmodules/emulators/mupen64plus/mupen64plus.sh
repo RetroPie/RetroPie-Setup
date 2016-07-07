@@ -200,4 +200,4 @@ function testCompatibility() {
 getAutoConf mupen64plus_hotkeys || remap
 getAutoConf mupen64plus_compatibility_check || testCompatibility
 getAutoConf mupen64plus_audio || setAudio
-"$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --gfx ${VIDEO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
+SDL_VIDEO_RPI_SCALE_MODE=1 "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --windowed --resolution 320x240 --gfx ${VIDEO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
