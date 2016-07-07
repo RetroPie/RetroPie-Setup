@@ -188,13 +188,17 @@ function rp_callModule() {
         remove)
             action="Removing"
             ;;
+        _update_hook)
+            ;;
         *)
             action="Running action '$mode' for"
             ;;
     esac
 
     # print an action and a description
-    printHeading "$action '$md_id' : $md_desc"
+    if [[ -n "$action" ]]; then
+        printHeading "$action '$md_id' : $md_desc"
+    fi
 
     case "$mode" in
         remove)
