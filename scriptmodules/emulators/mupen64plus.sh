@@ -73,7 +73,7 @@ function build_mupen64plus() {
     # build GLideN64
     $md_build/GLideN64/src/getRevision.sh
     pushd $md_build/GLideN64/projects/cmake
-    cmake -DMUPENPLUSAPI=On ../../src/
+    cmake -DMUPENPLUSAPI=On -DOPT ../../src/
     make
     popd
 
