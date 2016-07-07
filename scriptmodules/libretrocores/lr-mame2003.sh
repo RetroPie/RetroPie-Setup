@@ -42,6 +42,7 @@ function configure_lr-mame2003() {
     local mame_sub_dir
     for mame_dir in arcade mame-libretro; do
         mkRomDir "$mame_dir"
+        mkRomDir "$mame_dir/mame2003"
         ensureSystemretroconfig "$mame_dir"
 
         for mame_sub_dir in cfg ctrlr diff hi inp memcard nvram snap; do
