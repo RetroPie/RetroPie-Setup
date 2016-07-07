@@ -45,6 +45,7 @@ function install_bin_kodi() {
 
 function remove_kodi() {
     aptRemove kodi
+    rp_callModule kodi depends remove
 }
 
 function configure_kodi() {
