@@ -116,12 +116,13 @@ function install_mupen64plus() {
 }
 
 function configure_mupen64plus() {
-    addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
     if isPlatform "rpi"; then
-        addSystem 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"
+        addSystem 1 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
+        addSystem 0 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"
         addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
         addSystem 0 "${md_id}-videocore" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-videocore %ROM%"
     else
+        addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
         addSystem 1 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM%"
     fi
 
@@ -156,7 +157,7 @@ function configure_mupen64plus() {
         su "$user" -c "$cmd"
     fi
 
-    iniConfig " = " '"' "$config"
+    iniConfig " = " "" "$config"
     iniSet "ScreenshotPath" "$romdir/n64"
     iniSet "SaveStatePath" "$romdir/n64"
     iniSet "SaveSRAMPath" "$romdir/n64"
@@ -167,15 +168,14 @@ function configure_mupen64plus() {
         if ! grep -q "\[Video-GLideN64\]" "$config"; then
             echo "[Video-GLideN64]" >> "$config"
         fi
-
         # Settings version. Don't touch it.
-        iniSet "configVersion" "10"
-
+        iniSet "configVersion" "11"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "0"
-
         # Size of texture cache in megabytes. Good value is VRAM*3/4
         iniSet "CacheSize" "192"
+        # Disable FB emulation until visual issues are sorted out
+        iniSet "EnableFBEmulation" "True"
     fi
 
     chown -R $user:$user "$md_conf_root/n64"
