@@ -73,7 +73,7 @@ function build_mupen64plus() {
     # build GLideN64
     $md_build/GLideN64/src/getRevision.sh
     pushd $md_build/GLideN64/projects/cmake
-    cmake -DMUPENPLUSAPI=On -DOPT ../../src/
+    cmake -DMUPENPLUSAPI=On ../../src/
     make
     popd
 
@@ -175,7 +175,7 @@ function configure_mupen64plus() {
         # Size of texture cache in megabytes. Good value is VRAM*3/4
         iniSet "CacheSize" "192"
         # Disable FB emulation until visual issues are sorted out
-        iniSet "EnableFBEmulation" "False"
+        iniSet "EnableFBEmulation" "True"
     fi
 
     chown -R $user:$user "$md_conf_root/n64"
