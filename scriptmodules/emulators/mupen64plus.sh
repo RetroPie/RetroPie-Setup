@@ -171,20 +171,18 @@ function configure_mupen64plus() {
         # Settings version. Don't touch it.
         iniSet "configVersion" "11"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
-        iniSet "bilinearMode" "0"
+        iniSet "bilinearMode" "1"
         # Size of texture cache in megabytes. Good value is VRAM*3/4
         iniSet "CacheSize" "192"
         # Disable FB emulation until visual issues are sorted out
-        iniSet "EnableFBEmulation" "True"
+        iniSet "EnableFBEmulation" "False"
+        # Use native res
+        iniSet "nativeResFactor" "1"
     fi
 
     chown -R $user:$user "$md_conf_root/n64"
 
-    if isPlatform "rpi"; then
-        addAutoConf mupen64plus_audio 1
-    else
-        addAutoConf mupen64plus_audio 0
-    fi
+    addAutoConf mupen64plus_audio 0
     addAutoConf mupen64plus_hotkeys 1
     addAutoConf mupen64plus_compatibility_check 1
 }
