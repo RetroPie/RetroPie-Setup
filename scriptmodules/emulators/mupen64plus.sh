@@ -73,7 +73,9 @@ function build_mupen64plus() {
     # build GLideN64
     $md_build/GLideN64/src/getRevision.sh
     pushd $md_build/GLideN64/projects/cmake
-    cmake -DMUPENPLUSAPI=On ../../src/
+    params=("-DMUPENPLUSAPI=On" "-DVEC4_OPT=On")
+    isPlatform "neon" && params+=("-DNEON_OPT=On")
+    cmake "${params[@]}" ../../src/
     make
     popd
 
@@ -157,13 +159,9 @@ function configure_mupen64plus() {
         su "$user" -c "$cmd"
     fi
 
-    iniConfig " = " "" "$config"
-    iniSet "ScreenshotPath" "$romdir/n64"
-    iniSet "SaveStatePath" "$romdir/n64"
-    iniSet "SaveSRAMPath" "$romdir/n64"
-
     # RPI GLideN64 settings
     if isPlatform "rpi"; then
+        iniConfig " = " "" "$config"
         # Create GlideN64 section in .cfg
         if ! grep -q "\[Video-GLideN64\]" "$config"; then
             echo "[Video-GLideN64]" >> "$config"
@@ -178,11 +176,15 @@ function configure_mupen64plus() {
         iniSet "EnableFBEmulation" "False"
         # Use native res
         iniSet "nativeResFactor" "1"
+        
+        addAutoConf mupen64plus_audio 1
+        addAutoConf mupen64plus_compatibility_check 1
+    else
+        addAutoConf mupen64plus_audio 0
+        addAutoConf mupen64plus_compatibility_check 0
     fi
 
-    chown -R $user:$user "$md_conf_root/n64"
-
-    addAutoConf mupen64plus_audio 0
     addAutoConf mupen64plus_hotkeys 1
-    addAutoConf mupen64plus_compatibility_check 1
+
+    chown -R $user:$user "$md_conf_root/n64"
 }
