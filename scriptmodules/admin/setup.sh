@@ -350,11 +350,9 @@ function update_packages_gui_setup() {
     local update="$1"
     if [[ "$update" != "update" ]]; then
         dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
-        if dialog --yesno "It is advisable to update the RetroPie-Setup script before updating packages - may I do this now ?" 22 76 2>&1 >/dev/tty; then
-            updatescript_setup
-            # restart at post_update and then call "update_packages_gui_setup update" afterwards
-            exec "$scriptdir/retropie_packages.sh" setup post_update update_packages_gui_setup update
-        fi
+        updatescript_setup
+        # restart at post_update and then call "update_packages_gui_setup update" afterwards
+        exec "$scriptdir/retropie_packages.sh" setup post_update update_packages_gui_setup update
     fi
 
     local logfilename
@@ -369,6 +367,7 @@ function update_packages_gui_setup() {
     } &> >(tee >(gzip --stdout >"$logfilename"))
 
     rps_printInfo "$logfilename"
+    gui_setup
 }
 
 function quick_install_setup() {
