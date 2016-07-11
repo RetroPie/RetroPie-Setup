@@ -157,8 +157,6 @@ _EOF_
     chmod +x /usr/bin/emulationstation
 
     mkdir -p "/etc/emulationstation"
-
-    inputconfig_emulationstation
     
     # ensure we have a default theme
     rp_callModule esthemes install_theme
