@@ -218,6 +218,9 @@ function testCompatibility() {
         rayman
         donald
         diddy
+        beetle
+        tennis
+        golf
     )
 
     local GLideN64_blacklist=(
