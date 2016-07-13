@@ -51,24 +51,24 @@ function retropie_welcome() {
     done < <(df -h /)
 
     local rst="$(tput sgr0)"
-    local fgblk="${rst}$(tput setaf 0)"     # Black - Regular
-    local fgred="${rst}$(tput setaf 1)"     # Red
-    local fggrn="${rst}$(tput setaf 2)"     # Green
-    local fgylw="${rst}$(tput setaf 3)"     # Yellow
-    local fgblu="${rst}$(tput setaf 4)"     # Blue
-    local fgpur="${rst}$(tput setaf 5)"     # Purple
-    local fgcyn="${rst}$(tput setaf 6)"     # Cyan
-    local fgwht="${rst}$(tput setaf 7)"     # White
+    local fgblk="${rst}$(tput setaf 0)" # Black - Regular
+    local fgred="${rst}$(tput setaf 1)" # Red
+    local fggrn="${rst}$(tput setaf 2)" # Green
+    local fgylw="${rst}$(tput setaf 3)" # Yellow
+    local fgblu="${rst}$(tput setaf 4)" # Blue
+    local fgpur="${rst}$(tput setaf 5)" # Purple
+    local fgcyn="${rst}$(tput setaf 6)" # Cyan
+    local fgwht="${rst}$(tput setaf 7)" # White
 
     local bld="$(tput bold)"
-    local bfgblk="${bld}$(tput setaf 0)"     # Black - Regular
-    local bfgred="${bld}$(tput setaf 1)"     # Red
-    local bfggrn="${bld}$(tput setaf 2)"     # Green
-    local bfgylw="${bld}$(tput setaf 3)"     # Yellow
-    local bfgblu="${bld}$(tput setaf 4)"     # Blue
-    local bfgpur="${bld}$(tput setaf 5)"     # Purple
-    local bfgcyn="${bld}$(tput setaf 6)"     # Cyan
-    local bfgwht="${bld}$(tput setaf 7)"     # White
+    local bfgblk="${bld}$(tput setaf 0)"
+    local bfgred="${bld}$(tput setaf 1)"
+    local bfggrn="${bld}$(tput setaf 2)"
+    local bfgylw="${bld}$(tput setaf 3)"
+    local bfgblu="${bld}$(tput setaf 4)"
+    local bfgpur="${bld}$(tput setaf 5)"
+    local bfgcyn="${bld}$(tput setaf 6)"
+    local bfgwht="${bld}$(tput setaf 7)"
 
     logo=(
         "           "
