@@ -33,8 +33,8 @@ function package_cleanup_raspbiantools() {
 }
 
 function disable_blanker_raspbiantools() {
-    sed -i 's/BLANK_TIME=30/BLANK_TIME=0/g' /etc/kbd/config
-    sed -i 's/POWERDOWN_TIME=30/POWERDOWN_TIME=0/g' /etc/kbd/config
+    sed -i 's/BLANK_TIME=\d*/BLANK_TIME=0/g' /etc/kbd/config
+    sed -i 's/POWERDOWN_TIME=\d*/POWERDOWN_TIME=0/g' /etc/kbd/config
 }
 
 function enable_modules_raspbiantools() {
