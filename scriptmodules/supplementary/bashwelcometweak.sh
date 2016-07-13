@@ -70,7 +70,7 @@ function retropie_welcome() {
     local bfgcyn="${bld}$(tput setaf 6)"
     local bfgwht="${bld}$(tput setaf 7)"
 
-    logo=(
+    local logo=(
         "           "
         "${fgred}   .***.   "
         "${fgred}   ***${bfgwht}*${fgred}*   "
@@ -84,7 +84,8 @@ function retropie_welcome() {
         "${fgred} \`*******'${fgrst} "
         )
 
-    out=""
+    local out
+    local i
     for i in "${!logo[@]}"; do
         out+="  ${logo[$i]}  "
         case "$i" in
