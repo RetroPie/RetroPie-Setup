@@ -172,6 +172,8 @@ function configure_advmame() {
     do
         mkRomDir "mame-advmame/$mame_sub_dir"
         ln -sf "$romdir/mame-advmame/$mame_sub_dir" "$romdir/arcade/advmame"
+        # fix for older broken symlink generation
+        rm -f "$romdir/mame-advmame/$mame_sub_dir/$mame_sub_dir"
     done
 
     # delete old install files
