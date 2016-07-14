@@ -168,8 +168,7 @@ function configure_advmame() {
     mkRomDir "mame-advmame"
 
     local mame_sub_dir
-    for mame_sub_dir in artwork diff hi inp memcard nvram sample snap sta
-    do
+    for mame_sub_dir in artwork diff hi inp memcard nvram sample snap sta; do
         mkRomDir "mame-advmame/$mame_sub_dir"
         ln -sf "$romdir/mame-advmame/$mame_sub_dir" "$romdir/arcade/advmame"
         # fix for older broken symlink generation
