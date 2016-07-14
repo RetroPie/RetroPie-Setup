@@ -9,11 +9,21 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
+function _get_config_pifba() {
+    echo "$configdir/fba/fba2x.cfg"
+}
+
 function _split_config_pifba() {
-    local cfg="$configdir/fba/fba2x.cfg"
+    local cfg="$(_get_config_pifba)"
+    [[ ! -f "$cfg" ]]
     sed -n -e '/\[Keyboard\]/,/\[/p' "$cfg" | head -n -1 >/tmp/pifba-kb.cfg
     sed -n -e '/\[Joystick\]/,/\[/p' "$cfg" | head -n -1 >/tmp/pifba-js.cfg
     sed -n -e '/\[Graphics\]/,/\[/p' "$cfg" | head -n -1 >/tmp/pifba-gfx.cfg
+}
+
+function check_pifba() {
+    [[ ! -f "$(_get_config_pifba)" ]] && return 1
+    return 0
 }
 
 function onstart_pifba_joystick() {

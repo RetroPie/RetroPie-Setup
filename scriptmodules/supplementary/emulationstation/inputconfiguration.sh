@@ -13,6 +13,12 @@
 
 #######################################
 # Interface functions
+#
+# each input configuration module can have an optional function
+# check_<filename without extension>. If this function returns 1, the module is
+# skipped. This can be used to skip input configurations in some cases - eg
+# to skip configuration when an existing config file is not installed.
+#
 # There are 3 main interface functions for each of the input types (joystick/keyboard)
 #
 # function onstart_<filename without extension>_<inputtype>()
@@ -88,10 +94,17 @@ function inputconfiguration() {
         source "$module"  # register functions from emulatorconfigs folder
         local module_id=${module##*/}
         local module_id=${module_id%.sh}
+
+        local funcname="check_${module_id}"
+        # call check_module to check if we should run it
+        if fn_exists "$funcname"; then
+            "$funcname" || continue
+        fi
+
         echo "Configuring '$module_id'"
 
-        # at the start, the onstart_module function is called
-        local funcname="onstart_${module_id}_${device_type}"
+        # at the start, the onstart_module function is called.
+        funcname="onstart_${module_id}_${device_type}"
         fn_exists "$funcname" && "$funcname" "$device_type" "$device_name"
 
         local input_name
