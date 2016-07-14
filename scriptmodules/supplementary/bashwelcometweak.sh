@@ -71,7 +71,6 @@ function retropie_welcome() {
     local bfgwht="${bld}$(tput setaf 7)"
 
     local logo=(
-        "           "
         "${fgred}   .***.   "
         "${fgred}   ***${bfgwht}*${fgred}*   "
         "${fgred}   \`***'   "
@@ -82,6 +81,7 @@ function retropie_welcome() {
         "${bfgred}*******${fggrn}@@${bfgred}**"
         "${fgred}\`*${bfgred}****${bfgylw}@@${bfgred}*${fgred}*'"
         "${fgred} \`*******'${fgrst} "
+        "${fgred}  \`*****'${fgrst}  "
         )
 
     local out
