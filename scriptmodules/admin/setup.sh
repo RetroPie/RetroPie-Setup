@@ -390,7 +390,7 @@ function packages_gui_setup() {
 
     options+=(
         I "Quick install" "I This will install all packages from Core and Main which gives a basic RetroPie install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
-        U "Update all installed packages" "U Update all currently installed packages"
+        U "Update all installed packages" "U Update all currently installed packages. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
     )
 
     for section in core main opt driver exp; do
