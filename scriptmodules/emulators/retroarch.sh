@@ -92,13 +92,9 @@ function configure_retroarch() {
     # install shaders by default
     update_shaders_retroarch
 
-    local config="$configdir/all/retroarch.cfg"
-    # if the user has an existing config we will not overwrite it, but instead copy the
-    # default configuration to retroarch.cfg.rp-dist so any new options can be manually
-    # copied across as needed without destroying users changes
-    [[ -f "$config" ]] && config+=".rp-dist"
+    local config="$(mktemp)"
 
-    cp -v "$md_inst/retroarch.cfg" "$config"
+    cp "$md_inst/retroarch.cfg" "$config"
 
     # configure default options
     iniConfig " = " '"' "$config"
@@ -158,7 +154,8 @@ function configure_retroarch() {
     iniSet "auto_remaps_enable" "true"
     iniSet "input_joypad_driver" "udev"
 
-    chown $user:$user "$config"
+    copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
+    rm "$config"
 }
 
 function gui_retroarch() {
