@@ -59,12 +59,10 @@ function configure_mame4all() {
     # move old config
     moveConfigFile "mame.cfg" "$md_conf_root/$system/mame.cfg"
 
-    # if the user doesn't already have a config, we will copy the default.
-    if [[ ! -f "$md_conf_root/$system/mame.cfg" ]]; then
-        cp "mame.cfg.template" "$md_conf_root/$system/mame.cfg"
-    fi
+    local config="$(mktemp)"
+    copy "mame.cfg.template" "$config"
 
-    iniConfig "=" "" "$md_conf_root/$system/mame.cfg"
+    iniConfig "=" "" "$config"
     iniSet "cfg" "$md_conf_root/$system/cfg"
     iniSet "hi" "$md_conf_root/$system/hi"
     iniSet "inp" "$md_conf_root/$system/inp"
@@ -79,7 +77,8 @@ function configure_mame4all() {
 
     iniSet "samplerate" "44100"
 
-    chown -R $user:$user "$md_conf_root/$system"
+    copyDefaultConfig "$config" "$md_conf_root/$system/mame.cfg"
+    rm "$config"
 
     addSystem 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
     addSystem 1 "$md_id" "$system arcade mame" "$md_inst/mame %BASENAME%"
