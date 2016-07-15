@@ -52,15 +52,10 @@ function configure_vice() {
         ln -snf "$md_inst/lib64" "$md_inst/lib"
     fi
 
-    # if we have an old config vice.cfg then move it to sdl-vicerc
-    if [[ -f "$md_conf_root/c64/vice.cfg" ]]; then
-        mv -v "$md_conf_root/c64/vice.cfg" "$md_conf_root/c64/sdl-vicerc"
-    elif [[ ! -f "$md_conf_root/c64/sdl-vicerc" ]]; then
-        echo "[C64]" > "$md_conf_root/c64/sdl-vicerc"
-    fi
-    chown -R $user:$user "$md_conf_root/c64"
+    local config="$(mktemp)"
+    echo "[C64]" > "$(mktemp)"
 
-    iniConfig "=" "" "$md_conf_root/c64/sdl-vicerc"
+    iniConfig "=" "" "$config"
     if ! isPlatform "x11"; then
         iniSet "SDLBitdepth" "8"
         iniSet "Mouse" "1"
@@ -73,6 +68,9 @@ function configure_vice() {
         iniSet "AutostartWarp" "0"
         iniSet "WarpMode" "0"
     fi
+
+    copyDefaultConfig "$config" "$md_conf_root/c64/sdl-vicerc"
+    rm "$config"
 
     if isPlatform "rpi"; then
         configure_dispmanx_on_vice
