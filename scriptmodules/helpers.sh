@@ -252,11 +252,20 @@ function gitPullOrClone() {
 
 function ensureRootdirExists() {
     mkdir -p "$rootdir"
+
     # make sure we have inifuncs.sh in place and that it is up to date
     mkdir -p "$rootdir/lib"
     if [[ ! -f "$rootdir/lib/inifuncs.sh" || "$rootdir/lib/inifuncs.sh" -ot "$scriptdir/scriptmodules/inifuncs.sh" ]]; then
         cp --preserve=timestamps "$scriptdir/scriptmodules/inifuncs.sh" "$rootdir/lib/inifuncs.sh"
     fi
+
+    # create template for autoconf.cfg and make sure it is owned by $user
+    local config="$configdir/all/autoconf.cfg"
+    if [[ ! -f "$config" ]]; then
+        echo "# this file can be used to enable/disable retropie autoconfiguration features" >"$config"
+    fi
+    chown $user:$user "$config"
+
     mkUserDir "$datadir"
     mkUserDir "$configdir"
     mkUserDir "$configdir/all"

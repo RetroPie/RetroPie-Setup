@@ -331,6 +331,8 @@ _EOF_
 }
 
 function gui_bluetooth() {
+    addAutoConf "8bitdo_hack" 1
+
     while true; do
         local connect_mode="$(_get_connect_mode)"
 
@@ -343,6 +345,15 @@ function gui_bluetooth() {
             C "Connect now to all registered devices"
             M "Configure bluetooth connect mode (currently: $connect_mode)"
         )
+
+        local atebitdo
+        if getAutoConf 8bitdo_hack; then
+            atebitdo=1
+            options+=(8 "8Bitdo mapping hack (ON - old firmware)")
+        else
+            atebitdo=0
+            options+=(8 "8Bitdo mapping hack (OFF - new firmware)")
+        fi
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -364,6 +375,10 @@ function gui_bluetooth() {
                     ;;
                 M)
                     connect_mode_bluetooth
+                    ;;
+                8)
+                    atebitdo="$((atebitdo ^ 1))"
+                    setAutoConf "8bitdo_hack" "$atebitdo"
                     ;;
             esac
         else

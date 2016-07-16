@@ -156,6 +156,9 @@ function configure_retroarch() {
 
     copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
     rm "$config"
+
+    # remapping hack for old 8bitdo firmware
+    addAutoConf "8bitdo_hack" 1
 }
 
 function gui_retroarch() {
