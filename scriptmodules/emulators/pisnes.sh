@@ -49,11 +49,7 @@ function configure_pisnes() {
 
     moveConfigFile "$md_inst/snes9x.cfg" "$md_conf_root/snes/snes9x.cfg"
 
-    # if the user doesn't already have a config, we will copy the default.
-    if [[ ! -f "$md_conf_root/snes/snes9x.cfg" ]]; then
-        cp "$md_inst/snes9x.cfg.template" "$md_conf_root/snes/snes9x.cfg"
-        chown $user:$user "$md_conf_root/snes/snes9x.cfg"
-    fi
+    copyDefaultConfig "$md_inst/snes9x.cfg.template" "$md_conf_root/snes/snes9x.cfg"
 
     addSystem 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
 }

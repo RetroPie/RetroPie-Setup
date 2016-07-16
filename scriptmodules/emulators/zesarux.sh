@@ -55,8 +55,9 @@ _EOF_
 
     local ao="alsa"
     isPlatform "x11" && ao="pulse"
-    if [[ ! -f "$md_conf_root/zxspectrum/.zesaruxrc" ]]; then
-        cat > "$md_conf_root/zxspectrum/.zesaruxrc" << _EOF_
+    local config="$(mktemp)"
+    
+    cat > "$config" << _EOF_
 ;ZEsarUX sample configuration file
 ;
 ;Lines beginning with ; or # are ignored
@@ -76,8 +77,9 @@ _EOF_
 ;Remap Fire Event. Uncomment and amend if you wish to change the default button 3.
 ;--joystickevent 3 Fire
 _EOF_
-        chown $user:$user "$md_conf_root/zxspectrum/.zesaruxrc"
-    fi
+
+    copyDefaultConfig "$config" "$md_conf_root/zxspectrum/.zesaruxrc"
+    rm "$config"
 
     if isPlatform "rpi"; then
         setDispmanx "$md_id" 1

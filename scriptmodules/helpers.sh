@@ -327,6 +327,29 @@ function moveConfigFile() {
     chown -h $user:$user "$from"
 }
 
+function diffFiles() {
+    diff -q "$1" "$2" >/dev/null
+    return $?
+}
+
+function copyDefaultConfig() {
+    local from="$1"
+    local to="$2"
+    # if the destination exists, and is different then copy the config as name.rp-dist
+    if [[ -f "$to" ]]; then
+        if ! diffFiles "$from" "$to"; then
+            to+=".rp-dist"
+            printMsgs "console" "Copying new default configuration to $to"
+            cp "$from" "$to"
+        fi
+    else
+        printMsgs "console" "Copying default configuration to $to"
+        cp "$from" "$to"
+    fi
+
+    chown $user:$user "$to"
+}
+
 function setDispmanx() {
     isPlatform "rpi" || return
     local mod_id="$1"
@@ -555,25 +578,9 @@ function ensureSystemretroconfig {
         mkUserDir "$configdir/$system"
     fi
 
-    local include_comment="# Settings made here will only override settings in the global retroarch.cfg if placed above the #include line"
-    local include="#include \"$configdir/all/retroarch.cfg\""
-
-    local config="$configdir/$system/retroarch.cfg"
-    # if the user has an existing config we will not overwrite it, but instead create the 
-    # default config as retroarch.cfg.rp-dist (apart from the very important #include addition)
-    if [[ -f "$config" ]]; then
-        if ! grep -q "$include" "$config"; then
-            sed -i "1i$include_comment\n" "$config"
-            echo -e "\n$include" >>"$config"
-        fi
-        config="$configdir/$system/retroarch.cfg.rp-dist"
-        rm -f "$config"
-    fi
-
+    local config="$(mktemp)"
     # add the initial comment regarding include order
-    if [[ ! -f "$config" ]]; then
-        echo -e "$include_comment\n" >"$config"
-    fi
+    echo -e "# Settings made here will only override settings in the global retroarch.cfg if placed above the #include line\n" >"$config"
 
     # add the per system default settings
     iniConfig " = " '"' "$config"
@@ -586,9 +593,10 @@ function ensureSystemretroconfig {
     fi
 
     # include the main retroarch config
-    echo -e "\n$include" >>"$config"
+    echo -e "\n#include \"$configdir/all/retroarch.cfg\"" >>"$config"
 
-    chown $user:$user "$config"
+    copyDefaultConfig "$config" "$configdir/$system/retroarch.cfg"
+    rm "$config"
 }
 
 function setRetroArchCoreOption() {
