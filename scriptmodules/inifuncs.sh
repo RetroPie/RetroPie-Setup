@@ -127,8 +127,8 @@ function getAutoConf(){
     iniConfig " = " "" "$configdir/all/autoconf.cfg"
     iniGet "$key"
 
-    [[ "$ini_value" == "1" ]] && return 1
-    return 0
+    [[ "$ini_value" == "1" ]] && return 0
+    return 1
 }
 
 # escape backslashes and pipes for sed

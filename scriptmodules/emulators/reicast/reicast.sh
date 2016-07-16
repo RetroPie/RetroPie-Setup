@@ -63,7 +63,7 @@ function mapInput() {
 
 if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
     params="-config config:homedir=$HOME -config x11:fullscreen=1 "
-    getAutoConf reicast_input || params+=$(mapInput)
+    getAutoConf reicast_input && params+=$(mapInput)
     if [[ "$AUDIO" == "OSS" ]]; then
         params+=" -config audio:backend=oss -config audio:disable=0 "
         aoss "$rootdir/emulators/reicast/bin/reicast" $params -config config:image="$ROM" >> /dev/null

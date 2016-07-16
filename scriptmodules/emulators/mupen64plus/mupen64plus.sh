@@ -276,9 +276,9 @@ iniSet "ScreenshotPath" "$romdir/n64"
 iniSet "SaveStatePath" "$romdir/n64"
 iniSet "SaveSRAMPath" "$romdir/n64"
 
-getAutoConf mupen64plus_hotkeys || remap
-getAutoConf mupen64plus_compatibility_check || testCompatibility
-getAutoConf mupen64plus_audio || setAudio
+getAutoConf mupen64plus_hotkeys && remap
+getAutoConf mupen64plus_compatibility_check && testCompatibility
+getAutoConf mupen64plus_audio && setAudio
 
 if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == *BCM27* ]]; then
     # If a raspberry pi is used lower resolution to 320x240 and enable SDL dispmanx scaling mode 1

@@ -59,11 +59,11 @@ function map_emulationstation_joystick() {
             ;;
         a)
             key="$input_name"
-            getAutoConf es_swap_a_b || key="b"
+            getAutoConf es_swap_a_b && key="b"
             ;;
         b)
             key="$input_name"
-            getAutoConf es_swap_a_b || key="a"
+            getAutoConf es_swap_a_b && key="a"
             ;;
         *)
             return
