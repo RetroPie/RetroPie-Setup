@@ -252,6 +252,9 @@ function gitPullOrClone() {
 
 function ensureRootdirExists() {
     mkdir -p "$rootdir"
+    mkUserDir "$datadir"
+    mkUserDir "$configdir"
+    mkUserDir "$configdir/all"
 
     # make sure we have inifuncs.sh in place and that it is up to date
     mkdir -p "$rootdir/lib"
@@ -265,10 +268,6 @@ function ensureRootdirExists() {
         echo "# this file can be used to enable/disable retropie autoconfiguration features" >"$config"
     fi
     chown $user:$user "$config"
-
-    mkUserDir "$datadir"
-    mkUserDir "$configdir"
-    mkUserDir "$configdir/all"
 }
 
 function rmDirExists() {
