@@ -343,7 +343,7 @@ function settings_gui_setup() {
 function update_packages_setup() {
     local idx
     for idx in ${__mod_idx[@]}; do
-        if rp_isInstalled "$idx"; then
+        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]]; then
             rp_installModule "$idx"
         fi
     done
