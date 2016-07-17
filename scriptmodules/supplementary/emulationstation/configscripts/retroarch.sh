@@ -20,6 +20,9 @@ function onstart_retroarch_joystick() {
         input_joypad_driver="udev"
     fi
 
+    _atebitdo_hack=0
+    getAutoConf "8bitdo_hack" && _atebitdo_hack=1
+
     iniConfig " = " "\"" "/tmp/tempconfig.cfg"
     iniSet "input_device" "$device_name"
     iniSet "input_driver" "$input_joypad_driver"
@@ -242,21 +245,18 @@ function map_retroarch_joystick() {
                 ;;
             *)
                 key+="_btn"
+                value="$input_id"
+
                 # workaround for mismatched controller mappings
                 iniGet "input_driver"
                 if [[ "$ini_value" == "udev" ]]; then
-                    case "$device_name" in 
+                    case "$device_name" in
                         "8Bitdo FC30"*|"8Bitdo NES30"*|"8Bitdo SFC30"*|"8Bitdo SNES30"*|"8Bitdo Zero"*)
-                            if [[ "$input_id" -lt "17" ]]; then
-                                value=$(($input_id+11))
+                            if [[ "$_atebitdo_hack" -eq 1 ]]; then
+                                value="$((input_id+11))"
                             fi
                             ;;
-                        *)
-                            value="$input_id"
-                            ;;
                     esac
-                else
-                    value="$input_id"
                 fi
                 ;;
         esac

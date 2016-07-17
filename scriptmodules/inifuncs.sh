@@ -108,16 +108,22 @@ function addAutoConf() {
        default="1"
     fi
 
-    if [ ! -f "$file" ]; then
-        echo "# this file can be used to enable/disable retropie autoconfiguration features" >> "$file"
-    fi
-
     iniConfig " = " "" "$file"
     iniGet "$key"
     ini_value="${ini_value// /}"
     if [[ -z "$ini_value" ]]; then
         iniSet "$key" "$default"
     fi
+}
+
+# arg 1: key, arg 2: value
+function setAutoConf() {
+    local key="$1"
+    local value="$2"
+    local file="$configdir/all/autoconf.cfg"
+
+    iniConfig " = " "" "$file"
+    iniSet "$key" "$value"
 }
 
 # arg 1: key
