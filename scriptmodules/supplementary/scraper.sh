@@ -154,12 +154,32 @@ function gui_scraper() {
         rp_callModule "$md_id"
     fi
 
-    local use_thumbs=1
-    local max_width=400
-    local use_gdb_scraper=1
-    local rom_name=0
-    local append_only=0
-    local use_rom_folder=0
+    iniConfig " = " '"' "$configdir/all/scraper.cfg"
+
+    local options=(
+        'use_thumbs=1'
+        'max_width=400'
+        'use_gdb_scraper=1'
+        'rom_name=0'
+        'append_only=0'
+        'use_rom_folder=0'
+    )
+
+    local option
+    local key
+    local value
+
+    for option in "${options[@]}"; do
+        option=(${option/=/ })
+        key="${option[0]}"
+        value="${option[1]}"
+        iniGet "$key"
+        if [[ -z "$ini_value" ]]; then
+            iniSet "$key" "$value"
+        else
+            eval "$key=\"$ini_value\""
+        fi
+    done
 
     while true; do
         local ver=$(get_ver_scraper)
@@ -218,6 +238,7 @@ function gui_scraper() {
                     ;;
                 3)
                     use_thumbs="$((use_thumbs ^ 1))"
+                    iniSet "use_thumbs" "$use_thumbs"
                     ;;
                 4)
                     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
@@ -225,15 +246,19 @@ function gui_scraper() {
                     ;;
                 5)
                     use_gdb_scraper="$((use_gdb_scraper ^ 1))"
+                    iniSet "use_gdb_scraper" "$use_gdb_scraper"
                     ;;
                 6)
                     rom_name="$((( rom_name + 1 ) % 3))"
+                    iniSet "rom_name" "$rom_name"
                     ;;
                 7)
                     append_only="$((append_only ^ 1))"
+                    iniSet "append_only" "$append_only"
                     ;;
                 8)
                     use_rom_folder="$((use_rom_folder ^ 1))"
+                    iniSet "use_rom_folder" "$use_rom_folder"
                     ;;
                 U)
                     rp_callModule "$md_id"
