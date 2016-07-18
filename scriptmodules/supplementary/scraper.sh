@@ -61,11 +61,24 @@ function scrape_scraper() {
     local system="$1"
     local use_thumbs="$2"
     local max_width="$3"
+    local use_rom_folder="$4"
     [[ -z "$system" ]] && return
-    local gamelist="$home/.emulationstation/gamelists/$system/gamelist.xml"
-    local img_path="$home/.emulationstation/downloaded_images/$system"
+    set -x
+    local gamelist
+    local img_dir
+    local img_path
+    if [[ "$use_rom_folder" -eq 1 ]]; then
+        gamelist="$romdir/$system/gamelist.xml"
+        img_dir="$romdir/$system/downloaded_images"
+        img_path="./downloaded_images"
+    else
+        gamelist="$home/.emulationstation/gamelists/$system/gamelist.xml"
+        img_dir="$home/.emulationstation/downloaded_images/$system"
+        img_path="~/.emulationstation/downloaded_images/$system"
+    fi
+
     local params=()
-    params+=(-image_dir "$img_path")
+    params+=(-image_dir "$img_dir")
     params+=(-image_path "$img_path")
     params+=(-output_file "$gamelist")
     params+=(-rom_dir "$romdir/$system")
@@ -141,16 +154,38 @@ function gui_scraper() {
         rp_callModule "$md_id"
     fi
 
-    local use_thumbs=1
-    local max_width=400
-    local use_gdb_scraper=1
-    local rom_name=0
-    local append_only=0
+    iniConfig " = " '"' "$configdir/all/scraper.cfg"
 
+    local options=(
+        'use_thumbs=1'
+        'max_width=400'
+        'use_gdb_scraper=1'
+        'rom_name=0'
+        'append_only=0'
+        'use_rom_folder=0'
+    )
+
+    local option
+    local key
+    local value
+
+    for option in "${options[@]}"; do
+        option=(${option/=/ })
+        key="${option[0]}"
+        value="${option[1]}"
+        iniGet "$key"
+        if [[ -z "$ini_value" ]]; then
+            iniSet "$key" "$value"
+        else
+            eval "$key=\"$ini_value\""
+        fi
+    done
+
+    local default
     while true; do
         local ver=$(get_ver_scraper)
         [[ -z "$ver" ]] && ver="v(Git)"
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Scraper $ver by Steven Selph" 22 76 16) 
+        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Scraper $ver by Steven Selph" 22 76 16)
         local options=( 
             1 "Scrape all systems" 
             2 "Scrape chosen systems"
@@ -184,20 +219,28 @@ function gui_scraper() {
             options+=(7 "Gamelist (Overwrite)")
         fi
 
+        if [[ "$use_rom_folder" -eq 1 ]]; then
+            options+=(8 "Use rom folder for gamelist & images (Enabled)")
+        else
+            options+=(8 "Use rom folder for gamelist & images (Disabled)")
+        fi
+
         options+=(U "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty) 
-        if [[ -n "$choice" ]]; then 
+        if [[ -n "$choice" ]]; then
+            default="$choice"
             case $choice in 
                 1) 
-                    rp_callModule "$md_id" scrape_all $use_thumbs $max_width
+                    rp_callModule "$md_id" scrape_all $use_thumbs $max_width $use_rom_folder
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 2) 
-                    rp_callModule "$md_id" scrape_chosen $use_thumbs $max_width
+                    rp_callModule "$md_id" scrape_chosen $use_thumbs $max_width $use_rom_folder
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 3)
                     use_thumbs="$((use_thumbs ^ 1))"
+                    iniSet "use_thumbs" "$use_thumbs"
                     ;;
                 4)
                     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
@@ -205,17 +248,24 @@ function gui_scraper() {
                     ;;
                 5)
                     use_gdb_scraper="$((use_gdb_scraper ^ 1))"
+                    iniSet "use_gdb_scraper" "$use_gdb_scraper"
                     ;;
                 6)
                     rom_name="$((( rom_name + 1 ) % 3))"
+                    iniSet "rom_name" "$rom_name"
                     ;;
                 7)
                     append_only="$((append_only ^ 1))"
+                    iniSet "append_only" "$append_only"
+                    ;;
+                8)
+                    use_rom_folder="$((use_rom_folder ^ 1))"
+                    iniSet "use_rom_folder" "$use_rom_folder"
                     ;;
                 U)
                     rp_callModule "$md_id"
                     ;;
-            esac 
+            esac
         else 
             break 
         fi 
