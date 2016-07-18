@@ -61,11 +61,24 @@ function scrape_scraper() {
     local system="$1"
     local use_thumbs="$2"
     local max_width="$3"
+    local use_rom_folder="$4"
     [[ -z "$system" ]] && return
-    local gamelist="$home/.emulationstation/gamelists/$system/gamelist.xml"
-    local img_path="$home/.emulationstation/downloaded_images/$system"
+    set -x
+    local gamelist
+    local img_dir
+    local img_path
+    if [[ "$use_rom_folder" -eq 1 ]]; then
+        gamelist="$romdir/$system/gamelist.xml"
+        img_dir="$romdir/$system/downloaded_images"
+        img_path="./downloaded_images"
+    else
+        gamelist="$home/.emulationstation/gamelists/$system/gamelist.xml"
+        img_dir="$home/.emulationstation/downloaded_images/$system"
+        img_path="~/.emulationstation/downloaded_images/$system"
+    fi
+
     local params=()
-    params+=(-image_dir "$img_path")
+    params+=(-image_dir "$img_dir")
     params+=(-image_path "$img_path")
     params+=(-output_file "$gamelist")
     params+=(-rom_dir "$romdir/$system")
@@ -146,6 +159,7 @@ function gui_scraper() {
     local use_gdb_scraper=1
     local rom_name=0
     local append_only=0
+    local use_rom_folder=0
 
     while true; do
         local ver=$(get_ver_scraper)
@@ -184,16 +198,22 @@ function gui_scraper() {
             options+=(7 "Gamelist (Overwrite)")
         fi
 
+        if [[ "$use_rom_folder" -eq 1 ]]; then
+            options+=(8 "Use rom folder for gamelist & images (Enabled)")
+        else
+            options+=(8 "Use rom folder for gamelist & images (Disabled)")
+        fi
+
         options+=(U "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty) 
         if [[ -n "$choice" ]]; then 
             case $choice in 
                 1) 
-                    rp_callModule "$md_id" scrape_all $use_thumbs $max_width
+                    rp_callModule "$md_id" scrape_all $use_thumbs $max_width $use_rom_folder
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 2) 
-                    rp_callModule "$md_id" scrape_chosen $use_thumbs $max_width
+                    rp_callModule "$md_id" scrape_chosen $use_thumbs $max_width $use_rom_folder
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 3)
@@ -211,6 +231,9 @@ function gui_scraper() {
                     ;;
                 7)
                     append_only="$((append_only ^ 1))"
+                    ;;
+                8)
+                    use_rom_folder="$((use_rom_folder ^ 1))"
                     ;;
                 U)
                     rp_callModule "$md_id"
