@@ -181,10 +181,11 @@ function gui_scraper() {
         fi
     done
 
+    local default
     while true; do
         local ver=$(get_ver_scraper)
         [[ -z "$ver" ]] && ver="v(Git)"
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Scraper $ver by Steven Selph" 22 76 16) 
+        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Scraper $ver by Steven Selph" 22 76 16)
         local options=( 
             1 "Scrape all systems" 
             2 "Scrape chosen systems"
@@ -226,7 +227,8 @@ function gui_scraper() {
 
         options+=(U "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty) 
-        if [[ -n "$choice" ]]; then 
+        if [[ -n "$choice" ]]; then
+            default="$choice"
             case $choice in 
                 1) 
                     rp_callModule "$md_id" scrape_all $use_thumbs $max_width $use_rom_folder
@@ -263,7 +265,7 @@ function gui_scraper() {
                 U)
                     rp_callModule "$md_id"
                     ;;
-            esac 
+            esac
         else 
             break 
         fi 
