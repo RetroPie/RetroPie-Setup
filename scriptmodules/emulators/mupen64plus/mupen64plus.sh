@@ -221,6 +221,13 @@ function testCompatibility() {
         beetle
         tennis
         golf
+        instinct
+        gemini
+    )
+
+    local GLideN64LegacyBlending_blacklist=(
+        empire
+        beetle
     )
 
     local GLideN64_blacklist=(
@@ -249,12 +256,20 @@ function testCompatibility() {
         fi
         iniConfig " = " "" "$config"
         # Settings version. Don't touch it.
-        iniSet "configVersion" "11"
+        iniSet "configVersion" "12"
         # Enable FBEmulation if necessary
         iniSet "EnableFBEmulation" "False"
         for game in "${GLideN64FBEMU_whitelist[@]}"; do
             if [[ "${ROM,,}" == *"$game"* ]]; then
                 iniSet "EnableFBEmulation" "True"
+                break
+            fi
+        done
+        # Disable LegacyBlending if necessary
+        iniSet "enableLegacyBlending" "True"
+        for game in "${GLideN64LegacyBlending_blacklist[@]}"; do
+            if [[ "${ROM,,}" == *"$game"* ]]; then
+                iniSet "enableLegacyBlending" "False"
                 break
             fi
         done
