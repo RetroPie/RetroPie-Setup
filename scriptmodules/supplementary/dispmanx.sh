@@ -15,7 +15,7 @@ rp_module_section="config"
 rp_module_flags="!mali !x11"
 
 function gui_dispmanx() {
-    iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
+    iniConfig " = " '"' "$configdir/all/dispmanx.cfg"
     while true; do
         local count=1
         local options=()
