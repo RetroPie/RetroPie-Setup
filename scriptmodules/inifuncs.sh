@@ -89,13 +89,23 @@ function iniGet() {
         ini_value=""
         return 1
     fi
+
     local delim="$__ini_cfg_delim"
     local quote="$__ini_cfg_quote"
     # we strip the delimiter of spaces, so we can "fussy" match existing entries that have the wrong spacing
     local delim_strip=${delim// /}
     # if the stripped delimiter is empty - such as in the case of a space, just use the delimiter instead
     [[ -z "$delim_strip" ]] && delim_strip="$delim"
-    ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$quote*\([^$quote]*\)$quote*/\1/p" "$file")"
+
+    # create a regexp to match the value based on whether we are looking for quotes or not
+    local value_m
+    if [[ -n "$quote" ]]; then
+        value_m="$quote*\([^$quote]*\)$quote*"
+    else
+        value_m="\(.*\)"
+    fi
+
+    ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m/\1/p" "$file")"
 }
 
 # arg 1: key, arg 2: default value (optional - is 1 if not used)
