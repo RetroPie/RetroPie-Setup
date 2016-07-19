@@ -57,7 +57,7 @@ source "$rootdir/lib/inifuncs.sh"
 
 function get_config() {
     if [[ -f "$runcommand_conf" ]]; then
-        iniConfig "=" '"' "$runcommand_conf"
+        iniConfig " = " '"' "$runcommand_conf"
         iniGet "governor"
         governor="$ini_value"
         iniGet "use_art"
@@ -234,7 +234,7 @@ function load_mode_defaults() {
 
     if [[ -f "$video_conf" ]]; then
         # local default video modes for emulator / rom
-        iniConfig "=" '"' "$video_conf"
+        iniConfig " = " '"' "$video_conf"
         iniGet "$save_emu"
         if [[ -n "$ini_value" ]]; then
             mode_def_emu="$ini_value"
@@ -408,7 +408,7 @@ function choose_mode() {
     mode_new_id=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$mode_new_id" ]] && return
 
-    iniConfig "=" '"' "$video_conf"
+    iniConfig " = " '"' "$video_conf"
     iniSet "$save" "$mode_new_id"
 }
 
@@ -443,10 +443,10 @@ function choose_app() {
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         if [[ -n "$save" ]]; then
-            iniConfig "=" '"' "$apps_conf"
+            iniConfig " = " '"' "$apps_conf"
             iniSet "$save" "${apps[$choice]}"
         else
-            iniConfig "=" '"' "$emu_conf"
+            iniConfig " = " '"' "$emu_conf"
             iniSet "default" "${apps[$choice]}"
         fi
         get_sys_command "$system" "$rom"
@@ -488,7 +488,7 @@ function choose_render_res() {
             ;;
     esac
 
-    iniConfig "=" '"' "$video_conf"
+    iniConfig " = " '"' "$video_conf"
     iniSet "$save" "$render_res"
 }
 
@@ -513,7 +513,7 @@ function choose_fb_res() {
     [[ -z "$choice" ]] && return
     fb_res="${res[$choice-1]}"
 
-    iniConfig "=" '"' "$video_conf"
+    iniConfig " = " '"' "$video_conf"
     iniSet "$save" "$fb_res"
 }
 
@@ -579,7 +579,7 @@ function config_dispmanx() {
     # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
     # change the library path to load dispmanx sdl first
     if [[ -f "$dispmanx_conf" ]]; then
-        iniConfig "=" '"' "$dispmanx_conf"
+        iniConfig " = " '"' "$dispmanx_conf"
         iniGet "$name"
         [[ "$ini_value" == "1" ]] && command="SDL1_VIDEODRIVER=dispmanx $command"
     fi
@@ -665,7 +665,7 @@ function get_sys_command() {
         exit 1
     fi
 
-    iniConfig "=" '"' "$emu_conf"
+    iniConfig " = " '"' "$emu_conf"
     iniGet "default"
     if [[ -z "$ini_value" ]]; then
         echo "No default emulator found for system $system"
@@ -681,14 +681,14 @@ function get_sys_command() {
 
     # get system & rom specific app if set
     if [[ -f "$apps_conf" ]]; then
-        iniConfig "=" '"' "$apps_conf"
+        iniConfig " = " '"' "$apps_conf"
         iniGet "$appsave"
         emulator_def_rom="$ini_value"
         [[ -n "$ini_value" ]] && emulator="$ini_value"
     fi
 
     # get the app commandline
-    iniConfig "=" '"' "$emu_conf"
+    iniConfig " = " '"' "$emu_conf"
     iniGet "$emulator"
     command="$ini_value"
 

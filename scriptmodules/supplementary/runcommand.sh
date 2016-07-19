@@ -20,7 +20,7 @@ function install_bin_runcommand() {
     chmod a+x "$md_inst/joy2key.py"
     if [[ ! -f "$configdir/all/runcommand.cfg" ]]; then
         mkUserDir "$configdir/all"
-        iniConfig "=" '"' "$configdir/all/runcommand.cfg"
+        iniConfig " = " '"' "$configdir/all/runcommand.cfg"
         iniSet "use_art" "0"
         iniSet "disable_joystick" "0"
         iniSet "governor" ""
@@ -56,7 +56,7 @@ function governor_runcommand() {
 }
 
 function gui_runcommand() {
-    iniConfig "=" '"' "$configdir/all/runcommand.cfg"
+    iniConfig " = " '"' "$configdir/all/runcommand.cfg"
 
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     while true; do

@@ -108,7 +108,7 @@ function addAutoConf() {
        default="1"
     fi
 
-    iniConfig " = " "" "$file"
+    iniConfig " = " '"' "$file"
     iniGet "$key"
     ini_value="${ini_value// /}"
     if [[ -z "$ini_value" ]]; then
@@ -122,7 +122,7 @@ function setAutoConf() {
     local value="$2"
     local file="$configdir/all/autoconf.cfg"
 
-    iniConfig " = " "" "$file"
+    iniConfig " = " '"' "$file"
     iniSet "$key" "$value"
 }
 
@@ -130,7 +130,7 @@ function setAutoConf() {
 function getAutoConf(){
     local key="$1"
 
-    iniConfig " = " "" "$configdir/all/autoconf.cfg"
+    iniConfig " = " '"' "$configdir/all/autoconf.cfg"
     iniGet "$key"
 
     [[ "$ini_value" == "1" ]] && return 0
