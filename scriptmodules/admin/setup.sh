@@ -370,6 +370,7 @@ function update_packages_gui_setup() {
     } &> >(tee >(gzip --stdout >"$logfilename"))
 
     rps_printInfo "$logfilename"
+    printMsgs "dialog" "Installed packages have been updated."
     gui_setup
 }
 
