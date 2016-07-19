@@ -447,7 +447,7 @@ function iniFileEditor() {
         # process the editing of the option
         i=0
         options=("U" "unset")
-        local default
+        local default=""
 
         params=(${params[sel]})
         local mode="${params[0]}"
@@ -493,7 +493,7 @@ function iniFileEditor() {
             cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the value for ${keys[sel]}" 10 60 "${values[sel]}")
             value=$("${cmd[@]}" 2>&1 >/dev/tty)
         elif [[ "$choice" == "U" ]]; then
-            value="$default"
+            value=""
         else
             if [[ "$mode" == "_id_" ]]; then
                 value="$choice"
