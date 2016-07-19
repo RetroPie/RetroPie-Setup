@@ -12,7 +12,7 @@
 rp_module_id="raspbiantools"
 rp_module_desc="Raspbian related tools"
 rp_module_section="config"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!x11 !mali"
 
 function apt_upgrade_raspbiantools() {
     aptUpdate
@@ -75,6 +75,14 @@ function gui_raspbiantools() {
                     ;;
                 2)
                     rp_callModule "$md_id" lxde
+                    printMsgs "dialog" "LXDE is installed."
+                    local config="/etc/X11/Xwrapper.config"
+                    iniConfig "=" "" "$config"
+                    iniGet "$ini_value"
+                    if [[ "$ini_value" != "anybody" ]] && dialog --defaultno --yesno "To allow starting of the Desktop from Emulation Station, a security related change in $config is needed\n\nchanging allowed_users=console to allowed_users=anybody\n\nYou can read the Xwrapper.config manual page for more information (man Xwrapper.config).\n\nWould you like me to make this change now?" 22 76 2>&1 >/dev/tty; then
+                        iniSet "allowed_users" "anybody"
+                        printMsgs "dialog" "$config changed."
+                    fi
                     ;;
                 3)
                     rp_callModule "$md_id" package_cleanup
