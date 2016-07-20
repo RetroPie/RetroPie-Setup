@@ -749,7 +749,7 @@ function delSystem() {
     fi
 
     # if we don't have an emulators.cfg we can remove the system from emulation station
-    if [[ ! -f "$config" ]]; then
+    if [[ -f /etc/emulationstation/es_systems.cfg && ! -f "$config" ]]; then
         xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
     fi
 }
