@@ -34,24 +34,26 @@ function build_uae4arm() {
 
 function install_uae4arm() {
     md_ret_files=(
-        'conf'
         'data'
-        'kickstarts'
         'uae4arm'
-        'savestates'
-        'screenshots'
     )
 }
 
 function configure_uae4arm() {
     mkRomDir "amiga"
 
-    mkUserDir "$md_inst/conf"
-    
-    # symlinks to optional kickstart roms in our BIOS dir
-    for rom in kick12.rom kick13.rom kick20.rom kick31.rom; do
-        ln -sf "$biosdir/$rom" "$md_inst/kickstarts/$rom"
+    mkUserDir "$md_conf_root/amiga"
+    mkUserDir "$md_conf_root/amiga/$md_id"
+
+    # move config / save folders to $md_conf_root/amiga/$md_id
+    local dir
+    for dir in conf savestates screenshots; do
+        moveConfigDir "$md_inst/$dir" "$md_conf_root/amiga/$md_id/$dir"
     done
+
+    # and kickstart dir (removing old symlinks first)
+    rm -f "$md_inst/kickstarts/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
+    moveConfigDir "$md_inst/kickstarts" "$biosdir"
 
     cat > "$romdir/amiga/+Start UAE4Arm.sh" << _EOF_
 #!/bin/bash
