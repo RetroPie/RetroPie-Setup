@@ -54,31 +54,33 @@ function configure_mame4all() {
     mkRomDir "$system/artwork"
     mkRomDir "$system/samples"
 
-    mkdir -p "$md_conf_root/$system/"{cfg,hi,inp,memcard,nvram,snap,sta}
+    if [[ "$md_mode" == "install" ]]; then
+        mkdir -p "$md_conf_root/$system/"{cfg,hi,inp,memcard,nvram,snap,sta}
 
-    # move old config
-    moveConfigFile "mame.cfg" "$md_conf_root/$system/mame.cfg"
+        # move old config
+        moveConfigFile "mame.cfg" "$md_conf_root/$system/mame.cfg"
 
-    local config="$(mktemp)"
-    cp "mame.cfg.template" "$config"
+        local config="$(mktemp)"
+        cp "mame.cfg.template" "$config"
 
-    iniConfig "=" "" "$config"
-    iniSet "cfg" "$md_conf_root/$system/cfg"
-    iniSet "hi" "$md_conf_root/$system/hi"
-    iniSet "inp" "$md_conf_root/$system/inp"
-    iniSet "memcard" "$md_conf_root/$system/memcard"
-    iniSet "nvram" "$md_conf_root/$system/nvram"
-    iniSet "snap" "$md_conf_root/$system/snap"
-    iniSet "sta" "$md_conf_root/$system/sta"
+        iniConfig "=" "" "$config"
+        iniSet "cfg" "$md_conf_root/$system/cfg"
+        iniSet "hi" "$md_conf_root/$system/hi"
+        iniSet "inp" "$md_conf_root/$system/inp"
+        iniSet "memcard" "$md_conf_root/$system/memcard"
+        iniSet "nvram" "$md_conf_root/$system/nvram"
+        iniSet "snap" "$md_conf_root/$system/snap"
+        iniSet "sta" "$md_conf_root/$system/sta"
 
-    iniSet "artwork" "$romdir/$system/artwork"
-    iniSet "samplepath" "$romdir/$system/samples;$romdir/arcade/samples"
-    iniSet "rompath" "$romdir/$system;$romdir/arcade"
+        iniSet "artwork" "$romdir/$system/artwork"
+        iniSet "samplepath" "$romdir/$system/samples;$romdir/arcade/samples"
+        iniSet "rompath" "$romdir/$system;$romdir/arcade"
 
-    iniSet "samplerate" "44100"
+        iniSet "samplerate" "44100"
 
-    copyDefaultConfig "$config" "$md_conf_root/$system/mame.cfg"
-    rm "$config"
+        copyDefaultConfig "$config" "$md_conf_root/$system/mame.cfg"
+        rm "$config"
+    fi
 
     addSystem 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
     addSystem 1 "$md_id" "$system arcade mame" "$md_inst/mame %BASENAME%"
