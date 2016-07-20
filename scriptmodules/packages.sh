@@ -175,7 +175,6 @@ function rp_callModule() {
             ;;
         install|install_bin)
             action="Installing"
-            rmDirExists "$md_inst"
             mkdir -p "$md_inst"
             pushd "$md_build" 2>/dev/null
             pushed=$?
