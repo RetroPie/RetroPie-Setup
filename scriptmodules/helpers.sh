@@ -295,8 +295,8 @@ function moveConfigDir() {
     local to="$2"
 
     # if we are in remove mode - remove the symlink
-    if [[ "$md_mode" == "remove" && -h "$from" ]]; then
-        rm -f "$from"
+    if [[ "$md_mode" == "remove" ]]; then
+        [[ -h "$from" ]] && rm -f "$from"
         return
     fi
 
