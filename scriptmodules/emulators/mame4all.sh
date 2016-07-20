@@ -80,6 +80,8 @@ function configure_mame4all() {
 
         copyDefaultConfig "$config" "$md_conf_root/$system/mame.cfg"
         rm "$config"
+
+        chown -R $user:$user "$md_conf_root/$system"
     fi
 
     addSystem 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
