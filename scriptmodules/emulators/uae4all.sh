@@ -85,39 +85,55 @@ function build_uae4all() {
 }
 
 function install_uae4all() {
-    unzip -o "AndroidData/guichan26032014.zip" -d "$md_inst"
-    unzip -o "AndroidData/data.zip" -d "$md_inst"
-    unzip -o "AndroidData/aros20140110.zip" -d "$md_inst"
+    unzip -o "AndroidData/guichan26032014.zip" -d "$md_inst" "data/*"
+    unzip -o "AndroidData/data.zip" -d "$md_inst" "data/*"
     md_ret_files=(
         'copying'
         'uae4all'
         'Readme.txt'
+        'AndroidData/aros20140110.zip'
     )
+    rm -rf "$md_inst/"{blankdisks,roms,conf,customconf,saves}
 }
 
 function configure_uae4all() {
     mkRomDir "amiga"
 
-    mkdir -p "$md_inst/conf"
-    echo "path=$romdir/amiga" >"$md_inst/conf/adfdir.conf"
-    chown -R $user:$user "$md_inst/conf"
+    mkUserDir "$md_conf_root/amiga"
+    mkUserDir "$md_conf_root/amiga/$md_id"
 
-    # symlinks to optional kickstart roms in our BIOS dir
-    for rom in kick12.rom kick13.rom kick20.rom kick31.rom; do
-        ln -sf "$biosdir/$rom" "$md_inst/kickstarts/$rom"
+    # move config / save folders to $md_conf_root/amiga/$md_id
+    local dir
+    for dir in blankdisks conf customconf saves screenshots; do
+        moveConfigDir "$md_inst/$dir" "$md_conf_root/amiga/$md_id/$dir"
     done
 
-    rm -f "$md_inst/uae4all.sh" "$romdir/amiga/Start.txt"
-    cat > "$romdir/amiga/+Start UAE4All.sh" << _EOF_
+    # symlink rom dir
+    moveConfigDir "$md_inst/roms" "$romdir/amiga"
+
+    # and kickstart dir (removing old symlinks first)
+    rm -f "$md_inst/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
+    moveConfigDir "$md_inst/kickstarts" "$biosdir"
+
+    if [[ "$md_mode" == "install" ]]; then
+        if [[ ! -f "$biosdir/aros-amiga-m68k-ext.bin" ]]; then
+            # unpack aros kickstart
+            unzip -j "aros20140110.zip" -d "$biosdir"
+        fi
+
+        cat > "$romdir/amiga/+Start UAE4All.sh" << _EOF_
 #!/bin/bash
 pushd "$md_inst"
 ./uae4all
 popd
 _EOF_
-    chmod a+x "$romdir/amiga/+Start UAE4All.sh"
-    chown $user:$user "$romdir/amiga/+Start UAE4All.sh"
+        chmod a+x "$romdir/amiga/+Start UAE4All.sh"
+        chown $user:$user "$romdir/amiga/+Start UAE4All.sh"
 
-    setDispmanx "$md_id" 1
+        setDispmanx "$md_id" 1
+    else
+        rm -f "$biosdir/aros-amiga-m68k"*
+    fi
 
     addSystem 1 "$md_id" "amiga" "$romdir/amiga/+Start\ UAE4All.sh" "Amiga" ".sh"
 }
