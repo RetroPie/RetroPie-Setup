@@ -112,7 +112,7 @@ function configure_uae4all() {
     moveConfigDir "$md_inst/roms" "$romdir/amiga"
 
     # and kickstart dir (removing old symlinks first)
-    rm -f "$md_inst/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
+    rm -f "$md_inst/kickstarts/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
     moveConfigDir "$md_inst/kickstarts" "$biosdir"
 
     if [[ "$md_mode" == "install" ]]; then
