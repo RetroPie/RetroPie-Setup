@@ -611,7 +611,10 @@ function setRetroArchCoreOption() {
     local option="$1"
     local value="$2"
     iniConfig " = " "\"" "$configdir/all/retroarch-core-options.cfg"
-    iniSet "$option" "$value"
+    iniGet "$option"
+    if [[ -z "$ini_value" ]]; then
+        iniSet "$option" "$value"
+    fi
     chown $user:$user "$configdir/all/retroarch-core-options.cfg"
 }
 
