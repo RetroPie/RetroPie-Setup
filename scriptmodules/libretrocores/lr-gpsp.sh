@@ -40,5 +40,7 @@ function configure_lr-gpsp() {
     mkRomDir "gba"
     ensureSystemretroconfig "gba"
 
-    addSystem 1 "$md_id" "gba" "$md_inst/gpsp_libretro.so"
+    local def=0
+    isPlatform "armv6" && def=1
+    addSystem $def "$md_id" "gba" "$md_inst/gpsp_libretro.so"
 }

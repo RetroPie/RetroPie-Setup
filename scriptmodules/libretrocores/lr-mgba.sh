@@ -42,5 +42,7 @@ function configure_lr-mgba() {
     mkRomDir "gba"
     ensureSystemretroconfig "gba"
 
-    addSystem 0 "$md_id" "gba" "$md_inst/mgba_libretro.so"
+    local def=1
+    isPlatform "armv6" && def=0
+    addSystem $def "$md_id" "gba" "$md_inst/mgba_libretro.so"
 }
