@@ -52,7 +52,7 @@ function configure_kodi() {
     # remove old directLaunch entry
     delSystem "$md_id" "kodi"
 
-    addPort "$md_id" "kodi" "Kodi" "kodi-standalone"
+    addPort "$md_id" "kodi" "Kodi" "kodi"
 
     if [[ ! -f /etc/udev/rules.d/99-input.rules ]]; then
         echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
