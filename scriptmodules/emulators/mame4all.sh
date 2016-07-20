@@ -58,7 +58,7 @@ function configure_mame4all() {
         mkdir -p "$md_conf_root/$system/"{cfg,hi,inp,memcard,nvram,snap,sta}
 
         # move old config
-        moveConfigFile "mame.cfg" "$md_conf_root/$system/mame.cfg"
+        moveConfigFile "$md_inst/mame.cfg" "$md_conf_root/$system/mame.cfg"
 
         local config="$(mktemp)"
         cp "mame.cfg.template" "$config"
