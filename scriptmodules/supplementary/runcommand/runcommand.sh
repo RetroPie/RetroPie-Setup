@@ -218,11 +218,13 @@ function load_mode_defaults() {
         fi
     fi
 
-    # get default fb_res
+    # get default fb_res (if not running on X)
     fb_orig=""
-    fb_orig=$(fbset)
-    fb_orig=${fb_orig##*mode \"}
-    fb_orig=${fb_orig%%\"*}
+    if [[ -z "$DISPLAY" ]]; then
+        fb_orig="$(fbset)"
+        fb_orig="${fb_orig##*mode \"}"
+        fb_orig="${fb_orig%%\"*}"
+    fi
 
     mode_def_emu=""
     mode_def_rom=""
