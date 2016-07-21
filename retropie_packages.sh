@@ -60,18 +60,11 @@ ensureFBMode 320 240
 
 rp_ret=0
 if [[ $# -gt 0 ]]; then
-    # if joy2key.py is installed run it with cursor keys for axis, and enter + space for buttons 0 and 1
-    __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
-    if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
-        "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 1b5b44 1b5b43 1b5b41 1b5b42 0a 20 & 2>/dev/null
-        __joy2key_pid=$!
-    fi
+    joy2keyStart
     ensureRootdirExists
     rp_callModule "$@"
     rp_ret=$?
-    if [[ -n $__joy2key_pid ]]; then
-        kill -INT $__joy2key_pid 2>/dev/null
-    fi
+    joy2keyStop
 else
     rp_printUsageinfo
 fi

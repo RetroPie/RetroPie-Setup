@@ -645,6 +645,35 @@ endmode
 _EOF_
 }
 
+function joy2keyStart() {
+    local params=("$@")
+    if [[ "${#params[@]}" -eq 0 ]]; then
+        params=(1b5b44 1b5b43 1b5b41 1b5b42 0a 20)
+    fi
+    # check if joy2key is installed
+    [[ ! -f "$rootdir/supplementary/runcommand/joy2key.py" ]] && return 1
+
+    __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
+
+    # if no joystick device, or joy2key is already running exit
+    [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
+
+    # if joy2key.py is installed run it with cursor keys for axis, and enter + space for buttons 0 and 1
+    if "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
+        __joy2key_pid=$!
+        return 0
+    fi
+
+    return 1
+}
+
+function joy2keyStop() {
+    if [[ -n $__joy2key_pid ]]; then
+        kill -INT $__joy2key_pid 2>/dev/null
+        sleep 1
+    fi
+}
+
 # arg 1: 0 or 1 to make the emulator default, arg 2: module id, arg 3: "system" or "system platform" or "system platform theme", arg 4: commandline, arg 5 (optional) fullname for es config, arg 6: extensions
 function addSystem() {
     local default="$1"

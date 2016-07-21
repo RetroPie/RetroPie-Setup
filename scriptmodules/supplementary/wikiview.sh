@@ -40,8 +40,6 @@ function choose_wikipage_wikiview() {
 
 function gui_wikiview() {
     local wikidir="$rootdir/RetroPie-Setup.wiki"
-    __joy2key_pid=$(pgrep -f joy2key.py)
-    __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "RetroPie-Setup Wiki Viewer" 22 76 16)
         local options=()
@@ -66,23 +64,11 @@ function gui_wikiview() {
                         file=""
                         file=$(choose_wikipage_wikiview "$wikidir" ".*.md" ".*_.*")
                         if [[ -n "$file" ]]; then
-                            if [[ -n $__joy2key_pid ]]; then
-                                kill -INT $__joy2key_pid 2>/dev/null
-                                sleep 1
-                            fi
-                            if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
-                                "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 00 00 1b5b327e 1b5b337e 20 71 & 2>/dev/null
-                                __joy2key_pid=$!
-                            fi
+                            joy2keyStop
+                            joy2keyStart 00 00 1b5b327e 1b5b337e 20 71
                             pandoc "$wikidir/$file" | lynx -localhost -restrictions=all -stdin >/dev/tty
-                            if [[ -n $__joy2key_pid ]]; then
-                                kill -INT $__joy2key_pid 2>/dev/null
-                                sleep 1
-                            fi
-                            if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
-                                "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 1b5b44 1b5b43 1b5b41 1b5b42 0a 20 & 2>/dev/null
-                                __joy2key_pid=$!
-                            fi
+                            joy2keyStop
+                            joy2keyStart
                         else
                             break
                         fi
