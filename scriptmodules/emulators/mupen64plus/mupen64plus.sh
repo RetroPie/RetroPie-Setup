@@ -223,15 +223,13 @@ function testCompatibility() {
         golf
         instinct
         gemini
+        majora
+        1080
     )
 
     local GLideN64LegacyBlending_blacklist=(
         empire
         beetle
-    )
-
-    local GLideN64_blacklist=(
-        majora
     )
 
     if [[ "$VIDEO_PLUGIN" == "mupen64plus-video-n64" ]];then
@@ -259,6 +257,8 @@ function testCompatibility() {
         iniSet "configVersion" "12"
         # Enable FBEmulation if necessary
         iniSet "EnableFBEmulation" "False"
+        # Set native resolution factor of 1
+        iniSet "nativeResFactor" "1"
         for game in "${GLideN64FBEMU_whitelist[@]}"; do
             if [[ "${ROM,,}" == *"$game"* ]]; then
                 iniSet "EnableFBEmulation" "True"
@@ -271,12 +271,6 @@ function testCompatibility() {
             if [[ "${ROM,,}" == *"$game"* ]]; then
                 iniSet "enableLegacyBlending" "False"
                 break
-            fi
-        done
-        # Use rice video plugin if necessary
-        for game in "${GLideN64_blacklist[@]}"; do
-            if [[ "${ROM,,}" == *"$game"* ]]; then
-                VIDEO_PLUGIN="mupen64plus-video-rice"
             fi
         done
     fi
