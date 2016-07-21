@@ -221,10 +221,15 @@ function testCompatibility() {
         beetle
         tennis
         golf
+        instinct
+        gemini
+        majora
+        1080
     )
 
-    local GLideN64_blacklist=(
-        majora
+    local GLideN64LegacyBlending_blacklist=(
+        empire
+        beetle
     )
 
     if [[ "$VIDEO_PLUGIN" == "mupen64plus-video-n64" ]];then
@@ -249,19 +254,23 @@ function testCompatibility() {
         fi
         iniConfig " = " "" "$config"
         # Settings version. Don't touch it.
-        iniSet "configVersion" "11"
+        iniSet "configVersion" "12"
         # Enable FBEmulation if necessary
         iniSet "EnableFBEmulation" "False"
+        # Set native resolution factor of 1
+        iniSet "nativeResFactor" "1"
         for game in "${GLideN64FBEMU_whitelist[@]}"; do
             if [[ "${ROM,,}" == *"$game"* ]]; then
                 iniSet "EnableFBEmulation" "True"
                 break
             fi
         done
-        # Use rice video plugin if necessary
-        for game in "${GLideN64_blacklist[@]}"; do
+        # Disable LegacyBlending if necessary
+        iniSet "enableLegacyBlending" "True"
+        for game in "${GLideN64LegacyBlending_blacklist[@]}"; do
             if [[ "${ROM,,}" == *"$game"* ]]; then
-                VIDEO_PLUGIN="mupen64plus-video-rice"
+                iniSet "enableLegacyBlending" "False"
+                break
             fi
         done
     fi
