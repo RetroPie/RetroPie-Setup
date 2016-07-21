@@ -11,7 +11,7 @@
 
 rp_module_id="gemrb"
 rp_module_desc="gemrb - open-source implementation of Infinity Engine"
-rp_module_section="opt"
+rp_module_section="exp"
 
 function depends_gemrb() {
     getDepends python-dev libopenal-dev libsdl1.2-dev cmake libpng12-dev libfreetype6-dev
