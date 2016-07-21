@@ -43,8 +43,7 @@ function configure_sdlpop() {
 
     moveConfigFile "$md_inst/SDLPoP.ini" "$md_conf_root/$md_id/SDLPoP.ini"
 
-    if [[ ! -f "$md_conf_root/$md_id/SDLPoP.ini" ]]; then
-        cp -v "$md_inst/SDLPoP.ini.def" "$md_conf_root/$md_id/SDLPoP.ini"
-    fi
+    copyDefaultConfig "$md_inst/SDLPoP.ini.def" "$md_conf_root/$md_id/SDLPoP.ini"
+
     chown -R $user:$user "$md_conf_root/$md_id"
 }
