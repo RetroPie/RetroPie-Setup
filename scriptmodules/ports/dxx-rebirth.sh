@@ -104,9 +104,11 @@ function game_data_dxx-rebirth() {
 
 function configure_dxx-rebirth() {
     local ver
+    local name="Descent Rebirth"
     for ver in 1 2; do
         mkRomDir "ports/descent${ver}"
-        addPort "$md_id" "descent${ver}" "Descent Rebirth" "$md_inst/d${ver}x-rebirth -hogdir $romdir/ports/descent${ver}"
+        [[ "$ver" -eq 2 ]] && name="Descent 2 Rebirth"
+        addPort "$md_id" "descent${ver}" "$name" "$md_inst/d${ver}x-rebirth -hogdir $romdir/ports/descent${ver}"
 
         # copy any existing configs from ~/.d1x-rebirth and symlink the config folder to $md_conf_root/descent1/
         moveConfigDir "$home/.d${ver}x-rebirth" "$md_conf_root/descent${ver}/"
