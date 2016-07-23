@@ -56,7 +56,7 @@ function configure_dosbox() {
 #!/bin/bash
 params=("\$@")
 if [[ -z "\${params[0]}" ]]; then
-    params=(-c "MOUNT C $romdir/pc")
+    params=(-c "@MOUNT C $romdir/pc" -c "@C:")
 elif [[ "\${params[0]}" == *.sh ]]; then
     bash "\${params[@]}"
     exit
