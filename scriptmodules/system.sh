@@ -166,6 +166,9 @@ function get_platform() {
             ODROIDC)
                 __platform="odroid-c1"
                 ;;
+            "Freescale i.MX6 Quad/DualLite (Device Tree)")
+                __platform="imx6" 
+                ;;
             *)
                 case $architecture in
                     i686|x86_64|amd64)
@@ -252,5 +255,13 @@ function platform_armv7-mali() {
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="arm armv7 neon mali"
+    __has_binaries=0
+}
+
+function platform_imx6() {
+    __default_cflags="-O3 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j 2"
+    __platform_flags="arm armv7 neon"
     __has_binaries=0
 }
