@@ -22,7 +22,7 @@ function sources_lr-snes9x-next() {
 function build_lr-snes9x-next() {
     make -f Makefile.libretro clean
     if isPlatform "neon"; then
-        make -f Makefile.libretro platform=armvneon PREF_OPTIMIZATION=O2
+        make -f Makefile.libretro platform=armvneon
     else
         make -f Makefile.libretro
     fi
