@@ -72,7 +72,7 @@ function rp_callModule() {
     # shift the function parameters left so $@ will contain any additional parameters which we can use in modules
     shift 2
 
-    # if index get mod_id from array else try and find it (we should probably use bash associative arrays for efficiency)
+    # if index get mod_id from array else we look it up
     local md_id
     local md_idx
     if [[ "$req_id" =~ ^[0-9]+$ ]]; then
