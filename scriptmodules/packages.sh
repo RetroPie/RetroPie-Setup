@@ -90,7 +90,7 @@ function rp_callModule() {
     # automatically build/install module if no parameters are given
     if [[ -z "$mode" ]]; then
         for mode in depends sources build install configure clean; do
-            if [[ "$mode" == "install" ]] || fnExists "${mode}_${md_id}"; then
+            if [[ "$mode" == "install" || "$mode" == "clean" ]] || fnExists "${mode}_${md_id}"; then
                 rp_callModule "$md_idx" "$mode" || return 1
             fi
         done
