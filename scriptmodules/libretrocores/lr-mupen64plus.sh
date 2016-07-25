@@ -25,7 +25,7 @@ function sources_lr-mupen64plus() {
 function build_lr-mupen64plus() {
     rpSwap on 750
     make clean
-    if isPlatform "armv6"; then
+    if isPlatform "rpi"; then
         make platform="$__platform"
     else
         make
