@@ -15,11 +15,7 @@ rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/
 rp_module_section="main"
 
 function sources_lr-mupen64plus() {
-    if isPlatform "rpi"; then
-        gitPullOrClone "$md_build" https://github.com/gizmo98/mupen64plus-libretro.git rpi2_fix
-    else
-        gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
-    fi
+    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
 }
 
 function build_lr-mupen64plus() {
