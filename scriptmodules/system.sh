@@ -202,7 +202,7 @@ function platform_rpi1() {
 function platform_rpi2() {
     __default_cflags="-O3 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
+    __default_makeflags="-j$(nproc)"
     __platform_flags="arm armv7 neon rpi"
     # there is no support in qemu for cortex-a7 it seems, but it does have cortex-a15 which is architecturally
     # aligned with the a7, and allows the a7 targetted code to be run in a chroot/emulated environment
@@ -215,7 +215,7 @@ function platform_rpi2() {
 function platform_rpi3() {
     __default_cflags="-O3 -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
+    __default_makeflags="-j$(nproc)"
     __platform_flags="arm armv8 neon rpi"
     __has_binaries=1
 }
@@ -228,7 +228,7 @@ function platform_rpi3-64() {
 function platform_odroid-c1() {
     __default_cflags="-O3 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
+    __default_makeflags="-j$(nproc)"
     __platform_flags="arm armv7 neon mali"
     __qemu_cpu=cortex-a9
     __has_binaries=0
@@ -261,7 +261,7 @@ function platform_armv7-mali() {
 function platform_imx6() {
     __default_cflags="-O3 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j 2"
+    __default_makeflags="-j$(nproc)"
     __platform_flags="arm armv7 neon"
     __has_binaries=0
 }
