@@ -261,7 +261,7 @@ function platform_armv7-mali() {
 function platform_imx6() {
     __default_cflags="-O3 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j 2"
+    __default_makeflags="-j2"
     __platform_flags="arm armv7 neon"
     __has_binaries=0
 }
