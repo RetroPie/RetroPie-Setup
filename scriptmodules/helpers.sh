@@ -653,7 +653,7 @@ function joy2keyStart() {
     # check if joy2key is installed
     [[ ! -f "$rootdir/supplementary/runcommand/joy2key.py" ]] && return 1
 
-    __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
+    __joy2key_dev=${__joy2key_dev:-$(ls -1 /dev/input/js* 2>/dev/null | head -n1)}
 
     # if no joystick device, or joy2key is already running exit
     [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
