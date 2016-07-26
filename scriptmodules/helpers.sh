@@ -374,9 +374,6 @@ function iniFileEditor() {
     local config="$3"
     [[ ! -f "$config" ]] && return
 
-    # disable globbing
-    set -f
-
     iniConfig "$delim" "$quote" "$config"
     local sel
     local value
@@ -391,7 +388,8 @@ function iniFileEditor() {
 
         # generate menu from options
         for option in "${ini_options[@]}"; do
-            option=($option)
+            # split into new array (globbing safe)
+            read -ra option <<<"$option"
             key="${option[0]}"
             keys+=("$key")
             params+=("${option[*]:1}")
@@ -449,7 +447,9 @@ function iniFileEditor() {
         options=("U" "unset")
         local default=""
 
-        params=(${params[sel]})
+        # split into new array (globbing safe)
+        read -ra params <<<"${params[sel]}"
+
         local mode="${params[0]}"
 
         case "$mode" in
@@ -525,8 +525,6 @@ function iniFileEditor() {
 
     done
 
-    # enable globbing
-    set +f
 }
 
 function setESSystem() {
