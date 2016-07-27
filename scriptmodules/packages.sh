@@ -206,7 +206,8 @@ function rp_callModule() {
                 pushed=$?
                 "configure_${md_id}" remove
             fi
-            rm -rvf "$md_inst"
+            rm -rf "$md_inst"
+            printMsgs "console" "Removed directory $md_inst"
             ;;
         install)
             if fnExists "$function"; then
