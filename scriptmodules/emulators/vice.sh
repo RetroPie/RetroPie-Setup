@@ -16,11 +16,7 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_vice() {
-    if hasPackage vice; then
-        printf 'Package vice is already installed - removing package\n' "${1}"
-        apt-get remove -y vice
-    fi
-    getDepends libsdl1.2-dev libxaw7-dev automake checkinstall
+    getDepends libsdl2-dev libxaw7-dev automake checkinstall
 }
 
 function sources_vice() {
