@@ -40,6 +40,17 @@ function install_vice() {
 function configure_vice() {
     mkRomDir "c64"
 
+    local sdl_env="SDL_DISPMANX_RATIO=1.33"
+    addSystem 1 "$md_id-x64" "c64" "$sdl_env $md_inst/bin/x64 %ROM%"
+    addSystem 0 "$md_id-x64sc" "c64" "$sdl_env $md_inst/bin/x64sc %ROM%"
+    addSystem 0 "$md_id-x128" "c64" "$sdl_env $md_inst/bin/x128 %ROM%"
+    addSystem 0 "$md_id-xpet" "c64" "$sdl_env $md_inst/bin/xpet %ROM%"
+    addSystem 0 "$md_id-xplus4" "c64" "$sdl_env $md_inst/bin/xplus4 %ROM%"
+    addSystem 0 "$md_id-xvic" "c64" "$sdl_env $md_inst/bin/xvic %ROM%"
+    addSystem 0 "$md_id-xvic-cart" "c64" "$sdl_env $md_inst/bin/xvic -cartgeneric %ROM%"
+
+    [[ "$md_mode" == "remove" ]] && return
+
     # copy any existing configs from ~/.vice and symlink the config folder to $md_conf_root/c64/
     moveConfigDir "$home/.vice" "$md_conf_root/c64"
 
@@ -72,15 +83,6 @@ function configure_vice() {
         configure_dispmanx_on_vice
         setDispmanx "$md_id" 1
     fi
-
-    local sdl_env="SDL_DISPMANX_RATIO=1.33"
-    addSystem 1 "$md_id-x64" "c64" "$sdl_env $md_inst/bin/x64 %ROM%"
-    addSystem 0 "$md_id-x64sc" "c64" "$sdl_env $md_inst/bin/x64sc %ROM%"
-    addSystem 0 "$md_id-x128" "c64" "$sdl_env $md_inst/bin/x128 %ROM%"
-    addSystem 0 "$md_id-xpet" "c64" "$sdl_env $md_inst/bin/xpet %ROM%"
-    addSystem 0 "$md_id-xplus4" "c64" "$sdl_env $md_inst/bin/xplus4 %ROM%"
-    addSystem 0 "$md_id-xvic" "c64" "$sdl_env $md_inst/bin/xvic %ROM%"
-    addSystem 0 "$md_id-xvic-cart" "c64" "$sdl_env $md_inst/bin/xvic -cartgeneric %ROM%"
 }
 
 function configure_dispmanx_off_vice() {
