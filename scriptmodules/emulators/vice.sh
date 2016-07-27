@@ -49,7 +49,7 @@ function configure_vice() {
     fi
 
     local config="$(mktemp)"
-    echo "[C64]" > "$(mktemp)"
+    echo "[C64]" > "$config"
 
     iniConfig "=" "" "$config"
     if ! isPlatform "x11"; then
