@@ -321,7 +321,6 @@ function choose_config_configedit() {
     local path="$1"
     local include="$2"
     local exclude="$3"
-    [[ -z "$wildcard" ]] && wildcard="*"
     local cmd=(dialog --backtitle "$__backtitle" --menu "Which configuration would you like to edit" 22 76 16)
     local configs=()
     local options=()
