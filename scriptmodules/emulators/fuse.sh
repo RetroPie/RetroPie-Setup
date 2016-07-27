@@ -51,11 +51,6 @@ function build_fuse() {
 }
 
 function install_fuse() {
-    # remove old fuse packages
-    if hasPackage "fuse-emulator-sdl"; then
-        apt-get remove -y fuse-emulator-sdl fuse-emulator-utils fuse-emulator-common spectrum-roms
-    fi
-
     make install
 }
 
