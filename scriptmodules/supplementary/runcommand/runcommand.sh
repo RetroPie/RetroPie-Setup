@@ -759,6 +759,8 @@ function check_menu() {
     return $dont_launch
 }
 
+[[ -f "$configdir/all/runcommand-onstart.sh" ]] && bash "$configdir/all/runcommand-onstart.sh"
+
 # turn off cursor and clear screen
 tput civis
 clear
@@ -823,5 +825,7 @@ fi
 [[ -n "$fb_new" ]] && restore_fb
 
 tput cnorm
+
+[[ -f "$configdir/all/runcommand-onend.sh" ]] && bash "$configdir/all/runcommand-onend.sh"
 
 exit 0
