@@ -23,8 +23,6 @@ function depends_eduke32() {
     isPlatform "x86" && depends+=(nasm)
     isPlatform "x11" && depends+=(libgl1-mesa-dev libglu1-mesa-dev libgtk2.0-dev)
     getDepends "${depends[@]}"
-    # remove old eduke packages
-    hasPackage eduke32 && apt-get remove -y eduke32 duke3d-shareware
 }
 
 function sources_eduke32() {
