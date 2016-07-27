@@ -17,7 +17,6 @@ rp_module_flags="!mali"
 
 function depends_hatari() {
     getDepends libsdl2-dev zlib1g-dev libpng12-dev cmake libreadline-dev portaudio19-dev
-    apt-get remove -y hatari
 }
 
 function sources_hatari() {
