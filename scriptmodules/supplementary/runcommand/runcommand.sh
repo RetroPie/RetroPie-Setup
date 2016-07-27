@@ -798,9 +798,8 @@ config_dispmanx "$save_emu"
 
 retroarch_append_config
 
-# launch the command - don't redirect stdout for frotz,  when using console output or when not using _SYS_
-# frotz is included in case its emulators.cfg is out of date and missing CON: - can be removed in the future
-if [[ "$emulator" == frotz || "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
+# launch the command - don't redirect stdout when using console output (CON: prefix) or when not using _SYS_
+if [[ "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
     # turn cursor on
     tput cnorm
     eval $command </dev/tty 2>/tmp/runcommand.log
