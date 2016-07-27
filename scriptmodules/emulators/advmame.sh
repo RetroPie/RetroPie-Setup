@@ -167,58 +167,58 @@ function configure_advmame() {
     mkRomDir "arcade/advmame"
     mkRomDir "mame-advmame"
 
-    local mame_sub_dir
-    for mame_sub_dir in artwork diff hi inp memcard nvram sample snap sta; do
-        mkRomDir "mame-advmame/$mame_sub_dir"
-        ln -sf "$romdir/mame-advmame/$mame_sub_dir" "$romdir/arcade/advmame"
-        # fix for older broken symlink generation
-        rm -f "$romdir/mame-advmame/$mame_sub_dir/$mame_sub_dir"
-    done
-
-    # delete old install files
-    rm -rf "$md_inst/"{bin,man,share}
+    if [[ "$md_mode" == "install" ]]; then
+        local mame_sub_dir
+        for mame_sub_dir in artwork diff hi inp memcard nvram sample snap sta; do
+            mkRomDir "mame-advmame/$mame_sub_dir"
+            ln -sf "$romdir/mame-advmame/$mame_sub_dir" "$romdir/arcade/advmame"
+            # fix for older broken symlink generation
+            rm -f "$romdir/mame-advmame/$mame_sub_dir/$mame_sub_dir"
+        done
+    fi
 
     moveConfigDir "$home/.advance" "$md_conf_root/mame-advmame"
 
     local version
     local default
     for version in $(_get_vers_advmame); do
-        [[ -f "$md_conf_root/mame-advmame/advmame-$version.rc" ]] && continue
-        su "$user" -c "$md_inst/$version/bin/advmame --default"
+        if [[ "$md_mode" == "install" && ! -f "$md_conf_root/mame-advmame/advmame-$version.rc" ]]; then
+            su "$user" -c "$md_inst/$version/bin/advmame --default"
 
-        iniConfig " " "" "$md_conf_root/mame-advmame/advmame-$version.rc"
+            iniConfig " " "" "$md_conf_root/mame-advmame/advmame-$version.rc"
 
-        iniSet "misc_quiet" "yes"
-        iniSet "dir_rom" "$romdir/mame-advmame"
-        iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
-        iniSet "dir_sample" "$romdir/mame-advmame/samples"
-        iniSet "dir_diff" "$romdir/mame-advmame/diff"
-        iniSet "dir_hi" "$romdir/mame-advmame/hi"
-        iniSet "dir_image" "$romdir/mame-advmame"
-        iniSet "dir_inp" "$romdir/mame-advmame/inp"
-        iniSet "dir_memcard" "$romdir/mame-advmame/memcard"
-        iniSet "dir_nvram" "$romdir/mame-advmame/nvram"
-        iniSet "dir_snap" "$romdir/mame-advmame/snap"
-        iniSet "dir_sta" "$romdir/mame-advmame/nvram"
+            iniSet "misc_quiet" "yes"
+            iniSet "dir_rom" "$romdir/mame-advmame"
+            iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
+            iniSet "dir_sample" "$romdir/mame-advmame/samples"
+            iniSet "dir_diff" "$romdir/mame-advmame/diff"
+            iniSet "dir_hi" "$romdir/mame-advmame/hi"
+            iniSet "dir_image" "$romdir/mame-advmame"
+            iniSet "dir_inp" "$romdir/mame-advmame/inp"
+            iniSet "dir_memcard" "$romdir/mame-advmame/memcard"
+            iniSet "dir_nvram" "$romdir/mame-advmame/nvram"
+            iniSet "dir_snap" "$romdir/mame-advmame/snap"
+            iniSet "dir_sta" "$romdir/mame-advmame/nvram"
 
-        if isPlatform "rpi"; then
-            iniSet "device_video" "fb"
-            iniSet "device_video_cursor" "off"
-            iniSet "device_keyboard" "raw"
-            iniSet "device_sound" "alsa"
-            iniSet "display_vsync" "no"
-            iniSet "sound_normalize" "no"
-        else
-            iniSet "device_video_output" "overlay"
-            iniSet "display_aspectx" 16
-            iniSet "display_aspecty" 9
-        fi
+            if isPlatform "rpi"; then
+                iniSet "device_video" "fb"
+                iniSet "device_video_cursor" "off"
+                iniSet "device_keyboard" "raw"
+                iniSet "device_sound" "alsa"
+                iniSet "display_vsync" "no"
+                iniSet "sound_normalize" "no"
+            else
+                iniSet "device_video_output" "overlay"
+                iniSet "display_aspectx" 16
+                iniSet "display_aspecty" 9
+            fi
 
-        if isPlatform "armv6"; then
-            iniSet "sound_samplerate" "22050"
-            iniSet "sound_latency" "0.2"
-        else
-            iniSet "sound_samplerate" "44100"
+            if isPlatform "armv6"; then
+                iniSet "sound_samplerate" "22050"
+                iniSet "sound_latency" "0.2"
+            else
+                iniSet "sound_samplerate" "44100"
+            fi
         fi
 
         default=0
