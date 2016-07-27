@@ -113,8 +113,8 @@ function _joypad_index_configedit() {
 
                 # get joystick device paths
                 while read -r dev; do
-                    devs+=("$dev")
                     if udevadm info --name=$dev | grep -q "ID_INPUT_JOYSTICK=1"; then
+                        devs+=("$dev")
                         paths+=("$(udevadm info --name=$dev | grep DEVPATH | cut -d= -f2)")
                     fi
                 done < <(find /dev/input -name "js*")
