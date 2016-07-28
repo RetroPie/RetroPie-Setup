@@ -68,6 +68,8 @@ function get_config() {
         iniGet "disable_menu"
         disable_menu="$ini_value"
         [[ "$disable_menu" -eq 1 ]] && disable_joystick=1
+        iniGet "joy2key_device"
+        __joy2key_dev="$ini_value"
     fi
 
     if [[ -f "$tvservice" ]]; then
