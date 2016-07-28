@@ -20,6 +20,10 @@ function _update_hook_kodi() {
 }
 
 function depends_kodi() {
+    if hasPackage rbp-bootloader-osmc; then
+        md_ret_errors+=("The Kodi included with RetroPie is not compatible with OSMC")
+        return 1
+    fi
     if isPlatform "rpi"; then
         if [[ "$md_mode" == "install" ]]; then
             # remove old repository
