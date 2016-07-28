@@ -508,23 +508,13 @@ function iniFileEditor() {
             fi
         fi
 
-        # save the #include line and remove it, so we can add our ini values and re-add the include line(s) at the end
-        local include=$(grep "^#include" "$config")
-        sed -i "/^#include/d" "$config"
-
         if [[ "$choice" == "U" ]]; then
             iniUnset "${keys[sel]}" "$value"
         else
             iniSet "${keys[sel]}" "$value"
         fi
 
-        # re-add the include line(s)
-        if [[ -n "$include" ]]; then
-            echo "$include" >>"$config"
-        fi
-
     done
-
 }
 
 function setESSystem() {
