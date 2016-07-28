@@ -18,6 +18,7 @@ function depends_retroarch() {
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x86" && depends+=(nvidia-cg-toolkit)
+    idPlatform "x11" && depends+=(libpulse-dev)
     [[ "$__raspbian_ver" -ge "8" ]] && depends+=(libusb-1.0-0-dev)
 
     getDepends "${depends[@]}"
