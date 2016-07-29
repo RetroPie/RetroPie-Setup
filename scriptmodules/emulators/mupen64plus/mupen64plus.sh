@@ -57,6 +57,7 @@ function getBind() {
                             esac
                             m64p_hotkey+="H${ini_value}V${dir}"
                         else
+                            [[ "$atebitdo_hack" -eq 1 && "$ini_value" -ge 11 ]] && ((ini_value-=11))
                             m64p_hotkey+="B${ini_value}"
                         fi
                     ;;
@@ -96,11 +97,14 @@ function remap() {
         echo "Version = 1" >> "$config"
     fi
 
+    local atebitdo_hack
     for i in {0..2}; do
         bind=""
         for device_num in "${!devices[@]}"; do
             # get name of retroarch auto config file
             file=$(grep --exclude=*.bak -rl "$configdir/all/retroarch-joypads/" -e "\"${devices[$device_num]}\"")
+            atebitdo_hack=0
+            [[ "$file" == *8Bitdo* ]] && getAutoConf "8bitdo_hack" && atebitdo_hack=1
             if [[ -f "$file" ]]; then
                 if [[ -n "$bind" && "$bind" != *, ]]; then
                     bind+=","
