@@ -74,7 +74,7 @@ function remap() {
     local device
     local devices
     local device_num
-    
+
     # get lists of all present js device numbers and device names
     # get device count
     for device in /dev/input/js*; do
@@ -82,7 +82,7 @@ function remap() {
         devices[$device_num]=$(</sys/class/input/js${device_num}/device/name)
     done
 
-    # read retroarch auto config file and use config 
+    # read retroarch auto config file and use config
     # for mupen64plus.cfg
     local file
     local bind
