@@ -176,13 +176,17 @@ function gui_emulationstation() {
         else
             options+=(2 "Swap A/B Buttons in ES (Currently: Swapped)")
         fi
+
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        [[ -z "$choice" ]] && break
 
         case "$choice" in
             1)
-                clear_input_emulationstation
-                printMsgs "dialog" "$(_get_input_cfg_emulationstation) has been reset to default values."
+                if dialog --defaultno --yesno "Are you sure you want to reset the Emulation Station controller configuration ? This will wipe all controller configs for ES and it will prompt to reconfigure on next start" 22 76 2>&1 >/dev/tty; then
+                    clear_input_emulationstation
+                    printMsgs "dialog" "$(_get_input_cfg_emulationstation) has been reset to default values."
+                fi
                 ;;
             2)
                 es_swap="$((es_swap ^ 1))"
