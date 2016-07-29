@@ -19,99 +19,54 @@ function getBind() {
     local key="$1"
     local m64p_hotkey="J$2"
     local file="$3"
-    local input_type
-    
+
     iniConfig " = " "" "$file"
 
     # search hotkey enable button
-    for input_type in "_btn" "_axis"; do 
-        iniGet "input_enable_hotkey${input_type}"
-        ini_value="${ini_value// /}"
-        if [[ -n "$ini_value" ]]; then
-            case "$input_type" in
-                _axis)
-                    ini_value="${ini_value//\"/}"
-                    m64p_hotkey+="A${ini_value:1}${ini_value:0:1}/"
-                    break
-                ;;
-                _btn)
-                    # if ini_value contains "h" it should be a hat device
-                    if [[ "$ini_value" == *h* ]]; then
-                        ini_value="${ini_value//\"/}"
-                        local dir="${ini_value:2}"
-                        ini_value="${ini_value:1}"
-                        case $dir in
-                            up)
-                                dir="1"
-                                ;;
-                            right)
-                                dir="2"
-                                ;;
-                            down)
-                                dir="4"
-                                ;;
-                            left)
-                                dir="8"
-                                ;;
-                        esac
-                        m64p_hotkey+="H${ini_value:0:1}V${dir}/"
-                        break
-                    else
-                        m64p_hotkey+="B${ini_value//\"/}/"
-                        break
-                    fi
-                ;;
-            esac
-        fi
-    done
-
-    # search hotkey
-    for input_type in "_btn" "_axis"; do 
-        # add hotkey and append enable hotkey button
-        # return if hotkey exists
-        iniGet "${key}${input_type}"
-        ini_value="${ini_value// /}"
-        if [[ -n "$ini_value" ]]; then
-            case "$input_type" in
-                _axis)
-                    ini_value="${ini_value//\"/}"
-                    m64p_hotkey+="A${ini_value:1}${ini_value:0:1}"
-                    echo "$m64p_hotkey"
-                    return
+    local hotkey
+    local input_type
+    local i=0
+    for hotkey in input_enable_hotkey "$key"; do
+        for input_type in "_btn" "_axis"; do
+            iniGet "${hotkey}${input_type}"
+            ini_value="${ini_value// /}"
+            if [[ -n "$ini_value" ]]; then
+                ini_value="${ini_value//\"/}"
+                case "$input_type" in
+                    _axis)
+                        m64p_hotkey+="A${ini_value:1}${ini_value:0:1}"
                     ;;
-                _btn)
-                    # if ini_value contains "h" it should be a hat device
-                    if [[ "$ini_value" == *h* ]]; then
-                        ini_value="${ini_value//\"/}"
-                        local dir="${ini_value:2}"
-                        ini_value="${ini_value:1}"
-                        case $dir in
-                            up)
-                                dir="1"
-                                ;;
-                            right)
-                                dir="2"
-                                ;;
-                            down)
-                                dir="4"
-                                ;;
-                            left)
-                                dir="8"
-                                ;;
-                        esac
-                        m64p_hotkey+="H${ini_value:0:1}V${dir}"
-                        echo "$m64p_hotkey"
-                        return
-                    else
-                        m64p_hotkey+="B${ini_value//\"/}"
-                        echo "$m64p_hotkey"
-                        return
-                    fi 
+                    _btn)
+                        # if ini_value contains "h" it should be a hat device
+                        if [[ "$ini_value" == *h* ]]; then
+                            local dir="${ini_value:2}"
+                            ini_value="${ini_value:1}"
+                            case $dir in
+                                up)
+                                    dir="1"
+                                    ;;
+                                right)
+                                    dir="2"
+                                    ;;
+                                down)
+                                    dir="4"
+                                    ;;
+                                left)
+                                    dir="8"
+                                    ;;
+                            esac
+                            m64p_hotkey+="H${ini_value}V${dir}"
+                        else
+                            m64p_hotkey+="B${ini_value}"
+                        fi
                     ;;
-            esac
-        fi
+                esac
+            fi
+        done
+        [[ "$i" -eq 0 ]] && m64p_hotkey+="/"
+        ((i++))
     done
-    return
+    echo "$m64p_hotkey"
 }
 
 function remap() {
