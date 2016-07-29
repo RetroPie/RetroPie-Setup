@@ -161,20 +161,33 @@ _EOF_
     # ensure we have a default theme
     rp_callModule esthemes install_theme
     
-    addAutoConf es_swap_a_b 0
+    addAutoConf "es_swap_a_b" 0
 }
 
 function gui_emulationstation() {
-    local options=(
-        1 "Clear/Reset Emulation Station input configuration"
-    )
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
-    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    local es_swap=0
+    getAutoConf "es_swap_a_b" && es_swap=1
+    while true; do
+        local options=(
+            1 "Clear/Reset Emulation Station input configuration"
+        )
+        if [[ "$es_swap" -eq 0 ]]; then
+            options+=(2 "Swap A/B Buttons in ES (Currently: Default)")
+        else
+            options+=(2 "Swap A/B Buttons in ES (Currently: Swapped)")
+        fi
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
-    case "$choice" in
-        1)
-            clear_input_emulationstation
-            printMsgs "dialog" "$(_get_input_cfg_emulationstation) has been reset to default values."
-            ;;
-    esac
+        case "$choice" in
+            1)
+                clear_input_emulationstation
+                printMsgs "dialog" "$(_get_input_cfg_emulationstation) has been reset to default values."
+                ;;
+            2)
+                es_swap="$((es_swap ^ 1))"
+                setAutoConf "es_swap_a_b" "$es_swap"
+                printMsgs "dialog" "You will need to reconfigure you controller in Emulation Station for the changes to take effect."
+        esac
+    done
 }
