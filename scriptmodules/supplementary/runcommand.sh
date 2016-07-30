@@ -13,6 +13,11 @@ rp_module_id="runcommand"
 rp_module_desc="The 'runcommand' launch script - needed for launching the emulators from the frontend"
 rp_module_section="core"
 
+function _update_hook_runcommand() {
+    # make sure runcommand is always updated when updating retropie-setup
+    rp_isInstalled "$md_idx" && install_bin_runcommand
+}
+
 function install_bin_runcommand() {
     cp "$scriptdir/scriptmodules/$md_type/$md_id/runcommand.sh" "$md_inst/"
     cp "$scriptdir/scriptmodules/$md_type/$md_id/joy2key.py" "$md_inst/"
