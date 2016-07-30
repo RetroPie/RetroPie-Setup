@@ -17,6 +17,12 @@ function _get_input_cfg_emulationstation() {
     echo "$configdir/all/emulationstation/es_input.cfg"
 }
 
+function _update_hook_emulationstation() {
+    # make sure the input configuration scripts are installed on update
+    # due to auto conf logic change and their connection to the iniFuncs which is always updated
+    rp_isInstalled "$md_idx" && copy_inputscripts_emulationstation
+}
+
 function depends_emulationstation() {
     local depends=(
         libboost-locale-dev libboost-system-dev libboost-filesystem-dev
@@ -80,6 +86,13 @@ function init_input_emulationstation() {
     chown $user:$user "$es_config"
 }
 
+function copy_inputscripts_emulationstation() {
+    mkdir -p "$md_inst/scripts"
+
+    cp -rv "$scriptdir/scriptmodules/$md_type/emulationstation/"* "$md_inst/scripts/"
+    chmod +x "$md_inst/scripts/inputconfiguration.sh"
+}
+
 function clear_input_emulationstation() {
     rm "$(_get_input_cfg_emulationstation)"
     init_input_emulationstation
@@ -100,10 +113,7 @@ function configure_emulationstation() {
 
     init_input_emulationstation
 
-    mkdir -p "$md_inst/scripts"
-
-    cp -rv "$scriptdir/scriptmodules/$md_type/emulationstation/"* "$md_inst/scripts/"
-    chmod +x "$md_inst/scripts/inputconfiguration.sh"
+    copy_inputscripts_emulationstation
 
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
