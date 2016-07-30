@@ -598,7 +598,7 @@ function retroarch_append_config() {
     local conf="/tmp/retroarch.cfg"
     rm -f "$conf"
     touch "$conf"
-    if [[ "$has_tvs" -eq 1 ]]; then
+    if [[ "$has_tvs" -eq 1 && "${mode_new[5]}" -gt 0 ]]; then
         # set video_refresh_rate in our config to the same as the screen refresh
         [[ -n "${mode_new[5]}" ]] && echo "video_refresh_rate = ${mode_new[5]}" >>"$conf"
     fi
