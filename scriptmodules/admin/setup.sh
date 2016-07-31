@@ -104,7 +104,6 @@ function post_update_setup() {
         rp_updateHooks
     } &> >(tee >(gzip --stdout >"$logfilename"))
     rps_printInfo "$logfilename"
-    ;;
 
     printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nIt has come to our attention that some people are profiting from selling RetroPie SD cards, some including copyrighted games. This is illegal.\n\nIf you have been sold this software on its own or including games, you can let us know about it by emailing retropieproject@gmail.com"
 
