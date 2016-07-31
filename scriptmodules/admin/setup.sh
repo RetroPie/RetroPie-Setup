@@ -95,8 +95,16 @@ function post_update_setup() {
 
     echo "$__version" >"$rootdir/VERSION"
 
-    # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
-    rp_updateHooks
+    local logfilename
+    __ERRMSGS=()
+    __INFMSGS=()
+    rps_logInit
+    {
+        # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
+        rp_updateHooks
+    } &> >(tee >(gzip --stdout >"$logfilename"))
+    rps_printInfo "$logfilename"
+    ;;
 
     printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nIt has come to our attention that some people are profiting from selling RetroPie SD cards, some including copyrighted games. This is illegal.\n\nIf you have been sold this software on its own or including games, you can let us know about it by emailing retropieproject@gmail.com"
 
