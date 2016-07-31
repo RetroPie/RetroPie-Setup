@@ -219,8 +219,7 @@ function rp_callModule() {
         install_bin)
             if fnExists "install_bin_${md_id}"; then
                 if ! "$function" "$@"; then
-                    # if it failed to install remove the install folder if it exists
-                    rm -rf "$md_inst"
+                    md_ret_errors+=("Unable to install binary for $md_id")
                 fi
             else
                 if rp_hasBinary "$md_idx"; then
