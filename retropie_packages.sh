@@ -13,6 +13,8 @@
 
 __version="4.0-rc1"
 
+[[ __debug -eq 1 ]] && set -x
+
 # main retropie install location
 rootdir="/opt/retropie"
 
