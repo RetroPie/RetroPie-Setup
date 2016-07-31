@@ -100,8 +100,10 @@ function post_update_setup() {
     __INFMSGS=()
     rps_logInit
     {
+        rps_logStart
         # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
         rp_updateHooks
+        rps_logEnd
     } &> >(tee >(gzip --stdout >"$logfilename"))
     rps_printInfo "$logfilename"
 
