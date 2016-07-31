@@ -375,13 +375,22 @@ function update_packages_gui_setup() {
 }
 
 function quick_install_setup() {
-    for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
-        if rp_hasBinaries; then
-            rp_installModule "$idx"
-        else
-            rp_callModule "$idx"
-        fi
-    done
+    local logfilename
+    __ERRMSGS=()
+    __INFMSGS=()
+    rps_logInit
+    {
+        rps_logStart
+        for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
+            if rp_hasBinaries; then
+                rp_installModule "$idx"
+            else
+                rp_callModule "$idx"
+            fi
+        done
+        rps_logEnd
+    } &> >(tee >(gzip --stdout >"$logfilename"))
+    rps_printInfo "$logfilename"
 }
 
 function packages_gui_setup() {
