@@ -381,12 +381,9 @@ function quick_install_setup() {
     rps_logInit
     {
         rps_logStart
+        local idx
         for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
-            if rp_hasBinaries; then
-                rp_installModule "$idx"
-            else
-                rp_callModule "$idx"
-            fi
+            rp_installModule "$idx"
         done
         rps_logEnd
     } &> >(tee >(gzip --stdout >"$logfilename"))
