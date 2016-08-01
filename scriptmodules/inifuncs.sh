@@ -117,7 +117,7 @@ function iniGet() {
         value_m="\(.*\)"
     fi
 
-    ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m/\1/p" "$file")"
+    ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m/\1/p" "$file" | tail -1)"
 }
 
 # arg 1: key, arg 2: default value (optional - is 1 if not used)
