@@ -89,7 +89,7 @@ function init_input_emulationstation() {
 function copy_inputscripts_emulationstation() {
     mkdir -p "$md_inst/scripts"
 
-    cp -rv "$scriptdir/scriptmodules/$md_type/emulationstation/"* "$md_inst/scripts/"
+    cp -r "$scriptdir/scriptmodules/$md_type/emulationstation/"* "$md_inst/scripts/"
     chmod +x "$md_inst/scripts/inputconfiguration.sh"
 }
 
