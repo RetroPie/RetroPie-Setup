@@ -102,6 +102,7 @@ function post_update_setup() {
     {
         rps_logStart
         # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
+        printHeading "Running post update hooks"
         rp_updateHooks
         rps_logEnd
     } &> >(tee >(gzip --stdout >"$logfilename"))
