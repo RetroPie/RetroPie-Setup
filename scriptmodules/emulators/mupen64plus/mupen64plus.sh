@@ -19,106 +19,62 @@ function getBind() {
     local key="$1"
     local m64p_hotkey="J$2"
     local file="$3"
-    local input_type
-    
+
     iniConfig " = " "" "$file"
 
     # search hotkey enable button
-    for input_type in "_btn" "_axis"; do 
-        iniGet "input_enable_hotkey${input_type}"
-        ini_value="${ini_value// /}"
-        if [[ -n "$ini_value" ]]; then
-            case "$input_type" in
-                _axis)
-                    ini_value="${ini_value//\"/}"
-                    m64p_hotkey+="A${ini_value:1}${ini_value:0:1}/"
-                    break
-                ;;
-                _btn)
-                    # if ini_value contains "h" it should be a hat device
-                    if [[ "$ini_value" == *h* ]]; then
-                        ini_value="${ini_value//\"/}"
-                        local dir="${ini_value:2}"
-                        ini_value="${ini_value:1}"
-                        case $dir in
-                            up)
-                                dir="1"
-                                ;;
-                            right)
-                                dir="2"
-                                ;;
-                            down)
-                                dir="4"
-                                ;;
-                            left)
-                                dir="8"
-                                ;;
-                        esac
-                        m64p_hotkey+="H${ini_value:0:1}V${dir}/"
-                        break
-                    else
-                        m64p_hotkey+="B${ini_value//\"/}/"
-                        break
-                    fi
-                ;;
-            esac
-        fi
-    done
-
-    # search hotkey
-    for input_type in "_btn" "_axis"; do 
-        # add hotkey and append enable hotkey button
-        # return if hotkey exists
-        iniGet "${key}${input_type}"
-        ini_value="${ini_value// /}"
-        if [[ -n "$ini_value" ]]; then
-            case "$input_type" in
-                _axis)
-                    ini_value="${ini_value//\"/}"
-                    m64p_hotkey+="A${ini_value:1}${ini_value:0:1}"
-                    echo "$m64p_hotkey"
-                    return
+    local hotkey
+    local input_type
+    local i=0
+    for hotkey in input_enable_hotkey "$key"; do
+        for input_type in "_btn" "_axis"; do
+            iniGet "${hotkey}${input_type}"
+            ini_value="${ini_value// /}"
+            if [[ -n "$ini_value" ]]; then
+                ini_value="${ini_value//\"/}"
+                case "$input_type" in
+                    _axis)
+                        m64p_hotkey+="A${ini_value:1}${ini_value:0:1}"
                     ;;
-                _btn)
-                    # if ini_value contains "h" it should be a hat device
-                    if [[ "$ini_value" == *h* ]]; then
-                        ini_value="${ini_value//\"/}"
-                        local dir="${ini_value:2}"
-                        ini_value="${ini_value:1}"
-                        case $dir in
-                            up)
-                                dir="1"
-                                ;;
-                            right)
-                                dir="2"
-                                ;;
-                            down)
-                                dir="4"
-                                ;;
-                            left)
-                                dir="8"
-                                ;;
-                        esac
-                        m64p_hotkey+="H${ini_value:0:1}V${dir}"
-                        echo "$m64p_hotkey"
-                        return
-                    else
-                        m64p_hotkey+="B${ini_value//\"/}"
-                        echo "$m64p_hotkey"
-                        return
-                    fi 
+                    _btn)
+                        # if ini_value contains "h" it should be a hat device
+                        if [[ "$ini_value" == *h* ]]; then
+                            local dir="${ini_value:2}"
+                            ini_value="${ini_value:1}"
+                            case $dir in
+                                up)
+                                    dir="1"
+                                    ;;
+                                right)
+                                    dir="2"
+                                    ;;
+                                down)
+                                    dir="4"
+                                    ;;
+                                left)
+                                    dir="8"
+                                    ;;
+                            esac
+                            m64p_hotkey+="H${ini_value}V${dir}"
+                        else
+                            [[ "$atebitdo_hack" -eq 1 && "$ini_value" -ge 11 ]] && ((ini_value-=11))
+                            m64p_hotkey+="B${ini_value}"
+                        fi
                     ;;
-            esac
-        fi
+                esac
+            fi
+        done
+        [[ "$i" -eq 0 ]] && m64p_hotkey+="/"
+        ((i++))
     done
-    return
+    echo "$m64p_hotkey"
 }
 
 function remap() {
     local device
     local devices
     local device_num
-    
+
     # get lists of all present js device numbers and device names
     # get device count
     for device in /dev/input/js*; do
@@ -126,7 +82,7 @@ function remap() {
         devices[$device_num]=$(</sys/class/input/js${device_num}/device/name)
     done
 
-    # read retroarch auto config file and use config 
+    # read retroarch auto config file and use config
     # for mupen64plus.cfg
     local file
     local bind
@@ -141,11 +97,14 @@ function remap() {
         echo "Version = 1" >> "$config"
     fi
 
+    local atebitdo_hack
     for i in {0..2}; do
         bind=""
         for device_num in "${!devices[@]}"; do
             # get name of retroarch auto config file
             file=$(grep --exclude=*.bak -rl "$configdir/all/retroarch-joypads/" -e "\"${devices[$device_num]}\"")
+            atebitdo_hack=0
+            [[ "$file" == *8Bitdo* ]] && getAutoConf "8bitdo_hack" && atebitdo_hack=1
             if [[ -f "$file" ]]; then
                 if [[ -n "$bind" && "$bind" != *, ]]; then
                     bind+=","
