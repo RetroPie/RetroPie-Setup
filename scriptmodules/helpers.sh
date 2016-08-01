@@ -737,7 +737,7 @@ function addSystem() {
 
     # add the emulator to the $conf_dir/emulators.cfg if a commandline exists (not used for some ports)
     if [[ -n "$cmd" ]]; then
-        iniConfig "=" '"' "$md_conf_root/$system/emulators.cfg"
+        iniConfig " = " '"' "$md_conf_root/$system/emulators.cfg"
         iniSet "$id" "$cmd"
         # set a default unless there is one already set
         iniGet "default"
@@ -757,7 +757,7 @@ function delSystem() {
     # remove from apps list for system
     if [[ -f "$config" && -n "$id" ]]; then
         # delete emulator entry
-        iniConfig "=" '"' "$config"
+        iniConfig " = " '"' "$config"
         iniDel "$id"
         # if it is the default - remove it - runcommand will prompt to select a new default
         iniGet "default"
