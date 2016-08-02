@@ -195,7 +195,6 @@ function gui_retroarch() {
                 "remove_${dir}_retroarch"
                 ;;
             *)
-                exit
                 continue
                 ;;
 
