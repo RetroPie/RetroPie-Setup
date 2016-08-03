@@ -176,6 +176,7 @@ function gui_scraper() {
         iniGet "$key"
         if [[ -z "$ini_value" ]]; then
             iniSet "$key" "$value"
+            eval "$key=\"$value\""
         else
             eval "$key=\"$ini_value\""
         fi
