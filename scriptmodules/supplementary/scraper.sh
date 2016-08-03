@@ -63,7 +63,7 @@ function scrape_scraper() {
     local max_width="$3"
     local use_rom_folder="$4"
     [[ -z "$system" ]] && return
-    set -x
+
     local gamelist
     local img_dir
     local img_path
