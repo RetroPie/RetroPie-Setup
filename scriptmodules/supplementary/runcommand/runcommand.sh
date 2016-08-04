@@ -760,15 +760,23 @@ function check_menu() {
     return $dont_launch
 }
 
-[[ -f "$configdir/all/runcommand-onstart.sh" ]] && bash "$configdir/all/runcommand-onstart.sh"
+# calls script with parameters system, emulator, rom, and commandline
+function user_script() {
+    local script="$configdir/all/$1"
+    if [[ -f "$script" ]]; then
+        bash "$script" "$system" "$emulator" "$rom" "$command"
+    fi
+}
+
+get_config
+
+get_params "$@"
 
 # turn off cursor and clear screen
 tput civis
 clear
 
-get_config
-
-get_params "$@"
+user_script "runcommand-onstart.sh"
 
 get_save_vars
 
@@ -824,8 +832,8 @@ fi
 # reset/restore framebuffer res (if it was changed)
 [[ -n "$fb_new" ]] && restore_fb
 
-tput cnorm
+user_script "runcommand-onend.sh"
 
-[[ -f "$configdir/all/runcommand-onend.sh" ]] && bash "$configdir/all/runcommand-onend.sh"
+tput cnorm
 
 exit 0
