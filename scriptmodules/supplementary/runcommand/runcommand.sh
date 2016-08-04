@@ -777,7 +777,7 @@ get_params "$@"
 tput civis
 clear
 
-echo -e "$system\n$emulator\n$rom\n$command" >/run/shm/runcommand.info
+echo -e "$system\n$emulator\n$rom\n$command" >/dev/shm/runcommand.info
 user_script "runcommand-onstart.sh"
 
 get_save_vars
