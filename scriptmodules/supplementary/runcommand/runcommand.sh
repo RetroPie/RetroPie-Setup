@@ -109,7 +109,7 @@ function get_params() {
             # extract emulator from the name (and lowercase it)
             emulator=${BASH_REMATCH[1],,}
             is_sys=0
-            command="\"$4\""
+            command="bash \"$4\""
             system="$3"
         else
             is_sys=1
