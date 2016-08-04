@@ -175,6 +175,7 @@ function register_bluetooth() {
     local line
     local pin
     local error=""
+    local skip_connect=0
     while read -r line; do
         case "$line" in
             "RequestPinCode"*)
@@ -193,14 +194,18 @@ function register_bluetooth() {
                 # read "Enter PIN Code:"
                 read -n 15 line
                 ;;
+            "RequestConfirmation"*)
+                # read "Confirm passkey (yes/no): "
+                echo "yes" >&3
+                read -n 26 line
+                skip_connect=1
+                break
+                ;;
             "DisplayPasskey"*|"DisplayPinCode"*)
                 # extract key from end of line
                 # DisplayPasskey (/org/bluez/1284/hci0/dev_01_02_03_04_05_06, 123456)
                 [[ "$line" =~ ,\ (.+)\) ]] && pin=${BASH_REMATCH[1]}
                 dialog --backtitle "$__backtitle" --infobox "Please enter pin $pin on your bluetooth device" 10 60
-                ;;
-            "Release")
-                success=1
                 ;;
             "Creating device failed"*)
                 error="$line"
@@ -210,6 +215,16 @@ function register_bluetooth() {
     done < <(stdbuf -oL $(get_script_bluetooth bluez-simple-agent) -c "$mode" hci0 "$mac_address" <&3)
     exec 3>&-
     rm -f "$fifo"
+
+    if [[ "$skip_connect" -eq 1 ]]; then
+        if hcitool con | grep -q "$mac_address"; then
+            printMsgs "dialog" "Successfully registered and connected to $mac_address"
+            return 0
+        else
+            printMsgs "dialog" "Unable to connect to bluetooth device. Please try pairing with the commandline tool 'bluetoothctl'"
+            return 1
+        fi
+    fi
 
     if [[ -z "$error" ]]; then
         error=$($(get_script_bluetooth bluez-test-device) trusted "$mac_address" yes 2>&1)
