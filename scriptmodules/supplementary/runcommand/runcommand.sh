@@ -33,6 +33,7 @@
 
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
+log="/dev/shm/runcommand.log"
 
 runcommand_conf="$configdir/all/runcommand.cfg"
 video_conf="$configdir/all/videomodes.cfg"
@@ -739,7 +740,7 @@ function show_launch() {
         else
             launch_name="$emulator"
         fi
-        DIALOGRC="$configdir/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to /tmp/runcommand.log" 9 60
+        DIALOGRC="$configdir/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to $log" 9 60
     fi
 }
 
@@ -764,7 +765,7 @@ function check_menu() {
 function user_script() {
     local script="$configdir/all/$1"
     if [[ -f "$script" ]]; then
-        bash "$script" "$system" "$emulator" "$rom" "$command"
+        bashruncommand - change log location to /run/shm/runcommand.log (tmpfs) "$script" "$system" "$emulator" "$rom" "$command"
     fi
 }
 
@@ -811,9 +812,9 @@ retroarch_append_config
 if [[ "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
     # turn cursor on
     tput cnorm
-    eval $command </dev/tty 2>/tmp/runcommand.log
+    eval $command </dev/tty 2>"$log"
 else
-    eval $command </dev/tty &>/tmp/runcommand.log
+    eval $command </dev/tty &>"$log"
 fi
 
 clear
