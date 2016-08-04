@@ -765,7 +765,7 @@ function check_menu() {
 function user_script() {
     local script="$configdir/all/$1"
     if [[ -f "$script" ]]; then
-        bashruncommand - change log location to /run/shm/runcommand.log (tmpfs) "$script" "$system" "$emulator" "$rom" "$command"
+        bash "$script" "$system" "$emulator" "$rom" "$command"
     fi
 }
 
@@ -777,6 +777,7 @@ get_params "$@"
 tput civis
 clear
 
+echo -e "$system\n$emulator\n$rom\n$command" >/run/shm/runcommand.info
 user_script "runcommand-onstart.sh"
 
 get_save_vars
