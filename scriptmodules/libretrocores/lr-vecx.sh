@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .vec .gam .bin .zip\n\nCopy your Vectrex roms to
 rp_module_section="main"
 
 function sources_lr-vecx() {
-    gitPullOrClone "$md_build" https://github.com/libretro/libretro-vecx
+    gitPullOrClone "$md_build" https://github.com/libretro/libretro-vecx.git
 }
 
 function build_lr-vecx() {
