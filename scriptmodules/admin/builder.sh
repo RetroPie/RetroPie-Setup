@@ -18,19 +18,22 @@ function depends_builder() {
 }
 
 function module_builder() {
-    local id="$1"
+    local ids=($@)
 
-    if [[ "$id" =~ ^[0-9]+$ ]]; then
-        id="${__mod_id[$id]}"
-    fi
+    local id
+    local mode
+    for id in "${ids[@]}"; do
+        if [[ "$id" =~ ^[0-9]+$ ]]; then
+            id="${__mod_id[$id]}"
+        fi
+        ! fnExists "install_$id" && continue
 
-    ! fnExists "install_$id" && return
-
-    # initial clean in case anything was in the build folder when calling
-    for mode in clean remove depends sources build install clean; do
-        rp_callModule "$id" "$mode"
+        # build, install and create binary archive.
+        # initial clean in case anything was in the build folder when calling
+        for mode in clean remove depends sources build install clean create_bin; do
+            rp_callModule "$id" "$mode"
+        done
     done
-    rp_callModule "$id" create_bin
 }
 
 function section_builder() {
