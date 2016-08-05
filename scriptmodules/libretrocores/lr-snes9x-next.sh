@@ -16,7 +16,7 @@ rp_module_section="main"
 rp_module_flags="!armv6"
 
 function sources_lr-snes9x-next() {
-    gitPullOrClone "$md_build" https://github.com/libretro/snes9x-next
+    gitPullOrClone "$md_build" https://github.com/libretro/snes9x2010.git
 }
 
 function build_lr-snes9x-next() {
@@ -26,12 +26,12 @@ function build_lr-snes9x-next() {
     else
         make -f Makefile.libretro
     fi
-    md_ret_require="$md_build/snes9x_next_libretro.so"
+    md_ret_require="$md_build/snes9x2010_libretro.so"
 }
 
 function install_lr-snes9x-next() {
     md_ret_files=(
-        'snes9x_next_libretro.so'
+        'snes9x2010_libretro.so'
         'docs'
     )
 }
@@ -40,5 +40,5 @@ function configure_lr-snes9x-next() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 
-    addSystem 1 "$md_id" "snes" "$md_inst/snes9x_next_libretro.so"
+    addSystem 1 "$md_id" "snes" "$md_inst/snes9x2010_libretro.so"
 }
