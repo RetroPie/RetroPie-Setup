@@ -51,10 +51,7 @@ function configure_linapple() {
     # copy default config/disk if user doesn't have them installed
     local file
     for file in Master.dsk linapple.conf; do
-        if [[ ! -f "$md_conf_root/apple2/$file" ]]; then
-            cp -v "$file" "$md_conf_root/apple2/$file"
-            chown $user:$user "$md_conf_root/apple2/$file"
-        fi
+        copyDefaultConfig "$file" "$md_conf_root/apple2/$file"
     done
 
     addSystem 1 "$md_id" "apple2" "$md_inst/linapple -1 %ROM%" "Apple II" ".po .dsk .nib"
