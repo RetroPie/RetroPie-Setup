@@ -16,18 +16,18 @@ rp_module_section="main"
 rp_module_flags="!x86"
 
 function sources_lr-pocketsnes() {
-    gitPullOrClone "$md_build" https://github.com/libretro/pocketsnes-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/snes9x2002.git
 }
 
 function build_lr-pocketsnes() {
     make clean
     CFLAGS="$CFLAGS" make ARM_ASM=1
-    md_ret_require="$md_build/pocketsnes_libretro.so"
+    md_ret_require="$md_build/snes9x2002_libretro.so"
 }
 
 function install_lr-pocketsnes() {
     md_ret_files=(
-        'pocketsnes_libretro.so'
+        'snes9x2002_libretro.so'
         'README.txt'
     )
 }
@@ -38,5 +38,5 @@ function configure_lr-pocketsnes() {
 
     local def=0
     isPlatform "armv6" && def=1
-    addSystem $def "$md_id" "snes" "$md_inst/pocketsnes_libretro.so"
+    addSystem $def "$md_id" "snes" "$md_inst/snes9x2002_libretro.so"
 }

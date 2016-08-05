@@ -15,7 +15,7 @@ rp_module_help="ROM Extension: .zip\n\nCopy your FBA roms to\n$romdir/fba or\n$r
 rp_module_section="opt"
 
 function sources_lr-fba() {
-    gitPullOrClone "$md_build" https://github.com/libretro/fba-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/fbalpha2012.git
 }
 
 function build_lr-fba() {
@@ -24,13 +24,13 @@ function build_lr-fba() {
     local params=()
     isPlatform "arm" && params+=("platform=armv")
     make -f makefile.libretro "${params[@]}"
-    md_ret_require="$md_build/svn-current/trunk/fb_alpha_libretro.so"
+    md_ret_require="$md_build/svn-current/trunk/fbalpha2012_libretro.so"
 }
 
 function install_lr-fba() {
     md_ret_files=(
         'svn-current/trunk/fba.chm'
-        'svn-current/trunk/fb_alpha_libretro.so'
+        'svn-current/trunk/fbalpha2012_libretro.so'
         'svn-current/trunk/gamelist-gx.txt'
         'svn-current/trunk/gamelist.txt'
         'svn-current/trunk/whatsnew.html'
@@ -46,7 +46,7 @@ function configure_lr-fba() {
     ensureSystemretroconfig "fba"
     ensureSystemretroconfig "neogeo"
 
-    addSystem 0 "$md_id" "arcade" "$md_inst/fb_alpha_libretro.so"
-    addSystem 0 "$md_id" "neogeo" "$md_inst/fb_alpha_libretro.so"
-    addSystem 0 "$md_id" "fba arcade" "$md_inst/fb_alpha_libretro.so"
+    addSystem 0 "$md_id" "arcade" "$md_inst/fbalpha2012_libretro.so"
+    addSystem 0 "$md_id" "neogeo" "$md_inst/fbalpha2012_libretro.so"
+    addSystem 0 "$md_id" "fba arcade" "$md_inst/fbalpha2012_libretro.so"
 }
