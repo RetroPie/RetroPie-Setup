@@ -176,6 +176,10 @@ function configure_mupen64plus() {
         iniSet "EnableFBEmulation" "False"
         # Use native res
         iniSet "nativeResFactor" "1"
+
+        # Disable gles2n64 autores feature and use dispmanx upscaling
+        iniConfig " = " "" "$md_conf_root/n64/gles2n64.conf"
+        iniSet "auto resolution" "0"
         
         addAutoConf mupen64plus_audio 1
         addAutoConf mupen64plus_compatibility_check 1
