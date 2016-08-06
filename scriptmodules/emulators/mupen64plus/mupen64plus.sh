@@ -158,6 +158,13 @@ function testCompatibility() {
     # fallback for glesn64 and rice plugin
     # some roms lead to a black screen of death
     local game
+    local blacklist=(
+        resident
+        gauntlet
+        rogue
+        squadron
+    )
+
     local glesn64_blacklist=(
         zelda
         paper
@@ -184,12 +191,20 @@ function testCompatibility() {
         gemini
         majora
         1080
+        quake
     )
 
     local GLideN64LegacyBlending_blacklist=(
         empire
         beetle
     )
+
+    for game in "${blacklist[@]}"; do
+        if [[ "${ROM,,}" == *"$game"* ]]; then
+            dialog --msgbox "This game is not supported." 22 76
+            exit
+        fi
+    done
 
     if [[ "$VIDEO_PLUGIN" == "mupen64plus-video-n64" ]];then
         for game in "${glesn64_blacklist[@]}"; do
