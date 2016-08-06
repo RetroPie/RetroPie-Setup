@@ -614,6 +614,26 @@ function setConfigRoot() {
     mkUserDir "$md_conf_root"
 }
 
+function loadModuleConfig() {
+    local options=("$@")
+    local option
+    local key
+    local value
+
+    for option in "${options[@]}"; do
+        option=(${option/=/ })
+        key="${option[0]}"
+        value="${option[1]}"
+        iniGet "$key"
+        if [[ -z "$ini_value" ]]; then
+            iniSet "$key" "$value"
+            echo "local $key=\"$value\""
+        else
+            echo "local $key=\"$ini_value\""
+        fi
+    done
+}
+
 # add a framebuffer mode to /etc/fb.modes - useful for adding specific resolutions used by emulators so SDL
 # can use them and utilise the rpi hardware scaling
 # without a 320x240 mode in fb.modes many of the emulators that output to framebuffer (stella / snes9x / gngeo)

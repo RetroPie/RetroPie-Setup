@@ -155,32 +155,14 @@ function gui_scraper() {
     fi
 
     iniConfig " = " '"' "$configdir/all/scraper.cfg"
-
-    local options=(
-        'use_thumbs=1'
-        'max_width=400'
-        'use_gdb_scraper=1'
-        'rom_name=0'
-        'append_only=0'
-        'use_rom_folder=0'
+    eval $(loadModuleConfig \
+        'use_thumbs=1' \
+        'max_width=400' \
+        'use_gdb_scraper=1' \
+        'rom_name=0' \
+        'append_only=0' \
+        'use_rom_folder=0' \
     )
-
-    local option
-    local key
-    local value
-
-    for option in "${options[@]}"; do
-        option=(${option/=/ })
-        key="${option[0]}"
-        value="${option[1]}"
-        iniGet "$key"
-        if [[ -z "$ini_value" ]]; then
-            iniSet "$key" "$value"
-            eval "$key=\"$value\""
-        else
-            eval "$key=\"$ini_value\""
-        fi
-    done
 
     local default
     while true; do
@@ -246,6 +228,7 @@ function gui_scraper() {
                 4)
                     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
                     max_width=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    iniSet "max_width" "$max_width"
                     ;;
                 5)
                     use_gdb_scraper="$((use_gdb_scraper ^ 1))"
