@@ -65,6 +65,7 @@ function gui_esthemes() {
         'RetroPie zoid'
         'RetroPie nbba'
         'lilbud material'
+        'mattrixk metapixel'
         'robertybob space'
         'robertybob simplebigart'
         'RetroPie clean-look'
