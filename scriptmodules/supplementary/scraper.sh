@@ -155,6 +155,7 @@ function gui_scraper() {
     fi
 
     iniConfig " = " '"' "$configdir/all/scraper.cfg"
+    chown $user:$user "$configdir/all/scraper.cfg"
     eval $(loadModuleConfig \
         'use_thumbs=1' \
         'max_width=400' \
