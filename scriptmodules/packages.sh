@@ -84,7 +84,8 @@ function rp_callModule() {
     fi
 
     if [[ -z "$md_id" ]]; then
-        fatalError "No module '$req_id' found for platform $__platform"
+        printMsgs "console" "No module '$req_id' found for platform $__platform"
+        return 1
     fi
 
     # automatically build/install module if no parameters are given
