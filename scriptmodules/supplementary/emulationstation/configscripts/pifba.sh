@@ -31,11 +31,7 @@ function onstart_pifba_joystick() {
     iniConfig "=" "" /tmp/pifba-js.cfg
 }
 
-function onstart_pifba_keyboard() {
-    _split_config_pifba
-
-    iniConfig "=" "" /tmp/pifba-kb.cfg
-
+function _piemu_sdlkeymap() {
     # SDL codes from https://wiki.libsdl.org/SDLKeycodeLookup mapped to /usr/include/SDL/SDL_keysym.h
     declare -Ag sdl1_map
     local i
@@ -102,6 +98,14 @@ function onstart_pifba_keyboard() {
     sdl1_map["1073742054"]="307" # SDLK SDLK_RALT
     sdl1_map["1073742055"]="312" # SDLK SDLK_RGUI
     sdl1_map["1073742081"]="313" # SDLK SDLK_MODE
+}
+
+function onstart_pifba_keyboard() {
+    _split_config_pifba
+
+    iniConfig "=" "" /tmp/pifba-kb.cfg
+
+    _piemu_sdlkeymap
 }
 
 function map_pifba_keyboard() {
@@ -197,6 +201,12 @@ function map_pifba_joystick() {
             ;;
         select)
             key="SELECT_1"
+            ;;
+        leftthumb)
+            key="QSAVE"
+            ;;
+        rightthumb)
+            key="QLOAD"
             ;;
         *)
             return
