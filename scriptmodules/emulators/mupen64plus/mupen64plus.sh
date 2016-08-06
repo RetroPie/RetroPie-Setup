@@ -232,13 +232,12 @@ function testCompatibility() {
                 fi
             done
             ;;
-        "mupen64plus-video-n64")
+        "mupen64plus-video-n64"|"mupen64plus-video-rice")
             for game in "${glesn64_blacklist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
                     VIDEO_PLUGIN="mupen64plus-video-rice"
                 fi
             done
-        *)
             for game in "${glesn64rice_blacklist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
                     VIDEO_PLUGIN="mupen64plus-video-GLideN64"
