@@ -201,53 +201,51 @@ function testCompatibility() {
 
     for game in "${blacklist[@]}"; do
         if [[ "${ROM,,}" == *"$game"* ]]; then
-            dialog --msgbox "This game is not supported." 22 76
             exit
         fi
     done
 
-    if [[ "$VIDEO_PLUGIN" == "mupen64plus-video-n64" ]];then
-        for game in "${glesn64_blacklist[@]}"; do
-            if [[ "${ROM,,}" == *"$game"* ]]; then
-                VIDEO_PLUGIN="mupen64plus-video-rice"
+    case "$VIDEO_PLUGIN" in
+        "mupen64plus-video-GLideN64")
+            if ! grep -q "\[Video-GLideN64\]" "$config"; then
+                echo "[Video-GLideN64]" >> "$config"
             fi
-        done
-    fi
-
-    if [[ "$VIDEO_PLUGIN" != "mupen64plus-video-GLideN64" ]];then
-        for game in "${glesn64rice_blacklist[@]}"; do
-            if [[ "${ROM,,}" == *"$game"* ]]; then
-                VIDEO_PLUGIN="mupen64plus-video-GLideN64"
-            fi
-        done
-    fi
-
-    if [[ "$VIDEO_PLUGIN" == "mupen64plus-video-GLideN64" ]];then
-        if ! grep -q "\[Video-GLideN64\]" "$config"; then
-            echo "[Video-GLideN64]" >> "$config"
-        fi
-        iniConfig " = " "" "$config"
-        # Settings version. Don't touch it.
-        iniSet "configVersion" "12"
-        # Enable FBEmulation if necessary
-        iniSet "EnableFBEmulation" "False"
-        # Set native resolution factor of 1
-        iniSet "nativeResFactor" "1"
-        for game in "${GLideN64FBEMU_whitelist[@]}"; do
-            if [[ "${ROM,,}" == *"$game"* ]]; then
-                iniSet "EnableFBEmulation" "True"
-                break
-            fi
-        done
-        # Disable LegacyBlending if necessary
-        iniSet "enableLegacyBlending" "True"
-        for game in "${GLideN64LegacyBlending_blacklist[@]}"; do
-            if [[ "${ROM,,}" == *"$game"* ]]; then
-                iniSet "enableLegacyBlending" "False"
-                break
-            fi
-        done
-    fi
+            iniConfig " = " "" "$config"
+            # Settings version. Don't touch it.
+            iniSet "configVersion" "12"
+            # Enable FBEmulation if necessary
+            iniSet "EnableFBEmulation" "False"
+            # Set native resolution factor of 1
+            iniSet "nativeResFactor" "1"
+            for game in "${GLideN64FBEMU_whitelist[@]}"; do
+                if [[ "${ROM,,}" == *"$game"* ]]; then
+                    iniSet "EnableFBEmulation" "True"
+                    break
+                fi
+            done
+            # Disable LegacyBlending if necessary
+            iniSet "enableLegacyBlending" "True"
+            for game in "${GLideN64LegacyBlending_blacklist[@]}"; do
+                if [[ "${ROM,,}" == *"$game"* ]]; then
+                    iniSet "enableLegacyBlending" "False"
+                    break
+                fi
+            done
+            ;;
+        "mupen64plus-video-n64")
+            for game in "${glesn64_blacklist[@]}"; do
+                if [[ "${ROM,,}" == *"$game"* ]]; then
+                    VIDEO_PLUGIN="mupen64plus-video-rice"
+                fi
+            done
+        *)
+            for game in "${glesn64rice_blacklist[@]}"; do
+                if [[ "${ROM,,}" == *"$game"* ]]; then
+                    VIDEO_PLUGIN="mupen64plus-video-GLideN64"
+                fi
+            done
+            ;;
+    esac
 }
 
 if ! grep -q "\[Core\]" "$config"; then
