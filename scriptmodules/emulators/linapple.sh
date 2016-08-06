@@ -54,5 +54,5 @@ function configure_linapple() {
         copyDefaultConfig "$file" "$md_conf_root/apple2/$file"
     done
 
-    addSystem 1 "$md_id" "apple2" "$md_inst/linapple -1 %ROM%" "Apple II" ".po .dsk .nib"
+    addSystem 1 "$md_id" "apple2" "pushd $romdir/apple2; $md_inst/linapple -1 %ROM%; popd"
 }
