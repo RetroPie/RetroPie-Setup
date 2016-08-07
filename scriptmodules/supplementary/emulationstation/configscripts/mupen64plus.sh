@@ -109,6 +109,12 @@ function map_mupen64plus_joystick() {
             keys=("C Button D")
             dir=("Down")
             ;;
+        leftthumb)
+            keys=("Mempak switch")
+            ;;
+        rightthumb)
+            keys=("Rumblepak switch")
+            ;;
         *)
             return
             ;;
