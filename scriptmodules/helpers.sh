@@ -634,6 +634,20 @@ function loadModuleConfig() {
     done
 }
 
+function applyPatch() {
+    local patch="$1"
+    local patch_applied="${patch##*/}.applied"
+    if [[ ! -f "$patch_applied" ]]; then
+        if patch -f -p1 <"$patch"; then
+            touch "$patch_applied"
+        else
+            md_ret_errors+=("$md_id patch $patch failed to apply")
+            return 1
+        fi
+    fi
+    return 0
+}
+
 # add a framebuffer mode to /etc/fb.modes - useful for adding specific resolutions used by emulators so SDL
 # can use them and utilise the rpi hardware scaling
 # without a 320x240 mode in fb.modes many of the emulators that output to framebuffer (stella / snes9x / gngeo)
