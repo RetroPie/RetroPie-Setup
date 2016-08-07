@@ -119,10 +119,17 @@ function install_mupen64plus() {
 
 function configure_mupen64plus() {
     if isPlatform "rpi"; then
-        addSystem 1 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
-        addSystem 0 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"
-        addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
-        addSystem 0 "${md_id}-videocore" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-videocore %ROM%"
+        local res
+        for res in "320x240" "640x480"; do
+            local def=0
+            local name=""
+            [[ "$res" == "320x240" ]] && def=1
+            [[ "$res" == "640x480" ]] && name="-highres"
+            addSystem $def "${md_id}-GLideN64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% $res"
+            addSystem 0 "${md_id}-gles2rice$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
+            addSystem 0 "${md_id}-gles2n64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM% $res"
+            addSystem 0 "${md_id}-videocore$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-videocore %ROM% $res"
+        done
     else
         addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
         addSystem 1 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM%"
