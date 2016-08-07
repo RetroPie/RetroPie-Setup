@@ -841,7 +841,7 @@ _EOF_
     if [[ "$md_mode" == "remove" ]]; then
         rm -f "$file"
         # if there are no more port launch scripts we can remove ports from emulation station
-        if [[ "$(ls -1 "$romdir/ports/*.sh" 2>/dev/null | wc -l)" -eq 0 ]]; then
+        if [[ "$(find "$romdir/ports" -maxdepth 1 -name "*.sh" | wc -l)" -eq 0 ]]; then
             delSystem "$id" "ports"
         fi
     else
