@@ -267,6 +267,10 @@ function rp_callModule() {
     [[ "$pushed" -eq 0 ]] && popd
 
     if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
+        # if sources fails make sure we clean up
+        if [[ "$mode" == "sources" ]]; then
+            rp_callModule "$md_idx" clean
+        fi
         # remove install folder if there is an error
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
         printMsgs "console" "${md_ret_errors[@]}" >&2
