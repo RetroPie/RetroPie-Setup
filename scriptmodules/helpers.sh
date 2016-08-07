@@ -825,7 +825,7 @@ function addPort() {
         mv "$configdir/$port" "$md_conf_root/"
     fi
 
-    if [ -t 0 ]; then
+    if [[ -t 0 ]]; then
         cat >"$file" << _EOF_
 #!/bin/bash
 "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ $port
