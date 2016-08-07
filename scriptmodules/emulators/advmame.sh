@@ -44,7 +44,7 @@ function sources_advmame() {
             fi
             # patch advmame to use a fake generated mode with the exact dimensions for fb - avoids need for configuring monitor / clocks.
             # the pi framebuffer doesn't use any of the framebuffer timing configs - it hardware scales from chosen dimensions to actual size
-            patch -p1 <<\_EOF_
+            applyPatch rpi_framebuffer.diff <<\_EOF_
 --- a/advance/linux/vfb.c
 +++ b/advance/linux/vfb.c
 @@ -268,7 +268,7 @@

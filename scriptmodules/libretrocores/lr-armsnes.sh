@@ -17,7 +17,7 @@ rp_module_flags="!x86"
 
 function sources_lr-armsnes() {
     gitPullOrClone "$md_build" https://github.com/rmaz/ARMSNES-libretro
-    patch -p1 <<\_EOF_
+    applyPatch two_player.diff <<\_EOF_
 diff --git a/src/ppu.cpp b/src/ppu.cpp
 index 19340fb..6d1af27 100644
 --- a/src/ppu.cpp

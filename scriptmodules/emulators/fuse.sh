@@ -24,7 +24,7 @@ function sources_fuse() {
     mkdir libspectrum
     wget -O- -q $__archive_url/libspectrum-1.1.1.tar.gz | tar -xvz --strip-components=1 -C libspectrum
     if ! isPlatform "x11"; then
-        patch -p1 <<\_EOF_
+        applyPatch cursor.diff <<\_EOF_
 --- a/ui/sdl/sdldisplay.c	2015-02-18 22:39:05.631516602 +0000
 +++ b/ui/sdl/sdldisplay.c	2015-02-18 22:39:08.407506296 +0000
 @@ -411,7 +411,7 @@

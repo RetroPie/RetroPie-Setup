@@ -26,7 +26,8 @@ function depends_scummvm() {
 
 function sources_scummvm() {
     gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-1-8"
-    patch -p1 <<\_EOF_
+    if isPlatform "rpi"; then
+        applyPatch rpi_enable_scalers.diff <<\_EOF_
 diff --git a/configure b/configure
 index 31dbf5a..58e9563 100755
 --- a/configure
@@ -43,6 +44,7 @@ index 31dbf5a..58e9563 100755
  			# since SDL2 manages dispmanx/GLES2 very well internally.
  			# SDL1 is bit-rotten on this platform.
 _EOF_
+    fi
 }
 
 function build_scummvm() {

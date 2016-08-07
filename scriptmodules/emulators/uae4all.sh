@@ -25,7 +25,7 @@ function sources_uae4all() {
     wget -O- -q https://guichan.googlecode.com/files/guichan-0.8.2.tar.gz | tar -xvz --strip-components=1 -C "guichan"
     cd guichan
     # fix from https://github.com/sphaero/guichan
-    patch -p1 <<\_EOF_
+    applyPatch guichan.diff <<\_EOF_
 diff --git a/src/widget.cpp b/src/widget.cpp
 index 7dfc7e1..97978a7 100644
 --- a/src/widget.cpp
