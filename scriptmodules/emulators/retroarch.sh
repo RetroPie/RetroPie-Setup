@@ -38,7 +38,12 @@ function sources_retroarch() {
     if isPlatform "mali"; then
         sed -i 's|struct mali_native_window native_window|fbdev_window native_window|' gfx/drivers_context/mali_fbdev_ctx.c
     fi
-    patch -p1 <"$scriptdir/scriptmodules/emulators/$md_id/01_hotkey_hack.diff"
+    if ! grep -q "hotkey_counter" input/input_driver.c; then
+        if ! patch -f -p1 <"$scriptdir/scriptmodules/emulators/$md_id/01_hotkey_hack.diff"; then
+            git checkout input/input_driver.c
+            md_ret_errors+=("RetroArch patch 01_hotkey_hack.diff failed to apply")
+        fi
+    fi
 }
 
 function build_retroarch() {
