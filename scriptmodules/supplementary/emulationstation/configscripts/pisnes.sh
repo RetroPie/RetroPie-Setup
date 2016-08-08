@@ -36,15 +36,15 @@ function onstart_pisnes_keyboard() {
 
     iniConfig "=" "" /tmp/pisnes-kb.cfg
 
-    _piemu_sdlkeymap
+    sdl1_map
 }
 
 function map_pisnes_keyboard() {
-    map_pifba_keyboard "$1" "$2" "$3" "$4" "$5" "$6"
+    map_pifba_keyboard "$@"
 }
 
 function map_pisnes_joystick() {
-    map_pifba_joystick "$1" "$2" "$3" "$4" "$5" "$6"
+    map_pifba_joystick "$@"
 }
 
 function onend_pisnes_joystick() {
