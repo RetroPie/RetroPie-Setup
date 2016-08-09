@@ -173,6 +173,7 @@ function testCompatibility() {
         kazooie
         tooie
         instinct
+        beetle
     )
 
     local glesn64rice_blacklist=(
