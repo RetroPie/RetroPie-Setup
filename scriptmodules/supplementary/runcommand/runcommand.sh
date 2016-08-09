@@ -314,6 +314,9 @@ function main_menu() {
         fi
 
         options+=(X "Launch")
+        if [[ "$command" =~ retroarch ]]; then
+            options+=(L "Launch with verbose logging")
+        fi
         options+=(Q "Exit (without launching)")
 
         if [[ "$command" =~ retroarch ]]; then
@@ -390,6 +393,10 @@ function main_menu() {
                 break
                 ;;
             X)
+                return 0
+                ;;
+            L)
+                command+=" --verbose"
                 return 0
                 ;;
             Q)
