@@ -27,16 +27,16 @@ function sources_solarus() {
 function build_solarus() {
     mkdir build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX:PATH="$md_inst"
+    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zsdx-1.10.3/
-    cmake . -DCMAKE_INSTALL_PREFIX:PATH="$md_inst"
+    cd ../zsdx-1.10.3
+    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zsxd-1.10.3/
-    cmake . -DCMAKE_INSTALL_PREFIX:PATH="$md_inst"
+    cd ../zsxd-1.10.3
+    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zelda-roth-se-1.0.8/
-    cmake . -DCMAKE_INSTALL_PREFIX:PATH="$md_inst"
+    cd ../zelda-roth-se-1.0.8
+    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
     md_ret_require=(
         "$md_build/build/solarus_run"
