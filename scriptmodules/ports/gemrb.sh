@@ -18,14 +18,15 @@ function depends_gemrb() {
 }
 
 function sources_gemrb() {
-    gitPullOrClone "$md_build" https://github.com/gemrb/gemrb.git
+    gitPullOrClone "$md_build" https://github.com/gemrb/gemrb.git v0.8.4
 }
 
 function build_gemrb() {
     mkdir build
     cd build
-    cmake .. -DPREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
+    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
     make
+    md_ret_require="$md_build/build/gemrb/gemrb"
 }
 
 function install_gemrb() {
