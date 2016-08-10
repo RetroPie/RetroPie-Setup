@@ -20,17 +20,24 @@ REGEX_IMAGE=""
 do_start () {
     local config="/etc/splashscreen.list"
     local line
-    if [ "$RANDOMIZE" = "disabled" ]; then
-        line="$(head -1 "$config")"
-    elif [ "$RANDOMIZE" = "retropie" ]; then
-        line="$(find "$ROOTDIR/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" | shuf -n1)"
-    elif [ "$RANDOMIZE" = "custom" ]; then
-        line="$(find "$DATADIR/splashscreens" -type f ! -regex ".*README.*" | shuf -n1)"
-    elif [ "$RANDOMIZE" = "all" ]; then
-        line="$( (find "$ROOTDIR/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" && find "$DATADIR/splashscreens" -type f ! -regex ".*README.*") | shuf -n1)"
-    elif [ "$RANDOMIZE" = "list" ]; then
-        line="$(cat "$config" | shuf -n1)"
-    fi
+    local find='-type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*"'
+    case "$RANDOMIZE" in
+        disabled)
+            line="$(head -1 "$config")"
+            ;;
+        retropie)
+            line="$(find "$ROOTDIR/supplementary/splashscreen" $find | shuf -n1)"
+            ;;
+        custom)
+            line="$(find "$DATADIR/splashscreens" $find | shuf -n1)"
+            ;;
+        all)
+            line="$( (find "$ROOTDIR/supplementary/splashscreen" $find && find "$DATADIR/splashscreens" $find) | shuf -n1)"
+            ;;
+        list)
+            line="$(cat "$config" | shuf -n1)"
+            ;;
+    esac
     if $(echo "$line" | grep -q "$REGEX_VIDEO"); then
         # wait for dbus
         while ! pgrep "dbus" >/dev/null; do
@@ -56,23 +63,23 @@ do_start () {
 }
 
 case "$1" in
-  start|"")
-    do_start &
-    ;;
-  restart|reload|force-reload)
-    echo "Error: argument '$1' not supported" >&2
-    exit 3
-    ;;
-  stop)
-    # No-op
-    ;;
-  status)
-    exit 0
-    ;;
-  *)
-    echo "Usage: asplashscreen [start|stop]" >&2
-    exit 3
-    ;;
+    start|"")
+        do_start &
+        ;;
+    restart|reload|force-reload)
+        echo "Error: argument '$1' not supported" >&2
+        exit 3
+       ;;
+    stop)
+        # No-op
+        ;;
+    status)
+        exit 0
+        ;;
+    *)
+        echo "Usage: asplashscreen [start|stop]" >&2
+        exit 3
+        ;;
 esac
 
 :
