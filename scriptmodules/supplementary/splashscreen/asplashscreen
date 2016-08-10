@@ -20,18 +20,19 @@ REGEX_IMAGE=""
 do_start () {
     local config="/etc/splashscreen.list"
     local line
+    local re="$REGEX_VIDEO\|$REGEX_IMAGE"
     case "$RANDOMIZE" in
         disabled)
             line="$(head -1 "$config")"
             ;;
         retropie)
-            line="$(find "$ROOTDIR/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" | shuf -n1)"
+            line="$(find "$ROOTDIR/supplementary/splashscreen" -type f | grep "$re" | shuf -n1)"
             ;;
         custom)
-            line="$(find "$DATADIR/splashscreens" -type f ! -regex ".*README.*" | shuf -n1)"
+            line="$(find "$DATADIR/splashscreens" -type f | grep "$re" | shuf -n1)"
             ;;
         all)
-            line="$( (find "$ROOTDIR/supplementary/splashscreen" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" && find "$DATADIR/splashscreens" -type f ! -regex ".*README.*") | shuf -n1)"
+            line="$(find "$ROOTDIR/supplementary/splashscreen" "$DATADIR/splashscreens" -type f | grep "$re" | shuf -n1)"
             ;;
         list)
             line="$(cat "$config" | shuf -n1)"
