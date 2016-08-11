@@ -772,7 +772,7 @@ function check_menu() {
 function user_script() {
     local script="$configdir/all/$1"
     if [[ -f "$script" ]]; then
-        bash "$script" "$system" "$emulator" "$rom" "$command"
+        bash "$script" "$system" "$emulator" "$rom" "$command" </dev/tty 2>>"$log"
     fi
 }
 
@@ -784,6 +784,7 @@ get_params "$@"
 tput civis
 clear
 
+rm -f "$log"
 echo -e "$system\n$emulator\n$rom\n$command" >/dev/shm/runcommand.info
 user_script "runcommand-onstart.sh"
 
@@ -820,9 +821,9 @@ retroarch_append_config
 if [[ "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
     # turn cursor on
     tput cnorm
-    eval $command </dev/tty 2>"$log"
+    eval $command </dev/tty 2>>"$log"
 else
-    eval $command </dev/tty &>"$log"
+    eval $command </dev/tty &>>"$log"
 fi
 
 clear
