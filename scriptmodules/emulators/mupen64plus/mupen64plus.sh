@@ -79,10 +79,10 @@ function remap() {
 
     # get lists of all present js device numbers and device names
     # get device count
-    for device in /dev/input/js*; do
-        device_num=${device/\/dev\/input\/js/}
+    while read -r device; do
+        device_num="${device##*/js}"
         devices[$device_num]=$(</sys/class/input/js${device_num}/device/name)
-    done
+    done < <(find /dev/input -name "js*")
 
     # read retroarch auto config file and use config
     # for mupen64plus.cfg
