@@ -63,7 +63,10 @@ function install_sdl2() {
 }
 
 function install_bin_sdl2() {
-    isPlatform "rpi" || fatalError "$mod_id is only available as a binary package for platform rpi"
+    if ! isPlatform "rpi"; then
+        md_ret_errors+=("$md_id is only available as a binary package for platform rpi")
+        return 1
+    fi
     wget -c "$__binary_url/libsdl2-dev_$(get_ver_sdl2)_armhf.deb"
     wget -c "$__binary_url/libsdl2-2.0-0_$(get_ver_sdl2)_armhf.deb"
     install_sdl2
