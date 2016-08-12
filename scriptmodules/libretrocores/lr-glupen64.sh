@@ -17,7 +17,7 @@ rp_module_flags="!x86 !mali"
 
 function sources_lr-glupen64() {
     gitPullOrClone "$md_build" https://github.com/loganmc10/GLupeN64.git
-    git submodule update --init
+    runCmd git submodule update --init
 }
 
 function build_lr-glupen64() {
