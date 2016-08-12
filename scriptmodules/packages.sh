@@ -326,6 +326,7 @@ function rp_installModule() {
             rp_callModule "$idx" "$mode" || return 1
         done
     else
+        rp_callModule "$idx" clean
         rp_callModule "$idx" || return 1
     fi
     return 0
