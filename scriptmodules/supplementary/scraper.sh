@@ -69,8 +69,8 @@ function scrape_scraper() {
     local img_path
     if [[ "$use_rom_folder" -eq 1 ]]; then
         gamelist="$romdir/$system/gamelist.xml"
-        img_dir="$romdir/$system/downloaded_images"
-        img_path="./downloaded_images"
+        img_dir="$romdir/$system/images"
+        img_path="./images"
     else
         gamelist="$home/.emulationstation/gamelists/$system/gamelist.xml"
         img_dir="$home/.emulationstation/downloaded_images/$system"
