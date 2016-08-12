@@ -172,6 +172,7 @@ function package_setup() {
                 rps_logInit
                 {
                     rps_logStart
+                    rp_callModule "$idx" clean
                     rp_callModule "$idx"
                     rps_logEnd
                 } &> >(tee >(gzip --stdout >"$logfilename"))
@@ -275,6 +276,7 @@ function section_gui_setup() {
                 {
                     rps_logStart
                     for idx in $(rp_getSectionIds $section); do
+                        rp_callModule "$idx" clean
                         rp_callModule "$idx"
                     done
                     rps_logEnd
@@ -342,6 +344,7 @@ function settings_gui_setup() {
                 rp_callModule "$choice" depends
                 rp_callModule "$choice" gui
             else
+                rp_callModule "$idx" clean
                 rp_callModule "$choice"
             fi
             rps_logEnd
