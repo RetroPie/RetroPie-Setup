@@ -45,6 +45,16 @@ function ask() {
     esac
 }
 
+function runCmd() {
+    local ret
+    "$@"
+    ret=$?
+    if [[ "$ret" -ne 0 ]]; then
+        md_ret_errors+=("Error running '$*' - returned $ret")
+    fi
+    return $ret
+}
+
 function hasFlag() {
     local string="$1"
     local flag="$2"
@@ -246,7 +256,7 @@ function gitPullOrClone() {
         [[ "$repo" =~ github ]] && git+=" --depth 1"
         [[ "$branch" != "master" ]] && git+=" --branch $branch"
         echo "$git \"$repo\" \"$dir\""
-        $git "$repo" "$dir"
+        runCmd $git "$repo" "$dir"
     fi
 }
 
