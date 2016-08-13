@@ -54,13 +54,6 @@ function iniProcess() {
 
     [[ "$cmd" == "unset" ]] && key="# $key"
 
-    local include
-    # on retroarch configs save the #include line and remove it, so we can add our ini values and re-add the include line(s) at the end
-    if [[ "$file" =~ retroarch\.cfg$ ]]; then
-        include=$(grep "^#include" "$file")
-        sed -i "/^#include/d" "$file"
-    fi
-
     local replace="$key$delim$quote$value$quote"
     if [[ -z "$match" ]]; then
         # add key-value pair
@@ -70,9 +63,16 @@ function iniProcess() {
         sed -i -e "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
     fi
 
-    # re-add the include line
-    if [[ -n "$include" ]]; then
-        echo "$include" >>"$file"
+    local include
+    # remove any retroarch.cfg include line
+    if [[ "$file" =~ retroarch\.cfg$ ]]; then
+        include=$(grep "^#include.*retroarch\.cfg" "$file")
+
+        # re-add the include line
+        if [[ -n "$include" ]]; then
+            sed -i "/^#include.*retroarch\.cfg/d" "$file"
+            echo "$include" >>"$file"
+        fi
     fi
 }
 

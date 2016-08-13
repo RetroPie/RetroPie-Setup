@@ -784,11 +784,11 @@ function fix_retroarch_config() {
     local config="$configdir/$system/retroarch.cfg"
 
     # remove the include line
-    include=$(grep "^#include.*all/retroarch\.cfg" "$config")
-    sed -i "/^#include/d" "$config"
+    include=$(grep "^#include.*retroarch\.cfg" "$config")
 
     # and re-add it at the end
     if [[ -n "$include" ]]; then
+        sed -i "/^#include.*retroarch\.cfg/d" "$config"
         echo "$include" >>"$config"
     fi
 }
