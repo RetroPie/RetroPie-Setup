@@ -12,19 +12,22 @@
 rp_module_id="xpad"
 rp_module_desc="Updated Xpad Linux Kernel driver"
 rp_module_section="driver"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!mali"
 
 function depends_xpad() {
-    getDepends dkms raspberrypi-kernel-headers
+    local depends=(dkms)
+    isPlatform "rpi" && depends+=(raspberrypi-kernel-headers)
+    isPlatform "x11" && depends+=(linux-headers-generic)
+    getDepends "${depends[@]}"
 }
 
 function sources_xpad() {
     gitPullOrClone "$md_inst" https://github.com/paroj/xpad.git
     cd "$md_inst"
-    # force LED support (as disabled currently in packaged RPI kernel)
-    applyPatch "enable_leds.diff" <<\_EOF_
+    # LED support (as disabled currently in packaged RPI kernel) and allow forcing MAP_TRIGGERS_TO_BUTTONS
+    applyPatch "retropie.diff" <<\_EOF_
 diff --git a/xpad.c b/xpad.c
-index 2ff80cf..df25a77 100644
+index 2ff80cf..8c8ea54 100644
 --- a/xpad.c
 +++ b/xpad.c
 @@ -75,6 +75,7 @@
@@ -35,6 +38,22 @@ index 2ff80cf..df25a77 100644
  #include <linux/kernel.h>
  #include <linux/input.h>
  #include <linux/rcupdate.h>
+@@ -1505,12 +1506,13 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
+ 
+ 		if (dpad_to_buttons)
+ 			xpad->mapping |= MAP_DPAD_TO_BUTTONS;
+-		if (triggers_to_buttons)
+-			xpad->mapping |= MAP_TRIGGERS_TO_BUTTONS;
+ 		if (sticks_to_null)
+ 			xpad->mapping |= MAP_STICKS_TO_NULL;
+ 	}
+ 
++	if (triggers_to_buttons)
++		xpad->mapping |= MAP_TRIGGERS_TO_BUTTONS;
++
+ 	if (xpad->xtype == XTYPE_XBOXONE &&
+ 	    intf->cur_altsetting->desc.bInterfaceNumber != 0) {
+ 		/*
 _EOF_
 }
 
@@ -45,5 +64,12 @@ function build_xpad() {
 
 function remove_xpad() {
     dkms remove -m xpad -v 0.4 --all
-    rm -rf "/usr/src/xpad-0.4"
+    rm -rf /usr/src/xpad-0.4
+    rm -f /etc/modprobe.d/xpad.conf
+}
+
+function configure_xpad() {
+    if [[ ! -f /etc/modprobe.d/xpad.conf ]]; then
+        echo "options xpad triggers_to_buttons=1" >/etc/modprobe.d/xpad.conf
+    fi
 }
