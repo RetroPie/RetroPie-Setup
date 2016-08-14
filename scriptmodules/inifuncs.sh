@@ -114,6 +114,8 @@ function iniGet() {
 function retroarchIncludeToEnd() {
     local config="$1"
 
+    [[ ! -f "$config" ]] && return
+
     local include
     # remove the include line
     include=$(grep "^#include.*retroarch\.cfg" "$config")

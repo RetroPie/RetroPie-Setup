@@ -117,9 +117,11 @@ function get_params() {
             system="$3"
             rom="$4"
             if [[ "$command" == "_PORT_" ]]; then
-                emu_conf="$configdir/ports/$system/emulators.cfg"
+                conf_root="$configdir/ports/$system"
+                emu_conf="$conf_root/emulators.cfg"
             else
-                emu_conf="$configdir/$system/emulators.cfg"
+                conf_root="$configdir/$system"
+                emu_conf="$conf_root/emulators.cfg"
             fi
             get_sys_command "$system" "$rom"
         fi
@@ -842,7 +844,7 @@ fi
 # reset/restore framebuffer res (if it was changed)
 [[ -n "$fb_new" ]] && restore_fb
 
-[[ "$command" =~ retroarch ]] && retroarchIncludeToEnd "$configdir/$system/retroarch.cfg"
+[[ "$command" =~ retroarch ]] && retroarchIncludeToEnd "$conf_root/retroarch.cfg"
 
 user_script "runcommand-onend.sh"
 
