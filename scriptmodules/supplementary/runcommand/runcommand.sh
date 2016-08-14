@@ -776,23 +776,6 @@ function user_script() {
     fi
 }
 
-# make sure include for retroarch.cfg is at the end of the per system config as
-# retroarch will cause it to be at the top after saving from RGUI.
-function fix_retroarch_config() {
-    [[ ! "$command" =~ retroarch ]] && return
-
-    local config="$configdir/$system/retroarch.cfg"
-
-    # remove the include line
-    include=$(grep "^#include.*retroarch\.cfg" "$config")
-
-    # and re-add it at the end
-    if [[ -n "$include" ]]; then
-        sed -i "/^#include.*retroarch\.cfg/d" "$config"
-        echo "$include" >>"$config"
-    fi
-}
-
 get_config
 
 get_params "$@"
@@ -859,7 +842,7 @@ fi
 # reset/restore framebuffer res (if it was changed)
 [[ -n "$fb_new" ]] && restore_fb
 
-fix_retroarch_config
+[[ "$command" =~ retroarch ]] && retroarchIncludeToEnd "$configdir/$system/retroarch.cfg"
 
 user_script "runcommand-onend.sh"
 

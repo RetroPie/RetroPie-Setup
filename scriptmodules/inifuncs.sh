@@ -63,17 +63,7 @@ function iniProcess() {
         sed -i -e "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
     fi
 
-    local include
-    # remove any retroarch.cfg include line
-    if [[ "$file" =~ retroarch\.cfg$ ]]; then
-        include=$(grep "^#include.*retroarch\.cfg" "$file")
-
-        # re-add the include line
-        if [[ -n "$include" ]]; then
-            sed -i "/^#include.*retroarch\.cfg/d" "$file"
-            echo "$include" >>"$file"
-        fi
-    fi
+    [[ "$file" =~ retroarch\.cfg$ ]] && retroarchIncludeToEnd "$file"
 }
 
 # arg 1: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
@@ -118,6 +108,21 @@ function iniGet() {
     fi
 
     ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m/\1/p" "$file" | tail -1)"
+}
+
+# moves the retroarch.cfg include line to the end of a config file
+function retroarchIncludeToEnd() {
+    local config="$1"
+
+    local include
+    # remove the include line
+    include=$(grep "^#include.*retroarch\.cfg" "$config")
+
+    # and re-add it at the end
+    if [[ -n "$include" ]]; then
+        sed -i "/^#include.*retroarch\.cfg/d" "$config"
+        echo "$include" >>"$config"
+    fi
 }
 
 # arg 1: key, arg 2: default value (optional - is 1 if not used)
