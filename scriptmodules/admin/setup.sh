@@ -66,6 +66,9 @@ function depends_setup() {
     if isPlatform "rpi" && [[ -f /boot/config.txt ]] && grep -q "^dtoverlay=vc4-kms-v3d" /boot/config.txt; then
         printMsgs "dialog" "You have the experimental desktop GL driver enabled. This is NOT compatible with RetroPie, and Emulation Station as well as emulators will fail to launch. Please disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
     fi
+
+    # remove all but the last 10 logs
+    find "$__logdir" | sort | head -n -10 | xargs -d '\n' --no-run-if-empty rm
 }
 
 function updatescript_setup()
