@@ -83,9 +83,11 @@ function configure_reicast() {
 
     # add system
     # possible audio backends: alsa, oss, omx
-    addSystem 1 "$md_id" "dreamcast" "CON:$md_inst/bin/reicast.sh oss %ROM%"
     if isPlatform "rpi"; then
-        addSystem 0 "${md_id}-audio-omx" "dreamcast" "CON:$md_inst/bin/reicast.sh omx %ROM%"
+        addSystem 1 "${md_id}-audio-omx" "dreamcast" "CON:$md_inst/bin/reicast.sh omx %ROM%"
+        addSystem 0 "${md_id}-audio-oss" "dreamcast" "CON:$md_inst/bin/reicast.sh oss %ROM%"
+    else
+        addSystem 1 "$md_id" "dreamcast" "CON:$md_inst/bin/reicast.sh oss %ROM%"
     fi
 
     addAutoConf reicast_input 1
