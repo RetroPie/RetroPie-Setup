@@ -199,7 +199,8 @@ function testCompatibility() {
 
     local GLideN64LegacyBlending_blacklist=(
         empire
-        beetle
+        beetl
+        donkey
     )
 
     for game in "${blacklist[@]}"; do
