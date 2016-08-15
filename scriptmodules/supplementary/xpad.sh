@@ -63,7 +63,7 @@ function build_xpad() {
     if dkms status | grep -q "^xpad"; then
         dkms remove -m xpad -v 0.4 --all
     fi
-    dkms install -m xpad -v 0.4
+    dkms install -m xpad -v 0.4 -k "$(ls -1 /lib/modules | tail -n -1)"
 }
 
 function remove_xpad() {
