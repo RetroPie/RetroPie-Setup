@@ -11,6 +11,7 @@
 
 rp_module_id="xpad"
 rp_module_desc="Updated Xpad Linux Kernel driver"
+rp_module_help="This is the latest Xpad driver from https://github.com/paroj/xpad\n\nThe driver has been patched to allow the triggers to map to buttons for any controller and this has been enabled by default.\n\nThis fixes mapping the triggers in Emulation Station.\n\nIf you want the previous trigger behaviour please edit /etc/modprobe.d/xpad.conf and set triggers_to_buttons=0"
 rp_module_section="driver"
 rp_module_flags="!mali"
 
@@ -59,6 +60,9 @@ _EOF_
 
 function build_xpad() {
     ln -sf "$md_inst" "/usr/src/xpad-0.4"
+    if dkms status | grep -q "^xpad"; then
+        dkms remove -m xpad -v 0.4 --all
+    fi
     dkms install -m xpad -v 0.4
 }
 
