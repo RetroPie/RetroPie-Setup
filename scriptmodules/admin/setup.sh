@@ -68,7 +68,7 @@ function depends_setup() {
     fi
 
     # remove all but the last 20 logs
-    find "$__logdir" | sort | head -n -20 | xargs -d '\n' --no-run-if-empty rm
+    find "$__logdir" -type f | sort | head -n -20 | xargs -d '\n' --no-run-if-empty rm
 }
 
 function updatescript_setup()
