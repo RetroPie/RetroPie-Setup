@@ -174,7 +174,7 @@ function configure_mupen64plus() {
             echo "[Video-GLideN64]" >> "$config"
         fi
         # Settings version. Don't touch it.
-        iniSet "configVersion" "12"
+        iniSet "configVersion" "13"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         # Size of texture cache in megabytes. Good value is VRAM*3/4
@@ -182,7 +182,7 @@ function configure_mupen64plus() {
         # Disable FB emulation until visual issues are sorted out
         iniSet "EnableFBEmulation" "False"
         # Use native res
-        iniSet "nativeResFactor" "1"
+        iniSet "UseNativeResolutionFactor" "1"
 
         # Disable gles2n64 autores feature and use dispmanx upscaling
         iniConfig " = " "" "$md_conf_root/n64/gles2n64.conf"
