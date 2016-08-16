@@ -216,11 +216,11 @@ function testCompatibility() {
             fi
             iniConfig " = " "" "$config"
             # Settings version. Don't touch it.
-            iniSet "configVersion" "12"
+            iniSet "configVersion" "13"
             # Enable FBEmulation if necessary
             iniSet "EnableFBEmulation" "False"
             # Set native resolution factor of 1
-            iniSet "nativeResFactor" "1"
+            iniSet "UseNativeResolutionFactor" "1"
             for game in "${GLideN64FBEMU_whitelist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
                     iniSet "EnableFBEmulation" "True"
@@ -228,10 +228,10 @@ function testCompatibility() {
                 fi
             done
             # Disable LegacyBlending if necessary
-            iniSet "enableLegacyBlending" "True"
+            iniSet "EnableLegacyBlending" "True"
             for game in "${GLideN64LegacyBlending_blacklist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
-                    iniSet "enableLegacyBlending" "False"
+                    iniSet "EnableLegacyBlending" "False"
                     break
                 fi
             done
