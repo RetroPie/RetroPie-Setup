@@ -493,6 +493,7 @@ function gui_setup() {
 
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
+        default="$choice"
 
         if [[ "${choice[@]:0:4}" == "HELP" ]]; then
             choice="${choice[@]:5}"
