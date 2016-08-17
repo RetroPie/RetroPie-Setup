@@ -316,14 +316,13 @@ function main_menu() {
         fi
 
         options+=(X "Launch")
-        if [[ "$command" =~ retroarch ]]; then
-            options+=(L "Launch with verbose logging")
-        fi
-        options+=(Q "Exit (without launching)")
 
         if [[ "$command" =~ retroarch ]]; then
+            options+=(L "Launch with verbose logging")
             options+=(Z "Launch with netplay enabled")
         fi
+
+        options+=(Q "Exit (without launching)")
 
         local temp_mode
         if [[ $has_tvs -eq 1 ]]; then
