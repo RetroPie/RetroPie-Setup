@@ -309,7 +309,7 @@ function section_gui_setup() {
     done
 }
 
-function settings_gui_setup() {
+function config_gui_setup() {
     local default
     while true; do
         local options=()
@@ -411,11 +411,6 @@ function packages_gui_setup() {
     local default
     local options=()
 
-    options+=(
-        I "Quick install" "I This will install all packages from Core and Main which gives a basic RetroPie install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
-        U "Update all installed packages" "U Update all currently installed packages. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
-    )
-
     for section in core main opt driver exp; do
         options+=($section "Manage ${__sections[$section]} packages" "$section Choose top install/update/configure packages from the ${__sections[$section]}")
     done
@@ -434,20 +429,8 @@ function packages_gui_setup() {
             printMsgs "dialog" "$choice"
             continue
         fi
+        section_gui_setup "$choice"
         default="$choice"
-        case "$choice" in
-            I)
-                dialog --defaultno --yesno "Are you sure you want to do a quick install?" 22 76 2>&1 >/dev/tty || continue
-                quick_install_setup
-                ;;
-            U)
-                update_packages_gui_setup
-                ;;
-            *)
-                section_gui_setup "$choice"
-                ;;
-        esac
-
     done
 }
 
@@ -488,17 +471,21 @@ function gui_setup() {
 
         cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version\nLast Commit: $commit" 22 76 16)
         options=(
+            I "Basic Install" "I This will install all packages from Core and Main which gives a basic RetroPie install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
+
+            U "Update all installed packages" "U Update all currently installed packages. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
+
             P "Manage Packages"
             "P Install/Remove and Configure the various components of RetroPie, including emulators, ports, and controller drivers."
 
-            S "Setup / Tools"
-            "S Configuration Tools and additional setup. Any components of RetroPie that have configuration will also appear here after install."
+            C "Configuration / Tools"
+            "C Configuration and Tools. Any packages you have installed that have additional configuration options will also appear here."
+
+            S "Update RetroPie-Setup script"
+            "S Update this RetroPie-Setup script. This will update this main management script only, but will not update any software packages. To update packages use the 'Update' option from the main menu, which will also update the RetroPie-Setup script."
 
             X "Uninstall RetroPie"
             "X Uninstall RetroPie completely."
-
-            U "Update RetroPie-Setup script"
-            "U Update this RetroPie-Setup script. Note that RetroPie-Setup is constantly updated - the version numbers were introduced primarily for the pre-made images we provided, but we now display a version in this menu as a guide. If you update the RetroPie-Setup script after downloading a pre-made image, you may get a higher version number or a -dev release. This does not mean the software is unstable, it just means we are working on changes for the next version, when we will create a new image."
 
             R "Perform Reboot"
             "R Reboot your machine."
@@ -516,17 +503,24 @@ function gui_setup() {
         fi
         clear
         case "$choice" in
+            I)
+                dialog --defaultno --yesno "Are you sure you want to do a basic install?\n\nThis will install all packages from the 'Core' and 'Main' package sections." 22 76 2>&1 >/dev/tty || continue
+                quick_install_setup
+                ;;
+            U)
+                update_packages_gui_setup
+                ;;
             P)
                 packages_gui_setup
                 ;;
+            C)
+                config_gui_setup
+                ;;
             S)
-                settings_gui_setup
+                dialog --defaultno --yesno "Are you sure you want to update the RetroPie-Setup script ?" 22 76 2>&1 >/dev/tty || continue && updatescript_setup && exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
                 ;;
             X)
                 uninstall_setup
-                ;;
-            U)
-                updatescript_setup && exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
                 ;;
             R)
                 dialog --defaultno --yesno "Are you sure you want to reboot?" 22 76 2>&1 >/dev/tty || continue
