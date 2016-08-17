@@ -27,6 +27,7 @@ function build_lr-mame2003() {
     isPlatform "arm" && params+=("ARM=1")
     make ARCH="$CFLAGS" "${params[@]}"
     rpSwap off
+    md_ret_require="$md_build/mame2003_libretro.so"
 }
 
 function install_lr-mame2003() {
