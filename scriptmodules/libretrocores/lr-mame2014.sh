@@ -21,6 +21,7 @@ function sources_lr-mame2014() {
 function build_lr-mame2014() {
     make clean
     make "${params[@]}"
+    md_ret_require="$md_build/mame2014_libretro.so"
 }
 
 function install_lr-mame2014() {

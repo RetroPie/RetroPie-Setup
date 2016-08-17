@@ -24,6 +24,7 @@ function build_lr-mame2010() {
     isPlatform "arm" && params+=("VRENDER=soft" "ARM_ENABLED=1")
     make "${params[@]}" ARCHOPTS="$CFLAGS" buildtools
     make "${params[@]}" ARCHOPTS="$CFLAGS"
+    md_ret_require="$md_build/mame2010_libretro.so"
 }
 
 function install_lr-mame2010() {
