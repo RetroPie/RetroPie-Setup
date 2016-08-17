@@ -19,8 +19,10 @@ function sources_lr-mame2014() {
 }
 
 function build_lr-mame2014() {
+    rpSwap on 750
     make clean
     make "${params[@]}"
+    rpSwap off
     md_ret_require="$md_build/mame2014_libretro.so"
 }
 

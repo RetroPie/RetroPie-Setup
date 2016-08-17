@@ -19,8 +19,10 @@ function sources_lr-mame() {
 }
 
 function build_lr-mame() {
+    rpSwap on 750
     make -f Makefile.libretro clean
     make -f Makefile.libretro SUBTARGET=arcade
+    rpSwap off
     md_ret_require="$md_build/mamearcade_libretro.so"
 }
 
