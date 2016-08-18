@@ -73,6 +73,7 @@ function depends_setup() {
 
 function updatescript_setup()
 {
+    clear
     chown -R $user:$user "$scriptdir"
     printHeading "Fetching latest version of the RetroPie Setup Script."
     pushd "$scriptdir" >/dev/null
@@ -98,6 +99,7 @@ function post_update_setup() {
 
     echo "$__version" >"$rootdir/VERSION"
 
+    clear
     local logfilename
     __ERRMSGS=()
     __INFMSGS=()
@@ -357,6 +359,7 @@ function config_gui_setup() {
 }
 
 function update_packages_setup() {
+    clear
     local idx
     for idx in ${__mod_idx[@]}; do
         if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]]; then
@@ -374,13 +377,18 @@ function update_packages_gui_setup() {
         exec "$scriptdir/retropie_packages.sh" setup post_update update_packages_gui_setup update
     fi
 
+    local update_os=0
+    dialog --yesno "Would you like to update the underlying OS packages (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && update_os=1
+
+    clear
+
     local logfilename
     __ERRMSGS=()
     __INFMSGS=()
     rps_logInit
     {
         rps_logStart
-        dialog --yesno "Would you like to update the underlying OS packages (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && apt_upgrade_raspbiantools
+        [[ "$update_os" -eq 1 ]] && apt_upgrade_raspbiantools
         update_packages_setup
         rps_logEnd
     } &> >(tee >(gzip --stdout >"$logfilename"))
@@ -390,7 +398,8 @@ function update_packages_gui_setup() {
     gui_setup
 }
 
-function quick_install_setup() {
+function basic_install_setup() {
+    clear
     local logfilename
     __ERRMSGS=()
     __INFMSGS=()
@@ -493,7 +502,6 @@ function gui_setup() {
 
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
-        default="$choice"
 
         if [[ "${choice[@]:0:4}" == "HELP" ]]; then
             choice="${choice[@]:5}"
@@ -502,11 +510,12 @@ function gui_setup() {
             printMsgs "dialog" "$choice"
             continue
         fi
-        clear
+        default="$choice"
+
         case "$choice" in
             I)
                 dialog --defaultno --yesno "Are you sure you want to do a basic install?\n\nThis will install all packages from the 'Core' and 'Main' package sections." 22 76 2>&1 >/dev/tty || continue
-                quick_install_setup
+                basic_install_setup
                 ;;
             U)
                 update_packages_gui_setup
