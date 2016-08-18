@@ -112,8 +112,12 @@ _EOF_
     HOME="/home/pi" chroot --userspec 1000:1000 chroot bash /home/pi/install.sh
 
     _umount_chroot
+
     >chroot/etc/resolv.conf
     rm chroot/home/pi/install.sh
+
+    # remove any ssh host keys that may have been generated during any ssh package upgrades
+    rm -f chroot/etc/ssh/ssh_host*
 
     popd
 }
