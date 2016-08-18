@@ -165,6 +165,7 @@ function package_setup() {
 
         case "$choice" in
             B|I)
+                clear
                 rps_logInit
                 {
                     rps_logStart
@@ -174,6 +175,7 @@ function package_setup() {
                 rps_printInfo "$logfilename"
                 ;;
             S)
+                clear
                 rps_logInit
                 {
                     rps_logStart
