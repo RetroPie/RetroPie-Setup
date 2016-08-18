@@ -88,7 +88,7 @@ git clone https://github.com/RetroPie/RetroPie-Setup.git
 cd RetroPie-Setup
 modules=(
     'raspbiantools apt_upgrade'
-    'setup quick_install'
+    'setup basic_install'
     'bluetooth depends'
     'raspbiantools enable_modules'
     'autostart enable'
