@@ -471,14 +471,14 @@ function gui_setup() {
 
         cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version\nLast Commit: $commit" 22 76 16)
         options=(
-            I "Basic Install" "I This will install all packages from Core and Main which gives a basic RetroPie install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
+            I "Basic install" "I This will install all packages from Core and Main which gives a basic RetroPie install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
 
             U "Update all installed packages" "U Update all currently installed packages. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
 
-            P "Manage Packages"
+            P "Manage packages"
             "P Install/Remove and Configure the various components of RetroPie, including emulators, ports, and controller drivers."
 
-            C "Configuration / Tools"
+            C "Configuration / tools"
             "C Configuration and Tools. Any packages you have installed that have additional configuration options will also appear here."
 
             S "Update RetroPie-Setup script"
@@ -487,7 +487,7 @@ function gui_setup() {
             X "Uninstall RetroPie"
             "X Uninstall RetroPie completely."
 
-            R "Perform Reboot"
+            R "Perform reboot"
             "R Reboot your machine."
         )
 
