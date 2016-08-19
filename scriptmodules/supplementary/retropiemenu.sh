@@ -86,7 +86,7 @@ function launch_retropiemenu() {
             su $user -c "\"$emudir/retroarch/bin/retroarch\" --menu --config \"$configdir/all/retroarch.cfg\""
             ;;
         rpsetup.rp)
-            exec "$scriptdir/retropie_setup.sh"
+            rp_callModule setup gui
             ;;
         raspiconfig.rp)
             raspi-config
