@@ -751,7 +751,7 @@ function addSystem() {
     local es_path="$romdir/$system"
     local es_name="$system"
     if [[ "$theme" == "ports" ]]; then
-        es_cmd="%ROM%"
+        es_cmd="bash %ROM%"
         es_path="$romdir/ports"
         es_name="ports"
         exts=(".sh")
