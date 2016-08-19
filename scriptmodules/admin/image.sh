@@ -37,7 +37,7 @@ function chroot_image() {
     mount /dev/mapper/loop0p1 mnt/boot
 
     printMsgs "console" "Creating chroot"
-    rsync -a --numeric-ids --delete mnt/ chroot/
+    rsync -aAHX --numeric-ids --delete mnt/ chroot/
 
     umount mnt/boot mnt
     rm -rf mnt
@@ -174,7 +174,7 @@ function create_image() {
 
     # copy files
     printMsgs "console" "Rsyncing chroot to $image ..."
-    rsync --numeric-ids -a chroot/ mnt/
+    rsync -aAHX --numeric-ids  chroot/ mnt/
     
     # unmount
     umount mnt/boot mnt
