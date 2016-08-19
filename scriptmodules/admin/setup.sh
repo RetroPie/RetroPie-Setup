@@ -531,11 +531,10 @@ function gui_setup() {
                 config_gui_setup
                 ;;
             S)
-                if dialog --defaultno --yesno "Are you sure you want to update the RetroPie-Setup script ?" 22 76 2>&1 >/dev/tty; then
-                    if updatescript_setup; then
-                        joy2keyStop
-                        exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
-                    fi
+                dialog --defaultno --yesno "Are you sure you want to update the RetroPie-Setup script ?" 22 76 2>&1 >/dev/tty || continue
+                if updatescript_setup; then
+                    joy2keyStop
+                    exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
                 fi
                 ;;
             X)
