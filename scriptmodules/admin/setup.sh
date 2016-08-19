@@ -61,6 +61,7 @@ function depends_setup() {
     # check for VERSION file - if it doesn't exist we will run the post_update script as it won't be triggered
     # on first upgrade to 4.x
     if [[ ! -f "$rootdir/VERSION" ]]; then
+        joy2keyStop
         exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
     fi
     if isPlatform "rpi" && [[ -f /boot/config.txt ]] && grep -q "^dtoverlay=vc4-kms-v3d" /boot/config.txt; then
@@ -376,6 +377,7 @@ function update_packages_gui_setup() {
         dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
         updatescript_setup
         # restart at post_update and then call "update_packages_gui_setup update" afterwards
+        joy2keyStop
         exec "$scriptdir/retropie_packages.sh" setup post_update update_packages_gui_setup update
     fi
 
@@ -529,7 +531,12 @@ function gui_setup() {
                 config_gui_setup
                 ;;
             S)
-                dialog --defaultno --yesno "Are you sure you want to update the RetroPie-Setup script ?" 22 76 2>&1 >/dev/tty || continue && updatescript_setup && exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
+                if dialog --defaultno --yesno "Are you sure you want to update the RetroPie-Setup script ?" 22 76 2>&1 >/dev/tty; then
+                    if updatescript_setup; then
+                        joy2keyStop
+                        exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
+                    fi
+                fi
                 ;;
             X)
                 uninstall_setup
