@@ -84,7 +84,7 @@ while True:
         if js_number < len(button_codes) and js_value == 1:
             hex_chars = button_codes[js_number]
 
-    if js_type == JS_EVENT_AXIS:
+    if js_type == JS_EVENT_AXIS and js_number <= 7:
         if js_number % 2 == 0:
             if js_value <= JS_MIN * JS_THRESH:
                 hex_chars = axis_codes[0]
