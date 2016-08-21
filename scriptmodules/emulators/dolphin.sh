@@ -16,7 +16,6 @@ rp_module_section="exp"
 rp_module_flags="!arm"
 
 function depends_dolphin() {
-    hasPackage dolphin-emu && dpkg --remove dolphin-emu
     local depends=(cmake pkg-config git libao-dev libasound2-dev libavcodec-dev libavformat-dev libbluetooth-dev libenet-dev libgtk2.0-dev liblzo2-dev libminiupnpc-dev libopenal-dev libpulse-dev libreadline-dev libsfml-dev libsoil-dev libsoundtouch-dev libswscale-dev libusb-1.0-0-dev libwxbase3.0-dev libwxgtk3.0-dev libxext-dev libxrandr-dev portaudio19-dev zlib1g-dev libudev-dev libevdev-dev libmbedtls-dev libcurl4-openssl-dev libegl1-mesa-dev)
     getDepends "${depends[@]}"
 }
@@ -26,13 +25,15 @@ function sources_dolphin() {
 }
 
 function build_dolphin() {
-    mkdir Build && cd Build
-    cmake .. -DENABLE_HEADLESS=1
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst"
+    make clean
     make
 }
 
 function install_dolphin() {
-    cd Build
+    cd build
     make install
 }
 
@@ -40,6 +41,20 @@ function configure_dolphin() {
     mkRomDir "gc"
     mkRomDir "wii"
 
-    addSystem 1 "${md_id}" "gc" "dolphin-emu -b -e %ROM%"
-    addSystem 1 "${md_id}" "wii" "dolphin-emu -b -e %ROM%"
+    moveConfigDir "$home/.dolphin-emu" "$md_conf_root/gc"
+
+    if [[ ! -f "$md_conf_root/gc/Config/Dolphin.ini" ]]; then
+        mkdir -p "$md_conf_root/gc/Config"
+        cat >"$md_conf_root/gc/Config/Dolphin.ini" <<_EOF_
+[Display]
+FullscreenResolution = Auto
+Fullscreen = True
+_EOF_
+        chown -R $user:$user "$md_conf_root/gc/Config"
+    fi
+
+    addSystem 1 "$md_id" "gc" "$md_inst/bin/dolphin-emu-nogui -e %ROM%"
+    addSystem 0 "$md_id-gui" "gc" "$md_inst/bin/dolphin-emu -b -e %ROM%"
+    addSystem 1 "$md_id" "wii" "$md_inst/bin/dolphin-emu-nogui -e %ROM%"
+    addSystem 0 "$md_id-gui" "wii" "$md_inst/bin/dolphin-emu -b -e %ROM%"
 }
