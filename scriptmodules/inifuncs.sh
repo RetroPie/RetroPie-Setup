@@ -123,6 +123,8 @@ function retroarchIncludeToEnd() {
     # and re-add it at the end
     if [[ -n "$include" ]]; then
         sed -i "/^#include.*retroarch\.cfg/d" "$config"
+        # add newline if missing and the #include line
+        sed -i '$a\' "$config"
         echo "$include" >>"$config"
     fi
 }
