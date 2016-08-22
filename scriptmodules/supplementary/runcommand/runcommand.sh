@@ -103,6 +103,7 @@ function get_params() {
     command="$2"
     [[ -z "$command" ]] && exit 1
 
+    console_out=0
     # if the command is _SYS_, or _PORT_ arg 3 should be system name, and arg 4 rom/game, and we look up the configured system for that combination
     if [[ "$command" == "_SYS_" || "$command" == "_PORT_" ]]; then
         # if the rom is actually a special +Start System.sh script, we should launch the script directly.
@@ -127,6 +128,7 @@ function get_params() {
         fi
     else
         is_sys=0
+        console_out=1
         emulator="$3"
         # if we have an emulator name (such as module_id) we use that for storing/loading parameters for video output/dispmanx
         # if the parameter is empty we use the name of the binary (to avoid breakage with out of date emulationstation configs)
@@ -712,9 +714,7 @@ function get_sys_command() {
     if [[ "$command" == CON:* ]]; then
         # remove CON:
         command="${command:4}"
-        is_console=1
-    else
-        is_console=0
+        console_out=1
     fi
 }
 
@@ -818,8 +818,8 @@ config_dispmanx "$save_emu"
 
 retroarch_append_config
 
-# launch the command - don't redirect stdout when using console output (CON: prefix) or when not using _SYS_
-if [[ "$is_console" -eq 1 || "$is_sys" -eq 0 ]]; then
+# launch the command
+if [[ "$console_out" -eq 1 ]]; then
     # turn cursor on
     tput cnorm
     eval $command </dev/tty 2>>"$log"
