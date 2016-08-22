@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !x86 !mali"
 
 function depends_uae4all() {
-    getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev libmpg123-dev
+    getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev
 }
 
 function sources_uae4all() {
