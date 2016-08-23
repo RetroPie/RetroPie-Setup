@@ -30,12 +30,16 @@ function install_sdlpop() {
     md_ret_files=(
         'prince'
         'data'
-        'doc/Readme.txt'
-        'doc/gpl-3.0.txt'
+        'doc'
+        'DIGISND1.DAT'
+        'DIGISND2.DAT'
+        'DIGISND3.DAT'
+        'GUARD.DAT'
+        'GUARD1.DAT'
+        'GUARD2.DAT'
     )
     cp -v "SDLPoP.ini" "$md_inst/SDLPoP.ini.def"
     sed -i "s/use_correct_aspect_ratio = false/use_correct_aspect_ratio = true/" "$md_inst/SDLPoP.ini.def"
-    cp -v *.DAT "$md_inst"
 }
  
 function configure_sdlpop() {
