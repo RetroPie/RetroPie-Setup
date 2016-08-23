@@ -337,8 +337,8 @@ function moveConfigFile() {
     fi
 
     # move old file
-    if [[ -f "from" && ! -h "from" ]]; then
-        mv "from" "$to"
+    if [[ -f "$from" && ! -h "$from" ]]; then
+        mv "$from" "$to"
     fi
     ln -sf "$to" "$from"
     # set ownership of the actual link to $user
