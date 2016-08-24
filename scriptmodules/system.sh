@@ -79,8 +79,12 @@ function get_os_version() {
         else
             case "$ver" in
                 jessie/sid|stretch/sid)
-                    __raspbian_ver=8
-                    __raspbian_name="ubuntu"
+                    if ! isPlatform "rpi"; then
+                        __raspbian_ver=8
+                        __raspbian_name="ubuntu"
+                    else
+                        fatalError "Ubuntu is not supported on the Raspberry Pi - Please use Raspbian."
+                    fi
                     return
                     ;;
             esac
