@@ -39,7 +39,7 @@ function game_data_quake3() {
     if [[ ! -f "$romdir/ports/quake3/pak0.pk3" ]]; then
         cd "$__tmpdir"
         wget -O Q3DemoPaks.zip "$__archive_url/Q3DemoPaks.zip"
-        unzip -o Q3DemoPaks.zip -d "$romdir/ports/quake3"
+        unzip -oj Q3DemoPaks.zip  -d "$romdir/ports/quake3"
         rm Q3DemoPaks.zip
     fi
     # always chown as moveConfigDir in the configure_ script would move the root owned demo files
