@@ -199,8 +199,12 @@ function testCompatibility() {
 
     local GLideN64LegacyBlending_blacklist=(
         empire
-        beetl
+        beetle
         donkey
+    )
+
+    local GLideN64NativeResolution_blacklist=(
+        majora
     )
 
     for game in "${blacklist[@]}"; do
@@ -219,11 +223,17 @@ function testCompatibility() {
             iniSet "configVersion" "13"
             # Enable FBEmulation if necessary
             iniSet "EnableFBEmulation" "False"
-            # Set native resolution factor of 1
-            iniSet "UseNativeResolutionFactor" "1"
             for game in "${GLideN64FBEMU_whitelist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
                     iniSet "EnableFBEmulation" "True"
+                    break
+                fi
+            done
+            # Set native resolution factor of 1
+            iniSet "UseNativeResolutionFactor" "1"
+            for game in "${GLideN64NativeResolution_blacklist[@]}"; do
+                if [[ "${ROM,,}" == *"$game"* ]]; then
+                    iniSet "UseNativeResolutionFactor" "0"
                     break
                 fi
             done
