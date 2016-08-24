@@ -58,10 +58,9 @@ function runCmd() {
 function hasFlag() {
     local string="$1"
     local flag="$2"
-    [[ -z "$string" ]] || [[ -z "$flag" ]] && return 1
+    [[ -z "$string" || -z "$flag" ]] && return 1
 
-    local re="(^| )$flag($| )"
-    if [[ $string =~ $re ]]; then
+    if [[ "$string" =~ (^| )$flag($| ) ]]; then
         return 0
     else
         return 1
@@ -79,10 +78,11 @@ function isPlatform() {
 function addLineToFile() {
     if [[ -f "$2" ]]; then
         cp -p "$2" "$2.bak"
+    else
+        sed -i -e '$a\' "$2"
     fi
-    sed -i -e '$a\' "$2"
+
     echo "$1" >> "$2"
-    echo "Added $1 to file $2"
 }
 
 function editFile() {
