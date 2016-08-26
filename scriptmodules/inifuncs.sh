@@ -56,7 +56,8 @@ function iniProcess() {
 
     local replace="$key$delim$quote$value$quote"
     if [[ -z "$match" ]]; then
-        # add key-value pair
+        # make sure there is a newline then add the key-value pair
+        sed -i '$a\' "$file"
         echo "$replace" >> "$file"
     else
         # replace existing key-value pair
