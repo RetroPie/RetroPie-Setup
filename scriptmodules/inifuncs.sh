@@ -117,13 +117,15 @@ function retroarchIncludeToEnd() {
 
     [[ ! -f "$config" ]] && return
 
-    local include
-    # remove the include line
-    include=$(grep "^#include.*retroarch\.cfg" "$config")
+    local re="^#include.*retroarch\.cfg"
 
-    # and re-add it at the end
+    # extract the include line (unless it is the last line in the file)
+    # (remove blank lines, the last line and search for an include line in remaining lines)
+    local include=$(sed '/^$/d;$d' "$config" | grep "$re")
+
+    # if matched remove it and re-add it at the end
     if [[ -n "$include" ]]; then
-        sed -i "/^#include.*retroarch\.cfg/d" "$config"
+        sed -i "/$re/d" "$config"
         # add newline if missing and the #include line
         sed -i '$a\' "$config"
         echo "$include" >>"$config"
