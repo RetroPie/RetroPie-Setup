@@ -52,7 +52,9 @@ function configure_uae4arm() {
     done
 
     # and kickstart dir (removing old symlinks first)
-    rm -f "$md_inst/kickstarts/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
+    if [[ ! -h "$md_inst/kickstarts" ]]; then
+        rm -f "$md_inst/kickstarts/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
+    fi
     moveConfigDir "$md_inst/kickstarts" "$biosdir"
 
     cat > "$romdir/amiga/+Start UAE4Arm.sh" << _EOF_
