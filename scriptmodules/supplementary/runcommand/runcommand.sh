@@ -738,7 +738,6 @@ function show_launch() {
         done
     fi
 
-    # check for x/m key pressed to choose a screenmode (x included as it is useful on the picade)
     if [[ -n "$image" ]]; then
         fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
     elif [[ "$disable_menu" -ne 1 ]]; then
@@ -754,6 +753,7 @@ function show_launch() {
 
 function check_menu() {
     start_joy2key
+    # check for key pressed to enter configuration
     IFS= read -s -t 2 -N 1 key </dev/tty
     if [[ -n "$key" ]]; then
         if [[ $has_tvs -eq 1 ]]; then
