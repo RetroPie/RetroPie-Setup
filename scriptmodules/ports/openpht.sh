@@ -26,12 +26,13 @@ function install_bin_openpht() {
     else
         wget -nv -O "$__tmpdir/$package" $getdeb
         if hasPackage "apt" "1.1" "ge"; then
-            apt install -y --allow-downgrades $__tmpdir/$package
+            apt install -y --allow-downgrades "$__tmpdir/$package"
         else
             # Falling back to dpkg
-            dpkg -i $__tmpdir/$package
+            dpkg -i "$__tmpdir/$package"
             apt-get -f -y install
         fi
+        rm "$__tmpdir/$package"
     fi
 }
 
