@@ -14,6 +14,10 @@ rp_module_desc="OpenPHT is a community driven fork of Plex Home Theater"
 rp_module_section="opt"
 rp_module_flags="!arm"
 
+function depends_openpht() {
+    addUdevInputRules
+}
+
 function install_bin_openpht() {
     local version="1.6.2.123-e23a7eef"
     local codename=$(lsb_release -cs)
@@ -38,13 +42,8 @@ function install_bin_openpht() {
 
 function remove_openpht() {
     aptRemove openpht
-    apt-get autoremove --purge -y
 }
 
 function configure_openpht() {
     addPort "openpht" "openpht" "OpenPHT" "pasuspender -- env AE_SINK=ALSA openpht"
-
-    if [[ ! -f /etc/udev/rules.d/99-input.rules ]]; then
-        echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
-    fi
 }

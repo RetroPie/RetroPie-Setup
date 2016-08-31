@@ -23,12 +23,7 @@ function depends_retroarch() {
 
     getDepends "${depends[@]}"
 
-    if [[ ! -f /etc/udev/rules.d/99-input.rules ]]; then
-        echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
-    fi
-
-    # remove old 99-evdev.rules
-    rm -f /etc/udev/rules.d/99-evdev.rules
+    addUdevInputRules
 }
 
 function sources_retroarch() {

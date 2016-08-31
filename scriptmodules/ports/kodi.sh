@@ -39,6 +39,8 @@ function depends_kodi() {
             apt-key del 4096R/BAA567BB >/dev/null
         fi
     fi
+
+    addUdevInputRules
 }
 
 function install_bin_kodi() {
@@ -57,8 +59,4 @@ function configure_kodi() {
     delSystem "$md_id" "kodi"
 
     addPort "$md_id" "kodi" "Kodi" "kodi"
-
-    if [[ ! -f /etc/udev/rules.d/99-input.rules ]]; then
-        echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
-    fi
 }

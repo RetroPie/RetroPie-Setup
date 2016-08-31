@@ -368,6 +368,14 @@ function copyDefaultConfig() {
     chown $user:$user "$to"
 }
 
+function addUdevInputRules() {
+    if [[ ! -f /etc/udev/rules.d/99-input.rules ]]; then
+        echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
+    fi
+    # remove old 99-evdev.rules
+    rm -f /etc/udev/rules.d/99-evdev.rules
+}
+
 function setDispmanx() {
     isPlatform "rpi" || return
     local mod_id="$1"
