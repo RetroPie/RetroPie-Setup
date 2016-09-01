@@ -207,6 +207,7 @@ function testCompatibility() {
         majora
         1080
         quake
+        ridge
     )
 
     local GLideN64LegacyBlending_blacklist=(
