@@ -12,6 +12,7 @@
 rp_module_id="limelight"
 rp_module_desc="Limelight Game Streaming"
 rp_module_section="exp"
+rp_module_flags="!x11"
 
 function depends_limelight() {
     getDepends oracle-java8-jdk input-utils
@@ -47,6 +48,11 @@ function install_limelight() {
 function configure_limelight() { 
     # Create romdir limelight
     mkRomDir "limelight"
+
+    # Add System to es_system.cfg
+    addSystem 1 "$md_id" "limelight" "%ROM%" "Limelight Game Streaming" ".sh .SH"
+
+    [[ "$md_mode" == "remove" ]] && return
 
     # Create limelight config script
     cat > "$romdir/limelight/limelightconfig.sh" << _EOF_
@@ -111,9 +117,4 @@ _EOF_
 
     # Chmod scripts to be runnable
     chmod +x "$romdir/limelight/"*.sh
-
-    # Add System to es_system.cfg
-    setESSystem 'Limelight Game Streaming' 'limelight' '~/RetroPie/roms/limelight' '.sh .SH' '%ROM%' 'pc' 'limelight'
-
-    echo -e "\nEverything done! Now reboot the Pi and you are all set \n"
 }
