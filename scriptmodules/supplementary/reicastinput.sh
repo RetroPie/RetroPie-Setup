@@ -13,7 +13,7 @@ rp_module_id="reicastinput"
 rp_module_desc="Configure input devices for Reicast"
 rp_module_section="config"
 
-function configure_reicastinput() {
+function gui_reicastinput() {
     clear
     local temp_file="/tmp/temp.cfg"
     cd /opt/retropie/emulators/reicast/bin/
