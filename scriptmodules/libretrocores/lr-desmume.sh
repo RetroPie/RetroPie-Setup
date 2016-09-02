@@ -1,30 +1,29 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="lr-desmume"
 rp_module_desc="NDS emu - DESMUME"
-rp_module_menus="4+"
+rp_module_help="ROM Extensions: .nds .zip\n\nCopy your Nintendo DS roms to $romdir/nds"
+rp_module_section="exp"
 
 function sources_lr-desmume() {
     gitPullOrClone "$md_build" https://github.com/libretro/desmume.git
-    sed -i 's/CXXFLAGS =/CXXFLAGS +=/g' $md_build/desmume/Makefile.libretro
-    # temporary fix until https://github.com/libretro/desmume/issues/61 is sorted
-    wget -q https://github.com/libretro/desmume/commit/168aa380a85624fa07e4d6782fb392262cb7f653.diff -O fix.diff
-    patch -R -p1 <fix.diff
 }
 
 function build_lr-desmume() {
     cd desmume
+    local params=()
+    isPlatform "arm" && params+=("platform=armvhardfloat")
     make -f Makefile.libretro clean
-    make -f Makefile.libretro platform=armvhardfloat
+    make -f Makefile.libretro "${params[@]}" 
     md_ret_require="$md_build/desmume/desmume_libretro.so"
 }
 

@@ -1,0 +1,35 @@
+diff --git a/input/input_driver.c b/input/input_driver.c
+index 8a17b8b..ac7b6e0 100644
+--- a/input/input_driver.c
++++ b/input/input_driver.c
+@@ -106,6 +106,9 @@ static bool input_driver_osk_enabled              = false;
+ static bool input_driver_nonblock_state           = false;
+ static bool input_driver_flushing_input           = false;
+ static bool input_driver_data_own                 = false;
++/* number of frames required to trigger the hotkey */
++#define HOTKEY_DELAY 5
++static unsigned hotkey_counter = 0;
+ 
+ /**
+  * input_driver_find_handle:
+@@ -560,9 +563,17 @@ static bool check_input_driver_block_hotkey(bool enable_hotkey)
+    else
+       input_driver_unset_hotkey_block();
+ 
+-   /* If we hold ENABLE_HOTKEY button, block all libretro input to allow
+-    * hotkeys to be bound to same keys as RetroPad. */
+-   return (use_hotkey_enable && enable_hotkey);
++   if (use_hotkey_enable && enable_hotkey)
++   {
++      if (hotkey_counter < HOTKEY_DELAY)
++         hotkey_counter++;
++   }
++   else
++      hotkey_counter = 0;
++
++   /* If we hold ENABLE_HOTKEY button for HOTKEY_DELAY frames, block all
++    * libretro input to allow hotkeys to be bound to same keys as RetroPad. */
++   return (hotkey_counter == HOTKEY_DELAY);
+ }
+ 
+ /**

@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 function onstart_emulationstation_joystick() {
-    local device_type=$1
-    local device_name=$2
+    local device_type="$1"
+    local device_name="$2"
 
     local es_conf="$home/.emulationstation/es_input.cfg"
 
@@ -48,14 +48,22 @@ function map_emulationstation_joystick() {
 
     local key
     case "$input_name" in
-        leftbottom)
+        leftbottom|leftshoulder)
             key="pageup"
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             key="pagedown"
             ;;
-        up|right|down|left|a|b|start|select)
+        up|right|down|left|start|select)
             key="$input_name"
+            ;;
+        a)
+            key="$input_name"
+            getAutoConf es_swap_a_b && key="b"
+            ;;
+        b)
+            key="$input_name"
+            getAutoConf es_swap_a_b && key="a"
             ;;
         *)
             return

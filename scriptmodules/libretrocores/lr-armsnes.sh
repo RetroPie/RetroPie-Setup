@@ -1,21 +1,23 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="lr-armsnes"
 rp_module_desc="SNES emu - forked from pocketsnes focused on performance"
-rp_module_menus="2+"
+rp_module_help="ROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
+rp_module_section="opt"
+rp_module_flags="!x86"
 
 function sources_lr-armsnes() {
     gitPullOrClone "$md_build" https://github.com/rmaz/ARMSNES-libretro
-    patch -p1 <<\_EOF_
+    applyPatch two_player.diff <<\_EOF_
 diff --git a/src/ppu.cpp b/src/ppu.cpp
 index 19340fb..6d1af27 100644
 --- a/src/ppu.cpp
@@ -45,11 +47,8 @@ function install_lr-armsnes() {
 }
 
 function configure_lr-armsnes() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/armsnes"
-
     mkRomDir "snes"
-    ensureSystemretroconfig "snes" "snes_phosphor.glslp"
+    ensureSystemretroconfig "snes"
 
     addSystem 0 "$md_id" "snes" "$md_inst/libpocketsnes.so"
 }

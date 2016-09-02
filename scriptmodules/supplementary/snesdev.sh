@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="snesdev"
 rp_module_desc="SNESDev (Driver for the RetroPie GPIO-Adapter)"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="driver"
 
 function sources_snesdev() {
     gitPullOrClone "$md_build" https://github.com/petrockblog/SNESDev-RPi.git
@@ -88,8 +87,8 @@ function sup_snesdevAdapterversion() {
     fi
 }
 
-function configure_snesdev() {
-    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 86 16)
+function gui_snesdev() {
+    cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     options=(
         1 "Disable SNESDev on boot and SNESDev keyboard mapping."
         2 "Enable SNESDev on boot and SNESDev keyboard mapping (polling pads and button)."

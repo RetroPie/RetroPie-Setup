@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="lr-tyrquake"
 rp_module_desc="Quake 1 engine - Tyrquake port for libretro"
-rp_module_menus="2+"
+rp_module_section="opt"
 
 function depends_lr-tyrquake() {
     getDepends lhasa
@@ -36,17 +36,11 @@ function install_lr-tyrquake() {
     )
 }
 
-function configure_lr-tyrquake() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/tyrquake"
-
-    mkRomDir "ports"
-    mkRomDir "ports/quake"
-    ensureSystemretroconfig "quake"
-
+function game_data_lr-tyrquake() {
     if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then
+        cd "$__tmpdir"
         # download / unpack / install quake shareware files
-        wget "http://downloads.petrockblock.com/retropiearchives/quake106.zip" -O quake106.zip
+        wget "$__archive_url/quake106.zip" -O quake106.zip
         unzip -o quake106.zip -d "quake106"
         rm quake106.zip
         pushd quake106
@@ -55,7 +49,17 @@ function configure_lr-tyrquake() {
         popd
         rm -rf quake106
         chown -R $user:$user "$romdir/ports/quake"
+        chmod 644 "$romdir/ports/quake/id1/"*
     fi
+}
 
-    addPort "$md_id" "quake" "Quake" "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $configdir/quake/retroarch.cfg $romdir/ports/quake/id1/pak0.pak"
+function configure_lr-tyrquake() {
+    setConfigRoot "ports"
+
+    addPort "$md_id" "quake" "Quake" "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $md_conf_root/quake/retroarch.cfg $romdir/ports/quake/id1/pak0.pak"
+
+    mkRomDir "ports/quake"
+    ensureSystemretroconfig "ports/quake"
+
+    [[ "$md_mode" == "install" ]] && game_data_lr-tyrquake
 }

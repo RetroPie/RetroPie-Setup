@@ -1,27 +1,23 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="dxx-rebirth"
 rp_module_desc="DXX-Rebirth (Descent & Descent 2) build from source"
-rp_module_menus="4+"
-
-D1X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
-D2X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
-D1X_HIGH_TEXTURE_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
-D1X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
-D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
+rp_module_section="opt"
+rp_module_flags="!mali"
 
 function depends_dxx-rebirth() {
-    getDepends libphysfs1 libphysfs-dev libsdl1.2-dev libsdl-mixer1.2-dev scons
-    [[ "$__default_gcc_version" == "4.7" ]] && getDepends gcc-4.8 g++-4.8
+    local depends=(libphysfs1 libphysfs-dev libsdl1.2-dev libsdl-mixer1.2-dev scons)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_dxx-rebirth() {
@@ -29,12 +25,10 @@ function sources_dxx-rebirth() {
 }
 
 function build_dxx-rebirth() {
+    local params=()
+    isPlatform "rpi" && params+=(raspberrypi=1)
     scons -c
-    if [[ "$__default_gcc_version" == "4.7" ]]; then
-        scons raspberrypi=1 debug=1 CXX="g++-4.8"
-    else
-        scons raspberrypi=1 debug=1
-    fi
+    scons "${params[@]}"
     md_ret_require=(
         "$md_build/d1x-rebirth/d1x-rebirth"
         "$md_build/d2x-rebirth/d2x-rebirth"
@@ -67,24 +61,18 @@ function install_dxx-rebirth() {
     )
 }
 
-function configure_dxx-rebirth() {
-    mkRomDir "ports"
+function game_data_dxx-rebirth() {
+    local D1X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
+    local D2X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
+    local D1X_HIGH_TEXTURE_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
+    local D1X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
+    local D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
 
-    # Descent 1
-    mkRomDir "ports/descent1"
-    mkUserDir "$configdir/descent1"
-    
-    # copy any existing configs from ~/.d1x-rebirth and symlink the config folder to $configdir/descent1/
-    if [[ -d "$home/.d1x-rebirth" && ! -h "$home/.d1x-rebirth" ]]; then
-        mv -v "$home/.d1x-rebirth/"* "$configdir/descent1/"
-        rm -rf "$home/.d1x-rebirth"
-    fi
-    
-    ln -snf "$configdir/descent1" "$home/.d1x-rebirth"
-    
+    cd "$__tmpdir"
+
     # Download / unpack / install Descent shareware files
     if [[ ! -f "$romdir/ports/descent1/descent.hog" ]]; then
-        wget -nv "$D1X_SHARE_URL"
+        wget -nv -O descent-pc-shareware.zip "$D1X_SHARE_URL"
         unzip -o descent-pc-shareware.zip -d "$romdir/ports/descent1"
         rm descent-pc-shareware.zip
     fi
@@ -98,22 +86,6 @@ function configure_dxx-rebirth() {
     if [[ ! -f "$romdir/ports/descent1/d1xr-sc55-music.dxa" ]]; then
         wget -nv -P "$romdir/ports/descent1" "$D1X_OGG_URL"
     fi
-
-    chown -R $user:$user "$romdir/ports/descent1"
-
-    addPort "$md_id" "descent1" "Descent Rebirth" "$md_inst/d1x-rebirth -hogdir $romdir/ports/descent1"
-    
-    # Descent 2
-    mkRomDir "ports/descent2"
-    mkUserDir "$configdir/descent2"
-    
-    # copy any existing configs from ~/.d2x-rebirth and symlink the config folder to $configdir/descent2/
-    if [[ -d "$home/.d2x-rebirth" && ! -h "$home/.d2x-rebirth" ]]; then
-        mv -v "$home/.d2x-rebirth/"* "$configdir/descent2/"
-        rm -rf "$home/.d2x-rebirth"
-    fi
-    
-    ln -snf "$configdir/descent2" "$home/.d2x-rebirth"
     
     # Download / unpack / install Descent 2 shareware files
     if [[ ! -f "$romdir/ports/descent2/D2DEMO.HOG" ]]; then
@@ -127,7 +99,20 @@ function configure_dxx-rebirth() {
         wget -nv -P "$romdir/ports/descent2" "$D2X_OGG_URL"
     fi
 
-    chown -R $user:$user "$romdir/ports/descent2"
+    chown -R $user:$user "$romdir/ports/descent1" "$romdir/ports/descent2"
+}
 
-    addPort "$md_id" "descent2" "Descent 2 Rebirth" "$md_inst/d2x-rebirth -hogdir $romdir/ports/descent2"
+function configure_dxx-rebirth() {
+    local ver
+    local name="Descent Rebirth"
+    for ver in 1 2; do
+        mkRomDir "ports/descent${ver}"
+        [[ "$ver" -eq 2 ]] && name="Descent 2 Rebirth"
+        addPort "$md_id" "descent${ver}" "$name" "$md_inst/d${ver}x-rebirth -hogdir $romdir/ports/descent${ver}"
+
+        # copy any existing configs from ~/.d1x-rebirth and symlink the config folder to $md_conf_root/descent1/
+        moveConfigDir "$home/.d${ver}x-rebirth" "$md_conf_root/descent${ver}/"
+    done
+
+    [[ "$md_mode" == "install" ]] && game_data_dxx-rebirth
 }

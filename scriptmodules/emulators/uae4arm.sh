@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="uae4arm"
 rp_module_desc="Amiga emulator with JIT support"
-rp_module_menus="2+"
+rp_module_help="ROM Extension: .adf\n\nCopy your Amiga roms to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir"
+rp_module_section="opt"
+rp_module_flags="!x86 !mali"
 
 function depends_uae4arm() {
-    getDepends libsdl1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev libguichan-dev
+    getDepends libsdl1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev libguichan-dev libmpg123-dev
 }
 
 function sources_uae4arm() {
@@ -22,7 +24,7 @@ function sources_uae4arm() {
 }
 
 function build_uae4arm() {
-    if isPlatform "rpi"; then
+    if isPlatform "rpi1"; then
         make PLATFORM=rpi1 CPU_FLAGS=""
     else
         make PLATFORM=rpi2 CPU_FLAGS="-mfpu=neon"
@@ -32,24 +34,28 @@ function build_uae4arm() {
 
 function install_uae4arm() {
     md_ret_files=(
-        'conf'
         'data'
-        'kickstarts'
         'uae4arm'
-        'savestates'
-        'screenshots'
     )
 }
 
 function configure_uae4arm() {
     mkRomDir "amiga"
 
-    mkUserDir "$md_inst/conf"
-    
-    # symlinks to optional kickstart roms in our BIOS dir
-    for rom in kick12.rom kick13.rom kick20.rom kick31.rom; do
-        ln -sf "$biosdir/$rom" "$md_inst/kickstarts/$rom"
+    mkUserDir "$md_conf_root/amiga"
+    mkUserDir "$md_conf_root/amiga/$md_id"
+
+    # move config / save folders to $md_conf_root/amiga/$md_id
+    local dir
+    for dir in conf savestates screenshots; do
+        moveConfigDir "$md_inst/$dir" "$md_conf_root/amiga/$md_id/$dir"
     done
+
+    # and kickstart dir (removing old symlinks first)
+    if [[ ! -h "$md_inst/kickstarts" ]]; then
+        rm -f "$md_inst/kickstarts/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
+    fi
+    moveConfigDir "$md_inst/kickstarts" "$biosdir"
 
     cat > "$romdir/amiga/+Start UAE4Arm.sh" << _EOF_
 #!/bin/bash

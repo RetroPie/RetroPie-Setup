@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="wifi"
 rp_module_desc="Configure Wifi"
-rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_section="config"
+rp_module_flags="!x86"
 
 function remove_wifi() {
     sed -i '/RETROPIE CONFIG START/,/RETROPIE CONFIG END/d' "/etc/wpa_supplicant/wpa_supplicant.conf"
@@ -75,7 +75,7 @@ function connect_wifi() {
         cmd=(dialog --backtitle "$__backtitle" --insecure --passwordbox "Please enter the WiFi key/password for $essid" 10 63)
         local key_ok=0
         while [[ $key_ok -eq 0 ]]; do
-            key=$("${cmd[@]}" 2>&1 >/dev/tty)
+            key=$("${cmd[@]}" 2>&1 >/dev/tty) || return
             key_ok=1
             if [[ ${#key} -lt 8 || ${#key} -gt 63 ]] && [[ "$type" == "wpa" ]]; then
                 printMsgs "dialog" "Password must be between 8 and 63 characters"
@@ -117,9 +117,10 @@ $wpa_config
 _EOF_
 
     ifup wlan0 &>/dev/null
+    dialog --backtitle "$__backtitle" --infobox "\nConnecting ..." 5 40 >/dev/tty
     local id=""
     i=0
-    while [[ -z "$id" && $i -lt 20 ]]; do
+    while [[ -z "$id" && $i -lt 30 ]]; do
         sleep 1
         id=$(iwgetid -r)
         ((i++))
@@ -127,7 +128,7 @@ _EOF_
     [[ -z "$id" ]] && printMsgs "dialog" "Unable to connect to network $essid"
 }
 
-function configure_wifi() {
+function gui_wifi() {
     while true; do
         local ip_int=$(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure WiFi\nCurrent IP: $ip_int\nWireless ESSID: $(iwgetid -r)" 22 76 16)

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 #  Many, many thanks go to all people that provide the individual modules!!!
@@ -13,7 +13,8 @@
 
 rp_module_id="lr-prosystem"
 rp_module_desc="Atari 7800 ProSystem emu - ProSystem port for libretro"
-rp_module_menus="2+"
+rp_module_help="ROM Extensions: .a78 .bin .zip\n\nCopy your Atari 7800 roms to $romdir/atari7800\n\nCopy the optional BIOS file 7800 BIOS (U).rom to $biosdir"
+rp_module_section="main"
 
 function sources_lr-prosystem() {
     gitPullOrClone "$md_build" https://github.com/libretro/prosystem-libretro.git

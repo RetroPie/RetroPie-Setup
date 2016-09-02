@@ -1,29 +1,34 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/petrockblog/RetroPie-Setup/master/LICENSE.md.
 #
 
 rp_module_id="zesarux"
 rp_module_desc="ZX Spectrum emulator ZEsarUX"
-rp_module_menus="4+"
-rp_module_flags="dispmanx"
+rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum roms to $romdir/zxspectrum"
+rp_module_section="opt"
+rp_module_flags="dispmanx !mali"
 
 function depends_zesarux() {
-    getDepends libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev
+    local depends=(libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev)
+    isPlatform "x11" && depends+=(libpulse-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_zesarux() {
-    wget -O- -q "http://downloads.petrockblock.com/retropiearchives/ZEsarUX_src-3.0.tar.gz" | tar -xvz --strip-components=1
+    wget -O- -q "$__archive_url/ZEsarUX_src-3.0.tar.gz" | tar -xvz --strip-components=1
 }
 
 function build_zesarux() {
-    ./configure --enable-raspberry --prefix "$md_inst"
+    local params=()
+    isPlatform "rpi" && params+=(--enable-raspberry --disable-pulse)
+    ./configure --prefix "$md_inst" "${params[@]}"
     make clean
     make
     md_ret_require="$md_build/zesarux"
@@ -37,25 +42,22 @@ function install_zesarux() {
 function configure_zesarux() {
     mkRomDir "zxspectrum"
 
-    mkUserDir "$romdir/zxspectrum"
+    mkUserDir "$md_conf_root/zxspectrum"
 
     cat > "$romdir/zxspectrum/+Start ZEsarUX.sh" << _EOF_
 #!/bin/bash
-params="\$1"
-pushd "$md_inst/bin"
-if [[ "\$params" =~ \.sh$ ]]; then
-    ./zesarux
-else
-    ./zesarux "\$params"
-fi
-popd
+"$md_inst/bin/zesarux" "\$@"
 _EOF_
     chmod +x "$romdir/zxspectrum/+Start ZEsarUX.sh"
     chown $user:$user "$romdir/zxspectrum/+Start ZEsarUX.sh"
 
-    ln -sf "$configdir/zxspectrum/.zesaruxrc" "$home/.zesaruxrc"
+    moveConfigFile "$home/.zesaruxrc" "$md_conf_root/zxspectrum/.zesaruxrc"
 
-    cat > "$configdir/zxspectrum/.zesaruxrc" << _EOF_
+    local ao="alsa"
+    isPlatform "x11" && ao="pulse"
+    local config="$(mktemp)"
+    
+    cat > "$config" << _EOF_
 ;ZEsarUX sample configuration file
 ;
 ;Lines beginning with ; or # are ignored
@@ -64,8 +66,9 @@ _EOF_
 --disableborder
 --disablefooter
 --vo sdl
---ao alsa
+--ao $ao
 --hidemousepointer
+--fullscreen
 
 --smartloadpath $romdir/zxspectrum
 
@@ -75,9 +78,12 @@ _EOF_
 ;--joystickevent 3 Fire
 _EOF_
 
-    chown $user:$user "$configdir/zxspectrum/.zesaruxrc"
+    copyDefaultConfig "$config" "$md_conf_root/zxspectrum/.zesaruxrc"
+    rm "$config"
 
-    setDispmanx "$md_id" 1
+    if isPlatform "rpi"; then
+        setDispmanx "$md_id" 1
+    fi
 
     addSystem 1 "$md_id" "zxspectrum" "$romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%" "" ".sh"
 }

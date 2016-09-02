@@ -7,7 +7,7 @@ if [[ -z "$DEVICE" ]] || [[ -z "$DEST" ]]; then
     echo "$0 from/to DEVICE SOURCE/DEST"
     exit 1
 fi
-if [- $(id -u) -ne 0 ]=; then
+if [[ $(id -u) -ne 0 ]]; then
     printf "Script must be run as root."
     exit 1
 fi
