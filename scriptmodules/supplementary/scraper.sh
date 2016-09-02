@@ -155,7 +155,6 @@ function gui_scraper() {
     fi
 
     iniConfig " = " '"' "$configdir/all/scraper.cfg"
-    chown $user:$user "$configdir/all/scraper.cfg"
     eval $(loadModuleConfig \
         'use_thumbs=1' \
         'max_width=400' \
@@ -164,6 +163,7 @@ function gui_scraper() {
         'append_only=0' \
         'use_rom_folder=0' \
     )
+    chown $user:$user "$configdir/all/scraper.cfg"
 
     local default
     while true; do
