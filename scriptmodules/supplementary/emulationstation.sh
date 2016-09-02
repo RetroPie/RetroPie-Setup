@@ -172,24 +172,39 @@ _EOF_
     rp_callModule esthemes install_theme
     
     addAutoConf "es_swap_a_b" 0
+    addAutoConf "disable" 0
 }
 
 function gui_emulationstation() {
     local es_swap=0
     getAutoConf "es_swap_a_b" && es_swap=1
+
+    local disable=0
+    getAutoConf "disable" && disable=1
+
+    local default
+    local options
     while true; do
         local options=(
             1 "Clear/Reset Emulation Station input configuration"
         )
-        if [[ "$es_swap" -eq 0 ]]; then
-            options+=(2 "Swap A/B Buttons in ES (Currently: Default)")
+
+        if [[ "$disable" -eq 0 ]]; then
+            options+=(2 "Auto Configuration (Currently: Enabled)")
         else
-            options+=(2 "Swap A/B Buttons in ES (Currently: Swapped)")
+            options+=(2 "Auto Configuration (Currently: Disabled)")
         fi
 
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+        if [[ "$es_swap" -eq 0 ]]; then
+            options+=(3 "Swap A/B Buttons in ES (Currently: Default)")
+        else
+            options+=(3 "Swap A/B Buttons in ES (Currently: Swapped)")
+        fi
+
+        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Choose an option" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
+        default="$choice"
 
         case "$choice" in
             1)
@@ -199,9 +214,14 @@ function gui_emulationstation() {
                 fi
                 ;;
             2)
+                disable="$((disable ^ 1))"
+                setAutoConf "disable" "$disable"
+                ;;
+            3)
                 es_swap="$((es_swap ^ 1))"
                 setAutoConf "es_swap_a_b" "$es_swap"
                 printMsgs "dialog" "You will need to reconfigure you controller in Emulation Station for the changes to take effect."
+                ;;
         esac
     done
 }
