@@ -14,7 +14,7 @@ rp_module_desc="USB ROM Service"
 rp_module_section="config"
 
 function depends_usbromservice() {
-    local depends=(rsync ntfs-3g)
+    local depends=(rsync ntfs-3g exfat-fuse)
     if [[ "$__raspbian_ver" -gt 7 ]]; then
         if ! hasPackage usbmount 0.0.24; then
             depends+=(debhelper devscripts pmount lockfile-progs)
@@ -48,10 +48,13 @@ function enable_usbromservice() {
     sed -i -e "s/USERTOBECHOSEN/$user/g" /etc/usbmount/mount.d/01_retropie_copyroms
     chmod +x /etc/usbmount/mount.d/01_retropie_copyroms
     iniConfig "=" '"' /etc/usbmount/usbmount.conf
-    iniGet "FILESYSTEMS"
-    if [[ "$ini_value" != *ntfs* ]]; then
-        iniSet "FILESYSTEMS" "$ini_value ntfs"
-    fi
+    local fs
+    for fs in ntfs exfat; do
+        iniGet "FILESYSTEMS"
+        if [[ "$ini_value" != *$fs* ]]; then
+            iniSet "FILESYSTEMS" "$ini_value $fs"
+        fi
+    done
     iniGet "MOUNTOPTIONS"
     local uid=$(id -u $user)
     local gid=$(id -g $user)
