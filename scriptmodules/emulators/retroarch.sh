@@ -104,6 +104,7 @@ function configure_retroarch() {
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     iniSet "assets_directory" "$md_inst/assets"
     iniSet "overlay_directory" "$md_inst/overlays"
+    iniSet "menu_driver" "rgui"
     isPlatform "x11" && iniSet "video_fullscreen" "true"
 
     # set default render resolution to 640x480 for rpi1
