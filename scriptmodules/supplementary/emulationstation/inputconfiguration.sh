@@ -217,4 +217,4 @@ configdir="$rootdir/configs"
 
 source "$rootdir/lib/inifuncs.sh"
 
-inputconfiguration
+getAutoConf "disable" || inputconfiguration

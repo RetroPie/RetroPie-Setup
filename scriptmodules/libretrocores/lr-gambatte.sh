@@ -19,9 +19,9 @@ function sources_lr-gambatte() {
 }
 
 function build_lr-gambatte() {
-    make -C libgambatte -f Makefile.libretro clean
-    make -C libgambatte -f Makefile.libretro
-    md_ret_require="$md_build/libgambatte/gambatte_libretro.so"
+    make -f Makefile.libretro clean
+    make -f Makefile.libretro
+    md_ret_require="$md_build/gambatte_libretro.so"
 }
 
 function install_lr-gambatte() {
@@ -29,7 +29,7 @@ function install_lr-gambatte() {
         'COPYING'
         'changelog'
         'README'
-        'libgambatte/gambatte_libretro.so'
+        'gambatte_libretro.so'
     )
 }
 
