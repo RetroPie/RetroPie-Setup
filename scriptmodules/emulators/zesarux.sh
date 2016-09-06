@@ -89,5 +89,5 @@ _EOF_
 
     addSystem 1 "$md_id" "zxspectrum" "$romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%"
     addSystem 1 "$md_id" "samcoupe" "$romdir/zxspectrum/+Start\ ZEsarUX.sh --machine sam %ROM%"
-    addSystem 0 "$md_id" "amstradcpc" "$romdir/zxspectrum/+Start\ ZEsarUX.sh --machine CPC464 %ROM%"
+    addSystem 1 "$md_id" "amstradcpc" "$romdir/zxspectrum/+Start\ ZEsarUX.sh --machine CPC464 %ROM%"
 }
