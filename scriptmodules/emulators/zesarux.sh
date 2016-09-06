@@ -22,7 +22,7 @@ function depends_zesarux() {
 }
 
 function sources_zesarux() {
-    wget -O- -q "$__archive_url/ZEsarUX_src-3.0.tar.gz" | tar -xvz --strip-components=1
+    wget -O- -q "$__archive_url/ZEsarUX_src-4.1.tar.gz" | tar -xvz --strip-components=1
 }
 
 function build_zesarux() {
@@ -41,6 +41,8 @@ function install_zesarux() {
 
 function configure_zesarux() {
     mkRomDir "zxspectrum"
+    mkRomDir "amstradcpc"
+    mkRomDir "samcoupe"
 
     mkUserDir "$md_conf_root/zxspectrum"
 
@@ -53,7 +55,7 @@ _EOF_
 
     moveConfigFile "$home/.zesaruxrc" "$md_conf_root/zxspectrum/.zesaruxrc"
 
-    local ao="alsa"
+    local ao="sdl"
     isPlatform "x11" && ao="pulse"
     local config="$(mktemp)"
     
@@ -76,14 +78,16 @@ _EOF_
 
 ;Remap Fire Event. Uncomment and amend if you wish to change the default button 3.
 ;--joystickevent 3 Fire
+;Remap On-screen keyboard. Uncomment and amend if you wish to change the default button 5.
+;--joystickevent 5 Osdkeyboard
 _EOF_
 
     copyDefaultConfig "$config" "$md_conf_root/zxspectrum/.zesaruxrc"
     rm "$config"
 
-    if isPlatform "rpi"; then
-        setDispmanx "$md_id" 1
-    fi
+    setDispmanx "$md_id" 1
 
-    addSystem 1 "$md_id" "zxspectrum" "$romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%" "" ".sh"
+    addSystem 1 "$md_id" "zxspectrum" "$romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%"
+    addSystem 1 "$md_id" "samcoupe" "$romdir/zxspectrum/+Start\ ZEsarUX.sh --machine sam %ROM%"
+    addSystem 0 "$md_id" "amstradcpc" "$romdir/zxspectrum/+Start\ ZEsarUX.sh --machine CPC464 %ROM%"
 }
