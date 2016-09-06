@@ -22,7 +22,7 @@ function depends_zesarux() {
 }
 
 function sources_zesarux() {
-    wget -O- -q "$__archive_url/ZEsarUX_src-3.0.tar.gz" | tar -xvz --strip-components=1
+    wget -O- -q "http://downloads.sourceforge.net/project/zesarux/ZEsarUX-4.1/ZEsarUX_src-4.1.tar.gz" | tar -xvz --strip-components=1
 }
 
 function build_zesarux() {
@@ -53,7 +53,7 @@ _EOF_
 
     moveConfigFile "$home/.zesaruxrc" "$md_conf_root/zxspectrum/.zesaruxrc"
 
-    local ao="alsa"
+    local ao="sdl"
     isPlatform "x11" && ao="pulse"
     local config="$(mktemp)"
     
@@ -76,6 +76,8 @@ _EOF_
 
 ;Remap Fire Event. Uncomment and amend if you wish to change the default button 3.
 ;--joystickevent 3 Fire
+;Remap On-screen keyboard. Uncomment and amend if you wish to change the default button 5.
+;--joystickevent 5 Osdkeyboard
 _EOF_
 
     copyDefaultConfig "$config" "$md_conf_root/zxspectrum/.zesaruxrc"
