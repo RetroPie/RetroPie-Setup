@@ -36,7 +36,7 @@ function depends_fs-uae() {
     esac
 }
 
-function install_fs-uae() {
+function install_bin_fs-uae() {
     aptInstall fs-uae fs-uae-launcher fs-uae-arcade
 }
 
