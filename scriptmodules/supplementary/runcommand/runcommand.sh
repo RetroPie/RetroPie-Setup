@@ -255,17 +255,19 @@ function load_mode_defaults() {
             mode_new_id="$mode_def_rom"
         fi
 
-        # load default framebuffer res for emulator / rom
-        iniGet "$fb_save_emu"
-        if [[ -n "$ini_value" ]]; then
-            fb_def_emu="$ini_value"
-            fb_new="$fb_def_emu"
-        fi
+        if [[ -z "$DISPLAY" ]]; then
+            # load default framebuffer res for emulator / rom
+            iniGet "$fb_save_emu"
+            if [[ -n "$ini_value" ]]; then
+                fb_def_emu="$ini_value"
+                fb_new="$fb_def_emu"
+            fi
 
-        iniGet "$fb_save_rom"
-        if [[ -n "$ini_value" ]]; then
-            fb_def_rom="$ini_value"
-            fb_new="$fb_def_rom"
+            iniGet "$fb_save_rom"
+            if [[ -n "$ini_value" ]]; then
+                fb_def_rom="$ini_value"
+                fb_new="$fb_def_rom"
+            fi
         fi
 
         iniGet "$save_emu_render"
@@ -308,7 +310,7 @@ function main_menu() {
                 8 "Select RetroArch render res for $emulator ($render_res)"
                 9 "Edit custom RetroArch config for this rom"
             )
-        else
+        elif [[ -z "$DISPLAY" ]]; then
             options+=(
                 10 "Select framebuffer res for $emulator ($fb_def_emu)"
                 11 "Select framebuffer res for $emulator + rom ($fb_def_rom)"
