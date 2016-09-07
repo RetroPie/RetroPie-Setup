@@ -39,9 +39,14 @@ function build_ps3controller() {
 }
 
 function install_ps3controller() {
+    local branch="$1"
+    [[ -z "$branch" ]] && branch="ps3"
+
     cd sixad
     checkinstall -y --fstrans=no
     insserv sixad
+
+    echo "$branch" >"$md_inst/type.txt"
 
     if [[ "$__raspbian_ver" -ge "8" ]]; then
         # Disable timeouts
@@ -60,34 +65,51 @@ function remove_ps3controller() {
     dpkg --purge sixad
     rm -f /etc/udev/rules.d/99-sixpair.rules
     rm -f /etc/udev/rules.d/10-local.rules
-    rm -rf "$md_inst"
     # just incase permissions were not restored
     [[ -f /usr/sbin/bluetoothd ]] && chmod 755 /usr/sbin/bluetoothd
 }
 
 function pair_ps3controller() {
-    if [[ ! -f "/usr/sbin/sixpair" ]]; then
+    local branch="$1"
+    [[ -z "$branch" ]] && branch="ps3"
+
+    if [[ ! -f "$md_inst/type.txt" || "$(<"$md_inst/type.txt")" != "$branch" ]]; then
         local mode
-        local branch="$1"
-        for mode in depends sources build install; do
+        for mode in sources build install clean; do
             rp_callModule ps3controller $mode $branch
         done
+        return
     fi
 
-    printMsgs "dialog" "The driver and configuration tools for connecting PS3 controllers have been installed. \n\nPlease connect your PS3 controller now or anytime to its USB connection, to setup Bluetooth connection. \n\nAfterwards disconnect your PS3 controller from its USB connection, and press the PS button to connect via Bluetooth."
+    printMsgs "dialog" "Please connect your PS3 controller now or anytime to its USB connection, to setup Bluetooth connection. \n\nAfterwards disconnect your PS3 controller from its USB connection, and press the PS button to connect via Bluetooth."
     # enable old behaviour. run "sixad-helper sixpair" "now" for users who do not read info text 
     sixad-helper sixpair
 }
 
 function gui_ps3controller() {
+    declare -A drivers
+    drivers["ps3"]="official ps3"
+    drivers["gasia"]="clone support gasia"
+    drivers["gasia-only"]="gasia only"
+    drivers["shanwan"]="clone support shanwan"
+
     printMsgs "dialog" "NOTE: You cannot currently use PS3 controllers with other bluetooth devices. The PS3 controller driver disables the standard bluetooth stack. If you want to use a wireless keyboard along with your PS3 controllers you can use 2.4ghz wireless devices that come with their own dongle."
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
     while true; do
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
-        local options=(
-            1 "Install/Pair PS3 controller"
-            2 "Install/Pair PS3 controller (clone support gasia)"
-            3 "Install/Pair PS3 controller (gasia only)"
-            4 "Install/Pair PS3 controller (clone support shanwan)"
+        local i=1
+        local options=()
+        local installed
+        local id
+        for id in ps3 gasia gasia-only shanwan; do
+            installed=""
+            if [[ -f "$md_inst/type.txt" && "$(<"$md_inst/type.txt")" == "$id" ]]; then
+                options+=("$i" "Pair PS3 controller (${drivers[$id]})")
+            else
+                options+=("$i" "Install PS3 driver (${drivers[$id]})")
+            fi
+            ((i++))
+        done
+        options+=(
             5 "Remove PS3 controller configurations"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -107,7 +129,7 @@ function gui_ps3controller() {
                     ;;
                 5)
                     rp_callModule "$md_id" remove
-                    printMsgs "dialog" "Removed PS3 controller configurations"
+                    break
                     ;;
             esac
         else
