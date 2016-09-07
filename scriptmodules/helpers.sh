@@ -834,6 +834,7 @@ function addPort() {
     local port="$2"
     local file="$romdir/ports/$3.sh"
     local cmd="$4"
+    local game="$5"
 
     mkUserDir "$romdir/ports"
 
@@ -845,7 +846,7 @@ function addPort() {
     if [[ -t 0 ]]; then
         cat >"$file" << _EOF_
 #!/bin/bash
-"$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ $port
+"$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ "$port" "$game"
 _EOF_
     else
         cat >"$file"
@@ -862,7 +863,7 @@ _EOF_
             delSystem "$id" "ports"
         fi
     else
-        addSystem 1 "$id" "$port pc ports" "$cmd"
+        [[ -n "$cmd" ]] && addSystem 1 "$id" "$port pc ports" "$cmd"
     fi
 }
 

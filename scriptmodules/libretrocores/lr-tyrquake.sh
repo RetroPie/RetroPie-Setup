@@ -53,13 +53,37 @@ function game_data_lr-tyrquake() {
     fi
 }
 
+function _add_games_lr-tyrquake() {
+    local cmd="$1"
+    declare -A games
+    games['id1']="Quake"
+    games['id1/hipnotic']="Quake Mission Pack 1 (hipnotic)"
+    games['id1/rogue']="Quake Mission Pack 2 (rogue)"
+
+    local dir
+    local pak
+    for dir in "${!games[@]}"; do
+        pak="$romdir/ports/quake/$dir/pak0.pak"
+        if [[ -f "$pak" ]]; then
+            addPort "$md_id" "quake" "${games[$dir]}" "$cmd" "$pak"
+        else
+            rm -f "$romdir/ports/quake/${games[$dir]}.sh"
+        fi
+    done
+    exit
+}
+
+function add_games_lr-tyrquake() {
+    _add_games_lr-tyrquake "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $md_conf_root/quake/retroarch.cfg %ROM%"
+}
+
 function configure_lr-tyrquake() {
     setConfigRoot "ports"
 
-    addPort "$md_id" "quake" "Quake" "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $md_conf_root/quake/retroarch.cfg $romdir/ports/quake/id1/pak0.pak"
+    [[ "$md_mode" == "install" ]] && game_data_lr-tyrquake
+
+    add_games_lr-tyrquake
 
     mkRomDir "ports/quake"
     ensureSystemretroconfig "ports/quake"
-
-    [[ "$md_mode" == "install" ]] && game_data_lr-tyrquake
 }
