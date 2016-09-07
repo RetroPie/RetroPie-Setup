@@ -24,10 +24,11 @@ function sources_uae4arm() {
 }
 
 function build_uae4arm() {
+    make clean
     if isPlatform "rpi1"; then
-        make PLATFORM=rpi1 CPU_FLAGS=""
+        CXXFLAGS="" make PLATFORM=rpi1 CPU_FLAGS="$CXXFLAGS"
     else
-        make PLATFORM=rpi2 CPU_FLAGS="-mfpu=neon"
+        CXXFLAGS="" make PLATFORM=rpi2 CPU_FLAGS="$CXXFLAGS"
     fi
     md_ret_require="$md_build/uae4arm"
 }
