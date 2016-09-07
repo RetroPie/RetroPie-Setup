@@ -1,0 +1,4 @@
+fullscreen = 1
+keep_aspect = 1
+scanlines = 0
+floppy_drive_speed = 100
