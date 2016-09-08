@@ -70,7 +70,6 @@ function _add_games_lr-tyrquake() {
             rm -f "$romdir/ports/quake/${games[$dir]}.sh"
         fi
     done
-    exit
 }
 
 function add_games_lr-tyrquake() {
