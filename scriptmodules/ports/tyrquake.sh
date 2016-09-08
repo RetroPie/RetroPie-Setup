@@ -48,6 +48,9 @@ function add_games_tyrquake() {
 function configure_tyrquake() {
     mkRomDir "ports/quake"
 
+    mkUserDir "$md_conf_root/quake"
+    moveConfigDir "$home/.tyrquake" "$md_conf_root/quake/tyrquake"
+
     [[ "$md_mode" == "install" ]] && game_data_lr-tyrquake
 
     add_games_tyrquake
