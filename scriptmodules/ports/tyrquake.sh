@@ -39,19 +39,18 @@ function install_tyrquake() {
 }
 
 function add_games_tyrquake() {
+    _add_games_lr-tyrquake "$md_inst/bin/tyr-quake -basedir $romdir/ports/quake -game %QUAKEDIR%"
     if isPlatform "x11"; then
-        addSystem 1 "$md_id-gl" "quake pc ports" "$md_inst/bin/tyr-glquake -path $romdir/ports/quake/id1/pak0.pak $romdir/ports/quake/id1/pak1.pak %ROM%"
+        addSystem 1 "$md_id-gl" "quake pc ports" "$md_inst/bin/tyr-glquake -basedir $romdir/ports/quake -game %QUAKEDIR%"
     fi
-    _add_games_lr-tyrquake "$md_inst/bin/tyr-quake -path $romdir/ports/quake/id1/pak0.pak $romdir/ports/quake/id1/pak1.pak %ROM%"
 }
 
 function configure_tyrquake() {
     mkRomDir "ports/quake"
 
-    mkUserDir "$md_conf_root/quake"
-    moveConfigDir "$home/.tyrquake" "$md_conf_root/quake/tyrquake"
-
     [[ "$md_mode" == "install" ]] && game_data_lr-tyrquake
 
     add_games_tyrquake
+
+    moveConfigDir "$home/.tyrquake" "$md_conf_root/quake/tyrquake"
 }

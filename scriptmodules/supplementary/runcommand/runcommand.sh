@@ -674,6 +674,7 @@ function get_sys_command() {
 
     rom_bn="${rom##*/}"
     rom_bn="${rom_bn%.*}"
+
     appsave=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
 
     if [[ ! -f "$emu_conf" ]]; then
@@ -711,6 +712,13 @@ function get_sys_command() {
     # replace tokens
     command="${command/\%ROM\%/\"$rom\"}"
     command="${command/\%BASENAME\%/\"$rom_bn\"}"
+
+    # special case to get the last 2 folders for quake games for the -game parameter
+    # remove everything up to /quake/
+    local quake_dir="${rom##*/quake/}"
+    # remove filename
+    local quake_dir="${quake_dir%/*}"
+    command="${command/\%QUAKEDIR\%/\"$quake_dir\"}"
 
     # if it starts with CON: it is a console application (so we don't redirect stdout later)
     if [[ "$command" == CON:* ]]; then
