@@ -55,8 +55,6 @@ function install_sdl1() {
         apt-get -y -f install
     fi
     echo "libsdl1.2-dev hold" | dpkg --set-selections
-    # remove unused sdl1dispmanx library
-    rm -rf "$rootdir/supplementary/sdl1dispmanx"
 }
 
 function install_bin_sdl1() {
