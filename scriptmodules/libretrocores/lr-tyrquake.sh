@@ -78,11 +78,11 @@ function add_games_lr-tyrquake() {
 
 function configure_lr-tyrquake() {
     setConfigRoot "ports"
+    mkRomDir "ports/quake"
 
     [[ "$md_mode" == "install" ]] && game_data_lr-tyrquake
 
     add_games_lr-tyrquake
 
-    mkRomDir "ports/quake"
     ensureSystemretroconfig "ports/quake"
 }
