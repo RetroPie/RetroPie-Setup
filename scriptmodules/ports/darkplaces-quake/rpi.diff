@@ -14,10 +14,10 @@ index 9e76ac9..ba491dc 100644
  cvar_t gl_max_lightmapsize = {CVAR_SAVE, "gl_max_lightmapsize", "1024", "maximum allowed texture size for lightmap textures, use larger values to improve rendering speed, as long as there is enough video memory available (setting it too high for the hardware will cause very bad performance)"};
  cvar_t gl_picmip = {CVAR_SAVE, "gl_picmip", "0", "reduces resolution of textures by powers of 2, for example 1 will halve width/height, reducing texture memory usage by 75%"};
 diff --git a/makefile b/makefile
-index 59504d1..7eae83c 100644
+index 59504d1..73b3032 100644
 --- a/makefile
 +++ b/makefile
-@@ -128,6 +128,40 @@ ifeq ($(DP_MAKE_TARGET), linux)
+@@ -128,6 +128,37 @@ ifeq ($(DP_MAKE_TARGET), linux)
  	DP_LINK_CRYPTO_RIJNDAEL?=dlopen
  endif
  
@@ -29,9 +29,6 @@ index 59504d1..7eae83c 100644
 +	OBJ_CL=$(OBJ_GLX)
 +	OBJ_ICON=
 +	OBJ_ICON_NEXUIZ=
-+
-+	CFLAGS+=
-+	LDFLAGS+=
 +
 +	LDFLAGS_CL=$(LDFLAGS_LINUXCL)
 +	LDFLAGS_SV=$(LDFLAGS_LINUXSV)
