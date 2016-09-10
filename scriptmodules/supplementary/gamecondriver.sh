@@ -84,6 +84,10 @@ function install_bin_gamecondriver() {
     fi
 }
 
+function remove_gamecondriver() {
+    aptRemove db9-gpio-rpi-dkms gamecon-gpio-rpi-dkms
+}
+
 function gui_gamecondriver() {
     ! hasPackage gamecon-gpio-rpi-dkms && return 0
 
