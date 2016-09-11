@@ -15,6 +15,7 @@ rp_module_section="opt"
 rp_module_flags="!arm"
 
 function depends_openpht() {
+    getDepends pulseaudio-utils
     addUdevInputRules
 }
 
@@ -42,6 +43,7 @@ function install_bin_openpht() {
 
 function remove_openpht() {
     aptRemove openpht
+    rp_callModule openpht depends remove
 }
 
 function configure_openpht() {
