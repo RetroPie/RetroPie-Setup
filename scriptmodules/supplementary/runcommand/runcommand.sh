@@ -729,26 +729,35 @@ function get_sys_command() {
 }
 
 function show_launch() {
-    local image=""
-    if [[ "$use_art" -eq 1 ]]; then
-        local image_paths=(
-            "$HOME/RetroPie/roms/$system/images"
-            "$HOME/.emulationstation/downloaded_images/$system"
-        )
+    local images
 
-        local path
-        for path in "${image_paths[@]}"; do
-            if [[ -f "$path/${rom_bn}-image.jpg" ]]; then
-                image="$path/${rom_bn}-image.jpg"
-                break
-            elif [[ -f "$path/${rom_bn}-image.png" ]]; then
-                image="$path/${rom_bn}-image.png"
-                break
-            fi
-        done
+    if [[ "$use_art" -eq 1 ]]; then
+        # if using art look for images in paths for es art.
+        images=(
+            "$HOME/RetroPie/roms/$system/images/${rom_bn}-image"
+            "$HOME/.emulationstation/downloaded_images/$system/${rom_bn}-image"
+        )
+    else
+        # otherwise see if the user has a custom launching image
+        images=(
+            "$configdir/$system/launching"
+            "$configdir/all/launching"
+        )
     fi
 
-    if [[ -n "$image" ]]; then
+    local image
+    local path
+    local ext
+    for image in "${images[@]}"; do
+        for ext in jpg png; do
+            if [[ -f "$image.$ext" ]]; then
+                image="$image.$ext"
+                break 2
+            fi
+        done
+    done
+
+    if [[ -z "$DISPLAY" && -n "$image" ]]; then
         fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
     elif [[ "$disable_menu" -ne 1 ]]; then
         local launch_name
