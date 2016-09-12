@@ -846,6 +846,7 @@ if [[ "$console_out" -eq 1 ]]; then
     # turn cursor on
     tput cnorm
     eval $command </dev/tty 2>>"$log"
+    tput civis
 else
     eval $command </dev/tty &>>"$log"
 fi
@@ -869,7 +870,5 @@ fi
 [[ "$command" =~ retroarch ]] && retroarchIncludeToEnd "$conf_root/retroarch.cfg"
 
 user_script "runcommand-onend.sh"
-
-tput cnorm
 
 exit 0
