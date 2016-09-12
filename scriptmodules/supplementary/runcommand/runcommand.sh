@@ -748,10 +748,10 @@ function show_launch() {
     local image
     local path
     local ext
-    for image in "${images[@]}"; do
+    for path in "${images[@]}"; do
         for ext in jpg png; do
-            if [[ -f "$image.$ext" ]]; then
-                image="$image.$ext"
+            if [[ -f "$path.$ext" ]]; then
+                image="$path.$ext"
                 break 2
             fi
         done
