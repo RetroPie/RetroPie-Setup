@@ -15,6 +15,7 @@ rp_module_section="opt"
 rp_module_flags="!arm"
 
 function depends_openpht() {
+    getDepends pulseaudio-utils
     addUdevInputRules
 }
 
