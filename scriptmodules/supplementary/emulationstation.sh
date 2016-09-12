@@ -18,9 +18,11 @@ function _get_input_cfg_emulationstation() {
 }
 
 function _update_hook_emulationstation() {
-    # make sure the input configuration scripts are installed on update
-    # due to auto conf logic change and their connection to the iniFuncs which is always updated
-    rp_isInstalled "$md_idx" && copy_inputscripts_emulationstation
+    # make sure the input configuration scripts and launch script are always up to date
+    if rp_isInstalled "$md_idx"; then
+        copy_inputscripts_emulationstation
+        install_launch_emulationstation
+    fi
 }
 
 function depends_emulationstation() {
@@ -93,6 +95,49 @@ function copy_inputscripts_emulationstation() {
     chmod +x "$md_inst/scripts/inputconfiguration.sh"
 }
 
+function install_launch_emulationstation() {
+    cat > /usr/bin/emulationstation << _EOF_
+#!/bin/bash
+
+if [[ \$(id -u) -eq 0 ]]; then
+    echo "emulationstation should not be run as root. If you used 'sudo emulationstation' please run without sudo."
+    exit 1
+fi
+
+if [[ "\$(uname --machine)" != *86* ]]; then
+    if [[ -n "\$(pidof X)" ]]; then
+        echo "X is running. Please shut down X in order to mitigate problems with losing keyboard input. For example, logout from LXDE."
+        exit 1
+    fi
+fi
+
+clear
+"$md_inst/emulationstation.sh" "\$@"
+tput cnorm
+
+_EOF_
+    chmod +x /usr/bin/emulationstation
+
+    if isPlatform "x11"; then
+        mkdir -p /usr/local/share/{icons,applications}
+        cp "$scriptdir/scriptmodules/$md_type/emulationstation/retropie.svg" "/usr/local/share/icons/"
+        cat > /usr/local/share/applications/retropie.desktop << _EOF_
+[Desktop Entry]
+Type=Application
+Exec=gnome-terminal --full-screen -e emulationstation
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[de_DE]=RetroPie
+Name=rpie
+Comment[de_DE]=RetroPie
+Comment=retropie
+Icon=/usr/local/share/icons/retropie.svg
+Categories=Game
+_EOF_
+    fi
+}
+
 function clear_input_emulationstation() {
     rm "$(_get_input_cfg_emulationstation)"
     init_input_emulationstation
@@ -115,25 +160,7 @@ function configure_emulationstation() {
 
     copy_inputscripts_emulationstation
 
-    cat > /usr/bin/emulationstation << _EOF_
-#!/bin/bash
-
-if [[ \$(id -u) -eq 0 ]]; then
-    echo "emulationstation should not be run as root. If you used 'sudo emulationstation' please run without sudo."
-    exit 1
-fi
-
-if [[ "\$(uname --machine)" != *86* ]]; then
-    if [[ -n "\$(pidof X)" ]]; then
-        echo "X is running. Please shut down X in order to mitigate problems with losing keyboard input. For example, logout from LXDE."
-        exit 1
-    fi
-fi
-
-clear
-"$md_inst/emulationstation.sh" "\$@"
-
-_EOF_
+    install_launch_emulationstation
 
     if isPlatform "rpi"; then
         # make sure that ES has enough GPU memory
@@ -143,28 +170,6 @@ _EOF_
         iniSet "gpu_mem_1024" 256
         iniSet "overscan_scale" 1
     fi
-
-    if isPlatform "x11"; then
-        mkdir -p /usr/local/share/icons
-        mkdir -p /usr/local/share/applications
-        cp "$scriptdir/scriptmodules/$md_type/emulationstation/retropie.svg" "/usr/local/share/icons/"
-        cat > /usr/local/share/applications/retropie.desktop << _EOF_
-[Desktop Entry]
-Type=Application
-Exec=gnome-terminal --full-screen -e emulationstation
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-Name[de_DE]=RetroPie
-Name=rpie
-Comment[de_DE]=RetroPie
-Comment=retropie
-Icon=/usr/local/share/icons/retropie.svg
-Categories=Game
-_EOF_
-    fi
-
-    chmod +x /usr/bin/emulationstation
 
     mkdir -p "/etc/emulationstation"
     
