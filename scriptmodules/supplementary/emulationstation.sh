@@ -112,6 +112,7 @@ if [[ "\$(uname --machine)" != *86* ]]; then
 fi
 
 clear
+tput civis
 "$md_inst/emulationstation.sh" "\$@"
 tput cnorm
 
