@@ -751,13 +751,28 @@ function show_launch() {
     if [[ -n "$image" ]]; then
         fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
     elif [[ "$disable_menu" -ne 1 ]]; then
-        local launch_name
-        if [[ -n "$rom_bn" ]]; then
-            launch_name="$rom_bn ($emulator)"
+        # checking for a custom "launching" images
+        for path in "$configdir/$system" "$configdir/all" ; do
+            if [[ -f "$path/launching.jpg" ]]; then
+                image="$path/launching.jpg"
+                break
+            elif [[ -f "$path/launching.png" ]]; then
+                image="$path/launching.png"
+                break
+            fi
+        done
+        # display the custom "launching" image if it was found
+        if [[ -n "$image" ]]; then
+            fbi -1 -t 5 -noverbose -a "$image" </dev/tty &>/dev/null &
         else
-            launch_name="$emulator"
+            local launch_name
+            if [[ -n "$rom_bn" ]]; then
+                launch_name="$rom_bn ($emulator)"
+            else
+                launch_name="$emulator"
+            fi
+            DIALOGRC="$configdir/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to $log" 9 60
         fi
-        DIALOGRC="$configdir/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to $log" 9 60
     fi
 }
 
