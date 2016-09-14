@@ -106,9 +106,9 @@ function gui_retropie-manager() {
     while true; do
         rpmanager_status="$($md_inst/rpmanager.sh --isrunning)"
         if _is_enabled_retropie-manager; then
-            rpmanager_status+="\n\nRetroPie-Manager is currently enabled on boot"
+            rpmanager_status+="RetroPie-Manager is currently enabled on boot"
         else
-            rpmanager_status+="\n\nRetroPie-Manager is currently disabled on boot"
+            rpmanager_status+="RetroPie-Manager is currently disabled on boot"
         fi
         cmd=(dialog --backtitle "$__backtitle" --menu "$rpmanager_status\n\nChoose an option." 22 86 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
