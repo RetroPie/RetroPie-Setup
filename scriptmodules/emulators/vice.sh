@@ -32,7 +32,7 @@ function sources_vice() {
 }
 
 function build_vice() {
-    local params=(--enable-sdlui2 --disable-catweasel --without-arts)
+    local params=(--enable-sdlui2 --disable-catweasel --without-arts --without-oss)
     ! isPlatform "x11" && params+=(--without-pulse)
     ./configure --prefix="$md_inst" "${params[@]}"
     make
