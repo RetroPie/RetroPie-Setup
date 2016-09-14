@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
@@ -35,30 +35,29 @@ function build_retropie-manager() {
 function install_retropie-manager() {
     make install
     md_ret_files=(
-    "compass"
-    "bin"
-    "project"
-    "lib"
-    "include"
-    "deployment"
-    "pip-requirements"
-    "manage.py"
-    "Gruntfile.js"
-    "db.sqlite3"
-    "__init__.py"
-    "rpmanager.sh"
-)
+        "compass"
+        "bin"
+        "project"
+        "lib"
+        "include"
+        "deployment"
+        "pip-requirements"
+        "manage.py"
+        "Gruntfile.js"
+        "db.sqlite3"
+        "__init__.py"
+        "rpmanager.sh"
+    )
     chown -R "$user:$user" "$md_inst"
 
     touch "$home/RetroPie/retropiemenu/retropie-manager.rp"
-    chown "$user:$user" "$home/RetroPie/retropiemenu/retropie-manager.rp"
+    chown $user:$user "$home/RetroPie/retropiemenu/retropie-manager.rp"
 }
 
 function _is_enabled_retropie-manager() {
     grep -q 'rpmanager\.sh.*--start' /etc/rc.local
     return $?
 }
-
 
 function enable_retropie-manager() {
     local config="\"$md_inst/rpmanager.sh\" --start --user "$user" 2>\&1 > /dev/shm/rpmanager.log \&"
@@ -70,7 +69,7 @@ function enable_retropie-manager() {
     fi
 
     sed -i "/rpmanager\.sh.*--start/d" /etc/rc.local
-    sed -i "s|^exit 0$|${config}\\nexit 0|" /etc/rc.local && \
+    sed -i "s|^exit 0$|${config}\\nexit 0|" /etc/rc.local
     printMsgs "dialog" "RetroPie-Manager enabled in /etc/rc.local\n\nIt will be started on next boot."
 }
 
@@ -119,16 +118,16 @@ function gui_retropie-manager() {
                     dialog --infobox "Starting RetroPie-Manager" 4 30 2>&1 >/dev/tty
                     error_msg="$("$md_inst/rpmanager.sh" --start 2>&1 >/dev/null)" \
                     || printMsgs "dialog" "$error_msg"
-                ;;
+                    ;;
 
-                2)  
+                2)
                     dialog --infobox "Stopping RetroPie-Manager" 4 30 2>&1 >/dev/tty
                     error_msg="$("$md_inst/rpmanager.sh" --stop 2>&1 >/dev/null)" \
                     || printMsgs "dialog" "$error_msg"
-                ;;
+                    ;;
 
                 3)  enable_retropie-manager
-                ;;
+                    ;;
 
                 4)  disable_retropie-manager
                 ;;
