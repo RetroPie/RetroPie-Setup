@@ -96,8 +96,9 @@ function gui_retropie-manager() {
     local error_msg
 
     while true; do
-        rpmanager_status="$($md_inst/rpmanager.sh --isrunning)"
-        [[ -n "$rpmanager_status" ]] && rpmanager_status+="\n\n"
+        if [[ -f "$md_inst/rpmanager.sh" ]]; then
+            rpmanager_status="$($md_inst/rpmanager.sh --isrunning)\n\n"
+        fi
         if _is_enabled_retropie-manager; then
             rpmanager_status+="RetroPie-Manager is currently enabled on boot"
         else
