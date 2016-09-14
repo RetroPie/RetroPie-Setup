@@ -15,21 +15,12 @@ rp_module_help="Open your browser and go to http://your_retropie_ip:8000/"
 rp_module_section="exp"
 
 function depends_retropie-manager() {
-    local depends=(python-dev)
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        depends+=(virtualenv)
-    else
-        depends+=(python-virtualenv)
-    fi
+    local depends=(python-dev virtualenv)
     getDepends "${depends[@]}"
 }
 
 function sources_retropie-manager() {
     gitPullOrClone "$md_build" "https://github.com/botolo78/RetroPie-Manager.git"
-}
-
-function build_retropie-manager() {
-    md_ret_require="$md_build"
 }
 
 function install_retropie-manager() {
@@ -48,10 +39,11 @@ function install_retropie-manager() {
         "__init__.py"
         "rpmanager.sh"
     )
-    chown -R "$user:$user" "$md_inst"
+    chown -R $user:$user "$md_inst"
 
-    touch "$home/RetroPie/retropiemenu/retropie-manager.rp"
-    chown $user:$user "$home/RetroPie/retropiemenu/retropie-manager.rp"
+    mkUserDir "$datadir/retropiemenu"
+    touch "$datadir/retropiemenu/retropie-manager.rp"
+    chown $user:$user "$datadir/retropiemenu/retropie-manager.rp"
 }
 
 function _is_enabled_retropie-manager() {
@@ -79,7 +71,7 @@ function disable_retropie-manager() {
           --yesno "Are you sure you want to disable RetroPie-Manager on boot?" \
           22 76 2>&1 >/dev/tty || return
 
-        sed -i "/rpmanager\.sh.*--start/d" /etc/rc.local && \
+        sed -i "/rpmanager\.sh.*--start/d" /etc/rc.local
         printMsgs "dialog" "RetroPie-Manager configuration in /etc/rc.local has been removed."
     else
         printMsgs "dialog" "RetroPie-Manager was already disabled in /etc/rc.local."
@@ -105,6 +97,7 @@ function gui_retropie-manager() {
 
     while true; do
         rpmanager_status="$($md_inst/rpmanager.sh --isrunning)"
+        [[ -n "$rpmanager_status" ]] && rpmanager_status+="\n\n"
         if _is_enabled_retropie-manager; then
             rpmanager_status+="RetroPie-Manager is currently enabled on boot"
         else
@@ -130,7 +123,7 @@ function gui_retropie-manager() {
                     ;;
 
                 4)  disable_retropie-manager
-                ;;
+                    ;;
             esac
         else
             break
