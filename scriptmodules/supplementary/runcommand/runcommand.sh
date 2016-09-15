@@ -737,13 +737,12 @@ function show_launch() {
             "$HOME/RetroPie/roms/$system/images/${rom_bn}-image"
             "$HOME/.emulationstation/downloaded_images/$system/${rom_bn}-image"
         )
-    else
-        # otherwise see if the user has a custom launching image
-        images=(
-            "$configdir/$system/launching"
-            "$configdir/all/launching"
-        )
     fi
+    images=(
+        "${images[@]}"
+        "$configdir/$system/launching"
+        "$configdir/all/launching"
+    )
 
     local image
     local path
