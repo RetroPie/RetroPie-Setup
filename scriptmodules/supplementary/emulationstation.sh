@@ -125,7 +125,7 @@ _EOF_
         cat > /usr/local/share/applications/retropie.desktop << _EOF_
 [Desktop Entry]
 Type=Application
-Exec=gnome-terminal --full-screen -e emulationstation
+Exec=gnome-terminal --full-screen --hide-menubar -e emulationstation
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
