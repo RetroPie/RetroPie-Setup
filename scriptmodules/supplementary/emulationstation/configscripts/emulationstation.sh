@@ -54,7 +54,7 @@ function map_emulationstation_joystick() {
         rightbottom|rightshoulder)
             key="pagedown"
             ;;
-        up|right|down|left|start|select)
+        up|right|down|left|start|select|x|y)
             key="$input_name"
             ;;
         a)
