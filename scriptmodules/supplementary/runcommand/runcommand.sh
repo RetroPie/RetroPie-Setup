@@ -763,7 +763,7 @@ function show_launch() {
         else
             fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
         fi
-    elif [[ "$disable_menu" -ne 1 ]]; then
+    elif [[ "$disable_menu" -ne 1 && "$use_art" -ne 1 ]]; then
         local launch_name
         if [[ -n "$rom_bn" ]]; then
             launch_name="$rom_bn ($emulator)"
