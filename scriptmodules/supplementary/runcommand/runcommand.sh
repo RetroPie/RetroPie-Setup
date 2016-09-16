@@ -729,21 +729,21 @@ function get_sys_command() {
 }
 
 function show_launch() {
-    local images
+    local images=()
 
     if [[ "$use_art" -eq 1 ]]; then
         # if using art look for images in paths for es art.
-        images=(
+        images+=(
             "$HOME/RetroPie/roms/$system/images/${rom_bn}-image"
             "$HOME/.emulationstation/downloaded_images/$system/${rom_bn}-image"
         )
-    else
-        # otherwise see if the user has a custom launching image
-        images=(
-            "$configdir/$system/launching"
-            "$configdir/all/launching"
-        )
     fi
+
+    # look for custom launching images
+    images+=(
+        "$configdir/$system/launching"
+        "$configdir/all/launching"
+    )
 
     local image
     local path
