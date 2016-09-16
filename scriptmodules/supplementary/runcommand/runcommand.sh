@@ -738,6 +738,10 @@ function show_launch() {
             "$HOME/.emulationstation/downloaded_images/$system/${rom_bn}-image"
         )
     fi
+    images+=(
+        "$configdir/$system/launching"
+        "$configdir/all/launching"
+    )
 
     # look for custom launching images
     images+=(
