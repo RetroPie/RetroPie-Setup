@@ -10,6 +10,7 @@
 #
 
 import sys, struct, time, fcntl, termios, signal
+import curses
 
 #    struct js_event {
 #        __u32 time;     /* event timestamp in milliseconds */
@@ -38,14 +39,23 @@ signal.signal(signal.SIGINT, signal_handler)
 button_codes = []
 axis_codes = []
 
+curses.setupterm()
+
+def get_hex_chars(key_str):
+    if (key_str.startswith("0x")):
+        return key_str[2:].decode('hex')
+    else:
+        return curses.tigetstr(key_str)
+
 i = 0
 for arg in sys.argv[2:]:
+    chars = get_hex_chars(arg)
     if i < 4:
-        axis_codes.append(arg)
+        axis_codes.append(chars)
     else:
-        button_codes.append(arg)
+        button_codes.append(chars)
     i += 1
-
+  
 event_format = 'IhBB'
 event_size = struct.calcsize(event_format)
 
@@ -98,5 +108,5 @@ while True:
 
     if hex_chars:
         last_press = time.time()
-        for c in hex_chars.decode('hex'):
+        for c in hex_chars:
             fcntl.ioctl(tty_fd, termios.TIOCSTI, c)

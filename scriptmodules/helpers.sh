@@ -693,7 +693,7 @@ _EOF_
 function joy2keyStart() {
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
-        params=(1b5b44 1b5b43 1b5b41 1b5b42 0a 20)
+        params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
     fi
     # check if joy2key is installed
     [[ ! -f "$rootdir/supplementary/runcommand/joy2key.py" ]] && return 1

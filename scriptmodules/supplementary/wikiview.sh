@@ -65,7 +65,7 @@ function gui_wikiview() {
                         file=$(choose_wikipage_wikiview "$wikidir" ".*.md" ".*_.*")
                         if [[ -n "$file" ]]; then
                             joy2keyStop
-                            joy2keyStart 00 00 1b5b327e 1b5b337e 20 71
+                            joy2keyStart 0x00 0x00 kich1 kdch1 0x20 0x71
                             pandoc "$wikidir/$file" | lynx -localhost -restrictions=all -stdin >/dev/tty
                             joy2keyStop
                             joy2keyStart
