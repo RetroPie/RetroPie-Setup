@@ -20,26 +20,13 @@ function depends_retropie-manager() {
 }
 
 function sources_retropie-manager() {
-    gitPullOrClone "$md_build" "https://github.com/botolo78/RetroPie-Manager.git"
+    gitPullOrClone "$md_inst" "https://github.com/botolo78/RetroPie-Manager.git"
 }
 
 function install_retropie-manager() {
-    make install
-    md_ret_files=(
-        "compass"
-        "bin"
-        "project"
-        "lib"
-        "include"
-        "deployment"
-        "pip-requirements"
-        "manage.py"
-        "Gruntfile.js"
-        "db.sqlite3"
-        "__init__.py"
-        "rpmanager.sh"
-    )
-    chown -R $user:$user "$md_inst"
+    cd "$md_inst"
+    chown -R "$user:$user"  "$md_inst"
+    sudo -u $user make install
 
     mkUserDir "$datadir/retropiemenu"
     touch "$datadir/retropiemenu/retropie-manager.rp"
