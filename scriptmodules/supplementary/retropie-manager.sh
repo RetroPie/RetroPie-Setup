@@ -67,7 +67,7 @@ function disable_retropie-manager() {
 
 function remove_retropie-manager() {
     sed -i "/rpmanager\.sh.*--start/d" /etc/rc.local
-    rm -f "$home/RetroPie/retropiemenu/retropie-manager.rp"
+    rm -f "$datadir/retropiemenu/retropie-manager.rp"
 }
 
 function gui_retropie-manager() {
