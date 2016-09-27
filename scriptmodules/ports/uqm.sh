@@ -62,6 +62,10 @@ function install_bin_uqm() {
     fi
 }
 
+function remove_uqm() {
+    aptRemove uqm uqm-content uqm-music uqm-voice
+}
+
 function configure_uqm() {
     addPort "$md_id" "uqm" "Ur-quan Masters" "uqm -f"
 }

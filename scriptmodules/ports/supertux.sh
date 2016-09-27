@@ -22,6 +22,10 @@ function _update_hook_supertux() {
 function install_bin_supertux() {
     aptInstall supertux
 }
+
+function remove_supertux() {
+    aptRemove supertux
+}
  
 function configure_supertux() {
     addPort "$md_id" "supertux" "SuperTux" "supertux"

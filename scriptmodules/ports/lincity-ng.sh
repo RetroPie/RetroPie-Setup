@@ -27,6 +27,10 @@ function install_bin_lincity-ng() {
     aptInstall lincity-ng
 }
 
+function remove_lincity-ng() {
+    aptRemove lincity-ng
+}
+
 function configure_lincity-ng() {
     if isPlatform "x11"; then
         addPort "$md_id" "lincity-ng" "LinCity-NG" "/usr/games/lincity-ng"

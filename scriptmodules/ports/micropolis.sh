@@ -22,6 +22,10 @@ function install_bin_micropolis() {
     aptInstall micropolis
 }
 
+function remove_micropolis() {
+    aptRemove micropolis
+}
+
 function configure_micropolis() {
     if isPlatform "x11"; then
         addPort "$md_id" "micropolis" "Micropolis" "/usr/games/micropolis"

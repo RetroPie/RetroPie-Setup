@@ -22,6 +22,10 @@ function _update_hook_openttd() {
 function install_bin_openttd() {
     aptInstall openttd
 }
+
+function remove_openttd() {
+    aptRemove openttd
+}
  
 function configure_openttd() {
     addPort "$md_id" "openttd" "OpenTTD" "openttd"

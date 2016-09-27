@@ -19,6 +19,10 @@ function install_bin_pcsx2() {
     aptInstall pcsx2
 }
 
+function remove_pcsx2() {
+    aptRemove pcsx2
+}
+
 function configure_pcsx2() {
     mkRomDir "ps2"
 

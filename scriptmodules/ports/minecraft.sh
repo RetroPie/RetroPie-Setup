@@ -23,6 +23,10 @@ function install_bin_minecraft() {
     aptInstall minecraft-pi
 }
 
+function remove_minecraft() {
+    aptRemove minecraft-pi
+}
+
 function configure_minecraft() {
     addPort "$md_id" "minecraft" "Minecraft" "xinit $md_inst/Minecraft.sh"
 
