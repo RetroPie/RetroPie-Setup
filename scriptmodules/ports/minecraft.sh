@@ -14,11 +14,6 @@ rp_module_desc="Minecraft - Pi Edition"
 rp_module_section="exp"
 rp_module_flags="!mali !x86"
 
-function _update_hook_minecraft() {
-    # to show as installed in retropie-setup 4.x
-    hasPackage minecraft-pi && mkdir -p "$md_inst"
-}
-
 function depends_minecraft() {
     getDepends xorg matchbox
 }
