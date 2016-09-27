@@ -19,10 +19,11 @@ function depends_minecraft() {
 }
 
 function install_bin_minecraft() {
+    [[ -f "$md_inst/minecraft-pi" ]] && rm -rf "$md_inst/"*
     aptInstall minecraft-pi
 }
 
-function configure_minecraftpi() {
+function configure_minecraft() {
     addPort "$md_id" "minecraft" "Minecraft - Pi Edition" "xinit $md_inst/Minecraft.sh"
 
     cat >"$md_inst/Minecraft.sh" << _EOF_
@@ -32,6 +33,4 @@ matchbox-window-manager &
 /usr/bin/minecraft-pi
 _EOF_
     chmod +x "$md_inst/Minecraft.sh"
-
-
 }
