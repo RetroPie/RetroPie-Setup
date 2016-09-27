@@ -24,7 +24,7 @@ function install_bin_minecraft() {
 }
 
 function configure_minecraft() {
-    addPort "$md_id" "minecraft" "Minecraft - Pi Edition" "xinit $md_inst/Minecraft.sh"
+    addPort "$md_id" "minecraft" "Minecraft" "xinit $md_inst/Minecraft.sh"
 
     cat >"$md_inst/Minecraft.sh" << _EOF_
 #!/bin/bash
