@@ -9,34 +9,34 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="minecraftpi"
+rp_module_id="minecraft"
 rp_module_desc="Minecraft - Pi Edition"
 rp_module_section="exp"
 rp_module_flags="!mali !x86"
 
-function _update_hook_minecraftpi() {
+function _update_hook_minecraft() {
     # to show as installed in retropie-setup 4.x
     hasPackage minecraft-pi && mkdir -p "$md_inst"
 }
 
-function depends_minecraftpi() {
+function depends_minecraft() {
     getDepends xorg matchbox
 }
 
-function install_bin_minecraftpi() {
+function install_bin_minecraft() {
     aptInstall minecraft-pi
 }
 
 function configure_minecraftpi() {
-    addPort "$md_id" "minecraft" "Minecraft - Pi Edition" "xinit $md_inst/MinecraftPi.sh"
+    addPort "$md_id" "minecraft" "Minecraft - Pi Edition" "xinit $md_inst/Minecraft.sh"
 
-    cat >"$md_inst/MinecraftPi.sh" << _EOF_
+    cat >"$md_inst/Minecraft.sh" << _EOF_
 #!/bin/bash
 xset -dpms s off s noblank
 matchbox-window-manager &
 /usr/bin/minecraft-pi
 _EOF_
-    chmod +x "$md_inst/MinecraftPi.sh"
+    chmod +x "$md_inst/Minecraft.sh"
 
 
 }
