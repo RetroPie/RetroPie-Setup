@@ -20,7 +20,7 @@ function depends_fuse() {
 }
 
 function sources_fuse() {
-    wget -O- -q $__archive_url/fuse-1.1.1.tar.gz | tar -xvz --strip-components=1  
+    wget -O- -q $__archive_url/fuse-1.1.1.tar.gz | tar -xvz --strip-components=1
     mkdir libspectrum
     wget -O- -q $__archive_url/libspectrum-1.1.1.tar.gz | tar -xvz --strip-components=1 -C libspectrum
     if ! isPlatform "x11"; then

@@ -23,7 +23,7 @@ function build_lr-desmume() {
     local params=()
     isPlatform "arm" && params+=("platform=armvhardfloat")
     make -f Makefile.libretro clean
-    make -f Makefile.libretro "${params[@]}" 
+    make -f Makefile.libretro "${params[@]}"
     md_ret_require="$md_build/desmume/desmume_libretro.so"
 }
 
@@ -35,7 +35,7 @@ function install_lr-desmume() {
 
 function configure_lr-desmume() {
     mkRomDir "nds"
-    ensureSystemretroconfig "nds" 
+    ensureSystemretroconfig "nds"
 
     addSystem 0 "$md_id" "nds" "$md_inst/desmume_libretro.so"
 }

@@ -55,7 +55,7 @@ function sup_enableSNESDevAtStart() {
 
     case $1 in
         1)
-            iniSet "button_enabled" "0" 
+            iniSet "button_enabled" "0"
             iniSet "gamepad1_enabled" "1"
             iniSet "gamepad2_enabled" "1"
             ;;

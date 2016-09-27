@@ -226,7 +226,7 @@ function map_retroarch_joystick() {
             ;;
     esac
 
-    
+
     local key
     local value
     for key in "${keys[@]}"; do

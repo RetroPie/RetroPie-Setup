@@ -45,7 +45,7 @@ function configure_gngeopi() {
 
     # move old config to new location
     moveConfigDir "$home/.gngeo" "$md_conf_root/neogeo"
-    
+
     if [[ ! -f "$md_conf_root/neogeo/gngeorc" ]]; then
         # add default controls for keyboard p1/p2
         cat > "$md_conf_root/neogeo/gngeorc" <<\_EOF_

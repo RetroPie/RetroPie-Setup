@@ -13,7 +13,7 @@ function onstart_reicast_joystick() {
     local device_type="$1"
     local device_name="$2"
     local file
-    
+
     case "$device_name" in
         "Xbox 360 Controller (xpad driver)")
             file="$configdir/dreamcast/mappings/controller_xpad.cfg"
@@ -165,7 +165,7 @@ function map_reicast_joystick() {
     for key in "${keys[@]}"; do
         # read key value. Axis takes two key/axis values.
         case "$input_type" in
-            axis) 
+            axis)
                 # key "X/Y Axis" needs different button naming
                 if [[ "$key" == "btn_trigger_left" ]] ; then
                     iniSet "axis_trigger_left" "$input_id"
@@ -180,7 +180,7 @@ function map_reicast_joystick() {
                     iniSet "axis_x" "$input_id"
                     iniSet "axis_x_inverted" "no"
                 elif [[ "$key" == *axis* ]] ; then
-                    case "$device_name" in 
+                    case "$device_name" in
                         "Xbox 360 Controller (xpad driver)"|"Xbox 360 Controller (xboxdrv userspace driver)"|"Microsoft X-Box 360 pad"|"Xbox Gamepad (userspace driver)"|"Xbox 360 Wireless Receiver (XBOX)"|"Microsoft X-Box One pad"|"Microsoft X-Box pad (Japan)"|"Chinese-made Xbox Controller")
                             if [[ "$input_id" -gt 2 && "$input_id" -lt 5 ]]; then
                                 input_id=$(($input_id+13))
@@ -198,7 +198,7 @@ function map_reicast_joystick() {
                     # input_id must be recalculated: 288d = button 0
                     input_id=$(($input_id+288))
                     # workaround for specific controller button mismatch
-                    case "$device_name" in 
+                    case "$device_name" in
                         "Xbox 360 Controller (xpad driver)"|"Xbox 360 Controller (xboxdrv userspace driver)"|"Microsoft X-Box 360 pad"|"Xbox Gamepad (userspace driver)"|"Xbox 360 Wireless Receiver (XBOX)"|"Microsoft X-Box One pad"|"Microsoft X-Box pad (Japan)"|"Chinese-made Xbox Controller")
                             if [[ "$input_id" -lt "294" ]]; then
                                 input_id=$(($input_id+16))
@@ -218,7 +218,7 @@ function onend_reicast_joystick() {
     local device_type="$1"
     local device_name="$2"
     local file
-    
+
     case "$device_name" in
         "Xbox 360 Controller (xpad driver)")
             file="$configdir/dreamcast/mappings/controller_xpad.cfg"
@@ -230,7 +230,7 @@ function onend_reicast_joystick() {
             file="$configdir/dreamcast/mappings/controller_${device_name// /}.cfg"
             ;;
     esac
-    
+
     # add empty end line
     echo "" >> "$file"
 }

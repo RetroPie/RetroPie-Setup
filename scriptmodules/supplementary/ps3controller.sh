@@ -24,7 +24,7 @@ function depends_ps3controller() {
 function sources_ps3controller() {
     local branch="$1"
     [[ "$branch" == "gasia-only" ]] && branch="master"
-    
+
     gitPullOrClone "$md_build/sixad" https://github.com/RetroPie/sixad.git $branch
 }
 
@@ -32,7 +32,7 @@ function build_ps3controller() {
     local branch="$1"
     local params=("DEVICE_SHORT_NAME=1")
     [[ "$branch" == "gasia-only" ]] && params+=("GASIA_GAMEPAD_HACKS=1")
-    
+
     cd sixad
     make clean
     make "${params[@]}"
@@ -82,7 +82,7 @@ function pair_ps3controller() {
     fi
 
     printMsgs "dialog" "Please connect your PS3 controller now or anytime to its USB connection, to setup Bluetooth connection. \n\nAfterwards disconnect your PS3 controller from its USB connection, and press the PS button to connect via Bluetooth."
-    # enable old behaviour. run "sixad-helper sixpair" "now" for users who do not read info text 
+    # enable old behaviour. run "sixad-helper sixpair" "now" for users who do not read info text
     sixad-helper sixpair
 }
 

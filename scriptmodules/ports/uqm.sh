@@ -38,7 +38,7 @@ function build_uqm() {
     cd uqm-0.6.2.dfsg
     dpkg-buildpackage -us -uc
 }
- 
+
 function install_uqm() {
     cp -v *.deb "$md_inst"
     # uqm is missing on raspbian jessie

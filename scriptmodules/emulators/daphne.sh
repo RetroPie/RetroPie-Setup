@@ -51,7 +51,7 @@ function configure_daphne() {
         cp -v "$scriptdir/scriptmodules/$md_type/$md_id/dapinput.ini" "$md_conf_root/daphne/dapinput.ini"
     fi
     ln -snf "$romdir/daphne/roms" "$md_inst/roms"
-    ln -sf "$md_conf_root/$md_id/dapinput.ini" "$md_inst/dapinput.ini" 
+    ln -sf "$md_conf_root/$md_id/dapinput.ini" "$md_inst/dapinput.ini"
 
     cat >"$md_inst/daphne.sh" <<_EOF_
 #!/bin/bash

@@ -173,10 +173,10 @@ function configure_emulationstation() {
     fi
 
     mkdir -p "/etc/emulationstation"
-    
+
     # ensure we have a default theme
     rp_callModule esthemes install_theme
-    
+
     addAutoConf "es_swap_a_b" 0
     addAutoConf "disable" 0
 }

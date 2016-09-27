@@ -102,7 +102,7 @@ function choose_splashscreen() {
     local i=0
     while read splashdir; do
         splashdir=${splashdir/$path\//}
-        if echo "$splashdir" | grep -q "$regex"; then 
+        if echo "$splashdir" | grep -q "$regex"; then
             options+=("$i" "$splashdir")
             ((i++))
         fi

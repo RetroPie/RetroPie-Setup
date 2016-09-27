@@ -33,7 +33,7 @@ function install_lr-reicast() {
 
 function configure_lr-reicast() {
     mkRomDir "dreamcast"
-    ensureSystemretroconfig "dreamcast" 
+    ensureSystemretroconfig "dreamcast"
 
     # symlink bios
     mkUserDir "$biosdir/dc"

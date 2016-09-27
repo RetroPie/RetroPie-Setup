@@ -41,7 +41,7 @@ function configure_lr-mess() {
     ensureSystemretroconfig "coleco"
     ensureSystemretroconfig "arcadia"
     ensureSystemretroconfig "crvision"
-    
+
     setRetroArchCoreOption "mame_softlists_enable" "enabled"
     setRetroArchCoreOption "mame_softlists_auto_media" "enabled"
     setRetroArchCoreOption "mame_boot_from_cli" "enabled"

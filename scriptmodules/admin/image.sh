@@ -24,7 +24,7 @@ function chroot_image() {
     mkdir -p mnt/boot chroot
     local image=$(ls -1 *-raspbian-jessie-lite.img 2>/dev/null)
     if [[ ! -f "$image" ]]; then
-        wget -c -O "raspbian_lite.zip" https://downloads.raspberrypi.org/raspbian_lite_latest 
+        wget -c -O "raspbian_lite.zip" https://downloads.raspberrypi.org/raspbian_lite_latest
         unzip "raspbian_lite.zip"
         image=$(unzip -Z -1 "raspbian_lite.zip")
         rm "raspbian_lite.zip"
@@ -55,7 +55,7 @@ function install_rp_image() {
 
     # unmount on ctrl+c
     trap _umount_chroot INT
-    
+
     # mount special filesytems to chroot
     mkdir -p chroot/dev/pts
     mount none -t devpts chroot/dev/pts
@@ -66,7 +66,7 @@ function install_rp_image() {
 
     # so we can resolve inside the chroot
     echo "nameserver 192.168.1.1" >chroot/etc/resolv.conf
-    
+
     # hostname to retropie
     echo "retropie" >chroot/etc/hostname
     sed -i "s/raspberrypi/retropie/" chroot/etc/hosts
@@ -175,7 +175,7 @@ function create_image() {
     # copy files
     printMsgs "console" "Rsyncing chroot to $image ..."
     rsync -aAHX --numeric-ids  chroot/ mnt/
-    
+
     # unmount
     umount mnt/boot mnt
     rm -rf mnt
@@ -185,7 +185,7 @@ function create_image() {
 
     printMsgs "console" "Compressing $image ..."
     gzip -f "$image"
-    
+
     popd
 }
 

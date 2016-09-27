@@ -70,6 +70,6 @@ function configure_eduke32() {
 
     # remove old launch script
     rm -f "$romdir/ports/Duke3D Shareware.sh"
-    
+
     [[ "$md_mode" == "install" ]] && game_data_eduke32
 }

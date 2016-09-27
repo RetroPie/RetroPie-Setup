@@ -53,7 +53,7 @@ function game_data_oricutron() {
 
 function configure_oricutron() {
     mkRomDir "oric"
-    
+
     local machine
     local default
     for machine in atmos oric1 o16k telestrat pravetz; do

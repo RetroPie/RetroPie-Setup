@@ -48,6 +48,6 @@ function configure_lr-prboom() {
 
     cp prboom.wad "$romdir/ports/doom/"
     chown $user:$user "$romdir/ports/doom/prboom.wad"
-    
+
     [[ "$md_mode" == "install" ]] && game_data_lr-prboom
 }

@@ -58,7 +58,7 @@ _EOF_
     local ao="sdl"
     isPlatform "x11" && ao="pulse"
     local config="$(mktemp)"
-    
+
     cat > "$config" << _EOF_
 ;ZEsarUX sample configuration file
 ;

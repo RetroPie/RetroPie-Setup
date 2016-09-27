@@ -83,7 +83,7 @@ function configure_wolf4sdl() {
 
     setDispmanx "$md_id" 1
     configure_dispmanx_on_wolf4sdl
-    
+
     [[ "$md_mode" == "install" ]] && game_data_wolf4sdl
 }
 

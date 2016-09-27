@@ -170,7 +170,7 @@ function get_platform() {
                 __platform="odroid-c1"
                 ;;
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
-                __platform="imx6" 
+                __platform="imx6"
                 ;;
             *)
                 case $architecture in

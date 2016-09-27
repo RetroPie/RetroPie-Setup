@@ -372,7 +372,7 @@ function rp_registerModule() {
         __mod_desc["$module_idx"]="$rp_module_desc"
         __mod_help["$module_idx"]="$rp_module_help"
         __mod_section["$module_idx"]="$rp_module_section"
-        __mod_flags["$module_idx"]="$rp_module_flags" 
+        __mod_flags["$module_idx"]="$rp_module_flags"
 
         # id to idx mapping via associative array
         __mod_id_to_idx["$rp_module_id"]="$module_idx"
@@ -390,7 +390,7 @@ function rp_registerModuleDir() {
 
 function rp_registerAllModules() {
     rp_registerModuleDir 100 "emulators"
-    rp_registerModuleDir 200 "libretrocores" 
+    rp_registerModuleDir 200 "libretrocores"
     rp_registerModuleDir 300 "ports"
     rp_registerModuleDir 800 "supplementary"
     rp_registerModuleDir 900 "admin"

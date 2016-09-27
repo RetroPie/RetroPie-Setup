@@ -46,6 +46,6 @@ function install_lr-yabause() {
 function configure_lr-yabause() {
     mkRomDir "saturn"
     ensureSystemretroconfig "saturn"
-    
+
     addSystem 1 "$md_id" "saturn" "$md_inst/yabause_libretro.so"
 }

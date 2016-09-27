@@ -37,7 +37,7 @@ function build_lr-ppsspp() {
     cd ffmpeg
     build_ffmpeg_ppsspp
     cd "$md_build"
-    
+
     make -C libretro clean
     local params=()
     isPlatform "rpi" && params+=("platform=rpi2")

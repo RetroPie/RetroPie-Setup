@@ -86,7 +86,7 @@ function game_data_dxx-rebirth() {
     if [[ ! -f "$romdir/ports/descent1/d1xr-sc55-music.dxa" ]]; then
         wget -nv -P "$romdir/ports/descent1" "$D1X_OGG_URL"
     fi
-    
+
     # Download / unpack / install Descent 2 shareware files
     if [[ ! -f "$romdir/ports/descent2/D2DEMO.HOG" ]]; then
         wget -nv "$D2X_SHARE_URL"

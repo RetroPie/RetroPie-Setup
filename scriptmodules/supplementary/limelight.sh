@@ -20,10 +20,10 @@ function depends_limelight() {
 
 function sources_limelight() {
     gitPullOrClone "$md_build" "https://github.com/stsfin/RetropieLimelightInstaller.git"
-    
+
     wget https://github.com/irtimmer/limelight-embedded/releases/download/v1.2.2/libopus.so
     wget https://github.com/irtimmer/limelight-embedded/releases/download/v1.2.2/limelight.jar
-    
+
     # Download limelight simple theme
     wget https://github.com/stsfin/RetropieLimelightInstaller/releases/download/1.3.1/theme.xml
     wget https://github.com/stsfin/RetropieLimelightInstaller/releases/download/1.3.1/limelight.png
@@ -45,7 +45,7 @@ function install_limelight() {
     )
 }
 
-function configure_limelight() { 
+function configure_limelight() {
     # Create romdir limelight
     mkRomDir "limelight"
 

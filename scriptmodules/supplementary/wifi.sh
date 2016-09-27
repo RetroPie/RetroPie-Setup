@@ -103,7 +103,7 @@ function connect_wifi() {
             wpa_config+="\tkey_mgmt=NONE\n"
             ;;
     esac
-    
+
     [[ $hidden -eq 1 ]] &&  wpa_config+="\tscan_ssid=1\n"
 
     remove_wifi
