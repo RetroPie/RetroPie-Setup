@@ -12,7 +12,7 @@
 rp_module_id="lr-glupen64"
 rp_module_desc="N64 emu - GLupeN64 for libretro"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
-rp_module_section="opt"
+rp_module_section="main"
 rp_module_flags="!mali"
 
 function sources_lr-glupen64() {
