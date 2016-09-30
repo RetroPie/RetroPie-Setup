@@ -695,8 +695,6 @@ function joy2keyStart() {
     if [[ "${#params[@]}" -eq 0 ]]; then
         params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
     fi
-    # check if joy2key is installed
-    [[ ! -f "$rootdir/supplementary/runcommand/joy2key.py" ]] && return 1
 
     # get the first joystick device (if not already set)
     [[ -z "$__joy2key_dev" ]] && __joy2key_dev="$(ls -1 /dev/input/js* 2>/dev/null | head -n1)"
@@ -705,7 +703,7 @@ function joy2keyStart() {
     [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
 
     # if joy2key.py is installed run it with cursor keys for axis, and enter + space for buttons 0 and 1
-    if "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
+    if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
         __joy2key_pid=$!
         return 0
     fi
