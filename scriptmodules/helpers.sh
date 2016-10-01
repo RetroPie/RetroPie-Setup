@@ -9,6 +9,14 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
+## @file helpers.sh
+## @brief RetroPie helpers library
+## @copyright GPLv3
+
+## @fn printMsgs()
+## @param type style of display to use - dialog, console or heading
+## @param message string or array of messages to display
+## @brief Prints messages in a variety of ways
 function printMsgs() {
     local type="$1"
     shift
@@ -22,16 +30,27 @@ function printMsgs() {
     done
 }
 
+## @fn printHeading()
+## @param message string or array of messages to display
+## @brief Calls PrintMsgs with "heading" type
 function printHeading() {
     printMsgs "heading" "$@"
 }
 
+## @fn fatalError()
+## @param message string or array of messages to display
+## @brief Calls PrintMsgs with "heading" type, and exits immediately
 function fatalError() {
     printHeading "Error"
     echo "$1"
     exit 1
 }
 
+# @fn fnExists()
+# @param name name of function to check for
+# @brief Checks if function name exists.
+# @retval 0 if the function name exists
+# @retval 1 if the function name does not exist
 function fnExists() {
     declare -f "$1" > /dev/null
     return $?
@@ -45,6 +64,10 @@ function ask() {
     esac
 }
 
+## @fn runCmd()
+## @param command command to run
+## @brief Calls command and record any non zero return codes for later printing.
+## @return whatever the command returns.
 function runCmd() {
     local ret
     "$@"
@@ -55,6 +78,12 @@ function runCmd() {
     return $ret
 }
 
+## @fn hasFlag()
+## @param string string to search in
+## @param flag flag to search for
+## @brief Checks for a flag in a string (consisting of space separated flags).
+## @retval 0 if the flag was found
+## @retval 1 if the flag was not found
 function hasFlag() {
     local string="$1"
     local flag="$2"
@@ -67,6 +96,9 @@ function hasFlag() {
     fi
 }
 
+## @fn isPlatform()
+## @param platform
+## @brief Test for current platform / platform flags.
 function isPlatform() {
     local flag="$1"
     if hasFlag "$__platform $__platform_flags" "$flag"; then
@@ -75,6 +107,10 @@ function isPlatform() {
     return 1
 }
 
+## @fn addLineToFile()
+## @param line line to add
+## @param file file to add line to
+## @brief Adds a new line of text to a file.
 function addLineToFile() {
     if [[ -f "$2" ]]; then
         cp -p "$2" "$2.bak"
@@ -85,6 +121,9 @@ function addLineToFile() {
     echo "$1" >> "$2"
 }
 
+## @fn editFile()
+## @param file file to edit
+## @brief Opens an editing dialog for specified file.
 function editFile() {
     local file="$1"
     local cmd=(dialog --backtitle "$__backtitle" --editbox "$file" 22 76)
@@ -92,6 +131,13 @@ function editFile() {
     [[ -n "$choice" ]] && echo "$choice" >"$file"
 }
 
+## @fn hasPackage()
+## @param package name of Debian package
+## @param version requested version (optional)
+## @param comparison type of comparison - defaults to `ge` (greater than or equal) if a version parameter is provided.
+## @brief Test for an installed Debian package / package version.
+## @retval 0 if the requested package / version was installed
+## @retval 1 if the requested package / version was not installed
 function hasPackage() {
     local pkg="$1"
     local req_ver="$2"
@@ -111,6 +157,8 @@ function hasPackage() {
     return 1
 }
 
+## @fn aptUpdate()
+## @brief Calls apt-get update (if it has not been called before).
 function aptUpdate() {
     if [[ "$__apt_update" != "1" ]]; then
         apt-get update
@@ -118,18 +166,29 @@ function aptUpdate() {
     fi
 }
 
+## @fn aptInstall()
+## @param packages package / space separated list of packages to install
+## @brief Calls apt-get install with the packages provided.
 function aptInstall() {
     aptUpdate
     apt-get install -y "$@"
     return $?
 }
 
+## @fn aptRemove()
+## @param packages package / space separated list of packages to install
+## @brief Calls apt-get remove with the packages provided.
 function aptRemove() {
     aptUpdate
     apt-get remove -y "$@"
     return $?
 }
 
+## @fn getDepends()
+## @param packages package / space separated list of packages to install
+## @brief Installs packages if they are not installed.
+## @retval 0 on success
+## @retval 1 on failure
 function getDepends() {
     local required
     local packages=()
@@ -215,6 +274,11 @@ function getDepends() {
     return 0
 }
 
+
+## @fn rpSwap()
+## @param command *on* to add swap if needed and *off* to remove later
+## @param memory total memory needed (swap added = memory needed - available memory)
+## @brief Adds additional swap to the system if needed.
 function rpSwap() {
     local command=$1
     local swapfile="$__swapdir/swap"
@@ -240,7 +304,11 @@ function rpSwap() {
     esac
 }
 
-# clones or updates the sources of a repository $2 into the directory $1
+## @fn gitPullOrClone()
+## @param dest destination directory
+## @param repo repository to clone or pull from
+## @param branch branch to clone or pull from (optional)
+## @brief Git clones or pulls a repository.
 function gitPullOrClone() {
     local dir="$1"
     local repo="$2"
@@ -260,6 +328,8 @@ function gitPullOrClone() {
     fi
 }
 
+# @fn ensureRootdirExists()
+# @brief Makes sure some required retropie directories and files are created.
 function ensureRootdirExists() {
     mkdir -p "$rootdir"
     mkUserDir "$datadir"
@@ -280,17 +350,26 @@ function ensureRootdirExists() {
     chown $user:$user "$config"
 }
 
+## @fn rmDirExists()
+## @param dir directory to remove
+## @brief Removes a directory and all contents if it exists.
 function rmDirExists() {
     if [[ -d "$1" ]]; then
         rm -rf "$1"
     fi
 }
 
+## @fn mkUserDir()
+## @param dir directory to create
+## @brief Creates a directory owned by the current user.
 function mkUserDir() {
     mkdir -p "$1"
     chown $user:$user "$1"
 }
 
+## @fn mkRomDir()
+## @param dir rom directory to create
+## @brief Creates a directory under $romdir owned by the current user.
 function mkRomDir() {
     mkUserDir "$romdir/$1"
     if [[ "$1" == "megadrive" ]]; then
@@ -300,6 +379,10 @@ function mkRomDir() {
     fi
 }
 
+## @fn moveConfigDir()
+## @param from source directory
+## @param to destination directory
+## @brief Moves the contents of a folder and symlinks to the new location.
 function moveConfigDir() {
     local from="$1"
     local to="$2"
@@ -326,6 +409,10 @@ function moveConfigDir() {
     chown -h $user:$user "$from"
 }
 
+## @fn moveConfigFile()
+## @param from source file
+## @param to destination file
+## @brief Moves the file and symlinks to the new location.
 function moveConfigFile() {
     local from="$1"
     local to="$2"
@@ -345,11 +432,25 @@ function moveConfigFile() {
     chown -h $user:$user "$from"
 }
 
+## @fn diffFiles()
+## @param file1 file to compare
+## @param file2 file to compare
+## @brief Compares two files using diff.
+## @retval 0 if the files were the same
+## @retval 1 if they were not
+## @retval >1 an error occured
 function diffFiles() {
     diff -q "$1" "$2" >/dev/null
     return $?
 }
 
+## @fn copyDefaultConfig()
+## @param from source file
+## @param to destination file
+## @brief Copies a default configuration.
+## @details Copies from the source file to the destination file if the destination
+## file doesn't exist. If the destination is the same nothing is done. If different
+## the source is copied to `$destination.rp-dist`.
 function copyDefaultConfig() {
     local from="$1"
     local to="$2"
@@ -368,6 +469,10 @@ function copyDefaultConfig() {
     chown $user:$user "$to"
 }
 
+## @fn addUdevInputRules()
+## @brief Creates a udev rule to adjust input device permissions.
+## @details Creates a udev rule in `/etc/udev/rules.d/99-input.rules` to
+## make everything in `/dev/input` it writable by any user in group `input`.
 function addUdevInputRules() {
     if [[ ! -f /etc/udev/rules.d/99-input.rules ]]; then
         echo 'SUBSYSTEM=="input", GROUP="input", MODE="0660"' > /etc/udev/rules.d/99-input.rules
@@ -376,6 +481,12 @@ function addUdevInputRules() {
     rm -f /etc/udev/rules.d/99-evdev.rules
 }
 
+## @fn setDispmanx()
+## @param module_id name of module to add dispmanx flag for
+## @param status initial status of flag (0 or 1)
+## @brief Sets a dispmanx flag for a module.
+## @details Set a dispmanx flag for a module as to whether it should use the
+## sdl1 dispmanx backend by default or not (0 for framebuffer, 1 for dispmanx).
 function setDispmanx() {
     isPlatform "rpi" || return
     local mod_id="$1"
@@ -385,6 +496,62 @@ function setDispmanx() {
     chown $user:$user "$configdir/all/dispmanx.cfg"
 }
 
+## @fn iniFileEditor()
+## @param delim ini file delimiter
+## @param quote ini file quoting character eg. '"'
+## @param config ini file to edit
+## @brief Allows editing of ini files with a user friendly dialog based gui.
+## @details Some arrays need to be configured before calling this, which are
+## used to display what can be edited and the options available.
+##
+## The first array is `$ini_titles` which provides the titles for each
+## entry..
+##
+## The second array is `$ini_descs` which contains a help description for each
+## entry.
+##
+## The third array is `$ini_options` which contains multiple space separated
+## strings in each element to control how each entry should be managed.
+##
+## The `$ini_options` array is constructed as follows:
+##
+## If the first string is `_function_` then the next string should be a function
+## name that will handle that entry. The function will be called with a parameter
+## `get` or `set`. The function should return the value for get via `echo`
+## and should handle any gui functionality when called with `set`. This can be
+## used for example to build custom dialogs.
+##
+## If the first option is anything else, it is assumed to be a key name, followed
+## by a control type and a list of parameters.
+##
+## Control types are:
+##  * `_id_` map the following values to an id
+##  * `_string_` allow the value to be inputted by the user
+##  * `_file_` select from a list of files. The following values are wildcard,
+##    then file path.
+##
+## If none of the above, then the rest of the array element should be a list of
+## possible values for the key.
+##
+## Some examples for ini_options:
+##
+##     ini_options=('video_smooth true false')
+## Allow setting of the key `video_smooth` with the values of *true* or *false*
+##
+##     ini_options=('aspect_ratio_index _id_ 4:3 16:9 16:10)
+## Allow setting of the key `aspect_ratio_index` with the values 0 1 or 2 which
+## correspond to the ratios. The user is shown the ratios, but the ini configuration
+## is set to the id (4:3 = 0, 16:9 = 1, 16:10 = 2).
+##
+##     ini_options=('_function_ _video_fullscreen_configedit')
+## The function `_video_fullscreen_configedit` is called with *get* or *set*
+## to manage this entry.
+##
+##     ini_options=("video_shader _file_ *.*p $rootdir/emulators/retroarch/shader")
+## The key `video_shader` will be able to be set to a list of files in
+## `$rootdir/emulators/retroarch/shader` that match the wildcard `*.*p`
+##
+## For more examples you can check out the code in supplementary/configedit.sh
 function iniFileEditor() {
     local delim="$1"
     local quote="$2"
@@ -534,6 +701,15 @@ function iniFileEditor() {
     done
 }
 
+## @fn setESSystem()
+## @param fullname full name of system
+## @param name short name of system
+## @param path rom path
+## @param extension file extensions to show
+## @param command command to run
+## @param platform name of platform (used by es for scraping)
+## @param theme name of theme to use
+## @brief Adds a system entry for Emulation Station (to /etc/emulationstation/es_systems.cfg).
 function setESSystem() {
     local fullname=$1
     local name=$2
@@ -574,6 +750,9 @@ function setESSystem() {
     sortESSystems "name"
 }
 
+## @fn sortESSystems()
+## @param field field to sort by (eg name / platform etc)
+## @brief Sorts `/etc/emulationstation/es_systems.cfg` system list by specified field.
 function sortESSystems() {
     local field="$1"
     cp "/etc/emulationstation/es_systems.cfg" "/etc/emulationstation/es_systems.cfg.bak"
@@ -583,7 +762,11 @@ function sortESSystems() {
         "/etc/emulationstation/es_systems.cfg.bak" >"/etc/emulationstation/es_systems.cfg"
 }
 
-function ensureSystemretroconfig {
+## @fn ensureSystemretroconfig()
+## @param system system to create retroarch.cfg for
+## @param shader set a default shader to use (deprecated)
+## @brief Creates a default retroarch.cfg for specified system in `/opt/retropie/configs/$system/retroarch.cfg`.
+function ensureSystemretroconfig() {
     local system="$1"
     local shader="$2"
 
@@ -612,6 +795,10 @@ function ensureSystemretroconfig {
     rm "$config"
 }
 
+## @fn setRetroArchCoreOption()
+## @param option option to set
+## @param value value to set
+## @brief Sets a retroarch core option in `$configdir/all/retroarch-core-options.cfg`.
 function setRetroArchCoreOption() {
     local option="$1"
     local value="$2"
@@ -623,7 +810,11 @@ function setRetroArchCoreOption() {
     chown $user:$user "$configdir/all/retroarch-core-options.cfg"
 }
 
-# sets module config root to subfolder from $configdir - used for ports that are not actually in the ports etc
+## @fn setConfigRoot()
+## @param dir directory under $configdir to use
+## @brief Sets module config root `$md_conf_root` to subfolder from `$configdir`
+## @details This is used for ports that are not actually in scriptmodules/ports
+## as they would get the wrong config root otherwise.
 function setConfigRoot() {
     local dir="$1"
     md_conf_root="$configdir"
@@ -631,6 +822,24 @@ function setConfigRoot() {
     mkUserDir "$md_conf_root"
 }
 
+## @fn loadModuleConfig()
+## @param params space separated list of key=value parameters
+## @brief Load the settings for a module.
+## @details This allows modules to quickly load some settings from an ini file.
+## It can provide a shortcut way to load a set of keys from an ini file into
+## variables.
+##
+## It requies iniConfig to be called first to specify the format and file.
+## eg.
+##
+##     iniConfig " = " '"' "$configdir/all/mymodule.cfg"
+##     eval $(loadModuleConfig \
+##        'some_option=1' \
+##        'another_option=2'
+##
+## This would load the keys `some_option` and `another_option` into local
+## variables `some_option` and `another_option`. If the keys did not exist
+## in mymodule.cfg the variables would be initialised to 1 and 2.
 function loadModuleConfig() {
     local options=("$@")
     local option
@@ -651,6 +860,12 @@ function loadModuleConfig() {
     done
 }
 
+## @fn applyPatch()
+## @param patch filename of patch to apply
+## @brief Apply a patch if it has not already been applied to current folder.
+## @details This is used for applying patches against upstream code.
+## @retval 0 on success
+## @retval 1 on failure
 function applyPatch() {
     local patch="$1"
     local patch_applied="${patch##*/}.applied"
@@ -671,10 +886,15 @@ function applyPatch() {
     return 0
 }
 
-# add a framebuffer mode to /etc/fb.modes - useful for adding specific resolutions used by emulators so SDL
-# can use them and utilise the rpi hardware scaling
-# without a 320x240 mode in fb.modes many of the emulators that output to framebuffer (stella / snes9x / gngeo)
-# would just show in a small area of the screen
+## @fn ensureFBMode()
+## @param res_x width of mode
+## @param res_y height of mode
+## @brief Add a framebuffer mode to /etc/fb.modes
+## @details Useful for adding specific resolutions used by emulators so SDL1 can
+## use them and utilise the RPI hardware scaling. Without for example a 320x240
+## mode in fb.modes many of the emulators that output to the framebuffer and
+## were not set to use the dispmanx SDL1 backend would just show in a small
+## area of the screen.
 function ensureFBMode() {
     local res_x="$1"
     local res_y="$2"
@@ -690,6 +910,18 @@ endmode
 _EOF_
 }
 
+## @fn joy2keyStart()
+## @param left mapping for left
+## @param right mapping for right
+## @param up mapping for up
+## @param down mapping for down
+## @param but1 mapping for button 1
+## @param but2 mapping for button 2
+## @param but3 mapping for button 3
+## @param butX mapping for button X ...
+## @brief Start joy2key.py process in background to map joystick presses to keyboard
+## @details Arguments are curses capability names or hex values starting with '0x'
+## see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
 function joy2keyStart() {
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
@@ -711,6 +943,8 @@ function joy2keyStart() {
     return 1
 }
 
+## @fn joy2keyStop()
+## @brief Stop previously started joy2key.py process.
 function joy2keyStop() {
     if [[ -n $__joy2key_pid ]]; then
         kill -INT $__joy2key_pid 2>/dev/null
@@ -718,7 +952,33 @@ function joy2keyStop() {
     fi
 }
 
-# arg 1: 0 or 1 to make the emulator default, arg 2: module id, arg 3: "system" or "system platform" or "system platform theme", arg 4: commandline, arg 5 (optional) fullname for es config, arg 6: extensions
+## @fn addSystem()
+## @param default 1 to make the emulator / command default for the system if no default already set
+## @param id unique id of the module / command
+## @param names `"system"` or `"system platform"` or `"system platform theme"`
+## @param cmd commandline to launch
+## @param fullname optional fullname for the emulationstation config (if not present in platforms.cfg)
+## @param exts optional extensions for the emulationstation config (if not present in platforms.cfg)
+## @brief Adds a new emulator/commandline for a system.
+## @details This is the primary function for adding systems to emulationstation
+## allowing to add multiple emulators per system. eg.
+##
+##     addSystem 1 "vice-x64" "c64" "$md_inst/bin/x64 %ROM%"
+##     addSystem 0 "vice-xvic" "c64" "$md_inst/bin/xvic %ROM%"
+##
+## Would add two optional emulators for the c64 - with vice-x64 being the default if no default
+## was already set. This adds entries to `$configdir/$system/emulators.cfg` with
+##
+##     id = "cmd"
+##     default = id
+##
+## Which are then selectable from runcommand when launching roms
+##
+## For libretro emulators, cmd needs to only contain the path to the libretro library.
+##
+## eg. for the lr-fcuemm module
+##
+##     addSystem 1 "$md_id" "nes" "$md_inst/fceumm_libretro.so"
 function addSystem() {
     local default="$1"
     local id="$2"
@@ -805,6 +1065,13 @@ function addSystem() {
     setESSystem "$fullname" "$es_name" "$es_path" "$exts" "$es_cmd" "$platform" "$theme"
 }
 
+## @fn delSystem()
+## @param id id of the module / command
+## @param system system to delete
+## @brief Deletes an emulator entry / system
+## @details Delete the entry for the id from `$configdir/$system/emulators.cfg`.
+## If there are no more emulators for the system present, it will also
+## delete the system entry from `/etc/emulationstation/es_systems.cfg`.
 function delSystem() {
     local id="$1"
     local system="$2"
@@ -827,6 +1094,25 @@ function delSystem() {
     fi
 }
 
+## @fn addPort()
+## @param id id of the module / command
+## @param port name of the port
+## @param name display name for the launch script
+## @param cmd commandline to launch
+## @param game rom/game parameter (optional)
+## @brief Adds a port to the emulationstation ports menu.
+## @details Adds an emulators.cfg entry as with addSystem but also creates a launch script in `$datadir/ports/$name.sh`.
+##
+## Can optionally take a script via stdin to use instead of the default launch script.
+##
+## Can also optionally take a game parameter which can be used to create multiple launch
+## scripts for different games using the same engine - eg for quake
+##
+##     addPort "lr-tyrquake" "quake" "Quake" "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $md_conf_root/quake/retroarch.cfg %ROM%" "$romdir/ports/quake/id1/pak0.pak"
+##     addPort "lr-tyrquake" "quake" "Quake Mission Pack 2 (rogue)" "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $md_conf_root/quake/retroarch.cfg %ROM%" "$romdir/ports/quake/id1/rogue/pak0.pak"
+##
+## Would add an entry in $configdir/ports/quake/emulators.cfg for lr-tyrquake (setting it to default if no default set)
+## and create a launch script in $romdir/ports for each game.
 function addPort() {
     local id="$1"
     local port="$2"
