@@ -76,7 +76,7 @@ function install_rp_image() {
         # extra quiet as the raspbian usr/lib/raspi-config/init_resize.sh does
         # sed -i 's/ quiet init=.*$//' /boot/cmdline.txt so this will remove the last quiet
         # and the init line but leave ours intact
-        sed -i "s/quiet/quiet loglevel=3 consoleblank=0 quiet/" chroot/boot/cmdline.txt
+        sed -i "s/quiet/quiet loglevel=3 consoleblank=0 plymouth.enable=0 quiet/" chroot/boot/cmdline.txt
     fi
 
     cat > chroot/home/pi/install.sh <<_EOF_
