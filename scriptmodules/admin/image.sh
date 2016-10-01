@@ -71,7 +71,9 @@ function install_rp_image() {
     echo "retropie" >chroot/etc/hostname
     sed -i "s/raspberrypi/retropie/" chroot/etc/hosts
 
-    # quieter boot
+    # quieter boot / disable plymouth (as without the splash parameter it
+    # causes all boot messages to be displayed and interferes with people
+    # using tty3 to make the boot even quieter)
     if ! grep -q consoleblank chroot/boot/cmdline.txt; then
         # extra quiet as the raspbian usr/lib/raspi-config/init_resize.sh does
         # sed -i 's/ quiet init=.*$//' /boot/cmdline.txt so this will remove the last quiet
