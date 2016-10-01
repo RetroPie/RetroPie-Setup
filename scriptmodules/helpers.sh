@@ -16,7 +16,7 @@
 ## @fn printMsgs()
 ## @param type style of display to use - dialog, console or heading
 ## @param message string or array of messages to display
-## @brief Prints messages in a variety of ways
+## @brief Prints messages in a variety of ways.
 function printMsgs() {
     local type="$1"
     shift
@@ -32,14 +32,14 @@ function printMsgs() {
 
 ## @fn printHeading()
 ## @param message string or array of messages to display
-## @brief Calls PrintMsgs with "heading" type
+## @brief Calls PrintMsgs with "heading" type.
 function printHeading() {
     printMsgs "heading" "$@"
 }
 
 ## @fn fatalError()
 ## @param message string or array of messages to display
-## @brief Calls PrintMsgs with "heading" type, and exits immediately
+## @brief Calls PrintMsgs with "heading" type, and exits immediately.
 function fatalError() {
     printHeading "Error"
     echo "$1"
@@ -497,7 +497,7 @@ function setDispmanx() {
 }
 
 ## @fn iniFileEditor()
-## @param delim ini file delimiter
+## @param delim ini file delimiter eg. ' = '
 ## @param quote ini file quoting character eg. '"'
 ## @param config ini file to edit
 ## @brief Allows editing of ini files with a user friendly dialog based gui.
