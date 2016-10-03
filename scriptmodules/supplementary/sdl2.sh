@@ -21,6 +21,10 @@ function get_ver_sdl2() {
     echo "$ver"
 }
 
+function get_arch_sdl2() {
+    echo "$(dpkg --print-architecture)"
+}
+
 function depends_sdl2() {
     # Dependencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
     # already covered by the build-essential package retropie relies on.
@@ -42,7 +46,7 @@ function sources_sdl2() {
 function build_sdl2() {
     cd $(get_ver_sdl2)
     dpkg-buildpackage
-    md_ret_require="$md_build/libsdl2-dev_$(get_ver_sdl2)_armhf.deb"
+    md_ret_require="$md_build/libsdl2-dev_$(get_ver_sdl2)_$(get_arch_sdl2).deb"
     local dest="$__tmpdir/archives/$__raspbian_name/$__platform"
     mkdir -p "$dest"
     cp ../*.deb "$dest/"
@@ -56,7 +60,7 @@ function remove_old_sdl2() {
 function install_sdl2() {
     remove_old_sdl2
     # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
-    if ! dpkg -i libsdl2-2.0-0_$(get_ver_sdl2)_armhf.deb libsdl2-dev_$(get_ver_sdl2)_armhf.deb; then
+    if ! dpkg -i libsdl2-2.0-0_$(get_ver_sdl2)_$(get_arch_sdl2).deb libsdl2-dev_$(get_ver_sdl2)_$(get_arch_sdl2).deb; then
         apt-get -y -f install
     fi
     echo "libsdl2-dev hold" | dpkg --set-selections
