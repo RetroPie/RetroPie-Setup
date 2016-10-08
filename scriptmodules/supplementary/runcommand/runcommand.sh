@@ -845,6 +845,7 @@ config_dispmanx "$save_emu"
 retroarch_append_config
 
 # launch the command
+echo -e "Parameters: $@\nExecuting: $command" >>"$log"
 if [[ "$console_out" -eq 1 ]]; then
     # turn cursor on
     tput cnorm
