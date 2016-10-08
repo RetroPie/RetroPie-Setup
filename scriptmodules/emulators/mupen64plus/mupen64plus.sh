@@ -233,7 +233,7 @@ function testCompatibility() {
             fi
             iniConfig " = " "" "$config"
             # Settings version. Don't touch it.
-            iniSet "configVersion" "13"
+            iniSet "configVersion" "14"
             # Enable FBEmulation if necessary
             iniSet "EnableFBEmulation" "False"
             for game in "${GLideN64FBEMU_whitelist[@]}"; do
