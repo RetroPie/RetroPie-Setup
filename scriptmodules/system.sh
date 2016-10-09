@@ -30,7 +30,7 @@ function setup_env() {
 
     # set location of binary downloads
     __binary_host="files.retropie.org.uk"
-    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://$__binary_host/binaries/$__raspbian_name/$__platform"
+    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://$__binary_host/binaries/$__os_codename/$__platform"
 
     __archive_url="http://files.retropie.org.uk/archives"
 
@@ -56,55 +56,41 @@ function setup_env() {
 }
 
 function get_os_version() {
-    if [[ -f /etc/debian_version ]]; then
-        local ver=$(</etc/debian_version)
-        # check for debian major.minor version
-        if [[ "$ver" =~ [0-9]+\.[0-9]+ ]]; then
-            ver=(${ver/./ })
-            local ver_maj=${ver[0]}
-            local ver_min=${ver[1]}
-            case $ver_maj in
-                7)
-                    __raspbian_ver=7
-                    __raspbian_name="wheezy"
-                    __has_binaries=0
-                    return
-                    ;;
-                8)
-                    __raspbian_ver=8
-                    __raspbian_name="jessie"
-                    return
-                    ;;
-            esac
-        else
-            case "$ver" in
-                jessie/sid|stretch/sid)
-                    __raspbian_ver=8
-                    __raspbian_name="ubuntu"
-                    if isPlatform "rpi"; then
-                        __has_binaries=0
-                    fi
-                    return
-                    ;;
-            esac
-        fi
-    else
-        fatalError "Unsupported OS (no /etc/debian_version)"
-        return
-    fi
-    fatalError "Unsupported OS - /etc/debian_version $(cat /etc/debian_version)"
+    # get os distributor id, description, release number and codename
+    local os
+    mapfile -t os < <(lsb_release -sidrc)
+    __os_id="${os[0]}"
+    __os_desc="${os[1]}"
+    __os_release="${os[2]}"
+    __os_codename="${os[3]}"
+    case "$__os_id" in
+        Raspbian|Debian)
+            if compareVersions "$__os_release" lt 8; then
+                __has_binaries=0
+            fi
+            ;;
+        Ubuntu)
+            __has_binaries=0
+            ;;
+        *)
+            fatalError "Unsupported OS\n\n$(lsb_release -idrc)"
+            ;;
+    esac
 }
 
 function get_default_gcc() {
     if [[ -z "$__default_gcc_version" ]]; then
-        case $__raspbian_ver in
-            7)
-                __default_gcc_version="4.8"
+        case "$__os_id" in
+            Raspbian|Debian)
+                case "$__os_codename" in
+                    wheezy)
+                        __default_gcc_version="4.8"
+                        ;;
+                    *)
+                        __default_gcc_version="4.9"
+                esac
                 ;;
-            8)
-                if [[ "$__raspbian_name" == "jessie" ]]; then
-                    __default_gcc_version="4.9"
-                fi
+            *)
                 ;;
         esac
     fi
@@ -132,13 +118,13 @@ function set_default_gcc() {
 function get_retropie_depends() {
     # add rasberrypi repository if it's missing (needed for libraspberrypi-dev etc) - not used on osmc
     local config="/etc/apt/sources.list.d/raspi.list"
-    if [[ ! -f "$config" && "$__raspbian_name" != "ubuntu" ]] && hasPackage raspberrypi-bootloader; then
+    if [[ "$__os_id" == "Raspbian" && ! -f "$config" ]]; then
         # add key
         wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O- | apt-key add - >/dev/null
-        echo "deb http://archive.raspberrypi.org/debian/ $__raspbian_name main" >>$config
+        echo "deb http://archive.raspberrypi.org/debian/ $__os_codename main" >>$config
     fi
 
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet)
+    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet lsb-release)
     if [[ -n "$__default_gcc_version" ]]; then
         depends+=(gcc-$__default_gcc_version g++-$__default_gcc_version)
     fi
