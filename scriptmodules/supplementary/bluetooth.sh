@@ -31,7 +31,7 @@ function _get_connect_mode() {
 
 function depends_bluetooth() {
     local depends=(bluetooth python-dbus python-gobject)
-    if isPlatform "rpi3" && hasPackage raspberrypi-bootloader && [[ "$__raspbian_ver" -ge "8" ]]; then
+    if [[ "$__os_id" == "Raspbian" ]] && compareVersions "$__os_release" ge 8; then
         depends+=(pi-bluetooth raspberrypi-sys-mods)
     fi
     getDepends "${depends[@]}"

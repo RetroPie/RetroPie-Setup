@@ -20,7 +20,7 @@ function enable_autostart() {
         mkUserDir "$home/.config/autostart"
         ln -sf "/usr/local/share/applications/retropie.desktop" "$home/.config/autostart/"
     else
-        if [[ "$__raspbian_ver" -lt "8" ]]; then
+        if [[ "$__os_codename" == "wheezy" ]]; then
             sed -i "s|^1:2345:.*|1:2345:respawn:/bin/login -f $user tty1 </dev/tty1 >/dev/tty1 2>\&1|g" /etc/inittab
             update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
             sed -i "/emulationstation/d" /etc/profile
@@ -69,7 +69,7 @@ function disable_autostart() {
     if isPlatform "x11"; then
         rm "$home/.config/autostart/retropie.desktop"
     else
-        if [[ "$__raspbian_ver" -lt "8" ]]; then
+        if [[ "$__os_codename" == "wheezy" ]]; then
             sed -i "s|^1:2345:.*|1:2345:respawn:/sbin/getty --noclear 38400 tty1|g" /etc/inittab
             sed -i "/emulationstation/d" /etc/profile
         else
@@ -105,7 +105,7 @@ function gui_autostart() {
                 E "Manually edit $configdir/autostart.sh"
                 C "Boot to text console (auto login)"
             )
-            if [[ "$__raspbian_ver" -gt "7" ]]; then
+            if compareVersions "$__os_release" ge 8; then
                 options+=(D "Boot to desktop (auto login)")
             fi
         fi

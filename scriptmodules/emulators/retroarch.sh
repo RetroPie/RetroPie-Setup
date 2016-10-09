@@ -19,7 +19,7 @@ function depends_retroarch() {
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x86" && depends+=(nvidia-cg-toolkit)
     isPlatform "x11" && depends+=(libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev)
-    [[ "$__raspbian_ver" -ge "8" ]] && depends+=(libusb-1.0-0-dev)
+    compareVersions "$__os_release" ge 8  && depends+=(libusb-1.0-0-dev)
 
     getDepends "${depends[@]}"
 

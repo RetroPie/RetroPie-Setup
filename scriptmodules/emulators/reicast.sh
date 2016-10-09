@@ -17,7 +17,7 @@ rp_module_flags="!armv6 !mali"
 
 function depends_reicast() {
     local depends=(libsdl1.2-dev python-dev python-pip alsa-oss python-setuptools)
-    [[ "$__raspbian_ver" -ge "8" ]] && depends+=(libevdev-dev)
+    compareVersions "$__os_release" ge 8 && depends+=(libevdev-dev)
     getDepends "${depends[@]}"
     pip install evdev
 }

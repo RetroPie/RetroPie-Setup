@@ -21,11 +21,10 @@ function depends_openpht() {
 
 function install_bin_openpht() {
     local version="1.6.2.123-e23a7eef"
-    local codename=$(lsb_release -cs)
-    local package="openpht_${version}-${codename}_amd64.deb"
+    local package="openpht_${version}-${__os_codename}_amd64.deb"
     local getdeb="https://github.com/RasPlex/OpenPHT/releases/download/v$version/$package"
 
-    if [[ "$__raspbian_name" == "wheezy"  ]]; then
+    if [[ "$__os_codename" == "wheezy" ]]; then
         md_ret_errors+=("The Debian package available is only for Jessie")
         return 1
     else

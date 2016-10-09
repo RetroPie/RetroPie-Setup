@@ -15,7 +15,7 @@ rp_module_section="config"
 
 function depends_usbromservice() {
     local depends=(rsync ntfs-3g exfat-fuse)
-    if [[ "$__raspbian_ver" -gt 7 ]]; then
+    if compareVersions "$__os_release" ge 8; then
         if ! hasPackage usbmount 0.0.24; then
             depends+=(debhelper devscripts pmount lockfile-progs)
             getDepends "${depends[@]}"

@@ -20,7 +20,7 @@ function get_ver_sdl1() {
 
 function depends_sdl1() {
     getDepends debhelper dh-autoreconf devscripts libx11-dev libxext-dev libxt-dev libxv-dev x11proto-core-dev libaudiofile-dev libpulse-dev libgl1-mesa-dev libasound2-dev libcaca-dev libdirectfb-dev libglu1-mesa-dev libraspberrypi-dev
-    [[ "$__raspbian_ver" -lt "8" ]] && getDepends libts-dev
+    compareVersions "$__os_release" lt 8 && getDepends libts-dev
 }
 
 function sources_sdl1() {
@@ -35,7 +35,7 @@ function sources_sdl1() {
     wget https://github.com/RetroPie/sdl1/compare/master...rpi.diff -O debian/patches/rpi.diff
     echo "rpi.diff" >>debian/patches/series
     # force building without tslib on Jessie (as Raspbian Jessie has tslib, but Debian Jessie doesn't and we want cross compatibility
-    if [[ "$__raspbian_ver" -gt "7" ]]; then
+    if compareVersions "$__os_release" ge 8; then
         sed -i "s/--enable-video-caca/--enable-video-caca --disable-input-tslib/" debian/rules
     fi
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v 1.2.15-$(get_ver_sdl1)rpi "Added rpi fixes and dispmanx support from https://github.com/RetroPie/sdl1/compare/master...rpi"
@@ -44,7 +44,7 @@ function sources_sdl1() {
 function build_sdl1() {
     cd libsdl1.2-1.2.15
     dpkg-buildpackage
-    local dest="$__tmpdir/archives/$__raspbian_name/$__platform"
+    local dest="$__tmpdir/archives/$__os_codename/$__platform"
     mkdir -p "$dest"
     cp ../*.deb "$dest/"
 }

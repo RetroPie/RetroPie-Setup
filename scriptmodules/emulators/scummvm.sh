@@ -17,7 +17,7 @@ rp_module_flags="!mali"
 
 function depends_scummvm() {
     getDepends libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
+    if compareVersions "$__os_release" lt 8; then
         getDepends libjpeg8-dev
     else
         getDepends libjpeg-dev
