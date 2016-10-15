@@ -14,7 +14,7 @@ rp_module_desc="Moonlight Embedded Game Streaming"
 rp_module_section="exp"
 
 function depends_moonlight-embedded() {
-    getDepends libraspberrypi0 libraspberrypi-dev libopus0 libopus-dev libexpat1 libexpat1-dev libasound2 libasound2-dev libudev0 libudev-dev libavahi-client3 libavahi-client-dev libcurl3 libcurl4-openssl-dev libevdev2libevdev-dev libenet7 libenet-dev libssl-dev libpulse-dev uuid-dev
+    getDepends libraspberrypi0 libraspberrypi-dev libopus0 libopus-dev libexpat1 libexpat1-dev libasound2 libasound2-dev libudev0 libudev-dev libavahi-client3 libavahi-client-dev libcurl3 libcurl4-openssl-dev libevdev2 libevdev-dev libenet7 libenet-dev libssl-dev libpulse-dev uuid-dev
 }
 
 function sources_moonlight-embedded() {
