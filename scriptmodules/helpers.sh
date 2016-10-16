@@ -205,7 +205,7 @@ function getDepends() {
                 continue
             fi
         fi
-        if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage rbp-bootloader-osmc; then
+        if [[ "$required" == "libraspberrypi-dev" ]] && isPlatform "osmc"; then
             required="rbp-userland-dev-osmc"
         fi
         if [[ "$md_mode" == "remove" ]]; then
