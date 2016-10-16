@@ -205,9 +205,16 @@ function getDepends() {
                 continue
             fi
         fi
+
         if [[ "$required" == "libraspberrypi-dev" ]] && isPlatform "osmc"; then
             required="rbp-userland-dev-osmc"
         fi
+
+        # map libpng12-dev to libpng-dev for Ubuntu 16.10+
+        if [[ "$required" == "libpng12-dev" && "$__os_id" == "Ubuntu" ]] && compareVersions "$__os_release" ge 16.10;  then
+            required="libpng-dev"
+        fi
+
         if [[ "$md_mode" == "remove" ]]; then
             hasPackage "$required" && packages+=("$required")
         else
