@@ -16,8 +16,8 @@ rp_module_section="exp"
 rp_module_flags="!arm"
 
 function depends_fs-uae() {
-    case "$__raspbian_name" in
-        ubuntu)
+    case "$__os_id" in
+        Ubuntu)
             if [[ "$md_mode" == "install" ]]; then
                 apt-add-repository -y ppa:fengestad/stable
             else
@@ -25,7 +25,7 @@ function depends_fs-uae() {
             fi
             aptUpdate
             ;;
-        jessie)
+        Debian)
             if [[ "$md_mode" == "install" ]]; then
                 echo "deb http://download.opensuse.org/repositories/home:/FrodeSolheim:/stable/Debian_8.0/ /" > /etc/apt/sources.list.d/fsuae-stable.list
             else

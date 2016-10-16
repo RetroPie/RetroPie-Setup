@@ -14,10 +14,8 @@ rp_module_desc="PS3 controller driver and pair via sixad"
 rp_module_section="driver"
 
 function depends_ps3controller() {
-    local depends=(checkinstall libusb-dev bluetooth libbluetooth-dev joystick)
-    if isPlatform "rpi3" && hasPackage raspberrypi-bootloader && [[ "$__raspbian_ver" -ge "8" ]]; then
-        depends+=(pi-bluetooth raspberrypi-sys-mods)
-    fi
+    depends_bluetooth
+    local depends=(checkinstall libusb-dev libbluetooth-dev joystick)
     getDepends "${depends[@]}"
 }
 
@@ -48,7 +46,7 @@ function install_ps3controller() {
 
     echo "$branch" >"$md_inst/type.txt"
 
-    if [[ "$__raspbian_ver" -ge "8" ]]; then
+    if compareVersions "$__os_release" ge 8; then
         # Disable timeouts
         iniConfig " = " "" "/etc/bluetooth/main.conf"
         iniSet "DiscoverableTimeout" "0"

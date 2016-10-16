@@ -17,7 +17,7 @@
 # @param message string or array of messages to display
 # @brief echos message, and exits immediately.
 function fatalError() {
-    echo "$1"
+    echo -e "$1"
     exit 1
 }
 

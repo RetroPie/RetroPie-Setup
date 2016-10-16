@@ -15,7 +15,7 @@ rp_module_section="opt"
 
 function depends_eduke32() {
     local depends=(subversion flac libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats)
-    if [[ "$__raspbian_ver" -lt 8 ]]; then
+    if compareVersions "$__os_release" lt 8; then
         depends+=(libsdl1.2-dev libsdl-mixer1.2-dev)
     else
         depends+=(libsdl2-dev libsdl2-mixer-dev)
@@ -33,7 +33,7 @@ function build_eduke32() {
     local params=(LTO=0)
     ! isPlatform "x86" && params+=(NOASM=1)
     ! isPlatform "x11" && params+=(USE_OPENGL=0)
-    if [[ "$__raspbian_ver" -lt 8 ]]; then
+    if compareVersions "$__os_release" lt 8; then
         params+=(SDL_TARGET=1)
     else
         params+=(SDL_TARGET=2)

@@ -14,27 +14,22 @@ rp_module_desc="Scraper for EmulationStation by Steven Selph"
 rp_module_section="config"
 
 function depends_scraper() {
-    if [[ "$__raspbian_ver" -gt "7" ]]; then
-        getDepends golang
-    fi
+    [[ "$__os_codename" == "wheezy" ]] && return
+    getDepends golang
 }
 
 function sources_scraper() {
-    if [[ "$__raspbian_ver" -gt "7" ]]; then
-        GOPATH="$md_build" go get github.com/sselph/scraper
-    fi
+    [[ "$__os_codename" == "wheezy" ]] && return
+    GOPATH="$md_build" go get github.com/sselph/scraper
 }
 
 function build_scraper() {
-    if [[ "$__raspbian_ver" -gt "7" ]]; then
-        GOPATH="$md_build" go build github.com/sselph/scraper
-    fi
+    [[ "$__os_codename" == "wheezy" ]] && return
+    GOPATH="$md_build" go build github.com/sselph/scraper
 }
 
 function install_scraper() {
-    if [[ "$__raspbian_ver" -gt "7" ]]; then
-        md_ret_files=(scraper)
-    elif isPlatform "arm"; then
+    if [[ "$__os_codename" == "wheezy" ]] && isPlatform "arm"; then
         local ver="$(latest_ver_scraper)"
         mkdir -p "$md_build"
         local name="scraper_rpi.zip"
@@ -42,6 +37,8 @@ function install_scraper() {
         wget -O "$md_build/scraper.zip" "https://github.com/sselph/scraper/releases/download/$ver/$name"
         unzip -o "$md_build/scraper.zip" -d "$md_inst"
         rm -f "$md_build/scraper.zip"
+    else
+        md_ret_files=(scraper)
     fi
 }
 

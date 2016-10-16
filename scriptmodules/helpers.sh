@@ -42,7 +42,7 @@ function printHeading() {
 ## @brief Calls PrintMsgs with "heading" type, and exits immediately.
 function fatalError() {
     printHeading "Error"
-    echo "$1"
+    echo -e "$1"
     exit 1
 }
 
@@ -151,7 +151,7 @@ function hasPackage() {
         if [[ "$status" == *"ok installed" ]]; then
             # if we didn't request a version number, be happy with any
             [[ -z "$req_ver" ]] && return 0
-            dpkg --compare-versions "$ver" "$comp" "$req_ver" && return 0
+            compareVersions "$ver" "$comp" "$req_ver" && return 0
         fi
     fi
     return 1
@@ -441,6 +441,17 @@ function moveConfigFile() {
 ## @retval >1 an error occured
 function diffFiles() {
     diff -q "$1" "$2" >/dev/null
+    return $?
+}
+
+## @fn compareVersions()
+## @param version first version to compare
+## @param operator operator to use (lt le eq ne ge gt)
+## @brief version second version to compare
+## @retval 0 if the comparison was true
+## @retval 1 if the comparison was false
+function compareVersions() {
+    dpkg --compare-versions "$1" "$2" "$3" >/dev/null
     return $?
 }
 

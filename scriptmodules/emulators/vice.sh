@@ -18,7 +18,7 @@ rp_module_flags=""
 function depends_vice() {
     local depends=(libsdl2-dev libpng12-dev zlib1g-dev libasound2-dev automake checkinstall bison flex)
 
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
+    if compareVersions "$__os_release" lt 8; then
         depends+=(libjpeg8-dev )
     else
         depends+=(libjpeg-dev)
