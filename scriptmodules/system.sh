@@ -74,6 +74,12 @@ function get_os_version() {
             if compareVersions "$__os_release" lt 8; then
                 __has_binaries=0
             fi
+
+            # set a platform flag for osmc
+            if grep -q "ID=osmc" /etc/os-release; then
+                __platform_flags+=" osmc"
+            fi
+
             ;;
         Ubuntu|LinuxMint)
             __has_binaries=0
