@@ -14,6 +14,9 @@ function setup_env() {
     __ERRMSGS=()
     __INFMSGS=()
 
+    # if no apt-get we need to fail
+    [[ -z "$(which apt-get)" ]] && fatalError "Unsupported OS - No apt-get command found"
+
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
@@ -56,9 +59,6 @@ function setup_env() {
 }
 
 function get_os_version() {
-    # if no apt-get we need to fail
-    [[ -z "$(which apt-get)" ]] && fatalError "Unsupported OS - No apt-get command found"
-
     # make sure lsb_release is installed
     getDepends lsb-release
 
