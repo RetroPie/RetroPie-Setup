@@ -75,7 +75,7 @@ function get_os_version() {
                 __has_binaries=0
             fi
             ;;
-        Ubuntu)
+        Ubuntu|LinuxMint)
             __has_binaries=0
             ;;
         *)
