@@ -19,7 +19,7 @@ function depends_moonlight-embedded() {
 
 function sources_moonlight-embedded() {
     gitPullOrClone "$md_build/moonlight" "https://github.com/irtimmer/moonlight-embedded.git"
-	cd $md_build/moonlight/moonlight-embedded
+	cd $md_build/moonlight
 	git submodule update --init
 
     mkdir $md_build/cmake
