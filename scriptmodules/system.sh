@@ -56,6 +56,12 @@ function setup_env() {
 }
 
 function get_os_version() {
+    # if no apt-get we need to fail
+    [[ -z "$(which apt-get)" ]] && fatalError "Unsupported OS - No apt-get command found"
+
+    # make sure lsb_release is installed
+    getDepends lsb-release
+
     # get os distributor id, description, release number and codename
     local os
     mapfile -t os < <(lsb_release -sidrc)
@@ -124,7 +130,7 @@ function get_retropie_depends() {
         echo "deb http://archive.raspberrypi.org/debian/ $__os_codename main" >>$config
     fi
 
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet lsb-release)
+    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet)
     if [[ -n "$__default_gcc_version" ]]; then
         depends+=(gcc-$__default_gcc_version g++-$__default_gcc_version)
     fi
