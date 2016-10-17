@@ -237,7 +237,6 @@ function rp_callModule() {
     esac
 
     local file
-    # some errors were returned. append to global errors and return
     if [[ "${#md_ret_errors}" -eq 0 ]]; then
         # check if any required files are found
         if [[ -n "$md_ret_require" ]]; then
@@ -266,6 +265,7 @@ function rp_callModule() {
 
     [[ "$pushed" -eq 0 ]] && popd
 
+    # some errors were returned.
     if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
         # if sources fails make sure we clean up
         if [[ "$mode" == "sources" ]]; then
@@ -274,6 +274,7 @@ function rp_callModule() {
         # remove install folder if there is an error
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
         printMsgs "console" "${md_ret_errors[@]}" >&2
+        # append to global errors and return an error
         __ERRMSGS+=("${md_ret_errors[@]}")
         return 1
     fi
