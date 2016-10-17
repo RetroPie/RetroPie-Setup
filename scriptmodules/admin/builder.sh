@@ -31,7 +31,7 @@ function module_builder() {
         # build, install and create binary archive.
         # initial clean in case anything was in the build folder when calling
         for mode in clean remove depends sources build install clean create_bin; do
-            rp_callModule "$id" "$mode"
+            rp_callModule "$id" "$mode" || return 1
         done
     done
 }
@@ -40,7 +40,7 @@ function section_builder() {
     local section="$1"
     local idx
     for idx in $(rp_getSectionIds $section); do
-        module_builder "$idx"
+        module_builder "$idx" || return 1
     done
 }
 
