@@ -13,10 +13,10 @@ rp_module_id="capricerpi"
 rp_module_desc="Amstrad CPC emulator - port of Caprice32 for the RPI"
 rp_module_help="ROM Extensions: .cdt .cpc .dsk\n\nCopy your Amstrad CPC roms to $romdir/amstradcpc"
 rp_module_section="opt"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !xx86 !mali"
 
 function depends_capricerpi() {
-    getDepends libsdl1.2-dev zlib1g-dev
+    getDepends libsdl1.2-dev libsdl-ttf2.0-dev zlib1g-dev
 }
 
 function sources_capricerpi() {
