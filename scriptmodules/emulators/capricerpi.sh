@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !xx86 !mali"
 
 function depends_capricerpi() {
-    getDepends libsdl1.2-dev libsdl-ttf2.0-dev zlib1g-dev
+    getDepends libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev zlib1g-dev
 }
 
 function sources_capricerpi() {
