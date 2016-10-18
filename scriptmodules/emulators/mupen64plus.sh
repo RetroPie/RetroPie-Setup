@@ -69,7 +69,8 @@ function build_mupen64plus() {
             isPlatform "x11" && params+=("OSD=1")
             isPlatform "x86" && params+=("SSE=SSSE3")
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
-            make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -flto"
+            # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
+            MAKEFLAGS="${MAKEFLAGS/\/usr\/lib\/distcc:/}" make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -flto"
         fi
     done
 
