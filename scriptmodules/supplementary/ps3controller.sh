@@ -58,7 +58,7 @@ function install_ps3controller() {
 }
 
 function remove_ps3controller() {
-    service sixad stop
+    /etc/init.d/sixad stop
     insserv -r sixad
     dpkg --purge sixad
     rm -f /etc/udev/rules.d/99-sixpair.rules
