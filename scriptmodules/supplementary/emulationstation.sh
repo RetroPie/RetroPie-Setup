@@ -91,7 +91,7 @@ function init_input_emulationstation() {
 function copy_inputscripts_emulationstation() {
     mkdir -p "$md_inst/scripts"
 
-    cp -r "$scriptdir/scriptmodules/$md_type/emulationstation/"* "$md_inst/scripts/"
+    cp -r "$md_data/"* "$md_inst/scripts/"
     chmod +x "$md_inst/scripts/inputconfiguration.sh"
 }
 
@@ -121,7 +121,7 @@ _EOF_
 
     if isPlatform "x11"; then
         mkdir -p /usr/local/share/{icons,applications}
-        cp "$scriptdir/scriptmodules/$md_type/emulationstation/retropie.svg" "/usr/local/share/icons/"
+        cp "$md_data/retropie.svg" "/usr/local/share/icons/"
         cat > /usr/local/share/applications/retropie.desktop << _EOF_
 [Desktop Entry]
 Type=Application

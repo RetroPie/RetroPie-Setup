@@ -48,7 +48,7 @@ function configure_daphne() {
     mkUserDir "$md_conf_root/daphne"
 
     if [[ ! -f "$md_conf_root/daphne/dapinput.ini" ]]; then
-        cp -v "$scriptdir/scriptmodules/$md_type/$md_id/dapinput.ini" "$md_conf_root/daphne/dapinput.ini"
+        cp -v "$md_data/dapinput.ini" "$md_conf_root/daphne/dapinput.ini"
     fi
     ln -snf "$romdir/daphne/roms" "$md_inst/roms"
     ln -sf "$md_conf_root/$md_id/dapinput.ini" "$md_inst/dapinput.ini"

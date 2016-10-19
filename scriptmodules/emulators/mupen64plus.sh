@@ -157,7 +157,7 @@ function configure_mupen64plus() {
     [[ "$md_mode" == "remove" ]] && return
 
     # copy hotkey remapping start script
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/mupen64plus.sh" "$md_inst/bin/"
+    cp "$md_data/mupen64plus.sh" "$md_inst/bin/"
     chmod +x "$md_inst/bin/mupen64plus.sh"
 
     mkUserDir "$md_conf_root/n64/"

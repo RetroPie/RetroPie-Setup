@@ -27,7 +27,7 @@ function depends_splashscreen() {
 }
 
 function install_bin_splashscreen() {
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/asplashscreen" "/etc/init.d/"
+    cp "$md_data/asplashscreen" "/etc/init.d/"
 
     iniConfig "=" '"' /etc/init.d/asplashscreen
     iniSet "ROOTDIR" "$rootdir"

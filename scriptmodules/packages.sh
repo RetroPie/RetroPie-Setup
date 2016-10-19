@@ -103,6 +103,7 @@ function rp_callModule() {
     local md_flags="${__mod_flags[$md_idx]}"
     local md_build="$__builddir/$md_id"
     local md_inst="$rootdir/$md_type/$md_id"
+    local md_data="$scriptdir/scriptmodules/$md_type/$md_id"
     local md_mode="install"
 
     # set md_conf_root to $configdir and to $configdir/ports for ports

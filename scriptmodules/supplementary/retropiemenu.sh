@@ -60,8 +60,8 @@ function install_bin_retropiemenu()
 
     # add the gameslist / icons
     mkdir -p "$home/.emulationstation/gamelists/retropie/"
-    cp -v "$scriptdir/scriptmodules/$md_type/retropiemenu/gamelist.xml" "$home/.emulationstation/gamelists/retropie/gamelist.xml"
-    cp -Rv "$scriptdir/scriptmodules/$md_type/retropiemenu/icons" "$rpdir/"
+    cp -v "$md_data/gamelist.xml" "$home/.emulationstation/gamelists/retropie/gamelist.xml"
+    cp -Rv "$md_data/icons" "$rpdir/"
 
     chown -R $user:$user "$rpdir"
     chown -RL $user:$user "$home/.emulationstation"

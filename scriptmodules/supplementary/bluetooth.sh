@@ -41,7 +41,7 @@ function get_script_bluetooth() {
     name="$1"
     if ! which "$name"; then
         [[ "$name" == "bluez-test-input" ]] && name="bluez-test-device"
-        name="$scriptdir/scriptmodules/supplementary/$md_id/$name"
+        name="$md_data/$name"
     fi
     echo "$name"
 }

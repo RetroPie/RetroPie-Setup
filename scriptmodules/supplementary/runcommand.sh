@@ -19,8 +19,8 @@ function _update_hook_runcommand() {
 }
 
 function install_bin_runcommand() {
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/runcommand.sh" "$md_inst/"
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/joy2key.py" "$md_inst/"
+    cp "$md_data/runcommand.sh" "$md_inst/"
+    cp "$md_data/joy2key.py" "$md_inst/"
     chmod a+x "$md_inst/runcommand.sh"
     chmod a+x "$md_inst/joy2key.py"
     if [[ ! -f "$configdir/all/runcommand.cfg" ]]; then
