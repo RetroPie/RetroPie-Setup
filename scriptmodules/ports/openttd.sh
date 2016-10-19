@@ -12,7 +12,7 @@
 rp_module_id="openttd"
 rp_module_desc="Open Source Simulator Based On Transport Tycoon Deluxe"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="dispmanx !mali"
 
 function _update_hook_openttd() {
     # to show as installed in retropie-setup 4.x
@@ -28,5 +28,14 @@ function remove_openttd() {
 }
 
 function configure_openttd() {
+    local dir
+    mkUserDir "$home/.local"
+    for dir in .config .local/share; do
+        mkUserDir "$home/$dir"
+        moveConfigDir "$home/$dir/openttd" "$md_conf_root/openttd"
+    done
+
+    moveConfigDir "$home/.local/openttd" "$md_conf_root/openttd"
+
     addPort "$md_id" "openttd" "OpenTTD" "openttd"
 }
