@@ -16,10 +16,7 @@ rp_module_section="main"
 
 function _update_hook_lr-beetle-ngp() {
     # move from old location and update emulators.cfg
-    if [[ -d "$rootdir/$md_type/lr-mednafen-ngp" ]]; then
-        mv "$rootdir/$md_type/lr-mednafen-ngp" "$md_inst"
-        sed -i "s/lr-mednafen-ngp/lr-beetle-ngp/g" "$configdir"/*/emulators.cfg
-    fi
+    renameModule "lr-mednafen-ngp" "lr-beetle-ngp"
 }
 
 function sources_lr-beetle-ngp() {

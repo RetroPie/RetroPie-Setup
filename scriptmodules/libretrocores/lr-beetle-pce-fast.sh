@@ -16,10 +16,7 @@ rp_module_section="main"
 
 function _update_hook_lr-beetle-pce-fast() {
     # move from old location and update emulators.cfg
-    if [[ -d "$rootdir/$md_type/lr-mednafen-pce-fast" ]]; then
-        mv "$rootdir/$md_type/lr-mednafen-pce-fast" "$md_inst"
-        sed -i "s/lr-mednafen-pce-fast/lr-beetle-pce-fast/g" "$configdir"/*/emulators.cfg
-    fi
+    renameModule "lr-mednafen-pce-fast" "lr-beetle-pce-fast"
 }
 
 function sources_lr-beetle-pce-fast() {

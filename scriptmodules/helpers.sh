@@ -487,6 +487,22 @@ function copyDefaultConfig() {
     chown $user:$user "$to"
 }
 
+## @fn renameModule()
+## @param from source file
+## @param to destination file
+## @brief Renames an existing module.
+## @details Renames an existing module, moving it's install folder to the new location
+## and changing any references to it in `emulators.cfg`.
+function renameModule() {
+    local from="$1"
+    local to="$2"
+    # move from old location and update emulators.cfg
+    if [[ -d "$rootdir/$md_type/$from" ]]; then
+        mv "$rootdir/$md_type/$from" "$md_inst"
+        sed -i "s/$from/$to/g" "$configdir"/*/emulators.cfg
+    fi
+}
+
 ## @fn addUdevInputRules()
 ## @brief Creates a udev rule to adjust input device permissions.
 ## @details Creates a udev rule in `/etc/udev/rules.d/99-input.rules` to
