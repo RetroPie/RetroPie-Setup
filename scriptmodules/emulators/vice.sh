@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_vice() {
-    local depends=(libsdl2-dev libpng12-dev zlib1g-dev libasound2-dev automake checkinstall bison flex)
+    local depends=(libsdl2-dev libpng12-dev zlib1g-dev libasound2-dev libpcap-dev automake checkinstall bison flex subversion)
 
     if compareVersions "$__os_release" lt 8; then
         depends+=(libjpeg8-dev )
@@ -28,12 +28,13 @@ function depends_vice() {
 }
 
 function sources_vice() {
-    wget -O- -q $__archive_url/vice-2.4.30.tar.gz | tar -xvz --strip-components=1
+    svn checkout svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/ "$md_build"
 }
 
 function build_vice() {
-    local params=(--enable-sdlui2 --disable-catweasel --without-arts --without-oss)
-    ! isPlatform "x11" && params+=(--without-pulse)
+    local params=(--enable-sdlui2 --without-arts --without-oss --enable-ethernet)
+    ! isPlatform "x11" && params+=(--disable-catweasel --without-pulse)
+    ./autogen.sh
     ./configure --prefix="$md_inst" "${params[@]}"
     make
     md_ret_require="$md_build/src/x64"
