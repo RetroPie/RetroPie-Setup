@@ -58,5 +58,5 @@ _EOF_
     chmod a+x "$romdir/amiga/+Start FS-UAE.sh"
     chown $user:$user "$romdir/amiga/+Start FS-UAE.sh"
 
-    addSystem 1 "$md_id" "amiga" "$romdir/amiga/+Start\ FS-UAE.sh" "Amiga" ".sh"
+    addSystem 1 "$md_id" "amiga" "bash $romdir/amiga/+Start\ FS-UAE.sh" "Amiga" ".sh"
 }

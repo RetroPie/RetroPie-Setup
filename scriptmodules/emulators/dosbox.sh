@@ -79,6 +79,6 @@ _EOF_
 
     moveConfigDir "$home/.dosbox" "$md_conf_root/pc"
 
-    addSystem 1 "$md_id" "pc" "$romdir/pc/+Start\ DOSBox.sh %ROM%"
+    addSystem 1 "$md_id" "pc" "bash $romdir/pc/+Start\ DOSBox.sh %ROM%"
 }
 

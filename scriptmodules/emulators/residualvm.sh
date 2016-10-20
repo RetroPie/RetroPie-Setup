@@ -65,5 +65,5 @@ _EOF_
     chown $user:$user "$romdir/residualvm/+Start ResidualVM.sh"
     chmod u+x "$romdir/residualvm/+Start ResidualVM.sh"
 
-    addSystem 1 "$md_id" "residualvm" "$romdir/residualvm/+Start\ ResidualVM.sh %BASENAME%" "ResidualVM" ".sh .svm"
+    addSystem 1 "$md_id" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh %BASENAME%" "ResidualVM" ".sh .svm"
 }

@@ -94,5 +94,5 @@ _EOF_
     chown $user:$user "$romdir/scummvm/+Start ScummVM.sh"
     chmod u+x "$romdir/scummvm/+Start ScummVM.sh"
 
-    addSystem 1 "$md_id" "scummvm" "$romdir/scummvm/+Start\ ScummVM.sh %BASENAME%" "ScummVM" ".sh .svm"
+    addSystem 1 "$md_id" "scummvm" "bash $romdir/scummvm/+Start\ ScummVM.sh %BASENAME%" "ScummVM" ".sh .svm"
 }
