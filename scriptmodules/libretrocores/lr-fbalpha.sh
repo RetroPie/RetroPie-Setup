@@ -9,16 +9,21 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="lr-fba-next"
+rp_module_id="lr-fbalpha"
 rp_module_desc="Arcade emu - Final Burn Alpha (v0.2.97.39) port for libretro"
-rp_module_help="ROM Extension: .zip\n\nCopy your FBA roms to\n$romdir/fba or\n$romdir/neogeo or\n$romdir/arcade\n\nFor NeoGeo games the neogeo.zip BIOS is required and must be placed in the same directory as your FBA roms."
+rp_module_help="Previously called lr-fba-next\n\ROM Extension: .zip\n\nCopy your FBA roms to\n$romdir/fba or\n$romdir/neogeo or\n$romdir/arcade\n\nFor NeoGeo games the neogeo.zip BIOS is required and must be placed in the same directory as your FBA roms."
 rp_module_section="main"
 
-function sources_lr-fba-next() {
+function _update_hook_lr-fbalpha() {
+    # move from old location and update emulators.cfg
+    renameModule "lr-fba-next" "lr-fbalpha"
+}
+
+function sources_lr-fbalpha() {
     gitPullOrClone "$md_build" https://github.com/libretro/fbalpha.git
 }
 
-function build_lr-fba-next() {
+function build_lr-fbalpha() {
     make -f makefile.libretro clean
     local params=()
     isPlatform "arm" && params+=("platform=armv")
@@ -26,7 +31,7 @@ function build_lr-fba-next() {
     md_ret_require="$md_build/fbalpha_libretro.so"
 }
 
-function install_lr-fba-next() {
+function install_lr-fbalpha() {
     md_ret_files=(
         'fba.chm'
         'fbalpha_libretro.so'
@@ -36,7 +41,7 @@ function install_lr-fba-next() {
     )
 }
 
-function configure_lr-fba-next() {
+function configure_lr-fbalpha() {
     local dir
     for dir in arcade fba neogeo; do
         mkRomDir "$dir"
