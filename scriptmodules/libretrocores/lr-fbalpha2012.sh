@@ -16,7 +16,7 @@ rp_module_section="opt"
 
 function _update_hook_fbalpha2012() {
     # move from old location and update emulators.cfg
-    renameModule "lr-fba" "fbalpha2012"
+    renameModule "lr-fba" "lr-fbalpha2012"
 }
 
 function sources_lr-fbalpha2012() {
