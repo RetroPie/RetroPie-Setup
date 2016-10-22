@@ -103,10 +103,12 @@ function gui_autostart() {
                 1 "Start Emulation Station at boot"
                 2 "Start Kodi at boot (exit for Emulation Station)"
                 E "Manually edit $configdir/autostart.sh"
-                C "Boot to text console (auto login)"
+                CL "Boot to text console (require login)"
+                CA "Boot to text console (auto login as $user)"
             )
             if compareVersions "$__os_release" ge 8; then
-                options+=(D "Boot to desktop (auto login)")
+                options+=(DL "Boot to desktop (require login)")
+                options+=(DA "Boot to desktop (auto login as $user)")
             fi
         fi
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -134,13 +136,21 @@ function gui_autostart() {
                 E)
                     editFile "$configdir/all/autostart.sh"
                     ;;
-                C)
-                    disable_autostart
-                    printMsgs "dialog" "Booting to text console."
+                CL)
+                    disable_autostart B1
+                    printMsgs "dialog" "Booting to text console (require login)."
                     ;;
-                D)
+                CA)
+                    disable_autostart B2
+                    printMsgs "dialog" "Booting to text console (auto login as $user)."
+                    ;;
+                DL)
+                    disable_autostart B3
+                    printMsgs "dialog" "Booting to desktop (require login)."
+                    ;;
+                DA)
                     disable_autostart B4
-                    printMsgs "dialog" "Booting to desktop."
+                    printMsgs "dialog" "Booting to desktop (auto login as $user)."
                     ;;
             esac
         else
