@@ -68,6 +68,12 @@ function update_overlays_retroarch() {
     gitPullOrClone "$md_inst/overlays" https://github.com/libretro/common-overlays.git
 }
 
+function update_assets_retroarch() {
+    # remove if not a git repository for fresh checkout
+    [[ ! -d "$md_inst/assets/.git" ]] && rm -rf "$md_inst/assets"
+    gitPullOrClone "$md_inst/assets" https://github.com/libretro/retroarch-assets.git
+}
+
 function remove_shaders_retroarch() {
     rm -rf "$md_inst/shader"
 }
@@ -76,12 +82,14 @@ function remove_overlays_retroarch() {
     rm -rf "$md_inst/overlays"
 }
 
+function remove_assets_retroarch() {
+    rm -rf "$md_inst/assets"
+}
+
 function configure_retroarch() {
     [[ "$md_mode" == "remove" ]] && return
 
     mkUserDir "$configdir/all/retroarch-joypads"
-
-    mkUserDir "$md_inst/assets"
 
     # install shaders by default
     update_shaders_retroarch
@@ -225,7 +233,7 @@ function gui_retroarch() {
         local dir
         local name
         local i=1
-        for name in shaders overlays; do
+        for name in shaders overlays assets; do
             dir="$name"
             [[ "$dir" == "shaders" ]] && dir="shader"
             if [[ -d "$md_inst/$dir/.git" ]]; then
@@ -236,16 +244,17 @@ function gui_retroarch() {
             ((i++))
         done
         options+=(
-            3 "Configure keyboard for use with RetroArch"
-            4 "Configure keyboard hotkey behaviour for RetroArch"
+            4 "Configure keyboard for use with RetroArch"
+            5 "Configure keyboard hotkey behaviour for RetroArch"
         )
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
         case "$choice" in
-            1|2)
+            1|2|3)
                 [[ "$choice" -eq 1 ]] && dir="shaders"
                 [[ "$choice" -eq 2 ]] && dir="overlays"
+                [[ "$choice" -eq 3 ]] && dir="assets"
                 options=(1 "Install/Update $dir" 2 "Uninstall $dir" )
                 cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for $dir" 12 40 06)
                 choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -263,10 +272,10 @@ function gui_retroarch() {
 
                 esac
                 ;;
-            3)
+            4)
                 keyboard_retroarch
                 ;;
-            4)
+            5)
                 hotkey_retroarch
                 ;;
         esac
