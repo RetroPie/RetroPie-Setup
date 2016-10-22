@@ -102,7 +102,6 @@ function configure_retroarch() {
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     iniSet "assets_directory" "$md_inst/assets"
     iniSet "overlay_directory" "$md_inst/overlays"
-    iniSet "menu_driver" "rgui"
     isPlatform "x11" && iniSet "video_fullscreen" "true"
 
     # set default render resolution to 640x480 for rpi1
@@ -151,6 +150,11 @@ function configure_retroarch() {
 
     copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
     rm "$config"
+
+    # if no menu_driver is set, force RGUI, as the default has now changed to XMB.
+    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
+    iniGet "menu_driver"
+    [[ -z "$ini_value" ]] && iniSet "menu_driver" "rgui"
 
     # remapping hack for old 8bitdo firmware
     addAutoConf "8bitdo_hack" 1
