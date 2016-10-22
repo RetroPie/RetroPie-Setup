@@ -114,7 +114,7 @@ fi
 clear
 tput civis
 "$md_inst/emulationstation.sh" "\$@"
-tput cnorm
+reset
 
 _EOF_
     chmod +x /usr/bin/emulationstation
