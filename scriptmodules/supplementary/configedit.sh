@@ -232,6 +232,7 @@ function advanced_configedit() {
         "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
         "audio_driver $audio_opts"
         'video_driver gl dispmanx sdl2 vg'
+        'menu_driver rgui xmb'
         'video_fullscreen_x _string_'
         'video_fullscreen_y _string_'
         'video_frame_delay _string_'
@@ -280,6 +281,7 @@ function advanced_configedit() {
         'Input overlay to use (default none)'
         'Audio driver to use (default is alsa_thread)'
         'Video driver to use (default is gl)'
+        'Menu driver to use'
         'Fullscreen x resolution. Resolution of 0 uses the resolution of the desktop. (defaults to 0 if unset)'
         'Fullscreen y resolution. Resolution of 0 uses the resolution of the desktop. (defaults to 0 if unset)'
         'Sets how many milliseconds to delay after VSync before running the core. Can reduce latency at cost of higher risk of stuttering. Maximum is 15'
