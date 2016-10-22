@@ -76,16 +76,16 @@ function rp_callModule() {
     local md_id
     local md_idx
     if [[ "$req_id" =~ ^[0-9]+$ ]]; then
-        md_id="${__mod_id[$req_id]}"
+        md_id="$(rp_getIdFromIdx $req_id)"
         md_idx="$req_id"
     else
         md_idx="$(rp_getIdxFromId $req_id)"
-        [[ -n "$md_idx" ]] && md_id="$req_id"
+        md_id="$req_id"
     fi
 
-    if [[ -z "$md_id" ]]; then
+    if [[ -z "$md_id" || -z "$md_idx" ]]; then
         printMsgs "console" "No module '$req_id' found for platform $__platform"
-        return 1
+        return 2
     fi
 
     # automatically build/install module if no parameters are given
@@ -400,6 +400,10 @@ function rp_registerAllModules() {
 
 function rp_getIdxFromId() {
     echo "${__mod_id_to_idx[$1]}"
+}
+
+function rp_getIdFromIdx() {
+    echo "${__mod_id[$1]}"
 }
 
 function rp_getSectionIds() {
