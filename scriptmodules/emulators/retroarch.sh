@@ -147,6 +147,7 @@ function configure_retroarch() {
     iniSet "joypad_autoconfig_dir" "$configdir/all/retroarch-joypads/"
     iniSet "auto_remaps_enable" "true"
     iniSet "input_joypad_driver" "udev"
+    iniSet "all_users_control_menu" "true"
 
     copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
     rm "$config"
