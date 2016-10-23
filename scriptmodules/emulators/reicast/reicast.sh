@@ -65,6 +65,7 @@ function mapInput() {
     else
         # fallback to keyboard setup
         params+="-config input:evdev_device_id_1=0 "
+        device_counter=1
     fi
     params+="-config input:joystick_device_id=-1 "
     params+="-config players:nb=$device_counter "
