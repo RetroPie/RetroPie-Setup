@@ -761,11 +761,7 @@ function show_launch() {
     done
 
     if [[ -z "$DISPLAY" && -n "$image" ]]; then
-        if [[ "$command" =~ retroarch ]]; then
-            fbi -1 -t 5 -noverbose -a "$image" </dev/tty &>/dev/null &
-        else
-            fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
-        fi
+        fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
     elif [[ "$disable_menu" -ne 1 && "$use_art" -ne 1 ]]; then
         local launch_name
         if [[ -n "$rom_bn" ]]; then
