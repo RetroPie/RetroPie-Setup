@@ -63,7 +63,7 @@ function gui_raspbiantools() {
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(
             1 "Upgrade Raspbian packages"
-            2 "Install desktop environment (LXDE)"
+            2 "Install Pixel desktop environment"
             3 "Remove some uneeded packages (pulseaudio / cups / wolfram)"
             4 "Disable screen blanker"
             5 "Enable needed kernel modules (uinput joydev snd-bcm2835)"
@@ -75,6 +75,7 @@ function gui_raspbiantools() {
                     rp_callModule "$md_id" apt_upgrade
                     ;;
                 2)
+                    dialog --defaultno --yesno "Are you sure you want to install the Pixel desktop?" 22 76 2>&1 >/dev/tty || continue
                     rp_callModule "$md_id" lxde
                     printMsgs "dialog" "LXDE is installed."
                     local config="/etc/X11/Xwrapper.config"
