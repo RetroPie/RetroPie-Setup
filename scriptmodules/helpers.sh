@@ -503,6 +503,8 @@ function renameModule() {
         sed -i "s/\"$from\"/\"$to\"/g" "$configdir"/*/emulators.cfg
         # replace any $from = "cmdline"
         sed -i "s/$from\([ =]\)/$to\1/g" "$configdir"/*/emulators.cfg
+        # replace any paths with /$from/
+        sed -i "s|/$from/|/$to//g" "$configdir"/*/emulators.cfg
     fi
 }
 
