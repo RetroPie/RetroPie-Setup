@@ -403,20 +403,10 @@ function update_packages_gui_setup() {
 }
 
 function basic_install_setup() {
-    clear
-    local logfilename
-    __ERRMSGS=()
-    __INFMSGS=()
-    rps_logInit
-    {
-        rps_logStart
-        local idx
-        for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
-            rp_installModule "$idx"
-        done
-        rps_logEnd
-    } &> >(tee >(gzip --stdout >"$logfilename"))
-    rps_printInfo "$logfilename"
+    local idx
+    for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
+        rp_installModule "$idx"
+    done
 }
 
 function packages_gui_setup() {
@@ -519,7 +509,17 @@ function gui_setup() {
         case "$choice" in
             I)
                 dialog --defaultno --yesno "Are you sure you want to do a basic install?\n\nThis will install all packages from the 'Core' and 'Main' package sections." 22 76 2>&1 >/dev/tty || continue
-                basic_install_setup
+                clear
+                local logfilename
+                __ERRMSGS=()
+                __INFMSGS=()
+                rps_logInit
+                {
+                    rps_logStart
+                    basic_install_setup
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
                 ;;
             U)
                 update_packages_gui_setup
