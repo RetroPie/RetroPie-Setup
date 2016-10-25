@@ -28,7 +28,7 @@ function depends_gamecondriver() {
     getDepends dkms raspberrypi-kernel-headers
 }
 
-function install_gamecondriver() {
+function install_bin_gamecondriver() {
     local gamecon_ver="1.2"
     local db9_ver="1.0"
     local url="https://www.niksula.hut.fi/~mhiienka/Rpi"
