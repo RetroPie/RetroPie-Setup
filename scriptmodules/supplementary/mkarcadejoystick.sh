@@ -57,5 +57,5 @@ function configure_mkarcadejoystick() {
     fi
 
     [[ -n "$(lsmod | grep mk_arcade_joystick_rpi)" ]] && rmmod mk_arcade_joystick_rpi
-    modprobe gamecon_gpio_rpi
+    modprobe mk_arcade_joystick_rpi
 } 
