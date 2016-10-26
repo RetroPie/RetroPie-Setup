@@ -26,6 +26,9 @@ function sources_ppsspp() {
     runCmd git submodule update --init --recursive
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
+
+    mkdir cmake
+    wget -q -O- "$__archive_url/cmake-3.6.2.tar.gz" | tar -xvz --strip-components=1 -C cmake
 }
 
 function build_ffmpeg_ppsspp() {
@@ -65,14 +68,23 @@ function build_ffmpeg_ppsspp() {
 }
 
 function build_ppsspp() {
+    cd cmake
+    ./bootstrap
+    make
+    cd ..
+
     # build ffmpeg
     cd ffmpeg
     build_ffmpeg_ppsspp
     cd "$md_build"
 
-    # build ppsspp - we override CFLAGS, as currently ppsspp only works on pi2 when built for armv6
+    # build ppsspp
     rm -f CMakeCache.txt
-    cmake -DRASPBIAN=ON .
+    if isPlatform "rpi" && [[ "$__os_id" == "Raspbian" ]]; then
+        cmake/bin/cmake -DRASPBIAN=ON .
+    else
+        cmake/bin/cmake .
+    fi
     make clean
     make
 
