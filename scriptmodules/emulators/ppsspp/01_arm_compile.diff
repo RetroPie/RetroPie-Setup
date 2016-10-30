@@ -1,0 +1,68 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 471e832..14d7827 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -231,14 +231,6 @@ set(CommonARM
+ 	Common/ColorConvNEON.cpp)
+ source_group(ARM FILES ${CommonARM})
+ 
+-set(CommonARM64
+-	Common/Arm64Emitter.h
+-	Common/Arm64Emitter.cpp
+-	Common/ArmEmitter.h
+-	Common/ArmEmitter.cpp
+-	Core/Util/DisArm64.cpp)
+-source_group(ARM64 FILES ${CommonARM64})
+-
+ set(CommonMIPS
+ 	Common/MipsCPUDetect.cpp
+ 	Common/MipsEmitter.cpp
+diff --git a/cmake/Toolchains/raspberry.armv6.cmake b/cmake/Toolchains/raspberry.armv6.cmake
+index 8b05f08..8259203 100644
+--- a/cmake/Toolchains/raspberry.armv6.cmake
++++ b/cmake/Toolchains/raspberry.armv6.cmake
+@@ -8,10 +8,6 @@ include_directories(SYSTEM
+   /opt/vc/include/interface/vmcx_host/linux
+ )
+ 
+-link_directories(
+-  /opt/vc/lib
+-)
+-
+ add_definitions(
+   -DPPSSPP_PLATFORM_RPI=1
+ )
+@@ -21,7 +17,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARCH_FLAGS}")
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ARCH_FLAGS}")
+ set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${ARCH_FLAGS}")
+ 
+-set(OPENGL_LIBRARIES GLESv2 bcm_host)
++set(OPENGL_LIBRARIES /opt/vc/lib/libGLESv2.so /opt/vc/lib/libbcm_host.so)
+ set(USING_GLES2 ON)
+ set(USING_FBDEV ON)
+ 
+diff --git a/cmake/Toolchains/raspberry.armv7.cmake b/cmake/Toolchains/raspberry.armv7.cmake
+index 7617829..e33b603 100644
+--- a/cmake/Toolchains/raspberry.armv7.cmake
++++ b/cmake/Toolchains/raspberry.armv7.cmake
+@@ -8,10 +8,6 @@ include_directories(SYSTEM
+   /opt/vc/include/interface/vmcx_host/linux
+ )
+ 
+-link_directories(
+-  /opt/vc/lib
+-)
+-
+ add_definitions(
+   -DPPSSPP_PLATFORM_RPI=1
+   -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2
+@@ -22,7 +18,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARCH_FLAGS}")
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ARCH_FLAGS}")
+ set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${ARCH_FLAGS}")
+ 
+-set(OPENGL_LIBRARIES GLESv2 bcm_host)
++set(OPENGL_LIBRARIES /opt/vc/lib/libGLESv2.so /opt/vc/lib/libbcm_host.so)
+ set(USING_GLES2 ON)
+ set(USING_FBDEV ON)
+ set(ARMV7 ON)
+ 

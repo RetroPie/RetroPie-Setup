@@ -27,6 +27,9 @@ function sources_ppsspp() {
     runCmd git submodule update --init --recursive
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
+    # temporary fix for building on rpi
+    isPlatform "rpi" && applyPatch "$md_data/01_arm_compile.diff"
+
     cd ..
     mkdir -p cmake
     wget -q -O- "$__archive_url/cmake-3.6.2.tar.gz" | tar -xvz --strip-components=1 -C cmake
