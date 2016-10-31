@@ -79,4 +79,15 @@ function configure_vice() {
 
     copyDefaultConfig "$config" "$md_conf_root/c64/sdl-vicerc"
     rm "$config"
+
+    if ! isPlatform "x11"; then
+        # enforce a few settings to ensure a smooth upgrade from sdl1
+        iniConfig "=" "" "$md_conf_root/c64/sdl-vicerc"
+        iniDel "SDLBitdepth"
+        iniSet "VICIIDoubleSize" "0"
+        iniSet "VICIIDoubleScan" "0"
+        iniSet "SDLWindowWidth" "384"
+        iniSet "SDLWindowHeight" "272"
+    fi
+
 }
