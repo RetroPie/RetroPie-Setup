@@ -90,7 +90,7 @@ function build_ppsspp() {
         if isPlatform "armv6"; then
             "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake .
         else
-            "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake .
+            "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv7.cmake .
         fi
     else
         "$cmake" .

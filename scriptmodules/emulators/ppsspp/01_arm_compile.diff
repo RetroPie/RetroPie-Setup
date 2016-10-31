@@ -1,22 +1,3 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 471e832..14d7827 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -231,14 +231,6 @@ set(CommonARM
- 	Common/ColorConvNEON.cpp)
- source_group(ARM FILES ${CommonARM})
- 
--set(CommonARM64
--	Common/Arm64Emitter.h
--	Common/Arm64Emitter.cpp
--	Common/ArmEmitter.h
--	Common/ArmEmitter.cpp
--	Core/Util/DisArm64.cpp)
--source_group(ARM64 FILES ${CommonARM64})
--
- set(CommonMIPS
- 	Common/MipsCPUDetect.cpp
- 	Common/MipsEmitter.cpp
 diff --git a/cmake/Toolchains/raspberry.armv6.cmake b/cmake/Toolchains/raspberry.armv6.cmake
 index 8b05f08..8259203 100644
 --- a/cmake/Toolchains/raspberry.armv6.cmake
