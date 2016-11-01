@@ -86,6 +86,7 @@ function build_ppsspp() {
     local cmake="$md_build/cmake/bin/cmake"
     cd "$md_build/ppsspp"
     rm -f CMakeCache.txt
+    rm -rf CMakeFiles
     if isPlatform "rpi"; then
         if isPlatform "armv6"; then
             "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake .
@@ -98,14 +99,14 @@ function build_ppsspp() {
     make clean
     make
 
-    md_ret_require="$md_build/PPSSPPSDL"
+    md_ret_require="$md_build/ppsspp/PPSSPPSDL"
 }
 
 function install_ppsspp() {
     md_ret_files=(
-        'assets'
-        'flash0'
-        'PPSSPPSDL'
+        'ppsspp/assets'
+        'ppsspp/flash0'
+        'ppsspp/PPSSPPSDL'
     )
 }
 
