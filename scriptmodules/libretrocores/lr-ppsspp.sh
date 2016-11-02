@@ -33,8 +33,6 @@ function sources_lr-ppsspp() {
 }
 
 function build_lr-ppsspp() {
-    # build ffmpeg
-    cd ffmpeg
     build_ffmpeg_ppsspp
     cd "$md_build"
 

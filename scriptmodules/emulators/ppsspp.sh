@@ -13,7 +13,7 @@ rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_section="opt"
-rp_module_flags="!armv6 !mali"
+rp_module_flags="!mali"
 
 function depends_ppsspp() {
     local depends=(cmake libsdl2-dev libzip-dev)
@@ -27,8 +27,6 @@ function sources_ppsspp() {
     runCmd git submodule update --init --recursive
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
-    # temporary fix for building on rpi
-    isPlatform "rpi" && applyPatch "$md_data/01_arm_compile.diff"
 
     cd ..
     mkdir -p cmake
@@ -46,12 +44,11 @@ function build_ffmpeg_ppsspp() {
         local DEMUXERS
         local MUXERS
         local PARSERS
-        local OPTS
+        local GENERAL
+        local OPTS # used by older lr-ppsspp fork
         # get the ffmpeg configure variables from the ppsspp ffmpeg distributed script
         source linux_arm.sh
         ./configure \
-            ${OPTS} \
-            --cpu="cortex-a7" \
             --prefix="./linux/arm" \
             --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
             --disable-shared \
