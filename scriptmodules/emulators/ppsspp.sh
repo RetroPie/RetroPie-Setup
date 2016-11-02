@@ -34,7 +34,7 @@ function sources_ppsspp() {
 }
 
 function build_ffmpeg_ppsspp() {
-    cd "$md_build/ppsspp/ffmpeg"
+    cd "$1"
     if isPlatform "arm"; then
         local MODULES
         local VIDEO_DECODERS
@@ -77,7 +77,7 @@ function build_cmake_ppsspp() {
 
 function build_ppsspp() {
     build_cmake_ppsspp
-    build_ffmpeg_ppsspp
+    build_ffmpeg_ppsspp "$md_build/ppsspp/ffmpeg"
 
     # build ppsspp
     local cmake="$md_build/cmake/bin/cmake"

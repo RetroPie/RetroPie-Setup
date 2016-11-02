@@ -33,7 +33,7 @@ function sources_lr-ppsspp() {
 }
 
 function build_lr-ppsspp() {
-    build_ffmpeg_ppsspp
+    build_ffmpeg_ppsspp "$md_build/ffmpeg"
     cd "$md_build"
 
     make -C libretro clean
