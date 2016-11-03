@@ -30,14 +30,14 @@ function sources_residualvm() {
 
 function build_residualvm() {
     SDL_CONFIG=sdl2-config LDFLAGS="-L/opt/vc/lib" ./configure \
-              --force-opengles2 \
-              --disable-glew \
-              --enable-opengl-shaders \
-              --enable-vkeybd \
-              --enable-release \
-              --disable-debug \
-              --enable-keymapper \
-              --prefix="$md_inst"
+        --force-opengles2 \
+        --disable-glew \
+        --enable-opengl-shaders \
+        --enable-vkeybd \
+        --enable-release \
+        --disable-debug \
+        --enable-keymapper \
+        --prefix="$md_inst"
     make clean
     make
     strip "$md_build/residualvm"
