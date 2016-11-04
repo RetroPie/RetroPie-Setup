@@ -48,6 +48,8 @@ function build_ffmpeg_ppsspp() {
         local OPTS # used by older lr-ppsspp fork
         # get the ffmpeg configure variables from the ppsspp ffmpeg distributed script
         source linux_arm.sh
+        # linux_arm.sh has set -e which we need to switch off
+        set +e
         ./configure \
             --prefix="./linux/arm" \
             --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
