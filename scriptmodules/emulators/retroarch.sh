@@ -90,7 +90,10 @@ function remove_assets_retroarch() {
 function configure_retroarch() {
     [[ "$md_mode" == "remove" ]] && return
 
-    mkUserDir "$configdir/all/retroarch-joypads"
+    mkUserDir "$home/.config"
+    moveConfigDir "$home/.config/retroarch" "$configdir/all/retroarch"
+
+    moveConfigDir "$configdir/all/retroarch-joypads" "$configdir/all/retroarch/autoconfig"
 
     # install shaders by default
     update_shaders_retroarch
@@ -153,7 +156,6 @@ function configure_retroarch() {
 
     # input settings
     iniSet "input_autodetect_enable" "true"
-    iniSet "joypad_autoconfig_dir" "$configdir/all/retroarch-joypads/"
     iniSet "auto_remaps_enable" "true"
     iniSet "input_joypad_driver" "udev"
     iniSet "all_users_control_menu" "true"
