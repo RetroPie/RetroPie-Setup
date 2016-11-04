@@ -50,9 +50,13 @@ function gui_esthemes() {
         'RetroPie carbon'
         'RetroPie carbon-centered'
         'RetroPie carbon-nometa'
-        'RetroPie pixel'
-        'HerbFargus pixel-meta'
-        'HerbFargus pixel-tft'
+        'ehettervik pixel'
+        'ehettervik pixel-metadata'
+        'ehettervik pixel-tft'
+        'ehettervik luminous'
+        'ehettervik modern'
+        'ehettervik minilumi'
+        'ehettervik workbench'
         'AmadhiX eudora'
         'AmadhiX eudora-bigshot'
         'AmadhiX eudora-concise'
@@ -74,8 +78,6 @@ function gui_esthemes() {
         'robertybob simplebigart'
         'RetroPie clean-look'
         'HerbFargus tronkyfran'
-        'HerbFargus luminous'
-        'HerbFargus minilumi'
     )
     while true; do
         local theme
