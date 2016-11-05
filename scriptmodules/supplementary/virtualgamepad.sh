@@ -27,7 +27,7 @@ function sources_virtualgamepad() {
     gitPullOrClone "$md_inst" https://github.com/miroof/node-virtual-gamepads.git
 }
 
-function build__virtualgamepad() {
+function build_virtualgamepad() {
     cd "$md_inst"
     npm install --unsafe-perm
 }
