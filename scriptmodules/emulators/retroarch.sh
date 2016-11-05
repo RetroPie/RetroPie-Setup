@@ -90,9 +90,11 @@ function remove_assets_retroarch() {
 function configure_retroarch() {
     [[ "$md_mode" == "remove" ]] && return
 
+    # move / symlink the retroarch configuration
     mkUserDir "$home/.config"
     moveConfigDir "$home/.config/retroarch" "$configdir/all/retroarch"
 
+    # move / symlink our old retroarch-joypads folder
     moveConfigDir "$configdir/all/retroarch-joypads" "$configdir/all/retroarch/autoconfig"
 
     # install shaders by default
