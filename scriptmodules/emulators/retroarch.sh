@@ -158,6 +158,9 @@ function configure_retroarch() {
     iniSet "input_joypad_driver" "udev"
     iniSet "all_users_control_menu" "true"
 
+    # rgui by default
+    iniSet "menu_driver" "rgui"
+
     copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
     rm "$config"
 
