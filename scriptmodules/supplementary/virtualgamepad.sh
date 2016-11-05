@@ -32,7 +32,6 @@ function depends_virtualgamepad() {
             # force aptInstall to get a fresh list before installing
             __apt_update=0
             aptInstall nodejs
-            fi
         fi
     fi
 }
