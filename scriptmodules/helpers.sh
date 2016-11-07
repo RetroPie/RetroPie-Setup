@@ -688,7 +688,7 @@ function iniFileEditor() {
                     file="${file//$path\//}"
                     options+=("$i" "$file")
                     ((i++))
-                done < <(find "$path" -type f -name "$match" | sort)
+                done < <(find -L "$path" -type f -name "$match" | sort)
                 ;;
             _id_|*)
                 [[ "$mode" == "_id_" ]] && params=("${params[@]:1}")
