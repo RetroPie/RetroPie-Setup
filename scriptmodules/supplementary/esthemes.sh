@@ -54,7 +54,6 @@ function gui_esthemes() {
         'ehettervik pixel-metadata'
         'ehettervik pixel-tft'
         'ehettervik luminous'
-        'ehettervik modern'
         'ehettervik minilumi'
         'ehettervik workbench'
         'AmadhiX eudora'
