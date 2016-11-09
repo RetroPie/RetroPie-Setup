@@ -34,6 +34,10 @@ function build_ps3controller() {
     cd sixad
     make clean
     make "${params[@]}"
+    local bin
+    for bin in sixad-bin sixpair sixad-sixaxis sixad-remote sixad-raw sixad-3in1; do
+        md_ret_require+=("$md_build/sixad/bins/$bin")
+    done
 }
 
 function install_ps3controller() {
