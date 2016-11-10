@@ -27,7 +27,7 @@ function sources_lr-ppsspp() {
     else
         gitPullOrClone "$md_build" https://github.com/libretro/libretro-ppsspp.git
     fi
-    runCmd git submodule update --init --depth 1
+    runCmd git submodule update --init
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
 }

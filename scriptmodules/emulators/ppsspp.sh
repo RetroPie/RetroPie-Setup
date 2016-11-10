@@ -24,7 +24,7 @@ function depends_ppsspp() {
 function sources_ppsspp() {
     gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
     cd ppsspp
-    runCmd git submodule update --init --recursive --depth 1
+    runCmd git submodule update --init --recursive
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
 
