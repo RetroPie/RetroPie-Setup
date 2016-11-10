@@ -31,34 +31,34 @@
 # the user to set a screenmode for this particular command. the savename parameter is displayed to the user - we use the module id
 # of the emulator we are launching.
 
-rootdir="/opt/retropie"
-configdir="$rootdir/configs"
-log="/dev/shm/runcommand.log"
+ROOTDIR="/opt/retropie"
+CONFIGDIR="$ROOTDIR/configs"
+LOG="/dev/shm/runcommand.log"
 
-runcommand_conf="$configdir/all/runcommand.cfg"
-video_conf="$configdir/all/videomodes.cfg"
-apps_conf="$configdir/all/emulators.cfg"
-dispmanx_conf="$configdir/all/dispmanx.cfg"
-retronetplay_conf="$configdir/all/retronetplay.cfg"
+RUNCOMMAND_CONF="$CONFIGDIR/all/runcommand.cfg"
+VIDEO_CONF="$CONFIGDIR/all/videomodes.cfg"
+APPS_CONF="$CONFIGDIR/all/emulators.cfg"
+DISPMANX_CONF="$CONFIGDIR/all/dispmanx.cfg"
+RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
 
-tvservice="/opt/vc/bin/tvservice"
+TVSERVICE="/opt/vc/bin/tvservice"
 
-declare -A mode_map
-declare -A mode
+declare -A MODE_MAP
+declare -A MODE
 
-mode_map[1-CEA-4:3]="CEA-1"
-mode_map[1-DMT-4:3]="DMT-4"
-mode_map[1-CEA-16:9]="CEA-1"
+MODE_MAP[1-CEA-4:3]="CEA-1"
+MODE_MAP[1-DMT-4:3]="DMT-4"
+MODE_MAP[1-CEA-16:9]="CEA-1"
 
-mode_map[4-CEA-4:3]="DMT-16"
-mode_map[4-DMT-4:3]="DMT-16"
-mode_map[4-CEA-16:9]="CEA-4"
+MODE_MAP[4-CEA-4:3]="DMT-16"
+MODE_MAP[4-DMT-4:3]="DMT-16"
+MODE_MAP[4-CEA-16:9]="CEA-4"
 
-source "$rootdir/lib/inifuncs.sh"
+source "$ROOTDIR/lib/inifuncs.sh"
 
 function get_config() {
-    if [[ -f "$runcommand_conf" ]]; then
-        iniConfig " = " '"' "$runcommand_conf"
+    if [[ -f "$RUNCOMMAND_CONF" ]]; then
+        iniConfig " = " '"' "$RUNCOMMAND_CONF"
         iniGet "governor"
         governor="$ini_value"
         iniGet "use_art"
@@ -71,7 +71,7 @@ function get_config() {
         [[ "$disable_menu" -eq 1 ]] && disable_joystick=1
     fi
 
-    if [[ -f "$tvservice" ]]; then
+    if [[ -f "$TVSERVICE" ]]; then
         has_tvs=1
     else
         has_tvs=0
@@ -83,11 +83,11 @@ function start_joy2key() {
     # get the first joystick device (if not already set)
     [[ -z "$__joy2key_dev" ]] && __joy2key_dev="$(ls -1 /dev/input/js* 2>/dev/null | head -n1)"
     # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
-    if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
+    if [[ -f "$ROOTDIR/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
 
         # call joy2key.py: arguments are curses capability names or hex values starting with '0x'
         # see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
-        "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09 &
+        "$ROOTDIR/supplementary/runcommand/joy2key.py" "$__joy2key_dev" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09 &
         __joy2key_pid=$!
     fi
 }
@@ -121,11 +121,11 @@ function get_params() {
             system="$3"
             rom="$4"
             if [[ "$command" == "_PORT_" ]]; then
-                conf_root="$configdir/ports/$system"
+                conf_root="$CONFIGDIR/ports/$system"
                 emu_conf="$conf_root/emulators.cfg"
                 is_port=1
             else
-                conf_root="$configdir/$system"
+                conf_root="$CONFIGDIR/$system"
                 emu_conf="$conf_root/emulators.cfg"
                 is_port=0
             fi
@@ -162,15 +162,15 @@ function get_all_modes() {
             info=${info/ /}
             if [[ -n "$id" ]]; then
                 mode_id+=($group-$id)
-                mode[$group-$id]="$info"
+                MODE[$group-$id]="$info"
             fi
-        done < <($tvservice -m $group)
+        done < <($TVSERVICE -m $group)
     done
     local aspect
     for group in "NTSC" "PAL"; do
         for aspect in "4:3" "16:10" "16:9"; do
             mode_id+=($group-$aspect)
-            mode[$group-$aspect]="SDTV - $group-$aspect"
+            MODE[$group-$aspect]="SDTV - $group-$aspect"
         done
     done
 }
@@ -212,7 +212,7 @@ function load_mode_defaults() {
 
     if [[ $has_tvs -eq 1 ]]; then
         # get current mode / aspect ratio
-        mode_orig=($(get_mode_info "$($tvservice -s)"))
+        mode_orig=($(get_mode_info "$($TVSERVICE -s)"))
         mode_new=("${mode_orig[@]}")
 
         # get default mode for requested mode of 1 or 4
@@ -223,7 +223,7 @@ function load_mode_defaults() {
             local aspect="${mode_orig[4]}"
             [[ "$aspect" =~ (4:3|16:9) ]] || aspect="4:3"
             temp="${mode_req}-${mode_orig[0]}-$aspect"
-            mode_new_id="${mode_map[$temp]}"
+            mode_new_id="${MODE_MAP[$temp]}"
         else
             mode_new_id="$mode_req"
         fi
@@ -245,9 +245,9 @@ function load_mode_defaults() {
     # default retroarch render res to config file
     render_res="config"
 
-    if [[ -f "$video_conf" ]]; then
+    if [[ -f "$VIDEO_CONF" ]]; then
         # local default video modes for emulator / rom
-        iniConfig " = " '"' "$video_conf"
+        iniConfig " = " '"' "$VIDEO_CONF"
         iniGet "$save_emu"
         if [[ -n "$ini_value" ]]; then
             mode_def_emu="$ini_value"
@@ -335,7 +335,7 @@ function main_menu() {
 
         local temp_mode
         if [[ $has_tvs -eq 1 ]]; then
-            temp_mode="${mode[$mode_new_id]}"
+            temp_mode="${MODE[$mode_new_id]}"
         else
             temp_mode="n/a"
         fi
@@ -353,7 +353,7 @@ function main_menu() {
                 load_mode_defaults
                 ;;
             3)
-                sed -i "/$appsave/d" "$apps_conf"
+                sed -i "/$appsave/d" "$APPS_CONF"
                 get_sys_command "$system" "$rom"
                 ;;
             4)
@@ -365,11 +365,11 @@ function main_menu() {
                 load_mode_defaults
                 ;;
             6)
-                sed -i "/$save_emu/d" "$video_conf"
+                sed -i "/$save_emu/d" "$VIDEO_CONF"
                 load_mode_defaults
                 ;;
             7)
-                sed -i "/$save_rom/d" "$video_conf"
+                sed -i "/$save_rom/d" "$VIDEO_CONF"
                 load_mode_defaults
                 ;;
             8)
@@ -391,11 +391,11 @@ function main_menu() {
                 load_mode_defaults
                 ;;
             12)
-                sed -i "/$fb_save_emu/d" "$video_conf"
+                sed -i "/$fb_save_emu/d" "$VIDEO_CONF"
                 load_mode_defaults
                 ;;
             13)
-                sed -i "/$fb_save_rom/d" "$video_conf"
+                sed -i "/$fb_save_rom/d" "$VIDEO_CONF"
                 load_mode_defaults
                 ;;
             Z)
@@ -423,13 +423,13 @@ function choose_mode() {
     options=()
     local key
     for key in ${mode_id[@]}; do
-        options+=("$key" "${mode[$key]}")
+        options+=("$key" "${MODE[$key]}")
     done
     local cmd=(dialog --default-item "$default" --menu "Choose video output mode"  22 76 16 )
     mode_new_id=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$mode_new_id" ]] && return
 
-    iniConfig " = " '"' "$video_conf"
+    iniConfig " = " '"' "$VIDEO_CONF"
     iniSet "$save" "$mode_new_id"
 }
 
@@ -464,7 +464,7 @@ function choose_app() {
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         if [[ -n "$save" ]]; then
-            iniConfig " = " '"' "$apps_conf"
+            iniConfig " = " '"' "$APPS_CONF"
             iniSet "$save" "${apps[$choice]}"
         else
             iniConfig " = " '"' "$emu_conf"
@@ -509,7 +509,7 @@ function choose_render_res() {
             ;;
     esac
 
-    iniConfig " = " '"' "$video_conf"
+    iniConfig " = " '"' "$VIDEO_CONF"
     iniSet "$save" "$render_res"
 }
 
@@ -534,7 +534,7 @@ function choose_fb_res() {
     [[ -z "$choice" ]] && return
     fb_res="${res[$choice-1]}"
 
-    iniConfig " = " '"' "$video_conf"
+    iniConfig " = " '"' "$VIDEO_CONF"
     iniSet "$save" "$fb_res"
 }
 
@@ -561,12 +561,12 @@ function switch_mode() {
 
     local switched=0
     if [[ "${mode_id[0]}" == "PAL" ]] || [[ "${mode_id[0]}" == "NTSC" ]]; then
-        $tvservice -c "${mode_id[*]}"
+        $TVSERVICE -c "${mode_id[*]}"
         switched=1
     else
-        local has_mode=$($tvservice -m ${mode_id[0]} | grep -w "mode ${mode_id[1]}")
+        local has_mode=$($TVSERVICE -m ${mode_id[0]} | grep -w "mode ${mode_id[1]}")
         if [[ -n "${mode_id[*]}" ]] && [[ -n "$has_mode" ]]; then
-            $tvservice -e "${mode_id[*]}"
+            $TVSERVICE -e "${mode_id[*]}"
             switched=1
         fi
     fi
@@ -574,7 +574,7 @@ function switch_mode() {
     # if we have switched mode, switch the framebuffer resolution also
     if [[ $switched -eq 1 ]]; then
         sleep 1
-        mode_new=($(get_mode_info "$($tvservice -s)"))
+        mode_new=($(get_mode_info "$($TVSERVICE -s)"))
         [[ -z "$fb_new" ]] && fb_new="${mode_new[2]}x${mode_new[3]}"
     fi
 
@@ -583,10 +583,10 @@ function switch_mode() {
 
 function restore_mode() {
     local mode=(${1/-/ })
-    if [[ "${mode[0]}" == "PAL" ]] || [[ "${mode[0]}" == "NTSC" ]]; then
-        $tvservice -c "${mode[*]}"
+    if [[ "${MODE[0]}" == "PAL" ]] || [[ "${MODE[0]}" == "NTSC" ]]; then
+        $TVSERVICE -c "${MODE[*]}"
     else
-        $tvservice -p
+        $TVSERVICE -p
     fi
 }
 
@@ -599,8 +599,8 @@ function config_dispmanx() {
     local name="$1"
     # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
     # change the library path to load dispmanx sdl first
-    if [[ -f "$dispmanx_conf" ]]; then
-        iniConfig " = " '"' "$dispmanx_conf"
+    if [[ -f "$DISPMANX_CONF" ]]; then
+        iniConfig " = " '"' "$DISPMANX_CONF"
         iniGet "$name"
         [[ "$ini_value" == "1" ]] && command="SDL1_VIDEODRIVER=dispmanx $command"
     fi
@@ -646,8 +646,8 @@ function retroarch_append_config() {
     fi
 
     # append any netplay configuration
-    if [[ $netplay -eq 1 ]] && [[ -f "$retronetplay_conf" ]]; then
-        source "$retronetplay_conf"
+    if [[ $netplay -eq 1 ]] && [[ -f "$RETRONETPLAY_CONF" ]]; then
+        source "$RETRONETPLAY_CONF"
         command+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes --nick $__netplaynickname"
     fi
 }
@@ -702,8 +702,8 @@ function get_sys_command() {
     emulator_def_sys="$emulator"
 
     # get system & rom specific app if set
-    if [[ -f "$apps_conf" ]]; then
-        iniConfig " = " '"' "$apps_conf"
+    if [[ -f "$APPS_CONF" ]]; then
+        iniConfig " = " '"' "$APPS_CONF"
         iniGet "$appsave"
         emulator_def_rom="$ini_value"
         [[ -n "$ini_value" ]] && emulator="$ini_value"
@@ -746,9 +746,9 @@ function show_launch() {
 
     # look for custom launching images
     [[ $is_sys -eq 1 ]] && images+=("$conf_root/launching")
-    [[ $is_port -eq 1 ]] && images+=("$configdir/ports/launching")
+    [[ $is_port -eq 1 ]] && images+=("$CONFIGDIR/ports/launching")
     images+=(
-        "$configdir/all/launching"
+        "$CONFIGDIR/all/launching"
     )
 
     local image
@@ -772,7 +772,7 @@ function show_launch() {
         else
             launch_name="$emulator"
         fi
-        DIALOGRC="$configdir/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to $log" 9 60
+        DIALOGRC="$CONFIGDIR/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to $log" 9 60
     fi
 }
 
@@ -797,9 +797,9 @@ function check_menu() {
 
 # calls script with parameters system, emulator, rom, and commandline
 function user_script() {
-    local script="$configdir/all/$1"
+    local script="$CONFIGDIR/all/$1"
     if [[ -f "$script" ]]; then
-        bash "$script" "$system" "$emulator" "$rom" "$command" </dev/tty 2>>"$log"
+        bash "$script" "$system" "$emulator" "$rom" "$command" </dev/tty 2>>"$LOG"
     fi
 }
 
@@ -811,7 +811,7 @@ get_params "$@"
 tput civis
 clear
 
-rm -f "$log"
+rm -f "$LOG"
 echo -e "$system\n$emulator\n$rom\n$command" >/dev/shm/runcommand.info
 user_script "runcommand-onstart.sh"
 
@@ -845,14 +845,14 @@ config_dispmanx "$save_emu"
 retroarch_append_config
 
 # launch the command
-echo -e "Parameters: $@\nExecuting: $command" >>"$log"
+echo -e "Parameters: $@\nExecuting: $command" >>"$LOG"
 if [[ "$console_out" -eq 1 ]]; then
     # turn cursor on
     tput cnorm
-    eval $command </dev/tty 2>>"$log"
+    eval $command </dev/tty 2>>"$LOG"
     tput civis
 else
-    eval $command </dev/tty &>>"$log"
+    eval $command </dev/tty &>>"$LOG"
 fi
 
 clear
