@@ -176,7 +176,7 @@ function get_all_modes() {
 }
 
 function get_mode_info() {
-    local status="$1"
+    local status="$($TVSERVICE -s)"
     local temp
     local mode_info=()
 
@@ -187,7 +187,7 @@ function get_mode_info() {
         temp=($(echo "$status" | grep -oE "(CEA|DMT) \([0-9]+\)"))
     fi
     mode_info[0]="${temp[0]}"
-    mode_info[1]="${temp[1]/[()]/}"
+    mode_info[1]="${temp[1]//[()]/}"
 
     # get mode resolution
     temp=$(echo "$status" | cut -d"," -f2 | grep -oE "[0-9]+x[0-9]+")
@@ -212,20 +212,21 @@ function load_mode_defaults() {
 
     if [[ $HAS_TVS -eq 1 ]]; then
         # get current mode / aspect ratio
-        MODE_ORIG=($(get_mode_info "$($TVSERVICE -s)"))
-        MODE_NEW=("${MODE_ORIG[@]}")
+        MODE_ORIG=($(get_mode_info))
+        MODE_CUR="$MODE_ORIG"
+        MODE_ORIG_ID="${MODE_ORIG[0]}-${MODE_ORIG[1]}"
 
         # get default mode for requested mode of 1 or 4
         if [[ "$MODE_REQ" == "0" ]]; then
-            MODE_NEW_ID="${MODE_ORIG[0]}-${MODE_ORIG[1]}"
+            MODE_REQ_ID="$MODE_ORIG_ID"
         elif [[ $MODE_REQ =~ (1|4) ]]; then
             # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
             local aspect="${MODE_ORIG[4]}"
             [[ "$aspect" =~ (4:3|16:9) ]] || aspect="4:3"
             temp="${MODE_REQ}-${MODE_ORIG[0]}-$aspect"
-            MODE_NEW_ID="${MODE_MAP[$temp]}"
+            MODE_REQ_ID="${MODE_MAP[$temp]}"
         else
-            MODE_NEW_ID="$MODE_REQ"
+            MODE_REQ_ID="$MODE_REQ"
         fi
     fi
 
@@ -251,13 +252,13 @@ function load_mode_defaults() {
         iniGet "$SAVE_EMU"
         if [[ -n "$ini_value" ]]; then
             MODE_DEF_EMU="$ini_value"
-            MODE_NEW_ID="$MODE_DEF_EMU"
+            MODE_REQ_ID="$MODE_DEF_EMU"
         fi
 
         iniGet "$SAVE_ROM"
         if [[ -n "$ini_value" ]]; then
             MODE_DEF_ROM="$ini_value"
-            MODE_NEW_ID="$MODE_DEF_ROM"
+            MODE_REQ_ID="$MODE_DEF_ROM"
         fi
 
         if [[ -z "$DISPLAY" ]]; then
@@ -335,7 +336,7 @@ function main_menu() {
 
         local temp_mode
         if [[ $HAS_TVS -eq 1 ]]; then
-            temp_mode="${MODE[$MODE_NEW_ID]}"
+            temp_mode="${MODE[$MODE_REQ_ID]}"
         else
             temp_mode="n/a"
         fi
@@ -426,11 +427,11 @@ function choose_mode() {
         options+=("$key" "${MODE[$key]}")
     done
     local cmd=(dialog --default-item "$default" --menu "Choose video output mode"  22 76 16 )
-    MODE_NEW_ID=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    [[ -z "$MODE_NEW_ID" ]] && return
+    MODE_REQ_ID=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    [[ -z "$MODE_REQ_ID" ]] && return
 
     iniConfig " = " '"' "$VIDEO_CONF"
-    iniSet "$save" "$MODE_NEW_ID"
+    iniSet "$save" "$MODE_REQ_ID"
 }
 
 function choose_app() {
@@ -551,43 +552,29 @@ function switch_fb_res() {
     fi
 }
 
-function switch_mode() {
+function mode_switch() {
     local mode_id="$1"
 
     # if the requested mode is the same as the current mode don't switch
-    [[ "$mode_id" == "${MODE_ORIG[0]}-${MODE_ORIG[1]}" ]] && return 0
+    [[ "$mode_id" == "${MODE_CUR[0]}-${MODE_CUR[1]}" ]] && return 1
 
     local mode_id=(${mode_id/-/ })
 
-    local switched=0
     if [[ "${mode_id[0]}" == "PAL" ]] || [[ "${mode_id[0]}" == "NTSC" ]]; then
-        $TVSERVICE -c "${mode_id[*]}"
-        switched=1
+        $TVSERVICE -c "${mode_id[*]}" >/dev/null
     else
-        local has_mode=$($TVSERVICE -m ${mode_id[0]} | grep -w "mode ${mode_id[1]}")
-        if [[ -n "${mode_id[*]}" ]] && [[ -n "$has_mode" ]]; then
-            $TVSERVICE -e "${mode_id[*]}"
-            switched=1
-        fi
+        $TVSERVICE -e "${mode_id[*]}" >/dev/null
     fi
 
     # if we have switched mode, switch the framebuffer resolution also
-    if [[ $switched -eq 1 ]]; then
+    if [[ $? -eq 0 ]]; then
         sleep 1
-        MODE_NEW=($(get_mode_info "$($TVSERVICE -s)"))
-        [[ -z "$FB_NEW" ]] && FB_NEW="${MODE_NEW[2]}x${MODE_NEW[3]}"
+        MODE_CUR=($(get_mode_info))
+        [[ -z "$FB_NEW" ]] && FB_NEW="${MODE_CUR[2]}x${MODE_CUR[3]}"
+        return 0
     fi
 
-    return $switched
-}
-
-function restore_mode() {
-    local mode=(${1/-/ })
-    if [[ "${MODE[0]}" == "PAL" ]] || [[ "${MODE[0]}" == "NTSC" ]]; then
-        $TVSERVICE -c "${mode[*]}"
-    else
-        $TVSERVICE -p
-    fi
+    return 1
 }
 
 function restore_fb() {
@@ -616,9 +603,9 @@ function retroarch_append_config() {
     local conf="/dev/shm/retroarch.cfg"
     rm -f "$conf"
     touch "$conf"
-    if [[ "$HAS_TVS" -eq 1 && "${MODE_NEW[5]}" -gt 0 ]]; then
+    if [[ "$HAS_TVS" -eq 1 && "${MODE_CUR[5]}" -gt 0 ]]; then
         # set video_refresh_rate in our config to the same as the screen refresh
-        [[ -n "${MODE_NEW[5]}" ]] && echo "video_refresh_rate = ${MODE_NEW[5]}" >>"$conf"
+        [[ -n "${MODE_CUR[5]}" ]] && echo "video_refresh_rate = ${MODE_CUR[5]}" >>"$conf"
     fi
 
     local dim
@@ -828,12 +815,7 @@ if [[ "$DISABLE_MENU" -ne 1 ]]; then
     fi
 fi
 
-if [[ $HAS_TVS -eq 1 ]]; then
-    switch_mode "$MODE_NEW_ID"
-    switched=$?
-else
-    switched=0
-fi
+mode_switch "$MODE_REQ_ID"
 
 [[ -n "$FB_NEW" ]] && switch_fb_res "$FB_NEW"
 
@@ -864,9 +846,7 @@ rm -rf "/tmp/retroarch"
 [[ -n "$GOVERNOR" ]] && restore_governor
 
 # if we switched mode - restore preferred mode
-if [[ $switched -eq 1 ]]; then
-    restore_mode "$mode_cur"
-fi
+mode_switch "$MODE_ORIG_ID"
 
 # reset/restore framebuffer res (if it was changed)
 [[ -n "$FB_NEW" ]] && restore_fb
