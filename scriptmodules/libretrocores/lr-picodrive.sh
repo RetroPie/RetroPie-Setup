@@ -16,7 +16,7 @@ rp_module_section="main"
 
 function sources_lr-picodrive() {
     gitPullOrClone "$md_build" https://github.com/libretro/picodrive.git
-    runCmd git submodule update --init
+    runCmd git submodule update --init --depth 1
 }
 
 function build_lr-picodrive() {
