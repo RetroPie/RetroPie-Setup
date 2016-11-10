@@ -743,8 +743,8 @@ function show_launch() {
     fi
 
     # look for custom launching images
+    [[ $is_sys -eq 1 ]] && images+=("$conf_root/launching")
     images+=(
-        "$configdir/$system/launching"
         "$configdir/all/launching"
     )
 
