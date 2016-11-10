@@ -21,8 +21,11 @@ function sources_lr-snes9x() {
 function build_lr-snes9x() {
     cd libretro
     make -f Makefile clean
-    if isPlatform "neon"; then
-        make -f Makefile platform=armvneon
+    local platform=""
+    isPlatform "arm" && platform+="armv"
+    isPlatform "neon" && platform+="neon"
+    if [[ -n "$platform" ]]; then
+        make -f Makefile platform="$platform"
     else
         make -f Makefile
     fi
