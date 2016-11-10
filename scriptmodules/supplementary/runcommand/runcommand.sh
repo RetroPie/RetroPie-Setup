@@ -60,26 +60,26 @@ function get_config() {
     if [[ -f "$RUNCOMMAND_CONF" ]]; then
         iniConfig " = " '"' "$RUNCOMMAND_CONF"
         iniGet "governor"
-        governor="$ini_value"
+        GOVERNOR="$ini_value"
         iniGet "use_art"
-        use_art="$ini_value"
-        [[ -z "$(which fbi)" ]] && use_art=0
-        iniGet "disable_joystick"
-        disable_joystick="$ini_value"
-        iniGet "disable_menu"
-        disable_menu="$ini_value"
-        [[ "$disable_menu" -eq 1 ]] && disable_joystick=1
+        USE_ART="$ini_value"
+        [[ -z "$(which fbi)" ]] && USE_ART=0
+        iniGet "DISABLE_JOYSTICK"
+        DISABLE_JOYSTICK="$ini_value"
+        iniGet "DISABLE_MENU"
+        DISABLE_MENU="$ini_value"
+        [[ "$DISABLE_MENU" -eq 1 ]] && DISABLE_JOYSTICK=1
     fi
 
     if [[ -f "$TVSERVICE" ]]; then
-        has_tvs=1
+        HAS_TVS=1
     else
-        has_tvs=0
+        HAS_TVS=0
     fi
 }
 
 function start_joy2key() {
-    [[ "$disable_joystick" -eq 1 ]] && return
+    [[ "$DISABLE_JOYSTICK" -eq 1 ]] && return
     # get the first joystick device (if not already set)
     [[ -z "$__joy2key_dev" ]] && __joy2key_dev="$(ls -1 /dev/input/js* 2>/dev/null | head -n1)"
     # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
@@ -210,7 +210,7 @@ function load_mode_defaults() {
     local temp
     mode_orig=()
 
-    if [[ $has_tvs -eq 1 ]]; then
+    if [[ $HAS_TVS -eq 1 ]]; then
         # get current mode / aspect ratio
         mode_orig=($(get_mode_info "$($TVSERVICE -s)"))
         mode_new=("${mode_orig[@]}")
@@ -301,7 +301,7 @@ function main_menu() {
             [[ -n "$emulator_def_rom" ]] && options+=(3 "Remove emulator choice for rom")
         fi
 
-        if [[ $has_tvs -eq 1 ]]; then
+        if [[ $HAS_TVS -eq 1 ]]; then
             options+=(
                 4 "Select default video mode for $emulator ($mode_def_emu)"
                 5 "Select video mode for $emulator + rom ($mode_def_rom)"
@@ -334,7 +334,7 @@ function main_menu() {
         options+=(Q "Exit (without launching)")
 
         local temp_mode
-        if [[ $has_tvs -eq 1 ]]; then
+        if [[ $HAS_TVS -eq 1 ]]; then
             temp_mode="${MODE[$mode_new_id]}"
         else
             temp_mode="n/a"
@@ -584,7 +584,7 @@ function switch_mode() {
 function restore_mode() {
     local mode=(${1/-/ })
     if [[ "${MODE[0]}" == "PAL" ]] || [[ "${MODE[0]}" == "NTSC" ]]; then
-        $TVSERVICE -c "${MODE[*]}"
+        $TVSERVICE -c "${mode[*]}"
     else
         $TVSERVICE -p
     fi
@@ -616,7 +616,7 @@ function retroarch_append_config() {
     local conf="/dev/shm/retroarch.cfg"
     rm -f "$conf"
     touch "$conf"
-    if [[ "$has_tvs" -eq 1 && "${mode_new[5]}" -gt 0 ]]; then
+    if [[ "$HAS_TVS" -eq 1 && "${mode_new[5]}" -gt 0 ]]; then
         # set video_refresh_rate in our config to the same as the screen refresh
         [[ -n "${mode_new[5]}" ]] && echo "video_refresh_rate = ${mode_new[5]}" >>"$conf"
     fi
@@ -736,7 +736,7 @@ function get_sys_command() {
 function show_launch() {
     local images=()
 
-    if [[ "$use_art" -eq 1 ]]; then
+    if [[ "$USE_ART" -eq 1 ]]; then
         # if using art look for images in paths for es art.
         images+=(
             "$HOME/RetroPie/roms/$system/images/${rom_bn}-image"
@@ -765,14 +765,14 @@ function show_launch() {
 
     if [[ -z "$DISPLAY" && -n "$image" ]]; then
         fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
-    elif [[ "$disable_menu" -ne 1 && "$use_art" -ne 1 ]]; then
+    elif [[ "$DISABLE_MENU" -ne 1 && "$USE_ART" -ne 1 ]]; then
         local launch_name
         if [[ -n "$rom_bn" ]]; then
             launch_name="$rom_bn ($emulator)"
         else
             launch_name="$emulator"
         fi
-        DIALOGRC="$CONFIGDIR/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to $log" 9 60
+        DIALOGRC="$CONFIGDIR/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to $LOG" 9 60
     fi
 }
 
@@ -782,7 +782,7 @@ function check_menu() {
     # check for key pressed to enter configuration
     IFS= read -s -t 2 -N 1 key </dev/tty
     if [[ -n "$key" ]]; then
-        if [[ $has_tvs -eq 1 ]]; then
+        if [[ $HAS_TVS -eq 1 ]]; then
             get_all_modes
         fi
         tput cnorm
@@ -821,14 +821,14 @@ load_mode_defaults
 
 show_launch
 
-if [[ "$disable_menu" -ne 1 ]]; then
+if [[ "$DISABLE_MENU" -ne 1 ]]; then
     if ! check_menu; then
         tput cnorm
         exit 0
     fi
 fi
 
-if [[ $has_tvs -eq 1 ]]; then
+if [[ $HAS_TVS -eq 1 ]]; then
     switch_mode "$mode_new_id"
     switched=$?
 else
@@ -840,7 +840,7 @@ fi
 config_dispmanx "$save_emu"
 
 # switch to configured cpu scaling governor
-[[ -n "$governor" ]] && set_governor "$governor"
+[[ -n "$GOVERNOR" ]] && set_governor "$GOVERNOR"
 
 retroarch_append_config
 
@@ -861,7 +861,7 @@ clear
 rm -rf "/tmp/retroarch"
 
 # restore default cpu scaling governor
-[[ -n "$governor" ]] && restore_governor
+[[ -n "$GOVERNOR" ]] && restore_governor
 
 # if we switched mode - restore preferred mode
 if [[ $switched -eq 1 ]]; then
