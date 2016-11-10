@@ -140,17 +140,17 @@ function get_params() {
         [[ -z "$EMULATOR" ]] && EMULATOR="${COMMAND/% */}"
     fi
 
-    netplay=0
+    NETPLAY=0
 }
 
 function get_save_vars() {
     # convert emulator name / binary to a names usable as variables in our config files
-    save_emu=${EMULATOR//\//_}
-    save_emu=${save_emu//[^a-zA-Z0-9_\-]/}
-    save_emu_render="${save_emu}_render"
-    fb_save_emu="${save_emu}_fb"
-    save_rom=r$(echo "$COMMAND" | md5sum | cut -d" " -f1)
-    fb_save_rom="${save_rom}_fb"
+    SAVE_EMU=${EMULATOR//\//_}
+    SAVE_EMU=${SAVE_EMU//[^a-zA-Z0-9_\-]/}
+    SAVE_EMU_RENDER="${SAVE_EMU}_render"
+    FB_SAVE_EMU="${SAVE_EMU}_fb"
+    SAVE_ROM=r$(echo "$COMMAND" | md5sum | cut -d" " -f1)
+    FB_SAVE_ROM="${SAVE_ROM}_fb"
 }
 
 function get_all_modes() {
@@ -248,13 +248,13 @@ function load_mode_defaults() {
     if [[ -f "$VIDEO_CONF" ]]; then
         # local default video modes for emulator / rom
         iniConfig " = " '"' "$VIDEO_CONF"
-        iniGet "$save_emu"
+        iniGet "$SAVE_EMU"
         if [[ -n "$ini_value" ]]; then
             mode_def_emu="$ini_value"
             mode_new_id="$mode_def_emu"
         fi
 
-        iniGet "$save_rom"
+        iniGet "$SAVE_ROM"
         if [[ -n "$ini_value" ]]; then
             mode_def_rom="$ini_value"
             mode_new_id="$mode_def_rom"
@@ -262,20 +262,20 @@ function load_mode_defaults() {
 
         if [[ -z "$DISPLAY" ]]; then
             # load default framebuffer res for emulator / rom
-            iniGet "$fb_save_emu"
+            iniGet "$FB_SAVE_EMU"
             if [[ -n "$ini_value" ]]; then
                 fb_def_emu="$ini_value"
                 fb_new="$fb_def_emu"
             fi
 
-            iniGet "$fb_save_rom"
+            iniGet "$FB_SAVE_ROM"
             if [[ -n "$ini_value" ]]; then
                 fb_def_rom="$ini_value"
                 fb_new="$fb_def_rom"
             fi
         fi
 
-        iniGet "$save_emu_render"
+        iniGet "$SAVE_EMU_RENDER"
         if [[ -n "$ini_value" ]]; then
             render_res="$ini_value"
         fi
@@ -357,23 +357,23 @@ function main_menu() {
                 get_sys_command "$SYSTEM" "$ROM"
                 ;;
             4)
-                choose_mode "$save_emu" "$mode_def_emu"
+                choose_mode "$SAVE_EMU" "$mode_def_emu"
                 load_mode_defaults
                 ;;
             5)
-                choose_mode "$save_rom" "$mode_def_rom"
+                choose_mode "$SAVE_ROM" "$mode_def_rom"
                 load_mode_defaults
                 ;;
             6)
-                sed -i "/$save_emu/d" "$VIDEO_CONF"
+                sed -i "/$SAVE_EMU/d" "$VIDEO_CONF"
                 load_mode_defaults
                 ;;
             7)
-                sed -i "/$save_rom/d" "$VIDEO_CONF"
+                sed -i "/$SAVE_ROM/d" "$VIDEO_CONF"
                 load_mode_defaults
                 ;;
             8)
-                choose_render_res "$save_emu_render"
+                choose_render_res "$SAVE_EMU_RENDER"
                 ;;
             9)
                 touch "$ROM.cfg"
@@ -383,23 +383,23 @@ function main_menu() {
                 [[ ! -s "$ROM.cfg" ]] && rm "$ROM.cfg"
                 ;;
             10)
-                choose_fb_res "$fb_save_emu" "$fb_def_emu"
+                choose_fb_res "$FB_SAVE_EMU" "$fb_def_emu"
                 load_mode_defaults
                 ;;
             11)
-                choose_fb_res "$fb_save_rom" "$fb_def_rom"
+                choose_fb_res "$FB_SAVE_ROM" "$fb_def_rom"
                 load_mode_defaults
                 ;;
             12)
-                sed -i "/$fb_save_emu/d" "$VIDEO_CONF"
+                sed -i "/$FB_SAVE_EMU/d" "$VIDEO_CONF"
                 load_mode_defaults
                 ;;
             13)
-                sed -i "/$fb_save_rom/d" "$VIDEO_CONF"
+                sed -i "/$FB_SAVE_ROM/d" "$VIDEO_CONF"
                 load_mode_defaults
                 ;;
             Z)
-                netplay=1
+                NETPLAY=1
                 break
                 ;;
             X)
@@ -645,8 +645,8 @@ function retroarch_append_config() {
         COMMAND+=" --appendconfig $conf"
     fi
 
-    # append any netplay configuration
-    if [[ $netplay -eq 1 ]] && [[ -f "$RETRONETPLAY_CONF" ]]; then
+    # append any NETPLAY configuration
+    if [[ $NETPLAY -eq 1 ]] && [[ -f "$RETRONETPLAY_CONF" ]]; then
         source "$RETRONETPLAY_CONF"
         COMMAND+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes --nick $__netplaynickname"
     fi
@@ -837,7 +837,7 @@ fi
 
 [[ -n "$fb_new" ]] && switch_fb_res "$fb_new"
 
-config_dispmanx "$save_emu"
+config_dispmanx "$SAVE_EMU"
 
 # switch to configured cpu scaling governor
 [[ -n "$GOVERNOR" ]] && set_governor "$GOVERNOR"
