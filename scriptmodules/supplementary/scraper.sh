@@ -56,10 +56,10 @@ function list_systems_scraper() {
 
 function scrape_scraper() {
     local system="$1"
-    local use_thumbs="$2"
-    local max_width="$3"
-    local use_rom_folder="$4"
     [[ -z "$system" ]] && return
+
+    iniConfig " = " '"' "$configdir/all/scraper.cfg"
+    eval $(_load_config_scraper)
 
     local gamelist
     local img_dir
@@ -140,6 +140,17 @@ function scrape_chosen_scraper() {
     done
 }
 
+function _load_config_scraper() {
+    echo $(loadModuleConfig \
+        'use_thumbs=1' \
+        'max_width=400' \
+        'use_gdb_scraper=1' \
+        'rom_name=0' \
+        'append_only=0' \
+        'use_rom_folder=0' \
+    )
+}
+
 function gui_scraper() {
     if pgrep "emulationstatio" >/dev/null; then
         printMsgs "dialog" "This scraper must not be run while Emulation Station is running or the scraped data will be overwritten. \n\nPlease quit from Emulation Station, and run RetroPie-Setup from the terminal"
@@ -151,14 +162,7 @@ function gui_scraper() {
     fi
 
     iniConfig " = " '"' "$configdir/all/scraper.cfg"
-    eval $(loadModuleConfig \
-        'use_thumbs=1' \
-        'max_width=400' \
-        'use_gdb_scraper=1' \
-        'rom_name=0' \
-        'append_only=0' \
-        'use_rom_folder=0' \
-    )
+    eval $(_load_config_scraper)
     chown $user:$user "$configdir/all/scraper.cfg"
 
     local default
@@ -211,11 +215,11 @@ function gui_scraper() {
             default="$choice"
             case $choice in
                 1)
-                    rp_callModule "$md_id" scrape_all $use_thumbs $max_width $use_rom_folder
+                    rp_callModule "$md_id" scrape_all
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 2)
-                    rp_callModule "$md_id" scrape_chosen $use_thumbs $max_width $use_rom_folder
+                    rp_callModule "$md_id" scrape_chosen
                     printMsgs "dialog" "ROMS have been scraped."
                     ;;
                 3)
