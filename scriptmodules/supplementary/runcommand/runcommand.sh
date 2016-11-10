@@ -123,9 +123,11 @@ function get_params() {
             if [[ "$command" == "_PORT_" ]]; then
                 conf_root="$configdir/ports/$system"
                 emu_conf="$conf_root/emulators.cfg"
+                is_port=1
             else
                 conf_root="$configdir/$system"
                 emu_conf="$conf_root/emulators.cfg"
+                is_port=0
             fi
             get_sys_command "$system" "$rom"
         fi
@@ -744,6 +746,7 @@ function show_launch() {
 
     # look for custom launching images
     [[ $is_sys -eq 1 ]] && images+=("$conf_root/launching")
+    [[ $is_port -eq 1 ]] && images+=("$configdir/ports/launching")
     images+=(
         "$configdir/all/launching"
     )
