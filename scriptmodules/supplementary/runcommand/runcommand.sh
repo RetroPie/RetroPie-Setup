@@ -9,26 +9,26 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-# parameters - mode_req command_to_launch savename
+# parameters - MODE_REQ COMMAND savename
 
-# mode_req==0: run command
-# mode_req==1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz, and run command
-# mode_req==4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz, and run command
+# MODE_REQ==0: run COMMAND
+# MODE_REQ==1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz, and run COMMAND
+# MODE_REQ==4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz, and run COMMAND
 
-# mode_req=="CEA-#": set video mode to CEA mode #
-# mode_req=="DMT-#": set video mode to DMT mode #
-# mode_req=="PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
+# MODE_REQ=="CEA-#": set video mode to CEA mode #
+# MODE_REQ=="DMT-#": set video mode to DMT mode #
+# MODE_REQ=="PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
 
 # note that mode switching only happens if the monitor reports the modes as available (via tvservice)
 # and the requested mode differs from the currently active mode
 
 # if savename is included, that is used for loading and saving of video output modes as well as dispmanx settings
-# for the current command. If omitted, the binary name is used as a key for the loading and saving. The savename is
+# for the current COMMAND. If omitted, the binary name is used as a key for the loading and saving. The savename is
 # also displayed in the video output menu (detailed below), so for our purposes we send the emulator module id, which
 # is somewhat descriptive yet short.
 
 # on launch this script waits for 1 second for a keypress. If x or m is pressed, a menu is displayed allowing
-# the user to set a screenmode for this particular command. the savename parameter is displayed to the user - we use the module id
+# the user to set a screenmode for this particular COMMAND. the savename parameter is displayed to the user - we use the module id
 # of the emulator we are launching.
 
 ROOTDIR="/opt/retropie"
@@ -100,44 +100,44 @@ function stop_joy2key() {
 
 
 function get_params() {
-    mode_req="$1"
-    [[ -z "$mode_req" ]] && exit 1
+    MODE_REQ="$1"
+    [[ -z "$MODE_REQ" ]] && exit 1
 
-    command="$2"
-    [[ -z "$command" ]] && exit 1
+    COMMAND="$2"
+    [[ -z "$COMMAND" ]] && exit 1
 
-    console_out=0
-    # if the command is _SYS_, or _PORT_ arg 3 should be system name, and arg 4 rom/game, and we look up the configured system for that combination
-    if [[ "$command" == "_SYS_" || "$command" == "_PORT_" ]]; then
+    CONSOLE_OUT=0
+    # if the COMMAND is _SYS_, or _PORT_ arg 3 should be system name, and arg 4 rom/game, and we look up the configured system for that combination
+    if [[ "$COMMAND" == "_SYS_" || "$COMMAND" == "_PORT_" ]]; then
         # if the rom is actually a special +Start System.sh script, we should launch the script directly.
         if [[ "$4" =~ \/\+Start\ (.+)\.sh$ ]]; then
             # extract emulator from the name (and lowercase it)
-            emulator=${BASH_REMATCH[1],,}
-            is_sys=0
-            command="bash \"$4\""
-            system="$3"
+            EMULATOR=${BASH_REMATCH[1],,}
+            IS_SYS=0
+            COMMAND="bash \"$4\""
+            SYSTEM="$3"
         else
-            is_sys=1
-            system="$3"
-            rom="$4"
-            if [[ "$command" == "_PORT_" ]]; then
-                conf_root="$CONFIGDIR/ports/$system"
-                emu_conf="$conf_root/emulators.cfg"
-                is_port=1
+            IS_SYS=1
+            SYSTEM="$3"
+            ROM="$4"
+            if [[ "$COMMAND" == "_PORT_" ]]; then
+                CONF_ROOT="$CONFIGDIR/ports/$SYSTEM"
+                EMU_CONF="$CONF_ROOT/emulators.cfg"
+                IS_PORT=1
             else
-                conf_root="$CONFIGDIR/$system"
-                emu_conf="$conf_root/emulators.cfg"
-                is_port=0
+                CONF_ROOT="$CONFIGDIR/$SYSTEM"
+                EMU_CONF="$CONF_ROOT/emulators.cfg"
+                IS_PORT=0
             fi
-            get_sys_command "$system" "$rom"
+            get_sys_command "$SYSTEM" "$ROM"
         fi
     else
-        is_sys=0
-        console_out=1
-        emulator="$3"
+        IS_SYS=0
+        CONSOLE_OUT=1
+        EMULATOR="$3"
         # if we have an emulator name (such as module_id) we use that for storing/loading parameters for video output/dispmanx
         # if the parameter is empty we use the name of the binary (to avoid breakage with out of date emulationstation configs)
-        [[ -z "$emulator" ]] && emulator="${command/% */}"
+        [[ -z "$EMULATOR" ]] && EMULATOR="${COMMAND/% */}"
     fi
 
     netplay=0
@@ -145,11 +145,11 @@ function get_params() {
 
 function get_save_vars() {
     # convert emulator name / binary to a names usable as variables in our config files
-    save_emu=${emulator//\//_}
+    save_emu=${EMULATOR//\//_}
     save_emu=${save_emu//[^a-zA-Z0-9_\-]/}
     save_emu_render="${save_emu}_render"
     fb_save_emu="${save_emu}_fb"
-    save_rom=r$(echo "$command" | md5sum | cut -d" " -f1)
+    save_rom=r$(echo "$COMMAND" | md5sum | cut -d" " -f1)
     fb_save_rom="${save_rom}_fb"
 }
 
@@ -216,16 +216,16 @@ function load_mode_defaults() {
         mode_new=("${mode_orig[@]}")
 
         # get default mode for requested mode of 1 or 4
-        if [[ "$mode_req" == "0" ]]; then
+        if [[ "$MODE_REQ" == "0" ]]; then
             mode_new_id="${mode_orig[0]}-${mode_orig[1]}"
-        elif [[ $mode_req =~ (1|4) ]]; then
+        elif [[ $MODE_REQ =~ (1|4) ]]; then
             # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
             local aspect="${mode_orig[4]}"
             [[ "$aspect" =~ (4:3|16:9) ]] || aspect="4:3"
-            temp="${mode_req}-${mode_orig[0]}-$aspect"
+            temp="${MODE_REQ}-${mode_orig[0]}-$aspect"
             mode_new_id="${MODE_MAP[$temp]}"
         else
-            mode_new_id="$mode_req"
+            mode_new_id="$MODE_REQ"
         fi
     fi
 
@@ -288,45 +288,45 @@ function main_menu() {
     local choice
 
     [[ -z "$rom_bn" ]] && rom_bn="game/rom"
-    [[ -z "$system" ]] && system="emulator/port"
+    [[ -z "$SYSTEM" ]] && SYSTEM="emulator/port"
 
     while true; do
 
         local options=()
-        if [[ $is_sys -eq 1 ]]; then
+        if [[ $IS_SYS -eq 1 ]]; then
             options+=(
-                1 "Select default emulator for $system ($emulator_def_sys)"
-                2 "Select emulator for rom ($emulator_def_rom)"
+                1 "Select default emulator for $SYSTEM ($emulator_def_sys)"
+                2 "Select emulator for ROM ($emulator_def_rom)"
             )
-            [[ -n "$emulator_def_rom" ]] && options+=(3 "Remove emulator choice for rom")
+            [[ -n "$emulator_def_rom" ]] && options+=(3 "Remove emulator choice for ROM")
         fi
 
         if [[ $HAS_TVS -eq 1 ]]; then
             options+=(
-                4 "Select default video mode for $emulator ($mode_def_emu)"
-                5 "Select video mode for $emulator + rom ($mode_def_rom)"
+                4 "Select default video mode for $EMULATOR ($mode_def_emu)"
+                5 "Select video mode for $EMULATOR + rom ($mode_def_rom)"
             )
-            [[ -n "$mode_def_emu" ]] && options+=(6 "Remove video mode choice for $emulator")
-            [[ -n "$mode_def_rom" ]] && options+=(7 "Remove video mode choice for $emulator + rom")
+            [[ -n "$mode_def_emu" ]] && options+=(6 "Remove video mode choice for $EMULATOR")
+            [[ -n "$mode_def_rom" ]] && options+=(7 "Remove video mode choice for $EMULATOR + ROM")
         fi
 
-        if [[ "$command" =~ retroarch ]]; then
+        if [[ "$COMMAND" =~ retroarch ]]; then
             options+=(
-                8 "Select RetroArch render res for $emulator ($render_res)"
-                9 "Edit custom RetroArch config for this rom"
+                8 "Select RetroArch render res for $EMULATOR ($render_res)"
+                9 "Edit custom RetroArch config for this ROM"
             )
         elif [[ -z "$DISPLAY" ]]; then
             options+=(
-                10 "Select framebuffer res for $emulator ($fb_def_emu)"
-                11 "Select framebuffer res for $emulator + rom ($fb_def_rom)"
+                10 "Select framebuffer res for $EMULATOR ($fb_def_emu)"
+                11 "Select framebuffer res for $EMULATOR + ROM ($fb_def_rom)"
             )
-            [[ -n "$fb_def_emu" ]] && options+=(12 "Remove framebuffer res choice for $emulator")
-            [[ -n "$fb_def_rom" ]] && options+=(13 "Remove framebuffer res choice for $emulator + rom")
+            [[ -n "$fb_def_emu" ]] && options+=(12 "Remove framebuffer res choice for $EMULATOR")
+            [[ -n "$fb_def_rom" ]] && options+=(13 "Remove framebuffer res choice for $EMULATOR + ROM")
         fi
 
         options+=(X "Launch")
 
-        if [[ "$command" =~ retroarch ]]; then
+        if [[ "$COMMAND" =~ retroarch ]]; then
             options+=(L "Launch with verbose logging")
             options+=(Z "Launch with netplay enabled")
         fi
@@ -339,7 +339,7 @@ function main_menu() {
         else
             temp_mode="n/a"
         fi
-        cmd=(dialog --nocancel --menu "System: $system\nEmulator: $emulator\nVideo Mode: $temp_mode\nROM: $rom_bn"  22 76 16 )
+        cmd=(dialog --nocancel --menu "System: $SYSTEM\nEmulator: $EMULATOR\nVideo Mode: $temp_mode\nROM: $rom_bn"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         case $choice in
             1)
@@ -354,7 +354,7 @@ function main_menu() {
                 ;;
             3)
                 sed -i "/$appsave/d" "$APPS_CONF"
-                get_sys_command "$system" "$rom"
+                get_sys_command "$SYSTEM" "$ROM"
                 ;;
             4)
                 choose_mode "$save_emu" "$mode_def_emu"
@@ -376,11 +376,11 @@ function main_menu() {
                 choose_render_res "$save_emu_render"
                 ;;
             9)
-                touch "$rom.cfg"
-                cmd=(dialog --editbox "$rom.cfg" 22 76)
+                touch "$ROM.cfg"
+                cmd=(dialog --editbox "$ROM.cfg" 22 76)
                 choice=$("${cmd[@]}" 2>&1 >/dev/tty)
-                [[ -n "$choice" ]] && echo "$choice" >"$rom.cfg"
-                [[ ! -s "$rom.cfg" ]] && rm "$rom.cfg"
+                [[ -n "$choice" ]] && echo "$choice" >"$ROM.cfg"
+                [[ ! -s "$ROM.cfg" ]] && rm "$ROM.cfg"
                 ;;
             10)
                 choose_fb_res "$fb_save_emu" "$fb_def_emu"
@@ -406,7 +406,7 @@ function main_menu() {
                 return 0
                 ;;
             L)
-                command+=" --verbose"
+                COMMAND+=" --verbose"
                 return 0
                 ;;
             Q)
@@ -438,7 +438,7 @@ function choose_app() {
     local default
     local default_id
     if [[ -n "$save" ]]; then
-        default="$emulator"
+        default="$EMULATOR"
     else
         default="$emulator_def_sys"
     fi
@@ -455,9 +455,9 @@ function choose_app() {
         fi
         options+=($i "$id")
         ((i++))
-    done < <(sort "$emu_conf")
+    done < <(sort "$EMU_CONF")
     if [[ -z "${options[*]}" ]]; then
-        dialog --msgbox "No emulator options found for $system - have you installed any snes emulators yet? Do you have a valid $emu_conf ?" 20 60 >/dev/tty
+        dialog --msgbox "No emulator options found for $SYSTEM - have you installed any snes emulators yet? Do you have a valid $EMU_CONF ?" 20 60 >/dev/tty
         exit 1
     fi
     local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
@@ -467,10 +467,10 @@ function choose_app() {
             iniConfig " = " '"' "$APPS_CONF"
             iniSet "$save" "${apps[$choice]}"
         else
-            iniConfig " = " '"' "$emu_conf"
+            iniConfig " = " '"' "$EMU_CONF"
             iniSet "default" "${apps[$choice]}"
         fi
-        get_sys_command "$system" "$rom"
+        get_sys_command "$SYSTEM" "$ROM"
     fi
 }
 
@@ -602,13 +602,13 @@ function config_dispmanx() {
     if [[ -f "$DISPMANX_CONF" ]]; then
         iniConfig " = " '"' "$DISPMANX_CONF"
         iniGet "$name"
-        [[ "$ini_value" == "1" ]] && command="SDL1_VIDEODRIVER=dispmanx $command"
+        [[ "$ini_value" == "1" ]] && COMMAND="SDL1_VIDEODRIVER=dispmanx $COMMAND"
     fi
 }
 
 function retroarch_append_config() {
     # only for retroarch emulators
-    [[ ! "$command" =~ "retroarch" ]] && return
+    [[ ! "$COMMAND" =~ "retroarch" ]] && return
 
     # make sure tmp folder exists for unpacking archives
     mkdir -p "/tmp/retroarch"
@@ -633,22 +633,22 @@ function retroarch_append_config() {
         echo "video_fullscreen_y = ${dim[1]}" >>"$conf"
     fi
 
-    # if the rom has a custom configuration then append that too
-    if [[ -f "$rom.cfg" ]]; then
-        conf+="'|'\"$rom.cfg\""
+    # if the ROM has a custom configuration then append that too
+    if [[ -f "$ROM.cfg" ]]; then
+        conf+="'|'\"$ROM.cfg\""
     fi
 
     # if we already have an existing appendconfig parameter, we need to add our configs to that
-    if [[ "$command" =~ "--appendconfig" ]]; then
-        command=$(echo "$command" | sed "s#\(--appendconfig *[^ $]*\)#\1'|'$conf#")
+    if [[ "$COMMAND" =~ "--appendconfig" ]]; then
+        COMMAND=$(echo "$COMMAND" | sed "s#\(--appendconfig *[^ $]*\)#\1'|'$conf#")
     else
-        command+=" --appendconfig $conf"
+        COMMAND+=" --appendconfig $conf"
     fi
 
     # append any netplay configuration
     if [[ $netplay -eq 1 ]] && [[ -f "$RETRONETPLAY_CONF" ]]; then
         source "$RETRONETPLAY_CONF"
-        command+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes --nick $__netplaynickname"
+        COMMAND+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes --nick $__netplaynickname"
     fi
 }
 
@@ -682,12 +682,12 @@ function get_sys_command() {
 
     appsave=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
 
-    if [[ ! -f "$emu_conf" ]]; then
+    if [[ ! -f "$EMU_CONF" ]]; then
         echo "No config found for system $system"
         exit 1
     fi
 
-    iniConfig " = " '"' "$emu_conf"
+    iniConfig " = " '"' "$EMU_CONF"
     iniGet "default"
     if [[ -z "$ini_value" ]]; then
         echo "No default emulator found for system $system"
@@ -698,38 +698,38 @@ function get_sys_command() {
         return
     fi
 
-    emulator="$ini_value"
-    emulator_def_sys="$emulator"
+    EMULATOR="$ini_value"
+    emulator_def_sys="$EMULATOR"
 
     # get system & rom specific app if set
     if [[ -f "$APPS_CONF" ]]; then
         iniConfig " = " '"' "$APPS_CONF"
         iniGet "$appsave"
         emulator_def_rom="$ini_value"
-        [[ -n "$ini_value" ]] && emulator="$ini_value"
+        [[ -n "$ini_value" ]] && EMULATOR="$ini_value"
     fi
 
     # get the app commandline
-    iniConfig " = " '"' "$emu_conf"
-    iniGet "$emulator"
-    command="$ini_value"
+    iniConfig " = " '"' "$EMU_CONF"
+    iniGet "$EMULATOR"
+    COMMAND="$ini_value"
 
     # replace tokens
-    command="${command/\%ROM\%/\"$rom\"}"
-    command="${command/\%BASENAME\%/\"$rom_bn\"}"
+    COMMAND="${COMMAND/\%ROM\%/\"$rom\"}"
+    COMMAND="${COMMAND/\%BASENAME\%/\"$rom_bn\"}"
 
     # special case to get the last 2 folders for quake games for the -game parameter
     # remove everything up to /quake/
     local quake_dir="${rom##*/quake/}"
     # remove filename
     local quake_dir="${quake_dir%/*}"
-    command="${command/\%QUAKEDIR\%/\"$quake_dir\"}"
+    COMMAND="${COMMAND/\%QUAKEDIR\%/\"$quake_dir\"}"
 
     # if it starts with CON: it is a console application (so we don't redirect stdout later)
-    if [[ "$command" == CON:* ]]; then
+    if [[ "$COMMAND" == CON:* ]]; then
         # remove CON:
-        command="${command:4}"
-        console_out=1
+        COMMAND="${COMMAND:4}"
+        CONSOLE_OUT=1
     fi
 }
 
@@ -739,14 +739,14 @@ function show_launch() {
     if [[ "$USE_ART" -eq 1 ]]; then
         # if using art look for images in paths for es art.
         images+=(
-            "$HOME/RetroPie/roms/$system/images/${rom_bn}-image"
-            "$HOME/.emulationstation/downloaded_images/$system/${rom_bn}-image"
+            "$HOME/RetroPie/roms/$SYSTEM/images/${rom_bn}-image"
+            "$HOME/.emulationstation/downloaded_images/$SYSTEM/${rom_bn}-image"
         )
     fi
 
     # look for custom launching images
-    [[ $is_sys -eq 1 ]] && images+=("$conf_root/launching")
-    [[ $is_port -eq 1 ]] && images+=("$CONFIGDIR/ports/launching")
+    [[ $IS_SYS -eq 1 ]] && images+=("$CONF_ROOT/launching")
+    [[ $IS_PORT -eq 1 ]] && images+=("$CONFIGDIR/ports/launching")
     images+=(
         "$CONFIGDIR/all/launching"
     )
@@ -768,9 +768,9 @@ function show_launch() {
     elif [[ "$DISABLE_MENU" -ne 1 && "$USE_ART" -ne 1 ]]; then
         local launch_name
         if [[ -n "$rom_bn" ]]; then
-            launch_name="$rom_bn ($emulator)"
+            launch_name="$rom_bn ($EMULATOR)"
         else
-            launch_name="$emulator"
+            launch_name="$EMULATOR"
         fi
         DIALOGRC="$CONFIGDIR/all/runcommand-launch-dialog.cfg" dialog --infobox "\nLaunching $launch_name ...\n\nPress a button to configure\n\nErrors are logged to $LOG" 9 60
     fi
@@ -795,11 +795,11 @@ function check_menu() {
     return $dont_launch
 }
 
-# calls script with parameters system, emulator, rom, and commandline
+# calls script with parameters SYSTEM, EMULATOR, ROM, and commandline
 function user_script() {
     local script="$CONFIGDIR/all/$1"
     if [[ -f "$script" ]]; then
-        bash "$script" "$system" "$emulator" "$rom" "$command" </dev/tty 2>>"$LOG"
+        bash "$script" "$SYSTEM" "$EMULATOR" "$ROM" "$COMMAND" </dev/tty 2>>"$LOG"
     fi
 }
 
@@ -812,7 +812,7 @@ tput civis
 clear
 
 rm -f "$LOG"
-echo -e "$system\n$emulator\n$rom\n$command" >/dev/shm/runcommand.info
+echo -e "$SYSTEM\n$EMULATOR\n$ROM\n$COMMAND" >/dev/shm/runcommand.info
 user_script "runcommand-onstart.sh"
 
 get_save_vars
@@ -845,14 +845,14 @@ config_dispmanx "$save_emu"
 retroarch_append_config
 
 # launch the command
-echo -e "Parameters: $@\nExecuting: $command" >>"$LOG"
-if [[ "$console_out" -eq 1 ]]; then
+echo -e "Parameters: $@\nExecuting: $COMMAND" >>"$LOG"
+if [[ "$CONSOLE_OUT" -eq 1 ]]; then
     # turn cursor on
     tput cnorm
-    eval $command </dev/tty 2>>"$LOG"
+    eval $COMMAND </dev/tty 2>>"$LOG"
     tput civis
 else
-    eval $command </dev/tty &>>"$LOG"
+    eval $COMMAND </dev/tty &>>"$LOG"
 fi
 
 clear
@@ -871,7 +871,7 @@ fi
 # reset/restore framebuffer res (if it was changed)
 [[ -n "$fb_new" ]] && restore_fb
 
-[[ "$command" =~ retroarch ]] && retroarchIncludeToEnd "$conf_root/retroarch.cfg"
+[[ "$COMMAND" =~ retroarch ]] && retroarchIncludeToEnd "$CONF_ROOT/retroarch.cfg"
 
 user_script "runcommand-onend.sh"
 
