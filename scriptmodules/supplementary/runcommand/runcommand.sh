@@ -572,6 +572,8 @@ function switch_fb_res() {
 function mode_switch() {
     local mode_id="$1"
 
+    [[ $HAS_TVS -eq 0 ]] && return 1
+
     # if the requested mode is the same as the current mode don't switch
     [[ "$mode_id" == "${MODE_CUR[0]}-${MODE_CUR[1]}" ]] && return 1
 
