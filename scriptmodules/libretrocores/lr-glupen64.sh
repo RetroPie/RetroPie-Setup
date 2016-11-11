@@ -15,6 +15,10 @@ rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/
 rp_module_section="main"
 rp_module_flags="!mali"
 
+function depends_lr-glupen64() {
+    getDepends flex bison
+}
+
 function sources_lr-glupen64() {
     gitPullOrClone "$md_build" https://github.com/loganmc10/GLupeN64.git
 }
