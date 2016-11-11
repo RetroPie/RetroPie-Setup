@@ -288,7 +288,7 @@ function main_menu() {
     local cmd
     local choice
 
-    [[ -z "$rom_bn" ]] && rom_bn="game/rom"
+    [[ -z "$ROM_BN" ]] && ROM_BN="game/rom"
     [[ -z "$SYSTEM" ]] && SYSTEM="emulator/port"
 
     while true; do
@@ -296,10 +296,10 @@ function main_menu() {
         local options=()
         if [[ $IS_SYS -eq 1 ]]; then
             options+=(
-                1 "Select default emulator for $SYSTEM ($emulator_def_sys)"
-                2 "Select emulator for ROM ($emulator_def_rom)"
+                1 "Select default emulator for $SYSTEM ($EMULATOR_DEF_SYS)"
+                2 "Select emulator for ROM ($EMULATOR_DEF_ROM)"
             )
-            [[ -n "$emulator_def_rom" ]] && options+=(3 "Remove emulator choice for ROM")
+            [[ -n "$EMULATOR_DEF_ROM" ]] && options+=(3 "Remove emulator choice for ROM")
         fi
 
         if [[ $HAS_TVS -eq 1 ]]; then
@@ -340,7 +340,7 @@ function main_menu() {
         else
             temp_mode="n/a"
         fi
-        cmd=(dialog --nocancel --menu "System: $SYSTEM\nEmulator: $EMULATOR\nVideo Mode: $temp_mode\nROM: $rom_bn"  22 76 16 )
+        cmd=(dialog --nocancel --menu "System: $SYSTEM\nEmulator: $EMULATOR\nVideo Mode: $temp_mode\nROM: $ROM_BN"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         case $choice in
             1)
@@ -349,12 +349,12 @@ function main_menu() {
                 load_mode_defaults
                 ;;
             2)
-                choose_app "$appsave"
+                choose_app "$SAVE_APP"
                 get_save_vars
                 load_mode_defaults
                 ;;
             3)
-                sed -i "/$appsave/d" "$APPS_CONF"
+                sed -i "/$SAVE_APP/d" "$APPS_CONF"
                 get_sys_command "$SYSTEM" "$ROM"
                 ;;
             4)
@@ -441,7 +441,7 @@ function choose_app() {
     if [[ -n "$save" ]]; then
         default="$EMULATOR"
     else
-        default="$emulator_def_sys"
+        default="$EMULATOR_DEF_SYS"
     fi
     local options=()
     local i=1
@@ -664,10 +664,10 @@ function get_sys_command() {
     local system="$1"
     local rom="$2"
 
-    rom_bn="${rom##*/}"
-    rom_bn="${rom_bn%.*}"
+    ROM_BN="${rom##*/}"
+    ROM_BN="${ROM_BN%.*}"
 
-    appsave=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
+    SAVE_APP=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
 
     if [[ ! -f "$EMU_CONF" ]]; then
         echo "No config found for system $system"
@@ -686,13 +686,13 @@ function get_sys_command() {
     fi
 
     EMULATOR="$ini_value"
-    emulator_def_sys="$EMULATOR"
+    EMULATOR_DEF_SYS="$EMULATOR"
 
     # get system & rom specific app if set
     if [[ -f "$APPS_CONF" ]]; then
         iniConfig " = " '"' "$APPS_CONF"
-        iniGet "$appsave"
-        emulator_def_rom="$ini_value"
+        iniGet "$SAVE_APP"
+        EMULATOR_DEF_ROM="$ini_value"
         [[ -n "$ini_value" ]] && EMULATOR="$ini_value"
     fi
 
@@ -703,13 +703,13 @@ function get_sys_command() {
 
     # replace tokens
     COMMAND="${COMMAND/\%ROM\%/\"$rom\"}"
-    COMMAND="${COMMAND/\%BASENAME\%/\"$rom_bn\"}"
+    COMMAND="${COMMAND/\%BASENAME\%/\"$ROM_BN\"}"
 
     # special case to get the last 2 folders for quake games for the -game parameter
     # remove everything up to /quake/
     local quake_dir="${rom##*/quake/}"
     # remove filename
-    local quake_dir="${quake_dir%/*}"
+    quake_dir="${quake_dir%/*}"
     COMMAND="${COMMAND/\%QUAKEDIR\%/\"$quake_dir\"}"
 
     # if it starts with CON: it is a console application (so we don't redirect stdout later)
@@ -726,8 +726,8 @@ function show_launch() {
     if [[ "$USE_ART" -eq 1 ]]; then
         # if using art look for images in paths for es art.
         images+=(
-            "$HOME/RetroPie/roms/$SYSTEM/images/${rom_bn}-image"
-            "$HOME/.emulationstation/downloaded_images/$SYSTEM/${rom_bn}-image"
+            "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-image"
+            "$HOME/.emulationstation/downloaded_images/$SYSTEM/${ROM_BN}-image"
         )
     fi
 
@@ -754,8 +754,8 @@ function show_launch() {
         fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
     elif [[ "$DISABLE_MENU" -ne 1 && "$USE_ART" -ne 1 ]]; then
         local launch_name
-        if [[ -n "$rom_bn" ]]; then
-            launch_name="$rom_bn ($EMULATOR)"
+        if [[ -n "$ROM_BN" ]]; then
+            launch_name="$ROM_BN ($EMULATOR)"
         else
             launch_name="$EMULATOR"
         fi
