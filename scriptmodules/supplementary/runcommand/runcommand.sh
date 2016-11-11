@@ -855,4 +855,9 @@ mode_switch "$MODE_ORIG_ID"
 
 user_script "runcommand-onend.sh"
 
+## if we are not being run from emulationstation (get parent of parent), turn the cursor back on.
+if [[ "$(ps -o comm= -p $(ps -o ppid= -p $PPID))" != "emulationstatio" ]]; then
+    tput cnorm
+fi
+
 exit 0
