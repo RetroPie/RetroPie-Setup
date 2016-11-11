@@ -118,7 +118,12 @@ function rp_callModule() {
     case "$mode" in
         # remove sources
         clean)
-            rmDirExists "$md_build"
+            if [[ "$__persistent_repos" -eq 1 ]] && [[ -d "$md_build/.git" ]]; then
+                git -C "$md_build" reset --hard
+                git -C "$md_build" clean -f -d
+            else
+                rmDirExists "$md_build"
+            fi
             return 0
             ;;
         # create binary archive
