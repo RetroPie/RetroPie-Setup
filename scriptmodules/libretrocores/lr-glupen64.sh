@@ -21,9 +21,6 @@ function depends_lr-glupen64() {
 
 function sources_lr-glupen64() {
     gitPullOrClone "$md_build" https://github.com/loganmc10/GLupeN64.git
-    if isPlatform "armv6"; then
-        sed -i "s/-mstackrealign -DARCH_MIN_SSE2 -msse -msse2//" Makefile
-    fi
 }
 
 function build_lr-glupen64() {
