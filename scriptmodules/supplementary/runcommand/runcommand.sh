@@ -37,7 +37,7 @@ LOG="/dev/shm/runcommand.log"
 
 RUNCOMMAND_CONF="$CONFIGDIR/all/runcommand.cfg"
 VIDEO_CONF="$CONFIGDIR/all/videomodes.cfg"
-APPS_CONF="$CONFIGDIR/all/emulators.cfg"
+EMU_CONF="$CONFIGDIR/all/emulators.cfg"
 DISPMANX_CONF="$CONFIGDIR/all/dispmanx.cfg"
 RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
 
@@ -98,7 +98,6 @@ function stop_joy2key() {
     fi
 }
 
-
 function get_params() {
     MODE_REQ="$1"
     [[ -z "$MODE_REQ" ]] && exit 1
@@ -122,13 +121,14 @@ function get_params() {
             ROM="$4"
             if [[ "$COMMAND" == "_PORT_" ]]; then
                 CONF_ROOT="$CONFIGDIR/ports/$SYSTEM"
-                EMU_CONF="$CONF_ROOT/emulators.cfg"
+                EMU_SYS_CONF="$CONF_ROOT/emulators.cfg"
                 IS_PORT=1
             else
                 CONF_ROOT="$CONFIGDIR/$SYSTEM"
-                EMU_CONF="$CONF_ROOT/emulators.cfg"
+                EMU_SYS_CONF="$CONF_ROOT/emulators.cfg"
                 IS_PORT=0
             fi
+            SYS_SAVE_ROM="a$(echo "$SYSTEM$ROM" | md5sum | cut -d" " -f1)"
             get_sys_command "$SYSTEM" "$ROM"
         fi
     else
@@ -203,13 +203,33 @@ function get_mode_info() {
     echo "${mode_info[@]}"
 }
 
+function default_process() {
+    local config="$1"
+    local mode="$2"
+    local key="$3"
+    local value="$4"
+
+    iniConfig " = " '"' "$config"
+    case "$mode" in
+        get)
+            iniGet "$key"
+            echo "$ini_value"
+            ;;
+        set)
+            iniSet "$key" "$value"
+            ;;
+        del)
+            iniDel "$key"
+            ;;
+    esac
+}
+
 function default_mode() {
     local mode="$1"
     local type="$2"
     local value="$3"
-    iniConfig " = " '"' "$VIDEO_CONF"
-    local key
 
+    local key
     case "$type" in
         vid_emu)
             key="$SAVE_EMU"
@@ -227,18 +247,30 @@ function default_mode() {
             key="${SAVE_EMU}_render"
             ;;
     esac
-    case "$mode" in
-        get)
-            iniGet "$key"
-            echo "$ini_value"
+    default_process "$CONFIGDIR/all/videomodes.cfg" "$mode" "$key" "$value"
+}
+
+function default_emulator() {
+    local mode="$1"
+    local type="$2"
+    local value="$3"
+
+    local key
+    local config="$EMU_SYS_CONF"
+
+    case "$type" in
+        emu_sys)
+            key="default"
             ;;
-        set)
-            iniSet "$key" "$value"
+        emu_cmd)
+            key="$EMULATOR"
             ;;
-        del)
-            iniDel "$key"
+        emu_rom)
+            key="$SYS_SAVE_ROM"
+            config="$EMU_CONF"
             ;;
     esac
+    default_process "$config" "$mode" "$key" "$value"
 }
 
 function load_mode_defaults() {
@@ -312,11 +344,13 @@ function main_menu() {
 
         local options=()
         if [[ $IS_SYS -eq 1 ]]; then
+            local emu_sys="$(default_emulator get emu_sys)"
+            local emu_rom="$(default_emulator get emu_rom)"
             options+=(
-                1 "Select default emulator for $SYSTEM ($EMULATOR_DEF_SYS)"
-                2 "Select emulator for ROM ($EMULATOR_DEF_ROM)"
+                1 "Select default emulator for $SYSTEM ($emu_sys)"
+                2 "Select emulator for ROM ($emu_rom)"
             )
-            [[ -n "$EMULATOR_DEF_ROM" ]] && options+=(3 "Remove emulator choice for ROM")
+            [[ -n "$emu_rom" ]] && options+=(3 "Remove emulator choice for ROM")
         fi
 
         if [[ $HAS_TVS -eq 1 ]]; then
@@ -365,18 +399,16 @@ function main_menu() {
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         case $choice in
             1)
-                choose_app
-                get_save_vars
-                load_mode_defaults
+                choose_emulator "emu_sys" "$emu_sys"
                 ;;
             2)
-                choose_app "$SAVE_APP"
-                get_save_vars
-                load_mode_defaults
+                choose_emulator "emu_rom" "$emu_rom"
                 ;;
             3)
-                sed -i "/$SAVE_APP/d" "$APPS_CONF"
+                default_emulator "del" "emu_rom"
                 get_sys_command "$SYSTEM" "$ROM"
+                get_save_vars
+                load_mode_defaults
                 ;;
             4)
                 choose_mode "vid_emu" "$vid_emu"
@@ -448,15 +480,13 @@ function choose_mode() {
     load_mode_defaults
 }
 
-function choose_app() {
-    local save="$1"
+function choose_emulator() {
+    local mode="$1"
+    local default="$2"
+
     local default
     local default_id
-    if [[ -n "$save" ]]; then
-        default="$EMULATOR"
-    else
-        default="$EMULATOR_DEF_SYS"
-    fi
+
     local options=()
     local i=1
     while read line; do
@@ -470,23 +500,19 @@ function choose_app() {
         fi
         options+=($i "$id")
         ((i++))
-    done < <(sort "$EMU_CONF")
+    done < <(sort "$EMU_SYS_CONF")
     if [[ -z "${options[*]}" ]]; then
-        dialog --msgbox "No emulator options found for $SYSTEM - have you installed any snes emulators yet? Do you have a valid $EMU_CONF ?" 20 60 >/dev/tty
+        dialog --msgbox "No emulator options found for $SYSTEM - have you installed any snes emulators yet? Do you have a valid $EMU_SYS_CONF ?" 20 60 >/dev/tty
         exit 1
     fi
     local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choice" ]]; then
-        if [[ -n "$save" ]]; then
-            iniConfig " = " '"' "$APPS_CONF"
-            iniSet "$save" "${apps[$choice]}"
-        else
-            iniConfig " = " '"' "$EMU_CONF"
-            iniSet "default" "${apps[$choice]}"
-        fi
-        get_sys_command "$SYSTEM" "$ROM"
-    fi
+    [[ -z "$choice" ]] && return
+
+    default_emulator set "$mode" "${apps[$choice]}"
+    get_sys_command "$SYSTEM" "$ROM"
+    get_save_vars
+    load_mode_defaults
 }
 
 function choose_render_res() {
@@ -686,39 +712,28 @@ function get_sys_command() {
     ROM_BN="${rom##*/}"
     ROM_BN="${ROM_BN%.*}"
 
-    SAVE_APP=a$(echo "$system$rom" | md5sum | cut -d" " -f1)
-
-    if [[ ! -f "$EMU_CONF" ]]; then
+    if [[ ! -f "$EMU_SYS_CONF" ]]; then
         echo "No config found for system $system"
         exit 1
     fi
 
-    iniConfig " = " '"' "$EMU_CONF"
+    # get system & rom specific emulator if set
+    local emulator="$(default_emulator get emu_sys)"
     iniGet "default"
-    if [[ -z "$ini_value" ]]; then
+    if [[ -z "$emulator" ]]; then
         echo "No default emulator found for system $system"
         start_joy2key
-        choose_app
+        choose_emulator "emu_sys"
         stop_joy2key
         get_sys_command "$system" "$rom"
         return
     fi
 
-    EMULATOR="$ini_value"
-    EMULATOR_DEF_SYS="$EMULATOR"
+    EMULATOR="$emulator"
+    emulator="$(default_emulator get emu_rom)"
+    [[ -n "$emulator" ]] && EMULATOR="$emulator"
 
-    # get system & rom specific app if set
-    if [[ -f "$APPS_CONF" ]]; then
-        iniConfig " = " '"' "$APPS_CONF"
-        iniGet "$SAVE_APP"
-        EMULATOR_DEF_ROM="$ini_value"
-        [[ -n "$ini_value" ]] && EMULATOR="$ini_value"
-    fi
-
-    # get the app commandline
-    iniConfig " = " '"' "$EMU_CONF"
-    iniGet "$EMULATOR"
-    COMMAND="$ini_value"
+    COMMAND="$(default_emulator get emu_cmd)"
 
     # replace tokens
     COMMAND="${COMMAND/\%ROM\%/\"$rom\"}"
