@@ -119,6 +119,8 @@ function get_params() {
             IS_SYS=1
             SYSTEM="$3"
             ROM="$4"
+            ROM_BN_EXT="${ROM##*/}"
+            ROM_BN="${ROM_BN_EXT%.*}"
             if [[ "$COMMAND" == "_PORT_" ]]; then
                 CONF_ROOT="$CONFIGDIR/ports/$SYSTEM"
                 EMU_SYS_CONF="$CONF_ROOT/emulators.cfg"
@@ -128,7 +130,8 @@ function get_params() {
                 EMU_SYS_CONF="$CONF_ROOT/emulators.cfg"
                 IS_PORT=0
             fi
-            SYS_SAVE_ROM="a$(echo "$SYSTEM$ROM" | md5sum | cut -d" " -f1)"
+            SYS_SAVE_ROM_OLD="a$(echo "$SYSTEM$ROM" | md5sum | cut -d" " -f1)"
+            SYS_SAVE_ROM="$(clean_name "${SYSTEM}_${ROM_BN}")"
             get_sys_command "$SYSTEM" "$ROM"
         fi
     else
@@ -143,11 +146,22 @@ function get_params() {
     NETPLAY=0
 }
 
-function get_save_vars() {
+function clean_name() {
+    local name="$1"
+    name="${name//\//_}"
+    name="${name//[^a-zA-Z0-9_\-]/}"
+    echo "$name"
+}
+
+function set_save_vars() {
     # convert emulator name / binary to a names usable as variables in our config files
-    SAVE_EMU=${EMULATOR//\//_}
-    SAVE_EMU=${SAVE_EMU//[^a-zA-Z0-9_\-]/}
-    SAVE_ROM=r$(echo "$COMMAND" | md5sum | cut -d" " -f1)
+    SAVE_EMU="$(clean_name "$EMULATOR")"
+    SAVE_ROM_OLD=r$(echo "$COMMAND" | md5sum | cut -d" " -f1)
+    if [[ "$IS_SYS" -eq 1 ]]; then
+        SAVE_ROM="${SAVE_EMU}_$(clean_name "$ROM_BN")"
+    else
+        SAVE_ROM="$SAVE_EMU"
+    fi
 }
 
 function get_all_modes() {
@@ -234,11 +248,17 @@ function default_mode() {
         vid_emu)
             key="$SAVE_EMU"
             ;;
+        vid_rom_old)
+            key="$SAVE_ROM_OLD"
+            ;;
         vid_rom)
             key="$SAVE_ROM"
             ;;
         fb_emu)
             key="${SAVE_EMU}_fb"
+            ;;
+        fb_rom_old)
+            key="${SAVE_ROM_OLD}_fb"
             ;;
         fb_rom)
             key="${SAVE_ROM}_fb"
@@ -264,6 +284,10 @@ function default_emulator() {
             ;;
         emu_cmd)
             key="$EMULATOR"
+            ;;
+        emu_rom_old)
+            key="$SYS_SAVE_ROM_OLD"
+            config="$EMU_CONF"
             ;;
         emu_rom)
             key="$SYS_SAVE_ROM"
@@ -314,16 +338,34 @@ function load_mode_defaults() {
         mode="$(default_mode get vid_emu)"
         [[ -n "$mode" ]] && MODE_REQ_ID="$mode"
 
-        mode="$(default_mode get vid_rom)"
-        [[ -n "$mode" ]] && MODE_REQ_ID="$mode"
+        # get default mode for system + rom combination
+        # try the old key first and convert to the new key if found
+        mode="$(default_mode get vid_rom_old)"
+        if [[ -n "$mode" ]]; then
+            default_mode del vid_rom_old
+            default_mode set vid_rom "$mode"
+            MODE_REQ_ID="$mode"
+        else
+            mode="$(default_mode get vid_rom_old)"
+            [[ -n "$mode" ]] && MODE_REQ_ID="$mode"
+        fi
 
         if [[ -z "$DISPLAY" ]]; then
             # load default framebuffer res for emulator / rom
             mode="$(default_mode get fb_emu)"
             [[ -n "$mode" ]] && FB_NEW="$mode"
 
-            mode="$(default_mode get fb_rom)"
-            [[ -n "$mode" ]] && FB_NEW="$mode"
+            # get default fb mode for system + rom combination
+            # try the old key first and convert to the new key if found
+            mode="$(default_mode get fb_rom_old)"
+            if [[ -n "$mode" ]]; then
+                default_mode del fb_rom_old
+                default_mode set fb_rom "$mode"
+                FB_NEW="$mode"
+            else
+                mode="$(default_mode get fb_rom)"
+                [[ -n "$mode" ]] && FB_NEW="$mode"
+            fi
         fi
 
         # get default retroarch render resolution for emulator
@@ -407,7 +449,7 @@ function main_menu() {
             3)
                 default_emulator "del" "emu_rom"
                 get_sys_command "$SYSTEM" "$ROM"
-                get_save_vars
+                set_save_vars
                 load_mode_defaults
                 ;;
             4)
@@ -511,7 +553,7 @@ function choose_emulator() {
 
     default_emulator set "$mode" "${apps[$choice]}"
     get_sys_command "$SYSTEM" "$ROM"
-    get_save_vars
+    set_save_vars
     load_mode_defaults
 }
 
@@ -709,9 +751,6 @@ function get_sys_command() {
     local system="$1"
     local rom="$2"
 
-    ROM_BN="${rom##*/}"
-    ROM_BN="${ROM_BN%.*}"
-
     if [[ ! -f "$EMU_SYS_CONF" ]]; then
         echo "No config found for system $system"
         exit 1
@@ -728,10 +767,20 @@ function get_sys_command() {
         get_sys_command "$system" "$rom"
         return
     fi
-
     EMULATOR="$emulator"
-    emulator="$(default_emulator get emu_rom)"
-    [[ -n "$emulator" ]] && EMULATOR="$emulator"
+
+    # get default emulator for system + rom combination
+    # try the old key first and convert to the new key if found
+    emulator="$(default_emulator get emu_rom_old)"
+
+    if [[ -n "$emulator" ]]; then
+        default_emulator del emu_rom_old
+        default_emulator set emu_rom "$emulator"
+        EMULATOR="$emulator"
+    else
+        emulator="$(default_emulator get emu_rom)"
+        [[ -n "$mode" ]] && EMULATOR="$emulator"
+    fi
 
     COMMAND="$(default_emulator get emu_cmd)"
 
@@ -836,7 +885,7 @@ rm -f "$LOG"
 echo -e "$SYSTEM\n$EMULATOR\n$ROM\n$COMMAND" >/dev/shm/runcommand.info
 user_script "runcommand-onstart.sh"
 
-get_save_vars
+set_save_vars
 
 load_mode_defaults
 
