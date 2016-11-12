@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_stratagus() {
-    getDepends libsdl1.2-dev libbz2-dev libogg-dev libvorbis-dev libtheora-dev libpng12-dev liblua5.1-0-dev libtolua++5.1-dev
+    getDepends libsdl1.2-dev libbz2-dev libogg-dev libvorbis-dev libtheora-dev libpng12-dev liblua5.1-0-dev libtolua++5.1-dev libfluidsynth-dev libmikmod-dev
 }
 
 function sources_stratagus() {
