@@ -27,13 +27,13 @@
 ##
 ## * VIDEO_MODE = 0: use the current video mode
 ## * VIDEO_MODE = 1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz
-## * VIDEO_MODE_REQ = 4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz
+## * VIDEO_MODE = 4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz
 ##
 ## Manual video mode selection
 ##
-## * VIDEO_MODE_REQ = "CEA-#": set video mode to CEA mode #
-## * VIDEO_MODE_REQ = "DMT-#": set video mode to DMT mode #
-## * VIDEO_MODE_REQ = "PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
+## * VIDEO_MODE = "CEA-#": set video mode to CEA mode #
+## * VIDEO_MODE = "DMT-#": set video mode to DMT mode #
+## * VIDEO_MODE = "PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
 ##
 ## @note
 ## Video mode switching only happens if the monitor reports the modes as available
