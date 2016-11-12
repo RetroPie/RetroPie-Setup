@@ -9,27 +9,51 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-# parameters - MODE_REQ COMMAND savename
-
-# MODE_REQ==0: run COMMAND
-# MODE_REQ==1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz, and run COMMAND
-# MODE_REQ==4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz, and run COMMAND
-
-# MODE_REQ=="CEA-#": set video mode to CEA mode #
-# MODE_REQ=="DMT-#": set video mode to DMT mode #
-# MODE_REQ=="PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
-
-# note that mode switching only happens if the monitor reports the modes as available (via tvservice)
-# and the requested mode differs from the currently active mode
-
-# if savename is included, that is used for loading and saving of video output modes as well as dispmanx settings
-# for the current COMMAND. If omitted, the binary name is used as a key for the loading and saving. The savename is
-# also displayed in the video output menu (detailed below), so for our purposes we send the emulator module id, which
-# is somewhat descriptive yet short.
-
-# on launch this script waits for 1 second for a keypress. If x or m is pressed, a menu is displayed allowing
-# the user to set a screenmode for this particular COMMAND. the savename parameter is displayed to the user - we use the module id
-# of the emulator we are launching.
+## @file supplementary/runcommand/runcommand.sh
+## @brief runcommand launching script
+## @copyright GPLv3
+## @details
+## @par Usage
+##
+## `runcommand.sh VIDEO_MODE COMMAND SAVE_NAME`
+##
+## or
+##
+## `runcommand.sh VIDEO_MODE _SYS_/_PORT_ SYSTEM ROM`
+##
+## Video mode switching is only supported on the Raspberry Pi
+##
+## Automatic video mode selection:
+##
+## * VIDEO_MODE = 0: use the current video mode
+## * VIDEO_MODE = 1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz
+## * VIDEO_MODE_REQ = 4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz
+##
+## Manual video mode selection
+##
+## * VIDEO_MODE_REQ = "CEA-#": set video mode to CEA mode #
+## * VIDEO_MODE_REQ = "DMT-#": set video mode to DMT mode #
+## * VIDEO_MODE_REQ = "PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
+##
+## @note
+## Video mode switching only happens if the monitor reports the modes as available
+## (via tvservice) and the requested mode differs from the currently active mode
+##
+## If `_SYS_` or `_PORT_` is provided for the second parameter, the commandline
+## will be extracted from `/opt/retropie/configs/SYSTEM/emulators.cfg` with
+## `%ROM%` `%BASENAME%` being replaced with the ROM parameter. This is the
+## default mode used when launching in RetroPie so the user can switch emulator
+## used as well as other options from the runcommand GUI.
+##
+## If SAVE_NAME is included, that is used for loading and saving of video output
+## modes as well as SDL1 dispmanx settings for the current COMMAND. If omitted,
+## the binary name is used as a key for the loading and saving. The savename is
+## also displayed in the video output menu (detailed below), so for our purposes
+## we send the emulator module id, which is somewhat descriptive yet short.
+##
+## On launch this script waits for 2 second for a key or joystick press. If
+## pressed the GUI is shown, where a user can set video modes, default emulators
+## and other options (depending what is being launched).
 
 ROOTDIR="/opt/retropie"
 CONFIGDIR="$ROOTDIR/configs"
@@ -43,20 +67,20 @@ RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
 
 TVSERVICE="/opt/vc/bin/tvservice"
 
-declare -A MODE_MAP
-declare -A MODE
-
-MODE_MAP[1-CEA-4:3]="CEA-1"
-MODE_MAP[1-DMT-4:3]="DMT-4"
-MODE_MAP[1-CEA-16:9]="CEA-1"
-
-MODE_MAP[4-CEA-4:3]="DMT-16"
-MODE_MAP[4-DMT-4:3]="DMT-16"
-MODE_MAP[4-CEA-16:9]="CEA-4"
-
 source "$ROOTDIR/lib/inifuncs.sh"
 
 function get_config() {
+    declare -Ag MODE_MAP
+    declare -Ag MODE
+
+    MODE_MAP[1-CEA-4:3]="CEA-1"
+    MODE_MAP[1-DMT-4:3]="DMT-4"
+    MODE_MAP[1-CEA-16:9]="CEA-1"
+
+    MODE_MAP[4-CEA-4:3]="DMT-16"
+    MODE_MAP[4-DMT-4:3]="DMT-16"
+    MODE_MAP[4-CEA-16:9]="CEA-4"
+
     if [[ -f "$RUNCOMMAND_CONF" ]]; then
         iniConfig " = " '"' "$RUNCOMMAND_CONF"
         iniGet "governor"
