@@ -71,7 +71,6 @@ source "$ROOTDIR/lib/inifuncs.sh"
 
 function get_config() {
     declare -Ag MODE_MAP
-    declare -Ag MODE
 
     MODE_MAP[1-CEA-4:3]="CEA-1"
     MODE_MAP[1-DMT-4:3]="DMT-4"
@@ -191,6 +190,7 @@ function set_save_vars() {
 }
 
 function get_all_modes() {
+    declare -Ag MODE
     local group
     for group in CEA DMT; do
         while read -r line; do
