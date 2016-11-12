@@ -873,74 +873,92 @@ function user_script() {
     fi
 }
 
-get_config
-
-get_params "$@"
-
-# turn off cursor and clear screen
-tput civis
-clear
-
-rm -f "$LOG"
-echo -e "$SYSTEM\n$EMULATOR\n$ROM\n$COMMAND" >/dev/shm/runcommand.info
-user_script "runcommand-onstart.sh"
-
-set_save_vars
-
-load_mode_defaults
-
-show_launch
-
-if [[ "$DISABLE_MENU" -ne 1 ]]; then
-    if ! check_menu; then
+function restore_cursor_and_exit() {
+    # if we are not being run from emulationstation (get parent of parent), turn the cursor back on.
+    if [[ "$(ps -o comm= -p $(ps -o ppid= -p $PPID))" != "emulationstatio" ]]; then
         tput cnorm
-        exit 0
     fi
-fi
 
-mode_switch "$MODE_REQ_ID"
+    exit 0
+}
 
-[[ -n "$FB_NEW" ]] && switch_fb_res "$FB_NEW"
+function launch_command() {
+    local ret
+    # launch the command
+    echo -e "Parameters: $@\nExecuting: $COMMAND" >>"$LOG"
+    if [[ "$CONSOLE_OUT" -eq 1 ]]; then
+        # turn cursor on
+        tput cnorm
+        eval $COMMAND </dev/tty 2>>"$LOG"
+        ret=$?
+        tput civis
+    else
+        eval $COMMAND </dev/tty &>>"$LOG"
+        ret=$?
+    fi
+    return $ret
+}
 
-config_dispmanx "$SAVE_EMU"
+function runcommand() {
+    get_config
 
-# switch to configured cpu scaling governor
-[[ -n "$GOVERNOR" ]] && set_governor "$GOVERNOR"
+    get_params "$@"
 
-retroarch_append_config
-
-# launch the command
-echo -e "Parameters: $@\nExecuting: $COMMAND" >>"$LOG"
-if [[ "$CONSOLE_OUT" -eq 1 ]]; then
-    # turn cursor on
-    tput cnorm
-    eval $COMMAND </dev/tty 2>>"$LOG"
+    # turn off cursor and clear screen
     tput civis
-else
-    eval $COMMAND </dev/tty &>>"$LOG"
-fi
+    clear
 
-clear
+    rm -f "$LOG"
+    echo -e "$SYSTEM\n$EMULATOR\n$ROM\n$COMMAND" >/dev/shm/runcommand.info
+    user_script "runcommand-onstart.sh"
 
-# remove tmp folder for unpacked archives if it exists
-rm -rf "/tmp/retroarch"
+    set_save_vars
 
-# restore default cpu scaling governor
-[[ -n "$GOVERNOR" ]] && restore_governor
+    load_mode_defaults
 
-# if we switched mode - restore preferred mode
-mode_switch "$MODE_ORIG_ID"
+    show_launch
 
-# reset/restore framebuffer res (if it was changed)
-[[ -n "$FB_NEW" ]] && restore_fb
+    if [[ "$DISABLE_MENU" -ne 1 ]]; then
+        if ! check_menu; then
+            clear
+            restore_cursor_and_exit 0
+        fi
+    fi
 
-[[ "$COMMAND" =~ retroarch ]] && retroarchIncludeToEnd "$CONF_ROOT/retroarch.cfg"
+    mode_switch "$MODE_REQ_ID"
 
-user_script "runcommand-onend.sh"
+    [[ -n "$FB_NEW" ]] && switch_fb_res "$FB_NEW"
 
-## if we are not being run from emulationstation (get parent of parent), turn the cursor back on.
-if [[ "$(ps -o comm= -p $(ps -o ppid= -p $PPID))" != "emulationstatio" ]]; then
-    tput cnorm
-fi
+    config_dispmanx "$SAVE_EMU"
 
-exit 0
+    # switch to configured cpu scaling governor
+    [[ -n "$GOVERNOR" ]] && set_governor "$GOVERNOR"
+
+    retroarch_append_config
+
+    local ret
+    launch_command
+    ret=$?
+
+    clear
+
+    # remove tmp folder for unpacked archives if it exists
+    rm -rf "/tmp/retroarch"
+
+    # restore default cpu scaling governor
+    [[ -n "$GOVERNOR" ]] && restore_governor
+
+    # if we switched mode - restore preferred mode
+    mode_switch "$MODE_ORIG_ID"
+
+    # reset/restore framebuffer res (if it was changed)
+    [[ -n "$FB_NEW" ]] && restore_fb
+
+    [[ "$COMMAND" =~ retroarch ]] && retroarchIncludeToEnd "$CONF_ROOT/retroarch.cfg"
+
+    user_script "runcommand-onend.sh"
+
+    restore_cursor_and_exit "$ret"
+}
+
+runcommand "$@"
