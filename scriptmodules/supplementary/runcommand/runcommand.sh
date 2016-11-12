@@ -486,9 +486,11 @@ function main_menu() {
                 ;;
             6)
                 default_mode "del" "vid_emu"
+                load_mode_defaults
                 ;;
             7)
                 default_mode "del" "vid_rom"
+                load_mode_defaults
                 ;;
             8)
                 choose_render_res "render" "$RENDER_RES"
@@ -511,6 +513,7 @@ function main_menu() {
                 ;;
             13)
                 default_mode "del" "fb_rom"
+                load_mode_defaults
                 ;;
             Z)
                 NETPLAY=1
