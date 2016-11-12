@@ -45,3 +45,7 @@ function install_docs() {
     cp -R "$md_build/html" "$scriptdir/docs"
     chown -R $user:$user "$scriptdir/docs"
 }
+
+function upload_docs() {
+    rsync -av --delete "$scriptdir/docs/" "retropie@$__binary_host:retropie-setup-api/"
+}
