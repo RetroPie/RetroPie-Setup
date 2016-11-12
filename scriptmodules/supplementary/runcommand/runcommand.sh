@@ -100,10 +100,9 @@ function stop_joy2key() {
 
 function get_params() {
     MODE_REQ="$1"
-    [[ -z "$MODE_REQ" ]] && exit 1
-
     COMMAND="$2"
-    [[ -z "$COMMAND" ]] && exit 1
+
+    [[ -z "$MODE_REQ" || -z "$COMMAND" ]] && return 1
 
     CONSOLE_OUT=0
     # if the COMMAND is _SYS_, or _PORT_ arg 3 should be system name, and arg 4 rom/game, and we look up the configured system for that combination
@@ -115,6 +114,7 @@ function get_params() {
             IS_SYS=0
             COMMAND="bash \"$4\""
             SYSTEM="$3"
+            [[ -z "$SYSTEM" ]] && return 1
         else
             IS_SYS=1
             SYSTEM="$3"
@@ -132,6 +132,7 @@ function get_params() {
             fi
             SYS_SAVE_ROM_OLD="a$(echo "$SYSTEM$ROM" | md5sum | cut -d" " -f1)"
             SYS_SAVE_ROM="$(clean_name "${SYSTEM}_${ROM_BN}")"
+            [[ -z "$SYSTEM" ]] && return 1
             get_sys_command "$SYSTEM" "$ROM"
         fi
     else
@@ -144,6 +145,7 @@ function get_params() {
     fi
 
     NETPLAY=0
+    return 0
 }
 
 function clean_name() {
@@ -902,7 +904,11 @@ function launch_command() {
 function runcommand() {
     get_config
 
-    get_params "$@"
+    if ! get_params "$@"; then
+        echo "$0 MODE COMMAND [SAVENAME]"
+        echo "$0 MODE _SYS_/_PORT_ SYSTEM ROM"
+        exit 1
+    fi
 
     # turn off cursor and clear screen
     tput civis
