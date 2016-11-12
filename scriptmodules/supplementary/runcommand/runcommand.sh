@@ -510,6 +510,7 @@ function main_menu() {
                 ;;
             12)
                 default_mode "del" "fb_emu"
+                load_mode_defaults
                 ;;
             13)
                 default_mode "del" "fb_rom"
