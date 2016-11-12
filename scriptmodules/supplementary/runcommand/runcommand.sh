@@ -601,6 +601,7 @@ function choose_render_res() {
     local item
     local options=()
     for item in "${res[@]}"; do
+        [[ "$item" == "$default" ]] && default="$i"
         options+=($i "$item")
         ((i++))
     done
@@ -608,7 +609,9 @@ function choose_render_res() {
         O "Use video output resolution"
         C "Use config file resolution"
     )
-    local cmd=(dialog --menu "Choose RetroArch render resolution" 22 76 16 )
+    [[ "$default" == "output" ]] && default="O"
+    [[ "$default" == "config" ]] && default="C"
+    local cmd=(dialog --default-item "$default" --menu "Choose RetroArch render resolution" 22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
     case "$choice" in
