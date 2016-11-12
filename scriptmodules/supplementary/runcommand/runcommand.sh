@@ -777,6 +777,7 @@ function show_launch() {
 }
 
 function check_menu() {
+    local dont_launch=0
     start_joy2key
     # check for key pressed to enter configuration
     IFS= read -s -t 2 -N 1 key </dev/tty
@@ -786,7 +787,7 @@ function check_menu() {
         fi
         tput cnorm
         main_menu
-        local dont_launch=$?
+        dont_launch=$?
         tput civis
         clear
     fi
