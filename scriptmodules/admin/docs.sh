@@ -14,7 +14,7 @@ rp_module_desc="Generate developer documentation"
 rp_module_section=""
 
 function depends_docs() {
-    getDepends doxygen
+    getDepends doxygen graphviz
 }
 
 function sources_docs() {
@@ -32,10 +32,11 @@ function build_docs() {
     iniSet "EXTENSION_MAPPING" "sh=C"
     iniSet "QUIET" "YES"
     iniSet "WARN_IF_DOC_ERROR" "NO"
-    iniSet "INPUT" "$scriptdir $scriptdir/scriptmodules"
+    iniSet "INPUT" "$scriptdir"
     iniSet "FILE_PATTERNS" "*.sh"
     iniSet "EXCLUDE_PATTERNS" "*/tmp/*"
     iniSet "INPUT_FILTER" "\"sed -n -f $md_build/doxygen-bash.sed -- \""
+    iniSet "RECURSIVE" "YES"
     doxygen "$config"
 }
 
