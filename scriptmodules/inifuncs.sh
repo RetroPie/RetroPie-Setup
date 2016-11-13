@@ -151,7 +151,7 @@ function iniGet() {
         value_m="\([^\r]*\)"
     fi
 
-    ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m\r\?/\1/p" "$file" | tail -1)"
+    ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m.*/\1/p" "$file" | tail -1)"
 }
 
 # @fn retroarchIncludeToEnd()
