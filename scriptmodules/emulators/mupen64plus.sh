@@ -66,7 +66,7 @@ function build_mupen64plus() {
             params=()
             isPlatform "rpi1" && params+=("VC=1" "VFP=1" "VFP_HARD=1")
             isPlatform "neon" && params+=("VC=1" "NEON=1")
-            isPlatform "x11" && params+=("OSD=1")
+            isPlatform "x11" && params+=("OSD=1" "PIE=1")
             isPlatform "x86" && params+=("SSE=SSSE3")
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
