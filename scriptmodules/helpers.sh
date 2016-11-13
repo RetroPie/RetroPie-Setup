@@ -926,7 +926,7 @@ function getSystemExtensions() {
     iniConfig "=" '"' "$config"
     iniGet "$1_exts"
 
-    echo $ini_value
+    echo "$ini_value"
 }
 
 ## @fn applyPatch()

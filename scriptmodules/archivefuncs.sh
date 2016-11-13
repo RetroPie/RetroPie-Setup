@@ -43,9 +43,9 @@ function archiveExtract() {
     esac
 
     # build a regex portion from the passed extensions
-    regexPart=$(echo ${disk_exts} | sed 's/ /\\|/g')
+    local regex="${disk_exts// /\\|}"
 
-    IFS=$'\n' read -d '' -r -a arch_files < <(find "$arch_dir" -iregex ".*.\(${regexPart}\)$")
+    IFS=$'\n' read -d '' -r -a arch_files < <(find "$arch_dir" -iregex ".*.\(${regex}\)$" | sort)
 
     if [[ ${#arch_files[@]} -eq 0 ]]; then
         return 2

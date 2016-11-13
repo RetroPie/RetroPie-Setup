@@ -46,7 +46,7 @@ function install_vice() {
 
 function configure_vice() {
     # get a list of supported extensions
-    c64_exts=$(getSystemExtensions c64)
+    c64_exts="$(getSystemExtensions c64)"
 
     # install the vice start script
     mkdir "$md_inst/bin/"
