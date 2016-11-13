@@ -86,8 +86,8 @@ function list_registered_bluetooth() {
     local mac_address
     local device_name
     while read line; do
-        mac_address=$(echo $line | sed 's/ /,/g' | cut -d, -f1)
-        device_name=$(echo $line | sed -e 's/'"$mac_address"' //g')
+        mac_address="$(echo "$line" | sed 's/ /,/g' | cut -d, -f1)"
+        device_name="$(echo "$line" | sed -e 's/'"$mac_address"' //g')"
         echo -e "$mac_address\n$device_name"
     done < <($(get_script_bluetooth bluez-test-device) list)
 }
@@ -310,7 +310,7 @@ function connect_mode_bluetooth() {
     local connect_mode="$(_get_connect_mode)"
 
     local cmd=(dialog --backtitle "$__backtitle" --default-item "$connect_mode" --menu "Choose a connect mode" 22 76 16)
-    echo $__ini_cfg_file
+
     local options=(
         default "Bluetooth stack default behaviour"
         boot "Connect to devices once at boot"

@@ -112,9 +112,9 @@ function get_default_gcc() {
 function set_default() {
     if [[ -e "$1-$2" ]] ; then
         # echo $1-$2 is now the default
-        ln -sf $1-$2 $1
+        ln -sf "$1-$2" "$1"
     else
-        echo $1-$2 is not installed
+        echo "$1-$2 is not installed"
     fi
 }
 

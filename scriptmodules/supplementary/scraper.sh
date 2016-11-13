@@ -141,14 +141,14 @@ function scrape_chosen_scraper() {
 }
 
 function _load_config_scraper() {
-    echo $(loadModuleConfig \
+    echo "$(loadModuleConfig \
         'use_thumbs=1' \
         'max_width=400' \
         'use_gdb_scraper=1' \
         'rom_name=0' \
         'append_only=0' \
         'use_rom_folder=0' \
-    )
+    )"
 }
 
 function gui_scraper() {

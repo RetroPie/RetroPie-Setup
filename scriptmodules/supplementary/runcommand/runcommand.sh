@@ -194,8 +194,8 @@ function get_all_modes() {
     local group
     for group in CEA DMT; do
         while read -r line; do
-            local id=$(echo $line | grep -oE "mode [0-9]*" | cut -d" " -f2)
-            local info=$(echo $line | cut -d":" -f2-)
+            local id="$(echo "$line" | grep -oE "mode [0-9]*" | cut -d" " -f2)"
+            local info="$(echo "$line" | cut -d":" -f2-)"
             info=${info/ /}
             if [[ -n "$id" ]]; then
                 MODE_ID+=($group-$id)
