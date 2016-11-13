@@ -16,13 +16,10 @@ RES="$3"
 RSP_PLUGIN="$4"
 [[ -n "$RES" ]] && RES="--resolution $RES"
 [[ -z "$RSP_PLUGIN" ]] && RSP_PLUGIN="mupen64plus-rsp-hle"
+
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
 config="$configdir/n64/mupen64plus.cfg"
-
-user="$SUDO_USER"
-[[ -z "$user" ]] && user=$(id -un)
-home="$(eval echo ~$user)"
 datadir="$home/RetroPie"
 romdir="$datadir/roms"
 
