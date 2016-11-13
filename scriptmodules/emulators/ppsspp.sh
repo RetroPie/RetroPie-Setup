@@ -84,8 +84,7 @@ function build_ppsspp() {
     # build ppsspp
     local cmake="$md_build/cmake/bin/cmake"
     cd "$md_build/ppsspp"
-    rm -f CMakeCache.txt
-    rm -rf CMakeFiles
+    rm -rf CMakeCache.txt CMakeFiles
     if isPlatform "rpi"; then
         if isPlatform "armv6"; then
             "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake .
