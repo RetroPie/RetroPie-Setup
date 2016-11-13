@@ -791,7 +791,6 @@ function get_sys_command() {
 
     # get system & rom specific emulator if set
     local emulator="$(default_emulator get emu_sys)"
-    iniGet "default"
     if [[ -z "$emulator" ]]; then
         echo "No default emulator found for system $system"
         start_joy2key
@@ -812,7 +811,7 @@ function get_sys_command() {
         EMULATOR="$emulator"
     else
         emulator="$(default_emulator get emu_rom)"
-        [[ -n "$mode" ]] && EMULATOR="$emulator"
+        [[ -n "$emulator" ]] && EMULATOR="$emulator"
     fi
 
     COMMAND="$(default_emulator get emu_cmd)"
