@@ -156,7 +156,7 @@ function get_params() {
             SYS_SAVE_ROM_OLD="a$(echo "$SYSTEM$ROM" | md5sum | cut -d" " -f1)"
             SYS_SAVE_ROM="$(clean_name "${SYSTEM}_${ROM_BN}")"
             [[ -z "$SYSTEM" ]] && return 1
-            get_sys_command "$SYSTEM" "$ROM"
+            get_sys_command
         fi
     else
         IS_SYS=0
@@ -474,7 +474,7 @@ function main_menu() {
                 ;;
             3)
                 default_emulator "del" "emu_rom"
-                get_sys_command "$SYSTEM" "$ROM"
+                get_sys_command
                 set_save_vars
                 load_mode_defaults
                 ;;
@@ -582,7 +582,7 @@ function choose_emulator() {
     [[ -z "$choice" ]] && return
 
     default_emulator set "$mode" "${apps[$choice]}"
-    get_sys_command "$SYSTEM" "$ROM"
+    get_sys_command
     set_save_vars
     load_mode_defaults
 }
@@ -781,22 +781,19 @@ function restore_governor() {
 }
 
 function get_sys_command() {
-    local system="$1"
-    local rom="$2"
-
     if [[ ! -f "$EMU_SYS_CONF" ]]; then
-        echo "No config found for system $system"
+        echo "No config found for system $SYSTEM"
         exit 1
     fi
 
     # get system & rom specific emulator if set
     local emulator="$(default_emulator get emu_sys)"
     if [[ -z "$emulator" ]]; then
-        echo "No default emulator found for system $system"
+        echo "No default emulator found for system $SYSTEM"
         start_joy2key
         choose_emulator "emu_sys"
         stop_joy2key
-        get_sys_command "$system" "$rom"
+        get_sys_command "$SYSTEM" "$ROM"
         return
     fi
     EMULATOR="$emulator"
@@ -817,12 +814,12 @@ function get_sys_command() {
     COMMAND="$(default_emulator get emu_cmd)"
 
     # replace tokens
-    COMMAND="${COMMAND/\%ROM\%/\"$rom\"}"
+    COMMAND="${COMMAND/\%ROM\%/\"$ROM\"}"
     COMMAND="${COMMAND/\%BASENAME\%/\"$ROM_BN\"}"
 
     # special case to get the last 2 folders for quake games for the -game parameter
     # remove everything up to /quake/
-    local quake_dir="${rom##*/quake/}"
+    local quake_dir="${ROM##*/quake/}"
     # remove filename
     quake_dir="${quake_dir%/*}"
     COMMAND="${COMMAND/\%QUAKEDIR\%/\"$quake_dir\"}"
