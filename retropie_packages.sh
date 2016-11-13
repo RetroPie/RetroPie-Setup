@@ -58,8 +58,6 @@ rp_registerAllModules
 
 ensureFBMode 320 240
 
-[[ "$1" == "init" ]] && return
-
 rp_ret=0
 if [[ $# -gt 0 ]]; then
     joy2keyStart
