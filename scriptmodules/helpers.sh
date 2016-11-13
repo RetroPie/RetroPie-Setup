@@ -347,9 +347,12 @@ function ensureRootdirExists() {
 
     # make sure we have inifuncs.sh in place and that it is up to date
     mkdir -p "$rootdir/lib"
-    if [[ ! -f "$rootdir/lib/inifuncs.sh" || "$rootdir/lib/inifuncs.sh" -ot "$scriptdir/scriptmodules/inifuncs.sh" ]]; then
-        cp --preserve=timestamps "$scriptdir/scriptmodules/inifuncs.sh" "$rootdir/lib/inifuncs.sh"
-    fi
+    local helper_libs=(inifuncs.sh archivefuncs.sh)
+    for helper in "${helper_libs[@]}"; do
+        if [[ ! -f "$rootdir/lib/$helper" || "$rootdir/lib/$helper" -ot "$scriptdir/scriptmodules/$helper" ]]; then
+            cp --preserve=timestamps "$scriptdir/scriptmodules/$helper" "$rootdir/lib/$helper"
+        fi
+    done
 
     # create template for autoconf.cfg and make sure it is owned by $user
     local config="$configdir/all/autoconf.cfg"
@@ -908,6 +911,22 @@ function loadModuleConfig() {
             echo "local $key=\"$ini_value\""
         fi
     done
+}
+
+## @fn getSystemExtensions()
+## @param system sytem name to fetch extensions for
+## @brief Prints a space separated string of disk extensions supported by the system 
+## @details Example: ".a26 .bin .rom .zip .gz"
+function getSystemExtensions() {
+    local config
+    for config in "$configdir/all/platforms.cfg" "$scriptdir/platforms.cfg"; do
+         [[ -f "$config" ]] && break
+    done
+    
+    iniConfig "=" '"' "$config"
+    iniGet "$1_exts"
+
+    echo $ini_value
 }
 
 ## @fn applyPatch()

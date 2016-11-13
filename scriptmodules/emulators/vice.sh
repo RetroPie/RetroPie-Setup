@@ -45,15 +45,44 @@ function install_vice() {
 }
 
 function configure_vice() {
+    # get a list of supported extensions
+    c64_exts=$(getSystemExtensions c64)
+
+    # install the vice start script
+    mkdir "$md_inst/bin/"
+    cat > "$md_inst/bin/vice.sh" << _EOF_
+#!/bin/bash
+
+BIN="\${0%/*}/\$1"
+ROM="\$2"
+
+romdir="\${ROM%/*}"
+ext="\${ROM##*.}"
+source "$rootdir/lib/archivefuncs.sh"
+
+archiveExtract "\$ROM" "$c64_exts"
+
+# check successful extraction and if we have at least one file
+if [[ \$? == 0 ]]; then
+    ROM="\${arch_files[0]}"
+    romdir="\$arch_dir"
+fi
+
+"\$BIN" -chdir "\$romdir" "\$ROM"
+archiveCleanup
+_EOF_
+
+    chmod +x "$md_inst/bin/vice.sh"
+
     mkRomDir "c64"
 
-    addSystem 1 "$md_id-x64" "c64" "$md_inst/bin/x64 %ROM%"
-    addSystem 0 "$md_id-x64sc" "c64" "$md_inst/bin/x64sc %ROM%"
-    addSystem 0 "$md_id-x128" "c64" "$md_inst/bin/x128 %ROM%"
-    addSystem 0 "$md_id-xpet" "c64" "$md_inst/bin/xpet %ROM%"
-    addSystem 0 "$md_id-xplus4" "c64" "$md_inst/bin/xplus4 %ROM%"
-    addSystem 0 "$md_id-xvic" "c64" "$md_inst/bin/xvic %ROM%"
-    addSystem 0 "$md_id-xvic-cart" "c64" "$md_inst/bin/xvic -cartgeneric %ROM%"
+    addSystem 1 "$md_id-x64" "c64" "$md_inst/bin/vice.sh x64 %ROM%"
+    addSystem 0 "$md_id-x64sc" "c64" "$md_inst/bin/vice.sh x64sc %ROM%"
+    addSystem 0 "$md_id-x128" "c64" "$md_inst/bin/vice.sh x128 %ROM%"
+    addSystem 0 "$md_id-xpet" "c64" "$md_inst/bin/vice.sh xpet %ROM%"
+    addSystem 0 "$md_id-xplus4" "c64" "$md_inst/bin/vice.sh xplus4 %ROM%"
+    addSystem 0 "$md_id-xvic" "c64" "$md_inst/bin/vice.sh xvic %ROM%"
+    addSystem 0 "$md_id-xvic-cart" "c64" "$md_inst/bin/vice.sh 'xvic -cartgeneric' %ROM%"
 
     [[ "$md_mode" == "remove" ]] && return
 
