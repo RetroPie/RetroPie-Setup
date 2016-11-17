@@ -87,9 +87,9 @@ function get_config() {
         iniGet "use_art"
         USE_ART="$ini_value"
         [[ -z "$(which fbi)" ]] && USE_ART=0
-        iniGet "DISABLE_JOYSTICK"
+        iniGet "disable_joystick"
         DISABLE_JOYSTICK="$ini_value"
-        iniGet "DISABLE_MENU"
+        iniGet "disable_menu"
         DISABLE_MENU="$ini_value"
         [[ "$DISABLE_MENU" -eq 1 ]] && DISABLE_JOYSTICK=1
     fi
