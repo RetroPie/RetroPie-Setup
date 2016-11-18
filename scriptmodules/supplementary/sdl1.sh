@@ -14,8 +14,8 @@ rp_module_desc="SDL 1.2.15 with rpi fixes and dispmanx"
 rp_module_section=""
 rp_module_flags="!mali !x86"
 
-function get_ver_sdl1() {
-    echo "12"
+function get_pkg_ver_sdl1() {
+    echo "1.2.15-12rpi"
 }
 
 function depends_sdl1() {
@@ -38,7 +38,7 @@ function sources_sdl1() {
     if compareVersions "$__os_release" ge 8; then
         sed -i "s/--enable-video-caca/--enable-video-caca --disable-input-tslib/" debian/rules
     fi
-    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v 1.2.15-$(get_ver_sdl1)rpi "Added rpi fixes and dispmanx support from https://github.com/RetroPie/sdl1/compare/master...rpi"
+    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v $(get_pkg_ver_sdl1) "Added rpi fixes and dispmanx support from https://github.com/RetroPie/sdl1/compare/master...rpi"
 }
 
 function build_sdl1() {
@@ -51,7 +51,7 @@ function build_sdl1() {
 
 function install_sdl1() {
     # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
-    if ! dpkg -i libsdl1.2debian_1.2.15-$(get_ver_sdl1)rpi_armhf.deb libsdl1.2-dev_1.2.15-$(get_ver_sdl1)rpi_armhf.deb; then
+    if ! dpkg -i libsdl1.2debian_$(get_pkg_ver_sdl1)_armhf.deb libsdl1.2-dev_$(get_pkg_ver_sdl1)_armhf.deb; then
         apt-get -y -f install
     fi
     echo "libsdl1.2-dev hold" | dpkg --set-selections
@@ -62,8 +62,8 @@ function install_bin_sdl1() {
         md_ret_errors+=("$md_id is only available as a binary package for platform rpi")
         return 1
     fi
-    wget "$__binary_url/libsdl1.2debian_1.2.15-$(get_ver_sdl1)rpi_armhf.deb"
-    wget "$__binary_url/libsdl1.2-dev_1.2.15-$(get_ver_sdl1)rpi_armhf.deb"
+    wget "$__binary_url/libsdl1.2debian_$(get_pkg_ver_sdl1)_armhf.deb"
+    wget "$__binary_url/libsdl1.2-dev_$(get_pkg_ver_sdl1)_armhf.deb"
     install_sdl1
     rm ./*.deb
 }

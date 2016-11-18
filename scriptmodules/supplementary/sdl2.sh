@@ -15,7 +15,11 @@ rp_module_section=""
 rp_module_flags="!x86"
 
 function get_ver_sdl2() {
-    local ver="2.0.4+4"
+    echo "2.0.4"
+}
+
+function get_pkg_ver_sdl2() {
+    local ver="$(get_ver_sdl2)+4"
     isPlatform "rpi" && ver+="rpi"
     isPlatform "mali" && ver+="mali"
     echo "$ver"
@@ -35,16 +39,17 @@ function depends_sdl2() {
 }
 
 function sources_sdl2() {
-    local branch="release-2.0.4"
-    isPlatform "rpi" && branch="retropie-2.0.4"
-    isPlatform "mali" && branch="mali-2.0.4"
-    gitPullOrClone "$md_build/$(get_ver_sdl2)" https://github.com/RetroPie/SDL-mirror.git "$branch"
-    cd $(get_ver_sdl2)
-    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v $(get_ver_sdl2) "SDL 2.0.4 configured for the $__platform"
+    local ver="$(get_ver_sdl2)"
+    local branch="release-$ver"
+    isPlatform "rpi" && branch="retropie-$ver"
+    isPlatform "mali" && branch="mali-$ver"
+    gitPullOrClone "$md_build/$ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
+    cd "$ver"
+    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v $ver "SDL $ver configured for the $__platform"
 }
 
 function build_sdl2() {
-    cd $(get_ver_sdl2)
+    cd "$(get_ver_sdl2)"
     dpkg-buildpackage
     md_ret_require="$md_build/libsdl2-dev_$(get_ver_sdl2)_$(get_arch_sdl2).deb"
     local dest="$__tmpdir/archives/$__os_codename/$__platform"
