@@ -22,8 +22,7 @@ function sources_sdlpop() {
 }
 
 function build_sdlpop() {
-	cd "$md_build"/src
-    make
+    make --directory="$md_build"/src
     md_ret_require="$md_build/prince"
 }
 
