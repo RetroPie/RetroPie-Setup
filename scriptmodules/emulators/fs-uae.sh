@@ -11,7 +11,7 @@
 
 rp_module_id="fs-uae"
 rp_module_desc="Amiga emulator - FS-UAE integrates the most accurate Amiga emulation code available from WinUAE"
-rp_module_help="ROM Extension: .adf"
+rp_module_help="ROM Extension: .adf .ipf .dms .adz .zip\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required kickstart file kick13.bin to $biosdir"
 rp_module_section="exp"
 rp_module_flags="!arm"
 
@@ -37,26 +37,30 @@ function depends_fs-uae() {
 }
 
 function install_bin_fs-uae() {
-    aptInstall fs-uae fs-uae-launcher fs-uae-arcade
+    aptInstall fs-uae
 }
 
 function remove_fs-uae() {
-    aptRemove fs-uae fs-uae-launcher fs-uae-arcade
+    aptRemove fs-uae
 }
 
 function configure_fs-uae() {
     mkRomDir "amiga"
 
+    mkUserDir "$md_conf_root/amiga"
+    mkUserDir "$md_conf_root/amiga/$md_id"
+    
+    # copy configuring start script
+    mkdir "$md_inst/bin/"
+    cp "$scriptdir/scriptmodules/$md_type/$md_id/fs-uae.sh" "$md_inst/bin/"
+    chmod +x "$md_inst/bin/fs-uae.sh"
+
+    # copy default config file
+    cp -v "$scriptdir/scriptmodules/$md_type/$md_id/default_cfg.fs-uae" "$md_conf_root/amiga"
+    
     mkUserDir "$home/.config"
     mkUserDir "$md_conf_root/amiga"
     moveConfigDir "$home/.config/fs-uae" "$md_conf_root/amiga/fs-uae"
 
-    cat > "$romdir/amiga/+Start FS-UAE.sh" << _EOF_
-#!/bin/bash
-fs-uae-launcher
-_EOF_
-    chmod a+x "$romdir/amiga/+Start FS-UAE.sh"
-    chown $user:$user "$romdir/amiga/+Start FS-UAE.sh"
-
-    addSystem 1 "$md_id" "amiga" "bash $romdir/amiga/+Start\ FS-UAE.sh" "Amiga" ".sh"
+    addSystem 1 "$md_id" "amiga" "bash $md_inst/bin/fs-uae.sh %ROM%" Amiga ".adf .ipf .dms .adz .zip"
 }
