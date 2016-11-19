@@ -120,4 +120,11 @@ function configure_attractmode() {
 LD_LIBRARY_PATH="$md_inst/sfml/lib" "$md_inst/bin/attract" "\$@"
 _EOF_
     chmod +x "/usr/bin/attract"
+
+    local idx
+    for idx in "${__mod_idx[@]}"; do
+        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" && "$idx" != "$md_idx" ]]; then
+            rp_callModule "$idx" configure
+        fi
+    done
 }
