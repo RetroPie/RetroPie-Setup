@@ -464,6 +464,15 @@ function compareVersions() {
     return $?
 }
 
+## @fn dirIsEmpty()
+## @param path path to directory
+## @retval 0 if the directory is empty
+## @retval 1 if the directory is not empty
+function dirIsEmpty() {
+    [[ -z "$(ls -A "$1")" ]] && return 0
+    return 1
+}
+
 ## @fn copyDefaultConfig()
 ## @param from source file
 ## @param to destination file

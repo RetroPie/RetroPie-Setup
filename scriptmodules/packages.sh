@@ -277,7 +277,7 @@ function rp_callModule() {
         if [[ "$mode" == "sources" ]]; then
             rp_callModule "$md_idx" clean
         fi
-        # remove install folder if there is an error
+        # remove install folder if there is an error (and it is empty)
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
         printMsgs "console" "${md_ret_errors[@]}" >&2
         # append to global errors and return an error
@@ -313,16 +313,23 @@ function rp_installBin() {
 
 function rp_createBin() {
     printHeading "Creating binary archive for $md_desc"
-    if [[ -d "$rootdir/$md_type/$md_id" ]]; then
-        local archive="$md_id.tar.gz"
-        local dest="$__tmpdir/archives/$__os_codename/$__platform/$md_type"
-        rm -f "$dest/$archive"
-        mkdir -p "$dest"
-        tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"
-        chown $user:$user "$dest/$archive"
-    else
+
+    if [[ ! -d "$rootdir/$md_type/$md_id" ]]; then
         printMsgs "console" "No install directory $rootdir/$md_type/$md_id - no archive created"
+        return 1
     fi
+
+    if dirIsEmpty "$rootdir/$md_type/$md_id"; then
+        printMsgs "console" "Empty install directory $rootdir/$md_type/$md_id - no archive created"
+        return 1
+    fi
+
+    local archive="$md_id.tar.gz"
+    local dest="$__tmpdir/archives/$__os_codename/$__platform/$md_type"
+    rm -f "$dest/$archive"
+    mkdir -p "$dest"
+    tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"
+    chown $user:$user "$dest/$archive"
 }
 
 function rp_installModule() {
