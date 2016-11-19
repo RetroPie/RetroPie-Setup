@@ -16,7 +16,7 @@ rp_module_flags="!mali"
 
 function _addsystem_attractmode() {
     local attract_dir="$configdir/all/attractmode"
-    [[ ! -d "$attract_dir" ]] && return 1
+    [[ ! -d "$attract_dir" ]] && return 0
 
     local fullname="$1"
     local name="$2"
@@ -25,6 +25,8 @@ function _addsystem_attractmode() {
     local command="$5"
     local platform="$6"
     local theme="$7"
+
+    dirIsEmpty "$path" 1 && return 0
 
     local config="$attract_dir/emulators/$name.cfg"
     iniConfig " " "" "$config"
@@ -35,7 +37,6 @@ function _addsystem_attractmode() {
 
     iniSet "rompath" "$path"
     iniSet "system" "$fullname"
-    #iniSet "info_source" "thegamesdb.net"
 
     # extensions separated by semicolon
     extensions="${extensions// /;}"

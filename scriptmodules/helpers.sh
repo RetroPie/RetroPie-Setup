@@ -471,10 +471,15 @@ function compareVersions() {
 
 ## @fn dirIsEmpty()
 ## @param path path to directory
+## @param files_only set to 1 to ignore sub directories
 ## @retval 0 if the directory is empty
 ## @retval 1 if the directory is not empty
 function dirIsEmpty() {
-    [[ -z "$(ls -A "$1")" ]] && return 0
+    if [[ "$2" -eq 1 ]]; then
+        [[ -z "$(ls -lA1 "$1" | grep "^-")" ]] && return 0
+    else
+        [[ -z "$(ls -A "$1")" ]] && return 0
+    fi
     return 1
 }
 
