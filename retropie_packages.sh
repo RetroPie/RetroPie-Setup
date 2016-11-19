@@ -51,9 +51,6 @@ source "$scriptdir/scriptmodules/packages.sh"
 
 setup_env
 
-mkUserDir "$romdir"
-mkUserDir "$biosdir"
-
 rp_registerAllModules
 
 ensureFBMode 320 240
@@ -61,7 +58,7 @@ ensureFBMode 320 240
 rp_ret=0
 if [[ $# -gt 0 ]]; then
     joy2keyStart
-    ensureRootdirExists
+    setupDirectories
     rp_callModule "$@"
     rp_ret=$?
     joy2keyStop

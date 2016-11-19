@@ -337,11 +337,13 @@ function gitPullOrClone() {
     fi
 }
 
-# @fn ensureRootdirExists()
+# @fn setupDirectories()
 # @brief Makes sure some required retropie directories and files are created.
-function ensureRootdirExists() {
+function setupDirectories() {
     mkdir -p "$rootdir"
     mkUserDir "$datadir"
+    mkUserDir "$romdir"
+    mkUserDir "$biosdir"
     mkUserDir "$configdir"
     mkUserDir "$configdir/all"
 
