@@ -19,7 +19,7 @@ __version="4.1.3"
 rootdir="/opt/retropie"
 
 user="$SUDO_USER"
-[[ -z "$user" ]] && user=$(id -un)
+[[ -z "$user" ]] && user="$(id -un)"
 
 home="$(eval echo ~$user)"
 datadir="$home/RetroPie"
@@ -28,8 +28,8 @@ romdir="$datadir/roms"
 emudir="$rootdir/emulators"
 configdir="$rootdir/configs"
 
-scriptdir=$(dirname "$0")
-scriptdir=$(cd "$scriptdir" && pwd)
+scriptdir="$(dirname "$0")"
+scriptdir="$(cd "$scriptdir" && pwd)"
 
 __logdir="$scriptdir/logs"
 __tmpdir="$scriptdir/tmp"
@@ -37,7 +37,7 @@ __builddir="$__tmpdir/build"
 __swapdir="$__tmpdir"
 
 # check, if sudo is used
-if [[ $(id -u) -ne 0 ]]; then
+if [[ "$(id -u)" -ne 0 ]]; then
     echo "Script must be run as root. Try 'sudo $0'"
     exit 1
 fi
