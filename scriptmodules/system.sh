@@ -146,14 +146,14 @@ function get_retropie_depends() {
 }
 
 function get_platform() {
-    local architecture=$(uname --machine)
+    local architecture="$(uname --machine)"
     if [[ -z "$__platform" ]]; then
-        case $(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo) in
+        case "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" in
             BCM2708)
                 __platform="rpi1"
                 ;;
             BCM2709)
-                local revision=$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)
+                local revision="$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)"
                 if [[ "$revision" == "a02082" || "$revision" == "a22082" ]]; then
                     if [[ "$architecture" == "aarch64" ]]; then
                         __platform="rpi3-64"
