@@ -88,6 +88,9 @@ function get_os_version() {
             fatalError "Unsupported OS\n\n$(lsb_release -idrc)"
             ;;
     esac
+
+    # add 32bit/64bit to platform flags
+    __platform_flags+=" $(getconf LONG_BIT)bit"
 }
 
 function get_default_gcc() {
