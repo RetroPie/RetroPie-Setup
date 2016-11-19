@@ -20,7 +20,7 @@ RSP_PLUGIN="$4"
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
 config="$configdir/n64/mupen64plus.cfg"
-datadir="$home/RetroPie"
+datadir="$HOME/RetroPie"
 romdir="$datadir/roms"
 
 source "$rootdir/lib/inifuncs.sh"
