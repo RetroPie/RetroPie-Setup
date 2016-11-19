@@ -14,6 +14,52 @@ rp_module_desc="Attract Mode emulator frontend"
 rp_module_section="exp"
 rp_module_flags="!mali"
 
+function _addsystem_attractmode() {
+    local attract_dir="$configdir/all/attractmode"
+    [[ ! -d "$attract_dir" ]] && return 1
+
+    local fullname="$1"
+    local name="$2"
+    local path="$3"
+    local extensions="$4"
+    local command="$5"
+    local platform="$6"
+    local theme="$7"
+
+    local config="$attract_dir/emulators/$name.cfg"
+    iniConfig " " "" "$config"
+    # replace %ROM% with "[romfilename]" and convert to array
+    command=(${command//%ROM%/\"[romfilename]\"})
+    iniSet "executable" "${command[0]}"
+    iniSet "args" "${command[*]:1}"
+
+    iniSet "rompath" "$path"
+    iniSet "system" "$fullname"
+    #iniSet "info_source" "thegamesdb.net"
+
+    # extensions separated by semicolon
+    extensions="${extensions// /;}"
+    iniSet "romext" "$extensions"
+
+    chown $user:$user "$config"
+
+    # if no gameslist, generate one
+    if [[ ! -f "$attract_dir/romlists/$name.txt" ]]; then
+        sudo -u $user attract --build-romlist "$name" -o "$name"
+    fi
+
+    local config="$attract_dir/attract.cfg"
+    local tab=$'\t'
+    if [[ -f "$config" ]] && ! grep -q "display$tab$name" "$config"; then
+        cat >>"$config" <<_EOF_
+display${tab}$name
+${tab}layout               Basic
+${tab}romlist              $name
+_EOF_
+        chown $user:$user "$config"
+    fi
+}
+
 function depends_attractmode() {
     local depends=(
         cmake libflac-dev libogg-dev libvorbis-dev libopenal-dev libfreetype6-dev
@@ -65,6 +111,7 @@ function configure_attractmode() {
     local config="$md_conf_root/all/attractmode/attract.cfg"
     if [[ ! -f "$config" ]]; then
         echo "general" >"$config"
+        echo -e "\twindow_mode          fullscreen" >>"$config"
     fi
 
     mkUserDir "$md_conf_root/all/attractmode/emulators"
