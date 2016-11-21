@@ -46,7 +46,7 @@ function install_vice() {
 
 function configure_vice() {
     # get a list of supported extensions
-    c64_exts="$(getSystemExtensions c64)"
+    local exts="$(getPlatformConfig c64_exts)"
 
     # install the vice start script
     mkdir "$md_inst/bin/"
@@ -60,7 +60,7 @@ romdir="\${ROM%/*}"
 ext="\${ROM##*.}"
 source "$rootdir/lib/archivefuncs.sh"
 
-archiveExtract "\$ROM" "$c64_exts"
+archiveExtract "\$ROM" "$exts"
 
 # check successful extraction and if we have at least one file
 if [[ \$? == 0 ]]; then
