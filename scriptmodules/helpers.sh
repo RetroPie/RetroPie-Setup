@@ -1039,6 +1039,10 @@ function addSystem() {
         theme="$system"
     fi
 
+    local temp
+    temp="$(getPlatformConfig "${system}_theme")"
+    [[ -n "$temp" ]] && theme="$temp"
+
     # check if we are removing the system
     if [[ "$md_mode" == "remove" ]]; then
         delSystem "$id" "$system"
@@ -1056,7 +1060,7 @@ function addSystem() {
         exts=(".sh")
         fullname="Ports"
     else
-        local temp="$(getPlatformConfig "${system}_fullname")"
+        temp="$(getPlatformConfig "${system}_fullname")"
         [[ -n "$temp" ]] && fullname="$temp"
         exts+=("$(getPlatformConfig "${system}_exts")")
 
