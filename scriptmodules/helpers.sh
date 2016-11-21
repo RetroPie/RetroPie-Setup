@@ -471,10 +471,15 @@ function compareVersions() {
 
 ## @fn dirIsEmpty()
 ## @param path path to directory
+## @param files_only set to 1 to ignore sub directories
 ## @retval 0 if the directory is empty
 ## @retval 1 if the directory is not empty
 function dirIsEmpty() {
-    [[ -z "$(ls -A "$1")" ]] && return 0
+    if [[ "$2" -eq 1 ]]; then
+        [[ -z "$(ls -lA1 "$1" | grep "^-")" ]] && return 0
+    else
+        [[ -z "$(ls -A "$1")" ]] && return 0
+    fi
     return 1
 }
 
@@ -766,55 +771,10 @@ function iniFileEditor() {
 ## @param theme name of theme to use
 ## @brief Adds a system entry for Emulation Station (to /etc/emulationstation/es_systems.cfg).
 function setESSystem() {
-    local fullname=$1
-    local name=$2
-    local path=$3
-    local extension=$4
-    local command=$5
-    local platform=$6
-    local theme=$7
-
-    local conf="/etc/emulationstation/es_systems.cfg"
-    mkdir -p "/etc/emulationstation"
-    if [[ ! -f "$conf" ]]; then
-        echo "<systemList />" >"$conf"
-    fi
-
-    cp "$conf" "$conf.bak"
-    if [[ $(xmlstarlet sel -t -v "count(/systemList/system[name='$name'])" "$conf") -eq 0 ]]; then
-        xmlstarlet ed -L -s "/systemList" -t elem -n "system" -v "" \
-            -s "/systemList/system[last()]" -t elem -n "name" -v "$name" \
-            -s "/systemList/system[last()]" -t elem -n "fullname" -v "$fullname" \
-            -s "/systemList/system[last()]" -t elem -n "path" -v "$path" \
-            -s "/systemList/system[last()]" -t elem -n "extension" -v "$extension" \
-            -s "/systemList/system[last()]" -t elem -n "command" -v "$command" \
-            -s "/systemList/system[last()]" -t elem -n "platform" -v "$platform" \
-            -s "/systemList/system[last()]" -t elem -n "theme" -v "$theme" \
-            "$conf"
-    else
-        xmlstarlet ed -L \
-            -u "/systemList/system[name='$name']/fullname" -v "$fullname" \
-            -u "/systemList/system[name='$name']/path" -v "$path" \
-            -u "/systemList/system[name='$name']/extension" -v "$extension" \
-            -u "/systemList/system[name='$name']/command" -v "$command" \
-            -u "/systemList/system[name='$name']/platform" -v "$platform" \
-            -u "/systemList/system[name='$name']/theme" -v "$theme" \
-            "$conf"
-    fi
-
-    sortESSystems "name"
-}
-
-## @fn sortESSystems()
-## @param field field to sort by (eg name / platform etc)
-## @brief Sorts `/etc/emulationstation/es_systems.cfg` system list by specified field.
-function sortESSystems() {
-    local field="$1"
-    cp "/etc/emulationstation/es_systems.cfg" "/etc/emulationstation/es_systems.cfg.bak"
-    xmlstarlet sel -D -I \
-        -t -m "/" -e "systemList" \
-        -m "//system" -s A:T:U "$1" -c "." \
-        "/etc/emulationstation/es_systems.cfg.bak" >"/etc/emulationstation/es_systems.cfg"
+    local function
+    for function in $(compgen -A function _addsystem_); do
+        "$function" "$@"
+    done
 }
 
 ## @fn ensureSystemretroconfig()
