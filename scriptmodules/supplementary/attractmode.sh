@@ -28,7 +28,10 @@ function _addsystem_attractmode() {
 
     dirIsEmpty "$path" 1 && return 0
 
-    local config="$attract_dir/emulators/$name.cfg"
+    # replace any / characters in fullname
+    fullname="${fullname//\/ }"
+
+    local config="$attract_dir/emulators/$fullname.cfg"
     iniConfig " " "" "$config"
     # replace %ROM% with "[romfilename]" and convert to array
     command=(${command//%ROM%/\"[romfilename]\"})
@@ -46,16 +49,16 @@ function _addsystem_attractmode() {
 
     # if no gameslist, generate one
     if [[ ! -f "$attract_dir/romlists/$name.txt" ]]; then
-        sudo -u $user attract --build-romlist "$name" -o "$name"
+        sudo -u $user attract --build-romlist "$fullname" -o "$fullname"
     fi
 
     local config="$attract_dir/attract.cfg"
     local tab=$'\t'
-    if [[ -f "$config" ]] && ! grep -q "display$tab$name" "$config"; then
+    if [[ -f "$config" ]] && ! grep -q "display$tab$fullname" "$config"; then
         cat >>"$config" <<_EOF_
-display${tab}$name
+display${tab}$fullname
 ${tab}layout               Basic
-${tab}romlist              $name
+${tab}romlist              $fullname
 _EOF_
         chown $user:$user "$config"
     fi
