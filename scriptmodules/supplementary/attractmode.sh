@@ -12,7 +12,7 @@
 rp_module_id="attractmode"
 rp_module_desc="Attract Mode emulator frontend"
 rp_module_section="exp"
-rp_module_flags="!mali"
+rp_module_flags="!mali frontend"
 
 function _addsystem_attractmode() {
     local attract_dir="$configdir/all/attractmode"
@@ -127,7 +127,7 @@ _EOF_
 
     local idx
     for idx in "${__mod_idx[@]}"; do
-        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]] && ! hasFlag "frontend"; then
+        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]] && ! hasFlag "${__mod_flags[$idx]}" "frontend"; then
             rp_callModule "$idx" configure
         fi
     done
