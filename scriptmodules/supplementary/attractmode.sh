@@ -48,7 +48,7 @@ function _addsystem_attractmode() {
     chown $user:$user "$config"
 
     # if no gameslist, generate one
-    if [[ ! -f "$attract_dir/romlists/$name.txt" ]]; then
+    if [[ ! -f "$attract_dir/romlists/$fullname.txt" ]]; then
         sudo -u $user attract --build-romlist "$fullname" -o "$fullname"
     fi
 
