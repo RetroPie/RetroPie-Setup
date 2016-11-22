@@ -69,6 +69,6 @@ function configure_fs-uae() {
     copyDefaultConfig "$config" "$md_conf_root/amiga/fs-uae/Default.fs-uae"
     rm "$config"
     
-    local exts=$(getSystemExtensions amiga)
+    local exts=$(getPlatformConfig amiga_exts)
     addSystem 1 "$md_id" "amiga" "bash $md_inst/bin/fs-uae.sh '$exts' %ROM%"
 }

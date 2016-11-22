@@ -875,22 +875,6 @@ function loadModuleConfig() {
     done
 }
 
-## @fn getSystemExtensions()
-## @param system sytem name to fetch extensions for
-## @brief Prints a space separated string of disk extensions supported by the system 
-## @details Example: ".a26 .bin .rom .zip .gz"
-function getSystemExtensions() {
-    local config
-    for config in "$configdir/all/platforms.cfg" "$scriptdir/platforms.cfg"; do
-         [[ -f "$config" ]] && break
-    done
-    
-    iniConfig "=" '"' "$config"
-    iniGet "$1_exts"
-
-    echo "$ini_value"
-}
-
 ## @fn applyPatch()
 ## @param patch filename of patch to apply
 ## @brief Apply a patch if it has not already been applied to current folder.
@@ -983,6 +967,24 @@ function joy2keyStop() {
     fi
 }
 
+## @fn getPlatformConfig()
+## @param key key to look up
+## @brief gets a config from a platforms.cfg ini
+## @details gets a config from a platforms.cfg ini first looking in
+## `$configdir/all/platforms.cfg` then `$scriptdir/platforms.cfg`
+## allowing users to override any parts of `$scriptdir/platforms.cfg`
+function getPlatformConfig() {
+    local key="$1"
+    local conf
+    for conf in "$configdir/all/platforms.cfg" "$scriptdir/platforms.cfg"; do
+        [[ ! -f "$conf" ]] && continue
+        iniConfig "=" '"' "$conf"
+        iniGet "$key"
+        [[ -n "$ini_value" ]] && break
+    done
+    echo "$ini_value"
+}
+
 ## @fn addSystem()
 ## @param default 1 to make the emulator / command default for the system if no default already set
 ## @param id unique id of the module / command
@@ -1037,6 +1039,10 @@ function addSystem() {
         theme="$system"
     fi
 
+    local temp
+    temp="$(getPlatformConfig "${system}_theme")"
+    [[ -n "$temp" ]] && theme="$temp"
+
     # check if we are removing the system
     if [[ "$md_mode" == "remove" ]]; then
         delSystem "$id" "$system"
@@ -1054,19 +1060,9 @@ function addSystem() {
         exts=(".sh")
         fullname="Ports"
     else
-        local conf=""
-        if [[ -f "$configdir/all/platforms.cfg" ]]; then
-            conf="$configdir/all/platforms.cfg"
-        else
-            conf="$scriptdir/platforms.cfg"
-        fi
-
-        # get extensions to show
-        iniConfig "=" '"' "$conf"
-        iniGet "${system}_fullname"
-        [[ -n "$ini_value" ]] && fullname="$ini_value"
-        iniGet "${system}_exts"
-        [[ -n "$ini_value" ]] && exts+=($ini_value)
+        temp="$(getPlatformConfig "${system}_fullname")"
+        [[ -n "$temp" ]] && fullname="$temp"
+        exts+=("$(getPlatformConfig "${system}_exts")")
 
         # automatically add parameters for libretro modules
         if [[ "$id" =~ ^lr- ]]; then
@@ -1074,7 +1070,7 @@ function addSystem() {
         fi
     fi
 
-    exts="${exts[@]}"
+    exts="${exts[*]}"
     # add the extensions again as uppercase
     exts+=" ${exts^^}"
 
