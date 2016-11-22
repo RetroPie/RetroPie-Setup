@@ -127,7 +127,7 @@ _EOF_
 
     local idx
     for idx in "${__mod_idx[@]}"; do
-        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" && "$idx" != "$md_idx" ]]; then
+        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]] && ! hasFlag "frontend"; then
             rp_callModule "$idx" configure
         fi
     done

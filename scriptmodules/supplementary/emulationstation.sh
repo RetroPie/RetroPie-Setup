@@ -12,6 +12,7 @@
 rp_module_id="emulationstation"
 rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emulators"
 rp_module_section="core"
+rp_module_flags="frontend"
 
 function _get_input_cfg_emulationstation() {
     echo "$configdir/all/emulationstation/es_input.cfg"
