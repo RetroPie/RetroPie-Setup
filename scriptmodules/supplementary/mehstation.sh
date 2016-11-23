@@ -27,12 +27,9 @@ function _add_system_mehstation() {
 
     dirIsEmpty "$path" 1 || [[ ! -f "$db" ]] && return 0
 
-    local plat_id="$(sqlite3 "$db" "select id from platform where name='$fullname'")"
-    if [[ -z "$plat_id" ]]; then
-        command="${command//%ROM%/%exec%}"
-        extensions="${extensions// /,}"
-        plat_id="$(sqlite3 "$db" "insert into platform (name, command, discover_dir, discover_ext) values ('$fullname', '$command', '$path', '$extensions'); SELECT last_insert_rowid();")"
-    fi
+    command="${command//%ROM%/%exec%}"
+    extensions="${extensions// /,}"
+    sudo -u $user NAME="$fullname" COMMAND="$command" DIR="$path" EXTS="$extensions" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -new-platform
 }
 
 function depends_mehstation() {
@@ -41,32 +38,39 @@ function depends_mehstation() {
         libsndfile1-dev libudev-dev libasound2-dev libjpeg-dev
         libtiff5-dev libwebp-dev libsqlite3-dev libavutil-dev libavcodec-dev
         libavformat-dev git libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
-        libsdl2-image-dev sqlite3
+        libsdl2-image-dev sqlite3 golang
     )
     getDepends "${depends[@]}"
 }
 
 function sources_mehstation() {
     gitPullOrClone "$md_build" https://github.com/remeh/mehstation
+    GOPATH="$md_build/mehtadata" go get github.com/remeh/mehtadata
 }
 
 function build_mehstation() {
+    cd mehtadata
+    GOPATH="$md_build/mehtadata" go build
+    cd ..
+
     cmake .
     make clean
     make
 
-    md_ret_require="$md_build/mehstation"
+    md_ret_require=(
+        "$md_build/mehstation"
+        "$md_build/mehtadata/bin/mehtadata"
+    )
 }
 
 function install_mehstation() {
     mkdir -p "$md_inst"/{bin,share/mehstation}
-    cp mehstation "$md_inst/bin/"
+    cp mehstation mehtadata/bin/mehtadata "$md_inst/bin/"
     cp -R res "$md_inst/share/"
 }
 
 
 function configure_mehstation() {
-
     # move / symlink the configuration
     mkUserDir "$home/.config"
     moveConfigDir "$home/.config/mehstation" "$md_conf_root/all/mehstation"
@@ -74,66 +78,10 @@ function configure_mehstation() {
     local db="$md_conf_root/all/mehstation/database.db"
 
     if [[ ! -f "$db" ]]; then
-        sqlite3 "$db" <<\_EOF_
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
-
-CREATE TABLE "platform"  (
-    `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `name`  TEXT NOT NULL,
-    `command`   TEXT,
-    `icon`  TEXT,
-    `background` TEXT,
-    `type` TEXT DEFAULT 'complete', "discover_dir" TEXT, "discover_ext" TEXT);
-
-CREATE TABLE "mehstation" (
-    `name` TEXT NOT NULL PRIMARY KEY UNIQUE,
-    `value` TEXT
-);
-INSERT INTO "mehstation" VALUES('schema','2');
-
-CREATE TABLE "executable_resource" (
-    `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    `executable_id` INTEGER NOT NULL,
-    `type`  TEXT DEFAULT '',
-    `filepath`  TEXT DEFAULT ''
-);
-
-CREATE TABLE "executable" (
-    `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    `display_name`  TEXT DEFAULT '',
-    `filepath`  TEXT DEFAULT '',
-    `platform_id`   INTEGER NOT NULL,
-    `description`   TEXT,
-    `genres`    TEXT,
-    `publisher` TEXT,
-    `developer` TEXT,
-    `release_date`  TEXT,
-    `players`   TEXT,
-    `rating`    TEXT,
-    `extra_parameter`   TEXT,
-    `favorite` INTEGER DEFAULT 0,
-    `last_played` INTEGER DEFAULT 0
-);
-
-CREATE TABLE "mapping" (
-    `id` TEXT NOT NULL,
-    `left` INTEGER,
-    `right` INTEGER,
-    `up` INTEGER,
-    `down` INTEGER,
-    `a` INTEGER,
-    `b` INTEGER,
-    `start` INTEGER,
-    `select` INTEGER,
-    `l` INTEGER,
-    `r` INTEGER
-);
-
-COMMIT;
-_EOF_
-
-        chown $user:$user "$db"
+        local sql
+        while read -r sql; do
+            sudo -u $user SCHEMA="$sql" "$md_inst/bin/mehtadata" -db="$db" -init
+        done < <(find "$md_inst/share/res" -name "*.sql" | sort)
     fi
 
     cat >/usr/bin/mehstation <<_EOF_
