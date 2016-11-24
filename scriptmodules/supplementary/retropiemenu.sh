@@ -27,14 +27,16 @@ function depends_retropiemenu() {
 }
 
 function install_bin_retropiemenu() {
-    local rpdir="$home/RetroPie/retropiemenu"
-    mkdir -p "$rpdir"
-    cp -Rv "$md_data/icons" "$rpdir/"
-    chown -R $user:$user "$rpdir"
+    return
 }
 
 function configure_retropiemenu()
 {
+    local rpdir="$home/RetroPie/retropiemenu"
+    mkdir -p "$rpdir"
+    cp -Rv "$md_data/icons" "$rpdir/"
+    chown -R $user:$user "$rpdir"
+
     isPlatform "rpi" && rm -f "$rpdir/dispmanx.rp"
 
     # add the gameslist / icons
