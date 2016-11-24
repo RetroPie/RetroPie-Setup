@@ -772,7 +772,7 @@ function iniFileEditor() {
 ## @brief Adds a system entry for Emulation Station (to /etc/emulationstation/es_systems.cfg).
 function setESSystem() {
     local function
-    for function in $(compgen -A function _addsystem_); do
+    for function in $(compgen -A function _add_system_); do
         "$function" "$@"
     done
 }
