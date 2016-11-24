@@ -45,6 +45,18 @@ function _add_system_attractmode() {
     extensions="${extensions// /;}"
     iniSet "romext" "$extensions"
 
+    # snap path
+    local snaps
+    if [[ "$name" == "retropie" ]]; then
+        snaps="icons"
+    else
+        snaps="snaps"
+    fi
+    iniSet "artwork flyer" "$path/flyers"
+    iniSet "artwork marquee" "$path/marquees"
+    iniSet "artwork snap" "$path/$snaps"
+    iniSet "artwork wheel" "$path/wheels"
+
     chown $user:$user "$config"
 
     # if no gameslist, generate one
