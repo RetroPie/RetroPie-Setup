@@ -14,7 +14,7 @@ rp_module_desc="Attract Mode emulator frontend"
 rp_module_section="exp"
 rp_module_flags="!mali frontend"
 
-function _addsystem_attractmode() {
+function _add_system_attractmode() {
     local attract_dir="$configdir/all/attractmode"
     [[ ! -d "$attract_dir" ]] && return 0
 
@@ -62,6 +62,33 @@ ${tab}romlist              $fullname
 _EOF_
         chown $user:$user "$config"
     fi
+}
+
+function _add_rom_attractmode() {
+    local system_name="$1"
+    local system_fullname="$2"
+    local path="$3"
+    local name="$4"
+    local desc="$5"
+    local image="$6"
+
+    local attract_dir="$configdir/all/attractmode"
+    local config="$attract_dir/romlists/$system_fullname.txt"
+
+    # remove extension
+    path="${path/%.*}"
+
+    if [[ ! -f "$config" ]]; then
+        echo "#Name;Title;Emulator;CloneOf;Year;Manufacturer;Category;Players;Rotation;Control;Status;DisplayCount;DisplayType;AltRomname;AltTitle;Extra;Buttons" >"$config"
+    fi
+
+    # if the entry already exists, remove it
+    if grep -q "^$path;" "$config"; then
+        sed -i "/^$path/d" "$config"
+    fi
+
+    echo "$path;$name;$system_fullname;;;;;;;;;;;;;;" >>"$config"
+    chown $user:$user "$config"
 }
 
 function depends_attractmode() {

@@ -26,47 +26,94 @@ function depends_retropiemenu() {
     getDepends mc
 }
 
-function install_bin_retropiemenu()
-{
+function install_bin_retropiemenu() {
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
+    cp -Rv "$md_data/icons" "$rpdir/"
+    chown -R $user:$user "$rpdir"
+}
 
-    files=(
-        'rpsetup.rp'
-        'configedit.rp'
-        'retroarch.rp'
-        'retronetplay.rp'
-        'filemanager.rp'
-        'showip.rp'
-        'wifi.rp'
-        'runcommand.rp'
-        'bluetooth.rp'
-        'esthemes.rp'
-    )
-
-    if isPlatform "rpi"; then
-        files+=(
-            'raspiconfig.rp'
-            'audiosettings.rp'
-            'splashscreen.rp'
-        )
-        # remove the dispmanx.rp menu entry
-        rm -f "$rpdir/dispmanx.rp"
-    fi
-
-    for file in "${files[@]}"; do
-        touch "$rpdir/$file"
-    done
+function configure_retropiemenu()
+{
+    isPlatform "rpi" && rm -f "$rpdir/dispmanx.rp"
 
     # add the gameslist / icons
-    mkdir -p "$home/.emulationstation/gamelists/retropie/"
-    cp -v "$md_data/gamelist.xml" "$home/.emulationstation/gamelists/retropie/gamelist.xml"
-    cp -Rv "$md_data/icons" "$rpdir/"
+    local files=(
+        'audiosettings'
+        'bluetooth'
+        'configedit'
+        'esthemes'
+        'filemanager'
+        'raspiconfig'
+        'retroarch'
+        'retronetplay'
+        'rpsetup'
+        'runcommand'
+        'showip'
+        'splashscreen'
+        'wifi'
+    )
 
-    chown -R $user:$user "$rpdir"
-    chown -RL $user:$user "$home/.emulationstation"
+    local names=(
+        'Audio'
+        'Bluetooth'
+        'Configuration Editor'
+        'ES Themes'
+        'File Manager'
+        'Raspi-Config'
+        'Retroarch'
+        'RetroArch Net Play'
+        'RetroPie Setup'
+        'Run Command Configuration'
+        'Show IP'
+        'Splash Screens'
+        'WiFi'
+    )
 
-    setESSystem "RetroPie" "retropie" "~/RetroPie/retropiemenu" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
+    local descs=(
+        'Configure audio settings. Choose default of auto, 3.5mm jack, or HDMI. Mixer controls, and apply default settings.'
+        'Register and connect to bluetooth devices. Unregister and remove devices, and display registered and connected devices.'
+        'Change common RetroArch options, and manually edit RetroArch configs, global configs, and non-RetroArch configs.'
+        'Install, uninstall, or update EmulationStation themes. Most themes can be previewed at https://github.com/retropie/ RetroPie-Setup/wiki/themes.'
+        'Basic ascii file manager for linux allowing you to browse, copy, delete, and move files.'
+        'Change user password, boot options, internationalization, camera, add your pi to Rastrack, overclock, overscan, memory split, SSH and more.'
+        'Launches the RetroArch GUI so you can change RetroArch options. Note: Changes will not be saved unless you have enabled the "Save Configuration On Exit" option.'
+        'Set up RetroArch Netplay options, choose host or client, port, host IP, delay frames, and your nickname.'
+        'Install RetroPie from binary or source, install experimental packages, additional drivers, edit samba shares, custom scraper, as well as other RetroPie-related configurations.'
+        'Change what appears on the runcommand screen. Enable or disable the menu, enable or disable box art, and change CPU configuration.'
+        'Displays your current IP address, as well as other information provided by the command, "ip addr show."'
+        'Enable or disable the splashscreen on RetroPie boot. Choose a splashscreen, download new splashscreens, and return splashscreen to default.'
+        'Connect to or disconnect from a wifi network and configure wifi settings.'
+    )
+
+    local file
+    local name
+    local desc
+    local image
+    local i
+    for i in "${!files[@]}"; do
+        case "${files[i]}" in
+            audiosettings|raspiconfig|splashscreen)
+                ! isPlatform "rpi" && continue
+                ;;
+            wifi)
+                [[ "$__os_id" != "Raspbian" ]] && continue
+        esac
+
+        file="${files[i]}"
+        name="${names[i]}"
+        desc="${descs[i]}"
+        image="$home/RetroPie/retropiemenu/icons/${files[i]}.png"
+
+        touch "$rpdir/$file.rp"
+
+        local function
+        for function in $(compgen -A function _add_rom_); do
+            "$function" "retropie" "RetroPie" "$file.rp" "$name" "$desc" "$image"
+        done
+    done
+
+    setESSystem "RetroPie" "retropie" "$home/RetroPie/retropiemenu" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
 }
 
 function remove_retropiemenu() {

@@ -35,7 +35,7 @@ function _sort_systems_emulationstation() {
         "/etc/emulationstation/es_systems.cfg.bak" >"/etc/emulationstation/es_systems.cfg"
 }
 
-function _addsystem_emulationstation() {
+function _add_system_emulationstation() {
     local fullname="$1"
     local name="$2"
     local path="$3"
@@ -73,6 +73,40 @@ function _addsystem_emulationstation() {
     fi
 
     _sort_systems_emulationstation "name"
+}
+
+function _add_rom_emulationstation() {
+    local system_name="$1"
+    local system_fullname="$2"
+    local path="./$3"
+    local name="$4"
+    local desc="$5"
+    local image="$6"
+
+    local config_dir="$configdir/all/emulationstation/gamelists/$system_name"
+    mkUserDir "$config_dir"
+    local config="$config_dir/gamelist.xml"
+
+    if [[ ! -f "$config" ]]; then
+        echo "<gameList />" >"$config"
+    fi
+
+    if [[ $(xmlstarlet sel -t -v "count(/gameList/game[path='$path'])" "$config") -eq 0 ]]; then
+        xmlstarlet ed -L -s "/gameList" -t elem -n "game" -v "" \
+            -s "/gameList/game[last()]" -t elem -n "path" -v "$path" \
+            -s "/gameList/game[last()]" -t elem -n "name" -v "$name" \
+            -s "/gameList/game[last()]" -t elem -n "desc" -v "$desc" \
+            -s "/gameList/game[last()]" -t elem -n "image" -v "$image" \
+            "$config"
+    else
+        xmlstarlet ed -L \
+            -u "/gameList/game[name='$name']/path" -v "$path" \
+            -u "/gameList/game[name='$name']/name" -v "$name" \
+            -u "/gameList/game[name='$name']/desc" -v "$desc" \
+            -u "/gameList/game[name='$name']/image" -v "$image" \
+            "$config"
+    fi
+    chown $user:$user "$config"
 }
 
 function depends_emulationstation() {
