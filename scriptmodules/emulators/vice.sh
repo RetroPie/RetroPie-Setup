@@ -49,7 +49,7 @@ function configure_vice() {
     local exts="$(getPlatformConfig c64_exts)"
 
     # install the vice start script
-    mkdir "$md_inst/bin/"
+    mkdir -p "$md_inst/bin"
     cat > "$md_inst/bin/vice.sh" << _EOF_
 #!/bin/bash
 
