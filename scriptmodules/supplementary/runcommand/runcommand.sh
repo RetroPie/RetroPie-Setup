@@ -104,7 +104,7 @@ function get_config() {
 function start_joy2key() {
     [[ "$DISABLE_JOYSTICK" -eq 1 ]] && return
     # get the first joystick device (if not already set)
-    if [[ -n "$__joy2key_dev" ]]; then
+    if [[ -c "$__joy2key_dev" ]]; then
         JOY2KEY_DEV="$__joy2key_dev"
     else
         JOY2KEY_DEV="$(ls -1 /dev/input/js* 2>/dev/null | head -n1)"
