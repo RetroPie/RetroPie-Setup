@@ -104,7 +104,11 @@ function get_config() {
 function start_joy2key() {
     [[ "$DISABLE_JOYSTICK" -eq 1 ]] && return
     # get the first joystick device (if not already set)
-    [[ -z "$__joy2key_dev" ]] && JOY2KEY_DEV="$(ls -1 /dev/input/js* 2>/dev/null | head -n1)"
+    if [[ -n "$__joy2key_dev" ]]; then
+        JOY2KEY_DEV="$__joy2key_dev"
+    else
+        JOY2KEY_DEV="$(ls -1 /dev/input/js* 2>/dev/null | head -n1)"
+    fi
     # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
     if [[ -f "$ROOTDIR/supplementary/runcommand/joy2key.py" && -n "$JOY2KEY_DEV" ]] && ! pgrep -f joy2key.py >/dev/null; then
 
