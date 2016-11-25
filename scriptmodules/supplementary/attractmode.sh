@@ -52,10 +52,10 @@ function _add_system_attractmode() {
     else
         snaps="snaps"
     fi
-    iniSet "artwork flyer" "$path/flyers"
-    iniSet "artwork marquee" "$path/marquees"
-    iniSet "artwork snap" "$path/$snaps"
-    iniSet "artwork wheel" "$path/wheels"
+    iniSet "artwork flyer" "$path/flyer"
+    iniSet "artwork marquee" "$path/marquee"
+    iniSet "artwork snap" "$path/$snap"
+    iniSet "artwork wheel" "$path/wheel"
 
     chown $user:$user "$config"
 
