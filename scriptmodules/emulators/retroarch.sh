@@ -170,7 +170,7 @@ function configure_retroarch() {
     [[ -z "$ini_value" ]] && iniSet "menu_driver" "rgui"
 
     # remapping hack for old 8bitdo firmware
-    addAutoConf "8bitdo_hack" 1
+    addAutoConf "8bitdo_hack" 0
 }
 
 function keyboard_retroarch() {

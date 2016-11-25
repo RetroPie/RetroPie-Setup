@@ -351,7 +351,7 @@ _EOF_
 }
 
 function gui_bluetooth() {
-    addAutoConf "8bitdo_hack" 1
+    addAutoConf "8bitdo_hack" 0
 
     while true; do
         local connect_mode="$(_get_connect_mode)"
