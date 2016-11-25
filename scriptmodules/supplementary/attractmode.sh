@@ -76,6 +76,18 @@ _EOF_
     fi
 }
 
+function _del_system_attractmode() {
+    local fullname="$1"
+    local name="$2"
+
+    local attract_dir="$configdir/all/attractmode"
+    rm -rf "$attract_dir/romlists/$fullname.txt"
+
+    local tab=$'\t'
+    # remove display block from "^display$tab$fullname" to next "^display" or empty line keeping the next display line
+    sed -i "/^display$tab$fullname/,/^display\|^$/{/^display$tab$fullname/d;/^display\$/!d}" "$attract_dir/" attract.cfg
+}
+
 function _add_rom_attractmode() {
     local system_name="$1"
     local system_fullname="$2"

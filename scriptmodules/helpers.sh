@@ -982,6 +982,8 @@ function getPlatformConfig() {
         iniGet "$key"
         [[ -n "$ini_value" ]] && break
     done
+    # workaround for RetroPie platform
+    [[ "$key" == "retropie_fullname" ]] && ini_value="RetroPie"
     echo "$ini_value"
 }
 
