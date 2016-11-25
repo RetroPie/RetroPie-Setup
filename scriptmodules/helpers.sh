@@ -1115,10 +1115,12 @@ function delSystem() {
         grep -q "=" "$config" || rm -f "$config"
     fi
 
-    # if we don't have an emulators.cfg we can remove the system from emulation station
-    if [[ -f /etc/emulationstation/es_systems.cfg && ! -f "$config" ]]; then
-        xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
-    fi
+    local fullname="$(getPlatformConfig "${system}_fullname")"
+
+    local function
+    for function in $(compgen -A function _del_system_); do
+        "$function" "$fullname" "$system"
+    done
 }
 
 ## @fn addPort()
