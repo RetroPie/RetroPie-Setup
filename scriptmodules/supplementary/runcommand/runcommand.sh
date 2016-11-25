@@ -352,11 +352,12 @@ function load_mode_defaults() {
     fi
 
     # get default fb_res (if not running on X)
-    FB_ORIG=""
+    FB_ORIG=()
     if [[ -z "$DISPLAY" ]]; then
-        FB_ORIG="$(fbset)"
-        FB_ORIG="${FB_ORIG##*mode \"}"
-        FB_ORIG="${FB_ORIG%%\"*}"
+        local status=($(fbset | tr -s '\n'))
+        FB_ORIG[0]="${status[3]}"
+        FB_ORIG[1]="${status[4]}"
+        FB_ORIG[2]="${status[7]}"
     fi
 
     # default retroarch render res to config file
@@ -663,14 +664,17 @@ function choose_fb_res() {
 
 function switch_fb_res() {
     local res=(${1/x/ })
-    local res_x=${res[0]}
-    local res_y=${res[1]}
+    local res_x="${res[0]}"
+    local res_y="${res[1]}"
+    local depth="$2"
+    [[ -z "$depth" ]] && depth="${FB_ORIG[2]}"
+
     if [[ -z "$res_x" || -z "$res_y" ]]; then
         fbset --all -depth 8
-        fbset --all -depth 16
+        fbset --all -depth $depth
     else
         fbset --all -depth 8
-        fbset --all --geometry $res_x $res_y $res_x $res_y 16
+        fbset --all --geometry $res_x $res_y $res_x $res_y $depth
     fi
 }
 
@@ -703,7 +707,7 @@ function mode_switch() {
 
 function restore_fb() {
     sleep 1
-    switch_fb_res "$FB_ORIG"
+    switch_fb_res "${FB_ORIG[0]}x${FB_ORIG[1]}" "${FB_ORIG[2]}"
 }
 
 function config_dispmanx() {
@@ -964,7 +968,7 @@ function runcommand() {
 
     mode_switch "$MODE_REQ_ID"
 
-    [[ -n "$FB_NEW" ]] && switch_fb_res "$FB_NEW"
+    [[ -n "$FB_NEW" ]] && switch_fb_res $FB_NEW
 
     config_dispmanx "$SAVE_EMU"
 
