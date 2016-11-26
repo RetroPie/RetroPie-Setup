@@ -14,6 +14,10 @@ rp_module_desc="mehstation emulator frontend"
 rp_module_section="exp"
 rp_module_flags="frontend"
 
+function _get_database_mehstation() {
+    echo "$configdir/all/mehstation/database.db"
+}
+
 function _add_system_mehstation() {
     local fullname="$1"
     local name="$2"
@@ -23,13 +27,26 @@ function _add_system_mehstation() {
     local platform="$6"
     local theme="$7"
 
-    local db="$md_conf_root/all/mehstation/database.db"
+    local db="$(_get_database_mehstation)"
 
     dirIsEmpty "$path" 1 || [[ ! -f "$db" ]] && return 0
 
     command="${command//%ROM%/%exec%}"
     extensions="${extensions// /,}"
-    sudo -u $user NAME="$fullname" COMMAND="$command" DIR="$path" EXTS="$extensions" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -new-platform
+    NAME="$fullname" COMMAND="$command" DIR="$path" EXTS="$extensions" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -new-platform
+}
+
+function _add_rom_mehstation() {
+    local system_name="$1"
+    local system_fullname="$2"
+    local path="$3"
+    local name="$4"
+    local desc="$5"
+    local image="$6"
+
+    local db="$(_get_database_mehstation)"
+
+    NAME="$4" FILEPATH="$path" PLATFORM_NAME="$system_fullname" DESCRIPTION="$desc" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -new-exec
 }
 
 function depends_mehstation() {
