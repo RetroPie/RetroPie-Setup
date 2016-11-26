@@ -77,11 +77,11 @@ _EOF_
 }
 
 function _del_system_attractmode() {
-    local fullname="$1"
-    local name="$2"
-
     local attract_dir="$configdir/all/attractmode"
     [[ ! -d "$attract_dir" ]] && return 0
+
+    local fullname="$1"
+    local name="$2"
 
     rm -rf "$attract_dir/romlists/$fullname.txt"
 
@@ -91,15 +91,15 @@ function _del_system_attractmode() {
 }
 
 function _add_rom_attractmode() {
+    local attract_dir="$configdir/all/attractmode"
+    [[ ! -d "$attract_dir" ]] && return 0
+
     local system_name="$1"
     local system_fullname="$2"
     local path="$3"
     local name="$4"
     local desc="$5"
     local image="$6"
-
-    local attract_dir="$configdir/all/attractmode"
-    [[ ! -d "$attract_dir" ]] && return 0
 
     local config="$attract_dir/romlists/$system_fullname.txt"
 
