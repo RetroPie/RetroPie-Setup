@@ -15,7 +15,7 @@ rp_module_help="Steam Controller Driver from https://github.com/ynsta/steamcontr
 rp_module_section="driver"
 
 function depends_steamcontroller() {
-    getDepends virtualenv
+    getDepends virtualenv python3-dev
 }
 
 function sources_steamcontroller() {
