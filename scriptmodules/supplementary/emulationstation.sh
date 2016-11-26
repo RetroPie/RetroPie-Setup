@@ -92,9 +92,12 @@ function _add_rom_emulationstation() {
     local desc="$5"
     local image="$6"
 
-    local config_dir="$configdir/all/emulationstation/gamelists/$system_name"
+    local config_dir="$configdir/all/emulationstation"
+
     mkUserDir "$config_dir"
-    local config="$config_dir/gamelist.xml"
+    mkUserDir "$config_dir/gamelists"
+    mkUserDir "$config_dir/gamelists/$system_name"
+    local config="$config_dir/gamelists/$system_name/gamelist.xml"
 
     if [[ ! -f "$config" ]]; then
         echo "<gameList />" >"$config"
