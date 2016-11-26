@@ -97,6 +97,8 @@ function _add_rom_attractmode() {
     local image="$6"
 
     local attract_dir="$configdir/all/attractmode"
+    [[ ! -d "$attract_dir" ]] && return 0
+
     local config="$attract_dir/romlists/$system_fullname.txt"
 
     # remove extension
