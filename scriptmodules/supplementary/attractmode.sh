@@ -81,6 +81,8 @@ function _del_system_attractmode() {
     local name="$2"
 
     local attract_dir="$configdir/all/attractmode"
+    [[ ! -d "$attract_dir" ]] && return 0
+
     rm -rf "$attract_dir/romlists/$fullname.txt"
 
     local tab=$'\t'
