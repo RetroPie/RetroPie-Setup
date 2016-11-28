@@ -334,7 +334,7 @@ function load_mode_defaults() {
     if [[ $HAS_TVS -eq 1 ]]; then
         # get current mode / aspect ratio
         MODE_ORIG=($(get_mode_info))
-        MODE_CUR="$MODE_ORIG"
+        MODE_CUR=("${MODE_ORIG[@]}")
         MODE_ORIG_ID="${MODE_ORIG[0]}-${MODE_ORIG[1]}"
 
         # get default mode for requested mode of 1 or 4
