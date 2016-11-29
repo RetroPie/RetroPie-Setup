@@ -36,6 +36,17 @@ function _add_system_mehstation() {
     NAME="$fullname" COMMAND="$command" DIR="$path" EXTS="$extensions" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -new-platform
 }
 
+function _del_system_mehstation() {
+    local fullname="$1"
+    local name="$2"
+
+    local db="$(_get_database_mehstation)"
+
+    [[ ! -f "$db" ]] && return 0
+
+    PLATFORM_NAME="$fullname" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -del-platform
+}
+
 function _add_rom_mehstation() {
     local system_name="$1"
     local system_fullname="$2"
@@ -47,6 +58,8 @@ function _add_rom_mehstation() {
     local db="$(_get_database_mehstation)"
 
     NAME="$4" FILEPATH="$path" PLATFORM_NAME="$system_fullname" DESCRIPTION="$desc" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -new-exec
+
+    RESOURCE="$image" FILEPATH="$path" PLATFORM_NAME="$system_fullname" TYPE="cover" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -new-res
 }
 
 function depends_mehstation() {
