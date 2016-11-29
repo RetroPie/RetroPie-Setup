@@ -91,6 +91,12 @@ function configure_retropiemenu()
     )
 
     local file
+    for file in "${files[@]}"; do
+        touch "$rpdir/$file.rp"
+    done
+
+    setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
+
     local name
     local desc
     local image
@@ -109,15 +115,11 @@ function configure_retropiemenu()
         desc="${descs[i]}"
         image="$home/RetroPie/retropiemenu/icons/${files[i]}.png"
 
-        touch "$rpdir/$file.rp"
-
         local function
         for function in $(compgen -A function _add_rom_); do
             "$function" "retropie" "RetroPie" "$file.rp" "$name" "$desc" "$image"
         done
     done
-
-    setESSystem "RetroPie" "retropie" "$home/RetroPie/retropiemenu" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
 }
 
 function remove_retropiemenu() {
