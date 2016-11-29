@@ -91,7 +91,7 @@ function _del_system_attractmode() {
 
     local tab=$'\t'
     # remove display block from "^display$tab$fullname" to next "^display" or empty line keeping the next display line
-    sed -i "/^display$tab$fullname/,/^display\|^$/{/^display$tab$fullname/d;/^display\$/!d}" "$attract_dir/" attract.cfg
+    sed -i "/^display$tab$fullname/,/^display\|^$/{/^display$tab$fullname/d;/^display\$/!d}" "$attract_dir/attract.cfg"
 }
 
 function _add_rom_attractmode() {
