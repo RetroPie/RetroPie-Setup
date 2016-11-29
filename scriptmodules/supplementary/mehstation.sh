@@ -19,6 +19,9 @@ function _get_database_mehstation() {
 }
 
 function _add_system_mehstation() {
+    local db="$(_get_database_mehstation)"
+    [[ ! -f "$db" ]] && return 0
+
     local fullname="$1"
     local name="$2"
     local path="$3"
@@ -27,9 +30,7 @@ function _add_system_mehstation() {
     local platform="$6"
     local theme="$7"
 
-    local db="$(_get_database_mehstation)"
-
-    dirIsEmpty "$path" 1 || [[ ! -f "$db" ]] && return 0
+    dirIsEmpty "$path" 1 && return 0
 
     command="${command//%ROM%/%exec%}"
     extensions="${extensions// /,}"
@@ -37,25 +38,25 @@ function _add_system_mehstation() {
 }
 
 function _del_system_mehstation() {
+    local db="$(_get_database_mehstation)"
+    [[ ! -f "$db" ]] && return 0
+
     local fullname="$1"
     local name="$2"
-
-    local db="$(_get_database_mehstation)"
-
-    [[ ! -f "$db" ]] && return 0
 
     PLATFORM_NAME="$fullname" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -del-platform
 }
 
 function _add_rom_mehstation() {
+    local db="$(_get_database_mehstation)"
+    [[ ! -f "$db" ]] && return 0
+
     local system_name="$1"
     local system_fullname="$2"
     local path="$3"
     local name="$4"
     local desc="$5"
     local image="$6"
-
-    local db="$(_get_database_mehstation)"
 
     NAME="$4" FILEPATH="$path" PLATFORM_NAME="$system_fullname" DESCRIPTION="$desc" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -new-exec
 
