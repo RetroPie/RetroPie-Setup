@@ -14,8 +14,12 @@ rp_module_desc="Attract Mode emulator frontend"
 rp_module_section="exp"
 rp_module_flags="!mali frontend"
 
+function _get_configdir_attractmode() {
+    echo "$configdir/all/attractmode"
+}
+
 function _add_system_attractmode() {
-    local attract_dir="$configdir/all/attractmode"
+    local attract_dir="$(_get_configdir_attractmode)"
     [[ ! -d "$attract_dir" ]] && return 0
 
     local fullname="$1"
@@ -77,7 +81,7 @@ _EOF_
 }
 
 function _del_system_attractmode() {
-    local attract_dir="$configdir/all/attractmode"
+    local attract_dir="$(_get_configdir_attractmode)"
     [[ ! -d "$attract_dir" ]] && return 0
 
     local fullname="$1"
@@ -91,7 +95,7 @@ function _del_system_attractmode() {
 }
 
 function _add_rom_attractmode() {
-    local attract_dir="$configdir/all/attractmode"
+    local attract_dir="$(_get_configdir_attractmode)"
     [[ ! -d "$attract_dir" ]] && return 0
 
     local system_name="$1"
