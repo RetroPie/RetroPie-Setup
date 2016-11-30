@@ -50,12 +50,8 @@ function _add_system_attractmode() {
     iniSet "romext" "$extensions"
 
     # snap path
-    local snap
-    if [[ "$name" == "retropie" ]]; then
-        snap="icons"
-    else
-        snap="snap"
-    fi
+    local snap="snap"
+    [[ "$name" == "retropie" ]] && snap="icons"
     iniSet "artwork flyer" "$path/flyer"
     iniSet "artwork marquee" "$path/marquee"
     iniSet "artwork snap" "$path/$snap"
