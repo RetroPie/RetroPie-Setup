@@ -14,7 +14,7 @@ rp_module_desc="RetroArch - frontend to the libretro emulator cores - required b
 rp_module_section="core"
 
 function depends_retroarch() {
-    local depends=(libudev-dev libxkbcommon-dev libsdl2-dev)
+    local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x86" && depends+=(nvidia-cg-toolkit)
