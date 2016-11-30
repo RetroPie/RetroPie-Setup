@@ -20,7 +20,7 @@ function depends_openpht() {
 }
 
 function install_bin_openpht() {
-    local version="1.6.2.123-e23a7eef"
+    local version="1.7.1.137-b604995c"
     local package="openpht_${version}-${__os_codename}_amd64.deb"
     local getdeb="https://github.com/RasPlex/OpenPHT/releases/download/v$version/$package"
 
