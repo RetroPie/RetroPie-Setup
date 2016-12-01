@@ -16,7 +16,9 @@ rp_module_section="main"
 rp_module_flags="!mali"
 
 function depends_lr-glupen64() {
-    getDepends flex bison
+    local depends=(flex bison libpng12-dev)
+    isPlatform "x86" && depends+=(nasm)
+    getDepends "${depends[@]}"
 }
 
 function sources_lr-glupen64() {
