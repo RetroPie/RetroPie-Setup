@@ -76,6 +76,7 @@ function _install_libcapsimage_hatari() {
 
 function install_hatari() {
     make install
+    _install_libcapsimage_hatari
 }
 
 function configure_hatari() {
