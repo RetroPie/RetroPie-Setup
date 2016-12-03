@@ -15,7 +15,7 @@ rp_module_section="main"
 rp_module_flags="!x86 !osmc"
 
 function _update_hook_splashscreen() {
-    configure_splashscreen
+    rp_isInstalled "$md_idx" && configure_splashscreen
 }
 
 function _image_exts_splashscreen() {
