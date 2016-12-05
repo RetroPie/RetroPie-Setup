@@ -25,7 +25,7 @@ function sources_retropie-manager() {
 
 function install_retropie-manager() {
     cd "$md_inst"
-    chown -R "$user:$user"  "$md_inst"
+    chown -R $user:$user "$md_inst"
     sudo -u $user make install
 }
 
@@ -35,7 +35,7 @@ function _is_enabled_retropie-manager() {
 }
 
 function enable_retropie-manager() {
-    local config="\"$md_inst/rpmanager.sh\" --start --user "$user" 2>\&1 > /dev/shm/rpmanager.log \&"
+    local config="\"$md_inst/rpmanager.sh\" --start --user $user 2>\&1 > /dev/shm/rpmanager.log \&"
 
     if _is_enabled_retropie-manager; then
         dialog \
