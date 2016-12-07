@@ -18,6 +18,13 @@ function _update_hook_runcommand() {
     rp_isInstalled "$md_idx" && install_bin_runcommand
 }
 
+function depends_runcommand() {
+    local depends=()
+    isPlatform "rpi" && depends+=(fbi)
+    isPlatform "x11" && depends+=(feh)
+    getDepends "${depends[@]}"
+}
+
 function install_bin_runcommand() {
     cp "$md_data/runcommand.sh" "$md_inst/"
     cp "$md_data/joy2key.py" "$md_inst/"
