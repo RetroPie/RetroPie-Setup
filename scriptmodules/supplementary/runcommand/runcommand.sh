@@ -331,7 +331,7 @@ function load_mode_defaults() {
     local temp
     MODE_ORIG=()
 
-    if [[ $HAS_TVS -eq 1 ]]; then
+    if [[ "$HAS_TVS" -eq 1 ]]; then
         # get current mode / aspect ratio
         MODE_ORIG=($(get_mode_info))
         MODE_CUR=("${MODE_ORIG[@]}")
@@ -340,7 +340,7 @@ function load_mode_defaults() {
         # get default mode for requested mode of 1 or 4
         if [[ "$MODE_REQ" == "0" ]]; then
             MODE_REQ_ID="$MODE_ORIG_ID"
-        elif [[ $MODE_REQ =~ (1|4) ]]; then
+        elif [[ "$MODE_REQ" =~ (1|4) ]]; then
             # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
             local aspect="${MODE_ORIG[4]}"
             [[ "$aspect" =~ (4:3|16:9) ]] || aspect="4:3"
@@ -416,7 +416,7 @@ function main_menu() {
     while true; do
 
         local options=()
-        if [[ $IS_SYS -eq 1 ]]; then
+        if [[ "$IS_SYS" -eq 1 ]]; then
             local emu_sys="$(default_emulator get emu_sys)"
             local emu_rom="$(default_emulator get emu_rom)"
             options+=(
@@ -426,7 +426,7 @@ function main_menu() {
             [[ -n "$emu_rom" ]] && options+=(3 "Remove emulator choice for ROM")
         fi
 
-        if [[ $HAS_TVS -eq 1 ]]; then
+        if [[ "$HAS_TVS" -eq 1 ]]; then
             local vid_emu="$(default_mode get vid_emu)"
             local vid_rom="$(default_mode get vid_rom)"
             options+=(
@@ -463,7 +463,7 @@ function main_menu() {
         options+=(Q "Exit (without launching)")
 
         local temp_mode
-        if [[ $HAS_TVS -eq 1 ]]; then
+        if [[ "$HAS_TVS" -eq 1 ]]; then
             temp_mode="${MODE[$MODE_REQ_ID]}"
         else
             temp_mode="n/a"
@@ -681,7 +681,7 @@ function switch_fb_res() {
 function mode_switch() {
     local mode_id="$1"
 
-    [[ $HAS_TVS -eq 0 ]] && return 1
+    [[ "$HAS_TVS" -eq 0 ]] && return 1
 
     # if the requested mode is the same as the current mode don't switch
     [[ "$mode_id" == "${MODE_CUR[0]}-${MODE_CUR[1]}" ]] && return 1
@@ -695,7 +695,7 @@ function mode_switch() {
     fi
 
     # if we have switched mode, switch the framebuffer resolution also
-    if [[ $? -eq 0 ]]; then
+    if [[ "$?" -eq 0 ]]; then
         sleep 1
         MODE_CUR=($(get_mode_info))
         [[ -z "$FB_NEW" ]] && FB_NEW="${MODE_CUR[2]}x${MODE_CUR[3]}"
@@ -761,7 +761,7 @@ function retroarch_append_config() {
     fi
 
     # append any NETPLAY configuration
-    if [[ $NETPLAY -eq 1 ]] && [[ -f "$RETRONETPLAY_CONF" ]]; then
+    if [[ "$NETPLAY" -eq 1 ]] && [[ -f "$RETRONETPLAY_CONF" ]]; then
         source "$RETRONETPLAY_CONF"
         COMMAND+=" -$__netplaymode $__netplayhostip_cfile --port $__netplayport --frames $__netplayframes --nick $__netplaynickname"
     fi
@@ -852,13 +852,13 @@ function show_launch() {
     fi
 
     # look for custom launching images
-    if [[ $IS_SYS -eq 1 ]]; then
+    if [[ "$IS_SYS" -eq 1 ]]; then
         images+=(
             "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-launching"
             "$CONF_ROOT/launching"
         )
     fi
-    [[ $IS_PORT -eq 1 ]] && images+=("$CONFIGDIR/ports/launching")
+    [[ "$IS_PORT" -eq 1 ]] && images+=("$CONFIGDIR/ports/launching")
     images+=("$CONFIGDIR/all/launching")
 
     local image
@@ -892,7 +892,7 @@ function check_menu() {
     # check for key pressed to enter configuration
     IFS= read -s -t 2 -N 1 key </dev/tty
     if [[ -n "$key" ]]; then
-        if [[ $HAS_TVS -eq 1 ]]; then
+        if [[ "$HAS_TVS" -eq 1 ]]; then
             get_all_modes
         fi
         tput cnorm
