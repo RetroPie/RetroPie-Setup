@@ -31,6 +31,8 @@ function remove_stella() {
 function configure_stella() {
     mkRomDir "atari2600"
 
+    moveConfigDir "$home/.stella" "$md_conf_root/atari2600/stella"
+
     if ! isPlatform "x11"; then
         setDispmanx "$md_id" 1
     fi
