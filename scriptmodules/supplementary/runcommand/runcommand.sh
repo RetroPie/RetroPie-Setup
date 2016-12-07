@@ -846,6 +846,7 @@ function show_launch() {
     if [[ "$USE_ART" -eq 1 ]]; then
         # if using art look for images in paths for es art.
         images+=(
+            "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-launching"
             "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-image"
             "$HOME/.emulationstation/downloaded_images/$SYSTEM/${ROM_BN}-image"
         )
