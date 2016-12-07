@@ -852,11 +852,14 @@ function show_launch() {
     fi
 
     # look for custom launching images
-    [[ $IS_SYS -eq 1 ]] && images+=("$CONF_ROOT/launching")
+    if [[ $IS_SYS -eq 1 ]]; then
+        images+=(
+            "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-launching"
+            "$CONF_ROOT/launching"
+        )
+    fi
     [[ $IS_PORT -eq 1 ]] && images+=("$CONFIGDIR/ports/launching")
-    images+=(
-        "$CONFIGDIR/all/launching"
-    )
+    images+=("$CONFIGDIR/all/launching")
 
     local image
     local path
