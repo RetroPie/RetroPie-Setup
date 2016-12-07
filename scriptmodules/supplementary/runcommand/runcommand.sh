@@ -86,7 +86,6 @@ function get_config() {
         GOVERNOR="$ini_value"
         iniGet "use_art"
         USE_ART="$ini_value"
-        [[ -z "$(which fbi)" ]] && USE_ART=0
         iniGet "disable_joystick"
         DISABLE_JOYSTICK="$ini_value"
         iniGet "disable_menu"
@@ -873,8 +872,14 @@ function show_launch() {
         done
     done
 
-    if [[ -z "$DISPLAY" && -n "$image" ]]; then
-        fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
+    if [[ -n "$image" ]]; then
+        # if we are running under X use feh otherwise try and use fbi
+        if [[ -n "$DISPLAY" ]]; then
+            feh -F -N -Z -Y -q "$image" & &>/dev/null
+            IMG_PID=$!
+        else
+            fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
+        fi
     elif [[ "$DISABLE_MENU" -ne 1 && "$USE_ART" -ne 1 ]]; then
         local launch_name
         if [[ -n "$ROM_BN" ]]; then
@@ -983,6 +988,8 @@ function runcommand() {
     local ret
     launch_command
     ret=$?
+
+    [[ -n "$IMG_PID" ]] && kill -SIGINT "$IMG_PID"
 
     clear
 
