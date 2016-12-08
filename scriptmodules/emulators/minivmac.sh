@@ -12,7 +12,7 @@
 rp_module_id="minivmac"
 rp_module_desc="Macintosh Plus Emulator"
 rp_module_help="ROM Extensions: .dsk \n\nCopy your Macintosh Plus disks to $romdir/macintoshplus \n\n You need to copy the Macintosh bios file vMac.ROM into "$biosdir" and System Tools.dsk to $romdir"
-rp_module_section="opt"
+rp_module_section="exp"
 rp_module_flags="!mali"
 
 function sources_minivmac() {
