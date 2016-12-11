@@ -169,6 +169,11 @@ function configure_retroarch() {
     iniGet "menu_driver"
     [[ -z "$ini_value" ]] && iniSet "menu_driver" "rgui"
 
+    # if no menu_unified_controls is set, force it on so that keyboard player 1 can control
+    # the RGUI menu which is important for arcade sticks etc that map to keyboard inputs
+    iniGet "menu_unified_controls"
+    [[ -z "$ini_value" ]] && iniSet "menu_unified_controls" "true"
+
     # remapping hack for old 8bitdo firmware
     addAutoConf "8bitdo_hack" 0
 }
