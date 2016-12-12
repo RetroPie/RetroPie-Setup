@@ -32,8 +32,8 @@ function build_zdoom() {
     rm -rf release
     mkdir -p release
     cd release
-    local params=()
-    cmake -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DNO_ASM=1 "${params[@]}" ..
+    local params=(-DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release)
+    cmake "${params[@]}" ..
     make
     md_ret_require="$md_build/release/zdoom"
 }
