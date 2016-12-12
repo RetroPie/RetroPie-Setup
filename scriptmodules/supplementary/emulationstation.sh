@@ -127,7 +127,7 @@ function depends_emulationstation() {
         libboost-date-time-dev libfreeimage-dev libfreetype6-dev libeigen3-dev
         libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
         libvlc-dev libvlccore-dev vlc-nox
-        )
+    )
 
     isPlatform "x11" && depends+=(gnome-terminal)
     getDepends "${depends[@]}"
