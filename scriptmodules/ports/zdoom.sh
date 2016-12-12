@@ -15,7 +15,10 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_zdoom() {
-    local depends=(libev-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev timidity cmake)
+    local depends=(
+        libev-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev
+        timidity freepats cmake libopenal-dev
+    )
     if compareVersions "$__os_release" lt 8; then
         depends+=(libjpeg8-dev)
     else
