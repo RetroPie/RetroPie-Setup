@@ -36,7 +36,7 @@ __swapdir="$__tmpdir"
 
 # check, if sudo is used
 if [[ "$(id -u)" -ne 0 ]]; then
-    echo "Script must be run as root. Try 'sudo $0'"
+    echo "Script must be run under sudo from the user you want to install for. Try 'sudo $0'"
     exit 1
 fi
 
