@@ -9,6 +9,11 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
+function check_daphne() {
+    [[ ! -d "$configdir/daphne/" ]] && return 1
+    return 0
+}
+
 function onstart_daphne_joystick() {
     local -r mapping_file="$configdir/daphne/dapinput.ini"
     local -r force_joy_file="$configdir/daphne/dapinput-forcejoy.ini"
