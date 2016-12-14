@@ -1,8 +1,8 @@
 diff --git a/input/input_driver.c b/input/input_driver.c
-index a3253a5..e1fb8c9 100644
+index 8d26bcd..30a0832 100644
 --- a/input/input_driver.c
 +++ b/input/input_driver.c
-@@ -116,6 +116,10 @@ static bool input_driver_nonblock_state           = false;
+@@ -120,6 +120,10 @@ static bool input_driver_nonblock_state           = false;
  static bool input_driver_flushing_input           = false;
  static bool input_driver_data_own                 = false;
  
@@ -13,20 +13,23 @@ index a3253a5..e1fb8c9 100644
  /**
   * input_driver_find_handle:
   * @idx                : index of driver to get handle to.
-@@ -675,7 +679,15 @@ uint64_t input_keys_pressed(void)
+@@ -807,9 +811,17 @@ uint64_t input_keys_pressed(
     {
        if (current_input->input_state(current_input_data, &binds, 0,
                 RETRO_DEVICE_JOYPAD, 0, RARCH_ENABLE_HOTKEY))
 -         input_driver_block_libretro_input = true;
+-      else
 +      {
 +         if (hotkey_counter < HOTKEY_DELAY)
 +            hotkey_counter++;
-+         else
-+            hotkey_counter = 0;
 +
 +         if (hotkey_counter == HOTKEY_DELAY)
 +            input_driver_block_libretro_input = true;
 +      }
-       else
++      else {
++         hotkey_counter = 0;
           input_driver_block_hotkey         = true;
++      }
     }
+ 
+    /* Allows rarch_focus_toggle hotkey to still work even tough every hotkey is blocked */
