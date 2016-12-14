@@ -9,8 +9,6 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-# global variables ==========================================================
-
 __version="4.1.5"
 
 [[ "$__debug" -eq 1 ]] && set -x

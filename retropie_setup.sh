@@ -9,12 +9,8 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-# =============================================================
-#  START OF THE MAIN SCRIPT
-# =============================================================
-
-scriptdir=$(dirname "$0")
-scriptdir=$(cd "$scriptdir" && pwd)
+scriptdir="$(dirname "$0")"
+scriptdir="$(cd "$scriptdir" && pwd)"
 
 "$scriptdir/retropie_packages.sh" setup gui
 
