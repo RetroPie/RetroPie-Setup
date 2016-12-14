@@ -13,6 +13,12 @@ rp_module_id="autostart"
 rp_module_desc="Auto-start Emulation Station / Kodi on boot"
 rp_module_section="config"
 
+function _update_hook_autostart() {
+    if [[ -f /etc/profile.d/10-emulationstation.sh ]]; then
+        enable_autostart
+    fi
+}
+
 function enable_autostart() {
     local mode="$1"
 
