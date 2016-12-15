@@ -139,10 +139,6 @@ function sources_emulationstation() {
     [[ -z "$repo" ]] && repo="https://github.com/retropie/EmulationStation"
     [[ -z "$branch" ]] && branch="master"
     gitPullOrClone "$md_build" "$repo" "$branch"
-    # make sure libMali.so can be found so we use OpenGL ES
-    if isPlatform "mali"; then
-        sed -i 's|/usr/lib/libMali.so|/usr/lib/arm-linux-gnueabihf/libMali.so|g' CMakeLists.txt
-    fi
 }
 
 function build_emulationstation() {
