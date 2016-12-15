@@ -16,6 +16,7 @@ rp_module_section="opt"
 
 function depends_nxengine() {
     getDepends libsdl-ttf2.0-0 libsdl1.2
+}
 
 function sources_nxengine() {
     if isPlatform "rpi"; then 
@@ -34,6 +35,7 @@ function sources_nxengine() {
         rm nx-src-1006.tar.bz2
     fi
 }
+
 function build_nxengine() {
     if isPlatform "rpi"; then
         cd "$md_inst"
