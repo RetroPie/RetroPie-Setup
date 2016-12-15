@@ -25,9 +25,7 @@ function sources_lr-fbalpha() {
 
 function build_lr-fbalpha() {
     make -f makefile.libretro clean
-    local params=()
-    isPlatform "arm" && params+=("platform=armv")
-    make -f makefile.libretro "${params[@]}" profile=performance
+    make -f makefile.libretro profile=performance
     md_ret_require="$md_build/fbalpha_libretro.so"
 }
 
