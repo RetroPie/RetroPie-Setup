@@ -15,7 +15,10 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_zdoom() {
-    local depends=(libev-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev timidity cmake)
+    local depends=(
+        libev-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev
+        timidity freepats cmake libopenal-dev
+    )
     if compareVersions "$__os_release" lt 8; then
         depends+=(libjpeg8-dev)
     else
@@ -32,8 +35,14 @@ function build_zdoom() {
     rm -rf release
     mkdir -p release
     cd release
-    local params=()
-    cmake -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DNO_ASM=1 "${params[@]}" ..
+    local params=(-DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release)
+    # workaround for armv7+ on Raspbian armv6 userland due to GCC ABI incompatibility
+    # same issue as https://github.com/hrydgard/ppsspp/pull/8117
+    if [[ "$__os_id" == "Raspbian" ]]; then
+        CXXFLAGS+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2" cmake "${params[@]}" ..
+    else
+        cmake "${params[@]}" ..
+    fi
     make
     md_ret_require="$md_build/release/zdoom"
 }
