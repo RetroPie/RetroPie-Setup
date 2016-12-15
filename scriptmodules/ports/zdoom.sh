@@ -36,7 +36,13 @@ function build_zdoom() {
     mkdir -p release
     cd release
     local params=(-DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release)
-    cmake "${params[@]}" ..
+    # workaround for armv7+ on Raspbian armv6 userland due to GCC ABI incompatibility
+    # same issue as https://github.com/hrydgard/ppsspp/pull/8117
+    if [[ "$__os_id" == "Raspbian" ]]; then
+        CXXFLAGS+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2" cmake "${params[@]}" ..
+    else
+        cmake "${params[@]}" ..
+    fi
     make
     md_ret_require="$md_build/release/zdoom"
 }
