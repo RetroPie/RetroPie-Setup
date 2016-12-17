@@ -45,6 +45,7 @@ function remove_mkarcadejoystick() {
     _dkms_remove_mkarcadejoystick
     rm -rf /usr/src/mk_arcade_joystick_rpi-0.1.5
     rm -f /etc/modprobe.d/mk_arcade_joystick_rpi.conf
+    sed -i "/mk_arcade_joystick_rpi/d" /etc/modules
 }
 
 function configure_mkarcadejoystick() {
