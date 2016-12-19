@@ -28,45 +28,53 @@ function sources_ppsspp() {
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
 
-    cd ..
-    mkdir -p cmake
-    wget -q -O- "$__archive_url/cmake-3.6.2.tar.gz" | tar -xvz --strip-components=1 -C cmake
+    if hasPackage cmake 3.6 lt; then
+        cd ..
+        mkdir -p cmake
+        wget -q -O- "$__archive_url/cmake-3.6.2.tar.gz" | tar -xvz --strip-components=1 -C cmake
+    fi
 }
 
 function build_ffmpeg_ppsspp() {
+    ! isPlatform "arm" && return 0
+
     cd "$1"
-    if isPlatform "arm"; then
-        local MODULES
-        local VIDEO_DECODERS
-        local AUDIO_DECODERS
-        local VIDEO_ENCODERS
-        local AUDIO_ENCODERS
-        local DEMUXERS
-        local MUXERS
-        local PARSERS
-        local GENERAL
-        local OPTS # used by older lr-ppsspp fork
-        # get the ffmpeg configure variables from the ppsspp ffmpeg distributed script
-        source linux_arm.sh
-        # linux_arm.sh has set -e which we need to switch off
-        set +e
-        ./configure \
-            --prefix="./linux/arm" \
-            --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
-            --disable-shared \
-            --enable-static \
-            --enable-zlib \
-            --enable-pic \
-            --disable-everything \
-            ${MODULES} \
-            ${VIDEO_DECODERS} \
-            ${AUDIO_DECODERS} \
-            ${VIDEO_ENCODERS} \
-            ${AUDIO_ENCODERS} \
-            ${DEMUXERS} \
-            ${MUXERS} \
-            ${PARSERS}
+    local prefix
+    if isPlatform "armv6"; then
+        prefix="./linux/arm"
+    else
+        prefix="./linux/armv7"
     fi
+    local MODULES
+    local VIDEO_DECODERS
+    local AUDIO_DECODERS
+    local VIDEO_ENCODERS
+    local AUDIO_ENCODERS
+    local DEMUXERS
+    local MUXERS
+    local PARSERS
+    local GENERAL
+    local OPTS # used by older lr-ppsspp fork
+    # get the ffmpeg configure variables from the ppsspp ffmpeg distributed script
+    source linux_arm.sh
+    # linux_arm.sh has set -e which we need to switch off
+    set +e
+    ./configure \
+        --prefix="$prefix" \
+        --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
+        --disable-shared \
+        --enable-static \
+        --enable-zlib \
+        --enable-pic \
+        --disable-everything \
+        ${MODULES} \
+        ${VIDEO_DECODERS} \
+        ${AUDIO_DECODERS} \
+        ${VIDEO_ENCODERS} \
+        ${AUDIO_ENCODERS} \
+        ${DEMUXERS} \
+        ${MUXERS} \
+        ${PARSERS}
     make clean
     make install
 }
@@ -78,11 +86,16 @@ function build_cmake_ppsspp() {
 }
 
 function build_ppsspp() {
-    build_cmake_ppsspp
+    local cmake="cmake"
+    if hasPackage cmake 3.6 lt; then
+        build_cmake_ppsspp
+        cmake="$md_build/cmake/bin/cmake"
+    fi
+
+    # build ffmpeg
     build_ffmpeg_ppsspp "$md_build/ppsspp/ffmpeg"
 
     # build ppsspp
-    local cmake="$md_build/cmake/bin/cmake"
     cd "$md_build/ppsspp"
     rm -rf CMakeCache.txt CMakeFiles
     if isPlatform "rpi"; then
