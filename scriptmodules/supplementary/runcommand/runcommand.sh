@@ -106,7 +106,7 @@ function start_joy2key() {
     if [[ -c "$__joy2key_dev" ]]; then
         JOY2KEY_DEV="$__joy2key_dev"
     else
-        JOY2KEY_DEV="$(ls -1 /dev/input/js* 2>/dev/null | head -n1)"
+        JOY2KEY_DEV="/dev/input/jsX"
     fi
     # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
     if [[ -f "$ROOTDIR/supplementary/runcommand/joy2key.py" && -n "$JOY2KEY_DEV" ]] && ! pgrep -f joy2key.py >/dev/null; then
