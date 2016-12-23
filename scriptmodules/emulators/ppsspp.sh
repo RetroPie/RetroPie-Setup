@@ -13,7 +13,6 @@ rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_section="opt"
-rp_module_flags="!mali"
 
 function depends_ppsspp() {
     local depends=(cmake libsdl2-dev libzip-dev)
@@ -25,8 +24,13 @@ function sources_ppsspp() {
     gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
     cd ppsspp
     runCmd git submodule update --init --recursive
+
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
+
+    if isPlatform "aarch64"; then
+        applyPatch "$md_data/01_aarch64.diff"
+    fi
 
     if hasPackage cmake 3.6 lt; then
         cd ..
@@ -36,14 +40,22 @@ function sources_ppsspp() {
 }
 
 function build_ffmpeg_ppsspp() {
-    ! isPlatform "arm" && return 0
-
     cd "$1"
-    local prefix
-    if isPlatform "armv6"; then
-        prefix="./linux/arm"
-    else
-        prefix="./linux/armv7"
+    local arch
+    if isPlatform "arm"; then
+        if isPlatform "armv6"; then
+            arch="arm"
+        else
+            arch="armv7"
+        fi
+    elif isPlatform "x86"; then
+        if isPlatform "x86_64"; then
+            arch="x86_64";
+        else
+            arch="x86";
+        fi
+    elif isPlatform "aarch64"; then
+        arch="arm64"
     fi
     local MODULES
     local VIDEO_DECODERS
@@ -60,7 +72,7 @@ function build_ffmpeg_ppsspp() {
     # linux_arm.sh has set -e which we need to switch off
     set +e
     ./configure \
-        --prefix="$prefix" \
+        --prefix="./linux/$arch" \
         --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
         --disable-shared \
         --enable-static \
@@ -104,6 +116,8 @@ function build_ppsspp() {
         else
             "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv7.cmake .
         fi
+    elif isPlatform "mali"; then
+        "$cmake" . -DUSING_GLES2=ON -DUSING_FBDEV=ON
     else
         "$cmake" .
     fi

@@ -12,7 +12,7 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
-rp_module_flags="!x86 !osmc"
+rp_module_flags="!x86 !osmc !mali"
 
 function _update_hook_splashscreen() {
     rp_isInstalled "$md_idx" && configure_splashscreen
