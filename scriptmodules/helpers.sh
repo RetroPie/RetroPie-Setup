@@ -1045,6 +1045,9 @@ function addSystem() {
     temp="$(getPlatformConfig "${system}_theme")"
     [[ -n "$temp" ]] && theme="$temp"
 
+    temp="$(getPlatformConfig "${system}_platform")"
+    [[ -n "$temp" ]] && platform="$temp"
+
     # check if we are removing the system
     if [[ "$md_mode" == "remove" ]]; then
         delSystem "$id" "$system"
