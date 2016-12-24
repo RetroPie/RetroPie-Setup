@@ -85,5 +85,5 @@ function configure_mame4all() {
     fi
 
     addSystem 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
-    addSystem 1 "$md_id" "$system arcade mame" "$md_inst/mame %BASENAME%"
+    addSystem 1 "$md_id" "$system" "$md_inst/mame %BASENAME%"
 }

@@ -990,7 +990,7 @@ function getPlatformConfig() {
 ## @fn addSystem()
 ## @param default 1 to make the emulator / command default for the system if no default already set
 ## @param id unique id of the module / command
-## @param names `"system"` or `"system platform"` or `"system platform theme"`
+## @param name name of the system
 ## @param cmd commandline to launch
 ## @param fullname optional fullname for the emulationstation config (if not present in platforms.cfg)
 ## @param exts optional extensions for the emulationstation config (if not present in platforms.cfg)
@@ -1022,31 +1022,7 @@ function addSystem() {
     local fullname="$5"
     local exts=($6)
 
-    local system
-    local platform
-    local theme
-
-    # set system / platform / theme for configuration based on data in names field
-    if [[ -n "${names[2]}" ]]; then
-        system="${names[0]}"
-        platform="${names[1]}"
-        theme="${names[2]}"
-    elif [[ -n "${names[1]}" ]]; then
-        system="${names[0]}"
-        platform="${names[1]}"
-        theme="$system"
-    else
-        system="${names[0]}"
-        platform="$system"
-        theme="$system"
-    fi
-
-    local temp
-    temp="$(getPlatformConfig "${system}_theme")"
-    [[ -n "$temp" ]] && theme="$temp"
-
-    temp="$(getPlatformConfig "${system}_platform")"
-    [[ -n "$temp" ]] && platform="$temp"
+    local system="${names[0]}"
 
     # check if we are removing the system
     if [[ "$md_mode" == "remove" ]]; then
@@ -1054,25 +1030,55 @@ function addSystem() {
         return
     fi
 
-    # for the ports section, we will handle launching from a separate script and hardcode exts etc
-    local es_cmd="$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%"
-    local es_path="$romdir/$system"
-    local es_name="$system"
-    if [[ "$theme" == "ports" ]]; then
+    local platform
+    local theme
+    local is_port=0
+
+    local es_cmd
+    local es_path
+    local es_name
+    # set system / platform / theme for configuration based on data in names field
+    if [[ "${names[1]}" == "ports" ]]; then
+        is_port=1
+        platform="pc"
+        theme="ports"
+
+        # for the ports section, we will handle launching from a separate script and hardcode exts etc
         es_cmd="bash %ROM%"
         es_path="$romdir/ports"
         es_name="ports"
         exts=(".sh")
         fullname="Ports"
     else
+        local temp
+        temp="$(getPlatformConfig "${system}_theme")"
+        if [[ -n "$temp" ]]; then
+            theme="$temp"
+        else
+            theme="$system"
+        fi
+
+        temp="$(getPlatformConfig "${system}_platform")"
+        if [[ -n "$temp" ]]; then
+            platform="$temp"
+        else
+            platform="$system"
+        fi
+
+        es_cmd="$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%"
+        es_path="$romdir/$system"
+        es_name="$system"
+
         temp="$(getPlatformConfig "${system}_fullname")"
         [[ -n "$temp" ]] && fullname="$temp"
+
         exts+=("$(getPlatformConfig "${system}_exts")")
 
         # automatically add parameters for libretro modules
         if [[ "$id" =~ ^lr- ]]; then
             cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $md_conf_root/$system/retroarch.cfg %ROM%"
         fi
+
     fi
 
     exts="${exts[*]}"
@@ -1184,7 +1190,7 @@ _EOF_
             delSystem "$id" "ports"
         fi
     else
-        [[ -n "$cmd" ]] && addSystem 1 "$id" "$port pc ports" "$cmd"
+        [[ -n "$cmd" ]] && addSystem 1 "$id" "$port ports" "$cmd"
     fi
 }
 

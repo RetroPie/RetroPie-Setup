@@ -53,5 +53,5 @@ function configure_lr-fbalpha2012() {
 
     addSystem 0 "$md_id" "arcade" "$md_inst/fbalpha2012_libretro.so"
     addSystem 0 "$md_id" "neogeo" "$md_inst/fbalpha2012_libretro.so"
-    addSystem 0 "$md_id" "fba arcade" "$md_inst/fbalpha2012_libretro.so"
+    addSystem 0 "$md_id" "fba" "$md_inst/fbalpha2012_libretro.so"
 }

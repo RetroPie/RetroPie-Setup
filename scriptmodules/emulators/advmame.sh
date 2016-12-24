@@ -228,6 +228,6 @@ function configure_advmame() {
             [[ "$version" == "1.4" ]] && default=1
         fi
         addSystem 0 "$md_id-$version" "arcade" "$md_inst/$version/bin/advmame %BASENAME%"
-        addSystem $default "$md_id-$version" "mame-advmame arcade mame" "$md_inst/$version/bin/advmame %BASENAME%"
+        addSystem $default "$md_id-$version" "mame-advmame" "$md_inst/$version/bin/advmame %BASENAME%"
     done
 }

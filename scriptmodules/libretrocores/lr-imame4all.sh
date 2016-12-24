@@ -40,5 +40,5 @@ function configure_lr-imame4all() {
     ensureSystemretroconfig "mame-mame4all"
 
     addSystem 0 "$md_id" "arcade" "$md_inst/mame2000_libretro.so"
-    addSystem 0 "$md_id" "mame-mame4all arcade mame" "$md_inst/mame2000_libretro.so"
+    addSystem 0 "$md_id" "mame-mame4all" "$md_inst/mame2000_libretro.so"
 }

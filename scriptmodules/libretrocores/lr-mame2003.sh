@@ -62,5 +62,5 @@ function configure_lr-mame2003() {
     setRetroArchCoreOption "mame2003-samples" "enabled"
 
     addSystem 0 "$md_id" "arcade" "$md_inst/mame2003_libretro.so"
-    addSystem 1 "$md_id" "mame-libretro arcade mame" "$md_inst/mame2003_libretro.so"
+    addSystem 1 "$md_id" "mame-libretro" "$md_inst/mame2003_libretro.so"
 }

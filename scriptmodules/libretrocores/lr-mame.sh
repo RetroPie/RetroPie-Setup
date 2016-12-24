@@ -46,5 +46,5 @@ function configure_lr-mame() {
     ensureSystemretroconfig "mame-libretro"
 
     addSystem 0 "$md_id" "arcade" "$md_inst/mamearcade_libretro.so"
-    addSystem 0 "$md_id" "mame-libretro arcade mame" "$md_inst/mamearcade_libretro.so"
+    addSystem 0 "$md_id" "mame-libretro" "$md_inst/mamearcade_libretro.so"
 }
