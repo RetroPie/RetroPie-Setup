@@ -1122,10 +1122,13 @@ function delSystem() {
 
     local fullname="$(getPlatformConfig "${system}_fullname")"
 
-    local function
-    for function in $(compgen -A function _del_system_); do
-        "$function" "$fullname" "$system"
-    done
+    # if we don't have an emulators.cfg we can remove the system from the frontends
+    if [[ ! -f "$config" ]]; then
+        local function
+        for function in $(compgen -A function _del_system_); do
+            "$function" "$fullname" "$system"
+        done
+    fi
 }
 
 ## @fn addPort()

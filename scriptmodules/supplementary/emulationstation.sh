@@ -78,8 +78,7 @@ function _add_system_emulationstation() {
 function _del_system_emulationstation() {
     local fullname="$1"
     local name="$2"
-    # if we don't have an emulators.cfg we can remove the system from emulation station
-    if [[ -f /etc/emulationstation/es_systems.cfg && ! -f "$config" ]]; then
+    if [[ -f /etc/emulationstation/es_systems.cfg ]]; then
         xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
     fi
 }
