@@ -16,13 +16,7 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_ags() {
-    local depends=(xorg pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev)
-    if compareVersions "$__os_release" lt 8; then
-        depends+=(liballegro4.2-dev)
-    else
-        depends+=(liballegro4-dev)
-    fi
-    getDepends "${depends[@]}"
+    getDepends xorg pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev liballegro4-dev
 }
 
 function sources_ags() {

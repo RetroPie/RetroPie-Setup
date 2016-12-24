@@ -16,12 +16,7 @@ rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
 function depends_residualvm() {
-    getDepends libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
-    if compareVersions "$__os_release" lt 8; then
-        getDepends libjpeg8-dev
-    else
-        getDepends libjpeg-dev
-    fi
+    getDepends libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev
 }
 
 function sources_residualvm() {

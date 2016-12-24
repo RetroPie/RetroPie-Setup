@@ -16,15 +16,7 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_vice() {
-    local depends=(libsdl2-dev libmpg123-dev libpng12-dev zlib1g-dev libasound2-dev libvorbis-dev libflac-dev libpcap-dev automake checkinstall bison flex subversion)
-
-    if compareVersions "$__os_release" lt 8; then
-        depends+=(libjpeg8-dev )
-    else
-        depends+=(libjpeg-dev)
-    fi
-
-    getDepends "${depends[@]}"
+    getDepends libsdl2-dev libmpg123-dev libpng12-dev zlib1g-dev libasound2-dev libvorbis-dev libflac-dev libpcap-dev automake checkinstall bison flex subversion libjpeg-dev
 }
 
 function sources_vice() {

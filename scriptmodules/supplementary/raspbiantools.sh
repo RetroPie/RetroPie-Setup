@@ -42,10 +42,6 @@ function enable_modules_raspbiantools() {
     sed -i '/snd_bcm2835/d' /etc/modules
 
     local modules=(uinput)
-    # joydev and snd-bcm2835 get loaded automatically on Jessie
-    if compareVersions "$__os_release" lt 8; then
-        modules+=(joydev snd-bcm2835)
-    fi
 
     local module
     for module in "${modules[@]}"; do

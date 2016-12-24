@@ -16,13 +16,7 @@ rp_module_section="opt"
 rp_module_flags="!aarch64"
 
 function depends_love() {
-    local depends=(mercurial autotools-dev automake libtool pkg-config libdevil-dev libfreetype6-dev libluajit-5.1-dev libphysfs-dev libsdl2-dev libopenal-dev libogg-dev libtheora-dev libvorbis-dev libflac-dev libflac++-dev libmodplug-dev libmpg123-dev libmng-dev)
-
-    if compareVersions "$__os_release" lt 8; then
-        depends+=(libjpeg8-dev )
-    else
-        depends+=(libjpeg-dev)
-    fi
+    local depends=(mercurial autotools-dev automake libtool pkg-config libdevil-dev libfreetype6-dev libluajit-5.1-dev libphysfs-dev libsdl2-dev libopenal-dev libogg-dev libtheora-dev libvorbis-dev libflac-dev libflac++-dev libmodplug-dev libmpg123-dev libmng-dev libjpeg-dev)
 
     getDepends "${depends[@]}"
 }

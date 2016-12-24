@@ -15,19 +15,14 @@ rp_module_section="config"
 
 function depends_usbromservice() {
     local depends=(rsync ntfs-3g exfat-fuse)
-    if compareVersions "$__os_release" ge 8; then
-        if ! hasPackage usbmount 0.0.24; then
-            depends+=(debhelper devscripts pmount lockfile-progs)
-            getDepends "${depends[@]}"
-            if [[ "$md_mode" == "install" ]]; then
-                rp_callModule usbromservice sources
-                rp_callModule usbromservice build
-                rp_callModule usbromservice install
-            fi
-        fi
-    else
-        depends+=(usbmount)
+    if ! hasPackage usbmount 0.0.24; then
+        depends+=(debhelper devscripts pmount lockfile-progs)
         getDepends "${depends[@]}"
+        if [[ "$md_mode" == "install" ]]; then
+            rp_callModule usbromservice sources
+            rp_callModule usbromservice build
+            rp_callModule usbromservice install
+        fi
     fi
 }
 

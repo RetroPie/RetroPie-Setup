@@ -137,11 +137,9 @@ function gui_autostart() {
                     CA "Boot to text console (auto login as $user)"
                 )
             fi
-            if compareVersions "$__os_release" ge 8; then
-                options+=(DL "Boot to desktop (require login)")
-                if [[ "$__os_id" == "Raspbian" ]]; then
-                    options+=(DA "Boot to desktop (auto login as $user)")
-                fi
+            options+=(DL "Boot to desktop (require login)")
+            if [[ "$__os_id" == "Raspbian" ]]; then
+                options+=(DA "Boot to desktop (auto login as $user)")
             fi
         fi
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
