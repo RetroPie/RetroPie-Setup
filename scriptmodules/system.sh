@@ -81,7 +81,7 @@ function get_os_version() {
             fi
 
             ;;
-        Ubuntu|LinuxMint)
+        Ubuntu|LinuxMint|neon|elementary)
             __has_binaries=0
             ;;
         *)
