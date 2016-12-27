@@ -204,8 +204,8 @@ if [[ "\$(uname --machine)" != *86* ]]; then
 fi
 
 # save current tty/vt number for use with X so it can be launched on the correct tty
-tty=$(tty)
-export TTY="${tty:8:1}"
+tty=\$(tty)
+export TTY="\${tty:8:1}"
 
 clear
 tput civis
