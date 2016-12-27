@@ -128,9 +128,6 @@ function get_default_gcc() {
         case "$__os_id" in
             Raspbian|Debian)
                 case "$__os_codename" in
-                    wheezy)
-                        __default_gcc_version="4.8"
-                        ;;
                     *)
                         __default_gcc_version="4.9"
                 esac

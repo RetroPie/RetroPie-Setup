@@ -24,20 +24,15 @@ function install_bin_openpht() {
     local package="openpht_${version}-${__os_codename}_amd64.deb"
     local getdeb="https://github.com/RasPlex/OpenPHT/releases/download/v$version/$package"
 
-    if [[ "$__os_codename" == "wheezy" ]]; then
-        md_ret_errors+=("The Debian package available is only for Jessie")
-        return 1
+    wget -nv -O "$__tmpdir/$package" $getdeb
+    if hasPackage "apt" "1.1" "ge"; then
+        apt install -y --allow-downgrades "$__tmpdir/$package"
     else
-        wget -nv -O "$__tmpdir/$package" $getdeb
-        if hasPackage "apt" "1.1" "ge"; then
-            apt install -y --allow-downgrades "$__tmpdir/$package"
-        else
-            # Falling back to dpkg
-            dpkg -i "$__tmpdir/$package"
-            apt-get -f -y install
-        fi
-        rm "$__tmpdir/$package"
+        # Falling back to dpkg
+        dpkg -i "$__tmpdir/$package"
+        apt-get -f -y install
     fi
+    rm "$__tmpdir/$package"
 }
 
 function remove_openpht() {
