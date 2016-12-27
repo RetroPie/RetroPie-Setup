@@ -102,6 +102,7 @@ modules=(
     'splashscreen enable'
     'bashwelcometweak'
     'xpad'
+    'scraper'
 )
 for module in "\${modules[@]}"; do
     # rpi1 platform would use QEMU_CPU set to arm1176, but it seems buggy currently (lots of segfaults)
