@@ -57,11 +57,7 @@ function enable_autostart() {
         ln -sf "/usr/local/share/applications/retropie.desktop" "$home/.config/autostart/"
     else
         if [[ "$__os_id" == "Raspbian" ]]; then
-            if [[ "$__os_codename" == "wheezy" ]]; then
-                sed -i "s|^1:2345:.*|1:2345:respawn:/bin/login -f $user tty1 </dev/tty1 >/dev/tty1 2>\&1|g" /etc/inittab
-                update-rc.d lightdm disable 2 # taken from /usr/bin/raspi-config
-                sed -i "/emulationstation/d" /etc/profile
-            elif [[ "$__chroot" -eq 1 ]]; then
+            if [[ "$__chroot" -eq 1 ]]; then
                 mkdir -p /etc/systemd/system/getty@tty1.service.d
                 systemctl set-default multi-user.target
                 ln -fs /etc/systemd/system/autologin@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
@@ -90,10 +86,7 @@ function disable_autostart() {
         rm "$home/.config/autostart/retropie.desktop"
     else
         if [[ "$__os_id" == "Raspbian" ]]; then
-            if [[ "$__os_codename" == "wheezy" ]]; then
-                sed -i "s|^1:2345:.*|1:2345:respawn:/sbin/getty --noclear 38400 tty1|g" /etc/inittab
-                sed -i "/emulationstation/d" /etc/profile
-            elif [["$__chroot" -eq 1 ]]; then
+            if [["$__chroot" -eq 1 ]]; then
                 systemctl set-default graphical.target
                 ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
             else
@@ -137,11 +130,9 @@ function gui_autostart() {
                     CA "Boot to text console (auto login as $user)"
                 )
             fi
-            if compareVersions "$__os_release" ge 8; then
-                options+=(DL "Boot to desktop (require login)")
-                if [[ "$__os_id" == "Raspbian" ]]; then
-                    options+=(DA "Boot to desktop (auto login as $user)")
-                fi
+            options+=(DL "Boot to desktop (require login)")
+            if [[ "$__os_id" == "Raspbian" ]]; then
+                options+=(DA "Boot to desktop (auto login as $user)")
             fi
         fi
         choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)

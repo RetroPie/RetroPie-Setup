@@ -50,12 +50,10 @@ function install_ps3controller() {
 
     echo "$branch" >"$md_inst/type.txt"
 
-    if compareVersions "$__os_release" ge 8; then
-        # Disable timeouts
-        iniConfig " = " "" "/etc/bluetooth/main.conf"
-        iniSet "DiscoverableTimeout" "0"
-        iniSet "PairableTimeout" "0"
-    fi
+    # Disable timeouts
+    iniConfig " = " "" "/etc/bluetooth/main.conf"
+    iniSet "DiscoverableTimeout" "0"
+    iniSet "PairableTimeout" "0"
 
     # Start sixad daemon
     /etc/init.d/sixad start

@@ -211,7 +211,7 @@ function getDepends() {
         fi
 
         # map libpng12-dev to libpng-dev for Ubuntu 16.10+
-        if [[ "$required" == "libpng12-dev" && "$__os_id" == "Ubuntu" ]] && compareVersions "$__os_release" ge 16.10;  then
+        if [[ "$required" == "libpng12-dev" && -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" ge 16.10;  then
             required="libpng-dev"
         fi
 

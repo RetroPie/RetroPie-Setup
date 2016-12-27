@@ -69,25 +69,55 @@ function get_os_version() {
     __os_desc="${os[1]}"
     __os_release="${os[2]}"
     __os_codename="${os[3]}"
+    
+    local error=""
     case "$__os_id" in
         Raspbian|Debian)
             if compareVersions "$__os_release" lt 8; then
-                __has_binaries=0
+                error="You need Raspbian/Debian Jessie or newer"
             fi
 
             # set a platform flag for osmc
             if grep -q "ID=osmc" /etc/os-release; then
                 __platform_flags+=" osmc"
             fi
-
             ;;
-        Ubuntu|LinuxMint)
-            __has_binaries=0
+        LinuxMint)
+            if compareVersions "$__os_release" lt 17; then
+                error="You need Linux Mint 17 or newer"
+            elif compareVersions "$__os_release" lt 18; then
+                __os_ubuntu_ver="14.04"
+            else
+                __os_ubuntu_ver="16.04"
+            fi
+            __os_debian_ver="8"
+            ;;
+        Ubuntu)
+            if compareVersions "$__os_release" lt 14.04; then
+                error="You need Ubuntu 14.04 or newer"
+            fi
+            __os_ubuntu_ver="$__os_release"
+            __os_debian_ver="8"
+            ;;
+        elementary)
+            if compareVersions "$__os_release" lt 0.3; then
+                error="You need Elementary OS 0.3 or newer"
+            elif compareVersions "$__os_release" lt 0.4; then
+                __os_ubuntu_ver="14.04"
+            else
+                __os_ubuntu_ver="16.04"
+            fi
+            __os_debian_ver="8"
+            ;;
+        neon)
+             __os_ubuntu_ver="$__os_release"
             ;;
         *)
-            fatalError "Unsupported OS\n\n$(lsb_release -idrc)"
+            error="Unsupported OS"
             ;;
     esac
+    
+    [[ -n "$error" ]] && fatalError "$error\n\n$(lsb_release -idrc)"
 
     # add 32bit/64bit to platform flags
     __platform_flags+=" $(getconf LONG_BIT)bit"
@@ -98,9 +128,6 @@ function get_default_gcc() {
         case "$__os_id" in
             Raspbian|Debian)
                 case "$__os_codename" in
-                    wheezy)
-                        __default_gcc_version="4.8"
-                        ;;
                     *)
                         __default_gcc_version="4.9"
                 esac

@@ -14,12 +14,11 @@ rp_module_desc="Duke3D Port"
 rp_module_section="opt"
 
 function depends_eduke32() {
-    local depends=(subversion flac libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats)
-    if compareVersions "$__os_release" lt 8; then
-        depends+=(libsdl1.2-dev libsdl-mixer1.2-dev)
-    else
-        depends+=(libsdl2-dev libsdl2-mixer-dev)
-    fi
+    local depends=(
+        subversion flac libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats
+        libsdl2-dev libsdl2-mixer-dev
+    )
+
     isPlatform "x86" && depends+=(nasm)
     isPlatform "x11" && depends+=(libgl1-mesa-dev libglu1-mesa-dev libgtk2.0-dev)
     getDepends "${depends[@]}"
@@ -30,14 +29,9 @@ function sources_eduke32() {
 }
 
 function build_eduke32() {
-    local params=(LTO=0)
+    local params=(LTO=0 SDL_TARGET=2)
     ! isPlatform "x86" && params+=(NOASM=1)
     ! isPlatform "x11" && params+=(USE_OPENGL=0)
-    if compareVersions "$__os_release" lt 8; then
-        params+=(SDL_TARGET=1)
-    else
-        params+=(SDL_TARGET=2)
-    fi
     make veryclean
     CFLAGS+=" -DSDL_USEFOLDER" make "${params[@]}"
     md_ret_require="$md_build/eduke32"

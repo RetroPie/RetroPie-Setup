@@ -14,32 +14,19 @@ rp_module_desc="Scraper for EmulationStation by Steven Selph"
 rp_module_section="config"
 
 function depends_scraper() {
-    [[ "$__os_codename" == "wheezy" ]] && return
     getDepends golang
 }
 
 function sources_scraper() {
-    [[ "$__os_codename" == "wheezy" ]] && return
     GOPATH="$md_build" go get github.com/sselph/scraper
 }
 
 function build_scraper() {
-    [[ "$__os_codename" == "wheezy" ]] && return
     GOPATH="$md_build" go build github.com/sselph/scraper
 }
 
 function install_scraper() {
-    if [[ "$__os_codename" == "wheezy" ]] && isPlatform "arm"; then
-        local ver="$(latest_ver_scraper)"
-        mkdir -p "$md_build"
-        local name="scraper_rpi.zip"
-        isPlatform "neon" && name="scraper_rpi2.zip"
-        wget -O "$md_build/scraper.zip" "https://github.com/sselph/scraper/releases/download/$ver/$name"
-        unzip -o "$md_build/scraper.zip" -d "$md_inst"
-        rm -f "$md_build/scraper.zip"
-    else
-        md_ret_files=(scraper)
-    fi
+    md_ret_files=(scraper)
 }
 
 function get_ver_scraper() {
