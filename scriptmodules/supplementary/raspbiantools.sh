@@ -73,14 +73,7 @@ function gui_raspbiantools() {
                 2)
                     dialog --defaultno --yesno "Are you sure you want to install the Pixel desktop?" 22 76 2>&1 >/dev/tty || continue
                     rp_callModule "$md_id" lxde
-                    printMsgs "dialog" "LXDE is installed."
-                    local config="/etc/X11/Xwrapper.config"
-                    iniConfig "=" "" "$config"
-                    iniGet "$ini_value"
-                    if [[ "$ini_value" != "anybody" ]] && dialog --defaultno --yesno "To allow starting of the Desktop from Emulation Station, a security related change in $config is needed\n\nchanging allowed_users=console to allowed_users=anybody\n\nYou can read the Xwrapper.config manual page for more information (man Xwrapper.config).\n\nWould you like me to make this change now?" 22 76 2>&1 >/dev/tty; then
-                        iniSet "allowed_users" "anybody"
-                        printMsgs "dialog" "$config changed."
-                    fi
+                    printMsgs "dialog" "Pixel desktop/LXDE is installed."
                     ;;
                 3)
                     rp_callModule "$md_id" package_cleanup
