@@ -26,7 +26,12 @@ function build_scraper() {
 }
 
 function install_scraper() {
-    md_ret_files=(scraper)
+    md_ret_files=(
+        'scraper'
+        'src/github.com/sselph/scraper/LICENSE'
+        'src/github.com/sselph/scraper/README.md'
+        'src/github.com/sselph/scraper/hash.csv'
+    )
 }
 
 function get_ver_scraper() {
