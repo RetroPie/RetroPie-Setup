@@ -30,8 +30,6 @@ function _add_system_attractmode() {
     local platform="$6"
     local theme="$7"
 
-    dirIsEmpty "$path" 1 && return 0
-
     # replace any / characters in fullname
     fullname="${fullname//\/ }"
 

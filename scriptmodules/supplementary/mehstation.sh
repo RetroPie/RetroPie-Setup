@@ -30,8 +30,6 @@ function _add_system_mehstation() {
     local platform="$6"
     local theme="$7"
 
-    dirIsEmpty "$path" 1 && return 0
-
     command="${command//%ROM%/%exec%}"
     extensions="${extensions// /,}"
     NAME="$fullname" COMMAND="$command" DIR="$path" EXTS="$extensions" "/opt/retropie/supplementary/mehstation/bin/mehtadata" -db="$db" -new-platform
