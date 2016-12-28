@@ -90,13 +90,9 @@ function configure_retropiemenu()
         'Connect to or disconnect from a wifi network and configure wifi settings.'
     )
 
-    local file
-    for file in "${files[@]}"; do
-        touch "$rpdir/$file.rp"
-    done
-
     setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
 
+    local file
     local name
     local desc
     local image
@@ -114,6 +110,8 @@ function configure_retropiemenu()
         name="${names[i]}"
         desc="${descs[i]}"
         image="$home/RetroPie/retropiemenu/icons/${files[i]}.png"
+
+        touch "$rpdir/$file.rp"
 
         local function
         for function in $(compgen -A function _add_rom_); do
