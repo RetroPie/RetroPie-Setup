@@ -84,6 +84,7 @@ function inputconfiguration() {
 
     DEVICE_TYPE=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@type" "$es_conf")
     DEVICE_NAME=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceName" "$es_conf")
+    DEVICE_GUID=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceGUID" "$es_conf")
 
     echo "Input type is '$DEVICE_TYPE'."
 
