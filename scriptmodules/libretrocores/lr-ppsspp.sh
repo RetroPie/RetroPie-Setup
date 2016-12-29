@@ -30,8 +30,6 @@ function sources_lr-ppsspp() {
     runCmd git submodule update --init
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
-    # backup older includes which are needed due to missing defines (eg PIX_FMT_ARGB / CODEC_ID_H264)
-    cp -R "ffmpeg/linux/armv7/include" "ffmpeg/linux/"
 }
 
 function build_lr-ppsspp() {
@@ -42,10 +40,8 @@ function build_lr-ppsspp() {
     local params=()
     if isPlatform "rpi"; then
         if isPlatform "rpi1"; then
-            cp -R "ffmpeg/linux/include" "ffmpeg/linux/arm/"
             params+=("platform=rpi1")
         else
-            cp -R "ffmpeg/linux/include" "ffmpeg/linux/armv7/"
             params+=("platform=rpi2")
         fi
     fi
