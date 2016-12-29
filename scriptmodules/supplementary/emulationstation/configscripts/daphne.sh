@@ -108,8 +108,10 @@ _EOF_
 }
 
 function map_daphne_joystick() {
-    local input_name="$3"
-    local input_id="$5"
+    local input_name="$1"
+    local input_type="$2"
+    local input_id="$3"
+    local input_value="$4"
 
     local -r mapping_file="$configdir/daphne/dapinput.ini"
     local -r force_joy_file="$configdir/daphne/dapinput-forcejoy.ini"
