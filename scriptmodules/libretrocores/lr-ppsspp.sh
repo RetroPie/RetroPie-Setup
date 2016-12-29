@@ -65,10 +65,12 @@ function configure_lr-ppsspp() {
     mkRomDir "psp"
     ensureSystemretroconfig "psp"
 
-    mkUserDir "$biosdir/PPSSPP"
-    cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
-    cp -Rv "$md_inst/flash0" "$biosdir/PPSSPP/"
-    chown -R $user:$user "$biosdir/PPSSPP"
+    if [[ "$md_mode" == "install" ]]; then
+        mkUserDir "$biosdir/PPSSPP"
+        cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
+        cp -Rv "$md_inst/flash0" "$biosdir/PPSSPP/"
+        chown -R $user:$user "$biosdir/PPSSPP"
+    fi
 
     addSystem 1 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"
 }
