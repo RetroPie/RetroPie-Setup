@@ -9,59 +9,54 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-###### input configuration interface functions for scripts in configscripts ######
-
-#######################################
-# Interface functions
-#
-# each input configuration module can have an optional function
-# check_<filename without extension>. If this function returns 1, the module is
-# skipped. This can be used to skip input configurations in some cases - eg
-# to skip configuration when an existing config file is not installed.
-#
-# There are 3 global variables which are set to the current device being processed
-#
-# DEVICE_TYPE = device type is currently either joystick or keyboard
-# DEVICE_NAME = name of the device
-#
-# There are 3 main interface functions for each of the input types (joystick/keyboard)
-#
-# function onstart_<filename without extension>_<inputtype>()
-# is run at the start of the input configuration
-#
-# function onend_<filename without extension>_<inputtype>()
-# is run at the end of the input configuration
-#
-# Returns:
-#   None
-#
-# function map_<filename without extension>_<inputtype>()
-# is run for each of the inputs - with the following arguments
-#
-# Arguments:
-#   $1 - input name
-#   $2 - input type
-#   $3 - input ID
-#   $4 - input value
-#
-# $1 - input name is one of the following
-#   up, down, left, right
-#   a, b, x, y
-#   leftshoulder, rightshoulder, lefttrigger, righttrigger
-#   leftthumb. rightthumb
-#   start, select
-#   leftanalogup, leftanalogdown, leftanalogleft, leftanalogright
-#   rightanalogup, rightanalogdown, rightanalogleft, rightanalogright
-# $2 - input type for joysticks are button, axis, hat or key for keyboard.
-# $3 - button id of the input for a joystick, or SDL2 keycode for a keyboard.
-# $4 - value of the joystick input or 1 for keyboard.
-#
-# Returns:
-#   None
-#
-# Globals:
-#   $home - the home directory of the user
-#######################################
+## @file scriptmodules/supplementary/emulationstation/inputconfiguration.sh
+## @brief input configuration script
+## @copyright GPLv3
+## @details
+## @par global variables
+##
+## There are 3 global variables which are set to the current device being processed
+##
+## `DEVICE_TYPE` = device type is currently either joystick or keyboard
+## `DEVICE_NAME` = name of the device
+## `DEVICE_GUID` = SDL2 joystick GUID of the device (-1 for keyboard)
+##
+## @par Interface functions
+##
+## each input configuration module can have an optional function
+## `check_<filename without extension>`. If this function returns 1, the module is
+## skipped. This can be used to skip input configurations in some cases - eg
+## to skip configuration when an existing config file is not installed.
+##
+## There are 3 main interface functions for each of the input types (joystick/keyboard)
+##
+## function `onstart_<filename without extension>_<inputtype>()`
+## is run at the start of the input configuration
+##
+## function `onend_<filename without extension>_<inputtype>()`
+## is run at the end of the input configuration
+##
+## Returns:
+##   None
+##
+## function map_<filename without extension>_<inputtype>()
+## is run for each of the inputs - with the following arguments
+##
+## Arguments:
+## * $1 - input name is one of the following
+##  * up, down, left, right
+##  * a, b, x, y
+##  * leftshoulder, rightshoulder, lefttrigger, righttrigger
+##  * leftthumb. rightthumb
+##  * start, select
+##  * leftanalogup, leftanalogdown, leftanalogleft, leftanalogright
+##  * rightanalogup, rightanalogdown, rightanalogleft, rightanalogright
+## * $2 - input type for joysticks are button, axis, hat or key for keyboard.
+## * $3 - button id of the input for a joystick, or SDL2 keycode for a keyboard.
+## * $4 - value of the joystick input or 1 for keyboard.
+##
+## Returns:
+##   None
 
 function inputconfiguration() {
 
