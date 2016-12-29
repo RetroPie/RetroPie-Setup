@@ -12,7 +12,6 @@
 function onstart_emulationstation_joystick() {
     local device_type="$1"
     local device_name="$2"
-    local device_guid="$3"
 
     local es_conf="$home/.emulationstation/es_input.cfg"
 
@@ -29,7 +28,6 @@ function onstart_emulationstation_joystick() {
         xmlstarlet ed -L -s "/inputList" -t elem -n newInputConfig -v "" \
             -i //newInputConfig -t attr -n "type" -v "$device_type" \
             -i //newInputConfig -t attr -n "deviceName" -v "$device_name" \
-            -i //newInputConfig -t attr -n "deviceGUID" -v "$device_guid" \
             -r //newInputConfig -v inputConfig \
             "$es_conf"
     else

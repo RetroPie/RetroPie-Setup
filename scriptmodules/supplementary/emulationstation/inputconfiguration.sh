@@ -30,7 +30,6 @@
 # Arguments for the above two functions are
 #   $1 - device type
 #   $2 - device name
-#   $3 - device sdl guid
 #
 # Returns:
 #   None
@@ -85,7 +84,6 @@ function inputconfiguration() {
 
     local device_type=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@type" "$es_conf")
     local device_name=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceName" "$es_conf")
-    local device_guid=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceGUID" "$es_conf")
 
     echo "Input type is '$device_type'."
 
@@ -107,7 +105,7 @@ function inputconfiguration() {
 
         # at the start, the onstart_module function is called.
         funcname="onstart_${module_id}_${device_type}"
-        fn_exists "$funcname" && "$funcname" "$device_type" "$device_name" "$device_guid"
+        fn_exists "$funcname" && "$funcname" "$device_type" "$device_name"
 
         local input_name
         # loop through all buttons and use corresponding config function if it exists
