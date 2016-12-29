@@ -50,7 +50,9 @@ if [[ ! -d "$usb_path" ]]; then
 fi
 
 if [[ -z "$(ls -A "$usb_path")" ]]; then
+    log info "Copying existing $retropie_path to $usb_path ..."
     log_cmd rsync -rtu "$retropie_path/" "$usb_path/"
 fi
 
+log info "Mounting $usb_path over $retropie_path ..."
 log_cmd mount -o bind "$usb_path" "$retropie_path"
