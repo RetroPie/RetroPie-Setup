@@ -179,19 +179,23 @@ function get_platform() {
     local architecture="$(uname --machine)"
     if [[ -z "$__platform" ]]; then
         case "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" in
-            BCM2708)
-                __platform="rpi1"
-                ;;
-            BCM2709)
-                local revision="$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)"
-                if [[ "$revision" == "a02082" || "$revision" == "a22082" ]]; then
-                    if [[ "$architecture" == "aarch64" ]]; then
-                        __platform="rpi3-64"
-                    else
-                        __platform="rpi3"
-                    fi
+            BCM*)
+                local rev="$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)"
+                if [[ 0x$rev -lt 16 ]]; then
+                    __platform="rpi1"
                 else
-                    __platform="rpi2"
+                    local cpu=$(((0x$rev >> 12) & 15))
+                    case $cpu in
+                        0)
+                            __platform="rpi1"
+                            ;;
+                        1)
+                            __platform="rpi2"
+                            ;;
+                        2)
+                            __platform="rpi3"
+                            ;;
+                    esac
                 fi
                 ;;
             ODROIDC)
