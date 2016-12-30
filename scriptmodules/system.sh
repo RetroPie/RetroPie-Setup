@@ -181,7 +181,7 @@ function get_platform() {
         case "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" in
             BCM*)
                 local rev="$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)"
-                if [[ 0x$rev -le 0x0015 ]]; then
+                if [[ $(((0x$rev >> 23) & 1)) -eq 0 ]]; then
                     __platform="rpi1"
                 else
                     local cpu=$(((0x$rev >> 12) & 15))
