@@ -49,5 +49,6 @@ function configure_lr-snes9x2010() {
 
     local def=1
     isPlatform "armv6" && def=0
-    addSystem $def "$md_id" "snes" "$md_inst/snes9x2010_libretro.so"
+    addEmulator $def "$md_id" "snes" "$md_inst/snes9x2010_libretro.so"
+    addSystem "snes"
 }

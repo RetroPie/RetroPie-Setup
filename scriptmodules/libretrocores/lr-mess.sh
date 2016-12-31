@@ -34,16 +34,13 @@ function install_lr-mess() {
 }
 
 function configure_lr-mess() {
-    mkRomDir "nes"
-    mkRomDir "gameboy"
-    mkRomDir "coleco"
-    mkRomDir "arcadia"
-    mkRomDir "crvision"
-    ensureSystemretroconfig "nes"
-    ensureSystemretroconfig "gameboy"
-    ensureSystemretroconfig "coleco"
-    ensureSystemretroconfig "arcadia"
-    ensureSystemretroconfig "crvision"
+    local system
+    for system in nes gameboy coleco arcadia crvision; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/mess_libretro.so"
+        addSystem "$system"
+    done
 
     setRetroArchCoreOption "mame_softlists_enable" "enabled"
     setRetroArchCoreOption "mame_softlists_auto_media" "enabled"
@@ -52,9 +49,4 @@ function configure_lr-mess() {
     mkdir "$biosdir/mame"
     cp -rv "$md_build/hash" "$biosdir/mame/"
     chown -R $user:$user "$biosdir/mame"
-    addSystem 0 "$md_id" "nes" "$md_inst/mess_libretro.so"
-    addSystem 0 "$md_id" "gameboy" "$md_inst/mess_libretro.so"
-    addSystem 0 "$md_id" "coleco" "$md_inst/mess_libretro.so"
-    addSystem 0 "$md_id" "arcadia" "$md_inst/mess_libretro.so"
-    addSystem 0 "$md_id" "crvision" "$md_inst/mess_libretro.so"
 }

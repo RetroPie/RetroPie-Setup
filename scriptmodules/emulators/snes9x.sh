@@ -45,5 +45,6 @@ function configure_snes9x() {
 
     setDispmanx "$md_id" 1
 
-    addSystem 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
+    addEmulator 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
+    addSystem "snes"
 }

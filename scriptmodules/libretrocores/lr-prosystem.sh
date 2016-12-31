@@ -38,5 +38,6 @@ function configure_lr-prosystem() {
 
     ensureSystemretroconfig "atari7800"
 
-    addSystem 1 "$md_id" "atari7800" "$md_inst/prosystem_libretro.so"
+    addEmulator 1 "$md_id" "atari7800" "$md_inst/prosystem_libretro.so"
+    addSystem "atari7800"
 }

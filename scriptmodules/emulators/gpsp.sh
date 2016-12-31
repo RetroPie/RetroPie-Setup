@@ -53,5 +53,6 @@ function configure_gpsp() {
     # move old config
     moveConfigFile "gpsp.cfg" "$md_conf_root/gba/gpsp.cfg"
 
-    addSystem 0 "$md_id" "gba" "$md_inst/gpsp %ROM%"
+    addEmulator 0 "$md_id" "gba" "$md_inst/gpsp %ROM%"
+    addSystem "gba"
 }

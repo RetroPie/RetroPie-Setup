@@ -45,5 +45,6 @@ function configure_simcoupe() {
     mkRomDir "samcoupe"
     moveConfigDir "$home/.simcoupe" "$md_conf_root/$md_id"
 
-    addSystem 1 "$md_id" "samcoupe" "pushd $md_inst; $md_inst/simcoupe autoboot -disk1 %ROM% -fullscreen; popd"
+    addEmulator 1 "$md_id" "samcoupe" "pushd $md_inst; $md_inst/simcoupe autoboot -disk1 %ROM% -fullscreen; popd"
+    addSystem "samcoupe"
 }

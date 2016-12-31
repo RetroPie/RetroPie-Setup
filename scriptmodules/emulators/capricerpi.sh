@@ -39,5 +39,6 @@ function install_capricerpi() {
 function configure_capricerpi() {
     mkRomDir "amstradcpc"
 
-    addSystem 0 "$md_id" "amstradcpc" "$md_inst/capriceRPI %ROM%"
+    addEmulator 0 "$md_id" "amstradcpc" "$md_inst/capriceRPI %ROM%"
+    addSystem "amstradcpc"
 }

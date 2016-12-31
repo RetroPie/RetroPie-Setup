@@ -55,7 +55,10 @@ function configure_lr-fbalpha() {
 
     local def=1
     isPlatform "armv6" && def=0
-    addSystem 0 "$md_id" "arcade" "$md_inst/fbalpha_libretro.so"
-    addSystem $def "$md_id" "neogeo" "$md_inst/fbalpha_libretro.so"
-    addSystem $def "$md_id" "fba" "$md_inst/fbalpha_libretro.so"
+    addEmulator 0 "$md_id" "arcade" "$md_inst/fbalpha_libretro.so"
+    addEmulator $def "$md_id" "neogeo" "$md_inst/fbalpha_libretro.so"
+    addEmulator $def "$md_id" "fba" "$md_inst/fbalpha_libretro.so"
+    addSystem "arcade"
+    addSystem "neogeo"
+    addSystem "fba"
 }

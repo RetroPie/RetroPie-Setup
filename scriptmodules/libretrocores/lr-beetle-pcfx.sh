@@ -34,5 +34,6 @@ function configure_lr-beetle-pcfx() {
     mkRomDir "pcfx"
     ensureSystemretroconfig "pcfx"
 
-    addSystem 1 "$md_id" "pcfx" "$md_inst/mednafen_pcfx_libretro.so"
+    addEmulator 1 "$md_id" "pcfx" "$md_inst/mednafen_pcfx_libretro.so"
+    addSystem "pcfx"
 }

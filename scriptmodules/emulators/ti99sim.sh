@@ -38,5 +38,6 @@ function configure_ti99sim() {
     moveConfigDir "$home/.ti99sim" "$md_conf_root/ti99/"
     ln -sf "$biosdir/TI-994A.ctg" "$md_inst/TI-994A.ctg"
 
-    addSystem 1 "$md_id" "ti99" "pushd $md_inst; $md_inst/ti99sim-sdl -f %ROM%; popd" "TI99" ".ctg .CTG"
+    addEmulator 1 "$md_id" "ti99" "pushd $md_inst; $md_inst/ti99sim-sdl -f %ROM%; popd" "TI99" ".ctg .CTG"
+    addSystem "ti99"
 }

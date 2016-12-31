@@ -41,5 +41,6 @@ function configure_lr-vecx() {
     cp -v "$md_inst/"{fast.bin,skip.bin,system.bin} "$biosdir/"
     chown $user:$user "$biosdir/"{fast.bin,skip.bin,system.bin}
 
-    addSystem 1 "$md_id" "vectrex" "$md_inst/vecx_libretro.so"
+    addEmulator 1 "$md_id" "vectrex" "$md_inst/vecx_libretro.so"
+    addSystem "vectrex"
 }

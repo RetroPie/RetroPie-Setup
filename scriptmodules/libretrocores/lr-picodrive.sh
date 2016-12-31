@@ -42,17 +42,11 @@ function install_lr-picodrive() {
 }
 
 function configure_lr-picodrive() {
-    mkRomDir "megadrive"
-    mkRomDir "mastersystem"
-    mkRomDir "segacd"
-    mkRomDir "sega32x"
-    ensureSystemretroconfig "megadrive"
-    ensureSystemretroconfig "mastersystem"
-    ensureSystemretroconfig "segacd"
-    ensureSystemretroconfig "sega32x"
-
-    addSystem 1 "$md_id" "mastersystem" "$md_inst/picodrive_libretro.so"
-    addSystem 1 "$md_id" "megadrive" "$md_inst/picodrive_libretro.so"
-    addSystem 1 "$md_id" "segacd" "$md_inst/picodrive_libretro.so"
-    addSystem 1 "$md_id" "sega32x" "$md_inst/picodrive_libretro.so"
+    local system
+    for system in megadrrive mastersystem segacd sega32x; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 1 "$md_id" "$system" "$md_inst/picodrive_libretro.so"
+        addSystem "$system"
+    done
 }

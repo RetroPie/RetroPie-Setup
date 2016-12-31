@@ -41,6 +41,8 @@ function configure_lr-beetle-wswan() {
     ensureSystemretroconfig "wonderswan"
     ensureSystemretroconfig "wonderswancolor"
 
-    addSystem 1 "$md_id" "wonderswan" "$md_inst/mednafen_wswan_libretro.so"
-    addSystem 1 "$md_id" "wonderswancolor" "$md_inst/mednafen_wswan_libretro.so"
+    addEmulator 1 "$md_id" "wonderswan" "$md_inst/mednafen_wswan_libretro.so"
+    addEmulator 1 "$md_id" "wonderswancolor" "$md_inst/mednafen_wswan_libretro.so"
+    addSystem "wonderswan"
+    addSystem "wonderswancolor"
 }

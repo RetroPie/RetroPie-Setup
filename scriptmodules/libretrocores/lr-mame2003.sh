@@ -61,6 +61,8 @@ function configure_lr-mame2003() {
     setRetroArchCoreOption "mame2003-dcs-speedhack" "enabled"
     setRetroArchCoreOption "mame2003-samples" "enabled"
 
-    addSystem 0 "$md_id" "arcade" "$md_inst/mame2003_libretro.so"
-    addSystem 1 "$md_id" "mame-libretro" "$md_inst/mame2003_libretro.so"
+    addEmulator 0 "$md_id" "arcade" "$md_inst/mame2003_libretro.so"
+    addEmulator 1 "$md_id" "mame-libretro" "$md_inst/mame2003_libretro.so"
+    addSystem "arcade"
+    addSystem "mame-libretro"
 }

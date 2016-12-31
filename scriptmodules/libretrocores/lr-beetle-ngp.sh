@@ -36,11 +36,12 @@ function install_lr-beetle-ngp() {
 }
 
 function configure_lr-beetle-ngp() {
-    mkRomDir "ngp"
-    mkRomDir "ngpc"
-    ensureSystemretroconfig "ngp"
-    ensureSystemretroconfig "ngpc"
+    local system
+    for system in ngp ngpc; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 1 "$md_id" "$system" "$md_inst/mednafen_ngp_libretro.so"
+        addSystem "$system"
+    done
 
-    addSystem 1 "$md_id" "ngp" "$md_inst/mednafen_ngp_libretro.so"
-    addSystem 1 "$md_id" "ngpc" "$md_inst/mednafen_ngp_libretro.so"
 }

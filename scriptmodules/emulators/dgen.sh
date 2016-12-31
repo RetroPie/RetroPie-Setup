@@ -38,11 +38,15 @@ function install_dgen() {
     md_ret_require="$md_inst/bin/dgen"
 }
 
-function configure_dgen()
-{
-    mkRomDir "megadrive"
-    mkRomDir "segacd"
-    mkRomDir "sega32x"
+function configure_dgen() {
+    local system
+    for system in megadrive segacd sega32x; do
+        mkRomDir "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
+        addSystem "$system"
+    done
+
+    [[ "$md_mode" == "remove" ]] && return
 
     mkUserDir "$md_conf_root/megadrive"
 
@@ -94,8 +98,4 @@ function configure_dgen()
     iniSet "joy_pad2_start" "joystick1-button7"
 
     setDispmanx "$md_id" 1
-
-    addSystem 0 "$md_id" "megadrive" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
-    addSystem 0 "$md_id" "segacd" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
-    addSystem 0 "$md_id" "sega32x" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
 }

@@ -34,5 +34,6 @@ function configure_lr-quicknes() {
     mkRomDir "nes"
     ensureSystemretroconfig "nes"
 
-    addSystem 0 "$md_id" "nes" "$md_inst/quicknes_libretro.so"
+    addEmulator 0 "$md_id" "nes" "$md_inst/quicknes_libretro.so"
+    addSystem "nes"
 }

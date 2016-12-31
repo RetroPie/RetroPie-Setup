@@ -68,5 +68,6 @@ function configure_lr-ppsspp() {
         chown -R $user:$user "$biosdir/PPSSPP"
     fi
 
-    addSystem 1 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"
+    addEmulator 1 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"
+    addSystem "psp"
 }

@@ -39,6 +39,8 @@ function configure_lr-tgbdual() {
     # enable dual / link by default
     setRetroArchCoreOption "tgbdual_gblink_enable" "enabled"
 
-    addSystem 0 "$md_id" "gb" "$md_inst/tgbdual_libretro.so"
-    addSystem 0 "$md_id" "gbc" "$md_inst/tgbdual_libretro.so"
+    addEmulator 0 "$md_id" "gb" "$md_inst/tgbdual_libretro.so"
+    addEmulator 0 "$md_id" "gbc" "$md_inst/tgbdual_libretro.so"
+    addSystem "gb"
+    addSystem "gbc"
 }

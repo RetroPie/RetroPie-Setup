@@ -37,5 +37,6 @@ function configure_stella() {
         setDispmanx "$md_id" 1
     fi
 
-    addSystem 0 "$md_id" "atari2600" "stella -maxres 320x240 %ROM%"
+    addEmulator 0 "$md_id" "atari2600" "stella -maxres 320x240 %ROM%"
+    addSystem "atari2600"
 }

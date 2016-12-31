@@ -44,14 +44,11 @@ function install_lr-fbalpha2012() {
 }
 
 function configure_lr-fbalpha2012() {
-    mkRomDir "arcade"
-    mkRomDir "fba"
-    mkRomDir "neogeo"
-    ensureSystemretroconfig "arcade"
-    ensureSystemretroconfig "fba"
-    ensureSystemretroconfig "neogeo"
-
-    addSystem 0 "$md_id" "arcade" "$md_inst/fbalpha2012_libretro.so"
-    addSystem 0 "$md_id" "neogeo" "$md_inst/fbalpha2012_libretro.so"
-    addSystem 0 "$md_id" "fba" "$md_inst/fbalpha2012_libretro.so"
+    local system
+    for system in arcade fba neogeo; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/fbalpha2012_libretro.so"
+        addSystem "$system"
+    done
 }

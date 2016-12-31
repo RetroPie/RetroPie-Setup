@@ -84,6 +84,8 @@ function configure_mame4all() {
         chown -R $user:$user "$md_conf_root/$system"
     fi
 
-    addSystem 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
-    addSystem 1 "$md_id" "$system" "$md_inst/mame %BASENAME%"
+    addEmulator 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
+    addEmulator 1 "$md_id" "$system" "$md_inst/mame %BASENAME%"
+    addSystem "arcade"
+    addSystem "$system"
 }
