@@ -76,7 +76,7 @@ function retropie_welcome() {
         "${fgred}   \`***'   "
         "${bfgwht}    |*|    "
         "${bfgwht}    |*|    "
-        "  ${bfgred}..${bfgwht}|*|${bfgred}..  "
+        "${bfgred}  ..${bfgwht}|*|${bfgred}..  "
         "${bfgred}.*** ${bfgwht}*${bfgred} ***."
         "${bfgred}*******${fggrn}@@${bfgred}**"
         "${fgred}\`*${bfgred}****${bfgylw}@@${bfgred}*${fgred}*'"
