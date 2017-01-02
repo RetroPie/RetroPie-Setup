@@ -86,7 +86,7 @@ function disable_autostart() {
         rm "$home/.config/autostart/retropie.desktop"
     else
         if [[ "$__os_id" == "Raspbian" ]]; then
-            if [["$__chroot" -eq 1 ]]; then
+            if [[ "$__chroot" -eq 1 ]]; then
                 systemctl set-default graphical.target
                 ln -fs /lib/systemd/system/getty@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
             else
