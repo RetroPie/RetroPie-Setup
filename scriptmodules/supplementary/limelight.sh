@@ -50,8 +50,8 @@ function configure_limelight() {
     mkRomDir "limelight"
 
     # Add System to es_system.cfg
-    addEmulator 1 "$md_id" "limelight" "%ROM%" "Limelight Game Streaming" ".sh .SH"
-    addSystem "limelight"
+    addEmulator 1 "$md_id" "limelight" "%ROM%"
+    addSystem "limelight" "Limelight Game Streaming" ".sh"
 
     [[ "$md_mode" == "remove" ]] && return
 

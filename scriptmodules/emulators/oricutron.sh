@@ -59,7 +59,7 @@ function configure_oricutron() {
     for machine in atmos oric1 o16k telestrat pravetz; do
         default=0
         [[ "$machine" == "atmos" ]] && default=1
-        addEmulator 1 "$md_id-$machine" "oric" "pushd $md_inst; $md_inst/oricutron --machine $machine %ROM% --fullscreen; popd" "Oric 1/Atmos" ".dsk .tap"
+        addEmulator 1 "$md_id-$machine" "oric" "pushd $md_inst; $md_inst/oricutron --machine $machine %ROM% --fullscreen; popd"
     done
     addSystem "oric"
 
