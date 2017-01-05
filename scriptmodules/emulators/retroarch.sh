@@ -39,7 +39,7 @@ function build_retroarch() {
     ! isPlatform "x11" && params+=(--disable-x11 --enable-opengles --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
     isPlatform "rpi" && params+=(--enable-dispmanx)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
-    if isPlatform "arm" && ! isPlatform "64bit"; then
+    if isPlatform "arm"; then
         params+=(--enable-floathard)
         isPlatform "neon" && params+=(--enable-neon)
     fi
