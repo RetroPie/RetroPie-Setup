@@ -131,6 +131,8 @@ function install_mupen64plus() {
 
 function configure_mupen64plus() {
     if isPlatform "rpi"; then
+        addSystem 0 "${md_id}-gles2n64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM% 320x240"
+        addSystem 0 "${md_id}-videocore$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-videocore %ROM% 320x240"
         local res
         for res in "320x240" "640x480"; do
             local def=0
