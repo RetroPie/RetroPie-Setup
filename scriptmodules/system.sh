@@ -284,12 +284,16 @@ function platform_odroid-c1() {
 }
 
 function platform_odroid-c2() {
-    __default_cflags="-O2 -march=native -ftree-vectorize -funsafe-math-optimizations"
+    if [[ "$(getconf LONG_BIT)" -eq 32 ]]; then
+        __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
+        __platform_flags="arm armv8 neon mali"
+    else
+        __default_cflags="-O2 -march=native"
+        __platform_flags="aarch64 mali"
+    fi
+    __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="aarch64 armv8 mali"
-    __qemu_cpu=cortex-a15
-    __has_binaries=0
 }
 
 function platform_x86() {
