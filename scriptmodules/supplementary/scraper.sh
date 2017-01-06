@@ -18,7 +18,7 @@ function depends_scraper() {
 }
 
 function sources_scraper() {
-    GOPATH="$md_build" go get github.com/sselph/scraper
+    GOPATH="$md_build" go get -u github.com/sselph/scraper
 }
 
 function build_scraper() {
