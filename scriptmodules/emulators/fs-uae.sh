@@ -70,5 +70,6 @@ function configure_fs-uae() {
     rm "$config"
     
     local exts=$(getPlatformConfig amiga_exts)
-    addSystem 1 "$md_id" "amiga" "bash $md_inst/bin/fs-uae.sh '$exts' %ROM%"
+    addEmulator 1 "$md_id" "amiga" "bash $md_inst/bin/fs-uae.sh '$exts' %ROM%"
+    addSystem "amiga"
 }

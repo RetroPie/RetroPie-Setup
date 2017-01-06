@@ -51,5 +51,6 @@ function configure_pisnes() {
 
     copyDefaultConfig "$md_inst/snes9x.cfg.template" "$md_conf_root/snes/snes9x.cfg"
 
-    addSystem 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
+    addEmulator 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
+    addSystem "snes"
 }

@@ -43,5 +43,6 @@ function configure_lr-reicast() {
     iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
     iniSet "video_shared_context" "true"
 
-    addSystem 0 "$md_id" "dreamcast" "$md_inst/reicast_libretro.so"
+    addEmulator 0 "$md_id" "dreamcast" "$md_inst/reicast_libretro.so"
+    addSystem "dreamcast"
 }

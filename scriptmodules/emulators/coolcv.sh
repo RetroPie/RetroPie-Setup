@@ -24,5 +24,6 @@ function configure_coolcv() {
 
     moveConfigFile "$home/coolcv_mapping.txt" "$md_conf_root/coleco/coolcv_mapping.txt"
 
-    addSystem 1 "$md_id" "coleco colecovision colecovision" "$md_inst/coolcv/coolcv_pi %ROM%"
+    addEmulator 1 "$md_id" "coleco colecovision colecovision" "$md_inst/coolcv/coolcv_pi %ROM%"
+    addSystem "colecovision"
 }

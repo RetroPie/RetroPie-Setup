@@ -55,6 +55,8 @@ _EOF_
         chown -R $user:$user "$md_conf_root/neogeo/gngeorc"
     fi
 
-    addSystem 0 "$md_id" "arcade" "$md_inst/bin/gngeo -i $romdir/neogeo -B $md_inst/neogeobios %ROM%"
-    addSystem 0 "$md_id" "neogeo" "$md_inst/bin/gngeo -i $romdir/neogeo -B $md_inst/neogeobios %ROM%"
+    addEmulator 0 "$md_id" "arcade" "$md_inst/bin/gngeo -i $romdir/neogeo -B $md_inst/neogeobios %ROM%"
+    addEmulator 0 "$md_id" "neogeo" "$md_inst/bin/gngeo -i $romdir/neogeo -B $md_inst/neogeobios %ROM%"
+    addSystem "arcade"
+    addSystem "neogeo"
 }

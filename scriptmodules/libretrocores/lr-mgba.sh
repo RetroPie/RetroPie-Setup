@@ -44,5 +44,6 @@ function configure_lr-mgba() {
 
     local def=1
     isPlatform "armv6" && def=0
-    addSystem $def "$md_id" "gba" "$md_inst/mgba_libretro.so"
+    addEmulator $def "$md_id" "gba" "$md_inst/mgba_libretro.so"
+    addSystem "gba"
 }

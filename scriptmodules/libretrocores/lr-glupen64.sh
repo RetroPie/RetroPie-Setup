@@ -49,5 +49,6 @@ function configure_lr-glupen64() {
     mkRomDir "n64"
     ensureSystemretroconfig "n64"
 
-    addSystem 0 "$md_id" "n64" "$md_inst/glupen64_libretro.so"
+    addEmulator 0 "$md_id" "n64" "$md_inst/glupen64_libretro.so"
+    addSystem "n64"
 }

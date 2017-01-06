@@ -48,7 +48,8 @@ function configure_lr-hatari() {
     # move any old configs to new location
     moveConfigDir "$home/.hatari" "$md_conf_root/atarist"
 
-    addSystem 1 "$md_id" "atarist" "$md_inst/hatari_libretro.so"
+    addEmulator 1 "$md_id" "atarist" "$md_inst/hatari_libretro.so"
+    addSystem "atarist"
 
     # add LD_LIBRARY_PATH='$md_inst' to start of launch command
     iniConfig " = " '"' "$configdir/atarist/emulators.cfg"

@@ -35,5 +35,6 @@ function configure_lr-armsnes() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 
-    addSystem 0 "$md_id" "snes" "$md_inst/libpocketsnes.so"
+    addEmulator 0 "$md_id" "snes" "$md_inst/libpocketsnes.so"
+    addSystem "snes"
 }

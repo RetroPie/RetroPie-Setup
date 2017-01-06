@@ -48,6 +48,8 @@ function configure_lr-nestopia() {
 
     cp NstDatabase.xml "$biosdir/"
 
-    addSystem 0 "$md_id" "nes" "$md_inst/nestopia_libretro.so"
-    addSystem 1 "$md_id" "fds" "$md_inst/nestopia_libretro.so"
+    addEmulator 0 "$md_id" "nes" "$md_inst/nestopia_libretro.so"
+    addEmulator 1 "$md_id" "fds" "$md_inst/nestopia_libretro.so"
+    addSystem "nes"
+    addSystem "fds"
 }

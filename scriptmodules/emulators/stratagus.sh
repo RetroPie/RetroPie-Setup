@@ -41,5 +41,6 @@ function install_stratagus() {
 function configure_stratagus() {
     mkRomDir "stratagus"
 
-    addSystem 0 "$md_id" "stratagus" "$md_inst/stratagus -F -d %ROM%" "Stratagus Strategy Engine" ".wc1 .wc2 .sc .data"
+    addEmulator 0 "$md_id" "stratagus" "$md_inst/stratagus -F -d %ROM%"
+    addSystem "stratagus" "Stratagus Strategy Engine" ".wc1 .wc2 .sc .data"
 }
