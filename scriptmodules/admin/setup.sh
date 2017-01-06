@@ -149,6 +149,10 @@ function package_setup() {
             options+=(X "Remove")
         fi
 
+        if [[ -d "$__builddir/$md_id" ]]; then
+            options+=(Z "Clean source folder")
+        fi
+
         local help="${__mod_desc[$idx]}\n\n${__mod_help[$idx]}"
         if [[ -n "$help" ]]; then
             options+=(H "Package Help")
@@ -206,6 +210,10 @@ function package_setup() {
                 ;;
             H)
                 printMsgs "dialog" "$help"
+                ;;
+            Z)
+                rp_callModule "$idx" clean
+                printMsgs "dialog" "$__builddir/$md_id has been removed."
                 ;;
             *)
                 break
