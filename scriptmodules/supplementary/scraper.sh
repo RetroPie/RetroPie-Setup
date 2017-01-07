@@ -79,10 +79,20 @@ function scrape_scraper() {
     if [[ -n "$max_width" ]]; then
         params+=(-max_width "$max_width")
     fi
-    if [[ "$use_gdb_scraper" -eq 1 ]]; then
-        params+=(-use_gdb)
+    if [[ -n "$max_height" ]]; then
+        params+=(-max_height "$max_height")
+    fi
+    if [[ "$console_src" -eq 0 ]]; then
+        params+=(-console_src="ovgdb")
+    elif [[ "$console_src" -eq 1 ]]; then
+        params+=(-console_src="gdb")
     else
-        params+=(-use_ovgdb)
+        params+=(-console_src="ss")
+    fi
+    if [[ "$mame_src" -eq 0 ]]; then
+        params+=(-mame_src="mamedb")
+    else
+        params+=(-mame_src="ss")
     fi
     if [[ "$rom_name" -eq 1 ]]; then
         params+=(-use_nointro_name=false)
@@ -136,7 +146,9 @@ function _load_config_scraper() {
     echo "$(loadModuleConfig \
         'use_thumbs=1' \
         'max_width=400' \
-        'use_gdb_scraper=1' \
+        'max_height=400' \
+        'console_src=1' \
+        'mame_src=0' \
         'rom_name=0' \
         'append_only=0' \
         'use_rom_folder=0' \
@@ -173,12 +185,18 @@ function gui_scraper() {
             options+=(3 "Thumbnails only (Disabled)")
         fi
 
-        options+=(4 "Max image width ($max_width)")
-
-        if [[ "$use_gdb_scraper" -eq 1 ]]; then
-            options+=(5 "Scraper (thegamesdb)")
+        if [[ "$mame_src" -eq 0 ]]; then
+            options+=(4 "Arcade Source (MameDB)")
         else
-            options+=(5 "Scraper (OpenVGDB)")
+            options+=(4 "Arcade Source (ScreenScraper)")
+        fi
+
+        if [[ "$console_src" -eq 0 ]]; then
+            options+=(5 "Console Source (OpenVGDB)")
+        elif [[ "$console_src" -eq 1 ]]; then
+            options+=(5 "Console Source (thegamesdb)")
+        else
+            options+=(5 "Console Source (ScreenScraper)")
         fi
 
         if [[ "$rom_name" -eq 0 ]]; then
@@ -201,6 +219,9 @@ function gui_scraper() {
             options+=(8 "Use rom folder for gamelist & images (Disabled)")
         fi
 
+        options+=(W "Max image width ($max_width)")
+        options+=(H "Max image height ($max_height)")
+
         options+=(U "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -219,13 +240,12 @@ function gui_scraper() {
                     iniSet "use_thumbs" "$use_thumbs"
                     ;;
                 4)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
-                    max_width=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    iniSet "max_width" "$max_width"
+                    mame_src="$((( mame_src + 1) % 2))"
+                    iniSet "mame_src" "$mame_src"
                     ;;
                 5)
-                    use_gdb_scraper="$((use_gdb_scraper ^ 1))"
-                    iniSet "use_gdb_scraper" "$use_gdb_scraper"
+                    console_src="$((( console_src + 1) % 3))"
+                    iniSet "console_src" "$console_src"
                     ;;
                 6)
                     rom_name="$((( rom_name + 1 ) % 3))"
@@ -238,6 +258,16 @@ function gui_scraper() {
                 8)
                     use_rom_folder="$((use_rom_folder ^ 1))"
                     iniSet "use_rom_folder" "$use_rom_folder"
+                    ;;
+                H)
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image height in pixels" 10 60 "$max_height")
+                    max_height=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    iniSet "max_height" "$max_height"
+                    ;;
+                W)
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
+                    max_width=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    iniSet "max_width" "$max_width"
                     ;;
                 U)
                     rp_callModule "$md_id"
