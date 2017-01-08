@@ -1119,7 +1119,7 @@ _EOF_
             delSystem "$id" "ports"
         fi
     else
-        [[ -n "$cmd" ]] && addEmulator "$id" "$port" "$cmd"
+        [[ -n "$cmd" ]] && addEmulator 1 "$id" "$port" "$cmd"
         addSystem "ports"
     fi
 }
