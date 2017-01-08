@@ -1120,6 +1120,7 @@ _EOF_
         fi
     else
         [[ -n "$cmd" ]] && addEmulator "$id" "$port" "$cmd"
+        addSystem "ports"
     fi
 }
 
