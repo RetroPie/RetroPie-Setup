@@ -25,6 +25,8 @@ function install_bin_giana() {
 }
 
 function configure_giana() {
+    moveConfigDir "$home/.giana" "$md_conf_root/giana"
+
     addPort "$md_id" "giana" "Giana's Return" "pushd $md_inst; $md_inst/giana_rpi; popd"
 
     chmod +x "$md_inst/giana_rpi"

@@ -9,34 +9,33 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="lr-pocketsnes"
-rp_module_desc="SNES emu - ARM based SNES emulator for libretro"
+rp_module_id="lr-bsnes"
+rp_module_desc="Super Nintendo emu - bsnes port for libretro"
 rp_module_help="ROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
-rp_module_section="main"
-rp_module_flags="!x86"
+rp_module_section="opt"
+rp_module_flags="!arm"
 
-function sources_lr-pocketsnes() {
-    gitPullOrClone "$md_build" https://github.com/libretro/snes9x2002.git
+function sources_lr-bsnes() {
+    gitPullOrClone "$md_build" https://github.com/libretro/bsnes-libretro.git
 }
 
-function build_lr-pocketsnes() {
+function build_lr-bsnes() {
     make clean
-    CFLAGS="$CFLAGS" make ARM_ASM=1
-    md_ret_require="$md_build/snes9x2002_libretro.so"
+    make
+    md_ret_require="$md_build/out/bsnes_accuracy_libretro.so"
 }
 
-function install_lr-pocketsnes() {
+function install_lr-bsnes() {
     md_ret_files=(
-        'snes9x2002_libretro.so'
-        'README.txt'
+        'out/bsnes_accuracy_libretro.so'
+        'COPYING'
     )
 }
 
-function configure_lr-pocketsnes() {
+function configure_lr-bsnes() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 
-    local def=0
-    isPlatform "armv6" && def=1
-    addSystem $def "$md_id" "snes" "$md_inst/snes9x2002_libretro.so"
+    addEmulator 1 "$md_id" "snes" "$md_inst/bsnes_accuracy_libretro.so"
+    addSystem "snes"
 }

@@ -15,6 +15,12 @@ rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/
 rp_module_section="main"
 rp_module_flags="!mali"
 
+function depends_lr-glupen64() {
+    local depends=(flex bison libpng12-dev)
+    isPlatform "x86" && depends+=(nasm)
+    getDepends "${depends[@]}"
+}
+
 function sources_lr-glupen64() {
     gitPullOrClone "$md_build" https://github.com/loganmc10/GLupeN64.git
 }
@@ -43,5 +49,6 @@ function configure_lr-glupen64() {
     mkRomDir "n64"
     ensureSystemretroconfig "n64"
 
-    addSystem 0 "$md_id" "n64" "$md_inst/glupen64_libretro.so"
+    addEmulator 0 "$md_id" "n64" "$md_inst/glupen64_libretro.so"
+    addSystem "n64"
 }

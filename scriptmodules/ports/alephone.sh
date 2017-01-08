@@ -67,7 +67,13 @@ function configure_alephone() {
 
     mkRomDir "ports/$md_id"
 
-    moveConfigDir "$home/.alephone" "$configDir/alephone"
+    moveConfigDir "$home/.alephone" "$md_conf_root/alephone"
+    # fix for wrong config location
+    if [[ -d "/alephone" ]]; then
+        cp -R /alephone "$md_conf_root/"
+        rm -rf /alephone
+        chown $user:$user "$md_conf_root/alephone"
+    fi
 
     [[ "$md_mode" == "install" ]] && game_data_alephone
 }

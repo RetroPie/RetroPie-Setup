@@ -32,7 +32,7 @@ function get_opts_wolf4sdl() {
 function get_bins_wolf4sdl() {
     local opt
     while read -r opt; do
-        echo ${opt%% *}
+        echo "${opt%% *}"
     done < <(get_opts_wolf4sdl)
 }
 

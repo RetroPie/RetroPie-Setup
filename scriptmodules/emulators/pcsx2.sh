@@ -26,6 +26,7 @@ function remove_pcsx2() {
 function configure_pcsx2() {
     mkRomDir "ps2"
 
-    addSystem 0 "$md_id-nogui" "ps2" "PCSX2 %ROM% --fullscreen --nogui"
-    addSystem 1 "$md_id" "ps2" "PCSX2 %ROM% --windowed"
+    addEmulator 0 "$md_id-nogui" "ps2" "PCSX2 %ROM% --fullscreen --nogui"
+    addEmulator 1 "$md_id" "ps2" "PCSX2 %ROM% --windowed"
+    addSystem "ps2"
 }

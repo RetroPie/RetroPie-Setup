@@ -102,6 +102,7 @@ modules=(
     'splashscreen enable'
     'bashwelcometweak'
     'xpad'
+    'scraper'
 )
 for module in "\${modules[@]}"; do
     # rpi1 platform would use QEMU_CPU set to arm1176, but it seems buggy currently (lots of segfaults)
@@ -160,7 +161,7 @@ function create_image() {
     kpartx -s -a "$image"
 
     mkfs.vfat -F 16 -n boot /dev/mapper/loop0p1
-    mkfs.ext4 -L retropie /dev/mapper/loop0p2
+    mkfs.ext4 -O ^metadata_csum -L retropie /dev/mapper/loop0p2
 
     parted "$image" print
 

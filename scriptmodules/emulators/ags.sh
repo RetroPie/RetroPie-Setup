@@ -16,13 +16,7 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_ags() {
-    local depends=(xorg pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev)
-    if [[ "$__raspbian_ver" -lt 8 ]]; then
-        depends+=(liballegro4.2-dev)
-    else
-        depends+=(liballegro4-dev)
-    fi
-    getDepends "${depends[@]}"
+    getDepends xorg pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev liballegro4-dev
 }
 
 function sources_ags() {
@@ -42,8 +36,10 @@ function configure_ags() {
     mkRomDir "ags"
 
     if isPlatform "x11"; then
-        addSystem 1 "$md_id" "ags" "$md_inst/bin/ags --fullscreen %ROM%" "Adventure Game Studio" ".exe"
+        addEmulator 1 "$md_id" "ags" "$md_inst/bin/ags --fullscreen %ROM%" "Adventure Game Studio" ".exe"
     else
-        addSystem 1 "$md_id" "ags" "xinit $md_inst/bin/ags --fullscreen %ROM%" "Adventure Game Studio" ".exe"
+        addEmulator 1 "$md_id" "ags" "xinit $md_inst/bin/ags --fullscreen %ROM%" "Adventure Game Studio" ".exe"
     fi
+
+    addSystem "ags"
 }

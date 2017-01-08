@@ -15,7 +15,11 @@ rp_module_section=""
 rp_module_flags="!x86"
 
 function get_ver_sdl2() {
-    local ver="2.0.4+4"
+    echo "2.0.4"
+}
+
+function get_pkg_ver_sdl2() {
+    local ver="$(get_ver_sdl2)+4"
     isPlatform "rpi" && ver+="rpi"
     isPlatform "mali" && ver+="mali"
     echo "$ver"
@@ -35,19 +39,23 @@ function depends_sdl2() {
 }
 
 function sources_sdl2() {
-    local branch="release-2.0.4"
-    isPlatform "rpi" && branch="retropie-2.0.4"
-    isPlatform "mali" && branch="mali-2.0.4"
-    gitPullOrClone "$md_build/$(get_ver_sdl2)" https://github.com/RetroPie/SDL-mirror.git "$branch"
-    cd $(get_ver_sdl2)
-    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v $(get_ver_sdl2) "SDL 2.0.4 configured for the $__platform"
+    local ver="$(get_ver_sdl2)"
+    local pkg_ver="$(get_pkg_ver_sdl2)"
+
+    local branch="release-$ver"
+    isPlatform "rpi" && branch="retropie-$ver"
+    isPlatform "mali" && branch="mali-$ver"
+
+    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
+    cd "$pkg_ver"
+    DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
 }
 
 function build_sdl2() {
-    cd $(get_ver_sdl2)
+    cd "$(get_pkg_ver_sdl2)"
     dpkg-buildpackage
-    md_ret_require="$md_build/libsdl2-dev_$(get_ver_sdl2)_$(get_arch_sdl2).deb"
-    local dest="$__tmpdir/archives/$__raspbian_name/$__platform"
+    md_ret_require="$md_build/libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb"
+    local dest="$__tmpdir/archives/$__os_codename/$__platform"
     mkdir -p "$dest"
     cp ../*.deb "$dest/"
 }
@@ -60,7 +68,7 @@ function remove_old_sdl2() {
 function install_sdl2() {
     remove_old_sdl2
     # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
-    if ! dpkg -i libsdl2-2.0-0_$(get_ver_sdl2)_$(get_arch_sdl2).deb libsdl2-dev_$(get_ver_sdl2)_$(get_arch_sdl2).deb; then
+    if ! dpkg -i libsdl2-2.0-0_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb; then
         apt-get -y -f install
     fi
     echo "libsdl2-dev hold" | dpkg --set-selections
@@ -71,8 +79,8 @@ function install_bin_sdl2() {
         md_ret_errors+=("$md_id is only available as a binary package for platform rpi")
         return 1
     fi
-    wget -c "$__binary_url/libsdl2-dev_$(get_ver_sdl2)_armhf.deb"
-    wget -c "$__binary_url/libsdl2-2.0-0_$(get_ver_sdl2)_armhf.deb"
+    wget -c "$__binary_url/libsdl2-dev_$(get_pkg_ver_sdl2)_armhf.deb"
+    wget -c "$__binary_url/libsdl2-2.0-0_$(get_pkg_ver_sdl2)_armhf.deb"
     install_sdl2
     rm ./*.deb
 }

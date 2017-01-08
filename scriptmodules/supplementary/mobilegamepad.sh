@@ -14,26 +14,29 @@ rp_module_desc="Mobile Universal Gamepad for RetroPie"
 rp_module_section="exp"
 
 function depends_mobilegamepad() {
-    getDepends nodejs npm
-    if isPlatform "arm"; then
-        wget -qO "$__tmpdir/node_latest_armhf.deb" http://node-arm.herokuapp.com/node_latest_armhf.deb
-        dpkg -i "$__tmpdir/node_latest_armhf.deb"
-        rm "$__tmpdir/node_latest_armhf.deb"
-    fi
-    npm install -g grunt-cli
-    npm install --unsafe-perm pm2 -g
+    depends_virtualgamepad "$@"
+}
+
+function remove_mobilegamepad() {
+    pm2 stop app
+    pm2 delete app
+    rm -f /etc/apt/sources.list.d/nodesource.list
 }
 
 function sources_mobilegamepad() {
     gitPullOrClone "$md_inst" https://github.com/sbidolach/mobile-gamepad.git
+    chown -R $user:$user "$md_inst"
 }
 
-function build_mobilegamepad() {
+function install_mobilegamepad() {
+    npm install -g grunt-cli
+    npm install pm2 -g --unsafe-perm
     cd "$md_inst"
-    npm install --unsafe-perm
+    sudo -u $user npm install
 }
 
 function configure_mobilegamepad() {
+    [[ "$md_mode" == "remove" ]] && return
     pm2 start app.sh
     pm2 startup
     pm2 save

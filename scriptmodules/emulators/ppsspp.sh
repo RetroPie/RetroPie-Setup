@@ -13,7 +13,6 @@ rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_section="opt"
-rp_module_flags="!armv6 !mali"
 
 function depends_ppsspp() {
     local depends=(cmake libsdl2-dev libzip-dev)
@@ -22,68 +21,117 @@ function depends_ppsspp() {
 }
 
 function sources_ppsspp() {
-    gitPullOrClone "$md_build" https://github.com/hrydgard/ppsspp.git
+    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
+    cd ppsspp
     runCmd git submodule update --init --recursive
+
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
+
+    if isPlatform "aarch64"; then
+        applyPatch "$md_data/01_aarch64.diff"
+    fi
+
+    if hasPackage cmake 3.6 lt; then
+        cd ..
+        mkdir -p cmake
+        wget -q -O- "$__archive_url/cmake-3.6.2.tar.gz" | tar -xvz --strip-components=1 -C cmake
+    fi
 }
 
 function build_ffmpeg_ppsspp() {
+    cd "$1"
+    local arch
     if isPlatform "arm"; then
-        local MODULES
-        local VIDEO_DECODERS
-        local AUDIO_DECODERS
-        local VIDEO_ENCODERS
-        local AUDIO_ENCODERS
-        local DEMUXERS
-        local MUXERS
-        local PARSERS
-        local OPTS
-        # get the ffmpeg configure variables from the ppsspp ffmpeg distributed script
-        source linux_arm.sh
-        ./configure \
-            ${OPTS} \
-            --cpu="cortex-a7" \
-            --prefix="./linux/arm" \
-            --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
-            --disable-shared \
-            --enable-static \
-            --enable-zlib \
-            --enable-pic \
-            --disable-everything \
-            ${MODULES} \
-            ${VIDEO_DECODERS} \
-            ${AUDIO_DECODERS} \
-            ${VIDEO_ENCODERS} \
-            ${AUDIO_ENCODERS} \
-            ${DEMUXERS} \
-            ${MUXERS} \
-            ${PARSERS}
+        if isPlatform "armv6"; then
+            arch="arm"
+        else
+            arch="armv7"
+        fi
+    elif isPlatform "x86"; then
+        if isPlatform "x86_64"; then
+            arch="x86_64";
+        else
+            arch="x86";
+        fi
+    elif isPlatform "aarch64"; then
+        arch="arm64"
     fi
+    local MODULES
+    local VIDEO_DECODERS
+    local AUDIO_DECODERS
+    local VIDEO_ENCODERS
+    local AUDIO_ENCODERS
+    local DEMUXERS
+    local MUXERS
+    local PARSERS
+    local GENERAL
+    local OPTS # used by older lr-ppsspp fork
+    # get the ffmpeg configure variables from the ppsspp ffmpeg distributed script
+    source linux_arm.sh
+    # linux_arm.sh has set -e which we need to switch off
+    set +e
+    ./configure \
+        --prefix="./linux/$arch" \
+        --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
+        --disable-shared \
+        --enable-static \
+        --enable-zlib \
+        --enable-pic \
+        --disable-everything \
+        ${MODULES} \
+        ${VIDEO_DECODERS} \
+        ${AUDIO_DECODERS} \
+        ${VIDEO_ENCODERS} \
+        ${AUDIO_ENCODERS} \
+        ${DEMUXERS} \
+        ${MUXERS} \
+        ${PARSERS}
     make clean
     make install
 }
 
-function build_ppsspp() {
-    # build ffmpeg
-    cd ffmpeg
-    build_ffmpeg_ppsspp
-    cd "$md_build"
+function build_cmake_ppsspp() {
+    cd "$md_build/cmake"
+    ./bootstrap
+    make
+}
 
-    # build ppsspp - we override CFLAGS, as currently ppsspp only works on pi2 when built for armv6
-    rm -f CMakeCache.txt
-    cmake -DRASPBIAN=ON .
+function build_ppsspp() {
+    local cmake="cmake"
+    if hasPackage cmake 3.6 lt; then
+        build_cmake_ppsspp
+        cmake="$md_build/cmake/bin/cmake"
+    fi
+
+    # build ffmpeg
+    build_ffmpeg_ppsspp "$md_build/ppsspp/ffmpeg"
+
+    # build ppsspp
+    cd "$md_build/ppsspp"
+    rm -rf CMakeCache.txt CMakeFiles
+    if isPlatform "rpi"; then
+        if isPlatform "armv6"; then
+            "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake .
+        else
+            "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv7.cmake .
+        fi
+    elif isPlatform "mali"; then
+        "$cmake" . -DUSING_GLES2=ON -DUSING_FBDEV=ON
+    else
+        "$cmake" .
+    fi
     make clean
     make
 
-    md_ret_require="$md_build/PPSSPPSDL"
+    md_ret_require="$md_build/ppsspp/PPSSPPSDL"
 }
 
 function install_ppsspp() {
     md_ret_files=(
-        'assets'
-        'flash0'
-        'PPSSPPSDL'
+        'ppsspp/assets'
+        'ppsspp/flash0'
+        'ppsspp/PPSSPPSDL'
     )
 }
 
@@ -95,5 +143,6 @@ function configure_ppsspp() {
     mkUserDir "$md_conf_root/psp/PSP"
     ln -snf "$romdir/psp" "$md_conf_root/psp/PSP/GAME"
 
-    addSystem 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
+    addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
+    addSystem "psp"
 }

@@ -55,9 +55,6 @@ function rps_printInfo() {
 }
 
 function depends_setup() {
-    if [[ "$__raspbian_ver" -eq 7 ]]; then
-        printMsgs "dialog" "Raspbian Wheezy is no longer supported. Binaries are no longer updated and new emulators may fail to build, install or run.\n\nPlease backup your system and start from the latest image."
-    fi
     # check for VERSION file - if it doesn't exist we will run the post_update script as it won't be triggered
     # on first upgrade to 4.x
     if [[ ! -f "$rootdir/VERSION" ]]; then
@@ -152,6 +149,10 @@ function package_setup() {
             options+=(X "Remove")
         fi
 
+        if [[ -d "$__builddir/$md_id" ]]; then
+            options+=(Z "Clean source folder")
+        fi
+
         local help="${__mod_desc[$idx]}\n\n${__mod_help[$idx]}"
         if [[ -n "$help" ]]; then
             options+=(H "Package Help")
@@ -209,6 +210,10 @@ function package_setup() {
                 ;;
             H)
                 printMsgs "dialog" "$help"
+                ;;
+            Z)
+                rp_callModule "$idx" clean
+                printMsgs "dialog" "$__builddir/$md_id has been removed."
                 ;;
             *)
                 break
@@ -403,20 +408,10 @@ function update_packages_gui_setup() {
 }
 
 function basic_install_setup() {
-    clear
-    local logfilename
-    __ERRMSGS=()
-    __INFMSGS=()
-    rps_logInit
-    {
-        rps_logStart
-        local idx
-        for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
-            rp_installModule "$idx"
-        done
-        rps_logEnd
-    } &> >(tee >(gzip --stdout >"$logfilename"))
-    rps_printInfo "$logfilename"
+    local idx
+    for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
+        rp_installModule "$idx"
+    done
 }
 
 function packages_gui_setup() {
@@ -519,7 +514,17 @@ function gui_setup() {
         case "$choice" in
             I)
                 dialog --defaultno --yesno "Are you sure you want to do a basic install?\n\nThis will install all packages from the 'Core' and 'Main' package sections." 22 76 2>&1 >/dev/tty || continue
-                basic_install_setup
+                clear
+                local logfilename
+                __ERRMSGS=()
+                __INFMSGS=()
+                rps_logInit
+                {
+                    rps_logStart
+                    basic_install_setup
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
                 ;;
             U)
                 update_packages_gui_setup

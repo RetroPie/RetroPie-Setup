@@ -66,10 +66,11 @@ function build_mupen64plus() {
             params=()
             isPlatform "rpi1" && params+=("VC=1" "VFP=1" "VFP_HARD=1")
             isPlatform "neon" && params+=("VC=1" "NEON=1")
-            isPlatform "x11" && params+=("OSD=1")
+            isPlatform "x11" && params+=("OSD=1" "PIE=1")
             isPlatform "x86" && params+=("SSE=SSSE3")
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
-            make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -flto"
+            # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
+            MAKEFLAGS="${MAKEFLAGS/\/usr\/lib\/distcc:/}" make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -O3 -flto"
         fi
     done
 
@@ -136,27 +137,28 @@ function configure_mupen64plus() {
             local name=""
             [[ "$res" == "320x240" ]] && def=1
             [[ "$res" == "640x480" ]] && name="-highres"
-            addSystem $def "${md_id}-GLideN64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% $res"
-            addSystem 0 "${md_id}-gles2rice$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
+            addEmulator $def "${md_id}-GLideN64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% $res"
+            addEmulator 0 "${md_id}-gles2rice$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
         done
-        addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
-        addSystem 0 "${md_id}-videocore" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-videocore %ROM%"
+        addEmulator 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
+        addEmulator 0 "${md_id}-videocore" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-videocore %ROM%"
     else
-        addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
-        addSystem 0 "${md_id}-GLideN64-GL3-3" "n64" "MESA_GL_VERSION_OVERRIDE=3.3COMPAT $md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
-        addSystem 1 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM%"
+        addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
+        addEmulator 0 "${md_id}-GLideN64-GL3-3" "n64" "MESA_GL_VERSION_OVERRIDE=3.3COMPAT $md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
+        addEmulator 1 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM%"
         if isPlatform "x86"; then
-            addSystem 0 "${md_id}-GLideN64-LLE" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 640x480 mupen64plus-rsp-cxd4-ssse3"
-            addSystem 0 "${md_id}-GLideN64-LLE-GL3-3" "n64" "MESA_GL_VERSION_OVERRIDE=3.3COMPAT $md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 640x480 mupen64plus-rsp-cxd4-ssse3"
+            addEmulator 0 "${md_id}-GLideN64-LLE" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 640x480 mupen64plus-rsp-cxd4-ssse3"
+            addEmulator 0 "${md_id}-GLideN64-LLE-GL3-3" "n64" "MESA_GL_VERSION_OVERRIDE=3.3COMPAT $md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 640x480 mupen64plus-rsp-cxd4-ssse3"
         fi
     fi
+    addSystem "n64"
 
     mkRomDir "n64"
 
     [[ "$md_mode" == "remove" ]] && return
 
     # copy hotkey remapping start script
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/mupen64plus.sh" "$md_inst/bin/"
+    cp "$md_data/mupen64plus.sh" "$md_inst/bin/"
     chmod +x "$md_inst/bin/mupen64plus.sh"
 
     mkUserDir "$md_conf_root/n64/"
@@ -190,7 +192,7 @@ function configure_mupen64plus() {
             echo "[Video-GLideN64]" >> "$config"
         fi
         # Settings version. Don't touch it.
-        iniSet "configVersion" "14"
+        iniSet "configVersion" "16"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         # Size of texture cache in megabytes. Good value is VRAM*3/4

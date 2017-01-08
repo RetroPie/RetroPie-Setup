@@ -22,7 +22,9 @@ function sources_lr-gpsp() {
 function build_lr-gpsp() {
     make clean
     rpSwap on 512
-    make platform=armv
+    local params=()
+    isPlatform "arm" && params+=(platform=armv)
+    make "${params[@]}"
     rpSwap off
     md_ret_require="$md_build/gpsp_libretro.so"
 }
@@ -42,5 +44,6 @@ function configure_lr-gpsp() {
 
     local def=0
     isPlatform "armv6" && def=1
-    addSystem $def "$md_id" "gba" "$md_inst/gpsp_libretro.so"
+    addEmulator $def "$md_id" "gba" "$md_inst/gpsp_libretro.so"
+    addSystem "gba"
 }

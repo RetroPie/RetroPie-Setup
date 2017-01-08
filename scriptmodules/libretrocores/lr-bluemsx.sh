@@ -42,5 +42,6 @@ function configure_lr-bluemsx() {
 
     wget -q -O- "$__archive_url/bluemsxroms.tar.gz" | tar -xvz -C "$biosdir/Machines/Shared Roms/"
 
-    addSystem 1 "$md_id" "msx" "$md_inst/bluemsx_libretro.so"
+    addEmulator 1 "$md_id" "msx" "$md_inst/bluemsx_libretro.so"
+    addSystem "msx"
 }

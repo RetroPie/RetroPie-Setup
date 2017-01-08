@@ -13,7 +13,7 @@ rp_module_id="lr-ppsspp"
 rp_module_desc="PlayStation Portable emu - PPSSPP port for libretro"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_section="main"
-rp_module_flags="!armv6"
+rp_module_flags="!aarch64"
 
 function depends_lr-ppsspp() {
     local depends=()
@@ -33,14 +33,18 @@ function sources_lr-ppsspp() {
 }
 
 function build_lr-ppsspp() {
-    # build ffmpeg
-    cd ffmpeg
-    build_ffmpeg_ppsspp
+    build_ffmpeg_ppsspp "$md_build/ffmpeg"
     cd "$md_build"
 
     make -C libretro clean
     local params=()
-    isPlatform "rpi" && params+=("platform=rpi2")
+    if isPlatform "rpi"; then
+        if isPlatform "rpi1"; then
+            params+=("platform=rpi1")
+        else
+            params+=("platform=rpi2")
+        fi
+    fi
     make -C libretro "${params[@]}"
     md_ret_require="$md_build/libretro/ppsspp_libretro.so"
 }
@@ -57,10 +61,13 @@ function configure_lr-ppsspp() {
     mkRomDir "psp"
     ensureSystemretroconfig "psp"
 
-    mkUserDir "$biosdir/PPSSPP"
-    cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
-    cp -Rv "$md_inst/flash0" "$biosdir/PPSSPP/"
-    chown -R $user:$user "$biosdir/PPSSPP"
+    if [[ "$md_mode" == "install" ]]; then
+        mkUserDir "$biosdir/PPSSPP"
+        cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
+        cp -Rv "$md_inst/flash0" "$biosdir/PPSSPP/"
+        chown -R $user:$user "$biosdir/PPSSPP"
+    fi
 
-    addSystem 1 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"
+    addEmulator 1 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"
+    addSystem "psp"
 }

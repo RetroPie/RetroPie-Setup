@@ -20,10 +20,7 @@ function sources_lr-beetle-supergrafx() {
 
 function build_lr-beetle-supergrafx() {
     make clean
-    local params=()
-    isPlatform "armv6" && params=("platform=armv")
-    isPlatform "neon" && params=("platform=armvneon")
-    make "${params[@]}"
+    make
     md_ret_require="$md_build/mednafen_supergrafx_libretro.so"
 }
 
@@ -37,5 +34,6 @@ function configure_lr-beetle-supergrafx() {
     mkRomDir "pcengine"
     ensureSystemretroconfig "pcengine"
 
-    addSystem 0 "$md_id" "pcengine" "$md_inst/mednafen_supergrafx_libretro.so"
+    addEmulator 0 "$md_id" "pcengine" "$md_inst/mednafen_supergrafx_libretro.so"
+    addSystem "pcengine"
 }

@@ -16,12 +16,7 @@ rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
 function depends_residualvm() {
-    getDepends libsdl1.2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        getDepends libjpeg8-dev
-    else
-        getDepends libjpeg-dev
-    fi
+    getDepends libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev
 }
 
 function sources_residualvm() {
@@ -29,7 +24,15 @@ function sources_residualvm() {
 }
 
 function build_residualvm() {
-    ./configure --enable-vkeybd --enable-release --disable-debug --enable-keymapper --prefix="$md_inst"
+    SDL_CONFIG=sdl2-config LDFLAGS="-L/opt/vc/lib" ./configure \
+        --force-opengles2 \
+        --disable-glew \
+        --enable-opengl-shaders \
+        --enable-vkeybd \
+        --enable-release \
+        --disable-debug \
+        --enable-keymapper \
+        --prefix="$md_inst"
     make clean
     make
     strip "$md_build/residualvm"
@@ -52,10 +55,11 @@ function configure_residualvm() {
     rm -f "$romdir/residualvm/+Launch GUI.sh"
     cat > "$romdir/residualvm/+Start ResidualVM.sh" << _EOF_
 #!/bin/bash
-game="\$1"
+renderer="\$1"
+game="\$2"
 [[ "\$game" =~ ^\+ ]] && game=""
 pushd "$romdir/residualvm" >/dev/null
-$md_inst/bin/residualvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" \$game
+$md_inst/bin/residualvm --renderer=\$renderer --fullscreen --joystick=0 --extrapath="$md_inst/extra" \$game
 while read line; do
     id=(\$line);
     touch "$romdir/residualvm/\$id.svm"
@@ -65,5 +69,7 @@ _EOF_
     chown $user:$user "$romdir/residualvm/+Start ResidualVM.sh"
     chmod u+x "$romdir/residualvm/+Start ResidualVM.sh"
 
-    addSystem 1 "$md_id" "residualvm" "$romdir/residualvm/+Start\ ResidualVM.sh %BASENAME%" "ResidualVM" ".sh .svm"
+    addEmulator 1 "$md_id" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh opengl_shaders %BASENAME%"
+    addEmulator 1 "$md_id-software" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh software %BASENAME%"
+    addSystem "residualvm" "ResidualVM" ".sh .svm"
 }

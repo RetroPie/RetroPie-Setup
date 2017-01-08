@@ -25,12 +25,8 @@ function sources_retropie-manager() {
 
 function install_retropie-manager() {
     cd "$md_inst"
-    chown -R "$user:$user"  "$md_inst"
+    chown -R $user:$user "$md_inst"
     sudo -u $user make install
-
-    mkUserDir "$datadir/retropiemenu"
-    touch "$datadir/retropiemenu/retropie-manager.rp"
-    chown $user:$user "$datadir/retropiemenu/retropie-manager.rp"
 }
 
 function _is_enabled_retropie-manager() {
@@ -39,7 +35,7 @@ function _is_enabled_retropie-manager() {
 }
 
 function enable_retropie-manager() {
-    local config="\"$md_inst/rpmanager.sh\" --start --user "$user" 2>\&1 > /dev/shm/rpmanager.log \&"
+    local config="\"$md_inst/rpmanager.sh\" --start --user $user 2>\&1 > /dev/shm/rpmanager.log \&"
 
     if _is_enabled_retropie-manager; then
         dialog \
@@ -67,7 +63,6 @@ function disable_retropie-manager() {
 
 function remove_retropie-manager() {
     sed -i "/rpmanager\.sh.*--start/d" /etc/rc.local
-    rm -f "$datadir/retropiemenu/retropie-manager.rp"
 }
 
 function gui_retropie-manager() {

@@ -12,7 +12,11 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
-rp_module_flags="!x86"
+rp_module_flags="!x86 !osmc !mali"
+
+function _update_hook_splashscreen() {
+    rp_isInstalled "$md_idx" && configure_splashscreen
+}
 
 function _image_exts_splashscreen() {
     echo '\.bmp\|\.jpg\|\.jpeg\|\.gif\|\.png\|\.ppm\|\.tiff\|\.webp'
@@ -27,7 +31,7 @@ function depends_splashscreen() {
 }
 
 function install_bin_splashscreen() {
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/asplashscreen" "/etc/init.d/"
+    cp "$md_data/asplashscreen" "/etc/init.d/"
 
     iniConfig "=" '"' /etc/init.d/asplashscreen
     iniSet "ROOTDIR" "$rootdir"
@@ -44,6 +48,13 @@ function install_bin_splashscreen() {
     chown $user:$user "$datadir/splashscreens/README.txt"
 }
 
+function configure_splashscreen() {
+    local config="/boot/cmdline.txt"
+    if [[ -f "$config" ]] && ! grep -q "plymouth.enable" "$config"; then
+        sed -i '1 s/ *$/ plymouth.enable=0/' "$config"
+    fi
+}
+
 function default_splashscreen() {
     echo "$md_inst/retropie-default.png" >/etc/splashscreen.list
 }
@@ -54,6 +65,10 @@ function enable_splashscreen() {
 
 function remove_splashscreen() {
     insserv -r asplashscreen
+    local config="/boot/cmdline.txt"
+    if [[ -f "$config" ]]; then
+        sed -i "s/ *plymouth.enable=0//" "$config"
+    fi
 }
 
 function choose_path_splashscreen() {

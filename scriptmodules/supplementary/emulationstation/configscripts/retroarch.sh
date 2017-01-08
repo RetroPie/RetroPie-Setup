@@ -10,9 +10,6 @@
 #
 
 function onstart_retroarch_joystick() {
-    local device_type="$1"
-    local device_name="$2"
-
     iniConfig " = " '"' "$configdir/all/retroarch.cfg"
     iniGet "input_joypad_driver"
     local input_joypad_driver="$ini_value"
@@ -24,7 +21,7 @@ function onstart_retroarch_joystick() {
     getAutoConf "8bitdo_hack" && _atebitdo_hack=1
 
     iniConfig " = " "\"" "/tmp/tempconfig.cfg"
-    iniSet "input_device" "$device_name"
+    iniSet "input_device" "$DEVICE_NAME"
     iniSet "input_driver" "$input_joypad_driver"
 }
 
@@ -140,12 +137,10 @@ function onstart_retroarch_keyboard() {
 }
 
 function map_retroarch_joystick() {
-    local device_type="$1"
-    local device_name="$2"
-    local input_name="$3"
-    local input_type="$4"
-    local input_id="$5"
-    local input_value="$6"
+    local input_name="$1"
+    local input_type="$2"
+    local input_id="$3"
+    local input_value="$4"
 
     local keys
     case "$input_name" in
@@ -250,7 +245,7 @@ function map_retroarch_joystick() {
                 # workaround for mismatched controller mappings
                 iniGet "input_driver"
                 if [[ "$ini_value" == "udev" ]]; then
-                    case "$device_name" in
+                    case "$DEVICE_NAME" in
                         "8Bitdo FC30"*|"8Bitdo NES30"*|"8Bitdo SFC30"*|"8Bitdo SNES30"*|"8Bitdo Zero"*)
                             if [[ "$_atebitdo_hack" -eq 1 ]]; then
                                 value="$((input_id+11))"
@@ -265,12 +260,10 @@ function map_retroarch_joystick() {
 }
 
 function map_retroarch_keyboard() {
-    local device_type="$1"
-    local device_name="$2"
-    local input_name="$3"
-    local input_type="$4"
-    local input_id="$5"
-    local input_value="$6"
+    local input_name="$1"
+    local input_type="$2"
+    local input_id="$3"
+    local input_value="$4"
 
     local key
     case "$input_name" in
@@ -333,9 +326,6 @@ function map_retroarch_keyboard() {
 }
 
 function onend_retroarch_joystick() {
-    local device_type="$1"
-    local device_name="$2"
-
     # hotkey sanity check
     # remove hotkeys if there is no hotkey enable button
     if ! grep -q "input_enable_hotkey" /tmp/tempconfig.cfg; then
@@ -356,7 +346,7 @@ function onend_retroarch_joystick() {
     fi
 
     # sanitise filename
-    local file="${device_name//[ \?\<\>\\\/:\*\|]/}.cfg"
+    local file="${DEVICE_NAME//[ \?\<\>\\\/:\*\|]/}.cfg"
     if [[ -f "$configdir/all/retroarch-joypads/$file" ]]; then
         mv "$configdir/all/retroarch-joypads/$file" "$configdir/all/retroarch-joypads/$file.bak"
     fi

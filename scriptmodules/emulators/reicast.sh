@@ -16,9 +16,7 @@ rp_module_section="opt"
 rp_module_flags="!armv6 !mali"
 
 function depends_reicast() {
-    local depends=(libsdl1.2-dev python-dev python-pip alsa-oss python-setuptools)
-    [[ "$__raspbian_ver" -ge "8" ]] && depends+=(libevdev-dev)
-    getDepends "${depends[@]}"
+    getDepends libsdl1.2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev
     pip install evdev
 }
 
@@ -58,7 +56,7 @@ function install_reicast() {
 
 function configure_reicast() {
     # copy hotkey remapping start script
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/reicast.sh" "$md_inst/bin/"
+    cp "$md_data/reicast.sh" "$md_inst/bin/"
     chmod +x "$md_inst/bin/reicast.sh"
 
     mkRomDir "dreamcast"
@@ -84,11 +82,12 @@ function configure_reicast() {
     # add system
     # possible audio backends: alsa, oss, omx
     if isPlatform "rpi"; then
-        addSystem 1 "${md_id}-audio-omx" "dreamcast" "CON:$md_inst/bin/reicast.sh omx %ROM%"
-        addSystem 0 "${md_id}-audio-oss" "dreamcast" "CON:$md_inst/bin/reicast.sh oss %ROM%"
+        addEmulator 1 "${md_id}-audio-omx" "dreamcast" "CON:$md_inst/bin/reicast.sh omx %ROM%"
+        addEmulator 0 "${md_id}-audio-oss" "dreamcast" "CON:$md_inst/bin/reicast.sh oss %ROM%"
     else
-        addSystem 1 "$md_id" "dreamcast" "CON:$md_inst/bin/reicast.sh oss %ROM%"
+        addEmulator 1 "$md_id" "dreamcast" "CON:$md_inst/bin/reicast.sh oss %ROM%"
     fi
+    addSystem "dreamcast"
 
     addAutoConf reicast_input 1
 }

@@ -14,10 +14,8 @@ rp_module_desc="PS3 controller driver and pair via sixad"
 rp_module_section="driver"
 
 function depends_ps3controller() {
-    local depends=(checkinstall libusb-dev bluetooth libbluetooth-dev joystick)
-    if isPlatform "rpi3" && hasPackage raspberrypi-bootloader && [[ "$__raspbian_ver" -ge "8" ]]; then
-        depends+=(pi-bluetooth raspberrypi-sys-mods)
-    fi
+    depends_bluetooth
+    local depends=(checkinstall libusb-dev libbluetooth-dev joystick)
     getDepends "${depends[@]}"
 }
 
@@ -36,6 +34,10 @@ function build_ps3controller() {
     cd sixad
     make clean
     make "${params[@]}"
+    local bin
+    for bin in sixad-bin sixpair sixad-sixaxis sixad-remote sixad-raw sixad-3in1; do
+        md_ret_require+=("$md_build/sixad/bins/$bin")
+    done
 }
 
 function install_ps3controller() {
@@ -48,19 +50,17 @@ function install_ps3controller() {
 
     echo "$branch" >"$md_inst/type.txt"
 
-    if [[ "$__raspbian_ver" -ge "8" ]]; then
-        # Disable timeouts
-        iniConfig " = " "" "/etc/bluetooth/main.conf"
-        iniSet "DiscoverableTimeout" "0"
-        iniSet "PairableTimeout" "0"
-    fi
+    # Disable timeouts
+    iniConfig " = " "" "/etc/bluetooth/main.conf"
+    iniSet "DiscoverableTimeout" "0"
+    iniSet "PairableTimeout" "0"
 
     # Start sixad daemon
     /etc/init.d/sixad start
 }
 
 function remove_ps3controller() {
-    service sixad stop
+    /etc/init.d/sixad stop
     insserv -r sixad
     dpkg --purge sixad
     rm -f /etc/udev/rules.d/99-sixpair.rules

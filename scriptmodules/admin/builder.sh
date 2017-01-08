@@ -23,25 +23,24 @@ function module_builder() {
     local id
     local mode
     for id in "${ids[@]}"; do
-        if [[ "$id" =~ ^[0-9]+$ ]]; then
-            id="${__mod_id[$id]}"
-        fi
+        [[ "$id" =~ ^[0-9]+$ ]] && id="$(rp_getIdFromIdx $id)"
         ! fnExists "install_$id" && continue
 
         # build, install and create binary archive.
         # initial clean in case anything was in the build folder when calling
-        for mode in clean remove depends sources build install clean create_bin; do
-            rp_callModule "$id" "$mode"
+        for mode in clean remove depends sources build install create_bin clean remove "depends remove"; do
+            rp_callModule "$id" $mode
+            # return on error
+            [[ $? -eq 1 ]] && return 1
+            # no module found - skip to next module
+            [[ $? -eq 2 ]] && break
         done
     done
+    return 0
 }
 
 function section_builder() {
-    local section="$1"
-    local idx
-    for idx in $(rp_getSectionIds $section); do
-        module_builder "$idx"
-    done
+    module_builder $(rp_getSectionIds $1) || return 1
 }
 
 function upload_builder() {

@@ -9,59 +9,54 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-###### input configuration interface functions for scripts in configscripts ######
-
-#######################################
-# Interface functions
-#
-# each input configuration module can have an optional function
-# check_<filename without extension>. If this function returns 1, the module is
-# skipped. This can be used to skip input configurations in some cases - eg
-# to skip configuration when an existing config file is not installed.
-#
-# There are 3 main interface functions for each of the input types (joystick/keyboard)
-#
-# function onstart_<filename without extension>_<inputtype>()
-# is run at the start of the input configuration
-#
-# function onend_<filename without extension>_<inputtype>()
-# is run at the end of the input configuration
-#
-# Arguments for the above two functions are
-#   $1 - device type
-#   $2 - device name
-#
-# Returns:
-#   None
-#
-# function map_<filename without extension>_<inputtype>()
-# is run for each of the inputs - with the following arguments
-#
-# Arguments:
-#   $1 - device type
-#   $2 - device name
-#   $3 - input name
-#   $4 - input type
-#   $5 - input ID
-#   $6 - input value
-#
-# $1 - device type is currently either joystick or keyboard
-# $2 - input name is one of the following
-#   up, down, left, right
-#   a, b, x, y
-#   leftshoulder, rightshoulder, lefttrigger, righttrigger
-#   leftthumb. rightthumb
-#   start, select
-#   leftanalogup, leftanalogdown, leftanalogleft, leftanalogright
-#   rightanalogup, rightanalogdown, rightanalogleft, rightanalogright
-# $3 - input type is button, axis, or hat
-#
-# Returns:
-#   None
-#
-# Globals:
-#   $home - the home directory of the user
-#######################################
+## @file scriptmodules/supplementary/emulationstation/inputconfiguration.sh
+## @brief input configuration script
+## @copyright GPLv3
+## @details
+## @par global variables
+##
+## There are 3 global variables which are set to the current device being processed
+##
+## `DEVICE_TYPE` = device type is currently either joystick or keyboard
+## `DEVICE_NAME` = name of the device
+## `DEVICE_GUID` = SDL2 joystick GUID of the device (-1 for keyboard)
+##
+## @par Interface functions
+##
+## each input configuration module can have an optional function
+## `check_<filename without extension>`. If this function returns 1, the module is
+## skipped. This can be used to skip input configurations in some cases - eg
+## to skip configuration when an existing config file is not installed.
+##
+## There are 3 main interface functions for each of the input types (joystick/keyboard)
+##
+## function `onstart_<filename without extension>_<inputtype>()`
+## is run at the start of the input configuration
+##
+## function `onend_<filename without extension>_<inputtype>()`
+## is run at the end of the input configuration
+##
+## Returns:
+##   None
+##
+## function map_<filename without extension>_<inputtype>()
+## is run for each of the inputs - with the following arguments
+##
+## Arguments:
+## * $1 - input name is one of the following
+##  * up, down, left, right
+##  * a, b, x, y
+##  * leftshoulder, rightshoulder, lefttrigger, righttrigger
+##  * leftthumb. rightthumb
+##  * start, select
+##  * leftanalogup, leftanalogdown, leftanalogleft, leftanalogright
+##  * rightanalogup, rightanalogdown, rightanalogleft, rightanalogright
+## * $2 - input type for joysticks are button, axis, hat or key for keyboard.
+## * $3 - button id of the input for a joystick, or SDL2 keycode for a keyboard.
+## * $4 - value of the joystick input or 1 for keyboard.
+##
+## Returns:
+##   None
 
 function inputconfiguration() {
 
@@ -82,10 +77,11 @@ function inputconfiguration() {
     local inputscriptdir=$(dirname "$0")
     local inputscriptdir=$(cd "$inputscriptdir" && pwd)
 
-    local device_type=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@type" "$es_conf")
-    local device_name=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceName" "$es_conf")
+    DEVICE_TYPE=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@type" "$es_conf")
+    DEVICE_NAME=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceName" "$es_conf")
+    DEVICE_GUID=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceGUID" "$es_conf")
 
-    echo "Input type is '$device_type'."
+    echo "Input type is '$DEVICE_TYPE'."
 
     local module
     # call all configuration modules with the
@@ -104,13 +100,13 @@ function inputconfiguration() {
         echo "Configuring '$module_id'"
 
         # at the start, the onstart_module function is called.
-        funcname="onstart_${module_id}_${device_type}"
-        fn_exists "$funcname" && "$funcname" "$device_type" "$device_name"
+        funcname="onstart_${module_id}_${DEVICE_TYPE}"
+        fn_exists "$funcname" && "$funcname"
 
         local input_name
         # loop through all buttons and use corresponding config function if it exists
         for input_name in "${!mapping[@]}"; do
-            funcname="map_${module_id}_${device_type}"
+            funcname="map_${module_id}_${DEVICE_TYPE}"
 
             if fn_exists "$funcname"; then
                 local params=(${mapping[$input_name]})
@@ -118,13 +114,13 @@ function inputconfiguration() {
                 local input_id=${params[1]}
                 local input_value=${params[2]}
 
-                "$funcname" "$device_type" "$device_name" "$input_name" "$input_type" "$input_id" "$input_value"
+                "$funcname" "$input_name" "$input_type" "$input_id" "$input_value"
             fi
         done
 
         # at the end, the onend_module function is called
-        funcname="onend_${module_id}_${device_type}"
-        fn_exists "$funcname" && "$funcname" "$device_type" "$device_name"
+        funcname="onend_${module_id}_${DEVICE_TYPE}"
+        fn_exists "$funcname" && "$funcname"
 
     done
 

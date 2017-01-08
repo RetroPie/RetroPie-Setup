@@ -20,7 +20,8 @@ function apt_upgrade_raspbiantools() {
 }
 
 function lxde_raspbiantools() {
-    aptInstall lxde xorg raspberrypi-ui-mods epiphany-browser
+    aptInstall --no-install-recommends lxde
+    aptInstall xorg raspberrypi-ui-mods rpi-chromium-mods
     setConfigRoot "ports"
     addPort "lxde" "lxde" "Desktop" "startx"
     enable_autostart
@@ -41,10 +42,6 @@ function enable_modules_raspbiantools() {
     sed -i '/snd_bcm2835/d' /etc/modules
 
     local modules=(uinput)
-    # joydev and snd-bcm2835 get loaded automatically on Jessie
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        modules+=(joydev snd-bcm2835)
-    fi
 
     local module
     for module in "${modules[@]}"; do
@@ -62,7 +59,7 @@ function gui_raspbiantools() {
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(
             1 "Upgrade Raspbian packages"
-            2 "Install desktop environment (LXDE)"
+            2 "Install Pixel desktop environment"
             3 "Remove some uneeded packages (pulseaudio / cups / wolfram)"
             4 "Disable screen blanker"
             5 "Enable needed kernel modules (uinput joydev snd-bcm2835)"
@@ -74,15 +71,9 @@ function gui_raspbiantools() {
                     rp_callModule "$md_id" apt_upgrade
                     ;;
                 2)
+                    dialog --defaultno --yesno "Are you sure you want to install the Pixel desktop?" 22 76 2>&1 >/dev/tty || continue
                     rp_callModule "$md_id" lxde
-                    printMsgs "dialog" "LXDE is installed."
-                    local config="/etc/X11/Xwrapper.config"
-                    iniConfig "=" "" "$config"
-                    iniGet "$ini_value"
-                    if [[ "$ini_value" != "anybody" ]] && dialog --defaultno --yesno "To allow starting of the Desktop from Emulation Station, a security related change in $config is needed\n\nchanging allowed_users=console to allowed_users=anybody\n\nYou can read the Xwrapper.config manual page for more information (man Xwrapper.config).\n\nWould you like me to make this change now?" 22 76 2>&1 >/dev/tty; then
-                        iniSet "allowed_users" "anybody"
-                        printMsgs "dialog" "$config changed."
-                    fi
+                    printMsgs "dialog" "Pixel desktop/LXDE is installed."
                     ;;
                 3)
                     rp_callModule "$md_id" package_cleanup

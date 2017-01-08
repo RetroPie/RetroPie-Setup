@@ -19,9 +19,23 @@ function depends_sdlpop() {
 
 function sources_sdlpop() {
     gitPullOrClone "$md_build" https://github.com/NagyD/SDLPoP.git
+    applyPatch "sdlpop.diff" <<\_EOF_
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -14,7 +14,7 @@ LIBS := $(shell sdl2-config --libs) -lSDL2_image -lSDL2_mixer
+ INCS := -I/opt/local/include
+ CFLAGS += $(INCS) -Wall -std=gnu99 -D_GNU_SOURCE=1 -D_THREAD_SAFE -DOSX -O2
+ else
+-LIBS := $(shell pkg-config --libs   sdl2 SDL2_image SDL2_mixer)
++LIBS := $(shell pkg-config --libs   sdl2 SDL2_image SDL2_mixer) -lm
+ INCS := $(shell pkg-config --cflags sdl2 SDL2_image SDL2_mixer)
+ CFLAGS += $(INCS) -Wall -std=gnu99 -O2
+ endif
+_EOF_
 }
 
 function build_sdlpop() {
+    cd src
     make
     md_ret_require="$md_build/prince"
 }
@@ -31,12 +45,6 @@ function install_sdlpop() {
         'prince'
         'data'
         'doc'
-        'DIGISND1.DAT'
-        'DIGISND2.DAT'
-        'DIGISND3.DAT'
-        'GUARD.DAT'
-        'GUARD1.DAT'
-        'GUARD2.DAT'
     )
     cp -v "SDLPoP.ini" "$md_inst/SDLPoP.ini.def"
     sed -i "s/use_correct_aspect_ratio = false/use_correct_aspect_ratio = true/" "$md_inst/SDLPoP.ini.def"

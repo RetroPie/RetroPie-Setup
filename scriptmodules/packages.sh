@@ -76,16 +76,16 @@ function rp_callModule() {
     local md_id
     local md_idx
     if [[ "$req_id" =~ ^[0-9]+$ ]]; then
-        md_id="${__mod_id[$req_id]}"
+        md_id="$(rp_getIdFromIdx $req_id)"
         md_idx="$req_id"
     else
         md_idx="$(rp_getIdxFromId $req_id)"
-        [[ -n "$md_idx" ]] && md_id="$req_id"
+        md_id="$req_id"
     fi
 
-    if [[ -z "$md_id" ]]; then
+    if [[ -z "$md_id" || -z "$md_idx" ]]; then
         printMsgs "console" "No module '$req_id' found for platform $__platform"
-        return 1
+        return 2
     fi
 
     # automatically build/install module if no parameters are given
@@ -103,6 +103,7 @@ function rp_callModule() {
     local md_flags="${__mod_flags[$md_idx]}"
     local md_build="$__builddir/$md_id"
     local md_inst="$rootdir/$md_type/$md_id"
+    local md_data="$scriptdir/scriptmodules/$md_type/$md_id"
     local md_mode="install"
 
     # set md_conf_root to $configdir and to $configdir/ports for ports
@@ -117,7 +118,12 @@ function rp_callModule() {
     case "$mode" in
         # remove sources
         clean)
-            rmDirExists "$md_build"
+            if [[ "$__persistent_repos" -eq 1 ]] && [[ -d "$md_build/.git" ]]; then
+                git -C "$md_build" reset --hard
+                git -C "$md_build" clean -f -d
+            else
+                rmDirExists "$md_build"
+            fi
             return 0
             ;;
         # create binary archive
@@ -237,7 +243,6 @@ function rp_callModule() {
     esac
 
     local file
-    # some errors were returned. append to global errors and return
     if [[ "${#md_ret_errors}" -eq 0 ]]; then
         # check if any required files are found
         if [[ -n "$md_ret_require" ]]; then
@@ -266,14 +271,16 @@ function rp_callModule() {
 
     [[ "$pushed" -eq 0 ]] && popd
 
+    # some errors were returned.
     if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
         # if sources fails make sure we clean up
         if [[ "$mode" == "sources" ]]; then
             rp_callModule "$md_idx" clean
         fi
-        # remove install folder if there is an error
+        # remove install folder if there is an error (and it is empty)
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
         printMsgs "console" "${md_ret_errors[@]}" >&2
+        # append to global errors and return an error
         __ERRMSGS+=("${md_ret_errors[@]}")
         return 1
     fi
@@ -306,16 +313,23 @@ function rp_installBin() {
 
 function rp_createBin() {
     printHeading "Creating binary archive for $md_desc"
-    if [[ -d "$rootdir/$md_type/$md_id" ]]; then
-        local archive="$md_id.tar.gz"
-        local dest="$__tmpdir/archives/$__raspbian_name/$__platform/$md_type"
-        rm -f "$dest/$archive"
-        mkdir -p "$dest"
-        tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"
-        chown $user:$user "$dest/$archive"
-    else
+
+    if [[ ! -d "$rootdir/$md_type/$md_id" ]]; then
         printMsgs "console" "No install directory $rootdir/$md_type/$md_id - no archive created"
+        return 1
     fi
+
+    if dirIsEmpty "$rootdir/$md_type/$md_id"; then
+        printMsgs "console" "Empty install directory $rootdir/$md_type/$md_id - no archive created"
+        return 1
+    fi
+
+    local archive="$md_id.tar.gz"
+    local dest="$__tmpdir/archives/$__os_codename/$__platform/$md_type"
+    rm -f "$dest/$archive"
+    mkdir -p "$dest"
+    tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"
+    chown $user:$user "$dest/$archive"
 }
 
 function rp_installModule() {
@@ -398,6 +412,10 @@ function rp_registerAllModules() {
 
 function rp_getIdxFromId() {
     echo "${__mod_id_to_idx[$1]}"
+}
+
+function rp_getIdFromIdx() {
+    echo "${__mod_id[$1]}"
 }
 
 function rp_getSectionIds() {

@@ -137,5 +137,6 @@ _EOF_
         rm -f "$biosdir/aros-amiga-m68k"*
     fi
 
-    addSystem 1 "$md_id" "amiga" "$romdir/amiga/+Start\ UAE4All.sh" "Amiga" ".sh"
+    addEmulator 1 "$md_id" "amiga" "bash $romdir/amiga/+Start\ UAE4All.sh"
+    addSystem "amiga"
 }

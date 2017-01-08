@@ -67,5 +67,6 @@ _EOF_
     chmod a+x "$romdir/amiga/+Start UAE4Arm.sh"
     chown $user:$user "$romdir/amiga/+Start UAE4Arm.sh"
 
-    addSystem 1 "$md_id" "amiga" "$romdir/amiga/+Start\ UAE4Arm.sh" "Amiga" ".sh"
+    addEmulator 1 "$md_id" "amiga" "bash $romdir/amiga/+Start\ UAE4Arm.sh"
+    addSystem "amiga"
 }

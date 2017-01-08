@@ -16,16 +16,11 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_scummvm() {
-    getDepends libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        getDepends libjpeg8-dev
-    else
-        getDepends libjpeg-dev
-    fi
+    getDepends libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev
 }
 
 function sources_scummvm() {
-    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-1-8"
+    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-1-9"
     if isPlatform "rpi"; then
         applyPatch rpi_enable_scalers.diff <<\_EOF_
 diff --git a/configure b/configure
@@ -94,5 +89,6 @@ _EOF_
     chown $user:$user "$romdir/scummvm/+Start ScummVM.sh"
     chmod u+x "$romdir/scummvm/+Start ScummVM.sh"
 
-    addSystem 1 "$md_id" "scummvm" "$romdir/scummvm/+Start\ ScummVM.sh %BASENAME%" "ScummVM" ".sh .svm"
+    addEmulator 1 "$md_id" "scummvm" "bash $romdir/scummvm/+Start\ ScummVM.sh %BASENAME%" "ScummVM"
+    addSystem "scummvm"
 }

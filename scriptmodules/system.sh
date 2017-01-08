@@ -14,6 +14,9 @@ function setup_env() {
     __ERRMSGS=()
     __INFMSGS=()
 
+    # if no apt-get we need to fail
+    [[ -z "$(which apt-get)" ]] && fatalError "Unsupported OS - No apt-get command found"
+
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
@@ -30,7 +33,7 @@ function setup_env() {
 
     # set location of binary downloads
     __binary_host="files.retropie.org.uk"
-    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://$__binary_host/binaries/$__raspbian_name/$__platform"
+    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://$__binary_host/binaries/$__os_codename/$__platform"
 
     __archive_url="http://files.retropie.org.uk/archives"
 
@@ -56,55 +59,80 @@ function setup_env() {
 }
 
 function get_os_version() {
-    if [[ -f /etc/debian_version ]]; then
-        local ver=$(</etc/debian_version)
-        # check for debian major.minor version
-        if [[ "$ver" =~ [0-9]+\.[0-9]+ ]]; then
-            ver=(${ver/./ })
-            local ver_maj=${ver[0]}
-            local ver_min=${ver[1]}
-            case $ver_maj in
-                7)
-                    __raspbian_ver=7
-                    __raspbian_name="wheezy"
-                    __has_binaries=0
-                    return
-                    ;;
-                8)
-                    __raspbian_ver=8
-                    __raspbian_name="jessie"
-                    return
-                    ;;
-            esac
-        else
-            case "$ver" in
-                jessie/sid|stretch/sid)
-                    __raspbian_ver=8
-                    __raspbian_name="ubuntu"
-                    if isPlatform "rpi"; then
-                        __has_binaries=0
-                    fi
-                    return
-                    ;;
-            esac
-        fi
-    else
-        fatalError "Unsupported OS (no /etc/debian_version)"
-        return
-    fi
-    fatalError "Unsupported OS - /etc/debian_version $(cat /etc/debian_version)"
+    # make sure lsb_release is installed
+    getDepends lsb-release
+
+    # get os distributor id, description, release number and codename
+    local os
+    mapfile -t os < <(lsb_release -sidrc)
+    __os_id="${os[0]}"
+    __os_desc="${os[1]}"
+    __os_release="${os[2]}"
+    __os_codename="${os[3]}"
+    
+    local error=""
+    case "$__os_id" in
+        Raspbian|Debian)
+            if compareVersions "$__os_release" lt 8; then
+                error="You need Raspbian/Debian Jessie or newer"
+            fi
+
+            # set a platform flag for osmc
+            if grep -q "ID=osmc" /etc/os-release; then
+                __platform_flags+=" osmc"
+            fi
+            ;;
+        LinuxMint)
+            if compareVersions "$__os_release" lt 17; then
+                error="You need Linux Mint 17 or newer"
+            elif compareVersions "$__os_release" lt 18; then
+                __os_ubuntu_ver="14.04"
+            else
+                __os_ubuntu_ver="16.04"
+            fi
+            __os_debian_ver="8"
+            ;;
+        Ubuntu)
+            if compareVersions "$__os_release" lt 14.04; then
+                error="You need Ubuntu 14.04 or newer"
+            fi
+            __os_ubuntu_ver="$__os_release"
+            __os_debian_ver="8"
+            ;;
+        elementary)
+            if compareVersions "$__os_release" lt 0.3; then
+                error="You need Elementary OS 0.3 or newer"
+            elif compareVersions "$__os_release" lt 0.4; then
+                __os_ubuntu_ver="14.04"
+            else
+                __os_ubuntu_ver="16.04"
+            fi
+            __os_debian_ver="8"
+            ;;
+        neon)
+             __os_ubuntu_ver="$__os_release"
+            ;;
+        *)
+            error="Unsupported OS"
+            ;;
+    esac
+    
+    [[ -n "$error" ]] && fatalError "$error\n\n$(lsb_release -idrc)"
+
+    # add 32bit/64bit to platform flags
+    __platform_flags+=" $(getconf LONG_BIT)bit"
 }
 
 function get_default_gcc() {
     if [[ -z "$__default_gcc_version" ]]; then
-        case $__raspbian_ver in
-            7)
-                __default_gcc_version="4.8"
+        case "$__os_id" in
+            Raspbian|Debian)
+                case "$__os_codename" in
+                    *)
+                        __default_gcc_version="4.9"
+                esac
                 ;;
-            8)
-                if [[ "$__raspbian_name" == "jessie" ]]; then
-                    __default_gcc_version="4.9"
-                fi
+            *)
                 ;;
         esac
     fi
@@ -114,9 +142,9 @@ function get_default_gcc() {
 function set_default() {
     if [[ -e "$1-$2" ]] ; then
         # echo $1-$2 is now the default
-        ln -sf $1-$2 $1
+        ln -sf "$1-$2" "$1"
     else
-        echo $1-$2 is not installed
+        echo "$1-$2 is not installed"
     fi
 }
 
@@ -132,10 +160,10 @@ function set_default_gcc() {
 function get_retropie_depends() {
     # add rasberrypi repository if it's missing (needed for libraspberrypi-dev etc) - not used on osmc
     local config="/etc/apt/sources.list.d/raspi.list"
-    if [[ ! -f "$config" && "$__raspbian_name" != "ubuntu" ]] && hasPackage raspberrypi-bootloader; then
+    if [[ "$__os_id" == "Raspbian" && ! -f "$config" ]]; then
         # add key
         wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O- | apt-key add - >/dev/null
-        echo "deb http://archive.raspberrypi.org/debian/ $__raspbian_name main" >>$config
+        echo "deb http://archive.raspberrypi.org/debian/ $__os_codename main" >>$config
     fi
 
     local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet)
@@ -148,26 +176,33 @@ function get_retropie_depends() {
 }
 
 function get_platform() {
-    local architecture=$(uname --machine)
+    local architecture="$(uname --machine)"
     if [[ -z "$__platform" ]]; then
-        case $(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo) in
-            BCM2708)
-                __platform="rpi1"
-                ;;
-            BCM2709)
-                local revision=$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)
-                if [[ "$revision" == "a02082" || "$revision" == "a22082" ]]; then
-                    if [[ "$architecture" == "aarch64" ]]; then
-                        __platform="rpi3-64"
-                    else
-                        __platform="rpi3"
-                    fi
+        case "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" in
+            BCM*)
+                local rev="0x$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)"
+                if [[ $((($rev >> 23) & 1)) -eq 0 ]]; then
+                    __platform="rpi1"
                 else
-                    __platform="rpi2"
+                    local cpu=$((($rev >> 12) & 15))
+                    case $cpu in
+                        0)
+                            __platform="rpi1"
+                            ;;
+                        1)
+                            __platform="rpi2"
+                            ;;
+                        2)
+                            __platform="rpi3"
+                            ;;
+                    esac
                 fi
                 ;;
             ODROIDC)
                 __platform="odroid-c1"
+                ;;
+            ODROID-C2)
+                __platform="odroid-c2"
                 ;;
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
                 __platform="imx6"
@@ -203,7 +238,7 @@ function platform_rpi1() {
 }
 
 function platform_rpi2() {
-    __default_cflags="-O3 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon rpi"
@@ -216,7 +251,7 @@ function platform_rpi2() {
 # note the rpi3 currently uses the rpi2 binaries - for ease of maintenance - rebuilding from source
 # could improve performance with the compiler options below but needs further testing
 function platform_rpi3() {
-    __default_cflags="-O3 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi"
@@ -229,7 +264,7 @@ function platform_rpi3-64() {
 }
 
 function platform_odroid-c1() {
-    __default_cflags="-O3 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon mali"
@@ -237,8 +272,17 @@ function platform_odroid-c1() {
     __has_binaries=0
 }
 
+function platform_odroid-c2() {
+    __default_cflags="-O2 -march=native -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j4"
+    __platform_flags="aarch64 armv8 mali"
+    __qemu_cpu=cortex-a15
+    __has_binaries=0
+}
+
 function platform_x86() {
-    __default_cflags="-O3 -march=native"
+    __default_cflags="-O2 -march=native"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="x11"
@@ -246,7 +290,7 @@ function platform_x86() {
 }
 
 function platform_generic-x11() {
-    __default_cflags="-O3"
+    __default_cflags="-O2"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="x11"
@@ -254,7 +298,7 @@ function platform_generic-x11() {
 }
 
 function platform_armv7-mali() {
-    __default_cflags="-O3 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="arm armv7 neon mali"
@@ -262,7 +306,7 @@ function platform_armv7-mali() {
 }
 
 function platform_imx6() {
-    __default_cflags="-O3 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard -funsafe-math-optimizations"
+    __default_cflags="-O2 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon"

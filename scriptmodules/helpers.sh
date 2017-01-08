@@ -42,7 +42,7 @@ function printHeading() {
 ## @brief Calls PrintMsgs with "heading" type, and exits immediately.
 function fatalError() {
     printHeading "Error"
-    echo "$1"
+    echo -e "$1"
     exit 1
 }
 
@@ -151,7 +151,7 @@ function hasPackage() {
         if [[ "$status" == *"ok installed" ]]; then
             # if we didn't request a version number, be happy with any
             [[ -z "$req_ver" ]] && return 0
-            dpkg --compare-versions "$ver" "$comp" "$req_ver" && return 0
+            compareVersions "$ver" "$comp" "$req_ver" && return 0
         fi
     fi
     return 1
@@ -196,18 +196,25 @@ function getDepends() {
     for required in $@; do
         if [[ "$md_mode" == "install" ]]; then
             # make sure we have our sdl1 / sdl2 installed
-            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev 1.2.15-$(get_ver_sdl1)rpi "eq"; then
+            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "eq"; then
                 packages+=("$required")
                 continue
             fi
-            if ! isPlatform "x11" && [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_ver_sdl2) "eq"; then
+            if ! isPlatform "x11" && [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "eq"; then
                 packages+=("$required")
                 continue
             fi
         fi
-        if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage rbp-bootloader-osmc; then
+
+        if [[ "$required" == "libraspberrypi-dev" ]] && isPlatform "osmc"; then
             required="rbp-userland-dev-osmc"
         fi
+
+        # map libpng12-dev to libpng-dev for Ubuntu 16.10+
+        if [[ "$required" == "libpng12-dev" && -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" ge 16.10;  then
+            required="libpng-dev"
+        fi
+
         if [[ "$md_mode" == "remove" ]]; then
             hasPackage "$required" && packages+=("$required")
         else
@@ -321,26 +328,33 @@ function gitPullOrClone() {
         popd > /dev/null
     else
         local git="git clone"
-        [[ "$repo" =~ github ]] && git+=" --depth 1"
+        if [[ "$__persistent_repos" -ne 1 ]]; then
+            [[ "$repo" =~ github ]] && git+=" --depth 1"
+        fi
         [[ "$branch" != "master" ]] && git+=" --branch $branch"
         echo "$git \"$repo\" \"$dir\""
         runCmd $git "$repo" "$dir"
     fi
 }
 
-# @fn ensureRootdirExists()
+# @fn setupDirectories()
 # @brief Makes sure some required retropie directories and files are created.
-function ensureRootdirExists() {
+function setupDirectories() {
     mkdir -p "$rootdir"
     mkUserDir "$datadir"
+    mkUserDir "$romdir"
+    mkUserDir "$biosdir"
     mkUserDir "$configdir"
     mkUserDir "$configdir/all"
 
     # make sure we have inifuncs.sh in place and that it is up to date
     mkdir -p "$rootdir/lib"
-    if [[ ! -f "$rootdir/lib/inifuncs.sh" || "$rootdir/lib/inifuncs.sh" -ot "$scriptdir/scriptmodules/inifuncs.sh" ]]; then
-        cp --preserve=timestamps "$scriptdir/scriptmodules/inifuncs.sh" "$rootdir/lib/inifuncs.sh"
-    fi
+    local helper_libs=(inifuncs.sh archivefuncs.sh)
+    for helper in "${helper_libs[@]}"; do
+        if [[ ! -f "$rootdir/lib/$helper" || "$rootdir/lib/$helper" -ot "$scriptdir/scriptmodules/$helper" ]]; then
+            cp --preserve=timestamps "$scriptdir/scriptmodules/$helper" "$rootdir/lib/$helper"
+        fi
+    done
 
     # create template for autoconf.cfg and make sure it is owned by $user
     local config="$configdir/all/autoconf.cfg"
@@ -444,6 +458,31 @@ function diffFiles() {
     return $?
 }
 
+## @fn compareVersions()
+## @param version first version to compare
+## @param operator operator to use (lt le eq ne ge gt)
+## @brief version second version to compare
+## @retval 0 if the comparison was true
+## @retval 1 if the comparison was false
+function compareVersions() {
+    dpkg --compare-versions "$1" "$2" "$3" >/dev/null
+    return $?
+}
+
+## @fn dirIsEmpty()
+## @param path path to directory
+## @param files_only set to 1 to ignore sub directories
+## @retval 0 if the directory is empty
+## @retval 1 if the directory is not empty
+function dirIsEmpty() {
+    if [[ "$2" -eq 1 ]]; then
+        [[ -z "$(ls -lA1 "$1" | grep "^-")" ]] && return 0
+    else
+        [[ -z "$(ls -A "$1")" ]] && return 0
+    fi
+    return 1
+}
+
 ## @fn copyDefaultConfig()
 ## @param from source file
 ## @param to destination file
@@ -467,6 +506,27 @@ function copyDefaultConfig() {
     fi
 
     chown $user:$user "$to"
+}
+
+## @fn renameModule()
+## @param from source file
+## @param to destination file
+## @brief Renames an existing module.
+## @details Renames an existing module, moving it's install folder to the new location
+## and changing any references to it in `emulators.cfg`.
+function renameModule() {
+    local from="$1"
+    local to="$2"
+    # move from old location and update emulators.cfg
+    if [[ -d "$rootdir/$md_type/$from" ]]; then
+        mv "$rootdir/$md_type/$from" "$md_inst"
+        # replace any default = "$from"
+        sed -i "s/\"$from\"/\"$to\"/g" "$configdir"/*/emulators.cfg
+        # replace any $from = "cmdline"
+        sed -i "s/^$from\([ =]\)/$to\1/g" "$configdir"/*/emulators.cfg
+        # replace any paths with /$from/
+        sed -i "s|/$from/|/$to/|g" "$configdir"/*/emulators.cfg
+    fi
 }
 
 ## @fn addUdevInputRules()
@@ -649,7 +709,7 @@ function iniFileEditor() {
                     file="${file//$path\//}"
                     options+=("$i" "$file")
                     ((i++))
-                done < <(find "$path" -type f -name "$match" | sort)
+                done < <(find -L "$path" -type f -name "$match" | sort)
                 ;;
             _id_|*)
                 [[ "$mode" == "_id_" ]] && params=("${params[@]:1}")
@@ -711,55 +771,10 @@ function iniFileEditor() {
 ## @param theme name of theme to use
 ## @brief Adds a system entry for Emulation Station (to /etc/emulationstation/es_systems.cfg).
 function setESSystem() {
-    local fullname=$1
-    local name=$2
-    local path=$3
-    local extension=$4
-    local command=$5
-    local platform=$6
-    local theme=$7
-
-    local conf="/etc/emulationstation/es_systems.cfg"
-    mkdir -p "/etc/emulationstation"
-    if [[ ! -f "$conf" ]]; then
-        echo "<systemList />" >"$conf"
-    fi
-
-    cp "$conf" "$conf.bak"
-    if [[ $(xmlstarlet sel -t -v "count(/systemList/system[name='$name'])" "$conf") -eq 0 ]]; then
-        xmlstarlet ed -L -s "/systemList" -t elem -n "system" -v "" \
-            -s "/systemList/system[last()]" -t elem -n "name" -v "$name" \
-            -s "/systemList/system[last()]" -t elem -n "fullname" -v "$fullname" \
-            -s "/systemList/system[last()]" -t elem -n "path" -v "$path" \
-            -s "/systemList/system[last()]" -t elem -n "extension" -v "$extension" \
-            -s "/systemList/system[last()]" -t elem -n "command" -v "$command" \
-            -s "/systemList/system[last()]" -t elem -n "platform" -v "$platform" \
-            -s "/systemList/system[last()]" -t elem -n "theme" -v "$theme" \
-            "$conf"
-    else
-        xmlstarlet ed -L \
-            -u "/systemList/system[name='$name']/fullname" -v "$fullname" \
-            -u "/systemList/system[name='$name']/path" -v "$path" \
-            -u "/systemList/system[name='$name']/extension" -v "$extension" \
-            -u "/systemList/system[name='$name']/command" -v "$command" \
-            -u "/systemList/system[name='$name']/platform" -v "$platform" \
-            -u "/systemList/system[name='$name']/theme" -v "$theme" \
-            "$conf"
-    fi
-
-    sortESSystems "name"
-}
-
-## @fn sortESSystems()
-## @param field field to sort by (eg name / platform etc)
-## @brief Sorts `/etc/emulationstation/es_systems.cfg` system list by specified field.
-function sortESSystems() {
-    local field="$1"
-    cp "/etc/emulationstation/es_systems.cfg" "/etc/emulationstation/es_systems.cfg.bak"
-    xmlstarlet sel -D -I \
-        -t -m "/" -e "systemList" \
-        -m "//system" -s A:T:U "$1" -c "." \
-        "/etc/emulationstation/es_systems.cfg.bak" >"/etc/emulationstation/es_systems.cfg"
+    local function
+    for function in $(compgen -A function _add_system_); do
+        "$function" "$@"
+    done
 }
 
 ## @fn ensureSystemretroconfig()
@@ -929,10 +944,10 @@ function joy2keyStart() {
     fi
 
     # get the first joystick device (if not already set)
-    [[ -z "$__joy2key_dev" ]] && __joy2key_dev="$(ls -1 /dev/input/js* 2>/dev/null | head -n1)"
+    [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/jsX"
 
     # if no joystick device, or joy2key is already running exit
-    [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
+    [[ -z "$__joy2key_dev" || -n "$SSH_TTY" ]] || pgrep -f joy2key.py >/dev/null && return 1
 
     # if joy2key.py is installed run it with cursor keys for axis, and enter + space for buttons 0 and 1
     if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
@@ -952,59 +967,48 @@ function joy2keyStop() {
     fi
 }
 
+## @fn getPlatformConfig()
+## @param key key to look up
+## @brief gets a config from a platforms.cfg ini
+## @details gets a config from a platforms.cfg ini first looking in
+## `$configdir/all/platforms.cfg` then `$scriptdir/platforms.cfg`
+## allowing users to override any parts of `$scriptdir/platforms.cfg`
+function getPlatformConfig() {
+    local key="$1"
+    local conf
+    for conf in "$configdir/all/platforms.cfg" "$scriptdir/platforms.cfg"; do
+        [[ ! -f "$conf" ]] && continue
+        iniConfig "=" '"' "$conf"
+        iniGet "$key"
+        [[ -n "$ini_value" ]] && break
+    done
+    # workaround for RetroPie platform
+    [[ "$key" == "retropie_fullname" ]] && ini_value="RetroPie"
+    echo "$ini_value"
+}
+
 ## @fn addSystem()
-## @param default 1 to make the emulator / command default for the system if no default already set
-## @param id unique id of the module / command
-## @param names `"system"` or `"system platform"` or `"system platform theme"`
-## @param cmd commandline to launch
-## @param fullname optional fullname for the emulationstation config (if not present in platforms.cfg)
-## @param exts optional extensions for the emulationstation config (if not present in platforms.cfg)
-## @brief Adds a new emulator/commandline for a system.
-## @details This is the primary function for adding systems to emulationstation
-## allowing to add multiple emulators per system. eg.
-##
-##     addSystem 1 "vice-x64" "c64" "$md_inst/bin/x64 %ROM%"
-##     addSystem 0 "vice-xvic" "c64" "$md_inst/bin/xvic %ROM%"
-##
-## Would add two optional emulators for the c64 - with vice-x64 being the default if no default
-## was already set. This adds entries to `$configdir/$system/emulators.cfg` with
-##
-##     id = "cmd"
-##     default = id
-##
-## Which are then selectable from runcommand when launching roms
-##
-## For libretro emulators, cmd needs to only contain the path to the libretro library.
-##
-## eg. for the lr-fcuemm module
-##
-##     addSystem 1 "$md_id" "nes" "$md_inst/fceumm_libretro.so"
+## @param system system to add
+## @brief adds an emulator entry / system
+## @param fullname optional fullname for the frontend (if not present in platforms.cfg)
+## @param exts optional extensions for the frontend (if not present in platforms.cfg)
+## @details Adds a system to one of the frontend launchers
 function addSystem() {
-    local default="$1"
-    local id="$2"
-    local names=($3)
-    local cmd="$4"
-    local fullname="$5"
-    local exts=($6)
-
-    local system
-    local platform
-    local theme
-
-    # set system / platform / theme for configuration based on data in names field
-    if [[ -n "${names[2]}" ]]; then
-        system="${names[0]}"
-        platform="${names[1]}"
-        theme="${names[2]}"
-    elif [[ -n "${names[1]}" ]]; then
-        system="${names[0]}"
-        platform="${names[1]}"
-        theme="$system"
-    else
-        system="${names[0]}"
-        platform="$system"
-        theme="$system"
+    # backward compatibility for old addSystem functionality
+    if [[ $# > 3 ]]; then
+        addEmulator "$@"
+        addSystem "$3"
+        return
     fi
+
+    local system="$1"
+    local fullname="$2"
+    local exts=($3)
+
+    local platform="$system"
+    local theme="$system"
+    local cmd
+    local path
 
     # check if we are removing the system
     if [[ "$md_mode" == "remove" ]]; then
@@ -1012,86 +1016,54 @@ function addSystem() {
         return
     fi
 
-    # for the ports section, we will handle launching from a separate script and hardcode exts etc
-    local es_cmd="$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%"
-    local es_path="$romdir/$system"
-    local es_name="$system"
-    if [[ "$theme" == "ports" ]]; then
-        es_cmd="bash %ROM%"
-        es_path="$romdir/ports"
-        es_name="ports"
-        exts=(".sh")
-        fullname="Ports"
+    # set system / platform / theme for configuration based on data in names field
+    if [[ "$system" == "ports" ]]; then
+        cmd="bash %ROM%"
+        path="$romdir/ports"
     else
-        local conf=""
-        if [[ -f "$configdir/all/platforms.cfg" ]]; then
-            conf="$configdir/all/platforms.cfg"
-        else
-            conf="$scriptdir/platforms.cfg"
-        fi
-
-        # get extensions to show
-        iniConfig "=" '"' "$conf"
-        iniGet "${system}_fullname"
-        [[ -n "$ini_value" ]] && fullname="$ini_value"
-        iniGet "${system}_exts"
-        [[ -n "$ini_value" ]] && exts+=($ini_value)
-
-        # automatically add parameters for libretro modules
-        if [[ "$id" =~ ^lr- ]]; then
-            cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $md_conf_root/$system/retroarch.cfg %ROM%"
-        fi
+        cmd="$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%"
+        path="$romdir/$system"
     fi
 
-    exts="${exts[@]}"
+    exts+=("$(getPlatformConfig "${system}_exts")")
+
+    local temp
+    temp="$(getPlatformConfig "${system}_theme")"
+    if [[ -n "$temp" ]]; then
+        theme="$temp"
+    else
+        theme="$system"
+    fi
+
+    temp="$(getPlatformConfig "${system}_platform")"
+    if [[ -n "$temp" ]]; then
+        platform="$temp"
+    else
+        platform="$system"
+    fi
+
+    temp="$(getPlatformConfig "${system}_fullname")"
+    [[ -n "$temp" ]] && fullname="$temp"
+
+    exts="${exts[*]}"
     # add the extensions again as uppercase
     exts+=" ${exts^^}"
 
-    # create a config folder for the system / port
-    mkUserDir "$md_conf_root/$system"
-
-    # add the emulator to the $conf_dir/emulators.cfg if a commandline exists (not used for some ports)
-    if [[ -n "$cmd" ]]; then
-        iniConfig " = " '"' "$md_conf_root/$system/emulators.cfg"
-        iniSet "$id" "$cmd"
-        # set a default unless there is one already set
-        iniGet "default"
-        if [[ -z "$ini_value" && "$default" -eq 1 ]]; then
-            iniSet "default" "$id"
-        fi
-        chown $user:$user "$md_conf_root/$system/emulators.cfg"
-    fi
-
-    setESSystem "$fullname" "$es_name" "$es_path" "$exts" "$es_cmd" "$platform" "$theme"
+    setESSystem "$fullname" "$system" "$path" "$exts" "$cmd" "$platform" "$theme"
 }
 
 ## @fn delSystem()
-## @param id id of the module / command
 ## @param system system to delete
-## @brief Deletes an emulator entry / system
-## @details Delete the entry for the id from `$configdir/$system/emulators.cfg`.
-## If there are no more emulators for the system present, it will also
-## delete the system entry from `/etc/emulationstation/es_systems.cfg`.
+## @brief Deletes a system
+## @details deletes a system from all frontends.
 function delSystem() {
-    local id="$1"
-    local system="$2"
-    local config="$md_conf_root/$system/emulators.cfg"
-    # remove from apps list for system
-    if [[ -f "$config" && -n "$id" ]]; then
-        # delete emulator entry
-        iniConfig " = " '"' "$config"
-        iniDel "$id"
-        # if it is the default - remove it - runcommand will prompt to select a new default
-        iniGet "default"
-        [[ "$ini_value" == "$id" ]] && iniDel "default"
-        # if we no longer have any entries in the emulators.cfg file we can remove it
-        grep -q "=" "$config" || rm -f "$config"
-    fi
+    local system="$1"
+    local fullname="$(getPlatformConfig "${system}_fullname")"
 
-    # if we don't have an emulators.cfg we can remove the system from emulation station
-    if [[ -f /etc/emulationstation/es_systems.cfg && ! -f "$config" ]]; then
-        xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
-    fi
+    local function
+    for function in $(compgen -A function _del_system_); do
+        "$function" "$fullname" "$system"
+    done
 }
 
 ## @fn addPort()
@@ -1147,7 +1119,98 @@ _EOF_
             delSystem "$id" "ports"
         fi
     else
-        [[ -n "$cmd" ]] && addSystem 1 "$id" "$port pc ports" "$cmd"
+        [[ -n "$cmd" ]] && addEmulator 1 "$id" "$port" "$cmd"
+        addSystem "ports"
     fi
 }
 
+## @fn addEmulator()
+## @param default 1 to make the emulator / command default for the system if no default already set
+## @param id unique id of the module / command
+## @param name name of the system to add the emulator to
+## @param cmd commandline to launch
+## @brief Adds a new emulator for a system.
+## @details This is the primary function for adding emulators to a system which can be
+## switched between via the runcommand launch menu 
+##
+##     addEmulator 1 "vice-x64" "c64" "$md_inst/bin/x64 %ROM%"
+##     addEmulator 0 "vice-xvic" "c64" "$md_inst/bin/xvic %ROM%"
+##
+## Would add two optional emulators for the c64 - with vice-x64 being the default if no default
+## was already set. This adds entries to `$configdir/$system/emulators.cfg` with
+##
+##     id = "cmd"
+##     default = id
+##
+## Which are then selectable from runcommand when launching roms
+##
+## For libretro emulators, cmd needs to only contain the path to the libretro library.
+##
+## eg. for the lr-fcuemm module
+##
+##     addEmulator 1 "$md_id" "nes" "$md_inst/fceumm_libretro.so"
+function addEmulator() {
+    local default="$1"
+    local id="$2"
+    local system="$3"
+    local cmd="$4"
+
+    # check if we are removing the system
+    if [[ "$md_mode" == "remove" ]]; then
+        delEmulator "$id" "$system"
+        return
+    fi
+
+    # automatically add parameters for libretro modules
+    if [[ "$id" =~ ^lr- ]]; then
+        cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $md_conf_root/$system/retroarch.cfg %ROM%"
+    fi
+
+    # create a config folder for the system / port
+    mkUserDir "$md_conf_root/$system"
+
+    # add the emulator to the $conf_dir/emulators.cfg if a commandline exists (not used for some ports)
+    if [[ -n "$cmd" ]]; then
+        iniConfig " = " '"' "$md_conf_root/$system/emulators.cfg"
+        iniSet "$id" "$cmd"
+        # set a default unless there is one already set
+        iniGet "default"
+        if [[ -z "$ini_value" && "$default" -eq 1 ]]; then
+            iniSet "default" "$id"
+        fi
+        chown $user:$user "$md_conf_root/$system/emulators.cfg"
+    fi
+}
+
+## @fn delEmulator()
+## @param id id of emulator to delete
+## @param system system to delete from
+## @brief Deletes an emulator entry / system
+## @details Delete the entry for the id from `$configdir/$system/emulators.cfg`.
+## If there are no more emulators for the system present, it will also
+## delete the system entry from the installed frontends.
+function delEmulator() {
+    local id="$1"
+    local system="$2"
+
+    local config="$md_conf_root/$system/emulators.cfg"
+    # remove from apps list for system
+    if [[ -f "$config" && -n "$id" ]]; then
+        # delete emulator entry
+        iniConfig " = " '"' "$config"
+        iniDel "$id"
+        # if it is the default - remove it - runcommand will prompt to select a new default
+        iniGet "default"
+        [[ "$ini_value" == "$id" ]] && iniDel "default"
+        # if we no longer have any entries in the emulators.cfg file we can remove it
+        grep -q "=" "$config" || rm -f "$config"
+    fi
+
+    # if we don't have an emulators.cfg we can remove the system from the frontends
+    if [[ ! -f "$md_conf_root/$system/emulators.cfg" ]]; then
+        local function
+        for function in $(compgen -A function _del_system_); do
+            "$function" "$fullname" "$system"
+        done
+    fi
+}

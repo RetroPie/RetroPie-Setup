@@ -53,8 +53,11 @@ _EOF_
         chown -R $user:$user "$md_conf_root/gc/Config"
     fi
 
-    addSystem 1 "$md_id" "gc" "$md_inst/bin/dolphin-emu-nogui -e %ROM%"
-    addSystem 0 "$md_id-gui" "gc" "$md_inst/bin/dolphin-emu -b -e %ROM%"
-    addSystem 1 "$md_id" "wii" "$md_inst/bin/dolphin-emu-nogui -e %ROM%"
-    addSystem 0 "$md_id-gui" "wii" "$md_inst/bin/dolphin-emu -b -e %ROM%"
+    addEmulator 1 "$md_id" "gc" "$md_inst/bin/dolphin-emu-nogui -e %ROM%"
+    addEmulator 0 "$md_id-gui" "gc" "$md_inst/bin/dolphin-emu -b -e %ROM%"
+    addEmulator 1 "$md_id" "wii" "$md_inst/bin/dolphin-emu-nogui -e %ROM%"
+    addEmulator 0 "$md_id-gui" "wii" "$md_inst/bin/dolphin-emu -b -e %ROM%"
+
+    addSystem "gc"
+    addSystem "wii"
 }

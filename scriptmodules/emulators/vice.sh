@@ -16,24 +16,17 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_vice() {
-    local depends=(libsdl2-dev libpng12-dev zlib1g-dev libasound2-dev automake checkinstall bison flex)
-
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        depends+=(libjpeg8-dev )
-    else
-        depends+=(libjpeg-dev)
-    fi
-
-    getDepends "${depends[@]}"
+    getDepends libsdl2-dev libmpg123-dev libpng12-dev zlib1g-dev libasound2-dev libvorbis-dev libflac-dev libpcap-dev automake checkinstall bison flex subversion libjpeg-dev
 }
 
 function sources_vice() {
-    wget -O- -q $__archive_url/vice-2.4.30.tar.gz | tar -xvz --strip-components=1
+    svn checkout svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/ "$md_build"
 }
 
 function build_vice() {
-    local params=(--enable-sdlui2 --disable-catweasel --without-arts --without-oss)
-    ! isPlatform "x11" && params+=(--without-pulse)
+    local params=(--enable-sdlui2 --without-arts --without-oss --enable-ethernet)
+    ! isPlatform "x11" && params+=(--disable-catweasel --without-pulse)
+    ./autogen.sh
     ./configure --prefix="$md_inst" "${params[@]}"
     make
     md_ret_require="$md_build/src/x64"
@@ -44,15 +37,45 @@ function install_vice() {
 }
 
 function configure_vice() {
+    # get a list of supported extensions
+    local exts="$(getPlatformConfig c64_exts)"
+
+    # install the vice start script
+    mkdir -p "$md_inst/bin"
+    cat > "$md_inst/bin/vice.sh" << _EOF_
+#!/bin/bash
+
+BIN="\${0%/*}/\$1"
+ROM="\$2"
+
+romdir="\${ROM%/*}"
+ext="\${ROM##*.}"
+source "$rootdir/lib/archivefuncs.sh"
+
+archiveExtract "\$ROM" "$exts"
+
+# check successful extraction and if we have at least one file
+if [[ \$? == 0 ]]; then
+    ROM="\${arch_files[0]}"
+    romdir="\$arch_dir"
+fi
+
+"\$BIN" -chdir "\$romdir" "\$ROM"
+archiveCleanup
+_EOF_
+
+    chmod +x "$md_inst/bin/vice.sh"
+
     mkRomDir "c64"
 
-    addSystem 1 "$md_id-x64" "c64" "$md_inst/bin/x64 %ROM%"
-    addSystem 0 "$md_id-x64sc" "c64" "$md_inst/bin/x64sc %ROM%"
-    addSystem 0 "$md_id-x128" "c64" "$md_inst/bin/x128 %ROM%"
-    addSystem 0 "$md_id-xpet" "c64" "$md_inst/bin/xpet %ROM%"
-    addSystem 0 "$md_id-xplus4" "c64" "$md_inst/bin/xplus4 %ROM%"
-    addSystem 0 "$md_id-xvic" "c64" "$md_inst/bin/xvic %ROM%"
-    addSystem 0 "$md_id-xvic-cart" "c64" "$md_inst/bin/xvic -cartgeneric %ROM%"
+    addEmulator 1 "$md_id-x64" "c64" "$md_inst/bin/vice.sh x64 %ROM%"
+    addEmulator 0 "$md_id-x64sc" "c64" "$md_inst/bin/vice.sh x64sc %ROM%"
+    addEmulator 0 "$md_id-x128" "c64" "$md_inst/bin/vice.sh x128 %ROM%"
+    addEmulator 0 "$md_id-xpet" "c64" "$md_inst/bin/vice.sh xpet %ROM%"
+    addEmulator 0 "$md_id-xplus4" "c64" "$md_inst/bin/vice.sh xplus4 %ROM%"
+    addEmulator 0 "$md_id-xvic" "c64" "$md_inst/bin/vice.sh xvic %ROM%"
+    addEmulator 0 "$md_id-xvic-cart" "c64" "$md_inst/bin/vice.sh 'xvic -cartgeneric' %ROM%"
+    addSystem "c64"
 
     [[ "$md_mode" == "remove" ]] && return
 
@@ -78,4 +101,15 @@ function configure_vice() {
 
     copyDefaultConfig "$config" "$md_conf_root/c64/sdl-vicerc"
     rm "$config"
+
+    if ! isPlatform "x11"; then
+        # enforce a few settings to ensure a smooth upgrade from sdl1
+        iniConfig "=" "" "$md_conf_root/c64/sdl-vicerc"
+        iniDel "SDLBitdepth"
+        iniSet "VICIIDoubleSize" "0"
+        iniSet "VICIIDoubleScan" "0"
+        iniSet "SDLWindowWidth" "384"
+        iniSet "SDLWindowHeight" "272"
+    fi
+
 }

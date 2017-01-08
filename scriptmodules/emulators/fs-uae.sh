@@ -11,13 +11,13 @@
 
 rp_module_id="fs-uae"
 rp_module_desc="Amiga emulator - FS-UAE integrates the most accurate Amiga emulation code available from WinUAE"
-rp_module_help="ROM Extension: .adf"
+rp_module_help="ROM Extension: .adf  .adz .dms .ipf .zip\n\nCopy your Amiga games to $romdir/amiga\n\nCopy a required BIOS file (e.g. kick13.rom) to $biosdir"
 rp_module_section="exp"
 rp_module_flags="!arm"
 
 function depends_fs-uae() {
-    case "$__raspbian_name" in
-        ubuntu)
+    case "$__os_id" in
+        Ubuntu)
             if [[ "$md_mode" == "install" ]]; then
                 apt-add-repository -y ppa:fengestad/stable
             else
@@ -25,7 +25,7 @@ function depends_fs-uae() {
             fi
             aptUpdate
             ;;
-        jessie)
+        Debian)
             if [[ "$md_mode" == "install" ]]; then
                 echo "deb http://download.opensuse.org/repositories/home:/FrodeSolheim:/stable/Debian_8.0/ /" > /etc/apt/sources.list.d/fsuae-stable.list
             else
@@ -47,16 +47,29 @@ function remove_fs-uae() {
 function configure_fs-uae() {
     mkRomDir "amiga"
 
-    mkUserDir "$home/.config"
+    # copy configuring start script
+    mkdir "$md_inst/bin"
+    cp "$md_data/fs-uae.sh" "$md_inst/bin"
+    chmod +x "$md_inst/bin/fs-uae.sh"
+
     mkUserDir "$md_conf_root/amiga"
-    moveConfigDir "$home/.config/fs-uae" "$md_conf_root/amiga/fs-uae"
+    mkUserDir "$home/Documents/FS-UAE"
+    mkUserDir "$home/Documents/FS-UAE/Configurations"
+    moveConfigDir "$home/Documents/FS-UAE/Configurations" "$md_conf_root/amiga/fs-uae"
 
-    cat > "$romdir/amiga/+Start FS-UAE.sh" << _EOF_
-#!/bin/bash
-fs-uae-launcher
-_EOF_
-    chmod a+x "$romdir/amiga/+Start FS-UAE.sh"
-    chown $user:$user "$romdir/amiga/+Start FS-UAE.sh"
-
-    addSystem 1 "$md_id" "amiga" "$romdir/amiga/+Start\ FS-UAE.sh" "Amiga" ".sh"
+    # copy default config file
+    local config="$(mktemp)"
+    iniConfig " = " "" "$config"
+    iniSet "fullscreen" "1"
+    iniSet "keep_aspect" "1"
+    iniSet "zoom" "full"
+    iniSet "fsaa" "0"
+    iniSet "scanlines" "0"
+    iniSet "floppy_drive_speed" "100"
+    copyDefaultConfig "$config" "$md_conf_root/amiga/fs-uae/Default.fs-uae"
+    rm "$config"
+    
+    local exts=$(getPlatformConfig amiga_exts)
+    addEmulator 1 "$md_id" "amiga" "bash $md_inst/bin/fs-uae.sh '$exts' %ROM%"
+    addSystem "amiga"
 }

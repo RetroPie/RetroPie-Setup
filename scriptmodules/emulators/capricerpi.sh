@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !x86 !mali"
 
 function depends_capricerpi() {
-    getDepends libsdl1.2-dev zlib1g-dev
+    getDepends libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev zlib1g-dev
 }
 
 function sources_capricerpi() {
@@ -39,5 +39,6 @@ function install_capricerpi() {
 function configure_capricerpi() {
     mkRomDir "amstradcpc"
 
-    addSystem 0 "$md_id" "amstradcpc" "$md_inst/capriceRPI %ROM%"
+    addEmulator 0 "$md_id" "amstradcpc" "$md_inst/capriceRPI %ROM%"
+    addSystem "amstradcpc"
 }

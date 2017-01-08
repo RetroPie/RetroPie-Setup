@@ -29,10 +29,6 @@ function install_emulationstation-kids() {
     install_emulationstation
 }
 
-function remove_emulationstation-kids() {
-    remove_emulationstation
-}
-
 function configure_emulationstation-kids() {
     configure_emulationstation
 }

@@ -16,10 +16,7 @@ rp_module_section="opt"
 
 function _update_hook_lr-beetle-wswan() {
     # move from old location and update emulators.cfg
-    if [[ -d "$rootdir/$md_type/lr-mednafen-wswan" ]]; then
-        mv "$rootdir/$md_type/lr-mednafen-wswan" "$md_inst"
-        sed -i "s/lr-mednafen-wswan/lr-beetle-wswan/g" "$configdir"/*/emulators.cfg
-    fi
+    renameModule "lr-mednafen-wswan" "lr-beetle-wswan"
 }
 
 function sources_lr-beetle-wswan() {
@@ -44,6 +41,8 @@ function configure_lr-beetle-wswan() {
     ensureSystemretroconfig "wonderswan"
     ensureSystemretroconfig "wonderswancolor"
 
-    addSystem 1 "$md_id" "wonderswan" "$md_inst/mednafen_wswan_libretro.so"
-    addSystem 1 "$md_id" "wonderswancolor" "$md_inst/mednafen_wswan_libretro.so"
+    addEmulator 1 "$md_id" "wonderswan" "$md_inst/mednafen_wswan_libretro.so"
+    addEmulator 1 "$md_id" "wonderswancolor" "$md_inst/mednafen_wswan_libretro.so"
+    addSystem "wonderswan"
+    addSystem "wonderswancolor"
 }

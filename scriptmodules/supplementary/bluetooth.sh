@@ -31,7 +31,7 @@ function _get_connect_mode() {
 
 function depends_bluetooth() {
     local depends=(bluetooth python-dbus python-gobject)
-    if isPlatform "rpi3" && hasPackage raspberrypi-bootloader && [[ "$__raspbian_ver" -ge "8" ]]; then
+    if [[ "$__os_id" == "Raspbian" ]]; then
         depends+=(pi-bluetooth raspberrypi-sys-mods)
     fi
     getDepends "${depends[@]}"
@@ -41,7 +41,7 @@ function get_script_bluetooth() {
     name="$1"
     if ! which "$name"; then
         [[ "$name" == "bluez-test-input" ]] && name="bluez-test-device"
-        name="$scriptdir/scriptmodules/supplementary/$md_id/$name"
+        name="$md_data/$name"
     fi
     echo "$name"
 }
@@ -86,8 +86,8 @@ function list_registered_bluetooth() {
     local mac_address
     local device_name
     while read line; do
-        mac_address=$(echo $line | sed 's/ /,/g' | cut -d, -f1)
-        device_name=$(echo $line | sed -e 's/'"$mac_address"' //g')
+        mac_address="$(echo "$line" | sed 's/ /,/g' | cut -d, -f1)"
+        device_name="$(echo "$line" | sed -e 's/'"$mac_address"' //g')"
         echo -e "$mac_address\n$device_name"
     done < <($(get_script_bluetooth bluez-test-device) list)
 }
@@ -310,7 +310,7 @@ function connect_mode_bluetooth() {
     local connect_mode="$(_get_connect_mode)"
 
     local cmd=(dialog --backtitle "$__backtitle" --default-item "$connect_mode" --menu "Choose a connect mode" 22 76 16)
-    echo $__ini_cfg_file
+
     local options=(
         default "Bluetooth stack default behaviour"
         boot "Connect to devices once at boot"
@@ -351,7 +351,7 @@ _EOF_
 }
 
 function gui_bluetooth() {
-    addAutoConf "8bitdo_hack" 1
+    addAutoConf "8bitdo_hack" 0
 
     while true; do
         local connect_mode="$(_get_connect_mode)"

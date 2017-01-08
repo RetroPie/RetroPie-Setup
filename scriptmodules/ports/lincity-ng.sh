@@ -37,5 +37,11 @@ function configure_lincity-ng() {
     else
         addPort "$md_id" "lincity-ng" "LinCity-NG" "xinit /usr/games/lincity-ng"
     fi
-    moveConfigDir "$home/.lincity-ng" "$configDir/lincity-ng"
+    moveConfigDir "$home/.lincity-ng" "$md_conf_root/lincity-ng"
+    # fix for wrong config location
+    if [[ -d "/lincity-ng" ]]; then
+        cp -R /lincity-ng "$md_conf_root/"
+        rm -rf /lincity-ng
+        chown $user:$user "$md_conf_root/lincity-ng"
+    fi
 }

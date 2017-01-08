@@ -15,19 +15,14 @@ rp_module_section="config"
 
 function depends_usbromservice() {
     local depends=(rsync ntfs-3g exfat-fuse)
-    if [[ "$__raspbian_ver" -gt 7 ]]; then
-        if ! hasPackage usbmount 0.0.24; then
-            depends+=(debhelper devscripts pmount lockfile-progs)
-            getDepends "${depends[@]}"
-            if [[ "$md_mode" == "install" ]]; then
-                rp_callModule usbromservice sources
-                rp_callModule usbromservice build
-                rp_callModule usbromservice install
-            fi
-        fi
-    else
-        depends+=(usbmount)
+    if ! hasPackage usbmount 0.0.24; then
+        depends+=(debhelper devscripts pmount lockfile-progs)
         getDepends "${depends[@]}"
+        if [[ "$md_mode" == "install" ]]; then
+            rp_callModule usbromservice sources
+            rp_callModule usbromservice build
+            rp_callModule usbromservice install
+        fi
     fi
 }
 
@@ -44,9 +39,15 @@ function install_usbromservice() {
 }
 
 function enable_usbromservice() {
-    cp -v "$scriptdir/scriptmodules/$md_type/$md_id/01_retropie_copyroms" /etc/usbmount/mount.d/
-    sed -i -e "s/USERTOBECHOSEN/$user/g" /etc/usbmount/mount.d/01_retropie_copyroms
-    chmod +x /etc/usbmount/mount.d/01_retropie_copyroms
+    # copy our mount.d scripts over
+    local file
+    local dest
+    for file in "$md_data/"*; do
+        dest="/etc/usbmount/mount.d/${file##*/}"
+        sed "s/USERTOBECHOSEN/$user/g" "$file" >"$dest"
+        chmod +x "$dest"
+    done
+
     iniConfig "=" '"' /etc/usbmount/usbmount.conf
     local fs
     for fs in ntfs exfat; do
@@ -64,7 +65,11 @@ function enable_usbromservice() {
 }
 
 function disable_usbromservice() {
-    rm -f /etc/usbmount/mount.d/01_retropie_copyroms
+    local file
+    for file in "$md_data/"*; do
+        file="/etc/usbmount/mount.d/${file##*/}"
+        rm -f "$file"
+    done
 }
 
 function remove_usbromservice() {

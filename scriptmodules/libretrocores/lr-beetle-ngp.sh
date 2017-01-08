@@ -16,10 +16,7 @@ rp_module_section="main"
 
 function _update_hook_lr-beetle-ngp() {
     # move from old location and update emulators.cfg
-    if [[ -d "$rootdir/$md_type/lr-mednafen-ngp" ]]; then
-        mv "$rootdir/$md_type/lr-mednafen-ngp" "$md_inst"
-        sed -i "s/lr-mednafen-ngp/lr-beetle-ngp/g" "$configdir"/*/emulators.cfg
-    fi
+    renameModule "lr-mednafen-ngp" "lr-beetle-ngp"
 }
 
 function sources_lr-beetle-ngp() {
@@ -39,11 +36,12 @@ function install_lr-beetle-ngp() {
 }
 
 function configure_lr-beetle-ngp() {
-    mkRomDir "ngp"
-    mkRomDir "ngpc"
-    ensureSystemretroconfig "ngp"
-    ensureSystemretroconfig "ngpc"
+    local system
+    for system in ngp ngpc; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 1 "$md_id" "$system" "$md_inst/mednafen_ngp_libretro.so"
+        addSystem "$system"
+    done
 
-    addSystem 1 "$md_id" "ngp" "$md_inst/mednafen_ngp_libretro.so"
-    addSystem 1 "$md_id" "ngpc" "$md_inst/mednafen_ngp_libretro.so"
 }

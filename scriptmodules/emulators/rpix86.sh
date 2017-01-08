@@ -42,5 +42,6 @@ _EOF_
     chown $user:$user "$romdir/pc/+Start rpix86.sh"
     ln -sfn "$romdir/pc" games
 
-    addSystem 0 "$md_id" "pc" "$romdir/pc/+Start\ rpix86.sh %ROM%"
+    addEmulator 0 "$md_id" "pc" "bash $romdir/pc/+Start\ rpix86.sh %ROM%"
+    addSystem "pc"
 }

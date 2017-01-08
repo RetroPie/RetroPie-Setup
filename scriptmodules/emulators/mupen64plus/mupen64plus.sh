@@ -16,14 +16,11 @@ RES="$3"
 RSP_PLUGIN="$4"
 [[ -n "$RES" ]] && RES="--resolution $RES"
 [[ -z "$RSP_PLUGIN" ]] && RSP_PLUGIN="mupen64plus-rsp-hle"
+
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
 config="$configdir/n64/mupen64plus.cfg"
-
-user="$SUDO_USER"
-[[ -z "$user" ]] && user=$(id -un)
-home="$(eval echo ~$user)"
-datadir="$home/RetroPie"
+datadir="$HOME/RetroPie"
 romdir="$datadir/roms"
 
 source "$rootdir/lib/inifuncs.sh"
@@ -233,7 +230,7 @@ function testCompatibility() {
             fi
             iniConfig " = " "" "$config"
             # Settings version. Don't touch it.
-            iniSet "configVersion" "14"
+            iniSet "configVersion" "16"
             # Enable FBEmulation if necessary
             iniSet "EnableFBEmulation" "False"
             for game in "${GLideN64FBEMU_whitelist[@]}"; do

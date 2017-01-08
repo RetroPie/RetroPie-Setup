@@ -9,9 +9,7 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-# global variables ==========================================================
-
-__version="4.0.3"
+__version="4.1.9"
 
 [[ "$__debug" -eq 1 ]] && set -x
 
@@ -19,7 +17,7 @@ __version="4.0.3"
 rootdir="/opt/retropie"
 
 user="$SUDO_USER"
-[[ -z "$user" ]] && user=$(id -un)
+[[ -z "$user" ]] && user="$(id -un)"
 
 home="$(eval echo ~$user)"
 datadir="$home/RetroPie"
@@ -28,8 +26,8 @@ romdir="$datadir/roms"
 emudir="$rootdir/emulators"
 configdir="$rootdir/configs"
 
-scriptdir=$(dirname "$0")
-scriptdir=$(cd "$scriptdir" && pwd)
+scriptdir="$(dirname "$0")"
+scriptdir="$(cd "$scriptdir" && pwd)"
 
 __logdir="$scriptdir/logs"
 __tmpdir="$scriptdir/tmp"
@@ -37,8 +35,8 @@ __builddir="$__tmpdir/build"
 __swapdir="$__tmpdir"
 
 # check, if sudo is used
-if [[ $(id -u) -ne 0 ]]; then
-    echo "Script must be run as root. Try 'sudo $0'"
+if [[ "$(id -u)" -ne 0 ]]; then
+    echo "Script must be run under sudo from the user you want to install for. Try 'sudo $0'"
     exit 1
 fi
 
@@ -51,19 +49,14 @@ source "$scriptdir/scriptmodules/packages.sh"
 
 setup_env
 
-mkUserDir "$romdir"
-mkUserDir "$biosdir"
-
 rp_registerAllModules
 
 ensureFBMode 320 240
 
-[[ "$1" == "init" ]] && return
-
 rp_ret=0
 if [[ $# -gt 0 ]]; then
     joy2keyStart
-    ensureRootdirExists
+    setupDirectories
     rp_callModule "$@"
     rp_ret=$?
     joy2keyStop

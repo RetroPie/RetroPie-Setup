@@ -12,6 +12,7 @@
 rp_module_id="emulationstation"
 rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emulators"
 rp_module_section="core"
+rp_module_flags="frontend"
 
 function _get_input_cfg_emulationstation() {
     echo "$configdir/all/emulationstation/es_input.cfg"
@@ -25,12 +26,107 @@ function _update_hook_emulationstation() {
     fi
 }
 
+function _sort_systems_emulationstation() {
+    local field="$1"
+    cp "/etc/emulationstation/es_systems.cfg" "/etc/emulationstation/es_systems.cfg.bak"
+    xmlstarlet sel -D -I \
+        -t -m "/" -e "systemList" \
+        -m "//system" -s A:T:U "$1" -c "." \
+        "/etc/emulationstation/es_systems.cfg.bak" >"/etc/emulationstation/es_systems.cfg"
+}
+
+function _add_system_emulationstation() {
+    local fullname="$1"
+    local name="$2"
+    local path="$3"
+    local extension="$4"
+    local command="$5"
+    local platform="$6"
+    local theme="$7"
+
+    local conf="/etc/emulationstation/es_systems.cfg"
+    mkdir -p "/etc/emulationstation"
+    if [[ ! -f "$conf" ]]; then
+        echo "<systemList />" >"$conf"
+    fi
+
+    cp "$conf" "$conf.bak"
+    if [[ $(xmlstarlet sel -t -v "count(/systemList/system[name='$name'])" "$conf") -eq 0 ]]; then
+        xmlstarlet ed -L -s "/systemList" -t elem -n "system" -v "" \
+            -s "/systemList/system[last()]" -t elem -n "name" -v "$name" \
+            -s "/systemList/system[last()]" -t elem -n "fullname" -v "$fullname" \
+            -s "/systemList/system[last()]" -t elem -n "path" -v "$path" \
+            -s "/systemList/system[last()]" -t elem -n "extension" -v "$extension" \
+            -s "/systemList/system[last()]" -t elem -n "command" -v "$command" \
+            -s "/systemList/system[last()]" -t elem -n "platform" -v "$platform" \
+            -s "/systemList/system[last()]" -t elem -n "theme" -v "$theme" \
+            "$conf"
+    else
+        xmlstarlet ed -L \
+            -u "/systemList/system[name='$name']/fullname" -v "$fullname" \
+            -u "/systemList/system[name='$name']/path" -v "$path" \
+            -u "/systemList/system[name='$name']/extension" -v "$extension" \
+            -u "/systemList/system[name='$name']/command" -v "$command" \
+            -u "/systemList/system[name='$name']/platform" -v "$platform" \
+            -u "/systemList/system[name='$name']/theme" -v "$theme" \
+            "$conf"
+    fi
+
+    _sort_systems_emulationstation "name"
+}
+
+function _del_system_emulationstation() {
+    local fullname="$1"
+    local name="$2"
+    if [[ -f /etc/emulationstation/es_systems.cfg ]]; then
+        xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
+    fi
+}
+
+function _add_rom_emulationstation() {
+    local system_name="$1"
+    local system_fullname="$2"
+    local path="./$3"
+    local name="$4"
+    local desc="$5"
+    local image="$6"
+
+    local config_dir="$configdir/all/emulationstation"
+
+    mkUserDir "$config_dir"
+    mkUserDir "$config_dir/gamelists"
+    mkUserDir "$config_dir/gamelists/$system_name"
+    local config="$config_dir/gamelists/$system_name/gamelist.xml"
+
+    if [[ ! -f "$config" ]]; then
+        echo "<gameList />" >"$config"
+    fi
+
+    if [[ $(xmlstarlet sel -t -v "count(/gameList/game[path='$path'])" "$config") -eq 0 ]]; then
+        xmlstarlet ed -L -s "/gameList" -t elem -n "game" -v "" \
+            -s "/gameList/game[last()]" -t elem -n "path" -v "$path" \
+            -s "/gameList/game[last()]" -t elem -n "name" -v "$name" \
+            -s "/gameList/game[last()]" -t elem -n "desc" -v "$desc" \
+            -s "/gameList/game[last()]" -t elem -n "image" -v "$image" \
+            "$config"
+    else
+        xmlstarlet ed -L \
+            -u "/gameList/game[name='$name']/path" -v "$path" \
+            -u "/gameList/game[name='$name']/name" -v "$name" \
+            -u "/gameList/game[name='$name']/desc" -v "$desc" \
+            -u "/gameList/game[name='$name']/image" -v "$image" \
+            "$config"
+    fi
+    chown $user:$user "$config"
+}
+
 function depends_emulationstation() {
     local depends=(
         libboost-locale-dev libboost-system-dev libboost-filesystem-dev
         libboost-date-time-dev libfreeimage-dev libfreetype6-dev libeigen3-dev
         libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
-        )
+        libvlc-dev libvlccore-dev vlc-nox
+    )
 
     isPlatform "x11" && depends+=(gnome-terminal)
     getDepends "${depends[@]}"
@@ -42,10 +138,6 @@ function sources_emulationstation() {
     [[ -z "$repo" ]] && repo="https://github.com/retropie/EmulationStation"
     [[ -z "$branch" ]] && branch="master"
     gitPullOrClone "$md_build" "$repo" "$branch"
-    # make sure libMali.so can be found so we use OpenGL ES
-    if isPlatform "mali"; then
-        sed -i 's|/usr/lib/libMali.so|/usr/lib/arm-linux-gnueabihf/libMali.so|g' CMakeLists.txt
-    fi
 }
 
 function build_emulationstation() {
@@ -111,17 +203,23 @@ if [[ "\$(uname --machine)" != *86* ]]; then
     fi
 fi
 
+# save current tty/vt number for use with X so it can be launched on the correct tty
+tty=\$(tty)
+export TTY="\${tty:8:1}"
+
 clear
 tput civis
 "$md_inst/emulationstation.sh" "\$@"
-tput cnorm
+if [[ $? -eq 139 ]]; then
+    dialog --cr-wrap --no-collapse --msgbox "Emulation Station crashed!\n\nIf this is your first boot of RetroPie - make sure you are using the correct image for your system.\n\\nCheck your rom file/folder permissions and if running on a Raspberry Pi, make sure your gpu_split is set high enough and/or switch back to using carbon theme.\n\nFor more help please use the RetroPie forum." 20 60 >/dev/tty
+fi
 
 _EOF_
     chmod +x /usr/bin/emulationstation
 
     if isPlatform "x11"; then
         mkdir -p /usr/local/share/{icons,applications}
-        cp "$scriptdir/scriptmodules/$md_type/emulationstation/retropie.svg" "/usr/local/share/icons/"
+        cp "$md_data/retropie.svg" "/usr/local/share/icons/"
         cat > /usr/local/share/applications/retropie.desktop << _EOF_
 [Desktop Entry]
 Type=Application

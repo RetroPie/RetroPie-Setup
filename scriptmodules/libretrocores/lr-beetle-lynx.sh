@@ -34,5 +34,6 @@ function configure_lr-beetle-lynx() {
     mkRomDir "atarilynx"
     ensureSystemretroconfig "atarilynx"
 
-    addSystem 0 "$md_id" "atarilynx" "$md_inst/mednafen_lynx_libretro.so"
+    addEmulator 0 "$md_id" "atarilynx" "$md_inst/mednafen_lynx_libretro.so"
+    addSystem "atarilynx"
 }

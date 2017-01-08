@@ -39,5 +39,6 @@ function configure_lr-fuse() {
     # default to 128k spectrum
     setRetroArchCoreOption "fuse_machine" "Spectrum 128K"
 
-    addSystem 1 "$md_id" "zxspectrum" "$md_inst/fuse_libretro.so"
+    addEmulator 1 "$md_id" "zxspectrum" "$md_inst/fuse_libretro.so"
+    addSystem "zxspectrum"
 }

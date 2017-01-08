@@ -12,7 +12,7 @@
 rp_module_id="kodi"
 rp_module_desc="Kodi - Open source home theatre software"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="!mali !osmc"
 
 function _update_hook_kodi() {
     # to show as installed in retropie-setup 4.x
@@ -20,10 +20,6 @@ function _update_hook_kodi() {
 }
 
 function depends_kodi() {
-    if hasPackage rbp-bootloader-osmc; then
-        md_ret_errors+=("The Kodi included with RetroPie is not compatible with OSMC")
-        return 1
-    fi
     if isPlatform "rpi"; then
         if [[ "$md_mode" == "install" ]]; then
             # remove old repository
@@ -57,6 +53,8 @@ function remove_kodi() {
 function configure_kodi() {
     # remove old directLaunch entry
     delSystem "$md_id" "kodi"
+
+    moveConfigDir "$home/.kodi" "$md_conf_root/kodi"
 
     addPort "$md_id" "kodi" "Kodi" "kodi"
 }

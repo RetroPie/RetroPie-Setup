@@ -13,15 +13,10 @@ rp_module_id="love"
 rp_module_desc="Love - 2d Game Engine"
 rp_module_help="Copy your Love roms to $romdir/love"
 rp_module_section="opt"
+rp_module_flags="!aarch64"
 
 function depends_love() {
-    local depends=(mercurial autotools-dev automake libtool pkg-config libdevil-dev libfreetype6-dev libluajit-5.1-dev libphysfs-dev libsdl2-dev libopenal-dev libogg-dev libtheora-dev libvorbis-dev libflac-dev libflac++-dev libmodplug-dev libmpg123-dev libmng-dev)
-
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        depends+=(libjpeg8-dev )
-    else
-        depends+=(libjpeg-dev)
-    fi
+    local depends=(mercurial autotools-dev automake libtool pkg-config libdevil-dev libfreetype6-dev libluajit-5.1-dev libphysfs-dev libsdl2-dev libopenal-dev libogg-dev libtheora-dev libvorbis-dev libflac-dev libflac++-dev libmodplug-dev libmpg123-dev libmng-dev libjpeg-dev)
 
     getDepends "${depends[@]}"
 }
@@ -63,7 +58,8 @@ function configure_love() {
 
     mkRomDir "love"
 
-    addSystem 1 "$md_id" "love" "$md_inst/bin/love %ROM%" "Love" ".love"
+    addEmulator 1 "$md_id" "love" "$md_inst/bin/love %ROM%"
+    addSystem "love"
 
     [[ "$md_mode" == "install" ]] && game_data_love
 }

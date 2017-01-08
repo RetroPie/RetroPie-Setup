@@ -87,7 +87,10 @@ _EOF_
 
     setDispmanx "$md_id" 1
 
-    addSystem 1 "$md_id" "zxspectrum" "$romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%"
-    addSystem 1 "$md_id" "samcoupe" "$romdir/zxspectrum/+Start\ ZEsarUX.sh --machine sam %ROM%"
-    addSystem 1 "$md_id" "amstradcpc" "$romdir/zxspectrum/+Start\ ZEsarUX.sh --machine CPC464 %ROM%"
+    addEmulator 1 "$md_id" "zxspectrum" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%"
+    addEmulator 1 "$md_id" "samcoupe" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine sam %ROM%"
+    addEmulator 1 "$md_id" "amstradcpc" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine CPC464 %ROM%"
+    addSystem "zxspectrum"
+    addSystem "samcoupe"
+    addSystem "amstradcpc"
 }

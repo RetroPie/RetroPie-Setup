@@ -88,6 +88,16 @@ function connect_wifi() {
         done
     fi
 
+    create_config_wifi "$type" "$essid" "$key"
+
+    gui_connect_wifi
+}
+
+function create_config_wifi() {
+    local type="$1"
+    local essid="$2"
+    local key="$3"
+
     local wpa_config
     wpa_config+="\tssid=\"$essid\"\n"
     case $type in
@@ -115,7 +125,10 @@ $wpa_config
 }
 # RETROPIE CONFIG END
 _EOF_
+}
 
+function gui_connect_wifi() {
+    ifdown wlan0 &>/dev/null
     ifup wlan0 &>/dev/null
     dialog --backtitle "$__backtitle" --infobox "\nConnecting ..." 5 40 >/dev/tty
     local id=""
@@ -129,14 +142,31 @@ _EOF_
 }
 
 function gui_wifi() {
+    local default
     while true; do
         local ip_int=$(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Configure WiFi\nCurrent IP: $ip_int\nWireless ESSID: $(iwgetid -r)" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Configure WiFi\nCurrent IP: $ip_int\nWireless ESSID: $(iwgetid -r)" 22 76 16)
         local options=(
             1 "Connect to WiFi network"
+            "1 Connect to your WiFi network"
             2 "Disconnect/Remove WiFi config"
+            "2 Disconnect and remove any Wifi configuration"
+            3 "Import wifi credentials from /boot/wifikeyfile.txt"
+            "3 Will import the ssid (name) and psk (password) from a file /boot/wifikeyfile.txt
+
+The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk = \"YOUR PASSWORD\""
         )
+
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [[ "${choice[@]:0:4}" == "HELP" ]]; then
+            choice="${choice[@]:5}"
+            default="${choice/%\ */}"
+            choice="${choice#* }"
+            printMsgs "dialog" "$choice"
+            continue
+        fi
+        default="$choice"
+
         if [[ -n "$choice" ]]; then
             case $choice in
                 1)
@@ -144,6 +174,19 @@ function gui_wifi() {
                     ;;
                 2)
                     remove_wifi
+                    ;;
+                3)
+                    if [[ -f "/boot/wifikeyfile.txt" ]]; then
+                        iniConfig " = " "\"" "/boot/wifikeyfile.txt"
+                        iniGet "ssid"
+                        local ssid="$ini_value"
+                        iniGet "psk"
+                        local psk="$ini_value"
+                        create_config_wifi "wpa" "$ssid" "$psk"
+                        gui_connect_wifi
+                    else
+                        printMsgs "dialog" "No /boot/wifikeyfile.txt found"
+                    fi
                     ;;
             esac
         else

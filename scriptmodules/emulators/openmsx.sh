@@ -42,5 +42,6 @@ function install_openmsx() {
 function configure_openmsx() {
     mkRomDir "msx"
 
-    addSystem 0 "$md_id" "msx" "$md_inst/bin/openmsx %ROM%"
+    addEmulator 0 "$md_id" "msx" "$md_inst/bin/openmsx %ROM%"
+    addSystem "msx"
 }

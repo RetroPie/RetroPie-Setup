@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# This file is part of The RetroPie Project
+#
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
+# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
+#
+
+## config / defaults
+user="USERTOBECHOSEN"
+
+home="$(eval echo ~$user)"
+retropie_path="$home/RetroPie"
+
+usb_path="$UM_MOUNTPOINT/retropie-mount"
+
+## internals
+hook_name=${0##*/}
+
+## functions
+function log() {
+    logger -p user.$1 -t usbmount-"$hook_name"-[$$] -- "$2"
+}
+
+function log_cmd() {
+    local ret
+    local error
+    error="$("$@" 2>&1 >/dev/null)"
+    ret=$?
+    [[ "$ret" -ne 0 ]] && log err "$* - returned $ret - $error"
+}
+
+## some sanity checking
+if [[ -z "$UM_MOUNTPOINT" ]]; then
+    log err "UM_MOUNTPOINT not set!"
+    exit 0
+fi
+
+if [[ ! -d "$UM_MOUNTPOINT" ]]; then
+    log err "UM_MOUNTPOINT is not a directory"
+    exit 0
+fi
+
+# check for a retropie-mount folder
+if [[ ! -d "$usb_path" ]]; then
+    exit 0
+fi
+
+if [[ -z "$(ls -A "$usb_path")" ]]; then
+    log info "Copying existing $retropie_path to $usb_path ..."
+    log_cmd rsync -rtu "$retropie_path/" "$usb_path/"
+fi
+
+log info "Mounting $usb_path over $retropie_path ..."
+log_cmd mount -o bind "$usb_path" "$retropie_path"

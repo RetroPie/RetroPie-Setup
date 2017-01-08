@@ -15,12 +15,15 @@ rp_module_help="see wiki for detailed explanation"
 rp_module_section="exp"
 
 function sources_lr-mess() {
-    gitPullOrClone "$md_build" https://github.com/libretro/MAME.git
+    gitPullOrClone "$md_build" https://github.com/libretro/mame.git
 }
 
 function build_lr-mess() {
-    make -f Makefile.libretro clean
-    make -f Makefile.libretro SUBTARGET=mess
+    rpSwap on 750
+    local params=($(_get_params_lr-mame) SUBTARGET=mess)
+    make clean
+    make "${params[@]}"
+    rpSwap off
     md_ret_require="$md_build/mess_libretro.so"
 }
 
@@ -31,16 +34,13 @@ function install_lr-mess() {
 }
 
 function configure_lr-mess() {
-    mkRomDir "nes"
-    mkRomDir "gameboy"
-    mkRomDir "coleco"
-    mkRomDir "arcadia"
-    mkRomDir "crvision"
-    ensureSystemretroconfig "nes"
-    ensureSystemretroconfig "gameboy"
-    ensureSystemretroconfig "coleco"
-    ensureSystemretroconfig "arcadia"
-    ensureSystemretroconfig "crvision"
+    local system
+    for system in nes gameboy coleco arcadia crvision; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/mess_libretro.so"
+        addSystem "$system"
+    done
 
     setRetroArchCoreOption "mame_softlists_enable" "enabled"
     setRetroArchCoreOption "mame_softlists_auto_media" "enabled"
@@ -49,9 +49,4 @@ function configure_lr-mess() {
     mkdir "$biosdir/mame"
     cp -rv "$md_build/hash" "$biosdir/mame/"
     chown -R $user:$user "$biosdir/mame"
-    addSystem 0 "$md_id" "nes" "$md_inst/mess_libretro.so"
-    addSystem 0 "$md_id" "gameboy" "$md_inst/mess_libretro.so"
-    addSystem 0 "$md_id" "coleco" "$md_inst/mess_libretro.so"
-    addSystem 0 "$md_id" "arcadia" "$md_inst/mess_libretro.so"
-    addSystem 0 "$md_id" "crvision" "$md_inst/mess_libretro.so"
 }
