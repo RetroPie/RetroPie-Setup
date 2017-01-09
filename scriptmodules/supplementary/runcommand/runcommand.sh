@@ -903,6 +903,7 @@ function check_menu() {
     # check for key pressed to enter configuration
     IFS= read -s -t 2 -N 1 key </dev/tty
     if [[ -n "$key" ]]; then
+        [[ -n "$IMG_PID" ]] && kill -SIGINT "$IMG_PID"
         if [[ "$HAS_TVS" -eq 1 ]]; then
             get_all_modes
         fi
