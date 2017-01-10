@@ -29,7 +29,8 @@ function build_lr-imame4all() {
 function install_lr-imame4all() {
     md_ret_files=(
         'mame2000_libretro.so'
-        'Readme.txt'
+        'readme.md'
+        'readme.txt'
     )
 }
 
