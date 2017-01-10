@@ -185,10 +185,13 @@ function get_platform() {
     if [[ -z "$__platform" ]]; then
         case "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" in
             BCM*)
+                # calculated based on information from https://github.com/AndrewFromMelbourne/raspberry_pi_revision
                 local rev="0x$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)"
+                # if bit 23 is not set, we are on a rpi1 (bit 23 means the revision is a bitfield)
                 if [[ $((($rev >> 23) & 1)) -eq 0 ]]; then
                     __platform="rpi1"
                 else
+                    # if bit 23 is set, get the cpu from bits 12-15
                     local cpu=$((($rev >> 12) & 15))
                     case $cpu in
                         0)
