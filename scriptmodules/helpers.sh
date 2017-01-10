@@ -206,8 +206,10 @@ function getDepends() {
             fi
         fi
 
-        if [[ "$required" == "libraspberrypi-dev" ]] && isPlatform "osmc"; then
-            required="rbp-userland-dev-osmc"
+        # workaround for different package names on osmc / xbian
+        if [[ "$required" == "libraspberrypi-dev" ]]; then
+            isPlatform "osmc" && required="rbp-userland-dev-osmc"
+            isPlatform "xbian" && required="xbian-package-firmware"
         fi
 
         # map libpng12-dev to libpng-dev for Ubuntu 16.10+

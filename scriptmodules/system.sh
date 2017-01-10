@@ -81,6 +81,11 @@ function get_os_version() {
             if grep -q "ID=osmc" /etc/os-release; then
                 __platform_flags+=" osmc"
             fi
+
+            # and for xbian
+            if grep -q "NAME=XBian" /etc/os-release; then
+                __platform_flags+=" xbian"
+            fi
             ;;
         LinuxMint)
             if compareVersions "$__os_release" lt 17; then
