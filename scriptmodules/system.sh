@@ -280,7 +280,7 @@ function platform_odroid-c1() {
 function platform_odroid-c2() {
     __default_cflags="-O2 -march=native -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j4"
+    __default_makeflags="-j2"
     __platform_flags="aarch64 armv8 mali"
     __qemu_cpu=cortex-a15
     __has_binaries=0
