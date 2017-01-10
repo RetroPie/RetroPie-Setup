@@ -12,7 +12,7 @@
 rp_module_id="kodi"
 rp_module_desc="Kodi - Open source home theatre software"
 rp_module_section="opt"
-rp_module_flags="!mali !osmc"
+rp_module_flags="!mali !osmc !xbian"
 
 function _update_hook_kodi() {
     # to show as installed in retropie-setup 4.x
