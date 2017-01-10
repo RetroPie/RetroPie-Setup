@@ -31,6 +31,7 @@ function install_lr-imame4all() {
         'mame2000_libretro.so'
         'readme.md'
         'readme.txt'
+        'whatsnew.txt'
     )
 }
 
