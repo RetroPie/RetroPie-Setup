@@ -33,7 +33,7 @@ function install_lr-nestopia() {
         'NstDatabase.xml'
         'README.md'
         'README.unix'
-        'changelog.txt'
+        'ChangeLog'
         'readme.html'
         'COPYING'
         'AUTHORS'
