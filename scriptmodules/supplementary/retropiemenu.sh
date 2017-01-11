@@ -53,6 +53,7 @@ function configure_retropiemenu()
         'retronetplay'
         'rpsetup'
         'runcommand'
+        'log'
         'showip'
         'splashscreen'
         'wifi'
@@ -69,6 +70,7 @@ function configure_retropiemenu()
         'RetroArch Net Play'
         'RetroPie Setup'
         'Run Command Configuration'
+        'Run Command Log'
         'Show IP'
         'Splash Screens'
         'WiFi'
@@ -85,6 +87,7 @@ function configure_retropiemenu()
         'Set up RetroArch Netplay options, choose host or client, port, host IP, delay frames, and your nickname.'
         'Install RetroPie from binary or source, install experimental packages, additional drivers, edit samba shares, custom scraper, as well as other RetroPie-related configurations.'
         'Change what appears on the runcommand screen. Enable or disable the menu, enable or disable box art, and change CPU configuration.'
+        'Displays runcommand.log output, useful for checking errors with your roms.'
         'Displays your current IP address, as well as other information provided by the command, "ip addr show."'
         'Enable or disable the splashscreen on RetroPie boot. Choose a splashscreen, download new splashscreens, and return splashscreen to default.'
         'Connect to or disconnect from a wifi network and configure wifi settings.'
@@ -148,6 +151,9 @@ function launch_retropiemenu() {
             ;;
         filemanager.rp)
             mc
+            ;;
+        log.rp)
+            printMsgs "dialog" "Your runcommand.log is:\n\n$(cat /dev/shm/runcommand.log)"
             ;;
         showip.rp)
             local ip="$(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)"
