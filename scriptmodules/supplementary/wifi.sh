@@ -12,7 +12,7 @@
 rp_module_id="wifi"
 rp_module_desc="Configure Wifi"
 rp_module_section="config"
-rp_module_flags="!x86"
+rp_module_flags="!x86 !H3"
 
 function remove_wifi() {
     sed -i '/RETROPIE CONFIG START/,/RETROPIE CONFIG END/d' "/etc/wpa_supplicant/wpa_supplicant.conf"
