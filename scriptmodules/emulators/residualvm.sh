@@ -68,7 +68,6 @@ function configure_residualvm() {
     done
 
     # Create startup script
-    rm -f "$romdir/residualvm/+Launch GUI.sh"
     cat > "$romdir/residualvm/+Start ResidualVM.sh" << _EOF_
 #!/bin/bash
 renderer="\$1"
