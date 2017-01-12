@@ -16,7 +16,13 @@ rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
 function depends_residualvm() {
-    getDepends libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev
+    local depends=(
+        libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev
+        libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev
+        zlib1g-dev libjpeg-dev
+    )
+    isPlatform "x11" && depends+=(libglew-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_residualvm() {
@@ -24,15 +30,24 @@ function sources_residualvm() {
 }
 
 function build_residualvm() {
-    SDL_CONFIG=sdl2-config LDFLAGS="-L/opt/vc/lib" ./configure \
-        --force-opengles2 \
-        --disable-glew \
-        --enable-opengl-shaders \
-        --enable-vkeybd \
-        --enable-release \
-        --disable-debug \
-        --enable-keymapper \
+    local params=(
+        --enable-opengl-shaders
+        --enable-vkeybd
+        --enable-release
+        --disable-debug
+        --enable-keymapper
         --prefix="$md_inst"
+    )
+    if ! isPlatform "x11"; then
+        params+=(
+            --force-opengles2
+            --disable-engine=stark
+        )
+        LDFLAGS="-L/opt/vc/lib" ./configure "${params[@]}"
+    else
+        ./configure "${params[@]}"
+    fi
+
     make clean
     make
     strip "$md_build/residualvm"
