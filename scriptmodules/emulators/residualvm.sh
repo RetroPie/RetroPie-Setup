@@ -39,10 +39,8 @@ function build_residualvm() {
         --enable-keymapper
         --prefix="$md_inst"
     )
-    if ! isPlatform "x11"; then
-        params+=(
-            --force-opengles2
-        )
+    ! isPlatform "x11" && params+=(--force-opengles2)
+    if isPlatform "rpi"; then
         CXXFLAGS+=" -I/opt/vc/include" LDFLAGS+=" -L/opt/vc/lib" ./configure "${params[@]}"
     else
         ./configure "${params[@]}"
