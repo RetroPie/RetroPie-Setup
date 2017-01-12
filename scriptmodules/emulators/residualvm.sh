@@ -22,6 +22,7 @@ function depends_residualvm() {
         zlib1g-dev libjpeg-dev
     )
     isPlatform "x11" && depends+=(libglew-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
@@ -41,9 +42,8 @@ function build_residualvm() {
     if ! isPlatform "x11"; then
         params+=(
             --force-opengles2
-            --disable-engine=stark
         )
-        LDFLAGS="-L/opt/vc/lib" ./configure "${params[@]}"
+        CXXFLAGS+=" -I/opt/vc/include" LDFLAGS+=" -L/opt/vc/lib" ./configure "${params[@]}"
     else
         ./configure "${params[@]}"
     fi
