@@ -1,5 +1,5 @@
 diff --git a/input/input_driver.c b/input/input_driver.c
-index 4086543..9d9a9e4 100644
+index 8f323ad..299cb87 100644
 --- a/input/input_driver.c
 +++ b/input/input_driver.c
 @@ -119,6 +119,10 @@ static bool input_driver_nonblock_state           = false;
@@ -13,10 +13,10 @@ index 4086543..9d9a9e4 100644
  /**
   * input_driver_find_handle:
   * @idx                : index of driver to get handle to.
-@@ -904,9 +908,16 @@ uint64_t input_keys_pressed(
-       joypad_info.joy_idx        = 0;
-       joypad_info.auto_binds     = settings->input.autoconf_binds[0];
-       if (enable_hotkey_valid && current_input->input_state(current_input_data, joypad_info, &binds, 0, RETRO_DEVICE_JOYPAD, 0, RARCH_ENABLE_HOTKEY))
+@@ -912,9 +916,16 @@ uint64_t input_keys_pressed(
+             && current_input->input_state(
+                current_input_data, joypad_info, &binds, 0,
+                RETRO_DEVICE_JOYPAD, 0, RARCH_ENABLE_HOTKEY))
 -            input_driver_block_libretro_input = true;
 -         else
 -            input_driver_block_hotkey         = true;
