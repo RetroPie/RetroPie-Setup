@@ -16,11 +16,13 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function _get_vers_advmame() {
-    echo 0.94.0 1.4
+    echo 0.94.0 1.4 3.1
 }
 
 function depends_advmame() {
-    getDepends libsdl1.2-dev
+    local depends=(libsdl1.2-dev)
+    isPlatform "x11" && depends+=(libsdl2-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_advmame() {
@@ -207,6 +209,9 @@ function configure_advmame() {
                 iniSet "device_sound" "alsa"
                 iniSet "display_vsync" "no"
                 iniSet "sound_normalize" "no"
+                iniSet "display_resizeeffect" "none"
+                iniSet "display_resize" "integer"
+                iniSet "display_magnify" "1"
             else
                 iniSet "device_video_output" "overlay"
                 iniSet "display_aspectx" 16
@@ -225,7 +230,7 @@ function configure_advmame() {
         if isPlatform "rpi"; then
             [[ "$version" == "0.94.0" ]] && default=1
         else
-            [[ "$version" == "1.4" ]] && default=1
+            [[ "$version" == "3.1" ]] && default=1
         fi
         addEmulator 0 "$md_id-$version" "arcade" "$md_inst/$version/bin/advmame %BASENAME%"
         addEmulator $default "$md_id-$version" "mame-advmame" "$md_inst/$version/bin/advmame %BASENAME%"
