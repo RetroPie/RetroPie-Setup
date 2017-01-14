@@ -44,9 +44,10 @@ function sources_advmame() {
             if [[ "$version" == "0.94.0" ]]; then
                 sed -i 's/MAP_SHARED | MAP_FIXED,/MAP_SHARED,/' advance/linux/vfb.c
             fi
-            # patch advmame to use a fake generated mode with the exact dimensions for fb - avoids need for configuring monitor / clocks.
-            # the pi framebuffer doesn't use any of the framebuffer timing configs - it hardware scales from chosen dimensions to actual size
-            applyPatch rpi_framebuffer.diff <<\_EOF_
+            if [[ "$version" == "0.94.0" || "$version" == "1.4" ]]; then
+                # patch advmame to use a fake generated mode with the exact dimensions for fb - avoids need for configuring monitor / clocks.
+                # the pi framebuffer doesn't use any of the framebuffer timing configs - it hardware scales from chosen dimensions to actual size
+                applyPatch rpi_framebuffer.diff <<\_EOF_
 --- a/advance/linux/vfb.c
 +++ b/advance/linux/vfb.c
 @@ -268,7 +268,7 @@
@@ -139,6 +140,7 @@ function sources_advmame() {
  
  	option->cheat_flag = conf_bool_get_default(cfg_context, "misc_cheat");
 _EOF_
+            fi
         fi
         popd
     done
