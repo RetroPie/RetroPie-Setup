@@ -86,6 +86,9 @@ function get_os_version() {
             if grep -q "NAME=XBian" /etc/os-release; then
                 __platform_flags+=" xbian"
             fi
+
+            # get major version (8 instead of 8.0 etc)
+            __os_debian_ver="${__os_release%%.*}"
             ;;
         LinuxMint)
             if compareVersions "$__os_release" lt 17; then
