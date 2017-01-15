@@ -22,6 +22,7 @@ function _get_vers_advmame() {
 function depends_advmame() {
     local depends=(libsdl1.2-dev)
     isPlatform "x11" && depends+=(libsdl2-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
