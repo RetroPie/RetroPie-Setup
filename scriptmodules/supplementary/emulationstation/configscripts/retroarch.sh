@@ -345,12 +345,20 @@ function onend_retroarch_joystick() {
         iniSet "input_exit_emulator_axis" ""
     fi
 
+    # disable any auto configs for the same device to avoid duplicates
+    local file
+    local dir="$configdir/all/retroarch-joypads"
+    while read -r file; do
+        mv "$file" "$file.bak"
+    done < <(grep -Fl "\"$DEVICE_NAME\"" "$dir/"*.cfg)
+
     # sanitise filename
-    local file="${DEVICE_NAME//[ \?\<\>\\\/:\*\|]/}.cfg"
-    if [[ -f "$configdir/all/retroarch-joypads/$file" ]]; then
-        mv "$configdir/all/retroarch-joypads/$file" "$configdir/all/retroarch-joypads/$file.bak"
+    file="${DEVICE_NAME//[\?\<\>\\\/:\*\|]/}.cfg"
+
+    if [[ -f "$dir/$file" ]]; then
+        mv "$dir/$file" "$dir/$file.bak"
     fi
-    mv "/tmp/tempconfig.cfg" "$configdir/all/retroarch-joypads/$file"
+    mv "/tmp/tempconfig.cfg" "$dir/$file"
 }
 
 function onend_retroarch_keyboard() {

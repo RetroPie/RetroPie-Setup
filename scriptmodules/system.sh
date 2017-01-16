@@ -90,6 +90,14 @@ function get_os_version() {
             # get major version (8 instead of 8.0 etc)
             __os_debian_ver="${__os_release%%.*}"
             ;;
+        Devuan)
+            # devuan lsb-release version numbers don't match jessie
+            case "$__os_codename" in
+                jessie)
+                    __os_debian_ver="8"
+                    ;;
+            esac
+            ;;
         LinuxMint)
             if compareVersions "$__os_release" lt 17; then
                 error="You need Linux Mint 17 or newer"
