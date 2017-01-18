@@ -21,7 +21,7 @@ function sources_lr-mupen64plus() {
 function build_lr-mupen64plus() {
     rpSwap on 750
     make clean
-    if isPlatform "rpi"; then
+    if isPlatform "rpi" || isPlatform "odroid-c1"; then
         make platform="$__platform"
     else
         make
