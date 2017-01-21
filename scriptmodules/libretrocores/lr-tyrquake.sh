@@ -13,10 +13,6 @@ rp_module_id="lr-tyrquake"
 rp_module_desc="Quake 1 engine - Tyrquake port for libretro"
 rp_module_section="opt"
 
-function depends_lr-tyrquake() {
-    getDepends lhasa
-}
-
 function sources_lr-tyrquake() {
     gitPullOrClone "$md_build" https://github.com/libretro/tyrquake.git
 }
@@ -37,6 +33,7 @@ function install_lr-tyrquake() {
 }
 
 function game_data_lr-tyrquake() {
+    getDepends lhasa
     if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then
         cd "$__tmpdir"
         # download / unpack / install quake shareware files
