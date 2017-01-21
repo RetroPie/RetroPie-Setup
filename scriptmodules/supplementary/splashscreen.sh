@@ -12,7 +12,13 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
-rp_module_flags="!x86 !osmc !mali"
+rp_module_flags="!x86 !osmc"
+
+#add function to choose music ext
+function _music_exts(){
+echo '\.ogg\|\.mp3\|\.wav\|\.aac\|\.flac'
+}
+
 
 function _update_hook_splashscreen() {
     rp_isInstalled "$md_idx" && configure_splashscreen
@@ -27,7 +33,7 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    getDepends fbi omxplayer
+    getDepends fbi mpv libavdevice55 libavfilter5 libva-glx1
 }
 
 function install_bin_splashscreen() {
@@ -38,25 +44,75 @@ function install_bin_splashscreen() {
     iniSet "DATADIR" "$datadir"
     iniSet "REGEX_IMAGE" "$(_image_exts_splashscreen)"
     iniSet "REGEX_VIDEO" "$(_video_exts_splashscreen)"
+#add REGEX_MUSIC
+    iniSet "REGEX_MUSIC" "$(_music_exts)"
 
     chmod +x /etc/init.d/asplashscreen
+#not used by now
+    #gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
 
-    gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
-
-    mkUserDir "$datadir/splashscreens"
-    echo "Place your own splashscreens in here." >"$datadir/splashscreens/README.txt"
-    chown $user:$user "$datadir/splashscreens/README.txt"
+    #mkUserDir "$datadir/splashscreens"
+    #echo "Place your own splashscreens in here." >"$datadir/splashscreens/README.txt"
+    #chown $user:$user "$datadir/splashscreens/README.txt"
 }
 
-function configure_splashscreen() {
-    local config="/boot/cmdline.txt"
-    if [[ -f "$config" ]] && ! grep -q "plymouth.enable" "$config"; then
-        sed -i '1 s/ *$/ plymouth.enable=0/' "$config"
-    fi
+#not used by now
+
+#function configure_splashscreen() {
+ #   local config="/boot/cmdline.txt"
+  #  if [[ -f "$config" ]] && ! grep -q "plymouth.enable" "$config"; then
+   #     sed -i '1 s/ *$/ plymouth.enable=0/' "$config"
+   # fi
+#}
+
+#create 3 functions to choose background music
+function choose_path_music(){
+local options=(
+1 "RetrOrange Pi default"
+2 "Own Music (from $datadir/splashscreens)"
+)
+local cmd=(dialog --backtitle "$_backtitle" --menu "Choose an option." 22 86 16)
+local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+[[ "$choice" -eq 1 ]] && echo "/home/pi/RetroPie/splashscreens/bootsnd.ogg"
+[[ "$choice" -eq 2 ]] && echo "$datadir/splashscreens"
 }
+function set_music(){
+local path
+
+path="$(choose_path_music)"
+[[ -z "$path" ]] && break
+local music=$(choose_music "$path")
+echo "$music">/etc/music.list
+printMsgs "dialog" "Music set to '$music'"
+break
+}
+function choose_music(){
+local path="$1"
+#local type="$2"
+local regex
+regex=$(_music_exts)
+local options=()
+local i=0
+while read splashdir; do
+splashdir=${splashdir/$path\//}
+if echo "$splashdir" | grep -q "$regex"; then
+            options+=("$i" "$splashdir")
+            ((i++))
+        fi
+done < <(find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort)
+if [[ "${#options[@]}" -eq 0 ]]; then
+printMsgs "dialog" "There are no music installed in $path"
+return
+fi
+local cmd=(dialog --backtitle "$__backtitle" --menu "Choose music." 22 76 16)
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    echo "$path/${options[choice*2+1]}"
+}
+
+
 
 function default_splashscreen() {
-    echo "$md_inst/retropie-default.png" >/etc/splashscreen.list
+    echo "$md_inst/splash.png" 
 }
 
 function enable_splashscreen() {
@@ -65,10 +121,11 @@ function enable_splashscreen() {
 
 function remove_splashscreen() {
     insserv -r asplashscreen
-    local config="/boot/cmdline.txt"
-    if [[ -f "$config" ]]; then
-        sed -i "s/ *plymouth.enable=0//" "$config"
-    fi
+#not used
+#	local config="/boot/cmdline.txt"
+ #   if [[ -f "$config" ]]; then
+  #      sed -i "s/ *plymouth.enable=0//" "$config"
+   # fi
 }
 
 function choose_path_splashscreen() {
@@ -181,7 +238,7 @@ function preview_splashscreen() {
                 1)
                     file=$(choose_splashscreen "$path" "image")
                     [[ -z "$file" ]] && break
-                    fbi --noverbose --autozoom "$file"
+                    fbi -T 2 -once -noverbose -a "$file"
                     ;;
                 2)
                     file=$(mktemp)
@@ -197,7 +254,9 @@ function preview_splashscreen() {
                 3)
                     file=$(choose_splashscreen "$path" "video")
                     [[ -z "$file" ]] && break
-                    omxplayer -b --layer 10000 "$file"
+                    
+		    #changed command
+		    mpv -fs -vo sdl "$file"
                     ;;
             esac
         done
@@ -226,21 +285,22 @@ function gui_splashscreen() {
             iniGet "RANDOMIZE"
             random=1
             [[ "$ini_value" == "disabled" ]] && random=0
-            if [[ "$random" -eq 1 ]]; then
-                options+=(3 "Disable splashscreen randomizer (Enabled)")
-            else
-                options+=(3 "Enable splashscreen randomizer (Disabled)")
-            fi
+            #if [[ "$random" -eq 1 ]]; then 	COMMENTED UNTESTED OPTIONS
+                #options+=(3 "Disable splashscreen randomizer (Enabled)")
+            #else
+                #options+=(3 "Enable splashscreen randomizer (Disabled)")
+            #fi
         else
             options+=(2 "Enable splashscreen on boot (Disabled)")
         fi
         options+=(
-            4 "Use default splashscreen"
-            5 "Manually edit splashscreen list"
-            6 "Append splashscreen to list (for multiple entries)"
-            7 "Preview splashscreens"
-            8 "Update RetroPie splashscreens"
-            9 "Download RetroPie-Extra splashscreens"
+            3 "Use default splashscreen" #RENUMERATED DUE TO CUT OFF OF SPLASHSCREEN RANDOMIZE
+            4 "Manually edit splashscreen list"
+            #6 "Append splashscreen to list (for multiple entries)" REMOVED 
+			5 "Choose background music" #ADDED 
+            6 "Preview splashscreens"
+            7 "Update RetrOrangePi splashscreens"
+            8 "Download RetroPie-Extra splashscreens"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -258,31 +318,32 @@ function gui_splashscreen() {
                         printMsgs "dialog" "Enabled splashscreen on boot."
                     fi
                     ;;
+                #3)                                                                    CUT OFF AND RENUMERATED AS ABOVE
+                  #  if [[ "$random" -eq 1 ]]; then
+                     #   iniSet "RANDOMIZE" "disabled"
+                       # printMsgs "dialog" "Splashscreen randomizer disabled."
+                  #  else
+                 #       randomize_splashscreen
+                  #  fi
+                  #  ;;
                 3)
-                    if [[ "$random" -eq 1 ]]; then
-                        iniSet "RANDOMIZE" "disabled"
-                        printMsgs "dialog" "Splashscreen randomizer disabled."
-                    else
-                        randomize_splashscreen
-                    fi
-                    ;;
-                4)
                     default_splashscreen
                     printMsgs "dialog" "Splashscreen set to RetroPie default."
                     ;;
-                5)
+                4)
                     editFile /etc/splashscreen.list
                     ;;
+                5)
+                    #set_append_splashscreen append
+                    set_music set
+					;;
                 6)
-                    set_append_splashscreen append
-                    ;;
-                7)
                     preview_splashscreen
                     ;;
-                8)
+                7)
                     rp_callModule splashscreen install
                     ;;
-                9)
+                8)
                     rp_callModule splashscreen download_extra
                     printMsgs "dialog" "The RetroPie-Extra splashscreens have been downloaded to $datadir/splashscreens/retropie-extra"
                     ;;

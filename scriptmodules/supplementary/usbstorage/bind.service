@@ -1,0 +1,8 @@
+[Unit]
+Description=Usb drive script
+After=mnt-usb.mount
+Requires=mnt-usb.mount
+[Service]
+ExecStart=/etc/init.d/bind.sh
+[Install]
+WantedBy=mnt-usb.mount

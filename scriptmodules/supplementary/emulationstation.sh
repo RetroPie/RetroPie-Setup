@@ -136,14 +136,14 @@ function depends_emulationstation() {
 function sources_emulationstation() {
     local repo="$1"
     local branch="$2"
-    [[ -z "$repo" ]] && repo="https://github.com/retropie/EmulationStation"
+    [[ -z "$repo" ]] && repo="https://github.com/harryzimm/EmulationStation-ROPI"
     [[ -z "$branch" ]] && branch="master"
     gitPullOrClone "$md_build" "$repo" "$branch"
 }
 
 function build_emulationstation() {
     rpSwap on 512
-    cmake . -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
+    cmake .
     make clean
     make
     rpSwap off
