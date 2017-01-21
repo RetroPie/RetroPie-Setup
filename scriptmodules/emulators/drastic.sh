@@ -25,6 +25,6 @@ function configure_drastic() {
     mkRomDir "nds"
     ensureSystemretroconfig "nds"
 
-    addEmulator 0 "$md_id" "nds" "$md_inst/drastic %ROM%"
+    addEmulator 1 "$md_id" "nds" "$md_inst/drastic %ROM%"
     addSystem "nds"
 }
