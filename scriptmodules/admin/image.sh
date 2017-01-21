@@ -39,7 +39,7 @@ function chroot_image() {
     printMsgs "console" "Creating chroot"
     rsync -aAHX --numeric-ids --delete mnt/ chroot/
 
-    umount mnt/boot mnt
+    umount -l mnt/boot mnt
     rm -rf mnt
     kpartx -d "$image"
 
@@ -126,7 +126,7 @@ _EOF_
 
 function _umount_chroot() {
     trap "" INT
-    umount chroot/proc chroot/dev/pts
+    umount -l chroot/proc chroot/dev/pts
     trap INT
 }
 
@@ -179,7 +179,7 @@ function create_image() {
     rsync -aAHX --numeric-ids  chroot/ mnt/
 
     # unmount
-    umount mnt/boot mnt
+    umount -l mnt/boot mnt
     rm -rf mnt
     kpartx -d "$image"
 
