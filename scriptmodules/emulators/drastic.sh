@@ -20,6 +20,8 @@ function install_bin_drastic() {
 }
 
 function configure_drastic() {
+    mv "$md_inst/system" "$home"
+
     mkRomDir "nds"
     ensureSystemretroconfig "nds"
 
