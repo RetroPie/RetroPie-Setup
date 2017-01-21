@@ -12,7 +12,7 @@
 rp_module_id="darkplaces-quake"
 rp_module_desc="Quake 1 engine - Darkplaces Quake port with GLES rendering"
 rp_module_section="opt"
-rp_module_section="!mali"
+rp_module_flags="!mali"
 
 function depends_darkplaces-quake() {
     local depends=(libsdl2-dev)
