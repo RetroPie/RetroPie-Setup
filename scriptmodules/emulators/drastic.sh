@@ -21,8 +21,18 @@ function install_bin_drastic() {
 
 function configure_drastic() {
     mkRomDir "nds"
-    ensureSystemretroconfig "nds"
 
-    addEmulator 0 "$md_id" "nds" "$md_inst/drastic %ROM%"
+    # wrong permissions on game_database.xml
+    chmod 644 "$md_inst/game_database.xml"
+
+    mkUserDir "$md_conf_root/nds/drastic"
+    mkUserDir "$md_conf_root/nds/drastic/system"
+
+    local file
+    for file in game_database.xml system/drastic_bios_arm7.bin system/drastic_bios_arm9.bin usrcheat.dat; do
+        ln -sfv "$md_inst/$file" "$md_conf_root/nds/drastic/$file"
+    done
+
+    addEmulator 1 "$md_id" "nds" "pushd $md_conf_root/nds/drastic; $md_inst/drastic %ROM%; popd"
     addSystem "nds"
 }
