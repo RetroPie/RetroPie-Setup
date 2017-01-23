@@ -132,7 +132,6 @@ function depends_attractmode() {
 function sources_attractmode() {
     isPlatform "rpi" && gitPullOrClone "$md_build/sfml-pi" "https://github.com/mickelson/sfml-pi"
     gitPullOrClone "$md_build/attract" "https://github.com/mickelson/attract"
-    mkdir build
 }
 
 function build_attractmode() {
