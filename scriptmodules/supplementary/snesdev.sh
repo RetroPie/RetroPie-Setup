@@ -71,42 +71,42 @@ function set_adapter_version_snesdev() {
 function gui_snesdev() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     options=(
-        1 "Disable SNESDev on boot and SNESDev keyboard mapping."
-        2 "Enable SNESDev on boot and SNESDev keyboard mapping (polling pads and button)."
-        3 "Enable SNESDev on boot and SNESDev keyboard mapping (polling only pads)."
-        4 "Enable SNESDev on boot and SNESDev keyboard mapping (polling only button)."
-        5 "Switch to adapter version 1.X."
-        6 "Switch to adapter version 2.X."
+        1 "Enable SNESDev on boot and SNESDev keyboard mapping (polling pads and button)"
+        2 "Enable SNESDev on boot and SNESDev keyboard mapping (polling only pads)"
+        3 "Enable SNESDev on boot and SNESDev keyboard mapping (polling only button)"
+        4 "Switch to adapter version 1.X"
+        5 "Switch to adapter version 2.X"
+        D "Disable SNESDev on boot and SNESDev keyboard mapping"
     )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choices" ]]; then
         case $choices in
             1)
-                make -C "$md_inst" uninstallservice
-                printMsgs "dialog" "Disabled SNESDev on boot."
-                ;;
-            2)
                 enable_at_start_snesdev 3
                 make -C "$md_inst" make installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling pads and button)."
                 ;;
-            3)
+            2)
                 enable_at_start_snesdev 1
                 make -C "$md_inst" make installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only pads)."
                 ;;
-            4)
+            3)
                 enable_at_start_snesdev 2
                 make -C "$md_inst" make installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only button)."
                 ;;
-            5)
+            4)
                 set_adapter_version_snesdev 1
                 printMsgs "dialog" "Switched to adapter version 1.X."
                 ;;
-            6)
+            5)
                 set_adapter_version_snesdev 2
                 printMsgs "dialog" "Switched to adapter version 2.X."
+                ;;
+            D)
+                make -C "$md_inst" uninstallservice
+                printMsgs "dialog" "Disabled SNESDev on boot."
                 ;;
         esac
     fi
