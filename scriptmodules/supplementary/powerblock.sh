@@ -14,7 +14,7 @@ rp_module_desc="PowerBlock Driver"
 rp_module_section="driver"
 
 function depends_powerblock() {
-    local depends=(cmake doxygen g++-4.9)
+    local depends=(cmake doxygen)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
 
     getDepends "${depends[@]}"
@@ -32,27 +32,17 @@ function build_powerblock() {
 }
 
 function install_powerblock() {
-    # if we have built it, copy files to install location
-    if [[ -d "$md_build" ]]; then
-        mkdir -p "$md_inst/"{src,supplementary,scripts,build,doc}
-        cp -r "$md_build"/build/* "$md_inst/build/"
-        cp -r "$md_build"/scripts/* "$md_inst/scripts/"
-        cp -r "$md_build"/supplementary/* "$md_inst/supplementary/"
-        cp -r "$md_build"/src/* "$md_inst/src/"
-        cp -r "$md_build"/doc/* "$md_inst/doc/"
-    fi
+    mkdir -p "$md_inst/"{src,supplementary,scripts,build,doc}
+    cp -r "$md_build"/build/* "$md_inst/build/"
+    cp -r "$md_build"/scripts/* "$md_inst/scripts/"
+    cp -r "$md_build"/supplementary/* "$md_inst/supplementary/"
+    cp -r "$md_build"/src/* "$md_inst/src/"
+    cp -r "$md_build"/doc/* "$md_inst/doc/"
+
     # then install from there to system folders
     pushd "$md_inst/"build
     make install
     popd
-}
-
-function sup_checkInstallPowerBlock() {
-    if [[ ! -f "$md_inst/build/powerblock" ]]; then
-        rp_callModule powerblock sources
-        rp_callModule powerblock build
-        rp_callModule powerblock install
-    fi
 }
 
 function gui_powerblock() {
@@ -65,14 +55,12 @@ function gui_powerblock() {
     if [[ -n "$choices" ]]; then
         case $choices in
             1)
-                sup_checkInstallPowerBlock
                 pushd "$md_inst/"build
                 make uninstallservice
                 popd
                 printMsgs "dialog" "Disabled PowerBlock driver."
                 ;;
             2)
-                sup_checkInstallPowerBlock
                 pushd "$md_inst/"build
                 make installservice
                 popd
