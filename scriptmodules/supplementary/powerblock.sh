@@ -35,7 +35,7 @@ function build_powerblock() {
 }
 
 function install_powerblock() {
-    # then install from there to system folders
+    # install from there to system folders
     cd "$md_inst/build"
     make install
 }
@@ -43,19 +43,20 @@ function install_powerblock() {
 function gui_powerblock() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     options=(
-        1 "Disable PowerBlock driver."
-        2 "Enable PowerBlok driver"
+        1 "Enable PowerBlock driver"
+        2 "Disable PowerBlock driver"
+
     )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choices" ]]; then
         case $choices in
             1)
-                make -C "$md_inst/build" uninstallservice
-                printMsgs "dialog" "Disabled PowerBlock driver."
-                ;;
-            2)
                 make -C "$md_inst/build" installservice
                 printMsgs "dialog" "Enabled PowerBlock driver."
+                ;;
+            2)
+                make -C "$md_inst/build" uninstallservice
+                printMsgs "dialog" "Disabled PowerBlock driver."
                 ;;
         esac
     fi
