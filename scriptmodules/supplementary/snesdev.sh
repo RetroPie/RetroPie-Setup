@@ -29,12 +29,13 @@ function install_snesdev() {
 }
 
 # start SNESDev on boot and configure RetroArch input settings
-function sup_enableSNESDevAtStart() {
+function enable_at_start_snesdev() {
+    local mode="$1"
     iniConfig "=" "" "/etc/snesdev.cfg"
     clear
     printHeading "Enabling SNESDev on boot."
 
-    case $1 in
+    case "$mode" in
         1)
             iniSet "button_enabled" "0"
             iniSet "gamepad1_enabled" "1"
@@ -51,18 +52,17 @@ function sup_enableSNESDevAtStart() {
             iniSet "gamepad2_enabled" "1"
             ;;
         *)
-            echo "[sup_enableSNESDevAtStart] I do not understand what is going on here."
+            echo "[enable_at_start_snesdev] I do not understand what is going on here."
             ;;
     esac
 
 }
 
-function sup_snesdevAdapterversion() {
+function set_adapter_version_snesdev() {
+    local ver="$1"
     iniConfig "=" "" "/etc/snesdev.cfg"
-    if [[ $1 -eq 1 ]]; then
+    if [[ "$ver" -eq 1 ]]; then
         iniSet "adapter_version" "1x"
-    elif [[ $1 -eq 2 ]]; then
-        iniSet "adapter_version" "2x"
     else
         iniSet "adapter_version" "2x"
     fi
@@ -86,26 +86,26 @@ function gui_snesdev() {
                 printMsgs "dialog" "Disabled SNESDev on boot."
                 ;;
             2)
-                sup_enableSNESDevAtStart 3
+                enable_at_start_snesdev 3
                 make -C "$md_inst" make installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling pads and button)."
                 ;;
             3)
-                sup_enableSNESDevAtStart 1
+                enable_at_start_snesdev 1
                 make -C "$md_inst" make installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only pads)."
                 ;;
             4)
-                sup_enableSNESDevAtStart 2
+                enable_at_start_snesdev 2
                 make -C "$md_inst" make installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only button)."
                 ;;
             5)
-                sup_snesdevAdapterversion 1
+                set_adapter_version_snesdev 1
                 printMsgs "dialog" "Switched to adapter version 1.X."
                 ;;
             6)
-                sup_snesdevAdapterversion 2
+                set_adapter_version_snesdev 2
                 printMsgs "dialog" "Switched to adapter version 2.X."
                 ;;
         esac
