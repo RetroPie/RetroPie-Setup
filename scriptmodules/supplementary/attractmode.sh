@@ -125,6 +125,7 @@ function depends_attractmode() {
         libfontconfig1-dev
     )
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "x11" && depends+=(libsfml-dev)
     getDepends "${depends[@]}" 
 }
 
