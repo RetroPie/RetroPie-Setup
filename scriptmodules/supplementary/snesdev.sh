@@ -68,6 +68,11 @@ function set_adapter_version_snesdev() {
     fi
 }
 
+function remove_snesdev() {
+    make -C "$md_inst" uninstallservice
+    make -C "$md_inst" uninstall
+}
+
 function gui_snesdev() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     options=(
