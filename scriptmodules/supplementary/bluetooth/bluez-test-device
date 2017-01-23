@@ -55,7 +55,7 @@ if (args[0] == "list"):
 		if properties["Adapter"] != adapter_path:
 			continue;
 		device_string = "%s %s" % (properties["Address"], properties["Alias"])
-                print(device_string.encode('ascii', 'ignore'))
+		print(device_string.encode('ascii', 'ignore'))
 
 	sys.exit(0)
 
