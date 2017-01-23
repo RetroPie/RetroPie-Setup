@@ -21,28 +21,23 @@ function depends_powerblock() {
 }
 
 function sources_powerblock() {
-    gitPullOrClone "$md_build" https://github.com/petrockblog/PowerBlock.git
+    gitPullOrClone "$md_inst" https://github.com/petrockblog/PowerBlock.git
 }
 
 function build_powerblock() {
-    mkdir build && cd build
+    cd "$md_inst"
+    rm -rf "build"
+    mkdir build
+    cd build
     cmake ..
     make
-    md_ret_require="$md_build/build/powerblock"
+    md_ret_require="$md_inst/build/powerblock"
 }
 
 function install_powerblock() {
-    mkdir -p "$md_inst/"{src,supplementary,scripts,build,doc}
-    cp -r "$md_build"/build/* "$md_inst/build/"
-    cp -r "$md_build"/scripts/* "$md_inst/scripts/"
-    cp -r "$md_build"/supplementary/* "$md_inst/supplementary/"
-    cp -r "$md_build"/src/* "$md_inst/src/"
-    cp -r "$md_build"/doc/* "$md_inst/doc/"
-
     # then install from there to system folders
-    pushd "$md_inst/"build
+    cd "$md_inst/build"
     make install
-    popd
 }
 
 function gui_powerblock() {
@@ -55,15 +50,11 @@ function gui_powerblock() {
     if [[ -n "$choices" ]]; then
         case $choices in
             1)
-                pushd "$md_inst/"build
-                make uninstallservice
-                popd
+                make -C "$md_inst/build" uninstallservice
                 printMsgs "dialog" "Disabled PowerBlock driver."
                 ;;
             2)
-                pushd "$md_inst/"build
-                make installservice
-                popd
+                make -C "$md_inst/build" installservice
                 printMsgs "dialog" "Enabled PowerBlock driver."
                 ;;
         esac
@@ -71,8 +62,6 @@ function gui_powerblock() {
 }
 
 function remove_powerblock() {
-    pushd "$md_inst/"build
-    make uninstallservice
-    make uninstall
-    popd
+    make -C "$md_inst/build" uninstallservice
+    make -C "$md_inst/build" uninstall
 }
