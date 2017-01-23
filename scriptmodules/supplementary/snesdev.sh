@@ -14,37 +14,18 @@ rp_module_desc="SNESDev (Driver for the RetroPie GPIO-Adapter)"
 rp_module_section="driver"
 
 function sources_snesdev() {
-    gitPullOrClone "$md_build" https://github.com/petrockblog/SNESDev-RPi.git
+    gitPullOrClone "$md_inst" https://github.com/petrockblog/SNESDev-RPi.git
 }
 
 function build_snesdev() {
+    cd "$md_inst"
     make -j1
-    md_ret_require="$md_build/src/SNESDev"
+    md_ret_require="$md_inst/src/SNESDev"
 }
 
 function install_snesdev() {
-    # if we have built it, copy files to install location
-    if [[ -d "$md_build" ]]; then
-        mkdir -p "$md_inst/"{src,supplementary,scripts}
-        cp -v 'src/SNESDev' "$md_inst/src/"
-        cp -v 'src/Makefile' "$md_inst/src/"
-        cp -v 'Makefile' "$md_inst"
-        cp -v 'scripts/Makefile' "$md_inst/scripts/"
-        cp -v 'scripts/SNESDev' "$md_inst/scripts/"
-        cp -v 'supplementary/snesdev.cfg' "$md_inst/supplementary/"
-    fi
-    # then install from there to system folders
-    pushd "$md_inst"
+    cd "$md_inst"
     make install
-    popd
-}
-
-function sup_checkInstallSNESDev() {
-    if [[ ! -f "$md_inst/src/SNESDev" ]]; then
-        rp_callModule snesdev sources
-        rp_callModule snesdev build
-        rp_callModule snesdev install
-    fi
 }
 
 # start SNESDev on boot and configure RetroArch input settings
@@ -101,26 +82,22 @@ function gui_snesdev() {
     if [[ -n "$choices" ]]; then
         case $choices in
             1)
-                sup_checkInstallSNESDev
-                make uninstallservice
+                make -C "$md_inst" uninstallservice
                 printMsgs "dialog" "Disabled SNESDev on boot."
                 ;;
             2)
-                sup_checkInstallSNESDev
                 sup_enableSNESDevAtStart 3
-                make installservice
+                make -C "$md_inst" make installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling pads and button)."
                 ;;
             3)
-                sup_checkInstallSNESDev
                 sup_enableSNESDevAtStart 1
-                make installservice
+                make -C "$md_inst" make installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only pads)."
                 ;;
             4)
-                sup_checkInstallSNESDev
                 sup_enableSNESDevAtStart 2
-                make installservice
+                make -C "$md_inst" make installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only button)."
                 ;;
             5)
