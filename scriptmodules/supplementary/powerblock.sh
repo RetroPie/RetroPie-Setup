@@ -14,77 +14,55 @@ rp_module_desc="PowerBlock Driver"
 rp_module_section="driver"
 
 function depends_powerblock() {
-    local depends=(cmake doxygen g++-4.9)
+    local depends=(cmake doxygen)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
 
     getDepends "${depends[@]}"
 }
 
 function sources_powerblock() {
-    gitPullOrClone "$md_build" https://github.com/petrockblog/PowerBlock.git
+    gitPullOrClone "$md_inst" https://github.com/petrockblog/PowerBlock.git
 }
 
 function build_powerblock() {
-    mkdir build && cd build
+    cd "$md_inst"
+    rm -rf "build"
+    mkdir build
+    cd build
     cmake ..
     make
-    md_ret_require="$md_build/build/powerblock"
+    md_ret_require="$md_inst/build/powerblock"
 }
 
 function install_powerblock() {
-    # if we have built it, copy files to install location
-    if [[ -d "$md_build" ]]; then
-        mkdir -p "$md_inst/"{src,supplementary,scripts,build,doc}
-        cp -r "$md_build"/build/* "$md_inst/build/"
-        cp -r "$md_build"/scripts/* "$md_inst/scripts/"
-        cp -r "$md_build"/supplementary/* "$md_inst/supplementary/"
-        cp -r "$md_build"/src/* "$md_inst/src/"
-        cp -r "$md_build"/doc/* "$md_inst/doc/"
-    fi
-    # then install from there to system folders
-    pushd "$md_inst/"build
+    # install from there to system folders
+    cd "$md_inst/build"
     make install
-    popd
-}
-
-function sup_checkInstallPowerBlock() {
-    if [[ ! -f "$md_inst/build/powerblock" ]]; then
-        rp_callModule powerblock sources
-        rp_callModule powerblock build
-        rp_callModule powerblock install
-    fi
 }
 
 function gui_powerblock() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     options=(
-        1 "Disable PowerBlock driver."
-        2 "Enable PowerBlok driver"
+        1 "Enable PowerBlock driver"
+        2 "Disable PowerBlock driver"
+
     )
     choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choices" ]]; then
         case $choices in
             1)
-                sup_checkInstallPowerBlock
-                pushd "$md_inst/"build
-                make uninstallservice
-                popd
-                printMsgs "dialog" "Disabled PowerBlock driver."
+                make -C "$md_inst/build" installservice
+                printMsgs "dialog" "Enabled PowerBlock driver."
                 ;;
             2)
-                sup_checkInstallPowerBlock
-                pushd "$md_inst/"build
-                make installservice
-                popd
-                printMsgs "dialog" "Enabled PowerBlock driver."
+                make -C "$md_inst/build" uninstallservice
+                printMsgs "dialog" "Disabled PowerBlock driver."
                 ;;
         esac
     fi
 }
 
 function remove_powerblock() {
-    pushd "$md_inst/"build
-    make uninstallservice
-    make uninstall
-    popd
+    make -C "$md_inst/build" uninstallservice
+    make -C "$md_inst/build" uninstall
 }
