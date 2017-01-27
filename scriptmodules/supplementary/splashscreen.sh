@@ -48,7 +48,14 @@ function install_bin_splashscreen() {
     chown $user:$user "$datadir/splashscreens/README.txt"
 }
 
-function configure_splashscreen() {
+function enable_plymouth_splashscreen() {
+    local config="/boot/cmdline.txt"
+    if [[ -f "$config" ]]; then
+        sed -i "s/ *plymouth.enable=0//" "$config"
+    fi
+}
+
+function disable_plymouth_splashscreen() {
     local config="/boot/cmdline.txt"
     if [[ -f "$config" ]] && ! grep -q "plymouth.enable" "$config"; then
         sed -i '1 s/ *$/ plymouth.enable=0/' "$config"
@@ -63,12 +70,21 @@ function enable_splashscreen() {
     insserv asplashscreen
 }
 
-function remove_splashscreen() {
+function disable_splashscreen() {
     insserv -r asplashscreen
-    local config="/boot/cmdline.txt"
-    if [[ -f "$config" ]]; then
-        sed -i "s/ *plymouth.enable=0//" "$config"
-    fi
+}
+
+function configure_splashscreen() {
+    [[ "$md_mode" == "remove" ]] && return
+    disable_plymouth_splashscreen
+    enable_splashscreen
+    [[ ! -f /etc/splashscreen.list ]] && default_splashscreen
+}
+
+function remove_splashscreen() {
+    enable_plymouth_splashscreen
+    disable_splashscreen
+    rm -f /etc/splashscreen.list
 }
 
 function choose_path_splashscreen() {
@@ -250,7 +266,7 @@ function gui_splashscreen() {
                     ;;
                 2)
                     if [[ "$enabled" -eq 1 ]]; then
-                        remove_splashscreen
+                        disable_splashscreen
                         printMsgs "dialog" "Disabled splashscreen on boot."
                     else
                         [[ ! -f /etc/splashscreen.list ]] && rp_CallModule splashscreen default
