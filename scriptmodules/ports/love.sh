@@ -11,7 +11,7 @@
 
 rp_module_id="love"
 rp_module_desc="Love - 2d Game Engine"
-rp_module_help="Copy your Love roms to $romdir/love"
+rp_module_help="Copy your Love games to $romdir/love"
 rp_module_section="opt"
 rp_module_flags="!aarch64"
 

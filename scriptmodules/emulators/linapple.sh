@@ -11,7 +11,7 @@
 
 rp_module_id="linapple"
 rp_module_desc="Apple 2 emulator LinApple"
-rp_module_help="ROM Extensions: .dsk\n\nCopy your Apple 2 roms to $romdir/apple2"
+rp_module_help="ROM Extensions: .dsk\n\nCopy your Apple 2 games to $romdir/apple2"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 

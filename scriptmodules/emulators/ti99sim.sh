@@ -11,7 +11,7 @@
 
 rp_module_id="ti99sim"
 rp_module_desc="TI-99/SIM - Texas Instruments Home Computer Emulator"
-rp_module_help="ROM Extension: .ctg\n\nCopy your TI-99 roms to $romdir/ti99\n\nCopy the required BIOS file TI-994A.ctg (case sensitive) to $biosdir"
+rp_module_help="ROM Extension: .ctg\n\nCopy your TI-99 games to $romdir/ti99\n\nCopy the required BIOS file TI-994A.ctg (case sensitive) to $biosdir"
 rp_module_section="exp"
 rp_module_flags="!mali"
 

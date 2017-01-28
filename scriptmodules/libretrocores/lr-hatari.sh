@@ -11,7 +11,7 @@
 
 rp_module_id="lr-hatari"
 rp_module_desc="Atari emulator - Hatari port for libretro"
-rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr\n\nCopy your Hatari roms to $romdir/atarist"
+rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr\n\nCopy your Atari ST games to $romdir/atarist"
 rp_module_section="exp"
 
 function depends_lr-hatari() {
