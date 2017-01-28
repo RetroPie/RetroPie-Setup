@@ -87,6 +87,12 @@ function get_os_version() {
                 __platform_flags+=" xbian"
             fi
 
+            # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
+            # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
+            if [[ "$__os_id" == "Raspbian" ]]; then
+                CXXFLAGS+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
+            fi
+
             # get major version (8 instead of 8.0 etc)
             __os_debian_ver="${__os_release%%.*}"
             ;;
