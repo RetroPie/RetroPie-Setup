@@ -41,7 +41,7 @@ function game_data_lr-prboom() {
 function configure_lr-prboom() {
     setConfigRoot "ports"
 
-    addPort "$md_id" "doom" "Doom" "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $md_conf_root/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
+    addPort "$md_id" "doom" "Doom" "$md_inst/prboom_libretro.so" "$romdir/ports/doom/doom1.wad"
 
     mkRomDir "ports/doom"
     ensureSystemretroconfig "ports/doom"
