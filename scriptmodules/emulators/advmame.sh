@@ -193,7 +193,7 @@ function configure_advmame() {
             iniConfig " " "" "$md_conf_root/mame-advmame/advmame-$version.rc"
 
             iniSet "misc_quiet" "yes"
-            iniSet "dir_rom" "$romdir/mame-advmame"
+            iniSet "dir_rom" "$romdir/mame-advmame:$romdir/arcade"
             iniSet "dir_artwork" "$romdir/mame-advmame/artwork"
             iniSet "dir_sample" "$romdir/mame-advmame/samples"
             iniSet "dir_diff" "$romdir/mame-advmame/diff"
