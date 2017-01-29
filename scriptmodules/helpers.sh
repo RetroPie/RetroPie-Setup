@@ -1164,7 +1164,7 @@ function addEmulator() {
     fi
 
     # automatically add parameters for libretro modules
-    if [[ "$id" =~ ^lr- && "$cmd" != "$emudir/retroarch/bin/retroarch"* ]]; then
+    if [[ "$id" == lr-* && "$cmd" != "$emudir/retroarch/bin/retroarch"* ]]; then
         cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $md_conf_root/$system/retroarch.cfg %ROM%"
     fi
 
