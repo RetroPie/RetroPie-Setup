@@ -37,6 +37,7 @@ function install_lr-mame2003() {
         'changed.txt'
         'whatsnew.txt'
         'whatsold.txt'
+        'metadata'
     )
 }
 
@@ -55,6 +56,10 @@ function configure_lr-mame2003() {
 
     mkUserDir "$biosdir/mame2003"
     mkUserDir "$biosdir/mame2003/samples"
+
+    # copy hiscore.dat
+    cp "$md_inst/metadata/hiscore.dat" "$biosdir/mame2003/"
+    chown $user:$user "$biosdir/mame2003/hiscore.dat"
 
     # Set core options
     setRetroArchCoreOption "mame2003-skip_disclaimer" "enabled"
