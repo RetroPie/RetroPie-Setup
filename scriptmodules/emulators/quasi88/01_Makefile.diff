@@ -12,33 +12,6 @@ diff -u quasi88-0.6.4_org/Makefile quasi88-0.6.4/Makefile
  # GTK_VERSION	= 1
  
  
-@@ -32,7 +32,7 @@
- #	ディレクトリが使用されます。
- #	 ~/ は、QUASI88の起動時にホームディレクトリ（$HOME）に展開されます。
- 
--ROMDIR	= ~/quasi88/rom/
-+ROMDIR	= /home/pi/RetroPie/BIOS/quasi88
- 
- 
- # DISK用ディレクトリを設定します
-@@ -42,7 +42,7 @@
- #	ディレクトリが使用されます。
- #	 ~/ は、QUASI88の起動時にホームディレクトリ（$HOME）に展開されます。
- 
--DISKDIR	= ~/quasi88/disk/
-+DISKDIR	= /home/pi/RetroPie/roms/pc88
- 
- 
- # TAPE用ディレクトリを設定します
-@@ -51,7 +51,7 @@
- #	ディレクトリが使用されます。
- #	 ~/ は、QUASI88の起動時にホームディレクトリ（$HOME）に展開されます。
- 
--TAPEDIR	= ~/quasi88/tape/
-+TAPEDIR	= /home/pi/RetroPie/roms/pc88
- 
- 
- # (X11)
 @@ -188,9 +188,9 @@
  #	動作確認が取れているのは、FreeBSD と Linux のみです
  
@@ -51,39 +24,12 @@ diff -u quasi88-0.6.4_org/Makefile quasi88-0.6.4/Makefile
  #---------------------- NetBSD
  # ARCH = netbsd
  #---------------------- OpenBSD
-@@ -225,7 +225,7 @@
- # SOUND_ALSA		= 1
- # SOUND_ARTS_TEIRA	= 1
- # SOUND_ARTS_SMOTEK	= 1
--# SOUND_SDL		= 1
-+SOUND_SDL		= 1
- # SOUND_WAVEOUT		= 1
- 
- 
-@@ -234,7 +234,7 @@
- # サウンド出力を使用したい場合は、以下のコメントアウトを外して下さい。
- #	動作に必要なリソースが少なめとなります。
- 
--# USE_OLD_MAME_SOUND	= 1
-+USE_OLD_MAME_SOUND	= 1
- 
- 
- 
-@@ -245,7 +245,7 @@
- # cisc氏作の、fmgen (FM Sound Generator) を組み込まない場合、以下の行を
- # コメントアウトして下さい。
- 
--USE_FMGEN	= 1
-+# USE_FMGEN	= 1
- 
- 
- # 注意！
 @@ -367,7 +367,7 @@
  # インストール先ディレクトリの設定
  #
  
 -BINDIR = /usr/local/bin
-+BINDIR = /opt/retropie/emulators/quasi88
++BINDIR = %%md_inst%%
  
  
  
@@ -96,3 +42,12 @@ diff -u quasi88-0.6.4_org/Makefile quasi88-0.6.4/Makefile
  
  CFLAGS += -DQUASI88_SDL
  
+@@ -937,7 +937,7 @@
+ all:		$(OBJDIRS) $(PROGRAM)
+ 
+ $(OBJDIRS):
+-		-mkdir $@
++		-mkdir -p $@
+ 
+ $(PROGRAM):	$(OBJECTS)
+ 		$(LD) $(OBJECTS) $(LIBS) -o $(PROGRAM) 

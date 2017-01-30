@@ -12,6 +12,7 @@
 rp_module_id="quasi88"
 rp_module_desc="NEC PC-8801 emulator"
 rp_module_help="ROM Extensions: .d88 .88d .cmt .t88."
+rp_module_flags="!x11"
 rp_module_section="exp"
 
 function depends_quasi88() {
@@ -21,11 +22,12 @@ function depends_quasi88() {
 function sources_quasi88() {
     wget -q -O- "http://www.eonet.ne.jp/~showtime/quasi88/release/quasi88-0.6.4.tgz" | tar -xvz --strip-components=1
     applyPatch "$md_data/01_Makefile.diff"
+    sed -i -e "s|%%md_inst%%|$md_inst|g" Makefile
 }
 
 function build_quasi88() {
     make clean
-    make -j 1
+    make SOUND_SDL=1 USE_OLD_MAME_SOUND=1 USE_FMGEN=1 ROMDIR="$biosdir/quasi88" DISKDIR="$romdir/pc88" TAPEDIR="$romdir/pc88"
 }
 
 function install_quasi88() {
