@@ -20,7 +20,12 @@ function sources_lr-dinothawr() {
 
 function build_lr-dinothawr() {
     make clean
-    make
+    # libretro-common has an issue with neon
+    if isPlatform "neon"; then
+        CFLAGS="" make
+    else
+        make
+    fi
     md_ret_require="$md_build/dinothawr_libretro.so"
 }
 
