@@ -22,16 +22,15 @@ function depends_quasi88() {
 function sources_quasi88() {
     wget -q -O- "http://www.eonet.ne.jp/~showtime/quasi88/release/quasi88-0.6.4.tgz" | tar -xvz --strip-components=1
     applyPatch "$md_data/01_Makefile.diff"
-    sed -i -e "s|%%md_inst%%|$md_inst|g" Makefile
 }
 
 function build_quasi88() {
     make clean
-    make SOUND_SDL=1 USE_OLD_MAME_SOUND=1 USE_FMGEN=1 ROMDIR="$biosdir/quasi88" DISKDIR="$romdir/pc88" TAPEDIR="$romdir/pc88"
+    make X11_VERSION='' SDL_VERSION=1 ARCH=linux SOUND_SDL=1 USE_OLD_MAME_SOUND=1 USE_FMGEN=1 ROMDIR="$biosdir/quasi88" DISKDIR="$romdir/pc88" TAPEDIR="$romdir/pc88" 
 }
 
 function install_quasi88() {
-    make install
+    make X11_VERSION='' SDL_VERSION=1 BINDIR="$md_inst" install
 }
 
 function configure_quasi88() {

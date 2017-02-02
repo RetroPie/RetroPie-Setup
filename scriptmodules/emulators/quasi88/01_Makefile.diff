@@ -1,38 +1,6 @@
 diff -u quasi88-0.6.4_org/Makefile quasi88-0.6.4/Makefile
 --- quasi88-0.6.4_org/Makefile	2013-02-19 14:54:03.000000000 +0000
 +++ quasi88-0.6.4/Makefile	2017-01-29 04:51:05.264262542 +0000
-@@ -16,8 +16,8 @@
- #	GTK版の場合は、「GTK_VERSION」以外の行をコメントアウトしてください。
- #	( GTK版は実験中です。GTK版でサウンドを鳴らすには、SDL が必要です )
- 
--X11_VERSION	= 1
--# SDL_VERSION	= 1
-+# X11_VERSION	= 1
-+SDL_VERSION	= 1
- # GTK_VERSION	= 1
- 
- 
-@@ -188,9 +188,9 @@
- #	動作確認が取れているのは、FreeBSD と Linux のみです
- 
- #---------------------- FreeBSD
--ARCH = freebsd
-+# ARCH = freebsd
- #---------------------- Linux
--# ARCH = linux
-+ARCH = linux
- #---------------------- NetBSD
- # ARCH = netbsd
- #---------------------- OpenBSD
-@@ -367,7 +367,7 @@
- # インストール先ディレクトリの設定
- #
- 
--BINDIR = /usr/local/bin
-+BINDIR = %%md_inst%%
- 
- 
- 
 @@ -512,7 +512,7 @@
  # SDLバージョンでの設定
  
