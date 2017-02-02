@@ -111,7 +111,7 @@ function post_update_setup() {
     } &> >(tee >(gzip --stdout >"$logfilename"))
     rps_printInfo "$logfilename"
 
-    printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nIt has come to our attention that some people are profiting from selling RetroPie SD cards, some including copyrighted games. This is illegal.\n\nIf you have been sold this software on its own or including games, you can let us know about it by emailing retropieproject@gmail.com"
+    printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nThe pre-built RetroPie image includes software that has non commercial licences. Selling RetroPie images or including RetroPie with your commercial product is not allowed.\n\nNo copyrighted games are included with RetroPie.\n\nIf you have been sold this software, you can let us know about it by emailing retropieproject@gmail.com."
 
     # return to set return function
     "${return_func[@]}"
