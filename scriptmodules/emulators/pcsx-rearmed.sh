@@ -58,11 +58,11 @@ function configure_pcsx-rearmed() {
     mkUserDir "$md_conf_root/psx"
     mkdir -p "$md_inst/bios"
 
-    # symlink the rom so so it can be installed with the other bios files
-    ln -sf "$biosdir/scph1001.bin" "$md_inst/bios/scph1001.bin"
+    # symlink the bios so it can be installed with the other bios files
+    ln -sf "$biosdir/SCPH1001.BIN" "$md_inst/bios/SCPH1001.BIN"
 
     setDispmanx "$md_id" 1
 
-    addEmulator 0 "$md_id" "psx" "$md_inst/pcsx -cfg $md_conf_root/psx/pcsx.cfg -cdfile %ROM%"
+    addEmulator 0 "$md_id" "psx" "pushd $md_inst; $md_inst/pcsx -cfg $md_conf_root/psx/pcsx.cfg -cdfile %ROM%; popd"
     addSystem "psx"
 }
