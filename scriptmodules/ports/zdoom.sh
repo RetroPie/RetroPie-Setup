@@ -44,13 +44,17 @@ function install_zdoom() {
     )
 }
 
-function configure_zdoom() {
-    addPort "$md_id" "doom" "Doom" "$md_inst/zdoom -iwad $romdir/ports/doom/doom1.wad"
+function add_games_zdoom() {
+    _add_games_lr-prboom "$md_inst/zdoom -iwad %ROM%"
+}
 
+function configure_zdoom() {
     mkRomDir "ports/doom"
 
     mkUserDir "$home/.config"
     moveConfigDir "$home/.config/zdoom" "$md_conf_root/doom"
 
     [[ "$md_mode" == "install" ]] && game_data_lr-prboom
+
+    add_games_zdoom
 }

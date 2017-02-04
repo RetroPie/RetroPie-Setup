@@ -38,16 +38,38 @@ function game_data_lr-prboom() {
     fi
 }
 
+function _add_games_lr-prboom() {
+    local cmd="$1"
+    declare -A games=(
+        ['doom1']="Doom"
+        ['doom2']="Doom 2"
+        ['tnt']="TNT - Evilution"
+        ['plutonia']="The Plutonia Experiment"
+    )
+    local game
+    local wad
+    for game in "${!games[@]}"; do
+        wad="$romdir/ports/doom/$game.wad"
+        if [[ -f "$wad" ]]; then
+            addPort "$md_id" "doom" "${games[$game]}" "$cmd" "$wad"
+        fi
+    done
+}
+
+function add_games_lr-prboom() {
+    _add_games_lr-prboom "$md_inst/prboom_libretro.so"
+}
+
 function configure_lr-prboom() {
     setConfigRoot "ports"
-
-    addPort "$md_id" "doom" "Doom" "$md_inst/prboom_libretro.so" "$romdir/ports/doom/doom1.wad"
 
     mkRomDir "ports/doom"
     ensureSystemretroconfig "ports/doom"
 
+    [[ "$md_mode" == "install" ]] && game_data_lr-prboom
+
+    add_games_lr-prboom
+
     cp prboom.wad "$romdir/ports/doom/"
     chown $user:$user "$romdir/ports/doom/prboom.wad"
-
-    [[ "$md_mode" == "install" ]] && game_data_lr-prboom
 }
