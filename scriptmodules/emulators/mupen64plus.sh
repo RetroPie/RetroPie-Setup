@@ -23,7 +23,7 @@ function depends_mupen64plus() {
 
 function sources_mupen64plus() {
     local repos=(
-        'joolswills core include_paths'
+        'mupen64plus core'
         'mupen64plus ui-console'
         'mupen64plus audio-sdl'
         'mupen64plus input-sdl'
