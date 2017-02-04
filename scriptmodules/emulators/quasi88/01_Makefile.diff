@@ -1,0 +1,21 @@
+diff -u quasi88-0.6.4_org/Makefile quasi88-0.6.4/Makefile
+--- quasi88-0.6.4_org/Makefile	2013-02-19 14:54:03.000000000 +0000
++++ quasi88-0.6.4/Makefile	2017-01-29 04:51:05.264262542 +0000
+@@ -512,7 +512,7 @@
+ # SDLバージョンでの設定
+ 
+ CFLAGS += -Isrc/FUNIX -Isrc/SDL `$(SDL_CONFIG) --cflags`
+-LIBS   +=                       `$(SDL_CONFIG) --libs`
++LIBS   += -lm                   `$(SDL_CONFIG) --libs`
+ 
+ CFLAGS += -DQUASI88_SDL
+ 
+@@ -937,7 +937,7 @@
+ all:		$(OBJDIRS) $(PROGRAM)
+ 
+ $(OBJDIRS):
+-		-mkdir $@
++		-mkdir -p $@
+ 
+ $(PROGRAM):	$(OBJECTS)
+ 		$(LD) $(OBJECTS) $(LIBS) -o $(PROGRAM) 
