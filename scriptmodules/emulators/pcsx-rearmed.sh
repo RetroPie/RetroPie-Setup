@@ -66,6 +66,6 @@ function configure_pcsx-rearmed() {
 
     setDispmanx "$md_id" 1
 
-    addEmulator 0 "$md_id" "psx" "pushd $md_inst; $md_inst/pcsx -cdfile %ROM%; popd"
+    addEmulator 0 "$md_id" "psx" "pushd $md_inst; ./pcsx -cdfile %ROM%; popd"
     addSystem "psx"
 }
