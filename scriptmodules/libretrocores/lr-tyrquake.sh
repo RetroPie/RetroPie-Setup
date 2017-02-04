@@ -63,8 +63,6 @@ function _add_games_lr-tyrquake() {
         pak="$romdir/ports/quake/$dir/pak0.pak"
         if [[ -f "$pak" ]]; then
             addPort "$md_id" "quake" "${games[$dir]}" "$cmd" "$pak"
-        else
-            rm -f "$romdir/ports/quake/${games[$dir]}.sh"
         fi
     done
 }
