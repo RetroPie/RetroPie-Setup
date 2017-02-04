@@ -68,7 +68,7 @@ function _add_games_lr-tyrquake() {
 }
 
 function add_games_lr-tyrquake() {
-    _add_games_lr-tyrquake "$emudir/retroarch/bin/retroarch -L $md_inst/tyrquake_libretro.so --config $md_conf_root/quake/retroarch.cfg %ROM%"
+    _add_games_lr-tyrquake "$md_inst/tyrquake_libretro.so"
 }
 
 function configure_lr-tyrquake() {
