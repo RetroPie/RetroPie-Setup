@@ -298,9 +298,9 @@ function rp_hasBinary() {
     local id="${__mod_id[$idx]}"
     fnExists "install_bin_${__mod_id[$idx]}" && return 0
 
-    # binary blacklist for armv7 OSMC due to GCC ABI incompatibility with
+    # binary blacklist for armv7 Debian/OSMC due to GCC ABI incompatibility with
     # threaded C++ apps on Raspbian (armv6 userland)
-    if isPlatform "osmc" && ! isPlatform "armv6"; then
+    if [[ "$__os_id" != "Raspbian" ]] && ! isPlatform "armv6"; then
         case "$id" in
             emulationstation|zdoom|lr-dinothawr|lr-ppsspp|ppsspp)
                 return 1
