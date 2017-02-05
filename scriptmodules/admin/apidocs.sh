@@ -41,11 +41,10 @@ function build_apidocs() {
 }
 
 function install_apidocs() {
-    rm -rf "$scriptdir/docs"
-    cp -R "$md_build/html" "$scriptdir/docs"
-    chown -R $user:$user "$scriptdir/docs"
+    rsync -a --delete "$md_build/html/" "$__tmpdir/apidocs/"
+    chown -R $user:$user "$__tmpdir/apidocs"
 }
 
 function upload_apidocs() {
-    rsync -av --delete "$scriptdir/docs/" "retropie@$__binary_host:retropie-setup-api/"
+    rsync -av --delete "$__tmpdir/apidocs/" "retropie@$__binary_host:api/"
 }
