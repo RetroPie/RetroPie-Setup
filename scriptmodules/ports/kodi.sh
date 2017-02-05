@@ -42,7 +42,7 @@ function depends_kodi() {
 function install_bin_kodi() {
     # force aptInstall to get a fresh list before installing
     __apt_update=0
-    aptInstall kodi
+    aptInstall kodi kodi-peripheral-joystick kodi-inputstream-adaptive kodi-inputstream-rtmp
 }
 
 function remove_kodi() {
