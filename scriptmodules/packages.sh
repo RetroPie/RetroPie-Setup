@@ -295,7 +295,19 @@ function rp_hasBinaries() {
 
 function rp_hasBinary() {
     local idx="$1"
+    local id="${__mod_id[$idx]}"
     fnExists "install_bin_${__mod_id[$idx]}" && return 0
+
+    # binary blacklist for armv7 OSMC due to GCC ABI incompatibility with
+    # threaded C++ apps on Raspbian (armv6 userland)
+    if isPlatform "osmc" && ! isPlatform "armv6"; then
+        case "$id" in
+            emulationstation|zdoom|lr-dinothawr|lr-ppsspp|ppsspp)
+                return 1
+                ;;
+        esac
+    fi
+
     if rp_hasBinaries; then
         wget --spider -q "$__binary_url/${__mod_type[$idx]}/${__mod_id[$idx]}.tar.gz"
         return $?
