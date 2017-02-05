@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function _get_vers_advmame() {
-    echo 0.94.0 1.4 3.1
+    echo 0.94.0 1.4 3.2
 }
 
 function depends_advmame() {
