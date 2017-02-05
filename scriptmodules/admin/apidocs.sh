@@ -9,19 +9,19 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="docs"
+rp_module_id="apidocs"
 rp_module_desc="Generate developer documentation"
 rp_module_section=""
 
-function depends_docs() {
+function depends_apidocs() {
     getDepends doxygen graphviz
 }
 
-function sources_docs() {
+function sources_apidocs() {
     gitPullOrClone "$md_build" https://github.com/Anvil/bash-doxygen.git
 }
 
-function build_docs() {
+function build_apidocs() {
     local config="Doxyfile"
     rm -f "$config"
     doxygen -g "$config" >/dev/null
@@ -40,12 +40,12 @@ function build_docs() {
     doxygen "$config"
 }
 
-function install_docs() {
+function install_apidocs() {
     rm -rf "$scriptdir/docs"
     cp -R "$md_build/html" "$scriptdir/docs"
     chown -R $user:$user "$scriptdir/docs"
 }
 
-function upload_docs() {
+function upload_apidocs() {
     rsync -av --delete "$scriptdir/docs/" "retropie@$__binary_host:retropie-setup-api/"
 }
