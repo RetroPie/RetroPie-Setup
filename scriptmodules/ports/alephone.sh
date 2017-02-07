@@ -16,11 +16,21 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_alephone() {
-    getDepends libboost-all-dev libsdl1.2-dev libsdl-net1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake
+    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake)
+    if [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" ge 16.04; then
+        depends+=(libsdl2-dev libsdl2-net-dev libsdl2-image-dev libsdl2-ttf-dev)
+    else
+        depends+=(libsdl1.2-dev libsdl-net1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev)
+    fi
+    getDepends "${depends[@]}"
 }
 
 function sources_alephone() {
-    gitPullOrClone "$md_build" "https://github.com/Aleph-One-Marathon/alephone.git" "release-20150620"
+    local branch="release-20150620"
+    if [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" ge 16.04; then
+        branch="master"
+    fi
+    gitPullOrClone "$md_build" "https://github.com/Aleph-One-Marathon/alephone.git" "$branch"
 }
 
 function build_alephone() {
