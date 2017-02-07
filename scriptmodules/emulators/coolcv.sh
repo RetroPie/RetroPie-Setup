@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags="!x86 !x11 !mali"
 
 function install_bin_coolcv() {
-    wget -O- -q "$__archive_url/coolcv.tar.gz" | tar -xvz -C "$md_inst"
+    wget -O- -q "$__archive_url/coolcv.tar.gz" | tar -xvz --strip-components=1 -C "$md_inst" 
 }
 
 function configure_coolcv() {
@@ -24,6 +24,6 @@ function configure_coolcv() {
 
     moveConfigFile "$home/coolcv_mapping.txt" "$md_conf_root/coleco/coolcv_mapping.txt"
 
-    addEmulator 1 "$md_id" "coleco" "$md_inst/coolcv/coolcv_pi %ROM%"
+    addEmulator 1 "$md_id" "coleco" "$md_inst/coolcv_pi %ROM%"
     addSystem "coleco"
 }
