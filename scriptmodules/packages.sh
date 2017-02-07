@@ -180,6 +180,10 @@ function rp_callModule() {
             ;;
         install|install_bin)
             action="Installing"
+            # remove any previous install folder before installing
+            if ! hasFlag "${__mod_flags[$md_idx]}" "noinstclean"; then
+                rmDirExists "$md_inst"
+            fi
             mkdir -p "$md_inst"
             pushd "$md_build" 2>/dev/null
             pushed=$?
