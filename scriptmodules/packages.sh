@@ -252,7 +252,7 @@ function rp_callModule() {
         if [[ -n "$md_ret_require" ]]; then
             for file in "${md_ret_require[@]}"; do
                 if [[ ! -e "$file" ]]; then
-                    md_ret_errors+=("Could not successfully $mode $md_desc ($file not found).")
+                    md_ret_errors+=("Could not successfully $mode $md_id - $md_desc ($file not found).")
                     break
                 fi
             done
