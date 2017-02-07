@@ -25,7 +25,7 @@ function depends_eduke32() {
 }
 
 function sources_eduke32() {
-    svn checkout http://svn.eduke32.com/eduke32/polymer/eduke32/ "$md_build"
+    svn checkout http://svn.eduke32.com/eduke32 "$md_build"
 }
 
 function build_eduke32() {
