@@ -13,7 +13,7 @@ rp_module_id="mkarcadejoystick"
 rp_module_desc="Raspberry Pi GPIO Joystick Driver"
 rp_module_help="Installs the GPIO driver from https://github.com/recalbox/mk_arcade_joystick_rpi"
 rp_module_section="driver"
-rp_module_flags="!x86 !mali"
+rp_module_flags="noinstclean !x86 !mali"
 
 function _dkms_remove_mkarcadejoystick() {
     dkms remove -m mk_arcade_joystick_rpi -v 0.1.5 --all

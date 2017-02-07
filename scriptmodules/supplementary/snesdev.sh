@@ -12,6 +12,7 @@
 rp_module_id="snesdev"
 rp_module_desc="SNESDev (Driver for the RetroPie GPIO-Adapter)"
 rp_module_section="driver"
+rp_module_flags="noinstclean"
 
 function sources_snesdev() {
     gitPullOrClone "$md_inst" https://github.com/petrockblog/SNESDev-RPi.git

@@ -12,6 +12,7 @@
 rp_module_id="mobilegamepad"
 rp_module_desc="Mobile Universal Gamepad for RetroPie"
 rp_module_section="exp"
+rp_module_flags="noinstclean"
 
 function depends_mobilegamepad() {
     depends_virtualgamepad "$@"

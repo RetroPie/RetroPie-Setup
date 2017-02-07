@@ -13,6 +13,7 @@ rp_module_id="steamcontroller"
 rp_module_desc="Standalone Steam Controller Driver"
 rp_module_help="Steam Controller Driver from https://github.com/ynsta/steamcontroller"
 rp_module_section="driver"
+rp_module_flags="noinstclean"
 
 function depends_steamcontroller() {
     getDepends virtualenv python3-dev

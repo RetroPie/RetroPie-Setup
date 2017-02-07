@@ -12,6 +12,7 @@
 rp_module_id="powerblock"
 rp_module_desc="PowerBlock Driver"
 rp_module_section="driver"
+rp_module_flags="noinstclean"
 
 function depends_powerblock() {
     local depends=(cmake doxygen)
