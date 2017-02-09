@@ -34,7 +34,7 @@ function install_launchingimages() {
     chmod a+x generate-launching-images.sh
 }
 
-function _show_images() {
+function _show_images_launchingimages() {
     [[ -f "$1" ]] || return 1
 
     local image="$1"
@@ -45,27 +45,27 @@ function _show_images() {
 
     if isPlatform "x11"; then
         feh \
-          --cycle-once \
-          --hide-pointer \
-          --fullscreen \
-          --auto-zoom \
-          --no-menus \
-          --slideshow-delay $timeout \
-          --quiet \
-          $([[ "$is_list" -eq 1 ]] && echo --filelist) \
-          "$image"
+            --cycle-once \
+            --hide-pointer \
+            --fullscreen \
+            --auto-zoom \
+            --no-menus \
+            --slideshow-delay $timeout \
+            --quiet \
+            $([[ "$is_list" -eq 1 ]] && echo --filelist) \
+            "$image"
     else
         fbi \
-          --once \
-          --timeout "$timeout" \
-          --noverbose \
-          --autozoom \
-          $([[ "$is_list" -eq 1 ]] && echo --list) \
-          "$image" </dev/tty &>/dev/null
+            --once \
+            --timeout "$timeout" \
+            --noverbose \
+            --autozoom \
+            $([[ "$is_list" -eq 1 ]] && echo --list) \
+            "$image" </dev/tty &>/dev/null
     fi
 }
 
-function _dialog_menu() {
+function _dialog_menu_launchingimages() {
     local text="$1"
     shift
     [[ -z "$@" ]] && return 1
@@ -78,90 +78,79 @@ function _dialog_menu() {
         return
     fi
 
-    dialog \
-      --backtitle "$__backtitle" \
-      --no-items \
-      --menu "$text" \
-      22 86 16 \
-      $@ \
-      2>&1 >/dev/tty
+    dialog --backtitle "$__backtitle" --no-items --menu "$text" 22 86 16 "$@" 2>&1 >/dev/tty
 }
 
-function _set_theme() {
-      _dialog_menu \
+function _set_theme_launchingimages() {
+    _dialog_menu_launchingimages \
         "List of available themes" \
         $("$md_inst/generate-launching-images.sh" --list-themes) \
-      || echo "\$theme"
+    || echo "\$theme"
 }
 
-function _set_system() {
+function _set_system_launchingimages() {
     local choice=$(
-        _dialog_menu \
-          "List of available systems.\n\nSelect the system you want to generate a launching image or cancel to generate for all systems." \
-          $("$md_inst/generate-launching-images.sh" --list-systems)
+        _dialog_menu_launchingimages \
+            "List of available systems.\n\nSelect the system you want to generate a launching image or cancel to generate for all systems." \
+            $("$md_inst/generate-launching-images.sh" --list-systems)
     )
-    [[ -n "$choice" ]] && echo "--system $choice" \
-    || echo "\$system"
+    [[ -n "$choice" ]] && echo "--system $choice" || echo "\$system"
 }
 
-function _set_extension() {
-    _dialog_menu \
-      "Choose the file extension of the final launching image." \
-      png jpg \
+function _set_extension_launchingimages() {
+    _dialog_menu_launchingimages "Choose the file extension of the final launching image." png jpg \
     || echo "\$extension"
 }
 
-function _set_show_timeout() {
-    _dialog_menu \
-      "Set how long the image will be displayed before asking if you accept (in seconds)" \
-      1 2 3 4 5 6 7 8 9 10 \
+function _set_show_timeout_launchingimages() {
+    _dialog_menu_launchingimages \
+        "Set how long the image will be displayed before asking if you accept (in seconds)" \
+        1 2 3 4 5 6 7 8 9 10 \
     || echo "\$show_timeout"
 }
 
-function _set_loading_text() {
+function _set_loading_text_launchingimages() {
     dialog \
-      --backtitle "$__backtitle" \
-      --inputbox "Enter the \"NOW LOADING\" text (or leave blank to no text):" \
-      0 70 \
-      "NOW LOADING" \
-      2>&1 >/dev/tty \
+        --backtitle "$__backtitle" \
+        --inputbox "Enter the \"NOW LOADING\" text (or leave blank to no text):" \
+        0 70 \
+        "NOW LOADING" \
+        2>&1 >/dev/tty \
     || echo "\$loading_text"
 }
 
-function _set_press_button_text() {
+function _set_press_button_text_launchingimages() {
     dialog \
-      --backtitle "$__backtitle" \
-      --inputbox "Enter the \"PRESS A BUTTON\" text (or leave blank to no text):" \
-      0 70 \
-      "PRESS A BUTTON TO CONFIGURE LAUNCH OPTIONS" \
-      2>&1 >/dev/tty \
+        --backtitle "$__backtitle" \
+        --inputbox "Enter the \"PRESS A BUTTON\" text (or leave blank to no text):" \
+        0 70 \
+        "PRESS A BUTTON TO CONFIGURE LAUNCH OPTIONS" \
+        2>&1 >/dev/tty \
     || echo "\$press_button_text"
 }
 
-function _select_color() {
-    _dialog_menu \
-      "Pick a color for the $1" \
-      white black silver gray gray10 gray25 gray50 gray75 gray90 \
-      red orange yellow green cyan blue cyan purple pink brown
+function _select_color_launchingimages() {
+    _dialog_menu_launchingimages \
+        "Pick a color for the $1" \
+        white black silver gray gray10 gray25 gray50 gray75 gray90 \
+        red orange yellow green cyan blue cyan purple pink brown
 }
 
-function _set_loading_text_color() {
-    _select_color "\"LOADING\" text" \
-    || echo "\$loading_text_color"
+function _set_loading_text_color_launchingimages() {
+    _select_color_launchingimages "\"LOADING\" text" || echo "\$loading_text_color"
 }
 
-function _set_press_button_text_color() {
-    _select_color "\"PRESS A BUTTON\" text" \
-    || echo "\$press_button_text_color"
+function _set_press_button_text_color_launchingimages() {
+    _select_color_launchingimages "\"PRESS A BUTTON\" text" || echo "\$press_button_text_color"
 }
 
-function _set_solid_bg_color() {
+function _set_solid_bg_color_launchingimages() {
     local choice
     local cmd=(dialog --backtitle "$__backtitle" --menu "Color to use as background" 22 86 16)
     local options=(
           0 "Disable \"solid background color\""
-          1 "Use the system color defined by theme" \
-          2 "Select a color" \
+          1 "Use the system color defined by theme"
+          2 "Select a color"
     )
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
@@ -170,50 +159,50 @@ function _set_solid_bg_color() {
             ;;
         1)  echo "--solid-bg-color"
             ;;
-        2)  echo "--solid-bg-color $(_select_color background)"
+        2)  echo "--solid-bg-color $(_select_color_launchingimages background)"
             ;;
         *)  echo "\$solid_bg_color"
             ;;
     esac
 }
 
-function _dialog_yesno() {
+function _dialog_yesno_launchingimages() {
     dialog --backtitle "$__backtitle" --yesno "$@" 20 60 2>&1 >/dev/tty
 }
 
-function _set_no_ask() {
-    _dialog_yesno "If you enable \"no_ask\" all generated images will be automatically accepted.\n\nDo you want to enable it?" \
+function _set_no_ask_launchingimages() {
+    _dialog_yesno_launchingimages "If you enable \"no_ask\" all generated images will be automatically accepted.\n\nDo you want to enable it?" \
     && echo "--no-ask"
 }
 
-function _set_no_logo() {
-    _dialog_yesno "If you enable \"no_logo\" the images won't have the system logo (useful for tronkyfran theme, for example).\n\nDo you want to enable it?" \
+function _set_no_logo_launchingimages() {
+    _dialog_yesno_launchingimages "If you enable \"no_logo\" the images won't have the system logo (useful for tronkyfran theme, for example).\n\nDo you want to enable it?" \
     && echo "--no-logo"
 }
 
-function _set_logo_belt() {
-    _dialog_yesno "If you enable \"logo_belt\" the image will have a semi-transparent white belt behind the logo.\n\nDo you want to enable it?" \
+function _set_logo_belt_launchingimages() {
+    _dialog_yesno_launchingimages "If you enable \"logo_belt\" the image will have a semi-transparent white belt behind the logo.\n\nDo you want to enable it?" \
     && echo "--logo-belt"
 }
 
-function _get_all_launching_images() {
+function _get_all_launchingimages() {
     find "$configdir" -type f -regex ".*launching\.\(png\|jpg\)" | sort
 }
 
-function _is_theme_chosen() {
+function _is_theme_chosen_launchingimages() {
     if [[ -z "$1" ]]; then
         printMsgs "dialog" "You didn't choose a theme!\n\nGo to the \"Image generation settings\" and choose one."
         return 1
     fi
 }
 
-function _get_presetting_file() {
+function _get_presetting_file_launchingimages() {
     local file_list=$(find "$md_inst" -type f -name '*.cfg' | xargs basename -a)
     if [[ -z "$file_list" ]]; then
         printMsgs "dialog" "There's no presettings file saved."
         return 1
     fi
-    _dialog_menu "Choose the file" "$file_list" || return 1
+    _dialog_menu_launchingimages "Choose the file" "$file_list" || return 1
 }
 
 
@@ -239,12 +228,7 @@ function gui_launchingimages() {
     local presettings_file=
 
     while true; do
-        cmd=(dialog 
-          --backtitle "$__backtitle"
-          --title " runcommand launching images generation "
-          --menu "Choose an option."
-          22 86 16
-        )
+        cmd=(dialog --backtitle "$__backtitle" --title " runcommand launching images generation " --menu "Choose an option." 22 86 16)
         options=( 
             1 "Image generation settings"
             2 "Generate launching images"
@@ -255,12 +239,7 @@ function gui_launchingimages() {
         if [[ -n "$choice" ]]; then
             case $choice in
                 1) # Image generation settings
-                    cmd=(dialog
-                        --backtitle "$__backtitle"
-                        --title " SETTINGS "
-                        --menu "runcommand launching images generation settings."
-                        22 86 16
-                    )
+                    cmd=(dialog --backtitle "$__backtitle" --title " SETTINGS " --menu "runcommand launching images generation settings." 22 86 16)
                     while true; do
                         options=( 
                             presettings_file "$(
@@ -301,41 +280,41 @@ function gui_launchingimages() {
                             while true; do
                                 choice=$(
                                     dialog \
-                                      --backtitle "$__backtitle" \
-                                      --title " PRE SETTINGS " \
-                                      --menu "Choose an option\nCurrent presettings file: $presettings_file" \
-                                      22 86 16 \
-                                      1 "Load a pre-settings file" \
-                                      2 "Save current settings for \"$theme\"" \
-                                      3 "Delete a pre-settings file" \
-                                      2>&1 >/dev/tty
+                                        --backtitle "$__backtitle" \
+                                        --title " PRE SETTINGS " \
+                                        --menu "Choose an option\nCurrent presettings file: $presettings_file" \
+                                        22 86 16 \
+                                        1 "Load a pre-settings file" \
+                                        2 "Save current settings for \"$theme\"" \
+                                        3 "Delete a pre-settings file" \
+                                        2>&1 >/dev/tty
                                 )
 
                                 case "$choice" in
                                     1)
-                                        presettings_file=$(_get_presetting_file) || continue
+                                        presettings_file=$(_get_presetting_file_launchingimages) || continue
                                         local configs=$(cat "$md_inst/$presettings_file" | tr '\n' ' ')
                                         eval "$configs"
                                         break
                                         ;;
 
                                     2)
-                                        _is_theme_chosen "$theme" || break
+                                        _is_theme_chosen_launchingimages "$theme" || break
                                         file="$md_inst/$theme.cfg"
                                         if [[ -f "$file" ]]; then
-                                            _dialog_yesno "\"$file\" exists.\nDo you want to overwrite it?" \
+                                            _dialog_yesno_launchingimages "\"$file\" exists.\nDo you want to overwrite it?" \
                                             || continue
                                         fi
                                         presettings_file="$(basename $file)"
                                         echo -n > "$file"
                                         local var
                                         for var in \
-                                          theme extension show_timeout \
-                                          loading_text loading_text_color \
-                                          press_button_text \
-                                          press_button_text_color no_ask \
-                                          no_logo solid_bg_color system \
-                                          logo_belt
+                                            theme extension show_timeout \
+                                            loading_text loading_text_color \
+                                            press_button_text \
+                                            press_button_text_color no_ask \
+                                            no_logo solid_bg_color system \
+                                            logo_belt
                                         do
                                             echo "$var"=\"${!var}\" >> "$file"
                                         done
@@ -344,9 +323,9 @@ function gui_launchingimages() {
                                         ;;
 
                                     3)
-                                        presettings_file=$(_get_presetting_file) || continue
+                                        presettings_file=$(_get_presetting_file_launchingimages) || continue
 
-                                        _dialog_yesno "Are you sure you want to delete \"$presettings_file\"?" \
+                                        _dialog_yesno_launchingimages "Are you sure you want to delete \"$presettings_file\"?" \
                                         || continue
 
                                         rm "$md_inst/$presettings_file" \
@@ -363,40 +342,40 @@ function gui_launchingimages() {
                             continue
                         fi
 
-                        eval "$choice"=\"$(_set_$choice)\"
+                        eval "$choice"=\"$(_set_${choice}_launchingimages)\"
                     done
                     ;;
 
                 2) # Generate launching images
-                    _is_theme_chosen "$theme" || continue
+                    _is_theme_chosen_launchingimages "$theme" || continue
                     "$md_inst/generate-launching-images.sh" \
-                      --theme "$theme" \
-                      --extension "$extension" \
-                      --show-timeout "$show_timeout" \
-                      --loading-text "$loading_text" \
-                      --press-button-text "$press_button_text" \
-                      --loading-text-color "$loading_text_color" \
-                      --press-button-text-color "$press_button_text_color" \
-                      $system \
-                      $solid_bg_color \
-                      $no_ask \
-                      $no_logo \
-                      $logo_belt \
-                      2>&1 >/dev/tty
+                        --theme "$theme" \
+                        --extension "$extension" \
+                        --show-timeout "$show_timeout" \
+                        --loading-text "$loading_text" \
+                        --press-button-text "$press_button_text" \
+                        --loading-text-color "$loading_text_color" \
+                        --press-button-text-color "$press_button_text_color" \
+                        $system \
+                        $solid_bg_color \
+                        $no_ask \
+                        $no_logo \
+                        $logo_belt \
+                        2>&1 >/dev/tty
                     if [[ "$?" -ne 0 ]]; then
                         printMsgs "dialog" "Unable to generate launching images. Please check the \"Image generation settings\"."
                         continue
                     fi
-                    for file in $(_get_all_launching_images); do
+                    for file in $(_get_all_launchingimages); do
                         chown $user:$user "$file"
                     done
                     ;;
 
                 3) # View slideshow of all current launching images
                     file=$(mktemp)
-                    _get_all_launching_images > "$file"
+                    _get_all_launchingimages > "$file"
                     if [[ -s "$file" ]]; then
-                        _show_images "$file"
+                        _show_images_launchingimages "$file"
                     else
                         printMsgs "dialog" "There are no launching images found on your system."
                     fi
@@ -404,9 +383,9 @@ function gui_launchingimages() {
                     ;;
 
                 4) # View the launching image of a specific system
-                    choice=$(_dialog_menu "Choose the system" $(_get_all_launching_images))
+                    choice=$(_dialog_menu_launchingimages "Choose the system" $(_get_all_launchingimages))
                     [[ -z "$choice" ]] && continue
-                    _show_images "$choice"
+                    _show_images_launchingimages "$choice"
                     continue
                     ;;
 
