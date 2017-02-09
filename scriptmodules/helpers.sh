@@ -846,7 +846,7 @@ function setConfigRoot() {
 ## It can provide a shortcut way to load a set of keys from an ini file into
 ## variables.
 ##
-## It requies iniConfig to be called first to specify the format and file.
+## It requires iniConfig to be called first to specify the format and file.
 ## eg.
 ##
 ##     iniConfig " = " '"' "$configdir/all/mymodule.cfg"
