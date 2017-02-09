@@ -58,15 +58,40 @@ function configure_uae4arm() {
     fi
     moveConfigDir "$md_inst/kickstarts" "$biosdir"
 
+    local conf="$(mktemp)"
+    iniConfig "=" "" "$conf"
+    iniSet "config_description" "RetroPie A500, 68000, OCS, 512KB Chip + 512KB Slow Fast"
+    iniSet "chipmem_size" "1"
+    iniSet "bogomem_size" "2"
+    iniSet "chipset" "ocs"
+    iniSet "cachesize" "0"
+    iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick13.rom"
+    copyDefaultConfig "$conf" "$md_conf_root/amiga/$md_id/conf/rp-a500.uae"
+    rm "$conf"
+
+    conf="$(mktemp)"
+    iniConfig "=" "" "$conf"
+    iniSet "config_description" "RetroPie A1200, 68EC020, AGA, 2MB Chip"
+    iniSet "chipmem_size" "4"
+    iniSet "finegrain_cpu_speed" "1024"
+    iniSet "cpu_type" "68ec020"
+    iniSet "cpu_model" "68020"
+    iniSet "chipset" "aga"
+    iniSet "cachesize" "0"
+    iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick31.rom"
+    copyDefaultConfig "$conf" "$md_conf_root/amiga/$md_id/conf/rp-a1200.uae"
+    rm "$conf"
+
+    cp -v "$md_data/uae4arm.sh" "$md_inst/"
     cat > "$romdir/amiga/+Start UAE4Arm.sh" << _EOF_
 #!/bin/bash
-pushd "$md_inst"
-./uae4arm
-popd
+"$md_inst/uae4arm.sh"
 _EOF_
     chmod a+x "$romdir/amiga/+Start UAE4Arm.sh"
     chown $user:$user "$romdir/amiga/+Start UAE4Arm.sh"
 
-    addEmulator 1 "$md_id" "amiga" "bash $romdir/amiga/+Start\ UAE4Arm.sh"
+    addEmulator 1 "$md_id" "amiga" "bash $md_inst/uae4arm.sh auto %ROM%"
+    addEmulator 1 "$md_id-a500" "amiga" "bash $md_inst/uae4arm.sh rp-a500.uae %ROM%"
+    addEmulator 1 "$md_id-a1200" "amiga" "bash $md_inst/uae4arm.sh rp-a1200.uae %ROM%"
     addSystem "amiga"
 }
