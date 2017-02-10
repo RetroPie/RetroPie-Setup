@@ -866,7 +866,7 @@ function loadModuleConfig() {
     for option in "${options[@]}"; do
         option=(${option/=/ })
         key="${option[0]}"
-        value="${option[1]}"
+        value="${option[@]:1}"
         iniGet "$key"
         if [[ -z "$ini_value" ]]; then
             iniSet "$key" "$value"
