@@ -70,11 +70,11 @@ function _dialog_menu_launchingimages() {
     shift
     [[ -z "$@" ]] && return 1
 
-    # when there's only one item for the menu the, the 'dialog --menu' expect
+    # when there's only one item for the menu, the 'dialog --menu' expect
     # to receive a "tag" and an "item" even if using '--no-item'. It can be
     # an edge case, but this function shouldn't crash when it happens.
     if [[ "$#" -eq 1 ]]; then
-        echo "$1"
+        _dialog_yesno_launchingimages "$text: $1"
         return
     fi
 
@@ -196,36 +196,175 @@ function _is_theme_chosen_launchingimages() {
     fi
 }
 
-function _get_presetting_file_launchingimages() {
-    local file_list=$(find "$md_inst" -type f -name '*.cfg' | xargs basename -a)
+function _get_config_file_launchingimages() {
+    local file_list=$(find "$md_inst" -type f -name '*.cfg' ! -name '.current.cfg' | sort | xargs)
     if [[ -z "$file_list" ]]; then
-        printMsgs "dialog" "There's no presettings file saved."
+        printMsgs "dialog" "There's no config file saved."
         return 1
     fi
-    _dialog_menu_launchingimages "Choose the file" "$file_list" || return 1
+    _dialog_menu_launchingimages "Choose the file" $file_list # XXX: no quotes surrounding $file_list is mandatory!
+    return $?
 }
 
+function _load_config_launchingimages() {
+    echo "$(loadModuleConfig \
+        'theme=' \
+        'extension=png' \
+        'show_timeout=5' \
+        'loading_text=NOW LOADING' \
+        'press_button_text=PRESS A BUTTON TO CONFIGURE LAUNCH OPTIONS' \
+        'loading_text_color=white' \
+        'press_button_text_color=gray50' \
+        'no_ask=' \
+        'no_logo=' \
+        'solid_bg_color=' \
+        'system=' \
+        'logo_belt=' \
+    )"
+}
+
+function _settings_launchingimages() {
+    local cmd=(dialog --backtitle "$__backtitle" --title " SETTINGS " --menu "runcommand launching images generation settings." 22 86 16)
+    local options
+    local choice
+    local config_file
+
+    iniConfig ' = ' '"' "$md_inst/.current.cfg"
+
+    while true; do
+        eval $(_load_config_launchingimages)
+
+        options=( 
+            config_file "$(
+               [[ "$config_file" =~ $theme\.cfg$ ]] && echo "$(basename "$config_file")"
+            )"
+            theme "$theme"
+            system "$(
+                if [[ -z "$system" ]]; then
+                    echo "all systems in es_systems.cfg"
+                else
+                    echo "$system" | cut -d' ' -f2
+                fi
+            )"
+            extension ".$extension"
+            loading_text "\"$loading_text\""
+            press_button_text "\"$press_button_text\""
+            loading_text_color "$loading_text_color"
+            press_button_text_color "$press_button_text_color"
+            show_timeout "$( [[ -n "$no_ask" ]] && echo "don't show (see no_ask)" || echo "$show_timeout seconds")"
+            no_ask "$( [[ -n "$no_ask" ]] && echo true || echo false)"
+            no_logo "$( [[ -n "$no_logo" ]] && echo true || echo false)"
+            logo_belt "$( [[ -n "$logo_belt" ]] && echo true || echo false)"
+            solid_bg_color "$(
+                if [[ -z "$solid_bg_color" ]]; then
+                    echo false
+                elif [[ -z "$(echo "$solid_bg_color" | cut -s -d' ' -f2)" ]]; then
+                    echo "get from the theme"
+                else
+                    echo "$solid_bg_color" | cut -s -d' ' -f2
+                fi
+            )"
+        )
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+
+        [[ -z "$choice" ]] && break
+
+        if [[ "$choice" = "config_file" ]]; then
+            config_file=$(_manage_config_file_launchingimages)
+            continue
+        fi
+
+        eval iniSet "$choice" \"$(_set_${choice}_launchingimages)\"
+    done
+}
+
+function _manage_config_file_launchingimages() {
+    local choice
+    local config_file
+    local current_cfg="$md_inst/.current.cfg"
+
+    eval $(_load_config_launchingimages)
+
+    while true; do
+        choice=$(
+            dialog --backtitle "$__backtitle" --title " CONFIG FILE " --menu "Choose an option" 22 86 16 \
+                1 "Load a file" \
+                2 "Save current configs for \"$theme\"" \
+                3 "Delete a config file" \
+                2>&1 >/dev/tty
+        )
+
+        case "$choice" in
+            1)  # load config
+                config_file=$(_get_config_file_launchingimages) || continue
+                cat "$config_file" > "$current_cfg"
+                echo "$config_file"
+                break
+                ;;
+
+            2)  # save config
+                _is_theme_chosen_launchingimages "$theme" || break
+                config_file="$md_inst/$theme.cfg"
+                if [[ -f "$config_file" ]]; then
+                    _dialog_yesno_launchingimages "\"$(basename "$config_file")\" exists.\nDo you want to overwrite it?" \
+                    || continue
+                fi
+                cat "$current_cfg" > "$config_file"
+                printMsgs "dialog" "\"$(basename "$config_file")\" saved!"
+                echo "$config_file"
+                break
+                ;;
+
+            3)  # delete config
+                config_file=$(_get_config_file_launchingimages) || continue
+
+                _dialog_yesno_launchingimages "Are you sure you want to delete \"$config_file\"?" \
+                || continue
+
+                local err_msg=$(rm -v "$config_file")
+                printMsgs "dialog" "$err_msg"
+                ;;
+
+            *)
+                break
+                ;;
+        esac
+    done
+}
+
+function _generate_launchingimages() {
+    eval $(_load_config_launchingimages)
+
+    _is_theme_chosen_launchingimages "$theme" || return
+    "$md_inst/generate-launching-images.sh" \
+        --theme "$theme" \
+        --extension "$extension" \
+        --show-timeout "$show_timeout" \
+        --loading-text "$loading_text" \
+        --press-button-text "$press_button_text" \
+        --loading-text-color "$loading_text_color" \
+        --press-button-text-color "$press_button_text_color" \
+        $system \
+        $solid_bg_color \
+        $no_ask \
+        $no_logo \
+        $logo_belt \
+        2>&1 >/dev/tty
+
+    if [[ "$?" -ne 0 ]]; then
+        printMsgs "dialog" "Unable to generate launching images. Please check the \"Image generation settings\"."
+        return
+    fi
+
+    for file in $(_get_all_launchingimages); do
+        chown $user:$user "$file"
+    done
+}
 
 function gui_launchingimages() {
     local cmd=()
     local options=()
     local choice
-    local file
-
-    # image generation settings
-    local theme=
-    local extension="png"
-    local show_timeout=5
-    local loading_text="NOW LOADING"
-    local press_button_text="PRESS A BUTTON TO CONFIGURE LAUNCH OPTIONS"
-    local loading_text_color="white"
-    local press_button_text_color="gray50"
-    local no_ask=
-    local no_logo=
-    local solid_bg_color=
-    local system=
-    local logo_belt=
-    local presettings_file=
 
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --title " runcommand launching images generation " --menu "Choose an option." 22 86 16)
@@ -239,140 +378,15 @@ function gui_launchingimages() {
         if [[ -n "$choice" ]]; then
             case $choice in
                 1) # Image generation settings
-                    cmd=(dialog --backtitle "$__backtitle" --title " SETTINGS " --menu "runcommand launching images generation settings." 22 86 16)
-                    while true; do
-                        options=( 
-                            presettings_file "$(
-                               [[ "$theme" = "${presettings_file%.cfg}" ]] && echo "$presettings_file"
-                            )"
-                            theme "$theme"
-                            system "$(
-                                if [[ -z "$system" ]]; then
-                                    echo "all systems in es_systems.cfg"
-                                else
-                                    echo "$system" | cut -d' ' -f2
-                                fi
-                            )"
-                            extension ".$extension"
-                            loading_text "\"$loading_text\""
-                            press_button_text "\"$press_button_text\""
-                            loading_text_color "$loading_text_color"
-                            press_button_text_color "$press_button_text_color"
-                            show_timeout "$( [[ -n "$no_ask" ]] && echo "don't show (see no_ask)" || echo "$show_timeout seconds")"
-                            no_ask "$( [[ -n "$no_ask" ]] && echo true || echo false)"
-                            no_logo "$( [[ -n "$no_logo" ]] && echo true || echo false)"
-                            logo_belt "$( [[ -n "$logo_belt" ]] && echo true || echo false)"
-                            solid_bg_color "$(
-                                if [[ -z "$solid_bg_color" ]]; then
-                                    echo false
-                                elif [[ -z "$(echo "$solid_bg_color" | cut -s -d' ' -f2)" ]]; then
-                                    echo "get from the theme"
-                                else
-                                    echo "$solid_bg_color" | cut -s -d' ' -f2
-                                fi
-                            )"
-                        )
-                        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-
-                        [[ -z "$choice" ]] && break
-
-                        if [[ "$choice" = "presettings_file" ]]; then
-                            while true; do
-                                choice=$(
-                                    dialog \
-                                        --backtitle "$__backtitle" \
-                                        --title " PRE SETTINGS " \
-                                        --menu "Choose an option\nCurrent presettings file: $presettings_file" \
-                                        22 86 16 \
-                                        1 "Load a pre-settings file" \
-                                        2 "Save current settings for \"$theme\"" \
-                                        3 "Delete a pre-settings file" \
-                                        2>&1 >/dev/tty
-                                )
-
-                                case "$choice" in
-                                    1)
-                                        presettings_file=$(_get_presetting_file_launchingimages) || continue
-                                        local configs=$(cat "$md_inst/$presettings_file" | tr '\n' ' ')
-                                        eval "$configs"
-                                        break
-                                        ;;
-
-                                    2)
-                                        _is_theme_chosen_launchingimages "$theme" || break
-                                        file="$md_inst/$theme.cfg"
-                                        if [[ -f "$file" ]]; then
-                                            _dialog_yesno_launchingimages "\"$file\" exists.\nDo you want to overwrite it?" \
-                                            || continue
-                                        fi
-                                        presettings_file="$(basename $file)"
-                                        echo -n > "$file"
-                                        local var
-                                        for var in \
-                                            theme extension show_timeout \
-                                            loading_text loading_text_color \
-                                            press_button_text \
-                                            press_button_text_color no_ask \
-                                            no_logo solid_bg_color system \
-                                            logo_belt
-                                        do
-                                            echo "$var"=\"${!var}\" >> "$file"
-                                        done
-                                        printMsgs "dialog" "\"$file\" saved!"
-                                        break
-                                        ;;
-
-                                    3)
-                                        presettings_file=$(_get_presetting_file_launchingimages) || continue
-
-                                        _dialog_yesno_launchingimages "Are you sure you want to delete \"$presettings_file\"?" \
-                                        || continue
-
-                                        rm "$md_inst/$presettings_file" \
-                                        && printMsgs "dialog" "\"$presettings_file\" deleted!"
-
-                                        presettings_file=""
-                                        ;;
-
-                                    *)
-                                        break
-                                        ;;
-                                esac
-                            done
-                            continue
-                        fi
-
-                        eval "$choice"=\"$(_set_${choice}_launchingimages)\"
-                    done
+                    _settings_launchingimages
                     ;;
 
                 2) # Generate launching images
-                    _is_theme_chosen_launchingimages "$theme" || continue
-                    "$md_inst/generate-launching-images.sh" \
-                        --theme "$theme" \
-                        --extension "$extension" \
-                        --show-timeout "$show_timeout" \
-                        --loading-text "$loading_text" \
-                        --press-button-text "$press_button_text" \
-                        --loading-text-color "$loading_text_color" \
-                        --press-button-text-color "$press_button_text_color" \
-                        $system \
-                        $solid_bg_color \
-                        $no_ask \
-                        $no_logo \
-                        $logo_belt \
-                        2>&1 >/dev/tty
-                    if [[ "$?" -ne 0 ]]; then
-                        printMsgs "dialog" "Unable to generate launching images. Please check the \"Image generation settings\"."
-                        continue
-                    fi
-                    for file in $(_get_all_launchingimages); do
-                        chown $user:$user "$file"
-                    done
+                    _generate_launchingimages
                     ;;
 
                 3) # View slideshow of all current launching images
-                    file=$(mktemp)
+                    local file=$(mktemp)
                     _get_all_launchingimages > "$file"
                     if [[ -s "$file" ]]; then
                         _show_images_launchingimages "$file"
@@ -383,10 +397,11 @@ function gui_launchingimages() {
                     ;;
 
                 4) # View the launching image of a specific system
-                    choice=$(_dialog_menu_launchingimages "Choose the system" $(_get_all_launchingimages))
-                    [[ -z "$choice" ]] && continue
-                    _show_images_launchingimages "$choice"
-                    continue
+                    while true; do
+                        choice=$(_dialog_menu_launchingimages "Choose the system" $(_get_all_launchingimages))
+                        [[ -z "$choice" ]] && break
+                        _show_images_launchingimages "$choice"
+                    done
                     ;;
 
             esac
@@ -394,4 +409,5 @@ function gui_launchingimages() {
             break
         fi
     done
+    rm -f "$md_inst/.current.cfg"
 }
