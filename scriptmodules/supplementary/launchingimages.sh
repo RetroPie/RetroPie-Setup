@@ -35,13 +35,17 @@ function install_launchingimages() {
 }
 
 function _show_images_launchingimages() {
-    [[ -f "$1" ]] || return 1
-
-    local image="$1"
+    local image
     local timeout=5
     local is_list=0
 
-    [[ "$(file -i $1)" =~ text/plain ]] && is_list=1
+    if [[ "$1" = "1" ]]; then
+        is_list=1
+        shift
+    fi
+
+    [[ -f "$1" ]] || return 1
+    image="$1"
 
     if isPlatform "x11"; then
         feh \
@@ -389,7 +393,7 @@ function gui_launchingimages() {
                     local file=$(mktemp)
                     _get_all_launchingimages > "$file"
                     if [[ -s "$file" ]]; then
-                        _show_images_launchingimages "$file"
+                        _show_images_launchingimages 1 "$file"
                     else
                         printMsgs "dialog" "There are no launching images found on your system."
                     fi
