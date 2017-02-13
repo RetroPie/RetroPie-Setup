@@ -72,13 +72,14 @@ function _show_images_launchingimages() {
 function _dialog_menu_launchingimages() {
     local text="$1"
     shift
-    [[ -z "$@" ]] && return 1
+    [[ "$#" -eq 0 ]] && return 1
 
     # when there's only one item for the menu, the 'dialog --menu' expect
     # to receive a "tag" and an "item" even if using '--no-item'. It can be
     # an edge case, but this function shouldn't crash when it happens.
     if [[ "$#" -eq 1 ]]; then
         _dialog_yesno_launchingimages "$text: $1"
+        echo "$1"
         return
     fi
 
