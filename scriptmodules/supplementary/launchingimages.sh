@@ -274,7 +274,7 @@ function _settings_launchingimages() {
             continue
         fi
 
-        eval iniSet "$choice" \"$(_set_${choice}_launchingimages)\"
+        iniSet "$choice" \"$(_set_${choice}_launchingimages)\"
     done
 }
 
