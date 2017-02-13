@@ -88,7 +88,7 @@ function _dialog_menu_launchingimages() {
 
 function _set_theme_launchingimages() {
     _dialog_menu_launchingimages "List of available themes" $("$md_inst/generate-launching-images.sh" --list-themes) \
-    || echo "\$theme"
+    || echo "$theme"
 }
 
 function _set_system_launchingimages() {
@@ -102,14 +102,14 @@ function _set_system_launchingimages() {
 
 function _set_extension_launchingimages() {
     _dialog_menu_launchingimages "Choose the file extension of the final launching image." png jpg \
-    || echo "\$extension"
+    || echo "$extension"
 }
 
 function _set_show_timeout_launchingimages() {
     _dialog_menu_launchingimages \
         "Set how long the image will be displayed before asking if you accept (in seconds)" \
         1 2 3 4 5 6 7 8 9 10 \
-    || echo "\$show_timeout"
+    || echo "$show_timeout"
 }
 
 function _set_loading_text_launchingimages() {
@@ -119,7 +119,7 @@ function _set_loading_text_launchingimages() {
         0 70 \
         "NOW LOADING" \
         2>&1 >/dev/tty \
-    || echo "\$loading_text"
+    || echo "$loading_text"
 }
 
 function _set_press_button_text_launchingimages() {
@@ -129,7 +129,7 @@ function _set_press_button_text_launchingimages() {
         0 70 \
         "PRESS A BUTTON TO CONFIGURE LAUNCH OPTIONS" \
         2>&1 >/dev/tty \
-    || echo "\$press_button_text"
+    || echo "$press_button_text"
 }
 
 function _select_color_launchingimages() {
@@ -140,11 +140,11 @@ function _select_color_launchingimages() {
 }
 
 function _set_loading_text_color_launchingimages() {
-    _select_color_launchingimages "\"LOADING\" text" || echo "\$loading_text_color"
+    _select_color_launchingimages "\"LOADING\" text" || echo "$loading_text_color"
 }
 
 function _set_press_button_text_color_launchingimages() {
-    _select_color_launchingimages "\"PRESS A BUTTON\" text" || echo "\$press_button_text_color"
+    _select_color_launchingimages "\"PRESS A BUTTON\" text" || echo "$press_button_text_color"
 }
 
 function _set_solid_bg_color_launchingimages() {
@@ -164,7 +164,7 @@ function _set_solid_bg_color_launchingimages() {
             ;;
         2)  echo "--solid-bg-color $(_select_color_launchingimages background)"
             ;;
-        *)  echo "\$solid_bg_color"
+        *)  echo "$solid_bg_color"
             ;;
     esac
 }
