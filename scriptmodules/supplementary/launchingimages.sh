@@ -97,7 +97,7 @@ function _set_system_launchingimages() {
             "List of available systems.\n\nSelect the system you want to generate a launching image or cancel to generate for all systems." \
             $("$md_inst/generate-launching-images.sh" --list-systems)
     )
-    [[ -n "$choice" ]] && echo "--system $choice" || echo "\$system"
+    [[ -n "$choice" ]] && echo "--system $choice"
 }
 
 function _set_extension_launchingimages() {
@@ -277,7 +277,7 @@ function _settings_launchingimages() {
             continue
         fi
 
-        iniSet "$choice" \"$(_set_${choice}_launchingimages)\"
+        iniSet "$choice" "$(_set_${choice}_launchingimages)"
     done
 }
 
