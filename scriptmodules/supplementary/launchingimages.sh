@@ -87,9 +87,7 @@ function _dialog_menu_launchingimages() {
 }
 
 function _set_theme_launchingimages() {
-    _dialog_menu_launchingimages \
-        "List of available themes" \
-        $("$md_inst/generate-launching-images.sh" --list-themes) \
+    _dialog_menu_launchingimages "List of available themes" $("$md_inst/generate-launching-images.sh" --list-themes) \
     || echo "\$theme"
 }
 
