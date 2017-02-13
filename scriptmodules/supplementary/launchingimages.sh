@@ -239,7 +239,7 @@ function _settings_launchingimages() {
 
         options=( 
             config_file "$(
-               [[ "$config_file" =~ $theme\.cfg$ ]] && echo "$(basename "$config_file")"
+               [[ "$config_file" == *"$theme.cfg" ]] && echo "$(basename "$config_file")"
             )"
             theme "$theme"
             system "$(
