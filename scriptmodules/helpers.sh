@@ -327,9 +327,10 @@ function gitPullOrClone() {
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
         git pull > /dev/null
+        git submodule update --init --recursive
         popd > /dev/null
     else
-        local git="git clone"
+        local git="git clone --recursive"
         if [[ "$__persistent_repos" -ne 1 ]]; then
             [[ "$repo" =~ github ]] && git+=" --depth 1"
         fi
