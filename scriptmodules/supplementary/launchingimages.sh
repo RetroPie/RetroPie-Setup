@@ -25,13 +25,8 @@ function depends_launchingimages() {
     getDepends "${depends[@]}"
 }
 
-function sources_launchingimages() {
+function install_bin_launchingimages() {
     gitPullOrClone "$md_inst" "https://github.com/meleu/generate-launching-images.git"
-}
-
-function install_launchingimages() {
-    cd "$md_inst"
-    chmod a+x generate-launching-images.sh
 }
 
 function _show_images_launchingimages() {
@@ -78,8 +73,7 @@ function _dialog_menu_launchingimages() {
     # to receive a "tag" and an "item" even if using '--no-item'. It can be
     # an edge case, but this function shouldn't crash when it happens.
     if [[ "$#" -eq 1 ]]; then
-        _dialog_yesno_launchingimages "$text: $1"
-        echo "$1"
+        _dialog_yesno_launchingimages "$text: $1" && echo "$1"
         return
     fi
 
