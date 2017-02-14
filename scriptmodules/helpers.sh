@@ -326,8 +326,8 @@ function gitPullOrClone() {
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
-        git pull > /dev/null
-        git submodule update --init --recursive
+        runCmd git pull
+        runCmd git submodule update --init --recursive
         popd > /dev/null
     else
         local git="git clone --recursive"
