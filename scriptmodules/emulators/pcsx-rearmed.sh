@@ -21,7 +21,6 @@ function depends_pcsx-rearmed() {
 
 function sources_pcsx-rearmed() {
     gitPullOrClone "$md_build" https://github.com/notaz/pcsx_rearmed.git
-    runCmd git submodule update --init
 }
 
 function build_pcsx-rearmed() {
