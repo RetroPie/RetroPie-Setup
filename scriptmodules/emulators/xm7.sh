@@ -17,25 +17,25 @@ rp_module_flags="dispmanx !mali"
 
 function depends_xm7() {
     getDepends libjpeg-dev libsdl1.2-dev libtool libpng12-dev libfreetype6-dev gawk fonts-takao
+}
+
+function sources_xm7() {
     wget http://stable.hypertriton.com/agar/agar-1.5.0.tar.gz
+}
+
+function build_xm7() {
     tar xvfz agar-1.5.0.tar.gz
     cd agar-1.5.0
     ./configure --prefix="$md_build"
     make -j1 depend
     make -j1 all
     make -j1 install
-}
-
-function sources_xm7() {
-    rm -rf XM7-for-SDL
-    git clone https://github.com/nakatamaho/XM7-for-SDL.git
-}
-
-function build_xm7() {
+    cd ..
+    gitPullOrClone "${md_build}/XM7-for-SDL" https://github.com/nakatamaho/XM7-for-SDL.git
     cd "$md_build"/XM7-for-SDL
     mkdir linux-sdl/build
     cd linux-sdl/build
-    CXXFLAGS="-DSHAREDIR='\"${md_inst}/share/xm7\"'" cmake -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" -DCMAKE_BUILD_TYPE=Release -DUSE_OPENCL=No -DUSE_OPENGL=No -DWITH_LIBAGAR_PREFIX="$md_build" -DWITH_AGAR_STATIC=yes ..
+    cmake -DCMAKE_CXX_FLAGS="-DSHAREDIR='\"${md_inst}/share/xm7\"'" -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" -DCMAKE_BUILD_TYPE=Release -DUSE_OPENCL=No -DUSE_OPENGL=No -DWITH_LIBAGAR_PREFIX="$md_build" -DWITH_AGAR_STATIC=yes ..
     make
 }
 
@@ -45,13 +45,13 @@ function install_xm7() {
 }
 
 function configure_xm7() {
-    mkRomDir "xm7"
-    moveConfigDir "$home/.xm7" "$md_conf_root/xm7"
-    mkUserDir "$biosdir/xm7"
+    mkRomDir "fm7"
+    moveConfigDir "$home/.xm7" "$md_conf_root/fm7"
+    mkUserDir "$biosdir/fm7"
     local bios
     for bios in DICROM.ROM EXTSUB.ROM FBASIC30.ROM INITIATE.ROM KANJI1.ROM KANJI2.ROM SUBSYS_A.ROM SUBSYS_B.ROM SUBSYSCG.ROM SUBSYS_C.ROM fddseek.wav relayoff.wav relay_on.wav; do
-        ln -sf "$biosdir/xm7/$bios" "$md_conf_root/xm7/$bios"
+        ln -sf "$biosdir/fm7/$bios" "$md_conf_root/fm7/$bios"
     done
-    addEmulator 1 "$md_id" "xm7" "$md_inst/bin/xm7 %ROM%"
-    addSystem "xm7"
+    addEmulator 1 "$md_id" "fm7" "$md_inst/bin/xm7 %ROM%"
+    addSystem "fm7"
 }
