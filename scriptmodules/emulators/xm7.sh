@@ -21,6 +21,7 @@ function depends_xm7() {
 
 function sources_xm7() {
     wget http://stable.hypertriton.com/agar/agar-1.5.0.tar.gz
+    gitPullOrClone "${md_build}/XM7-for-SDL" https://github.com/nakatamaho/XM7-for-SDL.git
 }
 
 function build_xm7() {
@@ -30,8 +31,6 @@ function build_xm7() {
     make -j1 depend
     make -j1 all
     make -j1 install
-    cd ..
-    gitPullOrClone "${md_build}/XM7-for-SDL" https://github.com/nakatamaho/XM7-for-SDL.git
     cd "$md_build"/XM7-for-SDL
     mkdir linux-sdl/build
     cd linux-sdl/build
