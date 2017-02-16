@@ -18,9 +18,9 @@ rp_module_flags="noinstclean"
 function depends_launchingimages() {
     local depends=(imagemagick librsvg2-bin)
     if isPlatform "x11"; then
-        getDepends feh
+        depends+=(feh)
     else
-        getDepends fbi
+        depends+=(fbi)
     fi
     getDepends "${depends[@]}"
 }
