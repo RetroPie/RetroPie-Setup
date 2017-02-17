@@ -168,6 +168,8 @@ function remove_attractmode() {
 function configure_attractmode() {
     moveConfigDir "$home/.attract" "$md_conf_root/all/attractmode"
 
+    [[ "$md_mode" == "remove" ]] && return
+
     local config="$md_conf_root/all/attractmode/attract.cfg"
     if [[ ! -f "$config" ]]; then
         echo "general" >"$config"
