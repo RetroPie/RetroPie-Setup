@@ -231,28 +231,26 @@ function getDepends() {
         fi
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
 
-        # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2 for rpi
-        if isPlatform "rpi" || isPlatform "mali"; then
-            local temp=()
-            for required in ${packages[@]}; do
-                if isPlatform "rpi" && [[ "$required" == "libsdl1.2-dev" ]]; then
-                    if [[ "$__has_binaries" -eq 1 ]]; then
-                        rp_callModule sdl1 install_bin
-                    else
-                        rp_callModule sdl1
-                    fi
-                elif [[ "$required" == "libsdl2-dev" ]]; then
-                    if [[ "$__has_binaries" -eq 1 ]]; then
-                        rp_callModule sdl2 install_bin
-                    else
-                        rp_callModule sdl2
-                    fi
+        # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2
+        local temp=()
+        for required in ${packages[@]}; do
+            if isPlatform "rpi" && [[ "$required" == "libsdl1.2-dev" ]]; then
+                if [[ "$__has_binaries" -eq 1 ]]; then
+                    rp_callModule sdl1 install_bin
                 else
-                    temp+=("$required")
+                    rp_callModule sdl1
                 fi
-            done
-            packages=("${temp[@]}")
-        fi
+            elif [[ "$required" == "libsdl2-dev" ]]; then
+                if [[ "$__has_binaries" -eq 1 ]]; then
+                    rp_callModule sdl2 install_bin
+                else
+                    rp_callModule sdl2
+                fi
+            else
+                temp+=("$required")
+            fi
+        done
+        packages=("${temp[@]}")
 
         aptInstall --no-install-recommends "${packages[@]}"
 
