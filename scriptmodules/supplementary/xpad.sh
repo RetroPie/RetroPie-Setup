@@ -23,6 +23,7 @@ function depends_xpad() {
 }
 
 function sources_xpad() {
+    rm -rf "$md_inst"
     gitPullOrClone "$md_inst" https://github.com/paroj/xpad.git
     cd "$md_inst"
     # LED support (as disabled currently in packaged RPI kernel) and allow forcing MAP_TRIGGERS_TO_BUTTONS
