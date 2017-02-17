@@ -9,16 +9,21 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="lr-mupen64plus"
-rp_module_desc="N64 emu - Mupen64 Plus port for libretro"
+rp_module_id="lr-parallel-n64"
+rp_module_desc="N64 emu - Highly modified Mupen64Plus port for libretro"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_section="opt"
 
-function sources_lr-mupen64plus() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
+function _update_hook_lr-parallel-n64() {
+    # move from old location and update emulators.cfg
+    renameModule "lr-mupen64plus" "lr-parallel-n64"
 }
 
-function build_lr-mupen64plus() {
+function sources_lr-parallel-n64() {
+    gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git
+}
+
+function build_lr-parallel-n64() {
     rpSwap on 750
     make clean
     if isPlatform "rpi" || isPlatform "odroid-c1"; then
@@ -27,17 +32,17 @@ function build_lr-mupen64plus() {
         make
     fi
     rpSwap off
-    md_ret_require="$md_build/mupen64plus_libretro.so"
+    md_ret_require="$md_build/parallel_n64_libretro.so"
 }
 
-function install_lr-mupen64plus() {
+function install_lr-parallel-n64() {
     md_ret_files=(
-        'mupen64plus_libretro.so'
+        'parallel_n64_libretro.so'
         'README.md'
     )
 }
 
-function configure_lr-mupen64plus() {
+function configure_lr-parallel-n64() {
     mkRomDir "n64"
     ensureSystemretroconfig "n64"
 
@@ -151,6 +156,6 @@ target FPS=25
 _EOF_
     chown $user:$user "$biosdir/gles2n64rom.conf"
 
-    addEmulator 0 "$md_id" "n64" "$md_inst/mupen64plus_libretro.so"
+    addEmulator 0 "$md_id" "n64" "$md_inst/parallel_n64_libretro.so"
     addSystem "n64"
 }
