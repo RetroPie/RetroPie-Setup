@@ -20,7 +20,7 @@ function _get_configdir_attractmode() {
 
 function _add_system_attractmode() {
     local attract_dir="$(_get_configdir_attractmode)"
-    [[ ! -d "$attract_dir" && -f /usr/bin/attract ]] && return 0
+    [[ ! -d "$attract_dir" || ! -f /usr/bin/attract ]] && return 0
 
     local fullname="$1"
     local name="$2"
