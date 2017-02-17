@@ -12,7 +12,7 @@
 rp_module_id="sdl2"
 rp_module_desc="SDL (Simple DirectMedia Layer) v2.x"
 rp_module_section=""
-rp_module_flags="!x86"
+rp_module_flags=""
 
 function get_ver_sdl2() {
     echo "2.0.5"
