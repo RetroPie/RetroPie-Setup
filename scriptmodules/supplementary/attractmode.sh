@@ -140,13 +140,12 @@ function build_attractmode() {
         cmake . -DCMAKE_INSTALL_PREFIX="$md_inst/sfml" -DSFML_RPI=1 -DEGL_INCLUDE_DIR=/opt/vc/include -DEGL_LIBRARY=/opt/vc/lib/libEGL.so -DGLES_INCLUDE_DIR=/opt/vc/include -DGLES_LIBRARY=/opt/vc/lib/libGLESv1_CM.so
         make clean
         make
-        make install
         cd ..
     fi
     cd attract
     make clean
     local params=(prefix="$md_inst")
-    isPlatform "rpi" && params+=(EXTRA_CFLAGS="$CFLAGS -I$md_inst/sfml/include -L$md_inst/sfml/lib")
+    isPlatform "rpi" && params+=(EXTRA_CFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
     make "${params[@]}"
 
     # remove example configs
@@ -156,9 +155,10 @@ function build_attractmode() {
 }
 
 function install_attractmode() {
+    make -C sfml-pi install
     mkdir -p "$md_inst"/{bin,share,share/attract}
-    cp attract/attract "$md_inst/bin/"
-    cp -R attract/config/* "$md_inst/share/attract"
+    cp -v attract/attract "$md_inst/bin/"
+    cp -Rv attract/config/* "$md_inst/share/attract"
 }
 
 function remove_attractmode() {
