@@ -90,8 +90,8 @@ _EOF_
     chmod a+x "$romdir/amiga/+Start UAE4Arm.sh"
     chown $user:$user "$romdir/amiga/+Start UAE4Arm.sh"
 
-    addEmulator 1 "$md_id" "amiga" "bash $md_inst/uae4arm.sh auto %ROM%"
-    addEmulator 1 "$md_id-a500" "amiga" "bash $md_inst/uae4arm.sh rp-a500.uae %ROM%"
-    addEmulator 1 "$md_id-a1200" "amiga" "bash $md_inst/uae4arm.sh rp-a1200.uae %ROM%"
+    addEmulator 1 "$md_id" "amiga" "$md_inst/uae4arm.sh auto %ROM%"
+    addEmulator 1 "$md_id-a500" "amiga" "$md_inst/uae4arm.sh rp-a500.uae %ROM%"
+    addEmulator 1 "$md_id-a1200" "amiga" "$md_inst/uae4arm.sh rp-a1200.uae %ROM%"
     addSystem "amiga"
 }
