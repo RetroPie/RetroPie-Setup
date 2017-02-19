@@ -4,7 +4,9 @@ rom="$2"
 rom_bn="${rom%.*}"
 
 pushd "${0%/*}" >/dev/null
-if [[ "$rom" == *.uae ]]; then
+if [[ -z "$rom" ]]; then
+    ./uae4arm
+elif [[ "$rom" == *.uae ]]; then
     ./uae4arm -config="$rom" -G
 else
     source "../../lib/archivefuncs.sh"
