@@ -15,6 +15,14 @@ rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $rom
 rp_module_section="opt"
 rp_module_flags="!mali"
 
+function _update_hook_advmame() {
+    # if the non split advmame is installed, make directories for 0.94 / 1.4 so they will be updated
+    # when doing update all packages
+    if [[ -d "$md_inst/0.94.0" ]]; then
+        mkdir -p "$rootdir/emulators/advmame-"{0.94,1.4}
+    fi
+}
+
 function depends_advmame() {
     local depends=(libsdl1.2-dev)
     isPlatform "x11" && depends+=(libsdl2-dev)
