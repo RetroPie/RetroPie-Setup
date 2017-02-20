@@ -196,7 +196,7 @@ function getDepends() {
     for required in $@; do
         if [[ "$md_mode" == "install" ]]; then
             # make sure we have our sdl1 / sdl2 installed
-            if [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "eq"; then
+            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "eq"; then
                 packages+=("$required")
                 continue
             fi
