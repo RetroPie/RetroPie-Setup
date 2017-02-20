@@ -68,14 +68,6 @@ function _dialog_menu_launchingimages() {
     local text="$1"
     shift
     [[ "$#" -eq 0 ]] && return 1
-
-    local options=( "$@" )
-
-    # when there's only one item for the menu, the 'dialog --menu' expect
-    # to receive a "tag" and an "item" even if using '--no-item'. It can be
-    # an edge case, but this function shouldn't crash when it happens.
-    [[ "$#" -eq 1 ]] && options+=( "" )
-
     dialog --backtitle "$__backtitle" --no-items --menu "$text" 22 86 16 "$@" 2>&1 >/dev/tty
 }
 
