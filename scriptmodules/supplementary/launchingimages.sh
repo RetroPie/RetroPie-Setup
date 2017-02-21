@@ -77,12 +77,21 @@ function _set_theme_launchingimages() {
 }
 
 function _set_system_launchingimages() {
-    local choice=$(
+    local options=()
+    local choice
+
+    options=( all )
+    options+=( $("$md_inst/generate-launching-images.sh" --list-systems) )
+    choice=$(
         _dialog_menu_launchingimages \
-            "List of available systems.\n\nSelect the system you want to generate a launching image or cancel to generate for all systems." \
-            $("$md_inst/generate-launching-images.sh" --list-systems)
+            "List of available systems.\n\nSelect the system you want to generate a launching image or \"all\" to generate for all systems." \
+            "${options[@]}"
     )
-    [[ -n "$choice" ]] && echo "--system $choice"
+    case "$choice" in
+        "all")  echo "" ;;
+        "")     echo "$system" ;;
+        *)      echo "--system $choice" ;;
+    esac
 }
 
 function _set_extension_launchingimages() {
@@ -212,12 +221,12 @@ function _load_config_launchingimages() {
 }
 
 function _settings_launchingimages() {
-    local cmd=(dialog --backtitle "$__backtitle" --title " SETTINGS " --menu "runcommand launching images generation settings." 22 86 16)
+    local cmd=(dialog --backtitle "$__backtitle" --title " SETTINGS " --cancel-label "Back" --menu "runcommand launching images generation settings." 22 86 16)
     local options
     local choice
     local config_file
 
-    iniConfig ' = ' '"' "$md_inst/.current.cfg"
+    iniConfig ' = ' '"' "$current_cfg"
 
     while true; do
         eval $(_load_config_launchingimages)
@@ -269,7 +278,6 @@ function _settings_launchingimages() {
 function _manage_config_file_launchingimages() {
     local choice
     local config_file
-    local current_cfg="$md_inst/.current.cfg"
 
     eval $(_load_config_launchingimages)
 
@@ -353,7 +361,9 @@ function gui_launchingimages() {
     local cmd=()
     local options=()
     local choice
+    local current_cfg="$md_inst/.current.cfg"
 
+    rm -f "$current_cfg"
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --title " runcommand launching images generation " --menu "Choose an option." 22 86 16)
         options=( 
@@ -364,7 +374,7 @@ function gui_launchingimages() {
         )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1) # Image generation settings
                     _settings_launchingimages
                     ;;
@@ -379,14 +389,19 @@ function gui_launchingimages() {
                     if [[ -s "$file" ]]; then
                         _show_images_launchingimages 1 "$file"
                     else
-                        printMsgs "dialog" "There are no launching images found on your system."
+                        printMsgs "dialog" "No launching image found."
                     fi
                     rm -f "$file"
                     ;;
 
                 4) # View the launching image of a specific system
                     while true; do
-                        choice=$(_dialog_menu_launchingimages "Choose the system" $(_get_all_launchingimages))
+                        local img_list=$(_get_all_launchingimages)
+                        if [[ -z "$img_list" ]]; then
+                            printMsgs "dialog" "No launching image found."
+                            break
+                        fi
+                        choice=$(_dialog_menu_launchingimages "Choose the system" "$img_list")
                         [[ -z "$choice" ]] && break
                         _show_images_launchingimages "$choice"
                     done
@@ -397,5 +412,5 @@ function gui_launchingimages() {
             break
         fi
     done
-    rm -f "$md_inst/.current.cfg"
+    rm -f "$current_cfg"
 }
