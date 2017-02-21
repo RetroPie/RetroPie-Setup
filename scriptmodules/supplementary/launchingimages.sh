@@ -16,7 +16,8 @@ rp_module_section="exp"
 rp_module_flags="noinstclean"
 
 function depends_launchingimages() {
-    local depends=(imagemagick librsvg2-bin)
+    #local depends=(imagemagick librsvg2-bin)
+    local depends=(imagemagick)
     if isPlatform "x11"; then
         depends+=(feh)
     else
@@ -67,8 +68,16 @@ function _show_images_launchingimages() {
 function _dialog_menu_launchingimages() {
     local text="$1"
     shift
+    local options=( "$@" )
+
     [[ "$#" -eq 0 ]] && return 1
-    dialog --backtitle "$__backtitle" --no-items --menu "$text" 22 86 16 "$@" 2>&1 >/dev/tty
+
+    if [[ "$#" -eq 1 ]]; then
+        options+=( "" )
+        dialog --backtitle "$__backtitle" --menu "$text" 22 86 16 "${options[@]}" 2>&1 >/dev/tty
+    else
+        dialog --backtitle "$__backtitle" --no-items --menu "$text" 22 86 16 "${options[@]}" 2>&1 >/dev/tty
+    fi
 }
 
 function _set_theme_launchingimages() {
@@ -396,12 +405,12 @@ function gui_launchingimages() {
 
                 4) # View the launching image of a specific system
                     while true; do
-                        local img_list=$(_get_all_launchingimages)
-                        if [[ -z "$img_list" ]]; then
+                        local img_list=( $(_get_all_launchingimages) )
+                        if [[ "${#img_list[@]}" -eq 0 ]]; then
                             printMsgs "dialog" "No launching image found."
                             break
                         fi
-                        choice=$(_dialog_menu_launchingimages "Choose the system" "$img_list")
+                        choice=$(_dialog_menu_launchingimages "Choose the system" "${img_list[@]}")
                         [[ -z "$choice" ]] && break
                         _show_images_launchingimages "$choice"
                     done
