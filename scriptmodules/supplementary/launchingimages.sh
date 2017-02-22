@@ -16,10 +16,9 @@ rp_module_section="exp"
 rp_module_flags="noinstclean"
 
 function depends_launchingimages() {
-    #local depends=(imagemagick librsvg2-bin)
     local depends=(imagemagick)
     if isPlatform "x11"; then
-        depends+=(feh librsvg2-bin)
+        depends+=(feh)
     else
         depends+=(fbi)
     fi
@@ -68,16 +67,21 @@ function _show_images_launchingimages() {
 function _dialog_menu_launchingimages() {
     local text="$1"
     shift
-    local options=( "$@" )
+    local options=()
+    local choice
+    local opt
+    local i
 
     [[ "$#" -eq 0 ]] && return 1
 
-    if [[ "$#" -eq 1 ]]; then
-        options+=( "" )
-        dialog --backtitle "$__backtitle" --menu "$text" 22 86 16 "${options[@]}" 2>&1 >/dev/tty
-    else
-        dialog --backtitle "$__backtitle" --no-items --menu "$text" 22 86 16 "${options[@]}" 2>&1 >/dev/tty
-    fi
+    i=1
+    for opt in "$@"; do
+        options+=( "$i" "$opt" )
+        ((i++))
+    done
+    choice=$(dialog --backtitle "$__backtitle" --menu "$text" 22 86 16 "${options[@]}" 2>&1 >/dev/tty) || return
+    i=$[ 2 * choice - 1 ]
+    echo "${options[$i]}"
 }
 
 function _set_theme_launchingimages() {
