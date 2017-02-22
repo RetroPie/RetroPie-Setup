@@ -80,8 +80,7 @@ function _dialog_menu_launchingimages() {
         ((i++))
     done
     choice=$(dialog --backtitle "$__backtitle" --menu "$text" 22 86 16 "${options[@]}" 2>&1 >/dev/tty) || return
-    i=$[ 2 * choice - 1 ]
-    echo "${options[$i]}"
+    echo "${options[choice*2-1]}"
 }
 
 function _set_theme_launchingimages() {
