@@ -19,7 +19,7 @@ function depends_launchingimages() {
     #local depends=(imagemagick librsvg2-bin)
     local depends=(imagemagick)
     if isPlatform "x11"; then
-        depends+=(feh)
+        depends+=(feh librsvg2-bin)
     else
         depends+=(fbi)
     fi
