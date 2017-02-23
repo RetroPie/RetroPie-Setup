@@ -21,12 +21,7 @@ function sources_lr-mrboom() {
 function build_lr-mrboom() {
     rpSwap on 1000
     make clean
-    # libretro-common has an issue with neon
-    if isPlatform "neon"; then
-        CFLAGS="" make
-    else
-        make
-    fi
+    make
     md_ret_require="$md_build/mrboom_libretro.so"
 }
 
