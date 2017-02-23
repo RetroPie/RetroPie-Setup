@@ -12,6 +12,7 @@
 
 rp_module_id="webgui"
 rp_module_desc="RetroPie WebGUI on port 8080"
+rp_module_help="PHP and JQuery based web frontend for managing your retropie installation"
 rp_module_section="exp"
 
 function depends_webgui() {
@@ -32,7 +33,6 @@ function configure_webgui() {
 
 function remove_webgui() {
     killall php
-    aptRemove sqlite3 php5 php5-sqlite
     sed -i "/php/d" /etc/rc.local
     rm -R "$md_inst"
 }
