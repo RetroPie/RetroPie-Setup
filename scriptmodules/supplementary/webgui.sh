@@ -25,9 +25,9 @@ function install_bin_webgui() {
 
 function configure_webgui() {
     killall php
-    php -S "$(hostname -I | xargs):8080" -t "$md_inst" > /dev/null 2>&1 &
+    php -S "$(ip route get 8.8.8.8 | head -1 | cut -d' ' -f8):8080" -t "$md_inst" > /dev/null 2>&1 &
 
-    local config="php -S \"\$\(hostname -I \| xargs\):8080\" -t \"$md_inst\" > /dev/null 2>\&1 \&"
+    local config="php -S \"\$\(ip route get 8.8.8.8 \| head -1 \| cut -d' ' -f8\):8080\" -t \"$md_inst\" > /dev/null 2>\&1 \&"
     sed -i "s|^exit 0$|${config}\\nexit 0|" /etc/rc.local
 }
 
