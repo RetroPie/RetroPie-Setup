@@ -299,6 +299,7 @@ function rpSwap() {
             if [[ $size -ge 0 ]]; then
                 echo "Adding $size MB of additional swap"
                 fallocate -l ${size}M "$swapfile"
+                chmod 600 "$swapfile"
                 mkswap "$swapfile"
                 swapon "$swapfile"
             fi
