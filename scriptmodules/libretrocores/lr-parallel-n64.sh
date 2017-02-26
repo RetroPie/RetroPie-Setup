@@ -14,11 +14,6 @@ rp_module_desc="N64 emu - Highly modified Mupen64Plus port for libretro"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_section="opt"
 
-function _update_hook_lr-parallel-n64() {
-    # move from old location and update emulators.cfg
-    renameModule "lr-mupen64plus" "lr-parallel-n64"
-}
-
 function sources_lr-parallel-n64() {
     gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git
 }
