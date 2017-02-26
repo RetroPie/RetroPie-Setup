@@ -16,9 +16,15 @@ rp_module_section="main"
 rp_module_flags="!mali"
 
 function _update_hook_lr-mupen64plus() {
-    # move from old location and update emulators.cfg
-    # we need to first move lr-mupen64plus out of the way if it exists
-    renameModule "lr-mupen64plus" "lr-parallel-n64"
+    # retroarch renamed lr-mupen64plus to lr-parallel-n64 and
+    # lr-glupen64 to lr-mupen64plus which makes this a little tricky as an update hook
+
+    # we first need to rename lr-mupen64plus to lr-parallel-n64
+    # (if it's not the lr-glupen64 fork)
+    if [[ -d "$md_inst" ]] && ! grep -q "GLideN64" "$md_inst/README.md"; then
+        renameModule "lr-mupen64plus" "lr-parallel-n64"
+    fi
+    # then we can rename lr-glupen64 to lr-mupen64plus
     renameModule "lr-glupen64" "lr-mupen64plus"
 }
 
