@@ -521,6 +521,7 @@ function renameModule() {
     local to="$2"
     # move from old location and update emulators.cfg
     if [[ -d "$rootdir/$md_type/$from" ]]; then
+        rm -rf "$rootdir/$md_type/$to"
         mv "$rootdir/$md_type/$from" "$rootdir/$md_type/$to"
         # replace any default = "$from"
         sed -i "s/\"$from\"/\"$to\"/g" "$configdir"/*/emulators.cfg
