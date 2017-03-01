@@ -8,7 +8,8 @@
 #
 rp_module_id="golang"
 rp_module_desc="Golang binary install"
-rp_module_section="opt"
+rp_module_section=""
+rp_module_flags="noinstclean"
 
 function _get_goroot_golang() {
     echo "$rootdir/supplementary/golang/go"
@@ -24,9 +25,8 @@ function install_bin_golang() {
     if [[ ! "${version}" < "go1.8" ]]; then
         return 0
     fi
-    if [[ -d "${goroot}" ]]; then
-        rm -rf "$goroot"
-    fi
+
+    rm -rf "$goroot"
     local arch="armv6l"
     if isPlatform "x86"; then
         if isPlatform "64bit"; then
@@ -36,5 +36,5 @@ function install_bin_golang() {
         fi
     fi
     printMsgs "console" "Downloading go1.8.linux-$arch.tar.gz"
-    wget -O- "https://storage.googleapis.com/golang/go1.8.linux-$arch.tar.gz" | tar -xz -C "$md_inst"
+    wget -q -O- "https://storage.googleapis.com/golang/go1.8.linux-$arch.tar.gz" | tar -xz -C "$md_inst"
 }

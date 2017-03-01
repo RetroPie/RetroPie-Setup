@@ -15,7 +15,7 @@ rp_module_licence="MIT https://raw.githubusercontent.com/sselph/scraper/master/L
 rp_module_section="config"
 
 function depends_scraper() {
-    rp_callModule golang
+    rp_callModule golang install_bin
 }
 
 function sources_scraper() {
