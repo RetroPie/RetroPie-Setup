@@ -11,6 +11,7 @@
 
 rp_module_id="solarus"
 rp_module_desc="solarus - An Open Source Zelda LttP Engine"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/solarus-games/solarus/dev/license.txt"
 rp_module_section="opt"
 rp_module_flags="noinstclean !aarch64"
 

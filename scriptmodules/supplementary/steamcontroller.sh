@@ -12,6 +12,7 @@
 rp_module_id="steamcontroller"
 rp_module_desc="Standalone Steam Controller Driver"
 rp_module_help="Steam Controller Driver from https://github.com/ynsta/steamcontroller"
+rp_module_licence="MIT https://raw.githubusercontent.com/ynsta/steamcontroller/master/LICENSE"
 rp_module_section="driver"
 rp_module_flags="noinstclean"
 

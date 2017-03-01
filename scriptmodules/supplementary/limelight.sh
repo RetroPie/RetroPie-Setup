@@ -11,6 +11,7 @@
 
 rp_module_id="limelight"
 rp_module_desc="Limelight Game Streaming"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/irtimmer/moonlight-embedded/master/LICENSE"
 rp_module_section="exp"
 rp_module_flags="!x11"
 

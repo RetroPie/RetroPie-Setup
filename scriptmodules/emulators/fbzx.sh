@@ -12,6 +12,7 @@
 rp_module_id="fbzx"
 rp_module_desc="ZXSpectrum emulator FBZX"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum to $romdir/zxspectrum"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/rastersoft/fbzx/master/COPYING"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 

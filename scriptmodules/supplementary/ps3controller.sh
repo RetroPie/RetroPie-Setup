@@ -11,6 +11,7 @@
 
 rp_module_id="ps3controller"
 rp_module_desc="PS3 controller driver and pair via sixad"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/sixad/master/COPYING"
 rp_module_section="driver"
 
 function depends_ps3controller() {

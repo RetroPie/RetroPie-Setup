@@ -12,6 +12,7 @@
 rp_module_id="lr-bluemsx"
 rp_module_desc="MSX/MSX2 emu - blueMSX port for libretro"
 rp_module_help="ROM Extensions: .rom .mx1 .mx2 .col .dsk .zip\n\nCopy your MSX/MSX2 games to $romdir/msx"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/blueMSX-libretro/master/license.txt"
 rp_module_section="main"
 
 function sources_lr-bluemsx() {

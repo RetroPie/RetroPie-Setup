@@ -12,6 +12,7 @@
 rp_module_id="lr-mrboom"
 rp_module_desc="Mr.Boom - 8 players Bomberman clone for libretro."
 rp_module_help="8 players Bomberman clone for libretro."
+rp_module_licence="MIT https://raw.githubusercontent.com/libretro/mrboom-libretro/master/LICENSE"
 rp_module_section="exp"
 
 function sources_lr-mrboom() {
