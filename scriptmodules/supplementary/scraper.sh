@@ -15,15 +15,17 @@ rp_module_licence="MIT https://raw.githubusercontent.com/sselph/scraper/master/L
 rp_module_section="config"
 
 function depends_scraper() {
-    getDepends golang
+    rp_callModule golang
 }
 
 function sources_scraper() {
-    GOPATH="$md_build" go get -u github.com/sselph/scraper
+    local goroot="$(_get_goroot_golang)"
+    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" get -u github.com/sselph/scraper
 }
 
 function build_scraper() {
-    GOPATH="$md_build" go build github.com/sselph/scraper
+    local goroot="$(_get_goroot_golang)"
+    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" build github.com/sselph/scraper
 }
 
 function install_scraper() {
