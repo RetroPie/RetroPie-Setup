@@ -12,6 +12,7 @@
 rp_module_id="love"
 rp_module_desc="Love - 2d Game Engine"
 rp_module_help="Copy your Love games to $romdir/love"
+rp_module_licence="GPL3 https://bitbucket.org/rude/love/raw/7b520c437317626da2102de1aafdad0e67b54bf5/license.txt"
 rp_module_section="opt"
 rp_module_flags="!aarch64"
 

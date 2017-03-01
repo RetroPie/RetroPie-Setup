@@ -12,6 +12,7 @@
 rp_module_id="lr-fuse"
 rp_module_desc="ZX Spectrum emu - Fuse port for libretro"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum games to $romdir/zxspectrum"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/fuse-libretro/master/LICENSE"
 rp_module_section="main"
 
 function sources_lr-fuse() {

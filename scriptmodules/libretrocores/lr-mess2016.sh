@@ -12,6 +12,7 @@
 rp_module_id="lr-mess2016"
 rp_module_desc="MESS emulator - MESS Port for libretro"
 rp_module_help="see wiki for detailed explanation"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mame2016-libretro/master/LICENSE.md"
 rp_module_section="exp"
 
 function sources_lr-mess2016() {

@@ -12,6 +12,7 @@
 rp_module_id="lr-mame2014"
 rp_module_desc="Arcade emu - MAME 0.159 port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2014-libretro/master/docs/license.txt"
 rp_module_section="exp"
 
 function sources_lr-mame2014() {

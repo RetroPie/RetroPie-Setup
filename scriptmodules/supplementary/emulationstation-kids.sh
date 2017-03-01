@@ -11,6 +11,7 @@
 
 rp_module_id="emulationstation-kids"
 rp_module_desc="EmulationStation with additional UI modes (kids / kiosk)"
+rp_module_licence="MIT https://raw.githubusercontent.com/zigurana/EmulationStation/master/LICENSE.md"
 rp_module_section="exp"
 
 function depends_emulationstation-kids() {

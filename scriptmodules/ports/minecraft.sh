@@ -11,6 +11,7 @@
 
 rp_module_id="minecraft"
 rp_module_desc="Minecraft - Pi Edition"
+rp_module_licence="PROP"
 rp_module_section="exp"
 rp_module_flags="!mali !x86"
 

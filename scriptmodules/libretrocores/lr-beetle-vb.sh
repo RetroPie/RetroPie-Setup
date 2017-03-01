@@ -12,6 +12,7 @@
 rp_module_id="lr-beetle-vb"
 rp_module_desc="Virtual Boy emulator - Mednafen VB (optimised) port for libretro"
 rp_module_help="ROM Extensions: .vb .zip\n\nCopy your Virtual Boy roms to $romdir/virtualboy"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/beetle-vb-libretro/master/COPYING"
 rp_module_section="opt"
 rp_module_flags="!armv6"
 
