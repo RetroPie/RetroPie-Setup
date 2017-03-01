@@ -18,7 +18,7 @@ function _get_goroot_golang() {
 function install_bin_golang() {
     local version
     if [[ -e "$md_inst/bin/go" ]]; then
-        local version=$(GOROOT="$md_inst" "$goroot/bin/go" version | sed -e 's/.*\(go1[^ ]*\).*/\1/')
+        local version=$(GOROOT="$md_inst" "$md_inst/bin/go" version | sed -e 's/.*\(go1[^ ]*\).*/\1/')
     fi
     printMsgs "console" "Current Go version: $version"
     if [[ ! "${version}" < "go1.8" ]]; then
@@ -27,7 +27,6 @@ function install_bin_golang() {
 
     rm -rf "$md_inst"
     mkdir -p "$md_inst"
-
     local arch="armv6l"
     if isPlatform "x86"; then
         if isPlatform "64bit"; then
@@ -37,5 +36,5 @@ function install_bin_golang() {
         fi
     fi
     printMsgs "console" "Downloading go1.8.linux-$arch.tar.gz"
-    wget -q -O- "https://storage.googleapis.com/golang/go1.8.linux-$arch.tar.gz" | tar -xvz --strip-components=1 -C "$md_inst"
+    wget -q -O- "https://storage.googleapis.com/golang/go1.8.linux-$arch.tar.gz" | tar -xvz --strip-components=1 -C "$md_inst" 
 }
