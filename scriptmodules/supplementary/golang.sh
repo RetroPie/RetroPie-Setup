@@ -36,5 +36,5 @@ function install_bin_golang() {
         fi
     fi
     printMsgs "console" "Downloading go1.8.linux-$arch.tar.gz"
-    wget -q -O- "https://storage.googleapis.com/golang/go1.8.linux-$arch.tar.gz" | tar -xz -C "$md_inst"
+    wget -q -O- "https://storage.googleapis.com/golang/go1.8.linux-$arch.tar.gz" | tar -xvz -C "$md_inst"
 }
