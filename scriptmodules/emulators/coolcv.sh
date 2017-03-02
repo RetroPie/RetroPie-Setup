@@ -16,6 +16,10 @@ rp_module_licence="PROP"
 rp_module_section="opt"
 rp_module_flags="!x86 !x11 !mali"
 
+function depends_coolcv() {
+    getDepends libsdl2-dev
+}
+
 function install_bin_coolcv() {
     wget -O- -q "$__archive_url/coolcv.tar.gz" | tar -xvz --strip-components=1 -C "$md_inst" 
 }
