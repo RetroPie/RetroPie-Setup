@@ -12,15 +12,26 @@
 rp_module_id="alephone"
 rp_module_desc="AlephOne - Marathon Engine"
 rp_module_help="To get the games running on the Raspberry Pi, make sure to set each game to use the software renderer and disable the enhanced HUD from the Plugins menu. For Marathon 1, disable both HUDs from the Plugins menu, start a game, quit back to the title screen and enable Enhanced HUD and it will work and properly."
+rp_module_licence="GPL3 https://raw.githubusercontent.com/Aleph-One-Marathon/alephone/master/COPYING"
 rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_alephone() {
-    getDepends libboost-all-dev libsdl1.2-dev libsdl-net1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake
+    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake)
+    if [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" ge 16.04; then
+        depends+=(libsdl2-dev libsdl2-net-dev libsdl2-image-dev libsdl2-ttf-dev)
+    else
+        depends+=(libsdl1.2-dev libsdl-net1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev)
+    fi
+    getDepends "${depends[@]}"
 }
 
 function sources_alephone() {
-    gitPullOrClone "$md_build" "https://github.com/Aleph-One-Marathon/alephone.git" "release-20150620"
+    local branch="release-20150620"
+    if [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" ge 16.04; then
+        branch="master"
+    fi
+    gitPullOrClone "$md_build" "https://github.com/Aleph-One-Marathon/alephone.git" "$branch"
 }
 
 function build_alephone() {

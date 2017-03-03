@@ -39,7 +39,7 @@ function chroot_image() {
     printMsgs "console" "Creating chroot"
     rsync -aAHX --numeric-ids --delete mnt/ chroot/
 
-    umount mnt/boot mnt
+    umount -l mnt/boot mnt
     rm -rf mnt
     kpartx -d "$image"
 
@@ -102,7 +102,6 @@ modules=(
     'splashscreen enable'
     'bashwelcometweak'
     'xpad'
-    'scraper'
 )
 for module in "\${modules[@]}"; do
     # rpi1 platform would use QEMU_CPU set to arm1176, but it seems buggy currently (lots of segfaults)
@@ -127,7 +126,7 @@ _EOF_
 
 function _umount_chroot() {
     trap "" INT
-    umount chroot/proc chroot/dev/pts
+    umount -l chroot/proc chroot/dev/pts
     trap INT
 }
 
@@ -180,7 +179,7 @@ function create_image() {
     rsync -aAHX --numeric-ids  chroot/ mnt/
 
     # unmount
-    umount mnt/boot mnt
+    umount -l mnt/boot mnt
     rm -rf mnt
     kpartx -d "$image"
 

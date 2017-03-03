@@ -11,6 +11,7 @@
 
 rp_module_id="zdoom"
 rp_module_desc="ZDoom - Enhanced port of the official DOOM source"
+rp_module_licence="OTHER https://raw.githubusercontent.com/RetroPie/zdoom/master/docs/licenses/README.TXT"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
@@ -24,7 +25,7 @@ function depends_zdoom() {
 }
 
 function sources_zdoom() {
-    gitPullOrClone "$md_build" https://github.com/rheit/zdoom.git
+    gitPullOrClone "$md_build" https://github.com/RetroPie/zdoom.git retropie
 }
 
 function build_zdoom() {
@@ -32,13 +33,7 @@ function build_zdoom() {
     mkdir -p release
     cd release
     local params=(-DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release)
-    # workaround for armv7+ on Raspbian armv6 userland due to GCC ABI incompatibility
-    # same issue as https://github.com/hrydgard/ppsspp/pull/8117
-    if [[ "$__os_id" == "Raspbian" ]]; then
-        CXXFLAGS+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2" cmake "${params[@]}" ..
-    else
-        cmake "${params[@]}" ..
-    fi
+    cmake "${params[@]}" ..
     make
     md_ret_require="$md_build/release/zdoom"
 }
@@ -50,13 +45,17 @@ function install_zdoom() {
     )
 }
 
-function configure_zdoom() {
-    addPort "$md_id" "doom" "Doom" "$md_inst/zdoom -iwad $romdir/ports/doom/doom1.wad"
+function add_games_zdoom() {
+    _add_games_lr-prboom "$md_inst/zdoom +set fullscreen 1 -iwad %ROM%"
+}
 
+function configure_zdoom() {
     mkRomDir "ports/doom"
 
     mkUserDir "$home/.config"
     moveConfigDir "$home/.config/zdoom" "$md_conf_root/doom"
 
     [[ "$md_mode" == "install" ]] && game_data_lr-prboom
+
+    add_games_zdoom
 }

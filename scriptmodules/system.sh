@@ -41,7 +41,7 @@ function setup_env() {
     [[ $__memory_phys -ge 256 ]] && __default_cflags+=" -pipe"
 
     [[ -z "${CFLAGS}" ]] && export CFLAGS="${__default_cflags}"
-    [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cflags}"
+    [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cxxflags}"
     [[ -z "${ASFLAGS}" ]] && export ASFLAGS="${__default_asflags}"
     [[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
 
@@ -85,6 +85,12 @@ function get_os_version() {
             # and for xbian
             if grep -q "NAME=XBian" /etc/os-release; then
                 __platform_flags+=" xbian"
+            fi
+
+            # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
+            # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
+            if [[ "$__os_id" == "Raspbian" ]]; then
+                __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
             fi
 
             # get major version (8 instead of 8.0 etc)
@@ -241,6 +247,7 @@ function get_platform() {
     fi
 
     platform_${__platform}
+    [[ -z "$__default_cxxflags" ]] && __default_cxxflags="$__default_cflags"
 }
 
 function platform_rpi1() {

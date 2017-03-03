@@ -350,7 +350,7 @@ function onend_retroarch_joystick() {
     local dir="$configdir/all/retroarch-joypads"
     while read -r file; do
         mv "$file" "$file.bak"
-    done < <(grep -Fl "\"$DEVICE_NAME\"" "$dir/"*.cfg)
+    done < <(grep -Fl "\"$DEVICE_NAME\"" "$dir/"*.cfg 2>/dev/null)
 
     # sanitise filename
     file="${DEVICE_NAME//[\?\<\>\\\/:\*\|]/}.cfg"

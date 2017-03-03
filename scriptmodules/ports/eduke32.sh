@@ -11,6 +11,7 @@
 
 rp_module_id="eduke32"
 rp_module_desc="Duke3D Port"
+rp_module_licence="GPL2 http://svn.eduke32.com/eduke32/package/common/gpl-2.0.txt"
 rp_module_section="opt"
 
 function depends_eduke32() {
@@ -25,7 +26,7 @@ function depends_eduke32() {
 }
 
 function sources_eduke32() {
-    svn checkout http://svn.eduke32.com/eduke32/polymer/eduke32/ "$md_build"
+    svn checkout http://svn.eduke32.com/eduke32 "$md_build"
 }
 
 function build_eduke32() {

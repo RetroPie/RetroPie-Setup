@@ -12,20 +12,27 @@
 rp_module_id="stella"
 rp_module_desc="Atari2600 emulator STELLA"
 rp_module_help="ROM Extensions: .a26 .bin .rom .zip .gz\n\nCopy your Atari 2600 roms to $romdir/atari2600"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/stella-emu/stella/master/License.txt"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags=""
 
-function _update_hook_stella() {
-    # to show as installed in retropie-setup 4.x
-    hasPackage stella && mkdir -p "$md_inst"
+function depends_stella() {
+    getDepends libsdl2-dev libpng12-dev zlib1g-dev xz-utils
 }
 
-function install_bin_stella() {
-    aptInstall stella
+function sources_stella() {
+    wget -q -O- "$__archive_url/stella-4.7.3-src.tar.xz" | tar -xvJ --strip-components=1
 }
 
-function remove_stella() {
-    aptRemove stella
+function build_stella() {
+    ./configure --prefix="$md_inst"
+    make clean
+    make
+    md_ret_require="$md_build/stella"
+}
+
+function install_stella() {
+    make install
 }
 
 function configure_stella() {
@@ -33,10 +40,6 @@ function configure_stella() {
 
     moveConfigDir "$home/.stella" "$md_conf_root/atari2600/stella"
 
-    if ! isPlatform "x11"; then
-        setDispmanx "$md_id" 1
-    fi
-
-    addEmulator 0 "$md_id" "atari2600" "stella -maxres 320x240 %ROM%"
+    addEmulator 1 "$md_id" "atari2600" "$md_inst/bin/stella -maxres 320x240 -fullscreen 1 -tia.fsfill 1 %ROM%"
     addSystem "atari2600"
 }

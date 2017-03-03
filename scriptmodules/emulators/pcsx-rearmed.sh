@@ -12,6 +12,7 @@
 rp_module_id="pcsx-rearmed"
 rp_module_desc="Playstation emulator - PCSX (arm optimised)"
 rp_module_help="ROM Extensions: .bin .cue .cbn .img .iso .m3u .mdf .pbp .toc .z .znx\n\nCopy your PSX roms to $romdir/psx\n\nCopy the required BIOS file SCPH1001.BIN to $biosdir"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/notaz/pcsx_rearmed/master/COPYING"
 rp_module_section="opt"
 rp_module_flags="dispmanx !x86 !mali"
 
@@ -21,7 +22,6 @@ function depends_pcsx-rearmed() {
 
 function sources_pcsx-rearmed() {
     gitPullOrClone "$md_build" https://github.com/notaz/pcsx_rearmed.git
-    runCmd git submodule update --init
 }
 
 function build_pcsx-rearmed() {
@@ -58,11 +58,14 @@ function configure_pcsx-rearmed() {
     mkUserDir "$md_conf_root/psx"
     mkdir -p "$md_inst/bios"
 
-    # symlink the rom so so it can be installed with the other bios files
-    ln -sf "$biosdir/scph1001.bin" "$md_inst/bios/scph1001.bin"
+    # symlink the bios so it can be installed with the other bios files
+    ln -sf "$biosdir/SCPH1001.BIN" "$md_inst/bios/SCPH1001.BIN"
+
+    # symlink config folder
+    moveConfigDir "$md_inst/.pcsx" "$md_conf_root/psx/pcsx"
 
     setDispmanx "$md_id" 1
 
-    addEmulator 0 "$md_id" "psx" "$md_inst/pcsx -cfg $md_conf_root/psx/pcsx.cfg -cdfile %ROM%"
+    addEmulator 0 "$md_id" "psx" "pushd $md_inst; ./pcsx -cdfile %ROM%; popd"
     addSystem "psx"
 }

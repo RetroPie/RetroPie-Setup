@@ -12,6 +12,7 @@
 rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/hrydgard/ppsspp/master/LICENSE.TXT"
 rp_module_section="opt"
 
 function depends_ppsspp() {
@@ -23,7 +24,6 @@ function depends_ppsspp() {
 function sources_ppsspp() {
     gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
     cd ppsspp
-    runCmd git submodule update --init --recursive
 
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh

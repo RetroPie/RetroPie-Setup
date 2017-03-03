@@ -11,6 +11,7 @@
 
 rp_module_id="mehstation"
 rp_module_desc="mehstation emulator frontend"
+rp_module_licence="MIT https://raw.githubusercontent.com/remeh/mehstation/master/LICENSE"
 rp_module_section="exp"
 rp_module_flags="frontend"
 

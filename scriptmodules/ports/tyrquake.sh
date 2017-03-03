@@ -11,10 +11,11 @@
 
 rp_module_id="tyrquake"
 rp_module_desc="Quake 1 engine - TyrQuake port"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/tyrquake/master/gnu.txt"
 rp_module_section="opt"
 
 function depends_tyrquake() {
-    getDepends libsdl2-dev lhasa
+    getDepends libsdl2-dev
 }
 
 function sources_tyrquake() {

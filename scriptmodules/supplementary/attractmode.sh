@@ -11,6 +11,7 @@
 
 rp_module_id="attractmode"
 rp_module_desc="Attract Mode emulator frontend"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/mickelson/attract/master/License.txt"
 rp_module_section="exp"
 rp_module_flags="!mali frontend"
 
@@ -20,7 +21,7 @@ function _get_configdir_attractmode() {
 
 function _add_system_attractmode() {
     local attract_dir="$(_get_configdir_attractmode)"
-    [[ ! -d "$attract_dir" ]] && return 0
+    [[ ! -d "$attract_dir" || ! -f /usr/bin/attract ]] && return 0
 
     local fullname="$1"
     local name="$2"
@@ -125,13 +126,13 @@ function depends_attractmode() {
         libfontconfig1-dev
     )
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "x11" && depends+=(libsfml-dev)
     getDepends "${depends[@]}" 
 }
 
 function sources_attractmode() {
     isPlatform "rpi" && gitPullOrClone "$md_build/sfml-pi" "https://github.com/mickelson/sfml-pi"
     gitPullOrClone "$md_build/attract" "https://github.com/mickelson/attract"
-    mkdir build
 }
 
 function build_attractmode() {
@@ -140,13 +141,12 @@ function build_attractmode() {
         cmake . -DCMAKE_INSTALL_PREFIX="$md_inst/sfml" -DSFML_RPI=1 -DEGL_INCLUDE_DIR=/opt/vc/include -DEGL_LIBRARY=/opt/vc/lib/libEGL.so -DGLES_INCLUDE_DIR=/opt/vc/include -DGLES_LIBRARY=/opt/vc/lib/libGLESv1_CM.so
         make clean
         make
-        make install
         cd ..
     fi
     cd attract
     make clean
     local params=(prefix="$md_inst")
-    isPlatform "rpi" && params+=(EXTRA_CFLAGS="$CFLAGS -I$md_inst/sfml/include -L$md_inst/sfml/lib")
+    isPlatform "rpi" && params+=(EXTRA_CFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
     make "${params[@]}"
 
     # remove example configs
@@ -156,14 +156,20 @@ function build_attractmode() {
 }
 
 function install_attractmode() {
+    make -C sfml-pi install
     mkdir -p "$md_inst"/{bin,share,share/attract}
-    cp attract/attract "$md_inst/bin/"
-    cp -R attract/config/* "$md_inst/share/attract"
+    cp -v attract/attract "$md_inst/bin/"
+    cp -Rv attract/config/* "$md_inst/share/attract"
 }
 
+function remove_attractmode() {
+    rm -f /usr/bin/attract
+}
 
 function configure_attractmode() {
     moveConfigDir "$home/.attract" "$md_conf_root/all/attractmode"
+
+    [[ "$md_mode" == "remove" ]] && return
 
     local config="$md_conf_root/all/attractmode/attract.cfg"
     if [[ ! -f "$config" ]]; then

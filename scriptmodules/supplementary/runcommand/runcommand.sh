@@ -376,7 +376,7 @@ function load_mode_defaults() {
             default_mode set vid_rom "$mode"
             MODE_REQ_ID="$mode"
         else
-            mode="$(default_mode get vid_rom_old)"
+            mode="$(default_mode get vid_rom)"
             [[ -n "$mode" ]] && MODE_REQ_ID="$mode"
         fi
 

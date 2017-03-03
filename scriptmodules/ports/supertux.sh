@@ -11,6 +11,7 @@
 
 rp_module_id="supertux"
 rp_module_desc="SuperTux 2d scrolling platform"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/SuperTux/supertux/master/LICENSE.txt"
 rp_module_section="opt"
 rp_module_flags="!mali"
 

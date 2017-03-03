@@ -12,6 +12,7 @@
 rp_module_id="lr-armsnes"
 rp_module_desc="SNES emu - forked from pocketsnes focused on performance"
 rp_module_help="ROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/RetroPie/ARMSNES-libretro/master/src/snes9x.h"
 rp_module_section="opt"
 rp_module_flags="!x86 !aarch64"
 

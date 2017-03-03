@@ -35,7 +35,8 @@ function build_usbromservice() {
 }
 
 function install_usbromservice() {
-    dpkg -i ../*_all.deb
+    dpkg -i ../usbmount_*_all.deb
+    rm -f ../usbmount_*
 }
 
 function enable_usbromservice() {

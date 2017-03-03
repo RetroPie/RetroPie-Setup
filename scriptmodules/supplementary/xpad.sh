@@ -12,8 +12,9 @@
 rp_module_id="xpad"
 rp_module_desc="Updated Xpad Linux Kernel driver"
 rp_module_help="This is the latest Xpad driver from https://github.com/paroj/xpad\n\nThe driver has been patched to allow the triggers to map to buttons for any controller and this has been enabled by default.\n\nThis fixes mapping the triggers in Emulation Station.\n\nIf you want the previous trigger behaviour please edit /etc/modprobe.d/xpad.conf and set triggers_to_buttons=0"
+rp_module_licence="GPL2 https://www.kernel.org/pub/linux/kernel/COPYING"
 rp_module_section="driver"
-rp_module_flags="!mali"
+rp_module_flags="noinstclean !mali"
 
 function depends_xpad() {
     local depends=(dkms)
@@ -23,6 +24,7 @@ function depends_xpad() {
 }
 
 function sources_xpad() {
+    rm -rf "$md_inst"
     gitPullOrClone "$md_inst" https://github.com/paroj/xpad.git
     cd "$md_inst"
     # LED support (as disabled currently in packaged RPI kernel) and allow forcing MAP_TRIGGERS_TO_BUTTONS

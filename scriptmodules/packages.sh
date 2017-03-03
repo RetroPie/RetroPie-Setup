@@ -15,6 +15,7 @@ __mod_id=()
 __mod_type=()
 __mod_desc=()
 __mod_help=()
+__mod_licence=()
 __mod_section=()
 __mod_flags=()
 
@@ -180,6 +181,10 @@ function rp_callModule() {
             ;;
         install|install_bin)
             action="Installing"
+            # remove any previous install folder before installing
+            if ! hasFlag "${__mod_flags[$md_idx]}" "noinstclean"; then
+                rmDirExists "$md_inst"
+            fi
             mkdir -p "$md_inst"
             pushd "$md_build" 2>/dev/null
             pushed=$?
@@ -248,7 +253,7 @@ function rp_callModule() {
         if [[ -n "$md_ret_require" ]]; then
             for file in "${md_ret_require[@]}"; do
                 if [[ ! -e "$file" ]]; then
-                    md_ret_errors+=("Could not successfully $mode $md_desc ($file not found).")
+                    md_ret_errors+=("Could not successfully $mode $md_id - $md_desc ($file not found).")
                     break
                 fi
             done
@@ -295,7 +300,19 @@ function rp_hasBinaries() {
 
 function rp_hasBinary() {
     local idx="$1"
+    local id="${__mod_id[$idx]}"
     fnExists "install_bin_${__mod_id[$idx]}" && return 0
+
+    # binary blacklist for armv7 Debian/OSMC due to GCC ABI incompatibility with
+    # threaded C++ apps on Raspbian (armv6 userland)
+    if [[ "$__os_id" != "Raspbian" ]] && ! isPlatform "armv6"; then
+        case "$id" in
+            emulationstation|zdoom|lr-dinothawr|lr-ppsspp|ppsspp)
+                return 1
+                ;;
+        esac
+    fi
+
     if rp_hasBinaries; then
         wget --spider -q "$__binary_url/${__mod_type[$idx]}/${__mod_id[$idx]}.tar.gz"
         return $?
@@ -353,6 +370,7 @@ function rp_registerModule() {
     local rp_module_id=""
     local rp_module_desc=""
     local rp_module_help=""
+    local rp_module_licence=""
     local rp_module_section=""
     local rp_module_flags=""
     local var
@@ -385,6 +403,7 @@ function rp_registerModule() {
         __mod_type["$module_idx"]="$module_type"
         __mod_desc["$module_idx"]="$rp_module_desc"
         __mod_help["$module_idx"]="$rp_module_help"
+        __mod_licence["$module_idx"]="$rp_module_licence"
         __mod_section["$module_idx"]="$rp_module_section"
         __mod_flags["$module_idx"]="$rp_module_flags"
 

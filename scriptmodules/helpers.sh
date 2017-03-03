@@ -200,7 +200,7 @@ function getDepends() {
                 packages+=("$required")
                 continue
             fi
-            if ! isPlatform "x11" && [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "eq"; then
+            if [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "eq"; then
                 packages+=("$required")
                 continue
             fi
@@ -231,28 +231,26 @@ function getDepends() {
         fi
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
 
-        # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2 for rpi
-        if isPlatform "rpi" || isPlatform "mali"; then
-            local temp=()
-            for required in ${packages[@]}; do
-                if isPlatform "rpi" && [[ "$required" == "libsdl1.2-dev" ]]; then
-                    if [[ "$__has_binaries" -eq 1 ]]; then
-                        rp_callModule sdl1 install_bin
-                    else
-                        rp_callModule sdl1
-                    fi
-                elif [[ "$required" == "libsdl2-dev" ]]; then
-                    if [[ "$__has_binaries" -eq 1 ]]; then
-                        rp_callModule sdl2 install_bin
-                    else
-                        rp_callModule sdl2
-                    fi
+        # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2
+        local temp=()
+        for required in ${packages[@]}; do
+            if isPlatform "rpi" && [[ "$required" == "libsdl1.2-dev" ]]; then
+                if [[ "$__has_binaries" -eq 1 ]]; then
+                    rp_callModule sdl1 install_bin
                 else
-                    temp+=("$required")
+                    rp_callModule sdl1
                 fi
-            done
-            packages=("${temp[@]}")
-        fi
+            elif [[ "$required" == "libsdl2-dev" ]]; then
+                if [[ "$__has_binaries" -eq 1 ]]; then
+                    rp_callModule sdl2 install_bin
+                else
+                    rp_callModule sdl2
+                fi
+            else
+                temp+=("$required")
+            fi
+        done
+        packages=("${temp[@]}")
 
         aptInstall --no-install-recommends "${packages[@]}"
 
@@ -301,6 +299,7 @@ function rpSwap() {
             if [[ $size -ge 0 ]]; then
                 echo "Adding $size MB of additional swap"
                 fallocate -l ${size}M "$swapfile"
+                chmod 600 "$swapfile"
                 mkswap "$swapfile"
                 swapon "$swapfile"
             fi
@@ -326,10 +325,11 @@ function gitPullOrClone() {
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
-        git pull > /dev/null
+        runCmd git pull
+        runCmd git submodule update --init --recursive
         popd > /dev/null
     else
-        local git="git clone"
+        local git="git clone --recursive"
         if [[ "$__persistent_repos" -ne 1 ]]; then
             [[ "$repo" =~ github ]] && git+=" --depth 1"
         fi
@@ -521,7 +521,8 @@ function renameModule() {
     local to="$2"
     # move from old location and update emulators.cfg
     if [[ -d "$rootdir/$md_type/$from" ]]; then
-        mv "$rootdir/$md_type/$from" "$md_inst"
+        rm -rf "$rootdir/$md_type/$to"
+        mv "$rootdir/$md_type/$from" "$rootdir/$md_type/$to"
         # replace any default = "$from"
         sed -i "s/\"$from\"/\"$to\"/g" "$configdir"/*/emulators.cfg
         # replace any $from = "cmdline"
@@ -846,7 +847,7 @@ function setConfigRoot() {
 ## It can provide a shortcut way to load a set of keys from an ini file into
 ## variables.
 ##
-## It requies iniConfig to be called first to specify the format and file.
+## It requires iniConfig to be called first to specify the format and file.
 ## eg.
 ##
 ##     iniConfig " = " '"' "$configdir/all/mymodule.cfg"
@@ -866,7 +867,7 @@ function loadModuleConfig() {
     for option in "${options[@]}"; do
         option=(${option/=/ })
         key="${option[0]}"
-        value="${option[1]}"
+        value="${option[@]:1}"
         iniGet "$key"
         if [[ -z "$ini_value" ]]; then
             iniSet "$key" "$value"
@@ -1164,7 +1165,7 @@ function addEmulator() {
     fi
 
     # automatically add parameters for libretro modules
-    if [[ "$id" =~ ^lr- ]]; then
+    if [[ "$id" == lr-* && "$cmd" != "$emudir/retroarch/bin/retroarch"* ]]; then
         cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $md_conf_root/$system/retroarch.cfg %ROM%"
     fi
 

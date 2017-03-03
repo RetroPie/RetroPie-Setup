@@ -61,13 +61,13 @@ function map_mupen64plus_joystick() {
             keys=("C Button U")
             ;;
         leftbottom|leftshoulder)
-            keys=("Z Trig")
+            keys=("L Trig")
             ;;
         rightbottom|rightshoulder)
             keys=("R Trig")
             ;;
         lefttop|lefttrigger)
-            keys=("L Trig")
+            keys=("Z Trig")
             ;;
         start)
             keys=("Start")
@@ -211,6 +211,15 @@ function onend_mupen64plus_joystick() {
             iniDel "${axis_pos}"
         fi
     done
+
+    # If there is no Z Trig try to map the L shoulder
+    # button to it via copying over the existing L Trig
+    # value and deleting it (L Trig) after
+    if ! grep -q "Z Trig" /tmp/mp64tempconfig.cfg ; then
+        iniGet "L Trig"
+        iniSet "Z Trig" "${ini_value}"
+        iniDel "L Trig"
+    fi
 
     echo "; ${DEVICE_NAME}_END " >> /tmp/mp64tempconfig.cfg
     echo "" >> /tmp/mp64tempconfig.cfg

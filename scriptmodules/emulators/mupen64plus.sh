@@ -12,6 +12,7 @@
 rp_module_id="mupen64plus"
 rp_module_desc="N64 emulator MUPEN64Plus"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/mupen64plus/mupen64plus-core/master/LICENSES"
 rp_module_section="main"
 rp_module_flags="!mali"
 
@@ -50,7 +51,7 @@ function sources_mupen64plus() {
         dir="$md_build/mupen64plus-${repo[1]}"
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
-    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
+    gitPullOrClone "$md_build/GLideN64" https://github.com/joolswills/GLideN64.git flicker_fix
     # fix for static x86_64 libs found in repo which are not usefull if target is i686
     isPlatform "x11" && sed -i "s/BCMHOST/UNIX/g" GLideN64/src/GLideNHQ/CMakeLists.txt
 }
@@ -75,8 +76,8 @@ function build_mupen64plus() {
     done
 
     # build GLideN64
-    $md_build/GLideN64/src/getRevision.sh
-    pushd $md_build/GLideN64/projects/cmake
+    "$md_build/GLideN64/src/getRevision.sh"
+    pushd "$md_build/GLideN64/projects/cmake"
     params=("-DMUPENPLUSAPI=On" "-DVEC4_OPT=On")
     isPlatform "neon" && params+=("-DNEON_OPT=On")
     isPlatform "rpi3" && params+=("-DCRC_ARMV8=On")
@@ -192,7 +193,7 @@ function configure_mupen64plus() {
             echo "[Video-GLideN64]" >> "$config"
         fi
         # Settings version. Don't touch it.
-        iniSet "configVersion" "16"
+        iniSet "configVersion" "17"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         # Size of texture cache in megabytes. Good value is VRAM*3/4

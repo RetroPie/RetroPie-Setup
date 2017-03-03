@@ -11,18 +11,21 @@
 
 rp_module_id="scraper"
 rp_module_desc="Scraper for EmulationStation by Steven Selph"
-rp_module_section="config"
+rp_module_licence="MIT https://raw.githubusercontent.com/sselph/scraper/master/LICENSE"
+rp_module_section="opt"
 
 function depends_scraper() {
-    getDepends golang
+    rp_callModule golang install_bin
 }
 
 function sources_scraper() {
-    GOPATH="$md_build" go get -u github.com/sselph/scraper
+    local goroot="$(_get_goroot_golang)"
+    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" get -u github.com/sselph/scraper
 }
 
 function build_scraper() {
-    GOPATH="$md_build" go build github.com/sselph/scraper
+    local goroot="$(_get_goroot_golang)"
+    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" build github.com/sselph/scraper
 }
 
 function install_scraper() {
@@ -32,6 +35,10 @@ function install_scraper() {
         'src/github.com/sselph/scraper/README.md'
         'src/github.com/sselph/scraper/hash.csv'
     )
+}
+
+function remove_scraper() {
+    rp_callModule golang remove
 }
 
 function get_ver_scraper() {
@@ -159,10 +166,6 @@ function gui_scraper() {
     if pgrep "emulationstatio" >/dev/null; then
         printMsgs "dialog" "This scraper must not be run while Emulation Station is running or the scraped data will be overwritten. \n\nPlease quit from Emulation Station, and run RetroPie-Setup from the terminal"
         return
-    fi
-
-    if [[ ! -d "$md_inst" ]]; then
-        rp_callModule "$md_id"
     fi
 
     iniConfig " = " '"' "$configdir/all/scraper.cfg"

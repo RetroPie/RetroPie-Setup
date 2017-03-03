@@ -11,6 +11,7 @@
 
 rp_module_id="lr-prboom"
 rp_module_desc="Doom/Doom II engine - PrBoom port for libretro"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/libretro-prboom/master/COPYING"
 rp_module_section="opt"
 
 function sources_lr-prboom() {
@@ -38,16 +39,38 @@ function game_data_lr-prboom() {
     fi
 }
 
+function _add_games_lr-prboom() {
+    local cmd="$1"
+    declare -A games=(
+        ['doom1']="Doom"
+        ['doom2']="Doom 2"
+        ['tnt']="TNT - Evilution"
+        ['plutonia']="The Plutonia Experiment"
+    )
+    local game
+    local wad
+    for game in "${!games[@]}"; do
+        wad="$romdir/ports/doom/$game.wad"
+        if [[ -f "$wad" ]]; then
+            addPort "$md_id" "doom" "${games[$game]}" "$cmd" "$wad"
+        fi
+    done
+}
+
+function add_games_lr-prboom() {
+    _add_games_lr-prboom "$md_inst/prboom_libretro.so"
+}
+
 function configure_lr-prboom() {
     setConfigRoot "ports"
-
-    addPort "$md_id" "doom" "Doom" "$emudir/retroarch/bin/retroarch -L $md_inst/prboom_libretro.so --config $md_conf_root/doom/retroarch.cfg $romdir/ports/doom/doom1.wad"
 
     mkRomDir "ports/doom"
     ensureSystemretroconfig "ports/doom"
 
+    [[ "$md_mode" == "install" ]] && game_data_lr-prboom
+
+    add_games_lr-prboom
+
     cp prboom.wad "$romdir/ports/doom/"
     chown $user:$user "$romdir/ports/doom/prboom.wad"
-
-    [[ "$md_mode" == "install" ]] && game_data_lr-prboom
 }
