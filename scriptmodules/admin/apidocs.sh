@@ -25,7 +25,9 @@ function build_apidocs() {
     local config="Doxyfile"
     rm -f "$config"
     doxygen -g "$config" >/dev/null
+
     iniConfig " = " '' "$config"
+
     iniSet "PROJECT_NAME" "RetroPie-Setup"
     iniSet "PROJECT_NUMBER" "$__version"
 
@@ -33,10 +35,13 @@ function build_apidocs() {
     iniSet "QUIET" "YES"
     iniSet "WARN_IF_DOC_ERROR" "NO"
     iniSet "INPUT" "$scriptdir"
-    iniSet "FILE_PATTERNS" "*.sh"
     iniSet "EXCLUDE_PATTERNS" "*/tmp/*"
     iniSet "INPUT_FILTER" "\"sed -n -f $md_build/doxygen-bash.sed -- \""
     iniSet "RECURSIVE" "YES"
+
+    # unable to use iniSet for latest doxygen "multi line" FILE_PATTERNS default
+    echo "FILE_PATTERNS = *.sh" >>"$config"
+
     doxygen "$config"
 }
 
