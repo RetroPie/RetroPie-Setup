@@ -412,13 +412,8 @@ function moveConfigDir() {
     mkUserDir "$to"
     # move any old configs to the new location
     if [[ -d "$from" && ! -h "$from" ]]; then
-        # also match hidden files
-        shopt -s dotglob
-        if [[ -n "$(ls -A $from)" ]]; then
-            mv -f "$from/"* "$to"
-        fi
-        shopt -u dotglob
-        rmdir "$from"
+        cp -a "$from/." "$to/"
+        rm -rf "$from"
     fi
     ln -snf "$to" "$from"
     # set ownership of the actual link to $user
