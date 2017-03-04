@@ -13,7 +13,6 @@ rp_module_id="hatari"
 rp_module_desc="Atari emulator Hatari"
 rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr\n\nCopy your Hatari roms to $romdir/atarist"
 rp_module_section="opt"
-rp_module_flags="!mali"
 
 function depends_hatari() {
     getDepends libsdl2-dev zlib1g-dev libpng12-dev cmake libreadline-dev portaudio19-dev
@@ -27,7 +26,7 @@ function _sources_libcapsimage_hatari() {
 }
 
 function sources_hatari() {
-    wget -q -O- "$__archive_url/hatari-1.9.0.tar.bz2" | tar -xvj --strip-components=1
+    wget -q -O- http://download.tuxfamily.org/hatari/2.0.0/hatari-2.0.0.tar.bz2 | tar -xvj --strip-components=1
     # we need to use capsimage 5, as there is no source for 4.2
     sed -i "s/CAPSIMAGE_VERSION 4/CAPSIMAGE_VERSION 5/" cmake/FindCapsImage.cmake
     # capsimage 5.1 misses these types that were defined in 4.2
@@ -62,7 +61,8 @@ function build_hatari() {
         -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" \
         -DCAPSIMAGE_INCLUDE_DIR="$md_build/src/include" \
         -DCAPSIMAGE_LIBRARY="$md_build/lib/libcapsimage.so.5.1" \
-        -DENABLE_SDL2:BOOL=1
+        -DENABLE_SDL2:BOOL=1 \
+        -DSDL2_LIBRARY=/usr/lib/arm-linux-gnueabihf/libSDL2.so
     make clean
     make
     md_ret_require="$md_build/src/hatari"
