@@ -20,7 +20,6 @@ __netplaymode="$__netplaymode"
 __netplayport="$__netplayport"
 __netplayhostip="$__netplayhostip"
 __netplayhostip_cfile="$__netplayhostip_cfile"
-__netplayframes="$__netplayframes"
 __netplaynickname="'$__netplaynickname'"
 _EOF_
     chown $user:$user "$conf"
@@ -36,7 +35,6 @@ function rps_retronet_loadconfig() {
         __netplayport="55435"
         __netplayhostip="192.168.0.1"
         __netplayhostip_cfile=""
-        __netplayframes="15"
         __netplaynickname="RetroPie"
     fi
 }
@@ -79,14 +77,6 @@ function rps_retronet_hostip() {
     fi
 }
 
-function rps_retronet_frames() {
-    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the number of delay frames for netplay (default: 15)." 22 76 $__netplayframes)
-    choice=$("${cmd[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choice" ]]; then
-        __netplayframes="$choice"
-    fi
-}
-
 function rps_retronet_nickname() {
     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the nickname you wish to use (default: RetroPie)" 22 76 $__netplaynickname)
     choice=$("${cmd[@]}" 2>&1 >/dev/tty)
@@ -107,9 +97,8 @@ function gui_retronetplay() {
             1 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode"
             2 "Set port. Currently: $__netplayport"
             3 "Set host IP address (for client mode). Currently: $__netplayhostip"
-            4 "Set delay frames. Currently: $__netplayframes"
-            5 "Set netplay nickname. Currently: $__netplaynickname"
-            6 "Save configuration"
+            4 "Set netplay nickname. Currently: $__netplaynickname"
+            5 "Save configuration"
         )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -124,12 +113,9 @@ function gui_retronetplay() {
                     rps_retronet_hostip
                     ;;
                 4)
-                    rps_retronet_frames
-                    ;;
-                5)
                     rps_retronet_nickname
                     ;;
-                6)
+                5)
                     rps_retronet_saveconfig
                     ;;
             esac
