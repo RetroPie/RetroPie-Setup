@@ -9,8 +9,7 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-exts="$1"
-rom="$2"
+rom="$1"
 
 rootdir="/opt/retropie"
 datadir="$HOME/RetroPie"
@@ -26,7 +25,7 @@ if [[ ! -f "$kickfile" ]]; then
     exit 1
 fi
 
-archiveExtract "$rom" "$exts"
+archiveExtract "$rom" ".adf .adz .dms .ipf"
 
 # check successful extraction and if we have at least one file
 if [[ $? == 0 ]]; then

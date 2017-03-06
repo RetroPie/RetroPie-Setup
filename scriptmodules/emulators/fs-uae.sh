@@ -69,8 +69,7 @@ function configure_fs-uae() {
     iniSet "floppy_drive_speed" "100"
     copyDefaultConfig "$config" "$md_conf_root/amiga/fs-uae/Default.fs-uae"
     rm "$config"
-    
-    local exts=$(getPlatformConfig amiga_exts)
-    addEmulator 1 "$md_id" "amiga" "bash $md_inst/bin/fs-uae.sh '$exts' %ROM%"
+
+    addEmulator 1 "$md_id" "amiga" "bash $md_inst/bin/fs-uae.sh %ROM%"
     addSystem "amiga"
 }
