@@ -65,8 +65,13 @@ function configure_fuse() {
     setDispmanx "$md_id" 1
     configure_dispmanx_on_fuse
 
-    addEmulator 0 "$md_id-48k" "zxspectrum" "$md_inst/bin/fuse --machine 48 %ROM%"
-    addEmulator 0 "$md_id-128k" "zxspectrum" "$md_inst/bin/fuse --machine 128 %ROM%"
+        cat > "$romdir/zxspectrum/+Start Fuse.sh" << _EOF_
+#!/bin/bash
+$md_inst/bin/fuse --machine 128 --full-screen
+_EOF_
+
+    addEmulator 0 "$md_id-48k" "zxspectrum" "$md_inst/bin/fuse --machine 48 --full-screen %ROM%"
+    addEmulator 0 "$md_id-128k" "zxspectrum" "$md_inst/bin/fuse --machine 128 --full-screen %ROM%"
     addSystem "zxspectrum"
 }
 
