@@ -1,13 +1,15 @@
 #!/bin/bash
+
+emulator="./EMULATOR"
 config="$1"
 rom="$2"
 rom_bn="${rom%.*}"
 
 pushd "${0%/*}" >/dev/null
 if [[ -z "$rom" ]]; then
-    ./uae4arm
+    "$emulator"
 elif [[ "$rom" == *.uae ]]; then
-    ./uae4arm -config="$rom" -G
+    "$emulator" -config="$rom" -G
 else
     source "../../lib/archivefuncs.sh"
 
@@ -50,7 +52,7 @@ else
         config="conf/$config"
     fi
 
-    ./uae4arm -config="$config" "${images[@]}" -G
+    "$emulator" -config="$config" "${images[@]}" -G
     archiveCleanup
 fi
 

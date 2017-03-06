@@ -83,16 +83,21 @@ function configure_uae4arm() {
     copyDefaultConfig "$conf" "$md_conf_root/amiga/$md_id/conf/rp-a1200.uae"
     rm "$conf"
 
-    cp -v "$md_data/uae4arm.sh" "$md_inst/"
-    cat > "$romdir/amiga/+Start UAE4Arm.sh" << _EOF_
-#!/bin/bash
-"$md_inst/uae4arm.sh"
-_EOF_
-    chmod a+x "$romdir/amiga/+Start UAE4Arm.sh"
-    chown $user:$user "$romdir/amiga/+Start UAE4Arm.sh"
+    # copy launch script (used for uae4arm and amiberry)
+    sed "s/EMULATOR/$md_id/" "$scriptdir/scriptmodules/$md_type/uae4arm/uae4arm.sh" >"$md_inst/$md_id.sh"
+    chmod a+x "$md_inst/$md_id.sh"
 
-    addEmulator 1 "$md_id" "amiga" "$md_inst/uae4arm.sh auto %ROM%"
-    addEmulator 1 "$md_id-a500" "amiga" "$md_inst/uae4arm.sh rp-a500.uae %ROM%"
-    addEmulator 1 "$md_id-a1200" "amiga" "$md_inst/uae4arm.sh rp-a1200.uae %ROM%"
+    local script="+Start UAE4Arm.sh"
+    [[ "$md_id" == "amiberry" ]] && script="+Start Amiberry.sh"
+    cat > "$romdir/amiga/$script" << _EOF_
+#!/bin/bash
+"$md_inst/$md_id.sh"
+_EOF_
+    chmod a+x "$romdir/amiga/$script"
+    chown $user:$user "$romdir/amiga/$script"
+
+    addEmulator 1 "$md_id" "amiga" "$md_inst/$md_id.sh auto %ROM%"
+    addEmulator 1 "$md_id-a500" "amiga" "$md_inst/$md_id.sh rp-a500.uae %ROM%"
+    addEmulator 1 "$md_id-a1200" "amiga" "$md_inst/$md_id.sh rp-a1200.uae %ROM%"
     addSystem "amiga"
 }
