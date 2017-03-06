@@ -35,5 +35,5 @@ function configure_lr-puae() {
     mkRomDir "amiga"
     ensureSystemretroconfig "amiga"
     addEmulator 1 "$md_id" "amiga" "$md_inst/puae_libretro.so"
-    addSystem "amiga" "Commodore Amiga" ".uae"
+    addSystem "amiga"
 }
