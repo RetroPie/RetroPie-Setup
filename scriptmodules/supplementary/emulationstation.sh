@@ -80,7 +80,7 @@ function _del_system_emulationstation() {
     local fullname="$1"
     local name="$2"
     if [[ -f /etc/emulationstation/es_systems.cfg ]]; then
-        xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
+        xmlstarlet ed -L -P -d "/systemList/system[name='$name']" /etc/emulationstation/es_systems.cfg
     fi
 }
 
