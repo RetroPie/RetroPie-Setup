@@ -21,7 +21,7 @@ function apt_upgrade_raspbiantools() {
 
 function lxde_raspbiantools() {
     aptInstall --no-install-recommends lxde
-    aptInstall xorg raspberrypi-ui-mods rpi-chromium-mods
+    aptInstall xorg raspberrypi-ui-mods rpi-chromium-mods gvfs
     setConfigRoot "ports"
     addPort "lxde" "lxde" "Desktop" "startx"
     enable_autostart
