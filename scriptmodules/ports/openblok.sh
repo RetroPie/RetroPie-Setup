@@ -37,6 +37,5 @@ function configure_openblok() {
     mkUserDir "$home/.local"
     mkUserDir "$home/.local/share"
     moveConfigDir "$home/.local/share/openblok" "$md_conf_root/openblok"
-    moveConfigDir "$md_inst/share/openblok/themes" "$md_conf_root/openblok/themes"
     addPort "$md_id" "openblok" "OpenBlok" "$md_inst/games/openblok"
 }
