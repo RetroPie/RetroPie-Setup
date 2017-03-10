@@ -16,7 +16,7 @@ rp_module_section="exp"
 rp_module_flags="noinstclean"
 
 function depends_launchingimages() {
-    local depends=(imagemagick)
+    local depends=(imagemagick librsvg2-bin)
     if isPlatform "x11"; then
         depends+=(feh)
     else
