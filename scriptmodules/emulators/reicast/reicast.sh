@@ -70,17 +70,32 @@ function mapInput() {
     params+="-config input:joystick_device_id=-1 "
     params+="-config players:nb=$device_counter "
     echo "$params"
+
+    if [[ -z $device_counter ]]; then
+        exit 1
+    fi
 }
 
-if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
-    params="-config config:homedir=$HOME -config x11:fullscreen=1 "
-    getAutoConf reicast_input && params+=$(mapInput)
-    params+=" -config audio:backend=$AUDIO -config audio:disable=0 "
-    if [[ "$AUDIO" == "oss" ]]; then
-        aoss "$rootdir/emulators/reicast/bin/reicast" $params -config config:image="$ROM" >> /dev/null
-    else
-        "$rootdir/emulators/reicast/bin/reicast" $params -config config:image="$ROM" >> /dev/null
-    fi
-else
-    dialog --msgbox "You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator." 22 76
+function message() {
+    dialog --msgbox "$1" 22 76
+}
+
+if [[ ! -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
+    message "You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator."
+    exit
 fi
+
+params="-config config:homedir=$HOME -config x11:fullscreen=1 "
+getAutoConf reicast_input && params+=$(mapInput)
+
+if [[ $? == 1 ]]; then
+    message "No joystick found! Please connect at least one joystick!"
+    exit
+fi
+
+params+=" -config audio:backend=$AUDIO -config audio:disable=0 "
+prefix=""
+if [[ "$AUDIO" == "oss" ]]; then
+    prefix="aoss"
+fi
+$prefix "$rootdir/emulators/reicast/bin/reicast" $params -config config:image="$ROM" >> /dev/null
