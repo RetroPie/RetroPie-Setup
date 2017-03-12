@@ -29,7 +29,8 @@ function sources_ppsspp() {
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
 
     # remove -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 as we handle this ourselves if armv7 on Raspbian
-    sed -i "/-U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2/d" cmake/Toolchains/raspberry.armv7.cmake
+    # we also need to set our own ARCH_FLAGS to include our own CXXFLAGS
+    sed -i -e "/-U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2/d" -e "/set(ARCH_FLAGS/d" cmake/Toolchains/raspberry.armv7.cmake
 
     if isPlatform "aarch64"; then
         applyPatch "$md_data/01_aarch64.diff"
@@ -113,17 +114,17 @@ function build_ppsspp() {
     # build ppsspp
     cd "$md_build/ppsspp"
     rm -rf CMakeCache.txt CMakeFiles
+    local params=(-DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS="$CXXFLAGS")
     if isPlatform "rpi"; then
         if isPlatform "armv6"; then
-            "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake .
+            params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake)
         else
-            "$cmake" -DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv7.cmake .
+            params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv7.cmake)
         fi
     elif isPlatform "mali"; then
-        "$cmake" . -DUSING_GLES2=ON -DUSING_FBDEV=ON
-    else
-        "$cmake" .
+        params+=(-DUSING_GLES2=ON -DUSING_FBDEV=ON)
     fi
+    "$cmake" "${params[@]}" .
     make clean
     make
 
