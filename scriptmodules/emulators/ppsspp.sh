@@ -28,6 +28,9 @@ function sources_ppsspp() {
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
 
+    # remove -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 as we handle this ourselves if armv7 on Raspbian
+    sed -i "/-U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2/d" cmake/Toolchains/raspberry.armv7.cmake
+
     if isPlatform "aarch64"; then
         applyPatch "$md_data/01_aarch64.diff"
     fi
