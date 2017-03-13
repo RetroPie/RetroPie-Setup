@@ -76,6 +76,8 @@ function gui_esthemes() {
         'robertybob simplebigart'
         'RetroPie clean-look'
         'HerbFargus tronkyfran'
+        'lilbud flat'
+        'lilbud flat-dark'
     )
     while true; do
         local theme
