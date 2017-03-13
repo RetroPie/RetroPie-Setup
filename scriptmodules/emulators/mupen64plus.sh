@@ -17,7 +17,7 @@ rp_module_section="main"
 rp_module_flags="!mali"
 
 function depends_mupen64plus() {
-    local depends=(cmake libgl1-mesa-dev libsamplerate0-dev libspeexdsp-dev libsdl2-dev)
+    local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev)
     isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev libboost-filesystem-dev)
     getDepends "${depends[@]}"
 }
