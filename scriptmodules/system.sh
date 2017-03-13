@@ -268,9 +268,7 @@ function platform_rpi2() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon rpi"
-    # there is no support in qemu for cortex-a7 it seems, but it does have cortex-a15 which is architecturally
-    # aligned with the a7, and allows the a7 targetted code to be run in a chroot/emulated environment
-    __qemu_cpu=cortex-a15
+    __qemu_cpu=cortex-a7
     __has_binaries=1
 }
 
