@@ -76,9 +76,15 @@ function configure_reicast() {
 
     chown -R $user:$user "$md_conf_root/dreamcast"
 
-    # Link to file that does not exist as this results in the Dreamcast System Manager launching (as if one turned on the Dreamcast without a disc inserted)
-    # This is required to fix broken / corrupted VMU files.
-    ln -sf fileThatDoesNotExist "$home/RetroPie/roms/dreamcast/systemManager.cdi"
+    cat > "$romdir/dreamcast/+Start Reicast.sh" << _EOF_
+#!/bin/bash
+$md_inst/bin/reicast.sh
+_EOF_
+    chmod a+x "$romdir/dreamcast/+Start Reicast.sh"
+    chown $user:$user "$romdir/dreamcast/+Start Reicast.sh"
+
+    # remove old systemManager.cdi symlink
+    rm -f "$romdir/dreamcast/systemManager.cdi"
 
     # add system
     # possible audio backends: alsa, oss, omx

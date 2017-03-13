@@ -72,15 +72,17 @@ function mapInput() {
     echo "$params"
 }
 
-if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
-    params="-config config:homedir=$HOME -config x11:fullscreen=1 "
-    getAutoConf reicast_input && params+=$(mapInput)
-    params+=" -config audio:backend=$AUDIO -config audio:disable=0 "
-    if [[ "$AUDIO" == "oss" ]]; then
-        aoss "$rootdir/emulators/reicast/bin/reicast" $params -config config:image="$ROM" >> /dev/null
-    else
-        "$rootdir/emulators/reicast/bin/reicast" $params -config config:image="$ROM" >> /dev/null
-    fi
-else
+if [[ ! -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
     dialog --msgbox "You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator." 22 76
+    exit 1
+fi
+
+params=(-config config:homedir=$HOME -config x11:fullscreen=1)
+getAutoConf reicast_input && params+=($(mapInput))
+[[ -n "$AUDIO" ]] && params+=(-config audio:backend=$AUDIO -config audio:disable=0)
+[[ -n "$ROM" ]] && params+=(-config config:image="$ROM")
+if [[ "$AUDIO" == "oss" ]]; then
+    aoss "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
+else
+    "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
 fi
