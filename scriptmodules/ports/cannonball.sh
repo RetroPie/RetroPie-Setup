@@ -60,9 +60,9 @@ function configure_cannonball() {
     moveConfigFile "config.xml" "$md_conf_root/$md_id/config.xml"
     moveConfigFile "hiscores.xml" "$md_conf_root/$md_id/hiscores.xml"
 
-    if [[ ! -f "$md_conf_root/$md_id/config.xml" ]]; then
-        cp -v "$md_inst/config.xml.def" "$md_conf_root/$md_id/config.xml"
-    fi
+    [[ "$md_mode" == "remove" ]] && return
+
+    copyDefaultConfig "$md_inst/config.xml.def" "$md_conf_root/$md_id/config.xml"
 
     cp -v roms.txt "$romdir/ports/$md_id/"
 
