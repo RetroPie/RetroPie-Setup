@@ -14,7 +14,11 @@ rp_module_desc="Macintosh Plus Emulator"
 rp_module_help="ROM Extensions: .dsk \n\nCopy your Macintosh Plus disks to $romdir/macintoshplus \n\n You need to copy the Macintosh bios file vMac.ROM into "$biosdir" and System Tools.dsk to $romdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/vanfanel/minivmac_sdl2/master/COPYING.txt"
 rp_module_section="exp"
-rp_module_flags="!mali"
+rp_module_flags=""
+
+function depends_minivmac() {
+    getDepends libsdl2-dev
+}
 
 function sources_minivmac() {
     gitPullOrClone "$md_build" https://github.com/vanfanel/minivmac_sdl2.git
@@ -32,12 +36,10 @@ function install_minivmac() {
 }
 
 function configure_minivmac() {
-    mkRomDir "macintoshplus"
-
-    mkUserDir "$md_conf_root/macintoshplus"
+    mkRomDir "macintosh"
 
     ln -sf "$biosdir/vMac.ROM" "$md_inst/vMac.ROM"
 
-    addEmulator 1 "$md_id" "macintoshplus" "pushd $md_inst; $md_inst/minivmac $romdir/macintoshplus/System\ Tools.dsk %ROM%; popd"
-    addSystem "macintoshplus"
+    addEmulator 1 "$md_id" "macintosh" "pushd $md_inst; $md_inst/minivmac $romdir/macintosh/System\ Tools.dsk %ROM%; popd"
+    addSystem "macintosh"
 }
