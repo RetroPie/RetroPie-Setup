@@ -31,7 +31,7 @@ function module_builder() {
         for mode in clean remove depends sources build install create_bin clean remove "depends remove"; do
             rp_callModule "$id" $mode
             # return on error
-            [[ $? -eq 1 ]] && return 1
+            # [[ $? -eq 1 ]] && return 1
             # no module found - skip to next module
             [[ $? -eq 2 ]] && break
         done
@@ -40,7 +40,7 @@ function module_builder() {
 }
 
 function section_builder() {
-    module_builder $(rp_getSectionIds $1) || return 1
+    module_builder $(rp_getSectionIds $1)
 }
 
 function upload_builder() {
