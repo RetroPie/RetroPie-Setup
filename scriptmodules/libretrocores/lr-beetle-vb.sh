@@ -14,17 +14,17 @@ rp_module_desc="Virtual Boy emulator - Mednafen VB (optimised) port for libretro
 rp_module_help="ROM Extensions: .vb .zip\n\nCopy your Virtual Boy roms to $romdir/virtualboy"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/beetle-vb-libretro/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="!armv6"
+rp_module_flags=""
 
 function sources_lr-beetle-vb() {
     gitPullOrClone "$md_build" https://github.com/libretro/beetle-vb-libretro.git
 }
 
 function build_lr-beetle-vb() {
+    local params=(NEED_STEREO_SOUND=1)
+    isPlatform "arm" && params+=(platform=armv FRONTEND_SUPPORTS_RGB565=1)
     make clean
-    local params=()
-    isPlatform "arm" && params+=("platform=armvneon" "FRONTEND_SUPPORTS_RGB565=1")
-    make "${params[@]}" NEED_STEREO_SOUND=1
+    make "${params[@]}"
     md_ret_require="$md_build/mednafen_vb_libretro.so"
 }
 
