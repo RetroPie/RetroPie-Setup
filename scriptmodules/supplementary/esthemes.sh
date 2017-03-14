@@ -78,6 +78,8 @@ function gui_esthemes() {
         'HerbFargus tronkyfran'
         'lilbud flat'
         'lilbud flat-dark'
+        'FlyingTomahawk futura-10px'
+        'FlyingTomahawk futura-10px-dark'
     )
     while true; do
         local theme
