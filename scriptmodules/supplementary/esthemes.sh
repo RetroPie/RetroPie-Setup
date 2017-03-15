@@ -80,6 +80,7 @@ function gui_esthemes() {
         'lilbud flat-dark'
         'FlyingTomahawk futura-10px'
         'FlyingTomahawk futura-10px-dark'
+        'G-rila fundamental'
     )
     while true; do
         local theme
