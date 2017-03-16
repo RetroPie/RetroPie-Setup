@@ -66,6 +66,7 @@ function _add_system_attractmode() {
     local config="$attract_dir/attract.cfg"
     local tab=$'\t'
     if [[ -f "$config" ]] && ! grep -q "display$tab$fullname" "$config"; then
+        cp "$config" "$config.bak"
         cat >>"$config" <<_EOF_
 display${tab}$fullname
 ${tab}layout               Basic
