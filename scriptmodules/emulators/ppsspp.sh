@@ -29,8 +29,9 @@ function sources_ppsspp() {
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
 
     # remove -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 as we handle this ourselves if armv7 on Raspbian
-    # we also need to set our own ARCH_FLAGS to include our own CXXFLAGS
-    sed -i -e "/-U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2/d" -e "/set(ARCH_FLAGS/d" cmake/Toolchains/raspberry.armv7.cmake
+    sed -i -e "/^  -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2/d" cmake/Toolchains/raspberry.armv7.cmake
+    # set ARCH_FLAGS to our own CXXFLAGS (which includes GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 if needed)
+    sed -i "s/^set(ARCH_FLAGS.*/set(ARCH_FLAGS \"$CXXFLAGS\")/" cmake/Toolchains/raspberry.armv7.cmake
 
     if isPlatform "aarch64"; then
         applyPatch "$md_data/01_aarch64.diff"
@@ -114,7 +115,7 @@ function build_ppsspp() {
     # build ppsspp
     cd "$md_build/ppsspp"
     rm -rf CMakeCache.txt CMakeFiles
-    local params=(-DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS="$CXXFLAGS")
+    local params=()
     if isPlatform "rpi"; then
         if isPlatform "armv6"; then
             params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake)
