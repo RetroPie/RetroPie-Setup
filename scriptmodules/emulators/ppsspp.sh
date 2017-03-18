@@ -33,10 +33,6 @@ function sources_ppsspp() {
     # set ARCH_FLAGS to our own CXXFLAGS (which includes GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 if needed)
     sed -i "s/^set(ARCH_FLAGS.*/set(ARCH_FLAGS \"$CXXFLAGS\")/" cmake/Toolchains/raspberry.armv7.cmake
 
-    if isPlatform "aarch64"; then
-        applyPatch "$md_data/01_aarch64.diff"
-    fi
-
     if hasPackage cmake 3.6 lt; then
         cd ..
         mkdir -p cmake
