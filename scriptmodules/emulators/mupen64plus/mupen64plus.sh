@@ -232,6 +232,8 @@ function testCompatibility() {
             iniConfig " = " "" "$config"
             # Settings version. Don't touch it.
             iniSet "configVersion" "15"
+            # Size of texture cache in megabytes. Good value is VRAM*3/4
+            iniSet "CacheSize" "50"
             # Enable FBEmulation if necessary
             iniSet "EnableFBEmulation" "False"
             for game in "${GLideN64FBEMU_whitelist[@]}"; do
