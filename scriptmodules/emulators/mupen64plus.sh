@@ -35,7 +35,6 @@ function sources_mupen64plus() {
             'gizmo98 audio-omx'
             'ricrpi video-gles2rice pandora-backport'
             'ricrpi video-gles2n64'
-            'gizmo98 video-videocore'
         )
     else
         repos+=(
@@ -99,7 +98,6 @@ function build_mupen64plus() {
             'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
             'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
             'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
-            'mupen64plus-video-videocore/projects/unix/mupen64plus-video-videocore.so'
         )
     else
         md_ret_require+=(
@@ -142,7 +140,6 @@ function configure_mupen64plus() {
             addEmulator 0 "${md_id}-gles2rice$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
         done
         addEmulator 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
-        addEmulator 0 "${md_id}-videocore" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-videocore %ROM%"
     else
         addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
         addEmulator 0 "${md_id}-GLideN64-GL3-3" "n64" "MESA_GL_VERSION_OVERRIDE=3.3COMPAT $md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
