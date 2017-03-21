@@ -211,6 +211,7 @@ function testCompatibility() {
         empire
         beetle
         donkey
+        zelda
     )
 
     local GLideN64NativeResolution_blacklist=(
