@@ -234,6 +234,9 @@ function testCompatibility() {
             iniSet "configVersion" "15"
             # Size of texture cache in megabytes. Good value is VRAM*3/4
             iniSet "CacheSize" "50"
+            # Enable FPS Counter. Fixes zelda depth issue
+            iniSet "ShowFPS " "True"
+            iniSet "fontSize" "14"
             # Enable FBEmulation if necessary
             iniSet "EnableFBEmulation" "False"
             for game in "${GLideN64FBEMU_whitelist[@]}"; do
