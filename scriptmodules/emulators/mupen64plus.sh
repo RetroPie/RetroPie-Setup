@@ -35,7 +35,6 @@ function sources_mupen64plus() {
             'gizmo98 audio-omx'
             'ricrpi video-gles2rice pandora-backport'
             'ricrpi video-gles2n64'
-            'gizmo98 video-videocore'
         )
     else
         repos+=(
@@ -51,7 +50,7 @@ function sources_mupen64plus() {
         dir="$md_build/mupen64plus-${repo[1]}"
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
-    gitPullOrClone "$md_build/GLideN64" https://github.com/joolswills/GLideN64.git flicker_fix
+    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
     # fix for static x86_64 libs found in repo which are not usefull if target is i686
     isPlatform "x11" && sed -i "s/BCMHOST/UNIX/g" GLideN64/src/GLideNHQ/CMakeLists.txt
 }
@@ -78,7 +77,7 @@ function build_mupen64plus() {
     # build GLideN64
     "$md_build/GLideN64/src/getRevision.sh"
     pushd "$md_build/GLideN64/projects/cmake"
-    params=("-DMUPENPLUSAPI=On" "-DVEC4_OPT=On")
+    params=("-DMUPENPLUSAPI=On")
     isPlatform "neon" && params+=("-DNEON_OPT=On")
     isPlatform "rpi3" && params+=("-DCRC_ARMV8=On")
     cmake "${params[@]}" ../../src/
@@ -99,7 +98,6 @@ function build_mupen64plus() {
             'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
             'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
             'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
-            'mupen64plus-video-videocore/projects/unix/mupen64plus-video-videocore.so'
         )
     else
         md_ret_require+=(
@@ -142,7 +140,6 @@ function configure_mupen64plus() {
             addEmulator 0 "${md_id}-gles2rice$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
         done
         addEmulator 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
-        addEmulator 0 "${md_id}-videocore" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-videocore %ROM%"
     else
         addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
         addEmulator 0 "${md_id}-GLideN64-GL3-3" "n64" "MESA_GL_VERSION_OVERRIDE=3.3COMPAT $md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
@@ -193,11 +190,11 @@ function configure_mupen64plus() {
             echo "[Video-GLideN64]" >> "$config"
         fi
         # Settings version. Don't touch it.
-        iniSet "configVersion" "15"
+        iniSet "configVersion" "17"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         # Size of texture cache in megabytes. Good value is VRAM*3/4
-        iniSet "CacheSize" "192"
+        iniSet "CacheSize" "50"
         # Disable FB emulation until visual issues are sorted out
         iniSet "EnableFBEmulation" "False"
         # Use native res

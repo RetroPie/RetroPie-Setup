@@ -211,6 +211,7 @@ function testCompatibility() {
         empire
         beetle
         donkey
+        zelda
     )
 
     local GLideN64NativeResolution_blacklist=(
@@ -230,15 +231,20 @@ function testCompatibility() {
             fi
             iniConfig " = " "" "$config"
             # Settings version. Don't touch it.
-            iniSet "configVersion" "15"
+            iniSet "configVersion" "17"
+            # Size of texture cache in megabytes. Good value is VRAM*3/4
+            iniSet "CacheSize" "50"
+            # Enable FPS Counter. Fixes zelda depth issue
+            iniSet "ShowFPS " "True"
+            iniSet "fontSize" "14"
             # Enable FBEmulation if necessary
-            iniSet "EnableFBEmulation" "False"
-            for game in "${GLideN64FBEMU_whitelist[@]}"; do
-                if [[ "${ROM,,}" == *"$game"* ]]; then
-                    iniSet "EnableFBEmulation" "True"
-                    break
-                fi
-            done
+            iniSet "EnableFBEmulation" "True"
+            #for game in "${GLideN64FBEMU_whitelist[@]}"; do
+            #    if [[ "${ROM,,}" == *"$game"* ]]; then
+            #        iniSet "EnableFBEmulation" "True"
+            #        break
+            #    fi
+            #done
             # Set native resolution factor of 1
             iniSet "UseNativeResolutionFactor" "1"
             for game in "${GLideN64NativeResolution_blacklist[@]}"; do
