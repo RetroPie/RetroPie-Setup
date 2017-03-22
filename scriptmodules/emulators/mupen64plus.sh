@@ -50,7 +50,7 @@ function sources_mupen64plus() {
         dir="$md_build/mupen64plus-${repo[1]}"
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
-    gitPullOrClone "$md_build/GLideN64" https://github.com/joolswills/GLideN64.git flicker_fix
+    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
     # fix for static x86_64 libs found in repo which are not usefull if target is i686
     isPlatform "x11" && sed -i "s/BCMHOST/UNIX/g" GLideN64/src/GLideNHQ/CMakeLists.txt
 }
@@ -190,7 +190,7 @@ function configure_mupen64plus() {
             echo "[Video-GLideN64]" >> "$config"
         fi
         # Settings version. Don't touch it.
-        iniSet "configVersion" "15"
+        iniSet "configVersion" "17"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         # Size of texture cache in megabytes. Good value is VRAM*3/4
