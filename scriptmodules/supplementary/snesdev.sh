@@ -89,17 +89,17 @@ function gui_snesdev() {
         case $choices in
             1)
                 enable_at_start_snesdev 3
-                make -C "$md_inst" make installservice
+                make -C "$md_inst" installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling pads and button)."
                 ;;
             2)
                 enable_at_start_snesdev 1
-                make -C "$md_inst" make installservice
+                make -C "$md_inst" installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only pads)."
                 ;;
             3)
                 enable_at_start_snesdev 2
-                make -C "$md_inst" make installservice
+                make -C "$md_inst" installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only button)."
                 ;;
             4)
