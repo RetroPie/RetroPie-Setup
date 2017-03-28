@@ -38,7 +38,7 @@ function install_lr-imame4all() {
 
 function configure_lr-imame4all() {
     local system
-    for system in arcade mame-mame4all; do
+    for system in arcade mame-mame4all mame-libretro; do
         mkRomDir "$system"
         ensureSystemretroconfig "$system"
         addEmulator 0 "$md_id" "$system" "$md_inst/mame2000_libretro.so"
