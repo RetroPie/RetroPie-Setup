@@ -899,6 +899,7 @@ function show_launch() {
         if [[ -n "$DISPLAY" ]]; then
             feh -F -N -Z -Y -q "$image" & &>/dev/null
             IMG_PID=$!
+            sleep "$IMAGE_DELAY"
         else
             fbi -1 -t "$IMAGE_DELAY" -noverbose -a "$image" </dev/tty &>/dev/null
         fi
