@@ -70,10 +70,13 @@ function governor_runcommand() {
 function gui_runcommand() {
     iniConfig " = " '"' "$configdir/all/runcommand.cfg"
 
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
+    local cmd
+    local option
     while true; do
 
-        local options=()
+        cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
+        options=()
+
         iniGet "disable_menu"
         local disable_menu="$ini_value"
         [[ "$disable_menu" != 1 ]] && disable_joystick=0
@@ -101,7 +104,12 @@ function gui_runcommand() {
             options+=(3 "Launch menu joystick control (Disabled)")
         fi
 
-        options+=(4 "CPU configuration")
+        iniGet "image_delay"
+        local image_delay="$ini_value"
+        [[ -z "$image_delay" ]] && image_delay=2
+        options+=(4 "Launch image delay in seconds (currently $image_delay)")
+
+        options+=(5 "CPU configuration")
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -116,6 +124,11 @@ function gui_runcommand() {
                     iniSet "disable_joystick" "$((disable_joystick ^ 1))"
                     ;;
                 4)
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the delay in seconds" 10 60 "$image_delay")
+                    choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    iniSet "image_delay" "$choice"
+                    ;;
+                5)
                     governor_runcommand
                     ;;
             esac

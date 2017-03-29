@@ -91,6 +91,9 @@ function get_config() {
         iniGet "disable_menu"
         DISABLE_MENU="$ini_value"
         [[ "$DISABLE_MENU" -eq 1 ]] && DISABLE_JOYSTICK=1
+        iniGet "image_delay"
+        IMAGE_DELAY="$ini_value"
+        [[ -z "$IMAGE_DELAY" ]] && IMAGE_DELAY=2
     fi
 
     if [[ -f "$TVSERVICE" ]]; then
@@ -897,7 +900,7 @@ function show_launch() {
             feh -F -N -Z -Y -q "$image" & &>/dev/null
             IMG_PID=$!
         else
-            fbi -1 -t 2 -noverbose -a "$image" </dev/tty &>/dev/null
+            fbi -1 -t "$IMAGE_DELAY" -noverbose -a "$image" </dev/tty &>/dev/null
         fi
     elif [[ "$DISABLE_MENU" -ne 1 && "$USE_ART" -ne 1 ]]; then
         local launch_name
