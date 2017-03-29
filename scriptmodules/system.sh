@@ -20,6 +20,8 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
+    __has_binaries=0
+
     get_platform
 
     get_os_version
@@ -91,6 +93,11 @@ function get_os_version() {
             # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
             if [[ "$__os_id" == "Raspbian" ]]; then
                 __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
+            fi
+
+            # we provide binaries for RPI only
+            if isPlatform "rpi"; then
+                __has_binaries=1
             fi
 
             # get major version (8 instead of 8.0 etc)
@@ -259,8 +266,6 @@ function platform_rpi1() {
     # if building in a chroot, what cpu should be set by qemu
     # make chroot identify as arm6l
     __qemu_cpu=arm1176
-    # do we have prebuild binaries for this platform
-    __has_binaries=1
 }
 
 function platform_rpi2() {
@@ -269,7 +274,6 @@ function platform_rpi2() {
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon rpi"
     __qemu_cpu=cortex-a7
-    __has_binaries=1
 }
 
 # note the rpi3 currently uses the rpi2 binaries - for ease of maintenance - rebuilding from source
@@ -279,7 +283,6 @@ function platform_rpi3() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi"
-    __has_binaries=1
 }
 
 function platform_odroid-c1() {
@@ -288,7 +291,6 @@ function platform_odroid-c1() {
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon mali"
     __qemu_cpu=cortex-a9
-    __has_binaries=0
 }
 
 function platform_odroid-c2() {
@@ -309,7 +311,6 @@ function platform_x86() {
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="x11"
-    __has_binaries=0
 }
 
 function platform_generic-x11() {
@@ -317,7 +318,6 @@ function platform_generic-x11() {
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="x11"
-    __has_binaries=0
 }
 
 function platform_armv7-mali() {
@@ -325,7 +325,6 @@ function platform_armv7-mali() {
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="arm armv7 neon mali"
-    __has_binaries=0
 }
 
 function platform_imx6() {
@@ -333,5 +332,4 @@ function platform_imx6() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon"
-    __has_binaries=0
 }
