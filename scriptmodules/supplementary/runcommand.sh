@@ -37,6 +37,7 @@ function install_bin_runcommand() {
         iniSet "disable_joystick" "0"
         iniSet "governor" ""
         iniSet "disable_menu" "0"
+        iniSet "image_delay" "2"
         chown $user:$user "$configdir/all/runcommand.cfg"
     fi
     if [[ ! -f "$configdir/all/runcommand-launch-dialog.cfg" ]]; then
@@ -68,47 +69,43 @@ function governor_runcommand() {
 }
 
 function gui_runcommand() {
-    iniConfig " = " '"' "$configdir/all/runcommand.cfg"
+    local config="$configdir/all/runcommand.cfg"
+    iniConfig " = " '"' "$config"
+    chown $user:$user "$config"
 
     local cmd
     local option
     while true; do
 
+        eval "$(loadModuleConfig \
+            'disable_menu=0' \
+            'use_art=0' \
+            'disable_joystick=0' \
+            'image_delay=2' \
+        )"
+
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
         options=()
 
-        iniGet "disable_menu"
-        local disable_menu="$ini_value"
-        [[ "$disable_menu" != 1 ]] && disable_joystick=0
         if [[ "$disable_menu" -eq 0 ]]; then
-            options+=(1 "Launch menu (Enabled)")
+            options+=(1 "Launch menu (currently: Enabled)")
         else
-            options+=(1 "Launch menu (Disabled)")
+            options+=(1 "Launch menu (currently: Disabled)")
         fi
 
-        iniGet "use_art"
-        local use_art="$ini_value"
-        [[ "$use_art" != 1 ]] && use_art=0
         if [[ "$use_art" -eq 1 ]]; then
-            options+=(2 "Launch menu art (Enabled)")
+            options+=(2 "Launch menu art (currently: Enabled)")
         else
-            options+=(2 "Launch menu art (Disabled)")
+            options+=(2 "Launch menu art (currently: Disabled)")
         fi
 
-        iniGet "disable_joystick"
-        local disable_joystick="$ini_value"
-        [[ "$disable_joystick" != 1 ]] && disable_joystick=0
         if [[ "$disable_joystick" -eq 0 ]]; then
-            options+=(3 "Launch menu joystick control (Enabled)")
+            options+=(3 "Launch menu joystick control (currently: Enabled)")
         else
-            options+=(3 "Launch menu joystick control (Disabled)")
+            options+=(3 "Launch menu joystick control (currently: Disabled)")
         fi
 
-        iniGet "image_delay"
-        local image_delay="$ini_value"
-        [[ -z "$image_delay" ]] && image_delay=2
         options+=(4 "Launch image delay in seconds (currently $image_delay)")
-
         options+=(5 "CPU configuration")
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
