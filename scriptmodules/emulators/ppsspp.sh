@@ -131,7 +131,6 @@ function build_ppsspp() {
 function install_ppsspp() {
     md_ret_files=(
         'ppsspp/assets'
-        'ppsspp/flash0'
         'ppsspp/PPSSPPSDL'
     )
 }
