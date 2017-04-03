@@ -130,7 +130,7 @@ function remap() {
 }
 
 function setAudio() {
-    if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == *BCM27* ]]; then
+    if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == *BCM* ]]; then
         # If a raspberry pi is used try to set the right output and use audio omx if possible
         local audio_device=$(amixer)
         if [[ "$audio_device" == *PCM* ]]; then
