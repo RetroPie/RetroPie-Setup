@@ -312,9 +312,9 @@ function connect_mode_bluetooth() {
     local cmd=(dialog --backtitle "$__backtitle" --default-item "$connect_mode" --menu "Choose a connect mode" 22 76 16)
 
     local options=(
-        default "Bluetooth stack default behaviour"
+        default "Bluetooth stack default behaviour (recommended)"
         boot "Connect to devices once at boot"
-        background "Connect to devices in the background"
+        background "Force connecting to devices in the background"
     )
 
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
