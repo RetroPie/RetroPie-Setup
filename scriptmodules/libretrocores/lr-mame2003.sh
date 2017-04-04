@@ -17,8 +17,6 @@ rp_module_section="main"
 
 function sources_lr-mame2003() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2003-libretro.git
-    # quieter build
-    sed -i "s/-Wcast-align//" Makefile
 }
 
 function build_lr-mame2003() {
