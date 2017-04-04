@@ -37,6 +37,8 @@ function depends_kodi() {
         fi
     fi
 
+    getDepends policykit-1
+
     addUdevInputRules
 }
 
