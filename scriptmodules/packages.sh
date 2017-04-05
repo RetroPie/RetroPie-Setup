@@ -155,6 +155,7 @@ function rp_callModule() {
     local md_ret_require=()
     local md_ret_files=()
     local md_ret_errors=()
+    local md_ret_info=()
 
     local action
     local pushed=1
@@ -288,6 +289,11 @@ function rp_callModule() {
         # append to global errors and return an error
         __ERRMSGS+=("${md_ret_errors[@]}")
         return 1
+    fi
+
+    # some information messages were returned
+    if [[ "${#md_ret_info[@]}" -gt 0 ]]; then
+        __INFMSGS+=("${md_ret_info[@]}")
     fi
 
     return 0
