@@ -37,6 +37,7 @@ function install_lr-fbalpha() {
         'gamelist.txt'
         'whatsnew.html'
         'preset-example.zip'
+        'metadata'
     )
 }
 
@@ -50,6 +51,10 @@ function configure_lr-fbalpha() {
     # Create samples directory
     mkUserDir "$biosdir/fba"
     mkUserDir "$biosdir/fba/samples"
+
+    # copy hiscore.dat
+    cp "$md_inst/metadata/hiscore.dat" "$biosdir/fba/"
+    chown $user:$user "$biosdir/fba/hiscore.dat"
 
     # Set core options
     setRetroArchCoreOption "fba-diagnostic-input" "Hold Start"
