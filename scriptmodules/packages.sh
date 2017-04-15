@@ -26,6 +26,7 @@ __sections[opt]="optional"
 __sections[exp]="experimental"
 __sections[driver]="driver"
 __sections[config]="configuration"
+__sections[orangepi]="orangepi"
 
 function rp_listFunctions() {
     local idx
