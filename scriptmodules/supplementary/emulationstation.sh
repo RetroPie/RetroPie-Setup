@@ -136,8 +136,10 @@ function depends_emulationstation() {
 function sources_emulationstation() {
     local repo="$1"
     local branch="$2"
-    [[ -z "$repo" ]] && repo="https://github.com/retropie/EmulationStation"
-    [[ -z "$branch" ]] && branch="master"
+    #[[ -z "$repo" ]] && repo="https://github.com/retropie/EmulationStation"
+    #[[ -z "$branch" ]] && branch="master"
+    [[ -z "$repo" ]] && repo="https://github.com/gleam2003/EmulationStation"
+    [[ -z "$branch" ]] && branch="experimental"
     gitPullOrClone "$md_build" "$repo" "$branch"
 }
 
