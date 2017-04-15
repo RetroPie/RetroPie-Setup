@@ -33,6 +33,9 @@ function sources_retroarch() {
     fi
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
+    if isPlatform "rpi"; then
+        applyPatch "$md_data/03_dispmanx.diff"
+    fi
 }
 
 function build_retroarch() {
