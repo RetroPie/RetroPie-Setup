@@ -294,8 +294,7 @@ function rpSwap() {
             rpSwap off
             local memory=$(free -t -m | awk '/^Total:/{print $2}')
             local needed=$2
-            #local size=$((needed - memory))
-            local size=needed
+            local size=$((needed - memory))
             mkdir -p "$__swapdir/"
             if [[ $size -ge 0 ]]; then
                 echo "Adding $size MB of additional swap"
