@@ -236,6 +236,9 @@ function get_platform() {
             ODROID-C2)
                 __platform="odroid-c2"
                 ;;
+            sun8i)
+                __platform="H3-mali"
+                ;;
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
                 __platform="imx6"
                 ;;
@@ -332,4 +335,12 @@ function platform_imx6() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon"
+}
+
+function platform_H3-mali() {
+    __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv7 neon mali H3"
+    __has_binaries=0
 }
