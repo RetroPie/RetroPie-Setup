@@ -434,6 +434,7 @@ function rp_registerAllModules() {
     rp_registerModuleDir 300 "ports"
     rp_registerModuleDir 800 "supplementary"
     rp_registerModuleDir 900 "admin"
+    rp_registerModuleDir 400 "orangepi"
 }
 
 function rp_getIdxFromId() {
