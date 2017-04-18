@@ -20,7 +20,7 @@ function sources_lr-mame2014() {
 }
 
 function build_lr-mame2014() {
-    rpSwap on 750
+    rpSwap on 1200
     make clean
     make
     rpSwap off
