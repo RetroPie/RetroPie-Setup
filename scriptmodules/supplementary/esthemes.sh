@@ -31,6 +31,12 @@ function install_theme_esthemes() {
         theme="carbon"
         repo="RetroPie"
     fi
+    if [[ "$theme" == "crt" ]]; then
+        repo="anthonycaccese"
+    fi
+    if [[ "$theme" == "crt-centered" ]]; then
+        repo="anthonycaccese"
+    fi
     mkdir -p "/etc/emulationstation/themes"
     # do a fresh checkout to avoid some line ending issues with the autocrlf mode used to create the images vs git default on Raspbian
     rm -rf "/etc/emulationstation/themes/$theme"
@@ -49,6 +55,8 @@ function gui_esthemes() {
         'RetroPie carbon'
         'RetroPie carbon-centered'
         'RetroPie carbon-nometa'
+        'crt'
+        'crt-centered'
         'ehettervik pixel'
         'ehettervik pixel-metadata'
         'ehettervik pixel-tft'
