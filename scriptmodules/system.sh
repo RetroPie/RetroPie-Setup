@@ -340,7 +340,7 @@ function platform_imx6() {
 function platform_H3-mali() {
     __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
+    __default_makeflags=""
     __platform_flags="arm armv7 neon mali H3"
     __has_binaries=0
 }
