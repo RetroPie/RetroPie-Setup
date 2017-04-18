@@ -144,7 +144,7 @@ function sources_emulationstation() {
 }
 
 function build_emulationstation() {
-    rpSwap on 512
+    rpSwap on 1024
     cmake . -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
     make clean
     make
