@@ -86,6 +86,7 @@ function iniProcess() {
     fi
 
     [[ "$file" =~ retroarch\.cfg$ ]] && retroarchIncludeToEnd "$file"
+    return 0
 }
 
 ## @fn iniUnset()
