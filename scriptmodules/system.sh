@@ -40,7 +40,7 @@ function setup_env() {
     __archive_url="http://files.retropie.org.uk/archives"
 
     # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
-    [[ $__memory_phys -ge 256 ]] && __default_cflags+=" -pipe"
+    [[ $__memory_phys -ge 512 ]] && __default_cflags+=" -pipe"
 
     [[ -z "${CFLAGS}" ]] && export CFLAGS="${__default_cflags}"
     [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cxxflags}"
@@ -124,9 +124,12 @@ function get_os_version() {
         Ubuntu)
             if compareVersions "$__os_release" lt 14.04; then
                 error="You need Ubuntu 14.04 or newer"
+            elif compareVersions "$__os_release" lt 16.10; then
+                __os_debian_ver="8"
+            else
+                __os_debian_ver="9"
             fi
             __os_ubuntu_ver="$__os_release"
-            __os_debian_ver="8"
             ;;
         elementary)
             if compareVersions "$__os_release" lt 0.3; then
@@ -156,8 +159,8 @@ function get_default_gcc() {
     if [[ -z "$__default_gcc_version" ]]; then
         case "$__os_id" in
             Raspbian|Debian)
-                case "$__os_codename" in
-                    *)
+                case "$__os_debian_ver" in
+                    8)
                         __default_gcc_version="4.9"
                 esac
                 ;;
