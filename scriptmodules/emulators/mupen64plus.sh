@@ -12,7 +12,7 @@
 rp_module_id="mupen64plus"
 rp_module_desc="N64 emulator MUPEN64Plus"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
-rp_module_section="main"
+rp_module_section="opt"
 
 function depends_mupen64plus() {
     local depends=(cmake libsamplerate0-dev libspeexdsp-dev )
