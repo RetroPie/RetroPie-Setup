@@ -23,7 +23,7 @@ function depends_zesarux() {
 }
 
 function sources_zesarux() {
-    wget -O- -q "$__archive_url/ZEsarUX_src-4.1.tar.gz" | tar -xvz --strip-components=1
+    wget -O- -q "$__archive_url/ZEsarUX_src-5.0.tar.gz" | tar -xvz --strip-components=1
 }
 
 function build_zesarux() {
