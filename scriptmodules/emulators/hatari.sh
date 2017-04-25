@@ -40,7 +40,7 @@ function _build_libcapsimage_hatari() {
     cd capsimg_source_linux_macosx/CAPSImg
     ./configure --prefix="$md_build"
     make clean
-    make
+    make -j2
     make install
     mkdir -p "$md_build/src/includes/caps5/"
     cp -R "../LibIPF/"*.h "$md_build/src/includes/caps5/"
@@ -55,6 +55,7 @@ function build_hatari() {
     rm -f CMakeCache.txt
     # capsimage headers includes contain __cdecl which we don't want
     # also add $md_inst to library search path for loading capsimage library
+    rpSwap on 1024
     CFLAGS+=" -D__cdecl=''" LDFLAGS+="-Wl,-rpath='$md_inst'" \
         cmake . \
         -DCMAKE_SKIP_RPATH=ON \
@@ -63,8 +64,8 @@ function build_hatari() {
         -DCAPSIMAGE_LIBRARY="$md_build/lib/libcapsimage.so.5.1" \
         -DENABLE_SDL2:BOOL=1 \
         -DSDL2_LIBRARY=/usr/lib/arm-linux-gnueabihf/libSDL2.so
-    make clean
-    make
+    #make clean
+    make -j2
     md_ret_require="$md_build/src/hatari"
 }
 
