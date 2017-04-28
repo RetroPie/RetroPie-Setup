@@ -18,7 +18,7 @@ function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
-    isPlatform "x11" && depends+=(libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev)
+    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev)
 
     # only install nvidia-cg-toolkit if it is available (as the non-free repo may not be enabled)
     if isPlatform "x86"; then
