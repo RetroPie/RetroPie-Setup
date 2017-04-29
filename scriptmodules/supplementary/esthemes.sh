@@ -81,6 +81,8 @@ function gui_esthemes() {
         'FlyingTomahawk futura-10px'
         'FlyingTomahawk futura-10px-dark'
         'G-rila fundamental'
+        'ruckage nes-mini'
+        'ruckage famicom-mini'
     )
     while true; do
         local theme
