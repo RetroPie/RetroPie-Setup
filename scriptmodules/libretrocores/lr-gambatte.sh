@@ -12,6 +12,7 @@
 rp_module_id="lr-gambatte"
 rp_module_desc="Gameboy Color emu - libgambatte port for libretro"
 rp_module_help="ROM Extensions: .gb .gbc .zip\n\nCopy your GameBoy roms to $romdir/gb\n\nCopy your GameBoy Color roms to $romdir/gbc"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/gambatte-libretro/master/COPYING"
 rp_module_section="main"
 
 function sources_lr-gambatte() {
@@ -44,7 +45,8 @@ function configure_lr-gambatte() {
     mkRomDir "gb"
     ensureSystemretroconfig "gb"
     ensureSystemretroconfig "gbc"
-
-    addSystem 1 "$md_id" "gb" "$md_inst/gambatte_libretro.so"
-    addSystem 1 "$md_id" "gbc" "$md_inst/gambatte_libretro.so"
+    addEmulator 1 "$md_id" "gb" "$md_inst/gambatte_libretro.so"
+    addEmulator 1 "$md_id" "gbc" "$md_inst/gambatte_libretro.so"
+    addSystem "gb"
+    addSystem "gbc"
 }

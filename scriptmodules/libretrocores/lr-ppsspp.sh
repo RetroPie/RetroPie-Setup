@@ -12,7 +12,8 @@
 rp_module_id="lr-ppsspp"
 rp_module_desc="PlayStation Portable emu - PPSSPP port for libretro"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
-rp_module_section="main"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/ppsspp/master/LICENSE.TXT"
+rp_module_section="opt"
 rp_module_flags="!aarch64"
 
 function depends_lr-ppsspp() {
@@ -27,11 +28,8 @@ function sources_lr-ppsspp() {
     else
         gitPullOrClone "$md_build" https://github.com/libretro/libretro-ppsspp.git
     fi
-    runCmd git submodule update --init
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
-    # backup older includes which are needed due to missing defines (eg PIX_FMT_ARGB / CODEC_ID_H264)
-    cp -R "ffmpeg/linux/armv7/include" "ffmpeg/linux/"
 }
 
 function build_lr-ppsspp() {
@@ -42,10 +40,8 @@ function build_lr-ppsspp() {
     local params=()
     if isPlatform "rpi"; then
         if isPlatform "rpi1"; then
-            cp -R "ffmpeg/linux/include" "ffmpeg/linux/arm/"
             params+=("platform=rpi1")
         else
-            cp -R "ffmpeg/linux/include" "ffmpeg/linux/armv7/"
             params+=("platform=rpi2")
         fi
     fi
@@ -65,10 +61,13 @@ function configure_lr-ppsspp() {
     mkRomDir "psp"
     ensureSystemretroconfig "psp"
 
-    mkUserDir "$biosdir/PPSSPP"
-    cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
-    cp -Rv "$md_inst/flash0" "$biosdir/PPSSPP/"
-    chown -R $user:$user "$biosdir/PPSSPP"
+    if [[ "$md_mode" == "install" ]]; then
+        mkUserDir "$biosdir/PPSSPP"
+        cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
+        cp -Rv "$md_inst/flash0" "$biosdir/PPSSPP/"
+        chown -R $user:$user "$biosdir/PPSSPP"
+    fi
 
-    addSystem 1 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"
+    addEmulator 1 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"
+    addSystem "psp"
 }

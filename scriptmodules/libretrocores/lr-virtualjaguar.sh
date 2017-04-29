@@ -12,6 +12,7 @@
 rp_module_id="lr-virtualjaguar"
 rp_module_desc="Atari Jaguar emu - Virtual Jaguar (optimised) port for libretro"
 rp_module_help="ROM Extensions: .j64 .jag .zip\n\nCopy your Atari Jaguar roms to $romdir/atarijaguar"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/virtualjaguar-libretro/master/docs/GPLv3"
 rp_module_section="exp"
 rp_module_flags="!armv6"
 
@@ -36,5 +37,6 @@ function configure_lr-virtualjaguar() {
     mkRomDir "atarijaguar"
     ensureSystemretroconfig "atarijaguar"
 
-    addSystem 1 "$md_id" "atarijaguar" "$md_inst/virtualjaguar_libretro.so"
+    addEmulator 1 "$md_id" "atarijaguar" "$md_inst/virtualjaguar_libretro.so"
+    addSystem "atarijaguar"
 }

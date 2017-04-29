@@ -12,6 +12,7 @@
 rp_module_id="lr-mgba"
 rp_module_desc="GBA emulator - MGBA (optimised) port for libretro"
 rp_module_help="ROM Extensions: .gba .zip\n\nCopy your Game Boy Advance roms to $romdir/gba\n\nCopy the required BIOS file gba_bios.bin to $biosdir"
+rp_module_licence="MPL2 https://raw.githubusercontent.com/libretro/mgba/master/LICENSE"
 rp_module_section="main"
 rp_module_flags=""
 
@@ -44,5 +45,6 @@ function configure_lr-mgba() {
 
     local def=1
     isPlatform "armv6" && def=0
-    addSystem $def "$md_id" "gba" "$md_inst/mgba_libretro.so"
+    addEmulator $def "$md_id" "gba" "$md_inst/mgba_libretro.so"
+    addSystem "gba"
 }

@@ -12,6 +12,7 @@
 rp_module_id="lr-desmume"
 rp_module_desc="NDS emu - DESMUME"
 rp_module_help="ROM Extensions: .nds .zip\n\nCopy your Nintendo DS roms to $romdir/nds"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/desmume/master/desmume/COPYING"
 rp_module_section="exp"
 
 function sources_lr-desmume() {
@@ -37,5 +38,6 @@ function configure_lr-desmume() {
     mkRomDir "nds"
     ensureSystemretroconfig "nds"
 
-    addSystem 0 "$md_id" "nds" "$md_inst/desmume_libretro.so"
+    addEmulator 0 "$md_id" "nds" "$md_inst/desmume_libretro.so"
+    addSystem "nds"
 }

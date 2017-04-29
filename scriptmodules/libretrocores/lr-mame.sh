@@ -12,6 +12,7 @@
 rp_module_id="lr-mame"
 rp_module_desc="MAME emulator - MAME (current) port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mame/master/LICENSE.md"
 rp_module_section="exp"
 
 function _get_params_lr-mame() {
@@ -20,12 +21,19 @@ function _get_params_lr-mame() {
     echo "${params[@]}"
 }
 
+function depends_lr-mame() {
+    if compareVersions $(gcc -dumpversion) lt 5.0.0; then
+        md_ret_errors+=("Sorry, you need an OS with gcc 5.0 or newer to compile lr-mame")
+        return 1
+    fi
+}
+
 function sources_lr-mame() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame.git
 }
 
 function build_lr-mame() {
-    rpSwap on 750
+    rpSwap on 1200
     local params=($(_get_params_lr-mame) SUBTARGET=arcade)
     make clean
     make "${params[@]}"
@@ -40,11 +48,11 @@ function install_lr-mame() {
 }
 
 function configure_lr-mame() {
-    mkRomDir "arcade"
-    mkRomDir "mame-libretro"
-    ensureSystemretroconfig "arcade"
-    ensureSystemretroconfig "mame-libretro"
-
-    addSystem 0 "$md_id" "arcade" "$md_inst/mamearcade_libretro.so"
-    addSystem 0 "$md_id" "mame-libretro arcade mame" "$md_inst/mamearcade_libretro.so"
+    local system
+    for system in arcade mame-libretro; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/mamearcade_libretro.so"
+        addSystem "$system"
+    done
 }

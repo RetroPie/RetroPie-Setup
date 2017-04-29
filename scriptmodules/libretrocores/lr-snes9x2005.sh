@@ -12,6 +12,7 @@
 rp_module_id="lr-snes9x2005"
 rp_module_desc="Super Nintendo emu - Snes9x 1.43 based port for libretro"
 rp_module_help="Previously called lr-catsfc\n\nROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/snes9x2005/master/copyright"
 rp_module_section="main"
 
 function _update_hook_lr-snes9x2005() {
@@ -39,5 +40,6 @@ function configure_lr-snes9x2005() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 
-    addSystem 0 "$md_id" "snes" "$md_inst/snes9x2005_libretro.so"
+    addEmulator 0 "$md_id" "snes" "$md_inst/snes9x2005_libretro.so"
+    addSystem "snes"
 }

@@ -14,6 +14,7 @@
 rp_module_id="lr-prosystem"
 rp_module_desc="Atari 7800 ProSystem emu - ProSystem port for libretro"
 rp_module_help="ROM Extensions: .a78 .bin .zip\n\nCopy your Atari 7800 roms to $romdir/atari7800\n\nCopy the optional BIOS file 7800 BIOS (U).rom to $biosdir"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/prosystem-libretro/master/License.txt"
 rp_module_section="main"
 
 function sources_lr-prosystem() {
@@ -38,5 +39,6 @@ function configure_lr-prosystem() {
 
     ensureSystemretroconfig "atari7800"
 
-    addSystem 1 "$md_id" "atari7800" "$md_inst/prosystem_libretro.so"
+    addEmulator 1 "$md_id" "atari7800" "$md_inst/prosystem_libretro.so"
+    addSystem "atari7800"
 }

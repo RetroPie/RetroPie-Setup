@@ -12,6 +12,7 @@
 rp_module_id="lr-tgbdual"
 rp_module_desc="Gameboy Color emu - TGB Dual port for libretro"
 rp_module_help="ROM Extensions: .gb .gbc .zip\n\nCopy your GameBoy roms to $romdir/gb\n\nCopy your GameBoy Color roms to $romdir/gbc"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/tgbdual-libretro/master/docs/COPYING-2.0.txt"
 rp_module_section="opt"
 
 function sources_lr-tgbdual() {
@@ -39,6 +40,8 @@ function configure_lr-tgbdual() {
     # enable dual / link by default
     setRetroArchCoreOption "tgbdual_gblink_enable" "enabled"
 
-    addSystem 0 "$md_id" "gb" "$md_inst/tgbdual_libretro.so"
-    addSystem 0 "$md_id" "gbc" "$md_inst/tgbdual_libretro.so"
+    addEmulator 0 "$md_id" "gb" "$md_inst/tgbdual_libretro.so"
+    addEmulator 0 "$md_id" "gbc" "$md_inst/tgbdual_libretro.so"
+    addSystem "gb"
+    addSystem "gbc"
 }

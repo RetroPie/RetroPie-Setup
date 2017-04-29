@@ -12,6 +12,7 @@
 rp_module_id="lr-mame2010"
 rp_module_desc="Arcade emu - MAME 0.139 port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2010-libretro/master/docs/license.txt"
 rp_module_section="opt"
 
 function sources_lr-mame2010() {
@@ -39,11 +40,11 @@ function install_lr-mame2010() {
 }
 
 function configure_lr-mame2010() {
-    mkRomDir "arcade"
-    mkRomDir "mame-libretro"
-    ensureSystemretroconfig "arcade"
-    ensureSystemretroconfig "mame-libretro"
-
-    addSystem 0 "$md_id" "arcade" "$md_inst/mame2010_libretro.so"
-    addSystem 0 "$md_id" "mame-libretro arcade mame" "$md_inst/mame2010_libretro.so"
+    local system
+    for system in arcade mame-libretro; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/mame2010_libretro.so"
+        addSystem "$system"
+    done
 }

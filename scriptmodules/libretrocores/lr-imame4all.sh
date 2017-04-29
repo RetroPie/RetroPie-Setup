@@ -12,6 +12,7 @@
 rp_module_id="lr-imame4all"
 rp_module_desc="Arcade emu - iMAME4all (based on MAME 0.37b5) port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your iMAME4all roms to either $romdir/mame-mame4all or\n$romdir/arcade"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2000-libretro/master/readme.txt"
 rp_module_section="main"
 
 function sources_lr-imame4all() {
@@ -29,16 +30,18 @@ function build_lr-imame4all() {
 function install_lr-imame4all() {
     md_ret_files=(
         'mame2000_libretro.so'
-        'Readme.txt'
+        'readme.md'
+        'readme.txt'
+        'whatsnew.txt'
     )
 }
 
 function configure_lr-imame4all() {
-    mkRomDir "arcade"
-    mkRomDir "mame-mame4all"
-    ensureSystemretroconfig "arcade"
-    ensureSystemretroconfig "mame-mame4all"
-
-    addSystem 0 "$md_id" "arcade" "$md_inst/mame2000_libretro.so"
-    addSystem 0 "$md_id" "mame-mame4all arcade mame" "$md_inst/mame2000_libretro.so"
+    local system
+    for system in arcade mame-mame4all mame-libretro; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/mame2000_libretro.so"
+        addSystem "$system"
+    done
 }

@@ -12,6 +12,7 @@
 rp_module_id="lr-dinothawr"
 rp_module_desc="Dinothawr - standalone libretro puzzle game"
 rp_module_help="Dinothawr game assets are automatically installed to $romdir/ports/dinothawr/"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/Dinothawr/master/LICENSE"
 rp_module_section="exp"
 
 function sources_lr-dinothawr() {
@@ -20,10 +21,9 @@ function sources_lr-dinothawr() {
 
 function build_lr-dinothawr() {
     make clean
-    # we need -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 on armv7/armv8 due to armv6 userland on Raspbian
-    # as with PPSSPP https://github.com/hrydgard/ppsspp/pull/8117
-    if isPlatform "arm" && ! isPlatform "armv6"; then
-        CXXFLAGS+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2" make
+    # libretro-common has an issue with neon
+    if isPlatform "neon"; then
+        CFLAGS="" make
     else
         make
     fi
@@ -41,7 +41,7 @@ function install_lr-dinothawr() {
 function configure_lr-dinothawr() {
     setConfigRoot "ports"
 
-    addPort "$md_id" "dinothawr" "Dinothawr" "$emudir/retroarch/bin/retroarch -L $md_inst/dinothawr_libretro.so --config $md_conf_root/dinothawr/retroarch.cfg $romdir/ports/dinothawr/dinothawr.game"
+    addPort "$md_id" "dinothawr" "Dinothawr" "$md_inst/dinothawr_libretro.so" "$romdir/ports/dinothawr/dinothawr.game"
 
     mkRomDir "ports/dinothawr"
     ensureSystemretroconfig "ports/dinothawr"

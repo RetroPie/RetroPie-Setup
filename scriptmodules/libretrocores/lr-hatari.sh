@@ -11,7 +11,8 @@
 
 rp_module_id="lr-hatari"
 rp_module_desc="Atari emulator - Hatari port for libretro"
-rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr\n\nCopy your Hatari roms to $romdir/atarist"
+rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr\n\nCopy your Atari ST games to $romdir/atarist"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/hatari/master/gpl.txt"
 rp_module_section="exp"
 
 function depends_lr-hatari() {
@@ -48,7 +49,8 @@ function configure_lr-hatari() {
     # move any old configs to new location
     moveConfigDir "$home/.hatari" "$md_conf_root/atarist"
 
-    addSystem 1 "$md_id" "atarist" "$md_inst/hatari_libretro.so"
+    addEmulator 1 "$md_id" "atarist" "$md_inst/hatari_libretro.so"
+    addSystem "atarist"
 
     # add LD_LIBRARY_PATH='$md_inst' to start of launch command
     iniConfig " = " '"' "$configdir/atarist/emulators.cfg"
