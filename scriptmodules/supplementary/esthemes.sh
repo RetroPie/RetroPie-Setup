@@ -83,6 +83,8 @@ function gui_esthemes() {
         'G-rila fundamental'
         'ruckage nes-mini'
         'ruckage famicom-mini'
+        'anthonycaccese crt'
+        'anthonycaccese crt-centered'
     )
     while true; do
         local theme
