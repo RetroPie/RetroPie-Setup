@@ -27,7 +27,7 @@ function sources_lr-snes9x2002() {
 
 function build_lr-snes9x2002() {
     make clean
-    CFLAGS="$CFLAGS" make ARM_ASM=1
+    CFLAGS="$CFLAGS -Wa,-mimplicit-it=thumb" make ARM_ASM=1
     md_ret_require="$md_build/snes9x2002_libretro.so"
 }
 
