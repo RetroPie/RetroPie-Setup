@@ -34,13 +34,13 @@ function depends_retroarch() {
 
 function sources_retroarch() {
     gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.5.0
-    if isPlatform "mali"; then
-        sed -i 's|struct mali_native_window native_window|fbdev_window native_window|' gfx/drivers_context/mali_fbdev_ctx.c
-    fi
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
     if isPlatform "rpi"; then
         applyPatch "$md_data/03_dispmanx.diff"
+    fi
+    if isPlatform "mali"; then
+        applyPatch "$md_data/04_mali_struct.diff"
     fi
 }
 

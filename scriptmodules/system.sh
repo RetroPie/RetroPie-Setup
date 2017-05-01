@@ -242,6 +242,9 @@ function get_platform() {
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
                 __platform="imx6"
                 ;;
+            ODROID-XU3)
+                __platform="odroid-xu"
+                ;;
             *)
                 case $architecture in
                     i686|x86_64|amd64)
@@ -307,6 +310,15 @@ function platform_odroid-c2() {
     __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
+}
+
+function platform_odroid-xu() {
+    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    # required for mali-fbdev headers to define GL functions
+    __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv7 neon mali"
 }
 
 function platform_x86() {

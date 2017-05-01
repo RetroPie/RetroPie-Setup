@@ -61,8 +61,19 @@ function depends_setup() {
         joy2keyStop
         exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
     fi
+
     if isPlatform "rpi" && [[ -f /boot/config.txt ]] && grep -q "^dtoverlay=vc4-kms-v3d" /boot/config.txt; then
         printMsgs "dialog" "You have the experimental desktop GL driver enabled. This is NOT compatible with RetroPie, and Emulation Station as well as emulators will fail to launch. Please disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
+    fi
+
+    # make sure user has the correct group permissions
+    if ! isPlatform "x11"; then
+        local group
+        for group in input video; do
+            if ! hasFlag "$(groups $user)" "$group"; then
+                dialog --yesno "Your user '$user' is not a member of the system group '$group'.\n\nThis is needed for RetroPie to function correctly. May I add '$user' to group '$group'?\n\nYou will need to restart for these changes to take effect." 22 76 2>&1 >/dev/tty && usermod -a -G "$group" "$user"
+            fi
+        done
     fi
 
     # remove all but the last 20 logs
