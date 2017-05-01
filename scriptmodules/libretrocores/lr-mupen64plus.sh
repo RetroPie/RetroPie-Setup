@@ -14,7 +14,7 @@ rp_module_desc="N64 emu - Mupen64Plus + GLideN64 for libretro"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/mupen64plus-libretro/master/LICENSE"
 rp_module_section="main"
-rp_module_flags="!mali"
+rp_module_flags="!aarch64"
 
 function _update_hook_lr-mupen64plus() {
     # retroarch renamed lr-mupen64plus to lr-parallel-n64 and
@@ -44,6 +44,8 @@ function build_lr-mupen64plus() {
     make clean
     if isPlatform "rpi"; then
         make platform="$__platform"
+    elif isPlatform "mali"; then
+        make platform="odroid"
     else
         make
     fi
