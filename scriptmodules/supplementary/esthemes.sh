@@ -55,9 +55,9 @@ function gui_esthemes() {
         'ehettervik luminous'
         'ehettervik minilumi'
         'ehettervik workbench'
-        'AmadhiX eudora'
-        'AmadhiX eudora-bigshot'
-        'AmadhiX eudora-concise'
+        'ChoccyHobNob eudora'
+        'ChoccyHobNob eudora-bigshot'
+        'ChoccyHobNob eudora-concise'
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
         'RetroPie turtle-pi'
@@ -165,4 +165,3 @@ function gui_esthemes() {
         fi
     done
 }
-
