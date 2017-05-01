@@ -35,6 +35,8 @@ function depends_kodi() {
             rm -f /etc/apt/sources.list.d/pipplware.list
             apt-key del 4096R/BAA567BB >/dev/null
         fi
+    elif isPlatform "x86"; then
+        apt-add-repository -y ppa:team-xbmc/ppa
     fi
 
     getDepends policykit-1
