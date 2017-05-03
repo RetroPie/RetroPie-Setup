@@ -1,8 +1,8 @@
 diff --git a/input/input_driver.c b/input/input_driver.c
-index 8d26bcd..30a0832 100644
+index 8f323ad..299cb87 100644
 --- a/input/input_driver.c
 +++ b/input/input_driver.c
-@@ -120,6 +120,10 @@ static bool input_driver_nonblock_state           = false;
+@@ -119,6 +119,10 @@ static bool input_driver_nonblock_state           = false;
  static bool input_driver_flushing_input           = false;
  static bool input_driver_data_own                 = false;
  
@@ -13,23 +13,23 @@ index 8d26bcd..30a0832 100644
  /**
   * input_driver_find_handle:
   * @idx                : index of driver to get handle to.
-@@ -807,9 +811,17 @@ uint64_t input_keys_pressed(
-    {
-       if (current_input->input_state(current_input_data, &binds, 0,
+@@ -912,9 +916,16 @@ uint64_t input_keys_pressed(
+             && current_input->input_state(
+                current_input_data, joypad_info, &binds, 0,
                 RETRO_DEVICE_JOYPAD, 0, RARCH_ENABLE_HOTKEY))
--         input_driver_block_libretro_input = true;
--      else
+-            input_driver_block_libretro_input = true;
+-         else
+-            input_driver_block_hotkey         = true;
 +      {
 +         if (hotkey_counter < HOTKEY_DELAY)
 +            hotkey_counter++;
-+
 +         if (hotkey_counter == HOTKEY_DELAY)
-+            input_driver_block_libretro_input = true;
++             input_driver_block_libretro_input = true;
 +      }
 +      else {
 +         hotkey_counter = 0;
-          input_driver_block_hotkey         = true;
++         input_driver_block_hotkey = true;
 +      }
     }
  
-    /* Allows rarch_focus_toggle hotkey to still work even tough every hotkey is blocked */
+    game_focus_toggle_valid                      = binds[RARCH_GAME_FOCUS_TOGGLE].valid;
