@@ -11,6 +11,7 @@
 
 rp_module_id="emulationstation"
 rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emulators"
+rp_module_licence="MIT https://raw.githubusercontent.com/RetroPie/EmulationStation/master/LICENSE.md"
 rp_module_section="core"
 rp_module_flags="frontend"
 
@@ -78,9 +79,8 @@ function _add_system_emulationstation() {
 function _del_system_emulationstation() {
     local fullname="$1"
     local name="$2"
-    # if we don't have an emulators.cfg we can remove the system from emulation station
-    if [[ -f /etc/emulationstation/es_systems.cfg && ! -f "$config" ]]; then
-        xmlstarlet ed -L -P -d "/systemList/system[name='$system']" /etc/emulationstation/es_systems.cfg
+    if [[ -f /etc/emulationstation/es_systems.cfg ]]; then
+        xmlstarlet ed -L -P -d "/systemList/system[name='$name']" /etc/emulationstation/es_systems.cfg
     fi
 }
 
@@ -125,7 +125,7 @@ function depends_emulationstation() {
     local depends=(
         libboost-locale-dev libboost-system-dev libboost-filesystem-dev
         libboost-date-time-dev libfreeimage-dev libfreetype6-dev libeigen3-dev
-        libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
+        libcurl4-openssl-dev libasound2-dev cmake libsm-dev
         libvlc-dev libvlccore-dev vlc-nox
     )
 
@@ -134,20 +134,7 @@ function depends_emulationstation() {
 }
 
 function sources_emulationstation() {
-    local repo="$1"
-    local branch="$2"
-    [[ -z "$repo" ]] && repo="https://github.com/harryzimm/EmulationStation-ROPI"
-    [[ -z "$branch" ]] && branch="master"
-    gitPullOrClone "$md_build" "$repo" "$branch"
-}
-
-function build_emulationstation() {
-    rpSwap on 512
-    cmake .
-    make clean
-    make
-    rpSwap off
-    md_ret_require="$md_build/emulationstation"
+    wget -O- -q "http://www.retrorangepi.org/emulationstation.tar.gz" | tar -xvz -C .
 }
 
 function install_emulationstation() {
@@ -204,11 +191,17 @@ if [[ "\$(uname --machine)" != *86* ]]; then
     fi
 fi
 
+# save current tty/vt number for use with X so it can be launched on the correct tty
+tty=\$(tty)
+export TTY="\${tty:8:1}"
+
 clear
 tput civis
 "$md_inst/emulationstation.sh" "\$@"
-reset
-
+if [[ $? -eq 139 ]]; then
+    dialog --cr-wrap --no-collapse --msgbox "Emulation Station crashed!\n\nIf this is your first boot of RetroPie - make sure you are using the correct image for your system.\n\\nCheck your rom file/folder permissions and if running on a Raspberry Pi, make sure your gpu_split is set high enough and/or switch back to using carbon theme.\n\nFor more help please use the RetroPie forum." 20 60 >/dev/tty
+fi
+tput cnorm
 _EOF_
     chmod +x /usr/bin/emulationstation
 
