@@ -12,7 +12,7 @@
 rp_module_id="scraper"
 rp_module_desc="Scraper for EmulationStation by Steven Selph"
 rp_module_licence="MIT https://raw.githubusercontent.com/sselph/scraper/master/LICENSE"
-rp_module_section="opt"
+rp_module_section="config"
 
 function depends_scraper() {
     rp_callModule golang install_bin
