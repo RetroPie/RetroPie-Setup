@@ -25,11 +25,11 @@ function install_theme_esthemes() {
     local theme="$1"
     local repo="$2"
     if [[ -z "$repo" ]]; then
-        repo="RetroPie"
+        repo="anthonycaccese"
     fi
     if [[ -z "$theme" ]]; then
-        theme="carbon"
-        repo="RetroPie"
+        theme="crt"
+        repo="anthonycaccese"
     fi
     mkdir -p "/etc/emulationstation/themes"
     # do a fresh checkout to avoid some line ending issues with the autocrlf mode used to create the images vs git default on Raspbian
@@ -45,7 +45,6 @@ function uninstall_theme_esthemes() {
 }
 
 function gui_esthemes() {
-    printMsgs "dialog" "If you wish to run more than ~10 systems on themes other than Carbon, Pixel, Eudora, Turtle-pi, and Canela variants, you run the risk of getting the white screen of death (you may be able to get more systems by increasing your GPU/CPU split)."
     local themes=(
         'RetroPie carbon'
         'RetroPie carbon-centered'
@@ -54,7 +53,6 @@ function gui_esthemes() {
         'ehettervik pixel-metadata'
         'ehettervik pixel-tft'
         'ehettervik luminous'
-        'ehettervik modern'
         'ehettervik minilumi'
         'ehettervik workbench'
         'AmadhiX eudora'
@@ -78,6 +76,15 @@ function gui_esthemes() {
         'robertybob simplebigart'
         'RetroPie clean-look'
         'HerbFargus tronkyfran'
+        'lilbud flat'
+        'lilbud flat-dark'
+        'FlyingTomahawk futura-10px'
+        'FlyingTomahawk futura-10px-dark'
+        'G-rila fundamental'
+        'ruckage nes-mini'
+        'ruckage famicom-mini'
+        'anthonycaccese crt'
+        'anthonycaccese crt-centered'
     )
     while true; do
         local theme
