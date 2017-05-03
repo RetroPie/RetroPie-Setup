@@ -55,7 +55,7 @@ function build_retroarch() {
     fi
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
-    make
+    make -j2
     md_ret_require="$md_build/retroarch"
 }
 
