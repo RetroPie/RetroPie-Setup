@@ -11,35 +11,34 @@
 
 rp_module_id="scraper"
 rp_module_desc="Scraper for EmulationStation by Steven Selph"
-rp_module_section="config"
+rp_module_licence="MIT https://raw.githubusercontent.com/sselph/scraper/master/LICENSE"
+rp_module_section="opt"
 
 function depends_scraper() {
-    [[ "$__os_codename" == "wheezy" ]] && return
-    getDepends golang
+    rp_callModule golang install_bin
 }
 
 function sources_scraper() {
-    [[ "$__os_codename" == "wheezy" ]] && return
-    GOPATH="$md_build" go get github.com/sselph/scraper
+    local goroot="$(_get_goroot_golang)"
+    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" get -u github.com/sselph/scraper
 }
 
 function build_scraper() {
-    [[ "$__os_codename" == "wheezy" ]] && return
-    GOPATH="$md_build" go build github.com/sselph/scraper
+    local goroot="$(_get_goroot_golang)"
+    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" build github.com/sselph/scraper
 }
 
 function install_scraper() {
-    if [[ "$__os_codename" == "wheezy" ]] && isPlatform "arm"; then
-        local ver="$(latest_ver_scraper)"
-        mkdir -p "$md_build"
-        local name="scraper_rpi.zip"
-        isPlatform "neon" && name="scraper_rpi2.zip"
-        wget -O "$md_build/scraper.zip" "https://github.com/sselph/scraper/releases/download/$ver/$name"
-        unzip -o "$md_build/scraper.zip" -d "$md_inst"
-        rm -f "$md_build/scraper.zip"
-    else
-        md_ret_files=(scraper)
-    fi
+    md_ret_files=(
+        'scraper'
+        'src/github.com/sselph/scraper/LICENSE'
+        'src/github.com/sselph/scraper/README.md'
+        'src/github.com/sselph/scraper/hash.csv'
+    )
+}
+
+function remove_scraper() {
+    rp_callModule golang remove
 }
 
 function get_ver_scraper() {
@@ -87,10 +86,20 @@ function scrape_scraper() {
     if [[ -n "$max_width" ]]; then
         params+=(-max_width "$max_width")
     fi
-    if [[ "$use_gdb_scraper" -eq 1 ]]; then
-        params+=(-use_gdb)
+    if [[ -n "$max_height" ]]; then
+        params+=(-max_height "$max_height")
+    fi
+    if [[ "$console_src" -eq 0 ]]; then
+        params+=(-console_src="ovgdb")
+    elif [[ "$console_src" -eq 1 ]]; then
+        params+=(-console_src="gdb")
     else
-        params+=(-use_ovgdb)
+        params+=(-console_src="ss")
+    fi
+    if [[ "$mame_src" -eq 0 ]]; then
+        params+=(-mame_src="mamedb")
+    else
+        params+=(-mame_src="ss")
     fi
     if [[ "$rom_name" -eq 1 ]]; then
         params+=(-use_nointro_name=false)
@@ -144,7 +153,9 @@ function _load_config_scraper() {
     echo "$(loadModuleConfig \
         'use_thumbs=1' \
         'max_width=400' \
-        'use_gdb_scraper=1' \
+        'max_height=400' \
+        'console_src=1' \
+        'mame_src=0' \
         'rom_name=0' \
         'append_only=0' \
         'use_rom_folder=0' \
@@ -155,10 +166,6 @@ function gui_scraper() {
     if pgrep "emulationstatio" >/dev/null; then
         printMsgs "dialog" "This scraper must not be run while Emulation Station is running or the scraped data will be overwritten. \n\nPlease quit from Emulation Station, and run RetroPie-Setup from the terminal"
         return
-    fi
-
-    if [[ ! -d "$md_inst" ]]; then
-        rp_callModule "$md_id"
     fi
 
     iniConfig " = " '"' "$configdir/all/scraper.cfg"
@@ -181,12 +188,18 @@ function gui_scraper() {
             options+=(3 "Thumbnails only (Disabled)")
         fi
 
-        options+=(4 "Max image width ($max_width)")
-
-        if [[ "$use_gdb_scraper" -eq 1 ]]; then
-            options+=(5 "Scraper (thegamesdb)")
+        if [[ "$mame_src" -eq 0 ]]; then
+            options+=(4 "Arcade Source (MameDB)")
         else
-            options+=(5 "Scraper (OpenVGDB)")
+            options+=(4 "Arcade Source (ScreenScraper)")
+        fi
+
+        if [[ "$console_src" -eq 0 ]]; then
+            options+=(5 "Console Source (OpenVGDB)")
+        elif [[ "$console_src" -eq 1 ]]; then
+            options+=(5 "Console Source (thegamesdb)")
+        else
+            options+=(5 "Console Source (ScreenScraper)")
         fi
 
         if [[ "$rom_name" -eq 0 ]]; then
@@ -209,6 +222,9 @@ function gui_scraper() {
             options+=(8 "Use rom folder for gamelist & images (Disabled)")
         fi
 
+        options+=(W "Max image width ($max_width)")
+        options+=(H "Max image height ($max_height)")
+
         options+=(U "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -227,13 +243,12 @@ function gui_scraper() {
                     iniSet "use_thumbs" "$use_thumbs"
                     ;;
                 4)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
-                    max_width=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    iniSet "max_width" "$max_width"
+                    mame_src="$((( mame_src + 1) % 2))"
+                    iniSet "mame_src" "$mame_src"
                     ;;
                 5)
-                    use_gdb_scraper="$((use_gdb_scraper ^ 1))"
-                    iniSet "use_gdb_scraper" "$use_gdb_scraper"
+                    console_src="$((( console_src + 1) % 3))"
+                    iniSet "console_src" "$console_src"
                     ;;
                 6)
                     rom_name="$((( rom_name + 1 ) % 3))"
@@ -246,6 +261,16 @@ function gui_scraper() {
                 8)
                     use_rom_folder="$((use_rom_folder ^ 1))"
                     iniSet "use_rom_folder" "$use_rom_folder"
+                    ;;
+                H)
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image height in pixels" 10 60 "$max_height")
+                    max_height=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    iniSet "max_height" "$max_height"
+                    ;;
+                W)
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
+                    max_width=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    iniSet "max_width" "$max_width"
                     ;;
                 U)
                     rp_callModule "$md_id"
