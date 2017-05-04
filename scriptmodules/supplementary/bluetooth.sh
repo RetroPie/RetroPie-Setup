@@ -87,7 +87,7 @@ function list_registered_bluetooth() {
     local device_name
     while read line; do
         mac_address="$(echo "$line" | sed 's/ /,/g' | cut -d, -f1)"
-        device_name="$(echo "$line" | sed -e 's/'"$mac_address"' //g')"
+        device_name="$(echo "$line" | sed 's/'"$mac_address"' //g')"
         echo -e "$mac_address\n$device_name"
     done < <($(get_script_bluetooth bluez-test-device) list)
 }
@@ -100,7 +100,7 @@ function display_active_and_registered_bluetooth() {
     [[ -z "$registered" ]] && registered="There are no registered devices"
 
     if [[ "$(hcitool con)" != "Connections:" ]]; then
-        active="$(hcitool con 2>&1 | sed -e 1d)"
+        active="$(hcitool con 2>&1 | sed 1d)"
     else
         active="There are no active connections"
     fi

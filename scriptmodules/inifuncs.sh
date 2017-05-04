@@ -69,7 +69,7 @@ function iniProcess() {
     fi
 
     if [[ "$cmd" == "del" ]]; then
-        [[ -n "$match" ]] && sed -i --follow-symlinks -e "\|$(sedQuote "$match")|d" "$file"
+        [[ -n "$match" ]] && sed -i --follow-symlinks "\|$(sedQuote "$match")|d" "$file"
         return 0
     fi
 
@@ -82,7 +82,7 @@ function iniProcess() {
         echo "$replace" >> "$file"
     else
         # replace existing key-value pair
-        sed -i --follow-symlinks -e "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
+        sed -i --follow-symlinks "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
     fi
 
     [[ "$file" =~ retroarch\.cfg$ ]] && retroarchIncludeToEnd "$file"

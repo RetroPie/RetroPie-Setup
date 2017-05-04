@@ -115,7 +115,7 @@ function addLineToFile() {
     if [[ -f "$2" ]]; then
         cp -p "$2" "$2.bak"
     else
-        sed -i --follow-symlinks -e '$a\' "$2"
+        sed -i --follow-symlinks '$a\' "$2"
     fi
 
     echo "$1" >> "$2"

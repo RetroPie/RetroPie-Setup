@@ -15,9 +15,9 @@ function _get_config_pisnes() {
 
 function _split_config_pisnes() {
     local cfg="$(_get_config_pisnes)"
-    sed -n -e '/\[Keyboard\]/,/\[/p' "$cfg" | head -n -1 >/tmp/pisnes-kb.cfg
-    sed -n -e '/\[Joystick\]/,/\[/p' "$cfg" | head -n -1 >/tmp/pisnes-js.cfg
-    sed -n -e '/\[Graphics\]/,/\[/p' "$cfg" | head -n -1 >/tmp/pisnes-gfx.cfg
+    sed -n '/\[Keyboard\]/,/\[/p' "$cfg" | head -n -1 >/tmp/pisnes-kb.cfg
+    sed -n '/\[Joystick\]/,/\[/p' "$cfg" | head -n -1 >/tmp/pisnes-js.cfg
+    sed -n '/\[Graphics\]/,/\[/p' "$cfg" | head -n -1 >/tmp/pisnes-gfx.cfg
 }
 
 function check_pisnes() {
