@@ -18,7 +18,7 @@ function _get_goroot_golang() {
 function install_bin_golang() {
     local version
     if [[ -e "$md_inst/bin/go" ]]; then
-        local version=$(GOROOT="$md_inst" "$md_inst/bin/go" version | sed -e 's/.*\(go1[^ ]*\).*/\1/')
+        local version=$(GOROOT="$md_inst" "$md_inst/bin/go" version | sed 's/.*\(go1[^ ]*\).*/\1/')
     fi
     printMsgs "console" "Current Go version: $version"
     if [[ ! "${version}" < "go1.8" ]]; then

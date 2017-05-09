@@ -69,7 +69,7 @@ function iniProcess() {
     fi
 
     if [[ "$cmd" == "del" ]]; then
-        [[ -n "$match" ]] && sed -i -e "\|$(sedQuote "$match")|d" "$file"
+        [[ -n "$match" ]] && sed -i --follow-symlinks "\|$(sedQuote "$match")|d" "$file"
         return 0
     fi
 
@@ -78,11 +78,11 @@ function iniProcess() {
     local replace="$key$delim$quote$value$quote"
     if [[ -z "$match" ]]; then
         # make sure there is a newline then add the key-value pair
-        sed -i '$a\' "$file"
+        sed -i --follow-symlinks '$a\' "$file"
         echo "$replace" >> "$file"
     else
         # replace existing key-value pair
-        sed -i -e "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
+        sed -i --follow-symlinks "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
     fi
 
     [[ "$file" =~ retroarch\.cfg$ ]] && retroarchIncludeToEnd "$file"
@@ -176,9 +176,9 @@ function retroarchIncludeToEnd() {
 
     # if matched remove it and re-add it at the end
     if [[ -n "$include" ]]; then
-        sed -i "/$re/d" "$config"
+        sed -i --follow-symlinks "/$re/d" "$config"
         # add newline if missing and the #include line
-        sed -i '$a\' "$config"
+        sed -i --follow-symlinks '$a\' "$config"
         echo "$include" >>"$config"
     fi
 }

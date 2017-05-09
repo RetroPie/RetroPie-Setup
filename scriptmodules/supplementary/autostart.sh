@@ -37,7 +37,7 @@ _EOF_
     # delete any previous entries for emulationstation / kodi in autostart.sh
     sed -i '/#auto/d' "$script"
     # make sure there is a newline
-    sed -i -e '$a\' "$script"
+    sed -i '$a\' "$script"
     case "$mode" in
         kodi)
             echo -e "kodi #auto\nemulationstation #auto" >>"$script"
