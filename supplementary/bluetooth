@@ -1,0 +1,82 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides: bluetooth
+# Required-Start:    $local_fs $syslog $remote_fs dbus
+# Required-Stop:     $local_fs $syslog $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start bluetooth daemons
+### END INIT INFO
+#
+# bluez    Bluetooth subsystem starting and stopping
+#
+# originally from bluez's scripts/bluetooth.init
+#
+# Edd Dumbill <ejad@debian.org>
+# LSB 3.0 compilance and enhancements by Filippo Giunchedi <filippo@debian.org>
+#
+# Updated for bluez 4.7 by Mario Limonciello <mario_limonciello@dell.com>
+# Updated for bluez 5.5 by Nobuhiro Iwamatsu <iwamatsu@debian.org>
+#
+# Note: older daemons like dund pand hidd are now shipped inside the
+# bluez-compat package
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DESC=bluetooth
+
+DAEMON=/usr/libexec/bluetooth/bluetoothd
+
+SSD_OPTIONS="--exec $DAEMON"
+
+test -f $DAEMON || exit 0
+
+# FIXME: any of the sourced files may fail if/with syntax errors
+#test -f /etc/default/bluetooth && . /etc/default/bluetooth
+#test -f /etc/default/rcS && . /etc/default/rcS
+
+. /lib/lsb/init-functions
+
+set -e
+
+case $1 in
+  start)
+	log_daemon_msg "Starting $DESC"
+
+	if test "$BLUETOOTH_ENABLED" = 0; then
+		log_progress_msg "disabled. see /etc/default/bluetooth"
+		log_end_msg 0
+		exit 0
+	fi
+	start-stop-daemon --start --background $SSD_OPTIONS
+	log_progress_msg "${DAEMON##*/}"
+	log_end_msg 0
+  ;;
+  stop)
+	log_daemon_msg "Stopping $DESC"
+	if test "$BLUETOOTH_ENABLED" = 0; then
+		log_progress_msg "disabled."
+		log_end_msg 0
+		exit 0
+	fi
+	start-stop-daemon --stop $SSD_OPTIONS
+	log_progress_msg "${DAEMON}"
+	log_end_msg 0
+  ;;
+  restart|force-reload)
+	$0 stop
+	sleep 1
+	$0 start
+  ;;
+  status)
+	status_of_proc "$DAEMON" "$DESC" && exit 0 || exit $?
+  ;;
+  *)
+	N=/etc/init.d/bluetooth
+	echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
+	exit 1
+	;;
+esac
+
+exit 0
+
+# vim:noet
