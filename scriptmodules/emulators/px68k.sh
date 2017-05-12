@@ -11,7 +11,7 @@
 
 rp_module_id="px68k"
 rp_module_desc="SHARP X68000 Emulator"
-rp_module_help="You need to copy the X68000 bios files plrom30.dat, iplromco.dat, iplrom.dat, iplromxv.dat, and the font file cgrom.dat to $romdir/BIOS. Use F12 to access the in emulator menu."
+rp_module_help="You need to copy a X68000 bios file (iplrom30.dat, iplromco.dat, iplrom.dat, or iplromxv.dat), and the font file (cgrom.dat or cgrom.tmp) to $romdir/BIOS/keropi. Use F12 to access the in emulator menu."
 rp_module_section="exp"
 rp_module_flags="!mali"
 
@@ -40,10 +40,14 @@ function configure_px68k() {
     mkRomDir "x68000"
 
     moveConfigDir "$home/.keropi" "$md_conf_root/x68000"
+    mkUserDir "$biosdir/keropi"
 
     local bios
-    for bios in cgrom.dat plrom30.dat iplromco.dat iplrom.dat iplromxv.dat; do
-        ln -sf "$biosdir/$bios" "$md_conf_root/x68000/$bios"
+    for bios in cgrom.dat iplrom30.dat iplromco.dat iplrom.dat iplromxv.dat; do
+        if [[ -f "$biosdir/$bios" ]]; then
+            mv "$biosdir/$bios" "$biosdir/keropi/$bios"
+        fi
+        ln -sf "$biosdir/keropi/$bios" "$md_conf_root/x68000/$bios"
     done
 
     setDispmanx "$md_id" 0
