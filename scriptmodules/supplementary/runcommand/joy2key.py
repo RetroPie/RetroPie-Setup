@@ -10,7 +10,8 @@
 #
 
 import os, sys, struct, time, fcntl, termios, signal
-import curses, errno
+import curses, errno, re
+from pyudev import Context
 
 
 #    struct js_event {
@@ -29,6 +30,82 @@ JS_THRESH = 0.75
 JS_EVENT_BUTTON = 0x01
 JS_EVENT_AXIS = 0x02
 JS_EVENT_INIT = 0x80
+
+CONFIG_DIR = '/opt/retropie/configs/'
+RETROARCH_CFG = CONFIG_DIR + 'all/retroarch.cfg'
+
+def ini_get(key, cfg_file):
+    pattern = r'[ |\t]*' + key + r'[ |\t]*=[ |\t]*'
+    value_m = r'"*([^"\|\r]*)"*'
+    value = ''
+    with open(cfg_file, 'r') as ini_file:
+        for line in ini_file:
+            if re.match(pattern, line):
+                value = re.sub(pattern + value_m + '.*\n', r'\1', line)
+                break
+    return value
+
+def get_btn_num(btn, cfg):
+    num = ini_get('input_' + btn + '_btn', cfg)
+    if num: return num
+    num = ini_get('input_player1_' + btn + '_btn', cfg)
+    if num: return num
+    return ''
+
+def get_button_codes(dev_path):
+    js_cfg_dir = CONFIG_DIR + 'all/retroarch-joypads/'
+    js_cfg = ''
+    dev_name = ''
+
+    # getting joystick name
+    for device in Context().list_devices(DEVNAME=dev_path):
+        dev_name_file = device.get('DEVPATH')
+        dev_name_file = '/sys' + os.path.dirname(dev_name_file) + '/name'
+        for line in open(dev_name_file, 'r'):
+            dev_name = line.rstrip('\n')
+            break
+    if not dev_name:
+        return default_button_codes
+
+    # getting retroarch config file for joystick
+    for f in os.listdir(js_cfg_dir):
+        if f.endswith('.cfg'):
+            if ini_get('input_device', js_cfg_dir + f) == dev_name:
+                js_cfg = js_cfg_dir + f
+                break
+    if not js_cfg:
+        js_cfg = RETROARCH_CFG
+
+    # getting configs for buttons A, B, X and Y
+    btn_num = {}
+    biggest_num = 0
+    i = 0
+    for btn in 'a', 'b', 'x', 'y':
+        i += 1
+        if i > len(default_button_codes):
+            break
+        btn_num[btn] = get_btn_num(btn, js_cfg)
+        try:
+            btn_num[btn] = int(btn_num[btn])
+        except ValueError:
+            return default_button_codes
+        if btn_num[btn] > biggest_num:
+            biggest_num = btn_num[btn]
+
+    # building the button codes list
+    btn_codes = [''] * (biggest_num + 1)
+    i = 0
+    for btn in 'a', 'b', 'x', 'y':
+        btn_codes[btn_num[btn]] = default_button_codes[i]
+        i += 1
+        if i >= len(default_button_codes): break
+
+    # if button A is <enter> and menu_swap_ok_cancel_buttons is true, swap buttons A and B functions
+    if btn_codes[btn_num['a']] == '\n' and ini_get('menu_swap_ok_cancel_buttons', RETROARCH_CFG) == 'true':
+        btn_codes[btn_num['a']] = btn_codes[btn_num['b']]
+        btn_codes[btn_num['b']] = '\n'
+
+    return btn_codes
 
 def signal_handler(signum, frame):
     close_fds(js_fds)
@@ -58,6 +135,7 @@ def open_devices():
     for dev in devs:
         try:
             fds.append(os.open(dev, os.O_RDONLY | os.O_NONBLOCK ))
+            js_button_codes[fds[-1]] = get_button_codes(dev)
         except:
             pass
 
@@ -114,7 +192,9 @@ def process_event(event):
 
 signal.signal(signal.SIGINT, signal_handler)
 
+js_button_codes = {}
 button_codes = []
+default_button_codes = []
 axis_codes = []
 
 curses.setupterm()
@@ -125,7 +205,7 @@ for arg in sys.argv[2:]:
     if i < 4:
         axis_codes.append(chars)
     else:
-        button_codes.append(chars)
+        default_button_codes.append(chars)
     i += 1
 
 event_format = 'IhBB'
@@ -157,6 +237,10 @@ while True:
             event = read_event(fd)
             if event:
                 if time.time() - js_last[i] > JS_REP:
+                    if fd in js_button_codes:
+                        button_codes = js_button_codes[fd]
+                    else:
+                        button_codes = default_button_codes
                     if process_event(event):
                         js_last[i] = time.time()
             elif event == False:

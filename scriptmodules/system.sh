@@ -198,7 +198,7 @@ function get_retropie_depends() {
         echo "deb http://archive.raspberrypi.org/debian/ $__os_codename main" >>$config
     fi
 
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet)
+    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev)
     if [[ -n "$__default_gcc_version" ]]; then
         depends+=(gcc-$__default_gcc_version g++-$__default_gcc_version)
     fi
