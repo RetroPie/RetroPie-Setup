@@ -85,6 +85,8 @@ function gui_esthemes() {
         'ruckage famicom-mini'
         'anthonycaccese crt'
         'anthonycaccese crt-centered'
+		'TMNTturtlguy ComicBook'
+		'TMNTturtlguy ComicBook_4-3'
     )
     while true; do
         local theme
