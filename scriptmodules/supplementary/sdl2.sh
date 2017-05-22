@@ -13,7 +13,7 @@ rp_module_id="sdl2"
 rp_module_desc="SDL (Simple DirectMedia Layer) v2.x"
 rp_module_licence="ZLIB https://hg.libsdl.org/SDL/raw-file/f426dbef4aa0/COPYING.txt"
 rp_module_section=""
-rp_module_flags=""
+rp_module_flags="!H3"
 
 function get_ver_sdl2() {
     echo "2.0.5"

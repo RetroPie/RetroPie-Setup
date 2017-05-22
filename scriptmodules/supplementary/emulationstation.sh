@@ -125,7 +125,7 @@ function depends_emulationstation() {
     local depends=(
         libboost-locale-dev libboost-system-dev libboost-filesystem-dev
         libboost-date-time-dev libfreeimage-dev libfreetype6-dev libeigen3-dev
-        libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
+        libcurl4-openssl-dev libasound2-dev cmake libsm-dev
         libvlc-dev libvlccore-dev vlc-nox
     )
 
@@ -136,13 +136,15 @@ function depends_emulationstation() {
 function sources_emulationstation() {
     local repo="$1"
     local branch="$2"
-    [[ -z "$repo" ]] && repo="https://github.com/retropie/EmulationStation"
-    [[ -z "$branch" ]] && branch="master"
+    #[[ -z "$repo" ]] && repo="https://github.com/retropie/EmulationStation"
+    #[[ -z "$branch" ]] && branch="master"
+    [[ -z "$repo" ]] && repo="https://github.com/gleam2003/EmulationStation"
+    [[ -z "$branch" ]] && branch="experimental"
     gitPullOrClone "$md_build" "$repo" "$branch"
 }
 
 function build_emulationstation() {
-    rpSwap on 512
+    rpSwap on 1024
     cmake . -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
     make clean
     make
