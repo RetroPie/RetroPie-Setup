@@ -85,6 +85,10 @@ function gui_esthemes() {
         'ruckage famicom-mini'
         'anthonycaccese crt'
         'anthonycaccese crt-centered'
+        'ChoccyHobNob cygnus'
+        'ChoccyHobNob cygnus-nometa'
+        'ChoccyHobNob cygnus-simpleart'
+        'ChoccyHobNob cygnus-simpleart-nometa'
     )
     while true; do
         local theme
