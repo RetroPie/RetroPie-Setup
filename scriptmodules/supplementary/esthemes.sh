@@ -55,9 +55,9 @@ function gui_esthemes() {
         'ehettervik luminous'
         'ehettervik minilumi'
         'ehettervik workbench'
-        'AmadhiX eudora'
-        'AmadhiX eudora-bigshot'
-        'AmadhiX eudora-concise'
+        'ChoccyHobNob eudora'
+        'ChoccyHobNob eudora-bigshot'
+        'ChoccyHobNob eudora-concise'
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
         'RetroPie turtle-pi'
@@ -85,6 +85,10 @@ function gui_esthemes() {
         'ruckage famicom-mini'
         'anthonycaccese crt'
         'anthonycaccese crt-centered'
+        'ChoccyHobNob cygnus'
+        'ChoccyHobNob cygnus-nometa'
+        'ChoccyHobNob cygnus-simpleart'
+        'ChoccyHobNob cygnus-simpleart-nometa'
     )
     while true; do
         local theme
@@ -165,4 +169,3 @@ function gui_esthemes() {
         fi
     done
 }
-
