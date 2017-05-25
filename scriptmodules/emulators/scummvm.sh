@@ -17,7 +17,13 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_scummvm() {
-    getDepends libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev
+    local depends=(libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev)
+    if [[ "$md_id" == "scummvm-sdl1" ]]; then
+        depends+=(libsdl1.2-dev)
+    else
+        depends+=(libsdl2-dev)
+    fi
+    getDepends "${depends[@]}"
 }
 
 function sources_scummvm() {
@@ -76,7 +82,9 @@ function configure_scummvm() {
 
     # Create startup script
     rm -f "$romdir/scummvm/+Launch GUI.sh"
-    cat > "$romdir/scummvm/+Start ScummVM.sh" << _EOF_
+    local name="ScummVM"
+    [[ "$md_id" == "scummvm-sdl1" ]] && name="ScummVM-SDL1"
+    cat > "$romdir/scummvm/+Start $name.sh" << _EOF_
 #!/bin/bash
 game="\$1"
 pushd "$romdir/scummvm" >/dev/null
@@ -87,9 +95,9 @@ while read line; do
 done < <($md_inst/bin/scummvm --list-targets | tail -n +3)
 popd >/dev/null
 _EOF_
-    chown $user:$user "$romdir/scummvm/+Start ScummVM.sh"
-    chmod u+x "$romdir/scummvm/+Start ScummVM.sh"
+    chown $user:$user "$romdir/scummvm/+Start $name.sh"
+    chmod u+x "$romdir/scummvm/+Start $name.sh"
 
-    addEmulator 1 "$md_id" "scummvm" "bash $romdir/scummvm/+Start\ ScummVM.sh %BASENAME%" "ScummVM"
+    addEmulator 1 "$md_id" "scummvm" "bash $romdir/scummvm/+Start\ $name.sh %BASENAME%"
     addSystem "scummvm"
 }
