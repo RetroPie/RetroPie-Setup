@@ -274,19 +274,19 @@ function map_retroarch_keyboard() {
             keys=("input_player1_down")
             ;;
         left)
-            keys=("input_player1_left" "input_state_slot_decrease")
+            keys=("input_player1_left")
             ;;
         right)
-            keys=("input_player1_right" "input_state_slot_increase")
+            keys=("input_player1_right")
             ;;
         a)
             keys=("input_player1_a")
             ;;
         b)
-            keys=("input_player1_b" "input_reset")
+            keys=("input_player1_b")
             ;;
         x)
-            keys=("input_player1_x" "input_menu_toggle")
+            keys=("input_player1_x")
             ;;
         y)
             keys=("input_player1_y")
@@ -310,10 +310,10 @@ function map_retroarch_keyboard() {
             keys=("input_player1_r3")
             ;;
         start)
-            keys=("input_player1_start" "input_exit_emulator")
+            keys=("input_player1_start")
             ;;
         select)
-            keys=("input_player1_select" "input_enable_hotkey")
+            keys=("input_player1_select")
             ;;
         *)
             return
