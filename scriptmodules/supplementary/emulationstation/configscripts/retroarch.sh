@@ -17,6 +17,8 @@ function onstart_retroarch_joystick() {
         input_joypad_driver="udev"
     fi
 
+    _retroarch_select_hotkey=1
+
     _atebitdo_hack=0
     getAutoConf "8bitdo_hack" && _atebitdo_hack=1
 
@@ -27,6 +29,8 @@ function onstart_retroarch_joystick() {
 
 function onstart_retroarch_keyboard() {
     iniConfig " = " '"' "$configdir/all/retroarch.cfg"
+
+    _retroarch_select_hotkey=1
 
     declare -Ag retroarchkeymap
     # SDL codes from https://wiki.libsdl.org/SDLKeycodeLookup
@@ -134,6 +138,9 @@ function onstart_retroarch_keyboard() {
     retroarchkeymap["120"]="x"
     retroarchkeymap["121"]="y"
     retroarchkeymap["122"]="z"
+
+    # special case for disabled hotkey
+    retroarchkeymap["0"]="nul"
 }
 
 function map_retroarch_joystick() {
@@ -190,7 +197,7 @@ function map_retroarch_joystick() {
             keys=("input_start" "input_exit_emulator")
             ;;
         select)
-            keys=("input_select" "input_enable_hotkey")
+            keys=("input_select")
             ;;
         leftanalogleft)
             keys=("input_l_x_minus")
@@ -216,22 +223,29 @@ function map_retroarch_joystick() {
         rightanalogdown)
             keys=("input_r_y_plus")
             ;;
+        hotkeyenable)
+            keys=("input_enable_hotkey")
+            _retroarch_select_hotkey=0
+            if [[ "$input_type" == "key" && "$input_id" == "0" ]]; then
+                return
+            fi
+            ;;
         *)
             return
             ;;
     esac
 
-
     local key
     local value
+    local type
     for key in "${keys[@]}"; do
         case "$input_type" in
             hat)
-                key+="_btn"
+                type="btn"
                 value="h$input_id$input_name"
                 ;;
             axis)
-                key+="_axis"
+                type="axis"
                 if [[ "$input_value" == "1" ]]; then
                     value="+$input_id"
                 else
@@ -239,7 +253,7 @@ function map_retroarch_joystick() {
                 fi
                 ;;
             *)
-                key+="_btn"
+                type="btn"
                 value="$input_id"
 
                 # workaround for mismatched controller mappings
@@ -255,6 +269,10 @@ function map_retroarch_joystick() {
                 fi
                 ;;
         esac
+        if [[ "$input_name" == "select" && "$_retroarch_select_hotkey" -eq 1 ]]; then
+            _retroarch_select_type="$type"
+        fi
+        key+="_$type"
         iniSet "$key" "$value"
     done
 }
@@ -313,7 +331,11 @@ function map_retroarch_keyboard() {
             keys=("input_player1_start" "input_exit_emulator")
             ;;
         select)
-            keys=("input_player1_select" "input_enable_hotkey")
+            keys=("input_player1_select")
+            ;;
+        hotkeyenable)
+            keys=("input_enable_hotkey")
+            _retroarch_select_hotkey=0
             ;;
         *)
             return
@@ -326,6 +348,11 @@ function map_retroarch_keyboard() {
 }
 
 function onend_retroarch_joystick() {
+    if [[ "$_retroarch_select_hotkey" -eq 1 ]]; then
+        iniGet "input_select_${_retroarch_select_type}"
+        iniSet "input_enable_hotkey_${_retroarch_select_type}" "$ini_value"
+    fi
+
     # hotkey sanity check
     # remove hotkeys if there is no hotkey enable button
     if ! grep -q "input_enable_hotkey" /tmp/tempconfig.cfg; then
@@ -362,6 +389,11 @@ function onend_retroarch_joystick() {
 }
 
 function onend_retroarch_keyboard() {
+    if [[ "$_retroarch_select_hotkey" -eq 1 ]]; then
+        iniGet "input_player1_select"
+        iniSet "input_enable_hotkey" "$ini_value"
+    fi
+
     # hotkey sanity check
     # remove hotkeys if there is no hotkey enable button
     iniGet "input_enable_hotkey"
