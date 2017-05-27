@@ -38,6 +38,7 @@ function install_bin_openpht() {
 
 function remove_openpht() {
     aptRemove openpht
+    rp_callModule openpht depends remove
 }
 
 function configure_openpht() {
