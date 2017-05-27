@@ -1,0 +1,4 @@
+#!/bin/sh -e
+sudo chmod +x /dev/uinput
+
+xboxdrv --trigger-as-button --wid 0 --led 2 --detach-kernel-driver --quiet --silent & sleep 1
