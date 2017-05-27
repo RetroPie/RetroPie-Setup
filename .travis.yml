@@ -1,0 +1,14 @@
+# Use new trusty images, should yield newer compilers and packages
+sudo: required
+dist: precise
+language: cpp
+compiler: gcc
+
+env:
+  - __platform=rpi2
+
+before_install:
+  - sudo apt-get update -qq
+
+script:
+  - "bash -ex ./tools/test/travis-ci.sh"
