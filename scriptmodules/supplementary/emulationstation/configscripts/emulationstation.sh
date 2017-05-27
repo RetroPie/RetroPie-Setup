@@ -65,6 +65,12 @@ function map_emulationstation_joystick() {
             key="$input_name"
             getAutoConf es_swap_a_b && key="a"
             ;;
+        x)
+            key="$input_name"
+            ;;
+        y)
+            key="$input_name"
+            ;;
         *)
             return
             ;;
