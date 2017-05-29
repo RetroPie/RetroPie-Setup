@@ -83,7 +83,11 @@ function build_mupen64plus() {
     pushd "$md_build/GLideN64/projects/cmake"
     params=("-DMUPENPLUSAPI=On")
     isPlatform "neon" && params+=("-DNEON_OPT=On")
-    isPlatform "rpi3" && params+=("-DCRC_ARMV8=On")
+    if isPlatform "rpi3"; then 
+        params+=("-DCRC_ARMV8=On")
+    else
+        params+=("-DCRC_OPT=On")
+    fi
     cmake "${params[@]}" ../../src/
     make
     popd
