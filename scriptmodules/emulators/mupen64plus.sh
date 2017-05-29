@@ -79,7 +79,7 @@ function build_mupen64plus() {
     # build GLideN64
     "$md_build/GLideN64/src/getRevision.sh"
     pushd "$md_build/GLideN64/projects/cmake"
-    params=("-DMUPENPLUSAPI=On" "-DUSE_SYSTEM_LIBS=On")
+    params=("-DMUPENPLUSAPI=On" "-DUSE_SYSTEM_LIBS=On" "-DVEC4_OPT=On")
     isPlatform "neon" && params+=("-DNEON_OPT=On")
     if isPlatform "rpi3"; then 
         params+=("-DCRC_ARMV8=On")
