@@ -33,7 +33,6 @@ function install_lr-nestopia() {
         'libretro/nestopia_libretro.so'
         'NstDatabase.xml'
         'README.md'
-        'README.unix'
         'ChangeLog'
         'readme.html'
         'COPYING'
