@@ -53,7 +53,7 @@ function _add_system_attractmode() {
     [[ "$name" == "retropie" ]] && snap="icons"
     iniSet "artwork flyer" "$path/flyer"
     iniSet "artwork marquee" "$path/marquee"
-    iniSet "artwork snap" "$path/$snap"
+    iniSet "artwork snap" "$path/snap"
     iniSet "artwork wheel" "$path/wheel"
 
     chown $user:$user "$config"
