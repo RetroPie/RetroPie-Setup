@@ -281,6 +281,27 @@ function testCompatibility() {
     esac
 }
 
+function useTexturePacks() {
+    # video-GLideN64
+    if ! grep -q "\[Video-GLideN64\]" "$config"; then
+        echo "[Video-GLideN64]" >> "$config"
+    fi
+    iniConfig " = " "" "$config"
+    # Settings version. Don't touch it.
+    local config_version="17"
+    if [[ -f "$configdir/n64/GLideN64_config_version.ini" ]]; then
+        config_version=$(<"$configdir/n64/GLideN64_config_version.ini")
+    fi
+    iniSet "configVersion" "$config_version"
+    iniSet "txHiresEnable" "True"
+
+    # video-rice
+    if ! grep -q "\[Video-Rice\]" "$config"; then
+        echo "[Video-Rice]" >> "$config"
+    fi
+    iniSet "LoadHiResTextures" "True"
+}
+
 if ! grep -q "\[Core\]" "$config"; then
     echo "[Core]" >> "$config"
     echo "Version = 1.010000" >> "$config"
@@ -293,6 +314,7 @@ iniSet "SaveSRAMPath" "$romdir/n64"
 getAutoConf mupen64plus_hotkeys && remap
 getAutoConf mupen64plus_compatibility_check && testCompatibility
 getAutoConf mupen64plus_audio && setAudio
+getAutoConf mupen64plus_texture_packs && useTexturePacks
 
 if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* ]]; then
     # If a raspberry pi is used lower resolution to 320x240 and enable SDL dispmanx scaling mode 1

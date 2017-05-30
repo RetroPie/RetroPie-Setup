@@ -52,8 +52,6 @@ function sources_mupen64plus() {
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
     gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
-    # fix for static x86_64 libs found in repo which are not usefull if target is i686
-    isPlatform "x11" && sed -i "s/BCMHOST/UNIX/g" GLideN64/src/GLideNHQ/CMakeLists.txt
     
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
@@ -81,9 +79,13 @@ function build_mupen64plus() {
     # build GLideN64
     "$md_build/GLideN64/src/getRevision.sh"
     pushd "$md_build/GLideN64/projects/cmake"
-    params=("-DMUPENPLUSAPI=On")
+    params=("-DMUPENPLUSAPI=On" "-DUSE_SYSTEM_LIBS=On" "-DVEC4_OPT=On")
     isPlatform "neon" && params+=("-DNEON_OPT=On")
-    isPlatform "rpi3" && params+=("-DCRC_ARMV8=On")
+    if isPlatform "rpi3"; then 
+        params+=("-DCRC_ARMV8=On")
+    else
+        params+=("-DCRC_OPT=On")
+    fi
     cmake "${params[@]}" ../../src/
     make
     popd
@@ -217,6 +219,7 @@ function configure_mupen64plus() {
     fi
 
     addAutoConf mupen64plus_hotkeys 1
+    addAutoConf mupen64plus_texture_packs 1
 
     chown -R $user:$user "$md_conf_root/n64"
 }
