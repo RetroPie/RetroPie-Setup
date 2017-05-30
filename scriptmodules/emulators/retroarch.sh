@@ -172,6 +172,9 @@ function configure_retroarch() {
     # rgui by default
     iniSet "menu_driver" "rgui"
 
+    # disable xmb menu driver icon shadows
+    iniSet "xmb_shadows_enable" "false"
+
     copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
     rm "$config"
 
