@@ -80,6 +80,7 @@ function scrape_scraper() {
     params+=(-rom_dir "$romdir/$system")
     params+=(-workers "4")
     params+=(-skip_check)
+    params+=(-use_ovgdb)
     if [[ "$use_thumbs" -eq 1 ]]; then
         params+=(-thumb_only)
     fi
