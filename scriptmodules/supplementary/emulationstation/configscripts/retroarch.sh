@@ -355,21 +355,13 @@ function onend_retroarch_joystick() {
 
     # hotkey sanity check
     # remove hotkeys if there is no hotkey enable button
-    if ! grep -q "input_enable_hotkey" /tmp/tempconfig.cfg; then
-        iniSet "input_state_slot_decrease_btn" ""
-        iniSet "input_state_slot_increase_btn" ""
-        iniSet "input_reset_btn" ""
-        iniSet "input_menu_toggle_btn" ""
-        iniSet "input_load_state_btn" ""
-        iniSet "input_save_state_btn" ""
-        iniSet "input_exit_emulator_btn" ""
-        iniSet "input_state_slot_decrease_axis" ""
-        iniSet "input_state_slot_increase_axis" ""
-        iniSet "input_reset_axis" ""
-        iniSet "input_menu_toggle_axis" ""
-        iniSet "input_load_state_axis" ""
-        iniSet "input_save_state_axis" ""
-        iniSet "input_exit_emulator_axis" ""
+    iniGet "input_enable_hotkey_${_retroarch_select_type}"
+    if [[ -z "$ini_value" ]]; then
+        local key
+        local params=()
+        for key in input_state_slot_decrease input_state_slot_increase input_reset input_menu_toggle input_load_state input_save_state input_exit_emulator; do
+            sed -i "/$key/d" /tmp/tempconfig.cfg
+        done
     fi
 
     # disable any auto configs for the same device to avoid duplicates
@@ -397,7 +389,7 @@ function onend_retroarch_keyboard() {
     # hotkey sanity check
     # remove hotkeys if there is no hotkey enable button
     iniGet "input_enable_hotkey"
-    if [[ -z "$ini_value" ]]; then
+    if [[ -z "$ini_value" || "$ini_value" == "nul" ]]; then
         iniSet "input_state_slot_decrease" ""
         iniSet "input_state_slot_increase" ""
         iniSet "input_reset" ""
@@ -405,5 +397,8 @@ function onend_retroarch_keyboard() {
         iniSet "input_load_state" ""
         iniSet "input_save_state" ""
         iniSet "input_exit_emulator" "escape"
+        iniSet "input_shader_next" ""
+        iniSet "input_shader_prev" ""
+        iniSet "input_rewind" ""
     fi
 }
