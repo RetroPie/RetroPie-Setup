@@ -111,6 +111,12 @@ function get_os_version() {
                     ;;
             esac
             ;;
+         Devuan)
+            # Devuan 1 === Debian 8 Jessie, with the only modification
+            # of a different init system (it gets rid of systemD)
+            # so any Devuan version meets the requeriments
+            foo=bar
+            ;;
         LinuxMint)
             if compareVersions "$__os_release" lt 17; then
                 error="You need Linux Mint 17 or newer"
