@@ -114,6 +114,10 @@ function configure_retroarch() {
 
     cp "$md_inst/retroarch.cfg" "$config"
 
+    # query ES A/B key swap configuration
+    local es_swap="false"
+    getAutoConf "es_swap_a_b" && es_swap="true"
+
     # configure default options
     iniConfig " = " '"' "$config"
     iniSet "cache_directory" "/tmp/retroarch"
@@ -174,6 +178,9 @@ function configure_retroarch() {
 
     # disable xmb menu driver icon shadows
     iniSet "xmb_shadows_enable" "false"
+
+    # swap A/B buttons based on ES configuration
+    iniSet "menu_swap_ok_cancel_buttons" "$es_swap"
 
     copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
     rm "$config"
