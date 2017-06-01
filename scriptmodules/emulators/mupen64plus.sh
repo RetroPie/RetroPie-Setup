@@ -66,8 +66,9 @@ function build_mupen64plus() {
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
             make -C "$dir/projects/unix" clean
             params=()
-            isPlatform "rpi1" && params+=("VC=1" "VFP=1" "VFP_HARD=1" "HOST_CPU=armv6")
-            isPlatform "neon" && params+=("VC=1" "NEON=1")
+            isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1" "HOST_CPU=armv6")
+            isPlatform "rpi" && params+=("VC=1")
+            isPlatform "neon" && params+=("NEON=1")
             isPlatform "x11" && params+=("OSD=1" "PIE=1")
             isPlatform "x86" && params+=("SSE=SSSE3")
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
@@ -125,6 +126,7 @@ function install_mupen64plus() {
             local params=()
             isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1" "HOST_CPU=armv6")
             isPlatform "rpi" && params+=("VC=1")
+            isPlatform "neon" && params+=("NEON=1")
             isPlatform "x86" && params+=("SSE=SSSE3")
             make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" "${params[@]}" install
         fi
