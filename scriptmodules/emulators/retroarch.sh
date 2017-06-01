@@ -33,15 +33,9 @@ function depends_retroarch() {
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.5.0
+    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.6.0
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
-    if isPlatform "rpi"; then
-        applyPatch "$md_data/03_dispmanx.diff"
-    fi
-    if isPlatform "mali"; then
-        applyPatch "$md_data/04_mali_struct.diff"
-    fi
 }
 
 function build_retroarch() {
