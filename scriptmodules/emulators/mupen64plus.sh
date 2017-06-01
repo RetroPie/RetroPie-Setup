@@ -128,7 +128,7 @@ function install_mupen64plus() {
             isPlatform "rpi" && params+=("VC=1")
             isPlatform "neon" && params+=("NEON=1")
             isPlatform "x86" && params+=("SSE=SSSE3")
-            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" "${params[@]}" install
+            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
         fi
     done
     cp "$md_build/GLideN64/ini/GLideN64.custom.ini" "$md_inst/share/mupen64plus/"
