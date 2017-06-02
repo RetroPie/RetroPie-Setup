@@ -357,7 +357,6 @@ function onend_retroarch_joystick() {
     # remove hotkeys if there is no hotkey enable button
     if ! grep -q "input_enable_hotkey" /tmp/tempconfig.cfg; then
         local key
-        local params=()
         for key in input_state_slot_decrease input_state_slot_increase input_reset input_menu_toggle input_load_state input_save_state input_exit_emulator; do
             sed -i "/$key/d" /tmp/tempconfig.cfg
         done
