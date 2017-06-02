@@ -348,9 +348,12 @@ function map_retroarch_keyboard() {
 }
 
 function onend_retroarch_joystick() {
+    # if $_retroarch_select_hotkey is set here, then there was no hotkeyenable button
+    # in the configuration, so use the old behaviour of setting the select button to
+    # the hotkey enable button if set.
     if [[ "$_retroarch_select_hotkey" -eq 1 ]]; then
         iniGet "input_select_${_retroarch_select_type}"
-        iniSet "input_enable_hotkey_${_retroarch_select_type}" "$ini_value"
+        [[ -n "$ini_value" ]] && iniSet "input_enable_hotkey_${_retroarch_select_type}" "$ini_value"
     fi
 
     # hotkey sanity check
