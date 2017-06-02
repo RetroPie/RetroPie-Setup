@@ -58,6 +58,7 @@ function gui_esthemes() {
         'AmadhiX eudora'
         'AmadhiX eudora-bigshot'
         'AmadhiX eudora-concise'
+        'ChoccyHobNob eudora-updated'
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
         'RetroPie turtle-pi'
@@ -169,4 +170,3 @@ function gui_esthemes() {
         fi
     done
 }
-
