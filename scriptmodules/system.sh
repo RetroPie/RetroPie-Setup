@@ -233,6 +233,13 @@ function get_platform() {
                     esac
                 fi
                 ;;
+            BCM2835)
+                if [[ "$architecture" == "aarch64" ]]; then
+                    __platform="rpi3-64"
+                else
+                    __platform="rpi3"
+                fi
+                ;;
             ODROIDC)
                 __platform="odroid-c1"
                 ;;
