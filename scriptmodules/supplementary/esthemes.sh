@@ -89,6 +89,7 @@ function gui_esthemes() {
         'anthonycaccese crt-centered'
         'TMNTturtleguy ComicBook'
         'TMNTturtleguy ComicBook_4-3'
+        'ChoccyHobNob cygnus'
     )
     while true; do
         local theme
@@ -169,4 +170,3 @@ function gui_esthemes() {
         fi
     done
 }
-
