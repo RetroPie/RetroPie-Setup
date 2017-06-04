@@ -78,6 +78,7 @@ function gui_esthemes() {
         'HerbFargus tronkyfran'
         'lilbud flat'
         'lilbud flat-dark'
+        'lilbud es-theme-switch-light'
     )
     while true; do
         local theme
