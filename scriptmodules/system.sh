@@ -144,6 +144,9 @@ function get_os_version() {
         neon)
              __os_ubuntu_ver="$__os_release"
             ;;
+        8)
+            __default_gcc_version="4.9"
+            ;;
         *)
             error="Unsupported OS"
             ;;
