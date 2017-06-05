@@ -58,6 +58,7 @@ function gui_esthemes() {
         'AmadhiX eudora'
         'AmadhiX eudora-bigshot'
         'AmadhiX eudora-concise'
+        'ChoccyHobNob eudora-updated'
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
         'RetroPie turtle-pi'
@@ -78,6 +79,7 @@ function gui_esthemes() {
         'HerbFargus tronkyfran'
         'lilbud flat'
         'lilbud flat-dark'
+        'lilbud switch-light'
         'FlyingTomahawk futura-V'
         'FlyingTomahawk futura-VL'
         'FlyingTomahawk futura-dark-V'
@@ -89,6 +91,7 @@ function gui_esthemes() {
         'anthonycaccese crt-centered'
         'TMNTturtleguy ComicBook'
         'TMNTturtleguy ComicBook_4-3'
+        'ChoccyHobNob cygnus'
     )
     while true; do
         local theme
