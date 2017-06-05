@@ -937,19 +937,40 @@ _EOF_
 ## see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
 function joy2keyStart() {
     local params=("$@")
-    if [[ "${#params[@]}" -eq 0 ]]; then
-        params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
-    fi
 
-    # get the first joystick device (if not already set)
-    [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/jsX"
+    # get all joystick devices, if not already set
+    if [[ ! -c "$__joy2key_dev" ]]; then
+        # if the function client passed parameters explicitly, use the generic "jsX"
+        if [[ "${#params[@]}" -ne 0 ]]; then
+            __joy2key_dev="/dev/input/jsX"
+        else
+            __joy2key_dev=$(find /dev/input -name "js*")
+        fi
+    fi
 
     # if no joystick device, or joy2key is already running exit
     [[ -z "$__joy2key_dev" || -n "$SSH_TTY" ]] || pgrep -f joy2key.py >/dev/null && return 1
 
-    # if joy2key.py is installed run it with cursor keys for axis, and enter + space for buttons 0 and 1
+    # if NOT using the generic "jsX" joystick, get the the custom mappings
+    if [[ "$__joy2key_dev" != "/dev/input/jsX" ]]; then
+        local dev
+        iniConfig " = " '"'
+        for dev in $__joy2key_dev ; do
+            params=( $(joy2keyInputConfig) )
+            [[ -z "$params" ]] && params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
+
+            # if joy2key.py is installed run it with cursor keys for axis, and enter + space for buttons A and B
+            if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$dev" "${params[@]}" & 2>/dev/null; then
+                __joy2key_pid+=($!)
+            fi
+        done
+        [[ "${#__joy2key_pid[@]}" -gt 0 ]]
+        return $?
+    fi
+
+    # the code below executes only if the function client passed parameters explicitly
     if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
-        __joy2key_pid=$!
+        __joy2key_pid=($!)
         return 0
     fi
 
@@ -959,10 +980,68 @@ function joy2keyStart() {
 ## @fn joy2keyStop()
 ## @brief Stop previously started joy2key.py process.
 function joy2keyStop() {
-    if [[ -n $__joy2key_pid ]]; then
-        kill -INT $__joy2key_pid 2>/dev/null
+    if [[ "${#__joy2key_pid[@]}" -gt 0 ]]; then
+        kill -INT "${__joy2key_pid[@]}" 2>/dev/null
         sleep 1
     fi
+}
+
+function joy2keyInputConfig() {
+    local retroarchcfg="$configdir/all/retroarch.cfg"
+    local joypadcfg
+    local enter_btn=a
+    local enter_btn_num
+    local space_btn=b
+    local space_btn_num
+    local dev_name
+    local dev_path
+    local biggest_num
+    local i
+
+    iniGet menu_swap_ok_cancel_buttons "$retroarchcfg"
+    if [[ "$ini_value" == true ]]; then
+        enter_btn=b
+        space_btn=a
+    fi
+
+    # "inspired" on configedit.sh code
+    if udevadm info --name=$dev | grep -q "ID_INPUT_JOYSTICK=1"; then
+        dev_path="$(udevadm info --name=$dev | grep DEVPATH | cut -d= -f2)"
+        dev_name="$(</$(dirname sys$dev_path)/name)"
+
+        # get the retroarch config file for this joypad
+        joypadcfg="$(grep -l "input_device *= *\"$dev_name\"" "$configdir/all/retroarch-joypads/"*.cfg)"
+        [[ -f "$joypadcfg" ]] || return 1
+        iniGet input_device "$joypadcfg"
+        [[ "$ini_value" != "$dev_name" ]] && return 1
+
+        enter_btn_num=$(getBtnNumber "$enter_btn") || return 1
+        space_btn_num=$(getBtnNumber "$space_btn") || return 1
+
+        biggest_num=$space_btn_num
+        [[ "$space_btn_num" -lt "$enter_btn_num" ]] && biggest_num=$enter_btn_num
+
+        params="kcub1 kcuf1 kcuu1 kcud1"
+        for i in $(seq 0 $biggest_num); do
+            case $i in
+                $enter_btn_num) params+=" 0x0a" ;;
+                $space_btn_num) params+=" 0x20" ;;
+                *)              params+=" ''" ;;
+            esac
+        done
+
+        echo "$params"
+    fi
+}
+
+function getBtnNumber() {
+    local btn="$1"
+    iniGet input_${btn}_btn "$joypadcfg"
+    if [[ -z "$ini_value" ]]; then
+        iniGet input_player1_${btn}_btn "$joypadcfg"
+        [[ -z "$ini_value" ]] && return 1
+    fi
+    echo "$ini_value"
 }
 
 ## @fn getPlatformConfig()
