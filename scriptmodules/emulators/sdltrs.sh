@@ -52,4 +52,3 @@ function configure_sdltrs() {
     addEmulator 0 "$md_id-model4p" "trs-80" "$md_inst/sdltrs -model 4p -romfile4p $biosdir/level4p.rom -showled -diskdir $romdir/trs-80 -disk0 %ROM%"
     addSystem "trs-80"
 }
-

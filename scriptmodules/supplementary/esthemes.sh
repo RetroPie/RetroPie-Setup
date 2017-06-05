@@ -172,4 +172,3 @@ function gui_esthemes() {
         fi
     done
 }
-

@@ -83,4 +83,3 @@ _EOF_
     addEmulator 1 "$md_id" "pc" "bash $romdir/pc/+Start\ DOSBox.sh %ROM%"
     addSystem "pc"
 }
-
