@@ -221,6 +221,7 @@ function testCompatibility() {
 
     local AudioOMX_blacklist=(
         pokemon
+        resident
     )
 
     for game in "${blacklist[@]}"; do
