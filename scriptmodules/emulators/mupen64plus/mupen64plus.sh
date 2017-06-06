@@ -212,6 +212,7 @@ function testCompatibility() {
         beetle
         donkey
         zelda
+        bomberman
     )
 
     local GLideN64NativeResolution_blacklist=(
