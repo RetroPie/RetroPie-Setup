@@ -170,7 +170,6 @@ function testCompatibility() {
     # some roms lead to a black screen of death
     local game
     local blacklist=(
-        resident
         gauntlet
         rogue
         squadron
