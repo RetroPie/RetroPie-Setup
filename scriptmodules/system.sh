@@ -270,6 +270,9 @@ function get_platform() {
             ODROID-XU3)
                 __platform="odroid-xu"
                 ;;
+            "Rockchip (Device Tree)")
+                __platform="tinker"
+                ;;
             *)
                 case $architecture in
                     i686|x86_64|amd64)
@@ -346,18 +349,25 @@ function platform_odroid-xu() {
     __platform_flags="arm armv7 neon mali"
 }
 
+function platform_tinker() {
+    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv7 neon kms gles"
+}
+
 function platform_x86() {
     __default_cflags="-O2 -march=native"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
-    __platform_flags="x11"
+    __platform_flags="x11 gl"
 }
 
 function platform_generic-x11() {
     __default_cflags="-O2"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
-    __platform_flags="x11"
+    __platform_flags="x11 gl"
 }
 
 function platform_armv7-mali() {
