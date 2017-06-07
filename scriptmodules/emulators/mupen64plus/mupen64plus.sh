@@ -170,7 +170,6 @@ function testCompatibility() {
     # some roms lead to a black screen of death
     local game
     local blacklist=(
-        resident
         gauntlet
         rogue
         squadron
@@ -212,15 +211,27 @@ function testCompatibility() {
         beetle
         donkey
         zelda
+        bomberman
     )
 
     local GLideN64NativeResolution_blacklist=(
         majora
     )
 
+    local AudioOMX_blacklist=(
+        pokemon
+        resident
+    )
+
     for game in "${blacklist[@]}"; do
         if [[ "${ROM,,}" == *"$game"* ]]; then
             exit
+        fi
+    done
+
+    for game in "${AudioOMX_blacklist[@]}"; do
+        if [[ "${ROM,,}" == *"$game"* ]]; then
+            AUDIO_PLUGIN="mupen64plus-audio-sdl"
         fi
     done
 
@@ -312,8 +323,8 @@ iniSet "SaveStatePath" "$romdir/n64"
 iniSet "SaveSRAMPath" "$romdir/n64"
 
 getAutoConf mupen64plus_hotkeys && remap
-getAutoConf mupen64plus_compatibility_check && testCompatibility
 getAutoConf mupen64plus_audio && setAudio
+getAutoConf mupen64plus_compatibility_check && testCompatibility
 getAutoConf mupen64plus_texture_packs && useTexturePacks
 
 if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* ]]; then
