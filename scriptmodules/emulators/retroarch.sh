@@ -104,6 +104,9 @@ function configure_retroarch() {
     # install shaders by default
     update_shaders_retroarch
 
+    # install assets by default (needed for xmb menu driver)
+    update_assets_retroarch
+
     local config="$(mktemp)"
 
     cp "$md_inst/retroarch.cfg" "$config"
@@ -167,8 +170,8 @@ function configure_retroarch() {
     iniSet "input_joypad_driver" "udev"
     iniSet "all_users_control_menu" "true"
 
-    # rgui by default
-    iniSet "menu_driver" "rgui"
+    # disable xmb menu driver's icon shadows
+    iniSet "xmb_shadows_enable" "false"
 
     # disable xmb menu driver icon shadows
     iniSet "xmb_shadows_enable" "false"
@@ -179,13 +182,8 @@ function configure_retroarch() {
     copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
     rm "$config"
 
-    # if no menu_driver is set, force RGUI, as the default has now changed to XMB.
-    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
-    iniGet "menu_driver"
-    [[ -z "$ini_value" ]] && iniSet "menu_driver" "rgui"
-
     # if no menu_unified_controls is set, force it on so that keyboard player 1 can control
-    # the RGUI menu which is important for arcade sticks etc that map to keyboard inputs
+    # the GUI menu which is important for arcade sticks etc that map to keyboard inputs
     iniGet "menu_unified_controls"
     [[ -z "$ini_value" ]] && iniSet "menu_unified_controls" "true"
 
