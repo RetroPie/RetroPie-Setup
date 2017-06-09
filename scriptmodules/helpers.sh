@@ -193,6 +193,14 @@ function getDepends() {
     local required
     local packages=()
     local failed=()
+
+    # check whether to use our own sdl2 - can be disabled to resolve issues with
+    # mixing custom 64bit sdl2 and os distributed i386 version on multiarch
+    local own_sdl2=1
+    iniConfig " = " '"' "$configdir/all/retropie.cfg"
+    iniGet "own_sdl2"
+    [[ "$ini_value" == "0" ]] && own_sdl2=0
+
     for required in $@; do
         if [[ "$md_mode" == "install" ]]; then
             # make sure we have our sdl1 / sdl2 installed
@@ -240,7 +248,7 @@ function getDepends() {
                 else
                     rp_callModule sdl1
                 fi
-            elif [[ "$required" == "libsdl2-dev" ]]; then
+            elif [[ "$required" == "libsdl2-dev" && "$own_sdl2" == "1" ]]; then
                 if [[ "$__has_binaries" -eq 1 ]]; then
                     rp_callModule sdl2 install_bin
                 else
