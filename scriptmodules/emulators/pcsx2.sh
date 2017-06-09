@@ -16,6 +16,21 @@ rp_module_licence="GPL3 https://raw.githubusercontent.com/PCSX2/pcsx2/master/COP
 rp_module_section="exp"
 rp_module_flags="!arm"
 
+function depends_pcsx2() {
+    if isPlatform "64bit"; then
+        iniConfig " = " '"' "$configdir/all/retropie.cfg"
+        iniGet "own_sdl2"
+        if [[ "$ini_value" != "0" ]]; then
+            if dialog --yesno "PCSX2 cannot be installed on a 64bit system with the RetroPie custom version of SDL2 installed due to version conflicts with the multiarch i386 version of SDL2.\n\nDo you want to downgrade to your OS version of SDL2 and continue to install PCSX2?" 22 76 2>&1 >/dev/tty; then
+                iniSet "own_sdl2" "0"
+                rp_callModule sdl2 revert
+            else
+                md_ret_errors+=("$md_desc install aborted.")
+            fi
+        fi
+    fi
+}
+
 function install_bin_pcsx2() {
     aptInstall pcsx2
 }
