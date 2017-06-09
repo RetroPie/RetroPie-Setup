@@ -87,6 +87,12 @@ function install_bin_sdl2() {
     rm ./*.deb
 }
 
+function revert_sdl2() {
+    aptUpdate
+    local packaged="$(apt-cache madison libsdl2-dev | cut -d" " -f3)"
+    aptInstall --force-yes libsdl2-2.0-0="$packaged" libsdl2-dev="$packaged"
+}
+
 function remove_sdl2() {
     apt-get remove -y --force-yes libsdl2-dev
     apt-get autoremove -y
