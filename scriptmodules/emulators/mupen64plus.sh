@@ -142,14 +142,13 @@ function configure_mupen64plus() {
     if isPlatform "rpi"; then
         local res
         for res in "320x240" "640x480"; do
-            local def=0
             local name=""
-            [[ "$res" == "320x240" ]] && def=1
             [[ "$res" == "640x480" ]] && name="-highres"
-            addEmulator $def "${md_id}-GLideN64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% $res"
+            addEmulator 0 "${md_id}-GLideN64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% $res"
             addEmulator 0 "${md_id}-gles2rice$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
         done
         addEmulator 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
+        addEmulator 1 "${md_id}-auto" "n64" "$md_inst/bin/mupen64plus.sh AUTO %ROM%"
     else
         addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
         addEmulator 0 "${md_id}-GLideN64-GL3-3" "n64" "MESA_GL_VERSION_OVERRIDE=3.3COMPAT $md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
@@ -206,9 +205,11 @@ function configure_mupen64plus() {
         # Size of texture cache in megabytes. Good value is VRAM*3/4
         iniSet "CacheSize" "50"
         # Disable FB emulation until visual issues are sorted out
-        iniSet "EnableFBEmulation" "False"
+        iniSet "EnableFBEmulation" "True"
         # Use native res
         iniSet "UseNativeResolutionFactor" "1"
+        # Enable legacy blending
+        iniSet "EnableLegacyBlending" "True"
 
         # Disable gles2n64 autores feature and use dispmanx upscaling
         iniConfig " = " "" "$md_conf_root/n64/gles2n64.conf"

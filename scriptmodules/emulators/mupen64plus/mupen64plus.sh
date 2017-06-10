@@ -169,12 +169,16 @@ function testCompatibility() {
     # fallback for glesn64 and rice plugin
     # some roms lead to a black screen of death
     local game
+    
+    # these games need RSP-LLE
     local blacklist=(
         gauntlet
         rogue
         squadron
+        body
     )
 
+    # these games do not run with gles2n64
     local glesn64_blacklist=(
         zelda
         paper
@@ -184,28 +188,12 @@ function testCompatibility() {
         beetle
     )
 
+    # these games do not run with rice
     local glesn64rice_blacklist=(
         yoshi
     )
 
-    local GLideN64FBEMU_whitelist=(
-        ocarina
-        empire
-        pokemon
-        rayman
-        donald
-        diddy
-        beetle
-        tennis
-        golf
-        instinct
-        gemini
-        majora
-        1080
-        quake
-        ridge
-    )
-
+    # these games have massive glitches if legacy blending is enabled
     local GLideN64LegacyBlending_blacklist=(
         empire
         beetle
@@ -218,9 +206,11 @@ function testCompatibility() {
         majora
     )
 
+    # these games crash if audio-omx is selected
     local AudioOMX_blacklist=(
         pokemon
         resident
+        starcraft
     )
 
     for game in "${blacklist[@]}"; do
@@ -254,12 +244,6 @@ function testCompatibility() {
             iniSet "fontSize" "14"
             # Enable FBEmulation if necessary
             iniSet "EnableFBEmulation" "True"
-            #for game in "${GLideN64FBEMU_whitelist[@]}"; do
-            #    if [[ "${ROM,,}" == *"$game"* ]]; then
-            #        iniSet "EnableFBEmulation" "True"
-            #        break
-            #    fi
-            #done
             # Set native resolution factor of 1
             iniSet "UseNativeResolutionFactor" "1"
             for game in "${GLideN64NativeResolution_blacklist[@]}"; do
@@ -313,6 +297,63 @@ function useTexturePacks() {
     iniSet "LoadHiResTextures" "True"
 }
 
+function autoset() {
+    VIDEO_PLUGIN="mupen64plus-video-GLideN64"
+    RES="--resolution 320x240"
+
+    local game
+    # these games run fine and look better with 640x480
+    local highres=(
+        yoshi
+        worms
+        party
+        pokemon
+        bomberman
+        harvest
+        diddy
+        1080
+        starcraft
+        wipeout
+        darkness
+    )
+
+    for game in "${highres[@]}"; do
+        if [[ "${ROM,,}" == *"$game"* ]]; then
+            RES="--resolution 640x480"
+            break
+        fi
+    done
+
+    # these games have no glitches and run faster with gles2n64
+    local gles2n64=(
+        wave
+        kart
+    )
+
+    for game in "${gles2n64[@]}"; do
+        if [[ "${ROM,,}" == *"$game"* ]]; then
+            VIDEO_PLUGIN="mupen64plus-video-n64"
+            break
+        fi
+    done
+
+    # these games have no glitches or run faster with rice
+    local gles2rice=(
+        diddy
+        1080
+        conker
+        tooie
+        darkness
+    )
+
+    for game in "${gles2rice[@]}"; do
+        if [[ "${ROM,,}" == *"$game"* ]]; then
+            VIDEO_PLUGIN="mupen64plus-video-rice"
+            break
+        fi
+    done
+}
+
 if ! grep -q "\[Core\]" "$config"; then
     echo "[Core]" >> "$config"
     echo "Version = 1.010000" >> "$config"
@@ -326,6 +367,7 @@ getAutoConf mupen64plus_hotkeys && remap
 getAutoConf mupen64plus_audio && setAudio
 getAutoConf mupen64plus_compatibility_check && testCompatibility
 getAutoConf mupen64plus_texture_packs && useTexturePacks
+[[ "$VIDEO_PLUGIN" == "AUTO" ]] && autoset
 
 if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* ]]; then
     # If a raspberry pi is used lower resolution to 320x240 and enable SDL dispmanx scaling mode 1
