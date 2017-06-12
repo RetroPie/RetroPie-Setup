@@ -365,9 +365,9 @@ iniSet "SaveSRAMPath" "$romdir/n64"
 
 getAutoConf mupen64plus_hotkeys && remap
 getAutoConf mupen64plus_audio && setAudio
+[[ "$VIDEO_PLUGIN" == "AUTO" ]] && autoset
 getAutoConf mupen64plus_compatibility_check && testCompatibility
 getAutoConf mupen64plus_texture_packs && useTexturePacks
-[[ "$VIDEO_PLUGIN" == "AUTO" ]] && autoset
 
 if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* ]]; then
     # If a raspberry pi is used lower resolution to 320x240 and enable SDL dispmanx scaling mode 1
