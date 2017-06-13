@@ -347,6 +347,22 @@ function gitPullOrClone() {
     fi
 }
 
+## @fn svnExport()
+## @param dest destination directory
+## @param repo repository to export from
+## @param path to export files from
+## @param branch branch to export from (optional)
+## @brief Export a working copy of files from svn or git repository
+function svnExport() {
+    local dir="$1"
+    local repo="$2"
+    local path="$3"
+    local branch="$4"
+    [[ -z "$branch" ]] && branch="trunk"
+
+    runCmd svn export $repo/$branch/$path $dir/
+}
+
 # @fn setupDirectories()
 # @brief Makes sure some required retropie directories and files are created.
 function setupDirectories() {
