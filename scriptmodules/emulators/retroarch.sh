@@ -15,7 +15,7 @@ rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/mas
 rp_module_section="core"
 
 function depends_retroarch() {
-    local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
+    local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev subversion)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev)
@@ -86,6 +86,17 @@ function update_assets_retroarch() {
     chown -R $user:$user "$dir"
 }
 
+function update_xmbassets_retroarch() {
+    local dir="$configdir/all/retroarch/assets"
+    local path="xmb/monochrome"
+    # export files only if full assets are missing
+    if [ ! -d "$dir/.git" ]; then
+        rm -rf "$dir/$path"
+        svnExport "$dir/$path" https://github.com/libretro/retroarch-assets.git "$path"
+        chown -R $user:$user "$dir"
+    fi
+}
+
 function configure_retroarch() {
     [[ "$md_mode" == "remove" ]] && return
 
@@ -103,6 +114,9 @@ function configure_retroarch() {
 
     # install shaders by default
     update_shaders_retroarch
+
+    # install minimal xmb assets by default
+    update_xmbassets_retroarch
 
     local config="$(mktemp)"
 
@@ -287,6 +301,7 @@ function gui_retroarch() {
                         ;;
                     2)
                         rm -rf "$configdir/all/retroarch/$dir"
+                        [[ ! -d "$configdir/all/retroarch/assets" ]] && update_xmbassets_retroarch
                         ;;
                     *)
                         continue
