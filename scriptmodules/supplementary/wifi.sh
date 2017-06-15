@@ -12,7 +12,7 @@
 rp_module_id="wifi"
 rp_module_desc="Configure Wifi"
 rp_module_section="config"
-rp_module_flags="!x86"
+rp_module_flags="x11"
 
 function remove_wifi() {
     sed -i '/RETROPIE CONFIG START/,/RETROPIE CONFIG END/d' "/etc/wpa_supplicant/wpa_supplicant.conf"
@@ -34,6 +34,10 @@ function list_wifi() {
 }
 
 function connect_wifi() {
+    if [[ ! -d "/sys/class/net/wlan0/" ]]; then
+        printMsgs "dialog" "No wlan0 interface detected"
+        return 1
+    fi
     local essids=()
     local essid
     local types=()
