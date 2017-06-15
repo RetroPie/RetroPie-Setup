@@ -124,7 +124,7 @@ function install_mupen64plus() {
         if [[ -f "$source/projects/unix/Makefile" ]]; then
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
             local params=()
-            isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1" "HOST_CPU=armv6")
+            isPlatform "armv6" && params+=("VFP=1" "HOST_CPU=armv6")
             isPlatform "rpi" && params+=("VC=1")
             isPlatform "neon" && params+=("NEON=1")
             isPlatform "x86" && params+=("SSE=SSSE3")
@@ -210,6 +210,10 @@ function configure_mupen64plus() {
         iniSet "UseNativeResolutionFactor" "1"
         # Enable legacy blending
         iniSet "EnableLegacyBlending" "True"
+        # Enable FPS Counter. Fixes zelda depth issue
+        iniSet "ShowFPS " "True"
+        iniSet "fontSize" "14"
+        iniSet "fontColor" "1F1F1F"
 
         # Disable gles2n64 autores feature and use dispmanx upscaling
         iniConfig " = " "" "$md_conf_root/n64/gles2n64.conf"
