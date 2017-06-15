@@ -462,6 +462,10 @@ function main_menu() {
             options+=(Z "Launch with netplay enabled")
         fi
 
+        if [[ -f "$CONFIGDIR/all/runcommand-onmenu.sh" ]]; then
+            options+=(M "Execute runcommand-onmenu.sh")
+        fi
+        
         options+=(Q "Exit (without launching)")
 
         local temp_mode
@@ -533,6 +537,9 @@ function main_menu() {
             L)
                 COMMAND+=" --verbose"
                 return 0
+                ;;
+            M)
+                user_script "runcommand-onmenu.sh"
                 ;;
             Q)
                 return 1
