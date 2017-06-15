@@ -243,6 +243,7 @@ function testCompatibility() {
             # Enable FPS Counter. Fixes zelda depth issue
             iniSet "ShowFPS " "True"
             iniSet "fontSize" "14"
+            iniSet "fontColor" "1F1F1F"
             # Enable FBEmulation if necessary
             iniSet "EnableFBEmulation" "True"
             # Set native resolution factor of 1
