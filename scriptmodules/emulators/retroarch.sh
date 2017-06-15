@@ -86,6 +86,14 @@ function update_assets_retroarch() {
     chown -R $user:$user "$dir"
 }
 
+function install_xmb_monochrome_assets_retroarch() {
+    local dir="$configdir/all/retroarch/assets"
+    [[ -d "$dir/.git" ]] && return
+    [[ ! -d "$dir" ]] && mkUserDir "$dir"
+    wget -q -O- "$__archive_url/retroarch-xmb-monochrome.tar.gz" | tar -xvz -C "$dir"
+    chown -R $user:$user "$dir"
+}
+
 function configure_retroarch() {
     [[ "$md_mode" == "remove" ]] && return
 
@@ -103,6 +111,9 @@ function configure_retroarch() {
 
     # install shaders by default
     update_shaders_retroarch
+
+    # install minimal assets
+    install_xmb_monochrome_assets_retroarch
 
     local config="$(mktemp)"
 
@@ -287,6 +298,7 @@ function gui_retroarch() {
                         ;;
                     2)
                         rm -rf "$configdir/all/retroarch/$dir"
+                        [[ "$dir" == "assets" ]] && install_xmb_monochrome_assets_retroarch
                         ;;
                     *)
                         continue
