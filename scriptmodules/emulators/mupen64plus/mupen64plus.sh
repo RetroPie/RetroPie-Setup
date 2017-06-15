@@ -20,6 +20,7 @@ RSP_PLUGIN="$4"
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
 config="$configdir/n64/mupen64plus.cfg"
+inputconfig="$configdir/n64/InputAutoCfg.ini"
 datadir="$HOME/RetroPie"
 romdir="$datadir/roms"
 
@@ -362,6 +363,39 @@ iniConfig " = " "\"" "$config"
 iniSet "ScreenshotPath" "$romdir/n64"
 iniSet "SaveStatePath" "$romdir/n64"
 iniSet "SaveSRAMPath" "$romdir/n64"
+
+# add default keyboard configuration if InputAutoCFG.ini is missing
+if [[ ! -f "$inputconfig" ]]; then
+    cat > "$inputconfig" << _EOF_
+; InputAutoCfg.ini for Mupen64Plus SDL Input plugin
+
+; Keyboard_START
+[Keyboard]
+plugged = True
+plugin = 2
+mouse = False
+DPad R = key(100)
+DPad L = key(97)
+DPad D = key(115)
+DPad U = key(119)
+Start = key(13)
+Z Trig = key(122)
+B Button = key(306)
+A Button = key(304)
+C Button R = key(108)
+C Button L = key(106)
+C Button D = key(107)
+C Button U = key(105)
+R Trig = key(99)
+L Trig = key(120)
+Mempak switch = key(44)
+Rumblepak switch = key(46)
+X Axis = key(276,275)
+Y Axis = key(273,274)
+; Keyboard_END
+
+_EOF_
+fi
 
 getAutoConf mupen64plus_hotkeys && remap
 getAutoConf mupen64plus_audio && setAudio
