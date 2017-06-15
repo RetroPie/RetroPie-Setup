@@ -76,12 +76,22 @@ function scrape_scraper() {
     local params=()
     params+=(-image_dir "$img_dir")
     params+=(-image_path "$img_path")
+    params+=(-video_dir "$img_dir")
+    params+=(-video_path "$img_path")
+    params+=(-marquee_dir "$img_dir")
+    params+=(-marquee_path "$img_path")
     params+=(-output_file "$gamelist")
     params+=(-rom_dir "$romdir/$system")
     params+=(-workers "4")
     params+=(-skip_check)
     if [[ "$use_thumbs" -eq 1 ]]; then
         params+=(-thumb_only)
+    fi
+    if [[ "$download_videos" -eq 1 ]]; then
+        params+=(-download_videos)
+    fi
+    if [[ "$download_marquees" -eq 1 ]]; then
+        params+=(-download_marquees)
     fi
     if [[ -n "$max_width" ]]; then
         params+=(-max_width "$max_width")
@@ -98,8 +108,10 @@ function scrape_scraper() {
     fi
     if [[ "$mame_src" -eq 0 ]]; then
         params+=(-mame_src="mamedb")
-    else
+    elif [[ "$mame_src" -eq 1 ]]; then
         params+=(-mame_src="ss")
+    else
+        params+=(-mame_src="adb")
     fi
     if [[ "$rom_name" -eq 1 ]]; then
         params+=(-use_nointro_name=false)
@@ -155,10 +167,12 @@ function _load_config_scraper() {
         'max_width=400' \
         'max_height=400' \
         'console_src=1' \
-        'mame_src=0' \
+        'mame_src=2' \
         'rom_name=0' \
         'append_only=0' \
         'use_rom_folder=0' \
+        'download_videos=0' \
+        'download_marquees=0' \
     )"
 }
 
@@ -190,8 +204,10 @@ function gui_scraper() {
 
         if [[ "$mame_src" -eq 0 ]]; then
             options+=(4 "Arcade Source (MameDB)")
-        else
+        elif [[ "$mame_src" -eq 1 ]]; then
             options+=(4 "Arcade Source (ScreenScraper)")
+        else
+            options+=(4 "Arcade Source (ArcadeItalia)")
         fi
 
         if [[ "$console_src" -eq 0 ]]; then
@@ -222,6 +238,18 @@ function gui_scraper() {
             options+=(8 "Use rom folder for gamelist & images (Disabled)")
         fi
 
+        if [[ "$download_videos" -eq 1 ]]; then
+            options+=(9 "Download Videos (Enabled)")
+        else
+            options+=(9 "Download Videos (Disabled)")
+        fi
+
+        if [[ "$download_marquees" -eq 1 ]]; then
+            options+=(0 "Download Marquees (Enabled)")
+        else
+            options+=(0 "Download Marquees (Disabled)")
+        fi
+
         options+=(W "Max image width ($max_width)")
         options+=(H "Max image height ($max_height)")
 
@@ -243,7 +271,7 @@ function gui_scraper() {
                     iniSet "use_thumbs" "$use_thumbs"
                     ;;
                 4)
-                    mame_src="$((( mame_src + 1) % 2))"
+                    mame_src="$((( mame_src + 1) % 3))"
                     iniSet "mame_src" "$mame_src"
                     ;;
                 5)
@@ -261,6 +289,14 @@ function gui_scraper() {
                 8)
                     use_rom_folder="$((use_rom_folder ^ 1))"
                     iniSet "use_rom_folder" "$use_rom_folder"
+                    ;;
+                9)
+                    download_videos="$((download_videos ^ 1))"
+                    iniSet "download_videos" "$download_videos"
+                    ;;
+                0)
+                    download_marquees="$((download_marquees ^ 1))"
+                    iniSet "download_marquees" "$download_marquees"
                     ;;
                 H)
                     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image height in pixels" 10 60 "$max_height")
