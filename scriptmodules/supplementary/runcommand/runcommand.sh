@@ -412,6 +412,9 @@ function main_menu() {
     local cmd
     local choice
 
+    local user_menu=0
+    [[ -d "$CONFIGDIR/all/runcommand-menu" && -n "$(find "$CONFIGDIR/all/runcommand-menu" -maxdepth 1 -name "*.sh")" ]] && user_menu=1
+
     [[ -z "$ROM_BN" ]] && ROM_BN="game/rom"
     [[ -z "$SYSTEM" ]] && SYSTEM="emulator/port"
 
@@ -460,6 +463,10 @@ function main_menu() {
         if [[ "$COMMAND" =~ retroarch ]]; then
             options+=(L "Launch with verbose logging")
             options+=(Z "Launch with netplay enabled")
+        fi
+
+        if [[ "$user_menu" -eq 1 ]]; then
+            options+=(U "User Menu")
         fi
 
         options+=(Q "Exit (without launching)")
@@ -533,6 +540,12 @@ function main_menu() {
             L)
                 COMMAND+=" --verbose"
                 return 0
+                ;;
+            U)
+                user_menu
+                local ret="$?"
+                [[ "$ret" -eq 1 ]] && return 1
+                [[ "$ret" -eq 2 ]] && return 0
                 ;;
             Q)
                 return 1
@@ -675,6 +688,33 @@ function choose_fb_res() {
 
     default_mode set "$mode" "$choice"
     load_mode_defaults
+}
+
+function user_menu() {
+    local default
+    local options=()
+    local script
+    local i=1
+    while read -r script; do
+        script="${script##*/}"
+        script="${script%.*}"
+        options+=($i "$script")
+        ((i++))
+    done < <(find "$CONFIGDIR/all/runcommand-menu" -type f -name "*.sh" | sort)
+    local default
+    local cmd
+    local choice
+    local ret
+    while true; do
+        cmd=(dialog --default-item "$default" --cancel-label "Back" --menu "Choose option"  22 76 16)
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        [[ -z "$choice" ]] && return 0
+        default="$choice"
+        script="runcommand-menu/${options[choice*2-1]}.sh"
+        user_script "$script"
+        ret="$?"
+        [[ "$ret" -eq 1 || "$ret" -eq 2 ]] && return "$ret"
+    done
 }
 
 function switch_fb_res() {
