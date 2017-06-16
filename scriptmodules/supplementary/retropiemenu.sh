@@ -161,7 +161,7 @@ function launch_retropiemenu() {
             ;;
         *.sh)
             cd "$home/RetroPie/retropiemenu"
-            bash "$command"
+            sudo -u "$user" bash "$command"
             ;;
     esac
     clear
