@@ -1,34 +1,35 @@
+diff --git a/input/input_driver.c b/input/input_driver.c
+index 8f323ad..299cb87 100644
 --- a/input/input_driver.c
 +++ b/input/input_driver.c
-@@ -101,6 +101,10 @@ static rarch_remote_t *input_driver_remote = NULL;
- static const input_driver_t *current_input = NULL;
- static void *current_input_data = NULL;
+@@ -119,6 +119,10 @@ static bool input_driver_nonblock_state           = false;
+ static bool input_driver_flushing_input           = false;
+ static bool input_driver_data_own                 = false;
  
 +/* number of frames required to trigger the hotkey */
-+#define HOTKEY_DELAY 5 
++#define HOTKEY_DELAY 5
 +static unsigned hotkey_counter = 0;
 +
  /**
   * input_driver_find_handle:
   * @idx                : index of driver to get handle to.
-@@ -548,9 +552,17 @@ static bool check_input_driver_block_hotkey(bool enable_hotkey)
-    else
-       input_driver_ctl(RARCH_INPUT_CTL_UNSET_HOTKEY_BLOCK, NULL);
+@@ -912,9 +916,16 @@ uint64_t input_keys_pressed(
+             && current_input->input_state(
+                current_input_data, joypad_info, &binds, 0,
+                RETRO_DEVICE_JOYPAD, 0, RARCH_ENABLE_HOTKEY))
+-            input_driver_block_libretro_input = true;
+-         else
+-            input_driver_block_hotkey         = true;
++      {
++         if (hotkey_counter < HOTKEY_DELAY)
++            hotkey_counter++;
++         if (hotkey_counter == HOTKEY_DELAY)
++             input_driver_block_libretro_input = true;
++      }
++      else {
++         hotkey_counter = 0;
++         input_driver_block_hotkey = true;
++      }
+    }
  
--   /* If we hold ENABLE_HOTKEY button, block all libretro input to allow
--    * hotkeys to be bound to same keys as RetroPad. */
--   return (use_hotkey_enable && enable_hotkey);
-+   if (use_hotkey_enable && enable_hotkey)
-+   {
-+      if (hotkey_counter < HOTKEY_DELAY)
-+         hotkey_counter++;
-+   }
-+   else
-+      hotkey_counter = 0;
-+
-+   /* If we hold ENABLE_HOTKEY button for HOTKEY_DELAY frames, block all
-+    * libretro input to allow hotkeys to be bound to same keys as RetroPad. */
-+   return (hotkey_counter == HOTKEY_DELAY);
- }
- 
- /**
+    game_focus_toggle_valid                      = binds[RARCH_GAME_FOCUS_TOGGLE].valid;

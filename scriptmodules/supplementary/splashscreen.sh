@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
-rp_module_menus="3+configure"
-rp_module_flags="nobin !x86"
+rp_module_section="main"
+rp_module_flags="noinstclean !x86 !osmc !xbian !mali"
+
+function _update_hook_splashscreen() {
+    rp_isInstalled "$md_idx" && configure_splashscreen
+}
 
 function _image_exts_splashscreen() {
     echo '\.bmp\|\.jpg\|\.jpeg\|\.gif\|\.png\|\.ppm\|\.tiff\|\.webp'
@@ -26,8 +30,8 @@ function depends_splashscreen() {
     getDepends fbi omxplayer
 }
 
-function install_splashscreen() {
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/asplashscreen" "/etc/init.d/"
+function install_bin_splashscreen() {
+    cp "$md_data/asplashscreen" "/etc/init.d/"
 
     iniConfig "=" '"' /etc/init.d/asplashscreen
     iniSet "ROOTDIR" "$rootdir"
@@ -44,22 +48,49 @@ function install_splashscreen() {
     chown $user:$user "$datadir/splashscreens/README.txt"
 }
 
+function enable_plymouth_splashscreen() {
+    local config="/boot/cmdline.txt"
+    if [[ -f "$config" ]]; then
+        sed -i "s/ *plymouth.enable=0//" "$config"
+    fi
+}
+
+function disable_plymouth_splashscreen() {
+    local config="/boot/cmdline.txt"
+    if [[ -f "$config" ]] && ! grep -q "plymouth.enable" "$config"; then
+        sed -i '1 s/ *$/ plymouth.enable=0/' "$config"
+    fi
+}
+
 function default_splashscreen() {
-    find "$md_inst/retropie2015-blue" -type f >/etc/splashscreen.list
+    echo "$md_inst/retropie-default.png" >/etc/splashscreen.list
 }
 
 function enable_splashscreen() {
     insserv asplashscreen
 }
 
-function remove_splashscreen() {
+function disable_splashscreen() {
     insserv -r asplashscreen
+}
+
+function configure_splashscreen() {
+    [[ "$md_mode" == "remove" ]] && return
+    disable_plymouth_splashscreen
+    enable_splashscreen
+    [[ ! -f /etc/splashscreen.list ]] && default_splashscreen
+}
+
+function remove_splashscreen() {
+    enable_plymouth_splashscreen
+    disable_splashscreen
+    rm -f /etc/splashscreen.list
 }
 
 function choose_path_splashscreen() {
     local options=(
         1 "RetroPie splashscreens"
-        2 "Own splashscreens (from $datadir/splashscreens)"
+        2 "Own/Extra splashscreens (from $datadir/splashscreens)"
     )
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -102,11 +133,11 @@ function choose_splashscreen() {
     local i=0
     while read splashdir; do
         splashdir=${splashdir/$path\//}
-        if echo "$splashdir" | grep -q "$regex"; then 
+        if echo "$splashdir" | grep -q "$regex"; then
             options+=("$i" "$splashdir")
             ((i++))
         fi
-    done < <(find "$path" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort)
+    done < <(find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort)
     if [[ "${#options[@]}" -eq 0 ]]; then
         printMsgs "dialog" "There are no splashscreens installed in $path"
         return
@@ -170,7 +201,7 @@ function preview_splashscreen() {
                     ;;
                 2)
                     file=$(mktemp)
-                    find "$path" -type f ! -regex ".*/.git/.*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort > "$file"
+                    find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort > "$file"
                     if [[ -s "$file" ]]; then
                         fbi --timeout 6 --once --autozoom --list "$file"
                     else
@@ -189,7 +220,12 @@ function preview_splashscreen() {
     done
 }
 
-function configure_splashscreen() {
+function download_extra_splashscreen() {
+    gitPullOrClone "$datadir/splashscreens/retropie-extra" https://github.com/HerbFargus/retropie-splashscreens-extra
+    chown -R $user:$user "$datadir/splashscreens/retropie-extra"
+}
+
+function gui_splashscreen() {
     if [[ ! -d "$md_inst" ]]; then
         rp_callModule splashscreen depends
         rp_callModule splashscreen install
@@ -220,6 +256,7 @@ function configure_splashscreen() {
             6 "Append splashscreen to list (for multiple entries)"
             7 "Preview splashscreens"
             8 "Update RetroPie splashscreens"
+            9 "Download RetroPie-Extra splashscreens"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -229,7 +266,7 @@ function configure_splashscreen() {
                     ;;
                 2)
                     if [[ "$enabled" -eq 1 ]]; then
-                        remove_splashscreen
+                        disable_splashscreen
                         printMsgs "dialog" "Disabled splashscreen on boot."
                     else
                         [[ ! -f /etc/splashscreen.list ]] && rp_CallModule splashscreen default
@@ -260,6 +297,10 @@ function configure_splashscreen() {
                     ;;
                 8)
                     rp_callModule splashscreen install
+                    ;;
+                9)
+                    rp_callModule splashscreen download_extra
+                    printMsgs "dialog" "The RetroPie-Extra splashscreens have been downloaded to $datadir/splashscreens/retropie-extra"
                     ;;
             esac
         else

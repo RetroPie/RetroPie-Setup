@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="xboxdrv"
 rp_module_desc="Xbox / Xbox 360 gamepad driver"
-rp_module_menus="3+gui"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/zerojay/xboxdrv/stable/COPYING"
+rp_module_section="driver"
 
 function def_controllers_xboxdrv() {
     echo "2"
@@ -22,7 +23,6 @@ function def_deadzone_xboxdrv() {
 }
 
 function depends_xboxdrv() {
-    hasPackage xboxdrv && apt-get remove -y xboxdrv
     getDepends libboost-dev libusb-1.0-0-dev libudev-dev libx11-dev scons pkg-config x11proto-core-dev libdbus-glib-1-dev
 }
 

@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="esthemes"
 rp_module_desc="Install themes for Emulation Station"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function depends_esthemes() {
     if isPlatform "x11"; then
@@ -33,6 +32,8 @@ function install_theme_esthemes() {
         repo="RetroPie"
     fi
     mkdir -p "/etc/emulationstation/themes"
+    # do a fresh checkout to avoid some line ending issues with the autocrlf mode used to create the images vs git default on Raspbian
+    rm -rf "/etc/emulationstation/themes/$theme"
     gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git"
 }
 
@@ -43,16 +44,21 @@ function uninstall_theme_esthemes() {
     fi
 }
 
-function configure_esthemes() {
-    printMsgs "dialog" "If you wish to run more than ~10 systems on themes other than Carbon, Pixel, Eudora, Turtle-pi, and Canela variants, you run the risk of getting the white screen of death (you may be able to get more systems by increasing your GPU/CPU split)."
+function gui_esthemes() {
     local themes=(
         'RetroPie carbon'
         'RetroPie carbon-centered'
         'RetroPie carbon-nometa'
-        'RetroPie pixel'
+        'ehettervik pixel'
+        'ehettervik pixel-metadata'
+        'ehettervik pixel-tft'
+        'ehettervik luminous'
+        'ehettervik minilumi'
+        'ehettervik workbench'
         'AmadhiX eudora'
         'AmadhiX eudora-bigshot'
         'AmadhiX eudora-concise'
+        'ChoccyHobNob eudora-updated'
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
         'RetroPie turtle-pi'
@@ -63,10 +69,29 @@ function configure_esthemes() {
         'RetroPie simplified-static-canela'
         'RetroPie zoid'
         'RetroPie nbba'
+        'lilbud material'
+        'mattrixk io'
+        'mattrixk metapixel'
+        'mattrixk spare'
         'robertybob space'
         'robertybob simplebigart'
         'RetroPie clean-look'
         'HerbFargus tronkyfran'
+        'lilbud flat'
+        'lilbud flat-dark'
+        'lilbud switch-light'
+        'FlyingTomahawk futura-V'
+        'FlyingTomahawk futura-VL'
+        'FlyingTomahawk futura-dark-V'
+        'FlyingTomahawk futura-dark-VL'
+        'G-rila fundamental'
+        'ruckage nes-mini'
+        'ruckage famicom-mini'
+        'anthonycaccese crt'
+        'anthonycaccese crt-centered'
+        'TMNTturtleguy ComicBook'
+        'TMNTturtleguy ComicBook_4-3'
+        'ChoccyHobNob cygnus'
     )
     while true; do
         local theme
@@ -147,4 +172,3 @@ function configure_esthemes() {
         fi
     done
 }
-

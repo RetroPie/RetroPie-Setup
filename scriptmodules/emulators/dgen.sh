@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="dgen"
-rp_module_desc="Megadrive/Genesis emulat. DGEN"
-rp_module_menus="2+"
+rp_module_desc="Megadrive/Genesis emulator DGEN"
+rp_module_help="ROM Extensions: .32x .iso .cue .smd .bin .gen .md .sg .zip\n\nCopy your  Megadrive / Genesis roms to $romdir/megadrive\nSega 32X roms to $romdir/sega32x\nand SegaCD roms to $romdir/segacd\nThe Sega CD requires the BIOS files bios_CD_U.bin, bios_CD_E.bin, and bios_CD_J.bin copied to $biosdir"
+rp_module_licence="GPL2 https://sourceforge.net/p/dgen/dgen/ci/master/tree/COPYING"
+rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_dgen() {
@@ -37,11 +39,15 @@ function install_dgen() {
     md_ret_require="$md_inst/bin/dgen"
 }
 
-function configure_dgen()
-{
-    mkRomDir "megadrive"
-    mkRomDir "segacd"
-    mkRomDir "sega32x"
+function configure_dgen() {
+    local system
+    for system in megadrive segacd sega32x; do
+        mkRomDir "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
+        addSystem "$system"
+    done
+
+    [[ "$md_mode" == "remove" ]] && return
 
     mkUserDir "$md_conf_root/megadrive"
 
@@ -93,8 +99,4 @@ function configure_dgen()
     iniSet "joy_pad2_start" "joystick1-button7"
 
     setDispmanx "$md_id" 1
-
-    addSystem 0 "$md_id" "megadrive" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
-    addSystem 0 "$md_id" "segacd" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
-    addSystem 0 "$md_id" "sega32x" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
 }

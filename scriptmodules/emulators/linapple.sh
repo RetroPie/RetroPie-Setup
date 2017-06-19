@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="linapple"
 rp_module_desc="Apple 2 emulator LinApple"
-rp_module_menus="2+"
+rp_module_help="ROM Extensions: .dsk\n\nCopy your Apple 2 games to $romdir/apple2"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/dabonetn/linapple-pie/master/LICENSE"
+rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_linapple() {
@@ -29,17 +31,15 @@ function build_linapple() {
 }
 
 function install_linapple() {
-    mkdir -p "$md_inst/ftp/cache"
-    mkdir -p "$md_inst/images"
     md_ret_files=(
         'CHANGELOG'
         'INSTALL'
         'LICENSE'
         'linapple'
+        'linapple.conf'
         'Master.dsk'
         'README'
         'README-linapple-pie'
-        'linapple.conf'
     )
 }
 
@@ -47,19 +47,14 @@ function configure_linapple() {
     mkRomDir "apple2"
     mkUserDir "$md_conf_root/apple2"
 
-    # install linapple.conf under another name as we will copy it
-    cp -v "$md_inst/linapple.conf" "$md_inst/linapple.conf.sample"
-    cp -vf "$md_inst/Master.dsk" "$md_conf_root/apple2/Master.dsk"
-
-    # if the user doesn't already have a config, we will copy the default.
-    if [[ ! -f "$md_conf_root/apple2/linapple.conf" ]]; then
-        cp -v "linapple.conf.sample" "$md_conf_root/apple2/linapple.conf"
-    fi
-    moveConfigFile "linapple.conf" "$md_conf_root/apple2/linapple.conf"
-    moveConfigFile "Master.dsk" "$md_conf_root/apple2/Master.dsk"
-
-    addSystem 1 "$md_id" "apple2" "$md_inst/linapple -1 %ROM%" "Apple II" ".po .dsk .nib"
-
     moveConfigDir "$home/.linapple" "$md_conf_root/apple2"
-    chown -R $user:$user "$md_conf_root/apple2"
+
+    # copy default config/disk if user doesn't have them installed
+    local file
+    for file in Master.dsk linapple.conf; do
+        copyDefaultConfig "$file" "$md_conf_root/apple2/$file"
+    done
+
+    addEmulator 1 "$md_id" "apple2" "pushd $romdir/apple2; $md_inst/linapple -1 %ROM%; popd"
+    addSystem "apple2"
 }

@@ -1,32 +1,33 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="gemrb"
 rp_module_desc="gemrb - open-source implementation of Infinity Engine"
-rp_module_menus="4+"
-rp_module_flags=""
+rp_module_licence="GPL2 https://raw.githubusercontent.com/gemrb/gemrb/master/COPYING"
+rp_module_section="exp"
 
 function depends_gemrb() {
     getDepends python-dev libopenal-dev libsdl1.2-dev cmake libpng12-dev libfreetype6-dev
 }
 
 function sources_gemrb() {
-    gitPullOrClone "$md_build" https://github.com/gemrb/gemrb.git
+    gitPullOrClone "$md_build" https://github.com/gemrb/gemrb.git v0.8.4
 }
 
 function build_gemrb() {
     mkdir build
     cd build
-    cmake .. -DPREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
+    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
     make
+    md_ret_require="$md_build/build/gemrb/gemrb"
 }
 
 function install_gemrb() {

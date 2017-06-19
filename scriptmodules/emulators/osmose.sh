@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="osmose"
 rp_module_desc="Gamegear emulator Osmose"
-rp_module_menus="2+"
+rp_module_help="ROM Extensions: .bin .gg .sms .zip\nCopy your Game Gear roms to $romdir/gamegear\n\nMasterSystem roms to $romdir/mastersystem"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/osmose-rpi/master/license.txt"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_osmose() {
@@ -41,8 +43,8 @@ function configure_osmose() {
     mkRomDir "gamegear"
     mkRomDir "mastersystem"
 
-    delSystem "$md_id" "gamegear-osmose"
-    delSystem "$md_id" "mastersystem-osmose"
-    addSystem 0 "$md_id" "gamegear" "$md_inst/osmose %ROM% -tv -fs"
-    addSystem 0 "$md_id" "mastersystem" "$md_inst/osmose %ROM% -tv -fs"
+    addEmulator 0 "$md_id" "gamegear" "$md_inst/osmose %ROM% -tv -fs"
+    addEmulator 0 "$md_id" "mastersystem" "$md_inst/osmose %ROM% -tv -fs"
+    addSystem "gamegear"
+    addSystem "mastersystem"
 }

@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="configedit"
 rp_module_desc="Edit RetroPie/RetroArch configurations"
-rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function _video_fullscreen_configedit() {
     local mode="$1"
@@ -84,6 +83,87 @@ function _video_fullscreen_configedit() {
     esac
 }
 
+function _joypad_index_configedit() {
+    local mode="$1"
+    local value="$2"
+    while true; do
+
+        local players=()
+        local player
+        for player in 1 2 3 4; do
+            iniGet "input_player${player}_joypad_index"
+            if [[ -n "$ini_value" ]]; then
+                players+=("$ini_value")
+            else
+                players+=("unset")
+            fi
+        done
+
+        case "$mode" in
+            get)
+                echo "${players[@]}"
+                return
+                ;;
+            set)
+                local dev
+                local devs_name=()
+                local path
+                local paths=()
+
+                # get joystick device paths
+                while read -r dev; do
+                    if udevadm info --name=$dev | grep -q "ID_INPUT_JOYSTICK=1"; then
+                        paths+=("$(udevadm info --name=$dev | grep DEVPATH | cut -d= -f2)")
+                    fi
+                done < <(find /dev/input -name "js*")
+
+                if [[ "${#paths[@]}" -gt 0 ]]; then
+                    # sort by path
+                    IFS=$'\n'
+                    while read -r path; do
+                        devs_name+=("$(</$(dirname sys$path)/name)")
+                    done < <(sort <<<"${paths[*]}")
+                    unset IFS
+                fi
+
+                local options=()
+                local i
+                local value
+                local joypad
+                for i in 1 2 3 4; do
+                    player="${players[$i-1]}"
+                    value="$player"
+                    joypad="${devs_name[$player]}"
+                    [[ -z "$joypad" ]] && joypad="not connected"
+                    [[ "$player" != "unset" ]] && value+=" ($joypad)"
+                    options+=("$i" "$value")
+                done
+                local cmd=(dialog --backtitle "$__backtitle" --menu "Choose a player to adjust" 22 76 16)
+                local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+                [[ -z "$choice" ]] && return
+                player="$choice"
+                options=(U Unset)
+                local i=0
+                for dev in "${devs_name[@]}"; do
+                    options+=("$i" "$dev")
+                    ((i++))
+                done
+                local cmd=(dialog --backtitle "$__backtitle" --menu "Choose a Gamepad" 22 76 16)
+                local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+                [[ -z "$choice" ]] && continue
+                case "$choice" in
+                    U)
+                        iniUnset "input_player${player}_joypad_index"
+                        ;;
+                    *)
+                        iniSet "input_player${player}_joypad_index" "$choice"
+                        ;;
+                esac
+                ;;
+        esac
+    done
+}
+
 function basic_configedit() {
     local config="$1"
 
@@ -95,6 +175,7 @@ function basic_configedit() {
         "video_shader _file_ *.*p $rootdir/emulators/retroarch/shader"
         'input_overlay_enable true false'
         "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
+        '_function_ _joypad_index_configedit'
         'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick'
         'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick'
         'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick'
@@ -109,6 +190,7 @@ function basic_configedit() {
         "Video Shader File"
         'Overlay Enable'
         'Overlay File'
+        'Choose joypad order'
         'Player 1 - use analogue stick as d-pad'
         'Player 2 - use analogue stick as d-pad'
         'Player 3 - use analogue stick as d-pad'
@@ -123,6 +205,7 @@ function basic_configedit() {
         'Video shader to use (default none)'
         'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
         'Input overlay to use (default none)'
+        'Manual selection of joypad order'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
@@ -135,6 +218,11 @@ function basic_configedit() {
 function advanced_configedit() {
     local config="$1"
 
+    local audio_opts="alsa alsa_thread sdl2"
+    if isPlatform "x11"; then
+        audio_opts+=" pulse"
+    fi
+
     local ini_options=(
         'video_smooth true false'
         'aspect_ratio_index _id_ 4:3 16:9 16:10 16:15 1:1 2:1 3:2 3:4 4:1 4:4 5:4 6:5 7:9 8:3 8:7 19:12 19:14 30:17 32:9 config square core custom'
@@ -142,8 +230,9 @@ function advanced_configedit() {
         "video_shader _file_ *.*p $rootdir/emulators/retroarch/shader"
         'input_overlay_enable true false'
         "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
-        'audio_driver alsa alsa_thread sdl2'
+        "audio_driver $audio_opts"
         'video_driver gl dispmanx sdl2 vg'
+        'menu_driver rgui xmb'
         'video_fullscreen_x _string_'
         'video_fullscreen_y _string_'
         'video_frame_delay _string_'
@@ -163,6 +252,15 @@ function advanced_configedit() {
         'input_overlay_opacity _string_'
         'input_overlay_scale _string_'
         'input_joypad_driver udev sdl2 linuxraw'
+        'game_specific_options true false'
+        'input_player1_joypad_index _string_'
+        'input_player2_joypad_index _string_'
+        'input_player3_joypad_index _string_'
+        'input_player4_joypad_index _string_'
+        'input_player5_joypad_index _string_'
+        'input_player6_joypad_index _string_'
+        'input_player7_joypad_index _string_'
+        'input_player8_joypad_index _string_'
         'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick'
         'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick'
         'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick'
@@ -171,6 +269,7 @@ function advanced_configedit() {
         'input_player6_analog_dpad_mode _id_ disabled left-stick right-stick'
         'input_player7_analog_dpad_mode _id_ disabled left-stick right-stick'
         'input_player8_analog_dpad_mode _id_ disabled left-stick right-stick'
+
     )
 
     local ini_descs=(
@@ -182,6 +281,7 @@ function advanced_configedit() {
         'Input overlay to use (default none)'
         'Audio driver to use (default is alsa_thread)'
         'Video driver to use (default is gl)'
+        'Menu driver to use'
         'Fullscreen x resolution. Resolution of 0 uses the resolution of the desktop. (defaults to 0 if unset)'
         'Fullscreen y resolution. Resolution of 0 uses the resolution of the desktop. (defaults to 0 if unset)'
         'Sets how many milliseconds to delay after VSync before running the core. Can reduce latency at cost of higher risk of stuttering. Maximum is 15'
@@ -201,6 +301,15 @@ function advanced_configedit() {
         'Opacity of overlay. Float value 1.000000.'
         'Scale of overlay. Float value 1.000000.'
         'Input joypad driver to use (default is udev)'
+        'Game specific core options in retroarch-core-options.cfg, rather than for all games via that core.'
+        'Manual selection of joypad order'
+        'Manual selection of joypad order'
+        'Manual selection of joypad order'
+        'Manual selection of joypad order'
+        'Manual selection of joypad order'
+        'Manual selection of joypad order'
+        'Manual selection of joypad order'
+        'Manual selection of joypad order'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
@@ -209,6 +318,7 @@ function advanced_configedit() {
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
         'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+
     )
 
     iniFileEditor " = " '"' "$config"
@@ -218,7 +328,6 @@ function choose_config_configedit() {
     local path="$1"
     local include="$2"
     local exclude="$3"
-    [[ -z "$wildcard" ]] && wildcard="*"
     local cmd=(dialog --backtitle "$__backtitle" --menu "Which configuration would you like to edit" 22 76 16)
     local configs=()
     local options=()
@@ -309,7 +418,7 @@ function advanced_menu_configedit() {
     done
 }
 
-function configure_configedit() {
+function gui_configedit() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(

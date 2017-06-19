@@ -54,7 +54,8 @@ if (args[0] == "list"):
 		properties = interfaces["org.bluez.Device1"]
 		if properties["Adapter"] != adapter_path:
 			continue;
-		print("%s %s" % (properties["Address"], properties["Alias"]))
+		device_string = "%s %s" % (properties["Address"], properties["Alias"])
+		print(device_string.encode('ascii', 'ignore'))
 
 	sys.exit(0)
 

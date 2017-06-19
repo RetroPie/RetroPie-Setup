@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="atari800"
 rp_module_desc="Atari 8-bit/800/5200 emulator"
-rp_module_menus="2+"
+rp_module_help="ROM Extensions: .a52 .bas .bin .car .xex .atr .xfd .dcm .atr.gz .xfd.gz\n\nCopy your Atari800 games to $romdir/atari800\n\nCopy your Atari 5200 roms to $romdir/atari5200 You need to copy the Atari 800/5200 BIOS files (5200.ROM, ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)"
+rp_module_licence="GPL2 https://sourceforge.net/p/atari800/source/ci/master/tree/COPYING"
+rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_atari800() {
@@ -23,7 +25,7 @@ function depends_atari800() {
 function sources_atari800() {
     wget -q -O- "$__archive_url/atari800-3.1.0.tar.gz" | tar -xvz --strip-components=1
     if isPlatform "rpi"; then
-patch -p1 <<\_EOF_
+        applyPatch rpi_fixes.diff <<\_EOF_
 --- a/src/configure.ac	2014-04-12 13:58:16.000000000 +0000
 +++ b/src/configure.ac	2015-02-14 22:39:42.000000000 +0000
 @@ -136,7 +136,8 @@
@@ -76,8 +78,8 @@ function configure_atari800() {
     fi
     moveConfigFile "$home/.atari800.cfg" "$md_conf_root/atari800/atari800.cfg"
 
-    addSystem 1 "atari800" "atari800" "$md_inst/bin/atari800 %ROM%"
-    addSystem 1 "atari800" "atari5200" "$md_inst/bin/atari800 %ROM%"
-    
-    __INFMSGS+=("You need to copy the Atari 800/5200 BIOS files (5200.ROM, ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)")
+    addEmulator 1 "atari800" "atari800" "$md_inst/bin/atari800 %ROM%"
+    addEmulator 1 "atari800" "atari5200" "$md_inst/bin/atari800 %ROM%"
+    addSystem "atari800"
+    addSystem "atari5200"
 }

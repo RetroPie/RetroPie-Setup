@@ -1,23 +1,22 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="lr-picodrive"
 rp_module_desc="Sega 8/16 bit emu - picodrive arm optimised libretro core"
-rp_module_menus="2+"
-rp_module_flags=""
+rp_module_help="ROM Extensions: .32x .iso .cue .sms .smd .bin .gen .md .sg .zip\n\nCopy your Megadrive / Genesis roms to $romdir/megadrive\nMasterSystem roms to $romdir/mastersystem\nSega 32X roms to $romdir/sega32x and\nSegaCD roms to $romdir/segacd\nThe Sega CD requires the BIOS files us_scd1_9210.bin, eu_mcd1_9210.bin, jp_mcd1_9112.bin copied to $biosdir"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/picodrive/master/COPYING"
+rp_module_section="main"
 
 function sources_lr-picodrive() {
     gitPullOrClone "$md_build" https://github.com/libretro/picodrive.git
-    git submodule init
-    git submodule update
 }
 
 function build_lr-picodrive() {
@@ -43,20 +42,11 @@ function install_lr-picodrive() {
 }
 
 function configure_lr-picodrive() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/picodrive"
-
-    mkRomDir "megadrive"
-    mkRomDir "mastersystem"
-    mkRomDir "segacd"
-    mkRomDir "sega32x"
-    ensureSystemretroconfig "megadrive"
-    ensureSystemretroconfig "mastersystem"
-    ensureSystemretroconfig "segacd"
-    ensureSystemretroconfig "sega32x"
-
-    addSystem 1 "$md_id" "mastersystem" "$md_inst/picodrive_libretro.so"
-    addSystem 1 "$md_id" "megadrive" "$md_inst/picodrive_libretro.so"
-    addSystem 1 "$md_id" "segacd" "$md_inst/picodrive_libretro.so"
-    addSystem 1 "$md_id" "sega32x" "$md_inst/picodrive_libretro.so"
+    local system
+    for system in megadrive mastersystem segacd sega32x; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 1 "$md_id" "$system" "$md_inst/picodrive_libretro.so"
+        addSystem "$system"
+    done
 }
