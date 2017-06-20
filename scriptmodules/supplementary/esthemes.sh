@@ -93,6 +93,7 @@ function gui_esthemes() {
         'TMNTturtleguy ComicBook_4-3'
         'ChoccyHobNob cygnus'
         'dmmarti steampunk'
+        'dmmarti hurstyblue'
     )
     while true; do
         local theme
