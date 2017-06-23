@@ -9,17 +9,22 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="lr-imame4all"
+rp_module_id="lr-mame2000"
 rp_module_desc="Arcade emu - iMAME4all (based on MAME 0.37b5) port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your iMAME4all roms to either $romdir/mame-mame4all or\n$romdir/arcade"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2000-libretro/master/readme.txt"
 rp_module_section="main"
 
-function sources_lr-imame4all() {
+function _update_hook_lr-mame2000() {
+    # move from old location and update emulators.cfg
+    renameModule "lr-imame4all" "lr-mame2000"
+}
+
+function sources_lr-mame2000() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2000-libretro.git
 }
 
-function build_lr-imame4all() {
+function build_lr-mame2000() {
     make clean
     local params=()
     isPlatform "arm" && params+=("ARM=1" "USE_CYCLONE=1")
@@ -27,7 +32,7 @@ function build_lr-imame4all() {
     md_ret_require="$md_build/mame2000_libretro.so"
 }
 
-function install_lr-imame4all() {
+function install_lr-mame2000() {
     md_ret_files=(
         'mame2000_libretro.so'
         'readme.md'
@@ -36,7 +41,7 @@ function install_lr-imame4all() {
     )
 }
 
-function configure_lr-imame4all() {
+function configure_lr-mame2000() {
     local system
     for system in arcade mame-mame4all mame-libretro; do
         mkRomDir "$system"
