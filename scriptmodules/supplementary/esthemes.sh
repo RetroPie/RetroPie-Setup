@@ -92,6 +92,7 @@ function gui_esthemes() {
         'ChoccyHobNob cygnus'
         'dmmarti steampunk'
         'dmmarti hurstyblue'
+        'lipebello Retrorama'
     )
     while true; do
         local theme
