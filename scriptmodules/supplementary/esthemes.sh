@@ -89,6 +89,8 @@ function gui_esthemes() {
         'anthonycaccese crt-centered'
         'TMNTturtleguy ComicBook'
         'TMNTturtleguy ComicBook_4-3'
+        'TMNTturtleguy ComicBook_SE-Wheelart'
+        'TMNTturtleguy ComicBook_4-3_SE-Wheelart'
         'ChoccyHobNob cygnus'
         'dmmarti steampunk'
         'dmmarti hurstyblue'
