@@ -32,8 +32,6 @@ function install_theme_esthemes() {
         repo="RetroPie"
     fi
     mkdir -p "/etc/emulationstation/themes"
-    # do a fresh checkout to avoid some line ending issues with the autocrlf mode used to create the images vs git default on Raspbian
-    rm -rf "/etc/emulationstation/themes/$theme"
     gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git"
 }
 
