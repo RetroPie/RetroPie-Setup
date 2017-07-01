@@ -98,6 +98,7 @@ function gui_esthemes() {
     )
     while true; do
         local theme
+        local installed_themes=()
         local repo
         local options=()
         local status=()
@@ -111,12 +112,15 @@ function gui_esthemes() {
             options+=("$i" "Download Theme Gallery")
         fi
         ((i++))
+        options+=("$((i++))" "Update all installed themes")
         for theme in "${themes[@]}"; do
             theme=($theme)
+            repo="${theme[0]}"
             theme="${theme[1]}"
             if [[ -d "/etc/emulationstation/themes/$theme" ]]; then
                 status+=("i")
                 options+=("$i" "Update or Uninstall $theme (installed)")
+                installed_themes+=("$theme $repo")
             else
                 status+=("n")
                 options+=("$i" "Install $theme (not installed)")
@@ -125,8 +129,8 @@ function gui_esthemes() {
         done
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" && $choice > 1 ]]; then
-            theme=(${themes[choice-2]})
+        if [[ "$choice" > 2 ]]; then
+            theme=(${themes[choice-3]})
             repo="${theme[0]}"
             theme="${theme[1]}"
             if [[ "${status[choice-1]}" == "i" ]]; then
@@ -144,7 +148,7 @@ function gui_esthemes() {
             else
                 rp_callModule esthemes install_theme "$theme" "$repo"
             fi
-        elif [[ -n "$choice" && $choice == 1 ]]; then
+        elif [[ "$choice" == 1 ]]; then
             if [[ "${status[0]}" == "i" ]]; then
                 options=(1 "View Theme Gallery" 2 "Update Theme Gallery" 3 "Remove Theme Gallery")
                 cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for gallery" 12 40 06)
@@ -170,6 +174,11 @@ function gui_esthemes() {
             else
                 gitPullOrClone "$gallerydir" "http://github.com/wetriner/es-theme-gallery"
             fi
+        elif [[ "$choice" == 2 ]]; then
+            for theme in "${installed_themes[@]}"; do
+                theme=($theme)
+                rp_callModule esthemes install_theme "${theme[0]}" "${theme[1]}"
+            done
         else
             break
         fi
