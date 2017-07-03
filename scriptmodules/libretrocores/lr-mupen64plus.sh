@@ -31,6 +31,7 @@ function _update_hook_lr-mupen64plus() {
 
 function depends_lr-mupen64plus() {
     local depends=(flex bison libpng12-dev)
+    isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev)
     isPlatform "x86" && depends+=(nasm)
     getDepends "${depends[@]}"
 }
