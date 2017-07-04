@@ -487,9 +487,7 @@ function gui_setup() {
     depends_setup
     local default
     while true; do
-        pushd "$scriptdir" >/dev/null
-        local commit=$(git log -1 --pretty=format:"%cr (%h)")
-        popd >/dev/null
+        local commit=$(git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
 
         cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version\nLast Commit: $commit" 22 76 16)
         options=(
