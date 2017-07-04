@@ -30,7 +30,7 @@ function rps_logInit() {
 
 function rps_logStart() {
     echo -e "Log started at: $(date -d @$time_start)\n"
-    echo "RetroPie-Setup version: $__version ($(git log -1 --pretty=format:%h))"
+    echo "RetroPie-Setup version: $__version ($(git -C "$scriptdir" log -1 --pretty=format:%h))"
     echo "System: $(uname -a)"
 }
 
