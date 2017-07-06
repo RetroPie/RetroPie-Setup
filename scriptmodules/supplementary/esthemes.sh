@@ -131,7 +131,7 @@ function gui_esthemes() {
             theme=(${themes[choice-3]})
             repo="${theme[0]}"
             theme="${theme[1]}"
-            if [[ "${status[choice-1]}" == "i" ]]; then
+            if [[ "${status[choice-2]}" == "i" ]]; then
                 options=(1 "Update $theme" 2 "Uninstall $theme")
                 cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for theme" 12 40 06)
                 local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
