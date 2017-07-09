@@ -26,7 +26,6 @@ function setup_env() {
 
     get_os_version
     get_default_gcc
-    get_retropie_depends
 
     # set default gcc version
     if [[ -n "$__default_gcc_version" ]]; then
@@ -74,9 +73,9 @@ function get_os_version() {
     
     local error=""
     case "$__os_id" in
-        Raspbian|Debian)
+        Debian)
             if compareVersions "$__os_release" lt 8; then
-                error="You need Raspbian/Debian Jessie or newer"
+                error="You need Debian Jessie or newer"
             fi
 
             # set a platform flag for osmc
@@ -87,17 +86,6 @@ function get_os_version() {
             # and for xbian
             if grep -q "NAME=XBian" /etc/os-release; then
                 __platform_flags+=" xbian"
-            fi
-
-            # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
-            # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
-            if [[ "$__os_id" == "Raspbian" ]]; then
-                __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
-            fi
-
-            # we provide binaries for RPI only
-            if isPlatform "rpi"; then
-                __has_binaries=1
             fi
 
             # get major version (8 instead of 8.0 etc)
@@ -151,14 +139,14 @@ function get_os_version() {
     
     [[ -n "$error" ]] && fatalError "$error\n\n$(lsb_release -idrc)"
 
-    # add 32bit/64bit to platform flags
+    # add 64bit to platform flags
     __platform_flags+=" $(getconf LONG_BIT)bit"
 }
 
 function get_default_gcc() {
     if [[ -z "$__default_gcc_version" ]]; then
         case "$__os_id" in
-            Raspbian|Debian)
+            Debian)
                 case "$__os_debian_ver" in
                     8)
                         __default_gcc_version="4.9"
@@ -189,69 +177,16 @@ function set_default_gcc() {
     popd > /dev/null
 }
 
-function get_retropie_depends() {
-    # add rasberrypi repository if it's missing (needed for libraspberrypi-dev etc) - not used on osmc
-    local config="/etc/apt/sources.list.d/raspi.list"
-    if [[ "$__os_id" == "Raspbian" && ! -f "$config" ]]; then
-        # add key
-        wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O- | apt-key add - >/dev/null
-        echo "deb http://archive.raspberrypi.org/debian/ $__os_codename main" >>$config
-    fi
-
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev)
-    if [[ -n "$__default_gcc_version" ]]; then
-        depends+=(gcc-$__default_gcc_version g++-$__default_gcc_version)
-    fi
-    if ! getDepends "${depends[@]}"; then
-        fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
-    fi
-}
-
 function get_platform() {
     local architecture="$(uname --machine)"
     if [[ -z "$__platform" ]]; then
-        case "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" in
-            BCM*)
-                # calculated based on information from https://github.com/AndrewFromMelbourne/raspberry_pi_revision
-                local rev="0x$(sed -n '/^Revision/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)"
-                # if bit 23 is not set, we are on a rpi1 (bit 23 means the revision is a bitfield)
-                if [[ $((($rev >> 23) & 1)) -eq 0 ]]; then
-                    __platform="rpi1"
-                else
-                    # if bit 23 is set, get the cpu from bits 12-15
-                    local cpu=$((($rev >> 12) & 15))
-                    case $cpu in
-                        0)
-                            __platform="rpi1"
-                            ;;
-                        1)
-                            __platform="rpi2"
-                            ;;
-                        2)
-                            __platform="rpi3"
-                            ;;
-                    esac
-                fi
+        case "$(/proc/device-tree/model)" in
+            "Qualcomm Technologies, Inc. APQ 8016 SBC")
+					__platform="db410c"
                 ;;
-            ODROIDC)
-                __platform="odroid-c1"
-                ;;
-            ODROID-C2)
-                __platform="odroid-c2"
-                ;;
-            "Freescale i.MX6 Quad/DualLite (Device Tree)")
-                __platform="imx6"
-                ;;
-            ODROID-XU3)
-                __platform="odroid-xu"
-                ;;
-            *)
-                case $architecture in
-                    i686|x86_64|amd64)
-                        __platform="x86"
-                        ;;
-                esac
-                ;;
+			"HiKey Development Board")
+					__platform="hikey620"
+				;;
         esac
     fi
 
@@ -259,92 +194,20 @@ function get_platform() {
         fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
     fi
 
-    platform_${__platform}
-    [[ -z "$__default_cxxflags" ]] && __default_cxxflags="$__default_cflags"
+	platform_${__platform}
 }
 
-function platform_rpi1() {
-    # values to be used for configure/make
-    __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
-    __default_asflags=""
-    __default_makeflags=""
-    __platform_flags="arm armv6 rpi"
-    # if building in a chroot, what cpu should be set by qemu
-    # make chroot identify as arm6l
-    __qemu_cpu=arm1176
-}
-
-function platform_rpi2() {
-    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+function platform_db410c() {
+    __default_cflags="-O2 -march=armv8-a -mtune=cortex-a53 -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon rpi"
-    __qemu_cpu=cortex-a7
+    __platform_flags="arm armv8"
 }
 
-# note the rpi3 currently uses the rpi2 binaries - for ease of maintenance - rebuilding from source
-# could improve performance with the compiler options below but needs further testing
-function platform_rpi3() {
-    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+function platform_hikey620() {
+    __default_cflags="-O2 -march=armv8-a -mtune=cortex-a53 -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv8 neon rpi"
+    __platform_flags="arm armv8"
 }
 
-function platform_odroid-c1() {
-    __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon mali"
-    __qemu_cpu=cortex-a9
-}
-
-function platform_odroid-c2() {
-    if [[ "$(getconf LONG_BIT)" -eq 32 ]]; then
-        __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
-        __platform_flags="arm armv8 neon mali"
-    else
-        __default_cflags="-O2 -march=native"
-        __platform_flags="aarch64 mali"
-    fi
-    __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j2"
-}
-
-function platform_odroid-xu() {
-    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    # required for mali-fbdev headers to define GL functions
-    __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
-    __default_asflags=""
-    __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon mali"
-}
-
-function platform_x86() {
-    __default_cflags="-O2 -march=native"
-    __default_asflags=""
-    __default_makeflags="-j$(nproc)"
-    __platform_flags="x11"
-}
-
-function platform_generic-x11() {
-    __default_cflags="-O2"
-    __default_asflags=""
-    __default_makeflags="-j$(nproc)"
-    __platform_flags="x11"
-}
-
-function platform_armv7-mali() {
-    __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j$(nproc)"
-    __platform_flags="arm armv7 neon mali"
-}
-
-function platform_imx6() {
-    __default_cflags="-O2 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon"
-}
