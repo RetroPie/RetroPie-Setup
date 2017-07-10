@@ -92,6 +92,7 @@ function gui_esthemes() {
         'ChoccyHobNob cygnus'
         'dmmarti steampunk'
         'dmmarti hurstyblue'
+        'dmmarti maximuspie'
         'lipebello Retrorama'
     )
     while true; do
