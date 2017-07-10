@@ -23,6 +23,7 @@ config="$configdir/n64/mupen64plus.cfg"
 inputconfig="$configdir/n64/InputAutoCfg.ini"
 datadir="$HOME/RetroPie"
 romdir="$datadir/roms"
+screenshotsdir="$datadir/screenshots"
 
 source "$rootdir/lib/inifuncs.sh"
 
@@ -361,7 +362,7 @@ if ! grep -q "\[Core\]" "$config"; then
     echo "Version = 1.010000" >> "$config"
 fi
 iniConfig " = " "\"" "$config"
-iniSet "ScreenshotPath" "$romdir/n64"
+iniSet "ScreenshotPath" "$screenshotsdir"
 iniSet "SaveStatePath" "$romdir/n64"
 iniSet "SaveSRAMPath" "$romdir/n64"
 
