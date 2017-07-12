@@ -356,6 +356,7 @@ function setupDirectories() {
     mkUserDir "$biosdir"
     mkUserDir "$configdir"
     mkUserDir "$configdir/all"
+    mkUserDir "$screenshotsdir"
 
     # make sure we have inifuncs.sh in place and that it is up to date
     mkdir -p "$rootdir/lib"

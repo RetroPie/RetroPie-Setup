@@ -25,6 +25,7 @@ biosdir="$datadir/BIOS"
 romdir="$datadir/roms"
 emudir="$rootdir/emulators"
 configdir="$rootdir/configs"
+screenshotsdir="$datadir/screenshots"
 
 scriptdir="$(dirname "$0")"
 scriptdir="$(cd "$scriptdir" && pwd)"

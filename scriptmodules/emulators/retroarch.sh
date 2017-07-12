@@ -127,6 +127,7 @@ function configure_retroarch() {
     iniConfig " = " '"' "$config"
     iniSet "cache_directory" "/tmp/retroarch"
     iniSet "system_directory" "$biosdir"
+    iniSet "screenshot_directory" "$screenshotsdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "false"
