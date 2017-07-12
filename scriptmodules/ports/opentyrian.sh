@@ -41,7 +41,7 @@ function game_data_opentyrian() {
     if [[ ! -d "$romdir/ports/opentyrian/data" ]]; then
         cd "$__tmpdir"
         # get Tyrian 2.1 (freeware game data)
-        wget -nv -O tyrian21.zip http://www.camanis.net/tyrian/tyrian21.zip
+        wget -nv -O tyrian21.zip "$__archive_url/tyrian21.zip"
         unzip -j -o tyrian21.zip -d "$romdir/ports/opentyrian/data"
         rm -f tyrian21.zip
         chown -R $user:$user "$romdir/ports/opentyrian"
