@@ -220,6 +220,7 @@ except:
 js_fds = []
 rescan_time = time.time()
 while True:
+    do_sleep = True
     if not js_fds:
         js_devs, js_fds = open_devices()
         if js_fds:
@@ -236,6 +237,7 @@ while True:
         for fd in js_fds:
             event = read_event(fd)
             if event:
+                do_sleep = False
                 if time.time() - js_last[i] > JS_REP:
                     if fd in js_button_codes:
                         button_codes = js_button_codes[fd]
@@ -255,4 +257,5 @@ while True:
             close_fds(js_fds)
             js_fds = []
 
-    time.sleep(0.01)
+    if do_sleep:
+        time.sleep(0.01)
