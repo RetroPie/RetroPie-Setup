@@ -9,6 +9,9 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
+# On db410c building on 4 core (default) crashes due to little RAM
+MAKEFLAGS="-j1"
+
 scriptdir="$(dirname "$0")"
 scriptdir="$(cd "$scriptdir" && pwd)"
 
