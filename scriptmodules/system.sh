@@ -26,6 +26,7 @@ function setup_env() {
 
     get_os_version
     get_default_gcc
+    get_retropie_depends
 
     # set default gcc version
     if [[ -n "$__default_gcc_version" ]]; then
@@ -177,16 +178,27 @@ function set_default_gcc() {
     popd > /dev/null
 }
 
+function get_retropie_depends() {
+    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev)
+    if [[ -n "$__default_gcc_version" ]]; then
+        depends+=(gcc-$__default_gcc_version g++-$__default_gcc_version)
+    fi
+    if ! getDepends "${depends[@]}"; then
+        fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
+    fi
+}
+
 function get_platform() {
     local architecture="$(uname --machine)"
+    local plat="$(tr -d '\0' < /proc/device-tree/model)"
     if [[ -z "$__platform" ]]; then
-        case "$(/proc/device-tree/model)" in
+        case "$plat" in
             "Qualcomm Technologies, Inc. APQ 8016 SBC")
 					__platform="db410c"
                 ;;
-			"HiKey Development Board")
+	    "HiKey Development Board")
 					__platform="hikey620"
-				;;
+		;;
         esac
     fi
 
