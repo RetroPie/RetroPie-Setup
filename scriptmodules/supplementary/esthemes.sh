@@ -33,6 +33,7 @@ function install_theme_esthemes() {
     fi
     mkdir -p "/etc/emulationstation/themes"
     gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git"
+    rm -rf "/etc/emulationstation/themes/$theme/.git"
 }
 
 function uninstall_theme_esthemes() {
