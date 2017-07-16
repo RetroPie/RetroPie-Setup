@@ -377,6 +377,8 @@ function gui_bluetooth() {
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
+            # temporarily restore Bluetooth stack (if needed)
+            service sixad status >/dev/null && sixad -r
             case $choice in
                 R)
                     register_bluetooth
@@ -402,6 +404,8 @@ function gui_bluetooth() {
                     ;;
             esac
         else
+            # restart sixad (if running)
+            service sixad status >/dev/null && service sixad restart
             break
         fi
     done
