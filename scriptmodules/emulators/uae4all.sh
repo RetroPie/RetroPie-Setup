@@ -118,6 +118,7 @@ function configure_uae4all() {
     fi
     moveConfigDir "$md_inst/kickstarts" "$biosdir"
 
+    rm -f "$romdir/amiga/+Start UAE4All.sh"
     if [[ "$md_mode" == "install" ]]; then
         if [[ ! -f "$biosdir/aros-amiga-m68k-ext.bin" ]]; then
             # unpack aros kickstart
