@@ -134,7 +134,7 @@ function get_params() {
     [[ -z "$MODE_REQ" || -z "$COMMAND" ]] && return 1
 
     CONSOLE_OUT=0
-    # if the COMMAND is _SYS_, or _PORT_ arg 3 should be system name, and arg 4 rom/game, and we look up the configured system for that combination
+    # if the COMMAND is _SYS_, or _PORT_ arg 3 should be system name, arg 4 rom/game, and arg 5 launch art, and we look up the configured system for that combination
     if [[ "$COMMAND" == "_SYS_" || "$COMMAND" == "_PORT_" ]]; then
         # if the rom is actually a special +Start System.sh script, we should launch the script directly.
         if [[ "$4" =~ \/\+Start\ (.+)\.sh$ ]]; then
@@ -148,6 +148,7 @@ function get_params() {
             IS_SYS=1
             SYSTEM="$3"
             ROM="$4"
+            LAUNCH_ART="$5"
             ROM_BN_EXT="${ROM##*/}"
             ROM_BN="${ROM_BN_EXT%.*}"
             if [[ "$COMMAND" == "_PORT_" ]]; then
@@ -903,6 +904,13 @@ function get_sys_command() {
 
 function show_launch() {
     local images=()
+    
+    if [[ "$IS_SYS" -eq 1 && -n "$LAUNCH_ART" ]]; then
+        # if passing art as an arg, trim extension for upcoming check
+        images+=(
+            "$(echo $LAUNCH_ART | cut -f 1 -d '.')"
+        )
+    fi
 
     if [[ "$IS_SYS" -eq 1 && "$USE_ART" -eq 1 ]]; then
         # if using art look for images in paths for es art.
