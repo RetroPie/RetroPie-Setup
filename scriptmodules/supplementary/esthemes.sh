@@ -94,6 +94,8 @@ function gui_esthemes() {
         'dmmarti hurstyblue'
         'dmmarti maximuspie'
         'lipebello Retrorama'
+        'rxbrad gbz35'
+        'rxbrad gbz35-dark'
     )
     while true; do
         local theme
