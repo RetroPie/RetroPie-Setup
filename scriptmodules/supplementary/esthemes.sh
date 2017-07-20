@@ -134,6 +134,7 @@ function gui_esthemes() {
         local cmd=(dialog --default-item "$default" --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         default="$choice"
+        if [[ -z "$choice" ]] && break
         if [[ "$choice" == "G" ]]; then
             if [[ "${status[0]}" == "i" ]]; then
                 options=(1 "View Theme Gallery" 2 "Update Theme Gallery" 3 "Remove Theme Gallery")
