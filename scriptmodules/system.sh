@@ -35,9 +35,9 @@ function setup_env() {
 
     # set location of binary downloads
     __binary_host="files.retropie.org.uk"
-    [[ "$__has_binaries" -eq 1 ]] && __binary_url="http://$__binary_host/binaries/$__os_codename/$__platform"
+    [[ "$__has_binaries" -eq 1 ]] && __binary_url="https://$__binary_host/binaries/$__os_codename/$__platform"
 
-    __archive_url="http://files.retropie.org.uk/archives"
+    __archive_url="https://files.retropie.org.uk/archives"
 
     # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
     [[ $__memory_phys -ge 512 ]] && __default_cflags+=" -pipe"
