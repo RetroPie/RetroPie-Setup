@@ -103,17 +103,20 @@ function gui_esthemes() {
         local repo
         local options=()
         local status=()
-        local i=1
+        local default
+
         local gallerydir="/etc/emulationstation/es-theme-gallery"
         if [[ -d "$gallerydir" ]]; then
             status+=("i")
-            options+=("$i" "View or Update Theme Gallery")
+            options+=(G "View or Update Theme Gallery")
         else
             status+=("n")
-            options+=("$i" "Download Theme Gallery")
+            options+=(G "Download Theme Gallery")
         fi
-        ((i++))
-        options+=("$((i++))" "Update all installed themes")
+
+        options+=(U "Update all installed themes")
+
+        local i=1
         for theme in "${themes[@]}"; do
             theme=($theme)
             repo="${theme[0]}"
@@ -128,28 +131,10 @@ function gui_esthemes() {
             fi
             ((i++))
         done
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+        local cmd=(dialog --default-item "$default" --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ "$choice" > 2 ]]; then
-            theme=(${themes[choice-3]})
-            repo="${theme[0]}"
-            theme="${theme[1]}"
-            if [[ "${status[choice-2]}" == "i" ]]; then
-                options=(1 "Update $theme" 2 "Uninstall $theme")
-                cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for theme" 12 40 06)
-                local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-                case "$choice" in
-                    1)
-                        rp_callModule esthemes install_theme "$theme" "$repo"
-                        ;;
-                    2)
-                        rp_callModule esthemes uninstall_theme "$theme"
-                        ;;
-                esac
-            else
-                rp_callModule esthemes install_theme "$theme" "$repo"
-            fi
-        elif [[ "$choice" == 1 ]]; then
+        default="$choice"
+        if [[ "$choice" == "G" ]]; then
             if [[ "${status[0]}" == "i" ]]; then
                 options=(1 "View Theme Gallery" 2 "Update Theme Gallery" 3 "Remove Theme Gallery")
                 cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for gallery" 12 40 06)
@@ -175,13 +160,30 @@ function gui_esthemes() {
             else
                 gitPullOrClone "$gallerydir" "http://github.com/wetriner/es-theme-gallery"
             fi
-        elif [[ "$choice" == 2 ]]; then
+        elif [[ "$choice" == "U" ]]; then
             for theme in "${installed_themes[@]}"; do
                 theme=($theme)
                 rp_callModule esthemes install_theme "${theme[0]}" "${theme[1]}"
             done
         else
-            break
+            theme=(${themes[choice-1]})
+            repo="${theme[0]}"
+            theme="${theme[1]}"
+            if [[ "${status[choice]}" == "i" ]]; then
+                options=(1 "Update $theme" 2 "Uninstall $theme")
+                cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for theme" 12 40 06)
+                local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+                case "$choice" in
+                    1)
+                        rp_callModule esthemes install_theme "$theme" "$repo"
+                        ;;
+                    2)
+                        rp_callModule esthemes uninstall_theme "$theme"
+                        ;;
+                esac
+            else
+                rp_callModule esthemes install_theme "$theme" "$repo"
+            fi
         fi
     done
 }
