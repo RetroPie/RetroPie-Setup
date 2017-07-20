@@ -76,26 +76,30 @@ def get_button_codes(dev_path):
     if not js_cfg:
         js_cfg = RETROARCH_CFG
 
-    # getting configs for buttons A, B, X and Y
+    # getting configs for dpad, buttons A, B, X and Y
+    btn_map = [ 'left', 'right', 'up', 'down', 'a', 'b', 'x', 'y' ]
     btn_num = {}
     biggest_num = 0
     i = 0
-    for btn in 'a', 'b', 'x', 'y':
-        i += 1
-        if i > len(default_button_codes):
+    for btn in list(btn_map):
+        if i > len(default_button_codes)-1:
             break
         btn_num[btn] = get_btn_num(btn, js_cfg)
         try:
             btn_num[btn] = int(btn_num[btn])
         except ValueError:
-            return default_button_codes
+            btn_map.pop(i)
+            default_button_codes.pop(i)
+            btn_num.pop(btn, None)
+            continue
         if btn_num[btn] > biggest_num:
             biggest_num = btn_num[btn]
+        i += 1
 
     # building the button codes list
     btn_codes = [''] * (biggest_num + 1)
     i = 0
-    for btn in 'a', 'b', 'x', 'y':
+    for btn in btn_map:
         btn_codes[btn_num[btn]] = default_button_codes[i]
         i += 1
         if i >= len(default_button_codes): break
@@ -204,8 +208,8 @@ for arg in sys.argv[2:]:
     chars = get_hex_chars(arg)
     if i < 4:
         axis_codes.append(chars)
-    else:
-        default_button_codes.append(chars)
+
+    default_button_codes.append(chars)
     i += 1
 
 event_format = 'IhBB'
