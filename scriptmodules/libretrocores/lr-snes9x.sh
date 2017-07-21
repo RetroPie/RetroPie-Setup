@@ -21,14 +21,14 @@ function sources_lr-snes9x() {
 
 function build_lr-snes9x() {
     cd libretro
-    make -f Makefile clean
+    make clean
     local platform=""
     isPlatform "arm" && platform+="armv"
     isPlatform "neon" && platform+="neon"
     if [[ -n "$platform" ]]; then
-        make -f Makefile platform="$platform"
+        CXXFLAGS+=" -DARM" make platform="$platform"
     else
-        make -f Makefile
+        make
     fi
     md_ret_require="$md_build/libretro/snes9x_libretro.so"
 }
