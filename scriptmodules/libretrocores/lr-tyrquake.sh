@@ -55,8 +55,8 @@ function _add_games_lr-tyrquake() {
     local cmd="$1"
     declare -A games=(
         ['id1']="Quake"
-        ['id1/hipnotic']="Quake Mission Pack 1 (hipnotic)"
-        ['id1/rogue']="Quake Mission Pack 2 (rogue)"
+        ['hipnotic']="Quake Mission Pack 1 (hipnotic)"
+        ['rogue']="Quake Mission Pack 2 (rogue)"
     )
     local dir
     local pak
