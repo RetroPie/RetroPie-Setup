@@ -57,6 +57,7 @@ function _add_games_lr-tyrquake() {
         ['id1']="Quake"
         ['hipnotic']="Quake Mission Pack 1 (hipnotic)"
         ['rogue']="Quake Mission Pack 2 (rogue)"
+        ['dopa']="Quake Episode 5 (dopa)"
     )
     local dir
     local pak
