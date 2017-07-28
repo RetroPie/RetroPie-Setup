@@ -97,6 +97,7 @@ function gui_esthemes() {
         'lipebello Retrorama'
         'rxbrad gbz35'
         'rxbrad gbz35-dark'
+        'garaine marioblue'
     )
     while true; do
         local theme
