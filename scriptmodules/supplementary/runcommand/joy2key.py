@@ -56,6 +56,7 @@ def get_button_codes(dev_path):
     js_cfg_dir = CONFIG_DIR + 'all/retroarch-joypads/'
     js_cfg = ''
     dev_name = ''
+    dev_button_codes = list(default_button_codes)
 
     # getting joystick name
     for device in Context().list_devices(DEVNAME=dev_path):
@@ -65,7 +66,7 @@ def get_button_codes(dev_path):
             dev_name = line.rstrip('\n')
             break
     if not dev_name:
-        return default_button_codes
+        return dev_button_codes
 
     # getting retroarch config file for joystick
     for f in os.listdir(js_cfg_dir):
@@ -82,14 +83,14 @@ def get_button_codes(dev_path):
     biggest_num = 0
     i = 0
     for btn in list(btn_map):
-        if i > len(default_button_codes)-1:
+        if i > len(dev_button_codes)-1:
             break
         btn_num[btn] = get_btn_num(btn, js_cfg)
         try:
             btn_num[btn] = int(btn_num[btn])
         except ValueError:
             btn_map.pop(i)
-            default_button_codes.pop(i)
+            dev_button_codes.pop(i)
             btn_num.pop(btn, None)
             continue
         if btn_num[btn] > biggest_num:
@@ -100,14 +101,17 @@ def get_button_codes(dev_path):
     btn_codes = [''] * (biggest_num + 1)
     i = 0
     for btn in btn_map:
-        btn_codes[btn_num[btn]] = default_button_codes[i]
+        btn_codes[btn_num[btn]] = dev_button_codes[i]
         i += 1
-        if i >= len(default_button_codes): break
+        if i >= len(dev_button_codes): break
 
-    # if button A is <enter> and menu_swap_ok_cancel_buttons is true, swap buttons A and B functions
-    if btn_codes[btn_num['a']] == '\n' and ini_get('menu_swap_ok_cancel_buttons', RETROARCH_CFG) == 'true':
-        btn_codes[btn_num['a']] = btn_codes[btn_num['b']]
-        btn_codes[btn_num['b']] = '\n'
+    try:
+        # if button A is <enter> and menu_swap_ok_cancel_buttons is true, swap buttons A and B functions
+        if btn_codes[btn_num['a']] == '\n' and ini_get('menu_swap_ok_cancel_buttons', RETROARCH_CFG) == 'true':
+            btn_codes[btn_num['a']] = btn_codes[btn_num['b']]
+            btn_codes[btn_num['b']] = '\n'
+    except:
+        pass
 
     return btn_codes
 
