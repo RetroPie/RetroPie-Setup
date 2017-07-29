@@ -99,6 +99,7 @@ function gui_esthemes() {
         'rxbrad gbz35-dark'
         'garaine marioblue'
         'MrTomixf Royal_Primicia'
+        'RetroHursty69 magazinemadness'
     )
     while true; do
         local theme
