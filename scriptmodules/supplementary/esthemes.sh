@@ -98,6 +98,7 @@ function gui_esthemes() {
         'rxbrad gbz35'
         'rxbrad gbz35-dark'
         'garaine marioblue'
+        'MrTomixf Royal_Primicia'
     )
     while true; do
         local theme
