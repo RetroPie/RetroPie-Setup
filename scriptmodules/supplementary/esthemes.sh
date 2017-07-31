@@ -85,6 +85,8 @@ function gui_esthemes() {
         'ruckage famicom-mini'
         'anthonycaccese crt'
         'anthonycaccese crt-centered'
+        'anthonycaccese art-book'
+        'anthonycaccese tft'
         'TMNTturtleguy ComicBook'
         'TMNTturtleguy ComicBook_4-3'
         'TMNTturtleguy ComicBook_SE-Wheelart'
