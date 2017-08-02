@@ -20,11 +20,11 @@ function depends_np2pi() {
 }
 
 function sources_np2pi() {
-    git clone https://github.com/eagle0wl/np2pi.git
+    gitPullOrClone "$md_build" https://github.com/eagle0wl/np2pi.git
 }
 
 function build_np2pi() {
-    cd np2pi/sdl
+    cd sdl
     make -j 1 -f makefile.rpi
 }
 
