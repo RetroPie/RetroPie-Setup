@@ -34,7 +34,7 @@ function build_srb2() {
 function install_srb2() {
     md_ret_files=(
         'build/bin/srb2'
-        'build/bin/srb2-2.1.17'
+        'build/bin/srb2-2.1.19'
         'assets/music.dta'
         'assets/patch.dta'
         'assets/player.dta'
