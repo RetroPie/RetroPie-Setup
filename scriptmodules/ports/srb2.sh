@@ -32,9 +32,9 @@ function build_srb2() {
 }
 
 function install_srb2() {
+    # copy and dereference, so we get a srb2 binary rather than a symlink to srb2-version
+    cp -L 'build/bin/srb2' "$md_inst/srb2"
     md_ret_files=(
-        'build/bin/srb2'
-        'build/bin/srb2-2.1.19'
         'assets/music.dta'
         'assets/patch.dta'
         'assets/player.dta'
