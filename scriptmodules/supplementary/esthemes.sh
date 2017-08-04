@@ -103,6 +103,7 @@ function gui_esthemes() {
         'garaine marioblue'
         'MrTomixf Royal_Primicia'
         'RetroHursty69 magazinemadness'
+        'lostless playstation'
     )
     while true; do
         local theme
