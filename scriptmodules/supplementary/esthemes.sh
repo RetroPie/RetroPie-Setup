@@ -104,6 +104,7 @@ function gui_esthemes() {
         'MrTomixf Royal_Primicia'
         'RetroHursty69 magazinemadness'
         'lostless playstation'
+        'mrharias superdisplay'
     )
     while true; do
         local theme
