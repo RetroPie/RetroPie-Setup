@@ -208,7 +208,7 @@ function getDepends() {
                 packages+=("$required")
                 continue
             fi
-            if [[ "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "eq"; then
+            if [[ "$own_sdl2" -eq 1 && "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "eq"; then
                 packages+=("$required")
                 continue
             fi
