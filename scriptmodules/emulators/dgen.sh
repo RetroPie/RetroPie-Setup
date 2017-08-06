@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="dgen"
-rp_module_desc="Megadrive/Genesis emulat. DGEN"
-rp_module_menus="2+"
-rp_module_flags="dispmanx !x86"
+rp_module_desc="Megadrive/Genesis emulator DGEN"
+rp_module_help="ROM Extensions: .32x .iso .cue .smd .bin .gen .md .sg .zip\n\nCopy your  Megadrive / Genesis roms to $romdir/megadrive\nSega 32X roms to $romdir/sega32x\nand SegaCD roms to $romdir/segacd\nThe Sega CD requires the BIOS files bios_CD_U.bin, bios_CD_E.bin, and bios_CD_J.bin copied to $biosdir"
+rp_module_licence="GPL2 https://sourceforge.net/p/dgen/dgen/ci/master/tree/COPYING"
+rp_module_section="opt"
+rp_module_flags="dispmanx !mali"
 
 function depends_dgen() {
     getDepends libsdl1.2-dev libarchive-dev
@@ -23,7 +25,9 @@ function sources_dgen() {
 }
 
 function build_dgen() {
-    ./configure --disable-opengl --disable-hqx --prefix="$md_inst"
+    local params=()
+    isPlatform "rpi" && params+=(--disable-opengl --disable-hqx)
+    ./configure  --prefix="$md_inst"
     make clean
     make
     md_ret_require="$md_build/dgen"
@@ -35,37 +39,46 @@ function install_dgen() {
     md_ret_require="$md_inst/bin/dgen"
 }
 
-function configure_dgen()
-{
-    mkRomDir "megadrive"
-    mkRomDir "segacd"
-    mkRomDir "sega32x"
+function configure_dgen() {
+    local system
+    for system in megadrive segacd sega32x; do
+        mkRomDir "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/bin/dgen -r $md_conf_root/megadrive/dgenrc %ROM%"
+        addSystem "$system"
+    done
 
-    mkUserDir "$configdir/megadrive"
+    [[ "$md_mode" == "remove" ]] && return
+
+    mkUserDir "$md_conf_root/megadrive"
 
     # move config from previous location
     if [[ -f "$configdir/all/dgenrc" ]]; then
-        mv -v "$configdir/all/dgenrc" "$configdir/megadrive/dgenrc"
+        mv -v "$configdir/all/dgenrc" "$md_conf_root/megadrive/dgenrc"
     fi
 
-    if [[ ! -f "$configdir/megadrive/dgenrc" ]]; then
-        cp "sample.dgenrc" "$configdir/megadrive/dgenrc"
-        chown $user:$user "$configdir/megadrive/dgenrc"
+    if [[ ! -f "$md_conf_root/megadrive/dgenrc" ]]; then
+        cp "sample.dgenrc" "$md_conf_root/megadrive/dgenrc"
+        chown $user:$user "$md_conf_root/megadrive/dgenrc"
     fi
 
-    iniConfig " = " "" "$configdir/megadrive/dgenrc"
+    iniConfig " = " "" "$md_conf_root/megadrive/dgenrc"
 
-    iniSet "int_width" "320"
-    iniSet "int_height" "240"
-    iniSet "bool_doublebuffer" "no"
-    iniSet "bool_screen_thread" "yes"
-    iniSet "scaling_startup" "none"
+    if isPlatform "rpi"; then
+        iniSet "int_width" "320"
+        iniSet "int_height" "240"
+        iniSet "bool_doublebuffer" "no"
+        iniSet "bool_screen_thread" "yes"
+        iniSet "scaling_startup" "none"
 
-    # we don't have opengl (or build dgen with it)
-    iniSet "bool_opengl" "no"
+        # we don't have opengl (or build dgen with it)
+        iniSet "bool_opengl" "no"
 
-    # lower sample rate
-    iniSet "int_soundrate" "22050"
+        # lower sample rate
+        iniSet "int_soundrate" "22050"
+
+        iniSet "emu_z80_startup" "drz80"
+        iniSet "emu_m68k_startup" "cyclone"
+    fi
 
     iniSet "joy_pad1_a" "joystick0-button0"
     iniSet "joy_pad1_b" "joystick0-button1"
@@ -85,12 +98,5 @@ function configure_dgen()
     iniSet "joy_pad2_mode" "joystick1-button6"
     iniSet "joy_pad2_start" "joystick1-button7"
 
-    iniSet "emu_z80_startup" "drz80"
-    iniSet "emu_m68k_startup" "cyclone"
-
     setDispmanx "$md_id" 1
-
-    addSystem 0 "$md_id" "megadrive" "$md_inst/bin/dgen -r $configdir/megadrive/dgenrc %ROM%"
-    addSystem 0 "$md_id" "segacd" "$md_inst/bin/dgen -r $configdir/megadrive/dgenrc %ROM%"
-    addSystem 0 "$md_id" "sega32x" "$md_inst/bin/dgen -r $configdir/megadrive/dgenrc %ROM%"
 }

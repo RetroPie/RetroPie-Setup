@@ -1,31 +1,76 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="usbromservice"
 rp_module_desc="USB ROM Service"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function depends_usbromservice() {
-    getDepends usbmount rsync
+    local depends=(rsync ntfs-3g exfat-fuse)
+    if ! hasPackage usbmount 0.0.24; then
+        depends+=(debhelper devscripts pmount lockfile-progs)
+        getDepends "${depends[@]}"
+        if [[ "$md_mode" == "install" ]]; then
+            rp_callModule usbromservice sources
+            rp_callModule usbromservice build
+            rp_callModule usbromservice install
+        fi
+    fi
+}
+
+function sources_usbromservice() {
+    gitPullOrClone "$md_build" https://github.com/RetroPie/usbmount.git systemd
+}
+
+function build_usbromservice() {
+    dpkg-buildpackage
+}
+
+function install_usbromservice() {
+    dpkg -i ../usbmount_*_all.deb
+    rm -f ../usbmount_*
 }
 
 function enable_usbromservice() {
-    cp -v "$scriptdir/scriptmodules/$md_type/$md_id/01_retropie_copyroms" /etc/usbmount/mount.d/
-    sed -i -e "s/USERTOBECHOSEN/$user/g" /etc/usbmount/mount.d/01_retropie_copyroms
-    chmod +x /etc/usbmount/mount.d/01_retropie_copyroms
+    # copy our mount.d scripts over
+    local file
+    local dest
+    for file in "$md_data/"*; do
+        dest="/etc/usbmount/mount.d/${file##*/}"
+        sed "s/USERTOBECHOSEN/$user/g" "$file" >"$dest"
+        chmod +x "$dest"
+    done
+
+    iniConfig "=" '"' /etc/usbmount/usbmount.conf
+    local fs
+    for fs in ntfs exfat; do
+        iniGet "FILESYSTEMS"
+        if [[ "$ini_value" != *$fs* ]]; then
+            iniSet "FILESYSTEMS" "$ini_value $fs"
+        fi
+    done
+    iniGet "MOUNTOPTIONS"
+    local uid=$(id -u $user)
+    local gid=$(id -g $user)
+    if [[ ! "$ini_value" =~ uid|gid ]]; then
+        iniSet "MOUNTOPTIONS" "$ini_value,uid=$uid,gid=$gid"
+    fi
 }
 
 function disable_usbromservice() {
-    rm -f /etc/usbmount/mount.d/01_retropie_copyroms
+    local file
+    for file in "$md_data/"*; do
+        file="/etc/usbmount/mount.d/${file##*/}"
+        rm -f "$file"
+    done
 }
 
 function remove_usbromservice() {
@@ -33,7 +78,7 @@ function remove_usbromservice() {
     apt-get remove -y usbmount
 }
 
-function configure_usbromservice() {
+function gui_usbromservice() {
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose from an option below." 22 86 16)
         options=(

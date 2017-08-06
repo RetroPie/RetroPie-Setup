@@ -1,41 +1,52 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="retroarch"
-rp_module_desc="RetroArch"
-rp_module_menus="2+"
+rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
+rp_module_section="core"
 
 function depends_retroarch() {
-    getDepends libudev-dev libxkbcommon-dev libsdl2-dev 
-    [[ "$__platform" == *rpi* ]] && getDepends libraspberrypi-dev
-    [[ "$__raspbian_ver" -ge "8" ]] && getDepends libusb-1.0-0-dev
+    local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "mali" && depends+=(mali-fbdev)
+    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev)
 
-    cat > "/etc/udev/rules.d/99-evdev.rules" << _EOF_
-KERNEL=="event*", NAME="input/%k", MODE="666"
-_EOF_
-    sudo chmod 666 /dev/input/event*
+    # only install nvidia-cg-toolkit if it is available (as the non-free repo may not be enabled)
+    if isPlatform "x86"; then
+        if [[ -n "$(apt-cache search --names-only nvidia-cg-toolkit)" ]]; then
+            depends+=(nvidia-cg-toolkit)
+        fi
+    fi
+
+    getDepends "${depends[@]}"
+
+    addUdevInputRules
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git
-    gitPullOrClone "$md_build/overlays" https://github.com/libretro/common-overlays.git
-    gitPullOrClone "$md_build/shader" https://github.com/RetroPie/common-shaders.git
-    # disable the search dialog
-    sed -i 's|menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|//menu_input_ctl(MENU_INPUT_CTL_SEARCH_START|g' menu/menu_entry.c
+    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git 1.6.3
+    applyPatch "$md_data/01_hotkey_hack.diff"
+    applyPatch "$md_data/02_disable_search.diff"
 }
 
 function build_retroarch() {
-    local params=(--disable-x11 --enable-dispmanx --disable-oss --disable-pulse --disable-al --disable-jack --enable-sdl2 --enable-floathard)
-    isPlatform "rpi2" && params+=(--enable-neon)
-    isPlatform "x86" && params=(--enable-sdl2)
+    local params=(--enable-sdl2)
+    ! isPlatform "x11" && params+=(--disable-x11 --enable-opengles --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
+    isPlatform "rpi" && params+=(--enable-dispmanx)
+    isPlatform "mali" && params+=(--enable-mali_fbdev)
+    if isPlatform "arm"; then
+        params+=(--enable-floathard)
+        isPlatform "neon" && params+=(--enable-neon)
+    fi
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
     make
@@ -44,41 +55,91 @@ function build_retroarch() {
 
 function install_retroarch() {
     make install
-    mkdir -p "$md_inst/"{shader,assets,overlays}
-    cp -v -a "$md_build/shader/"* "$md_inst/shader/"
-    cp -v -a "$md_build/overlays/"* "$md_inst/overlays/"
-    chown $user:$user -R "$md_inst/"{shader,assets,overlays}
     md_ret_files=(
         'retroarch.cfg'
     )
 }
 
-function configure_retroarch() {
-    mkUserDir "$configdir/all/retroarch-joypads"
+function update_shaders_retroarch() {
+    local dir="$configdir/all/retroarch/shaders"
+    local branch=""
+    isPlatform "rpi" && branch="rpi"
+    # remove if not git repository for fresh checkout
+    [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
+    gitPullOrClone "$dir" https://github.com/RetroPie/common-shaders.git "$branch"
+    chown -R $user:$user "$dir"
+}
 
-    local config="$configdir/all/retroarch.cfg"
-    # if the user has an existing config we will not overwrite it, but instead copy the
-    # default configuration to retroarch.cfg.rp-dist so any new options can be manually
-    # copied across as needed without destroying users changes
-    if [[ -f "$configdir/all/retroarch.cfg" ]]; then
-        config="$configdir/all/retroarch.cfg.rp-dist"
-        cp -v "$md_inst/retroarch.cfg" "$config"
-    else
-        cp -v "$md_inst/retroarch.cfg" "$config"
-    fi
+function update_overlays_retroarch() {
+    local dir="$configdir/all/retroarch/overlay"
+    # remove if not a git repository for fresh checkout
+    [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
+    gitPullOrClone "$configdir/all/retroarch/overlay" https://github.com/libretro/common-overlays.git
+    chown -R $user:$user "$dir"
+}
+
+function update_assets_retroarch() {
+    local dir="$configdir/all/retroarch/assets"
+    # remove if not a git repository for fresh checkout
+    [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
+    gitPullOrClone "$dir" https://github.com/libretro/retroarch-assets.git
+    chown -R $user:$user "$dir"
+}
+
+function install_xmb_monochrome_assets_retroarch() {
+    local dir="$configdir/all/retroarch/assets"
+    [[ -d "$dir/.git" ]] && return
+    [[ ! -d "$dir" ]] && mkUserDir "$dir"
+    wget -q -O- "$__archive_url/retroarch-xmb-monochrome.tar.gz" | tar -xvz -C "$dir"
+    chown -R $user:$user "$dir"
+}
+
+function configure_retroarch() {
+    [[ "$md_mode" == "remove" ]] && return
+
+    # move / symlink the retroarch configuration
+    mkUserDir "$home/.config"
+    moveConfigDir "$home/.config/retroarch" "$configdir/all/retroarch"
+
+    # move / symlink our old retroarch-joypads folder
+    moveConfigDir "$configdir/all/retroarch-joypads" "$configdir/all/retroarch/autoconfig"
+
+    # move / symlink old assets / overlays and shader folder
+    moveConfigDir "$md_inst/assets" "$configdir/all/retroarch/assets"
+    moveConfigDir "$md_inst/overlays" "$configdir/all/retroarch/overlay"
+    moveConfigDir "$md_inst/shader" "$configdir/all/retroarch/shaders"
+
+    # install shaders by default
+    update_shaders_retroarch
+
+    # install minimal assets
+    install_xmb_monochrome_assets_retroarch
+
+    local config="$(mktemp)"
+
+    cp "$md_inst/retroarch.cfg" "$config"
+
+    # query ES A/B key swap configuration
+    local es_swap="false"
+    getAutoConf "es_swap_a_b" && es_swap="true"
 
     # configure default options
-    iniConfig " = " "" "$config"
+    iniConfig " = " '"' "$config"
+    iniSet "cache_directory" "/tmp/retroarch"
     iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
-    iniSet "video_smooth" "true"
+    iniSet "video_smooth" "false"
     iniSet "video_threaded" "true"
     iniSet "video_font_size" "12"
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
-    iniSet "assets_directory" "$md_inst/assets"
-    iniSet "overlay_directory" "$md_inst/overlays"
-    isPlatform "x86" && iniSet "video_fullscreen" "true"
+    isPlatform "x11" && iniSet "video_fullscreen" "true"
+
+    # set default render resolution to 640x480 for rpi1
+    if isPlatform "rpi1"; then
+        iniSet "video_fullscreen_x" "640"
+        iniSet "video_fullscreen_y" "480"
+    fi
 
     # enable hotkey ("select" button)
     iniSet "input_enable_hotkey" "nul"
@@ -96,7 +157,6 @@ function configure_retroarch() {
     # enable and configure shaders
     iniSet "input_shader_next" "m"
     iniSet "input_shader_prev" "n"
-    iniSet "video_shader_dir" "$md_inst/shader/"
 
     # configure keyboard mappings
     iniSet "input_player1_a" "x"
@@ -114,9 +174,148 @@ function configure_retroarch() {
 
     # input settings
     iniSet "input_autodetect_enable" "true"
-    iniSet "joypad_autoconfig_dir" "$configdir/all/retroarch-joypads/"
     iniSet "auto_remaps_enable" "true"
     iniSet "input_joypad_driver" "udev"
+    iniSet "all_users_control_menu" "true"
 
-    chown $user:$user "$config"
+    # rgui by default
+    iniSet "menu_driver" "rgui"
+
+    # disable xmb menu driver icon shadows
+    iniSet "xmb_shadows_enable" "false"
+
+    # swap A/B buttons based on ES configuration
+    iniSet "menu_swap_ok_cancel_buttons" "$es_swap"
+
+    copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
+    rm "$config"
+
+    # if no menu_driver is set, force RGUI, as the default has now changed to XMB.
+    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
+    iniGet "menu_driver"
+    [[ -z "$ini_value" ]] && iniSet "menu_driver" "rgui"
+
+    # if no menu_unified_controls is set, force it on so that keyboard player 1 can control
+    # the RGUI menu which is important for arcade sticks etc that map to keyboard inputs
+    iniGet "menu_unified_controls"
+    [[ -z "$ini_value" ]] && iniSet "menu_unified_controls" "true"
+
+    # remapping hack for old 8bitdo firmware
+    addAutoConf "8bitdo_hack" 0
+}
+
+function keyboard_retroarch() {
+    if [[ ! -f "$configdir/all/retroarch.cfg" ]]; then
+        printMsgs "dialog" "No RetroArch configuration file found at $configdir/all/retroarch.cfg"
+        return
+    fi
+    local input
+    local options
+    local i=1
+    local key=()
+    while read input; do
+        local parts=($input)
+        key+=("${parts[0]}")
+        options+=("${parts[0]}" $i 2 "${parts[*]:2}" $i 26 16 0)
+        ((i++))
+    done < <(grep "^[[:space:]]*input_player[0-9]_[a-z]*" "$configdir/all/retroarch.cfg")
+    local cmd=(dialog --backtitle "$__backtitle" --form "RetroArch keyboard configuration" 22 48 16)
+    local choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choices" ]]; then
+        local value
+        local values
+        readarray -t values <<<"$choices"
+        iniConfig " = " "" "$configdir/all/retroarch.cfg"
+        i=0
+        for value in "${values[@]}"; do
+            iniSet "${key[$i]}" "$value" >/dev/null
+            ((i++))
+        done
+    fi
+}
+
+function hotkey_retroarch() {
+    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
+    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired hotkey behaviour." 22 76 16)
+    options=(1 "Hotkeys enabled. (default)"
+             2 "Press ALT to enable hotkeys."
+             3 "Hotkeys disabled. Press ESCAPE to open RGUI.")
+    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choices" ]]; then
+        case $choices in
+            1)
+                iniSet "input_enable_hotkey" "nul"
+                iniSet "input_exit_emulator" "escape"
+                iniSet "input_menu_toggle" "F1"
+                ;;
+            2)
+                iniSet "input_enable_hotkey" "alt"
+                iniSet "input_exit_emulator" "escape"
+                iniSet "input_menu_toggle" "F1"
+                ;;
+            3)
+                iniSet "input_enable_hotkey" "escape"
+                iniSet "input_exit_emulator" "nul"
+                iniSet "input_menu_toggle" "escape"
+                ;;
+        esac
+    fi
+}
+
+function gui_retroarch() {
+    while true; do
+        local names=(shaders overlays assets)
+        local dirs=(shaders overlay assets)
+        local options=()
+        local name
+        local dir
+        local i=1
+        for name in "${names[@]}"; do
+            if [[ -d "$configdir/all/retroarch/${dirs[i-1]}/.git" ]]; then
+                options+=("$i" "Manage $name (installed)")
+            else
+                options+=("$i" "Manage $name (not installed)")
+            fi
+            ((i++))
+        done
+        options+=(
+            4 "Configure keyboard for use with RetroArch"
+            5 "Configure keyboard hotkey behaviour for RetroArch"
+        )
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        case "$choice" in
+            1|2|3)
+                name="${names[choice-1]}"
+                dir="${dirs[choice-1]}"
+                options=(1 "Install/Update $name" 2 "Uninstall $name" )
+                cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for $dir" 12 40 06)
+                choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+
+                case "$choice" in
+                    1)
+                        "update_${name}_retroarch"
+                        ;;
+                    2)
+                        rm -rf "$configdir/all/retroarch/$dir"
+                        [[ "$dir" == "assets" ]] && install_xmb_monochrome_assets_retroarch
+                        ;;
+                    *)
+                        continue
+                        ;;
+
+                esac
+                ;;
+            4)
+                keyboard_retroarch
+                ;;
+            5)
+                hotkey_retroarch
+                ;;
+            *)
+                break
+                ;;
+        esac
+
+    done
 }

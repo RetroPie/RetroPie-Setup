@@ -1,30 +1,148 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="emulationstation"
-rp_module_desc="EmulationStation"
-rp_module_menus="2+"
+rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emulators"
+rp_module_licence="MIT https://raw.githubusercontent.com/RetroPie/EmulationStation/master/LICENSE.md"
+rp_module_section="core"
+rp_module_flags="frontend"
+
+function _get_input_cfg_emulationstation() {
+    echo "$configdir/all/emulationstation/es_input.cfg"
+}
+
+function _update_hook_emulationstation() {
+    # make sure the input configuration scripts and launch script are always up to date
+    if rp_isInstalled "$md_idx"; then
+        copy_inputscripts_emulationstation
+        install_launch_emulationstation
+    fi
+}
+
+function _sort_systems_emulationstation() {
+    local field="$1"
+    cp "/etc/emulationstation/es_systems.cfg" "/etc/emulationstation/es_systems.cfg.bak"
+    xmlstarlet sel -D -I \
+        -t -m "/" -e "systemList" \
+        -m "//system" -s A:T:U "$1" -c "." \
+        "/etc/emulationstation/es_systems.cfg.bak" >"/etc/emulationstation/es_systems.cfg"
+}
+
+function _add_system_emulationstation() {
+    local fullname="$1"
+    local name="$2"
+    local path="$3"
+    local extension="$4"
+    local command="$5"
+    local platform="$6"
+    local theme="$7"
+
+    local conf="/etc/emulationstation/es_systems.cfg"
+    mkdir -p "/etc/emulationstation"
+    if [[ ! -f "$conf" ]]; then
+        echo "<systemList />" >"$conf"
+    fi
+
+    cp "$conf" "$conf.bak"
+    if [[ $(xmlstarlet sel -t -v "count(/systemList/system[name='$name'])" "$conf") -eq 0 ]]; then
+        xmlstarlet ed -L -s "/systemList" -t elem -n "system" -v "" \
+            -s "/systemList/system[last()]" -t elem -n "name" -v "$name" \
+            -s "/systemList/system[last()]" -t elem -n "fullname" -v "$fullname" \
+            -s "/systemList/system[last()]" -t elem -n "path" -v "$path" \
+            -s "/systemList/system[last()]" -t elem -n "extension" -v "$extension" \
+            -s "/systemList/system[last()]" -t elem -n "command" -v "$command" \
+            -s "/systemList/system[last()]" -t elem -n "platform" -v "$platform" \
+            -s "/systemList/system[last()]" -t elem -n "theme" -v "$theme" \
+            "$conf"
+    else
+        xmlstarlet ed -L \
+            -u "/systemList/system[name='$name']/fullname" -v "$fullname" \
+            -u "/systemList/system[name='$name']/path" -v "$path" \
+            -u "/systemList/system[name='$name']/extension" -v "$extension" \
+            -u "/systemList/system[name='$name']/command" -v "$command" \
+            -u "/systemList/system[name='$name']/platform" -v "$platform" \
+            -u "/systemList/system[name='$name']/theme" -v "$theme" \
+            "$conf"
+    fi
+
+    _sort_systems_emulationstation "name"
+}
+
+function _del_system_emulationstation() {
+    local fullname="$1"
+    local name="$2"
+    if [[ -f /etc/emulationstation/es_systems.cfg ]]; then
+        xmlstarlet ed -L -P -d "/systemList/system[name='$name']" /etc/emulationstation/es_systems.cfg
+    fi
+}
+
+function _add_rom_emulationstation() {
+    local system_name="$1"
+    local system_fullname="$2"
+    local path="./$3"
+    local name="$4"
+    local desc="$5"
+    local image="$6"
+
+    local config_dir="$configdir/all/emulationstation"
+
+    mkUserDir "$config_dir"
+    mkUserDir "$config_dir/gamelists"
+    mkUserDir "$config_dir/gamelists/$system_name"
+    local config="$config_dir/gamelists/$system_name/gamelist.xml"
+
+    if [[ ! -f "$config" ]]; then
+        echo "<gameList />" >"$config"
+    fi
+
+    if [[ $(xmlstarlet sel -t -v "count(/gameList/game[path='$path'])" "$config") -eq 0 ]]; then
+        xmlstarlet ed -L -s "/gameList" -t elem -n "game" -v "" \
+            -s "/gameList/game[last()]" -t elem -n "path" -v "$path" \
+            -s "/gameList/game[last()]" -t elem -n "name" -v "$name" \
+            -s "/gameList/game[last()]" -t elem -n "desc" -v "$desc" \
+            -s "/gameList/game[last()]" -t elem -n "image" -v "$image" \
+            "$config"
+    else
+        xmlstarlet ed -L \
+            -u "/gameList/game[name='$name']/path" -v "$path" \
+            -u "/gameList/game[name='$name']/name" -v "$name" \
+            -u "/gameList/game[name='$name']/desc" -v "$desc" \
+            -u "/gameList/game[name='$name']/image" -v "$image" \
+            "$config"
+    fi
+    chown $user:$user "$config"
+}
 
 function depends_emulationstation() {
-    getDepends \
-        libboost-locale-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev \
-        libfreeimage-dev libfreetype6-dev libeigen3-dev libcurl4-openssl-dev \
-        libasound2-dev cmake libsdl2-dev
+    local depends=(
+        libboost-locale-dev libboost-system-dev libboost-filesystem-dev
+        libboost-date-time-dev libfreeimage-dev libfreetype6-dev libeigen3-dev
+        libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
+        libvlc-dev libvlccore-dev vlc-nox
+    )
+
+    isPlatform "x11" && depends+=(gnome-terminal)
+    getDepends "${depends[@]}"
 }
+
 function sources_emulationstation() {
-    gitPullOrClone "$md_build" "https://github.com/retropie/EmulationStation"
+    local repo="$1"
+    local branch="$2"
+    [[ -z "$repo" ]] && repo="https://github.com/RetroPie/EmulationStation"
+    [[ -z "$branch" ]] && branch="v2.4.1"
+    gitPullOrClone "$md_build" "$repo" "$branch"
 }
 
 function build_emulationstation() {
-    rpSwap on 512
+    rpSwap on 1000
     cmake . -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
     make clean
     make
@@ -36,35 +154,43 @@ function install_emulationstation() {
     md_ret_files=(
         'CREDITS.md'
         'emulationstation'
+        'emulationstation.sh'
         'GAMELISTS.md'
         'README.md'
         'THEMES.md'
     )
 }
 
-function configure_inputconfig_emulationstation() {
-    mkUserDir "$home/.emulationstation"
-    cat > "$home/.emulationstation/es_input.cfg" << _EOF_
-<?xml version="1.0"?>
-<inputList>
-  <inputAction type="onfinish">
-    <command>/opt/retropie/supplementary/emulationstation/scripts/inputconfiguration.sh</command>
-  </inputAction>
-</inputList>
-_EOF_
-    chown $user:$user "$home/.emulationstation/es_input.cfg"
-    mkdir -p "$md_inst/scripts"
+function init_input_emulationstation() {
+    local es_config="$(_get_input_cfg_emulationstation)"
 
-    cp -rv "$scriptdir/scriptmodules/$md_type/$md_id/"* "$md_inst/scripts/"
-    chmod +x "$md_inst/scripts/inputconfiguration.sh"
-    chown -R $user:$user "$md_inst/scripts"
+    # if there is no ES config (or empty file) create it with initial inputList element
+    if [[ ! -s "$es_config" ]]; then
+        echo "<inputList />" >"$es_config"
+    fi
+
+    # add our inputconfiguration.sh inputAction if it is missing
+    if [[ $(xmlstarlet sel -t -v "count(/inputList/inputAction[@type='onfinish'])" "$es_config") -eq 0 ]]; then
+        xmlstarlet ed -L -S \
+            -s "/inputList" -t elem -n "inputActionTMP" -v "" \
+            -s "//inputActionTMP" -t attr -n "type" -v "onfinish" \
+            -s "//inputActionTMP" -t elem -n "command" -v "$md_inst/scripts/inputconfiguration.sh" \
+            -r "//inputActionTMP" -v "inputAction" "$es_config"
+    fi
+
+    chown $user:$user "$es_config"
 }
 
-function configure_emulationstation() {
+function copy_inputscripts_emulationstation() {
+    mkdir -p "$md_inst/scripts"
+
+    cp -r "$scriptdir/scriptmodules/$md_type/emulationstation/"* "$md_inst/scripts/"
+    chmod +x "$md_inst/scripts/inputconfiguration.sh"
+}
+
+function install_launch_emulationstation() {
     cat > /usr/bin/emulationstation << _EOF_
 #!/bin/bash
-
-es_bin="$md_inst/emulationstation"
 
 if [[ \$(id -u) -eq 0 ]]; then
     echo "emulationstation should not be run as root. If you used 'sudo emulationstation' please run without sudo."
@@ -73,42 +199,137 @@ fi
 
 if [[ "\$(uname --machine)" != *86* ]]; then
     if [[ -n "\$(pidof X)" ]]; then
-        echo "X is running. Please shut down X in order to mitigate problems with loosing keyboard input. For example, logout from LXDE."
+        echo "X is running. Please shut down X in order to mitigate problems with losing keyboard input. For example, logout from LXDE."
         exit 1
     fi
 fi
 
-key=""
-while [[ -z "\$key" ]]; do
-    \$es_bin "\$@"
-    echo "EmulationStation will restart in 5 seconds. Press a key to exit back to console."
-    IFS= read -s -t 5 -N 1 key </dev/tty
-done
+# save current tty/vt number for use with X so it can be launched on the correct tty
+tty=\$(tty)
+export TTY="\${tty:8:1}"
+
+clear
+tput civis
+"$md_inst/emulationstation.sh" "\$@"
+if [[ $? -eq 139 ]]; then
+    dialog --cr-wrap --no-collapse --msgbox "Emulation Station crashed!\n\nIf this is your first boot of RetroPie - make sure you are using the correct image for your system.\n\\nCheck your rom file/folder permissions and if running on a Raspberry Pi, make sure your gpu_split is set high enough and/or switch back to using carbon theme.\n\nFor more help please use the RetroPie forum." 20 60 >/dev/tty
+fi
+tput cnorm
 _EOF_
-    if [[ "$__platform" == *rpi* ]]; then
+    chmod +x /usr/bin/emulationstation
+
+    if isPlatform "x11"; then
+        mkdir -p /usr/local/share/{icons,applications}
+        cp "$md_data/retropie.svg" "/usr/local/share/icons/"
+        cat > /usr/local/share/applications/retropie.desktop << _EOF_
+[Desktop Entry]
+Type=Application
+Exec=gnome-terminal --full-screen --hide-menubar -e emulationstation
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[de_DE]=RetroPie
+Name=rpie
+Comment[de_DE]=RetroPie
+Comment=retropie
+Icon=/usr/local/share/icons/retropie.svg
+Categories=Game
+_EOF_
+    fi
+}
+
+function clear_input_emulationstation() {
+    rm "$(_get_input_cfg_emulationstation)"
+    init_input_emulationstation
+}
+
+function remove_emulationstation() {
+    rm -rfv "/etc/emulationstation" "/usr/bin/emulationstation" "$configdir/all/emulationstation/"*.cfg "$configdir/all/emulationstation/"*.txt
+    if isPlatform "x11"; then
+        rm -rfv "/usr/local/share/icons/retropie.svg" "/usr/local/share/applications/retropie.desktop"
+    fi
+}
+
+function configure_emulationstation() {
+    # move the $home/emulationstation configuration dir and symlink it
+    moveConfigDir "$home/.emulationstation" "$configdir/all/emulationstation"
+
+    [[ "$mode" == "remove" ]] && return
+
+    init_input_emulationstation
+
+    copy_inputscripts_emulationstation
+
+    install_launch_emulationstation
+
+    if isPlatform "rpi"; then
         # make sure that ES has enough GPU memory
         iniConfig "=" "" /boot/config.txt
         iniSet "gpu_mem_256" 128
         iniSet "gpu_mem_512" 256
         iniSet "gpu_mem_1024" 256
         iniSet "overscan_scale" 1
-    else
-        cat > /usr/share/applications/retropie.desktop << _EOF_
-[Desktop Entry]
-Type=Application
-Version=1.0
-Name=RetroPie
-Comment=RetroPie
-Path=/usr/bin
-Exec=emulationstation
-Terminal=true
-Categories=Game
-_EOF_
     fi
-
-    chmod +x /usr/bin/emulationstation
 
     mkdir -p "/etc/emulationstation"
 
-    configure_inputconfig_emulationstation
+    # ensure we have a default theme
+    rp_callModule esthemes install_theme
+
+    addAutoConf "es_swap_a_b" 0
+    addAutoConf "disable" 0
+}
+
+function gui_emulationstation() {
+    local es_swap=0
+    getAutoConf "es_swap_a_b" && es_swap=1
+
+    local disable=0
+    getAutoConf "disable" && disable=1
+
+    local default
+    local options
+    while true; do
+        local options=(
+            1 "Clear/Reset Emulation Station input configuration"
+        )
+
+        if [[ "$disable" -eq 0 ]]; then
+            options+=(2 "Auto Configuration (Currently: Enabled)")
+        else
+            options+=(2 "Auto Configuration (Currently: Disabled)")
+        fi
+
+        if [[ "$es_swap" -eq 0 ]]; then
+            options+=(3 "Swap A/B Buttons in ES (Currently: Default)")
+        else
+            options+=(3 "Swap A/B Buttons in ES (Currently: Swapped)")
+        fi
+
+        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Choose an option" 22 76 16)
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        [[ -z "$choice" ]] && break
+        default="$choice"
+
+        case "$choice" in
+            1)
+                if dialog --defaultno --yesno "Are you sure you want to reset the Emulation Station controller configuration ? This will wipe all controller configs for ES and it will prompt to reconfigure on next start" 22 76 2>&1 >/dev/tty; then
+                    clear_input_emulationstation
+                    printMsgs "dialog" "$(_get_input_cfg_emulationstation) has been reset to default values."
+                fi
+                ;;
+            2)
+                disable="$((disable ^ 1))"
+                setAutoConf "disable" "$disable"
+                ;;
+            3)
+                es_swap="$((es_swap ^ 1))"
+                setAutoConf "es_swap_a_b" "$es_swap"
+                local ra_swap="false"
+                getAutoConf "es_swap_a_b" && ra_swap="true"
+                iniSet "menu_swap_ok_cancel_buttons" "$ra_swap" "$configdir/all/retroarch.cfg"
+                printMsgs "dialog" "You will need to reconfigure you controller in Emulation Station for the changes to take effect."
+                ;;
+        esac
+    done
 }

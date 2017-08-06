@@ -4,19 +4,15 @@ RetroPie-Setup
 General Usage
 -------------
 
-Shell script to setup the Raspberry Pi 1 / 2 with several emulators, various cores, and EmulationStation as graphical front end. Bootable pre-made images are available from http://blog.petrockblock.com/retropie/ for those that want a ready to go system.
+Shell script to setup the Raspberry Pi, ODroid-C1 or a PC running Ubuntu with many emulators and games, using EmulationStation as the graphical front end. Bootable pre-made images for the Raspberry Pi are available for those that want a ready to go system, downloadable from the releases section of GitHub or via our website at https://retropie.org.uk
 
-This script is designed for use on the Raspbian Wheezy distribution. It has some support for Raspbian Jessie / OSMC but requires building from source - and there may be problems with modules. Before using the script, please **make sure that you have run the raspi-config script to extend your root file system **. You can run the script with
-
-```shell
-sudo raspi-config
-```
+This script is designed for use on Raspbian on the Rasperry Pi, or Ubuntu on the ODroid-C1 or a PC.
 
 To run the RetroPie Setup Script make sure that your APT repositories are up-to-date and that Git is installed:
 
 ```shell
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get dist-upgrade
 sudo apt-get install git
 ```
 
@@ -34,15 +30,14 @@ cd RetroPie-Setup
 sudo ./retropie_setup.sh
 ```
 
-When you first run the script it may install some additional packages that are needed. Note that you might **need to reboot your Raspberry**, if your firmware was updated during the installation process.
-
+When you first run the script it may install some additional packages that are needed.
 
 Binaries and Sources
 --------------------
 
-RetroPie Setup offers the possibility to install from binaries or build from source. For most users installing from binary should suffice - but for the very latest versions of some software building from source may be preferred. Building from source can take more than a day on a Raspberry Pi.
+On the Raspberry Pi, RetroPie Setup offers the possibility to install from binaries or source. For other supported platforms only a source install is available. Installing from binary is recommended on a Raspberry Pi as building everything from source can take a long time.
 
-For more information visit the blog at http://www.petrockblock.com or the repository at https://github.com/RetroPie/RetroPie-Setup. A forum thread about the RetroPie Setup script in the official Raspberry Pi forum can be found at http://www.raspberrypi.org/phpBB3/viewtopic.php?f=35&t=13600.
+For more information visit the blog at https://retropie.org.uk or the repository at https://github.com/RetroPie/RetroPie-Setup.
 
 Wiki
 ----

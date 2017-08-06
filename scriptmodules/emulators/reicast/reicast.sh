@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+
+# This file is part of The RetroPie Project
+#
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
+# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
+#
+
 AUDIO="$1"
 ROM="$2"
 rootdir="/opt/retropie"
@@ -14,10 +24,7 @@ function mapInput() {
     local ev_device_num
     local device_counter
     local conf="$configdir/dreamcast/emu.cfg"
-    
-    # cleanup "$home/.reicast/emu.cfg"
-    sed -i '/input/,/joystick_device_id/d' "$conf"
-    echo "[input]" >> "$conf"
+    local params=""
 
     # get a list of all present js device numbers and device names
     # and device count
@@ -46,34 +53,36 @@ function mapInput() {
         for ev_device_num in "${!ev_devices[@]}"; do
             if [[ "$counter" -lt "$device_counter" ]]; then
                 counter=$(($counter+1))
-                echo "evdev_device_id_$counter = $ev_device_num" >> "$conf"
-                echo "evdev_mapping_$counter = ${file[$ev_device_num]}" >> "$conf"
+                params+="-config input:evdev_device_id_$counter=$ev_device_num "
+                params+="-config input:evdev_mapping_$counter=${file[$ev_device_num]} "
             fi
+        done
+        while [[ "$counter" -lt "4" ]]; do
+            counter=$(($counter+1))
+            params+="-config input:evdev_device_id_$counter=-1 "
+            params+="-config input:evdev_mapping_$counter=-1 "
         done
     else
         # fallback to keyboard setup
-        echo "evdev_device_id_1 = 0" >> "$conf"
+        params+="-config input:evdev_device_id_1=0 "
+        device_counter=1
     fi
-    echo "joystick_device_id = -1" >> "$conf"
-    echo "" >> "$conf"
+    params+="-config input:joystick_device_id=-1 "
+    params+="-config players:nb=$device_counter "
+    echo "$params"
 }
 
-if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
-    getAutoConf reicast_input || mapInput
-    conf="$configdir/dreamcast/emu.cfg"
-    sed -i '/audio/,/disable/d' "$conf"
-    echo "[audio]" >> "$conf"
-    if [[ "$AUDIO" == "OSS" ]]; then
-        echo "backend = oss" >> "$conf"
-        echo "disable = 0" >> "$conf"
-        echo "" >> "$conf"
-        aoss "$rootdir/emulators/reicast/bin/reicast" -config config:homedir="$HOME" -config config:image="$ROM" >> /dev/null
-    else
-        echo "backend = alsa" >> "$conf"
-        echo "disable = 0" >> "$conf"
-        echo "" >> "$conf"
-        "$rootdir/emulators/reicast/bin/reicast" -config config:homedir="$HOME" -config config:image="$ROM" >> /dev/null
-    fi
-else
+if [[ ! -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
     dialog --msgbox "You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator." 22 76
+    exit 1
+fi
+
+params=(-config config:homedir=$HOME -config x11:fullscreen=1)
+getAutoConf reicast_input && params+=($(mapInput))
+[[ -n "$AUDIO" ]] && params+=(-config audio:backend=$AUDIO -config audio:disable=0)
+[[ -n "$ROM" ]] && params+=(-config config:image="$ROM")
+if [[ "$AUDIO" == "oss" ]]; then
+    aoss "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
+else
+    "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
 fi

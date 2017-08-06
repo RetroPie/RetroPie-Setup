@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="lr-pcsx-rearmed"
 rp_module_desc="Playstation emulator - PCSX (arm optimised) port for libretro"
-rp_module_menus="2+"
+rp_module_help="ROM Extensions: .bin .cue .cbn .img .iso .m3u .mdf .pbp .toc .z .znx\n\nCopy your PSX roms to $romdir/psx\n\nCopy the required BIOS file SCPH1001.BIN to $biosdir"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/pcsx_rearmed/master/COPYING"
+rp_module_section="main"
 
 function depends_lr-pcsx-rearmed() {
     getDepends libpng12-dev libx11-dev
@@ -41,15 +43,9 @@ function install_lr-pcsx-rearmed() {
 }
 
 function configure_lr-pcsx-rearmed() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/psxlibretro"
-
     mkRomDir "psx"
     ensureSystemretroconfig "psx"
 
-    # system-specific, PSX
-    iniConfig " = " "" "$configdir/psx/retroarch.cfg"
-    iniSet "rewind_enable" "false"
-
-    addSystem 1 "$md_id" "psx" "$md_inst/libretro.so"
+    addEmulator 1 "$md_id" "psx" "$md_inst/libretro.so"
+    addSystem "psx"
 }

@@ -1,32 +1,36 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 function onstart_retroarch_joystick() {
-    local device_type=$1
-    local device_name=$2
-
-    iniConfig " = " "" "/opt/retropie/configs/all/retroarch.cfg"
+    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
     iniGet "input_joypad_driver"
     local input_joypad_driver="$ini_value"
     if [[ -z "$input_joypad_driver" ]]; then
         input_joypad_driver="udev"
     fi
 
+    _retroarch_select_hotkey=1
+
+    _atebitdo_hack=0
+    getAutoConf "8bitdo_hack" && _atebitdo_hack=1
+
     iniConfig " = " "\"" "/tmp/tempconfig.cfg"
-    iniSet "input_device" "$device_name"
+    iniSet "input_device" "$DEVICE_NAME"
     iniSet "input_driver" "$input_joypad_driver"
 }
 
 function onstart_retroarch_keyboard() {
-    iniConfig " = " "" "/opt/retropie/configs/all/retroarch.cfg"
+    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
+
+    _retroarch_select_hotkey=1
 
     declare -Ag retroarchkeymap
     # SDL codes from https://wiki.libsdl.org/SDLKeycodeLookup
@@ -134,15 +138,16 @@ function onstart_retroarch_keyboard() {
     retroarchkeymap["120"]="x"
     retroarchkeymap["121"]="y"
     retroarchkeymap["122"]="z"
+
+    # special case for disabled hotkey
+    retroarchkeymap["0"]="nul"
 }
 
 function map_retroarch_joystick() {
-    local device_type="$1"
-    local device_name="$2"
-    local input_name="$3"
-    local input_type="$4"
-    local input_id="$5"
-    local input_value="$6"
+    local input_name="$1"
+    local input_type="$2"
+    local input_id="$3"
+    local input_value="$4"
 
     local keys
     case "$input_name" in
@@ -170,16 +175,16 @@ function map_retroarch_joystick() {
         y)
             keys=("input_y")
             ;;
-        leftbottom)
+        leftbottom|leftshoulder)
             keys=("input_l" "input_load_state")
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             keys=("input_r" "input_save_state")
             ;;
-        lefttop)
+        lefttop|lefttrigger)
             keys=("input_l2")
             ;;
-        righttop)
+        righttop|righttrigger)
             keys=("input_r2")
             ;;
         leftthumb)
@@ -192,7 +197,7 @@ function map_retroarch_joystick() {
             keys=("input_start" "input_exit_emulator")
             ;;
         select)
-            keys=("input_select" "input_enable_hotkey")
+            keys=("input_select")
             ;;
         leftanalogleft)
             keys=("input_l_x_minus")
@@ -218,22 +223,29 @@ function map_retroarch_joystick() {
         rightanalogdown)
             keys=("input_r_y_plus")
             ;;
+        hotkeyenable)
+            keys=("input_enable_hotkey")
+            _retroarch_select_hotkey=0
+            if [[ "$input_type" == "key" && "$input_id" == "0" ]]; then
+                return
+            fi
+            ;;
         *)
             return
             ;;
     esac
 
-    
     local key
     local value
+    local type
     for key in "${keys[@]}"; do
         case "$input_type" in
             hat)
-                key+="_btn"
+                type="btn"
                 value="h$input_id$input_name"
                 ;;
             axis)
-                key+="_axis"
+                type="axis"
                 if [[ "$input_value" == "1" ]]; then
                     value="+$input_id"
                 else
@@ -241,30 +253,35 @@ function map_retroarch_joystick() {
                 fi
                 ;;
             *)
+                type="btn"
+                value="$input_id"
+
                 # workaround for mismatched controller mappings
                 iniGet "input_driver"
                 if [[ "$ini_value" == "udev" ]]; then
-                    case "$device_name" in 
-                        "8Bitdo FC30 Pro"|"8Bitdo FC30 GamePad"|"8Bitdo FC30 II"|"8Bitdo NES30 GamePad"|"8Bitdo SFC30 GamePad"|"8Bitdo SNES30 GamePad"|"8Bitdo Zero GamePad")
-                            input_id=$(($input_id+11))
+                    case "$DEVICE_NAME" in
+                        "8Bitdo FC30"*|"8Bitdo NES30"*|"8Bitdo SFC30"*|"8Bitdo SNES30"*|"8Bitdo Zero"*)
+                            if [[ "$_atebitdo_hack" -eq 1 ]]; then
+                                value="$((input_id+11))"
+                            fi
                             ;;
                     esac
                 fi
-                key+="_btn"
-                value="$input_id"
                 ;;
         esac
+        if [[ "$input_name" == "select" && "$_retroarch_select_hotkey" -eq 1 ]]; then
+            _retroarch_select_type="$type"
+        fi
+        key+="_$type"
         iniSet "$key" "$value"
     done
 }
 
 function map_retroarch_keyboard() {
-    local device_type="$1"
-    local device_name="$2"
-    local input_name="$3"
-    local input_type="$4"
-    local input_id="$5"
-    local input_value="$6"
+    local input_name="$1"
+    local input_type="$2"
+    local input_id="$3"
+    local input_value="$4"
 
     local key
     case "$input_name" in
@@ -292,16 +309,16 @@ function map_retroarch_keyboard() {
         y)
             keys=("input_player1_y")
             ;;
-        leftbottom)
+        leftbottom|leftshoulder)
             keys=("input_player1_l")
             ;;
-        rightbottom)
+        rightbottom|rightshoulder)
             keys=("input_player1_r")
             ;;
-        lefttop)
+        lefttop|lefttrigger)
             keys=("input_player1_l2")
             ;;
-        righttop)
+        righttop|righttrigger)
             keys=("input_player1_r2")
             ;;
         leftthumb)
@@ -314,7 +331,11 @@ function map_retroarch_keyboard() {
             keys=("input_player1_start" "input_exit_emulator")
             ;;
         select)
-            keys=("input_player1_select" "input_enable_hotkey")
+            keys=("input_player1_select")
+            ;;
+        hotkeyenable)
+            keys=("input_enable_hotkey")
+            _retroarch_select_hotkey=0
             ;;
         *)
             return
@@ -327,41 +348,48 @@ function map_retroarch_keyboard() {
 }
 
 function onend_retroarch_joystick() {
-    local device_type=$1
-    local device_name=$2
+    # if $_retroarch_select_hotkey is set here, then there was no hotkeyenable button
+    # in the configuration, so we should use the select button as hotkey enable if set
+    if [[ "$_retroarch_select_hotkey" -eq 1 ]]; then
+        iniGet "input_select_${_retroarch_select_type}"
+        [[ -n "$ini_value" ]] && iniSet "input_enable_hotkey_${_retroarch_select_type}" "$ini_value"
+    fi
 
     # hotkey sanity check
     # remove hotkeys if there is no hotkey enable button
     if ! grep -q "input_enable_hotkey" /tmp/tempconfig.cfg; then
-        iniSet "input_state_slot_decrease_btn" ""
-        iniSet "input_state_slot_increase_btn" ""
-        iniSet "input_reset_btn" ""
-        iniSet "input_menu_toggle_btn" ""
-        iniSet "input_load_state_btn" ""
-        iniSet "input_save_state_btn" ""
-        iniSet "input_exit_emulator_btn" ""
-        iniSet "input_state_slot_decrease_axis" ""
-        iniSet "input_state_slot_increase_axis" ""
-        iniSet "input_reset_axis" ""
-        iniSet "input_menu_toggle_axis" ""
-        iniSet "input_load_state_axis" ""
-        iniSet "input_save_state_axis" ""
-        iniSet "input_exit_emulator_axis" ""
+        local key
+        for key in input_state_slot_decrease input_state_slot_increase input_reset input_menu_toggle input_load_state input_save_state input_exit_emulator; do
+            sed -i "/$key/d" /tmp/tempconfig.cfg
+        done
     fi
 
+    # disable any auto configs for the same device to avoid duplicates
+    local file
+    local dir="$configdir/all/retroarch-joypads"
+    while read -r file; do
+        mv "$file" "$file.bak"
+    done < <(grep -Fl "\"$DEVICE_NAME\"" "$dir/"*.cfg 2>/dev/null)
+
     # sanitise filename
-    local file="${device_name//[ \?\<\>\\\/:\*\|]/}.cfg"
-    if [[ -f "/opt/retropie/configs/all/retroarch-joypads/$file" ]]; then
-        mv "/opt/retropie/configs/all/retroarch-joypads/$file" "/opt/retropie/configs/all/retroarch-joypads/$file.bak"
+    file="${DEVICE_NAME//[\?\<\>\\\/:\*\|]/}.cfg"
+
+    if [[ -f "$dir/$file" ]]; then
+        mv "$dir/$file" "$dir/$file.bak"
     fi
-    mv "/tmp/tempconfig.cfg" "/opt/retropie/configs/all/retroarch-joypads/$file"
+    mv "/tmp/tempconfig.cfg" "$dir/$file"
 }
 
 function onend_retroarch_keyboard() {
+    if [[ "$_retroarch_select_hotkey" -eq 1 ]]; then
+        iniGet "input_player1_select"
+        iniSet "input_enable_hotkey" "$ini_value"
+    fi
+
     # hotkey sanity check
     # remove hotkeys if there is no hotkey enable button
     iniGet "input_enable_hotkey"
-    if [[ -z "$ini_value" ]]; then
+    if [[ -z "$ini_value" || "$ini_value" == "nul" ]]; then
         iniSet "input_state_slot_decrease" ""
         iniSet "input_state_slot_increase" ""
         iniSet "input_reset" ""
@@ -369,5 +397,8 @@ function onend_retroarch_keyboard() {
         iniSet "input_load_state" ""
         iniSet "input_save_state" ""
         iniSet "input_exit_emulator" "escape"
+        iniSet "input_shader_next" ""
+        iniSet "input_shader_prev" ""
+        iniSet "input_rewind" ""
     fi
 }

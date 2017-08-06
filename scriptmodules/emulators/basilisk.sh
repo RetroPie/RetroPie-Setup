@@ -1,21 +1,25 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="basilisk"
 rp_module_desc="Macintosh emulator"
-rp_module_menus="2+"
-rp_module_flags="dispmanx !x86"
+rp_module_help="ROM Extensions: .img .rom\n\nCopy your Macintosh roms mac.rom and disk.img to $romdir/macintosh"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/cebix/macemu/master/BasiliskII/COPYING"
+rp_module_section="opt"
+rp_module_flags="dispmanx !mali"
 
 function depends_basilisk() {
-    getDepends libsdl1.2-dev autoconf automake
+    local depends=(libsdl1.2-dev autoconf automake)
+    isPlatform "x11" && depends+=(libgtk2.0-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_basilisk() {
@@ -24,7 +28,10 @@ function sources_basilisk() {
 
 function build_basilisk() {
     cd BasiliskII/src/Unix
-    ./autogen.sh --prefix="$md_inst" --enable-sdl-video --enable-sdl-audio --disable-vosf --disable-jit-compiler --without-x --without-mon --without-esd --without-gtk
+    local params=(--enable-sdl-video --enable-sdl-audio --disable-vosf --without-mon --without-esd)
+    ! isPlatform "x86" && params+=(--disable-jit-compiler)
+    ! isPlatform "x11" && params+=(--without-x --without-gtk)
+    ./autogen.sh --prefix="$md_inst" "${params[@]}"
     make clean
     make
     md_ret_require="$md_build/BasiliskII/src/Unix/BasiliskII"
@@ -38,8 +45,9 @@ function install_basilisk() {
 function configure_basilisk() {
     mkRomDir "macintosh"
     touch "$romdir/macintosh/Start.txt"
-    
-    mkUserDir "$configdir/macintosh"
 
-    addSystem 1 "$md_id" "macintosh" "$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img --config $configdir/macintosh/basiliskii.cfg" "Apple Macintosh" ".txt"
+    mkUserDir "$md_conf_root/macintosh"
+
+    addEmulator 1 "$md_id" "macintosh" "$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img --extfs $romdir/macintosh --config $md_conf_root/macintosh/basiliskii.cfg"
+    addSystem "macintosh"
 }

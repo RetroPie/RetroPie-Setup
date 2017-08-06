@@ -1,35 +1,38 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="vice"
 rp_module_desc="C64 emulator VICE"
-rp_module_menus="2+"
-rp_module_flags="dispmanx !x86"
+rp_module_help="ROM Extensions: .crt .d64 .g64 .prg .t64 .tap .x64 .zip .vsf\n\nCopy your Commodore 64 games to $romdir/c64"
+rp_module_licence="GPL2 http://svn.code.sf.net/p/vice-emu/code/trunk/vice/COPYING"
+rp_module_section="opt"
+rp_module_flags=""
 
 function depends_vice() {
-    if hasPackage vice; then
-        printf 'Package vice is already installed - removing package\n' "${1}"
-        apt-get remove -y vice
-    fi
-    getDepends libsdl1.2-dev libxaw7-dev automake checkinstall
+    local depends=(libsdl2-dev libmpg123-dev libpng12-dev zlib1g-dev libasound2-dev libvorbis-dev libflac-dev libpcap-dev automake checkinstall bison flex subversion libjpeg-dev portaudio19-dev texinfo)
+    isPlatform "x11" && depends+=(libpulse-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_vice() {
-    wget -O- -q $__archive_url/vice-2.4.tar.gz | tar -xvz --strip-components=1
+    svn checkout svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/ "$md_build"
 }
 
 function build_vice() {
-    ./configure --prefix="$md_inst" --enable-sdlui --without-pulse --with-sdlsound
-    sed -i "s/#define HAVE_HWSCALE/#undef HAVE_HWSCALE/" src/config.h
+    local params=(--enable-sdlui2 --without-arts --without-oss --enable-ethernet)
+    ! isPlatform "x11" && params+=(--disable-catweasel --without-pulse)
+    ./autogen.sh
+    ./configure --prefix="$md_inst" "${params[@]}"
     make
+    md_ret_require="$md_build/src/x64"
 }
 
 function install_vice() {
@@ -37,58 +40,79 @@ function install_vice() {
 }
 
 function configure_vice() {
+    # get a list of supported extensions
+    local exts="$(getPlatformConfig c64_exts)"
+
+    # install the vice start script
+    mkdir -p "$md_inst/bin"
+    cat > "$md_inst/bin/vice.sh" << _EOF_
+#!/bin/bash
+
+BIN="\${0%/*}/\$1"
+ROM="\$2"
+
+romdir="\${ROM%/*}"
+ext="\${ROM##*.}"
+source "$rootdir/lib/archivefuncs.sh"
+
+archiveExtract "\$ROM" "$exts"
+
+# check successful extraction and if we have at least one file
+if [[ \$? == 0 ]]; then
+    ROM="\${arch_files[0]}"
+    romdir="\$arch_dir"
+fi
+
+"\$BIN" -chdir "\$romdir" "\$ROM"
+archiveCleanup
+_EOF_
+
+    chmod +x "$md_inst/bin/vice.sh"
+
     mkRomDir "c64"
 
-    # copy any existing configs from ~/.vice and symlink the config folder to $configdir/c64/
-    moveConfigDir "$home/.vice" "$configdir/c64"
+    addEmulator 1 "$md_id-x64" "c64" "$md_inst/bin/vice.sh x64 %ROM%"
+    addEmulator 0 "$md_id-x64sc" "c64" "$md_inst/bin/vice.sh x64sc %ROM%"
+    addEmulator 0 "$md_id-x128" "c64" "$md_inst/bin/vice.sh x128 %ROM%"
+    addEmulator 0 "$md_id-xpet" "c64" "$md_inst/bin/vice.sh xpet %ROM%"
+    addEmulator 0 "$md_id-xplus4" "c64" "$md_inst/bin/vice.sh xplus4 %ROM%"
+    addEmulator 0 "$md_id-xvic" "c64" "$md_inst/bin/vice.sh xvic %ROM%"
+    addEmulator 0 "$md_id-xvic-cart" "c64" "$md_inst/bin/vice.sh 'xvic -cartgeneric' %ROM%"
+    addSystem "c64"
 
-    # if we have an old config vice.cfg then move it to sdl-vicerc
-    if [[ -f "$configdir/c64/vice.cfg" ]]; then
-        mv -v "$configdir/c64/vice.cfg" "$configdir/c64/sdl-vicerc"
-    elif [[ ! -f "$configdir/c64/sdl-vicerc" ]]; then
-        echo "[C64]" > "$configdir/c64/sdl-vicerc"
+    [[ "$md_mode" == "remove" ]] && return
+
+    # copy any existing configs from ~/.vice and symlink the config folder to $md_conf_root/c64/
+    moveConfigDir "$home/.vice" "$md_conf_root/c64"
+
+    local config="$(mktemp)"
+    echo "[C64]" > "$config"
+    iniConfig "=" "" "$config"
+    if ! isPlatform "x11"; then
+        iniSet "Mouse" "1"
+        iniSet "VICIIDoubleSize" "0"
+        iniSet "VICIIDoubleScan" "0"
+        iniSet "VICIIFilter" "0"
+        iniSet "VICIIVideoCache" "0"
+        iniSet "SDLWindowWidth" "384"
+        iniSet "SDLWindowHeight" "272"
+        isPlatform "rpi1" && iniSet "SoundSampleRate" "22050"
+        iniSet "SidEngine" "0"
+    else
+        iniSet "VICIIFullscreen" "1"
     fi
-    chown -R $user:$user "$configdir/c64"
 
-    iniConfig "=" "" "$configdir/c64/sdl-vicerc"
-    iniSet "SDLBitdepth" "8"
-    iniSet "Mouse" "1"
-    iniSet "VICIIFilter" "0"
-    iniSet "VICIIVideoCache" "0"
-    iniSet "SoundDeviceName" "alsa"
-    iniSet "SoundSampleRate" "22050"
-    iniSet "Drive8Type" "1542"
-    iniSet "SidEngine" "0"
-    iniSet "AutostartWarp" "0"
-    iniSet "WarpMode" "0"
+    copyDefaultConfig "$config" "$md_conf_root/c64/sdl-vicerc"
+    rm "$config"
 
-    configure_dispmanx_on_vice
-    setDispmanx "$md_id" 1
+    if ! isPlatform "x11"; then
+        # enforce a few settings to ensure a smooth upgrade from sdl1
+        iniConfig "=" "" "$md_conf_root/c64/sdl-vicerc"
+        iniDel "SDLBitdepth"
+        iniSet "VICIIDoubleSize" "0"
+        iniSet "VICIIDoubleScan" "0"
+        iniSet "SDLWindowWidth" "384"
+        iniSet "SDLWindowHeight" "272"
+    fi
 
-    addSystem 1 "$md_id-x64" "c64" "$md_inst/bin/x64 %ROM%"
-    addSystem 0 "$md_id-x64sc" "c64" "$md_inst/bin/x64sc %ROM%" 
-    addSystem 0 "$md_id-x128" "c64" "$md_inst/bin/x128 %ROM%"
-    addSystem 0 "$md_id-xpet" "c64" "$md_inst/bin/xpet %ROM%"
-    addSystem 0 "$md_id-xplus4" "c64" "$md_inst/bin/xplus4 %ROM%"
-    addSystem 0 "$md_id-xvic" "c64" "$md_inst/bin/xvic %ROM%"
-}
-
-function configure_dispmanx_off_vice() {
-    local id
-    for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic; do
-        setDispmanx "id" 0
-    done
-    iniConfig "=" "" "$configdir/c64/sdl-vicerc"
-    iniSet "VICIIDoubleSize" "1"
-    iniSet "VICIIDoubleScan" "1"
-}
-
-function configure_dispmanx_on_vice() {
-    local id
-    for id in $md_id-x64 $md_id-x64sc $md_id-x128 $md_id-xpet $md_id-xplus4 $md_id-xvic; do
-        setDispmanx "$id" 1
-    done
-    iniConfig "=" "" "$configdir/c64/sdl-vicerc"
-    iniSet "VICIIDoubleSize" "0"
-    iniSet "VICIIDoubleScan" "0"
 }

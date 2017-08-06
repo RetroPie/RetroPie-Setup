@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="setup"
 rp_module_desc="GUI based setup for RetroPie"
-rp_module_menus=""
-rp_module_flags="nobin"
+rp_module_section=""
 
 function rps_logInit() {
     if [[ ! -d "$__logdir" ]]; then
@@ -30,7 +29,9 @@ function rps_logInit() {
 }
 
 function rps_logStart() {
-    echo "Log started at: $(date -d @$time_start)"
+    echo -e "Log started at: $(date -d @$time_start)\n"
+    echo "RetroPie-Setup version: $__version ($(git -C "$scriptdir" log -1 --pretty=format:%h))"
+    echo "System: $(uname -a)"
 }
 
 function rps_logEnd() {
@@ -45,253 +46,434 @@ function rps_logEnd() {
 }
 
 function rps_printInfo() {
+    reset
     if [[ ${#__ERRMSGS[@]} -gt 0 ]]; then
         printMsgs "dialog" "${__ERRMSGS[@]}"
-        printMsgs "dialog" "Please see $1 more in depth information regarding the errors."
+        printMsgs "dialog" "Please see $1 for more in depth information regarding the errors."
     fi
-    printMsgs "dialog" "${__INFMSGS[@]}"
-}
-
-function rps_buildMenu()
-{
-    options=()
-    command=()
-    local status
-    local id
-    local menu
-    local menus
-    for id in "${__mod_idx[@]}"; do
-        menus="${__mod_menus[$id]}"
-        for menu in $menus; do
-            if [[ "${menu:0:1}" == "$1" ]]; then
-                command[$id]="${menu:2}"
-                if [[ "$1" == "3" ]]; then
-                    options=("${options[@]}" "$id" "${__mod_desc[$id]}")
-                else
-                    options=("${options[@]}" "$id" "${__mod_id[$id]} - ${__mod_desc[$id]}")
-                fi
-                if [[ "$2" == "bool" ]]; then
-                    status="ON"
-                    [[ "${menu:1:1}" == "-" ]] && status="OFF"
-                    options=("${options[@]}" "$status")
-                fi
-            fi
-        done
-    done
-}
-
-function rps_availFreeDiskSpace() {
-    local rootdirExists=0
-    if [[ ! -d "$rootdir" ]]; then
-        rootdirExists=1
-        mkdir -p $rootdir
-    fi
-    local __required=$1
-    local __avail=$(df -P $rootdir | tail -n1 | awk '{print $4}')
-    if [[ $rootdirExists -eq 1 ]]; then
-        rmdir $rootdir
-    fi
-
-    required_MB=$((__required/1024))
-    available_MB=$((__avail/1024))
-
-    if [[ "$__avail" -lt "$__required" ]]; then
-        dialog --yesno "Minimum recommended disk space ($required_MB MB) not available.\n\nTry 'raspi-config' to resize partition to full size. Only $available_MB MB available at $rootdir.\n\nContinue anyway?" 22 76 2>&1 >/dev/tty || exit 0
+    if [[ ${#__INFMSGS[@]} -gt 0 ]]; then
+        printMsgs "dialog" "${__INFMSGS[@]}"
     fi
 }
 
 function depends_setup() {
-    rps_availFreeDiskSpace 500000
-}
+    # check for VERSION file - if it doesn't exist we will run the post_update script as it won't be triggered
+    # on first upgrade to 4.x
+    if [[ ! -f "$rootdir/VERSION" ]]; then
+        joy2keyStop
+        exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
+    fi
 
-# download, extract, and install binaries
-function binaries_setup()
-{
-    local idx
+    if isPlatform "rpi" && [[ -f /boot/config.txt ]] && grep -q "^dtoverlay=vc4-kms-v3d" /boot/config.txt; then
+        printMsgs "dialog" "You have the experimental desktop GL driver enabled. This is NOT compatible with RetroPie, and Emulation Station as well as emulators will fail to launch. Please disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
+    fi
 
-    clear
-    printHeading "Binaries-based installation"
-
-    ensureRootdirExists
-    local logfilename
-    rps_logInit
-    {
-        rps_logStart
-        rp_callModule raspbiantools apt_upgrade
-        # force installation of our sdl1 packages as wheezy package may already be installed, and so we always get the latest
-        # version. This can be solved later by adding version number checking to the dependency checking
-        rp_callModule sdl1 install_bin
-
-        # and force sdl2 - so that any updates will be installed.
-        rp_callModule sdl2 install_bin
-
-        # install needed dependencies for all modules with a binary distribution (except for experimental packages)
-        for idx in "${__mod_idx[@]}"; do
-            if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobin ]]; then
-                rp_callModule $idx depends
-                rp_callModule $idx install_bin
-                rp_callModule $idx configure
+    # make sure user has the correct group permissions
+    if ! isPlatform "x11"; then
+        local group
+        for group in input video; do
+            if ! hasFlag "$(groups $user)" "$group"; then
+                dialog --yesno "Your user '$user' is not a member of the system group '$group'.\n\nThis is needed for RetroPie to function correctly. May I add '$user' to group '$group'?\n\nYou will need to restart for these changes to take effect." 22 76 2>&1 >/dev/tty && usermod -a -G "$group" "$user"
             fi
         done
+    fi
 
-        # modules that have another binary distribution method (deb etc)
-        rp_callModule stella
-        rp_callModule frotz
-        rp_callModule rpix86
-
-        # required supplementary modules 
-        rp_callModule raspbiantools enable_modules
-        rp_callModule esthemes install_theme carbon HerbFargus
-        rp_callModule runcommand install
-
-        # some additional supplementary modules
-        rp_callModule retropiemenu
-
-        rps_logEnd
-    } &> >(tee >(gzip --stdout > "$logfilename"))
-
-    rps_printInfo "$logfilename"
-
-    printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
+    # remove all but the last 20 logs
+    find "$__logdir" -type f | sort | head -n -20 | xargs -d '\n' --no-run-if-empty rm
 }
 
 function updatescript_setup()
 {
+    clear
     chown -R $user:$user "$scriptdir"
     printHeading "Fetching latest version of the RetroPie Setup Script."
-    pushd $scriptdir
+    pushd "$scriptdir" >/dev/null
     if [[ ! -d ".git" ]]; then
         printMsgs "dialog" "Cannot find directory '.git'. Please clone the RetroPie Setup script via 'git clone https://github.com/RetroPie/RetroPie-Setup.git'"
-        popd
-        return
+        popd >/dev/null
+        return 1
     fi
     local error
     if ! error=$(su $user -c "git pull 2>&1 >/dev/null"); then
         printMsgs "dialog" "Update failed:\n\n$error"
-        popd
-        return
+        popd >/dev/null
+        return 1
     fi
-    popd
-    rp_callModule runcommand install
+    popd >/dev/null
+
     printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script."
-    exec "$scriptdir/retropie_setup.sh"
+    return 0
 }
 
-function source_setup()
-{
-    rps_buildMenu 2 "bool"
-    cmd=(dialog --separate-output --backtitle "$__backtitle" --checklist "Select options with 'space' and arrow keys. The default selection installs a complete set of packages and configures basic settings." 22 76 16)
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+function post_update_setup() {
+    local return_func=("$@")
+
+    echo "$__version" >"$rootdir/VERSION"
+
     clear
-    if [[ -n "$choices" ]]; then
+    local logfilename
+    __ERRMSGS=()
+    __INFMSGS=()
+    rps_logInit
+    {
+        rps_logStart
+        # run _update_hook_id functions - eg to fix up modules for retropie-setup 4.x install detection
+        printHeading "Running post update hooks"
+        rp_updateHooks
+        rps_logEnd
+    } &> >(tee >(gzip --stdout >"$logfilename"))
+    rps_printInfo "$logfilename"
+
+    printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nThe pre-built RetroPie image includes software that has non commercial licences. Selling RetroPie images or including RetroPie with your commercial product is not allowed.\n\nNo copyrighted games are included with RetroPie.\n\nIf you have been sold this software, you can let us know about it by emailing retropieproject@gmail.com."
+
+    # return to set return function
+    "${return_func[@]}"
+}
+
+function package_setup() {
+    local idx="$1"
+    local md_id="${__mod_id[$idx]}"
+
+    while true; do
+        local options=()
+
+        local install
+        local status
+        if rp_isInstalled "$idx"; then
+            install="Update"
+            status="Installed"
+        else
+            install="Install"
+            status="Not installed"
+        fi
+
+        if rp_hasBinary "$idx"; then
+            options+=(B "$install from binary")
+        fi
+
+        if fnExists "sources_${md_id}"; then
+            options+=(S "$install from source")
+        fi
+
+        if rp_isInstalled "$idx"; then
+            if fnExists "gui_${md_id}"; then
+                options+=(C "Configuration / Options")
+            fi
+            options+=(X "Remove")
+        fi
+
+        if [[ -d "$__builddir/$md_id" ]]; then
+            options+=(Z "Clean source folder")
+        fi
+
+        local help="${__mod_desc[$idx]}\n\n${__mod_help[$idx]}"
+        if [[ -n "$help" ]]; then
+            options+=(H "Package Help")
+        fi
+
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]} ($status)" 22 76 16)
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+
         local logfilename
+        __ERRMSGS=()
+        __INFMSGS=()
+
+        case "$choice" in
+            B|I)
+                clear
+                rps_logInit
+                {
+                    rps_logStart
+                    rp_installModule "$idx"
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
+                ;;
+            S)
+                clear
+                rps_logInit
+                {
+                    rps_logStart
+                    rp_callModule "$idx" clean
+                    rp_callModule "$idx"
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
+                ;;
+            C)
+                rps_logInit
+                {
+                    rps_logStart
+                    rp_callModule "$idx" gui
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
+                ;;
+            X)
+                local text="Are you sure you want to remove $md_id?"
+                [[ "${__mod_section[$idx]}" == "core" ]] && text+="\n\nWARNING - core packages are needed for RetroPie to function!"
+                dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
+                rps_logInit
+                {
+                    rps_logStart
+                    rp_callModule "$idx" remove
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
+                ;;
+            H)
+                printMsgs "dialog" "$help"
+                ;;
+            Z)
+                rp_callModule "$idx" clean
+                printMsgs "dialog" "$__builddir/$md_id has been removed."
+                ;;
+            *)
+                break
+                ;;
+        esac
+
+    done
+}
+
+function section_gui_setup() {
+    local section="$1"
+
+    local default=""
+    while true; do
+        local options=()
+
+        # we don't build binaries for experimental packages
+        if rp_hasBinaries && [[ "$section" != "exp" ]]; then
+            options+=(B "Install/Update all ${__sections[$section]} packages from binary" "This will install all ${__sections[$section]} packages from binary archives (if available). If a binary archive is missing a source install will be performed.")
+        fi
+
+        options+=(
+            S "Install/Update all ${__sections[$section]} packages from source" "S This will build and install all the packages from $section from source. Building from source will pull in the very latest releases of many of the emulators. Building could fail or resulting binaries could not work. Only choose this option if you are comfortable in working with the linux console and debugging any issues."
+            X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
+        )
+
+        local idx
+        for idx in $(rp_getSectionIds $section); do
+            if rp_isInstalled "$idx"; then
+                installed="(Installed)"
+            else
+                installed=""
+            fi
+            options+=("$idx" "${__mod_id[$idx]} $installed" "$idx ${__mod_desc[$idx]}"$'\n\n'"${__mod_help[$idx]}")
+        done
+
+        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
+
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        [[ -z "$choice" ]] && break
+        if [[ "${choice[@]:0:4}" == "HELP" ]]; then
+            # remove HELP
+            choice="${choice[@]:5}"
+            # get id of menu item
+            default="${choice/%\ */}"
+            # remove id
+            choice="${choice#* }"
+            printMsgs "dialog" "$choice"
+            continue
+        fi
+
+        default="$choice"
+
+        local logfilename
+        __ERRMSGS=()
+        __INFMSGS=()
+        case "$choice" in
+            B)
+                dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from binary?" 22 76 2>&1 >/dev/tty || continue
+                rps_logInit
+                {
+                    rps_logStart
+                    for idx in $(rp_getSectionIds $section); do
+                        rp_installModule "$idx"
+                    done
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
+                ;;
+            S)
+                dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from source?" 22 76 2>&1 >/dev/tty || continue
+                rps_logInit
+                {
+                    rps_logStart
+                    for idx in $(rp_getSectionIds $section); do
+                        rp_callModule "$idx" clean
+                        rp_callModule "$idx"
+                    done
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
+                ;;
+
+            X)
+                local text="Are you sure you want to remove all $section packages?"
+                [[ "$section" == "core" ]] && text+="\n\nWARNING - core packages are needed for RetroPie to function!"
+                dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
+                rps_logInit
+                {
+                    rps_logStart
+                    for idx in $(rp_getSectionIds $section); do
+                        rp_isInstalled "$idx" && rp_callModule "$idx" remove
+                    done
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
+                ;;
+            *)
+                package_setup "$choice"
+                ;;
+        esac
+
+    done
+}
+
+function config_gui_setup() {
+    local default
+    while true; do
+        local options=()
+        local idx
+        for idx in "${__mod_idx[@]}"; do
+            # show all configuration modules and any installed packages with a gui function
+            if [[ "${__mod_section[idx]}" == "config" ]] || rp_isInstalled "$idx" && fnExists "gui_${__mod_id[idx]}"; then
+                options+=("$idx" "${__mod_id[$idx]}  - ${__mod_desc[$idx]}" "$idx ${__mod_desc[$idx]}")
+            fi
+        done
+
+        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
+
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        [[ -z "$choice" ]] && break
+        if [[ "${choice[@]:0:4}" == "HELP" ]]; then
+            choice="${choice[@]:5}"
+            default="${choice/%\ */}"
+            choice="${choice#* }"
+            printMsgs "dialog" "$choice"
+            continue
+        fi
+
+        [[ -z "$choice" ]] && break
+
+        default="$choice"
+
+        local logfilename
+        __ERRMSGS=()
+        __INFMSGS=()
         rps_logInit
-        choices=($choices)
-        total=${#choices[@]}
-        count=1
         {
             rps_logStart
-            for choice in ${choices[@]}
-            do
-                rp_callModule $choice ${command[$choice]}
-                printHeading "Module $count of $total processed."
-                ((count++))
-            done
-            rp_callModule runcommand install
-            rps_logEnd
-        } &> >(tee >(gzip --stdout > "$logfilename"))
-
-        rps_printInfo "$logfilename"
-
-        printMsgs "dialog" "Finished tasks.\nStart the front end with 'emulationstation'. You now have to copy roms to the roms folders. Have fun!"
-    fi
-}
-
-function supplementary_setup()
-{
-    local logfilename
-    rps_logInit
-    while true; do
-        cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
-        rps_buildMenu 3
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choices" ]]; then
-            {
-                rps_logStart
-                rp_callModule $choices ${command[$choices]}
-                rps_logEnd
-            } &> >(tee >(gzip --stdout >$logfilename))
-        else
-            break
-        fi
-    done
-
-    rps_printInfo "$logfilename"
-}
-
-function experimental_setup()
-{
-    local logfilename
-    while true; do
-        rps_logInit
-        cmd=(dialog --backtitle "$__backtitle" --menu "Choose task." 22 76 16)
-        rps_buildMenu 4
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choices" ]]; then
-            {
-                rps_logStart
-                rp_callModule $choices ${command[$choices]}
-                rps_logEnd
-            } &> >(tee >(gzip --stdout >$logfilename))
-        else
-            break
-        fi
-    done
-
-    rps_printInfo "$logfilename"
-}
-
-function individual_setup()
-{
-    local logfilename
-    local options=()
-    for idx in "${__mod_idx[@]}"; do
-        if [[ ! "${__mod_menus[$idx]}" =~ 4 ]] && [[ ! "${__mod_flags[$idx]}" =~ nobin ]]; then
-            options+=($idx "${__mod_id[$idx]} - ${__mod_desc[$idx]}")
-        fi
-    done
-    while true; do
-        local md_idx=$(dialog --backtitle "$__backtitle" --menu "Select Emulator/Port." 22 76 16 "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$md_idx" ]]; then
-            rps_logInit
-            local choice
-            if [[ $__has_binaries -eq 1 ]]; then
-                choice=$(dialog --backtitle "$__backtitle" --menu "Install ${__mod_id[$md_idx]} - ${__mod_desc[$md_idx]}\nFrom binary or source?" 12 60 10 b Binary s Source 2>&1 >/dev/tty)
+            if fnExists "gui_${__mod_id[choice]}"; then
+                rp_callModule "$choice" depends
+                rp_callModule "$choice" gui
             else
-                choice=s
+                rp_callModule "$idx" clean
+                rp_callModule "$choice"
             fi
-            clear
-            __ERRMSGS=()
-            __INFMSGS=()
-            {
-                rps_logStart
-                case $choice in
-                    b)
-                        rp_callModule "$md_idx" depends && rp_callModule "$md_idx" install_bin && rp_callModule "$md_idx" configure
-                        ;;
-                    s)
-                        rp_callModule "$md_idx"
-                        ;;
-                esac
-                rp_callModule runcommand install
-                rps_logEnd
-            } &> >(tee >(gzip --stdout > "$logfilename"))
+            rps_logEnd
+        } &> >(tee >(gzip --stdout >"$logfilename"))
+        rps_printInfo "$logfilename"
+    done
+}
 
-            rps_printInfo "$logfilename"
-        else
-            break
+function update_packages_setup() {
+    clear
+    local idx
+    for idx in ${__mod_idx[@]}; do
+        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]]; then
+            rp_installModule "$idx"
         fi
     done
+}
+
+function update_packages_gui_setup() {
+    local update="$1"
+    if [[ "$update" != "update" ]]; then
+        dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
+        updatescript_setup
+        # restart at post_update and then call "update_packages_gui_setup update" afterwards
+        joy2keyStop
+        exec "$scriptdir/retropie_packages.sh" setup post_update update_packages_gui_setup update
+    fi
+
+    local update_os=0
+    dialog --yesno "Would you like to update the underlying OS packages (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && update_os=1
+
+    clear
+
+    local logfilename
+    __ERRMSGS=()
+    __INFMSGS=()
+    rps_logInit
+    {
+        rps_logStart
+        [[ "$update_os" -eq 1 ]] && apt_upgrade_raspbiantools
+        update_packages_setup
+        rps_logEnd
+    } &> >(tee >(gzip --stdout >"$logfilename"))
+
+    rps_printInfo "$logfilename"
+    printMsgs "dialog" "Installed packages have been updated."
+    gui_setup
+}
+
+function basic_install_setup() {
+    local idx
+    for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
+        rp_installModule "$idx"
+    done
+}
+
+function packages_gui_setup() {
+    local section
+    local default
+    local options=()
+
+    for section in core main opt driver exp; do
+        options+=($section "Manage ${__sections[$section]} packages" "$section Choose top install/update/configure packages from the ${__sections[$section]}")
+    done
+
+    local cmd
+    while true; do
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
+
+        local choice
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        [[ -z "$choice" ]] && break
+        if [[ "${choice[@]:0:4}" == "HELP" ]]; then
+            choice="${choice[@]:5}"
+            default="${choice/%\ */}"
+            choice="${choice#* }"
+            printMsgs "dialog" "$choice"
+            continue
+        fi
+        section_gui_setup "$choice"
+        default="$choice"
+    done
+}
+
+function uninstall_setup()
+{
+    dialog --defaultno --yesno "Are you sure you want to uninstall RetroPie?" 22 76 2>&1 >/dev/tty || return 0
+    dialog --defaultno --yesno "Are you REALLY sure you want to uninstall RetroPie?\n\n$rootdir will be removed - this includes configuration files for all RetroPie components." 22 76 2>&1 >/dev/tty || return 0
+    clear
+    printHeading "Uninstalling RetroPie"
+    for idx in "${__mod_idx[@]}"; do
+        rp_isInstalled "$idx" && rp_callModule $idx remove
+    done
+    rm -rfv "$rootdir"
+    dialog --defaultno --yesno "Do you want to remove all the files from $datadir - this includes all your installed ROMs, BIOS files and custom splashscreens." 22 76 2>&1 >/dev/tty && rm -rfv "$datadir"
+    if dialog --defaultno --yesno "Do you want to remove all the system packages that RetroPie depends on? \n\nWARNING: this will remove packages like SDL even if they were installed before you installed RetroPie - it will also remove any package configurations - such as those in /etc/samba for Samba.\n\nIf unsure choose No (selected by default)." 22 76 2>&1 >/dev/tty; then
+        clear
+        # remove all dependencies
+        for idx in "${__mod_idx[@]}"; do
+            rp_isInstalled "$idx" && rp_callModule "$idx" depends remove
+        done
+    fi
+    printMsgs "dialog" "RetroPie has been uninstalled."
 }
 
 function reboot_setup()
@@ -301,49 +483,92 @@ function reboot_setup()
 }
 
 # retropie-setup main menu
-function configure_setup() {
+function gui_setup() {
+    depends_setup
+    local default
     while true; do
-        __ERRMSGS=()
-        __INFMSGS=()
+        local commit=$(git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
 
-        cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
-        options=()
-        if [[ $__has_binaries -eq 1 ]]; then
-            options+=(
-            1 "Binary-based installation (recommended)")
-        fi
-        options+=(
-            2 "Source-based installation (bleeding edge - 24h+ build time on rpi1)"
-            3 "Setup / Configuration (to be used post install)"
-            4 "Experimental packages (these are potentially unstable)"
+        cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version\nLast Commit: $commit" 22 76 16)
+        options=(
+            I "Basic install" "I This will install all packages from Core and Main which gives a basic RetroPie install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
+
+            U "Update all installed packages" "U Update all currently installed packages. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
+
+            P "Manage packages"
+            "P Install/Remove and Configure the various components of RetroPie, including emulators, ports, and controller drivers."
+
+            C "Configuration / tools"
+            "C Configuration and Tools. Any packages you have installed that have additional configuration options will also appear here."
+
+            S "Update RetroPie-Setup script"
+            "S Update this RetroPie-Setup script. This will update this main management script only, but will not update any software packages. To update packages use the 'Update' option from the main menu, which will also update the RetroPie-Setup script."
+
+            X "Uninstall RetroPie"
+            "X Uninstall RetroPie completely."
+
+            R "Perform reboot"
+            "R Reboot your machine."
         )
-        if [[ $__has_binaries -eq 1 ]]; then
-            options+=(
-                5 "Install individual emulators from binary or source"
-            )
-        else
-            options+=(5 "Install individual emulators from source")
+
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        [[ -z "$choice" ]] && break
+
+        if [[ "${choice[@]:0:4}" == "HELP" ]]; then
+            choice="${choice[@]:5}"
+            default="${choice/%\ */}"
+            choice="${choice#* }"
+            printMsgs "dialog" "$choice"
+            continue
         fi
-        options+=(
-            U "Update RetroPie-Setup script"
-            R "Perform Reboot"
-        )
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choices" ]]; then
-            case $choices in
-                1) binaries_setup ;;
-                2)
-                    printMsgs "dialog" "Please note - Building from source will pull in the very latest releases of many of the emulators. Building could fail or resulting binaries could not work. Only choose this option if you are comfortable in working with the linux console and debugging any issues. The binary option is recommended for most users, as it provides mostly up to date - but more importantly - tested versions of the emulators.\n\nYou can also install from binary and then update any emulators individually later from option 5 on the main menu."
-                    source_setup ;;
-                3) supplementary_setup ;;
-                4) experimental_setup ;;
-                5) individual_setup ;;
-                U) updatescript_setup ;;
-                R) reboot_setup ;;
-            esac
-        else
-            break
-        fi
+        default="$choice"
+
+        case "$choice" in
+            I)
+                dialog --defaultno --yesno "Are you sure you want to do a basic install?\n\nThis will install all packages from the 'Core' and 'Main' package sections." 22 76 2>&1 >/dev/tty || continue
+                clear
+                local logfilename
+                __ERRMSGS=()
+                __INFMSGS=()
+                rps_logInit
+                {
+                    rps_logStart
+                    basic_install_setup
+                    rps_logEnd
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
+                ;;
+            U)
+                update_packages_gui_setup
+                ;;
+            P)
+                packages_gui_setup
+                ;;
+            C)
+                config_gui_setup
+                ;;
+            S)
+                dialog --defaultno --yesno "Are you sure you want to update the RetroPie-Setup script ?" 22 76 2>&1 >/dev/tty || continue
+                if updatescript_setup; then
+                    joy2keyStop
+                    exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
+                fi
+                ;;
+            X)
+                local logfilename
+                __ERRMSGS=()
+                __INFMSGS=()
+                rps_logInit
+                {
+                    uninstall_setup
+                } &> >(tee >(gzip --stdout >"$logfilename"))
+                rps_printInfo "$logfilename"
+                ;;
+            R)
+                dialog --defaultno --yesno "Are you sure you want to reboot?" 22 76 2>&1 >/dev/tty || continue
+                reboot_setup
+                ;;
+        esac
     done
     clear
 }
