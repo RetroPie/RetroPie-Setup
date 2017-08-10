@@ -95,8 +95,8 @@ function get_os_version() {
                 __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
             fi
 
-            # we provide binaries for RPI only
-            if isPlatform "rpi"; then
+            # we provide binaries for RPI on Raspbian < 9 only
+            if isPlatform "rpi" && compareVersions "$__os_release" lt 9; then
                 __has_binaries=1
             fi
 
