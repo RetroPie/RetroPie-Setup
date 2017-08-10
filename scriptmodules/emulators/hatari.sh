@@ -21,8 +21,7 @@ function depends_hatari() {
 }
 
 function _sources_libcapsimage_hatari() {
-    wget -q -O spsdeclib.zip "$__archive_url/spsdeclib_5.1_source.zip"
-    unzip -o spsdeclib.zip
+    downloadAndExtract "$__archive_url/spsdeclib_5.1_source.zip" "$md_build"
     unzip -o capsimg_source_linux_macosx.zip
     chmod u+x capsimg_source_linux_macosx/CAPSImg/configure
 }

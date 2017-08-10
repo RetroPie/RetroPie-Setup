@@ -38,9 +38,7 @@ function game_data_lr-tyrquake() {
     if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then
         cd "$__tmpdir"
         # download / unpack / install quake shareware files
-        wget "$__archive_url/quake106.zip" -O quake106.zip
-        unzip -o quake106.zip -d "quake106"
-        rm quake106.zip
+        downloadAndExtract "$__archive_url/quake106.zip" "$__tmpdir/quake106"
         pushd quake106
         lhasa ef resource.1
         cp -rf id1 "$romdir/ports/quake/"

@@ -21,9 +21,7 @@ function depends_jzintv() {
 }
 
 function sources_jzintv() {
-    wget $__archive_url/jzintv-20141028.zip -O jzintv.zip
-    unzip jzintv.zip
-    rm jzintv.zip
+    downloadAndExtract "$__archive_url/jzintv-20141028.zip" "$md_build"
     cd jzintv/src
     # don't build event_diag.rom/emu_ver.rom/joy_diag.rom/jlp_test.bin due to missing example/library files from zip
     sed -i '/^PROGS/,$d' {event,joy,jlp,util}/subMakefile
