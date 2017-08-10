@@ -33,7 +33,7 @@ function depends_advmame() {
 }
 
 function sources_advmame() {
-    wget -O- -q "$__archive_url/advancemame-3.5.tar.gz" | tar -xvz --strip-components=1
+    downloadAndExtract "$__archive_url/advancemame-3.5.tar.gz" "$md_build" 1
 }
 
 function build_advmame() {

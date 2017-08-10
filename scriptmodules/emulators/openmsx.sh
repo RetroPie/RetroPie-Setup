@@ -37,7 +37,7 @@ function build_openmsx() {
 function install_openmsx() {
     make install
     mkdir -p "$md_inst/share/systemroms/"
-    wget -q -O- "$__archive_url/openmsxroms.tar.gz" | tar -xvz -C "$md_inst/share/systemroms/"
+    downloadAndExtract "$__archive_url/openmsxroms.tar.gz" "$md_inst/share/systemroms/"
 }
 
 function configure_openmsx() {

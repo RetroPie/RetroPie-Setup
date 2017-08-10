@@ -21,7 +21,7 @@ function depends_coolcv() {
 }
 
 function install_bin_coolcv() {
-    wget -O- -q "$__archive_url/coolcv.tar.gz" | tar -xvz --strip-components=1 -C "$md_inst" 
+    downloadAndExtract "$__archive_url/coolcv.tar.gz" "$md_inst" 1
 }
 
 function configure_coolcv() {

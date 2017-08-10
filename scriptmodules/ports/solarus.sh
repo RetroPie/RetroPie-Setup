@@ -20,10 +20,10 @@ function depends_solarus() {
 }
 
 function sources_solarus() {
-    wget -O- -q http://www.solarus-games.org/downloads/solarus/solarus-1.4.5-src.tar.gz | tar -xvz --strip-components=1
-    wget -O- -q http://www.zelda-solarus.com/downloads/zsdx/zsdx-1.10.3.tar.gz | tar -xvz
-    wget -O- -q http://www.zelda-solarus.com/downloads/zsxd/zsxd-1.10.3.tar.gz | tar -xvz
-    wget -O- -q http://www.zelda-solarus.com/downloads/zelda-roth-se/zelda-roth-se-1.0.8.tar.gz | tar -xvz
+    downloadAndExtract "http://www.solarus-games.org/downloads/solarus/solarus-1.4.5-src.tar.gz" "$md_build" 1
+    downloadAndExtract "http://www.zelda-solarus.com/downloads/zsdx/zsdx-1.10.3.tar.gz" "$md_build"
+    downloadAndExtract "http://www.zelda-solarus.com/downloads/zsxd/zsxd-1.10.3.tar.gz" "$md_build"
+    downloadAndExtract "http://www.zelda-solarus.com/downloads/zelda-roth-se/zelda-roth-se-1.0.8.tar.gz" "$md_build"
 }
 
 function build_solarus() {

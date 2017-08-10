@@ -36,7 +36,7 @@ function sources_ppsspp() {
     if hasPackage cmake 3.6 lt; then
         cd ..
         mkdir -p cmake
-        wget -q -O- "$__archive_url/cmake-3.6.2.tar.gz" | tar -xvz --strip-components=1 -C cmake
+        downloadAndExtract "$__archive_url/cmake-3.6.2.tar.gz" "$md_build/ppsspp/cmake" 1
     fi
 }
 

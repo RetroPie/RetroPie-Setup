@@ -28,7 +28,7 @@ function _sources_libcapsimage_hatari() {
 }
 
 function sources_hatari() {
-    wget -q -O- "$__archive_url/hatari-1.9.0.tar.bz2" | tar -xvj --strip-components=1
+    downloadAndExtract "$__archive_url/hatari-1.9.0.tar.bz2" "$md_build" 1
     # we need to use capsimage 5, as there is no source for 4.2
     sed -i "s/CAPSIMAGE_VERSION 4/CAPSIMAGE_VERSION 5/" cmake/FindCapsImage.cmake
     # capsimage 5.1 misses these types that were defined in 4.2

@@ -20,7 +20,7 @@ function depends_quasi88() {
 }
 
 function sources_quasi88() {
-    wget -q -O- "$__archive_url/quasi88-0.6.4.tgz" | tar -xvz --strip-components=1
+    downloadAndExtract "$__archive_url/quasi88-0.6.4.tgz" "$md_build" 1
     applyPatch "$md_data/01_fixes.diff"
 }
 

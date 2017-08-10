@@ -907,6 +907,41 @@ function applyPatch() {
     return 0
 }
 
+## @fn downloadAndExtract()
+## @param url url of archive
+## @param dest destination folder for the archive
+## @param strip number of leading components from file to strip off
+## @brief Download and extract an archive
+## @details Download and extract an archive, optionally stripping off a number
+## of directories - equivalent to the tar `--strip-components parameter`
+## @retval 0 on success
+function downloadAndExtract() {
+    local url="$1"
+    local dest="$2"
+    local strip="$3"
+
+    local ext="${url##*.}"
+    local cmd=(tar -xv)
+
+    case "$ext" in
+        gz|tgz)
+            cmd+=(-z)
+            ;;
+        bz2)
+            cmd+=(-j)
+            ;;
+        xz)
+            cmd+=(-J)
+            ;;
+    esac
+
+    cmd+=(-C "$dest")
+    [[ -n "$strip" ]] && cmd+=(--strip-components "$strip")
+
+    runCmd "${cmd[@]}" < <(wget -q -O- "$url")
+    return $?
+}
+
 ## @fn ensureFBMode()
 ## @param res_x width of mode
 ## @param res_y height of mode

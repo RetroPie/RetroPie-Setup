@@ -21,7 +21,7 @@ function depends_stella() {
 }
 
 function sources_stella() {
-    wget -q -O- "$__archive_url/stella-4.7.3-src.tar.xz" | tar -xvJ --strip-components=1
+    downloadAndExtract "$__archive_url/stella-4.7.3-src.tar.xz" "$md_build" 1
 }
 
 function build_stella() {

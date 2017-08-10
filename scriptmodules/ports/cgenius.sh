@@ -19,7 +19,7 @@ function depends_cgenius() {
 }
 
 function sources_cgenius() {
-    wget -O- -q "https://github.com/gerstrong/Commander-Genius/archive/v1992beta.tar.gz" | tar -xvz --strip-components=1 -C "$md_build"
+    downloadAndExtract "https://github.com/gerstrong/Commander-Genius/archive/v1992beta.tar.gz" "$md_build" 1
 }
 
 function build_cgenius() {
