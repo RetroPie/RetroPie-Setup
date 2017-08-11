@@ -61,6 +61,8 @@ function gui_esthemes() {
         'InsecureSpike retroplay-clean-detail-canela'
         'RetroPie turtle-pi'
         'Omnija simpler-turtlepi'
+        'Omnija simpler-turtlemini'
+        'Omnija metro'
         'RetroPie simple'
         'RetroPie simple-dark'
         'RetroPie color-pi'
