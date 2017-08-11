@@ -21,9 +21,9 @@ function depends_fuse() {
 }
 
 function sources_fuse() {
-    wget -O- -q $__archive_url/fuse-1.3.7.tar.gz | tar -xvz --strip-components=1
+    downloadAndExtract "$__archive_url/fuse-1.3.7.tar.gz" "$md_build" 1
     mkdir libspectrum
-    wget -O- -q $__archive_url/libspectrum-1.3.5.tar.gz | tar -xvz --strip-components=1 -C libspectrum
+    downloadAndExtract "$__archive_url/libspectrum-1.3.5.tar.gz" "$md_build/libspectrum" 1
     if ! isPlatform "x11"; then
         applyPatch cursor.diff <<\_EOF_
 --- a/ui/sdl/sdldisplay.c	2015-02-18 22:39:05.631516602 +0000

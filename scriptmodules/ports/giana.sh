@@ -19,9 +19,7 @@ function depends_giana() {
 }
 
 function install_bin_giana() {
-    wget http://www.retroguru.com/gianas-return/gianas-return-v.latest-raspberrypi.zip -O "$md_inst/giana.zip"
-    unzip -n "$md_inst/giana.zip" -d "$md_inst"
-    rm "$md_inst/giana.zip"
+    downloadAndExtract "http://www.retroguru.com/gianas-return/gianas-return-v.latest-raspberrypi.zip" "$md_inst"
 }
 
 function configure_giana() {

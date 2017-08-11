@@ -907,6 +907,56 @@ function applyPatch() {
     return 0
 }
 
+## @fn downloadAndExtract()
+## @param url url of archive
+## @param dest destination folder for the archive
+## @param opts number of leading components from file to strip off or unzip params
+## @brief Download and extract an archive
+## @details Download and extract an archive, optionally stripping off a number
+## of directories - equivalent to the tar `--strip-components parameter`. For
+## zip files, the strip parameter can contain additional options to send to unzip
+## @retval 0 on success
+function downloadAndExtract() {
+    local url="$1"
+    local dest="$2"
+    local opts="$3"
+
+    local ext="${url##*.}"
+    local cmd=(tar -xv)
+    local is_tar=1
+
+    local ret
+    case "$ext" in
+        gz|tgz)
+            cmd+=(-z)
+            ;;
+        bz2)
+            cmd+=(-j)
+            ;;
+        xz)
+            cmd+=(-J)
+            ;;
+        zip)
+            is_tar=0
+            local tmp="$(mktemp -d)"
+            local file="${url##*/}"
+            runCmd wget -q -O"$tmp/$file" "$url"
+            runCmd unzip $opts -o "$tmp/$file" -d "$dest"
+            rm -rf "$tmp"
+            ret=$?
+    esac
+
+    if [[ "$is_tar" -eq 1 ]]; then
+        cmd+=(-C "$dest")
+        [[ -n "$opts" ]] && cmd+=(--strip-components "$opts")
+
+        runCmd "${cmd[@]}" < <(wget -q -O- "$url")
+        ret=$?
+    fi
+
+    return $ret
+}
+
 ## @fn ensureFBMode()
 ## @param res_x width of mode
 ## @param res_y height of mode

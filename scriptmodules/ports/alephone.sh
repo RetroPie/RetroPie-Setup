@@ -52,21 +52,15 @@ function game_data_alephone() {
     cd "$__tmpdir"
     local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-20150620"
     if [[ ! -f "$romdir/ports/$md_id/Marathon/Shapes.shps" ]]; then
-        wget -O Marathon-20150620-Data.zip "$release_url/Marathon-20150620-Data.zip"
-        unzip Marathon-20150620-Data.zip -d "$romdir/ports/$md_id"
-        rm Marathon-20150620-Data.zip
+        downloadAndExtract "$release_url/Marathon-20150620-Data.zip" "$romdir/ports/$md_id"
     fi
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon 2/Shapes.shpA" ]]; then
-        wget -O Marathon2-20150620-Data.zip "$release_url/Marathon2-20150620-Data.zip"
-        unzip Marathon2-20150620-Data.zip -d "$romdir/ports/$md_id"
-        rm Marathon2-20150620-Data.zip
+        downloadAndExtract "$release_url/Marathon2-20150620-Data.zip" "$romdir/ports/$md_id"
     fi
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon Infinity/Shapes.shpA" ]]; then
-        wget -O MarathonInfinity-20150620-Data.zip "$release_url/MarathonInfinity-20150620-Data.zip"
-        unzip MarathonInfinity-20150620-Data.zip -d "$romdir/ports/$md_id"
-        rm MarathonInfinity-20150620-Data.zip
+        downloadAndExtract "$release_url/MarathonInfinity-20150620-Data.zip" "$romdir/ports/$md_id"
     fi
     chown -R $user:$user "$romdir/ports/$md_id"
 }

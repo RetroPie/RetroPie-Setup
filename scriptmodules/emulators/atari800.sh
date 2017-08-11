@@ -23,7 +23,7 @@ function depends_atari800() {
 }
 
 function sources_atari800() {
-    wget -q -O- "$__archive_url/atari800-3.1.0.tar.gz" | tar -xvz --strip-components=1
+    downloadAndExtract "$__archive_url/atari800-3.1.0.tar.gz" "$md_build" 1
     if isPlatform "rpi"; then
         applyPatch rpi_fixes.diff <<\_EOF_
 --- a/src/configure.ac	2014-04-12 13:58:16.000000000 +0000

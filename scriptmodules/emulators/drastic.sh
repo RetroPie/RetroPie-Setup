@@ -17,7 +17,7 @@ rp_module_section="exp"
 rp_module_flags="!mali !x86 !armv6"
 
 function install_bin_drastic() {
-    wget -O- -q http://drastic-ds.com/drastic_rpi.tar.bz2 | tar -xvj --strip-components=1 -C "$md_inst"
+    downloadAndExtract "http://drastic-ds.com/drastic_rpi.tar.bz2" "$md_inst" 1
 }
 
 function configure_drastic() {

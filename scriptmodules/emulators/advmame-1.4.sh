@@ -43,7 +43,7 @@ function _sources_patch_advmame-1.4() {
 }
 
 function sources_advmame-1.4() {
-    wget -O- -q "$__archive_url/advancemame-1.4.tar.gz" | tar -xvz --strip-components=1
+    downloadAndExtract "$__archive_url/advancemame-1.4.tar.gz" "$md_build" 1
     _sources_patch_advmame-1.4 1.4
 }
 

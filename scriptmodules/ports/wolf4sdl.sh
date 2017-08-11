@@ -60,10 +60,8 @@ function game_data_wolf4sdl() {
     if [[ ! -f "$romdir/ports/wolf3d/gamemaps.wl1" ]]; then
         cd "$__tmpdir"
         # Get shareware game data
-        wget -q -O wolf3d14.zip http://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip
-        unzip -j -o -LL wolf3d14.zip -d "$romdir/ports/wolf3d"
+        downloadAndExtract "http://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip" "$romdir/ports/wolf3d" "-j -LL"
         chown -R $user:$user "$romdir/ports/wolf3d"
-        rm -f wolf3d14.zip
     fi
 }
 

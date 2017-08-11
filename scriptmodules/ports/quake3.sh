@@ -36,10 +36,7 @@ function install_quake3() {
 
 function game_data_quake3() {
     if [[ ! -f "$romdir/ports/quake3/pak0.pk3" ]]; then
-        cd "$__tmpdir"
-        wget -O Q3DemoPaks.zip "$__archive_url/Q3DemoPaks.zip"
-        unzip -oj Q3DemoPaks.zip  -d "$romdir/ports/quake3"
-        rm Q3DemoPaks.zip
+        downloadAndExtract "$__archive_url/Q3DemoPaks.zip" "$romdir/ports/quake3" "-j"
     fi
     # always chown as moveConfigDir in the configure_ script would move the root owned demo files
     chown -R $user:$user "$romdir/ports/quake3"
