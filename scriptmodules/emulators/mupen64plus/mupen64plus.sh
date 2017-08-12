@@ -174,9 +174,9 @@ function testCompatibility() {
     # these games need RSP-LLE
     local blacklist=(
         gauntlet
-        rogue
-        squadron
+        naboo
         body
+        infernal
     )
 
     # these games do not run with gles2n64
@@ -187,11 +187,15 @@ function testCompatibility() {
         tooie
         instinct
         beetle
+        rogue
+        squadron
     )
 
     # these games do not run with rice
     local glesn64rice_blacklist=(
         yoshi
+        rogue
+        squadron
     )
 
     # these games have massive glitches if legacy blending is enabled
@@ -212,6 +216,8 @@ function testCompatibility() {
         pokemon
         resident
         starcraft
+        rogue
+        squadron
     )
 
     for game in "${blacklist[@]}"; do
