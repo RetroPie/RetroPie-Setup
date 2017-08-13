@@ -73,7 +73,7 @@ function gui_esthemes() {
         'mattrixk io'
         'mattrixk metapixel'
         'mattrixk spare'
-        'robertybob space'
+        'robertybob space-2.0'
         'robertybob simplebigart'
         'RetroPie clean-look'
         'HerbFargus tronkyfran'
