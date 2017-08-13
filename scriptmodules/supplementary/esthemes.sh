@@ -51,7 +51,8 @@ function gui_esthemes() {
         'ehettervik pixel-metadata'
         'ehettervik pixel-tft'
         'ehettervik luminous'
-        'ehettervik minilumi'
+
+'ehettervik minilumi'
         'ehettervik workbench'
         'AmadhiX eudora'
         'AmadhiX eudora-bigshot'
@@ -103,6 +104,7 @@ function gui_esthemes() {
         'rxbrad gbz35'
         'rxbrad gbz35-dark'
         'garaine marioblue'
+        'garaine bigwood'
         'MrTomixf Royal_Primicia'
         'RetroHursty69 magazinemadness'
         'lostless playstation'
