@@ -291,6 +291,21 @@ function platform_rpi3() {
     __platform_flags="arm armv8 neon rpi"
 }
 
+function platform_rpi2-kms() {
+    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv7 neon rpi kms"
+    __qemu_cpu=cortex-a7
+}
+
+function platform_rpi3-kms() {
+    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv8 neon rpi kms"
+}
+
 function platform_odroid-c1() {
     __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
@@ -326,6 +341,13 @@ function platform_x86() {
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
     __platform_flags="x11"
+}
+
+function platform_x86-kms() {
+    __default_cflags="-O2"
+    __default_asflags=""
+    __default_makeflags="-j$(nproc)"
+    __platform_flags="kms"
 }
 
 function platform_generic-x11() {

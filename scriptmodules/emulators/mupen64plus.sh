@@ -31,7 +31,11 @@ function sources_mupen64plus() {
         'mupen64plus input-sdl'
         'mupen64plus rsp-hle'
     )
-    if isPlatform "rpi"; then
+    if isPlatform "kms"; then
+        repos+=(
+            'ricrpi video-gles2rice pandora-backport'
+        )
+    elif isPlatform "rpi"; then
         repos+=(
             'gizmo98 audio-omx'
             'ricrpi video-gles2rice pandora-backport'
@@ -52,7 +56,10 @@ function sources_mupen64plus() {
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
     gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
-    
+
+    # ugly fix to prevent bcmhost autodetection
+    isPlatform "kms" && sed -i 's/bcm_host.h/bcm_host.old/g' "$md_build/GLideN64/src/CMakeLists.txt"
+
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
 }
@@ -67,7 +74,11 @@ function build_mupen64plus() {
             make -C "$dir/projects/unix" clean
             params=()
             isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1" "HOST_CPU=armv6")
-            isPlatform "rpi" && params+=("VC=1")
+            if isPlatform "kms"; then
+                params+=("USE_GLES=1")
+            else
+                isPlatform "rpi" && params+=("VC=1")
+            fi
             isPlatform "neon" && params+=("NEON=1")
             isPlatform "x11" && params+=("OSD=1" "PIE=1")
             isPlatform "x86" && params+=("SSE=SSSE3")
@@ -82,6 +93,7 @@ function build_mupen64plus() {
     pushd "$md_build/GLideN64/projects/cmake"
     params=("-DMUPENPLUSAPI=On" "-DUSE_SYSTEM_LIBS=On" "-DVEC4_OPT=On")
     isPlatform "neon" && params+=("-DNEON_OPT=On")
+    isPlatform "kms" && params+=("-DEGL=On")
     if isPlatform "rpi3"; then 
         params+=("-DCRC_ARMV8=On")
     else
@@ -101,6 +113,10 @@ function build_mupen64plus() {
         'GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so'
     )
     if isPlatform "rpi"; then
+        md_ret_require+=(
+            'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
+        )
+    elif isPlatform "rpi"; then
         md_ret_require+=(
             'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
             'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
@@ -125,7 +141,11 @@ function install_mupen64plus() {
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
             local params=()
             isPlatform "armv6" && params+=("VFP=1" "HOST_CPU=armv6")
-            isPlatform "rpi" && params+=("VC=1")
+            if isPlatform "kms"; then
+                params+=("USE_GLES=1")
+            else
+                isPlatform "rpi" && params+=("VC=1")
+            fi
             isPlatform "neon" && params+=("NEON=1")
             isPlatform "x86" && params+=("SSE=SSSE3")
             make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
@@ -139,7 +159,10 @@ function install_mupen64plus() {
 }
 
 function configure_mupen64plus() {
-    if isPlatform "rpi"; then
+    if isPlatform "kms"; then
+        addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 1920x1080"
+        addEmulator 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% 1920x1080"
+    elif isPlatform "rpi"; then
         local res
         for res in "320x240" "640x480"; do
             local name=""
@@ -192,7 +215,7 @@ function configure_mupen64plus() {
     fi
 
     # RPI GLideN64 settings
-    if isPlatform "rpi"; then
+    if isPlatform "rpi" && ! isPlatform "kms" ; then
         iniConfig " = " "" "$config"
         # Create GlideN64 section in .cfg
         if ! grep -q "\[Video-GLideN64\]" "$config"; then

@@ -16,9 +16,13 @@ rp_module_section="core"
 
 function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev)
+    if isPlatform "kms"; then 
+        depends+=(libgbm-dev libdrm-dev libegl1-mesa-dev libgles2-mesa-dev)
+    else
+        isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    fi
 
     # only install nvidia-cg-toolkit if it is available (as the non-free repo may not be enabled)
     if isPlatform "x86"; then
@@ -33,7 +37,7 @@ function depends_retroarch() {
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.6.4
+    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
 }
@@ -41,8 +45,12 @@ function sources_retroarch() {
 function build_retroarch() {
     local params=(--enable-sdl2)
     ! isPlatform "x11" && params+=(--disable-x11 --enable-opengles --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
-    isPlatform "rpi" && params+=(--enable-dispmanx)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
+    if isPlatform "kms"; then 
+        params+=(--enable-kms --enable-egl --disable-videocore --enable-plain_drm)
+    else
+        isPlatform "rpi" && params+=(--enable-dispmanx)
+    fi
     if isPlatform "arm"; then
         params+=(--enable-floathard)
         isPlatform "neon" && params+=(--enable-neon)

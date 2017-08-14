@@ -37,6 +37,7 @@ function depends_sdl2() {
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x11" && depends+=(libpulse-dev)
+    isPlatform "kms" && depends+=(libgbm-dev libdrm-dev fcitx-libs-dev libegl1-mesa-dev libgles1-mesa-dev libgles2-mesa-dev)
     getDepends "${depends[@]}"
 }
 
@@ -48,7 +49,11 @@ function sources_sdl2() {
     isPlatform "rpi" && branch="retropie-$ver"
     isPlatform "mali" && branch="mali-$ver"
 
-    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
+    if isPlatform "kms"; then
+        gitPullOrClone "$md_build/$pkg_ver" https://github.com/gizmo98/SDL-mirror.git "retropie-kms-2.0.5"
+    else
+        gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
+    fi
     cd "$pkg_ver"
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
 }
