@@ -367,9 +367,13 @@ if ! grep -q "\[Core\]" "$config"; then
     echo "Version = 1.010000" >> "$config"
 fi
 iniConfig " = " "\"" "$config"
-iniSet "ScreenshotPath" "$romdir/n64"
-iniSet "SaveStatePath" "$romdir/n64"
-iniSet "SaveSRAMPath" "$romdir/n64"
+
+function setPath() {
+    iniSet "ScreenshotPath" "$romdir/n64"
+    iniSet "SaveStatePath" "$romdir/n64"
+    iniSet "SaveSRAMPath" "$romdir/n64"
+}
+
 
 # add default keyboard configuration if InputAutoCFG.ini is missing
 if [[ ! -f "$inputconfig" ]]; then
@@ -404,6 +408,7 @@ Y Axis = key(273,274)
 _EOF_
 fi
 
+getAutoConf mupen64plus_savepath && setPath
 getAutoConf mupen64plus_hotkeys && remap
 getAutoConf mupen64plus_audio && setAudio
 [[ "$VIDEO_PLUGIN" == "AUTO" ]] && autoset
