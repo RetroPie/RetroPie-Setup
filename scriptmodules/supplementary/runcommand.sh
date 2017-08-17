@@ -48,7 +48,7 @@ function install_bin_runcommand() {
 }
 
 function governor_runcommand() {
-    cmd=(dialog --backtitle "$__backtitle" --menu "Configure CPU Governor on command launch" 22 86 16)
+    cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Configure CPU Governor on command launch" 22 86 16)
     local governors
     local governor
     local options=("1" "Default (don't change)")
@@ -75,6 +75,7 @@ function gui_runcommand() {
 
     local cmd
     local option
+    local default
     while true; do
 
         eval "$(loadModuleConfig \
@@ -84,7 +85,7 @@ function gui_runcommand() {
             'image_delay=2' \
         )"
 
-        cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Exit" --default-item "$default" --menu "Choose an option." 22 86 16)
         options=()
 
         if [[ "$disable_menu" -eq 0 ]]; then
@@ -109,28 +110,26 @@ function gui_runcommand() {
         options+=(5 "CPU configuration")
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            case $choice in
-                1)
-                    iniSet "disable_menu" "$((disable_menu ^ 1))"
-                    ;;
-                2)
-                    iniSet "use_art" "$((use_art ^ 1))"
-                    ;;
-                3)
-                    iniSet "disable_joystick" "$((disable_joystick ^ 1))"
-                    ;;
-                4)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the delay in seconds" 10 60 "$image_delay")
-                    choice=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    iniSet "image_delay" "$choice"
-                    ;;
-                5)
-                    governor_runcommand
-                    ;;
-            esac
-        else
-            break
-        fi
+        [[ -z "$choice" ]] && break
+        default="$choice"
+        case $choice in
+            1)
+                iniSet "disable_menu" "$((disable_menu ^ 1))"
+                ;;
+            2)
+                iniSet "use_art" "$((use_art ^ 1))"
+                ;;
+            3)
+                iniSet "disable_joystick" "$((disable_joystick ^ 1))"
+                ;;
+            4)
+                cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the delay in seconds" 10 60 "$image_delay")
+                choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+                iniSet "image_delay" "$choice"
+                ;;
+            5)
+                governor_runcommand
+                ;;
+        esac
     done
 }
