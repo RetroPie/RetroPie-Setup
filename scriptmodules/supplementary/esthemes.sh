@@ -103,6 +103,7 @@ function gui_esthemes() {
         'rxbrad gbz35'
         'rxbrad gbz35-dark'
         'garaine marioblue'
+        'garaine bigwood'
         'MrTomixf Royal_Primicia'
         'RetroHursty69 magazinemadness'
         'lostless playstation'
