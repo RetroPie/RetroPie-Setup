@@ -106,6 +106,7 @@ function gui_esthemes() {
         'garaine bigwood'
         'MrTomixf Royal_Primicia'
         'RetroHursty69 magazinemadness'
+        'RetroHursty69 stirling'
         'lostless playstation'
         'mrharias superdisplay'
     )
