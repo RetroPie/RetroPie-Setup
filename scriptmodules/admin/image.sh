@@ -19,15 +19,35 @@ function depends_image() {
 }
 
 function chroot_image() {
+    local version="$1"
+    [[ -z "$version" ]] && version="jessie"
+
     mkdir -p "$md_build"
     pushd "$md_build"
     mkdir -p mnt/boot chroot
-    local image=$(ls -1 *-raspbian-jessie-lite.img 2>/dev/null)
+
+    local url
+    local image
+    case "$version" in
+        jessie)
+            url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip"
+            ;;
+        stretch)
+            url="https://downloads.raspberrypi.org/raspbian_lite_latest"
+            ;;
+        *)
+            printMsgs "console" "Unknown/unsupported Raspbian version"
+            return 1
+            ;;
+    esac
+
+    local base="raspbian-${version}-lite"
+    local image="$base.img"
     if [[ ! -f "$image" ]]; then
-        wget -c -O "raspbian_lite.zip" https://downloads.raspberrypi.org/raspbian_lite_latest
-        unzip "raspbian_lite.zip"
-        image=$(unzip -Z -1 "raspbian_lite.zip")
-        rm "raspbian_lite.zip"
+        wget -c -O "$base.zip" "$url"
+        unzip -o "$base.zip"
+        mv "$(unzip -Z -1 "$base.zip")" "$image"
+        rm "$base.zip"
     fi
 
     # mount image
@@ -214,13 +234,15 @@ function create_bb_image() {
 function all_image() {
     local platform
     local image
+    local version="$1"
     for platform in rpi1 rpi2; do
-        platform_image "$platform"
+        platform_image "$platform" "$version"
     done
 }
 
 function platform_image() {
     local platform="$1"
+    local version="$2"
     [[ -z "$platform" ]] && exit
 
     local image
@@ -230,7 +252,7 @@ function platform_image() {
         image="retropie-${__version}-rpi2_rpi3"
     fi
 
-    rp_callModule image chroot
+    rp_callModule image chroot "$version"
     rp_callModule image install_rp "$platform"
     rp_callModule image create "$image"
     rp_callModule image create_bb "$image"
