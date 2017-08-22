@@ -44,11 +44,7 @@ function build_lr-mupen64plus() {
     rpSwap on 750
     make clean
     if isPlatform "rpi"; then
-        if isPlatform "kms" ; then
-            make platform="$__platform mesa"
-        else
-            make platform="$__platform"
-        fi
+        make platform="$__platform"
     elif isPlatform "mali"; then
         make platform="odroid"
     else
