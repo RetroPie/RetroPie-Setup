@@ -42,7 +42,7 @@ function sources_retroarch() {
     applyPatch "$md_data/02_disable_search.diff"
 
     isPlatform "rpi" && sed -i 's/#extension GL_OES_standard_derivatives : enable//g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
-    isPlatform "rpi" && sed -i 's/precision highp float/precision mediump float/g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
+    isPlatform "rpi" && sed -i 's/#define GL_FRAGMENT_PRECISION_HIGH 1/#define GL_FRAGMENT_PRECISION_HIGH 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
 }
 
 function build_retroarch() {
