@@ -41,7 +41,7 @@ function sources_retroarch() {
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
 
-    isPlatform "rpi" && && sed -i 's/#extension GL_OES_standard_derivatives : enable//g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
+    isPlatform "rpi" && sed -i 's/#extension GL_OES_standard_derivatives : enable//g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
 }
 
 function build_retroarch() {
