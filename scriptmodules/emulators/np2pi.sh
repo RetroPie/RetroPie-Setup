@@ -30,7 +30,7 @@ function build_np2pi() {
 
 function install_np2pi() {
     md_ret_files=(
-        'np2pi/bin/np2'
+        'bin/np2'
     )
 }
 
