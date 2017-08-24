@@ -24,7 +24,7 @@ function depends_lr-ppsspp() {
 
 function sources_lr-ppsspp() {
     if isPlatform "rpi"; then
-        gitPullOrClone "$md_build" https://github.com/gizmo98/libretro-ppsspp.git
+        gitPullOrClone "$md_build" https://github.com/gizmo98/libretro-ppsspp.git patch-1
     elif isPlatform "rpi"; then
         gitPullOrClone "$md_build" https://github.com/RetroPie/ppsspp.git libretro_rpi_fix
     else
