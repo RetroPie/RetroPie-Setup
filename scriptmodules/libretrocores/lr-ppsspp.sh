@@ -24,6 +24,8 @@ function depends_lr-ppsspp() {
 
 function sources_lr-ppsspp() {
     if isPlatform "rpi"; then
+        gitPullOrClone "$md_build" https://github.com/gizmo98/libretro-ppsspp.git
+    elif isPlatform "rpi"; then
         gitPullOrClone "$md_build" https://github.com/RetroPie/ppsspp.git libretro_rpi_fix
     else
         gitPullOrClone "$md_build" https://github.com/libretro/libretro-ppsspp.git
@@ -39,11 +41,7 @@ function build_lr-ppsspp() {
     make -C libretro clean
     local params=()
     if isPlatform "rpi"; then
-        if isPlatform "rpi1"; then
-            params+=("platform=rpi1")
-        else
-            params+=("platform=rpi2")
-        fi
+        params+=("platform=$__platform")
     elif isPlatform "mali"; then
         params+=("platform=armvglesneon")
     fi
