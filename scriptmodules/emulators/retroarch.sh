@@ -40,9 +40,6 @@ function sources_retroarch() {
     gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
-
-    isPlatform "rpi" && sed -i 's/#extension GL_OES_standard_derivatives : enable//g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
-    isPlatform "rpi" && sed -i 's/#define GL_FRAGMENT_PRECISION_HIGH 1/#define GL_FRAGMENT_PRECISION_HIGH 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
 }
 
 function build_retroarch() {
