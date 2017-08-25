@@ -42,7 +42,11 @@ function build_lr-ppsspp() {
     make -C libretro clean
     local params=()
     if isPlatform "rpi"; then
-        params+=("platform=$__platform")
+        if isPlatform "rpi1"; then
+            params+=("platform=rpi1")
+        else
+            params+=("platform=rpi2")
+        fi
     elif isPlatform "mali"; then
         params+=("platform=armvglesneon")
     fi
