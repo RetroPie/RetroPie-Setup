@@ -35,8 +35,10 @@ function sources_lr-ppsspp() {
 }
 
 function build_lr-ppsspp() {
-    build_ffmpeg_ppsspp "$md_build/ffmpeg"
-    cd "$md_build"
+    if ! isPlatform "kms"; then
+        build_ffmpeg_ppsspp "$md_build/ffmpeg"
+        cd "$md_build"
+    fi
 
     make -C libretro clean
     local params=()
