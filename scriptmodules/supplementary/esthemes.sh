@@ -99,6 +99,7 @@ function gui_esthemes() {
         'dmmarti hurstyblue'
         'dmmarti maximuspie'
         'dmmarti showcase'
+        'dmmarti kidz'
         'lipebello Retrorama'
         'rxbrad gbz35'
         'rxbrad gbz35-dark'
