@@ -21,6 +21,7 @@ function sources_lr-reicast() {
 }
 
 function build_lr-reicast() {
+    rpSwap on 750
     make clean
     if isPlatform "rpi"; then
         make platform="$__platform"
