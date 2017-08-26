@@ -21,7 +21,7 @@ function sources_lr-reicast() {
 }
 
 function build_lr-reicast() {
-    rpSwap on 750
+    rpSwap on 1200
     make clean
     if isPlatform "rpi"; then
         make platform="$__platform"
@@ -30,6 +30,7 @@ function build_lr-reicast() {
     else
         make
     fi
+    rpSwap off
     md_ret_require="$md_build/reicast_libretro.so"
 }
 
