@@ -22,12 +22,17 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    if isPlatform "x11"; then
+    if isPlatform "x11" && isPlatform "kms"; then
         gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
+        sed -i "s|LIBS += -L/opt/vc/lib/  -L../linux-deps/lib -lbcm_host|USE_SDL := 1|g" "$md_build/shell/linux/Makefile"
+        sed -i "s|INCS += -I/opt/vc/include/ -I/opt/vc/include/interface/vmcs_host/linux -I/opt/vc/include/interface/vcos/pthreads -I../linux-deps/include||g" "$md_build/shell/linux/Makefile"
+        sed -i 's|enable_runfast()|//enable_runfast()|g' "$md_build/core/linux/common.cpp"
+        sed -i 's|linux_rpi2_init()|//linux_rpi2_init()|g' "$md_build/core/linux/common.cpp"
     else
         gitPullOrClone "$md_build" https://github.com/RetroPie/reicast-emulator.git retropie
     fi
     sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
+
 }
 
 function build_reicast() {
