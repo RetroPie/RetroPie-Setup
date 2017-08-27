@@ -23,7 +23,7 @@ function depends_lr-ppsspp() {
 }
 
 function sources_lr-ppsspp() {
-    if isPlatform "rpi" && isPlatform "mesa"; then
+    if isPlatform "kms"; then
         gitPullOrClone "$md_build" https://github.com/gizmo98/ppsspp.git mesa
     elif isPlatform "rpi"; then
         gitPullOrClone "$md_build" https://github.com/RetroPie/ppsspp.git libretro_rpi_fix
