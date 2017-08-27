@@ -877,15 +877,15 @@ function get_sys_command() {
     COMMAND="$(default_emulator get emu_cmd)"
 
     # replace tokens
-    COMMAND="${COMMAND/\%ROM\%/\"$ROM\"}"
-    COMMAND="${COMMAND/\%BASENAME\%/\"$ROM_BN\"}"
+    COMMAND="${COMMAND//\%ROM\%/\"$ROM\"}"
+    COMMAND="${COMMAND//\%BASENAME\%/\"$ROM_BN\"}"
 
     # special case to get the last 2 folders for quake games for the -game parameter
     # remove everything up to /quake/
     local quake_dir="${ROM##*/quake/}"
     # remove filename
     quake_dir="${quake_dir%/*}"
-    COMMAND="${COMMAND/\%QUAKEDIR\%/\"$quake_dir\"}"
+    COMMAND="${COMMAND//\%QUAKEDIR\%/\"$quake_dir\"}"
 
     # if it starts with CON: it is a console application (so we don't redirect stdout later)
     if [[ "$COMMAND" == CON:* ]]; then
