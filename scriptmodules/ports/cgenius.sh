@@ -15,11 +15,11 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/gerstrong/Commander-Ge
 rp_module_section="exp"
 
 function depends_cgenius() {
-    getDepends build-essential libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libboost-dev
+    getDepends build-essential cmake libcurl4-openssl-dev libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libboost-dev
 }
 
 function sources_cgenius() {
-    downloadAndExtract "https://github.com/gerstrong/Commander-Genius/archive/v1992beta.tar.gz" "$md_build" 1
+    downloadAndExtract "https://github.com/gerstrong/Commander-Genius/archive/v1995beta.tar.gz" "$md_build" 1
 }
 
 function build_cgenius() {
@@ -31,23 +31,16 @@ function build_cgenius() {
 
 function install_cgenius() {
     md_ret_files=(
-        'hqp'
-        'vfsroot/games'
-        'src/Build/LINUX/CGeniusExe'
+        'vfsroot'
+        'src/CGeniusExe'
     )
 }
 
 function configure_cgenius() {
-    addPort "$md_id" "cgenius" "Commander Genius" "pushd $md_inst; ./CGeniusExe; popd"
-
     mkRomDir "ports/$md_id"
-
+    mkUserDir "$home/.CommanderGenius"
+    
     moveConfigDir "$home/.CommanderGenius"  "$md_conf_root/$md_id"
 
-    mv "$md_inst/games" "$romdir/ports/$md_id/"
-    mv "$md_inst/hqp" "$romdir/ports/$md_id/"
-
-    ln -snf "$romdir/ports/$md_id/games" "$md_inst"
-
-    chown -R $user:$user "$romdir/ports/$md_id"
+    addPort "$md_id" "cgenius" "Commander Genius" "pushd $md_inst; ./CGeniusExe; popd"
 }
