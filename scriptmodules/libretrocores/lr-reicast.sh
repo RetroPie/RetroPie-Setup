@@ -18,7 +18,7 @@ rp_module_flags=""
 
 function sources_lr-reicast() {
     gitPullOrClone "$md_build" https://github.com/gizmo98/reicast-emulator.git patch-1
-    sed -i 's|enable_runfast|//enable_runfast()|g' "$md_build/core/libretro/common.cpp"
+    sed -i 's|enable_runfast()|//enable_runfast()|g' "$md_build/core/libretro/common.cpp"
 
     
 }
