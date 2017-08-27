@@ -23,7 +23,9 @@ function depends_lr-ppsspp() {
 }
 
 function sources_lr-ppsspp() {
-    if isPlatform "rpi"; then
+    if isPlatform "rpi" && isPlatform "mesa"; then
+        gitPullOrClone "$md_build" https://github.com/gizmo98/ppsspp.git mesa
+    elif isPlatform "rpi"; then
         gitPullOrClone "$md_build" https://github.com/RetroPie/ppsspp.git libretro_rpi_fix
     else
         gitPullOrClone "$md_build" https://github.com/libretro/libretro-ppsspp.git
@@ -31,8 +33,8 @@ function sources_lr-ppsspp() {
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
     
-    isPlatform "kms" && sed -i 's|INCFLAGS += -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthread/||g' "$md_build/libretro/Makefile"
-    isPlatform "kms" && sed -i 's|-L/opt/vc/lib||g' "$md_build/libretro/Makefile"
+    #isPlatform "kms" && sed -i 's|INCFLAGS += -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthread/||g' "$md_build/libretro/Makefile"
+    #isPlatform "kms" && sed -i 's|-L/opt/vc/lib||g' "$md_build/libretro/Makefile"
 }
 
 function build_lr-ppsspp() {
