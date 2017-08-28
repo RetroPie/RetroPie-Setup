@@ -29,8 +29,8 @@ function depends_gamecondriver() {
 }
 
 function install_bin_gamecondriver() {
-    local gamecon_ver="1.2"
-    local db9_ver="1.0"
+    local gamecon_ver="1.3"
+    local db9_ver="1.1"
     local url="https://www.niksula.hut.fi/~mhiienka/Rpi"
 
     # install gamecon
