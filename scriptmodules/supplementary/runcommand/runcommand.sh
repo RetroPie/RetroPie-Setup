@@ -904,35 +904,37 @@ function get_sys_command() {
 function show_launch() {
     local images=()
 
-    if [[ "$IS_SYS" -eq 1 && "$USE_ART" -eq 1 ]]; then
-        # if using art look for images in paths for es art.
-        images+=(
-            "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-image"
-            "$HOME/.emulationstation/downloaded_images/$SYSTEM/${ROM_BN}-image"
-        )
-    fi
+    if [[ "$IMAGE_DELAY" -ne 0 ]]; then
+        if [[ "$IS_SYS" -eq 1 && "$USE_ART" -eq 1 ]]; then
+            # if using art look for images in paths for es art.
+            images+=(
+                "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-image"
+                "$HOME/.emulationstation/downloaded_images/$SYSTEM/${ROM_BN}-image"
+            )
+        fi
 
-    # look for custom launching images
-    if [[ "$IS_SYS" -eq 1 ]]; then
-        images+=(
-            "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-launching"
-            "$CONF_ROOT/launching"
-        )
-    fi
-    [[ "$IS_PORT" -eq 1 ]] && images+=("$CONFIGDIR/ports/launching")
-    images+=("$CONFIGDIR/all/launching")
+        # look for custom launching images
+        if [[ "$IS_SYS" -eq 1 ]]; then
+            images+=(
+                "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-launching"
+                "$CONF_ROOT/launching"
+            )
+        fi
+        [[ "$IS_PORT" -eq 1 ]] && images+=("$CONFIGDIR/ports/launching")
+        images+=("$CONFIGDIR/all/launching")
 
-    local image
-    local path
-    local ext
-    for path in "${images[@]}"; do
-        for ext in jpg png; do
-            if [[ -f "$path.$ext" ]]; then
-                image="$path.$ext"
-                break 2
-            fi
+        local image
+        local path
+        local ext
+        for path in "${images[@]}"; do
+            for ext in jpg png; do
+                if [[ -f "$path.$ext" ]]; then
+                    image="$path.$ext"
+                    break 2
+                fi
+            done
         done
-    done
+    fi
 
     if [[ -n "$image" ]]; then
         # if we are running under X use feh otherwise try and use fbi
