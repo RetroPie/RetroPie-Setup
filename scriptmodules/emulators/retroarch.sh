@@ -44,25 +44,25 @@ function sources_retroarch() {
     fi
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
-    if isPlatform "kms"; then
-        sed -i 's/"#extension GL_OES_standard_derivatives : enable\n" \/precision mediump float;\n/g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
-        sed -i 's/#define GL_FRAGMENT_PRECISION_HIGH 1/#define GL_FRAGMENT_PRECISION_HIGH 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
-        sed -i 's/#define GL_OES_standard_derivatives 1/#define GL_OES_standard_derivatives 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
-        #sed -i 's/#define GL_EXT_frag_depth 1/#define GL_EXT_frag_depth 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
-        sed -i 's/precision highp float/precision mediump float/g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
-        rm "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
-        cp "$md_build/gfx/drivers/d3d_shaders/shaders_common.h" "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
-    fi
+    #if isPlatform "kms"; then
+    #    sed -i 's/"#extension GL_OES_standard_derivatives : enable\n" \/precision mediump float;\n/g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
+    #    sed -i 's/#define GL_FRAGMENT_PRECISION_HIGH 1/#define GL_FRAGMENT_PRECISION_HIGH 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
+    #    sed -i 's/#define GL_OES_standard_derivatives 1/#define GL_OES_standard_derivatives 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
+    #    #sed -i 's/#define GL_EXT_frag_depth 1/#define GL_EXT_frag_depth 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
+    #    sed -i 's/precision highp float/precision mediump float/g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
+    #    rm "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
+    #    cp "$md_build/gfx/drivers/d3d_shaders/shaders_common.h" "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
+    #fi
 }
 
 function build_retroarch() {
     local params=(--enable-sdl2)
-    ! isPlatform "x11" && params+=(--disable-x11 --enable-opengles --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
-    isPlatform "mali" && params+=(--enable-mali_fbdev)
+    ! isPlatform "x11" && params+=(--disable-x11 --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
+    isPlatform "mali" && params+=(--enable-mali_fbdev --enable-opengles)
     if isPlatform "kms"; then 
         params+=(--enable-kms --enable-egl --disable-videocore --enable-plain_drm)
     else
-        isPlatform "rpi" && params+=(--enable-dispmanx)
+        isPlatform "rpi" && params+=(--enable-dispmanx --enable-opengles)
     fi
     if isPlatform "arm"; then
         params+=(--enable-floathard)
