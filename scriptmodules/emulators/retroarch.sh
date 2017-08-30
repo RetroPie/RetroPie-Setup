@@ -41,7 +41,7 @@ function sources_retroarch() {
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
     if isPlatform "kms"; then
-        sed -i 's/#extension GL_OES_standard_derivatives : enable/#extension GL_OES_standard_derivatives : disable/g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
+        sed -i 's/#extension GL_OES_standard_derivatives : enable//g' "$md_build/gfx/drivers/gl_shaders/shaders_common.h"
         sed -i 's/#define GL_FRAGMENT_PRECISION_HIGH 1/#define GL_FRAGMENT_PRECISION_HIGH 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
         sed -i 's/#define GL_OES_standard_derivatives 1/#define GL_OES_standard_derivatives 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
         sed -i 's/#define GL_EXT_frag_depth 1/#define GL_EXT_frag_depth 0/g' "$md_build/deps/glslang/glslang/glslang/MachineIndependent/Versions.cpp"
