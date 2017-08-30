@@ -19,7 +19,7 @@ function depends_retroarch() {
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev)
     if isPlatform "kms"; then 
-        depends+=(libgbm-dev libdrm-dev libegl1-mesa-dev libgles2-mesa-dev)
+        depends+=(libgbm-dev libdrm-dev libgl1-mesa-dev libegl1-mesa-dev libgles2-mesa-dev)
     else
         isPlatform "rpi" && depends+=(libraspberrypi-dev)
     fi
