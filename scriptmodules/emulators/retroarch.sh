@@ -61,6 +61,7 @@ function build_retroarch() {
     isPlatform "mali" && params+=(--enable-mali_fbdev --enable-opengles)
     if isPlatform "kms"; then 
         params+=(--enable-kms --enable-egl --disable-videocore --enable-plain_drm)
+        isPlatform "rpi" && params+=(--enable-opengles --disable-opengles3)
     else
         isPlatform "rpi" && params+=(--enable-dispmanx --enable-opengles)
     fi
