@@ -57,13 +57,13 @@ function sources_retroarch() {
 
 function build_retroarch() {
     local params=(--enable-sdl2)
-    ! isPlatform "x11" && params+=(--disable-x11 --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
-    isPlatform "mali" && params+=(--enable-mali_fbdev --enable-opengles)
+    ! isPlatform "x11" && params+=(--enable-opengles --disable-x11 --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
+    isPlatform "mali" && params+=(--enable-mali_fbdev)
     if isPlatform "kms"; then 
         params+=(--enable-kms --enable-egl --disable-videocore --enable-plain_drm)
-        isPlatform "rpi" && params+=(--enable-opengles --enable-opengles3)
+        isPlatform "rpi" && params+=(--disable-opengles3)
     else
-        isPlatform "rpi" && params+=(--enable-dispmanx --enable-opengles)
+        isPlatform "rpi" && params+=(--enable-dispmanx)
     fi
     if isPlatform "arm"; then
         params+=(--enable-floathard)
@@ -88,7 +88,11 @@ function update_shaders_retroarch() {
     isPlatform "rpi" && branch="rpi"
     # remove if not git repository for fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
-    gitPullOrClone "$dir" https://github.com/RetroPie/common-shaders.git "$branch"
+    if isPlatform "kms"; then
+        gitPullOrClone "$dir" https://github.com/libretro/glsl-shaders.git
+    else
+        gitPullOrClone "$dir" https://github.com/RetroPie/common-shaders.git "$branch"
+    fi
     chown -R $user:$user "$dir"
 }
 
