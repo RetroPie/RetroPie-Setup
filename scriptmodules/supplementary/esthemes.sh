@@ -80,6 +80,7 @@ function gui_esthemes() {
         'lilbud flat-dark'
         'lilbud switch-light'
         'lilbud switch-dark'
+        'lilbud minimal'
     )
     while true; do
         local theme
