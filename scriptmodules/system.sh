@@ -75,6 +75,10 @@ function get_os_version() {
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
+            if compareVersions "$__os_release" ge 9 && isPlatform "rpi"; then
+                error="Sorry - Raspbian/Debian Stretch (and newer) is not yet supported on the RPI"
+            fi
+
             if compareVersions "$__os_release" lt 8; then
                 error="You need Raspbian/Debian Jessie or newer"
             fi
