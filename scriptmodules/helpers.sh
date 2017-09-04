@@ -224,6 +224,12 @@ function getDepends() {
                 packages+=("$required")
                 continue
             fi
+
+            # make sure libraspberrypi-dev/libraspberrypi0 is up to date.
+            if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage libraspberrypi-dev 1.20170703-1 "lt"; then
+                packages+=("$required")
+                continue
+            fi
         fi
 
         if [[ "$md_mode" == "remove" ]]; then
