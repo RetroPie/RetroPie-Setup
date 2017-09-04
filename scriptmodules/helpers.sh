@@ -202,17 +202,6 @@ function getDepends() {
     [[ "$ini_value" == "0" ]] && own_sdl2=0
 
     for required in $@; do
-        if [[ "$md_mode" == "install" ]]; then
-            # make sure we have our sdl1 / sdl2 installed
-            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "eq"; then
-                packages+=("$required")
-                continue
-            fi
-            if [[ "$own_sdl2" -eq 1 && "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "eq"; then
-                packages+=("$required")
-                continue
-            fi
-        fi
 
         # workaround for different package names on osmc / xbian
         if [[ "$required" == "libraspberrypi-dev" ]]; then
@@ -223,6 +212,18 @@ function getDepends() {
         # map libpng12-dev to libpng-dev for Ubuntu 16.10+
         if [[ "$required" == "libpng12-dev" ]] && compareVersions "$__os_debian_ver" ge 9;  then
             required="libpng-dev"
+        fi
+
+        if [[ "$md_mode" == "install" ]]; then
+            # make sure we have our sdl1 / sdl2 installed
+            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "eq"; then
+                packages+=("$required")
+                continue
+            fi
+            if [[ "$own_sdl2" -eq 1 && "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "eq"; then
+                packages+=("$required")
+                continue
+            fi
         fi
 
         if [[ "$md_mode" == "remove" ]]; then
