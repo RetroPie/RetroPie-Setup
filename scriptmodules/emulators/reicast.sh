@@ -36,6 +36,7 @@ function sources_reicast() {
         #sed -i 's|enable_runfast();|//enable_runfast();|g' "$md_build/core/linux/common.cpp"
         sed -i 's|linux_rpi2_init();|//linux_rpi2_init();|g' "$md_build/core/linux/common.cpp"
         sed -i "s|USE_DISPMANX := 1||g" "$md_build/shell/linux/Makefile"
+        sed -i "s|USE_OMX := 1||g" "$md_build/shell/linux/Makefile"
     fi
     sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
 
