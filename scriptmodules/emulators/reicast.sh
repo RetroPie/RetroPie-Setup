@@ -29,8 +29,8 @@ function sources_reicast() {
     fi
     
     if isPlatform "kms"; then
-        sed -i "s|LIBS += -L/opt/vc/lib/  -L../linux-deps/lib -lbcm_host||g" "$md_build/shell/linux/Makefile"
-        sed -i "s|LIBS += -L/opt/vc/lib/ -lbcm_host||g" "$md_build/shell/linux/Makefile"
+        sed -i "s|LIBS += -L/opt/vc/lib/  -L../linux-deps/lib -lbcm_host|USE_SDL := 1|g" "$md_build/shell/linux/Makefile"
+        sed -i "s|LIBS += -L/opt/vc/lib/ -lbcm_host|USE_SDL := 1|g" "$md_build/shell/linux/Makefile"
         sed -i "s|INCS += -I/opt/vc/include/ -I/opt/vc/include/interface/vmcs_host/linux -I/opt/vc/include/interface/vcos/pthreads -I../linux-deps/include||g" "$md_build/shell/linux/Makefile"
         sed -i "s|INCS += -I/opt/vc/include/ -I/opt/vc/include/interface/vmcs_host/linux -I/opt/vc/include/interface/vcos/pthreads||g" "$md_build/shell/linux/Makefile"
         sed -i 's|enable_runfast();|//enable_runfast();|g' "$md_build/core/linux/common.cpp"
