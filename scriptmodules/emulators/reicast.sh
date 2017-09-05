@@ -22,7 +22,7 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    if isPlatform "x11" || isPlatform "kms"; then
+    if isPlatform "x11"; then
         gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
     else
         gitPullOrClone "$md_build" https://github.com/RetroPie/reicast-emulator.git retropie
