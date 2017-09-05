@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_basilisk() {
-    local depends=(libsdl1.2-dev autoconf automake)
+    local depends=(libsdl1.2-dev autoconf automake oss-compat)
     isPlatform "x11" && depends+=(libgtk2.0-dev)
     getDepends "${depends[@]}"
 }
