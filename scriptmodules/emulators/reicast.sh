@@ -65,7 +65,11 @@ function build_reicast() {
 function install_reicast() {
     cd shell/linux
     if isPlatform "rpi"; then
-        make platform=rpi2 PREFIX="$md_inst" install
+        if isPlatform "kms"; then
+            make platform=rpi2mesa PREFIX="$md_inst" install
+        else
+            make platform=rpi2 PREFIX="$md_inst" install
+        fi
     else
         make PREFIX="$md_inst" install
     fi
