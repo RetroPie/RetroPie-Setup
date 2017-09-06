@@ -48,12 +48,12 @@ function sources_reicast() {
 function build_reicast() {
     cd shell/linux
     if isPlatform "rpi"; then
-        if isPlatform "rpi"; then
-            make platform=rpi2 clean
-            make platform=rpi2
-        else
+        if isPlatform "kms"; then
             make platform=rpi2mesa clean
             make platform=rpi2mesa
+        else
+            make platform=rpi2 clean
+            make platform=rpi2
         fi
     else
         make clean
