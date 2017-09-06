@@ -16,7 +16,9 @@ rp_module_licence="NONCOM https://raw.githubusercontent.com/djyt/cannonball/mast
 rp_module_section="opt"
 
 function depends_cannonball() {
-    getDepends cmake libsdl2-dev libboost-dev
+    local depends=(cmake libsdl2-dev libboost-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_cannonball() {
