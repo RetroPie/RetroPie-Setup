@@ -115,7 +115,7 @@ function build_ppsspp() {
     if isPlatform "rpi"; then
         if isPlatform "armv6"; then
             params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake)
-        else if isPlatform "kms"; then
+        elif isPlatform "kms"; then
             params+=(-DUSING_GLES2=ON -DUSING_EGL=ON)
         else
             params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv7.cmake)
