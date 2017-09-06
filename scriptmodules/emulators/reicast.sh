@@ -28,7 +28,7 @@ function sources_reicast() {
         gitPullOrClone "$md_build" https://github.com/gizmo98/reicast-emulator.git retropie
     fi
     
-    if isPlatform "kms"; then
+    #if isPlatform "kms"; then
         #sed -i "s|LIBS += -L/opt/vc/lib/  -L../linux-deps/lib -lbcm_host|USE_SDL := 1|g" "$md_build/shell/linux/Makefile"
         #sed -i "s|LIBS += -L/opt/vc/lib/ -lbcm_host|USE_SDL := 1|g" "$md_build/shell/linux/Makefile"
         #sed -i "s|LIBS += -L/opt/vc/lib/ -lbcm_host|LIBS += -L/opt/vc/lib/ -lopenmaxil|g" "$md_build/shell/linux/Makefile"
@@ -40,7 +40,7 @@ function sources_reicast() {
         #sed -i "s|USE_OMX := 1||g" "$md_build/shell/linux/Makefile"
         #sed -i "s| Bool| Enable|g" "$md_build/core/cfg/cfg.h"
         #sed -i "s| Bool| Enable|g" "$md_build/core/cfg/cfg.cpp"
-    fi
+    #fi
     sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
 
 }
