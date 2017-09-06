@@ -110,6 +110,8 @@ function gui_esthemes() {
         'RetroHursty69 stirling'
         'lostless playstation'
         'mrharias superdisplay'
+        'lilbud minimal'
+        
     )
     while true; do
         local theme
