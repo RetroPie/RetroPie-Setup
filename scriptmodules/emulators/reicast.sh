@@ -25,7 +25,7 @@ function sources_reicast() {
     if isPlatform "x11"; then
         gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
     else
-        gitPullOrClone "$md_build" https://github.com/gizmo98/reicast-emulator.git retropie
+        gitPullOrClone "$md_build" https://github.com/gizmo98/reicast-emulator.git vc4-omx
     fi
     
     if isPlatform "kms"; then
@@ -40,7 +40,7 @@ function sources_reicast() {
         #sed -i "s|USE_OMX := 1||g" "$md_build/shell/linux/Makefile"
         #sed -i "s| Bool| Enable|g" "$md_build/core/cfg/cfg.h"
         #sed -i "s| Bool| Enable|g" "$md_build/core/cfg/cfg.cpp"
-        sed -i "s|settings.aica.BufferSize=1024;|settings.aica.BufferSize=2048;|g" "$md_build/core/nullDC.cpp"
+        #sed -i "s|settings.aica.BufferSize=1024;|settings.aica.BufferSize=2048;|g" "$md_build/core/nullDC.cpp"
     fi
     sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
 
