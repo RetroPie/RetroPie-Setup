@@ -18,11 +18,11 @@ rp_module_flags=""
 
 function sources_lr-reicast() {
     gitPullOrClone "$md_build" https://github.com/gizmo98/reicast-emulator.git patch-1
-    sed -i 's|enable_runfast()|//enable_runfast()|g' "$md_build/core/libretro/common.cpp"
+    #sed -i 's|enable_runfast()|//enable_runfast()|g' "$md_build/core/libretro/common.cpp"
 }
 
 function build_lr-reicast() {
-    rpSwap on 1200
+    rpSwap on 1400
     make clean
     if isPlatform "rpi"; then
         make platform="$__platform"
