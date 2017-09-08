@@ -112,6 +112,7 @@ function gui_esthemes() {
         'RetroHursty69 stirling'
         'lostless playstation'
         'mrharias superdisplay'
+        'robertybob tv'
     )
     while true; do
         local theme
