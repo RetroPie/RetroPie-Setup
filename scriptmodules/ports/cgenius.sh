@@ -15,7 +15,7 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/gerstrong/Commander-Ge
 rp_module_section="exp"
 
 function depends_cgenius() {
-    getDepends build-essential libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libboost-dev
+    getDepends build-essential clang-3.9 libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libboost-dev
 }
 
 function sources_cgenius() {
@@ -24,7 +24,7 @@ function sources_cgenius() {
 
 function build_cgenius() {
     cd $md_build
-    cmake -DUSE_SDL2=yes -DCMAKE_INSTALL_PREFIX="$md_inst"
+    CC=clang-3.9 CXX=clang++-3.9 cmake -DUSE_SDL2=yes -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
     md_ret_require="$md_build"
 }
