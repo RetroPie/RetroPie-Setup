@@ -27,7 +27,12 @@ function sources_dgen() {
 function build_dgen() {
     local params=()
     isPlatform "rpi" && params+=(--disable-opengl --disable-hqx)
-    ./configure  --prefix="$md_inst"
+    # dgen contains obsoleted arm assembler that gcc/as will not like for armv8 cpu targets
+    if isPlatform "armv8"; then
+        CFLAGS="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard" ./configure --prefix="$md_inst"
+    else
+        ./configure --prefix="$md_inst"
+    fi
     make clean
     make
     md_ret_require="$md_build/dgen"
