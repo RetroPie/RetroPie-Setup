@@ -16,12 +16,7 @@ rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/picodrive/m
 rp_module_section="main"
 
 function sources_lr-picodrive() {
-    # temporary fix on arm due to https://github.com/libretro/picodrive/issues/57#issuecomment-327061488
-    if isPlatform "arm"; then
-        gitPullOrClone "$md_build" https://github.com/RetroPie/picodrive.git rpi_fix
-    else
-        gitPullOrClone "$md_build" https://github.com/libretro/picodrive.git
-    fi
+    gitPullOrClone "$md_build" https://github.com/libretro/picodrive.git
 }
 
 function build_lr-picodrive() {
