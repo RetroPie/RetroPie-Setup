@@ -405,7 +405,7 @@ function gui_bluetooth() {
             esac
         else
             # restart sixad (if running)
-            service sixad status >/dev/null && service sixad restart
+            service sixad status >/dev/null && service sixad restart && printMsgs "dialog" "NOTICE: The ps3controller driver was temporarily interrupted in order to allow compatibility with standard Bluetooth peripherals. Please re-pair your Dual Shock controller to continue (or disregard this message if currently using another controller)."
             break
         fi
     done

@@ -94,7 +94,7 @@ function gui_ps3controller() {
     drivers["gasia-only"]="gasia only"
     drivers["shanwan"]="clone support shanwan"
 
-    printMsgs "dialog" "NOTE: You cannot currently use PS3 controllers with other bluetooth devices. The PS3 controller driver disables the standard bluetooth stack. If you want to use a wireless keyboard along with your PS3 controllers you can use 2.4ghz wireless devices that come with their own dongle."
+    printMsgs "dialog" "WARNING: The ps3controller driver partially disables the standard Bluetooth stack so that Dual Shock controllers can pair correctly. Although the Bluetooth stack is temporarily re-enabled inside Retropie's Bluetooth menu to allow compatibility with standard Bluetooth peripherals, any other software that relies on the full Bluetooth stack will not work correctly while the ps3controller driver is active."
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
     while true; do
         local i=1
