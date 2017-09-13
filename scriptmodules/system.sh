@@ -213,7 +213,7 @@ function platform_db410c() {
     __default_cflags="-O2 -march=armv8-a -mtune=cortex-a53 -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv8"
+    __platform_flags="arm armv8 x11"
 }
 
 function platform_hikey620() {
