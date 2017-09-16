@@ -31,16 +31,17 @@ function sources_mupen64plus() {
         'mupen64plus input-sdl'
         'mupen64plus rsp-hle'
     )
-    if isPlatform "kms"; then
-        repos+=(
-            'ricrpi video-gles2rice pandora-backport'
-        )
     elif isPlatform "rpi"; then
         repos+=(
             'gizmo98 audio-omx'
             'ricrpi video-gles2rice pandora-backport'
             'ricrpi video-gles2n64'
         )
+        if isPlatform "kms"; then
+            repos+=(
+                'mupen64plus video-glide64mk2'
+            )
+        fi
     else
         repos+=(
             'mupen64plus video-glide64mk2'
@@ -81,7 +82,7 @@ function build_mupen64plus() {
             fi
             isPlatform "neon" && params+=("NEON=1")
             isPlatform "x11" && params+=("OSD=1" "PIE=1")
-            isPlatform "x86" && params+=("SSE=SSSE3")
+            isPlatform "x86" && params+=("SSE=SSSE2")
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
             MAKEFLAGS="${MAKEFLAGS/\/usr\/lib\/distcc:/}" make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -O3 -flto"
@@ -112,23 +113,22 @@ function build_mupen64plus() {
         'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
         'GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so'
     )
-    if isPlatform "rpi"; then
-        md_ret_require+=(
-            'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
-        )
     elif isPlatform "rpi"; then
         md_ret_require+=(
             'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
             'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
             'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
         )
+        if isPlatform "kms"; then
+            'mupen64plus-video-glide64mk2/projects/unix/mupen64plus-video-glide64mk2.so'
+        fi
     else
         md_ret_require+=(
             'mupen64plus-video-glide64mk2/projects/unix/mupen64plus-video-glide64mk2.so'
             'mupen64plus-rsp-z64/projects/unix/mupen64plus-rsp-z64.so'
         )
         if isPlatform "x86"; then
-            md_ret_require+=('mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4-ssse3.so')
+            md_ret_require+=('mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4-ssse2.so')
         else
             md_ret_require+=('mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4.so')
         fi
@@ -161,7 +161,9 @@ function install_mupen64plus() {
 function configure_mupen64plus() {
     if isPlatform "kms"; then
         addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 1920x1080"
+        addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 1920x1080"
         addEmulator 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% 1920x1080"
+        addEmulator 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM% 1920x1080"
     elif isPlatform "rpi"; then
         local res
         for res in "320x240" "640x480"; do
