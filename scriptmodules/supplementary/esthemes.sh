@@ -91,6 +91,8 @@ function gui_esthemes() {
         'anthonycaccese crt'
         'anthonycaccese crt-centered'
         'anthonycaccese art-book'
+        'anthonycaccese art-book-4-3'
+        'anthonycaccese art-book-pocket'
         'anthonycaccese tft'
         'TMNTturtleguy ComicBook'
         'TMNTturtleguy ComicBook_4-3'
