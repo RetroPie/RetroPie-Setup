@@ -128,7 +128,7 @@ function build_mupen64plus() {
             'mupen64plus-rsp-z64/projects/unix/mupen64plus-rsp-z64.so'
         )
         if isPlatform "x86"; then
-            md_ret_require+=('mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4-ssse2.so')
+            md_ret_require+=('mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4-sse2.so')
         else
             md_ret_require+=('mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4.so')
         fi
