@@ -18,12 +18,7 @@ function _get_ver_usbromservice() {
 }
 
 function _update_hook_usbromservice() {
-    # if any of our usbromservice scripts are installed, update them
-    local update=0
-    for file in "$md_data/"*; do
-        [[ -f "/etc/usbmount/mount.d/${file##*/}" ]] && update=1
-    done
-    [[ "$update" -eq 1 ]] && _install_scripts_usbromservice
+    [[ ! -f "$md_inst/disabled" ]] && install_scripts_usbromservice
 }
 
 function depends_usbromservice() {
@@ -31,28 +26,19 @@ function depends_usbromservice() {
     if ! hasPackage usbmount $(_get_ver_usbromservice); then
         depends+=(debhelper devscripts pmount lockfile-progs)
         getDepends "${depends[@]}"
-        if [[ "$md_mode" == "install" ]]; then
-            rp_callModule usbromservice sources
-            rp_callModule usbromservice build
-            rp_callModule usbromservice install
-        fi
+        gitPullOrClone "$md_build" https://github.com/RetroPie/usbmount.git systemd
+        cd "$md_build"
+        dpkg-buildpackage
+        dpkg -i ../usbmount_*_all.deb
+        rm -f ../usbmount_*
     fi
 }
 
-function sources_usbromservice() {
-    gitPullOrClone "$md_build" https://github.com/RetroPie/usbmount.git systemd
+function install_bin_usbromservice() {
+    [[ ! -f "/etc/usbmount/rp_disabled" ]] && install_scripts_usbromservice
 }
 
-function build_usbromservice() {
-    dpkg-buildpackage
-}
-
-function install_usbromservice() {
-    dpkg -i ../usbmount_*_all.deb
-    rm -f ../usbmount_*
-}
-
-function _install_scripts_usbromservice() {
+function install_scripts_usbromservice() {
     # copy our mount.d scripts over
     local file
     local dest
@@ -64,7 +50,8 @@ function _install_scripts_usbromservice() {
 }
 
 function enable_usbromservice() {
-    _install_scripts_usbromservice
+    rm -f "/etc/usbmount/rp_disabled"
+    install_scripts_usbromservice
 }
 
 function disable_usbromservice() {
@@ -73,6 +60,7 @@ function disable_usbromservice() {
         file="/etc/usbmount/mount.d/${file##*/}"
         rm -f "$file"
     done
+    touch "/etc/usbmount/rp_disabled"
 }
 
 function remove_usbromservice() {
