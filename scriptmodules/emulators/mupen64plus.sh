@@ -31,7 +31,7 @@ function sources_mupen64plus() {
         'mupen64plus input-sdl'
         'mupen64plus rsp-hle'
     )
-    elif isPlatform "rpi"; then
+    if isPlatform "rpi"; then
         repos+=(
             'gizmo98 audio-omx'
             'ricrpi video-gles2rice pandora-backport'
