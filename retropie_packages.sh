@@ -16,8 +16,17 @@ __version="4.2.20"
 # main retropie install location
 rootdir="/opt/retropie"
 
-user="$SUDO_USER"
-[[ -z "$user" ]] && user="$(id -un)"
+# if __user is set, try and install for that user, else use SUDO_USER
+if [[ -n "$__user" ]]; then
+    user="$__user"
+    if ! id -u "$__user" &>/dev/null; then
+        echo "User $__user not exist"
+        exit 1
+    fi
+else
+    user="$SUDO_USER"
+    [[ -z "$user" ]] && user="$(id -un)"
+fi
 
 home="$(eval echo ~$user)"
 datadir="$home/RetroPie"
