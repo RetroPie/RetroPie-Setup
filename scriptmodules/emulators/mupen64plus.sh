@@ -113,7 +113,7 @@ function build_mupen64plus() {
         'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
         'GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so'
     )
-    elif isPlatform "rpi"; then
+    if isPlatform "rpi"; then
         md_ret_require+=(
             'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
             'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
