@@ -17,9 +17,14 @@ __version="4.2.20"
 rootdir="/opt/retropie"
 
 user="$SUDO_USER"
+[[ -n "$RETROPIE_USER" ]] && user=$RETROPIE_USER
 [[ -z "$user" ]] && user="$(id -un)"
 
 home="$(eval echo ~$user)"
+if [[ $home == ~* ]]; then
+    echo "User $user does not seem to exist"
+    exit 1
+fi
 datadir="$home/RetroPie"
 biosdir="$datadir/BIOS"
 romdir="$datadir/roms"
