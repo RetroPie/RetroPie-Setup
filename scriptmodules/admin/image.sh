@@ -178,7 +178,7 @@ function create_image() {
     kpartx -s -a "$image"
 
     mkfs.vfat -F 16 -n boot /dev/mapper/loop0p1
-    mkfs.ext4 -O ^metadata_csum -L retropie /dev/mapper/loop0p2
+    mkfs.ext4 -O ^metadata_csum,^huge_file -L retropie /dev/mapper/loop0p2
 
     parted "$image" print
 
