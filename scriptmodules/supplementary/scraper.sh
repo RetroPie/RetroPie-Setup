@@ -123,14 +123,18 @@ function scrape_scraper() {
     fi
 
     [[ "$system" =~ ^mame-|arcade|fba|neogeo ]] && params+=(-mame -mame_img t,m,s)
+
+    # trap ctrl+c and return if pressed (rather than exiting retropie-setup etc)
+    trap 'trap 2; return 1' INT
     sudo -u $user "$md_inst/scraper" ${params[@]}
+    trap 2
 }
 
 function scrape_all_scraper() {
     local system
     while read system; do
         system=${system/$romdir\//}
-        scrape_scraper "$system" "$@"
+        scrape_scraper "$system" "$@" || return 1
     done < <(list_systems_scraper)
 }
 
@@ -259,12 +263,18 @@ function gui_scraper() {
             default="$choice"
             case $choice in
                 1)
-                    rp_callModule "$md_id" scrape_all
-                    printMsgs "dialog" "ROMS have been scraped."
+                    if scrape_all_scraper; then
+                        printMsgs "dialog" "ROMS have been scraped."
+                    else
+                        printMsgs "dialog" "Scraping was aborted"
+                    fi
                     ;;
                 2)
-                    rp_callModule "$md_id" scrape_chosen
-                    printMsgs "dialog" "ROMS have been scraped."
+                    if scrape_chosen_scraper; then
+                        printMsgs "dialog" "ROMS have been scraped."
+                    else
+                        printMsgs "dialog" "Scraping was aborted"
+                    fi
                     ;;
                 3)
                     use_thumbs="$((use_thumbs ^ 1))"
