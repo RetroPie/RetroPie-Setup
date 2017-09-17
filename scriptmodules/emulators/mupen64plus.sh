@@ -151,7 +151,8 @@ function install_mupen64plus() {
                 isPlatform "rpi" && params+=("VC=1")
             fi
             isPlatform "neon" && params+=("NEON=1")
-            isPlatform "x86" && params+=("SSE=SSSE3")
+            isPlatform "x11" && params+=("OSD=1" "PIE=1")
+            isPlatform "x86" && params+=("SSE=SSSE2")
             make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
         fi
     done
@@ -165,7 +166,7 @@ function install_mupen64plus() {
 function configure_mupen64plus() {
     if isPlatform "kms"; then
         addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 1920x1080"
-        addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 1920x1080"
+        addEmulator 0 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM% 1920x1080"
         addEmulator 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% 1920x1080"
         addEmulator 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM% 1920x1080"
     elif isPlatform "rpi"; then
