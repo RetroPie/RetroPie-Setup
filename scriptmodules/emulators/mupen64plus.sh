@@ -33,13 +33,16 @@ function sources_mupen64plus() {
     )
     if isPlatform "rpi"; then
         repos+=(
-            'gizmo98 audio-omx'
             'ricrpi video-gles2rice pandora-backport'
             'ricrpi video-gles2n64'
         )
         if isPlatform "kms"; then
             repos+=(
                 'mupen64plus video-glide64mk2'
+            )
+        else
+            repos+=(
+                'gizmo98 audio-omx'
             )
         fi
     else
@@ -117,10 +120,11 @@ function build_mupen64plus() {
         md_ret_require+=(
             'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
             'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
-            'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
         )
         if isPlatform "kms"; then
             'mupen64plus-video-glide64mk2/projects/unix/mupen64plus-video-glide64mk2.so'
+        else
+            'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
         fi
     else
         md_ret_require+=(
