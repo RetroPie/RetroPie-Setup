@@ -142,9 +142,9 @@ function gui_bashwelcometweak() {
         1 "Install Bash Welcome Tweak"
         2 "Remove Bash Welcome Tweak"
     )
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choices" ]]; then
-        case $choices in
+    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        case $choice in
             1)
                 install_bashwelcometweak
                 printMsgs "dialog" "Installed Bash Welcome Tweak."

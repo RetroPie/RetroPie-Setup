@@ -230,11 +230,11 @@ function keyboard_retroarch() {
         ((i++))
     done < <(grep "^[[:space:]]*input_player[0-9]_[a-z]*" "$configdir/all/retroarch.cfg")
     local cmd=(dialog --backtitle "$__backtitle" --form "RetroArch keyboard configuration" 22 48 16)
-    local choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choices" ]]; then
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
         local value
         local values
-        readarray -t values <<<"$choices"
+        readarray -t values <<<"$choice"
         iniConfig " = " "" "$configdir/all/retroarch.cfg"
         i=0
         for value in "${values[@]}"; do
@@ -246,13 +246,13 @@ function keyboard_retroarch() {
 
 function hotkey_retroarch() {
     iniConfig " = " '"' "$configdir/all/retroarch.cfg"
-    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired hotkey behaviour." 22 76 16)
-    options=(1 "Hotkeys enabled. (default)"
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired hotkey behaviour." 22 76 16)
+    local options=(1 "Hotkeys enabled. (default)"
              2 "Press ALT to enable hotkeys."
              3 "Hotkeys disabled. Press ESCAPE to open RGUI.")
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choices" ]]; then
-        case $choices in
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        case "$choice" in
             1)
                 iniSet "input_enable_hotkey" "nul"
                 iniSet "input_exit_emulator" "escape"

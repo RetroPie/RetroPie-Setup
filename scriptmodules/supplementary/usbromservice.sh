@@ -92,9 +92,9 @@ function gui_usbromservice() {
             1 "Enable USB ROM Service scripts"
             2 "Disable USB ROM Service scripts"
         )
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choices" ]]; then
-            case $choices in
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [[ -n "$choice" ]]; then
+            case "$choice" in
                 1)
                     rp_callModule "$md_id" depends
                     rp_callModule "$md_id" enable

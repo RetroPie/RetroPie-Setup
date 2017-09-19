@@ -48,9 +48,9 @@ function gui_powerblock() {
         2 "Disable PowerBlock driver"
 
     )
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choices" ]]; then
-        case $choices in
+    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        case $choice in
             1)
                 make -C "$md_inst/build" installservice
                 printMsgs "dialog" "Enabled PowerBlock driver."

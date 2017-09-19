@@ -154,12 +154,12 @@ function scrape_chosen_scraper() {
     fi
 
     local cmd=(dialog --backtitle "$__backtitle" --checklist "Select ROM Folders" 22 76 16)
-    local choices=($("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty))
+    local choice=($("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty))
 
-    [[ ${#choices[@]} -eq 0 ]] && return
+    [[ ${#choice[@]} -eq 0 ]] && return
 
     local choice
-    for choice in "${choices[@]}"; do
+    for choice in "${choice[@]}"; do
         choice=${options[choice*3-2]}
         scrape_scraper "$choice" "$@"
     done

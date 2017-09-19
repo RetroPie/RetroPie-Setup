@@ -37,14 +37,14 @@ function sup_checkInstallXarcade2Jstick() {
 }
 
 function gui_xarcade2jstick() {
-    cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
-    options=(
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
+    local options=(
         1 "Disable Xarcade2Jstick service."
         2 "Enable Xarcade2Jstick service."
     )
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choices" ]]; then
-        case $choices in
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        case "$choice" in
             1)
                 sup_checkInstallXarcade2Jstick
                 make uninstallservice

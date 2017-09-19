@@ -84,9 +84,9 @@ function gui_snesdev() {
         5 "Switch to adapter version 2.X"
         D "Disable SNESDev on boot and SNESDev keyboard mapping"
     )
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choices" ]]; then
-        case $choices in
+    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        case "$choice" in
             1)
                 enable_at_start_snesdev 3
                 make -C "$md_inst" installservice
