@@ -38,7 +38,7 @@ function check_consolefont() {
 function gui_consolefont() {
     local cmd
     local options
-    local choices
+    local choice
 
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired console font configuration: \n(Current configuration: $(check_consolefont))" 22 86 16)
     options=(
