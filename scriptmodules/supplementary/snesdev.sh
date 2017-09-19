@@ -75,8 +75,8 @@ function remove_snesdev() {
 }
 
 function gui_snesdev() {
-    cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
-    options=(
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
+    local options=(
         1 "Enable SNESDev on boot and SNESDev keyboard mapping (polling pads and button)"
         2 "Enable SNESDev on boot and SNESDev keyboard mapping (polling only pads)"
         3 "Enable SNESDev on boot and SNESDev keyboard mapping (polling only button)"
@@ -84,7 +84,7 @@ function gui_snesdev() {
         5 "Switch to adapter version 2.X"
         D "Disable SNESDev on boot and SNESDev keyboard mapping"
     )
-    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         case "$choice" in
             1)

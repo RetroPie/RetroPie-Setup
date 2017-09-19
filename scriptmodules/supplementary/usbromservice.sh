@@ -86,6 +86,9 @@ function configure_usbromservice() {
 }
 
 function gui_usbromservice() {
+    local cmd
+    local options
+    local choice
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose from an option below." 22 86 16)
         options=(

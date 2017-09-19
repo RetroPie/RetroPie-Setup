@@ -137,12 +137,12 @@ function remove_bashwelcometweak() {
 }
 
 function gui_bashwelcometweak() {
-    cmd=(dialog --backtitle "$__backtitle" --menu "Bash Welcome Tweak Configuration" 22 86 16)
-    options=(
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Bash Welcome Tweak Configuration" 22 86 16)
+    local options=(
         1 "Install Bash Welcome Tweak"
         2 "Remove Bash Welcome Tweak"
     )
-    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         case $choice in
             1)
