@@ -261,7 +261,7 @@ function gui_scraper() {
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             default="$choice"
-            case $choice in
+            case "$choice" in
                 1)
                     if scrape_all_scraper; then
                         printMsgs "dialog" "ROMS have been scraped."

@@ -66,7 +66,7 @@ function gui_raspbiantools() {
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     rp_callModule "$md_id" apt_upgrade
                     ;;

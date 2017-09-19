@@ -144,7 +144,7 @@ function gui_bashwelcometweak() {
     )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
-        case $choice in
+        case "$choice" in
             1)
                 install_bashwelcometweak
                 printMsgs "dialog" "Installed Bash Welcome Tweak."

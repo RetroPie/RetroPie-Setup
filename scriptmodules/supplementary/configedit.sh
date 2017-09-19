@@ -389,7 +389,7 @@ function advanced_menu_configedit() {
         local file="-"
         if [[ -n "$choice" ]]; then
             while [[ -n "$file" ]]; do
-                case $choice in
+                case "$choice" in
                     1)
                         file=$(choose_config_configedit "$configdir" ".*/retroarch.cfg")
                         advanced_configedit "$configdir/$file" 2

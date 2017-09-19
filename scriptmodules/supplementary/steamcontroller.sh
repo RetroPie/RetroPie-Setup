@@ -75,7 +75,7 @@ function gui_steamcontroller() {
     while true; do
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     enable_steamcontroller xbox
                     ;;

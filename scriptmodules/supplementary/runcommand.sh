@@ -112,7 +112,7 @@ function gui_runcommand() {
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
         default="$choice"
-        case $choice in
+        case "$choice" in
             1)
                 iniSet "disable_menu" "$((disable_menu ^ 1))"
                 ;;

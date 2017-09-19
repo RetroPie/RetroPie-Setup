@@ -102,7 +102,7 @@ function gui_retronetplay() {
         )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     rps_retronet_mode
                     ;;

@@ -55,7 +55,7 @@ function gui_wikiview() {
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         local file="-"
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     gitPullOrClone "$wikidir" "https://github.com/RetroPie/RetroPie-Setup.wiki.git"
                     ;;

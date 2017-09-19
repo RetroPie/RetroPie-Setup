@@ -379,7 +379,7 @@ function gui_bluetooth() {
         if [[ -n "$choice" ]]; then
             # temporarily restore Bluetooth stack (if needed)
             service sixad status >/dev/null && sixad -r
-            case $choice in
+            case "$choice" in
                 R)
                     register_bluetooth
                     ;;

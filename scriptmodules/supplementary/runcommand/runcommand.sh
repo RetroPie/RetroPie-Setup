@@ -479,7 +479,7 @@ function main_menu() {
         fi
         cmd=(dialog --nocancel --menu "System: $SYSTEM\nEmulator: $EMULATOR\nVideo Mode: $temp_mode\nROM: $ROM_BN"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        case $choice in
+        case "$choice" in
             1)
                 choose_emulator "emu_sys" "$emu_sys"
                 ;;

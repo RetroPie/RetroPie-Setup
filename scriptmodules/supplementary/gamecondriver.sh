@@ -158,7 +158,7 @@ function gui_gamecondriver() {
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         default="$choice"
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     dialog --defaultno --yesno "Gamecon driver supports RetroPie GPIO adapter board for 2 SNES controllers. Do you want to configure gamecon for 2 SNES controllers?"  22 76 >/dev/tty || continue
                     dual_snes_gamecondriver
