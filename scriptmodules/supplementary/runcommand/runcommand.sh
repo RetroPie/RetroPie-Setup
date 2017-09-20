@@ -575,6 +575,7 @@ function choose_mode() {
 function choose_emulator() {
     local mode="$1"
     local default="$2"
+    local cancel="$3"
 
     local default
     local default_id
@@ -597,7 +598,7 @@ function choose_emulator() {
         dialog --msgbox "No emulator options found for $SYSTEM - have you installed any snes emulators yet? Do you have a valid $EMU_SYS_CONF ?" 20 60 >/dev/tty
         exit 1
     fi
-    local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
+    local cmd=(dialog $cancel --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
@@ -854,7 +855,7 @@ function get_sys_command() {
     if [[ -z "$emulator" ]]; then
         echo "No default emulator found for system $SYSTEM"
         start_joy2key
-        choose_emulator "emu_sys"
+        choose_emulator "emu_sys" "" "--nocancel"
         stop_joy2key
         get_sys_command "$SYSTEM" "$ROM"
         return
