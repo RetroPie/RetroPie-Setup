@@ -72,7 +72,7 @@ function configure_residualvm() {
     cat > "$romdir/residualvm/+Start ResidualVM.sh" << _EOF_
 #!/bin/bash
 renderer="\$1"
-[[ -z "\$renderer" ]] && renderer="opengl_shaders"
+[[ -z "\$renderer" ]] && renderer="software"
 game="\$2"
 [[ "\$game" =~ ^\+ ]] && game=""
 pushd "$romdir/residualvm" >/dev/null
@@ -86,7 +86,7 @@ _EOF_
     chown $user:$user "$romdir/residualvm/+Start ResidualVM.sh"
     chmod u+x "$romdir/residualvm/+Start ResidualVM.sh"
 
-    addEmulator 1 "$md_id" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh opengl_shaders %BASENAME%"
+    addEmulator 0 "$md_id" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh opengl_shaders %BASENAME%"
     addEmulator 1 "$md_id-software" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh software %BASENAME%"
     addSystem "residualvm" "ResidualVM" ".sh .rvm"
 }
