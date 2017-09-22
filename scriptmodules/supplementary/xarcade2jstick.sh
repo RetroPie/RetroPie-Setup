@@ -31,6 +31,7 @@ function install_xarcade2jstick() {
 function remove_xarcade2jstick() {
     cd "$md_inst"
     make uninstallservice
+    make uninstall
 }
 
 function gui_xarcade2jstick() {
