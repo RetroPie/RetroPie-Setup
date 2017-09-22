@@ -28,31 +28,44 @@ function install_xarcade2jstick() {
     make install
 }
 
-function remove_xarcade2jstick() {
+
+function enable_xarcade2jstick() {
+    cd "$md_inst"
+    make installservice
+}
+
+function disable_xarcade2jstick() {
     cd "$md_inst"
     make uninstallservice
+}
+
+function remove_xarcade2jstick() {
+    [[ -f /lib/systemd/system/xarcade2jstick.service ]] && disable_xarcade2jstick
+    cd "$md_inst"
     make uninstall
 }
 
 function gui_xarcade2jstick() {
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
+    local status
     local options=(
-        1 "Disable Xarcade2Jstick service."
-        2 "Enable Xarcade2Jstick service."
+        1 "Enable Xarcade2Jstick service."
+        2 "Disable Xarcade2Jstick service."
     )
-    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choice" ]]; then
+    while true; do
+        status="Disabled"
+        [[ -f /lib/systemd/system/xarcade2jstick.service ]] && status="Enabled"
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Service is currently: $status" 22 86 16)
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        [[ -z "$choice" ]] && break
         case "$choice" in
             1)
-                cd "$md_inst"
-                make uninstallservice
-                printMsgs "dialog" "Disabled Xarcade2Jstick."
+                enable_xarcade2jstick
+                printMsgs "dialog" "Enabled Xarcade2Jstick."
                 ;;
             2)
-                cd "$md_inst"
-                make installservice
-                printMsgs "dialog" "Enabled Xarcade2Jstick service."
+                disable_xarcade2jstick
+                printMsgs "dialog" "Disabled Xarcade2Jstick service."
                 ;;
         esac
-    fi
+    done
 }
