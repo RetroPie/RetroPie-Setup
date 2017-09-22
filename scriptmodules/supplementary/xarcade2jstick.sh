@@ -28,12 +28,9 @@ function install_xarcade2jstick() {
     make install
 }
 
-function sup_checkInstallXarcade2Jstick() {
-    if [[ ! -d "$md_inst" ]]; then
-        sources_xarcade2jstick
-        build_xarcade2jstick
-        install_xarcade2jstick
-    fi
+function remove_xarcade2jstick() {
+    cd "$md_inst"
+    make uninstallservice
 }
 
 function gui_xarcade2jstick() {
@@ -46,12 +43,12 @@ function gui_xarcade2jstick() {
     if [[ -n "$choice" ]]; then
         case "$choice" in
             1)
-                sup_checkInstallXarcade2Jstick
+                cd "$md_inst"
                 make uninstallservice
                 printMsgs "dialog" "Disabled Xarcade2Jstick."
                 ;;
             2)
-                sup_checkInstallXarcade2Jstick
+                cd "$md_inst"
                 make installservice
                 printMsgs "dialog" "Enabled Xarcade2Jstick service."
                 ;;
