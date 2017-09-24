@@ -44,7 +44,7 @@ function build_xm7() {
 
 function install_xm7() {
     cd linux-sdl/build
-    make -j1 install VERBOSE=1
+    make install
 }
 
 function configure_xm7() {

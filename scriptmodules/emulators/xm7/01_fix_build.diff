@@ -1,3 +1,16 @@
+diff --git a/linux-sdl/CMakeLists.txt b/linux-sdl/CMakeLists.txt
+index e6988ff..00582e5 100644
+--- a/linux-sdl/CMakeLists.txt
++++ b/linux-sdl/CMakeLists.txt
+@@ -41,7 +41,7 @@ else(WITH_AGAR_STATIC)
+   link_directories(${WITH_LIBAGAR_PREFIX}/lib)
+ endif()
+ 
+-set(AGAR_DEPLIBS m jpeg png z dl uim-scm uim Xinerama)
++set(AGAR_DEPLIBS m jpeg png z dl uim-scm uim Xinerama X11)
+ 
+ 
+ find_package(Gettext)
 diff --git a/linux-sdl/fmgen/psg.cpp b/linux-sdl/fmgen/psg.cpp
 index f590cc9..cee80a5 100644
 --- a/linux-sdl/fmgen/psg.cpp
@@ -12,7 +25,7 @@ index f590cc9..cee80a5 100644
  	if (!enveloptable[0][0])
  	{
 diff --git a/linux-sdl/resource/CMakeLists.txt b/linux-sdl/resource/CMakeLists.txt
-index deb1dfb..35edd5b 100644
+index deb1dfb..17053ee 100644
 --- a/linux-sdl/resource/CMakeLists.txt
 +++ b/linux-sdl/resource/CMakeLists.txt
 @@ -47,7 +47,7 @@ if(ImageMagick_convert_FOUND)
@@ -24,16 +37,3 @@ index deb1dfb..35edd5b 100644
  		     ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${loop_var_target}
  		     )
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${loop_var_target} DESTINATION share/xm7)
-diff --git a/linux-sdl/CMakeLists.txt b/linux-sdl/CMakeLists.txt
-index e6988ff..00582e5 100644
---- a/linux-sdl/CMakeLists.txt
-+++ b/linux-sdl/CMakeLists.txt
-@@ -41,7 +41,7 @@ else(WITH_AGAR_STATIC)
-   link_directories(${WITH_LIBAGAR_PREFIX}/lib)
- endif()
- 
--set(AGAR_DEPLIBS m jpeg png z dl uim-scm uim Xinerama)
-+set(AGAR_DEPLIBS m jpeg png z dl uim-scm uim Xinerama X11)
- 
- 
- find_package(Gettext)
