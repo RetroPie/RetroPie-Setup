@@ -565,7 +565,7 @@ function gui_setup() {
                 rps_printInfo "$logfilename"
                 ;;
             R)
-                dialog --defaultno --yesno "Are you sure you want to reboot?" 22 76 2>&1 >/dev/tty || continue
+                dialog --defaultno --yesno "Are you sure you want to reboot?\n\nNote that if you reboot when Emulation Station is running, you will lose any metadata changes." 22 76 2>&1 >/dev/tty || continue
                 reboot_setup
                 ;;
         esac
