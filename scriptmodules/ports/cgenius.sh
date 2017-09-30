@@ -25,11 +25,6 @@ function sources_cgenius() {
     if compareVersions $(gcc -dumpversion) lt 6.0.0; then
         sed -i "s/ADD_DEFINITIONS(-O3)/ADD_DEFINITIONS(-O2)/" src/CMakeLists.txt
     fi
-
-    # fix alignment issue throwing error on arm
-    if isPlatform "arm"; then
-        sed -i "/ADD_DEFINITIONS(-Werror=cast-align)/d" src/CMakeLists.txt
-    fi
 }
 
 function build_cgenius() {
