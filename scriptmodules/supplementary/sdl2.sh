@@ -16,7 +16,7 @@ rp_module_section=""
 rp_module_flags=""
 
 function get_ver_sdl2() {
-    echo "2.0.6"
+    echo "2.0.5"
 }
 
 function get_pkg_ver_sdl2() {
@@ -47,6 +47,7 @@ function sources_sdl2() {
 
     local branch="release-$ver"
     isPlatform "rpi" && branch="retropie-$ver"
+    isPlatform "kms" && branch="kms-2.0.6"
     isPlatform "mali" && branch="mali-$ver"
 
     gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
