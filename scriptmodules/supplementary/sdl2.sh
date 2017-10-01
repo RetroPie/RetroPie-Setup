@@ -16,7 +16,7 @@ rp_module_section=""
 rp_module_flags=""
 
 function get_ver_sdl2() {
-    echo "2.0.5"
+    echo "2.0.6"
 }
 
 function get_pkg_ver_sdl2() {
@@ -49,11 +49,10 @@ function sources_sdl2() {
     isPlatform "rpi" && branch="retropie-$ver"
     isPlatform "mali" && branch="mali-$ver"
 
-    if isPlatform "kms"; then
-        gitPullOrClone "$md_build/$pkg_ver" https://github.com/gizmo98/SDL-mirror.git "retropie-kms-2.0.5"
-    else
-        gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
-    fi
+    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
+
+    isPlatform "kms" && sed -i "s/--host=armv6l-raspberry-linux-gnueabihf/--enable-video-kmsdrm/g" "$md_build/$pkg_ver/debian/rules"
+
     cd "$pkg_ver"
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
 }
