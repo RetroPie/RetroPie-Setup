@@ -153,6 +153,10 @@ function get_os_version() {
 
     # add 32bit/64bit to platform flags
     __platform_flags+=" $(getconf LONG_BIT)bit"
+    
+
+    # configure Raspberry Pi graphics stack
+    isPlatform "rpi" && get_rpi_video
 }
 
 function get_default_gcc() {
@@ -205,6 +209,29 @@ function get_retropie_depends() {
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
     fi
+}
+
+function get_rpi_video() {
+    local configtxt="/boot/config.txt"
+    local testconfig
+
+    # find config.txt from mounted volumes
+    for i in $(ls /dev/mmc* /dev/sd*); do
+        testconfig="$(df -P "$i" | tail -1 | awk '{ print $NF}')/config.txt"
+        [ -f "$testconfig" ] && configtxt="$testconfig" && break
+    done
+
+    # set platform flags for mesa vc4 (KMS/fake KMS) or vendor driver
+    if grep -q "^dtoverlay=vc4-fkms-v3d" "$configtxt"; then
+        __platform_flags+=" mesa kms dispmanx"
+    elif grep -q "^dtoverlay=vc4-kms-v3d" "$configtxt"; then
+        __platform_flags+=" mesa kms"
+    else
+        __platform_flags+=" videocore dispmanx"
+    fi
+
+    # set pkgconfig path for vendor libraries
+    export PKG_CONFIG_PATH="/opt/vc/lib/pkgconfig"
 }
 
 function get_platform() {
