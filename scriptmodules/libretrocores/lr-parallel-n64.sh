@@ -23,7 +23,11 @@ function build_lr-parallel-n64() {
     rpSwap on 750
     make clean
     if isPlatform "rpi" || isPlatform "odroid-c1"; then
-        make platform="$__platform"
+        if isPlatform "mesa"; then
+            make platform="$__platform-mesa"
+        else
+            make platform="$__platform"
+        fi
     else
         make
     fi
