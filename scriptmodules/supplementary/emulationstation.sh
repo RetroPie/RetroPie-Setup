@@ -220,7 +220,7 @@ _EOF_
 
     if isPlatform "x11"; then
         mkdir -p /usr/local/share/{icons,applications}
-        cp "$md_data/retropie.svg" "/usr/local/share/icons/"
+        cp "$scriptdir/scriptmodules/$md_type/emulationstation/retropie.svg" "/usr/local/share/icons/"
         cat > /usr/local/share/applications/retropie.desktop << _EOF_
 [Desktop Entry]
 Type=Application
@@ -255,6 +255,14 @@ function configure_emulationstation() {
     moveConfigDir "$home/.emulationstation" "$configdir/all/emulationstation"
 
     [[ "$mode" == "remove" ]] && return
+
+    # remove other emulation station if it's installed, so we don't end up with
+    # both packages interfering - but leave configs alone so switching is easy
+    if [[ "$md_id" == "emulationstation-dev" ]]; then
+        rmDirExists "$rootdir/$md_type/emulationstation"
+    else
+        rmDirExists "$rootdir/$md_type/emulationstation-dev"
+    fi
 
     init_input_emulationstation
 
