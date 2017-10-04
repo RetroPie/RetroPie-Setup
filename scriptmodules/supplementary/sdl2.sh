@@ -16,11 +16,11 @@ rp_module_section=""
 rp_module_flags=""
 
 function get_ver_sdl2() {
-    echo "2.0.5"
+    echo "2.0.6"
 }
 
 function get_pkg_ver_sdl2() {
-    local ver="$(get_ver_sdl2)+5"
+    local ver="$(get_ver_sdl2)+1"
     isPlatform "rpi" && ver+="rpi"
     isPlatform "mali" && ver+="mali"
     echo "$ver"
@@ -33,7 +33,7 @@ function get_arch_sdl2() {
 function depends_sdl2() {
     # Dependencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
     # already covered by the build-essential package retropie relies on.
-    local depends=(devscripts debhelper dh-autoreconf libasound2-dev libudev-dev libibus-1.0-dev libdbus-1-dev libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev libgl1-mesa-dev)
+    local depends=(devscripts debhelper dh-autoreconf libasound2-dev libudev-dev libibus-1.0-dev libdbus-1-dev libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev libgl1-mesa-dev fcitx-libs-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x11" && depends+=(libpulse-dev)
@@ -45,7 +45,7 @@ function sources_sdl2() {
     local pkg_ver="$(get_pkg_ver_sdl2)"
 
     local branch="release-$ver"
-    isPlatform "rpi" && branch="retropie-$ver"
+    isPlatform "rpi" && branch="rpi-$ver"
     isPlatform "mali" && branch="mali-$ver"
 
     gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
