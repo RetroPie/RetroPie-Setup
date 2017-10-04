@@ -225,6 +225,9 @@ function get_rpi_video() {
         __platform_flags+=" videocore dispmanx"
     fi
 
+    # use our supplied fallback pkgconfig if necessary
+    [[ ! -d "$pkgconfig" ]] && pkgconfig="$scriptdir/pkgconfig"
+
     # set pkgconfig path for vendor libraries
     export PKG_CONFIG_PATH="$pkgconfig"
 }
