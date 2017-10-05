@@ -27,21 +27,36 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    getDepends fbi omxplayer
+    getDepends fbi omxplayer insserv
 }
 
 function install_bin_splashscreen() {
-    cp "$md_data/asplashscreen" "/etc/init.d/"
+    cat > "/etc/systemd/system/asplashscreen.service" << _EOF_
+[Unit]
+Description=Show custom splashscreen
+DefaultDependencies=no
+Before=local-fs-pre.target
+Wants=local-fs-pre.target
+ConditionPathExists=$md_inst/asplashscreen.sh
 
-    iniConfig "=" '"' /etc/init.d/asplashscreen
+[Service]
+Type=oneshot
+ExecStart=$md_inst/asplashscreen.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target
+_EOF_
+
+    gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
+
+    cp "$md_data/asplashscreen.sh" "$md_inst"
+
+    iniConfig "=" '"' "$md_inst/asplashscreen.sh"
     iniSet "ROOTDIR" "$rootdir"
     iniSet "DATADIR" "$datadir"
     iniSet "REGEX_IMAGE" "$(_image_exts_splashscreen)"
     iniSet "REGEX_VIDEO" "$(_video_exts_splashscreen)"
-
-    chmod +x /etc/init.d/asplashscreen
-
-    gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
 
     mkUserDir "$datadir/splashscreens"
     echo "Place your own splashscreens in here." >"$datadir/splashscreens/README.txt"
@@ -67,15 +82,19 @@ function default_splashscreen() {
 }
 
 function enable_splashscreen() {
-    insserv asplashscreen
+    systemctl enable asplashscreen
 }
 
 function disable_splashscreen() {
-    insserv -r asplashscreen
+    systemctl disable asplashscreen
 }
 
 function configure_splashscreen() {
     [[ "$md_mode" == "remove" ]] && return
+
+    # remove legacy service
+    [[ -f "/etc/init.d/asplashscreen" ]] && insserv -r asplashscreen && rm -f /etc/init.d/asplashscreen
+
     disable_plymouth_splashscreen
     enable_splashscreen
     [[ ! -f /etc/splashscreen.list ]] && default_splashscreen
@@ -84,7 +103,8 @@ function configure_splashscreen() {
 function remove_splashscreen() {
     enable_plymouth_splashscreen
     disable_splashscreen
-    rm -f /etc/splashscreen.list
+    rm -f /etc/splashscreen.list /etc/systemd/system/asplashscreen.service
+    systemctl daemon-reload
 }
 
 function choose_path_splashscreen() {
@@ -137,7 +157,7 @@ function choose_splashscreen() {
             options+=("$i" "$splashdir")
             ((i++))
         fi
-    done < <(find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort)
+    done < <(find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh" | sort)
     if [[ "${#options[@]}" -eq 0 ]]; then
         printMsgs "dialog" "There are no splashscreens installed in $path"
         return
@@ -156,7 +176,7 @@ function randomize_splashscreen() {
     )
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    iniConfig "=" '"' /etc/init.d/asplashscreen
+    iniConfig "=" '"' "$md_inst/asplashscreen.sh"
     case "$choice" in
         1)
             iniSet "RANDOMIZE" "retropie"
@@ -201,7 +221,7 @@ function preview_splashscreen() {
                     ;;
                 2)
                     file=$(mktemp)
-                    find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" | sort > "$file"
+                    find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh" | sort > "$file"
                     if [[ -s "$file" ]]; then
                         fbi --timeout 6 --once --autozoom --list "$file"
                     else
@@ -234,11 +254,11 @@ function gui_splashscreen() {
     while true; do
         local enabled=0
         local random=0
-        [[ -n "$(find "/etc/rcS.d" -type l -name "S*asplashscreen")" ]] && enabled=1
+        [[ -n "$(find "/etc/systemd/system/"*".wants" -type l -name "asplashscreen.service")" ]] && enabled=1
         local options=(1 "Choose splashscreen")
         if [[ "$enabled" -eq 1 ]]; then
             options+=(2 "Disable splashscreen on boot (Enabled)")
-            iniConfig "=" '"' /etc/init.d/asplashscreen
+            iniConfig "=" '"' "$md_inst/asplashscreen.sh"
             iniGet "RANDOMIZE"
             random=1
             [[ "$ini_value" == "disabled" ]] && random=0
