@@ -111,7 +111,7 @@ function retropie_welcome() {
                 out+="${fgred}Running Processes..: $(ps ax | wc -l | tr -d " ")"
                 ;;
             8)
-                out+="${fgred}IP Address.........: $(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)"
+                out+="${fgred}IP Address.........: $(ip route get 8.8.8.8 2>/dev/null | awk '{print $NF; exit}')"
                 ;;
             9)
                 out+="Temperature........: CPU: $cpuTempC°C/$cpuTempF°F GPU: $gpuTempC°C/$gpuTempF°F"
