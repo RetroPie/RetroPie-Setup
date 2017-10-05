@@ -181,9 +181,11 @@ function configure_retroarch() {
     # rgui by default
     iniSet "menu_driver" "rgui"
 
-    # hide online updater menu options
+    # hide core updater menu option
     iniSet "menu_show_core_updater" "false"
-    iniSet "menu_show_online_updater" "false"
+    
+    # show online updater menu option (for cheats)
+    iniSet "menu_show_online_updater" "true"
 
     # disable unnecessary xmb menu tabs
     iniSet "xmb_show_add" "false"
