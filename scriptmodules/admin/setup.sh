@@ -64,8 +64,9 @@ function depends_setup() {
         exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
     fi
 
-    if isPlatform "rpi" && [[ -f /boot/config.txt ]] && grep -q "^dtoverlay=vc4-kms-v3d" /boot/config.txt; then
-        printMsgs "dialog" "You have the experimental desktop GL driver enabled. This is NOT compatible with RetroPie, and Emulation Station as well as emulators will fail to launch. Please disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
+    if isPlatform "rpi" && isPlatform "mesa"; then
+        printMsgs "dialog" "ERROR: You have the experimental desktop GL driver enabled. This is NOT compatible with RetroPie, and Emulation Station as well as emulators will fail to launch.\n\nPlease disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
+        exit 1
     fi
 
     # make sure user has the correct group permissions
