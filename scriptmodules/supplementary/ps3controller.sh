@@ -16,7 +16,7 @@ rp_module_section="driver"
 
 function depends_ps3controller() {
     depends_bluetooth
-    local depends=(checkinstall libusb-dev libbluetooth-dev joystick)
+    local depends=(checkinstall libusb-dev libbluetooth-dev joystick insserv)
     getDepends "${depends[@]}"
 }
 
