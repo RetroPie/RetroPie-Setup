@@ -21,17 +21,18 @@ function _update_hook_kodi() {
 }
 
 function depends_kodi() {
-    if [[ "$md_mode" == "install" ]]; then
-        if isPlatform "x86"; then
-            apt-add-repository -y ppa:team-xbmc/ppa
-        fi
-    fi
-
     if isPlatform "rpi"; then
-        # remove old repositories
-        rm -f /etc/apt/sources.list.d/mene.list
-        rm -f /etc/apt/sources.list.d/pipplware.list
-        apt-key del 4096R/BAA567BB >/dev/null
+        if [[ "$md_mode" == "install" ]]; then
+            # remove old repository
+            rm -f /etc/apt/sources.list.d/mene.list
+            echo "deb http://pipplware.pplware.pt/pipplware/dists/jessie/main/binary/ ./" >/etc/apt/sources.list.d/pipplware.list
+            wget -q -O- http://pipplware.pplware.pt/pipplware/key.asc | apt-key add - >/dev/null
+        else
+            rm -f /etc/apt/sources.list.d/pipplware.list
+            apt-key del 4096R/BAA567BB >/dev/null
+        fi
+    elif isPlatform "x86" && [[ "$md_mode" == "install" ]]; then
+        apt-add-repository -y ppa:team-xbmc/ppa
     fi
 
     getDepends policykit-1
