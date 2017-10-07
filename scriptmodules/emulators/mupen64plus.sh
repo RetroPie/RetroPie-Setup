@@ -55,6 +55,7 @@ function sources_mupen64plus() {
     
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
+    isPlatform "rpi" && patch_rpi_video "GLideN64/src/Graphics/OpenGLContext/GLFunctions.cpp"
 }
 
 function build_mupen64plus() {

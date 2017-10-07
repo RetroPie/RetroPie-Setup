@@ -229,7 +229,24 @@ function get_rpi_video() {
     [[ ! -d "$pkgconfig" ]] && pkgconfig="$scriptdir/pkgconfig"
 
     # set pkgconfig path for vendor libraries
-    export PKG_CONFIG_PATH="$pkgconfig"
+    compareVersions "$__os_release" ge 9 && export PKG_CONFIG_PATH="$pkgconfig"
+}
+
+function patch_rpi_video() {
+    compareVersions "$__os_release" ge 9 && return
+    [[ "$(pwd)" == "$scriptdir" ]] && return
+
+    local file
+    for file in "$@" $(grep -rlI --include \*Makefile* --include \*CMake*.txt --include \*.cmake --include \*.sh \
+      -e brcmEGL -e brcmGLESv2 -e brcmOpenVG -e brcmWFC); do
+        echo "Applying Raspberry Pi legacy graphics patch: $file (in $(pwd))"
+        sed -i -e "s/brcmEGL/EGL/g" \
+          -e "s/brcmGLESv2/GLESv2/g" \
+          -e "s/brcmOpenVG/OpenVG/g" \
+          -e "s/brcmWFC/WFC/g" \
+          -e 's/VC_PREFIX="brcm"/VC_PREFIX=""/g' \
+          "$file"
+    done
 }
 
 function get_platform() {
