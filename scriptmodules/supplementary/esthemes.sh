@@ -88,6 +88,7 @@ function gui_esthemes() {
         'G-rila fundamental'
         'ruckage nes-mini'
         'ruckage famicom-mini'
+        'ruckage snes-mini'
         'anthonycaccese crt'
         'anthonycaccese crt-centered'
         'anthonycaccese art-book'
