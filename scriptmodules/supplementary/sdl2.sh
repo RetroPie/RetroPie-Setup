@@ -51,6 +51,7 @@ function sources_sdl2() {
     gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
     cd "$pkg_ver"
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
+    isPlatform "rpi" && patch_rpi_video "src/video/SDL_egl.c"
 }
 
 function build_sdl2() {

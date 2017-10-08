@@ -352,6 +352,7 @@ function gitPullOrClone() {
         echo "$git \"$repo\" \"$dir\""
         runCmd $git "$repo" "$dir"
     fi
+    isPlatform "rpi" && patch_rpi_video
 }
 
 # @fn setupDirectories()
@@ -960,6 +961,8 @@ function downloadAndExtract() {
         runCmd "${cmd[@]}" < <(wget -q -O- "$url")
         ret=$?
     fi
+
+    isPlatform "rpi" && patch_rpi_video
 
     return $ret
 }
