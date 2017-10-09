@@ -1025,8 +1025,9 @@ function joy2keyStart() {
 ## @brief Stop previously started joy2key.py process.
 function joy2keyStop() {
     if [[ -n $__joy2key_pid ]]; then
-        kill -INT $__joy2key_pid 2>/dev/null
-        sleep 1
+        while kill -INT $__joy2key_pid 2>/dev/null; do
+            sleep 0.1
+        done
     fi
 }
 
