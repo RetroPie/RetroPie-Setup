@@ -31,6 +31,8 @@ JS_EVENT_BUTTON = 0x01
 JS_EVENT_AXIS = 0x02
 JS_EVENT_INIT = 0x80
 
+FB_UNBLANK = '\033[13]'
+
 CONFIG_DIR = '/opt/retropie/configs/'
 RETROARCH_CFG = CONFIG_DIR + 'all/retroarch.cfg'
 
@@ -194,6 +196,9 @@ def process_event(event):
     if hex_chars:
         for c in hex_chars:
             fcntl.ioctl(tty_fd, termios.TIOCSTI, c)
+        if os.getenv('TERM') == 'linux':
+            sys.stdout.write(FB_UNBLANK)
+            sys.stdout.flush()
         return True
 
     return False
