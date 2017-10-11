@@ -35,7 +35,8 @@ function depends_usbromservice() {
 }
 
 function install_bin_usbromservice() {
-    [[ ! -f "/etc/usbmount/rp_disabled" ]] && install_scripts_usbromservice
+    [[ ! -f "$md_inst/disabled" ]] && install_scripts_usbromservice
+    touch "$md_inst/installed"
 }
 
 function install_scripts_usbromservice() {
@@ -50,7 +51,7 @@ function install_scripts_usbromservice() {
 }
 
 function enable_usbromservice() {
-    rm -f "/etc/usbmount/rp_disabled"
+    rm -f "$md_inst/disabled"
     install_scripts_usbromservice
 }
 
@@ -60,7 +61,7 @@ function disable_usbromservice() {
         file="/etc/usbmount/mount.d/${file##*/}"
         rm -f "$file"
     done
-    touch "/etc/usbmount/rp_disabled"
+    touch "$md_inst/disabled"
 }
 
 function remove_usbromservice() {
