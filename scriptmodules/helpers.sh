@@ -1001,6 +1001,8 @@ _EOF_
 ## @details Arguments are curses capability names or hex values starting with '0x'
 ## see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
 function joy2keyStart() {
+    [[ "$TERM" != "linux" ]] && return
+
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
         params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
@@ -1024,6 +1026,8 @@ function joy2keyStart() {
 ## @fn joy2keyStop()
 ## @brief Stop previously started joy2key.py process.
 function joy2keyStop() {
+    [[ "$TERM" != "linux" ]] && return
+
     if [[ -n $__joy2key_pid ]]; then
         kill -INT $__joy2key_pid 2>/dev/null
         sleep 1
