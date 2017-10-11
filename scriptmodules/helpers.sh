@@ -345,8 +345,8 @@ function gitPullOrClone() {
         popd > /dev/null
     else
         local git="git clone --recursive"
-        if [[ "$__persistent_repos" -ne 1 ]]; then
-            [[ "$repo" =~ github ]] && git+=" --depth 1"
+        if [[ "$__persistent_repos" -ne 1 && "$repo" == *github* ]]; then
+            git+=" --depth 1"
         fi
         [[ "$branch" != "master" ]] && git+=" --branch $branch"
         echo "$git \"$repo\" \"$dir\""
