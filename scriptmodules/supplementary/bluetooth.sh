@@ -56,7 +56,7 @@ function list_available_bluetooth() {
         mkfifo "$fifo"
         exec 3<>"$fifo"
         local line
-        while read -r -n12 line; do
+        while read -r -n18 line; do
             if [[ "$line" == *"[bluetooth]"* ]]; then
                 echo "scan on" >&3
                 read -r line
