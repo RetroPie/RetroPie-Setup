@@ -16,7 +16,7 @@ rp_module_section="driver"
 
 function depends_ps3controller() {
     depends_bluetooth
-    local depends=(checkinstall libusb-dev libbluetooth-dev joystick insserv)
+    local depends=(checkinstall libusb-dev libbluetooth-dev joystick)
     getDepends "${depends[@]}"
 }
 
@@ -47,7 +47,6 @@ function install_ps3controller() {
 
     cd sixad
     checkinstall -y --fstrans=no
-    insserv sixad
 
     echo "$branch" >"$md_inst/type.txt"
 
@@ -55,19 +54,10 @@ function install_ps3controller() {
     iniConfig " = " "" "/etc/bluetooth/main.conf"
     iniSet "DiscoverableTimeout" "0"
     iniSet "PairableTimeout" "0"
-
-    # Start sixad daemon
-    /etc/init.d/sixad start
 }
 
 function remove_ps3controller() {
-    /etc/init.d/sixad stop
-    insserv -r sixad
     dpkg --purge sixad
-    rm -f /etc/udev/rules.d/99-sixpair.rules
-    rm -f /etc/udev/rules.d/10-local.rules
-    # just incase permissions were not restored
-    [[ -f /usr/sbin/bluetoothd ]] && chmod 755 /usr/sbin/bluetoothd
 }
 
 function pair_ps3controller() {
