@@ -1001,6 +1001,10 @@ _EOF_
 ## @details Arguments are curses capability names or hex values starting with '0x'
 ## see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
 function joy2keyStart() {
+    # don't start on SSH sessions
+    # (check for bracket in output - ip/name in brackets over a SSH connection)
+    [[ "$(who -m)" == *\(* ]] && return
+
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
         params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
