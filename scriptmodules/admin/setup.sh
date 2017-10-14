@@ -486,6 +486,7 @@ function reboot_setup()
 # retropie-setup main menu
 function gui_setup() {
     depends_setup
+    [[ "$TERM" == "linux" ]] && setterm --blank poke
     joy2keyStart
     local default
     while true; do

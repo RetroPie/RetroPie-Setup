@@ -1025,9 +1025,10 @@ function runcommand() {
         exit 1
     fi
 
-    # turn off cursor and clear screen
+    # turn off cursor, clear screen and unblank
     tput civis
     clear
+    [[ "$TERM" == "linux" ]] && setterm --blank poke
 
     rm -f "$LOG"
     echo -e "$SYSTEM\n$EMULATOR\n$ROM\n$COMMAND" >/dev/shm/runcommand.info
