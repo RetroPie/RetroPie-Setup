@@ -26,9 +26,9 @@ function sources_atari800() {
     downloadAndExtract "$__archive_url/atari800-3.1.0.tar.gz" "$md_build" 1
     if isPlatform "rpi"; then
         applyPatch rpi_fixes.diff <<\_EOF_
---- a/src/configure.ac	2014-04-12 13:58:16.000000000 +0000
-+++ b/src/configure.ac	2015-02-14 22:39:42.000000000 +0000
-@@ -136,7 +136,8 @@
+--- a/src/configure.ac
++++ b/src/configure.ac
+@@ -136,7 +136,8 @@ if [[ "$a8_target" = "ps2" ]]; then
      LDFLAGS="$LDFLAGS -L${PS2SDK}/ports/lib"
  fi
  if [[ "$a8_target" = "rpi" ]]; then
@@ -38,14 +38,18 @@ function sources_atari800() {
      CFLAGS="$CFLAGS -I${RPI_SDK}/include -I${RPI_SDK}/include/SDL -I${RPI_SDK}/include/interface/vmcs_host/linux -I${RPI_SDK}/include/interface/vcos/pthreads"
      LDFLAGS="$LDFLAGS -Wl,--unresolved-symbols=ignore-in-shared-libs -L${RPI_SDK}/lib"
  fi
-@@ -309,6 +310,7 @@
+@@ -309,8 +310,9 @@ dnl BeOS has a real issue with redundant-decls
          AC_DEFINE(SUPPORTS_PLATFORM_CONFIGURE,1,[Additional config file options.])
          AC_DEFINE(SUPPORTS_PLATFORM_CONFIGSAVE,1,[Save additional config file options.])
          AC_DEFINE(SUPPORTS_PLATFORM_PALETTEUPDATE,1,[Update the Palette if it changed.])
+-        A8_NEED_LIB(GLESv2)
+-        A8_NEED_LIB(EGL)
 +        AC_DEFINE(PLATFORM_MAP_PALETTE,1,[Platform-specific mapping of RGB palette to display surface.])
-         A8_NEED_LIB(GLESv2)
-         A8_NEED_LIB(EGL)
++        A8_NEED_LIB(brcmGLESv2)
++        A8_NEED_LIB(brcmEGL)
          A8_NEED_LIB(SDL)
+         A8_NEED_LIB(bcm_host)
+         OBJS="atari_rpi.o gles2/video.o sdl/main.o sdl/input.o"
 _EOF_
     fi
 }
