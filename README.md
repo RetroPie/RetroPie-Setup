@@ -22,7 +22,12 @@ Then you can download the latest RetroPie setup script with
 cd
 git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
 ```
+Or, you can do it the lazy way without git:
 
+```shell
+cd
+wget https://codeload.github.com/RetroPie/RetroPie-Setup/zip/master -O master.zip; unzip master.zip; rm master.zip
+```
 The script is executed with 
 
 ```shell
