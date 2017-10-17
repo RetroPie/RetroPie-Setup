@@ -464,7 +464,7 @@ function moveConfigFile() {
 ## @brief Compares two files using diff.
 ## @retval 0 if the files were the same
 ## @retval 1 if they were not
-## @retval >1 an error occured
+## @retval >1 an error occurred
 function diffFiles() {
     diff -q "$1" "$2" >/dev/null
     return $?

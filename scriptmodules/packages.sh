@@ -267,7 +267,7 @@ function rp_callModule() {
                 fi
             done
         else
-            # check for existance and copy any files/directories returned
+            # check for existence and copy any files/directories returned
             if [[ -n "$md_ret_files" ]]; then
                 for file in "${md_ret_files[@]}"; do
                     if [[ ! -e "$md_build/$file" ]]; then
