@@ -109,6 +109,8 @@ function updatescript_setup()
 function post_update_setup() {
     local return_func=("$@")
 
+    joy2keyStart
+
     echo "$__version" >"$rootdir/VERSION"
 
     clear
