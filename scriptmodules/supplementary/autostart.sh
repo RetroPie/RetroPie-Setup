@@ -38,14 +38,16 @@ _EOF_
     sed -i '/#auto/d' "$script"
     # make sure there is a newline
     sed -i '$a\' "$script"
+    echo "if \$(whoami) == \"${user}\"; then #auto" >> "$script"
     case "$mode" in
         kodi)
-            echo -e "kodi #auto\nemulationstation #auto" >>"$script"
+            echo -e "    kodi #auto\nemulationstation #auto" >>"$script"
             ;;
         es|*)
-            echo "emulationstation #auto" >>"$script"
+            echo "    emulationstation #auto" >>"$script"
             ;;
     esac
+    echo "fi #auto" >> "$script"
     chown $user:$user "$script"
 }
 
