@@ -13,7 +13,7 @@ rp_module_id="zdoom"
 rp_module_desc="ZDoom - Enhanced port of the official DOOM source"
 rp_module_licence="OTHER https://raw.githubusercontent.com/RetroPie/zdoom/master/docs/licenses/README.TXT"
 rp_module_section="opt"
-rp_module_flags=""
+rp_module_flags="newbrcmlibs"
 
 function depends_zdoom() {
     local depends=(

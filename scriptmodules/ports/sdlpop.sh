@@ -13,6 +13,7 @@ rp_module_id="sdlpop"
 rp_module_desc="SDLPoP - Port of Prince of Persia"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/NagyD/SDLPoP/master/doc/gpl-3.0.txt"
 rp_module_section="opt"
+rp_module_flags="newbrcmlibs"
 
 function depends_sdlpop() {
     getDepends libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev
