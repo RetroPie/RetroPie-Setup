@@ -28,7 +28,7 @@ function _autostart_script_autostart() {
 
     cat >/etc/profile.d/10-retropie.sh <<_EOF_
 # launch our autostart apps (if we are on the correct tty)
-if [ "\`tty\`" = "/dev/tty1" ]; then
+if [ "\`tty\`" = "/dev/tty1" ] && [ "\$USER" = "$user" ]; then
     bash "$script"
 fi
 _EOF_
