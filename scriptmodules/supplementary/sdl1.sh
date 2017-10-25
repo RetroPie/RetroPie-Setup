@@ -16,7 +16,27 @@ rp_module_section=""
 rp_module_flags="!mali !x86"
 
 function get_pkg_ver_sdl1() {
-    echo "1.2.15-12rpi"
+    local basever
+    local revision
+    local rpi_revision
+
+    if compareVersions "$__os_release" ge 9; then
+        basever="1.2.15+dfsg1"
+        revision="4"
+        rpi_revision="rpi1"
+    else
+        basever="1.2.15"
+        revision="10"
+        rpi_revision="rpi1"
+    fi
+
+    if [[ "$1" == "source" ]]; then
+        echo "$basever-$revision"
+    elif [[ "$1" == "base" ]]; then
+        echo "$basever"
+    else
+        echo "$basever-$(expr $revision + 1)~$rpi_revision~$__os_codename"
+    fi
 }
 
 function depends_sdl1() {
@@ -25,12 +45,12 @@ function depends_sdl1() {
 
 function sources_sdl1() {
     local file
-    for file in libsdl1.2_1.2.15.orig.tar.gz libsdl1.2_1.2.15-10.dsc libsdl1.2_1.2.15-10.debian.tar.xz; do
-        wget -q -O "$file" "http://ftp.debian.org/debian/pool/main/libs/libsdl1.2/$file"
+    for file in libsdl1.2_$(get_pkg_ver_sdl1 base).orig.tar.xz libsdl1.2_$(get_pkg_ver_sdl1 base).orig.tar.gz libsdl1.2_$(get_pkg_ver_sdl1 source).dsc libsdl1.2_$(get_pkg_ver_sdl1 source).debian.tar.xz; do
+        wget -q -O "$file" "http://mirrordirector.raspbian.org/raspbian/pool/main/libs/libsdl1.2/$file" || rm -f "$file"
     done
-    dpkg-source -x libsdl1.2_1.2.15-10.dsc
+    dpkg-source -x libsdl1.2_$(get_pkg_ver_sdl1 source).dsc
 
-    cd libsdl1.2-1.2.15
+    cd libsdl1.2-$(get_pkg_ver_sdl1 base)
     # add fixes from https://github.com/RetroPie/sdl1/compare/master...rpi
     wget https://github.com/RetroPie/sdl1/compare/master...rpi.diff -O debian/patches/rpi.diff
     echo "rpi.diff" >>debian/patches/series
@@ -40,7 +60,7 @@ function sources_sdl1() {
 }
 
 function build_sdl1() {
-    cd libsdl1.2-1.2.15
+    cd libsdl1.2-$(get_pkg_ver_sdl1 base)
     dpkg-buildpackage
     local dest="$__tmpdir/archives/$__os_codename/$__platform"
     mkdir -p "$dest"
