@@ -116,6 +116,7 @@ function gui_esthemes() {
         'RetroHursty69 stirling'
         'lostless playstation'
         'mrharias superdisplay'
+        'coinjunkie synthwave'
     )
     while true; do
         local theme
