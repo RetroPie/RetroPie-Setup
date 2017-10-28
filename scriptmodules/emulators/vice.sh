@@ -50,6 +50,7 @@ function configure_vice() {
 
 BIN="\${0%/*}/\$1"
 ROM="\$2"
+PARAMS=("\${@:3}")
 
 romdir="\${ROM%/*}"
 ext="\${ROM##*.}"
@@ -63,7 +64,7 @@ if [[ \$? == 0 ]]; then
     romdir="\$arch_dir"
 fi
 
-"\$BIN" -chdir "\$romdir" "\$ROM"
+"\$BIN" -chdir "\$romdir" "\${PARAMS[@]}" "\$ROM"
 archiveCleanup
 _EOF_
 
@@ -77,7 +78,7 @@ _EOF_
     addEmulator 0 "$md_id-xpet" "c64" "$md_inst/bin/vice.sh xpet %ROM%"
     addEmulator 0 "$md_id-xplus4" "c64" "$md_inst/bin/vice.sh xplus4 %ROM%"
     addEmulator 0 "$md_id-xvic" "c64" "$md_inst/bin/vice.sh xvic %ROM%"
-    addEmulator 0 "$md_id-xvic-cart" "c64" "$md_inst/bin/vice.sh 'xvic -cartgeneric' %ROM%"
+    addEmulator 0 "$md_id-xvic-cart" "c64" "$md_inst/bin/vice.sh xvic %ROM% -cartgeneric"
     addSystem "c64"
 
     [[ "$md_mode" == "remove" ]] && return
