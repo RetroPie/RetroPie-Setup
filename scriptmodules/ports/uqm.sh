@@ -13,7 +13,7 @@ rp_module_id="uqm"
 rp_module_desc="The Ur-Quan Masters (Port of DOS game Star Control 2)"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/davidben/uqm/nacl/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="!mali !kms"
 
 function _update_hook_uqm() {
     # to show as installed in retropie-setup 4.x

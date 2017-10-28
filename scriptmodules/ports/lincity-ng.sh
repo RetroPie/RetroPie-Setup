@@ -13,7 +13,7 @@ rp_module_id="lincity-ng"
 rp_module_desc="lincity-ng - Open Source City Building Game"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/lincity-ng/lincity-ng/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="!mali !kms"
 
 function _update_hook_lincity-ng() {
     # to show as installed in retropie-setup 4.x

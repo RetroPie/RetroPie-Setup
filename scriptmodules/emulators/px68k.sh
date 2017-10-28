@@ -13,7 +13,7 @@ rp_module_id="px68k"
 rp_module_desc="SHARP X68000 Emulator"
 rp_module_help="You need to copy a X68000 bios file (iplrom30.dat, iplromco.dat, iplrom.dat, or iplromxv.dat), and the font file (cgrom.dat or cgrom.tmp) to $romdir/BIOS/keropi. Use F12 to access the in emulator menu."
 rp_module_section="exp"
-rp_module_flags="!mali"
+rp_module_flags="!mali !kms"
 
 function depends_px68k() {
     getDepends libsdl1.2-dev libsdl-gfx1.2-dev

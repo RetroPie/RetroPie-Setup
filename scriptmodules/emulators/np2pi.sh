@@ -13,7 +13,7 @@ rp_module_id="np2pi"
 rp_module_desc="NEC PC-9801 emulator"
 rp_module_help="ROM Extensions: .d88 .d98 .88d .98d .fdi .xdf .hdm .dup .2hd .tfd .hdi .thd .nhd .hdd\n\nCopy your pc98 games to to $romdir/pc88\n\nCopy bios files 2608_bd.wav, 2608_hh.wav, 2608_rim.wav, 2608_sd.wav, 2608_tom.wav 2608_top.wav, bios.rom, FONT.ROM and sound.rom to $biosdir/pc98"
 rp_module_section="exp"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !x86 !mali !kms"
 
 function depends_np2pi() {
     getDepends libsdl1.2-dev libasound2-dev libsdl-ttf2.0-dev fonts-takao-gothic

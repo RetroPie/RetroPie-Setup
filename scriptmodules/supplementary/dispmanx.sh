@@ -12,7 +12,7 @@
 rp_module_id="dispmanx"
 rp_module_desc="Configure emulators to use dispmanx SDL"
 rp_module_section="config"
-rp_module_flags="!mali !x11"
+rp_module_flags="!mali !x11 !kms"
 
 function gui_dispmanx() {
     iniConfig " = " '"' "$configdir/all/dispmanx.cfg"
