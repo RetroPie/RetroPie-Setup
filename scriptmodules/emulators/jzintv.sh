@@ -14,7 +14,7 @@ rp_module_desc="Intellivision emulator"
 rp_module_help="ROM Extensions: .int .bin\n\nCopy your Intellivision roms to $romdir/intellivision\n\nCopy the required BIOS files exec.bin and grom.bin to $biosdir"
 rp_module_licence="GPL2 http://spatula-city.org/%7Eim14u2c/intv/"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="dispmanx !mali !kms"
 
 function depends_jzintv() {
     getDepends libsdl1.2-dev

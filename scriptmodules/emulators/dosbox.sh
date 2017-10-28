@@ -14,7 +14,7 @@ rp_module_desc="DOS emulator"
 rp_module_help="ROM Extensions: .bat .com .exe .sh\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk/COPYING"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="dispmanx !mali !kms"
 
 function depends_dosbox() {
     getDepends libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng12-dev automake autoconf zlib1g-dev

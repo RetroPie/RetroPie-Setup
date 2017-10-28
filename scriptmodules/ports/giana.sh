@@ -12,7 +12,7 @@
 rp_module_id="giana"
 rp_module_desc="Giana's Return"
 rp_module_section="opt"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!x86 !mali !kms"
 
 function depends_giana() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev libraspberrypi-dev

@@ -14,7 +14,7 @@ rp_module_desc="NDS emu - DraStic"
 rp_module_help="ROM Extensions: .nds .zip\n\nCopy your Nintendo DS roms to $romdir/nds"
 rp_module_licence="PROP"
 rp_module_section="exp"
-rp_module_flags="!mali !x86 !armv6"
+rp_module_flags="!mali !x86 !armv6 !kms"
 
 function install_bin_drastic() {
     downloadAndExtract "http://drastic-ds.com/drastic_rpi.tar.bz2" "$md_inst" 1

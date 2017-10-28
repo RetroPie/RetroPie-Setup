@@ -14,7 +14,7 @@ rp_module_desc="Fujitsu FM-7 series emulator"
 rp_module_help="ROM Extensions: .d77 .t77 .d88 .2d \n\nCopy your FM-7 games to to $romdir/xm7\n\nCopy bios files DICROM.ROM, EXTSUB.ROM, FBASIC30.ROM, INITIATE.ROM, KANJI1.ROM, KANJI2.ROM, SUBSYS_A.ROM, SUBSYS_B.ROM, SUBSYSCG.ROM, SUBSYS_C.ROM, fddseek.wav, relayoff.wav and relay_on.wav to $biosdir/xm7"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/nakatamaho/XM7-for-SDL/master/Doc/mess/license.txt"
 rp_module_section="exp"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="dispmanx !mali !kms"
 
 function depends_xm7() {
     getDepends libjpeg-dev libsdl1.2-dev libsdl-mixer1.2-dev libtool libpng12-dev libuim-dev libfreetype6-dev libfontconfig1-dev gawk fonts-takao libxinerama-dev libx11-dev imagemagick
