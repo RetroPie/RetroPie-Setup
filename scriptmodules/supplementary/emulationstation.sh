@@ -169,13 +169,17 @@ function init_input_emulationstation() {
         echo "<inputList />" >"$es_config"
     fi
 
-    # add our inputconfiguration.sh inputAction if it is missing
+    # add/update our inputconfiguration.sh inputAction
     if [[ $(xmlstarlet sel -t -v "count(/inputList/inputAction[@type='onfinish'])" "$es_config") -eq 0 ]]; then
         xmlstarlet ed -L -S \
             -s "/inputList" -t elem -n "inputActionTMP" -v "" \
             -s "//inputActionTMP" -t attr -n "type" -v "onfinish" \
             -s "//inputActionTMP" -t elem -n "command" -v "$md_inst/scripts/inputconfiguration.sh" \
             -r "//inputActionTMP" -v "inputAction" "$es_config"
+    else
+        xmlstarlet ed -L \
+            -u "/inputList/inputAction[@type='onfinish']/command" -v "$md_inst/scripts/inputconfiguration.sh" \
+            "$es_config"
     fi
 
     chown $user:$user "$es_config"
