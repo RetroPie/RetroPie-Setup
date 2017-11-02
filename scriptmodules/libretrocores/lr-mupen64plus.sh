@@ -42,14 +42,18 @@ function sources_lr-mupen64plus() {
 
 function build_lr-mupen64plus() {
     rpSwap on 750
-    make clean
+    local params=()
     if isPlatform "rpi"; then
-        make platform="$__platform"
+        params+=(platform="$__platform")
     elif isPlatform "mali"; then
-        make platform="odroid"
+        params+=(platform="odroid")
     else
-        make
+        isPlatform "arm" && params+=(WITH_DYNAREC=arm)
+        isPlatform "neon" && params+=(HAVE_NEON=1)
+        isPlatform "gles" && params+=(FORCE_GLES=1)
     fi
+    make clean
+    make "${params[@]}"
     rpSwap off
     md_ret_require="$md_build/mupen64plus_libretro.so"
 }
