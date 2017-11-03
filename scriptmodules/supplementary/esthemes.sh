@@ -119,6 +119,7 @@ function gui_esthemes() {
         'coinjunkie synthwave'
         'RetroHursty69 boxalloyred'
         'RetroHursty69 boxalloyblue'
+        'Saracade scv720'
     )
     while true; do
         local theme
