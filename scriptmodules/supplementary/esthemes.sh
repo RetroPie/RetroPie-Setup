@@ -117,6 +117,9 @@ function gui_esthemes() {
         'lostless playstation'
         'mrharias superdisplay'
         'coinjunkie synthwave'
+        'RetroHursty69 boxalloyred'
+        'RetroHursty69 boxalloyblue'
+        'Saracade scv720'
     )
     while true; do
         local theme
