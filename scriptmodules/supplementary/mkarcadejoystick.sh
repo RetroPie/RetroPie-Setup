@@ -34,7 +34,13 @@ function build_mkarcadejoystick() {
     if dkms status | grep -q "^mk_arcade_joystick"; then
         _dkms_remove_mkarcadejoystick
     fi
-    dkms install -m mk_arcade_joystick_rpi -v 0.1.5 -k "$(ls -1 /lib/modules | tail -n -1)"
+    local kernel
+    if [[ "$__chroot" -eq 1 ]]; then
+        kernel="$(ls -1 /lib/modules | tail -n -1)"
+    else
+        kernel="$(uname -r)"
+    fi
+    dkms install -m mk_arcade_joystick_rpi -v 0.1.5 -k "$kernel"
     if dkms status | grep -q "^mk_arcade_joystick"; then
         md_ret_error+=("Failed to install $md_id")
         return 1
