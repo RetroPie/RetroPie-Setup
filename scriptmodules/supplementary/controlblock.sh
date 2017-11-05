@@ -39,6 +39,7 @@ function install_controlblock() {
     # install from there to system folders
     cd "$md_inst/build"
     make install
+    [[ ! -f "$md_inst/disabled" ]] && make installservice
 }
 
 function gui_controlblock() {
@@ -53,10 +54,12 @@ function gui_controlblock() {
         case "$choice" in
             1)
                 make -C "$md_inst/build" installservice
+                rm "$md_inst/disabled"
                 printMsgs "dialog" "Enabled ControlBlock driver."
                 ;;
             2)
                 make -C "$md_inst/build" uninstallservice
+                touch "$md_inst/disabled"
                 printMsgs "dialog" "Disabled ControlBlock driver."
                 ;;
         esac
