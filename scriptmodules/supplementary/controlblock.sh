@@ -39,6 +39,7 @@ function install_controlblock() {
     # install from there to system folders
     cd "$md_inst/build"
     make install
+    make installservice
 }
 
 function gui_controlblock() {

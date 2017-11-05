@@ -39,6 +39,7 @@ function install_powerblock() {
     # install from there to system folders
     cd "$md_inst/build"
     make install
+    make installservice
 }
 
 function gui_powerblock() {
