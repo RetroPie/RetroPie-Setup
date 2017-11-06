@@ -14,7 +14,7 @@ rp_module_desc="TI-99/SIM - Texas Instruments Home Computer Emulator"
 rp_module_help="ROM Extension: .ctg\n\nCopy your TI-99 games to $romdir/ti99\n\nCopy the required BIOS file TI-994A.ctg (case sensitive) to $biosdir"
 rp_module_licence="GPL2 http://www.mrousseau.org/programs/ti99sim/"
 rp_module_section="exp"
-rp_module_flags="!mali"
+rp_module_flags="!mali !kms"
 
 function depends_ti99sim() {
     getDepends libsdl1.2-dev libssl-dev

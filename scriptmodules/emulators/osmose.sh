@@ -14,7 +14,7 @@ rp_module_desc="Gamegear emulator Osmose"
 rp_module_help="ROM Extensions: .bin .gg .sms .zip\nCopy your Game Gear roms to $romdir/gamegear\n\nMasterSystem roms to $romdir/mastersystem"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/osmose-rpi/master/license.txt"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="!mali !kms"
 
 function depends_osmose() {
     getDepends libsdl1.2-dev

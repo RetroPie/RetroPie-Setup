@@ -14,7 +14,7 @@ rp_module_desc="NeoGeo emulator GnGeoPi"
 rp_module_help="ROM Extension: .zip\n\nCopy your GnGeoPi roms to $romdir/neogeo\n\nCopy the required BIOS file neogeo.zip BIOS to $romdir/neogeo"
 rp_module_licence="NONCOM https://github.com/ymartel06/GnGeo-Pi/blob/master/gngeo/COPYING"
 rp_module_section="opt"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!x86 !mali !kms"
 
 function depends_gngeopi() {
     getDepends libsdl1.2-dev

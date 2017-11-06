@@ -13,7 +13,7 @@ rp_module_id="kodi"
 rp_module_desc="Kodi - Open source home theatre software"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/xbmc/xbmc/master/LICENSE.GPL"
 rp_module_section="opt"
-rp_module_flags="!mali !osmc !xbian"
+rp_module_flags="!mali !osmc !xbian !kms"
 
 function _update_hook_kodi() {
     # to show as installed in retropie-setup 4.x

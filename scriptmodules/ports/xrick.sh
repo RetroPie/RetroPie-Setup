@@ -13,7 +13,7 @@ rp_module_id="xrick"
 rp_module_desc="xrick - Port of Rick Dangerous"
 rp_module_licence="GPL https://raw.githubusercontent.com/HerbFargus/xrick/master/README"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="!mali !kms"
 
 function depends_xrick() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev zlib1g
