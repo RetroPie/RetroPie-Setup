@@ -13,7 +13,7 @@ rp_module_id="wolf4sdl"
 rp_module_desc="Wolf4SDL - port of Wolfenstein 3D / Spear of Destiny engine"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/mozzwald/wolf4sdl/master/license-mame.txt"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="dispmanx !mali !kms"
 
 function depends_wolf4sdl() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev

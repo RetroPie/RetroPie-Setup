@@ -47,6 +47,7 @@ function sources_sdl2() {
     local branch="release-$ver"
     isPlatform "rpi" && branch="rpi-$ver"
     isPlatform "mali" && branch="mali-$ver"
+    isPlatform "kms" && branch="kms-$ver"
 
     gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
     cd "$pkg_ver"

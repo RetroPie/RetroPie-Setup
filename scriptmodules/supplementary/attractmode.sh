@@ -13,7 +13,7 @@ rp_module_id="attractmode"
 rp_module_desc="Attract Mode emulator frontend"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/mickelson/attract/master/License.txt"
 rp_module_section="exp"
-rp_module_flags="!mali frontend"
+rp_module_flags="!mali !kms frontend"
 
 function _get_configdir_attractmode() {
     echo "$configdir/all/attractmode"

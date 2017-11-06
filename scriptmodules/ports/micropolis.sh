@@ -13,7 +13,7 @@ rp_module_id="micropolis"
 rp_module_desc="Micropolis - Open Source City Building Game"
 rp_module_licence="GPL https://raw.githubusercontent.com/SimHacker/micropolis/wiki/License.md"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="!mali !kms"
 
 function depends_micropolis() {
     ! isPlatform "x11" getDepends xorg matchbox

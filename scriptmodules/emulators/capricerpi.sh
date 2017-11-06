@@ -14,7 +14,7 @@ rp_module_desc="Amstrad CPC emulator - port of Caprice32 for the RPI"
 rp_module_help="ROM Extensions: .cdt .cpc .dsk\n\nCopy your Amstrad CPC games to $romdir/amstradcpc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/KaosOverride/CapriceRPI/master/COPYING.txt"
 rp_module_section="opt"
-rp_module_flags="dispmanx !x86 !mali"
+rp_module_flags="dispmanx !x86 !mali !kms"
 
 function depends_capricerpi() {
     getDepends libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev zlib1g-dev
