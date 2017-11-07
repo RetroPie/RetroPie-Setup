@@ -56,6 +56,8 @@ function remove_mkarcadejoystick() {
 }
 
 function configure_mkarcadejoystick() {
+    [[ "$md_mode" == "remove" ]] && return
+
     if ! grep -q "mk_arcade_joystick_rpi" /etc/modules; then
         addLineToFile "mk_arcade_joystick_rpi" /etc/modules
     fi
