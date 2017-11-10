@@ -120,6 +120,7 @@ function gui_esthemes() {
         'RetroHursty69 boxalloyred'
         'RetroHursty69 boxalloyblue'
         'Saracade scv720'
+        'RetroHursty69 retroroid'
     )
     while true; do
         local theme
