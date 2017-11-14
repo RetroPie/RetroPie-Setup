@@ -22,7 +22,7 @@ function sources_cgenius() {
     gitPullOrClone "$md_build" https://github.com/gerstrong/Commander-Genius.git
 
     # use -O2 on older GCC due to segmentation fault when compiling with -O3
-    if compareVersions $(gcc -dumpversion) lt 6.0.0; then
+    if compareVersions $__gcc_version lt 6.0.0; then
         sed -i "s/ADD_DEFINITIONS(-O3)/ADD_DEFINITIONS(-O2)/" src/CMakeLists.txt
     fi
 }

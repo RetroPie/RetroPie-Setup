@@ -23,14 +23,15 @@ function setup_env() {
     __has_binaries=0
 
     get_platform
-
     get_os_version
-    get_default_gcc
     get_retropie_depends
 
-    # set default gcc version
-    if [[ -n "$__default_gcc_version" ]]; then
-        set_default_gcc "$__default_gcc_version"
+    __gcc_version=$(gcc -dumpversion)
+
+    # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
+    # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
+    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5.0.0; then
+        __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
     fi
 
     # set location of binary downloads
@@ -91,12 +92,6 @@ function get_os_version() {
             # and for xbian
             if grep -q "NAME=XBian" /etc/os-release; then
                 __platform_flags+=" xbian"
-            fi
-
-            # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
-            # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
-            if [[ "$__os_id" == "Raspbian" ]]; then
-                __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
             fi
 
             # we provide binaries for RPI on Raspbian < 9 only
@@ -162,40 +157,6 @@ function get_os_version() {
     isPlatform "rpi" && get_rpi_video
 }
 
-function get_default_gcc() {
-    if [[ -z "$__default_gcc_version" ]]; then
-        case "$__os_id" in
-            Raspbian|Debian)
-                case "$__os_debian_ver" in
-                    8)
-                        __default_gcc_version="4.9"
-                esac
-                ;;
-            *)
-                ;;
-        esac
-    fi
-}
-
-# gcc version helper
-function set_default() {
-    if [[ -e "$1-$2" ]] ; then
-        # echo $1-$2 is now the default
-        ln -sf "$1-$2" "$1"
-    else
-        echo "$1-$2 is not installed"
-    fi
-}
-
-# sets default gcc version
-function set_default_gcc() {
-    pushd /usr/bin > /dev/null
-    for i in gcc cpp g++ gcov; do
-        set_default $i $1
-    done
-    popd > /dev/null
-}
-
 function get_retropie_depends() {
     # add raspberrypi.org repository if it's missing (needed for libraspberrypi-dev etc) - not used on osmc
     local config="/etc/apt/sources.list.d/raspi.list"
@@ -206,9 +167,7 @@ function get_retropie_depends() {
     fi
 
     local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev)
-    if [[ -n "$__default_gcc_version" ]]; then
-        depends+=(gcc-$__default_gcc_version g++-$__default_gcc_version)
-    fi
+
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
     fi
