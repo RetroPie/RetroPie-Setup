@@ -22,7 +22,7 @@ function _get_params_lr-mame() {
 }
 
 function depends_lr-mame() {
-    if compareVersions $(gcc -dumpversion) lt 5.0.0; then
+    if compareVersions $__gcc_version lt 5.0.0; then
         md_ret_errors+=("Sorry, you need an OS with gcc 5.0 or newer to compile lr-mame")
         return 1
     fi
