@@ -95,7 +95,7 @@ function get_os_version() {
 
             # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
             # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
-            if [[ "$__os_id" == "Raspbian" ]]; then
+            if [[ "$__os_id" == "Raspbian" ]] && compareVersions "$__os_release" lt 9; then
                 __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
             fi
 
