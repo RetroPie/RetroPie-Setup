@@ -17,7 +17,9 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !mali !kms"
 
 function depends_dosbox() {
-    getDepends libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng12-dev automake autoconf zlib1g-dev
+    local depends=(libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng12-dev automake autoconf zlib1g-dev)
+    isPlatform "rpi" && depends+=(timidity freepats)
+    getDepends "${depends[@]}"
 }
 
 function sources_dosbox() {
@@ -50,11 +52,36 @@ function install_dosbox() {
 }
 
 function configure_dosbox() {
-    mkRomDir "pc"
+    local needs_synth
 
+    # needs software synth for midi
+    isPlatform "rpi" && needs_synth=1
+
+    mkRomDir "pc"
     rm -f "$romdir/pc/Start DOSBox.sh"
     cat > "$romdir/pc/+Start DOSBox.sh" << _EOF_
 #!/bin/bash
+
+[[ ! -n "\$(aconnect -o | grep -e TiMidity -e FluidSynth)" ]] && needs_synth="$needs_synth"
+
+function midi_synth() {
+    [[ "\$needs_synth" != "1" ]] && return
+
+    case "\$1" in
+        "start")
+            timidity -Os -iAD &
+            until [[ -n "\$(aconnect -o | grep TiMidity)" ]]; do
+                sleep 1
+            done
+            ;;
+        "stop")
+            killall timidity
+            ;;
+        *)
+            ;;
+    esac
+}
+
 params=("\$@")
 if [[ -z "\${params[0]}" ]]; then
     params=(-c "@MOUNT C $romdir/pc" -c "@C:")
@@ -64,7 +91,10 @@ elif [[ "\${params[0]}" == *.sh ]]; then
 else
     params+=(-exit)
 fi
+
+midi_synth start
 "$md_inst/bin/dosbox" "\${params[@]}"
+midi_synth stop
 _EOF_
     chmod +x "$romdir/pc/+Start DOSBox.sh"
     chown $user:$user "$romdir/pc/+Start DOSBox.sh"
@@ -76,6 +106,10 @@ _EOF_
         iniSet "core" "dynamic"
         iniSet "cycles" "max"
         iniSet "scaler" "none"
+        if isPlatform "rpi" || [[ -n "$(aconnect -o | grep -e TiMidity -e FluidSynth)" ]]; then
+            iniSet "mididevice" "alsa"
+            iniSet "midiconfig" "128:0"
+        fi
     fi
 
     moveConfigDir "$home/.dosbox" "$md_conf_root/pc"
