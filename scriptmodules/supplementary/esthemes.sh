@@ -119,6 +119,9 @@ function gui_esthemes() {
         'coinjunkie synthwave'
         'RetroHursty69 boxalloyred'
         'RetroHursty69 boxalloyblue'
+        'RetroHursty69 greenilicious'
+        'RetroHursty69 retroroid'
+        'RetroHursty69 merryxmas'
         'Saracade scv720'
     )
     while true; do
