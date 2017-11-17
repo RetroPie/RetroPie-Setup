@@ -234,11 +234,15 @@ function get_platform() {
                 __platform="tinker"
                 ;;
             *)
-                case $architecture in
-                    i686|x86_64|amd64)
-                        __platform="x86"
-                        ;;
-                esac
+                if grep -q "Rock64" /sys/firmware/devicetree/base/model 2>/dev/null; then
+                    __platform="rock64"
+                else
+                    case $architecture in
+                        i686|x86_64|amd64)
+                            __platform="x86"
+                            ;;
+                    esac
+                fi
                 ;;
         esac
     fi
@@ -307,6 +311,19 @@ function platform_odroid-xu() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon mali gles"
+}
+
+function platform_rock64() {
+    if [[ "$(getconf LONG_BIT)" -eq 32 ]]; then
+        __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
+        __platform_flags="arm armv8 neon kms gles"
+    else
+        __default_cflags="-O2 -march=native"
+        __platform_flags="aarch64 kms gles"
+    fi
+    __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j2"
 }
 
 function platform_tinker() {
