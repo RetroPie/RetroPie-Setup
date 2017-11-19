@@ -18,6 +18,7 @@ function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
+    isPlatform "rock64" && depends+=(libmali-rk-dev)
     isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev)
 
     if compareVersions "$__os_debian_ver" ge 9; then
@@ -45,7 +46,7 @@ function sources_retroarch() {
 
 function build_retroarch() {
     local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack --disable-qt)
-    ! isPlatform "x11" && params+=(--disable-x11 --disable-pulse)
+    ! isPlatform "x11" && params+=(--disable-x11 --disable-pulse --disable-wayland)
     if compareVersions "$__os_debian_ver" lt 9; then
         params+=(--disable-ffmpeg)
     fi
