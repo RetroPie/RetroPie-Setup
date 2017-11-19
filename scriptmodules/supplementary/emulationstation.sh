@@ -130,6 +130,7 @@ function depends_emulationstation() {
     )
 
     isPlatform "x11" && depends+=(gnome-terminal)
+    isPlatform "rock64" && depends+=(libmali-rk-dev)
     getDepends "${depends[@]}"
 }
 
