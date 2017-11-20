@@ -17,9 +17,9 @@
 ##
 ## There are 3 global variables which are set to the current device being processed
 ##
-## `DEVICE_TYPE` = device type is currently either joystick or keyboard
+## `DEVICE_TYPE` = device type is currently either joystick, keyboard or cec
 ## `DEVICE_NAME` = name of the device
-## `DEVICE_GUID` = SDL2 joystick GUID of the device (-1 for keyboard)
+## `DEVICE_GUID` = SDL2 joystick GUID of the device (-1 for keyboard, -2 for cec)
 ##
 ## @par Interface functions
 ##
@@ -51,9 +51,9 @@
 ##  * start, select
 ##  * leftanalogup, leftanalogdown, leftanalogleft, leftanalogright
 ##  * rightanalogup, rightanalogdown, rightanalogleft, rightanalogright
-## * $2 - input type for joysticks are button, axis, hat or key for keyboard.
-## * $3 - button id of the input for a joystick, or SDL2 keycode for a keyboard.
-## * $4 - value of the joystick input or 1 for keyboard.
+## * $2 - input type is button, axis or hat for joysticks, key for keyboard and button for cec.
+## * $3 - button id of the input for a joystick, SDL2 keycode for a keyboard, or button id for cec.
+## * $4 - value of the joystick input or 1 for keyboard and cec.
 ##
 ## Returns:
 ##   None
