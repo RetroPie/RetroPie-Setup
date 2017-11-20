@@ -96,3 +96,11 @@ function onstart_emulationstation_keyboard() {
 function map_emulationstation_keyboard() {
     map_emulationstation_joystick "$@"
 }
+
+function onstart_emulationstation_cec() {
+    onstart_emulationstation_joystick "$@"
+}
+
+function map_emulationstation_cec() {
+    map_emulationstation_joystick "$@"
+}
