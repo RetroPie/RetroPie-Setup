@@ -322,6 +322,8 @@ function platform_rock64() {
         __platform_flags="aarch64 kms gles"
     fi
     __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
+    # required for mali headers to define GL functions
+    __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
     __default_asflags=""
     __default_makeflags="-j2"
 }
