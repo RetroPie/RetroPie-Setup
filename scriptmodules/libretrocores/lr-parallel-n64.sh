@@ -17,6 +17,8 @@ rp_module_section="opt"
 
 function sources_lr-parallel-n64() {
     gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git
+    # needed until https://github.com/libretro/parallel-n64/pull/469 is accepted
+    isPlatform "rpi" && sed -i "s#-L/opt/vc/lib -lGLESv2#-L/opt/vc/lib -lbrcmGLESv2#" Makefile
 }
 
 function build_lr-parallel-n64() {
