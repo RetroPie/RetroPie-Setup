@@ -13,7 +13,7 @@ rp_module_id="darkplaces-quake"
 rp_module_desc="Quake 1 engine - Darkplaces Quake port with GLES rendering"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/xonotic/darkplaces/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali !kms newbrcmlibs"
+rp_module_flags="!mali !kms"
 
 function depends_darkplaces-quake() {
     local depends=(libsdl2-dev)
