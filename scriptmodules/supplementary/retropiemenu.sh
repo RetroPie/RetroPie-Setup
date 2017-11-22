@@ -133,6 +133,7 @@ function launch_retropiemenu() {
     joy2keyStart
     case $basename in
         retroarch.rp)
+            joy2keyStop
             cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
             chown $user:$user "$configdir/all/retroarch.cfg.bak"
             su $user -c "\"$emudir/retroarch/bin/retroarch\" --menu --config \"$configdir/all/retroarch.cfg\""
