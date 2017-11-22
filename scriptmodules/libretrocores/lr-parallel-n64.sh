@@ -15,6 +15,13 @@ rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/parallel-n64/master/mupen64plus-core/LICENSES"
 rp_module_section="opt"
 
+function depends_lr-parallel-n64() {
+    local depends=()
+    isPlatform "x11" && depends+=(libgl1-mesa-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    getDepends "${depends[@]}"
+}
+
 function sources_lr-parallel-n64() {
     gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git
     # needed until https://github.com/libretro/parallel-n64/pull/469 is accepted
