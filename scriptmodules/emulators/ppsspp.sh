@@ -14,7 +14,7 @@ rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/hrydgard/ppsspp/master/LICENSE.TXT"
 rp_module_section="opt"
-rp_module_flags="newbrcmlibs"
+rp_module_flags=""
 
 function depends_ppsspp() {
     local depends=(cmake libsdl2-dev libzip-dev)

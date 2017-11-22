@@ -901,13 +901,6 @@ function get_sys_command() {
     if [[ -n "$TTY" && "$COMMAND" =~ ^(startx|xinit) ]]; then
         COMMAND+=" -- vt$TTY -keeptty"
     fi
-
-    # if on RPI and there is no RP-NEWBRCMLIBS file present then use old library names for SDL
-    if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* && "$COMMAND" =~ $ROOTDIR/[^/]*/[^/]* ]]; then
-        if [[ ! -f "${BASH_REMATCH[0]}/RP-NEWBRCMLIBS" ]]; then
-            COMMAND="SDL_VIDEO_EGL_DRIVER=/opt/vc/lib/libEGL.so SDL_VIDEO_GL_DRIVER=/opt/vc/lib/libGLESv2.so $COMMAND"
-        fi
-    fi
 }
 
 function show_launch() {

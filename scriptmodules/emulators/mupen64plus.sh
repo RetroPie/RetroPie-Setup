@@ -14,7 +14,7 @@ rp_module_desc="N64 emulator MUPEN64Plus"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/mupen64plus/mupen64plus-core/master/LICENSES"
 rp_module_section="main"
-rp_module_flags="!mali !kms newbrcmlibs"
+rp_module_flags="!mali !kms"
 
 function depends_mupen64plus() {
     local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng12-dev)
