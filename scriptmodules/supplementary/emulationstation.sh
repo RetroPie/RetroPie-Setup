@@ -201,6 +201,11 @@ if [[ \$(id -u) -eq 0 ]]; then
     exit 1
 fi
 
+if [[ -d "/sys/module/vc4" ]]; then
+    echo -e "ERROR: You have the experimental desktop GL driver enabled. This is NOT compatible with RetroPie, and Emulation Station as well as emulators will fail to launch.\\n\\nPlease disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
+    exit 1
+fi
+
 if [[ "\$(uname --machine)" != *86* ]]; then
     if [[ -n "\$(pidof X)" ]]; then
         echo "X is running. Please shut down X in order to mitigate problems with losing keyboard input. For example, logout from LXDE."
