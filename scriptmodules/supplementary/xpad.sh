@@ -71,11 +71,13 @@ function build_xpad() {
 function remove_xpad() {
     dkms remove -m xpad -v 0.4 --all
     rm -rf /usr/src/xpad-0.4
-    rm -f /etc/modprobe.d/xpad.conf
+    configKernelModule "remove" "xpad"
 }
 
 function configure_xpad() {
+    [[ "$md_mode" == "remove" ]] && return
     if [[ ! -f /etc/modprobe.d/xpad.conf ]]; then
-        echo "options xpad triggers_to_buttons=1" >/etc/modprobe.d/xpad.conf
+        local parameter="options xpad triggers_to_buttons=1"
     fi
+    configKernelModule "install" "xpad" "xpad" "$parameter"
 }

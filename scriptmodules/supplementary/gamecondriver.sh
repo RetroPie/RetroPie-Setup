@@ -52,19 +52,12 @@ function install_bin_gamecondriver() {
 }
 
 function remove_gamecondriver() {
-    sed -i "/gamecon_gpio_rpi/d" /etc/modules
-    rm -f /etc/modprobe.d/gamecon.conf
+    configKernelModule "remove" "gamecon_gpio_rpi" "gamecon"
     aptRemove db9-gpio-rpi-dkms gamecon-gpio-rpi-dkms
 }
 
 function configure_gamecondriver() {
     [[ "$md_mode" == "remove" ]] && return
-
-    if ! grep -q "gamecon_gpio_rpi" /etc/modules; then
-        addLineToFile "gamecon_gpio_rpi" /etc/modules
-    elif grep -q "gamecon_gpio_rpi.*map" /etc/modules; then
-        sed -i "s/gamecon_gpio_rpi.*/gamecon_gpio_rpi/" /etc/modules
-    fi
 }
 
 function dual_snes_gamecondriver() {
@@ -79,13 +72,10 @@ function dual_snes_gamecondriver() {
     esac
 
     if [[ "$gpio_rev" == 1 ]]; then
-        echo "options gamecon_gpio_rpi map=0,1,1,0" >/etc/modprobe.d/gamecon.conf
+        configKernelModule "install" "gamecon_gpio_rpi" "gamecon" "options gamecon_gpio_rpi map=0,1,1,0"
     else
-        echo "options gamecon_gpio_rpi map=0,0,1,0,0,1" >/etc/modprobe.d/gamecon.conf
+        configKernelModule "install" "gamecon_gpio_rpi" "gamecon" "options gamecon_gpio_rpi map=0,0,1,0,0,1"
     fi
-
-    [[ -n "$(lsmod | grep gamecon_gpio_rpi)" ]] && rmmod gamecon_gpio_rpi
-    modprobe gamecon_gpio_rpi
 
     iniConfig " = " "" "$configdir/all/retroarch.cfg"
 
