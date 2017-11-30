@@ -1,0 +1,26 @@
+diff --git a/src/Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilder.cpp b/src/Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilder.cpp
+index ae8c2e7..9f61a39 100644
+--- a/GLideN64/src/Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilder.cpp
++++ b/GLideN64/src/Graphics/OpenGLContext/GLSL/glsl_CombinerProgramBuilder.cpp
+@@ -1167,10 +1167,7 @@ public:
+ 			m_part =
+ 				"  nCurrentTile = 0; \n"
+ 				"  lowp vec4 readtex0;																\n"
+-				"  if (uBiLerp[0] != 0)																\n"
+ 				"    readtex0 = readTex(uTex0, vTexCoord0, uFbMonochrome[0], uFbFixedAlpha[0]);		\n"
+-				"  else																				\n"
+-				"    readtex0 = YUV_Convert(uTex0, vTexCoord0, uTextureConvert[0], uTextureFormat[0], readtex0);	\n"
+ 				;
+ 		} else {
+ 			if (config.video.multisampling > 0) {
+@@ -1205,10 +1202,7 @@ public:
+ 			m_part =
+ 				"  nCurrentTile = 1; \n"
+ 				"  lowp vec4 readtex1;																\n"
+-				"  if (uBiLerp[1] != 0)																\n"
+ 				"    readtex1 = readTex(uTex1, vTexCoord1, uFbMonochrome[1], uFbFixedAlpha[1]);		\n"
+-				"  else																				\n"
+-				"    readtex1 = YUV_Convert(uTex1, vTexCoord1, uTextureConvert[1], uTextureFormat[1], readtex0);	\n"
+ 				;
+ 		} else {
+ 			if (config.video.multisampling > 0) {
