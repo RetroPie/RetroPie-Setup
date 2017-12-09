@@ -41,10 +41,19 @@ function install_bin_usbromservice() {
 
 function install_scripts_usbromservice() {
     # copy our mount.d scripts over
+    local filesrc
     local file
     local dest
-    for file in "$md_data/"*; do
-        dest="/etc/usbmount/mount.d/${file##*/}"
+    for file in "$md_data/"*.mount"; do
+	filesrc=${file%%.mount}
+        dest="/etc/usbmount/mount.d/${filesrc##*/}"
+        sed "s/USERTOBECHOSEN/$user/g" "$file" >"$dest"
+        chmod +x "$dest"
+    done
+
+    for file in "$md_data/"*.umount"; do
+	filesrc=${file%%.umount}
+        dest="/etc/usbmount/umount.d/${filesrc##*/}"
         sed "s/USERTOBECHOSEN/$user/g" "$file" >"$dest"
         chmod +x "$dest"
     done
@@ -56,9 +65,18 @@ function enable_usbromservice() {
 }
 
 function disable_usbromservice() {
+    local filesrc
     local file
-    for file in "$md_data/"*; do
+
+    for filesrc in "$md_data/"*.mount; do
+	file=${filesrc%%.mount}
         file="/etc/usbmount/mount.d/${file##*/}"
+        rm -f "$file"
+    done
+
+    for filesrc in "$md_data/"*.umount; do
+	file=${filesrc%%.umount}
+        file="/etc/usbmount/umount.d/${file##*/}"
         rm -f "$file"
     done
     touch "$md_inst/disabled"
