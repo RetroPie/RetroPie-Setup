@@ -254,10 +254,6 @@ function testCompatibility() {
             iniSet "EnableFBEmulation" "True"
             # Set native resolution factor of 1
             iniSet "UseNativeResolutionFactor" "1"
-            # Force 3-point bilinear filtering & disable shader/key cache on Pi
-            # See: https://github.com/gonetz/GLideN64/issues/1665
-            iniSet "bilinearMode" "False"
-            iniSet "EnableShadersStorage" "False"
             for game in "${GLideN64NativeResolution_blacklist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
                     iniSet "UseNativeResolutionFactor" "0"
