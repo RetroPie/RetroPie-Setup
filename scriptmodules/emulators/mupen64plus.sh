@@ -52,10 +52,7 @@ function sources_mupen64plus() {
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
     gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
-
-    # temporary workaround for https://github.com/gonetz/GLideN64/issues/1665
-    isPlatform "rpi" && applyPatch "$md_data/rpi-yuv.diff"
-
+    
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
 }
