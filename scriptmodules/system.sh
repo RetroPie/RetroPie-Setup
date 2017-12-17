@@ -267,7 +267,7 @@ function get_platform() {
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
                 __platform="imx6"
                 ;;
-            ODROID-XU3)
+            ODROID-XU3|ODROID-XU4)
                 __platform="odroid-xu"
                 ;;
             *)
