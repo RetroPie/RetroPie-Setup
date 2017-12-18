@@ -123,8 +123,8 @@ function _add_rom_emulationstation() {
 
 function depends_emulationstation() {
     local depends=(
-        libboost-locale-dev libboost-system-dev libboost-filesystem-dev
-        libboost-date-time-dev libfreeimage-dev libfreetype6-dev libeigen3-dev
+        libboost-system-dev libboost-filesystem-dev
+        libboost-date-time-dev libfreeimage-dev libfreetype6-dev
         libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
         libvlc-dev libvlccore-dev vlc
     )
