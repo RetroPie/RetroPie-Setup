@@ -48,7 +48,7 @@ function sources_advmame-1.4() {
 }
 
 function build_advmame-1.4() {
-    ./configure CFLAGS="$CFLAGS -fsigned-char" LDFLAGS="-s -lm -Wl,--no-as-needed" --prefix="$md_inst"
+    ./configure CFLAGS="$CFLAGS -fsigned-char -fno-stack-protector" LDFLAGS="-s -lm -Wl,--no-as-needed" --prefix="$md_inst"
     make clean
     make
 }
