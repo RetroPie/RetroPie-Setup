@@ -37,7 +37,7 @@ function sources_advmame() {
 }
 
 function build_advmame() {
-    ./configure --prefix="$md_inst"
+    ./configure CFLAGS="$CFLAGS -fno-stack-protector" --prefix="$md_inst"
     make clean
     make
 }
