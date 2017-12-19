@@ -36,6 +36,9 @@ function install_ags() {
 function configure_ags() {
     mkRomDir "ags"
 
+    # install Eawpatches GUS patch set (see: http://liballeg.org/digmid.html)
+    [[ "$md_mode" == "install" ]] && wget -qO- "http://www.eglebbk.dds.nl/program/download/digmid.dat" | bzcat >"$md_inst/bin/patches.dat"
+
     if isPlatform "x11"; then
         addEmulator 1 "$md_id" "ags" "$md_inst/bin/ags --fullscreen %ROM%" "Adventure Game Studio" ".exe"
     else
