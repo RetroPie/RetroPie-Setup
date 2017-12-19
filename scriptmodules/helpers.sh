@@ -115,6 +115,7 @@ function addLineToFile() {
     if [[ -f "$2" ]]; then
         cp -p "$2" "$2.bak"
     else
+        touch "$2"
         sed -i --follow-symlinks '$a\' "$2"
     fi
 
@@ -129,6 +130,57 @@ function editFile() {
     local cmd=(dialog --backtitle "$__backtitle" --editbox "$file" 22 76)
     local choice=$("${cmd[@]}" 2>&1 >/dev/tty)
     [[ -n "$choice" ]] && echo "$choice" >"$file"
+}
+
+## @fn configKernelModule()
+## @brief mode configuration mode (install or remove)
+## @brief module module name to be added to /etc/modules-load.d file
+## @param prefix prefix name of .conf files in /etc/modprobe.d & /etc/modules-load.d
+## @param parameter module parameter to be added to /etc/modprobe.d file
+function configKernelModule() {
+    local mode="$1"
+    local module="$2"
+    local prefix="$3"
+    local parameter="$4"
+
+    [[ -z "$prefix" ]] && prefix="$module"
+
+    local parameter_file="/etc/modprobe.d/$prefix.conf"
+    local module_file="/etc/modules-load.d/$prefix.conf"
+
+    # SysVinit legacy compatibility
+    [[ ! -d "/etc/modules-load.d/" ]] && module_file="/etc/modules"
+
+    if [[ "$mode" == "remove" ]]; then
+        # remove all entries matching module name from configs
+        touch "$module_file" "$parameter_file"
+        sed -i --follow-symlinks "/$module\b/d" "$module_file" "$parameter_file"
+        # delete empty config files (if necessary)
+        [[ ! -s "$module_file" && -d "/etc/modules-load.d/" ]] && rm -f "$module_file"
+        [[ ! -s "$parameter_file" ]] && rm -f "$parameter_file"
+        # rmmod module (if necessary)
+        [[ -n "$(lsmod | grep $module)" ]] && rmmod "$module"
+        return
+    fi
+
+    # add parameter to config
+    [[ -n "$parameter" ]] && if ! grep -qs "$parameter" "$parameter_file"; then
+        # if a new parameter is specified, remove all lines referencing this module
+        [[ -f "$parameter_file" ]] && sed -i --follow-symlinks "/$module\b/d" "$parameter_file"
+        addLineToFile "$parameter" "$parameter_file"
+    fi
+
+    # remove legacy entries from /etc/modules (only if using systemd)
+    [[ -d "/etc/modules-load.d/" ]] && sed -i --follow-symlinks "/$module\b/d" /etc/modules
+
+    # add module to config
+    if ! grep -qs "$module" "$module_file"; then
+        addLineToFile "$module" "$module_file"
+    fi
+
+    # rmmod (if needed) & modprobe
+    [[ -n "$(lsmod | grep $module)" ]] && rmmod "$module"
+    modprobe "$module"
 }
 
 ## @fn hasPackage()
