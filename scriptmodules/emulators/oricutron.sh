@@ -27,7 +27,7 @@ function sources_oricutron() {
 
 function build_oricutron() {
     make clean
-    if isPlatform "rpi" || isPlatform "mali"; then
+    if isPlatform "kms" || isPlatform "mali"; then
         make PLATFORM=rpi SDL_LIB=sdl2
     else
         make SDL_LIB=sdl2
