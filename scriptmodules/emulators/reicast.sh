@@ -14,7 +14,7 @@ rp_module_desc="Dreamcast emulator Reicast"
 rp_module_help="ROM Extensions: .cdi .gdi\n\nCopy your Dremcast roms to $romdir/dreamcast\n\nCopy the required BIOS files dc_boot.bin and dc_flash.bin to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/reicast/reicast-emulator/master/LICENSE"
 rp_module_section="opt"
-rp_module_flags="!armv6 !mali !kms"
+rp_module_flags="!armv6 !mali "
 
 function depends_reicast() {
     getDepends libsdl1.2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev
@@ -22,12 +22,16 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    if isPlatform "x11"; then
+    if isPlatform "kms"; then
         gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
+		applypatch "$md_data/001-fix-pcw-crash.patch"
+		applypatch "$md_data/002-fix-mali.patch"
+		applypatch "$md_data/003-fix-neon.patch"
     else
         gitPullOrClone "$md_build" https://github.com/RetroPie/reicast-emulator.git retropie
+		
     fi
-    sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
+	    sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
 }
 
 function build_reicast() {
@@ -36,7 +40,7 @@ function build_reicast() {
         make platform=rpi2 clean
         make platform=rpi2
     else
-        make clean
+        make platform=odroidxu3 clean
         make
     fi
     md_ret_require="$md_build/shell/linux/reicast.elf"
