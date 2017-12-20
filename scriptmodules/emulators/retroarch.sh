@@ -41,7 +41,7 @@ function sources_retroarch() {
 function build_retroarch() {
     local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack)
     ! isPlatform "x11" && params+=(--disable-x11 --disable-ffmpeg --disable-pulse)
-    isPlatform "gles" && params+=(--enable-opengles)
+    isPlatform "gles" && params+=(--enable-opengles --enable-opengles3 --enable-pulse)
     isPlatform "rpi" && params+=(--enable-dispmanx)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
     isPlatform "kms" && params+=(--enable-kms)
