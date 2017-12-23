@@ -305,7 +305,7 @@ function platform_odroid-xu() {
     __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon kms gles"
+    __platform_flags="arm armv7 neon mali gles"
 }
 
 function platform_tinker() {
