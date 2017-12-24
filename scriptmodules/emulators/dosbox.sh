@@ -59,11 +59,17 @@ function install_dosbox() {
 }
 
 function configure_dosbox() {
-    local def="1"
-    local launcher_name="+Start DOSBox.sh"
-    # needs software synth for midi; limit to Pi for now
-    if isPlatform "rpi"; then
-        local needs_synth="1"
+    if [[ "$md_id" == "dosbox-sdl2" ]]; then
+        local def="0"
+        local launcher_name="+Start DOSBox-SDL2.sh"
+        local needs_synth="0"
+    else
+        local def="1"
+        local launcher_name="+Start DOSBox.sh"
+        # needs software synth for midi; limit to Pi for now
+        if isPlatform "rpi"; then
+            local needs_synth="1"
+        fi
     fi
 
     mkRomDir "pc"
