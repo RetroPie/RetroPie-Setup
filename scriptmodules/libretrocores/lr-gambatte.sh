@@ -29,7 +29,7 @@ function install_lr-gambatte() {
     md_ret_files=(
         'COPYING'
         'changelog'
-        'README'
+        'README.md'
         'gambatte_libretro.so'
     )
 }
