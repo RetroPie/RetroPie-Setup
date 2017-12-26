@@ -293,7 +293,7 @@ function gui_splashscreen() {
                         disable_splashscreen
                         printMsgs "dialog" "Disabled splashscreen on boot."
                     else
-                        [[ ! -f /etc/splashscreen.list ]] && rp_CallModule splashscreen default
+                        [[ ! -f /etc/splashscreen.list ]] && rp_callModule splashscreen default
                         enable_splashscreen
                         printMsgs "dialog" "Enabled splashscreen on boot."
                     fi
