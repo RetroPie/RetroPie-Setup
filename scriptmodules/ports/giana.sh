@@ -20,6 +20,7 @@ function depends_giana() {
 
 function install_bin_giana() {
     downloadAndExtract "http://www.retroguru.com/gianas-return/gianas-return-v.latest-raspberrypi.zip" "$md_inst"
+    patchVendorGraphics "$md_inst/giana_rpi"
 }
 
 function configure_giana() {
