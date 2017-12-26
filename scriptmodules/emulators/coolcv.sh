@@ -22,6 +22,7 @@ function depends_coolcv() {
 
 function install_bin_coolcv() {
     downloadAndExtract "$__archive_url/coolcv.tar.gz" "$md_inst" 1
+    patchVendorGraphics "$md_inst/coolcv_pi"
 }
 
 function configure_coolcv() {
