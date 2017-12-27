@@ -13,6 +13,7 @@ rp_module_id="powerblock"
 rp_module_desc="PowerBlock Driver"
 rp_module_section="driver"
 rp_module_flags="noinstclean"
+rp_module_help="Please note that you need to manually enable or disable the PowerBlock Service in the Configuration section. IMPORTANT: If the service is enabled and the power switch functionality is enabled (which is the default setting) in the config file, you need to have a switch connected to the PowerBlock."
 
 function depends_powerblock() {
     local depends=(cmake doxygen)
@@ -39,7 +40,6 @@ function install_powerblock() {
     # install from there to system folders
     cd "$md_inst/build"
     make install
-    [[ ! -f "$md_inst/disabled" ]] && make installservice
 }
 
 function gui_powerblock() {
@@ -54,12 +54,10 @@ function gui_powerblock() {
         case "$choice" in
             1)
                 make -C "$md_inst/build" installservice
-                rm "$md_inst/disabled"
                 printMsgs "dialog" "Enabled PowerBlock driver."
                 ;;
             2)
                 make -C "$md_inst/build" uninstallservice
-                touch "$md_inst/disabled"
                 printMsgs "dialog" "Disabled PowerBlock driver."
                 ;;
         esac
