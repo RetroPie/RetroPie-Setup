@@ -279,15 +279,14 @@ function rp_callModule() {
 
     # some errors were returned.
     if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
+        __ERRMSGS+=("${md_ret_errors[@]}")
+        printMsgs "console" "${md_ret_errors[@]}" >&2
         # if sources fails make sure we clean up
         if [[ "$mode" == "sources" ]]; then
             rp_callModule "$md_idx" clean
         fi
         # remove install folder if there is an error (and it is empty)
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
-        printMsgs "console" "${md_ret_errors[@]}" >&2
-        # append to global errors and return an error
-        __ERRMSGS+=("${md_ret_errors[@]}")
         return 1
     fi
 
