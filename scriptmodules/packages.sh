@@ -217,7 +217,7 @@ function rp_callModule() {
             if fnExists "configure_${md_id}"; then
                 pushd "$md_inst" 2>/dev/null
                 pushed=$?
-                "configure_${md_id}" remove
+                "configure_${md_id}"
             fi
             rm -rf "$md_inst"
             printMsgs "console" "Removed directory $md_inst"
