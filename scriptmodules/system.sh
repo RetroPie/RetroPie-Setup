@@ -111,12 +111,14 @@ function get_os_version() {
             esac
             ;;
         LinuxMint)
-            if compareVersions "$__os_release" lt 17; then
-                error="You need Linux Mint 17 or newer"
-            elif compareVersions "$__os_release" lt 18; then
-                __os_ubuntu_ver="14.04"
-            else
-                __os_ubuntu_ver="16.04"
+            if [[ "$__os_desc" != LMDE* ]]; then
+                if compareVersions "$__os_release" lt 17; then
+                    error="You need Linux Mint 17 or newer"
+                elif compareVersions "$__os_release" lt 18; then
+                    __os_ubuntu_ver="14.04"
+                else
+                    __os_ubuntu_ver="16.04"
+                fi
             fi
             __os_debian_ver="8"
             ;;
