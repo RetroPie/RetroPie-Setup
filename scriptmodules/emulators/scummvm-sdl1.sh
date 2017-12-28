@@ -22,7 +22,6 @@ function depends_scummvm-sdl1() {
 
 function sources_scummvm-sdl1() {
     sources_scummvm
-    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-1-9"
     if isPlatform "rpi"; then
         applyPatch rpi-sdl1.diff <<\_EOF_
 --- a/configure
