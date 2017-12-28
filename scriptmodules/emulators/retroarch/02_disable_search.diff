@@ -1,8 +1,8 @@
 diff --git a/menu/widgets/menu_entry.c b/menu/widgets/menu_entry.c
-index 4a54527..e42afe5 100644
+index ea5be0c4cc..846f662c8f 100644
 --- a/menu/widgets/menu_entry.c
 +++ b/menu/widgets/menu_entry.c
-@@ -543,7 +543,7 @@ int menu_entry_action(menu_entry_t *entry, unsigned i, enum menu_action action)
+@@ -474,7 +474,7 @@ int menu_entry_action(menu_entry_t *entry, unsigned i, enum menu_action action)
                    entry->label, entry->type, i);
           break;
        case MENU_ACTION_SEARCH:
