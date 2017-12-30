@@ -23,7 +23,7 @@ function depends_ppsspp() {
 }
 
 function sources_ppsspp() {
-    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
+    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git v1.5.4
     cd ppsspp
 
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
