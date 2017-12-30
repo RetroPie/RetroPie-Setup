@@ -1289,6 +1289,9 @@ function delEmulator() {
 function patchVendorGraphics() {
     local filename="$1"
 
+    # patchelf is not available on Raspbian Jessie
+    compareVersions "$__os_debian_ver" lt 9 && return
+
     getDepends patchelf
     printMsgs "console" "Applying vendor graphics patch: $filename"
     patchelf --replace-needed libEGL.so libbrcmEGL.so \
