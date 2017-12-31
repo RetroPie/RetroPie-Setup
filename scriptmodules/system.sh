@@ -132,6 +132,12 @@ function get_os_version() {
             fi
             __os_ubuntu_ver="$__os_release"
             ;;
+        Deepin)
+            if compareVersions "$__os_release" lt 15.5; then
+                error="You need Deepin OS 15.5 or newer"
+            fi
+            __os_debian_ver="9"
+            ;;
         elementary)
             if compareVersions "$__os_release" lt 0.3; then
                 error="You need Elementary OS 0.3 or newer"
