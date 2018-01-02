@@ -109,7 +109,10 @@ function configure_advmame() {
             iniSet "display_aspectx" 16
             iniSet "display_aspecty" 9
         fi
-
+ if isPlatform "odroid-xu"; then
+             iniSet "device_keyboard" "sdl"
+             iniSet "display_magnify" "1"
+      fi
         if isPlatform "armv6"; then
             iniSet "sound_samplerate" "22050"
             iniSet "sound_latency" "0.2"
