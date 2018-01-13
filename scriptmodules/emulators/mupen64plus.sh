@@ -34,7 +34,7 @@ function sources_mupen64plus() {
     if isPlatform "mali"; then
         repos+=(
             
-            'ricrpi video-gles2rice pandora-backport'
+            'mupen64plus video-gles2rice pandora-backport'
             'mupen64plus video-glide64mk2'
             'mupen64plus rsp-cxd4'
             'mupen64plus rsp-z64'
@@ -51,9 +51,9 @@ function sources_mupen64plus() {
     for repo in "${repos[@]}"; do
         repo=($repo)
         dir="$md_build/mupen64plus-${repo[1]}"
-        gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
+        gitPullOrClone "$dir" https://github.com/Odroid-RetroArena/mupen64plus-${repo[1]} ${repo[2]}
     done
-    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
+    gitPullOrClone "$md_build/GLideN64" https://github.com/Odroid-RetroArena/GLideN64.git
     
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
