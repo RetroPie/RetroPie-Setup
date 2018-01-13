@@ -90,8 +90,8 @@ function get_os_version() {
                 __platform_flags+=" xbian"
             fi
 
-            # we provide binaries for RPI on Raspbian < 9 only
-            if isPlatform "rpi" && compareVersions "$__os_release" lt 9; then
+            # we provide binaries for RPI on Raspbian < 10 only
+            if isPlatform "rpi" && compareVersions "$__os_release" lt 10; then
                 __has_binaries=1
             fi
 
