@@ -130,7 +130,7 @@ function install_mupen64plus() {
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
             local params=()
             isPlatform "armv7" && params+=("VFP=1" "HOST_CPU=armv7")
-            isPlatform "mali" && params+=("VFP=1" "VFP_HARD=1" "HOST_CPU=armv7")
+            isPlatform "mali" && params+=("VFP=1" "VFP_HARD=1" "HOST_CPU=armv7" "USE_GLES=1")
             isPlatform "neon" && params+=("NEON=1")
             isPlatform "x86" && params+=("SSE=SSE2")
             make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
