@@ -256,7 +256,7 @@ function get_platform() {
 
 function platform_rpi1() {
     # values to be used for configure/make
-    __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+    __default_cflags="-O2 -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags=""
     __platform_flags="arm armv6 rpi gles"
