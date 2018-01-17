@@ -29,6 +29,7 @@ function build_xroar() {
     if ! isPlatform "x11"; then
         params+=(--without-pulse)
     fi
+    ./autogen.sh
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
     make
