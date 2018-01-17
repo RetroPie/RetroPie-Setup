@@ -21,7 +21,7 @@ function depends_jzintv() {
 }
 
 function sources_jzintv() {
-    downloadAndExtract "$__archive_url/jzintv-20180115-src.zip" "$md_build"
+    downloadAndExtract "http://spatula-city.org/~im14u2c/intv/dl/jzintv-20180115-src.zip" "$md_build"
     cd jzintv/src
     # don't build event_diag.rom/emu_ver.rom/joy_diag.rom/jlp_test.bin due to missing example/library files from zip
     sed -i '/^PROGS/,$d' {event,joy,jlp,util}/subMakefile
