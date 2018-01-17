@@ -22,14 +22,14 @@ function depends_jzintv() {
 
 function sources_jzintv() {
     downloadAndExtract "http://spatula-city.org/~im14u2c/intv/dl/jzintv-20180115-src.zip" "$md_build"
-    cd jzintv/src
+    cd jzintv-20180115-src/src
     # don't build event_diag.rom/emu_ver.rom/joy_diag.rom/jlp_test.bin due to missing example/library files from zip
     sed -i '/^PROGS/,$d' {event,joy,jlp,util}/subMakefile
 }
 
 function build_jzintv() {
     mkdir -p jzintv/bin
-    cd jzintv/src
+    cd jzintv-20180115-src/src
     make clean
     make OPT_FLAGS="$CFLAGS"
     md_ret_require="$md_build/jzintv/bin/jzintv"
@@ -38,8 +38,8 @@ function build_jzintv() {
 function install_jzintv() {
     md_ret_files=(
         'jzintv/bin'
-        'jzintv/src/COPYING.txt'
-        'jzintv/src/COPYRIGHT.txt'
+        'jzintv-20180115-src/src/COPYING.txt'
+        'jzintv-20180115-src/src/COPYRIGHT.txt'
     )
 }
 
