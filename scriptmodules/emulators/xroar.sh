@@ -25,7 +25,7 @@ function sources_xroar() {
 }
 
 function build_xroar() {
-    local params=(--without-gtk2 --without-gtkgl --without-sdlgl )
+    local params=(--without-gtk2 --without-gtkgl --without-sdlgl --enable-filereq-cli )
     if ! isPlatform "x11"; then
         params+=(--without-pulse)
     fi
