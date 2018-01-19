@@ -126,6 +126,9 @@ function gui_esthemes() {
         'RetroHursty69 license2game'
         'RetroHursty69 comiccrazy'
         'RetroHursty69 snazzy'
+        'RetroHursty69 tributeGoT'
+        'RetroHursty69 tributeSTrek'
+        'RetroHursty69 tributeSWars'        
         'Saracade scv720'
     )
     while true; do
