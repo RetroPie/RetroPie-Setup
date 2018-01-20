@@ -137,8 +137,7 @@ function sources_emulationstation-ora() {
     local repo="$1"
     local branch="$2"
     [[ -z "$repo" ]] && repo="https://github.com/Odroid-RetroArena/EmulationStation-ORA.git"
-    [[ -z "$branch" ]] && branch="stable"
-    gitPullOrClone "$md_build" "$repo" "$branch"
+    gitPullOrClone "$md_build" "$repo" 
 }
 
 function build_emulationstation-ora() {
