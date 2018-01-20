@@ -121,7 +121,7 @@ function _add_rom_emulationstation() {
     chown $user:$user "$config"
 }
 
-function depends_emulationstation() {
+function depends_emulationstation-ora() {
     local depends=(
         libboost-system-dev libboost-filesystem-dev
         libboost-date-time-dev libfreeimage-dev libfreetype6-dev
@@ -133,7 +133,7 @@ function depends_emulationstation() {
     getDepends "${depends[@]}"
 }
 
-function sources_emulationstation() {
+function sources_emulationstation-ora() {
     local repo="$1"
     local branch="$2"
     [[ -z "$repo" ]] && repo="https://github.com/Odroid-RetroArena/EmulationStation-ORA"
@@ -141,16 +141,16 @@ function sources_emulationstation() {
     gitPullOrClone "$md_build" "$repo" "$branch"
 }
 
-function build_emulationstation() {
+function build_emulationstation-ora() {
     rpSwap on 1000
     cmake . -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
     make clean
     make
     rpSwap off
-    md_ret_require="$md_build/emulationstation"
+    md_ret_require="$md_build/emulationstation-ora"
 }
 
-function install_emulationstation() {
+function install_emulationstation-ora() {
     md_ret_files=(
         'CREDITS.md'
         'emulationstation'
