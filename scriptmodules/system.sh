@@ -20,7 +20,7 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
-    __has_binaries=0
+    __has_binaries=1
 
     get_platform
     get_os_version
@@ -35,7 +35,7 @@ function setup_env() {
     fi
 
     # set location of binary downloads
-    __binary_host="files.retropie.org.uk"
+    __binary_host="odroidarena.com/pub"
     [[ "$__has_binaries" -eq 1 ]] && __binary_url="https://$__binary_host/binaries/$__os_codename/$__platform"
 
     __archive_url="https://files.retropie.org.uk/archives"
@@ -94,8 +94,8 @@ function get_os_version() {
                 __platform_flags+=" xbian"
             fi
 
-            # we provide binaries for RPI on Raspbian < 9 only
-            if isPlatform "rpi" && compareVersions "$__os_release" lt 9; then
+            # We currently only provide binaries for the Odroid XU4
+            if isPlatform "odroid-xu" && compareVersions "$__os_release" lt 9; then
                 __has_binaries=1
             fi
 
@@ -306,6 +306,7 @@ function platform_odroid-xu() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon mali gles"
+	__has_binaries=1
 }
 
 function platform_tinker() {
