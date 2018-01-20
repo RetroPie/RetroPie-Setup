@@ -12,7 +12,7 @@
 rp_module_id="emulationstation-ora"
 rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emulators ora edition"
 rp_module_licence="MIT https://raw.githubusercontent.com/RetroPie/EmulationStation/master/LICENSE.md"
-rp_module_section="core"
+rp_module_section="exp"
 rp_module_flags="frontend"
 
 function _get_input_cfg_emulationstation() {
@@ -146,7 +146,7 @@ function build_emulationstation-ora() {
     make clean
     make
     rpSwap off
-    md_ret_require="$md_build/emulationstation-ora"
+    md_ret_require="$md_build/"
 }
 
 function install_emulationstation-ora() {
