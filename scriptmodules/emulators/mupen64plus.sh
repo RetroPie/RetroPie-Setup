@@ -33,7 +33,15 @@ function sources_mupen64plus() {
     )
     if isPlatform "mali"; then
         repos+=(
-            
+            'mupen64plus video-glide64mk2'
+            'mupen64plus rsp-cxd4'
+            'mupen64plus rsp-z64'
+            'mupen64plus video-glide64mk2'
+            'mupen64plus rsp-cxd4'
+            'mupen64plus rsp-z64'
+	    'mupen64plus video-rice'
+            'mupen64plus video-arachnoid'
+            'mupen64plus video-z64'
             'ricrpi video-gles2rice pandora-backport'
             
         )
