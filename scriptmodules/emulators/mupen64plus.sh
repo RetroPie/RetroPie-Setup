@@ -38,7 +38,6 @@ function sources_mupen64plus() {
             'mupen64plus video-glide64mk2'
             'mupen64plus rsp-cxd4'
             'mupen64plus rsp-z64'
-			'mupen64plus video-rice'
 			'mupen64plus video-arachnoid'
 			'mupen64plus video-z64'
 			'mupen64plus video-glide64'
