@@ -331,12 +331,14 @@ function rpSwap() {
 ## @param dest destination directory
 ## @param repo repository to clone or pull from
 ## @param branch branch to clone or pull from (optional)
+## @param commit specific commit to checkout (optional - requires branch to be set)
 ## @brief Git clones or pulls a repository.
 function gitPullOrClone() {
     local dir="$1"
     local repo="$2"
     local branch="$3"
     [[ -z "$branch" ]] && branch="master"
+    local commit="$4"
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
@@ -345,12 +347,16 @@ function gitPullOrClone() {
         popd > /dev/null
     else
         local git="git clone --recursive"
-        if [[ "$__persistent_repos" -ne 1 && "$repo" == *github* ]]; then
+        if [[ "$__persistent_repos" -ne 1 && "$repo" == *github* && -z "$commit" ]]; then
             git+=" --depth 1"
         fi
         [[ "$branch" != "master" ]] && git+=" --branch $branch"
         echo "$git \"$repo\" \"$dir\""
         runCmd $git "$repo" "$dir"
+    fi
+    if [[ "$commit" ]]; then
+        echo "Winding back $repo->$branch to commit: #$commit"
+        runCmd git -C "$dir" checkout $commit
     fi
 }
 

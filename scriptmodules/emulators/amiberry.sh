@@ -18,11 +18,16 @@ rp_module_flags="!x86"
 
 function depends_amiberry() {
     local depends=(libpng12-dev libmpeg2-4-dev zlib1g-dev)
-    if ! isPlatform "rpi" || isPlatform "kms"; then
+    if ! isPlatform "rpi" || isPlatform "kms" || isPlatform "vero4k"; then
         depends+=(libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
     fi
 
-    depends_uae4arm "${depends[@]}"
+    if isPlatform "vero4k"; then
+        depends+=(vero3-userland-dev-osmc libmpg123-dev libxml2-dev libflac-dev)
+        getDepends "${depends[@]}"
+    else
+        depends_uae4arm "${depends[@]}"
+    fi
 }
 
 function sources_amiberry() {
@@ -41,6 +46,9 @@ function build_amiberry() {
     elif isPlatform "tinker"; then
         amiberry_bin="tinker"
         amiberry_platform="tinker"
+    elif isPlatform "vero4k"; then
+        amiberry_bin="vero4k"
+        amiberry_platform="vero4k"
     fi
 
     make clean
@@ -57,6 +65,8 @@ function install_amiberry() {
         amiberry_bin="xu4"
     elif isPlatform "tinker"; then
         amiberry_bin="tinker"
+    elif isPlatform "vero4k"; then
+        amiberry_bin="vero4k"
     fi
 
     md_ret_files=(
