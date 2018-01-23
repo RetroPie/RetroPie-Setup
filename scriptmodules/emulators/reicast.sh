@@ -25,7 +25,7 @@ function sources_reicast() {
     if isPlatform "x11"; then
         gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
     else
-        gitPullOrClone "$md_build" https://github.com/jonsimantov/reicast-emulator
+        gitPullOrClone "$md_build" https://github.com/jonsimantov/reicast-emulator retropie
     fi
     sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
 }
