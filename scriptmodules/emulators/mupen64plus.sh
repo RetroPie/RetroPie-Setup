@@ -34,7 +34,7 @@ function sources_mupen64plus() {
     if isPlatform "mali"; then
         repos+=(
             
-            'ricrpi video-gles2rice pandora-backport'
+            'mupen64plus video-rice '
             'mupen64plus video-glide64mk2'
             'mupen64plus rsp-cxd4'
             'mupen64plus rsp-z64'
@@ -105,7 +105,7 @@ function build_mupen64plus() {
     )
     if isPlatform "mali"; then
         md_ret_require+=(
-            'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
+            'mupen64plus-video-rice/projects/unix/mupen64plus-video-rice.so'
             'mupen64plus-video-glide64mk2/projects/unix/mupen64plus-video-glide64mk2.so'
             'mupen64plus-rsp-z64/projects/unix/mupen64plus-rsp-z64.so'
         )
