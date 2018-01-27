@@ -20,7 +20,7 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
-    __has_binaries=1
+    __has_binaries=0
 
     get_platform
     get_os_version
