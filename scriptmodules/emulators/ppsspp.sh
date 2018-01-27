@@ -23,7 +23,7 @@ function depends_ppsspp() {
 }
 
 function sources_ppsspp() {
-    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git v1.5.4
+    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
     cd ppsspp
 
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
@@ -137,6 +137,10 @@ function install_ppsspp() {
 }
 
 function configure_ppsspp() {
+    local params=()
+
+    ! isPlatform "x11" && params+=("--fullscreen")
+
     mkRomDir "psp"
 
     mkUserDir "$home/.config"
@@ -144,6 +148,6 @@ function configure_ppsspp() {
     mkUserDir "$md_conf_root/psp/PSP"
     ln -snf "$romdir/psp" "$md_conf_root/psp/PSP/GAME"
 
-    addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
+    addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL ${params[@]} %ROM%"
     addSystem "psp"
 }
