@@ -12,7 +12,7 @@
 rp_module_id="emulationstation"
 rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emulators"
 rp_module_licence="MIT https://raw.githubusercontent.com/RetroPie/EmulationStation/master/LICENSE.md"
-rp_module_section="core"
+rp_module_section="exp"
 rp_module_flags="frontend"
 
 function _get_input_cfg_emulationstation() {
@@ -136,10 +136,8 @@ function depends_emulationstation() {
 function sources_emulationstation() {
     local repo="$1"
     local branch="$2"
-    [[ -z "$repo" ]] && repo="https://github.com/Odroid-RetroArena/EmulationStation"
-    [[ -z "$branch" ]] && branch="stable"
-    gitPullOrClone "$md_build" "$repo" "$branch"
-}
+    [[ -z "$repo" ]] && repo="https://github.com/Odroid-RetroArena/EmulationStation-ORA"
+    gitPullOrClone "$md_build" "$repo" 
 
 function build_emulationstation() {
     rpSwap on 1000

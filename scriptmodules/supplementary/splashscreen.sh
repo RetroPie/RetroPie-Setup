@@ -12,7 +12,7 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
-rp_module_flags="noinstclean !x86 !osmc !xbian !mali !kms"
+rp_module_flags="noinstclean !x86 !osmc !xbian  !kms"
 
 function _update_hook_splashscreen() {
     # make sure splashscreen is always up to date if updating just RetroPie-Setup
@@ -31,7 +31,7 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    getDepends fbi omxplayer insserv
+    getDepends fbi mplayer insserv
 }
 
 function install_bin_splashscreen() {
@@ -261,7 +261,7 @@ function gui_splashscreen() {
         [[ -n "$(find "/etc/systemd/system/"*".wants" -type l -name "asplashscreen.service")" ]] && enabled=1
         local options=(1 "Choose splashscreen")
         if [[ "$enabled" -eq 1 ]]; then
-            options+=(2 "Disable splashscreen on boot (Enabled)")
+            options+=(2 "Run splashscreen on boot (Enabled)")
             iniConfig "=" '"' "$md_inst/asplashscreen.sh"
             iniGet "RANDOMIZE"
             random=1

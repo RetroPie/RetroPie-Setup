@@ -31,7 +31,7 @@ function sources_lr-parallel-n64() {
 function build_lr-parallel-n64() {
     rpSwap on 750
     make clean
-    if isPlatform "rpi" || isPlatform "odroid-c1"; then
+    if isPlatform "rpi" || isPlatform "odroid-xu"; then
         make platform="$__platform"
     else
         make

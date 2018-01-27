@@ -14,7 +14,7 @@ rp_module_desc="ScummVM"
 rp_module_help="Copy your ScummVM games to $romdir/scummvm"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags=""
 
 function depends_scummvm() {
     local depends=(libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev)
@@ -27,7 +27,10 @@ function depends_scummvm() {
 }
 
 function sources_scummvm() {
+
     gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-2-0"
+
+
     if isPlatform "rpi"; then
         applyPatch rpi_enable_scalers.diff <<\_EOF_
 diff --git a/configure b/configure
