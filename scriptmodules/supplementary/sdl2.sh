@@ -50,7 +50,7 @@ function sources_sdl2() {
     isPlatform "mali" && branch="mali-$ver"
     isPlatform "kms" && branch="kms-$ver"
 
-    gitPullOrClone "$md_build/$pkg_ver" https://github.com/sikotik/SDL-mirror.git "$branch"
+    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
     cd "$pkg_ver"
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
 }
