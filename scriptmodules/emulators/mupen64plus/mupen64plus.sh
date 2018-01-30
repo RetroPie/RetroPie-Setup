@@ -254,6 +254,10 @@ function testCompatibility() {
             iniSet "EnableFBEmulation" "True"
             # Set native resolution factor of 1
             iniSet "UseNativeResolutionFactor" "1"
+			  # Force 3-point bilinear filtering & disable shader/key cache on Pi
+ -            # See: https://github.com/gonetz/GLideN64/issues/1665
+ -            iniSet "bilinearMode" "False"
+ -            iniSet "EnableShadersStorage" "False"
             for game in "${GLideN64NativeResolution_blacklist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
                     iniSet "UseNativeResolutionFactor" "0"
@@ -419,5 +423,5 @@ if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* ]]; th
     # If a raspberry pi is used lower resolution to 320x240 and enable SDL dispmanx scaling mode 1
     SDL_VIDEO_RPI_SCALE_MODE=1 "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --windowed $RES --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio ${AUDIO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
 else
-    SDL_AUDIODRIVER=pulse "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio mupen64plus-audio-sdl.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
+     SDL_AUDIODRIVER=alsa "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --resolution 1920x1080 --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio mupen64plus-audio-sdl.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
 fi

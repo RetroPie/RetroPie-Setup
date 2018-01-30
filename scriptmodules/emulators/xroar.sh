@@ -14,18 +14,18 @@ rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_help="ROM Extensions: .cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna\n\nCopy your Dragon roms to $romdir/dragon32\n\nCopy your CoCo games to $romdir/coco\n\nCopy the required BIOS files d32.rom (Dragon 32) and bas13.rom (CoCo) to $biosdir"
 rp_module_licence="GPL2 http://www.6809.org.uk/xroar/"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags=" "
 
 function depends_xroar() {
-    getDepends libsdl1.2-dev automake
+    getDepends libsdl2-dev automake
 }
 
 function sources_xroar() {
-    gitPullOrClone "$md_build" http://www.6809.org.uk/git/xroar.git 0.33.2
+    gitPullOrClone "$md_build" http://www.6809.org.uk/git/xroar.git 0.34.8
 }
 
 function build_xroar() {
-    local params=(--without-gtk2 --without-gtkgl)
+    local params=(--without-gtk2 --without-gtkgl --without-sdlgl --enable-filereq-cli )
     if ! isPlatform "x11"; then
         params+=(--without-pulse)
     fi
