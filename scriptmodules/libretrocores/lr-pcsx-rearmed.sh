@@ -24,7 +24,11 @@ function sources_lr-pcsx-rearmed() {
 }
 
 function build_lr-pcsx-rearmed() {
-    ./configure --platform=libretro
+    if isPlatform "neon"; then
+        ./configure --platform=libretro --enable-neon
+    else
+        ./configure --platform=libretro --disable-neon
+    fi
     make clean
     make
     md_ret_require="$md_build/libretro.so"

@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="!x86 !mali !kms"
 
 function depends_pisnes() {
-    getDepends libasound2-dev libsdl1.2-dev libraspberrypi-dev
+    getDepends libasound2-dev libsdl1.2-dev libraspberrypi-dev libjpeg-dev
 }
 
 function sources_pisnes() {
