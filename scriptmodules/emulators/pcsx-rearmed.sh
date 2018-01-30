@@ -28,7 +28,7 @@ function build_pcsx-rearmed() {
     if isPlatform "neon"; then
         ./configure --sound-drivers=alsa --enable-neon
     else
-        ./configure --sound-drivers=alsa
+        ./configure --sound-drivers=alsa --disable-neon
     fi
     make clean
     make

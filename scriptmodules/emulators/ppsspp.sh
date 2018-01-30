@@ -28,6 +28,8 @@ function sources_ppsspp() {
 
     cd ppsspp
 
+    applyPatch "$md_data/01_egl_name.diff"
+
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
 

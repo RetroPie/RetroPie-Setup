@@ -68,12 +68,17 @@ function game_data_wolf4sdl() {
 function configure_wolf4sdl() {
     local bin
     local bins
+    local mission=0
     while read -r bin; do
         bins+=("$bin")
     done < <(get_bins_wolf4sdl)
     # called outside of above loop to avoid problems with addPort and stdin
     for bin in "${bins[@]}"; do
-        addPort "$bin" "wolf3d" "Wolfenstein 3D" "$md_inst/bin/$bin"
+        [[ "$bin" != "wolf4sdl-spear" ]] && addPort "$bin" "wolf3d" "Wolfenstein 3D" "$md_inst/bin/$bin"
+    done
+    for bin in "wolf4sdl-spear" "wolf4sdl-spear2" "wolf4sdl-spear3"; do
+        ((mission++))
+        addPort "$bin" "wolf3d" "Wolfenstein 3D" "$md_inst/bin/wolf4sdl-spear --mission $mission"
     done
 
     mkRomDir "ports/wolf3d"

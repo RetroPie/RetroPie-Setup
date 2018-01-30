@@ -76,10 +76,6 @@ function get_os_version() {
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
-            if compareVersions "$__os_release" ge 9 && isPlatform "rpi"; then
-                error="Sorry - Raspbian/Debian Stretch (and newer) is not yet supported on the RPI"
-            fi
-
             if compareVersions "$__os_release" lt 8; then
                 error="You need Raspbian/Debian Jessie or newer"
             fi
@@ -96,7 +92,8 @@ function get_os_version() {
 
             # We currently only provide binaries for the Odroid XU4
             if isPlatform "odroid-xu" && compareVersions "$__os_release" lt 9; then
-                __has_binaries=1
+
+                __has_binaries=0
             fi
 
             # get major version (8 instead of 8.0 etc)
@@ -260,7 +257,7 @@ function get_platform() {
 
 function platform_rpi1() {
     # values to be used for configure/make
-    __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+    __default_cflags="-O2 -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags=""
     __platform_flags="arm armv6 rpi gles"
