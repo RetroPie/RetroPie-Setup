@@ -22,6 +22,7 @@ function depends_capricerpi() {
 
 function sources_capricerpi() {
     gitPullOrClone "$md_build" https://github.com/KaosOverride/CapriceRPI.git
+    sed -i "s/-lpng12/-lpng/" src/makefile
 }
 
 function build_capricerpi() {

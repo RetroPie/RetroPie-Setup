@@ -76,10 +76,6 @@ function get_os_version() {
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
-            if compareVersions "$__os_release" ge 9 && isPlatform "rpi"; then
-                error="Sorry - Raspbian/Debian Stretch (and newer) is not yet supported on the RPI"
-            fi
-
             if compareVersions "$__os_release" lt 8; then
                 error="You need Raspbian/Debian Jessie or newer"
             fi
@@ -94,8 +90,8 @@ function get_os_version() {
                 __platform_flags+=" xbian"
             fi
 
-            # we provide binaries for RPI on Raspbian < 9 only
-            if isPlatform "rpi" && compareVersions "$__os_release" lt 9; then
+            # we provide binaries for RPI on Raspbian < 10 only
+            if isPlatform "rpi" && compareVersions "$__os_release" lt 10; then
                 __has_binaries=1
             fi
 
@@ -260,7 +256,7 @@ function get_platform() {
 
 function platform_rpi1() {
     # values to be used for configure/make
-    __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+    __default_cflags="-O2 -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags=""
     __platform_flags="arm armv6 rpi gles"
