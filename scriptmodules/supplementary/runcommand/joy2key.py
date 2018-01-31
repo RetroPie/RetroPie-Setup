@@ -212,8 +212,6 @@ def process_event(event):
     return False
 
 signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
-signal.signal(signal.SIGUSR1, signal_handler)
 
 js_button_codes = {}
 button_codes = []

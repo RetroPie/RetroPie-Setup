@@ -123,8 +123,7 @@ function start_joy2key() {
 
 function stop_joy2key() {
     if [[ -n "$JOY2KEY_PID" ]]; then
-        kill -USR1 "$JOY2KEY_PID"
-        wait "$JOY2KEY_PID" 2>/dev/null
+        kill -INT "$JOY2KEY_PID"
     fi
 }
 
