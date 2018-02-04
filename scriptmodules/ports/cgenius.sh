@@ -15,15 +15,19 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/gerstrong/Commander-Ge
 rp_module_section="exp"
 
 function depends_cgenius() {
-    getDepends build-essential libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libboost-dev
+    getDepends build-essential cmake libcurl4-openssl-dev libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libboost-dev
 }
 
 function sources_cgenius() {
-    wget -O- -q "https://github.com/gerstrong/Commander-Genius/archive/v1992beta.tar.gz" | tar -xvz --strip-components=1 -C "$md_build"
+    gitPullOrClone "$md_build" https://github.com/gerstrong/Commander-Genius.git
+
+    # use -O2 on older GCC due to segmentation fault when compiling with -O3
+    if compareVersions $__gcc_version lt 6.0.0; then
+        sed -i "s/ADD_DEFINITIONS(-O3)/ADD_DEFINITIONS(-O2)/" src/CMakeLists.txt
+    fi
 }
 
 function build_cgenius() {
-    cd $md_build
     cmake -DUSE_SDL2=yes -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
     md_ret_require="$md_build"
@@ -31,9 +35,8 @@ function build_cgenius() {
 
 function install_cgenius() {
     md_ret_files=(
-        'hqp'
-        'vfsroot/games'
-        'src/Build/LINUX/CGeniusExe'
+        'vfsroot'
+        'src/CGeniusExe'
     )
 }
 
@@ -43,11 +46,5 @@ function configure_cgenius() {
     mkRomDir "ports/$md_id"
 
     moveConfigDir "$home/.CommanderGenius"  "$md_conf_root/$md_id"
-
-    mv "$md_inst/games" "$romdir/ports/$md_id/"
-    mv "$md_inst/hqp" "$romdir/ports/$md_id/"
-
-    ln -snf "$romdir/ports/$md_id/games" "$md_inst"
-
-    chown -R $user:$user "$romdir/ports/$md_id"
+    moveConfigDir "$md_conf_root/$md_id/games"  "$romdir/ports/$md_id"
 }
