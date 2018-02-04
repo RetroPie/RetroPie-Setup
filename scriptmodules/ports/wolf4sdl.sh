@@ -13,7 +13,7 @@ rp_module_id="wolf4sdl"
 rp_module_desc="Wolf4SDL - port of Wolfenstein 3D / Spear of Destiny engine"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/mozzwald/wolf4sdl/master/license-mame.txt"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="dispmanx !mali !kms"
 
 function depends_wolf4sdl() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev
@@ -60,22 +60,25 @@ function game_data_wolf4sdl() {
     if [[ ! -f "$romdir/ports/wolf3d/gamemaps.wl1" ]]; then
         cd "$__tmpdir"
         # Get shareware game data
-        wget -q -O wolf3d14.zip http://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip
-        unzip -j -o -LL wolf3d14.zip -d "$romdir/ports/wolf3d"
+        downloadAndExtract "http://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip" "$romdir/ports/wolf3d" "-j -LL"
         chown -R $user:$user "$romdir/ports/wolf3d"
-        rm -f wolf3d14.zip
     fi
 }
 
 function configure_wolf4sdl() {
     local bin
     local bins
+    local mission=0
     while read -r bin; do
         bins+=("$bin")
     done < <(get_bins_wolf4sdl)
     # called outside of above loop to avoid problems with addPort and stdin
     for bin in "${bins[@]}"; do
-        addPort "$bin" "wolf3d" "Wolfenstein 3D" "$md_inst/bin/$bin"
+        [[ "$bin" != "wolf4sdl-spear" ]] && addPort "$bin" "wolf3d" "Wolfenstein 3D" "$md_inst/bin/$bin"
+    done
+    for bin in "wolf4sdl-spear" "wolf4sdl-spear2" "wolf4sdl-spear3"; do
+        ((mission++))
+        addPort "$bin" "wolf3d" "Wolfenstein 3D" "$md_inst/bin/wolf4sdl-spear --mission $mission"
     done
 
     mkRomDir "ports/wolf3d"

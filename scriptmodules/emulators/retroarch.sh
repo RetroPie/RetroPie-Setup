@@ -18,7 +18,7 @@ function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
-    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev)
+    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev libvulkan-dev)
 
     # only install nvidia-cg-toolkit if it is available (as the non-free repo may not be enabled)
     if isPlatform "x86"; then
@@ -33,20 +33,21 @@ function depends_retroarch() {
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git 1.6.3
+    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.6.9
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
 }
 
 function build_retroarch() {
-    local params=(--enable-sdl2)
-    ! isPlatform "x11" && params+=(--disable-x11 --enable-opengles --disable-ffmpeg --disable-sdl --enable-sdl2 --disable-oss --disable-pulse --disable-al --disable-jack)
+    local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack)
+    ! isPlatform "x11" && params+=(--disable-x11 --disable-ffmpeg --disable-pulse)
+    isPlatform "gles" && params+=(--enable-opengles)
     isPlatform "rpi" && params+=(--enable-dispmanx)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
-    if isPlatform "arm"; then
-        params+=(--enable-floathard)
-        isPlatform "neon" && params+=(--enable-neon)
-    fi
+    isPlatform "kms" && params+=(--enable-kms)
+    isPlatform "arm" && params+=(--enable-floathard)
+    isPlatform "neon" && params+=(--enable-neon)
+    isPlatform "x11" && params+=(--enable-vulkan)
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
     make
@@ -90,7 +91,7 @@ function install_xmb_monochrome_assets_retroarch() {
     local dir="$configdir/all/retroarch/assets"
     [[ -d "$dir/.git" ]] && return
     [[ ! -d "$dir" ]] && mkUserDir "$dir"
-    wget -q -O- "$__archive_url/retroarch-xmb-monochrome.tar.gz" | tar -xvz -C "$dir"
+    downloadAndExtract "$__archive_url/retroarch-xmb-monochrome.tar.gz" "$dir"
     chown -R $user:$user "$dir"
 }
 
@@ -181,6 +182,16 @@ function configure_retroarch() {
     # rgui by default
     iniSet "menu_driver" "rgui"
 
+    # hide online updater menu options
+    iniSet "menu_show_core_updater" "false"
+    iniSet "menu_show_online_updater" "false"
+
+    # disable unnecessary xmb menu tabs
+    iniSet "xmb_show_add" "false"
+    iniSet "xmb_show_history" "false"
+    iniSet "xmb_show_images" "false"
+    iniSet "xmb_show_music" "false"
+
     # disable xmb menu driver icon shadows
     iniSet "xmb_shadows_enable" "false"
 
@@ -220,11 +231,11 @@ function keyboard_retroarch() {
         ((i++))
     done < <(grep "^[[:space:]]*input_player[0-9]_[a-z]*" "$configdir/all/retroarch.cfg")
     local cmd=(dialog --backtitle "$__backtitle" --form "RetroArch keyboard configuration" 22 48 16)
-    local choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choices" ]]; then
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
         local value
         local values
-        readarray -t values <<<"$choices"
+        readarray -t values <<<"$choice"
         iniConfig " = " "" "$configdir/all/retroarch.cfg"
         i=0
         for value in "${values[@]}"; do
@@ -236,13 +247,13 @@ function keyboard_retroarch() {
 
 function hotkey_retroarch() {
     iniConfig " = " '"' "$configdir/all/retroarch.cfg"
-    cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired hotkey behaviour." 22 76 16)
-    options=(1 "Hotkeys enabled. (default)"
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired hotkey behaviour." 22 76 16)
+    local options=(1 "Hotkeys enabled. (default)"
              2 "Press ALT to enable hotkeys."
              3 "Hotkeys disabled. Press ESCAPE to open RGUI.")
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choices" ]]; then
-        case $choices in
+    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        case "$choice" in
             1)
                 iniSet "input_enable_hotkey" "nul"
                 iniSet "input_exit_emulator" "escape"

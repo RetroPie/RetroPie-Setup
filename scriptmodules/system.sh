@@ -23,14 +23,15 @@ function setup_env() {
     __has_binaries=0
 
     get_platform
-
     get_os_version
-    get_default_gcc
     get_retropie_depends
 
-    # set default gcc version
-    if [[ -n "$__default_gcc_version" ]]; then
-        set_default_gcc "$__default_gcc_version"
+    __gcc_version=$(gcc -dumpversion)
+
+    # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
+    # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
+    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5.0.0; then
+        __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
     fi
 
     # set location of binary downloads
@@ -89,14 +90,8 @@ function get_os_version() {
                 __platform_flags+=" xbian"
             fi
 
-            # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
-            # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
-            if [[ "$__os_id" == "Raspbian" ]]; then
-                __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
-            fi
-
-            # we provide binaries for RPI only
-            if isPlatform "rpi"; then
+            # we provide binaries for RPI on Raspbian < 10 only
+            if isPlatform "rpi" && compareVersions "$__os_release" lt 10; then
                 __has_binaries=1
             fi
 
@@ -112,12 +107,14 @@ function get_os_version() {
             esac
             ;;
         LinuxMint)
-            if compareVersions "$__os_release" lt 17; then
-                error="You need Linux Mint 17 or newer"
-            elif compareVersions "$__os_release" lt 18; then
-                __os_ubuntu_ver="14.04"
-            else
-                __os_ubuntu_ver="16.04"
+            if [[ "$__os_desc" != LMDE* ]]; then
+                if compareVersions "$__os_release" lt 17; then
+                    error="You need Linux Mint 17 or newer"
+                elif compareVersions "$__os_release" lt 18; then
+                    __os_ubuntu_ver="14.04"
+                else
+                    __os_ubuntu_ver="16.04"
+                fi
             fi
             __os_debian_ver="8"
             ;;
@@ -130,6 +127,12 @@ function get_os_version() {
                 __os_debian_ver="9"
             fi
             __os_ubuntu_ver="$__os_release"
+            ;;
+        Deepin)
+            if compareVersions "$__os_release" lt 15.5; then
+                error="You need Deepin OS 15.5 or newer"
+            fi
+            __os_debian_ver="9"
             ;;
         elementary)
             if compareVersions "$__os_release" lt 0.3; then
@@ -153,58 +156,43 @@ function get_os_version() {
 
     # add 32bit/64bit to platform flags
     __platform_flags+=" $(getconf LONG_BIT)bit"
-}
 
-function get_default_gcc() {
-    if [[ -z "$__default_gcc_version" ]]; then
-        case "$__os_id" in
-            Raspbian|Debian)
-                case "$__os_debian_ver" in
-                    8)
-                        __default_gcc_version="4.9"
-                esac
-                ;;
-            *)
-                ;;
-        esac
-    fi
-}
-
-# gcc version helper
-function set_default() {
-    if [[ -e "$1-$2" ]] ; then
-        # echo $1-$2 is now the default
-        ln -sf "$1-$2" "$1"
-    else
-        echo "$1-$2 is not installed"
-    fi
-}
-
-# sets default gcc version
-function set_default_gcc() {
-    pushd /usr/bin > /dev/null
-    for i in gcc cpp g++ gcov; do
-        set_default $i $1
-    done
-    popd > /dev/null
+    # configure Raspberry Pi graphics stack
+    isPlatform "rpi" && get_rpi_video
 }
 
 function get_retropie_depends() {
-    # add rasberrypi repository if it's missing (needed for libraspberrypi-dev etc) - not used on osmc
+    # add raspberrypi.org repository if it's missing (needed for libraspberrypi-dev etc) - not used on osmc
     local config="/etc/apt/sources.list.d/raspi.list"
     if [[ "$__os_id" == "Raspbian" && ! -f "$config" ]]; then
         # add key
         wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O- | apt-key add - >/dev/null
-        echo "deb http://archive.raspberrypi.org/debian/ $__os_codename main" >>$config
+        echo "deb http://archive.raspberrypi.org/debian/ $__os_codename main ui" >>$config
     fi
 
     local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev)
-    if [[ -n "$__default_gcc_version" ]]; then
-        depends+=(gcc-$__default_gcc_version g++-$__default_gcc_version)
-    fi
+
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
     fi
+}
+
+function get_rpi_video() {
+    local pkgconfig="/opt/vc/lib/pkgconfig"
+
+    # detect driver via inserted module / platform driver setup
+    if [[ -d "/sys/module/vc4" ]]; then
+        __platform_flags+=" mesa kms"
+        [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __platform_flags+=" dispmanx"
+    else
+        __platform_flags+=" videocore dispmanx"
+    fi
+
+    # use our supplied fallback pkgconfig if necessary
+    [[ ! -d "$pkgconfig" ]] && pkgconfig="$scriptdir/pkgconfig"
+
+    # set pkgconfig path for vendor libraries
+    export PKG_CONFIG_PATH="$pkgconfig"
 }
 
 function get_platform() {
@@ -242,8 +230,11 @@ function get_platform() {
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
                 __platform="imx6"
                 ;;
-            ODROID-XU3)
+            ODROID-XU[34])
                 __platform="odroid-xu"
+                ;;
+            "Rockchip (Device Tree)")
+                __platform="tinker"
                 ;;
             *)
                 case $architecture in
@@ -265,10 +256,10 @@ function get_platform() {
 
 function platform_rpi1() {
     # values to be used for configure/make
-    __default_cflags="-O2 -mfpu=vfp -march=armv6j -mfloat-abi=hard"
+    __default_cflags="-O2 -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
     __default_asflags=""
     __default_makeflags=""
-    __platform_flags="arm armv6 rpi"
+    __platform_flags="arm armv6 rpi gles"
     # if building in a chroot, what cpu should be set by qemu
     # make chroot identify as arm6l
     __qemu_cpu=arm1176
@@ -278,7 +269,7 @@ function platform_rpi2() {
     __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon rpi"
+    __platform_flags="arm armv7 neon rpi gles"
     __qemu_cpu=cortex-a7
 }
 
@@ -288,21 +279,21 @@ function platform_rpi3() {
     __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv8 neon rpi"
+    __platform_flags="arm armv8 neon rpi gles"
 }
 
 function platform_odroid-c1() {
     __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon mali"
+    __platform_flags="arm armv7 neon mali gles"
     __qemu_cpu=cortex-a9
 }
 
 function platform_odroid-c2() {
     if [[ "$(getconf LONG_BIT)" -eq 32 ]]; then
         __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
-        __platform_flags="arm armv8 neon mali"
+        __platform_flags="arm armv8 neon mali gles"
     else
         __default_cflags="-O2 -march=native"
         __platform_flags="aarch64 mali"
@@ -318,28 +309,37 @@ function platform_odroid-xu() {
     __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
     __default_asflags=""
     __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon mali"
+    __platform_flags="arm armv7 neon mali gles"
+}
+
+function platform_tinker() {
+    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    # required for mali headers to define GL functions
+    __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv7 neon kms gles"
 }
 
 function platform_x86() {
     __default_cflags="-O2 -march=native"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
-    __platform_flags="x11"
+    __platform_flags="x11 gl"
 }
 
 function platform_generic-x11() {
     __default_cflags="-O2"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
-    __platform_flags="x11"
+    __platform_flags="x11 gl"
 }
 
 function platform_armv7-mali() {
     __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
-    __platform_flags="arm armv7 neon mali"
+    __platform_flags="arm armv7 neon mali gles"
 }
 
 function platform_imx6() {

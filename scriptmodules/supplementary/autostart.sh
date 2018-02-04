@@ -28,7 +28,7 @@ function _autostart_script_autostart() {
 
     cat >/etc/profile.d/10-retropie.sh <<_EOF_
 # launch our autostart apps (if we are on the correct tty)
-if [ "\`tty\`" = "/dev/tty1" ]; then
+if [ "\`tty\`" = "/dev/tty1" ] && [ "\$USER" = "$user" ]; then
     bash "$script"
 fi
 _EOF_
@@ -135,9 +135,9 @@ function gui_autostart() {
                 options+=(DA "Boot to desktop (auto login as $user)")
             fi
         fi
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choices" ]]; then
-            case $choices in
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [[ -n "$choice" ]]; then
+            case "$choice" in
                 1)
                     if isPlatform "x11"; then
                         if [[ "$x11_autostart" -eq 0 ]]; then

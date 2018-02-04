@@ -21,7 +21,7 @@ function depends_stella() {
 }
 
 function sources_stella() {
-    wget -q -O- "$__archive_url/stella-4.7.3-src.tar.xz" | tar -xvJ --strip-components=1
+    downloadAndExtract "$__archive_url/stella-5.0.2-src.tar.xz" "$md_build" 1
 }
 
 function build_stella() {
@@ -38,7 +38,8 @@ function install_stella() {
 function configure_stella() {
     mkRomDir "atari2600"
 
-    moveConfigDir "$home/.stella" "$md_conf_root/atari2600/stella"
+    mkUserDir "$home/.config"
+    moveConfigDir "$home/.config/stella" "$md_conf_root/atari2600/stella"
 
     addEmulator 1 "$md_id" "atari2600" "$md_inst/bin/stella -maxres 320x240 -fullscreen 1 -tia.fsfill 1 %ROM%"
     addSystem "atari2600"

@@ -21,17 +21,17 @@ function depends_audiosettings() {
 }
 
 function gui_audiosettings() {
-    cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output." 22 86 16)
-    options=(
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output." 22 86 16)
+    local options=(
         1 "Auto"
         2 "Headphones - 3.5mm jack"
         3 "HDMI"
         4 "Mixer - adjust output volume"
         R "Reset to default"
     )
-    choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    if [[ -n "$choices" ]]; then
-        case $choices in
+    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    if [[ -n "$choice" ]]; then
+        case "$choice" in
             1)
                 amixer cset numid=3 0
                 alsactl store

@@ -172,7 +172,7 @@ The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk =
         default="$choice"
 
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     connect_wifi
                     ;;

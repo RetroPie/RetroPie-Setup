@@ -14,20 +14,25 @@ rp_module_desc="Megadrive/Genesis emulator DGEN"
 rp_module_help="ROM Extensions: .32x .iso .cue .smd .bin .gen .md .sg .zip\n\nCopy your  Megadrive / Genesis roms to $romdir/megadrive\nSega 32X roms to $romdir/sega32x\nand SegaCD roms to $romdir/segacd\nThe Sega CD requires the BIOS files bios_CD_U.bin, bios_CD_E.bin, and bios_CD_J.bin copied to $biosdir"
 rp_module_licence="GPL2 https://sourceforge.net/p/dgen/dgen/ci/master/tree/COPYING"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="dispmanx !mali !kms"
 
 function depends_dgen() {
     getDepends libsdl1.2-dev libarchive-dev
 }
 
 function sources_dgen() {
-    wget -O- -q $__archive_url/dgen-sdl-1.33.tar.gz | tar -xvz --strip-components=1
+    downloadAndExtract "$__archive_url/dgen-sdl-1.33.tar.gz" "$md_build" 1
 }
 
 function build_dgen() {
     local params=()
     isPlatform "rpi" && params+=(--disable-opengl --disable-hqx)
-    ./configure  --prefix="$md_inst"
+    # dgen contains obsoleted arm assembler that gcc/as will not like for armv8 cpu targets
+    if isPlatform "armv8"; then
+        CFLAGS="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard" ./configure --prefix="$md_inst"
+    else
+        ./configure --prefix="$md_inst"
+    fi
     make clean
     make
     md_ret_require="$md_build/dgen"

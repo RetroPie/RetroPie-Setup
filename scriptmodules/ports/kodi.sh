@@ -13,7 +13,7 @@ rp_module_id="kodi"
 rp_module_desc="Kodi - Open source home theatre software"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/xbmc/xbmc/master/LICENSE.GPL"
 rp_module_section="opt"
-rp_module_flags="!mali !osmc !xbian"
+rp_module_flags="!mali !osmc !xbian !kms"
 
 function _update_hook_kodi() {
     # to show as installed in retropie-setup 4.x
@@ -21,17 +21,18 @@ function _update_hook_kodi() {
 }
 
 function depends_kodi() {
-    if [[ "$md_mode" == "install" ]]; then
-        if isPlatform "x86"; then
-            apt-add-repository -y ppa:team-xbmc/ppa
-        fi
-    fi
-
     if isPlatform "rpi"; then
-        # remove old repositories
-        rm -f /etc/apt/sources.list.d/mene.list
-        rm -f /etc/apt/sources.list.d/pipplware.list
-        apt-key del 4096R/BAA567BB >/dev/null
+        if [[ "$md_mode" == "install" ]]; then
+            # remove old repository
+            rm -f /etc/apt/sources.list.d/mene.list
+            echo "deb http://pipplware.pplware.pt/pipplware/dists/jessie/main/binary/ ./" >/etc/apt/sources.list.d/pipplware.list
+            wget -q -O- http://pipplware.pplware.pt/pipplware/key.asc | apt-key add - >/dev/null
+        else
+            rm -f /etc/apt/sources.list.d/pipplware.list
+            apt-key del 4096R/BAA567BB >/dev/null
+        fi
+    elif isPlatform "x86" && [[ "$md_mode" == "install" ]]; then
+        apt-add-repository -y ppa:team-xbmc/ppa
     fi
 
     getDepends policykit-1

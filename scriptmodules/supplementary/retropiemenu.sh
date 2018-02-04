@@ -130,8 +130,10 @@ function launch_retropiemenu() {
     local command="$1"
     local basename="${command##*/}"
     local no_ext=${basename%.rp}
+    joy2keyStart
     case $basename in
         retroarch.rp)
+            joy2keyStop
             cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
             chown $user:$user "$configdir/all/retroarch.cfg.bak"
             su $user -c "\"$emudir/retroarch/bin/retroarch\" --menu --config \"$configdir/all/retroarch.cfg\""
@@ -164,5 +166,6 @@ function launch_retropiemenu() {
             sudo -u "$user" bash "$command"
             ;;
     esac
+    joy2keyStop
     clear
 }

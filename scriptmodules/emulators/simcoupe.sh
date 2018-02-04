@@ -14,7 +14,7 @@ rp_module_desc="SimCoupe SAM Coupe emulator"
 rp_module_help="ROM Extensions: .dsk .mgt .sbt .sad\n\nCopy your SAM Coupe games to $romdir/samcoupe."
 rp_module_licence="GPL2 https://raw.githubusercontent.com/simonowen/simcoupe/master/License.txt"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="!mali !kms"
 
 function depends_simcoupe() {
     getDepends cmake libsdl1.2-dev zlib1g-dev

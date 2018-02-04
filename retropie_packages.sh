@@ -9,15 +9,24 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-__version="4.2.14"
+__version="4.3.10"
 
 [[ "$__debug" -eq 1 ]] && set -x
 
 # main retropie install location
 rootdir="/opt/retropie"
 
-user="$SUDO_USER"
-[[ -z "$user" ]] && user="$(id -un)"
+# if __user is set, try and install for that user, else use SUDO_USER
+if [[ -n "$__user" ]]; then
+    user="$__user"
+    if ! id -u "$__user" &>/dev/null; then
+        echo "User $__user not exist"
+        exit 1
+    fi
+else
+    user="$SUDO_USER"
+    [[ -z "$user" ]] && user="$(id -un)"
+fi
 
 home="$(eval echo ~$user)"
 datadir="$home/RetroPie"
@@ -55,11 +64,9 @@ ensureFBMode 320 240
 
 rp_ret=0
 if [[ $# -gt 0 ]]; then
-    joy2keyStart
     setupDirectories
     rp_callModule "$@"
     rp_ret=$?
-    joy2keyStop
 else
     rp_printUsageinfo
 fi

@@ -14,6 +14,7 @@ rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/hrydgard/ppsspp/master/LICENSE.TXT"
 rp_module_section="opt"
+rp_module_flags=""
 
 function depends_ppsspp() {
     local depends=(cmake libsdl2-dev libzip-dev)
@@ -22,8 +23,10 @@ function depends_ppsspp() {
 }
 
 function sources_ppsspp() {
-    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
+    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git v1.5.4
     cd ppsspp
+
+    applyPatch "$md_data/01_egl_name.diff"
 
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
@@ -36,7 +39,7 @@ function sources_ppsspp() {
     if hasPackage cmake 3.6 lt; then
         cd ..
         mkdir -p cmake
-        wget -q -O- "$__archive_url/cmake-3.6.2.tar.gz" | tar -xvz --strip-components=1 -C cmake
+        downloadAndExtract "$__archive_url/cmake-3.6.2.tar.gz" "$md_build/cmake" 1
     fi
 }
 

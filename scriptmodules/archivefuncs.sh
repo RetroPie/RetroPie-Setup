@@ -17,7 +17,7 @@ readonly arch_dir="/tmp/retropie-archive"
 
 ## @fn archiveExtract()
 ## @param src_file Full path to archive file to extract
-## @param disk_exts Space seperated list of supported disk extensions (e.g. ".d64 .t64")
+## @param disk_exts Space separated list of supported disk extensions (e.g. ".d64 .t64")
 ## @brief Extracts an archive to a temporary directory
 ## @details After calling this the variable arch_dir will contain the directory that was used
 ## for extraction. Also the variable arch_files will contain an array of filenames that are

@@ -479,7 +479,7 @@ function main_menu() {
         fi
         cmd=(dialog --nocancel --menu "System: $SYSTEM\nEmulator: $EMULATOR\nVideo Mode: $temp_mode\nROM: $ROM_BN"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        case $choice in
+        case "$choice" in
             1)
                 choose_emulator "emu_sys" "$emu_sys"
                 ;;
@@ -575,6 +575,7 @@ function choose_mode() {
 function choose_emulator() {
     local mode="$1"
     local default="$2"
+    local cancel="$3"
 
     local default
     local default_id
@@ -597,7 +598,7 @@ function choose_emulator() {
         dialog --msgbox "No emulator options found for $SYSTEM - have you installed any snes emulators yet? Do you have a valid $EMU_SYS_CONF ?" 20 60 >/dev/tty
         exit 1
     fi
-    local cmd=(dialog --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
+    local cmd=(dialog $cancel --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
@@ -854,7 +855,7 @@ function get_sys_command() {
     if [[ -z "$emulator" ]]; then
         echo "No default emulator found for system $SYSTEM"
         start_joy2key
-        choose_emulator "emu_sys"
+        choose_emulator "emu_sys" "" "--nocancel"
         stop_joy2key
         get_sys_command "$SYSTEM" "$ROM"
         return
@@ -877,15 +878,15 @@ function get_sys_command() {
     COMMAND="$(default_emulator get emu_cmd)"
 
     # replace tokens
-    COMMAND="${COMMAND/\%ROM\%/\"$ROM\"}"
-    COMMAND="${COMMAND/\%BASENAME\%/\"$ROM_BN\"}"
+    COMMAND="${COMMAND//\%ROM\%/\"$ROM\"}"
+    COMMAND="${COMMAND//\%BASENAME\%/\"$ROM_BN\"}"
 
     # special case to get the last 2 folders for quake games for the -game parameter
     # remove everything up to /quake/
     local quake_dir="${ROM##*/quake/}"
     # remove filename
     quake_dir="${quake_dir%/*}"
-    COMMAND="${COMMAND/\%QUAKEDIR\%/\"$quake_dir\"}"
+    COMMAND="${COMMAND//\%QUAKEDIR\%/\"$quake_dir\"}"
 
     # if it starts with CON: it is a console application (so we don't redirect stdout later)
     if [[ "$COMMAND" == CON:* ]]; then

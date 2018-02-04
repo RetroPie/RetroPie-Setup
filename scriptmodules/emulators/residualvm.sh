@@ -14,7 +14,7 @@ rp_module_desc="ResidualVM - A 3D Game Interpreter"
 rp_module_help="Copy your ResidualVM games to $romdir/residualvm"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/residualvm/residualvm/master/COPYING"
 rp_module_section="exp"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="dispmanx !mali !kms"
 
 function depends_residualvm() {
     local depends=(
@@ -72,7 +72,7 @@ function configure_residualvm() {
     cat > "$romdir/residualvm/+Start ResidualVM.sh" << _EOF_
 #!/bin/bash
 renderer="\$1"
-[[ -z "\$renderer" ]] && renderer="opengl_shaders"
+[[ -z "\$renderer" ]] && renderer="software"
 game="\$2"
 [[ "\$game" =~ ^\+ ]] && game=""
 pushd "$romdir/residualvm" >/dev/null
@@ -86,7 +86,7 @@ _EOF_
     chown $user:$user "$romdir/residualvm/+Start ResidualVM.sh"
     chmod u+x "$romdir/residualvm/+Start ResidualVM.sh"
 
-    addEmulator 1 "$md_id" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh opengl_shaders %BASENAME%"
+    addEmulator 0 "$md_id" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh opengl_shaders %BASENAME%"
     addEmulator 1 "$md_id-software" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh software %BASENAME%"
     addSystem "residualvm" "ResidualVM" ".sh .rvm"
 }

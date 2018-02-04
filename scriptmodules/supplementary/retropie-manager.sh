@@ -91,7 +91,7 @@ function gui_retropie-manager() {
         cmd=(dialog --backtitle "$__backtitle" --menu "$rpmanager_status\n\nChoose an option." 22 86 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     dialog --infobox "Starting RetroPie-Manager" 4 30 2>&1 >/dev/tty
                     error_msg="$("$md_inst/rpmanager.sh" --start 2>&1 >/dev/null)" \

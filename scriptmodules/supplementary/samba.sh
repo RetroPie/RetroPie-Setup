@@ -72,7 +72,7 @@ function gui_samba() {
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     rp_callModule "$md_id" depends
                     rp_callModule "$md_id" install_shares

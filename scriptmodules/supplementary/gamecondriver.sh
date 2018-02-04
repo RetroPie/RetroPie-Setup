@@ -29,8 +29,8 @@ function depends_gamecondriver() {
 }
 
 function install_bin_gamecondriver() {
-    local gamecon_ver="1.2"
-    local db9_ver="1.0"
+    local gamecon_ver="1.3"
+    local db9_ver="1.1"
     local url="https://www.niksula.hut.fi/~mhiienka/Rpi"
 
     # install gamecon
@@ -158,7 +158,7 @@ function gui_gamecondriver() {
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         default="$choice"
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     dialog --defaultno --yesno "Gamecon driver supports RetroPie GPIO adapter board for 2 SNES controllers. Do you want to configure gamecon for 2 SNES controllers?"  22 76 >/dev/tty || continue
                     dual_snes_gamecondriver

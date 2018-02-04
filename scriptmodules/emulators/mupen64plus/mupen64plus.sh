@@ -174,9 +174,9 @@ function testCompatibility() {
     # these games need RSP-LLE
     local blacklist=(
         gauntlet
-        rogue
-        squadron
+        naboo
         body
+        infernal
     )
 
     # these games do not run with gles2n64
@@ -187,11 +187,15 @@ function testCompatibility() {
         tooie
         instinct
         beetle
+        rogue
+        squadron
     )
 
     # these games do not run with rice
     local glesn64rice_blacklist=(
         yoshi
+        rogue
+        squadron
     )
 
     # these games have massive glitches if legacy blending is enabled
@@ -212,6 +216,8 @@ function testCompatibility() {
         pokemon
         resident
         starcraft
+        rogue
+        squadron
     )
 
     for game in "${blacklist[@]}"; do
@@ -361,9 +367,13 @@ if ! grep -q "\[Core\]" "$config"; then
     echo "Version = 1.010000" >> "$config"
 fi
 iniConfig " = " "\"" "$config"
-iniSet "ScreenshotPath" "$romdir/n64"
-iniSet "SaveStatePath" "$romdir/n64"
-iniSet "SaveSRAMPath" "$romdir/n64"
+
+function setPath() {
+    iniSet "ScreenshotPath" "$romdir/n64"
+    iniSet "SaveStatePath" "$romdir/n64"
+    iniSet "SaveSRAMPath" "$romdir/n64"
+}
+
 
 # add default keyboard configuration if InputAutoCFG.ini is missing
 if [[ ! -f "$inputconfig" ]]; then
@@ -398,6 +408,7 @@ Y Axis = key(273,274)
 _EOF_
 fi
 
+getAutoConf mupen64plus_savepath && setPath
 getAutoConf mupen64plus_hotkeys && remap
 getAutoConf mupen64plus_audio && setAudio
 [[ "$VIDEO_PLUGIN" == "AUTO" ]] && autoset
@@ -408,5 +419,5 @@ if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* ]]; th
     # If a raspberry pi is used lower resolution to 320x240 and enable SDL dispmanx scaling mode 1
     SDL_VIDEO_RPI_SCALE_MODE=1 "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --windowed $RES --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio ${AUDIO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
 else
-    "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio mupen64plus-audio-sdl.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
+    SDL_AUDIODRIVER=pulse "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio mupen64plus-audio-sdl.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
 fi

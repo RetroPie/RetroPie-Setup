@@ -47,6 +47,14 @@ function gui_esthemes() {
         'RetroPie carbon'
         'RetroPie carbon-centered'
         'RetroPie carbon-nometa'
+        'RetroPie simple'
+        'RetroPie simple-dark'
+        'RetroPie clean-look'
+        'RetroPie color-pi'
+        'RetroPie nbba'
+        'RetroPie simplified-static-canela'
+        'RetroPie turtle-pi'
+        'RetroPie zoid'
         'ehettervik pixel'
         'ehettervik pixel-metadata'
         'ehettervik pixel-tft'
@@ -59,24 +67,20 @@ function gui_esthemes() {
         'ChoccyHobNob eudora-updated'
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
-        'RetroPie turtle-pi'
         'Omnija simpler-turtlepi'
-        'RetroPie simple'
-        'RetroPie simple-dark'
-        'RetroPie color-pi'
-        'RetroPie simplified-static-canela'
-        'RetroPie zoid'
-        'RetroPie nbba'
+        'Omnija simpler-turtlemini'
+        'Omnija metro'
         'lilbud material'
         'mattrixk io'
         'mattrixk metapixel'
         'mattrixk spare'
         'robertybob space'
         'robertybob simplebigart'
-        'RetroPie clean-look'
+        'robertybob tv'
         'HerbFargus tronkyfran'
         'lilbud flat'
         'lilbud flat-dark'
+        'lilbud minimal'
         'lilbud switch-light'
         'lilbud switch-dark'
         'FlyingTomahawk futura-V'
@@ -84,9 +88,12 @@ function gui_esthemes() {
         'G-rila fundamental'
         'ruckage nes-mini'
         'ruckage famicom-mini'
+        'ruckage snes-mini'
         'anthonycaccese crt'
         'anthonycaccese crt-centered'
         'anthonycaccese art-book'
+        'anthonycaccese art-book-4-3'
+        'anthonycaccese art-book-pocket'
         'anthonycaccese tft'
         'TMNTturtleguy ComicBook'
         'TMNTturtleguy ComicBook_4-3'
@@ -97,14 +104,33 @@ function gui_esthemes() {
         'dmmarti hurstyblue'
         'dmmarti maximuspie'
         'dmmarti showcase'
+        'dmmarti kidz'
         'lipebello Retrorama'
+        'lipebello SpaceOddity'
         'rxbrad gbz35'
         'rxbrad gbz35-dark'
         'garaine marioblue'
+        'garaine bigwood'
         'MrTomixf Royal_Primicia'
-        'RetroHursty69 magazinemadness'
         'lostless playstation'
         'mrharias superdisplay'
+        'coinjunkie synthwave'
+        'RetroHursty69 magazinemadness'
+        'RetroHursty69 stirling'
+        'RetroHursty69 boxalloyred'
+        'RetroHursty69 boxalloyblue'
+        'RetroHursty69 greenilicious'
+        'RetroHursty69 retroroid'
+        'RetroHursty69 merryxmas'
+        'RetroHursty69 cardcrazy'
+        'RetroHursty69 license2game'
+        'RetroHursty69 comiccrazy'
+        'RetroHursty69 snazzy'
+        'RetroHursty69 tributeGoT'
+        'RetroHursty69 tributeSTrek'
+        'RetroHursty69 tributeSWars'        
+        'Saracade scv720'
+        'chicueloarcade Chicuelo'
     )
     while true; do
         local theme
@@ -132,11 +158,11 @@ function gui_esthemes() {
             theme="${theme[1]}"
             if [[ -d "/etc/emulationstation/themes/$theme" ]]; then
                 status+=("i")
-                options+=("$i" "Update or Uninstall $theme (installed)")
+                options+=("$i" "Update or Uninstall $repo/$theme (installed)")
                 installed_themes+=("$theme $repo")
             else
                 status+=("n")
-                options+=("$i" "Install $theme (not installed)")
+                options+=("$i" "Install $repo/$theme (not installed)")
             fi
             ((i++))
         done
@@ -183,7 +209,7 @@ function gui_esthemes() {
                 repo="${theme[0]}"
                 theme="${theme[1]}"
                 if [[ "${status[choice]}" == "i" ]]; then
-                    options=(1 "Update $theme" 2 "Uninstall $theme")
+                    options=(1 "Update $repo/$theme" 2 "Uninstall $repo/$theme")
                     cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for theme" 12 40 06)
                     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
                     case "$choice" in

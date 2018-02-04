@@ -1,16 +1,5 @@
 #!/bin/sh
 
-### BEGIN INIT INFO
-# Provides:          asplashscreen
-# Required-Start:    mountdevsubfs
-# Required-Stop:
-# Default-Start:     S
-# X-Start-Before:    checkroot
-# Default-Stop:
-# Short-Description: Show custom splashscreen
-# Description:       Show custom splashscreen
-### END INIT INFO
-
 ROOTDIR=""
 DATADIR=""
 RANDOMIZE="disabled"

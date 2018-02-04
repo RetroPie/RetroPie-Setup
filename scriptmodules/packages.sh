@@ -217,7 +217,7 @@ function rp_callModule() {
             if fnExists "configure_${md_id}"; then
                 pushd "$md_inst" 2>/dev/null
                 pushed=$?
-                "configure_${md_id}" remove
+                "configure_${md_id}"
             fi
             rm -rf "$md_inst"
             printMsgs "console" "Removed directory $md_inst"
@@ -259,7 +259,7 @@ function rp_callModule() {
                 fi
             done
         else
-            # check for existance and copy any files/directories returned
+            # check for existence and copy any files/directories returned
             if [[ -n "$md_ret_files" ]]; then
                 for file in "${md_ret_files[@]}"; do
                     if [[ ! -e "$md_build/$file" ]]; then
@@ -279,15 +279,14 @@ function rp_callModule() {
 
     # some errors were returned.
     if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
+        __ERRMSGS+=("${md_ret_errors[@]}")
+        printMsgs "console" "${md_ret_errors[@]}" >&2
         # if sources fails make sure we clean up
         if [[ "$mode" == "sources" ]]; then
             rp_callModule "$md_idx" clean
         fi
         # remove install folder if there is an error (and it is empty)
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
-        printMsgs "console" "${md_ret_errors[@]}" >&2
-        # append to global errors and return an error
-        __ERRMSGS+=("${md_ret_errors[@]}")
         return 1
     fi
 

@@ -21,7 +21,7 @@ kickfile="$biosdir/kick13.rom"
 source "$rootdir/lib/archivefuncs.sh"
 
 if [[ ! -f "$kickfile" ]]; then
-    dialog --msgbox "You need to copy the Amiga kickstart file (kick13.rom) to the folder $biosdir to boot the Amiga emulator." 22 76
+    dialog --no-cancel --pause "You need to copy the Amiga kickstart file (kick13.rom) to the folder $biosdir to boot the Amiga emulator." 22 76 15
     exit 1
 fi
 

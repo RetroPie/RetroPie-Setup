@@ -47,7 +47,6 @@ function install_ps3controller() {
 
     cd sixad
     checkinstall -y --fstrans=no
-    insserv sixad
 
     echo "$branch" >"$md_inst/type.txt"
 
@@ -55,19 +54,10 @@ function install_ps3controller() {
     iniConfig " = " "" "/etc/bluetooth/main.conf"
     iniSet "DiscoverableTimeout" "0"
     iniSet "PairableTimeout" "0"
-
-    # Start sixad daemon
-    /etc/init.d/sixad start
 }
 
 function remove_ps3controller() {
-    /etc/init.d/sixad stop
-    insserv -r sixad
     dpkg --purge sixad
-    rm -f /etc/udev/rules.d/99-sixpair.rules
-    rm -f /etc/udev/rules.d/10-local.rules
-    # just incase permissions were not restored
-    [[ -f /usr/sbin/bluetoothd ]] && chmod 755 /usr/sbin/bluetoothd
 }
 
 function pair_ps3controller() {
@@ -94,7 +84,7 @@ function gui_ps3controller() {
     drivers["gasia-only"]="gasia only"
     drivers["shanwan"]="clone support shanwan"
 
-    printMsgs "dialog" "NOTE: You cannot currently use PS3 controllers with other bluetooth devices. The PS3 controller driver disables the standard bluetooth stack. If you want to use a wireless keyboard along with your PS3 controllers you can use 2.4ghz wireless devices that come with their own dongle."
+    printMsgs "dialog" "WARNING: The ps3controller driver partially disables the standard Bluetooth stack so that Dual Shock controllers can pair correctly. Although the Bluetooth stack is temporarily re-enabled inside Retropie's Bluetooth menu to allow compatibility with standard Bluetooth peripherals, any other software that relies on the full Bluetooth stack will not work correctly while the ps3controller driver is active."
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
     while true; do
         local i=1
@@ -115,7 +105,7 @@ function gui_ps3controller() {
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     rp_callModule "$md_id" pair
                     ;;

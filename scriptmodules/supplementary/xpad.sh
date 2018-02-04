@@ -30,18 +30,19 @@ function sources_xpad() {
     # LED support (as disabled currently in packaged RPI kernel) and allow forcing MAP_TRIGGERS_TO_BUTTONS
     applyPatch "retropie.diff" <<\_EOF_
 diff --git a/xpad.c b/xpad.c
-index 2ff80cf..8c8ea54 100644
+index 633eab0..0cd7cfd 100644
 --- a/xpad.c
 +++ b/xpad.c
-@@ -75,6 +75,7 @@
-  * Later changes can be tracked in SCM.
-  */
- #define DEBUG
+@@ -89,6 +89,8 @@
+ 
+ #define XPAD_PKT_LEN 64
+ 
 +#define CONFIG_JOYSTICK_XPAD_LEDS 1
- #include <linux/kernel.h>
- #include <linux/input.h>
- #include <linux/rcupdate.h>
-@@ -1505,12 +1506,13 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
++
+ /* xbox d-pads should map to buttons, as is required for DDR pads
+    but we map them to axes when possible to simplify things */
+ #define MAP_DPAD_TO_BUTTONS		(1 << 0)
+@@ -1748,12 +1750,13 @@ static int xpad_probe(struct usb_interface *intf, const struct usb_device_id *id
  
  		if (dpad_to_buttons)
  			xpad->mapping |= MAP_DPAD_TO_BUTTONS;

@@ -14,7 +14,7 @@ rp_module_desc="ScummVM - built with legacy SDL1 support."
 rp_module_help="Copy your ScummVM games to $romdir/scummvm"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !x11"
+rp_module_flags="dispmanx !mali !x11 !kms"
 
 function depends_scummvm-sdl1() {
     depends_scummvm
@@ -22,7 +22,6 @@ function depends_scummvm-sdl1() {
 
 function sources_scummvm-sdl1() {
     sources_scummvm
-    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-1-9"
     if isPlatform "rpi"; then
         applyPatch rpi-sdl1.diff <<\_EOF_
 --- a/configure

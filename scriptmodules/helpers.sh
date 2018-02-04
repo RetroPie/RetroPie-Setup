@@ -202,17 +202,6 @@ function getDepends() {
     [[ "$ini_value" == "0" ]] && own_sdl2=0
 
     for required in $@; do
-        if [[ "$md_mode" == "install" ]]; then
-            # make sure we have our sdl1 / sdl2 installed
-            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && ! hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "eq"; then
-                packages+=("$required")
-                continue
-            fi
-            if [[ "$own_sdl2" -eq 1 && "$required" == "libsdl2-dev" ]] && ! hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "eq"; then
-                packages+=("$required")
-                continue
-            fi
-        fi
 
         # workaround for different package names on osmc / xbian
         if [[ "$required" == "libraspberrypi-dev" ]]; then
@@ -223,6 +212,24 @@ function getDepends() {
         # map libpng12-dev to libpng-dev for Ubuntu 16.10+
         if [[ "$required" == "libpng12-dev" ]] && compareVersions "$__os_debian_ver" ge 9;  then
             required="libpng-dev"
+        fi
+
+        if [[ "$md_mode" == "install" ]]; then
+            # make sure we have our sdl1 / sdl2 installed
+            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "ne"; then
+                packages+=("$required")
+                continue
+            fi
+            if [[ "$own_sdl2" -eq 1 && "$required" == "libsdl2-dev" ]] && hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "ne"; then
+                packages+=("$required")
+                continue
+            fi
+
+            # make sure libraspberrypi-dev/libraspberrypi0 is up to date.
+            if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage libraspberrypi-dev 1.20170703-1 "lt"; then
+                packages+=("$required")
+                continue
+            fi
         fi
 
         if [[ "$md_mode" == "remove" ]]; then
@@ -338,8 +345,8 @@ function gitPullOrClone() {
         popd > /dev/null
     else
         local git="git clone --recursive"
-        if [[ "$__persistent_repos" -ne 1 ]]; then
-            [[ "$repo" =~ github ]] && git+=" --depth 1"
+        if [[ "$__persistent_repos" -ne 1 && "$repo" == *github* ]]; then
+            git+=" --depth 1"
         fi
         [[ "$branch" != "master" ]] && git+=" --branch $branch"
         echo "$git \"$repo\" \"$dir\""
@@ -457,7 +464,7 @@ function moveConfigFile() {
 ## @brief Compares two files using diff.
 ## @retval 0 if the files were the same
 ## @retval 1 if they were not
-## @retval >1 an error occured
+## @retval >1 an error occurred
 function diffFiles() {
     diff -q "$1" "$2" >/dev/null
     return $?
@@ -907,6 +914,56 @@ function applyPatch() {
     return 0
 }
 
+## @fn downloadAndExtract()
+## @param url url of archive
+## @param dest destination folder for the archive
+## @param opts number of leading components from file to strip off or unzip params
+## @brief Download and extract an archive
+## @details Download and extract an archive, optionally stripping off a number
+## of directories - equivalent to the tar `--strip-components parameter`. For
+## zip files, the strip parameter can contain additional options to send to unzip
+## @retval 0 on success
+function downloadAndExtract() {
+    local url="$1"
+    local dest="$2"
+    local opts="$3"
+
+    local ext="${url##*.}"
+    local cmd=(tar -xv)
+    local is_tar=1
+
+    local ret
+    case "$ext" in
+        gz|tgz)
+            cmd+=(-z)
+            ;;
+        bz2)
+            cmd+=(-j)
+            ;;
+        xz)
+            cmd+=(-J)
+            ;;
+        zip)
+            is_tar=0
+            local tmp="$(mktemp -d)"
+            local file="${url##*/}"
+            runCmd wget -q -O"$tmp/$file" "$url"
+            runCmd unzip $opts -o "$tmp/$file" -d "$dest"
+            rm -rf "$tmp"
+            ret=$?
+    esac
+
+    if [[ "$is_tar" -eq 1 ]]; then
+        cmd+=(-C "$dest")
+        [[ -n "$opts" ]] && cmd+=(--strip-components "$opts")
+
+        runCmd "${cmd[@]}" < <(wget -q -O- "$url")
+        ret=$?
+    fi
+
+    return $ret
+}
+
 ## @fn ensureFBMode()
 ## @param res_x width of mode
 ## @param res_y height of mode
@@ -944,6 +1001,10 @@ _EOF_
 ## @details Arguments are curses capability names or hex values starting with '0x'
 ## see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
 function joy2keyStart() {
+    # don't start on SSH sessions
+    # (check for bracket in output - ip/name in brackets over a SSH connection)
+    [[ "$(who -m)" == *\(* ]] && return
+
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
         params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
@@ -953,7 +1014,7 @@ function joy2keyStart() {
     [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/jsX"
 
     # if no joystick device, or joy2key is already running exit
-    [[ -z "$__joy2key_dev" || -n "$SSH_TTY" ]] || pgrep -f joy2key.py >/dev/null && return 1
+    [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
 
     # if joy2key.py is installed run it with cursor keys for axis/dpad, and enter + space for buttons 0 and 1
     if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
@@ -1219,4 +1280,24 @@ function delEmulator() {
             "$function" "$fullname" "$system"
         done
     fi
+}
+
+## @fn patchVendorGraphics()
+## @param filename file to patch
+## @details replace declared dependencies of old vendor graphics libraries with new names
+## Temporary compatibility workaround for legacy software to work on new Raspberry Pi firmwares.
+function patchVendorGraphics() {
+    local filename="$1"
+
+    # patchelf is not available on Raspbian Jessie
+    compareVersions "$__os_debian_ver" lt 9 && return
+
+    getDepends patchelf
+    printMsgs "console" "Applying vendor graphics patch: $filename"
+    patchelf --replace-needed libEGL.so libbrcmEGL.so \
+             --replace-needed libGLES_CM.so libbrcmGLESv2.so \
+             --replace-needed libGLESv1_CM.so libbrcmGLESv2.so \
+             --replace-needed libGLESv2.so libbrcmGLESv2.so \
+             --replace-needed libOpenVG.so libbrcmOpenVG.so \
+             --replace-needed libWFC.so libbrcmWFC.so "$filename"
 }

@@ -52,26 +52,39 @@ def get_btn_num(btn, cfg):
     if num: return num
     return ''
 
+def sysdev_get(key, sysdev_path):
+    value = ''
+    for line in open(sysdev_path + key, 'r'):
+        value = line.rstrip('\n')
+        break
+    return value
+
 def get_button_codes(dev_path):
     js_cfg_dir = CONFIG_DIR + 'all/retroarch-joypads/'
     js_cfg = ''
     dev_name = ''
     dev_button_codes = list(default_button_codes)
 
-    # getting joystick name
     for device in Context().list_devices(DEVNAME=dev_path):
-        dev_name_file = device.get('DEVPATH')
-        dev_name_file = '/sys' + os.path.dirname(dev_name_file) + '/name'
-        for line in open(dev_name_file, 'r'):
-            dev_name = line.rstrip('\n')
-            break
+        sysdev_path = '/sys' + os.path.dirname(device.get('DEVPATH')) + '/'
+        # getting joystick name
+        dev_name = sysdev_get('name', sysdev_path)
+        # getting joystick vendor ID
+        dev_vendor_id = int(sysdev_get('id/vendor', sysdev_path), 16)
+        # getting joystick product ID
+        dev_product_id = int(sysdev_get('id/product', sysdev_path), 16)
     if not dev_name:
         return dev_button_codes
 
     # getting retroarch config file for joystick
     for f in os.listdir(js_cfg_dir):
         if f.endswith('.cfg'):
-            if ini_get('input_device', js_cfg_dir + f) == dev_name:
+            input_device = ini_get('input_device', js_cfg_dir + f)
+            input_vendor_id = ini_get('input_vendor_id', js_cfg_dir + f)
+            input_product_id = ini_get('input_product_id', js_cfg_dir + f)
+            if (input_device == dev_name and
+               (input_vendor_id  == '' or int(input_vendor_id)  == dev_vendor_id) and
+               (input_product_id == '' or int(input_product_id) == dev_product_id)):
                 js_cfg = js_cfg_dir + f
                 break
     if not js_cfg:

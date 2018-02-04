@@ -13,7 +13,7 @@ rp_module_id="quake3"
 rp_module_desc="Quake 3"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/raspberrypi/quake3/master/COPYING.txt"
 rp_module_section="opt"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!x86 !mali !kms"
 
 function depends_quake3() {
     getDepends libsdl1.2-dev libraspberrypi-dev
@@ -36,10 +36,7 @@ function install_quake3() {
 
 function game_data_quake3() {
     if [[ ! -f "$romdir/ports/quake3/pak0.pk3" ]]; then
-        cd "$__tmpdir"
-        wget -O Q3DemoPaks.zip "$__archive_url/Q3DemoPaks.zip"
-        unzip -oj Q3DemoPaks.zip  -d "$romdir/ports/quake3"
-        rm Q3DemoPaks.zip
+        downloadAndExtract "$__archive_url/Q3DemoPaks.zip" "$romdir/ports/quake3" "-j"
     fi
     # always chown as moveConfigDir in the configure_ script would move the root owned demo files
     chown -R $user:$user "$romdir/ports/quake3"

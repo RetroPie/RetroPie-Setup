@@ -56,7 +56,7 @@ function list_available_bluetooth() {
         mkfifo "$fifo"
         exec 3<>"$fifo"
         local line
-        while read -r -n12 line; do
+        while read -r -n18 line; do
             if [[ "$line" == *"[bluetooth]"* ]]; then
                 echo "scan on" >&3
                 read -r line
@@ -379,7 +379,7 @@ function gui_bluetooth() {
         if [[ -n "$choice" ]]; then
             # temporarily restore Bluetooth stack (if needed)
             service sixad status >/dev/null && sixad -r
-            case $choice in
+            case "$choice" in
                 R)
                     register_bluetooth
                     ;;
@@ -405,7 +405,7 @@ function gui_bluetooth() {
             esac
         else
             # restart sixad (if running)
-            service sixad status >/dev/null && service sixad restart
+            service sixad status >/dev/null && service sixad restart && printMsgs "dialog" "NOTICE: The ps3controller driver was temporarily interrupted in order to allow compatibility with standard Bluetooth peripherals. Please re-pair your Dual Shock controller to continue (or disregard this message if currently using another controller)."
             break
         fi
     done

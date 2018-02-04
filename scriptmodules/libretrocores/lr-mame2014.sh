@@ -30,7 +30,7 @@ function build_lr-mame2014() {
 function install_lr-mame2014() {
     md_ret_files=(
         'mame2014_libretro.so'
-        'README.md'
+        'docs/README-original.md'
     )
 }
 

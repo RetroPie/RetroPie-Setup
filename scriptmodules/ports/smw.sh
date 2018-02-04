@@ -13,7 +13,7 @@ rp_module_id="smw"
 rp_module_desc="Super Mario War"
 rp_module_licence="GPL http://supermariowar.supersanctuary.net/"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="!mali !kms"
 
 function depends_smw() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev

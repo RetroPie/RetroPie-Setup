@@ -13,7 +13,7 @@ rp_module_id="minecraft"
 rp_module_desc="Minecraft - Pi Edition"
 rp_module_licence="PROP"
 rp_module_section="exp"
-rp_module_flags="!mali !x86"
+rp_module_flags="!mali !x86 !kms"
 
 function depends_minecraft() {
     getDepends xorg matchbox

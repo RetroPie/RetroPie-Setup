@@ -11,35 +11,35 @@
 
 rp_module_id="usbromservice"
 rp_module_desc="USB ROM Service"
-rp_module_section="config"
+rp_module_section="main"
+
+function _get_ver_usbromservice() {
+    echo 0.0.24
+}
+
+function _update_hook_usbromservice() {
+    [[ ! -f "$md_inst/disabled" ]] && install_scripts_usbromservice
+}
 
 function depends_usbromservice() {
     local depends=(rsync ntfs-3g exfat-fuse)
-    if ! hasPackage usbmount 0.0.24; then
+    if ! hasPackage usbmount $(_get_ver_usbromservice); then
         depends+=(debhelper devscripts pmount lockfile-progs)
         getDepends "${depends[@]}"
-        if [[ "$md_mode" == "install" ]]; then
-            rp_callModule usbromservice sources
-            rp_callModule usbromservice build
-            rp_callModule usbromservice install
-        fi
+        gitPullOrClone "$md_build" https://github.com/RetroPie/usbmount.git systemd
+        cd "$md_build"
+        dpkg-buildpackage
+        dpkg -i ../usbmount_*_all.deb
+        rm -f ../usbmount_*
     fi
 }
 
-function sources_usbromservice() {
-    gitPullOrClone "$md_build" https://github.com/RetroPie/usbmount.git systemd
+function install_bin_usbromservice() {
+    [[ ! -f "$md_inst/disabled" ]] && install_scripts_usbromservice
+    touch "$md_inst/installed"
 }
 
-function build_usbromservice() {
-    dpkg-buildpackage
-}
-
-function install_usbromservice() {
-    dpkg -i ../usbmount_*_all.deb
-    rm -f ../usbmount_*
-}
-
-function enable_usbromservice() {
+function install_scripts_usbromservice() {
     # copy our mount.d scripts over
     local file
     local dest
@@ -48,7 +48,28 @@ function enable_usbromservice() {
         sed "s/USERTOBECHOSEN/$user/g" "$file" >"$dest"
         chmod +x "$dest"
     done
+}
 
+function enable_usbromservice() {
+    rm -f "$md_inst/disabled"
+    install_scripts_usbromservice
+}
+
+function disable_usbromservice() {
+    local file
+    for file in "$md_data/"*; do
+        file="/etc/usbmount/mount.d/${file##*/}"
+        rm -f "$file"
+    done
+    touch "$md_inst/disabled"
+}
+
+function remove_usbromservice() {
+    disable_usbromservice
+    apt-get remove -y usbmount
+}
+
+function configure_usbromservice() {
     iniConfig "=" '"' /etc/usbmount/usbmount.conf
     local fs
     for fs in ntfs exfat; do
@@ -65,30 +86,19 @@ function enable_usbromservice() {
     fi
 }
 
-function disable_usbromservice() {
-    local file
-    for file in "$md_data/"*; do
-        file="/etc/usbmount/mount.d/${file##*/}"
-        rm -f "$file"
-    done
-}
-
-function remove_usbromservice() {
-    disable_usbromservice
-    apt-get remove -y usbmount
-}
-
 function gui_usbromservice() {
+    local cmd
+    local options
+    local choice
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Choose from an option below." 22 86 16)
         options=(
-            1 "Enable USB ROM Service"
-            2 "Disable USB ROM Service"
-            3 "Remove usbmount daemon"
+            1 "Enable USB ROM Service scripts"
+            2 "Disable USB ROM Service scripts"
         )
-        choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choices" ]]; then
-            case $choices in
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        if [[ -n "$choice" ]]; then
+            case "$choice" in
                 1)
                     rp_callModule "$md_id" depends
                     rp_callModule "$md_id" enable
@@ -97,10 +107,6 @@ function gui_usbromservice() {
                 2)
                     rp_callModule "$md_id" disable
                     printMsgs "dialog" "Disabled $md_desc"
-                    ;;
-                3)
-                    rp_callModule "$md_id" remove
-                    printMsgs "dialog" "Removed $md_desc"
                     ;;
             esac
         else
