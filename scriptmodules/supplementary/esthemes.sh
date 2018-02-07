@@ -105,8 +105,6 @@ function gui_esthemes() {
         'dmmarti maximuspie'
         'dmmarti showcase'
         'dmmarti kidz'
-        'lipebello Retrorama'
-        'lipebello SpaceOddity'
         'rxbrad gbz35'
         'rxbrad gbz35-dark'
         'garaine marioblue'
