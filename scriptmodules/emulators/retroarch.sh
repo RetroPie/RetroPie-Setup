@@ -18,7 +18,11 @@ function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
-    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libavcodec-dev libavformat-dev libavdevice-dev libvulkan-dev)
+    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev)
+
+    if compareVersions "$__os_debian_ver" ge 9; then
+        depends+=(libavcodec-dev libavformat-dev libavdevice-dev)
+    fi
 
     # only install nvidia-cg-toolkit if it is available (as the non-free repo may not be enabled)
     if isPlatform "x86"; then
@@ -40,7 +44,10 @@ function sources_retroarch() {
 
 function build_retroarch() {
     local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack)
-    ! isPlatform "x11" && params+=(--disable-x11 --disable-ffmpeg --disable-pulse)
+    ! isPlatform "x11" && params+=(--disable-x11 --disable-pulse)
+    if compareVersions "$__os_debian_ver" lt 9; then
+        params+=(--disable-ffmpeg)
+    fi
     isPlatform "gles" && params+=(--enable-opengles)
     isPlatform "rpi" && params+=(--enable-dispmanx)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
