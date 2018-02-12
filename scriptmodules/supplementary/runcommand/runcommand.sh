@@ -1034,6 +1034,7 @@ function runcommand() {
 
     if [[ "$DISABLE_MENU" -ne 1 ]]; then
         if ! check_menu; then
+            user_script "runcommand-onend.sh"
             clear
             restore_cursor_and_exit 0
         fi
