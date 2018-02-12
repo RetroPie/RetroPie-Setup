@@ -30,6 +30,7 @@ function install_bin_runcommand() {
     cp "$md_data/joy2key.py" "$md_inst/"
     chmod a+x "$md_inst/runcommand.sh"
     chmod a+x "$md_inst/joy2key.py"
+    python -m compileall "$md_inst/joy2key.py"
     if [[ ! -f "$configdir/all/runcommand.cfg" ]]; then
         mkUserDir "$configdir/all"
         iniConfig " = " '"' "$configdir/all/runcommand.cfg"
