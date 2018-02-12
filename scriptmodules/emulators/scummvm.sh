@@ -89,9 +89,8 @@ function configure_scummvm() {
 game="\$1"
 pushd "$romdir/scummvm" >/dev/null
 $md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" \$game
-while read line; do
-    id=(\$line);
-    touch "$romdir/scummvm/\$id.svm"
+while read id desc; do
+    echo "\$desc" > "$romdir/scummvm/\$id.svm"
 done < <($md_inst/bin/scummvm --list-targets | tail -n +3)
 popd >/dev/null
 _EOF_
