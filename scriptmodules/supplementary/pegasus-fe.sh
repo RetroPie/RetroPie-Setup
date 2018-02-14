@@ -66,6 +66,7 @@ function install_bin_pegasus-fe() {
     # download and extract the package
     printMsgs "console" "Download URL: ${asset_url}"
     downloadAndExtract "${asset_url}" "$md_inst"
+    patchVendorGraphics "$md_inst/pegasus-fe"
 }
 
 function configure_pegasus-fe() {
