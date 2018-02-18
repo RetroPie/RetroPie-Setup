@@ -15,27 +15,32 @@ rp_module_licence="NONCOM https://raw.githubusercontent.com/davidben/uqm/nacl/CO
 rp_module_section="opt"
 rp_module_flags="!mali !kms"
 
+function _get_ver_uqm() {
+    echo "0.6.2.dfsg-9.4"
+}
+
 function _update_hook_uqm() {
     # to show as installed in retropie-setup 4.x
     hasPackage uqm && mkdir -p "$md_inst"
 }
 
 function depends_uqm() {
-    ! hasPackage raspberrypi-bootloader && return 0
-    getDepends debhelper devscripts libmikmod-dev libsdl1.2-dev libopenal-dev libsdl-image1.2-dev libogg-dev libvorbis-dev
+    [[ "$__os_id" != "Raspbian" ]] && return 0
+    getDepends debhelper devscripts libmikmod-dev libsdl1.2-dev libopenal-dev libsdl-image1.2-dev libogg-dev libvorbis-dev xz-utils
 }
 
 function sources_uqm() {
-    ! hasPackage raspberrypi-bootloader && return 0
-    local url="http://http.debian.net/debian/pool/contrib/u/uqm/"
-    for file in uqm_0.6.2.dfsg-9.1~deb8u1.dsc uqm_0.6.2.dfsg.orig.tar.gz uqm_0.6.2.dfsg-9.1~deb8u1.diff.gz; do
+    [[ "$__os_id" != "Raspbian" ]] && return 0
+    local ver="$(_get_ver_uqm)"
+    local url="http://http.debian.net/debian/pool/contrib/u/uqm"
+    for file in uqm_$ver.dsc uqm_0.6.2.dfsg.orig.tar.gz uqm_$ver.debian.tar.xz; do
         wget -nv -O"$file" "$url/$file"
     done
 }
 
 function build_uqm() {
-    ! hasPackage raspberrypi-bootloader && return 0
-    dpkg-source -x uqm_0.6.2.dfsg-9.1~deb8u1.dsc
+    [[ "$__os_id" != "Raspbian" ]] && return 0
+    dpkg-source -x uqm_$(_get_ver_uqm).dsc
     cd uqm-0.6.2.dfsg
     dpkg-buildpackage -us -uc
 }
@@ -43,7 +48,7 @@ function build_uqm() {
 function install_uqm() {
     cp -v *.deb "$md_inst"
     # uqm is missing on raspbian
-    if hasPackage raspberrypi-bootloader; then
+    if [[ "$__os_id" == "Raspbian" ]]; then
         dpkg -i *.deb
         aptInstall uqm-content uqm-music uqm-voice
     else
@@ -68,5 +73,6 @@ function remove_uqm() {
 }
 
 function configure_uqm() {
+    moveConfigDir "$home/.uqm" "$md_conf_root/uqm"
     addPort "$md_id" "uqm" "Ur-quan Masters" "uqm -f"
 }
