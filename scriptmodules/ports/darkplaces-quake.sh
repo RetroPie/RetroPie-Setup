@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags="!mali !kms"
 
 function depends_darkplaces-quake() {
-    local depends=(libsdl2-dev)
+    local depends=(libsdl2-dev libjpeg-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
