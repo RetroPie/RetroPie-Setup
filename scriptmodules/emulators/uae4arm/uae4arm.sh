@@ -13,7 +13,7 @@ elif [[ "$rom" == *.uae ]]; then
 else
     source "../../lib/archivefuncs.sh"
 
-    archiveExtract "$rom" ".adf .adz .dms"
+    archiveExtract "$rom" ".adf .adz .dms .ipf"
 
     # check successful extraction and if we have at least one file
     if [[ $? == 0 ]]; then
