@@ -17,8 +17,8 @@ rp_module_flags="noinstclean"
 
 function depends_virtualgamepad() {
     getDepends nodejs
-    # if the system version of nodejs is old, we will install manually for armv6 or use nodesource
-    if hasPackage nodejs 4.6 lt; then
+    # if the system version of nodejs is old or doesn't package npm, we will install manually for armv6 or use nodesource
+    if hasPackage nodejs 4.6 lt || ! which npm >/dev/null; then
         if isPlatform "armv6"; then
             getDepends npm
             if ! hasPackage node; then
