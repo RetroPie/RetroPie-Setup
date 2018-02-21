@@ -12,21 +12,61 @@
 rp_module_id="lr-mame2003-plus"
 rp_module_desc="Arcade emu - updated MAME 0.78 port for libretro with added game support"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
-rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro-mirrors/mame2003-plus-libretro/master/docs/mame.txt"
-rp_module_section="exp"
+rp_module_licence="NONCOM https://github.com/arcadez/-mame2003-plus-libretro/blob/master/docs/mame.txt"
+rp_module_section="main"
 
 function sources_lr-mame2003-plus() {
-    gitPullOrClone "$md_build" https://github.com/libretro-mirrors/mame2003-plus-libretro.git
+    gitPullOrClone "$md_build" https://github.com/arcadez/-mame2003-plus-libretro
 }
 
 function build_lr-mame2003-plus() {
-    build_lr-mame2003
+    rpSwap on 750
+    make clean
+    local params=()
+    isPlatform "arm" && params+=("ARM=1")
+    make ARCH="$CFLAGS" "${params[@]}"
+    rpSwap off
+    md_ret_require="$md_build/mame2003-plus_libretro.so"
 }
 
 function install_lr-mame2003-plus() {
-    install_lr-mame2003
+    md_ret_files=(
+        'mame2003-plus_libretro.so'
+        'README.md'
+        'changed.txt'
+        'whatsnew.txt'
+        'whatsold.txt'
+        'metadata'
+    )
 }
 
 function configure_lr-mame2003-plus() {
-    configure_lr-mame2003
+    local mame_dir
+    local mame_sub_dir
+    for mame_dir in arcade mame-libretro; do
+        mkRomDir "$mame_dir"
+        mkRomDir "$mame_dir/mame2003-plus"
+        ensureSystemretroconfig "$mame_dir"
+
+        for mame_sub_dir in cfg ctrlr diff hi inp memcard nvram snap; do
+            mkRomDir "$mame_dir/mame2003-plus/$mame_sub_dir"
+        done
+    done
+
+    mkUserDir "$biosdir/mame2003-plus"
+    mkUserDir "$biosdir/mame2003-plus/samples"
+
+    # copy hiscore.dat
+    cp "$md_inst/metadata/"{hiscore.dat,cheat.dat} "$biosdir/mame2003-plus/"
+    chown $user:$user "$biosdir/mame2003-plus/"{hiscore.dat,cheat.dat}
+
+    # Set core options
+    setRetroArchCoreOption "mame2003-plus-skip_disclaimer" "enabled"
+    setRetroArchCoreOption "mame2003-plus-dcs-speedhack" "enabled"
+    setRetroArchCoreOption "mame2003-plus-samples" "enabled"
+
+    addEmulator 0 "$md_id" "arcade" "$md_inst/mame2003-plus_libretro.so"
+    addEmulator 1 "$md_id" "mame-libretro" "$md_inst/mame2003-plus_libretro.so"
+    addSystem "arcade"
+    addSystem "mame-libretro"
 }
