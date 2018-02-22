@@ -33,8 +33,7 @@ function build_lr-mame2010() {
 function install_lr-mame2010() {
     md_ret_files=(
         'mame2010_libretro.so'
-        'README.txt'
-        'whatsnew.txt'
+        'README.md'
         'mame.ini'
     )
 }
