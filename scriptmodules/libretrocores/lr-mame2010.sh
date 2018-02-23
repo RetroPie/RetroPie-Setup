@@ -34,7 +34,6 @@ function install_lr-mame2010() {
     md_ret_files=(
         'mame2010_libretro.so'
         'README.md'
-        'mame.ini'
     )
 }
 
