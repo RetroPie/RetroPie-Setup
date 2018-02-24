@@ -57,8 +57,8 @@ function configure_lr-mame2003() {
     mkUserDir "$biosdir/mame2003/samples"
 
     # copy hiscore.dat
-    cp "$md_inst/metadata/"{hiscore.dat,cheat.dat} "$biosdir/mame2003/"
-    chown $user:$user "$biosdir/mame2003/"{hiscore.dat,cheat.dat}
+    cp "$md_inst/metadata/"{cheat.dat} "$biosdir/mame2003/"
+    chown $user:$user "$biosdir/mame2003/"{cheat.dat}
 
     # Set core options
     setRetroArchCoreOption "mame2003-skip_disclaimer" "enabled"
