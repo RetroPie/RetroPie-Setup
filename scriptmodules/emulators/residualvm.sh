@@ -77,9 +77,8 @@ game="\$2"
 [[ "\$game" =~ ^\+ ]] && game=""
 pushd "$romdir/residualvm" >/dev/null
 $md_inst/bin/residualvm --renderer=\$renderer --fullscreen --joystick=0 --extrapath="$md_inst/extra" \$game
-while read line; do
-    id=(\$line);
-    touch "$romdir/residualvm/\$id.rvm"
+while read id desc; do
+    echo "\$desc" > "$romdir/residualvm/\$id.rvm"
 done < <($md_inst/bin/residualvm --list-targets | tail -n +3)
 popd >/dev/null
 _EOF_
