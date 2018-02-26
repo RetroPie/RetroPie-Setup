@@ -38,6 +38,6 @@ function configure_lr-desmume2015() {
     mkRomDir "nds"
     ensureSystemretroconfig "nds"
 
-    addEmulator 0 "$md_id" "nds" "$md_inst/desmume_libretro.so"
+    addEmulator 0 "$md_id" "nds" "$md_inst/desmume2015_libretro.so"
     addSystem "nds"
 }
