@@ -36,8 +36,8 @@ function build_amiberry() {
         amiberry_bin="$__platform-sdl1"
         amiberry_platform="$__platform"
     elif isPlatform "odroid-xu"; then
-        amiberry_bin="xu4-sdl2"
-        amiberry_platform="xu4-sdl2"
+        amiberry_bin="xu4"
+        amiberry_platform="xu4"
     elif isPlatform "tinker"; then
         amiberry_bin="tinker"
         amiberry_platform="tinker"
@@ -54,7 +54,7 @@ function install_amiberry() {
     if isPlatform "rpi" && ! isPlatform "kms"; then
         amiberry_bin="$__platform-sdl1"
     elif isPlatform "odroid-xu"; then
-        amiberry_bin="xu4-sdl2"
+        amiberry_bin="xu4"
     elif isPlatform "tinker"; then
         amiberry_bin="tinker"
     fi
