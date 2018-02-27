@@ -23,18 +23,31 @@ function sources_wolf4sdl() {
     gitPullOrClone "$md_build" https://github.com/mozzwald/wolf4sdl.git
 }
 
-function get_opts_wolf4sdl() {
+function _get_opts_wolf4sdl() {
     echo 'wolf4sdl-sw-v14 -DCARMACIZED -DUPLOAD' # shareware v1.4
     echo 'wolf4sdl-3dr-v14 -DCARMACIZED' # 3d realms / apogee v1.4 full
     echo 'wolf4sdl-gt-v14 -DCARMACIZED -DGOODTIMES' # gt / id / activision v1.4 full
     echo 'wolf4sdl-spear -DCARMACIZED -DGOODTIMES -DSPEAR' # spear of destiny
 }
 
-function get_bins_wolf4sdl() {
-    local opt
-    while read -r opt; do
-        echo "${opt%% *}"
-    done < <(get_opts_wolf4sdl)
+function add_games_wolf4sdl() {
+    local cmd="$1"
+    declare -A games=(
+        ['vswap.wl1']="Wolfenstein 3D demo"
+        ['vswap.wl6']="Wolfenstein 3D"
+        ['vswap.sd1']="Wolfenstein 3D - Spear of Destiny Ep 1"
+        ['vswap.sd2']="Wolfenstein 3D - Spear of Destiny Ep 2"
+        ['vswap.sd3']="Wolfenstein 3D - Spear of Destiny Ep 3"
+    )
+    local game
+    local wad
+
+    for game in "${!games[@]}"; do
+        wad="$romdir/ports/wolf3d/$game"
+        if [[ -f "$wad" ]]; then
+            addPort "$md_id" "wolf3d" "${games[$game]}" "$cmd" "$wad"
+        fi
+    done
 }
 
 function build_wolf4sdl() {
@@ -47,7 +60,7 @@ function build_wolf4sdl() {
         CFLAGS+=" -DVERSIONALREADYCHOSEN $defs" make DATADIR="$romdir/ports/wolf3d/"
         mv wolf3d "bin/$bin"
         md_ret_require+=("bin/$bin")
-    done < <(get_opts_wolf4sdl)
+    done < <(_get_opts_wolf4sdl)
 }
 
 function install_wolf4sdl() {
@@ -57,50 +70,63 @@ function install_wolf4sdl() {
 }
 
 function game_data_wolf4sdl() {
-    if [[ ! -f "$romdir/ports/wolf3d/gamemaps.wl1" ]]; then
+    pushd "$romdir/ports/wolf3d"
+    rename 'y/A-Z/a-z/' *
+    popd
+    if [[ ! -f "$romdir/ports/wolf3d/vswap.wl6" && ! -f "$romdir/ports/wolf3d/vswap.wl1" ]]; then
         cd "$__tmpdir"
         # Get shareware game data
         downloadAndExtract "http://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip" "$romdir/ports/wolf3d" "-j -LL"
-        chown -R $user:$user "$romdir/ports/wolf3d"
     fi
+    chown -R $user:$user "$romdir/ports/wolf3d"
 }
 
 function configure_wolf4sdl() {
-    local bin
-    local bins
-    local mission=0
-    while read -r bin; do
-        bins+=("$bin")
-    done < <(get_bins_wolf4sdl)
-    # called outside of above loop to avoid problems with addPort and stdin
-    for bin in "${bins[@]}"; do
-        [[ "$bin" != "wolf4sdl-spear" ]] && addPort "$bin" "wolf3d" "Wolfenstein 3D" "$md_inst/bin/$bin"
-    done
-    for bin in "wolf4sdl-spear" "wolf4sdl-spear2" "wolf4sdl-spear3"; do
-        ((mission++))
-        addPort "$bin" "wolf3d" "Wolfenstein 3D" "$md_inst/bin/wolf4sdl-spear --mission $mission"
-    done
+    local game
 
     mkRomDir "ports/wolf3d"
+
+    # remove obsolete emulator entries
+    while read game; do
+        delEmulator "${game%% *}" "wolf3d"
+    done < <(_get_opts_wolf4sdl; echo -e "wolf4sdl-spear2\nwolf4sdl-spear3")
+
+    if [[ "$md_mode" == "install" ]]; then
+        game_data_wolf4sdl
+        cat > "$md_inst/bin/wolf4sdl.sh" << _EOF_
+#!/bin/bash
+
+function get_md5sum() {
+    local file="\$1"
+
+    [[ -n "\$file" ]] && md5sum "\$file" 2>/dev/null | cut -d" " -f1
+}
+
+function launch_wolf4sdl() {
+    local wad_file="\$1"
+    declare -A game_checksums=(
+        ['6efa079414b817c97db779cecfb081c9']="wolf4sdl-sw-v14"
+        ['a6d901dfb455dfac96db5e4705837cdb']="wolf4sdl-3dr-v14"
+        ['b8ff4997461bafa5ef2a94c11f9de001']="wolf4sdl-gt-v14"
+        ['b1dac0a8786c7cdbb09331a4eba00652']="wolf4sdl-spear --mission 1"
+        ['25d92ac0ba012a1e9335c747eb4ab177']="wolf4sdl-spear --mission 2"
+        ['94aeef7980ef640c448087f92be16d83']="wolf4sdl-spear --mission 3"
+    )
+        if [[ "\${game_checksums[\$(get_md5sum \$wad_file)]}" ]] 2>/dev/null; then
+            $md_inst/bin/\${game_checksums[\$(get_md5sum \$wad_file)]}
+        else
+            echo "Error: \$wad_file (md5: \$(get_md5sum \$wad_file)) is not a supported version"
+        fi
+}
+
+launch_wolf4sdl "\$1"
+_EOF_
+        chmod +x "$md_inst/bin/wolf4sdl.sh"
+    fi
+
+    add_games_wolf4sdl "$md_inst/bin/wolf4sdl.sh %ROM%"
 
     moveConfigDir "$home/.wolf4sdl" "$md_conf_root/wolf3d"
 
     setDispmanx "$md_id" 1
-    configure_dispmanx_on_wolf4sdl
-
-    [[ "$md_mode" == "install" ]] && game_data_wolf4sdl
-}
-
-function configure_dispmanx_off_wolf4sdl() {
-    local bin
-    while read -r bin; do
-        setDispmanx "$bin" 0
-    done < <(get_bins_wolf4sdl)
-}
-
-function configure_dispmanx_on_wolf4sdl() {
-    local bin
-    while read -r bin; do
-        setDispmanx "$bin" 1
-    done < <(get_bins_wolf4sdl)
 }
