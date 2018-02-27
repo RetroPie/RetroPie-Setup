@@ -122,7 +122,8 @@ function configure_retropiemenu()
 
 function remove_retropiemenu() {
     rm -rf "$home/RetroPie/retropiemenu"
-    delSystem "" retropie
+    rm -rf "$home/.emulationstation/gamelists/retropie"
+    delSystem retropie
 }
 
 function launch_retropiemenu() {
