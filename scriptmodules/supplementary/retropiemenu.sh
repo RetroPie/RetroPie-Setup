@@ -130,9 +130,9 @@ function launch_retropiemenu() {
     clear
     local command="$1"
     local basename="${command##*/}"
-    local no_ext=${basename%.rp}
+    local no_ext="${basename%.rp}"
     joy2keyStart
-    case $basename in
+    case "$basename" in
         retroarch.rp)
             joy2keyStop
             cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
