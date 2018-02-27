@@ -27,7 +27,7 @@ function build_sdltrs() {
     cd src/linux
     make clean
     make
-    md_ret_require="$md_build"
+    md_ret_require="$md_build/src/linux/sdltrs"
 }
 
 function install_sdltrs() {
