@@ -28,7 +28,7 @@ function build_srb2() {
     cd build
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    md_ret_require="$md_build"
+    md_ret_require="$md_build/build/bin/srb2"
 }
 
 function install_srb2() {
