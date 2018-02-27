@@ -146,11 +146,11 @@ function gui_bashwelcometweak() {
     if [[ -n "$choice" ]]; then
         case "$choice" in
             1)
-                install_bashwelcometweak
+                rp_callModule bashwelcometweak install
                 printMsgs "dialog" "Installed Bash Welcome Tweak."
                 ;;
             2)
-                remove_bashwelcometweak
+                rp_callModule bashwelcometweak remove
                 printMsgs "dialog" "Removed Bash Welcome Tweak."
                 ;;
         esac
