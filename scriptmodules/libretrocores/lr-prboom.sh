@@ -46,10 +46,17 @@ function _add_games_lr-prboom() {
         ['doom2']="Doom 2"
         ['tnt']="TNT - Evilution"
         ['plutonia']="The Plutonia Experiment"
-        ['heretic']="Heretic - Shadow of the Serpent Riders"
-        ['hexen']="Hexen - Beyond Heretic"
-        ['hexdd']="Hexen - Deathkings of the Dark Citadel"
     )
+
+    if [[ "$md_id" == "zdoom" ]]; then
+        games+=(
+            ['heretic']="Heretic - Shadow of the Serpent Riders"
+            ['hexen']="Hexen - Beyond Heretic"
+            ['hexdd']="Hexen - Deathkings of the Dark Citadel"
+            ['chex3']="Chex Quest 3"
+            ['strife1']="Strife"
+        )
+    fi
     local game
     local doswad
     local wad
