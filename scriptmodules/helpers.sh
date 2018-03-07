@@ -1160,12 +1160,23 @@ function addPort() {
     local cmd="$4"
     local game="$5"
 
-    mkUserDir "$romdir/ports"
-
     # move configurations from old ports location
     if [[ -d "$configdir/$port" ]]; then
         mv "$configdir/$port" "$md_conf_root/"
     fi
+
+    # remove the ports launch script if in remove mode
+    if [[ "$md_mode" == "remove" ]]; then
+        rm -f "$file"
+        delEmulator "$id" "$port"
+        # if there are no more port launch scripts we can remove ports from emulation station
+        if [[ "$(find "$romdir/ports" -maxdepth 1 -name "*.sh" | wc -l)" -eq 0 ]]; then
+            delSystem "$id" "ports"
+        fi
+        return
+    fi
+
+    mkUserDir "$romdir/ports"
 
     if [[ -t 0 ]]; then
         cat >"$file" << _EOF_
@@ -1179,18 +1190,8 @@ _EOF_
     chown $user:$user "$file"
     chmod +x "$file"
 
-    # remove the ports launch script if in remove mode
-    if [[ "$md_mode" == "remove" ]]; then
-        rm -f "$file"
-        delEmulator "$id" "$port"
-        # if there are no more port launch scripts we can remove ports from emulation station
-        if [[ "$(find "$romdir/ports" -maxdepth 1 -name "*.sh" | wc -l)" -eq 0 ]]; then
-            delSystem "$id" "ports"
-        fi
-    else
-        [[ -n "$cmd" ]] && addEmulator 1 "$id" "$port" "$cmd"
-        addSystem "ports"
-    fi
+    [[ -n "$cmd" ]] && addEmulator 1 "$id" "$port" "$cmd"
+    addSystem "ports"
 }
 
 ## @fn addEmulator()
