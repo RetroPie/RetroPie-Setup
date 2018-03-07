@@ -954,6 +954,7 @@ function downloadAndExtract() {
     esac
 
     if [[ "$is_tar" -eq 1 ]]; then
+        mkdir -p "$dest"
         cmd+=(-C "$dest")
         [[ -n "$opts" ]] && cmd+=(--strip-components "$opts")
 
