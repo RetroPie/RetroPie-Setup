@@ -35,7 +35,11 @@ function install_digger() {
 }
 
 function configure_digger() {
-    mkUserDir "$home/.config"
-    moveConfigDir "$home/.config/digger" "$md_conf_root/digger"
-    addPort "$md_id" "digger" "Digger Remastered" "pushd $md_inst; $md_inst/digger /F; popd"
+    # remove symlink that isn't used
+    rm -f "$home/.config/digger"
+
+    # symlink config and hiscore save file
+    moveConfigFile "$home/.digger.rc" "$md_conf_root/digger/.digger.rc"
+    moveConfigFile "$home/.digger.sco" "$md_conf_root/digger/.digger.sco"
+    addPort "$md_id" "digger" "Digger Remastered" "$md_inst/digger /F"
 }
