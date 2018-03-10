@@ -37,5 +37,5 @@ function install_digger() {
 function configure_digger() {
     mkUserDir "$home/.config"
     moveConfigDir "$home/.config/digger" "$md_conf_root/digger"
-    addPort "$md_id" "digger" "Digger Remastered" "pushd $md_inst; $md_inst/digger; popd"
+    addPort "$md_id" "digger" "Digger Remastered" "pushd $md_inst; $md_inst/digger /F; popd"
 }
