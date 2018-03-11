@@ -21,7 +21,7 @@ function depends_fuse() {
 }
 
 function sources_fuse() {
-    downloadAndExtract "$__archive_url/fuse-1.5.1.tar.gz" "$md_build" 1
+    downloadAndExtract "$__archive_url/fuse-1.4.1.tar.gz" "$md_build" 1
     mkdir libspectrum
     downloadAndExtract "$__archive_url/libspectrum-1.4.1.tar.gz" "$md_build/libspectrum" 1
     if ! isPlatform "x11"; then
