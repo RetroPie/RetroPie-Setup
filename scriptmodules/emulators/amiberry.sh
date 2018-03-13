@@ -60,9 +60,10 @@ function install_amiberry() {
     fi
 
     md_ret_files=(
-        'data'
-        "amiberry-$amiberry_bin"
         'amiberry'
+        "amiberry-$amiberry_bin"
+        'data'
+        'whdboot'
     )
 }
 
@@ -70,4 +71,8 @@ function configure_amiberry() {
     configure_uae4arm
     moveConfigDir "$md_inst/controllers" "$configdir/all/retroarch/autoconfig"
     moveConfigFile "$md_inst/conf/retroarch.cfg" "$configdir/all/retroarch.cfg"
+
+    # whdload auto-booter user configuration
+    moveConfigFile "$md_inst/whdboot/hostprefs.conf" "$md_conf_root/amiga/$md_id/conf/hostprefs.conf"
+    chown $user:$user "$md_conf_root/amiga/$md_id/conf/hostprefs.conf"
 }
