@@ -10,6 +10,8 @@ if [[ -z "$rom" ]]; then
     "$emulator"
 elif [[ "$rom" == *.uae ]]; then
     "$emulator" -config="$rom" -G
+elif [[ "$rom" == *.lha ]]; then
+    "$emulator" -autowhdload="$rom" -G
 else
     source "../../lib/archivefuncs.sh"
 
