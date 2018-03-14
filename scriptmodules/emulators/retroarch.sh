@@ -102,6 +102,14 @@ function install_xmb_monochrome_assets_retroarch() {
     chown -R $user:$user "$dir"
 }
 
+function _package_xmb_monochrome_assets_retroarch() {
+    gitPullOrClone "$md_build/assets" https://github.com/libretro/retroarch-assets.git
+    mkdir -p "$__tmpdir/archives"
+    local archive="$__tmpdir/archives/retroarch-xmb-monochrome.tar.gz"
+    rm -f "$archive"
+    tar cvzf "$archive" -C "$md_build/assets" xmb/monochrome
+}
+
 function configure_retroarch() {
     [[ "$md_mode" == "remove" ]] && return
 
