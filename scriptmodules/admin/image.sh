@@ -15,7 +15,7 @@ rp_module_section=""
 rp_module_flags="!arm"
 
 function depends_image() {
-    getDepends kpartx unzip qemu-user-static rsync parted squashfs-tools
+    getDepends kpartx unzip qemu-user-static rsync parted squashfs-tools dosfstools e2fsprogs
 }
 
 function chroot_image() {
