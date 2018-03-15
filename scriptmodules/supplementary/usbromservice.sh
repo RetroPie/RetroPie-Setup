@@ -31,6 +31,7 @@ function depends_usbromservice() {
         dpkg-buildpackage
         dpkg -i ../usbmount_*_all.deb
         rm -f ../usbmount_*
+        rm -rf "$md_build"
     fi
 }
 
