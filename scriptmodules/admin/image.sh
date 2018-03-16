@@ -20,7 +20,7 @@ function depends_image() {
 
 function chroot_image() {
     local version="$1"
-    [[ -z "$version" ]] && version="jessie"
+    [[ -z "$version" ]] && version="stretch"
 
     mkdir -p "$md_build"
     pushd "$md_build"
