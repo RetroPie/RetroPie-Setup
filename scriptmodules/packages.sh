@@ -248,28 +248,26 @@ function rp_callModule() {
             ;;
     esac
 
-    local file
-    if [[ "${#md_ret_errors}" -eq 0 ]]; then
-        # check if any required files are found
-        if [[ -n "$md_ret_require" ]]; then
-            for file in "${md_ret_require[@]}"; do
-                if [[ ! -e "$file" ]]; then
-                    md_ret_errors+=("Could not successfully $mode $md_id - $md_desc ($file not found).")
-                    break
-                fi
-            done
-        else
-            # check for existence and copy any files/directories returned
-            if [[ -n "$md_ret_files" ]]; then
-                for file in "${md_ret_files[@]}"; do
-                    if [[ ! -e "$md_build/$file" ]]; then
-                        md_ret_errors+=("Could not successfully install $md_desc ($md_build/$file not found).")
-                        break
-                    fi
-                    cp -Rvf "$md_build/$file" "$md_inst"
-                done
+    # check if any required files are found
+    if [[ -n "$md_ret_require" ]]; then
+        for file in "${md_ret_require[@]}"; do
+            if [[ ! -e "$file" ]]; then
+                md_ret_errors+=("Could not successfully $mode $md_id - $md_desc ($file not found).")
+                break
             fi
-        fi
+        done
+    fi
+
+    if [[ "${#md_ret_errors}" -eq 0 && -n "$md_ret_files" ]]; then
+        # check for existence and copy any files/directories returned
+        local file
+        for file in "${md_ret_files[@]}"; do
+            if [[ ! -e "$md_build/$file" ]]; then
+                md_ret_errors+=("Could not successfully install $md_desc ($md_build/$file not found).")
+                break
+            fi
+            cp -Rvf "$md_build/$file" "$md_inst"
+        done
     fi
 
     # remove build folder if empty
