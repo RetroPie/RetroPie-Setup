@@ -943,7 +943,7 @@ function downloadAndExtract() {
         xz)
             cmd+=(-J)
             ;;
-        zip)
+        exe|zip)
             is_tar=0
             local tmp="$(mktemp -d)"
             local file="${url##*/}"
