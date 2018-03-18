@@ -102,7 +102,7 @@ function build_mupen64plus() {
         'mupen64plus-audio-sdl/projects/unix/mupen64plus-audio-sdl.so'
         'mupen64plus-input-sdl/projects/unix/mupen64plus-input-sdl.so'
         'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
-        'GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so'
+        'GLideN64/projects/cmake/plugin/Release/mupen64plus-video-GLideN64.so'
     )
     if isPlatform "rpi"; then
         md_ret_require+=(
@@ -136,7 +136,7 @@ function install_mupen64plus() {
         fi
     done
     cp "$md_build/GLideN64/ini/GLideN64.custom.ini" "$md_inst/share/mupen64plus/"
-    cp "$md_build/GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
+    cp "$md_build/GLideN64/projects/cmake/plugin/Release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
     cp "$md_build/GLideN64_config_version.ini" "$md_inst/share/mupen64plus/"
     # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
     rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
