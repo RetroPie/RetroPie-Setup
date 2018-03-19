@@ -18,7 +18,7 @@ rp_module_flags=""
 function depends_zdoom() {
     local depends=(
         libev-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev
-        timidity freepats cmake libopenal-dev libjpeg-dev
+        timidity freepats cmake libopenal-dev libjpeg-dev "${@}"
     )
 
     getDepends "${depends[@]}"
@@ -46,16 +46,33 @@ function install_zdoom() {
 }
 
 function add_games_zdoom() {
-    _add_games_lr-prboom "DOOMWADDIR=$romdir/ports/doom $md_inst/zdoom +set fullscreen 1 -iwad %ROM%"
+    local params=("+set fullscreen 1")
+    _add_games_lr-prboom "$md_inst/$md_id.sh %ROM% ${params[@]}"
 }
 
 function configure_zdoom() {
     mkRomDir "ports/doom"
 
     mkUserDir "$home/.config"
-    moveConfigDir "$home/.config/zdoom" "$md_conf_root/doom"
+    moveConfigDir "$home/.config/$md_id" "$md_conf_root/doom"
 
-    [[ "$md_mode" == "install" ]] && game_data_lr-prboom
+    if [[ "$md_mode" == "install" ]]; then
+        game_data_lr-prboom
+        cat > "$md_inst/$md_id.sh" << _EOF_
+#!/bin/bash
+params="\$@"
+basewad="doom2"
+if [[ ! -f "$romdir/ports/doom/doom2.wad" ]]; then
+    basewad="freedoom2"
+fi
 
-    add_games_zdoom
+if [[ "\${params[@]}" =~ ".wad" ]]; then
+    DOOMWADDIR=$romdir/ports/doom $md_inst/$md_id -iwad \${params[@]}
+else
+    DOOMWADDIR=$romdir/ports/doom $md_inst/$md_id -iwad \$basewad -file \${params[@]}
+fi
+_EOF_
+        chmod +x "$md_inst/$md_id.sh"
+    fi
+    add_games_$md_id
 }
