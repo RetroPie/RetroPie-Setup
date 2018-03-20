@@ -22,7 +22,11 @@ function depends_dolphin() {
 }
 
 function sources_dolphin() {
-    gitPullOrClone "$md_build" https://github.com/dolphin-emu/dolphin.git
+    local branch="master"
+    # current HEAD of dolphin doesn't build on Ubuntu 16.04 (with gcc 5.4)
+    compareVersions $__gcc_version lt 6.0.0 && branch="5.0"
+
+    gitPullOrClone "$md_build" https://github.com/dolphin-emu/dolphin.git "$branch"
 }
 
 function build_dolphin() {
