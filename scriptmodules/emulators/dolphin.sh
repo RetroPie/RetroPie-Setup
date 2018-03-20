@@ -31,6 +31,7 @@ function build_dolphin() {
     cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst"
     make clean
     make
+    md_ret_require="$md_build/build/Binaries/dolphin-emu"
 }
 
 function install_dolphin() {
