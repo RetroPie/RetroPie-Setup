@@ -10,7 +10,7 @@
 #
 
 rp_module_id="advmame"
-rp_module_desc="AdvanceMAME v3.6"
+rp_module_desc="AdvanceMAME v3.7"
 rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $romdir/mame-advmame or\n$romdir/arcade"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
 rp_module_section="opt"
@@ -21,7 +21,7 @@ function _update_hook_advmame() {
     # when doing update all packages
     if [[ -d "$md_inst/0.94.0" ]]; then
         mkdir -p "$rootdir/emulators/advmame-"{0.94,1.4}
-        printMsgs "dialog" "The advmame package has now been split into the following packages.\n\nadvmame-0.94\nadvmame-1.4\nadvmame\n\nIf you have chosen just to update the RetroPie-Setup script, you will need to update all the advmame packages for them to work correctly.\n\nNote that advmame-0.94.0.rc will be renamed to advmame-0.94.rc and the config for the main advmame will be advmame.rc.\n\nThe advmame package will be the latest version of the software (currently v3.6)."
+        printMsgs "dialog" "The advmame package has now been split into the following packages.\n\nadvmame-0.94\nadvmame-1.4\nadvmame\n\nIf you have chosen just to update the RetroPie-Setup script, you will need to update all the advmame packages for them to work correctly.\n\nNote that advmame-0.94.0.rc will be renamed to advmame-0.94.rc and the config for the main advmame will be advmame.rc.\n\nThe advmame package will be the latest version of the software."
     fi
 }
 
@@ -33,7 +33,7 @@ function depends_advmame() {
 }
 
 function sources_advmame() {
-    downloadAndExtract "$__archive_url/advancemame-3.6.tar.gz" "$md_build" 1
+    downloadAndExtract "$__archive_url/advancemame-3.7.tar.gz" "$md_build" 1
 }
 
 function build_advmame() {
