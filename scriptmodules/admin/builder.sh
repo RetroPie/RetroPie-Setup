@@ -92,6 +92,8 @@ if [[ "$use_distcc" -eq 1 ]]; then
 fi
 _EOF_
             rp_callModule image chroot "$md_build/$dist" bash /home/pi/install.sh
+        else
+            git -C "$md_build/$dist/home/pi/RetroPie-Setup" pull
         fi
 
         for sys in rpi1 rpi2; do
