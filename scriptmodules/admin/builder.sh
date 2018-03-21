@@ -78,9 +78,10 @@ function chroot_build_builder() {
 
     for dist in jessie stretch; do
         [[ "$use_distcc" -eq 1 ]] && rp_callModule crosscomp switch_distcc "$dist"
-        rp_callModule image create_chroot "$dist" "$md_build/$dist"
-        git clone "$HOME/RetroPie-Setup" "$md_build/$dist/home/pi/RetroPie-Setup"
-        cat > "$md_build/$dist/home/pi/install.sh" <<_EOF_
+        if [[ ! -d "$md_build/$dist" ]]; then
+            rp_callModule image create_chroot "$dist" "$md_build/$dist"
+            git clone "$HOME/RetroPie-Setup" "$md_build/$dist/home/pi/RetroPie-Setup"
+            cat > "$md_build/$dist/home/pi/install.sh" <<_EOF_
 #!/bin/bash
 cd
 sudo apt-get update
@@ -90,7 +91,8 @@ if [[ "$use_distcc" -eq 1 ]]; then
     sudo sed -i s/\+zeroconf/$ip/ /etc/distcc/hosts;
 fi
 _EOF_
-        rp_callModule image chroot "$md_build/$dist" bash /home/pi/install.sh
+            rp_callModule image chroot "$md_build/$dist" bash /home/pi/install.sh
+        fi
 
         for sys in rpi1 rpi2; do
             rp_callModule image chroot "$md_build/$dist" \
