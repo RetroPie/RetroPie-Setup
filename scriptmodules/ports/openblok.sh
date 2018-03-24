@@ -24,9 +24,9 @@ function sources_openblok() {
 }
 
 function build_openblok() {
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PORTABLE=ON -DCMAKE_INSTALL_PREFIX="$md_inst" -DENABLE_MP3=OFF
+    cmake -DCMAKE_BUILD_TYPE=Release -DINSTALL_PORTABLE=ON -DCMAKE_INSTALL_PREFIX="$md_inst" -DENABLE_MP3=OFF
     make
-    md_ret_require="$md_build"
+    md_ret_require="$md_build/src/openblok"
 }
 
 function install_openblok() {
@@ -37,5 +37,5 @@ function configure_openblok() {
     mkUserDir "$home/.local"
     mkUserDir "$home/.local/share"
     moveConfigDir "$home/.local/share/openblok" "$md_conf_root/openblok"
-    addPort "$md_id" "openblok" "OpenBlok" "$md_inst/games/openblok"
+    addPort "$md_id" "openblok" "OpenBlok" "$md_inst/openblok"
 }

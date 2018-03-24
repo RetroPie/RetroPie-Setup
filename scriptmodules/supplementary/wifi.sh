@@ -14,9 +14,23 @@ rp_module_desc="Configure Wifi"
 rp_module_section="config"
 rp_module_flags="!x11"
 
+function _set_interface_wifi() {
+    local state="$1"
+
+    if [[ "$state" == "up" ]]; then
+        if ! ifup wlan0; then
+            ip link set wlan0 up
+        fi
+    elif [[ "$state" == "down" ]]; then
+        if ! ifdown wlan0; then
+            ip link set wlan0 down
+        fi
+    fi
+}
+
 function remove_wifi() {
     sed -i '/RETROPIE CONFIG START/,/RETROPIE CONFIG END/d' "/etc/wpa_supplicant/wpa_supplicant.conf"
-    ifdown wlan0 &>/dev/null
+    _set_interface_wifi down 2>/dev/null
 }
 
 function list_wifi() {
@@ -44,6 +58,8 @@ function connect_wifi() {
     local type
     local options=()
     i=0
+    _set_interface_wifi up 2>/dev/null
+    sleep 1
     while read essid; read type; do
         essids+=("$essid")
         types+=("$type")
@@ -132,8 +148,11 @@ _EOF_
 }
 
 function gui_connect_wifi() {
-    ifdown wlan0 &>/dev/null
-    ifup wlan0 &>/dev/null
+    _set_interface_wifi down 2>/dev/null
+    _set_interface_wifi up 2>/dev/null
+    # BEGIN workaround for dhcpcd trigger failure on Raspbian stretch
+    systemctl restart dhcpcd &>/dev/null
+    # END workaround
     dialog --backtitle "$__backtitle" --infobox "\nConnecting ..." 5 40 >/dev/tty
     local id=""
     i=0
@@ -142,14 +161,18 @@ function gui_connect_wifi() {
         id=$(iwgetid -r)
         ((i++))
     done
-    [[ -z "$id" ]] && printMsgs "dialog" "Unable to connect to network $essid"
+    if [[ -z "$id" ]]; then
+        printMsgs "dialog" "Unable to connect to network $essid"
+        _set_interface_wifi down 2>/dev/null
+    fi
 }
 
 function gui_wifi() {
     local default
     while true; do
-        local ip_int=$(ip route get 8.8.8.8 2>/dev/null | head -1 | cut -d' ' -f8)
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Configure WiFi\nCurrent IP: $ip_int\nWireless ESSID: $(iwgetid -r)" 22 76 16)
+        local ip_current=$(ip route get 8.8.8.8 2>/dev/null | awk '{print $NF; exit}')
+        local ip_wlan=$(ip route ls dev wlan0 2>/dev/null | awk 'END {print $7}')
+        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Configure WiFi\nCurrent IP: $ip_current\nWireless IP: $ip_wlan\nWireless ESSID: $(iwgetid -r)" 22 76 16)
         local options=(
             1 "Connect to WiFi network"
             "1 Connect to your WiFi network"

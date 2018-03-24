@@ -20,8 +20,9 @@ function apt_upgrade_raspbiantools() {
 }
 
 function lxde_raspbiantools() {
-    aptInstall --no-install-recommends lxde
-    aptInstall xorg raspberrypi-ui-mods rpi-chromium-mods gvfs
+    aptInstall --no-install-recommends xorg lxde
+    aptInstall raspberrypi-ui-mods rpi-chromium-mods gvfs
+
     setConfigRoot "ports"
     addPort "lxde" "lxde" "Desktop" "startx"
     enable_autostart
@@ -60,9 +61,9 @@ function gui_raspbiantools() {
         local options=(
             1 "Upgrade Raspbian packages"
             2 "Install Pixel desktop environment"
-            3 "Remove some uneeded packages (pulseaudio / cups / wolfram)"
+            3 "Remove some unneeded packages (pulseaudio / cups / wolfram)"
             4 "Disable screen blanker"
-            5 "Enable needed kernel modules (uinput joydev snd-bcm2835)"
+            5 "Enable needed kernel module uinput"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then

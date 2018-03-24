@@ -47,7 +47,7 @@ _EOF_
 
     cat > "$md_inst/hidsony_source.sh" << _EOF_
 #!/bin/bash
-rpi_kernel_ver="raspberrypi-kernel_\$(dpkg -s raspberrypi-kernel | grep '^Version:' | awk '{print \$2}')"
+rpi_kernel_ver="rpi-4.9.y"
 mkdir -p "drivers/hid/" "patches"
 wget https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-sony.c -O "drivers/hid/hid-sony.c"
 wget https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-ids.h -O "drivers/hid/hid-ids.h"

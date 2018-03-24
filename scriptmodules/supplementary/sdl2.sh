@@ -16,11 +16,11 @@ rp_module_section=""
 rp_module_flags=""
 
 function get_ver_sdl2() {
-    echo "2.0.7"
+    echo "2.0.8"
 }
 
 function get_pkg_ver_sdl2() {
-    local ver="$(get_ver_sdl2)+2"
+    local ver="$(get_ver_sdl2)+1"
     isPlatform "rpi" && ver+="rpi"
     isPlatform "mali" && ver+="mali"
     echo "$ver"
@@ -37,7 +37,7 @@ function depends_sdl2() {
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "kms" && depends+=(libdrm-dev libgbm-dev)
-    isPlatform "x11" && depends+=(libpulse-dev)
+    isPlatform "x11" && depends+=(libpulse-dev libegl1-mesa-dev libgles2-mesa-dev libglu1-mesa-dev)
     getDepends "${depends[@]}"
 }
 

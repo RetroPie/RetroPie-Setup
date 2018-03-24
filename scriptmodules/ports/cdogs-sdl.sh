@@ -26,7 +26,7 @@ function sources_cdogs-sdl() {
 function build_cdogs-sdl() {
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst" -DCDOGS_DATA_DIR="$md_inst/"
     make
-    md_ret_require="$md_build"
+    md_ret_require="$md_build/src/cdogs-sdl"
 }
 
 function install_cdogs-sdl() {

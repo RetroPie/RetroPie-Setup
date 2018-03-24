@@ -62,3 +62,49 @@ function upload_builder() {
 function clean_archives_builder() {
     rm -rfv "$__tmpdir/archives"
 }
+
+function chroot_build_builder() {
+    rp_callModule image depends
+    mkdir -p "$md_build"
+
+    # get current host ip for the distcc in the emulated chroot to connect to
+    local ip="$(ip route get 8.8.8.8 2>/dev/null | awk '{print $NF; exit}')"
+
+    local use_distcc=0
+    [[ -d "$rootdir/admin/crosscomp/$dist" ]] && use_distcc=1
+
+    local dist
+    local sys
+
+    for dist in jessie stretch; do
+        [[ "$use_distcc" -eq 1 ]] && rp_callModule crosscomp switch_distcc "$dist"
+        if [[ ! -d "$md_build/$dist" ]]; then
+            rp_callModule image create_chroot "$dist" "$md_build/$dist"
+            git clone "$HOME/RetroPie-Setup" "$md_build/$dist/home/pi/RetroPie-Setup"
+            cat > "$md_build/$dist/home/pi/install.sh" <<_EOF_
+#!/bin/bash
+cd
+sudo apt-get update
+sudo apt-get install -y git
+if [[ "$use_distcc" -eq 1 ]]; then
+    sudo apt-get install -y distcc
+    sudo sed -i s/\+zeroconf/$ip/ /etc/distcc/hosts;
+fi
+_EOF_
+            rp_callModule image chroot "$md_build/$dist" bash /home/pi/install.sh
+        else
+            git -C "$md_build/$dist/home/pi/RetroPie-Setup" pull
+        fi
+
+        for sys in rpi1 rpi2; do
+            rp_callModule image chroot "$md_build/$dist" \
+                sudo \
+                PATH="/usr/lib/distcc:$PATH" \
+                MAKEFLAGS="-j4 PATH=/usr/lib/distcc:$PATH" \
+                __platform="$sys" \
+                /home/pi/RetroPie-Setup/retropie_packages.sh builder "$@"
+        done
+
+        rsync -av "$md_build/$dist/home/pi/RetroPie-Setup/tmp/archives/" "$HOME/RetroPie-Setup/tmp/archives/"
+    done
+}

@@ -18,6 +18,7 @@ rp_module_flags="!mali !kms"
 
 function depends_mupen64plus() {
     local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng12-dev fonts-freefont-ttf)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev libboost-filesystem-dev)
     isPlatform "x86" && depends+=(nasm)
     getDepends "${depends[@]}"
@@ -52,7 +53,10 @@ function sources_mupen64plus() {
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
     gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
-    
+
+    # workaround for shader cache crash issue on Raspbian stretch. See: https://github.com/gonetz/GLideN64/issues/1665
+    applyPatch "$md_data/0001-GLideN64-use-emplace.patch"
+
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
 }
@@ -64,7 +68,6 @@ function build_mupen64plus() {
     local params=()
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
-            make -C "$dir/projects/unix" clean
             params=()
             isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1" "HOST_CPU=armv6")
             isPlatform "rpi" && params+=("VC=1")
@@ -72,6 +75,7 @@ function build_mupen64plus() {
             isPlatform "x11" && params+=("OSD=1" "PIE=1")
             isPlatform "x86" && params+=("SSE=SSE2")
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
+            make -C "$dir/projects/unix" "${params[@]}" clean
             # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
             MAKEFLAGS="${MAKEFLAGS/\/usr\/lib\/distcc:/}" make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -O3 -flto"
         fi
@@ -99,7 +103,7 @@ function build_mupen64plus() {
         'mupen64plus-audio-sdl/projects/unix/mupen64plus-audio-sdl.so'
         'mupen64plus-input-sdl/projects/unix/mupen64plus-input-sdl.so'
         'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
-        'GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so'
+        'GLideN64/projects/cmake/plugin/Release/mupen64plus-video-GLideN64.so'
     )
     if isPlatform "rpi"; then
         md_ret_require+=(
@@ -133,7 +137,7 @@ function install_mupen64plus() {
         fi
     done
     cp "$md_build/GLideN64/ini/GLideN64.custom.ini" "$md_inst/share/mupen64plus/"
-    cp "$md_build/GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
+    cp "$md_build/GLideN64/projects/cmake/plugin/Release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
     cp "$md_build/GLideN64_config_version.ini" "$md_inst/share/mupen64plus/"
     # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
     rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
