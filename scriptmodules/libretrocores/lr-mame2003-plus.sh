@@ -16,7 +16,7 @@ rp_module_licence="NONCOM https://raw.githubusercontent.com/arcadez/-mame2003-pl
 rp_module_section="exp"
 
 function sources_lr-mame2003-plus() {
-    gitPullOrClone "$md_build" https://github.com/arcadez/-mame2003-plus-libretro.git
+    gitPullOrClone "$md_build" https://github.com/arcadez/mame2003-plus-libretro.git
 }
 
 function build_lr-mame2003-plus() {
