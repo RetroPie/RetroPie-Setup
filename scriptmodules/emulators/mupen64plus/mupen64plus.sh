@@ -173,7 +173,6 @@ function testCompatibility() {
     
     # these games need RSP-LLE
     local blacklist=(
-        gauntlet
         naboo
         body
         infernal
@@ -189,6 +188,7 @@ function testCompatibility() {
         beetle
         rogue
         squadron
+        gauntlet
     )
 
     # these games do not run with rice
@@ -196,6 +196,7 @@ function testCompatibility() {
         yoshi
         rogue
         squadron
+        gauntlet
     )
 
     # these games have massive glitches if legacy blending is enabled
