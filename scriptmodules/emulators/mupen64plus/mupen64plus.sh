@@ -240,7 +240,7 @@ function testCompatibility() {
             fi
             iniConfig " = " "" "$config"
             # Settings version. Don't touch it.
-            local config_version="17"
+            local config_version="20"
             if [[ -f "$configdir/n64/GLideN64_config_version.ini" ]]; then
                 config_version=$(<"$configdir/n64/GLideN64_config_version.ini")
             fi
