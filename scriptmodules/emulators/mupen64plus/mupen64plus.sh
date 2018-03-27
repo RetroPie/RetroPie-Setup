@@ -212,6 +212,12 @@ function testCompatibility() {
         majora
     )
 
+    # these games have major problems with GLideN64
+    local gliden64_blacklist=(
+        zelda
+        conker
+    )
+
     # these games crash if audio-omx is selected
     local AudioOMX_blacklist=(
         pokemon
@@ -267,6 +273,11 @@ function testCompatibility() {
                 if [[ "${ROM,,}" == *"$game"* ]]; then
                     iniSet "EnableLegacyBlending" "False"
                     break
+                fi
+            done
+            for game in "${gliden64_blacklist[@]}"; do
+                if [[ "${ROM,,}" == *"$game"* ]]; then
+                    VIDEO_PLUGIN="mupen64plus-video-rice"
                 fi
             done
             ;;
