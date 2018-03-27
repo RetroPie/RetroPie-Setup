@@ -322,7 +322,7 @@ function autoset() {
         1080
         starcraft
         wipeout
-        darkness
+        dark
     )
 
     for game in "${highres[@]}"; do
