@@ -283,6 +283,15 @@ function testCompatibility() {
             done
             ;;
     esac
+
+    # fix Audio-SDL crackle
+    iniConfig " = " "\"" "$config"
+    # create section if necessary
+    if ! grep -q "\[Audio-SDL\]" "$config"; then
+        echo "[Audio-SDL]" >> "$config"
+        echo "Version = 1" >> "$config"
+    fi
+    iniSet "RESAMPLE" "src-sinc-fastest"
 }
 
 function useTexturePacks() {
