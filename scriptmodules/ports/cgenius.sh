@@ -19,7 +19,7 @@ function depends_cgenius() {
 }
 
 function sources_cgenius() {
-    gitPullOrClone "$md_build" https://github.com/gerstrong/Commander-Genius.git v207Release
+    gitPullOrClone "$md_build" https://github.com/gerstrong/Commander-Genius.git v2.2.0
 
     # use -O2 on older GCC due to segmentation fault when compiling with -O3
     if compareVersions $__gcc_version lt 6.0.0; then
