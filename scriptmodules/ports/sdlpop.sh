@@ -20,19 +20,6 @@ function depends_sdlpop() {
 
 function sources_sdlpop() {
     gitPullOrClone "$md_build" https://github.com/NagyD/SDLPoP.git
-    applyPatch "sdlpop.diff" <<\_EOF_
---- a/src/Makefile
-+++ b/src/Makefile
-@@ -14,7 +14,7 @@ LIBS := $(shell sdl2-config --libs) -lSDL2_image -lSDL2_mixer
- INCS := -I/opt/local/include
- CFLAGS += $(INCS) -Wall -std=gnu99 -D_GNU_SOURCE=1 -D_THREAD_SAFE -DOSX -O2
- else
--LIBS := $(shell pkg-config --libs   sdl2 SDL2_image SDL2_mixer)
-+LIBS := $(shell pkg-config --libs   sdl2 SDL2_image SDL2_mixer) -lm
- INCS := $(shell pkg-config --cflags sdl2 SDL2_image SDL2_mixer)
- CFLAGS += $(INCS) -Wall -std=gnu99 -O2
- endif
-_EOF_
 }
 
 function build_sdlpop() {
