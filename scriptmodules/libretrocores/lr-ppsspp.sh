@@ -23,7 +23,7 @@ function depends_lr-ppsspp() {
 }
 
 function sources_lr-ppsspp() {
-    local branch="master"
+    local branch="libretro"
     isPlatform "rpi" && branch="libretro_rpi_fix"
     gitPullOrClone "$md_build" https://github.com/RetroPie/ppsspp.git "$branch"
 
