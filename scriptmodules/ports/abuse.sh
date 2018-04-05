@@ -15,7 +15,6 @@ rp_module_license="GPL https://raw.githubusercontent.com/Xenoveritas/abuse/maste
 rp_module_section="exp"
 
 # abuse-lib & abuse-sfx will pull in the older abuse package which only works under X
-# no children or animals harmed though, so whatever..
 function depends_abuse() {
     getDepends libsdl2-dev libsdl2-mixer-dev abuse-lib abuse-sfx
 }
