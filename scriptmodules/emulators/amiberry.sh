@@ -60,14 +60,35 @@ function install_amiberry() {
     fi
 
     md_ret_files=(
-        'data'
-        "amiberry-$amiberry_bin"
         'amiberry'
+        "amiberry-$amiberry_bin"
+        'data'
     )
+
+    cp -R "$md_build/whdboot" "$md_inst/whdboot-dist"
 }
 
 function configure_amiberry() {
     configure_uae4arm
-    moveConfigDir "$md_inst/controllers" "$configdir/all/retroarch/autoconfig"
-    moveConfigFile "$md_inst/conf/retroarch.cfg" "$configdir/all/retroarch.cfg"
+    # symlink the retroarch config / autoconfigs for amiberry to use
+    ln -sf "$configdir/all/retroarch/autoconfig" "$md_inst/controllers"
+    ln -sf "$configdir/all/retroarch.cfg" "$md_inst/conf/retroarch.cfg"
+
+    local config_dir="$md_conf_root/amiga/$md_id"
+
+    # create whdboot config area
+    moveConfigDir "$md_inst/whdboot" "$config_dir/whdboot"
+
+    # move hostprefs.conf from previous location
+    if [[ -f "$config_dir/conf/hostprefs.conf" ]]; then
+        mv "$config_dir/conf/hostprefs.conf" "$config_dir/whdboot/hostprefs.conf"
+    fi
+
+    # whdload auto-booter user config - copy default configuration
+    copyDefaultConfig "$md_inst/whdboot-dist/hostprefs.conf" "$config_dir/whdboot/hostprefs.conf"
+
+    # copy game-data, save-data folders and boot-data.zip
+    cp -R "$md_inst/whdboot-dist/"{game-data,save-data,boot-data.zip} "$config_dir/whdboot/"
+
+    chown -R $user:$user "$config_dir/whdboot"
 }
