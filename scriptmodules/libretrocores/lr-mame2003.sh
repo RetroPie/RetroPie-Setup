@@ -57,6 +57,10 @@ function configure_lr-mame2003() {
         for mame_sub_dir in cfg ctrlr diff hi inp memcard nvram snap; do
             mkRomDir "$mame_dir/$name/$mame_sub_dir"
         done
+        
+        # copy nvram patches - currently only rungun.nv
+        cp "$md_inst/metadata/*.nv" "$mame_dir/$name/$nvram"
+        chown $user:$user "$mame_dir/$name/$nvram/*.*"
     done
 
     mkUserDir "$biosdir/$name"
