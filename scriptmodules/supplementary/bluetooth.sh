@@ -80,9 +80,15 @@ function bluez_cmd_bluetooth() {
 function list_available_bluetooth() {
     local mac_address
     local device_name
+    local info_text="\n\nSearching ..."
 
-    dialog --backtitle "$__backtitle" --infobox "\nSearching ..." 5 40 >/dev/tty
+    # sixaxis: add USB pairing information
+    [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="Searching ...\n\n(To register a DualShock controller, please unplug and replug your controller while this text is visible...)"
+
+    dialog --backtitle "$__backtitle" --infobox "$info_text" 7 60 >/dev/tty
     if hasPackage bluez 5; then
+        # sixaxis: reply to authorization challenge on USB cable connect
+        [[ -n "$(lsmod | grep hid_sony)" ]] && bluez_cmd_bluetooth "default-agent" "10" "Authorize" "yes" >/dev/null &
         while read mac_address; read device_name; do
             echo "$mac_address"
             echo "$device_name"
