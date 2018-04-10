@@ -10,13 +10,21 @@
 #
 
 rp_module_id="customhidsony"
-rp_module_desc="Custom hid-sony driver for Raspberry Pi"
-rp_module_help="Installs patched hid-sony driver to fix Shanwan third-party controllers always vibrating via USB.\n\nNote: this driver should be used in conjunction with ps3controller to ensure Bluetooth compatibility."
+rp_module_desc="Custom hid-sony driver backported from kernel 4.15"
+rp_module_help="Fixes eternal vibrating bug with Shanwan DS3 controllers.\n\nWarning: the new driver has a different button layout, so you may need to remap your controller."
 rp_module_section="driver"
-rp_module_flags="noinstclean !x86 !mali !x11"
+rp_module_flags="noinstclean"
+
+function _update_hook_customhidsony() {
+    if rp_isInstalled "$md_idx"; then
+        if [[ ! "$(dkms status hid-sony/$(_version_customhidsony))" ]]; then
+            rp_callModule "$md_idx"
+        fi
+    fi
+}
 
 function _version_customhidsony() {
-    echo "0.1.0"
+    echo "0.1.1"
 }
 
 function _dkms_remove_customhidsony() {
@@ -28,7 +36,7 @@ function depends_customhidsony() {
 }
 
 function sources_customhidsony() {
-    mkdir -p "$md_inst/"
+    mkdir -p "$md_inst/patches"
     pushd "$md_inst"
 
     cat > "$md_inst/Makefile" << _EOF_
@@ -47,14 +55,15 @@ _EOF_
 
     cat > "$md_inst/hidsony_source.sh" << _EOF_
 #!/bin/bash
-rpi_kernel_ver="rpi-4.9.y"
+rpi_kernel_ver="rpi-4.15.y"
 mkdir -p "drivers/hid/" "patches"
 wget https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-sony.c -O "drivers/hid/hid-sony.c"
 wget https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-ids.h -O "drivers/hid/hid-ids.h"
-wget https://github.com/raspberrypi/linux/commit/492ca83c3d19fba1622164f07cd7b775596a7db2.patch -O "patches/0001-sony-shanwan.diff"
-patch -p1 <"patches/0001-sony-shanwan.diff"
+patch -p1 <"patches/0001-hidsony-nomotionsensors.diff"
 _EOF_
     chmod +x "$md_inst/hidsony_source.sh"
+
+    cp "$md_data/0001-hidsony-nomotionsensors.diff" "patches/"
 
     popd
 }
@@ -70,7 +79,7 @@ function build_customhidsony() {
     else
         kernel="$(uname -r)"
     fi
-    dkms install -m hid-sony -v "$(_version_customhidsony)" -k "$kernel"
+    dkms install --force -m hid-sony -v "$(_version_customhidsony)" -k "$kernel"
     if dkms status | grep -q "^hid-sony"; then
         md_ret_error+=("Failed to install $md_id")
         return 1
@@ -84,8 +93,6 @@ function remove_customhidsony() {
 }
 
 function configure_customhidsony() {
-    [[ "$md_mode" == "remove" ]] && return
-
     [[ -n "$(lsmod | grep hid_sony)" ]] && rmmod hid-sony
     modprobe hid-sony
 }
