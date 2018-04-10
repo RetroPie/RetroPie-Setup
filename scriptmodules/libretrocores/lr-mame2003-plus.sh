@@ -12,11 +12,11 @@
 rp_module_id="lr-mame2003-plus"
 rp_module_desc="Arcade emu - updated MAME 0.78 port for libretro with added game support"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
-rp_module_licence="NONCOM https://raw.githubusercontent.com/arcadez/mame2003-plus-libretro/master/docs/mame.txt"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2003-plus-libretro/master/docs/mame.txt"
 rp_module_section="exp"
 
 function sources_lr-mame2003-plus() {
-    gitPullOrClone "$md_build" https://github.com/arcadez/mame2003-plus-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/mame2003-plus-libretro.git
 }
 
 function build_lr-mame2003-plus() {
