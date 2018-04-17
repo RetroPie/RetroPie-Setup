@@ -15,18 +15,64 @@ rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mam
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2003-plus-libretro/master/LICENSE.md"
 rp_module_section="exp"
 
+function _get_name_lr-mame2003-plus() {
+    echo "${md_id/lr-/}"
+}
+
 function sources_lr-mame2003-plus() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2003-plus-libretro.git
 }
 
 function build_lr-mame2003-plus() {
-    build_lr-mame2003
+    rpSwap on 750
+    make clean
+    local params=()
+    isPlatform "arm" && params+=("ARM=1")
+    make ARCH="$CFLAGS" "${params[@]}"
+    rpSwap off
+    md_ret_require="$md_build/$(_get_name_lr-mame2003-plus)_libretro.so"
 }
 
 function install_lr-mame2003-plus() {
-    install_lr-mame2003
+    md_ret_files=(
+        "$(_get_name_lr-mame2003-plus)_libretro.so"
+        'README.md'
+        'changed.txt'
+        'whatsnew.txt'
+        'whatsold.txt'
+        'metadata'
+    )
 }
 
 function configure_lr-mame2003-plus() {
-    configure_lr-mame2003
+    local name="$(_get_name_lr-mame2003-plus)"
+
+    local mame_dir
+    local mame_sub_dir
+    for mame_dir in arcade mame-libretro; do
+        mkRomDir "$mame_dir"
+        mkRomDir "$mame_dir/$name"
+        ensureSystemretroconfig "$mame_dir"
+
+        for mame_sub_dir in cfg ctrlr diff hi inp memcard nvram snap; do
+            mkRomDir "$mame_dir/$name/$mame_sub_dir"
+        done
+    done
+
+    mkUserDir "$biosdir/$name"
+    mkUserDir "$biosdir/$name/samples"
+
+    # copy hiscore.dat
+    cp "$md_inst/metadata/"{hiscore.dat,cheat.dat} "$biosdir/$name/"
+    chown $user:$user "$biosdir/$name/"{hiscore.dat,cheat.dat}
+
+    # Set core options
+    setRetroArchCoreOption "${name}-skip_disclaimer" "enabled"
+    setRetroArchCoreOption "${name}-dcs-speedhack" "enabled"
+    setRetroArchCoreOption "${name}-samples" "enabled"
+
+    addEmulator 0 "$md_id" "arcade" "$md_inst/${name}_libretro.so"
+    addEmulator 1 "$md_id" "mame-libretro" "$md_inst/${name}_libretro.so"
+    addSystem "arcade"
+    addSystem "mame-libretro"
 }
