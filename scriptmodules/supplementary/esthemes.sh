@@ -137,6 +137,10 @@ function gui_esthemes() {
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
+        'lipebello retrorama'
+        'lipebello strangerstuff'
+        'lipebello spaceoddity'
+        'lipebello swineapple'
     )
     while true; do
         local theme
