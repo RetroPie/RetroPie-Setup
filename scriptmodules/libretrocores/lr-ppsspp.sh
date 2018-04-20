@@ -23,11 +23,10 @@ function depends_lr-ppsspp() {
 }
 
 function sources_lr-ppsspp() {
-    if isPlatform "rpi"; then
-        gitPullOrClone "$md_build" https://github.com/RetroPie/ppsspp.git libretro_rpi_fix
-    else
-        gitPullOrClone "$md_build" https://github.com/libretro/libretro-ppsspp.git
-    fi
+    local branch="libretro"
+    isPlatform "rpi" && branch="libretro_rpi_fix"
+    gitPullOrClone "$md_build" https://github.com/RetroPie/ppsspp.git "$branch"
+
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
 }

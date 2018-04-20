@@ -67,7 +67,7 @@ function create_chroot_image() {
     rsync -aAHX --numeric-ids --delete "$tmp/" "$chroot/"
 
     umount -l "$tmp/boot" "$tmp"
-    rm -rf "tmp"
+    rm -rf "$tmp"
 
     kpartx -d "$image"
 

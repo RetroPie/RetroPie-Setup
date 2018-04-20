@@ -126,10 +126,21 @@ function gui_esthemes() {
         'RetroHursty69 snazzy'
         'RetroHursty69 tributeGoT'
         'RetroHursty69 tributeSTrek'
-        'RetroHursty69 tributeSWars'        
+        'RetroHursty69 tributeSWars'
+        'RetroHursty69 crisp'
+        'RetroHursty69 crisp_light'
+        'RetroHursty69 primo'
+        'RetroHursty69 primo_light'
+        'RetroHursty69 back2basics'
+        'RetroHursty69 retrogamenews'
+        'RetroHursty69 bluray'        
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
+        'lipebello retrorama'
+        'lipebello strangerstuff'
+        'lipebello spaceoddity'
+        'lipebello swineapple'
     )
     while true; do
         local theme

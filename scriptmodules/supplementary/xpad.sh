@@ -66,7 +66,13 @@ function build_xpad() {
     if dkms status | grep -q "^xpad"; then
         dkms remove -m xpad -v 0.4 --all
     fi
-    dkms install -m xpad -v 0.4 -k "$(ls -1 /lib/modules | tail -n -1)"
+    local kernel
+    if [[ "$__chroot" -eq 1 ]]; then
+        kernel="$(ls -1 /lib/modules | tail -n -1)"
+    else
+        kernel="$(uname -r)"
+    fi
+    dkms install -m xpad -v 0.4 -k "$kernel"
 }
 
 function remove_xpad() {
