@@ -47,27 +47,29 @@ function configure_lr-mame2003() {
 
     local mame_dir
     local mame_sub_dir
+
+    # create subfolders to prepopulate - mame2003 now generates other folders when needed
     for mame_dir in arcade mame-libretro; do
         mkRomDir "$mame_dir"
         mkRomDir "$mame_dir/$name"
         ensureSystemretroconfig "$mame_dir"
 
-        for mame_sub_dir in cfg ctrlr diff hi inp memcard nvram snap; do
-            mkRomDir "$mame_dir/$name/$mame_sub_dir"
+        # currently nvram is the only folder to repopulate
+        for mame_sub_dir in nvram; do
+            mkRomDir "$romdir/$mame_dir/$name/$mame_sub_dir"
         done
-        
-        # copy nvram patches - currently only rungun.nv
-        cp "$md_inst/metadata/*.nv" "$mame_dir/$name/$nvram"
-        chown $user:$user "$mame_dir/$name/$nvram/*.*"
+
+        # prepopulate nvram patches
+        cp -r "$md_inst/metadata/nvram" "$romdir/$mame_dir/$name/$nvram"
+        chown -R $user:$user "$romdir/$mame_dir/$name/$nvram"
     done
 
     mkUserDir "$biosdir/$name"
     mkUserDir "$biosdir/$name/samples"
 
-    # copy hiscore.dat
+    # prepopulate hiscore.dat and cheat.dat
     cp "$md_inst/metadata/"{hiscore.dat,cheat.dat} "$biosdir/$name/"
-    chown $user:$user "$biosdir/$name/"{hiscore.dat,cheat.dat}
-
+    chown -R $user:$user "$biosdir"
     # Set core options
     setRetroArchCoreOption "${name}-skip_disclaimer" "enabled"
     setRetroArchCoreOption "${name}-dcs-speedhack" "enabled"
