@@ -10,8 +10,8 @@
 #
 
 rp_module_id="lr-mgba"
-rp_module_desc="GBA emulator - MGBA (optimised) port for libretro"
-rp_module_help="ROM Extensions: .gba .zip\n\nCopy your Game Boy Advance roms to $romdir/gba\n\nCopy the required BIOS file gba_bios.bin to $biosdir"
+rp_module_desc="(Super) Game Boy Color/GBA emulator - MGBA (optimised) port for libretro"
+rp_module_help="ROM Extensions: .gb .gbc .gba .zip\n\nCopy your Game Boy roms to $romdir/gb\nGame Boy Color roms to $romdir/gbc\nGame Boy Advance roms to $romdir/gba\n\nCopy the recommended BIOS files gb_bios.bin, gbc_bios.bin, sgb_bios.bin and gba_bios.bin to $biosdir"
 rp_module_licence="MPL2 https://raw.githubusercontent.com/libretro/mgba/master/LICENSE"
 rp_module_section="main"
 rp_module_flags=""
@@ -40,11 +40,14 @@ function install_lr-mgba() {
 }
 
 function configure_lr-mgba() {
-    mkRomDir "gba"
-    ensureSystemretroconfig "gba"
-
-    local def=1
-    isPlatform "armv6" && def=0
-    addEmulator $def "$md_id" "gba" "$md_inst/mgba_libretro.so"
-    addSystem "gba"
+    local system
+    local def
+    for system in gb gbc gba; do
+        def=0
+        [[ "$system" == "gba" ]] && ! isPlatform "armv6" && def=1
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator "$def" "$md_id" "$system" "$md_inst/mgba_libretro.so"
+        addSystem "$system"
+    done
 }
