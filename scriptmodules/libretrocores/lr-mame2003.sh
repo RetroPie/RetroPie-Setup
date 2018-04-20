@@ -39,7 +39,6 @@ function install_lr-mame2003() {
         'README.md'
         'CHANGELOG.md'
         'metadata'
-        'metadata/nvram'
     )
 }
 
@@ -54,25 +53,23 @@ function configure_lr-mame2003() {
         mkRomDir "$mame_dir"
         mkRomDir "$mame_dir/$name"
         ensureSystemretroconfig "$mame_dir"
-        
-        # currently nvram is the only folder to prepopulate
+
+        # currently nvram is the only folder to repopulate
         for mame_sub_dir in nvram; do
             mkRomDir "$romdir/$mame_dir/$name/$mame_sub_dir"
         done
-        
+
         # prepopulate nvram patches
-        cp -r "$md_inst/nvram" "$romdir/$mame_dir/$name/$nvram"
+        cp -r "$md_inst/metadata/nvram" "$romdir/$mame_dir/$name/$nvram"
         chown -R $user:$user "$romdir/$mame_dir/$name/$nvram"
     done
 
     mkUserDir "$biosdir/$name"
     mkUserDir "$biosdir/$name/samples"
-    chown -R $user:$user "$biosdir"
-
 
     # prepopulate hiscore.dat and cheat.dat
     cp "$md_inst/metadata/"{hiscore.dat,cheat.dat} "$biosdir/$name/"
-    chown -R $user:$user "$biosdir/$name/"{hiscore.dat,cheat.dat}
+    chown -R $user:$user "$biosdir"
     # Set core options
     setRetroArchCoreOption "${name}-skip_disclaimer" "enabled"
     setRetroArchCoreOption "${name}-dcs-speedhack" "enabled"
