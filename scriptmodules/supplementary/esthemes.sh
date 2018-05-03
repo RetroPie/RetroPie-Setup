@@ -137,7 +137,7 @@ function gui_esthemes() {
         'RetroHursty69 lightswitch'
         'RetroHursty69 darkswitch'
         'RetroHursty69 whiteslide'
-        'RetroHursty69 graffiti'         
+        'RetroHursty69 graffiti'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
