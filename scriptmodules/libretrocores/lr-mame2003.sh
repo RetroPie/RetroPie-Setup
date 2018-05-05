@@ -56,7 +56,7 @@ function configure_lr-mame2003() {
         mkRomDir "$mame_dir/$dir_name"
         ensureSystemretroconfig "$mame_dir"
 
-        for mame_sub_dir in cfg ctrlr diff hi inp memcard nvram snap; do
+        for mame_sub_dir in cfg ctrlr diff hi memcard nvram; do
             mkRomDir "$mame_dir/$dir_name/$mame_sub_dir"
         done
     done
