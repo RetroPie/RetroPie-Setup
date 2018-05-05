@@ -59,6 +59,9 @@ function configure_lr-mame2003() {
         for mame_sub_dir in cfg ctrlr diff hi memcard nvram; do
             mkRomDir "$mame_dir/$dir_name/$mame_sub_dir"
         done
+
+        # lr-mame2003-plus also has an artwork folder
+        [[ "$md_id" == "lr-mame2003-plus" ]] && mkRomDir "$mame_dir/$dir_name/artwork"
     done
 
     mkUserDir "$biosdir/$dir_name"
