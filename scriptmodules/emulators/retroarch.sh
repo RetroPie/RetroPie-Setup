@@ -37,13 +37,14 @@ function depends_retroarch() {
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.7.1
+    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.7.3
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
+    applyPatch "$md_data/03_disable_udev_sort.diff"
 }
 
 function build_retroarch() {
-    local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack)
+    local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack --disable-qt)
     ! isPlatform "x11" && params+=(--disable-x11 --disable-pulse)
     if compareVersions "$__os_debian_ver" lt 9; then
         params+=(--disable-ffmpeg)
