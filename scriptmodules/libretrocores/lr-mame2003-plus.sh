@@ -15,6 +15,14 @@ rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mam
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2003-plus-libretro/master/LICENSE.md"
 rp_module_section="exp"
 
+function _get_dir_name_lr-mame2003-plus() {
+    echo "mame2003-plus"
+}
+
+function _get_so_name_lr-mame2003-plus() {
+    echo "mame2003_plus"
+}
+
 function sources_lr-mame2003-plus() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2003-plus-libretro.git
 }
