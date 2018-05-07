@@ -994,6 +994,8 @@ function restore_cursor_and_exit() {
 
 function launch_command() {
     local ret
+    # escape $ to avoid variable expansion (eg roms containing $!)
+    COMMAND="${COMMAND//\$/\\\$}"
     # launch the command
     echo -e "Parameters: $@\nExecuting: $COMMAND" >>"$LOG"
     if [[ "$CONSOLE_OUT" -eq 1 ]]; then
