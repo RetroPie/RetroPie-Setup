@@ -14,7 +14,7 @@ rp_module_desc="Dreamcast emulator Reicast"
 rp_module_help="ROM Extensions: .cdi .gdi\n\nCopy your Dremcast roms to $romdir/dreamcast\n\nCopy the required BIOS files dc_boot.bin and dc_flash.bin to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/reicast/reicast-emulator/master/LICENSE"
 rp_module_section="opt"
-rp_module_flags="!armv6 !mali !kms"
+rp_module_flags="!armv6 !mali"
 
 function depends_reicast() {
     getDepends libsdl1.2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev
@@ -35,6 +35,9 @@ function build_reicast() {
     if isPlatform "rpi"; then
         make platform=rpi2 clean
         make platform=rpi2
+    elif isPlatform "tinker"; then
+        make USE_GLES=1 USE_SDL=1 clean
+        make USE_GLES=1 USE_SDL=1
     else
         make clean
         make
@@ -46,6 +49,8 @@ function install_reicast() {
     cd shell/linux
     if isPlatform "rpi"; then
         make platform=rpi2 PREFIX="$md_inst" install
+    elif isPlatform "tinker"; then
+        make USE_GLES=1 USE_SDL=1 PREFIX="$md_inst" install
     else
         make PREFIX="$md_inst" install
     fi
