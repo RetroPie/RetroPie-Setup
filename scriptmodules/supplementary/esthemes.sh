@@ -200,7 +200,7 @@ function gui_esthemes() {
                             fi
                             ;;
                         2)
-                            gitPullOrClone "$gallerydir" "http://github.com/wetriner/es-theme-gallery"
+                            gitPullOrClone "$gallerydir" "https://github.com/wetriner/es-theme-gallery"
                             ;;
                         3)
                             if [[ -d "$gallerydir" ]]; then
