@@ -33,9 +33,9 @@ function get_arch_sdl2() {
 function depends_sdl2() {
     # Dependencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
     # already covered by the build-essential package retropie relies on.
-    local depends=(devscripts debhelper dh-autoreconf libasound2-dev libudev-dev libibus-1.0-dev libdbus-1-dev libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev libgl1-mesa-dev fcitx-libs-dev libpulse-dev libsamplerate0-dev )
+    local depends=(devscripts debhelper dh-autoreconf libasound2-dev libudev-dev libibus-1.0-dev libdbus-1-dev libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev libgl1-mesa-dev fcitx-libs-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
-    isPlatform "mali" && depends+=(mali-fbdev)
+    isPlatform "mali" && depends+=(mali-fbdev libpulse-dev libsamplerate0-dev   )
     isPlatform "kms" && depends+=(libdrm-dev libgbm-dev)
     isPlatform "x11" && depends+=(libpulse-dev libegl1-mesa-dev libgles2-mesa-dev libglu1-mesa-dev)
     getDepends "${depends[@]}"
@@ -50,7 +50,7 @@ function sources_sdl2() {
     isPlatform "mali" && branch="mali-$ver"
     isPlatform "kms" && branch="kms-$ver"
 
-    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
+    gitPullOrClone "$md_build/$pkg_ver" https://github.com/Retro-Arena/SDL-mirror.git "$branch"
     cd "$pkg_ver"
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
 }
