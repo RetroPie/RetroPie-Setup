@@ -38,6 +38,7 @@ function install_lr-mesen() {
 function configure_lr-mesen() {
     mkRomDir "nes"
     mkRomDir "fds"
+    mkUserDir "$biosdir/HdPacks"
     ensureSystemretroconfig "nes"
     ensureSystemretroconfig "fds"
 
