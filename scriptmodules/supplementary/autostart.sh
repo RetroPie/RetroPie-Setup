@@ -54,7 +54,7 @@ function enable_autostart() {
 
     if isPlatform "x11"; then
         mkUserDir "$home/.config/autostart"
-        ln -sf "/usr/local/share/applications/retropie.desktop" "$home/.config/autostart/"
+        ln -sf "/usr/share/applications/retropie.desktop" "$home/.config/autostart/"
     else
         if [[ "$__os_id" == "Raspbian" ]]; then
             if [[ "$__chroot" -eq 1 ]]; then

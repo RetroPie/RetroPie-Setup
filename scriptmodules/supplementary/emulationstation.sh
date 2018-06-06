@@ -228,9 +228,10 @@ _EOF_
     chmod +x /usr/bin/emulationstation
 
     if isPlatform "x11"; then
-        mkdir -p /usr/local/share/{icons,applications}
-        cp "$scriptdir/scriptmodules/$md_type/emulationstation/retropie.svg" "/usr/local/share/icons/"
-        cat > /usr/local/share/applications/retropie.desktop << _EOF_
+        mkdir -p /usr/share/applications
+        mkdir -p /usr/share/icons/hicolor/scalable/apps/
+        cp "$scriptdir/scriptmodules/$md_type/emulationstation/retropie.svg" "/usr/share/icons/hicolor/scalable/apps/"
+        cat > /usr/share/applications/retropie.desktop << _EOF_
 [Desktop Entry]
 Type=Application
 Exec=gnome-terminal --full-screen --hide-menubar -e emulationstation
@@ -241,7 +242,7 @@ Name[de_DE]=RetroPie
 Name=rpie
 Comment[de_DE]=RetroPie
 Comment=retropie
-Icon=/usr/local/share/icons/retropie.svg
+Icon=/usr/share/icons/hicolor/scalable/apps/retropie.svg
 Categories=Game
 _EOF_
     fi
@@ -255,7 +256,7 @@ function clear_input_emulationstation() {
 function remove_emulationstation() {
     rm -f "/usr/bin/emulationstation"
     if isPlatform "x11"; then
-        rm -rfv "/usr/local/share/icons/retropie.svg" "/usr/local/share/applications/retropie.desktop"
+        rm -rfv "/usr/share/icons/hicolor/scalable/apps/retropie.svg" "/usr/share/applications/retropie.desktop"
     fi
 }
 
