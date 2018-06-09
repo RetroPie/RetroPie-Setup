@@ -24,20 +24,8 @@ function depends_ppsspp() {
 }
 
 function sources_ppsspp() {
-    if isPlatform "tinker"; then
-        gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
-    elif isPlatform "vero4k"; then
-        gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
-    else
-        gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git v1.5.4
-    fi
+    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
     cd ppsspp
-
-    if isPlatform "tinker"; then
-        applyPatch "$md_data/02_tinker_options.diff"
-    elif ! isPlatform "vero4k"; then
-        applyPatch "$md_data/01_egl_name.diff"
-    fi
 
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
@@ -141,6 +129,9 @@ function build_ppsspp() {
     elif isPlatform "vero4k"; then
         params+=(-DCMAKE_TOOLCHAIN_FILE="cmake/Toolchains/vero4k.armv8.cmake")
     fi
+    if isPlatform "arm" && ! isPlatform "x11"; then
+        params+=(-DARM_NO_VULKAN=ON)
+    fi
     "$cmake" "${params[@]}" .
     make clean
     make
@@ -156,16 +147,16 @@ function install_ppsspp() {
 }
 
 function configure_ppsspp() {
-    mkRomDir "psp"
+    local extra_params=()
+    if ! isPlatform "x11"; then
+        extra_params+=(--fullscreen)
+    fi
 
+    mkRomDir "psp"
     moveConfigDir "$home/.config/ppsspp" "$md_conf_root/psp"
     mkUserDir "$md_conf_root/psp/PSP"
     ln -snf "$romdir/psp" "$md_conf_root/psp/PSP/GAME"
 
-    if isPlatform "tinker"; then
-        addEmulator 1 "$md_id" "psp" "$md_inst/PPSSPPSDL --fullscreen %ROM%"
-    else
-        addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
-    fi
+    addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL ${extra_params[*]} %ROM%"
     addSystem "psp"
 }
