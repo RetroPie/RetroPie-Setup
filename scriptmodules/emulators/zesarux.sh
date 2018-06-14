@@ -14,7 +14,7 @@ rp_module_desc="ZX Spectrum emulator ZEsarUX"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum games to $romdir/zxspectrum"
 rp_module_licence="GPL3 https://sourceforge.net/p/zesarux/code/ci/master/tree/LICENSE"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="dispmanx  !kms"
 
 function depends_zesarux() {
     local depends=(libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev)
@@ -23,16 +23,17 @@ function depends_zesarux() {
 }
 
 function sources_zesarux() {
-    downloadAndExtract "$__archive_url/ZEsarUX_src-5.0.tar.gz" "$md_build" 1
+    gitPullOrClone "$md_build" https://github.com/chernandezba/zesarux/
 }
 
 function build_zesarux() {
+    cd src
     local params=()
-    isPlatform "rpi" && params+=(--enable-raspberry --disable-pulse)
+    isPlatform "mali" && params+=(--enable-sdl2 )
     ./configure --prefix "$md_inst" "${params[@]}"
     make clean
     make
-    md_ret_require="$md_build/zesarux"
+    md_ret_require="$md_build/src/zesarux"
 }
 
 function install_zesarux() {
