@@ -25,20 +25,20 @@ function sources_simcoupe() {
 }
 
 function build_simcoupe() {
-    cd SDL
-    make clean
+    mkdir build && cd build
+    cmake ..
     make
 }
 
 function install_simcoupe() {
     md_ret_files=(
-        'SDL/simcoupe'
-        'Resource/atom.rom'
-        'Resource/atomlite.rom'
-        'Resource/samcoupe.rom'
-        'Resource/SimCoupe.bmp'
-        'Resource/samports.map'
-        'Resource/samrom.map'
+        '/build/simcoupe'
+        '/Resource/atom.rom'
+        '/Resource/atomlite.rom'
+        '/Resource/samcoupe.rom'
+        '/Resource/SimCoupe.bmp'
+        '/Resource/samports.map'
+        '/Resource/samrom.map'
     )
 }
 
