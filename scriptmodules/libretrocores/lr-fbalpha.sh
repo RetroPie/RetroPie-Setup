@@ -26,7 +26,7 @@ function sources_lr-fbalpha() {
 
 function build_lr-fbalpha() {
     make -f makefile.libretro clean
-    make -f makefile.libretro profile=performance
+    make -f makefile.libretro
     md_ret_require="$md_build/fbalpha_libretro.so"
 }
 
@@ -38,6 +38,7 @@ function install_lr-fbalpha() {
         'whatsnew.html'
         'preset-example.zip'
         'metadata'
+        'dats'
     )
 }
 
