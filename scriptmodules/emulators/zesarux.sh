@@ -37,6 +37,7 @@ function build_zesarux() {
 }
 
 function install_zesarux() {
+    cd src
     make install
 }
 
