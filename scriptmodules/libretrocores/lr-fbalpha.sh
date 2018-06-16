@@ -68,7 +68,22 @@ function configure_lr-fbalpha() {
     addEmulator 0 "$md_id-neocd" "neogeo" "$md_inst/fbalpha_libretro.so --subsystem neocd"
     addEmulator $def "$md_id" "fba" "$md_inst/fbalpha_libretro.so"
     addEmulator 0 "$md_id-neocd" "fba" "$md_inst/fbalpha_libretro.so --subsystem neocd"
+
+    addEmulator 0 "$md_id-pce" "pcengine" "$md_inst/fbalpha_libretro.so --subsystem pce"
+    addEmulator 0 "$md_id-sgx" "pcengine" "$md_inst/fbalpha_libretro.so --subsystem sgx"
+    addEmulator 0 "$md_id-tg" "pcengine" "$md_inst/fbalpha_libretro.so --subsystem tg"
+    addEmulator 0 "$md_id-gg" "gamegear" "$md_inst/fbalpha_libretro.so --subsystem gg"
+    addEmulator 0 "$md_id-sms" "mastersystem" "$md_inst/fbalpha_libretro.so --subsystem sms"
+    addEmulator 0 "$md_id-md" "megadrive" "$md_inst/fbalpha_libretro.so --subsystem md"
+    addEmulator 0 "$md_id-sg1k" "sg-1000" "$md_inst/fbalpha_libretro.so --subsystem sg1k"
+
     addSystem "arcade"
     addSystem "neogeo"
     addSystem "fba"
+    
+    addSystem "pcengine"
+    addSystem "gamegear"
+    addSystem "mastersystem"
+    addSystem "megadrive"
+    addSystem "sg-1000"
 }
