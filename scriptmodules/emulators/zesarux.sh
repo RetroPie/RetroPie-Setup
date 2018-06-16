@@ -46,6 +46,9 @@ function configure_zesarux() {
     mkRomDir "zxspectrum"
     mkRomDir "amstradcpc"
     mkRomDir "samcoupe"
+    mkRomDir "zx81"
+    mkRomDir "jupiter-ace"
+    mkRomDir "ql"
 
     mkUserDir "$md_conf_root/zxspectrum"
 
@@ -93,7 +96,13 @@ _EOF_
     addEmulator 1 "$md_id" "zxspectrum" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%"
     addEmulator 1 "$md_id" "samcoupe" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine sam %ROM%"
     addEmulator 1 "$md_id" "amstradcpc" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine CPC464 %ROM%"
+    addEmulator 1 "$md_id" "zx81" "bash $romdir/zx81/+Start\ ZEsarUX.sh --machine ZX81 %ROM%"
+    addEmulator 1 "$md_id" "jupiter-ace" "bash $romdir/jupiter-ace/+Start\ ZEsarUX.sh --machine ACE %ROM%"
+    addEmulator 1 "$md_id" "ql" "bash $romdir/ql/+Start\ ZEsarUX.sh --machine QL %ROM%"
     addSystem "zxspectrum"
     addSystem "samcoupe"
     addSystem "amstradcpc"
+    addSystem "zx81"
+    addSystem "jupiter-ace"
+    addSystem "ql"
 }
