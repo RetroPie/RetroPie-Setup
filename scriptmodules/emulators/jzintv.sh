@@ -15,6 +15,7 @@ rp_module_help="ROM Extensions: .int .bin\n\nCopy your Intellivision roms to $ro
 rp_module_licence="GPL2 http://spatula-city.org/%7Eim14u2c/intv/"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali !kms"
+rp_module_sites=['http://spatula-city.org/~im14u2c/intv/']
 
 function depends_jzintv() {
     getDepends libsdl1.2-dev

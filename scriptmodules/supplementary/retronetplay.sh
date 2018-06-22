@@ -12,6 +12,7 @@
 rp_module_id="retronetplay"
 rp_module_desc="RetroNetplay"
 rp_module_section="config"
+rp_module_sites=['https://github.com/RetroPie/RetroPie-Setup/wiki/Netplay']
 
 function rps_retronet_saveconfig() {
     local conf="$configdir/all/retronetplay.cfg"

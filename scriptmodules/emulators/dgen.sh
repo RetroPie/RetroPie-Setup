@@ -15,6 +15,7 @@ rp_module_help="ROM Extensions: .32x .iso .cue .smd .bin .gen .md .sg .zip\n\nCo
 rp_module_licence="GPL2 https://sourceforge.net/p/dgen/dgen/ci/master/tree/COPYING"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali !kms"
+rp_module_sites=['http://dgen.sourceforge.net/']
 
 function depends_dgen() {
     getDepends libsdl1.2-dev libarchive-dev

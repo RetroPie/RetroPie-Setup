@@ -15,6 +15,7 @@ rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd
 rp_module_licence="GPL2 https://sourceforge.net/p/fuse-emulator/fuse/ci/master/tree/COPYING"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
+rp_module_sites=['https://sourceforge.net/projects/fuse-emulator/']
 
 function depends_fuse() {
     getDepends libsdl1.2-dev libpng12-dev zlib1g-dev libbz2-dev libaudiofile-dev bison flex

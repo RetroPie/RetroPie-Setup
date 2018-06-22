@@ -12,6 +12,7 @@
 rp_module_id="bluetooth"
 rp_module_desc="Configure Bluetooth Devices"
 rp_module_section="config"
+rp_module_sites=['https://github.com/RetroPie/RetroPie-Setup/wiki/Bluetooth-Controller']
 
 function _update_hook_bluetooth() {
     # fix config location

@@ -14,6 +14,7 @@ rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emula
 rp_module_licence="MIT https://raw.githubusercontent.com/RetroPie/EmulationStation/master/LICENSE.md"
 rp_module_section="core"
 rp_module_flags="frontend"
+rp_module_sites=['https://www.github.com/RetroPie/EmulationStation']
 
 function _get_input_cfg_emulationstation() {
     echo "$configdir/all/emulationstation/es_input.cfg"

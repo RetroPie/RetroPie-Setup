@@ -14,6 +14,7 @@ rp_module_desc="Pegasus: A cross platform, customizable graphical frontend (late
 rp_module_licence="GPL3+ https://raw.githubusercontent.com/mmatyas/pegasus-frontend/master/LICENSE.md"
 rp_module_section="exp"
 rp_module_flags="!mali !kms frontend"
+rp_module_sites=['https://github.com/mmatyas/pegasus-frontend','http://pegasus-frontend.org/']
 
 function depends_pegasus-fe() {
     local depends=(

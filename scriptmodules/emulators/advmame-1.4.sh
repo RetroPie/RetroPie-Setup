@@ -15,6 +15,7 @@ rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $rom
 rp_module_licence="GPL2 https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
 rp_module_section="opt"
 rp_module_flags="!mali !kms"
+rp_module_sites=['https://github.com/amadvance/advancemame']
 
 function depends_advmame-1.4() {
     local depends=(libsdl1.2-dev)
@@ -43,6 +44,7 @@ function _sources_patch_advmame-1.4() {
 }
 
 function sources_advmame-1.4() {
+    #gitPullOrClone "$md_build" https://github.com/amadvance/advancemame.git
     downloadAndExtract "$__archive_url/advancemame-1.4.tar.gz" "$md_build" 1
     _sources_patch_advmame-1.4 1.4
 }

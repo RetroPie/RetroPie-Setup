@@ -15,6 +15,7 @@ rp_module_help="ROM Extensions: .bin .iso .img .mdf .z .z2 .bz2 .cso .ima .gz\n\
 rp_module_licence="GPL3 https://raw.githubusercontent.com/PCSX2/pcsx2/master/COPYING.GPLv3"
 rp_module_section="exp"
 rp_module_flags="!arm"
+rp_module_sites=['https://github.com/PCSX2/pcsx2/']
 
 function depends_pcsx2() {
     if isPlatform "64bit"; then

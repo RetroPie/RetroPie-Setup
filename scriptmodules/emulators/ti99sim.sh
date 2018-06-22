@@ -15,6 +15,7 @@ rp_module_help="ROM Extension: .ctg\n\nCopy your TI-99 games to $romdir/ti99\n\n
 rp_module_licence="GPL2 http://www.mrousseau.org/programs/ti99sim/"
 rp_module_section="exp"
 rp_module_flags="!mali !kms"
+rp_module_sites=['http://www.mrousseau.org/programs/ti99sim/']
 
 function depends_ti99sim() {
     getDepends libsdl1.2-dev libssl-dev

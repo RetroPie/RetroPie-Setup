@@ -15,6 +15,7 @@ rp_module_help="ROM Extensions: .crt .d64 .g64 .prg .t64 .tap .x64 .zip .vsf\n\n
 rp_module_licence="GPL2 http://svn.code.sf.net/p/vice-emu/code/trunk/vice/COPYING"
 rp_module_section="opt"
 rp_module_flags=""
+rp_module_sites=['http://vice-emu.sourceforge.net/']
 
 function depends_vice() {
     local depends=(libsdl2-dev libmpg123-dev libpng12-dev zlib1g-dev libasound2-dev libvorbis-dev libflac-dev libpcap-dev automake checkinstall bison flex subversion libjpeg-dev portaudio19-dev texinfo xa65)

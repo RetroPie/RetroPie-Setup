@@ -15,6 +15,7 @@ rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr\n\nCopy your A
 rp_module_licence="GPL2 https://hg.tuxfamily.org/mercurialroot/hatari/hatari/file/9ee1235233e9/gpl.txt"
 rp_module_section="opt"
 rp_module_flags=""
+rp_module_sites=['https://github.com/RetroPie/RetroPie-Setup/wiki/Atari-ST-STE-TT-Falcon','http://hatari.tuxfamily.org/']
 
 function depends_hatari() {
     getDepends libsdl2-dev zlib1g-dev libpng12-dev cmake libreadline-dev portaudio19-dev

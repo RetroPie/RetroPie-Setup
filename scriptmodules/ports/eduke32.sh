@@ -13,6 +13,7 @@ rp_module_id="eduke32"
 rp_module_desc="Duke3D Port"
 rp_module_licence="GPL2 http://svn.eduke32.com/eduke32/package/common/gpl-2.0.txt"
 rp_module_section="opt"
+rp_module_sites=['http://www.eduke32.com/']
 
 function depends_eduke32() {
     local depends=(
