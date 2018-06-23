@@ -143,6 +143,7 @@ function gui_esthemes() {
         'RetroHursty69 sublime'
         'RetroHursty69 infinity'
         'RetroHursty69 neogeo_only'
+        'RetroHursty69 boxcity'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
