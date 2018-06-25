@@ -12,6 +12,7 @@
 rp_module_id="lr-pokemini"
 rp_module_desc="Pokemon Mini emulator - PokeMini port for libretro"
 rp_module_help="ROM Extensions: .min .zip\n\nCopy your Pokemon Mini roms to $romdir/pokemini"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/PokeMini/master/LICENSE"
 rp_module_section="exp"
 
 function sources_lr-pokemini() {
