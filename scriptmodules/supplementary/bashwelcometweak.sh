@@ -71,18 +71,19 @@ function retropie_welcome() {
     local bfgwht="${bld}$(tput setaf 7)"
 
     local logo=(
-        "${fgred}   .***.   "
-        "${fgred}   ***${bfgwht}*${fgred}*   "
-        "${fgred}   \`***'   "
-        "${bfgwht}    |*|    "
-        "${bfgwht}    |*|    "
-        "${bfgred}  ..${bfgwht}|*|${bfgred}..  "
-        "${bfgred}.*** ${bfgwht}*${bfgred} ***."
-        "${bfgred}*******${fggrn}@@${bfgred}**"
-        "${fgred}\`*${bfgred}****${bfgylw}@@${bfgred}*${fgred}*'"
-        "${fgred} \`*******'${fgrst} "
-        "${fgred}   \`\"\"\"'${fgrst}   "
+        "                     "
+        "${fgylw}    )  (             "
+        "${fgylw} ( /(  )\ )   (      "
+        "${fgred} )\())(()/(   )\     "
+        "${fgred}((_)\  /(_)|(((_)(   "
+        "${fgred}  ((_)(_))  ()${fggrn} _ ${fgred})\  "
+        "${fggrn} / _ \| _ \ ${fgred}(_)${fggrn}_\ ${fgred}(_)"
+        "${fggrn}| (_) |   /  / _ \   "
+        "${fggrn} \___/|_|_\ /_/ \_\  "
+        "                     "
+        "                     "
         )
+
 
     local out
     local i
@@ -156,3 +157,4 @@ function gui_bashwelcometweak() {
         esac
     fi
 }
+

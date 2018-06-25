@@ -32,7 +32,7 @@ function build_lr-parallel-n64() {
     rpSwap on 1000
     make clean
     local params=()
-    if isPlatform "rpi" || isPlatform "odroid-c1"; then
+    if isPlatform "rpi" || isPlatform "odroid-c1" || isPlatform "odroid-xu"; then
         params+=(platform="$__platform")
     elif isPlatform "tinker"; then
         params+=(platform="kms")
