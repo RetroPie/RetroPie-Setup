@@ -11,7 +11,7 @@
 
 rp_module_id="lr-pocketcdg"
 rp_module_desc="libretro port of pocketcdg karaoke player"
-rp_module_help="ROM Extensions: .cdg .CDG\n\nCopy your mp3+cdg games to to $romdir/pocketcdg\n
+rp_module_help="ROM Extensions: .cdg .CDG\n\nCopy your mp3+cdg games to to $romdir/pocketcdg\n"
 rp_module_section="exp"
 
 function sources_lr-pocketcdg() {
