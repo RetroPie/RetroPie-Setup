@@ -12,6 +12,7 @@
 rp_module_id="samba"
 rp_module_desc="Configure Samba ROM Shares"
 rp_module_section="config"
+rp_module_sites=['https://github.com/retropie/retropie-setup/wiki/Transferring-Roms']
 
 function depends_samba() {
     getDepends samba

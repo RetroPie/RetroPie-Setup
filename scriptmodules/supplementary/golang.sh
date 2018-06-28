@@ -10,6 +10,7 @@ rp_module_id="golang"
 rp_module_desc="Golang binary install"
 rp_module_section=""
 rp_module_flags="noinstclean"
+rp_module_sites=['https://golang.org/']
 
 function _get_goroot_golang() {
     echo "$rootdir/supplementary/golang"

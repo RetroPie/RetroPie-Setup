@@ -15,6 +15,7 @@ rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $rom
 rp_module_licence="GPL2 https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
 rp_module_section="opt"
 rp_module_flags="!mali !kms"
+rp_module_sites=['https://github.com/amadvance/advancemame']
 
 function depends_advmame-0.94() {
     local depends=(libsdl1.2-dev)

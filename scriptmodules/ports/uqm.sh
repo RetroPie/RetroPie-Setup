@@ -14,6 +14,7 @@ rp_module_desc="The Ur-Quan Masters (Port of DOS game Star Control 2)"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/davidben/uqm/nacl/COPYING"
 rp_module_section="opt"
 rp_module_flags="!mali !kms"
+rp_module_sites=['https://www.github.com/davidben/uqm']
 
 function _get_ver_uqm() {
     echo "0.6.2.dfsg-9.4"

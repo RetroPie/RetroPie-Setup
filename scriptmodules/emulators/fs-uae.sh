@@ -15,6 +15,7 @@ rp_module_help="ROM Extension: .adf  .adz .dms .ipf .zip\n\nCopy your Amiga game
 rp_module_licence="GPL2 https://raw.githubusercontent.com/FrodeSolheim/fs-uae/master/COPYING"
 rp_module_section="exp"
 rp_module_flags="!arm"
+rp_module_sites=['https://www.github.com/FrodeSolheim/fs-uae']
 
 function depends_fs-uae() {
     case "$__os_id" in

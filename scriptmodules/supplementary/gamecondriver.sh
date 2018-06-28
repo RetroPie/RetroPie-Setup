@@ -13,6 +13,7 @@ rp_module_id="gamecondriver"
 rp_module_desc="Gamecon & db9 drivers"
 rp_module_section="driver"
 rp_module_flags="!x86 !mali"
+rp_module_sites=['https://github.com/RetroPie/RetroPie-Setup/wiki/GPIO-Modules']
 
 function _update_hook_gamecondriver() {
     # to show as installed in retropie-setup 4.x

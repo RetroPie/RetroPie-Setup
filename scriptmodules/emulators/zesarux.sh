@@ -15,6 +15,7 @@ rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd
 rp_module_licence="GPL3 https://sourceforge.net/p/zesarux/code/ci/master/tree/LICENSE"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali !kms"
+rp_module_sites=['https://sourceforge.net/projects/zesarux/']
 
 function depends_zesarux() {
     local depends=(libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev)

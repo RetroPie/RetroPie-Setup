@@ -14,6 +14,7 @@ rp_module_desc="EmulationStation (latest development version) - Frontend used by
 rp_module_licence="MIT https://raw.githubusercontent.com/RetroPie/EmulationStation/master/LICENSE.md"
 rp_module_section="exp"
 rp_module_flags="frontend"
+rp_module_sites=['https://www.github.com/RetroPie/EmulationStation']
 
 function _update_hook_emulationstation-dev() {
     _update_hook_emulationstation

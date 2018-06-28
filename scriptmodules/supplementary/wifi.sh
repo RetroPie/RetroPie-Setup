@@ -13,6 +13,7 @@ rp_module_id="wifi"
 rp_module_desc="Configure Wifi"
 rp_module_section="config"
 rp_module_flags="!x11"
+rp_module_sites=['https://github.com/RetroPie/RetroPie-Setup/wiki/Wifi']
 
 function _set_interface_wifi() {
     local state="$1"

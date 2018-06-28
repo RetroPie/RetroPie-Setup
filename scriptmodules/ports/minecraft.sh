@@ -14,6 +14,7 @@ rp_module_desc="Minecraft - Pi Edition"
 rp_module_licence="PROP"
 rp_module_section="exp"
 rp_module_flags="!mali !x86 !kms"
+rp_module_sites=['https://github.com/RetroPie/RetroPie-Setup/wiki/Minecraft']
 
 function depends_minecraft() {
     getDepends xorg matchbox

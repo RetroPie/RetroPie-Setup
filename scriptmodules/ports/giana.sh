@@ -13,6 +13,7 @@ rp_module_id="giana"
 rp_module_desc="Giana's Return"
 rp_module_section="opt"
 rp_module_flags="!x86 !mali !kms"
+rp_module_sites=['http://www.retroguru.com/gianas-return/']
 
 function depends_giana() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev libraspberrypi-dev
