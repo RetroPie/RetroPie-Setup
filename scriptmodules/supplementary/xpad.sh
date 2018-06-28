@@ -72,7 +72,7 @@ function build_xpad() {
     else
         kernel="$(uname -r)"
     fi
-    dkms install -m xpad -v 0.4 -k "$kernel"
+    dkms install --force -m xpad -v 0.4 -k "$kernel"
 }
 
 function remove_xpad() {
