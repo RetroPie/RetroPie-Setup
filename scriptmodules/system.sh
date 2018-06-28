@@ -112,11 +112,15 @@ function get_os_version() {
                     error="You need Linux Mint 17 or newer"
                 elif compareVersions "$__os_release" lt 18; then
                     __os_ubuntu_ver="14.04"
-                else
+                    __os_debian_ver="8"
+                elif compareVersions "$__os_release" lt 19; then
                     __os_ubuntu_ver="16.04"
+                    __os_debian_ver="8"
+                else
+                    __os_ubuntu_ver="18.04"
+                    __os_debian_ver="9"
                 fi
             fi
-            __os_debian_ver="8"
             ;;
         Ubuntu)
             if compareVersions "$__os_release" lt 14.04; then
