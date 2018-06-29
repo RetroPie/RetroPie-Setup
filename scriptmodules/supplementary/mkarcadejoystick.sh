@@ -40,7 +40,7 @@ function build_mkarcadejoystick() {
     else
         kernel="$(uname -r)"
     fi
-    dkms install -m mk_arcade_joystick_rpi -v 0.1.5 -k "$kernel"
+    dkms install --force -m mk_arcade_joystick_rpi -v 0.1.5 -k "$kernel"
     if dkms status | grep -q "^mk_arcade_joystick"; then
         md_ret_error+=("Failed to install $md_id")
         return 1
