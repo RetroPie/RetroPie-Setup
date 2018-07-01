@@ -23,19 +23,21 @@ function depends_zesarux() {
 }
 
 function sources_zesarux() {
-    downloadAndExtract "$__archive_url/ZEsarUX_src-5.0.tar.gz" "$md_build" 1
+    gitPullOrClone "$md_build" https://github.com/chernandezba/zesarux.git 7.0
 }
 
 function build_zesarux() {
     local params=()
     isPlatform "rpi" && params+=(--enable-raspberry --disable-pulse)
+    cd src
     ./configure --prefix "$md_inst" "${params[@]}"
     make clean
     make
-    md_ret_require="$md_build/zesarux"
+    md_ret_require="$md_build/src/zesarux"
 }
 
 function install_zesarux() {
+    cd src
     make install
 }
 
