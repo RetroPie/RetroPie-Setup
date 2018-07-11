@@ -28,6 +28,7 @@ function build_lr-xrick() {
         make
     fi
     md_ret_require="$md_build/xrick_libretro.so"
+    md_ret_require="$md_build/data.zip"
 }
 
 function install_lr-xrick() {
@@ -46,7 +47,7 @@ function configure_lr-xrick() {
     mkRomDir "ports/xrick"
     ensureSystemretroconfig "ports/xrick"
 
-    cp -Rv "$md_inst/xrick" "$romdir/ports"
+    cp -Rv "$md_inst/xrick/data.zip" "$romdir/ports"
 
     chown $user:$user -R "$romdir/ports/xrick"
 }
