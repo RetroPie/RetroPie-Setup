@@ -1,35 +1,63 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="lr-mupen64plus"
-rp_module_desc="N64 emu - Mupen64 Plus port for libretro"
-rp_module_menus="2+"
-rp_module_flags=""
+rp_module_desc="N64 emu - Mupen64Plus + GLideN64 for libretro"
+rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/mupen64plus-libretro/master/LICENSE"
+rp_module_section="main"
+rp_module_flags="!aarch64"
+
+function _update_hook_lr-mupen64plus() {
+    # retroarch renamed lr-mupen64plus to lr-parallel-n64 and
+    # lr-glupen64 to lr-mupen64plus which makes this a little tricky as an update hook
+
+    # we first need to rename lr-mupen64plus to lr-parallel-n64
+    # (if it's not the lr-glupen64 fork)
+    if [[ -d "$md_inst" ]] && ! grep -q "GLideN64" "$md_inst/README.md"; then
+        renameModule "lr-mupen64plus" "lr-parallel-n64"
+    fi
+    # then we can rename lr-glupen64 to lr-mupen64plus
+    renameModule "lr-glupen64" "lr-mupen64plus"
+}
+
+function depends_lr-mupen64plus() {
+    local depends=(flex bison libpng12-dev)
+    isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev)
+    isPlatform "x86" && depends+=(nasm)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    getDepends "${depends[@]}"
+}
 
 function sources_lr-mupen64plus() {
-    if isPlatform "rpi"; then
-        gitPullOrClone "$md_build" https://github.com/gizmo98/mupen64plus-libretro.git rpi2_fix
-    else
-        gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
-    fi
+    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
+    # needed until https://github.com/libretro/mupen64plus-libretro/pull/39 is accepted
+    isPlatform "rpi" && applyPatch "$md_data/01_new_lib_names.diff"
 }
 
 function build_lr-mupen64plus() {
     rpSwap on 750
-    make clean
+    local params=()
     if isPlatform "rpi"; then
-        make platform="$__platform"
+        params+=(platform="$__platform")
+    elif isPlatform "mali"; then
+        params+=(platform="odroid")
     else
-        make
+        isPlatform "arm" && params+=(WITH_DYNAREC=arm)
+        isPlatform "neon" && params+=(HAVE_NEON=1)
+        isPlatform "gles" && params+=(FORCE_GLES=1)
+        isPlatform "kms" && params+=(FORCE_GLES3=1)
     fi
+    make clean
+    make "${params[@]}"
     rpSwap off
     md_ret_require="$md_build/mupen64plus_libretro.so"
 }
@@ -38,125 +66,14 @@ function install_lr-mupen64plus() {
     md_ret_files=(
         'mupen64plus_libretro.so'
         'README.md'
+        'BUILDING.md'
     )
 }
 
 function configure_lr-mupen64plus() {
-    # remove old install folder
-    rm -rf "$rootdir/$md_type/mupen64plus-libretro"
-
     mkRomDir "n64"
     ensureSystemretroconfig "n64"
 
-    # Set core options
-    setRetroArchCoreOption "mupen64-gfxplugin" "rice"
-    setRetroArchCoreOption "mupen64-gfxplugin-accuracy" "low"
-    setRetroArchCoreOption "mupen64-screensize" "640x480"
-
-    # Copy config files
-    cat > $home/RetroPie/BIOS/gles2n64rom.conf << _EOF_
-#rom specific settings
-
-rom name=SUPER MARIO 64
-target FPS=25
-
-rom name=Kirby64
-target FPS=25
-
-rom name=Banjo-Kazooie
-framebuffer enable=1
-update mode=4
-target FPS=25
-
-rom name=BANJO TOOIE
-hack banjo tooie=1
-ignore offscreen rendering=1
-framebuffer enable=1
-update mode=4
-
-rom name=STARFOX64
-window width=864
-window height=520
-target FPS=27
-
-rom name=MARIOKART64
-target FPS=27
-
-rom name=THE LEGEND OF ZELDA
-texture use IA=0
-hack zelda=1
-target FPS=17
-
-rom name=ZELDA MAJORA'S MASK
-texture use IA=0
-hack zelda=1
-rom name=F-ZERO X
-window width=864
-window height=520
-target FPS=55
-rom name=WAVE RACE 64
-window width=864
-window height=520
-target FPS=27
-rom name=SMASH BROTHERS
-framebuffer enable=1
-window width=864
-window height=520
-target FPS=27
-rom name=1080 SNOWBOARDING
-update mode=2
-target FPS=27
-rom name=PAPER MARIO
-update mode=4
-rom name=STAR WARS EP1 RACER
-video force=1
-video width=320
-video height=480
-rom name=JET FORCE GEMINI
-framebuffer enable=1
-update mode=2
-ignore offscreen rendering=1
-target FPS=27
-rom name=RIDGE RACER 64
-window width=864
-window height=520
-enable lighting=0
-target FPS=27
-rom name=Diddy Kong Racing
-target FPS=27
-rom name=MarioParty
-update mode=4
-rom name=MarioParty3
-update mode=4
-rom name=Beetle Adventure Rac
-window width=864
-window height=520
-target FPS=27
-rom name=EARTHWORM JIM 3D
-rom name=LEGORacers
-rom name=GOEMONS GREAT ADV
-window width=864
-window height=520
-rom name=Buck Bumble
-window width=864
-window height=520
-rom name=BOMBERMAN64U2
-window width=864
-window height=520
-rom name=ROCKETROBOTONWHEELS
-window width=864
-window height=520
-rom name=GOLDENEYE
-force screen clear=1
-framebuffer enable=1
-window width=864
-window height=520
-target FPS=25
-rom name=Mega Man 64
-framebuffer enable=1
-target FPS=25
-_EOF_
-    chown $user:$user "$biosdir/gles2n64rom.conf"
-
-    addSystem 0 "$md_id" "n64" "$md_inst/mupen64plus_libretro.so"
+    addEmulator 0 "$md_id" "n64" "$md_inst/mupen64plus_libretro.so"
+    addSystem "n64"
 }

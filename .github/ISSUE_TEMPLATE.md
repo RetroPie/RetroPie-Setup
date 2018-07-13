@@ -1,1 +1,7 @@
-Please make sure you read the "guidelines for contributing" above before opening an issue. Support questions should go to the forum. Please post to the forum first, as many "issues" can be solved with configuration changes. Please remove this text before posting.
+Please start a topic on the RetroPie forum before opening an issue - https://retropie.org.uk/forum/
+
+This includes edit suggestions for the wiki. There are more people to help on the forum.
+
+Once a problem has been verified on the forum, an issue can be opened here.
+
+Please remove this text before posting.

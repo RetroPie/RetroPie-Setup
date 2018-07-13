@@ -1,0 +1,39 @@
+diff --git a/linux-sdl/CMakeLists.txt b/linux-sdl/CMakeLists.txt
+index e6988ff..00582e5 100644
+--- a/linux-sdl/CMakeLists.txt
++++ b/linux-sdl/CMakeLists.txt
+@@ -41,7 +41,7 @@ else(WITH_AGAR_STATIC)
+   link_directories(${WITH_LIBAGAR_PREFIX}/lib)
+ endif()
+ 
+-set(AGAR_DEPLIBS m jpeg png z dl uim-scm uim Xinerama)
++set(AGAR_DEPLIBS m jpeg png z dl uim-scm uim Xinerama X11)
+ 
+ 
+ find_package(Gettext)
+diff --git a/linux-sdl/fmgen/psg.cpp b/linux-sdl/fmgen/psg.cpp
+index f590cc9..cee80a5 100644
+--- a/linux-sdl/fmgen/psg.cpp
++++ b/linux-sdl/fmgen/psg.cpp
+@@ -150,7 +150,7 @@ void PSG::MakeEnvelopTable()
+ 		2,2, 2,0, 2,1, 2,3, 1,1, 1,3, 1,2, 1,0,
+ 	};
+ 	static uint8 table2[4] = {  0,  0, 31, 31 };
+-	static uint8 table3[4] = {  0,  1, -1,  0 };
++	static uint8 table3[4] = {  0,  1, (uint8)-1,  0 };
+ 
+ 	if (!enveloptable[0][0])
+ 	{
+diff --git a/linux-sdl/resource/CMakeLists.txt b/linux-sdl/resource/CMakeLists.txt
+index deb1dfb..17053ee 100644
+--- a/linux-sdl/resource/CMakeLists.txt
++++ b/linux-sdl/resource/CMakeLists.txt
+@@ -47,7 +47,7 @@ if(ImageMagick_convert_FOUND)
+      add_custom_target(${loop_var_target} ALL 
+                      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${loop_var_src}
+ 		     COMMAND  ${ImageMagick_convert_EXECUTABLE}
+-		     ${CMAKE_CURRENT_SOURCE_DIR}/${loop_var_src}
++		     ${CMAKE_CURRENT_SOURCE_DIR}/${loop_var_src}[0]
+ 		     ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${loop_var_target}
+ 		     )
+      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${loop_var_target} DESTINATION share/xm7)

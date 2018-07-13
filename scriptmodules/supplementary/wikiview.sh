@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="wikiview"
 rp_module_desc="RetroPie-Setup Wiki Viewer"
-rp_module_menus="3+"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function depends_wikiview() {
     getDepends pandoc lynx-cur
@@ -39,10 +38,8 @@ function choose_wikipage_wikiview() {
     fi
 }
 
-function configure_wikiview() {
+function gui_wikiview() {
     local wikidir="$rootdir/RetroPie-Setup.wiki"
-    __joy2key_pid=$(pgrep -f joy2key.py)
-    __joy2key_dev=$(ls -1 /dev/input/js* 2>/dev/null | head -n1)
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "RetroPie-Setup Wiki Viewer" 22 76 16)
         local options=()
@@ -58,7 +55,7 @@ function configure_wikiview() {
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         local file="-"
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     gitPullOrClone "$wikidir" "https://github.com/RetroPie/RetroPie-Setup.wiki.git"
                     ;;
@@ -67,23 +64,11 @@ function configure_wikiview() {
                         file=""
                         file=$(choose_wikipage_wikiview "$wikidir" ".*.md" ".*_.*")
                         if [[ -n "$file" ]]; then
-                            if [[ -n $__joy2key_pid ]]; then
-                                kill -INT $__joy2key_pid 2>/dev/null
-                                sleep 1
-                            fi
-                            if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
-                                "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 00 00 1b5b327e 1b5b337e 20 71 & 2>/dev/null
-                                __joy2key_pid=$!
-                            fi
+                            joy2keyStop
+                            joy2keyStart 0x00 0x00 kich1 kdch1 0x20 0x71
                             pandoc "$wikidir/$file" | lynx -localhost -restrictions=all -stdin >/dev/tty
-                            if [[ -n $__joy2key_pid ]]; then
-                                kill -INT $__joy2key_pid 2>/dev/null
-                                sleep 1
-                            fi
-                            if [[ -f "$rootdir/supplementary/runcommand/joy2key.py" && -n "$__joy2key_dev" ]] && ! pgrep -f joy2key.py >/dev/null; then
-                                "$rootdir/supplementary/runcommand/joy2key.py" "$__joy2key_dev" 1b5b44 1b5b43 1b5b41 1b5b42 0a 20 & 2>/dev/null
-                                __joy2key_pid=$!
-                            fi
+                            joy2keyStop
+                            joy2keyStart
                         else
                             break
                         fi

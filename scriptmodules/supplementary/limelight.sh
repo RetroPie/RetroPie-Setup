@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="limelight"
 rp_module_desc="Limelight Game Streaming"
-rp_module_menus="4+"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/irtimmer/moonlight-embedded/master/LICENSE"
+rp_module_section="exp"
+rp_module_flags="!x11"
 
 function depends_limelight() {
     getDepends oracle-java8-jdk input-utils
@@ -19,10 +21,10 @@ function depends_limelight() {
 
 function sources_limelight() {
     gitPullOrClone "$md_build" "https://github.com/stsfin/RetropieLimelightInstaller.git"
-    
+
     wget https://github.com/irtimmer/limelight-embedded/releases/download/v1.2.2/libopus.so
     wget https://github.com/irtimmer/limelight-embedded/releases/download/v1.2.2/limelight.jar
-    
+
     # Download limelight simple theme
     wget https://github.com/stsfin/RetropieLimelightInstaller/releases/download/1.3.1/theme.xml
     wget https://github.com/stsfin/RetropieLimelightInstaller/releases/download/1.3.1/limelight.png
@@ -44,9 +46,15 @@ function install_limelight() {
     )
 }
 
-function configure_limelight() { 
+function configure_limelight() {
     # Create romdir limelight
     mkRomDir "limelight"
+
+    # Add System to es_system.cfg
+    addEmulator 1 "$md_id" "limelight" "%ROM%"
+    addSystem "limelight" "Limelight Game Streaming" ".sh"
+
+    [[ "$md_mode" == "remove" ]] && return
 
     # Create limelight config script
     cat > "$romdir/limelight/limelightconfig.sh" << _EOF_
@@ -111,9 +119,4 @@ _EOF_
 
     # Chmod scripts to be runnable
     chmod +x "$romdir/limelight/"*.sh
-
-    # Add System to es_system.cfg
-    setESSystem 'Limelight Game Streaming' 'limelight' '~/RetroPie/roms/limelight' '.sh .SH' '%ROM%' 'pc' 'limelight'
-
-    echo -e "\nEverything done! Now reboot the Pi and you are all set \n"
 }

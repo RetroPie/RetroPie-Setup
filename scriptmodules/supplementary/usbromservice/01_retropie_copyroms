@@ -1,4 +1,4 @@
-#!/bin/bash -ue
+#!/bin/bash
 # This file is part of The RetroPie Project
 # 
 # The RetroPie Project is the legal property of its developers, whose names are
@@ -32,6 +32,14 @@ function log() {
     logger -p user.$1 -t usbmount-"$hook_name"-[$$] -- "$2"
 }
 
+function log_cmd() {
+    local ret
+    local error
+    error="$("$@" 2>&1 >/dev/null)"
+    ret=$?
+    [[ "$ret" -ne 0 ]] && log err "$* - returned $ret - $error"
+}
+
 ## some sanity checking
 if [[ -z "$UM_MOUNTPOINT" ]]; then
     log err "UM_MOUNTPOINT not set!"
@@ -59,7 +67,7 @@ find "$retropie_path/roms" -mindepth 1 -maxdepth 1 -type d -printf "$usb_path/ro
 # copy ROMs/BIOS from USB stick to local SD card
 for dir in roms BIOS; do
     log info "Syncing $dir ..."
-    rsync -rtu --exclude '._*' --max-delete=-1 "$usb_path/$dir" "$retropie_path/" >/dev/null 2>&1 || log err "rsync failed to sync $dir, returned error code $?"
+    log_cmd rsync -rtu --exclude '._*' --max-delete=-1 "$usb_path/$dir" "$retropie_path/"
     chown -R $user:$user "$retropie_path/$dir"
 done
 
@@ -67,7 +75,7 @@ log info "Syncing configs ..."
 # copy configs to usb
 for to in "${!path_mapping[@]}"; do
     from=${path_mapping[$to]}
-    rsync -rtu --exclude '._*' --max-delete=-1 "$from/" "$usb_path_from_rp/$to/" >/dev/null 2>&1 || log err "rsync failed to sync $from/ -> $usb_path_from_rp/$to/, returned error code $?"
+    log_cmd rsync -rtu --exclude '._*' --max-delete=-1 "$from/" "$usb_path_from_rp/$to/"
 done
 
 # copy configs from usb
@@ -76,7 +84,7 @@ for from in $(find "$usb_path_to_rp/" -mindepth 1 -maxdepth 1); do
     from_bn=${from##*/}
     to=${path_mapping[$from_bn]}
     if [[ -n "$to" ]]; then
-        rsync -rtu --exclude '._*' --max-delete=-1 "$from/" "$to/" >/dev/null 2>&1 || log err "rsync failed to sync $from/ -> $to/ configuration, returned error code $?"
+        log_cmd rsync -rtu --exclude '._*' --max-delete=-1 "$from/" "$to/"
         chown -R $user:$user "$to"
     fi
 done

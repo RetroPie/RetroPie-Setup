@@ -1,43 +1,44 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="solarus"
 rp_module_desc="solarus - An Open Source Zelda LttP Engine"
-rp_module_menus="4+"
-rp_module_flags=""
+rp_module_licence="GPL3 https://raw.githubusercontent.com/solarus-games/solarus/dev/license.txt"
+rp_module_section="opt"
+rp_module_flags="noinstclean !aarch64"
 
 function depends_solarus() {
-    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libmodplug-dev libvorbis-dev unzip
+    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libmodplug-dev libvorbis-dev zip unzip
 }
 
 function sources_solarus() {
-    wget -O- -q http://www.solarus-games.org/downloads/solarus/solarus-1.4.5-src.tar.gz | tar -xvz --strip-components=1
-    wget -O- -q http://www.zelda-solarus.com/downloads/zsdx/zsdx-1.10.3.tar.gz | tar -xvz
-    wget -O- -q http://www.zelda-solarus.com/downloads/zsxd/zsxd-1.10.3.tar.gz | tar -xvz
-    wget -O- -q http://www.zelda-solarus.com/downloads/zelda-roth-se/zelda-roth-se-1.0.8.tar.gz | tar -xvz
+    downloadAndExtract "http://www.solarus-games.org/downloads/solarus/solarus-1.4.5-src.tar.gz" "$md_build" 1
+    downloadAndExtract "http://www.zelda-solarus.com/downloads/zsdx/zsdx-1.10.3.tar.gz" "$md_build"
+    downloadAndExtract "http://www.zelda-solarus.com/downloads/zsxd/zsxd-1.10.3.tar.gz" "$md_build"
+    downloadAndExtract "http://www.zelda-solarus.com/downloads/zelda-roth-se/zelda-roth-se-1.0.8.tar.gz" "$md_build"
 }
 
 function build_solarus() {
     mkdir build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX:PATH="$md_inst"
+    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zsdx-1.10.3/
-    cmake . -DCMAKE_INSTALL_PREFIX:PATH="$md_inst"
+    cd ../zsdx-1.10.3
+    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zsxd-1.10.3/
-    cmake . -DCMAKE_INSTALL_PREFIX:PATH="$md_inst"
+    cd ../zsxd-1.10.3
+    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zelda-roth-se-1.0.8/
-    cmake . -DCMAKE_INSTALL_PREFIX:PATH="$md_inst"
+    cd ../zelda-roth-se-1.0.8
+    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
     md_ret_require=(
         "$md_build/build/solarus_run"

@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="fbzx"
 rp_module_desc="ZXSpectrum emulator FBZX"
-rp_module_menus="2+"
-rp_module_flags="dispmanx !mali"
+rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum to $romdir/zxspectrum"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/rastersoft/fbzx/master/COPYING"
+rp_module_section="opt"
+rp_module_flags="dispmanx !mali !kms"
 
 function depends_fbzx() {
     getDepends "libasound2-dev libsdl1.2-dev"
@@ -46,6 +48,6 @@ function install_fbzx() {
 function configure_fbzx() {
     mkRomDir "zxspectrum"
 
-    delSystem "$md_id" "zxspectrum-fbzx"
-    addSystem 0 "$md_id" "zxspectrum" "pushd $md_inst/share; $md_inst/bin/fbzx %ROM%; popd"
+    addEmulator 0 "$md_id" "zxspectrum" "pushd $md_inst/share; $md_inst/bin/fbzx %ROM%; popd"
+    addSystem "zxspectrum"
 }

@@ -1,0 +1,105 @@
+diff --git a/gl_textures.c b/gl_textures.c
+index 9e76ac9..ba491dc 100644
+--- a/gl_textures.c
++++ b/gl_textures.c
+@@ -14,6 +14,10 @@ extern LPDIRECT3DDEVICE9 vid_d3d9dev;
+ #define GL_TEXTURE_3D				0x806F
+ #endif
+ 
++#define GL_RGBA32F				0x8814
++#define GL_RGBA16F				0x881A
++#define GL_HALF_FLOAT_ARB			0x140B
++
+ cvar_t gl_max_size = {CVAR_SAVE, "gl_max_size", "2048", "maximum allowed texture size, can be used to reduce video memory usage, limited by hardware capabilities (typically 2048, 4096, or 8192)"};
+ cvar_t gl_max_lightmapsize = {CVAR_SAVE, "gl_max_lightmapsize", "1024", "maximum allowed texture size for lightmap textures, use larger values to improve rendering speed, as long as there is enough video memory available (setting it too high for the hardware will cause very bad performance)"};
+ cvar_t gl_picmip = {CVAR_SAVE, "gl_picmip", "0", "reduces resolution of textures by powers of 2, for example 1 will halve width/height, reducing texture memory usage by 75%"};
+diff --git a/makefile b/makefile
+index 59504d1..73b3032 100644
+--- a/makefile
++++ b/makefile
+@@ -128,6 +128,37 @@ ifeq ($(DP_MAKE_TARGET), linux)
+ 	DP_LINK_CRYPTO_RIJNDAEL?=dlopen
+ endif
+ 
++# Linux configuration
++ifeq ($(DP_MAKE_TARGET), rpi)
++	DEFAULT_SNDAPI=ALSA
++	OBJ_CD=$(OBJ_LINUXCD)
++
++	OBJ_CL=$(OBJ_GLX)
++	OBJ_ICON=
++	OBJ_ICON_NEXUIZ=
++
++	LDFLAGS_CL=$(LDFLAGS_LINUXCL)
++	LDFLAGS_SV=$(LDFLAGS_LINUXSV)
++	LDFLAGS_SDL=$(LDFLAGS_LINUXSDL)
++
++	SDLCONFIG_CFLAGS=$(SDLCONFIG_UNIXCFLAGS) $(SDLCONFIG_UNIXCFLAGS_X11) -DUSE_GLES2
++	SDLCONFIG_LIBS=$(SDLCONFIG_UNIXLIBS) $(SDLCONFIG_UNIXLIBS_X11) -L /opt/vc/lib -lbrcmGLESv2
++	SDLCONFIG_STATICLIBS=$(SDLCONFIG_UNIXSTATICLIBS) $(SDLCONFIG_UNIXSTATICLIBS_X11)
++
++	EXE_CL=$(EXE_UNIXCL)
++	EXE_SV=$(EXE_UNIXSV)
++	EXE_SDL=$(EXE_UNIXSDL)
++	EXE_CLNEXUIZ=$(EXE_UNIXCLNEXUIZ)
++	EXE_SVNEXUIZ=$(EXE_UNIXSVNEXUIZ)
++	EXE_SDLNEXUIZ=$(EXE_UNIXSDLNEXUIZ)
++
++	DP_LINK_ZLIB?=shared
++	DP_LINK_JPEG?=shared
++	DP_LINK_ODE?=dlopen
++	DP_LINK_CRYPTO?=dlopen
++	DP_LINK_CRYPTO_RIJNDAEL?=dlopen
++endif
++
+ # Mac OS X configuration
+ ifeq ($(DP_MAKE_TARGET), macosx)
+ 	DEFAULT_SNDAPI=COREAUDIO
+diff --git a/makefile.inc b/makefile.inc
+index 9c66ed1..03fb7c5 100644
+--- a/makefile.inc
++++ b/makefile.inc
+@@ -434,8 +434,8 @@ bin-debug :
+ 	$(MAKE) prepare BUILD_DIR=build-obj/debug/$(EXE)
+ 	$(MAKE) -C build-obj/debug/$(EXE) $(EXE) \
+ 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) DP_SOUND_API=$(DP_SOUND_API) \
+-		CFLAGS='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_DEBUG) $(OPTIM_DEBUG)'\
+-		LDFLAGS='$(LDFLAGS_DEBUG) $(LDFLAGS_COMMON)' LEVEL=2
++		CFLAGS+='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_DEBUG) $(OPTIM_DEBUG)'\
++		LDFLAGS+='$(LDFLAGS_DEBUG) $(LDFLAGS_COMMON)' LEVEL=2
+ 
+ bin-profile :
+ 	$(CHECKLEVEL1)
+@@ -444,8 +444,8 @@ bin-profile :
+ 	$(MAKE) prepare BUILD_DIR=build-obj/profile/$(EXE)
+ 	$(MAKE) -C build-obj/profile/$(EXE) $(EXE) \
+ 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) DP_SOUND_API=$(DP_SOUND_API) \
+-		CFLAGS='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_PROFILE) $(OPTIM_RELEASE)'\
+-		LDFLAGS='$(LDFLAGS_PROFILE) $(LDFLAGS_COMMON)' LEVEL=2
++		CFLAGS+='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_PROFILE) $(OPTIM_RELEASE)'\
++		LDFLAGS+='$(LDFLAGS_PROFILE) $(LDFLAGS_COMMON)' LEVEL=2
+ 
+ bin-release :
+ 	$(CHECKLEVEL1)
+@@ -454,8 +454,8 @@ bin-release :
+ 	$(MAKE) prepare BUILD_DIR=build-obj/release/$(EXE)
+ 	$(MAKE) -C build-obj/release/$(EXE) $(EXE) \
+ 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) DP_SOUND_API=$(DP_SOUND_API) \
+-		CFLAGS='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_RELEASE) $(OPTIM_RELEASE)'\
+-		LDFLAGS='$(LDFLAGS_RELEASE) $(LDFLAGS_COMMON)' LEVEL=2
++		CFLAGS+='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_RELEASE) $(OPTIM_RELEASE)'\
++		LDFLAGS+='$(LDFLAGS_RELEASE) $(LDFLAGS_COMMON)' LEVEL=2
+ 	$(STRIP) $(EXE)
+ 
+ bin-release-profile :
+@@ -465,8 +465,8 @@ bin-release-profile :
+ 	$(MAKE) prepare BUILD_DIR=build-obj/release-profile/$(EXE)
+ 	$(MAKE) -C build-obj/release-profile/$(EXE) $(EXE) \
+ 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) DP_SOUND_API=$(DP_SOUND_API) \
+-		CFLAGS='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_RELEASE_PROFILE) $(OPTIM_RELEASE)'\
+-		LDFLAGS='$(LDFLAGS_RELEASE) $(LDFLAGS_COMMON)' LEVEL=2
++		CFLAGS+='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_RELEASE_PROFILE) $(OPTIM_RELEASE)'\
++		LDFLAGS+='$(LDFLAGS_RELEASE) $(LDFLAGS_COMMON)' LEVEL=2
+ 	$(STRIP) $(EXE)
+ 
+ prepare :

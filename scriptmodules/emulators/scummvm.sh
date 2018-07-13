@@ -1,31 +1,35 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="scummvm"
 rp_module_desc="ScummVM"
-rp_module_menus="2+"
-rp_module_flags="!mali"
+rp_module_help="Copy your ScummVM games to $romdir/scummvm"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
+rp_module_section="opt"
+rp_module_flags=""
 
 function depends_scummvm() {
-    getDepends libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
-    if [[ "$__raspbian_ver" -lt "8" ]]; then
-        getDepends libjpeg8-dev
+    local depends=(libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev)
+    if [[ "$md_id" == "scummvm-sdl1" ]]; then
+        depends+=(libsdl1.2-dev)
     else
-        getDepends libjpeg-dev
+        depends+=(libsdl2-dev)
     fi
+    getDepends "${depends[@]}"
 }
 
 function sources_scummvm() {
-    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-1-8"
-    patch -p1 <<\_EOF_
+    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-2-0"
+    if isPlatform "rpi"; then
+        applyPatch rpi_enable_scalers.diff <<\_EOF_
 diff --git a/configure b/configure
 index 31dbf5a..58e9563 100755
 --- a/configure
@@ -42,6 +46,7 @@ index 31dbf5a..58e9563 100755
  			# since SDL2 manages dispmanx/GLES2 very well internally.
  			# SDL1 is bit-rotten on this platform.
 _EOF_
+    fi
 }
 
 function build_scummvm() {
@@ -77,19 +82,21 @@ function configure_scummvm() {
 
     # Create startup script
     rm -f "$romdir/scummvm/+Launch GUI.sh"
-    cat > "$romdir/scummvm/+Start ScummVM.sh" << _EOF_
+    local name="ScummVM"
+    [[ "$md_id" == "scummvm-sdl1" ]] && name="ScummVM-SDL1"
+    cat > "$romdir/scummvm/+Start $name.sh" << _EOF_
 #!/bin/bash
 game="\$1"
 pushd "$romdir/scummvm" >/dev/null
 $md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" \$game
-while read line; do
-    id=(\$line);
-    touch "$romdir/scummvm/\$id.svm"
+while read id desc; do
+    echo "\$desc" > "$romdir/scummvm/\$id.svm"
 done < <($md_inst/bin/scummvm --list-targets | tail -n +3)
 popd >/dev/null
 _EOF_
-    chown $user:$user "$romdir/scummvm/+Start ScummVM.sh"
-    chmod u+x "$romdir/scummvm/+Start ScummVM.sh"
+    chown $user:$user "$romdir/scummvm/+Start $name.sh"
+    chmod u+x "$romdir/scummvm/+Start $name.sh"
 
-    addSystem 1 "$md_id" "scummvm" "$romdir/scummvm/+Start\ ScummVM.sh %BASENAME%" "ScummVM" ".sh .svm"
+    addEmulator 1 "$md_id" "scummvm" "bash $romdir/scummvm/+Start\ $name.sh %BASENAME%"
+    addSystem "scummvm"
 }

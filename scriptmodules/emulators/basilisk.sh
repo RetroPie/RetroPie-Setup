@@ -1,21 +1,23 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="basilisk"
 rp_module_desc="Macintosh emulator"
-rp_module_menus="2+"
-rp_module_flags="dispmanx !mali"
+rp_module_help="ROM Extensions: .img .rom\n\nCopy your Macintosh roms mac.rom and disk.img to $romdir/macintosh"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/cebix/macemu/master/BasiliskII/COPYING"
+rp_module_section="opt"
+rp_module_flags="dispmanx !mali !kms"
 
 function depends_basilisk() {
-    local depends=(libsdl1.2-dev autoconf automake)
+    local depends=(libsdl1.2-dev autoconf automake oss-compat)
     isPlatform "x11" && depends+=(libgtk2.0-dev)
     getDepends "${depends[@]}"
 }
@@ -43,8 +45,9 @@ function install_basilisk() {
 function configure_basilisk() {
     mkRomDir "macintosh"
     touch "$romdir/macintosh/Start.txt"
-    
+
     mkUserDir "$md_conf_root/macintosh"
 
-    addSystem 1 "$md_id" "macintosh" "$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img --extfs $romdir/macintosh --config $md_conf_root/macintosh/basiliskii.cfg" "Apple Macintosh" ".txt"
+    addEmulator 1 "$md_id" "macintosh" "$md_inst/bin/BasiliskII --rom $romdir/macintosh/mac.rom --disk $romdir/macintosh/disk.img --extfs $romdir/macintosh --config $md_conf_root/macintosh/basiliskii.cfg"
+    addSystem "macintosh"
 }

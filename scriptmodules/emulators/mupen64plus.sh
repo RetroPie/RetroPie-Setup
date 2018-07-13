@@ -1,23 +1,26 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="mupen64plus"
 rp_module_desc="N64 emulator MUPEN64Plus"
-rp_module_menus="2+"
-rp_module_flags="!mali"
+rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/mupen64plus/mupen64plus-core/master/LICENSES"
+rp_module_section="main"
+rp_module_flags="!mali !kms"
 
 function depends_mupen64plus() {
-    local depends=(cmake libgl1-mesa-dev libsamplerate0-dev libspeexdsp-dev libsdl2-dev)
-    [[ "$__default_gcc_version" == "4.7" ]] && depends+=(gcc-4.8 g++-4.8)
+    local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng12-dev fonts-freefont-ttf)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev libboost-filesystem-dev)
+    isPlatform "x86" && depends+=(nasm)
     getDepends "${depends[@]}"
 }
 
@@ -34,11 +37,12 @@ function sources_mupen64plus() {
             'gizmo98 audio-omx'
             'ricrpi video-gles2rice pandora-backport'
             'ricrpi video-gles2n64'
-            'gizmo98 video-videocore'
         )
     else
         repos+=(
             'mupen64plus video-glide64mk2'
+            'mupen64plus rsp-cxd4'
+            'mupen64plus rsp-z64'
         )
     fi
     local repo
@@ -49,8 +53,12 @@ function sources_mupen64plus() {
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]}
     done
     gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
-    # fix for static x86_64 libs found in repo which are not usefull if target is i686 
-    isPlatform "x11" && sed -i "s/BCMHOST/UNIX/g" GLideN64/src/GLideNHQ/CMakeLists.txt
+
+    # workaround for shader cache crash issue on Raspbian stretch. See: https://github.com/gonetz/GLideN64/issues/1665
+    applyPatch "$md_data/0001-GLideN64-use-emplace.patch"
+
+    local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
+    echo "$config_version" > "$md_build/GLideN64_config_version.ini"
 }
 
 function build_mupen64plus() {
@@ -60,25 +68,30 @@ function build_mupen64plus() {
     local params=()
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
-            make -C "$dir/projects/unix" clean
             params=()
-            isPlatform "rpi1" && params+=("VC=1" "VFP=1" "VFP_HARD=1")
-            isPlatform "neon" && params+=("VC=1" "NEON=1")
-            isPlatform "x11" && params+=("OSD=1")
+            isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1" "HOST_CPU=armv6")
+            isPlatform "rpi" && params+=("VC=1")
+            isPlatform "neon" && params+=("NEON=1")
+            isPlatform "x11" && params+=("OSD=1" "PIE=1")
+            isPlatform "x86" && params+=("SSE=SSE2")
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
-            make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS"
+            make -C "$dir/projects/unix" "${params[@]}" clean
+            # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
+            MAKEFLAGS="${MAKEFLAGS/\/usr\/lib\/distcc:/}" make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -O3 -flto"
         fi
     done
 
     # build GLideN64
-    $md_build/GLideN64/src/getRevision.sh
-    pushd $md_build/GLideN64/projects/cmake
-    # this plugin needs at least gcc-4.8
-    if [[ "$__default_gcc_version" == "4.7" ]]; then
-        cmake -DCMAKE_C_COMPILER=gcc-4.8 -DCMAKE_CXX_COMPILER=g++-4.8 -DMUPENPLUSAPI=On ../../src/
+    "$md_build/GLideN64/src/getRevision.sh"
+    pushd "$md_build/GLideN64/projects/cmake"
+    params=("-DMUPENPLUSAPI=On" "-DVEC4_OPT=On" "-DUSE_SYSTEM_LIBS=On")
+    isPlatform "neon" && params+=("-DNEON_OPT=On")
+    if isPlatform "rpi3"; then 
+        params+=("-DCRC_ARMV8=On")
     else
-        cmake -DMUPENPLUSAPI=On ../../src/
+        params+=("-DCRC_OPT=On")
     fi
+    cmake "${params[@]}" ../../src/
     make
     popd
 
@@ -89,19 +102,24 @@ function build_mupen64plus() {
         'mupen64plus-audio-sdl/projects/unix/mupen64plus-audio-sdl.so'
         'mupen64plus-input-sdl/projects/unix/mupen64plus-input-sdl.so'
         'mupen64plus-rsp-hle/projects/unix/mupen64plus-rsp-hle.so'
-        'GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so'
+        'GLideN64/projects/cmake/plugin/Release/mupen64plus-video-GLideN64.so'
     )
     if isPlatform "rpi"; then
         md_ret_require+=(
             'mupen64plus-video-gles2rice/projects/unix/mupen64plus-video-rice.so'
             'mupen64plus-video-gles2n64/projects/unix/mupen64plus-video-n64.so'
             'mupen64plus-audio-omx/projects/unix/mupen64plus-audio-omx.so'
-            'mupen64plus-video-videocore/projects/unix/mupen64plus-video-videocore.so'
         )
     else
         md_ret_require+=(
             'mupen64plus-video-glide64mk2/projects/unix/mupen64plus-video-glide64mk2.so'
+            'mupen64plus-rsp-z64/projects/unix/mupen64plus-rsp-z64.so'
         )
+        if isPlatform "x86"; then
+            md_ret_require+=('mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4-sse2.so')
+        else
+            md_ret_require+=('mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4.so')
+        fi
     fi
 }
 
@@ -110,52 +128,108 @@ function install_mupen64plus() {
         if [[ -f "$source/projects/unix/Makefile" ]]; then
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
             local params=()
+            isPlatform "armv6" && params+=("VFP=1" "HOST_CPU=armv6")
             isPlatform "rpi" && params+=("VC=1")
-            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS" "${params[@]}" install
+            isPlatform "neon" && params+=("NEON=1")
+            isPlatform "x86" && params+=("SSE=SSE2")
+            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
         fi
     done
     cp "$md_build/GLideN64/ini/GLideN64.custom.ini" "$md_inst/share/mupen64plus/"
-    cp "$md_build/GLideN64/projects/cmake/plugin/release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
+    cp "$md_build/GLideN64/projects/cmake/plugin/Release/mupen64plus-video-GLideN64.so" "$md_inst/lib/mupen64plus/"
+    cp "$md_build/GLideN64_config_version.ini" "$md_inst/share/mupen64plus/"
+    # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
+    rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
 }
 
 function configure_mupen64plus() {
+    if isPlatform "rpi"; then
+        local res
+        for res in "320x240" "640x480"; do
+            local name=""
+            [[ "$res" == "640x480" ]] && name="-highres"
+            addEmulator 0 "${md_id}-GLideN64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% $res"
+            addEmulator 0 "${md_id}-gles2rice$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
+        done
+        addEmulator 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
+        addEmulator 1 "${md_id}-auto" "n64" "$md_inst/bin/mupen64plus.sh AUTO %ROM%"
+    else
+        addEmulator 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
+        addEmulator 1 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM%"
+        if isPlatform "x86"; then
+            addEmulator 0 "${md_id}-GLideN64-LLE" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% 640x480 mupen64plus-rsp-cxd4-sse2"
+        fi
+    fi
+    addSystem "n64"
+
     mkRomDir "n64"
 
+    [[ "$md_mode" == "remove" ]] && return
+
     # copy hotkey remapping start script
-    cp "$scriptdir/scriptmodules/$md_type/$md_id/mupen64plus.sh" "$md_inst/bin/"
+    cp "$md_data/mupen64plus.sh" "$md_inst/bin/"
     chmod +x "$md_inst/bin/mupen64plus.sh"
 
-    # to solve startup problems delete old config file
-    rm -f "$md_conf_root/n64/mupen64plus.cfg"
-    # remove default InputAutoConfig.ini. inputconfigscript writes a clean file
-    rm -f "$md_inst/share/mupen64plus/InputAutoCfg.ini"
     mkUserDir "$md_conf_root/n64/"
+
     # Copy config files
-    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf,*.conf} "$md_conf_root/n64/"
-    su "$user" -c "$md_inst/bin/mupen64plus --md_conf_root $md_conf_root/n64 --datadir $md_conf_root/n64"
+    cp -v "$md_inst/share/mupen64plus/"{*.ini,font.ttf} "$md_conf_root/n64/"
+    isPlatform "rpi" && cp -v "$md_inst/share/mupen64plus/"*.conf "$md_conf_root/n64/"
 
-    iniConfig " = " '"' "$md_conf_root/n64/mupen64plus.cfg"
-    iniSet "ScreenshotPath" "$romdir/n64"
-    iniSet "SaveStatePath" "$romdir/n64"
-    iniSet "SaveSRAMPath" "$romdir/n64"
+    local config="$md_conf_root/n64/mupen64plus.cfg"
+    local cmd="$md_inst/bin/mupen64plus --configdir $md_conf_root/n64 --datadir $md_conf_root/n64"
 
-    chown -R $user:$user "$md_conf_root/n64"
-
-    delSystem "$md_id" "n64-mupen64plus"
-    addSystem 0 "${md_id}-GLideN64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM%"
-    if isPlatform "rpi"; then
-        addSystem 1 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM%"
-        addSystem 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
-        addSystem 0 "${md_id}-videocore" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-videocore %ROM%"
+    # if the user has an existing mupen64plus config we back it up, generate a new configuration
+    # copy that to rp-dist and put the original config back again. We then make any ini changes
+    # on the rp-dist file. This preserves any user configs from modification and allows us to have
+    # a default config for reference
+    if [[ -f "$config" ]]; then
+        mv "$config" "$config.user"
+        su "$user" -c "$cmd"
+        mv "$config" "$config.rp-dist"
+        mv "$config.user" "$config"
+        config+=".rp-dist"
     else
-        addSystem 1 "${md_id}-glide64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-glide64mk2 %ROM%"
+        su "$user" -c "$cmd"
     fi
 
+    # RPI GLideN64 settings
     if isPlatform "rpi"; then
+        iniConfig " = " "" "$config"
+        # Create GlideN64 section in .cfg
+        if ! grep -q "\[Video-GLideN64\]" "$config"; then
+            echo "[Video-GLideN64]" >> "$config"
+        fi
+        # Settings version. Don't touch it.
+        iniSet "configVersion" "17"
+        # Bilinear filtering mode (0=N64 3point, 1=standard)
+        iniSet "bilinearMode" "1"
+        # Size of texture cache in megabytes. Good value is VRAM*3/4
+        iniSet "CacheSize" "50"
+        # Disable FB emulation until visual issues are sorted out
+        iniSet "EnableFBEmulation" "True"
+        # Use native res
+        iniSet "UseNativeResolutionFactor" "1"
+        # Enable legacy blending
+        iniSet "EnableLegacyBlending" "True"
+        # Enable FPS Counter. Fixes zelda depth issue
+        iniSet "ShowFPS " "True"
+        iniSet "fontSize" "14"
+        iniSet "fontColor" "1F1F1F"
+
+        # Disable gles2n64 autores feature and use dispmanx upscaling
+        iniConfig " = " "" "$md_conf_root/n64/gles2n64.conf"
+        iniSet "auto resolution" "0"
+
         addAutoConf mupen64plus_audio 1
+        addAutoConf mupen64plus_compatibility_check 1
     else
         addAutoConf mupen64plus_audio 0
+        addAutoConf mupen64plus_compatibility_check 0
     fi
+
     addAutoConf mupen64plus_hotkeys 1
-    addAutoConf mupen64plus_compatibility_check 1
+    addAutoConf mupen64plus_texture_packs 1
+
+    chown -R $user:$user "$md_conf_root/n64"
 }

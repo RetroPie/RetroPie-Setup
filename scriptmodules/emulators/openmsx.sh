@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="openmsx"
 rp_module_desc="MSX emulator OpenMSX"
-rp_module_menus="4+"
-rp_module_flags="!mali"
+rp_module_help="ROM Extensions: .rom .mx1 .mx2 .col .dsk .zip\n\nCopy your MSX/MSX2 games to $romdir/msx"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/openMSX/openMSX/master/doc/GPL.txt"
+rp_module_section="opt"
+rp_module_flags="!mali !kms"
 
 function depends_openmsx() {
     getDepends libsdl1.2-dev libsdl-ttf2.0-dev libglew-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev
@@ -35,11 +37,12 @@ function build_openmsx() {
 function install_openmsx() {
     make install
     mkdir -p "$md_inst/share/systemroms/"
-    wget -q -O- "$__archive_url/openmsxroms.tar.gz" | tar -xvz -C "$md_inst/share/systemroms/"
+    downloadAndExtract "$__archive_url/openmsxroms.tar.gz" "$md_inst/share/systemroms/"
 }
 
 function configure_openmsx() {
     mkRomDir "msx"
 
-    addSystem 0 "$md_id" "msx" "$md_inst/bin/openmsx %ROM%"
+    addEmulator 0 "$md_id" "msx" "$md_inst/bin/openmsx %ROM%"
+    addSystem "msx"
 }

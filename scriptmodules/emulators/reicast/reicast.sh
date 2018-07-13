@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+
+# This file is part of The RetroPie Project
+#
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
+# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
+#
+
 AUDIO="$1"
 ROM="$2"
 rootdir="/opt/retropie"
@@ -55,22 +65,24 @@ function mapInput() {
     else
         # fallback to keyboard setup
         params+="-config input:evdev_device_id_1=0 "
+        device_counter=1
     fi
     params+="-config input:joystick_device_id=-1 "
     params+="-config players:nb=$device_counter "
     echo "$params"
 }
 
-if [[ -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
-    params="-config config:homedir=$HOME -config x11:fullscreen=1 "
-    getAutoConf reicast_input || params+=$(mapInput)
-    if [[ "$AUDIO" == "OSS" ]]; then
-        params+=" -config audio:backend=oss -config audio:disable=0 "
-        aoss "$rootdir/emulators/reicast/bin/reicast" $params -config config:image="$ROM" >> /dev/null
-    else
-        params+=" -config audio:backend=alsa -config audio:disable=0"
-        "$rootdir/emulators/reicast/bin/reicast" $params -config config:image="$ROM" >> /dev/null
-    fi
+if [[ ! -f "$HOME/RetroPie/BIOS/dc_boot.bin" ]]; then
+    dialog --no-cancel --pause "You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator." 22 76 15
+    exit 1
+fi
+
+params=(-config config:homedir=$HOME -config x11:fullscreen=1)
+getAutoConf reicast_input && params+=($(mapInput))
+[[ -n "$AUDIO" ]] && params+=(-config audio:backend=$AUDIO -config audio:disable=0)
+[[ -n "$ROM" ]] && params+=(-config config:image="$ROM")
+if [[ "$AUDIO" == "oss" ]]; then
+    aoss "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
 else
-    dialog --msgbox "You need to copy the Dreamcast BIOS files (dc_boot.bin and dc_flash.bin) to the folder $biosdir to boot the Dreamcast emulator." 22 76
+    "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
 fi

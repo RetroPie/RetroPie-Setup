@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
-# 
+#
 # The RetroPie Project is the legal property of its developers, whose names are
 # too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
-# 
-# See the LICENSE.md file at the top-level directory of this distribution and 
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="samba"
 rp_module_desc="Configure Samba ROM Shares"
-rp_module_menus="3+configure"
-rp_module_flags="nobin"
+rp_module_section="config"
 
 function depends_samba() {
     getDepends samba
@@ -51,7 +50,7 @@ function install_shares_samba() {
     add_share_samba "bios" "$home/RetroPie/BIOS"
     add_share_samba "configs" "$configdir"
     add_share_samba "splashscreens" "$datadir/splashscreens"
-    restart_samba_samba
+    restart_samba
 }
 
 function remove_shares_samba() {
@@ -61,7 +60,7 @@ function remove_shares_samba() {
     done
 }
 
-function configure_samba() {
+function gui_samba() {
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option" 22 76 16)
         local options=(
@@ -73,7 +72,7 @@ function configure_samba() {
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
-            case $choice in
+            case "$choice" in
                 1)
                     rp_callModule "$md_id" depends
                     rp_callModule "$md_id" install_shares
