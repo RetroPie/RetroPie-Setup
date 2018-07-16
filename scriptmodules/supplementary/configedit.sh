@@ -218,7 +218,7 @@ function basic_configedit() {
 function advanced_configedit() {
     local config="$1"
 
-    local audio_opts="alsa alsa_thread sdl2"
+    local audio_opts="alsa alsathread sdl2"
     if isPlatform "x11"; then
         audio_opts+=" pulse"
     fi
@@ -279,7 +279,7 @@ function advanced_configedit() {
         'Video shader to use (default none)'
         'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
         'Input overlay to use (default none)'
-        'Audio driver to use (default is alsa_thread)'
+        'Audio driver to use (default is alsathread)'
         'Video driver to use (default is gl)'
         'Menu driver to use'
         'Fullscreen x resolution. Resolution of 0 uses the resolution of the desktop. (defaults to 0 if unset)'
