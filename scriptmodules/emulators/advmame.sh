@@ -26,20 +26,22 @@ function _update_hook_advmame() {
 }
 
 function depends_advmame() {
-    local depends=(libsdl1.2-dev)
+    local depends=(libsdl1.2-dev autoconf automake)
     isPlatform "x11" && depends+=(libsdl2-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
 function sources_advmame() {
-    downloadAndExtract "$__archive_url/advancemame-3.8.tar.gz" "$md_build" 1
+    gitPullOrClone "$md_build" https://github.com/amadvance/advancemame v3.8
 }
 
 function build_advmame() {
+    ./autogen.sh
     ./configure CFLAGS="$CFLAGS -fno-stack-protector" --prefix="$md_inst"
     make clean
     make
+    md_ret_require="$md_build/advmame"
 }
 
 function install_advmame() {
