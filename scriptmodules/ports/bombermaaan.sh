@@ -41,7 +41,5 @@ function install_bombermaaan() {
 }
 
 function configure_bombermaaan() {
-    mkUserDir "$home/.config"
-    moveConfigDir "$home/.config/bombermaaan" "$md_conf_root/bombermaaan"
     addPort "$md_id" "bombermaaan" "Bombermaaan" "pushd $md_inst; $md_inst/bombermaaan; popd"
 }
