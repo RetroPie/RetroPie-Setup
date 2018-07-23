@@ -78,6 +78,7 @@ function configure_scummvm() {
     for dir in .config .local/share .cache; do
         mkUserDir "$home/$dir"
         moveConfigDir "$home/$dir/scummvm" "$md_conf_root/scummvm"
+        cp "$home/$dir/RetroPie-Setup/configs/scummvm/scummvm.ini" "$md_conf_root/scummvm/"
     done
 
     # Create startup script
@@ -96,7 +97,7 @@ popd >/dev/null
 _EOF_
     chown $user:$user "$romdir/scummvm/+Start $name.sh"
     chmod u+x "$romdir/scummvm/+Start $name.sh"
-
+    
     addEmulator 1 "$md_id" "scummvm" "bash $romdir/scummvm/+Start\ $name.sh %BASENAME%"
     addSystem "scummvm"
 }
