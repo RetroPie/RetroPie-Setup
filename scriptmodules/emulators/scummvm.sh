@@ -100,5 +100,5 @@ _EOF_
     
     addEmulator 1 "$md_id" "scummvm" "bash $romdir/scummvm/+Start\ $name.sh %BASENAME%"
     addSystem "scummvm"
-    cp "$home/$dir/RetroPie-Setup/configs/scummvm/scummvm.ini" "$md_conf_root/scummvm/"
+    cp "/home/pigaming/RetroPie-Setup/configs/scummvm/scummvm.ini" "$md_conf_root/scummvm/"
 }
