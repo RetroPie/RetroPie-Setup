@@ -64,7 +64,7 @@ if [[ -f "\$dir/\$name.commands" ]]; then
     params=\$(<"\$dir/\$name.commands")
 fi
 
-"$md_inst/daphne.bin" "\$name" vldp -nohwaccel -framefile "\$dir/\$name.txt" -homedir "$md_inst" -fullscreen \$params
+"$md_inst/daphne.bin" "\$name" vldp -nohwaccel -framefile "\$dir/\$name.txt" -homedir "$md_inst" -fullscreen -x 1920 -y 1080 \$params
 _EOF_
     chmod +x "$md_inst/daphne.sh"
 
