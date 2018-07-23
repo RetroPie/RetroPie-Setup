@@ -1,0 +1,54 @@
+; InputAutoCfg.ini for Mupen64Plus SDL Input plugin
+
+; Keyboard_START
+[Keyboard]
+plugged = True
+plugin = 2
+mouse = False
+DPad R = key(100)
+DPad L = key(97)
+DPad D = key(115)
+DPad U = key(119)
+Start = key(13)
+Z Trig = key(122)
+B Button = key(306)
+A Button = key(304)
+C Button R = key(108)
+C Button L = key(106)
+C Button D = key(107)
+C Button U = key(105)
+R Trig = key(99)
+L Trig = key(120)
+Mempak switch = key(44)
+Rumblepak switch = key(46)
+X Axis = key(276,275)
+Y Axis = key(273,274)
+; Keyboard_END
+
+; DragonRise Inc.   Generic   USB  Joystick  _START 
+[DragonRise Inc.   Generic   USB  Joystick  ]
+plugged = True
+plugin = 2
+mouse = False
+AnalogDeadzone = 4096,4096
+AnalogPeak = 32768,32768
+Mempak switch = button(10) 
+Rumblepak switch = button(11) 
+C Button D = button(3) axis(4+) 
+C Button L = axis(3-) 
+L Trig = button(4) 
+Start = button(9) 
+Y Axis = axis(1-,1+)
+DPad U = hat(0 Up) 
+C Button U = button(0) axis(4-) 
+A Button = button(2) 
+DPad D = hat(0 Down) 
+X Axis = axis(0-,0+)
+R Trig = button(5) 
+DPad R = hat(0 Right) 
+B Button = button(1) 
+DPad L = hat(0 Left) 
+C Button R = axis(3+) 
+Z Trig = button(6) 
+; DragonRise Inc.   Generic   USB  Joystick  _END 
+
