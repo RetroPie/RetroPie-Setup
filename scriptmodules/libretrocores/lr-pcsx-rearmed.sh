@@ -16,7 +16,9 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/pcsx_rearmed/
 rp_module_section="main"
 
 function depends_lr-pcsx-rearmed() {
-    getDepends libpng12-dev libx11-dev
+    local depends=(libpng12-dev)
+    isPlatform "x11" && depends+=(libx11-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_lr-pcsx-rearmed() {
