@@ -27,7 +27,7 @@ function _update_hook_advmame() {
 
 function depends_advmame() {
     local depends=(libsdl1.2-dev autoconf automake)
-    isPlatform "x11" && depends+=(libsdl2-dev)
+    isPlatform "mali" && depends+=(libsdl2-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
