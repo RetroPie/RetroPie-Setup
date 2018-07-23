@@ -59,4 +59,5 @@ function install_advmame-1.4() {
 
 function configure_advmame-1.4() {
     configure_advmame
+     cp "$home/$dir/RetroPie-Setup/configs/mame-advmame/advmame-1.4.rc" "$md_conf_root/mame-advmame/"
 }
