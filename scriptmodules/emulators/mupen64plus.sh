@@ -236,5 +236,5 @@ function configure_mupen64plus() {
     addAutoConf mupen64plus_texture_packs 1
 
     chown -R $user:$user "$md_conf_root/n64"
-    cp "$home/$dir/RetroPie-Setup/configs/n64/*.* "$md_conf_root/n64/"
+    cp "$home/$dir/RetroPie-Setup/configs/n64/*.*" "$md_conf_root/n64/"
 }
