@@ -43,13 +43,17 @@ function install_lr-nestopia() {
 function configure_lr-nestopia() {
     mkRomDir "nes"
     mkRomDir "fds"
+    mkRomDir "famicom"
     ensureSystemretroconfig "nes"
     ensureSystemretroconfig "fds"
+    ensureSystemretroconfig "famicom"
 
     cp NstDatabase.xml "$biosdir/"
 
     addEmulator 0 "$md_id" "nes" "$md_inst/nestopia_libretro.so"
     addEmulator 1 "$md_id" "fds" "$md_inst/nestopia_libretro.so"
+    addEmulator 1 "$md_id" "famicom" "$md_inst/nestopia_libretro.so"
     addSystem "nes"
     addSystem "fds"
+    addSystem "famicom"
 }
