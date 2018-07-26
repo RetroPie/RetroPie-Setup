@@ -1,0 +1,65 @@
+Amstrad CPC;amstradcpc;.cdt .cpc .dsk .CDT .CPC .DSK;lr-caprice32
+Apple II;apple2;.po .dsk .nib .PO .DSK .NIB;linapple
+Arcade;arcade;.7z .fba .zip .7Z .FBA .ZIP;mame4all,pifba,lr-fbalpha,lr-mame2000,lr-mame2003,advmame-0.94 ,advmame-1.4,lr-fbalpha2012,lr-mame2010;multiple;located with rom files
+Atari 2600;atari2600;.7z .a26 .bin .rom .zip .gz .7Z .A26 .BIN .ROM .ZIP .GZ;lr-stella
+Atari 5200;atari5200;.a52 .bin .car .zip .A52 .BIN .CAR .ZIP;lr-atari800,atari800;5200.rom,5200a.rom;/home/pi/RetroPie/BIOS
+Atari 7800 ProSystem;atari7800;.7z .a78 .bin .zip .7Z .A78 .BIN .ZIP;lr-prosystem;7800 BIOS (U).rom;/home/pi/RetroPie/BIOS
+Atari 800;atari800;.bas .bin .car .com .xex .atr .xfd .dcm .atr.gz .xfd.gz .BAS .BIN .CAR .COM .XEX .ATR .XFD .DCM .ATR.GZ .XFD.GZ;lr-atari800,atari800;ATARIBAS.ROM,ATARIOSA.ROM,ATARIOSB.ROM,ATARIXL.ROM;/home/pi/RetroPie/BIOS
+Atari Lynx;atarilynx;.7z .lnx .zip .7Z .LNX .ZIP;lr-handy,lr-beetle-lynx;lynxboot.img;/home/pi/RetroPie/BIOS
+Atari ST;atarist;.st .stx .img .rom .raw .ipf .ctr .ST .STX .IMG .ROM .RAW .IPF .CTR;lr-hatari,hatari-fast,hatari-fast-borders,hatari-compatible,hatari-compatible-borders
+Bandai Wonderswan Color;wonderswancolor;.7z .wsc .zip .7Z .WSC .ZIP;lr-beetle-wswan
+Bandai Wonderswan;wonderswan;.7z .ws .zip .7Z .WS .ZIP;lr-beetle-wswan
+ColecoVision;coleco;.bin .col .rom .zip .BIN .COL .ROM .ZIP;lr-bluemsx,coolcv;coleco.rom;/home/pi/RetroPie/BIOS,/home/pi/RetroPie/BIOS/Machines/COL - ColecoVision
+Commodore 64;c64;.crt .d64 .g64 .prg .t64 .tap .x64 .zip .vsf .CRT .D64 .G64 .PRG .T64 .TAP .X64 .ZIP .VSF;lr-vice,vice-x64
+Commodore Amiga;amiga;.adf .adz .dms .ipf .uae .zip .sh .ADF .ADZ .DMS .IPF .UAE .ZIP .SH;amiberry;kick13.rom,kick20.rom,kick31.rom;/home/pi/RetroPie/BIOS
+Commodore Amiga CD32;amigacd32;.adf .adz .dms .ipf .uae .zip .sh .ADF .ADZ .DMS .IPF .UAE .ZIP .SH;amiberry;kick13.rom,kick20.rom,kick31.rom;/home/pi/RetroPie/BIOS
+Daphne;daphne;.daphne .DAPHNE;daphne
+Dragon 32;dragon32;.cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna .CAS .WAV .BAS .ASC .DMK .JVC .OS9 .DSK .VDK .ROM .CCC .SNA;xroar-dragon32;d32.rom;located with rom files
+Final Burn Alpha;fba;.7z .fba .zip .7Z .FBA .ZIP;lr-fbalpha,lr-fbalpha2012,pifba;multiple;located with rom files
+GCE Vectrex;vectrex;.7z .vec .gam .bin .zip .7Z .VEC .GAM .BIN .ZIP;lr-vecx
+Magnavox Odyssey;videopac;.7z .bin .zip .7Z .BIN .ZIP;lr-o2em;o2rom.bin;/home/pi/RetroPie/BIOS
+MAME Advance;mame-advmame;.zip .ZIP;advmame-0.94,advmame-1.4;multiple;located with roms
+MAME Libretro;mame-libretro;.zip .ZIP;lr-mame2000,lr-mame2003,lr-mame2010;multiple;located with roms
+MAME Mame4All;mame-mame4all;.zip .ZIP;mame4all,lr-mame2000;multiple;located with roms
+Mattel Intellivision;intellivision;.int .bin .INT .BIN;jzintv,lr-freeintv;exec.bin,grom.bin;/home/pi/RetroPie/BIOS
+Microsoft MSX2;msx2;.rom .mx1 .mx2 .col .dsk .zip .ROM .MX1 .MX2 .COL .DSK .ZIP;lr-fmsx,lr-bluemsx;MSX.ROM,PHILIPSDISK.ROMMSX2.ROM,MSX2EXT.ROM,MSX2PMUS.ROM,MOONSOUND.ROM,XBASIC2.ROM;/home/pi/RetroPie/BIOS
+Microsoft MSX;msx;.rom .mx1 .mx2 .col .dsk .zip .m3u .ROM .MX1 .MX2 .COL .DSK .ZIP .M3U;lr-fmsx,lr-bluemsx;MSX.ROM,PHILIPSDISK.ROMMSX2.ROM,MSX2EXT.ROM,MSX2PMUS.ROM,MOONSOUND.ROM,XBASIC2.ROM;/home/pi/RetroPie/BIOS
+NEC PC Engine-CD;pce-cd;.7z .pce .ccd .chd .cue .zip .7Z .PCE .CCD .CHD .CUE .ZIP;lr-beetle-pce-fast;syscard3.pce;/home/pi/RetroPie/BIOS,some say located rom files
+NEC PC Engine;pcengine;.7z .pce .ccd .chd .cue .zip .7Z .PCE .CCD .CHD .CUE .ZIP;lr-beetle-pce-fast;syscard3.pce;/home/pi/RetroPie/BIOS
+NEC SuperGrafx;supergrafx;.7z .pce .ccd .chd .cue .zip .7Z .PCE .CCD .CHD .CUE .ZIP;lr-beetle-supergrafx;syscard3.pce;/home/pi/RetroPie/BIOS
+NEC TurboGrafx 16-CD;tg-cd;.7z .pce .ccd .chd .cue .zip .7Z .PCE .CCD .CHD .CUE .ZIP;lr-beetle-pce-fast;syscard3.pce;/home/pi/RetroPie/BIOS,some say located rom files
+NEC TurboGrafx 16;tg16;.7z .pce .ccd .chd .cue .zip .7Z .PCE .CCD .CHD .CUE .ZIP;lr-beetle-pce-fast;syscard3.pce;/home/pi/RetroPie/BIOS
+Nintendo 64;n64;.z64 .n64 .v64 .Z64 .N64 .V64;lr-mupen64plus,mupen64plus-GLideN64,mupen64plus-gles2rice,mupen64plus-gles2n64
+Nintendo DS;nds;.nds .zip .NDS .ZIP;drastic
+Nintendo Entertainment System;nes;.7z .nes .zip .7Z .NES .ZIP;lr-fceumm,lr-nestopia;disksys.rom;/home/pi/RetroPie/BIOS
+Nintendo Famicom Disk System;fds;.7z .nes .fds .zip .7Z .NES .FDS .ZIP;lr-fceumm,lr-nestopia;disksys.rom;/home/pi/RetroPie/BIOS
+Nintendo Famicom System;famicom;.nes .fds .zip .NES .FDS .ZIP;lr-fceumm;disksys.rom;/home/pi/RetroPie/BIOS
+Nintendo Game and Watch;gameandwatch;.mgw .MGW;lr-gw
+Nintendo Game Boy Advance;gba;.7z .gba .zip .7Z .GBA .ZIP;lr-mgba,lr-gpsp;gba_bios.bin;/home/pi/RetroPie/BIOS
+Nintendo Game Boy Color;gbc;.7z .gbc .zip .7Z .GBC .ZIP;lr-gambatte
+Nintendo Game Boy;gb;.7z .gb .zip .7Z .GB .ZIP;lr-gambatte
+Nintendo Super Famicom Disk System;sfc;.bin .smc .sfc .fig .swc .mgd .zip .BIN .SMC .SFC .FIG .SWC .MGD .ZIP;lr-snes9x2005,lr-snes9x2002,lr-snes9x2010,lr-snes9x
+Nintendo Virtual Boy;virtualboy;.7z .vb .zip .7Z .VB .ZIP;lr-beetle-vb
+Sega 32X;sega32x;.7z .32x .smd .bin .md .zip .7Z .32X .SMD .BIN .MD .ZIP;lr-picodrive
+Sega CD;segacd;.iso .cue .chd .ISO .CUE .CHD;lr-genesis-plus-gx,lr-picodrive;bios_CD_U.bin,bios_CD_E.bin,bios_CD_J.bin,us_scd1_9210.bin,eu_mcd1_9210.bin,jp_mcd1_9112.bin;/home/pi/RetroPie/BIOS
+Sega Dreamcast;dreamcast;.cdi .chd .gdi .sh .CDI .CHD .GDI .SH;reicast-audio-omx,reicast-audio-oss;dc_boot.bin,dc_flash.bin;/home/pi/RetroPie/BIOS
+Sega Gamegear;gamegear;.7z .gg .bin .sms .zip .7Z .GG .BIN .SMS .ZIP;lr-genesis-plus-gx
+Sega Master System;mastersystem;.7z .sms .bin .zip .7Z .SMS .BIN .ZIP;lr-genesis-plus-gx,lr-picodrive
+Sega Mega Drive Japan;megadrive-japan;.7z .smd .bin .gen .md .sg .zip .7Z .SMD .BIN .GEN .MD .SG .ZIP;lr-genesis-plus-gx,lr-picodrive
+Sega Mega Drive;megadrive;.7z .smd .bin .gen .md .sg .zip .7Z .SMD .BIN .GEN .MD .SG .ZIP;lr-genesis-plus-gx,lr-picodrive
+Sega SG-1000;sg-1000;.7z .sg .bin .zip .7Z .SG .BIN .ZIP;lr-genesis-plus-gx
+Sharp X68000;x68000;.dim .hdf .2hd .d88 .m3u .DIM .HDF .2HD .D88 .M3U;lr-px68kiplrom30.dat,iplromco.dat,iplrom.dat,iplromxv.dat,cgrom.dat;/home/pi/RetroPie/BIOS
+Sinclair ZX Spectrum;zxspectrum;.7z .sh .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip .rzx .7Z .SH .SNA .SZX .Z80 .TAP .TZX .GZ .UDI .MGT .IMG .TRD .SCL .DSK .ZIP .RZX;lr-fuse
+SNK Neo Geo;neogeo;.7z .fba .zip .7Z .FBA .ZIP;lr-fbalpha,lr-fbalpha2012,pifba;neogeo.zip;located with rom files
+SNK Neo Geo Pocket Color;ngpc;.7z .ngc .zip .7Z .NGC .ZIP;lr-beetle-ngp
+SNK Neo Geo Pocket;ngp;.7z .ngp .zip .7Z .NGP .ZIP;lr-beetle-ngp
+Sony PlayStation Portable Minis;pspminis;.iso .pbp .cso .ISO .PBP .CSO;lr-ppsspp
+Sony PlayStation Portable;psp;.iso .pbp .cso .ISO .PBP .CSO;lr-ppsspp
+Sony PlayStation;psx;.cue .cbn .img .iso .m3u .mdf .pbp .toc .z .znx .CUE .CBN .IMG .ISO .M3U .MDF .PBP .TOC .Z .ZNX;lr-pcsx-rearmed;SCPH1001.BIN,scph5500.bin,scph5501.bin,scph5502.bin;/home/pi/RetroPie/BIOS
+Super Nintendo MSU-1;snescd;.7z .bin .bs .smc .sfc .fig .swc .mgd .zip .7Z .BIN .BS .SMC .SFC .FIG .SWC .MGD .ZIP;lr-snes9x
+Super Nintendo;snes;.7z .bin .bs .smc .sfc .fig .swc .mgd .zip .7Z .BIN .BS .SMC .SFC .FIG .SWC .MGD .ZIP;lr-snes9x2005,lr-snes9x2002,lr-snes9x2010,lr-snes9x
+Tandy TRS-80 Color Computer;coco;.cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna .CAS .WAV .BAS .ASC .DMK .JVC .OS9 .DSK .VDK .ROM .CCC .SNA;xroar-coco,xroar-cocous;bas13.rom;/home/pi/RetroPie/BIOS
+Tandy TRS-80;trs-80;.dsk .DSK;sdltrs-model1,sdltrs-model3,sdltrs-model4,sdltrs-model4p;level2.rom;located with rom files
+Tangerine Oric 1;oric;.dsk .tap .DSK .TAP;oricutron-atmos,oricutron-oric1,oricutron-o16k,oricutron-telestrat,oricutron-pravetz
+Texas Instruments TI99/4A;ti99;.ctg .CTG;ti99sim;TI-994A.ctg;located with rom files
+Z-machine Infocom;zmachine;.dat .zip .z1 .z2 .z3 .z4 .z5 .z6 .z7 .z8 .DAT .ZIP .Z1 .Z2 .Z3 .Z4 .Z5 .Z6 .Z7 .Z8;frotz
