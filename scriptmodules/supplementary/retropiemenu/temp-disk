@@ -1,0 +1,3 @@
+"         Name                    Total  Used  Free Load Mountpoint"
+Emmc/Sd Retropie partition         7.2G  4.7G  2.4G  66% /
+Emmc/Sd Boot partition             128M  8.5M  120M   7% /media/boot

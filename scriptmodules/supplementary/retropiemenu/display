@@ -1,0 +1,19 @@
+                         Storage System
+ 
+"         Name                    Total  Used  Free Load Mountpoint"
+Emmc/Sd Retropie partition         7.2G  4.7G  2.4G  66% /
+Emmc/Sd Boot partition             128M  8.5M  120M   7% /media/boot
+ 
+ 
+                     Temperature Monitoring
+ 
+Cpu Temperature in Celcius degree :   49
+Cpu Temperature in Farenheit degree : 120
+ 
+ 
+                         Network Info
+ 
+Local Ip address :           10.10.10.18
+Public Ip address :          71.128.149.227
+Loopback interface status :  unknown
+Ethernet Connection status : up
