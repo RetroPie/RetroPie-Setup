@@ -152,6 +152,7 @@ function gui_esthemes() {
         'lipebello strangerstuff'
         'lipebello spaceoddity'
         'lipebello swineapple'
+        'waweedman pii-wii'
     )
     while true; do
         local theme
