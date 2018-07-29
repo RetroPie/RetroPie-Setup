@@ -13,8 +13,8 @@ rp_module_id="love"
 rp_module_desc="Love - 2d Game Engine"
 rp_module_help="Copy your Love games to $romdir/love"
 rp_module_licence="GPL3 https://bitbucket.org/rude/love/raw/7b520c437317626da2102de1aafdad0e67b54bf5/license.txt"
-rp_module_section="opt"
-rp_module_flags=" !mali !aarch64"
+rp_module_section="exp"
+rp_module_flags="  !aarch64"
 
 function depends_love() {
     local depends=(mercurial autotools-dev automake libtool pkg-config libdevil-dev libfreetype6-dev libluajit-5.1-dev libphysfs-dev libsdl2-dev libopenal-dev libogg-dev libtheora-dev libvorbis-dev libflac-dev libflac++-dev libmodplug-dev libmpg123-dev libmng-dev libjpeg-dev)
