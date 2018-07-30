@@ -64,7 +64,6 @@ function gui_esthemes() {
         'AmadhiX eudora'
         'AmadhiX eudora-bigshot'
         'AmadhiX eudora-concise'
-        'ChoccyHobNob eudora-updated'
         'InsecureSpike retroplay-clean-canela'
         'InsecureSpike retroplay-clean-detail-canela'
         'Omnija simpler-turtlepi'
@@ -105,8 +104,7 @@ function gui_esthemes() {
         'dmmarti maximuspie'
         'dmmarti showcase'
         'dmmarti kidz'
-        'lipebello Retrorama'
-        'lipebello SpaceOddity'
+        'rxbrad freeplay'
         'rxbrad gbz35'
         'rxbrad gbz35-dark'
         'garaine marioblue'
@@ -124,7 +122,36 @@ function gui_esthemes() {
         'RetroHursty69 merryxmas'
         'RetroHursty69 cardcrazy'
         'RetroHursty69 license2game'
+        'RetroHursty69 comiccrazy'
+        'RetroHursty69 snazzy'
+        'RetroHursty69 tributeGoT'
+        'RetroHursty69 tributeSTrek'
+        'RetroHursty69 tributeSWars'
+        'RetroHursty69 crisp'
+        'RetroHursty69 crisp_light'
+        'RetroHursty69 primo'
+        'RetroHursty69 primo_light'
+        'RetroHursty69 back2basics'
+        'RetroHursty69 retrogamenews'
+        'RetroHursty69 bluray'
+        'RetroHursty69 soda'
+        'RetroHursty69 lightswitch'
+        'RetroHursty69 darkswitch'
+        'RetroHursty69 whiteslide'
+        'RetroHursty69 graffiti'
+        'RetroHursty69 whitewood'
+        'RetroHursty69 sublime'
+        'RetroHursty69 infinity'
+        'RetroHursty69 neogeo_only'
+        'RetroHursty69 boxcity'
+        'RetroHursty69 vertical_arcade'
         'Saracade scv720'
+        'chicueloarcade Chicuelo'
+        'SuperMagicom nostalgic'
+        'lipebello retrorama'
+        'lipebello strangerstuff'
+        'lipebello spaceoddity'
+        'lipebello swineapple'
     )
     while true; do
         local theme
@@ -180,7 +207,7 @@ function gui_esthemes() {
                             fi
                             ;;
                         2)
-                            gitPullOrClone "$gallerydir" "http://github.com/wetriner/es-theme-gallery"
+                            gitPullOrClone "$gallerydir" "https://github.com/wetriner/es-theme-gallery"
                             ;;
                         3)
                             if [[ -d "$gallerydir" ]]; then

@@ -14,7 +14,7 @@ rp_module_desc="AdvanceMAME v1.4"
 rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $romdir/mame-advmame or\n$romdir/arcade"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags=" !kms"
 
 function depends_advmame-1.4() {
     local depends=(libsdl1.2-dev)
@@ -59,4 +59,5 @@ function install_advmame-1.4() {
 
 function configure_advmame-1.4() {
     configure_advmame
+     cp "$home/$dir/RetroPie-Setup/configs/mame-advmame/advmame-1.4.rc" "$md_conf_root/mame-advmame/"
 }

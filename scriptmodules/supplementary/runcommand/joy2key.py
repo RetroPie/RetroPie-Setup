@@ -66,7 +66,9 @@ def get_button_codes(dev_path):
     dev_button_codes = list(default_button_codes)
 
     for device in Context().list_devices(DEVNAME=dev_path):
-        sysdev_path = '/sys' + os.path.dirname(device.get('DEVPATH')) + '/'
+        sysdev_path = os.path.normpath('/sys' + device.get('DEVPATH')) + '/'
+        if not os.path.isfile(sysdev_path + 'name'):
+            sysdev_path = os.path.normpath(sysdev_path + '/../') + '/'
         # getting joystick name
         dev_name = sysdev_get('name', sysdev_path)
         # getting joystick vendor ID
@@ -212,8 +214,6 @@ def process_event(event):
     return False
 
 signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
-signal.signal(signal.SIGUSR1, signal_handler)
 
 js_button_codes = {}
 button_codes = []

@@ -331,12 +331,14 @@ function rpSwap() {
 ## @param dest destination directory
 ## @param repo repository to clone or pull from
 ## @param branch branch to clone or pull from (optional)
+## @param commit specific commit to checkout (optional - requires branch to be set)
 ## @brief Git clones or pulls a repository.
 function gitPullOrClone() {
     local dir="$1"
     local repo="$2"
     local branch="$3"
     [[ -z "$branch" ]] && branch="master"
+    local commit="$4"
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
@@ -345,12 +347,16 @@ function gitPullOrClone() {
         popd > /dev/null
     else
         local git="git clone --recursive"
-        if [[ "$__persistent_repos" -ne 1 && "$repo" == *github* ]]; then
+        if [[ "$__persistent_repos" -ne 1 && "$repo" == *github* && -z "$commit" ]]; then
             git+=" --depth 1"
         fi
         [[ "$branch" != "master" ]] && git+=" --branch $branch"
         echo "$git \"$repo\" \"$dir\""
         runCmd $git "$repo" "$dir"
+    fi
+    if [[ "$commit" ]]; then
+        echo "Winding back $repo->$branch to commit: #$commit"
+        runCmd git -C "$dir" checkout $commit
     fi
 }
 
@@ -943,7 +949,7 @@ function downloadAndExtract() {
         xz)
             cmd+=(-J)
             ;;
-        zip)
+        exe|zip)
             is_tar=0
             local tmp="$(mktemp -d)"
             local file="${url##*/}"
@@ -954,6 +960,7 @@ function downloadAndExtract() {
     esac
 
     if [[ "$is_tar" -eq 1 ]]; then
+        mkdir -p "$dest"
         cmd+=(-C "$dest")
         [[ -n "$opts" ]] && cmd+=(--strip-components "$opts")
 
@@ -1029,8 +1036,8 @@ function joy2keyStart() {
 ## @brief Stop previously started joy2key.py process.
 function joy2keyStop() {
     if [[ -n $__joy2key_pid ]]; then
-        kill -USR1 $__joy2key_pid
-        wait $__joy2key_pid 2>/dev/null
+        kill -INT $__joy2key_pid 2>/dev/null
+        sleep 1
     fi
 }
 
@@ -1159,12 +1166,23 @@ function addPort() {
     local cmd="$4"
     local game="$5"
 
-    mkUserDir "$romdir/ports"
-
     # move configurations from old ports location
     if [[ -d "$configdir/$port" ]]; then
         mv "$configdir/$port" "$md_conf_root/"
     fi
+
+    # remove the ports launch script if in remove mode
+    if [[ "$md_mode" == "remove" ]]; then
+        rm -f "$file"
+        delEmulator "$id" "$port"
+        # if there are no more port launch scripts we can remove ports from emulation station
+        if [[ "$(find "$romdir/ports" -maxdepth 1 -name "*.sh" | wc -l)" -eq 0 ]]; then
+            delSystem "$id" "ports"
+        fi
+        return
+    fi
+
+    mkUserDir "$romdir/ports"
 
     if [[ -t 0 ]]; then
         cat >"$file" << _EOF_
@@ -1178,17 +1196,8 @@ _EOF_
     chown $user:$user "$file"
     chmod +x "$file"
 
-    # remove the ports launch script if in remove mode
-    if [[ "$md_mode" == "remove" ]]; then
-        rm -f "$file"
-        # if there are no more port launch scripts we can remove ports from emulation station
-        if [[ "$(find "$romdir/ports" -maxdepth 1 -name "*.sh" | wc -l)" -eq 0 ]]; then
-            delSystem "$id" "ports"
-        fi
-    else
-        [[ -n "$cmd" ]] && addEmulator 1 "$id" "$port" "$cmd"
-        addSystem "ports"
-    fi
+    [[ -n "$cmd" ]] && addEmulator 1 "$id" "$port" "$cmd"
+    addSystem "ports"
 }
 
 ## @fn addEmulator()

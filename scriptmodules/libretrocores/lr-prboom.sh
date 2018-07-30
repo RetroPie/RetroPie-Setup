@@ -47,10 +47,25 @@ function _add_games_lr-prboom() {
         ['tnt']="TNT - Evilution"
         ['plutonia']="The Plutonia Experiment"
     )
+
+    if [[ "$md_id" == "zdoom" ]]; then
+        games+=(
+            ['heretic']="Heretic - Shadow of the Serpent Riders"
+            ['hexen']="Hexen - Beyond Heretic"
+            ['hexdd']="Hexen - Deathkings of the Dark Citadel"
+            ['chex3']="Chex Quest 3"
+            ['strife1']="Strife"
+        )
+    fi
     local game
+    local doswad
     local wad
     for game in "${!games[@]}"; do
+        doswad="$romdir/ports/doom/${game^^}.WAD"
         wad="$romdir/ports/doom/$game.wad"
+        if [[ -f "$doswad" ]]; then
+            mv "$doswad" "$wad"
+        fi
         if [[ -f "$wad" ]]; then
             addPort "$md_id" "doom" "${games[$game]}" "$cmd" "$wad"
         fi

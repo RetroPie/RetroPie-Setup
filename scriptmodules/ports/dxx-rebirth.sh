@@ -13,7 +13,7 @@ rp_module_id="dxx-rebirth"
 rp_module_desc="DXX-Rebirth (Descent & Descent 2) build from source"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/dxx-rebirth/dxx-rebirth/master/COPYING.txt"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags=" !kms"
 
 function depends_dxx-rebirth() {
     local depends=(libphysfs1 libphysfs-dev libsdl1.2-dev libsdl-mixer1.2-dev scons)
@@ -22,12 +22,13 @@ function depends_dxx-rebirth() {
 }
 
 function sources_dxx-rebirth() {
-    gitPullOrClone "$md_build" https://github.com/dxx-rebirth/dxx-rebirth "master"
+    gitPullOrClone "$md_build" https://github.com/dxx-rebirth/dxx-rebirth "stable-0.60.x"
 }
 
 function build_dxx-rebirth() {
     local params=()
     isPlatform "rpi" && params+=(raspberrypi=1)
+    isPlatform "mali" && params+=(opengles=1 egl_lib=EGL opengles_lib=GLESv2)
     scons -c
     scons "${params[@]}"
     md_ret_require=(

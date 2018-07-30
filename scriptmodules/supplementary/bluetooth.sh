@@ -46,33 +46,53 @@ function get_script_bluetooth() {
     echo "$name"
 }
 
+function bluez_cmd_bluetooth() {
+    # create a named pipe & fd for input for bluetoothctl
+    local fifo="$(mktemp -u)"
+    mkfifo "$fifo"
+    exec 3<>"$fifo"
+    local line
+    while read -r line; do
+        if [[ "$line" == *"[bluetooth]"* ]]; then
+            echo -e "$1" >&3
+            read -r line
+            if [[ -n "$2" ]]; then
+                # collect output for specified amount of time, then echo it
+                local buf
+                while read -r -t "$2" line; do
+                    buf+=("$line")
+                    # reply to any optional challenges
+                    if [[ -n "$4" && "$line" == *"$3"* ]]; then
+                        echo -e "$4" >&3
+                    fi
+                done
+                printf '%s\n' "${buf[@]}"
+            fi
+            sleep 1
+            echo -e "quit" >&3
+            break
+        fi
+    # read from bluetoothctl buffered line by line
+    done < <(stdbuf -oL bluetoothctl <&3)
+    exec 3>&-
+}
+
 function list_available_bluetooth() {
     local mac_address
     local device_name
-    dialog --backtitle "$__backtitle" --infobox "\nSearching ..." 5 40 >/dev/tty
-    if hasPackage bluez 5; then
-        # create a named pipe & fd for input for bluetoothctl
-        local fifo="$(mktemp -u)"
-        mkfifo "$fifo"
-        exec 3<>"$fifo"
-        local line
-        while read -r -n18 line; do
-            if [[ "$line" == *"[bluetooth]"* ]]; then
-                echo "scan on" >&3
-                read -r line
-                sleep 10
-                break
-            fi
-        # read from bluetoothctl buffered line by line
-        done < <(stdbuf -oL bluetoothctl <&3)
-        exec 3>&-
-        rm -f "$fifo"
+    local info_text="\n\nSearching ..."
 
+    # sixaxis: add USB pairing information
+    [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="Searching ...\n\n(To register a DualShock controller, please unplug and replug your controller while this text is visible...)"
+
+    dialog --backtitle "$__backtitle" --infobox "$info_text" 7 60 >/dev/tty
+    if hasPackage bluez 5; then
+        # sixaxis: reply to authorization challenge on USB cable connect
+        [[ -n "$(lsmod | grep hid_sony)" ]] && bluez_cmd_bluetooth "default-agent" "10" "Authorize" "yes" >/dev/null &
         while read mac_address; read device_name; do
             echo "$mac_address"
             echo "$device_name"
-        done < <(echo "devices" | bluetoothctl 2>/dev/null | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/')
-
+        done < <(bluez_cmd_bluetooth "scan on" "10" >/dev/null; bluez_cmd_bluetooth "devices" "2" | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/')
     else
         while read; read mac_address; read device_name; do
             echo "$mac_address"
@@ -300,7 +320,7 @@ function boot_bluetooth() {
             while read mac_address; read device_name; do
                 macs+=($mac_address)
             done < <(list_registered_bluetooth)
-            local script="while true; do for mac in ${macs[@]}; do hcitool con | grep -q \"\$mac\" || echo \"connect \$mac\" | bluetoothctl >/dev/null 2>&1; sleep 10; done; done"
+            local script="while true; do for mac in ${macs[@]}; do hcitool con | grep -q \"\$mac\" || { echo \"connect \$mac\nquit\"; sleep 1; } | bluetoothctl >/dev/null 2>&1; sleep 10; done; done"
             nohup nice -n19 /bin/sh -c "$script" >/dev/null &
             ;;
     esac

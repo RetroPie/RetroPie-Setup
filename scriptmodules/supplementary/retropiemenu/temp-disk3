@@ -1,0 +1,6 @@
+/dev/mmcblk0p2  7.2G  4.7G  2.4G  66% /
+tmpfs           996M  380K  995M   1% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs           996M     0  996M   0% /sys/fs/cgroup
+/dev/mmcblk0p1  128M  8.5M  120M   7% /media/boot
+tmpfs           200M  4.0K  200M   1% /run/user/1000

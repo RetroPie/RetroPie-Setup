@@ -123,8 +123,7 @@ function start_joy2key() {
 
 function stop_joy2key() {
     if [[ -n "$JOY2KEY_PID" ]]; then
-        kill -USR1 "$JOY2KEY_PID"
-        wait "$JOY2KEY_PID" 2>/dev/null
+        kill -INT "$JOY2KEY_PID"
     fi
 }
 
@@ -995,6 +994,8 @@ function restore_cursor_and_exit() {
 
 function launch_command() {
     local ret
+    # escape $ to avoid variable expansion (eg roms containing $!)
+    COMMAND="${COMMAND//\$/\\\$}"
     # launch the command
     echo -e "Parameters: $@\nExecuting: $COMMAND" >>"$LOG"
     if [[ "$CONSOLE_OUT" -eq 1 ]]; then
@@ -1035,6 +1036,7 @@ function runcommand() {
 
     if [[ "$DISABLE_MENU" -ne 1 ]]; then
         if ! check_menu; then
+            user_script "runcommand-onend.sh"
             clear
             restore_cursor_and_exit 0
         fi

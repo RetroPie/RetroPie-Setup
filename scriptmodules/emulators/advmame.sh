@@ -10,36 +10,38 @@
 #
 
 rp_module_id="advmame"
-rp_module_desc="AdvanceMAME v3.6"
+rp_module_desc="AdvanceMAME v3.8"
 rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $romdir/mame-advmame or\n$romdir/arcade"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags=" !kms"
 
 function _update_hook_advmame() {
     # if the non split advmame is installed, make directories for 0.94 / 1.4 so they will be updated
     # when doing update all packages
     if [[ -d "$md_inst/0.94.0" ]]; then
         mkdir -p "$rootdir/emulators/advmame-"{0.94,1.4}
-        printMsgs "dialog" "The advmame package has now been split into the following packages.\n\nadvmame-0.94\nadvmame-1.4\nadvmame\n\nIf you have chosen just to update the RetroPie-Setup script, you will need to update all the advmame packages for them to work correctly.\n\nNote that advmame-0.94.0.rc will be renamed to advmame-0.94.rc and the config for the main advmame will be advmame.rc.\n\nThe advmame package will be the latest version of the software (currently v3.6)."
+        printMsgs "dialog" "The advmame package has now been split into the following packages.\n\nadvmame-0.94\nadvmame-1.4\nadvmame\n\nIf you have chosen just to update the RetroPie-Setup script, you will need to update all the advmame packages for them to work correctly.\n\nNote that advmame-0.94.0.rc will be renamed to advmame-0.94.rc and the config for the main advmame will be advmame.rc.\n\nThe advmame package will be the latest version of the software."
     fi
 }
 
 function depends_advmame() {
-    local depends=(libsdl1.2-dev)
-    isPlatform "x11" && depends+=(libsdl2-dev)
+    local depends=(libsdl1.2-dev autoconf automake)
+    isPlatform "mali" && depends+=(libsdl2-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
 function sources_advmame() {
-    downloadAndExtract "$__archive_url/advancemame-3.6.tar.gz" "$md_build" 1
+    gitPullOrClone "$md_build" https://github.com/amadvance/advancemame v3.8
 }
 
 function build_advmame() {
+    ./autogen.sh
     ./configure CFLAGS="$CFLAGS -fno-stack-protector" --prefix="$md_inst"
     make clean
     make
+    md_ret_require="$md_build/advmame"
 }
 
 function install_advmame() {

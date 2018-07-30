@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<gameList>
+	<game>
+		<path>/home/pigaming/RetroPie/retropiemenu/arenatoolbox/</path>
+		<name>Arena Toolbox</name>
+		<desc>Custom scripts build by ORA team to enhance your RetroPie experience.</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/arenatoolbox.png</image>
+	</game>
+	<game>
+		<path>/home/pigaming/RetroPie/retropiemenu/arenatoolbox/fancontrol/</path>
+		<name>Fan Control</name>
+		<desc>Change the fan settings to control cooling and fan noise.</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/fancontrol.png</image>
+	</game>
+	<game>
+		<path>./arenatoolbox/fancontrol/medium-rate.sh</path>
+		<name>2 - Medium Rate</name>
+		<desc> To update the fan to the HIGHER COOLING RATE the factory Odroid settings select this option. DISCLAIMER: PERFORM AT YOUR OWN RISK. NO IMPLIED WARRANTIES.</desc>
+		<image>./icons/fanmediumrate.png</image>
+		<playcount>1</playcount>
+		<lastplayed>20180225T183935</lastplayed>
+	</game>
+	<game>
+		<path>/home/pigaming/RetroPie/retropiemenu/arenatoolbox/fancontrol/aggressive-rate.sh</path>
+		<name>3 - Aggressive Rate</name>
+		<desc>To update the fan to the most AGGRESSIVE COOLING RATE compared to the factory Odroid settings select this option. The tan will become noticeably loud. DISCLAIMER: PERFORM AT YOUR OWN RISK. NO IMPLIED WARRANTIES.</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/fanaggressiverate.png</image>
+	</game>
+	<game>
+		<path>/home/pigaming/RetroPie/retropiemenu/arenatoolbox/reset-controllers.sh</path>
+		<name>Controller Reset</name>
+		<desc>This will wipe out all controller configurations, and reset everything to factory default.
+NOTE:  THIS WILL CAUSE YOUR SYSTEM TO REBOOT.</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/controllerreset.png</image>
+	</game>
+	<game>
+		<path>./arenatoolbox/reference.sh</path>
+		<name>RetroPie Reference</name>
+		<desc>This utility provides common information about Retropie including information about Emulation Station, Retroarch, and ROM information.</desc>
+		<image>./icons/reference.png</image>
+		<playcount>1</playcount>
+		<lastplayed>20180316T020432</lastplayed>
+	</game>
+	<game>
+		<path>./arenatoolbox/softreboot.sh</path>
+		<name>Soft Reboot</name>
+		<desc>Perform a soft reboot to recover local keyboard function if not functional.
+NOTE:  Typically only needed after exit from PSP games and there is a need to access the terminal by exit from EmulationStation.</desc>
+		<image>./icons/softreboot.png</image>
+	</game>
+	<game>
+		<path>./arenatoolbox/systeminfo.sh</path>
+		<name>System Info Utility</name>
+		<desc>View your CPU temps, IP connectivity, and storage to include external storage addons.</desc>
+		<image>./icons/systeminfo.png</image>
+		<playcount>5</playcount>
+		<lastplayed>20180316T011718</lastplayed>
+	</game>
+	<game>
+		<path>./bluetooth.rp</path>
+		<name>Bluetooth</name>
+		<desc>Register and connect to bluetooth devices. Unregister and remove devices, and display registered and connected devices.</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/bluetooth.png</image>
+	</game>
+	<game>
+		<path>./configedit.rp</path>
+		<name>Configuration Editor</name>
+		<desc>Change common RetroArch options, and manually edit RetroArch configs, global configs, and non-RetroArch configs.</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/configedit.png</image>
+	</game>
+	<game>
+		<path>./retroarch.rp</path>
+		<name>Retroarch</name>
+		<desc>Launches the RetroArch GUI so you can change RetroArch options. Note: Changes will not be saved unless you have enabled the "Save Configuration On Exit" option.</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/retroarch.png</image>
+	</game>
+	<game>
+		<path>./retronetplay.rp</path>
+		<name>RetroArch Net Play</name>
+		<desc>Set up RetroArch Netplay options, choose host or client, port, host IP, delay frames, and your nickname.</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/retronetplay.png</image>
+	</game>
+	<game>
+		<path>./runcommand.rp</path>
+		<name>Run Command Configuration</name>
+		<desc>Change what appears on the runcommand screen. Enable or disable the menu, enable or disable box art, and change CPU configuration.</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/runcommand.png</image>
+	</game>
+	<game>
+		<path>./audiosettings.rp</path>
+		<name>Audio</name>
+		<desc>Configure audio settings. Choose default of auto, 3.5mm jack, or HDMI. Mixer controls, and apply default settings.</desc>
+		<image>./icons/audiosettings.png</image>
+		<playcount>2</playcount>
+		<lastplayed>20171022T044711</lastplayed>
+	</game>
+	<game>
+		<path>./wifi.sh</path>
+		<name>Wi-Fi Setup</name>
+		<desc>Launch NMTUI and connect to a wireless network.</desc>
+		<image>./icons/wifi.png</image>
+	</game>
+	<game>
+		<path>/home/pigaming/RetroPie/retropiemenu/arenatoolbox/toggle bgm.sh</path>
+		<name>toggle bgm</name>
+		<playcount>2</playcount>
+		<lastplayed>20180316T230742</lastplayed>
+	</game>
+	<game>
+		<path>./arenatoolbox/pce-to-tg16.sh</path>
+		<name>PC Engine/TurboGrafx16 Swap</name>
+		<desc>This script will swap the NEC PC Engine and TurboGrafx-16 themes to display on the main menu.
+NOTE:  You will need to restart Emulation Station after making the change.</desc>
+		<image>./icons/pce-to-tg16.png</image>
+	</game>
+	<game>
+		<path>./arenatoolbox/fancontrol/default-rate.sh</path>
+		<name>1 - Default Rate</name>
+		<desc> To restore the fan to the factory Odroid settings select this option.</desc>
+		<image>./icons/fandefaultrate.png</image>
+		<playcount>1</playcount>
+		<lastplayed>20180321T174959</lastplayed>
+	</game>
+	<game>
+		<path>./arenatoolbox/genesis.sh</path>
+		<name>Genesis/MegaDrive Swap</name>
+		<desc>This script will swap the Sega Genesis and Sega MegaDrive themes to display on the main menu.
+NOTE:  You will need to restart Emulation Station after making the change.</desc>
+		<image>./icons/genesis.png</image>
+		<playcount>1</playcount>
+		<lastplayed>20180321T201803</lastplayed>
+	</game>
+	<game>
+		<path>./showip.rp</path>
+		<name>Show IP</name>
+		<desc>Displays your current IP address, as well as other information provided by the command, "ip addr show."</desc>
+		<image>/home/pigaming/RetroPie/retropiemenu/icons/showip.png</image>
+		<playcount>4</playcount>
+		<lastplayed>20180328T232407</lastplayed>
+	</game>
+	<game>
+		<path>./esthemes.rp</path>
+		<name>ES Themes</name>
+		<desc>Install, uninstall, or update EmulationStation themes. Most themes can be previewed at https://github.com/retropie/ RetroPie-Setup/wiki/themes.</desc>
+		<image>./icons/esthemes.png</image>
+		<playcount>3</playcount>
+		<lastplayed>20180605T020501</lastplayed>
+	</game>
+	<game>
+		<path>./splashscreen.rp</path>
+		<name>Splash Screens</name>
+		<desc>Enable or disable the splashscreen on RetroPie boot. Choose a splashscreen, download new splashscreens, and return splashscreen to default.</desc>
+		<image>./icons/splashscreen.png</image>
+		<playcount>38</playcount>
+		<lastplayed>20180605T020421</lastplayed>
+	</game>
+	<game>
+		<path>./arenatoolbox/toggle-bgm.sh</path>
+		<name>Toggle BGM</name>
+		<desc>Enable or disable the background music feature.</desc>
+		<image>./icons/togglebgm.png</image>
+		<playcount>5</playcount>
+		<lastplayed>20180718T221824</lastplayed>
+	</game>
+	<game>
+		<path>./rpsetup.rp</path>
+		<name>RetroPie Setup</name>
+		<desc>Install RetroPie from binary or source, install experimental packages, additional drivers, edit samba shares, custom scraper, as well as other RetroPie-related configurations.</desc>
+		<image>./icons/rpsetup.png</image>
+		<playcount>72</playcount>
+		<lastplayed>20180718T235338</lastplayed>
+	</game>
+	<game>
+		<path>./filemanager.rp</path>
+		<name>File Manager</name>
+		<desc>Basic ascii file manager for linux allowing you to browse, copy, delete, and move files.</desc>
+		<image>./icons/filemanager.png</image>
+		<playcount>3</playcount>
+		<lastplayed>20180718T235530</lastplayed>
+	</game>
+</gameList>

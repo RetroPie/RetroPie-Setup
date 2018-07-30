@@ -1,25 +1,25 @@
 diff --git a/input/input_driver.c b/input/input_driver.c
-index 8f323ad..299cb87 100644
+index 3d5ee6ca73..c9b58a6f1f 100644
 --- a/input/input_driver.c
 +++ b/input/input_driver.c
-@@ -119,6 +119,10 @@ static bool input_driver_nonblock_state           = false;
- static bool input_driver_flushing_input           = false;
- static bool input_driver_data_own                 = false;
+@@ -380,6 +380,10 @@ static unsigned input_driver_max_users            = 0;
+ static const void *hid_data                       = NULL;
+ #endif
  
 +/* number of frames required to trigger the hotkey */
 +#define HOTKEY_DELAY 5
 +static unsigned hotkey_counter = 0;
 +
  /**
-  * input_driver_find_handle:
-  * @idx                : index of driver to get handle to.
-@@ -912,9 +916,16 @@ uint64_t input_keys_pressed(
+  * check_input_driver_block_hotkey:
+  *
+@@ -1057,9 +1061,16 @@ void input_keys_pressed(void *data, retro_bits_t* p_new_state)
              && current_input->input_state(
                 current_input_data, joypad_info, &binds, 0,
                 RETRO_DEVICE_JOYPAD, 0, RARCH_ENABLE_HOTKEY))
--            input_driver_block_libretro_input = true;
--         else
--            input_driver_block_hotkey         = true;
+-         input_driver_block_libretro_input = true;
+-      else
+-         input_driver_block_hotkey         = true;
 +      {
 +         if (hotkey_counter < HOTKEY_DELAY)
 +            hotkey_counter++;

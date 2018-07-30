@@ -13,7 +13,7 @@ rp_module_id="cdogs-sdl"
 rp_module_desc="C-Dogs SDL - Classic overhead run-and-gun game"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/cxong/cdogs-sdl/master/COPYING"
 rp_module_section="exp"
-rp_module_flags="!mali !kms"
+rp_module_flags=" !kms"
 
 function depends_cdogs-sdl() {
     getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev build-essential
@@ -26,7 +26,7 @@ function sources_cdogs-sdl() {
 function build_cdogs-sdl() {
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst" -DCDOGS_DATA_DIR="$md_inst/"
     make
-    md_ret_require="$md_build"
+    md_ret_require="$md_build/src/cdogs-sdl"
 }
 
 function install_cdogs-sdl() {

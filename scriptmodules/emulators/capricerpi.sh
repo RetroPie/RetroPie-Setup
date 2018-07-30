@@ -17,11 +17,12 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !x86 !mali !kms"
 
 function depends_capricerpi() {
-    getDepends libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev zlib1g-dev
+    getDepends libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev zlib1g-dev libpng12-dev
 }
 
 function sources_capricerpi() {
     gitPullOrClone "$md_build" https://github.com/KaosOverride/CapriceRPI.git
+    sed -i "s/-lpng12/-lpng/" src/makefile
 }
 
 function build_capricerpi() {

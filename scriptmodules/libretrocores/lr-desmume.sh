@@ -14,23 +14,24 @@ rp_module_desc="NDS emu - DESMUME"
 rp_module_help="ROM Extensions: .nds .zip\n\nCopy your Nintendo DS roms to $romdir/nds"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/desmume/master/desmume/COPYING"
 rp_module_section="exp"
+rp_module_flags="!arm !aarch64 !32bit"
 
 function sources_lr-desmume() {
     gitPullOrClone "$md_build" https://github.com/libretro/desmume.git
 }
 
 function build_lr-desmume() {
-    cd desmume
+    cd desmume/src/frontend/libretro
     local params=()
     isPlatform "arm" && params+=("platform=armvhardfloat")
-    make -f Makefile.libretro clean
-    make -f Makefile.libretro "${params[@]}"
-    md_ret_require="$md_build/desmume/desmume_libretro.so"
+    make clean
+    make "${params[@]}"
+    md_ret_require="$md_build/desmume/src/frontend/libretro/desmume_libretro.so"
 }
 
 function install_lr-desmume() {
     md_ret_files=(
-        'desmume/desmume_libretro.so'
+        'desmume/src/frontend/libretro/desmume_libretro.so'
     )
 }
 

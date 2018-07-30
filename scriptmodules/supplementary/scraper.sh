@@ -87,6 +87,13 @@ function scrape_scraper() {
     if [[ "$use_thumbs" -eq 1 ]]; then
         params+=(-thumb_only)
     fi
+    if [[ "$screenshots" -eq 1 ]]; then
+        if [[ "$system" =~ ^mame-|arcade|fba|neogeo ]]; then
+            params+=(-mame -mame_img s,m,t)
+        else
+            params+=(-console_img "s,b,3b,l,f")
+        fi
+    fi
     if [[ "$download_videos" -eq 1 ]]; then
         params+=(-download_videos)
     fi
@@ -168,6 +175,7 @@ function scrape_chosen_scraper() {
 function _load_config_scraper() {
     echo "$(loadModuleConfig \
         'use_thumbs=1' \
+        'screenshots=0' \
         'max_width=400' \
         'max_height=400' \
         'console_src=1' \
@@ -206,52 +214,58 @@ function gui_scraper() {
             options+=(3 "Thumbnails only (Disabled)")
         fi
 
-        if [[ "$mame_src" -eq 0 ]]; then
-            options+=(4 "Arcade Source (MameDB)")
-        elif [[ "$mame_src" -eq 1 ]]; then
-            options+=(4 "Arcade Source (ScreenScraper)")
+        if [[ "$screenshots" -eq 1 ]]; then
+            options+=(4 "Prefer screenshots (Enabled)")
         else
-            options+=(4 "Arcade Source (ArcadeItalia)")
+            options+=(4 "Prefer screenshots (Disabled)")
+        fi
+
+        if [[ "$mame_src" -eq 0 ]]; then
+            options+=(5 "Arcade Source (MameDB)")
+        elif [[ "$mame_src" -eq 1 ]]; then
+            options+=(5 "Arcade Source (ScreenScraper)")
+        else
+            options+=(5 "Arcade Source (ArcadeItalia)")
         fi
 
         if [[ "$console_src" -eq 0 ]]; then
-            options+=(5 "Console Source (OpenVGDB)")
+            options+=(6 "Console Source (OpenVGDB)")
         elif [[ "$console_src" -eq 1 ]]; then
-            options+=(5 "Console Source (thegamesdb)")
+            options+=(6 "Console Source (thegamesdb)")
         else
-            options+=(5 "Console Source (ScreenScraper)")
+            options+=(6 "Console Source (ScreenScraper)")
         fi
 
         if [[ "$rom_name" -eq 0 ]]; then
-            options+=(6 "ROM Names (No-Intro)")
+            options+=(7 "ROM Names (No-Intro)")
         elif [[ "$rom_name" -eq 1 ]]; then
-            options+=(6 "ROM Names (theGamesDB)")
+            options+=(7 "ROM Names (theGamesDB)")
         else
-            options+=(6 "ROM Names (Filename)")
+            options+=(7 "ROM Names (Filename)")
         fi
 
         if [[ "$append_only" -eq 1 ]]; then
-            options+=(7 "Gamelist (Append)")
+            options+=(8 "Gamelist (Append)")
         else
-            options+=(7 "Gamelist (Overwrite)")
+            options+=(8 "Gamelist (Overwrite)")
         fi
 
         if [[ "$use_rom_folder" -eq 1 ]]; then
-            options+=(8 "Use rom folder for gamelist & images (Enabled)")
+            options+=(9 "Use rom folder for gamelist & images (Enabled)")
         else
-            options+=(8 "Use rom folder for gamelist & images (Disabled)")
+            options+=(9 "Use rom folder for gamelist & images (Disabled)")
         fi
 
         if [[ "$download_videos" -eq 1 ]]; then
-            options+=(9 "Download Videos (Enabled)")
+            options+=(V "Download Videos (Enabled)")
         else
-            options+=(9 "Download Videos (Disabled)")
+            options+=(V "Download Videos (Disabled)")
         fi
 
         if [[ "$download_marquees" -eq 1 ]]; then
-            options+=(0 "Download Marquees (Enabled)")
+            options+=(M "Download Marquees (Enabled)")
         else
-            options+=(0 "Download Marquees (Disabled)")
+            options+=(M "Download Marquees (Disabled)")
         fi
 
         options+=(W "Max image width ($max_width)")
@@ -281,30 +295,34 @@ function gui_scraper() {
                     iniSet "use_thumbs" "$use_thumbs"
                     ;;
                 4)
+                    screenshots="$((screenshots ^ 1))"
+                    iniSet "screenshots" "$screenshots"
+                    ;;
+                5)
                     mame_src="$((( mame_src + 1) % 3))"
                     iniSet "mame_src" "$mame_src"
                     ;;
-                5)
+                6)
                     console_src="$((( console_src + 1) % 3))"
                     iniSet "console_src" "$console_src"
                     ;;
-                6)
+                7)
                     rom_name="$((( rom_name + 1 ) % 3))"
                     iniSet "rom_name" "$rom_name"
                     ;;
-                7)
+                8)
                     append_only="$((append_only ^ 1))"
                     iniSet "append_only" "$append_only"
                     ;;
-                8)
+                9)
                     use_rom_folder="$((use_rom_folder ^ 1))"
                     iniSet "use_rom_folder" "$use_rom_folder"
                     ;;
-                9)
+                V)
                     download_videos="$((download_videos ^ 1))"
                     iniSet "download_videos" "$download_videos"
                     ;;
-                0)
+                M)
                     download_marquees="$((download_marquees ^ 1))"
                     iniSet "download_marquees" "$download_marquees"
                     ;;

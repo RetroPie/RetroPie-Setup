@@ -14,10 +14,13 @@ rp_module_desc="ScummVM"
 rp_module_help="Copy your ScummVM games to $romdir/scummvm"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags=""
 
 function depends_scummvm() {
     local depends=(libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev)
+    if isPlatform "vero4k"; then
+        depends+=(vero3-userland-dev-osmc)
+    fi
     if [[ "$md_id" == "scummvm-sdl1" ]]; then
         depends+=(libsdl1.2-dev)
     else
@@ -27,7 +30,7 @@ function depends_scummvm() {
 }
 
 function sources_scummvm() {
-    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-1-9"
+    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-2-0"
     if isPlatform "rpi"; then
         applyPatch rpi_enable_scalers.diff <<\_EOF_
 diff --git a/configure b/configure
@@ -52,6 +55,7 @@ _EOF_
 function build_scummvm() {
     local params=(--enable-all-engines --enable-vkeybd --enable-release --disable-debug --enable-keymapper --disable-eventrecorder --prefix="$md_inst")
     isPlatform "rpi" && params+=(--host=raspberrypi)
+    isPlatform "vero4k" && params+=(--opengl-mode=gles2)
     # stop scummvm using arm-linux-gnueabihf-g++ which is v4.6 on wheezy and doesn't like rpi2 cpu flags
     if isPlatform "rpi"; then
         CC="gcc" CXX="g++" ./configure "${params[@]}"
@@ -78,6 +82,7 @@ function configure_scummvm() {
     for dir in .config .local/share .cache; do
         mkUserDir "$home/$dir"
         moveConfigDir "$home/$dir/scummvm" "$md_conf_root/scummvm"
+        
     done
 
     # Create startup script
@@ -89,15 +94,15 @@ function configure_scummvm() {
 game="\$1"
 pushd "$romdir/scummvm" >/dev/null
 $md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" \$game
-while read line; do
-    id=(\$line);
-    touch "$romdir/scummvm/\$id.svm"
+while read id desc; do
+    echo "\$desc" > "$romdir/scummvm/\$id.svm"
 done < <($md_inst/bin/scummvm --list-targets | tail -n +3)
 popd >/dev/null
 _EOF_
     chown $user:$user "$romdir/scummvm/+Start $name.sh"
     chmod u+x "$romdir/scummvm/+Start $name.sh"
-
+    
     addEmulator 1 "$md_id" "scummvm" "bash $romdir/scummvm/+Start\ $name.sh %BASENAME%"
     addSystem "scummvm"
+    cp "/home/pigaming/RetroPie-Setup/configs/scummvm/scummvm.ini" "$md_conf_root/scummvm/"
 }

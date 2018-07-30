@@ -1,7 +1,7 @@
-This issue tracker is NOT for Help / Support - Please use the RetroPie forum - https://retropie.org.uk/forum/
+Please start a topic on the RetroPie forum before opening an issue - https://retropie.org.uk/forum/
 
-Even if you think you have a bug please post to the forum first, as many "issues" can be solved with configuration changes.
+This includes edit suggestions for the wiki. There are more people to help on the forum.
 
-For ideas and enhancements, please also post to the forum first, to see if it is something we would consider and to see if other users would find it useful.
+Once a problem has been verified on the forum, an issue can be opened here.
 
 Please remove this text before posting.

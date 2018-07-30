@@ -43,7 +43,19 @@ _EOF_
             echo -e "kodi #auto\nemulationstation #auto" >>"$script"
             ;;
         es|*)
-            echo "emulationstation #auto" >>"$script"
+            echo "#!/bin/sh
+
+while pgrep fbi &>/dev/null;
+do sleep 1;
+done
+while pgrep mplayer &>/dev/null;
+do sleep 1;
+done
+while pgrep vlc >/dev/null; do sleep 1; done
+if [ -a /home/pigaming/scripts/bgm/start.sc ];  then
+(mpg123 -f 18000 -Z /home/pigaming/bgm/*.mp3 >/dev/null 2>&1) &
+fi
+emulationstation #auto" >>"$script"
             ;;
     esac
     chown $user:$user "$script"
@@ -71,7 +83,7 @@ function enable_autostart() {
             cat >/etc/systemd/system/getty@tty1.service.d/autologin.conf <<_EOF_
 [Service]
 ExecStart=
-ExecStart=-/sbin/agetty --autologin $user --noclear %I \$TERM
+ExecStart=-/sbin/agetty --skip-login --noclear --noissue --login-options "-f pigaming" %I $TERM
 _EOF_
         fi
 

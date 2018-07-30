@@ -58,6 +58,7 @@ function install_ps3controller() {
 
 function remove_ps3controller() {
     dpkg --purge sixad
+    [[ -f /usr/sbin/bluetoothd ]] && chmod 755 /usr/sbin/bluetoothd
 }
 
 function pair_ps3controller() {

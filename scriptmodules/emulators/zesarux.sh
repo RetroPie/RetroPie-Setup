@@ -14,7 +14,7 @@ rp_module_desc="ZX Spectrum emulator ZEsarUX"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum games to $romdir/zxspectrum"
 rp_module_licence="GPL3 https://sourceforge.net/p/zesarux/code/ci/master/tree/LICENSE"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="dispmanx  !kms"
 
 function depends_zesarux() {
     local depends=(libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev)
@@ -23,19 +23,21 @@ function depends_zesarux() {
 }
 
 function sources_zesarux() {
-    downloadAndExtract "$__archive_url/ZEsarUX_src-5.0.tar.gz" "$md_build" 1
+   gitPullOrClone "$md_build" https://github.com/chernandezba/zesarux.git 7.0
 }
 
 function build_zesarux() {
+    cd src
     local params=()
-    isPlatform "rpi" && params+=(--enable-raspberry --disable-pulse)
+    isPlatform "mali" && params+=(--enable-sdl2 )
     ./configure --prefix "$md_inst" "${params[@]}"
     make clean
     make
-    md_ret_require="$md_build/zesarux"
+    md_ret_require="$md_build/src/zesarux"
 }
 
 function install_zesarux() {
+    cd src
     make install
 }
 
@@ -44,6 +46,9 @@ function configure_zesarux() {
     mkRomDir "zxspectrum"
     mkRomDir "amstradcpc"
     mkRomDir "samcoupe"
+    mkRomDir "zx81"
+    mkRomDir "jupiter-ace"
+    mkRomDir "ql"
 
     mkUserDir "$md_conf_root/zxspectrum"
 
@@ -91,7 +96,13 @@ _EOF_
     addEmulator 1 "$md_id" "zxspectrum" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%"
     addEmulator 1 "$md_id" "samcoupe" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine sam %ROM%"
     addEmulator 1 "$md_id" "amstradcpc" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine CPC464 %ROM%"
+    addEmulator 1 "$md_id" "zx81" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine ZX81 %ROM%"
+    addEmulator 1 "$md_id" "jupiter-ace" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine ACE %ROM%"
+    addEmulator 1 "$md_id" "ql" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine QL %ROM%"
     addSystem "zxspectrum"
     addSystem "samcoupe"
     addSystem "amstradcpc"
+    addSystem "zx81"
+    addSystem "jupiter-ace"
+    addSystem "ql"
 }

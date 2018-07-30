@@ -10,10 +10,12 @@ if [[ -z "$rom" ]]; then
     "$emulator"
 elif [[ "$rom" == *.uae ]]; then
     "$emulator" -config="$rom" -G
+elif [[ "$rom" == *.lha ]]; then
+    "$emulator" -autowhdload="$rom" -G
 else
     source "../../lib/archivefuncs.sh"
 
-    archiveExtract "$rom" ".adf .adz .dms"
+    archiveExtract "$rom" ".adf .adz .dms .ipf"
 
     # check successful extraction and if we have at least one file
     if [[ $? == 0 ]]; then

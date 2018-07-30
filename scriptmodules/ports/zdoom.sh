@@ -46,7 +46,7 @@ function install_zdoom() {
 }
 
 function add_games_zdoom() {
-    _add_games_lr-prboom "$md_inst/zdoom +set fullscreen 1 -iwad %ROM%"
+    _add_games_lr-prboom "DOOMWADDIR=$romdir/ports/doom $md_inst/zdoom +set fullscreen 1 -iwad %ROM%"
 }
 
 function configure_zdoom() {

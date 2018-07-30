@@ -71,18 +71,19 @@ function retropie_welcome() {
     local bfgwht="${bld}$(tput setaf 7)"
 
     local logo=(
-        "${fgred}   .***.   "
-        "${fgred}   ***${bfgwht}*${fgred}*   "
-        "${fgred}   \`***'   "
-        "${bfgwht}    |*|    "
-        "${bfgwht}    |*|    "
-        "${bfgred}  ..${bfgwht}|*|${bfgred}..  "
-        "${bfgred}.*** ${bfgwht}*${bfgred} ***."
-        "${bfgred}*******${fggrn}@@${bfgred}**"
-        "${fgred}\`*${bfgred}****${bfgylw}@@${bfgred}*${fgred}*'"
-        "${fgred} \`*******'${fgrst} "
-        "${fgred}   \`\"\"\"'${fgrst}   "
+        "                     "
+        "${fgylw}    )  (             "
+        "${fgylw} ( /(  )\ )   (      "
+        "${fgred} )\())(()/(   )\     "
+        "${fgred}((_)\  /(_)|(((_)(   "
+        "${fgred}  ((_)(_))  ()${fggrn} _ ${fgred})\  "
+        "${fggrn} / _ \| _ \ ${fgred}(_)${fggrn}_\ ${fgred}(_)"
+        "${fggrn}| (_) |   /  / _ \   "
+        "${fggrn} \___/|_|_\ /_/ \_\  "
+        "                     "
+        "                     "
         )
+
 
     local out
     local i
@@ -146,13 +147,14 @@ function gui_bashwelcometweak() {
     if [[ -n "$choice" ]]; then
         case "$choice" in
             1)
-                install_bashwelcometweak
+                rp_callModule bashwelcometweak install
                 printMsgs "dialog" "Installed Bash Welcome Tweak."
                 ;;
             2)
-                remove_bashwelcometweak
+                rp_callModule bashwelcometweak remove
                 printMsgs "dialog" "Removed Bash Welcome Tweak."
                 ;;
         esac
     fi
 }
+

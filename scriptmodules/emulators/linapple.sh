@@ -14,7 +14,7 @@ rp_module_desc="Apple 2 emulator LinApple"
 rp_module_help="ROM Extensions: .dsk\n\nCopy your Apple 2 games to $romdir/apple2"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dabonetn/linapple-pie/master/LICENSE"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="dispmanx  !kms"
 
 function depends_linapple() {
     getDepends libzip-dev libsdl1.2-dev libsdl-image1.2-dev libcurl4-openssl-dev
@@ -56,7 +56,7 @@ function configure_linapple() {
             copyDefaultConfig "$file" "$md_conf_root/apple2/$file"
         done
     fi
-
+    cp "$home/$dir/RetroPie-Setup/configs/apple2/linapple.conf" "$md_conf_root/apple2/"
     addEmulator 1 "$md_id" "apple2" "pushd $romdir/apple2; $md_inst/linapple -1 %ROM%; popd"
     addSystem "apple2"
 }

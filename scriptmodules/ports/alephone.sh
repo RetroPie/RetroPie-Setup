@@ -17,9 +17,9 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_alephone() {
-    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake)
-    if [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" ge 16.04; then
-        depends+=(libsdl2-dev libsdl2-net-dev libsdl2-image-dev libsdl2-ttf-dev)
+    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake libboost-system-dev libcurl4-openssl-dev)
+    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
+        depends+=(libsdl2-dev libsdl2-net-dev libsdl2-image-dev libsdl2-ttf-dev libglu1-mesa-dev libgl1-mesa-dev)
     else
         depends+=(libsdl1.2-dev libsdl-net1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev)
     fi
@@ -28,7 +28,7 @@ function depends_alephone() {
 
 function sources_alephone() {
     local branch="release-20150620"
-    if [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" ge 16.04; then
+    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
         branch="master"
     fi
     gitPullOrClone "$md_build" "https://github.com/Aleph-One-Marathon/alephone.git" "$branch"
@@ -49,8 +49,8 @@ function install_alephone() {
 }
 
 function game_data_alephone() {
-    cd "$__tmpdir"
     local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-20150620"
+
     if [[ ! -f "$romdir/ports/$md_id/Marathon/Shapes.shps" ]]; then
         downloadAndExtract "$release_url/Marathon-20150620-Data.zip" "$romdir/ports/$md_id"
     fi
@@ -62,6 +62,7 @@ function game_data_alephone() {
     if [[ ! -f "$romdir/ports/$md_id/Marathon Infinity/Shapes.shpA" ]]; then
         downloadAndExtract "$release_url/MarathonInfinity-20150620-Data.zip" "$romdir/ports/$md_id"
     fi
+
     chown -R $user:$user "$romdir/ports/$md_id"
 }
 

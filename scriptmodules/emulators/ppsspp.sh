@@ -19,12 +19,25 @@ rp_module_flags=""
 function depends_ppsspp() {
     local depends=(cmake libsdl2-dev libzip-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
     getDepends "${depends[@]}"
 }
 
 function sources_ppsspp() {
-    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git v1.5.4
+    if isPlatform "tinker"; then
+        gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
+    elif isPlatform "vero4k"; then
+        gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
+    else
+        gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git v1.5.4
+    fi
     cd ppsspp
+
+    if isPlatform "tinker"; then
+        applyPatch "$md_data/02_tinker_options.diff"
+    elif ! isPlatform "vero4k"; then
+        applyPatch "$md_data/01_egl_name.diff"
+    fi
 
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
@@ -59,6 +72,8 @@ function build_ffmpeg_ppsspp() {
     elif isPlatform "aarch64"; then
         arch="arm64"
     fi
+    isPlatform "vero4k" && local extra_params='--arch=arm'
+
     local MODULES
     local VIDEO_DECODERS
     local AUDIO_DECODERS
@@ -73,7 +88,7 @@ function build_ffmpeg_ppsspp() {
     source linux_arm.sh
     # linux_arm.sh has set -e which we need to switch off
     set +e
-    ./configure \
+    ./configure $extra_params \
         --prefix="./linux/$arch" \
         --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
         --disable-shared \
@@ -121,6 +136,10 @@ function build_ppsspp() {
         fi
     elif isPlatform "mali"; then
         params+=(-DUSING_GLES2=ON -DUSING_FBDEV=ON)
+    elif isPlatform "tinker"; then
+        params+=(-DCMAKE_TOOLCHAIN_FILE="$md_data/tinker.armv7.cmake")
+    elif isPlatform "vero4k"; then
+        params+=(-DCMAKE_TOOLCHAIN_FILE="cmake/Toolchains/vero4k.armv8.cmake")
     fi
     "$cmake" "${params[@]}" .
     make clean
@@ -144,6 +163,10 @@ function configure_ppsspp() {
     mkUserDir "$md_conf_root/psp/PSP"
     ln -snf "$romdir/psp" "$md_conf_root/psp/PSP/GAME"
 
-    addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
+    if isPlatform "tinker"; then
+        addEmulator 1 "$md_id" "psp" "$md_inst/PPSSPPSDL --fullscreen %ROM%"
+    else
+        addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
+    fi
     addSystem "psp"
 }
