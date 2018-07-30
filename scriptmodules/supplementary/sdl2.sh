@@ -59,7 +59,17 @@ function sources_sdl2() {
 }
 
 function build_sdl2() {
+    # workaround for dpkg-shlibdeps issue with 32bit userland on aarch64 kernel
+    # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=846211
+    local dpkg_hack=0
+    [[ "$(uname -m)" == "aarch64" ]] && isPlatform "32bit" && dpkg_hack=1
+
     cd "$(get_pkg_ver_sdl2)"
+
+    [[ "$dpkg_hack" -eq 1 ]] && mv /lib/aarch64-linux-gnu /lib/aarch64-linux-gnu.bak
+    sudo dpkg-buildpackage
+    [[ "$dpkg_hack" -eq 1 ]] && mv /lib/aarch64-linux-gnu.bak /lib/aarch64-linux-gnu
+
 
     if isPlatform "vero4k"; then
         # remove harmful (mesa) and un-needed (X11) dependancies from debian package control
@@ -69,6 +79,7 @@ function build_sdl2() {
     fi
 
     dpkg-buildpackage
+
     md_ret_require="$md_build/libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb"
     local dest="$__tmpdir/archives/$__os_codename/$__platform"
     mkdir -p "$dest"

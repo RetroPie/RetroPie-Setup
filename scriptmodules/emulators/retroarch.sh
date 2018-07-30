@@ -18,13 +18,13 @@ function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev libpulse-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
+    isPlatform "rock64" && depends+=(libmali-rk-dev)
     isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
 
     if compareVersions "$__os_debian_ver" ge 9; then
         depends+=(libavcodec-dev libavformat-dev libavdevice-dev)
     fi
-
     # only install nvidia-cg-toolkit if it is available (as the non-free repo may not be enabled)
     if isPlatform "x86"; then
         if [[ -n "$(apt-cache search --names-only nvidia-cg-toolkit)" ]]; then
@@ -45,8 +45,9 @@ function sources_retroarch() {
 }
 
 function build_retroarch() {
+   
     local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack --disable-qt --enable-pulse)
-    ! isPlatform "x11" && params+=(--disable-x11 )
+    ! isPlatform "x11" && params+=(--disable-x11 --disable-wayland)
     if compareVersions "$__os_debian_ver" lt 9; then
         params+=(--disable-ffmpeg)
     fi
