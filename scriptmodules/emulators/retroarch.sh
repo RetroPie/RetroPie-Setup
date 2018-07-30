@@ -149,7 +149,11 @@ function configure_retroarch() {
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "false"
-    iniSet "video_threaded" "true"
+
+    if ! isPlatform "x86"; then
+        iniSet "video_threaded" "true"
+    fi
+
     iniSet "video_font_size" "12"
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     isPlatform "x11" && iniSet "video_fullscreen" "true"
