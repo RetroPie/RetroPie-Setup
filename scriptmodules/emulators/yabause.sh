@@ -47,7 +47,7 @@ function configure_yabause() {
 
     addEmulator 0 "${md_id}-internal" "saturn" "$md_inst/yabasanshiro -a -i %ROM%"
 	 addEmulator 0 "${md_id}-US" "saturn" "$md_inst/yabasanshiro -a -b /home/pigaming/RetroPie/BIOS/saturn_bios.bin -i %ROM%"
-	 addEmulator 0 "${md_id}-US" "saturn" "$md_inst/yabasanshiro -a -b /home/pigaming/RetroPie/BIOS/sega_101.bin -i %ROM%"
+	 addEmulator 0 "${md_id}-JP" "saturn" "$md_inst/yabasanshiro -a -b /home/pigaming/RetroPie/BIOS/sega_101.bin -i %ROM%"
 	 
     addSystem "saturn"
 }
