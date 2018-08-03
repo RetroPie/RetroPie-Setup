@@ -36,9 +36,7 @@ function configure_lr-reicast() {
     mkRomDir "dreamcast"
     ensureSystemretroconfig "dreamcast"
 
-    # symlink bios
     mkUserDir "$biosdir/dc"
-    ln -sf "$biosdir/dc/"{dc_boot.bin,dc_flash.bin} "$configdir/dreamcast/data"
 
     # system-specific
     iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
