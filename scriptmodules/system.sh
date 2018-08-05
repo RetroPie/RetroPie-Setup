@@ -318,7 +318,7 @@ function platform_odroid-xu() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon mali gles"
-    __has_binaries=1
+    __has_binaries=0
 }
 
 function platform_rock64() {
