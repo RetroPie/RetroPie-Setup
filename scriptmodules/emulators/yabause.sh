@@ -28,7 +28,7 @@ function build_yabause() {
     mkdir build 
 	cd build
 	export CFLAGS="-O2 -mcpu=cortex-a15 -mtune=cortex-a15.cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-	cmake ../yabause -DYAB_PORTS=xu4
+	cmake ../yabause -DYAB_PORTS=xu4 -DYAB_WANT_DYNAREC_DEVMIYAX=ON -DYAB_WANT_ARM7=ON
  make
     
     md_ret_require="$md_build/build/src/xu4/yabasanshiro"
