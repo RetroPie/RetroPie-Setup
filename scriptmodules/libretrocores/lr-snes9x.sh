@@ -43,11 +43,11 @@ function install_lr-snes9x() {
 function configure_lr-snes9x() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
-    mkRomDir "superfamicom"
-    ensureSystemretroconfig "superfamicom"
+    mkRomDir "sfc"
+    ensureSystemretroconfig "sfc"
 
     addEmulator 0 "$md_id" "snes" "$md_inst/snes9x_libretro.so"
     addSystem "snes"
-    addEmulator 0 "$md_id" "superfamicom" "$md_inst/snes9x_libretro.so"
-    addSystem "superfamicom"
+    addEmulator 0 "$md_id" "sfc" "$md_inst/snes9x_libretro.so"
+    addSystem "sfc"
 }
