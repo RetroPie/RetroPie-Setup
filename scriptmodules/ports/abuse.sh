@@ -10,8 +10,9 @@
 #
 
 rp_module_id="abuse"
-rp_module_desc="Abuse"
+rp_module_desc="Abuse - port of run and gun game"
 rp_module_license="GPL https://raw.githubusercontent.com/Xenoveritas/abuse/master/COPYING"
+rp_module_help="Please copy your Abuse data files to $romdir/ports/$md_id before running the game."
 rp_module_section="exp"
 
 # abuse-lib & abuse-sfx will pull in the older abuse package which only works under X
@@ -37,6 +38,7 @@ function install_abuse() {
 
 function configure_abuse() {
     mkRomDir "ports"
+    mkRomDir "ports/$md_id"
     moveConfigDir "$home/.abuse" "$md_conf_root/abuse"
-    addPort "$md_id" "abuse" "Abuse" "pushd $md_inst; $md_inst/abuse; popd"
+    addPort "$md_id" "abuse" "Abuse port of run and gum game" "pushd $md_inst; $md_inst/abuse -datadir $romdir/ports/$md_id; popd"
 }
