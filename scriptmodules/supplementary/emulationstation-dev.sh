@@ -36,7 +36,7 @@ function depends_emulationstation-dev() {
 }
 
 function sources_emulationstation-dev() {
-    sources_emulationstation "extra-media"
+    sources_emulationstation "" "extra-media"
 }
 
 function build_emulationstation-dev() {
