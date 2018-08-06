@@ -47,13 +47,13 @@ function install_lr-snes9x2010() {
 function configure_lr-snes9x2010() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
-    mkRomDir "superfamicom"
-    ensureSystemretroconfig "superfamicom"
+    mkRomDir "sfc"
+    ensureSystemretroconfig "sfc"
 
     local def=1
     isPlatform "armv6" && def=0
     addEmulator $def "$md_id" "snes" "$md_inst/snes9x2010_libretro.so"
     addSystem "snes"
-    addEmulator $def "$md_id" "superfamicom" "$md_inst/snes9x2010_libretro.so"
-    addSystem "superfamicom"
+    addEmulator $def "$md_id" "sfc" "$md_inst/snes9x2010_libretro.so"
+    addSystem "sfc"
 }
