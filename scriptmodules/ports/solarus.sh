@@ -16,7 +16,7 @@ rp_module_section="opt"
 rp_module_flags="noinstclean !aarch64"
 
 function depends_solarus() {
-    getDepends zip cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libmodplug-dev libvorbis-dev zip unzip
+    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libmodplug-dev libvorbis-dev zip unzip
 }
 
 function sources_solarus() {
