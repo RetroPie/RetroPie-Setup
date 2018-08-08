@@ -78,7 +78,7 @@ function configure_solarus() {
     	sudo rm -rf /opt/retropie/port/solarus/lib/arm-linux-gnueabihf
 	ln -sf /usr/lib/arm-linux-gnueabihf/libsolarus.so "$md_inst/lib/libsolarus.so"
     else
-    # symlink the library so it can be found on all platforms
+    	# symlink the library so it can be found on all platforms
     	ln -sf "$md_inst"/lib/*/libsolarus.so "$md_inst/lib"
     fi
     moveConfigDir "$home/.solarus" "$md_conf_root/solarus"
