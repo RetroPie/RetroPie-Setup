@@ -68,7 +68,7 @@ function install_solarus() {
 }
 
 function configure_solarus() {
-		addPort "$md_id" "zsdx" "Solarus Engine - Zelda Mystery of Solarus DX" "LD_LIBRARY_PATH=/usr/lib $md_inst/bin/solarus-run $md_inst/share/solarus/zsdx/"
+	addPort "$md_id" "zsdx" "Solarus Engine - Zelda Mystery of Solarus DX" "LD_LIBRARY_PATH=/usr/lib $md_inst/bin/solarus-run $md_inst/share/solarus/zsdx/"
     	addPort "$md_id" "zsxd" "Solarus Engine - Zelda Mystery of Solarus XD" "LD_LIBRARY_PATH=/usr/lib $md_inst/bin/solarus-run $md_inst/share/solarus/zsxd/"
     	addPort "$md_id" "zelda_roth_se" "Solarus Engine - Zelda Return of the Hylian SE" "LD_LIBRARY_PATH=/usr/lib $md_inst/bin/solarus-run $md_inst/share/solarus/zelda_roth_se/"
     	addPort "$md_id" "zelda_xd2_mercuris_chess" "Solarus Engine - Zelda XD2 Mercuris Chess" "LD_LIBRARY_PATH=/usr/lib $md_inst/bin/solarus-run $md_inst/share/solarus/zelda_xd2_mercuris_chess/"
@@ -76,11 +76,11 @@ function configure_solarus() {
     if isPlatform "tinker"; then
     	sudo mv /opt/retropie/port/solarus/lib/arm-linux-gnueabihf/* /usr/lib/arm-linux-gnueabihf/
     	sudo rm -rf /opt/retropie/port/solarus/lib/arm-linux-gnueabihf
-		ln -sf /usr/lib/arm-linux-gnueabihf/libsolarus.so "$md_inst/lib/libsolarus.so"
-	else
+	ln -sf /usr/lib/arm-linux-gnueabihf/libsolarus.so "$md_inst/lib/libsolarus.so"
+    else
     # symlink the library so it can be found on all platforms
     	ln -sf "$md_inst"/lib/*/libsolarus.so "$md_inst/lib"
-	fi
+    fi
     moveConfigDir "$home/.solarus" "$md_conf_root/solarus"
 
     chown -R $user:$user "$md_inst"/share/solarus/*/data.solarus
