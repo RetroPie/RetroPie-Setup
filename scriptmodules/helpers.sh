@@ -62,7 +62,8 @@ function fnExists() {
 # @retval 0 if the user selected the "yes" option
 # @retval 1 if the user gave any other input, including "no"
 function ask() {
-    echo -e -n "$@" '[y/n] ' ; read ans
+    local ans
+    echo -e -n "$@" '[y/N] ' ; read -r ans
     case "$ans" in
         y*|Y*) return 0 ;;
         *) return 1 ;;
