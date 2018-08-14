@@ -56,6 +56,11 @@ function fnExists() {
     return $?
 }
 
+# @fn ask()
+# @param message string or array of messages for the prompt
+# @brief Asks the user for a yes/no decision.
+# @retval 0 if the user selected the "yes" option
+# @retval 1 if the user gave any other input, including "no"
 function ask() {
     echo -e -n "$@" '[y/n] ' ; read ans
     case "$ans" in
