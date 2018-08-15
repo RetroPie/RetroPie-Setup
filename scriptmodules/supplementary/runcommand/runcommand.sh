@@ -299,7 +299,7 @@ function default_mode() {
             key="${SAVE_EMU}_render"
             ;;
     esac
-    default_process "$CONFIGDIR/all/videomodes.cfg" "$mode" "$key" "$value"
+    default_process "$VIDEO_CONF" "$mode" "$key" "$value"
 }
 
 function default_emulator() {
