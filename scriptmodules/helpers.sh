@@ -204,6 +204,10 @@ function getDepends() {
     for required in $@; do
 
         # workaround for different package names on osmc / xbian
+        if [[ "$required" == "libraspberrypi-bin" ]]; then
+            isPlatform "osmc" && required="rbp-userland-osmc"
+            isPlatform "xbian" && required="xbian-package-firmware"
+        fi
         if [[ "$required" == "libraspberrypi-dev" ]]; then
             isPlatform "osmc" && required="rbp-userland-dev-osmc"
             isPlatform "xbian" && required="xbian-package-firmware"
