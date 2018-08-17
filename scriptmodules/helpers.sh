@@ -203,15 +203,20 @@ function getDepends() {
 
     for required in $@; do
 
-        # workaround for different package names on osmc / xbian
-        if [[ "$required" == "libraspberrypi-bin" ]]; then
-            isPlatform "osmc" && required="rbp-userland-osmc"
-            isPlatform "xbian" && required="xbian-package-firmware"
-        fi
-        if [[ "$required" == "libraspberrypi-dev" ]]; then
-            isPlatform "osmc" && required="rbp-userland-dev-osmc"
-            isPlatform "xbian" && required="xbian-package-firmware"
-        fi
+        # workaround for raspberrypi userland packages having different names on osmc / xbian
+        # libraspberrypi0 -> rbp-userland-osmc, xbian-package-firmware
+        # libraspberrypi-bin -> rbp-userland-osmc, xbian-package-firmware
+        # libraspberrypi-dev -> rbp-userland-dev-osmc, xbian-package-firmware
+        case "$required" in
+            libraspberrypi0|libraspberrypi-bin)
+                isPlatform "osmc" && required="rbp-userland-osmc"
+                isPlatform "xbian" && required="xbian-package-firmware"
+                ;;
+            libraspberrypi-dev)
+                isPlatform "osmc" && required="rbp-userland-dev-osmc"
+                isPlatform "xbian" && required="xbian-package-firmware"
+                ;;
+        esac
 
         # map libpng12-dev to libpng-dev for Ubuntu 16.10+
         if [[ "$required" == "libpng12-dev" ]] && compareVersions "$__os_debian_ver" ge 9;  then
@@ -229,8 +234,8 @@ function getDepends() {
                 continue
             fi
 
-            # make sure libraspberrypi-dev/libraspberrypi0 is up to date.
-            if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage libraspberrypi-dev 1.20170703-1 "lt"; then
+            # make sure raspberrypi userland packages are up to date.
+            if [[ "$required" =~ libraspberrypi(0|-bin|-dev) ]] && hasPackage "$required" 1.20180328-1 "lt"; then
                 packages+=("$required")
                 continue
             fi
