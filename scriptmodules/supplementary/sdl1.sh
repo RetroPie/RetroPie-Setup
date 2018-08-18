@@ -84,6 +84,6 @@ function install_bin_sdl1() {
 }
 
 function remove_sdl1() {
-    apt-get remove -y --force-yes libsdl1.2-dev
+    apt-get remove -y libsdl1.2-dev
     apt-get autoremove -y
 }
