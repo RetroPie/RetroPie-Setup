@@ -103,7 +103,7 @@ function install_bin_sdl2() {
 function revert_sdl2() {
     aptUpdate
     local packaged="$(apt-cache madison libsdl2-dev | cut -d" " -f3 | head -n1)"
-    aptInstall --allow-downgrades libsdl2-2.0-0="$packaged" libsdl2-dev="$packaged"
+    aptInstall --allow-downgrades --allow-change-held-packages libsdl2-2.0-0="$packaged" libsdl2-dev="$packaged"
 }
 
 function remove_sdl2() {
