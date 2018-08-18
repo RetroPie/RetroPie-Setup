@@ -109,6 +109,6 @@ function revert_sdl2() {
 }
 
 function remove_sdl2() {
-    apt-get remove -y --force-yes libsdl2-dev
+    apt-get remove -y --allow-change-held-packages libsdl2-dev libsdl2-2.0-0
     apt-get autoremove -y
 }
