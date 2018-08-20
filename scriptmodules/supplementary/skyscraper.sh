@@ -15,22 +15,30 @@ rp_module_help="IMPORTANT! In order for Skyscraper to work properly you need to 
 rp_module_licence="GPL3 https://raw.githubusercontent.com/muldjord/skyscraper/master/LICENSE"
 rp_module_section="opt"
 
-skysource="/home/$user/skysource"
-skyconfig="/home/$user/.skyscraper"
+function get_skysource() {
+    local skysource="/home/$user/skysource"
+    echo "$skysource"
+}
+
+function get_skyconfig() {
+    local skyconfig="/home/$user/.skyscraper"
+    echo "$skyconfig"
+}
 
 function depends_skyscraper() {
     local depends=(qt5-default)
 }
 
 function sources_skyscraper() {
+    local skysource=$(get_skysource)
+    
     if [[ -f "$skysource/Skyscraper" ]]; then
-        cd $skysource
+        cd "$skysource"
 	./update_skyscraper.sh
-	sleep 5
     else
-        mkdir $skysource
-        cd $skysource
-        curl https://raw.githubusercontent.com/muldjord/skyscraper/master/update_skyscraper.sh | bash
+        mkdir "$skysource"
+        cd "$skysource"
+	wget -q -O - https://raw.githubusercontent.com/muldjord/skyscraper/master/update_skyscraper.sh | bash
     fi
 
     cp Skyscraper $md_build
@@ -44,21 +52,18 @@ function install_skyscraper() {
 }
 
 function remove_skyscraper() {
+    local skysource=$(get_skysource)
+    local skyconfig=$(get_skyconfig)
+    
     if [[ -f "$skysource/Skyscraper" ]]; then
-	cd $skysource
+	cd "$skysource"
 	make uninstall
-	rm -Rf $skysource
+	rm -Rf "$skysource"
     fi
 
     clear
 
     if [[ -d "$skyconfig" ]]; then
-	read -n1 -p "Do you wish to delete the $skyconfig cache and config folder (y/n)? " purgeall
-	echo \n
-	case $purgeall in  
-	    y|Y) echo "Deleting $skyconfig folder..."
-		 rm -Rf $skyconfig
-		 ;; 
-	esac
+	rm -Rf "$skyconfig"
     fi
 }
