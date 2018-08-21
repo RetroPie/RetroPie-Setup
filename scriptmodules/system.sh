@@ -166,7 +166,7 @@ function get_os_version() {
 }
 
 function get_retropie_depends() {
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev)
+    local depends=(git ca-certificates dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev procps)
 
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
