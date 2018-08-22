@@ -908,14 +908,10 @@ function applyPatch() {
     local patch="$1"
     local patch_applied="${patch##*/}.applied"
 
-    # patch is in stdin
-    if [[ ! -t 0 ]]; then
-        cat >"$patch"
-    fi
-
     if [[ ! -f "$patch_applied" ]]; then
         if patch -f -p1 <"$patch"; then
             touch "$patch_applied"
+            printMsgs "console" "Successfully applied patch: $patch"
         else
             md_ret_errors+=("$md_id patch $patch failed to apply")
             return 1
