@@ -1,0 +1,11 @@
+--- a/ui/sdl/sdldisplay.c	2017-07-02 05:36:42.000000000 +0000
++++ b/ui/sdl/sdldisplay.c	2018-08-22 13:55:03.474702732 +0000
+@@ -412,7 +412,7 @@
+     SDL_ShowCursor( SDL_DISABLE );
+     SDL_WarpMouse( 128, 128 );
+   } else {
+-    SDL_ShowCursor( SDL_ENABLE );
++    SDL_ShowCursor( SDL_DISABLE );
+   }
+ 
+   fuse_emulation_unpause();
