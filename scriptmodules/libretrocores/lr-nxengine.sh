@@ -32,9 +32,10 @@ function install_lr-nxengine() {
 }
 
 function configure_lr-nxengine() {
+    local script
     setConfigRoot "ports"
 
-    addPort "$md_id" "cavestory" "Cave Story" "$md_inst/nxengine_libretro.so" << _EOF_
+    read -r -d "" script << _EOF_
 #!/bin/bash
 if [[ ! -f "$romdir/ports/CaveStory/Doukutsu.exe" ]]; then
     dialog --no-cancel --pause "$md_help" 22 76 15
@@ -42,6 +43,7 @@ else
     "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ cavestory "$romdir/ports/CaveStory/Doukutsu.exe"
 fi
 _EOF_
+    addPort "$md_id" "cavestory" "Cave Story" "$md_inst/nxengine_libretro.so" "" "$script"
 
     ensureSystemretroconfig "ports/cavestory"
 }
