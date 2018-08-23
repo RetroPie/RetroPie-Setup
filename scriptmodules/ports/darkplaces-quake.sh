@@ -24,7 +24,7 @@ function depends_darkplaces-quake() {
 function sources_darkplaces-quake() {
     gitPullOrClone "$md_build" https://github.com/xonotic/darkplaces.git
     if isPlatform "rpi"; then
-        applyPatch "$md_data/rpi.diff"
+        applyPatch "$md_data/01_rpi_fixes.diff"
     fi
 }
 

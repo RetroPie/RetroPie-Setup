@@ -26,48 +26,7 @@ function sources_uae4all() {
     downloadAndExtract "$__archive_url/guichan-0.8.2.tar.gz" "$md_build/guichan" 1
     cd guichan
     # fix from https://github.com/sphaero/guichan
-    applyPatch guichan.diff <<\_EOF_
-diff --git a/src/widget.cpp b/src/widget.cpp
-index 7dfc7e1..97978a7 100644
---- a/src/widget.cpp
-+++ b/src/widget.cpp
-@@ -598,7 +598,8 @@ namespace gcn
-     {
-         if (mFocusHandler == NULL)
-         {
--            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
-+            return false;
-+            //throw GCN_EXCEPTION("No focushandler set (isModalFocused: did you add the widget to the gui?).");
-         }
- 
-         if (getParent() != NULL)
-@@ -614,7 +615,8 @@ namespace gcn
-     {
-         if (mFocusHandler == NULL)
-         {
--            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
-+            return false;
-+            //throw GCN_EXCEPTION("No focushandler set (isModalMouseInputFocused: did you add the widget to the gui?).");
-         }
- 
-         if (getParent() != NULL)
-diff --git a/src/widgets/tabbedarea.cpp b/src/widgets/tabbedarea.cpp
-index e07d14c..5ed9d39 100644
---- a/src/widgets/tabbedarea.cpp
-+++ b/src/widgets/tabbedarea.cpp
-@@ -317,6 +317,10 @@ namespace gcn
- 
-     void TabbedArea::logic()
-     {
-+        for (unsigned int i = 0; i < mTabs.size(); i++)
-+        {
-+                  mTabs[i].second->logic();
-+        }
-     }
- 
-     void TabbedArea::adjustSize()
-
-_EOF_
+    applyPatch "$md_data/01_guichan.diff"
 }
 
 function build_uae4all() {

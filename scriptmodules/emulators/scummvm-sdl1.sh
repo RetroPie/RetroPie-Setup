@@ -21,21 +21,11 @@ function depends_scummvm-sdl1() {
 }
 
 function sources_scummvm-sdl1() {
-    sources_scummvm
+    # sources_scummvm() expects $md_data to be ../scummvm
+    # the following only modifies $md_data for the function call
+    md_data="$md_data/../scummvm" sources_scummvm
     if isPlatform "rpi"; then
-        applyPatch rpi-sdl1.diff <<\_EOF_
---- a/configure
-+++ b/configure
-@@ -2807,7 +2807,7 @@ if test -n "$_host"; then
- 			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
- 			# since SDL2 manages dispmanx/GLES2 very well internally.
- 			# SDL1 is bit-rotten on this platform.
--			_sdlconfig=sdl2-config
-+			_sdlconfig=sdl-config
- 			# OpenGL ES support is mature enough as to be the best option on
- 			# the Raspberry Pi, so it's enabled by default.
- 			# The Raspberry Pi always supports OpenGL ES 2.0 contexts, thus we
-_EOF_
+        applyPatch "$md_data/01_rpi_sdl1.diff"
     fi
 }
 
