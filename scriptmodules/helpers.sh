@@ -1147,11 +1147,8 @@ function delSystem() {
 ## @param name display name for the launch script
 ## @param cmd commandline to launch
 ## @param game rom/game parameter (optional)
-## @param script launch script to use instead of the default (optional - requires game to be set)
 ## @brief Adds a port to the emulationstation ports menu.
 ## @details Adds an emulators.cfg entry as with addSystem but also creates a launch script in `$datadir/ports/$name.sh`.
-##
-## Can optionally take a script via stdin to use instead of the default launch script.
 ##
 ## Can also optionally take a game parameter which can be used to create multiple launch
 ## scripts for different games using the same engine - eg for quake
@@ -1167,7 +1164,6 @@ function addPort() {
     local file="$romdir/ports/$3.sh"
     local cmd="$4"
     local game="$5"
-    local script="$6"
 
     # move configurations from old ports location
     if [[ -d "$configdir/$port" ]]; then
@@ -1187,14 +1183,10 @@ function addPort() {
 
     mkUserDir "$romdir/ports"
 
-    if [[ -z "$script" ]]; then
-        cat >"$file" << _EOF_
+    cat >"$file" << _EOF_
 #!/bin/bash
 "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ "$port" "$game"
 _EOF_
-    else
-        cat >"$file" <<< "$script"
-    fi
 
     chown $user:$user "$file"
     chmod +x "$file"
