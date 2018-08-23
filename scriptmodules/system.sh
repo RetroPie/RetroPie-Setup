@@ -300,7 +300,7 @@ function platform_odroid-c2() {
         __platform_flags="arm armv8 neon mali gles"
     else
         __default_cflags="-O2 -march=native"
-        __platform_flags="aarch64 mali"
+        __platform_flags="aarch64 mali gles"
     fi
     __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
