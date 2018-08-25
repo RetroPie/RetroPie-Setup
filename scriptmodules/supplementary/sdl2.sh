@@ -113,11 +113,13 @@ function install_bin_sdl2() {
 
 function revert_sdl2() {
     aptUpdate
-    local packaged="$(apt-cache madison libsdl2-dev | cut -d" " -f3)"
-    aptInstall --force-yes libsdl2-2.0-0="$packaged" libsdl2-dev="$packaged"
+    local packaged="$(apt-cache madison libsdl2-dev | cut -d" " -f3 | head -n1)"
+    if ! aptInstall --allow-downgrades --allow-change-held-packages libsdl2-2.0-0="$packaged" libsdl2-dev="$packaged"; then
+        md_ret_errors+=("Failed to revert to OS packaged sdl2 versions")
+    fi
 }
 
 function remove_sdl2() {
-    apt-get remove -y --force-yes libsdl2-dev
+    apt-get remove -y --allow-change-held-packages libsdl2-dev libsdl2-2.0-0
     apt-get autoremove -y
 }

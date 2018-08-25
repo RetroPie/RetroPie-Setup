@@ -22,9 +22,12 @@ function depends_pcsx2() {
         iniGet "own_sdl2"
         if [[ "$ini_value" != "0" ]]; then
             if dialog --yesno "PCSX2 cannot be installed on a 64bit system with the RetroPie custom version of SDL2 installed due to version conflicts with the multiarch i386 version of SDL2.\n\nDo you want to downgrade to your OS version of SDL2 and continue to install PCSX2?" 22 76 2>&1 >/dev/tty; then
-                iniSet "own_sdl2" "0"
                 chown $user:$user "$configdir/all/retropie.cfg"
-                rp_callModule sdl2 revert
+                if rp_callModule sdl2 revert; then
+                    iniSet "own_sdl2" "0"
+                else
+                    md_ret_errors+=("Failed to install $md_desc")
+                fi
             else
                 md_ret_errors+=("$md_desc install aborted.")
             fi

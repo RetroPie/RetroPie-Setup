@@ -908,14 +908,10 @@ function applyPatch() {
     local patch="$1"
     local patch_applied="${patch##*/}.applied"
 
-    # patch is in stdin
-    if [[ ! -t 0 ]]; then
-        cat >"$patch"
-    fi
-
     if [[ ! -f "$patch_applied" ]]; then
         if patch -f -p1 <"$patch"; then
             touch "$patch_applied"
+            printMsgs "console" "Successfully applied patch: $patch"
         else
             md_ret_errors+=("$md_id patch $patch failed to apply")
             return 1
@@ -1154,8 +1150,6 @@ function delSystem() {
 ## @brief Adds a port to the emulationstation ports menu.
 ## @details Adds an emulators.cfg entry as with addSystem but also creates a launch script in `$datadir/ports/$name.sh`.
 ##
-## Can optionally take a script via stdin to use instead of the default launch script.
-##
 ## Can also optionally take a game parameter which can be used to create multiple launch
 ## scripts for different games using the same engine - eg for quake
 ##
@@ -1189,14 +1183,10 @@ function addPort() {
 
     mkUserDir "$romdir/ports"
 
-    if [[ -t 0 ]]; then
-        cat >"$file" << _EOF_
+    cat >"$file" << _EOF_
 #!/bin/bash
 "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ "$port" "$game"
 _EOF_
-    else
-        cat >"$file"
-    fi
 
     chown $user:$user "$file"
     chmod +x "$file"

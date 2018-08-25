@@ -1,0 +1,27 @@
+--- a/xpad.c	2018-08-22 14:49:37.237360461 +0000
++++ b/xpad.c	2018-08-22 14:49:37.293357132 +0000
+@@ -86,6 +86,8 @@
+ 
+ #define XPAD_PKT_LEN 64
+ 
++#define CONFIG_JOYSTICK_XPAD_LEDS 1
++
+ /*
+  * xbox d-pads should map to buttons, as is required for DDR pads
+  * but we map them to axes when possible to simplify things
+@@ -1782,12 +1784,13 @@
+ 
+ 		if (dpad_to_buttons)
+ 			xpad->mapping |= MAP_DPAD_TO_BUTTONS;
+-		if (triggers_to_buttons)
+-			xpad->mapping |= MAP_TRIGGERS_TO_BUTTONS;
+ 		if (sticks_to_null)
+ 			xpad->mapping |= MAP_STICKS_TO_NULL;
+ 	}
+ 
++	if (triggers_to_buttons)
++		xpad->mapping |= MAP_TRIGGERS_TO_BUTTONS;
++
+ 	if (xpad->xtype == XTYPE_XBOXONE &&
+ 	    intf->cur_altsetting->desc.bInterfaceNumber != 0) {
+ 		/*
