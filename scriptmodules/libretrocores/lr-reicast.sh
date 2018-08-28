@@ -43,7 +43,8 @@ function configure_lr-reicast() {
     ln -sf "$biosdir/dc/naomi_boot_jp.bin" "$biosdir/dc/naomi_boot.bin"
     
     # symlink update to dc folder
-    ln -sf "$biosdir/dc/"{dc_boot.bin,dc_flash.bin} "$md_conf_root/dreamcast/data"
+    ln -sf "$biosdir/dc/dc_boot.bin" "$md_conf_root/dreamcast/data/dc_boot.bin"
+    ln -sf "$biosdir/dc/dc_flash.bin" "$md_conf_root/dreamcast/data/dc_flash.bin"
     
     # add naomi as a copy of arcade for carbon theme
     if [[ ! -f /etc/emulationstation/themes/carbon/naomi/theme.xml ]];
@@ -68,11 +69,21 @@ function configure_lr-reicast() {
     iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
     iniSet "video_shared_context" "true"
 
+    iniConfig " = " "" "$configdir/naomi/retroarch.cfg"
+    iniSet "video_shared_context" "true"
+
     addEmulator 0 "$md_id" "dreamcast" "$md_inst/reicast_libretro.so"
-    addEmulator 0 "$md_id" "naomi" "$md_inst/reicast_libretro.so"
+    addEmulator 1 "$md_id" "naomi" "$md_inst/reicast_libretro.so"
+
     addSystem "dreamcast"
     addSystem "naomi"
     
     # use custom runcommand for naomi
     sed -i -e 's/runcommand.sh 0 _SYS_ naomi/runcommand_naomi.sh 0 _SYS_ naomi/g' /etc/emulationstation/es_systems.cfg
+    
+    # set core options
+    setRetroArchCoreOption "${dir_name}-reicast_audio_buffer_size" "2048"
+    setRetroArchCoreOption "${dir_name}-reicast_reicast_broadcast" "default"
+    setRetroArchCoreOption "${dir_name}-reicast_enable_dsp" "disabled"
+    setRetroArchCoreOption "${dir_name}-reicast_threaded_rendering" "enabled"
 }
