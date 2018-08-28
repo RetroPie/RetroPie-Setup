@@ -82,8 +82,8 @@ function configure_lr-reicast() {
     sed -i -e 's/runcommand.sh 0 _SYS_ naomi/runcommand_naomi.sh 0 _SYS_ naomi/g' /etc/emulationstation/es_systems.cfg
     
     # set core options
-    setRetroArchCoreOption "${dir_name}-reicast_audio_buffer_size" "2048"
-    setRetroArchCoreOption "${dir_name}-reicast_reicast_broadcast" "default"
-    setRetroArchCoreOption "${dir_name}-reicast_enable_dsp" "disabled"
-    setRetroArchCoreOption "${dir_name}-reicast_threaded_rendering" "enabled"
+    setRetroArchCoreOption "${dir_name}reicast_audio_buffer_size" "2048"
+    setRetroArchCoreOption "${dir_name}reicast_reicast_broadcast" "default"
+    setRetroArchCoreOption "${dir_name}reicast_enable_dsp" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_threaded_rendering" "disabled"
 }
