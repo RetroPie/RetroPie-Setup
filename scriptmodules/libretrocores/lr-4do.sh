@@ -17,7 +17,7 @@ rp_module_section="exp"
 
 function sources_lr-4do() {
     
-    gitPullOrClone  "$md_build" https://github.com/trapexit/4do-libretro.git -b dsp_threading
+    gitPullOrClone  "$md_build" https://github.com/trapexit/4do-libretro.git  dsp_threading
 }
 
 function build_lr-4do() {
