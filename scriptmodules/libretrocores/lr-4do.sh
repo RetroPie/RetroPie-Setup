@@ -16,8 +16,8 @@ rp_module_licence="LGPL https://raw.githubusercontent.com/libretro/4do-libretro/
 rp_module_section="exp"
 
 function sources_lr-4do() {
-    
-    gitPullOrClone  "$md_build" https://github.com/libretro/4do-libretro.git
+    gitPullOrClone "$md_build" https://github.com/libretro/4do-libretro.git
+}
 
 function build_lr-4do() {
     make clean
