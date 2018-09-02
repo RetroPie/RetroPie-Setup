@@ -41,7 +41,7 @@ function sources_mupen64plus() {
         repos+=(
             'mupen64plus video-rice '
             'mupen64plus video-glide64mk2'
-            'mupen64plus rsp-cxd4'
+            #'mupen64plus rsp-cxd4'
             'mupen64plus rsp-z64'
         )
     elif isPlatform "vero4k"; then
@@ -127,7 +127,7 @@ function build_mupen64plus() {
             'mupen64plus-video-rice/projects/unix/mupen64plus-video-rice.so'
             'mupen64plus-video-glide64mk2/projects/unix/mupen64plus-video-glide64mk2.so'
             'mupen64plus-rsp-z64/projects/unix/mupen64plus-rsp-z64.so'
-			'mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4.so'
+			#'mupen64plus-rsp-cxd4/projects/unix/mupen64plus-rsp-cxd4.so'
         )
     elif isPlatform "vero4k"; then
         md_ret_require+=(
