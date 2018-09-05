@@ -10,102 +10,41 @@
 #
 
 rp_module_id="ppsspp"
-rp_module_desc="PlayStation Portable emulator PPSSPP"
+rp_module_desc="PlayStation Portable emulator PPSSPP (ORA)"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/hrydgard/ppsspp/master/LICENSE.TXT"
 rp_module_section="opt"
 rp_module_flags=""
 
-function depends_ppsspp() {
-    local depends=(cmake libsdl2-dev libzip-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
-    isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
-    getDepends "${depends[@]}"
-}
-
 function sources_ppsspp() {
-    if isPlatform "tinker"; then
-        gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
-    elif isPlatform "vero4k"; then
-        gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
-    else
-        gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git v1.5.4
-    fi
-    cd ppsspp
-
-    if isPlatform "tinker"; then
-        applyPatch "$md_data/02_tinker_options.diff"
-    elif ! isPlatform "vero4k"; then
-        applyPatch "$md_data/01_egl_name.diff"
-    fi
-
-    # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
-    sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
-
-    # remove -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 as we handle this ourselves if armv7 on Raspbian
-    sed -i "/^  -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2/d" cmake/Toolchains/raspberry.armv7.cmake
-    # set ARCH_FLAGS to our own CXXFLAGS (which includes GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 if needed)
-    sed -i "s/^set(ARCH_FLAGS.*/set(ARCH_FLAGS \"$CXXFLAGS\")/" cmake/Toolchains/raspberry.armv7.cmake
-
+    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
+	
+    # gl2ext.h fix
+    cp /usr/include/GLES2/gl2ext.h /usr/include/GLES2/gl2ext.h.org
+    sed -i -e 's:GL_APICALL void GL_APIENTRY glBindFragDataLocationIndexedEXT://GL_APICALL void GL_APIENTRY glBindFragDataLocationIndexedEXT:g' /usr/include/GLES2/gl2ext.h
+    sed -i -e 's:GL_APICALL void GL_APIENTRY glBindFragDataLocationEXT://GL_APICALL void GL_APIENTRY glBindFragDataLocationEXT:g' /usr/include/GLES2/gl2ext.h
+    sed -i -e 's:GL_APICALL GLint GL_APIENTRY glGetProgramResourceLocationIndexEXT://GL_APICALL GLint GL_APIENTRY glGetProgramResourceLocationIndexEXT:g' /usr/include/GLES2/gl2ext.h
+    sed -i -e 's:GL_APICALL GLint GL_APIENTRY glGetFragDataIndexEXT://GL_APICALL GLint GL_APIENTRY glGetFragDataIndexEXT:g' /usr/include/GLES2/gl2ext.h
+    sed -i -e 's:GL_APICALL void GL_APIENTRY glBufferStorageEXT://GL_APICALL void GL_APIENTRY glBufferStorageEXT:g' /usr/include/GLES2/gl2ext.h
+    sed -i -e 's:GL_APICALL void GL_APIENTRY glCopyImageSubDataOES://GL_APICALL void GL_APIENTRY glCopyImageSubDataOES:g' /usr/include/GLES2/gl2ext.h
+    
+	  # CMakeLists.txt changes
+    sed -i -e 's:set(ARM ON):set(ARM ON)\n    add_definitions(-mfloat-abi=hard -marm -mtune=cortex-a15.cortex-a7 -mcpu=cortex-a15 -mfpu=neon-vfpv4 -fomit-frame-pointer -ftree-vectorize -mvectorize-with-neon-quad -ffast-math -DARM_NEON):g' "$md_build/ppsspp/CMakeLists.txt"
+    sed -i -e 's:set(VULKAN ON):set(VULKAN OFF):g' "$md_build/ppsspp/CMakeLists.txt"
+	
+    # linux_arm.sh changes   
+    sed -i -e 's:cc=arm-linux-gnueabi-gcc:cc=gcc:g' "$md_build/ppsspp/ffmpeg/linux_arm.sh"
+    sed -i '/   --cross-prefix=arm-linux-gnueabi- \\/d' "$md_build/ppsspp/ffmpeg/linux_arm.sh"
+    sed -i -e 's:nm=arm-linux-gnueabi-nm:nm=nm:g' "$md_build/ppsspp/ffmpeg/linux_arm.sh"
+    sed -i -e 's:-mfloat-abi=softfp -mfpu=neon -marm -march=armv7-a:-mfloat-abi=hard -mfpu=neon -marm -march=armv7-a:g' "$md_build/ppsspp/ffmpeg/linux_arm.sh"
+    sed -i -e 's:build_ARMv6:#build_ARMv6:g' "$md_build/ppsspp/ffmpeg/linux_arm.sh"
+    sed -i -e 's:function #build_ARMv6:function build_ARMv6:g' "$md_build/ppsspp/ffmpeg/linux_arm.sh"
+    
     if hasPackage cmake 3.6 lt; then
         cd ..
         mkdir -p cmake
         downloadAndExtract "$__archive_url/cmake-3.6.2.tar.gz" "$md_build/cmake" 1
     fi
-}
-
-function build_ffmpeg_ppsspp() {
-    cd "$1"
-    local arch
-    if isPlatform "arm"; then
-        if isPlatform "armv6"; then
-            arch="arm"
-        else
-            arch="armv7"
-        fi
-    elif isPlatform "x86"; then
-        if isPlatform "x86_64"; then
-            arch="x86_64";
-        else
-            arch="x86";
-        fi
-    elif isPlatform "aarch64"; then
-        arch="arm64"
-    fi
-    isPlatform "vero4k" && local extra_params='--arch=arm'
-
-    local MODULES
-    local VIDEO_DECODERS
-    local AUDIO_DECODERS
-    local VIDEO_ENCODERS
-    local AUDIO_ENCODERS
-    local DEMUXERS
-    local MUXERS
-    local PARSERS
-    local GENERAL
-    local OPTS # used by older lr-ppsspp fork
-    # get the ffmpeg configure variables from the ppsspp ffmpeg distributed script
-    source linux_arm.sh
-    # linux_arm.sh has set -e which we need to switch off
-    set +e
-    ./configure $extra_params \
-        --prefix="./linux/$arch" \
-        --extra-cflags="-fasm -Wno-psabi -fno-short-enums -fno-strict-aliasing -finline-limit=300" \
-        --disable-shared \
-        --enable-static \
-        --enable-zlib \
-        --enable-pic \
-        --disable-everything \
-        ${MODULES} \
-        ${VIDEO_DECODERS} \
-        ${AUDIO_DECODERS} \
-        ${VIDEO_ENCODERS} \
-        ${AUDIO_ENCODERS} \
-        ${DEMUXERS} \
-        ${MUXERS} \
-        ${PARSERS}
-    make clean
-    make install
 }
 
 function build_cmake_ppsspp() {
@@ -122,25 +61,13 @@ function build_ppsspp() {
     fi
 
     # build ffmpeg
-    build_ffmpeg_ppsspp "$md_build/ppsspp/ffmpeg"
+    source "$md_build/ppsspp/ffmpeg/linux_arm.sh"
 
     # build ppsspp
     cd "$md_build/ppsspp"
     rm -rf CMakeCache.txt CMakeFiles
     local params=()
-    if isPlatform "rpi"; then
-        if isPlatform "armv6"; then
-            params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake)
-        else
-            params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv7.cmake)
-        fi
-    elif isPlatform "mali"; then
-        params+=(-DUSING_GLES2=ON -DUSING_FBDEV=ON)
-    elif isPlatform "tinker"; then
-        params+=(-DCMAKE_TOOLCHAIN_FILE="$md_data/tinker.armv7.cmake")
-    elif isPlatform "vero4k"; then
-        params+=(-DCMAKE_TOOLCHAIN_FILE="cmake/Toolchains/vero4k.armv8.cmake")
-    fi
+    params+=(-DARMV7=ON -DARM=ON -DUSING_EGL=ON -DUSING_GLES2=ON -DUSING_FBDEV=ON -DUSING_X11_VULKAN=OFF -DUSING_QT_UI=OFF -DHEADLESS=OFF -DUNITTEST=OFF -DSIMULATOR=OFF -DUSE_WAYLAND_WSI=OFF -DUSE_FFMPEG=YES -DUSE_SYSTEM_FFMPEG=NO)
     "$cmake" "${params[@]}" .
     make clean
     make
@@ -163,10 +90,12 @@ function configure_ppsspp() {
     mkUserDir "$md_conf_root/psp/PSP"
     ln -snf "$romdir/psp" "$md_conf_root/psp/PSP/GAME"
 
-    if isPlatform "tinker"; then
-        addEmulator 1 "$md_id" "psp" "$md_inst/PPSSPPSDL --fullscreen %ROM%"
-    else
-        addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
-    fi
+    addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL --fulscreen %ROM%"
     addSystem "psp"
+	
+	  # gl2ext.h revert
+    if [[ -e /usr/include/GLES2/gl2ext.h.org ]]; then
+        cp /usr/include/GLES2/gl2ext.h.org /usr/include/GLES2/gl2ext.h
+	      rm /usr/include/GLES2/gl2ext.h.org
+    fi
 }
