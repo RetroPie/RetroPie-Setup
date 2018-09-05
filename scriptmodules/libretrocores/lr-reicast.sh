@@ -45,12 +45,14 @@ function configure_lr-reicast() {
     # add naomi as a copy of arcade for showcase theme
     if [[ ! -f /etc/emulationstation/themes/showcase/naomi/theme.xml ]]; then
         cp -R /etc/emulationstation/themes/showcase/arcade/. /etc/emulationstation/themes/showcase/naomi/
+        wget -O /etc/emulationstation/themes/showcase/naomi/_inc/system.png https://image.ibb.co/kDMSAK/showcase_naomi_system.png
+        wget -O /etc/emulationstation/themes/showcase/naomi/_inc/background.png https://image.ibb.co/gLBije/showcase_naomi_background.png
     fi
     
     # multibios hack
     if [[ ! -f /opt/retropie/supplementary/runcommand/runcommand_naomi.sh ]]; then
         cp /opt/retropie/supplementary/runcommand/runcommand.sh /opt/retropie/supplementary/runcommand/runcommand_naomi.sh
-        sed -i -e 's:function show_launch() {:function show_launch() {\n    if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice")$ ]];\n    then\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    else\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    fi\n:g' /opt/retropie/supplementary/runcommand/runcommand_naomi.sh
+        sed -i -e 's:function show_launch() {:function show_launch() {\n    if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Gun Spike")$ ]];\n    then\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    else\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    fi\n:g' /opt/retropie/supplementary/runcommand/runcommand_naomi.sh
     fi
        
     # system-specific
@@ -75,5 +77,6 @@ function configure_lr-reicast() {
     setRetroArchCoreOption "${dir_name}reicast_audio_buffer_size" "2048"
     setRetroArchCoreOption "${dir_name}reicast_broadcast" "default"
     setRetroArchCoreOption "${dir_name}reicast_enable_dsp" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_enable_rtt" "disabled"    
     setRetroArchCoreOption "${dir_name}reicast_threaded_rendering" "enabled"
 }
