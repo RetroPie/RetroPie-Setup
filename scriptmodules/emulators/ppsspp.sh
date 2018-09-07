@@ -17,16 +17,21 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function sources_ppsspp() {
-    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
-	
     # gl2ext.h fix
-    cp /usr/include/GLES2/gl2ext.h /usr/include/GLES2/gl2ext.h.org
+    if [[ -e /usr/include/GLES2/gl2ext.h.org ]]; then
+        cp -p /usr/include/GLES2/gl2ext.h.org /usr/include/GLES2/gl2ext.h
+    else
+        cp -p /usr/include/GLES2/gl2ext.h /usr/include/GLES2/gl2ext.h.org
+    fi
     sed -i -e 's:GL_APICALL void GL_APIENTRY glBindFragDataLocationIndexedEXT://GL_APICALL void GL_APIENTRY glBindFragDataLocationIndexedEXT:g' /usr/include/GLES2/gl2ext.h
     sed -i -e 's:GL_APICALL void GL_APIENTRY glBindFragDataLocationEXT://GL_APICALL void GL_APIENTRY glBindFragDataLocationEXT:g' /usr/include/GLES2/gl2ext.h
     sed -i -e 's:GL_APICALL GLint GL_APIENTRY glGetProgramResourceLocationIndexEXT://GL_APICALL GLint GL_APIENTRY glGetProgramResourceLocationIndexEXT:g' /usr/include/GLES2/gl2ext.h
     sed -i -e 's:GL_APICALL GLint GL_APIENTRY glGetFragDataIndexEXT://GL_APICALL GLint GL_APIENTRY glGetFragDataIndexEXT:g' /usr/include/GLES2/gl2ext.h
     sed -i -e 's:GL_APICALL void GL_APIENTRY glBufferStorageEXT://GL_APICALL void GL_APIENTRY glBufferStorageEXT:g' /usr/include/GLES2/gl2ext.h
     sed -i -e 's:GL_APICALL void GL_APIENTRY glCopyImageSubDataOES://GL_APICALL void GL_APIENTRY glCopyImageSubDataOES:g' /usr/include/GLES2/gl2ext.h
+
+    # git
+    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
     
 	  # CMakeLists.txt changes
     sed -i -e 's:set(ARM ON):set(ARM ON)\n    add_definitions(-mfloat-abi=hard -marm -mtune=cortex-a15.cortex-a7 -mcpu=cortex-a15 -mfpu=neon-vfpv4 -fomit-frame-pointer -ftree-vectorize -mvectorize-with-neon-quad -ffast-math -DARM_NEON):g' "$md_build/ppsspp/CMakeLists.txt"
@@ -90,12 +95,12 @@ function configure_ppsspp() {
     mkUserDir "$md_conf_root/psp/PSP"
     ln -snf "$romdir/psp" "$md_conf_root/psp/PSP/GAME"
 
-    addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL --fulscreen %ROM%"
+    addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
     addSystem "psp"
 	
 	  # gl2ext.h revert
     if [[ -e /usr/include/GLES2/gl2ext.h.org ]]; then
-        cp /usr/include/GLES2/gl2ext.h.org /usr/include/GLES2/gl2ext.h
+        cp -p /usr/include/GLES2/gl2ext.h.org /usr/include/GLES2/gl2ext.h
 	      rm /usr/include/GLES2/gl2ext.h.org
     fi
 }
