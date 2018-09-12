@@ -42,6 +42,10 @@ function install_lr-fbalpha() {
     )
 }
 
+function install_bin_lr-fbalpha() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/lr-fbalpha.tar.gz" "$md_inst" 1
+}
+
 function configure_lr-fbalpha() {
     local dir
     for dir in arcade fba neogeo; do
