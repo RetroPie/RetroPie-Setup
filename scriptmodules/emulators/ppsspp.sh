@@ -87,6 +87,10 @@ function install_ppsspp() {
     )
 }
 
+function install_bin_ppsspp() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/ppsspp.tar.gz" "$md_inst" 1
+}
+
 function configure_ppsspp() {
     mkRomDir "psp"
 
@@ -97,8 +101,8 @@ function configure_ppsspp() {
 
     addEmulator 0 "$md_id" "psp" "$md_inst/PPSSPPSDL %ROM%"
     addSystem "psp"
-
-    # gl2ext.h revert
+	
+	  # gl2ext.h revert
     if [[ -e /usr/include/GLES2/gl2ext.h.org ]]; then
         cp -p /usr/include/GLES2/gl2ext.h.org /usr/include/GLES2/gl2ext.h
 	      rm /usr/include/GLES2/gl2ext.h.org
