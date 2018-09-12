@@ -35,7 +35,6 @@ function install_bin_lr-reicast() {
     downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/lr-4do.tar.gz" "$md_inst" 1
 }
 
-
 function configure_lr-4do() {
     mkRomDir "3do"
     ensureSystemretroconfig "3do"
