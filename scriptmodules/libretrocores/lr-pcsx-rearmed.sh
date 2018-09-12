@@ -48,7 +48,7 @@ function install_lr-pcsx-rearmed() {
     )
 }
 
-function install_bin_pcsx-rearmed() {
+function install_bin_lr-pcsx-rearmed() {
     downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/lr-pcsx-rearmed.tar.gz" "$md_inst" 1
 }
 
