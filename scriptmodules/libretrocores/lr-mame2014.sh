@@ -35,7 +35,7 @@ function install_lr-mame2014() {
 }
 
 function install_bin_mame2014() {
-    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/mame2014.tar.gz" "$md_inst" 1
+    downloadAndExtract "http://odroidarena.com/pub/mame2014.tar.gz" "$md_inst" 1
 }
 
 function configure_lr-mame2014() {
