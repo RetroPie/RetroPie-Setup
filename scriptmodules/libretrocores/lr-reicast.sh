@@ -13,7 +13,7 @@ rp_module_id="lr-reicast"
 rp_module_desc="Dreamcast emu - Reicast port for libretro"
 rp_module_help="Dreamcast ROM Extensions: .cdi .gdi\n\nCopy your Dreamcast roms to $romdir/dreamcast\n\nCopy the required BIOS files dc_boot.bin and dc_flash.bin to $biosdir/dc\n\nNaomi ROM Extensions: .lst and .bin pairs\n\nCopy your Naomi roms to $romdir/naomi\n\nCopy the required BIOS files naomi_boot_jp.bin and naomi_boot_us.bin to $biosdir/dc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/reicast-emulator/master/LICENSE"
-rp_module_section="exp"
+rp_module_section="opt"
 
 function sources_lr-reicast() {
     gitPullOrClone "$md_build" https://github.com/libretro/reicast-emulator.git
@@ -59,15 +59,11 @@ function configure_lr-reicast() {
     fi
     
     # multibios hack
-    if [[ ! -f /opt/retropie/supplementary/runcommand/runcommand_naomi.sh ]]; then
-        cp /opt/retropie/supplementary/runcommand/runcommand.sh /opt/retropie/supplementary/runcommand/runcommand_naomi.sh
-        sed -i -e 's:function show_launch() {:function show_launch() {\n    if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Spawn")$ ]];\n    then\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    else\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    fi\n:g' /opt/retropie/supplementary/runcommand/runcommand_naomi.sh
-    fi
+    cp /opt/retropie/supplementary/runcommand/runcommand.sh /opt/retropie/supplementary/runcommand/runcommand_naomi.sh
+    sed -i -e 's:function show_launch() {:function show_launch() {\n    if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Spawn")$ ]];\n    then\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    else\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    fi\n:g' /opt/retropie/supplementary/runcommand/runcommand_naomi.sh
     
-    if [[ ! -f /opt/retropie/supplementary/runcommand/runcommand_atomiswave.sh ]]; then
-        cp /opt/retropie/supplementary/runcommand/runcommand.sh /opt/retropie/supplementary/runcommand/runcommand_atomiswave.sh
-        sed -i -e 's:function show_launch() {:function show_launch() {\n    if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Spawn")$ ]];\n    then\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    else\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    fi\n:g' /opt/retropie/supplementary/runcommand/runcommand_atomiswave.sh
-    fi
+    cp /opt/retropie/supplementary/runcommand/runcommand.sh /opt/retropie/supplementary/runcommand/runcommand_atomiswave.sh
+    sed -i -e 's:function show_launch() {:function show_launch() {\n    if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Spawn")$ ]];\n    then\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    else\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    fi\n:g' /opt/retropie/supplementary/runcommand/runcommand_atomiswave.sh
        
     # system-specific
     iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
