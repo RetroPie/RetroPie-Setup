@@ -46,6 +46,10 @@ function install_lr-mame2003() {
     )
 }
 
+function install_bin_mame2003() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/mame2003.tar.gz" "$md_inst" 1
+}
+
 function configure_lr-mame2003() {
     local dir_name="$(_get_dir_name_${md_id})"
 
