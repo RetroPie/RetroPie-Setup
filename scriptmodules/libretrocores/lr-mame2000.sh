@@ -41,8 +41,8 @@ function install_lr-mame2000() {
     )
 }
 
-function install_bin_mame2000() {
-    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/mame2000.tar.gz" "$md_inst" 1
+function install_bin_lr-mame2000() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/lr-mame2000.tar.gz" "$md_inst" 1
 }
 
 function configure_lr-mame2000() {
