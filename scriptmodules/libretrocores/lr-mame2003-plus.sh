@@ -35,6 +35,10 @@ function install_lr-mame2003-plus() {
     install_lr-mame2003
 }
 
+function install_bin_mame2003-plus() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/mame2003-plus.tar.gz" "$md_inst" 1
+}
+
 function configure_lr-mame2003-plus() {
     configure_lr-mame2003
 }
