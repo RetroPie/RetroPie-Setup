@@ -40,6 +40,10 @@ function install_yabause() {
     )
 }
 
+function install_bin_yabause() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/yabause.tar.gz" "$md_inst" 1
+}
+
 function configure_yabause() {
     mkRomDir "saturn"
     addEmulator 0 "${md_id}-internal" "saturn" "$md_inst/yabasanshiro -a -i %ROM%"
