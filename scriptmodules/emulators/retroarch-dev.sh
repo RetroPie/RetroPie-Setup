@@ -9,12 +9,12 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="retroarch"
+rp_module_id="retroarch-dev"
 rp_module_desc="RetroArch (latest development version) - frontend to the libretro emulator cores - required by all lr-* emulators"
-rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING "
 rp_module_section="exp"
 
-function depends_retroarch() {
+function depends_retroarch-dev() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
@@ -36,14 +36,14 @@ function depends_retroarch() {
     addUdevInputRules
 }
 
-function sources_retroarch() {
+function sources_retroarch-dev() {
     gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git master
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
     applyPatch "$md_data/03_disable_udev_sort.diff"
 }
 
-function build_retroarch() {
+function build_retroarch-dev() {
     local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack --disable-qt)
     ! isPlatform "x11" && params+=(--disable-x11 --disable-pulse)
     if compareVersions "$__os_debian_ver" lt 9; then
@@ -62,14 +62,14 @@ function build_retroarch() {
     md_ret_require="$md_build/retroarch"
 }
 
-function install_retroarch() {
+function install_retroarch-dev() {
     make install
     md_ret_files=(
         'retroarch.cfg'
     )
 }
 
-function update_shaders_retroarch() {
+function update_shaders_retroarch-dev() {
     local dir="$configdir/all/retroarch/shaders"
     local branch=""
     isPlatform "rpi" && branch="rpi"
@@ -79,7 +79,7 @@ function update_shaders_retroarch() {
     chown -R $user:$user "$dir"
 }
 
-function update_overlays_retroarch() {
+function update_overlays_retroarch-dev() {
     local dir="$configdir/all/retroarch/overlay"
     # remove if not a git repository for fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
@@ -87,7 +87,7 @@ function update_overlays_retroarch() {
     chown -R $user:$user "$dir"
 }
 
-function update_assets_retroarch() {
+function update_assets_retroarch-dev() {
     local dir="$configdir/all/retroarch/assets"
     # remove if not a git repository for fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
@@ -95,7 +95,7 @@ function update_assets_retroarch() {
     chown -R $user:$user "$dir"
 }
 
-function install_xmb_monochrome_assets_retroarch() {
+function install_xmb_monochrome_assets_retroarch-dev() {
     local dir="$configdir/all/retroarch/assets"
     [[ -d "$dir/.git" ]] && return
     [[ ! -d "$dir" ]] && mkUserDir "$dir"
@@ -103,7 +103,7 @@ function install_xmb_monochrome_assets_retroarch() {
     chown -R $user:$user "$dir"
 }
 
-function _package_xmb_monochrome_assets_retroarch() {
+function _package_xmb_monochrome_assets_retroarch-dev() {
     gitPullOrClone "$md_build/assets" https://github.com/libretro/retroarch-assets.git
     mkdir -p "$__tmpdir/archives"
     local archive="$__tmpdir/archives/retroarch-xmb-monochrome.tar.gz"
@@ -111,7 +111,7 @@ function _package_xmb_monochrome_assets_retroarch() {
     tar cvzf "$archive" -C "$md_build/assets" xmb/monochrome
 }
 
-function configure_retroarch() {
+function configure_retroarch-dev() {
     [[ "$md_mode" == "remove" ]] && return
 
     # move / symlink the retroarch configuration
@@ -231,7 +231,7 @@ function configure_retroarch() {
     addAutoConf "8bitdo_hack" 0
 }
 
-function keyboard_retroarch() {
+function keyboard_retroarch-dev() {
     if [[ ! -f "$configdir/all/retroarch.cfg" ]]; then
         printMsgs "dialog" "No RetroArch configuration file found at $configdir/all/retroarch.cfg"
         return
@@ -261,7 +261,7 @@ function keyboard_retroarch() {
     fi
 }
 
-function hotkey_retroarch() {
+function hotkey_retroarch-dev() {
     iniConfig " = " '"' "$configdir/all/retroarch.cfg"
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired hotkey behaviour." 22 76 16)
     local options=(1 "Hotkeys enabled. (default)"
@@ -289,7 +289,7 @@ function hotkey_retroarch() {
     fi
 }
 
-function gui_retroarch() {
+function gui_retroarch-dev() {
     while true; do
         local names=(shaders overlays assets)
         local dirs=(shaders overlay assets)
