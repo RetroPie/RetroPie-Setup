@@ -37,7 +37,7 @@ function depends_retroarch() {
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git
+    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git master
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
     applyPatch "$md_data/03_disable_udev_sort.diff"
