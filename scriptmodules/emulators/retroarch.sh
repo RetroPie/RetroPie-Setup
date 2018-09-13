@@ -72,6 +72,10 @@ function install_retroarch() {
     )
 }
 
+function install_bin_retroarch() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/retroarch174.tar.gz" "$md_inst" 1
+}
+
 function update_shaders_retroarch() {
     local dir="$configdir/all/retroarch/shaders"
     local branch=""
