@@ -33,6 +33,10 @@ function install_retroarch-dev() {
     install_retroarch
 }
 
+function install_bin_retroarch-dev() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/retroarch-dev.tar.gz" "$md_inst" 1
+}
+
 function update_shaders_retroarch-dev() {
     update_shaders_retroarch
 }
@@ -55,6 +59,8 @@ function _package_xmb_monochrome_assets_retroarch-dev() {
 
 function configure_retroarch-dev() {
     configure_retroarch
+    cd /opt/retropie/emulators
+    mv retroarch-dev retroarch
 }
 
 function keyboard_retroarch-dev() {
