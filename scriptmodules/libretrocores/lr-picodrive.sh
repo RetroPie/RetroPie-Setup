@@ -41,6 +41,10 @@ function install_lr-picodrive() {
     )
 }
 
+function install_bin_lr-picodrive() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/lr-picodrive.tar.gz" "$md_inst" 1
+}
+
 function configure_lr-picodrive() {
     local system
     for system in megadrive mastersystem segacd sega32x; do
