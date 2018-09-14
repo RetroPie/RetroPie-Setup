@@ -62,9 +62,9 @@ function configure_retroarch-dev() {
     # rename retroarch-dev to retroarch
     if [[ -d /opt/retropie/emulators/retroarch ]]; then
         rm -rf /opt/retropie/emulators/retroarch
-        ln -s /opt/retropie/emulators/retroarch-dev /opt/retropie/emulators/retroarch
+        mv /opt/retropie/emulators/retroarch-dev /opt/retropie/emulators/retroarch
     else
-         ln -s /opt/retropie/emulators/retroarch-dev /opt/retropie/emulators/retroarch
+        mv /opt/retropie/emulators/retroarch-dev /opt/retropie/emulators/retroarch
     fi
 }
 
