@@ -34,6 +34,10 @@ function install_lr-genesis-plus-gx() {
     )
 }
 
+function install_bin_lr-genesis-plus-gx() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/lr-genesis-plus-gx.tar.gz" "$md_inst" 1
+}
+
 function configure_lr-genesis-plus-gx() {
     local system
     local def
