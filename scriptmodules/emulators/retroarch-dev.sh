@@ -29,11 +29,11 @@ function build_retroarch-dev() {
     build_retroarch
 }
 
-function install_retroarch() {
+function install_retroarch-dev() {
     install_retroarch
 }
 
-function install_bin_retroarch() {
+function install_bin_retroarch-dev() {
     downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/retroarch-dev.tar.gz" "$md_inst" 1
 }
 
@@ -59,6 +59,13 @@ function _package_xmb_monochrome_assets_retroarch-dev() {
 
 function configure_retroarch-dev() {
     configure_retroarch
+    # rename retroarch-dev to retroarch
+    if [[ -d /opt/retropie/emulators/retroarch ]]; then
+        rm -rf /opt/retropie/emulators/retroarch
+        mv /opt/retropie/emulators/retroarch-dev /opt/retropie/emulators/retroarch
+    else
+        mv /opt/retropie/emulators/retroarch-dev /opt/retropie/emulators/retroarch
+    fi
 }
 
 function keyboard_retroarch-dev() {
