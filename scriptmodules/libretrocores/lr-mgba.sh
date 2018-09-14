@@ -39,6 +39,10 @@ function install_lr-mgba() {
     )
 }
 
+function install_bin_lr-mgba() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/lr-mgba.tar.gz" "$md_inst" 1
+}
+
 function configure_lr-mgba() {
     local system
     local def
