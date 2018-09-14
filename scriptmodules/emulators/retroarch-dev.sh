@@ -10,7 +10,7 @@
 #
 
 rp_module_id="retroarch-dev"
-rp_module_desc="RetroArch (latest development version) - frontend to the libretro emulator cores - required by all lr-* emulators"
+rp_module_desc="RetroArch (latest development version) - frontend to the libretro emulator cores - required by all lr-* emulators\n\nNote: to remove, go to Core packages"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING "
 rp_module_section="exp"
 
