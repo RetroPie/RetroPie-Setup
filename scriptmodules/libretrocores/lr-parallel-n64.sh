@@ -35,10 +35,9 @@ function build_lr-parallel-n64() {
     if isPlatform "rpi" || isPlatform "odroid-c1"; then
         params+=(platform="$__platform")
     elif isPlatform "tinker"; then
-        params+=(platform="kms")
-        params+=("CPUFLAGS=-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE")
-        params+=("GLES=1 HAVE_NEON=1 WITH_DYNAREC=arm")
-        params+=("GL_LIB:=-lGLESv2")
+        params+=(CPUFLAGS="-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE")
+        params+=(GLES=1 HAVE_NEON=1 WITH_DYNAREC=arm)
+        params+=(GL_LIB:=-lGLESv2)
     fi
     make "${params[@]}"
     rpSwap off
