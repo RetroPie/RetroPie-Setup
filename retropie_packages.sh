@@ -55,7 +55,6 @@ source "$scriptdir/scriptmodules/system.sh"
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/inifuncs.sh"
 source "$scriptdir/scriptmodules/packages.sh"
-source "$scriptdir/scriptmodules/revertgles2headers.sh"
 
 setup_env
 
