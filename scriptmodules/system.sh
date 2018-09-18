@@ -76,6 +76,11 @@ function get_os_version() {
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
+            # Debian unstable is not officially supported though
+            if [[ "$__os_release" == "unstable" ]]; then
+                __os_release=10
+            fi
+
             if compareVersions "$__os_release" lt 8; then
                 error="You need Raspbian/Debian Jessie or newer"
             fi
