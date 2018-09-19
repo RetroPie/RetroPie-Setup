@@ -354,13 +354,13 @@ function load_mode_defaults() {
     fi
 
     # get default fb_res (if not running on X)
-    FB_ORIG=()
-    if [[ -z "$DISPLAY" ]]; then
-        local status=($(fbset | tr -s '\n'))
-        FB_ORIG[0]="${status[3]}"
-        FB_ORIG[1]="${status[4]}"
-        FB_ORIG[2]="${status[7]}"
-    fi
+    #FB_ORIG=()
+    #if [[ -z "$DISPLAY" ]]; then
+        #local status=($(fbset | tr -s '\n'))
+        #FB_ORIG[0]="${status[3]}"
+        #FB_ORIG[1]="${status[4]}"
+        #FB_ORIG[2]="${status[7]}"
+    #fi
 
     # default retroarch render res to config file
     RENDER_RES="config"
@@ -1054,6 +1054,7 @@ function runcommand() {
     retroarch_append_config
 
     local ret
+    user_script "n64case_onstart.sh" &
     launch_command
     ret=$?
 
