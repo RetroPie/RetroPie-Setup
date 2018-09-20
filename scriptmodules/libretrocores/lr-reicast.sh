@@ -61,13 +61,6 @@ function configure_lr-reicast() {
         wget -O /etc/emulationstation/themes/showcase/atomiswave/_inc/system.png https://image.ibb.co/f5fCKe/system.png
         wget -O /etc/emulationstation/themes/showcase/atomiswave/_inc/background.png https://image.ibb.co/kgftsz/background.png
     fi
-    
-    # multibios hack
-    cp /opt/retropie/supplementary/runcommand/runcommand.sh /opt/retropie/supplementary/runcommand/runcommand_naomi.sh
-    sed -i -e 's:function show_launch() {:function show_launch() {\n    if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Spawn")$ ]];\n    then\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    else\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    fi\n:g' /opt/retropie/supplementary/runcommand/runcommand_naomi.sh
-    
-    cp /opt/retropie/supplementary/runcommand/runcommand.sh /opt/retropie/supplementary/runcommand/runcommand_atomiswave.sh
-    sed -i -e 's:function show_launch() {:function show_launch() {\n    if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Spawn")$ ]];\n    then\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    else\n        ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin\n    fi\n:g' /opt/retropie/supplementary/runcommand/runcommand_atomiswave.sh
        
     # system-specific
     iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
@@ -86,10 +79,6 @@ function configure_lr-reicast() {
     addSystem "dreamcast"
     addSystem "naomi"
     addSystem "atomiswave"
-    
-    # custom runcommand
-    sed -i -e 's/runcommand.sh 0 _SYS_ naomi/runcommand_naomi.sh 0 _SYS_ naomi/g' /etc/emulationstation/es_systems.cfg
-    sed -i -e 's/runcommand.sh 0 _SYS_ atomiswave/runcommand_atomiswave.sh 0 _SYS_ atomiswave/g' /etc/emulationstation/es_systems.cfg
     
     # set core options
     setRetroArchCoreOption "${dir_name}reicast_audio_buffer_size" "2048"
