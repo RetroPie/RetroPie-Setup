@@ -1054,7 +1054,7 @@ function runcommand() {
     retroarch_append_config
 
     local ret
-    user_script "n64case_onstart.sh" &
+    source "$CONFIGDIR/all/runcommand-custom.sh"
     launch_command
     ret=$?
 
