@@ -1017,7 +1017,7 @@ function ogst_off() {
 
 function ogst_on() {
     sleep 2
-	source "$CONFIGDIR/all/runcommand-custom.sh"
+    source "$CONFIGDIR/all/runcommand-custom.sh"
 }
 
 function runcommand() {
@@ -1063,8 +1063,8 @@ function runcommand() {
     retroarch_append_config
 
     local ret
-	ogst_off
-	ogst_on &
+    ogst_off
+    ogst_on &
     launch_command
     ret=$?
 
