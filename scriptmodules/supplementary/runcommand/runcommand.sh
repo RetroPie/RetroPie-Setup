@@ -1011,6 +1011,15 @@ function launch_command() {
     return $ret
 }
 
+function ogst_off() {
+    sudo rmmod fbtft_device
+}
+
+function ogst_on() {
+    sleep 2
+	source "$CONFIGDIR/all/runcommand-custom.sh"
+}
+
 function runcommand() {
     get_config
 
@@ -1054,7 +1063,8 @@ function runcommand() {
     retroarch_append_config
 
     local ret
-    source "$CONFIGDIR/all/runcommand-custom.sh"
+	ogst_off
+	ogst_on &
     launch_command
     ret=$?
 
