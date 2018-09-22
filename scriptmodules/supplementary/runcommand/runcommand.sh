@@ -1026,7 +1026,7 @@ function ogst_off() {
 }
 
 function ogst_emu() {
-    sleep 2
+    sleep 5
 
     # OGSTSET
     OGST_SYS="/home/pigaming/ogst/system-$SYSTEM.png"
