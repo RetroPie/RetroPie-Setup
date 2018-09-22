@@ -1011,6 +1011,16 @@ function launch_command() {
     return $ret
 }
 
+function naomi_bios() {
+    if [[ "$SYSTEM" =~ ^("naomi"|"atomiswave")$ ]]; then
+        if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Spawn")$ ]]; then
+            ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin
+        else
+            ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin
+        fi
+    fi
+}
+
 function ogst_off() {
     sudo rmmod fbtft_device
 }
