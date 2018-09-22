@@ -1032,17 +1032,20 @@ function ogst_emu() {
     OGST_SYS="/home/pigaming/ogst/system-$SYSTEM.png"
     OGST_SET="$OGST_SYS"
 
-    sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270
-    if [[ -e "$OGST_SET" ]]; then
-        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "$OGST_SET" &> /dev/null
-    else
-        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+    if ! lsmod | grep 'fbtft_device'; then
+        sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270
+        sleep 5
+        if [[ -e "$OGST_SET" ]]; then
+            sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "$OGST_SET"
+        else
+            sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif"
+        fi
     fi
 }
 
 function ogst_es() {
     sleep 5
-    sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+    sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif"
 }
 
 function runcommand() {
