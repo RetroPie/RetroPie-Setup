@@ -1025,9 +1025,24 @@ function ogst_off() {
     sudo rmmod fbtft_device
 }
 
-function ogst_on() {
+function ogst_emu() {
     sleep 2
-    source "$CONFIGDIR/all/runcommand-custom.sh"
+
+    # OGSTSET
+    OGST_SYS="/home/pigaming/ogst/system-$SYSTEM.png"
+    OGST_SET="$OGST_SYS"
+
+    sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270
+    if [[ -e "$OGST_SET" ]]; then
+        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "$OGST_SET" &> /dev/null
+    else
+        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+    fi
+}
+
+function ogst_es() {
+    sleep 2
+    sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
 }
 
 function runcommand() {
@@ -1046,6 +1061,10 @@ function runcommand() {
     rm -f "$LOG"
     echo -e "$SYSTEM\n$EMULATOR\n$ROM\n$COMMAND" >/dev/shm/runcommand.info
     user_script "runcommand-onstart.sh"
+    
+    naomi_bios
+    ogst_off
+    ogst_emu &
 
     set_save_vars
 
@@ -1073,8 +1092,6 @@ function runcommand() {
     retroarch_append_config
 
     local ret
-    ogst_off
-    ogst_on &
     launch_command
     ret=$?
 
@@ -1097,6 +1114,7 @@ function runcommand() {
     [[ "$COMMAND" =~ retroarch ]] && retroarchIncludeToEnd "$CONF_ROOT/retroarch.cfg"
 
     user_script "runcommand-onend.sh"
+    ogst_es &
 
     restore_cursor_and_exit "$ret"
 }
