@@ -1034,7 +1034,6 @@ function ogst_emu() {
 
     if ! lsmod | grep 'fbtft_device'; then
         sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270
-        sleep 5
         if [[ -e "$OGST_SET" ]]; then
             sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "$OGST_SET"
         else
