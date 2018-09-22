@@ -1022,7 +1022,7 @@ function naomi_bios() {
 }
 
 function ogst_off() {
-    sudo rmmod fbtft_device
+    sudo rmmod fbtft_device &> /dev/null
 }
 
 function ogst_emu() {
