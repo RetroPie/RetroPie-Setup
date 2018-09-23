@@ -1021,8 +1021,20 @@ function naomi_bios() {
     fi
 }
 
+function naomi_bios() {
+    if [[ "$SYSTEM" =~ ^("naomi"|"atomiswave")$ ]]; then
+        if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Spawn")$ ]]; then
+            ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin
+        else
+            ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin
+        fi
+    fi
+}
+
 function ogst_off() {
-    sudo rmmod fbtft_device &> /dev/null
+    if lsmod | grep -q 'fbtft_device'; then
+        sudo rmmod fbtft_device &> /dev/null
+    fi
 }
 
 function ogst_emu() {
@@ -1032,8 +1044,8 @@ function ogst_emu() {
     OGST_SYS="/home/pigaming/ogst/system-$SYSTEM.png"
     OGST_SET="$OGST_SYS"
 
-    if ! lsmod | grep 'fbtft_device'; then
-        sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270
+    if ! lsmod | grep -q 'fbtft_device'; then
+        sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270 &> /dev/null
         if [[ -e "$OGST_SET" ]]; then
             sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "$OGST_SET" &> /dev/null
         else
@@ -1044,7 +1056,13 @@ function ogst_emu() {
 
 function ogst_es() {
     sleep 5
-    sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+
+    if  lsmod | grep -q 'fbtft_device'; then
+        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+    else
+        sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270 &> /dev/null
+        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+    fi
 }
 
 function runcommand() {
@@ -1100,6 +1118,8 @@ function runcommand() {
     [[ -n "$IMG_PID" ]] && kill -SIGINT "$IMG_PID"
 
     clear
+    
+    ogst_es &
 
     # remove tmp folder for unpacked archives if it exists
     rm -rf "/tmp/retroarch"
@@ -1116,7 +1136,6 @@ function runcommand() {
     [[ "$COMMAND" =~ retroarch ]] && retroarchIncludeToEnd "$CONF_ROOT/retroarch.cfg"
 
     user_script "runcommand-onend.sh"
-    ogst_es &
 
     restore_cursor_and_exit "$ret"
 }
