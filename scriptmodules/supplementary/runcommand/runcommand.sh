@@ -1066,11 +1066,6 @@ function ogst_emu() {
     for pid in $pids; do
         sleep 3
         
-        #cannonball fix
-        if [[ $2 == cannonball ]] && [ `ls -1q /home/pigaming/RetroPie/roms/ports/cannonball | wc -l` -eq 1 ]; then
-            sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270
-        fi
-        
         if ! lsmod | grep -q 'fbtft_device'; then
             sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270 &> /dev/null
             if [[ -e "$OGST_SET" ]]; then
