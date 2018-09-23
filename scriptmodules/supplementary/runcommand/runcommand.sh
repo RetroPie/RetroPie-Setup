@@ -1028,24 +1028,65 @@ function ogst_off() {
 }
 
 function ogst_emu() {
-    sleep 15
-
     # OGSTSET
     OGST_SYS="/home/pigaming/ogst/system-$SYSTEM.png"
     OGST_SET="$OGST_SYS"
 
-    if ! lsmod | grep -q 'fbtft_device'; then
-        sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270 &> /dev/null
-        if [[ -e "$OGST_SET" ]]; then
-            sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "$OGST_SET" &> /dev/null
-        else
-            sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
-        fi
+    if [[ $EMULATOR == reicast* ]]; then
+        EMU_PROC="reicast"
+    elif [[ $EMULATOR == ppsspp ]]; then
+        EMU_PROC="PPSSPPSDL"
+    elif [[ $EMULATOR == mupen64plus-* ]]; then
+        EMU_PROC="mupen64plus"
+    elif [[ $EMULATOR == daphne ]]; then
+        EMU_PROC="daphne.bin"
+    elif [[ $SYSTEM == c64 ]]; then
+        EMU_PROC="x64"
+    elif [[ $SYSTEM == vic20 ]]; then
+        EMU_PROC="xvic"
+    elif [[ $EMULATOR == yabause* ]]; then
+        EMU_PROC="yabasanshiro"
+    elif [[ $EMULATOR == lr* ]]; then
+        EMU_PROC="retroarch"
+    elif [[ $EMULATOR == openfodder ]]; then
+        EMU_PROC="OpenFodder"
+    elif [[ $EMULATOR == sdlpop ]]; then
+        EMU_PROC="prince"
+    elif [[ $EMULATOR == solarus ]]; then
+        EMU_PROC="solarus_run"
+    else
+        EMU_PROC="$EMULATOR"
     fi
-}
 
-function ogst_es() {
-    sleep 5
+    until pids=$(pidof $EMU_PROC)
+    do
+        sleep 1
+    done
+
+    for pid in $pids; do
+        sleep 3
+        
+        #cannonball fix
+        if [[ $2 == cannonball ]] && [ `ls -1q /home/pigaming/RetroPie/roms/ports/cannonball | wc -l` -eq 1 ]; then
+            sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270
+        fi
+        
+        if ! lsmod | grep -q 'fbtft_device'; then
+            sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270 &> /dev/null
+            if [[ -e "$OGST_SET" ]]; then
+                sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "$OGST_SET" &> /dev/null
+            else
+                sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+            fi
+        fi
+        
+        #debugging
+        #echo "ogst_emu"
+    done
+    
+    while kill -0 "$pids" >/dev/null 2>&1; do
+        sleep 1
+    done
 
     if lsmod | grep -q 'fbtft_device'; then
         sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
@@ -1053,6 +1094,9 @@ function ogst_es() {
         sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270 &> /dev/null
         sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
     fi
+    
+    #debugging
+    #echo "ogst_exit"
 }
 
 function runcommand() {
@@ -1108,8 +1152,6 @@ function runcommand() {
     [[ -n "$IMG_PID" ]] && kill -SIGINT "$IMG_PID"
 
     clear
-    
-    ogst_es &
 
     # remove tmp folder for unpacked archives if it exists
     rm -rf "/tmp/retroarch"
