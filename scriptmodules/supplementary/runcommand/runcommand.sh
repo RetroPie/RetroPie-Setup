@@ -1045,8 +1045,6 @@ function ogst_emu() {
 }
 
 function ogst_es() {
-    sleep 5
-
     if lsmod | grep -q 'fbtft_device'; then
         sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
     else
