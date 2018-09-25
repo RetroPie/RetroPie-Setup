@@ -37,10 +37,28 @@ function install_lr-beetle-pce-fast() {
     )
 }
 
+function install_bin_lr-beetle-pce-fast() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/lr-beetle-pce-fast.tar.gz" "$md_inst" 1
+}
+
 function configure_lr-beetle-pce-fast() {
     mkRomDir "pcengine"
+    mkRomDir "pce-cd"
+    mkRomDir "tg-16"
+    mkRomDir "tg-cd"
+    
     ensureSystemretroconfig "pcengine"
+    ensureSystemretroconfig "pce-cd"
+    ensureSystemretroconfig "tg16"
+    ensureSystemretroconfig "tg-cd"
 
     addEmulator 1 "$md_id" "pcengine" "$md_inst/mednafen_pce_fast_libretro.so"
+    addEmulator 2 "$md_id" "pce-cd" "$md_inst/mednafen_pce_fast_libretro.so"
+    addEmulator 3 "$md_id" "tg16" "$md_inst/mednafen_pce_fast_libretro.so"
+    addEmulator 4 "$md_id" "tg-cd" "$md_inst/mednafen_pce_fast_libretro.so"
+    
     addSystem "pcengine"
+    addSystem "pce-cd"
+    addSystem "tg16"
+    addSystem "tg-cd"
 }
