@@ -413,11 +413,6 @@ function mkUserDir() {
 ## @brief Creates a directory under $romdir owned by the current user.
 function mkRomDir() {
     mkUserDir "$romdir/$1"
-    if [[ "$1" == "megadrive" ]]; then
-        pushd "$romdir"
-        ln -snf "$1" "genesis"
-        popd
-    fi
 }
 
 ## @fn moveConfigDir()
