@@ -39,15 +39,11 @@ function install_lr-snes9x2002() {
 }
 
 function configure_lr-snes9x2002() {
-    mkRomDir "snes"
-    ensureSystemretroconfig "snes"
-    mkRomDir "sfc"
-    ensureSystemretroconfig "sfc"
-
-    local def=0
-    isPlatform "armv6" && def=1
-    addEmulator $def "$md_id" "snes" "$md_inst/snes9x2002_libretro.so"
-    addSystem "snes"
-    addEmulator $def "$md_id" "sfc" "$md_inst/snes9x2002_libretro.so"
-    addSystem "sfc"
+    local system
+    for system in snes sfc; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 1 "$md_id" "$system" "$md_inst/snes9x_libretro.so"
+        addSystem "$system"
+done
 }
