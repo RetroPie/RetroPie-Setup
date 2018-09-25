@@ -42,23 +42,11 @@ function install_bin_lr-beetle-pce-fast() {
 }
 
 function configure_lr-beetle-pce-fast() {
-    mkRomDir "pcengine"
-    mkRomDir "pce-cd"
-    mkRomDir "tg-16"
-    mkRomDir "tg-cd"
-    
-    ensureSystemretroconfig "pcengine"
-    ensureSystemretroconfig "pce-cd"
-    ensureSystemretroconfig "tg16"
-    ensureSystemretroconfig "tg-cd"
-
-    addEmulator 1 "$md_id" "pcengine" "$md_inst/mednafen_pce_fast_libretro.so"
-    addEmulator 2 "$md_id" "pce-cd" "$md_inst/mednafen_pce_fast_libretro.so"
-    addEmulator 3 "$md_id" "tg16" "$md_inst/mednafen_pce_fast_libretro.so"
-    addEmulator 4 "$md_id" "tg-cd" "$md_inst/mednafen_pce_fast_libretro.so"
-    
-    addSystem "pcengine"
-    addSystem "pce-cd"
-    addSystem "tg16"
-    addSystem "tg-cd"
+    local system
+    for system in pcengine pce-cd tg16 tg-cd; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 1 "$md_id" "$system" "$md_inst/mednafen_pce_fast_libretro.so"
+        addSystem "$system"
+    done
 }
