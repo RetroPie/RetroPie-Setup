@@ -40,13 +40,10 @@ function install_bin_lr-genesis-plus-gx() {
 
 function configure_lr-genesis-plus-gx() {
     local system
-    local def
     for system in gamegear mastersystem genesis megadrive sg-1000 segacd; do
-        def=0
-        [[ "$system" == "gamegear" || "$system" == "sg-1000" ]] && def=1
         mkRomDir "$system"
         ensureSystemretroconfig "$system"
-        addEmulator "$def" "$md_id" "$system" "$md_inst/genesis_plus_gx_libretro.so"
+        addEmulator 1 "$md_id" "$system" "$md_inst/genesis_plus_gx_libretro.so"
         addSystem "$system"
     done
 }
