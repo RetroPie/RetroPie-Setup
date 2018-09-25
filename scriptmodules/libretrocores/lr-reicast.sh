@@ -35,17 +35,9 @@ function install_bin_lr-reicast() {
     downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/lr-reicast.tar.gz" "$md_inst" 1
 }
 
-function configure_lr-reicast() {
-    mkRomDir "dreamcast"
-    mkRomDir "naomi"
-    mkRomDir "atomiswave"
-    ensureSystemretroconfig "dreamcast"
-    ensureSystemretroconfig "naomi"
-    ensureSystemretroconfig "atomiswave"
-
+function configure_lr-reicast() {    
+    # bios
     mkUserDir "$biosdir/dc"
-     
-    # symlink to JP bios by default
     ln -sf "$biosdir/dc/naomi_boot_jp.bin" "$biosdir/dc/naomi_boot.bin"
           
     # add naomi to showcase theme
@@ -61,25 +53,17 @@ function configure_lr-reicast() {
         wget -O /etc/emulationstation/themes/showcase/atomiswave/_inc/system.png https://image.ibb.co/f5fCKe/system.png
         wget -O /etc/emulationstation/themes/showcase/atomiswave/_inc/background.png https://image.ibb.co/kgftsz/background.png
     fi
-       
-    # system-specific
-    iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
-    iniSet "video_shared_context" "true"
-
-    iniConfig " = " "" "$configdir/naomi/retroarch.cfg"
-    iniSet "video_shared_context" "true"
     
-    iniConfig " = " "" "$configdir/atomiswave/retroarch.cfg"
-    iniSet "video_shared_context" "true"
+    local system
+    for system in dreamcast naomi atomiswave; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        iniConfig " = " "" "$configdir/$system/retroarch.cfg"
+        iniSet "video_shared_context" "true"
+        addEmulator 1 "$md_id" "$system" "$md_inst/lr-reicast_libretro.so"
+        addSystem "$system"
+    done
 
-    addEmulator 0 "$md_id" "dreamcast" "$md_inst/reicast_libretro.so"
-    addEmulator 1 "$md_id" "naomi" "$md_inst/reicast_libretro.so"
-    addEmulator 2 "$md_id" "atomiswave" "$md_inst/reicast_libretro.so"
-
-    addSystem "dreamcast"
-    addSystem "naomi"
-    addSystem "atomiswave"
-    
     # set core options
     setRetroArchCoreOption "${dir_name}reicast_audio_buffer_size" "2048"
     setRetroArchCoreOption "${dir_name}reicast_broadcast" "default"
