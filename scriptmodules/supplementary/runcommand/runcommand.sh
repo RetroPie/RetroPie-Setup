@@ -1028,10 +1028,6 @@ function ogst_off() {
 }
 
 function ogst_emu() {
-    # OGSTSET
-    OGST_SYS="/home/pigaming/ogst/system-$SYSTEM.png"
-    OGST_SET="$OGST_SYS"
-
     if [[ $EMULATOR == reicast* ]]; then
         EMU_PROC="reicast"
     elif [[ $EMULATOR == ppsspp ]]; then
@@ -1039,11 +1035,28 @@ function ogst_emu() {
     elif [[ $EMULATOR == mupen64plus-* ]]; then
         EMU_PROC="mupen64plus"
     elif [[ $EMULATOR == daphne ]]; then
-        EMU_PROC="daphne.bin"
-    elif [[ $SYSTEM == c64 ]]; then
+        EMU_PROC="daphne.bin"        
+    elif [[ $EMULATOR == vice-x64 ]]; then
         EMU_PROC="x64"
-    elif [[ $SYSTEM == vic20 ]]; then
+        SYSTEM="c64"
+    elif [[ $EMULATOR == vice-x64sc ]]; then
+        EMU_PROC="x64sc"
+        SYSTEM="c64"
+    elif [[ $EMULATOR == vice-x128 ]]; then
+        EMU_PROC="x128"
+        SYSTEM="c64"
+    elif [[ $EMULATOR == vice-xpet ]]; then
+        EMU_PROC="xpet"
+        SYSTEM="c64"
+    elif [[ $EMULATOR == vice-xplus4 ]]; then
+        EMU_PROC="xplus4"
+        SYSTEM="c64"
+    elif [[ $EMULATOR == vice-xvic ]]; then
         EMU_PROC="xvic"
+        SYSTEM="vic20"
+    elif [[ $EMULATOR == vice-xvic-cart ]]; then
+        EMU_PROC="xvic"
+        SYSTEM="vic20"
     elif [[ $EMULATOR == yabause* ]]; then
         EMU_PROC="yabasanshiro"
     elif [[ $EMULATOR == lr* ]]; then
@@ -1056,7 +1069,7 @@ function ogst_emu() {
         EMU_PROC="solarus_run"
     else
         EMU_PROC="$EMULATOR"
-    fi
+    fi  
 
     until pids=$(pidof $EMU_PROC)
     do
@@ -1066,10 +1079,10 @@ function ogst_emu() {
     for pid in $pids; do
         sleep 3
         
-        if ! lsmod | grep -q 'fbtft_device'; then
+        if ! lsmod | grep -q 'fbtft_device'; then           
             sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270 &> /dev/null
-            if [[ -e "$OGST_SET" ]]; then
-                sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "$OGST_SET" &> /dev/null
+            if [[ -e "/home/pigaming/ogst/system-$SYSTEM.png" ]]; then
+                sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/system-$SYSTEM.png" &> /dev/null
             else
                 sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
             fi
