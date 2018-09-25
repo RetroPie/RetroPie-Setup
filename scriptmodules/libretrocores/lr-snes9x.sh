@@ -45,13 +45,11 @@ function install_bin_lr-snes9x() {
 }
 
 function configure_lr-snes9x() {
-    mkRomDir "snes"
-    ensureSystemretroconfig "snes"
-    mkRomDir "sfc"
-    ensureSystemretroconfig "sfc"
-
-    addEmulator 0 "$md_id" "snes" "$md_inst/snes9x_libretro.so"
-    addSystem "snes"
-    addEmulator 0 "$md_id" "sfc" "$md_inst/snes9x_libretro.so"
-    addSystem "sfc"
+    local system
+    for system in snes sfc; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 0 "$md_id" "$system" "$md_inst/snes9x_libretro.so"
+        addSystem "$system"
+    done
 }
