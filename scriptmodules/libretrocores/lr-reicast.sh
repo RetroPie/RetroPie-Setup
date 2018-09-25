@@ -60,7 +60,7 @@ function configure_lr-reicast() {
         ensureSystemretroconfig "$system"
         iniConfig " = " "" "$configdir/$system/retroarch.cfg"
         iniSet "video_shared_context" "true"
-        addEmulator 1 "$md_id" "$system" "$md_inst/lr-reicast_libretro.so"
+        addEmulator 1 "$md_id" "$system" "$md_inst/reicast_libretro.so"
         addSystem "$system"
     done
 
