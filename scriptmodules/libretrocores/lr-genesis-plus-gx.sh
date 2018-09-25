@@ -46,4 +46,9 @@ function configure_lr-genesis-plus-gx() {
         addEmulator 1 "$md_id" "$system" "$md_inst/genesis_plus_gx_libretro.so"
         addSystem "$system"
     done
+    
+    # remove symlink if exists
+    if [[ -f /home/pigaming/RetroPie/roms/genesis/megadrive ]]; then
+        rm /home/pigaming/RetroPie/roms/genesis/megadrive
+    fi
 }
