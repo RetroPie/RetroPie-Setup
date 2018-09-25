@@ -41,7 +41,7 @@ function configure_lr-snes9x2005() {
     for system in snes sfc; do
         mkRomDir "$system"
         ensureSystemretroconfig "$system"
-        addEmulator 1 "$md_id" "$system" "$md_inst/snes9x_libretro.so"
+        addEmulator 1 "$md_id" "$system" "$md_inst/snes9x2005_libretro.so"
         addSystem "$system"
     done
 }
