@@ -36,15 +36,11 @@ function install_bin_lr-beetle-supergrafx() {
 }
 
 function configure_lr-beetle-supergrafx() {
-    mkRomDir "pcengine"
-    mkRomDir "supergrafx"
-    
-    ensureSystemretroconfig "pcengine"
-    ensureSystemretroconfig "supergrafx"
-
-    addEmulator 0 "$md_id" "pcengine" "$md_inst/mednafen_supergrafx_libretro.so"
-    addEmulator 1 "$md_id" "supergrafx" "$md_inst/mednafen_supergrafx_libretro.so"
-    
-    addSystem "pcengine"
-    addSystem "supergrafx"
+    local system
+    for system in pcengine supergrafx; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 1 "$md_id" "$system" "$md_inst/mednafen_supergrafx_libretro.so"
+        addSystem "$system"
+    done
 }
