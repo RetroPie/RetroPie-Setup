@@ -162,6 +162,7 @@ function gui_esthemes() {
         'RetroHursty69 evilresident'
         'RetroHursty69 hurstyspin'
         'RetroHursty69 cyber'
+        'RetroHursty69 supersweet'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
