@@ -1084,7 +1084,7 @@ function ogst_emu() {
             if [[ -e "/home/pigaming/ogst/system-$SYSTEM.png" ]]; then
                 sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/system-$SYSTEM.png" &> /dev/null
             else
-                sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+                sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.png" &> /dev/null
             fi
         fi
         
