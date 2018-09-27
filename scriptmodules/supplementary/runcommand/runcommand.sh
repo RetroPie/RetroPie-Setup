@@ -1097,10 +1097,10 @@ function ogst_emu() {
     done
 
     if lsmod | grep -q 'fbtft_device'; then
-        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/es.png" &> /dev/null
     else
         sudo modprobe fbtft_device name=hktft9340 busnum=1 rotate=270 &> /dev/null
-        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/ora.gif" &> /dev/null
+        sudo mplayer -quiet -nolirc -nosound -vo fbdev2:/dev/fb1 -vf scale=320:240 "/home/pigaming/ogst/es.png" &> /dev/null
     fi
     
     #debugging
