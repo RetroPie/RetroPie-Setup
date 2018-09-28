@@ -18,6 +18,7 @@ rp_module_flags="!arm !aarch64"
 
 function sources_lr-dolphin() {
     depends_dolphin
+    gitPullOrClone "$md_build" https://github.com/libretro/dolphin
 }
 
 function build_lr-dolphin() {
