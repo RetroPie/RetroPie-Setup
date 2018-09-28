@@ -16,8 +16,12 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/dolphin/maste
 rp_module_section="exp"
 rp_module_flags="!arm !aarch64"
 
-function sources_lr-dolphin() {
+function depends_lr-dolphin() {
     depends_dolphin
+}
+
+function sources_lr-dolphin() {
+    gitPullOrClone "$md_build" https://github.com/libretro/dolphin
 }
 
 function build_lr-dolphin() {
