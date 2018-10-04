@@ -171,6 +171,9 @@ function gui_esthemes() {
         'lipebello spaceoddity'
         'lipebello swineapple'
         'waweedman pii-wii'
+        'waweedman Blade-360'
+        'waweedman Venom'
+        'waweedman Spider-Man'
     )
     while true; do
         local theme
