@@ -1013,10 +1013,10 @@ function launch_command() {
 
 function naomi_bios() {
     if [[ "$SYSTEM" =~ ^("naomi"|"atomiswave")$ ]]; then
-        if [[ "$ROM_BN" =~ ^("Capcom vs. SNK 2 - Mark of the Millennium 2001"|"Marvel vs. Capcom 2 - The New Age of Heroes"|"Project Justice"|"Cannon Spike"|"Spawn"|"Sports Jam")$ ]]; then
-            ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin
-        else
+        if [[ "$ROM_BN" =~ ^("Capcom vs. SNK - Millennium Fight 2000 Pro"|"Chaos Field"|"Guilty Gear XX #Reload (Rev A)"|"Guilty Gear XX Slash (Rev A)"|"Jingi Storm - The Arcade"|"Mamonoro"|"Melty Blood Act Cadenza (Ver B2)"|"Psyvariar 2 - The Will To Fabricate"|"Senko No Ronde Special"|"Shooting Love 2007"|"Street Fighter Zero 3 Upper"|"Trigger Heart Exelica (Rev A)"|"Trizeal"|"cvsgd"|"cfield"|"ggxxrl"|"ggxxsla"|"jingystm"|"mamonoro"|"meltyb"|"meltyba"|"meltybld"|"psyvar2"|"senko"|"senkoo"|"senkosp"|"sfz3ugd"|"trgheart"|"trizeal")$ ]]; then
             ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin
+        else
+            ln -sf /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin
         fi
     fi
 }
