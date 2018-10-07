@@ -154,7 +154,12 @@ function get_os_version() {
             __os_debian_ver="8"
             ;;
         neon)
-             __os_ubuntu_ver="$__os_release"
+            __os_ubuntu_ver="$__os_release"
+            if compareVersions "$__os_release" lt 16.10; then
+                __os_debian_ver="8"
+            else
+                __os_debian_ver="9"
+            fi
             ;;
         *)
             error="Unsupported OS"
