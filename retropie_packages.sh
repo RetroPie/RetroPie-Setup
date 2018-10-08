@@ -55,6 +55,7 @@ source "$scriptdir/scriptmodules/system.sh"
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/inifuncs.sh"
 source "$scriptdir/scriptmodules/packages.sh"
+source "$scriptdir/scriptmodules/orafixes.sh"
 
 setup_env
 
