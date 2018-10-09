@@ -12,3 +12,8 @@ if [[ ! -f /home/pigaming/scripts/update001 ]]; then
     sudo cp -p /etc/rc.local.bak /etc/rc.local
     touch /home/pigaming/scripts/update001
 fi
+
+if [[ ! -f /home/pigaming/scripts/update002 ]]; then
+   wget -O /opt/retropie/configs/all/retroarch-core-options https://pastebin.com/raw/ATeS35pE
+   touch /home/pigaming/scripts/update002
+fi
