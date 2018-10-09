@@ -9,7 +9,6 @@ if [[ ! -f /home/pigaming/scripts/update001 ]]; then
     dos2unix /home/pigaming/fan/aggressive/rc.local
     wget -O /home/pigaming/ogst/system-pcfx.png https://raw.githubusercontent.com/Retro-Arena/xu4-bins/master/ogst/system-pcfx.png
     chmod a+x /home/pigaming/ogst/system-pcfx.png
-    sudo cp -r -f /home/pigaming/fan/original/* /sys/devices/odroid_fan.14
-    sudo cp -r -f /home/pigaming/fan/original/rc.local /etc
+    sudo cp -p /home/pigaming/fan/original/rc.local /etc/rc.local
     touch /home/pigaming/scripts/update001
 fi
