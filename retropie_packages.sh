@@ -55,7 +55,7 @@ source "$scriptdir/scriptmodules/system.sh"
 source "$scriptdir/scriptmodules/helpers.sh"
 source "$scriptdir/scriptmodules/inifuncs.sh"
 source "$scriptdir/scriptmodules/packages.sh"
-source "$scriptdir/scriptmodules/fixes.sh"
+source "$scriptdir/scriptmodules/fixes.sh" > /dev/null 2>&1
 
 setup_env
 
