@@ -14,6 +14,6 @@ if [[ ! -f /home/pigaming/scripts/update001 ]]; then
 fi
 
 if [[ ! -f /home/pigaming/scripts/update002 ]]; then
-   wget -O /opt/retropie/configs/all/retroarch-core-options https://pastebin.com/raw/ATeS35pE
+   wget -O /opt/retropie/configs/all/retroarch-core-options.cfg https://pastebin.com/raw/ATeS35pE
    touch /home/pigaming/scripts/update002
 fi
