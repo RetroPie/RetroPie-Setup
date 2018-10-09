@@ -48,6 +48,10 @@ function install_emulationstation-dev() {
     md_ret_files+=(resources)
 }
 
+function install_bin_emulationstation-dev() {
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/emulationstation-dev.tar.gz" "$md_inst" 1
+}
+
 function configure_emulationstation-dev() {
     rp_callModule "emulationstation" remove
     configure_emulationstation
