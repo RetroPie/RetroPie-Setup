@@ -9,6 +9,6 @@ if [[ ! -f /home/pigaming/scripts/update001 ]]; then
     dos2unix /home/pigaming/fan/aggressive/rc.local
     wget -O /home/pigaming/ogst/system-pcfx.png https://raw.githubusercontent.com/Retro-Arena/xu4-bins/master/ogst/system-pcfx.png
     chmod a+x /home/pigaming/ogst/system-pcfx.png
-    sudo cp -p /home/pigaming/fan/original/rc.local /etc/rc.local
+    sudo cp -p /etc/rc.local.bak /etc/rc.local
     touch /home/pigaming/scripts/update001
 fi
