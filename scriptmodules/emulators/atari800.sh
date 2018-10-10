@@ -23,7 +23,7 @@ function depends_atari800() {
 }
 
 function sources_atari800() {
-    downloadAndExtract "$__archive_url/atari800-3.1.0.tar.gz" "$md_build" 1
+    downloadAndExtract "$__archive_url/atari800-4.0.0.tar.gz" "$md_build" 1
     if isPlatform "rpi"; then
         applyPatch "$md_data/01_rpi_fixes.diff"
     fi
