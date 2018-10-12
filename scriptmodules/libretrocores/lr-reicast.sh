@@ -38,7 +38,6 @@ function install_bin_lr-reicast() {
 function configure_lr-reicast() {    
     # bios
     mkUserDir "$biosdir/dc"
-    ln -sf "$biosdir/dc/naomi_boot_jp.bin" "$biosdir/dc/naomi_boot.bin"
           
     # add naomi to showcase theme
     if [[ ! -f /etc/emulationstation/themes/showcase/naomi/theme.xml ]]; then
