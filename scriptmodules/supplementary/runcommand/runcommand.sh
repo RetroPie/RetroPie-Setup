@@ -1013,7 +1013,7 @@ function launch_command() {
 
 function naomi_bios() {
     if [[ "$SYSTEM" =~ ^("naomi"|"atomiswave")$ ]]; then
-        if [[ "$ROM_BN" =~ ^("Capcom vs. SNK - Millennium Fight 2000 Pro"|"Chaos Field"|"Guilty Gear XX #Reload (Rev A)"|"Guilty Gear XX Slash (Rev A)"|"Jingi Storm - The Arcade"|"Kurukuru Chameleon"|"Mamonoro"|"Melty Blood Act Cadenza"|"Melty Blood Act Cadenza (Ver B)"|"Melty Blood Act Cadenza (Ver B2)"|"Moeru Casinyo"|"Psyvariar 2 - The Will To Fabricate"|"Senko No Ronde"|"Senko No Ronde (Rev A)"|"Senko No Ronde Special"|"Shooting Love 2007"|"Street Fighter Zero 3 Upper"|"Trigger Heart Exelica (Rev A)"|"Trizeal"|"cvsgd"|"cfield"|"ggxxrl"|"ggxxsla"|"jingystm"|"kurucham"|"mamonoro"|"meltyb"|"meltyba"|"meltybld"|"moeru"|"psyvar2"|"senko"|"senkoo"|"senkosp"|"sfz3ugd"|"trgheart"|"trizeal")$ ]]; then
+        if [[ "$ROM_BN" =~ ^("Capcom vs. SNK - Millennium Fight 2000 Pro"|"Chaos Field"|"Guilty Gear XX #Reload (Rev A)"|"Guilty Gear XX Slash (Rev A)"|"Jingi Storm - The Arcade"|"Kurukuru Chameleon"|"Mamonoro"|"Melty Blood Act Cadenza"|"Melty Blood Act Cadenza (Ver B)"|"Melty Blood Act Cadenza (Ver B2)"|"Moeru Casinyo"|"Psyvariar 2 - The Will To Fabricate"|"Senko No Ronde"|"Senko No Ronde (Rev A)"|"Senko No Ronde Special"|"Shooting Love 2007"|"Street Fighter Zero 3 Upper"|"Trigger Heart Exelica (Rev A)"|"Trizeal"|"cvsgd"|"cfield"|"ggxxrl"|"ggxxsla"|"jingystm"|"kurucham"|"mamonoro"|"meltyb"|"meltyba"|"meltybld"|"moeru"|"psyvar2"|"senko"|"senkoo"|"senkosp"|"sfz3ugd"|"sl2007"|"trgheart"|"trizeal")$ ]]; then
             rm /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin &> /dev/null
             cp -f /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin &> /dev/null
         else
