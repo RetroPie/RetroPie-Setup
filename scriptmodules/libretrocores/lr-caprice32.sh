@@ -21,7 +21,8 @@ function sources_lr-caprice32() {
 
 function build_lr-caprice32() {
     make clean
-    make
+    # temporary fix until https://github.com/libretro/libretro-cap32/pull/40 is accepted
+    CFLAGS+=" -std=c99" make
     md_ret_require="$md_build/cap32_libretro.so"
 }
 
