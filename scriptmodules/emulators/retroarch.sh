@@ -10,7 +10,7 @@
 #
 
 rp_module_id="retroarch"
-rp_module_desc="RetroArch v1.7.4 - frontend to the libretro emulator cores - required by all lr-* emulators"
+rp_module_desc="RetroArch v1.7.5 - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
 rp_module_section="core"
 
@@ -73,7 +73,7 @@ function install_retroarch() {
 }
 
 function install_bin_retroarch() {
-    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/retroarch174.tar.gz" "$md_inst" 1
+    downloadAndExtract "http://github.com/Retro-Arena/xu4-bins/raw/master/retroarch175.tar.gz" "$md_inst" 1
 }
 
 function update_shaders_retroarch() {
