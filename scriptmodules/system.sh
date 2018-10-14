@@ -109,6 +109,15 @@ function get_os_version() {
                 jessie)
                     __os_debian_ver="8"
                     ;;
+                ascii)
+                    __os_debian_ver="9"
+                    ;;
+                beowolf)
+                    __os_debian_ver="10"
+                    ;;
+                ceres)
+                    __os_debian_ver="11"
+                    ;;
             esac
             ;;
         LinuxMint)
