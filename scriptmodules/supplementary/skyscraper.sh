@@ -62,7 +62,7 @@ function remove_skyscraper() {
         case $purgeall in  
             y|Y) echo "Deleting $skyconfig folder..."
             rm -Rf $skyconfig
-		    ;; 
+            ;; 
         esac
     fi
 }
