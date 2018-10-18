@@ -104,6 +104,9 @@ function get_os_version() {
             __os_debian_ver="${__os_release%%.*}"
             ;;
         Devuan)
+            if isPlatform "rpi"; then
+                error="We do not support Devuan on the Raspberry Pi. We recommend you use Raspbian to run RetroPie."
+            fi
             # devuan lsb-release version numbers don't match jessie
             case "$__os_codename" in
                 jessie)
