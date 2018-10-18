@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !x86 !mali !kms"
 
 function depends_pcsx-rearmed() {
-    getDepends libsdl1.2-dev libasound2-dev libpng12-dev libx11-dev
+    getDepends libsdl1.2-dev libasound2-dev libpng-dev libx11-dev
 }
 
 function sources_pcsx-rearmed() {
