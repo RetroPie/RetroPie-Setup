@@ -25,6 +25,7 @@ function sources_ppsspp() {
     else
         cp -p /usr/include/GLES2/gl2ext.h /usr/include/GLES2/gl2ext.h.org
     fi
+    sed -i -e 's:GL_APICALL void GL_APIENTRY glBufferStorageEXT://GL_APICALL void GL_APIENTRY glBufferStorageEXT:g' /usr/include/GLES2/gl2ext.h
     sed -i -e 's:GL_APICALL void GL_APIENTRY glCopyImageSubDataOES://GL_APICALL void GL_APIENTRY glCopyImageSubDataOES:g' /usr/include/GLES2/gl2ext.h
     
     # CMakeLists.txt changes
