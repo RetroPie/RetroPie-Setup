@@ -213,9 +213,15 @@ function getDepends() {
             isPlatform "xbian" && required="xbian-package-firmware"
         fi
 
-        # map libpng12-dev to libpng-dev for Ubuntu 16.10+
+        # map libpng12-dev to libpng-dev for Stretch+
         if [[ "$required" == "libpng12-dev" ]] && compareVersions "$__os_debian_ver" ge 9;  then
             required="libpng-dev"
+            printMsgs "console" "RetroPie module references libpng12-dev and should be changed to libpng-dev"
+        fi
+
+        # map libpng-dev to libpng12-dev for Jessie
+        if [[ "$required" == "libpng-dev" ]] && compareVersions "$__os_debian_ver" lt 9; then
+            required="libpng12-dev"
         fi
 
         if [[ "$md_mode" == "install" ]]; then
