@@ -19,6 +19,14 @@ rp_module_flags=""
 function sources_ppsspp() {
     gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git
     
+    # gl2ext.h fix
+    if [[ -e /usr/include/GLES2/gl2ext.h.org ]]; then
+        cp -p /usr/include/GLES2/gl2ext.h.org /usr/include/GLES2/gl2ext.h
+    else
+        cp -p /usr/include/GLES2/gl2ext.h /usr/include/GLES2/gl2ext.h.org
+    fi
+    sed -i -e 's:GL_APICALL void GL_APIENTRY glCopyImageSubDataOES://GL_APICALL void GL_APIENTRY glCopyImageSubDataOES:g' /usr/include/GLES2/gl2ext.h
+    
     # CMakeLists.txt changes
     sed -i -e 's:set(ARM ON):set(ARM ON)\n    add_definitions(-mfloat-abi=hard -marm -mtune=cortex-a15.cortex-a7 -mcpu=cortex-a15 -mfpu=neon-vfpv4 -fomit-frame-pointer -ftree-vectorize -mvectorize-with-neon-quad -ffast-math -DARM_NEON):g' "$md_build/ppsspp/CMakeLists.txt"
     sed -i -e 's:set(VULKAN ON):set(VULKAN OFF):g' "$md_build/ppsspp/CMakeLists.txt"
