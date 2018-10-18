@@ -100,6 +100,6 @@ function configure_ppsspp() {
     # gl2ext.h revert
     if [[ -e /usr/include/GLES2/gl2ext.h.org ]]; then
         cp -p /usr/include/GLES2/gl2ext.h.org /usr/include/GLES2/gl2ext.h
-	      rm /usr/include/GLES2/gl2ext.h.org
+        rm /usr/include/GLES2/gl2ext.h.org
     fi
 }
