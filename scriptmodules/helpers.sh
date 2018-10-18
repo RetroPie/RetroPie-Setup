@@ -346,6 +346,7 @@ function gitPullOrClone() {
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
+        runCmd git checkout "$branch"
         runCmd git pull
         runCmd git submodule update --init --recursive
         popd > /dev/null
@@ -355,12 +356,14 @@ function gitPullOrClone() {
             git+=" --depth 1"
         fi
         [[ "$branch" != "master" ]] && git+=" --branch $branch"
-        echo "$git \"$repo\" \"$dir\""
+        printMsgs "console" "$git \"$repo\" \"$dir\""
         runCmd $git "$repo" "$dir"
     fi
-    if [[ "$commit" ]]; then
-        echo "Winding back $repo->$branch to commit: #$commit"
-        runCmd git -C "$dir" checkout $commit
+
+    if [[ -n "$commit" ]]; then
+        printMsgs "console" "Winding back $repo->$branch to commit: #$commit"
+        git branch -D "$commit" &>/dev/null
+        runCmd git -C "$dir" checkout -f "$commit" -b "$commit"
     fi
 }
 
