@@ -15,7 +15,7 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/gemrb/gemrb/master/COP
 rp_module_section="exp"
 
 function depends_gemrb() {
-    getDepends python-dev libopenal-dev libsdl1.2-dev cmake libpng12-dev libfreetype6-dev
+    getDepends python-dev libopenal-dev libsdl1.2-dev cmake libpng-dev libfreetype6-dev
 }
 
 function sources_gemrb() {
