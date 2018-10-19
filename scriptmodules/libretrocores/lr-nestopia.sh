@@ -47,6 +47,7 @@ function configure_lr-nestopia() {
     ensureSystemretroconfig "fds"
 
     cp NstDatabase.xml "$biosdir/"
+    chown $user:$user "$biosdir/NstDatabase.xml"
 
     addEmulator 0 "$md_id" "nes" "$md_inst/nestopia_libretro.so"
     addEmulator 1 "$md_id" "fds" "$md_inst/nestopia_libretro.so"
