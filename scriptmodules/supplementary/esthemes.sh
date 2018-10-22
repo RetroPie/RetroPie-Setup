@@ -175,7 +175,7 @@ function gui_esthemes() {
         'waweedman Blade-360'
         'waweedman Venom'
         'waweedman Spider-Man'
-        'blowfinger77 LOCOMOTION'
+        'blowfinger77 locomotion'
     )
     while true; do
         local theme
