@@ -90,7 +90,6 @@ function get_config() {
         DISABLE_JOYSTICK="$ini_value"
         iniGet "disable_menu"
         DISABLE_MENU="$ini_value"
-        [[ "$DISABLE_MENU" -eq 1 ]] && DISABLE_JOYSTICK=1
         iniGet "image_delay"
         IMAGE_DELAY="$ini_value"
         [[ -z "$IMAGE_DELAY" ]] && IMAGE_DELAY=2
