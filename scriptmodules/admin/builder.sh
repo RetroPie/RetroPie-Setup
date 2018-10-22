@@ -32,6 +32,11 @@ function module_builder() {
             md_idx="$(rp_getIdxFromId $id)"
             md_id="$id"
         fi
+
+        # don't build binaries for modules with flag nobin
+        # eg scraper which fails as go1.8 doesn't work under qemu
+        hasFlag "${__mod_flags[$md_idx]}" "nobin" && continue
+
         ! fnExists "install_${md_id}" && continue
 
         # skip already built archives, so we can retry failed modules
