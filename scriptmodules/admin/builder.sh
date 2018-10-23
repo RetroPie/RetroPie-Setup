@@ -75,14 +75,16 @@ function chroot_build_builder() {
     # get current host ip for the distcc in the emulated chroot to connect to
     local ip="$(ip route get 8.8.8.8 2>/dev/null | awk '{print $NF; exit}')"
 
-    local use_distcc=0
-    [[ -d "$rootdir/admin/crosscomp/$dist" ]] && use_distcc=1
-
     local dist
     local sys
 
     for dist in jessie stretch; do
-        [[ "$use_distcc" -eq 1 ]] && rp_callModule crosscomp switch_distcc "$dist"
+        local use_distcc=0
+        if [[ -d "$rootdir/admin/crosscomp/$dist" ]]; then
+            use_distcc=1
+            rp_callModule crosscomp switch_distcc "$dist"
+        fi
+
         if [[ ! -d "$md_build/$dist" ]]; then
             rp_callModule image create_chroot "$dist" "$md_build/$dist"
             git clone "$HOME/RetroPie-Setup" "$md_build/$dist/home/pi/RetroPie-Setup"
