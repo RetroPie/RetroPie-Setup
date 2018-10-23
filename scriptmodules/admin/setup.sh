@@ -69,6 +69,10 @@ function depends_setup() {
         exit 1
     fi
 
+    if isPlatform "rpi" && [[ "$__os_debian_ver" -eq 8 ]]; then
+        printMsgs "dialog" "Raspbian Jessie is no longer supported by the Raspberry Pi Foundation and compatibility with RetroPie-Setup will be dropped in the near future.\n\nBinary packages for RetroPie will also not be updated further.\n\nPlease install RetroPie 4.4 or newer from a fresh image which is based on Raspbian Stretch.\n\nIt is possible to upgrade a Jessie install to Stretch but we recommend a fresh install.\n\n"
+    fi
+
     # make sure user has the correct group permissions
     if ! isPlatform "x11"; then
         local group
