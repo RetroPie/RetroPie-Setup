@@ -33,6 +33,20 @@ function install_skyscraper() {
         'Skyscraper'
         'LICENSE'
         'README.md'
+        'config.ini.example'
+        'artwork.xml'
+        'artwork.xml.example1'
+        'artwork.xml.example2'
+        'artwork.xml.example3'
+        'artwork.xml.example4'
+        'ARTWORK.md'
+        'tgdb_developers.json'
+        'tgdb_publishers.json'
+        'mameMap.csv'
+        'hints.txt'
+        'dbs'
+        'import'
+        'resources'
     )
 }
 
@@ -163,16 +177,13 @@ unattend="true"
 unattendSkip="true"
 noHints="false"
 threads="2"
-maxFails="30"
 lang="en"
 region="wor"
 videos="false"
 marquees="true"
-wheels="false"
+wheels="true"
 covers="true"
 screenshots="true"
-artworkXml="$md_conf_dir/artwork.xml"
-
 _EOF_
 
     # Make sure the `artwork.xml` and other conf file(s) are present, but don't overwrite them on upgrades.
@@ -180,9 +191,9 @@ _EOF_
     local f_conf
     for f_conf in artwork.xml; do
         if [[ -f "$md_conf_dir/$f_conf" ]]; then
-            cp "$md_build/$f_conf" "$md_conf_dir/$f_conf.default"
+            cp "$md_inst/$f_conf" "$md_conf_dir/$f_conf.default"
         else
-            cp "$md_build/$f_conf" "$md_conf_dir"
+            cp "$md_inst/$f_conf" "$md_conf_dir"
         fi
     done
 
@@ -203,26 +214,28 @@ _EOF_
         done
     else
         # Fallback to the known resource files list
-        cp -f "$md_build/artwork.xml.example"* "$md_conf_dir"
+        cp -f "$md_inst/artwork.xml.example"* "$md_conf_dir"
 
         # Copy resources
         local resource_file
         for resource_file in ARTWORK.md README.md mameMap.csv tgdb_developers.json tgdb_publishers.json hints.txt; do
-            cp -f "$md_build/$resource_file" "$md_conf_dir"
+            cp -f "$md_inst/$resource_file" "$md_conf_dir"
         done
     fi
 
     # Copy the rest of the folders
-    cp -rf "$md_build/resources" "$md_conf_dir"
+    cp -rf "$md_inst/resources" "$md_conf_dir"
 
-    # Create the import folders
+    # Create the import folders and add the sample files.
     local folder
-    for folder in boxart snaps covers marquees screenshots textual videos wheels; do
+    for folder in covers marquees screenshots textual videos wheels; do
         mkUserDir "$md_conf_dir/import/$folder"
     done
+    cp -rf "$md_inst/import" "$md_conf_dir"
 
-    # Create the LocalDB cache folder
+    # Create the LocalDB cache folder and add the sample files
     mkUserDir "$md_conf_dir/dbs"
+    cp -fr "$md_inst/dbs" "$md_conf_dir"
 }
 
 # Scrape one system, passed as parameter
@@ -236,7 +249,7 @@ function _scrape_skyscraper() {
 
     local gamelist
     local media_dir
-    local relative
+    local relative=""
 
     if [[ "$use_rom_folder" -eq 1 ]]; then
         gamelist="$romdir/$system"
@@ -251,7 +264,8 @@ function _scrape_skyscraper() {
     local -a params=("--unattend" "--skipped")
 
     params+=(-o "$media_dir")
-    params+=(-g "$gamelist" "$relative")
+    params+=(-g "$gamelist")
+    [[ -n "$relative" ]] && params+=("$relative")
     params+=(-p "$system")
     params+=(-s "$scrape_source")
 
@@ -333,7 +347,7 @@ function _scrape_chosen_skyscraper() {
     local choice
 
     for choice in "${choices[@]}"; do
-        choice=${options[choices*3-2]}
+        choice="${options[choice*3-2]}"
         _scrape_skyscraper "$choice" "$@"
     done
 }
