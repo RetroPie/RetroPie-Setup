@@ -13,7 +13,7 @@ rp_module_id="yabause"
 rp_module_desc="Sega Saturn Emulator"
 rp_module_help="ROM Extensions: .iso .bin .zip\n\nCopy your Sega Saturn roms to $romdir/saturn\n\nCopy the required BIOS file saturn_bios_us.bin and saturn_bios_jp.bin to $biosdir"
 rp_module_licence="https://github.com/devmiyax/yabause/blob/minimum_linux/yabause/COPYING"
-rp_module_section="exp"
+rp_module_section="opt"
 rp_module_flags="!armv6"
 
 function depends_yabause() {
@@ -46,9 +46,9 @@ function install_bin_yabause() {
 
 function configure_yabause() {
     mkRomDir "saturn"
-    addEmulator 0 "${md_id}-internal" "saturn" "$md_inst/yabasanshiro -a -i %ROM%"
-	  addEmulator 0 "${md_id}-highres" "saturn" "$md_inst/yabasanshiro -a -r 1 -b /home/pigaming/RetroPie/BIOS/saturn_bios.bin -i %ROM%"
-	  addEmulator 0 "${md_id}-midres" "saturn" "$md_inst/yabasanshiro -a -r 2 -b /home/pigaming/RetroPie/BIOS/saturn_bios.bin -i %ROM%"
-	  addEmulator 0 "${md_id}-lowres" "saturn" "$md_inst/yabasanshiro -a -r 3 -b /home/pigaming/RetroPie/BIOS/saturn_bios.bin -i %ROM%"
+    addEmulator 0 "${md_id}-internalres" "saturn" "$md_inst/yabasanshiro -a -i %ROM%"
+    addEmulator 0 "${md_id}-4x" "saturn" "$md_inst/yabasanshiro -a -r 1 -b /home/pigaming/RetroPie/BIOS/saturn_bios.bin -i %ROM%"
+    addEmulator 0 "${md_id}-2x" "saturn" "$md_inst/yabasanshiro -a -r 2 -b /home/pigaming/RetroPie/BIOS/saturn_bios.bin -i %ROM%"
+    addEmulator 0 "${md_id}-1x" "saturn" "$md_inst/yabasanshiro -a -r 3 -b /home/pigaming/RetroPie/BIOS/saturn_bios.bin -i %ROM%"
     addSystem "saturn"
 }
