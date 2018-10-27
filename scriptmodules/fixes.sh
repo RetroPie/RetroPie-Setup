@@ -17,3 +17,8 @@ if [[ ! -f /home/pigaming/scripts/update002 ]]; then
    wget -O /opt/retropie/configs/all/retroarch-core-options.cfg https://pastebin.com/raw/ATeS35pE
    touch /home/pigaming/scripts/update002
 fi
+
+if [[ ! -f /home/pigaming/scripts/update003 ]]; then
+   wget -O /opt/retropie/configs/saturn/emulators.cfg https://pastebin.com/raw/1s960yPS
+   touch /home/pigaming/scripts/update003
+fi
