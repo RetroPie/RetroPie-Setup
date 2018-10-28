@@ -18,6 +18,7 @@ function _get_ver_usbromservice() {
 }
 
 function _update_hook_usbromservice() {
+    [[ ! -f "$md_inst/installed" ]] && return
     [[ ! -f "$md_inst/disabled" ]] && install_scripts_usbromservice
 }
 
@@ -67,6 +68,7 @@ function disable_usbromservice() {
 
 function remove_usbromservice() {
     disable_usbromservice
+    rm -f "$md_inst/installed"
     apt-get remove -y usbmount
 }
 
