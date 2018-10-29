@@ -70,6 +70,6 @@ function configure_fs-uae() {
     copyDefaultConfig "$config" "$md_conf_root/amiga/fs-uae/Default.fs-uae"
     rm "$config"
 
-    addEmulator 1 "$md_id" "amiga" "bash $md_inst/bin/fs-uae.sh %ROM%"
+    addEmulator 1 "$md_id" "amiga" "CON:bash $md_inst/bin/fs-uae.sh %ROM%"
     addSystem "amiga"
 }
