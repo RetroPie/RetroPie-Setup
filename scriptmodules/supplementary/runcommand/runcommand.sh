@@ -1000,7 +1000,7 @@ function launch_command() {
     echo -e "Parameters: $@\nExecuting: $COMMAND" >>"$LOG"
     if [[ "$CONSOLE_OUT" -eq 1 ]]; then
         # turn cursor on
-        tput cnorm
+        #tput cnorm
         eval $COMMAND </dev/tty 2>>"$LOG"
         ret=$?
         tput civis
