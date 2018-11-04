@@ -26,7 +26,7 @@ function sources_lr-fbalpha() {
 
 function build_lr-fbalpha() {
     make -f makefile.libretro clean
-    make -f makefile.libretro
+    make -f makefile.libretro HAVE_NEON=1
     md_ret_require="$md_build/fbalpha_libretro.so"
 }
 
