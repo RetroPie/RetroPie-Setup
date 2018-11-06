@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
@@ -186,4 +185,3 @@ function configure_lr-fbalpha() {
     addSystem "megadrive"
     addSystem "sg-1000"
 }
->>>>>>> 2b7e724dbe8d2a24a34a7dcf10870d2dcf4dc669
