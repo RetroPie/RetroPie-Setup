@@ -22,3 +22,12 @@ if [[ ! -f /home/pigaming/scripts/update003 ]]; then
    wget -O /opt/retropie/configs/saturn/emulators.cfg https://pastebin.com/raw/1s960yPS
    touch /home/pigaming/scripts/update003
 fi
+
+if [[ ! -f /home/pigaming/scripts/update004 ]]; then
+   wget -O /etc/usbmount/usbmount.conf https://pastebin.com/raw/dNn591bL
+   dos2unix /etc/usbmount/usbmount.conf
+   wget -O /etc/usbmount/mount.d/10_retropie_mount https://pastebin.com/raw/M6ZG9iu8
+   dos2unix /etc/usbmount/mount.d/10_retropie_mount
+   rm /etc/usbmount/mount.d/01_retropie_copyroms
+   touch /home/pigaming/scripts/update004
+fi
