@@ -17,13 +17,13 @@ rp_module_section="opt"
 rp_module_flags=" !kms"
 
 function depends_atari800() {
-    local depends=(libsdl1.2-dev autoconf zlib1g-dev libpng12-dev)
+    local depends=(libsdl1.2-dev autoconf zlib1g-dev libpng-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
 function sources_atari800() {
-    downloadAndExtract "$__archive_url/atari800-3.1.0.tar.gz" "$md_build" 1
+    downloadAndExtract "$__archive_url/atari800-4.0.0.tar.gz" "$md_build" 1
     if isPlatform "rpi"; then
         applyPatch "$md_data/01_rpi_fixes.diff"
     fi

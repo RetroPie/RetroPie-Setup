@@ -19,7 +19,7 @@ rp_module_flags="dispmanx !mali !kms"
 function depends_residualvm() {
     local depends=(
         libsdl2-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev
-        libpng12-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev
+        libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev
         zlib1g-dev libjpeg-dev
     )
     isPlatform "x11" && depends+=(libglew-dev)

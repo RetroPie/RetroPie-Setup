@@ -24,7 +24,7 @@ function sources_lr-mess() {
 }
 
 function build_lr-mess() {
-    rpSwap on 1400
+    rpSwap on 2000
     local params=($(_get_params_lr-mame) SUBTARGET=mess)
     make clean
     make "${params[@]}"

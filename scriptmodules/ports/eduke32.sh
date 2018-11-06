@@ -17,7 +17,7 @@ rp_module_flags="!mali !x86 !armv6 !kms"
 
 function depends_eduke32() {
     local depends=(
-        subversion flac libflac-dev libvorbis-dev libpng12-dev libvpx-dev freepats
+        subversion flac libflac-dev libvorbis-dev libpng-dev libvpx-dev freepats
         libsdl2-dev libsdl2-mixer-dev
     )
 
@@ -27,7 +27,7 @@ function depends_eduke32() {
 }
 
 function sources_eduke32() {
-    svn checkout http://svn.eduke32.com/eduke32 "$md_build"
+    svn checkout -r7077 http://svn.eduke32.com/eduke32 "$md_build"
 }
 
 function build_eduke32() {

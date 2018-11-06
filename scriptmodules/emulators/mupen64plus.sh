@@ -17,7 +17,7 @@ rp_module_section="main"
 rp_module_flags="!kms"
 
 function depends_mupen64plus() {
-    local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng12-dev fonts-freefont-ttf)
+    local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng-dev fonts-freefont-ttf)
     isPlatform "rpi" && depends+=(libraspberrypi-bin libraspberrypi-dev)
     isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev libboost-filesystem-dev)
     isPlatform "x86" && depends+=(nasm)

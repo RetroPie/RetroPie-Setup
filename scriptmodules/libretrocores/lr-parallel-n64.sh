@@ -23,9 +23,11 @@ function depends_lr-parallel-n64() {
 }
 
 function sources_lr-parallel-n64() {
-    gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git
-    # needed until https://github.com/libretro/parallel-n64/pull/469 is accepted
-    isPlatform "rpi" && sed -i "s#-L/opt/vc/lib -lGLESv2#-L/opt/vc/lib -lbrcmGLESv2#" Makefile
+    local branch"master"
+    local commit=""
+    # build from ab155da1 due to https://github.com/libretro/parallel-n64/issues/544
+    isPlatform "arm" && commit="ab155da1"
+    gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git "$branch" "$commit"
 }
 
 function build_lr-parallel-n64() {
@@ -35,10 +37,9 @@ function build_lr-parallel-n64() {
     if isPlatform "rpi" || isPlatform "odroid-c1" || isPlatform "odroid-xu"; then
         params+=(platform="$__platform")
     elif isPlatform "tinker"; then
-        params+=(platform="kms")
-        params+=("CPUFLAGS=-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE")
-        params+=("GLES=1 HAVE_NEON=1 WITH_DYNAREC=arm")
-        params+=("GL_LIB:=-lGLESv2")
+        params+=(CPUFLAGS="-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE")
+        params+=(GLES=1 HAVE_NEON=1 WITH_DYNAREC=arm)
+        params+=(GL_LIB:=-lGLESv2)
     fi
     make "${params[@]}"
     rpSwap off

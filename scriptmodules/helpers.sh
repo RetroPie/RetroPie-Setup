@@ -213,9 +213,15 @@ function getDepends() {
             isPlatform "xbian" && required="xbian-package-firmware"
         fi
 
-        # map libpng12-dev to libpng-dev for Ubuntu 16.10+
+        # map libpng12-dev to libpng-dev for Stretch+
         if [[ "$required" == "libpng12-dev" ]] && compareVersions "$__os_debian_ver" ge 9;  then
             required="libpng-dev"
+            printMsgs "console" "RetroPie module references libpng12-dev and should be changed to libpng-dev"
+        fi
+
+        # map libpng-dev to libpng12-dev for Jessie
+        if [[ "$required" == "libpng-dev" ]] && compareVersions "$__os_debian_ver" lt 9; then
+            required="libpng12-dev"
         fi
 
         if [[ "$md_mode" == "install" ]]; then
@@ -346,6 +352,7 @@ function gitPullOrClone() {
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
+        runCmd git checkout "$branch"
         runCmd git pull
         runCmd git submodule update --init --recursive
         popd > /dev/null
@@ -355,12 +362,14 @@ function gitPullOrClone() {
             git+=" --depth 1"
         fi
         [[ "$branch" != "master" ]] && git+=" --branch $branch"
-        echo "$git \"$repo\" \"$dir\""
+        printMsgs "console" "$git \"$repo\" \"$dir\""
         runCmd $git "$repo" "$dir"
     fi
-    if [[ "$commit" ]]; then
-        echo "Winding back $repo->$branch to commit: #$commit"
-        runCmd git -C "$dir" checkout $commit
+
+    if [[ -n "$commit" ]]; then
+        printMsgs "console" "Winding back $repo->$branch to commit: #$commit"
+        git branch -D "$commit" &>/dev/null
+        runCmd git -C "$dir" checkout -f "$commit" -b "$commit"
     fi
 }
 
