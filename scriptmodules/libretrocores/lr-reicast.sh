@@ -19,7 +19,7 @@ function sources_lr-reicast() {
     gitPullOrClone "$md_build" https://github.com/libretro/reicast-emulator.git
     
     #temp lazyload fix
-    wget -O /home/pigaming/RetroPie-Setup/tmp/build/lr-reicast/core/libretro https://raw.githubusercontent.com/Retro-Arena/xu4-bins/master/lr-reicast/libretro.cpp
+    wget -O /home/pigaming/RetroPie-Setup/tmp/build/lr-reicast/core/libretro/libretro.cpp https://raw.githubusercontent.com/Retro-Arena/xu4-bins/master/lr-reicast/libretro.cpp
 }
 
 function build_lr-reicast() {
