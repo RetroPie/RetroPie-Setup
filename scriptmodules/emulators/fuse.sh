@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_fuse() {
-    getDepends libsdl1.2-dev libpng12-dev zlib1g-dev libbz2-dev libaudiofile-dev bison flex
+    getDepends libsdl1.2-dev libpng-dev zlib1g-dev libbz2-dev libaudiofile-dev bison flex
 }
 
 function sources_fuse() {

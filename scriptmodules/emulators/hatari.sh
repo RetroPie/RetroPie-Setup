@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_hatari() {
-    getDepends libsdl2-dev zlib1g-dev libpng12-dev cmake libreadline-dev portaudio19-dev
+    getDepends libsdl2-dev zlib1g-dev libpng-dev cmake libreadline-dev portaudio19-dev
 }
 
 function _sources_libcapsimage_hatari() {

@@ -18,6 +18,7 @@ function _get_ver_usbromservice() {
 }
 
 function _update_hook_usbromservice() {
+    ! rp_isInstalled "$md_idx" && return
     [[ ! -f "$md_inst/disabled" ]] && install_scripts_usbromservice
 }
 

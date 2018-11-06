@@ -76,6 +76,11 @@ function get_os_version() {
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
+            # Debian unstable is not officially supported though
+            if [[ "$__os_release" == "unstable" ]]; then
+                __os_release=10
+            fi
+
             if compareVersions "$__os_release" lt 8; then
                 error="You need Raspbian/Debian Jessie or newer"
             fi
@@ -99,10 +104,22 @@ function get_os_version() {
             __os_debian_ver="${__os_release%%.*}"
             ;;
         Devuan)
+            if isPlatform "rpi"; then
+                error="We do not support Devuan on the Raspberry Pi. We recommend you use Raspbian to run RetroPie."
+            fi
             # devuan lsb-release version numbers don't match jessie
             case "$__os_codename" in
                 jessie)
                     __os_debian_ver="8"
+                    ;;
+                ascii)
+                    __os_debian_ver="9"
+                    ;;
+                beowolf)
+                    __os_debian_ver="10"
+                    ;;
+                ceres)
+                    __os_debian_ver="11"
                     ;;
             esac
             ;;
@@ -149,7 +166,12 @@ function get_os_version() {
             __os_debian_ver="8"
             ;;
         neon)
-             __os_ubuntu_ver="$__os_release"
+            __os_ubuntu_ver="$__os_release"
+            if compareVersions "$__os_release" lt 16.10; then
+                __os_debian_ver="8"
+            else
+                __os_debian_ver="9"
+            fi
             ;;
         *)
             error="Unsupported OS"

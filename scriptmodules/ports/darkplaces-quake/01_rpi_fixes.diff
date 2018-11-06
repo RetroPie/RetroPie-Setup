@@ -1,10 +1,10 @@
 diff --git a/gl_textures.c b/gl_textures.c
-index c970f8c..8ca9c10 100644
+index 9e76ac99..ba491dcc 100644
 --- a/gl_textures.c
 +++ b/gl_textures.c
-@@ -5,6 +5,10 @@
- #include "image_png.h"
- #include "intoverflow.h"
+@@ -14,6 +14,10 @@ extern LPDIRECT3DDEVICE9 vid_d3d9dev;
+ #define GL_TEXTURE_3D				0x806F
+ #endif
  
 +#define GL_RGBA32F				0x8814
 +#define GL_RGBA16F				0x881A
@@ -14,10 +14,10 @@ index c970f8c..8ca9c10 100644
  cvar_t gl_max_lightmapsize = {CVAR_SAVE, "gl_max_lightmapsize", "1024", "maximum allowed texture size for lightmap textures, use larger values to improve rendering speed, as long as there is enough video memory available (setting it too high for the hardware will cause very bad performance)"};
  cvar_t gl_picmip = {CVAR_SAVE, "gl_picmip", "0", "reduces resolution of textures by powers of 2, for example 1 will halve width/height, reducing texture memory usage by 75%"};
 diff --git a/makefile b/makefile
-index d7f3e6d..1dd84a2 100644
+index 59504d11..73b30324 100644
 --- a/makefile
 +++ b/makefile
-@@ -108,6 +108,37 @@ ifeq ($(DP_MAKE_TARGET), linux)
+@@ -128,6 +128,37 @@ ifeq ($(DP_MAKE_TARGET), linux)
  	DP_LINK_CRYPTO_RIJNDAEL?=dlopen
  endif
  
@@ -54,15 +54,15 @@ index d7f3e6d..1dd84a2 100644
 +
  # Mac OS X configuration
  ifeq ($(DP_MAKE_TARGET), macosx)
- 	OBJ_ICON=
+ 	DEFAULT_SNDAPI=COREAUDIO
 diff --git a/makefile.inc b/makefile.inc
-index 326e3a4..bc80179 100644
+index 9c66ed1d..03fb7c59 100644
 --- a/makefile.inc
 +++ b/makefile.inc
-@@ -372,8 +372,8 @@ bin-debug :
+@@ -434,8 +434,8 @@ bin-debug :
  	$(MAKE) prepare BUILD_DIR=build-obj/debug/$(EXE)
  	$(MAKE) -C build-obj/debug/$(EXE) $(EXE) \
- 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) \
+ 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) DP_SOUND_API=$(DP_SOUND_API) \
 -		CFLAGS='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_DEBUG) $(OPTIM_DEBUG)'\
 -		LDFLAGS='$(LDFLAGS_DEBUG) $(LDFLAGS_COMMON)' LEVEL=2
 +		CFLAGS+='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_DEBUG) $(OPTIM_DEBUG)'\
@@ -70,10 +70,10 @@ index 326e3a4..bc80179 100644
  
  bin-profile :
  	$(CHECKLEVEL1)
-@@ -382,8 +382,8 @@ bin-profile :
+@@ -444,8 +444,8 @@ bin-profile :
  	$(MAKE) prepare BUILD_DIR=build-obj/profile/$(EXE)
  	$(MAKE) -C build-obj/profile/$(EXE) $(EXE) \
- 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) \
+ 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) DP_SOUND_API=$(DP_SOUND_API) \
 -		CFLAGS='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_PROFILE) $(OPTIM_RELEASE)'\
 -		LDFLAGS='$(LDFLAGS_PROFILE) $(LDFLAGS_COMMON)' LEVEL=2
 +		CFLAGS+='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_PROFILE) $(OPTIM_RELEASE)'\
@@ -81,10 +81,10 @@ index 326e3a4..bc80179 100644
  
  bin-release :
  	$(CHECKLEVEL1)
-@@ -392,8 +392,8 @@ bin-release :
+@@ -454,8 +454,8 @@ bin-release :
  	$(MAKE) prepare BUILD_DIR=build-obj/release/$(EXE)
  	$(MAKE) -C build-obj/release/$(EXE) $(EXE) \
- 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) \
+ 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) DP_SOUND_API=$(DP_SOUND_API) \
 -		CFLAGS='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_RELEASE) $(OPTIM_RELEASE)'\
 -		LDFLAGS='$(LDFLAGS_RELEASE) $(LDFLAGS_COMMON)' LEVEL=2
 +		CFLAGS+='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_RELEASE) $(OPTIM_RELEASE)'\
@@ -92,10 +92,10 @@ index 326e3a4..bc80179 100644
  	$(STRIP) $(EXE)
  
  bin-release-profile :
-@@ -403,8 +403,8 @@ bin-release-profile :
+@@ -465,8 +465,8 @@ bin-release-profile :
  	$(MAKE) prepare BUILD_DIR=build-obj/release-profile/$(EXE)
  	$(MAKE) -C build-obj/release-profile/$(EXE) $(EXE) \
- 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) \
+ 		DP_MAKE_TARGET=$(DP_MAKE_TARGET) DP_SOUND_API=$(DP_SOUND_API) \
 -		CFLAGS='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_RELEASE_PROFILE) $(OPTIM_RELEASE)'\
 -		LDFLAGS='$(LDFLAGS_RELEASE) $(LDFLAGS_COMMON)' LEVEL=2
 +		CFLAGS+='$(CFLAGS_COMMON) $(CFLAGS_FEATURES) $(CFLAGS_EXTRA) $(CFLAGS_RELEASE_PROFILE) $(OPTIM_RELEASE)'\
