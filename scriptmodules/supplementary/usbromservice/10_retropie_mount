@@ -13,9 +13,9 @@
 user="USERTOBECHOSEN"
 
 home="$(eval echo ~$user)"
-retropie_path="$home/RetroPie"
+retropie_path="$home/RetroPie/roms"
 
-usb_path="$UM_MOUNTPOINT/retropie-mount"
+usb_path="$UM_MOUNTPOINT/retropie-mount/roms"
 
 ## internals
 hook_name=${0##*/}
