@@ -497,7 +497,7 @@ function gui_setup() {
     while true; do
         local commit=$(git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
 
-        cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Retro-Arena: v1.5.2\nScript Base: v$__version\nLast Commit: $commit" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Retro-Arena: v1.6\nSetup-Scrpt: v$__version\nLast Commit: $commit" 22 76 16)
         options=(
             #I "Basic install" "I This will install all packages from Core and Main which gives a basic RetroPie install. Further packages can then be installed later from the Optional and Experimental sections. If binaries are available they will be used, alternatively packages will be built from source - which will take longer."
 
