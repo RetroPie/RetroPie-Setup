@@ -41,20 +41,6 @@ function install_bin_lr-reicast() {
 function configure_lr-reicast() {    
     # bios
     mkUserDir "$biosdir/dc"
-          
-    # add naomi to showcase theme
-    if [[ ! -f /etc/emulationstation/themes/showcase/naomi/theme.xml ]]; then
-        cp -R /etc/emulationstation/themes/showcase/arcade/. /etc/emulationstation/themes/showcase/naomi/
-        wget -O /etc/emulationstation/themes/showcase/naomi/_inc/system.png https://image.ibb.co/kDMSAK/showcase_naomi_system.png
-        wget -O /etc/emulationstation/themes/showcase/naomi/_inc/background.png https://image.ibb.co/gLBije/showcase_naomi_background.png
-    fi
-    
-    # add atomiswave to showcase theme
-    if [[ ! -f /etc/emulationstation/themes/showcase/atomiswave/theme.xml ]]; then
-        cp -R /etc/emulationstation/themes/showcase/arcade/. /etc/emulationstation/themes/showcase/atomiswave/
-        wget -O /etc/emulationstation/themes/showcase/atomiswave/_inc/system.png https://image.ibb.co/f5fCKe/system.png
-        wget -O /etc/emulationstation/themes/showcase/atomiswave/_inc/background.png https://image.ibb.co/kgftsz/background.png
-    fi
     
     local system
     for system in dreamcast naomi atomiswave; do
@@ -67,9 +53,57 @@ function configure_lr-reicast() {
     done
 
     # set core options
+    setRetroArchCoreOption "${dir_name}reicast_allow_service_buttons" "enabled"
+    setRetroArchCoreOption "${dir_name}reicast_alpha_sorting" "per-triangle (normal)"
+    setRetroArchCoreOption "${dir_name}reicast_analog_stick_deadzone" "15%"
     setRetroArchCoreOption "${dir_name}reicast_audio_buffer_size" "2048"
-    setRetroArchCoreOption "${dir_name}reicast_broadcast" "default"
+    setRetroArchCoreOption "${dir_name}reicast_boot_to_bios" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_broadcast" "Default"
+    setRetroArchCoreOption "${dir_name}reicast_cable_type" "TV (RGB)"
+    setRetroArchCoreOption "${dir_name}reicast_cpu_mode" "dynamic_recompiler"
+    setRetroArchCoreOption "${dir_name}reicast_digital_triggers" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_div_matching" "auto"
     setRetroArchCoreOption "${dir_name}reicast_enable_dsp" "disabled"
-    setRetroArchCoreOption "${dir_name}reicast_enable_rtt" "disabled"    
+    setRetroArchCoreOption "${dir_name}reicast_enable_purupuru" "enabled"
+    setRetroArchCoreOption "${dir_name}reicast_enable_rtt" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_enable_rttb" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_extra_depth_scale" "auto"
+    setRetroArchCoreOption "${dir_name}reicast_framerate" "fullspeed"
+    setRetroArchCoreOption "${dir_name}reicast_gdrom_fast_loading" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_internal_resolution" "640x480"
+    setRetroArchCoreOption "${dir_name}reicast_mipmapping" "enabled"
+    setRetroArchCoreOption "${dir_name}reicast_region" "Default"
+    setRetroArchCoreOption "${dir_name}reicast_render_to_texture_upscaling" "1x"
+    setRetroArchCoreOption "${dir_name}reicast_screen_rotation" "horizontal"
+    setRetroArchCoreOption "${dir_name}reicast_system" "auto"
+    setRetroArchCoreOption "${dir_name}reicast_texupscale" "off"
+    setRetroArchCoreOption "${dir_name}reicast_texupscale_max_filtered_texture_size" "1024"
     setRetroArchCoreOption "${dir_name}reicast_threaded_rendering" "enabled"
+    setRetroArchCoreOption "${dir_name}reicast_trigger_deadzone" "0%"
+    setRetroArchCoreOption "${dir_name}reicast_vmu1_pixel_off_color" "DEFAULT_OFF 01"
+    setRetroArchCoreOption "${dir_name}reicast_vmu1_pixel_on_color" "DEFAULT_ON 00"
+    setRetroArchCoreOption "${dir_name}reicast_vmu1_screen_display" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_vmu1_screen_opacity" "100%"
+    setRetroArchCoreOption "${dir_name}reicast_vmu1_screen_position" "Upper Left"
+    setRetroArchCoreOption "${dir_name}reicast_vmu1_screen_size_mult" "1x"
+    setRetroArchCoreOption "${dir_name}reicast_vmu2_pixel_off_color" "DEFAULT_OFF 01"
+    setRetroArchCoreOption "${dir_name}reicast_vmu2_pixel_on_color" "DEFAULT_ON 00"
+    setRetroArchCoreOption "${dir_name}reicast_vmu2_screen_display" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_vmu2_screen_opacity" "100%"
+    setRetroArchCoreOption "${dir_name}reicast_vmu2_screen_position" "Upper Left"
+    setRetroArchCoreOption "${dir_name}reicast_vmu2_screen_size_mult" "1x"
+    setRetroArchCoreOption "${dir_name}reicast_vmu3_pixel_off_color" "DEFAULT_OFF 01"
+    setRetroArchCoreOption "${dir_name}reicast_vmu3_pixel_on_color" "DEFAULT_ON 00"
+    setRetroArchCoreOption "${dir_name}reicast_vmu3_screen_display" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_vmu3_screen_opacity" "100%"
+    setRetroArchCoreOption "${dir_name}reicast_vmu3_screen_position" "Upper Left"
+    setRetroArchCoreOption "${dir_name}reicast_vmu3_screen_size_mult" "1x"
+    setRetroArchCoreOption "${dir_name}reicast_vmu4_pixel_off_color" "DEFAULT_OFF 01"
+    setRetroArchCoreOption "${dir_name}reicast_vmu4_pixel_on_color" "DEFAULT_ON 00"
+    setRetroArchCoreOption "${dir_name}reicast_vmu4_screen_display" "disabled"
+    setRetroArchCoreOption "${dir_name}reicast_vmu4_screen_opacity" "100%"
+    setRetroArchCoreOption "${dir_name}reicast_vmu4_screen_position" "Upper Left"
+    setRetroArchCoreOption "${dir_name}reicast_vmu4_screen_size_mult" "1x"
+    setRetroArchCoreOption "${dir_name}reicast_volume_modifier_enable" "enabled"
+    setRetroArchCoreOption "${dir_name}reicast_widescreen_hack" "disabled"
 }
