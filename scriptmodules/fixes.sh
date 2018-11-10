@@ -31,3 +31,19 @@ if [[ ! -f /home/pigaming/scripts/update004 ]]; then
    rm /etc/usbmount/mount.d/01_retropie_copyroms
    touch /home/pigaming/scripts/update004
 fi
+
+if [[ ! -f /home/pigaming/scripts/update004 ]]; then
+    # add naomi to showcase theme
+    if [[ ! -f /etc/emulationstation/themes/showcase/naomi/theme.xml ]]; then
+        cp -R /etc/emulationstation/themes/showcase/arcade/. /etc/emulationstation/themes/showcase/naomi/
+        wget -O /etc/emulationstation/themes/showcase/naomi/_inc/system.png https://image.ibb.co/kDMSAK/showcase_naomi_system.png
+        wget -O /etc/emulationstation/themes/showcase/naomi/_inc/background.png https://image.ibb.co/gLBije/showcase_naomi_background.png
+    fi
+    # add atomiswave to showcase theme
+    if [[ ! -f /etc/emulationstation/themes/showcase/atomiswave/theme.xml ]]; then
+        cp -R /etc/emulationstation/themes/showcase/arcade/. /etc/emulationstation/themes/showcase/atomiswave/
+        wget -O /etc/emulationstation/themes/showcase/atomiswave/_inc/system.png https://image.ibb.co/f5fCKe/system.png
+        wget -O /etc/emulationstation/themes/showcase/atomiswave/_inc/background.png https://image.ibb.co/kgftsz/background.png
+    fi
+    touch /home/pigaming/scripts/update005
+fi
