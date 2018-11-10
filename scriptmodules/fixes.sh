@@ -32,7 +32,7 @@ if [[ ! -f /home/pigaming/scripts/update004 ]]; then
    touch /home/pigaming/scripts/update004
 fi
 
-if [[ ! -f /home/pigaming/scripts/update004 ]]; then
+if [[ ! -f /home/pigaming/scripts/update005 ]]; then
     # add naomi to showcase theme
     if [[ ! -f /etc/emulationstation/themes/showcase/naomi/theme.xml ]]; then
         cp -R /etc/emulationstation/themes/showcase/arcade/. /etc/emulationstation/themes/showcase/naomi/
