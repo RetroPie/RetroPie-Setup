@@ -72,7 +72,7 @@ function configure_lr-reicast() {
     setRetroArchCoreOption "${dir_name}reicast_gdrom_fast_loading" "disabled"
     setRetroArchCoreOption "${dir_name}reicast_internal_resolution" "640x480"
     setRetroArchCoreOption "${dir_name}reicast_mipmapping" "enabled"
-    setRetroArchCoreOption "${dir_name}reicast_region" "Default"
+    setRetroArchCoreOption "${dir_name}reicast_region" "USA"
     setRetroArchCoreOption "${dir_name}reicast_render_to_texture_upscaling" "1x"
     setRetroArchCoreOption "${dir_name}reicast_screen_rotation" "horizontal"
     setRetroArchCoreOption "${dir_name}reicast_system" "auto"
