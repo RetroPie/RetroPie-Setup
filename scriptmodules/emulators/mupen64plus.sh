@@ -64,10 +64,14 @@ function sources_mupen64plus() {
         dir="$md_build/mupen64plus-${repo[1]}"
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]} ${repo[3]}
     done
-    gitPullOrClone "$md_build/GLideN64" https://github.com/Retro-Arena/GLideN64.git
+    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
 
     # workaround for shader cache crash issue on Raspbian stretch. See: https://github.com/gonetz/GLideN64/issues/1665
     applyPatch "$md_data/0001-GLideN64-use-emplace.patch"
+    
+    # fixes
+    sed -i -e 's:project( GLideNHQ ):project( GLideNHQ )\nset(BCMHOST ON):g' "$md_build/GLideN64/src/GLideNHQ/CMakeLists.txt"
+    sed -i -e 's:#include "Ext_TxFilter.h":#define GL_RGBA8 GL_RGBA8_OES\n#include "Ext_TxFilter.h":g' "$md_build/GLideN64/src/GLideNHQ/TxInternal.h"
 
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
