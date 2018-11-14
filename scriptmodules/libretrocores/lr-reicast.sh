@@ -16,10 +16,7 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/reicast-emula
 rp_module_section="opt"
 
 function sources_lr-reicast() {
-    gitPullOrClone "$md_build" https://github.com/libretro/reicast-emulator.git
-    
-    #temp lazyload fix
-    wget -O /home/pigaming/RetroPie-Setup/tmp/build/lr-reicast/core/libretro/libretro.cpp https://raw.githubusercontent.com/Retro-Arena/xu4-bins/master/lr-reicast/libretro.cpp
+    gitPullOrClone "$md_build" https://github.com/libretro/reicast-emulator.git   
 }
 
 function build_lr-reicast() {
