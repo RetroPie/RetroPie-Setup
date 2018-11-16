@@ -23,6 +23,7 @@ function sources_lr-kronos() {
 function build_lr-kronos() {
     cd libretro
     make clean
+    make
     md_ret_require="$md_build/libretro/kronos_libretro.so"
 }
 
