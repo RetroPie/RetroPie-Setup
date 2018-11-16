@@ -262,6 +262,9 @@ function get_platform() {
             Vero4K)
                 __platform="vero4k"
                 ;;
+            "Allwinner sun8i Family")
+                __platform="armv7-mali"
+                ;;
             *)
                 case $architecture in
                     i686|x86_64|amd64)
