@@ -26,7 +26,7 @@ function sources_lr-fbalpha() {
 
 function build_lr-fbalpha() {
     local params=()
-    isPlatform "armv6" && params+=(USE_CYCLONE=1)
+    isPlatform "arm" && params+=(USE_CYCLONE=1)
     isPlatform "neon" && params+=(HAVE_NEON=1)
     make -f makefile.libretro clean
     make -f makefile.libretro "${params[@]}"
