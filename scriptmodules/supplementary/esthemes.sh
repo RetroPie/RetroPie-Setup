@@ -164,6 +164,7 @@ function gui_esthemes() {
         'RetroHursty69 cyber'
         'RetroHursty69 supersweet'
         'RetroHursty69 donkeykonkey'
+        'RetroHursty69 snapback'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
