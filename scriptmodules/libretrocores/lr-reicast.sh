@@ -16,12 +16,12 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/reicast-emula
 rp_module_section="opt"
 
 function sources_lr-reicast() {
-    gitPullOrClone "$md_build" https://github.com/libretro/reicast-emulator.git   
+    gitPullOrClone "$md_build" https://github.com/libretro/reicast-emulator.git
 }
 
 function build_lr-reicast() {
     make clean
-    platform=odroid BOARD="ODROID-XU3" ARCH=arm make
+    make platform=odroid BOARD="ODROID-XU3" ARCH=arm
     md_ret_require="$md_build/reicast_libretro.so"
 }
 
@@ -40,7 +40,7 @@ function configure_lr-reicast() {
     mkUserDir "$biosdir/dc"
     
     local system
-    for system in dreamcast naomi atomiswave; do
+    for system in atomiswave dreamcast naomi; do
         mkRomDir "$system"
         ensureSystemretroconfig "$system"
         iniConfig " = " "" "$configdir/$system/retroarch.cfg"
@@ -48,6 +48,11 @@ function configure_lr-reicast() {
         addEmulator 1 "$md_id" "$system" "$md_inst/reicast_libretro.so"
         addSystem "$system"
     done
+    
+    # test
+    #sed -i -e 's:/opt/retropie/emulators/retroarch/bin/retroarch:/opt/retropie/emulators/retroarch/bin/retroarch < /dev/null :g' "$configdir/atomiswave/emulators.cfg"
+    #sed -i -e 's:/opt/retropie/emulators/retroarch/bin/retroarch:/opt/retropie/emulators/retroarch/bin/retroarch < /dev/null :g' "$configdir/dreamcast/emulators.cfg"
+    #sed -i -e 's:/opt/retropie/emulators/retroarch/bin/retroarch:/opt/retropie/emulators/retroarch/bin/retroarch < /dev/null :g' "$configdir/naomi/emulators.cfg"
 
     # set core options
     setRetroArchCoreOption "${dir_name}reicast_allow_service_buttons" "enabled"
