@@ -149,6 +149,8 @@ function get_params() {
             ROM="$4"
             ROM_BN_EXT="${ROM##*/}"
             ROM_BN="${ROM_BN_EXT%.*}"
+            ROM_EXT="${ROM_BN_EXT##*.}"
+            [[ "$ROM_BN" == "$ROM_EXT" ]] && ROM_EXT=""  # no extension case
             if [[ "$COMMAND" == "_PORT_" ]]; then
                 CONF_ROOT="$CONFIGDIR/ports/$SYSTEM"
                 EMU_SYS_CONF="$CONF_ROOT/emulators.cfg"
@@ -876,8 +878,21 @@ function get_sys_command() {
 
     COMMAND="$(default_emulator get emu_cmd)"
 
+    # if rom is a directory and has an extension in the name, collect
+    # files inside the rom directory with that same extension
+    local -a romdir_files
+    if [[ -d "$ROM" && -n "$ROM_EXT" ]]; then
+        mapfile -t romdir_files < <(compgen -G "$ROM/*.$ROM_EXT")
+    fi
+
     # replace tokens
-    COMMAND="${COMMAND//\%ROM\%/\"$ROM\"}"
+    if [[ "${#romdir_files[@]}" -eq 1 ]]; then
+        # if there is exactly one file inside the rom directory with
+        # the same extension as the rom directory, use it for %ROM%
+        COMMAND="${COMMAND//\%ROM\%/\"${romdir_files[0]}\"}"
+    else
+        COMMAND="${COMMAND//\%ROM\%/\"$ROM\"}"
+    fi
     COMMAND="${COMMAND//\%BASENAME\%/\"$ROM_BN\"}"
 
     # special case to get the last 2 folders for quake games for the -game parameter
