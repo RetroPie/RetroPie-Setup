@@ -49,10 +49,10 @@ function configure_lr-reicast() {
         addSystem "$system"
     done
     
-    # test
-    #sed -i -e 's:/opt/retropie/emulators/retroarch/bin/retroarch:/opt/retropie/emulators/retroarch/bin/retroarch < /dev/null :g' "$configdir/atomiswave/emulators.cfg"
-    #sed -i -e 's:/opt/retropie/emulators/retroarch/bin/retroarch:/opt/retropie/emulators/retroarch/bin/retroarch < /dev/null :g' "$configdir/dreamcast/emulators.cfg"
-    #sed -i -e 's:/opt/retropie/emulators/retroarch/bin/retroarch:/opt/retropie/emulators/retroarch/bin/retroarch < /dev/null :g' "$configdir/naomi/emulators.cfg"
+    # temp fix
+    sed -i -e 's:/opt/retropie/emulators/retroarch/bin/retroarch:/opt/retropie/emulators/retroarch/bin/retroarch < /dev/null :g' "$configdir/atomiswave/emulators.cfg"
+    sed -i -e 's:/opt/retropie/emulators/retroarch/bin/retroarch:/opt/retropie/emulators/retroarch/bin/retroarch < /dev/null :g' "$configdir/dreamcast/emulators.cfg"
+    sed -i -e 's:/opt/retropie/emulators/retroarch/bin/retroarch:/opt/retropie/emulators/retroarch/bin/retroarch < /dev/null :g' "$configdir/naomi/emulators.cfg"
 
     # set core options
     setRetroArchCoreOption "${dir_name}reicast_allow_service_buttons" "enabled"
