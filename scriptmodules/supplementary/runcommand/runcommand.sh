@@ -1010,18 +1010,30 @@ function launch_command() {
     return $ret
 }
 
-function naomi_bios() {
+function lr-reicast_bios() {
+    DC="$HOME/RetroPie/BIOS/dc/"
     if [[ "$SYSTEM" =~ ^("naomi"|"atomiswave")$ ]]; then
-        if [[ "$ROM_BN" =~ ^("ausfache"|"azumanga"|"bdrdown"|"chocomk"|"cvsgd"|"derbyoc"|"derbyoc2"|"dybb99"|"dybbnao"|"ggram2"|"ggxxac"|"ggxxrl"|"ggxxrlo"|"ggxxsla"|"ikaruga"|"inunoos"|"jingystm"|"kurucham"|"lupinsho"|"luptype"|"mamonoro"|"marstv"|"mbaa"|"mbaao"|"meltyb"|"meltybld"|"meltyblo"|"meltybo"|"moeru"|"psyvar2"|"qmegamis"|"quizqgd"|"radirgy"|"radirgyn"|"radirgyo"|"rhytngk"|"senko"|"senkoo"|"shangril"|"shikgam2"|"sl2007"|"ss2005"|"ss2005o"|"starseek"|"suchie3"|"takoron"|"tduno"|"tetkiwam"|"trgheart"|"trghearto"|"trizeal"|"undefeat"|"usagiym"|"zunou"|"Capcom vs. SNK - Millennium Fight 2000 Pro"|"Chaos Field"|"Guilty Gear XX #Reload (Rev A)"|"Guilty Gear XX Slash (Rev A)"|"Jingi Storm - The Arcade"|"Kurukuru Chameleon"|"Mamonoro"|"Melty Blood Act Cadenza"|"Melty Blood Act Cadenza (Ver B)"|"Melty Blood Act Cadenza (Ver B2)"|"Moeru Casinyo"|"Psyvariar 2 - The Will To Fabricate"|"Senko No Ronde"|"Senko No Ronde (Rev A)"|"Senko No Ronde Special"|"Shooting Love 2007"|"Street Fighter Zero 3 Upper"|"Trigger Heart Exelica (Rev A)"|"Trizeal")$ ]]; then
-            rm /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin &> /dev/null
-            cp -f /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin &> /dev/null
-        elif [[ "$ROM_BN" = *'(Japan)'* ]]; then
-            rm /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin &> /dev/null
-            cp -f /home/pigaming/RetroPie/BIOS/dc/naomi_boot_jp.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin &> /dev/null
-        else
-            rm /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin &> /dev/null
-            cp -f /home/pigaming/RetroPie/BIOS/dc/naomi_boot_us.bin /home/pigaming/RetroPie/BIOS/dc/naomi_boot.bin &> /dev/null
-        fi
+        for filename in airlbios awbios f355bios f355dlx hod2bios naomi; do
+            if [[ ! -f "$DC/$filename.zip" ]]; then
+                dialog --no-cancel --pause "REQUIRED BIOS FILES\n\nPlease copy airlbios.zip, awbios.zip, f355bios.zip, f355dlx.zip, hod2bios.zip, and naomi.zip from the Mame BIOS pack to:\n\n$DC\n\nIn addition, an update to lr-reicast from binary is required.\n\nCheck http://bit.do/lr-reicast for more information." 22 76 15
+                clear
+                exit 1
+            fi
+        done
+        for filename in naomi_boot naomi_boot_jp naomi_boot_us; do
+            if [[ -f "$DC/$filename.bin" ]]; then
+                rm "$DC/$filename.bin" &> /dev/null
+            fi
+        done
+    fi
+    if [[ "$SYSTEM" == "dreamcast" ]]; then
+        for filename in dc_boot dc_flash; do
+            if [[ ! -f "$DC/$filename.bin" ]]; then
+                dialog --no-cancel --pause "REQUIRED BIOS FILES\n\nPlease copy dc_boot.bin and dc_flash.bin to:\n\n$DC\n\nCheck http://bit.do/lr-reicast for more information." 22 76 15
+                clear
+                exit 1
+            fi
+        done
     fi
 }
 
@@ -1128,7 +1140,7 @@ function runcommand() {
     echo -e "$SYSTEM\n$EMULATOR\n$ROM\n$COMMAND" >/dev/shm/runcommand.info
     user_script "runcommand-onstart.sh"
     
-    naomi_bios
+    lr-reicast_bios
     ogst_off
     ogst_emu &
 
