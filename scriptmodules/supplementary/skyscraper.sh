@@ -167,25 +167,6 @@ function configure_skyscraper() {
 function _init_config_skyscraper() {
     local md_conf_dir="$configdir/all/skyscraper"
 
-    cat > "$md_conf_dir/config.ini.rp" << _EOF_
-[main]
-frontend="emulationstation"
-dbFolder="$md_conf_dir/dbs"
-importFolder="$md_conf_dir/import"
-inputFolder="$romdir"
-unattend="true"
-unattendSkip="true"
-noHints="false"
-threads="2"
-lang="en"
-region="wor"
-videos="false"
-marquees="true"
-wheels="true"
-covers="true"
-screenshots="true"
-_EOF_
-
     # Make sure the `artwork.xml` and other conf file(s) are present, but don't overwrite them on upgrades.
     # For now we just have one file, but more might come up in the future.
     local f_conf
@@ -197,8 +178,8 @@ _EOF_
         fi
     done
 
-    # If we don't have a previous config.ini file, copy the dist one
-    [[ ! -f "$md_conf_dir/config.ini" ]] && cp "$md_conf_dir/config.ini.rp" "$md_conf_dir/config.ini"
+    # If we don't have a previous config.ini file, copy the example one
+    [[ ! -f "$md_conf_dir/config.ini" ]] && cp "$md_inst/config.ini.example" "$md_conf_dir/config.ini"
 
     # Try to find the rest of the necesary files from the qmake build file
     # They should be listed in the `unix:examples.file` configuration line
@@ -247,63 +228,41 @@ function _scrape_skyscraper() {
     iniConfig " = " '"' "$configdir/all/skyscraper.cfg"
     eval $(_load_config_skyscraper)
 
-    local gamelist
-    local media_dir
-    local relative=""
-
-    if [[ "$use_rom_folder" -eq 1 ]]; then
-        gamelist="$romdir/$system"
-        media_dir="$romdir/$system/media"
-        # If we're saving to the ROM folder, then use relative paths in the gamelist
-        relative="--relative"
-    else
-        gamelist="$home/.emulationstation/gamelists/$system"
-        media_dir="$home/.emulationstation/downloaded_media/$system"
-    fi
-
     local -a params=("--unattend" "--skipped")
 
-    params+=(-o "$media_dir")
-    params+=(-g "$gamelist")
-    [[ -n "$relative" ]] && params+=("$relative")
+    if [[ "$use_rom_folder" -eq 1 ]]; then
+        params+=(-g "$romdir/$system")
+        params+=(-o "$romdir/$system/media")
+        # If we're saving to the ROM folder, then use relative paths in the gamelist
+        params+=(--relative)
+    else
+        params+=(-g "$home/.emulationstation/gamelists/$system")
+        params+=(-o "$home/.emulationstation/downloaded_media/$system")
+    fi
+
+
     params+=(-p "$system")
     params+=(-s "$scrape_source")
 
-    if [[ "$download_videos" -eq 1 ]]; then
-        params+=(--videos)
-    fi
+    [[ "$download_videos" -eq 1 ]] && params+=(--videos)
 
-    if [[ "$cache_marquees" -eq 0 ]]; then
-        params+=(--nomarquees)
-    fi
+    [[ "$cache_marquees" -eq 0 ]] && params+=(--nomarquees)
 
-    if [[ "$cache_covers" -eq 0 ]]; then
-        params+=(--nocovers)
-    fi
+    [[ "$cache_covers" -eq 0 ]] && params+=(--nocovers)
 
-    if [[ "$cache_screenshots" -eq 0 ]]; then
-        params+=(--noscreenshots)
-    fi
+    [[ "$cache_screenshots" -eq 0 ]] && params+=(--noscreenshots)
 
-    if [[ "$cache_wheels" -eq 0 ]]; then
-        params+=(--nowheels)
-    fi
+    [[ "$cache_wheels" -eq 0 ]] && params+=(--nowheels)
 
-    if [[ "$rom_name" -eq 1 ]]; then
-        params+=(--forcefilename)
-    fi
+    [[ "$rom_name" -eq 1 ]] && params+=(--forcefilename)
 
-    if [[ "$remove_brackets" -eq 1 ]]; then
-        params+=(--nobrackets)
-    fi
+    [[ "$remove_brackets" -eq 1 ]] && params+=(--nobrackets)
 
-    if [[ "$force_refresh" -eq 1 ]]; then
-        params+=(--refresh)
-    fi
+    [[ "$force_refresh" -eq 1 ]] && params+=(--refresh)
 
     # trap ctrl+c and return if pressed (rather than exiting retropie-setup etc)
     trap 'trap 2; return 1' INT
-        sudo -u "$user" "$md_inst/Skyscraper" "${params[@]}"
+        sudo -u "$user" stdbuf -o0  "$md_inst/Skyscraper" "${params[@]}"
         echo -e "\nCOMMAND LINE USED:\n $md_inst/Skyscraper" "${params[@]}"
         sleep 2
     trap 2
@@ -372,10 +331,10 @@ function _open_editor_skyscraper() {
     local editor
 
     if [[ -n $(command -v sensible-editor) ]]; then
-        sensible-editor "$1"
+        sudo -u "$user" sensible-editor "$1" > /dev/tty < /dev/tty
     else
         editor="${EDITOR:-nano}"
-        $editor "$1"
+        sudo -u "$user" $editor "$1" > /dev/tty < /dev/tty
     fi
 }
 
