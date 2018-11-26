@@ -28,7 +28,7 @@ function depends_fs-uae() {
             ;;
         Debian)
             if [[ "$md_mode" == "install" ]]; then
-                echo "deb http://download.opensuse.org/repositories/home:/FrodeSolheim:/stable/Debian_8.0/ /" > /etc/apt/sources.list.d/fsuae-stable.list
+                echo "deb http://download.opensuse.org/repositories/home:/FrodeSolheim:/stable/Debian_9.0/ /" > /etc/apt/sources.list.d/fsuae-stable.list
             else
                 rm -f /etc/apt/sources.list.d/fsuae-stable.list
             fi
