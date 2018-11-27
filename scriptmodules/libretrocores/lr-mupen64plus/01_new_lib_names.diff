@@ -1,8 +1,8 @@
 diff --git a/Makefile b/Makefile
-index 324fb5a..72dfa15 100644
+index a7bab1a..2883d64 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -108,6 +108,7 @@ else ifneq (,$(findstring rpi,$(platform)))
+@@ -103,6 +103,7 @@ else ifneq (,$(findstring rpi,$(platform)))
        LLE = 0
        CPUFLAGS += -DVC
        GL_LIB := -L/opt/vc/lib -lbrcmGLESv2
@@ -11,10 +11,10 @@ index 324fb5a..72dfa15 100644
     endif
     WITH_DYNAREC=arm
 diff --git a/Makefile.common b/Makefile.common
-index a54d4dd..536175e 100644
+index 573bdf0..1509f6b 100644
 --- a/Makefile.common
 +++ b/Makefile.common
-@@ -302,15 +302,17 @@ else
+@@ -323,15 +323,17 @@ else
  	SOURCES_CXX   += $(VIDEODIR_GLIDEN64)/src/3DMath.cpp
  endif
  
