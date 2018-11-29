@@ -167,6 +167,7 @@ function gui_esthemes() {
         'RetroHursty69 snapback'
         'RetroHursty69 heman'
         'RetroHursty69 pitube'
+        'RetroHursty69 batmanburton'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
