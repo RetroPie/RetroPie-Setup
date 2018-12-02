@@ -13,7 +13,7 @@ rp_module_id="yabause"
 rp_module_desc="Sega Saturn Emulator"
 rp_module_help="ROM Extensions: .iso .bin .zip\n\nCopy your Sega Saturn roms to $romdir/saturn\n\nCopy the required BIOS file saturn_bios_us.bin and saturn_bios_jp.bin to $biosdir"
 rp_module_licence="https://github.com/devmiyax/yabause/blob/minimum_linux/yabause/COPYING"
-rp_module_section="opt"
+rp_module_section="main"
 rp_module_flags="!armv6"
 
 function depends_yabause() {
