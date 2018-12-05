@@ -34,8 +34,6 @@ function install_openblok() {
 }
 
 function configure_openblok() {
-    mkUserDir "$home/.local"
-    mkUserDir "$home/.local/share"
     moveConfigDir "$home/.local/share/openblok" "$md_conf_root/openblok"
     addPort "$md_id" "openblok" "OpenBlok" "$md_inst/openblok"
 }
