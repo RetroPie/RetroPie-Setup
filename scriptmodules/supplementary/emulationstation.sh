@@ -279,15 +279,6 @@ function configure_emulationstation() {
 
     install_launch_emulationstation
 
-    if isPlatform "rpi"; then
-        # make sure that ES has enough GPU memory
-        iniConfig "=" "" /boot/config.txt
-        iniSet "gpu_mem_256" 128
-        iniSet "gpu_mem_512" 256
-        iniSet "gpu_mem_1024" 256
-        iniSet "overscan_scale" 1
-    fi
-
     mkdir -p "/etc/emulationstation"
 
     # ensure we have a default theme
