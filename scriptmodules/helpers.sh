@@ -383,6 +383,12 @@ function setupDirectories() {
     mkUserDir "$configdir"
     mkUserDir "$configdir/all"
 
+    # some home folders for configs that modules rely on
+    mkUserDir "$home/.cache"
+    mkUserDir "$home/.config"
+    mkUserDir "$home/.local"
+    mkUserDir "$home/.local/share"
+
     # make sure we have inifuncs.sh in place and that it is up to date
     mkdir -p "$rootdir/lib"
     local helper_libs=(inifuncs.sh archivefuncs.sh)

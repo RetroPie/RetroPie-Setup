@@ -102,7 +102,6 @@ function install_mehstation() {
 
 function configure_mehstation() {
     # move / symlink the configuration
-    mkUserDir "$home/.config"
     moveConfigDir "$home/.config/mehstation" "$md_conf_root/all/mehstation"
 
     local db="$md_conf_root/all/mehstation/database.db"
