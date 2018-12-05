@@ -62,9 +62,7 @@ function configure_scummvm() {
     mkRomDir "scummvm"
 
     local dir
-    mkUserDir "$home/.local"
-    for dir in .config .local/share .cache; do
-        mkUserDir "$home/$dir"
+    for dir in .config .local/share; do
         moveConfigDir "$home/$dir/scummvm" "$md_conf_root/scummvm"
     done
 

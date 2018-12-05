@@ -52,7 +52,6 @@ function add_games_zdoom() {
 function configure_zdoom() {
     mkRomDir "ports/doom"
 
-    mkUserDir "$home/.config"
     moveConfigDir "$home/.config/zdoom" "$md_conf_root/doom"
 
     [[ "$md_mode" == "install" ]] && game_data_lr-prboom

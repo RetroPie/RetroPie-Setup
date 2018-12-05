@@ -158,7 +158,6 @@ function install_ppsspp() {
 function configure_ppsspp() {
     mkRomDir "psp"
 
-    mkUserDir "$home/.config"
     moveConfigDir "$home/.config/ppsspp" "$md_conf_root/psp"
     mkUserDir "$md_conf_root/psp/PSP"
     ln -snf "$romdir/psp" "$md_conf_root/psp/PSP/GAME"

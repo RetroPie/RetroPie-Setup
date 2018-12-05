@@ -44,7 +44,6 @@ function install_cdogs-sdl() {
 }
 
 function configure_cdogs-sdl() {
-    mkUserDir "$home/.config"
     moveConfigDir "$home/.config/cdogs-sdl" "$md_conf_root/cdogs-sdl"
     addPort "$md_id" "cdogs-sdl" "C-Dogs SDL" "pushd $md_inst; $md_inst/cdogs-sdl; popd"
 }
