@@ -95,6 +95,13 @@ function install_rp_image() {
         sed -i "s/quiet/quiet loglevel=3 consoleblank=0 plymouth.enable=0 quiet/" "$chroot/boot/cmdline.txt"
     fi
 
+    # set default GPU mem, and overscan_scale so ES scales to overscan settings.
+    iniConfig "=" "" "$chroot/boot/config.txt"
+    iniSet "gpu_mem_256" 128
+    iniSet "gpu_mem_512" 256
+    iniSet "gpu_mem_1024" 256
+    iniSet "overscan_scale" 1
+
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
 cd
