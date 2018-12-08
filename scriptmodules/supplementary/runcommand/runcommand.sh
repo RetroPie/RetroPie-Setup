@@ -441,7 +441,7 @@ function main_menu() {
             [[ -n "$vid_rom" ]] && options+=(7 "Remove video mode choice for $EMULATOR + ROM")
         fi
 
-        if [[ "$COMMAND" =~ retroarch ]]; then
+        if [[ "$EMULATOR" == lr-* ]]; then
             options+=(
                 8 "Select RetroArch render res for $EMULATOR ($RENDER_RES)"
                 9 "Edit custom RetroArch config for this ROM"
@@ -459,7 +459,7 @@ function main_menu() {
 
         options+=(X "Launch")
 
-        if [[ "$COMMAND" =~ retroarch ]]; then
+        if [[ "$EMULATOR" == lr-* ]]; then
             options+=(L "Launch with verbose logging")
             options+=(Z "Launch with netplay enabled")
         fi
@@ -778,7 +778,7 @@ function config_dispmanx() {
 
 function retroarch_append_config() {
     # only for retroarch emulators
-    [[ ! "$COMMAND" =~ "retroarch" ]] && return
+    [[ "$EMULATOR" != lr-* ]] && return
 
     # make sure tmp folder exists for unpacking archives
     mkdir -p "/tmp/retroarch"
@@ -1072,7 +1072,7 @@ function runcommand() {
     # reset/restore framebuffer res (if it was changed)
     [[ -n "$FB_NEW" ]] && restore_fb
 
-    [[ "$COMMAND" =~ retroarch ]] && retroarchIncludeToEnd "$CONF_ROOT/retroarch.cfg"
+    [[ "$EMULATOR" == lr-* ]] && retroarchIncludeToEnd "$CONF_ROOT/retroarch.cfg"
 
     user_script "runcommand-onend.sh"
 
