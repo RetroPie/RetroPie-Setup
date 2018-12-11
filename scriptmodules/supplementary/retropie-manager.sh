@@ -22,7 +22,7 @@ function depends_retropie-manager() {
 }
 
 function sources_retropie-manager() {
-    gitPullOrClone "$md_inst" "https://github.com/botolo78/RetroPie-Manager.git"
+    gitPullOrClone "$md_inst" "https://github.com/botolo78/RetroPie-Manager.git" retropie
 }
 
 function install_retropie-manager() {
