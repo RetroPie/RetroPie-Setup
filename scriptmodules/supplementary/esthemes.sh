@@ -211,7 +211,7 @@ function gui_esthemes() {
                 installed_themes+=("$theme $repo")
             else
                 status+=("n")
-                options+=("$i" "Install $repo/$theme (not installed)")
+                options+=("$i" "Install $repo/$theme")
             fi
             ((i++))
         done
