@@ -59,17 +59,21 @@ function configure_lr-mame2003() {
         for mame_sub_dir in cfg ctrlr diff hi memcard nvram; do
             mkRomDir "$mame_dir/$dir_name/$mame_sub_dir"
         done
-
-        # lr-mame2003-plus also has an artwork folder
-        [[ "$md_id" == "lr-mame2003-plus" ]] && mkRomDir "$mame_dir/$dir_name/artwork"
     done
 
     mkUserDir "$biosdir/$dir_name"
     mkUserDir "$biosdir/$dir_name/samples"
 
-    # copy hiscore.dat
+    # copy hiscore.dat and cheat.dat
     cp "$md_inst/metadata/"{hiscore.dat,cheat.dat} "$biosdir/$dir_name/"
     chown $user:$user "$biosdir/$dir_name/"{hiscore.dat,cheat.dat}
+    
+    # lr-mame2003-plus also has an artwork folder
+    if [[ "$md_id" == "lr-mame2003-plus" ]]; then
+        mkRomDir "$biosdir/$dir_name/artwork"
+        cp "$md_inst"/metadata/artwork/* "$biosdir/$dir_name"/artwork/
+        chown -R $user:$user "$biosdir/$dir_name/artwork"
+    fi
 
     # Set core options
     setRetroArchCoreOption "${dir_name}-skip_disclaimer" "enabled"
