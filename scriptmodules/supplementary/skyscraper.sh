@@ -469,10 +469,10 @@ function gui_skyscraper() {
     local -a s_source_names
     local -A help_strings
 
-    s_source=([1]=screenscraper [2]=arcadedb [3]=thegamesdb [4]=igdb [5]=mobygames [6]=openretro [7]=worldofspectrum)
+    s_source=([1]=screenscraper [2]=arcadedb [3]=thegamesdb [4]=igdb [5]=openretro [6]=worldofspectrum)
     s_source+=([10]=localdb [11]=import)
 
-    s_source_names=([1]=ScreenScraper [2]=Arcade Database [3]=TheGamesDB [4]=IGDB [5]="Moby Games" [6]="OpenRetro" [7]="World of Spectrum")
+    s_source_names=([1]=ScreenScraper [2]=Arcade Database [3]=TheGamesDB [4]=IGDB [5]="OpenRetro" [6]="World of Spectrum")
     s_source_names+=([10]="LocalDB Cache" [11]="Import Folder")
 
     local default
@@ -482,7 +482,7 @@ function gui_skyscraper() {
     help_strings=(
         [1]="Scrape all systems found in \Zb$romdir\Zn."
         [2]="Choose which systems to scrape from the ones found in \Zb$romdir\Zn."
-        [3]="Select the source for ROM scraping. Supported sources:\n\ZbONLINE\Zn\n * ScreenScraper (screenscraper.fr)\n * TheGamesDB (thegamesdb.net)\n * OpenRetro (openretro.org)\n * ArcadeDB (adb.arcadeitalia.net)\n * Moby Games (mobygames.com)\n * IGDB (igdb.com)\n * World of Spectrum (worldofspectrum.org)\n\ZbLOCAL\Zn\n * LocalDB Cache (scrapes exclusively from cached resources)\n * Import (imports resources in the local cache)\n\n\Zb\ZrNOTE\Zn: Some sources require a username and password for access. These can be set per source in the \Zbconfig.ini\Zn configuration file.\n\n Skyscraper parameter: \Zb-s <source_name>\Zn"
+        [3]="Select the source for ROM scraping. Supported sources:\n\ZbONLINE\Zn\n * ScreenScraper (screenscraper.fr)\n * TheGamesDB (thegamesdb.net)\n * OpenRetro (openretro.org)\n * ArcadeDB (adb.arcadeitalia.net)\n * IGDB (igdb.com)\n * World of Spectrum (worldofspectrum.org)\n\ZbLOCAL\Zn\n * LocalDB Cache (scrapes exclusively from cached resources)\n * Import (imports resources in the local cache)\n\n\Zb\ZrNOTE\Zn: Some sources require a username and password for access. These can be set per source in the \Zbconfig.ini\Zn configuration file.\n\n Skyscraper parameter: \Zb-s <source_name>\Zn"
         [4]="Game name format used in the Emulationstation gamelist. Available options:\n\n\ZbSource name\Zn: use the name returned by the scraper\n\ZbFilename\Zn: use the filename of the ROM as game name\n\nSkyscraper option: \Zb--forcefilename\Z0"
         [5]="Game name option to remove/keep the text found between '()' and '[]' in the ROMs filename.\n\nSkyscraper option: \Zb--nobrackets\Zn"
         [6]="Force the refresh of resources in the local cache when scraping.\n\nSkyscraper option: \Zb--refresh\Zn"
