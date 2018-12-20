@@ -14,17 +14,14 @@ rp_module_desc="Steam Link for Raspberry Pi 3"
 rp_module_licence="PROP https://steamcommunity.com/app/353380/discussions/0/1743353164093954254/"
 rp_module_section="exp"
 rp_module_flags="!mali !x86 !kms !rpi1 !rpi2"
-rp_module_help="Streaming games to your computer with Steam.\n\nIf you experience a black screen during startup, you may need to disable the overscan_scale setting in your Pi's /boot/config.txt."
+rp_module_help="Stream games from your computer with Steam"
 
 function depends_steamlink() {
-    getDepends python3-dev curl xz-utils libinput10 libxkbcommon-x11-0
+    getDepends python3-dev curl xz-utils libinput10 libxkbcommon-x11-0 matchbox
 }
 
 function install_bin_steamlink() {
-    local ver="1.0.7"
-    local url="http://media.steampowered.com/steamlink/rpi"
-    wget -qO "$__tmpdir/steamlink_"$ver"_armhf.deb" ""$url"/steamlink_"$ver"_armhf.deb"
-    dpkg -i "$__tmpdir/steamlink_"$ver"_armhf.deb"
+    aptInstall steamlink
 }
 
 function remove_steamlink() {
@@ -32,6 +29,7 @@ function remove_steamlink() {
 }
 
 function configure_steamlink() {
+    local sl_script="$md_inst/steamlink_xinit.sh"
     local sl_dir="$home/.local/share/SteamLink"
     local valve_dir="$home/.local/share/Valve Corporation"
 
@@ -44,11 +42,16 @@ function configure_steamlink() {
     chown $user:$user "$valve_dir/SteamLink/streaming_args.txt"
     moveConfigFile "$valve_dir/SteamLink/streaming_args.txt" "$md_conf_root/$md_id/streaming_args.txt"
 
-    # RetroPie sets overscan by default, which requires an override
-    if grep '^overscan_scale=1' /boot/config.txt &>/dev/null; then
-        touch "$sl_dir/.ignore_overscan"
-        chown $user:$user "$sl_dir/.ignore_overscan"
+
+    if [[ "$md_mode" == "install" ]]; then
+        cat > "$sl_script" << _EOF_
+#!/bin/bash
+xset -dpms s off s noblank
+matchbox-window-manager &
+/usr/bin/steamlink
+_EOF_
+        chmod +x "$sl_script"
     fi
 
-    addPort "$md_id" "steamlink" "Steam Link" "/usr/bin/steamlink"
+    addPort "$md_id" "steamlink" "Steam Link" "xinit $sl_script"
 }
