@@ -71,7 +71,7 @@ function configure_lr-mame2003() {
     # lr-mame2003-plus also has an artwork folder
     if [[ "$md_id" == "lr-mame2003-plus" ]]; then
         mkUserDir "$biosdir/$dir_name/artwork"
-        cp "$md_inst/metadata/artwork/"* "$biosdir/$dir_name/artwork/"
+        cp -r "$md_inst/metadata/artwork" "$biosdir/$dir_name"
         chown -R $user:$user "$biosdir/$dir_name/artwork"
     fi
 
