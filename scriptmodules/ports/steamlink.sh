@@ -17,7 +17,7 @@ rp_module_flags="!mali !x86 !kms !rpi1 !rpi2"
 rp_module_help="Stream games from your computer with Steam"
 
 function depends_steamlink() {
-    getDepends python3-dev curl xz-utils libinput10 libxkbcommon-x11-0 matchbox
+    getDepends python3-dev curl xz-utils libinput10 libxkbcommon-x11-0 matchbox-window-manager xorg
 }
 
 function install_bin_steamlink() {
