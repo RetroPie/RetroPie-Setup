@@ -168,6 +168,8 @@ function gui_esthemes() {
         'RetroHursty69 heman'
         'RetroHursty69 pitube'
         'RetroHursty69 batmanburton'
+        'RetroHursty69 NegativeColor'
+        'RetroHursty69 NegativeSepia'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
