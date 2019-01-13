@@ -38,5 +38,5 @@ function install_abuse() {
 function configure_abuse() {
     mkRomDir "ports"
     moveConfigDir "$home/.abuse" "$md_conf_root/abuse"
-    addPort "$md_id" "abuse" "Abuse" "pushd $md_inst; $md_inst/abuse; popd"
+    addPort "$md_id" "abuse" "Abuse" "pushd $md_inst; $md_inst/abuse -datadir /usr/share/games/abuse/; popd"
 }
