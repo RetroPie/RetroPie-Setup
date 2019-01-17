@@ -185,6 +185,7 @@ function gui_esthemes() {
         'waweedman Venom'
         'waweedman Spider-Man'
         'blowfinger77 locomotion'
+        'CrashCortez Crashtheme'
     )
     while true; do
         local theme
