@@ -39,9 +39,6 @@ function depends_lr-mupen64plus() {
 
 function sources_lr-mupen64plus() {
     gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
-    # both needed until https://github.com/libretro/mupen64plus-libretro/pull/39 is accepted
-    isPlatform "rpi" && applyPatch "$md_data/01_new_lib_names.diff"
-    isPlatform "rpi" && applyPatch "$md_data/02_fix_build.diff"
 }
 
 function build_lr-mupen64plus() {
