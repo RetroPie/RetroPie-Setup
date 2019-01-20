@@ -39,56 +39,67 @@ function install_skyscraper() {
         'artwork.xml.example2'
         'artwork.xml.example3'
         'artwork.xml.example4'
-        'ARTWORK.md'
         'tgdb_developers.json'
         'tgdb_publishers.json'
         'mameMap.csv'
+        'aliasMap.csv'
         'hints.txt'
-        'dbs'
         'import'
         'resources'
     )
 }
 
+# Get the location of the cached resources folder. In v3+, this changed to 'cache'.
+# Note: the cache folder might be unavailable during first time installations
+function _cache_folder_skyscraper() {
+    if [[ -d "$configdir/all/skyscraper/dbs" ]]; then
+        echo "dbs"
+    else
+        echo "cache"
+    fi
+}
+
 # Purge all Skyscraper caches
 function _purge_skyscraper() {
     local platform
+    local cache_folder=$(_cache_folder_skyscraper)
 
     while read platform; do
-        # Find any folders underneath the Local DB cache and clear them
+        # Find any sub-folders of the cache folder and clear them
         _clear_platform_skyscraper "$platform"
-    done < <(find "$configdir/all/skyscraper/dbs" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
+    done < <(find "$configdir/all/skyscraper/$cache_folder" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
 }
 
 function _clear_platform_skyscraper() {
     local platform="$1"
+    local cache_folder=$(_cache_folder_skyscraper)
 
-    [[ ! -d "$configdir/all/skyscraper/dbs/$platform" ]] && return
+    [[ ! -d "$configdir/all/skyscraper/$cache_folder/$platform" ]] && return
 
     # Remove any folder underneath the platform, try to keep any customized files
-    pushd "$configdir/all/skyscraper/dbs/$platform"
+    pushd "$configdir/all/skyscraper/$cache_folder/$platform"
     find . -maxdepth 1 -mindepth 1 -type d -print0 -exec rm -fr {} \;
     rm -f db.xml
     popd
 }
 
-# Purge by cached platform
 function _purge_platform_skyscraper() {
     local options=()
+    local cache_folder=$(_cache_folder_skyscraper)
     local system
 
     while read system; do
         # If there is no 'db.xml' file underneath the folder, skip it, it means folder is empty
-        [[ ! -f "$configdir/all/skyscraper/dbs/$system/db.xml" ]] && continue
+        [[ ! -f "$configdir/all/skyscraper/$cache_folder/$system/db.xml" ]] && continue
 
         # Get the size on disk of the system and show it in the select list
-        local size=$(du -sh  "$configdir/all/skyscraper/dbs/$system" | cut -f1)
+        local size=$(du -sh  "$configdir/all/skyscraper/$cache_folder/$system" | cut -f1)
         options+=("$system" "$size" OFF)
-    done < <(find "$configdir/all/skyscraper/dbs" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
+    done < <(find "$configdir/all/skyscraper/$cache_folder" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
 
     # If not folders are found, show an info message instead of the selection list
     if [[ ${#options[@]} -eq 0 ]] ; then
-        printMsgs "dialog" "Nothing to delete ! No cached systems found in \n$configdir/all/skyscraper/dbs "
+        printMsgs "dialog" "Nothing to delete ! No cached systems found in \n$configdir/all/skyscraper/$cache_folder."
         return
     fi
 
@@ -103,7 +114,7 @@ function _purge_platform_skyscraper() {
 
 function _get_ver_skyscraper() {
     if [[ -f "$md_inst/Skyscraper" ]]; then
-        echo $("$md_inst/Skyscraper" -h | grep 'Running Skyscraper'  | cut -d' '  -f 3 2>/dev/null)
+        echo $("$md_inst/Skyscraper" -h | grep 'Running Skyscraper'  | cut -d' '  -f 3 | tr -d v 2>/dev/null)
     fi
 }
 
@@ -113,11 +124,11 @@ function _latest_ver_skyscraper() {
 
 # List any non-empty system found in the ROM parent folder
 function _list_systems_skyscraper() {
-    find "$romdir"  -mindepth 2 -maxdepth 2 -type f -not -name '+*' | sed 's%/[^/]*$%%' | sort -u
+    find "$romdir/" -mindepth 2 -type f -not -name '+*' | sed "s%$romdir/%%; s%/.*$%%" | sort -u
 }
 
 function remove_skyscraper() {
-    # On removal of package, purge the Local DB
+    # On removal of the package, purge the cache
     _purge_skyscraper
 }
 
@@ -133,18 +144,21 @@ function configure_skyscraper() {
     # Handle the cases where the user has an existing Skyscraper installation.
     if [[ -d "$home/.skyscraper" && "$local_config" != "$configdir/all/skyscraper" ]]; then
         # We have an existing Skyscraper installation, but not handled by this scriptmodule.
-        # Since the $HOME/.skyscraper folder will be moved, make sure the Local DB and Import folders are moved separately
+        # Since the $HOME/.skyscraper folder will be moved, make sure the 'cache' and 'import' folders are moved separately
         local f_size
-        f_size=$(du --total -sm "$home/.skyscraper/dbs" "$home/.skyscraper/import" 2>/dev/null | grep total | cut -f 1 )
-        printMsgs "console" "INFO: Moving the Local DB and Import folders to new configuration folder (total: $f_size Mb)"
+        local cache_folder="dbs"
+        [[ -d "$home/.skyscraper/cache" ]] && cache_folder="cache"
+
+        f_size=$(du --total -sm "$home/.skyscraper/$cache_folder" "$home/.skyscraper/import" 2>/dev/null | tail -n 1 | cut -f 1 )
+        printMsgs "console" "INFO: Moving the Cache and Import folders to new configuration folder (total: $f_size Mb)"
 
         local folder
-        for folder in dbs import; do
+        for folder in $cache_folder import; do
             mv "$home/.skyscraper/$folder" "$home/.skyscraper-$folder" && \
                 printMsgs "console" "INFO: Moved "$home/.skyscraper/$folder" to "$home/.skyscraper-$folder""
         done
 
-        # When having an existing installation, changes are the gamelist is in the ROMs folder
+        # When having an existing installation, chances are the gamelist is generated in the ROMs folder
         # Create a GUI config file with this setting pre-set.
         iniConfig " = " '"' "$configdir/all/skyscraper.cfg"
         iniSet "use_rom_folder" 1
@@ -152,8 +166,8 @@ function configure_skyscraper() {
 
     moveConfigDir "$home/.skyscraper" "$configdir/all/skyscraper"
 
-    # When migrating an existing installation, make sure we move the Local DB and Import folder back the new conf folder
-    for folder in dbs import; do
+    # Move the Cache and Import folders back the new conf folder
+    for folder in $cache_folder import; do
         if [[ -d "$home/.skyscraper-$folder" ]]; then
             printMsgs "console" "INFO: Moving "$home/.skyscraper-$folder" back to configuration folder"
             mv  "$home/.skyscraper-$folder" "$configdir/all/skyscraper/$folder"
@@ -167,12 +181,11 @@ function configure_skyscraper() {
 function _init_config_skyscraper() {
     local md_conf_dir="$configdir/all/skyscraper"
 
-    # Make sure the `artwork.xml` and other conf file(s) are present, but don't overwrite them on upgrades.
-    # For now we just have one file, but more might come up in the future.
+    # Make sure the `artwork.xml` and other conf file(s) are present, but don't overwrite them on upgrades
     local f_conf
-    for f_conf in artwork.xml; do
+    for f_conf in artwork.xml aliasMap.csv; do
         if [[ -f "$md_conf_dir/$f_conf" ]]; then
-            cp "$md_inst/$f_conf" "$md_conf_dir/$f_conf.default"
+            cp -f "$md_inst/$f_conf" "$md_conf_dir/$f_conf.default"
         else
             cp "$md_inst/$f_conf" "$md_conf_dir"
         fi
@@ -188,8 +201,8 @@ function _init_config_skyscraper() {
         local file
 
         for file in $files; do
-            # Copy the files to the configuration folder. Skip config.ini and artwork.xml, they're already handled
-            if [[ $file != "artwork.xml" && $file != "config.ini" ]]; then
+            # Copy the files to the configuration folder. Skip config.ini, artwork.xml and aliasMap.csv
+            if [[ $file != "artwork.xml" && $file != "config.ini" && $file != "aliasMap.csv" ]]; then
                 cp -f "$md_build/$file" "$md_conf_dir"
             fi
         done
@@ -197,9 +210,9 @@ function _init_config_skyscraper() {
         # Fallback to the known resource files list
         cp -f "$md_inst/artwork.xml.example"* "$md_conf_dir"
 
-        # Copy resources
+        # Copy resources and readme
         local resource_file
-        for resource_file in ARTWORK.md README.md mameMap.csv tgdb_developers.json tgdb_publishers.json hints.txt; do
+        for resource_file in README.md mameMap.csv tgdb_developers.json tgdb_publishers.json hints.txt; do
             cp -f "$md_inst/$resource_file" "$md_conf_dir"
         done
     fi
@@ -213,10 +226,6 @@ function _init_config_skyscraper() {
         mkUserDir "$md_conf_dir/import/$folder"
     done
     cp -rf "$md_inst/import" "$md_conf_dir"
-
-    # Create the LocalDB cache folder and add the sample files
-    mkUserDir "$md_conf_dir/dbs"
-    cp -fr "$md_inst/dbs" "$md_conf_dir"
 }
 
 # Scrape one system, passed as parameter
@@ -241,8 +250,13 @@ function _scrape_skyscraper() {
     fi
 
 
+    # If 2nd parameter is unset, use the configured scraping source, otherwise scrape from cache.
+    # Scraping from cache means we can omit '-s' from the parameter list.
+    if [[ -z "$2" ]]; then
+        params+=(-s "$scrape_source")
+    fi
+
     params+=(-p "$system")
-    params+=(-s "$scrape_source")
 
     [[ "$download_videos" -eq 1 ]] && params+=(--videos)
 
@@ -296,7 +310,7 @@ function _scrape_chosen_skyscraper() {
     fi
 
     local choices
-    local cmd=(dialog --backtitle "$__backtitle" --checklist "Select ROM Folders" 22 76 16)
+    local cmd=(dialog --backtitle "$__backtitle" --checklist "Select ROM Folders" 22 60 16)
 
     choices=($("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty))
 
@@ -339,30 +353,307 @@ function _open_editor_skyscraper() {
 }
 
 function _gui_advanced_skyscraper() {
-    local db_size
-    local -A help_strings_adv
+    declare -A help_strings_adv
 
     iniConfig " = " '"' "$configdir/all/skyscraper.cfg"
     eval $(_load_config_skyscraper)
 
     help_strings_adv=(
+        [E]="Opens the configuration file \Zbconfig.ini\Zn in an editor."
+        [F]="Opens the artwork definition file \Zbartwork.xml\Zn in an editor."
+        [G]="Opens the game alias configuration file \ZbaliasMap.csv\Zn in an editor."
+    )
+
+    while true; do
+
+        local cmd=(dialog --backtitle "$__backtitle" --help-button --colors --no-collapse --default-item "$default" --ok-label "Ok" --cancel-label "Back" --title "Advanced options" --menu "    EXPERT - edit configurations\n" 14 50 5)
+        local options=()
+
+        options+=(E "Edit 'config.ini'")
+        options+=(F "Edit 'artwork.xml'")
+        options+=(G "Edit 'aliasMap.csv'")
+
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 > /dev/tty)
+
+        if [[ -n "$choice" ]]; then
+            local default="$choice"
+
+            case "$choice" in
+
+                E)
+                    _open_editor_skyscraper "$configdir/all/skyscraper/config.ini"
+                    ;;
+
+                F)
+                    _open_editor_skyscraper "$configdir/all/skyscraper/artwork.xml"
+                    ;;
+
+                G)
+                    _open_editor_skyscraper "$configdir/all/skyscraper/aliasMap.csv"
+                    ;;
+
+                HELP*)
+                    # Retain choice
+                    default="${choice/HELP /}"
+                    if [[ ! -z "${help_strings_adv[${default}]}" ]]; then
+                    dialog --colors --no-collapse --ok-label "Close" --msgbox "${help_strings_adv[${default}]}" 22 65 >&1
+                    fi
+            esac
+        else
+            break
+        fi
+    done
+}
+
+function gui_skyscraper() {
+    if pgrep "emulationstatio" >/dev/null; then
+        printMsgs "dialog" "This scraper must not be run while EmulationStation is running or the scraped data will be overwritten.\n\nPlease quit EmulationStation and run RetroPie-Setup from the terminal:\n\n sudo \$HOME/RetroPie-Setup/retropie_setup.sh"
+        return
+    fi
+
+    iniConfig " = " '"' "$configdir/all/skyscraper.cfg"
+    eval $(_load_config_skyscraper)
+    chown "$user":"$user" "$configdir/all/skyscraper.cfg"
+
+    local -a s_source
+    local -a s_source_names
+    declare -A help_strings
+
+    s_source=(
+        [1]=screenscraper
+        [2]=arcadedb
+        [3]=thegamesdb
+        [4]=openretro
+        [5]=worldofspectrum
+    )
+    s_source+=(
+        [10]=esgamelist
+        [11]=import
+    )
+
+    s_source_names=(
+        [1]=ScreenScraper
+        [2]=ArcadeDB
+        [3]=TheGamesDB
+        [4]=OpenRetro
+        [5]="World of Spectrum"
+    )
+    s_source_names+=(
+        [10]="EmulationStation Gamelist"
+        [11]="Import Folder"
+    )
+
+    local ver
+    local lastest_ver
+
+    # Help strings for this GUI
+    help_strings=(
+        [1]="Gather and cache resources for all systems found in \Zb$romdir\Zn."
+        [2]="Choose which systems will have resources gathered and cached, from the ones found in \Zb$romdir\Zn."
+        [3]="Select the source for ROM scraping. Supported sources:\n\ZbONLINE\Zn\n * ScreenScraper (screenscraper.fr)\n * TheGamesDB (thegamesdb.net)\n * OpenRetro (openretro.org)\n * ArcadeDB (adb.arcadeitalia.net)\n * World of Spectrum (worldofspectrum.org)\n\ZbLOCAL\Zn\n * EmulationStation Gamelist (imports data from ES gamelist)\n * Import (imports resources in the local cache)\n\n\Zb\ZrNOTE\Zn: Some sources require a username and password for access. These can be set per source in the \Zbconfig.ini\Zn configuration file.\n\n Skyscraper parameter: \Zb-s <source_name>\Zn"
+        [4]="Options for resource gathering and caching sub-menu.\nClick to open it."
+        [5]="Generate EmulationStation game lists.\nRuns the scraper to incorporate downloaded information and media from the local cache and write them to \Zbgamelist.xml\Zn files to be used by EmulationStation."
+        [6]="Options for EmulationStation game list generation sub-menu.\nClick to open it and change the options."
+        [V]="Toggle the download and caching of videos.\nThis also toggles whether the videos will be included in the resulting gamelist.\n\nSkyscraper option: \Zb--videos\Zn"
+        [A]="Advanced options sub-menu."
+        [U]="Check for an update to Skyscraper\nIf there is a new release, you'll have the option to update."
+    )
+
+    ver=$(_get_ver_skyscraper)
+
+    while true; do
+        [[ -z "$ver" ]] && ver="v(Git)"
+
+        local cmd=(dialog --backtitle "$__backtitle"  --colors --cancel-label "Exit" --help-button --no-collapse --cr-wrap --default-item "$default" --menu "   Skyscraper: game scraper by Lars Muldjord ($ver)\\n \\n" 22 60 13)
+
+        local options=(
+            "-" "GATHER and cache resources"
+        )
+
+        local source_found=0
+        local online="Online"
+        local i
+
+        options+=(
+            1 "Gather for All systems"
+            2 "Gather for Chosen systems"
+        )
+
+        for i in "${!s_source[@]}"; do
+            if [[ "$scrape_source" == "${s_source[$i]}" ]]; then
+                [[ $i -ge 10 ]] && online="Local"
+                options+=(3 "Gather source - ${s_source_names[$i]} ($online) -->")
+                source_found=1
+            fi
+        done
+
+        if [[ $source_found -ne 1 ]]; then
+            options+=(3 "Gather from - Screenscraper (Online) -->")
+            scrape_source="screenscraper" # default scraping source if none found
+        fi
+
+        options+=(4 "Cache options and commands -->")
+
+        options+=("-" "GAME LIST generation")
+        options+=(5 "Generate game list(s)")
+        options+=(6 "Generate options -->")
+
+        options+=("-" "OTHER options")
+
+        if [[ "$download_videos" -eq 1 ]]; then
+            options+=(V "Download videos (Enabled)")
+        else
+            options+=(V "Download videos (Disabled)")
+        fi
+
+        options+=(A "Advanced options -->")
+
+        # Show different options, depending on the previous check action
+        if compareVersions "$latest_ver" gt "$ver" && [[ -n "$latest_ver" ]]; then
+            options+=(U "Update to $latest_ver")
+        else 
+            options+=(U "Check for Updates")
+        fi
+
+        # Run the GUI
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+
+        if [[ -n "$choice" ]]; then
+            local default="$choice"
+
+            case "$choice" in
+
+                1)
+                    if _scrape_all_skyscraper; then
+                        printMsgs "dialog" "ROMs information gathered.\nDon't forget to use 'Generate Game list(s)' to add this information to EmulationStation."
+                    else
+                        printMsgs "dialog" "Gathering was aborted"
+                    fi
+                    ;;
+
+                2)
+                    if _scrape_chosen_skyscraper; then
+                        printMsgs "dialog" "ROMs information gathered.\nDon't forget to use 'Generate same list(s)' to add this information to EmulationStation."
+                    elif [[ $? -eq 2 ]]; then
+                        printMsgs "dialog" "Gathering was aborted"
+                    fi
+                    ;;
+
+                3)
+                    # Scrape source options have a separate dialog
+                    local s_options=()
+                    local i
+
+                    for i in "${!s_source[@]}"; do
+                        online="Online:"
+                        [[ i -ge 10 ]] && online="Local:"
+
+                        if [[ "$scrape_source" == "${s_source[$i]}" ]]; then
+                            s_default="$online ${s_source_names[$i]}"
+                        fi
+
+                        s_options+=("$online ${s_source_names[$i]}" "")
+                    done
+
+                    if [[ -z "$s_default" ]]; then
+                        s_default="Online: ${s_source_names[1]}"
+                    fi
+
+                    local s_cmd=(dialog --title "Select Scraping source" --default-item "$s_default" \
+                        --menu "Choose one of the available scraping sources" 18 50 9)
+
+                    # Run the Scraper source selection dialog
+                    local scrape_source_name=$("${s_cmd[@]}" "${s_options[@]}" 2>&1 >/dev/tty)
+
+                    # If Cancel was chosen, don't do anything
+                    [[ -z "$scrape_source_name" ]] && continue
+
+                    # Strip the "XYZ:" prefix from the chosen scraper source, then compare to our list
+                    local src=$(echo "$scrape_source_name" | cut -d' ' -f2-)
+
+                    for i in "${!s_source_names[@]}"; do
+                        [[ "${s_source_names[$i]}" == "$src" ]] && scrape_source=${s_source[$i]}
+                    done
+
+                    iniSet "scrape_source" "$scrape_source"
+                    ;;
+
+                4)
+                    _gui_cache_skyscraper
+                    ;;
+
+                5)
+                    if _scrape_chosen_skyscraper "cache"; then
+                        printMsgs "dialog" "Game list(s) generated."
+                    elif [[ $? -eq 2 ]]; then
+                        printMsgs "dialog" "Game list generation aborted"
+                    fi
+                    ;;
+
+                6)
+                    _gui_generate_skyscraper
+                    ;;
+
+
+                V)
+                    download_videos="$((download_videos ^ 1))"
+                    iniSet "download_videos" "$download_videos"
+                    ;;
+
+                A)
+                    _gui_advanced_skyscraper
+                    ;;
+
+                U)
+                    # Update to lastest release or check for update
+                    if [[ "$latest_ver" > "$ver" && -n "$latest_ver" ]]; then
+                        rp_callModule "$md_id"
+                    else 
+                        latest_ver=$(_latest_ver_skyscraper)
+                        printMsgs "dialog" "Skyscraper latest released version is $latest_ver"
+                    fi
+                    ;;
+
+                HELP*)
+                    # Retain choice when the Help button is selected
+                    default="${choice/HELP /}"
+                    if [[ ! -z "${help_strings[$default]}" ]]; then
+                        dialog --colors --no-collapse --ok-label "Close" --msgbox "${help_strings[$default]}" 22 65 >&1
+                    fi
+                    ;;
+            esac
+        else
+            break
+        fi
+    done
+}
+
+function _gui_cache_skyscraper() {
+    local db_size
+    local cache_folder=$(_cache_folder_skyscraper)
+    declare -A help_strings_cache
+
+    iniConfig " = " '"' "$configdir/all/skyscraper.cfg"
+    eval $(_load_config_skyscraper)
+
+    help_strings_cache=(
         [1]="Toggle whether screenshots are cached locally when scraping.\n\nSkyscraper option: \Zb--noscreenshots\Zn"
         [2]="Toggle whether covers are cached locally when scraping.\n\nSkyscraper option: \Zb--nocovers\Zn"
         [3]="Toggle whether wheels are cached locally when scraping.\n\nSkyscraper option: \Zb--nowheels\Zn"
         [4]="Toggle whether marquees are cached locally when scraping.\n\nSkyscraper option: \Zb--nomarquees\Zn"
-        [E]="Opens the configuration file \Zbconfig.ini\Zn in an editor."
-        [F]="Opens the artwork definition file \Zbartwork.xml\Zn in an editor."
-        [P]="Purge \ZbALL\Zn all cached resources from the LocalDB."
-        [S]="Purge all cached resources from the LocalDB for a chosen system."
+        [5]="Force the refresh of resources in the local cache when scraping.\n\nSkyscraper option: \Zb--refresh\Zn"
+        [P]="Purge \ZbALL\Zn all cached resources."
+        [S]="Purge all cached resources for a chosen system."
+#        [V]="Removes all non-used cached resources for a chosen system (Vacuum)"
     )
 
     while true; do
-        db_size=$(du -sh "$configdir/all/skyscraper/dbs" 2>/dev/null | cut -f 1 || echo 0m)
+        db_size=$(du -sh "$configdir/all/skyscraper/$cache_folder" 2>/dev/null | cut -f 1 || echo 0m)
         [[ -z "$db_size" ]] && db_size="0Mb"
 
-        local cmd=(dialog --backtitle "$__backtitle" --help-button --colors --no-collapse --default-item "$default" --ok-label "Ok" --cancel-label "Back" --title "Advanced options and commands" --menu "\n  Local cache is currently at $db_size\n\n" 21 65 12)
+        local cmd=(dialog --backtitle "$__backtitle" --help-button --colors --no-collapse --default-item "$default" --ok-label "Ok" --cancel-label "Back" --title "Cache options and commands" --menu "\n           Current cache size: $db_size\n\n" 21 60 12)
 
-        local options=("-" "LOCAL Cache")
+        local options=("-" "OPTIONS for gathering and caching")
 
         if [[ "$cache_screenshots" -eq 1 ]]; then
             options+=(1 "Cache screenshots (Enabled)")
@@ -388,18 +679,21 @@ function _gui_advanced_skyscraper() {
             options+=(4 "Cache marquees (Disabled)")
         fi
 
-        options+=("-" "PURGE commands")
-        options+=(S "Purge system")
-        options+=(P "Purge all (!)")
+        if [[ "$force_refresh" -eq 0 ]]; then
+            options+=(5 "Force cache refresh (Disabled)")
+        else
+            options+=(5 "Force cache refresh (Enabled)")
+        fi
 
-        options+=("-" "EXPERT - edit configurations")
-        options+=(E "Edit 'config.ini'")
-        options+=(F "Edit 'artwork.xml'")
+        options+=("-" "PURGE cache commands")
+        # options+=(V "Vacuum chosen system")
+        options+=(S "Purge chosen system")
+        options+=(P "Purge all systems (!)")
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 > /dev/tty)
 
         if [[ -n "$choice" ]]; then
-            local default=$choice
+            local default="$choice"
 
             case "$choice" in
 
@@ -423,30 +717,31 @@ function _gui_advanced_skyscraper() {
                     iniSet "cache_marquees" "$cache_marquees"
                     ;;
 
+                5)
+                    force_refresh="$((force_refresh ^ 1))"
+                    iniSet "force_refresh" "$force_refresh"
+                    ;;
+
+                V)
+                    _purge_platform_skyscraper "vacuum"
+                    ;;
+
                 S)
                     _purge_platform_skyscraper
                     ;;
 
                 P)
-                    local confirm=$(dialog --clear --defaultno --colors --yesno  "\Z1\ZbAre you sure ?\Zn\nThis will \Zb\ZuERASE\Zn all locally cached scraped resources" 8 60 2>&1 >/dev/tty)
-                    if [[ ! -n "$confirm" ]]; then
+                    dialog --clear --defaultno --colors --yesno  "\Z1\ZbAre you sure ?\Zn\nThis will \Zb\ZuERASE\Zn all locally cached scraped resources" 8 60 2>&1 >/dev/tty
+                    if [[ $? == 0 ]]; then
                         _purge_skyscraper
                     fi
-                    ;;
-
-                E)
-                    _open_editor_skyscraper "$configdir/all/skyscraper/config.ini"
-                    ;;
-
-                F)
-                    _open_editor_skyscraper "$configdir/all/skyscraper/artwork.xml"
                     ;;
 
                 HELP*)
                     # Retain choice
                     default="${choice/HELP /}"
-                    if [[ ! -z "${help_strings_adv[${default}]}" ]]; then
-                    dialog --colors --no-collapse --ok-label "Close" --msgbox "${help_strings_adv[${default}]}" 22 65 >&1
+                    if [[ ! -z "${help_strings_cache[${default}]}" ]]; then
+                    dialog --colors --no-collapse --ok-label "Close" --msgbox "${help_strings_cache[${default}]}" 22 65 >&1
                     fi
             esac
         else
@@ -455,203 +750,69 @@ function _gui_advanced_skyscraper() {
     done
 }
 
-function gui_skyscraper() {
-    if pgrep "emulationstatio" >/dev/null; then
-        printMsgs "dialog" "This scraper must not be run while Emulation Station is running or the scraped data will be overwritten. \n\nPlease quit from Emulation Station, and run RetroPie-Setup from the terminal"
-        return
-    fi
+function _gui_generate_skyscraper() {
+    declare -A help_strings_gen
 
     iniConfig " = " '"' "$configdir/all/skyscraper.cfg"
     eval $(_load_config_skyscraper)
-    chown "$user":"$user" "$configdir/all/skyscraper.cfg"
 
-    local -a s_source
-    local -a s_source_names
-    local -A help_strings
-
-    s_source=([1]=screenscraper [2]=arcadedb [3]=thegamesdb [4]=igdb [5]=openretro [6]=worldofspectrum)
-    s_source+=([10]=localdb [11]=import)
-
-    s_source_names=([1]=ScreenScraper [2]=Arcade Database [3]=TheGamesDB [4]=IGDB [5]="OpenRetro" [6]="World of Spectrum")
-    s_source_names+=([10]="LocalDB Cache" [11]="Import Folder")
-
-    local default
-    local ver
-
-    # Help strings for this GUI
-    help_strings=(
-        [1]="Scrape all systems found in \Zb$romdir\Zn."
-        [2]="Choose which systems to scrape from the ones found in \Zb$romdir\Zn."
-        [3]="Select the source for ROM scraping. Supported sources:\n\ZbONLINE\Zn\n * ScreenScraper (screenscraper.fr)\n * TheGamesDB (thegamesdb.net)\n * OpenRetro (openretro.org)\n * ArcadeDB (adb.arcadeitalia.net)\n * IGDB (igdb.com)\n * World of Spectrum (worldofspectrum.org)\n\ZbLOCAL\Zn\n * LocalDB Cache (scrapes exclusively from cached resources)\n * Import (imports resources in the local cache)\n\n\Zb\ZrNOTE\Zn: Some sources require a username and password for access. These can be set per source in the \Zbconfig.ini\Zn configuration file.\n\n Skyscraper parameter: \Zb-s <source_name>\Zn"
-        [4]="Game name format used in the Emulationstation gamelist. Available options:\n\n\ZbSource name\Zn: use the name returned by the scraper\n\ZbFilename\Zn: use the filename of the ROM as game name\n\nSkyscraper option: \Zb--forcefilename\Z0"
-        [5]="Game name option to remove/keep the text found between '()' and '[]' in the ROMs filename.\n\nSkyscraper option: \Zb--nobrackets\Zn"
-        [6]="Force the refresh of resources in the local cache when scraping.\n\nSkyscraper option: \Zb--refresh\Zn"
-        [7]="Toggle the download and caching of videos.\nThis also toggles whether the videos will be included in the resulting gamelist.\n\nSkyscraper option: \Zb--videos\Zn"
-        [8]="Choose to save the generated 'gamelist.xml' and media in the ROMs folder. Supported options:\n\n\ZbEnabled\Zn saves the 'gamelist.xml' in the ROMs folder and the media in the 'media' sub-folder.\n\n\ZbDisabled\Zn saves the 'gamelist.xml' in \Zu\$HOME/.emulationstation/gamelists/<system>\Zn and the media in \Zu\$HOME/.emulationstation/downloaded_media\Zn.\n\n\Zb\ZrNOTE\Zn: changing this option will not automatically copy the 'gamelist.xml' file and the media to the new location or remove the ones in the old location. You must do this manually.\n\nSkyscraper parameters: \Zb-g <gamelist>\Zn / \Zb-o <path>\Zn"
-        [A]="Advanced options sub-menu."
+    help_strings_gen=(
+        [1]="Game name format used in the EmulationStation game list. Available options:\n\n\ZbSource name\Zn: use the name returned by the scraper\n\ZbFilename\Zn: use the filename of the ROM as game name\n\nSkyscraper option: \Zb--forcefilename\Z0"
+        [2]="Game name option to remove/keep the text found between '()' and '[]' in the ROMs filename.\n\nSkyscraper option: \Zb--nobrackets\Zn"
+        [3]="Choose to save the generated 'gamelist.xml' and media in the ROMs folder. Supported options:\n\n\ZbEnabled\Zn saves the 'gamelist.xml' in the ROMs folder and the media in the 'media' sub-folder.\n\n\ZbDisabled\Zn saves the 'gamelist.xml' in \Zu\$HOME/.emulationstation/gamelists/<system>\Zn and the media in \Zu\$HOME/.emulationstation/downloaded_media\Zn.\n\n\Zb\ZrNOTE\Zn: changing this option will not automatically copy the 'gamelist.xml' file and the media to the new location or remove the ones in the old location. You must do this manually.\n\nSkyscraper parameters: \Zb-g <gamelist>\Zn / \Zb-o <path>\Zn"
     )
 
-    ver=$(_get_ver_skyscraper)
-
     while true; do
-        [[ -z "$ver" ]] && ver="v(Git)"
 
-        local cmd=(dialog --backtitle "$__backtitle"  --colors --cancel-label "Exit" --help-button --no-collapse --cr-wrap --default-item "$default" --menu "   Skyscraper: game scraper by Lars Muldjord ($ver)\\n \\n" 21 65 10)
-
-        local -a options=(
-            1 "Scrape all systems"
-            2 "Scrape chosen systems"
-        )
-
-        local source_found=0
-        local online="Online"
-        local i
-
-        for i in "${!s_source[@]}"; do
-            if [[ "$scrape_source" == "${s_source[$i]}" ]]; then
-                [[ $i -ge 10 ]] && online="Local"
-                options+=(3 "Scrape from ${s_source_names[$i]} ($online)")
-                source_found=1
-            fi
-        done
-
-        if [[ ! $source_found ]]; then
-            options+=(3 "Scrape from Screenscraper (Default)")
-            scrape_source="screenscraper" # default scraping source if none found
-        fi
+        local cmd=(dialog --backtitle "$__backtitle" --help-button --colors --no-collapse --default-item "$default" --ok-label "Ok" --cancel-label "Back" --title "Game list generation options" --menu "\n\n" 13 60 5)
+        local -a options
 
         if [[ "$rom_name" -eq 0 ]]; then
-            options+=(4 "ROM Names (Source name)")
+            options=(1 "ROM Names (Source name)")
         else
-            options+=(4 "ROM Names (Filename)")
+            options=(1 "ROM Names (Filename)")
         fi
 
         if [[ "$remove_brackets" -eq 1 ]]; then
-            options+=(5 "Remove bracket info (Enabled)")
+            options+=(2 "Remove bracket info (Enabled)")
         else
-            options+=(5 "Remove bracket info (Disabled)")
-        fi
-
-        if [[ "$force_refresh" -eq 0 ]]; then
-            options+=(6 "Force cache refresh (Disabled)")
-        else
-            options+=(6 "Force cache refresh (Enabled)")
-        fi
-
-        if [[ "$download_videos" -eq 1 ]]; then
-            options+=(7 "Download videos (Enabled)")
-        else
-            options+=(7 "Download videos (Disabled)")
+            options+=(2 "Remove bracket info (Disabled)")
         fi
 
         if [[ "$use_rom_folder" -eq 1 ]]; then
-            options+=(8 "Use ROM folders for gamelist & media (Enabled)")
+            options+=(3 "Use ROM folders for game list & media (Enabled)")
         else
-            options+=(8 "Use ROM folders for gamelist & media (Disabled)")
+            options+=(3 "Use ROM folders for game list & media (Disabled)")
         fi
 
-        options+=(A "Advanced options -->")
-
-        # Run the GUI
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 > /dev/tty)
 
         if [[ -n "$choice" ]]; then
-            default="$choice"
+            local default="$choice"
 
             case "$choice" in
 
                 1)
-                    if _scrape_all_skyscraper; then
-                        printMsgs "dialog" "ROMS have been scraped."
-                    else
-                        printMsgs "dialog" "Scraping was aborted"
-                    fi
-                    ;;
-
-                2)
-                    if _scrape_chosen_skyscraper; then
-                        printMsgs "dialog" "ROMS have been scraped."
-                    elif [[ $? -eq 2 ]]; then
-                        printMsgs "dialog" "Scraping was aborted"
-                    fi
-                    ;;
-
-                3)
-                    # Scrape options have a separate dialog
-                    declare -a s_options=()
-                    local i
-
-                    for i in "${!s_source[@]}"; do
-                        online="Online:"
-                        [[ i -ge 10 ]] && online="Local:"
-
-                        if [[ "$scrape_source" == "${s_source[$i]}" ]]; then
-                            s_default="$online ${s_source_names[$i]}"
-                        fi
-
-                        s_options+=("$online ${s_source_names[$i]}" "")
-                    done
-
-                    if [[ -z "$s_default" ]]; then
-                        s_default="Online: ${s_source_names[1]}"
-                    fi
-
-                    
-                    local s_cmd=(dialog --title "Select Scraping source" --default-item "$s_default" \
-                        --menu "Choose one of the available scraping sources" 18 50 9)
-
-                    # Run the Scraper source selection dialog
-                    local scrape_source_name=$("${s_cmd[@]}" "${s_options[@]}" 2>&1 >/dev/tty)
-
-                    # If Cancel was chosen, don't do anything
-                    [[ -z "$scrape_source_name" ]] && continue
-
-                    # Strip the "XYZ:" prefix from the chosen scraper source, then compare to our list
-                    local src=$(echo "$scrape_source_name" | cut -d' ' -f2-)
-
-                    for i in "${!s_source_names[@]}"; do
-                        [[ "${s_source_names[$i]}" == "$src" ]] && scrape_source=${s_source[$i]}
-                    done
-
-                    iniSet "scrape_source" "$scrape_source"
-                    ;;
-
-                4)
                     rom_name="$((rom_name ^ 1))"
                     iniSet "rom_name" "$rom_name"
                     ;;
 
-                5)
+                2)
                     remove_brackets="$((remove_brackets ^ 1))"
                     iniSet "remove_brackets" "$remove_brackets"
                     ;;
 
-                6)
-                    force_refresh="$((force_refresh ^ 1))"
-                    iniSet "force_refresh" "$force_refresh"
-                    ;;
-
-                7)
-                    download_videos="$((download_videos ^ 1))"
-                    iniSet "download_videos" "$download_videos"
-                    ;;
-
-                8)
+                3)
                     use_rom_folder="$((use_rom_folder ^ 1))"
                     iniSet "use_rom_folder" "$use_rom_folder"
                     ;;
 
-                A)
-                    _gui_advanced_skyscraper
-                    ;;
-
                 HELP*)
-                    # Retain choice when the Help button is selected
+                    # Retain choice
                     default="${choice/HELP /}"
-                    if [[ ! -z "${help_strings[$default]}" ]]; then
-                        dialog --colors --no-collapse --ok-label "Close" --msgbox "${help_strings[$default]}" 22 65 >&1
+                    if [[ ! -z "${help_strings_gen[${default}]}" ]]; then
+                    dialog --colors --no-collapse --ok-label "Close" --msgbox "${help_strings_gen[${default}]}" 22 65 >&1
                     fi
-                    ;;
             esac
         else
             break
