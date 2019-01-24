@@ -490,6 +490,7 @@ function gui_skyscraper() {
         if [[ $source_found -ne 1 ]]; then
             options+=(3 "Gather from - Screenscraper (Online) -->")
             scrape_source="screenscraper" # default scraping source if none found
+            iniSet "scrape_source" "$scrape_source"
         fi
 
         options+=(4 "Cache options and commands -->")
@@ -509,7 +510,7 @@ function gui_skyscraper() {
         options+=(A "Advanced options -->")
 
         # Show different options, depending on the previous check action
-        if compareVersions "$latest_ver" gt "$ver" && [[ -n "$latest_ver" ]]; then
+        if [[ -n "$latest_ver" ]] && compareVersions "$latest_ver" gt "$ver" ; then
             options+=(U "Update to $latest_ver")
         else 
             options+=(U "Check for Updates")
@@ -533,7 +534,7 @@ function gui_skyscraper() {
 
                 2)
                     if _scrape_chosen_skyscraper; then
-                        printMsgs "dialog" "ROMs information gathered.\nDon't forget to use 'Generate same list(s)' to add this information to EmulationStation."
+                        printMsgs "dialog" "ROMs information gathered.\nDon't forget to use 'Generate Game list(s)' to add this information to EmulationStation."
                     elif [[ $? -eq 2 ]]; then
                         printMsgs "dialog" "Gathering was aborted"
                     fi
@@ -606,7 +607,7 @@ function gui_skyscraper() {
 
                 U)
                     # Update to lastest release or check for update
-                    if [[ "$latest_ver" > "$ver" && -n "$latest_ver" ]]; then
+                    if [[ -n "$latest_ver" ]] && compareVersions "$latest_ver" gt "$ver" ; then
                         rp_callModule "$md_id"
                     else 
                         latest_ver=$(_latest_ver_skyscraper)
