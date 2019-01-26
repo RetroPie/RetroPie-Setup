@@ -78,7 +78,7 @@ function chroot_build_builder() {
     local dist
     local sys
 
-    for dist in jessie stretch; do
+    for dist in stretch; do
         local use_distcc=0
         if [[ -d "$rootdir/admin/crosscomp/$dist" ]]; then
             use_distcc=1
