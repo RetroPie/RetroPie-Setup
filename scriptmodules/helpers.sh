@@ -368,9 +368,13 @@ function gitPullOrClone() {
 
     if [[ -n "$commit" ]]; then
         printMsgs "console" "Winding back $repo->$branch to commit: #$commit"
-        git branch -D "$commit" &>/dev/null
+        git -C "$dir" branch -D "$commit" &>/dev/null
         runCmd git -C "$dir" checkout -f "$commit" -b "$commit"
     fi
+
+    branch=$(runCmd git -C "$dir" rev-parse --abbrev-ref HEAD)
+    commit=$(runCmd git -C "$dir" rev-parse HEAD)
+    printMsgs "console" "HEAD is now in branch '$branch' at commit '$commit'"
 }
 
 # @fn setupDirectories()
