@@ -17,8 +17,6 @@ rp_module_section="exp"
 
 function sources_lr-scummvm() {
     gitPullOrClone "$md_build" https://github.com/libretro/scummvm.git
-    # fix random freeze-on-quit (remove when patched upstream)
-    applyPatch "$md_data/01_fix_quit.diff"
 }
 
 function build_lr-scummvm() {
