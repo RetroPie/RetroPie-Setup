@@ -113,7 +113,7 @@ function _joypad_index_configedit() {
                 # get joystick device paths
                 while read -r dev; do
                     if udevadm info --name=$dev | grep -q "ID_INPUT_JOYSTICK=1"; then
-                        paths+=("$(udevadm info --name=$dev | grep DEVPATH | cut -d= -f2)")
+                        paths+=("$(udevadm info --name=$dev --query=name)")
                     fi
                 done < <(find /dev/input -name "js*")
 
@@ -121,7 +121,7 @@ function _joypad_index_configedit() {
                     # sort by path
                     IFS=$'\n'
                     while read -r path; do
-                        devs_name+=("$(</$(dirname sys$path)/name)")
+                        devs_name+=("$(cat /sys/class/$path/device/name)")
                     done < <(sort <<<"${paths[*]}")
                     unset IFS
                 fi
