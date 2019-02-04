@@ -1,8 +1,8 @@
 diff --git a/input/input_driver.c b/input/input_driver.c
-index f49fd829fe..d13ba8e561 100644
+index 47c831c728..b62d7b435e 100644
 --- a/input/input_driver.c
 +++ b/input/input_driver.c
-@@ -413,6 +413,10 @@ static unsigned input_driver_max_users            = 0;
+@@ -427,6 +427,10 @@ static unsigned input_driver_max_users            = 0;
  static const void *hid_data                       = NULL;
  #endif
  
@@ -13,7 +13,7 @@ index f49fd829fe..d13ba8e561 100644
  /**
   * check_input_driver_block_hotkey:
   *
-@@ -1118,9 +1122,16 @@ void input_keys_pressed(void *data, input_bits_t *p_new_state)
+@@ -1127,9 +1131,16 @@ void input_keys_pressed(void *data, input_bits_t *p_new_state)
              && current_input->input_state(
                 current_input_data, joypad_info, &binds, 0,
                 RETRO_DEVICE_JOYPAD, 0, RARCH_ENABLE_HOTKEY))
@@ -33,3 +33,4 @@ index f49fd829fe..d13ba8e561 100644
     }
  
     if (binds[RARCH_GAME_FOCUS_TOGGLE].valid)
+
