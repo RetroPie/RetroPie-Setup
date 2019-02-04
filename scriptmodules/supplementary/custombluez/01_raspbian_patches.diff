@@ -1,0 +1,146 @@
+From 480f82debde736f6511262cf1ecfa5ca02a22197 Mon Sep 17 00:00:00 2001
+From: Conn O'Griofa <connogriofa@gmail.com>
+Date: Sat, 17 Nov 2018 00:30:13 +0000
+Subject: [PATCH] Import Raspbian patches
+
+---
+ debian/changelog                                    |  6 ++++++
+ debian/libbluetooth3.symbols                        |  2 --
+ .../0050-bcm43xx-Add-bcm43xx-3wire-variant.patch    | 21 +++++++++++++++++++++
+ ...0052-Increase-firmware-load-timeout-to-30s.patch | 20 ++++++++++++++++++++
+ .../0053-Move-43xx-firmware-to-lib-firmware.patch   | 11 +++++++++++
+ debian/patches/0054-update-bluetooth.conf.patch     | 11 +++++++++++
+ debian/patches/series                               |  4 ++++
+ 7 files changed, 73 insertions(+), 2 deletions(-)
+ create mode 100644 debian/patches/0050-bcm43xx-Add-bcm43xx-3wire-variant.patch
+ create mode 100644 debian/patches/0052-Increase-firmware-load-timeout-to-30s.patch
+ create mode 100644 debian/patches/0053-Move-43xx-firmware-to-lib-firmware.patch
+ create mode 100644 debian/patches/0054-update-bluetooth.conf.patch
+
+diff --git a/debian/changelog b/debian/changelog
+index 85a875f53..7ff84df69 100644
+--- a/debian/changelog
++++ b/debian/changelog
+@@ -1,3 +1,9 @@
++bluez (5.50-1~rpi1) UNRELEASED; urgency=medium
++
++  * Import Raspbian patches.
++
++ -- Conn O'Griofa <connogriofa@gmail.com>  Sat, 17 Nov 2018 00:27:54 +0000
++
+ bluez (5.50-1) unstable; urgency=medium
+ 
+   * Update to 5.50.
+diff --git a/debian/libbluetooth3.symbols b/debian/libbluetooth3.symbols
+index b395a17a7..d08b15d52 100644
+--- a/debian/libbluetooth3.symbols
++++ b/debian/libbluetooth3.symbols
+@@ -216,6 +216,4 @@ libbluetooth.so.3 libbluetooth3 #MINVER#
+  str2ba@Base 4.91
+  strtoba@Base 4.91
+ sixaxis.so libbluetooth3 #MINVER#
+- __start___debug@Base 5.46
+- __stop___debug@Base 5.46
+  bluetooth_plugin_desc@Base 5.20
+diff --git a/debian/patches/0050-bcm43xx-Add-bcm43xx-3wire-variant.patch b/debian/patches/0050-bcm43xx-Add-bcm43xx-3wire-variant.patch
+new file mode 100644
+index 000000000..14b2f4e17
+--- /dev/null
++++ b/debian/patches/0050-bcm43xx-Add-bcm43xx-3wire-variant.patch
+@@ -0,0 +1,21 @@
++From 874990be3b958bd3d5d5f61989f8d6314be3358a Mon Sep 17 00:00:00 2001
++From: Phil Elwell <phil@raspberrypi.org>
++Date: Tue, 16 Feb 2016 16:40:46 +0000
++Subject: [PATCH 1/3] bcm43xx: Add bcm43xx-3wire variant
++
++---
++ tools/hciattach.c | 3 +++
++ 1 file changed, 3 insertions(+)
++
++--- a/tools/hciattach.c
+++++ b/tools/hciattach.c
++@@ -1144,6 +1144,9 @@
++ 	{ "bcm43xx",    0x0000, 0x0000, HCI_UART_H4,   115200, 3000000,
++ 				FLOW_CTL, DISABLE_PM, NULL, bcm43xx, NULL  },
++ 
+++	{ "bcm43xx-3wire",    0x0000, 0x0000, HCI_UART_3WIRE, 115200, 3000000,
+++				0, DISABLE_PM, NULL, bcm43xx, NULL  },
+++
++ 	{ "ath3k",    0x0000, 0x0000, HCI_UART_ATH3K, 115200, 115200,
++ 			FLOW_CTL, DISABLE_PM, NULL, ath3k_ps, ath3k_pm  },
++ 
+diff --git a/debian/patches/0052-Increase-firmware-load-timeout-to-30s.patch b/debian/patches/0052-Increase-firmware-load-timeout-to-30s.patch
+new file mode 100644
+index 000000000..df264b091
+--- /dev/null
++++ b/debian/patches/0052-Increase-firmware-load-timeout-to-30s.patch
+@@ -0,0 +1,20 @@
++From 74e6869ecce13b1066741ba995fc47b437c4c72f Mon Sep 17 00:00:00 2001
++From: Phil Elwell <phil@raspberrypi.org>
++Date: Wed, 20 Jan 2016 16:00:37 +0000
++Subject: [PATCH 3/3] Increase firmware load timeout to 30s
++
++---
++ tools/hciattach.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++--- a/tools/hciattach.c
+++++ b/tools/hciattach.c
++@@ -1287,7 +1287,7 @@
++ {
++ 	struct uart_t *u = NULL;
++ 	int detach, printpid, raw, opt, i, n, ld, err;
++-	int to = 10;
+++	int to = 30;
++ 	int init_speed = 0;
++ 	int send_break = 0;
++ 	pid_t pid;
+diff --git a/debian/patches/0053-Move-43xx-firmware-to-lib-firmware.patch b/debian/patches/0053-Move-43xx-firmware-to-lib-firmware.patch
+new file mode 100644
+index 000000000..61fbb7b2c
+--- /dev/null
++++ b/debian/patches/0053-Move-43xx-firmware-to-lib-firmware.patch
+@@ -0,0 +1,11 @@
++--- a/tools/hciattach_bcm43xx.c
+++++ b/tools/hciattach_bcm43xx.c
++@@ -43,7 +43,7 @@
++ #include "hciattach.h"
++ 
++ #ifndef FIRMWARE_DIR
++-#define FIRMWARE_DIR "/etc/firmware"
+++#define FIRMWARE_DIR "/lib/firmware"
++ #endif
++ 
++ #define FW_EXT ".hcd"
+diff --git a/debian/patches/0054-update-bluetooth.conf.patch b/debian/patches/0054-update-bluetooth.conf.patch
+new file mode 100644
+index 000000000..58b8b3808
+--- /dev/null
++++ b/debian/patches/0054-update-bluetooth.conf.patch
+@@ -0,0 +1,11 @@
++--- a/src/bluetooth.conf
+++++ b/src/bluetooth.conf
++@@ -37,7 +37,7 @@
++   </policy>
++ 
++   <policy context="default">
++-    <deny send_destination="org.bluez"/>
+++    <allow send_destination="org.bluez"/>
++   </policy>
++ 
++ </busconfig>
+diff --git a/debian/patches/series b/debian/patches/series
+index d4709adf3..7598d7426 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -9,3 +9,7 @@ org.bluez.obex.service.in.patch
+ Fix-typo.patch
+ shared-gatt-client-Fix-segfault-after-PIN-entry.patch
+ main.conf-Add-more-details-Closes-904212.patch
++0050-bcm43xx-Add-bcm43xx-3wire-variant.patch
++0052-Increase-firmware-load-timeout-to-30s.patch
++0053-Move-43xx-firmware-to-lib-firmware.patch
++0054-update-bluetooth.conf.patch
+-- 
+2.11.0
+
