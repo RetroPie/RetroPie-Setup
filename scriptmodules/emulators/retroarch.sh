@@ -38,7 +38,7 @@ function depends_retroarch() {
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.7.5
+    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.7.6
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
     applyPatch "$md_data/03_disable_udev_sort.diff"
@@ -148,6 +148,7 @@ function configure_retroarch() {
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "false"
+    iniSet "rgui_show_start_screen" "false"
 
     if ! isPlatform "x86"; then
         iniSet "video_threaded" "true"
