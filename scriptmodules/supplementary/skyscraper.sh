@@ -122,9 +122,9 @@ function _latest_ver_skyscraper() {
     wget -qO- https://api.github.com/repos/muldjord/skyscraper/releases/latest | grep -m 1 tag_name | cut -d\" -f4
 }
 
-# List any non-empty system found in the ROM parent folder
+# List any non-empty systems found in the ROM folder
 function _list_systems_skyscraper() {
-    find "$romdir/" -mindepth 2 -type f -not -name '+*' | sed "s%$romdir/%%; s%/.*$%%" | sort -u
+    find -L "$romdir/" -mindepth 1 -maxdepth 1 -type d -not -empty | sort -u
 }
 
 function remove_skyscraper() {
