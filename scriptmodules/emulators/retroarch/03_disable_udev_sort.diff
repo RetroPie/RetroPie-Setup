@@ -1,8 +1,8 @@
 diff --git a/input/drivers_joypad/udev_joypad.c b/input/drivers_joypad/udev_joypad.c
-index 4475c62..865431c 100644
+index c420d2b18b..27cd162dfa 100644
 --- a/input/drivers_joypad/udev_joypad.c
 +++ b/input/drivers_joypad/udev_joypad.c
-@@ -588,8 +588,8 @@ static bool udev_joypad_init(void *data)
+@@ -599,8 +599,8 @@ static bool udev_joypad_init(void *data)
  
     /* Sort the udev entries by devnode name so that they are
      * created in the proper order */
