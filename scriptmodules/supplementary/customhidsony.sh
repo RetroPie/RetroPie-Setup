@@ -15,20 +15,12 @@ rp_module_help="Fixes eternal vibrating bug with Shanwan DS3 controllers.\n\nWar
 rp_module_section="driver"
 rp_module_flags="noinstclean"
 
-function _update_hook_customhidsony() {
-    if rp_isInstalled "$md_idx"; then
-        if [[ ! "$(dkms status hid-sony/$(_version_customhidsony))" ]]; then
-            rp_callModule "$md_idx"
-        fi
-    fi
-}
-
 function _version_customhidsony() {
     echo "0.1.1"
 }
 
-function _dkms_remove_customhidsony() {
-    dkms remove -m hid-sony -v "$(_version_customhidsony)" --all
+function _update_hook_customhidsony() {
+    dkmsManager update_hook hid-sony "$(_version_customhidsony)"
 }
 
 function depends_customhidsony() {
@@ -39,11 +31,11 @@ function sources_customhidsony() {
     mkdir -p "$md_inst/patches"
     pushd "$md_inst"
 
-    cat > "$md_inst/Makefile" << _EOF_
+    cat > "Makefile" << _EOF_
 obj-m := drivers/hid/hid-sony.o
 _EOF_
 
-    cat > "$md_inst/dkms.conf" << _EOF_
+    cat > "dkms.conf" << _EOF_
 PACKAGE_NAME="hid-sony"
 PACKAGE_VERSION="$(_version_customhidsony)"
 PRE_BUILD="hidsony_source.sh"
@@ -53,7 +45,7 @@ DEST_MODULE_LOCATION="/updates/dkms"
 AUTOINSTALL="yes"
 _EOF_
 
-    cat > "$md_inst/hidsony_source.sh" << _EOF_
+    cat > "hidsony_source.sh" << _EOF_
 #!/bin/bash
 rpi_kernel_ver="rpi-4.15.y"
 mkdir -p "drivers/hid/" "patches"
@@ -61,7 +53,7 @@ wget https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/driv
 wget https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-ids.h -O "drivers/hid/hid-ids.h"
 patch -p1 <"patches/0001-hidsony-nomotionsensors.diff"
 _EOF_
-    chmod +x "$md_inst/hidsony_source.sh"
+    chmod +x "hidsony_source.sh"
 
     cp "$md_data/0001-hidsony-nomotionsensors.diff" "patches/"
 
@@ -69,30 +61,15 @@ _EOF_
 }
 
 function build_customhidsony() {
-    ln -sf "$md_inst" "/usr/src/hid-sony-$(_version_customhidsony)"
-    if dkms status | grep -q "^hid-sony"; then
-        _dkms_remove_customhidsony
-    fi
-    local kernel
-    if [[ "$__chroot" -eq 1 ]]; then
-        kernel="$(ls -1 /lib/modules | tail -n -1)"
-    else
-        kernel="$(uname -r)"
-    fi
-    dkms install --force -m hid-sony -v "$(_version_customhidsony)" -k "$kernel"
-    if dkms status | grep -q "^hid-sony"; then
-        md_ret_error+=("Failed to install $md_id")
-        return 1
-    fi
+    dkmsManager install hid-sony "$(_version_customhidsony)"
 }
 
 function remove_customhidsony() {
-    [[ -n "$(lsmod | grep hid_sony)" ]] && rmmod hid-sony
-    _dkms_remove_customhidsony
-    rm -rf /usr/src/hid-sony-"$(_version_customhidsony)"
+    dkmsManager remove hid-sony "$(_version_customhidsony)"
 }
 
 function configure_customhidsony() {
-    [[ -n "$(lsmod | grep hid_sony)" ]] && rmmod hid-sony
-    modprobe hid-sony
+    [[ "$md_mode" == "remove" ]] && return
+
+    dkmsManager reload hid-sony "$(_version_customhidsony)"
 }
