@@ -1324,3 +1324,55 @@ function patchVendorGraphics() {
              --replace-needed libOpenVG.so libbrcmOpenVG.so \
              --replace-needed libWFC.so libbrcmWFC.so "$filename"
 }
+
+## @fn dkmsManager()
+## @param mode dkms operation type
+## @module_name name of dkms module
+## @module_ver version of dkms module
+## Helper function to manage DKMS modules installed by RetroPie
+function dkmsManager() {
+    local mode="$1"
+    local module_name="$2"
+    local module_ver="$3"
+    local kernel="$(uname -r)"
+    local ver
+
+    case "$mode" in
+        install)
+            if dkms status | grep -q "^$module_name"; then
+                dkmsManager remove "$module_name" "$module_ver"
+            fi
+            if [[ "$__chroot" -eq 1 ]]; then
+                kernel="$(ls -1 /lib/modules | tail -n -1)"
+            fi
+            ln -sf "$md_inst" "/usr/src/${module_name}-${module_ver}"
+            dkms install --force -m "$module_name" -v "$module_ver" -k "$kernel"
+            if dkms status | grep -q "^$module_name"; then
+                md_ret_error+=("Failed to install $md_id")
+                return 1
+            fi
+            ;;
+        remove)
+            for ver in $(dkms status "$module_name" | cut -d"," -f2); do
+                dkms remove -m "$module_name" -v "$ver" --all
+                rm -f "/usr/src/${module_name}-${ver}"
+            done
+            dkmsManager unload "$module_name" "$module_ver"
+            ;;
+        reload)
+            dkmsManager unload "$module_name" "$module_ver"
+            modprobe "$module_name"
+            ;;
+        unload)
+            if [[ -n "$(lsmod | grep ${module_name/-/_})" ]]; then
+                rmmod "$module_name"
+            fi
+            ;;
+        update_hook)
+            if ! [[ "$(dkms status $module_name | cut -d':' -f2)" =~ "installed" ]]; then
+                dkmsManager install "$module_name" "$module_ver"
+                dkmsManager reload "$module_name" "$module_ver"
+            fi
+            ;;
+    esac
+}
