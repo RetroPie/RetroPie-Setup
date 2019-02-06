@@ -24,7 +24,7 @@ function _update_hook_customhidsony() {
 }
 
 function depends_customhidsony() {
-    depends_gamecondriver
+    depends_xpad
 }
 
 function sources_customhidsony() {
