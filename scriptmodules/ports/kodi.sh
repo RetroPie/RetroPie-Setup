@@ -43,7 +43,7 @@ function depends_kodi() {
 function install_bin_kodi() {
     # force aptInstall to get a fresh list before installing
     __apt_update=0
-    aptInstall kodi kodi-peripheral-joystick kodi-inputstream-adaptive kodi-inputstream-rtmp
+    aptInstall kodi kodi-peripheral-joystick kodi-inputstream-adaptive kodi-inputstream-rtmp kodi-vfs-libarchive kodi-vfs-sftp kodi-vfs-nfs
 }
 
 function remove_kodi() {
@@ -57,5 +57,5 @@ function configure_kodi() {
 
     moveConfigDir "$home/.kodi" "$md_conf_root/kodi"
 
-    addPort "$md_id" "kodi" "Kodi" "kodi"
+    addPort "$md_id" "kodi" "Kodi" "kodi-standalone"
 }
