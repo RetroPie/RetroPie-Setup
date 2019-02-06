@@ -16,6 +16,14 @@ rp_module_licence="GPL2 https://www.kernel.org/pub/linux/kernel/COPYING"
 rp_module_section="driver"
 rp_module_flags="noinstclean !mali"
 
+function _version_xpad() {
+    echo "0.4"
+}
+
+function _update_hook_xpad() {
+    dkmsManager update_hook xpad "$(_version_xpad)"
+}
+
 function depends_xpad() {
     local depends=(dkms)
     isPlatform "rpi" && depends+=(raspberrypi-kernel-headers)
@@ -32,27 +40,19 @@ function sources_xpad() {
 }
 
 function build_xpad() {
-    ln -sf "$md_inst" "/usr/src/xpad-0.4"
-    if dkms status | grep -q "^xpad"; then
-        dkms remove -m xpad -v 0.4 --all
-    fi
-    local kernel
-    if [[ "$__chroot" -eq 1 ]]; then
-        kernel="$(ls -1 /lib/modules | tail -n -1)"
-    else
-        kernel="$(uname -r)"
-    fi
-    dkms install --force -m xpad -v 0.4 -k "$kernel"
+    dkmsManager install xpad "$(_version_xpad)"
 }
 
 function remove_xpad() {
-    dkms remove -m xpad -v 0.4 --all
-    rm -rf /usr/src/xpad-0.4
+    dkmsManager remove xpad "$(_version_xpad)"
     rm -f /etc/modprobe.d/xpad.conf
 }
 
 function configure_xpad() {
+    [[ "$md_mode" == "remove" ]] && return
+
     if [[ ! -f /etc/modprobe.d/xpad.conf ]]; then
         echo "options xpad triggers_to_buttons=1" >/etc/modprobe.d/xpad.conf
     fi
+    dkmsManager reload xpad "$(_version_xpad)"
 }
