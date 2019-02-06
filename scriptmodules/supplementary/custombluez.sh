@@ -19,7 +19,7 @@ function _version_custombluez() {
 }
 
 function depends_custombluez() {
-    local depends=(check dh-systemd icu-devtools libcap-ng-dev libdbus-1-dev libdbus-glib-1-dev libdw-dev libical-dev libicu-dev libreadline-dev libsubunit-dev libtinfo-dev)
+    local depends=(bison check dh-systemd flex icu-devtools libasound2-dev libcap-ng-dev libdbus-1-dev libdbus-glib-1-dev libdw-dev libical-dev libicu-dev libreadline-dev libsubunit-dev libtinfo-dev libudev-dev)
 
     getDepends "${depends[@]}"
 }

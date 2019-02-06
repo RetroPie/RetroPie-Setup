@@ -1369,9 +1369,8 @@ function dkmsManager() {
             fi
             ;;
         update_hook)
-            if ! [[ "$(dkms status $module_name | cut -d':' -f2)" =~ "installed" ]]; then
-                dkmsManager install "$module_name" "$module_ver"
-                dkmsManager reload "$module_name" "$module_ver"
+            if rp_isInstalled "$md_idx" && ! [[ "$(dkms status -m $module_name -v $module_ver | cut -d':' -f2)" =~ "installed" ]]; then
+                rp_callModule "$md_idx"
             fi
             ;;
     esac
