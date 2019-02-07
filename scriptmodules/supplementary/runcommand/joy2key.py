@@ -235,6 +235,7 @@ event_format = 'IhBB'
 event_size = struct.calcsize(event_format)
 
 try:
+    time.sleep(1)
     tty_fd = open('/dev/tty', 'w')
 except:
     print 'Unable to open /dev/tty'

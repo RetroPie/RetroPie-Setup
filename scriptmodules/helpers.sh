@@ -1046,7 +1046,6 @@ function joy2keyStart() {
     # if joy2key.py is installed run it with cursor keys for axis/dpad, and enter + space for buttons 0 and 1
     if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
         __joy2key_pid=$!
-        sleep 1
         return 0
     fi
 
