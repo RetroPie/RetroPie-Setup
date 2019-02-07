@@ -26,7 +26,7 @@ function depends_eduke32() {
 }
 
 function sources_eduke32() {
-    svn checkout -r7077 http://svn.eduke32.com/eduke32 "$md_build"
+    svn checkout http://svn.eduke32.com/eduke32 "$md_build"
 }
 
 function build_eduke32() {
@@ -61,7 +61,7 @@ function configure_eduke32() {
 
     mkRomDir "ports/duke3d"
 
-    moveConfigDir "$home/.eduke32" "$md_conf_root/duke3d"
+    moveConfigDir "$home/.config/eduke32" "$md_conf_root/duke3d"
 
     # remove old launch script
     rm -f "$romdir/ports/Duke3D Shareware.sh"
