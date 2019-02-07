@@ -20,10 +20,6 @@ function _version_mkarcadejoystick() {
     echo "0.1.5"
 }
 
-function _update_hook_mkarcadejoystick() {
-    dkmsManager update_hook mk_arcade_joystick_rpi "$(_version_mkarcadejoystick)"
-}
-
 function depends_mkarcadejoystick() {
     depends_gamecondriver
 }
