@@ -19,10 +19,6 @@ function _version_customhidsony() {
     echo "0.1.1"
 }
 
-function _update_hook_customhidsony() {
-    dkmsManager update_hook hid-sony "$(_version_customhidsony)"
-}
-
 function depends_customhidsony() {
     depends_xpad
 }
