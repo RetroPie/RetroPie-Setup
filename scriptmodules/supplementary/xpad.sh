@@ -20,10 +20,6 @@ function _version_xpad() {
     echo "0.4"
 }
 
-function _update_hook_xpad() {
-    dkmsManager update_hook xpad "$(_version_xpad)"
-}
-
 function depends_xpad() {
     local depends=(dkms)
     isPlatform "rpi" && depends+=(raspberrypi-kernel-headers)
