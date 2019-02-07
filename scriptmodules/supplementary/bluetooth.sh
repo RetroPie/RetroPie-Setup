@@ -159,7 +159,6 @@ function remove_device_bluetooth() {
 }
 
 function register_bluetooth() {
-    local is_trusted=""
     local mac_addresses=()
     local mac_address
     local device_names=()
@@ -182,10 +181,6 @@ function register_bluetooth() {
     [[ -z "$choice" ]] && return
 
     mac_address="$choice"
-
-    # skip registration for devices that are trusted
-    is_trusted=$($(get_script_bluetooth bluez-test-device) trusted "$mac_address" yes 2>&1)
-    [[ -z "$is_trusted" ]] && return
 
     local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the security mode - Try the first one, then second if that fails" 22 76 16)
     options=(
