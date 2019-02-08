@@ -17,21 +17,14 @@ rp_module_section="opt"
 rp_module_flags="!armv6 !mali"
 
 function depends_reicast() {
-    local depends=(libsdl2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev)
+    local depends=(libsdl2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev libasound2-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
     getDepends "${depends[@]}"
     pip install evdev
 }
 
 function sources_reicast() {
-    if isPlatform "x11"; then
-        gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
-    elif isPlatform "vero4k"; then
-        gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
-    else
-        gitPullOrClone "$md_build" https://github.com/RetroPie/reicast-emulator.git retropie
-    fi
-    sed -i "s/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names/CXXFLAGS += -fno-rtti -fpermissive -fno-operator-names -D_GLIBCXX_USE_CXX11_ABI=0/g" shell/linux/Makefile
+    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
 }
 
 function build_reicast() {
