@@ -45,7 +45,6 @@ function build_emulationstation-dev() {
 
 function install_emulationstation-dev() {
     install_emulationstation
-    md_ret_files+=(resources)
 }
 
 function configure_emulationstation-dev() {
