@@ -90,7 +90,7 @@ function retropie_welcome() {
         out+="  ${logo[$i]}  "
         case "$i" in
             0)
-                out+="${fggrn}$(date +"%A, %e %B %Y, %r")"
+                out+="${fggrn}$(date +"%A, %e %B %Y, %X")"
                 ;;
             1)
                 out+="${fggrn}$(uname -srmo)"
