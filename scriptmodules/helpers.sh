@@ -352,6 +352,7 @@ function gitPullOrClone() {
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
+        runCmd git fetch
         runCmd git checkout "$branch"
         runCmd git pull
         runCmd git submodule update --init --recursive
@@ -1222,7 +1223,7 @@ _EOF_
 ## @param cmd commandline to launch
 ## @brief Adds a new emulator for a system.
 ## @details This is the primary function for adding emulators to a system which can be
-## switched between via the runcommand launch menu 
+## switched between via the runcommand launch menu
 ##
 ##     addEmulator 1 "vice-x64" "c64" "$md_inst/bin/x64 %ROM%"
 ##     addEmulator 0 "vice-xvic" "c64" "$md_inst/bin/xvic %ROM%"
