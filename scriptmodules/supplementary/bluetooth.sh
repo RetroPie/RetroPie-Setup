@@ -63,10 +63,10 @@ function bluez_cmd_bluetooth() {
     mkfifo "$fifo"
     exec 3<>"$fifo"
     local line
-    while read -t "$2"; do
+    while true; do
         _slowecho_bluetooth "$1" >&3
         # collect output for specified amount of time, then echo it
-        while read -t "$2" -r line; do
+        while read -r line; do
             printf '%s\n' "$line"
             # (slow) reply to any optional challenges
             if [[ -n "$3" && "$line" =~ $3 ]]; then
@@ -76,7 +76,7 @@ function bluez_cmd_bluetooth() {
         _slowecho_bluetooth "quit\n" >&3
         break
     # read from bluetoothctl buffered line by line
-    done < <(stdbuf -oL bluetoothctl --agent=NoInputNoOutput <&3)
+    done < <(timeout "$2" stdbuf -oL bluetoothctl --agent=NoInputNoOutput <&3)
     exec 3>&-
 }
 
@@ -86,7 +86,7 @@ function list_available_bluetooth() {
     local info_text="\n\nSearching ..."
 
     # sixaxis: add USB pairing information
-    [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="Searching ...\n\nDualShock registration: wait 3 seconds, then unplug and replug the controller (while this text is visible)."
+    [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="Searching ...\n\nDualShock registration: while this text is visible, unplug and replug the controller, then press the PS/SHARE button."
 
     dialog --backtitle "$__backtitle" --infobox "$info_text" 7 60 >/dev/tty
     if hasPackage bluez 5; then
@@ -94,7 +94,7 @@ function list_available_bluetooth() {
         while read mac_address; read device_name; do
             echo "$mac_address"
             echo "$device_name"
-        done < <(bluez_cmd_bluetooth "default-agent\nscan on" "20" "Authorize service$" "yes\ntrust\ndisconnect" >/dev/null; bluez_cmd_bluetooth "devices" "2" | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/')
+        done < <(bluez_cmd_bluetooth "default-agent\nscan on" "15" "Authorize service$" "yes\ntrust\ndisconnect" >/dev/null; bluez_cmd_bluetooth "devices" "3" | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/')
     else
         while read; read mac_address; read device_name; do
             echo "$mac_address"
