@@ -85,12 +85,15 @@ function scrape_scraper() {
     params+=(-rom_dir "$romdir/$system")
     params+=(-workers "4")
     params+=(-skip_check)
+
+    [[ "$system" =~ ^mame-|arcade|fba|neogeo ]] && params+=(-mame)
+
     if [[ "$use_thumbs" -eq 1 ]]; then
         params+=(-thumb_only)
     fi
     if [[ "$screenshots" -eq 1 ]]; then
         if [[ "$system" =~ ^mame-|arcade|fba|neogeo ]]; then
-            params+=(-mame -mame_img s,m,t)
+            params+=(-mame_img "s,m,t")
         else
             params+=(-console_img "s,b,3b,l,f")
         fi
@@ -129,8 +132,6 @@ function scrape_scraper() {
     if [[ "$append_only" -eq 1 ]]; then
         params+=(-append)
     fi
-
-    [[ "$system" =~ ^mame-|arcade|fba|neogeo ]] && params+=(-mame -mame_img t,m,s)
 
     # trap ctrl+c and return if pressed (rather than exiting retropie-setup etc)
     trap 'trap 2; return 1' INT
