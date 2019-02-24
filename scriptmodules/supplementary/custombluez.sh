@@ -68,20 +68,6 @@ function install_custombluez() {
     _install_custombluez_packages "install" "$md_build"
 }
 
-function install_bin_custombluez() {
-    local dest="$__tmpdir/archives/$__os_codename/$__platform/custombluez"
-
-    if ! isPlatform "rpi"; then
-        md_ret_errors+=("$md_id is only available as a binary package for platform rpi")
-        return 1
-    fi
-
-    rm -rf "$dest"
-    mkdir -p "$dest"
-    downloadAndExtract "$__binary_url/custombluez_$(_version_custombluez).tar.bz2" "$dest/" --strip-components 1
-    _install_custombluez_packages "install" "$dest"
-}
-
 function remove_custombluez() {
     _install_custombluez_packages "remove" ""
 }
