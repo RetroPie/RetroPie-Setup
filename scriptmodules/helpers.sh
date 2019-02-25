@@ -1354,7 +1354,7 @@ function dkmsManager() {
             fi
             ;;
         remove)
-            for ver in $(dkms status "$module_name" | cut -d"," -f2); do
+            for ver in $(dkms status "$module_name" | cut -d"," -f2 | cut -d":" -f1); do
                 dkms remove -m "$module_name" -v "$ver" --all
                 rm -f "/usr/src/${module_name}-${ver}"
             done
