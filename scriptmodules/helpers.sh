@@ -28,6 +28,7 @@ function printMsgs() {
         [[ "$type" == "console" ]] && echo -e "$msg"
         [[ "$type" == "heading" ]] && echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$msg\n= = = = = = = = = = = = = = = = = = = = =\n"
     done
+    return 0
 }
 
 ## @fn printHeading()
