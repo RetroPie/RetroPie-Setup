@@ -947,11 +947,14 @@ function applyPatch() {
 ## @details Download and extract an archive, optionally stripping off a number
 ## of directories - equivalent to the tar `--strip-components parameter`. For
 ## zip files, the strip parameter can contain additional options to send to unzip
+## or tar. If you send additional parameters to tar, you need to start with the
+## number of components to strip, this number can be 0.
 ## @retval 0 on success
 function downloadAndExtract() {
     local url="$1"
     local dest="$2"
-    local opts="$3"
+    shift 2
+    local opts=( "$@" )
 
     local ext="${url##*.}"
     local cmd=(tar -xv)
@@ -973,7 +976,7 @@ function downloadAndExtract() {
             local tmp="$(mktemp -d)"
             local file="${url##*/}"
             runCmd wget -q -O"$tmp/$file" "$url"
-            runCmd unzip $opts -o "$tmp/$file" -d "$dest"
+            runCmd unzip "${opts[@]}" -o "$tmp/$file" -d "$dest"
             rm -rf "$tmp"
             ret=$?
     esac
@@ -981,7 +984,7 @@ function downloadAndExtract() {
     if [[ "$is_tar" -eq 1 ]]; then
         mkdir -p "$dest"
         cmd+=(-C "$dest")
-        [[ -n "$opts" ]] && cmd+=(--strip-components "$opts")
+        [[ -n "$opts" ]] && cmd+=(--strip-components "${opts[@]}")
 
         runCmd "${cmd[@]}" < <(wget -q -O- "$url")
         ret=$?
