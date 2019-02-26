@@ -40,13 +40,7 @@ function install_bin_pegasus-fe() {
     # find out which platform's package we'll need
     local platform
     isPlatform "x11" && platform="x11"
-    if isPlatform "rpi"; then
-        if isPlatform "armv6"; then
-            platform="rpi1"
-        else
-            platform="rpi2"
-        fi
-    fi
+    isPlatform "rpi" && platform="$__platform"
     if [[ -z "${platform}" ]]; then
         md_ret_errors+=("Sorry, Pegasus is not yet available for this platform. Consider reporting this on the forum!")
         return
