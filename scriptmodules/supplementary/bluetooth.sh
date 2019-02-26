@@ -177,6 +177,17 @@ function register_bluetooth() {
     [[ -z "$choice" ]] && return
 
     mac_address="$choice"
+    device_name="${mac_addresses[$choice]}"
+
+    if [[ "$device_name" =~ "PLAYSTATION(R)3 Controller" ]]; then
+        local trusted=$($(get_script_bluetooth bluez-test-device) trusted "$mac_address" 2>&1)
+        if [[ "$trusted" -eq 1 ]]; then
+            printMsgs "dialog" "Successfully authenticated $device_name ($mac_address).\n\nYou can now remove the USB cable."
+        else
+            printMsgs "dialog" "Unable to authenticate $device_name ($mac_address).\n\nPlease try to register the device again, making sure to follow the on-screen steps exactly."
+        fi
+        return
+    fi
 
     local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the security mode - Try the first one, then second if that fails" 22 76 16)
     options=(
