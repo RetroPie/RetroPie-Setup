@@ -78,7 +78,7 @@ function install_bin_custombluez() {
 
     rm -rf "$dest"
     mkdir -p "$dest"
-    downloadAndExtract "$__binary_url/custombluez_$(_version_custombluez).tar.bz2" "$dest/" 1
+    downloadAndExtract "$__binary_url/custombluez_$(_version_custombluez).tar.bz2" "$dest/" --strip-components 1
     _install_custombluez_packages "install" "$dest"
 }
 

@@ -23,7 +23,7 @@ function depends_xm7() {
 function sources_xm7() {
     gitPullOrClone "$md_build" https://github.com/nakatamaho/XM7-for-SDL.git
     mkdir -p "$md_build/agar"
-    downloadAndExtract "http://stable.hypertriton.com/agar/agar-1.5.0.tar.gz" "$md_build/agar" 1
+    downloadAndExtract "http://stable.hypertriton.com/agar/agar-1.5.0.tar.gz" "$md_build/agar" --strip-components 1
     # _BSD_SOURCE is deprecated and will throw an error during configure
     sed -i "s/_BSD_SOURCE/_DEFAULT_SOURCE/g" "$md_build/agar/configure"
     # needs libx11 to link

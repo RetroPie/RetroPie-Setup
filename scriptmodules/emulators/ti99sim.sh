@@ -21,7 +21,7 @@ function depends_ti99sim() {
 }
 
 function sources_ti99sim() {
-    downloadAndExtract "$__archive_url/ti99sim-0.13.0.src.tar.gz" "$md_build" 1
+    downloadAndExtract "$__archive_url/ti99sim-0.13.0.src.tar.gz" "$md_build" --strip-components 1
 }
 
 function build_ti99sim() {

@@ -61,19 +61,19 @@ function sources_crosscomp() {
             ;;
     esac
 
-    downloadAndExtract "ftp://gcc.gnu.org/pub/gcc/infrastructure/isl-${pkgs[isl]}.tar.bz2" isl 1
-    downloadAndExtract "http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-${pkgs[cloog]}.tar.gz" cloog 1
+    downloadAndExtract "ftp://gcc.gnu.org/pub/gcc/infrastructure/isl-${pkgs[isl]}.tar.bz2" isl --strip-components 1
+    downloadAndExtract "http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-${pkgs[cloog]}.tar.gz" cloog --strip-components 1
 
-    downloadAndExtract "https://ftp.gnu.org/gnu/binutils/binutils-${pkgs[binutils]}.tar.gz" binutils 1
+    downloadAndExtract "https://ftp.gnu.org/gnu/binutils/binutils-${pkgs[binutils]}.tar.gz" binutils --strip-components 1
 
-    downloadAndExtract "https://ftp.gnu.org/gnu/mpfr/mpfr-${pkgs[mpfr]}.tar.gz" mpfr 1
-    downloadAndExtract "https://ftp.gnu.org/gnu/gmp/gmp-${pkgs[gmp]}.tar.bz2" gmp 1
-    downloadAndExtract "https://ftp.gnu.org/gnu/mpc/mpc-${pkgs[mpc]}.tar.gz" mpc 1
+    downloadAndExtract "https://ftp.gnu.org/gnu/mpfr/mpfr-${pkgs[mpfr]}.tar.gz" mpfr --strip-components 1
+    downloadAndExtract "https://ftp.gnu.org/gnu/gmp/gmp-${pkgs[gmp]}.tar.bz2" gmp --strip-components 1
+    downloadAndExtract "https://ftp.gnu.org/gnu/mpc/mpc-${pkgs[mpc]}.tar.gz" mpc --strip-components 1
 
-    downloadAndExtract "https://ftp.gnu.org/gnu/glibc/glibc-${pkgs[glibc]}.tar.bz2" glibc 1
-    downloadAndExtract "https://ftp.gnu.org/gnu/gcc/gcc-${pkgs[gcc]}/gcc-${pkgs[gcc]}.tar.gz" gcc 1
+    downloadAndExtract "https://ftp.gnu.org/gnu/glibc/glibc-${pkgs[glibc]}.tar.bz2" glibc --strip-components 1
+    downloadAndExtract "https://ftp.gnu.org/gnu/gcc/gcc-${pkgs[gcc]}/gcc-${pkgs[gcc]}.tar.gz" gcc --strip-components 1
 
-    downloadAndExtract "https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgs[kernel]}.tar.gz" linux 1
+    downloadAndExtract "https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgs[kernel]}.tar.gz" linux --strip-components 1
 
     local pkg
     for pkg in cloog gmp isl mpc mpfr; do
