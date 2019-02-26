@@ -60,6 +60,28 @@ function install_bin_pegasus-fe() {
     # download and extract the package
     printMsgs "console" "Download URL: ${asset_url}"
     downloadAndExtract "${asset_url}" "$md_inst"
+
+    # create launcher script
+    cat > /usr/bin/pegasus-fe << _EOF_
+#!/bin/bash
+
+if [[ \$(id -u) -eq 0 ]]; then
+    echo "Pegasus should not be run as root. If you used 'sudo pegasus-fe' please run without sudo."
+    exit 1
+fi
+
+# save current tty/vt number for use with X so it can be launched on the correct tty
+tty=\$(tty)
+export TTY="\${tty:8:1}"
+
+clear
+"$md_inst/pegasus-fe" "\$@"
+_EOF_
+    chmod +x /usr/bin/pegasus-fe
+}
+
+function remove_pegasus-fe() {
+    rm -f /usr/bin/pegasus-fe
 }
 
 function configure_pegasus-fe() {
