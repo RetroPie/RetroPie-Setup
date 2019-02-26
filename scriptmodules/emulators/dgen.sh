@@ -21,7 +21,7 @@ function depends_dgen() {
 }
 
 function sources_dgen() {
-    downloadAndExtract "$__archive_url/dgen-sdl-1.33.tar.gz" "$md_build" 1
+    downloadAndExtract "$__archive_url/dgen-sdl-1.33.tar.gz" "$md_build" --strip-components 1
 }
 
 function build_dgen() {
