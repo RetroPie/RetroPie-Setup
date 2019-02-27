@@ -17,7 +17,7 @@ rp_module_section="exp"
 rp_module_flags="!mali !x86 !armv6 !kms"
 
 function install_bin_drastic() {
-    downloadAndExtract "http://drastic-ds.com/drastic_rpi.tar.bz2" "$md_inst" 1
+    downloadAndExtract "http://drastic-ds.com/drastic_rpi.tar.bz2" "$md_inst" --strip-components 1
     patchVendorGraphics "$md_inst/drastic"
 }
 

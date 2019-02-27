@@ -23,7 +23,7 @@ function depends_uae4all() {
 function sources_uae4all() {
     gitPullOrClone "$md_build" https://github.com/RetroPie/uae4all2.git retropie
     mkdir guichan
-    downloadAndExtract "$__archive_url/guichan-0.8.2.tar.gz" "$md_build/guichan" 1
+    downloadAndExtract "$__archive_url/guichan-0.8.2.tar.gz" "$md_build/guichan" --strip-components 1
     cd guichan
     # fix from https://github.com/sphaero/guichan
     applyPatch "$md_data/01_guichan.diff"

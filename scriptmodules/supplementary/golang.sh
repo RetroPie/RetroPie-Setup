@@ -36,5 +36,5 @@ function install_bin_golang() {
         fi
     fi
     printMsgs "console" "Downloading go1.8.linux-$arch.tar.gz"
-    downloadAndExtract "https://storage.googleapis.com/golang/go1.8.linux-$arch.tar.gz" "$md_inst" 1
+    downloadAndExtract "https://storage.googleapis.com/golang/go1.8.linux-$arch.tar.gz" "$md_inst" --strip-components 1
 }
