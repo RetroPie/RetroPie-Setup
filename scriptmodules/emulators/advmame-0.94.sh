@@ -22,7 +22,7 @@ function depends_advmame-0.94() {
 }
 
 function sources_advmame-0.94() {
-    downloadAndExtract "$__archive_url/advancemame-0.94.0.tar.gz" "$md_build" 1
+    downloadAndExtract "$__archive_url/advancemame-0.94.0.tar.gz" "$md_build" --strip-components 1
     _sources_patch_advmame-1.4
 }
 
