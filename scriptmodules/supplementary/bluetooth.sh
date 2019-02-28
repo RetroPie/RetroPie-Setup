@@ -86,7 +86,7 @@ function list_available_bluetooth() {
     local info_text="\n\nSearching ..."
 
     # sixaxis: add USB pairing information
-    [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="Searching ...\n\nDualShock registration: while this text is visible, unplug and replug the controller, then press the PS/SHARE button."
+    [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="Searching ...\n\nDualShock registration: while this text is visible, unplug the controller, press the PS/SHARE button, and then replug the controller."
 
     dialog --backtitle "$__backtitle" --infobox "$info_text" 7 60 >/dev/tty
     if hasPackage bluez 5; then
@@ -94,7 +94,7 @@ function list_available_bluetooth() {
         while read mac_address; read device_name; do
             echo "$mac_address"
             echo "$device_name"
-        done < <(bluez_cmd_bluetooth "default-agent\nscan on" "15" "Authorize service$" "yes\ntrust\ndisconnect" >/dev/null; bluez_cmd_bluetooth "devices" "3" | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/')
+        done < <(bluez_cmd_bluetooth "default-agent\nscan on" "15" "Authorize service$" "yes" >/dev/null; bluez_cmd_bluetooth "devices" "3" | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/')
     else
         while read; read mac_address; read device_name; do
             echo "$mac_address"
@@ -180,6 +180,8 @@ function register_bluetooth() {
     device_name="${mac_addresses[$choice]}"
 
     if [[ "$device_name" =~ "PLAYSTATION(R)3 Controller" ]]; then
+        $(get_script_bluetooth bluez-test-device) disconnect "$mac_address" 2>&1
+        $(get_script_bluetooth bluez-test-device) trusted "$mac_address" yes 2>&1
         local trusted=$($(get_script_bluetooth bluez-test-device) trusted "$mac_address" 2>&1)
         if [[ "$trusted" -eq 1 ]]; then
             printMsgs "dialog" "Successfully authenticated $device_name ($mac_address).\n\nYou can now remove the USB cable."

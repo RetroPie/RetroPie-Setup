@@ -1,0 +1,30 @@
+--- a/drivers/hid/hid-sony.c	2018-11-15 05:39:31.762572258 +0000
++++ b/drivers/hid/hid-sony.c	2018-11-15 05:38:55.762745843 +0000
+@@ -1987,6 +1987,7 @@
+ 	struct sixaxis_output_report *report =
+ 		(struct sixaxis_output_report *)sc->output_report_dmabuf;
+ 	int n;
++	int ret;
+ 
+ 	/* Initialize the report with default values */
+ 	memcpy(report, &default_report, sizeof(struct sixaxis_output_report));
+@@ -2021,9 +2022,18 @@
+ 		}
+ 	}
+ 
+-	hid_hw_raw_request(sc->hdev, report->report_id, (u8 *)report,
++	/*
++	 * Gasia controller workaround
++	 * See: https://bugzilla.kernel.org/show_bug.cgi?id=200009
++	 */
++	ret = hid_hw_raw_request(sc->hdev, report->report_id, (u8 *)report,
+ 			sizeof(struct sixaxis_output_report),
+ 			HID_OUTPUT_REPORT, HID_REQ_SET_REPORT);
++	if (ret < 0) {
++		hid_err(sc->hdev, "failed to send raw request, attempting fallback\n");
++		hid_hw_output_report(sc->hdev, (u8 *)report,
++				sizeof(struct sixaxis_output_report));
++	}
+ }
+ 
+ static void dualshock4_send_output_report(struct sony_sc *sc)
