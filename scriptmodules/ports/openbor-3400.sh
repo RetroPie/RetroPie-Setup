@@ -48,7 +48,6 @@ function configure_openbor-3400() {
 
     md_id="$(strip $md_id -5)"
     mkRomDir "ports/$md_id"
-    chmod +x "$md_inst/extract.sh"
 
     local dir
     for dir in ScreenShots Saves; do
