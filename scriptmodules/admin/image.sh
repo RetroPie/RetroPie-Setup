@@ -55,13 +55,15 @@ function create_chroot_image() {
     fi
 
     # mount image
-    kpartx -s -a "$image"
+    local partitions=($(kpartx -s -a -v "$image" | awk '{ print "/dev/mapper/"$3 }'))
+    local part_boot="${partitions[0]}"
+    local part_root="${partitions[1]}"
 
     local tmp="$(mktemp -d -p "$md_build")"
     mkdir -p "$tmp/boot"
 
-    mount /dev/mapper/loop0p2 "$tmp"
-    mount /dev/mapper/loop0p1 "$tmp/boot"
+    mount "$part_root" "$tmp"
+    mount "$part_boot" "$tmp/boot"
 
     printMsgs "console" "Creating chroot from $image ..."
     rsync -aAHX --numeric-ids --delete "$tmp/" "$chroot/"
@@ -217,10 +219,12 @@ function create_image() {
     local image_name="${image##*/}"
     pushd "$image_path"
 
-    kpartx -s -a "$image_name"
+    local partitions=($(kpartx -s -a -v "$image_name" | awk '{ print "/dev/mapper/"$3 }'))
+    local part_boot="${partitions[0]}"
+    local part_root="${partitions[1]}"
 
-    mkfs.vfat -F 16 -n boot /dev/mapper/loop0p1
-    mkfs.ext4 -O ^metadata_csum,^huge_file -L retropie /dev/mapper/loop0p2
+    mkfs.vfat -F 16 -n boot "$part_boot"
+    mkfs.ext4 -O ^metadata_csum,^huge_file -L retropie "$part_root"
 
     parted "$image_name" print
 
@@ -230,9 +234,9 @@ function create_image() {
     # mount
     printMsgs "console" "Mounting $image_name ..."
     local tmp="$(mktemp -d -p "$md_build")"
-    mount /dev/mapper/loop0p2 "$tmp"
+    mount "$part_root" "$tmp"
     mkdir -p "$tmp/boot"
-    mount /dev/mapper/loop0p1 "$tmp/boot"
+    mount "$part_boot" "$tmp/boot"
 
     # copy files
     printMsgs "console" "Rsyncing chroot to $image_name ..."
@@ -240,7 +244,7 @@ function create_image() {
 
     # we need to fix up the UUIDS for /boot/cmdline.txt and /etc/fstab
     local old_id="$(sed "s/.*PARTUUID=\([^-]*\).*/\1/" $tmp/boot/cmdline.txt)"
-    local new_id="$(blkid -s PARTUUID -o value /dev/mapper/loop0p2 | cut -c -8)"
+    local new_id="$(blkid -s PARTUUID -o value "$part_root" | cut -c -8)"
     sed -i "s/$old_id/$new_id/" "$tmp/boot/cmdline.txt"
     sed -i "s/$old_id/$new_id/g" "$tmp/etc/fstab"
 
