@@ -44,6 +44,7 @@ function printHeading() {
 function fatalError() {
     printHeading "Error"
     echo -e "$1"
+    joy2keyStop
     exit 1
 }
 
@@ -1043,9 +1044,8 @@ function joy2keyStart() {
     [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
 
     # if joy2key.py is installed run it with cursor keys for axis/dpad, and enter + space for buttons 0 and 1
-    if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
+    if __joy2key_ppid=$$ "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
         __joy2key_pid=$!
-        sleep 1
         return 0
     fi
 
@@ -1056,8 +1056,7 @@ function joy2keyStart() {
 ## @brief Stop previously started joy2key.py process.
 function joy2keyStop() {
     if [[ -n $__joy2key_pid ]]; then
-        kill -INT $__joy2key_pid 2>/dev/null
-        sleep 1
+        kill $__joy2key_pid 2>/dev/null
     fi
 }
 

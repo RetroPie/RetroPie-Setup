@@ -115,14 +115,14 @@ function start_joy2key() {
 
         # call joy2key.py: arguments are curses capability names or hex values starting with '0x'
         # see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
-        "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09 &
+        __joy2key_ppid=$$ "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09 &
         JOY2KEY_PID=$!
     fi
 }
 
 function stop_joy2key() {
     if [[ -n "$JOY2KEY_PID" ]]; then
-        kill -INT "$JOY2KEY_PID"
+        kill "$JOY2KEY_PID"
     fi
 }
 
@@ -595,6 +595,7 @@ function choose_emulator() {
     done < <(sort "$EMU_SYS_CONF")
     if [[ -z "${options[*]}" ]]; then
         dialog --msgbox "No emulator options found for $SYSTEM - Do you have a valid $EMU_SYS_CONF ?" 20 60 >/dev/tty
+        stop_joy2key
         exit 1
     fi
     local cmd=(dialog $cancel --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
@@ -846,6 +847,7 @@ function restore_governor() {
 function get_sys_command() {
     if [[ ! -f "$EMU_SYS_CONF" ]]; then
         echo "No config found for system $SYSTEM"
+        stop_joy2key
         exit 1
     fi
 

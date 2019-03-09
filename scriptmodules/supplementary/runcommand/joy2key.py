@@ -125,13 +125,14 @@ def get_button_codes(dev_path):
         if btn_codes[btn_num['a']] == '\n' and ini_get('menu_swap_ok_cancel_buttons', RETROARCH_CFG) == 'true':
             btn_codes[btn_num['a']] = btn_codes[btn_num['b']]
             btn_codes[btn_num['b']] = '\n'
-    except:
+    except ValueError:
         pass
 
     return btn_codes
 
 def signal_handler(signum, frame):
-    close_fds(js_fds)
+    if (js_fds):
+        close_fds(js_fds)
     sys.exit(0)
 
 def get_hex_chars(key_str):
@@ -159,7 +160,7 @@ def open_devices():
         try:
             fds.append(os.open(dev, os.O_RDONLY | os.O_NONBLOCK ))
             js_button_codes[fds[-1]] = get_button_codes(dev)
-        except:
+        except (OSError, ValueError):
             pass
 
     return devs, fds
@@ -214,6 +215,7 @@ def process_event(event):
     return False
 
 signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 js_button_codes = {}
 button_codes = []
@@ -235,14 +237,15 @@ event_format = 'IhBB'
 event_size = struct.calcsize(event_format)
 
 try:
-    tty_fd = open('/dev/tty', 'w')
-except:
+    tty_fd = open('/dev/tty', 'a')
+except IOError:
     print 'Unable to open /dev/tty'
     sys.exit(1)
 
 js_fds = []
 rescan_time = time.time()
-while True:
+prev_parent = int(os.getenv("__joy2key_ppid", os.getppid()))
+while prev_parent == os.getppid():
     do_sleep = True
     if not js_fds:
         js_devs, js_fds = open_devices()
@@ -282,3 +285,5 @@ while True:
 
     if do_sleep:
         time.sleep(0.01)
+
+signal_handler(0, 0)
