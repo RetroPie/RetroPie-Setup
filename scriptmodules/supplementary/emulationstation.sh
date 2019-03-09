@@ -125,9 +125,10 @@ function depends_emulationstation() {
     local depends=(
         libfreeimage-dev libfreetype6-dev
         libcurl4-openssl-dev libasound2-dev cmake libsdl2-dev libsm-dev
-        libvlc-dev libvlccore-dev vlc rapidjson-dev
+        libvlc-dev libvlccore-dev vlc
     )
 
+    compareVersions "$__os_debian_ver" gt 8 && depends+=(rapidjson-dev)
     isPlatform "x11" && depends+=(gnome-terminal)
     getDepends "${depends[@]}"
 }
@@ -136,7 +137,13 @@ function sources_emulationstation() {
     local repo="$1"
     local branch="$2"
     [[ -z "$repo" ]] && repo="https://github.com/RetroPie/EmulationStation"
-    [[ -z "$branch" ]] && branch="stable"
+    if [[ -z "$branch" ]]; then
+        if compareVersions "$__os_debian_ver" gt 8; then
+            branch="stable"
+        else
+            branch="v2.7.6"
+        fi
+    fi
     gitPullOrClone "$md_build" "$repo" "$branch"
 }
 
