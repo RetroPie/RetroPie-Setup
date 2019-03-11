@@ -1,0 +1,108 @@
+--- a/src/gui/sdl_mapper.cpp	2019-03-10 04:19:35.938770333 +0000
++++ b/src/gui/sdl_mapper.cpp	2019-03-10 04:46:26.474081295 +0000
+@@ -69,6 +69,8 @@
+ #define MAXACTIVE 16
+ #define MAXBUTTON 32
+ #define MAXBUTTON_CAP 16
++#define MAXAXIS 8
++#define MAXHAT 2
+ 
+ class CEvent;
+ class CHandlerEvent;
+@@ -634,8 +636,8 @@
+ 		if (_dummy) return;
+ 
+ 		// initialize binding lists and position data
+-		pos_axis_lists=new CBindList[4];
+-		neg_axis_lists=new CBindList[4];
++		pos_axis_lists=new CBindList[MAXAXIS];
++		neg_axis_lists=new CBindList[MAXAXIS];
+ 		button_lists=new CBindList[MAXBUTTON];
+ 		hat_lists=new CBindList[4];
+ 		Bitu i;
+@@ -644,7 +646,7 @@
+ 			old_button_state[i]=0;
+ 		}
+ 		for(i=0;i<16;i++) old_hat_state[i]=0;
+-		for (i=0; i<4; i++) {
++		for (i=0; i<MAXAXIS; i++) {
+ 			old_pos_axis_state[i]=false;
+ 			old_neg_axis_state[i]=false;
+ 		}
+@@ -662,8 +664,16 @@
+ 		}
+ 
+ 		axes=SDL_JoystickNumAxes(sdl_joystick);
+-		buttons=SDL_JoystickNumButtons(sdl_joystick);
++		if (axes > MAXAXIS) axes = MAXAXIS;
++		axes_cap=emulated_axes;
++		if (axes_cap>axes) axes_cap=axes;
++
+ 		hats=SDL_JoystickNumHats(sdl_joystick);
++		if (hats > MAXHAT) hats = MAXHAT;
++		hats_cap=emulated_hats;
++		if (hats_cap>hats) hats_cap=hats;
++
++		buttons=SDL_JoystickNumButtons(sdl_joystick);
+ 		button_wrap=buttons;
+ 		button_cap=buttons;
+ 		if (button_wrapping_enabled) {
+@@ -671,10 +681,7 @@
+ 			if (buttons>MAXBUTTON_CAP) button_cap = MAXBUTTON_CAP;
+ 		}
+ 		if (button_wrap > MAXBUTTON) button_wrap = MAXBUTTON;
+-		axes_cap=emulated_axes;
+-		if (axes_cap>axes) axes_cap=axes;
+-		hats_cap=emulated_hats;
+-		if (hats_cap>hats) hats_cap=hats;
++
+ 		LOG_MSG("Using joystick %s with %d axes, %d buttons and %d hat(s)",SDL_JoystickName(stick),axes,buttons,hats);
+ 	}
+ 	~CStickBindGroup() {
+@@ -707,7 +714,7 @@
+ 		if (event->type==SDL_JOYAXISMOTION) {
+ 			if (event->jaxis.which!=stick) return 0;
+ #if defined (REDUCE_JOYSTICK_POLLING)
+-			if (event->jaxis.axis>=emulated_axes) return 0;
++			if (event->jaxis.axis>=axes) return 0;
+ #endif
+ 			if (abs(event->jaxis.value)<25000) return 0;
+ 			return CreateAxisBind(event->jaxis.axis,event->jaxis.value>0);
+@@ -799,7 +806,7 @@
+ 			}
+ 		}
+ 
+-		for (i=0; i<axes_cap; i++) {
++		for (i=0; i<axes; i++) {
+ 			Sint16 caxis_pos=SDL_JoystickGetAxis(sdl_joystick,i);
+ 			/* activate bindings for joystick position */
+ 			if (caxis_pos>1) {
+@@ -831,7 +838,7 @@
+ 			}
+ 		}
+ 
+-		for (i=0; i<hats_cap; i++) {
++		for (i=0; i<hats; i++) {
+ 			Uint8 chat_state=SDL_JoystickGetHat(sdl_joystick,i);
+ 
+ 			/* activate binding if hat state has changed */
+@@ -857,7 +864,7 @@
+ 
+ private:
+ 	CBind * CreateAxisBind(Bitu axis,bool positive) {
+-		if (axis<emulated_axes) {
++		if (axis<axes) {
+ 			if (positive) return new CJAxisBind(&pos_axis_lists[axis],this,axis,positive);
+ 			else return new CJAxisBind(&neg_axis_lists[axis],this,axis,positive);
+ 		}
+@@ -896,8 +903,8 @@
+ 	char configname[10];
+ 	Bitu button_autofire[MAXBUTTON];
+ 	bool old_button_state[MAXBUTTON];
+-	bool old_pos_axis_state[16];
+-	bool old_neg_axis_state[16];
++	bool old_pos_axis_state[MAXAXIS];
++	bool old_neg_axis_state[MAXAXIS];
+ 	Uint8 old_hat_state[16];
+ 	bool is_dummy;
+ };
