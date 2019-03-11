@@ -24,9 +24,10 @@ function depends_dosbox() {
 
 function sources_dosbox() {
     local revision="$1"
-    [[ -z "$revision" ]] && revision="4006"
+    [[ -z "$revision" ]] && revision="4194"
 
     svn checkout https://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk "$md_build" -r "$revision"
+    applyPatch "$md_data/01-fully-bindable-joystick.diff"
 }
 
 function build_dosbox() {
