@@ -151,7 +151,7 @@ function launch_retropiemenu() {
             mc
             ;;
         showip.rp)
-            local ip="$(ip route get 8.8.8.8 2>/dev/null | awk '{print $NF; exit}')"
+            local ip="$(ip route get 8.8.8.8 2>/dev/null | sed -n '1{s/.*src //; s/\s.*//;p}')"
             printMsgs "dialog" "Your IP is: $ip\n\nOutput of 'ip addr show':\n\n$(ip addr show)"
             ;;
         *.rp)
