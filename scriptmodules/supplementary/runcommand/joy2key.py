@@ -98,11 +98,10 @@ def get_button_codes(dev_path):
     biggest_num = 0
     i = 0
     for btn in list(btn_map):
-        if i > len(dev_button_codes)-1:
+        if i >= len(dev_button_codes):
             break
-        btn_num[btn] = get_btn_num(btn, js_cfg)
         try:
-            btn_num[btn] = int(btn_num[btn])
+            btn_num[btn] = int(get_btn_num(btn, js_cfg))
         except ValueError:
             btn_map.pop(i)
             dev_button_codes.pop(i)
@@ -116,16 +115,17 @@ def get_button_codes(dev_path):
     btn_codes = [''] * (biggest_num + 1)
     i = 0
     for btn in btn_map:
+        if i >= len(dev_button_codes):
+            break
         btn_codes[btn_num[btn]] = dev_button_codes[i]
         i += 1
-        if i >= len(dev_button_codes): break
-
     try:
         # if button A is <enter> and menu_swap_ok_cancel_buttons is true, swap buttons A and B functions
-        if btn_codes[btn_num['a']] == '\n' and ini_get('menu_swap_ok_cancel_buttons', RETROARCH_CFG) == 'true':
+        if (ini_get('menu_swap_ok_cancel_buttons', RETROARCH_CFG) == 'true' and
+           'a' in btn_num and 'b' in btn_num and btn_codes[btn_num['a']] == '\n'):
             btn_codes[btn_num['a']] = btn_codes[btn_num['b']]
             btn_codes[btn_num['b']] = '\n'
-    except ValueError:
+    except (IOError, ValueError):
         pass
 
     return btn_codes
