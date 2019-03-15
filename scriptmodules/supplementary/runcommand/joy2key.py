@@ -131,8 +131,12 @@ def get_button_codes(dev_path):
     return btn_codes
 
 def signal_handler(signum, frame):
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)
     if (js_fds):
         close_fds(js_fds)
+    if (tty_fd):
+        tty_fd.close()
     sys.exit(0)
 
 def get_hex_chars(key_str):
