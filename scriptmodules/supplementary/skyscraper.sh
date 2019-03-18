@@ -78,9 +78,9 @@ function _clear_platform_skyscraper() {
     [[ ! -d "$configdir/all/skyscraper/$cache_folder/$platform" ]] && return
 
     if [[ $mode == "vacuum" ]]; then
-        $md_inst/Skyscraper --unattend -p "$platform" --cache vacuum
+        sudo -u "$user" stdbuf -o0 $md_inst/Skyscraper --unattend -p "$platform" --cache vacuum
     else
-        $md_inst/Skyscraper --unattend -p "$platform" --cache purge:all
+        sudo -u "$user" stdbuf -o0 $md_inst/Skyscraper --unattend -p "$platform" --cache purge:all
     fi
     sleep 5
 }
