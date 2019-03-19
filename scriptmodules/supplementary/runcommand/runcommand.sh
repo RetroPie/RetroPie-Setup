@@ -115,14 +115,19 @@ function start_joy2key() {
 
         # call joy2key.py: arguments are curses capability names or hex values starting with '0x'
         # see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
-        __joy2key_ppid=$$ "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09 &
-        JOY2KEY_PID=$!
+        "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09
+        JOY2KEY_PID=$(pgrep -f joy2key.py)
+
+    # ensure coherency between on-screen prompts and actual button mapping functionality
+    sleep 0.3
     fi
 }
 
 function stop_joy2key() {
     if [[ -n "$JOY2KEY_PID" ]]; then
         kill "$JOY2KEY_PID"
+        JOY2KEY_PID=""
+        sleep 1
     fi
 }
 
@@ -958,7 +963,6 @@ function show_launch() {
 
 function check_menu() {
     local dont_launch=0
-    start_joy2key
     # check for key pressed to enter configuration
     IFS= read -s -t 2 -N 1 key </dev/tty
     if [[ -n "$key" ]]; then
@@ -972,7 +976,6 @@ function check_menu() {
         tput civis
         clear
     fi
-    stop_joy2key
     return $dont_launch
 }
 
@@ -1033,15 +1036,18 @@ function runcommand() {
 
     load_mode_defaults
 
+    start_joy2key
     show_launch
 
     if [[ "$DISABLE_MENU" -ne 1 ]]; then
         if ! check_menu; then
+            stop_joy2key
             user_script "runcommand-onend.sh"
             clear
             restore_cursor_and_exit 0
         fi
     fi
+    stop_joy2key
 
     mode_switch "$MODE_REQ_ID"
 
