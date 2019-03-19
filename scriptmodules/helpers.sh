@@ -1044,8 +1044,8 @@ function joy2keyStart() {
     [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
 
     # if joy2key.py is installed run it with cursor keys for axis/dpad, and enter + space for buttons 0 and 1
-    if __joy2key_ppid=$$ "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" & 2>/dev/null; then
-        __joy2key_pid=$!
+    if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" 2>/dev/null; then
+        __joy2key_pid=$(pgrep -f joy2key.py)
         return 0
     fi
 
@@ -1057,6 +1057,8 @@ function joy2keyStart() {
 function joy2keyStop() {
     if [[ -n $__joy2key_pid ]]; then
         kill $__joy2key_pid 2>/dev/null
+        __joy2key_pid=""
+        sleep 1
     fi
 }
 
