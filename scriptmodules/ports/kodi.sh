@@ -35,7 +35,8 @@ function depends_kodi() {
         apt-add-repository -y ppa:team-xbmc/ppa
     fi
 
-    getDepends policykit-1
+    # required for reboot/shutdown options. Don't try and remove if removing dependencies
+    [[ "$md_mode" == "install" ]] && getDepends policykit-1
 
     addUdevInputRules
 }
