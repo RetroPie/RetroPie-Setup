@@ -97,8 +97,8 @@ function configure_amiberry() {
     # whdload auto-booter user config - copy default configuration
     copyDefaultConfig "$md_inst/whdboot-dist/hostprefs.conf" "$config_dir/whdboot/hostprefs.conf"
 
-    # copy game-data, save-data folders and boot-data.zip
-    cp -R "$md_inst/whdboot-dist/"{game-data,save-data,boot-data.zip} "$config_dir/whdboot/"
+    # copy game-data, save-data folders, boot-data.zip and WHDLoad
+    cp -R "$md_inst/whdboot-dist/"{game-data,save-data,boot-data.zip,WHDLoad} "$config_dir/whdboot/"
 
     chown -R $user:$user "$config_dir/whdboot"
 }
