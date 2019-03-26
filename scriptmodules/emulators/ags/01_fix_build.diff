@@ -1,0 +1,73 @@
+diff --git a/Engine/Makefile-defs.linux b/Engine/Makefile-defs.linux
+index 00987e7..4e3c546 100644
+--- a/Engine/Makefile-defs.linux
++++ b/Engine/Makefile-defs.linux
+@@ -11,7 +11,7 @@ CFLAGS := -O2 -g \
+     -fsigned-char -fno-strict-aliasing -fwrapv \
+     -Wunused-result \
+     -Wno-unused-value  \
+-    -Werror=write-strings -Werror=format-security -Werror=implicit-function-declaration \
++    -Werror=write-strings -Werror=format -Werror=format-security -Werror=implicit-function-declaration \
+     -DNDEBUG \
+     -DALLEGRO_STATICLINK -DALLEGRO_NO_COMPATIBILITY -DALLEGRO_NO_FIX_ALIASES -DALLEGRO_NO_FIX_CLASS \
+     -DLINUX_VERSION -DBUILTIN_PLUGINS -DHAVE_FSEEKO -DDISABLE_MPEG_AUDIO -DAGS_CASE_SENSITIVE_FILESYSTEM -DAGS_HAS_CD_AUDIO -DAGS_RUNTIME_PATCH_ALLEGRO \
+diff --git a/Engine/ac/draw.cpp b/Engine/ac/draw.cpp
+index a73a24bc..7568f471 100644
+--- a/Engine/ac/draw.cpp
++++ b/Engine/ac/draw.cpp
+@@ -12,6 +12,7 @@
+ //
+ //=============================================================================
+ 
++#include <math.h>
+ #include <algorithm>
+ #include "aastr.h"
+ #include "ac/common.h"
+@@ -2132,7 +2133,7 @@ void draw_fps()
+     char tbuffer[60];
+     color_t text_color = fpsDisplay->GetCompatibleColor(14);
+     // Don't display fps if we don't have enough information (because loop count was just reset)
+-    if (!std::isnan(fps)) {
++    if (!isnan(fps)) {
+         sprintf(tbuffer, "FPS: %2.1f / %d", fps, frames_per_second);
+     } else {
+         sprintf(tbuffer, "FPS: --.- / %d", frames_per_second);
+diff --git a/Engine/debug/debug.cpp b/Engine/debug/debug.cpp
+index 89a3540a..d8eebf97 100644
+--- a/Engine/debug/debug.cpp
++++ b/Engine/debug/debug.cpp
+@@ -12,6 +12,7 @@
+ //
+ //=============================================================================
+ 
++#include <math.h>
+ #include <memory>
+ #include "ac/common.h"
+ #include "ac/gamesetupstruct.h"
+diff --git a/Engine/gui/guidialog.cpp b/Engine/gui/guidialog.cpp
+index 27f159d5..1a70d6d2 100644
+--- a/Engine/gui/guidialog.cpp
++++ b/Engine/gui/guidialog.cpp
+@@ -433,7 +433,8 @@ int roomSelectorWindow(int currentRoom, int numRooms, int*roomNumbers, char**roo
+ 
+   lpTemp = NULL;
+   //sprintf(buffer2, "%d", currentRoom);
+-  sprintf(buffer2, "");
++  buffer2[0] = 0;
++//  sprintf(buffer2, "");
+ 
+   int ctrltbox = CSCICreateControl(CNT_TEXTBOX, 10, 29, 120, 0, NULL);
+   CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, (long)&buffer2[0]);
+diff --git a/Engine/main/game_run.cpp b/Engine/main/game_run.cpp
+index 2c352368..f32bb1e0 100644
+--- a/Engine/main/game_run.cpp
++++ b/Engine/main/game_run.cpp
+@@ -16,6 +16,7 @@
+ // Game loop
+ //
+ 
++#include <math.h>
+ #include <chrono>
+ #include "ac/common.h"
+ #include "ac/characterextras.h"
+
