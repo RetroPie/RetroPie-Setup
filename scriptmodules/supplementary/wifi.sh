@@ -184,9 +184,9 @@ function gui_wifi() {
 
     local default
     while true; do
-        local ip_current=$(ip route get 8.8.8.8 2>/dev/null | awk '{print $NF; exit}')
-        local ip_wlan=$(ip route ls dev wlan0 2>/dev/null | awk 'END {print $7}')
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Configure WiFi\nCurrent IP: $ip_current\nWireless IP: $ip_wlan\nWireless ESSID: $(iwgetid -r)" 22 76 16)
+        local ip_current="$(getIPAddress)"
+        local ip_wlan="$(getIPAddress wlan0)"
+        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Configure WiFi\nCurrent IP: ${ip_current:-(unknown)}\nWireless IP: ${ip_wlan:-(unknown)}\nWireless ESSID: $(iwgetid -r)" 22 76 16)
         local options=(
             1 "Connect to WiFi network"
             "1 Connect to your WiFi network"

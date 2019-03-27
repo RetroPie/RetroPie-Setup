@@ -1371,3 +1371,25 @@ function dkmsManager() {
             ;;
     esac
 }
+
+## @fn getIPAddress()
+## @param dev optional specific network device to use for address lookup
+## @brief Obtains the current externally routable source IP address of the machine
+## @details This function first tries to obtain an external IPv4 route and
+## otherwise tries an IPv6 route if the IPv4 route can not be determined.
+## If no external route can be determined, nothing will be returned.
+## This function uses Google's DNS servers as the external lookup address.
+function getIPAddress() {
+    local dev="$1"
+    local ip_route
+
+    # first try to obtain an external IPv4 route
+    ip_route=$(ip -4 route get 8.8.8.8 ${dev:+dev $dev} 2>/dev/null)
+    if [[ -z "$ip_route" ]]; then
+        # if there is no IPv4 route, try to obtain an IPv6 route instead
+        ip_route=$(ip -6 route get 2001:4860:4860::8888 ${dev:+dev $dev} 2>/dev/null)
+    fi
+
+    # if an external route was found, report its source address
+    [[ -n "$ip_route" ]] && grep -oP "src \K[^\s]+" <<< "$ip_route"
+}
