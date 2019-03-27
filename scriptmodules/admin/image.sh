@@ -117,6 +117,7 @@ modules=(
     'bluetooth depends'
     'raspbiantools enable_modules'
     'autostart enable'
+    'usbromservice'
     'samba depends'
     'samba install_shares'
     'splashscreen default'
