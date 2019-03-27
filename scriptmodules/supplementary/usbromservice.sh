@@ -11,7 +11,7 @@
 
 rp_module_id="usbromservice"
 rp_module_desc="USB ROM Service"
-rp_module_section="main"
+rp_module_section="opt"
 
 function _get_ver_usbromservice() {
     echo 0.0.24
