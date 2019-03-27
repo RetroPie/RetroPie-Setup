@@ -73,7 +73,7 @@ function chroot_build_builder() {
     mkdir -p "$md_build"
 
     # get current host ip for the distcc in the emulated chroot to connect to
-    local ip="$(ip route get 8.8.8.8 2>/dev/null | awk '{print $NF; exit}')"
+    local ip="$(getIPAddress)"
 
     local dist
     local sys
