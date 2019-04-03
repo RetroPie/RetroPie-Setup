@@ -16,7 +16,7 @@ rp_module_section=""
 rp_module_flags=""
 
 function get_ver_sdl2() {
-    echo "2.0.9"
+    echo "2.0.8"
 }
 
 function get_pkg_ver_sdl2() {
