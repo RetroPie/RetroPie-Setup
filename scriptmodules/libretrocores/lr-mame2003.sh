@@ -76,9 +76,9 @@ function configure_lr-mame2003() {
     fi
 
     # Set core options
-    setRetroArchCoreOption "${dir_name}-skip_disclaimer" "enabled"
-    setRetroArchCoreOption "${dir_name}-dcs-speedhack" "enabled"
-    setRetroArchCoreOption "${dir_name}-samples" "enabled"
+    setRetroArchCoreOption "${dir_name}_skip_disclaimer" "enabled"
+    setRetroArchCoreOption "${dir_name}_dcs-speedhack" "enabled"
+    setRetroArchCoreOption "${dir_name}_samples" "enabled"
 
     local so_name="$(_get_so_name_${md_id})"
     addEmulator 0 "$md_id" "arcade" "$md_inst/${so_name}_libretro.so"
