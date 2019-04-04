@@ -33,8 +33,7 @@ function build_lr-pcsx-rearmed() {
         isPlatform "arm" && platform+="armv"
         isPlatform "neon" && platform+="neon"
     fi
-    [[ -z "$platform" ]] && platform="unix"
-    make -f Makefile.libretro clean
+    make -f Makefile.libretro platform="$platform" clean
     make -f Makefile.libretro platform="$platform"
     md_ret_require="$md_build/pcsx_rearmed_libretro.so"
 }
