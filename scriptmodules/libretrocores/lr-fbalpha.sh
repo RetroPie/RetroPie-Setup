@@ -28,6 +28,7 @@ function build_lr-fbalpha() {
     local params=()
     isPlatform "arm" && params+=(USE_CYCLONE=1)
     isPlatform "neon" && params+=(HAVE_NEON=1)
+    isPlatform "x86" && isPlatform "64bit" && params+=(USE_X64_DRC=1)
     make -f makefile.libretro clean
     make -f makefile.libretro "${params[@]}"
     md_ret_require="$md_build/fbalpha_libretro.so"
