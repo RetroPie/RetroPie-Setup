@@ -32,6 +32,7 @@ function depends_amiberry() {
 
 function sources_amiberry() {
     gitPullOrClone "$md_build" https://github.com/midwan/amiberry/
+    applyPatch "$md_data/01_remove_cflags.diff"
 }
 
 function build_amiberry() {

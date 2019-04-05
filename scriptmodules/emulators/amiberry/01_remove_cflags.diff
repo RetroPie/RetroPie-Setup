@@ -1,0 +1,23 @@
+diff --git a/Makefile b/Makefile
+index e1fdd4d..ebfd4b2 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3,18 +3,6 @@ ifeq ($(PLATFORM),)
+ 	PLATFORM = rpi3-sdl2-dispmanx
+ endif
+ 
+-ifneq (,$(findstring rpi3,$(PLATFORM)))
+-    CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8
+-endif
+-
+-ifneq (,$(findstring rpi2,$(PLATFORM)))
+-    CFLAGS += -march=armv7-a -mtune=cortex-a7 -mfpu=neon-vfpv4
+-endif
+-
+-ifneq (,$(findstring rpi1,$(PLATFORM)))
+-    CFLAGS += -march=armv6zk -mtune=arm1176jzf-s -mfpu=vfp
+-endif
+-
+ #
+ # DispmanX Common flags for both SDL1 and SDL2 (RPI-specific)
+ #
