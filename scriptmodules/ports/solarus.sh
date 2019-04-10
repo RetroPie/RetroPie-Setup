@@ -10,64 +10,133 @@
 #
 
 rp_module_id="solarus"
-rp_module_desc="solarus - An Open Source Zelda LttP Engine"
-rp_module_licence="GPL3 https://raw.githubusercontent.com/solarus-games/solarus/dev/license.txt"
+rp_module_desc="Solarus - A lightweight, free and open-source game engine for Action-RPGs"
+rp_module_help="Copy your Solarus quests (games) to $romdir/solarus"
+rp_module_licence="GPL3 https://gitlab.com/solarus-games/solarus/raw/dev/license.txt"
 rp_module_section="opt"
-rp_module_flags="noinstclean !aarch64"
+
+function _options_cfg_file_solarus() {
+    echo "$configdir/solarus/options.cfg"
+}
 
 function depends_solarus() {
-    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libmodplug-dev libvorbis-dev zip unzip
+    # ref: https://gitlab.com/solarus-games/solarus/blob/dev/compilation.md
+    local depends=(
+        cmake pkg-config
+        libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
+        libopenal-dev libvorbis-dev libogg-dev
+        libmodplug-dev libphysfs-dev
+        libluajit-5.1-dev
+    )
+    getDepends "${depends[@]}"
 }
 
 function sources_solarus() {
-    downloadAndExtract "http://www.solarus-games.org/downloads/solarus/solarus-1.4.5-src.tar.gz" "$md_build" --strip-components 1
-    downloadAndExtract "http://www.zelda-solarus.com/downloads/zsdx/zsdx-1.10.3.tar.gz" "$md_build"
-    downloadAndExtract "http://www.zelda-solarus.com/downloads/zsxd/zsxd-1.10.3.tar.gz" "$md_build"
-    downloadAndExtract "http://www.zelda-solarus.com/downloads/zelda-roth-se/zelda-roth-se-1.0.8.tar.gz" "$md_build"
+    gitPullOrClone "$md_build" https://gitlab.com/solarus-games/solarus.git
 }
 
 function build_solarus() {
+    local params=(
+        -DSOLARUS_GUI=OFF -DSOLARUS_TESTS=OFF -DSOLARUS_FILE_LOGGING=OFF
+        -DSOLARUS_LIBRARY_INSTALL_DESTINATION="$md_inst/lib"
+        -DCMAKE_INSTALL_PREFIX="$md_inst"
+        -DCMAKE_INSTALL_RPATH="$md_inst/lib"
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
+    )
+    isPlatform "gles" && params+=(-DSOLARUS_GL_ES=ON)
+    rm -rf build
     mkdir build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst"
+    cmake "${params[@]}" ..
     make
-    cd ../zsdx-1.10.3
-    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
-    make
-    cd ../zsxd-1.10.3
-    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
-    make
-    cd ../zelda-roth-se-1.0.8
-    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
-    make
-    md_ret_require=(
-        "$md_build/build/solarus_run"
-        "$md_build/zsdx-1.10.3/data.solarus"
-        "$md_build/zsxd-1.10.3/data.solarus"
-        "$md_build/zelda-roth-se-1.0.8/data.solarus"
-    )
 }
 
 function install_solarus() {
     cd build
-    make install
-    cd ../zsdx-1.10.3/
-    make install
-    cd ../zsxd-1.10.3/
-    make install
-    cd ../zelda-roth-se-1.0.8/
-    make install
+    make install/strip
 }
 
 function configure_solarus() {
-    addPort "$md_id" "zsdx" "Solarus Engine - Zelda Mystery of Solarus DX" "LD_LIBRARY_PATH=$md_inst/lib $md_inst/bin/solarus_run $md_inst/share/solarus/zsdx/"
-    addPort "$md_id" "zsxd" "Solarus Engine - Zelda Mystery of Solarus XD" "LD_LIBRARY_PATH=$md_inst/lib $md_inst/bin/solarus_run $md_inst/share/solarus/zsxd/"
-    addPort "$md_id" "zelda_roth_se" "Solarus Engine - Zelda Return of the Hylian SE" "LD_LIBRARY_PATH=$md_inst/lib $md_inst/bin/solarus_run $md_inst/share/solarus/zelda_roth_se/"
+    setConfigRoot ""
+    addEmulator 1 "$md_id" "solarus" "$md_inst/solarus.sh %ROM%"
+    addSystem "solarus"
+    moveConfigDir "$home/.solarus" "$configdir/solarus"
+    [[ "$mode" == "remove" ]] && return
 
-    # symlink the library so it can be found on all platforms
-    ln -sf "$md_inst"/lib/*/libsolarus.so "$md_inst/lib"
+    # ensure rom dir exists
+    mkRomDir "solarus"
 
-    moveConfigDir "$home/.solarus" "$md_conf_root/solarus"
+    # create launcher for Solarus that disables JACK driver in OpenAL,
+    # disables mouse cursor, starts in fullscreen mode and configures
+    # the joypad deadzone and buttons combo for quitting options
+    cat > "$md_inst/solarus.sh" << _EOF_
+#!/usr/bin/env bash
+export ALSOFT_DRIVERS="-jack,"
+ARGS=("-cursor-visible=no" "-fullscreen=yes")
+[[ -f "$(_options_cfg_file_solarus)" ]] && source "$(_options_cfg_file_solarus)"
+[[ -n "\$JOYPAD_DEADZONE" ]] && ARGS+=("-joypad-deadzone=\$JOYPAD_DEADZONE")
+[[ -n "\$QUIT_COMBO" ]] && ARGS+=("-quit-combo=\$QUIT_COMBO")
+"$md_inst"/bin/solarus-run "\${ARGS[@]}" "\$@"
+_EOF_
+    chmod +x "$md_inst/solarus.sh"
+}
 
-    chown -R $user:$user "$md_inst"/share/solarus/*/data.solarus
+function gui_solarus() {
+    local options=()
+    local default
+    local cmd
+    local choice
+    local joypad_deadzone
+    local quit_combo
+
+    # initialise options config file
+    iniConfig "=" "\"" "$(_options_cfg_file_solarus)"
+
+    # start the menu gui
+    default="D"
+    while true; do
+        # read current options
+        iniGet "JOYPAD_DEADZONE" && joypad_deadzone="$ini_value"
+        iniGet "QUIT_COMBO" && quit_combo="$ini_value"
+
+        # create menu options
+        options=(
+            D "Set joypad axis deadzone (${joypad_deadzone:-default})"
+            Q "Set joypad quit buttons combo (${quit_combo:-unset})"
+        )
+
+        # show main menu
+        cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "Choose an option" 16 60 16)
+        choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        default="$choice"
+        case "$choice" in
+            D)
+                cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter a joypad axis deadzone value between 0-32767, higher is less sensitive (leave BLANK to use engine default)" 10 65)
+                choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+                if [[ $? -eq 0 ]]; then
+                    if [[ -n "$choice" ]]; then
+                        iniSet "JOYPAD_DEADZONE" "$choice"
+                    else
+                        iniDel "JOYPAD_DEADZONE"
+                    fi
+                    chown $user:$user "$(_options_cfg_file_solarus)"
+                fi
+                ;;
+            Q)
+                cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter joypad button numbers to use for quitting separated by '+' signs (leave BLANK to unset)\n\nTip: use 'jstest' to find button numbers for your joypad" 12 65)
+                choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+                if [[ $? -eq 0 ]]; then
+                    if [[ -n "$choice" ]]; then
+                        iniSet "QUIT_COMBO" "$choice"
+                    else
+                        iniDel "QUIT_COMBO"
+                    fi
+                    chown $user:$user "$(_options_cfg_file_solarus)"
+                fi
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
 }
