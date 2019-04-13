@@ -22,7 +22,6 @@ function depends_ags() {
 
 function sources_ags() {
     gitPullOrClone "$md_build" https://github.com/adventuregamestudio/ags.git ags3
-    applyPatch "$md_data/01_fix_build.diff"
 }
 
 function build_ags() {
