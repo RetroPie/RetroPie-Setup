@@ -76,13 +76,16 @@ function get_os_version() {
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
+            # get major version (8 instead of 8.0 etc)
+            __os_debian_ver="${__os_release%%.*}"
+
             # Debian unstable is not officially supported though
             if [[ "$__os_release" == "unstable" ]]; then
                 __os_release=10
             fi
 
-            if compareVersions "$__os_release" lt 8; then
-                error="You need Raspbian/Debian Jessie or newer"
+            if compareVersions "$__os_debian_ver" lt 8; then
+                error="You need Raspbian/Debian Stretch or newer"
             fi
 
             # set a platform flag for osmc
@@ -95,13 +98,10 @@ function get_os_version() {
                 __platform_flags+=" xbian"
             fi
 
-            # we provide binaries for RPI on Raspbian < 10 only
-            if isPlatform "rpi" && compareVersions "$__os_release" lt 10; then
+            # we provide binaries for RPI on Raspbian 9 only
+            if isPlatform "rpi" && compareVersions "$__os_debian_ver" gt 8 && compareVersions "$__os_debian_ver" lt 10; then
                 __has_binaries=1
             fi
-
-            # get major version (8 instead of 8.0 etc)
-            __os_debian_ver="${__os_release%%.*}"
             ;;
         Devuan)
             if isPlatform "rpi"; then
