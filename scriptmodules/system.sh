@@ -140,8 +140,8 @@ function get_os_version() {
             fi
             ;;
         Ubuntu)
-            if compareVersions "$__os_release" lt 14.04; then
-                error="You need Ubuntu 14.04 or newer"
+            if compareVersions "$__os_release" lt 16.04; then
+                error="You need Ubuntu 16.04 or newer"
             elif compareVersions "$__os_release" lt 16.10; then
                 __os_debian_ver="8"
             else
@@ -156,14 +156,15 @@ function get_os_version() {
             __os_debian_ver="9"
             ;;
         elementary)
-            if compareVersions "$__os_release" lt 0.3; then
-                error="You need Elementary OS 0.3 or newer"
-            elif compareVersions "$__os_release" lt 0.4; then
-                __os_ubuntu_ver="14.04"
-            else
+            if compareVersions "$__os_release" lt 0.4; then
+                error="You need Elementary OS 0.4 or newer"
+            elif compareVersions "$__os_release" eq 0.4; then
                 __os_ubuntu_ver="16.04"
+                __os_debian_ver="8"
+            else
+                __os_ubuntu_ver="18.04"
+                __os_debian_ver="9"
             fi
-            __os_debian_ver="8"
             ;;
         neon)
             __os_ubuntu_ver="$__os_release"
