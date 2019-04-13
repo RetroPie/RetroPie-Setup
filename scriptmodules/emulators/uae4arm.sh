@@ -44,59 +44,61 @@ function install_uae4arm() {
 function configure_uae4arm() {
     mkRomDir "amiga"
 
-    mkUserDir "$md_conf_root/amiga"
-    mkUserDir "$md_conf_root/amiga/$md_id"
-
-    # move config / save folders to $md_conf_root/amiga/$md_id
-    local dir
-    for dir in conf savestates screenshots; do
-        moveConfigDir "$md_inst/$dir" "$md_conf_root/amiga/$md_id/$dir"
-    done
-
-    # and kickstart dir (removing old symlinks first)
-    if [[ ! -h "$md_inst/kickstarts" ]]; then
-        rm -f "$md_inst/kickstarts/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
-    fi
-    moveConfigDir "$md_inst/kickstarts" "$biosdir"
-
-    local conf="$(mktemp)"
-    iniConfig "=" "" "$conf"
-    iniSet "config_description" "RetroPie A500, 68000, OCS, 512KB Chip + 512KB Slow Fast"
-    iniSet "chipmem_size" "1"
-    iniSet "bogomem_size" "2"
-    iniSet "chipset" "ocs"
-    iniSet "cachesize" "0"
-    iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick13.rom"
-    copyDefaultConfig "$conf" "$md_conf_root/amiga/$md_id/conf/rp-a500.uae"
-    rm "$conf"
-
-    conf="$(mktemp)"
-    iniConfig "=" "" "$conf"
-    iniSet "config_description" "RetroPie A1200, 68EC020, AGA, 2MB Chip"
-    iniSet "chipmem_size" "4"
-    iniSet "finegrain_cpu_speed" "1024"
-    iniSet "cpu_type" "68ec020"
-    iniSet "cpu_model" "68020"
-    iniSet "chipset" "aga"
-    iniSet "cachesize" "0"
-    iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick31.rom"
-    copyDefaultConfig "$conf" "$md_conf_root/amiga/$md_id/conf/rp-a1200.uae"
-    rm "$conf"
-
-    # copy launch script (used for uae4arm and amiberry)
-    sed "s/EMULATOR/$md_id/" "$scriptdir/scriptmodules/$md_type/uae4arm/uae4arm.sh" >"$md_inst/$md_id.sh"
-    chmod a+x "$md_inst/$md_id.sh"
-
-    local script="+Start UAE4Arm.sh"
-    [[ "$md_id" == "amiberry" ]] && script="+Start Amiberry.sh"
-    rm -f "$romdir/amiga/$script"
     if [[ "$md_mode" == "install" ]]; then
-        cat > "$romdir/amiga/$script" << _EOF_
+        mkUserDir "$md_conf_root/amiga"
+        mkUserDir "$md_conf_root/amiga/$md_id"
+
+        # move config / save folders to $md_conf_root/amiga/$md_id
+        local dir
+        for dir in conf savestates screenshots; do
+            moveConfigDir "$md_inst/$dir" "$md_conf_root/amiga/$md_id/$dir"
+        done
+
+        # and kickstart dir (removing old symlinks first)
+        if [[ ! -h "$md_inst/kickstarts" ]]; then
+            rm -f "$md_inst/kickstarts/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
+        fi
+        moveConfigDir "$md_inst/kickstarts" "$biosdir"
+
+        local conf="$(mktemp)"
+        iniConfig "=" "" "$conf"
+        iniSet "config_description" "RetroPie A500, 68000, OCS, 512KB Chip + 512KB Slow Fast"
+        iniSet "chipmem_size" "1"
+        iniSet "bogomem_size" "2"
+        iniSet "chipset" "ocs"
+        iniSet "cachesize" "0"
+        iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick13.rom"
+        copyDefaultConfig "$conf" "$md_conf_root/amiga/$md_id/conf/rp-a500.uae"
+        rm "$conf"
+
+        conf="$(mktemp)"
+        iniConfig "=" "" "$conf"
+        iniSet "config_description" "RetroPie A1200, 68EC020, AGA, 2MB Chip"
+        iniSet "chipmem_size" "4"
+        iniSet "finegrain_cpu_speed" "1024"
+        iniSet "cpu_type" "68ec020"
+        iniSet "cpu_model" "68020"
+        iniSet "chipset" "aga"
+        iniSet "cachesize" "0"
+        iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick31.rom"
+        copyDefaultConfig "$conf" "$md_conf_root/amiga/$md_id/conf/rp-a1200.uae"
+        rm "$conf"
+
+        # copy launch script (used for uae4arm and amiberry)
+        sed "s/EMULATOR/$md_id/" "$scriptdir/scriptmodules/$md_type/uae4arm/uae4arm.sh" >"$md_inst/$md_id.sh"
+        chmod a+x "$md_inst/$md_id.sh"
+
+        local script="+Start UAE4Arm.sh"
+        [[ "$md_id" == "amiberry" ]] && script="+Start Amiberry.sh"
+        rm -f "$romdir/amiga/$script"
+        if [[ "$md_mode" == "install" ]]; then
+            cat > "$romdir/amiga/$script" << _EOF_
 #!/bin/bash
 "$md_inst/$md_id.sh"
 _EOF_
-        chmod a+x "$romdir/amiga/$script"
-        chown $user:$user "$romdir/amiga/$script"
+            chmod a+x "$romdir/amiga/$script"
+            chown $user:$user "$romdir/amiga/$script"
+        fi
     fi
 
     addEmulator 1 "$md_id" "amiga" "$md_inst/$md_id.sh auto %ROM%"
