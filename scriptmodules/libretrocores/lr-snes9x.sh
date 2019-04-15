@@ -20,16 +20,12 @@ function sources_lr-snes9x() {
 }
 
 function build_lr-snes9x() {
+    local params=()
+    isPlatform "arm" && params+=(platform="armv")
+
     cd libretro
-    make clean
-    local platform=""
-    isPlatform "arm" && platform+="armv"
-    isPlatform "neon" && platform+="neon"
-    if [[ -n "$platform" ]]; then
-        CXXFLAGS+=" -DARM" make platform="$platform"
-    else
-        make
-    fi
+    make "${params[@]}" clean
+    make "${params[@]}"
     md_ret_require="$md_build/libretro/snes9x_libretro.so"
 }
 
