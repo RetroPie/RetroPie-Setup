@@ -106,6 +106,7 @@ function gui_esthemes() {
         'dmmarti showcase'
         'dmmarti kidz'
         'dmmarti unified'
+        'dmmarti gamehat'
         'rxbrad freeplay'
         'rxbrad gbz35'
         'rxbrad gbz35-dark'
