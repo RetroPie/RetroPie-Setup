@@ -18,7 +18,7 @@ function depends_apidocs() {
 }
 
 function sources_apidocs() {
-    gitPullOrClone "$md_build" https://github.com/Anvil/bash-doxygen.git master 35ec6ff6
+    gitPullOrClone "$md_build" https://github.com/Anvil/bash-doxygen.git
 }
 
 function build_apidocs() {
