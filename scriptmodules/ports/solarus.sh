@@ -20,10 +20,10 @@ function depends_solarus() {
 }
 
 function sources_solarus() {
-    downloadAndExtract "http://www.solarus-games.org/downloads/solarus/solarus-1.4.5-src.tar.gz" "$md_build" --strip-components 1
-    downloadAndExtract "http://www.zelda-solarus.com/downloads/zsdx/zsdx-1.10.3.tar.gz" "$md_build"
-    downloadAndExtract "http://www.zelda-solarus.com/downloads/zsxd/zsxd-1.10.3.tar.gz" "$md_build"
-    downloadAndExtract "http://www.zelda-solarus.com/downloads/zelda-roth-se/zelda-roth-se-1.0.8.tar.gz" "$md_build"
+    downloadAndExtract "http://www.solarus-games.org/downloads/solarus/solarus-1.6.0-src.tar.gz" "$md_build" --strip-components 1
+    downloadAndExtract "https://gitlab.com/solarus-games/zsdx/-/archive/release-1.12.0/zsdx-release-1.12.0.tar.gz" "$md_build"
+    downloadAndExtract "https://gitlab.com/solarus-games/zsxd/-/archive/release-1.12.0/zsxd-release-1.12.0.tar.gz" "$md_build"
+    downloadAndExtract "https://gitlab.com/solarus-games/zelda-roth-se/-/archive/release-1.2.0/zelda-roth-se-release-1.2.0.tar.gz" "$md_build"
 }
 
 function build_solarus() {
@@ -31,31 +31,31 @@ function build_solarus() {
     cd build
     cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zsdx-1.10.3
+    cd ../zsdx-1.12.0
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zsxd-1.10.3
+    cd ../zsxd-1.12.0
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zelda-roth-se-1.0.8
+    cd ../zelda-roth-se-1.2.0
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
     md_ret_require=(
         "$md_build/build/solarus_run"
-        "$md_build/zsdx-1.10.3/data.solarus"
-        "$md_build/zsxd-1.10.3/data.solarus"
-        "$md_build/zelda-roth-se-1.0.8/data.solarus"
+        "$md_build/zsdx-1.12.0/data.solarus"
+        "$md_build/zsxd-1.12.0/data.solarus"
+        "$md_build/zelda-roth-se-1.2.0/data.solarus"
     )
 }
 
 function install_solarus() {
     cd build
     make install
-    cd ../zsdx-1.10.3/
+    cd ../zsdx-1.12.0/
     make install
-    cd ../zsxd-1.10.3/
+    cd ../zsxd-1.12.0/
     make install
-    cd ../zelda-roth-se-1.0.8/
+    cd ../zelda-roth-se-1.2.0/
     make install
 }
 
