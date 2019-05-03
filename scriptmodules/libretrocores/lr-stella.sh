@@ -22,13 +22,13 @@ function sources_lr-stella() {
 function build_lr-stella() {
     make clean
     make
-    md_ret_require="$md_build/stella_libretro.so"
+    md_ret_require="$md_build/stella2014_libretro.so"
 }
 
 function install_lr-stella() {
     md_ret_files=(
         'README.md'
-        'stella_libretro.so'
+        'stella2014_libretro.so'
     )
 }
 
@@ -36,6 +36,6 @@ function configure_lr-stella() {
     mkRomDir "atari2600"
     ensureSystemretroconfig "atari2600"
 
-    addEmulator 1 "$md_id" "atari2600" "$md_inst/stella_libretro.so"
+    addEmulator 1 "$md_id" "atari2600" "$md_inst/stella2014_libretro.so"
     addSystem "atari2600"
 }
