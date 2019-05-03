@@ -20,7 +20,7 @@ function depends_solarus() {
 }
 
 function sources_solarus() {
-    downloadAndExtract "http://www.solarus-games.org/downloads/solarus/solarus-1.6.0-src.tar.gz" "$md_build" --strip-components 1
+    downloadAndExtract "http://www.solarus-games.org/downloads/solarus/solarus-1.4.5-src.tar.gz" "$md_build" --strip-components 1
     downloadAndExtract "https://gitlab.com/solarus-games/zsdx/-/archive/release-1.12.0/zsdx-release-1.12.0.tar.gz" "$md_build"
     downloadAndExtract "https://gitlab.com/solarus-games/zsxd/-/archive/release-1.12.0/zsxd-release-1.12.0.tar.gz" "$md_build"
     downloadAndExtract "https://gitlab.com/solarus-games/zelda-roth-se/-/archive/release-1.2.0/zelda-roth-se-release-1.2.0.tar.gz" "$md_build"
