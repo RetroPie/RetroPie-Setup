@@ -34,6 +34,7 @@ function install_lr-stella2014() {
     md_ret_files=(
         'README.md'
         'stella2014_libretro.so'
+        'stella/license.txt'
     )
 }
 
