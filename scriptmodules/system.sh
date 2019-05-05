@@ -255,6 +255,9 @@ function get_platform() {
             ODROID-C2)
                 __platform="odroid-c2"
                 ;;
+            "Hardkernel ODROID-N2")
+                __platform="odroid-n2"
+                ;;
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
                 __platform="imx6"
                 ;;
@@ -335,6 +338,19 @@ function platform_odroid-c2() {
     __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
+}
+
+function platform_odroid-n2() {
+    if [[ "$(getconf LONG_BIT)" -eq 32 ]]; then
+        __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a73 -mfpu=neon-fp-armv8"
+        __platform_flags="arm armv8 neon mali gles"
+    else
+        __default_cflags="-O2 -march=native"
+        __platform_flags="aarch64 mali"
+    fi
+    __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j4"
 }
 
 function platform_odroid-xu() {
