@@ -15,6 +15,10 @@ rp_module_help="ROM Extensions: .nds .zip\n\nCopy your Nintendo DS roms to $romd
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/desmume/master/desmume/COPYING"
 rp_module_section="exp"
 
+function depends_lr-desmume() {
+    getDepends libpcap-dev
+}
+
 function sources_lr-desmume() {
     gitPullOrClone "$md_build" https://github.com/libretro/desmume.git
 }
