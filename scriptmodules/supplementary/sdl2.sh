@@ -16,7 +16,11 @@ rp_module_section=""
 rp_module_flags=""
 
 function get_ver_sdl2() {
-    echo "2.0.8"
+    if isPlatform "x11"; then
+        echo "2.0.9"
+    else
+        echo "2.0.8"
+    fi
 }
 
 function get_pkg_ver_sdl2() {
