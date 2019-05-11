@@ -15,21 +15,15 @@ rp_module_licence="GPL3 https://raw.githubusercontent.com/solarus-games/solarus/
 rp_module_section="opt"
 rp_module_flags="noinstclean !aarch64"
 
-# Version numbers
-solarus_ver="1.4.5"
-zsdx_ver="1.10.3"
-zsxd_ver="1.10.3"
-zrothse_ver="1.0.8"
-
 function depends_solarus() {
     getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libluajit-5.1-dev libphysfs-dev libopenal-dev libmodplug-dev libvorbis-dev zip unzip
 }
 
 function sources_solarus() {
-    downloadAndExtract "http://www.solarus-games.org/downloads/solarus/solarus-$solarus_ver-src.tar.gz" "$md_build" --strip-components 1
-    downloadAndExtract "https://gitlab.com/solarus-games/zsdx/-/archive/release-$zsdx_ver/zsdx-release-$zsdx_ver.tar.gz" "$md_build"
-    downloadAndExtract "https://gitlab.com/solarus-games/zsxd/-/archive/release-$zsxd_ver/zsxd-release-$zsxd_ver.tar.gz" "$md_build"
-    downloadAndExtract "https://gitlab.com/solarus-games/zelda-roth-se/-/archive/release-$zrothse_ver/zelda-roth-se-release-$zrothse_ver.tar.gz" "$md_build"
+    downloadAndExtract "http://www.solarus-games.org/downloads/solarus/solarus-1.4.5-src.tar.gz" "$md_build" --strip-components 1
+    downloadAndExtract "https://gitlab.com/solarus-games/zsdx/-/archive/zsdx-1.10.3/zsdx-zsdx-1.10.3.tar.gz" "$md_build"
+    downloadAndExtract "https://gitlab.com/solarus-games/zsxd/-/archive/v1.10.3/zsxd-v1.10.3.tar.gz" "$md_build"
+    downloadAndExtract "https://gitlab.com/solarus-games/zelda-roth-se/-/archive/v1.0.8/zelda-roth-se-v1.0.8.tar.gz" "$md_build"
 }
 
 function build_solarus() {
@@ -37,31 +31,31 @@ function build_solarus() {
     cd build
     cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zsdx-$zsdx_ver
+    cd ../zsdx-zsdx-1.10.3
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zsxd-$zsxd_ver
-    cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
+    cd ../zsxd-v1.10.3/build
+    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    cd ../zelda-roth-se-$zrothse_ver
+    cd ../../zelda-roth-se-v1.0.8
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
     md_ret_require=(
         "$md_build/build/solarus_run"
-        "$md_build/zsdx-release-$zsdx_ver/data.solarus"
-        "$md_build/zsxd-release-$zsxd_ver/data.solarus"
-        "$md_build/zelda-roth-se-release-$zrothse_ver/data.solarus"
+        "$md_build/zsdx-zsdx-1.10.3/data.solarus"
+        "$md_build/zsxd-v1.10.3/build/data.solarus"
+        "$md_build/zelda-roth-se-v1.0.8/data.solarus"
     )
 }
 
 function install_solarus() {
     cd build
     make install
-    cd ../zsdx-release-$zsdx_ver/
+    cd ../zsdx-zsdx-1.10.3/
     make install
-    cd ../zsxd-release-$zsxd_ver/
+    cd ../zsxd-v1.10.3/build/
     make install
-    cd ../zelda-release-roth-se-$zrothse_ver/
+    cd ../../zelda-roth-se-v1.0.8/
     make install
 }
 
