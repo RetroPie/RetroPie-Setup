@@ -206,6 +206,7 @@ function gui_esthemes() {
         'waweedman Venom'
         'waweedman Spider-Man'
         'blowfinger77 locomotion'
+        'justincaseurskynet Arcade1up-5x4-Horizontal'
     )
     while true; do
         local theme
