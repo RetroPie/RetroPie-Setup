@@ -124,8 +124,9 @@ function retropie_welcome() {
     done
     echo -e "\n$out"
 }
-
-retropie_welcome
+if shopt -q login_shell; then¬
+    retropie_welcome
+fi
 # RETROPIE PROFILE END
 _EOF_
 
