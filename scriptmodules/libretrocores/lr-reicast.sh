@@ -18,6 +18,8 @@ rp_module_flags="!mali !armv6"
 
 function sources_lr-reicast() {
     gitPullOrClone "$md_build" https://github.com/libretro/reicast-emulator.git
+    # don't override our C/CXXFLAGS
+    sed -i "/^C.*FLAGS.*:=/d" Makefile
 }
 
 function build_lr-reicast() {
