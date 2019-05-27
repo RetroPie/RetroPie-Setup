@@ -14,7 +14,7 @@ rp_module_desc="Web Based Manager for RetroPie files and configs based on the Re
 rp_module_help="Open your browser and go to http://your_retropie_ip:8000/"
 rp_module_licence="MIT https://raw.githubusercontent.com/botolo78/RetroPie-Manager/retropie/ORIGINAL%20LICENCE.txt"
 rp_module_section="exp"
-rp_module_flags="noinstclean"
+rp_module_flags="noinstclean nobin"
 
 function depends_retropie-manager() {
     local depends=(python-dev virtualenv)
