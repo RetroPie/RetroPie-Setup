@@ -194,6 +194,8 @@ function gui_esthemes() {
         'RetroHursty69 bluesteel'
         'RetroHursty69 blueprism'
         'RetroHursty69 bluesmooth'
+        'RetroHursty69 floyd'
+        'RetroHursty69 floyd_arcade'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
