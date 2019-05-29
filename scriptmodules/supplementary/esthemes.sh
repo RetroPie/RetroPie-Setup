@@ -116,6 +116,8 @@ function gui_esthemes() {
         'lostless playstation'
         'mrharias superdisplay'
         'coinjunkie synthwave'
+        'nickearl retrowave'
+        'nickearl retrowave_4_3'
         'RetroHursty69 magazinemadness'
         'RetroHursty69 stirling'
         'RetroHursty69 boxalloyred'
