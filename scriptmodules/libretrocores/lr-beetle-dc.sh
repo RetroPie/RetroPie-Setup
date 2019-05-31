@@ -29,7 +29,8 @@ function sources_lr-beetle-dc() {
 function build_lr-beetle-dc() {
     make clean
     if isPlatform "rpi"; then
-        make platform=rpi
+        # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
+        MAKEFLAGS="${MAKEFLAGS/\/usr\/lib\/distcc:/}" make platform=rpi
     else
         make
     fi
