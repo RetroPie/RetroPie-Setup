@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="!armv6 !mali"
 
 function depends_reicast() {
-    local depends=(libsdl2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev libasound2-dev)
+    local depends=(libsdl2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev libasound2-dev libudev-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
     getDepends "${depends[@]}"
     pip install evdev
