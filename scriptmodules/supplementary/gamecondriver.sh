@@ -10,14 +10,10 @@
 #
 
 rp_module_id="gamecondriver"
-rp_module_desc="Gamecon & db9 drivers"
+rp_module_desc="Gamecon & Db9 drivers GPIO drivers"
+rp_module_license="GPL2 https://raw.githubusercontent.com/marqs85/gamecon_gpio_rpi/master/gamecon_gpio_rpi-1.4/gamecon_gpio_rpi.c"
 rp_module_section="driver"
 rp_module_flags="!x86 !mali"
-
-function _update_hook_gamecondriver() {
-    # to show as installed in retropie-setup 4.x
-    hasPackage gamecon-gpio-rpi-dkms && mkdir -p "$md_inst"
-}
 
 function depends_gamecondriver() {
     # remove any old kernel headers for current kernel
@@ -28,33 +24,61 @@ function depends_gamecondriver() {
     getDepends dkms raspberrypi-kernel-headers
 }
 
+function _gamecon_version() {
+    echo "1.4"
+}
+
+function _db9_version() {
+    echo "1.2"
+}
 function install_bin_gamecondriver() {
-    local gamecon_ver="1.3"
-    local db9_ver="1.1"
-    local url="https://www.niksula.hut.fi/~mhiienka/Rpi"
+    # install both modules
+    declare -A modules=(
+        [gamecon_gpio_rpi]=$(_gamecon_version)
+        [db9_gpio_rpi]=$(_db9_version)
+    )
+    local github_url="https://github.com/marqs85"
 
-    # install gamecon
-    local package
-    for package in  gamecon-gpio-rpi-dkms_${gamecon_ver}_all.deb  db9-gpio-rpi-dkms_${db9_ver}_all.deb; do
-        wget -q -O"$package" "${url}/$package"
-        dpkg -i "$package"
+    _remove_gamecondriver_files
+
+    pushd "$md_inst"
+    for module_name in "${!modules[@]}"; do
+        local module_ver="${modules[$module_name]}"
+        gitPullOrClone "$module_name" "$github_url/$module_name"
+
+        pushd "$module_name"
+        dkmsManager remove "$module_name" 
+        ln -sfn "`pwd`/$module_name-$module_ver" /usr/src/"$module_name-$module_ver"
+        dkms install --force -m "$module_name" -v "$module_ver"
+        popd
+
+        # test if module installation is OK
+        if ! dkms status | grep -q "^$module_name"; then
+            md_ret_errors+=("$module_name driver installation FAILED")
+        fi
     done
+    popd
+}
 
-    # test if gamecon installation is OK
-    if [[ -z "$(modinfo -n gamecon_gpio_rpi | grep gamecon_gpio_rpi.ko)" ]]; then
-        md_ret_errors+=("Gamecon GPIO driver installation FAILED")
-    fi
+function _remove_gamecondriver_config()
+{
+    sed -i "/gamecon_gpio_rpi/d" /etc/modules
+    rm -f /etc/modprobe.d/gamecon.conf
+}
 
-    # test if db9 installation is OK
-    if [[ -z "$(modinfo -n db9_gpio_rpi | grep db9_gpio_rpi.ko)" ]]; then
-        md_ret_errors+=("Db9 GPIO driver installation FAILED")
-    fi
+function _remove_gamecondriver_files()
+{
+    dkmsManager remove gamecon_gpio_rpi
+    dkmsManager remove db9_gpio_rpi
+
+    # Remove older version of the driver, installed as Debian packages
+    hasPackage gamecon-gpio-rpi-dkms && aptRemove gamecon-gpio-rpi-dkms
+    hasPackage db9-gpio-rpi-dkms && aptRemove db9-gpio-rpi-dkms
 }
 
 function remove_gamecondriver() {
-    sed -i "/gamecon_gpio_rpi/d" /etc/modules
-    rm -f /etc/modprobe.d/gamecon.conf
-    aptRemove db9-gpio-rpi-dkms gamecon-gpio-rpi-dkms
+    _remove_gamecondriver_files
+    _remove_gamecondriver_config
 }
 
 function configure_gamecondriver() {
@@ -164,10 +188,10 @@ function gui_gamecondriver() {
                     dual_snes_gamecondriver
                     ;;
                 2)
-                    dialog --msgbox "$(gzip -dc /usr/share/doc/gamecon_gpio_rpi/README.gz)" 22 76 >/dev/tty
+                    dialog --msgbox "$(cat "$md_inst/gamecon_gpio_rpi/gamecon_gpio_rpi-$(_gamecon_version)/README")" 22 80 >/dev/tty
                     ;;
                 3)
-                    dialog --msgbox "$(gzip -dc /usr/share/doc/db9_gpio_rpi/README.gz)" 22 76 >/dev/tty
+                    dialog --msgbox "$(cat "$md_inst/db9_gpio_rpi/db9_gpio_rpi-$(_db9_version)/README")" 22 80 >/dev/tty
                     ;;
             esac
         else
