@@ -9,24 +9,25 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="lr-beetle-dc"
+rp_module_id="lr-flycast"
 rp_module_desc="Dreamcast emulator - Reicast port for libretro"
-rp_module_help="ROM Extensions: .cdi .gdi\n\nCopy your Dreamcast roms to $romdir/dreamcast\n\nCopy the required BIOS files dc_boot.bin and dc_flash.bin to $biosdir/dc"
-rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/beetle-dc/master/LICENSE"
+rp_module_help="Previously named lr-reicast then lr-beetle-dc\n\nROM Extensions: .cdi .gdi\n\nCopy your Dreamcast roms to $romdir/dreamcast\n\nCopy the required BIOS files dc_boot.bin and dc_flash.bin to $biosdir/dc"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/flycast/master/LICENSE"
 rp_module_section="exp"
 rp_module_flags="!mali !armv6"
 
-function _update_hook_lr-beetle-dc() {
+function _update_hook_lr-flycast() {
     renameModule "lr-reicast" "lr-beetle-dc"
+    renameModule "lr-beetle-dc" "lr-flycast"
 }
 
-function sources_lr-beetle-dc() {
-    gitPullOrClone "$md_build" https://github.com/libretro/beetle-dc.git
+function sources_lr-flycast() {
+    gitPullOrClone "$md_build" https://github.com/libretro/flycast.git
     # don't override our C/CXXFLAGS
     sed -i "/^C.*FLAGS.*:=/d" Makefile
 }
 
-function build_lr-beetle-dc() {
+function build_lr-flycast() {
     make clean
     if isPlatform "rpi"; then
         # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
@@ -34,17 +35,17 @@ function build_lr-beetle-dc() {
     else
         make
     fi
-    md_ret_require="$md_build/beetledc_libretro.so"
+    md_ret_require="$md_build/flycast_libretro.so"
 }
 
-function install_lr-beetle-dc() {
+function install_lr-flycast() {
     md_ret_files=(
-        'beetledc_libretro.so'
+        'flycast_libretro.so'
         'LICENSE'
     )
 }
 
-function configure_lr-beetle-dc() {
+function configure_lr-flycast() {
     mkRomDir "dreamcast"
     ensureSystemretroconfig "dreamcast"
 
@@ -55,6 +56,6 @@ function configure_lr-beetle-dc() {
     iniSet "video_shared_context" "true"
 
     # segfaults on the rpi without redirecting stdin from </dev/null
-    addEmulator 0 "$md_id" "dreamcast" "$md_inst/beetledc_libretro.so </dev/null"
+    addEmulator 0 "$md_id" "dreamcast" "$md_inst/flycast_libretro.so </dev/null"
     addSystem "dreamcast"
 }
