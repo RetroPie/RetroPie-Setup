@@ -27,11 +27,9 @@ function depends_mupen64plus() {
 
 function sources_mupen64plus() {
     local commit
-    #addresses segfault from "Add support for 64 Disk Drive. #446" in mupen64plus-core master
-    isPlatform "vero4k" && commit=("master b75fdfb")
 
     local repos=(
-        "mupen64plus core ${commit[0]}"
+        'mupen64plus core'
         'mupen64plus ui-console'
         'mupen64plus audio-sdl'
         'mupen64plus input-sdl'
@@ -85,7 +83,7 @@ function build_mupen64plus() {
             isPlatform "neon" && params+=("NEON=1")
             isPlatform "x11" && params+=("OSD=1" "PIE=1")
             isPlatform "x86" && params+=("SSE=SSE2")
-            isPlatform "vero4k" && params+=("HOST_CPU=armv8" "USE_GLES=1")
+            isPlatform "vero4k" && params+=("HOST_CPU=armv7" "USE_GLES=1")
 
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             make -C "$dir/projects/unix" "${params[@]}" clean
@@ -102,7 +100,7 @@ function build_mupen64plus() {
     if isPlatform "rpi3"; then
         params+=("-DCRC_ARMV8=On")
     elif isPlatform "vero4k"; then
-        params+=("-DVERO4K=On" "-DCRC_ARMV8=On" "-DEGL=On")
+        params+=("-DVERO4K=On" "-DCRC_OPT=On" "-DEGL=On")
     else
         params+=("-DCRC_OPT=On")
     fi
@@ -153,7 +151,7 @@ function install_mupen64plus() {
             isPlatform "rpi" && params+=("VC=1")
             isPlatform "neon" && params+=("NEON=1")
             isPlatform "x86" && params+=("SSE=SSE2")
-            isPlatform "vero4k" && params+=("HOST_CPU=armv8" "USE_GLES=1")
+            isPlatform "vero4k" && params+=("HOST_CPU=armv7" "USE_GLES=1")
             make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
         fi
     done
