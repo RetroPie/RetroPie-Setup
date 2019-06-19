@@ -377,9 +377,9 @@ function platform_imx6() {
 }
 
 function platform_vero4k() {
-    __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib -O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib -O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j4"
-    __platform_flags="arm armv8 neon vero4k gles"
+    __platform_flags="arm armv7 neon vero4k gles"
 }
 
