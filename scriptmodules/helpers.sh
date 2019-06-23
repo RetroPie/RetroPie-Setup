@@ -1038,7 +1038,7 @@ function joy2keyStart() {
 
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
-        params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20)
+        params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20 0x1b)
     fi
 
     # get the first joystick device (if not already set)
