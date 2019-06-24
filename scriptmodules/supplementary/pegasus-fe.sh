@@ -74,6 +74,9 @@ fi
 tty=\$(tty)
 export TTY="\${tty:8:1}"
 
+# improve gradients
+export QT_QPA_EGLFS_FORCE888=1
+
 clear
 "$md_inst/pegasus-fe" "\$@"
 _EOF_
