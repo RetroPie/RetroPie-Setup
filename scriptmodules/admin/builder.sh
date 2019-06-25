@@ -76,9 +76,11 @@ function chroot_build_builder() {
     local ip="$(getIPAddress)"
 
     local dist
+    local dists="$__dists"
+    [[ -z "$dists" ]] && dists="stretch buster"
     local sys
 
-    for dist in stretch; do
+    for dist in $dists; do
         local use_distcc=0
         if [[ -d "$rootdir/admin/crosscomp/$dist" ]]; then
             use_distcc=1
