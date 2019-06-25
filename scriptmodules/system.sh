@@ -81,7 +81,7 @@ function get_os_version() {
 
             # Debian unstable is not officially supported though
             if [[ "$__os_release" == "unstable" ]]; then
-                __os_release=10
+                __os_debian_ver=11
             fi
 
             if compareVersions "$__os_debian_ver" lt 8; then
