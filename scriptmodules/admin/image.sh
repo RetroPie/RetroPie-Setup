@@ -161,6 +161,9 @@ function _init_chroot_image() {
     local nameserver="$(nmcli device show | grep IP4.DNS  | awk '{print $NF; exit}')"
     # so we can resolve inside the chroot
     echo "nameserver $nameserver" >"$chroot"/etc/resolv.conf
+
+    # move /etc/ld.so.preload out of the way to avoid warnings
+    mv "$chroot/etc/ld.so.preload" "$chroot/etc/ld.so.preload.bak"
 }
 
 function _deinit_chroot_image() {
@@ -168,7 +171,12 @@ function _deinit_chroot_image() {
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
 
     trap "" INT
+
     >"$chroot/etc/resolv.conf"
+
+    # restore /etc/ld.so.preload
+    mv "$chroot/etc/ld.so.preload.bak" "$chroot/etc/ld.so.preload"
+
     umount -l "$chroot/proc" "$chroot/dev/pts"
     trap INT
 }
