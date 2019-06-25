@@ -37,6 +37,9 @@ function create_chroot_image() {
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip"
             ;;
         stretch)
+            url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip"
+            ;;
+        buster)
             url="https://downloads.raspberrypi.org/raspbian_lite_latest"
             ;;
         *)
