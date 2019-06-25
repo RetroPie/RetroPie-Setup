@@ -421,7 +421,7 @@ function update_packages_gui_setup() {
     rps_logInit
     {
         rps_logStart
-        [[ "$update_os" -eq 1 ]] && apt_upgrade_raspbiantools
+        [[ "$update_os" -eq 1 ]] && rp_callModule raspbiantools apt_upgrade
         update_packages_setup
         rps_logEnd
     } &> >(_setup_gzip_log "$logfilename")
