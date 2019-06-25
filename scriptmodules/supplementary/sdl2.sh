@@ -16,7 +16,7 @@ rp_module_section=""
 rp_module_flags=""
 
 function get_ver_sdl2() {
-    if isPlatform "x11"; then
+    if isPlatform "x11" || compareVersions "$__os_debian_ver" ge 10; then
         echo "2.0.9"
     else
         echo "2.0.8"
