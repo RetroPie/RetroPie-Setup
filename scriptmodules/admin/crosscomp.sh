@@ -55,13 +55,26 @@ function sources_crosscomp() {
                 [mpc]=1.0.3
             )
             ;;
+        buster)
+            pkgs=(
+                [binutils]=2.31.1
+                [cloog]=0.18.4
+                [gcc]=8.3.0
+                [glibc]=2.28
+                [gmp]=6.1.2
+                [isl]=0.20
+                [kernel]=4.19.50
+                [mpfr]=4.0.2
+                [mpc]=1.1.0
+            )
+            ;;
         *)
             md_ret_errors+=("Unsupported distribution $dist")
             return 1
             ;;
     esac
 
-    downloadAndExtract "ftp://gcc.gnu.org/pub/gcc/infrastructure/isl-${pkgs[isl]}.tar.bz2" isl --strip-components 1
+    downloadAndExtract "http://isl.gforge.inria.fr/isl-${pkgs[isl]}.tar.bz2" isl --strip-components 1
     downloadAndExtract "http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-${pkgs[cloog]}.tar.gz" cloog --strip-components 1
 
     downloadAndExtract "https://ftp.gnu.org/gnu/binutils/binutils-${pkgs[binutils]}.tar.gz" binutils --strip-components 1
@@ -167,7 +180,7 @@ function setup_crosscomp() {
 
 function setup_all_crosscomp() {
     local dist
-    for dist in jessie stretch; do
+    for dist in jessie stretch buster; do
         setup_crosscomp "$dist"
     done
 }
