@@ -51,7 +51,9 @@ function build_retroarch() {
         params+=(--disable-ffmpeg)
     fi
     isPlatform "gles" && params+=(--enable-opengles)
-    isPlatform "rpi" && params+=(--enable-dispmanx)
+    # Temporarily block dispmanx support for fkms until upstream support is fixed
+    isPlatform "dispmanx" && ! isPlatform "kms" && params+=(--enable-dispmanx)
+    isPlatform "rpi" && isPlatform "mesa" && params+=(--disable-videocore)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
     isPlatform "kms" && params+=(--enable-kms)
     isPlatform "arm" && params+=(--enable-floathard)
