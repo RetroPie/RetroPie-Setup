@@ -148,8 +148,11 @@ function sources_emulationstation() {
 }
 
 function build_emulationstation() {
+    local params=(-DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/)
+    # Temporary workaround until GLESv2 support is implemented
+    isPlatform "rpi" && isPlatform "mesa" && params+=(-DGL=On)
     rpSwap on 1000
-    cmake . -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
+    cmake . "${params[@]}"
     make clean
     make
     rpSwap off
@@ -205,11 +208,6 @@ function install_launch_emulationstation() {
 
 if [[ \$(id -u) -eq 0 ]]; then
     echo "emulationstation should not be run as root. If you used 'sudo emulationstation' please run without sudo."
-    exit 1
-fi
-
-if [[ -d "/sys/module/vc4" ]]; then
-    echo -e "ERROR: You have the experimental desktop GL driver enabled. This is NOT compatible with RetroPie, and Emulation Station as well as emulators will fail to launch.\\n\\nPlease disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
     exit 1
 fi
 
