@@ -239,6 +239,9 @@ function get_platform() {
                         2)
                             __platform="rpi3"
                             ;;
+						3)
+                            __platform="rpi4"
+                            ;;
                     esac
                 fi
                 ;;
@@ -304,6 +307,13 @@ function platform_rpi2() {
 # could improve performance with the compiler options below but needs further testing
 function platform_rpi3() {
     __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv8 neon rpi gles"
+}
+
+function platform_rpi4() {
+    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi gles"
