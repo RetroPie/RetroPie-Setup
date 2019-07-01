@@ -17,8 +17,9 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_ppsspp() {
-    local depends=(cmake libsdl2-dev libzip-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    local depends=(cmake libsdl2-dev libsnappy-dev libzip-dev zlib1g-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
+    isPlatform "mesa" && depends+=(libgles2-mesa-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
     getDepends "${depends[@]}"
 }
@@ -120,12 +121,14 @@ function build_ppsspp() {
     cd "$md_build/$md_id"
     rm -rf CMakeCache.txt CMakeFiles
     local params=()
-    if isPlatform "rpi"; then
+    if isPlatform "videocore"; then
         if isPlatform "armv6"; then
             params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake)
         else
             params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv7.cmake)
         fi
+    elif isPlatform "mesa"; then
+        params+=(-DUSING_GLES2=ON -DUSING_EGL=OFF)
     elif isPlatform "mali"; then
         params+=(-DUSING_GLES2=ON -DUSING_FBDEV=ON)
     elif isPlatform "tinker"; then
