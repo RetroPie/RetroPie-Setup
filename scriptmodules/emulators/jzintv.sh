@@ -29,7 +29,10 @@ function build_jzintv() {
     mkdir -p jzintv/bin
     cd jzintv/src
     make clean
-    make CC="gcc" CXX="g++" WARNXX="" OPT_FLAGS="$CFLAGS"
+
+    sed -i '/ WARN/ s/-Wall//' Makefile
+    sed -i '/ WARNXX/ s/-Wall//' Makefile
+    make CC="gcc" CXX="g++" OPT_FLAGS="$CFLAGS"
     md_ret_require="$md_build/jzintv/bin/jzintv"
 }
 
