@@ -16,7 +16,7 @@ rp_module_flags="noinstclean"
 rp_module_help="Please note that you need to manually enable or disable the ControlBlock Service in the Configuration section. IMPORTANT: If the service is enabled and the power switch functionality is enabled (which is the default setting) in the config file, you need to have a switch connected to the ControlBlock."
 
 function depends_controlblock() {
-    local depends=(cmake doxygen)
+    local depends=(cmake doxygen wiringpi)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
 
     getDepends "${depends[@]}"
