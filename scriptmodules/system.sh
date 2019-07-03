@@ -84,7 +84,7 @@ function get_os_version() {
                 __os_debian_ver=11
             fi
 
-            if compareVersions "$__os_debian_ver" lt 8; then
+            if compareVersions "$__os_debian_ver" lt 9; then
                 error="You need Raspbian/Debian Stretch or newer"
             fi
 
@@ -129,20 +129,20 @@ function get_os_version() {
                     error="You need Linux Mint 18 or newer"
                 elif compareVersions "$__os_release" lt 19; then
                     __os_ubuntu_ver="16.04"
-                    __os_debian_ver="8"
+                    __os_debian_ver="9"
                 else
                     __os_ubuntu_ver="18.04"
-                    __os_debian_ver="9"
+                    __os_debian_ver="10"
                 fi
             fi
             ;;
         Ubuntu)
             if compareVersions "$__os_release" lt 16.04; then
                 error="You need Ubuntu 16.04 or newer"
-            elif compareVersions "$__os_release" lt 16.10; then
-                __os_debian_ver="8"
-            else
+            elif compareVersions "$__os_release" lt 18.04; then
                 __os_debian_ver="9"
+            else
+                __os_debian_ver="10"
             fi
             __os_ubuntu_ver="$__os_release"
             ;;
