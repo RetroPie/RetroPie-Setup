@@ -146,6 +146,16 @@ function get_os_version() {
             fi
             __os_ubuntu_ver="$__os_release"
             ;;
+        Zorin)
+            if compareVersions "$__os_release" lt 14; then
+                error="You need Zorin OS 14 or newer"
+            elif compareVersions "$__os_release" lt 14; then
+                __os_debian_ver="8"
+            else
+                __os_debian_ver="9"
+            fi
+            __os_ubuntu_ver="$__os_release"
+            ;;
         Deepin)
             if compareVersions "$__os_release" lt 15.5; then
                 error="You need Deepin OS 15.5 or newer"
