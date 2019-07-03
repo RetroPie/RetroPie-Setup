@@ -167,19 +167,19 @@ function get_os_version() {
                 error="You need Elementary OS 0.4 or newer"
             elif compareVersions "$__os_release" eq 0.4; then
                 __os_ubuntu_ver="16.04"
-                __os_debian_ver="8"
+                __os_debian_ver="9"
             else
                 __os_ubuntu_ver="18.04"
-                __os_debian_ver="9"
+                __os_debian_ver="10"
             fi
             ;;
         neon)
-            __os_ubuntu_ver="$__os_release"
-            if compareVersions "$__os_release" lt 16.10; then
-                __os_debian_ver="8"
-            else
+            if compareVersions "$__os_release" lt 18.04; then
                 __os_debian_ver="9"
+            else
+                __os_debian_ver="10"
             fi
+            __os_ubuntu_ver="$__os_release"
             ;;
         *)
             error="Unsupported OS"
