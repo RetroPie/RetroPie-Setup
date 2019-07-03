@@ -11,9 +11,9 @@
 
 rp_module_id="controlblock"
 rp_module_desc="ControlBlock Driver"
-rp_module_section="driver"
-rp_module_flags="noinstclean"
 rp_module_help="Please note that you need to manually enable or disable the ControlBlock Service in the Configuration section. IMPORTANT: If the service is enabled and the power switch functionality is enabled (which is the default setting) in the config file, you need to have a switch connected to the ControlBlock."
+rp_module_section="driver"
+rp_module_flags="noinstclean !x86 !mali"
 
 function depends_controlblock() {
     local depends=(cmake doxygen wiringpi)
