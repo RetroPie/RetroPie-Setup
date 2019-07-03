@@ -44,7 +44,7 @@ function disable_blanker_raspbiantools() {
 
 function kernel_bt_fix_raspbiantools() {
     # install a newer kernel/firmware for stretch to resolve sony bt issues
-    if isPlatform "rpi" && [[ "$__os_debian_ver" -eq 9 ]]; then
+    if isPlatform "rpi" && [[ "$__os_debian_ver" -eq 9 ]] && hasPackage raspberrypi-kernel 1.20190620+1-1 lt; then
         install_firmware_raspbiantools 1.20190620+1-1
     fi
 }
