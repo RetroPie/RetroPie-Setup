@@ -14,7 +14,7 @@ rp_module_desc="DOS emulator"
 rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk/COPYING"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="dispmanx !mali"
 
 function depends_dosbox() {
     local depends=(libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev libasound2-dev libpng-dev automake autoconf zlib1g-dev subversion "$@")
@@ -24,7 +24,7 @@ function depends_dosbox() {
 
 function sources_dosbox() {
     local revision="$1"
-    [[ -z "$revision" ]] && revision="4194"
+    [[ -z "$revision" ]] && revision="4252"
 
     svn checkout https://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk "$md_build" -r "$revision"
     applyPatch "$md_data/01-fully-bindable-joystick.diff"
@@ -122,7 +122,7 @@ _EOF_
 
         local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
         if [[ -f "$config_path" ]]; then
-            iniConfig "=" "" "$config_path"
+            iniConfig " = " "" "$config_path"
             iniSet "usescancodes" "false"
             iniSet "core" "dynamic"
             iniSet "cycles" "max"
@@ -130,6 +130,11 @@ _EOF_
             if isPlatform "rpi" || [[ -n "$(aconnect -o | grep -e TiMidity -e FluidSynth)" ]]; then
                 iniSet "mididevice" "alsa"
                 iniSet "midiconfig" "128:0"
+            fi
+            if isPlatform "mesa"; then
+                iniSet "fullscreen" "true"
+                iniSet "fullresolution" "desktop"
+                iniSet "output" "overlay"
             fi
         fi
     fi
