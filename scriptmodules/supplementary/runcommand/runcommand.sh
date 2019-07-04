@@ -900,12 +900,6 @@ function get_sys_command() {
         COMMAND="${COMMAND:4}"
         CONSOLE_OUT=1
     fi
-
-    # workaround for launching xserver on correct/user owned tty
-    # see https://github.com/RetroPie/RetroPie-Setup/issues/1805
-    if [[ -n "$TTY" && "$COMMAND" =~ ^(startx|xinit) ]]; then
-        COMMAND+=" -- vt$TTY -keeptty"
-    fi
 }
 
 function show_launch() {
@@ -1059,6 +1053,12 @@ function runcommand() {
     [[ -n "$GOVERNOR" ]] && set_governor "$GOVERNOR"
 
     retroarch_append_config
+
+    # workaround for launching xserver on correct/user owned tty
+    # see https://github.com/RetroPie/RetroPie-Setup/issues/1805
+    if [[ -n "$TTY" && "$COMMAND" =~ ^(startx|xinit) ]]; then
+        COMMAND+=" -- vt$TTY -keeptty"
+    fi
 
     local ret
     launch_command
