@@ -16,19 +16,17 @@ rp_module_section=""
 rp_module_flags=""
 
 function get_ver_sdl2() {
-    if isPlatform "x11" || compareVersions "$__os_debian_ver" ge 10; then
-        echo "2.0.9"
-    else
-        echo "2.0.8"
-    fi
+    echo "2.0.9+dfsg1-1+rpt1"
 }
 
 function get_pkg_ver_sdl2() {
-    local ver="$(get_ver_sdl2)+1"
-    isPlatform "rpi" && ver+="rpi"
+    local our_ver="1"
+    local ver="$(get_ver_sdl2)+"
+    isPlatform "videocore" && ver+="videocore"
+    isPlatform "mesa" && ver+="mesa"
     isPlatform "mali" && ver+="mali"
     isPlatform "vero4k" && ver+="mali"
-    echo "$ver"
+    echo "${ver}rpi${our_ver}"
 }
 
 function get_arch_sdl2() {
@@ -38,10 +36,15 @@ function get_arch_sdl2() {
 function depends_sdl2() {
     # Dependencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
     # already covered by the build-essential package retropie relies on.
-    local depends=(devscripts debhelper dh-autoreconf libasound2-dev libudev-dev libibus-1.0-dev libdbus-1-dev fcitx-libs-dev)
+    local depends=(
+        debhelper devscripts dh-autoreconf doxygen fcitx-libs-dev libasound2-dev libdbus-1-dev libegl1-mesa-dev libgles2-mesa-dev
+        libglu1-mesa-dev libibus-1.0-dev libpulse-dev libsamplerate0-dev libsndio-dev libudev-dev libvulkan-dev libwayland-dev
+        libxkbcommon-dev libxv-dev wayland-protocols
+    )
     # these were removed by a PR for vero4k support (cannot test). Needed though at least for for RPI and X11
     ! isPlatform "vero4k" && depends+=(libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev libgl1-mesa-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
+    isPlatform "mesa" && depends+=(libegl1-mesa-dev libgles2-mesa-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "kms" && depends+=(libdrm-dev libgbm-dev)
     isPlatform "x11" && depends+=(libpulse-dev libegl1-mesa-dev libgles2-mesa-dev libglu1-mesa-dev)
@@ -50,31 +53,47 @@ function depends_sdl2() {
 }
 
 function sources_sdl2() {
+    local branch="retropie-2.0.9+dfsg1-1"
     local ver="$(get_ver_sdl2)"
     local pkg_ver="$(get_pkg_ver_sdl2)"
 
-    local branch="release-$ver"
-    isPlatform "rpi" && branch="rpi-$ver"
-    isPlatform "mali" && branch="mali-$ver"
-    isPlatform "kms" && branch="kms-$ver"
-    isPlatform "vero4k" && branch="mali-$ver"
-
-    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
+    gitPullOrClone "$md_build/$pkg_ver" https://github.com/psyke83/libsdl2 "$branch"
     cd "$pkg_ver"
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
 }
 
 function build_sdl2() {
+    local conf_flags=()
+
     cd "$(get_pkg_ver_sdl2)"
 
     if isPlatform "vero4k"; then
         # remove harmful (mesa) and un-needed (X11) dependancies from debian package control
         sed -i '/^\s*lib.*x\|mesa/ d' ./debian/control
         # disable vulkan and X11 video support
-        sed -i 's/confflags =/confflags = --disable-video-vulkan --disable-video-x11 \\\n/' ./debian/rules
+        conf_flags+=("--disable-video-x11")
+    elif ! isPlatform "arm"; then
+         # disable Raspbian ARM optimizations
+         sed -i -e '/-ARM-/d' -e '/-SDL_blit/d' ./debian/patches/series
+    fi
+    ! isPlatform "x11" && conf_flags+=("--disable-video-vulkan")
+    ! isPlatform "videocore" && conf_flags+=("--disable-video-rpi")
+    ! isPlatform "mali" && conf_flags+=("--disable-video-mali")
+    isPlatform "kms" && conf_flags+=("--enable-video-kmsdrm")
+    sed -i 's/confflags =/confflags = '"${conf_flags[*]}"' \\\n/' ./debian/rules
+
+    # disable docs packaging to speed up building
+    rm -rf debian/libsdl2-doc.*
+    sed -i -e 's/doxygen docs\/doxyfile/install \-Dv \/dev\/null output\/jquery.js/' \
+      -e 's/dh_installexamples \-i.*/\/bin\/true/' ./debian/rules
+
+    # enable debhelper <11 compatibility
+    if hasPackage "debhelper" 11 "lt"; then
+        sed -i 's/debhelper (.*/debhelper,/' ./debian/control
+        echo "9" >"debian/compat"
     fi
 
-    dpkg-buildpackage
+    dpkg-buildpackage -b
     md_ret_require="$md_build/libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb"
     local dest="$__tmpdir/archives/$__os_codename/$__platform"
     mkdir -p "$dest"
