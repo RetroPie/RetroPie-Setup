@@ -246,6 +246,15 @@ function getDepends() {
                 packages+=("$required")
                 continue
             fi
+
+            # gl4es translation library installation for gles targets
+            if [[ "$required" == "libgl1-mesa-dev" ]] \
+              && isPlatform "gles" \
+              && hasFlag "${__mod_flags[$md_idx]}" "gl4es" \
+              && ! rp_isInstalled "$(rp_getIdxFromId "gl4es")"; then
+                packages+=("gl4es")
+                continue
+            fi
         fi
 
         if [[ "$md_mode" == "remove" ]]; then
@@ -276,6 +285,12 @@ function getDepends() {
                     rp_callModule sdl2 install_bin
                 else
                     rp_callModule sdl2
+                fi
+            elif [[ "$required" == "gl4es" ]]; then
+                if [[ "$__has_binaries" -eq 1 ]]; then
+                    rp_callModule gl4es install_bin
+                else
+                    rp_callModule gl4es
                 fi
             else
                 temp+=("$required")
@@ -1259,6 +1274,11 @@ function addEmulator() {
     # automatically add parameters for libretro modules
     if [[ "$id" == lr-* && "$cmd" =~ ^"$md_inst"[^[:space:]]*\.so ]]; then
         cmd="$emudir/retroarch/bin/retroarch -L $cmd --config $md_conf_root/$system/retroarch.cfg %ROM%"
+    fi
+
+    # prepend gl4es environment variables if indicated as needed by scriptmodule
+    if hasFlag "${__mod_flags[$md_idx]}" "gl4es" && isPlatform "gles" && ! isPlatform "mesa"; then
+        cmd="SDL_VIDEO_GL_DRIVER=libGL.so.1 LD_LIBRARY_PATH=$rootdir/supplementary/gl4es $cmd"
     fi
 
     # create a config folder for the system / port
