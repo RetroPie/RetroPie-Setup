@@ -14,7 +14,7 @@ rp_module_desc="Configure Samba ROM Shares"
 rp_module_section="config"
 
 function depends_samba() {
-    getDepends samba
+    DEBIAN_FRONTEND=noninteractive getDepends samba
 }
 
 function remove_share_samba() {
@@ -41,7 +41,7 @@ _EOF_
 }
 
 function restart_samba() {
-    service samba restart
+    service samba restart || service smbd restart
 }
 
 function install_shares_samba() {
@@ -58,6 +58,7 @@ function remove_shares_samba() {
     for name in roms bios configs splashscreens; do
         remove_share_samba "$name"
     done
+    restart_samba
 }
 
 function gui_samba() {
