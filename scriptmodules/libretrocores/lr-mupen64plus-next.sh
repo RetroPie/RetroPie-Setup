@@ -20,18 +20,24 @@ function depends_lr-mupen64plus-next() {
     local depends=(flex bison libpng-dev)
     isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev)
     isPlatform "x86" && depends+=(nasm)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
+    isPlatform "mesa" && depends+=(libgles2-mesa-dev)
     getDepends "${depends[@]}"
 }
 
 function sources_lr-mupen64plus-next() {
     gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro-nx.git GLideN64
+
+    # HACK: force EGL detection on FKMS
+    isPlatform "mesa" && applyPatch "$md_data/0001-force-egl.patch"
 }
 
 function build_lr-mupen64plus-next() {
     local params=()
-    if isPlatform "rpi"; then
+    if isPlatform "videocore"; then
         params+=(platform="$__platform")
+    elif isPlatform "mesa"; then
+        params+=(platform="$__platform-mesa")
     elif isPlatform "mali"; then
         params+=(platform="odroid")
     else

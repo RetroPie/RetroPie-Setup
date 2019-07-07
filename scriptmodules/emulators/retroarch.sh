@@ -17,6 +17,8 @@ rp_module_section="core"
 function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "gles" && depends+=(libgles2-mesa-dev)
+    isPlatform "mesa" && depends+=(libx11-xcb-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
@@ -46,7 +48,10 @@ function sources_retroarch() {
 
 function build_retroarch() {
     local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack --disable-qt)
-    ! isPlatform "x11" && params+=(--disable-x11 --disable-pulse)
+    if ! isPlatform "x11"; then
+        params+=(--disable-pulse)
+        ! isPlatform "mesa" && params+=(--disable-x11)
+    fi
     if compareVersions "$__os_debian_ver" lt 9; then
         params+=(--disable-ffmpeg)
     fi
@@ -159,6 +164,7 @@ function configure_retroarch() {
     iniSet "video_font_size" "12"
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     isPlatform "x11" && iniSet "video_fullscreen" "true"
+    isPlatform "mesa" && iniSet "video_fullscreen" "true"
 
     # set default render resolution to 640x480 for rpi1
     if isPlatform "rpi1"; then
