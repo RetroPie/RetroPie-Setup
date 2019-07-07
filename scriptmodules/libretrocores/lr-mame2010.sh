@@ -16,7 +16,8 @@ rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2010-li
 rp_module_section="opt"
 
 function sources_lr-mame2010() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mame2010-libretro.git
+    # Temporarily pin to c87309d to work around https://github.com/libretro/mame2010-libretro/issues/128
+    gitPullOrClone "$md_build" https://github.com/libretro/mame2010-libretro.git master c87309d
 }
 
 function build_lr-mame2010() {
