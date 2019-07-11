@@ -1045,6 +1045,10 @@ function runcommand() {
 
     mode_switch "$MODE_REQ_ID"
 
+    # replace X/Y resolution (needed for KMS applications)
+    COMMAND="${COMMAND//\%XRES\%/${MODE_CUR[0]}}"
+    COMMAND="${COMMAND//\%YRES\%/${MODE_CUR[1]}}"
+
     [[ -n "$FB_NEW" ]] && switch_fb_res $FB_NEW
 
     config_dispmanx "$SAVE_EMU"
