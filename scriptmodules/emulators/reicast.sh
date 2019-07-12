@@ -24,7 +24,7 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
+    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git master
 }
 
 function build_reicast() {
