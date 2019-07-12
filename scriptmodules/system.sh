@@ -84,7 +84,8 @@ function get_os_version() {
                 __os_debian_ver=11
             fi
 
-            if compareVersions "$__os_debian_ver" lt 9; then
+            # we still allow Raspbian 8 (jessie) to work (We show an popup in the setup module)
+            if compareVersions "$__os_debian_ver" lt 8; then
                 error="You need Raspbian/Debian Stretch or newer"
             fi
 
