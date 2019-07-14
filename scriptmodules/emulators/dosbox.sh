@@ -87,12 +87,16 @@ function midi_synth() {
     case "\$1" in
         "start")
             timidity -Os -iAD &
-            until [[ -n "\$(aconnect -o | grep TiMidity)" ]]; do
+            sleep 1
+            pgrep timidity || timidity -Os -iAD -c /etc/timidity/freepats.cfg &
+            local timeout=5
+            until [[ -n "\$(aconnect -o | grep TiMidity)" || \$timeout -le 0 ]]; do
                 sleep 1
+                timeout=\$((timeout-1))
             done
             ;;
         "stop")
-            killall timidity
+            killall timidity 2>/dev/null
             ;;
         *)
             ;;
