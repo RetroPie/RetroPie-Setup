@@ -1064,6 +1064,8 @@ function runcommand() {
         COMMAND+=" -- vt$TTY -keeptty"
     fi
 
+    user_script "runcommand-onbeforelaunch.sh"
+
     local ret
     launch_command
     ret=$?
