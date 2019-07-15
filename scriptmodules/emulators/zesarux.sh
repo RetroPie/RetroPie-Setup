@@ -14,7 +14,7 @@ rp_module_desc="ZX Spectrum emulator ZEsarUX"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum games to $romdir/zxspectrum"
 rp_module_licence="GPL3 https://sourceforge.net/p/zesarux/code/ci/master/tree/LICENSE"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="dispmanx !mali"
 
 function depends_zesarux() {
     local depends=(libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev)
@@ -28,7 +28,8 @@ function sources_zesarux() {
 
 function build_zesarux() {
     local params=()
-    isPlatform "rpi" && params+=(--enable-raspberry --disable-pulse)
+    isPlatform "videocore" && params+=(--enable-raspberry)
+    ! isPlatform "x11" && params+=(--disable-pulse)
     cd src
     ./configure --prefix "$md_inst" "${params[@]}"
     make clean
