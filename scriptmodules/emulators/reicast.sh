@@ -28,7 +28,7 @@ function sources_reicast() {
 }
 
 function build_reicast() {
-    cd shell/linux
+    cd reicast/linux
     if isPlatform "rpi"; then
         make platform=rpi2 clean
         make platform=rpi2
@@ -39,11 +39,11 @@ function build_reicast() {
         make clean
         make
     fi
-    md_ret_require="$md_build/shell/linux/reicast.elf"
+    md_ret_require="$md_build/reicast/linux/reicast.elf"
 }
 
 function install_reicast() {
-    cd shell/linux
+    cd reicast/linux
     if isPlatform "rpi"; then
         make platform=rpi2 PREFIX="$md_inst" install
     elif isPlatform "tinker"; then
