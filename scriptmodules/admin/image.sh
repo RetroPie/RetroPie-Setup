@@ -208,7 +208,7 @@ function create_image() {
 
     # make image size 300mb larger than contents of chroot
     local mb_size=$(du -s --block-size 1048576 $chroot 2>/dev/null | cut -f1)
-    ((mb_size+=300))
+    ((mb_size+=492))
 
     # create image
     printMsgs "console" "Creating image $image ..."
@@ -218,9 +218,9 @@ function create_image() {
     printMsgs "console" "partitioning $image ..."
     parted -s "$image" -- \
         mklabel msdos \
-        mkpart primary fat16 4 64 \
+        mkpart primary fat16 4 256 \
         set 1 boot on \
-        mkpart primary 64 -1
+        mkpart primary 256 -1
 
     # format
     printMsgs "console" "Formatting $image ..."
