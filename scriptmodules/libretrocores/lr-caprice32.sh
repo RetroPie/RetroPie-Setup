@@ -38,6 +38,7 @@ function configure_lr-caprice32() {
     setRetroArchCoreOption "cap32_autorun" "enabled"
     setRetroArchCoreOption "cap32_Model" "6128"
     setRetroArchCoreOption "cap32_Ram" "128"
+    setRetroArchCoreOption "cap32_combokey" "y"
 
     addEmulator 1 "$md_id" "amstradcpc" "$md_inst/cap32_libretro.so"
     addSystem "amstradcpc"
