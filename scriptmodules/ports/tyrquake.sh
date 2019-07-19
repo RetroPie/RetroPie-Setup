@@ -15,7 +15,12 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/tyrquake/mast
 rp_module_section="opt"
 
 function depends_tyrquake() {
-    getDepends libsdl2-dev
+    local depends=(libsdl2-dev)
+    if isPlatform "x11" || isPlatform "mesa"; then
+        depends+=(libgl1-mesa-dev)
+    fi
+
+    getDepends "${depends[@]}"
 }
 
 function sources_tyrquake() {
@@ -40,10 +45,15 @@ function install_tyrquake() {
 }
 
 function add_games_tyrquake() {
-    _add_games_lr-tyrquake "$md_inst/bin/tyr-quake -basedir $romdir/ports/quake -game %QUAKEDIR%"
-    if isPlatform "x11"; then
-        addEmulator 1 "$md_id-gl" "quake ports" "$md_inst/bin/tyr-glquake -basedir $romdir/ports/quake -game %QUAKEDIR%"
+    local params=("-basedir $romdir/ports/quake" "-game %QUAKEDIR%")
+    local binary="$md_inst/bin/tyr-quake"
+
+    isPlatform "kms" && params+=("-width %XRES%" "-height %YRES%")
+    if isPlatform "x11" || isPlatform "mesa"; then
+        binary="$md_inst/bin/tyr-glquake"
     fi
+
+    _add_games_lr-tyrquake "$binary ${params[*]}"
 }
 
 function configure_tyrquake() {
