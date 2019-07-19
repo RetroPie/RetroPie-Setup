@@ -17,7 +17,7 @@ rp_module_section="driver"
 rp_module_flags="noinstclean !x86 !mali"
 
 function _version_mkarcadejoystick() {
-    echo "0.1.5"
+    echo "0.1.6"
 }
 
 function depends_mkarcadejoystick() {
@@ -26,7 +26,10 @@ function depends_mkarcadejoystick() {
 
 function sources_mkarcadejoystick() {
     gitPullOrClone "$md_inst" https://github.com/recalbox/mk_arcade_joystick_rpi
+    pushd "$md_inst"
+    applyPatch "$md_data/01_kernel_timers_api.diff"
     sed -i "s/\$MKVERSION/$(_version_mkarcadejoystick)/" "$md_inst/dkms.conf"
+    popd
 }
 
 function build_mkarcadejoystick() {
