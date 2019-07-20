@@ -268,7 +268,7 @@ function get_platform() {
             "Rockchip (Device Tree)")
                 __platform="tinker"
                 ;;
-            Vero4K)
+            Vero4K|Vero4KPlus)
                 __platform="vero4k"
                 ;;
             "Allwinner sun8i Family")
