@@ -48,7 +48,7 @@ function _add_games_lr-prboom() {
         ['plutonia']="The Plutonia Experiment"
     )
 
-    if [[ "$md_id" == "zdoom" ]]; then
+    if [[ "$md_id" =~ "zdoom" ]]; then
         games+=(
             ['heretic']="Heretic - Shadow of the Serpent Riders"
             ['hexen']="Hexen - Beyond Heretic"
