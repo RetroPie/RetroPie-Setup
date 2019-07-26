@@ -250,7 +250,6 @@ function get_platform() {
                             __platform="rpi4"
                             ;;
                     esac
-
                 fi
                 ;;
             ODROIDC)
