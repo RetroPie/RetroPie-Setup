@@ -137,13 +137,9 @@ function get_os_version() {
                 fi
             fi
             ;;
-        Ubuntu|neon)
+        Ubuntu)
             if compareVersions "$__os_release" lt 16.04; then
                 error="You need Ubuntu 16.04 or newer"
-            # although ubuntu 16.10 reports as being based on stretch it is before some
-            # packages were changed - we map to version 8 to avoid issues (eg libpng-dev name)
-            elif compareVersions "$__os_release" eq 16.10; then
-                __os_debian_ver="8"
             elif compareVersions "$__os_release" lt 18.04; then
                 __os_debian_ver="9"
             else
@@ -172,11 +168,19 @@ function get_os_version() {
                 error="You need Elementary OS 0.4 or newer"
             elif compareVersions "$__os_release" eq 0.4; then
                 __os_ubuntu_ver="16.04"
-                __os_debian_ver="8"
+                __os_debian_ver="9"
             else
                 __os_ubuntu_ver="18.04"
                 __os_debian_ver="10"
             fi
+            ;;
+        neon)
+            if compareVersions "$__os_release" lt 18.04; then
+                __os_debian_ver="9"
+            else
+                __os_debian_ver="10"
+            fi
+            __os_ubuntu_ver="$__os_release"
             ;;
         *)
             error="Unsupported OS"
@@ -246,6 +250,9 @@ function get_platform() {
                         2)
                             __platform="rpi3"
                             ;;
+                        3)
+                            __platform="rpi4"
+                            ;;
                     esac
                 fi
                 ;;
@@ -311,6 +318,13 @@ function platform_rpi2() {
 # could improve performance with the compiler options below but needs further testing
 function platform_rpi3() {
     __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv8 neon rpi gles"
+}
+
+function platform_rpi4() {
+    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi gles"
