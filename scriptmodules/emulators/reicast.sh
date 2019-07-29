@@ -20,11 +20,12 @@ function depends_reicast() {
     local depends=(libsdl2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev libasound2-dev libudev-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
     getDepends "${depends[@]}"
+    isPlatform "vero4k" && pip install wheel
     pip install evdev
 }
 
 function sources_reicast() {
-    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git
+    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git master
 }
 
 function build_reicast() {
