@@ -232,7 +232,7 @@ function getDepends() {
 
         if [[ "$md_mode" == "install" ]]; then
             # make sure we have our sdl1 / sdl2 installed
-            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "ne"; then
+            if ! isPlatform "x11" && ! isPlatform "mesa" && [[ "$required" == "libsdl1.2-dev" ]] && hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "ne"; then
                 packages+=("$required")
                 continue
             fi
@@ -265,7 +265,7 @@ function getDepends() {
         # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2
         local temp=()
         for required in ${packages[@]}; do
-            if isPlatform "videocore" && [[ "$required" == "libsdl1.2-dev" ]]; then
+            if [[ "$required" == "libsdl1.2-dev" ]]; then
                 if [[ "$__has_binaries" -eq 1 ]]; then
                     rp_callModule sdl1 install_bin
                 else
