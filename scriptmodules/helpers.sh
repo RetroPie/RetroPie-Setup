@@ -367,7 +367,7 @@ function gitPullOrClone() {
         if [[ "$__persistent_repos" -ne 1 && "$repo" == *github* && -z "$commit" ]]; then
             git+=" --depth 1"
         fi
-        [[ "$branch" != "master" ]] && git+=" --branch $branch"
+        git+=" --branch $branch"
         printMsgs "console" "$git \"$repo\" \"$dir\""
         runCmd $git "$repo" "$dir"
     fi
