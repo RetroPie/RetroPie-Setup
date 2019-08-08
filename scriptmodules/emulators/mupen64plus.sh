@@ -244,7 +244,7 @@ function configure_mupen64plus() {
         iniSet "fontColor" "1F1F1F"
 
         # Disable gles2n64 autores feature and use dispmanx upscaling
-        iniConfig " = " "" "$md_conf_root/n64/gles2n64.conf"
+        iniConfig "=" "" "$md_conf_root/n64/gles2n64.conf"
         iniSet "auto resolution" "0"
 
         addAutoConf mupen64plus_audio 1
