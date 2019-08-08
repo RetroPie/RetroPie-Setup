@@ -204,6 +204,8 @@ function gui_esthemes() {
         'RetroHursty69 Slick_Red'
         'RetroHursty69 ghostbusters'
         'RetroHursty69 realghostbusters'
+        'RetroHursty69 stirlingness'
+        'RetroHursty69 marco'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
