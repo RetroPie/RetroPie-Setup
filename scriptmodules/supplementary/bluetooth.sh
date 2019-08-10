@@ -327,8 +327,7 @@ function boot_bluetooth() {
             while read mac_address; read device_name; do
                 macs+=($mac_address)
             done < <(list_registered_bluetooth)
-            local script="while true; do for mac in ${macs[@]}; do hcitool con | grep -q \"\$mac\" || { echo \"connect \$mac\nquit\"; sleep 1; } | bluetoothctl >/dev/null 2>&1; sleep 10; done; done"
-            nohup nice -n19 /bin/sh -c "$script" >/dev/null &
+            nohup nice -n19 /usr/bin/env bash "$md_data/bluetooth_background.sh" "${macs[@]}" >/dev/null &
             ;;
     esac
 }
