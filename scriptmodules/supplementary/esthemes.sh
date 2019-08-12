@@ -220,6 +220,7 @@ function gui_esthemes() {
         'waweedman Spider-Man'
         'blowfinger77 locomotion'
         'justincaseurskynet Arcade1up-5x4-Horizontal'
+        'KALEL1981 Super-Retroboy'
     )
     while true; do
         local theme
