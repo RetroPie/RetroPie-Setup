@@ -1057,6 +1057,7 @@ function runcommand() {
     [[ -n "$GOVERNOR" ]] && set_governor "$GOVERNOR"
 
     retroarch_append_config
+    user_script "runcommand_retroarch_append_config.sh"
 
     # workaround for launching xserver on correct/user owned tty
     # see https://github.com/RetroPie/RetroPie-Setup/issues/1805
