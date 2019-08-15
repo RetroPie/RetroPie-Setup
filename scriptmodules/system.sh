@@ -390,3 +390,9 @@ function platform_vero4k() {
     __platform_flags="arm armv7 neon vero4k gles"
 }
 
+function platform_armv8-mali-drm-gles2() {
+    __default_cflags="-O2 -march=armv8-a+crypto+crc -mtune=cortex-a53 -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j`nproc`"
+    __platform_flags="armv8 kms gles"
+}
