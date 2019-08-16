@@ -632,6 +632,8 @@ function get_resolutions() {
         "1280x800"
         "1280x960"
         "1280x1024"
+        "1360x768"
+        "1366x768"
         "1920x1080"
     )
     echo "${res[@]}"
@@ -742,7 +744,11 @@ function switch_fb_res() {
 function mode_switch() {
     local mode_id="$1"
 
-    [[ "$HAS_TVS" -eq 0 ]] && return 1
+    if [[ "$HAS_TVS" -eq 0 ]]; then
+        # set the X/Y res to the original FB resolution for KMS case
+        MODE_CUR=("${FB_ORIG[0]}" "${FB_ORIG[1]}")
+        return 1
+    fi
 
     # if the requested mode is the same as the current mode don't switch
     [[ "$mode_id" == "${MODE_CUR[0]}-${MODE_CUR[1]}" ]] && return 1
