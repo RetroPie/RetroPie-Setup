@@ -284,6 +284,14 @@ function get_platform() {
         fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
     fi
 
+    # check if we wish to target kms for platform
+    if [[ -z "$__has_kms" ]]; then
+        iniConfig " = " '"' "$configdir/all/retropie.cfg"
+        iniGet "force_kms"
+        [[ "$ini_value" == 1 ]] && __has_kms=1
+        [[ "$ini_value" == 0 ]] && __has_kms=0
+    fi
+
     platform_${__platform}
     [[ -z "$__default_cxxflags" ]] && __default_cxxflags="$__default_cflags"
 }
@@ -366,7 +374,12 @@ function platform_x86() {
     __default_cflags="-O2 -march=native"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
-    __platform_flags="x11 gl"
+    __platform_flags="gl"
+    if [[ "$__has_kms" -eq 1 ]]; then
+        __platform_flags+=" kms"
+    else
+        __platform_flags+=" x11"
+    fi
 }
 
 function platform_generic-x11() {
