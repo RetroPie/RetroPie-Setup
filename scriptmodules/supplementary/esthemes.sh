@@ -204,6 +204,9 @@ function gui_esthemes() {
         'RetroHursty69 Slick_Red'
         'RetroHursty69 ghostbusters'
         'RetroHursty69 realghostbusters'
+        'RetroHursty69 stirlingness'
+        'RetroHursty69 marco'
+        'RetroHursty69 swatch'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
@@ -217,6 +220,7 @@ function gui_esthemes() {
         'waweedman Spider-Man'
         'blowfinger77 locomotion'
         'justincaseurskynet Arcade1up-5x4-Horizontal'
+        'KALEL1981 Super-Retroboy'
     )
     while true; do
         local theme
