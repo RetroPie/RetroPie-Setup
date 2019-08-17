@@ -15,11 +15,11 @@ rp_module_section="config"
 rp_module_flags="!x11 !mali"
 
 function apt_upgrade_raspbiantools() {
-    # install a newer kernel/firmware for stretch to resolve sony bt issues
-    stretch_fix_raspbiantools
-
     aptUpdate
     apt-get -y dist-upgrade
+
+    # install an older kernel/firmware for stretch to resolve sony bt issues
+    stretch_fix_raspbiantools
 }
 
 function lxde_raspbiantools() {

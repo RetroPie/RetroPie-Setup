@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="!mali !kms"
 
 function depends_xroar() {
-    getDepends libsdl1.2-dev automake
+    getDepends libsdl2-dev automake
 }
 
 function sources_xroar() {
@@ -27,7 +27,7 @@ function sources_xroar() {
 function build_xroar() {
     local params=(--without-gtk2 --without-gtkgl)
     if ! isPlatform "x11"; then
-        params+=(--without-pulse)
+        params+=(--without-pulse --disable-kbd-translate --without-x)
     fi
     ./autogen.sh
     ./configure --prefix="$md_inst" "${params[@]}"
@@ -48,7 +48,7 @@ function configure_xroar() {
     ln -snf "$biosdir" "$md_inst/share/xroar/roms"
 
     local params=(-fs)
-    ! isPlatform "x11" && params+=(-vo sdl --ccr simple)
+    ! isPlatform "x11" && params+=(-vo sdl -ccr simple)
     addEmulator 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar ${params[*]} -machine dragon32 -run %ROM%"
     addEmulator 1 "$md_id-cocous" "coco" "$md_inst/bin/xroar ${params[*]} -machine cocous -run %ROM%"
     addEmulator 0 "$md_id-coco" "coco" "$md_inst/bin/xroar ${params[*]} -machine coco -run %ROM%"
