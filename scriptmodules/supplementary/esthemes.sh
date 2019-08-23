@@ -119,6 +119,7 @@ function gui_esthemes() {
         'coinjunkie synthwave'
         'nickearl retrowave'
         'nickearl retrowave_4_3'
+        'pacdude minijawn'
         'RetroHursty69 magazinemadness'
         'RetroHursty69 stirling'
         'RetroHursty69 boxalloyred'
