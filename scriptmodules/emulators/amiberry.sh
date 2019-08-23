@@ -16,6 +16,27 @@ rp_module_licence="GPL3 https://raw.githubusercontent.com/midwan/amiberry/master
 rp_module_section="opt"
 rp_module_flags="!x86"
 
+function _get_platform_bin_amiberry() {
+    local choice="$1"
+    local amiberry_bin="$__platform-sdl2"
+    local amiberry_platform="$__platform-sdl2"
+    if isPlatform "rpi" && ! isPlatform "kms"; then
+        amiberry_bin="$__platform-sdl1"
+        amiberry_platform="$__platform"
+    elif isPlatform "odroid-xu"; then
+        amiberry_bin="xu4"
+        amiberry_platform="xu4"
+    elif isPlatform "tinker"; then
+        amiberry_bin="tinker"
+        amiberry_platform="tinker"
+    elif isPlatform "vero4k"; then
+        amiberry_bin="vero4k"
+        amiberry_platform="vero4k"
+    fi
+    [[ "$choice" == "bin" ]] && echo "$amiberry_bin"
+    [[ "$choice" == "platform" ]] && echo "$amiberry_platform"
+}
+
 function depends_amiberry() {
     local depends=(libpng-dev libmpeg2-4-dev zlib1g-dev)
     if ! isPlatform "rpi" || isPlatform "kms" || isPlatform "vero4k"; then
@@ -36,22 +57,8 @@ function sources_amiberry() {
 }
 
 function build_amiberry() {
-    local amiberry_bin="$__platform-sdl2"
-    local amiberry_platform="$__platform-sdl2"
-    if isPlatform "rpi" && ! isPlatform "kms"; then
-        amiberry_bin="$__platform-sdl1"
-        amiberry_platform="$__platform"
-    elif isPlatform "odroid-xu"; then
-        amiberry_bin="xu4"
-        amiberry_platform="xu4"
-    elif isPlatform "tinker"; then
-        amiberry_bin="tinker"
-        amiberry_platform="tinker"
-    elif isPlatform "vero4k"; then
-        amiberry_bin="vero4k"
-        amiberry_platform="vero4k"
-    fi
-
+    local amiberry_bin=$(_get_platform_bin_amiberry bin)
+    local amiberry_platform=$(_get_platform_bin_amiberry platform)
     make clean
     CXXFLAGS="" make PLATFORM="$amiberry_platform"
     ln -sf "amiberry-$amiberry_bin" "amiberry"
@@ -59,17 +66,7 @@ function build_amiberry() {
 }
 
 function install_amiberry() {
-    local amiberry_bin="$__platform-sdl2"
-    if isPlatform "rpi" && ! isPlatform "kms"; then
-        amiberry_bin="$__platform-sdl1"
-    elif isPlatform "odroid-xu"; then
-        amiberry_bin="xu4"
-    elif isPlatform "tinker"; then
-        amiberry_bin="tinker"
-    elif isPlatform "vero4k"; then
-        amiberry_bin="vero4k"
-    fi
-
+    local amiberry_bin=$(_get_platform_bin_amiberry bin)
     md_ret_files=(
         'amiberry'
         "amiberry-$amiberry_bin"
