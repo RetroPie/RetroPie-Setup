@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_openmsx() {
-    local depends=(libsdl2-dev libsdl2-ttf-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev)
+    local depends=(libsdl2-dev libsdl2-ttf-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev libasound2-dev)
     isPlatform "x11" && depends+=(libglew-dev)
 
     getDepends "${depends[@]}"
@@ -30,11 +30,12 @@ function sources_openmsx() {
 }
 
 function build_openmsx() {
-    rpSwap on 1024
+    rpSwap on 2000
     ./configure
     make clean
     make
     rpSwap off
+    md_ret_require="$md_build/derived/openmsx"
 }
 
 function install_openmsx() {
