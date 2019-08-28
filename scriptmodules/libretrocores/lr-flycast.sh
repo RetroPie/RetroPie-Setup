@@ -32,6 +32,8 @@ function build_lr-flycast() {
     if isPlatform "rpi"; then
         # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
         MAKEFLAGS="${MAKEFLAGS/\/usr\/lib\/distcc:/}" make platform=rpi
+    elif isPlatform "aarch64"; then
+    make platform=arm64 
     else
         make
     fi
