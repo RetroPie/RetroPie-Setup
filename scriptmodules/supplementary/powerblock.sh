@@ -33,7 +33,7 @@ function build_powerblock() {
     cd build
     cmake ..
     make
-    md_ret_require="$md_inst/build/powerblock"
+    md_ret_require="$md_inst/build/src/powerblock/powerblock"
 }
 
 function install_powerblock() {
