@@ -20,7 +20,7 @@ function depends_splitwolf() {
 }
 
 function sources_splitwolf() {
-    gitPullOrClone "$md_build" https://bitbucket.org/linuxwolf6/splitwolf.git
+    gitPullOrClone "$md_build" https://bitbucket.org/linuxwolf6/splitwolf.git scrubbed
 }
 
 function _get_opts_splitwolf() {
