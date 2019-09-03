@@ -16,7 +16,7 @@ rp_module_section="driver"
 rp_module_flags="noinstclean !x86 !mali"
 
 function depends_powerblock() {
-    local depends=(cmake doxygen wiringpi)
+    local depends=(cmake doxygen)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
 
     getDepends "${depends[@]}"
@@ -33,7 +33,7 @@ function build_powerblock() {
     cd build
     cmake ..
     make
-    md_ret_require="$md_inst/build/powerblock"
+    md_ret_require="$md_inst/build/src/powerblock/powerblock"
 }
 
 function install_powerblock() {
