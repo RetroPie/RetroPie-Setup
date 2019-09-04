@@ -21,26 +21,23 @@ function sources_lr-yabause() {
 }
 
 function build_lr-yabause() {
-    cd libretro
+    cd yabause/src/libretro
     make clean
     if isPlatform "neon"; then
         make platform=armvneonhardfloat
     else
         make
     fi
-    md_ret_require="$md_build/libretro/yabause_libretro.so"
+    md_ret_require="$md_build/yabause/src/libretro/yabause_libretro.so"
 }
 
 function install_lr-yabause() {
     md_ret_files=(
-        'libretro/yabause_libretro.so'
-        'yabause/AUTHORS'
+        'yabause/src/libretro/yabause_libretro.so'
         'yabause/COPYING'
         'yabause/ChangeLog'
         'yabause/AUTHORS'
-        'yabause/GOALS'
         'yabause/README'
-        'yabause/README.LIN'
     )
 }
 
