@@ -45,7 +45,7 @@ function install_ioquake3() {
 function configure_ioquake3() {
     local launcher=("$md_inst/ioquake3.$(_arch_ioquake3)")
     isPlatform "mesa" && launcher+=("+set cl_renderer opengl1")
-    isPlatform "kms" && launcher+=("+set r_mode -1" "+set r_customwidth %XRES%" "+set r_customheight %YRES%")
+    isPlatform "kms" && launcher+=("+set r_mode -1" "+set r_customwidth %XRES%" "+set r_customheight %YRES%" "+set r_swapInterval 1")
 
     addPort "$md_id" "quake3" "Quake III Arena" "${launcher[*]}"
 
