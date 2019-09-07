@@ -26,6 +26,7 @@ function depends_lzdoom() {
 
 function sources_lzdoom() {
     gitPullOrClone "$md_build" https://github.com/drfrag666/gzdoom "3.82"
+    applyPatch "$md_data/0001-kmsdrm-fix-atexit-segfault.patch"
 }
 
 function build_lzdoom() {
@@ -50,23 +51,31 @@ function install_lzdoom() {
         'release/lzdoom.pk3'
         'release/lights.pk3'
         'release/game_support.pk3'
+        'release/soundfonts'
         'README.md'
     )
 }
 
 function add_games_lzdoom() {
     local params=("+fullscreen 1")
-    local launcher_env="DOOMWADDIR=$romdir/ports/doom"
+    local launcher_prefix="DOOMWADDIR=$romdir/ports/doom"
 
-    if isPlatform "mesa" || isPlatform "x11"; then
-        launcher_env="SDL_RENDER_DRIVER=opengl $launcher_env"
+    if isPlatform "mesa" || isPlatform "gl"; then
         params+=("+vid_renderer 1")
     elif isPlatform "gles"; then
-        launcher_env="SDL_RENDER_DRIVER=opengles2 $launcher_env"
         params+=("+vid_renderer 0")
     fi
 
-    _add_games_lr-prboom "$launcher_env $md_inst/$md_id -iwad %ROM% ${params[*]}"
+    # FluidSynth is too memory/CPU intensive
+    if isPlatform "arm"; then
+        params+=("+'snd_mididevice -3'")
+    fi
+
+    if isPlatform "kms"; then
+        params+=("+vid_vsync 1" "-width %XRES%" "-height %YRES%")
+    fi
+
+    _add_games_lr-prboom "$launcher_prefix $md_inst/$md_id -iwad %ROM% ${params[*]}"
 }
 
 function configure_lzdoom() {
