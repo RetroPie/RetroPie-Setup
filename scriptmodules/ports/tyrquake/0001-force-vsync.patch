@@ -1,0 +1,17 @@
+diff --git a/common/vid_sgl.c b/common/vid_sgl.c
+index 560248f..0bd5c3b 100644
+--- a/common/vid_sgl.c
++++ b/common/vid_sgl.c
+@@ -274,6 +274,12 @@ VID_SetMode(const qvidmode_t *mode, const byte *palette)
+ 	Sys_Error("%s: SDL_GL_MakeCurrent() failed: %s",
+ 		  __func__, SDL_GetError());
+ 
++    // force vsync
++    err = SDL_GL_SetSwapInterval(1);
++    if (err)
++	Sys_Error("%s: SDL_GL_SetSwapInterval() failed: %s",
++		  __func__, SDL_GetError());
++
+     VID_InitGL();
+ 
+     vid.numpages = 1;
