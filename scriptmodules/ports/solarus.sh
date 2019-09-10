@@ -14,6 +14,7 @@ rp_module_desc="Solarus - A lightweight, free and open-source game engine for Ac
 rp_module_help="Copy your Solarus quests (games) to $romdir/solarus"
 rp_module_licence="GPL3 https://gitlab.com/solarus-games/solarus/raw/dev/license.txt"
 rp_module_section="opt"
+rp_module_flags="!aarch64"
 
 function _options_cfg_file_solarus() {
     echo "$configdir/solarus/options.cfg"
@@ -49,6 +50,9 @@ function build_solarus() {
     cd build
     cmake "${params[@]}" ..
     make
+    md_ret_require=(
+        "$md_build/build/solarus-run"
+    )
 }
 
 function install_solarus() {

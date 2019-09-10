@@ -32,11 +32,7 @@ function install_lr-nestopia() {
     md_ret_files=(
         'libretro/nestopia_libretro.so'
         'NstDatabase.xml'
-        'README.md'
-        'ChangeLog'
-        'readme.html'
         'COPYING'
-        'AUTHORS'
     )
 }
 
