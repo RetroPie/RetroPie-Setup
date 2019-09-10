@@ -27,9 +27,6 @@ function depends_lr-mupen64plus-next() {
 
 function sources_lr-mupen64plus-next() {
     gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro-nx.git develop
-
-    # HACK: force EGL detection on FKMS
-    isPlatform "mesa" && applyPatch "$md_data/0001-force-egl.patch"
 }
 
 function build_lr-mupen64plus-next() {
