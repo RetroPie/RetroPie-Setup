@@ -218,9 +218,10 @@ function create_image() {
     printMsgs "console" "partitioning $image ..."
     parted -s "$image" -- \
         mklabel msdos \
-        mkpart primary fat16 4 256 \
+        unit mib \
+        mkpart primary fat16 4 260 \
         set 1 boot on \
-        mkpart primary 256 -1
+        mkpart primary 260 -1s
 
     # format
     printMsgs "console" "Formatting $image ..."
