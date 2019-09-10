@@ -1,0 +1,143 @@
+From ca2348e899d5d76152fb021fe948d08f281ad541 Mon Sep 17 00:00:00 2001
+From: Conn O'Griofa <connogriofa@gmail.com>
+Date: Sun, 8 Sep 2019 09:24:03 +0100
+Subject: [PATCH] Use signal handler to invoke call_terms() before exit when
+ possible
+
+It's not advisable to rely on atexit() to invoke SDL_Quit(), as it
+causes a segmentation fault on exit for the SDL2 KMSDRM driver due to
+a conflict with the Mesa drivers* which upstream Mesa may not elect to fix.
+
+The issue can be resolved by replacing the atexit() call with a signal
+handler that will interrupt the D_DoomMain() and D_DoomLoop()
+functions, then invoke call_terms() within the main thread before exiting.
+
+We can leave the atexit() hook intact to handle edge cases such as abnormal
+process exit, or exit methods which do not produce signals such as Alt+F4 or
+window close via GUI (neither of which are possible in a KMS context, so
+should not affect KMSDRM sessions).
+
+Fixes a segmentation fault/uninterruptible application hang on exit
+for all KMS targets, including Raspberry Pi 4B, 3B and Intel i965.
+
+* See: https://bugzilla.libsdl.org/show_bug.cgi?id=4530 and
+https://lists.freedesktop.org/archives/mesa-users/2019-March/001519.html
+---
+ src/d_main.cpp             | 10 ++++++----
+ src/posix/sdl/i_main.cpp   | 19 +++++++++++++++++++
+ src/posix/sdl/st_start.cpp |  1 +
+ 3 files changed, 26 insertions(+), 4 deletions(-)
+
+diff --git a/src/d_main.cpp b/src/d_main.cpp
+index 109484d7f..91a4e984c 100644
+--- a/src/d_main.cpp
++++ b/src/d_main.cpp
+@@ -260,6 +260,7 @@ cycle_t FrameCycles;
+ // [SP] Store the capabilities of the renderer in a global variable, to prevent excessive per-frame processing
+ uint32_t r_renderercaps = 0;
+ 
++volatile int game_running = 1;
+ 
+ // PRIVATE DATA DEFINITIONS ------------------------------------------------
+ 
+@@ -1050,7 +1051,7 @@ void D_DoomLoop ()
+ 
+ 	vid_cursor.Callback();
+ 
+-	for (;;)
++	do
+ 	{
+ 		try
+ 		{
+@@ -1107,7 +1108,7 @@ void D_DoomLoop ()
+ 			Printf("%s", error.stacktrace.GetChars());
+ 			D_ErrorCleanup();
+ 		}
+-	}
++	} while (game_running);
+ }
+ 
+ //==========================================================================
+@@ -2839,7 +2840,8 @@ void D_DoomMain (void)
+ 
+ 		GC::DelSoftRootHead();
+ 
+-		PClass::StaticShutdown();
++		if (game_running)
++			PClass::StaticShutdown();
+ 
+ 		GC::FullGC();					// perform one final garbage collection after shutdown
+ 
+@@ -2851,7 +2853,7 @@ void D_DoomMain (void)
+ 
+ 		gamestate = GS_STARTUP;
+ 	}
+-	while (1);
++	while (game_running);
+ }
+ 
+ //==========================================================================
+diff --git a/src/posix/sdl/i_main.cpp b/src/posix/sdl/i_main.cpp
+index 4ee534fd4..9bcfed4c1 100644
+--- a/src/posix/sdl/i_main.cpp
++++ b/src/posix/sdl/i_main.cpp
+@@ -85,6 +85,8 @@ void Linux_I_FatalError(const char* errortext);
+ 
+ // EXTERNAL DATA DECLARATIONS ----------------------------------------------
+ 
++extern volatile int game_running;
++
+ // PUBLIC DATA DEFINITIONS -------------------------------------------------
+ 
+ // The command line arguments.
+@@ -95,6 +97,9 @@ FArgs *Args;
+ 
+ // CODE --------------------------------------------------------------------
+ 
++void exit_handler(int dummy) {
++        game_running = 0;
++}
+ 
+ static void NewFailure ()
+ {
+@@ -206,6 +211,19 @@ int main (int argc, char **argv)
+ 
+ 		atexit (call_terms);
+ 		atterm (I_Quit);
++#ifdef __linux__
++		/*
++		  Register signal handlers to interrupt D_DoomMain and D_DoomLoop, allowing
++		  call_terms() to be invoked at the conclusion of the main thread/quit menu
++		  rather than at exit. The atexit() call can remain to handle edge cases
++		  where a signal cannot be intercepted, such as Alt+F4 or closing the window
++		  via the GUI.
++
++		  Fixes segmentation fault on exit when using the KMSDRM SDL video driver.
++		*/
++		signal(SIGINT, exit_handler);
++		signal(SIGTERM, exit_handler);
++#endif
+ 
+ 		// Should we even be doing anything with progdir on Unix systems?
+ 		char program[PATH_MAX];
+@@ -262,5 +280,6 @@ int main (int argc, char **argv)
+ 		call_terms ();
+ 		throw;
+     }
++    call_terms();
+     return 0;
+ }
+diff --git a/src/posix/sdl/st_start.cpp b/src/posix/sdl/st_start.cpp
+index 3bba816d4..ba2bedc77 100644
+--- a/src/posix/sdl/st_start.cpp
++++ b/src/posix/sdl/st_start.cpp
+@@ -351,5 +351,6 @@ bool FTTYStartupScreen::NetLoop(bool (*timer_callback)(void *), void *userdata)
+ void ST_Endoom()
+ {
+ 	I_ShutdownJoysticks();
++	call_terms();
+ 	exit(0);
+ }
+-- 
+2.20.1
+
