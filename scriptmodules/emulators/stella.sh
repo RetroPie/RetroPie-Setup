@@ -21,7 +21,7 @@ function depends_stella() {
 }
 
 function sources_stella() {
-    downloadAndExtract "$__archive_url/stella-5.0.2-src.tar.xz" "$md_build" --strip-components 1
+    downloadAndExtract "$__archive_url/stella-6.0.1-src.tar.xz" "$md_build" --strip-components 1
 }
 
 function build_stella() {
