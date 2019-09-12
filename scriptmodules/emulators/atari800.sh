@@ -17,22 +17,21 @@ rp_module_section="opt"
 rp_module_flags="!mali !kms"
 
 function depends_atari800() {
-    local depends=(libsdl1.2-dev autoconf zlib1g-dev libpng-dev)
+    local depends=(libsdl1.2-dev autoconf automake zlib1g-dev libpng-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
 function sources_atari800() {
-    downloadAndExtract "$__archive_url/atari800-4.0.0.tar.gz" "$md_build" --strip-components 1
+    gitPullOrClone "$md_build" "https://github.com/atari800/atari800.git" ATARI800_4_1_0
     if isPlatform "rpi"; then
         applyPatch "$md_data/01_rpi_fixes.diff"
     fi
 }
 
 function build_atari800() {
-    cd src
-    autoreconf -v
-    params=()
+    local params=()
+    ./autogen.sh
     isPlatform "rpi" && params+=(--target=rpi)
     ./configure --prefix="$md_inst" ${params[@]}
     make clean
