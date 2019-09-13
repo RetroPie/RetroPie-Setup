@@ -12,7 +12,7 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
-rp_module_flags="noinstclean !x86 !osmc !xbian !mali !kms"
+rp_module_flags="noinstclean !x86 !osmc !xbian !mali"
 
 function _update_hook_splashscreen() {
     # make sure splashscreen is always up to date if updating just RetroPie-Setup
@@ -39,8 +39,8 @@ function install_bin_splashscreen() {
 [Unit]
 Description=Show custom splashscreen
 DefaultDependencies=no
-Before=local-fs-pre.target
-Wants=local-fs-pre.target
+After=console-setup.service
+Wants=console-setup.service
 ConditionPathExists=$md_inst/asplashscreen.sh
 
 [Service]
@@ -237,7 +237,7 @@ function preview_splashscreen() {
                 3)
                     file=$(choose_splashscreen "$path" "video")
                     [[ -z "$file" ]] && break
-                    omxplayer -b --layer 10000 "$file"
+                    omxplayer --no-osd -b --layer 10000 "$file"
                     ;;
             esac
         done

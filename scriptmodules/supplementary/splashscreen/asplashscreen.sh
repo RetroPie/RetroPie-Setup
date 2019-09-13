@@ -10,6 +10,7 @@ do_start () {
     local config="/etc/splashscreen.list"
     local line
     local re="$REGEX_VIDEO\|$REGEX_IMAGE"
+
     case "$RANDOMIZE" in
         disabled)
             line="$(head -1 "$config")"
@@ -32,7 +33,7 @@ do_start () {
         while ! pgrep "dbus" >/dev/null; do
             sleep 1
         done
-        omxplayer -o both -b --layer 10000 "$line"
+        omxplayer --no-osd -o both -b --layer 10000 "$line"
     elif $(echo "$line" | grep -q "$REGEX_IMAGE"); then
         if [ "$RANDOMIZE" = "disabled" ]; then
             local count=$(wc -l <"$config")
