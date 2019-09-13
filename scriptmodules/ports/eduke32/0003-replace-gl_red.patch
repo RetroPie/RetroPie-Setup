@@ -1,0 +1,71 @@
+Index: source/build/src/glsurface.cpp
+===================================================================
+--- a/source/build/src/glsurface.cpp	(revision 8090)
++++ b/source/build/src/glsurface.cpp	(working copy)
+@@ -94,7 +94,7 @@
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bufferRes.x, bufferRes.y, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
++    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, bufferRes.x, bufferRes.y, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0);
+ 
+     glsurface_setPalette(curpalettefaded);
+ 
+@@ -227,7 +227,7 @@
+         return;
+ 
+     glActiveTexture(GL_TEXTURE0);
+-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bufferRes.x, bufferRes.y, GL_RED, GL_UNSIGNED_BYTE, (void*) buffer);
++    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, bufferRes.x, bufferRes.y, GL_LUMINANCE, GL_UNSIGNED_BYTE, (void*) buffer);
+ 
+     glDrawArrays(GL_TRIANGLE_STRIP,
+                  0,
+Index: source/build/src/polymost.cpp
+===================================================================
+--- a/source/build/src/polymost.cpp	(revision 8090)
++++ b/source/build/src/polymost.cpp	(working copy)
+@@ -1874,11 +1874,11 @@
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+ 
+-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, siz.y, siz.x, 0, GL_RED, GL_UNSIGNED_BYTE, (void*) tile);
++        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, siz.y, siz.x, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, (void*) tile);
+     }
+     else
+     {
+-        glTexSubImage2D(GL_TEXTURE_2D, 0, offset.x, offset.y, siz.y, siz.x, GL_RED, GL_UNSIGNED_BYTE, (void*) tile);
++        glTexSubImage2D(GL_TEXTURE_2D, 0, offset.x, offset.y, siz.y, siz.x, GL_LUMINANCE, GL_UNSIGNED_BYTE, (void*) tile);
+     }
+ }
+ 
+@@ -1954,7 +1954,7 @@
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, PALSWAP_TEXTURE_SIZE, PALSWAP_TEXTURE_SIZE, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
++        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, PALSWAP_TEXTURE_SIZE, PALSWAP_TEXTURE_SIZE, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, NULL);
+     }
+ 
+     int32_t column = palookupnum%(PALSWAP_TEXTURE_SIZE/256);
+@@ -1965,7 +1965,7 @@
+         OSD_Printf("Polymost: palswaps are too large for palswap tilesheet!\n");
+         return;
+     }
+-    glTexSubImage2D(GL_TEXTURE_2D, 0, 256*column, rowOffset, 256, numshades+1, GL_RED, GL_UNSIGNED_BYTE, palookup[palookupnum]);
++    glTexSubImage2D(GL_TEXTURE_2D, 0, 256*column, rowOffset, 256, numshades+1, GL_LUMINANCE, GL_UNSIGNED_BYTE, palookup[palookupnum]);
+ }
+ 
+ 
+Index: source/build/src/voxmodel.cpp
+===================================================================
+--- a/source/build/src/voxmodel.cpp	(revision 8090)
++++ b/source/build/src/voxmodel.cpp	(working copy)
+@@ -60,7 +60,7 @@
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
+ 
+-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, ysiz, xsiz, 0, GL_RED, GL_UNSIGNED_BYTE, (char *) pic2);
++    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, ysiz, xsiz, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, (char *) pic2);
+ 
+     Xfree(pic2);
+ 
