@@ -348,13 +348,22 @@ function rpSwap() {
 ## @param repo repository to clone or pull from
 ## @param branch branch to clone or pull from (optional)
 ## @param commit specific commit to checkout (optional - requires branch to be set)
+## @param depth depth parameter for git. (optional)
 ## @brief Git clones or pulls a repository.
+## @details depth parameter will default to 1 (shallow clone) so long as __persistent_repos isn't set.
+## A depth parameter of 0 will do a full clone with all history.
 function gitPullOrClone() {
     local dir="$1"
     local repo="$2"
     local branch="$3"
     [[ -z "$branch" ]] && branch="master"
     local commit="$4"
+    local depth="$5"
+    if [[ -z "$depth" && "$__persistent_repos" -ne 1 && -z "$commit" ]]; then
+        depth=1
+    else
+        depth=0
+    fi
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
@@ -364,8 +373,8 @@ function gitPullOrClone() {
         popd > /dev/null
     else
         local git="git clone --recursive"
-        if [[ "$__persistent_repos" -ne 1 && "$repo" == *github* && -z "$commit" ]]; then
-            git+=" --depth 1"
+        if [[ "$depth" -gt 0 ]]; then
+            git+=" --depth $depth"
         fi
         git+=" --branch $branch"
         printMsgs "console" "$git \"$repo\" \"$dir\""
