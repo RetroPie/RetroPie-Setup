@@ -1,0 +1,48 @@
+diff --git a/core/linux-dist/main.cpp b/core/linux-dist/main.cpp
+index aa29515..f53c871 100644
+--- a/core/linux-dist/main.cpp
++++ b/core/linux-dist/main.cpp
+@@ -374,6 +374,9 @@ int main(int argc, wchar* argv[])
+ 	printf("Data dir is:   %s\n", get_writable_data_path("/").c_str());
+ 
+ 	#if defined(USE_SDL)
++		// bypass SDL internal signal handlers due to conflict with reicast handlers
++		SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
++
+ 		if (SDL_Init(0) != 0)
+ 		{
+ 			die("SDL: Initialization failed!");
+@@ -410,6 +413,10 @@ int main(int argc, wchar* argv[])
+ 		x11_window_destroy();
+ 	#endif
+ 
++	#if defined(USE_SDL)
++		SDL_Quit();
++	#endif
++
+ 	return 0;
+ }
+ #endif
+diff --git a/core/linux/common.cpp b/core/linux/common.cpp
+index 26449cb..fd73602 100644
+--- a/core/linux/common.cpp
++++ b/core/linux/common.cpp
+@@ -1,6 +1,8 @@
+ #include "types.h"
+ #include "cfg/cfg.h"
+ 
++extern void dc_exit();
++
+ #if HOST_OS==OS_LINUX || HOST_OS == OS_DARWIN
+ #if HOST_OS == OS_DARWIN
+ 	#define _XOPEN_SOURCE 1
+@@ -195,7 +197,8 @@ void common_linux_setup()
+ 
+ 	enable_runfast();
+ 	install_fault_handler();
+-	signal(SIGINT, exit);
++	signal(SIGINT, dc_exit);
++	signal(SIGTERM, dc_exit);
+ 	
+ 	settings.profile.run_counts=0;
+ 	
