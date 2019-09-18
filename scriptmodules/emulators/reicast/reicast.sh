@@ -11,6 +11,8 @@
 
 AUDIO="$1"
 ROM="$2"
+XRES="$3"
+YRES="$4"
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
 biosdir="$HOME/RetroPie/BIOS/dc"
@@ -79,11 +81,12 @@ if [[ ! -f "$biosdir/dc_boot.bin" ]]; then
 fi
 
 params=(-config config:homedir=$HOME -config x11:fullscreen=1)
+[[ -n "$XRES" ]] && params+=(-config x11:width=$XRES -config x11:height=$YRES)
 getAutoConf reicast_input && params+=($(mapInput))
 [[ -n "$AUDIO" ]] && params+=(-config audio:backend=$AUDIO -config audio:disable=0)
 [[ -n "$ROM" ]] && params+=(-config config:image="$ROM")
 if [[ "$AUDIO" == "oss" ]]; then
-    aoss "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
+    aoss "$rootdir/emulators/reicast/bin/reicast" "${params[@]}"
 else
-    "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
+    "$rootdir/emulators/reicast/bin/reicast" "${params[@]}"
 fi
