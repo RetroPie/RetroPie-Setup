@@ -1,13 +1,13 @@
-diff --git a/menu/widgets/menu_entry.c b/menu/widgets/menu_entry.c
-index 0d42ff79d7..b8ec6e14c6 100644
---- a/menu/widgets/menu_entry.c
-+++ b/menu/widgets/menu_entry.c
-@@ -493,7 +493,7 @@ int menu_entry_action(menu_entry_t *entry, unsigned i, enum menu_action action)
+diff --git a/menu/menu_driver.c b/menu/menu_driver.c
+index cf3a8c3..aae5231 100644
+--- a/menu/menu_driver.c
++++ b/menu/menu_driver.c
+@@ -785,7 +785,7 @@ int menu_entry_action(menu_entry_t *entry,
                    entry->label, entry->type, i);
           break;
        case MENU_ACTION_SEARCH:
 -         menu_input_dialog_start_search();
-+         //menu_input_dialog_start_search();
++         // menu_input_dialog_start_search();
           break;
  
        case MENU_ACTION_SCAN:
