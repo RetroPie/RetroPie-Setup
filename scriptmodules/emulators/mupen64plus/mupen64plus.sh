@@ -12,8 +12,9 @@
 AUDIO_PLUGIN="mupen64plus-audio-sdl"
 VIDEO_PLUGIN="$1"
 ROM="$2"
-RES="$3"
-RSP_PLUGIN="$4"
+[[ "$3" -ne 0 ]] && RES="$3"
+[[ "$4" -ne 0 ]] && RSP_PLUGIN="$4"
+PARAMS="${@:5}"
 [[ -n "$RES" ]] && RES="--resolution $RES"
 [[ -z "$RSP_PLUGIN" ]] && RSP_PLUGIN="mupen64plus-rsp-hle"
 WINDOW_MODE="--fullscreen $RES"
@@ -324,6 +325,7 @@ function useTexturePacks() {
 function autoset() {
     VIDEO_PLUGIN="mupen64plus-video-GLideN64"
     RES="--resolution 320x240"
+    PARAMS="--set Video-GLideN64[UseNativeResolutionFactor]=1"
 
     local game
     # these games run fine and look better with 640x480
@@ -344,6 +346,7 @@ function autoset() {
     for game in "${highres[@]}"; do
         if [[ "${ROM,,}" == *"$game"* ]]; then
             RES="--resolution 640x480"
+            PARAMS="--set Video-GLideN64[UseNativeResolutionFactor]=2"
             break
         fi
     done
@@ -441,4 +444,4 @@ else
     SDL_AUDIODRIVER=pulse
 fi
 
-SDL_AUDIODRIVER=${SDL_AUDIODRIVER} SDL_VIDEO_RPI_SCALE_MODE=${SDL_VIDEO_RPI_SCALE_MODE} "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd ${WINDOW_MODE} --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio ${AUDIO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
+SDL_AUDIODRIVER=${SDL_AUDIODRIVER} SDL_VIDEO_RPI_SCALE_MODE=${SDL_VIDEO_RPI_SCALE_MODE} "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd $PARAMS ${WINDOW_MODE} --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio ${AUDIO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
