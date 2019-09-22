@@ -28,7 +28,7 @@ function sources_cgenius() {
 }
 
 function build_cgenius() {
-    cmake -DUSE_SDL2=yes -DCMAKE_INSTALL_PREFIX="$md_inst"
+    cmake -DUSE_SDL2=yes -DCMAKE_INSTALL_PREFIX="$md_inst" -DNOTYPESAVE=on
     make
     md_ret_require="$md_build/src/CGeniusExe"
 }
