@@ -211,6 +211,7 @@ function gui_esthemes() {
         'RetroHursty69 meshy'
         'RetroHursty69 magazinemadness2'
         'RetroHursty69 CosmicRise'
+        'RetroHursty69 uniflyered'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
