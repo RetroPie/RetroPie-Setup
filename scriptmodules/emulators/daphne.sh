@@ -14,55 +14,63 @@ rp_module_desc="Daphne - Laserdisc Emulator"
 rp_module_help="ROM Extension: .daphne\n\nCopy your Daphne roms to $romdir/daphne"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/daphne-emu/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags=" !mali !kms"
 
 function depends_daphne() {
+        if uname -m |grep "x86_64"; then
+        dpkg --add-architecture i386
+        getDepends libsdl1.2-dev:i386 libvorbis-dev:i386 libxmu6:i386 libxi-dev:i386 libglewmx1.13:i386 libpangox-1.0-dev:i386
+        else
     getDepends libsdl1.2-dev libvorbis-dev libglew-dev zlib1g-dev
+    fi
 }
 
 function sources_daphne() {
         if uname -m |grep "x86_64"; then
-        gitPullOrClone "$md_build" https://github.com/DavidGriffith/daphne.git
-        else
-        gitPullOrClone "$md_build" https://github.com/RetroPie/daphne-emu.git retropie
-        fi
-        }
+    wget http://www.daphne-emu.com/download/daphne-1.0beta-linux.tar.gz
+    tar -xf daphne-1.0beta-linux.tar.gz
+    cd daphne || exit
+  #  cp libvldp2.so /lib
+    mv daphne daphne.bin
+    mv * ../ ../
+    else
+    gitPullOrClone "$md_build" https://github.com/RetroPie/daphne-emu.git retropie
+    fi
+        
+}
+
 
 function build_daphne() {
+        if uname -m |grep "x86_64"; then
+        echo ok
+        else
     cd src/vldp2 || exit
-    if uname -m |grep "x86_64"; then
-    ./configure --disable-accel-detect
-    else
     ./configure
-    fi
-    if uname -m |grep "x86_64"; then
-    make -f Makefile.linux_x64
-    else
     make -f Makefile.rp
-    fi
     cd ..
-    if uname -m |grep "x86_64"; then
-    ln -s Makefile.vars.linux_x64 Makefile.vars
-    else
     ln -sf Makefile.vars.rp Makefile.vars
-    fi
-    if uname -m |grep "x86_64"; then
-    make
-    else
     make STATIC_VLDP=1
     fi
-    if uname -m |grep "x86_64"; then
-        cp "$HOME/RetroPie-Setup/tmp/build/daphne/libvldp2.so" /lib
-        fi
 }
 
 function install_daphne() {
+        if uname -m |grep "x86_64"; then
+        md_ret_files=(
+        'sound'
+        'pics'
+        'daphne.bin'
+        'lib'
+        'libvldp2.so'
+   )
+       export LD_LIBRARY_PATH=/opt/retropie/emulators/daphne/lib
+        else
     md_ret_files=(
         'sound'
         'pics'
         'daphne.bin'
         'COPYING'
     )
+    fi
 }
 
 function configure_daphne() {
@@ -97,3 +105,4 @@ _EOF_
     addEmulator 1 "$md_id" "daphne" "$md_inst/daphne.sh %ROM%"
     addSystem "daphne"
 }
+
