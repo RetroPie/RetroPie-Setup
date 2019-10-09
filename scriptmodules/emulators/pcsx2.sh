@@ -18,6 +18,9 @@ rp_module_flags="!arm"
 
 function depends_pcsx2() {
     if isPlatform "64bit"; then
+        local depends=(gcc cmake gcc-multilib g++ g++-multilib libc6:i386 libncurses5:i386 libstdc++6:i386 libgcc-6-dev:i386 libaio-dev:i386 libbz2-dev:i386 libcggl:i386 libegl1-mesa-dev:i386 libglew-dev:i386 libgles2-mesa-dev libgtk2.0-dev:i386 libjpeg-dev:i386 libsdl1.2-dev:i386 libsoundtouch-dev:i386 libwxgtk3.0-dev:i386 nvidia-cg-toolkit portaudio19-dev:i386 zlib1g-dev:i386 libsdl2-dev:i386 libjack-jackd2-dev:i386 libportaudiocpp0:i386 portaudio19-dev:i386 liblzma-dev:i386)
+        getDepends "${depends[@]}"
+
         iniConfig " = " '"' "$configdir/all/retropie.cfg"
         iniGet "own_sdl2"
         if [[ "$ini_value" != "0" ]]; then
@@ -35,18 +38,32 @@ function depends_pcsx2() {
     fi
 }
 
-function install_bin_pcsx2() {
-    aptInstall pcsx2
+function sources_pcsx2() {
+    local branch="master"
+    gitPullOrClone "$md_build" https://github.com/PCSX2/pcsx2.git "$branch"
 }
 
-function remove_pcsx2() {
-    aptRemove pcsx2
+function build_pcsx2() {
+    bash -x build.sh
+}
+
+function install_pcsx2() {
+    md_ret_files=(
+        'bin'
+    )
 }
 
 function configure_pcsx2() {
     mkRomDir "ps2"
+    mkUserDir "$biosdir/ps2"
+    mkUserDir "$md_inst/bin/bios"
+    local bios
+    for bios in SCPH-10000.bin SCPH-30004RV6.bin SCPH-70012.bin SCPH-70012_BIOS_V12_USA_200.bin SCPH-77001.bin; do
+        ln -sf "$biosdir/ps2/$bios" "$md_inst/bin/bios/$bios"
+    done
+    addEmulator 0 "$md_id-nogui" "ps2" "$md_inst/bin/PCSX2 %ROM% --fullscreen --nogui"
+    addEmulator 1 "$md_id" "ps2" "$md_inst/bin/PCSX2 %ROM% --windowed"
 
-    addEmulator 0 "$md_id-nogui" "ps2" "PCSX2 %ROM% --fullscreen --nogui"
-    addEmulator 1 "$md_id" "ps2" "PCSX2 %ROM% --windowed"
     addSystem "ps2"
+    chown -R $user:$user "$md_inst/bin/"
 }
