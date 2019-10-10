@@ -26,15 +26,14 @@ function sources_powerblock() {
     gitPullOrClone "$md_inst" https://github.com/petrockblog/PowerBlock.git
 }
 
-
 function install_powerblock() {
     cd "$md_inst"
-    sh install.sh
+    bash install.sh
 }
 
 function remove_powerblock() {
     cd "$md_inst"
-    sh uninstall.sh
+    bash uninstall.sh
 }
 
 function gui_powerblock() {
