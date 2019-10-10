@@ -22,6 +22,7 @@ function depends_pegasus-fe() {
         gstreamer1.0-libav
         gstreamer1.0-plugins-good
         jq
+        libsdl2-dev
         policykit-1
     )
 
