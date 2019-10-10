@@ -26,20 +26,14 @@ function sources_powerblock() {
     gitPullOrClone "$md_inst" https://github.com/petrockblog/PowerBlock.git
 }
 
-function build_powerblock() {
+function install_powerblock() {
     cd "$md_inst"
-    rm -rf "build"
-    mkdir build
-    cd build
-    cmake ..
-    make
-    md_ret_require="$md_inst/build/src/powerblock/powerblock"
+    bash install.sh
 }
 
-function install_powerblock() {
-    # install from there to system folders
-    cd "$md_inst/build"
-    make install
+function remove_powerblock() {
+    cd "$md_inst"
+    bash uninstall.sh
 }
 
 function gui_powerblock() {
@@ -53,18 +47,13 @@ function gui_powerblock() {
     if [[ -n "$choice" ]]; then
         case "$choice" in
             1)
-                make -C "$md_inst/build" installservice
+                install_powerblock
                 printMsgs "dialog" "Enabled PowerBlock driver."
                 ;;
             2)
-                make -C "$md_inst/build" uninstallservice
+                remove_powerblock
                 printMsgs "dialog" "Disabled PowerBlock driver."
                 ;;
         esac
     fi
-}
-
-function remove_powerblock() {
-    make -C "$md_inst/build" uninstallservice
-    make -C "$md_inst/build" uninstall
 }
