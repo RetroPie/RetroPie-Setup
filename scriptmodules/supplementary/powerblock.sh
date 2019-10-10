@@ -26,10 +26,6 @@ function sources_powerblock() {
     gitPullOrClone "$md_inst" https://github.com/petrockblog/PowerBlock.git
 }
 
-function build_powerblock() {
-    cd "$md_inst"
-    md_ret_require="$md_inst/install.sh"
-}
 
 function install_powerblock() {
     cd "$md_inst"
