@@ -58,7 +58,8 @@ function configure_pcsx2() {
     mkUserDir "$biosdir/ps2"
     mkUserDir "$md_inst/bin/bios"
     local bios
-    for bios in SCPH-10000.bin SCPH-30004RV6.bin SCPH-70012.bin SCPH-70012_BIOS_V12_USA_200.bin SCPH-77001.bin; do
+    BIOSs=`cat "$md_data/bioslist"`
+    for bios in $BIOSs; do
         ln -sf "$biosdir/ps2/$bios" "$md_inst/bin/bios/$bios"
     done
     addEmulator 0 "$md_id-nogui" "ps2" "$md_inst/bin/PCSX2 %ROM% --fullscreen --nogui"
