@@ -13,7 +13,7 @@ rp_module_id="pegasus-fe"
 rp_module_desc="Pegasus: A cross platform, customizable graphical frontend (latest alpha release)"
 rp_module_licence="GPL3+ https://raw.githubusercontent.com/mmatyas/pegasus-frontend/master/LICENSE.md"
 rp_module_section="exp"
-rp_module_flags="!mali !kms frontend"
+rp_module_flags="!mali frontend"
 
 function depends_pegasus-fe() {
     local depends=(
@@ -22,6 +22,7 @@ function depends_pegasus-fe() {
         gstreamer1.0-libav
         gstreamer1.0-plugins-good
         jq
+        libsdl2-dev
         policykit-1
     )
 
@@ -74,8 +75,8 @@ fi
 tty=\$(tty)
 export TTY="\${tty:8:1}"
 
-# improve gradients
-export QT_QPA_EGLFS_FORCE888=1
+export QT_QPA_EGLFS_FORCE888=1  # improve gradients
+export QT_QPA_EGLFS_KMS_ATOMIC=1  # use the atomic DRM API on Pi 4
 
 clear
 "$md_inst/pegasus-fe" "\$@"
