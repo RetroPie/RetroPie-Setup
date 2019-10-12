@@ -45,6 +45,7 @@ function sources_pcsx2() {
 
 function build_pcsx2() {
     bash -x build.sh
+    rm bin/portable.ini
 }
 
 function install_pcsx2() {
@@ -56,15 +57,15 @@ function install_pcsx2() {
 function configure_pcsx2() {
     mkRomDir "ps2"
     mkUserDir "$biosdir/ps2"
-    mkUserDir "$md_inst/bin/bios"
+    moveConfigDir "$home/PCSX2" "$md_conf_root/ps2"
+    mkUserDir "$md_conf_root/ps2/bios"
     local bios
     BIOSs=`cat "$md_data/bioslist"`
     for bios in $BIOSs; do
-        ln -sf "$biosdir/ps2/$bios" "$md_inst/bin/bios/$bios"
+        ln -sf "$biosdir/ps2/$bios" "$md_conf_root/ps2/bios/$bios"
     done
     addEmulator 0 "$md_id-nogui" "ps2" "$md_inst/bin/PCSX2 %ROM% --fullscreen --nogui"
     addEmulator 1 "$md_id" "ps2" "$md_inst/bin/PCSX2 %ROM% --windowed"
 
     addSystem "ps2"
-    chown -R $user:$user "$md_inst/bin/"
 }
