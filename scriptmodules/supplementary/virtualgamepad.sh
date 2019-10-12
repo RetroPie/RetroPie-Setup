@@ -50,7 +50,9 @@ function sources_virtualgamepad() {
 }
 
 function install_virtualgamepad() {
-    npm install pm2 -g --unsafe-perm
+    if ! [[ -x "$(command -v pm2)" ]]; then
+        wget -qO- https://getpm2.com/install.sh | bash
+    fi
     cd "$md_inst"
     sudo -u $user npm install
     sudo -u $user npm install ref
