@@ -18,7 +18,7 @@ rp_module_flags="!arm"
 
 function depends_pcsx2() {
     if isPlatform "64bit"; then
-        local depends=(gcc cmake gcc-multilib g++ g++-multilib libc6:i386 libncurses5:i386 libstdc++6:i386 libgcc-6-dev:i386 libaio-dev:i386 libbz2-dev:i386 libcggl:i386 libegl1-mesa-dev:i386 libglew-dev:i386 libgles2-mesa-dev libgtk2.0-dev:i386 libjpeg-dev:i386 libsdl1.2-dev:i386 libsoundtouch-dev:i386 libwxgtk3.0-dev:i386 nvidia-cg-toolkit portaudio19-dev:i386 zlib1g-dev:i386 libsdl2-dev:i386 libjack-jackd2-dev:i386 libportaudiocpp0:i386 portaudio19-dev:i386 liblzma-dev:i386)
+        local depends=(gcc cmake gcc-multilib g++ g++-multilib libc6:i386 libncurses5:i386 libstdc++6:i386 libgcc-6-dev:i386 libaio-dev:i386 libbz2-dev:i386 libcggl:i386 libegl1-mesa-dev:i386 libglew-dev:i386 libgles2-mesa-dev libgtk2.0-dev:i386 libjpeg-dev:i386 libsdl1.2-dev:i386 libsoundtouch-dev:i386 libwxgtk3.0-dev:i386 nvidia-cg-toolkit portaudio19-dev:i386 zlib1g-dev:i386 libsdl2-dev:i386 libjack-jackd2-dev:i386 libportaudiocpp0:i386 portaudio19-dev:i386 liblzma-dev:i386 libpcap-dev:i386 libxml2-dev:i386)
         getDepends "${depends[@]}"
 
         iniConfig " = " '"' "$configdir/all/retropie.cfg"
