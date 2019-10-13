@@ -23,9 +23,9 @@ function depends_powerblock() {
 }
 
 function sources_powerblock() {
-    pushd "$md_inst"
-    git reset --hard  # ensure that no local changes exist
-    popd
+    if [[ -d "$md_inst" ]]; then
+        git -C "$md_inst" reset --hard  # ensure that no local changes exist
+    fi
     gitPullOrClone "$md_inst" https://github.com/petrockblog/PowerBlock.git
 }
 
