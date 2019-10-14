@@ -30,7 +30,7 @@ function depends_scummvm() {
 }
 
 function sources_scummvm() {
-    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-2-0"
+    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-2-1"
     if isPlatform "rpi"; then
         applyPatch "$md_data/01_rpi_enable_scalers.diff"
     fi
