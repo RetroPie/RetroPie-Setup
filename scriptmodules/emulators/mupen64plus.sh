@@ -244,6 +244,8 @@ function configure_mupen64plus() {
         iniSet "fontColor" "1F1F1F"
         # Enable Threaded GL calls
         iniSet "ThreadedVideo" "True"
+        # Swap frame buffers On buffer update (most performant)
+        iniSet "BufferSwapMode" "2"
 
         # Disable gles2n64 autores feature and use dispmanx upscaling
         iniConfig "=" "" "$md_conf_root/n64/gles2n64.conf"
