@@ -159,7 +159,7 @@ function _init_chroot_image() {
     cp "/usr/bin/qemu-arm-static" "$chroot"/usr/bin/
 
     local nameserver="$__nameserver"
-    [[ -z "$nameserver" ]] && nameserver="$(nmcli device show | grep IP4.DNS  | awk '{print $NF; exit}')"
+    [[ -z "$nameserver" ]] && nameserver="$(nmcli device show | grep IP4.DNS | awk '{print $NF; exit}')"
     # so we can resolve inside the chroot
     echo "nameserver $nameserver" >"$chroot"/etc/resolv.conf
 
