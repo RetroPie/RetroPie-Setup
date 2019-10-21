@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_scummvm() {
-    local depends=(libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev)
+    local depends=(libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev libasound2-dev libcurl4-openssl-dev)
     if isPlatform "vero4k"; then
         depends+=(vero3-userland-dev-osmc)
     fi
@@ -30,7 +30,7 @@ function depends_scummvm() {
 }
 
 function sources_scummvm() {
-    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-2-0"
+    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-2-1"
     if isPlatform "rpi"; then
         applyPatch "$md_data/01_rpi_enable_scalers.diff"
     fi
