@@ -36,7 +36,9 @@ function setup_env() {
 
     # set location of binary downloads
     __binary_host="files.retropie.org.uk"
-    [[ "$__has_binaries" -eq 1 ]] && __binary_url="https://$__binary_host/binaries/$__os_codename/$__platform"
+    __binary_path="$__os_codename/$__platform"
+    isPlatform "kms" && __binary_path+="/kms"
+    __binary_url="https://$__binary_host/binaries/$__binary_path"
 
     __archive_url="https://files.retropie.org.uk/archives"
 
