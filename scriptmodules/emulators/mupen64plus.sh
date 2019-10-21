@@ -262,6 +262,8 @@ function configure_mupen64plus() {
         iniSet "EnableLegacyBlending" "True"
         # Enable Threaded GL calls
         iniSet "ThreadedVideo" "True"
+        # Swap frame buffers On buffer update (most performant)
+        iniSet "BufferSwapMode" "2"
 
         if isPlatform "videocore"; then
             # Enable FPS Counter. Fixes zelda depth issue
