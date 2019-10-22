@@ -20,6 +20,14 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
+    # test if we are in a chroot
+    if [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]; then
+        [[ -z "$QEMU_CPU" && -n "$__qemu_cpu" ]] && export QEMU_CPU=$__qemu_cpu
+        __chroot=1
+    else
+        __chroot=0
+    fi
+
     __has_binaries=0
 
     get_platform
@@ -49,14 +57,6 @@ function setup_env() {
     [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cxxflags}"
     [[ -z "${ASFLAGS}" ]] && export ASFLAGS="${__default_asflags}"
     [[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
-
-    # test if we are in a chroot
-    if [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]; then
-        [[ -z "$QEMU_CPU" && -n "$__qemu_cpu" ]] && export QEMU_CPU=$__qemu_cpu
-        __chroot=1
-    else
-        __chroot=0
-    fi
 
     if [[ -z "$__nodialog" ]]; then
         __nodialog=0
