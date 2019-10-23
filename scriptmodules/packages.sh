@@ -345,7 +345,7 @@ function rp_createBin() {
     fi
 
     local archive="$md_id.tar.gz"
-    local dest="$__tmpdir/archives/$__os_codename/$__platform/$md_type"
+    local dest="$__tmpdir/archives/$__binary_path/$md_type"
     rm -f "$dest/$archive"
     mkdir -p "$dest"
     tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"
