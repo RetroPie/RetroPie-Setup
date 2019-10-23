@@ -232,7 +232,6 @@ function configure_mupen64plus() {
         iniSet "bilinearMode" "1"
         # Size of texture cache in megabytes. Good value is VRAM*3/4
         iniSet "CacheSize" "50"
-        # Disable FB emulation until visual issues are sorted out
         iniSet "EnableFBEmulation" "True"
         # Use native res
         iniSet "UseNativeResolutionFactor" "1"
