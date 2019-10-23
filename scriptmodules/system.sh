@@ -223,6 +223,10 @@ function get_rpi_video() {
         __platform_flags+=" videocore dispmanx"
     fi
 
+    # delete legacy pkgconfig that conflicts with Mesa (may be installed via rpi-update)
+    # see: https://github.com/raspberrypi/userland/pull/585
+    rm -rf $pkgconfig/{egl.pc,glesv2.pc,vg.pc}
+
     # set pkgconfig path for vendor libraries
     export PKG_CONFIG_PATH="$pkgconfig"
 }
