@@ -238,10 +238,6 @@ function configure_mupen64plus() {
         iniSet "UseNativeResolutionFactor" "1"
         # Enable legacy blending
         iniSet "EnableLegacyBlending" "True"
-        # Enable FPS Counter. Fixes zelda depth issue
-        iniSet "ShowFPS " "True"
-        iniSet "fontSize" "14"
-        iniSet "fontColor" "1F1F1F"
         # Enable Threaded GL calls
         iniSet "ThreadedVideo" "True"
         # Swap frame buffers On buffer update (most performant)
