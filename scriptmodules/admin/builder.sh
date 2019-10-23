@@ -105,7 +105,7 @@ _EOF_
             git -C "$md_build/$dist/home/pi/RetroPie-Setup" pull
         fi
 
-        for sys in rpi1 rpi2; do
+        for sys in rpi1 rpi2 rpi4; do
             rp_callModule image chroot "$md_build/$dist" \
                 sudo \
                 PATH="/usr/lib/distcc:$PATH" \
