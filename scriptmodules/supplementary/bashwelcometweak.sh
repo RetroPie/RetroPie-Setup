@@ -129,7 +129,7 @@ function retropie_welcome() {
                 out+="${fgwht}The RetroPie Project, https://retropie.org.uk"
                 ;;
         esac
-        out+="\n"
+        out+="${rst}\n"
     done
     echo -e "\n$out"
 }
