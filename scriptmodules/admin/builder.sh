@@ -40,7 +40,7 @@ function module_builder() {
         ! fnExists "install_${md_id}" && continue
 
         # skip already built archives, so we can retry failed modules
-        [[ -f "$__tmpdir/archives/$__os_codename/$__platform/${__mod_type[md_idx]}/$md_id.tar.gz" ]] && continue
+        [[ -f "$__tmpdir/archives/$__binary_path/${__mod_type[md_idx]}/$md_id.tar.gz" ]] && continue
 
         # build, install and create binary archive.
         # initial clean in case anything was in the build folder when calling
