@@ -14,7 +14,7 @@ rp_module_desc="ResidualVM - A 3D Game Interpreter"
 rp_module_help="Copy your ResidualVM games to $romdir/residualvm"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/residualvm/residualvm/master/COPYING"
 rp_module_section="exp"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="dispmanx !mali"
 
 function depends_residualvm() {
     local depends=(
@@ -23,7 +23,7 @@ function depends_residualvm() {
         zlib1g-dev libjpeg-dev
     )
     isPlatform "x11" && depends+=(libglew-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
@@ -41,7 +41,7 @@ function build_residualvm() {
         --prefix="$md_inst"
     )
     ! isPlatform "x11" && params+=(--force-opengles2)
-    if isPlatform "rpi"; then
+    if isPlatform "videocore"; then
         CXXFLAGS+=" -I/opt/vc/include" LDFLAGS+=" -L/opt/vc/lib" ./configure "${params[@]}"
     else
         ./configure "${params[@]}"
