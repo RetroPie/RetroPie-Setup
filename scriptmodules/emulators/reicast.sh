@@ -25,12 +25,28 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git master
+
+    if isPlatform "rpi4"; then
+        gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git alpha
+    else
+        gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git master
+    fi
 }
 
 function build_reicast() {
-    cd shell/linux
-    if isPlatform "rpi"; then
+
+    if isPlatform "rpi4"; then
+        cd reicast/linux
+        md_ret_require="$md_build/reicast/linux/reicast.elf"
+    else
+        cd shell/linux
+        md_ret_require="$md_build/shell/linux/reicast.elf"
+    fi
+
+    if isPlatform "rpi4"; then
+        make platform=rpi4 clean
+        make platform=rpi4
+    elif isPlatform "rpi"; then
         make platform=rpi2 clean
         make platform=rpi2
     elif isPlatform "tinker"; then
@@ -40,12 +56,20 @@ function build_reicast() {
         make clean
         make
     fi
-    md_ret_require="$md_build/shell/linux/reicast.elf"
+
 }
 
 function install_reicast() {
-    cd shell/linux
-    if isPlatform "rpi"; then
+
+    if isPlatform "rpi4"; then
+        cd reicast/linux
+    else
+        cd shell/linux
+    fi
+
+    if isPlatform "rpi4"; then
+        make platform=rpi4 PREFIX="$md_inst" install
+    elif isPlatform "rpi"; then
         make platform=rpi2 PREFIX="$md_inst" install
     elif isPlatform "tinker"; then
         make USE_GLES=1 USE_SDL=1 PREFIX="$md_inst" install

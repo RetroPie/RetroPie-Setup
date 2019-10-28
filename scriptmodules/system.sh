@@ -338,7 +338,7 @@ function platform_rpi3() {
 function platform_rpi4() {
     __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
+    __default_makeflags="-j4"
     __platform_flags="arm armv8 neon rpi gles gles3"
 }
 
