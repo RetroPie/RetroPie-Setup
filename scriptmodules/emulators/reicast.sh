@@ -19,6 +19,7 @@ rp_module_flags="!armv6 !mali"
 function depends_reicast() {
     local depends=(libsdl2-dev python-dev python-pip alsa-oss python-setuptools libevdev-dev libasound2-dev libudev-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
+    isPlatform "mesa" && depends+=(libgles2-mesa-dev)
     getDepends "${depends[@]}"
     isPlatform "vero4k" && pip install wheel
     pip install evdev
@@ -26,32 +27,58 @@ function depends_reicast() {
 
 function sources_reicast() {
     gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git master
+    applyPatch "$md_data/0001-enable-rpi4-sdl2-target.patch"
+    applyPatch "$md_data/0002-enable-vsync.patch"
+    applyPatch "$md_data/0003-fix-sdl2-sighandler-conflict.patch"
+}
+
+function _params_reicast() {
+    local platform
+    local subplatform
+    local params=()
+
+    # platform-specific params
+    if isPlatform "rpi"; then
+        # platform configuration
+        if isPlatform "rpi4"; then
+            platform="rpi4"
+        elif isPlatform "rpi3"; then
+            platform="rpi3"
+        else
+            platform="rpi2"
+        fi
+
+        # subplatform configuration
+        if isPlatform "rpi4"; then
+            # we need to target SDL with GLES3 disabled for KMSDRM compatibility
+            subplatform="-sdl"
+        elif isPlatform "mesa"; then
+            subplatform="-mesa"
+        fi
+
+        params+=("platform=${platform}${subplatform}")
+    else
+        # generic flags
+        isPlatform "x11" && params+=("USE_X11=1")
+        isPlatform "kms" || isPlatform "gles" && params+=("USE_GLES=1")
+        isPlatform "kms" || isPlatform "tinker" && params+=("USE_X11=" "HAS_SOFTREND=" "USE_SDL=1")
+    fi
+
+    echo "${params[*]}"
 }
 
 function build_reicast() {
     cd shell/linux
-    if isPlatform "rpi"; then
-        make platform=rpi2 clean
-        make platform=rpi2
-    elif isPlatform "tinker"; then
-        make USE_GLES=1 USE_SDL=1 clean
-        make USE_GLES=1 USE_SDL=1
-    else
-        make clean
-        make
-    fi
+    make $(_params_reicast) clean
+    make $(_params_reicast)
+
     md_ret_require="$md_build/shell/linux/reicast.elf"
 }
 
 function install_reicast() {
     cd shell/linux
-    if isPlatform "rpi"; then
-        make platform=rpi2 PREFIX="$md_inst" install
-    elif isPlatform "tinker"; then
-        make USE_GLES=1 USE_SDL=1 PREFIX="$md_inst" install
-    else
-        make PREFIX="$md_inst" install
-    fi
+    make $(_params_reicast) PREFIX="$md_inst" install
+
     md_ret_files=(
         'LICENSE'
         'README.md'
@@ -59,6 +86,15 @@ function install_reicast() {
 }
 
 function configure_reicast() {
+    local backend
+    local backends=(alsa omx oss)
+    local params=("%ROM%")
+
+    # KMS reqires Xorg context & X/Y res passed.
+    if isPlatform "kms"; then
+        params+=("%XRES%" "%YRES%")
+    fi
+
     # copy hotkey remapping start script
     cp "$md_data/reicast.sh" "$md_inst/bin/"
     chmod +x "$md_inst/bin/reicast.sh"
@@ -90,16 +126,19 @@ _EOF_
     # remove old systemManager.cdi symlink
     rm -f "$romdir/dreamcast/systemManager.cdi"
 
-    # add system
-    # possible audio backends: alsa, oss, omx
-    if isPlatform "rpi"; then
-        addEmulator 1 "${md_id}-audio-omx" "dreamcast" "CON:$md_inst/bin/reicast.sh omx %ROM%"
-        addEmulator 0 "${md_id}-audio-oss" "dreamcast" "CON:$md_inst/bin/reicast.sh oss %ROM%"
-    elif isPlatform "vero4k"; then
-        addEmulator 1 "$md_id" "dreamcast" "CON:$md_inst/bin/reicast.sh alsa %ROM%"
-    else
-        addEmulator 1 "$md_id" "dreamcast" "CON:$md_inst/bin/reicast.sh oss %ROM%"
+    if [[ "$md_mode" == "install" ]]; then
+        # possible audio backends: alsa, oss, omx
+        if isPlatform "videocore"; then
+            backends=(omx oss)
+        else
+            backends=(alsa)
+        fi
     fi
+
+    # add system(s)
+    for backend in "${backends[@]}"; do
+        addEmulator 1 "${md_id}-audio-${backend}" "dreamcast" "$md_inst/bin/reicast.sh $backend ${params[*]}"
+    done
     addSystem "dreamcast"
 
     addAutoConf reicast_input 1
