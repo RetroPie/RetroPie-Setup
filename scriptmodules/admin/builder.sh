@@ -87,9 +87,9 @@ function chroot_build_builder() {
             rp_callModule crosscomp switch_distcc "$dist"
         fi
 
-        if [[ ! -d "$md_build/$dist" ]]; then
-            rp_callModule image create_chroot "$dist" "$md_build/$dist"
-            git clone "$HOME/RetroPie-Setup" "$md_build/$dist/home/pi/RetroPie-Setup"
+        [[ ! -d "$md_build/$dist" ]] && rp_callModule image create_chroot "$dist" "$md_build/$dist"
+        if [[ ! -d "$md_build/$dist/home/pi/RetroPie-Setup" ]]; then
+            sudo -u $user git clone "$home/RetroPie-Setup" "$md_build/$dist/home/pi/RetroPie-Setup"
             cat > "$md_build/$dist/home/pi/install.sh" <<_EOF_
 #!/bin/bash
 cd
@@ -102,7 +102,7 @@ fi
 _EOF_
             rp_callModule image chroot "$md_build/$dist" bash /home/pi/install.sh
         else
-            git -C "$md_build/$dist/home/pi/RetroPie-Setup" pull
+            sudo -u $user git -C "$md_build/$dist/home/pi/RetroPie-Setup" pull
         fi
 
         for sys in rpi1 rpi2; do
