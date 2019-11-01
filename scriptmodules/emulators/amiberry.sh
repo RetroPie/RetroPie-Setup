@@ -31,7 +31,7 @@ function _get_platform_amiberry() {
 }
 
 function depends_amiberry() {
-    local depends=(libpng-dev libmpeg2-4-dev zlib1g-dev libguichan-dev libmpg123-dev libflac-dev libxml2-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
+    local depends=(autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libguichan-dev libmpg123-dev libflac-dev libxml2-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
 
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
 
@@ -45,6 +45,12 @@ function sources_amiberry() {
 
 function build_amiberry() {
     local platform=$(_get_platform_amiberry)
+    cd external/capsimg
+    make clean
+    ./bootstrap.fs
+    ./configure.fs
+    make -f Makefile.fs
+    cd "$md_build"
     make clean
     make PLATFORM="$platform"
     md_ret_require="$md_build/amiberry"
@@ -54,6 +60,7 @@ function install_amiberry() {
     md_ret_files=(
         'amiberry'
         'data'
+        'external/capsimg/capsimg.so'
     )
 
     cp -R "$md_build/whdboot" "$md_inst/whdboot-dist"
