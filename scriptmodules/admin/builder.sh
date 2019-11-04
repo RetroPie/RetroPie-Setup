@@ -114,6 +114,6 @@ _EOF_
                 /home/pi/RetroPie-Setup/retropie_packages.sh builder "$@"
         done
 
-        rsync -av "$md_build/$dist/home/pi/RetroPie-Setup/tmp/archives/" "$HOME/RetroPie-Setup/tmp/archives/"
+        rsync -av "$md_build/$dist/home/pi/RetroPie-Setup/tmp/archives/" "$home/RetroPie-Setup/tmp/archives/"
     done
 }
