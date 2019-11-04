@@ -17,7 +17,11 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_scummvm() {
-    local depends=(libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libjpeg-dev libasound2-dev libcurl4-openssl-dev)
+    local depends=(
+        libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev
+        libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
+        libjpeg-dev libasound2-dev libcurl4-openssl-dev
+    )
     if isPlatform "vero4k"; then
         depends+=(vero3-userland-dev-osmc)
     fi
@@ -30,17 +34,21 @@ function depends_scummvm() {
 }
 
 function sources_scummvm() {
-    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git "branch-2-1"
+    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git v2.1.0
     if isPlatform "rpi"; then
         applyPatch "$md_data/01_rpi_enable_scalers.diff"
     fi
 }
 
 function build_scummvm() {
-    local params=(--enable-all-engines --enable-vkeybd --enable-release --disable-debug --enable-keymapper --disable-eventrecorder --prefix="$md_inst")
+    local params=(
+        --enable-release --enable-vkeybd --enable-keymapper
+        --disable-debug --disable-eventrecorder --prefix="$md_inst"
+    )
     isPlatform "rpi" && params+=(--host=raspberrypi)
     isPlatform "vero4k" && params+=(--opengl-mode=gles2)
-    # stop scummvm using arm-linux-gnueabihf-g++ which is v4.6 on wheezy and doesn't like rpi2 cpu flags
+    # stop scummvm using arm-linux-gnueabihf-g++ which is v4.6 on
+    # wheezy and doesn't like rpi2 cpu flags
     if isPlatform "rpi"; then
         CC="gcc" CXX="g++" ./configure "${params[@]}"
     else
