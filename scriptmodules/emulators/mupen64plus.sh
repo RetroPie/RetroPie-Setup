@@ -271,11 +271,6 @@ function configure_mupen64plus() {
         iniSet "BufferSwapMode" "2"
 
         if isPlatform "videocore"; then
-            # Enable FPS Counter. Fixes zelda depth issue
-            iniSet "ShowFPS " "True"
-            iniSet "fontSize" "14"
-            iniSet "fontColor" "1F1F1F"
-
             # Disable gles2n64 autores feature and use dispmanx upscaling
             iniConfig "=" "" "$md_conf_root/n64/gles2n64.conf"
             iniSet "auto resolution" "0"
