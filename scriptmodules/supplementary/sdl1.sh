@@ -19,8 +19,11 @@ function get_pkg_ver_sdl1() {
     local basever
     local revision
 
-    if compareVersions "$__os_release" ge 9; then
+    if compareVersions "$__os_release" eq 9; then
         basever="1.2.15+dfsg1"
+        revision="4"
+    elif compareVersions "$__os_release" eq 10; then
+        basever="1.2.15+dfsg2"
         revision="4"
     else
         basever="1.2.15"
