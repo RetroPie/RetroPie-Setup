@@ -19,8 +19,8 @@ function depends_image() {
 }
 
 function create_chroot_image() {
-    local version="$1"
-    [[ -z "$version" ]] && version="stretch"
+    local dist="$1"
+    [[ -z "$dist" ]] && dist="stretch"
 
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
@@ -32,7 +32,7 @@ function create_chroot_image() {
 
     local url
     local image
-    case "$version" in
+    case "$dist" in
         jessie)
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip"
             ;;
@@ -48,7 +48,7 @@ function create_chroot_image() {
             ;;
     esac
 
-    local base="raspbian-${version}-lite"
+    local base="raspbian-${dist}-lite"
     local image="$base.img"
     if [[ ! -f "$image" ]]; then
         wget -c -O "$base.zip" "$url"
@@ -298,9 +298,9 @@ function create_bb_image() {
 function all_image() {
     local platform
     local image
-    local version="$1"
+    local dist="$1"
     for platform in rpi1 rpi2; do
-        platform_image "$platform" "$version"
+        platform_image "$platform" "$dist"
     done
 }
 
@@ -312,11 +312,11 @@ function platform_image() {
     local dest="$__tmpdir/images"
     mkdir -p "$dest"
 
-    local image
+    local image="$dest/retropie-${dist}-${__version}-"
     if [[ "$platform" == "rpi1" ]]; then
-        image="$dest/retropie-${__version}-rpi1_zero"
+        image+="rpi1_zero"
     else
-        image="$dest/retropie-${__version}-rpi2_rpi3"
+        image+="rpi2_rpi3"
     fi
 
     rp_callModule image create_chroot "$dist"
