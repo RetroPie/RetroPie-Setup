@@ -91,7 +91,7 @@ function build_sdl2() {
     fi
 
     md_ret_require="$md_build/libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb"
-    local dest="$__tmpdir/archives/$__os_codename/$__platform"
+    local dest="$__tmpdir/archives/$__binary_path"
     mkdir -p "$dest"
     cp ../*.deb "$dest/"
 }
