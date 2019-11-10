@@ -123,7 +123,7 @@ function build_ppsspp() {
     local params=()
     if isPlatform "videocore"; then
         if isPlatform "armv6"; then
-            params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake)
+            params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv6.cmake -DFORCED_CPU=armv6)
         else
             params+=(-DCMAKE_TOOLCHAIN_FILE=cmake/Toolchains/raspberry.armv7.cmake)
         fi
