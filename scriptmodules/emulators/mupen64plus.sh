@@ -70,8 +70,6 @@ function sources_mupen64plus() {
             applyPatch "$md_data/0001-GLideN64-use-emplace.patch"
         fi
     fi
-    # vsync fix; see: https://github.com/mupen64plus/mupen64plus-core/pull/670
-    applyPatch "$md_data/0002-core-vsync-670.patch"
 
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
