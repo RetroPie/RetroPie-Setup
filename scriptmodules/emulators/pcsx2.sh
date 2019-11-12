@@ -35,7 +35,8 @@ function depends_pcsx2() {
     fi
 
     if [[ "$md_mode" == "install" ]]; then
-        add-apt-repository -y ppa:pcsx2-team/pcsx2-daily
+        # On Ubuntu, add the PCSX2 PPA to get the latest version
+        [[ -n "${__os_ubuntu_ver}" ]] && add-apt-repository -y ppa:pcsx2-team/pcsx2-daily
         dpkg --add-architecture i386
     else
         rm -f /etc/apt/sources.list.d/pcsx2-team-ubuntu-pcsx2-daily-*.list
@@ -44,11 +45,17 @@ function depends_pcsx2() {
 }
 
 function install_bin_pcsx2() {
-    aptInstall pcsx2-unstable
+    local version
+    [[ -n "${__os_ubuntu_ver}" ]] && version="-unstable"
+
+    aptInstall "pcsx2$version"
 }
 
 function remove_pcsx2() {
-    aptRemove pcsx2-unstable
+    local version
+    [[ -n "${__os_ubuntu_ver}" ]] && version="-unstable"
+
+    aptRemove "pcsx2$version"
     rp_callModule pcsx2 depends remove
 }
 
