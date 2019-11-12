@@ -46,6 +46,12 @@ function install_bin_runcommand() {
         dialog --create-rc "$configdir/all/runcommand-launch-dialog.cfg"
         chown $user:$user "$configdir/all/runcommand-launch-dialog.cfg"
     fi
+
+    # needed for KMS modesetting (debian buster or later only)
+    if compareVersions "$__os_debian_ver" ge 10; then
+        rp_callModule mesa-drm
+    fi
+
     md_ret_require="$md_inst/runcommand.sh"
 }
 
