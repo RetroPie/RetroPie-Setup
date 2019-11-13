@@ -21,19 +21,26 @@
 ##
 ## `runcommand.sh VIDEO_MODE _SYS_/_PORT_ SYSTEM ROM`
 ##
-## Video mode switching is only supported on the Raspberry Pi
+## Video mode switching is supported on KMS and Raspberry Pi (legacy graphics) systems
 ##
-## Automatic video mode selection:
+## Automatic video mode selection (all):
 ##
 ## * VIDEO_MODE = 0: use the current video mode
+##
+## Automatic video mode (Raspberry Pi legacy graphics):
+##
 ## * VIDEO_MODE = 1: set video mode to 640x480 (4:3) or 720x480 (16:9) @60hz
 ## * VIDEO_MODE = 4: set video mode to 1024x768 (4:3) or 1280x720 (16:9) @60hz
 ##
-## Manual video mode selection
+## Manual video mode selection (Raspberry Pi legacy graphics):
 ##
 ## * VIDEO_MODE = "CEA-#": set video mode to CEA mode #
 ## * VIDEO_MODE = "DMT-#": set video mode to DMT mode #
 ## * VIDEO_MODE = "PAL/NTSC-RATIO": set mode to SD output with RATIO of 4:3 / 16:10 or 16:9
+##
+## Manual video mode selection (KMS):
+##
+## * VIDEO_MODE = "CRTCID-MODEID": set video mode to CRTC connector id and mode id
 ##
 ## @note
 ## Video mode switching only happens if the monitor reports the modes as available
@@ -65,7 +72,9 @@ EMU_CONF="$CONFIGDIR/all/emulators.cfg"
 DISPMANX_CONF="$CONFIGDIR/all/dispmanx.cfg"
 RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
 
+# modesetting tools
 TVSERVICE="/opt/vc/bin/tvservice"
+KMSTOOL="$ROOTDIR/supplementary/mesa-drm/modetest/modetest"
 
 source "$ROOTDIR/lib/inifuncs.sh"
 
@@ -95,10 +104,11 @@ function get_config() {
         [[ -z "$IMAGE_DELAY" ]] && IMAGE_DELAY=2
     fi
 
-    if [[ -f "$TVSERVICE" ]]; then
-        HAS_TVS=1
-    else
-        HAS_TVS=0
+    # copy kms tool output to global variable to avoid multiple invocations
+    if KMS_BUFFER="$($KMSTOOL -r 2>/dev/null)"; then
+        HAS_MODESET="kms"
+    elif [[ -f "$TVSERVICE" ]]; then
+        HAS_MODESET="tvs"
     fi
 }
 
@@ -199,7 +209,7 @@ function set_save_vars() {
     fi
 }
 
-function get_all_modes() {
+function get_all_tvs_modes() {
     declare -Ag MODE
     local group
     for group in CEA DMT; do
@@ -222,7 +232,42 @@ function get_all_modes() {
     done
 }
 
-function get_mode_info() {
+function get_all_kms_modes() {
+    declare -Ag MODE
+    local default_mode="$(echo "$KMS_BUFFER" | grep "crtc" | grep -m1 "Mode:")"
+    local crtc="$(echo "$default_mode" | awk '{ print $(NF-1) }')"
+    local crtc_encoder="$(echo "$KMS_BUFFER" | grep "Encoder map:" | awk -v crtc="$crtc" '$5 == crtc { print $3 }')"
+
+    local info
+    local line
+    local mode_id
+
+    # add default mode as fallback in case real mode cannot be mapped
+    MODE[def-def]="$(echo "$default_mode" | awk '{--NF --NF --NF; print}' | cut -c7-)"
+
+    while read -r line; do
+        # encoder id
+        encoder_id="$(echo "$line" | awk '{ print $(NF-1) }')"
+
+        # only match encoders that are linked to the currently active crtc
+        if [[ "$encoder_id" == "$crtc_encoder" ]]; then
+            # mode id
+            mode_id="$(echo "$line" | awk '{ print $NF }')"
+
+            # make output more human-readable
+            info="$(echo "$line" | awk '{--NF --NF --NF; print}' | cut -c7-)"
+
+            # populate resolution into arrays (using mapped crtc encoder value)
+            MODE_ID+=($crtc-$mode_id)
+            MODE[$crtc-$mode_id]="$info"
+
+            # if string matches default mode, add a special mapped entry
+            [[ "$default_mode" =~ "$info" ]] && MODE[map-map]="$crtc $mode_id"
+        fi
+    done < <(echo "$KMS_BUFFER" | grep "Mode:" | grep "connector")
+}
+
+function get_tvs_mode_info() {
     local status="$($TVSERVICE -s)"
     local temp
     local mode_info=()
@@ -249,6 +294,43 @@ function get_mode_info() {
     # get refresh rate
     temp=$(echo "$status" | grep -oE "[0-9\.]+Hz" | cut -d"." -f1)
     mode_info[5]="$temp"
+
+    echo "${mode_info[@]}"
+}
+
+function get_kms_mode_info() {
+    local mode_id=(${1/-/ })
+    local mode_info=()
+    local status
+
+    if [[ -z "${mode_id[*]}" ]]; then
+	if [[ -n "${MODE[map-map]}" ]]; then
+            # use mapped mode directly
+            mode_id=(${MODE[map-map]})
+        else
+            # use fallback mode
+            mode_id=(def def)
+        fi
+    fi
+
+    # split resolution
+    status=(${MODE[${mode_id[0]}-${mode_id[1]}]/x/ })
+
+    # get crtc id
+    mode_info[0]="${mode_id[0]}"
+
+    # get mode id
+    mode_info[1]="${mode_id[1]}"
+
+    # get mode resolution
+    mode_info[2]="${status[0]}"
+    mode_info[3]="${status[1]}"
+
+    # get aspect ratio
+    mode_info[4]="${status[5]}"
+
+    # get refresh rate
+    mode_info[5]="${status[3]}"
 
     echo "${mode_info[@]}"
 }
@@ -337,21 +419,29 @@ function load_mode_defaults() {
     local temp
     MODE_ORIG=()
 
-    if [[ "$HAS_TVS" -eq 1 ]]; then
+
+    if [[ -n "$HAS_MODESET" ]]; then
+        # populate available modes
+        [[ -z "$MODE_ID" ]] && get_all_${HAS_MODESET}_modes
+
         # get current mode / aspect ratio
-        MODE_ORIG=($(get_mode_info))
+        MODE_ORIG=($(get_${HAS_MODESET}_mode_info))
         MODE_CUR=("${MODE_ORIG[@]}")
         MODE_ORIG_ID="${MODE_ORIG[0]}-${MODE_ORIG[1]}"
 
-        # get default mode for requested mode of 1 or 4
-        if [[ "$MODE_REQ" == "0" ]]; then
+       if [[ "$MODE_REQ" == "0" ]]; then
             MODE_REQ_ID="$MODE_ORIG_ID"
-        elif [[ "$MODE_REQ" =~ (1|4) ]]; then
-            # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
-            local aspect="${MODE_ORIG[4]}"
-            [[ "$aspect" =~ (4:3|16:9) ]] || aspect="4:3"
-            temp="${MODE_REQ}-${MODE_ORIG[0]}-$aspect"
-            MODE_REQ_ID="${MODE_MAP[$temp]}"
+       elif [[ "$HAS_MODESET" == "tvs" ]]; then
+            # get default mode for requested mode of 1 or 4
+            if [[ "$MODE_REQ" =~ (1|4) ]]; then
+                # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
+                local aspect="${MODE_ORIG[4]}"
+                [[ "$aspect" =~ (4:3|16:9) ]] || aspect="4:3"
+                temp="${MODE_REQ}-${MODE_ORIG[0]}-$aspect"
+                MODE_REQ_ID="${MODE_MAP[$temp]}"
+            else
+                MODE_REQ_ID="$MODE_REQ"
+            fi
         else
             MODE_REQ_ID="$MODE_REQ"
         fi
@@ -387,7 +477,7 @@ function load_mode_defaults() {
             [[ -n "$mode" ]] && MODE_REQ_ID="$mode"
         fi
 
-        if [[ -z "$DISPLAY" ]]; then
+        if [[ "$HAS_MODESET" == "tvs" ]]; then
             # load default framebuffer res for emulator / rom
             mode="$(default_mode get fb_emu)"
             [[ -n "$mode" ]] && FB_NEW="$mode"
@@ -435,7 +525,7 @@ function main_menu() {
             [[ -n "$emu_rom" ]] && options+=(3 "Remove emulator choice for ROM")
         fi
 
-        if [[ "$HAS_TVS" -eq 1 ]]; then
+        if [[ -n "$HAS_MODESET" ]]; then
             local vid_emu="$(default_mode get vid_emu)"
             local vid_rom="$(default_mode get vid_rom)"
             options+=(
@@ -451,7 +541,7 @@ function main_menu() {
                 8 "Select RetroArch render res for $EMULATOR ($RENDER_RES)"
                 9 "Edit custom RetroArch config for this ROM"
             )
-        elif [[ -z "$DISPLAY" ]]; then
+        elif [[ "$HAS_MODESET" == "tvs" ]]; then
             local fb_emu="$(default_mode get fb_emu)"
             local fb_rom="$(default_mode get fb_rom)"
             options+=(
@@ -476,7 +566,7 @@ function main_menu() {
         options+=(Q "Exit (without launching)")
 
         local temp_mode
-        if [[ "$HAS_TVS" -eq 1 ]]; then
+        if [[ -n "$HAS_MODESET" ]]; then
             temp_mode="${MODE[$MODE_REQ_ID]}"
         else
             temp_mode="n/a"
@@ -742,31 +832,34 @@ function switch_fb_res() {
 }
 
 function mode_switch() {
-    local mode_id="$1"
+    local command_prefix
+    local mode_id=(${1/-/ })
 
-    if [[ "$HAS_TVS" -eq 0 ]]; then
-        # set the X/Y res to the original FB resolution for KMS case
-        MODE_CUR=("${FB_ORIG[0]}" "${FB_ORIG[1]}")
-        return 1
-    fi
+    # if the requested mode is the same as the current mode, don't switch
+    [[ "${mode_id[*]}" == "${MODE_CUR[0]} ${MODE_CUR[1]}" ]] && return 1
 
-    # if the requested mode is the same as the current mode don't switch
-    [[ "$mode_id" == "${MODE_CUR[0]}-${MODE_CUR[1]}" ]] && return 1
+    if [[ "$HAS_MODESET" == "kms" ]]; then
+        # update the target resolution even though the underlying fb hasn't changed
+        MODE_CUR=($(get_${HAS_MODESET}_mode_info "${mode_id[*]}"))
+        # inject the environment variables to do modesetting for SDL2 applications
+        command_prefix="SDL_VIDEO_KMSDRM_CRTCID=${MODE_CUR[0]} SDL_VIDEO_KMSDRM_MODEID=${MODE_CUR[1]}"
+        COMMAND="$(echo "$command_prefix $COMMAND" | sed -e "s/;/; $command_prefix /g")"
 
-    local mode_id=(${mode_id/-/ })
-
-    if [[ "${mode_id[0]}" == "PAL" ]] || [[ "${mode_id[0]}" == "NTSC" ]]; then
-        $TVSERVICE -c "${mode_id[*]}" >/dev/null
-    else
-        $TVSERVICE -e "${mode_id[*]}" >/dev/null
-    fi
-
-    # if we have switched mode, switch the framebuffer resolution also
-    if [[ "$?" -eq 0 ]]; then
-        sleep 1
-        MODE_CUR=($(get_mode_info))
-        [[ -z "$FB_NEW" ]] && FB_NEW="${MODE_CUR[2]}x${MODE_CUR[3]}"
         return 0
+    elif [[ "$HAS_MODESET" == "tvs" ]]; then
+        if [[ "${mode_id[0]}" == "PAL" ]] || [[ "${mode_id[0]}" == "NTSC" ]]; then
+            $TVSERVICE -c "${mode_id[*]}" >/dev/null
+        else
+            $TVSERVICE -e "${mode_id[*]}" >/dev/null
+        fi
+
+        # if we have switched mode, switch the framebuffer resolution also
+        if [[ "$?" -eq 0 ]]; then
+            sleep 1
+            MODE_CUR=($(get_${HAS_MODESET}_mode_info))
+            [[ -z "$FB_NEW" ]] && FB_NEW="${MODE_CUR[2]}x${MODE_CUR[3]}"
+            return 0
+        fi
     fi
 
     return 1
@@ -798,7 +891,7 @@ function retroarch_append_config() {
     local conf="/dev/shm/retroarch.cfg"
     rm -f "$conf"
     touch "$conf"
-    if [[ "$HAS_TVS" -eq 1 && "${MODE_CUR[5]}" -gt 0 ]]; then
+    if [[ -n "$HAS_MODESET" && "${MODE_CUR[5]}" -gt 0 ]]; then
         # set video_refresh_rate in our config to the same as the screen refresh
         [[ -n "${MODE_CUR[5]}" ]] && echo "video_refresh_rate = ${MODE_CUR[5]}" >>"$conf"
     fi
@@ -967,9 +1060,6 @@ function check_menu() {
     IFS= read -s -t 2 -N 1 key </dev/tty
     if [[ -n "$key" ]]; then
         [[ -n "$IMG_PID" ]] && kill -SIGINT "$IMG_PID"
-        if [[ "$HAS_TVS" -eq 1 ]]; then
-            get_all_modes
-        fi
         tput cnorm
         main_menu
         dont_launch=$?
@@ -1051,9 +1141,10 @@ function runcommand() {
 
     mode_switch "$MODE_REQ_ID"
 
-    # replace X/Y resolution (needed for KMS applications)
-    COMMAND="${COMMAND//\%XRES\%/${MODE_CUR[0]}}"
-    COMMAND="${COMMAND//\%YRES\%/${MODE_CUR[1]}}"
+    # replace X/Y resolution and refresh (useful for KMS/modesetting)
+    COMMAND="${COMMAND//\%XRES\%/${MODE_CUR[2]}}"
+    COMMAND="${COMMAND//\%YRES\%/${MODE_CUR[3]}}"
+    COMMAND="${COMMAND//\%REFRESH\%/${MODE_CUR[5]}}"
 
     [[ -n "$FB_NEW" ]] && switch_fb_res $FB_NEW
 
