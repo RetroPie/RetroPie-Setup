@@ -614,10 +614,10 @@ function main_menu() {
         fi
 
         if [[ "$EMULATOR" == lr-* ]]; then
-            options+=(
-                8 "Select RetroArch render res for $EMULATOR ($RENDER_RES)"
-                9 "Edit custom RetroArch config for this ROM"
-            )
+            if [[ "$HAS_MODESET" == "tvs" ]]; then
+                options+=(8 "Select RetroArch render res for $EMULATOR ($RENDER_RES)")
+            fi
+            options+=(9 "Edit custom RetroArch config for this ROM")
         elif [[ "$HAS_MODESET" == "tvs" ]]; then
             local fb_emu="$(default_mode get fb_emu)"
             local fb_rom="$(default_mode get fb_rom)"
@@ -969,30 +969,38 @@ function config_dispmanx() {
 }
 
 function retroarch_append_config() {
+    local conf="/dev/shm/retroarch.cfg"
+    local dim
+
     # only for retroarch emulators
     [[ "$EMULATOR" != lr-* ]] && return
 
     # make sure tmp folder exists for unpacking archives
     mkdir -p "/tmp/retroarch"
 
-    local conf="/dev/shm/retroarch.cfg"
     rm -f "$conf"
     touch "$conf"
+    iniConfig " = " '"' "$conf"
+
     if [[ -n "$HAS_MODESET" && "${MODE_CUR[5]}" -gt 0 ]]; then
         # set video_refresh_rate in our config to the same as the screen refresh
-        [[ -n "${MODE_CUR[5]}" ]] && echo "video_refresh_rate = ${MODE_CUR[5]}" >>"$conf"
+        iniSet "video_refresh_rate" "${MODE_CUR[5]}"
     fi
 
-    local dim
+    # populate with target resolution & fullscreen flag if KMS is active
+    if [[ "$HAS_MODESET" != "tvs" ]]; then
+        iniSet "video_fullscreen" "true"
+        iniSet "video_fullscreen_x" "${MODE_CUR[2]}"
+        iniSet "video_fullscreen_y" "${MODE_CUR[3]}"
     # if our render resolution is "config", then we don't set anything (use the value in the retroarch.cfg)
-    if [[ "$RENDER_RES" != "config" ]]; then
+    elif [[ "$RENDER_RES" != "config" ]]; then
         if [[ "$RENDER_RES" == "output" ]]; then
             dim=(0 0)
         else
             dim=(${RENDER_RES/x/ })
         fi
-        echo "video_fullscreen_x = ${dim[0]}" >>"$conf"
-        echo "video_fullscreen_y = ${dim[1]}" >>"$conf"
+        iniSet "video_fullscreen_x" "${dim[0]}"
+        iniSet "video_fullscreen_y" "${dim[1]}"
     fi
 
     # if the ROM has a custom configuration then append that too
