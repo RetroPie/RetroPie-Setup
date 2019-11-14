@@ -21,7 +21,7 @@
 ##
 ## `runcommand.sh VIDEO_MODE _SYS_/_PORT_ SYSTEM ROM`
 ##
-## Video mode switching is supported on KMS and Raspberry Pi (legacy graphics) systems
+## Video mode switching is supported on X11, KMS and Raspberry Pi (legacy graphics) systems
 ##
 ## Automatic video mode selection (all):
 ##
@@ -41,6 +41,10 @@
 ## Manual video mode selection (KMS):
 ##
 ## * VIDEO_MODE = "CRTCID-MODEID": set video mode to CRTC connector id and mode id
+##
+## Manual video mode selection (X11):
+##
+## * VIDEO_MODE = "OUTPUT:MODEID": set video mode to connected output name and mode index
 ##
 ## @note
 ## Video mode switching only happens if the monitor reports the modes as available
@@ -75,6 +79,7 @@ RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
 # modesetting tools
 TVSERVICE="/opt/vc/bin/tvservice"
 KMSTOOL="$ROOTDIR/supplementary/mesa-drm/modetest/modetest"
+XRANDR="xrandr"
 
 source "$ROOTDIR/lib/inifuncs.sh"
 
@@ -104,8 +109,10 @@ function get_config() {
         [[ -z "$IMAGE_DELAY" ]] && IMAGE_DELAY=2
     fi
 
+    if [[ -n "$DISPLAY" ]] && $XRANDR &>/dev/null; then
+        HAS_MODESET="x11"
     # copy kms tool output to global variable to avoid multiple invocations
-    if KMS_BUFFER="$($KMSTOOL -r 2>/dev/null)"; then
+    elif KMS_BUFFER="$($KMSTOOL -r 2>/dev/null)"; then
         HAS_MODESET="kms"
     elif [[ -f "$TVSERVICE" ]]; then
         HAS_MODESET="tvs"
@@ -267,6 +274,39 @@ function get_all_kms_modes() {
     done < <(echo "$KMS_BUFFER" | grep "Mode:" | grep "connector")
 }
 
+function get_all_x11_modes()
+{
+        declare -Ag MODE
+        local id
+        local info
+        local line
+        local verbose_info=()
+        local output="$($XRANDR --verbose | grep " connected" | awk '{ print $1 }')"
+
+        while read -r line; do
+            # scan for line that contains bracketed mode id
+            id="$(echo "$line" | awk '{ print $2 }' | grep "([0-9]\{1,\}x[0-9]\{1,\})")"
+
+            if [[ -n "$id" ]]; then
+                # strip brackets from mode id
+                id="$(echo ${id:1:-1})"
+
+                # extract extended details
+                verbose_info=($(echo "$line" | awk '{ for (i=3; i<=NF; ++i) print $i }'))
+
+                # extract x/y resolution, vertical refresh rate and append details
+                read -r line
+                info="$(echo "$line" | awk '{ print $3 }')"
+                read -r line
+                info+="x$(echo "$line" | awk '{ print $3 }') @ $(echo "$line" | awk '{ print $NF }') ("${verbose_info[*]}")"
+
+                # populate resolution into arrays
+                MODE_ID+=($output:$id)
+                MODE[$output:$id]="$info"
+            fi
+        done < <($XRANDR --verbose)
+}
+
 function get_tvs_mode_info() {
     local status="$($TVSERVICE -s)"
     local temp
@@ -331,6 +371,41 @@ function get_kms_mode_info() {
 
     # get refresh rate
     mode_info[5]="${status[3]}"
+
+    echo "${mode_info[@]}"
+}
+
+function get_x11_mode_info() {
+    local mode_id=(${1/:/ })
+    local mode_info=()
+    local status
+
+    if [[ -z "$mode_id" ]]; then
+        # determine current output
+        mode_id[0]="$($XRANDR --verbose | grep " connected" | awk '{ print $1 }')"
+        # determine current mode id & strip brackets
+        mode_id[1]="$($XRANDR --verbose | grep " connected" | grep -o "([0-9]\{1,\}x[0-9]\{1,\})")"
+        mode_id[1]="$(echo ${mode_id[1]:1:-1})"
+    fi
+
+    # mode type corresponds to the currently connected output name
+    mode_info[0]="${mode_id[0]}"
+
+    # get mode id
+    mode_info[1]="${mode_id[1]}"
+
+    # get status line and split resolution
+    status=(${MODE[${mode_id[0]}:${mode_id[1]}]/x/ })
+
+    # get resolution
+    mode_info[2]="${status[0]}"
+    mode_info[3]="${status[1]}"
+
+    # aspect ratio cannot be determined for X11
+    mode_info[4]="n/a"
+
+    # get refresh rate (stripping Hz, rounded to integer)
+    mode_info[5]="$(printf '%.0f\n' ${status[3]::-2})"
 
     echo "${mode_info[@]}"
 }
@@ -416,6 +491,8 @@ function default_emulator() {
 }
 
 function load_mode_defaults() {
+    local separator="-"
+    [[ "$HAS_MODESET" == "x11" ]] && separator=":"
     local temp
     MODE_ORIG=()
 
@@ -427,7 +504,7 @@ function load_mode_defaults() {
         # get current mode / aspect ratio
         MODE_ORIG=($(get_${HAS_MODESET}_mode_info))
         MODE_CUR=("${MODE_ORIG[@]}")
-        MODE_ORIG_ID="${MODE_ORIG[0]}-${MODE_ORIG[1]}"
+        MODE_ORIG_ID="${MODE_ORIG[0]}${separator}${MODE_ORIG[1]}"
 
        if [[ "$MODE_REQ" == "0" ]]; then
             MODE_REQ_ID="$MODE_ORIG_ID"
@@ -833,7 +910,10 @@ function switch_fb_res() {
 
 function mode_switch() {
     local command_prefix
-    local mode_id=(${1/-/ })
+    local separator="-"
+    # X11 uses hypens in connector names
+    [[ $HAS_MODESET == "x11" ]] && separator=":"
+    local mode_id=(${1/${separator}/ })
 
     # if the requested mode is the same as the current mode, don't switch
     [[ "${mode_id[*]}" == "${MODE_CUR[0]} ${MODE_CUR[1]}" ]] && return 1
@@ -846,6 +926,13 @@ function mode_switch() {
         COMMAND="$(echo "$command_prefix $COMMAND" | sed -e "s/;/; $command_prefix /g")"
 
         return 0
+    elif [[ "$HAS_MODESET" == "x11" ]]; then
+        # query the target resolution
+        MODE_CUR=($(get_${HAS_MODESET}_mode_info "${mode_id[*]}"))
+        # set target resolution
+        $XRANDR --output "${MODE_CUR[0]}" --mode "${MODE_CUR[1]}"
+
+        [[ "$?" -eq 0 ]] && return 0
     elif [[ "$HAS_MODESET" == "tvs" ]]; then
         if [[ "${mode_id[0]}" == "PAL" ]] || [[ "${mode_id[0]}" == "NTSC" ]]; then
             $TVSERVICE -c "${mode_id[*]}" >/dev/null
