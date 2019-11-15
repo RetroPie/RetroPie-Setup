@@ -13,10 +13,10 @@ rp_module_id="minecraft"
 rp_module_desc="Minecraft - Pi Edition"
 rp_module_licence="PROP"
 rp_module_section="exp"
-rp_module_flags="!mali !x86 !kms"
+rp_module_flags="!mali !x86"
 
 function depends_minecraft() {
-    getDepends xorg matchbox
+    getDepends xorg matchbox-window-manager
 }
 
 function install_bin_minecraft() {
@@ -29,7 +29,7 @@ function remove_minecraft() {
 }
 
 function configure_minecraft() {
-    addPort "$md_id" "minecraft" "Minecraft" "xinit $md_inst/Minecraft.sh"
+    addPort "$md_id" "minecraft" "Minecraft" "XINIT:$md_inst/Minecraft.sh"
 
     cat >"$md_inst/Minecraft.sh" << _EOF_
 #!/bin/bash

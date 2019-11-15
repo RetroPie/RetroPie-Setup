@@ -34,10 +34,9 @@ function install_ags() {
 }
 
 function configure_ags() {
-    local binary="$md_inst/bin/ags"
+    local binary="XINIT:$md_inst/bin/ags"
     local params=("--fullscreen %ROM%")
     if ! isPlatform "x11"; then
-        binary="xinit $binary"
         params+=("--gfxdriver software")
     fi
 
