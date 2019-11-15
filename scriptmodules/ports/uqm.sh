@@ -81,7 +81,7 @@ function configure_uqm() {
     local params=("-f")
     if isPlatform "kms"; then
         # SDL1 needs xinit, and does not have /usr/games in $PATH
-        binary="xinit /usr/games/$binary"
+        binary="XINIT:/usr/games/$binary"
         # OpenGL mode must be also be enabled for high resolution support
         params+=("-o" "-r %XRES%x%YRES%")
     fi

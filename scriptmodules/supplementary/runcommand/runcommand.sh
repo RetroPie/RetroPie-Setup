@@ -908,6 +908,47 @@ function switch_fb_res() {
     fi
 }
 
+function build_xinitrc() {
+    local mode="$1"
+    local xinitrc="/dev/shm/retropie_xinitrc"
+
+    case "$mode" in
+        clear)
+            rm -rf "$xinitrc"
+            ;;
+        build)
+            echo "#!/bin/bash" >"$xinitrc"
+
+            # do modesetting (if supported)
+            if [[ -n "$HAS_MODESET" ]]; then
+                cat >>"$xinitrc" <<_EOF_
+XRANDR_OUTPUT="\$($XRANDR --verbose | grep " connected" | awk '{ print \$1 }')"
+$XRANDR --output \$XRANDR_OUTPUT --mode ${MODE_CUR[2]}x${MODE_CUR[3]} --refresh ${MODE_CUR[5]}
+echo "Set mode ${MODE_CUR[2]}x${MODE_CUR[3]}@${MODE_CUR[5]}Hz on \$XRANDR_OUTPUT"
+_EOF_
+            fi
+
+            # echo command line for runcommand log
+            cat >>"$xinitrc" <<_EOF_
+echo -e "\nExecuting (via xinit): "${COMMAND//\$/\\\$}"\n"
+${COMMAND//\$/\\\$}
+_EOF_
+            chmod +x "$xinitrc"
+
+            # rewrite command to launch our xinit script (if not startx)
+            if ! [[ "$COMMAND" =~ ^startx ]]; then
+                COMMAND="xinit $xinitrc"
+            fi
+
+            # workaround for launching xserver on correct/user owned tty
+            # see https://github.com/RetroPie/RetroPie-Setup/issues/1805
+            if [[ -n "$TTY" ]]; then
+                COMMAND="$COMMAND -- vt$TTY -keeptty"
+            fi
+            ;;
+    esac
+}
+
 function mode_switch() {
     local command_prefix
     local separator="-"
@@ -1094,6 +1135,13 @@ function get_sys_command() {
         COMMAND="${COMMAND:4}"
         CONSOLE_OUT=1
     fi
+
+   # if it starts with XINIT: it is an X11 application (so we need to launch via xinit)
+    if [[ "$COMMAND" == XINIT:* ]]; then
+        # remove XINIT:
+        COMMAND="${COMMAND:6}"
+        XINIT=1
+    fi
 }
 
 function show_launch() {
@@ -1250,10 +1298,9 @@ function runcommand() {
 
     retroarch_append_config
 
-    # workaround for launching xserver on correct/user owned tty
-    # see https://github.com/RetroPie/RetroPie-Setup/issues/1805
-    if [[ -n "$TTY" && "$COMMAND" =~ ^(startx|xinit) ]]; then
-        COMMAND+=" -- vt$TTY -keeptty"
+    # build xinitrc and rewrite command if not already in X11 context
+    if [[ "$XINIT" -eq 1 && "$HAS_MODESET" != "x11" ]]; then
+        build_xinitrc build
     fi
 
     local ret
@@ -1272,6 +1319,11 @@ function runcommand() {
 
     # if we switched mode - restore preferred mode
     mode_switch "$MODE_ORIG_ID"
+
+    # delete temporary xinitrc launch script
+    if [[ "$XINIT" -eq 1 && "$HAS_MODESET" != "x11" ]]; then
+        build_xinitrc clear
+    fi
 
     # reset/restore framebuffer res (if it was changed)
     [[ -n "$FB_NEW" ]] && restore_fb
