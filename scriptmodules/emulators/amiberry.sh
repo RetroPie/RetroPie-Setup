@@ -11,66 +11,56 @@
 
 rp_module_id="amiberry"
 rp_module_desc="Amiga emulator with JIT support (forked from uae4arm)"
-rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir"
+rp_module_help="ROM Extension: .adf .ipf .zip\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/midwan/amiberry/master/COPYING"
 rp_module_section="opt"
 rp_module_flags="!x86"
 
-function _get_platform_bin_amiberry() {
-    local choice="$1"
-    local amiberry_bin="$__platform-sdl2"
-    local amiberry_platform="$__platform-sdl2"
+function _get_platform_amiberry() {
+    local platform="$__platform-sdl2"
     if isPlatform "rpi" && ! isPlatform "kms"; then
-        amiberry_bin="$__platform-sdl1"
-        amiberry_platform="$__platform"
+        platform="$__platform"
     elif isPlatform "odroid-xu"; then
-        amiberry_bin="xu4"
-        amiberry_platform="xu4"
+        platform="xu4"
     elif isPlatform "tinker"; then
-        amiberry_bin="tinker"
-        amiberry_platform="tinker"
+        platform="tinker"
     elif isPlatform "vero4k"; then
-        amiberry_bin="vero4k"
-        amiberry_platform="vero4k"
+        platform="vero4k"
     fi
-    [[ "$choice" == "bin" ]] && echo "$amiberry_bin"
-    [[ "$choice" == "platform" ]] && echo "$amiberry_platform"
+    echo "$platform"
 }
 
 function depends_amiberry() {
-    local depends=(libpng-dev libmpeg2-4-dev zlib1g-dev)
-    if ! isPlatform "rpi" || isPlatform "kms" || isPlatform "vero4k"; then
-        depends+=(libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
-    fi
+    local depends=(autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libguichan-dev libmpg123-dev libflac-dev libxml2-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
 
-    if isPlatform "vero4k"; then
-        depends+=(vero3-userland-dev-osmc libmpg123-dev libxml2-dev libflac-dev)
-        getDepends "${depends[@]}"
-    else
-        depends_uae4arm "${depends[@]}"
-    fi
+    isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
+
+    getDepends "${depends[@]}"
 }
 
 function sources_amiberry() {
-    gitPullOrClone "$md_build" https://github.com/midwan/amiberry/
-    applyPatch "$md_data/01_remove_cflags.diff"
+    # temporarily use dev branch
+    gitPullOrClone "$md_build" https://github.com/midwan/amiberry
 }
 
 function build_amiberry() {
-    local amiberry_bin=$(_get_platform_bin_amiberry bin)
-    local amiberry_platform=$(_get_platform_bin_amiberry platform)
+    local platform=$(_get_platform_amiberry)
+    cd external/capsimg
     make clean
-    CXXFLAGS="" make PLATFORM="$amiberry_platform"
-    ln -sf "amiberry-$amiberry_bin" "amiberry"
-    md_ret_require="$md_build/amiberry-$amiberry_bin"
+    ./bootstrap.fs
+    ./configure.fs
+    make -f Makefile.fs
+    cd "$md_build"
+    make clean
+    make PLATFORM="$platform"
+    md_ret_require="$md_build/amiberry"
 }
 
 function install_amiberry() {
-    local amiberry_bin=$(_get_platform_bin_amiberry bin)
     md_ret_files=(
         'amiberry'
-        "amiberry-$amiberry_bin"
         'data'
+        'external/capsimg/capsimg.so'
     )
 
     cp -R "$md_build/whdboot" "$md_inst/whdboot-dist"
