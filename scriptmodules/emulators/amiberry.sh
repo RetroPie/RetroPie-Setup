@@ -39,7 +39,6 @@ function depends_amiberry() {
 }
 
 function sources_amiberry() {
-    # temporarily use dev branch
     gitPullOrClone "$md_build" https://github.com/midwan/amiberry
 }
 
