@@ -102,7 +102,7 @@ function install_moonlight() {
 function configure_moonlight() {
     addEmulator 1 "$md_id" "steam" "$md_inst/moonlight.sh stream -config %ROM%"
     addSystem "steam" "Steam Game Streaming" ".ml"
-    [[ "$mode" == "remove" ]] && return
+    [[ "$md_mode" == "remove" ]] && return
 
     # ensure rom dir
     mkRomDir "steam"
