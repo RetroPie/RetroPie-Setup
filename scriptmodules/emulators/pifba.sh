@@ -49,14 +49,16 @@ function configure_pifba() {
     mkRomDir "fba"
     mkRomDir "neogeo"
 
-    mkUserDir "$md_conf_root/fba"
+    if [[ "$md_mode" == "install" ]]; then
+        mkUserDir "$md_conf_root/fba"
 
-    local config
-    for config in fba2x.cfg capex.cfg; do
-        # move old config if it exists
-        moveConfigFile "$md_inst/$config" "$md_conf_root/fba/$config"
-        copyDefaultConfig "$config.template" "$md_conf_root/fba/$config"
-    done
+        local config
+        for config in fba2x.cfg capex.cfg; do
+            # move old config if it exists
+            moveConfigFile "$md_inst/$config" "$md_conf_root/fba/$config"
+            copyDefaultConfig "$config.template" "$md_conf_root/fba/$config"
+        done
+    fi
 
     local def=0
     isPlatform "rpi1" && def=1

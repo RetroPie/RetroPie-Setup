@@ -268,7 +268,7 @@ function configure_emulationstation() {
     # move the $home/emulationstation configuration dir and symlink it
     moveConfigDir "$home/.emulationstation" "$configdir/all/emulationstation"
 
-    [[ "$mode" == "remove" ]] && return
+    [[ "$md_mode" == "remove" ]] && return
 
     # remove other emulation station if it's installed, so we don't end up with
     # both packages interfering - but leave configs alone so switching is easy
