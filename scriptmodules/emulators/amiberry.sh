@@ -45,9 +45,9 @@ function sources_amiberry() {
 function build_amiberry() {
     local platform=$(_get_platform_amiberry)
     cd external/capsimg
-    make clean
     ./bootstrap.fs
     ./configure.fs
+    make -f Makefile.fs clean
     make -f Makefile.fs
     cd "$md_build"
     make clean
