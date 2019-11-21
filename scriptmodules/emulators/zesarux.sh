@@ -12,13 +12,20 @@
 rp_module_id="zesarux"
 rp_module_desc="ZX Spectrum emulator ZEsarUX"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum games to $romdir/zxspectrum"
-rp_module_licence="GPL3 https://sourceforge.net/p/zesarux/code/ci/master/tree/LICENSE"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/chernandezba/zesarux/master/src/LICENSE"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_zesarux() {
-    local depends=(libssl-dev libpthread-stubs0-dev libsdl1.2-dev libasound2-dev)
+    local depends=(libssl-dev libpthread-stubs0-dev libasound2-dev)
     isPlatform "x11" && depends+=(libpulse-dev)
+
+    if isPlatform "kms"; then
+        depends+=(libsdl2-dev)
+    else
+        depends+=(libsdl1.2-dev)
+    fi
+
     getDepends "${depends[@]}"
 }
 
@@ -30,8 +37,10 @@ function build_zesarux() {
     local params=()
     isPlatform "videocore" && params+=(--enable-raspberry)
     ! isPlatform "x11" && params+=(--disable-pulse)
+    isPlatform "kms" && params+=(--enable-sdl2)
+
     cd src
-    ./configure --prefix "$md_inst" "${params[@]}"
+    ./configure --prefix "$md_inst" "${params[@]}" --enable-ssl
     make clean
     make
     md_ret_require="$md_build/src/zesarux"
