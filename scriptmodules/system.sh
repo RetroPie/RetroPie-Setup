@@ -67,7 +67,9 @@ function get_os_version() {
 
     # get os distributor id, description, release number and codename
     local os
-    mapfile -t os < <(lsb_release -sidrc)
+    # armbian uses a minimal shell script replacement for lsb_release with basic
+    # parameter parsing that requires the arguments split rather than using -sidrc
+    mapfile -t os < <(lsb_release -s -i -d -r -c)
     __os_id="${os[0]}"
     __os_desc="${os[1]}"
     __os_release="${os[2]}"
