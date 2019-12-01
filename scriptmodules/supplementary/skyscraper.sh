@@ -46,6 +46,7 @@ function install_skyscraper() {
         'hints.txt'
         'import'
         'resources'
+        'cache/priorities.xml.example'
     )
 }
 
@@ -231,6 +232,10 @@ function _init_config_skyscraper() {
         mkUserDir "$md_conf_dir/import/$folder"
     done
     cp -rf "$md_inst/import" "$md_conf_dir"
+
+    # Create the cache folder and add the sample 'priorities.xml' file to it
+    mkdir -p "$md_conf_dir/cache"
+    cp -f "$md_inst/priorities.xml.example" "$md_conf_dir/cache"
 }
 
 # Scrape one system, passed as parameter
