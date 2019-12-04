@@ -400,6 +400,19 @@ function rp_registerModule() {
         fi
     done
 
+    local sections=($rp_module_section)
+    # get default section
+    rp_module_section="${sections[0]}"
+
+    # loop through any additional flag=section parameters
+    local flag section
+    for section in "${sections[@]:1}"; do
+        section=(${section/=/ })
+        flag="${section[0]}"
+        section="${section[1]}"
+        isPlatform "$flag" && rp_module_section="$section"
+    done
+
     if [[ "$valid" -eq 1 ]]; then
         __mod_idx+=("$module_idx")
         __mod_id["$module_idx"]="$rp_module_id"
