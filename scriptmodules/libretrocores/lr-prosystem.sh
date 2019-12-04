@@ -8,8 +8,6 @@
 # See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
-#  Many, many thanks go to all people that provide the individual modules!!!
-#
 
 rp_module_id="lr-prosystem"
 rp_module_desc="Atari 7800 ProSystem emu - ProSystem port for libretro"
