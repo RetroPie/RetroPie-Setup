@@ -194,13 +194,14 @@ function gui_wifi() {
             "2 Disconnect and remove any Wifi configuration"
             3 "Import wifi credentials from /boot/wifikeyfile.txt"
             "3 Will import the ssid (name) and psk (password) from a file /boot/wifikeyfile.txt
-
 The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk = \"YOUR PASSWORD\""
+            4 "Connecting via WPS"
+            "4 Connecting via Push to Button WPS"
         )
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ "${choice[@]:0:4}" == "HELP" ]]; then
-            choice="${choice[@]:5}"
+        if [[ "${choice[@]:0:5}" == "HELP" ]]; then
+            choice="${choice[@]:6}"
             default="${choice/%\ */}"
             choice="${choice#* }"
             printMsgs "dialog" "$choice"
@@ -229,9 +230,64 @@ The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk =
                         printMsgs "dialog" "No /boot/wifikeyfile.txt found"
                     fi
                     ;;
+                 4)
+                    wps_wifi
+                    ;;
             esac
         else
             break
         fi
     done
+}
+
+function wps_wifi() {
+	remove_wifi
+	check_country_wifi
+	dialog --backtitle "$__backtitle" --infobox "\nConnecting ..." 5 40 >/dev/tty
+    if [ "$(LANG=C && /sbin/ifconfig wlan0 | grep 'HWaddr\|ether' | wc -l)" -gt "0" -a "$(LANG=C && /sbin/ip addr show wlan0 | grep 'inet ' | grep -v '169.254' | wc -l)" -lt "1" ]; 
+	then killall -q wpa_supplicant
+    sleep 1
+    # Check if "update_config=1" needed in /etc/wpa_supplicant/wpa_supplicant.conf for Autoconfig
+    if [ "$(grep -i "update_config=1" /etc/wpa_supplicant/wpa_supplicant.conf | wc -l)" -lt "1" ]; then
+    	echo "update_config=1" >> /etc/wpa_supplicant/wpa_supplicant.conf
+    fi
+    
+    # Make sure WPA-Supplicant is running with config
+    # separate RPI3 no wext Driver for WPS!
+    if [ "0" -lt "$(wpa_supplicant -h | grep nl80211 | wc -l)" ]; then
+    	wpa_supplicant -B w -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
+    else
+    	wpa_supplicant -B w -D wext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
+    fi
+    sleep 3
+    
+    # Clear network list
+    for i in `wpa_cli -iwlan0 list_networks | grep ^[0-9] | cut -f1`; do wpa_cli -iwlan0 remove_network $i; done
+    
+    # get Routers supporting WPS, sorted by signal strength        
+    SSID=$(/sbin/wpa_cli -iwlan0 scan_results | grep "WPS" | sort -r -k3 | awk 'END{print $NF}')
+    echo "Using $SSID for WPS"
+    #SUCCESS=$(wpa_cli -iwlan0 wps_pbc $SSID)
+    SUCCESS=$(wpa_cli -iwlan0 wps_pbc)
+    sleep 10
+    
+    # Check for Entry in wpa_supplicant.conf
+    VALIDENTRY=$(grep -i "^network=" /etc/wpa_supplicant/wpa_supplicant.conf | wc -l)
+    
+    # wpa_supplicant.conf should be modified in last 20 seconds by WPS Config
+    MODIFIED=$(( `date +%s` - `stat -L --format %Y /etc/wpa_supplicant/wpa_supplicant.conf` ))
+    
+    if [ "$(echo "$SUCCESS" | grep 'OK' | wc -l)" -gt "0" -a "$VALIDENTRY" -gt "0" -a "$MODIFIED" -lt "20" ]; then
+    	# Now Config File should be written    	
+    	
+    	# Stop existing WPA_Supplicant Process with Old Config
+    	killall -q wpa_supplicant
+    	sleep 3
+    	
+    	# Enable wlan0 in /etc/network/interfaces
+    	if [ "$(grep -i '^auto wlan0' /etc/network/interfaces | wc -l)" -lt "1" ]; then
+    		sed -i "s/#allow-hotplug wlan0/allow-hotplug wlan0/;s/#iface wlan0 inet dhcp/iface wlan0 inet dhcp/;s/#auto wlan0/auto wlan0/;s/#pre-up wpa_supplicant/pre-up wpa_supplicant/;s/#post-down killall -q wpa_supplicant/post-down killall -q wpa_supplicant/" /etc/network/interfaces  
+			gui_connect_wifi			
+		fi
+	fi
 }
