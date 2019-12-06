@@ -11,6 +11,7 @@
 
 rp_module_id="xarcade2jstick"
 rp_module_desc="Xarcade2Jstick"
+rp_module_license="GPL3 https://raw.githubusercontent.com/petrockblog/Xarcade2Jstick/master/gpl3.txt"
 rp_module_section="driver"
 rp_module_flags="noinstclean"
 

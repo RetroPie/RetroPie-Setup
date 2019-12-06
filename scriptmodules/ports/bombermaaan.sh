@@ -11,7 +11,7 @@
 
 rp_module_id="bombermaaan"
 rp_module_desc="Bombermaaan - Classic bomberman game"
-rp_module_licence="GPL3 https://github.com/bjaraujo/Bombermaaan/blob/master/LICENSE.txt"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/bjaraujo/Bombermaaan/master/LICENSE.txt"
 rp_module_section="exp"
 rp_module_flags="!mali !kms"
 
