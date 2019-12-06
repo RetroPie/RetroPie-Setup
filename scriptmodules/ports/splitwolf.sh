@@ -12,7 +12,7 @@
 rp_module_id="splitwolf"
 rp_module_desc="SplitWolf - 2-4 player split-screen Wolfenstein 3D / Spear of Destiny"
 rp_module_help="Game File Extension: .wl6, .sod, .sd2, .sd3\n\nCopy your game files to $romdir/ports/wolf3d/\n\nIf you add new game files, run: sudo ~/RetroPie-Setup/retropie_packages.sh splitwolf configure"
-rp_module_licence="NONCOM https://bitbucket.org/linuxwolf6/splitwolf/src/master/license-mame.txt"
+rp_module_licence="NONCOM https://bitbucket.org/linuxwolf6/splitwolf/raw/scrubbed/license-mame.txt"
 rp_module_section="exp"
 
 function depends_splitwolf() {
