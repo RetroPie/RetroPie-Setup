@@ -12,7 +12,7 @@
 rp_module_id="lr-puae"
 rp_module_desc="P-UAE Amiga emulator port for libretro"
 rp_module_help="ROM Extensions: .adf .uae\n\nCopy your roms to $romdir/amiga and create configs as .uae"
-rp_module_licence="GPL2"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/PUAE/master/COPYING"
 rp_module_section="exp"
 
 function sources_lr-puae() {
