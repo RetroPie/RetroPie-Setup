@@ -12,7 +12,7 @@
 rp_module_id="lr-dosbox"
 rp_module_desc="DOS emulator"
 rp_module_help="ROM Extensions: .bat .com .exe .sh\n\nCopy your DOS games to $ROMDIR/pc"
-rp_module_licence="https://raw.githubusercontent.com/libretro/dosbox-libretro/master/COPYING"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/dosbox-libretro/master/COPYING"
 rp_module_section="exp"
 rp_module_flags=""
 

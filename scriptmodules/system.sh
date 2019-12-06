@@ -58,6 +58,20 @@ function setup_env() {
     [[ -z "${ASFLAGS}" ]] && export ASFLAGS="${__default_asflags}"
     [[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
 
+    # if using distcc, add /usr/lib/distcc to PATH/MAKEFLAGS
+    if [[ -n "$DISTCC_HOSTS" ]]; then
+        PATH="/usr/lib/distcc:$PATH"
+        MAKEFLAGS+=" PATH=/usr/lib/distcc:$PATH"
+    fi
+
+    # test if we are in a chroot
+    if [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]; then
+        [[ -z "$QEMU_CPU" && -n "$__qemu_cpu" ]] && export QEMU_CPU=$__qemu_cpu
+        __chroot=1
+    else
+        __chroot=0
+    fi
+
     if [[ -z "$__nodialog" ]]; then
         __nodialog=0
     fi
@@ -198,6 +212,8 @@ function get_os_version() {
 
 function get_retropie_depends() {
     local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev ca-certificates)
+
+    [[ -n "$DISTCC_HOSTS" ]] && depends+=(distcc)
 
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
