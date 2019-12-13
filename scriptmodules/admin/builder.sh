@@ -61,7 +61,11 @@ function section_builder() {
 }
 
 function upload_builder() {
-    rsync -av --progress --delay-updates "$__tmpdir/archives/" "retropie@$__binary_host:files/binaries/"
+    local host="$__upload_host"
+    [[ -z "$host" ]] && host="$__binary_host"
+    local port="$__upload_port"
+    [[ -z "$port" ]] && port=22
+    rsync -av --progress --delay-updates -e "ssh -p $port" "$__tmpdir/archives/" "retropie@$host:files/binaries/"
 }
 
 function clean_archives_builder() {
