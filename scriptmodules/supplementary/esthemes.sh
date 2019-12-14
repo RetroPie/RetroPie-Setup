@@ -227,6 +227,7 @@ function gui_esthemes() {
         'blowfinger77 locomotion'
         'justincaseurskynet Arcade1up-5x4-Horizontal'
         'KALEL1981 Super-Retroboy'
+        'xovox RetroCRT-240p'
     )
     while true; do
         local theme
