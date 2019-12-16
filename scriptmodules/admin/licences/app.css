@@ -1,0 +1,85 @@
+body {
+	font-family: sans-serif;
+	line-height: 1.25;
+}
+.center {
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+}
+h1, body > p {
+	max-width: 600px;
+	text-align: center;
+}
+
+
+canvas {
+	max-width: 500px;
+	margin: 1em 0;
+}
+
+
+
+#packages h3 {
+	margin: 0;
+	padding: .25em;
+	margin-bottom: .25em;
+}
+#packages table {
+	width: 100%;
+	max-width: 1280px;
+	border-collapse: collapse;
+}
+#packages thead {
+	border-bottom: 1px solid rgba(0,0,0,30%);
+}
+#packages td {
+	padding: .25em;
+}
+#packages tr td:first-child {
+	font-family: monospace;
+	min-width: 15%;
+}
+#packages tr td:last-child {
+	text-align: center;
+	min-width: 5%;
+}
+#packages thead td:nth-child(3),
+#packages tr td:nth-child(3) {
+	text-align: center;
+	min-width: 8%;
+}
+#packages tr:hover {
+	background-color: #fffe;
+}
+#packages section {
+	margin: 2em 0;
+	padding: .5em;
+}
+
+
+#commit {
+	font-size: 90%;
+	margin-top: 0;
+}
+#commit code {
+	font-size: 110%;
+}
+
+
+footer {
+	font-size: 85%;
+	width: 100%;
+	max-width: 900px;
+	text-align: center;
+	margin-top: 2em;
+	border-top: 1px solid #ccc;
+	padding: 1.5em 0;
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+}
+footer p {
+	max-width: 800px;
+	margin-bottom: 0;
+}
