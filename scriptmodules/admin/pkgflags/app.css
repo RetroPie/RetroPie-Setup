@@ -1,0 +1,118 @@
+body {
+	font-family: sans-serif;
+	line-height: 1.25;
+}
+.center {
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+}
+h1, p {
+	max-width: 600px;
+	text-align: center;
+}
+
+
+#packages table {
+	width: 100%;
+	max-width: 1280px;
+	border-collapse: collapse;
+}
+#packages td {
+	padding: .25rem;
+}
+#packages tr td.id {
+	font-family: monospace;
+	min-width: 15%;
+}
+#packages td.flag.first {
+	border-left: 1px solid rgba(0,0,0,30%);
+}
+#packages tr td.flag {
+	color: rgba(0,0,0,50%);
+}
+#packages tr td.flag.pass {
+	background-color: #dfd;
+}
+#packages tr td.flag.fail {
+	background-color: #fbb;
+}
+#packages table .flag {
+	text-align: center;
+}
+#packages thead {
+	vertical-align: bottom;
+	border-bottom: 1px solid rgba(0,0,0,30%);
+}
+#packages thead .flag {
+	writing-mode: vertical-rl;
+	width: 2rem;
+	line-height: 2rem;
+}
+#packages tr:hover {
+	background-color: #eee;
+}
+#packages tr:hover td.flag.pass {
+	background-color: #cfc;
+}
+#packages tr:hover td.flag.fail {
+	background-color: #f99;
+}
+#packages section {
+	position: relative;
+	margin: 2em 0;
+}
+#packages section h2 {
+	position: absolute;
+	top: 0;
+}
+
+
+#devices {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	max-width: 1000px;
+}
+#devices ul {
+	list-style-type: none;
+	padding: 0;
+	width: 100%;
+	display: flex;
+	flex-flow: column;
+}
+#devices li {
+	display: flex;
+	margin: .25em 0;
+}
+#devices li span {
+	width: 11em;
+}
+#devices li span:first-child {
+	text-align: right;
+}
+#devices li progress {
+	flex-grow: 1;
+	margin: 0 .5em;
+	height: auto; /* for webkit */
+}
+
+
+#commit {
+	font-size: 90%;
+	margin-top: 0;
+}
+#commit code {
+	font-size: 110%;
+}
+
+
+footer {
+	font-size: 85%;
+	width: 100%;
+	max-width: 900px;
+	text-align: center;
+	margin-top: 2em;
+	border-top: 1px solid #ccc;
+	padding: 1.5em 0;
+}
