@@ -10,15 +10,6 @@
 #
 
 declare -A __mod_id_to_idx
-__mod_idx=()
-__mod_id=()
-__mod_type=()
-__mod_desc=()
-__mod_help=()
-__mod_licence=()
-__mod_section=()
-__mod_flags=()
-
 declare -A __sections
 __sections[core]="core"
 __sections[main]="main"
@@ -393,12 +384,14 @@ function rp_registerModule() {
     local flag
     local valid=1
 
-    for flag in "${flags[@]}"; do
-        if [[ "$flag" =~ ^\!(.+) ]] && isPlatform "${BASH_REMATCH[1]}"; then
-            valid=0
-            break
-        fi
-    done
+    if [[ "$__ignore_flags" -ne 1 ]]; then
+        for flag in "${flags[@]}"; do
+            if [[ "$flag" =~ ^\!(.+) ]] && isPlatform "${BASH_REMATCH[1]}"; then
+                valid=0
+                break
+            fi
+        done
+    fi
 
     if [[ "$valid" -eq 1 ]]; then
         __mod_idx+=("$module_idx")
@@ -425,6 +418,15 @@ function rp_registerModuleDir() {
 }
 
 function rp_registerAllModules() {
+    __mod_idx=()
+    __mod_id=()
+    __mod_type=()
+    __mod_desc=()
+    __mod_help=()
+    __mod_licence=()
+    __mod_section=()
+    __mod_flags=()
+
     rp_registerModuleDir 100 "emulators"
     rp_registerModuleDir 200 "libretrocores"
     rp_registerModuleDir 300 "ports"
