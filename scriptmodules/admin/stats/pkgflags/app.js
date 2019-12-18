@@ -1,21 +1,22 @@
 async function fetch_packages() {
-	const resp = await fetch('packages.csv');
+	const resp = await fetch('../packages.csv');
 	const data = await resp.text();
 
 	return data
 		.split('\n')
 		.map(line => line.split(';'))
-		.filter(fields => fields.length >= 4)
+		.filter(fields => fields.length >= 5)
 		.map(fields => ({
 			section: fields[0],
 			id: fields[1],
 			desc: fields[2],
-			flags: fields[3].split(' '),
+			// fields[3] is the licence
+			flags: fields[4].split(' '),
 		}));
 }
 
 async function fetch_commit_info() {
-	const resp = await fetch('commit.csv');
+	const resp = await fetch('../commit.csv');
 	const data = await resp.text();
 	const fields = data.split(';');
 	return {
