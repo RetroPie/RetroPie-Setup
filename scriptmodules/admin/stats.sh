@@ -33,6 +33,10 @@ function build_stats() {
     local dest="$__tmpdir/stats"
     mkUserDir "$dest"
 
+    # ignore platform flags to get info for all packages
+    __ignore_flags=1
+    rp_registerAllModules
+
     echo "$(_get_package_data_stats)" > "$dest/packages.csv"
     echo "$(_get_commit_data_stats)" > "$dest/commit.csv"
 
