@@ -10,7 +10,7 @@
 #
 
 rp_module_id="resetromdirs"
-rp_module_desc="Reset ownership/permissions of $romdir"
+rp_module_desc="Reset ownership/permissions of RetroPie/roms directory"
 rp_module_section="config"
 
 function gui_resetromdirs() {
