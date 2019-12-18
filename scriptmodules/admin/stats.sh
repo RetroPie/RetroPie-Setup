@@ -13,12 +13,6 @@ rp_module_id="stats"
 rp_module_desc="Generates statistics about packages"
 rp_module_section=""
 
-function _dest_stats() {
-    local dest="$__tmpdir/stats"
-    mkUserDir "$dest"
-    echo "$dest"
-}
-
 function _get_commit_data_stats() {
     local hash=$(git -C "$scriptdir" log -1 --format=%h)
     local date=$(git -C "$scriptdir" log -1 --format=%cd --date=iso-strict)
@@ -26,39 +20,24 @@ function _get_commit_data_stats() {
     echo "$hash;$date;$branch;"
 }
 
-function licences_stats() {
+function _get_package_data_stats() {
     local data=()
-
-    local dest="$(_dest_stats)/licences"
-    mkUserDir "$dest"
-
     local idx
     for idx in ${__mod_idx[@]}; do
-        data+=("${__mod_section[$idx]};${__mod_id[$idx]};${__mod_desc[$idx]};${__mod_licence[$idx]};")
+        data+=("${__mod_section[$idx]};${__mod_id[$idx]};${__mod_desc[$idx]};${__mod_licence[$idx]};${__mod_flags[$idx]};")
     done
-    printf "%s\n" "${data[@]}" >"$dest/packages.csv"
-
-    echo "$(_get_commit_data_stats)" > "$dest/commit.csv"
-
-    cp -v "$md_data/licences/"* "$dest/"
-    chown -R $user:$user "$dest"
+    printf "%s\n" "${data[@]}"
 }
 
-function packages_stats() {
-    local data=()
-
-    local dest="$(_dest_stats)/pkgflags"
+function build_stats() {
+    local dest="$__tmpdir/stats"
     mkUserDir "$dest"
 
-    local idx
-    for idx in ${__mod_idx[@]}; do
-        data+=("${__mod_section[$idx]};${__mod_id[$idx]};${__mod_desc[$idx]};${__mod_flags[$idx]};")
-    done
-    printf "%s\n" "${data[@]}" >"$dest/packages.csv"
-
+    echo "$(_get_package_data_stats)" > "$dest/packages.csv"
     echo "$(_get_commit_data_stats)" > "$dest/commit.csv"
 
-    cp -v "$md_data/pkgflags/"* "$dest/"
+    cp -rv "$md_data/licences" "$dest/"
+    cp -rv "$md_data/pkgflags" "$dest/"
     chown -R $user:$user "$dest"
 }
 
