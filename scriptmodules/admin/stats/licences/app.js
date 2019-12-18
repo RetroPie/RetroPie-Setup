@@ -1,5 +1,5 @@
 async function fetch_packages() {
-	const resp = await fetch('packages.csv');
+	const resp = await fetch('../packages.csv');
 	const data = await resp.text();
 
 	return data
@@ -15,7 +15,7 @@ async function fetch_packages() {
 }
 
 async function fetch_commit_info() {
-	const resp = await fetch('commit.csv');
+	const resp = await fetch('../commit.csv');
 	const data = await resp.text();
 	const fields = data.split(';');
 	return {
