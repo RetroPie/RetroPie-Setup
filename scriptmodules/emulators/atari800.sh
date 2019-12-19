@@ -48,16 +48,22 @@ function configure_atari800() {
     mkRomDir "atari800"
     mkRomDir "atari5200"
 
-    mkUserDir "$md_conf_root/atari800"
+    if [[ "$md_mode" == "install" ]]; then
+        mkUserDir "$md_conf_root/atari800"
 
-    # move old config if exists to new location
-    if [[ -f "$md_conf_root/atari800.cfg" ]]; then
-        mv "$md_conf_root/atari800.cfg" "$md_conf_root/atari800/atari800.cfg"
+        # move old config if exists to new location
+        if [[ -f "$md_conf_root/atari800.cfg" ]]; then
+            mv "$md_conf_root/atari800.cfg" "$md_conf_root/atari800/atari800.cfg"
+        fi
+        moveConfigFile "$home/.atari800.cfg" "$md_conf_root/atari800/atari800.cfg"
+
+        # copy launch script (used for unpacking archives)
+        sed "s#EMULATOR#/bin/$md_id#" "$scriptdir/scriptmodules/$md_type/atari800/atari800.sh" >"$md_inst/$md_id.sh"
+        chmod a+x "$md_inst/$md_id.sh"
     fi
-    moveConfigFile "$home/.atari800.cfg" "$md_conf_root/atari800/atari800.cfg"
 
-    addEmulator 1 "atari800" "atari800" "$md_inst/bin/atari800 %ROM%"
-    addEmulator 1 "atari800" "atari5200" "$md_inst/bin/atari800 %ROM%"
+    addEmulator 1 "atari800" "atari800" "$md_inst/atari800.sh %ROM%"
+    addEmulator 1 "atari800" "atari5200" "$md_inst/atari800.sh %ROM%"
     addSystem "atari800"
     addSystem "atari5200"
 }
