@@ -28,11 +28,11 @@ function setup_env() {
         __chroot=0
     fi
 
-    __has_binaries=0
-
     get_platform
     get_os_version
     get_retropie_depends
+
+    [[ -z "$__has_binaries" ]] && __has_binaries=0
 
     __gcc_version=$(gcc -dumpversion)
 
@@ -119,7 +119,8 @@ function get_os_version() {
 
             # we provide binaries for RPI on Raspbian 9
             if isPlatform "rpi" && compareVersions "$__os_debian_ver" gt 8 && compareVersions "$__os_debian_ver" lt 10; then
-                __has_binaries=1
+               # only set __has_binaries if not already set
+               [[ -z "$__has_binaries" ]] && __has_binaries=1
             fi
             ;;
         Devuan)
