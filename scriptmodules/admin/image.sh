@@ -314,11 +314,20 @@ function platform_image() {
     mkdir -p "$dest"
 
     local image="$dest/retropie-${dist}-${__version}-"
-    if [[ "$platform" == "rpi1" ]]; then
-        image+="rpi1_zero"
-    else
-        image+="rpi2_rpi3"
-    fi
+    case "$platform" in
+        rpi1)
+            image+="rpi1_zero"
+            ;;
+        rpi2)
+            image+="rpi2_rpi3"
+            ;;
+        rpi3|rpi4)
+            image+="$platform"
+            ;;
+        *)
+            fatalError "Unknown platform $platform for image building"
+            ;;
+    esac
 
     rp_callModule image create_chroot "$dist"
     rp_callModule image install_rp "$platform"
