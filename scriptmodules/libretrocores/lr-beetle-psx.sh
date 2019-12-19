@@ -13,7 +13,7 @@ rp_module_id="lr-beetle-psx"
 rp_module_desc="PlayStation emulator - Mednafen PSX Port for libretro"
 rp_module_help="ROM Extensions: .bin .cue .cbn .img .iso .m3u .mdf .pbp .toc .z .znx\n\nCopy your PlayStation roms to $romdir/psx\n\nCopy the required BIOS files\n\nscph5500.bin and\nscph5501.bin and\nscph5502.bin to\n\n$biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/beetle-psx-libretro/master/COPYING"
-rp_module_section="opt"
+rp_module_section="opt x86=main"
 rp_module_flags="!arm"
 
 function depends_lr-beetle-psx() {

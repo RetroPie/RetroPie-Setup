@@ -85,6 +85,14 @@ function list_available_bluetooth() {
     local device_name
     local info_text="\n\nSearching ..."
 
+    declare -A registered=()
+    declare -A found=()
+
+    # get an asc array of registered mac addresses
+    while read mac_address; read device_name; do
+        registered+=(["$mac_address"]="$device_name")
+    done < <(list_registered_bluetooth)
+
     # sixaxis: add USB pairing information
     [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="Searching ...\n\nDualShock registration: while this text is visible, unplug the controller, press the PS/SHARE button, and then replug the controller."
 
@@ -92,15 +100,21 @@ function list_available_bluetooth() {
     if hasPackage bluez 5; then
         # sixaxis: reply to authorization challenge on USB cable connect
         while read mac_address; read device_name; do
-            echo "$mac_address"
-            echo "$device_name"
-        done < <(bluez_cmd_bluetooth "default-agent\nscan on" "15" "Authorize service$" "yes" >/dev/null; bluez_cmd_bluetooth "devices" "3" | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/')
+            found+=(["$mac_address"]="$device_name")
+       done < <(bluez_cmd_bluetooth "default-agent\nscan on" "15" "Authorize service$" "yes" >/dev/null; bluez_cmd_bluetooth "devices" "3" | grep "^Device " | cut -d" " -f2,3- | sed 's/ /\n/')
     else
         while read; read mac_address; read device_name; do
-            echo "$mac_address"
-            echo "$device_name"
+            found+=(["$mac_address"]="$device_name")
         done < <(hcitool scan --flush | tail -n +2 | sed 's/\t/\n/g')
     fi
+
+    # display any found addresses that are not already registered
+    for mac_address in "${!found[@]}"; do
+        if [[ -z "${registered[$mac_address]}" ]]; then
+            echo "$mac_address"
+            echo "${found[$mac_address]}"
+        fi
+    done
 }
 
 function list_registered_bluetooth() {

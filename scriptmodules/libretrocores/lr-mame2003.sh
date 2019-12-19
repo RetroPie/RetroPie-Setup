@@ -13,7 +13,7 @@ rp_module_id="lr-mame2003"
 rp_module_desc="Arcade emu - MAME 0.78 port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2003-libretro/master/LICENSE.md"
-rp_module_section="main"
+rp_module_section="main armv6=opt"
 
 function _get_dir_name_lr-mame2003() {
     echo "mame2003"

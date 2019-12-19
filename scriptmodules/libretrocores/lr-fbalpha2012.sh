@@ -13,7 +13,7 @@ rp_module_id="lr-fbalpha2012"
 rp_module_desc="Arcade emu - Final Burn Alpha (0.2.97.30) port for libretro"
 rp_module_help="Previously called lr-fba\n\nROM Extension: .zip\n\nCopy your FBA roms to\n$romdir/fba or\n$romdir/neogeo or\n$romdir/arcade\n\nFor NeoGeo games the neogeo.zip BIOS is required and must be placed in the same directory as your FBA roms."
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/fbalpha2012/master/docs/license.txt"
-rp_module_section="opt"
+rp_module_section="opt armv6=main"
 
 function _update_hook_lr-fbalpha2012() {
     # move from old location and update emulators.cfg
