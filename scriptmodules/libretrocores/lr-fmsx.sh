@@ -12,7 +12,7 @@
 rp_module_id="lr-fmsx"
 rp_module_desc="MSX/MSX2 emu - fMSX port for libretro"
 rp_module_help="ROM Extensions: .rom .mx1 .mx2 .col .dsk .zip\n\nCopy your MSX/MSX2 games to $romdir/msx"
-rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/fmsx-libretro/master/fMSX/fMSX.html"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/fmsx-libretro/master/LICENSE"
 rp_module_section="opt"
 
 function sources_lr-fmsx() {
