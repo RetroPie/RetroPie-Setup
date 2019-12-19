@@ -2,11 +2,13 @@
 
 emulator="./EMULATOR"
 rom="$1"
+shift
+params=("$@")
 
 pushd "${0%/*}" >/dev/null
 
 if [[ -z "$rom" ]]; then
-    "$emulator"
+    "$emulator" "${params[@]}"
 else
     source "../../lib/archivefuncs.sh"
 
@@ -17,7 +19,7 @@ else
         rom="${arch_files[0]}"
     fi
 
-    "$emulator" "$rom"
+    "$emulator" "$rom" "${params[@]}"
     archiveCleanup
 fi
 
