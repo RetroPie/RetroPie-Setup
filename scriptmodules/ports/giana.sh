@@ -11,7 +11,6 @@
 
 rp_module_id="giana"
 rp_module_desc="Giana's Return"
-rp_module_license="NONCOM https://www.gianas-return.de/?page_id=6"
 rp_module_section="opt"
 rp_module_flags="!x86 !mali !kms"
 
