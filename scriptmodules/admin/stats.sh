@@ -46,9 +46,5 @@ function build_stats() {
 }
 
 function upload_stats() {
-    local host="$__upload_host"
-    [[ -z "$host" ]] && host="$__binary_host"
-    local port="$__upload_port"
-    [[ -z "$port" ]] && port=22
-    rsync -av --progress --delay-updates -e "ssh -p $port" "$__tmpdir/stats/" "retropie@$host:stats/"
+    adminRsync "$__tmpdir/stats/" "stats/" --delete
 }
