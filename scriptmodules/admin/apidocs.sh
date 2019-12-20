@@ -51,5 +51,5 @@ function install_apidocs() {
 }
 
 function upload_apidocs() {
-    rsync -av --delete "$__tmpdir/apidocs/" "retropie@$__binary_host:api/"
+    adminRsync "$__tmpdir/apidocs/" "api/" --delete
 }
