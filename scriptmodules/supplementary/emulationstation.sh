@@ -130,6 +130,7 @@ function depends_emulationstation() {
 
     compareVersions "$__os_debian_ver" gt 8 && depends+=(rapidjson-dev)
     isPlatform "x11" && depends+=(gnome-terminal)
+    isPlatform "rpi" && depends+=(omxplayer)
     getDepends "${depends[@]}"
 }
 
@@ -151,6 +152,7 @@ function build_emulationstation() {
     local params=(-DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/)
     # Temporary workaround until GLESv2 support is implemented
     isPlatform "rpi" && isPlatform "mesa" && params+=(-DGL=On)
+    isPlatform "rpi" && params+=(-DRPI=On)
     rpSwap on 1000
     cmake . "${params[@]}"
     make clean
