@@ -1406,3 +1406,29 @@ function getIPAddress() {
     # if an external route was found, report its source address
     [[ -n "$ip_route" ]] && grep -oP "src \K[^\s]+" <<< "$ip_route"
 }
+
+## @fn adminRsync()
+## @param src src folder on local system - eg "$__tmpdir/stats/"
+## @param dest destination folder on remote system - eg "stats/"
+## @param params additional rsync parameters - eg --delete
+## @brief Rsyncs data to remote host for admin modules
+## @details Used to rsync data to our server for admin modules. Default remote
+## user is retropie, host is $__binary_host and default port is 22. These can be overridden with
+## env vars __upload_user __upload_host and __upload_port
+##
+## The default parameters for rsync are "-av --delay-updates" - more can be added via the 3rd+ argument
+function adminRsync() {
+    local src="$1"
+    local dest="$2"
+    shift 2
+    local params=("$@")
+
+    local remote_user="$__upload_user"
+    [[ -z "$remote_user" ]] && remote_user="retropie"
+    local remote_host="$__upload_host"
+    [[ -z "$remote_host" ]] && remote_host="$__binary_host"
+    local remote_port="$__upload_port"
+    [[ -z "$remote_port" ]] && remote_port=22
+
+    rsync -av --delay-updates -e "ssh -p $remote_port" "${params[@]}" "$src" "$remote_user@$remote_host:$dest"
+}

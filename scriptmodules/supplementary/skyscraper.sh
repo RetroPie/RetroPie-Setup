@@ -11,7 +11,7 @@
 
 rp_module_id="skyscraper"
 rp_module_desc="Scraper for EmulationStation by Lars Muldjord"
-rp_module_licence="GPLv3.0 https://raw.githubusercontent.com/muldjord/skyscraper/master/LICENSE"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/muldjord/skyscraper/master/LICENSE"
 rp_module_section="exp"
 
 function depends_skyscraper() {

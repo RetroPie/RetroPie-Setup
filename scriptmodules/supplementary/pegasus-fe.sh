@@ -11,7 +11,7 @@
 
 rp_module_id="pegasus-fe"
 rp_module_desc="Pegasus: A cross platform, customizable graphical frontend (latest alpha release)"
-rp_module_licence="GPL3+ https://raw.githubusercontent.com/mmatyas/pegasus-frontend/master/LICENSE.md"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/mmatyas/pegasus-frontend/master/LICENSE.md"
 rp_module_section="exp"
 rp_module_flags="!mali frontend"
 
