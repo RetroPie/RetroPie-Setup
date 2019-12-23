@@ -57,15 +57,9 @@ function enable_autostart() {
         ln -sf "/usr/local/share/applications/retropie.desktop" "$home/.config/autostart/"
     else
         if [[ "$__os_id" == "Raspbian" ]]; then
-            if [[ "$__chroot" -eq 1 ]]; then
-                mkdir -p /etc/systemd/system/getty@tty1.service.d
-                systemctl set-default multi-user.target
-                ln -fs /etc/systemd/system/autologin@.service /etc/systemd/system/getty.target.wants/getty@tty1.service
-            else
-                # remove any old autologin.conf - we use raspi-config now
-                rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf
-                raspi-config nonint do_boot_behaviour B2
-            fi
+            # remove any old autologin.conf - we use raspi-config now
+            rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf
+            raspi-config nonint do_boot_behaviour B2
         elif [[ "$(cat /proc/1/comm)" == "systemd" ]]; then
             mkdir -p /etc/systemd/system/getty@tty1.service.d/
             cat >/etc/systemd/system/getty@tty1.service.d/autologin.conf <<_EOF_

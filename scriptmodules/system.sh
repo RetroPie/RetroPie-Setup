@@ -352,6 +352,7 @@ function platform_rpi3() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi gles"
+    __qemu_cpu=cortex-a53
 }
 
 function platform_rpi4() {
