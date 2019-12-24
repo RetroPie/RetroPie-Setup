@@ -86,7 +86,7 @@ getAutoConf reicast_input && params+=($(mapInput))
 [[ -n "$AUDIO" ]] && params+=(-config audio:backend=$AUDIO -config audio:disable=0)
 [[ -n "$ROM" ]] && params+=(-config config:image="$ROM")
 if [[ "$AUDIO" == "oss" ]]; then
-    aoss "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
+    aoss "$rootdir/emulators/reicast/bin/reicast" "${params[@]}"
 else
-    "$rootdir/emulators/reicast/bin/reicast" "${params[@]}" >/dev/null
+    "$rootdir/emulators/reicast/bin/reicast" "${params[@]}"
 fi
