@@ -30,8 +30,8 @@ function sources_lr-flycast() {
 function build_lr-flycast() {
     make clean
     if isPlatform "rpi"; then
-        # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
-        MAKEFLAGS="${MAKEFLAGS/\/usr\/lib\/distcc:/}" make platform=rpi
+        # temporarily disable distcc due to segfaults with cross compiler and lto
+        DISTCC_HOSTS="" make platform=rpi
     else
         make
     fi

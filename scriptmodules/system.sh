@@ -51,7 +51,7 @@ function setup_env() {
     # if using distcc, add /usr/lib/distcc to PATH/MAKEFLAGS
     if [[ -n "$DISTCC_HOSTS" ]]; then
         PATH="/usr/lib/distcc:$PATH"
-        MAKEFLAGS+=" PATH=/usr/lib/distcc:$PATH"
+        MAKEFLAGS+=" PATH=$PATH"
     fi
 
     # test if we are in a chroot
