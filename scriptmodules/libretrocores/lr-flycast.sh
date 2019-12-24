@@ -39,8 +39,8 @@ function build_lr-flycast() {
             params+=("platform=rpi")
         fi
     fi
-    # MAKEFLAGS replace removes any distcc from path, as it segfaults with cross compiler and lto
-    MAKEFLAGS="${MAKEFLAGS/\/usr\/lib\/distcc:/}" make "${params[@]}"
+    # temporarily disable distcc due to segfaults with cross compiler and lto
+    DISTCC_HOSTS="" make "${params[@]}"
     md_ret_require="$md_build/flycast_libretro.so"
 }
 
