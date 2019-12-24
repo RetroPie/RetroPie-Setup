@@ -107,6 +107,7 @@ function chroot_build_builder() {
                 MAKEFLAGS="$makeflags" \
                 DISTCC_HOSTS="$distcc_hosts" \
                 __platform="$platform" \
+                __has_binaries="$__chroot_has_binaries" \
                 /home/pi/RetroPie-Setup/retropie_packages.sh builder "$@"
         done
 
