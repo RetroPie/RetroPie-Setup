@@ -62,7 +62,7 @@ function sources_sdl1() {
 function build_sdl1() {
     cd libsdl1.2-$(get_pkg_ver_sdl1 base)
     dpkg-buildpackage
-    local dest="$__tmpdir/archives/$__os_codename/$__platform"
+    local dest="$__tmpdir/archives/$__binary_path"
     mkdir -p "$dest"
     cp ../*.deb "$dest/"
 }

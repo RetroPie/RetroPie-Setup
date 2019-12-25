@@ -19,6 +19,7 @@ function depends_lr-parallel-n64() {
     local depends=()
     isPlatform "x11" && depends+=(libgl1-mesa-dev)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "kms" && isPlatform "gles" && depends+=(libgles2-mesa-dev)
     getDepends "${depends[@]}"
 }
 
@@ -28,19 +29,24 @@ function sources_lr-parallel-n64() {
     # build from ab155da1 due to https://github.com/libretro/parallel-n64/issues/544
     isPlatform "arm" && commit="ab155da1"
     gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git "$branch" "$commit"
+    # avoid conflicting typedefs for GLfloat on rpi4/kms
+    isPlatform "kms" && isPlatform "gles" && sed -i "/^typedef GLfloat GLdouble/d" "$md_build/libretro-common/include/glsm/glsm.h"
 }
 
 function build_lr-parallel-n64() {
     rpSwap on 1000
-    make clean
     local params=()
-    if isPlatform "rpi" || isPlatform "odroid-c1"; then
+    if isPlatform "rpi" || isPlatform "odroid-c1" && ! isPlatform "kms"; then
         params+=(platform="$__platform")
-    elif isPlatform "tinker"; then
-        params+=(CPUFLAGS="-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE")
-        params+=(GLES=1 HAVE_NEON=1 WITH_DYNAREC=arm)
-        params+=(GL_LIB:=-lGLESv2)
+    else
+        isPlatform "gles" && params+=(GLES=1 GL_LIB:=-lGLESv2)
+        if isPlatform "arm"; then
+            params+=(CPUFLAGS="-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE")
+            params+=(WITH_DYNAREC=arm)
+            isPlatform "neon" && params+=(HAVE_NEON=1)
+        fi
     fi
+    make clean
     make "${params[@]}"
     rpSwap off
     md_ret_require="$md_build/parallel_n64_libretro.so"

@@ -20,11 +20,19 @@ function setup_env() {
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
-    __has_binaries=0
+    # test if we are in a chroot
+    if [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]; then
+        [[ -z "$QEMU_CPU" && -n "$__qemu_cpu" ]] && export QEMU_CPU=$__qemu_cpu
+        __chroot=1
+    else
+        __chroot=0
+    fi
 
     get_platform
     get_os_version
     get_retropie_depends
+
+    [[ -z "$__has_binaries" ]] && __has_binaries=0
 
     __gcc_version=$(gcc -dumpversion)
 
@@ -36,7 +44,9 @@ function setup_env() {
 
     # set location of binary downloads
     __binary_host="files.retropie.org.uk"
-    [[ "$__has_binaries" -eq 1 ]] && __binary_url="https://$__binary_host/binaries/$__os_codename/$__platform"
+    __binary_path="$__os_codename/$__platform"
+    isPlatform "kms" && __binary_path+="/kms"
+    __binary_url="https://$__binary_host/binaries/$__binary_path"
 
     __archive_url="https://files.retropie.org.uk/archives"
 
@@ -107,9 +117,10 @@ function get_os_version() {
                 __platform_flags+=" xbian"
             fi
 
-            # we provide binaries for RPI on Raspbian 9/10
-            if isPlatform "rpi" && compareVersions "$__os_debian_ver" gt 8 && compareVersions "$__os_debian_ver" lt 11; then
-                __has_binaries=1
+            # we provide binaries for RPI on Raspbian 9
+            if isPlatform "rpi" && compareVersions "$__os_debian_ver" gt 8 && compareVersions "$__os_debian_ver" lt 10; then
+               # only set __has_binaries if not already set
+               [[ -z "$__has_binaries" ]] && __has_binaries=1
             fi
             ;;
         Devuan)
@@ -218,16 +229,22 @@ function get_retropie_depends() {
 function get_rpi_video() {
     local pkgconfig="/opt/vc/lib/pkgconfig"
 
+    if [[ -z "$__has_kms" && "$__chroot" -eq 1 ]]; then
+        # in chroot, use kms by default for rpi4 target
+        isPlatform "rpi4" && __has_kms=1
+    fi
+
     # detect driver via inserted module / platform driver setup
-    if [[ -d "/sys/module/vc4" ]]; then
+    if [[ -d "/sys/module/vc4" || "$__has_kms" -eq 1 ]]; then
         __platform_flags+=" mesa kms"
         [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __platform_flags+=" dispmanx"
     else
         __platform_flags+=" videocore dispmanx"
     fi
 
-    # use our supplied fallback pkgconfig if necessary
-    [[ ! -d "$pkgconfig" ]] && pkgconfig="$scriptdir/pkgconfig"
+    # delete legacy pkgconfig that conflicts with Mesa (may be installed via rpi-update)
+    # see: https://github.com/raspberrypi/userland/pull/585
+    rm -rf $pkgconfig/{egl.pc,glesv2.pc,vg.pc}
 
     # set pkgconfig path for vendor libraries
     export PKG_CONFIG_PATH="$pkgconfig"
@@ -255,6 +272,9 @@ function get_platform() {
                             ;;
                         2)
                             __platform="rpi3"
+                            ;;
+                        3)
+                            __platform="rpi4"
                             ;;
                     esac
                 fi
@@ -294,6 +314,14 @@ function get_platform() {
         fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
     fi
 
+    # check if we wish to target kms for platform
+    if [[ -z "$__has_kms" ]]; then
+        iniConfig " = " '"' "$configdir/all/retropie.cfg"
+        iniGet "force_kms"
+        [[ "$ini_value" == 1 ]] && __has_kms=1
+        [[ "$ini_value" == 0 ]] && __has_kms=0
+    fi
+
     platform_${__platform}
     [[ -z "$__default_cxxflags" ]] && __default_cxxflags="$__default_cflags"
 }
@@ -325,6 +353,13 @@ function platform_rpi3() {
     __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi gles"
     __qemu_cpu=cortex-a53
+}
+
+function platform_rpi4() {
+    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j2"
+    __platform_flags="arm armv8 neon rpi gles gles3"
 }
 
 function platform_odroid-c1() {
@@ -370,7 +405,12 @@ function platform_x86() {
     __default_cflags="-O2 -march=native"
     __default_asflags=""
     __default_makeflags="-j$(nproc)"
-    __platform_flags="x11 gl"
+    __platform_flags="gl"
+    if [[ "$__has_kms" -eq 1 ]]; then
+        __platform_flags+=" kms"
+    else
+        __platform_flags+=" x11"
+    fi
 }
 
 function platform_generic-x11() {

@@ -301,7 +301,7 @@ function rp_hasBinary() {
     # threaded C++ apps on Raspbian (armv6 userland)
     if [[ "$__os_id" != "Raspbian" ]] && ! isPlatform "armv6"; then
         case "$id" in
-            emulationstation|zdoom|lr-dinothawr|lr-ppsspp|ppsspp)
+            emulationstation|lzdoom|lr-dinothawr|lr-ppsspp|ppsspp)
                 return 1
                 ;;
         esac
@@ -336,7 +336,7 @@ function rp_createBin() {
     fi
 
     local archive="$md_id.tar.gz"
-    local dest="$__tmpdir/archives/$__os_codename/$__platform/$md_type"
+    local dest="$__tmpdir/archives/$__binary_path/$md_type"
     rm -f "$dest/$archive"
     mkdir -p "$dest"
     tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"

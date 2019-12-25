@@ -14,7 +14,7 @@ rp_module_desc="Atari 8-bit/800/5200 emulator"
 rp_module_help="ROM Extensions: .a52 .bas .bin .car .xex .atr .xfd .dcm .atr.gz .xfd.gz\n\nCopy your Atari800 games to $romdir/atari800\n\nCopy your Atari 5200 roms to $romdir/atari5200 You need to copy the Atari 800/5200 BIOS files (5200.ROM, ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/atari800/atari800/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags="!mali"
 
 function depends_atari800() {
     local depends=(libsdl1.2-dev autoconf automake zlib1g-dev libpng-dev)
@@ -32,7 +32,7 @@ function sources_atari800() {
 function build_atari800() {
     local params=()
     ./autogen.sh
-    isPlatform "rpi" && params+=(--target=rpi)
+    isPlatform "videocore" && params+=(--target=rpi)
     ./configure --prefix="$md_inst" ${params[@]}
     make clean
     make
@@ -45,6 +45,9 @@ function install_atari800() {
 }
 
 function configure_atari800() {
+    local params=()
+    isPlatform "kms" && params+=("-fullscreen" "-fs-width %XRES%" "-fs-height %YRES%")
+
     mkRomDir "atari800"
     mkRomDir "atari5200"
 
@@ -62,8 +65,8 @@ function configure_atari800() {
         chmod a+x "$md_inst/$md_id.sh"
     fi
 
-    addEmulator 1 "atari800" "atari800" "$md_inst/atari800.sh %ROM%"
-    addEmulator 1 "atari800" "atari5200" "$md_inst/atari800.sh %ROM%"
+    addEmulator 1 "atari800" "atari800" "$md_inst/atari800.sh %ROM% ${params[*]}"
+    addEmulator 1 "atari800" "atari5200" "$md_inst/atari800.sh %ROM% ${params[*]}"
     addSystem "atari800"
     addSystem "atari5200"
 }
