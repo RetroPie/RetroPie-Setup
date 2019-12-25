@@ -102,6 +102,11 @@ function chroot_build_builder() {
         fi
 
         for platform in $platforms; do
+            if [[ "$dist" == "stretch" && "$platform" == "rpi4" ]]; then
+                printMsgs "heading" "Skipping platform $platform on $dist ..."
+                continue
+            fi
+
             rp_callModule image chroot "$md_build/$dist" \
                 sudo \
                 MAKEFLAGS="$makeflags" \
