@@ -1,0 +1,20 @@
+diff --git a/shell/linux/Makefile b/shell/linux/Makefile
+index 96c2e58..a975698 100644
+--- a/shell/linux/Makefile
++++ b/shell/linux/Makefile
+@@ -185,9 +185,13 @@ else ifneq (,$(findstring lincpp,$(platform)))
+ else ifneq (,$(findstring rpi4,$(platform)))
+ 
+     CFLAGS += -D TARGET_BEAGLE -D TARGET_LINUX_ARMELv7 -DARM_HARDFP -fsingle-precision-constant
+-    CFLAGS += -DGLES3
++    ifneq (,$(findstring sdl,$(platform)))
++        USE_SDL := 1
++    else
++        CFLAGS += -DGLES3
++        USE_X11 := 1
++    endif
+ 
+-    USE_X11 := 1
+     USE_GLES := 1
+ 
+     MFLAGS += -march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard

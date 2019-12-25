@@ -16,6 +16,7 @@ RES="$3"
 RSP_PLUGIN="$4"
 [[ -n "$RES" ]] && RES="--resolution $RES"
 [[ -z "$RSP_PLUGIN" ]] && RSP_PLUGIN="mupen64plus-rsp-hle"
+WINDOW_MODE="--fullscreen $RES"
 
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
@@ -431,10 +432,13 @@ getAutoConf mupen64plus_compatibility_check && testCompatibility
 getAutoConf mupen64plus_texture_packs && useTexturePacks
 
 if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* ]]; then
+    WINDOW_MODE="--windowed $RES"
+    SDL_VIDEO_RPI_SCALE_MODE=1
     # If a raspberry pi is used lower resolution to 320x240 and enable SDL dispmanx scaling mode 1
-    SDL_VIDEO_RPI_SCALE_MODE=1 "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --windowed $RES --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio ${AUDIO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
 elif [[ -e /opt/vero3/lib/libMali.so  ]]; then
-    SDL_AUDIODRIVER=alsa "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio mupen64plus-audio-sdl.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
+    SDL_AUDIODRIVER=alsa
 else
-    SDL_AUDIODRIVER=pulse "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio mupen64plus-audio-sdl.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
+    SDL_AUDIODRIVER=pulse
 fi
+
+SDL_AUDIODRIVER=${SDL_AUDIODRIVER} SDL_VIDEO_RPI_SCALE_MODE=${SDL_VIDEO_RPI_SCALE_MODE} "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd ${WINDOW_MODE} --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio ${AUDIO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"

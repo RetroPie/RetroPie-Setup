@@ -16,11 +16,7 @@ rp_module_section=""
 rp_module_flags=""
 
 function get_ver_sdl2() {
-    if isPlatform "x11" || compareVersions "$__os_debian_ver" ge 10; then
-        echo "2.0.9"
-    else
-        echo "2.0.8"
-    fi
+    echo "2.0.10"
 }
 
 function get_pkg_ver_sdl2() {
@@ -35,48 +31,84 @@ function get_arch_sdl2() {
     echo "$(dpkg --print-architecture)"
 }
 
-function depends_sdl2() {
+function _list_depends_sdl2() {
     # Dependencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
     # already covered by the build-essential package retropie relies on.
-    local depends=(devscripts debhelper dh-autoreconf libasound2-dev libudev-dev libibus-1.0-dev libdbus-1-dev fcitx-libs-dev)
+    local depends=(libasound2-dev libudev-dev libibus-1.0-dev libdbus-1-dev fcitx-libs-dev libsndio-dev)
     # these were removed by a PR for vero4k support (cannot test). Needed though at least for for RPI and X11
-    ! isPlatform "vero4k" && depends+=(libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev libxxf86vm-dev libgl1-mesa-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    ! isPlatform "vero4k" && depends+=(libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxkbcommon-dev libxrandr-dev libxss-dev libxt-dev libxv-dev libxxf86vm-dev libgl1-mesa-dev)
+    isPlatform "gles" || isPlatform "gl" && depends+=(libegl1-mesa-dev libgles2-mesa-dev)
+    isPlatform "gl" || isPlatform "rpi" && depends+=(libgl1-mesa-dev libglu1-mesa-dev)
+    isPlatform "kms" || isPlatform "rpi" && depends+=(libdrm-dev libgbm-dev)
+    isPlatform "x11" && depends+=(libpulse-dev libwayland-dev)
+
+    echo "${depends[@]}"
+}
+
+function depends_sdl2() {
+    # install additional packages that are needed, but may be unsuitable as debian package dependencies due to distribution oddities
+    local depends=(devscripts debhelper dh-autoreconf)
+
     isPlatform "mali" && depends+=(mali-fbdev)
-    isPlatform "kms" && depends+=(libdrm-dev libgbm-dev)
-    isPlatform "x11" && depends+=(libpulse-dev libegl1-mesa-dev libgles2-mesa-dev libglu1-mesa-dev)
+    isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
-    getDepends "${depends[@]}"
+
+    getDepends $(_list_depends_sdl2) "${depends[@]}"
 }
 
 function sources_sdl2() {
     local ver="$(get_ver_sdl2)"
     local pkg_ver="$(get_pkg_ver_sdl2)"
+    local branch="retropie-${ver}"
 
-    local branch="release-$ver"
-    isPlatform "rpi" && branch="rpi-$ver"
-    isPlatform "mali" && branch="mali-$ver"
-    isPlatform "kms" && branch="kms-$ver"
-    isPlatform "vero4k" && branch="mali-$ver"
-
-    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror.git "$branch"
+    gitPullOrClone "$md_build/$pkg_ver" https://github.com/psyke83/SDL-mirror "$branch"
     cd "$pkg_ver"
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
 }
 
 function build_sdl2() {
+    local conf_flags=()
+    local conf_depends=( $(_list_depends_sdl2) )
+
     cd "$(get_pkg_ver_sdl2)"
 
     if isPlatform "vero4k"; then
         # remove harmful (mesa) and un-needed (X11) dependancies from debian package control
         sed -i '/^\s*lib.*x\|mesa/ d' ./debian/control
         # disable vulkan and X11 video support
-        sed -i 's/confflags =/confflags = --disable-video-vulkan --disable-video-x11 \\\n/' ./debian/rules
+        conf_flags+=("--disable-video-x11")
+    fi
+    ! isPlatform "x11" && conf_flags+=("--disable-video-vulkan")
+    isPlatform "mali" && conf_flags+=("--enable-video-mali" "--disable-video-opengl")
+    isPlatform "rpi" && conf_flags+=("--enable-video-rpi")
+    isPlatform "kms" || isPlatform "rpi" && conf_flags+=("--enable-video-kmsdrm")
+
+    # format debian package dependencies into comma-separated list
+    conf_depends=( "${conf_depends[@]/%/,}" )
+
+    sed -i 's/libgl1-mesa-dev,/libgl1-mesa-dev, '"${conf_depends[*]}"'/' ./debian/control
+    sed -i 's/confflags =/confflags = '"${conf_flags[*]}"' \\\n/' ./debian/rules
+
+    if isPlatform "rpi"; then
+        # move proprietary videocore headers
+        sed -i -e 's/\"EGL/\"brcmEGL/g' -e 's/\"GLES/\"brcmGLES/g' ./src/video/raspberry/SDL_rpivideo.h
+        mv /opt/vc/include/EGL /opt/vc/include/brcmEGL
+        mv /opt/vc/include/GLES /opt/vc/include/brcmGLES
+        mv /opt/vc/include/GLES2 /opt/vc/include/brcmGLES2
     fi
 
-    dpkg-buildpackage
+    # using the videocore pkgconfig will cause unwanted linkage, so disable it!
+    PKG_CONFIG_PATH= dpkg-buildpackage -b
+
+    if isPlatform "rpi"; then
+        # restore proprietary headers
+        mv /opt/vc/include/brcmEGL /opt/vc/include/EGL
+        mv /opt/vc/include/brcmGLES /opt/vc/include/GLES
+        mv /opt/vc/include/brcmGLES2 /opt/vc/include/GLES2
+    fi
+
     md_ret_require="$md_build/libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb"
-    local dest="$__tmpdir/archives/$__os_codename/$__platform"
+    local dest="$__tmpdir/archives/$__binary_path"
     mkdir -p "$dest"
     cp ../*.deb "$dest/"
 }

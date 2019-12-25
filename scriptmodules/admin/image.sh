@@ -100,19 +100,22 @@ function install_rp_image() {
         sed -i "s/quiet/quiet loglevel=3 consoleblank=0 plymouth.enable=0 quiet/" "$chroot/boot/cmdline.txt"
     fi
 
-    # set default GPU mem, and overscan_scale so ES scales to overscan settings.
+    # set default GPU mem (videocore only) and overscan_scale so ES scales to overscan settings.
     iniConfig "=" "" "$chroot/boot/config.txt"
-    iniSet "gpu_mem_256" 128
-    iniSet "gpu_mem_512" 256
-    iniSet "gpu_mem_1024" 256
+    if ! [[ "$platform" =~ rpi.*kms|rpi4 ]]; then
+        iniSet "gpu_mem_256" 128
+        iniSet "gpu_mem_512" 256
+        iniSet "gpu_mem_1024" 256
+    fi
     iniSet "overscan_scale" 1
 
+    [[ -z "$__chroot_branch" ]] && __chroot_branch="master"
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
 cd
 sudo apt-get update
 sudo apt-get -y install git dialog xmlstarlet joystick
-git clone https://github.com/RetroPie/RetroPie-Setup.git
+git clone -b "$__chroot_branch" https://github.com/RetroPie/RetroPie-Setup.git
 cd RetroPie-Setup
 modules=(
     'raspbiantools apt_upgrade'
@@ -129,7 +132,8 @@ modules=(
     'xpad'
 )
 for module in "\${modules[@]}"; do
-    sudo __platform=$platform __nodialog=1 ./retropie_packages.sh \$module
+    # rpi1 platform would use QEMU_CPU set to arm1176, but it seems buggy currently (lots of segfaults)
+    sudo __platform=$platform __nodialog=1 __has_binaries=$__chroot_has_binaries ./retropie_packages.sh \$module
 done
 
 rm -rf tmp
@@ -310,11 +314,20 @@ function platform_image() {
     mkdir -p "$dest"
 
     local image="$dest/retropie-${dist}-${__version}-"
-    if [[ "$platform" == "rpi1" ]]; then
-        image+="rpi1_zero"
-    else
-        image+="rpi2_rpi3"
-    fi
+    case "$platform" in
+        rpi1)
+            image+="rpi1_zero"
+            ;;
+        rpi2)
+            image+="rpi2_rpi3"
+            ;;
+        rpi3|rpi4)
+            image+="$platform"
+            ;;
+        *)
+            fatalError "Unknown platform $platform for image building"
+            ;;
+    esac
 
     rp_callModule image create_chroot "$dist"
     rp_callModule image install_rp "$platform"
