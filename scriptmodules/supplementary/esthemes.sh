@@ -229,6 +229,12 @@ function gui_esthemes() {
         'KALEL1981 Super-Retroboy'
         'xovox RetroCRT-240p'
         'xovox RetroCRT-240p-Vertical'
+        'arcadeforge push-a'
+        'arcadeforge push-a-v'
+        'arcadeforge pixel-heaven'
+        'arcadeforge pixel-heaven-text'
+        'arcadeforge 240p_Bubblegum'
+        'arcadeforge 240p-honey'
     )
     while true; do
         local theme
