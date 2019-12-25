@@ -300,7 +300,7 @@ function all_image() {
     local platform
     local image
     local dist="$1"
-    for platform in rpi1 rpi2; do
+    for platform in rpi1 rpi2 rpi4; do
         platform_image "$platform" "$dist"
     done
 }
@@ -308,7 +308,12 @@ function all_image() {
 function platform_image() {
     local platform="$1"
     local dist="$2"
-    [[ -z "$platform" ]] && exit
+    [[ -z "$platform" ]] && return 1
+
+    if [[ "$dist" == "stretch" && "$platform" == "rpi4" ]]; then
+        printMsgs "console" "Platform $platform on $dist is unsupported."
+        return 1
+    fi
 
     local dest="$__tmpdir/images"
     mkdir -p "$dest"
