@@ -122,7 +122,7 @@ function install_sdl2() {
     remove_old_sdl2
     # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
     if ! dpkg -i libsdl2-2.0-0_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb; then
-        apt-get -y -f install
+        apt-get -y -f --no-install-recommends install
     fi
     echo "libsdl2-dev hold" | dpkg --set-selections
 }

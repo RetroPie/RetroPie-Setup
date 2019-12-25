@@ -70,7 +70,7 @@ function build_sdl1() {
 function install_sdl1() {
     # if the packages don't install completely due to missing dependencies the apt-get -y -f install will correct it
     if ! dpkg -i libsdl1.2debian_$(get_pkg_ver_sdl1)_armhf.deb libsdl1.2-dev_$(get_pkg_ver_sdl1)_armhf.deb; then
-        apt-get -y -f install
+        apt-get -y -f --no-install-recommends install
     fi
     echo "libsdl1.2-dev hold" | dpkg --set-selections
 }
