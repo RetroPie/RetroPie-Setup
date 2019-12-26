@@ -22,6 +22,10 @@ function depends_love-0.10.2() {
 
 function sources_love-0.10.2() {
     hg clone https://bitbucket.org/rude/love/#0.10.2 "$md_build"
+    # libluajit-5.1-dev in buster (and also on Ubuntu 18.04+) still has
+    # LUA_VERSION_NUM defined as 501 but requires the newer luaL_Reg named struct.
+    # adjusting the compatibility code #if to check for LUA_VERSION_NUM >= 501 fixes this.
+    sed -i "s/LUA_VERSION_NUM > 501/LUA_VERSION_NUM >= 501/" "$md_build/src/libraries/luasocket/libluasocket/lua.h"
 }
 
 function build_love-0.10.2() {
