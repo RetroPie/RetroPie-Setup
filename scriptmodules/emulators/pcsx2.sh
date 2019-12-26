@@ -38,6 +38,9 @@ function depends_pcsx2() {
         # On Ubuntu, add the PCSX2 PPA to get the latest version
         [[ -n "${__os_ubuntu_ver}" ]] && add-apt-repository -y ppa:pcsx2-team/pcsx2-daily
         dpkg --add-architecture i386
+        # For some reason, this dependency is not explicity, and can lead to broken system state
+        local depends=(libjack-jackd2-0:i386)
+        getDepends "${depends[@]}"
     else
         rm -f /etc/apt/sources.list.d/pcsx2-team-ubuntu-pcsx2-daily-*.list
         apt-key del "D7B4 49CF E17E 659E 5A12  EE8E DD6E EEA2 BD74 7717" >/dev/null  
