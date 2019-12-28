@@ -46,7 +46,8 @@ function setup_env() {
     __binary_host="files.retropie.org.uk"
     __binary_path="$__os_codename/$__platform"
     isPlatform "kms" && __binary_path+="/kms"
-    __binary_url="https://$__binary_host/binaries/$__binary_path"
+    __binary_base_url="https://$__binary_host/binaries"
+    __binary_url="$__binary_base_url/$__binary_path"
 
     __archive_url="https://files.retropie.org.uk/archives"
 
