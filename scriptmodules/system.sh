@@ -44,9 +44,10 @@ function setup_env() {
 
     # set location of binary downloads
     __binary_host="files.retropie.org.uk"
+    __binary_base_url="https://$__binary_host/binaries"
+
     __binary_path="$__os_codename/$__platform"
     isPlatform "kms" && __binary_path+="/kms"
-    __binary_base_url="https://$__binary_host/binaries"
     __binary_url="$__binary_base_url/$__binary_path"
 
     __archive_url="https://files.retropie.org.uk/archives"
@@ -91,7 +92,7 @@ function get_os_version() {
     __os_desc="${os[1]}"
     __os_release="${os[2]}"
     __os_codename="${os[3]}"
-    
+
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
@@ -202,7 +203,7 @@ function get_os_version() {
             error="Unsupported OS"
             ;;
     esac
-    
+
     [[ -n "$error" ]] && fatalError "$error\n\n$(lsb_release -idrc)"
 
     # add 32bit/64bit to platform flags
@@ -441,4 +442,3 @@ function platform_vero4k() {
     __default_makeflags="-j4"
     __platform_flags="arm armv7 neon vero4k gles"
 }
-
