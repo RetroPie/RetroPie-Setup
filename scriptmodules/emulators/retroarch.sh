@@ -56,7 +56,7 @@ function build_retroarch() {
     fi
     isPlatform "gles" && params+=(--enable-opengles)
     isPlatform "rpi" && isPlatform "mesa" && params+=(--disable-videocore)
-     # Temporarily block dispmanx support for fkms until upstream support is fixed
+    # Temporarily block dispmanx support for fkms until upstream support is fixed
     isPlatform "dispmanx" && ! isPlatform "kms" && params+=(--enable-dispmanx --disable-opengl1)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
     isPlatform "kms" && params+=(--enable-kms --enable-egl)
@@ -108,7 +108,7 @@ function install_xmb_monochrome_assets_retroarch() {
     local dir="$configdir/all/retroarch/assets"
     [[ -d "$dir/.git" ]] && return
     [[ ! -d "$dir" ]] && mkUserDir "$dir"
-    downloadAndExtract "$__archive_url/retroarch-xmb-monochrome.tar.gz" "$dir"
+    downloadAndExtract "$__binary_base_url/retroarch-xmb-monochrome.tar.gz" "$dir"
     chown -R $user:$user "$dir"
 }
 
@@ -214,6 +214,7 @@ function configure_retroarch() {
 
     # rgui by default
     iniSet "menu_driver" "rgui"
+    iniSet "rgui_aspect_ratio_lock" "2"
 
     # hide online updater menu options and the restart option
     iniSet "menu_show_core_updater" "false"
