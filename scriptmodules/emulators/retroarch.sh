@@ -104,20 +104,20 @@ function update_assets_retroarch() {
     chown -R $user:$user "$dir"
 }
 
-function install_xmb_monochrome_assets_retroarch() {
+function install_minimal_assets_retroarch() {
     local dir="$configdir/all/retroarch/assets"
     [[ -d "$dir/.git" ]] && return
     [[ ! -d "$dir" ]] && mkUserDir "$dir"
-    downloadAndExtract "$__binary_base_url/retroarch-xmb-monochrome.tar.gz" "$dir"
+    downloadAndExtract "$__binary_base_url/retroarch-minimal-assets.tar.gz" "$dir"
     chown -R $user:$user "$dir"
 }
 
-function _package_xmb_monochrome_assets_retroarch() {
+function _package_minimal_assets_retroarch() {
     gitPullOrClone "$md_build/assets" https://github.com/libretro/retroarch-assets.git
     mkdir -p "$__tmpdir/archives"
-    local archive="$__tmpdir/archives/retroarch-xmb-monochrome.tar.gz"
+    local archive="$__tmpdir/archives/retroarch-minimal-assets.tar.gz"
     rm -f "$archive"
-    tar cvzf "$archive" -C "$md_build/assets" xmb/monochrome
+    tar cvzf "$archive" -C "$md_build/assets" ozone menu_widgets xmb/monochrome
 }
 
 function configure_retroarch() {
@@ -140,7 +140,7 @@ function configure_retroarch() {
     update_shaders_retroarch
 
     # install minimal assets
-    install_xmb_monochrome_assets_retroarch
+    install_minimal_assets_retroarch
 
     local config="$(mktemp)"
 
