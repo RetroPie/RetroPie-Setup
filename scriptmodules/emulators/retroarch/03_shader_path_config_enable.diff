@@ -1,0 +1,97 @@
+diff --git a/configuration.c b/configuration.c
+index 0c8076d..ff0a0d2 100644
+--- a/configuration.c
++++ b/configuration.c
+@@ -1209,6 +1209,8 @@ static struct config_path_setting *populate_settings_path(settings_t *settings,
+          settings->paths.path_core_options, false, NULL, true);
+    SETTING_PATH("libretro_info_path",
+          settings->paths.path_libretro_info, false, NULL, true);
++   SETTING_PATH("video_shader",
++          settings->paths.path_shader, false, NULL, true);
+    SETTING_PATH("content_database_path",
+          settings->paths.path_content_database, false, NULL, true);
+    SETTING_PATH("cheat_database_path",
+@@ -2225,6 +2227,7 @@ void config_set_defaults(void)
+    *settings->paths.path_content_image_history   = '\0';
+    *settings->paths.path_content_video_history   = '\0';
+    *settings->paths.path_cheat_settings    = '\0';
++   *settings->paths.path_shader   = '\0';
+ #ifndef IOS
+    *settings->arrays.bundle_assets_src = '\0';
+    *settings->arrays.bundle_assets_dst = '\0';
+@@ -4102,6 +4105,10 @@ bool config_save_overrides(int override_type)
+ 
+       for (i = 0; i < (unsigned)path_settings_size; i++)
+       {
++         /* blacklist video_shader, better handled by shader presets*/
++         if (string_is_equal(path_settings[i].ident, "video_shader"))
++            continue;
++
+          if (!string_is_equal(path_settings[i].ptr, path_overrides[i].ptr))
+             config_set_path(conf, path_overrides[i].ident,
+                   path_overrides[i].ptr);
+diff --git a/configuration.h b/configuration.h
+index 5be7863..112bf2f 100644
+--- a/configuration.h
++++ b/configuration.h
+@@ -667,6 +667,7 @@ typedef struct settings
+       char path_libretro_info[PATH_MAX_LENGTH];
+       char path_cheat_settings[PATH_MAX_LENGTH];
+       char path_font[PATH_MAX_LENGTH];
++      char path_shader[PATH_MAX_LENGTH];
+       char path_rgui_theme_preset[PATH_MAX_LENGTH];
+ 
+       char directory_audio_filter[PATH_MAX_LENGTH];
+diff --git a/retroarch.c b/retroarch.c
+index a79bc98..c86f2cd 100644
+--- a/retroarch.c
++++ b/retroarch.c
+@@ -24057,6 +24057,7 @@ static bool retroarch_load_shader_preset_internal(
+ {
+    unsigned i;
+    char *shader_path = (char*)malloc(PATH_MAX_LENGTH);
++   settings_t *settings = configuration_settings;
+ 
+    static enum rarch_shader_type types[] =
+    {
+@@ -24084,11 +24085,13 @@ static bool retroarch_load_shader_preset_internal(
+          if (string_is_empty(special_name))
+             break;
+ 
+-         fill_pathname_join(shader_path, shader_directory, special_name, PATH_MAX_LENGTH);
+-         strlcat(shader_path,
+-               video_shader_get_preset_extension(types[i]),
+-               PATH_MAX_LENGTH);
+-      }
++         if (strcmp(special_name, "config")!=0) {
++            fill_pathname_join(shader_path, shader_directory, special_name, PATH_MAX_LENGTH);
++            strlcat(shader_path, video_shader_get_preset_extension(types[i]), PATH_MAX_LENGTH);
++         } else {
++             strlcpy(shader_path, settings->paths.path_shader, PATH_MAX_LENGTH);
++         }
++       }
+ 
+       if (!path_is_valid(shader_path))
+          continue;
+@@ -24112,6 +24115,7 @@ static bool retroarch_load_shader_preset_internal(
+  * Tries to load a supported core-, game-, folder-specific or global
+  * shader preset from its respective location:
+  *
++ * config:          preset from the configuration file
+  * global:          $SHADER_DIR/presets/global.$PRESET_EXT
+  * core-specific:   $SHADER_DIR/presets/$CORE_NAME/$CORE_NAME.$PRESET_EXT
+  * folder-specific: $SHADER_DIR/presets/$CORE_NAME/$FOLDER_NAME.$PRESET_EXT
+@@ -24185,6 +24189,13 @@ static bool retroarch_load_shader_preset(void)
+       goto success;
+    }
+ 
++   if (retroarch_load_shader_preset_internal(shader_directory, NULL,
++         "config"))
++   {
++      RARCH_LOG("[Shaders]: configuration file shader preset found.\n");
++      goto success;
++   }
++
+    free(shader_directory);
+    return false;
+ 

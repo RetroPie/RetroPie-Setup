@@ -22,6 +22,7 @@ function depends_retroarch() {
     isPlatform "mali" && depends+=(mali-fbdev)
     isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
+    isPlatform "kms" && depends+=(libgbm-dev)
 
     if compareVersions "$__os_debian_ver" ge 9; then
         depends+=(libavcodec-dev libavformat-dev libavdevice-dev)
@@ -35,15 +36,13 @@ function depends_retroarch() {
     fi
 
     getDepends "${depends[@]}"
-
-    addUdevInputRules
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.7.6
+    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.7.9.2
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
-    applyPatch "$md_data/03_disable_udev_sort.diff"
+    applyPatch "$md_data/03_shader_path_config_enable.diff"
 }
 
 function build_retroarch() {
@@ -56,14 +55,15 @@ function build_retroarch() {
         params+=(--disable-ffmpeg)
     fi
     isPlatform "gles" && params+=(--enable-opengles)
-    # Temporarily block dispmanx support for fkms until upstream support is fixed
-    isPlatform "dispmanx" && ! isPlatform "kms" && params+=(--enable-dispmanx)
     isPlatform "rpi" && isPlatform "mesa" && params+=(--disable-videocore)
+    # Temporarily block dispmanx support for fkms until upstream support is fixed
+    isPlatform "dispmanx" && ! isPlatform "kms" && params+=(--enable-dispmanx --disable-opengl1)
     isPlatform "mali" && params+=(--enable-mali_fbdev)
-    isPlatform "kms" && params+=(--enable-kms)
+    isPlatform "kms" && params+=(--enable-kms --enable-egl)
     isPlatform "arm" && params+=(--enable-floathard)
     isPlatform "neon" && params+=(--enable-neon)
     isPlatform "x11" && params+=(--enable-vulkan)
+    ! isPlatform "x11" && params+=(--disable-vulkan --disable-wayland)
     isPlatform "vero4k" && params+=(--enable-mali_fbdev --with-opengles_libs='-L/opt/vero3/lib')
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
@@ -104,24 +104,26 @@ function update_assets_retroarch() {
     chown -R $user:$user "$dir"
 }
 
-function install_xmb_monochrome_assets_retroarch() {
+function install_minimal_assets_retroarch() {
     local dir="$configdir/all/retroarch/assets"
     [[ -d "$dir/.git" ]] && return
     [[ ! -d "$dir" ]] && mkUserDir "$dir"
-    downloadAndExtract "$__binary_base_url/retroarch-xmb-monochrome.tar.gz" "$dir"
+    downloadAndExtract "$__binary_base_url/retroarch-minimal-assets.tar.gz" "$dir"
     chown -R $user:$user "$dir"
 }
 
-function _package_xmb_monochrome_assets_retroarch() {
+function _package_minimal_assets_retroarch() {
     gitPullOrClone "$md_build/assets" https://github.com/libretro/retroarch-assets.git
     mkdir -p "$__tmpdir/archives"
-    local archive="$__tmpdir/archives/retroarch-xmb-monochrome.tar.gz"
+    local archive="$__tmpdir/archives/retroarch-minimal-assets.tar.gz"
     rm -f "$archive"
-    tar cvzf "$archive" -C "$md_build/assets" xmb/monochrome
+    tar cvzf "$archive" -C "$md_build/assets" ozone menu_widgets xmb/monochrome
 }
 
 function configure_retroarch() {
     [[ "$md_mode" == "remove" ]] && return
+
+    addUdevInputRules
 
     # move / symlink the retroarch configuration
     moveConfigDir "$home/.config/retroarch" "$configdir/all/retroarch"
@@ -138,7 +140,7 @@ function configure_retroarch() {
     update_shaders_retroarch
 
     # install minimal assets
-    install_xmb_monochrome_assets_retroarch
+    install_minimal_assets_retroarch
 
     local config="$(mktemp)"
 
@@ -156,12 +158,13 @@ function configure_retroarch() {
     iniSet "video_aspect_ratio_auto" "true"
     iniSet "video_smooth" "false"
     iniSet "rgui_show_start_screen" "false"
+    iniSet "rgui_browser_directory" "$romdir"
 
     if ! isPlatform "x86"; then
         iniSet "video_threaded" "true"
     fi
 
-    iniSet "video_font_size" "12"
+    iniSet "video_font_size" "24"
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
     isPlatform "x11" && iniSet "video_fullscreen" "true"
     isPlatform "mesa" && iniSet "video_fullscreen" "true"
@@ -211,10 +214,12 @@ function configure_retroarch() {
 
     # rgui by default
     iniSet "menu_driver" "rgui"
+    iniSet "rgui_aspect_ratio_lock" "2"
 
-    # hide online updater menu options
+    # hide online updater menu options and the restart option
     iniSet "menu_show_core_updater" "false"
     iniSet "menu_show_online_updater" "false"
+    iniSet "menu_show_restart_retroarch" "false"
 
     # disable unnecessary xmb menu tabs
     iniSet "xmb_show_add" "false"
@@ -228,18 +233,30 @@ function configure_retroarch() {
     # swap A/B buttons based on ES configuration
     iniSet "menu_swap_ok_cancel_buttons" "$es_swap"
 
+    # disable 'press twice to quit'
+    iniSet "quit_press_twice" "false"
+
+    # enable video shaders
+    iniSet "video_shader_enable" "true"
+
     copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
     rm "$config"
 
     # if no menu_driver is set, force RGUI, as the default has now changed to XMB.
-    iniConfig " = " '"' "$configdir/all/retroarch.cfg"
-    iniGet "menu_driver"
-    [[ -z "$ini_value" ]] && iniSet "menu_driver" "rgui"
+    _set_config_option_retroarch "menu_driver" "rgui"
+
+    # set RGUI aspect ratio to "Integer Scaling" to prevent stretching
+    _set_config_option_retroarch "rgui_aspect_ratio_lock" "2"
 
     # if no menu_unified_controls is set, force it on so that keyboard player 1 can control
     # the RGUI menu which is important for arcade sticks etc that map to keyboard inputs
-    iniGet "menu_unified_controls"
-    [[ -z "$ini_value" ]] && iniSet "menu_unified_controls" "true"
+    _set_config_option_retroarch "menu_unified_controls" "true"
+
+    # disable `quit_press_twice` on existing configs
+    _set_config_option_retroarch "quit_press_twice" "false"
+
+    # enable video shaders on existing configs
+    _set_config_option_retroarch "video_shader_enable" "true"
 
     # remapping hack for old 8bitdo firmware
     addAutoConf "8bitdo_hack" 0
@@ -359,4 +376,16 @@ function gui_retroarch() {
         esac
 
     done
+}
+
+# adds a retroarch global config option in `$configdir/all/retroarch.cfg`, if not already set
+function _set_config_option_retroarch()
+{
+    local option="$1"
+    local value="$2"
+    iniConfig " = " "\"" "$configdir/all/retroarch.cfg"
+    iniGet "$option"
+    if [[ -z "$ini_value" ]]; then
+        iniSet "$option" "$value"
+    fi
 }
