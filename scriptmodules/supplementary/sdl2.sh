@@ -79,7 +79,7 @@ function build_sdl2() {
         conf_flags+=("--disable-video-x11")
     fi
     ! isPlatform "x11" && conf_flags+=("--disable-video-vulkan")
-    isPlatform "mali" && conf_flags+=("--enable-video-mali" "--disable-video-opengl")
+    isPlatform "mali" || isPlatform "vero4k" && conf_flags+=("--enable-video-mali" "--disable-video-opengl")
     isPlatform "rpi" && conf_flags+=("--enable-video-rpi")
     isPlatform "kms" || isPlatform "rpi" && conf_flags+=("--enable-video-kmsdrm")
 
