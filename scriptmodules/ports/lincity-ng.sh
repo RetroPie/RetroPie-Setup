@@ -33,11 +33,10 @@ function remove_lincity-ng() {
 }
 
 function configure_lincity-ng() {
-    if isPlatform "x11"; then
-        addPort "$md_id" "lincity-ng" "LinCity-NG" "/usr/games/lincity-ng"
-    else
-        addPort "$md_id" "lincity-ng" "LinCity-NG" "xinit /usr/games/lincity-ng"
-    fi
+    local binary="XINIT:/usr/games/lincity-ng"
+
+    addPort "$md_id" "lincity-ng" "LinCity-NG" "$binary"
+
     moveConfigDir "$home/.lincity-ng" "$md_conf_root/lincity-ng"
     # fix for wrong config location
     if [[ -d "/lincity-ng" ]]; then

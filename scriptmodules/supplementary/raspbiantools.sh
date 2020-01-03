@@ -27,7 +27,7 @@ function lxde_raspbiantools() {
     aptInstall raspberrypi-ui-mods rpi-chromium-mods gvfs
 
     setConfigRoot "ports"
-    addPort "lxde" "lxde" "Desktop" "startx"
+    addPort "lxde" "lxde" "Desktop" "XINIT:startx"
     enable_autostart
 }
 
