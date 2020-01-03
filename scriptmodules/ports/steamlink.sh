@@ -53,5 +53,5 @@ _EOF_
         chmod +x "$sl_script"
     fi
 
-    addPort "$md_id" "steamlink" "Steam Link" "xinit $sl_script"
+    addPort "$md_id" "steamlink" "Steam Link" "XINIT:$sl_script"
 }

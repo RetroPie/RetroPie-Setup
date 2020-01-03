@@ -170,7 +170,7 @@ function configure_retroarch() {
     isPlatform "mesa" && iniSet "video_fullscreen" "true"
 
     # set default render resolution to 640x480 for rpi1
-    if isPlatform "rpi1"; then
+    if isPlatform "videocore" && isPlatform "rpi1"; then
         iniSet "video_fullscreen_x" "640"
         iniSet "video_fullscreen_y" "480"
     fi

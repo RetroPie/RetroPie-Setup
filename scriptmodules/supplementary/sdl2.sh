@@ -20,7 +20,7 @@ function get_ver_sdl2() {
 }
 
 function get_pkg_ver_sdl2() {
-    local ver="$(get_ver_sdl2)+1"
+    local ver="$(get_ver_sdl2)+2"
     isPlatform "rpi" && ver+="rpi"
     isPlatform "mali" && ver+="mali"
     isPlatform "vero4k" && ver+="mali"
@@ -61,7 +61,7 @@ function sources_sdl2() {
     local pkg_ver="$(get_pkg_ver_sdl2)"
     local branch="retropie-${ver}"
 
-    gitPullOrClone "$md_build/$pkg_ver" https://github.com/psyke83/SDL-mirror "$branch"
+    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror "$branch"
     cd "$pkg_ver"
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
 }
