@@ -15,7 +15,7 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/STJr/SRB2/master/LICEN
 rp_module_section="exp"
 
 function depends_srb2() {
-    getDepends cmake libsdl2-dev libsdl2-mixer-dev
+    getDepends cmake libsdl2-dev libsdl2-mixer-dev libgme-dev libopenmpt-dev
 }
 
 function sources_srb2() {
@@ -28,19 +28,19 @@ function build_srb2() {
     cd build
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$md_inst"
     make
-    md_ret_require="$md_build/build/bin/srb2"
+    md_ret_require="$md_build/build/bin/lsdlsrb2"
 }
 
 function install_srb2() {
-    # copy and dereference, so we get a srb2 binary rather than a symlink to srb2-version
-    cp -L 'build/bin/srb2' "$md_inst/srb2"
+    # copy and dereference, so we get a srb2 binary rather than a symlink to lsdlsrb2-version
+    cp -L 'build/bin/lsdlsrb2' "$md_inst/srb2"
     md_ret_files=(
-        'assets/music.dta'
-        'assets/patch.dta'
-        'assets/player.dta'
-        'assets/rings.dta'
-        'assets/zones.dta'
-        'assets/srb2.srb'
+        'assets/installer/music.dta'
+        'assets/installer/player.dta'
+        'assets/installer/zones.pk3'
+        'assets/installer/srb2.pk3'
+        'assets/README.txt'
+        'assets/LICENSE.txt'
     )
 }
 
