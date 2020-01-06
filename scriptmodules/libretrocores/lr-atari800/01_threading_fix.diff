@@ -1,0 +1,12 @@
+diff --git a/libretro/libretro-core.c b/libretro/libretro-core.c
+index 2992e78..950ae4e 100644
+--- a/libretro/libretro-core.c
++++ b/libretro/libretro-core.c
+@@ -711,7 +711,6 @@ bool retro_load_game(const struct retro_game_info *info)
+ #endif
+ 	memset(SNDBUF,0,1024*2*2);
+ 
+-	co_switch(emuThread);
+ 
+    return true;
+ }

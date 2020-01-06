@@ -17,6 +17,7 @@ rp_module_section="main"
 
 function sources_lr-atari800() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-atari800.git
+    applyPatch "$md_data/01_threading_fix.diff"
 }
 
 function build_lr-atari800() {
