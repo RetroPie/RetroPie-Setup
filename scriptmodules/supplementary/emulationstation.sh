@@ -168,9 +168,13 @@ function install_emulationstation() {
         'emulationstation.sh'
         'GAMELISTS.md'
         'README.md'
-        'resources'
         'THEMES.md'
     )
+
+    # This folder is present only from 2.8.x, don't include it for older releases
+    if compareVersions "$__os_debian_ver" gt 8; then
+        md_ret_files+=('resources')
+    fi
 }
 
 function init_input_emulationstation() {
