@@ -22,7 +22,7 @@ function depends_mesa-drm() {
 }
 
 function sources_mesa-drm() {
-    gitPullOrClone "$md_build" https://github.com/psyke83/mesa-drm "runcommand_debug"
+    gitPullOrClone "$md_build" https://github.com/RetroPie/mesa-drm "runcommand_debug"
 }
 
 function build_mesa-drm() {
@@ -42,7 +42,7 @@ function build_mesa-drm() {
 
 function install_mesa-drm() {
     md_ret_files=(
-        builddir/libkms
-        builddir/tests/modetest
+        builddir/libkms/libkms.so*
+        builddir/tests/modetest/modetest
     )
 }

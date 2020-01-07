@@ -78,7 +78,7 @@ RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
 
 # modesetting tools
 TVSERVICE="/opt/vc/bin/tvservice"
-KMSTOOL="$ROOTDIR/supplementary/mesa-drm/modetest/modetest"
+KMSTOOL="$ROOTDIR/supplementary/mesa-drm/modetest"
 XRANDR="xrandr"
 
 source "$ROOTDIR/lib/inifuncs.sh"
