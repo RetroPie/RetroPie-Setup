@@ -1,13 +1,14 @@
-diff --git a/menu/menu_driver.c b/menu/menu_driver.c
-index cf3a8c3..aae5231 100644
---- a/menu/menu_driver.c
-+++ b/menu/menu_driver.c
-@@ -785,7 +785,7 @@ int menu_entry_action(menu_entry_t *entry,
-                   entry->label, entry->type, i);
+diff --git a/menu/drivers/menu_generic.c b/menu/drivers/menu_generic.c
+index 20976955ed..23f688619b 100644
+--- a/menu/drivers/menu_generic.c
++++ b/menu/drivers/menu_generic.c
+@@ -396,7 +396,8 @@ int generic_menu_entry_action(
+                   entry->label, entry->type, i, entry->entry_idx);
           break;
        case MENU_ACTION_SEARCH:
 -         menu_input_dialog_start_search();
++         // Disable search action
 +         // menu_input_dialog_start_search();
           break;
- 
        case MENU_ACTION_SCAN:
+          if (cbs && cbs->action_scan)
