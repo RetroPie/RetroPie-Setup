@@ -23,7 +23,7 @@ function depends_atari800() {
 }
 
 function sources_atari800() {
-    gitPullOrClone "$md_build" "https://github.com/atari800/atari800.git" ATARI800_4_1_0
+    gitPullOrClone "$md_build" "https://github.com/atari800/atari800.git" ATARI800_4_2_0
     if isPlatform "rpi"; then
         applyPatch "$md_data/01_rpi_fixes.diff"
     fi
