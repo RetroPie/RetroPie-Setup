@@ -250,14 +250,6 @@ function configure_mupen64plus() {
         iniSet "configVersion" "17"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
-        # Size of texture cache in megabytes. Good value is VRAM*3/4
-        local gpu_mem
-        if isPlatform "armv6"; then
-            gpu_mem=64
-        else
-            gpu_mem=128
-        fi
-        iniSet "CacheSize" "$gpu_mem"
         iniSet "EnableFBEmulation" "True"
         # Use native res
         iniSet "UseNativeResolutionFactor" "1"
