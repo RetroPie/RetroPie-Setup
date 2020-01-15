@@ -116,7 +116,7 @@ function gui_autostart() {
             options=(
                 1 "Start Emulation Station at boot"
                 2 "Start Kodi at boot (exit for Emulation Station)"
-                E "Manually edit $configdir/autostart.sh"
+                E "Manually edit $configdir/all/autostart.sh"
             )
             if [[ "$__os_id" == "Raspbian" ]]; then
                 options+=(
