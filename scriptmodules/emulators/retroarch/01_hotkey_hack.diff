@@ -1,8 +1,8 @@
 diff --git a/retroarch.c b/retroarch.c
-index 0158f5c..a79bc98 100644
+index b89de3520f..d6ae484ca2 100644
 --- a/retroarch.c
 +++ b/retroarch.c
-@@ -988,6 +988,10 @@ static bool menu_widgets_fast_forward        = false;
+@@ -2556,6 +2556,10 @@ static bool menu_widgets_fast_forward        = false;
  static bool menu_widgets_rewinding           = false;
  #endif
  
@@ -13,7 +13,7 @@ index 0158f5c..a79bc98 100644
  bool menu_widgets_ready(void)
  {
  #ifdef HAVE_MENU_WIDGETS
-@@ -13835,9 +13839,16 @@ static void input_keys_pressed(input_bits_t *p_new_state)
+@@ -16042,9 +16046,16 @@ static void input_keys_pressed(input_bits_t *p_new_state)
                    current_input_data, joypad_info,
                    &binds, port,
                    RETRO_DEVICE_JOYPAD, 0, RARCH_ENABLE_HOTKEY))
