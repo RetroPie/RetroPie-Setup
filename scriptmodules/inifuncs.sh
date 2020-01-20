@@ -41,6 +41,7 @@ function iniConfig() {
 # @param key ini key to operate on
 # @param value to set
 # @param file optional file to use another file than the one configured with iniConfig
+# @param section optional section header within the file under which the line will be added
 # @brief The main function for setting and deleting from ini files - usually
 # not called directly but via iniSet iniUnset and iniDel
 function iniProcess() {
@@ -48,6 +49,7 @@ function iniProcess() {
     local key="$2"
     local value="$3"
     local file="$4"
+    local section="$5"
     [[ -z "$file" ]] && file="$__ini_cfg_file"
     local delim="$__ini_cfg_delim"
     local quote="$__ini_cfg_quote"
@@ -62,8 +64,16 @@ function iniProcess() {
     local match_re="^[[:space:]#]*$key[[:space:]]*$delim_strip.*$"
 
     local match
+    local file_temp
     if [[ -f "$file" ]]; then
-        match=$(egrep -i "$match_re" "$file" | tail -1)
+        if [[ ! -z "$section" ]]; then
+            # if section header exists, use the first match following it
+            file_temp=$(sed -n --follow-symlinks "/$(sedQuote "$section")/,\$p" "$file")
+            match=$(echo "$file_temp" | egrep -i "$match_re" | head -n 1)
+        else
+            # otherwise, use the last match in the file
+            match=$(egrep -i "$match_re" "$file" | tail -1)
+        fi
     else
         touch "$file"
     fi
@@ -77,9 +87,19 @@ function iniProcess() {
 
     local replace="$key$delim$quote$value$quote"
     if [[ -z "$match" ]]; then
-        # make sure there is a newline then add the key-value pair
-        sed -i --follow-symlinks '$a\' "$file"
-        echo "$replace" >> "$file"
+        # if section passed, add header if not already present
+        if [[ ! -z "$section" ]]; then
+            if ! grep -q -F "$section" "$file"; then
+                sed -i --follow-symlinks '$a\' "$file"
+                echo "$section" >> "$file"
+            fi
+            # add the key-value pair under the section header
+            sed -i --follow-symlinks "/$(sedQuote "$section")/a$replace" "$file"
+        else
+            # make sure there is a newline then add the key-value pair
+            sed -i --follow-symlinks '$a\' "$file"
+            echo "$replace" >> "$file"
+        fi
     else
         # replace existing key-value pair
         sed -i --follow-symlinks "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
@@ -108,11 +128,12 @@ function iniUnset() {
 ## @param key ini key to operate on
 ## @param value to set
 ## @param file optional file to use another file than the one configured with iniConfig
+## @param section optional section header within the file under which the line will be added
 ## @brief Set a key / value pair in an ini file.
 ## @details If the key already exists the existing line will be changed. If not
 ## a new line will be created.
 function iniSet() {
-    iniProcess "set" "$1" "$2" "$3"
+    iniProcess "set" "$1" "$2" "$3" "$4"
 }
 
 ## @fn iniDel()
