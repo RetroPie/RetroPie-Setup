@@ -48,6 +48,7 @@ function configure_vvvvvv() {
 
     moveConfigDir "$home/.local/share/VVVVVV" "$md_conf_root/vvvvvv"
 
+    mkUserDir "$romdir/ports/$md_id"
     # symlink game data
     ln -snf "$romdir/ports/$md_id/data.zip" "$md_inst/data.zip"
 }
