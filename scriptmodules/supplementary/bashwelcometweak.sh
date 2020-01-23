@@ -27,6 +27,10 @@ function getIPAddress() {
     [[ -n "$ip_route" ]] && grep -oP "src \K[^\s]+" <<< "$ip_route"
 }
 
+function getClockSpeed() {
+    expr $(echo $(vcgencmd measure_clock $1|awk -F= '{print $2}') / 1000000 )
+}
+
 function retropie_welcome() {
     local upSeconds="$(/usr/bin/cut -d. -f1 /proc/uptime)"
     local secs=$((upSeconds%60))
@@ -126,6 +130,9 @@ function retropie_welcome() {
                 out+="Temperature........: CPU: $cpuTempC°C/$cpuTempF°F GPU: $gpuTempC°C/$gpuTempF°F"
                 ;;
             10)
+                out+="Clock Speed........: CPU: $(getClockSpeed arm)MHz Core: $(getClockSpeed core)MHz V3D: $(getClockSpeed v3d)MHz"
+                ;;
+            11)
                 out+="${fgwht}The RetroPie Project, https://retropie.org.uk"
                 ;;
         esac
