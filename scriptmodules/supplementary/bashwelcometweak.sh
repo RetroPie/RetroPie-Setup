@@ -27,13 +27,6 @@ function getIPAddress() {
     [[ -n "$ip_route" ]] && grep -oP "src \K[^\s]+" <<< "$ip_route"
 }
 
-function getClockSpeed() {
-    local cpuClock
-    local gpuClock
-    
-    expr $(echo $(vcgencmd measure_clock $1|awk -F= '{print $2}') / 1000000 )
-}
-
 function retropie_welcome() {
     local upSeconds="$(/usr/bin/cut -d. -f1 /proc/uptime)"
     local secs=$((upSeconds%60))
