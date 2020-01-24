@@ -28,6 +28,9 @@ function getIPAddress() {
 }
 
 function getClockSpeed() {
+    local cpuClock
+    local gpuClock
+    
     expr $(echo $(vcgencmd measure_clock $1|awk -F= '{print $2}') / 1000000 )
 }
 
@@ -38,6 +41,12 @@ function retropie_welcome() {
     local hours=$((upSeconds/3600%24))
     local days=$((upSeconds/86400))
     local UPTIME=$(printf "%d days, %02dh%02dm%02ds" "$days" "$hours" "$mins" "$secs")
+
+    # calculate CPU minimum and maximum clockspeed:
+    local cpuClockMax
+    local cpuClockMin
+    cpuClockMax=$(lscpu|grep "max MHz"|awk '{print $NF}'| awk '{print int($1+0.5)}')
+    cpuClockMin=$(lscpu|grep "min MHz"|awk '{print $NF}'| awk '{print int($1+0.5)}')
 
     # calculate rough CPU and GPU temperatures:
     local cpuTempC
@@ -130,7 +139,7 @@ function retropie_welcome() {
                 out+="Temperature........: CPU: $cpuTempC°C/$cpuTempF°F GPU: $gpuTempC°C/$gpuTempF°F"
                 ;;
             10)
-                out+="Clock Speed........: CPU: $(getClockSpeed arm)MHz Core: $(getClockSpeed core)MHz V3D: $(getClockSpeed v3d)MHz"
+                out+="CPU Clock Speed....: Max: ${cpuClockMax}MHz Min: ${cpuClockMin}MHz" 
                 ;;
             11)
                 out+="${fgwht}The RetroPie Project, https://retropie.org.uk"
