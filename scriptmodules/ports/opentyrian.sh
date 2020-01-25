@@ -13,7 +13,7 @@ rp_module_id="opentyrian"
 rp_module_desc="Open Tyrian - port of the DOS shoot-em-up Tyrian"
 rp_module_licence="GPL2 https://bitbucket.org/opentyrian/opentyrian/raw/3e3d6b925342a5891d8b937989dc50b563ff83dd/COPYING"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="dispmanx !mali"
 
 function depends_opentyrian() {
     getDepends libsdl1.2-dev libsdl-net1.2-dev mercurial
