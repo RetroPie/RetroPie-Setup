@@ -1136,7 +1136,7 @@ function get_sys_command() {
         CONSOLE_OUT=1
     fi
 
-   # if it starts with XINIT: it is an X11 application (so we need to launch via xinit)
+    # if it starts with XINIT: it is an X11 application (so we need to launch via xinit)
     if [[ "$COMMAND" == XINIT:* ]]; then
         # remove XINIT:
         COMMAND="${COMMAND:6}"
