@@ -1,0 +1,19 @@
+diff --git a/configure b/configure
+index b7654c4..13799c5 100755
+--- a/configure
++++ b/configure
+@@ -3146,12 +3146,12 @@ if test -n "$_host"; then
+ 			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
+ 			# since SDL2 manages dispmanx/GLES2 very well internally.
+ 			# SDL1 is bit-rotten on this platform.
+-			_sdlconfig=sdl2-config
++			_sdlconfig=sdl-config
+ 			# OpenGL ES support is mature enough as to be the best option on
+ 			# the Raspberry Pi, so it's enabled by default.
+ 			# The Raspberry Pi always supports OpenGL ES 2.0 contexts, thus we
+ 			# take advantage of those.
+-			_opengl_mode=gles2
++			_opengl_mode=none
+ 			;;
+ 		dreamcast)
+ 			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
