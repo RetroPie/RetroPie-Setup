@@ -14,7 +14,7 @@ rp_module_desc="ScummVM - built with legacy SDL1 support."
 rp_module_help="Copy your ScummVM games to $romdir/scummvm"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !x11 !kms"
+rp_module_flags="dispmanx !mali !x11"
 
 function depends_scummvm-sdl1() {
     depends_scummvm
@@ -25,7 +25,11 @@ function sources_scummvm-sdl1() {
     # the following only modifies $md_data for the function call
     md_data="$md_data/../scummvm" sources_scummvm
     if isPlatform "rpi"; then
-        applyPatch "$md_data/01_rpi_sdl1.diff"
+        if isPlatform "kms"; then
+            applyPatch "$md_data/01_rpi_kms_sdl1.diff"
+        else
+            applyPatch "$md_data/01_rpi_sdl1.diff"
+        fi
     fi
 }
 
@@ -38,5 +42,6 @@ function install_scummvm-sdl1() {
 }
 
 function configure_scummvm-sdl1() {
+    isPlatform "kms" && setDispmanx "$md_id" 1
     configure_scummvm
 }
