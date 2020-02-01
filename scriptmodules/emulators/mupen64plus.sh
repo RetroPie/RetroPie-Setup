@@ -179,8 +179,14 @@ function configure_mupen64plus() {
         isPlatform "videocore" && addEmulator 1 "${md_id}-auto" "n64" "$md_inst/bin/mupen64plus.sh AUTO %ROM%"
         for res in "${resolutions[@]}"; do
             local name=""
-            [[ "$res" == "640x480" ]] && name="-highres"
-            addEmulator 1 "${md_id}-GLideN64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% $res"
+            local nativeResFactor=""
+            if [[ "$res" == "640x480" ]]; then
+                name="-highres"
+                nativeResFactor=2
+            else
+                nativeResFactor=1
+            fi
+            addEmulator 1 "${md_id}-GLideN64$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% $res 0 --set Video-GLideN64[UseNativeResolutionFactor]\=$nativeResFactor"
             addEmulator 0 "${md_id}-gles2rice$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
         done
         addEmulator 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
