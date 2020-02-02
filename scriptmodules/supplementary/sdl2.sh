@@ -20,7 +20,7 @@ function get_ver_sdl2() {
 }
 
 function get_pkg_ver_sdl2() {
-    local ver="$(get_ver_sdl2)+4"
+    local ver="$(get_ver_sdl2)+5"
     isPlatform "rpi" && ver+="rpi"
     isPlatform "mali" && ver+="mali"
     isPlatform "vero4k" && ver+="mali"
