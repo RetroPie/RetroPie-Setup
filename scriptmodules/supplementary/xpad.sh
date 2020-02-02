@@ -21,9 +21,7 @@ function _version_xpad() {
 }
 
 function depends_xpad() {
-    local depends=(dkms)
-    isPlatform "rpi" && depends+=(raspberrypi-kernel-headers)
-    isPlatform "x11" && depends+=(linux-headers-generic)
+    local depends=(dkms LINUX-HEADERS)
     getDepends "${depends[@]}"
 }
 
