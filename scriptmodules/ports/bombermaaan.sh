@@ -20,14 +20,14 @@ function depends_bombermaaan() {
 }
 
 function sources_bombermaaan() {
-    gitPullOrClone "$md_build" https://github.com/bjaraujo/Bombermaaan.git
+    gitPullOrClone "$md_build" https://github.com/bjaraujo/Bombermaaan.git v1.9.7.2126
 }
 
 function build_bombermaaan() {
     cd trunk
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst" -DLOAD_RESOURCES_FROM_FILES:BOOL=ON
     make
-    mv src/Bombermaaan bombermaaan
+    mv bin/Bombermaaan bombermaaan
     md_ret_require="$md_build/trunk/bombermaaan"
 }
 
