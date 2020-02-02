@@ -18,7 +18,7 @@ rp_module_flags="!x86"
 
 function _get_platform_amiberry() {
     local platform="$__platform-sdl2"
-    if isPlatform "rpi" && ! isPlatform "kms"; then
+    if isPlatform "videocore"; then
         platform="$__platform"
     elif isPlatform "odroid-xu"; then
         platform="xu4"
@@ -33,6 +33,7 @@ function _get_platform_amiberry() {
 function depends_amiberry() {
     local depends=(autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libguichan-dev libmpg123-dev libflac-dev libxml2-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
 
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
 
     getDepends "${depends[@]}"
