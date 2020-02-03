@@ -12,7 +12,7 @@
 rp_module_id="skyscraper"
 rp_module_desc="Scraper for EmulationStation by Lars Muldjord"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/muldjord/skyscraper/master/LICENSE"
-rp_module_section="exp"
+rp_module_section="opt"
 
 function depends_skyscraper() {
     getDepends qt5-default p7zip-full
