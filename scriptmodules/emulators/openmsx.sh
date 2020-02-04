@@ -24,7 +24,12 @@ function depends_openmsx() {
 }
 
 function sources_openmsx() {
-    gitPullOrClone "$md_build" https://github.com/openMSX/openMSX.git
+    local commit
+    # latest code requires at least GCC 7 as it contains C++17 code
+    # build from earlier commit before C++17 changes for GCC < 7
+    compareVersions $__gcc_version lt 7.0.0 && commit="5ee25b62"
+
+    gitPullOrClone "$md_build" https://github.com/openMSX/openMSX.git "" "$commit"
     sed -i "s|INSTALL_BASE:=/opt/openMSX|INSTALL_BASE:=$md_inst|" build/custom.mk
     sed -i "s|SYMLINK_FOR_BINARY:=true|SYMLINK_FOR_BINARY:=false|" build/custom.mk
 }
