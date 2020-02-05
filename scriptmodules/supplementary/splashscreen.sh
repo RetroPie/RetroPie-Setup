@@ -12,7 +12,7 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
-rp_module_flags="noinstclean !x86 !osmc !xbian !mali !kms"
+rp_module_flags="noinstclean !x86 !osmc !xbian !mali"
 
 function _update_hook_splashscreen() {
     # make sure splashscreen is always up to date if updating just RetroPie-Setup
@@ -31,7 +31,7 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    getDepends fbi omxplayer insserv
+    getDepends omxplayer insserv
 }
 
 function install_bin_splashscreen() {
@@ -39,8 +39,8 @@ function install_bin_splashscreen() {
 [Unit]
 Description=Show custom splashscreen
 DefaultDependencies=no
-Before=local-fs-pre.target
-Wants=local-fs-pre.target
+After=console-setup.service
+Wants=console-setup.service
 ConditionPathExists=$md_inst/asplashscreen.sh
 
 [Service]
@@ -52,6 +52,7 @@ RemainAfterExit=yes
 WantedBy=sysinit.target
 _EOF_
 
+    rp_installModule "omxiv"
     gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
 
     cp "$md_data/asplashscreen.sh" "$md_inst"
@@ -107,6 +108,7 @@ function configure_splashscreen() {
 function remove_splashscreen() {
     enable_plymouth_splashscreen
     disable_splashscreen
+    rp_callModule "omxiv" remove
     rm -f /etc/splashscreen.list /etc/systemd/system/asplashscreen.service
     systemctl daemon-reload
 }
@@ -210,6 +212,7 @@ function preview_splashscreen() {
 
     local path
     local file
+    local omxiv="/opt/retropie/supplementary/omxiv/omxiv"
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -221,13 +224,13 @@ function preview_splashscreen() {
                 1)
                     file=$(choose_splashscreen "$path" "image")
                     [[ -z "$file" ]] && break
-                    fbi --noverbose --autozoom "$file"
+                    $omxiv -b "$file"
                     ;;
                 2)
                     file=$(mktemp)
                     find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh" | sort > "$file"
                     if [[ -s "$file" ]]; then
-                        fbi --timeout 6 --once --autozoom --list "$file"
+                        $omxiv -t 6 -T blend -b --once -f "$file"
                     else
                         printMsgs "dialog" "There are no splashscreens installed in $path"
                     fi
@@ -237,7 +240,7 @@ function preview_splashscreen() {
                 3)
                     file=$(choose_splashscreen "$path" "video")
                     [[ -z "$file" ]] && break
-                    omxplayer -b --layer 10000 "$file"
+                    omxplayer --no-osd -b --layer 10000 "$file"
                     ;;
             esac
         done
