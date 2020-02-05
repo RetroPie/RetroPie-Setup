@@ -1000,7 +1000,7 @@ function restore_fb() {
 
 function config_dispmanx() {
     # if we are running under X then don't try and use dispmanx
-    [[ -n "$DISPLAY" ]] && return
+    [[ -n "$DISPLAY" || "$XINIT" -eq 1 ]] && return
     local name="$1"
     # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
     # change the library path to load dispmanx sdl first
