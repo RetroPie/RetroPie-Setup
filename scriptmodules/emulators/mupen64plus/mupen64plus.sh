@@ -12,7 +12,7 @@
 AUDIO_PLUGIN="mupen64plus-audio-sdl"
 VIDEO_PLUGIN="$1"
 ROM="$2"
-[[ "$3" -ne 0 ]] && RES="$3"
+[[ "$3" != 0 ]] && RES="$3"
 [[ "$4" -ne 0 ]] && RSP_PLUGIN="$4"
 PARAMS="${@:5}"
 [[ -n "$RES" ]] && RES="--resolution $RES"
