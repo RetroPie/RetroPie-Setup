@@ -45,6 +45,9 @@ function sources_lr-mupen64plus() {
     if hasPackage libgles2-mesa-dev 18.2 ge; then
         applyPatch "$md_data/0001-eliminate-conflicting-typedefs.patch"
     fi
+
+    # Allows GLES3 with rpi
+    applyPatch "$md_data/0002-rpi-gles3.patch"
 }
 
 function build_lr-mupen64plus() {
@@ -59,8 +62,11 @@ function build_lr-mupen64plus() {
     else
         isPlatform "arm" && params+=(WITH_DYNAREC=arm)
         isPlatform "neon" && params+=(HAVE_NEON=1)
-        isPlatform "gles" && params+=(FORCE_GLES=1)
-        isPlatform "kms" && params+=(FORCE_GLES3=1)
+    fi
+    if isPlatform "gles3"; then
+        params+=(FORCE_GLES3=1)
+    elif isPlatform "gles"; then
+        params+=(FORCE_GLES=1)
     fi
     make clean
     make "${params[@]}"
