@@ -41,6 +41,8 @@ function install_sdlpop() {
 function configure_sdlpop() {
     addPort "$md_id" "sdlpop" "Prince of Persia" "pushd $md_inst; $md_inst/prince full; popd"
 
+    [[ "$md_mode" == "remove" ]] && return
+
     copyDefaultConfig "$md_inst/SDLPoP.ini.def" "$md_conf_root/$md_id/SDLPoP.ini"
     moveConfigFile "$md_inst/SDLPoP.ini" "$md_conf_root/$md_id/SDLPoP.ini"
 
