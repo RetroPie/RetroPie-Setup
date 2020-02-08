@@ -1,0 +1,26 @@
+Index: source/duke3d/src/astub.cpp
+===================================================================
+--- a/source/duke3d/src/astub.cpp	(revision 8090)
++++ b/source/duke3d/src/astub.cpp	(working copy)
+@@ -4291,7 +4291,7 @@
+     i = (i&0x4)+((i>>4)&3);
+     i = eitherSHIFT ? prev3[i] : next3[i];
+     message("Sector %d %s flip %d deg%s", sectnum, typestr[search],
+-            klabs(orient[i])%360, orient[i] < 0 ? " mirrored":"");
++            (int)klabs(orient[i])%360, orient[i] < 0 ? " mirrored":"");
+     i = (i&0x4)+((i&3)<<4);
+     *stat &= ~0x34;
+     *stat |= i;
+Index: source/duke3d/src/player.cpp
+===================================================================
+--- a/source/duke3d/src/player.cpp	(revision 8090)
++++ b/source/duke3d/src/player.cpp	(working copy)
+@@ -1666,7 +1666,7 @@
+ 
+     for (bssize_t i=0; i < pPlayer->numloogs; i++)
+     {
+-        int const rotAng = klabs(sintable[((loogCounter + i) << 5) & 2047]) >> 5;
++        int const rotAng = (int)klabs(sintable[((loogCounter + i) << 5) & 2047]) >> 5;
+         int const rotZoom  = 4096 + ((loogCounter + i) << 9);
+         int const rotX     = (-fix16_to_int(g_player[screenpeek].input->q16avel) >> 1) + (sintable[((loogCounter + i) << 6) & 2047] >> 10);
+ 

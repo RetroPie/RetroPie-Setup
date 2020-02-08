@@ -38,6 +38,8 @@ function sources_eduke32() {
     # r6776 breaks VC4 & GLES 2.0 devices that lack GL_RED internal
     # format support for glTexImage2D/glTexSubImage2D
     isPlatform "gles" && applyPatch "$md_data/0003-replace-gl_red.patch"
+    # gcc 6.3.x compiler fix
+    applyPatch "$md_data/0004-recast-function.patch"
 }
 
 function build_eduke32() {
