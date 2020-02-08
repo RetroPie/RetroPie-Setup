@@ -13,7 +13,7 @@ rp_module_id="xrick"
 rp_module_desc="xrick - Port of Rick Dangerous"
 rp_module_licence="GPL https://raw.githubusercontent.com/HerbFargus/xrick/master/README"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags="!mali"
 
 function depends_xrick() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev zlib1g
@@ -36,5 +36,19 @@ function install_xrick() {
 }
 
 function configure_xrick() {
-    addPort "$md_id" "xrick" "XRick" "pushd $md_inst; $md_inst/xrick -fullscreen; popd"
+    addPort "$md_id" "xrick" "XRick" "$md_inst/xrick -fullscreen"
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    isPlatform "kms" && setDispmanx "$md_id" 1
+
+    local file="$romdir/ports/XRick.sh"
+    cat >"$file" << _EOF_
+#!/bin/bash
+pushd "$md_inst"
+"$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ xrick ""
+popd
+_EOF_
+    chown $user:$user "$file"
+    chmod +x "$file"
 }
