@@ -46,7 +46,14 @@ function configure_daphne() {
     mkRomDir "daphne"
     mkRomDir "daphne/roms"
 
+    addEmulator 1 "$md_id" "daphne" "$md_inst/daphne.sh %ROM%"
+    addSystem "daphne"
+
+    [[ "$md_mode" == "remove" ]] && return
+
     mkUserDir "$md_conf_root/daphne"
+
+    setDispmanx "$md_id" 1
 
     if [[ ! -f "$md_conf_root/daphne/dapinput.ini" ]]; then
         cp -v "$md_data/dapinput.ini" "$md_conf_root/daphne/dapinput.ini"
@@ -71,8 +78,4 @@ _EOF_
     chown -R $user:$user "$md_inst"
     chown -R $user:$user "$md_conf_root/daphne/dapinput.ini"
 
-    setDispmanx "$md_id" 1
-
-    addEmulator 1 "$md_id" "daphne" "$md_inst/daphne.sh %ROM%"
-    addSystem "daphne"
 }
