@@ -29,21 +29,15 @@ function depends_eduke32() {
 function sources_eduke32() {
     local revision="-r8090"
 
-    # stretch has an older gcc that doesn't work with the newer code
-    compareVersions $__gcc_version lt 7.0.0 && revision="-r7077"
-
     svn checkout "$revision" http://svn.eduke32.com/eduke32 "$md_build"
 
-    if [[ "$revision" == "-r7077" ]]; then
-        # r6918 causes a 20+ second delay on startup on ARM devices
-        isPlatform "arm" && applyPatch "$md_data/0001-revert-r6918.patch"
-    else
-        # r7424 gives a black skybox when r_useindexedcolortextures is 0
-        applyPatch "$md_data/0002-fix-skybox.patch"
-        # r6776 breaks VC4 & GLES 2.0 devices that lack GL_RED internal
-        # format support for glTexImage2D/glTexSubImage2D
-        isPlatform "gles" && applyPatch "$md_data/0003-replace-gl_red.patch"
-    fi
+    # r6918 causes a 20+ second delay on startup on ARM devices
+    isPlatform "arm" && applyPatch "$md_data/0001-revert-r6918.patch"
+    # r7424 gives a black skybox when r_useindexedcolortextures is 0
+    applyPatch "$md_data/0002-fix-skybox.patch"
+    # r6776 breaks VC4 & GLES 2.0 devices that lack GL_RED internal
+    # format support for glTexImage2D/glTexSubImage2D
+    isPlatform "gles" && applyPatch "$md_data/0003-replace-gl_red.patch"
 }
 
 function build_eduke32() {
