@@ -19,22 +19,25 @@ function depends_retro-stats() {
 }
 
 function sources_retro-stats() {
-    gitPullOrClone "$md_build" "https://github.com/langest/RetroStats.git"
+    gitPullOrClone "$md_inst" "https://github.com/langest/RetroStats.git"
 }
 
 function build_retro-stats() {
-    pip3 install "$md_build"
+    pip3 install "$md_inst"
 }
 
 function remove_retro-stats() {
     pip3 uninstall RetroStats -y
-    sed -i "/`cat ${md_build}/runcommand_hooks/runcommand-onstart.sh`/d" /opt/retropie/configs/all/runcommand-onstart.sh
-    sed -i "/`cat ${md_build}/runcommand_hooks/runcommand-onend.sh`/d" /opt/retropie/configs/all/runcommand-onend.sh
+    sed -i "/# retro-stats logging/d" "${configdir}/all/runcommand-onstart.sh"
+    sed -i "/# retro-stats logging/d" "${configdir}/all/runcommand-onend.sh"
     crontab -l | sed -e '/@reboot retro-stats-server &/d' | crontab -
 }
 
 function configure_retro-stats() {
-    cat "${md_build}/runcommand_hooks/runcommand-onstart.sh" >> /opt/retropie/configs/all/runcommand-onstart.sh
-    cat "${md_build}/runcommand_hooks/runcommand-onend.sh" >> /opt/retropie/configs/all/runcommand-onend.sh
+    if [[ "$md_mode" == "remove" ]]; then
+        return
+    fi
+    cat "${md_inst}/runcommand_hooks/runcommand-onstart.sh" | sed -e "s/$/ # retro-stats logging/" >> "${configdir}/all/runcommand-onstart.sh"
+    cat "${md_inst}/runcommand_hooks/runcommand-onend.sh" | sed -e "s/$/ # retro-stats logging/" >> "${configdir}/all/runcommand-onend.sh"
     (crontab -l ; echo "@reboot retro-stats-server &") | crontab -
 }
