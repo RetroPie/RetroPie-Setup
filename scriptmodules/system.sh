@@ -231,13 +231,14 @@ function get_retropie_depends() {
 function get_rpi_video() {
     local pkgconfig="/opt/vc/lib/pkgconfig"
 
-    if [[ -z "$__has_kms" && "$__chroot" -eq 1 ]]; then
+    if [[ -z "$__has_kms" ]]; then
         # in chroot, use kms by default for rpi4 target
-        isPlatform "rpi4" && __has_kms=1
+        [[ "$__chroot" -eq 1 ]] && isPlatform "rpi4" && __has_kms=1
+        # detect driver via inserted module / platform driver setup
+        [[ -d "/sys/module/vc4" ]] && __has_kms=1
     fi
 
-    # detect driver via inserted module / platform driver setup
-    if [[ -d "/sys/module/vc4" || "$__has_kms" -eq 1 ]]; then
+    if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=" mesa kms"
         [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __platform_flags+=" dispmanx"
     else
