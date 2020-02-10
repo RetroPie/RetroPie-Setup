@@ -12,7 +12,7 @@
 rp_module_id="ioquake3"
 rp_module_desc="Quake 3 source port"
 rp_module_licence="GPL2 https://github.com/ioquake/ioq3/blob/master/COPYING.txt"
-rp_module_section="exp"
+rp_module_section="opt"
 rp_module_flags="!mali !videocore"
 
 function depends_ioquake3() {
