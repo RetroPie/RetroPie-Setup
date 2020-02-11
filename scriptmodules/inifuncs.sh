@@ -102,7 +102,12 @@ function iniProcess() {
         fi
     else
         # replace existing key-value pair
-        sed -i --follow-symlinks "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
+        # if section passed, replace within section
+        if [[ ! -z "$section" ]]; then
+            sed -i --follow-symlinks "/$(sedQuote "$section")/,/^$/ s/$(sedQuote "$match")/$(sedQuote "$replace")/" "$file"
+        else
+            sed -i --follow-symlinks "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
+        fi
     fi
 
     [[ "$file" =~ retroarch\.cfg$ ]] && retroarchIncludeToEnd "$file"
