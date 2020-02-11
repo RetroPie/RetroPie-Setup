@@ -40,7 +40,7 @@ function build_lr-parallel-n64() {
     else
         isPlatform "gles" && params+=(GLES=1 GL_LIB:=-lGLESv2)
         if isPlatform "arm"; then
-            params+=(CPUFLAGS="-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE")
+            params+=(CPUFLAGS="-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE -DARM_FIX")
             params+=(WITH_DYNAREC=arm)
             isPlatform "neon" && params+=(HAVE_NEON=1)
         fi
