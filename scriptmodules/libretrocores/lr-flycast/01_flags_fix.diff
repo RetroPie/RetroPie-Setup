@@ -1,0 +1,21 @@
+diff --git a/Makefile b/Makefile
+index 36aacd6b..b3ffda87 100644
+--- a/Makefile
++++ b/Makefile
+@@ -45,8 +45,6 @@ LDFLAGS  :=
+ LDFLAGS_END :=
+ INCFLAGS :=
+ LIBS     :=
+-CFLAGS   := 
+-CXXFLAGS :=
+ 
+ GIT_VERSION := " $(shell git rev-parse --short HEAD || echo unknown)"
+ ifneq ($(GIT_VERSION)," unknown")
+@@ -196,6 +194,7 @@ else ifneq (,$(findstring rpi,$(platform)))
+ 		endif
+ 		CORE_DEFINES += -DLOW_END
+ 	endif
++	LDFLAGS += $(CFLAGS)
+ 	PLATFORM_EXT := unix
+ 	WITH_DYNAREC=arm
+ 	HAVE_GENERIC_JIT = 0

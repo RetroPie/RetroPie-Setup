@@ -24,8 +24,8 @@ function _update_hook_lr-flycast() {
 function sources_lr-flycast() {
     # build from an older commit due to current broken upstream
     gitPullOrClone "$md_build" https://github.com/libretro/flycast.git "" "c59eac0"
-    # don't override our C/CXXFLAGS
-    sed -i "/^C.*FLAGS.*:=/d" Makefile
+    # don't override our C/CXXFLAGS and set LDFLAGS to CFLAGS to avoid warnings on linking
+    applyPatch "$md_data/01_flags_fix.diff"
 }
 
 function build_lr-flycast() {
