@@ -59,8 +59,10 @@ function configure_lr-flycast() {
     mkUserDir "$biosdir/dc"
 
     # system-specific
-    iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
-    iniSet "video_shared_context" "true"
+    if isPlatform "gl"; then
+        iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
+        iniSet "video_shared_context" "true"
+    fi
 
     # segfaults on the rpi without redirecting stdin from </dev/null
     addEmulator 0 "$md_id" "dreamcast" "$md_inst/flycast_libretro.so </dev/null"
