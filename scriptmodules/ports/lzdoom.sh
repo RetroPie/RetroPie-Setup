@@ -25,8 +25,7 @@ function depends_lzdoom() {
 }
 
 function sources_lzdoom() {
-    gitPullOrClone "$md_build" https://github.com/drfrag666/gzdoom "3.82"
-    applyPatch "$md_data/0001-kmsdrm-fix-atexit-segfault.patch"
+    gitPullOrClone "$md_build" https://github.com/drfrag666/gzdoom "3.84"
 }
 
 function build_lzdoom() {
