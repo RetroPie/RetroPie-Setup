@@ -16,11 +16,11 @@ rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
 function depends_cdogs-sdl() {
-    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev build-essential libgtk-3-dev
+    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev build-essential
 }
 
 function sources_cdogs-sdl() {
-    gitPullOrClone "$md_build" https://github.com/cxong/cdogs-sdl.git
+    gitPullOrClone "$md_build" https://github.com/cxong/cdogs-sdl.git 0.7.2
 }
 
 function build_cdogs-sdl() {
