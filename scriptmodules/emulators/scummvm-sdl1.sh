@@ -23,7 +23,7 @@ function depends_scummvm-sdl1() {
 function sources_scummvm-sdl1() {
     # sources_scummvm() expects $md_data to be ../scummvm
     # the following only modifies $md_data for the function call
-    md_data="$md_data/../scummvm" sources_scummvm
+    md_data="$(dirname $md_data)/scummvm" sources_scummvm
     if isPlatform "rpi"; then
         if isPlatform "kms"; then
             applyPatch "$md_data/01_rpi_kms_sdl1.diff"
