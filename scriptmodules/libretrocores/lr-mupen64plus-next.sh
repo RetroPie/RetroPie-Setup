@@ -26,7 +26,12 @@ function depends_lr-mupen64plus-next() {
 }
 
 function sources_lr-mupen64plus-next() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro-nx.git develop
+    # the core is crashing when using legacy/broadcom drivers since commit 9f316922
+    # while the problem is being resolved, use the previous commit for now
+    local commit
+    isPlatform "videocore" && commit="4a663ef0"
+
+    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro-nx.git develop "$commit"
 }
 
 function build_lr-mupen64plus-next() {
