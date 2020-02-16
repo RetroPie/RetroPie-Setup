@@ -13,7 +13,7 @@ rp_module_id="lr-mupen64plus-next"
 rp_module_desc="N64 emulator - Mupen64Plus + GLideN64 for libretro (next version)"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mupen64plus-libretro-nx/master/LICENSE"
-rp_module_section="exp"
+rp_module_section="opt kms=main"
 rp_module_flags="!armv6"
 
 function depends_lr-mupen64plus-next() {
@@ -65,6 +65,6 @@ function configure_lr-mupen64plus-next() {
     mkRomDir "n64"
     ensureSystemretroconfig "n64"
 
-    addEmulator 0 "$md_id" "n64" "$md_inst/mupen64plus_next_libretro.so"
+    addEmulator 1 "$md_id" "n64" "$md_inst/mupen64plus_next_libretro.so"
     addSystem "n64"
 }

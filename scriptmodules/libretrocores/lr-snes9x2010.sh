@@ -48,8 +48,8 @@ function configure_lr-snes9x2010() {
     mkRomDir "snes"
     ensureSystemretroconfig "snes"
 
-    local def=1
-    isPlatform "armv6" && def=0
+    local def=0
+    isPlatform "armv7" && def=1
     addEmulator $def "$md_id" "snes" "$md_inst/snes9x2010_libretro.so"
     addSystem "snes"
 }

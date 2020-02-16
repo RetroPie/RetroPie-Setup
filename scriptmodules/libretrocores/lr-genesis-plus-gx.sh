@@ -40,6 +40,8 @@ function configure_lr-genesis-plus-gx() {
     for system in gamegear mastersystem megadrive sg-1000 segacd; do
         def=0
         [[ "$system" == "gamegear" || "$system" == "sg-1000" ]] && def=1
+        # always default emulator for non armv6
+        ! isPlatform "armv6" && def=1
         mkRomDir "$system"
         ensureSystemretroconfig "$system"
         addEmulator "$def" "$md_id" "$system" "$md_inst/genesis_plus_gx_libretro.so"
