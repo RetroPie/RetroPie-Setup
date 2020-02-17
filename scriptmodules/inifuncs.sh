@@ -153,11 +153,13 @@ function iniDel() {
 ## @fn iniGet()
 ## @param key ini key to get the value of
 ## @param file optional file to use another file than the one configured with iniConfig
+## @param section optional section header within the file under which the key should be found
 ## @brief Get the value of a key from an ini file.
 ## @details The value of the key will end up in the global ini_value variable.
 function iniGet() {
     local key="$1"
     local file="$2"
+    local section="$3"
     [[ -z "$file" ]] && file="$__ini_cfg_file"
     if [[ ! -f "$file" ]]; then
         ini_value=""
@@ -179,7 +181,14 @@ function iniGet() {
         value_m="\([^\r]*\)"
     fi
 
-    ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m.*/\1/p" "$file" | tail -1)"
+    # if section passed, search within section
+    local file_temp
+    if [[ ! -z "$section" ]]; then
+        file_temp="$(awk "/$(sedQuote "$section")/,/^$/" "$file")"
+        ini_value="$(echo "$file_temp" | sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m.*/\1/p" | tail -1)"
+    else
+        ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m.*/\1/p" "$file" | tail -1)"
+    fi
 }
 
 # @fn retroarchIncludeToEnd()
