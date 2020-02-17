@@ -119,6 +119,7 @@ function iniProcess() {
 ## @param key ini key to operate on
 ## @param value to Unset (key will be commented out, but the value can be changed also)
 ## @param file optional file to use another file than the one configured with iniConfig
+## @param section optional section header within the file where the key will be found
 ## @brief Unset (comment out) a key / value pair in an ini file.
 ## @details The key does not have to exist - if it doesn't exist a new line will
 ## be added - eg. `# key = "value"`
@@ -127,7 +128,7 @@ function iniProcess() {
 ## to manually enable later or if a configuration is to be disabled but left
 ## as an example.
 function iniUnset() {
-    iniProcess "unset" "$1" "$2" "$3"
+    iniProcess "unset" "$1" "$2" "$3" "$4"
 }
 
 ## @fn iniSet()
