@@ -143,7 +143,7 @@ function build_ppsspp() {
     if isPlatform "arm" && ! isPlatform "x11"; then
         params+=(-DARM_NO_VULKAN=ON)
     fi
-    if [ "$md_id" == "lr-ppsspp" ]; then
+    if [[ "$md_id" == "lr-ppsspp" ]]; then
         params+=(-DLIBRETRO=On)
         ppsspp_binary="lib/ppsspp_libretro.so"
     fi
