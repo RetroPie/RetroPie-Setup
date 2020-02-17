@@ -146,9 +146,10 @@ function iniSet() {
 ## @fn iniDel()
 ## @param key ini key to operate on
 ## @param file optional file to use another file than the one configured with iniConfig
+## @param section optional section header within the file where the key will be found
 ## @brief Delete a key / value pair in an ini file.
 function iniDel() {
-    iniProcess "del" "$1" "" "$2"
+    iniProcess "del" "$1" "" "$2" "$3"
 }
 
 ## @fn iniGet()
