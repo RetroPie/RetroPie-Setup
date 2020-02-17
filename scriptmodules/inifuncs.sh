@@ -68,7 +68,7 @@ function iniProcess() {
     if [[ -f "$file" ]]; then
         if [[ ! -z "$section" ]]; then
             # if section header exists, match after header, and before line break
-            file_temp=$(awk "/$(sedQuote "$section")/,/^$/" "$file")
+            file_temp="$(awk "/$(sedQuote "$section")/,/^$/" "$file")"
             match=$(echo "$file_temp" | egrep -i "$match_re" | head -n 1)
         else
             # otherwise, use the last match in the file
@@ -91,7 +91,7 @@ function iniProcess() {
         if [[ ! -z "$section" ]]; then
             if ! grep -q -F "$section" "$file"; then
                 # add blank line to signify end of previous section
-                sed -i --follow-symlinks '$a\\' "$file"
+                sed -i --follow-symlinks "$a\\" "$file"
                 echo -e "$section" >> "$file"
             fi
             # add the key-value pair under the section header
