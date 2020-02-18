@@ -58,8 +58,10 @@ function configure_lr-flycast() {
     mkUserDir "$biosdir/dc"
 
     # system-specific
-    iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
-    iniSet "video_shared_context" "true"
+    if isPlatform "gl"; then
+        iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
+        iniSet "video_shared_context" "true"
+    fi
 
     local def=0
     isPlatform "kms" && def=1
