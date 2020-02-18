@@ -1,5 +1,5 @@
 diff --git a/Makefile b/Makefile
-index 36aacd6b..b3ffda87 100644
+index 36aacd6b..3226c1f3 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -45,8 +45,6 @@ LDFLAGS  :=
@@ -19,3 +19,12 @@ index 36aacd6b..b3ffda87 100644
  	PLATFORM_EXT := unix
  	WITH_DYNAREC=arm
  	HAVE_GENERIC_JIT = 0
+@@ -892,7 +891,7 @@ else
+ 	ifneq (,$(findstring msvc,$(platform)))
+ 		OPTFLAGS       := -O2
+ 	else ifneq ($(platform), classic_armv7_a7)
+-		OPTFLAGS       := -O3
++		OPTFLAGS       := -O2
+ 	endif
+ 
+ 	CORE_DEFINES   += -DNDEBUG
