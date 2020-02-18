@@ -22,6 +22,7 @@ function _update_hook_lr-flycast() {
 }
 
 function sources_lr-flycast() {
+    gitPullOrClone "$md_build" https://github.com/libretro/flycast.git
     # don't override our C/CXXFLAGS and set LDFLAGS to CFLAGS to avoid warnings on linking
     applyPatch "$md_data/01_flags_fix.diff"
 }
