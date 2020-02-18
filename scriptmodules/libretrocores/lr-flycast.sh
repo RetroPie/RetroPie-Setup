@@ -16,6 +16,13 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/flycast/maste
 rp_module_section="opt"
 rp_module_flags="!mali !armv6"
 
+function depends_lr-flycast() {
+    local depends=()
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
+    isPlatform "mesa" && depends+=(libgles2-mesa-dev)
+    getDepends "${depends[@]}"
+}
+
 function _update_hook_lr-flycast() {
     renameModule "lr-reicast" "lr-beetle-dc"
     renameModule "lr-beetle-dc" "lr-flycast"
