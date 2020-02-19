@@ -150,7 +150,7 @@ function input_reicast() {
     ./reicast-joyconfig -f "$temp_file" >/dev/tty
     iniConfig " = " "" "$temp_file"
     iniGet "mapping_name"
-    local mapping_file="$configdir/dreamcast/mappings/controller_${ini_value// /}.cfg"
+    local mapping_file="$configdir/dreamcast/mappings/evdev_${ini_value//[:><?\"]/-}.cfg"
     mv "$temp_file" "$mapping_file"
     chown $user:$user "$mapping_file"
 }
