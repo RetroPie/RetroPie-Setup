@@ -14,7 +14,7 @@ rp_module_desc="Redream Dreamcast emulator"
 rp_module_help="ROM Extensions: .cdi .cue .chd .gdi .iso\n\nCopy your Dreamcast roms to $romdir/dreamcast"
 rp_module_licence="PROP"
 rp_module_section="exp"
-rp_module_flags="!x86 !x11 !mali"
+rp_module_flags="noinstclean !x86 !x11 !mali"
 
 function install_bin_redream() {
     downloadAndExtract "https://redream.io/download/redream.aarch32-raspberry-linux-latest.tar.gz" "$md_inst"
@@ -37,6 +37,12 @@ function configure_redream() {
     moveConfigFile "$md_inst/redream.cfg" "$dest/redream.cfg"
     moveConfigDir "$md_inst/cache" "$dest/cache"
     moveConfigDir "$md_inst/saves" "$dest/saves"
+
+    # copy / symlink vmus (memory cards)
+    local i
+    for i in 0 1 2 3; do
+      moveConfigFile "$md_inst/vmu$i.bin" "$dest/vmu$i.bin"
+    done
 
     # symlink bios files to libretro core install locations
     ln -sf "$biosdir/dc/dc_boot.bin" "$md_inst/boot.bin"
