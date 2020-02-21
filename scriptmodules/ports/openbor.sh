@@ -43,10 +43,18 @@ function install_openbor() {
 }
 
 function configure_openbor() {
-    addPort "$md_id" "openbor" "OpenBOR - Beats of Rage Engine" "pushd $md_inst; $md_inst/OpenBOR; popd"
+    addPort "$md_id" "openbor" "OpenBOR - Beats of Rage Engine" "$md_inst/openbor.sh"
 
     mkRomDir "ports/$md_id"
     setDispmanx "$md_id" 1
+
+    cat >"$md_inst/openbor.sh" << _EOF_
+#!/bin/bash
+pushd "$md_inst"
+./OpenBOR "\$@"
+popd
+_EOF_
+    chmod +x "$md_inst/openbor.sh"
 
     cat >"$md_inst/extract.sh" <<_EOF_
 #!/bin/bash
