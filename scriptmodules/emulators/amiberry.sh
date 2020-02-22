@@ -40,7 +40,7 @@ function depends_amiberry() {
 }
 
 function sources_amiberry() {
-    gitPullOrClone "$md_build" https://github.com/midwan/amiberry
+    gitPullOrClone "$md_build" https://github.com/midwan/amiberry "v3.1.0"
     # use our default optimisation level
     sed -i "s/-Ofast//" "$md_build/Makefile"
 }
