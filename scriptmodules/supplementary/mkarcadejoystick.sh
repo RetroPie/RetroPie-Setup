@@ -14,7 +14,7 @@ rp_module_desc="Raspberry Pi GPIO Joystick Driver"
 rp_module_help="Installs the GPIO driver from https://github.com/cmitu/mk_arcade_joystick_rpi"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/recalbox/mk_arcade_joystick_rpi/master/LICENSE"
 rp_module_section="driver"
-rp_module_flags="noinstclean !x86 !mali"
+rp_module_flags="noinstclean !all rpi"
 
 function _version_mkarcadejoystick() {
     echo "0.1.7"

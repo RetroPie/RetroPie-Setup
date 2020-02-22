@@ -14,7 +14,7 @@ rp_module_desc="Moonlight Embedded - an open source gamestream client for embedd
 rp_module_help="ROM Extensions: .ml\n\nCopy your moonlight launch configurations to $romdir/steam\n\nDon't forget to first pair with your remote host before using moonlight. You can use the configuration menu for pairing/unpairing to/from a remote machine."
 rp_module_licence="GPL3 https://raw.githubusercontent.com/irtimmer/moonlight-embedded/master/LICENSE"
 rp_module_section="exp"
-rp_module_flags="!x86"
+rp_module_flags="!all arm"
 
 function _scriptmodule_cfg_file_moonlight() {
     echo "$configdir/all/moonlight/scriptmodule.cfg"
