@@ -405,7 +405,7 @@ function get_x11_mode_info() {
     mode_info[4]="n/a"
 
     # get refresh rate (stripping Hz, rounded to integer)
-    mode_info[5]="$(printf '%.0f\n' ${status[3]::-2})"
+    mode_info[5]="$(LC_NUMERIC=C printf '%.0f\n' ${status[3]::-2})"
 
     echo "${mode_info[@]}"
 }
