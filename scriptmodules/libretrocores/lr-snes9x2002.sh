@@ -14,7 +14,7 @@ rp_module_desc="Super Nintendo emu - ARM optimised Snes9x 1.39 port for libretro
 rp_module_help="Previously called lr-pocketsnes\n\nROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/snes9x2002/master/src/copyright.h"
 rp_module_section="opt armv6=main"
-rp_module_flags="!x86 !aarch64"
+rp_module_flags="!all arm"
 
 function _update_hook_lr-snes9x2002() {
     # move from old location and update emulators.cfg
