@@ -9,32 +9,36 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="lr-4do"
-rp_module_desc="3DO emu - 4DO/libfreedo port for libretro"
+rp_module_id="lr-opera"
+rp_module_desc="3DO emulator - fork of 4DO/FreeDO for libretro"
 rp_module_help="ROM Extension: .iso\n\nCopy your 3do roms to $romdir/3do\n\nCopy the required BIOS file panazf10.bin to $biosdir"
-rp_module_licence="LGPL https://raw.githubusercontent.com/libretro/4do-libretro/master/libfreedo/freedo_3do.c"
+rp_module_licence="LGPL https://raw.githubusercontent.com/libretro/opera-libretro/master/libfreedo/freedo_3do.c"
 rp_module_section="exp"
 
-function sources_lr-4do() {
-    gitPullOrClone "$md_build" https://github.com/libretro/4do-libretro.git
+function sources_lr-opera() {
+    gitPullOrClone "$md_build" https://github.com/libretro/opera-libretro.git
 }
 
-function build_lr-4do() {
+function _update_hook_lr-opera() {
+     renameModule "lr-4do" "lr-opera"
+}
+
+function build_lr-opera() {
     make clean
     make
-    md_ret_require="$md_build/4do_libretro.so"
+    md_ret_require="$md_build/opera_libretro.so"
 }
 
-function install_lr-4do() {
+function install_lr-opera() {
     md_ret_files=(
-        '4do_libretro.so'
+        'opera_libretro.so'
     )
 }
 
-function configure_lr-4do() {
+function configure_lr-opera() {
     mkRomDir "3do"
     ensureSystemretroconfig "3do"
 
-    addEmulator 1 "$md_id" "3do" "$md_inst/4do_libretro.so"
+    addEmulator 1 "$md_id" "3do" "$md_inst/opera_libretro.so"
     addSystem "3do"
 }
