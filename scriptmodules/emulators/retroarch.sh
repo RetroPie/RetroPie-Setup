@@ -234,6 +234,9 @@ function configure_retroarch() {
     # swap A/B buttons based on ES configuration
     iniSet "menu_swap_ok_cancel_buttons" "$es_swap"
 
+    # enable menu_unified_controls by default (see below for more info)
+    iniSet "menu_unified_controls" "true"
+
     # disable 'press twice to quit'
     iniSet "quit_press_twice" "false"
 
