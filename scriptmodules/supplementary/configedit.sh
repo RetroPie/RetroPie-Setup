@@ -388,6 +388,7 @@ function advanced_menu_configedit() {
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         local file="-"
         if [[ -n "$choice" ]]; then
+            local ra_exclude='.*/all/retroarch/\(assets\|shaders\)/.*'
             while [[ -n "$file" ]]; do
                 case "$choice" in
                     1)
@@ -395,11 +396,11 @@ function advanced_menu_configedit() {
                         advanced_configedit "$configdir/$file" 2
                         ;;
                     2)
-                        file=$(choose_config_configedit "$configdir" ".*/retroarch.*")
+                        file=$(choose_config_configedit "$configdir" ".*/retroarch.*" "$ra_exclude")
                         editFile "$configdir/$file"
                         ;;
                     3)
-                        file=$(choose_config_configedit "$configdir" ".*/all/.*")
+                        file=$(choose_config_configedit "$configdir" ".*/all/.*" "$ra_exclude")
                         editFile "$configdir/$file"
                         ;;
                     4)
@@ -407,7 +408,7 @@ function advanced_menu_configedit() {
                         editFile "$configdir/$file"
                         ;;
                     5)
-                        file=$(choose_config_configedit "$configdir" ".*")
+                        file=$(choose_config_configedit "$configdir" ".*" "$ra_exclude")
                         editFile "$configdir/$file"
                         ;;
                 esac
