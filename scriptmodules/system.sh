@@ -17,9 +17,6 @@ function setup_env() {
     # if no apt-get we need to fail
     [[ -z "$(which apt-get)" ]] && fatalError "Unsupported OS - No apt-get command found"
 
-    __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
-    __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
-
     # test if we are in a chroot
     if [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]; then
         [[ -z "$QEMU_CPU" && -n "$__qemu_cpu" ]] && export QEMU_CPU=$__qemu_cpu
@@ -28,6 +25,7 @@ function setup_env() {
         __chroot=0
     fi
 
+    get_memory_info
     get_platform
     get_os_version
     get_retropie_depends
@@ -52,8 +50,8 @@ function setup_env() {
 
     __archive_url="https://files.retropie.org.uk/archives"
 
-    # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
-    [[ $__memory_phys -ge 512 ]] && __default_cflags+=" -pipe"
+    # -pipe is faster but will use more memory - so let's only add it if we have at least 512MB ram.
+    [[ "$__memory_avail" -ge 512 ]] && __default_cflags+=" -pipe"
 
     [[ -z "${CFLAGS}" ]] && export CFLAGS="${__default_cflags}"
     [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cxxflags}"
@@ -77,6 +75,13 @@ function setup_env() {
     if [[ -z "$__nodialog" ]]; then
         __nodialog=0
     fi
+}
+
+function get_memory_info() {
+    __memory_total_kb=$(awk '/^MemTotal:/{print $2}' /proc/meminfo)
+    __memory_total=$(( "$__memory_total_kb" / 1024 ))
+    __memory_avail_kb=$(awk '/^MemAvailable:/{print $2}' /proc/meminfo)
+    __memory_avail=$(( "$__memory_avail_kb" / 1024 ))
 }
 
 function get_os_version() {
