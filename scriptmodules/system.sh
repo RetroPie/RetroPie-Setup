@@ -53,10 +53,26 @@ function setup_env() {
     # -pipe is faster but will use more memory - so let's only add it if we have at least 512MB ram.
     [[ "$__memory_avail" -ge 512 ]] && __default_cflags+=" -pipe"
 
-    [[ -z "${CFLAGS}" ]] && export CFLAGS="${__default_cflags}"
-    [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cxxflags}"
-    [[ -z "${ASFLAGS}" ]] && export ASFLAGS="${__default_asflags}"
-    [[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
+    # calculate build concurrency based on cores and available memory
+    __jobs=1
+    if [[ "$(nproc)" -gt 1 ]]; then
+        # if we have less than 1gb of ram free, then limit build jobs to 2
+        if [[ "$__memory_avail" -lt 1024 ]]; then
+           __jobs=2
+        else
+           __jobs=$(nproc)
+        fi
+    fi
+
+    [[ -z "${CFLAGS}" ]] && CFLAGS="${__default_cflags}"
+    [[ -z "${CXXFLAGS}" ]] && CXXFLAGS="${__default_cxxflags}"
+    [[ -z "${ASFLAGS}" ]] && ASFLAGS="${__default_asflags}"
+    [[ -z "${MAKEFLAGS}" ]] && MAKEFLAGS="-j${__jobs}"
+    # export our build flags so all child processes can see them
+    export CFLAGS
+    export CXXFLAGS
+    export ASFLAGS
+    export MAKEFLAGS
 
     # if using distcc, add /usr/lib/distcc to PATH/MAKEFLAGS
     if [[ -n "$DISTCC_HOSTS" ]]; then
@@ -348,7 +364,6 @@ function platform_rpi1() {
 function platform_rpi2() {
     __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
     __platform_flags="arm armv7 neon rpi gles"
     __qemu_cpu=cortex-a7
 }
@@ -358,7 +373,6 @@ function platform_rpi2() {
 function platform_rpi3() {
     __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi gles"
     __qemu_cpu=cortex-a53
 }
@@ -366,14 +380,12 @@ function platform_rpi3() {
 function platform_rpi4() {
     __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
     __platform_flags="arm armv8 neon rpi gles gles3"
 }
 
 function platform_odroid-c1() {
     __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
     __platform_flags="arm armv7 neon mali gles"
     __qemu_cpu=cortex-a9
 }
@@ -388,7 +400,6 @@ function platform_odroid-c2() {
     fi
     __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
 }
 
 function platform_odroid-xu() {
@@ -396,7 +407,6 @@ function platform_odroid-xu() {
     # required for mali-fbdev headers to define GL functions
     __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
     __default_asflags=""
-    __default_makeflags="-j2"
     __platform_flags="arm armv7 neon mali gles"
 }
 
@@ -405,14 +415,12 @@ function platform_tinker() {
     # required for mali headers to define GL functions
     __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
     __default_asflags=""
-    __default_makeflags="-j2"
     __platform_flags="arm armv7 neon kms gles"
 }
 
 function platform_x86() {
     __default_cflags="-O2 -march=native"
     __default_asflags=""
-    __default_makeflags="-j$(nproc)"
     __platform_flags="gl"
     if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=" kms"
@@ -424,27 +432,23 @@ function platform_x86() {
 function platform_generic-x11() {
     __default_cflags="-O2"
     __default_asflags=""
-    __default_makeflags="-j$(nproc)"
     __platform_flags="x11 gl"
 }
 
 function platform_armv7-mali() {
     __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j$(nproc)"
     __platform_flags="arm armv7 neon mali gles"
 }
 
 function platform_imx6() {
     __default_cflags="-O2 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j2"
     __platform_flags="arm armv7 neon"
 }
 
 function platform_vero4k() {
     __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib -O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
     __default_asflags=""
-    __default_makeflags="-j4"
     __platform_flags="arm armv7 neon mali gles"
 }
