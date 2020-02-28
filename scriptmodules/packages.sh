@@ -384,11 +384,24 @@ function rp_registerModule() {
     local flag
     local valid=1
 
+    # flags are parsed in the order provided in the module - so the !all flag only makes sense first
+    # by default modules are enabled for all platforms
     if [[ "$__ignore_flags" -ne 1 ]]; then
         for flag in "${flags[@]}"; do
+            # !all excludes the module from all platforms
+            if [[ "$flag" == "!all" ]]; then
+                valid=0
+                continue
+            fi
+            # flags without ! make the module valid for the platform
+            if isPlatform "$flag"; then
+                valid=1
+                continue
+            fi
+            # flags with !flag will exclude the module for the platform
             if [[ "$flag" =~ ^\!(.+) ]] && isPlatform "${BASH_REMATCH[1]}"; then
                 valid=0
-                break
+                continue
             fi
         done
     fi
