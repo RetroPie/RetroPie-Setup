@@ -18,7 +18,7 @@ rp_module_flags="!all arm"
 
 function _get_platform_amiberry() {
     local platform="$__platform-sdl2"
-    if isPlatform "videocore"; then
+    if isPlatform "dispmanx"; then
         platform="$__platform"
     elif isPlatform "odroid-xu"; then
         platform="xu4"
@@ -33,14 +33,14 @@ function _get_platform_amiberry() {
 function depends_amiberry() {
     local depends=(autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libguichan-dev libmpg123-dev libflac-dev libxml2-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
 
-    isPlatform "videocore" && depends+=(libraspberrypi-dev)
+    isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
 
     getDepends "${depends[@]}"
 }
 
 function sources_amiberry() {
-    gitPullOrClone "$md_build" https://github.com/midwan/amiberry "v3.1.0"
+    gitPullOrClone "$md_build" https://github.com/midwan/amiberry
     # use our default optimisation level
     sed -i "s/-Ofast//" "$md_build/Makefile"
 }
