@@ -357,7 +357,6 @@ function get_platform() {
 function platform_rpi1() {
     # values to be used for configure/make
     __default_cflags="-O2 -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
-    __default_asflags=""
     __default_makeflags=""
     __platform_flags="arm armv6 rpi gles"
     # if building in a chroot, what cpu should be set by qemu
@@ -367,7 +366,6 @@ function platform_rpi1() {
 
 function platform_rpi2() {
     __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
-    __default_asflags=""
     __platform_flags="arm armv7 neon rpi gles"
     __qemu_cpu=cortex-a7
 }
@@ -376,20 +374,17 @@ function platform_rpi2() {
 # could improve performance with the compiler options below but needs further testing
 function platform_rpi3() {
     __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
-    __default_asflags=""
     __platform_flags="arm armv8 neon rpi gles"
     __qemu_cpu=cortex-a53
 }
 
 function platform_rpi4() {
     __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
-    __default_asflags=""
     __platform_flags="arm armv8 neon rpi gles gles3"
 }
 
 function platform_odroid-c1() {
     __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
-    __default_asflags=""
     __platform_flags="arm armv7 neon mali gles"
     __qemu_cpu=cortex-a9
 }
@@ -402,14 +397,12 @@ function platform_odroid-c2() {
         __default_cflags="-O2 -march=native"
         __platform_flags="aarch64 mali gles"
     fi
-    __default_asflags=""
 }
 
 function platform_odroid-xu() {
     __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     # required for mali-fbdev headers to define GL functions
     __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
-    __default_asflags=""
     __platform_flags="arm armv7 neon mali gles"
 }
 
@@ -417,13 +410,11 @@ function platform_tinker() {
     __default_cflags="-O2 -marm -march=armv7-a -mtune=cortex-a17 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     # required for mali headers to define GL functions
     __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
-    __default_asflags=""
     __platform_flags="arm armv7 neon kms gles"
 }
 
 function platform_x86() {
     __default_cflags="-O2 -march=native"
-    __default_asflags=""
     __platform_flags="gl"
     if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=" kms"
@@ -434,24 +425,20 @@ function platform_x86() {
 
 function platform_generic-x11() {
     __default_cflags="-O2"
-    __default_asflags=""
     __platform_flags="x11 gl"
 }
 
 function platform_armv7-mali() {
     __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
-    __default_asflags=""
     __platform_flags="arm armv7 neon mali gles"
 }
 
 function platform_imx6() {
     __default_cflags="-O2 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard"
-    __default_asflags=""
     __platform_flags="arm armv7 neon"
 }
 
 function platform_vero4k() {
     __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib -O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4"
-    __default_asflags=""
     __platform_flags="arm armv7 neon mali gles"
 }
