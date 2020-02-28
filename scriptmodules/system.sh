@@ -68,14 +68,6 @@ function conf_binary_vars() {
 function conf_build_vars() {
     __gcc_version=$(gcc -dumpversion)
 
-    # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
-    # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
-    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5.0.0; then
-        __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
-    fi
-    # -pipe is faster but will use more memory - so let's only add it if we have at least 512MB ram.
-    [[ "$__memory_avail" -ge 512 ]] && __default_cflags+=" -pipe"
-
     # calculate build concurrency based on cores and available memory
     __jobs=1
     if [[ "$(nproc)" -gt 1 ]]; then
@@ -86,16 +78,42 @@ function conf_build_vars() {
            __jobs=$(nproc)
         fi
     fi
+    __default_makeflags="-j${__jobs}"
 
-    [[ -z "${CFLAGS}" ]] && CFLAGS="${__default_cflags}"
-    [[ -z "${CXXFLAGS}" ]] && CXXFLAGS="${__default_cxxflags}"
-    [[ -z "${ASFLAGS}" ]] && ASFLAGS="${__default_asflags}"
-    [[ -z "${MAKEFLAGS}" ]] && MAKEFLAGS="-j${__jobs}"
-    # export our build flags so all child processes can see them
-    export CFLAGS
-    export CXXFLAGS
-    export ASFLAGS
-    export MAKEFLAGS
+    # set our default gcc optimisation level
+    if [[ -z "$__opt_flags" ]]; then
+        __opt_flags="$__default_opt_flags"
+        # -pipe is faster but will use more memory - so let's only add it if we have at least 512MB ram.
+        [[ "$__memory_avail" -ge 512 ]] && __opt_flags+=" -pipe"
+    fi
+
+    # set default cpu flags
+    [[ -z "$__cpu_flags" ]] && __cpu_flags="$__default_cpu_flags"
+
+    # if default cxxflags is empty, use our default cflags
+    [[ -z "$__default_cxxflags" ]] && __default_cxx_flags="$__default_cflags"
+
+    # add our cpu and optimisation flags
+    __default_cflags+=" $__cpu_flags $__opt_flags"
+    __default_cxxflags+=" $__cpu_flags $__opt_flags"
+
+    # if not overridden by user, configure our compiler flags
+    [[ -z "$__cflags" ]] && __cflags="$__default_cflags"
+    [[ -z "$__cxxflags" ]] && __cxxflags="$__default_cxxflags"
+    [[ -z "$__asflags" ]] && __asflags="$__default_asflags"
+    [[ -z "$__makeflags" ]] && __makeflags="$__default_makeflags"
+
+    # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
+    # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
+    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5.0.0; then
+        __cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
+    fi
+
+    # export our compiler flags so all child processes can see them
+    export CFLAGS="$__cflags"
+    export CXXFLAGS="$__cxxflags"
+    export ASFLAGS="$__asflags"
+    export MAKEFLAGS="$__makeflags"
 
     # if using distcc, add /usr/lib/distcc to PATH/MAKEFLAGS
     if [[ -n "$DISTCC_HOSTS" ]]; then
@@ -350,14 +368,16 @@ function get_platform() {
         [[ "$ini_value" == 0 ]] && __has_kms=0
     fi
 
+    set_platform_defaults
     platform_${__platform}
-    [[ -z "$__default_cxxflags" ]] && __default_cxxflags="$__default_cflags"
+}
+
+function set_platform_defaults() {
+    __default_opt_flags="-O2"
 }
 
 function platform_rpi1() {
-    # values to be used for configure/make
-    __default_cflags="-O2 -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
-    __default_makeflags=""
+    __default_cpu_flags="-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
     __platform_flags="arm armv6 rpi gles"
     # if building in a chroot, what cpu should be set by qemu
     # make chroot identify as arm6l
@@ -365,7 +385,7 @@ function platform_rpi1() {
 }
 
 function platform_rpi2() {
-    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __platform_flags="arm armv7 neon rpi gles"
     __qemu_cpu=cortex-a7
 }
@@ -373,48 +393,48 @@ function platform_rpi2() {
 # note the rpi3 currently uses the rpi2 binaries - for ease of maintenance - rebuilding from source
 # could improve performance with the compiler options below but needs further testing
 function platform_rpi3() {
-    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
+    __defaukt_cpu_flags="-march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
     __platform_flags="arm armv8 neon rpi gles"
     __qemu_cpu=cortex-a53
 }
 
 function platform_rpi4() {
-    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
+    __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
     __platform_flags="arm armv8 neon rpi gles gles3"
 }
 
 function platform_odroid-c1() {
-    __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __platform_flags="arm armv7 neon mali gles"
     __qemu_cpu=cortex-a9
 }
 
 function platform_odroid-c2() {
     if [[ "$(getconf LONG_BIT)" -eq 32 ]]; then
-        __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
+        __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
         __platform_flags="arm armv8 neon mali gles"
     else
-        __default_cflags="-O2 -march=native"
+        __default_cpu_flags="-march=native"
         __platform_flags="aarch64 mali gles"
     fi
 }
 
 function platform_odroid-xu() {
-    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     # required for mali-fbdev headers to define GL functions
-    __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
+    __default_cflags=" -DGL_GLEXT_PROTOTYPES"
     __platform_flags="arm armv7 neon mali gles"
 }
 
 function platform_tinker() {
-    __default_cflags="-O2 -marm -march=armv7-a -mtune=cortex-a17 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-marm -march=armv7-a -mtune=cortex-a17 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     # required for mali headers to define GL functions
-    __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
+    __default_cflags=" -DGL_GLEXT_PROTOTYPES"
     __platform_flags="arm armv7 neon kms gles"
 }
 
 function platform_x86() {
-    __default_cflags="-O2 -march=native"
+    __default_cpu_flags="-march=native"
     __platform_flags="gl"
     if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=" kms"
@@ -424,21 +444,21 @@ function platform_x86() {
 }
 
 function platform_generic-x11() {
-    __default_cflags="-O2"
     __platform_flags="x11 gl"
 }
 
 function platform_armv7-mali() {
-    __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __platform_flags="arm armv7 neon mali gles"
 }
 
 function platform_imx6() {
-    __default_cflags="-O2 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard"
+    __default_cpu_flags="-march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard"
     __platform_flags="arm armv7 neon"
 }
 
 function platform_vero4k() {
-    __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib -O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4"
+    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4"
+    __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib"
     __platform_flags="arm armv7 neon mali gles"
 }
