@@ -62,7 +62,13 @@ function install_daphne() {
         'lib'
         'libvldp2.so'
    )
-       export LD_LIBRARY_PATH=/opt/retropie/emulators/daphne/lib
+       if grep -q "/opt/retropie/emulators/daphne/lib" /etc/ld.so.conf.d/randomLibs.conf; then
+               :
+        else
+         echo '/opt/retropie/emulators/daphne/lib' > /etc/ld.so.conf.d/randomLibs.conf
+       fi
+
+ldconfig
         else
     md_ret_files=(
         'sound'
@@ -71,6 +77,7 @@ function install_daphne() {
         'COPYING'
     )
     fi
+   
 }
 
 function configure_daphne() {
