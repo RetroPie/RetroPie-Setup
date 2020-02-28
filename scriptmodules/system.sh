@@ -17,6 +17,23 @@ function setup_env() {
     # if no apt-get we need to fail
     [[ -z "$(which apt-get)" ]] && fatalError "Unsupported OS - No apt-get command found"
 
+    test_chroot
+
+    get_platform
+    get_os_version
+
+    get_retropie_depends
+
+    conf_memory_vars
+    conf_binary_vars
+    conf_build_vars
+
+    if [[ -z "$__nodialog" ]]; then
+        __nodialog=0
+    fi
+}
+
+function test_chroot() {
     # test if we are in a chroot
     if [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]; then
         [[ -z "$QEMU_CPU" && -n "$__qemu_cpu" ]] && export QEMU_CPU=$__qemu_cpu
@@ -24,21 +41,18 @@ function setup_env() {
     else
         __chroot=0
     fi
+}
 
-    get_memory_info
-    get_platform
-    get_os_version
-    get_retropie_depends
 
+function conf_memory_vars() {
+    __memory_total_kb=$(awk '/^MemTotal:/{print $2}' /proc/meminfo)
+    __memory_total=$(( "$__memory_total_kb" / 1024 ))
+    __memory_avail_kb=$(awk '/^MemAvailable:/{print $2}' /proc/meminfo)
+    __memory_avail=$(( "$__memory_avail_kb" / 1024 ))
+}
+
+function conf_binary_vars() {
     [[ -z "$__has_binaries" ]] && __has_binaries=0
-
-    __gcc_version=$(gcc -dumpversion)
-
-    # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
-    # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
-    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5.0.0; then
-        __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
-    fi
 
     # set location of binary downloads
     __binary_host="files.retropie.org.uk"
@@ -49,7 +63,16 @@ function setup_env() {
     __binary_url="$__binary_base_url/$__binary_path"
 
     __archive_url="https://files.retropie.org.uk/archives"
+}
 
+function conf_build_vars() {
+    __gcc_version=$(gcc -dumpversion)
+
+    # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
+    # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
+    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5.0.0; then
+        __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
+    fi
     # -pipe is faster but will use more memory - so let's only add it if we have at least 512MB ram.
     [[ "$__memory_avail" -ge 512 ]] && __default_cflags+=" -pipe"
 
@@ -79,17 +102,6 @@ function setup_env() {
         PATH="/usr/lib/distcc:$PATH"
         MAKEFLAGS+=" PATH=$PATH"
     fi
-
-    if [[ -z "$__nodialog" ]]; then
-        __nodialog=0
-    fi
-}
-
-function get_memory_info() {
-    __memory_total_kb=$(awk '/^MemTotal:/{print $2}' /proc/meminfo)
-    __memory_total=$(( "$__memory_total_kb" / 1024 ))
-    __memory_avail_kb=$(awk '/^MemAvailable:/{print $2}' /proc/meminfo)
-    __memory_avail=$(( "$__memory_avail_kb" / 1024 ))
 }
 
 function get_os_version() {
