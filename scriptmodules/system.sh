@@ -80,14 +80,6 @@ function setup_env() {
         MAKEFLAGS+=" PATH=$PATH"
     fi
 
-    # test if we are in a chroot
-    if [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]; then
-        [[ -z "$QEMU_CPU" && -n "$__qemu_cpu" ]] && export QEMU_CPU=$__qemu_cpu
-        __chroot=1
-    else
-        __chroot=0
-    fi
-
     if [[ -z "$__nodialog" ]]; then
         __nodialog=0
     fi
