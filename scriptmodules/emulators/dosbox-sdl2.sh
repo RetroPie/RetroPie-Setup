@@ -14,7 +14,6 @@ rp_module_desc="DOS emulator (enhanced DOSBox fork)"
 rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk/COPYING"
 rp_module_section="exp"
-rp_module_flags="!mali"
 
 function depends_dosbox-sdl2() {
     local depends=(libsdl2-dev libsdl2-net-dev libfluidsynth-dev fluid-soundfont-gm libglew-dev)
