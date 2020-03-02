@@ -300,14 +300,16 @@ function all_image() {
     local platform
     local image
     local dist="$1"
+    local make_bb="$2"
     for platform in rpi1 rpi2 rpi4; do
-        platform_image "$platform" "$dist"
+        platform_image "$platform" "$dist" "$make_bb"
     done
 }
 
 function platform_image() {
     local platform="$1"
     local dist="$2"
+    local make_bb="$3"
     [[ -z "$platform" ]] && return 1
 
     if [[ "$dist" == "stretch" && "$platform" == "rpi4" ]]; then
@@ -337,5 +339,5 @@ function platform_image() {
     rp_callModule image create_chroot "$dist"
     rp_callModule image install_rp "$platform"
     rp_callModule image create "$image"
-    rp_callModule image create_bb "$image"
+    [[ "$make_bb" -eq 1 ]] && rp_callModule image create_bb "$image"
 }
