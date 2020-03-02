@@ -942,6 +942,14 @@ _EOF_
 
             # workaround for launching xserver on correct/user owned tty
             # see https://github.com/RetroPie/RetroPie-Setup/issues/1805
+
+            # if no TTY env var is set, try and get it - eg if launching a ports script or runcommand manually
+            if [[ -z "$TTY" ]]; then
+                TTY=$(tty)
+                TTY=${TTY:8:1}
+            fi
+
+            # if we managed to get the current tty then try and use it
             if [[ -n "$TTY" ]]; then
                 COMMAND="$COMMAND -- vt$TTY -keeptty"
             fi
