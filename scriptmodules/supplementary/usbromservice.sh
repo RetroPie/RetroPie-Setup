@@ -71,7 +71,10 @@ function remove_usbromservice() {
 }
 
 function configure_usbromservice() {
+    [[ "$md_mode" == "remove" ]] && return
+
     iniConfig "=" '"' /etc/usbmount/usbmount.conf
+
     local fs
     for fs in ntfs exfat; do
         iniGet "FILESYSTEMS"
@@ -79,12 +82,13 @@ function configure_usbromservice() {
             iniSet "FILESYSTEMS" "$ini_value $fs"
         fi
     done
-    iniGet "MOUNTOPTIONS"
+
+    # set our mount options (usbmount has sync by default which we don't want)
     local uid=$(id -u $user)
     local gid=$(id -g $user)
-    if [[ ! "$ini_value" =~ uid|gid ]]; then
-        iniSet "MOUNTOPTIONS" "$ini_value,uid=$uid,gid=$gid"
-    fi
+    local mount_options="nodev,noexec,noatime,uid=$uid,gid=$gid"
+
+    iniSet "MOUNTOPTIONS" "$mount_options"
 }
 
 function gui_usbromservice() {
