@@ -19,7 +19,7 @@ rp_module_flags=" !mali !kms"
 function depends_daphne() {
         if uname -m |grep "x86_64"; then
         dpkg --add-architecture i386
-        getDepends libsdl1.2-dev:i386 libvorbis-dev:i386 libxmu6:i386 libxi-dev:i386 libglewmx1.13:i386 libpangox-1.0-dev:i386
+        getDepends libsdl1.2-dev libsdl2-mixer-dev libglew-dev libvorbis-dev libsdl-image1.2-dev libsdl-ttf2.0-dev zlib1g-dev libxmu-dev
         else
     getDepends libsdl1.2-dev libvorbis-dev libglew-dev zlib1g-dev
     fi
@@ -27,12 +27,7 @@ function depends_daphne() {
 
 function sources_daphne() {
         if uname -m |grep "x86_64"; then
-    wget http://www.daphne-emu.com/download/daphne-1.0beta-linux.tar.gz
-    tar -xf daphne-1.0beta-linux.tar.gz
-    cd daphne || exit
-  #  cp libvldp2.so /lib
-    mv daphne daphne.bin
-    mv * ../ ../
+    gitPullOrClone "$md_build" https://github.com/MrCoolSpan/Daphne.git
     else
     gitPullOrClone "$md_build" https://github.com/RetroPie/daphne-emu.git retropie
     fi
@@ -42,7 +37,14 @@ function sources_daphne() {
 
 function build_daphne() {
         if uname -m |grep "x86_64"; then
-        echo ok
+        cd src/vldp2 || exit
+        ./configure --disable-accel-detect
+        make -f Makefile.linux_x64
+        cd ../game/singe
+        make -f Makefile.linux_x64
+        cd ../..
+        ln -s Makefile.vars.linux_x64 Makefile.vars
+        make
         else
     cd src/vldp2 || exit
     ./configure
@@ -59,8 +61,10 @@ function install_daphne() {
         'sound'
         'pics'
         'daphne.bin'
-        'lib'
         'libvldp2.so'
+        'libsinge.so'
+        'singe.sh'
+        'COPYING'
    )
        if grep -q "/opt/retropie/emulators/daphne/lib" /etc/ld.so.conf.d/randomLibs.conf; then
                :
@@ -82,6 +86,8 @@ ldconfig
 
 function configure_daphne() {
     mkRomDir "daphne"
+    mkRomDir "alg"
+    mkRomDir "daphne/roms"
     mkRomDir "daphne/roms"
 
     mkUserDir "$md_conf_root/daphne"
@@ -90,7 +96,11 @@ function configure_daphne() {
         cp -v "$md_data/dapinput.ini" "$md_conf_root/daphne/dapinput.ini"
     fi
     ln -snf "$romdir/daphne/roms" "$md_inst/roms"
+    ln -snf "$romdir/alg" "$md_inst/singe" 
     ln -sf "$md_conf_root/$md_id/dapinput.ini" "$md_inst/dapinput.ini"
+
+    cd "$romdir/alg"
+    git clone https://github.com/MrCoolSpan/Daphe-singe-gamelist.git
 
     cat >"$md_inst/daphne.sh" <<_EOF_
 #!/bin/bash
@@ -103,14 +113,55 @@ if [[ -f "\$dir/\$name.commands" ]]; then
 fi
 
 "$md_inst/daphne.bin" "\$name" vldp -nohwaccel -framefile "\$dir/\$name.txt" -homedir "$md_inst" -fullscreen \$params
+
+xrandr --output "HDMI-0" --mode 1920x1080
 _EOF_
+   
+cat >"$md_inst/singe.sh" <<_EOF_
+#!/bin/bash
+# point to our linked libs that user may not have
+export LD_LIBRARY_PATH=$SCRIPT_DIR:$DAPHNE_SHARE:$LD_LIBRARY_PATH
+
+SCRIPT_DIR=`dirname "$0"`
+if realpath / >/dev/null; then SCRIPT_DIR=$(realpath "$SCRIPT_DIR"); fi
+DAPHNE_BIN=daphne.bin
+DAPHNE_SHARE=/opt/retropie/emulators/daphne
+
+function STDERR () {
+	/bin/cat - 1>&2
+}
+
+echo "Singe Launcher : Script dir is $SCRIPT_DIR"
+cd "$SCRIPT_DIR"
+
+dir="$1"
+name="${dir##*/}"
+name="${name%.*}"
+#xxrandr="${xdpyinfo | awk '/dimensions/{print $2}'}"
+if [[ -f "$dir/$name.commands" ]]; then
+    params=$(<"$dir/$name.commands")
+fi
+
+##xxrandr="${xdpyinfo | awk '/dimensions/{print $2}'}"
+#if [[ -f "$dir/$name.commands" ]]; then
+#    params=$(<"$dir/$name.commands")
+#fi
+
+"/opt/retropie/emulators/daphne/daphne.bin" singe vldp -FULLSCREEN -framefile "$dir/$name.txt" -script "$dir/$name.singe" -homedir "$DAPHNE_SHARE" -datadir "$DAPHNE_SHARE" -sound_buffer 2048 -noserversend -x 800 -y 600
+
+xrandr --output "HDMI-0" --mode 1920x1080
+_EOF_
+
     chmod +x "$md_inst/daphne.sh"
+    chmod +x "$md_inst/singe.sh"
 
     chown -R "$user":"$user" "$md_inst"
     chown -R "$user":"$user" "$md_conf_root/daphne/dapinput.ini"
 
     addEmulator 1 "$md_id" "daphne" "$md_inst/daphne.sh %ROM%"
     addSystem "daphne"
+    addEmulator 1 "$md_id" "American Laser Games" "$md_inst/singe.sh %ROM%"
+    addSystem "alg"
 }
 
 
