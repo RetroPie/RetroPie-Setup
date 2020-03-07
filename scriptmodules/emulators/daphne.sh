@@ -96,7 +96,7 @@ function configure_daphne() {
         cp -v "$md_data/dapinput.ini" "$md_conf_root/daphne/dapinput.ini"
     fi
     ln -snf "$romdir/daphne/roms" "$md_inst/roms"
-    ln -snf "$romdir/alg" "$md_inst/singe" 
+    ln -snf "$romdir/alg/roms" "$md_inst/singe" 
     ln -sf "$md_conf_root/$md_id/dapinput.ini" "$md_inst/dapinput.ini"
       
 cat >"$romdir/symlink.sh" <<_EOF_
