@@ -219,6 +219,11 @@ function getDepends() {
             isPlatform "xbian" && required="xbian-package-firmware"
         fi
 
+        # ignore mali-fbdev on Vero4k - doesn't exist - headers are supplied elsewhere
+        if [[ "$required" == "mali-fbdev" ]]; then
+            isPlatform "vero4k" && continue
+        fi
+
         # handle our custom package alias LINUX-HEADERS
         if [[ "$required" == "LINUX-HEADERS" ]]; then
             if isPlatform "rpi"; then
