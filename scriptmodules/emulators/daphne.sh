@@ -88,7 +88,7 @@ function configure_daphne() {
     mkRomDir "daphne"
     mkRomDir "alg"
     mkRomDir "daphne/roms"
-    mkRomDir "daphne/roms"
+    mkRomDir "alg/roms"
 
     mkUserDir "$md_conf_root/daphne"
 
@@ -98,6 +98,16 @@ function configure_daphne() {
     ln -snf "$romdir/daphne/roms" "$md_inst/roms"
     ln -snf "$romdir/alg" "$md_inst/singe" 
     ln -sf "$md_conf_root/$md_id/dapinput.ini" "$md_inst/dapinput.ini"
+      
+cat >"$romdir/symlink.sh" <<_EOF_
+#!/bin/bash
+mkdir ~/RetroPie/roms/alg/tmp
+ln -s ~/RetroPie/roms/alg/roms/* ~/RetroPie/roms/alg/tmp/ && ls -l ~/RetroPie/roms/alg/tmp/
+cd tmp
+for i in *; do mv "$i" "$i".daphne; done
+mv *.* ~/RetroPie/roms/alg
+rm -r ~/RetroPie/roms/alg/tmp
+_EOF_
 
     cd "$romdir/alg"
     git clone https://github.com/MrCoolSpan/Daphe-singe-gamelist.git
@@ -154,6 +164,7 @@ _EOF_
 
     chmod +x "$md_inst/daphne.sh"
     chmod +x "$md_inst/singe.sh"
+    chmod +x "$romdir/symlink.sh"
 
     chown -R "$user":"$user" "$md_inst"
     chown -R "$user":"$user" "$md_conf_root/daphne/dapinput.ini"
