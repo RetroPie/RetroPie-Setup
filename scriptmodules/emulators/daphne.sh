@@ -177,11 +177,12 @@ _EOF_
 
     chown -R "$user":"$user" "$md_inst"
     chown -R "$user":"$user" "$md_conf_root/daphne/dapinput.ini"
+    chown -R "$user":"$user" "$romdir/alg/symlink.sh"
 
     addEmulator 1 "$md_id" "daphne" "$md_inst/daphne.sh %ROM%"
     addSystem "daphne"
     addEmulator 1 "$md_id" "alg" "$md_inst/singe.sh %ROM%"
-    addSystem "alg"
+    addSystem "daphne"
 }
 
 
