@@ -181,7 +181,7 @@ _EOF_
     addEmulator 1 "$md_id" "daphne" "$md_inst/daphne.sh %ROM%"
     addSystem "daphne"
     addEmulator 1 "$md_id" "alg" "$md_inst/singe.sh %ROM%"
-    addSystem "American Laser Games"
+    addSystem "alg"
 }
 
 
