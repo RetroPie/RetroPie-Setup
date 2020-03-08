@@ -116,7 +116,7 @@ cat >"$romdir/alg/symlink.sh" <<_EOF_
 mkdir ~/RetroPie/roms/alg/tmp
 ln -s ~/RetroPie/roms/alg/roms/* ~/RetroPie/roms/alg/tmp/ && ls -l ~/RetroPie/roms/alg/tmp/
 cd tmp
-for i in *; do mv "$i" "$i".daphne; done
+for file in *; do mv "$file" "$file.daphne"; done;
 mv *.* ~/RetroPie/roms/alg
 rm -r ~/RetroPie/roms/alg/tmp
 _EOF_
@@ -173,7 +173,7 @@ _EOF_
 
     chmod +x "$md_inst/daphne.sh"
     chmod +x "$md_inst/singe.sh"
-    chmod +x "$romdir/symlink.sh"
+    chmod +x "$romdir/alg/symlink.sh"
 
     chown -R "$user":"$user" "$md_inst"
     chown -R "$user":"$user" "$md_conf_root/daphne/dapinput.ini"
