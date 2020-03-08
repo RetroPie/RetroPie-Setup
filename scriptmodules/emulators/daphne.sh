@@ -111,7 +111,7 @@ function configure_daphne() {
     ln -snf "$romdir/alg/roms" "$md_inst/singe" 
     ln -sf "$md_conf_root/$md_id/dapinput.ini" "$md_inst/dapinput.ini"
       
-cat >"$romdir/symlink.sh" <<_EOF_
+cat >"$romdir/alg/symlink.sh" <<_EOF_
 #!/bin/bash
 mkdir ~/RetroPie/roms/alg/tmp
 ln -s ~/RetroPie/roms/alg/roms/* ~/RetroPie/roms/alg/tmp/ && ls -l ~/RetroPie/roms/alg/tmp/
@@ -120,9 +120,6 @@ for i in *; do mv "$i" "$i".daphne; done
 mv *.* ~/RetroPie/roms/alg
 rm -r ~/RetroPie/roms/alg/tmp
 _EOF_
-
-    cd "$romdir/alg"
-    git clone https://github.com/MrCoolSpan/Daphe-singe-gamelist.git
 
     cat >"$md_inst/daphne.sh" <<_EOF_
 #!/bin/bash
@@ -183,8 +180,8 @@ _EOF_
 
     addEmulator 1 "$md_id" "daphne" "$md_inst/daphne.sh %ROM%"
     addSystem "daphne"
-    addEmulator 1 "$md_id" "American Laser Games" "$md_inst/singe.sh %ROM%"
-    addSystem "alg"
+    addEmulator 1 "$md_id" "alg" "$md_inst/singe.sh %ROM%"
+    addSystem "American Laser Games"
 }
 
 
