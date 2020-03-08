@@ -72,6 +72,17 @@ function install_daphne() {
          echo '/opt/retropie/emulators/daphne/lib' > /etc/ld.so.conf.d/randomLibs.conf
        fi
 
+      FILE=/etc/udev/rules.d/80-dolphinbar.rule
+      if [ -f "$FILE" ]; then
+      :
+      else 
+      cat >"/etc/udev/rules.d/80-dolphinbar.rule" <<_EOF_
+      SUBSYSTEM=="hidraw", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0306", MODE="0666"
+      SUBSYSTEM=="hidraw*", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0330", MODE="0666"
+_EOF_
+
+      fi
+
 ldconfig
         else
     md_ret_files=(
@@ -91,6 +102,7 @@ function configure_daphne() {
     mkRomDir "alg/roms"
 
     mkUserDir "$md_conf_root/daphne"
+    mkUserDir "$md_conf_root/alg"
 
     if [[ ! -f "$md_conf_root/daphne/dapinput.ini" ]]; then
         cp -v "$md_data/dapinput.ini" "$md_conf_root/daphne/dapinput.ini"
