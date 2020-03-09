@@ -123,6 +123,8 @@ rm -r ~/RetroPie/roms/alg/tmp' > "$romdir/alg/symlink.sh"
 
     cat >"$md_inst/daphne.sh" <<_EOF_
 #!/bin/bash
+# point to our linked libs that user may not have
+export LD_LIBRARY_PATH=$SCRIPT_DIR:$DAPHNE_SHARE:$LD_LIBRARY_PATH
 dir="\$1"
 name="\${dir##*/}"
 name="\${name%.*}"
