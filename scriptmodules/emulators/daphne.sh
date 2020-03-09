@@ -156,17 +156,8 @@ cd "$SCRIPT_DIR"
 dir="$1"
 name="${dir##*/}"
 name="${name%.*}"
-#xxrandr="${xdpyinfo | awk '/dimensions/{print $2}'}"
-if [[ -f "$dir/$name.commands" ]]; then
-    params=$(<"$dir/$name.commands")
-fi
 
-##xxrandr="${xdpyinfo | awk '/dimensions/{print $2}'}"
-#if [[ -f "$dir/$name.commands" ]]; then
-#    params=$(<"$dir/$name.commands")
-#fi
-
-"/opt/retropie/emulators/daphne/daphne.bin" singe vldp -FULLSCREEN -framefile "$dir/$name.txt" -script "$dir/$name.singe" -homedir "$DAPHNE_SHARE" -datadir "$DAPHNE_SHARE" -sound_buffer 2048 -noserversend -x 800 -y 600
+"/opt/retropie/emulators/daphne/daphne.bin" singe vldp -FULLSCREEN -framefile "$dir/$name.txt" -script "$dir/$name.singe" -homedir "$DAPHNE_SHARE" -datadir "$DAPHNE_SHARE" -sound_buffer 2048 -noserversend -x 1920 -y 1080
 
 xrandr --output "HDMI-0" --mode 1920x1080
 _EOF_
@@ -181,7 +172,7 @@ _EOF_
 
     addEmulator 1 "$md_id" "daphne" "$md_inst/daphne.sh %ROM%"
     addSystem "daphne"
-    addEmulator 1 "$md_id" "daphne" "$md_inst/singe.sh %ROM%"
+    addEmulator 1 "$md_id" "alg" "$md_inst/singe.sh %ROM%"
     addSystem "alg"
 }
 
