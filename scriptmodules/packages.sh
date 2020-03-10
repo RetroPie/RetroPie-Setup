@@ -80,13 +80,34 @@ function rp_callModule() {
         return 2
     fi
 
-    # automatically build/install module if no parameters are given
-    if [[ -z "$mode" ]]; then
-        for mode in depends sources build install configure clean; do
-            rp_callModule "$md_idx" "$mode" || return 1
-        done
-        return 0
-    fi
+    # parameters _auto_ _binary or _source_ (_source_ is used if no parameters are given for a module)
+    case "$mode" in
+        # automatic mode used by rp_installModule to choose between binary/source based on pkg info
+        _auto_)
+            eval $(rp_getPackageInfo "$md_idx")
+            if [[ "$pkg_origin" == "binary" ]]; then
+                rp_callModule "$md_idx" _binary_ || return 1
+            else
+                rp_callModule "$md_idx" || return 1
+            fi
+            return 0
+            ;;
+        _binary_)
+            if rp_hasBinary "$md_idx"; then
+                for mode in depends install_bin configure; do
+                   rp_callModule "$md_idx" "$mode" || return 1
+                done
+            fi
+            return 0
+            ;;
+        # automatically build/install module from source if no _source_ or no parameters are given
+        ""|_source_)
+            for mode in depends sources build install configure clean; do
+                rp_callModule "$md_idx" "$mode" || return 1
+            done
+            return 0
+            ;;
+    esac
 
     # create variables that can be used in modules
     local md_desc="${__mod_desc[$md_idx]}"
@@ -94,7 +115,7 @@ function rp_callModule() {
     local md_type="${__mod_type[$md_idx]}"
     local md_flags="${__mod_flags[$md_idx]}"
     local md_build="$__builddir/$md_id"
-    local md_inst="$rootdir/$md_type/$md_id"
+    local md_inst="$(rp_getInstallPath $md_idx)"
     local md_data="$scriptdir/scriptmodules/$md_type/$md_id"
     local md_mode="install"
 
@@ -277,6 +298,9 @@ function rp_callModule() {
         # remove install folder if there is an error (and it is empty)
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
         return 1
+    else
+        [[ "$mode" == "install" ]] && rp_setPackageInfo "$md_idx" "source"
+        [[ "$mode" == "install_bin" ]] && rp_setPackageInfo "$md_idx" "binary"
     fi
 
     # some information messages were returned
@@ -312,6 +336,12 @@ function rp_hasBinary() {
         return $?
     fi
     return 1
+}
+
+function rp_getInstallPath() {
+    local idx="$1"
+    local id=$(rp_getIdFromIdx "$idx")
+    echo "$rootdir/${__mod_type[$idx]}/$id"
 }
 
 function rp_installBin() {
@@ -351,16 +381,33 @@ function rp_hasModule() {
 
 function rp_installModule() {
     local idx="$1"
-    local mode
-    if rp_hasBinary "$idx"; then
-        for mode in depends install_bin configure; do
-            rp_callModule "$idx" "$mode" || return 1
-        done
-    else
-        rp_callModule "$idx" clean
-        rp_callModule "$idx" || return 1
-    fi
+    local mode="$2"
+    [[ -z "$mode" ]] && mode="_auto_"
+    rp_callModule "$idx" "$mode" || return 1
     return 0
+}
+
+# this is a basic / temporary fix to record the source of a package when updating (binary vs source)
+# packaging will be overhauled at a later date
+function rp_setPackageInfo() {
+    local pkg="$(rp_getInstallPath $1)/retropie.pkg"
+    local origin="$2"
+    iniConfig "=" '"' "$pkg"
+    iniSet "pkg_origin" "$origin"
+}
+
+function rp_getPackageInfo() {
+    local pkg="$(rp_getInstallPath $1)/retropie.pkg"
+
+    local pkg_origin="source"
+    [[ "$__has_binaries" -eq 1 ]] && pkg_origin="binary"
+
+    if [[ -f "$pkg" ]]; then
+        iniConfig "=" '"' "$pkg"
+        iniGet "pkg_origin"
+        [[ -n "$ini_value" ]] && pkg_origin="$ini_value"
+    fi
+    echo "local pkg_origin=\"$pkg_origin\""
 }
 
 function rp_registerModule() {
