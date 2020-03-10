@@ -44,13 +44,15 @@ function retropie_welcome() {
         cpuTempC=$(($(cat /sys/class/thermal/thermal_zone0/temp)/1000)) && cpuTempF=$((cpuTempC*9/5+32))
     fi
 
+    # calculate CPU max speed
+    local cpuSpeed=$(lscpu|grep "max MHz"|awk '{print $NF}'| awk '{print int($1+0.5)}')
+
     if [[ -f "/opt/vc/bin/vcgencmd" ]]; then
-        if gpuTempC=$(/opt/vc/bin/vcgencmd measure_temp); then
-            gpuTempC=${gpuTempC:5:2}
-            gpuTempF=$((gpuTempC*9/5+32))
-        else
-            gpuTempC=""
-        fi
+        local isPie=yes
+        v3dSpeed=$(expr $(($(vcgencmd measure_clock core|awk -F= '{print $2}') / 1000000)))
+        gpuTempC=$(/opt/vc/bin/vcgencmd measure_temp)
+        gpuTempC=${gpuTempC:5:2}
+        gpuTempF=$((gpuTempC*9/5+32))
     fi
 
     local df_out=()
@@ -91,6 +93,7 @@ function retropie_welcome() {
         "${fgred}\`*${bfgred}****${bfgylw}@@${bfgred}*${fgred}*'"
         "${fgred} \`*******'${fgrst} "
         "${fgred}   \`\"\"\"'${fgrst}   "
+        "           "
         )
 
     local out
@@ -123,10 +126,13 @@ function retropie_welcome() {
                 out+="${fgred}IP Address.........: $(getIPAddress)"
                 ;;
             9)
-                out+="Temperature........: CPU: $cpuTempC°C/$cpuTempF°F GPU: $gpuTempC°C/$gpuTempF°F"
+                out+="Temperature........: CPU: $cpuTempC°C/$cpuTempF°F $([[ $isPie == yes ]] && echo "GPU: $gpuTempC°C/$gpuTempF°F")"
                 ;;
             10)
-                out+="${fgwht}The RetroPie Project, https://retropie.org.uk"
+                out+="Max Clock Speed....: CPU: ${cpuSpeed}MHz $([[ $isPie == yes ]] && echo "V3D: ${v3dSpeed}MHz")"
+                ;;
+            11)
+                out+="\n${fgwht}The RetroPie Project, https://retropie.org.uk"
                 ;;
         esac
         out+="${rst}\n"
@@ -137,7 +143,6 @@ function retropie_welcome() {
 retropie_welcome
 # RETROPIE PROFILE END
 _EOF_
-
 
 }
 
