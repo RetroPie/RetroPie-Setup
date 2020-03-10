@@ -147,22 +147,24 @@ function package_setup() {
     while true; do
         local options=()
 
-        local install
         local status
+
+        local pkg_origin
+
         if rp_isInstalled "$idx"; then
-            install="Update"
-            status="Installed"
+            eval $(rp_getPackageInfo "$idx")
+            status="Installed - from $pkg_origin"
+            options+=(U "Update (from $pkg_origin)")
         else
-            install="Install"
             status="Not installed"
         fi
 
-        if rp_hasBinary "$idx"; then
-            options+=(B "$install from binary")
+        if [[ -z "$pkg_origin" || "$pkg_origin" == "source" ]] && rp_hasBinary "$idx"; then
+            options+=(B "Install from pre-compiled binary")
         fi
 
-        if fnExists "sources_${md_id}"; then
-            options+=(S "$install from source")
+        if [[ -z "$pkg_origin" || "$pkg_origin" == "binary" ]] && fnExists "sources_${md_id}"; then
+            options+=(S "Install from source")
         fi
 
         if rp_isInstalled "$idx"; then
@@ -189,23 +191,18 @@ function package_setup() {
         __INFMSGS=()
 
         case "$choice" in
-            B|I)
+            U|B|S)
+                local mode="_auto_"
+                case "$choice" in
+                    U) mode="_auto_" ;;
+                    B) mode="_binary_" ;;
+                    S) mode="_source_" ;;
+                esac
                 clear
                 rps_logInit
                 {
                     rps_logStart
-                    rp_installModule "$idx"
-                    rps_logEnd
-                } &> >(_setup_gzip_log "$logfilename")
-                rps_printInfo "$logfilename"
-                ;;
-            S)
-                clear
-                rps_logInit
-                {
-                    rps_logStart
-                    rp_callModule "$idx" clean
-                    rp_callModule "$idx"
+                    rp_installModule "$idx" "$mode"
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
@@ -253,17 +250,13 @@ function section_gui_setup() {
     while true; do
         local options=()
 
-        # we don't build binaries for experimental packages
-        if rp_hasBinaries && [[ "$section" != "exp" ]]; then
-            options+=(B "Install/Update all ${__sections[$section]} packages from binary" "This will install all ${__sections[$section]} packages from binary archives (if available). If a binary archive is missing a source install will be performed.")
-        fi
-
         options+=(
-            S "Install/Update all ${__sections[$section]} packages from source" "S This will build and install all the packages from $section from source. Building from source will pull in the very latest releases of many of the emulators. Building could fail or resulting binaries could not work. Only choose this option if you are comfortable in working with the linux console and debugging any issues."
+            U "Install all ${__sections[$section]} packages" "This will install all ${__sections[$section]} packages. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously"
             X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
         )
 
         local idx
+        local pkg_origin
         for idx in $(rp_getSectionIds $section); do
             if rp_isInstalled "$idx"; then
                 installed="(Installed)"
@@ -294,32 +287,18 @@ function section_gui_setup() {
         __ERRMSGS=()
         __INFMSGS=()
         case "$choice" in
-            B)
-                dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from binary?" 22 76 2>&1 >/dev/tty || continue
+            U)
+                dialog --defaultno --yesno "Are you sure you want to install all $section packages?" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     rps_logStart
                     for idx in $(rp_getSectionIds $section); do
-                        rp_installModule "$idx"
+                        rp_installModule "$idx" "_auto_"
                     done
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
                 ;;
-            S)
-                dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from source?" 22 76 2>&1 >/dev/tty || continue
-                rps_logInit
-                {
-                    rps_logStart
-                    for idx in $(rp_getSectionIds $section); do
-                        rp_callModule "$idx" clean
-                        rp_callModule "$idx"
-                    done
-                    rps_logEnd
-                } &> >(_setup_gzip_log "$logfilename")
-                rps_printInfo "$logfilename"
-                ;;
-
             X)
                 local text="Are you sure you want to remove all $section packages?"
                 [[ "$section" == "core" ]] && text+="\n\nWARNING - core packages are needed for RetroPie to function!"
@@ -394,7 +373,7 @@ function update_packages_setup() {
     local idx
     for idx in ${__mod_idx[@]}; do
         if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]]; then
-            rp_installModule "$idx"
+            rp_installModule "$idx" "_auto_"
         fi
     done
 }
