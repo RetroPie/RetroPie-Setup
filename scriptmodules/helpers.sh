@@ -149,10 +149,11 @@ function hasPackage() {
     if [[ $? -eq 0 ]]; then
         local ver="${status##* }"
         local status="${status% *}"
-        # if status doesn't contain "ok installed" package is not installed
-        if [[ "$status" == *"ok installed" ]]; then
-            # if we didn't request a version number, be happy with any
-            [[ -z "$req_ver" ]] && return 0
+        if [[ -z "$req_ver" ]]; then
+            # if we are not checking on a specific version and the package is installed we are happy
+            [[ "$status" == *"ok installed" ]] && return 0
+        else
+            # otherwise check the version
             compareVersions "$ver" "$comp" "$req_ver" && return 0
         fi
     fi
