@@ -14,7 +14,7 @@ rp_module_desc="Redream Dreamcast emulator"
 rp_module_help="ROM Extensions: .cdi .cue .chd .gdi .iso\n\nCopy your Dreamcast roms to $romdir/dreamcast"
 rp_module_licence="PROP"
 rp_module_section="exp"
-rp_module_flags="noinstclean !all rpi3 rpi4 !videocore"
+rp_module_flags="noinstclean !all rpi4"
 
 function install_bin_redream() {
     downloadAndExtract "https://redream.io/download/redream.aarch32-raspberry-linux-latest.tar.gz" "$md_inst"
