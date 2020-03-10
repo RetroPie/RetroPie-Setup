@@ -343,6 +343,12 @@ function rp_createBin() {
     chown $user:$user "$dest/$archive"
 }
 
+function rp_hasModule() {
+    local id="$1"
+    [[ -z "${__md_id_to_idx[id]}" ]] && return 0
+    return 1
+}
+
 function rp_installModule() {
     local idx="$1"
     local mode
