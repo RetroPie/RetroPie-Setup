@@ -14,17 +14,26 @@ rp_module_desc="OpenBOR - Beat 'em Up Game Engine"
 rp_module_help="OpenBOR games need to be extracted to function properly. Place your pak files in $romdir/ports/openbor and then run $rootdir/ports/openbor/extract.sh. When the script is done, your original pak files will be found in $romdir/ports/openbor/originals and can be deleted."
 rp_module_licence="BSD https://raw.githubusercontent.com/rofl0r/openbor/master/LICENSE"
 rp_module_section="exp"
-rp_module_flags="!mali !x11 !kms"
+rp_module_flags="!mali !kms"
 
 function depends_openbor() {
-    getDepends libsdl1.2-dev libsdl-gfx1.2-dev libogg-dev libvorbisidec-dev libvorbis-dev libpng-dev zlib1g-dev
+    getDepends libsdl1.2-dev libsdl-gfx1.2-dev libogg-dev libvorbisidec-dev libvorbis-dev libpng-dev zlib1g-dev yasm
 }
 
 function sources_openbor() {
+    if uname -m |grep "x86_64"; then
+    gitPullOrClone "$md_build" https://github.com/DCurrent/openbor.git
+    else
     gitPullOrClone "$md_build" https://github.com/rofl0r/openbor.git
+    fi
 }
 
 function build_openbor() {
+    if uname -m |grep "x86_64"; then
+    cd "$md_build/engine"
+    sed -i 's/-Werror//g' Makefile 
+    ./build.sh 4 amd64
+    else
     local params=()
     ! isPlatform "x11" && params+=(NO_GL=1)
     make clean
@@ -32,14 +41,21 @@ function build_openbor() {
     cd "$md_build/tools/borpak/"
     ./build-linux.sh
     md_ret_require="$md_build/OpenBOR"
+    fi
 }
 
 function install_openbor() {
-    md_ret_files=(
+    if uname -m |grep "x86_64"; then
+      md_ret_files=(
+       'engine/releases/LINUX_AMD64/OpenBOR'
+        )
+       else
+       md_ret_files=(
        'OpenBOR'
        'tools/borpak/borpak'
        'tools/unpack.sh'
     )
+    fi
 }
 
 function configure_openbor() {
