@@ -16,8 +16,12 @@ rp_module_licence="PROP"
 rp_module_section="exp"
 rp_module_flags="noinstclean !all rpi4"
 
+function __binary_url_redream() {
+    echo "https://redream.io/download/redream.aarch32-raspberry-linux-latest.tar.gz"
+}
+
 function install_bin_redream() {
-    downloadAndExtract "https://redream.io/download/redream.aarch32-raspberry-linux-latest.tar.gz" "$md_inst"
+    downloadAndExtract "$(__binary_url_redream)" "$md_inst"
 }
 
 function configure_redream() {
