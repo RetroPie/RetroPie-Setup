@@ -91,7 +91,7 @@ function midi_synth() {
             i=0
             until [[ -n "\$(aconnect -o | grep TiMidity)" || "\$i" -ge 10 ]]; do
                 sleep 1
-                \$((i++))
+                ((i++))
             done
             ;;
         "stop")
