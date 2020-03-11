@@ -1,0 +1,13 @@
+diff --git a/retroarch.c b/retroarch.c
+index b89de3520f..02a3912e49 100644
+--- a/retroarch.c
++++ b/retroarch.c
+@@ -23402,7 +23402,7 @@ void driver_set_nonblock_state(void)
+  **/
+ static void drivers_init(int flags)
+ {
+-   bool video_is_threaded = false;
++   bool video_is_threaded = video_driver_is_threaded_internal();
+    settings_t *settings   = configuration_settings;
+ 
+ #ifdef HAVE_MENU

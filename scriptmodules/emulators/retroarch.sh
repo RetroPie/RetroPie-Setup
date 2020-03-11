@@ -43,6 +43,7 @@ function sources_retroarch() {
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
     applyPatch "$md_data/03_shader_path_config_enable.diff"
+    applyPatch "$md_data/04_fix_corrupted_widgets.diff"
 }
 
 function build_retroarch() {
