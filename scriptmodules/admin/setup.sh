@@ -149,21 +149,30 @@ function package_setup() {
 
         local status
 
-        local pkg_origin
-
+        local pkg_origin=""
         if rp_isInstalled "$idx"; then
             eval $(rp_getPackageInfo "$idx")
-            status="Installed - from $pkg_origin"
-            options+=(U "Update (from $pkg_origin)")
+            status="Installed - via $pkg_origin"
+            [[ -n "$pkg_date" ]] && status+=" (built: $pkg_date)"
+            if [[ "$pkg_origin" == "binary" ]]; then
+                if rp_hasNewerBinary "$idx"; then
+                    options+=(U "Update (from binary)")
+                    status+="\nBinary update available."
+                else
+                    status+="\nNo binary update available."
+                fi
+            else
+                options+=(U "Update (from source)")
+            fi
         else
             status="Not installed"
         fi
 
-        if [[ -z "$pkg_origin" || "$pkg_origin" == "source" ]] && rp_hasBinary "$idx"; then
+        if [[ "$pkg_origin" != "binary" ]] && rp_hasBinary "$idx"; then
             options+=(B "Install from pre-compiled binary")
         fi
 
-        if [[ -z "$pkg_origin" || "$pkg_origin" == "binary" ]] && fnExists "sources_${md_id}"; then
+        if [[ "$pkg_origin" != "source" ]] && fnExists "sources_${md_id}"; then
             options+=(S "Install from source")
         fi
 
@@ -183,7 +192,7 @@ function package_setup() {
             options+=(H "Package Help")
         fi
 
-        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]} ($status)" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]}\n$status" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
         local logfilename
