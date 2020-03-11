@@ -149,10 +149,11 @@ function hasPackage() {
     if [[ $? -eq 0 ]]; then
         local ver="${status##* }"
         local status="${status% *}"
-        # if status doesn't contain "ok installed" package is not installed
-        if [[ "$status" == *"ok installed" ]]; then
-            # if we didn't request a version number, be happy with any
-            [[ -z "$req_ver" ]] && return 0
+        if [[ -z "$req_ver" ]]; then
+            # if we are not checking on a specific version and the package is installed we are happy
+            [[ "$status" == *"ok installed" ]] && return 0
+        else
+            # otherwise check the version
             compareVersions "$ver" "$comp" "$req_ver" && return 0
         fi
     fi
@@ -186,145 +187,149 @@ function aptRemove() {
     return $?
 }
 
+function _mapPackage() {
+    local pkg="$1"
+    case "$pkg" in
+        libraspberrypi-bin)
+            isPlatform "osmc" && pkg="rbp-userland-osmc"
+            isPlatform "xbian" && pkg="xbian-package-firmware"
+            ;;
+        libraspberrypi-dev)
+            isPlatform "osmc" && pkg="rbp-userland-dev-osmc"
+            isPlatform "xbian" && pkg="xbian-package-firmware"
+            ;;
+        mali-fbdev)
+            isPlatform "vero4k" && pkg=""
+            ;;
+        # handle our custom package alias LINUX-HEADERS
+        LINUX-HEADERS)
+            if isPlatform "rpi"; then
+                pkg="raspberrypi-kernel-headers"
+            elif [[ -z "$__os_ubuntu_ver" ]]; then
+                pkg="linux-headers-$(uname -r)"
+            else
+                pkg="linux-headers-generic"
+            fi
+            ;;
+        # map libpng-dev to libpng12-dev for Jessie
+        libpng-dev)
+            compareVersions "$__os_debian_ver" lt 9 && pkg="libpng12-dev"
+            ;;
+        libsdl1.2-dev)
+            rp_hasModule "sdl1" && pkg="RP sdl1 $pkg"
+            ;;
+        libsdl2-dev)
+            if rp_hasModule "sdl2"; then
+                # check whether to use our own sdl2 - can be disabled to resolve issues with
+                # mixing custom 64bit sdl2 and os distributed i386 version on multiarch
+                local own_sdl2=1
+                # default to off for x11 targets due to issues with dependencies with recent
+                # Ubuntu (19.04). eg libavdevice58 requiring exactly 2.0.9 sdl2.
+                isPlatform "x11" && own_sdl2=0
+                iniConfig " = " '"' "$configdir/all/retropie.cfg"
+                iniGet "own_sdl2"
+                [[ "$ini_value" == "1" ]] && own_sdl2=1
+                [[ "$own_sdl2" -eq 1 ]] && pkg="RP sdl2 $pkg"
+            fi
+            ;;
+    esac
+    echo "$pkg"
+}
+
 ## @fn getDepends()
 ## @param packages package / space separated list of packages to install
 ## @brief Installs packages if they are not installed.
 ## @retval 0 on success
 ## @retval 1 on failure
 function getDepends() {
-    local required
-    local packages=()
-    local failed=()
-
-    # check whether to use our own sdl2 - can be disabled to resolve issues with
-    # mixing custom 64bit sdl2 and os distributed i386 version on multiarch
-    local own_sdl2=1
-    # default to off for x11 targets due to issues with dependencies with recent
-    # Ubuntu (19.04). eg libavdevice58 requiring exactly 2.0.9 sdl2.
-    isPlatform "x11" && own_sdl2=0
-    iniConfig " = " '"' "$configdir/all/retropie.cfg"
-    iniGet "own_sdl2"
-    [[ "$ini_value" == 1 ]] && own_sdl2=1
-    [[ "$ini_value" == 0 ]] && own_sdl2=0
-
-    for required in $@; do
-
-        # workaround for different package names on osmc / xbian
-        if [[ "$required" == "libraspberrypi-bin" ]]; then
-            isPlatform "osmc" && required="rbp-userland-osmc"
-            isPlatform "xbian" && required="xbian-package-firmware"
-        fi
-        if [[ "$required" == "libraspberrypi-dev" ]]; then
-            isPlatform "osmc" && required="rbp-userland-dev-osmc"
-            isPlatform "xbian" && required="xbian-package-firmware"
-        fi
-
-        # ignore mali-fbdev on Vero4k - doesn't exist - headers are supplied elsewhere
-        if [[ "$required" == "mali-fbdev" ]]; then
-            isPlatform "vero4k" && continue
-        fi
-
-        # handle our custom package alias LINUX-HEADERS
-        if [[ "$required" == "LINUX-HEADERS" ]]; then
-            if isPlatform "rpi"; then
-                required="raspberrypi-kernel-headers"
-            elif [[ -z "$__os_ubuntu_ver" ]]; then
-                required="linux-headers-$(uname -r)"
+    local own_pkgs=()
+    local apt_pkgs=()
+    local all_pkgs=()
+    local pkg
+    for pkg in "$@"; do
+        pkg=($(_mapPackage "$pkg"))
+        # manage our custom packages (pkg = "RP module_id pkg_name")
+        if [[ "${pkg[0]}" == "RP" ]]; then
+            # if removing, check if any version is installed and queue for removal via the custom module
+            if [[ "$md_mode" == "remove" ]]; then
+                if hasPackage "${pkg[2]}"; then
+                    own_pkgs+=("${pkg[1]}")
+                    all_pkgs+=("${pkg[2]}(custom)")
+                fi
             else
-                required="linux-headers-generic"
+                # if installing check if our version is installed and queue for installing via the custom module
+                if hasPackage "${pkg[2]}" $(get_pkg_ver_${pkg[1]}) "ne"; then
+                    own_pkgs+=("${pkg[1]}")
+                    all_pkgs+=("${pkg[2]}(custom)")
+                fi
             fi
-        fi
-
-        # map libpng12-dev to libpng-dev for Stretch+
-        if [[ "$required" == "libpng12-dev" ]] && compareVersions "$__os_debian_ver" ge 9;  then
-            required="libpng-dev"
-            printMsgs "console" "RetroPie module references libpng12-dev and should be changed to libpng-dev"
-        fi
-
-        # map libpng-dev to libpng12-dev for Jessie
-        if [[ "$required" == "libpng-dev" ]] && compareVersions "$__os_debian_ver" lt 9; then
-            required="libpng12-dev"
-        fi
-
-        if [[ "$md_mode" == "install" ]]; then
-            # make sure we have our sdl1 / sdl2 installed
-            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "ne"; then
-                packages+=("$required")
-                continue
-            fi
-            if [[ "$own_sdl2" -eq 1 && "$required" == "libsdl2-dev" ]] && hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "ne"; then
-                packages+=("$required")
-                continue
-            fi
-
-            # make sure libraspberrypi-dev/libraspberrypi0 is up to date.
-            if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage libraspberrypi-dev 1.20170703-1 "lt"; then
-                packages+=("$required")
-                continue
-            fi
+            continue
         fi
 
         if [[ "$md_mode" == "remove" ]]; then
-            hasPackage "$required" && packages+=("$required")
+            # add package to apt_pkgs for removal if installed
+            if hasPackage "$pkg"; then
+                apt_pkgs+=("$pkg")
+                all_pkgs+=("$pkg")
+            fi
         else
-            hasPackage "$required" || packages+=("$required")
+            # add package to apt_pkgs for installation if not installed
+            if ! hasPackage "$pkg"; then
+                apt_pkgs+=("$pkg")
+                all_pkgs+=("$pkg")
+            fi
+        fi
+
+    done
+
+
+    # return if no packages required
+    [[ ${#apt_pkgs[@]} -eq 0 && ${#own_pkgs[@]} -eq 0 ]] && return
+
+    # if we are removing, then remove packages, do an autoremove to clean up additional packages and return
+    if [[ "$md_mode" == "remove" ]]; then
+        printMsgs "console" "Removing dependencies: ${all_pkgs[*]}"
+        for pkg in ${own_pkgs[@]}; do
+            rp_callModule "$pkg" remove
+        done
+        apt-get remove --purge -y "${apt_pkgs[@]}"
+        apt-get autoremove --purge -y
+        return 0
+    fi
+
+    printMsgs "console" "Did not find needed dependencies: ${all_pkgs[*]}. Trying to install them now."
+
+    # install any custom packages
+    for pkg in ${own_pkgs[@]}; do
+       rp_installModule "$(rp_getIdxFromId $pkg)"
+    done
+
+    aptInstall --no-install-recommends "${apt_pkgs[@]}"
+
+    local failed=()
+    # check the required packages again rather than return code of apt-get,
+    # as apt-get might fail for other reasons (eg other half installed packages)
+    for pkg in ${apt_pkgs[@]}; do
+        if ! hasPackage "$pkg"; then
+            # workaround for installing samba in a chroot (fails due to failed smbd service restart)
+            # we replace the init.d script with an empty script so the install completes
+            if [[ "$pkg" == "samba" && "$__chroot" -eq 1 ]]; then
+                mv /etc/init.d/smbd /etc/init.d/smbd.old
+                echo "#!/bin/sh" >/etc/init.d/smbd
+                chmod u+x /etc/init.d/smbd
+                apt-get -f install
+                mv /etc/init.d/smbd.old /etc/init.d/smbd
+            else
+                failed+=("$pkg")
+            fi
         fi
     done
-    if [[ ${#packages[@]} -ne 0 ]]; then
-        if [[ "$md_mode" == "remove" ]]; then
-            apt-get remove --purge -y "${packages[@]}"
-            apt-get autoremove --purge -y
-            return 0
-        fi
-        echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
 
-        # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2
-        local temp=()
-        for required in ${packages[@]}; do
-            if [[ "$required" == "libsdl1.2-dev" ]]; then
-                if [[ "$__has_binaries" -eq 1 ]]; then
-                    rp_callModule sdl1 install_bin
-                else
-                    rp_callModule sdl1
-                fi
-            elif [[ "$required" == "libsdl2-dev" && "$own_sdl2" == "1" ]]; then
-                if [[ "$__has_binaries" -eq 1 ]]; then
-                    rp_callModule sdl2 install_bin
-                else
-                    rp_callModule sdl2
-                fi
-            else
-                temp+=("$required")
-            fi
-        done
-        packages=("${temp[@]}")
-
-        aptInstall --no-install-recommends "${packages[@]}"
-
-        # check the required packages again rather than return code of apt-get,
-        # as apt-get might fail for other reasons (eg other half installed packages)
-        for required in ${packages[@]}; do
-            if ! hasPackage "$required"; then
-                # workaround for installing samba in a chroot (fails due to failed smbd service restart)
-                # we replace the init.d script with an empty script so the install completes
-                if [[ "$required" == "samba" && "$__chroot" -eq 1 ]]; then
-                    mv /etc/init.d/smbd /etc/init.d/smbd.old
-                    echo "#!/bin/sh" >/etc/init.d/smbd
-                    chmod u+x /etc/init.d/smbd
-                    apt-get -f install
-                    mv /etc/init.d/smbd.old /etc/init.d/smbd
-                else
-                    failed+=("$required")
-                fi
-            fi
-        done
-        if [[ ${#failed[@]} -eq 0 ]]; then
-            printMsgs "console" "Successfully installed package(s): ${packages[*]}."
-        else
-            md_ret_errors+=("Could not install package(s): ${failed[*]}.")
-            return 1
-        fi
+    if [[ ${#failed[@]} -gt 0 ]]; then
+        md_ret_errors+=("Could not install package(s): ${failed[*]}.")
+        return 1
     fi
+
     return 0
 }
 
