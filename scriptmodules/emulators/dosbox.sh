@@ -88,8 +88,10 @@ function midi_synth() {
     case "\$1" in
         "start")
             timidity -Os -iAD &
-            until [[ -n "\$(aconnect -o | grep TiMidity)" ]]; do
+            i=0
+            until [[ -n "\$(aconnect -o | grep TiMidity)" || "\$i" -ge 10 ]]; do
                 sleep 1
+                \$((i++))
             done
             ;;
         "stop")
