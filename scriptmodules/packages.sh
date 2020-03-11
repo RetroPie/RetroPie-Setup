@@ -85,7 +85,7 @@ function rp_callModule() {
         # automatic mode used by rp_installModule to choose between binary/source based on pkg info
         _auto_)
             eval $(rp_getPackageInfo "$md_idx")
-            if [[ "$pkg_origin" == "binary" ]]; then
+            if [[ "$pkg_origin" != "source" ]] && rp_hasBinary "$md_idx"; then
                 rp_callModule "$md_idx" _binary_ || return 1
             else
                 rp_callModule "$md_idx" || return 1
@@ -93,7 +93,9 @@ function rp_callModule() {
             return 0
             ;;
         _binary_)
-            if rp_hasBinary "$md_idx" && rp_hasNewerBinary "$md_idx"; then
+            rp_hasNewerBinary "$md_idx"
+            local ret="$?"
+            if [[ "$ret" -eq 0 || "$ret" -eq 2 ]]; then
                 for mode in depends install_bin configure; do
                     rp_callModule "$md_idx" "$mode" || return 1
                 done
@@ -361,9 +363,9 @@ function rp_getBinaryDate() {
 function rp_hasNewerBinary() {
     local idx="$1"
     eval $(rp_getPackageInfo "$idx")
-    [[ -z "$pkg_date" ]] && return 0
+    [[ -z "$pkg_date" ]] && return 2
     local bin_date="$(rp_getBinaryDate $idx)"
-    [[ -z "$bin_date" ]] && return 0
+    [[ -z "$bin_date" ]] && return 2
 
     local pkg_date_unix="$(date -d "$pkg_date" +%s)"
     local bin_date_unix="$(date -d "$bin_date" +%s)"
@@ -443,8 +445,7 @@ function rp_setPackageInfo() {
 function rp_getPackageInfo() {
     local pkg="$(rp_getInstallPath $1)/retropie.pkg"
 
-    local pkg_origin="source"
-    [[ "$__has_binaries" -eq 1 ]] && pkg_origin="binary"
+    local pkg_origin="unknown"
 
     local pkg_date
     if [[ -f "$pkg" ]]; then
