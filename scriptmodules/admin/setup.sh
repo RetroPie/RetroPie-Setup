@@ -149,30 +149,41 @@ function package_setup() {
 
         local status
 
+        local has_binary=0
+        rp_hasBinary "$idx" && has_binary=1
+
         local pkg_origin=""
+        local source_update=0
+        local binary_update=0
         if rp_isInstalled "$idx"; then
             eval $(rp_getPackageInfo "$idx")
             status="Installed - via $pkg_origin"
             [[ -n "$pkg_date" ]] && status+=" (built: $pkg_date)"
-            if [[ "$pkg_origin" == "binary" ]]; then
-                if rp_hasNewerBinary "$idx"; then
+
+            if [[ "$pkg_origin" != "source" && "$has_binary" -eq 1 ]]; then
+                rp_hasNewerBinary "$idx"
+                local has_newer="$?"
+                binary_update=1
+                if [[ "$has_newer" -ne 1 ]]; then
                     options+=(U "Update (from binary)")
-                    status+="\nBinary update available."
-                else
-                    status+="\nNo binary update available."
                 fi
-            else
+                [[ "$has_newer" -eq 0 ]] && status+="\nBinary update is available."
+                [[ "$has_newer" -eq 1 ]] && status+="\nYou are running the latest binary."
+                [[ "$has_newer" -eq 2 ]] && status+="\nBinary update may be available."
+            fi
+            if [[ "$binary_update" -eq 0 ]]; then
+                source_update=1
                 options+=(U "Update (from source)")
             fi
         else
             status="Not installed"
         fi
 
-        if [[ "$pkg_origin" != "binary" ]] && rp_hasBinary "$idx"; then
+        if [[ "$binary_update" -eq 0 && "$has_binary" -eq 1 ]]; then
             options+=(B "Install from pre-compiled binary")
         fi
 
-        if [[ "$pkg_origin" != "source" ]] && fnExists "sources_${md_id}"; then
+        if [[ "$source_update" -eq 0 ]] && fnExists "sources_${md_id}"; then
             options+=(S "Install from source")
         fi
 
