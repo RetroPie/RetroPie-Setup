@@ -93,9 +93,9 @@ function rp_callModule() {
             return 0
             ;;
         _binary_)
-            if rp_hasBinary "$md_idx"; then
+            if rp_hasBinary "$md_idx" && rp_hasNewerBinary "$md_idx"; then
                 for mode in depends install_bin configure; do
-                   rp_callModule "$md_idx" "$mode" || return 1
+                    rp_callModule "$md_idx" "$mode" || return 1
                 done
             fi
             return 0
@@ -338,6 +338,42 @@ function rp_hasBinary() {
     return 1
 }
 
+function rp_getBinaryDate() {
+    local idx="$1"
+    local id="$(rp_getIdFromIdx $idx)"
+    local url="$__binary_url/${__mod_type[$idx]}/${id}.tar.gz"
+    if fnExists "install_bin_${id}"; then
+        if fnExists "__binary_url_${id}"; then
+            url="$(__binary_url_${id})"
+        else
+            return 1
+        fi
+    fi
+    local bin_date=$(wget \
+        --server-response --spider -q \
+        "$url" 2>&1 \
+        | grep -i "Last-Modified" \
+        | cut -d" " -f4-)
+    echo "$bin_date"
+    return 0
+}
+
+function rp_hasNewerBinary() {
+    local idx="$1"
+    eval $(rp_getPackageInfo "$idx")
+    [[ -z "$pkg_date" ]] && return 0
+    local bin_date="$(rp_getBinaryDate $idx)"
+    [[ -z "$bin_date" ]] && return 0
+
+    local pkg_date_unix="$(date -d "$pkg_date" +%s)"
+    local bin_date_unix="$(date -d "$bin_date" +%s)"
+    if [[ "$bin_date_unix" -gt "$pkg_date_unix" ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
 function rp_getInstallPath() {
     local idx="$1"
     local id=$(rp_getIdFromIdx "$idx")
@@ -390,10 +426,18 @@ function rp_installModule() {
 # this is a basic / temporary fix to record the source of a package when updating (binary vs source)
 # packaging will be overhauled at a later date
 function rp_setPackageInfo() {
-    local pkg="$(rp_getInstallPath $1)/retropie.pkg"
+    local idx="$1"
+    local pkg="$(rp_getInstallPath $idx)/retropie.pkg"
     local origin="$2"
     iniConfig "=" '"' "$pkg"
     iniSet "pkg_origin" "$origin"
+    local pkg_date
+    if [[ "$origin" == "binary" ]]; then
+        pkg_date="$(rp_getBinaryDate $idx)"
+    else
+        pkg_date="$(date)"
+    fi
+    iniSet "pkg_date" "$pkg_date"
 }
 
 function rp_getPackageInfo() {
@@ -402,12 +446,16 @@ function rp_getPackageInfo() {
     local pkg_origin="source"
     [[ "$__has_binaries" -eq 1 ]] && pkg_origin="binary"
 
+    local pkg_date
     if [[ -f "$pkg" ]]; then
         iniConfig "=" '"' "$pkg"
         iniGet "pkg_origin"
         [[ -n "$ini_value" ]] && pkg_origin="$ini_value"
+        iniGet "pkg_date"
+        [[ -n "$ini_value" ]] && pkg_date="$ini_value"
     fi
     echo "local pkg_origin=\"$pkg_origin\""
+    echo "local pkg_date=\"$pkg_date\""
 }
 
 function rp_registerModule() {
