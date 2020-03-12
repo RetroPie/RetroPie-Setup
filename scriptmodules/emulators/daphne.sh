@@ -71,7 +71,7 @@ function install_daphne() {
         else
          echo '/opt/retropie/emulators/daphne/lib' > /etc/ld.so.conf.d/randomLibs.conf
        fi
-
+# Mayflash Sensor DolphinBar
       FILE=/etc/udev/rules.d/80-dolphinbar.rule
       if [ -f "$FILE" ]; then
       :
@@ -84,6 +84,16 @@ _EOF_
       fi
 
 ldconfig
+
+ if grep -q "alg_exts=".daphne"" ~/RetroPie-Setup/platforms.cfg; then
+               :
+        else
+sed '/ags_fullname="Adventure Game Studio"/a\
+alg_exts=".daphne"\
+\\alg_fullname="American Laser Games"' ~/RetroPie-Setup/platforms.cfg
+      
+       fi
+
         else
     md_ret_files=(
         'sound'
