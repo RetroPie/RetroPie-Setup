@@ -85,12 +85,10 @@ _EOF_
 
 ldconfig
 
- if grep -q "alg_exts=".daphne"" ~/RetroPie-Setup/platforms.cfg; then
+ if grep -q "alg_exts=".daphne"" $user/RetroPie-Setup/platforms.cfg; then
                :
         else
-sed '/ags_fullname="Adventure Game Studio"/a\
-alg_exts=".daphne"\
-\\alg_fullname="American Laser Games"' ~/RetroPie-Setup/platforms.cfg
+awk '1;/PATTERN/{ print "alg_exts=".daphne""; print "\\alg_fullname="American Laser Games""}' $user/RetroPie-Setup/platforms.cfg
       
        fi
 
