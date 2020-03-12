@@ -123,7 +123,7 @@ function retropie_welcome() {
                 out+="${fgred}IP Address.........: $(getIPAddress)"
                 ;;
             9)
-                out+="Temperature........: CPU: $cpuTempC°C/$cpuTempF°F GPU: $gpuTempC°C/$gpuTempF°F"
+                out+="Temperature........: CPU: ${cpuTempC}°C/${cpuTempF}°F GPU: ${gpuTempC}°C/${gpuTempF}°F"
                 ;;
             10)
                 out+="${fgwht}The RetroPie Project, https://retropie.org.uk"
