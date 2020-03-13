@@ -303,8 +303,12 @@ function rp_callModule() {
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
         return 1
     else
-        [[ "$mode" == "install" ]] && rp_setPackageInfo "$md_idx" "source"
         [[ "$mode" == "install_bin" ]] && rp_setPackageInfo "$md_idx" "binary"
+        [[ "$mode" == "install" ]] && rp_setPackageInfo "$md_idx" "source"
+        # handle the case of a few drivers that don't have an install function and set the package info at build stage
+        if ! fnExists "install_${mod_id}" && [[ "$mode" == "build" ]]; then
+            rp_setPackageInfo "$md_idx" "source"
+        fi
     fi
 
     # some information messages were returned
