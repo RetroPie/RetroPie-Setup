@@ -293,25 +293,36 @@ function section_gui_setup() {
     local default=""
     while true; do
         local options=()
+        local pkgs=()
+
+        local idx
+        local pkg_origin
+        local num_pkgs=0
+        for idx in $(rp_getSectionIds $section); do
+            if rp_isInstalled "$idx"; then
+                installed="(Installed)"
+                ((num_pkgs++))
+            else
+                installed=""
+            fi
+            pkgs+=("$idx" "${__mod_id[$idx]} $installed" "$idx ${__mod_desc[$idx]}"$'\n\n'"${__mod_help[$idx]}")
+        done
+
+        if [[ "$num_pkgs" -gt 0 ]]; then
+            options+=(
+                U "Update all ${__sections[$section]} packages" "This will update any installed ${__sections[$section]} packages. The packages will be updated by the method used previously."
+            )
+        fi
 
         # allow installing an entire section except for drivers - as it's probably a bad idea
         if [[ "$section" != "driver" ]]; then
             options+=(
-               U "Install all ${__sections[$section]} packages" "This will install all ${__sections[$section]} packages. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously"
-               X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
+                I "Install all ${__sections[$section]} packages" "This will install all ${__sections[$section]} packages. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously"
+                X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
             )
         fi
 
-        local idx
-        local pkg_origin
-        for idx in $(rp_getSectionIds $section); do
-            if rp_isInstalled "$idx"; then
-                installed="(Installed)"
-            else
-                installed=""
-            fi
-            options+=("$idx" "${__mod_id[$idx]} $installed" "$idx ${__mod_desc[$idx]}"$'\n\n'"${__mod_help[$idx]}")
-        done
+        options+=("${pkgs[@]}")
 
         local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
 
@@ -332,13 +343,20 @@ function section_gui_setup() {
 
         local logfilename
         case "$choice" in
-            U)
-                dialog --defaultno --yesno "Are you sure you want to install all $section packages?" 22 76 2>&1 >/dev/tty || continue
+            U|I)
+                local mode="update"
+                [[ "$choice" == "I" ]] && mode="install"
+                dialog --defaultno --yesno "Are you sure you want to $mode all $section packages?" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     rps_logStart
                     for idx in $(rp_getSectionIds $section); do
-                        rp_installModule "$idx" "_auto_" || break
+                        # if we are updating, skip packages that are not installed
+                        if [[ "$mode" == "update" ]]; then
+                            rp_isInstalled "$idx" && rp_installModule "$idx" "_update_" || break
+                        else
+                            rp_installModule "$idx" "_auto_" || break
+                        fi
                     done
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
