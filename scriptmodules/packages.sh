@@ -84,6 +84,12 @@ function rp_callModule() {
     case "$mode" in
         # automatic modes used by rp_installModule to choose between binary/source based on pkg info
         _auto_|_update_)
+            # if updating and a package isn't installed, return an error
+            if [[ "$mode" == "_update_" ]] && ! rp_isInstalled "$md_idx"; then
+                __ERRMSGS+=("$md_id is not installed, so can't update")
+                return 1
+            fi
+
             eval $(rp_getPackageInfo "$md_idx")
             rp_hasBinary "$md_idx"
             local ret="$?"
