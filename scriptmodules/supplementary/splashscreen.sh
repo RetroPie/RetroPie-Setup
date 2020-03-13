@@ -52,7 +52,8 @@ RemainAfterExit=yes
 WantedBy=sysinit.target
 _EOF_
 
-    rp_installModule "omxiv"
+    rp_installModule "omxiv" "_autoupdate_"
+
     gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
 
     cp "$md_data/asplashscreen.sh" "$md_inst"

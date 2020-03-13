@@ -82,6 +82,15 @@ function rp_callModule() {
 
     # parameters _auto_ _binary or _source_ (_source_ is used if no parameters are given for a module)
     case "$mode" in
+        # install the module if not installed, and update if it is
+        _autoupdate_)
+            if rp_isInstalled "$md_idx"; then
+                rp_callModule "$md_idx" "_update_" || return 1
+            else
+                rp_callModule "$md_idx" "_auto_" || return 1
+            fi
+            return 0
+            ;;
         # automatic modes used by rp_installModule to choose between binary/source based on pkg info
         _auto_|_update_)
             # if updating and a package isn't installed, return an error
