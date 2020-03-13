@@ -345,7 +345,7 @@ function rp_createBin() {
 
 function rp_hasModule() {
     local id="$1"
-    [[ -z "${__md_id_to_idx[id]}" ]] && return 0
+    [[ -n "$(rp_getIdxFromId $id)" ]] && return 0
     return 1
 }
 
