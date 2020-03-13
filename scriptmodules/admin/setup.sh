@@ -144,6 +144,13 @@ function package_setup() {
     local idx="$1"
     local md_id="${__mod_id[$idx]}"
 
+    # associative array so we can pull out the messages later for the confirmation requester
+    declare -A option_msgs=(
+        ["U"]=""
+        ["B"]="Install from pre-compiled binary"
+        ["S"]="Install from source"
+    )
+
     while true; do
         local options=()
 
@@ -164,27 +171,38 @@ function package_setup() {
                 rp_hasNewerBinary "$idx"
                 local has_newer="$?"
                 binary_update=1
-                if [[ "$has_newer" -ne 1 ]]; then
-                    options+=(U "Update (from binary)")
-                fi
-                [[ "$has_newer" -eq 0 ]] && status+="\nBinary update is available."
-                [[ "$has_newer" -eq 1 ]] && status+="\nYou are running the latest binary."
-                [[ "$has_newer" -eq 2 ]] && status+="\nBinary update may be available."
+                option_msgs["U"]="Update (from pre-built binary)"
+                case "$has_newer" in
+                    0)
+                        status+="\nBinary update is available."
+                        ;;
+                    1)
+                        status+="\nYou are running the latest binary."
+                        option_msgs["U"]="Re-install (from pre-built binary)"
+                        ;;
+                    2)
+                        status+="\nBinary update may be available (Unable to check for this package)."
+                        ;;
+                esac
             fi
             if [[ "$binary_update" -eq 0 ]]; then
                 source_update=1
-                options+=(U "Update (from source)")
+                option_msgs["U"]="Update (from source)"
             fi
         else
             status="Not installed"
         fi
 
+        if [[ "$source_update" -eq 1 || "$binary_update" -eq 1 ]]; then
+            options+=(U "${option_msgs["U"]}")
+        fi
+
         if [[ "$binary_update" -eq 0 && "$has_binary" -eq 1 ]]; then
-            options+=(B "Install from pre-compiled binary")
+            options+=(B "${option_msgs["B"]}")
         fi
 
         if [[ "$source_update" -eq 0 ]] && fnExists "sources_${md_id}"; then
-            options+=(S "Install from source")
+            options+=(S "${option_msgs[S]}")
         fi
 
         if rp_isInstalled "$idx"; then
@@ -212,7 +230,8 @@ function package_setup() {
 
         case "$choice" in
             U|B|S)
-                local mode="_auto_"
+                dialog --defaultno --yesno "Are you sure you want to ${option_msgs[$choice]}" 22 76 2>&1 >/dev/tty || continue
+                local mode
                 case "$choice" in
                     U) mode="_auto_" ;;
                     B) mode="_binary_" ;;
@@ -222,7 +241,7 @@ function package_setup() {
                 rps_logInit
                 {
                     rps_logStart
-                    rp_installModule "$idx" "$mode"
+                    rp_installModule "$idx" "$mode" "force"
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
@@ -393,7 +412,7 @@ function update_packages_setup() {
     local idx
     for idx in ${__mod_idx[@]}; do
         if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]]; then
-            rp_installModule "$idx" "_auto_"
+            rp_installModule "$idx" "_update_"
         fi
     done
 }
