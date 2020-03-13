@@ -15,7 +15,7 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/cmitu/omxiv/master/LIC
 rp_module_flags="!all rpi"
 
 function depends_omxiv() {
-    getDepends libraspberrypi-dev libpng-dev libjpeg-dev
+    getDepends libraspberrypi-dev libraspberrypi-doc libpng-dev libjpeg-dev
 }
 
 function sources_omxiv() {
