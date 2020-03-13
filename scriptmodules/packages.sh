@@ -82,10 +82,16 @@ function rp_callModule() {
 
     # parameters _auto_ _binary or _source_ (_source_ is used if no parameters are given for a module)
     case "$mode" in
-        # automatic mode used by rp_installModule to choose between binary/source based on pkg info
-        _auto_)
+        # automatic modes used by rp_installModule to choose between binary/source based on pkg info
+        _auto_|_update_)
             eval $(rp_getPackageInfo "$md_idx")
             if [[ "$pkg_origin" != "source" ]] && rp_hasBinary "$md_idx"; then
+                # if we are in _update_ mode we only update if there is a newer binary
+                if [[ "$mode" == "_update_" ]]; then
+                    rp_hasNewerBinary "$md_idx"
+                    local ret="$?"
+                    [[ "$ret" -eq 1 ]] && return 0
+                fi
                 rp_callModule "$md_idx" _binary_ || return 1
             else
                 rp_callModule "$md_idx" || return 1
@@ -93,13 +99,9 @@ function rp_callModule() {
             return 0
             ;;
         _binary_)
-            rp_hasNewerBinary "$md_idx"
-            local ret="$?"
-            if [[ "$ret" -eq 0 || "$ret" -eq 2 ]]; then
-                for mode in depends install_bin configure; do
-                    rp_callModule "$md_idx" "$mode" || return 1
-                done
-            fi
+            for mode in depends install_bin configure; do
+                rp_callModule "$md_idx" "$mode" || return 1
+            done
             return 0
             ;;
         # automatically build/install module from source if no _source_ or no parameters are given
