@@ -58,6 +58,8 @@ function rps_printInfo() {
     if [[ ${#__INFMSGS[@]} -gt 0 ]]; then
         printMsgs "dialog" "${__INFMSGS[@]}"
     fi
+    __ERRMSGS=()
+    __INFMSGS=()
 }
 
 function depends_setup() {
@@ -122,8 +124,6 @@ function post_update_setup() {
 
     clear
     local logfilename
-    __ERRMSGS=()
-    __INFMSGS=()
     rps_logInit
     {
         rps_logStart
@@ -144,25 +144,72 @@ function package_setup() {
     local idx="$1"
     local md_id="${__mod_id[$idx]}"
 
+    # associative array so we can pull out the messages later for the confirmation requester
+    declare -A option_msgs=(
+        ["U"]=""
+        ["B"]="Install from pre-compiled binary"
+        ["S"]="Install from source"
+    )
+
     while true; do
         local options=()
 
-        local install
         local status
+
+        local has_binary=0
+        rp_hasBinary "$idx"
+        local binary_ret="$?"
+        [[ "$binary_ret" -eq 0 ]] && has_binary=1
+
+        local pkg_origin=""
+        local source_update=0
+        local binary_update=0
         if rp_isInstalled "$idx"; then
-            install="Update"
-            status="Installed"
+            eval $(rp_getPackageInfo "$idx")
+            status="Installed - via $pkg_origin"
+            [[ -n "$pkg_date" ]] && status+=" (built: $pkg_date)"
+
+            if [[ "$pkg_origin" != "source" && "$has_binary" -eq 1 ]]; then
+                rp_hasNewerBinary "$idx"
+                local has_newer="$?"
+                binary_update=1
+                option_msgs["U"]="Update (from pre-built binary)"
+                case "$has_newer" in
+                    0)
+                        status+="\nBinary update is available."
+                        ;;
+                    1)
+                        status+="\nYou are running the latest binary."
+                        option_msgs["U"]="Re-install (from pre-built binary)"
+                        ;;
+                    2)
+                        status+="\nBinary update may be available (Unable to check for this package)."
+                        ;;
+                esac
+            fi
+            if [[ "$binary_update" -eq 0 && "$binary_ret" -ne 4 ]]; then
+                source_update=1
+                option_msgs["U"]="Update (from source)"
+            fi
         else
-            install="Install"
             status="Not installed"
         fi
 
-        if rp_hasBinary "$idx"; then
-            options+=(B "$install from binary")
-        fi
+        # if we had a network error don't display install options
+        if [[ "$binary_ret" -eq 4 ]]; then
+            status+="\nInstall options disabled (Unable to access internet)"
+        else
+            if [[ "$source_update" -eq 1 || "$binary_update" -eq 1 ]]; then
+                options+=(U "${option_msgs["U"]}")
+            fi
 
-        if fnExists "sources_${md_id}"; then
-            options+=(S "$install from source")
+            if [[ "$binary_update" -eq 0 && "$has_binary" -eq 1 ]]; then
+                options+=(B "${option_msgs["B"]}")
+            fi
+
+            if [[ "$source_update" -eq 0 ]] && fnExists "sources_${md_id}"; then
+                options+=(S "${option_msgs[S]}")
+           fi
         fi
 
         if rp_isInstalled "$idx"; then
@@ -181,31 +228,25 @@ function package_setup() {
             options+=(H "Package Help")
         fi
 
-        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]} ($status)" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]}\n$status" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
         local logfilename
-        __ERRMSGS=()
-        __INFMSGS=()
 
         case "$choice" in
-            B|I)
+            U|B|S)
+                dialog --defaultno --yesno "Are you sure you want to ${option_msgs[$choice]}" 22 76 2>&1 >/dev/tty || continue
+                local mode
+                case "$choice" in
+                    U) mode="_auto_" ;;
+                    B) mode="_binary_" ;;
+                    S) mode="_source_" ;;
+                esac
                 clear
                 rps_logInit
                 {
                     rps_logStart
-                    rp_installModule "$idx"
-                    rps_logEnd
-                } &> >(_setup_gzip_log "$logfilename")
-                rps_printInfo "$logfilename"
-                ;;
-            S)
-                clear
-                rps_logInit
-                {
-                    rps_logStart
-                    rp_callModule "$idx" clean
-                    rp_callModule "$idx"
+                    rp_installModule "$idx" "$mode" "force"
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
@@ -252,26 +293,36 @@ function section_gui_setup() {
     local default=""
     while true; do
         local options=()
-
-        # we don't build binaries for experimental packages
-        if rp_hasBinaries && [[ "$section" != "exp" ]]; then
-            options+=(B "Install/Update all ${__sections[$section]} packages from binary" "This will install all ${__sections[$section]} packages from binary archives (if available). If a binary archive is missing a source install will be performed.")
-        fi
-
-        options+=(
-            S "Install/Update all ${__sections[$section]} packages from source" "S This will build and install all the packages from $section from source. Building from source will pull in the very latest releases of many of the emulators. Building could fail or resulting binaries could not work. Only choose this option if you are comfortable in working with the linux console and debugging any issues."
-            X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
-        )
+        local pkgs=()
 
         local idx
+        local pkg_origin
+        local num_pkgs=0
         for idx in $(rp_getSectionIds $section); do
             if rp_isInstalled "$idx"; then
                 installed="(Installed)"
+                ((num_pkgs++))
             else
                 installed=""
             fi
-            options+=("$idx" "${__mod_id[$idx]} $installed" "$idx ${__mod_desc[$idx]}"$'\n\n'"${__mod_help[$idx]}")
+            pkgs+=("$idx" "${__mod_id[$idx]} $installed" "$idx ${__mod_desc[$idx]}"$'\n\n'"${__mod_help[$idx]}")
         done
+
+        if [[ "$num_pkgs" -gt 0 ]]; then
+            options+=(
+                U "Update all ${__sections[$section]} packages" "This will update any installed ${__sections[$section]} packages. The packages will be updated by the method used previously."
+            )
+        fi
+
+        # allow installing an entire section except for drivers - as it's probably a bad idea
+        if [[ "$section" != "driver" ]]; then
+            options+=(
+                I "Install all ${__sections[$section]} packages" "This will install all ${__sections[$section]} packages. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously"
+                X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
+            )
+        fi
+
+        options+=("${pkgs[@]}")
 
         local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
 
@@ -291,35 +342,26 @@ function section_gui_setup() {
         default="$choice"
 
         local logfilename
-        __ERRMSGS=()
-        __INFMSGS=()
         case "$choice" in
-            B)
-                dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from binary?" 22 76 2>&1 >/dev/tty || continue
+            U|I)
+                local mode="update"
+                [[ "$choice" == "I" ]] && mode="install"
+                dialog --defaultno --yesno "Are you sure you want to $mode all $section packages?" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     rps_logStart
                     for idx in $(rp_getSectionIds $section); do
-                        rp_installModule "$idx"
+                        # if we are updating, skip packages that are not installed
+                        if [[ "$mode" == "update" ]]; then
+                            rp_isInstalled "$idx" && rp_installModule "$idx" "_update_" || break
+                        else
+                            rp_installModule "$idx" "_auto_" || break
+                        fi
                     done
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
                 ;;
-            S)
-                dialog --defaultno --yesno "Are you sure you want to install/update all $section packages from source?" 22 76 2>&1 >/dev/tty || continue
-                rps_logInit
-                {
-                    rps_logStart
-                    for idx in $(rp_getSectionIds $section); do
-                        rp_callModule "$idx" clean
-                        rp_callModule "$idx"
-                    done
-                    rps_logEnd
-                } &> >(_setup_gzip_log "$logfilename")
-                rps_printInfo "$logfilename"
-                ;;
-
             X)
                 local text="Are you sure you want to remove all $section packages?"
                 [[ "$section" == "core" ]] && text+="\n\nWARNING - core packages are needed for RetroPie to function!"
@@ -371,8 +413,6 @@ function config_gui_setup() {
         default="$choice"
 
         local logfilename
-        __ERRMSGS=()
-        __INFMSGS=()
         rps_logInit
         {
             rps_logStart
@@ -394,7 +434,7 @@ function update_packages_setup() {
     local idx
     for idx in ${__mod_idx[@]}; do
         if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]]; then
-            rp_installModule "$idx"
+            rp_installModule "$idx" "_update_" || return 1
         fi
     done
 }
@@ -403,7 +443,7 @@ function update_packages_gui_setup() {
     local update="$1"
     if [[ "$update" != "update" ]]; then
         dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
-        updatescript_setup
+        updatescript_setup || return 1
         # restart at post_update and then call "update_packages_gui_setup update" afterwards
         joy2keyStop
         exec "$scriptdir/retropie_packages.sh" setup post_update update_packages_gui_setup update
@@ -415,8 +455,6 @@ function update_packages_gui_setup() {
     clear
 
     local logfilename
-    __ERRMSGS=()
-    __INFMSGS=()
     rps_logInit
     {
         rps_logStart
@@ -433,8 +471,9 @@ function update_packages_gui_setup() {
 function basic_install_setup() {
     local idx
     for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
-        rp_installModule "$idx"
+        rp_installModule "$idx" || return 1
     done
+    return 0
 }
 
 function packages_gui_setup() {
@@ -539,8 +578,6 @@ function gui_setup() {
                 dialog --defaultno --yesno "Are you sure you want to do a basic install?\n\nThis will install all packages from the 'Core' and 'Main' package sections." 22 76 2>&1 >/dev/tty || continue
                 clear
                 local logfilename
-                __ERRMSGS=()
-                __INFMSGS=()
                 rps_logInit
                 {
                     rps_logStart
@@ -567,8 +604,6 @@ function gui_setup() {
                 ;;
             X)
                 local logfilename
-                __ERRMSGS=()
-                __INFMSGS=()
                 rps_logInit
                 {
                     uninstall_setup
