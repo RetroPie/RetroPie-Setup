@@ -85,7 +85,16 @@ function rp_callModule() {
         # automatic modes used by rp_installModule to choose between binary/source based on pkg info
         _auto_|_update_)
             eval $(rp_getPackageInfo "$md_idx")
-            if [[ "$pkg_origin" != "source" ]] && rp_hasBinary "$md_idx"; then
+            rp_hasBinary "$md_idx"
+            local ret="$?"
+
+            # check if we had a network failure from wget
+            if [[ "$ret" -eq 4 ]]; then
+                __ERRMSGS+=("Unable to connect to the internet")
+                return 1
+            fi
+
+            if [[ "$pkg_origin" != "source" ]] && [[ "$ret" -eq 0 ]]; then
                 # if we are in _update_ mode we only update if there is a newer binary
                 if [[ "$mode" == "_update_" ]]; then
                     rp_hasNewerBinary "$md_idx"

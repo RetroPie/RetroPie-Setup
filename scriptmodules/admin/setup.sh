@@ -58,6 +58,8 @@ function rps_printInfo() {
     if [[ ${#__INFMSGS[@]} -gt 0 ]]; then
         printMsgs "dialog" "${__INFMSGS[@]}"
     fi
+    __ERRMSGS=()
+    __INFMSGS=()
 }
 
 function depends_setup() {
@@ -122,8 +124,6 @@ function post_update_setup() {
 
     clear
     local logfilename
-    __ERRMSGS=()
-    __INFMSGS=()
     rps_logInit
     {
         rps_logStart
@@ -157,7 +157,9 @@ function package_setup() {
         local status
 
         local has_binary=0
-        rp_hasBinary "$idx" && has_binary=1
+        rp_hasBinary "$idx"
+        local binary_ret="$?"
+        [[ "$binary_ret" -eq 0 ]] && has_binary=1
 
         local pkg_origin=""
         local source_update=0
@@ -185,7 +187,7 @@ function package_setup() {
                         ;;
                 esac
             fi
-            if [[ "$binary_update" -eq 0 ]]; then
+            if [[ "$binary_update" -eq 0 && "$binary_ret" -ne 4 ]]; then
                 source_update=1
                 option_msgs["U"]="Update (from source)"
             fi
@@ -193,16 +195,21 @@ function package_setup() {
             status="Not installed"
         fi
 
-        if [[ "$source_update" -eq 1 || "$binary_update" -eq 1 ]]; then
-            options+=(U "${option_msgs["U"]}")
-        fi
+        # if we had a network error don't display install options
+        if [[ "$binary_ret" -eq 4 ]]; then
+            status+="\nInstall options disabled (Unable to access internet)"
+        else
+            if [[ "$source_update" -eq 1 || "$binary_update" -eq 1 ]]; then
+                options+=(U "${option_msgs["U"]}")
+            fi
 
-        if [[ "$binary_update" -eq 0 && "$has_binary" -eq 1 ]]; then
-            options+=(B "${option_msgs["B"]}")
-        fi
+            if [[ "$binary_update" -eq 0 && "$has_binary" -eq 1 ]]; then
+                options+=(B "${option_msgs["B"]}")
+            fi
 
-        if [[ "$source_update" -eq 0 ]] && fnExists "sources_${md_id}"; then
-            options+=(S "${option_msgs[S]}")
+            if [[ "$source_update" -eq 0 ]] && fnExists "sources_${md_id}"; then
+                options+=(S "${option_msgs[S]}")
+           fi
         fi
 
         if rp_isInstalled "$idx"; then
@@ -225,8 +232,6 @@ function package_setup() {
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 
         local logfilename
-        __ERRMSGS=()
-        __INFMSGS=()
 
         case "$choice" in
             U|B|S)
@@ -326,8 +331,6 @@ function section_gui_setup() {
         default="$choice"
 
         local logfilename
-        __ERRMSGS=()
-        __INFMSGS=()
         case "$choice" in
             U)
                 dialog --defaultno --yesno "Are you sure you want to install all $section packages?" 22 76 2>&1 >/dev/tty || continue
@@ -335,7 +338,7 @@ function section_gui_setup() {
                 {
                     rps_logStart
                     for idx in $(rp_getSectionIds $section); do
-                        rp_installModule "$idx" "_auto_"
+                        rp_installModule "$idx" "_auto_" || break
                     done
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
@@ -392,8 +395,6 @@ function config_gui_setup() {
         default="$choice"
 
         local logfilename
-        __ERRMSGS=()
-        __INFMSGS=()
         rps_logInit
         {
             rps_logStart
@@ -415,7 +416,7 @@ function update_packages_setup() {
     local idx
     for idx in ${__mod_idx[@]}; do
         if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]]; then
-            rp_installModule "$idx" "_update_"
+            rp_installModule "$idx" "_update_" || return 1
         fi
     done
 }
@@ -424,7 +425,7 @@ function update_packages_gui_setup() {
     local update="$1"
     if [[ "$update" != "update" ]]; then
         dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
-        updatescript_setup
+        updatescript_setup || return 1
         # restart at post_update and then call "update_packages_gui_setup update" afterwards
         joy2keyStop
         exec "$scriptdir/retropie_packages.sh" setup post_update update_packages_gui_setup update
@@ -436,8 +437,6 @@ function update_packages_gui_setup() {
     clear
 
     local logfilename
-    __ERRMSGS=()
-    __INFMSGS=()
     rps_logInit
     {
         rps_logStart
@@ -454,8 +453,9 @@ function update_packages_gui_setup() {
 function basic_install_setup() {
     local idx
     for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
-        rp_installModule "$idx"
+        rp_installModule "$idx" || return 1
     done
+    return 0
 }
 
 function packages_gui_setup() {
@@ -560,8 +560,6 @@ function gui_setup() {
                 dialog --defaultno --yesno "Are you sure you want to do a basic install?\n\nThis will install all packages from the 'Core' and 'Main' package sections." 22 76 2>&1 >/dev/tty || continue
                 clear
                 local logfilename
-                __ERRMSGS=()
-                __INFMSGS=()
                 rps_logInit
                 {
                     rps_logStart
@@ -588,8 +586,6 @@ function gui_setup() {
                 ;;
             X)
                 local logfilename
-                __ERRMSGS=()
-                __INFMSGS=()
                 rps_logInit
                 {
                     uninstall_setup
