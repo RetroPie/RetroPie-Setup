@@ -301,7 +301,12 @@ function getDepends() {
 
     # install any custom packages
     for pkg in ${own_pkgs[@]}; do
-       rp_installModule "$(rp_getIdxFromId $pkg)"
+       # we need to check if we have binaries else install_bin for sdl1/sdl2 could fail
+       if [[ "$__has_binaries" -eq 1 ]]; then
+           rp_callModule "$pkg" _auto_
+       else
+           rp_callModule "$pkg"
+       fi
     done
 
     aptInstall --no-install-recommends "${apt_pkgs[@]}"
