@@ -344,7 +344,7 @@ function get_kms_mode_info() {
     local status
 
     if [[ -z "${mode_id[*]}" ]]; then
-	if [[ -n "${MODE[map-map]}" ]]; then
+        if [[ -n "${MODE[map-map]}" ]]; then
             # use mapped mode directly
             mode_id=(${MODE[map-map]})
         else
