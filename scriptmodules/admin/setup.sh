@@ -289,10 +289,13 @@ function section_gui_setup() {
     while true; do
         local options=()
 
-        options+=(
-            U "Install all ${__sections[$section]} packages" "This will install all ${__sections[$section]} packages. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously"
-            X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
-        )
+        # allow installing an entire section except for drivers - as it's probably a bad idea
+        if [[ "$section" != "driver" ]]; then
+            options+=(
+               U "Install all ${__sections[$section]} packages" "This will install all ${__sections[$section]} packages. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously"
+               X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
+            )
+        fi
 
         local idx
         local pkg_origin
