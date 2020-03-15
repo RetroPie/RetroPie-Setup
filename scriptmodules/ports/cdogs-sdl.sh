@@ -16,7 +16,7 @@ rp_module_section="exp"
 rp_module_flags="!mali !kms"
 
 function depends_cdogs-sdl() {
-    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev build-essential
+    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev build-essential libgtk-3-dev
 }
 
 function sources_cdogs-sdl() {
@@ -25,6 +25,11 @@ function sources_cdogs-sdl() {
 
 function build_cdogs-sdl() {
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst" -DCDOGS_DATA_DIR="$md_inst/"
+    if uname -m |grep "x86_64"; then
+    sed 's| -Werror||' -i CMakeLists.txt
+    else
+    :
+    fi
     make
     md_ret_require="$md_build/src/cdogs-sdl"
 }
