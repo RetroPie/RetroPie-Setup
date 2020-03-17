@@ -75,11 +75,12 @@ function install_sdl1() {
     echo "libsdl1.2-dev hold" | dpkg --set-selections
 }
 
+
+function __binary_url_sdl1() {
+    rp_hasBinaries && echo "$__binary_url/libsdl1.2debian_$(get_pkg_ver_sdl1)_armhf.deb"
+}
+
 function install_bin_sdl1() {
-    if ! isPlatform "rpi"; then
-        md_ret_errors+=("$md_id is only available as a binary package for platform rpi")
-        return 1
-    fi
     wget "$__binary_url/libsdl1.2debian_$(get_pkg_ver_sdl1)_armhf.deb"
     wget "$__binary_url/libsdl1.2-dev_$(get_pkg_ver_sdl1)_armhf.deb"
     install_sdl1
