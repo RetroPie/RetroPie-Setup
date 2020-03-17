@@ -118,6 +118,7 @@ sudo apt-get -y install git dialog xmlstarlet joystick
 git clone -b "$__chroot_branch" https://github.com/RetroPie/RetroPie-Setup.git
 cd RetroPie-Setup
 modules=(
+    'raspbiantools apt_upgrade'
     'setup basic_install'
     'bluetooth depends'
     'raspbiantools enable_modules'
