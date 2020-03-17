@@ -348,10 +348,23 @@ function rp_hasBinaries() {
     return 1
 }
 
+function rp_getBinaryUrl() {
+    local idx="$1"
+    local id="${__mod_id[$idx]}"
+    local url="$__binary_url/${__mod_type[$idx]}/$id.tar.gz"
+    if fnExists "install_bin_${id}"; then
+        if fnExists "__binary_url_${id}"; then
+            url="$(__binary_url_${id})"
+        else
+            url="notest"
+        fi
+    fi
+    echo "$url"
+}
+
 function rp_hasBinary() {
     local idx="$1"
     local id="${__mod_id[$idx]}"
-    fnExists "install_bin_${__mod_id[$idx]}" && return 0
 
     # binary blacklist for armv7 Debian/OSMC due to GCC ABI incompatibility with
     # threaded C++ apps on Raspbian (armv6 userland)
@@ -363,8 +376,12 @@ function rp_hasBinary() {
         esac
     fi
 
+    local url="$(rp_getBinaryUrl $idx)"
+    [[ "$url" == "notest" ]] && return 0
+    [[ -z "$url" ]] && return 1
+
     if rp_hasBinaries; then
-        wget --spider -q "$__binary_url/${__mod_type[$idx]}/${__mod_id[$idx]}.tar.gz"
+        wget --spider -q "$url"
         return $?
     fi
     return 1
@@ -373,14 +390,9 @@ function rp_hasBinary() {
 function rp_getBinaryDate() {
     local idx="$1"
     local id="$(rp_getIdFromIdx $idx)"
-    local url="$__binary_url/${__mod_type[$idx]}/${id}.tar.gz"
-    if fnExists "install_bin_${id}"; then
-        if fnExists "__binary_url_${id}"; then
-            url="$(__binary_url_${id})"
-        else
-            return 1
-        fi
-    fi
+    local url="$(rp_getBinaryUrl $idx)"
+    [[ -z "$url" || "$url" == "notest" ]] && return 1
+
     local bin_date=$(wget \
         --server-response --spider -q \
         "$url" 2>&1 \
