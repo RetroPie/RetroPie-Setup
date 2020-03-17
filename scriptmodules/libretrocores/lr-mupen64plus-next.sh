@@ -54,7 +54,13 @@ function build_lr-mupen64plus-next() {
     # use a custom core name to avoid core option name clashes with lr-mupen64plus
     params+=(CORE_NAME=mupen64plus-next)
     make "${params[@]}" clean
-    make "${params[@]}"
+    # workaround for linkage_arm.S including some armv7 instructions without this
+    if isPlatform "armv6"; then
+        CFLAGS="$CFLAGS -DARMv5_ONLY" make "${params[@]}"
+    else
+        make "${params[@]}"
+    fi
+
     md_ret_require="$md_build/mupen64plus_next_libretro.so"
 }
 
