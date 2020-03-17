@@ -31,7 +31,6 @@ function build_lr-nestopia() {
 function install_lr-nestopia() {
     md_ret_files=(
         'libretro/nestopia_libretro.so'
-        'NstDatabase.xml'
         'COPYING'
     )
 }
