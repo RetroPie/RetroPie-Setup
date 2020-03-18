@@ -17,7 +17,7 @@ rp_module_section="exp"
 rp_module_flags="!mali !kms"
 
 function depends_xm7() {
-    getDepends libjpeg-dev libsdl1.2-dev libsdl-mixer1.2-dev libtool libpng-dev libuim-dev libfreetype6-dev libfontconfig1-dev gawk fonts-takao libxinerama-dev libx11-dev imagemagick
+    getDepends cmake libjpeg-dev libsdl1.2-dev libsdl-mixer1.2-dev libtool libpng-dev libuim-dev libfreetype6-dev libfontconfig1-dev gawk fonts-takao libxinerama-dev libx11-dev imagemagick
 }
 
 function sources_xm7() {
