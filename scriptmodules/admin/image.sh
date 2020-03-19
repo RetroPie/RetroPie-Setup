@@ -156,16 +156,16 @@ function _init_chroot_image() {
 
     # mount special filesytems to chroot
     mkdir -p "$chroot"/dev/pts
-    mount none -t devpts "$chroot"/dev/pts
-    mount -t proc /proc "$chroot"/proc
+    mount none -t devpts "$chroot/dev/pts"
+    mount -t proc /proc "$chroot/proc"
 
     # required for emulated chroot
-    isPlatform "x86" && cp "/usr/bin/qemu-arm-static" "$chroot"/usr/bin/
+    isPlatform "x86" && cp "/usr/bin/qemu-arm-static" "$chroot/usr/bin/"
 
     local nameserver="$__nameserver"
     [[ -z "$nameserver" ]] && nameserver="$(nmcli device show | grep IP4.DNS | awk '{print $NF; exit}')"
     # so we can resolve inside the chroot
-    echo "nameserver $nameserver" >"$chroot"/etc/resolv.conf
+    echo "nameserver $nameserver" >"$chroot/etc/resolv.conf"
 
     # move /etc/ld.so.preload out of the way to avoid warnings
     mv "$chroot/etc/ld.so.preload" "$chroot/etc/ld.so.preload.bak"
@@ -214,7 +214,7 @@ function create_image() {
     image+=".img"
 
     # make image size 300mb larger than contents of chroot
-    local mb_size=$(du -s --block-size 1048576 $chroot 2>/dev/null | cut -f1)
+    local mb_size=$(du -s --block-size 1048576 "$chroot" 2>/dev/null | cut -f1)
     ((mb_size+=492))
 
     # create image
