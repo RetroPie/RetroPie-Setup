@@ -12,10 +12,12 @@
 rp_module_id="image"
 rp_module_desc="Create/Manage RetroPie images"
 rp_module_section=""
-rp_module_flags="!arm"
+rp_module_flags=""
 
 function depends_image() {
-    getDepends kpartx unzip binfmt-support qemu-user-static rsync parted squashfs-tools dosfstools e2fsprogs
+    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs)
+    isPlatform "x86" && depends+=(qemu-user-static)
+    getDepends "${depends[@]}"
 }
 
 function create_chroot_image() {
@@ -132,7 +134,6 @@ modules=(
     'xpad'
 )
 for module in "\${modules[@]}"; do
-    # rpi1 platform would use QEMU_CPU set to arm1176, but it seems buggy currently (lots of segfaults)
     sudo __platform=$platform __nodialog=1 __has_binaries=$__chroot_has_binaries ./retropie_packages.sh \$module
 done
 
@@ -159,7 +160,7 @@ function _init_chroot_image() {
     mount -t proc /proc "$chroot"/proc
 
     # required for emulated chroot
-    cp "/usr/bin/qemu-arm-static" "$chroot"/usr/bin/
+    isPlatform "x86" && cp "/usr/bin/qemu-arm-static" "$chroot"/usr/bin/
 
     local nameserver="$__nameserver"
     [[ -z "$nameserver" ]] && nameserver="$(nmcli device show | grep IP4.DNS | awk '{print $NF; exit}')"
@@ -177,6 +178,8 @@ function _deinit_chroot_image() {
     trap "" INT
 
     >"$chroot/etc/resolv.conf"
+
+    isPlatform "x86" && rm -f "$chroot/usr/bin/qemu-arm-static"
 
     # restore /etc/ld.so.preload
     mv "$chroot/etc/ld.so.preload.bak" "$chroot/etc/ld.so.preload"
