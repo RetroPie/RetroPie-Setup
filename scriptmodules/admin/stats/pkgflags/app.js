@@ -92,6 +92,32 @@ function create_commit_info(commit) {
 	document.getElementById('commit').innerHTML = text;
 }
 
+function package_enabled_for(pkg, flag) {
+	const video_flag_synonyms = {
+		'videocore' : [ 'arm', 'rpi', 'rpi1', 'rpi2', 'rpi3', 'dispmanx', 'gles' ],
+		'mali'     : [ 'arm' , 'gles' ],
+		'kms'      : [ 'arm' , 'rpi', 'rpi4', 'dispmanx', 'mesa' , 'gles3' ],
+		'x11'      : [ 'x86' , '64bit', 'mesa' ]
+	};
+
+	var equivs = (video_flag_synonyms[flag] ? [flag].concat(video_flag_synonyms[flag]) : [flag]);
+
+	if ( pkg.flags.includes('!all') ) {
+		return _flags_include(pkg.flags, equivs) && !_flags_exclude(pkg.flags, equivs);
+	} else {
+		return !_flags_exclude(pkg.flags, equivs);
+	}
+
+}
+
+function _flags_include(pkg_flags, flags) {
+	return flags.reduce( (acc, flag) => acc || pkg_flags.includes(flag), false);
+}
+
+function _flags_exclude(pkg_flags, flags) {
+	return flags.reduce( (acc, flag) => acc || pkg_flags.includes('!' + flag), false);
+}
+
 function append_pkg_text_cell(parent, klass, text) {
 	const cell = document.createElement('td');
 	cell.innerText = text;
@@ -129,12 +155,13 @@ function create_section_thead() {
 
 function create_section_row(pkg) {
 	const row = document.createElement('tr');
+	row.title='Script flags: ' + pkg.flags.join(' ');
 	append_pkg_text_cell(row, 'id', pkg.id);
 	append_pkg_text_cell(row, 'desc', pkg.desc);
-	append_pkg_flag_cell(row, 'video', !pkg.flags.includes('!videocore'));
-	append_pkg_flag_cell(row, 'video', !pkg.flags.includes('!mali'));
-	append_pkg_flag_cell(row, 'video', !pkg.flags.includes('!kms'));
-	append_pkg_flag_cell(row, 'video', !pkg.flags.includes('!x11'));
+	append_pkg_flag_cell(row, 'video', package_enabled_for(pkg, 'videocore'));
+	append_pkg_flag_cell(row, 'video', package_enabled_for(pkg, 'mali'));
+	append_pkg_flag_cell(row, 'video', package_enabled_for(pkg, 'kms'));
+	append_pkg_flag_cell(row, 'video', package_enabled_for(pkg, 'x11'));
 	append_pkg_flag_cell(row, 'cpu', !pkg.flags.includes('!arm') && !pkg.flags.includes('!armv6'));
 	append_pkg_flag_cell(row, 'cpu', !pkg.flags.includes('!arm') && !pkg.flags.includes('!armv7'));
 	append_pkg_flag_cell(row, 'cpu', !pkg.flags.includes('!arm') && !pkg.flags.includes('!armv8'));
