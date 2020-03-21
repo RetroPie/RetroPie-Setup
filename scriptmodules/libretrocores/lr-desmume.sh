@@ -16,7 +16,7 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/desmume/maste
 rp_module_section="exp"
 
 function depends_lr-desmume() {
-    getDepends libpcap-dev
+    getDepends libpcap-dev libgl1-mesa-dev
 }
 
 function sources_lr-desmume() {
