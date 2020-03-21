@@ -15,7 +15,7 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/STJr/SRB2/master/LICEN
 rp_module_section="exp"
 
 function depends_srb2() {
-    local depends=(cmake libsdl2-dev libsdl2-mixer-dev libgme-dev)
+    local depends=(cmake libsdl2-dev libsdl2-mixer-dev libgme-dev libpng-dev)
     compareVersions "$__os_debian_ver" gt 9 && depends+=(libopenmpt-dev)
     getDepends "${depends[@]}"
 }
