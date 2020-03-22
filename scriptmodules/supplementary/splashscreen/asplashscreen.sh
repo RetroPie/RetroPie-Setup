@@ -2,9 +2,11 @@
 
 ROOTDIR=""
 DATADIR=""
-RANDOMIZE="disabled"
 REGEX_VIDEO=""
 REGEX_IMAGE=""
+
+# Load user settings
+. /opt/retropie/configs/all/splashscreen.cfg
 
 is_fkms() {
     if grep -q okay /proc/device-tree/soc/v3d@7ec00000/status 2> /dev/null || grep -q okay /proc/device-tree/soc/firmwarekms@7e600000/status 2> /dev/null ; then
@@ -50,7 +52,10 @@ do_start () {
         fi
         [ $count -eq 0 ] && count=1
         [ $count -gt 12 ] && count=12
-        local delay=$((12/count))
+
+        # Default duration is 12 seconds, check if configured otherwise
+        [ -z "$DURATION" ] && DURATION=12
+        local delay=$((DURATION/count))
         if [ "$RANDOMIZE" = "disabled" ]; then
             "$omxiv" --once -t $delay -b --layer 1000 -f "$config" >/dev/null 2>&1
         else

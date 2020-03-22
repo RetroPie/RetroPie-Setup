@@ -164,7 +164,7 @@ function choose_splashscreen() {
             options+=("$i" "$splashdir")
             ((i++))
         fi
-    done < <(find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh" | sort)
+    done < <(find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh"  ! -regex ".*\.pkg" | sort)
     if [[ "${#options[@]}" -eq 0 ]]; then
         printMsgs "dialog" "There are no splashscreens installed in $path"
         return
@@ -183,7 +183,9 @@ function randomize_splashscreen() {
     )
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    iniConfig "=" '"' "$md_inst/asplashscreen.sh"
+    iniConfig "=" '"' "$configdir/all/$md_id.cfg"
+    chown $user:$user "$configdir/all/$md_id.cfg"
+
     case "$choice" in
         1)
             iniSet "RANDOMIZE" "retropie"
@@ -266,7 +268,7 @@ function gui_splashscreen() {
         local options=(1 "Choose splashscreen")
         if [[ "$enabled" -eq 1 ]]; then
             options+=(2 "Disable splashscreen on boot (Enabled)")
-            iniConfig "=" '"' "$md_inst/asplashscreen.sh"
+            iniConfig "=" '"' "$configdir/all/$md_id.cfg"
             iniGet "RANDOMIZE"
             random=1
             [[ "$ini_value" == "disabled" ]] && random=0
@@ -286,6 +288,15 @@ function gui_splashscreen() {
             8 "Update RetroPie splashscreens"
             9 "Download RetroPie-Extra splashscreens"
         )
+
+        iniConfig "=" '"' "$configdir/all/$md_id.cfg"
+        iniGet "DURATION"
+        # default splashscreen duration is 12 seconds
+        local duration=${ini_value:-12}
+
+        options+=(
+            A "Configure image splashscreen duration ($duration sec)"
+            )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case "$choice" in
@@ -329,6 +340,12 @@ function gui_splashscreen() {
                 9)
                     rp_callModule splashscreen download_extra
                     printMsgs "dialog" "The RetroPie-Extra splashscreens have been downloaded to $datadir/splashscreens/retropie-extra"
+                    ;;
+                A)  
+                    duration=$(dialog --title "Splashscreen duration" --clear --rangebox "Configure how many seconds the splashscreen is active" 0 60 5 100 $duration 2>&1 >/dev/tty)
+                    if [[ -n "$duration" ]]; then
+                        iniSet "DURATION" "${duration//[^[:digit:]]/}"
+                    fi
                     ;;
             esac
         else
