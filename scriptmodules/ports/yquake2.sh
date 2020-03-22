@@ -16,7 +16,7 @@ rp_module_section="exp"
 rp_module_flags=""
 
 function depends_yquake2() {
-    local depends=(libgl1-mesa-dev libglu1-mesa-dev libogg-dev libopenal-dev libsdl2-dev libvorbis-dev zlib1g-dev)
+    local depends=(libgl1-mesa-dev libglu1-mesa-dev libogg-dev libopenal-dev libsdl2-dev libvorbis-dev zlib1g-dev libcurl4-openssl-dev)
 
     getDepends "${depends[@]}"
 }
