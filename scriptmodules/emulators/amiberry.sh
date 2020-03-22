@@ -31,7 +31,7 @@ function _get_platform_amiberry() {
 }
 
 function depends_amiberry() {
-    local depends=(autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libguichan-dev libmpg123-dev libflac-dev libxml2-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
+    local depends=(autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libmpg123-dev libflac-dev libxml2-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
 
     isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
