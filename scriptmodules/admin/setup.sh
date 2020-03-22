@@ -300,7 +300,8 @@ function section_gui_setup() {
         local num_pkgs=0
         for idx in $(rp_getSectionIds $section); do
             if rp_isInstalled "$idx"; then
-                installed="(Installed)"
+                eval $(rp_getPackageInfo "$idx")
+                installed="\Zb(Installed - via $pkg_origin)\Zn"
                 ((num_pkgs++))
             else
                 installed=""
@@ -324,7 +325,7 @@ function section_gui_setup() {
 
         options+=("${pkgs[@]}")
 
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
+        local cmd=(dialog --colors --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
