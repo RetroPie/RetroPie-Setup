@@ -262,7 +262,15 @@ function package_setup() {
                 ;;
             X)
                 local text="Are you sure you want to remove $md_id?"
-                [[ "${__mod_section[$idx]}" == "core" ]] && text+="\n\nWARNING - core packages are needed for RetroPie to function!"
+                case "${__mod_section[$idx]}" in
+                    core)
+                        text+="\n\nWARNING - core packages are needed for RetroPie to function!"
+                        ;;
+                    depends)
+                        text+="\n\nWARNING - this package is required by other RetroPie packages - removing may cause other packages to fail."
+                        text+="\n\nNOTE: This will be reinstalled if missing when updating packages that require it."
+                        ;;
+                esac
                 dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
@@ -315,8 +323,8 @@ function section_gui_setup() {
             )
         fi
 
-        # allow installing an entire section except for drivers - as it's probably a bad idea
-        if [[ "$section" != "driver" ]]; then
+        # allow installing an entire section except for drivers and dependencies - as it's probably a bad idea
+        if [[ "$section" != "driver" && "$section" != "depends" ]]; then
             options+=(
                 I "Install all ${__sections[$section]} packages" "This will install all ${__sections[$section]} packages. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously"
                 X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
@@ -434,7 +442,7 @@ function update_packages_setup() {
     clear
     local idx
     for idx in ${__mod_idx[@]}; do
-        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]]; then
+        if rp_isInstalled "$idx" && [[ "${__mod_section[$idx]}" != "depends" ]]; then
             rp_installModule "$idx" "_update_" || return 1
         fi
     done
@@ -482,7 +490,7 @@ function packages_gui_setup() {
     local default
     local options=()
 
-    for section in core main opt driver exp; do
+    for section in core main opt driver exp depends; do
         options+=($section "Manage ${__sections[$section]} packages" "$section Choose top install/update/configure packages from the ${__sections[$section]}")
     done
 
