@@ -64,6 +64,12 @@ _EOF_
     iniSet "REGEX_IMAGE" "$(_image_exts_splashscreen)"
     iniSet "REGEX_VIDEO" "$(_video_exts_splashscreen)"
 
+    if [[ ! -f "$configdir/all/$md_id.cfg" ]]; then
+        iniConfig "=" '"' "$configdir/all/$md_id.cfg"
+        iniSet "RANDOMIZE" "disabled"
+    fi
+    chown $user:$user "$configdir/all/$md_id.cfg"
+
     mkUserDir "$datadir/splashscreens"
     echo "Place your own splashscreens in here." >"$datadir/splashscreens/README.txt"
     chown $user:$user "$datadir/splashscreens/README.txt"
