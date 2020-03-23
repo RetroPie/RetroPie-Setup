@@ -22,6 +22,8 @@ function _get_platform_amiberry() {
         platform="$__platform"
     elif isPlatform "odroid-xu"; then
         platform="xu4"
+    elif isPlatform "odroid-c1"; then
+        platform="c1"
     elif isPlatform "tinker"; then
         platform="tinker"
     elif isPlatform "vero4k"; then
