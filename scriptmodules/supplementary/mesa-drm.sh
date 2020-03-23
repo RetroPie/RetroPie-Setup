@@ -12,7 +12,7 @@
 rp_module_id="mesa-drm"
 rp_module_desc="libdrm - userspace library for drm"
 rp_module_licence="MIT https://www.mesa3d.org/license.html"
-rp_module_section=""
+rp_module_section="depends"
 rp_module_flags=""
 
 function depends_mesa-drm() {

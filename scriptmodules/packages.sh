@@ -17,6 +17,7 @@ __sections[opt]="optional"
 __sections[exp]="experimental"
 __sections[driver]="driver"
 __sections[config]="configuration"
+__sections[depends]="dependency"
 
 function rp_listFunctions() {
     local idx
