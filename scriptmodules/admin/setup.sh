@@ -319,7 +319,7 @@ function section_gui_setup() {
 
         if [[ "$num_pkgs" -gt 0 ]]; then
             options+=(
-                U "Update all ${__sections[$section]} packages" "This will update any installed ${__sections[$section]} packages. The packages will be updated by the method used previously."
+                U "Update all installed ${__sections[$section]} packages" "This will update any installed ${__sections[$section]} packages. The packages will be updated by the method used previously."
             )
         fi
 
