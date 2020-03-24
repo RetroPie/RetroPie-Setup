@@ -235,7 +235,7 @@ function package_setup() {
 
         case "$choice" in
             U|B|S)
-                dialog --defaultno --yesno "Are you sure you want to ${option_msgs[$choice]}" 22 76 2>&1 >/dev/tty || continue
+                dialog --defaultno --yesno "Are you sure you want to ${option_msgs[$choice]}?" 22 76 2>&1 >/dev/tty || continue
                 local mode
                 case "$choice" in
                     U) mode="_auto_" ;;
