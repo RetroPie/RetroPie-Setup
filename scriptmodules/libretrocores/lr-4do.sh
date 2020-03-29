@@ -22,12 +22,12 @@ function sources_lr-4do() {
 function build_lr-4do() {
     make clean
     make
-    md_ret_require="$md_build/4do_libretro.so"
+    md_ret_require="$md_build/opera_libretro.so"
 }
 
 function install_lr-4do() {
     md_ret_files=(
-        '4do_libretro.so'
+        'opera_libretro.so'
     )
 }
 
@@ -35,6 +35,6 @@ function configure_lr-4do() {
     mkRomDir "3do"
     ensureSystemretroconfig "3do"
 
-    addEmulator 1 "$md_id" "3do" "$md_inst/4do_libretro.so"
+    addEmulator 1 "$md_id" "3do" "$md_inst/opera_libretro.so"
     addSystem "3do"
 }
