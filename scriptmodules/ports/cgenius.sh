@@ -15,7 +15,7 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/gerstrong/Commander-Ge
 rp_module_section="exp"
 
 function depends_cgenius() {
-    getDepends build-essential cmake libcurl4-openssl-dev libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libboost-dev python3-dev
+    getDepends cmake libcurl4-openssl-dev libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libboost-dev python3-dev
 }
 
 function sources_cgenius() {

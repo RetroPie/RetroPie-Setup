@@ -16,7 +16,7 @@ rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
 function depends_cdogs-sdl() {
-    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev build-essential
+    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev
 }
 
 function sources_cdogs-sdl() {
