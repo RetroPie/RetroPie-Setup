@@ -35,7 +35,7 @@ function sources_lr-flycast() {
 }
 
 function build_lr-flycast() {
-    local params=()
+    local params=("HAVE_LTCG=0")
     make clean
     if isPlatform "rpi"; then
         if isPlatform "rpi4"; then
