@@ -41,6 +41,7 @@ function configure_redream() {
     moveConfigFile "$md_inst/redream.cfg" "$dest/redream.cfg"
     moveConfigDir "$md_inst/cache" "$dest/cache"
     moveConfigDir "$md_inst/saves" "$dest/saves"
+    moveConfigDir "$md_inst/states" "$dest/states"
 
     # copy / symlink vmus (memory cards)
     local i
