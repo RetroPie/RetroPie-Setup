@@ -14,7 +14,7 @@ rp_module_desc="Q3lite: Updated id Tech 3 game engine for embedded Linux systems
 rp_module_help="This port requires:\n1. Your original CD key;\n2. The pak0.pk3 file from the original disc.\n\nIt plays natively with keyboard and mouse, but you could use xboxdrv to map a gamepad instead."
 rp_module_licence="GPL3 https://raw.githubusercontent.com/cdev-tux/q3lite/dev/COPYING.txt"
 rp_module_section="opt"
-rp_module_flags="!x86 !mali !kms"
+rp_module_flags="!x86 !kms"
 
 function depends_q3lite() {
     local depends=(libsdl2-dev libasound2-dev libudev-dev libibus-1.0-dev libevdev-dev libdbus-1-dev)
