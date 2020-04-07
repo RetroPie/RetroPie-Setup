@@ -1,0 +1,26 @@
+diff --git a/libretro/core/core-mapper.cpp b/libretro/core/core-mapper.cpp
+index fa148c8..08df1c3 100644
+--- a/libretro/core/core-mapper.cpp
++++ b/libretro/core/core-mapper.cpp
+@@ -11,6 +11,7 @@ extern const char *retro_save_directory;
+ extern const char *retro_system_directory;
+ extern const char *retro_content_directory;
+ char RETRO_DIR[512];
++int hack_autorun=1;
+ 
+ //TIME
+ #ifdef __CELLOS_LV2__
+@@ -263,6 +264,13 @@ int Retro_PollEvent(uint8 *key_matrix, uint8 *rev_matrix, uint8 *joystick)
+    int16_t mouse_x,mouse_y;
+    mouse_x=mouse_y=0;
+ 
++   if(hack_autorun)
++   {
++     hack_autorun=0;
++     kbd_buf_feed("\rLOAD\":*\",8,1:\rRUN\r\0");
++     autoboot=true; 
++   }
++
+    if(SHOWKEY==-1 && pauseg==0)Process_key(key_matrix,rev_matrix,joystick);
+ 
+ if(pauseg==0){
