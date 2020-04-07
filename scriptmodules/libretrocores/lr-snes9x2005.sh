@@ -25,14 +25,23 @@ function sources_lr-snes9x2005() {
 }
 
 function build_lr-snes9x2005() {
-    make clean
-    make
-    md_ret_require="$md_build/snes9x2005_libretro.so"
+    mkdir -p "snes9x2005-cores"
+    local params=()
+    for i in _ _plus_; do
+        if [[ "$i" = _plus_ ]]; then
+	    params+=(USE_BLARGG_APU=1)
+        fi
+	make "${params[@]}" clean
+	make "${params[@]}" -j`nproc`
+	mv "snes9x2005"$i"libretro.so" "snes9x2005-cores"   
+	md_ret_require="$md_build/snes9x2005-cores/snes9x2005"$i"libretro.so"
+    done
 }
 
 function install_lr-snes9x2005() {
     md_ret_files=(
-        'snes9x2005_libretro.so'
+	'snes9x2005-cores/snes9x2005_libretro.so'
+	'snes9x2005-cores/snes9x2005_plus_libretro.so'
     )
 }
 
@@ -41,5 +50,7 @@ function configure_lr-snes9x2005() {
     ensureSystemretroconfig "snes"
 
     addEmulator 0 "$md_id" "snes" "$md_inst/snes9x2005_libretro.so"
+    addEmulator 1 "$md_id-plus" "snes" "$md_inst/snes9x2005_plus_libretro.so"
+
     addSystem "snes"
 }
