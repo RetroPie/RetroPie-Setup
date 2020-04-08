@@ -10,7 +10,7 @@
 #
 
 rp_module_id="lr-gearsystem"
-rp_module_desc="Sega 8/16-bit (MS/GG/SG-1000) emulator - Gearsystem port for libretro."
+rp_module_desc="Sega 8-bit (MS/GG/SG-1000) emulator - Gearsystem port for libretro."
 rp_module_help="ROM Extensions: .sms .gg .sg .mv .bin .rom .zip .7z\n\nCopy your Game Gear roms to $romdir/gamegear\nMasterSystem roms to $romdir/mastersystem\nSG-1000 roms to $romdir/sg-1000"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/drhelius/gearsystem/master/LICENSE"
 rp_module_section="opt"
