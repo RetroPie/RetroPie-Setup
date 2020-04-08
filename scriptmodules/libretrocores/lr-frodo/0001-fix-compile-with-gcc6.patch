@@ -1,0 +1,13 @@
+diff --git a/Makefile.libretro b/Makefile.libretro
+index 29e1f27..85b7bbc 100644
+--- a/Makefile.libretro
++++ b/Makefile.libretro
+@@ -149,7 +149,7 @@ SOURCES_CXX :=
+ include Makefile.common
+ 
+ OBJECTS  = $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
+-CXXFLAGS += -D__LIBRETRO__ $(fpic) $(INCFLAGS) $(COMMONFLAGS)
++CXXFLAGS += -D__LIBRETRO__ $(fpic) $(INCFLAGS) $(COMMONFLAGS) -std=c++98
+ CFLAGS   += -D__LIBRETRO__ $(fpic) $(INCFLAGS) $(COMMONFLAGS)
+ LDFLAGS  += -lm $(fpic)
+ 
