@@ -15,18 +15,13 @@ rp_module_help="ROM Extensions: .a26 .bin .rom .zip .gz\n\nCopy your Atari 2600 
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/stella2014-libretro/master/stella/license.txt"
 rp_module_section="main"
 
-function _update_hook_lr-stella2014() {
-    # rename lr-stella to lr-stella2014
-    renameModule "lr-stella" "lr-stella2014"
-}
-
 function sources_lr-stella2014() {
     gitPullOrClone "$md_build" https://github.com/libretro/stella2014-libretro.git
 }
 
 function build_lr-stella2014() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/stella2014_libretro.so"
 }
 
