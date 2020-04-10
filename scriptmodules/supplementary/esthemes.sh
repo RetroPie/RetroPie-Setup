@@ -235,6 +235,7 @@ function gui_esthemes() {
         'arcadeforge pixel-heaven-text'
         'arcadeforge 240p_Bubblegum'
         'arcadeforge 240p-honey'
+        'c64-dev es-epicnoir'
     )
     while true; do
         local theme
