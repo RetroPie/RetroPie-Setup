@@ -26,9 +26,10 @@ function depends_solarus() {
         cmake pkg-config
         libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
         libopenal-dev libvorbis-dev libogg-dev
-        libmodplug-dev libphysfs-dev
+        libmodplug-dev libphysfs-dev libglm-dev
         libluajit-5.1-dev
     )
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
@@ -70,17 +71,24 @@ function configure_solarus() {
     # ensure rom dir exists
     mkRomDir "solarus"
 
-    # create launcher for Solarus that disables JACK driver in OpenAL,
-    # disables mouse cursor, starts in fullscreen mode and configures
-    # the joypad deadzone and buttons combo for quitting options
+    # create launcher for Solarus that:
+    # * starts in fullscreen mode
+    # * disables mouse cursor, the JACK driver in OpenAL and the Lua console
+    # * configures the joypad deadzone and quit combo options
+    # * preloads the legacy videocore GLES2 driver (if necessary)
     cat > "$md_inst/solarus.sh" << _EOF_
 #!/usr/bin/env bash
 export ALSOFT_DRIVERS="-jack,"
-ARGS=("-cursor-visible=no" "-fullscreen=yes")
+ARGS=("-fullscreen=yes" "-cursor-visible=no" "-lua-console=no")
 [[ -f "$(_options_cfg_file_solarus)" ]] && source "$(_options_cfg_file_solarus)"
 [[ -n "\$JOYPAD_DEADZONE" ]] && ARGS+=("-joypad-deadzone=\$JOYPAD_DEADZONE")
 [[ -n "\$QUIT_COMBO" ]] && ARGS+=("-quit-combo=\$QUIT_COMBO")
-"$md_inst"/bin/solarus-run "\${ARGS[@]}" "\$@"
+if $(isPlatform "videocore" && echo true); then
+  if [[ -f /opt/vc/lib/libbrcmGLESv2.so ]]; then
+    export LD_PRELOAD="/opt/vc/lib/libbrcmGLESv2.so"
+  fi
+fi
+exec "$md_inst"/bin/solarus-run "\${ARGS[@]}" "\$@"
 _EOF_
     chmod +x "$md_inst/solarus.sh"
 }
