@@ -264,7 +264,7 @@ function get_os_version() {
 }
 
 function get_retropie_depends() {
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev ca-certificates)
+    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python3-pyudev ca-certificates)
 
     [[ -n "$DISTCC_HOSTS" ]] && depends+=(distcc)
 
