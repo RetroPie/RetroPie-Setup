@@ -111,7 +111,7 @@ elif [[ "\${params[0]}" == *.sh ]]; then
     midi_synth stop
     exit
 elif [[ "\${params[0]}" == *.conf ]]; then
-    params=(-userconf -conf "\${params[@]}")
+    params=(-conf "\${params[@]}")
 else
     params+=(-exit)
 fi
