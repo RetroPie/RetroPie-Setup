@@ -1,8 +1,8 @@
 diff --git a/configuration.c b/configuration.c
-index c339e9eb63..b2a49a17ff 100644
+index e6b1919c54..ec61bb1bd9 100644
 --- a/configuration.c
 +++ b/configuration.c
-@@ -1214,6 +1214,8 @@ static struct config_path_setting *populate_settings_path(settings_t *settings,
+@@ -1210,6 +1210,8 @@ static struct config_path_setting *populate_settings_path(settings_t *settings,
           settings->paths.path_core_options, false, NULL, true);
     SETTING_PATH("libretro_info_path",
           settings->paths.path_libretro_info, false, NULL, true);
@@ -11,7 +11,7 @@ index c339e9eb63..b2a49a17ff 100644
     SETTING_PATH("content_database_path",
           settings->paths.path_content_database, false, NULL, true);
     SETTING_PATH("cheat_database_path",
-@@ -2238,6 +2240,7 @@ void config_set_defaults(void *data)
+@@ -2262,6 +2264,7 @@ void config_set_defaults(void *data)
     *settings->paths.path_content_image_history   = '\0';
     *settings->paths.path_content_video_history   = '\0';
     *settings->paths.path_cheat_settings    = '\0';
@@ -19,7 +19,7 @@ index c339e9eb63..b2a49a17ff 100644
  #ifndef IOS
     *settings->arrays.bundle_assets_src = '\0';
     *settings->arrays.bundle_assets_dst = '\0';
-@@ -4117,6 +4120,10 @@ bool config_save_overrides(int override_type)
+@@ -4162,6 +4165,10 @@ bool config_save_overrides(enum override_type type, void *data)
  
        for (i = 0; i < (unsigned)path_settings_size; i++)
        {
@@ -31,10 +31,10 @@ index c339e9eb63..b2a49a17ff 100644
              config_set_path(conf, path_overrides[i].ident,
                    path_overrides[i].ptr);
 diff --git a/configuration.h b/configuration.h
-index 12aa7d446e..804b2e7820 100644
+index 445856b713..e602b2d100 100644
 --- a/configuration.h
 +++ b/configuration.h
-@@ -686,6 +686,7 @@ typedef struct settings
+@@ -698,6 +698,7 @@ typedef struct settings
        char path_libretro_info[PATH_MAX_LENGTH];
        char path_cheat_settings[PATH_MAX_LENGTH];
        char path_font[PATH_MAX_LENGTH];
@@ -43,10 +43,10 @@ index 12aa7d446e..804b2e7820 100644
  
        char directory_audio_filter[PATH_MAX_LENGTH];
 diff --git a/retroarch.c b/retroarch.c
-index d6ae484ca2..308c6e97ad 100644
+index c0dff7ae55..94cb93058a 100644
 --- a/retroarch.c
 +++ b/retroarch.c
-@@ -26359,6 +26359,7 @@ static bool retroarch_load_shader_preset_internal(
+@@ -28368,6 +28368,7 @@ static bool retroarch_load_shader_preset_internal(
  {
     unsigned i;
     char *shader_path = (char*)malloc(PATH_MAX_LENGTH);
@@ -54,7 +54,7 @@ index d6ae484ca2..308c6e97ad 100644
  
     static enum rarch_shader_type types[] =
     {
-@@ -26386,11 +26387,13 @@ static bool retroarch_load_shader_preset_internal(
+@@ -28395,11 +28396,13 @@ static bool retroarch_load_shader_preset_internal(
           if (string_is_empty(special_name))
              break;
  
@@ -73,7 +73,7 @@ index d6ae484ca2..308c6e97ad 100644
  
        if (!path_is_valid(shader_path))
           continue;
-@@ -26414,6 +26417,7 @@ static bool retroarch_load_shader_preset_internal(
+@@ -28423,6 +28426,7 @@ static bool retroarch_load_shader_preset_internal(
   * Tries to load a supported core-, game-, folder-specific or global
   * shader preset from its respective location:
   *
@@ -81,7 +81,7 @@ index d6ae484ca2..308c6e97ad 100644
   * global:          $SHADER_DIR/presets/global.$PRESET_EXT
   * core-specific:   $SHADER_DIR/presets/$CORE_NAME/$CORE_NAME.$PRESET_EXT
   * folder-specific: $SHADER_DIR/presets/$CORE_NAME/$FOLDER_NAME.$PRESET_EXT
-@@ -26487,6 +26491,13 @@ static bool retroarch_load_shader_preset(void)
+@@ -28496,6 +28500,13 @@ static bool retroarch_load_shader_preset(void)
        goto success;
     }
  
