@@ -17,7 +17,7 @@ rp_module_section="opt kms=main"
 rp_module_flags=""
 
 function depends_lr-mupen64plus-next() {
-    local depends=(flex bison libpng-dev)
+    local depends=()
     isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev)
     isPlatform "x86" && depends+=(nasm)
     isPlatform "videocore" && depends+=(libraspberrypi-dev)
@@ -26,12 +26,7 @@ function depends_lr-mupen64plus-next() {
 }
 
 function sources_lr-mupen64plus-next() {
-    # the core is crashing when using legacy/broadcom drivers since commit 9f316922
-    # while the problem is being resolved, use the previous commit for now
-    local commit
-    isPlatform "videocore" && commit="4a663ef0"
-
-    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro-nx.git develop "$commit"
+    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro-nx.git develop
 }
 
 function build_lr-mupen64plus-next() {
@@ -51,9 +46,11 @@ function build_lr-mupen64plus-next() {
     elif isPlatform "gles"; then
         params+=(FORCE_GLES=1)
     fi
+
     # use a custom core name to avoid core option name clashes with lr-mupen64plus
     params+=(CORE_NAME=mupen64plus-next)
     make "${params[@]}" clean
+
     # workaround for linkage_arm.S including some armv7 instructions without this
     if isPlatform "armv6"; then
         CFLAGS="$CFLAGS -DARMv5_ONLY" make "${params[@]}"
