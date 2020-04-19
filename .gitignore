@@ -12,4 +12,5 @@ Thumbs.db
 # Generated files
 logs/
 tmp/
+*.code-workspace
 
