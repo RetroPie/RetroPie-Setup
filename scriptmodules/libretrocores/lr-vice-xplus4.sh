@@ -8,40 +8,40 @@
 # See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
-rp_module_id="lr-vice-xvic"
-rp_module_desc="Commodore Vic20 emulator - port of VICE for libretro"
-rp_module_help="ROM Extensions: .crt .p00 .d64 .g64 .prg .t64 .tap .x64 .zip .vsf\n\nCopy your Commodore Vic20 games to $romdir/vic20"
+rp_module_id="lr-vice-xplus4"
+rp_module_desc="Commodore C16/Plus4 emulator - port of VICE for libretro"
+rp_module_help="ROM Extensions: .crt .d64 .g64 .prg .t64 .tap .x64 .zip .vsf\n\nCopy your Commodore C16/Plus4 games to $romdir/plus4"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/vice-libretro/master/vice/COPYING"
 rp_module_section="exp"
 rp_module_flags=""
 
-function sources_lr-vice-xvic() {
+function sources_lr-vice-xplus4() {
     gitPullOrClone "$md_build" https://github.com/libretro/vice-libretro.git
 }
 
-function build_lr-vice-xvic() {
+function build_lr-vice-xplus4() {
     make -f Makefile.libretro clean
-    make -f Makefile.libretro EMUTYPE=xvic
-    md_ret_require="$md_build/vice_xvic_libretro.so"
+    make -f Makefile.libretro EMUTYPE=xplus4
+    md_ret_require="$md_build/vice_xplus4_libretro.so"
 }
 
-function install_lr-vice-xvic() {
+function install_lr-vice-xplus4() {
     md_ret_files=(
         'vice/data'
         'vice/COPYING'
-        'vice_xvic_libretro.so'
+        'vice_xplus4_libretro.so'
     )
 }
 
-function configure_lr-vice-xvic() {
-    mkRomDir "vic20"
-    ensureSystemretroconfig "vic20"
+function configure_lr-vice-xplus4() {
+    mkRomDir "plus4"
+    ensureSystemretroconfig "plus4"
 
     cp -R "$md_inst/data" "$biosdir"
     chown -R $user:$user "$biosdir/data"
 
-    addEmulator 1 "$md_id" "vic20" "$md_inst/vice_xvic_libretro.so"
+    addEmulator 1 "$md_id" "plus4" "$md_inst/vice_xplus4_libretro.so"
 
-    addSystem "vic20" "Commodore Vic20" ".crt .p00 .d64 .g64 .prg .t64 .tap .x64 .zip .vsf"
+    addSystem "plus4" "Commodore Plus4" ".crt .d64 .g64 .prg .t64 .tap .x64 .zip .vsf"
 }
 
