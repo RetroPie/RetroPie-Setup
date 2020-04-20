@@ -11,7 +11,7 @@
 
 rp_module_id="sdltrs"
 rp_module_desc="Radio Shack TRS-80 Model I/III/4/4P emulator"
-rp_module_help="ROM Extension: .dsk\n\nCopy your TRS-80 games to $romdir/trs-80\n\nCopy the required BIOS file level2.rom, model3.rom, model4.rom or model4p.rom to $biosdir\n\nOptionally, you may copy DOS disks to $biosdir$ as well: trs80-newdos.dsk for model 1, and trs80-lddos.dsk for model3/4/4p."
+rp_module_help="ROM Extension: .dsk\n\nCopy your TRS-80 games to $romdir/trs-80\n\nCopy the required BIOS file level2.rom, model3.rom, model4.rom or model4p.rom to $biosdir/trs-80\n\nOptionally, you may copy DOS disks to $biosdir$/trs-80 as well: newdos.dsk for model 1, and lddos.dsk for model3/4/4p."
 rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
@@ -39,21 +39,16 @@ function install_sdltrs() {
 function configure_sdltrs() {
     mkRomDir "trs-80"
 
-    addEmulator 0 "$md_id-model1" "trs-80" "$md_inst/sdltrs -scanlines -model 1 -diskdir $romdir/trs-80 -disk0 %ROM%"
-    addEmulator 1 "$md_id-model3" "trs-80" "$md_inst/sdltrs -scanlines -model 3 -diskdir $romdir/trs-80 -disk0 %ROM%"
-    addEmulator 0 "$md_id-model4" "trs-80" "$md_inst/sdltrs -scanlines -model 4 -diskdir $romdir/trs-80 -disk0 %ROM%"
-    addEmulator 0 "$md_id-model4p" "trs-80" "$md_inst/sdltrs -scanlines -model 4p -diskdir $romdir/trs-80 -disk0 %ROM%"
-    addEmulator 0 "$md_id-model1-dos" "trs-80" "$md_inst/sdltrs -scanlines -model 1 -diskdir $romdir/trs-80 -disk0 /opt/retropie/emulators/sdltrs/trs80-newdos.dsk -disk1 %ROM%"
-    addEmulator 0 "$md_id-model3-dos" "trs-80" "$md_inst/sdltrs -scanlines -model 3 -diskdir $romdir/trs-80 -disk0 /opt/retropie/emulators/sdltrs/trs80-ldos.dsk -disk1 %ROM%"
-    addEmulator 0 "$md_id-model4-dos" "trs-80" "$md_inst/sdltrs -scanlines -model 4 -diskdir $romdir/trs-80 -disk0 /opt/retropie/emulators/sdltrs/trs80-lddos.dsk -disk1 %ROM%"
-    addEmulator 0 "$md_id-model4p-dos" "trs-80" "$md_inst/sdltrs -scanlines -model 4p -diskdir $romdir/trs-80 -disk0 /opt/retropie/emulators/sdltrs/trs80-lddos.dsk -disk1 %ROM%"
+    addEmulator 1 "$md_id-model1" "trs-80" "$md_inst/sdltrs -scanlines -model 1 -romfile $biosdir/trs-80/level2.rom -diskdir $romdir/trs-80 -disk0 %ROM%"
+    addEmulator 0 "$md_id-model3" "trs-80" "$md_inst/sdltrs -scanlines -model 3 -romfile3 $biosdir/trs-80/model3.rom -diskdir $romdir/trs-80 -disk0 %ROM%"
+    addEmulator 0 "$md_id-model4" "trs-80" "$md_inst/sdltrs -scanlines -model 4 -romfile3 $biosdir/trs-80/model4.rom -diskdir $romdir/trs-80 -disk0 %ROM%"
+    addEmulator 0 "$md_id-model4p" "trs-80" "$md_inst/sdltrs -scanlines -model 4p -romfile4p $biosdir/trs-80/model4p.rom -diskdir $romdir/trs-80 -disk0 %ROM%"
+    addEmulator 0 "$md_id-model1-dos" "trs-80" "$md_inst/sdltrs -scanlines -model 1 -romfile $biosdir/trs-80/level2.rom -diskdir $romdir/trs-80 -disk0 $biosdir/trs-80/newdos.dsk -disk1 %ROM%"
+    addEmulator 0 "$md_id-model3-dos" "trs-80" "$md_inst/sdltrs -scanlines -model 3 -romfile3 $biosdir/trs-80/model3.rom -diskdir $romdir/trs-80 -disk0 $biosdir/trs-80/lddos.dsk -disk1 %ROM%"
+    addEmulator 0 "$md_id-model4-dos" "trs-80" "$md_inst/sdltrs -scanlines -model 4 -romfile3 $biosdir/trs-80/model4.rom -diskdir $romdir/trs-80 -disk0 $biosdir/trs-80/lddos.dsk -disk1 %ROM%"
+    addEmulator 0 "$md_id-model4p-dos" "trs-80" "$md_inst/sdltrs -scanlines -model 4p -romfile4p $biosdir/trs-80/model4p.rom -diskdir $romdir/trs-80 -disk0 $biosdir/trs-80/lddos.dsk -disk1 %ROM%"
     addSystem "trs-80"
 
     [[ "$md_mode" == "remove" ]] && return
-
-    local rom
-    for rom in level2.rom model3.rom model4.rom model4p.rom trs80-newdos.dsk trs80-lddos.dsk; do
-        ln -sf "$biosdir/$rom" "$md_inst/$rom"
-    done
 
 }
