@@ -35,7 +35,6 @@ function build_lr-mess() {
 
 function install_lr-mess() {
     md_ret_files=(
-        'LICENSE.md'
         'mess_libretro.so'
         'README.md'
     )

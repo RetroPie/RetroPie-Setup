@@ -13,4 +13,5 @@ Thumbs.db
 logs/
 tmp/
 *.code-workspace
+*.swp
 
