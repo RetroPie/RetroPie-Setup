@@ -62,7 +62,12 @@ function sources_mupen64plus() {
         dir="$md_build/mupen64plus-${repo[1]}"
         gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]} ${repo[3]}
     done
-    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git
+    local commit=""
+    # GLideN64 now requires cmake 3.9 so use an older commit as a workaround for systems with older cmake
+    if hasPackage cmake 3.9 lt; then
+        commit="8a9d52b4"
+    fi
+    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git master "$commit"
 
     if [[ -d "GLideN64" ]]; then
         if isPlatform "videocore"; then
