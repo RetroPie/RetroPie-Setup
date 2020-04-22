@@ -28,6 +28,18 @@ function depends_lr-mess-crvision() {
 	fi
 }
 
+function sources_lr-mess-crvision() {
+	true
+}
+
+function build_lr-mess-crvision() {
+	true
+}
+
+function install_lr-mess-crvision() {
+	true
+}
+
 function configure_lr-mess-crvision() {
 	_mess=$(dirname "$md_inst")/lr-mess/mess_libretro.so
 	_retroarch_bin="$rootdir/emulators/retroarch/bin/retroarch"
@@ -49,7 +61,7 @@ function configure_lr-mess-crvision() {
 	# this will get loaded too via --append_config
 	iniConfig " = " "\"" "$_add_config"
 	iniSet "core_options_path" "$_custom_coreconfig"
-	iniSet "save_on_exit" "false"
+	#iniSet "save_on_exit" "false"
 
 	# setup rom folder
 	mkRomDir "$_system"

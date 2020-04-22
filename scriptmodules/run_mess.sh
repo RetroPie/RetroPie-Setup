@@ -30,7 +30,8 @@ _stopadd=false
 for _param in "$@"; do
     if [ $_count -gt 4 ]; then
 		# we need to strip --appendconfig here, which seems to be added by emulationstation in the end......
-		if [ "$_param" = "--appendconfig" ]; then
+		# we also remove verbose, in case it's launched with verbose on from runcommand.sh (we use --verbose anyway ourself)
+		if [ "$_param" = "--appendconfig" ] || [ "$_param" = "--verbose" ]; then
 			_stopadd=true
 		fi
 		if [ "$_stopadd" = false ]; then
@@ -54,6 +55,7 @@ cat "$_config.add" >> /tmp/config.add
 set -- "$_retroarchbin"
 set -- "$@" --verbose --config "$_config" --appendconfig /tmp/config.add -L "$_messpath" /tmp/mess.cmd
 echo "[.] launching: $@"
+
 "$@"
 
 # deleting tmp 

@@ -15,7 +15,8 @@ rp_module_help="ROM Extensions: .zip .ssd\n\n
 Put games in:\n
 $romdir/bbcmicro\n\n
 Put BIOS files in $biosdir:\n
-bbcb.zip,bbcbp.zip, bbcbp128.zip, saa5050.zip"
+bbcb.zip,bbcbp.zip, bbcbp128.zip, saa5050.zip\n\n
+Press SHIFT+F12 to autoboot the loaded disk!"
 
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mame/master/LICENSE.md"
 rp_module_section="exp"
@@ -27,6 +28,18 @@ function depends_lr-mess-bbcmicro() {
 		printMsgs dialog "cannot find '$_mess' !\n\nplease install 'lr-mess' package."
 		exit 1
 	fi
+}
+
+function sources_lr-mess-bbcmicro() {
+	true
+}
+
+function build_lr-mess-bbcmicro() {
+	true
+}
+
+function install_lr-mess-bbcmicro()  {
+	true
 }
 
 function configure_lr-mess-bbcmicro() {
@@ -50,7 +63,7 @@ function configure_lr-mess-bbcmicro() {
 	# this will get loaded too via --append_config
 	iniConfig " = " "\"" "$_add_config"
 	iniSet "core_options_path" "$_custom_coreconfig"
-	iniSet "save_on_exit" "false"
+	#iniSet "save_on_exit" "false"
 
 	# setup rom folder
 	mkRomDir "$_system"
@@ -60,7 +73,7 @@ function configure_lr-mess-bbcmicro() {
 	chmod 755 "$_script"
 
 	# add the emulators.cfg as normal, pointing to the above script
-	addEmulator 1 "$md_id" "$_system" "$_script $_retroarch_bin $_mess $_config bbcbp128 $biosdir -flop1 %ROM%"
+	addEmulator 1 "$md_id" "$_system" "$_script $_retroarch_bin $_mess $_config bbcb $biosdir -flop1 %ROM%"
 
 	# add system to es_systems.cfg as normal
 	addSystem "$_system" "BBC Micro" ".zip .bin"
