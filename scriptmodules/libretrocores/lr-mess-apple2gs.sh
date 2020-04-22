@@ -11,7 +11,7 @@
 
 rp_module_id="lr-mess-apple2gs"
 rp_module_desc="MESS emulator (Apple II/GS) - MESS Port for libretro"
-rp_module_help="ROM Extensions: .zip .2mg\\n
+rp_module_help="ROM Extensions: .zip .2mg\n\n
 Put games in:\n
 $romdir/apple2gs\n\n
 Put BIOS files in $biosdir:\n

@@ -11,7 +11,7 @@
 
 rp_module_id="lr-mess-coco"
 rp_module_desc="MESS emulator (Tandy Color Computer) - MESS Port for libretro"
-rp_module_help="ROM Extensions: .zip .cas .bin .ccc .rom\\n
+rp_module_help="ROM Extensions: .zip .cas .bin .ccc .rom\n\n
 Put games in:\n
 $romdir/coco\n\n
 Put BIOS files in $biosdir:\n
