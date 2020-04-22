@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !mali !kms"
 
 function depends_fbzx() {
-    getDepends "libasound2-dev libsdl1.2-dev"
+    getDepends libasound2-dev libsdl1.2-dev
 }
 
 function sources_fbzx() {
