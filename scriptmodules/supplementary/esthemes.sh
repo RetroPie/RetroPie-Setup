@@ -235,7 +235,7 @@ function gui_esthemes() {
         'arcadeforge pixel-heaven-text'
         'arcadeforge 240p_Bubblegum'
         'arcadeforge 240p-honey'
-        'AndreaMav' 'es-theme-arcade-crt'
+        'AndreaMav' 'arcade-crt'
         'dionmunk clean'
         'c64-dev epicnoir'        
     )
