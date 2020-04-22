@@ -236,6 +236,8 @@ function gui_esthemes() {
         'arcadeforge 240p_Bubblegum'
         'arcadeforge 240p-honey'
         'AndreaMav' 'es-theme-arcade-crt'
+        'dionmunk clean'
+        'c64-dev epicnoir'        
     )
     while true; do
         local theme
