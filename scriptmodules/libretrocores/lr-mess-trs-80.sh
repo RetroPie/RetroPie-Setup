@@ -16,7 +16,7 @@ Put games in:\n
 $romdir/trs-80\n\n
 Put BIOS files in $biosdir:\n
 trs80.zip,trs80m3.zip,trsdos.zip (i used MultiDos)\n\n
-For disk mode, on first run first run the floppy disk will not work.\n
+For disk mode, on first run the floppy disk will not work.\n
 It must be enabled with SCRLCK, TAB, Machine Configuration, Floppy Disk Drive, On, RESET, SCRLCK again."
 
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mame/master/LICENSE.md"
