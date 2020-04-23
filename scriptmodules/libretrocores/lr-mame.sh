@@ -44,7 +44,9 @@ function build_lr-mame() {
 
 function install_lr-mame() {
     md_ret_files=(
+        'COPYING'
         'mamearcade_libretro.so'
+        'README.md'
     )
 }
 
