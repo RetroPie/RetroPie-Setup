@@ -65,6 +65,8 @@ function _purge_skyscraper() {
     local platform
     local cache_folder=$(_cache_folder_skyscraper)
 
+    [[ ! -d "$configdir/all/skyscraper/$cache_folder" ]] && return
+
     while read platform; do
         # Find any sub-folders of the cache folder and clear them
         _clear_platform_skyscraper "$platform"
