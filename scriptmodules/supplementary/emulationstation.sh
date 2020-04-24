@@ -249,9 +249,9 @@ Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
 Name[de_DE]=RetroPie
-Name=rpie
+Name=Retropie
 Comment[de_DE]=RetroPie
-Comment=retropie
+Comment=RetroPie
 Icon=/usr/local/share/icons/retropie.svg
 Categories=Game
 _EOF_
