@@ -23,8 +23,6 @@ function sources_vvvvvv() {
     gitPullOrClone "$md_build" https://github.com/TerryCavanagh/VVVVVV
     # default to fullscreen
     sed -i "s/fullscreen = false/fullscreen = true/" "$md_build/desktop_version/src/Game.cpp"
-    # remove -Werror=implicit-fallthrough option as it breaks compilation on older GCC
-    sed -i "/implicit-fallthrough/d" "$md_build/desktop_version/CMakeLists.txt"
 }
 
 function build_vvvvvv() {
