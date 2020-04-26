@@ -157,7 +157,6 @@ function configure_retroarch() {
     iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
-    iniSet "video_smooth" "false"
     iniSet "rgui_show_start_screen" "false"
     iniSet "rgui_browser_directory" "$romdir"
 
