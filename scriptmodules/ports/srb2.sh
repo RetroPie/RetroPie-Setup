@@ -21,7 +21,7 @@ function depends_srb2() {
 }
 
 function sources_srb2() {
-    gitPullOrClone "$md_build" https://github.com/STJr/SRB2.git
+    gitPullOrClone "$md_build" https://github.com/STJr/SRB2.git "SRB2_release_2.2.2"
     downloadAndExtract "$__archive_url/srb2-assets.tar.gz" "$md_build"
 }
 
@@ -45,6 +45,7 @@ function install_srb2() {
         'assets/installer/player.dta'
         'assets/installer/zones.pk3'
         'assets/installer/srb2.pk3'
+        'assets/installer/patch.pk3'
         'assets/README.txt'
         'assets/LICENSE.txt'
     )
