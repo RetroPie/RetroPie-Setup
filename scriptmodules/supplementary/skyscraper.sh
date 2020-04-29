@@ -299,6 +299,11 @@ function _scrape_skyscraper() {
 
 # Scrape a list of systems, chosen by the user
 function _scrape_chosen_skyscraper() {
+    ver=$(_get_ver_skyscraper)
+    if compareVersions "$ver" lt "3.5" ]]; then
+        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
+	return 1
+    fi
     local options=()
     local system
     local i=1
@@ -336,6 +341,11 @@ function _scrape_chosen_skyscraper() {
 
 # Generate gamelists for a list of systems, chosen by the user
 function _generate_chosen_skyscraper() {
+    ver=$(_get_ver_skyscraper)
+    if compareVersions "$ver" lt "3.5" ]]; then
+        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
+	return 1
+    fi
     local options=()
     local system
     local i=1
