@@ -249,18 +249,32 @@ function _scrape_skyscraper() {
     iniConfig " = " '"' "$configdir/all/skyscraper.cfg"
     eval $(_load_config_skyscraper)
 
-    local -a params=("--unattend" "--skipped")
+    local -a params=(-p "$system")
+    local flags="unattend,skipped,"
+
+    [[ "$download_videos" -eq 1 ]] && flags+="videos,"
+
+    [[ "$cache_marquees" -eq 0 ]] && flags+="nomarquees,"
+
+    [[ "$cache_covers" -eq 0 ]] && flags+="nocovers,"
+
+    [[ "$cache_screenshots" -eq 0 ]] && flags+="noscreenshots,"
+
+    [[ "$cache_wheels" -eq 0 ]] && flags+="nowheels,"
+
+    [[ "$rom_name" -eq 1 ]] && flags+="forcefilename,"
+
+    [[ "$remove_brackets" -eq 1 ]] && flags+="nobrackets,"
 
     if [[ "$use_rom_folder" -eq 1 ]]; then
         params+=(-g "$romdir/$system")
         params+=(-o "$romdir/$system/media")
         # If we're saving to the ROM folder, then use relative paths in the gamelist
-        params+=(--relative)
+        flags+="relative,"
     else
         params+=(-g "$home/.emulationstation/gamelists/$system")
         params+=(-o "$home/.emulationstation/downloaded_media/$system")
     fi
-
 
     # If 2nd parameter is unset, use the configured scraping source, otherwise scrape from cache.
     # Scraping from cache means we can omit '-s' from the parameter list.
@@ -268,23 +282,12 @@ function _scrape_skyscraper() {
         params+=(-s "$scrape_source")
     fi
 
-    params+=(-p "$system")
-
-    [[ "$download_videos" -eq 1 ]] && params+=(--videos)
-
-    [[ "$cache_marquees" -eq 0 ]] && params+=(--nomarquees)
-
-    [[ "$cache_covers" -eq 0 ]] && params+=(--nocovers)
-
-    [[ "$cache_screenshots" -eq 0 ]] && params+=(--noscreenshots)
-
-    [[ "$cache_wheels" -eq 0 ]] && params+=(--nowheels)
-
-    [[ "$rom_name" -eq 1 ]] && params+=(--forcefilename)
-
-    [[ "$remove_brackets" -eq 1 ]] && params+=(--nobrackets)
-
     [[ "$force_refresh" -eq 1 ]] && params+=(--refresh)
+
+    # There will always be a ',' at the end of $flags, so let's remove it
+    flags=${flags::-1}
+
+    params+=(--flags "$flags")
 
     # trap ctrl+c and return if pressed (rather than exiting retropie-setup etc)
     trap 'trap 2; return 1' INT
@@ -296,6 +299,11 @@ function _scrape_skyscraper() {
 
 # Scrape a list of systems, chosen by the user
 function _scrape_chosen_skyscraper() {
+    ver=$(_get_ver_skyscraper)
+    if compareVersions "$ver" lt "3.5" ]]; then
+        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
+	return 1
+    fi
     local options=()
     local system
     local i=1
@@ -333,6 +341,11 @@ function _scrape_chosen_skyscraper() {
 
 # Generate gamelists for a list of systems, chosen by the user
 function _generate_chosen_skyscraper() {
+    ver=$(_get_ver_skyscraper)
+    if compareVersions "$ver" lt "3.5" ]]; then
+        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
+	return 1
+    fi
     local options=()
     local system
     local i=1
@@ -490,7 +503,7 @@ function gui_skyscraper() {
         [3]="Options for resource gathering and caching sub-menu.\nClick to open it."
         [4]="Generate EmulationStation game lists.\nRuns the scraper to incorporate downloaded information and media from the local cache and write them to \Zbgamelist.xml\Zn files to be used by EmulationStation."
         [5]="Options for EmulationStation game list generation sub-menu.\nClick to open it and change the options."
-        [V]="Toggle the download and caching of videos.\nThis also toggles whether the videos will be included in the resulting gamelist.\n\nSkyscraper option: \Zb--videos\Zn"
+        [V]="Toggle the download and caching of videos.\nThis also toggles whether the videos will be included in the resulting gamelist.\n\nSkyscraper option: \Zb--flags videos\Zn"
         [A]="Advanced options sub-menu."
         [U]="Check for an update to Skyscraper\nIf there is a new release, you'll have the option to update."
     )
@@ -664,10 +677,10 @@ function _gui_cache_skyscraper() {
     eval $(_load_config_skyscraper)
 
     help_strings_cache=(
-        [1]="Toggle whether screenshots are cached locally when scraping.\n\nSkyscraper option: \Zb--noscreenshots\Zn"
-        [2]="Toggle whether covers are cached locally when scraping.\n\nSkyscraper option: \Zb--nocovers\Zn"
-        [3]="Toggle whether wheels are cached locally when scraping.\n\nSkyscraper option: \Zb--nowheels\Zn"
-        [4]="Toggle whether marquees are cached locally when scraping.\n\nSkyscraper option: \Zb--nomarquees\Zn"
+        [1]="Toggle whether screenshots are cached locally when scraping.\n\nSkyscraper option: \Zb--flags noscreenshots\Zn"
+        [2]="Toggle whether covers are cached locally when scraping.\n\nSkyscraper option: \Zb--flags nocovers\Zn"
+        [3]="Toggle whether wheels are cached locally when scraping.\n\nSkyscraper option: \Zb--flags nowheels\Zn"
+        [4]="Toggle whether marquees are cached locally when scraping.\n\nSkyscraper option: \Zb--flags nomarquees\Zn"
         [5]="Force the refresh of resources in the local cache when scraping.\n\nSkyscraper option: \Zb--cache refresh\Zn"
         [P]="Purge \ZbALL\Zn all cached resources for all platforms."
         [S]="Purge all cached resources for a chosen platform.\n\nSkyscraper option: \Zb--cache purge:all\Zn"
@@ -784,8 +797,8 @@ function _gui_generate_skyscraper() {
     eval $(_load_config_skyscraper)
 
     help_strings_gen=(
-        [1]="Game name format used in the EmulationStation game list. Available options:\n\n\ZbSource name\Zn: use the name returned by the scraper\n\ZbFilename\Zn: use the filename of the ROM as game name\n\nSkyscraper option: \Zb--forcefilename\Z0"
-        [2]="Game name option to remove/keep the text found between '()' and '[]' in the ROMs filename.\n\nSkyscraper option: \Zb--nobrackets\Zn"
+        [1]="Game name format used in the EmulationStation game list. Available options:\n\n\ZbSource name\Zn: use the name returned by the scraper\n\ZbFilename\Zn: use the filename of the ROM as game name\n\nSkyscraper option: \Zb--flags forcefilename\Z0"
+        [2]="Game name option to remove/keep the text found between '()' and '[]' in the ROMs filename.\n\nSkyscraper option: \Zb--flags nobrackets\Zn"
         [3]="Choose to save the generated 'gamelist.xml' and media in the ROMs folder. Supported options:\n\n\ZbEnabled\Zn saves the 'gamelist.xml' in the ROMs folder and the media in the 'media' sub-folder.\n\n\ZbDisabled\Zn saves the 'gamelist.xml' in \Zu\$HOME/.emulationstation/gamelists/<system>\Zn and the media in \Zu\$HOME/.emulationstation/downloaded_media\Zn.\n\n\Zb\ZrNOTE\Zn: changing this option will not automatically copy the 'gamelist.xml' file and the media to the new location or remove the ones in the old location. You must do this manually.\n\nSkyscraper parameters: \Zb-g <gamelist>\Zn / \Zb-o <path>\Zn"
     )
 
