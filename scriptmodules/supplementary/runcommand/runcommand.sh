@@ -241,7 +241,7 @@ function get_all_tvs_modes() {
 
 function get_all_kms_modes() {
     declare -Ag MODE
-    local default_mode="$(echo "$KMS_BUFFER" | grep -m1 "^Mode:.*driver.*crtc")"
+    local default_mode="$(echo "$KMS_BUFFER" | grep -m1 "^Mode:.*[driver|userdef].*crtc")"
     local crtc="$(echo "$default_mode" | awk '{ print $(NF-1) }')"
     local crtc_encoder="$(echo "$KMS_BUFFER" | grep "Encoder map:" | awk -v crtc="$crtc" '$5 == crtc { print $3 }')"
 
