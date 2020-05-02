@@ -46,7 +46,7 @@ function test_chroot() {
 
 function conf_memory_vars() {
     __memory_total_kb=$(awk '/^MemTotal:/{print $2}' /proc/meminfo)
-    __memory_total=$(( "$__memory_total_kb" / 1024 ))
+    __memory_total=$(( __memory_total_kb / 1024 ))
     if grep -q "^MemAvailable:" /proc/meminfo; then
         __memory_avail_kb=$(awk '/^MemAvailable:/{print $2}' /proc/meminfo)
     else
@@ -55,7 +55,7 @@ function conf_memory_vars() {
         local mem_buffers=$(awk '/^Buffers:/{print $2}' /proc/meminfo)
         __memory_avail_kb=$((mem_free + mem_cached + mem_buffers))
     fi
-    __memory_avail=$(( "$__memory_avail_kb" / 1024 ))
+    __memory_avail=$(( __memory_avail_kb / 1024 ))
 }
 
 function conf_binary_vars() {
