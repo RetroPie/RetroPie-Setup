@@ -274,6 +274,8 @@ function configure_mupen64plus() {
         iniSet "ThreadedVideo" "True"
         # Swap frame buffers On buffer update (most performant)
         iniSet "BufferSwapMode" "2"
+        # Disable hybrid upscaling filter (needs better GPU)
+        iniSet "EnableHybridFilter" "False"
 
         if isPlatform "videocore"; then
             # Disable gles2n64 autores feature and use dispmanx upscaling
