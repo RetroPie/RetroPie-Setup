@@ -50,6 +50,7 @@ function configure_redream() {
     done
 
     # symlink bios files to libretro core install locations
+    mkUserDir "$biosdir/dc"
     ln -sf "$biosdir/dc/dc_boot.bin" "$md_inst/boot.bin"
     ln -sf "$biosdir/dc/dc_flash.bin" "$md_inst/flash.bin"
 }
