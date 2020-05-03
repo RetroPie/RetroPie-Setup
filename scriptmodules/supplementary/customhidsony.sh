@@ -10,7 +10,7 @@
 #
 
 rp_module_id="customhidsony"
-rp_module_desc="Custom hid-sony driver backported from kernel 4.15"
+rp_module_desc="Custom hid-sony (Sony DualShock) driver with enhanced third-party controller support"
 rp_module_help="Improves support for third-party (Shanwan & Gasia) DualShock 3 controllers.\n\nNote: BlueZ 5.50+ may also be installed via the 'custombluez' module to enable pairing on third-party controllers."
 rp_module_section="driver"
 rp_module_flags="noinstclean"
