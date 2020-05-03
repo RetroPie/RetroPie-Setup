@@ -1,6 +1,6 @@
 --- a/drivers/hid/hid-sony.c	2018-11-15 05:39:31.762572258 +0000
 +++ b/drivers/hid/hid-sony.c	2018-11-15 05:38:55.762745843 +0000
-@@ -2063,6 +2063,7 @@
+@@ -2067,6 +2067,7 @@
  	struct sixaxis_output_report *report =
  		(struct sixaxis_output_report *)sc->output_report_dmabuf;
  	int n;
@@ -8,7 +8,7 @@
  
  	/* Initialize the report with default values */
  	memcpy(report, &default_report, sizeof(struct sixaxis_output_report));
-@@ -2097,9 +2097,18 @@
+@@ -2101,9 +2101,18 @@
  		}
  	}
  

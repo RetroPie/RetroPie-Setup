@@ -17,6 +17,12 @@ rp_module_section="driver"
 function depends_sixaxis() {
     getDepends checkinstall libevdev-tools
 
+    # add special check for presence of sixaxis plugin, and restart bluetooth stack if necessary
+    if ! hasPackage "libbluetooth3"; then
+        getDepends libbluetooth3
+        service bluetooth restart
+    fi
+
     rp_callModule ps3controller remove
 }
 
