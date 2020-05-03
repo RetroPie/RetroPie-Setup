@@ -362,7 +362,9 @@ function section_gui_setup() {
                     for idx in $(rp_getSectionIds $section); do
                         # if we are updating, skip packages that are not installed
                         if [[ "$mode" == "update" ]]; then
-                            rp_isInstalled "$idx" && rp_installModule "$idx" "_update_" || break
+                            if rp_isInstalled "$idx"; then
+                                rp_installModule "$idx" "_update_" || break
+                            fi
                         else
                             rp_installModule "$idx" "_auto_" || break
                         fi
