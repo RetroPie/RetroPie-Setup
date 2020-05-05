@@ -237,6 +237,7 @@ function gui_esthemes() {
         'arcadeforge 240p-honey'
         'dionmunk clean'
         'c64-dev epicnoir'
+        'AndreaMav arcade-crt'
     )
     while true; do
         local theme
