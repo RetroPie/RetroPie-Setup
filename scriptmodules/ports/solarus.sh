@@ -83,7 +83,7 @@ ARGS=("-fullscreen=yes" "-cursor-visible=no" "-lua-console=no")
 [[ -f "$(_options_cfg_file_solarus)" ]] && source "$(_options_cfg_file_solarus)"
 [[ -n "\$JOYPAD_DEADZONE" ]] && ARGS+=("-joypad-deadzone=\$JOYPAD_DEADZONE")
 [[ -n "\$QUIT_COMBO" ]] && ARGS+=("-quit-combo=\$QUIT_COMBO")
-if $(isPlatform "videocore" && echo true); then
+if $(isPlatform "videocore" && echo true || echo false); then
   if [[ -f /opt/vc/lib/libbrcmGLESv2.so ]]; then
     export LD_PRELOAD="/opt/vc/lib/libbrcmGLESv2.so"
   fi
