@@ -44,7 +44,7 @@ function depends_kodi() {
 function install_bin_kodi() {
     # force aptInstall to get a fresh list before installing
     __apt_update=0
-    aptInstall kodi kodi-peripheral-joystick kodi-inputstream-adaptive kodi-inputstream-rtmp kodi-vfs-libarchive kodi-vfs-sftp kodi-vfs-nfs
+    aptInstall kodi kodi-peripheral-joystick kodi-inputstream-adaptive kodi-inputstream-rtmp kodi-vfs-libarchive kodi-vfs-sftp kodi-vfs-nfs libnss3
 }
 
 function remove_kodi() {
