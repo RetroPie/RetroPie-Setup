@@ -208,7 +208,7 @@ function get_os_version() {
                 fi
             fi
             ;;
-        Ubuntu|neon)
+        Ubuntu|neon|Pop)
             if compareVersions "$__os_release" lt 16.04; then
                 error="You need Ubuntu 16.04 or newer"
             # although ubuntu 16.10 reports as being based on stretch it is before some
