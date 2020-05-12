@@ -48,10 +48,11 @@ function install_pisnes() {
 function configure_pisnes() {
     mkRomDir "snes"
 
-    moveConfigFile "$md_inst/snes9x.cfg" "$md_conf_root/snes/snes9x.cfg"
-
-    copyDefaultConfig "$md_inst/snes9x.cfg.template" "$md_conf_root/snes/snes9x.cfg"
-
     addEmulator 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
     addSystem "snes"
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    moveConfigFile "$md_inst/snes9x.cfg" "$md_conf_root/snes/snes9x.cfg"
+    copyDefaultConfig "$md_inst/snes9x.cfg.template" "$md_conf_root/snes/snes9x.cfg"
 }
