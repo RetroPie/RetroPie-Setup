@@ -1,5 +1,5 @@
 diff --git a/menu/menu_driver.c b/menu/menu_driver.c
-index fefc705393..9f7821df3c 100644
+index 39e8e23527..4f673a2554 100644
 --- a/menu/menu_driver.c
 +++ b/menu/menu_driver.c
 @@ -415,7 +415,8 @@ int generic_menu_entry_action(
