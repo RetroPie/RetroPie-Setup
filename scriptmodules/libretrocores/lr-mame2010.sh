@@ -23,7 +23,7 @@ function build_lr-mame2010() {
     rpSwap on 750
     make clean
     local params=()
-    isPlatform "arm" && params+=("VRENDER=soft" "ARM_ENABLED=1")
+    isPlatform "arm" && params+=("VRENDER=soft" "ARM_ENABLED=1" "FORCE_DRC_C_BACKEND=1")
     make "${params[@]}" ARCHOPTS="$CFLAGS" buildtools
     make "${params[@]}" ARCHOPTS="$CFLAGS"
     rpSwap off
