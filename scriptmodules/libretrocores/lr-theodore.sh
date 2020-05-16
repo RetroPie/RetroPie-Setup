@@ -17,7 +17,7 @@ rp_module_section="exp"
 rp_module_flags=""
 
 function sources_lr-theodore() {
-    gitPullOrClone "$md_build" https://github.com/libretro/theodore
+    gitPullOrClone "$md_build" https://github.com/Zlika/theodore
 }
 
 function build_lr-theodore() {
