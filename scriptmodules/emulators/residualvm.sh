@@ -37,7 +37,6 @@ function build_residualvm() {
         --enable-vkeybd
         --enable-release
         --disable-debug
-        --enable-keymapper
         --prefix="$md_inst"
     )
     ! isPlatform "x11" && params+=(--force-opengles2)
