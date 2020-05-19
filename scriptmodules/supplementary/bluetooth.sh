@@ -16,6 +16,7 @@ rp_module_section="config"
 function _update_hook_bluetooth() {
     # fix config location
     [[ -f "$configdir/bluetooth.cfg" ]] && mv "$configdir/bluetooth.cfg" "$configdir/all/bluetooth.cfg"
+    connect_mode_set_bluetooth "$(_get_connect_mode)"
 }
 
 function _get_connect_mode() {
@@ -322,30 +323,11 @@ function connect_bluetooth() {
     done < <(list_registered_bluetooth)
 }
 
-function boot_bluetooth() {
-    connect_mode="$(_get_connect_mode)"
-    case "$connect_mode" in
-        boot)
-            connect_bluetooth
-            ;;
-        background)
-            local script=""
-            local macs=()
-            local mac_address
-            local device_name
-            while read mac_address; read device_name; do
-                macs+=($mac_address)
-            done < <(list_registered_bluetooth)
-            local script="while true; do for mac in ${macs[@]}; do hcitool con | grep -q \"\$mac\" || { echo \"connect \$mac\nquit\"; sleep 1; } | bluetoothctl >/dev/null 2>&1; sleep 10; done; done"
-            nohup nice -n19 /bin/sh -c "$script" >/dev/null &
-            ;;
-    esac
-}
+function connect_mode_gui_bluetooth() {
+    local mode="$(_get_connect_mode)"
+    [[ -z "$mode" ]] && mode="default"
 
-function connect_mode_bluetooth() {
-    local connect_mode="$(_get_connect_mode)"
-
-    local cmd=(dialog --backtitle "$__backtitle" --default-item "$connect_mode" --menu "Choose a connect mode" 22 76 16)
+    local cmd=(dialog --backtitle "$__backtitle" --default-item "$mode" --menu "Choose a connect mode" 22 76 16)
 
     local options=(
         default "Bluetooth stack default behaviour (recommended)"
@@ -354,20 +336,26 @@ function connect_mode_bluetooth() {
     )
 
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    [[ -z "$choice" ]] && return
+    [[ -n "$choice" ]] && connect_mode_set_bluetooth "$choice"
+}
+
+function connect_mode_set_bluetooth() {
+    local mode="$1"
+    [[ -z "$mode" ]] && mode="default"
 
     local config="/etc/systemd/system/connect-bluetooth.service"
-    case "$choice" in
+    case "$mode" in
         boot|background)
-            local type="simple"
-            [[ "$choice" == "background" ]] && type="forking"
+            mkdir -p "$md_inst"
+            sed -e "s#CONFIGDIR#$configdir#" -e "s#ROOTDIR#$rootdir#" "$md_data/connect.sh" >"$md_inst/connect.sh"
+            chmod a+x "$md_inst/connect.sh"
             cat > "$config" << _EOF_
 [Unit]
 Description=Connect Bluetooth
 
 [Service]
-Type=$type
-ExecStart=/bin/bash "$scriptdir/retropie_packages.sh" bluetooth boot
+Type=simple
+ExecStart=nice -n19 "$md_inst/connect.sh"
 
 [Install]
 WantedBy=multi-user.target
@@ -379,10 +367,11 @@ _EOF_
                systemctl disable "$config"
             fi
             rm -f "$config"
+            rm -rf "$md_inst"
             ;;
     esac
     iniConfig "=" '"' "$configdir/all/bluetooth.cfg"
-    iniSet "connect_mode" "$choice"
+    iniSet "connect_mode" "$mode"
     chown $user:$user "$configdir/all/bluetooth.cfg"
 }
 
@@ -432,7 +421,7 @@ function gui_bluetooth() {
                     connect_bluetooth
                     ;;
                 M)
-                    connect_mode_bluetooth
+                    connect_mode_gui_bluetooth
                     ;;
                 8)
                     atebitdo="$((atebitdo ^ 1))"
