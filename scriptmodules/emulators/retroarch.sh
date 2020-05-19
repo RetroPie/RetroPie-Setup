@@ -39,7 +39,7 @@ function depends_retroarch() {
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.8.6
+    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.8.8
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
     applyPatch "$md_data/03_shader_path_config_enable.diff"
@@ -166,6 +166,7 @@ function configure_retroarch() {
 
     iniSet "video_font_size" "24"
     iniSet "core_options_path" "$configdir/all/retroarch-core-options.cfg"
+    iniSet "global_core_options" "true"
     isPlatform "x11" && iniSet "video_fullscreen" "true"
     isPlatform "mesa" && iniSet "video_fullscreen" "true"
 
@@ -260,6 +261,9 @@ function configure_retroarch() {
 
     # enable video shaders on existing configs
     _set_config_option_retroarch "video_shader_enable" "true"
+
+    # (compat) keep all core options in a single file
+    _set_config_option_retroarch "global_core_options" "true"
 
     # remapping hack for old 8bitdo firmware
     addAutoConf "8bitdo_hack" 0
