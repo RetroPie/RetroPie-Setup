@@ -112,7 +112,7 @@ function conf_build_vars() {
 
     # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
     # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
-    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5.0.0; then
+    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5; then
         __cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
     fi
 
