@@ -1,19 +1,19 @@
 diff --git a/retroarch.c b/retroarch.c
-index be36eaf141..dcccdaff47 100644
+index 79be7cc927..c20ddae412 100644
 --- a/retroarch.c
 +++ b/retroarch.c
-@@ -1191,6 +1191,10 @@ static char current_valid_extensions[1024]                      = {0};
- static char error_string[255]                                   = {0};
- static char cached_video_driver[32]                             = {0};
- 
+@@ -1024,6 +1024,10 @@ static const camera_driver_t *camera_drivers[] = {
+ #define SHADER_FILE_WATCH_DELAY_MSEC 500
+ #define HOLD_START_DELAY_SEC 2
+
 +/* number of frames required to trigger the hotkey */
 +#define HOTKEY_DELAY 5
 +static unsigned hotkey_counter = 0;
 +
- /* PATHS */
- struct rarch_dir_list
- {
-@@ -18086,9 +18090,16 @@ static void input_keys_pressed(input_bits_t *p_new_state,
+ #define QUIT_DELAY_USEC 3 * 1000000 /* 3 seconds */
+
+ #define DEBUG_INFO_FILENAME "debug_info.txt"
+@@ -16980,9 +16984,16 @@ static void input_keys_pressed(input_bits_t *p_new_state,
                 current_input_data, joypad_info,
                 &binds, port,
                 RETRO_DEVICE_JOYPAD, 0, RARCH_ENABLE_HOTKEY))
@@ -31,5 +31,5 @@ index be36eaf141..dcccdaff47 100644
 +               input_driver_block_hotkey = true;
 +            }
     }
- 
+
     if (binds[RARCH_GAME_FOCUS_TOGGLE].valid)
