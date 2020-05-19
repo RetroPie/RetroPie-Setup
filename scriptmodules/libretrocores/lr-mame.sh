@@ -23,8 +23,8 @@ function _get_params_lr-mame() {
 }
 
 function depends_lr-mame() {
-    if compareVersions $__gcc_version lt 5; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 5.0 or newer to compile lr-mame")
+    if compareVersions $__gcc_version lt 6; then
+        md_ret_errors+=("Sorry, you need an OS with gcc 6 or newer to compile $md_id")
         return 1
     fi
 }
@@ -34,7 +34,7 @@ function sources_lr-mame() {
 }
 
 function build_lr-mame() {
-    rpSwap on 2000
+    rpSwap on 4096
     local params=($(_get_params_lr-mame) SUBTARGET=arcade)
     make clean
     make "${params[@]}"
