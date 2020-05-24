@@ -10,7 +10,9 @@
 #
 
 rp_module_id="sixaxis"
-rp_module_desc="Helper service to install & configure the latest drivers for official and third-party DualShock controllers (ps3controller replacement)\n\nNote: For Shanwan/GASIA third-party controllers, enable third-party support in the configuration options.\n\nTo pair controllers, use the RetroPie Bluetooth menu, choose 'Register and Connect...', then follow the on-screen instructions."
+rp_module_desc="Helper service for official and third-party DualShock controllers (ps3controller replacement)"
+rp_module_help="For Shanwan/GASIA third-party controllers, enable third-party support in the configuration options.\n\nTo pair controllers, use the RetroPie Bluetooth menu, choose 'Register and Connect...', then follow the on-screen instructions."
+rp_module_help=""
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/sixaxis/master/COPYING"
 rp_module_section="driver"
 

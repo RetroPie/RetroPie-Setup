@@ -10,7 +10,8 @@
 #
 
 rp_module_id="custombluez"
-rp_module_desc="Updated version of BlueZ Bluetooth stack\n\nInstall alongside 'sixaxis' driver if you need to pair third-party (Gasia/Shanwan) DualShock 3 controllers.\nNeeded only if your distribution's BlueZ version is <5.48."
+rp_module_desc="Updated version of BlueZ Bluetooth stack"
+rp_module_help="Install alongside 'sixaxis' driver if you need to pair third-party (Gasia/Shanwan) DualShock 3 controllers.\nNeeded only if your distribution's BlueZ version is <5.48."
 rp_module_licence="GPL2 http://www.bluez.org/faq/common/"
 rp_module_section="driver"
 
