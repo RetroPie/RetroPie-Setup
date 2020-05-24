@@ -27,6 +27,10 @@ function depends_lr-mame() {
         md_ret_errors+=("Sorry, you need an OS with gcc 7 or newer to compile $md_id")
         return 1
     fi
+    local depends=(libasound2-dev)
+    isPlatform "gles" && depends+=(libgles2-mesa-dev)
+    isPlatform "gl" && depends+=(libglu1-mesa-dev)
+    getDepends "${depends[@]}"
 }
 
 function sources_lr-mame() {
