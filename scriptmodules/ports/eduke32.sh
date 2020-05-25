@@ -108,6 +108,7 @@ function configure_eduke32() {
     if [[ "$md_mode" == "install" ]]; then
         game_data_eduke32
 
+        touch "$config"
         iniConfig " " '"' "$config"
 
         # enforce vsync for kms targets
