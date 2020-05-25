@@ -11,12 +11,12 @@
 
 rp_module_id="eduke32"
 rp_module_desc="Duke3D source port"
-rp_module_licence="GPL2 http://svn.eduke32.com/eduke32/package/common/gpl-2.0.txt"
+rp_module_licence="GPL2 https://voidpoint.io/terminx/eduke32/-/raw/master/package/common/gpl-2.0.txt?inline=false"
 rp_module_section="opt"
 
 function depends_eduke32() {
     local depends=(
-        subversion flac libflac-dev libvorbis-dev libpng-dev libvpx-dev freepats
+        flac libflac-dev libvorbis-dev libpng-dev libvpx-dev freepats
         libsdl2-dev libsdl2-mixer-dev
     )
 
@@ -27,9 +27,10 @@ function depends_eduke32() {
 }
 
 function sources_eduke32() {
-    local revision="-r8090"
+    # was svn rev -r8090
+    local revision="dfc16b08"
 
-    svn checkout "$revision" http://svn.eduke32.com/eduke32 "$md_build"
+    gitPullOrClone "$md_build" https://voidpoint.io/terminx/eduke32.git "" "$revision"
 
     # r6918 causes a 20+ second delay on startup on ARM devices
     isPlatform "arm" && applyPatch "$md_data/0001-revert-r6918.patch"
