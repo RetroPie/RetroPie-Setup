@@ -21,7 +21,7 @@ function depends_srb2() {
 }
 
 function sources_srb2() {
-    gitPullOrClone "$md_build" https://github.com/STJr/SRB2.git "SRB2_release_2.2.2"
+    gitPullOrClone "$md_build" https://github.com/STJr/SRB2.git "SRB2_release_2.2.4"
     downloadAndExtract "$__archive_url/srb2-assets.tar.gz" "$md_build"
 }
 
