@@ -145,17 +145,28 @@ function hasPackage() {
     local req_ver="$2"
     local comp="$3"
     [[ -z "$comp" ]] && comp="ge"
-    local status=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
-    if [[ $? -eq 0 ]]; then
-        local ver="${status##* }"
-        local status="${status% *}"
-        if [[ -z "$req_ver" ]]; then
-            # if we are not checking on a specific version and the package is installed we are happy
-            [[ "$status" == *"ok installed" ]] && return 0
-        else
-            # otherwise check the version
-            compareVersions "$ver" "$comp" "$req_ver" && return 0
-        fi
+
+    local ver
+    local status
+    local out=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
+    if [[ "$?" -eq 0 ]]; then
+        ver="${out##* }"
+        status="${out% *}"
+    fi
+
+    local installed=0
+    [[ "$status" == *"ok installed" ]] && installed=1
+    # if we are not checking version
+    if [[ -z "$req_ver" ]]; then
+        # if the package is installed return true
+        [[ "$installed" -eq 1 ]] && return 0
+    else
+        # if checking version and the package is not installed we need to clear "ver" as it may contain
+        # the version number of a removed package and give a false positive with compareVersions.
+        # we still need to do the version check even if not installed due to the varied boolean operators
+        [[ "$installed" -eq 0 ]] && ver=""
+
+        compareVersions "$ver" "$comp" "$req_ver" && return 0
     fi
     return 1
 }
