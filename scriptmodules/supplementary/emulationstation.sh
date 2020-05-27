@@ -249,9 +249,24 @@ Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
 Name[de_DE]=RetroPie
-Name=rpie
+Name=RetroPie
 Comment[de_DE]=RetroPie
-Comment=retropie
+Comment=RetroPie
+Icon=/usr/local/share/icons/retropie.svg
+Categories=Game
+_EOF_
+
+    cat > /usr/local/share/applications/retropie_setup.desktop << _EOF_
+[Desktop Entry]
+Type=Application
+Exec=gnome-terminal -e '/bin/bash -c "sudo $(locate -b RetroPie-Setup)/retropie_setup.sh"'
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[de_DE]=RetroPie-Setup
+Name=RetroPie-Setup
+Comment[de_DE]=RetroPie-Setup
+Comment=RetroPie-Setup
 Icon=/usr/local/share/icons/retropie.svg
 Categories=Game
 _EOF_
