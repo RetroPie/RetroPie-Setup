@@ -285,7 +285,7 @@ function get_all_x11_modes()
 
         while read -r line; do
             # scan for line that contains bracketed mode id
-            id="$(echo "$line" | awk '{ print $2 }' | grep "([0-9]\{1,\}x[0-9]\{1,\})")"
+            id="$(echo "$line" | awk '{ print $2 }' | grep -o "(0x[a-f0-9]\{1,\})")"
 
             if [[ -n "$id" ]]; then
                 # strip brackets from mode id
@@ -384,7 +384,7 @@ function get_x11_mode_info() {
         # determine current output
         mode_id[0]="$($XRANDR --verbose | grep " connected" | awk '{ print $1 }')"
         # determine current mode id & strip brackets
-        mode_id[1]="$($XRANDR --verbose | grep " connected" | grep -o "([0-9]\{1,\}x[0-9]\{1,\})")"
+        mode_id[1]="$($XRANDR --verbose | grep " connected" | grep -o "(0x[a-f0-9]\{1,\})")"
         mode_id[1]="$(echo ${mode_id[1]:1:-1})"
     fi
 
