@@ -31,14 +31,14 @@ function sources_lr-mupen64plus-next() {
 
 function build_lr-mupen64plus-next() {
     local params=()
-    if isPlatform "videocore"; then
-        params+=(platform="$__platform")
-    elif isPlatform "mesa"; then
-        params+=(platform="$__platform-mesa")
-    elif isPlatform "mali"; then
-        params+=(platform="odroid")
-    else
-        isPlatform "arm" && params+=(WITH_DYNAREC=arm)
+    if isPlatform "arm"; then
+        if isPlatform "videocore"; then
+            params+=(platform="$__platform")
+        elif isPlatform "mesa"; then
+            params+=(platform="$__platform-mesa")
+        elif isPlatform "mali"; then
+            params+=(platform="odroid")
+        fi
         isPlatform "neon" && params+=(HAVE_NEON=1)
     fi
     if isPlatform "gles3"; then
