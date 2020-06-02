@@ -23,6 +23,8 @@ function depends_jzintv() {
 function sources_jzintv() {
     downloadAndExtract "$__archive_url/jzintv-20181225.zip" "$md_build"
     cd jzintv/src
+    # aarch64 doesn't include sys/io.h - we can just remove it in this case
+    isPlatform "aarch64" && grep -rl "include.*sys/io.h" | xargs sed -i "/include.*sys\/io.h/d"
 }
 
 function build_jzintv() {
