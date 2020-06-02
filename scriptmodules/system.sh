@@ -401,6 +401,7 @@ function set_platform_defaults() {
 
     # add platform name and 32bit/64bit to platform flags
     __platform_flags=("$__platform" "$(getconf LONG_BIT)bit")
+    __platform_arch=$(uname -m)
 }
 
 function platform_rpi1() {
