@@ -166,6 +166,12 @@ function get_os_version() {
                 error="You need Raspbian/Debian Stretch or newer"
             fi
 
+            # 64bit Raspberry Pi OS identifies as Debian, but functions (currently) as Raspbian
+            # we will check package sources and set to Raspbian
+            if isPlatform "aarch64" && apt-cache policy | grep -q "archive.raspberrypi.org"; then
+                __os_id="Raspbian"
+            fi
+
             # set a platform flag for osmc
             if grep -q "ID=osmc" /etc/os-release; then
                 __platform_flags+=(osmc)
