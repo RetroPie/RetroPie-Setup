@@ -88,7 +88,7 @@ function build_sdl2() {
     sed -i 's/libgl1-mesa-dev,/libgl1-mesa-dev, '"${conf_depends[*]}"'/' ./debian/control
     sed -i 's/confflags =/confflags = '"${conf_flags[*]}"' \\\n/' ./debian/rules
 
-    if isPlatform "rpi"; then
+    if isPlatform "rpi" && [[ -d "/opt/vc/include" ]]; then
         # move proprietary videocore headers
         sed -i -e 's/\"EGL/\"brcmEGL/g' -e 's/\"GLES/\"brcmGLES/g' ./src/video/raspberry/SDL_rpivideo.h
         mv /opt/vc/include/EGL /opt/vc/include/brcmEGL
@@ -99,7 +99,7 @@ function build_sdl2() {
     # using the videocore pkgconfig will cause unwanted linkage, so disable it!
     PKG_CONFIG_PATH= dpkg-buildpackage -b
 
-    if isPlatform "rpi"; then
+    if isPlatform "rpi" && [[ -d "/opt/vc/include" ]]; then
         # restore proprietary headers
         mv /opt/vc/include/brcmEGL /opt/vc/include/EGL
         mv /opt/vc/include/brcmGLES /opt/vc/include/GLES
