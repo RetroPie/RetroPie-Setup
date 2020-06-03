@@ -39,7 +39,7 @@ function _params_reicast() {
     local params=()
 
     # platform-specific params
-    if isPlatform "rpi"; then
+    if isPlatform "rpi" && isPlatform "32bit"; then
         # platform configuration
         if isPlatform "rpi4"; then
             platform="rpi4"
