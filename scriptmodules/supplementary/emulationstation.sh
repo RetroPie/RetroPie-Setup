@@ -259,7 +259,7 @@ _EOF_
     cat > /usr/local/share/applications/retropie_setup.desktop << _EOF_
 [Desktop Entry]
 Type=Application
-Exec=gnome-terminal -e '/bin/bash -c "sudo $(locate -b RetroPie-Setup)/retropie_setup.sh"'
+Exec=gnome-terminal --maximize -e '/bin/bash -c "sudo $(locate -b RetroPie-Setup)/retropie_setup.sh"'
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
