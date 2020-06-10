@@ -20,14 +20,15 @@ function sources_lr-np2kai() {
 }
 
 function build_lr-np2kai() {
-    cd ./sdl2
-    make
-    md_ret_require="$md_build/sdl2/np2kai_libretro.so"
+    cd "$md_build/sdl"
+    make -f Makefile.libretro clean
+    make -f Makefile.libretro
+    md_ret_require="$md_build/sdl/np2kai_libretro.so"
 }
 
 function install_lr-np2kai() {
     md_ret_files=(
-        'sdl2/np2kai_libretro.so'
+        'sdl/np2kai_libretro.so'
     )
 }
 
