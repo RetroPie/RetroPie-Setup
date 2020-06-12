@@ -35,6 +35,7 @@ function add_games_wolf4sdl() {
     declare -A -g games_wolf4sdl=(
         ['vswap.wl1']="Wolfenstein 3D demo"
         ['vswap.wl6']="Wolfenstein 3D"
+        ['vswap.sod']="Wolfenstein 3D - Spear of Destiny"
         ['vswap.sd1']="Wolfenstein 3D - Spear of Destiny Ep 1"
         ['vswap.sd2']="Wolfenstein 3D - Spear of Destiny Ep 2"
         ['vswap.sd3']="Wolfenstein 3D - Spear of Destiny Ep 3"
@@ -122,6 +123,7 @@ function launch_wolf4sdl() {
         ['6efa079414b817c97db779cecfb081c9']="wolf4sdl-sw-v14"
         ['a6d901dfb455dfac96db5e4705837cdb']="wolf4sdl-3dr-v14"
         ['b8ff4997461bafa5ef2a94c11f9de001']="wolf4sdl-gt-v14"
+        ['94aeef7980ef640c448087f92be16d83']="wolf4sdl-spear"
         ['b1dac0a8786c7cdbb09331a4eba00652']="wolf4sdl-spear --mission 1"
         ['25d92ac0ba012a1e9335c747eb4ab177']="wolf4sdl-spear --mission 2"
         ['94aeef7980ef640c448087f92be16d83']="wolf4sdl-spear --mission 3"
