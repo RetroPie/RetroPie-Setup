@@ -87,6 +87,8 @@ function configure_lr-fbneo() {
     addEmulator 0 "$md_id-spec" "zxspectrum" "$md_inst/fbneo_libretro.so --subsystem spec"
     addEmulator 0 "$md_id-fds" "fds" "$md_inst/fbneo_libretro.so --subsystem fds"
     addEmulator 0 "$md_id-nes" "nes" "$md_inst/fbneo_libretro.so --subsystem nes"
+    addEmulator 0 "$md_id-ngp" "ngp" "$md_inst/fbneo_libretro.so --subsystem ngp"
+    addEmulator 0 "$md_id-ngpc" "ngpc" "$md_inst/fbneo_libretro.so --subsystem ngp"
 
     addSystem "arcade"
     addSystem "neogeo"
@@ -102,4 +104,6 @@ function configure_lr-fbneo() {
     addSystem "zxspectrum"
     addSystem "fds"
     addSystem "nes"
+    addSystem "ngp"
+    addSystem "ngpc"
 }
