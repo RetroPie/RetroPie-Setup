@@ -62,5 +62,5 @@ function configure_darkplaces-quake() {
     moveConfigDir "$home/.darkplaces" "$md_conf_root/quake/darkplaces"
 	if isPlatform "rpi"; then
 		echo "gl_nopartialtextureupdates 1" >> "$md_conf_root/quake/darkplaces/id1/autoexec.cfg"
-    fi
+	fi
 }
