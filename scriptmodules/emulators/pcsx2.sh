@@ -47,14 +47,16 @@ function depends_pcsx2() {
 function install_bin_pcsx2() {
     local version
     [[ -n "${__os_ubuntu_ver}" ]] && version="-unstable"
-
+    aptInstall "libportaudio2:i386"
+    aptInstall "libsdl2-2.0-0:i386"
     aptInstall "pcsx2$version"
 }
 
 function remove_pcsx2() {
     local version
     [[ -n "${__os_ubuntu_ver}" ]] && version="-unstable"
-
+    aptRemove "libportaudio2:i386"
+    aptRemove "libsdl2-2.0-0:i386"
     aptRemove "pcsx2$version"
     rp_callModule pcsx2 depends remove
 }
