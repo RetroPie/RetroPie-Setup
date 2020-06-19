@@ -47,6 +47,7 @@ function depends_pcsx2() {
 function install_bin_pcsx2() {
     local version
     [[ -n "${__os_ubuntu_ver}" ]] && version="-unstable"
+    dpkg --add-architecture i386 && apt update
     aptInstall "libportaudio2:i386"
     aptInstall "libsdl2-2.0-0:i386"
     aptInstall "pcsx2$version"
