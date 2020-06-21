@@ -41,6 +41,10 @@ function build_lr-parallel-n64() {
             params+=(WITH_DYNAREC=arm)
             isPlatform "neon" && params+=(HAVE_NEON=1)
         fi
+        if isPlatform "aarch64"; then
+            params+=(CPUFLAGS=-DNO_ASM -DARM64 -D__arm64__ -DARM_ASM -DNOSSE -DARM_FIX")
+            params+=(WITH_DYNAREC=aarch64)
+        fi
     fi
     make clean
     make "${params[@]}"
