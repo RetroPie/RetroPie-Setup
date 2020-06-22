@@ -27,10 +27,30 @@ function depends_fs-uae() {
             aptUpdate
             ;;
         Debian)
+            local apt_file="/etc/apt/sources.list.d/fsuae-stable.list"
             if [[ "$md_mode" == "install" ]]; then
-                echo "deb http://download.opensuse.org/repositories/home:/FrodeSolheim:/stable/Debian_9.0/ /" > /etc/apt/sources.list.d/fsuae-stable.list
+                local name
+                case "$__os_debian_ver" in
+                    9)
+                        name="Debian_9.0"
+                        ;;
+                    10)
+                        name="Debian_10"
+                        ;;
+                    *)
+                        md_ret_errors+=("Sorry, fs-uae isn't currently available for Debian $__os_debian_ver")
+                        return 1
+                        ;;
+                esac
+                # add repository and key
+                local repo="http://download.opensuse.org/repositories/home:/FrodeSolheim:/stable/$name"
+                echo "deb $repo/ /" > "$apt_file"
+                wget -q -O- "$repo/Release.key" | apt-key add -
             else
-                rm -f /etc/apt/sources.list.d/fsuae-stable.list
+                # remove repository and key
+                rm -f "$apt_file"
+                # remove key by email
+                gpg --keyring /etc/apt/trusted.gpg --batch --yes --delete-keys "home:FrodeSolheim@build.opensuse.org" &>/dev/null
             fi
             aptUpdate
             ;;
