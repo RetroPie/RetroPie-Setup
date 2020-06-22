@@ -16,6 +16,7 @@ rp_module_section="config"
 function _update_hook_bluetooth() {
     # fix config location
     [[ -f "$configdir/bluetooth.cfg" ]] && mv "$configdir/bluetooth.cfg" "$configdir/all/bluetooth.cfg"
+    connect_mode_set_bluetooth "$(_get_connect_mode)"
 }
 
 function _get_connect_mode() {
@@ -30,7 +31,7 @@ function _get_connect_mode() {
 }
 
 function depends_bluetooth() {
-    local depends=(bluetooth python-dbus python-gobject)
+    local depends=(bluetooth python-dbus python-gobject bluez-tools)
     if [[ "$__os_id" == "Raspbian" ]]; then
         depends+=(pi-bluetooth raspberrypi-sys-mods)
     fi
@@ -119,20 +120,19 @@ function list_available_bluetooth() {
 
 function list_registered_bluetooth() {
     local line
-    local mac_address
-    local device_name
     while read line; do
-        mac_address="$(echo "$line" | sed 's/ /,/g' | cut -d, -f1)"
-        device_name="$(echo "$line" | sed 's/'"$mac_address"' //g')"
-        echo -e "$mac_address\n$device_name"
-    done < <($(get_script_bluetooth bluez-test-device) list)
+        if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
+            echo ${BASH_REMATCH[2]}
+            echo ${BASH_REMATCH[1]}
+        fi
+    done < <(bt-device --list)
 }
 
 function display_active_and_registered_bluetooth() {
     local registered
     local active
 
-    registered="$($(get_script_bluetooth bluez-test-device) list 2>&1)"
+    registered="$(bt-device --list | tail -n +2)"
     [[ -z "$registered" ]] && registered="There are no registered devices"
 
     if [[ "$(hcitool con)" != "Connections:" ]]; then
@@ -141,7 +141,7 @@ function display_active_and_registered_bluetooth() {
         active="There are no active connections"
     fi
 
-    printMsgs "dialog" "Registered Devices:\n\n$registered\n\n\nActive Connections:\n\n$active"
+    printMsgs "dialog" "Registered Devices:\n\n$registered\n\nActive Connections:\n\n$active"
 }
 
 function remove_device_bluetooth() {
@@ -161,11 +161,12 @@ function remove_device_bluetooth() {
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && return
 
-        remove_bluetooth_device=$($(get_script_bluetooth bluez-test-device) remove $choice)
-        if [[ -z "$remove_bluetooth_device" ]] ; then
+        local out
+        out=$(bt-device --remove $choice 2>&1)
+        if [[ "$?" -eq 0 ]] ; then
             printMsgs "dialog" "Device removed"
         else
-            printMsgs "dialog" "An error occurred removing the bluetooth device. Please ensure you typed the mac address correctly"
+            printMsgs "dialog" "Error removing device:\n\n$out"
         fi
     fi
 }
@@ -194,10 +195,9 @@ function register_bluetooth() {
     device_name="${mac_addresses[$choice]}"
 
     if [[ "$device_name" =~ "PLAYSTATION(R)3 Controller" ]]; then
-        $(get_script_bluetooth bluez-test-device) disconnect "$mac_address" 2>&1
-        $(get_script_bluetooth bluez-test-device) trusted "$mac_address" yes 2>&1
-        local trusted=$($(get_script_bluetooth bluez-test-device) trusted "$mac_address" 2>&1)
-        if [[ "$trusted" -eq 1 ]]; then
+        bt-device --disconnect="$mac_address" >/dev/null
+        bt-device --set "$mac_address" Trusted 1 >/dev/null
+        if [[ "$?" -eq 0 ]]; then
             printMsgs "dialog" "Successfully authenticated $device_name ($mac_address).\n\nYou can now remove the USB cable."
         else
             printMsgs "dialog" "Unable to authenticate $device_name ($mac_address).\n\nPlease try to register the device again, making sure to follow the on-screen steps exactly."
@@ -277,13 +277,9 @@ function register_bluetooth() {
     fi
 
     if [[ -z "$error" ]]; then
-        error=$($(get_script_bluetooth bluez-test-device) trusted "$mac_address" yes 2>&1)
-        if [[ -z "$error" ]] ; then
-            error=$($(get_script_bluetooth bluez-test-input) connect "$mac_address" 2>&1)
-            if [[ -z "$error" ]]; then
-                printMsgs "dialog" "Successfully registered and connected to $mac_address"
-                return 0
-            fi
+        error=$(bt-device --set "$mac_address" Trusted 1 2>&1)
+        if [[ "$?" -eq 0 ]] ; then
+            return 0
         fi
     fi
 
@@ -323,34 +319,15 @@ function connect_bluetooth() {
     local mac_address
     local device_name
     while read mac_address; read device_name; do
-        $($(get_script_bluetooth bluez-test-input) connect "$mac_address" 2>/dev/null)
+        $(bt-device --connect "$mac_address" 2>/dev/null)
     done < <(list_registered_bluetooth)
 }
 
-function boot_bluetooth() {
-    connect_mode="$(_get_connect_mode)"
-    case "$connect_mode" in
-        boot)
-            connect_bluetooth
-            ;;
-        background)
-            local script=""
-            local macs=()
-            local mac_address
-            local device_name
-            while read mac_address; read device_name; do
-                macs+=($mac_address)
-            done < <(list_registered_bluetooth)
-            local script="while true; do for mac in ${macs[@]}; do hcitool con | grep -q \"\$mac\" || { echo \"connect \$mac\nquit\"; sleep 1; } | bluetoothctl >/dev/null 2>&1; sleep 10; done; done"
-            nohup nice -n19 /bin/sh -c "$script" >/dev/null &
-            ;;
-    esac
-}
+function connect_mode_gui_bluetooth() {
+    local mode="$(_get_connect_mode)"
+    [[ -z "$mode" ]] && mode="default"
 
-function connect_mode_bluetooth() {
-    local connect_mode="$(_get_connect_mode)"
-
-    local cmd=(dialog --backtitle "$__backtitle" --default-item "$connect_mode" --menu "Choose a connect mode" 22 76 16)
+    local cmd=(dialog --backtitle "$__backtitle" --default-item "$mode" --menu "Choose a connect mode" 22 76 16)
 
     local options=(
         default "Bluetooth stack default behaviour (recommended)"
@@ -359,20 +336,26 @@ function connect_mode_bluetooth() {
     )
 
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    [[ -z "$choice" ]] && return
+    [[ -n "$choice" ]] && connect_mode_set_bluetooth "$choice"
+}
+
+function connect_mode_set_bluetooth() {
+    local mode="$1"
+    [[ -z "$mode" ]] && mode="default"
 
     local config="/etc/systemd/system/connect-bluetooth.service"
-    case "$choice" in
+    case "$mode" in
         boot|background)
-            local type="simple"
-            [[ "$choice" == "background" ]] && type="forking"
+            mkdir -p "$md_inst"
+            sed -e "s#CONFIGDIR#$configdir#" -e "s#ROOTDIR#$rootdir#" "$md_data/connect.sh" >"$md_inst/connect.sh"
+            chmod a+x "$md_inst/connect.sh"
             cat > "$config" << _EOF_
 [Unit]
 Description=Connect Bluetooth
 
 [Service]
-Type=$type
-ExecStart=/bin/bash "$scriptdir/retropie_packages.sh" bluetooth boot
+Type=simple
+ExecStart=nice -n19 "$md_inst/connect.sh"
 
 [Install]
 WantedBy=multi-user.target
@@ -384,10 +367,11 @@ _EOF_
                systemctl disable "$config"
             fi
             rm -f "$config"
+            rm -rf "$md_inst"
             ;;
     esac
     iniConfig "=" '"' "$configdir/all/bluetooth.cfg"
-    iniSet "connect_mode" "$choice"
+    iniSet "connect_mode" "$mode"
     chown $user:$user "$configdir/all/bluetooth.cfg"
 }
 
@@ -437,7 +421,7 @@ function gui_bluetooth() {
                     connect_bluetooth
                     ;;
                 M)
-                    connect_mode_bluetooth
+                    connect_mode_gui_bluetooth
                     ;;
                 8)
                     atebitdo="$((atebitdo ^ 1))"
