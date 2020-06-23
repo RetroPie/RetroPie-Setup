@@ -16,7 +16,14 @@ rp_module_section="config"
 function _update_hook_bluetooth() {
     # fix config location
     [[ -f "$configdir/bluetooth.cfg" ]] && mv "$configdir/bluetooth.cfg" "$configdir/all/bluetooth.cfg"
-    connect_mode_set_bluetooth "$(_get_connect_mode)"
+    local mode="$(_get_connect_mode)"
+    # if user has set bluetooth connect mode to boot or background, make sure we
+    # have the latest dependencies and update systemd script
+    if [[ "$mode" != "default" ]]; then
+        # make sure dependencies are up to date
+        ! hasPackage "bluez-tools" && depends_bluetooth
+        connect_mode_set_bluetooth "$mode"
+    fi
 }
 
 function _get_connect_mode() {
