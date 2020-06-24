@@ -370,7 +370,7 @@ _EOF_
             systemctl enable "$config"
             ;;
         default)
-            if systemctl is-enabled connect-bluetooth | grep -q "enabled"; then
+            if systemctl is-enabled connect-bluetooth 2>/dev/null | grep -q "enabled"; then
                systemctl disable "$config"
             fi
             rm -f "$config"
