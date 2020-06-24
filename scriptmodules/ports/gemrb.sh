@@ -12,7 +12,8 @@
 rp_module_id="gemrb"
 rp_module_desc="gemrb - open-source implementation of Infinity Engine"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/gemrb/gemrb/master/COPYING"
-rp_module_section="exp dispmanx"
+rp_module_section="exp"
+rp_module_flags="dispmanx"
 
 function depends_gemrb() {
     getDepends python2-dev libopenal-dev libsdl1.2-dev cmake libpng-dev libfreetype6-dev libvorbis-dev libvlc-dev libvlccore-dev
