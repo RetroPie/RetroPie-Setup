@@ -16,7 +16,7 @@ rp_module_section="exp"
 rp_module_flags="!mali dispmanx"
 
 function depends_gemrb() {
-    getDepends python2-dev libopenal-dev libsdl1.2-dev cmake libpng-dev libfreetype6-dev libvorbis-dev libvlc-dev libvlccore-dev
+    getDepends python2-dev libopenal-dev cmake libpng-dev libfreetype6-dev libsdl2-dev libvorbis-dev libvlc-dev libvlccore-dev
 }
 
 function sources_gemrb() {
@@ -27,7 +27,7 @@ function build_gemrb() {
     mkdir -p build
     cd build
     make clean
-    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/ -DSDL_BACKEND=SDL -DUSE_SDLMIXER=OFF
+    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/ -DSDL_BACKEND=SDL2 -DUSE_SDLMIXER=OFF
     make
     md_ret_require="$md_build/build/gemrb/gemrb"
 }
