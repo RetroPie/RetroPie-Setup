@@ -24,18 +24,22 @@ function depends_darkplaces-quake() {
 
 function sources_darkplaces-quake() {
     gitPullOrClone "$md_build" https://github.com/xonotic/darkplaces.git div0-stable
-    if isPlatform "rpi"; then
-        applyPatch "$md_data/01_rpi_fixes.diff"
-    fi
+    isPlatform "rpi" && applyPatch "$md_data/01_rpi_fixes.diff"
+    applyPatch "$md_data/02_makefile_fixes.diff"
 }
 
 function build_darkplaces-quake() {
-    make clean
-    if isPlatform "videocore"; then
-        make sdl-release DP_MAKE_TARGET=rpi
-    else
-        make sdl-release
+    local params=(OPTIM_RELEASE="")
+    if isPlatform "gles" && ! isPlatform "rpi4"; then
+        params+=(SDLCONFIG_UNIXCFLAGS_X11="-DUSE_GLES2")
+        if isPlatform "videocore"; then
+            params+=(SDLCONFIG_UNIXLIBS_X11="-L /opt/vc/lib -lbrcmGLESv2")
+        else
+            params+=(SDLCONFIG_UNIXLIBS_X11="-lGLESv2")
+        fi
     fi
+    make clean
+    make sdl-release "${params[@]}"
 }
 
 function install_darkplaces-quake() {
