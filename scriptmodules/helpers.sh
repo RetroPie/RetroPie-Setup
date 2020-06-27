@@ -1406,7 +1406,10 @@ function dkmsManager() {
             ;;
         reload)
             dkmsManager unload "$module_name" "$module_ver"
-            modprobe "$module_name"
+            # No reason to load modules in chroot
+            if [[ "$__chroot" -eq 0 ]]; then
+                modprobe "$module_name"
+            fi
             ;;
         unload)
             if [[ -n "$(lsmod | grep ${module_name/-/_})" ]]; then
