@@ -26,11 +26,16 @@ function sources_darkplaces-quake() {
     gitPullOrClone "$md_build" https://github.com/xonotic/darkplaces.git div0-stable
     isPlatform "rpi" && applyPatch "$md_data/01_rpi_fixes.diff"
     applyPatch "$md_data/02_makefile_fixes.diff"
+    # comment out problematic invariant qualifier which fails to compile with mesa gles on rpi4
+    isPlatform "rpi4" && sed -i 's#^"invariant#"//invariant#' "$md_build/shader_glsl.h"
 }
 
 function build_darkplaces-quake() {
+    local force_opengl="$1"
+    # on the rpi4, we build gles first, and then force an opengl build (which is the default)
+    [[ -z "$force_opengl" ]] && force_opengl=0
     local params=(OPTIM_RELEASE="")
-    if isPlatform "gles" && ! isPlatform "rpi4"; then
+    if isPlatform "gles" && [[ "$force_opengl" -eq 0 ]]; then
         params+=(SDLCONFIG_UNIXCFLAGS_X11="-DUSE_GLES2")
         if isPlatform "videocore"; then
             params+=(SDLCONFIG_UNIXLIBS_X11="-L /opt/vc/lib -lbrcmGLESv2")
@@ -40,6 +45,16 @@ function build_darkplaces-quake() {
     fi
     make clean
     make sdl-release "${params[@]}"
+    if isPlatform "rpi4" && [[ "$force_opengl" -eq 0 ]]; then
+        mv "$md_build/darkplaces-sdl" "$md_build/darkplaces-sdl-gles"
+        # revert rpi4 gles change which commented out invariant line from earlier.
+        sed -i 's#^"//invariant#"invariant#' "$md_build/shader_glsl.h"
+        # rebuild opengl version on rpi4
+        build_darkplaces-quake 1
+        md_ret_require+=("$md_build/darkplaces-sdl-gles")
+    else
+        md_ret_require+=("$md_build/darkplaces-sdl")
+    fi
 }
 
 function install_darkplaces-quake() {
@@ -48,12 +63,16 @@ function install_darkplaces-quake() {
         'darkplaces-sdl'
         'COPYING'
     )
+    isPlatform "rpi4" && md_ret_files+=("darkplaces-sdl-gles")
 }
 
 function add_games_darkplaces-quake() {
-    local params=()
+    local params=(-basedir "$romdir/ports/quake" -game %QUAKEDIR%)
     isPlatform "kms" && params+=("+vid_vsync 1")
-    _add_games_lr-tyrquake "$md_inst/darkplaces-sdl -basedir $romdir/ports/quake -game %QUAKEDIR% ${params[*]}"
+    if isPlatform "rpi4"; then
+       addEmulator 0 "$md_id-gles" "quake" "$md_inst/darkplaces-sdl-gles ${params[*]}"
+    fi
+    _add_games_lr-tyrquake "$md_inst/darkplaces-sdl ${params[*]}"
 }
 
 function configure_darkplaces-quake() {
