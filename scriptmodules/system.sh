@@ -214,9 +214,9 @@ function get_os_version() {
         Ubuntu|neon|Pop)
             if compareVersions "$__os_release" lt 16.04; then
                 error="You need Ubuntu 16.04 or newer"
-            # although ubuntu 16.10 reports as being based on stretch it is before some
+            # although ubuntu 16.04/16.10 report as being based on stretch it is before some
             # packages were changed - we map to version 8 to avoid issues (eg libpng-dev name)
-            elif compareVersions "$__os_release" eq 16.10; then
+            elif compareVersions "$__os_release" le 16.10; then
                 __os_debian_ver="8"
             elif compareVersions "$__os_release" lt 18.04; then
                 __os_debian_ver="9"
