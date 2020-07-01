@@ -122,7 +122,7 @@ function configure_advmame() {
             # default for best performance
             iniSet "display_magnify" "1"
             # disable threading to get rid of the crash-on-exit when using SDL, preventing config save
-            initSet "misc_smp" "no"
+            iniSet "misc_smp" "no"
         else
             iniSet "device_video_output" "overlay"
             iniSet "display_aspectx" 16
