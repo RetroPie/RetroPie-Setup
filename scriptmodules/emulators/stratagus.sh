@@ -21,7 +21,7 @@ function depends_stratagus() {
 }
 
 function sources_stratagus() {
-    gitPullOrClone "$md_build" https://github.com/Wargus/stratagus.git
+    gitPullOrClone "$md_build" https://github.com/Wargus/stratagus.git v2.4.3
 }
 
 function build_stratagus() {
