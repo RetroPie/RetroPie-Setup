@@ -198,7 +198,7 @@ function get_os_version() {
                     ;;
             esac
             ;;
-        LinuxMint)
+        LinuxMint|Linuxmint)
             if [[ "$__os_desc" != LMDE* ]]; then
                 if compareVersions "$__os_release" lt 18; then
                     error="You need Linux Mint 18 or newer"
