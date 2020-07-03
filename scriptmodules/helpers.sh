@@ -1238,13 +1238,16 @@ function addPort() {
         mv "$configdir/$port" "$md_conf_root/"
     fi
 
-    # remove the ports launch script if in remove mode
+    # remove the emulator / port
     if [[ "$md_mode" == "remove" ]]; then
-        rm -f "$file"
         delEmulator "$id" "$port"
+
+        # remove launch script if in remove mode and the ports emulators.cfg is empty
+        [[ ! -f "$md_conf_root/$port/emulators.cfg" ]] && rm -f "$file"
+
         # if there are no more port launch scripts we can remove ports from emulation station
         if [[ "$(find "$romdir/ports" -maxdepth 1 -name "*.sh" | wc -l)" -eq 0 ]]; then
-            delSystem "$id" "ports"
+            delSystem "ports"
         fi
         return
     fi
