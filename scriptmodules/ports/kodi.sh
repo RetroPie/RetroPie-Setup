@@ -53,9 +53,6 @@ function remove_kodi() {
 }
 
 function configure_kodi() {
-    # remove old directLaunch entry
-    delSystem "$md_id" "kodi"
-
     moveConfigDir "$home/.kodi" "$md_conf_root/kodi"
 
     addPort "$md_id" "kodi" "Kodi" "kodi-standalone"
