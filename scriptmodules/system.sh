@@ -80,19 +80,16 @@ function conf_build_vars() {
 
     # calculate build concurrency based on cores and available memory
     __jobs=1
+    local unit=512
+    isPlatform "64bit" && unit=$(($unit + 256))
     if [[ "$(nproc)" -gt 1 ]]; then
-        # if we have less than 1gb of ram free, then limit build jobs to 2
-        if [[ "$__memory_avail" -lt 1024 ]]; then
-           __jobs=2
+        local nproc="$(nproc)"
+        # max one thread per unit (MB) of ram
+        local max_jobs=$(($__memory_avail / $unit))
+        if [[ "$max_jobs" -lt "$nproc" ]]; then
+            __jobs="$max_jobs"
         else
-           local nproc="$(nproc)"
-           # limit jobs to 1 per 512MB free
-           local max_jobs=$(($__memory_avail / 512))
-           if [[ "$max_jobs" < "$nproc" ]]; then
-               __jobs="$max_jobs"
-           else
-               __jobs="$nproc"
-           fi
+            __jobs="$nproc"
         fi
     fi
     __default_makeflags="-j${__jobs}"
