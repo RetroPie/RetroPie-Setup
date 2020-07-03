@@ -1133,13 +1133,6 @@ function getPlatformConfig() {
 ## @param exts optional extensions for the frontend (if not present in platforms.cfg)
 ## @details Adds a system to one of the frontend launchers
 function addSystem() {
-    # backward compatibility for old addSystem functionality
-    if [[ $# > 3 ]]; then
-        addEmulator "$@"
-        addSystem "$3"
-        return
-    fi
-
     local system="$1"
     local fullname="$2"
     local exts=($3)
