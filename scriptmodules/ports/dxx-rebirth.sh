@@ -16,20 +16,21 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_dxx-rebirth() {
-    local depends=(libpng-dev libphysfs-dev libsdl1.2-dev libsdl-mixer1.2-dev scons)
+    local depends=(libpng-dev libphysfs-dev scons)
     if isPlatform "videocore"; then
-        depends+=(libraspberrypi-dev)
-    elif isPlatform "gles" && ! isPlatform "mesa"; then
-        depends+=(libgles2-mesa-dev)
+        depends+=(libraspberrypi-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev)
     else
-        depends+=(libgl1-mesa-dev libglu1-mesa-dev libsdl2-dev libsdl2-mixer-dev)
+        depends+=(libgl1-mesa-dev libglu1-mesa-dev libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev)
     fi
 
     getDepends "${depends[@]}"
 }
 
 function sources_dxx-rebirth() {
-    gitPullOrClone "$md_build" https://github.com/dxx-rebirth/dxx-rebirth "master"
+    local commit=""
+    # latest code requires gcc 7+
+    compareVersions "$__gcc_version" lt 7 && commit="a1b3a86c"
+    gitPullOrClone "$md_build" https://github.com/dxx-rebirth/dxx-rebirth "master" "$commit"
 }
 
 function build_dxx-rebirth() {
@@ -40,14 +41,12 @@ function build_dxx-rebirth() {
     elif isPlatform "mesa"; then
         # GLES is limited to ES 1 and blocks SDL2; GL works at fullspeed on Pi 3.
         params+=("raspberrypi=mesa" "opengl=1" "opengles=0" "sdl2=1")
-    elif isPlatform "gles";  then
-        params+=("opengl=0" "opengles=1")
     else
         params+=("opengl=1" "opengles=0" "sdl2=1")
     fi
 
     scons -c
-    scons "${params[@]}"
+    scons "${params[@]}" -j$__jobs
     md_ret_require=(
         "$md_build/d1x-rebirth/d1x-rebirth"
         "$md_build/d2x-rebirth/d2x-rebirth"
