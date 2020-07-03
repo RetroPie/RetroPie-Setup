@@ -16,11 +16,11 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_opentyrian() {
-    getDepends libsdl1.2-dev libsdl-net1.2-dev mercurial
+    getDepends libsdl1.2-dev libsdl-net1.2-dev
 }
 
 function sources_opentyrian() {
-    hg clone https://bitbucket.org/opentyrian/opentyrian "$md_build"
+    gitPullOrClone "$md_build" https://github.com/opentyrian/opentyrian.git
     # don't replace our CFLAGS
     sed -i "s/CFLAGS := -pedantic/CFLAGS += -pedantic/" Makefile
 }
