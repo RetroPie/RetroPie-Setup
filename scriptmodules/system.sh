@@ -207,9 +207,12 @@ function get_os_version() {
                 elif compareVersions "$__os_release" lt 19; then
                     __os_ubuntu_ver="16.04"
                     __os_debian_ver="9"
-                else
+                elif compareVersions "$__os_release" lt 20; then
                     __os_ubuntu_ver="18.04"
                     __os_debian_ver="10"
+                else
+                    __os_ubuntu_ver="20.04"
+                    __os_debian_ver="11"
                 fi
             fi
             ;;
@@ -222,8 +225,10 @@ function get_os_version() {
                 __os_debian_ver="8"
             elif compareVersions "$__os_release" lt 18.04; then
                 __os_debian_ver="9"
-            else
+            elif compareVersions "$__os_release" lt 20.04; then
                 __os_debian_ver="10"
+            else
+                __os_debian_ver="11"
             fi
             __os_ubuntu_ver="$__os_release"
             ;;
