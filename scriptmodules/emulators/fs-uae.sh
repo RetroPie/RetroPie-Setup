@@ -18,14 +18,6 @@ rp_module_flags="!all !arm x11"
 
 function depends_fs-uae() {
     case "$__os_id" in
-        Ubuntu)
-            if [[ "$md_mode" == "install" ]]; then
-                apt-add-repository -y ppa:fengestad/stable
-            else
-                apt-add-repository -r -y ppa:fengestad/stable
-            fi
-            aptUpdate
-            ;;
         Debian)
             local apt_file="/etc/apt/sources.list.d/fsuae-stable.list"
             if [[ "$md_mode" == "install" ]]; then
@@ -53,6 +45,20 @@ function depends_fs-uae() {
                 gpg --keyring /etc/apt/trusted.gpg --batch --yes --delete-keys "home:FrodeSolheim@build.opensuse.org" &>/dev/null
             fi
             aptUpdate
+            ;;
+        *)
+            # check if we are running on an Ubuntu based OS.
+            if [[ -n "$__os_ubuntu_ver" ]]; then
+                if [[ "$md_mode" == "install" ]]; then
+                    apt-add-repository -y ppa:fengestad/stable
+                else
+                    apt-add-repository -r -y ppa:fengestad/stable
+                fi
+                aptUpdate
+            else
+                md_ret_errors+=("Sorry, but $__os_id is not supported by fs-uae")
+                return 1
+            fi
             ;;
     esac
 }
