@@ -1149,9 +1149,9 @@ function addSystem() {
     local cmd
     local path
 
-    # check if we are removing the system
-    if [[ "$md_mode" == "remove" ]]; then
-        delSystem "$id" "$system"
+    # if removing and we don't have an emulators.cfg we can remove the system from the frontends
+    if [[ "$md_mode" == "remove" ]] && [[ ! -f "$md_conf_root/$system/emulators.cfg" ]]; then
+        delSystem "$system" "$fullname"
         return
     fi
 
@@ -1197,7 +1197,11 @@ function addSystem() {
 ## @details deletes a system from all frontends.
 function delSystem() {
     local system="$1"
-    local fullname="$(getPlatformConfig "${system}_fullname")"
+    local fullname="$2"
+
+    local temp
+    temp="$(getPlatformConfig "${system}_fullname")"
+    [[ -n "$temp" ]] && fullname="$temp"
 
     local function
     for function in $(compgen -A function _del_system_); do
@@ -1341,13 +1345,6 @@ function delEmulator() {
         grep -q "=" "$config" || rm -f "$config"
     fi
 
-    # if we don't have an emulators.cfg we can remove the system from the frontends
-    if [[ ! -f "$md_conf_root/$system/emulators.cfg" ]]; then
-        local function
-        for function in $(compgen -A function _del_system_); do
-            "$function" "$fullname" "$system"
-        done
-    fi
 }
 
 ## @fn patchVendorGraphics()
