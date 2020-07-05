@@ -25,6 +25,7 @@ function printMsgs() {
     fi
     for msg in "$@"; do
         [[ "$type" == "dialog" ]] && dialog --backtitle "$__backtitle" --cr-wrap --no-collapse --msgbox "$msg" 20 60 >/dev/tty
+        [[ "$type" == "info" ]] && dialog --backtitle "$__backtitle" --cr-wrap --infobox "$msg" 0 0 >/dev/tty
         [[ "$type" == "console" ]] && echo -e "$msg"
         [[ "$type" == "heading" ]] && echo -e "\n= = = = = = = = = = = = = = = = = = = = =\n$msg\n= = = = = = = = = = = = = = = = = = = = =\n"
     done
