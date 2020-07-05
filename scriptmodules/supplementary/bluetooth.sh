@@ -142,7 +142,7 @@ function list_unpaired_bluetooth_input_devices() {
     declare -A paired=()
     declare -A found=()
 
-    # get an asc array of known mac addresses
+    # get an asc array of paired mac addresses
     while read mac_address; read device_name; do
         paired+=(["$mac_address"]="$device_name")
     done < <(_list_paired_bluetooth_input_devices)
@@ -247,7 +247,7 @@ function pair_bluetooth_input_device() {
         if [[ "$?" -eq 0 ]]; then
             printMsgs "dialog" "Successfully authenticated $device_name ($mac_address).\n\nYou can now remove the USB cable."
         else
-            printMsgs "dialog" "Unable to authenticate $device_name ($mac_address).\n\nPlease try to register the device again, making sure to follow the on-screen steps exactly."
+            printMsgs "dialog" "Unable to authenticate $device_name ($mac_address).\n\nPlease try to pair the device again, making sure to follow the on-screen steps exactly."
         fi
         return
     fi
@@ -336,7 +336,7 @@ function setup_bluetooth_joypad_udev_rule() {
     done < <(_list_paired_bluetooth_input_devices)
 
     if [[ ${#mac_addresses[@]} -eq 0 ]] ; then
-        printMsgs "dialog" "There are no registered bluetooth devices."
+        printMsgs "dialog" "There are no paired bluetooth devices."
     else
         local cmd=(dialog --backtitle "$__backtitle" --menu "Which Bluetooth input device do you want to set up a udev rule for?" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
