@@ -88,30 +88,49 @@ function bluetoothctl_cmd() {
     exec 3>&-
 }
 
-function _raw_list_known_bluetooth_input_devices() {
-    while read line; do
-        if echo $line | grep -qE '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'; then
-            echo $line
-	fi
-    done < <(bt-device --list)
+function _is_bluetooth_input_device_info() {
+    local info="$111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
+    if echo "$info" | grep --color=none -F " Icon: " | grep -qiF "input"; then
+        return 0
+    elif echo "$info" | grep --color=none -F " UUIDs: [" | grep -qF "HumanInterfaceDevice"; then
+        return 0
+    fi
+    return 1
+}
+
+function _is_bluetooth_input_device() {
+    local mac="$1"
+    if [[ -n "$mac" ]]; then
+        # suppress stderr due to segfault bug in bluez 5.50
+        local info; info="$(bt-device --info $mac 2>/dev/null)"
+        if [[ "$?" == "0" ]] && _is_bluetooth_input_device_info "$info"; then
+            return 0
+        fi
+    fi
+    return 1
 }
 
 function _raw_list_known_bluetooth_input_devices_with_regex() {
     local regex="$1"
     while read line; do
-        local mac=$(echo $line | grep --color=none -oE '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
-        # suppress stderr due to segfault bug in bluez 5.50
-        if bt-device --info $mac 2>/dev/null | grep -qzP --regex="$regex"; then
-            echo $line
+        local mac="$(echo "$line" | grep --color=none -oE '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')"
+        if [[ -n "$mac" ]]; then
+            # suppress stderr due to segfault bug in bluez 5.50
+            local info; info="$(bt-device --info $mac 2>/dev/null)"
+            if [[ "$?" == "0" ]] && _is_bluetooth_input_device_info "$info"; then
+                if echo "$info" | grep -qzP --regex="$regex"; then
+                    echo "$line"
+                fi
+            fi
         fi
-    done < <(_raw_list_known_bluetooth_input_devices)
+    done < <(bt-device --list)
 }
 
 function _list_paired_bluetooth_input_devices() {
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
-            echo ${BASH_REMATCH[2]}
-            echo ${BASH_REMATCH[1]}
+            echo "${BASH_REMATCH[2]}"
+            echo "${BASH_REMATCH[1]}"
         fi
     done < <(_raw_list_known_bluetooth_input_devices_with_regex '(?s)^(?=.*\bPaired: 1\b).*$')
 }
@@ -119,8 +138,8 @@ function _list_paired_bluetooth_input_devices() {
 function _list_connected_bluetooth_input_devices() {
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
-            echo ${BASH_REMATCH[2]}
-            echo ${BASH_REMATCH[1]}
+            echo "${BASH_REMATCH[2]}"
+            echo "${BASH_REMATCH[1]}"
         fi
     done < <(_raw_list_known_bluetooth_input_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 1\b).*$')
 }
@@ -128,8 +147,8 @@ function _list_connected_bluetooth_input_devices() {
 function _list_disconnected_bluetooth_input_devices() {
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
-            echo ${BASH_REMATCH[2]}
-            echo ${BASH_REMATCH[1]}
+            echo "${BASH_REMATCH[2]}"
+            echo "${BASH_REMATCH[1]}"
         fi
     done < <(_raw_list_known_bluetooth_input_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 0\b).*$')
 }
@@ -137,7 +156,7 @@ function _list_disconnected_bluetooth_input_devices() {
 function list_unpaired_bluetooth_input_devices() {
     local mac_address
     local device_name
-    local info_text="Scanning for devices..."
+    local info_text="Scanning for input devices..."
 
     declare -A paired=()
     declare -A found=()
@@ -162,9 +181,9 @@ function list_unpaired_bluetooth_input_devices() {
         done < <(hcitool scan --flush | tail -n +2 | sed 's/\t/\n/g')
     fi
 
-    # display any found addresses that are not already paired
+    # display any found addresses that are not already paired and are input devices
     for mac_address in "${!found[@]}"; do
-        if [[ -z "${paired[$mac_address]}" ]]; then
+        if [[ -z "${paired[$mac_address]}" ]] && _is_bluetooth_input_device "$mac_address"; then
             echo "$mac_address"
             echo "${found[$mac_address]}"
         fi
@@ -178,13 +197,13 @@ function display_all_paired_bluetooth_input_devices() {
     while read mac_address; read device_name; do
         connected="$connected  $mac_address  $device_name\n"
     done < <(_list_connected_bluetooth_input_devices)
-    [[ -z "$connected" ]] && connected="  <none>"
+    [[ -z "$connected" ]] && connected="  <none>\n"
 
     local disconnected=''
     while read mac_address; read device_name; do
         disconnected="$paired  $mac_address  $device_name\n"
     done < <(_list_disconnected_bluetooth_input_devices)
-    [[ -z "$disconnected" ]] && disconnected="  <none>"
+    [[ -z "$disconnected" ]] && disconnected="  <none>\n"
 
     printMsgs "dialog" "Connected Devices:\n\n$connected\nDisconnected Devices:\n\n$disconnected"
 }
@@ -228,7 +247,7 @@ function pair_bluetooth_input_device() {
     done < <(list_unpaired_bluetooth_input_devices)
 
     if [[ ${#mac_addresses[@]} -eq 0 ]] ; then
-        printMsgs "dialog" "No devices were found. Ensure device is on and try again"
+        printMsgs "dialog" "No input devices were found. Ensure your input device is on, and try again."
         return
     fi
 
