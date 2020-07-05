@@ -86,10 +86,12 @@ function conf_build_vars() {
         local nproc="$(nproc)"
         # max one thread per unit (MB) of ram
         local max_jobs=$(($__memory_avail / $unit))
-        if [[ "$max_jobs" -lt "$nproc" ]]; then
-            __jobs="$max_jobs"
-        else
-            __jobs="$nproc"
+        if [[ "$max_jobs" -gt 0 ]]; then
+            if [[ "$max_jobs" -lt "$nproc" ]]; then
+                __jobs="$max_jobs"
+            else
+                __jobs="$nproc"
+            fi
         fi
     fi
     __default_makeflags="-j${__jobs}"
