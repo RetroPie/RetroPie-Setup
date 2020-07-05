@@ -98,25 +98,22 @@ function _raw_list_known_bluetooth_devices_with_regex() {
     done < <(_raw_list_known_bluetooth_devices)
 }
 
-function _raw_list_paired_bluetooth_devices() {
-    _raw_list_known_bluetooth_devices_with_regex '(?s)^(?=.*\bPaired: 1\b).*$'
-}
-
 function _list_paired_bluetooth_devices() {
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
             echo ${BASH_REMATCH[2]}
             echo ${BASH_REMATCH[1]}
         fi
-    done < <(_raw_list_paired_bluetooth_devices)
+    done < <(_raw_list_known_bluetooth_devices_with_regex '(?s)^(?=.*\bPaired: 1\b).*$')
 }
 
-function _raw_list_connected_bluetooth_devices() {
-    _raw_list_known_bluetooth_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 1\b).*$'
-}
-
-function _raw_list_disconnected_bluetooth_devices() {
-    _raw_list_known_bluetooth_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 0\b).*$'
+function _list_connected_bluetooth_devices() {
+    while read line; do
+        if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
+            echo ${BASH_REMATCH[2]}
+            echo ${BASH_REMATCH[1]}
+        fi
+    done < <(_raw_list_known_bluetooth_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 1\b).*$')
 }
 
 function _list_disconnected_bluetooth_devices() {
@@ -125,7 +122,7 @@ function _list_disconnected_bluetooth_devices() {
             echo ${BASH_REMATCH[2]}
             echo ${BASH_REMATCH[1]}
         fi
-    done < <(_raw_list_disconnected_bluetooth_devices)
+    done < <(_raw_list_known_bluetooth_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 0\b).*$')
 }
 
 function list_unpaired_bluetooth_devices() {
@@ -166,11 +163,17 @@ function list_unpaired_bluetooth_devices() {
 }
 
 function display_connected_or_paired_bluetooth_devices() {
-    local paired="$(_raw_list_paired_bluetooth_devices)"
-    [[ -z "$paired" ]] && paired="There are no paired devices"
+    local paired=''
+    while read mac_address; read device_name; do
+        paired="$paired  $mac_address  $device_name\n"
+    done < <(_list_paired_bluetooth_devices)
+    [[ -z "$paired" ]] && paired="  There are no paired devices"
 
-    local connected="$(_raw_list_connected_bluetooth_devices)"
-    [[ -z "$connected" ]] && paired="There are no connected devices"
+    local connected=''
+    while read mac_address; read device_name; do
+        connected="$connected  $mac_address  $device_name\n"
+    done < <(_list_connected_bluetooth_devices)
+    [[ -z "$connected" ]] && paired="  There are no connected devices"
 
     printMsgs "dialog" "Connected Devices:\n\n$connected\n\nPaired Devices:\n\n$paired"
 }
@@ -218,7 +221,7 @@ function pair_bluetooth_device() {
         return
     fi
 
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the bluetooth device you would like to connect to" 22 76 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the Bluetooth input device you would like to pair" 22 76 16)
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
