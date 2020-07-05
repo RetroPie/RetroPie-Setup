@@ -330,6 +330,47 @@ function connect_bluetooth() {
     done < <(list_registered_bluetooth)
 }
 
+function _get_ertm_mode() {
+	local ertm=$(cat /sys/module/bluetooth/parameters/disable_ertm)
+	echo $ertm; 
+}
+
+function toggle_bluetooth_ertm() {
+	# Xbox one controllers aren't paring properly until this is set to disable_ertm=Y 
+	# It will insert/update the change to the bluetooth.conf file so it persists. 
+	# It will restart blueooth service for immediate effect for the user. 
+
+	local ertm_mode
+	local bluetooth_config_file
+
+        ertm_mode="$(_get_ertm_mode)"
+	bluetooth_config_file="/etc/modprobe.d/bluetooth.conf"	
+
+	touch $bluetooth_config_file #ensure it exists as we're going to need it 
+
+	if [[ "$ertm_mode" = "Y" ]];
+      	then
+
+		# Either update the parameter or append it to the bluetooth_config_file 
+		grep -q "disable_ertm=" $bluetooth_config_file && 
+			sed "s/disable_ertm=.*/disable_ertm=N/g" -i $bluetooth_config_file || 
+			echo  "options bluetooth disable_ertm=N" >> $bluetooth_config_file
+
+		echo 0 > /sys/module/bluetooth/parameters/disable_ertm 
+		service bluetooth restart; 
+		printMsgs "dialog" "Bluetooth option disable_ertm=N\n(This is the default)"
+	else 
+		grep -q "disable_ertm=" $bluetooth_config_file && 
+			sed "s/disable_ertm=.*/disable_ertm=Y/g" -i $bluetooth_config_file || 
+			echo  "options bluetooth disable_ertm=Y" >> $bluetooth_config_file
+
+		echo 1 > /sys/module/bluetooth/parameters/disable_ertm 
+		service bluetooth restart; 
+		printMsgs "dialog" "Bluetooth option disable_ertm=Y\n\n(Xbox One bluetooth controllers can pair now.)\n\n Changes saved to $bluetooth_config_file"
+	fi
+
+}
+
 function connect_mode_gui_bluetooth() {
     local mode="$(_get_connect_mode)"
     [[ -z "$mode" ]] && mode="default"
@@ -387,6 +428,7 @@ function gui_bluetooth() {
 
     while true; do
         local connect_mode="$(_get_connect_mode)"
+        local ertm_mode="$(_get_ertm_mode)"
 
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Devices" 22 76 16)
         local options=(
@@ -396,6 +438,7 @@ function gui_bluetooth() {
             U "Set up udev rule for Joypad (required for joypads from 8Bitdo etc)"
             C "Connect now to all registered devices"
             M "Configure bluetooth connect mode (currently: $connect_mode)"
+	    E "Xbox One BT Controller Support (disable_ertm): $ertm_mode). "
         )
 
         local atebitdo
@@ -434,6 +477,10 @@ function gui_bluetooth() {
                     atebitdo="$((atebitdo ^ 1))"
                     setAutoConf "8bitdo_hack" "$atebitdo"
                     ;;
+		E)
+                    toggle_bluetooth_ertm
+                    ;;
+
             esac
         else
             # restart sixad (if running)
