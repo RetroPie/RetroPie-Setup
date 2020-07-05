@@ -13,6 +13,15 @@ rp_module_id="bluetooth"
 rp_module_desc="Configure Bluetooth Devices"
 rp_module_section="config"
 
+function _is_keyboard_attached() {
+    grep -qP --regexp='(?s)(?<=^H: Handlers=).*\bkbd(?=\b)' /proc/bus/input/devices
+    return $?
+}
+
+function _is_joystick_attached() {
+    grep -qP --regexp='(?s)(?<=^H: Handlers=).*\bjs[0-9]+(?=\b)' /proc/bus/input/devices
+}
+
 function _update_hook_bluetooth() {
     # fix config location
     [[ -f "$configdir/bluetooth.cfg" ]] && mv "$configdir/bluetooth.cfg" "$configdir/all/bluetooth.cfg"
@@ -239,18 +248,13 @@ function pair_bluetooth_device() {
         return
     fi
 
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the security mode - Try the first one, then second if that fails" 22 76 16)
-    options=(
-        1 "DisplayYesNo"
-        2 "KeyboardDisplay"
-        3 "NoInputNoOutput"
-        4 "DisplayOnly"
-        5 "KeyboardOnly"
-    )
-    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    [[ -z "$choice" ]] && return
-
-    local mode="${options[choice*2-1]}"
+    if _is_keyboard_attached; then
+        local capability='KeyboardDisplay'
+    elif _is_joystick_attached; then
+        local capability='DisplayYesNo'
+    else
+        local capability='DisplayOnly'
+    fi
 
     # create a named pipe & fd for input for pair-input-device
     local fifo="$(mktemp -u)"
@@ -296,7 +300,7 @@ function pair_bluetooth_device() {
                 ;;
         esac
     # read from pair-input-device buffered line by line
-    done < <(stdbuf -oL "$md_data/pair-input-device" -c "$mode" -i hci0 "$mac_address" <&3)
+    done < <(stdbuf -oL "$md_data/pair-input-device" -c "$capability" -i hci0 "$mac_address" <&3)
     exec 3>&-
     rm -f "$fifo"
 
