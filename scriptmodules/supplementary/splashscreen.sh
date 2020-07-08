@@ -31,7 +31,9 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    getDepends omxplayer insserv
+    local params=(insserv)
+    isPlatform "32bit" && params+=(omxplayer)
+    getDepends "${params[@]}"
 }
 
 function install_bin_splashscreen() {
