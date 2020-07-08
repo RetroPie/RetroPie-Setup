@@ -17,11 +17,11 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_xroar() {
-    getDepends libsdl2-dev automake
+    getDepends libsdl2-dev automake texinfo
 }
 
 function sources_xroar() {
-    gitPullOrClone "$md_build" http://www.6809.org.uk/git/xroar.git 0.35.4 "" 0
+    gitPullOrClone "$md_build" http://www.6809.org.uk/git/xroar.git 0.36 "" 0
 }
 
 function build_xroar() {
