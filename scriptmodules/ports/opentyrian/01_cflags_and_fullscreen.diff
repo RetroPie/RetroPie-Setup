@@ -1,0 +1,26 @@
+diff --git a/Makefile b/Makefile
+index 658a5ef..02a1061 100644
+--- a/Makefile
++++ b/Makefile
+@@ -61,7 +61,7 @@ ifneq ($(OPENTYRIAN_VERSION), )
+ endif
+ 
+ CPPFLAGS := -DNDEBUG
+-CFLAGS := -pedantic
++CFLAGS += -pedantic
+ CFLAGS += -MMD
+ CFLAGS += -Wall \
+           -Wextra \
+diff --git a/src/config.c b/src/config.c
+index 9d85d4a..f20b943 100644
+--- a/src/config.c
++++ b/src/config.c
+@@ -225,7 +225,7 @@ Config opentyrian_config;  // implicitly initialized
+ bool load_opentyrian_config( void )
+ {
+ 	// defaults
+-	fullscreen_display = -1;
++	fullscreen_display = 0;
+ 	set_scaler_by_name("Scale2x");
+ 	
+ 	Config *config = &opentyrian_config;
