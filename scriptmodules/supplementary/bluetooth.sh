@@ -183,7 +183,7 @@ function display_all_paired_bluetooth_devices() {
     done < <(_list_disconnected_bluetooth_devices)
     [[ -z "$disconnected" ]] && disconnected="  <none>\n"
 
-    printMsgs "dialog" "Connected Devices:\n\n$connectedDisconnected Devices:\n\n$disconnected"
+    printMsgs "dialog" "Connected Devices:\n\n$connected\nDisconnected Devices:\n\n$disconnected"
 }
 
 function remove_paired_bluetooth_device() {
