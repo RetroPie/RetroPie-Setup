@@ -89,7 +89,7 @@ function bluetoothctl_cmd() {
 }
 
 function _is_bluetooth_input_device_info() {
-    local info="$111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
+    local info="$1"
     if echo "$info" | grep --color=none -F " Icon: " | grep -qiF "input"; then
         return 0
     elif echo "$info" | grep --color=none -F " UUIDs: [" | grep -qF "HumanInterfaceDevice"; then
