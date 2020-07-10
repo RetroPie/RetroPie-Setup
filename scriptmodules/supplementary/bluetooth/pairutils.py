@@ -26,7 +26,7 @@ def _get_bluez_iface_props(obj_, interface):
 	return dbus_unwrap(properties)
 
 
-def get_input_device(adapter, adapter_name, device_mac, timeout=30):
+def get_device(adapter, adapter_name, device_mac, timeout=30):
 	device = None
 	seconds_elapsed = 0
 	while device is None:
@@ -45,22 +45,11 @@ def get_input_device(adapter, adapter_name, device_mac, timeout=30):
 	debug_message("object_path: " + dbus_unwrap(device.object_path))
 	properties = _get_bluez_iface_props(device, "Device1")
 	debug_dict("properties", properties)
-
-	if properties.get('UUIDs', None):
-		try:
-			_get_bluez_iface_props(device, "Input1")
-		except DBusException as e:
-			if dbus_error_is(e, "org.freedesktop.DBus.Error.InvalidArgs"):
-				print("Not an input device.")
-			else:
-				print("ERROR: " + str(e))
-			sys.exit(1)
-	
 	return device
 
 
 def remove_device_pairing(adapter, adapter_name, device_mac):
-	device = get_input_device(adapter, adapter_name, device_mac) 
+	device = get_device(adapter, adapter_name, device_mac) 
 	try:
 		device_path = device.object_path
 		debug_message("device path: %s" % (device_path))
@@ -77,7 +66,7 @@ def remove_device_pairing(adapter, adapter_name, device_mac):
 
 
 def connect_device(adapter, adapter_name, device_mac):
-	device = get_input_device(adapter, adapter_name, device_mac) 
+	device = get_device(adapter, adapter_name, device_mac) 
 	properties = dbus.Interface(device, "org.freedesktop.DBus.Properties")
 	try:
 		connected = dbus_unwrap(properties.Get("org.bluez.Input1", "Connected"))
@@ -98,7 +87,7 @@ def connect_device(adapter, adapter_name, device_mac):
 
 
 def trust_device(adapter, adapter_name, device_mac):
-	device = get_input_device(adapter, adapter_name, device_mac) 
+	device = get_device(adapter, adapter_name, device_mac) 
 	properties = dbus.Interface(device, "org.freedesktop.DBus.Properties")
 	try:
 		trusted = dbus_unwrap(properties.Get("org.bluez.Device1", "Trusted"))

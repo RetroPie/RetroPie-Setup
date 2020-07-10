@@ -10,7 +10,7 @@
 #
 
 rp_module_id="bluetooth"
-rp_module_desc="Configure Bluetooth input devices"
+rp_module_desc="Configure Bluetooth devices"
 rp_module_section="config"
 
 function _is_keyboard_attached() {
@@ -88,36 +88,14 @@ function bluetoothctl_cmd() {
     exec 3>&-
 }
 
-function _is_bluetooth_input_device_info() {
-    local info="$1"
-    if echo "$info" | grep --color=none -F " Icon: " | grep -qiF "input"; then
-        return 0
-    elif echo "$info" | grep --color=none -F " UUIDs: [" | grep -qF "HumanInterfaceDevice"; then
-        return 0
-    fi
-    return 1
-}
-
-function _is_bluetooth_input_device() {
-    local mac="$1"
-    if [[ -n "$mac" ]]; then
-        # suppress stderr due to segfault bug in bluez 5.50
-        local info; info="$(bt-device --info $mac 2>/dev/null)"
-        if [[ "$?" == "0" ]] && _is_bluetooth_input_device_info "$info"; then
-            return 0
-        fi
-    fi
-    return 1
-}
-
-function _raw_list_known_bluetooth_input_devices_with_regex() {
+function _raw_list_known_bluetooth_devices_with_regex() {
     local regex="$1"
     while read line; do
         local mac="$(echo "$line" | grep --color=none -oE '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')"
         if [[ -n "$mac" ]]; then
             # suppress stderr due to segfault bug in bluez 5.50
             local info; info="$(bt-device --info $mac 2>/dev/null)"
-            if [[ "$?" == "0" ]] && _is_bluetooth_input_device_info "$info"; then
+            if [[ "$?" == "0" ]] ; then
                 if echo "$info" | grep -qzP --regex="$regex"; then
                     echo "$line"
                 fi
@@ -126,37 +104,37 @@ function _raw_list_known_bluetooth_input_devices_with_regex() {
     done < <(bt-device --list)
 }
 
-function _list_paired_bluetooth_input_devices() {
+function _list_paired_bluetooth_devices() {
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
             echo "${BASH_REMATCH[2]}"
             echo "${BASH_REMATCH[1]}"
         fi
-    done < <(_raw_list_known_bluetooth_input_devices_with_regex '(?s)^(?=.*\bPaired: 1\b).*$')
+    done < <(_raw_list_known_bluetooth_devices_with_regex '(?s)^(?=.*\bPaired: 1\b).*$')
 }
 
-function _list_connected_bluetooth_input_devices() {
+function _list_connected_bluetooth_devices() {
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
             echo "${BASH_REMATCH[2]}"
             echo "${BASH_REMATCH[1]}"
         fi
-    done < <(_raw_list_known_bluetooth_input_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 1\b).*$')
+    done < <(_raw_list_known_bluetooth_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 1\b).*$')
 }
 
-function _list_disconnected_bluetooth_input_devices() {
+function _list_disconnected_bluetooth_devices() {
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
             echo "${BASH_REMATCH[2]}"
             echo "${BASH_REMATCH[1]}"
         fi
-    done < <(_raw_list_known_bluetooth_input_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 0\b).*$')
+    done < <(_raw_list_known_bluetooth_devices_with_regex '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 0\b).*$')
 }
 
-function list_unpaired_bluetooth_input_devices() {
+function list_unpaired_bluetooth_devices() {
     local mac_address
     local device_name
-    local info_text="Scanning for input devices..."
+    local info_text="Scanning for devices..."
 
     declare -A paired=()
     declare -A found=()
@@ -164,7 +142,7 @@ function list_unpaired_bluetooth_input_devices() {
     # get an asc array of paired mac addresses
     while read mac_address; read device_name; do
         paired+=(["$mac_address"]="$device_name")
-    done < <(_list_paired_bluetooth_input_devices)
+    done < <(_list_paired_bluetooth_devices)
 
     # sixaxis: add USB pairing information
     [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="$info_text\n\nDualShock registration: while this text is visible, unplug the controller, press the PS/SHARE button, and then replug the controller."
@@ -181,34 +159,34 @@ function list_unpaired_bluetooth_input_devices() {
         done < <(hcitool scan --flush | tail -n +2 | sed 's/\t/\n/g')
     fi
 
-    # display any found addresses that are not already paired and are input devices
+    # display any found devices that are not already paired
     for mac_address in "${!found[@]}"; do
-        if [[ -z "${paired[$mac_address]}" ]] && _is_bluetooth_input_device "$mac_address"; then
+        if [[ -z "${paired[$mac_address]}" ]]; then
             echo "$mac_address"
             echo "${found[$mac_address]}"
         fi
     done
 }
 
-function display_all_paired_bluetooth_input_devices() {
+function display_all_paired_bluetooth_devices() {
     printMsgs "info" "Working..."
 
     local connected=''
     while read mac_address; read device_name; do
         connected="$connected  $mac_address  $device_name\n"
-    done < <(_list_connected_bluetooth_input_devices)
+    done < <(_list_connected_bluetooth_devices)
     [[ -z "$connected" ]] && connected="  <none>\n"
 
     local disconnected=''
     while read mac_address; read device_name; do
         disconnected="$paired  $mac_address  $device_name\n"
-    done < <(_list_disconnected_bluetooth_input_devices)
+    done < <(_list_disconnected_bluetooth_devices)
     [[ -z "$disconnected" ]] && disconnected="  <none>\n"
 
     printMsgs "dialog" "Connected Devices:\n\n$connected\nDisconnected Devices:\n\n$disconnected"
 }
 
-function remove_paired_bluetooth_input_device() {
+function remove_paired_bluetooth_device() {
     declare -A mac_addresses=()
     local mac_address
     local device_name
@@ -216,12 +194,12 @@ function remove_paired_bluetooth_input_device() {
     while read mac_address; read device_name; do
         mac_addresses+=(["$mac_address"]="$device_name")
         options+=("$mac_address" "$device_name")
-    done < <(_list_paired_bluetooth_input_devices)
+    done < <(_list_paired_bluetooth_devices)
 
     if [[ ${#mac_addresses[@]} -eq 0 ]] ; then
         printMsgs "dialog" "There are no devices to remove."
     else
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Which Bluetooth input device do you want to remove?" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Which Bluetooth device do you want to remove?" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && return
 
@@ -235,7 +213,7 @@ function remove_paired_bluetooth_input_device() {
     fi
 }
 
-function pair_bluetooth_input_device() {
+function pair_bluetooth_device() {
     declare -A mac_addresses=()
     local mac_address
     local device_name
@@ -244,14 +222,14 @@ function pair_bluetooth_input_device() {
     while read mac_address; read device_name; do
         mac_addresses+=(["$mac_address"]="$device_name")
         options+=("$mac_address" "$device_name")
-    done < <(list_unpaired_bluetooth_input_devices)
+    done < <(list_unpaired_bluetooth_devices)
 
     if [[ ${#mac_addresses[@]} -eq 0 ]] ; then
-        printMsgs "dialog" "No input devices were found. Ensure your input device is on, and try again."
+        printMsgs "dialog" "No devices were found. Ensure your device is on, and try again."
         return
     fi
 
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Which Bluetooth input device do you want to pair?" 22 76 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Which Bluetooth device do you want to pair?" 22 76 16)
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
@@ -279,7 +257,7 @@ function pair_bluetooth_input_device() {
         local capability='DisplayOnly'
     fi
 
-    # create a named pipe & fd for input for pair-input-device
+    # create a named pipe & fd for input for pair-device
     local fifo="$(mktemp -u)"
     mkfifo "$fifo"
     exec 3<>"$fifo"
@@ -320,15 +298,12 @@ function pair_bluetooth_input_device() {
             "Creating device failed"*)
                 error="$line"
                 ;;
-            "Not an input device.")
-                error="$line"
-                ;;
             "Done.")
                 succeeded='1'
                 ;;
         esac
-    # read from pair-input-device buffered line by line
-    done < <(stdbuf -oL "$md_data/pair-input-device" -c "$capability" -i hci0 "$mac_address" <&3)
+    # read from pair-device buffered line by line
+    done < <(stdbuf -oL "$md_data/pair-device" -c "$capability" -i hci0 "$mac_address" <&3)
     exec 3>&-
     rm -f "$fifo"
 
@@ -352,12 +327,12 @@ function setup_bluetooth_joypad_udev_rule() {
     while read mac_address; read device_name; do
         mac_addresses+=(["$mac_address"]="$device_name")
         options+=("$mac_address" "$device_name")
-    done < <(_list_paired_bluetooth_input_devices)
+    done < <(_list_paired_bluetooth_devices)
 
     if [[ ${#mac_addresses[@]} -eq 0 ]] ; then
         printMsgs "dialog" "There are no paired bluetooth devices."
     else
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Which Bluetooth input device do you want to set up a udev rule for?" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Which Bluetooth device do you want to set up a udev rule for?" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && return
         device_name="${mac_addresses[$choice]}"
@@ -372,11 +347,11 @@ function setup_bluetooth_joypad_udev_rule() {
     fi
 }
 
-function connect_all_disconnected_bluetooth_input_devices() {
+function connect_all_disconnected_bluetooth_devices() {
     printMsgs "info" "Working..."
-    local devices="$(_list_disconnected_bluetooth_input_devices)"
+    local devices="$(_list_disconnected_bluetooth_devices)"
     if [[ -z "$devices" ]]; then
-        printMsgs "dialog" "All input devices are already connected."
+        printMsgs "dialog" "All devices are already connected."
         return 0
     fi
 
@@ -462,12 +437,12 @@ function gui_bluetooth() {
     while true; do
         local connect_mode="$(_get_connect_mode)"
 
-        local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Input Devices" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Devices" 22 76 16)
         local options=(
-            P "Pair a Bluetooth input device"
-            C "Connect all disconnected Bluetooth input devices"
-            D "Display all paired Bluetooth input devices"
-            X "Remove a paired Bluetooth input device"
+            P "Pair a Bluetooth device"
+            C "Connect all disconnected Bluetooth devices"
+            D "Display all paired Bluetooth devices"
+            X "Remove a paired Bluetooth device"
             U "Set up udev rule for Bluetooth joypad (required for 8Bitdo, etc)"
             M "Change Bluetooth connect mode (currently: $connect_mode)"
         )
@@ -487,19 +462,19 @@ function gui_bluetooth() {
             service sixad status &>/dev/null && sixad -r
             case "$choice" in
                 P)
-                    pair_bluetooth_input_device
+                    pair_bluetooth_device
                     ;;
                 X)
-                    remove_paired_bluetooth_input_device
+                    remove_paired_bluetooth_device
                     ;;
                 D)
-                    display_all_paired_bluetooth_input_devices
+                    display_all_paired_bluetooth_devices
                     ;;
                 U)
                     setup_bluetooth_joypad_udev_rule
                     ;;
                 C)
-                    connect_all_disconnected_bluetooth_input_devices
+                    connect_all_disconnected_bluetooth_devices
                     ;;
                 M)
                     bluetooth_connect_mode_gui
