@@ -14,7 +14,7 @@ import dbus.service
 import dbus.mainloop.glib
 from debugutils import debug_message 
 import gobject as GObject
-from pairutils import get_input_device
+from pairutils import get_device
 
 # Python built-ins
 import sys
@@ -134,7 +134,7 @@ class _Agent(dbus.service.Object):
 			manager.RegisterAgent(self._path, self._capability)
 			debug_message("agent registered")
 			self._succeeded = False
-			device = get_input_device(self._adapter, adapter_name, device_mac)
+			device = get_device(self._adapter, adapter_name, device_mac)
 			device.Pair(
 				reply_handler=_Agent._pair_device_reply,
 				error_handler=_Agent._pair_device_error,
