@@ -179,11 +179,11 @@ function display_all_paired_bluetooth_devices() {
 
     local disconnected=''
     while read mac_address; read device_name; do
-        disconnected="$paired  $mac_address  $device_name\n"
+        disconnected="$disconnected  $mac_address  $device_name\n"
     done < <(_list_disconnected_bluetooth_devices)
     [[ -z "$disconnected" ]] && disconnected="  <none>\n"
 
-    printMsgs "dialog" "Connected Devices:\n\n$connected\nDisconnected Devices:\n\n$disconnected"
+    printMsgs "dialog" "Connected Devices:\n\n$connectedDisconnected Devices:\n\n$disconnected"
 }
 
 function remove_paired_bluetooth_device() {
