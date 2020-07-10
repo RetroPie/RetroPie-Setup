@@ -105,6 +105,7 @@ function _raw_list_known_bluetooth_devices_with_regex() {
 }
 
 function _list_paired_bluetooth_devices() {
+    local line
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
             echo "${BASH_REMATCH[2]}"
@@ -114,6 +115,7 @@ function _list_paired_bluetooth_devices() {
 }
 
 function _list_connected_bluetooth_devices() {
+    local line
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
             echo "${BASH_REMATCH[2]}"
@@ -123,6 +125,7 @@ function _list_connected_bluetooth_devices() {
 }
 
 function _list_disconnected_bluetooth_devices() {
+    local line
     while read line; do
         if [[ "$line" =~ ^(.+)\ \((.+)\)$ ]]; then
             echo "${BASH_REMATCH[2]}"
@@ -171,6 +174,8 @@ function list_unpaired_bluetooth_devices() {
 function display_all_paired_bluetooth_devices() {
     printMsgs "info" "Working..."
 
+    local mac_address
+    local device_name
     local connected=''
     while read mac_address; read device_name; do
         connected="$connected  $mac_address  $device_name\n"
@@ -355,6 +360,8 @@ function connect_all_disconnected_bluetooth_devices() {
         return 0
     fi
 
+    local mac_address
+    local device_name
     local connected=''
     local errored=''
     while read mac_address; read device_name; do
