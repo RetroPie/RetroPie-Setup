@@ -90,6 +90,7 @@ function bluetoothctl_cmd_bluetooth() {
 
 function _raw_list_known_devices_with_regex_bluetooth() {
     local regex="$1"
+    local line
     while read line; do
         local mac="$(echo "$line" | grep --color=none -oE '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')"
         if [[ -n "$mac" ]]; then
