@@ -1,0 +1,61 @@
+#!/usr/bin/python
+
+from __future__ import absolute_import, print_function, unicode_literals
+
+# Third-party
+import bluezutils
+from debugutils import debug_message, set_debug
+from pairagent import pair_device
+from pairutils import (
+	connect_device,
+	remove_device_pairing,
+	trust_device
+	)
+
+# Python built-ins
+import argparse
+import signal
+import sys
+
+
+def main(adapter_name, device_mac, capability):
+	# Prevent the user from interrupting this script via CTRL+C or
+	# CTRL+BREAK, as that can leave the Bluetooth stack in a wonky
+	# unrecoverable state.
+	signal.signal(signal.SIGINT, lambda signum, frame: None)
+
+	debug_message("device_mac: " + device_mac)
+	debug_message("adapter_name: " + adapter_name)
+
+	adapter = bluezutils.find_adapter(adapter_name)
+	adapter.StartDiscovery()
+	try:
+		remove_device_pairing(adapter, adapter_name, device_mac)
+		pair_device(adapter, adapter_name, device_mac, capability)
+		connect_device(adapter, adapter_name, device_mac)
+		trust_device(adapter, adapter_name, device_mac)
+		print("Done.")
+	except Exception as e:
+		print("ERROR: " + str(e))
+	finally:
+		adapter.StopDiscovery()
+
+
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser(
+			description="pair a Bluetooth device")
+	parser.add_argument('-d', '--debug', action='store_true', dest='debug',
+		help='enable debug output')
+	parser.add_argument('-i', '--interface', dest='interface', type=str,
+		default='hci0',
+		help='simple name of Bluetooth interface')
+	parser.add_argument('-c', '--capability', dest='capability', type=str,
+		default='KeyboardDisplay',
+		help='capability that the agent should claim to support')
+	parser.add_argument(dest='device_mac', type=str,
+		help='MAC address of the device to pair')
+	args = parser.parse_args() 
+
+	set_debug(args.debug)
+
+	main(args.interface, args.device_mac, args.capability)
