@@ -86,10 +86,12 @@ function conf_build_vars() {
         local nproc="$(nproc)"
         # max one thread per unit (MB) of ram
         local max_jobs=$(($__memory_avail / $unit))
-        if [[ "$max_jobs" -lt "$nproc" ]]; then
-            __jobs="$max_jobs"
-        else
-            __jobs="$nproc"
+        if [[ "$max_jobs" -gt 0 ]]; then
+            if [[ "$max_jobs" -lt "$nproc" ]]; then
+                __jobs="$max_jobs"
+            else
+                __jobs="$nproc"
+            fi
         fi
     fi
     __default_makeflags="-j${__jobs}"
@@ -206,7 +208,7 @@ function get_os_version() {
                     error="You need Linux Mint 18 or newer"
                 elif compareVersions "$__os_release" lt 19; then
                     __os_ubuntu_ver="16.04"
-                    __os_debian_ver="9"
+                    __os_debian_ver="8"
                 elif compareVersions "$__os_release" lt 20; then
                     __os_ubuntu_ver="18.04"
                     __os_debian_ver="10"

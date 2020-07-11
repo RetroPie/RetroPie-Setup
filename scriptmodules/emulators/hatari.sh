@@ -11,7 +11,7 @@
 
 rp_module_id="hatari"
 rp_module_desc="Atari emulator Hatari"
-rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr\n\nCopy your Atari ST games to $romdir/atarist"
+rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr .zip\n\nCopy your Atari ST games to $romdir/atarist\n\nCopy Atari ST BIOS (tos.img) to $biosdir"
 rp_module_licence="GPL2 https://hg.tuxfamily.org/mercurialroot/hatari/hatari/file/9ee1235233e9/gpl.txt"
 rp_module_section="opt"
 rp_module_flags=""
@@ -27,7 +27,8 @@ function _sources_libcapsimage_hatari() {
 }
 
 function sources_hatari() {
-    downloadAndExtract "$__archive_url/hatari-1.9.0.tar.bz2" "$md_build" --strip-components 1
+    # shallow clone isn't supported via https:// on this repo
+    gitPullOrClone "$md_build" "git://git.tuxfamily.org/gitroot/hatari/hatari.git" "v2.2.1"
     # we need to use capsimage 5, as there is no source for 4.2
     sed -i "s/CAPSIMAGE_VERSION 4/CAPSIMAGE_VERSION 5/" cmake/FindCapsImage.cmake
     # capsimage 5.1 misses these types that were defined in 4.2
@@ -82,9 +83,6 @@ function install_hatari() {
 function configure_hatari() {
     mkRomDir "atarist"
 
-    # move any old configs to new location
-    moveConfigDir "$home/.hatari" "$md_conf_root/atarist"
-
     local common_config=("--confirm-quit 0" "--statusbar 0")
     if ! isPlatform "x11"; then
         common_config+=("--zoom 1" "-w")
@@ -97,4 +95,11 @@ function configure_hatari() {
     addEmulator 0 "$md_id-compatible" "atarist" "$md_inst/bin/hatari ${common_config[*]} --compatible 1 --timer-d 0 --borders 0 %ROM%"
     addEmulator 0 "$md_id-compatible-borders" "atarist" "$md_inst/bin/hatari ${common_config[*]} --compatible 1 --timer-d 0 --borders 1 %ROM%"
     addSystem "atarist"
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    # move any old configs to new location
+    moveConfigDir "$home/.hatari" "$md_conf_root/atarist"
+
+    ln -sf "$biosdir/tos.img" "$md_inst/share/hatari/tos.img"
 }
