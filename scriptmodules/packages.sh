@@ -472,8 +472,11 @@ function rp_installModule() {
 # packaging will be overhauled at a later date
 function rp_setPackageInfo() {
     local idx="$1"
-    local pkg="$(rp_getInstallPath $idx)/retropie.pkg"
+    local install_path="$(rp_getInstallPath $idx)"
+    [[ ! -d "$install_path" ]] && return 1
+    local pkg="$install_path/retropie.pkg"
     local origin="$2"
+
     iniConfig "=" '"' "$pkg"
     iniSet "pkg_origin" "$origin"
     local pkg_date
