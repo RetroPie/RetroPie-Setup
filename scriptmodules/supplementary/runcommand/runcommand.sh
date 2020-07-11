@@ -127,11 +127,12 @@ function start_joy2key() {
     else
         JOY2KEY_DEV="/dev/input/jsX"
     fi
-    # if joy2key.py is installed, run it with cursor keys for axis, b0=enter, b1=escape, b2=space, b3=space
+    # if joy2key.py is installed, run it
     if [[ -f "$ROOTDIR/supplementary/runcommand/joy2key.py" && -n "$JOY2KEY_DEV" ]] && ! pgrep -f joy2key.py >/dev/null; then
 
         # call joy2key.py: arguments are curses capability names or hex values starting with '0x'
         # see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
+        # axes=cursor keys, b0=enter, b1=escape, b2=space, b3=space
         "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0d 0x1b 0x20 0x20
         JOY2KEY_PID=$(pgrep -f joy2key.py)
 
