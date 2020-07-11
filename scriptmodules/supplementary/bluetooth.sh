@@ -56,7 +56,7 @@ function depends_bluetooth() {
 
 function _bluetoothctl_slowecho_bluetooth() {
     local line
-    
+
     IFS=$'\n'
     for line in $(echo -e "${1}"); do
         echo -e "$line"
@@ -209,7 +209,7 @@ function remove_paired_device_bluetooth() {
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && return
 
-    	printMsgs "info" "Removing..."
+        printMsgs "info" "Removing..."
         local out=$(bt-device --remove $choice 2>&1)
         if [[ "$?" -eq 0 ]] ; then
             printMsgs "dialog" "Device removed successfully."
@@ -255,12 +255,13 @@ function pair_device_bluetooth() {
         return
     fi
 
+    local capability
     if _is_keyboard_attached_bluetooth; then
-        local capability='KeyboardDisplay'
+        capability='KeyboardDisplay'
     elif _is_joystick_attached_bluetooth; then
-        local capability='DisplayYesNo'
+        capability='DisplayYesNo'
     else
-        local capability='DisplayOnly'
+        capability='DisplayOnly'
     fi
 
     # create a named pipe & fd for input for pair-device
@@ -270,9 +271,16 @@ function pair_device_bluetooth() {
     local line
     local pin
     local passkey
-    local succeeded=''
     local error=""
+    # read from pair-device buffered line by line
     while read -r line; do
+        if [ -z "$error" ] && printf "$line" | grep -qiP '\b(error|failed)\b'; then
+            error="$line"
+            continue
+        elif [ -n "$error" ]; then
+            error="$error\n$line"
+            continue
+        fi
         case "$line" in
             "RequestPinCode"*)
                 cmd=(dialog --nocancel --backtitle "$__backtitle" --menu "Which PIN do you want to use?" 22 76 16)
@@ -285,7 +293,7 @@ function pair_device_bluetooth() {
                 if [[ "$choice" == "2" ]]; then
                     pin=$(dialog --backtitle "$__backtitle" --inputbox "Please enter a pin" 10 60 2>&1 >/dev/tty)
                 fi
-                dialog --backtitle "$__backtitle" --infobox "Please enter PIN $pin (and press ENTER) on your Bluetooth device now." 10 60
+                printMsgs "info" "Please enter PIN $pin (and press ENTER) on your Bluetooth device now."
                 echo "$pin" >&3
                 # read "Enter PIN Code:"
                 read -n 15 line
@@ -299,29 +307,21 @@ function pair_device_bluetooth() {
             "DisplayPasskey"*|"DisplayPinCode"*)
                 # extract key from end of line
                 [[ "$line" =~ ,\ (.+)\) ]] && passkey=${BASH_REMATCH[1]}
-                dialog --backtitle "$__backtitle" --infobox "Please enter passkey $passkey (and press ENTER) on your Bluetooth device now." 10 60
-                ;;
-            "Creating device failed"*)
-                error="$line"
-                ;;
-            "Done.")
-                succeeded='1'
+                printMsgs "info" "Please enter $passkey (and press ENTER) on your Bluetooth device now."
                 ;;
         esac
-    # read from pair-device buffered line by line
     done < <(stdbuf -oL "$md_data/pair-device" -c "$capability" -i hci0 "$mac_address" <&3)
     exec 3>&-
     rm -f "$fifo"
 
     if [[ -n "$error" ]]; then
-        printMsgs "dialog" "An error occurred while pairing and connecting to $mac_address $device_name:\n\n$error"
+        local msg="An error occurred while pairing and connecting to $mac_address $device_name:\n\n$error"
+        msg="$msg\n\nPlease try pairing with the command line tool 'bluetoothctl' instead."
+        printMsgs "dialog" "$msg"
         return 1
-    elif [[ "$succeeded" == '1' ]]; then
+    else
         printMsgs "dialog" "Successfully paired and connected to $mac_address $device_name."
         return 0
-    else
-        printMsgs "dialog" "Unable to connect to $mac_address $device_name. Please try pairing with the commandline tool 'bluetoothctl' instead."
-        return 1
     fi
 }
 
