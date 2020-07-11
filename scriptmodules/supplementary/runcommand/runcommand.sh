@@ -132,8 +132,8 @@ function start_joy2key() {
 
         # call joy2key.py: arguments are curses capability names or hex values starting with '0x'
         # see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
-        # axes=cursor keys, b0=enter, b1=escape, b2=space, b3=space
-        "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0d 0x1b 0x20 0x20
+        # axes=cursor keys, b0=enter, b1=escape, b2=space, b3=space, b4=pageup, b5=pagedown
+        "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0d 0x1b 0x20 0x20 kpp knp
         JOY2KEY_PID=$(pgrep -f joy2key.py)
 
     # ensure coherency between on-screen prompts and actual button mapping functionality

@@ -92,8 +92,8 @@ def get_button_codes(dev_path):
     if not js_cfg:
         js_cfg = RETROARCH_CFG
 
-    # getting configs for dpad, buttons A, B, X and Y
-    btn_map = [ 'left', 'right', 'up', 'down', 'a', 'b', 'x', 'y' ]
+    # getting configs for dpad, buttons A, B, X, Y, L, and R
+    btn_map = [ 'left', 'right', 'up', 'down', 'a', 'b', 'x', 'y', 'l', 'r' ]
     btn_num = {}
     biggest_num = 0
     i = 0

@@ -1078,8 +1078,8 @@ function joy2keyStart() {
 
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
-        # cursor keys for axis/dpad, b0=enter, b1=escape, b2=space, b3=space
-        params=(kcub1 kcuf1 kcuu1 kcud1 0x0d 0x1b 0x20 0x20)
+        # cursor keys for axis/dpad, b0=enter, b1=escape, b2=space, b3=space, b4=pageup, b5=pagedown
+        params=(kcub1 kcuf1 kcuu1 kcud1 0x0d 0x1b 0x20 0x20 kpp knp)
     fi
 
     # get the first joystick device (if not already set)
