@@ -25,7 +25,7 @@ function depends_lzdoom() {
 }
 
 function sources_lzdoom() {
-    gitPullOrClone "$md_build" https://github.com/drfrag666/gzdoom "3.84"
+    gitPullOrClone "$md_build" https://github.com/drfrag666/gzdoom "3.86a"
 }
 
 function build_lzdoom() {
