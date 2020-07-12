@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # This file is part of The RetroPie Project
 #
