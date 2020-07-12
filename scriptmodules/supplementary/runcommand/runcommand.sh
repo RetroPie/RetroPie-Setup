@@ -121,30 +121,27 @@ function get_config() {
 
 function start_joy2key() {
     [[ "$DISABLE_JOYSTICK" -eq 1 ]] && return
-    # get the first joystick device (if not already set)
-    if [[ -c "$__joy2key_dev" ]]; then
-        JOY2KEY_DEV="$__joy2key_dev"
-    else
-        JOY2KEY_DEV="/dev/input/jsX"
-    fi
-    # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
-    if [[ -f "$ROOTDIR/supplementary/runcommand/joy2key.py" && -n "$JOY2KEY_DEV" ]] && ! pgrep -f joy2key.py >/dev/null; then
 
-        # call joy2key.py: arguments are curses capability names or hex values starting with '0x'
+    # if joy2key.py is installed and not already running, run it
+    if [[ -z "$__joy2key_pid" && -x "$ROOTDIR/supplementary/runcommand/joy2key.py" ]]; then
+        # arguments are curses capability names or hex values starting with '0x'
         # see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
-        "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09
-        JOY2KEY_PID=$(pgrep -f joy2key.py)
-
-    # ensure coherency between on-screen prompts and actual button mapping functionality
-    sleep 0.3
+        # axes=arrows, b0=enter, b1=space, b2=escape
+        local params=(kcub1 kcuf1 kcuu1 kcud1 0x0b 0x20 0x1b)
+        "$ROOTDIR/supplementary/runcommand/joy2key.py" "${params[@]}" &
+        if [[ "$?" == "0" ]]; then
+            __joy2key_pid=$!
+            # ensure coherency between on-screen prompts and actual button mapping functionality
+            sleep 0.3
+        fi
     fi
 }
 
 function stop_joy2key() {
-    if [[ -n "$JOY2KEY_PID" ]]; then
-        kill "$JOY2KEY_PID"
-        JOY2KEY_PID=""
-        sleep 1
+    if [[ -n "$__joy2key_pid" ]]; then
+        kill "$__joy2key_pid" 2>/dev/null
+        while ps -A -o pid,cmd | grep -vF grep | grep -F joy2key | grep -qF $__joy2key_pid; do sleep 0.2; done
+        unset __joy2key_pid
     fi
 }
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # This file is part of The RetroPie Project
 #
@@ -1078,19 +1078,19 @@ function joy2keyStart() {
 
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
-        params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20 0x1b)
+        # axes=arrows, b0=enter, b1=space, b2=escape
+        params=(kcub1 kcuf1 kcuu1 kcud1 0x0b 0x20 0x1b)
     fi
 
-    # get the first joystick device (if not already set)
-    [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/jsX"
-
-    # if no joystick device, or joy2key is already running exit
-    [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
-
-    # if joy2key.py is installed run it with cursor keys for axis/dpad, and enter + space for buttons 0 and 1
-    if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" 2>/dev/null; then
-        __joy2key_pid=$(pgrep -f joy2key.py)
-        return 0
+    # if joy2key.py is installed and not already running, run it
+    if [[ -z "$__joy2key_pid" && -x "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" ]]; then
+        "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "${params[@]}" &
+        if [[ "$?" == "0" ]]; then
+            __joy2key_pid=$!
+            # ensure coherency between on-screen prompts and actual button mapping functionality
+            sleep 0.3
+            return 0
+        fi
     fi
 
     return 1
@@ -1099,10 +1099,10 @@ function joy2keyStart() {
 ## @fn joy2keyStop()
 ## @brief Stop previously started joy2key.py process.
 function joy2keyStop() {
-    if [[ -n $__joy2key_pid ]]; then
+    if [[ -n "$__joy2key_pid" ]]; then
         kill $__joy2key_pid 2>/dev/null
-        __joy2key_pid=""
-        sleep 1
+        while ps -A -o pid,cmd | grep -vF grep | grep -F joy2key | grep -qF $__joy2key_pid; do sleep 0.2; done
+        unset __joy2key_pid
     fi
 }
 
