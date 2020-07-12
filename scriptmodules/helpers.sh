@@ -1079,7 +1079,7 @@ function joy2keyStart() {
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
         # axes=arrows, b0=enter, b1=space, b2=escape
-        params=(kcub1 kcuf1 kcuu1 kcud1 0x0b 0x20 0x1b)
+        params=(kcub1 kcuf1 kcuu1 kcud1 0x0d 0x20 0x1b)
     fi
 
     # if joy2key.py is installed and not already running, run it

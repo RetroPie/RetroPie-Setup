@@ -127,7 +127,7 @@ function start_joy2key() {
         # arguments are curses capability names or hex values starting with '0x'
         # see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
         # axes=arrows, b0=enter, b1=space, b2=escape
-        local params=(kcub1 kcuf1 kcuu1 kcud1 0x0b 0x20 0x1b)
+        local params=(kcub1 kcuf1 kcuu1 kcud1 0x0d 0x20 0x1b)
         "$ROOTDIR/supplementary/runcommand/joy2key.py" "${params[@]}" &
         if [[ "$?" == "0" ]]; then
             __joy2key_pid=$!
