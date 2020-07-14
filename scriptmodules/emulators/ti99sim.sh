@@ -17,7 +17,7 @@ rp_module_section="exp"
 rp_module_flags=""
 
 function depends_ti99sim() {
-    getDepends libsd2-dev libssl-dev
+    getDepends libsdl2-dev libssl-dev
 }
 
 function sources_ti99sim() {
