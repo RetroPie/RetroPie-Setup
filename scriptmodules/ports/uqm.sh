@@ -26,7 +26,7 @@ function _update_hook_uqm() {
 
 function depends_uqm() {
     [[ "$__os_id" != "Raspbian" ]] && return 0
-    local depends=(debhelper devscripts libmikmod-dev libsdl1.2-dev libopenal-dev libsdl-image1.2-dev libogg-dev libvorbis-dev xz-utils)
+    local depends=(debhelper devscripts libmikmod-dev libsdl1.2-dev libopenal-dev libsdl-image1.2-dev libogg-dev libvorbis-dev)
     isPlatform "gl" || isPlatform "mesa" && depends+=(libgl1-mesa-dev)
     isPlatform "kms" && depends+=(xorg)
 
