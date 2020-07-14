@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_stella() {
-    getDepends libsdl2-dev libpng-dev zlib1g-dev xz-utils
+    getDepends libsdl2-dev libpng-dev zlib1g-dev
 }
 
 function sources_stella() {
