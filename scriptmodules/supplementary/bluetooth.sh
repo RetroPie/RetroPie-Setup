@@ -122,7 +122,10 @@ function _list_connected_devices_bluetooth() {
             echo "${BASH_REMATCH[2]}"
             echo "${BASH_REMATCH[1]}"
         fi
-    done < <(_raw_list_known_devices_with_regex_bluetooth '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 1\b).*$')
+    # NOTE: PS3 (sixaxis) controllers don't show as paired even when connected, so we
+    # explicitly do NOT scope this to only Paired-and-Connected devices, but look for
+    # Trusted-and-Connected devices instead.
+    done < <(_raw_list_known_devices_with_regex_bluetooth '(?s)^(?=.*\bTrusted: 1\b)(?=.*\bConnected: 1\b).*$')
 }
 
 function _list_disconnected_devices_bluetooth() {
@@ -132,7 +135,8 @@ function _list_disconnected_devices_bluetooth() {
             echo "${BASH_REMATCH[2]}"
             echo "${BASH_REMATCH[1]}"
         fi
-    done < <(_raw_list_known_devices_with_regex_bluetooth '(?s)^(?=.*\bPaired: 1\b)(?=.*\bConnected: 0\b).*$')
+    # See note in list_connected_devices_bluetooth
+    done < <(_raw_list_known_devices_with_regex_bluetooth '(?s)^(?=.*\bTrusted: 1\b)(?=.*\bConnected: 0\b).*$')
 }
 
 function list_unpaired_devices_bluetooth() {

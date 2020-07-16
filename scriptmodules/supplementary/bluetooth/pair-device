@@ -8,7 +8,7 @@ from debugutils import debug_message, set_debug
 from pairagent import pair_device
 from pairutils import (
 	connect_device,
-	remove_device_pairing,
+	remove_device_registration,
 	trust_device
 	)
 
@@ -30,7 +30,7 @@ def main(adapter_name, device_mac, capability):
 	adapter = bluezutils.find_adapter(adapter_name)
 	adapter.StartDiscovery()
 	try:
-		remove_device_pairing(adapter, adapter_name, device_mac)
+		remove_device_registration(adapter, adapter_name, device_mac)
 		pair_device(adapter, adapter_name, device_mac, capability)
 		connect_device(adapter, adapter_name, device_mac)
 		trust_device(adapter, adapter_name, device_mac)

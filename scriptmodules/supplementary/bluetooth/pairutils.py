@@ -48,12 +48,18 @@ def get_device(adapter, adapter_name, device_mac, timeout=30):
 	return device
 
 
-def remove_device_pairing(adapter, adapter_name, device_mac):
-	device = get_device(adapter, adapter_name, device_mac) 
+def remove_device_registration(adapter, adapter_name, device_mac):
+	device = get_device(adapter, adapter_name, device_mac)
+
+	properties = _get_bluez_iface_props(device, "Device1")
+        if properties.get("Name", None) == "Sony PLAYSTATION(R)3 Controller":
+		print("Preserving already-established PS3 controller registration...")
+		return
+
 	try:
 		device_path = device.object_path
 		debug_message("device path: %s" % (device_path))
-		print("Removing existing pairing...")
+		print("Removing device registration...")
 		adapter.RemoveDevice(device_path)
 		debug_message("removed")
 	except DBusException as e:
