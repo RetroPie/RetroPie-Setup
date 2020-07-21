@@ -23,9 +23,11 @@ from pyudev import Context
 
 JS_MIN = -32768
 JS_MAX = 32768
-JS_REP = 0.20
 
-JS_THRESH = 0.75
+JS_DEL = 0.5
+JS_REP = 0.07
+
+JS_THRESH = 0.9
 
 JS_EVENT_BUTTON = 0x01
 JS_EVENT_AXIS = 0x02
@@ -175,16 +177,18 @@ def close_fds(fds):
         os.close(fd)
 
 def read_event(fd):
-    while True:
-        try:
-            event = os.read(fd, event_size)
-        except OSError as e:
-            if e.errno == errno.EWOULDBLOCK:
-                return None
-            return False
+    try:
+        event = os.read(fd, event_size)
+    except OSError as e:
+        if e.errno == errno.EWOULDBLOCK:
+            return None
+        return False
+    else:
+        return event
 
-        else:
-            return event
+def output_chars(hex_chars):
+    for c in hex_chars:
+        fcntl.ioctl(tty_fd, termios.TIOCSTI, c)
 
 def process_event(event):
 
@@ -213,14 +217,15 @@ def process_event(event):
                 hex_chars = axis_codes[3]
 
     if hex_chars:
-        for c in hex_chars:
-            fcntl.ioctl(tty_fd, termios.TIOCSTI, c)
-        return True
+        return hex_chars
+    else:
+        return None
 
     return False
 
 js_fds = []
 tty_fd = []
+js_hold = -1
 
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
@@ -274,13 +279,22 @@ while True:
             event = read_event(fd)
             if event:
                 do_sleep = False
-                if time.time() - js_last[i] > JS_REP:
-                    if fd in js_button_codes:
-                        button_codes = js_button_codes[fd]
-                    else:
-                        button_codes = default_button_codes
-                    if process_event(event):
-                        js_last[i] = time.time()
+                if fd in js_button_codes:
+                    button_codes = js_button_codes[fd]
+                else:
+                    button_codes = default_button_codes
+                output = process_event(event)
+
+                if output and js_hold != i:
+                    output_chars(output)
+                    js_hold = i
+                    js_last[i] = time.time() + JS_DEL
+                elif output == None:
+                    js_hold = -1
+            elif event == None:
+                if time.time() - js_last[i] > JS_REP and js_hold == i:
+                    output_chars(output)
+                    js_last[i] = time.time()
             elif event == False:
                 close_fds(js_fds)
                 js_fds = []
