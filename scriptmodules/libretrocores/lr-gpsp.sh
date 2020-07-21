@@ -16,16 +16,20 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/gpsp/master/C
 rp_module_section="opt arm=main"
 rp_module_flags="!all arm"
 
+function depends_lr-gpsp() {
+    getDepends gcc-6
+}
+
 function sources_lr-gpsp() {
     gitPullOrClone "$md_build" https://github.com/libretro/gpsp.git
 }
 
 function build_lr-gpsp() {
-    make clean
     rpSwap on 512
     local params=()
     isPlatform "arm" && params+=(platform=armv)
-    make "${params[@]}"
+    make "${params[@]}" clean
+    CC="gcc-6" make "${params[@]}"
     rpSwap off
     md_ret_require="$md_build/gpsp_libretro.so"
 }
