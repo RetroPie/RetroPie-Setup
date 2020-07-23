@@ -1,0 +1,167 @@
+diff --git a/src/doomdef.h b/src/doomdef.h
+index ac3a87c8e0..2260259708 100644
+--- a/src/doomdef.h
++++ b/src/doomdef.h
+@@ -184,6 +184,8 @@ enum ESkillLevels
+ #define KEY_JOY6				(KEY_FIRSTJOYBUTTON+5)
+ #define KEY_JOY7				(KEY_FIRSTJOYBUTTON+6)
+ #define KEY_JOY8				(KEY_FIRSTJOYBUTTON+7)
++#define KEY_JOY14				(KEY_FIRSTJOYBUTTON+13)	// PS3 button
++#define KEY_JOY15				(KEY_FIRSTJOYBUTTON+14)	// PS3 button
+ #define KEY_LASTJOYBUTTON		0x187
+ #define KEY_JOYPOV1_UP			0x188
+ #define KEY_JOYPOV1_RIGHT		0x189
+diff --git a/src/menu/menu.cpp b/src/menu/menu.cpp
+index 1097ae6f76..ef4c987566 100644
+--- a/src/menu/menu.cpp
++++ b/src/menu/menu.cpp
+@@ -662,16 +662,19 @@ bool M_Responder (event_t *ev)
+ 			switch (ch)
+ 			{
+ 			case KEY_JOY1:
++			case KEY_JOY3:
++			case KEY_JOY15:
+ 			case KEY_PAD_A:
+ 				mkey = MKEY_Enter;
+ 				break;
+ 
+ 			case KEY_JOY2:
++			case KEY_JOY14:
+ 			case KEY_PAD_B:
+ 				mkey = MKEY_Back;
+ 				break;
+ 
+-			case KEY_JOY3:
++			case KEY_JOY4:
+ 			case KEY_PAD_X:
+ 				mkey = MKEY_Clear;
+ 				break;
+@@ -688,28 +691,28 @@ bool M_Responder (event_t *ev)
+ 
+ 			case KEY_PAD_DPAD_UP:
+ 			case KEY_PAD_LTHUMB_UP:
+-			case KEY_JOYAXIS1MINUS:
++			case KEY_JOYAXIS2MINUS:
+ 			case KEY_JOYPOV1_UP:
+ 				mkey = MKEY_Up;
+ 				break;
+ 
+ 			case KEY_PAD_DPAD_DOWN:
+ 			case KEY_PAD_LTHUMB_DOWN:
+-			case KEY_JOYAXIS1PLUS:
++			case KEY_JOYAXIS2PLUS:
+ 			case KEY_JOYPOV1_DOWN:
+ 				mkey = MKEY_Down;
+ 				break;
+ 
+ 			case KEY_PAD_DPAD_LEFT:
+ 			case KEY_PAD_LTHUMB_LEFT:
+-			case KEY_JOYAXIS2MINUS:
++			case KEY_JOYAXIS1MINUS:
+ 			case KEY_JOYPOV1_LEFT:
+ 				mkey = MKEY_Left;
+ 				break;
+ 
+ 			case KEY_PAD_DPAD_RIGHT:
+ 			case KEY_PAD_LTHUMB_RIGHT:
+-			case KEY_JOYAXIS2PLUS:
++			case KEY_JOYAXIS1PLUS:
+ 			case KEY_JOYPOV1_RIGHT:
+ 				mkey = MKEY_Right;
+ 				break;
+diff --git a/src/posix/sdl/i_gui.cpp b/src/posix/sdl/i_gui.cpp
+index 1a895a6766..72585a862f 100644
+--- a/src/posix/sdl/i_gui.cpp
++++ b/src/posix/sdl/i_gui.cpp
+@@ -52,6 +52,7 @@ bool I_SetCursor(FTexture *cursorpic)
+ 			return false;
+ 		}
+ 
++		SDL_ShowCursor(SDL_DISABLE);
+ 		if (cursorSurface == NULL)
+ 			cursorSurface = SDL_CreateRGBSurface (0, 32, 32, 32, MAKEARGB(0,255,0,0), MAKEARGB(0,0,255,0), MAKEARGB(0,0,0,255), MAKEARGB(255,0,0,0));
+ 
+@@ -67,6 +68,7 @@ bool I_SetCursor(FTexture *cursorpic)
+ 			SDL_FreeCursor (cursor);
+ 		cursor = SDL_CreateColorCursor (cursorSurface, 0, 0);
+ 		SDL_SetCursor (cursor);
++		SDL_ShowCursor(SDL_ENABLE);
+ 	}
+ 	else
+ 	{
+diff --git a/src/posix/sdl/i_input.cpp b/src/posix/sdl/i_input.cpp
+index 1454ce7934..864f35dd91 100644
+--- a/src/posix/sdl/i_input.cpp
++++ b/src/posix/sdl/i_input.cpp
+@@ -203,12 +203,10 @@ void I_SetMouseCapture()
+ {
+ 	// Clear out any mouse movement.
+ 	SDL_GetRelativeMouseState (NULL, NULL);
+-	SDL_SetRelativeMouseMode (SDL_TRUE);
+ }
+ 
+ void I_ReleaseMouseCapture()
+ {
+-	SDL_SetRelativeMouseMode (SDL_FALSE);
+ }
+ 
+ static void PostMouseMove (int x, int y)
+@@ -279,7 +277,6 @@ static bool inGame()
+ static void I_CheckNativeMouse ()
+ {
+ 	bool focus = SDL_GetKeyboardFocus() != NULL;
+-	bool fs = screen->IsFullscreen();
+ 	
+ 	bool wantNative = !focus || (!use_mouse || GUICapture || paused || demoplayback || !inGame());
+ 
+@@ -547,13 +544,10 @@ void MessagePump (const SDL_Event &sev)
+ 
+ 	case SDL_JOYBUTTONDOWN:
+ 	case SDL_JOYBUTTONUP:
+-		if (!GUICapture)
+-		{
+-			event.type = sev.type == SDL_JOYBUTTONDOWN ? EV_KeyDown : EV_KeyUp;
+-			event.data1 = KEY_FIRSTJOYBUTTON + sev.jbutton.button;
+-			if(event.data1 != 0)
+-				D_PostEvent(&event);
+-		}
++		event.type = sev.type == SDL_JOYBUTTONDOWN ? EV_KeyDown : EV_KeyUp;
++		event.data1 = KEY_FIRSTJOYBUTTON + sev.jbutton.button;
++		if(event.data1 != 0)
++			D_PostEvent(&event);
+ 		break;
+ 	}
+ }
+diff --git a/wadsrc/static/language.enu b/wadsrc/static/language.enu
+index 968201efab..eb70ecc1ad 100644
+--- a/wadsrc/static/language.enu
++++ b/wadsrc/static/language.enu
+@@ -1787,6 +1787,7 @@ CNTRLMNU_OPEN_SAVE				= "Open Save Menu";
+ CNTRLMNU_OPEN_LOAD				= "Open Load Menu";
+ CNTRLMNU_OPEN_OPTIONS				= "Open Options Menu";
+ CNTRLMNU_OPEN_DISPLAY				= "Open Display Menu";
++CNTRLMNU_OPEN_MAIN				= "Open Main Menu";
+ CNTRLMNU_QUICKSAVE				= "Quicksave";
+ CNTRLMNU_QUICKLOAD				= "Quickload";
+ CNTRLMNU_EXIT_TO_MAIN				= "Exit to Main Menu";
+diff --git a/src/m_joy.cpp b/src/m_joy.cpp
+index 7b78d8266f..1d7207a71b 100644
+--- a/src/m_joy.cpp
++++ b/src/m_joy.cpp
+@@ -58,3 +58,3 @@ // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+-CUSTOM_CVAR(Bool, use_joystick, false, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
++CUSTOM_CVAR(Bool, use_joystick, true, CVAR_ARCHIVE|CVAR_GLOBALCONFIG|CVAR_NOINITCALL)
+ {
+diff --git a/src/posix/sdl/i_joystick.cpp b/src/posix/sdl/i_joystick.cpp
+index 968201efab..eb70ecc1ad 100644
+--- a/src/posix/sdl/i_joystick.cpp
++++ b/src/posix/sdl/i_joystick.cpp
+@@ -147,6 +147,6 @@ info.Name.Format("Axis %d", i+1);
+ 			else
+ 				info.Name.Format("Hat %d (%c)", (i-NumAxes)/2 + 1, (i-NumAxes)%2 == 0 ? 'x' : 'y');
+-			info.DeadZone = MIN_DEADZONE;
++			info.DeadZone = 0.1;
+ 			info.Multiplier = 1.0f;
+ 			info.Value = 0.0;
+ 			info.ButtonValue = 0;

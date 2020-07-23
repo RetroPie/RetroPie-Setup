@@ -26,6 +26,9 @@ function depends_lzdoom() {
 
 function sources_lzdoom() {
     gitPullOrClone "$md_build" https://github.com/drfrag666/gzdoom "3.86a"
+	if isPlatform "rpi"; then
+		applyPatch "$md_data/01_rpi_fixes.diff" # Enables use of joypad to control menus so you don't need a keyboard!
+	fi
 }
 
 function build_lzdoom() {
