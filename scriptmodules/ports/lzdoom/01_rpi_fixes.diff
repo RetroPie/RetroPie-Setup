@@ -161,7 +161,7 @@ index 968201efab..eb70ecc1ad 100644
  			else
  				info.Name.Format("Hat %d (%c)", (i-NumAxes)/2 + 1, (i-NumAxes)%2 == 0 ? 'x' : 'y');
 -			info.DeadZone = MIN_DEADZONE;
-+			info.DeadZone = 0.1;
++			info.DeadZone = 0.15;
  			info.Multiplier = 1.0f;
  			info.Value = 0.0;
  			info.ButtonValue = 0;
