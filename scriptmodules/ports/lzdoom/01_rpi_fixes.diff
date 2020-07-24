@@ -161,7 +161,19 @@ index 968201efab..eb70ecc1ad 100644
  			else
  				info.Name.Format("Hat %d (%c)", (i-NumAxes)/2 + 1, (i-NumAxes)%2 == 0 ? 'x' : 'y');
 -			info.DeadZone = MIN_DEADZONE;
-+			info.DeadZone = 0.15;
++			info.DeadZone = 0.1;
  			info.Multiplier = 1.0f;
  			info.Value = 0.0;
  			info.ButtonValue = 0;
+diff --git a/wadsrc/static/defbinds.txt b/wadsrc/static/defbinds.txt
+index 94efc110f0..4314781900 100644
+--- a/wadsrc/static/defbinds.txt
++++ b/wadsrc/static/defbinds.txt
+@@ -60,6 +60,7 @@ dpadleft invprev
+ dpadright invnext
+ dpaddown invuse
+ dpadup togglemap
++joy9 menu_main
+ pad_start pause
+ pad_back menu_main
+ lthumb crouch
