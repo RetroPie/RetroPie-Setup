@@ -26,8 +26,10 @@ function depends_lzdoom() {
 
 function sources_lzdoom() {
     gitPullOrClone "$md_build" https://github.com/drfrag666/gzdoom "3.86a"
-	if isPlatform "rpi"; then
+	if isPlatform "rpi" && ! grep -q CNTRLMNU_OPEN_MAIN "$md_build/wadsrc/static/language.enu"; then
+		# Failsafe to apply joypad patch if it hasn't been added upstream yet https://github.com/coelckers/gzdoom/pull/1072
 		applyPatch "$md_data/01_rpi_fixes.diff" # Enables use of joypad to control menus so you don't need a keyboard!
+		# Safe to remove this patch if LZDOOM gets updated beyond 3.86a and includes joypad support for menus
 	fi
 }
 
