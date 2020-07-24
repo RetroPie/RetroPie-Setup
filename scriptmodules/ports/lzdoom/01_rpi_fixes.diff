@@ -177,3 +177,15 @@ index 94efc110f0..4314781900 100644
  pad_start pause
  pad_back menu_main
  lthumb crouch
+diff --git a/wadsrc/static/menudef.txt b/wadsrc/static/menudef.txt
+index 7b78d8266f..1d7207a71b 100644
+--- a/wadsrc/static/menudef.txt
++++ b/wadsrc/static/menudef.txt
+@@ -625,6 +625,7 @@ OptionMenu "OtherControlsMenu" protected
+ 	Control    "$CNTRLMNU_SCREENSHOT"      , "screenshot"
+ 	Control    "$CNTRLMNU_CONSOLE"         , "toggleconsole"
+ 	Control    "$CNTRLMNU_PAUSE"           , "pause"
++	Control    "$CNTRLMNU_OPEN_MAIN"       , "menu_main"
+ 
+ 	StaticText ""
+ 	Control    "$CNTRLMNU_DISPLAY_INC"     , "sizeup"
