@@ -1,6 +1,6 @@
 # How to contribute
 
-## Support Requests vs Bug reporting
+## Support Requests vs Bug Reporting
 
 Please use the GitHub for bug reports only. For help / support in using RetroPie and the emulators
 it ships with, please use the [RetroPie forum](https://retropie.org.uk/forum/).

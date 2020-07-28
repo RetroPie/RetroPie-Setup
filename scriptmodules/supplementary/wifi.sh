@@ -10,7 +10,7 @@
 #
 
 rp_module_id="wifi"
-rp_module_desc="Configure Wifi"
+rp_module_desc="Configure WiFi"
 rp_module_section="config"
 rp_module_flags="!x11"
 
@@ -191,9 +191,9 @@ function gui_wifi() {
             1 "Connect to WiFi network"
             "1 Connect to your WiFi network"
             2 "Disconnect/Remove WiFi config"
-            "2 Disconnect and remove any Wifi configuration"
-            3 "Import wifi credentials from /boot/wifikeyfile.txt"
-            "3 Will import the ssid (name) and psk (password) from a file /boot/wifikeyfile.txt
+            "2 Disconnect and remove any WiFi configuration"
+            3 "Import WiFi credentials from /boot/wifikeyfile.txt"
+            "3 Will import the SSID (network name) and PSK (password) from a file at /boot/wifikeyfile.txt
 
 The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk = \"YOUR PASSWORD\""
         )
