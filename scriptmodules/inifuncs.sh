@@ -224,10 +224,12 @@ function getAutoConf(){
     return 1
 }
 
-# escape backslashes and pipes for sed
+# escape special characters for sed
 function sedQuote() {
     local string="$1"
     string="${string//\\/\\\\}"
     string="${string//|/\\|}"
+    string="${string//[/\\[}"
+    string="${string//]/\\]}"
     echo "$string"
 }
