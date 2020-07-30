@@ -262,6 +262,8 @@ function _scrape_skyscraper() {
 
     [[ "$cache_wheels" -eq 0 ]] && flags+="nowheels,"
 
+    [[ "$only_missing" -eq 1 ]] && flags+="onlymissing,"
+
     [[ "$rom_name" -eq 1 ]] && flags+="forcefilename,"
 
     [[ "$remove_brackets" -eq 1 ]] && flags+="nobrackets,"
@@ -386,7 +388,8 @@ function _load_config_skyscraper() {
         'cache_screenshots=1' \
         'scrape_source=screenscraper' \
         'remove_brackets=0' \
-        'force_refresh=0'
+        'force_refresh=0' \
+        'only_missing=0'
     )"
 }
 
@@ -681,7 +684,8 @@ function _gui_cache_skyscraper() {
         [2]="Toggle whether covers are cached locally when scraping.\n\nSkyscraper option: \Zb--flags nocovers\Zn"
         [3]="Toggle whether wheels are cached locally when scraping.\n\nSkyscraper option: \Zb--flags nowheels\Zn"
         [4]="Toggle whether marquees are cached locally when scraping.\n\nSkyscraper option: \Zb--flags nomarquees\Zn"
-        [5]="Force the refresh of resources in the local cache when scraping.\n\nSkyscraper option: \Zb--cache refresh\Zn"
+        [5]="Enable this to only scrape files that do not already have data in the Skyscraper resource cache.\n\nSkyscraper option: \Zb--flags onlymissing\Zn"
+        [6]="Force the refresh of resources in the local cache when scraping.\n\nSkyscraper option: \Zb--cache refresh\Zn"
         [P]="Purge \ZbALL\Zn all cached resources for all platforms."
         [S]="Purge all cached resources for a chosen platform.\n\nSkyscraper option: \Zb--cache purge:all\Zn"
         [V]="Removes all non-used cached resources for a chosen platform (vacuum).\n\nSkyscraper option: \Zb--cache vacuum\Zn"
@@ -719,10 +723,16 @@ function _gui_cache_skyscraper() {
             options+=(4 "Cache marquees (Disabled)")
         fi
 
-        if [[ "$force_refresh" -eq 0 ]]; then
-            options+=(5 "Force cache refresh (Disabled)")
+        if [[ "$only_missing" -eq 1 ]]; then
+            options+=(5 "Scrape only missing (Enabled)")
         else
-            options+=(5 "Force cache refresh (Enabled)")
+            options+=(5 "Scrape only missing (Disabled)")
+        fi
+
+        if [[ "$force_refresh" -eq 0 ]]; then
+            options+=(6 "Force cache refresh (Disabled)")
+        else
+            options+=(6 "Force cache refresh (Enabled)")
         fi
 
         options+=("-" "PURGE cache commands")
@@ -758,6 +768,11 @@ function _gui_cache_skyscraper() {
                     ;;
 
                 5)
+                    only_missing="$((only_missing ^ 1))"
+                    iniSet "only_missing" "$only_missing"
+                    ;;
+
+                6)
                     force_refresh="$((force_refresh ^ 1))"
                     iniSet "force_refresh" "$force_refresh"
                     ;;
