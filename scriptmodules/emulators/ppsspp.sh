@@ -66,7 +66,7 @@ function build_ffmpeg_ppsspp() {
             arch="x86";
         fi
     elif isPlatform "aarch64"; then
-        arch="arm64"
+        arch="aarch64"
     fi
     isPlatform "vero4k" && local extra_params='--arch=arm'
 

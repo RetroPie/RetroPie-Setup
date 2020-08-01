@@ -22,7 +22,7 @@ function _latest_ver_mame() {
 
 function _get_binary_name_mame() {
     # The MAME executable on 64-bit systems is called mame64 instead of mame. Rename it back to mame.
-    if isPlatform "64bit"; then
+    if isPlatform "64bit" && ! isPlatform "aarch64"; then
         echo 'mame64'
     else
         echo 'mame'
