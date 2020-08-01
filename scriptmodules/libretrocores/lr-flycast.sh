@@ -30,16 +30,19 @@ function _update_hook_lr-flycast() {
 
 function sources_lr-flycast() {
     gitPullOrClone "$md_build" https://github.com/libretro/flycast.git
+    # don't override our C/CXXFLAGS and set LDFLAGS to CFLAGS to avoid warnings on linking
+    applyPatch "$md_data/01_flags_fix.diff"
 }
 
 function build_lr-flycast() {
     local params=("HAVE_LTCG=0")
+    local add_flags=()
     if isPlatform "gles"; then
         if isPlatform "videocore"; then
             params+=(
                 "GLES=1"
-                "GL_LIB=-L/opt/vc/lib -lbrcmGLESv2"
-                "CPU_FLAGS=-I/opt/vc/include -DTARGET_NO_STENCIL -DLOW_END")
+                "GL_LIB=-L/opt/vc/lib -lbrcmGLESv2")
+            add_flags+=("-I/opt/vc/include -DTARGET_NO_STENCIL -DLOW_END")
         else
             params+=("FORCE_GLES=1")
         fi
@@ -52,7 +55,8 @@ function build_lr-flycast() {
     isPlatform "aarch64" && params+=("WITH_DYNAREC=arm64" "HOST_CPU_FLAGS=-DTARGET_LINUX_ARMv8")
     isPlatform "arm" && params+=("WITH_DYNAREC=arm")
     ! isPlatform "x86" && params+=("HAVE_GENERIC_JIT=0" "HAVE_VULKAN=0")
-    make "${params[@]}"
+    make "${params[@]}" clean
+    CFLAGS+=" ${add_flags[@]}" make "${params[@]}"
     md_ret_require="$md_build/flycast_libretro.so"
 }
 
