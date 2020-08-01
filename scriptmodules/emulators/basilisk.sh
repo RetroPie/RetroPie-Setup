@@ -31,6 +31,7 @@ function build_basilisk() {
     local params=(--enable-sdl-video --enable-sdl-audio --disable-vosf --without-mon --without-esd)
     ! isPlatform "x86" && params+=(--disable-jit-compiler)
     ! isPlatform "x11" && params+=(--without-x --without-gtk)
+    isPlatform "aarch64" && params+=(--build=arm)
     ./autogen.sh --prefix="$md_inst" "${params[@]}"
     make clean
     make

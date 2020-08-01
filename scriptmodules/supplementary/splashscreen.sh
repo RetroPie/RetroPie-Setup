@@ -12,7 +12,7 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
-rp_module_flags="noinstclean !all rpi !osmc !xbian"
+rp_module_flags="noinstclean !all rpi !osmc !xbian !aarch64"
 
 function _update_hook_splashscreen() {
     # make sure splashscreen is always up to date if updating just RetroPie-Setup
@@ -31,7 +31,9 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    getDepends omxplayer insserv
+    local params=(insserv)
+    isPlatform "32bit" && params+=(omxplayer)
+    getDepends "${params[@]}"
 }
 
 function install_bin_splashscreen() {

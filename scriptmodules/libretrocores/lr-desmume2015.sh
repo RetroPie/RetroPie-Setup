@@ -15,16 +15,18 @@ rp_module_help="ROM Extensions: .nds .zip\n\nCopy your Nintendo DS roms to $romd
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/desmume/master/desmume/COPYING"
 rp_module_section="exp"
 
+function depends_lr-desmume2015() {
+   depends_lr-desmume
+}
+
 function sources_lr-desmume2015() {
     gitPullOrClone "$md_build" https://github.com/libretro/desmume2015.git
 }
 
 function build_lr-desmume2015() {
     cd desmume
-    local params=()
-    isPlatform "arm" && params+=("platform=armvhardfloat")
-    make -f Makefile.libretro clean
-    make -f Makefile.libretro "${params[@]}"
+    make clean
+    make $(_params_lr-desmume)
     md_ret_require="$md_build/desmume/desmume2015_libretro.so"
 }
 

@@ -25,8 +25,10 @@ function sources_daphne() {
 }
 
 function build_daphne() {
+    local params=()
+    isPlatform "aarch64" && params=(--build=arm)
     cd src/vldp2
-    ./configure
+    ./configure "${params[@]}"
     make -f Makefile.rp
     cd ..
     ln -sf Makefile.vars.rp Makefile.vars
