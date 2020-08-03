@@ -1,0 +1,13 @@
+diff --git a/src/config.c b/src/config.c
+index c4f4330..4c77a5d 100644
+--- a/src/config.c
++++ b/src/config.c
+@@ -249,7 +249,7 @@ Config opentyrian_config;  // implicitly initialized
+ bool load_opentyrian_config( void )
+ {
+ 	// defaults
+-	fullscreen_display = -1;
++	fullscreen_display = 0;
+ 	set_scaler_by_name("Scale2x");
+ 	
+ 	Config *config = &opentyrian_config;

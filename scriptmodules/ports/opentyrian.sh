@@ -21,8 +21,8 @@ function depends_opentyrian() {
 
 function sources_opentyrian() {
     gitPullOrClone "$md_build" https://github.com/opentyrian/opentyrian.git
-    # patch to keep our custom cflags, and default to fullscreen
-    applyPatch "$md_data/01_cflags_and_fullscreen.diff"
+    # patch to default to fullscreen
+    applyPatch "$md_data/01_fullscreen.diff"
 }
 
 function build_opentyrian() {
