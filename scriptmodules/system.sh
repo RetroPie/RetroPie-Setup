@@ -376,12 +376,19 @@ function get_platform() {
             "Allwinner sun8i Family")
                 __platform="armv7-mali"
                 ;;
-            *)
-                case $architecture in
-                    i686|x86_64|amd64)
-                        __platform="x86"
-                        ;;
-                esac
+            *)  #For now nvidia jetson nano no have Hardware name string by /proc/cpuinfo you can info by base/model 
+                if grep -q "NVIDIA Jetson Nano Developer Kit" /sys/firmware/devicetree/base/model 2>/dev/null; then
+                    __platform="jetson-nano" 
+
+                elif  grep -q "icosa" /sys/firmware/devicetree/base/model 2>/dev/null; then
+                    __platform="tegra-x1" 
+                else
+                    case $architecture in
+                        i686|x86_64|amd64)
+                            __platform="x86"
+                            ;;
+                    esac
+                fi
                 ;;
         esac
     fi
@@ -471,6 +478,20 @@ function platform_odroid-xu() {
     # required for mali-fbdev headers to define GL functions
     __default_cflags=" -DGL_GLEXT_PROTOTYPES"
     __platform_flags="arm armv7 neon mali gles"
+}
+
+function platform_jetson-nano() {
+    __default_cpu_flags="-march=armv8-a+crc -mcpu=cortex-a57 -mtune=cortex-a57"
+    __platform_flags+=(aarch64 x11 gl)
+    __default_cflags+=" -ftree-vectorize"
+    __default_asflags=""
+}
+
+function platform_tegra-x1() {
+    __default_cpu_flags="-march=armv8-a+crc -mcpu=cortex-a57 -mtune=cortex-a57"
+    __platform_flags+=(aarch64 x11 gl)
+    __default_cflags+=" -ftree-vectorize"
+    __default_asflags=""
 }
 
 function platform_tinker() {
