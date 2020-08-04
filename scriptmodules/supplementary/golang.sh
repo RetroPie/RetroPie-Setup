@@ -9,7 +9,7 @@
 
 rp_module_id="golang"
 rp_module_desc="Golang binary install"
-rp_module_license="BSD https://golang.org/LICENSE"
+rp_module_licence="BSD https://golang.org/LICENSE"
 rp_module_section="depends"
 rp_module_flags="noinstclean"
 
