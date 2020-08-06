@@ -198,13 +198,12 @@ def process_event(event):
     if js_type & JS_EVENT_INIT:
         return False
 
-    hex_chars = ""
+    hex_chars = None
 
     if js_type == JS_EVENT_BUTTON:
         if js_number < len(button_codes) and js_value == 1:
             hex_chars = button_codes[js_number]
-
-    if js_type == JS_EVENT_AXIS and js_number <= 7:
+    elif js_type == JS_EVENT_AXIS and js_number <= 7:
         if js_number % 2 == 0:
             if js_value <= JS_MIN * JS_THRESH:
                 hex_chars = axis_codes[0]
@@ -215,13 +214,10 @@ def process_event(event):
                 hex_chars = axis_codes[2]
             if js_value >= JS_MAX * JS_THRESH:
                 hex_chars = axis_codes[3]
-
-    if hex_chars:
-        return hex_chars
     else:
-        return None
+        return False
 
-    return False
+    return hex_chars
 
 js_fds = []
 tty_fd = []
