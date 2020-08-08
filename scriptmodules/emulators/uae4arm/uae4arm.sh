@@ -7,13 +7,20 @@ rom_path="${rom%/*}"
 rom_name="${rom##*/}"
 rom_bn="${rom_name%.*}"
 
+config_param="-config="
+is_amiberry=0
+if [[ "$emulator" == *amiberry* ]]; then
+    is_amiberry=1
+    config_param="--config "
+fi
+
 pushd "${0%/*}" >/dev/null
 if [[ -z "$rom" ]]; then
     "$emulator"
 elif [[ "$rom" == *.uae ]]; then
-    "$emulator" -config="$rom" -G
-elif [[ "$rom" == *.lha || "$rom" == *.cue ]]; then
-    "$emulator" -autoload="$rom" -G
+    "$emulator" ${config_param}"$rom" -G
+elif [[ "$is_amiberry" -eq 1 ]] && [[ "$rom" == *.lha || "$rom" == *.cue ]]; then
+    "$emulator" --autoload "$rom" -G
 else
     source "../../lib/archivefuncs.sh"
 
@@ -58,7 +65,7 @@ else
         config="conf/$config"
     fi
 
-    "$emulator" -config="$config" "${images[@]}" -G
+    "$emulator" ${config_param}"$config" "${images[@]}" -G
     archiveCleanup
 fi
 
