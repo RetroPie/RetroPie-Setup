@@ -35,7 +35,7 @@ function get_pkg_ver_sdl1() {
     elif [[ "$1" == "base" ]]; then
         echo "$basever"
     else
-        echo "$basever-$(($revision + 2))rpi"
+        echo "$basever-$(($revision + 3))rpi"
     fi
 }
 
