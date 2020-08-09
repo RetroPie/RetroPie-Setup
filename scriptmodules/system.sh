@@ -307,7 +307,13 @@ function get_rpi_video() {
 
     if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=(mesa kms)
-        [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __platform_flags+=" dispmanx"
+        if [[ -z "$__has_dispmanx" ]]; then
+            # in a chroot, unless __has_dispmanx is set, default to fkms (adding dispmanx flag)
+            [[ "$__chroot" -eq 1 ]] && __has_dispmanx=1
+            # if running fkms driver, add dispmanx flag
+            [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __has_dispmanx=1
+        fi
+        [[ "$__has_dispmanx" -eq 1 ]] && __platform_flags+=(dispmanx)
     else
         __platform_flags+=(videocore dispmanx)
     fi
