@@ -1019,7 +1019,12 @@ function config_dispmanx() {
     if [[ -f "$DISPMANX_CONF" ]]; then
         iniConfig " = " '"' "$DISPMANX_CONF"
         iniGet "$name"
-        [[ "$ini_value" == "1" ]] && COMMAND="SDL1_VIDEODRIVER=dispmanx $COMMAND"
+        if [[ "$ini_value" == "1" ]]; then
+            if [[ "$HAS_MODESET" == "kms" ]]; then
+                COMMAND="SDL_DISPMANX_WIDTH=${MODE_CUR[2]} SDL_DISPMANX_HEIGHT=${MODE_CUR[3]} $COMMAND"
+            fi
+            COMMAND="SDL1_VIDEODRIVER=dispmanx $COMMAND"
+        fi
     fi
 }
 
