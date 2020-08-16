@@ -386,6 +386,13 @@ function rpSwap() {
 function gitPullOrClone() {
     local dir="$1"
     local repo="$2"
+
+    # temporarily disable all libretro repos due to libretro github being hacked
+    if [[ "$repo" == */libretro/* ]]; then
+        md_ret_errors+=("Libretro cores are currently disabled due to a hack which has caused damage to their repositories.")
+        return 1
+    fi
+
     local branch="$3"
     [[ -z "$branch" ]] && branch="master"
     local commit="$4"
