@@ -54,4 +54,8 @@ function configure_openmsx() {
 
     addEmulator 0 "$md_id" "msx" "$md_inst/bin/openmsx %ROM%"
     addSystem "msx"
+
+    mkUserDir "$home/.openMSX/share/systemroms"
+    chown -R "$user" "$home/.openMSX"
+    moveConfigDir "$home/.openMSX/share/systemroms" "$biosdir/openmsx"
 }
