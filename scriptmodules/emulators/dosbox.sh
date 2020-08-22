@@ -134,13 +134,11 @@ _EOF_
                 iniSet "mididevice" "alsa"
                 iniSet "midiconfig" "128:0"
             fi
-            if isPlatform "mesa"; then
-                iniSet "fullscreen" "true"
-                iniSet "fullresolution" "desktop"
-                iniSet "output" "overlay"
-            fi
         fi
     fi
+
+    # default to dispmanx on rpi4/kms
+    isPlatform "mesa" && setDispmanx "$md_id" 1
 
     moveConfigDir "$home/.$md_id" "$md_conf_root/pc"
 
