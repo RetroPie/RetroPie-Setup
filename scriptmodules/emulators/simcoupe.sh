@@ -21,7 +21,12 @@ function depends_simcoupe() {
 }
 
 function sources_simcoupe() {
-    gitPullOrClone "$md_build" https://github.com/simonowen/simcoupe.git
+    local branch="master"
+    # latest simcoupe requires cmake 3.8.2 - on Stretch older versions throw a cmake error about CXX17
+    # dialect support but actually seem to build ok. Lock systems with older cmake to 20200711 tag,
+    # which builds ok on Raspbian Stretch and hopefully Ubuntu 18.04.
+    hasPackage cmake 3.8.2 lt && branch="20200711"
+    gitPullOrClone "$md_build" https://github.com/simonowen/simcoupe.git "$branch"
 }
 
 function build_simcoupe() {
