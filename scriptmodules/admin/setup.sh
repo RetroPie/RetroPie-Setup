@@ -82,9 +82,6 @@ function depends_setup() {
         printMsgs "dialog" "Raspbian/Debian Jessie and versions of Ubuntu below 18.04 are no longer supported.\n\nPlease install RetroPie from a fresh image (or if running Ubuntu, upgrade your OS)."
     fi
 
-    # warn about libretro hack / possible broken packages
-    printMsgs "dialog" "On the 16th August 2020, the libretro build server and GitHub project were hacked and many of the repositories were wiped. Some of the libretro packages for RetroPie may fail to build from source currently, until all the repositories have been restored.\n\nRetroPie binaries are unaffected.\n\nSee https://www.libretro.com/index.php/hacker-vandalised-our-buildbot-and-github-organization/ for more information."
-
     # make sure user has the correct group permissions
     if ! isPlatform "x11"; then
         local group
