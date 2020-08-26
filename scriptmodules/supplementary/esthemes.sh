@@ -241,6 +241,7 @@ function gui_esthemes() {
         'dionmunk clean'
         'c64-dev epicnoir'
         'AndreaMav arcade-crt'
+        'AndreaMav es-theme-arcade-crt2020'
         'Zechariel VectorPie'
     )
     while true; do
