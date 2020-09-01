@@ -96,7 +96,13 @@ function chroot_build_builder() {
         [[ ! -d "$md_build/$dist" ]] && rp_callModule image create_chroot "$dist" "$md_build/$dist"
         if [[ ! -d "$md_build/$dist/home/pi/RetroPie-Setup" ]]; then
             sudo -u $user git clone "$home/RetroPie-Setup" "$md_build/$dist/home/pi/RetroPie-Setup"
-            rp_callModule image chroot "$md_build/$dist" bash -c "sudo apt-get update; sudo apt-get install -y git"
+            gpg --export-secret-keys "$__gpg_signing_key" >"$md_build/$dist/retropie.key"
+            rp_callModule image chroot "$md_build/$dist" bash -c "\
+                sudo gpg --import "/retropie.key"; \
+                sudo rm "/retropie.key"; \
+                sudo apt-get update; \
+                sudo apt-get install -y git; \
+                "
         else
             sudo -u $user git -C "$md_build/$dist/home/pi/RetroPie-Setup" pull
         fi
