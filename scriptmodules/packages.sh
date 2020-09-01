@@ -170,7 +170,7 @@ function rp_callModule() {
             ;;
         # create binary archive
         create_bin)
-            rp_createBin
+            rp_createBin || return 1
             return 0
             ;;
         # echo module help to console
@@ -427,10 +427,33 @@ function rp_getInstallPath() {
 
 function rp_installBin() {
     rp_hasBinaries || fatalError "There are no binary archives for platform $__platform"
-    local archive="$md_type/$md_id.tar.gz";
+    local archive="$md_id.tar.gz";
     local dest="$rootdir/$md_type"
-    mkdir -p "$dest"
-    wget -O- -q "$__binary_url/$archive" | tar -xvz -C "$dest"
+
+    local cmd_out
+
+    # create temporary folder
+    local tmp=$(mktemp -d)
+
+    if download "$__binary_url/$md_type/$archive.asc" "$tmp/$archive.asc"; then
+        if download "$__binary_url/$md_type/$archive" "$tmp/$archive"; then
+            cmd_out="$(gpg --verify "$tmp/$archive.asc" 2>&1)"
+            if [[ "$?" -eq 0 ]]; then
+                mkdir -p "$dest"
+                if ! tar -xvf "$tmp/$archive" -C "$dest"; then
+                    md_ret_errors+=("Archive $archive failed to unpack correctly to $dest")
+                else
+                    rm -rf "$tmp"
+                    return 0
+                fi
+            else
+                md_ret_errors+=("Archive $archive failed signature check:\n\n$cmd_out")
+            fi
+        fi
+    fi
+
+    rm -rf "$tmp"
+    return 1
 }
 
 function rp_createBin() {
@@ -448,10 +471,16 @@ function rp_createBin() {
 
     local archive="$md_id.tar.gz"
     local dest="$__tmpdir/archives/$__binary_path/$md_type"
-    rm -f "$dest/$archive"
     mkdir -p "$dest"
-    tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"
-    chown $user:$user "$dest/$archive"
+    rm -f "$dest/$archive"
+    if tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"; then
+        if gpg --default-key "$__gpg_signing_key" --detach-sign --armor --yes "$dest/$archive"; then
+            chown $user:$user "$dest/$archive" "$dest/$archive.asc"
+            return 0
+        fi
+    fi
+    rm -f "$dest/$archive" "$dest/$archive.asc"
+    return 1
 }
 
 function rp_hasModule() {
