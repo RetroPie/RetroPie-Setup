@@ -242,6 +242,8 @@ function gui_esthemes() {
         'c64-dev epicnoir'
         'AndreaMav arcade-crt'
         'Zechariel VectorPie'
+        'KALEL1981 nes-box'
+        'KALEL1981 super-arcade1up-5x4'
     )
     while true; do
         local theme
