@@ -27,7 +27,7 @@ function sources_vice() {
 }
 
 function build_vice() {
-    local params=(--enable-sdlui2 --without-oss --enable-ethernet --enable-x64 --disable-pdf-docs)
+    local params=(--enable-sdlui2 --without-oss --enable-ethernet --enable-x64 --disable-pdf-docs --with-fastsid)
     ! isPlatform "x11" && params+=(--disable-catweasel --without-pulse)
     ./autogen.sh
     ./configure --prefix="$md_inst" "${params[@]}"
