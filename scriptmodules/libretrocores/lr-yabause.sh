@@ -21,13 +21,12 @@ function sources_lr-yabause() {
 }
 
 function build_lr-yabause() {
+    local params=()
     cd yabause/src/libretro
-    make clean
-    if isPlatform "neon"; then
-        make platform=armvneonhardfloat
-    else
-        make
-    fi
+    isPlatform "neon" && params+=(platform=armvneonhardfloat)
+    ! isPlatform "x86" && params+=(HAVE_SSE=0)
+    make "${params[@]}" clean
+    make "${params[@]}"
     md_ret_require="$md_build/yabause/src/libretro/yabause_libretro.so"
 }
 
