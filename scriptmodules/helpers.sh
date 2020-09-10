@@ -1528,3 +1528,18 @@ function adminRsync() {
 
     rsync -av --delay-updates -e "ssh -p $remote_port" "${params[@]}" "$src" "$remote_user@$remote_host:$dest"
 }
+
+## @fn signFile()
+## @param file path to file to sign
+## @brief signs file with $__gpg_signing_key
+## @details signs file with $__gpg_signing_key creating corresponding .asc file in the same folder
+function signFile() {
+    local file="$1"
+    local cmd_out
+    cmd_out=$(gpg --default-key "$__gpg_signing_key" --detach-sign --armor --yes "$1" 2>&1)
+    if [[ "$?" -ne 0 ]]; then
+        md_ret_errors+=("Failed to sign $1\n\n$cmd_out")
+        return 1
+    fi
+    return 0
+}
