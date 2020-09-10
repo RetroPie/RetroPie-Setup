@@ -987,13 +987,16 @@ function applyPatch() {
 
 ## @fn download()
 ## @param url url of file
-## @param dest destination file
+## @param dest destination name (optional)
 ## @brief Download a file
-## @details Download a file.
+## @details Download a file - if the dest parameter is ommitted, the file will be downloaded to the current directory
 ## @retval 0 on success
 function download() {
     local url="$1"
     local dest="$2"
+
+    # if no destination, get the basename from the url (supported by GNU basename)
+    [[ -z "$dest" ]] && dest="${PWD}/$(basename "$url")"
 
     # set up additional file descriptor for stdin
     exec 3>&1
@@ -1024,14 +1027,18 @@ function download() {
 
 ## @fn downloadAndVerify()
 ## @param url url of file
-## @param dest destination file
+## @param dest destination file (optional)
 ## @brief Download a file and a corresponding .asc signature and verify the contents
 ## @details Download a file and a corresponding .asc signature and verify the contents.
 ## The .asc file will be downloaded to verify the file, but will be removed after downloading.
+## If the dest parameter is omitted, the file will be downloaded to the current directory
 ## @retval 0 on success
 function downloadAndVerify() {
     local url="$1"
     local dest="$2"
+
+    # if no destination, get the basename from the url (supported by GNU basename)
+    [[ -z "$dest" ]] && dest="${PWD}/$(basename "$url")"
 
     local cmd_out
     local ret=1
