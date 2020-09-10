@@ -133,7 +133,7 @@ function depends_attractmode() {
         libfontconfig1-dev
     )
     isPlatform "videocore" && depends+=(libraspberrypi-dev)
-    isPlatform "kms" && depends+=(libegl1-mesa-dev libgl-dev libdrm-dev libgbm-dev)
+    isPlatform "kms" && depends+=(libegl1-mesa-dev libgl-dev libglu1-mesa-dev libdrm-dev libgbm-dev)
     isPlatform "x11" && depends+=(libsfml-dev)
     getDepends "${depends[@]}"
 }
