@@ -467,7 +467,7 @@ function rp_createBin() {
     mkdir -p "$dest"
     rm -f "$dest/$archive"
     if tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"; then
-        if gpg --default-key "$__gpg_signing_key" --detach-sign --armor --yes "$dest/$archive"; then
+        if signFile "$dest/$archive"; then
             chown $user:$user "$dest/$archive" "$dest/$archive.asc"
             return 0
         fi
