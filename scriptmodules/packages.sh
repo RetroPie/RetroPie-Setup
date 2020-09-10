@@ -435,20 +435,13 @@ function rp_installBin() {
     # create temporary folder
     local tmp=$(mktemp -d)
 
-    if download "$__binary_url/$md_type/$archive.asc" "$tmp/$archive.asc"; then
-        if download "$__binary_url/$md_type/$archive" "$tmp/$archive"; then
-            cmd_out="$(gpg --verify "$tmp/$archive.asc" 2>&1)"
-            if [[ "$?" -eq 0 ]]; then
-                mkdir -p "$dest"
-                if ! tar -xvf "$tmp/$archive" -C "$dest"; then
-                    md_ret_errors+=("Archive $archive failed to unpack correctly to $dest")
-                else
-                    rm -rf "$tmp"
-                    return 0
-                fi
-            else
-                md_ret_errors+=("Archive $archive failed signature check:\n\n$cmd_out")
-            fi
+    if downloadAndVerify "$__binary_url/$md_type/$archive" "$tmp/$archive"; then
+        mkdir -p "$dest"
+        if tar -xvf "$tmp/$archive" -C "$dest"; then
+            rm -rf "$tmp"
+            return 0
+        else
+            md_ret_errors+=("Archive $archive failed to unpack correctly to $dest")
         fi
     fi
 
