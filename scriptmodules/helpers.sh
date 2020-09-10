@@ -1022,6 +1022,31 @@ function download() {
     return 0
 }
 
+## @fn downloadAndVerify()
+## @param url url of file
+## @param dest destination file
+## @brief Download a file and a corresponding .asc signature and verify the contents
+## @details Download a file and a corresponding .asc signature and verify the contents.
+## The .asc file will be downloaded to verify the file, but will be removed after downloading.
+## @retval 0 on success
+function downloadAndVerify() {
+    local url="$1"
+    local dest="$2"
+
+    local cmd_out
+    local ret=1
+    if download "${url}.asc" "${dest}.asc"; then
+        if download "$url" "$dest"; then
+            cmd_out="$(gpg --verify "${dest}.asc" 2>&1)"
+            ret="$?"
+            if [[ "$ret" -ne 0 ]]; then
+                md_ret_errors+=("$dest failed signature check:\n\n$cmd_out")
+            fi
+        fi
+    fi
+    return "$ret"
+}
+
 ## @fn downloadAndExtract()
 ## @param url url of archive
 ## @param dest destination folder for the archive
