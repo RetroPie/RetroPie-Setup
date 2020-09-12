@@ -377,11 +377,26 @@ function get_platform() {
                 __platform="armv7-mali"
                 ;;
             *)
-                case $architecture in
-                    i686|x86_64|amd64)
-                        __platform="x86"
-                        ;;
-                esac
+                # jetson nano and tegra x1 can be identified via /sys/firmware/devicetree/base/model
+                local model_path="/sys/firmware/devicetree/base/model"
+                if [[ -f "$model_path" ]]; then
+                    # ignore end null to avoid bash warning
+                    local model=$(tr -d '\0' <$model_path)
+                    case "$model" in
+                        "NVIDIA Jetson Nano Developer Kit")
+                            __platform="jetson-nano"
+                            ;;
+                        icosa)
+                            __platform="tegra-x1"
+                            ;;
+                    esac
+                else
+                    case $architecture in
+                        i686|x86_64|amd64)
+                            __platform="x86"
+                            ;;
+                    esac
+                fi
                 ;;
         esac
     fi
@@ -471,6 +486,15 @@ function platform_odroid-xu() {
     # required for mali-fbdev headers to define GL functions
     __default_cflags=" -DGL_GLEXT_PROTOTYPES"
     __platform_flags+=(arm armv7 neon mali gles)
+}
+
+function platform_tegra-x1() {
+    __default_cpu_flags="-mcpu=cortex-a57"
+    __platform_flags+=(aarch64 x11 gl)
+}
+
+function platform_jetson-nano() {
+    platform_tegra-x1
 }
 
 function platform_tinker() {
