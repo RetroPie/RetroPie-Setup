@@ -470,7 +470,7 @@ function platform_odroid-xu() {
     __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     # required for mali-fbdev headers to define GL functions
     __default_cflags=" -DGL_GLEXT_PROTOTYPES"
-    __platform_flags="arm armv7 neon mali gles"
+    __platform_flags+=(arm armv7 neon mali gles)
 }
 
 function platform_tinker() {
