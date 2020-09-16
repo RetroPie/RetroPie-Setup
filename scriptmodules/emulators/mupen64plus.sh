@@ -100,7 +100,7 @@ function build_mupen64plus() {
             isPlatform "armv7" && params+=("HOST_CPU=armv7")
             isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
 
-            [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
+            [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/" "CC=gcc" "CXX=g++")
             make -C "$dir/projects/unix" "${params[@]}" clean
             # temporarily disable distcc due to segfaults with cross compiler and lto
             DISTCC_HOSTS="" make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -O3 -flto"
