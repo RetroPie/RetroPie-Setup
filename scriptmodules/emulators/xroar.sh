@@ -47,8 +47,9 @@ function configure_xroar() {
     mkdir -p "$md_inst/share/xroar"
     ln -snf "$biosdir" "$md_inst/share/xroar/roms"
 
-    local params=(-fs)
+    local params=()
     ! isPlatform "x11" && params+=(-vo sdl -ccr simple)
+    ! isPlatform "videocore" && params+=(-fs)
     addEmulator 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar ${params[*]} -machine dragon32 -run %ROM%"
     addEmulator 1 "$md_id-cocous" "coco" "$md_inst/bin/xroar ${params[*]} -machine cocous -run %ROM%"
     addEmulator 0 "$md_id-coco" "coco" "$md_inst/bin/xroar ${params[*]} -machine coco -run %ROM%"
