@@ -985,6 +985,75 @@ function applyPatch() {
     return 0
 }
 
+## @fn download()
+## @param url url of file
+## @param dest destination name (optional)
+## @brief Download a file
+## @details Download a file - if the dest parameter is ommitted, the file will be downloaded to the current directory
+## @retval 0 on success
+function download() {
+    local url="$1"
+    local dest="$2"
+
+    # if no destination, get the basename from the url (supported by GNU basename)
+    [[ -z "$dest" ]] && dest="${PWD}/$(basename "$url")"
+
+    # set up additional file descriptor for stdin
+    exec 3>&1
+
+    local cmd_err
+    local ret
+    # get the last non zero exit status (ignoring tee)
+    set -o pipefail
+    printMsgs "console" "Downloading $url ..."
+    # capture stderr - while passing both stdout and stderr to terminal
+    # wget by default outputs the progress to stderr - if we force it to log to stdout, we get no useful error msgs
+    # however this code will be useful when switching away from wget to curl. For now it's best left with -nv
+    # no progress, but less log spam, and output can be useful on failure
+    cmd_err=$(wget -nv -O"$dest" "$url" 2>&1 1>&3 | tee /dev/stderr)
+    ret="$?"
+    set +o pipefail
+    # remove stdin copy
+    exec 3>&-
+
+    # if download failed, remove file, log error and return error code
+    if [[ "$ret" -ne 0 ]]; then
+        rm "$dest"
+        md_ret_errors+=("URL $url failed to download.\n\n$cmd_err")
+        return "$ret"
+    fi
+    return 0
+}
+
+## @fn downloadAndVerify()
+## @param url url of file
+## @param dest destination file (optional)
+## @brief Download a file and a corresponding .asc signature and verify the contents
+## @details Download a file and a corresponding .asc signature and verify the contents.
+## The .asc file will be downloaded to verify the file, but will be removed after downloading.
+## If the dest parameter is omitted, the file will be downloaded to the current directory
+## @retval 0 on success
+function downloadAndVerify() {
+    local url="$1"
+    local dest="$2"
+
+    # if no destination, get the basename from the url (supported by GNU basename)
+    [[ -z "$dest" ]] && dest="${PWD}/$(basename "$url")"
+
+    local cmd_out
+    local ret=1
+    if download "${url}.asc" "${dest}.asc"; then
+        if download "$url" "$dest"; then
+            cmd_out="$(gpg --verify "${dest}.asc" 2>&1)"
+            ret="$?"
+            if [[ "$ret" -ne 0 ]]; then
+                md_ret_errors+=("$dest failed signature check:\n\n$cmd_out")
+            fi
+        fi
+    fi
+    return "$ret"
+}
+
 ## @fn downloadAndExtract()
 ## @param url url of archive
 ## @param dest destination folder for the archive
@@ -1458,4 +1527,19 @@ function adminRsync() {
     [[ -z "$remote_port" ]] && remote_port=22
 
     rsync -av --delay-updates -e "ssh -p $remote_port" "${params[@]}" "$src" "$remote_user@$remote_host:$dest"
+}
+
+## @fn signFile()
+## @param file path to file to sign
+## @brief signs file with $__gpg_signing_key
+## @details signs file with $__gpg_signing_key creating corresponding .asc file in the same folder
+function signFile() {
+    local file="$1"
+    local cmd_out
+    cmd_out=$(gpg --default-key "$__gpg_signing_key" --detach-sign --armor --yes "$1" 2>&1)
+    if [[ "$?" -ne 0 ]]; then
+        md_ret_errors+=("Failed to sign $1\n\n$cmd_out")
+        return 1
+    fi
+    return 0
 }
