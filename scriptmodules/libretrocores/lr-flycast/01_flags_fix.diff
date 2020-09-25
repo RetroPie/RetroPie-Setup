@@ -1,8 +1,8 @@
 diff --git a/Makefile b/Makefile
-index 36aacd6b..3226c1f3 100644
+index 2c477b4d..92a67b62 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -45,8 +45,6 @@ LDFLAGS  :=
+@@ -44,8 +44,6 @@ LDFLAGS  :=
  LDFLAGS_END :=
  INCFLAGS :=
  LIBS     :=
@@ -11,18 +11,18 @@ index 36aacd6b..3226c1f3 100644
  
  GIT_VERSION := " $(shell git rev-parse --short HEAD || echo unknown)"
  ifneq ($(GIT_VERSION)," unknown")
-@@ -196,6 +194,7 @@ else ifneq (,$(findstring rpi,$(platform)))
+@@ -208,6 +206,7 @@ else ifneq (,$(findstring rpi,$(platform)))
  		endif
  		CORE_DEFINES += -DLOW_END
  	endif
 +	LDFLAGS += $(CFLAGS)
- 	PLATFORM_EXT := unix
- 	WITH_DYNAREC=arm
- 	HAVE_GENERIC_JIT = 0
-@@ -892,7 +891,7 @@ else
- 	ifneq (,$(findstring msvc,$(platform)))
+ 
+ # Classic Platforms #####################
+ # Platform affix = classic_<ISA>_<µARCH>
+@@ -894,7 +893,7 @@ else
+ 	else ifneq (,$(findstring classic_arm,$(platform)))
  		OPTFLAGS       := -O2
- 	else ifneq ($(platform), classic_armv7_a7)
+ 	else ifeq (,$(findstring classic_arm,$(platform)))
 -		OPTFLAGS       := -O3
 +		OPTFLAGS       := -O2
  	endif
