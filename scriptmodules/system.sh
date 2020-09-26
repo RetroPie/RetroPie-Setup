@@ -494,7 +494,7 @@ function platform_odroid-xu() {
 }
 
 function platform_tegra-x1() {
-    __default_cpu_flags="-mcpu=cortex-a57"
+    __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a57 -mcpu=cortex-a57+crc+fp+simd"
     __platform_flags+=(aarch64 x11 gl)
 }
 
