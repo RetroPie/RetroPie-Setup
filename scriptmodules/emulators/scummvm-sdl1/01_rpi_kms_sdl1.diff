@@ -2,7 +2,7 @@ diff --git a/configure b/configure
 index b7654c4..13799c5 100755
 --- a/configure
 +++ b/configure
-@@ -3146,12 +3146,12 @@ if test -n "$_host"; then
+@@ -3274,12 +3274,12 @@ if test -n "$_host"; then
  			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
  			# since SDL2 manages dispmanx/GLES2 very well internally.
  			# SDL1 is bit-rotten on this platform.
