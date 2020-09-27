@@ -34,15 +34,12 @@ function depends_scummvm() {
 }
 
 function sources_scummvm() {
-    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git v2.1.1
-    if isPlatform "rpi"; then
-        applyPatch "$md_data/01_rpi_enable_scalers.diff"
-    fi
+    gitPullOrClone "$md_build" https://github.com/scummvm/scummvm.git v2.2.0
 }
 
 function build_scummvm() {
     local params=(
-        --enable-release --enable-vkeybd --enable-keymapper
+        --enable-release --enable-vkeybd
         --disable-debug --disable-eventrecorder --prefix="$md_inst"
     )
     isPlatform "rpi" && isPlatform "32bit" && params+=(--host=raspberrypi)
