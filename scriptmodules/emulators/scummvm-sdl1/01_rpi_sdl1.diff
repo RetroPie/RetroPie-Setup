@@ -1,6 +1,6 @@
 --- a/configure	2018-08-22 14:35:59.974063916 +0000
 +++ b/configure	2018-08-22 14:36:36.379862346 +0000
-@@ -2917,7 +2917,7 @@
+@@ -3274,7 +3274,7 @@
  			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
  			# since SDL2 manages dispmanx/GLES2 very well internally.
  			# SDL1 is bit-rotten on this platform.
