@@ -49,8 +49,18 @@ function depends_sdl1() {
 }
 
 function sources_sdl1() {
+    local files=()
+    if compareVersions "$__os_debian_ver" eq 9; then
+        files+=(libsdl1.2_$(get_pkg_ver_sdl1 base).orig.tar.xz)
+    else
+        files+=(libsdl1.2_$(get_pkg_ver_sdl1 base).orig.tar.gz)
+    fi
+    files+=(
+        libsdl1.2_$(get_pkg_ver_sdl1 source).dsc
+        libsdl1.2_$(get_pkg_ver_sdl1 source).debian.tar.xz
+    )
     local file
-    for file in libsdl1.2_$(get_pkg_ver_sdl1 base).orig.tar.gz libsdl1.2_$(get_pkg_ver_sdl1 source).dsc libsdl1.2_$(get_pkg_ver_sdl1 source).debian.tar.xz; do
+    for file in "${files[@]}"; do
         download "http://mirrordirector.raspbian.org/raspbian/pool/main/libs/libsdl1.2/$file" "$file"
     done
     dpkg-source -x libsdl1.2_$(get_pkg_ver_sdl1 source).dsc
