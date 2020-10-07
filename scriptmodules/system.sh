@@ -76,7 +76,7 @@ function conf_binary_vars() {
 
     [[ -z "$__gpg_signing_key" ]] && __gpg_signing_key="retropieproject@gmail.com"
     if ! gpg --list-keys "$__gpg_signing_key" &>/dev/null; then
-        gpg --keyserver keyserver.ubuntu.com --recv-keys DC9D77FF8208FFC51D8F50CCF1B030906A3B0D31
+        gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DC9D77FF8208FFC51D8F50CCF1B030906A3B0D31
     fi
 }
 
