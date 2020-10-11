@@ -23,7 +23,7 @@ function depends_cannonball() {
 }
 
 function sources_cannonball() {
-    gitPullOrClone "$md_build" https://github.com/djyt/cannonball.git
+    gitPullOrClone "$md_build" https://github.com/djyt/cannonball.git "master" "2b3839dd34c1b4263ec5006fdeeb1ae2689cd401"
     sed -i "s/-march=armv6 -mfpu=vfp -mfloat-abi=hard//" "$md_build/cmake/sdl2_rpi.cmake" "$md_build/cmake/sdl2gles_rpi.cmake"
 }
 
