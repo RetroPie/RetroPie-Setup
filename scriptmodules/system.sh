@@ -431,7 +431,7 @@ function set_platform_defaults() {
 }
 
 function platform_rpi1() {
-    __default_cpu_flags="-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
+    __default_cpu_flags="-mcpu=arm1176jzf-s -mfpu=vfp"
     __platform_flags+=(arm armv6 rpi gles)
     # if building in a chroot, what cpu should be set by qemu
     # make chroot identify as arm6l
@@ -439,7 +439,7 @@ function platform_rpi1() {
 }
 
 function platform_rpi2() {
-    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4"
     __platform_flags+=(arm armv7 neon rpi gles)
     __qemu_cpu=cortex-a7
 }
@@ -448,7 +448,7 @@ function platform_rpi2() {
 # could improve performance with the compiler options below but needs further testing
 function platform_rpi3() {
     if isPlatform "32bit"; then
-        __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
+        __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
         __platform_flags+=(arm armv8 neon)
     else
         __default_cpu_flags="-mcpu=cortex-a53"
@@ -460,7 +460,7 @@ function platform_rpi3() {
 
 function platform_rpi4() {
     if isPlatform "32bit"; then
-        __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
+        __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8"
         __platform_flags+=(arm armv8 neon)
     else
         __default_cpu_flags="-mcpu=cortex-a72"
@@ -470,7 +470,7 @@ function platform_rpi4() {
 }
 
 function platform_odroid-c1() {
-    __default_cpu_flags="-marm -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-marm -mcpu=cortex-a5 -mfpu=neon-vfpv4"
     __platform_flags+=(arm armv7 neon mali gles)
     __qemu_cpu=cortex-a9
 }
@@ -487,7 +487,7 @@ function platform_odroid-c2() {
 }
 
 function platform_odroid-xu() {
-    __default_cpu_flags="-marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-marm -mcpu=cortex-a7 -mfpu=neon-vfpv4"
     # required for mali-fbdev headers to define GL functions
     __default_cflags=" -DGL_GLEXT_PROTOTYPES"
     __platform_flags+=(arm armv7 neon mali gles)
@@ -503,7 +503,7 @@ function platform_jetson-nano() {
 }
 
 function platform_tinker() {
-    __default_cpu_flags="-marm -march=armv7-a -mtune=cortex-a17 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-marm -march=armv7-a -mtune=cortex-a17 -mfpu=neon-vfpv4"
     # required for mali headers to define GL functions
     __default_cflags=" -DGL_GLEXT_PROTOTYPES"
     __platform_flags+=(arm armv7 neon kms gles)
@@ -524,12 +524,12 @@ function platform_generic-x11() {
 }
 
 function platform_armv7-mali() {
-    __default_cpu_flags="-march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-march=armv7-a -mfpu=neon-vfpv4"
     __platform_flags+=(arm armv7 neon mali gles)
 }
 
 function platform_imx6() {
-    __default_cpu_flags="-march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard"
+    __default_cpu_flags="-march=armv7-a -mfpu=neon -mtune=cortex-a9"
     __platform_flags+=(arm armv7 neon)
 }
 
