@@ -470,14 +470,14 @@ function platform_rpi4() {
 }
 
 function platform_odroid-c1() {
-    __default_cpu_flags="-mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-marm -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     __platform_flags+=(arm armv7 neon mali gles)
     __qemu_cpu=cortex-a9
 }
 
 function platform_odroid-c2() {
     if isPlatform "32bit"; then
-        __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
+        __default_cpu_flags="-marm -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
         __platform_flags+=(arm armv8 neon)
     else
         __default_cpu_flags="-march=native"
@@ -487,7 +487,7 @@ function platform_odroid-c2() {
 }
 
 function platform_odroid-xu() {
-    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
     # required for mali-fbdev headers to define GL functions
     __default_cflags=" -DGL_GLEXT_PROTOTYPES"
     __platform_flags+=(arm armv7 neon mali gles)
