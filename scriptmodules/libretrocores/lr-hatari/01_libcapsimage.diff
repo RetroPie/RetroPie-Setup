@@ -2,12 +2,12 @@ diff --git a/Makefile.libretro b/Makefile.libretro
 index 58e33e4..eb654c6 100755
 --- a/Makefile.libretro
 +++ b/Makefile.libretro
-@@ -212,7 +212,7 @@ $(TARGET): $(OBJECTS)
+@@ -225,7 +225,7 @@ $(TARGET): $(OBJECTS)
  ifeq ($(STATIC_LINKING_LINK),1)
  	$(AR) rcs $@ $(OBJECTS) 
  else
--	$(CC) $(CFLAGS) $(INCFLAGS) $(LDFLAGS) $(OBJECTS) -o $@ -lm -lz $(SHARED)
-+	$(CC) $(CFLAGS) $(INCFLAGS) $(LDFLAGS) $(OBJECTS) -o $@ -lm -lz $(SHARED) $(CAPSIMG_LDFLAGS)
+-	$(CC) $(CFLAGS) $(INCFLAGS) $(LDFLAGS) $(OBJECTS) -o $@ -lm $(ZLIB) $(SHARED)
++	$(CC) $(CFLAGS) $(INCFLAGS) $(LDFLAGS) $(OBJECTS) -o $@ -lm $(ZLIB) $(SHARED) $(CAPSIMG_LDFLAGS)
  endif
  
  %.o: %.c
