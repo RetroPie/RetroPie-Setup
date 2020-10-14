@@ -110,7 +110,7 @@ function conf_build_vars() {
     [[ -z "$__cpu_flags" ]] && __cpu_flags="$__default_cpu_flags"
 
     # if default cxxflags is empty, use our default cflags
-    [[ -z "$__default_cxxflags" ]] && __default_cxx_flags="$__default_cflags"
+    [[ -z "$__default_cxxflags" ]] && __default_cxxflags="$__default_cflags"
 
     # add our cpu and optimisation flags
     __default_cflags+=" $__cpu_flags $__opt_flags"
@@ -490,7 +490,6 @@ function platform_odroid-xu() {
     __default_cpu_flags="-marm -mcpu=cortex-a7 -mfpu=neon-vfpv4"
     # required for mali-fbdev headers to define GL functions
     __default_cflags="-DGL_GLEXT_PROTOTYPES"
-    __default_cxxflags="$__default_cflags"
     __platform_flags+=(arm armv7 neon mali gles)
 }
 
@@ -507,7 +506,6 @@ function platform_tinker() {
     __default_cpu_flags="-marm -mcpu=cortex-a17 -mfpu=neon-vfpv4"
     # required for mali headers to define GL functions
     __default_cflags="-DGL_GLEXT_PROTOTYPES"
-    __default_cxxflags="$__default_cflags"
     __platform_flags+=(arm armv7 neon kms gles)
 }
 
