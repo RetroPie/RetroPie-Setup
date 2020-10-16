@@ -20,8 +20,12 @@ function sources_lr-vecx() {
 }
 
 function build_lr-vecx() {
+    local params
+    isPlatform "videocore" && params+="platform=rpi"
+    isPlatform "gles" && params+=" HAS_GLES=1"
+
     make clean
-    make -f Makefile.libretro
+    make -f Makefile.libretro $params
     md_ret_require="$md_build/vecx_libretro.so"
 }
 
