@@ -39,7 +39,11 @@ function build_residualvm() {
         --disable-debug
         --prefix="$md_inst"
     )
-    ! isPlatform "x11" && params+=(--force-opengles2)
+    if isPlatform "gles"; then
+        params+=(--force-opengles2)
+        # wintermute fails to build on rpi/opegles - disable for now
+        params+=(--disable-engine=wintermute)
+    fi
     if isPlatform "videocore"; then
         CXXFLAGS+=" -I/opt/vc/include" LDFLAGS+=" -L/opt/vc/lib" ./configure "${params[@]}"
     else
