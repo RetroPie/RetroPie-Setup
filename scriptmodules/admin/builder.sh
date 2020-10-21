@@ -46,9 +46,8 @@ function module_builder() {
         # initial clean in case anything was in the build folder when calling
         local mode
         for mode in clean remove depends sources build install create_bin clean remove "depends remove"; do
-            rp_callModule "$md_id" $mode
-            # no module found - skip to next module
-            [[ $? -eq 2 ]] && break
+            # continue to next module if not available or an error occurs
+            rp_callModule "$md_id" $mode || break
         done
     done
     return 0
