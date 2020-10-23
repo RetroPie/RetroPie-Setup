@@ -245,6 +245,7 @@ function gui_esthemes() {
         'Zechariel VectorPie'
         'KALEL1981 nes-box'
         'KALEL1981 super-arcade1up-5x4'
+        'Elratauru angular-artwork'
     )
     while true; do
         local theme
