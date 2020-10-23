@@ -369,8 +369,11 @@ function get_platform() {
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
                 __platform="imx6"
                 ;;
-            ODROID-XU[34])
+            ODROID-XU)
                 __platform="odroid-xu"
+                ;;
+            ODROID-XU[34])
+                __platform="odroid-xu3"
                 ;;
             "Rockchip (Device Tree)")
                 __platform="tinker"
@@ -491,6 +494,13 @@ function platform_odroid-xu() {
     # required for mali-fbdev headers to define GL functions
     __default_cflags="-DGL_GLEXT_PROTOTYPES"
     __platform_flags+=(arm armv7 neon mali gles)
+}
+
+function platform_odroid-xu3() {
+    __default_cpu_flags="-marm -mcpu=cortex-a7 -mfpu=neon-vfpv4"
+    # required for mali-fbdev headers to define GL functions
+    __default_cflags="-DGL_GLEXT_PROTOTYPES"
+    __platform_flags+=(arm armv7 neon mali gles gles3)
 }
 
 function platform_tegra-x1() {
