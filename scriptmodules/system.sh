@@ -73,6 +73,11 @@ function conf_binary_vars() {
     __binary_url="$__binary_base_url/$__binary_path"
 
     __archive_url="https://files.retropie.org.uk/archives"
+
+    [[ -z "$__gpg_signing_key" ]] && __gpg_signing_key="retropieproject@gmail.com"
+    if ! gpg --list-keys "$__gpg_signing_key" &>/dev/null; then
+        gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DC9D77FF8208FFC51D8F50CCF1B030906A3B0D31
+    fi
 }
 
 function conf_build_vars() {
@@ -105,7 +110,7 @@ function conf_build_vars() {
     [[ -z "$__cpu_flags" ]] && __cpu_flags="$__default_cpu_flags"
 
     # if default cxxflags is empty, use our default cflags
-    [[ -z "$__default_cxxflags" ]] && __default_cxx_flags="$__default_cflags"
+    [[ -z "$__default_cxxflags" ]] && __default_cxxflags="$__default_cflags"
 
     # add our cpu and optimisation flags
     __default_cflags+=" $__cpu_flags $__opt_flags"
@@ -281,7 +286,7 @@ function get_os_version() {
 }
 
 function get_retropie_depends() {
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python3-pyudev ca-certificates)
+    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python3-pyudev ca-certificates dirmngr)
 
     [[ -n "$DISTCC_HOSTS" ]] && depends+=(distcc)
 
@@ -377,11 +382,26 @@ function get_platform() {
                 __platform="armv7-mali"
                 ;;
             *)
-                case $architecture in
-                    i686|x86_64|amd64)
-                        __platform="x86"
-                        ;;
-                esac
+                # jetson nano and tegra x1 can be identified via /sys/firmware/devicetree/base/model
+                local model_path="/sys/firmware/devicetree/base/model"
+                if [[ -f "$model_path" ]]; then
+                    # ignore end null to avoid bash warning
+                    local model=$(tr -d '\0' <$model_path)
+                    case "$model" in
+                        "NVIDIA Jetson Nano Developer Kit")
+                            __platform="jetson-nano"
+                            ;;
+                        icosa)
+                            __platform="tegra-x1"
+                            ;;
+                    esac
+                else
+                    case $architecture in
+                        i686|x86_64|amd64)
+                            __platform="x86"
+                            ;;
+                    esac
+                fi
                 ;;
         esac
     fi
@@ -411,7 +431,7 @@ function set_platform_defaults() {
 }
 
 function platform_rpi1() {
-    __default_cpu_flags="-mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
+    __default_cpu_flags="-mcpu=arm1176jzf-s -mfpu=vfp"
     __platform_flags+=(arm armv6 rpi gles)
     # if building in a chroot, what cpu should be set by qemu
     # make chroot identify as arm6l
@@ -419,7 +439,7 @@ function platform_rpi1() {
 }
 
 function platform_rpi2() {
-    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4"
     __platform_flags+=(arm armv7 neon rpi gles)
     __qemu_cpu=cortex-a7
 }
@@ -428,7 +448,7 @@ function platform_rpi2() {
 # could improve performance with the compiler options below but needs further testing
 function platform_rpi3() {
     if isPlatform "32bit"; then
-        __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
+        __default_cpu_flags="-mcpu=cortex-a53 -mfpu=neon-fp-armv8"
         __platform_flags+=(arm armv8 neon)
     else
         __default_cpu_flags="-mcpu=cortex-a53"
@@ -440,7 +460,7 @@ function platform_rpi3() {
 
 function platform_rpi4() {
     if isPlatform "32bit"; then
-        __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard"
+        __default_cpu_flags="-mcpu=cortex-a72 -mfpu=neon-fp-armv8"
         __platform_flags+=(arm armv8 neon)
     else
         __default_cpu_flags="-mcpu=cortex-a72"
@@ -450,33 +470,42 @@ function platform_rpi4() {
 }
 
 function platform_odroid-c1() {
-    __default_cpu_flags="-mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-marm -mcpu=cortex-a5 -mfpu=neon-vfpv4"
     __platform_flags+=(arm armv7 neon mali gles)
     __qemu_cpu=cortex-a9
 }
 
 function platform_odroid-c2() {
     if isPlatform "32bit"; then
-        __default_cpu_flags="-march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
+        __default_cpu_flags="-marm -mcpu=cortex-a53 -mfpu=neon-fp-armv8"
         __platform_flags+=(arm armv8 neon)
     else
-        __default_cpu_flags="-march=native"
+        __default_cpu_flags="-mcpu=cortex-a53"
         __platform_flags+=(aarch64)
     fi
     __platform_flags+=(mali gles)
 }
 
 function platform_odroid-xu() {
-    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-marm -mcpu=cortex-a7 -mfpu=neon-vfpv4"
     # required for mali-fbdev headers to define GL functions
-    __default_cflags=" -DGL_GLEXT_PROTOTYPES"
-    __platform_flags="arm armv7 neon mali gles"
+    __default_cflags="-DGL_GLEXT_PROTOTYPES"
+    __platform_flags+=(arm armv7 neon mali gles)
+}
+
+function platform_tegra-x1() {
+    __default_cpu_flags="-mcpu=cortex-a57"
+    __platform_flags+=(aarch64 x11 gl)
+}
+
+function platform_jetson-nano() {
+    platform_tegra-x1
 }
 
 function platform_tinker() {
-    __default_cpu_flags="-marm -march=armv7-a -mtune=cortex-a17 -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-marm -mcpu=cortex-a17 -mfpu=neon-vfpv4"
     # required for mali headers to define GL functions
-    __default_cflags=" -DGL_GLEXT_PROTOTYPES"
+    __default_cflags="-DGL_GLEXT_PROTOTYPES"
     __platform_flags+=(arm armv7 neon kms gles)
 }
 
@@ -495,12 +524,12 @@ function platform_generic-x11() {
 }
 
 function platform_armv7-mali() {
-    __default_cpu_flags="-march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard"
+    __default_cpu_flags="-march=armv7-a -mfpu=neon-vfpv4"
     __platform_flags+=(arm armv7 neon mali gles)
 }
 
 function platform_imx6() {
-    __default_cpu_flags="-march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard"
+    __default_cpu_flags="-march=armv7-a -mfpu=neon -mtune=cortex-a9"
     __platform_flags+=(arm armv7 neon)
 }
 

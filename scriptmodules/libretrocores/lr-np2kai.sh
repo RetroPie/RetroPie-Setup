@@ -21,8 +21,8 @@ function sources_lr-np2kai() {
 
 function build_lr-np2kai() {
     cd "$md_build/sdl"
-    make -f Makefile.libretro clean
-    make -f Makefile.libretro
+    make -f Makefile.libretro clean GIT_TAG="master"
+    make -f Makefile.libretro GIT_TAG="master"
     md_ret_require="$md_build/sdl/np2kai_libretro.so"
 }
 

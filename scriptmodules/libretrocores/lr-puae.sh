@@ -27,7 +27,7 @@ function build_lr-puae() {
 function install_lr-puae() {
     md_ret_files=(
         'puae_libretro.so'
-        'README'
+        'README.md'
     )
 }
 

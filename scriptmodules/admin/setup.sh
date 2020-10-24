@@ -82,6 +82,10 @@ function depends_setup() {
         printMsgs "dialog" "Raspbian/Debian Jessie and versions of Ubuntu below 18.04 are no longer supported.\n\nPlease install RetroPie from a fresh image (or if running Ubuntu, upgrade your OS)."
     fi
 
+    if [[ "$__os_debian_ver" -eq 9 ]] && [[ "$__has_binaries" -eq 1 ]]; then
+        printMsgs "dialog" "You are currently running RetroPie on a Raspbian Stretch based distribution.\n\nWe will soon stop building binaries for your system, and recommend you switch to a newer RetroPie image.\n\nYou will still be able to update packages from source when binaries are no longer available, but due to the age of Raspbian Stretch we can't guarantee all software included will work."
+    fi
+
     # make sure user has the correct group permissions
     if ! isPlatform "x11"; then
         local group

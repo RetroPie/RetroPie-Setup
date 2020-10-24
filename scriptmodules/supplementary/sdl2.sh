@@ -109,7 +109,15 @@ function build_sdl2() {
     md_ret_require="$md_build/libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb"
     local dest="$__tmpdir/archives/$__binary_path"
     mkdir -p "$dest"
-    cp ../*.deb "$dest/"
+
+    local file
+    for file in ../*.deb; do
+        if gpg --list-secret-keys "$__gpg_signing_key" &>/dev/null; then
+            signFile "$file" || return 1
+            cp "${file}.asc" "$dest/"
+        fi
+        cp ../*.deb "$dest/"
+    done
 }
 
 function remove_old_sdl2() {
@@ -131,10 +139,17 @@ function __binary_url_sdl2() {
 }
 
 function install_bin_sdl2() {
-    wget -c "$__binary_url/libsdl2-dev_$(get_pkg_ver_sdl2)_armhf.deb"
-    wget -c "$__binary_url/libsdl2-2.0-0_$(get_pkg_ver_sdl2)_armhf.deb"
-    install_sdl2
-    rm ./*.deb
+    local tmp="$(mktemp -d)"
+    pushd "$tmp" >/dev/null
+    local ret=1
+    if downloadAndVerify "$__binary_url/libsdl2-dev_$(get_pkg_ver_sdl2)_armhf.deb" && \
+       downloadAndVerify "$__binary_url/libsdl2-2.0-0_$(get_pkg_ver_sdl2)_armhf.deb"; then
+        install_sdl2
+        ret=0
+    fi
+    popd >/dev/null
+    rm -rf "$tmp"
+    return "$ret"
 }
 
 function revert_sdl2() {
