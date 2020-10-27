@@ -243,14 +243,14 @@ function get_all_kms_modes() {
     declare -Ag MODE
     local default_mode="$(echo "$KMS_BUFFER" | grep -Em1 "^Mode:.*(driver|userdef).*crtc")"
     local crtc="$(echo "$default_mode" | awk '{ print $(NF-1) }')"
-    local crtc_encoder="$(echo "$KMS_BUFFER" | grep "Encoder map:" | awk -v crtc="$crtc" '$5 == crtc { print $3 }')"
+    local crtc_encoder="$(echo "$KMS_BUFFER" | awk -v crtc="$crtc" '/Encoder map:/ && $5 == crtc { print $3 }')"
 
     local info
     local line
     local mode_id
 
     # add default mode as fallback in case real mode cannot be mapped
-    MODE[def-def]="$(echo "$default_mode" | awk '{--NF --NF --NF; print}' | cut -c7-)"
+    MODE[def-def]="$(echo "$default_mode" | awk 'NF-=3 {print substr($0,7)}')"
 
     while read -r line; do
         # encoder id
@@ -262,7 +262,7 @@ function get_all_kms_modes() {
             mode_id="$(echo "$line" | awk '{ print $NF }')"
 
             # make output more human-readable
-            info="$(echo "$line" | awk '{--NF --NF --NF; print}' | cut -c7-)"
+            info="$(echo "$line" | awk 'NF-=3 {print substr($0,7)}')"
 
             # populate resolution into arrays (using mapped crtc encoder value)
             MODE_ID+=($crtc-$mode_id)
@@ -271,7 +271,7 @@ function get_all_kms_modes() {
             # if string matches default mode, add a special mapped entry
             [[ "$default_mode" =~ "$info" ]] && MODE[map-map]="$crtc $mode_id"
         fi
-    done < <(echo "$KMS_BUFFER" | grep "Mode:" | grep "connector")
+    done < <(echo "$KMS_BUFFER" | awk '/Mode:/ && /connector/')
 }
 
 function get_all_x11_modes()
@@ -281,7 +281,7 @@ function get_all_x11_modes()
         local info
         local line
         local verbose_info=()
-        local output="$($XRANDR --verbose | grep " connected" | awk '{ print $1 }')"
+        local output="$($XRANDR --verbose | awk '/primary/ { print $1 }')"
 
         while read -r line; do
             # scan for line that contains bracketed mode id
@@ -304,7 +304,7 @@ function get_all_x11_modes()
                 MODE_ID+=($output:$id)
                 MODE[$output:$id]="$info"
             fi
-        done < <($XRANDR --verbose)
+        done < <($XRANDR --verbose | awk '/^[^ \t]+/ {a++} /primary/ {c=a} c==a') # only want primary
 }
 
 function get_tvs_mode_info() {
@@ -382,10 +382,13 @@ function get_x11_mode_info() {
 
     if [[ -z "$mode_id" ]]; then
         # determine current output
-        mode_id[0]="$($XRANDR --verbose | grep " connected" | awk '{ print $1 }')"
+        mode_id[0]="$($XRANDR --verbose | awk '/primary/ { print $1 }')"
+        
         # determine current mode id & strip brackets
-        mode_id[1]="$($XRANDR --verbose | grep " connected" | grep -o "(0x[a-f0-9]\{1,\})")"
-        mode_id[1]="$(echo ${mode_id[1]:1:-1})"
+        mode_id[1]="$($XRANDR --verbose | awk '
+         /primary/ && match($5,/0x[a-z0-9][a-z0-9]/) {
+         print substr($5,RSTART,RLENGTH)
+        }')"
     fi
 
     # mode type corresponds to the currently connected output name
@@ -922,7 +925,7 @@ function build_xinitrc() {
             # do modesetting (if supported)
             if [[ -n "$HAS_MODESET" ]]; then
                 cat >>"$xinitrc" <<_EOF_
-XRANDR_OUTPUT="\$($XRANDR --verbose | grep " connected" | awk '{ print \$1 }')"
+XRANDR_OUTPUT="\$($XRANDR --verbose | awk '/primary/ { print \$1 }')"
 $XRANDR --output \$XRANDR_OUTPUT --mode ${MODE_CUR[2]}x${MODE_CUR[3]} --refresh ${MODE_CUR[5]}
 echo "Set mode ${MODE_CUR[2]}x${MODE_CUR[3]}@${MODE_CUR[5]}Hz on \$XRANDR_OUTPUT"
 _EOF_
