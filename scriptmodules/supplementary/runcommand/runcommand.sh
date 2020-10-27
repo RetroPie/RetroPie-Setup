@@ -276,35 +276,29 @@ function get_all_kms_modes() {
 
 function get_all_x11_modes()
 {
-        declare -Ag MODE
-        local id
-        local info
-        local line
-        local verbose_info=()
-        local output="$($XRANDR --verbose | awk '/primary/ { print $1 }')"
-
-        while read -r line; do
-            # scan for line that contains bracketed mode id
-            id="$(echo "$line" | awk '{ print $2 }' | grep -o "(0x[a-f0-9]\{1,\})")"
-
-            if [[ -n "$id" ]]; then
-                # strip brackets from mode id
-                id="$(echo ${id:1:-1})"
-
-                # extract extended details
-                verbose_info=($(echo "$line" | awk '{ for (i=3; i<=NF; ++i) print $i }'))
-
-                # extract x/y resolution, vertical refresh rate and append details
-                read -r line
-                info="$(echo "$line" | awk '{ print $3 }')"
-                read -r line
-                info+="x$(echo "$line" | awk '{ print $3 }') @ $(echo "$line" | awk '{ print $NF }') ("${verbose_info[*]}")"
-
-                # populate resolution into arrays
-                MODE_ID+=($output:$id)
-                MODE[$output:$id]="$info"
-            fi
-        done < <($XRANDR --verbose | awk '/^[^ \t]+/ {a++} /primary/ {c=a} c==a') # only want primary
+ declare -Ag MODE
+ local id
+ local line
+ while read -r id; do
+  MODE_ID+=($id) # output:id as in (hdmi1:0x4b)
+  read -r line
+  MODE[$id]="$line" # 1920x1080 @ 60.00Hz (148.500MHz +HSync +VSync +preferred)
+ done < <( $XRANDR --verbose | awk '
+  /^[^ \t]+/ {s++} # Section
+  $2 == "connected" && /primary/  {
+   output=$1 # new output section
+   c=s # We only want the connected sections
+   next
+  }
+  c!=s { next } # skip anything that isnt part of the section we want
+  match($2,/^\(0x[0-9a-f]+\)$/) {
+   print output ":" substr($2,2,length($2)-2) # id
+   $1="";$2="";sub(/^[ \t]+/,"");info=$0
+   getline; width=$3
+   getline;
+   printf("%sx%s @ %s (%s)\n",width,$3,$NF,info)
+  }
+ ')
 }
 
 function get_tvs_mode_info() {
@@ -382,6 +376,7 @@ function get_x11_mode_info() {
 
     if [[ -z "$mode_id" ]]; then
         # determine current output
+        # exit because we just want the first connected one
         mode_id[0]="$($XRANDR --verbose | awk '/primary/ { print $1 }')"
         
         # determine current mode id & strip brackets
