@@ -219,16 +219,18 @@ function set_save_vars() {
 function get_all_tvs_modes() {
     declare -Ag MODE
     local group
+    local id
+    local info
     for group in CEA DMT; do
-        while read -r line; do
-            local id="$(echo "$line" | grep -oE "mode [0-9]*" | cut -d" " -f2)"
-            local info="$(echo "$line" | cut -d":" -f2-)"
-            info=${info/ /}
-            if [[ -n "$id" ]]; then
-                MODE_ID+=($group-$id)
-                MODE[$group-$id]="$info"
-            fi
-        done < <($TVSERVICE -m $group)
+        while read -r id; do
+            MODE_ID+=($group-$id)
+            read -r info
+            MODE[$group-$id]="$info"
+        done < <($TVSERVICE -m $group | awk '
+         match($0,/mode [0-9]+/) {
+          print substr($0,RSTART+5,RLENGTH-5) # id
+          print substr($0,RSTART+RLENGTH+2) # info
+         }' )
     done
     local aspect
     for group in "NTSC" "PAL"; do
@@ -280,12 +282,12 @@ function get_all_x11_modes()
  local id
  local line
  while read -r id; do
-  MODE_ID+=($id) # output:id as in (hdmi1:0x4b)
+  MODE_ID+=($id) # output:id as in (hdmi:0x44)
   read -r line
   MODE[$id]="$line" # 1920x1080 @ 60.00Hz (148.500MHz +HSync +VSync +preferred)
  done < <( $XRANDR --verbose | awk '
   /^[^ \t]+/ {s++} # Section
-  $2 == "connected" && /primary/  {
+  $2 == "connected" && /primary/  { # only want the primary output for x11
    output=$1 # new output section
    c=s # We only want the connected sections
    next
