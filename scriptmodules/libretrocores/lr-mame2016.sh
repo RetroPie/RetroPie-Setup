@@ -14,7 +14,7 @@ rp_module_desc="MAME emulator - MAME 0.174 port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mame2016-libretro/master/LICENSE.md"
 rp_module_section="exp"
-rp_module_flags="nobin"
+rp_module_flags=""
 
 function sources_lr-mame2016() {
     gitPullOrClone "$md_build" https://github.com/libretro/mame2016-libretro.git
