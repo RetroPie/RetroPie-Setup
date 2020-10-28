@@ -381,7 +381,7 @@ function get_x11_mode_info() {
         
         # determine current mode id & strip brackets
         mode_id[1]="$($XRANDR --verbose | awk '
-         /primary/ && match($5,/0x[a-z0-9][a-z0-9]/) {
+         /primary/ && match($5,/0x[a-z0-9]+/) {
          print substr($5,RSTART,RLENGTH)
         }')"
     fi
