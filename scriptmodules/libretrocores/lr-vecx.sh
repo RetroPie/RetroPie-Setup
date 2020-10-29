@@ -15,6 +15,13 @@ rp_module_help="ROM Extensions: .vec .gam .bin .zip\n\nCopy your Vectrex roms to
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/libretro-vecx/master/LICENSE.md"
 rp_module_section="main"
 
+function depends_lr-vecx() {
+    local depends=()
+    isPlatform "mesa" && depends+=(libgles2-mesa-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
+    getDepends "${depends[@]}"
+}
+
 function sources_lr-vecx() {
     gitPullOrClone "$md_build" https://github.com/libretro/libretro-vecx.git
 }
