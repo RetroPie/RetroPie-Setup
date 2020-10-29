@@ -26,7 +26,7 @@ function sources_lr-pcsx-rearmed() {
 }
 
 function build_lr-pcsx-rearmed() {
-    local params=()
+    local params=(THREAD_RENDERING=0)
 
     if isPlatform "arm"; then
         params+=(ARCH=arm DYNAREC=ari64)
