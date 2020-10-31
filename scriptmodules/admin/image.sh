@@ -137,7 +137,7 @@ for module in "\${modules[@]}"; do
     sudo __platform=$platform __nodialog=1 __has_binaries=$__chroot_has_binaries ./retropie_packages.sh \$module
 done
 
-rm -rf tmp
+sudo rm -rf tmp
 sudo apt-get clean
 _EOF_
 
