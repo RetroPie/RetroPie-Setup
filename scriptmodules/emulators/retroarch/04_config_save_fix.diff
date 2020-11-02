@@ -1,0 +1,560 @@
+diff --git a/configuration.c b/configuration.c
+index dc5e6d72c7..995154a01b 100644
+--- a/configuration.c
++++ b/configuration.c
+@@ -4253,7 +4253,6 @@ bool config_save_overrides(enum override_type type, void *data)
+    free(override_directory);
+    free(core_path);
+    free(game_path);
+-   free(content_path);
+ 
+    return ret;
+ }
+diff --git a/core_info.c b/core_info.c
+index 8eab7d5583..97d6af6d17 100644
+--- a/core_info.c
++++ b/core_info.c
+@@ -140,17 +140,15 @@ static void core_info_list_resolve_all_firmware(
+          snprintf(desc_key, sizeof(desc_key), "firmware%u_desc", c);
+          snprintf(opt_key,  sizeof(opt_key),  "firmware%u_opt",  c);
+ 
+-         if (config_get_string(config, path_key, &tmp))
++         if (config_get_string(config, path_key, &tmp) && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-               info->firmware[c].path = strdup(tmp);
++            info->firmware[c].path = strdup(tmp);
+             free(tmp);
+             tmp = NULL;
+          }
+-         if (config_get_string(config, desc_key, &tmp))
++         if (config_get_string(config, desc_key, &tmp) && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-               info->firmware[c].desc = strdup(tmp);
++            info->firmware[c].desc = strdup(tmp);
+             free(tmp);
+             tmp = NULL;
+          }
+@@ -318,48 +316,48 @@ static core_info_list_t *core_info_list_new(const char *path,
+       {
+          char *tmp           = NULL;
+ 
+-         if (config_get_string(conf, "display_name", &tmp))
++         if (config_get_string(conf, "display_name", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-               core_info[i].display_name = strdup(tmp);
++            core_info[i].display_name = strdup(tmp);
+             free(tmp);
+             tmp = NULL;
+          }
+-         if (config_get_string(conf, "display_version", &tmp))
++         if (config_get_string(conf, "display_version", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-               core_info[i].display_version = strdup(tmp);
++            core_info[i].display_version = strdup(tmp);
+             free(tmp);
+             tmp = NULL;
+          }
+-         if (config_get_string(conf, "corename", &tmp))
++         if (config_get_string(conf, "corename", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-               core_info[i].core_name = strdup(tmp);
++            core_info[i].core_name = strdup(tmp);
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "systemname", &tmp))
++         if (config_get_string(conf, "systemname", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-               core_info[i].systemname = strdup(tmp);
++            core_info[i].systemname = strdup(tmp);
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "systemid", &tmp))
++         if (config_get_string(conf, "systemid", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-               core_info[i].system_id = strdup(tmp);
++            core_info[i].system_id = strdup(tmp);
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "manufacturer", &tmp))
++         if (config_get_string(conf, "manufacturer", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-               core_info[i].system_manufacturer = strdup(tmp);
++            core_info[i].system_manufacturer = strdup(tmp);
+             free(tmp);
+             tmp = NULL;
+          }
+@@ -370,103 +368,87 @@ static core_info_list_t *core_info_list_new(const char *path,
+             core_info[i].firmware_count = count;
+          }
+ 
+-         if (config_get_string(conf, "supported_extensions", &tmp))
++         if (config_get_string(conf, "supported_extensions", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-            {
+-               core_info[i].supported_extensions      = strdup(tmp);
+-               core_info[i].supported_extensions_list =
+-                  string_split(core_info[i].supported_extensions, "|");
+-            }
++            core_info[i].supported_extensions      = strdup(tmp);
++            core_info[i].supported_extensions_list =
++               string_split(core_info[i].supported_extensions, "|");
+ 
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "authors", &tmp))
++         if (config_get_string(conf, "authors", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-            {
+-               core_info[i].authors      = strdup(tmp);
+-               core_info[i].authors_list =
+-                  string_split(core_info[i].authors, "|");
+-            }
++            core_info[i].authors      = strdup(tmp);
++            core_info[i].authors_list =
++               string_split(core_info[i].authors, "|");
+ 
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "permissions", &tmp))
++         if (config_get_string(conf, "permissions", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-            {
+-               core_info[i].permissions      = strdup(tmp);
+-               core_info[i].permissions_list =
+-                  string_split(core_info[i].permissions, "|");
+-            }
++            core_info[i].permissions      = strdup(tmp);
++            core_info[i].permissions_list =
++               string_split(core_info[i].permissions, "|");
+ 
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "license", &tmp))
++         if (config_get_string(conf, "license", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-            {
+-               core_info[i].licenses      = strdup(tmp);
+-               core_info[i].licenses_list =
+-                  string_split(core_info[i].licenses, "|");
+-            }
++            core_info[i].licenses      = strdup(tmp);
++            core_info[i].licenses_list =
++               string_split(core_info[i].licenses, "|");
+ 
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "categories", &tmp))
++         if (config_get_string(conf, "categories", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-            {
+-               core_info[i].categories      = strdup(tmp);
+-               core_info[i].categories_list =
+-                  string_split(core_info[i].categories, "|");
+-            }
++            core_info[i].categories      = strdup(tmp);
++            core_info[i].categories_list =
++               string_split(core_info[i].categories, "|");
+ 
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "database", &tmp))
++         if (config_get_string(conf, "database", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-            {
+-               core_info[i].databases      = strdup(tmp);
+-               core_info[i].databases_list =
+-                  string_split(core_info[i].databases, "|");
+-            }
++            core_info[i].databases      = strdup(tmp);
++            core_info[i].databases_list =
++               string_split(core_info[i].databases, "|");
+ 
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "notes", &tmp))
++         if (config_get_string(conf, "notes", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-            {
+-               core_info[i].notes     = strdup(tmp);
+-               core_info[i].note_list = string_split(core_info[i].notes, "|");
+-            }
++            core_info[i].notes     = strdup(tmp);
++            core_info[i].note_list = string_split(core_info[i].notes, "|");
+ 
+             free(tmp);
+             tmp = NULL;
+          }
+ 
+-         if (config_get_string(conf, "required_hw_api", &tmp))
++         if (config_get_string(conf, "required_hw_api", &tmp)
++               && !string_is_empty(tmp))
+          {
+-            if (!string_is_empty(tmp))
+-            {
+-               core_info[i].required_hw_api = strdup(tmp);
+-               core_info[i].required_hw_api_list = string_split(core_info[i].required_hw_api, "|");
+-            }
++            core_info[i].required_hw_api = strdup(tmp);
++            core_info[i].required_hw_api_list = string_split(core_info[i].required_hw_api, "|");
+ 
+             free(tmp);
+             tmp = NULL;
+diff --git a/gfx/video_shader_parse.c b/gfx/video_shader_parse.c
+index 07f5591c05..51d98bcaa7 100644
+--- a/gfx/video_shader_parse.c
++++ b/gfx/video_shader_parse.c
+@@ -643,10 +643,6 @@ bool video_shader_write_preset(const char *path,
+       config_file_t *conf;
+       bool ret;
+ 
+-      /* Note: We always create a new/blank config
+-       * file here. Loading and updating an existing
+-       * file could leave us with unwanted/invalid
+-       * parameters. */
+       if (!(conf = config_file_new_alloc()))
+          return false;
+ 
+diff --git a/libretro-common/file/config_file.c b/libretro-common/file/config_file.c
+index 28ebf03233..921dbcd4cc 100644
+--- a/libretro-common/file/config_file.c
++++ b/libretro-common/file/config_file.c
+@@ -74,17 +74,7 @@ static config_file_t *config_file_new_internal(
+ static int config_sort_compare_func(struct config_entry_list *a,
+       struct config_entry_list *b)
+ {
+-   if (a && b)
+-   {
+-      if (a->key && b->key)
+-         return strcasecmp(a->key, b->key);
+-      else if (a->key)
+-         return 1;
+-      else if (b->key)
+-         return -1;
+-   }
+-
+-   return 0;
++   return (a && b) ? strcasecmp(a->key, b->key) : 0;
+ }
+ 
+ /* https://stackoverflow.com/questions/7685/merge-sort-a-linked-list */
+@@ -216,19 +206,12 @@ static char *extract_value(char *line, bool is_value)
+    while (isspace((int)*line))
+       line++;
+ 
+-   /* Note: From this point on, an empty value
+-    * string is valid - and in this case, strdup("")
+-    * will be returned
+-    * > If we instead return NULL, the the entry
+-    *   is ignored completely - which means we cannot
+-    *   track *changes* in entry value */
+-
+    /* We have a full string. Read until next ". */
+    if (*line == '"')
+    {
+       line++;
+       if (*line == '"')
+-         return strdup("");
++         return NULL;
+       tok = strtok_r(line, "\"", &save);
+    }
+    /* We don't have that. Read until next space. */
+@@ -237,7 +220,7 @@ static char *extract_value(char *line, bool is_value)
+ 
+    if (tok && *tok)
+       return strdup(tok);
+-   return strdup("");
++   return NULL;
+ }
+ 
+ /* Move semantics? */
+@@ -359,7 +342,7 @@ static bool parse_line(config_file_t *conf,
+          char *include_line = comment + STRLEN_CONST("include ");
+          char *path         = extract_value(include_line, false);
+ 
+-         if (string_is_empty(path))
++         if (!path)
+             return false;
+ 
+          if (conf->include_depth >= MAX_INCLUDE_DEPTH)
+@@ -565,8 +548,7 @@ config_file_t *config_file_new_from_string(const char *from_string,
+    conf->last                     = NULL;
+    conf->includes                 = NULL;
+    conf->include_depth            = 0;
+-   conf->guaranteed_no_duplicates = false;
+-   conf->modified                 = false;
++   conf->guaranteed_no_duplicates = false ;
+ 
+    if (!string_is_empty(path))
+       conf->path                  = strdup(path);
+@@ -658,8 +640,7 @@ config_file_t *config_file_new_alloc(void)
+    conf->last                     = NULL;
+    conf->includes                 = NULL;
+    conf->include_depth            = 0;
+-   conf->guaranteed_no_duplicates = false;
+-   conf->modified                 = false;
++   conf->guaranteed_no_duplicates = false ;
+ 
+    return conf;
+ }
+@@ -823,7 +804,7 @@ bool config_get_string(config_file_t *conf, const char *key, char **str)
+ {
+    const struct config_entry_list *entry = config_get_entry(conf, key, NULL);
+ 
+-   if (!entry || !entry->value)
++   if (!entry)
+       return false;
+ 
+    *str = strdup(entry->value);
+@@ -888,44 +869,20 @@ bool config_get_bool(config_file_t *conf, const char *key, bool *in)
+ 
+ void config_set_string(config_file_t *conf, const char *key, const char *val)
+ {
+-   struct config_entry_list *last  = NULL;
+-   struct config_entry_list *entry = NULL;
++   struct config_entry_list *last  = (conf->guaranteed_no_duplicates && conf->last) ? conf->last : conf->entries;
++   struct config_entry_list *entry = conf->guaranteed_no_duplicates?NULL:config_get_entry(conf, key, &last);
+ 
+-   if (!conf || !key || !val)
+-      return;
+-
+-   last  = (conf->guaranteed_no_duplicates && conf->last) ?
+-         conf->last : conf->entries;
+-   entry = conf->guaranteed_no_duplicates ?
+-         NULL : config_get_entry(conf, key, &last);
+-
+-   if (entry)
++   if (entry && !entry->readonly)
+    {
+-      /* An entry corresponding to 'key' already exists
+-       * > Check if it's read only */
+-      if (entry->readonly)
+-         return;
+-
+-      /* Check whether value is currently set */
+       if (entry->value)
+-      {
+-         /* Do nothing if value is unchanged */
+-         if (string_is_equal(entry->value, val))
+-            return;
+-
+-         /* Value is to be updated
+-          * > Free existing */
+          free(entry->value);
+-      }
+-
+-      /* Update value */
+-      entry->value   = strdup(val);
+-      conf->modified = true;
++      entry->value = strdup(val);
+       return;
+    }
+ 
+-   /* Entry corresponding to 'key' does not exist
+-    * > Create new entry */
++   if (!val)
++      return;
++
+    entry = (struct config_entry_list*)malloc(sizeof(*entry));
+    if (!entry)
+       return;
+@@ -934,7 +891,6 @@ void config_set_string(config_file_t *conf, const char *key, const char *val)
+    entry->key       = strdup(key);
+    entry->value     = strdup(val);
+    entry->next      = NULL;
+-   conf->modified   = true;
+ 
+    if (last)
+       last->next    = entry;
+@@ -946,27 +902,16 @@ void config_set_string(config_file_t *conf, const char *key, const char *val)
+ 
+ void config_unset(config_file_t *conf, const char *key)
+ {
+-   struct config_entry_list *last  = NULL;
+-   struct config_entry_list *entry = NULL;
+-
+-   if (!conf || !key)
+-      return;
+-
+-   last  = conf->entries;
+-   entry = config_get_entry(conf, key, &last);
++   struct config_entry_list *last  = conf->entries;
++   struct config_entry_list *entry = config_get_entry(conf, key, &last);
+ 
+    if (!entry)
+       return;
+ 
+-   if (entry->key)
+-      free(entry->key);
+-
+-   if (entry->value)
+-      free(entry->value);
+-
+-   entry->key     = NULL;
+-   entry->value   = NULL;
+-   conf->modified = true;
++   entry->key   = NULL;
++   entry->value = NULL;
++   free(entry->key);
++   free(entry->value);
+ }
+ 
+ void config_set_path(config_file_t *conf, const char *entry, const char *val)
+@@ -1058,12 +1003,6 @@ void config_set_bool(config_file_t *conf, const char *key, bool val)
+ 
+ bool config_file_write(config_file_t *conf, const char *path, bool sort)
+ {
+-   if (!conf)
+-      return false;
+-
+-   if (!conf->modified)
+-      return true;
+-
+    if (!string_is_empty(path))
+    {
+ #ifdef ORBIS
+@@ -1091,10 +1030,6 @@ bool config_file_write(config_file_t *conf, const char *path, bool sort)
+       if (buf)
+          free(buf);
+ #endif
+-
+-      /* Only update modified flag if config file
+-       * is actually written to disk */
+-      conf->modified = false;
+    }
+    else
+       config_file_dump(conf, stdout, sort);
+diff --git a/libretro-common/include/file/config_file.h b/libretro-common/include/file/config_file.h
+index 7d7a408fe6..e340452821 100644
+--- a/libretro-common/include/file/config_file.h
++++ b/libretro-common/include/file/config_file.h
+@@ -59,7 +59,6 @@ struct config_file
+    struct config_entry_list *last;
+    unsigned include_depth;
+    bool guaranteed_no_duplicates;
+-   bool modified;
+ 
+    struct config_include_list *includes;
+ };
+diff --git a/menu/drivers/materialui.c b/menu/drivers/materialui.c
+index 68d34eaabe..07cffdc3ec 100644
+--- a/menu/drivers/materialui.c
++++ b/menu/drivers/materialui.c
+@@ -8935,14 +8935,8 @@ static int materialui_pointer_up(void *userdata,
+                      menu_navigation_set_selection(ptr);
+ 
+                   /* Perform a MENU_ACTION_SELECT on currently
+-                   * active item
+-                   * > Note that we still use 'selection'
+-                   *   (i.e. old selection value) here. This
+-                   *   ensures that materialui_menu_entry_action()
+-                   *   registers any change due to the above automatic
+-                   *   'pointer item' activation, and thus operates
+-                   *   on the correct target entry */
+-                  return materialui_menu_entry_action(mui, entry, selection, MENU_ACTION_SELECT);
++                   * active item */
++                  return materialui_menu_entry_action(mui, entry, (size_t)ptr, MENU_ACTION_SELECT);
+                }
+                else
+                {
+diff --git a/retroarch.c b/retroarch.c
+index 79be7cc927..b147394816 100644
+--- a/retroarch.c
++++ b/retroarch.c
+@@ -9413,7 +9413,8 @@ error:
+  **/
+ static void core_option_manager_flush(
+       config_file_t *conf,
+-      core_option_manager_t *opt)
++      core_option_manager_t *opt,
++      const char *path)
+ {
+    size_t i;
+ 
+@@ -27621,27 +27622,17 @@ static void retroarch_deinit_core_options(void)
+    /* Check whether game-specific options file is being used */
+    if (!path_is_empty(RARCH_PATH_CORE_OPTIONS))
+    {
+-      const char *path        = path_get(RARCH_PATH_CORE_OPTIONS);
+-      config_file_t *conf_tmp = NULL;
+-
+       /* We only need to save configuration settings for
+-       * the current core
+-       * > If game-specific options file exists, have
+-       *   to read it (to ensure file only gets written
+-       *   if config values change)
+-       * > Otherwise, create a new, empty config_file_t
+-       *   object */
+-      if (path_is_valid(path))
+-         conf_tmp = config_file_new_from_path_to_string(path);
+-
+-      if (!conf_tmp)
+-         conf_tmp = config_file_new_alloc();
++       * the current core, so create a temporary config_file
++       * object and populate the required values. */
++      config_file_t *conf_tmp = config_file_new_alloc();
+ 
+       if (conf_tmp)
+       {
++         const char *path = path_get(RARCH_PATH_CORE_OPTIONS);
+          core_option_manager_flush(
+                conf_tmp,
+-               runloop_core_options);
++               runloop_core_options, path);
+          RARCH_LOG("[Core Options]: Saved game-specific core options to \"%s\"\n", path);
+          config_file_write(conf_tmp, path, true);
+          config_file_free(conf_tmp);
+@@ -27654,7 +27645,7 @@ static void retroarch_deinit_core_options(void)
+       const char *path = runloop_core_options->conf_path;
+       core_option_manager_flush(
+             runloop_core_options->conf,
+-            runloop_core_options);
++            runloop_core_options, path);
+       RARCH_LOG("[Core Options]: Saved core options file to \"%s\"\n", path);
+       config_file_write(runloop_core_options->conf, path, true);
+    }
