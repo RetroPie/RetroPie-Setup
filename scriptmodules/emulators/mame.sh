@@ -53,10 +53,7 @@ function build_mame() {
     fi
 
     # Compile MAME
-    local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE)
-    # Prefer python3 for building, when available
-    command -v python3 >/dev/null 2>&1 && params+=(PYTHON_EXECUTABLE=python3)
-
+    local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE PYTHON_EXECUTABLE=python3)
     make "${params[@]}"
 
     local binary_name="$(_get_binary_name_${md_id})"
