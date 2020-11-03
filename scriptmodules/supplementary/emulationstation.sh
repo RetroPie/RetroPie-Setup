@@ -152,13 +152,17 @@ function sources_emulationstation() {
 
 function build_emulationstation() {
     local params=(-DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/)
-    # Temporary workaround until GLESv2 support is implemented
-    isPlatform "rpi" && isPlatform "mesa" && params+=(-DGL=On)
-    isPlatform "rpi" && params+=(-DRPI=On)
+    if isPlatform "rpi"; then
+        params+=(-DRPI=On)
+        # use OpenGL on RPI/KMS for now
+        isPlatform "mesa" && params+=(-DGL=On)
+        # force GLESv1 on videocore due to performance issue with GLESv2
+        isPlatform "videocore" && params+=(-DUSE_GLES1=On)
+    fi
     rpSwap on 1000
     cmake . "${params[@]}"
     make clean
-    make
+    make VERBOSE=1
     rpSwap off
     md_ret_require="$md_build/emulationstation"
 }
