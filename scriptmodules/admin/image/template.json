@@ -1,0 +1,10 @@
+        {
+            "url": "https://github.com/RetroPie/RetroPie-Setup/releases/download/IMG_PATH",
+            "extract_size": IMG_EXTRACT_SIZE,
+            "extract_sha256": "IMG_SHA256",
+            "image_download_size": IMG_DOWNLOAD_SIZE,
+            "description": "Turn your Raspberry Pi into a retro-gaming machine.",
+            "icon": "https://retropie.org.uk/retropie-logo-40x40.png",
+            "name": "RetroPie IMG_VERSION (IMG_PLATFORM)",
+            "release_date": "IMG_DATE"
+        }
