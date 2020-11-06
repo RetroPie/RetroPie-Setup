@@ -276,37 +276,35 @@ function get_all_kms_modes() {
 
 function get_all_x11_modes()
 {
-        declare -Ag MODE
-        local id
-        local info
-        local line
-        local verbose_info=()
-        
-        # will print the first output found
-        local output="$($XRANDR --verbose | awk '/ connected/ { print $1;exit }' )"
+    declare -Ag MODE
+    local id
+    local info
+    local line
+    local verbose_info=()
+    local output="$($XRANDR --verbose | awk '/ connected/ { print $1;exit }' )"
 
-        while read -r line; do
-            # scan for line that contains bracketed mode id
-            id="$(echo "$line" | awk '{ print $2 }' | grep -o "(0x[a-f0-9]\{1,\})")"
+    while read -r line; do
+        # scan for line that contains bracketed mode id
+        id="$(echo "$line" | awk '{ print $2 }' | grep -o "(0x[a-f0-9]\{1,\})")"
 
-            if [[ -n "$id" ]]; then
-                # strip brackets from mode id
-                id="$(echo ${id:1:-1})"
+        if [[ -n "$id" ]]; then
+            # strip brackets from mode id
+            id="$(echo ${id:1:-1})"
 
-                # extract extended details
-                verbose_info=($(echo "$line" | awk '{ for (i=3; i<=NF; ++i) print $i }'))
+            # extract extended details
+            verbose_info=($(echo "$line" | awk '{ for (i=3; i<=NF; ++i) print $i }'))
 
-                # extract x/y resolution, vertical refresh rate and append details
-                read -r line
-                info="$(echo "$line" | awk '{ print $3 }')"
-                read -r line
-                info+="x$(echo "$line" | awk '{ print $3 }') @ $(echo "$line" | awk '{ print $NF }') ("${verbose_info[*]}")"
+            # extract x/y resolution, vertical refresh rate and append details
+            read -r line
+            info="$(echo "$line" | awk '{ print $3 }')"
+            read -r line
+            info+="x$(echo "$line" | awk '{ print $3 }') @ $(echo "$line" | awk '{ print $NF }') ("${verbose_info[*]}")"
 
-                # populate resolution into arrays
-                MODE_ID+=($output:$id)
-                MODE[$output:$id]="$info"
-            fi
-        done < <($XRANDR --verbose)
+            # populate resolution into arrays
+            MODE_ID+=($output:$id)
+            MODE[$output:$id]="$info"
+        fi
+    done < <($XRANDR --verbose)
 }
 
 function get_tvs_mode_info() {
@@ -498,7 +496,6 @@ function load_mode_defaults() {
     local temp
     MODE_ORIG=()
 
-
     if [[ -n "$HAS_MODESET" ]]; then
         # populate available modes
         [[ -z "$MODE_ID" ]] && get_all_${HAS_MODESET}_modes
@@ -508,9 +505,9 @@ function load_mode_defaults() {
         MODE_CUR=("${MODE_ORIG[@]}")
         MODE_ORIG_ID="${MODE_ORIG[0]}${separator}${MODE_ORIG[1]}"
 
-       if [[ "$MODE_REQ" == "0" ]]; then
+        if [[ "$MODE_REQ" == "0" ]]; then
             MODE_REQ_ID="$MODE_ORIG_ID"
-       elif [[ "$HAS_MODESET" == "tvs" ]]; then
+        elif [[ "$HAS_MODESET" == "tvs" ]]; then
             # get default mode for requested mode of 1 or 4
             if [[ "$MODE_REQ" =~ (1|4) ]]; then
                 # if current aspect is anything else like 5:4 / 10:9 just choose a 4:3 mode
