@@ -39,7 +39,7 @@ function depends_lr-mupen64plus() {
 }
 
 function sources_lr-mupen64plus() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
+    gitPullOrClone "$md_build" https://github.com/RetroPie/mupen64plus-libretro.git
 
     # mesa workaround; see: https://github.com/libretro/libretro-common/issues/98
     if hasPackage libgles2-mesa-dev 18.2 ge; then
