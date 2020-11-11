@@ -46,6 +46,7 @@ function sources_retroarch() {
     # revert of https://github.com/libretro/RetroArch/pull/10524/commits/9eb84728
     # see https://github.com/RetroPie/RetroPie-Setup/issues/3249
     applyPatch "$md_data/04_config_save_fix.diff"
+    applyPatch "$md_data/05_cheevos_https.diff"
 }
 
 function build_retroarch() {
