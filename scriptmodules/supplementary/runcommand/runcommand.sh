@@ -278,33 +278,53 @@ function get_all_x11_modes()
 {
     declare -Ag MODE
     local id
-    local info
     local line
-    local verbose_info=()
-    local output="$($XRANDR --verbose | grep " connected" | awk '{ print $1 }')"
+    while read -r id; do
+        # populate CONNECTOR:0xID into an array
+        MODE_ID+=($id) # output:id as in (hdmi:0x44)
+        
+        read -r line
+        # array is x/y resolution @ vertical refresh rate ( details )
+        MODE[$id]="$line"
+    done < <( $XRANDR --verbose | awk '
+        # defines the type of line
+        # true is the "header" (output and id)
+        # false is the "description" (Mode: and everything that begins with a space)
+        { type = /^[^ \t]+/ }
+        
+        # Exit after the first output
+        type && output {exit} # New header and output set means new output
+        
+        # many outputs can be connected, but only the ones with the id are in use.
+        # output must be connected and have an (id)
+        type && / connected/ && /\(0x[0-9a-f]+\)/ {
+            output=$1; next
+        }
+        
+        # parse mode and lines
+        # If we are in a "description", and output is set (output being what we want)
+        # And if $2 is an id, we are in a video mode description line
+        !type && output && $2 ~ /^\(0x[0-9a-f]+\)$/ {
+            # Print CRTC identifier (CONNECTOR:0xID)
+            print output ":" substr($2,2,length($2)-2) # id
+            
+            # get rid of what we printed
+            $1="";$2=""
+            sub(/^[ \t]+/,"") # trim spaces
+            
+            # save rest of the line
+            info=$0
 
-    while read -r line; do
-        # scan for line that contains bracketed mode id
-        id="$(echo "$line" | awk '{ print $2 }' | grep -o "(0x[a-f0-9]\{1,\})")"
-
-        if [[ -n "$id" ]]; then
-            # strip brackets from mode id
-            id="$(echo ${id:1:-1})"
-
-            # extract extended details
-            verbose_info=($(echo "$line" | awk '{ for (i=3; i<=NF; ++i) print $i }'))
-
-            # extract x/y resolution, vertical refresh rate and append details
-            read -r line
-            info="$(echo "$line" | awk '{ print $3 }')"
-            read -r line
-            info+="x$(echo "$line" | awk '{ print $3 }') @ $(echo "$line" | awk '{ print $NF }') ("${verbose_info[*]}")"
-
-            # populate resolution into arrays
-            MODE_ID+=($output:$id)
-            MODE[$output:$id]="$info"
-        fi
-    done < <($XRANDR --verbose)
+            # Save width from the 2nd line of the video mode
+            getline; width=$3
+            
+            # Save height & vrefresh from the 3rd line of video mode
+            getline; height=$3; vrefresh=$NF
+            
+            # Print video mode details
+            print width "x" height " @ " vrefresh " (" info ")"
+        }
+    ')
 }
 
 function get_tvs_mode_info() {
