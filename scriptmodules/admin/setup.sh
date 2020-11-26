@@ -371,10 +371,10 @@ function section_gui_setup() {
                         # if we are updating, skip packages that are not installed
                         if [[ "$mode" == "update" ]]; then
                             if rp_isInstalled "$idx"; then
-                                rp_installModule "$idx" "_update_" || break
+                                rp_installModule "$idx" "_update_"
                             fi
                         else
-                            rp_installModule "$idx" "_auto_" || break
+                            rp_installModule "$idx" "_auto_"
                         fi
                     done
                     rps_logEnd
@@ -490,7 +490,7 @@ function update_packages_gui_setup() {
 function basic_install_setup() {
     local idx
     for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
-        rp_installModule "$idx" || return 1
+        rp_installModule "$idx"
     done
     return 0
 }
