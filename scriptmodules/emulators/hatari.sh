@@ -28,12 +28,7 @@ function _sources_libcapsimage_hatari() {
 
 function sources_hatari() {
     # shallow clone isn't supported via https:// on this repo
-    gitPullOrClone "$md_build" "git://git.tuxfamily.org/gitroot/hatari/hatari.git" "v2.2.1"
-    # we need to use capsimage 5, as there is no source for 4.2
-    sed -i "s/CAPSIMAGE_VERSION 4/CAPSIMAGE_VERSION 5/" cmake/FindCapsImage.cmake
-    # capsimage 5.1 misses these types that were defined in 4.2
-    sed -i "s/CapsLong/Sint32/g" src/floppy_ipf.c
-    sed -i "s/CapsULong/Uint32/g" src/floppy_ipf.c
+    gitPullOrClone "$md_build" "git://git.tuxfamily.org/gitroot/hatari/hatari.git" "v2.3.0"
     _sources_libcapsimage_hatari
 }
 
@@ -44,9 +39,9 @@ function _build_libcapsimage_hatari() {
     make clean
     make
     make install
-    mkdir -p "$md_build/src/includes/caps5/"
-    cp -R "../LibIPF/"*.h "$md_build/src/includes/caps5/"
-    cp "../Core/CommonTypes.h" "$md_build/src/includes/caps5/"
+    mkdir -p "$md_build/src/includes/caps"
+    cp -R "../LibIPF/"*.h "$md_build/src/includes/caps/"
+    cp "../Core/CommonTypes.h" "$md_build/src/includes/caps/"
 }
 
 function build_hatari() {
@@ -55,13 +50,12 @@ function build_hatari() {
     # build hatari
     cd "$md_build"
     rm -f CMakeCache.txt
-    # capsimage headers includes contain __cdecl which we don't want
-    # also add $md_inst to library search path for loading capsimage library
-    CFLAGS+=" -D__cdecl=''" LDFLAGS+="-Wl,-rpath='$md_inst'" \
+    # add $md_inst to library search path for loading capsimage library
+    LDFLAGS+="-Wl,-rpath='$md_inst'" \
         cmake . \
         -DCMAKE_SKIP_RPATH=ON \
         -DCMAKE_INSTALL_PREFIX:PATH="$md_inst" \
-        -DCAPSIMAGE_INCLUDE_DIR="$md_build/src/include" \
+        -DCAPSIMAGE_INCLUDE_DIR="$md_build/src/includes" \
         -DCAPSIMAGE_LIBRARY="$md_build/lib/libcapsimage.so.5.1" \
         -DENABLE_SDL2:BOOL=1
     make clean
