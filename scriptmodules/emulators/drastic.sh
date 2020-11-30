@@ -52,7 +52,7 @@ function configure_drastic() {
 #!/bin/bash
 # Don't start a window manager on x11 platforms
 if [[ -n \$DISPLAY && "\$2" == "kms" ]]; then
-    matchbox-window-manager &
+    matchbox-window-manager -use_cursor no &
     sleep 0.5
 fi
 pushd "$md_conf_root/nds/drastic"
