@@ -21,7 +21,7 @@ function _get_input_cfg_emulationstation() {
 
 function _update_hook_emulationstation() {
     # make sure the input configuration scripts and launch script are always up to date
-    if rp_isInstalled "$md_idx"; then
+    if rp_isInstalled "$md_id"; then
         copy_inputscripts_emulationstation
         install_launch_emulationstation
     fi

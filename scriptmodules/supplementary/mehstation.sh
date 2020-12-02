@@ -121,10 +121,10 @@ popd
 _EOF_
     chmod +x "/usr/bin/mehstation"
 
-    local idx
-    for idx in "${__mod_idx[@]}"; do
-        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]] && ! hasFlag "${__mod_flags[$idx]}" "frontend"; then
-            rp_callModule "$idx" configure
+    local id
+    for id in "${__mod_id[@]}"; do
+        if rp_isInstalled "$id" && [[ -n "${__mod_section[$id]}" ]] && ! hasFlag "${__mod_flags[$id]}" "frontend"; then
+            rp_callModule "$id" configure
         fi
     done
 }

@@ -9,7 +9,6 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-declare -A __mod_id_to_idx
 declare -A __sections
 __sections[core]="core"
 __sections[main]="main"
@@ -20,64 +19,53 @@ __sections[config]="configuration"
 __sections[depends]="dependency"
 
 function rp_listFunctions() {
-    local idx
-    local mod_id
+    local id
     local desc
     local mode
     local func
 
-    echo -e "Index/ID:                 Description:                                 List of available actions"
+    echo -e "ID:                 Description:                                 List of available functions"
     echo "-----------------------------------------------------------------------------------------------------------------------------------"
-    for idx in ${__mod_idx[@]}; do
-        mod_id=${__mod_id[$idx]};
-        printf "%d/%-20s: %-42s :" "$idx" "$mod_id" "${__mod_desc[$idx]}"
+    for id in ${__mod_id[@]}; do
+        printf "%-20s: %-42s :" "$id" "${__mod_desc[$id]}"
         while read mode; do
             # skip private module functions (start with an underscore)
             [[ "$mode" = _* ]] && continue
-            mode=${mode//_$mod_id/}
+            mode=${mode//_$id/}
             echo -n " $mode"
-        done < <(compgen -A function -X \!*_$mod_id)
-        fnExists "install_${mod_id}" || fnExists "install_bin_${mod_id}" && ! fnExists "remove_${mod_id}" && echo -n " remove"
-        echo -n " help"
+        done < <(compgen -A function -X \!*_$id)
+        fnExists "sources_${id}" && echo -n " clean"
+        fnExists "install_${id}" || fnExists "install_bin_${id}" && ! fnExists "remove_${id}" && echo -n " remove"
         echo ""
     done
     echo "==================================================================================================================================="
 }
 
 function rp_printUsageinfo() {
-    echo -e "Usage:\n$0 <Index # or ID>\nThis will run the actions depends, sources, build, install, configure and clean automatically.\n"
-    echo -e "Alternatively, $0 can be called as\n$0 <Index # or ID [depends|sources|build|install|configure|clean|remove]\n"
-    echo    "Definitions:"
-    echo    "depends:    install the dependencies for the module"
+    echo -e "Usage:\n$0 <ID>\nThis will run the functions depends, sources, build, install, configure and clean automatically.\n"
+    echo -e "Alternatively, $0 can be called as\n$0 <ID> [function] where function is a supported module functions as listed below\n"
+    echo    "Details of some common functions:"
+    echo    "depends:    install the dependencies for the module."
     echo    "sources:    install the sources for the module"
     echo    "build:      build/compile the module"
     echo    "install:    install the compiled module"
     echo    "configure:  configure the installed module (es_systems.cfg / launch parameters etc)"
     echo    "clean:      remove the sources/build folder for the module"
-    echo    "help:       get additional help on the module"
-    echo -e "\nThis is a list of valid modules/packages and supported commands:\n"
+    echo    "remove:     remove/uninstall the module"
+    echo    "help:       get additional help on the module (available for all modules)"
+    echo -e "\nThis is a list of valid modules/packages and supported functions:\n"
     rp_listFunctions
 }
 
 function rp_callModule() {
-    local req_id="$1"
+    local md_id="$1"
     local mode="$2"
     # shift the function parameters left so $@ will contain any additional parameters which we can use in modules
     shift 2
 
-    # if index get mod_id from array else we look it up
-    local md_id
-    local md_idx
-    if [[ "$req_id" =~ ^[0-9]+$ ]]; then
-        md_id="$(rp_getIdFromIdx $req_id)"
-        md_idx="$req_id"
-    else
-        md_idx="$(rp_getIdxFromId $req_id)"
-        md_id="$req_id"
-    fi
-
-    if [[ -z "$md_id" || -z "$md_idx" ]]; then
-        printMsgs "console" "No module '$req_id' found for platform $__platform"
+    # check for module
+    if [[ -x "${__mod_idx[$md_id]}" ]]; then
+        printMsgs "console" "No module '$md_id' found for platform $__platform"
         return 2
     fi
 
@@ -85,23 +73,23 @@ function rp_callModule() {
     case "$mode" in
         # install the module if not installed, and update if it is
         _autoupdate_)
-            if rp_isInstalled "$md_idx"; then
-                rp_callModule "$md_idx" "_update_" || return 1
+            if rp_isInstalled "$md_id"; then
+                rp_callModule "$md_id" "_update_" || return 1
             else
-                rp_callModule "$md_idx" "_auto_" || return 1
+                rp_callModule "$md_id" "_auto_" || return 1
             fi
             return 0
             ;;
         # automatic modes used by rp_installModule to choose between binary/source based on pkg info
         _auto_|_update_)
             # if updating and a package isn't installed, return an error
-            if [[ "$mode" == "_update_" ]] && ! rp_isInstalled "$md_idx"; then
+            if [[ "$mode" == "_update_" ]] && ! rp_isInstalled "$md_id"; then
                 __ERRMSGS+=("$md_id is not installed, so can't update")
                 return 1
             fi
 
-            eval $(rp_getPackageInfo "$md_idx")
-            rp_hasBinary "$md_idx"
+            eval $(rp_getPackageInfo "$md_id")
+            rp_hasBinary "$md_id"
             local ret="$?"
 
             # check if we had a network failure from wget
@@ -113,38 +101,38 @@ function rp_callModule() {
             if [[ "$pkg_origin" != "source" ]] && [[ "$ret" -eq 0 ]]; then
                 # if we are in _update_ mode we only update if there is a newer binary
                 if [[ "$mode" == "_update_" ]]; then
-                    rp_hasNewerBinary "$md_idx"
+                    rp_hasNewerBinary "$md_id"
                     local ret="$?"
                     [[ "$ret" -eq 1 ]] && return 0
                 fi
-                rp_callModule "$md_idx" _binary_ || return 1
+                rp_callModule "$md_id" _binary_ || return 1
             else
-                rp_callModule "$md_idx" || return 1
+                rp_callModule "$md_id" || return 1
             fi
             return 0
             ;;
         _binary_)
             for mode in depends install_bin configure; do
-                rp_callModule "$md_idx" "$mode" || return 1
+                rp_callModule "$md_id" "$mode" || return 1
             done
             return 0
             ;;
         # automatically build/install module from source if no _source_ or no parameters are given
         ""|_source_)
             for mode in depends sources build install configure clean; do
-                rp_callModule "$md_idx" "$mode" || return 1
+                rp_callModule "$md_id" "$mode" || return 1
             done
             return 0
             ;;
     esac
 
     # create variables that can be used in modules
-    local md_desc="${__mod_desc[$md_idx]}"
-    local md_help="${__mod_help[$md_idx]}"
-    local md_type="${__mod_type[$md_idx]}"
-    local md_flags="${__mod_flags[$md_idx]}"
+    local md_desc="${__mod_desc[$md_id]}"
+    local md_help="${__mod_help[$md_id]}"
+    local md_type="${__mod_type[$md_id]}"
+    local md_flags="${__mod_flags[$md_id]}"
     local md_build="$__builddir/$md_id"
-    local md_inst="$(rp_getInstallPath $md_idx)"
+    local md_inst="$(rp_getInstallPath $md_id)"
     local md_data="$scriptdir/scriptmodules/$md_type/$md_id"
     local md_mode="install"
 
@@ -224,7 +212,7 @@ function rp_callModule() {
         install|install_bin)
             action="Installing"
             # remove any previous install folder before installing
-            if ! hasFlag "${__mod_flags[$md_idx]}" "noinstclean"; then
+            if ! hasFlag "${__mod_flags[$md_id]}" "noinstclean"; then
                 rmDirExists "$md_inst"
             fi
             mkdir -p "$md_inst"
@@ -276,7 +264,7 @@ function rp_callModule() {
                     md_ret_errors+=("Unable to install binary for $md_id")
                 fi
             else
-                if rp_hasBinary "$md_idx"; then
+                if rp_hasBinary "$md_id"; then
                     rp_installBin
                 else
                     md_ret_errors+=("Could not find a binary for $md_id")
@@ -322,17 +310,17 @@ function rp_callModule() {
         printMsgs "console" "${md_ret_errors[@]}" >&2
         # if sources fails and we were called from the setup gui module clean sources
         if [[ "$mode" == "sources" && "$__setup" -eq 1 ]]; then
-            rp_callModule "$md_idx" clean
+            rp_callModule "$md_id" clean
         fi
         # remove install folder if there is an error (and it is empty)
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
         return 1
     else
-        [[ "$mode" == "install_bin" ]] && rp_setPackageInfo "$md_idx" "binary"
-        [[ "$mode" == "install" ]] && rp_setPackageInfo "$md_idx" "source"
+        [[ "$mode" == "install_bin" ]] && rp_setPackageInfo "$md_id" "binary"
+        [[ "$mode" == "install" ]] && rp_setPackageInfo "$md_id" "source"
         # handle the case of a few drivers that don't have an install function and set the package info at build stage
         if ! fnExists "install_${md_id}" && [[ "$mode" == "build" ]]; then
-            rp_setPackageInfo "$md_idx" "source"
+            rp_setPackageInfo "$md_id" "source"
         fi
     fi
 
@@ -350,9 +338,8 @@ function rp_hasBinaries() {
 }
 
 function rp_getBinaryUrl() {
-    local idx="$1"
-    local id="${__mod_id[$idx]}"
-    local url="$__binary_url/${__mod_type[$idx]}/$id.tar.gz"
+    local id="$1"
+    local url="$__binary_url/${__mod_type[$id]}/$id.tar.gz"
     if fnExists "install_bin_${id}"; then
         if fnExists "__binary_url_${id}"; then
             url="$(__binary_url_${id})"
@@ -364,8 +351,7 @@ function rp_getBinaryUrl() {
 }
 
 function rp_hasBinary() {
-    local idx="$1"
-    local id="${__mod_id[$idx]}"
+    local id="$1"
 
     # binary blacklist for armv7 Debian/OSMC due to GCC ABI incompatibility with
     # threaded C++ apps on Raspbian (armv6 userland)
@@ -377,7 +363,7 @@ function rp_hasBinary() {
         esac
     fi
 
-    local url="$(rp_getBinaryUrl $idx)"
+    local url="$(rp_getBinaryUrl $id)"
     [[ "$url" == "notest" ]] && return 0
     [[ -z "$url" ]] && return 1
 
@@ -389,9 +375,8 @@ function rp_hasBinary() {
 }
 
 function rp_getBinaryDate() {
-    local idx="$1"
-    local id="$(rp_getIdFromIdx $idx)"
-    local url="$(rp_getBinaryUrl $idx)"
+    local id="$1"
+    local url="$(rp_getBinaryUrl $id)"
     [[ -z "$url" || "$url" == "notest" ]] && return 1
 
     local bin_date=$(wget \
@@ -404,10 +389,10 @@ function rp_getBinaryDate() {
 }
 
 function rp_hasNewerBinary() {
-    local idx="$1"
-    eval $(rp_getPackageInfo "$idx")
+    local id="$1"
+    eval $(rp_getPackageInfo "$id")
     [[ -z "$pkg_date" ]] && return 2
-    local bin_date="$(rp_getBinaryDate $idx)"
+    local bin_date="$(rp_getBinaryDate $id)"
     [[ -z "$bin_date" ]] && return 2
 
     local pkg_date_unix="$(date -d "$pkg_date" +%s)"
@@ -420,9 +405,8 @@ function rp_hasNewerBinary() {
 }
 
 function rp_getInstallPath() {
-    local idx="$1"
-    local id=$(rp_getIdFromIdx "$idx")
-    echo "$rootdir/${__mod_type[$idx]}/$id"
+    local id="$1"
+    echo "$rootdir/${__mod_type[$id]}/$id"
 }
 
 function rp_installBin() {
@@ -478,23 +462,23 @@ function rp_createBin() {
 
 function rp_hasModule() {
     local id="$1"
-    [[ -n "$(rp_getIdxFromId $id)" ]] && return 0
+    [[ -n "${__mod_type[$id]}" ]] && return 0
     return 1
 }
 
 function rp_installModule() {
-    local idx="$1"
+    local id="$1"
     local mode="$2"
     [[ -z "$mode" ]] && mode="_auto_"
-    rp_callModule "$idx" "$mode" || return 1
+    rp_callModule "$id" "$mode" || return 1
     return 0
 }
 
 # this is a basic / temporary fix to record the source of a package when updating (binary vs source)
 # packaging will be overhauled at a later date
 function rp_setPackageInfo() {
-    local idx="$1"
-    local install_path="$(rp_getInstallPath $idx)"
+    local id="$1"
+    local install_path="$(rp_getInstallPath $id)"
     [[ ! -d "$install_path" ]] && return 1
     local pkg="$install_path/retropie.pkg"
     local origin="$2"
@@ -503,7 +487,7 @@ function rp_setPackageInfo() {
     iniSet "pkg_origin" "$origin"
     local pkg_date
     if [[ "$origin" == "binary" ]]; then
-        pkg_date="$(rp_getBinaryDate $idx)"
+        pkg_date="$(rp_getBinaryDate $id)"
     else
         pkg_date="$(date)"
     fi
@@ -528,20 +512,20 @@ function rp_getPackageInfo() {
 }
 
 function rp_registerModule() {
-    local module_idx="$1"
-    local module_path="$2"
-    local module_type="$3"
+    local path="$1"
+    local type="$2"
     local rp_module_id=""
     local rp_module_desc=""
     local rp_module_help=""
     local rp_module_licence=""
     local rp_module_section=""
     local rp_module_flags=""
-    local var
+
     local error=0
 
-    source "$module_path"
+    source "$path"
 
+    local var
     for var in rp_module_id rp_module_desc; do
         if [[ -z "${!var}" ]]; then
             echo "Module $module_path is missing valid $var"
@@ -590,59 +574,48 @@ function rp_registerModule() {
     done
 
     if [[ "$valid" -eq 1 ]]; then
-        __mod_idx+=("$module_idx")
-        __mod_id["$module_idx"]="$rp_module_id"
-        __mod_type["$module_idx"]="$module_type"
-        __mod_desc["$module_idx"]="$rp_module_desc"
-        __mod_help["$module_idx"]="$rp_module_help"
-        __mod_licence["$module_idx"]="$rp_module_licence"
-        __mod_section["$module_idx"]="$rp_module_section"
-        __mod_flags["$module_idx"]="$rp_module_flags"
-
-        # id to idx mapping via associative array
-        __mod_id_to_idx["$rp_module_id"]="$module_idx"
+        # create numerical index for each module id from nunber of added modules
+        __mod_idx["$rp_module_id"]="${#__mod_id[@]}"
+        __mod_id+=("$rp_module_id")
+        __mod_type["$rp_module_id"]="$type"
+        __mod_desc["$rp_module_id"]="$rp_module_desc"
+        __mod_help["$rp_module_id"]="$rp_module_help"
+        __mod_licence["$rp_module_id"]="$rp_module_licence"
+        __mod_section["$rp_module_id"]="$rp_module_section"
+        __mod_flags["$rp_module_id"]="$rp_module_flags"
     fi
 }
 
 function rp_registerModuleDir() {
-    local module_idx="$1"
-    local module_dir="$2"
-    for module in $(find "$scriptdir/scriptmodules/$2" -maxdepth 1 -name "*.sh" | sort); do
-        rp_registerModule $module_idx "$module" "$module_dir"
-        ((module_idx++))
+    local dir="$1"
+    local module
+    for module in $(find "$scriptdir/scriptmodules/$dir" -maxdepth 1 -name "*.sh" | sort); do
+        rp_registerModule "$module" "$dir"
     done
 }
 
 function rp_registerAllModules() {
-    __mod_idx=()
     __mod_id=()
-    __mod_type=()
-    __mod_desc=()
-    __mod_help=()
-    __mod_licence=()
-    __mod_section=()
-    __mod_flags=()
+    declare -Ag __mod_idx=()
+    declare -Ag __mod_type=()
+    declare -Ag __mod_desc=()
+    declare -Ag __mod_help=()
+    declare -Ag __mod_licence=()
+    declare -Ag __mod_section=()
+    declare -Ag __mod_flags=()
 
-    rp_registerModuleDir 100 "emulators"
-    rp_registerModuleDir 200 "libretrocores"
-    rp_registerModuleDir 300 "ports"
-    rp_registerModuleDir 800 "supplementary"
-    rp_registerModuleDir 900 "admin"
-}
-
-function rp_getIdxFromId() {
-    echo "${__mod_id_to_idx[$1]}"
-}
-
-function rp_getIdFromIdx() {
-    echo "${__mod_id[$1]}"
+    rp_registerModuleDir "emulators"
+    rp_registerModuleDir "libretrocores"
+    rp_registerModuleDir "ports"
+    rp_registerModuleDir "supplementary"
+    rp_registerModuleDir "admin"
 }
 
 function rp_getSectionIds() {
     local section
     local id
     local ids=()
-    for id in "${__mod_idx[@]}"; do
+    for id in "${__mod_id[@]}"; do
         for section in "$@"; do
             [[ "${__mod_section[$id]}" == "$section" ]] && ids+=("$id")
         done
@@ -651,17 +624,17 @@ function rp_getSectionIds() {
 }
 
 function rp_isInstalled() {
-    local md_idx="$1"
-    local md_inst="$rootdir/${__mod_type[$md_idx]}/${__mod_id[$md_idx]}"
+    local id="$1"
+    local md_inst="$rootdir/${__mod_type[$id]}/$id"
     [[ -d "$md_inst" ]] && return 0
     return 1
 }
 
 function rp_updateHooks() {
     local function
-    local mod_idx
+    local mod_id
     for function in $(compgen -A function _update_hook_); do
-        mod_idx="$(rp_getIdxFromId "${function/_update_hook_/}")"
-        [[ -n "$mod_idx" ]] && rp_callModule "$mod_idx" _update_hook
+        mod_id="${function/_update_hook_/}"
+        [[ -n "$mod_id" ]] && rp_callModule "$mod_id" _update_hook
     done
 }

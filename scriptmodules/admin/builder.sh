@@ -22,32 +22,21 @@ function module_builder() {
 
     local id
     for id in "${ids[@]}"; do
-        # if index get mod_id from array else we look it up
-        local md_id
-        local md_idx
-        if [[ "$id" =~ ^[0-9]+$ ]]; then
-            md_id="$(rp_getIdFromIdx $id)"
-            md_idx="$id"
-        else
-            md_idx="$(rp_getIdxFromId $id)"
-            md_id="$id"
-        fi
-
         # don't build binaries for modules with flag nobin
         # eg scraper which fails as go1.8 doesn't work under qemu
-        hasFlag "${__mod_flags[$md_idx]}" "nobin" && continue
+        hasFlag "${__mod_flags[$id]}" "nobin" && continue
 
-        ! fnExists "install_${md_id}" && continue
+        ! fnExists "install_${id}" && continue
 
         # skip already built archives, so we can retry failed modules
-        [[ -f "$__tmpdir/archives/$__binary_path/${__mod_type[md_idx]}/$md_id.tar.gz" ]] && continue
+        [[ -f "$__tmpdir/archives/$__binary_path/${__mod_type[id]}/$id.tar.gz" ]] && continue
 
         # build, install and create binary archive.
         # initial clean in case anything was in the build folder when calling
         local mode
         for mode in clean remove depends sources build install create_bin clean remove "depends remove"; do
             # continue to next module if not available or an error occurs
-            rp_callModule "$md_id" $mode || break
+            rp_callModule "$id" $mode || break
         done
     done
     return 0
