@@ -98,6 +98,9 @@ function depends_setup() {
 
     # remove all but the last 20 logs
     find "$__logdir" -type f | sort | head -n -20 | xargs -d '\n' --no-run-if-empty rm
+
+    # set a global __setup to 1 which is used to adjust package function behaviour if called from the setup gui
+    __setup=1
 }
 
 function updatescript_setup()

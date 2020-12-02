@@ -320,8 +320,8 @@ function rp_callModule() {
     if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
         __ERRMSGS+=("${md_ret_errors[@]}")
         printMsgs "console" "${md_ret_errors[@]}" >&2
-        # if sources fails make sure we clean up
-        if [[ "$mode" == "sources" ]]; then
+        # if sources fails and we were called from the setup gui module clean sources
+        if [[ "$mode" == "sources" && "$__setup" -eq 1 ]]; then
             rp_callModule "$md_idx" clean
         fi
         # remove install folder if there is an error (and it is empty)
