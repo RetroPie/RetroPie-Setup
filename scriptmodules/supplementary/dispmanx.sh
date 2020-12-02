@@ -20,16 +20,16 @@ function gui_dispmanx() {
         local count=1
         local options=()
         local command=()
-        for idx in "${__mod_idx[@]}"; do
-            if [[ "${__mod_flags[$idx]}" =~ dispmanx ]] && rp_isInstalled "$idx"; then
-                local mod_id=${__mod_id[idx]}
-                iniGet "$mod_id"
+        local id
+        for id in "${__mod_id[@]}"; do
+            if [[ "${__mod_flags[$id]}" =~ dispmanx ]] && rp_isInstalled "$id"; then
+                iniGet "$id"
                 if [[ "$ini_value" == "1" ]]; then
-                    options+=($count "Disable for $mod_id (currently enabled)")
-                    command[$count]="$mod_id off"
+                    options+=($count "Disable for $id (currently enabled)")
+                    command[$count]="$id off"
                 else
-                    options+=($count "Enable for $mod_id (currently disabled)")
-                    command[$count]="$mod_id on"
+                    options+=($count "Enable for $id (currently disabled)")
+                    command[$count]="$id on"
                 fi
                 ((count++))
             fi

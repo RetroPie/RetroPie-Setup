@@ -22,9 +22,9 @@ function _get_commit_data_stats() {
 
 function _get_package_data_stats() {
     local data=()
-    local idx
-    for idx in ${__mod_idx[@]}; do
-        data+=("${__mod_section[$idx]};${__mod_id[$idx]};${__mod_desc[$idx]};${__mod_licence[$idx]};${__mod_flags[$idx]};")
+    local id
+    for id in ${__mod_id[@]}; do
+        data+=("${__mod_section[$id]};$id;${__mod_desc[$id]};${__mod_licence[$id]};${__mod_flags[$id]};")
     done
     printf "%s\n" "${data[@]}"
 }
