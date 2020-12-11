@@ -153,6 +153,7 @@ function post_update_setup() {
 
 function package_setup() {
     local id="$1"
+    local default=""
 
     # associative array so we can pull out the messages later for the confirmation requester
     declare -A option_msgs=(
@@ -238,9 +239,9 @@ function package_setup() {
             options+=(H "Package Help")
         fi
 
-        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for $id\n$status" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --default-item "$default" --menu "Choose an option for $id\n$status" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-
+        default="$choice"
         local logfilename
 
         case "$choice" in
