@@ -171,10 +171,12 @@ function rp_callModule() {
     # create function name
     function="${mode}_${md_id}"
 
-    # handle cases where we have automatic module functions like remove
+    # automatically switch to install_bin if present while install is not, and handle cases where we have
+    # fallback functions when not present in modules - currently install_bin and remove
     if ! fnExists "$function"; then
         if [[ "$mode" == "install" ]] && fnExists "install_bin_${md_id}"; then
             function="install_bin_${md_id}"
+            mode="install_bin"
         elif [[ "$mode" != "install_bin" && "$mode" != "remove" ]]; then
             return 0
         fi
@@ -209,15 +211,12 @@ function rp_callModule() {
             pushd "$md_build" 2>/dev/null
             pushed=$?
             ;;
-        install|install_bin)
-            action="Installing"
-            # remove any previous install folder before installing
-            if ! hasFlag "${__mod_flags[$md_id]}" "noinstclean"; then
-                rmDirExists "$md_inst"
-            fi
-            mkdir -p "$md_inst"
+        install)
             pushd "$md_build" 2>/dev/null
             pushed=$?
+            ;;
+        install_bin)
+            action="Installing (binary)"
             ;;
         configure)
             action="Configuring"
@@ -252,14 +251,17 @@ function rp_callModule() {
             printMsgs "console" "Removed directory $md_inst"
             ;;
         install)
-            if fnExists "$function"; then
-                "$function" "$@"
-            elif fnExists "install_bin_${md_id}"; then
-                "install_bin_${md_id}" "$@"
+            action="Installing"
+            # remove any previous install folder unless noinstclean flag is set
+            if ! hasFlag "${__mod_flags[$md_id]}" "noinstclean"; then
+                rmDirExists "$md_inst"
             fi
+            mkdir -p "$md_inst"
+            "$function" "$@"
             ;;
         install_bin)
             if fnExists "install_bin_${md_id}"; then
+                mkdir -p "$md_inst"
                 if ! "$function" "$@"; then
                     md_ret_errors+=("Unable to install binary for $md_id")
                 fi
@@ -273,7 +275,7 @@ function rp_callModule() {
             ;;
         *)
             # call the function with parameters
-            fnExists "$function" && "$function" "$@"
+            "$function" "$@"
             ;;
     esac
 
@@ -421,6 +423,7 @@ function rp_installBin() {
 
     if downloadAndVerify "$__binary_url/$md_type/$archive" "$tmp/$archive"; then
         mkdir -p "$dest"
+        rm -rf "$dest/$md_id"
         if tar -xvf "$tmp/$archive" -C "$dest"; then
             rm -rf "$tmp"
             return 0
