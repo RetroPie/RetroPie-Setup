@@ -25,7 +25,7 @@ function depends_xpadneo() {
 }
 
 function sources_xpadneo() {
-    local tag="v0.8.4"
+    local tag="v0.9"
     gitPullOrClone "$md_build" https://github.com/atar-axis/xpadneo.git "$tag"
     rsync -a --delete "$md_build/hid-xpadneo/" "$md_inst/"
     cp "$md_build/VERSION" "$md_inst/"
