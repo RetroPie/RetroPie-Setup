@@ -30,8 +30,8 @@ function build_lr-ppsspp() {
 
 function install_lr-ppsspp() {
     md_ret_files=(
-        'lr-ppsspp/lib/ppsspp_libretro.so'
-        'lr-ppsspp/assets'
+        'ppsspp/lib/ppsspp_libretro.so'
+        'ppsspp/assets'
     )
 }
 
