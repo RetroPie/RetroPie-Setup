@@ -363,7 +363,7 @@ function connect_bluetooth() {
     local mac
     local name
     while read mac; read name; do
-        $(bt-device --connect "$mac" 2>/dev/null)
+        bt-device --connect "$mac" 2>/dev/null
     done < <(list_registered_bluetooth)
 }
 
