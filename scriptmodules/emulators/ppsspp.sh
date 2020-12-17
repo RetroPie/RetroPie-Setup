@@ -25,8 +25,10 @@ function depends_ppsspp() {
 }
 
 function sources_ppsspp() {
-    gitPullOrClone "$md_build/$md_id" https://github.com/hrydgard/ppsspp.git
-    cd "$md_id"
+    local branch="$1"
+    [[ -z "$branch" ]] && branch="master"
+    gitPullOrClone "$md_build/ppsspp" https://github.com/hrydgard/ppsspp.git "$branch"
+    cd "ppsspp"
 
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it
     sed -i "/^build_ARMv6$/,$ d" ffmpeg/linux_arm.sh
@@ -119,10 +121,10 @@ function build_ppsspp() {
     fi
 
     # build ffmpeg
-    build_ffmpeg_ppsspp "$md_build/$md_id/ffmpeg"
+    build_ffmpeg_ppsspp "$md_build/ppsspp/ffmpeg"
 
     # build ppsspp
-    cd "$md_build/$md_id"
+    cd "$md_build/ppsspp"
     rm -rf CMakeCache.txt CMakeFiles
     local params=()
     if isPlatform "videocore"; then
@@ -154,7 +156,7 @@ function build_ppsspp() {
     make clean
     make
 
-    md_ret_require="$md_build/$md_id/$ppsspp_binary"
+    md_ret_require="$md_build/ppsspp/$ppsspp_binary"
 }
 
 function install_ppsspp() {
