@@ -456,7 +456,7 @@ function update_packages_setup() {
     local id
     for id in ${__mod_id[@]}; do
         if rp_isInstalled "$id" && [[ "${__mod_section[$id]}" != "depends" ]]; then
-            rp_installModule "$id" "_update_" || return 1
+            rp_installModule "$id" "_update_"
         fi
     done
 }
