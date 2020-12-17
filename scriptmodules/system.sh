@@ -190,7 +190,7 @@ function get_os_version() {
             # we provide binaries for RPI on Raspbian 9/10
             if isPlatform "rpi" && \
                isPlatform "32bit" && \
-               compareVersions "$__os_debian_ver" gt 8 && compareVersions "$__os_debian_ver" lt 11; then
+               compareVersions "$__os_debian_ver" gt 9 && compareVersions "$__os_debian_ver" lt 11; then
                # only set __has_binaries if not already set
                [[ -z "$__has_binaries" ]] && __has_binaries=1
             fi
