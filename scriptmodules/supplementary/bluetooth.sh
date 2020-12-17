@@ -165,12 +165,12 @@ function status_bluetooth() {
     local name
 
     while read mac; read name; do
-        paired+="$mac: $name\n"
+        paired+="$mac - $name\n"
     done < <(list_paired_bluetooth)
     [[ -z "$paired" ]] && paired="There are no paired devices"
 
     while read mac; read name; do
-        connected+="$mac: $name\n"
+        connected+="$mac - $name\n"
     done < <(list_connected_bluetooth)
     [[ -z "$connected" ]] && connected="There are no connected devices"
 
@@ -215,7 +215,7 @@ function remove_device_bluetooth() {
     fi
 }
 
-function register_bluetooth() {
+function pair_bluetooth() {
     declare -A devices=()
     local mac
     local name
@@ -244,7 +244,7 @@ function register_bluetooth() {
         if [[ "$?" -eq 0 ]]; then
             printMsgs "dialog" "Successfully authenticated $name ($mac).\n\nYou can now remove the USB cable."
         else
-            printMsgs "dialog" "Unable to authenticate $name ($mac).\n\nPlease try to register the device again, making sure to follow the on-screen steps exactly."
+            printMsgs "dialog" "Unable to authenticate $name ($mac).\n\nPlease try to pair the device again, making sure to follow the on-screen steps exactly."
         fi
         return
     fi
@@ -312,7 +312,7 @@ function register_bluetooth() {
 
     if [[ "$skip_connect" -eq 1 ]]; then
         if hcitool con | grep -q "$mac"; then
-            printMsgs "dialog" "Successfully registered and connected to $mac"
+            printMsgs "dialog" "Successfully paired and connected to $mac"
             return 0
         else
             printMsgs "dialog" "Unable to connect to bluetooth device. Please try pairing with the commandline tool 'bluetoothctl'"
@@ -339,10 +339,10 @@ function udev_bluetooth() {
     while read mac; read name; do
         devices+=(["$mac"]="$name")
         options+=("$mac" "$name")
-    done < <(list_registered_bluetooth)
+    done < <(list_paired_bluetooth)
 
     if [[ ${#devices[@]} -eq 0 ]] ; then
-        printMsgs "dialog" "There are no registered bluetooth devices."
+        printMsgs "dialog" "There are no paired bluetooth devices."
     else
         local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the bluetooth device you would like to create a udev rule for" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -364,7 +364,7 @@ function connect_bluetooth() {
     local name
     while read mac; read name; do
         bt-device --connect "$mac" 2>/dev/null
-    done < <(list_registered_bluetooth)
+    done < <(list_paired_bluetooth)
 }
 
 function connect_mode_gui_bluetooth() {
@@ -427,11 +427,11 @@ function gui_bluetooth() {
 
         local cmd=(dialog --backtitle "$__backtitle" --menu "Configure Bluetooth Devices" 22 76 16)
         local options=(
-            R "Register and Connect to Bluetooth Device"
+            P "Pair and Connect to Bluetooth Device"
             X "Remove Bluetooth Device"
             S "Show Paired & Connected Bluetooth Devices"
             U "Set up udev rule for Joypad (required for joypads from 8Bitdo etc)"
-            C "Connect now to all registered devices"
+            C "Connect now to all paired devices"
             M "Configure bluetooth connect mode (currently: $connect_mode)"
         )
 
@@ -449,8 +449,8 @@ function gui_bluetooth() {
             # temporarily restore Bluetooth stack (if needed)
             service sixad status &>/dev/null && sixad -r
             case "$choice" in
-                R)
-                    register_bluetooth
+                P)
+                    pair_bluetooth
                     ;;
                 X)
                     remove_device_bluetooth
