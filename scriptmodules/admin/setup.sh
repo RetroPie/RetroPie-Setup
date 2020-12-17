@@ -286,6 +286,7 @@ function package_setup() {
                 rps_logInit
                 {
                     rps_logStart
+                    clear
                     rp_callModule "$id" remove
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
