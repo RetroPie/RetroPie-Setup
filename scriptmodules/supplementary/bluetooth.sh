@@ -93,13 +93,13 @@ function list_available_bluetooth() {
     local device_name
     local info_text="\n\nSearching ..."
 
-    declare -A registered=()
+    declare -A paired=()
     declare -A found=()
 
-    # get an asc array of registered mac addresses
+    # get an asc array of paired mac addresses
     while read mac_address; read device_name; do
-        registered+=(["$mac_address"]="$device_name")
-    done < <(list_registered_bluetooth)
+        paired+=(["$mac_address"]="$device_name")
+    done < <(list_paired_bluetooth)
 
     # sixaxis: add USB pairing information
     [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="Searching ...\n\nDualShock registration: while this text is visible, unplug the controller, press the PS/SHARE button, and then replug the controller."
@@ -116,9 +116,9 @@ function list_available_bluetooth() {
         done < <(hcitool scan --flush | tail -n +2 | sed 's/\t/\n/g')
     fi
 
-    # display any found addresses that are not already registered
+    # display any found addresses that are not already paired
     for mac_address in "${!found[@]}"; do
-        if [[ -z "${registered[$mac_address]}" ]]; then
+        if [[ -z "${paired[$mac_address]}" ]]; then
             echo "$mac_address"
             echo "${found[$mac_address]}"
         fi
@@ -132,36 +132,73 @@ function list_registered_bluetooth() {
             echo ${BASH_REMATCH[2]}
             echo ${BASH_REMATCH[1]}
         fi
-    done < <(bt-device --list)
+    done < <(bt-device --list 2>/dev/null)
 }
 
-function display_active_and_registered_bluetooth() {
-    local registered
-    local active
+function _devices_grep_bluetooth() {
+    declare -A devices=()
+    local pattern="$1"
 
-    registered="$(bt-device --list | tail -n +2)"
-    [[ -z "$registered" ]] && registered="There are no registered devices"
+    local mac
+    local name
+    while read mac; read name; do
+        if bt-device --info "$mac" 2>/dev/null | grep -q "$pattern"; then
+            echo "$mac"
+            echo "$name"
+        fi
+    done < <(list_registered_bluetooth)
+}
 
-    if [[ "$(hcitool con)" != "Connections:" ]]; then
-        active="$(hcitool con 2>&1 | sed 1d)"
-    else
-        active="There are no active connections"
-    fi
+function list_paired_bluetooth() {
+    _devices_grep_bluetooth "Paired: 1"
+}
 
-    printMsgs "dialog" "Registered Devices:\n\n$registered\n\nActive Connections:\n\n$active"
+function list_connected_bluetooth() {
+    _devices_grep_bluetooth "Connected: 1"
+}
+
+function status_bluetooth() {
+    local paired
+    local connected
+
+    local mac
+    local name
+
+    while read mac; read name; do
+        paired+="$mac: $name\n"
+    done < <(list_paired_bluetooth)
+    [[ -z "$paired" ]] && paired="There are no paired devices"
+
+    while read mac; read name; do
+        connected+="$mac: $name\n"
+    done < <(list_connected_bluetooth)
+    [[ -z "$connected" ]] && connected="There are no connected devices"
+
+    echo -e "Paired Devices:\n\n$paired\nConnected Devices:\n\n$connected"
 }
 
 function remove_device_bluetooth() {
-    declare -A mac_addresses=()
-    local mac_address
-    local device_name
+    declare -A devices=()
+    local mac
+    local name
+
     local options=()
-    while read mac_address; read device_name; do
-        mac_addresses+=(["$mac_address"]="$device_name")
-        options+=("$mac_address" "$device_name")
+
+    # show paired devices first
+    while read mac; read name; do
+        devices+=(["$mac"]="$name")
+        options+=("$mac" "$name")
+    done < <(list_paired_bluetooth)
+
+    # then list all other devices known
+    while read mac; read name; do
+        if [[ -z "${devices[$mac]}" ]]; then
+            devices+=(["$mac"]="$name")
+            options+=("$mac" "$name")
+        fi
     done < <(list_registered_bluetooth)
 
-    if [[ ${#mac_addresses[@]} -eq 0 ]] ; then
+    if [[ ${#devices[@]} -eq 0 ]] ; then
         printMsgs "dialog" "There are no devices to remove."
     else
         local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the bluetooth device you would like to remove" 22 76 16)
@@ -169,7 +206,7 @@ function remove_device_bluetooth() {
         [[ -z "$choice" ]] && return
 
         local out
-        out=$(bt-device --remove $choice 2>&1)
+        out=$(bt-device --remove "$choice" 2>&1)
         if [[ "$?" -eq 0 ]] ; then
             printMsgs "dialog" "Device removed"
         else
@@ -392,7 +429,7 @@ function gui_bluetooth() {
         local options=(
             R "Register and Connect to Bluetooth Device"
             X "Remove Bluetooth Device"
-            D "Display Registered & Connected Bluetooth Devices"
+            S "Show Paired & Connected Bluetooth Devices"
             U "Set up udev rule for Joypad (required for joypads from 8Bitdo etc)"
             C "Connect now to all registered devices"
             M "Configure bluetooth connect mode (currently: $connect_mode)"
@@ -418,8 +455,8 @@ function gui_bluetooth() {
                 X)
                     remove_device_bluetooth
                     ;;
-                D)
-                    display_active_and_registered_bluetooth
+                S)
+                    printMsgs "dialog" "$(status_bluetooth)"
                     ;;
                 U)
                     udev_bluetooth
