@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+
+# This file is part of The RetroPie Project
+#
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
+#
+# See the LICENSE.md file at the top-level directory of this distribution and
+# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
+#
+
+function onstart_openmsx_joystick()
+{
+    truncate --size 0 /tmp/openMSXtemp.cfg
+}
+
+# Function to return the binding configuration string, when mapping to the MSX machine joystick
+# See https://openmsx.org/manual/commands.html#joystickN_config
+function _get_msx_bind()
+{
+    local input_name="$1"
+    local input_type="$2"
+    local input_id="$3"
+    local input_value="$4"
+    declare -A sdl_hat_directions=([1]="U" [2]="R" [4]="D" [8]="L")
+
+    case "$input_type" in
+        button)
+            echo "button${input_id}"
+            ;;
+        axis)
+            if [[ $input_value =~ ^- ]]; then
+                echo "-axis${input_id}"
+            else
+                echo "+axis${input_id}"
+            fi
+            ;;
+        hat)
+            echo "${sdl_hat_directions[${input_value}]}_hat${input_id}"
+            ;;
+        *)
+            ;;
+    esac
+}
+
+# Function to return the binding configuration string, when mapping to openMSX emulator actions
+# See http://openmsx.org/manual/commands.html#bind
+function _get_emu_bind()
+{
+    local input_name="$1"
+    local input_type="$2"
+    local input_id="$3"
+    local input_value="$4"
+    declare -A sdl_hat_directions=([1]="up" [2]="right" [4]="down" [8]="left")
+
+    case "$input_type" in
+        button)
+            echo "button${input_id} down"
+            ;;
+        axis)
+            if [[ $input_value =~ ^- ]]; then
+                echo "axis${input_id} -1"
+            else
+                echo "+axis${input_id} +1"
+            fi
+            ;;
+        hat)
+            echo "hat${input_id} ${sdl_hat_directions[${input_value}]}"
+            ;;
+        *)
+            ;;
+    esac
+}
+
+function map_openmsx_joystick() {
+    local input_name="$1"
+    local input_type="$2"
+    local input_id="$3"
+    local input_value="$4"
+
+    local bind_msx_joystick=$(_get_msx_bind "$1" "$2" "$3" "$4")
+    local bind_msx_emulator=$(_get_emu_bind "$1" "$2" "$3" "$4")
+    local msx_key
+    local emu_key
+    local temp_conf="/tmp/openMSXtemp.cfg"
+
+    case "$input_name" in
+        a)
+            msx_key="A"
+            ;;
+        b)
+            msx_key="B"
+            ;;
+        up|leftanalogup)
+            msx_key="UP"
+            ;;
+        down|leftanalogdown)
+            msx_key="DOWN"
+            ;;
+        left|leftanalogleft)
+            msx_key="LEFT"
+            ;;
+        right|leftanalogright)
+            msx_key="RIGHT"
+            ;;
+        x)
+            emu_key="keymatrixdown 6 0x40" # F1
+            ;;
+        y)
+            emu_key="keymatrixdown 6 0x20" # F2
+            ;;
+        lefttop|leftshoulder|pageup)
+            emu_key="keymatrixdown 6 0x80" # F3
+            ;;
+        righttop|rightshoulder|pagedown)
+            emu_key="keymatrixdown 7 0x01" # F4
+            ;;
+        start)
+            emu_key="main_menu_open"
+            ;;
+        select)
+            emu_key="toggle_osd_keyboard"
+            ;;
+        *)
+            return
+            ;;
+    esac
+
+    if [[ -n $msx_key ]]; then
+        echo "    dict lappend joystick1_config $msx_key $bind_msx_joystick" >> "$temp_conf"
+    fi
+
+    if [[ -n $emu_key ]]; then
+        # Don't try to bind a non-button input to a keyboard key, there's no 'release' event for axis/hat inputs
+        [[ $emu_key =~ ^keymatrixdown && ! $bind_msx_emulator =~ "button" ]] && return
+
+        echo "    bind_default \"joy1 $bind_msx_emulator\" \"$emu_key\"" >> "$temp_conf"
+        if [[ $emu_key =~ ^keymatrixdown ]]; then
+            echo "    bind_default \"joy1 ${bind_msx_emulator//down/up}\" \"${emu_key//down/up}\"" >>  "$temp_conf"
+        fi
+    fi
+
+    # Add an extra configuration for 'Start' to close the OSD menu
+    if [[ "$input_name" == "start" ]]; then
+        echo "    bind \"joy1 ${bind_msx_emulator}\" -layer osd_menu \"main_menu_close\"" >> "$temp_conf"
+    fi
+}
+
+function onend_openmsx_joystick() {
+    local conf
+
+    # sanitize filename
+    conf=${DEVICE_NAME//[\?\<\>\\\/:\*\|]/}
+
+    mkdir -p "$home/.openMSX/share/joystick/game"
+    cat > "$home/.openMSX/share/joystick/${conf}.tcl" <<_EOF_
+proc auto_config_joypad { } {
+    # clear existing joypad configuration
+    global joystick1_config
+    dict for {btn binding} \$joystick1_config { dict set joystick1_config \$btn {} }
+
+$(sort /tmp/openMSXtemp.cfg )
+}
+_EOF_
+
+# Add a note about game overrides
+cat > "$home/.openMSX/share/joystick/README.txt" <<_EOF2_
+This folder contains joypad configuration scripts, generated by EmulationStation's input configuration.
+They are read by openMSX at start-up and loaded automatically when the corresponding joypad is plugged in.
+
+If you wish to have a game specific joystick configuration, you can override the gamepad's configuration by:
+ * copy an already existing controller '.tcl' configuration file to the 'game' subfolder.
+ * edit the file and adjust the 'bind_default' commands or the 'joystick1_config' configuration.
+   See the openMSX documentation for how to use those commands:
+   - http://openmsx.org/manual/commands.html#bind
+   - https://openmsx.org/manual/commands.html#joystickN_config
+   - http://map.grauw.nl/articles/keymatrix.php
+ * rename the new '.tcl' file so the name is similar to the disk/tape/rom name (i.e. 'Metal Gear.zip' will load 'Metal Gear.tcl').
+   If you are not sure which name to use, start the game, then press 'F10' and type 'guess_title', followed by Enter.
+   openMSX will print the content name, which you can then use as a filename for the override configuration file.
+   NOTE: special characters '(:?/\*)', are automatically striped from the name so if your content file is 'ABC?.dsk',
+   then the configuration file should be 'ABC.tcl'.
+
+_EOF2_
+
+    rm /tmp/openMSXtemp.cfg
+}
