@@ -24,6 +24,7 @@ function depends_esthemes() {
 function install_theme_esthemes() {
     local theme="$1"
     local repo="$2"
+    local branch="$3"
     if [[ -z "$repo" ]]; then
         repo="RetroPie"
     fi
@@ -32,7 +33,7 @@ function install_theme_esthemes() {
         repo="RetroPie"
     fi
     mkdir -p "/etc/emulationstation/themes"
-    gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git"
+    gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git" "$branch"
 }
 
 function uninstall_theme_esthemes() {
@@ -252,6 +253,7 @@ function gui_esthemes() {
         local theme
         local installed_themes=()
         local repo
+        local branch
         local options=()
         local status=()
         local default
@@ -324,20 +326,21 @@ function gui_esthemes() {
                 theme=(${themes[choice-1]})
                 repo="${theme[0]}"
                 theme="${theme[1]}"
+                branch="${theme[2]}"
                 if [[ "${status[choice]}" == "i" ]]; then
                     options=(1 "Update $repo/$theme" 2 "Uninstall $repo/$theme")
                     cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option for theme" 12 40 06)
                     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
                     case "$choice" in
                         1)
-                            rp_callModule esthemes install_theme "$theme" "$repo"
+                            rp_callModule esthemes install_theme "$theme" "$repo" "$branch"
                             ;;
                         2)
                             rp_callModule esthemes uninstall_theme "$theme"
                             ;;
                     esac
                 else
-                    rp_callModule esthemes install_theme "$theme" "$repo"
+                    rp_callModule esthemes install_theme "$theme" "$repo" "$branch"
                 fi
                 ;;
         esac
