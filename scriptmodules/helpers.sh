@@ -240,6 +240,7 @@ function _mapPackage() {
                 iniConfig " = " '"' "$configdir/all/retropie.cfg"
                 iniGet "own_sdl2"
                 [[ "$ini_value" == "1" ]] && own_sdl2=1
+                [[ "$ini_value" == "0" ]] && own_sdl2=0
                 [[ "$own_sdl2" -eq 1 ]] && pkg="RP sdl2 $pkg"
             fi
             ;;
