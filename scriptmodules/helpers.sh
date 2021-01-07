@@ -239,7 +239,11 @@ function _mapPackage() {
                 isPlatform "x11" && own_sdl2=0
                 iniConfig " = " '"' "$configdir/all/retropie.cfg"
                 iniGet "own_sdl2"
-                [[ "$ini_value" == "1" ]] && own_sdl2=1
+                if [[ "$ini_value" -eq 1 ]]; then
+                    own_sdl2=1
+                elif [[ "$ini_value" -eq 0 ]]; then
+                    own_sdl2=0
+                fi
                 [[ "$own_sdl2" -eq 1 ]] && pkg="RP sdl2 $pkg"
             fi
             ;;
