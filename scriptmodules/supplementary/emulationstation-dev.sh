@@ -19,18 +19,6 @@ function _update_hook_emulationstation-dev() {
     _update_hook_emulationstation
 }
 
-function _add_system_emulationstation-dev() {
-    _add_system_emulationstation "$@"
-}
-
-function _del_system_emulationstation-dev() {
-    _del_system_emulationstation "$@"
-}
-
-function _add_rom_emulationstation-dev() {
-    _add_rom_emulationstation "$@"
-}
-
 function depends_emulationstation-dev() {
     depends_emulationstation
 }
