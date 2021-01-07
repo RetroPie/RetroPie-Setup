@@ -229,6 +229,7 @@ function gui_esthemes() {
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
         'lipebello retrorama'
+        'lipebello retrorama-turbo'
         'lipebello strangerstuff'
         'lipebello spaceoddity'
         'lipebello swineapple'
