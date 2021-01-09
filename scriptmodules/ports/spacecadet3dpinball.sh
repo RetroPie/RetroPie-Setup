@@ -42,6 +42,24 @@ function configure_spacecadet3dpinball() {
     local system="spacecadet3dpinball"
     local spacecadet3dpinball="$md_inst/spacecadet3dpinball_xinit.sh"
 
+		#
+		# Configure audio for better performance and mixing within Wine
+		#
+    mv /home/pi/.wine/drive_c/Program\ Files/SpaceCadet3DPinball/wavemix.inf /home/pi/.wine/drive_c/Program\ Files/SpaceCadet3DPinball/wavemix.inf.bak
+    cat > /home/pi/.wine/drive_c/Program\ Files/SpaceCadet3DPinball/wavemix.inf << _EOFWM_
+[general]
+ShowDevices=0
+WaveOutDevice=0
+[default]
+Remix=2
+GoodWavePos=1
+WaveBlocks=6
+WaveBlockLen=688
+SamplesPerSec=44
+_EOFWM_
+
+    chown pi:pi /home/pi/.wine/drive_c/Program\ Files/SpaceCadet3DPinball/wavemix.inf
+
     #
     # Add Space Cadet 3D Pinball entry to Ports in Emulation Station
     #
