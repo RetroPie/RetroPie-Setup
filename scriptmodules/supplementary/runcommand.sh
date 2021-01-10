@@ -15,7 +15,7 @@ rp_module_section="core"
 
 function _update_hook_runcommand() {
     # make sure runcommand is always updated when updating retropie-setup
-    rp_isInstalled "$md_idx" && install_bin_runcommand
+    rp_isInstalled "$md_id" && install_bin_runcommand
 }
 
 function depends_runcommand() {

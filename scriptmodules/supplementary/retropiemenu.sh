@@ -15,7 +15,7 @@ rp_module_section="core"
 
 function _update_hook_retropiemenu() {
     # to show as installed when upgrading to retropie-setup 4.x
-    if ! rp_isInstalled "$md_idx" && [[ -f "$home/.emulationstation/gamelists/retropie/gamelist.xml" ]]; then
+    if ! rp_isInstalled "$md_id" && [[ -f "$home/.emulationstation/gamelists/retropie/gamelist.xml" ]]; then
         mkdir -p "$md_inst"
         # to stop older scripts removing when launching from retropie menu in ES due to not using exec or exiting after running retropie-setup from this module
         touch "$md_inst/.retropie"
