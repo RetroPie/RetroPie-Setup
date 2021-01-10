@@ -152,8 +152,8 @@ function post_update_setup() {
 }
 
 function package_setup() {
-    local idx="$1"
-    local md_id="${__mod_id[$idx]}"
+    local id="$1"
+    local default=""
 
     # associative array so we can pull out the messages later for the confirmation requester
     declare -A option_msgs=(
@@ -168,20 +168,20 @@ function package_setup() {
         local status
 
         local has_binary=0
-        rp_hasBinary "$idx"
+        rp_hasBinary "$id"
         local binary_ret="$?"
         [[ "$binary_ret" -eq 0 ]] && has_binary=1
 
         local pkg_origin=""
         local source_update=0
         local binary_update=0
-        if rp_isInstalled "$idx"; then
-            eval $(rp_getPackageInfo "$idx")
+        if rp_isInstalled "$id"; then
+            eval $(rp_getPackageInfo "$id")
             status="Installed - via $pkg_origin"
             [[ -n "$pkg_date" ]] && status+=" (built: $pkg_date)"
 
             if [[ "$pkg_origin" != "source" && "$has_binary" -eq 1 ]]; then
-                rp_hasNewerBinary "$idx"
+                rp_hasNewerBinary "$id"
                 local has_newer="$?"
                 binary_update=1
                 option_msgs["U"]="Update (from pre-built binary)"
@@ -218,30 +218,30 @@ function package_setup() {
                 options+=(B "${option_msgs["B"]}")
             fi
 
-            if [[ "$source_update" -eq 0 ]] && fnExists "sources_${md_id}"; then
+            if [[ "$source_update" -eq 0 ]] && fnExists "sources_${id}"; then
                 options+=(S "${option_msgs[S]}")
            fi
         fi
 
-        if rp_isInstalled "$idx"; then
-            if fnExists "gui_${md_id}"; then
+        if rp_isInstalled "$id"; then
+            if fnExists "gui_${id}"; then
                 options+=(C "Configuration / Options")
             fi
             options+=(X "Remove")
         fi
 
-        if [[ -d "$__builddir/$md_id" ]]; then
+        if [[ -d "$__builddir/$id" ]]; then
             options+=(Z "Clean source folder")
         fi
 
-        local help="${__mod_desc[$idx]}\n\n${__mod_help[$idx]}"
+        local help="${__mod_desc[$id]}\n\n${__mod_help[$id]}"
         if [[ -n "$help" ]]; then
             options+=(H "Package Help")
         fi
 
-        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --menu "Choose an option for ${__mod_id[$idx]}\n$status" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --default-item "$default" --menu "Choose an option for $id\n$status" 22 76 16)
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-
+        default="$choice"
         local logfilename
 
         case "$choice" in
@@ -257,7 +257,7 @@ function package_setup() {
                 rps_logInit
                 {
                     rps_logStart
-                    rp_installModule "$idx" "$mode"
+                    rp_installModule "$id" "$mode"
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
@@ -266,14 +266,14 @@ function package_setup() {
                 rps_logInit
                 {
                     rps_logStart
-                    rp_callModule "$idx" gui
+                    rp_callModule "$id" gui
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
                 ;;
             X)
-                local text="Are you sure you want to remove $md_id?"
-                case "${__mod_section[$idx]}" in
+                local text="Are you sure you want to remove $id?"
+                case "${__mod_section[$id]}" in
                     core)
                         text+="\n\nWARNING - core packages are needed for RetroPie to function!"
                         ;;
@@ -286,7 +286,8 @@ function package_setup() {
                 rps_logInit
                 {
                     rps_logStart
-                    rp_callModule "$idx" remove
+                    clear
+                    rp_callModule "$id" remove
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
@@ -295,8 +296,8 @@ function package_setup() {
                 printMsgs "dialog" "$help"
                 ;;
             Z)
-                rp_callModule "$idx" clean
-                printMsgs "dialog" "$__builddir/$md_id has been removed."
+                rp_callModule "$id" clean
+                printMsgs "dialog" "$__builddir/$id has been removed."
                 ;;
             *)
                 break
@@ -314,18 +315,18 @@ function section_gui_setup() {
         local options=()
         local pkgs=()
 
-        local idx
+        local id
         local pkg_origin
         local num_pkgs=0
-        for idx in $(rp_getSectionIds $section); do
-            if rp_isInstalled "$idx"; then
-                eval $(rp_getPackageInfo "$idx")
+        for id in $(rp_getSectionIds $section); do
+            if rp_isInstalled "$id"; then
+                eval $(rp_getPackageInfo "$id")
                 installed="\Zb(Installed - via $pkg_origin)\Zn"
                 ((num_pkgs++))
             else
                 installed=""
             fi
-            pkgs+=("$idx" "${__mod_id[$idx]} $installed" "$idx ${__mod_desc[$idx]}"$'\n\n'"${__mod_help[$idx]}")
+            pkgs+=("${__mod_idx[$id]}" "$id $installed" "$id - ${__mod_desc[$id]}"$'\n\n'"${__mod_help[$id]}")
         done
 
         if [[ "$num_pkgs" -gt 0 ]]; then
@@ -370,14 +371,14 @@ function section_gui_setup() {
                 rps_logInit
                 {
                     rps_logStart
-                    for idx in $(rp_getSectionIds $section); do
+                    for id in $(rp_getSectionIds $section); do
                         # if we are updating, skip packages that are not installed
                         if [[ "$mode" == "update" ]]; then
-                            if rp_isInstalled "$idx"; then
-                                rp_installModule "$idx" "_update_"
+                            if rp_isInstalled "$id"; then
+                                rp_installModule "$id" "_update_"
                             fi
                         else
-                            rp_installModule "$idx" "_auto_"
+                            rp_installModule "$id" "_auto_"
                         fi
                     done
                     rps_logEnd
@@ -391,15 +392,15 @@ function section_gui_setup() {
                 rps_logInit
                 {
                     rps_logStart
-                    for idx in $(rp_getSectionIds $section); do
-                        rp_isInstalled "$idx" && rp_callModule "$idx" remove
+                    for id in $(rp_getSectionIds $section); do
+                        rp_isInstalled "$id" && rp_callModule "$id" remove
                     done
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
                 ;;
             *)
-                package_setup "$choice"
+                package_setup "${__mod_id[$choice]}"
                 ;;
         esac
 
@@ -410,11 +411,11 @@ function config_gui_setup() {
     local default
     while true; do
         local options=()
-        local idx
-        for idx in "${__mod_idx[@]}"; do
+        local id
+        for id in "${__mod_id[@]}"; do
             # show all configuration modules and any installed packages with a gui function
-            if [[ "${__mod_section[idx]}" == "config" ]] || rp_isInstalled "$idx" && fnExists "gui_${__mod_id[idx]}"; then
-                options+=("$idx" "${__mod_id[$idx]}  - ${__mod_desc[$idx]}" "$idx ${__mod_desc[$idx]}")
+            if [[ "${__mod_section[$id]}" == "config" ]] || rp_isInstalled "$id" && fnExists "gui_$id"; then
+                options+=("${__mod_idx[$id]}" "$id  - ${__mod_desc[$id]}" "${__mod_idx[$id]} ${__mod_desc[$id]}")
             fi
         done
 
@@ -433,17 +434,17 @@ function config_gui_setup() {
         [[ -z "$choice" ]] && break
 
         default="$choice"
-
+        id="${__mod_id[$choice]}"
         local logfilename
         rps_logInit
         {
             rps_logStart
-            if fnExists "gui_${__mod_id[choice]}"; then
-                rp_callModule "$choice" depends
-                rp_callModule "$choice" gui
+            if fnExists "gui_$id"; then
+                rp_callModule "$id" depends
+                rp_callModule "$id" gui
             else
-                rp_callModule "$idx" clean
-                rp_callModule "$choice"
+                rp_callModule "$id" clean
+                rp_callModule "$id"
             fi
             rps_logEnd
         } &> >(_setup_gzip_log "$logfilename")
@@ -453,10 +454,10 @@ function config_gui_setup() {
 
 function update_packages_setup() {
     clear
-    local idx
-    for idx in ${__mod_idx[@]}; do
-        if rp_isInstalled "$idx" && [[ "${__mod_section[$idx]}" != "depends" ]]; then
-            rp_installModule "$idx" "_update_" || return 1
+    local id
+    for id in ${__mod_id[@]}; do
+        if rp_isInstalled "$id" && [[ "${__mod_section[$id]}" != "depends" ]]; then
+            rp_installModule "$id" "_update_"
         fi
     done
 }
@@ -491,9 +492,9 @@ function update_packages_gui_setup() {
 }
 
 function basic_install_setup() {
-    local idx
-    for idx in $(rp_getSectionIds core) $(rp_getSectionIds main); do
-        rp_installModule "$idx"
+    local id
+    for id in $(rp_getSectionIds core) $(rp_getSectionIds main); do
+        rp_installModule "$id"
     done
     return 0
 }
@@ -532,16 +533,16 @@ function uninstall_setup()
     dialog --defaultno --yesno "Are you REALLY sure you want to uninstall RetroPie?\n\n$rootdir will be removed - this includes configuration files for all RetroPie components." 22 76 2>&1 >/dev/tty || return 0
     clear
     printHeading "Uninstalling RetroPie"
-    for idx in "${__mod_idx[@]}"; do
-        rp_isInstalled "$idx" && rp_callModule $idx remove
+    for id in "${__mod_id[@]}"; do
+        rp_isInstalled "$id" && rp_callModule $id remove
     done
     rm -rfv "$rootdir"
     dialog --defaultno --yesno "Do you want to remove all the files from $datadir - this includes all your installed ROMs, BIOS files and custom splashscreens." 22 76 2>&1 >/dev/tty && rm -rfv "$datadir"
     if dialog --defaultno --yesno "Do you want to remove all the system packages that RetroPie depends on? \n\nWARNING: this will remove packages like SDL even if they were installed before you installed RetroPie - it will also remove any package configurations - such as those in /etc/samba for Samba.\n\nIf unsure choose No (selected by default)." 22 76 2>&1 >/dev/tty; then
         clear
         # remove all dependencies
-        for idx in "${__mod_idx[@]}"; do
-            rp_isInstalled "$idx" && rp_callModule "$idx" depends remove
+        for id in "${__mod_id[@]}"; do
+            rp_isInstalled "$id" && rp_callModule "$id" depends remove
         done
     fi
     printMsgs "dialog" "RetroPie has been uninstalled."
