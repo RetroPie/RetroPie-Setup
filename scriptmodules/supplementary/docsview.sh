@@ -14,7 +14,7 @@ rp_module_desc="RetroPie-Setup Docs Viewer"
 rp_module_section="config"
 
 function depends_docsview() {
-    getDepends pandoc lynx-cur
+    getDepends pandoc lynx
 }
 
 function choose_page_docsview() {
