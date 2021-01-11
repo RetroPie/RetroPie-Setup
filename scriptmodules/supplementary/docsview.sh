@@ -9,64 +9,64 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="wikiview"
-rp_module_desc="RetroPie-Setup Wiki Viewer"
+rp_module_id="docsview"
+rp_module_desc="RetroPie-Setup Docs Viewer"
 rp_module_section="config"
 
-function depends_wikiview() {
+function depends_docsview() {
     getDepends pandoc lynx-cur
 }
 
-function choose_wikipage_wikiview() {
+function choose_page_docsview() {
     local path="$1"
     local include="$2"
     local exclude="$3"
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Which wiki page would you like to view?" 22 76 16)
-    local wikipages=()
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Which page would you like to view?" 22 76 16)
+    local pages=()
     local options=()
-    local wikipage
+    local page
     local i=0
-    while read wikipage; do
-        wikipage=${wikipage//$path\//}
-        wikipages+=("$wikipage")
-        options+=("$i" "$wikipage")
+    while read page; do
+        page=${page//$path\//}
+        pages+=("$page")
+        options+=("$i" "$page")
         ((i++))
     done < <(find "$path" -type f -regex "$include" ! -regex "$exclude" | sort)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
-        echo "${wikipages[choice]}"
+        echo "${pages[choice]}"
     fi
 }
 
-function gui_wikiview() {
-    local wikidir="$rootdir/RetroPie-Setup.wiki"
+function gui_docsview() {
+    local dir="$rootdir/RetroPie-Docs"
     while true; do
-        local cmd=(dialog --backtitle "$__backtitle" --menu "RetroPie-Setup Wiki Viewer" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --menu "RetroPie-Setup Docs Viewer" 22 76 16)
         local options=()
-        if [[ -d "$wikidir" ]]; then
+        if [[ -d "$dir" ]]; then
             options=(
-                1 "Update RetroPie-Setup Wiki"
-                2 "View Wiki Pages"
-                3 "Remove RetroPie-Setup Wiki"
+                1 "Update RetroPie-Setup Docs"
+                2 "View Pages"
+                3 "Remove RetroPie-Setup Docs"
             )
         else
-            options+=("1" "Download RetroPie-Setup Wiki")
+            options+=("1" "Download RetroPie-Setup Docs")
         fi
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         local file="-"
         if [[ -n "$choice" ]]; then
             case "$choice" in
                 1)
-                    gitPullOrClone "$wikidir" "https://github.com/RetroPie/RetroPie-Setup.wiki.git"
+                    gitPullOrClone "$dir" "https://github.com/RetroPie/RetroPie-Docs.git"
                     ;;
                 2)
                     while [[ -n  "$file" ]]; do
                         file=""
-                        file=$(choose_wikipage_wikiview "$wikidir" ".*.md" ".*_.*")
+                        file=$(choose_page_docsview "$dir/docs" ".*.md" ".*_.*")
                         if [[ -n "$file" ]]; then
                             joy2keyStop
                             joy2keyStart 0x00 0x00 kich1 kdch1 0x20 0x71
-                            pandoc "$wikidir/$file" | lynx -localhost -restrictions=all -stdin >/dev/tty
+                            pandoc "$dir/docs/$file" | lynx -localhost -restrictions=all -stdin >/dev/tty
                             joy2keyStop
                             joy2keyStart
                         else
@@ -75,8 +75,8 @@ function gui_wikiview() {
                     done
                     ;;
                 3)
-                    if [[ -d "$wikidir" ]]; then
-                        rm -rf "$wikidir"
+                    if [[ -d "$dir" ]]; then
+                        rm -rf "$dir"
                     fi
                     ;;
             esac
