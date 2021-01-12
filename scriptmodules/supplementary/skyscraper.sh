@@ -130,6 +130,15 @@ function _latest_ver_skyscraper() {
     wget -qO- https://api.github.com/repos/muldjord/skyscraper/releases/latest | grep -m 1 tag_name | cut -d\" -f4
 }
 
+function _check_ver_skyscraper() {
+    ver=$(_get_ver_skyscraper)
+    if compareVersions "$ver" lt "3.5" ]]; then
+        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
+        return 1
+    fi
+    return 0
+}
+
 # List any non-empty systems found in the ROM folder
 function _list_systems_skyscraper() {
     find -L "$romdir/" -mindepth 1 -maxdepth 1 -type d -not -empty | sort -u
@@ -301,11 +310,8 @@ function _scrape_skyscraper() {
 
 # Scrape a list of systems, chosen by the user
 function _scrape_chosen_skyscraper() {
-    ver=$(_get_ver_skyscraper)
-    if compareVersions "$ver" lt "3.5" ]]; then
-        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
-        return 1
-    fi
+    ! _check_ver_skyscraper && return 1
+
     local options=()
     local system
     local i=1
@@ -343,11 +349,8 @@ function _scrape_chosen_skyscraper() {
 
 # Generate gamelists for a list of systems, chosen by the user
 function _generate_chosen_skyscraper() {
-    ver=$(_get_ver_skyscraper)
-    if compareVersions "$ver" lt "3.5" ]]; then
-        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
-        return 1
-    fi
+    ! _check_ver_skyscraper && return 1
+
     local options=()
     local system
     local i=1
