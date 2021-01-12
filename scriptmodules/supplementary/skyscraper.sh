@@ -130,6 +130,15 @@ function _latest_ver_skyscraper() {
     wget -qO- https://api.github.com/repos/muldjord/skyscraper/releases/latest | grep -m 1 tag_name | cut -d\" -f4
 }
 
+function _check_ver_skyscraper() {
+    ver=$(_get_ver_skyscraper)
+    if compareVersions "$ver" lt "3.5" ]]; then
+        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
+        return 1
+    fi
+    return 0
+}
+
 # List any non-empty systems found in the ROM folder
 function _list_systems_skyscraper() {
     find -L "$romdir/" -mindepth 1 -maxdepth 1 -type d -not -empty | sort -u
@@ -301,11 +310,8 @@ function _scrape_skyscraper() {
 
 # Scrape a list of systems, chosen by the user
 function _scrape_chosen_skyscraper() {
-    ver=$(_get_ver_skyscraper)
-    if compareVersions "$ver" lt "3.5" ]]; then
-        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
-	return 1
-    fi
+    ! _check_ver_skyscraper && return 1
+
     local options=()
     local system
     local i=1
@@ -343,11 +349,8 @@ function _scrape_chosen_skyscraper() {
 
 # Generate gamelists for a list of systems, chosen by the user
 function _generate_chosen_skyscraper() {
-    ver=$(_get_ver_skyscraper)
-    if compareVersions "$ver" lt "3.5" ]]; then
-        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
-	return 1
-    fi
+    ! _check_ver_skyscraper && return 1
+
     local options=()
     local system
     local i=1
@@ -508,7 +511,7 @@ function gui_skyscraper() {
         [5]="Options for EmulationStation game list generation sub-menu.\nClick to open it and change the options."
         [V]="Toggle the download and caching of videos.\nThis also toggles whether the videos will be included in the resulting gamelist.\n\nSkyscraper option: \Zb--flags videos\Zn"
         [A]="Advanced options sub-menu."
-        [U]="Check for an update to Skyscraper\nIf there is a new release, you'll have the option to update."
+        [U]="Check for an update to Skyscraper."
     )
 
     ver=$(_get_ver_skyscraper)
@@ -560,12 +563,7 @@ function gui_skyscraper() {
 
         options+=(A "Advanced options -->")
 
-        # Show different options, depending on the previous check action
-        if [[ -n "$latest_ver" ]] && compareVersions "$latest_ver" gt "$ver" ; then
-            options+=(U "Update to $latest_ver")
-        else 
-            options+=(U "Check for Updates")
-        fi
+        options+=(U "Check for Updates")
 
         # Run the GUI
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -648,12 +646,12 @@ function gui_skyscraper() {
                     ;;
 
                 U)
-                    # Update to lastest release or check for update
-                    if [[ -n "$latest_ver" ]] && compareVersions "$latest_ver" gt "$ver" ; then
-                        rp_callModule "$md_id"
-                    else 
-                        latest_ver=$(_latest_ver_skyscraper)
-                        printMsgs "dialog" "Skyscraper latest released version is $latest_ver"
+                    local latest_ver="$(_latest_ver_skyscraper)"
+                    # check for update
+                    if compareVersions "$latest_ver" gt "$ver" ; then
+                        printMsgs "dialog" "There is a new version available. Latest released version is $latest_ver (You are running $ver).\n\nYou can update the package from RetroPie-Setup -> Manage Packages"
+                    else
+                        printMsgs "dialog" "You are running the latest version ($ver)."
                     fi
                     ;;
 
