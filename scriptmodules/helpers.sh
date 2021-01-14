@@ -991,9 +991,11 @@ function applyPatch() {
 
 ## @fn download()
 ## @param url url of file
-## @param dest destination name (optional)
+## @param dest destination name (optional), use - for stdout
 ## @brief Download a file
-## @details Download a file - if the dest parameter is omitted, the file will be downloaded to the current directory
+## @details Download a file - if the dest parameter is omitted, the file will be downloaded to the current directory.
+## If the destination name is a hyphen (-), then the file will be outputted to stdout, for piping to another command
+## or retrieving the contents directly to a variable.
 ## @retval 0 on success
 function download() {
     local url="$1"
@@ -1009,9 +1011,16 @@ function download() {
     local ret
     # get the last non zero exit status (ignoring tee)
     set -o pipefail
-    printMsgs "console" "Downloading $url ..."
+    local params=()
+    if [[ "$dest" == "-" ]]; then
+        params+=(-s)
+    else
+        printMsgs "console" "Downloading $url to $dest ..."
+        params+=(-o "$dest")
+    fi
+    params+=("$url")
     # capture stderr - while passing both stdout and stderr to terminal
-    cmd_err=$(curl -o"$dest" "$url" 2>&1 1>&3 | tee /dev/stderr)
+    cmd_err=$(curl "${params[@]}" 2>&1 1>&3 | tee /dev/stderr)
     ret="$?"
     set +o pipefail
     # remove stdin copy
