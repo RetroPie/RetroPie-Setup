@@ -1011,10 +1011,7 @@ function download() {
     set -o pipefail
     printMsgs "console" "Downloading $url ..."
     # capture stderr - while passing both stdout and stderr to terminal
-    # wget by default outputs the progress to stderr - if we force it to log to stdout, we get no useful error msgs
-    # however this code will be useful when switching away from wget to curl. For now it's best left with -nv
-    # no progress, but less log spam, and output can be useful on failure
-    cmd_err=$(wget -nv -O"$dest" "$url" 2>&1 1>&3 | tee /dev/stderr)
+    cmd_err=$(curl -o"$dest" "$url" 2>&1 1>&3 | tee /dev/stderr)
     ret="$?"
     set +o pipefail
     # remove stdin copy
