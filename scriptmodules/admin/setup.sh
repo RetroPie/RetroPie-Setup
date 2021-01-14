@@ -25,6 +25,10 @@ function rps_logInit() {
             fatalError "Couldn't make directory $__logdir"
         fi
     fi
+
+    # remove all but the last 20 logs
+    find "$__logdir" -type f | sort | head -n -20 | xargs -d '\n' --no-run-if-empty rm
+
     local now=$(date +'%Y-%m-%d_%H%M%S')
     logfilename="$__logdir/rps_$now.log.gz"
     touch "$logfilename"
@@ -95,9 +99,6 @@ function depends_setup() {
             fi
         done
     fi
-
-    # remove all but the last 20 logs
-    find "$__logdir" -type f | sort | head -n -20 | xargs -d '\n' --no-run-if-empty rm
 
     # set a global __setup to 1 which is used to adjust package function behaviour if called from the setup gui
     __setup=1
