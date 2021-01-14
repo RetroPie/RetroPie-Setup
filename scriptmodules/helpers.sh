@@ -1069,37 +1069,29 @@ function downloadAndExtract() {
     local opts=("$@")
 
     local ext="${url##*.}"
-    local cmd=(tar -xv)
-    local is_tar=1
+    local file="${url##*/}"
+
+    local temp="$(mktemp -d)"
+    # download file, removing temporary folder and returning on error
+    if ! download "$url" "$temp/$file"; then
+        rm -rf "$temp"
+        return 1
+    fi
+
+    mkdir -p "$dest"
 
     local ret
     case "$ext" in
-        gz|tgz)
-            cmd+=(-z)
-            ;;
-        bz2)
-            cmd+=(-j)
-            ;;
-        xz)
-            cmd+=(-J)
-            ;;
         exe|zip)
-            is_tar=0
-            local tmp="$(mktemp -d)"
-            local file="${url##*/}"
-            runCmd wget -q -O"$tmp/$file" "$url"
-            runCmd unzip "${opts[@]}" -o "$tmp/$file" -d "$dest"
-            rm -rf "$tmp"
-            ret=$?
+            runCmd unzip "${opts[@]}" -o "$temp/$file" -d "$dest"
+            ;;
+        *)
+            tar -xvf "$temp/$file" -C "$dest" "${opts[@]}"
+            ;;
     esac
+    ret=$?
 
-    if [[ "$is_tar" -eq 1 ]]; then
-        mkdir -p "$dest"
-        cmd+=(-C "$dest" "${opts[@]}")
-
-        runCmd "${cmd[@]}" < <(wget -q -O- "$url")
-        ret=$?
-    fi
+    rm -rf "$temp"
 
     return $ret
 }
