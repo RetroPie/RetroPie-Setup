@@ -27,7 +27,7 @@ function depends_kodi() {
             # remove old repository
             rm -f /etc/apt/sources.list.d/mene.list
             echo "deb http://pipplware.pplware.pt/pipplware/dists/$__os_codename/main/binary/ ./" >/etc/apt/sources.list.d/pipplware.list
-            wget -q -O- http://pipplware.pplware.pt/pipplware/key.asc | apt-key add - &>/dev/null
+            download http://pipplware.pplware.pt/pipplware/key.asc - | apt-key add - &>/dev/null
         else
             rm -f /etc/apt/sources.list.d/pipplware.list
             apt-key del 4096R/BAA567BB >/dev/null
