@@ -995,14 +995,19 @@ function applyPatch() {
 ## @brief Download a file
 ## @details Download a file - if the dest parameter is omitted, the file will be downloaded to the current directory.
 ## If the destination name is a hyphen (-), then the file will be outputted to stdout, for piping to another command
-## or retrieving the contents directly to a variable.
+## or retrieving the contents directly to a variable. If the destination is a folder, extract with the basename from
+## the url to the destination folder.
 ## @retval 0 on success
 function download() {
     local url="$1"
     local dest="$2"
+    local file="${url##*/}"
 
-    # if no destination, get the basename from the url (supported by GNU basename)
-    [[ -z "$dest" ]] && dest="${PWD}/$(basename "$url")"
+    # if no destination, get the basename from the url
+    [[ -z "$dest" ]] && dest="${PWD}/$file"
+
+    # if the destination is a folder, download to that with filename from url
+    [[ -d "$dest" ]] && dest="$dest/$file"
 
     # set up additional file descriptor for stdin
     exec 3>&1
@@ -1046,9 +1051,10 @@ function download() {
 function downloadAndVerify() {
     local url="$1"
     local dest="$2"
+    local file="${url##*/}"
 
     # if no destination, get the basename from the url (supported by GNU basename)
-    [[ -z "$dest" ]] && dest="${PWD}/$(basename "$url")"
+    [[ -z "$dest" ]] && dest="${PWD}/$file"
 
     local cmd_out
     local ret=1
