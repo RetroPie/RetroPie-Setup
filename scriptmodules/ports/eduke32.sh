@@ -75,15 +75,16 @@ function install_eduke32() {
 }
 
 function game_data_eduke32() {
-    cd "$_tmpdir"
-
+    local dest="$romdir/ports/duke3d"
     if [[ "$md_id" == "eduke32" ]]; then
-        if [[ ! -f "$romdir/ports/duke3d/duke3d.grp" ]]; then
-            wget -O 3dduke13.zip "$__archive_url/3dduke13.zip"
-            unzip -L -o 3dduke13.zip dn3dsw13.shr
-            unzip -L -o dn3dsw13.shr -d "$romdir/ports/duke3d" duke3d.grp duke.rts
-            rm 3dduke13.zip dn3dsw13.shr
-            chown -R $user:$user "$romdir/ports/duke3d"
+        if [[ ! -f "$dest/duke3d.grp" ]]; then
+            mkUserDir "$dest"
+            local temp="$(mktemp -d)"
+            download "$__archive_url/3dduke13.zip" "$temp"
+            unzip -L -o "$temp/3dduke13.zip" -d "$temp" dn3dsw13.shr
+            unzip -L -o "$temp/dn3dsw13.shr" -d "$dest" duke3d.grp duke.rts
+            rm -rf "$temp"
+            chown -R $user:$user "$dest"
         fi
     fi
 }
