@@ -32,6 +32,34 @@ sudo ./retropie_setup.sh
 
 When you first run the script it may install some additional packages that are needed.
 
+RPCS3 Setup to Retropie
+-----------------------
+
+After dump your original PS3 game, move the game content to a folder with a .PS3 extension under ~/RetroPie/roms/ps3/.
+
+Example: if your game is Skate3, put content under ~/RetroPie/roms/ps3/Skate3.PS3/
+PSN game
+
+PSN games uses .pkg extension.
+Install
+
+Open RPCS3: from a terminal, run /opt/retropie/emulators/rpcs3/bin/rpcs3.AppImage.
+
+Then, into RPCS3 menu, select File > Install .pkg.
+
+Browse and select the .pkg content to run.
+EmulationStation
+
+In order to create an entry for the PSN game, take note of the game serial (you can copy the game serial on RPCS3 UI, right clicking in the game and select "Copy info" > "Copy game serial").
+
+Then create a folder for your game with a .PS3 extension under ~/RetroPie/roms/ps3/ (remember to replace the game name by your actual game name):
+
+mkdir ~/RetroPie/roms/ps3/<replace-with-your-game-name>.PS3
+
+Create a shortcut from the PS3 internal storage to the ~/RetroPie/roms/ps3/ (remember to replace the serial and game name by your actual game values):
+
+ln -sf  ~/.config/rpcs3/dev_hdd0/game/<serial> ~/RetroPie/roms/ps3/<replace-with-your-game-name>.PS3/PS3_GAME
+  
 Binaries and Sources
 --------------------
 
