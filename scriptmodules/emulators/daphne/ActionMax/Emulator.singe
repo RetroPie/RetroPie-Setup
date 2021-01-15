@@ -1,0 +1,486 @@
+dofile("/opt/retropie/emulators/daphne/singe/Framework.singe")
+
+stateStartup    = 0
+stateSetup      = 1
+stateTitle      = 2
+stateMenu       = 3
+stateIntro      = 4
+statePlaying    = 5
+stateGameOver   = 6
+
+gameStandard = 0
+gameLimited  = 1
+
+pixelLow     = 0
+pixelHigh    = 1
+pixelUnknown = 2
+
+sprLightOn   = spriteLoad("singe/ActionMax/sprite_LightOn.png")
+sprLightOff  = spriteLoad("singe/ActionMax/sprite_LightOff.png")
+sprActionMax = spriteLoad("singe/ActionMax/sprite_ActionMax.png")
+sprCrosshair = spriteLoad("singe/ActionMax/sprite_Crosshair.png")
+sprBullet    = spriteLoad("singe/ActionMax/sprite_Bullet.png")
+sprBoxArt    = spriteLoad("singe/ActionMax/sprite_" .. gameID .. ".png")
+
+sndActionMax = soundLoad("singe/ActionMax/sound_ActionMax.wav")
+sndSteadyAim = soundLoad("singe/ActionMax/sound_ASteadyAimIsCritical.wav")
+sndGetReady  = soundLoad("singe/ActionMax/sound_GetReadyForAction.wav")
+sndGunShot   = soundLoad("singe/ActionMax/sound_Gunshot.wav")
+sndGoodHit   = soundLoad("singe/ActionMax/sound_GoodHit.wav")
+sndBadHit    = soundLoad("singe/ActionMax/sound_BadHit.wav")
+sndGameOver  = soundLoad("singe/ActionMax/sound_GameOver.wav")
+
+mouseX = 0
+mouseY = 0
+
+halfWidth = 0
+
+crosshairCenterX = spriteGetWidth(sprCrosshair)  / 2
+crosshairCenterY = spriteGetHeight(sprCrosshair) / 2
+
+currentState = stateStartup
+gameMode     = gameStandard
+
+shotsFired = 0   -- Total Fired
+shotsGood  = 0   -- Hit our target
+shotsBad   = 0   -- Hit our friends
+
+scoreDisplay = 0   -- How long the score is yet to be displayed
+scoreTimer   = 4   -- How long to display the score + 1
+
+lightDisplay = 0   -- How long the light is yet to be displayed
+lightTimer   = 2   -- How long to display the light + 1
+
+triggerPulled = 0  -- This isn't quite a boolean.  It counts down so we can get multiple pixel samples across frames.
+
+ammoLeft  = 0 -- Number of misses remaining in limited ammo mode
+ammoCount = 5 -- Number of misses allowed in limited ammo mode
+
+gunLastState    = pixelUnknown
+sensorLastState = pixelUnknown
+
+thisSeconds = 0
+lastSeconds = 0
+heartbeat = false
+
+fntBlueStone20 = fontLoad("singe/ActionMax/font_BlueStone.ttf", 20)
+fntChemRea16   = fontLoad("singe/ActionMax/font_chemrea.ttf", 16)
+fntChemRea32   = fontLoad("singe/ActionMax/font_chemrea.ttf", 32)
+fntChemRea48   = fontLoad("singe/ActionMax/font_chemrea.ttf", 48)
+fntLEDReal32   = fontLoad("singe/ActionMax/font_LED_Real.ttf", 32)
+
+colorBackground(0, 0, 0)
+fontQuality(FONT_QUALITY_BLENDED)
+
+colorForeground(255, 255, 0)
+fontSelect(fntBlueStone20)
+sprPullToStart = fontToSprite("Pull Trigger to Start!")
+sprGetReady = fontToSprite("Get Ready!")
+
+colorForeground(255, 255, 255)
+fontSelect(fntChemRea16)
+sprLastGame = fontToSprite("LAST GAME SCORE")
+
+colorForeground(255, 255, 0)
+fontSelect(fntChemRea32)
+sprSelectGameType = fontToSprite("Select Game Type")
+sprStandard1 = fontToSprite("Standard")
+sprStandard2 = fontToSprite("Game")
+sprLimited1 = fontToSprite("Limited")
+sprLimited2 = fontToSprite("Ammo")
+
+colorForeground(255, 0, 0)
+fontSelect(fntChemRea48)
+sprGameOver = fontToSprite("GAME OVER")
+
+discSearch(backgroundFrame)
+
+
+
+function getPixelState(intX, intY)
+
+	r1, g1, b1 = vldpGetPixel(intX, intY)
+
+	-- Determine pixel state
+	if ((255 - r1 < highThreshold) and (255 - g1 < highThreshold) and (255 - b1 < highThreshold)) then
+		pixelState = pixelHigh
+	elseif ((r1 < lowThreshold) and (g1 < lowThreshold) and (b1 < lowThreshold)) then
+		pixelState = pixelLow
+	else
+		pixelState = pixelUnknown
+	end
+	
+	return pixelState
+
+end
+
+
+function onInputPressed(intWhat)
+
+	--dr, dg, db = vldpGetPixel(mouseX, mouseY)
+	--debugPrint("Current Frame: " .. discGetFrame() .. "  X: " .. mouseX .. "  Y: " .. mouseY .. "  R: " .. dr .. "  G: " .. dg .. "  B: " .. db)
+
+	-- They fired!
+	if (intWhat == SWITCH_BUTTON3) then
+	
+		if (currentState == stateTitle) then
+		
+			discSearch(lengthIntro  + lengthGame + 2)
+			discPlay()
+			currentState = stateMenu
+		
+		elseif (currentState == stateMenu) then
+		
+			if (mouseX < halfWidth) then
+				gameMode = gameStandard
+			else
+				ammoLeft = ammoCount
+				gameMode = gameLimited
+			end
+		
+			shotsFired = 0
+			shotsGood  = 0
+			shotsBad   = 0
+			colorForeground(255, 0, 0)
+			fontSelect(fntLEDReal32)
+			discSearch(1)
+			discPlay()
+			soundPlay(sndGetReady)
+			currentState = stateIntro
+
+		elseif (currentState == statePlaying) then
+
+			-- Make gunshot noise
+			soundPlay(sndGunShot)
+
+			-- We want to sample across two frames
+ 			triggerPulled = 2
+			
+			shotsFired = shotsFired + 1
+			
+			-- No matter what, we subtract ammo.  On good hits, we add it back to make it look like nothing changed.
+			if (gameMode == gameLimited) then
+				ammoLeft = ammoLeft - 1
+			end
+			
+		end
+		
+	end
+
+end
+
+
+--dbgPaused = 0
+--dbgSpeed  = 1
+
+function onInputReleased(intWhat)
+
+	--[[ We don't use this.  All this is debug stuff.
+	
+	if (intWhat == SWITCH_BUTTON1) then
+		if (currentState == statePlaying) then
+			discSearch(lengthIntro + lengthGame - 60)
+			discPlay()
+		else
+			if (dbgPaused == 1) then
+				discPlay()
+				dbgPaused = 0
+			else
+				discPause()
+				dbgPaused = 1
+			end
+		end
+	end
+	if (intWhat == SWITCH_RIGHT) then
+		if (dbgSpeed < 4) then
+			dbgSpeed = dbgSpeed + 1
+		end
+		discChangeSpeed(dbgSpeed, 1)
+	end
+	if (intWhat == SWITCH_LEFT) then
+		if (dbgSpeed > 1) then
+			dbgSpeed = dbgSpeed - 1
+		end
+		discChangeSpeed(dbgSpeed, 1)
+	end
+	if (intWhat == SWITCH_UP) then
+		discStepBackward()
+	end
+	if (intWhat == SWITCH_DOWN) then
+		discStepForward()
+	end
+
+	--]]
+	
+end
+
+
+function onMouseMoved(intX, intY, intXrel, intYrel)
+
+	-- Remember the mouse location for use later.
+	mouseX = intX
+	mouseY = intY
+
+end
+
+
+function onOverlayUpdate()
+
+	overlayClear()
+
+	currentFrame = discGetFrame()
+
+	-- Give us a 1 second heartbeat for overlay element timing
+	thisSeconds = os.time(os.date('*t'))
+	if (thisSeconds ~= lastSeconds) then
+		heartbeat = not heartbeat
+		lastSeconds = thisSeconds
+		-- Tick off floating score display
+		if (scoreDisplay > 0) then
+			scoreDisplay = scoreDisplay - 1
+		end
+		-- Tick off light timer
+		if (lightDisplay > 0) then
+			lightDisplay = lightDisplay - 1
+		end
+	end
+
+	if (currentState == stateStartup) then
+	
+		-- We run this state to cause the overlay to update once before we use the dimensions to build the menu
+		overlayClear()
+		currentState = stateSetup
+	
+	elseif (currentState == stateSetup) then
+	
+		-- We do all the math to draw the menu here, one time.
+		halfWidth = (overlayGetWidth() / 2)
+		
+		logoTop    = 5
+		logoLeft   = halfWidth - (spriteGetWidth(sprActionMax) / 2)
+		logoHeight = logoTop + spriteGetHeight(sprActionMax)
+		
+		pullToStartHeight = spriteGetHeight(sprPullToStart)
+		pullToStartTop    = overlayGetHeight() - pullToStartHeight
+		pullToStartLeft   = halfWidth - (spriteGetWidth(sprPullToStart) / 2)
+
+		getReadyHeight = spriteGetHeight(sprGetReady)
+		getReadyTop    = overlayGetHeight() - getReadyHeight
+		getReadyLeft   = halfWidth - (spriteGetWidth(sprGetReady) / 2)
+		
+		boxLeft = (halfWidth / 2) - spriteGetWidth(sprBoxArt) / 2 + halfWidth
+		boxTop  = (overlayGetHeight() - (logoHeight + pullToStartHeight)) / 2 - spriteGetHeight(sprBoxArt) / 2 + logoHeight
+
+		lastGameLeft = (halfWidth / 2) - spriteGetWidth(sprLastGame) / 2
+		lastGameTop  = logoHeight + logoTop
+		
+		scoreHeight = 13   -- Point size + 1 instead of spriteGetHeight(sprLastGame)
+		scoreTop    = lastGameTop + scoreHeight + 10
+		scoreLeft   = lastGameLeft
+		
+		lightLeft = overlayGetWidth() - spriteGetWidth(sprLightOff)
+		lightTop  = overlayGetHeight() - spriteGetHeight(sprLightOff)
+		
+		bulletWidth = spriteGetWidth(sprBullet)
+
+		selectGameTypeLeft = halfWidth - spriteGetWidth(sprSelectGameType) / 2
+		selectGameTypeTop  = 25
+		
+		standard1Left = halfWidth / 2 - spriteGetWidth(sprStandard1) / 2
+		standard2Left = halfWidth / 2 - spriteGetWidth(sprStandard2) / 2
+
+		limited1Left = halfWidth + (halfWidth / 2) - spriteGetWidth(sprLimited1) / 2
+		limited2Left = halfWidth + (halfWidth / 2) - spriteGetWidth(sprLimited2) / 2
+		
+		standardLimited1Top = (overlayGetHeight() / 2) - spriteGetHeight(sprStandard1) + 2
+		standardLimited2Top = (overlayGetHeight() / 2) + 2
+
+		gameOverLeft = halfWidth - spriteGetWidth(sprGameOver) / 2
+		gameOverTop  = (overlayGetHeight() / 2) - spriteGetHeight(sprGameOver)
+		
+		colorForeground(200, 200, 200)
+		fontSelect(fntChemRea16)
+		
+		hndActionMaxSound = soundPlay(sndActionMax)
+		
+		currentState = stateTitle
+
+	elseif (currentState == stateTitle) then
+	
+		spriteDraw(logoLeft, logoTop, sprActionMax)
+		spriteDraw(boxLeft, boxTop, sprBoxArt)
+		spriteDraw(lastGameLeft, lastGameTop, sprLastGame)
+		y = scoreTop
+		fontPrint(scoreLeft, y, " Shots Fired:  " .. shotsFired)
+		y = y + scoreHeight
+		fontPrint(scoreLeft, y, "   Good Hits:  " .. shotsGood)
+		y = y + scoreHeight
+		fontPrint(scoreLeft, y, "    Bad Hits:  " .. shotsBad)
+		y = y + scoreHeight
+		fontPrint(scoreLeft, y, " Shot Score:  " .. shotsGood - shotsBad)
+		y = y + scoreHeight * 2
+		if (shotsFired > 0) then
+			scorePercent = math.floor((shotsGood - shotsBad) / shotsFired * 100)
+		else
+			scorePercent = 0
+		end
+		fontPrint(scoreLeft, y, " Game Score:  " .. scorePercent .. "%")
+		if (heartbeat) then
+			spriteDraw(pullToStartLeft, pullToStartTop, sprPullToStart)
+		end
+		
+	elseif (currentState == stateMenu) then
+	
+		spriteDraw(selectGameTypeLeft, selectGameTypeTop, sprSelectGameType)
+		spriteDraw(standard1Left, standardLimited1Top, sprStandard1)
+		spriteDraw(standard2Left, standardLimited2Top, sprStandard2)
+		spriteDraw(limited1Left, standardLimited1Top, sprLimited1)
+		spriteDraw(limited2Left, standardLimited2Top, sprLimited2)
+		
+		if (currentFrame == lengthIntro + lengthGame + lengthMenu) then
+			discSearch(lengthIntro  + lengthGame + 2)
+			discPlay()
+		end
+		
+	elseif (currentState == stateIntro) then
+
+		if (heartbeat) then
+			spriteDraw(getReadyLeft, getReadyTop, sprGetReady)
+		end
+		
+		-- Skip into game video when the intro is over.
+		if (currentFrame == lengthIntro) then
+			discSearch(lengthIntro + 1)
+			discPlay()
+			currentState = statePlaying
+		end
+
+	elseif (currentState == statePlaying) then
+	
+		-- Read Sucton Cup Sensor.
+		sensorLastState = sensorState
+		sensorState = getPixelState(sensorX, sensorY)
+		-- Are they firing?
+		if (triggerPulled > 0) then
+			-- New frame (according to the sensor)?
+			if (sensorLastState ~= sensorState) then
+				-- Did they aim outside the suction cup sensor area?
+				if ((mouseX < sensorLeft) or (mouseY < sensorTop)) then
+					-- Yes.  Process shot.
+					gunState = getPixelState(mouseX, mouseY)
+				else
+					-- No.  They shot the sensor area.  Bad user.
+					gunState = pixelUnknown
+				end
+				-- Are we doing the first or second frame sample?
+				if (triggerPulled == 1) then
+					--debugPrint("S1: " .. sensorLastState .. "  S2: " .. sensorState .. "  G1: " .. gunLastState .. "  G2: " .. gunState)
+					-- Decide what happened.  Do we have two good samples of each sensor?
+					if ((gunState ~= pixelUnknown) and (sensorState ~= pixelUnknown) and (gunLastState ~= pixelUnknown) and (sensorLastState ~= pixelUnknown)) then
+						-- If the sensor and gun states didn't change between frames, then this makes no sense.
+						if (gunLastState ~= gunState) then
+							-- Does the gun match the sensor?
+							if (gunState == sensorState) then
+								-- Yes!  Hit bad guy!
+								soundPlay(sndGoodHit)
+								shotsGood    = shotsGood + 1
+								lightDisplay = lightTimer
+								-- Add it back to make it look like nothing changed.
+								if (gameMode == gameLimited) then
+									ammoLeft = ammoLeft + 1
+								end
+							else
+								-- No.  Crap - shot a good guy!
+								soundPlay(sndBadHit)
+								shotsBad = shotsBad + 1
+							end
+							-- Float the score for a bit
+							scoreDisplay = scoreTimer
+						end
+					end
+				else
+					-- Remember this info for next pass
+					gunLastState = gunState
+				end
+				-- Get ready for next pass
+				triggerPulled = triggerPulled - 1
+			end
+		end
+		
+		-- When the game is over, return to the menu.
+		if (currentFrame == lengthIntro + lengthGame) then
+			discPause()
+			discSearch(backgroundFrame)
+			colorForeground(255, 255, 255)
+			fontSelect(fntChemRea16)
+			currentState = stateTitle
+		end
+		
+		-- Do we need to show the score?
+		if (scoreDisplay > 0) then
+			fontPrint(5, 5, "SCORE:  " .. (shotsGood - shotsBad))
+		end
+		
+		-- Do we need to light the light?
+		if (lightDisplay > 0) then
+			spriteDraw(lightLeft, lightTop, sprLightOn)
+		else
+			spriteDraw(lightLeft, lightTop, sprLightOff)
+		end
+		
+		-- Do we need to draw the ammo display?
+		if (gameMode == gameLimited) then
+			-- Are they out of ammo?
+			if (ammoLeft < 0) then
+				discSearch(lengthIntro  + lengthGame + 2)
+				discPlay()
+				soundPlay(sndGameOver)
+				currentState = stateGameOver
+			end
+			if (ammoLeft > 0) then
+				bulletStart = overlayGetWidth() - bulletWidth - 5
+				for i=1,ammoLeft do
+					spriteDraw(bulletStart, 0, sprBullet)
+					bulletStart = bulletStart - bulletWidth
+				end
+			end
+		end
+
+	elseif (currentState == stateGameOver) then
+	
+		spriteDraw(gameOverLeft, gameOverTop, sprGameOver)
+		
+		if (currentFrame == lengthIntro + lengthGame + lengthMenu) then
+			discPause()
+			discSearch(backgroundFrame)
+			colorForeground(255, 255, 255)
+			fontSelect(fntChemRea16)
+			currentState = stateTitle
+		end
+		
+	end
+	
+	-- Draw gun crosshair (This must be the last thing we draw so it's on top.)
+	spriteDraw(mouseX - crosshairCenterX, mouseY - crosshairCenterY, sprCrosshair)
+	
+	return(OVERLAY_UPDATED)
+	
+end
+
+
+function onShutdown()
+	
+	discStop()
+	
+end
+
+
+function onSoundCompleted(intWhich)
+
+	-- Play the "A Steady Aim is Critical" sound after "ActionMax" is finished.
+	if (intWhich == hndActionMaxSound) then
+		soundPlay(sndSteadyAim)
+		hndActionMaxSound = SOUND_REMOVE_HANDLE
+	end
+
+end
