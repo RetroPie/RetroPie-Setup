@@ -37,7 +37,7 @@ function depends_fs-uae() {
                 # add repository and key
                 local repo="http://download.opensuse.org/repositories/home:/FrodeSolheim:/stable/$name"
                 echo "deb $repo/ /" > "$apt_file"
-                wget -q -O- "$repo/Release.key" | apt-key add -
+                download "$repo/Release.key" - | apt-key add -
             else
                 # remove repository and key
                 rm -f "$apt_file"
