@@ -1016,7 +1016,7 @@ function download() {
     local ret
     # get the last non zero exit status (ignoring tee)
     set -o pipefail
-    local params=()
+    local params=(--location)
     if [[ "$dest" == "-" ]]; then
         params+=(-s)
     else
