@@ -61,16 +61,31 @@ function install_daphne() {
         'sound'
         'pics'
         'daphne.bin'
-        'libvldp2.so'
-        'libsinge.so'
         'singe.sh'
         'COPYING'
-   )
+        'libsinge.so'
+        'libvldp2.so'
+    )  
+        else
+function install_daphne() {        
+         md_ret_files=(
+        'sound'
+        'pics'
+        'daphne.bin'
+        'COPYING'
+    )
+    }
+    fi
+    }
+    
+        
+   
        if grep -q "/opt/retropie/emulators/daphne/lib" /etc/ld.so.conf.d/randomLibs.conf; then
                :
         else
          echo '/opt/retropie/emulators/daphne/lib' > /etc/ld.so.conf.d/randomLibs.conf
        fi
+       
 # Mayflash Sensor DolphinBar
       FILE=/etc/udev/rules.d/80-dolphinbar.rule
       if [ -f "$FILE" ]; then
@@ -85,35 +100,26 @@ _EOF_
 
 ldconfig
 
- if grep -q "alg_exts=".daphne"" $user/RetroPie-Setup/platforms.cfg; then
-               :
-        else
-awk '1;/PATTERN/{ print "alg_exts=".daphne""; print "\\alg_fullname="American Laser Games""}' $user/RetroPie-Setup/platforms.cfg
       
-       fi
-
-        else
-    md_ret_files=(
-        'sound'
-        'pics'
-        'daphne.bin'
-        'COPYING'
-    )
-    fi
    
-}
 
 function configure_daphne() {
     mkRomDir "daphne"
     mkRomDir "alg"
     mkRomDir "daphne/roms"
     mkRomDir "alg/roms"
-
+    mkRomDir "actionmax"
+    mkRomDir "actionmax/roms"
+    
     mkUserDir "$md_conf_root/daphne"
     mkUserDir "$md_conf_root/alg"
+    mkUserDir "$md_conf_root/actionmax"    
 
     if [[ ! -f "$md_conf_root/daphne/dapinput.ini" ]]; then
         cp -v "$md_data/dapinput.ini" "$md_conf_root/daphne/dapinput.ini"
+    fi
+   if [[ ! -f "$romdir/alg/roms/ActionMax" ]]; then
+        cp -r "$md_data/ActionMax" "$romdir/alg/roms/ActionMax"
     fi
     ln -snf "$romdir/daphne/roms" "$md_inst/roms"
     ln -snf "$romdir/alg/roms" "$md_inst/singe" 
@@ -127,6 +133,15 @@ cd tmp
 for i in *; do mv "$i" "$i".daphne; done
 mv *.* ~/RetroPie/roms/alg
 rm -r ~/RetroPie/roms/alg/tmp' > "$romdir/alg/symlink.sh"
+
+echo '
+#!/bin/bash
+mkdir ~/RetroPie/roms/actionmax/tmp
+ln -s ~/RetroPie/roms/actionmax/roms/* ~/RetroPie/roms/actionmax/tmp/ && ls -l ~/RetroPie/roms/actionmax/tmp/
+cd tmp
+for i in *; do mv "$i" "$i".daphne; done
+mv *.* ~/RetroPie/roms/actionmax
+rm -r ~/RetroPie/roms/actionmax/tmp' > "$romdir/actionmax/symlink.sh"
 
 
     cat >"$md_inst/daphne.sh" <<_EOF_
@@ -175,6 +190,7 @@ xrandr --output "HDMI-0" --mode 1920x1080' > "$md_inst/singe.sh"
     chmod +x "$md_inst/daphne.sh"
     chmod +x "$md_inst/singe.sh"
     chmod +x "$romdir/alg/symlink.sh"
+    chmod +x "$romdir/actionmax/symlink.sh"
 
     chown -R "$user":"$user" "$md_inst"
     chown -R "$user":"$user" "$md_conf_root/daphne/dapinput.ini"
@@ -184,6 +200,8 @@ xrandr --output "HDMI-0" --mode 1920x1080' > "$md_inst/singe.sh"
     addSystem "daphne"
     addEmulator 1 "$md_id" "alg" "$md_inst/singe.sh %ROM%"
     addSystem "alg"
+    addEmulator 1 "$md_id" "actionmax" "$md_inst/singe.sh %ROM%"
+    addSystem "actionmax"    
 }
 
 
