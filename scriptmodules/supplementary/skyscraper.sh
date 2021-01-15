@@ -127,7 +127,7 @@ function _get_ver_skyscraper() {
 }
 
 function _latest_ver_skyscraper() {
-    wget -qO- https://api.github.com/repos/muldjord/skyscraper/releases/latest | grep -m 1 tag_name | cut -d\" -f4
+    download https://api.github.com/repos/muldjord/skyscraper/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
 }
 
 function _check_ver_skyscraper() {
