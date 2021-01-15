@@ -32,18 +32,20 @@ function install_lr-prboom() {
 }
 
 function game_data_lr-prboom() {
-    if [[ ! -f "$romdir/ports/doom/doom1.wad" ]]; then
+    local dest="$romdir/ports/doom"
+    mkUserDir "$dest"
+    if [[ ! -f "$dest/doom1.wad" ]]; then
         # download doom 1 shareware
-        wget -nv -O "$romdir/ports/doom/doom1.wad" "$__archive_url/doom1.wad"
+        download "$__archive_url/doom1.wad" "$dest/doom1.wad"
     fi
 
     if ! echo "e9bf428b73a04423ea7a0e9f4408f71df85ab175 $romdir/ports/doom/freedoom1.wad" | sha1sum -c &>/dev/null; then
         # download (or update) freedoom
-        downloadAndExtract "https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip" "$romdir/ports/doom/" -j -LL
+        downloadAndExtract "https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip" "$dest" -j -LL
     fi
 
-    mkdir -p "$romdir/ports/doom/addon"
-    chown -R $user:$user "$romdir/ports/doom"
+    mkUserDir "$dest/addon"
+    chown -R $user:$user "$dest"
 }
 
 function _add_games_lr-prboom() {
