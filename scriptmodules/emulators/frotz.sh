@@ -30,17 +30,18 @@ function remove_frotz() {
 }
 
 function game_data_frotz() {
-    if [[ ! -f "$romdir/zmachine/zork1.dat" ]]; then
-        cd "$__tmpdir"
+    local dest="$romdir/zmachine"
+    if [[ ! -f "$dest/zork1.dat" ]]; then
+        mkUserDir "$dest"
+        local temp="$(mktemp -d)"
         local file
         for file in zork1 zork2 zork3; do
-            wget -nv -O "$file.zip" "$__archive_url/$file.zip"
-            unzip -L -n "$file.zip" "data/$file.dat"
-            mv "data/$file.dat" "$romdir/zmachine/"
-            chown $user:$user "$romdir/zmachine/$file.dat"
-            rm "$file.zip"
+            downloadAndExtract "$__archive_url/$file.zip" "$temp" -L
+            cp "$temp/data/$file.dat" "$dest"
+            rm -rf "$temp"
         done
-        rmdir data
+        rm -rf "$temp"
+        chown -R $user:$user "$romdir/zmachine"
     fi
 }
 
