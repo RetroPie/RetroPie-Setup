@@ -47,7 +47,7 @@ function get_ver_scraper() {
 }
 
 function latest_ver_scraper() {
-    wget -qO- https://api.github.com/repos/sselph/scraper/releases/latest | grep -m 1 tag_name | cut -d\" -f4
+    download https://api.github.com/repos/sselph/scraper/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
 }
 
 function list_systems_scraper() {
