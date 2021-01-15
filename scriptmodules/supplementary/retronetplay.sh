@@ -89,7 +89,7 @@ function gui_retronetplay() {
     rps_retronet_loadconfig
 
     local ip_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-    local ip_ext=$(wget -O- -q http://ipecho.net/plain)
+    local ip_ext=$(download http://ipecho.net/plain -)
 
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --menu "Configure RetroArch Netplay.\nInternal IP: $ip_int External IP: $ip_ext" 22 76 16)
