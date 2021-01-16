@@ -135,7 +135,9 @@ ln -s ~/RetroPie/roms/alg/roms/* ~/RetroPie/roms/alg/tmp/ && ls -l ~/RetroPie/ro
 cd tmp
 for i in *; do mv "$i" "$i".daphne; done
 mv *.* ~/RetroPie/roms/alg
-rm -r ~/RetroPie/roms/alg/tmp' > "$romdir/alg/symlink.sh"
+rm -r ~/RetroPie/roms/alg/tmp
+rm -r ~/RetroPie/roms/alg/Framework.singe.daphne
+rm -r ~/RetroPie/roms/alg/ActionMax.daphne' > "$romdir/alg/symlink.sh"
 
 echo '
 #!/bin/bash
