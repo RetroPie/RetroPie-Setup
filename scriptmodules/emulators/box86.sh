@@ -19,7 +19,7 @@ rp_module_flags="rpi4 x11"
 function _latest_ver_box86() {
     # This defines the Git tag / branch which will be used. Main repository is at:
     # https://github.com/ptitSeb/box86
-    echo v0.1.8
+    echo v0.2.0
     # The following is not working yet. Releases must be non-prerelease and non-draft.
     # wget -qO- https://api.github.com/repos/ptitSeb/box86/releases/latest | grep -m 1 tag_name | cut -d\" -f4
 }

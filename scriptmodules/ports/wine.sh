@@ -19,11 +19,15 @@ rp_module_flags="rpi4"
 #       X86 platform requires some modification in the Ports scripts so that the custom Mesa path is removed.
 
 function _latest_ver_wine() {
-    echo "6.0~rc5"
+    echo "6.0.0"
 }
 
 function _release_type_wine() {
-    echo devel
+    echo stable
+}
+
+function _release_distribution() {
+    echo buster-1_i386
 }
 
 function depends_wine() {
@@ -43,6 +47,7 @@ function depends_wine() {
 function install_bin_wine() {
     local version="$(_latest_ver_wine)"
     local releaseType="$(_release_type_wine)"
+    local releaseDist="$(_release_distribution)"
     local baseURL="https://dl.winehq.org/wine-builds/debian/dists/buster/main/binary-i386/"
 
     local workingDir="$__tmpdir/wine-${releaseType}-${version}/"
@@ -52,20 +57,27 @@ function install_bin_wine() {
 
     for i in wine-${releaseType}-i386 wine-${releaseType}
     do
-      local package="${i}_${version}~buster_i386.deb"
+      local package="${i}_${version}~$releaseDist.deb"
       local getdeb="${baseURL}${package}"
       
-      wget -nv -O "${workingDir}/$package" $getdeb
+      wget -nv -O "$package" $getdeb
 
       mkdir "$i"
       pushd "$i"
   
-      ar x ../${i}_${version}~buster_i386.deb
+      ar x ../${i}_${version}~$releaseDist.deb
       tar xvf data.tar.xz
 
       cp -R opt/wine-${releaseType}/* $md_inst
       popd
     done
+    
+    # Download and install Winetricks into the same directory as WINE
+    wget -nv -O winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
+    cp winetricks $md_inst/bin/
+    chmod a+rx $md_inst/bin/winetricks
+    
+    # Return to working directory
     popd
 }
 
@@ -75,6 +87,7 @@ function configure_wine() {
     local winedesktop_xinit="$md_inst/winedesktop_xinit.sh"
     local wineexplorer_xinit="$md_inst/wineexplorer_xinit.sh"
     local winecfg_xinit="$md_inst/winecfg_xinit.sh"
+    local winetricks_xinit="$md_inst/winetricks_xinit.sh"
     
     #
     # Create a new Wine prefix directory
@@ -108,7 +121,17 @@ WINEDEBUG=-all LD_LIBRARY_PATH="/opt/retropie/supplementary/mesa/lib/" setarch l
 _EOFCONFIG_
         chmod +x "$winecfg_xinit"
 
+    cat > "$winetricks_xinit" << _EOFTRICKS_
+#!/bin/bash
+xset -dpms s off s noblank
+matchbox-window-manager &
+PATH="$PATH:/opt/retropie/ports/wine/bin/" BOX86_NOBANNER=1 WINEDEBUG=-all LD_LIBRARY_PATH="/opt/retropie/supplementary/mesa/lib/" setarch linux32 -L /opt/retropie/ports/wine/bin/winetricks
+_EOFTRICKS_
+        chmod +x "$winetricks_xinit"
+
+
     addPort "$md_id" "winedesktop" "Wine Desktop" "XINIT:$winedesktop_xinit"
     addPort "$md_id" "wineexplorer" "Wine Explorer" "XINIT:$wineexplorer_xinit"
     addPort "$md_id" "winecfg" "Wine Config" "XINIT:$winecfg_xinit"
+    addPort "$md_id" "winetricks" "Winetricks" "XINIT:$winetricks_xinit"
 }
