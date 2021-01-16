@@ -121,6 +121,9 @@ function configure_daphne() {
    if [[ ! -f "$romdir/alg/roms/ActionMax" ]]; then
         cp -r "$md_data/ActionMax" "$romdir/alg/roms/ActionMax"
     fi
+    if [[ ! -f "$romdir/alg/roms/Framework.singe" ]]; then
+        cp -r "$md_data/ActionMax" "$romdir/alg/roms/Framework.singe"
+    fi
     ln -snf "$romdir/daphne/roms" "$md_inst/roms"
     ln -snf "$romdir/alg/roms" "$md_inst/singe" 
     ln -sf "$md_conf_root/$md_id/dapinput.ini" "$md_inst/dapinput.ini"
