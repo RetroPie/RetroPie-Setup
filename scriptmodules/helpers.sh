@@ -1445,19 +1445,24 @@ function dkmsManager() {
     local mode="$1"
     local module_name="$2"
     local module_ver="$3"
-    local kernel="$(uname -r)"
+    local kernel
+    local kernels=($(for kernel in $(dpkg -S /lib/modules/*/ | cut -d ":" -f2); do basename "$kernel" | grep -v "$(uname -r)"; done))
     local ver
+
+    # make sure to include running kernel if not in chroot
+    if [[ "$__chroot" -eq 0 ]]; then
+        kernels+=("$(uname -r)")
+    fi
 
     case "$mode" in
         install)
             if dkms status | grep -q "^$module_name"; then
                 dkmsManager remove "$module_name" "$module_ver"
             fi
-            if [[ "$__chroot" -eq 1 ]]; then
-                kernel="$(ls -1 /lib/modules | tail -n -1)"
-            fi
             ln -sf "$md_inst" "/usr/src/${module_name}-${module_ver}"
-            dkms install -m "$module_name" -v "$module_ver" -k "$kernel"
+            for kernel in "${kernels[@]}"; do
+                dkms install -m "$module_name" -v "$module_ver" -k "$kernel"
+            done
             if ! dkms status "$module_name"/"$module_ver" | grep -q ": installed"; then
                 dkmsManager remove "$module_name" "$module_ver"
                 md_ret_errors+=("Failed to install $md_id (missing kernel headers?)")
