@@ -1457,9 +1457,10 @@ function dkmsManager() {
                 kernel="$(ls -1 /lib/modules | tail -n -1)"
             fi
             ln -sf "$md_inst" "/usr/src/${module_name}-${module_ver}"
-            dkms install --force -m "$module_name" -v "$module_ver" -k "$kernel"
-            if dkms status | grep -q "^$module_name"; then
-                md_ret_error+=("Failed to install $md_id")
+            dkms install -m "$module_name" -v "$module_ver" -k "$kernel"
+            if ! dkms status "$module_name"/"$module_ver" | grep -q ": installed"; then
+                dkmsManager remove "$module_name" "$module_ver"
+                md_ret_errors+=("Failed to install $md_id (missing kernel headers?)")
                 return 1
             fi
             ;;
