@@ -86,7 +86,7 @@ function configure_usbromservice() {
     # set our mount options (usbmount has sync by default which we don't want)
     iniSet "MOUNTOPTIONS" "nodev,noexec,noatime"
 
-    # set per filesytem mount options
+    # set per filesystem mount options
     local options="uid=$(id -u $user),gid=$(id -g $user)"
     local fs_options
     local fs

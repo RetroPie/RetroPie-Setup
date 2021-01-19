@@ -120,7 +120,7 @@ _EOF_
         chown $user:$user "$(_global_cfg_file_moonlight)"
     fi
 
-    # create wrapper for moonlight with appropiate directories set
+    # create wrapper for moonlight with appropriate directories set
     # note: moonlight adds /moonlight to XDG_* variables
     cat > "$md_inst/moonlight.sh" << _EOF_
 #!/usr/bin/env bash

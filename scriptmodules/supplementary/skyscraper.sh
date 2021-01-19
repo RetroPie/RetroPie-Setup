@@ -211,7 +211,7 @@ function _init_config_skyscraper() {
     # If we don't have a previous config.ini file, copy the example one
     [[ ! -f "$scraper_conf_dir/config.ini" ]] && cp "$md_inst/config.ini.example" "$scraper_conf_dir/config.ini"
 
-    # Try to find the rest of the necesary files from the qmake build file
+    # Try to find the rest of the necessary files from the qmake build file
     # They should be listed in the `unix:examples.file` configuration line
     if [[ $(grep unix:examples.files "$md_build/skyscraper.pro" 2>/dev/null | cut -d= -f2-) ]]; then
         local files=$(grep unix:examples.files "$md_build/skyscraper.pro" | cut -d= -f2-)
