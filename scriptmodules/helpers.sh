@@ -1023,6 +1023,10 @@ function download() {
         printMsgs "console" "Downloading $url to $dest ..."
         params+=(-o "$dest")
     fi
+    params+=(--connect-timeout 60 --speed-limit 1 --speed-time 60)
+    # add any user supplied curl opts - timeouts can be overridden as curl uses the last parameters given
+    [[ -z "$__curl_opts" ]] && params+=($__curl_opts)
+    # add the url
     params+=("$url")
     # capture stderr - while passing both stdout and stderr to terminal
     cmd_err=$(curl "${params[@]}" 2>&1 1>&3 | tee /dev/stderr)
