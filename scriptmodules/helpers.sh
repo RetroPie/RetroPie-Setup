@@ -1009,13 +1009,6 @@ function download() {
     # if the destination is a folder, download to that with filename from url
     [[ -d "$dest" ]] && dest="$dest/$file"
 
-    # set up additional file descriptor for stdin
-    exec 3>&1
-
-    local cmd_err
-    local ret
-    # get the last non zero exit status (ignoring tee)
-    set -o pipefail
     local params=(--location)
     if [[ "$dest" == "-" ]]; then
         params+=(-s)
@@ -1028,16 +1021,33 @@ function download() {
     [[ -z "$__curl_opts" ]] && params+=($__curl_opts)
     # add the url
     params+=("$url")
+
+    local cmd_err
+    local ret
+
+    # get the last non zero exit status (ignoring tee)
+    set -o pipefail
+
     # capture stderr - while passing both stdout and stderr to terminal
+    # curl like wget outputs the progress meter to stderr, so we will extract the error line later
+
+    # set up additional file descriptor for stdin
+    exec 3>&1
+
     cmd_err=$(curl "${params[@]}" 2>&1 1>&3 | tee /dev/stderr)
     ret="$?"
-    set +o pipefail
+
     # remove stdin copy
     exec 3>&-
+
+    set +o pipefail
 
     # if download failed, remove file, log error and return error code
     if [[ "$ret" -ne 0 ]]; then
         rm "$dest"
+        # as we also capture the curl progress output, extract the last line which contains the error
+        cmd_err="${cmd_err##*$'\n'}"
+
         md_ret_errors+=("URL $url failed to download.\n\n$cmd_err")
         return "$ret"
     fi
