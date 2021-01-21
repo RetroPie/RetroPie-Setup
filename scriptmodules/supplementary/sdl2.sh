@@ -72,7 +72,7 @@ function build_sdl2() {
     cd "$(get_pkg_ver_sdl2)"
 
     if isPlatform "vero4k"; then
-        # remove harmful (mesa) and un-needed (X11) dependancies from debian package control
+        # remove harmful (mesa) and un-needed (X11) dependencies from debian package control
         sed -i '/^\s*lib.*x\|mesa/ d' ./debian/control
         # disable vulkan and X11 video support
         conf_flags+=("--disable-video-x11")

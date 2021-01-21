@@ -993,7 +993,7 @@ function applyPatch() {
 ## @param url url of file
 ## @param dest destination name (optional)
 ## @brief Download a file
-## @details Download a file - if the dest parameter is ommitted, the file will be downloaded to the current directory
+## @details Download a file - if the dest parameter is omitted, the file will be downloaded to the current directory
 ## @retval 0 on success
 function download() {
     local url="$1"
