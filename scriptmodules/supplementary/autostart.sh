@@ -40,7 +40,7 @@ _EOF_
     sed -i '$a\' "$script"
     case "$mode" in
         kodi)
-            echo -e "kodi-standalone #auto\nemulationstation #auto" >>"$script"
+            echo -e "while pgrep omxplayer >/dev/null; do sleep 1; done #auto\nkodi #auto\nemulationstation #auto" >>"$script"
             ;;
         es|*)
             echo "emulationstation #auto" >>"$script"
