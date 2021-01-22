@@ -28,7 +28,7 @@ function _sources_libcapsimage_hatari() {
 
 function sources_hatari() {
     # shallow clone isn't supported via https:// on this repo
-    gitPullOrClone "$md_build" "git://git.tuxfamily.org/gitroot/hatari/hatari.git" "v2.3.0"
+    gitPullOrClone "$md_build" "git://git.tuxfamily.org/gitroot/hatari/hatari.git" "v2.3.1"
     _sources_libcapsimage_hatari
 }
 
