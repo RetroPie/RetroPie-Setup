@@ -30,7 +30,7 @@ function depends_zesarux() {
 }
 
 function sources_zesarux() {
-    gitPullOrClone "$md_build" https://github.com/chernandezba/zesarux.git 8.0
+    gitPullOrClone "$md_build" https://github.com/chernandezba/zesarux.git 9.1
 }
 
 function build_zesarux() {
