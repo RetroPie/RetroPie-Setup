@@ -991,38 +991,63 @@ function applyPatch() {
 
 ## @fn download()
 ## @param url url of file
-## @param dest destination name (optional)
+## @param dest destination name (optional), use - for stdout
 ## @brief Download a file
-## @details Download a file - if the dest parameter is omitted, the file will be downloaded to the current directory
+## @details Download a file - if the dest parameter is omitted, the file will be downloaded to the current directory.
+## If the destination name is a hyphen (-), then the file will be outputted to stdout, for piping to another command
+## or retrieving the contents directly to a variable. If the destination is a folder, extract with the basename from
+## the url to the destination folder.
 ## @retval 0 on success
 function download() {
     local url="$1"
     local dest="$2"
+    local file="${url##*/}"
 
-    # if no destination, get the basename from the url (supported by GNU basename)
-    [[ -z "$dest" ]] && dest="${PWD}/$(basename "$url")"
+    # if no destination, get the basename from the url
+    [[ -z "$dest" ]] && dest="${PWD}/$file"
+
+    # if the destination is a folder, download to that with filename from url
+    [[ -d "$dest" ]] && dest="$dest/$file"
+
+    local params=(--location)
+    if [[ "$dest" == "-" ]]; then
+        params+=(-s)
+    else
+        printMsgs "console" "Downloading $url to $dest ..."
+        params+=(-o "$dest")
+    fi
+    params+=(--connect-timeout 60 --speed-limit 1 --speed-time 60)
+    # add any user supplied curl opts - timeouts can be overridden as curl uses the last parameters given
+    [[ -z "$__curl_opts" ]] && params+=($__curl_opts)
+    # add the url
+    params+=("$url")
+
+    local cmd_err
+    local ret
+
+    # get the last non zero exit status (ignoring tee)
+    set -o pipefail
+
+    # capture stderr - while passing both stdout and stderr to terminal
+    # curl like wget outputs the progress meter to stderr, so we will extract the error line later
 
     # set up additional file descriptor for stdin
     exec 3>&1
 
-    local cmd_err
-    local ret
-    # get the last non zero exit status (ignoring tee)
-    set -o pipefail
-    printMsgs "console" "Downloading $url ..."
-    # capture stderr - while passing both stdout and stderr to terminal
-    # wget by default outputs the progress to stderr - if we force it to log to stdout, we get no useful error msgs
-    # however this code will be useful when switching away from wget to curl. For now it's best left with -nv
-    # no progress, but less log spam, and output can be useful on failure
-    cmd_err=$(wget -nv -O"$dest" "$url" 2>&1 1>&3 | tee /dev/stderr)
+    cmd_err=$(curl "${params[@]}" 2>&1 1>&3 | tee /dev/stderr)
     ret="$?"
-    set +o pipefail
+
     # remove stdin copy
     exec 3>&-
+
+    set +o pipefail
 
     # if download failed, remove file, log error and return error code
     if [[ "$ret" -ne 0 ]]; then
         rm "$dest"
+        # as we also capture the curl progress output, extract the last line which contains the error
+        cmd_err="${cmd_err##*$'\n'}"
+
         md_ret_errors+=("URL $url failed to download.\n\n$cmd_err")
         return "$ret"
     fi
@@ -1040,9 +1065,10 @@ function download() {
 function downloadAndVerify() {
     local url="$1"
     local dest="$2"
+    local file="${url##*/}"
 
     # if no destination, get the basename from the url (supported by GNU basename)
-    [[ -z "$dest" ]] && dest="${PWD}/$(basename "$url")"
+    [[ -z "$dest" ]] && dest="${PWD}/$file"
 
     local cmd_out
     local ret=1
@@ -1072,37 +1098,29 @@ function downloadAndExtract() {
     local opts=("$@")
 
     local ext="${url##*.}"
-    local cmd=(tar -xv)
-    local is_tar=1
+    local file="${url##*/}"
+
+    local temp="$(mktemp -d)"
+    # download file, removing temporary folder and returning on error
+    if ! download "$url" "$temp/$file"; then
+        rm -rf "$temp"
+        return 1
+    fi
+
+    mkdir -p "$dest"
 
     local ret
     case "$ext" in
-        gz|tgz)
-            cmd+=(-z)
-            ;;
-        bz2)
-            cmd+=(-j)
-            ;;
-        xz)
-            cmd+=(-J)
-            ;;
         exe|zip)
-            is_tar=0
-            local tmp="$(mktemp -d)"
-            local file="${url##*/}"
-            runCmd wget -q -O"$tmp/$file" "$url"
-            runCmd unzip "${opts[@]}" -o "$tmp/$file" -d "$dest"
-            rm -rf "$tmp"
-            ret=$?
+            runCmd unzip "${opts[@]}" -o "$temp/$file" -d "$dest"
+            ;;
+        *)
+            tar -xvf "$temp/$file" -C "$dest" "${opts[@]}"
+            ;;
     esac
+    ret=$?
 
-    if [[ "$is_tar" -eq 1 ]]; then
-        mkdir -p "$dest"
-        cmd+=(-C "$dest" "${opts[@]}")
-
-        runCmd "${cmd[@]}" < <(wget -q -O- "$url")
-        ret=$?
-    fi
+    rm -rf "$temp"
 
     return $ret
 }

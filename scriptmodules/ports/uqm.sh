@@ -38,7 +38,7 @@ function sources_uqm() {
     local ver="$(_get_ver_uqm)"
     local url="http://http.debian.net/debian/pool/contrib/u/uqm"
     for file in uqm_$ver.dsc uqm_0.6.2.dfsg.orig.tar.gz uqm_$ver.debian.tar.xz; do
-        wget -nv -O"$file" "$url/$file"
+        download "$url/$file"
     done
 }
 

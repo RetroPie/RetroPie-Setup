@@ -53,7 +53,7 @@ function create_chroot_image() {
     local base="raspbian-${dist}-lite"
     local image="$base.img"
     if [[ ! -f "$image" ]]; then
-        wget -c -O "$base.zip" "$url"
+        download "$url" "$base.zip"
         unzip -o "$base.zip"
         mv "$(unzip -Z -1 "$base.zip")" "$image"
         rm "$base.zip"

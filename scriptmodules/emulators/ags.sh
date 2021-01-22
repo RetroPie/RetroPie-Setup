@@ -43,7 +43,9 @@ function configure_ags() {
     mkRomDir "ags"
 
     # install Eawpatches GUS patch set (see: http://liballeg.org/digmid.html)
-    [[ "$md_mode" == "install" ]] && wget -qO- "http://www.eglebbk.dds.nl/program/download/digmid.dat" | bzcat >"$md_inst/bin/patches.dat"
+    if [[ "$md_mode" == "install" ]]; then
+        download "http://www.eglebbk.dds.nl/program/download/digmid.dat" - | bzcat >"$md_inst/bin/patches.dat"
+    fi
 
     addEmulator 1 "$md_id" "ags" "$binary ${params[*]}" "Adventure Game Studio" ".exe"
 

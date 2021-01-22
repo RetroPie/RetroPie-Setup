@@ -32,7 +32,7 @@ function depends_pegasus-fe() {
 function install_bin_pegasus-fe() {
     # get all asset urls for the latest continuous release
     local all_assets
-    all_assets="$(wget -q -O - https://api.github.com/repos/mmatyas/pegasus-frontend/releases/tags/continuous)" || return
+    all_assets="$(download https://api.github.com/repos/mmatyas/pegasus-frontend/releases/tags/continuous -)" || return
     all_assets="$(echo "${all_assets}" | jq -r '.assets[] | .browser_download_url')"
 
     printMsgs "console" "Available releases:"
