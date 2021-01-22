@@ -76,40 +76,44 @@ function install_dxx-rebirth() {
 }
 
 function game_data_dxx-rebirth() {
-    local D1X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
-    local D2X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
-    local D1X_HIGH_TEXTURE_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
-    local D1X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
-    local D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
+    local D1X_SHARE_URL='https://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
+    local D2X_SHARE_URL='https://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
+    local D1X_HIGH_TEXTURE_URL='https://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
+    local D1X_OGG_URL='https://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
+    local D2X_OGG_URL='https://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
 
-    cd "$__tmpdir"
+    local dest_d1="$romdir/ports/descent1"
+    local dest_d2="$romdir/ports/descent2"
+
+    mkUserDir "$dest_d1"
+    mkUserDir "$dest_d2"
 
     # Download / unpack / install Descent shareware files
-    if [[ ! -f "$romdir/ports/descent1/descent.hog" ]]; then
-        downloadAndExtract "$D1X_SHARE_URL" "$romdir/ports/descent1"
+    if [[ ! -f "$dest_d1/descent.hog" ]]; then
+        downloadAndExtract "$D1X_SHARE_URL" "$dest_d1"
     fi
 
     # High Res Texture Pack
-    if [[ ! -f "$romdir/ports/descent1/d1xr-hires.dxa" ]]; then
-        wget -nv -P "$romdir/ports/descent1" "$D1X_HIGH_TEXTURE_URL"
+    if [[ ! -f "$dest_d1/d1xr-hires.dxa" ]]; then
+        download "$D1X_HIGH_TEXTURE_URL" "$dest_d1"
     fi
 
     # Ogg Sound Replacement (Roland Sound Canvas SC-55 MIDI)
-    if [[ ! -f "$romdir/ports/descent1/d1xr-sc55-music.dxa" ]]; then
-        wget -nv -P "$romdir/ports/descent1" "$D1X_OGG_URL"
+    if [[ ! -f "$dest_d1/d1xr-sc55-music.dxa" ]]; then
+        download "$D1X_OGG_URL" "$dest_d1"
     fi
 
     # Download / unpack / install Descent 2 shareware files
-    if [[ ! -f "$romdir/ports/descent2/D2DEMO.HOG" ]]; then
-        downloadAndExtract "$D2X_SHARE_URL" "$romdir/ports/descent2"
+    if [[ ! -f "$dest_d2/D2DEMO.HOG" ]]; then
+        downloadAndExtract "$D2X_SHARE_URL" "$dest_d2"
     fi
 
     # Ogg Sound Replacement (Roland Sound Canvas SC-55 MIDI)
-    if [[ ! -f "$romdir/ports/descent2/d2xr-sc55-music.dxa" ]]; then
-        wget -nv -P "$romdir/ports/descent2" "$D2X_OGG_URL"
+    if [[ ! -f "$dest_d2/d2xr-sc55-music.dxa" ]]; then
+        download "$D2X_OGG_URL" "$dest_d2"
     fi
 
-    chown -R $user:$user "$romdir/ports/descent1" "$romdir/ports/descent2"
+    chown -R $user:$user "$dest_d1" "$dest_d2"
 }
 
 function configure_dxx-rebirth() {

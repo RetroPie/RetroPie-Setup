@@ -77,7 +77,7 @@ function install_firmware_raspbiantools() {
     for pkg in "${pkgs[@]}"; do
         if hasPackage "$pkg" "$ver" ne; then
             deb="${pkg}_${ver}_armhf.deb"
-            if ! wget -O"$deb" "$url/$deb"; then
+            if ! download "$url/$deb"; then
                md_ret_errors+=("Failed to download $deb")
                return 1
             fi

@@ -17,7 +17,7 @@ rp_module_flags="!all rpi3 rpi4"
 rp_module_help="Stream games from your computer with Steam"
 
 function depends_steamlink() {
-    getDepends python3-dev curl libinput10 libxkbcommon-x11-0 matchbox-window-manager xorg zenity
+    getDepends python3-dev libinput10 libxkbcommon-x11-0 matchbox-window-manager xorg zenity
 }
 
 function install_bin_steamlink() {

@@ -92,9 +92,9 @@ function rp_callModule() {
             rp_hasBinary "$md_id"
             local ret="$?"
 
-            # check if we had a network failure from wget
-            if [[ "$ret" -eq 4 ]]; then
-                __ERRMSGS+=("Unable to connect to the internet")
+            # check if we get a couldn't resolve host or failed to connect to host from curl
+            if [[ "$ret" -eq 6 || "$ret" -eq 7 ]]; then
+                __ERRMSGS+=("Unable to connect to the internet - curl returned $ret")
                 return 1
             fi
 
@@ -370,7 +370,7 @@ function rp_hasBinary() {
     [[ -z "$url" ]] && return 1
 
     if rp_hasBinaries; then
-        wget --spider -q "$url"
+        curl -o /dev/null -sfI "$url"
         return $?
     fi
     return 1
@@ -381,11 +381,7 @@ function rp_getBinaryDate() {
     local url="$(rp_getBinaryUrl $id)"
     [[ -z "$url" || "$url" == "notest" ]] && return 1
 
-    local bin_date=$(wget \
-        --server-response --spider -q \
-        "$url" 2>&1 \
-        | grep -i "Last-Modified" \
-        | cut -d" " -f4-)
+    local bin_date=$(curl -sfI $url | grep -i "last-modified" | cut -d" " -f2-)
     echo "$bin_date"
     return 0
 }

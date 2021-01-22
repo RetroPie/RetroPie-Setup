@@ -208,7 +208,7 @@ function package_setup() {
         fi
 
         # if we had a network error don't display install options
-        if [[ "$binary_ret" -eq 4 ]]; then
+        if [[ "$binary_ret" -eq 6 || "$binary_ret" -eq 7 ]]; then
             status+="\nInstall options disabled (Unable to access internet)"
         else
             if [[ "$source_update" -eq 1 || "$binary_update" -eq 1 ]]; then
