@@ -28,7 +28,7 @@ function rp_listFunctions() {
     echo -e "ID:                 Description:                                 List of available functions"
     echo "-----------------------------------------------------------------------------------------------------------------------------------"
     for id in ${__mod_id[@]}; do
-        printf "%-20s: %-42s :" "$id" "${__mod_desc[$id]}"
+        printf "%-20s: %-42s :" "$id" "${__mod_info[$id/desc]}"
         while read mode; do
             # skip private module functions (start with an underscore)
             [[ "$mode" = _* ]] && continue
@@ -128,10 +128,10 @@ function rp_callModule() {
     esac
 
     # create variables that can be used in modules
-    local md_desc="${__mod_desc[$md_id]}"
-    local md_help="${__mod_help[$md_id]}"
-    local md_type="${__mod_type[$md_id]}"
-    local md_flags="${__mod_flags[$md_id]}"
+    local md_desc="${__mod_info[$md_id/desc]}"
+    local md_help="${__mod_info[$md_id/help]}"
+    local md_type="${__mod_info[$md_id/type]}"
+    local md_flags="${__mod_info[$md_id/flags]}"
     local md_build="$__builddir/$md_id"
     local md_inst="$(rp_getInstallPath $md_id)"
     local md_data="$scriptdir/scriptmodules/$md_type/$md_id"
@@ -254,7 +254,7 @@ function rp_callModule() {
         install)
             action="Installing"
             # remove any previous install folder unless noinstclean flag is set
-            if ! hasFlag "${__mod_flags[$md_id]}" "noinstclean"; then
+            if ! hasFlag "${__mod_info[$md_id/flags]}" "noinstclean"; then
                 rmDirExists "$md_inst"
             fi
             mkdir -p "$md_inst"
@@ -342,7 +342,7 @@ function rp_hasBinaries() {
 
 function rp_getBinaryUrl() {
     local id="$1"
-    local url="$__binary_url/${__mod_type[$id]}/$id.tar.gz"
+    local url="$__binary_url/${__mod_info[$id/type]}/$id.tar.gz"
     if fnExists "install_bin_${id}"; then
         if fnExists "__binary_url_${id}"; then
             url="$(__binary_url_${id})"
@@ -405,7 +405,7 @@ function rp_hasNewerBinary() {
 
 function rp_getInstallPath() {
     local id="$1"
-    echo "$rootdir/${__mod_type[$id]}/$id"
+    echo "$rootdir/${__mod_info[$id/type]}/$id"
 }
 
 function rp_installBin() {
@@ -462,7 +462,7 @@ function rp_createBin() {
 
 function rp_hasModule() {
     local id="$1"
-    [[ -n "${__mod_type[$id]}" ]] && return 0
+    [[ -n "${__mod_idx[$id]}" ]] && return 0
     return 1
 }
 
@@ -577,12 +577,12 @@ function rp_registerModule() {
         # create numerical index for each module id from nunber of added modules
         __mod_idx["$rp_module_id"]="${#__mod_id[@]}"
         __mod_id+=("$rp_module_id")
-        __mod_type["$rp_module_id"]="$type"
-        __mod_desc["$rp_module_id"]="$rp_module_desc"
-        __mod_help["$rp_module_id"]="$rp_module_help"
-        __mod_licence["$rp_module_id"]="$rp_module_licence"
-        __mod_section["$rp_module_id"]="$rp_module_section"
-        __mod_flags["$rp_module_id"]="$rp_module_flags"
+        __mod_info["$rp_module_id/type"]="$type"
+        __mod_info["$rp_module_id/desc"]="$rp_module_desc"
+        __mod_info["$rp_module_id/help"]="$rp_module_help"
+        __mod_info["$rp_module_id/licence"]="$rp_module_licence"
+        __mod_info["$rp_module_id/section"]="$rp_module_section"
+        __mod_info["$rp_module_id/flags"]="$rp_module_flags"
     fi
 }
 
@@ -597,12 +597,7 @@ function rp_registerModuleDir() {
 function rp_registerAllModules() {
     __mod_id=()
     declare -Ag __mod_idx=()
-    declare -Ag __mod_type=()
-    declare -Ag __mod_desc=()
-    declare -Ag __mod_help=()
-    declare -Ag __mod_licence=()
-    declare -Ag __mod_section=()
-    declare -Ag __mod_flags=()
+    declare -Ag __mod_info=()
 
     rp_registerModuleDir "emulators"
     rp_registerModuleDir "libretrocores"
@@ -617,7 +612,7 @@ function rp_getSectionIds() {
     local ids=()
     for id in "${__mod_id[@]}"; do
         for section in "$@"; do
-            [[ "${__mod_section[$id]}" == "$section" ]] && ids+=("$id")
+            [[ "${__mod_info[$id/section]}" == "$section" ]] && ids+=("$id")
         done
     done
     echo "${ids[@]}"
@@ -625,7 +620,7 @@ function rp_getSectionIds() {
 
 function rp_isInstalled() {
     local id="$1"
-    local md_inst="$rootdir/${__mod_type[$id]}/$id"
+    local md_inst="$rootdir/${__mod_info[$id/type]}/$id"
     [[ -d "$md_inst" ]] && return 0
     return 1
 }

@@ -22,7 +22,7 @@ function gui_dispmanx() {
         local command=()
         local id
         for id in "${__mod_id[@]}"; do
-            if [[ "${__mod_flags[$id]}" =~ dispmanx ]] && rp_isInstalled "$id"; then
+            if [[ "${__mod_info[$id/flags]}" =~ dispmanx ]] && rp_isInstalled "$id"; then
                 iniGet "$id"
                 if [[ "$ini_value" == "1" ]]; then
                     options+=($count "Disable for $id (currently enabled)")
