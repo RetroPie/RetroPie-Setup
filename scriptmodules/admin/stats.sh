@@ -24,7 +24,7 @@ function _get_package_data_stats() {
     local data=()
     local id
     for id in ${__mod_id[@]}; do
-        data+=("${__mod_section[$id]};$id;${__mod_desc[$id]};${__mod_licence[$id]};${__mod_flags[$id]};")
+        data+=("${__mod_info[$id/section]};$id;${__mod_info[$id/desc]};${__mod_info[$id/licence]};${__mod_info[$id/flags]};")
     done
     printf "%s\n" "${data[@]}"
 }

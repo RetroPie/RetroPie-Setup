@@ -235,7 +235,7 @@ function package_setup() {
             options+=(Z "Clean source folder")
         fi
 
-        local help="${__mod_desc[$id]}\n\n${__mod_help[$id]}"
+        local help="${__mod_info[$id/desc]}\n\n${__mod_info[$id/help]}"
         if [[ -n "$help" ]]; then
             options+=(H "Package Help")
         fi
@@ -274,7 +274,7 @@ function package_setup() {
                 ;;
             X)
                 local text="Are you sure you want to remove $id?"
-                case "${__mod_section[$id]}" in
+                case "${__mod_info[$id/section]}" in
                     core)
                         text+="\n\nWARNING - core packages are needed for RetroPie to function!"
                         ;;
@@ -327,7 +327,7 @@ function section_gui_setup() {
             else
                 installed=""
             fi
-            pkgs+=("${__mod_idx[$id]}" "$id $installed" "$id - ${__mod_desc[$id]}"$'\n\n'"${__mod_help[$id]}")
+            pkgs+=("${__mod_idx[$id]}" "$id $installed" "$id - ${__mod_info[$id/desc]}"$'\n\n'"${__mod_info[$id/help]}")
         done
 
         if [[ "$num_pkgs" -gt 0 ]]; then
@@ -415,8 +415,8 @@ function config_gui_setup() {
         local id
         for id in "${__mod_id[@]}"; do
             # show all configuration modules and any installed packages with a gui function
-            if [[ "${__mod_section[$id]}" == "config" ]] || rp_isInstalled "$id" && fnExists "gui_$id"; then
-                options+=("${__mod_idx[$id]}" "$id  - ${__mod_desc[$id]}" "${__mod_idx[$id]} ${__mod_desc[$id]}")
+            if [[ "${__mod_info[$id/section]}" == "config" ]] || rp_isInstalled "$id" && fnExists "gui_$id"; then
+                options+=("${__mod_idx[$id]}" "$id  - ${__mod_info[$id/desc]}" "${__mod_idx[$id]} ${__mod_info[$id/desc]}")
             fi
         done
 
@@ -457,7 +457,7 @@ function update_packages_setup() {
     clear
     local id
     for id in ${__mod_id[@]}; do
-        if rp_isInstalled "$id" && [[ "${__mod_section[$id]}" != "depends" ]]; then
+        if rp_isInstalled "$id" && [[ "${__mod_info[$id/section]}" != "depends" ]]; then
             rp_installModule "$id" "_update_"
         fi
     done
