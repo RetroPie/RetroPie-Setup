@@ -24,11 +24,17 @@ function rp_listFunctions() {
     local desc
     local mode
     local func
+    local enabled
 
     echo -e "ID:                 Description:                                 List of available functions"
     echo "-----------------------------------------------------------------------------------------------------------------------------------"
     for id in ${__mod_id[@]}; do
-        printf "%-20s: %-42s :" "$id" "${__mod_info[$id/desc]}"
+        if rp_isEnabled "$id"; then
+            printf "%-20s: %-42s :" "$id" "${__mod_info[$id/desc]}"
+        else
+            printf "*%-20s: %-42s : %s\n" "$id" "${__mod_info[$id/desc]}" "This module is not available for your platform"
+            continue
+        fi
         while read mode; do
             # skip private module functions (start with an underscore)
             [[ "$mode" = _* ]] && continue
@@ -64,10 +70,16 @@ function rp_callModule() {
     # shift the function parameters left so $@ will contain any additional parameters which we can use in modules
     shift 2
 
-    # check for module
-    if [[ -x "${__mod_idx[$md_id]}" ]]; then
-        printMsgs "console" "No module '$md_id' found for platform $__platform"
+    # check if module exists
+    if ! rp_hasModule "$md_id"; then
+        printMsgs "console" "No module '$md_id' found."
         return 2
+    fi
+
+    # check if module is enabled for platform
+    if ! rp_isEnabled "$md_id"; then
+        printMsgs "console" "Module '$md_id' is not available for your system ($__platform)"
+        return 3
     fi
 
     # parameters _auto_ _binary or _source_ (_source_ is used if no parameters are given for a module)
@@ -536,7 +548,7 @@ function rp_registerModule() {
 
     local flags=($rp_module_flags)
     local flag
-    local valid=1
+    local enabled=1
 
     # flags are parsed in the order provided in the module - so the !all flag only makes sense first
     # by default modules are enabled for all platforms
@@ -544,17 +556,17 @@ function rp_registerModule() {
         for flag in "${flags[@]}"; do
             # !all excludes the module from all platforms
             if [[ "$flag" == "!all" ]]; then
-                valid=0
+                enabled=0
                 continue
             fi
             # flags without ! make the module valid for the platform
             if isPlatform "$flag"; then
-                valid=1
+                enabled=1
                 continue
             fi
             # flags with !flag will exclude the module for the platform
             if [[ "$flag" =~ ^\!(.+) ]] && isPlatform "${BASH_REMATCH[1]}"; then
-                valid=0
+                enabled=0
                 continue
             fi
         done
@@ -573,17 +585,16 @@ function rp_registerModule() {
         isPlatform "$flag" && rp_module_section="$section"
     done
 
-    if [[ "$valid" -eq 1 ]]; then
-        # create numerical index for each module id from nunber of added modules
-        __mod_idx["$rp_module_id"]="${#__mod_id[@]}"
-        __mod_id+=("$rp_module_id")
-        __mod_info["$rp_module_id/type"]="$type"
-        __mod_info["$rp_module_id/desc"]="$rp_module_desc"
-        __mod_info["$rp_module_id/help"]="$rp_module_help"
-        __mod_info["$rp_module_id/licence"]="$rp_module_licence"
-        __mod_info["$rp_module_id/section"]="$rp_module_section"
-        __mod_info["$rp_module_id/flags"]="$rp_module_flags"
-    fi
+    # create numerical index for each module id from nunber of added modules
+    __mod_idx["$rp_module_id"]="${#__mod_id[@]}"
+    __mod_id+=("$rp_module_id")
+    __mod_info["$rp_module_id/enabled"]="$enabled"
+    __mod_info["$rp_module_id/type"]="$type"
+    __mod_info["$rp_module_id/desc"]="$rp_module_desc"
+    __mod_info["$rp_module_id/help"]="$rp_module_help"
+    __mod_info["$rp_module_id/licence"]="$rp_module_licence"
+    __mod_info["$rp_module_id/section"]="$rp_module_section"
+    __mod_info["$rp_module_id/flags"]="$rp_module_flags"
 }
 
 function rp_registerModuleDir() {
@@ -623,6 +634,12 @@ function rp_isInstalled() {
     local md_inst="$rootdir/${__mod_info[$id/type]}/$id"
     [[ -d "$md_inst" ]] && return 0
     return 1
+}
+
+function rp_isEnabled() {
+    local id="$1"
+    [[ "${__mod_info[$id/enabled]}" -eq 0 ]] && return 1
+    return 0
 }
 
 function rp_updateHooks() {
