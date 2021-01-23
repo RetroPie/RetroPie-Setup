@@ -329,11 +329,12 @@ function section_gui_setup() {
             if ! rp_isEnabled "$id"; then
                 info="\Zb*$id - Not available for your system\Zn"
             else
-                info="$id"
                 if rp_isInstalled "$id"; then
                     eval $(rp_getPackageInfo "$id")
-                    info+=" \Zb(Installed - via $pkg_origin)\Zn"
+                    info="\Zb\Z7$id\Zn \Zb(Installed - via $pkg_origin)"
                     ((num_pkgs++))
+                else
+                    info="$id"
                 fi
             fi
             pkgs+=("${__mod_idx[$id]}" "$info" "$id - ${__mod_info[$id/desc]}"$'\n\n'"${__mod_info[$id/help]}")
