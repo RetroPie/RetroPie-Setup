@@ -53,11 +53,13 @@ function configure_lr-mess() {
         addSystem "$system"
     done
 
+    [[ "$md_mode" == "remove" ]] && return
+
     setRetroArchCoreOption "mame_softlists_enable" "enabled"
     setRetroArchCoreOption "mame_softlists_auto_media" "enabled"
     setRetroArchCoreOption "mame_boot_from_cli" "enabled"
 
-    mkdir "$biosdir/mame"
+    mkUserDir "$biosdir/mame"
     cp -rv "$md_build/hash" "$biosdir/mame/"
     chown -R $user:$user "$biosdir/mame"
 }
