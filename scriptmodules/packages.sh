@@ -9,14 +9,15 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-declare -A __sections
-__sections[core]="core"
-__sections[main]="main"
-__sections[opt]="optional"
-__sections[exp]="experimental"
-__sections[driver]="driver"
-__sections[config]="configuration"
-__sections[depends]="dependency"
+declare -A __sections=(
+    [core]="core"
+    [main]="main"
+    [opt]="optional"
+    [exp]="experimental"
+    [driver]="driver"
+    [config]="configuration"
+    [depends]="dependency"
+)
 
 function rp_listFunctions() {
     local id
