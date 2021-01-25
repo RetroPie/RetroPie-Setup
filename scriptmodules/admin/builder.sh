@@ -63,7 +63,7 @@ function chroot_build_builder() {
 
     local dist
     local dists="$__builder_dists"
-    [[ -z "$dists" ]] && dists="stretch buster"
+    [[ -z "$dists" ]] && dists="buster"
 
     local platform
     local platforms="$__builder_platforms"
