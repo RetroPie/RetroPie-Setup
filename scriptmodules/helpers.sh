@@ -1044,7 +1044,8 @@ function download() {
 
     # if download failed, remove file, log error and return error code
     if [[ "$ret" -ne 0 ]]; then
-        rm "$dest"
+        # remove dest if not set to stdout and exists
+        [[ "$dest" != "-" && -f "$dest" ]] && rm "$dest"
         # as we also capture the curl progress output, extract the last line which contains the error
         cmd_err="${cmd_err##*$'\n'}"
 
