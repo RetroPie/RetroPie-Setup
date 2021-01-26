@@ -599,12 +599,10 @@ function rp_registerModule() {
 
 function rp_registerModuleDir() {
     local dir="$1"
-    [[ ! -d "$dir" ]] && return 1
     local module
-    for module in $(find "$dir" -mindepth 1 -maxdepth 1 -type f -name "*.sh" | sort); do
+    for module in $(find "$scriptdir/scriptmodules/$dir" -maxdepth 1 -name "*.sh" | sort); do
         rp_registerModule "$module" "$dir"
     done
-    return 0
 }
 
 function rp_registerAllModules() {
@@ -612,13 +610,11 @@ function rp_registerAllModules() {
     declare -Ag __mod_idx=()
     declare -Ag __mod_info=()
 
-    local dir
-    local type
-    while read dir; do
-        for type in emulators libretrocores ports supplementary admin; do
-            rp_registerModuleDir "$dir/$type"
-        done
-    done < <(find "$scriptdir"/scriptmodules "$scriptdir"/ext/*/scriptmodules -maxdepth 0 2>/dev/null)
+    rp_registerModuleDir "emulators"
+    rp_registerModuleDir "libretrocores"
+    rp_registerModuleDir "ports"
+    rp_registerModuleDir "supplementary"
+    rp_registerModuleDir "admin"
 }
 
 function rp_getSectionIds() {
