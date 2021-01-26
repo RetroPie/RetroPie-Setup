@@ -600,9 +600,9 @@ function rp_registerModule() {
 function rp_registerModuleDir() {
     local dir="$1"
     local module
-    for module in $(find "$scriptdir/scriptmodules/$dir" -maxdepth 1 -name "*.sh" | sort); do
+    while read module; do
         rp_registerModule "$module" "$dir"
-    done
+    done < <(find "$scriptdir/scriptmodules/$dir" -maxdepth 1 -name "*.sh" | sort)
 }
 
 function rp_registerAllModules() {
