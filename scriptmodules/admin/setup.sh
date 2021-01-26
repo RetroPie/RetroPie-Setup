@@ -325,7 +325,14 @@ function section_gui_setup() {
         local pkg_origin
         local num_pkgs=0
         local info
+        local type
         for id in $(rp_getSectionIds $section); do
+            # do a heading for each origin and module type
+            if [[ "$type" != "${__mod_info[$id/type]}" ]]; then
+                info="${__mod_info[$id/vendor]} - ${__mod_info[$id/type]}"
+                pkgs+=("----" "$info ----" "Packages from $info")
+                type="${__mod_info[$id/type]}"
+            fi
             if ! rp_isEnabled "$id"; then
                 info="\Zb*$id - Not available for your system\Zn"
             else
@@ -410,6 +417,8 @@ function section_gui_setup() {
                     rps_logEnd
                 } &> >(_setup_gzip_log "$logfilename")
                 rps_printInfo "$logfilename"
+                ;;
+            ----)
                 ;;
             *)
                 package_setup "${__mod_id[$choice]}"
