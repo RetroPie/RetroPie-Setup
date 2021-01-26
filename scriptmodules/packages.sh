@@ -526,6 +526,8 @@ function rp_getPackageInfo() {
 function rp_registerModule() {
     local path="$1"
     local type="$2"
+    # type is the last folder in the path as we now send a full path to rp_registerModule
+    type="${type##*/}"
     local rp_module_id=""
     local rp_module_desc=""
     local rp_module_help=""
@@ -599,10 +601,13 @@ function rp_registerModule() {
 
 function rp_registerModuleDir() {
     local dir="$1"
+    [[ ! -d "$dir" ]] && return 1
     local module
+
     while read module; do
         rp_registerModule "$module" "$dir"
-    done < <(find "$scriptdir/scriptmodules/$dir" -maxdepth 1 -name "*.sh" | sort)
+    done < <(find "$dir" -mindepth 1 -maxdepth 1 -type f -name "*.sh" | sort)
+    return 0
 }
 
 function rp_registerAllModules() {
@@ -610,11 +615,13 @@ function rp_registerAllModules() {
     declare -Ag __mod_idx=()
     declare -Ag __mod_info=()
 
-    rp_registerModuleDir "emulators"
-    rp_registerModuleDir "libretrocores"
-    rp_registerModuleDir "ports"
-    rp_registerModuleDir "supplementary"
-    rp_registerModuleDir "admin"
+    local dir
+    local type
+    while read dir; do
+        for type in emulators libretrocores ports supplementary admin; do
+            rp_registerModuleDir "$dir/$type"
+        done
+    done < <(find "$scriptdir"/scriptmodules "$scriptdir"/ext/*/scriptmodules -maxdepth 0 2>/dev/null)
 }
 
 function rp_getSectionIds() {
