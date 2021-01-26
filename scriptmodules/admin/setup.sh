@@ -330,7 +330,7 @@ function section_gui_setup() {
             # do a heading for each origin and module type
             if [[ "$type" != "${__mod_info[$id/type]}" ]]; then
                 info="${__mod_info[$id/vendor]} - ${__mod_info[$id/type]}"
-                pkgs+=("----" "$info ----" "Packages from $info")
+                pkgs+=("----" "\Z4$info ----\Zn" "Packages from $info")
                 type="${__mod_info[$id/type]}"
             fi
             if ! rp_isEnabled "$id"; then
