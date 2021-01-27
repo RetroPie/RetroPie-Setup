@@ -43,14 +43,12 @@ function game_data_quake3() {
 }
 
 function configure_quake3() {
+    mkRomDir "ports/quake3"
     addPort "$md_id" "quake3" "Quake III Arena" "LD_LIBRARY_PATH=lib $md_inst/ioquake3.arm"
 
-    mkRomDir "ports/quake3"
+    [[ "$md_mode" == "remove" ]] && return
+
+    game_data_quake3
 
     moveConfigDir "$md_inst/baseq3" "$romdir/ports/quake3"
-
-    # Add user for no sudo run
-    usermod -a -G video $user
-
-    [[ "$md_mode" == "install" ]] && game_data_quake3
 }
