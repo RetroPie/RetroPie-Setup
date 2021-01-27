@@ -102,6 +102,9 @@ function depends_setup() {
 
     # set a global __setup to 1 which is used to adjust package function behaviour if called from the setup gui
     __setup=1
+
+    # print any pending msgs - eg during module scanning which wouldn't be seen otherwise
+    rps_printInfo
 }
 
 function updatescript_setup()
