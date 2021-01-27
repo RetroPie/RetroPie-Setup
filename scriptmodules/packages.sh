@@ -538,6 +538,14 @@ function rp_registerModule() {
 
     local error=0
 
+    # extract the module id and make sure it is unique - also we don't want 3rd party
+    # repos overriding our built in modules as it will cause issues when debugging
+    rp_module_id=$(grep -oP "rp_module_id=\"\K([^\"]+)" "$path")
+    if [[ -n "${__mod_idx[$rp_module_id]}" ]]; then
+        __INFMSGS+=("Module $path was skipped as $rp_module_id is already used by ${__mod_info[$rp_module_id/path]}")
+        return
+    fi
+
     source "$path"
 
     local var
@@ -592,6 +600,7 @@ function rp_registerModule() {
     __mod_idx["$rp_module_id"]="${#__mod_id[@]}"
     __mod_id+=("$rp_module_id")
     __mod_info["$rp_module_id/enabled"]="$enabled"
+    __mod_info["$rp_module_id/path"]="$path"
     __mod_info["$rp_module_id/vendor"]="$vendor"
     __mod_info["$rp_module_id/type"]="$type"
     __mod_info["$rp_module_id/desc"]="$rp_module_desc"
