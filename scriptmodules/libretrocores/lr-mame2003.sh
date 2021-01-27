@@ -85,6 +85,4 @@ function configure_lr-mame2003() {
 
     # Set core options
     setRetroArchCoreOption "${dir_name}_skip_disclaimer" "enabled"
-    setRetroArchCoreOption "${dir_name}_dcs-speedhack" "enabled"
-    setRetroArchCoreOption "${dir_name}_samples" "enabled"
 }
