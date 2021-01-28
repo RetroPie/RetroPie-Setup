@@ -25,8 +25,7 @@ function build_lr-snes9x() {
 
     cd libretro
     make "${params[@]}" clean
-    # temporarily disable distcc due to segfaults with cross compiler and lto
-    DISTCC_HOSTS="" make "${params[@]}"
+    make "${params[@]}"
     md_ret_require="$md_build/libretro/snes9x_libretro.so"
 }
 
