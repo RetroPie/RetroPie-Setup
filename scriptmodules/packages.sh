@@ -526,6 +526,9 @@ function rp_getPackageInfo() {
 function rp_registerModule() {
     local path="$1"
     local type="$2"
+    local vendor="$3"
+    # type is the last folder in the path as we now send a full path to rp_registerModule
+    type="${type##*/}"
     local rp_module_id=""
     local rp_module_desc=""
     local rp_module_help=""
@@ -534,6 +537,14 @@ function rp_registerModule() {
     local rp_module_flags=""
 
     local error=0
+
+    # extract the module id and make sure it is unique - also we don't want 3rd party
+    # repos overriding our built in modules as it will cause issues when debugging
+    rp_module_id=$(grep -oP "rp_module_id=\"\K([^\"]+)" "$path")
+    if [[ -n "${__mod_idx[$rp_module_id]}" ]]; then
+        __INFMSGS+=("Module $path was skipped as $rp_module_id is already used by ${__mod_info[$rp_module_id/path]}")
+        return
+    fi
 
     source "$path"
 
@@ -589,6 +600,8 @@ function rp_registerModule() {
     __mod_idx["$rp_module_id"]="${#__mod_id[@]}"
     __mod_id+=("$rp_module_id")
     __mod_info["$rp_module_id/enabled"]="$enabled"
+    __mod_info["$rp_module_id/path"]="$path"
+    __mod_info["$rp_module_id/vendor"]="$vendor"
     __mod_info["$rp_module_id/type"]="$type"
     __mod_info["$rp_module_id/desc"]="$rp_module_desc"
     __mod_info["$rp_module_id/help"]="$rp_module_help"
@@ -599,10 +612,15 @@ function rp_registerModule() {
 
 function rp_registerModuleDir() {
     local dir="$1"
+    [[ ! -d "$dir" ]] && return 1
+    local vendor="$2"
+    [[ -z "$vendor" ]] && return 1
     local module
+    local vendor
     while read module; do
-        rp_registerModule "$module" "$dir"
-    done < <(find "$scriptdir/scriptmodules/$dir" -maxdepth 1 -name "*.sh" | sort)
+        rp_registerModule "$module" "$dir" "$vendor"
+    done < <(find "$dir" -mindepth 1 -maxdepth 1 -type f -name "*.sh" | sort)
+    return 0
 }
 
 function rp_registerAllModules() {
@@ -610,11 +628,23 @@ function rp_registerAllModules() {
     declare -Ag __mod_idx=()
     declare -Ag __mod_info=()
 
-    rp_registerModuleDir "emulators"
-    rp_registerModuleDir "libretrocores"
-    rp_registerModuleDir "ports"
-    rp_registerModuleDir "supplementary"
-    rp_registerModuleDir "admin"
+    local dir
+    local type
+    local origin
+    while read dir; do
+        # get parent folder
+        vendor="${dir%/*}"
+        # if the folder isn't RetroPie-Setup then get the repo name which will be used for module vendor
+        if [[ "$vendor" != "$scriptdir" ]]; then
+            vendor="${vendor##*/}"
+        else
+            vendor="RetroPie"
+        fi
+
+        for type in emulators libretrocores ports supplementary admin; do
+            rp_registerModuleDir "$dir/$type" "$vendor"
+        done
+    done < <(find "$scriptdir"/scriptmodules "$scriptdir"/ext/*/scriptmodules -maxdepth 0 2>/dev/null)
 }
 
 function rp_getSectionIds() {
