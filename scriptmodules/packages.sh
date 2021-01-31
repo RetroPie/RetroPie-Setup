@@ -144,9 +144,11 @@ function rp_callModule() {
     local md_help="${__mod_info[$md_id/help]}"
     local md_type="${__mod_info[$md_id/type]}"
     local md_flags="${__mod_info[$md_id/flags]}"
+    local md_path="${__mod_info[$md_id/path]}"
     local md_build="$__builddir/$md_id"
     local md_inst="$(rp_getInstallPath $md_id)"
-    local md_data="$scriptdir/scriptmodules/$md_type/$md_id"
+    # get module path folder + md_id for $md_data
+    local md_data="${md_path%/*}/$md_id"
     local md_mode="install"
 
     # set md_conf_root to $configdir and to $configdir/ports for ports
