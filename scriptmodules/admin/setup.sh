@@ -329,12 +329,14 @@ function section_gui_setup() {
         local num_pkgs=0
         local info
         local type
+        local last_type
         for id in $(rp_getSectionIds $section); do
+            local type="${__mod_info[$id/vendor]} - ${__mod_info[$id/type]}"
             # do a heading for each origin and module type
-            if [[ "$type" != "${__mod_info[$id/type]}" ]]; then
-                info="${__mod_info[$id/vendor]} - ${__mod_info[$id/type]}"
+            if [[ "$last_type" != "$type" ]]; then
+                info="$type"
                 pkgs+=("----" "\Z4$info ----\Zn" "Packages from $info")
-                type="${__mod_info[$id/type]}"
+                last_type="$type"
             fi
             if ! rp_isEnabled "$id"; then
                 info="\Zb*$id - Not available for your system\Zn"
