@@ -13,3 +13,5 @@ Thumbs.db
 logs/
 tmp/
 
+# 3rd Party Repos
+ext/*
