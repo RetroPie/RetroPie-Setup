@@ -329,7 +329,7 @@ function section_gui_setup() {
         local num_pkgs=0
         local info
         local type
-        local last_type
+        local last_type=""
         for id in $(rp_getSectionIds $section); do
             local type="${__mod_info[$id/vendor]} - ${__mod_info[$id/type]}"
             # do a heading for each origin and module type
