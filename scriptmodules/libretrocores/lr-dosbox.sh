@@ -13,11 +13,12 @@ rp_module_id="lr-dosbox"
 rp_module_desc="DOS emulator"
 rp_module_help="ROM Extensions: .bat .com .exe .sh\n\nCopy your DOS games to $ROMDIR/pc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/dosbox-libretro/master/COPYING"
+rp_module_repo="git https://github.com/libretro/dosbox-libretro.git master"
 rp_module_section="exp"
 rp_module_flags=""
 
 function sources_lr-dosbox() {
-    gitPullOrClone "$md_build" https://github.com/libretro/dosbox-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-dosbox() {

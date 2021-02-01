@@ -13,6 +13,7 @@ rp_module_id="lr-mame2010"
 rp_module_desc="Arcade emu - MAME 0.139 port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2010-libretro/master/docs/license.txt"
+rp_module_repo="git https://github.com/libretro/mame2010-libretro.git master"
 rp_module_section="opt"
 
 function depends_lr-mame2010() {
@@ -20,7 +21,7 @@ function depends_lr-mame2010() {
 }
 
 function sources_lr-mame2010() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mame2010-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-mame2010() {

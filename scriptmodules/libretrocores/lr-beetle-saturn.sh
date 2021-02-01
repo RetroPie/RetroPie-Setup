@@ -13,11 +13,12 @@ rp_module_id="lr-beetle-saturn"
 rp_module_desc="Saturn emulator - Mednafen Saturn port for libretro"
 rp_module_help="ROM Extensions: .chd .cue\n\nCopy your Saturn roms to $romdir/saturn\n\nCopy the required BIOS files sega_101.bin / mpr-17933.bin to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/beetle-saturn-libretro/master/COPYING"
+rp_module_repo="git https://github.com/libretro/beetle-saturn-libretro.git master"
 rp_module_section="exp"
 rp_module_flags="!armv6"
 
 function sources_lr-beetle-saturn() {
-    gitPullOrClone "$md_build" https://github.com/libretro/beetle-saturn-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-beetle-saturn() {
