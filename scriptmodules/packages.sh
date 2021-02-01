@@ -396,7 +396,7 @@ function rp_getBinaryDate() {
     local url="$(rp_getBinaryUrl $id)"
     [[ -z "$url" || "$url" == "notest" ]] && return 1
 
-    local bin_date=$(curl -sfI $url | grep -i "last-modified" | cut -d" " -f2-)
+    local bin_date=$(curl -sfI --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
     echo "$bin_date"
     return 0
 }
