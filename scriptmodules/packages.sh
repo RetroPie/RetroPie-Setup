@@ -396,9 +396,15 @@ function rp_getBinaryDate() {
     local url="$(rp_getBinaryUrl $id)"
     [[ -z "$url" || "$url" == "notest" ]] && return 1
 
+    # get last-modified date stripping any CR in the output
     local bin_date=$(curl -sfI --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
-    echo "$bin_date"
-    return 0
+    # if there is a date set in last-modified header, then convert to iso-8601 format
+    if [[ -n "$bin_date" ]]; then
+        bin_date="$(date -Iseconds --date="$bin_date")"
+        echo "$bin_date"
+        return 0
+    fi
+    return 1
 }
 
 function rp_hasNewerBinary() {
@@ -503,7 +509,7 @@ function rp_setPackageInfo() {
     if [[ "$origin" == "binary" ]]; then
         pkg_date="$(rp_getBinaryDate $id)"
     else
-        pkg_date="$(date)"
+        pkg_date="$(date -Iseconds)"
     fi
     iniSet "pkg_date" "$pkg_date"
 }
