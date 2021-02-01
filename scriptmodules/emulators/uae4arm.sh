@@ -13,6 +13,7 @@ rp_module_id="uae4arm"
 rp_module_desc="Amiga emulator with JIT support"
 rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir"
 rp_module_licence="GPL2"
+rp_module_repo="git https://github.com/Chips-fr/uae4arm-rpi.git master"
 rp_module_section="opt"
 rp_module_flags="!all videocore"
 
@@ -21,7 +22,7 @@ function depends_uae4arm() {
 }
 
 function sources_uae4arm() {
-    gitPullOrClone "$md_build" https://github.com/Chips-fr/uae4arm-rpi/
+    gitPullOrClone
 }
 
 function build_uae4arm() {

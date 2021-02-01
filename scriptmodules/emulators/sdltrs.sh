@@ -14,6 +14,7 @@ rp_module_desc="Radio Shack TRS-80 Model I/III/4/4P emulator"
 rp_module_help="ROM Extension: .dsk\n\nCopy your TRS-80 games to $romdir/trs-80\n\nCopy the required BIOS file level2.rom, level3.rom, level4.rom or level4p.rom to $biosdir"
 rp_module_section="exp"
 rp_module_licence="BSD https://gitlab.com/jengun/sdltrs/-/raw/master/LICENSE"
+rp_module_repo="git https://gitlab.com/jengun/sdltrs.git sdl2"
 rp_module_flags=""
 
 function depends_sdltrs() {
@@ -21,7 +22,7 @@ function depends_sdltrs() {
 }
 
 function sources_sdltrs() {
-    gitPullOrClone "$md_build" https://gitlab.com/jengun/sdltrs.git sdl2
+    gitPullOrClone
 }
 
 function build_sdltrs() {

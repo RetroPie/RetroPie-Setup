@@ -13,6 +13,7 @@ rp_module_id="fbzx"
 rp_module_desc="ZXSpectrum emulator FBZX"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum to $romdir/zxspectrum"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/rastersoft/fbzx/master/COPYING"
+rp_module_repo="git https://github.com/rastersoft/fbzx master"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali !kms"
 
@@ -24,7 +25,7 @@ function sources_fbzx() {
     local branch
     # use older version for non x86 systems (faster)
     ! isPlatform "x86" && branch="2.11.1"
-    gitPullOrClone "$md_build" https://github.com/rastersoft/fbzx "$branch"
+    gitPullOrClone "$md_build" "$md_repo_url" "$branch"
     ! isPlatform "x86" && sed -i 's|PREFIX2=$(PREFIX)/usr|PREFIX2=$(PREFIX)|' Makefile
 }
 

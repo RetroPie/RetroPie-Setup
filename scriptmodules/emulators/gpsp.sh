@@ -13,6 +13,7 @@ rp_module_id="gpsp"
 rp_module_desc="GameBoy Advance emulator"
 rp_module_help="ROM Extensions: .gba .zip\n\nCopy your Game Boy Advance roms to $romdir/gba\n\nCopy the required BIOS file gba_bios.bin to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/gizmo98/gpsp/master/COPYING.DOC"
+rp_module_repo="git https://github.com/gizmo98/gpsp.git master"
 rp_module_section="opt"
 rp_module_flags="noinstclean !all videocore"
 
@@ -21,7 +22,7 @@ function depends_gpsp() {
 }
 
 function sources_gpsp() {
-    gitPullOrClone "$md_build" https://github.com/gizmo98/gpsp.git
+    gitPullOrClone
 }
 
 function build_gpsp() {
