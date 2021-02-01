@@ -181,36 +181,39 @@ function package_setup() {
         local binary_ret="$?"
         [[ "$binary_ret" -eq 0 ]] && has_binary=1
 
-        local pkg_origin=""
-        local source_update=0
-        local binary_update=0
+        local pkg_origin
+        local is_installed=0
+
         if rp_isInstalled "$id"; then
+            is_installed=1
             eval $(rp_getPackageInfo "$id")
             status="Installed - via $pkg_origin"
+
             [[ -n "$pkg_date" ]] && status+=" (built: $(date -u -d "$pkg_date"))"
 
-            if [[ "$pkg_origin" != "source" && "$has_binary" -eq 1 ]]; then
-                rp_hasNewerBinary "$id"
-                local has_newer="$?"
-                binary_update=1
-                option_msgs["U"]="Update (from pre-built binary)"
-                case "$has_newer" in
-                    0)
-                        status+="\nBinary update is available."
-                        ;;
-                    1)
-                        status+="\nYou are running the latest binary."
-                        option_msgs["U"]="Re-install (from pre-built binary)"
-                        ;;
-                    2)
-                        status+="\nBinary update may be available (Unable to check for this package)."
-                        ;;
-                esac
-            fi
-            if [[ "$binary_update" -eq 0 && "$binary_ret" -ne 4 ]]; then
-                source_update=1
-                option_msgs["U"]="Update (from source)"
-            fi
+            rp_hasNewerModule "$id" "$pkg_origin"
+            local has_newer="$?"
+            case "$has_newer" in
+                0)
+                    status+="\nUpdate is available."
+                    option_msgs["U"]="Update (from $pkg_origin)"
+                    ;;
+                1)
+                    status+="\nYou are running the latest $pkg_origin."
+                    option_msgs["U"]="Re-install (from $pkg_origin)"
+                    ;;
+                2)
+                    if [[ "$pkg_origin" == "unknown" ]]; then
+                        if [[ "$has_binary" -eq 1 ]]; then
+                            pkg_origin="binary"
+                        else
+                            pkg_origin="source"
+                        fi
+                    fi
+                    option_msgs["U"]="Update (from $pkg_origin)"
+                    status+="\nUpdate may be available (Unable to check for this package)."
+                    ;;
+            esac
         else
             status="Not installed"
         fi
@@ -219,20 +222,20 @@ function package_setup() {
         if [[ "$binary_ret" -eq 6 || "$binary_ret" -eq 7 ]]; then
             status+="\nInstall options disabled (Unable to access internet)"
         else
-            if [[ "$source_update" -eq 1 || "$binary_update" -eq 1 ]]; then
+            if [[ "$is_installed" -eq 1 ]]; then
                 options+=(U "${option_msgs["U"]}")
             fi
 
-            if [[ "$binary_update" -eq 0 && "$has_binary" -eq 1 ]]; then
+            if [[ "$pkg_origin" != "binary" && "$has_binary" -eq 1 ]]; then
                 options+=(B "${option_msgs["B"]}")
             fi
 
-            if [[ "$source_update" -eq 0 ]] && fnExists "sources_${id}"; then
+            if [[ "$pkg_origin" != "source" ]] && fnExists "sources_${id}"; then
                 options+=(S "${option_msgs[S]}")
            fi
         fi
 
-        if rp_isInstalled "$id"; then
+        if [[ "$is_installed" -eq 1 ]]; then
             if fnExists "gui_${id}"; then
                 options+=(C "Configuration / Options")
             fi
