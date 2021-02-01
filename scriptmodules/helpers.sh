@@ -389,11 +389,19 @@ function rpSwap() {
 ## A depth parameter of 0 will do a full clone with all history.
 function gitPullOrClone() {
     local dir="$1"
+    [[ -z "$dir" ]] && dir="$md_build"
     local repo="$2"
     local branch="$3"
-    [[ -z "$branch" ]] && branch="master"
     local commit="$4"
     local depth="$5"
+    # if repo is blank then use the rp_module_repo info
+    if [[ -z "$repo" && -n "$md_repo_url" ]]; then
+        repo="$md_repo_url"
+        branch="$md_repo_branch"
+        commit="$md_repo_commit"
+    fi
+    [[ -z "$repo" ]] && return 1
+    [[ -z "$branch" ]] && branch="master"
     if [[ -z "$depth" && "$__persistent_repos" -ne 1 && -z "$commit" ]]; then
         depth=1
     else
