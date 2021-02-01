@@ -187,7 +187,7 @@ function package_setup() {
         if rp_isInstalled "$id"; then
             eval $(rp_getPackageInfo "$id")
             status="Installed - via $pkg_origin"
-            [[ -n "$pkg_date" ]] && status+=" (built: $pkg_date)"
+            [[ -n "$pkg_date" ]] && status+=" (built: $(date -u -d "$pkg_date"))"
 
             if [[ "$pkg_origin" != "source" && "$has_binary" -eq 1 ]]; then
                 rp_hasNewerBinary "$id"
