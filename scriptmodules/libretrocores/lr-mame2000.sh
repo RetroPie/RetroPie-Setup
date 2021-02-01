@@ -13,6 +13,7 @@ rp_module_id="lr-mame2000"
 rp_module_desc="Arcade emu - MAME 0.37b5 port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME 0.37b5 roms to either $romdir/mame-mame4all or\n$romdir/arcade"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2000-libretro/master/readme.txt"
+rp_module_repo="git https://github.com/libretro/mame2000-libretro.git master"
 rp_module_section="opt armv6=main"
 
 function _update_hook_lr-mame2000() {
@@ -21,7 +22,7 @@ function _update_hook_lr-mame2000() {
 }
 
 function sources_lr-mame2000() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mame2000-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-mame2000() {

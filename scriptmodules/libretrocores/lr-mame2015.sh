@@ -13,6 +13,7 @@ rp_module_id="lr-mame2015"
 rp_module_desc="Arcade emu - MAME 0.160 port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2015-libretro/master/docs/license.txt"
+rp_module_repo="git https://github.com/libretro/mame2015-libretro.git master"
 rp_module_section="exp"
 
 function _update_hook_lr-mame2015() {
@@ -21,7 +22,7 @@ function _update_hook_lr-mame2015() {
 }
 
 function sources_lr-mame2015() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mame2015-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-mame2015() {

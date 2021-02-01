@@ -13,10 +13,11 @@ rp_module_id="lr-gearsystem"
 rp_module_desc="Sega 8 bit emu - Gearsystem port for libretro"
 rp_module_help="ROM Extensions: .gg .sg .sms .bin .zip\nCopy your Game Gear roms to $romdir/gamegear\nMasterSystem roms to $romdir/mastersystem\nSG-1000 roms to $romdir/sg-1000"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/drhelius/Gearsystem/master/LICENSE"
+rp_module_repo="git https://github.com/drhelius/Gearsystem.git master"
 rp_module_section="exp"
 
 function sources_lr-gearsystem() {
-    gitPullOrClone "$md_build" https://github.com/drhelius/Gearsystem.git
+    gitPullOrClone
 }
 
 function build_lr-gearsystem() {
