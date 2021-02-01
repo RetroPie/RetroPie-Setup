@@ -13,6 +13,7 @@ rp_module_id="reicast"
 rp_module_desc="Dreamcast emulator Reicast"
 rp_module_help="ROM Extensions: .cdi .gdi\n\nCopy your Dreamcast roms to $romdir/dreamcast\n\nCopy the required BIOS files dc_boot.bin and dc_flash.bin to $biosdir/dc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/reicast/reicast-emulator/master/LICENSE"
+rp_module_repo="git https://github.com/reicast/reicast-emulator.git master"
 rp_module_section="opt"
 rp_module_flags="!armv6"
 
@@ -26,7 +27,7 @@ function depends_reicast() {
 }
 
 function sources_reicast() {
-    gitPullOrClone "$md_build" https://github.com/reicast/reicast-emulator.git master
+    gitPullOrClone
     applyPatch "$md_data/0001-enable-rpi4-sdl2-target.patch"
     applyPatch "$md_data/0002-enable-vsync.patch"
     applyPatch "$md_data/0003-fix-sdl2-sighandler-conflict.patch"

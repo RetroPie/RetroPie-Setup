@@ -13,6 +13,7 @@ rp_module_id="simcoupe"
 rp_module_desc="SimCoupe SAM Coupe emulator"
 rp_module_help="ROM Extensions: .dsk .mgt .sbt .sad\n\nCopy your SAM Coupe games to $romdir/samcoupe."
 rp_module_licence="GPL2 https://raw.githubusercontent.com/simonowen/simcoupe/master/License.txt"
+rp_module_repo="git https://github.com/simonowen/simcoupe.git master"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -26,7 +27,7 @@ function sources_simcoupe() {
     # dialect support but actually seem to build ok. Lock systems with older cmake to 20200711 tag,
     # which builds ok on Raspbian Stretch and hopefully Ubuntu 18.04.
     hasPackage cmake 3.8.2 lt && branch="20200711"
-    gitPullOrClone "$md_build" https://github.com/simonowen/simcoupe.git "$branch"
+    gitPullOrClone "$md_build" "$md_repo_url" "$branch"
 }
 
 function build_simcoupe() {

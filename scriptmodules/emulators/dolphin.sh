@@ -13,6 +13,7 @@ rp_module_id="dolphin"
 rp_module_desc="Gamecube/Wii emulator Dolphin"
 rp_module_help="ROM Extensions: .gcm .iso .wbfs .ciso .gcz .rvz\n\nCopy your Gamecube roms to $romdir/gc and Wii roms to $romdir/wii"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dolphin-emu/dolphin/master/license.txt"
+rp_module_repo="git https://github.com/dolphin-emu/dolphin.git master"
 rp_module_section="exp"
 rp_module_flags="!all 64bit"
 
@@ -28,7 +29,7 @@ function sources_dolphin() {
     # current HEAD of dolphin doesn't build on Ubuntu 16.04 (with  gcc 5.4)
     compareVersions $__gcc_version lt 6 && branch="5.0"
 
-    gitPullOrClone "$md_build" https://github.com/dolphin-emu/dolphin.git "$branch"
+    gitPullOrClone "$md_build" "$md_repo_url" "$branch"
 }
 
 function build_dolphin() {

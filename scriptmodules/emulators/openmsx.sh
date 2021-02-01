@@ -13,6 +13,7 @@ rp_module_id="openmsx"
 rp_module_desc="MSX emulator OpenMSX"
 rp_module_help="ROM Extensions: .cas .rom .mx1 .mx2 .col .dsk .zip\n\nCopy your MSX/MSX2 games to $romdir/msx\nCopy the BIOS files to $biosdir/openmsx"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/openMSX/openMSX/master/doc/GPL.txt"
+rp_module_repo="git https://github.com/openMSX/openMSX.git master"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -29,7 +30,7 @@ function sources_openmsx() {
     # build from earlier commit before C++17 changes for GCC < 7
     compareVersions $__gcc_version lt 7 && commit="5ee25b62"
 
-    gitPullOrClone "$md_build" https://github.com/openMSX/openMSX.git "" "$commit"
+    gitPullOrClone "$md_build" "$md_repo_url" "master" "$commit"
     sed -i "s|INSTALL_BASE:=/opt/openMSX|INSTALL_BASE:=$md_inst|" build/custom.mk
     sed -i "s|SYMLINK_FOR_BINARY:=true|SYMLINK_FOR_BINARY:=false|" build/custom.mk
 }
