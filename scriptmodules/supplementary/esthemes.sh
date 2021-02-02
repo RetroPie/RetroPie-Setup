@@ -232,6 +232,8 @@ function gui_esthemes() {
         'lipebello retrorama-turbo'
         'lipebello strangerstuff'
         'lipebello spaceoddity'
+        'lipebello spaceoddity-43'
+        'lipebello spaceoddity-wide'
         'lipebello swineapple'
         'waweedman pii-wii'
         'waweedman Blade-360'
