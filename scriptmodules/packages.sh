@@ -513,6 +513,12 @@ function rp_hasNewerModule() {
                     return 0
                     ;;
             esac
+
+            # check the date of the module code - if it's newer than the install date of the module we force an update
+            local module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
+            if rp_dateIsNewer "$pkg_date" "$module_date"; then
+                return 0
+            fi
             ;;
         *)
             # for unknown or in the case of a blank pkg_origin assume there is an update
