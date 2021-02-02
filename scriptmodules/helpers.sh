@@ -445,8 +445,8 @@ function setupDirectories() {
 
     # make sure we have inifuncs.sh in place and that it is up to date
     mkdir -p "$rootdir/lib"
-    local helper_libs=(inifuncs.sh archivefuncs.sh)
-    for helper in "${helper_libs[@]}"; do
+    local helper
+    for helper in inifuncs.sh archivefuncs.sh; do
         if [[ ! -f "$rootdir/lib/$helper" || "$rootdir/lib/$helper" -ot "$scriptdir/scriptmodules/$helper" ]]; then
             cp --preserve=timestamps "$scriptdir/scriptmodules/$helper" "$rootdir/lib/$helper"
         fi
