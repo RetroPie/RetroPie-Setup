@@ -181,12 +181,15 @@ function package_setup() {
         local binary_ret="$?"
         [[ "$binary_ret" -eq 0 ]] && has_binary=1
 
-        local pkg_origin
         local is_installed=0
 
         if rp_isInstalled "$id"; then
             is_installed=1
-            eval $(rp_getPackageInfo "$id")
+
+            rp_loadPackageInfo "$id"
+            local pkg_origin="${__mod_info[$id/pkg_origin]}"
+            local pkg_date="${__mod_info[$id/pkg_date]}"
+
             status="Installed - via $pkg_origin"
 
             [[ -n "$pkg_date" ]] && status+=" (built: $(date -u -d "$pkg_date"))"
@@ -328,7 +331,6 @@ function section_gui_setup() {
         local pkgs=()
 
         local id
-        local pkg_origin
         local num_pkgs=0
         local info
         local type
@@ -345,7 +347,9 @@ function section_gui_setup() {
                 info="\Z1$id\Zn - Not available for your system"
             else
                 if rp_isInstalled "$id"; then
-                    eval $(rp_getPackageInfo "$id")
+                    rp_loadPackageInfo "$id" "pkg_origin"
+                    local pkg_origin="${__mod_info[$id/pkg_origin]}"
+
                     info="$id (Installed - via $pkg_origin)"
                     ((num_pkgs++))
                 else

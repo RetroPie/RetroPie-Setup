@@ -127,7 +127,8 @@ function rp_callModule() {
                 return 1
             fi
 
-            eval $(rp_getPackageInfo "$md_id")
+            rp_loadPackageInfo "$md_id" "pkg_origin"
+            local pkg_origin="${__mod_info[$md_id/pkg_origin]}"
 
             local has_binary=0
             rp_hasBinary "$md_id"
@@ -462,7 +463,13 @@ function rp_dateIsNewer() {
 function rp_hasNewerModule() {
     local id="$1"
     local type="$2"
-    eval $(rp_getPackageInfo "$id")
+
+    rp_loadPackageInfo "$id"
+    local pkg_origin="${__mod_info[$id/pkg_origin]}"
+    local pkg_date="${__mod_info[$id/pkg_date]}"
+    local pkg_repo_date="${__mod_info[$id/pkg_repo_date]}"
+    local pkg_repo_commit="${__mod_info[$id/pkg_repo_commit]}"
+
     case "$type" in
         binary)
             [[ -z "$pkg_date" ]] && return 2
@@ -592,6 +599,9 @@ function rp_setPackageInfo() {
     local pkg="$install_path/retropie.pkg"
     local origin="$2"
 
+    # set pkg_info to 0 to force a reload when needed
+    __mod_info[$id/pkg_info]=0
+
     iniConfig "=" '"' "$pkg"
     iniSet "pkg_origin" "$origin"
     local pkg_date
@@ -635,20 +645,44 @@ function rp_setPackageInfo() {
     fi
 }
 
-function rp_getPackageInfo() {
-    local pkg="$(rp_getInstallPath $1)/retropie.pkg"
+# loads installed package information into __mod_info/pkg_* fields
+# additional parameters are optional keys to load, but the data won't be cached if this is provided
+function rp_loadPackageInfo() {
+    local id="$1"
 
-    local pkg_date
-    if [[ -f "$pkg" ]]; then
-        iniConfig "=" '"' "$pkg"
-        loadModuleConfig \
-            pkg_origin="unknown" \
-            pkg_date= \
-            pkg_repo_type= \
-            pkg_repo_url= \
-            pkg_repo_branch= \
-            pkg_repo_commit= \
-            pkg_repo_date=
+    # if we have cached the package information already, return
+    [[ "${__mod_info[$id/pkg_info]}" -eq 1 ]] && return
+
+    local keys
+    local cache=1
+    if [[ -z "$2" ]]; then
+        keys=(
+            pkg_origin
+            pkg_date
+            pkg_repo_type
+            pkg_repo_url
+            pkg_repo_branch
+            pkg_repo_commit
+            pkg_repo_date
+        )
+    else
+        # get user supplied keys but don't cache
+        shift
+        keys=("$@")
+        cache=0
+    fi
+
+    local pkg_file="$(rp_getInstallPath $id)/retropie.pkg"
+    # if the pkg file is available, load the requested keys into __mod_info
+    if [[ -f "$pkg_file" ]]; then
+        local key
+        local data
+        for key in "${keys[@]}"; do
+           data="$(grep -oP "$key=\"\K[^\"]+" "$pkg_file")"
+           [[ -n "$data" ]] && __mod_info[$id/$key]="$data"
+        done
+        # if loading all data set pkg_info to 1 so we avoid loading when not needed
+        [[ "$cache" -eq 1 ]] && __mod_info[$id/pkg_info]=1
     fi
 }
 
@@ -740,6 +774,9 @@ function rp_registerModule() {
     __mod_info["$rp_module_id/licence"]="$rp_module_licence"
     __mod_info["$rp_module_id/section"]="$rp_module_section"
     __mod_info["$rp_module_id/flags"]="$rp_module_flags"
+
+    # default pkg_origin which is updated later from installed packages containing retropie.pkg
+    __mod_info["$rp_module_id/pkg_origin"]="unknown"
 
     # split module repo into type, url, branch and commit
     if [[ -n "$rp_module_repo" ]]; then
