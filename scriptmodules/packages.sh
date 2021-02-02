@@ -681,9 +681,9 @@ function rp_isEnabled() {
 
 function rp_updateHooks() {
     local function
-    local mod_id
+    local id
     for function in $(compgen -A function _update_hook_); do
-        mod_id="${function/_update_hook_/}"
-        [[ -n "$mod_id" ]] && rp_callModule "$mod_id" _update_hook
+        id="${function/_update_hook_/}"
+        [[ -n "$id" ]] && rp_callModule "$id" _update_hook
     done
 }
