@@ -624,7 +624,6 @@ function rp_registerModuleDir() {
     local vendor="$2"
     [[ -z "$vendor" ]] && return 1
     local module
-    local vendor
     while read module; do
         rp_registerModule "$module" "$dir" "$vendor"
     done < <(find "$dir" -mindepth 1 -maxdepth 1 -type f -name "*.sh" | sort)
@@ -638,7 +637,7 @@ function rp_registerAllModules() {
 
     local dir
     local type
-    local origin
+    local vendor
     while read dir; do
         # get parent folder
         vendor="${dir%/*}"
