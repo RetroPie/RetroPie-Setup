@@ -12,6 +12,7 @@
 rp_module_id="quasi88"
 rp_module_desc="NEC PC-8801 emulator"
 rp_module_help="ROM Extensions: .d88 .88d .cmt .t88\n\nCopy your pc88 games to to $romdir/pc88\n\nCopy bios files FONT.ROM, N88.ROM, N88KNJ1.ROM, N88KNJ2.ROM, and N88SUB.ROM to $biosdir/pc88"
+rp_module_repo="file $__archive_url/quasi88-0.6.4.tgz"
 rp_module_section="exp"
 rp_module_flags="dispmanx !mali !kms"
 
@@ -20,7 +21,7 @@ function depends_quasi88() {
 }
 
 function sources_quasi88() {
-    downloadAndExtract "$__archive_url/quasi88-0.6.4.tgz" "$md_build" --strip-components 1
+    downloadAndExtract "$md_repo_url" "$md_build" --strip-components 1
     applyPatch "$md_data/01_fixes.diff"
 }
 

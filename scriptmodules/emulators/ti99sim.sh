@@ -13,6 +13,7 @@ rp_module_id="ti99sim"
 rp_module_desc="TI-99/SIM - Texas Instruments Home Computer Emulator"
 rp_module_help="ROM Extension: .ctg\n\nCopy your TI-99 games to $romdir/ti99\n\nCopy the required BIOS file TI-994A.ctg (case sensitive) to $biosdir"
 rp_module_licence="GPL2 https://www.mrousseau.org/programs/ti99sim"
+rp_module_repo="file $__archive_url/ti99sim-0.16.0.src.tar.gz"
 rp_module_section="exp"
 rp_module_flags=""
 
@@ -25,7 +26,7 @@ function depends_ti99sim() {
 }
 
 function sources_ti99sim() {
-    downloadAndExtract "$__archive_url/ti99sim-0.16.0.src.tar.gz" "$md_build" --strip-components 1
+    downloadAndExtract "$md_repo_url" "$md_build" --strip-components 1
 }
 
 function build_ti99sim() {
