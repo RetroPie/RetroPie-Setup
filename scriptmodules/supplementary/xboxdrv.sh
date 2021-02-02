@@ -12,6 +12,7 @@
 rp_module_id="xboxdrv"
 rp_module_desc="Xbox / Xbox 360 gamepad driver"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/zerojay/xboxdrv/stable/COPYING"
+rp_module_repo="git https://github.com/zerojay/xboxdrv.git stable"
 rp_module_section="driver"
 
 function def_controllers_xboxdrv() {
@@ -27,7 +28,7 @@ function depends_xboxdrv() {
 }
 
 function sources_xboxdrv() {
-    gitPullOrClone "$md_build" https://github.com/zerojay/xboxdrv.git stable
+    gitPullOrClone
 }
 
 function build_xboxdrv() {

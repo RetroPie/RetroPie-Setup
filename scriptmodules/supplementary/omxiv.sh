@@ -12,6 +12,7 @@
 rp_module_id="omxiv"
 rp_module_desc="OpenMAX image viewer for the Raspberry Pi"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/cmitu/omxiv/master/LICENSE"
+rp_module_repo="git https://github.com/retropie/omxiv.git master"
 rp_module_section="depends"
 rp_module_flags="!all rpi"
 
@@ -20,7 +21,7 @@ function depends_omxiv() {
 }
 
 function sources_omxiv() {
-    gitPullOrClone "$md_build" https://github.com/retropie/omxiv.git
+    gitPullOrClone
 }
 
 function build_omxiv() {
