@@ -64,6 +64,32 @@ function rp_printUsageinfo() {
     rp_listFunctions
 }
 
+function rp_moduleVars() {
+    local id="$1"
+
+    # create variables that can be used in modules
+    local code
+    read -d "" -r code <<_EOF_
+        local md_desc="${__mod_info[$id/desc]}"
+        local md_help="${__mod_info[$id/help]}"
+        local md_type="${__mod_info[$id/type]}"
+        local md_flags="${__mod_info[$id/flags]}"
+        local md_path="${__mod_info[$id/path]}"
+
+        local md_repo_type="${__mod_info[$id/repo_type]}"
+        local md_repo_url="${__mod_info[$id/repo_url]}"
+        local md_repo_branch="${__mod_info[$id/repo_branch]}"
+        local md_repo_commit="${__mod_info[$id/repo_commit]}"
+
+        local md_build="$__builddir/$id"
+        local md_inst="$(rp_getInstallPath $id)"
+        # get module path folder + md_id for $md_data
+        local md_data="${__mod_info[$id/path]%/*}/$id"
+_EOF_
+
+    echo "$code"
+}
+
 function rp_callModule() {
     local md_id="$1"
     local mode="$2"
@@ -148,22 +174,9 @@ function rp_callModule() {
             ;;
     esac
 
-    # create variables that can be used in modules
-    local md_desc="${__mod_info[$md_id/desc]}"
-    local md_help="${__mod_info[$md_id/help]}"
-    local md_type="${__mod_info[$md_id/type]}"
-    local md_flags="${__mod_info[$md_id/flags]}"
-    local md_path="${__mod_info[$md_id/path]}"
+    # load our md_* variables
+    eval "$(rp_moduleVars $md_id)"
 
-    local md_repo_type="${__mod_info[$md_id/repo_type]}"
-    local md_repo_url="${__mod_info[$md_id/repo_url]}"
-    local md_repo_branch="${__mod_info[$md_id/repo_branch]}"
-    local md_repo_commit="${__mod_info[$md_id/repo_commit]}"
-
-    local md_build="$__builddir/$md_id"
-    local md_inst="$(rp_getInstallPath $md_id)"
-    # get module path folder + md_id for $md_data
-    local md_data="${md_path%/*}/$md_id"
     local md_mode="install"
 
     # set md_conf_root to $configdir and to $configdir/ports for ports
