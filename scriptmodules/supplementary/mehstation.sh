@@ -12,6 +12,7 @@
 rp_module_id="mehstation"
 rp_module_desc="mehstation emulator frontend"
 rp_module_licence="MIT https://raw.githubusercontent.com/remeh/mehstation/master/LICENSE"
+rp_module_repo="git https://github.com/remeh/mehstation master"
 rp_module_section="exp"
 rp_module_flags="frontend nobin"
 
@@ -74,7 +75,7 @@ function depends_mehstation() {
 }
 
 function sources_mehstation() {
-    gitPullOrClone "$md_build" https://github.com/remeh/mehstation
+    gitPullOrClone
     GOPATH="$md_build/mehtadata" go get github.com/remeh/mehtadata
 }
 
