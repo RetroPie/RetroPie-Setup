@@ -13,6 +13,7 @@ rp_module_id="jumpnbump"
 rp_module_desc="Jump 'n Bump, play cute bunnies jumping on each other's heads - Modernization fork"
 rp_module_help="Copy custom game levels (.dat) to $romdir/ports/jumpnbump"
 rp_module_licence="GPL2 https://gitlab.com/LibreGames/jumpnbump/raw/master/COPYING"
+rp_module_repo="git https://gitlab.com/LibreGames/jumpnbump.git master"
 rp_module_section="exp"
 rp_module_flags=""
 
@@ -21,7 +22,7 @@ function depends_jumpnbump() {
 }
 
 function sources_jumpnbump() {
-    gitPullOrClone "$md_build" https://gitlab.com/LibreGames/jumpnbump.git
+    gitPullOrClone
 }
 
 function build_jumpnbump() {

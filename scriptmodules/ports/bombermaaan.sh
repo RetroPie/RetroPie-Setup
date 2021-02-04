@@ -12,6 +12,7 @@
 rp_module_id="bombermaaan"
 rp_module_desc="Bombermaaan - Classic bomberman game"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/bjaraujo/Bombermaaan/master/LICENSE.txt"
+rp_module_repo="git https://github.com/bjaraujo/Bombermaaan.git v1.9.7.2126"
 rp_module_section="exp"
 rp_module_flags="dispmanx !mali"
 
@@ -20,7 +21,7 @@ function depends_bombermaaan() {
 }
 
 function sources_bombermaaan() {
-    gitPullOrClone "$md_build" https://github.com/bjaraujo/Bombermaaan.git v1.9.7.2126
+    gitPullOrClone
 }
 
 function build_bombermaaan() {

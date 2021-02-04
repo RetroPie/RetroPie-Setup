@@ -12,6 +12,7 @@
 rp_module_id="wolf4sdl"
 rp_module_desc="Wolf4SDL - port of Wolfenstein 3D / Spear of Destiny engine"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/mozzwald/wolf4sdl/master/license-mame.txt"
+rp_module_repo="git https://github.com/mozzwald/wolf4sdl.git master"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
@@ -20,7 +21,7 @@ function depends_wolf4sdl() {
 }
 
 function sources_wolf4sdl() {
-    gitPullOrClone "$md_build" https://github.com/mozzwald/wolf4sdl.git
+    gitPullOrClone
 }
 
 function _get_opts_wolf4sdl() {

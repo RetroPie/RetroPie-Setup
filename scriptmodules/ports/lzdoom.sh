@@ -12,6 +12,7 @@
 rp_module_id="lzdoom"
 rp_module_desc="lzdoom - DOOM source port (legacy version of GZDoom)"
 rp_module_licence="GPL3 https://github.com/drfrag666/gzdoom/blob/g3.3mgw/docs/licenses/README.TXT"
+rp_module_repo="git https://github.com/drfrag666/gzdoom 3.86a"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -25,7 +26,7 @@ function depends_lzdoom() {
 }
 
 function sources_lzdoom() {
-    gitPullOrClone "$md_build" https://github.com/drfrag666/gzdoom "3.86a"
+    gitPullOrClone
 }
 
 function build_lzdoom() {

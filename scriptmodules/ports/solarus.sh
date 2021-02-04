@@ -13,6 +13,7 @@ rp_module_id="solarus"
 rp_module_desc="Solarus - A lightweight, free and open-source game engine for Action-RPGs"
 rp_module_help="Copy your Solarus quests (games) to $romdir/solarus"
 rp_module_licence="GPL3 https://gitlab.com/solarus-games/solarus/raw/dev/license.txt"
+rp_module_repo="git https://gitlab.com/solarus-games/solarus.git master"
 rp_module_section="opt"
 rp_module_flags="!aarch64"
 
@@ -34,7 +35,7 @@ function depends_solarus() {
 }
 
 function sources_solarus() {
-    gitPullOrClone "$md_build" https://gitlab.com/solarus-games/solarus.git
+    gitPullOrClone
 }
 
 function build_solarus() {
