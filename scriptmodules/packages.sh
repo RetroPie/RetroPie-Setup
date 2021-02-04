@@ -460,6 +460,19 @@ function rp_dateIsNewer() {
     return 1
 }
 
+# resolve repository parameters - any parameters with a : will get the data from the following function name
+function rp_resolveRepoParam() {
+    local param="$1"
+    if [[ "$param" == :* ]]; then
+        param="${param:1}"
+        if fnExists "$param"; then
+            echo "$($param)"
+            return
+        fi
+    fi
+    echo "$param"
+}
+
 function rp_hasNewerModule() {
     local id="$1"
     local type="$2"
@@ -481,7 +494,7 @@ function rp_hasNewerModule() {
             ;;
         source)
             local repo_type="${__mod_info[$id/repo_type]}"
-            local repo_url="${__mod_info[$id/repo_url]}"
+            local repo_url="$(rp_resolveRepoParam "${__mod_info[$id/repo_url]}")"
             case "$repo_type" in
                 file)
                     [[ -z "$pkg_repo_date" ]] && return 2
@@ -491,8 +504,8 @@ function rp_hasNewerModule() {
                     fi
                     ;;
                 git|svn)
-                    local repo_branch="${__mod_info[$id/repo_branch]}"
-                    local repo_commit="${__mod_info[$id/repo_commit]}"
+                    local repo_branch="$(rp_resolveRepoParam "${__mod_info[$id/repo_branch]}")"
+                    local repo_commit="$(rp_resolveRepoParam "${__mod_info[$id/repo_commit]}")"
                     [[ -z "$pkg_repo_commit" ]] && return 0
                     # if we are locked to a single commit, then we compare against current module commit only
                     if [[ "$pkg_repo_commit" == "$repo_commit" ]]; then
@@ -623,8 +636,8 @@ function rp_setPackageInfo() {
     else
         pkg_date="$(date -Iseconds)"
         pkg_repo_type="${__mod_info[$id/repo_type]}"
-        pkg_repo_url="${__mod_info[$id/repo_url]}"
-        pkg_repo_branch="${__mod_info[$id/repo_branch]}"
+        pkg_repo_url="$(rp_resolveRepoParam "${__mod_info[$id/repo_url]}")"
+        pkg_repo_branch="$(rp_resolveRepoParam "${__mod_info[$id/repo_branch]}")"
         case "$pkg_repo_type" in
             git|svn)
                 if [[ "$pkg_repo_type" == "git" ]]; then
