@@ -12,8 +12,16 @@
 rp_module_id="dxx-rebirth"
 rp_module_desc="DXX-Rebirth (Descent & Descent 2) source port"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/dxx-rebirth/dxx-rebirth/master/COPYING.txt"
+rp_module_repo="git https://github.com/dxx-rebirth/dxx-rebirth master :_get_commit_dxx-rebirth"
 rp_module_section="opt"
 rp_module_flags="!mali"
+
+function _get_commit_dxx-rebirth() {
+    local commit="moooo"
+    # latest code requires gcc 7+
+    compareVersions "$__gcc_version" lt 7 && commit="a1b3a86c"
+    echo "$commit"
+}
 
 function depends_dxx-rebirth() {
     local depends=(libpng-dev libphysfs-dev scons)
@@ -27,10 +35,7 @@ function depends_dxx-rebirth() {
 }
 
 function sources_dxx-rebirth() {
-    local commit=""
-    # latest code requires gcc 7+
-    compareVersions "$__gcc_version" lt 7 && commit="a1b3a86c"
-    gitPullOrClone "$md_build" https://github.com/dxx-rebirth/dxx-rebirth "master" "$commit"
+    gitPullOrClone
 }
 
 function build_dxx-rebirth() {

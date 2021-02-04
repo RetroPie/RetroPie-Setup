@@ -26,9 +26,7 @@ function depends_ppsspp() {
 }
 
 function sources_ppsspp() {
-    local branch="$1"
-    [[ -z "$branch" ]] && branch="master"
-    gitPullOrClone "$md_build" "$md_repo_url" "$branch"
+    gitPullOrClone "$md_build/ppsspp"
     cd "ppsspp"
 
     # remove the lines that trigger the ffmpeg build script functions - we will just use the variables from it

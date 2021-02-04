@@ -13,9 +13,17 @@ rp_module_id="openmsx"
 rp_module_desc="MSX emulator OpenMSX"
 rp_module_help="ROM Extensions: .cas .rom .mx1 .mx2 .col .dsk .zip\n\nCopy your MSX/MSX2 games to $romdir/msx\nCopy the BIOS files to $biosdir/openmsx"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/openMSX/openMSX/master/doc/GPL.txt"
-rp_module_repo="git https://github.com/openMSX/openMSX.git master"
+rp_module_repo="git https://github.com/openMSX/openMSX.git master :_get_commit_openmsx"
 rp_module_section="opt"
 rp_module_flags=""
+
+function _get_commit_openmsx() {
+    local commit
+    # latest code requires at least GCC 7 as it contains C++17 code
+    # build from earlier commit before C++17 changes for GCC < 7
+    compareVersions $__gcc_version lt 7 && commit="5ee25b62"
+    echo "$commit"
+}
 
 function depends_openmsx() {
     local depends=(libsdl2-dev libsdl2-ttf-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev libasound2-dev)
@@ -25,12 +33,7 @@ function depends_openmsx() {
 }
 
 function sources_openmsx() {
-    local commit
-    # latest code requires at least GCC 7 as it contains C++17 code
-    # build from earlier commit before C++17 changes for GCC < 7
-    compareVersions $__gcc_version lt 7 && commit="5ee25b62"
-
-    gitPullOrClone "$md_build" "$md_repo_url" "master" "$commit"
+    gitPullOrClone
     sed -i "s|INSTALL_BASE:=/opt/openMSX|INSTALL_BASE:=$md_inst|" build/custom.mk
     sed -i "s|SYMLINK_FOR_BINARY:=true|SYMLINK_FOR_BINARY:=false|" build/custom.mk
 }
