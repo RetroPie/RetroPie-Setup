@@ -12,6 +12,7 @@
 rp_module_id="launchingimages"
 rp_module_desc="Generate runcommand launching images based on emulationstation themes."
 rp_module_help="A runcommand launching image is displayed while loading a game, with this tool you can automatically create some cool images based on a chosen emulationstation theme you have on your system."
+rp_module_repo="git https://github.com/meleu/generate-launching-images.git master"
 rp_module_section="exp"
 rp_module_flags="noinstclean"
 
@@ -26,7 +27,7 @@ function depends_launchingimages() {
 }
 
 function install_bin_launchingimages() {
-    gitPullOrClone "$md_inst" "https://github.com/meleu/generate-launching-images.git"
+    gitPullOrClone "$md_inst"
 }
 
 function _show_images_launchingimages() {

@@ -13,6 +13,7 @@ rp_module_id="retropie-manager"
 rp_module_desc="Web Based Manager for RetroPie files and configs based on the Recalbox Manager"
 rp_module_help="Open your browser and go to http://your_retropie_ip:8000/"
 rp_module_licence="MIT https://raw.githubusercontent.com/RetroPie/RetroPie-Manager/retropie/ORIGINAL%20LICENCE.txt"
+rp_module_repo="git https://github.com/RetroPie/RetroPie-Manager.git retropie"
 rp_module_section="exp"
 rp_module_flags="noinstclean nobin"
 
@@ -22,7 +23,7 @@ function depends_retropie-manager() {
 }
 
 function sources_retropie-manager() {
-    gitPullOrClone "$md_inst" "https://github.com/RetroPie/RetroPie-Manager.git" retropie
+    gitPullOrClone "$md_inst"
 }
 
 function install_retropie-manager() {

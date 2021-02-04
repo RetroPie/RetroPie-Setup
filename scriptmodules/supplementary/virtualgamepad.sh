@@ -12,6 +12,7 @@
 rp_module_id="virtualgamepad"
 rp_module_desc="Virtual Gamepad for Smartphone"
 rp_module_licence="MIT https://raw.githubusercontent.com/miroof/node-virtual-gamepads/master/LICENSE"
+rp_module_repo="git https://github.com/miroof/node-virtual-gamepads.git master"
 rp_module_section="exp"
 rp_module_flags="noinstclean nobin"
 
@@ -26,7 +27,7 @@ function remove_virtualgamepad() {
 }
 
 function sources_virtualgamepad() {
-    gitPullOrClone "$md_inst" https://github.com/miroof/node-virtual-gamepads.git
+    gitPullOrClone "$md_inst"
     chown -R $user:$user "$md_inst"
 }
 
