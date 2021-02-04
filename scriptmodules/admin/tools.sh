@@ -14,13 +14,21 @@ rp_module_desc="Various RetroPie development/administration tools"
 rp_module_section=""
 
 function check_repos_tools() {
+    local ids
+    if [[ -n "$1" ]]; then
+        ids=("$@")
+    else
+        ids=("${__mod_id[@]}")
+    fi
     local id
     local ret=0
-    for id in "${__mod_id[@]}"; do
+    for id in "${ids[@]}"; do
         eval "$(rp_moduleVars $id)"
         local out
         [[ -z "$md_repo_type" ]] && continue
-        printMsgs "console" "Checking $id repository source ..."
+        md_repo_url="$(rp_resolveRepoParam "$md_repo_url")"
+        md_repo_branch="$(rp_resolveRepoParam "$md_repo_branch")"
+        printMsgs "console" "Checking $id repository ($md_repo_url / $md_repo_branch) ..."
         case "$md_repo_type" in
             git)
                 out="$(git ls-remote --symref "$md_repo_url" "$md_repo_branch")"

@@ -396,9 +396,9 @@ function gitPullOrClone() {
     local depth="$5"
     # if repo is blank then use the rp_module_repo info
     if [[ -z "$repo" && -n "$md_repo_url" ]]; then
-        repo="$md_repo_url"
-        branch="$md_repo_branch"
-        commit="$md_repo_commit"
+        repo="$(rp_resolveRepoParam "$md_repo_url")"
+        branch="$(rp_resolveRepoParam "$md_repo_branch")"
+        commit="$(rp_resolveRepoParam "$md_repo_commit")"
     fi
     [[ -z "$repo" ]] && return 1
     [[ -z "$branch" ]] && branch="master"
