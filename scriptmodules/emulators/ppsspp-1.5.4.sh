@@ -22,7 +22,7 @@ function depends_ppsspp-1.5.4() {
 }
 
 function sources_ppsspp-1.5.4() {
-    sources_ppsspp "v1.5.4"
+    sources_ppsspp
 }
 
 function build_ppsspp-1.5.4() {
