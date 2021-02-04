@@ -12,6 +12,7 @@
 rp_module_id="smw"
 rp_module_desc="Super Mario War"
 rp_module_licence="GPL http://supermariowar.supersanctuary.net/"
+rp_module_repo="git https://github.com/HerbFargus/Super-Mario-War.git master"
 rp_module_section="opt"
 rp_module_flags="!mali"
 
@@ -20,7 +21,7 @@ function depends_smw() {
 }
 
 function sources_smw() {
-    gitPullOrClone "$md_build" https://github.com/HerbFargus/Super-Mario-War.git
+    gitPullOrClone
 }
 
 function build_smw() {

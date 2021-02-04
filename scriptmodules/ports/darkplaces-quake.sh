@@ -12,6 +12,7 @@
 rp_module_id="darkplaces-quake"
 rp_module_desc="Quake 1 engine - Darkplaces Quake port with GLES rendering"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/xonotic/darkplaces/master/COPYING"
+rp_module_repo="git https://github.com/xonotic/darkplaces.git div0-stable"
 rp_module_section="opt"
 rp_module_flags="!mali"
 
@@ -23,7 +24,7 @@ function depends_darkplaces-quake() {
 }
 
 function sources_darkplaces-quake() {
-    gitPullOrClone "$md_build" https://github.com/xonotic/darkplaces.git div0-stable
+    gitPullOrClone
     isPlatform "rpi" && applyPatch "$md_data/01_rpi_fixes.diff"
     applyPatch "$md_data/02_makefile_fixes.diff"
     # comment out problematic invariant qualifier which fails to compile with mesa gles on rpi4

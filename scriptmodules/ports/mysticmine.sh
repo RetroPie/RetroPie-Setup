@@ -12,6 +12,7 @@
 rp_module_id="mysticmine"
 rp_module_desc="Mystic Mine - Rail game for up to six players on one keyboard"
 rp_module_licence="MIT https://raw.githubusercontent.com/dewitters/MysticMine/master/LICENSE.txt"
+rp_module_repo="git https://github.com/dewitters/MysticMine.git master"
 rp_module_section="exp"
 
 function depends_mysticmine() {
@@ -19,7 +20,7 @@ function depends_mysticmine() {
 }
 
 function sources_mysticmine() {
-    gitPullOrClone "$md_build" https://github.com/dewitters/MysticMine.git master
+    gitPullOrClone
 }
 
 function build_mysticmine() {

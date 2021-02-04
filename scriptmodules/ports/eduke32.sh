@@ -12,6 +12,7 @@
 rp_module_id="eduke32"
 rp_module_desc="Duke3D source port"
 rp_module_licence="GPL2 https://voidpoint.io/terminx/eduke32/-/raw/master/package/common/gpl-2.0.txt?inline=false"
+rp_module_repo="git https://voidpoint.io/terminx/eduke32.git master dfc16b08"
 rp_module_section="opt"
 
 function depends_eduke32() {
@@ -27,10 +28,7 @@ function depends_eduke32() {
 }
 
 function sources_eduke32() {
-    # was svn rev -r8090
-    local revision="dfc16b08"
-
-    gitPullOrClone "$md_build" https://voidpoint.io/terminx/eduke32.git "" "$revision"
+    gitPullOrClone
 
     # r6918 causes a 20+ second delay on startup on ARM devices
     isPlatform "arm" && applyPatch "$md_data/0001-revert-r6918.patch"

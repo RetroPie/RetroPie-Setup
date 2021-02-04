@@ -12,6 +12,7 @@
 rp_module_id="tyrquake"
 rp_module_desc="Quake 1 engine - TyrQuake port"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/tyrquake/master/gnu.txt"
+rp_module_repo="git https://github.com/RetroPie/tyrquake.git master"
 rp_module_section="opt"
 
 function depends_tyrquake() {
@@ -24,7 +25,7 @@ function depends_tyrquake() {
 }
 
 function sources_tyrquake() {
-    gitPullOrClone "$md_build" https://github.com/RetroPie/tyrquake.git
+    gitPullOrClone
     isPlatform "kms" && applyPatch "$md_data/0001-force-vsync.patch"
 }
 

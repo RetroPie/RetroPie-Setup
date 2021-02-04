@@ -12,6 +12,7 @@
 rp_module_id="digger"
 rp_module_desc="Digger Remastered"
 rp_module_licence="GPL https://raw.githubusercontent.com/sobomax/digger/master/README.md"
+rp_module_repo="git https://github.com/proyvind/digger.git joystick"
 rp_module_section="exp"
 
 function depends_digger() {
@@ -19,7 +20,7 @@ function depends_digger() {
 }
 
 function sources_digger() {
-    gitPullOrClone "$md_build" https://github.com/proyvind/digger.git joystick
+    gitPullOrClone
 }
 
 function build_digger() {
