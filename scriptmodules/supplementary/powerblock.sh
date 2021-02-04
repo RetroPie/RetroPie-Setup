@@ -12,6 +12,7 @@
 rp_module_id="powerblock"
 rp_module_desc="PowerBlock Driver"
 rp_module_help="Please note that you need to manually enable or disable the PowerBlock Service in the Configuration section. IMPORTANT: If the service is enabled and the power switch functionality is enabled (which is the default setting) in the config file, you need to have a switch connected to the PowerBlock."
+rp_module_repo="git https://github.com/petrockblog/PowerBlock.git master"
 rp_module_section="driver"
 rp_module_flags="noinstclean !all rpi"
 
@@ -26,7 +27,7 @@ function sources_powerblock() {
     if [[ -d "$md_inst" ]]; then
         git -C "$md_inst" reset --hard  # ensure that no local changes exist
     fi
-    gitPullOrClone "$md_inst" https://github.com/petrockblog/PowerBlock.git
+    gitPullOrClone "$md_inst"
 }
 
 function install_powerblock() {

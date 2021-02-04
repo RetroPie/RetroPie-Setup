@@ -13,6 +13,7 @@ rp_module_id="steamcontroller"
 rp_module_desc="Standalone Steam Controller Driver"
 rp_module_help="Steam Controller Driver from https://github.com/ynsta/steamcontroller"
 rp_module_licence="MIT https://raw.githubusercontent.com/ynsta/steamcontroller/master/LICENSE"
+rp_module_repo="git https://github.com/ynsta/steamcontroller.git master"
 rp_module_section="driver"
 rp_module_flags="noinstclean"
 
@@ -21,7 +22,7 @@ function depends_steamcontroller() {
 }
 
 function sources_steamcontroller() {
-    gitPullOrClone "$md_inst" https://github.com/ynsta/steamcontroller.git
+    gitPullOrClone "$md_inst"
 }
 
 function install_steamcontroller() {

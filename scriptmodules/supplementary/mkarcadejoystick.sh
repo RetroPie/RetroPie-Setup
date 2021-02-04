@@ -13,6 +13,7 @@ rp_module_id="mkarcadejoystick"
 rp_module_desc="Raspberry Pi GPIO Joystick Driver"
 rp_module_help="Installs the GPIO driver from https://github.com/cmitu/mk_arcade_joystick_rpi"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/recalbox/mk_arcade_joystick_rpi/master/LICENSE"
+rp_module_repo="git https://github.com/cmitu/mk_arcade_joystick_rpi retropie"
 rp_module_section="driver"
 rp_module_flags="noinstclean !all rpi"
 
@@ -25,7 +26,7 @@ function depends_mkarcadejoystick() {
 }
 
 function sources_mkarcadejoystick() {
-    gitPullOrClone "$md_inst" https://github.com/cmitu/mk_arcade_joystick_rpi retropie
+    gitPullOrClone "$md_inst"
     pushd "$md_inst"
     sed -i "s/\$MKVERSION/$(_version_mkarcadejoystick)/" "$md_inst/dkms.conf"
     popd

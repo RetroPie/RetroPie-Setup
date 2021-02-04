@@ -12,6 +12,7 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
+rp_module_repo="git https://github.com/RetroPie/retropie-splashscreens.git master"
 rp_module_flags="noinstclean !all rpi !osmc !xbian !aarch64"
 
 function _update_hook_splashscreen() {
@@ -56,7 +57,7 @@ _EOF_
 
     rp_installModule "omxiv" "_autoupdate_"
 
-    gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
+    gitPullOrClone "$md_inst"
 
     cp "$md_data/asplashscreen.sh" "$md_inst"
 
