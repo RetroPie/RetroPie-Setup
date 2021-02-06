@@ -611,6 +611,12 @@ function rp_installModule() {
     return 0
 }
 
+# this is run after the install_ID function for a module - which by default would be from the
+# folder set by md_build. However some modules install directly to md_inst which would mean unless
+# they change directory also to md_inst in the install stage (which is common), it's possible this
+# function could be run and not find the source. Therefore, we currently record the first directory used
+# by gitPullOrClone and record it in __mod_info to be used here - but this needs further work to handle
+# other cases.
 function rp_setPackageInfo() {
     local id="$1"
     local install_path="$(rp_getInstallPath $id)"
@@ -641,9 +647,12 @@ function rp_setPackageInfo() {
         case "$pkg_repo_type" in
             git|svn)
                 if [[ "$pkg_repo_type" == "git" ]]; then
+                    # if we have recorded a source install dir during gitPullOrClone use it, or default to md_build
+                    local repo_dir="${__mod_info[$id/repo_dir]}"
+                    [[ -z "$repo_dir" ]] && repo_dir="$md_build"
                     # date cannot understand the default date format of git
-                    pkg_repo_date="$(git log -1 --format=%aI)"
-                    pkg_repo_commit="$(git log -1 --format=%H)"
+                    pkg_repo_date="$(git -C "$repo_dir" log -1 --format=%aI)"
+                    pkg_repo_commit="$(git -C "$repo_dir" log -1 --format=%H)"
                 else
                     pkg_repo_date="$(svn info . | grep -oP "Last Changed Date: \K.*")"
                     pkg_repo_date="$(date -Iseconds -d "$pkg_repo_date")"
