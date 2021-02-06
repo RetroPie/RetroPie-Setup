@@ -12,6 +12,7 @@
 rp_module_id="custombluez"
 rp_module_desc="Updated version of BlueZ Bluetooth stack"
 rp_module_help="Install alongside 'sixaxis' driver if you need to pair third-party (Gasia/Shanwan) DualShock 3 controllers.\nNeeded only if your distribution's BlueZ version is <5.48."
+rp_module_repo="git https://salsa.debian.org/bluetooth-team/bluez.git debian/5.50-1"
 rp_module_licence="GPL2 http://www.bluez.org/faq/common/"
 rp_module_section="driver"
 
@@ -26,7 +27,7 @@ function depends_custombluez() {
 }
 
 function sources_custombluez() {
-    gitPullOrClone "$md_build/custombluez" https://salsa.debian.org/bluetooth-team/bluez "debian/5.50-1"
+    gitPullOrClone "$md_build/custombluez"
     cd "custombluez"
     applyPatch "$md_data/01_raspbian_patches.diff"
 }

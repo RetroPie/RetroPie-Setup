@@ -12,6 +12,7 @@
 rp_module_id="attractmode"
 rp_module_desc="Attract Mode emulator frontend"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/mickelson/attract/master/License.txt"
+rp_module_repo="git https://github.com/mickelson/attract master"
 rp_module_section="exp"
 rp_module_flags="!mali frontend"
 
@@ -140,7 +141,7 @@ function depends_attractmode() {
 
 function sources_attractmode() {
     isPlatform "rpi" && gitPullOrClone "$md_build/sfml-pi" "https://github.com/mickelson/sfml-pi"
-    gitPullOrClone "$md_build/attract" "https://github.com/mickelson/attract"
+    gitPullOrClone "$md_build/attract"
 }
 
 function build_attractmode() {
