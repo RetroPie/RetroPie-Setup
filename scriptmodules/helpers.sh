@@ -408,6 +408,12 @@ function gitPullOrClone() {
         depth=0
     fi
 
+    # record the source directory in __mod_info[ID/repo_dir] if not previously set which will be used
+    # by the packaging functions later to grab repository information
+    if [[ -z "${__mod_info[$md_id/repo_dir]}" ]]; then
+        __mod_info[$md_id/repo_dir]="$dir"
+    fi
+
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
         runCmd git checkout "$branch"
