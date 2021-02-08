@@ -26,20 +26,14 @@ function check_repos_tools() {
         eval "$(rp_moduleVars $id)"
         local out
         [[ -z "$md_repo_type" ]] && continue
-        md_repo_url="$(rp_resolveRepoParam "$md_repo_url")"
         md_repo_branch="$(rp_resolveRepoParam "$md_repo_branch")"
+        md_repo_commit="$(rp_resolveRepoParam "$md_repo_commit")"
         printMsgs "console" "Checking $id repository ($md_repo_url / $md_repo_branch) ..."
         case "$md_repo_type" in
-            git)
-                out="$(git ls-remote --symref "$md_repo_url" "$md_repo_branch")"
+            git|svn)
+                out=$(rp_getRemoteRepoHash "$md_repo_type" "$md_repo_url" "$md_repo_branch" "$md_repo_commit")
                 if [[ -z "$out" ]]; then
                     printMsgs "console" "$id repository failed - $md_repo_url $md_repo_branch"
-                    ret=1
-                fi
-                ;;
-            svn)
-                if ! out="$(svn info -r"$md_repo_commit" "$md_repo_url" 2>&1)"; then
-                    printMsgs "console" "$id repository failed - $md_repo_url $md_repo_commit\n$out"
                     ret=1
                 fi
                 ;;
@@ -49,6 +43,14 @@ function check_repos_tools() {
                     ret=1
                 fi
                 ;;
+           :*)
+                # handle checking via module function - function should return 1 if there was an error
+                local function="${md_repo_type:1}"
+                if fnExists "$function" ; then
+                    ! "$function" check && ret=1
+                fi
+                ;;
+
         esac
     done
     return "$ret"
