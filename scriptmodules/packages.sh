@@ -546,12 +546,14 @@ function rp_registerModule() {
 
     local error=0
 
-    # extract the module id and make sure it is unique - also we don't want 3rd party
-    # repos overriding our built in modules as it will cause issues when debugging
-    rp_module_id=$(grep -oP "rp_module_id=\"\K([^\"]+)" "$path")
-    if [[ -n "${__mod_idx[$rp_module_id]}" ]]; then
-        __INFMSGS+=("Module $path was skipped as $rp_module_id is already used by ${__mod_info[$rp_module_id/path]}")
-        return
+    # for 3rd party modules, extract the module id and make sure it is unique
+    # as we don't want 3rd party repos overriding our built-in modules
+    if [[ "$vendor" != "RetroPie" ]]; then
+        rp_module_id=$(grep -oP "rp_module_id=\"\K([^\"]+)" "$path")
+        if [[ -n "${__mod_idx[$rp_module_id]}" ]]; then
+            __INFMSGS+=("Module $path was skipped as $rp_module_id is already used by ${__mod_info[$rp_module_id/path]}")
+            return
+        fi
     fi
 
     source "$path"
