@@ -473,6 +473,26 @@ function rp_resolveRepoParam() {
     echo "$param"
 }
 
+# gets remote repository hash/revision
+function rp_getRemoteRepoHash() {
+    local type="$1"
+    local url="$2"
+    local branch="$3"
+    local commit="$4"
+    local hash
+    case "$type" in
+        git)
+            # grep to make sure we only return refs/heads/BRANCH and refs/tags/BRANCH in case there are
+            # additional references to the branch/tag eg refs/heads/SOMETHINGELSE/master which can be the case
+            hash="$(git ls-remote "$url" "$branch" | grep -P "\trefs/(heads|tags)/$branch" | cut -f1)"
+            ;;
+        svn)
+            hash="$(svn info -r"$commit" "$url" | grep -oP "Revision: \K.*")"
+            ;;
+    esac
+    echo "$hash"
+}
+
 function rp_hasNewerModule() {
     local id="$1"
     local type="$2"
@@ -511,13 +531,16 @@ function rp_hasNewerModule() {
                     if [[ "$pkg_repo_commit" == "$repo_commit" ]]; then
                         return 1
                     fi
-                    local remote_commit
-                    if [[ "$repo_type" == "git" ]]; then
-                        remote_commit="$(git ls-remote --symref "$repo_url" "$repo_branch" | cut -f1)"
-                    else
-                        remote_commit="$(svn info -r"$repo_commit" "$repo_url" | grep -oP "Revision: \K.*")"
-                    fi
+                    local remote_commit="$(rp_getRemoteRepoHash "$repo_type" "$repo_url" "$repo_branch" "$repo_commit")"
                     if [[ "$pkg_repo_commit" != "$remote_commit" ]]; then
+                        return 0
+                    fi
+                    ;;
+                :*)
+                    local pkg_repo_extra="${__mod_info[$id/pkg_repo_extra]}"
+                    # handle checking via module function - function should return 0 if there is a newer version
+                    local function="${repo_type:1}"
+                    if fnExists "$function" && "$function" newer; then
                         return 0
                     fi
                     ;;
@@ -635,6 +658,7 @@ function rp_setPackageInfo() {
     local pkg_repo_branch
     local pkg_repo_commit
     local pkg_repo_date
+    local pkg_repo_extra
 
     if [[ "$origin" == "binary" ]]; then
         pkg_date="$(rp_getBinaryDate $id)"
@@ -662,6 +686,12 @@ function rp_setPackageInfo() {
             file)
                 pkg_repo_date="$(rp_getFileDate "$pkg_repo_url")"
                 ;;
+            :*)
+                # set data based on function hook - function should return code to define any pkg_* vars
+                # eg. local pkg_repo_date="something"
+                local function="${pkg_repo_type:1}"
+                fnExists "$function" && eval $("$function" get)
+                ;;
         esac
 
         iniSet "pkg_date" "$pkg_date"
@@ -670,6 +700,7 @@ function rp_setPackageInfo() {
         iniSet "pkg_repo_branch" "$pkg_repo_branch"
         iniSet "pkg_repo_commit" "$pkg_repo_commit"
         iniSet "pkg_repo_date" "$pkg_repo_date"
+        iniSet "pkg_repo_extra" "$pkg_repo_extra"
     fi
 }
 
@@ -692,6 +723,7 @@ function rp_loadPackageInfo() {
             pkg_repo_branch
             pkg_repo_commit
             pkg_repo_date
+            pkg_repo_extra
         )
     else
         # get user supplied keys but don't cache
