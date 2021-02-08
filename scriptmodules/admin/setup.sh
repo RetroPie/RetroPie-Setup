@@ -335,15 +335,15 @@ function section_gui_setup() {
             # do a heading for each origin and module type
             if [[ "$last_type" != "$type" ]]; then
                 info="$type"
-                pkgs+=("----" "\Z4$info ----\Zn" "Packages from $info")
+                pkgs+=("----" "\Z4$info ----" "Packages from $info")
                 last_type="$type"
             fi
             if ! rp_isEnabled "$id"; then
-                info="\Zb*$id - Not available for your system\Zn"
+                info="\Z1$id\Zn - Not available for your system"
             else
                 if rp_isInstalled "$id"; then
                     eval $(rp_getPackageInfo "$id")
-                    info="\Zb\Z7$id\Zn \Zb(Installed - via $pkg_origin)"
+                    info="$id (Installed - via $pkg_origin)"
                     ((num_pkgs++))
                 else
                     info="$id"
