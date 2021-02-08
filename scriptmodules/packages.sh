@@ -527,10 +527,19 @@ function rp_hasNewerModule() {
                     local repo_branch="$(rp_resolveRepoParam "${__mod_info[$id/repo_branch]}")"
                     local repo_commit="$(rp_resolveRepoParam "${__mod_info[$id/repo_commit]}")"
                     [[ -z "$pkg_repo_commit" ]] && return 0
-                    # if we are locked to a single commit, then we compare against current module commit only
-                    if [[ "$pkg_repo_commit" == "$repo_commit" ]]; then
-                        return 1
+                    # if we are locked to a single commit, then we compare against the current module commit only
+                    if [[ -n "$repo_commit" ]]; then
+                        # if we are using git and the module has an 8 character commit hash, then adjust
+                        # the package commit to 8 characters also for the comparison
+                        if [[ "$repo_type" == "git" && "${#repo_commit}" -eq 8 ]]; then
+                            pkg_repo_commit="${pkg_repo_commit::8}"
+                        fi
+
+                        if [[ "$pkg_repo_commit" == "$repo_commit" ]]; then
+                            return 1
+                        fi
                     fi
+
                     local remote_commit="$(rp_getRemoteRepoHash "$repo_type" "$repo_url" "$repo_branch" "$repo_commit")"
                     if [[ "$pkg_repo_commit" != "$remote_commit" ]]; then
                         return 0
