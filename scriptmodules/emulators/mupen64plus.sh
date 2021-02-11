@@ -100,7 +100,10 @@ function _pkg_info_mupen64plus() {
                 if [[ -n "${repo[3]}" ]]; then
                     hash="${repo[3]}"
                 else
-                    hash="$(rp_getRemoteRepoHash git https://github.com/${repo[0]}/${repo[1]} ${repo[2]})"
+                    if ! hash="$(rp_getRemoteRepoHash git https://github.com/${repo[0]}/${repo[1]} ${repo[2]})"; then
+                        __ERRMSGS+=("$hash")
+                        return 3
+                    fi
                 fi
                 hashes+=("$hash")
             done < <(_get_repos_mupen64plus)

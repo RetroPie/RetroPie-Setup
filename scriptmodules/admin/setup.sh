@@ -177,54 +177,67 @@ function package_setup() {
         local status
 
         local has_binary=0
-        rp_hasBinary "$id"
-        local binary_ret="$?"
-        [[ "$binary_ret" -eq 0 ]] && has_binary=1
+        local has_net=0
+
+        local ip="$(getIPAddress)"
+        [[ -n "$ip" ]] && has_net=1
+
+        if [[ "$has_net" -eq 1 ]]; then
+            rp_hasBinary "$id"
+            local ret="$?"
+            [[ "$ret" -eq 0 ]] && has_binary=1
+            [[ "$ret" -eq 2 ]] && has_net=0
+        fi
 
         local is_installed=0
 
-        if rp_isInstalled "$id"; then
+        local pkg_origin=""
+        local pkg_date=""
+        if ! rp_isInstalled "$id"; then
+            status="Not installed"
+        else
             is_installed=1
 
             rp_loadPackageInfo "$id"
-            local pkg_origin="${__mod_info[$id/pkg_origin]}"
-            local pkg_date="${__mod_info[$id/pkg_date]}"
+            pkg_origin="${__mod_info[$id/pkg_origin]}"
+            pkg_date="${__mod_info[$id/pkg_date]}"
 
             status="Installed - via $pkg_origin"
 
             [[ -n "$pkg_date" ]] && status+=" (built: $(date -u -d "$pkg_date"))"
 
-            rp_hasNewerModule "$id" "$pkg_origin"
-            local has_newer="$?"
-            case "$has_newer" in
-                0)
-                    status+="\nUpdate is available."
-                    option_msgs["U"]="Update (from $pkg_origin)"
-                    ;;
-                1)
-                    status+="\nYou are running the latest $pkg_origin."
-                    option_msgs["U"]="Re-install (from $pkg_origin)"
-                    ;;
-                2)
-                    if [[ "$pkg_origin" == "unknown" ]]; then
-                        if [[ "$has_binary" -eq 1 ]]; then
-                            pkg_origin="binary"
-                        else
-                            pkg_origin="source"
+            if [[ "$has_net" -eq 1 ]]; then
+                rp_hasNewerModule "$id" "$pkg_origin"
+                local has_newer="$?"
+                case "$has_newer" in
+                    0)
+                        status+="\nUpdate is available."
+                        option_msgs["U"]="Update (from $pkg_origin)"
+                        ;;
+                    1)
+                        status+="\nYou are running the latest $pkg_origin."
+                        option_msgs["U"]="Re-install (from $pkg_origin)"
+                        ;;
+                    2)
+                        if [[ "$pkg_origin" == "unknown" ]]; then
+                            if [[ "$has_binary" -eq 1 ]]; then
+                                pkg_origin="binary"
+                            else
+                                pkg_origin="source"
+                            fi
                         fi
-                    fi
-                    option_msgs["U"]="Update (from $pkg_origin)"
-                    status+="\nUpdate may be available (Unable to check for this package)."
-                    ;;
-            esac
-        else
-            status="Not installed"
+                        option_msgs["U"]="Update (from $pkg_origin)"
+                        status+="\nUpdate may be available (Unable to check for this package)."
+                        ;;
+                    3)
+                        has_net=0
+                        ;;
+                esac
+            fi
         fi
 
         # if we had a network error don't display install options
-        if [[ "$binary_ret" -eq 6 || "$binary_ret" -eq 7 ]]; then
-            status+="\nInstall options disabled (Unable to access internet)"
-        else
+        if [[ "$has_net" -eq 1 ]]; then
             if [[ "$is_installed" -eq 1 ]]; then
                 options+=(U "${option_msgs["U"]}")
             fi
@@ -236,6 +249,8 @@ function package_setup() {
             if [[ "$pkg_origin" != "source" ]] && fnExists "sources_${id}"; then
                 options+=(S "${option_msgs[S]}")
            fi
+        else
+            status+="\nInstall options disabled (Unable to access internet)"
         fi
 
         if [[ "$is_installed" -eq 1 ]]; then
@@ -326,9 +341,18 @@ function section_gui_setup() {
     local section="$1"
 
     local default=""
+    local status=""
+    local has_net=1
     while true; do
         local options=()
         local pkgs=()
+
+        status="Please choose a package from below"
+        local ip="$(getIPAddress)"
+        if [[ -z "$ip" ]]; then
+            status+="\nInstall options disabled (Unable to access internet)"
+            has_net=0
+        fi
 
         local id
         local num_pkgs=0
@@ -359,14 +383,14 @@ function section_gui_setup() {
             pkgs+=("${__mod_idx[$id]}" "$info" "$id - ${__mod_info[$id/desc]}"$'\n\n'"${__mod_info[$id/help]}")
         done
 
-        if [[ "$num_pkgs" -gt 0 ]]; then
+        if [[ "$has_net" -eq 1 && "$num_pkgs" -gt 0 ]]; then
             options+=(
                 U "Update all installed ${__sections[$section]} packages" "This will update any installed ${__sections[$section]} packages. The packages will be updated by the method used previously."
             )
         fi
 
         # allow installing an entire section except for drivers and dependencies - as it's probably a bad idea
-        if [[ "$section" != "driver" && "$section" != "depends" ]]; then
+        if [[ "$has_net" -eq 1 && "$section" != "driver" && "$section" != "depends" ]]; then
             options+=(
                 I "Install all ${__sections[$section]} packages" "This will install all ${__sections[$section]} packages. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously"
                 X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
@@ -375,7 +399,7 @@ function section_gui_setup() {
 
         options+=("${pkgs[@]}")
 
-        local cmd=(dialog --colors --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "Choose an option" 22 76 16)
+        local cmd=(dialog --colors --backtitle "$__backtitle" --cancel-label "Back" --item-help --help-button --default-item "$default" --menu "$status" 22 76 16)
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break

@@ -32,7 +32,7 @@ function check_repos_tools() {
         case "$md_repo_type" in
             git|svn)
                 out=$(rp_getRemoteRepoHash "$md_repo_type" "$md_repo_url" "$md_repo_branch" "$md_repo_commit")
-                if [[ -z "$out" ]]; then
+                if [[ "$?" -ne 0 || -z "$out" ]]; then
                     printMsgs "console" "$id repository failed - $md_repo_url $md_repo_branch"
                     ret=1
                 fi
