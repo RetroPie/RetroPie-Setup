@@ -131,13 +131,21 @@ function rp_callModule() {
             local pkg_origin="${__mod_info[$md_id/pkg_origin]}"
 
             local has_binary=0
-            rp_hasBinary "$md_id"
-            local ret="$?"
-            [[ "$ret" -eq 0 ]] && has_binary=1
+            local has_net=0
 
-            # check if we get a couldn't resolve host or failed to connect to host from curl
-            if [[ "$ret" -eq 6 || "$ret" -eq 7 ]]; then
-                __ERRMSGS+=("Unable to connect to the internet - curl returned $ret")
+            local ip="$(getIPAddress)"
+            [[ -n "$ip" ]] && has_net=1
+
+            if [[ "$has_net" -eq 1 ]]; then
+                rp_hasBinary "$md_id"
+                local ret="$?"
+                [[ "$ret" -eq 0 ]] && has_binary=1
+                [[ "$ret" -eq 2 ]] && has_net=0
+            fi
+
+            # fail if we don't seem to be connected
+            if [[ "$has_net" -eq 0 ]]; then
+                __ERRMSGS+=("Can't install/update $md_id - unable to connect to the internet")
                 return 1
             fi
 
@@ -147,6 +155,8 @@ function rp_callModule() {
             if [[ "$mode" == "_update_" ]]; then
                 rp_hasNewerModule "$md_id" "$pkg_origin"
                 [[ "$?" -eq 0 || "$?" == 2 ]] && do_update=1
+                # if rp_hasNewerModule returns 3, then there was an error and we should abort
+                [[ "$?" -eq 3 ]] && return 1
             else
                 do_update=1
             fi
@@ -399,6 +409,21 @@ function rp_getBinaryUrl() {
     echo "$url"
 }
 
+# returns 0 if file exists, 1 if it doesn't and 2 on other error
+function rp_remoteFileExists() {
+    local url="$1"
+    local ret
+    curl --max-time 5 -o /dev/null -sfI "$url"
+    ret="$?"
+    if [[ "$ret" -eq 0 ]]; then
+        return 0
+    elif [[ "$ret" -eq 22 ]]; then
+        return 1
+    else
+        return 2
+    fi
+}
+
 function rp_hasBinary() {
     local id="$1"
 
@@ -417,8 +442,8 @@ function rp_hasBinary() {
     [[ -z "$url" ]] && return 1
 
     if rp_hasBinaries; then
-        curl -o /dev/null -sfI "$url"
-        return $?
+        rp_remoteFileExists "$url"
+        return "$?"
     fi
     return 1
 }
@@ -473,26 +498,40 @@ function rp_resolveRepoParam() {
     echo "$param"
 }
 
-# gets remote repository hash/revision
+# gets remote repository hash/revision - echos hash of remote repo and returns 0, or
+# echos an error and returns 1 on failure
 function rp_getRemoteRepoHash() {
     local type="$1"
     local url="$2"
     local branch="$3"
     local commit="$4"
     local hash
+    local ret
+    local cmd=()
+    set -o pipefail
     case "$type" in
         git)
+            cmd=(git ls-remote "$url" "$branch")
             # grep to make sure we only return refs/heads/BRANCH and refs/tags/BRANCH in case there are
             # additional references to the branch/tag eg refs/heads/SOMETHINGELSE/master which can be the case
-            hash="$(git ls-remote "$url" "$branch" | grep -P "\trefs/(heads|tags)/$branch" | cut -f1)"
+            hash=$("${cmd[@]}" 2>/dev/null | grep -P "\trefs/(heads|tags)/$branch" | cut -f1)
             ;;
         svn)
-            hash="$(svn info -r"$commit" "$url" | grep -oP "Revision: \K.*")"
+            cmd=(svn info -r"$commit" "$url")
+            hash=$("${cmd[@]}" 2>/dev/null | grep -oP "Revision: \K.*")
             ;;
     esac
+    ret="$?"
+    set +o pipefail
+    if [[ "$ret" -ne 0 ]]; then
+        echo "${cmd[*]} failed with return code $ret - please check your network connection"
+        return 1
+    fi
     echo "$hash"
+    return 0
 }
 
+# returns 0 if a module has a newer version, 1 if it doesn't, 2 if unknown, or 3 if there is an error
 function rp_hasNewerModule() {
     local id="$1"
     local type="$2"
@@ -539,10 +578,14 @@ function rp_hasNewerModule() {
                             return 1
                         fi
                     fi
-
-                    local remote_commit="$(rp_getRemoteRepoHash "$repo_type" "$repo_url" "$repo_branch" "$repo_commit")"
-                    if [[ "$pkg_repo_commit" != "$remote_commit" ]]; then
-                        return 0
+                    local remote_commit
+                    if remote_commit="$(rp_getRemoteRepoHash "$repo_type" "$repo_url" "$repo_branch" "$repo_commit")"; then
+                        if [[ -n "$remote_commit" && "$pkg_repo_commit" != "$remote_commit" ]]; then
+                            return 0
+                        fi
+                    else
+                        __ERRMSGS+=("$remote_commit")
+                        return 3
                     fi
                     ;;
                 :*)
@@ -551,6 +594,8 @@ function rp_hasNewerModule() {
                     local function="${repo_type:1}"
                     if fnExists "$function" && "$function" newer; then
                         return 0
+                    else
+                        return "$?"
                     fi
                     ;;
                 *)
@@ -560,14 +605,17 @@ function rp_hasNewerModule() {
             esac
 
             # check the date of the module code - if it's newer than the install date of the module we force an update
-            local module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
-            if rp_dateIsNewer "$pkg_date" "$module_date"; then
-                return 0
+            if [[ "$__ignore_module_date" -ne 1 ]]; then
+                local module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
+                if rp_dateIsNewer "$pkg_date" "$module_date"; then
+                    return 0
+                fi
             fi
             ;;
         *)
             # for unknown or in the case of a blank pkg_origin assume there is an update
             return 2
+            ;;
     esac
     return 1
 }
