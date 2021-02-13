@@ -11,7 +11,7 @@
 
 rp_module_id="customhidsony"
 rp_module_desc="Custom hid-sony (Sony DualShock) driver with enhanced third-party controller support"
-rp_module_help="Improves support for third-party (Shanwan & Gasia) DualShock 3 controllers.\n\nNote: BlueZ 5.50+ may also be installed via the 'custombluez' module to enable pairing on third-party controllers."
+rp_module_help="Improves support for third-party (Shanwan & Gasia) DualShock 3 controllers."
 rp_module_section="driver"
 rp_module_flags="noinstclean"
 
@@ -21,9 +21,6 @@ function _version_customhidsony() {
 
 function depends_customhidsony() {
     depends_xpad
-    if hasPackage bluez 5.50 lt; then
-        rp_callModule custombluez
-    fi
 }
 
 function sources_customhidsony() {
