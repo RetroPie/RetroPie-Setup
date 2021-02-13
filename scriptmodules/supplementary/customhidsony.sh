@@ -11,19 +11,16 @@
 
 rp_module_id="customhidsony"
 rp_module_desc="Custom hid-sony (Sony DualShock) driver with enhanced third-party controller support"
-rp_module_help="Improves support for third-party (Shanwan & Gasia) DualShock 3 controllers.\n\nNote: BlueZ 5.50+ may also be installed via the 'custombluez' module to enable pairing on third-party controllers."
+rp_module_help="Improves support for third-party (Shanwan & Gasia) DualShock 3 controllers."
 rp_module_section="driver"
 rp_module_flags="noinstclean"
 
 function _version_customhidsony() {
-    echo "0.1.2"
+    echo "0.1.3"
 }
 
 function depends_customhidsony() {
     depends_xpad
-    if hasPackage bluez 5.50 lt; then
-        rp_callModule custombluez
-    fi
 }
 
 function sources_customhidsony() {
@@ -46,7 +43,7 @@ _EOF_
 
     cat > "hidsony_source.sh" << _EOF_
 #!/bin/bash
-rpi_kernel_ver="rpi-4.19.y"
+rpi_kernel_ver="rpi-5.10.y"
 mkdir -p "drivers/hid/" "patches"
 curl -s https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-sony.c -o "drivers/hid/hid-sony.c"
 curl -s https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-ids.h -o "drivers/hid/hid-ids.h"

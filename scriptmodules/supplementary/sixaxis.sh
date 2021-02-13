@@ -62,7 +62,6 @@ function gui_sixaxis() {
                     rp_callModule "customhidsony"
                     ;;
                 2)  rp_callModule "customhidsony" remove
-                    rp_callModule "custombluez" remove
                     ;;
                 3)
                     local timeout_choice=$("${cmd[@]}" "${timeout_options[@]}" 2>&1 >/dev/tty)
