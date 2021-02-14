@@ -163,9 +163,11 @@ function rp_callModule() {
     case "$mode" in
         # remove sources
         clean)
-            if [[ "$__persistent_repos" -eq 1 ]] && [[ -d "$md_build/.git" ]]; then
-                git -C "$md_build" reset --hard
-                git -C "$md_build" clean -f -d
+            if [[ "$__persistent_repos" -eq 1 ]]; then
+                if [[ -d "$md_build/.git" ]]; then
+                    git -C "$md_build" reset --hard
+                    git -C "$md_build" clean -f -d
+                fi
             else
                 rmDirExists "$md_build"
             fi
