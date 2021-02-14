@@ -304,6 +304,7 @@ function rp_callModule() {
                 "configure_${md_id}"
             fi
             rm -rf "$md_inst"
+            rp_clearCachedInfo "$md_id"
             printMsgs "console" "Removed directory $md_inst"
             ;;
         install)
@@ -441,11 +442,15 @@ function rp_hasBinary() {
     [[ "$url" == "notest" ]] && return 0
     [[ -z "$url" ]] && return 1
 
+    [[ -n "${__mod_info[$id/has_binary]}" ]] && return "${__mod_info[$id/has_binary]}"
+    local ret=1
     if rp_hasBinaries; then
         rp_remoteFileExists "$url"
-        return "$?"
+        ret="$?"
     fi
-    return 1
+    # if there wasn't an error, cache the result
+    [[ "$ret" -ne 2 ]] && __mod_info[$id/has_binary]="$ret"
+    return "$ret"
 }
 
 function rp_getFileDate() {
@@ -531,10 +536,12 @@ function rp_getRemoteRepoHash() {
     return 0
 }
 
-# returns 0 if a module has a newer version, 1 if it doesn't, 2 if unknown, or 3 if there is an error
+# returns 0 if a module has a newer version, 1 if it doesn't, 2 if unknown (always update), or 3 if there is an error
 function rp_hasNewerModule() {
     local id="$1"
     local type="$2"
+
+    [[ -n "${__mod_info[$id/has_newer]}" ]] && return "${__mod_info[$id/has_newer]}"
 
     rp_loadPackageInfo "$id"
     local pkg_origin="${__mod_info[$id/pkg_origin]}"
@@ -542,30 +549,33 @@ function rp_hasNewerModule() {
     local pkg_repo_date="${__mod_info[$id/pkg_repo_date]}"
     local pkg_repo_commit="${__mod_info[$id/pkg_repo_commit]}"
 
+    local ret=1
     case "$type" in
         binary)
-            [[ -z "$pkg_date" ]] && return 2
-            local bin_date="$(rp_getBinaryDate $id)"
-            [[ -z "$bin_date" ]] && return 2
-            if rp_dateIsNewer "$pkg_date" "$bin_date"; then
-                return 0
+            ret=""
+            if [[ -n "$pkg_date" ]]; then
+                local bin_date="$(rp_getBinaryDate $id)"
+                if [[ -n "$bin_date" ]]; then
+                    rp_dateIsNewer "$pkg_date" "$bin_date"
+                    ret="$?"
+                fi
             fi
+            [[ -z "$ret" ]] && ret=2
             ;;
         source)
             local repo_type="${__mod_info[$id/repo_type]}"
             local repo_url="$(rp_resolveRepoParam "${__mod_info[$id/repo_url]}")"
             case "$repo_type" in
                 file)
-                    [[ -z "$pkg_repo_date" ]] && return 2
-                    local file_date="$(rp_getFileDate "$repo_url")"
-                    if rp_dateIsNewer "$pkg_repo_date" "$file_date"; then
-                        return 0
+                    if [[ -n "$pkg_repo_date" ]]; then
+                        local file_date="$(rp_getFileDate "$repo_url")"
+                        rp_dateIsNewer "$pkg_repo_date" "$file_date"
+                        ret="$?"
                     fi
                     ;;
                 git|svn)
                     local repo_branch="$(rp_resolveRepoParam "${__mod_info[$id/repo_branch]}")"
                     local repo_commit="$(rp_resolveRepoParam "${__mod_info[$id/repo_commit]}")"
-                    [[ -z "$pkg_repo_commit" ]] && return 0
                     # if we are locked to a single commit, then we compare against the current module commit only
                     if [[ -n "$repo_commit" ]]; then
                         # if we are using git and the module has an 8 character commit hash, then adjust
@@ -573,51 +583,55 @@ function rp_hasNewerModule() {
                         if [[ "$repo_type" == "git" && "${#repo_commit}" -eq 8 ]]; then
                             pkg_repo_commit="${pkg_repo_commit::8}"
                         fi
-
-                        if [[ "$pkg_repo_commit" == "$repo_commit" ]]; then
-                            return 1
-                        fi
-                    fi
-                    local remote_commit
-                    if remote_commit="$(rp_getRemoteRepoHash "$repo_type" "$repo_url" "$repo_branch" "$repo_commit")"; then
-                        if [[ -n "$remote_commit" && "$pkg_repo_commit" != "$remote_commit" ]]; then
-                            return 0
+                        if [[ "$pkg_repo_commit" != "$repo_commit" ]]; then
+                            ret=0
                         fi
                     else
-                        __ERRMSGS+=("$remote_commit")
-                        return 3
+                        local remote_commit
+                        if remote_commit="$(rp_getRemoteRepoHash "$repo_type" "$repo_url" "$repo_branch" "$repo_commit")"; then
+                            if [[ -n "$remote_commit" && "$pkg_repo_commit" != "$remote_commit" ]]; then
+                                ret=0
+                            fi
+                        else
+                            __ERRMSGS+=("$remote_commit")
+                            ret=3
+                        fi
                     fi
                     ;;
                 :*)
                     local pkg_repo_extra="${__mod_info[$id/pkg_repo_extra]}"
                     # handle checking via module function - function should return 0 if there is a newer version
                     local function="${repo_type:1}"
-                    if fnExists "$function" && "$function" newer; then
-                        return 0
-                    else
-                        return "$?"
+                    if fnExists "$function"; then
+                        "$function" newer
+                        ret="$?"
                     fi
                     ;;
                 *)
                     # fallback on forcing an update
-                    return 0
+                    ret=2
                     ;;
             esac
 
-            # check the date of the module code - if it's newer than the install date of the module we force an update
-            if [[ "$__ignore_module_date" -ne 1 ]]; then
+            # if we are currently not going to update - check the date of the module code
+            # if it's newer than the install date of the module we force an update
+            if [[ "$ret" -eq 1 && "$__ignore_module_date" -ne 1 ]]; then
                 local module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
                 if rp_dateIsNewer "$pkg_date" "$module_date"; then
-                    return 0
+                    ret=0
                 fi
             fi
             ;;
         *)
             # for unknown or in the case of a blank pkg_origin assume there is an update
-            return 2
+            ret=2
             ;;
     esac
-    return 1
+
+    # cache our return value
+    __mod_info[$id/has_newer]="$ret"
+
+    return "$ret"
 }
 
 function rp_getInstallPath() {
@@ -691,6 +705,15 @@ function rp_installModule() {
     return 0
 }
 
+function rp_clearCachedInfo() {
+    local id="$1"
+    # clear cached data
+    # set pkg_info to 0 to force a reload when needed
+    __mod_info[$id/pkg_info]=0
+    __mod_info[$id/has_binary]=""
+    __mod_info[$id/has_newer]=""
+}
+
 # this is run after the install_ID function for a module - which by default would be from the
 # folder set by md_build. However some modules install directly to md_inst which would mean unless
 # they change directory also to md_inst in the install stage (which is common), it's possible this
@@ -704,8 +727,7 @@ function rp_setPackageInfo() {
     local pkg="$install_path/retropie.pkg"
     local origin="$2"
 
-    # set pkg_info to 0 to force a reload when needed
-    __mod_info[$id/pkg_info]=0
+    rp_clearCachedInfo "$id"
 
     iniConfig "=" '"' "$pkg"
     iniSet "pkg_origin" "$origin"
