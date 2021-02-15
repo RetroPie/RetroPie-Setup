@@ -156,12 +156,19 @@ function rp_callModule() {
 
             # if we are in _update_ mode we only update if there is a newer version of the binary or source
             if [[ "$mode" == "_update_" ]]; then
+                printMsgs "heading" "Checking for updates for $md_id"
                 rp_hasNewerModule "$md_id" "$pkg_origin"
                 [[ "$?" -eq 0 || "$?" == 2 ]] && do_update=1
                 # if rp_hasNewerModule returns 3, then there was an error and we should abort
                 [[ "$?" -eq 3 ]] && return 1
             else
                 do_update=1
+            fi
+
+            if [[ "$do_update" -eq 1 ]]; then
+                printMsgs "console" "Update is available - updating ..."
+            else
+                printMsgs "console" "No update was found."
             fi
 
             if [[ "$do_update" -eq 1 ]]; then
