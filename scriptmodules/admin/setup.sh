@@ -522,9 +522,19 @@ function update_packages_setup() {
     done
 }
 
+function check_connection_gui_setup() {
+    local ip="$(getIPAddress)"
+    if [[ -z "$ip" ]]; then
+        printMsgs "dialog" "Sorry, you don't seem to be connected to the internet, so installing/updating is not available."
+        return 1
+    fi
+    return 0
+}
+
 function update_packages_gui_setup() {
     local update="$1"
     if [[ "$update" != "update" ]]; then
+        ! check_connection_gui_setup && return 1
         dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
         updatescript_setup || return 1
         # restart at post_update and then call "update_packages_gui_setup update" afterwards
@@ -658,6 +668,7 @@ function gui_setup() {
 
         case "$choice" in
             I)
+                ! check_connection_gui_setup && continue
                 dialog --defaultno --yesno "Are you sure you want to do a basic install?\n\nThis will install all packages from the 'Core' and 'Main' package sections." 22 76 2>&1 >/dev/tty || continue
                 clear
                 local logfilename
@@ -679,6 +690,7 @@ function gui_setup() {
                 config_gui_setup
                 ;;
             S)
+                ! check_connection_gui_setup && continue
                 dialog --defaultno --yesno "Are you sure you want to update the RetroPie-Setup script ?" 22 76 2>&1 >/dev/tty || continue
                 if updatescript_setup; then
                     joy2keyStop
