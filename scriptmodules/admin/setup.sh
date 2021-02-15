@@ -182,6 +182,9 @@ function package_setup() {
         local ip="$(getIPAddress)"
         [[ -n "$ip" ]] && has_net=1
 
+        # for modules with nonet flag that don't need to download data, we force has_net to 1, so we get install options
+        hasFlag "${__mod_info[$id/flags]}" "nonet" && has_net=1
+
         if [[ "$has_net" -eq 1 ]]; then
             rp_hasBinary "$id"
             local ret="$?"
@@ -237,7 +240,6 @@ function package_setup() {
             fi
         fi
 
-        # if we had a network error don't display install options
         if [[ "$has_net" -eq 1 ]]; then
             if [[ "$is_installed" -eq 1 ]]; then
                 options+=(U "${option_msgs["U"]}")
