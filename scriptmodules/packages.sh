@@ -813,18 +813,28 @@ function rp_loadPackageInfo() {
         cache=0
     fi
 
+    local load=0
     local pkg_file="$(rp_getInstallPath $id)/retropie.pkg"
-    # if the pkg file is available, load the requested keys into __mod_info
-    if [[ -f "$pkg_file" ]]; then
-        local key
-        local data
-        for key in "${keys[@]}"; do
-           data="$(grep -oP "$key=\"\K[^\"]+" "$pkg_file")"
-           [[ -n "$data" ]] && __mod_info[$id/$key]="$data"
-        done
-        # if loading all data set pkg_info to 1 so we avoid loading when not needed
-        [[ "$cache" -eq 1 ]] && __mod_info[$id/pkg_info]=1
-    fi
+
+    # if the pkg file is available, we will load the data in the next loop
+    [[ -f "$pkg_file" ]] && load=1
+
+    local key
+    local data
+    for key in "${keys[@]}"; do
+        # clear any previous data we have stored, but default "pkg_origin" to "unknown"
+        data=""
+        [[ "$key" == "pkg_origin" ]] && data="unknown"
+        __mod_info[$id/$key]="$data"
+
+        # if the package file is available and the field is set, override the default values
+        if [[ "$load" -eq 1 ]]; then
+            data="$(grep -oP "$key=\"\K[^\"]+" "$pkg_file")"
+            [[ -n "$data" ]] && __mod_info[$id/$key]="$data"
+        fi
+    done
+    # if loading all data set pkg_info to 1 so we avoid loading when not needed
+    [[ "$cache" -eq 1 ]] && __mod_info[$id/pkg_info]=1
 }
 
 function rp_registerModule() {
@@ -915,9 +925,6 @@ function rp_registerModule() {
     __mod_info["$rp_module_id/licence"]="$rp_module_licence"
     __mod_info["$rp_module_id/section"]="$rp_module_section"
     __mod_info["$rp_module_id/flags"]="$rp_module_flags"
-
-    # default pkg_origin which is updated later from installed packages containing retropie.pkg
-    __mod_info["$rp_module_id/pkg_origin"]="unknown"
 
     # split module repo into type, url, branch and commit
     if [[ -n "$rp_module_repo" ]]; then
