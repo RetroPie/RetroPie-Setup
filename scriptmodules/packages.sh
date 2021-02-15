@@ -484,9 +484,11 @@ function rp_dateIsNewer() {
     local date_a="$1"
     local date_b="$2"
     [[ -z "$date_a" || -z "$date_b" ]] && return 0
-    date_a="$(date -d "$date_a" +%s)"
-    date_b="$(date -d "$date_b" +%s)"
-    [[ "$date_b" -gt "$date_a" ]] && return 0
+    if date_a="$(date -d "$date_a" +%s 2>/dev/null)" && date_b="$(date -d "$date_b" +%s 2>/dev/null)"; then
+        [[ "$date_b" -gt "$date_a" ]] && return 0
+    else
+        return 0
+    fi
     return 1
 }
 

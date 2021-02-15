@@ -201,10 +201,11 @@ function package_setup() {
             rp_loadPackageInfo "$id"
             pkg_origin="${__mod_info[$id/pkg_origin]}"
             pkg_date="${__mod_info[$id/pkg_date]}"
+            [[ -n "$pkg_date" ]] && pkg_date="$(date -u -d "$pkg_date" 2>/dev/null)"
 
             status="Installed - via $pkg_origin"
 
-            [[ -n "$pkg_date" ]] && status+=" (built: $(date -u -d "$pkg_date"))"
+            [[ -n "$pkg_date" ]] && status+=" (built: $pkg_date)"
 
             if [[ "$has_net" -eq 1 ]]; then
                 rp_hasNewerModule "$id" "$pkg_origin"
