@@ -31,10 +31,14 @@ function _release_distribution() {
 }
 
 function depends_wine() {
+    if compareVersions $__version lt 4.7.7; then
+        md_ret_errors+=("Sorry, you need to be running RetroPie v4.7.7 or later")
+        return 1
+    fi
+
     # On RPI systems, we need to make sure Box86 is installed.
     if isPlatform "rpi"; then
-        local dep_idx="$(rp_getIdxFromId "box86")"
-        if [ "$dep_idx" == "" ] || ! rp_isInstalled "$dep_idx" ; then
+        if ! rp_isInstalled "box86" ; then
             md_ret_errors+=("Sorry, you need to install the Box86 scriptmodule")
             return 1
         fi

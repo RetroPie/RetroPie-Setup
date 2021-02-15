@@ -30,8 +30,12 @@ function depends_box86() {
         return 1
     fi
 
-    local dep_idx="$(rp_getIdxFromId "mesa")"
-    if [ "$dep_idx" == "" ] || ! rp_isInstalled "$dep_idx" ; then
+    if compareVersions $__version lt 4.7.7; then
+        md_ret_errors+=("Sorry, you need to be running RetroPie v4.7.7 or later")
+        return 1
+    fi
+
+    if ! rp_isInstalled "mesa" ; then
         md_ret_errors+=("Sorry, you need to install the Mesa scriptmodule")
         return 1
     fi
