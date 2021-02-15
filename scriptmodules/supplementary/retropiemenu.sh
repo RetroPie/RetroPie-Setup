@@ -12,6 +12,7 @@
 rp_module_id="retropiemenu"
 rp_module_desc="RetroPie configuration menu for EmulationStation"
 rp_module_section="core"
+rp_module_flags="nonet"
 
 function _update_hook_retropiemenu() {
     # to show as installed when upgrading to retropie-setup 4.x
