@@ -371,7 +371,7 @@ function section_gui_setup() {
                 last_type="$type"
             fi
             if ! rp_isEnabled "$id"; then
-                info="\Z1$id\Zn - Not available for your system"
+                info="\Z1$id\Zn"
             else
                 if rp_isInstalled "$id"; then
                     rp_loadPackageInfo "$id" "pkg_origin"
