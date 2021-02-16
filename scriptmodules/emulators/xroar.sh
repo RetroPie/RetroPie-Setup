@@ -13,6 +13,7 @@ rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_help="ROM Extensions: .cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna\n\nCopy your Dragon roms to $romdir/dragon32\n\nCopy your CoCo games to $romdir/coco\n\nCopy the required BIOS files d32.rom (Dragon 32) and bas13.rom (CoCo) to $biosdir"
 rp_module_licence="GPL2 http://www.6809.org.uk/xroar/"
+rp_module_repo="git http://www.6809.org.uk/git/xroar.git 0.36"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -21,7 +22,8 @@ function depends_xroar() {
 }
 
 function sources_xroar() {
-    gitPullOrClone "$md_build" http://www.6809.org.uk/git/xroar.git 0.36 "" 0
+    gitPullOrClone "$md_build" "$md_repo_url" "$md_repo_branch" "" 0
+
 }
 
 function build_xroar() {

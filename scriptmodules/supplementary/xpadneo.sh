@@ -12,6 +12,7 @@
 rp_module_id="xpadneo"
 rp_module_desc="Advanced Linux driver for Xbox One wireless gamepads"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/atar-axis/xpadneo/master/LICENSE"
+rp_module_repo="git https://github.com/atar-axis/xpadneo.git v0.9"
 rp_module_section="driver"
 rp_module_flags="nobin"
 
@@ -25,8 +26,7 @@ function depends_xpadneo() {
 }
 
 function sources_xpadneo() {
-    local tag="v0.9"
-    gitPullOrClone "$md_build" https://github.com/atar-axis/xpadneo.git "$tag"
+    gitPullOrClone
     rsync -a --delete "$md_build/hid-xpadneo/" "$md_inst/"
     cp "$md_build/VERSION" "$md_inst/"
     local version="$(_version_xpadneo)"

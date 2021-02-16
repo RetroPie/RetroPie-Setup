@@ -12,6 +12,7 @@
 rp_module_id="yquake2"
 rp_module_desc="yquake2 - The Yamagi Quake II client"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/yquake2/yquake2/master/LICENSE"
+rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_7_41"
 rp_module_section="exp"
 rp_module_flags=""
 
@@ -22,7 +23,7 @@ function depends_yquake2() {
 }
 
 function sources_yquake2() {
-    gitPullOrClone "$md_build" https://github.com/yquake2/yquake2.git "QUAKE2_7_41"
+    gitPullOrClone
 }
 
 function build_yquake2() {

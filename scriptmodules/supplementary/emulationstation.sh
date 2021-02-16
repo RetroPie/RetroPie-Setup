@@ -12,6 +12,7 @@
 rp_module_id="emulationstation"
 rp_module_desc="EmulationStation - Frontend used by RetroPie for launching emulators"
 rp_module_licence="MIT https://raw.githubusercontent.com/RetroPie/EmulationStation/master/LICENSE.md"
+rp_module_repo="git https://github.com/RetroPie/EmulationStation :_get_branch_emulationstation"
 rp_module_section="core"
 rp_module_flags="frontend"
 
@@ -142,10 +143,7 @@ function depends_emulationstation() {
     getDepends "${depends[@]}"
 }
 
-function sources_emulationstation() {
-    local repo="$1"
-    local branch="$2"
-    [[ -z "$repo" ]] && repo="https://github.com/RetroPie/EmulationStation"
+function _get_branch_emulationstation() {
     if [[ -z "$branch" ]]; then
         if compareVersions "$__os_debian_ver" gt 8; then
             branch="stable"
@@ -153,7 +151,11 @@ function sources_emulationstation() {
             branch="v2.7.6"
         fi
     fi
-    gitPullOrClone "$md_build" "$repo" "$branch"
+    echo "$branch"
+}
+
+function sources_emulationstation() {
+    gitPullOrClone
 }
 
 function build_emulationstation() {

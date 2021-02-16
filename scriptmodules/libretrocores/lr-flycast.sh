@@ -13,6 +13,7 @@ rp_module_id="lr-flycast"
 rp_module_desc="Dreamcast emulator - Reicast port for libretro"
 rp_module_help="Previously named lr-reicast then lr-beetle-dc\n\nDreamcast ROM Extensions: .cdi .gdi .chd, Naomi/Atomiswave ROM Extension: .zip\n\nCopy your Dreamcast/Naomi roms to $romdir/dreamcast\n\nCopy the required Dreamcast BIOS files dc_boot.bin and dc_flash.bin to $biosdir/dc\n\nCopy the required Naomi/Atomiswave BIOS files naomi.zip and awbios.zip to $biosdir/dc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/flycast/master/LICENSE"
+rp_module_repo="git https://github.com/libretro/flycast.git master"
 rp_module_section="opt"
 rp_module_flags="!armv6"
 
@@ -29,7 +30,7 @@ function _update_hook_lr-flycast() {
 }
 
 function sources_lr-flycast() {
-    gitPullOrClone "$md_build" https://github.com/libretro/flycast.git
+    gitPullOrClone
     # don't override our C/CXXFLAGS and set LDFLAGS to CFLAGS to avoid warnings on linking
     applyPatch "$md_data/01_flags_fix.diff"
 }

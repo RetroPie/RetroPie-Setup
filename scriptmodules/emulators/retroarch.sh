@@ -12,6 +12,7 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
+rp_module_repo="git https://github.com/libretro/RetroArch.git v1.8.8"
 rp_module_section="core"
 
 function depends_retroarch() {
@@ -39,7 +40,7 @@ function depends_retroarch() {
 }
 
 function sources_retroarch() {
-    gitPullOrClone "$md_build" https://github.com/libretro/RetroArch.git v1.8.8
+    gitPullOrClone
     applyPatch "$md_data/01_hotkey_hack.diff"
     applyPatch "$md_data/02_disable_search.diff"
     applyPatch "$md_data/03_shader_path_config_enable.diff"

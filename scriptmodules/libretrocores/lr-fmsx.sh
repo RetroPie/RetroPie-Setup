@@ -13,10 +13,11 @@ rp_module_id="lr-fmsx"
 rp_module_desc="MSX/MSX2 emu - fMSX port for libretro"
 rp_module_help="ROM Extensions: .rom .mx1 .mx2 .col .dsk .zip\n\nCopy the fmsx BIOS files to '$biosdir'\n\nCopy your MSX/MSX2 games to $romdir/msx"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/fmsx-libretro/master/LICENSE"
+rp_module_repo="git https://github.com/libretro/fmsx-libretro.git master"
 rp_module_section="opt"
 
 function sources_lr-fmsx() {
-    gitPullOrClone "$md_build" https://github.com/libretro/fmsx-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-fmsx() {

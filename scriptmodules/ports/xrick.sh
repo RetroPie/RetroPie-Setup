@@ -13,6 +13,7 @@ rp_module_id="xrick"
 rp_module_desc="xrick - Open source implementation of Rick Dangerous"
 rp_module_help="Install the xrick data.zip to $romdir/ports/xrick/data.zip"
 rp_module_licence="GPL https://raw.githubusercontent.com/RetroPie/xrick/master/README"
+rp_module_repo="git https://github.com/RetroPie/xrick.git master"
 rp_module_section="opt"
 rp_module_flags="!mali"
 
@@ -21,7 +22,7 @@ function depends_xrick() {
 }
 
 function sources_xrick() {
-    gitPullOrClone "$md_build" https://github.com/RetroPie/xrick.git
+    gitPullOrClone
 }
 
 function build_xrick() {

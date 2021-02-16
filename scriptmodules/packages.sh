@@ -64,6 +64,32 @@ function rp_printUsageinfo() {
     rp_listFunctions
 }
 
+function rp_moduleVars() {
+    local id="$1"
+
+    # create variables that can be used in modules
+    local code
+    read -d "" -r code <<_EOF_
+        local md_desc="${__mod_info[$id/desc]}"
+        local md_help="${__mod_info[$id/help]}"
+        local md_type="${__mod_info[$id/type]}"
+        local md_flags="${__mod_info[$id/flags]}"
+        local md_path="${__mod_info[$id/path]}"
+
+        local md_repo_type="${__mod_info[$id/repo_type]}"
+        local md_repo_url="${__mod_info[$id/repo_url]}"
+        local md_repo_branch="${__mod_info[$id/repo_branch]}"
+        local md_repo_commit="${__mod_info[$id/repo_commit]}"
+
+        local md_build="$__builddir/$id"
+        local md_inst="$(rp_getInstallPath $id)"
+        # get module path folder + md_id for $md_data
+        local md_data="${__mod_info[$id/path]%/*}/$id"
+_EOF_
+
+    echo "$code"
+}
+
 function rp_callModule() {
     local md_id="$1"
     local mode="$2"
@@ -101,26 +127,56 @@ function rp_callModule() {
                 return 1
             fi
 
-            eval $(rp_getPackageInfo "$md_id")
-            rp_hasBinary "$md_id"
-            local ret="$?"
+            rp_loadPackageInfo "$md_id" "pkg_origin"
+            local pkg_origin="${__mod_info[$md_id/pkg_origin]}"
 
-            # check if we get a couldn't resolve host or failed to connect to host from curl
-            if [[ "$ret" -eq 6 || "$ret" -eq 7 ]]; then
-                __ERRMSGS+=("Unable to connect to the internet - curl returned $ret")
+            local has_binary=0
+            local has_net=0
+
+            local ip="$(getIPAddress)"
+            [[ -n "$ip" ]] && has_net=1
+
+            # for modules with nonet flag that don't need to download data, we force has_net to 1
+            hasFlag "${__mod_info[$id/flags]}" "nonet" && has_net=1
+
+            if [[ "$has_net" -eq 1 ]]; then
+                rp_hasBinary "$md_id"
+                local ret="$?"
+                [[ "$ret" -eq 0 ]] && has_binary=1
+                [[ "$ret" -eq 2 ]] && has_net=0
+            fi
+
+            # fail if we don't seem to be connected
+            if [[ "$has_net" -eq 0 ]]; then
+                __ERRMSGS+=("Can't install/update $md_id - unable to connect to the internet")
                 return 1
             fi
 
-            if [[ "$pkg_origin" != "source" ]] && [[ "$ret" -eq 0 ]]; then
-                # if we are in _update_ mode we only update if there is a newer binary
-                if [[ "$mode" == "_update_" ]]; then
-                    rp_hasNewerBinary "$md_id"
-                    local ret="$?"
-                    [[ "$ret" -eq 1 ]] && return 0
-                fi
-                rp_callModule "$md_id" _binary_ || return 1
+            local do_update=0
+
+            # if we are in _update_ mode we only update if there is a newer version of the binary or source
+            if [[ "$mode" == "_update_" ]]; then
+                printMsgs "heading" "Checking for updates for $md_id"
+                rp_hasNewerModule "$md_id" "$pkg_origin"
+                [[ "$?" -eq 0 || "$?" == 2 ]] && do_update=1
+                # if rp_hasNewerModule returns 3, then there was an error and we should abort
+                [[ "$?" -eq 3 ]] && return 1
             else
-                rp_callModule "$md_id" || return 1
+                do_update=1
+            fi
+
+            if [[ "$do_update" -eq 1 ]]; then
+                printMsgs "console" "Update is available - updating ..."
+            else
+                printMsgs "console" "No update was found."
+            fi
+
+            if [[ "$do_update" -eq 1 ]]; then
+                if [[ "$pkg_origin" != "source" && "$has_binary" -eq 1 ]]; then
+                    rp_callModule "$md_id" _binary_ || return 1
+                else
+                    rp_callModule "$md_id" _source_ || return 1
+                fi
             fi
             return 0
             ;;
@@ -139,16 +195,9 @@ function rp_callModule() {
             ;;
     esac
 
-    # create variables that can be used in modules
-    local md_desc="${__mod_info[$md_id/desc]}"
-    local md_help="${__mod_info[$md_id/help]}"
-    local md_type="${__mod_info[$md_id/type]}"
-    local md_flags="${__mod_info[$md_id/flags]}"
-    local md_path="${__mod_info[$md_id/path]}"
-    local md_build="$__builddir/$md_id"
-    local md_inst="$(rp_getInstallPath $md_id)"
-    # get module path folder + md_id for $md_data
-    local md_data="${md_path%/*}/$md_id"
+    # load our md_* variables
+    eval "$(rp_moduleVars $md_id)"
+
     local md_mode="install"
 
     # set md_conf_root to $configdir and to $configdir/ports for ports
@@ -265,6 +314,7 @@ function rp_callModule() {
                 "configure_${md_id}"
             fi
             rm -rf "$md_inst"
+            rp_clearCachedInfo "$md_id"
             printMsgs "console" "Removed directory $md_inst"
             ;;
         install)
@@ -321,8 +371,7 @@ function rp_callModule() {
     # remove build folder if empty
     [[ -d "$md_build" ]] && find "$md_build" -maxdepth 0 -empty -exec rmdir {} \;
 
-    [[ "$pushed" -eq 0 ]] && popd
-
+    local ret=0
     # some errors were returned.
     if [[ "${#md_ret_errors[@]}" -gt 0 ]]; then
         __ERRMSGS+=("${md_ret_errors[@]}")
@@ -333,7 +382,7 @@ function rp_callModule() {
         fi
         # remove install folder if there is an error (and it is empty)
         [[ -d "$md_inst" ]] && find "$md_inst" -maxdepth 0 -empty -exec rmdir {} \;
-        return 1
+        ret=1
     else
         [[ "$mode" == "install_bin" ]] && rp_setPackageInfo "$md_id" "binary"
         [[ "$mode" == "install" ]] && rp_setPackageInfo "$md_id" "source"
@@ -348,7 +397,9 @@ function rp_callModule() {
         __INFMSGS+=("${md_ret_info[@]}")
     fi
 
-    return 0
+    [[ "$pushed" -eq 0 ]] && popd
+
+    return "$ret"
 }
 
 function rp_hasBinaries() {
@@ -369,6 +420,21 @@ function rp_getBinaryUrl() {
     echo "$url"
 }
 
+# returns 0 if file exists, 1 if it doesn't and 2 on other error
+function rp_remoteFileExists() {
+    local url="$1"
+    local ret
+    curl --max-time 5 -o /dev/null -sfI "$url"
+    ret="$?"
+    if [[ "$ret" -eq 0 ]]; then
+        return 0
+    elif [[ "$ret" -eq 22 ]]; then
+        return 1
+    else
+        return 2
+    fi
+}
+
 function rp_hasBinary() {
     local id="$1"
 
@@ -386,9 +452,28 @@ function rp_hasBinary() {
     [[ "$url" == "notest" ]] && return 0
     [[ -z "$url" ]] && return 1
 
+    [[ -n "${__mod_info[$id/has_binary]}" ]] && return "${__mod_info[$id/has_binary]}"
+    local ret=1
     if rp_hasBinaries; then
-        curl -o /dev/null -sfI "$url"
-        return $?
+        rp_remoteFileExists "$url"
+        ret="$?"
+    fi
+    # if there wasn't an error, cache the result
+    [[ "$ret" -ne 2 ]] && __mod_info[$id/has_binary]="$ret"
+    return "$ret"
+}
+
+function rp_getFileDate() {
+    local url="$1"
+    [[ -z "$url" ]] && return 1
+
+    # get last-modified date stripping any CR in the output
+    local file_date=$(curl -sfI --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
+    # if there is a date set in last-modified header, then convert to iso-8601 format
+    if [[ -n "$file_date" ]]; then
+        file_date="$(date -Iseconds --date="$file_date")"
+        echo "$file_date"
+        return 0
     fi
     return 1
 }
@@ -397,32 +482,168 @@ function rp_getBinaryDate() {
     local id="$1"
     local url="$(rp_getBinaryUrl $id)"
     [[ -z "$url" || "$url" == "notest" ]] && return 1
-
-    # get last-modified date stripping any CR in the output
-    local bin_date=$(curl -sfI --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
-    # if there is a date set in last-modified header, then convert to iso-8601 format
-    if [[ -n "$bin_date" ]]; then
-        bin_date="$(date -Iseconds --date="$bin_date")"
+    local bin_date
+    if bin_date="$(rp_getFileDate "$url")"; then
         echo "$bin_date"
         return 0
     fi
     return 1
 }
 
-function rp_hasNewerBinary() {
-    local id="$1"
-    eval $(rp_getPackageInfo "$id")
-    [[ -z "$pkg_date" ]] && return 2
-    local bin_date="$(rp_getBinaryDate $id)"
-    [[ -z "$bin_date" ]] && return 2
-
-    local pkg_date_unix="$(date -d "$pkg_date" +%s)"
-    local bin_date_unix="$(date -d "$bin_date" +%s)"
-    if [[ "$bin_date_unix" -gt "$pkg_date_unix" ]]; then
+function rp_dateIsNewer() {
+    local date_a="$1"
+    local date_b="$2"
+    [[ -z "$date_a" || -z "$date_b" ]] && return 0
+    if date_a="$(date -d "$date_a" +%s 2>/dev/null)" && date_b="$(date -d "$date_b" +%s 2>/dev/null)"; then
+        [[ "$date_b" -gt "$date_a" ]] && return 0
+    else
         return 0
     fi
-
     return 1
+}
+
+# resolve repository parameters - any parameters with a : will get the data from the following function name
+function rp_resolveRepoParam() {
+    local param="$1"
+    if [[ "$param" == :* ]]; then
+        param="${param:1}"
+        if fnExists "$param"; then
+            echo "$($param)"
+            return
+        fi
+    fi
+    echo "$param"
+}
+
+# gets remote repository hash/revision - echos hash of remote repo and returns 0, or
+# echos an error and returns 1 on failure
+function rp_getRemoteRepoHash() {
+    local type="$1"
+    local url="$2"
+    local branch="$3"
+    local commit="$4"
+    local hash
+    local ret
+    local cmd=()
+    set -o pipefail
+    case "$type" in
+        git)
+            cmd=(git ls-remote "$url" "$branch")
+            # grep to make sure we only return refs/heads/BRANCH and refs/tags/BRANCH in case there are
+            # additional references to the branch/tag eg refs/heads/SOMETHINGELSE/master which can be the case
+            hash=$("${cmd[@]}" 2>/dev/null | grep -P "\trefs/(heads|tags)/$branch" | cut -f1)
+            ;;
+        svn)
+            cmd=(svn info -r"$commit" "$url")
+            hash=$("${cmd[@]}" 2>/dev/null | grep -oP "Revision: \K.*")
+            ;;
+    esac
+    ret="$?"
+    set +o pipefail
+    if [[ "$ret" -ne 0 ]]; then
+        echo "${cmd[*]} failed with return code $ret - please check your network connection"
+        return 1
+    fi
+    echo "$hash"
+    return 0
+}
+
+# returns 0 if a module has a newer version, 1 if it doesn't, 2 if unknown (always update), or 3 if there is an error
+function rp_hasNewerModule() {
+    local id="$1"
+    local type="$2"
+
+    [[ -n "${__mod_info[$id/has_newer]}" ]] && return "${__mod_info[$id/has_newer]}"
+
+    rp_loadPackageInfo "$id"
+    local pkg_origin="${__mod_info[$id/pkg_origin]}"
+    local pkg_date="${__mod_info[$id/pkg_date]}"
+    local pkg_repo_date="${__mod_info[$id/pkg_repo_date]}"
+    local pkg_repo_commit="${__mod_info[$id/pkg_repo_commit]}"
+
+    local ret=1
+    case "$type" in
+        binary)
+            ret=""
+            if [[ -n "$pkg_date" ]]; then
+                local bin_date="$(rp_getBinaryDate $id)"
+                if [[ -n "$bin_date" ]]; then
+                    rp_dateIsNewer "$pkg_date" "$bin_date"
+                    ret="$?"
+                fi
+            fi
+            [[ -z "$ret" ]] && ret=2
+            ;;
+        source)
+            local repo_type="${__mod_info[$id/repo_type]}"
+            local repo_url="$(rp_resolveRepoParam "${__mod_info[$id/repo_url]}")"
+            case "$repo_type" in
+                file)
+                    if [[ -n "$pkg_repo_date" ]]; then
+                        local file_date="$(rp_getFileDate "$repo_url")"
+                        rp_dateIsNewer "$pkg_repo_date" "$file_date"
+                        ret="$?"
+                    fi
+                    ;;
+                git|svn)
+                    local repo_branch="$(rp_resolveRepoParam "${__mod_info[$id/repo_branch]}")"
+                    local repo_commit="$(rp_resolveRepoParam "${__mod_info[$id/repo_commit]}")"
+                    # if we are locked to a single commit, then we compare against the current module commit only
+                    if [[ -n "$repo_commit" ]]; then
+                        # if we are using git and the module has an 8 character commit hash, then adjust
+                        # the package commit to 8 characters also for the comparison
+                        if [[ "$repo_type" == "git" && "${#repo_commit}" -eq 8 ]]; then
+                            pkg_repo_commit="${pkg_repo_commit::8}"
+                        fi
+                        if [[ "$pkg_repo_commit" != "$repo_commit" ]]; then
+                            ret=0
+                        fi
+                    else
+                        local remote_commit
+                        if remote_commit="$(rp_getRemoteRepoHash "$repo_type" "$repo_url" "$repo_branch" "$repo_commit")"; then
+                            if [[ -n "$remote_commit" && "$pkg_repo_commit" != "$remote_commit" ]]; then
+                                ret=0
+                            fi
+                        else
+                            __ERRMSGS+=("$remote_commit")
+                            ret=3
+                        fi
+                    fi
+                    ;;
+                :*)
+                    local pkg_repo_extra="${__mod_info[$id/pkg_repo_extra]}"
+                    # handle checking via module function - function should return 0 if there is a newer version
+                    local function="${repo_type:1}"
+                    if fnExists "$function"; then
+                        "$function" newer
+                        ret="$?"
+                    fi
+                    ;;
+                *)
+                    # fallback on forcing an update
+                    ret=2
+                    ;;
+            esac
+
+            # if we are currently not going to update - check the date of the module code
+            # if it's newer than the install date of the module we force an update
+            if [[ "$ret" -eq 1 && "$__ignore_module_date" -ne 1 ]]; then
+                local module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
+                if rp_dateIsNewer "$pkg_date" "$module_date"; then
+                    ret=0
+                fi
+            fi
+            ;;
+        *)
+            # for unknown or in the case of a blank pkg_origin assume there is an update
+            ret=2
+            ;;
+    esac
+
+    # cache our return value
+    __mod_info[$id/has_newer]="$ret"
+
+    return "$ret"
 }
 
 function rp_getInstallPath() {
@@ -496,8 +717,21 @@ function rp_installModule() {
     return 0
 }
 
-# this is a basic / temporary fix to record the source of a package when updating (binary vs source)
-# packaging will be overhauled at a later date
+function rp_clearCachedInfo() {
+    local id="$1"
+    # clear cached data
+    # set pkg_info to 0 to force a reload when needed
+    __mod_info[$id/pkg_info]=0
+    __mod_info[$id/has_binary]=""
+    __mod_info[$id/has_newer]=""
+}
+
+# this is run after the install_ID function for a module - which by default would be from the
+# folder set by md_build. However some modules install directly to md_inst which would mean unless
+# they change directory also to md_inst in the install stage (which is common), it's possible this
+# function could be run and not find the source. Therefore, we currently record the first directory used
+# by gitPullOrClone and record it in __mod_info to be used here - but this needs further work to handle
+# other cases.
 function rp_setPackageInfo() {
     local id="$1"
     local install_path="$(rp_getInstallPath $id)"
@@ -505,32 +739,112 @@ function rp_setPackageInfo() {
     local pkg="$install_path/retropie.pkg"
     local origin="$2"
 
+    rp_clearCachedInfo "$id"
+
     iniConfig "=" '"' "$pkg"
     iniSet "pkg_origin" "$origin"
     local pkg_date
+    local pkg_repo_type
+    local pkg_repo_url
+    local pkg_repo_branch
+    local pkg_repo_commit
+    local pkg_repo_date
+    local pkg_repo_extra
+
     if [[ "$origin" == "binary" ]]; then
         pkg_date="$(rp_getBinaryDate $id)"
+        iniSet "pkg_date" "$pkg_date"
     else
         pkg_date="$(date -Iseconds)"
+        pkg_repo_type="${__mod_info[$id/repo_type]}"
+        pkg_repo_url="$(rp_resolveRepoParam "${__mod_info[$id/repo_url]}")"
+        pkg_repo_branch="$(rp_resolveRepoParam "${__mod_info[$id/repo_branch]}")"
+        case "$pkg_repo_type" in
+            git|svn)
+                if [[ "$pkg_repo_type" == "git" ]]; then
+                    # if we have recorded a source install dir during gitPullOrClone use it, or default to md_build
+                    local repo_dir="${__mod_info[$id/repo_dir]}"
+                    [[ -z "$repo_dir" ]] && repo_dir="$md_build"
+                    # date cannot understand the default date format of git
+                    pkg_repo_date="$(git -C "$repo_dir" log -1 --format=%aI)"
+                    pkg_repo_commit="$(git -C "$repo_dir" log -1 --format=%H)"
+                else
+                    pkg_repo_date="$(svn info . | grep -oP "Last Changed Date: \K.*")"
+                    pkg_repo_date="$(date -Iseconds -d "$pkg_repo_date")"
+                    pkg_repo_commit="$(svn info . | grep -oP "Revision: \K.*")"
+                fi
+                ;;
+            file)
+                pkg_repo_date="$(rp_getFileDate "$pkg_repo_url")"
+                ;;
+            :*)
+                # set data based on function hook - function should return code to define any pkg_* vars
+                # eg. local pkg_repo_date="something"
+                local function="${pkg_repo_type:1}"
+                fnExists "$function" && eval $("$function" get)
+                ;;
+        esac
+
+        iniSet "pkg_date" "$pkg_date"
+        iniSet "pkg_repo_type" "$pkg_repo_type"
+        iniSet "pkg_repo_url" "$pkg_repo_url"
+        iniSet "pkg_repo_branch" "$pkg_repo_branch"
+        iniSet "pkg_repo_commit" "$pkg_repo_commit"
+        iniSet "pkg_repo_date" "$pkg_repo_date"
+        iniSet "pkg_repo_extra" "$pkg_repo_extra"
     fi
-    iniSet "pkg_date" "$pkg_date"
 }
 
-function rp_getPackageInfo() {
-    local pkg="$(rp_getInstallPath $1)/retropie.pkg"
+# loads installed package information into __mod_info/pkg_* fields
+# additional parameters are optional keys to load, but the data won't be cached if this is provided
+function rp_loadPackageInfo() {
+    local id="$1"
 
-    local pkg_origin="unknown"
+    # if we have cached the package information already, return
+    [[ "${__mod_info[$id/pkg_info]}" -eq 1 ]] && return
 
-    local pkg_date
-    if [[ -f "$pkg" ]]; then
-        iniConfig "=" '"' "$pkg"
-        iniGet "pkg_origin"
-        [[ -n "$ini_value" ]] && pkg_origin="$ini_value"
-        iniGet "pkg_date"
-        [[ -n "$ini_value" ]] && pkg_date="$ini_value"
+    local keys
+    local cache=1
+    if [[ -z "$2" ]]; then
+        keys=(
+            pkg_origin
+            pkg_date
+            pkg_repo_type
+            pkg_repo_url
+            pkg_repo_branch
+            pkg_repo_commit
+            pkg_repo_date
+            pkg_repo_extra
+        )
+    else
+        # get user supplied keys but don't cache
+        shift
+        keys=("$@")
+        cache=0
     fi
-    echo "local pkg_origin=\"$pkg_origin\""
-    echo "local pkg_date=\"$pkg_date\""
+
+    local load=0
+    local pkg_file="$(rp_getInstallPath $id)/retropie.pkg"
+
+    # if the pkg file is available, we will load the data in the next loop
+    [[ -f "$pkg_file" ]] && load=1
+
+    local key
+    local data
+    for key in "${keys[@]}"; do
+        # clear any previous data we have stored, but default "pkg_origin" to "unknown"
+        data=""
+        [[ "$key" == "pkg_origin" ]] && data="unknown"
+        __mod_info[$id/$key]="$data"
+
+        # if the package file is available and the field is set, override the default values
+        if [[ "$load" -eq 1 ]]; then
+            data="$(grep -oP "$key=\"\K[^\"]+" "$pkg_file")"
+            [[ -n "$data" ]] && __mod_info[$id/$key]="$data"
+        fi
+    done
+    # if loading all data set pkg_info to 1 so we avoid loading when not needed
+    [[ "$cache" -eq 1 ]] && __mod_info[$id/pkg_info]=1
 }
 
 function rp_registerModule() {
@@ -545,6 +859,7 @@ function rp_registerModule() {
     local rp_module_licence=""
     local rp_module_section=""
     local rp_module_flags=""
+    local rp_module_repo=""
 
     local error=0
 
@@ -620,6 +935,15 @@ function rp_registerModule() {
     __mod_info["$rp_module_id/licence"]="$rp_module_licence"
     __mod_info["$rp_module_id/section"]="$rp_module_section"
     __mod_info["$rp_module_id/flags"]="$rp_module_flags"
+
+    # split module repo into type, url, branch and commit
+    if [[ -n "$rp_module_repo" ]]; then
+        local repo=($rp_module_repo)
+        __mod_info["$rp_module_id/repo_type"]="${repo[0]}"
+        __mod_info["$rp_module_id/repo_url"]="${repo[1]}"
+        __mod_info["$rp_module_id/repo_branch"]="${repo[2]}"
+        __mod_info["$rp_module_id/repo_commit"]="${repo[3]}"
+    fi
 }
 
 function rp_registerModuleDir() {

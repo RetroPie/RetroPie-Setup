@@ -13,6 +13,7 @@ rp_module_id="lr-parallel-n64"
 rp_module_desc="N64 emu - Highly modified Mupen64Plus port for libretro"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/parallel-n64/master/mupen64plus-core/LICENSES"
+rp_module_repo="git https://github.com/libretro/parallel-n64.git master"
 rp_module_section="exp x86=main"
 
 function depends_lr-parallel-n64() {
@@ -24,7 +25,7 @@ function depends_lr-parallel-n64() {
 }
 
 function sources_lr-parallel-n64() {
-    gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git
+    gitPullOrClone
     # avoid conflicting typedefs for GLfloat on rpi4/kms
     isPlatform "kms" && isPlatform "gles" && sed -i "/^typedef GLfloat GLdouble/d" "$md_build/libretro-common/include/glsm/glsm.h"
 }

@@ -13,6 +13,7 @@ rp_module_id="linapple"
 rp_module_desc="Apple 2 emulator LinApple"
 rp_module_help="ROM Extensions: .dsk\n\nCopy your Apple 2 games to $romdir/apple2"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dabonetn/linapple-pie/master/LICENSE"
+rp_module_repo="git https://github.com/dabonetn/linapple-pie.git master"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
@@ -21,7 +22,7 @@ function depends_linapple() {
 }
 
 function sources_linapple() {
-    gitPullOrClone "$md_build" https://github.com/dabonetn/linapple-pie.git
+    gitPullOrClone
 }
 
 function build_linapple() {

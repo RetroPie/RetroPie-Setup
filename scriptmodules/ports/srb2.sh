@@ -12,6 +12,7 @@
 rp_module_id="srb2"
 rp_module_desc="Sonic Robo Blast 2 - 3D Sonic the Hedgehog fan-game built using a modified version of the Doom Legacy source port of Doom"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/STJr/SRB2/master/LICENSE"
+rp_module_repo="git https://github.com/STJr/SRB2.git SRB2_release_2.2.2"
 rp_module_section="exp"
 
 function depends_srb2() {
@@ -21,7 +22,7 @@ function depends_srb2() {
 }
 
 function sources_srb2() {
-    gitPullOrClone "$md_build" https://github.com/STJr/SRB2.git "SRB2_release_2.2.2"
+    gitPullOrClone
     downloadAndExtract "$__archive_url/srb2-assets.tar.gz" "$md_build"
 }
 

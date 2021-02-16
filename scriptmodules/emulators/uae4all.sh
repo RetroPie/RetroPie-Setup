@@ -13,6 +13,7 @@ rp_module_id="uae4all"
 rp_module_desc="Amiga emulator UAE4All"
 rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/uae4all2/retropie/copying"
+rp_module_repo="git https://github.com/RetroPie/uae4all2.git retropie"
 rp_module_section="opt"
 rp_module_flags="dispmanx !all videocore"
 
@@ -21,7 +22,7 @@ function depends_uae4all() {
 }
 
 function sources_uae4all() {
-    gitPullOrClone "$md_build" https://github.com/RetroPie/uae4all2.git retropie
+    gitPullOrClone
     mkdir guichan
     downloadAndExtract "$__archive_url/guichan-0.8.2.tar.gz" "$md_build/guichan" --strip-components 1
     cd guichan

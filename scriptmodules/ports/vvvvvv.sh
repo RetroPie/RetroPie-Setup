@@ -12,6 +12,7 @@
 rp_module_id="vvvvvv"
 rp_module_desc="VVVVVV - 2D puzzle game by Terry Cavanagh"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/TerryCavanagh/VVVVVV/master/LICENSE.md"
+rp_module_repo="git https://github.com/TerryCavanagh/VVVVVV master"
 rp_module_help="Copy data.zip from a purchased or Make and Play edition of VVVVVV to $romdir/ports/vvvvvv"
 rp_module_section="exp"
 
@@ -20,7 +21,7 @@ function depends_vvvvvv() {
 }
 
 function sources_vvvvvv() {
-    gitPullOrClone "$md_build" https://github.com/TerryCavanagh/VVVVVV
+    gitPullOrClone
     # default to fullscreen
     sed -i "s/fullscreen = false/fullscreen = true/" "$md_build/desktop_version/src/Game.cpp"
 }

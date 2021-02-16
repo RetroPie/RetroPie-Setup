@@ -12,6 +12,7 @@
 rp_module_id="cgenius"
 rp_module_desc="Commander Genius - Modern Interpreter for the Commander Keen Games (Vorticon and Galaxy Games)"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/gerstrong/Commander-Genius/master/COPYRIGHT"
+rp_module_repo="git https://gitlab.com/Dringgstein/Commander-Genius.git v2.4.4.1"
 rp_module_section="exp"
 
 function depends_cgenius() {
@@ -19,7 +20,7 @@ function depends_cgenius() {
 }
 
 function sources_cgenius() {
-    gitPullOrClone "$md_build" https://gitlab.com/Dringgstein/Commander-Genius.git v2.4.4.1
+    gitPullOrClone
 
     # use -O2 on older GCC due to segmentation fault when compiling with -O3
     if compareVersions $__gcc_version lt 6; then

@@ -13,10 +13,11 @@ rp_module_id="lr-freechaf"
 rp_module_desc="ChannelF emulator for libretro"
 rp_module_help="ROM Extensions: .bin .rom\n\nCopy your ChannelF roms to $romdir/channelf\n\nCopy the required BIOS files sl31245.bin and sl31253.bin or sl90025.bin to $biosdir"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/FreeChaF/master/LICENSE"
+rp_module_repo="git https://github.com/libretro/FreeChaF.git master"
 rp_module_section="exp"
 
 function sources_lr-freechaf() {
-    gitPullOrClone "$md_build" https://github.com/libretro/FreeChaF.git
+    gitPullOrClone
 }
 
 function build_lr-freechaf() {

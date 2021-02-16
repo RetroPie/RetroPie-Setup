@@ -13,6 +13,7 @@ rp_module_id="lr-superflappybirds"
 rp_module_desc="Super Flappy Birds - Multiplayer Flappy Bird Clone"
 rp_module_help="https://github.com/IgniparousTempest/libretro-superflappybirds/wiki"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/IgniparousTempest/libretro-superflappybirds/master/LICENSE"
+rp_module_repo="git https://github.com/IgniparousTempest/libretro-superflappybirds.git master"
 rp_module_section="exp"
 
 function depends_lr-superflappybirds() {
@@ -20,7 +21,7 @@ function depends_lr-superflappybirds() {
 }
 
 function sources_lr-superflappybirds() {
-    gitPullOrClone "$md_build" https://github.com/IgniparousTempest/libretro-superflappybirds.git
+    gitPullOrClone
 }
 
 function build_lr-superflappybirds() {

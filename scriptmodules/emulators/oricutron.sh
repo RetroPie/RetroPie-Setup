@@ -13,6 +13,7 @@ rp_module_id="oricutron"
 rp_module_desc="Oricutron Oric 1/Oric Atmos emulator"
 rp_module_help="ROM Extensions: .dsk .tap\n\nCopy your Oric games to $romdir/oric"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/pete-gordon/oricutron/4c359acfb6bd36d44e6d37891d7b6453324faf7d/main.h"
+rp_module_repo="git https://github.com/HerbFargus/oricutron.git extras"
 rp_module_section="exp"
 
 function depends_oricutron() {
@@ -22,7 +23,7 @@ function depends_oricutron() {
 }
 
 function sources_oricutron() {
-    gitPullOrClone "$md_build" https://github.com/HerbFargus/oricutron.git extras
+    gitPullOrClone
 }
 
 function build_oricutron() {
