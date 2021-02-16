@@ -551,7 +551,14 @@ function update_packages_gui_setup() {
     rps_logInit
     {
         rps_logStart
-        [[ "$update_os" -eq 1 ]] && rp_callModule raspbiantools apt_upgrade
+        if [[ "$update_os" -eq 1 ]]; then
+            if rp_isEnabled "raspbiantools"; then
+                rp_callModule raspbiantools apt_upgrade
+            else
+                aptUpdate
+                apt-get -y dist-upgrade
+            fi
+        fi
         update_packages_setup
         rps_logEnd
     } &> >(_setup_gzip_log "$logfilename")
