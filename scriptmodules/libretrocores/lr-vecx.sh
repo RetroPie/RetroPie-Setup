@@ -13,6 +13,7 @@ rp_module_id="lr-vecx"
 rp_module_desc="Vectrex emulator - vecx port for libretro"
 rp_module_help="ROM Extensions: .vec .gam .bin .zip\n\nCopy your Vectrex roms to $romdir/vectrex"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/libretro-vecx/master/LICENSE.md"
+rp_module_repo="git https://github.com/libretro/libretro-vecx.git master"
 rp_module_section="main"
 
 function depends_lr-vecx() {
@@ -23,7 +24,7 @@ function depends_lr-vecx() {
 }
 
 function sources_lr-vecx() {
-    gitPullOrClone "$md_build" https://github.com/libretro/libretro-vecx.git
+    gitPullOrClone
 }
 
 function build_lr-vecx() {

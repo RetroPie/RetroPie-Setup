@@ -13,11 +13,12 @@ rp_module_id="lr-theodore"
 rp_module_desc="Thomson MO/TO system emulator"
 rp_module_help="ROM Extensions: *.fd, *.sap, *.k7, *.m5, *.m7, *.rom\n\nAdd your game files in $romdir/moto"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/theodore/master/LICENSE"
+rp_module_repo="git https://github.com/Zlika/theodore master"
 rp_module_section="exp"
 rp_module_flags=""
 
 function sources_lr-theodore() {
-    gitPullOrClone "$md_build" https://github.com/Zlika/theodore
+    gitPullOrClone
 }
 
 function build_lr-theodore() {

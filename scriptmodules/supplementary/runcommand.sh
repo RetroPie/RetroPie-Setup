@@ -12,6 +12,7 @@
 rp_module_id="runcommand"
 rp_module_desc="The 'runcommand' launch script - needed for launching the emulators from the frontend"
 rp_module_section="core"
+rp_module_flags="nonet"
 
 function _update_hook_runcommand() {
     # make sure runcommand is always updated when updating retropie-setup

@@ -13,10 +13,11 @@ rp_module_id="lr-smsplus-gx"
 rp_module_desc="Sega Master System & Game Gear emu - SMSPlus (enhanced) port for libretro"
 rp_module_help="ROM Extensions: .gg .sms .bin .zip\nCopy your Game Gear roms to $romdir/gamegear\nMasterSystem roms to $romdir/mastersystem"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/smsplus-gx/master/docs/license"
+rp_module_repo="git https://github.com/libretro/smsplus-gx.git master"
 rp_module_section="exp"
 
 function sources_lr-smsplus-gx() {
-    gitPullOrClone "$md_build" https://github.com/libretro/smsplus-gx.git
+    gitPullOrClone
 }
 
 function build_lr-smsplus-gx() {

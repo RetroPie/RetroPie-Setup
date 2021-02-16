@@ -13,6 +13,7 @@ rp_module_id="mupen64plus"
 rp_module_desc="N64 emulator MUPEN64Plus"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/mupen64plus/mupen64plus-core/master/LICENSES"
+rp_module_repo=":_pkg_info_mupen64plus"
 rp_module_section="main"
 rp_module_flags=""
 
@@ -28,52 +29,117 @@ function depends_mupen64plus() {
     getDepends "${depends[@]}"
 }
 
-function sources_mupen64plus() {
-    local commit
-
+function _get_repos_mupen64plus() {
     local repos=(
-        'mupen64plus core'
-        'mupen64plus ui-console'
-        'mupen64plus audio-sdl'
-        'mupen64plus input-sdl'
-        'mupen64plus rsp-hle'
+        'mupen64plus mupen64plus-core master'
+        'mupen64plus mupen64plus-ui-console master'
+        'mupen64plus mupen64plus-audio-sdl master'
+        'mupen64plus mupen64plus-input-sdl master'
+        'mupen64plus mupen64plus-rsp-hle master'
     )
     if isPlatform "videocore" && isPlatform "32bit"; then
-        repos+=('gizmo98 audio-omx')
+        repos+=('gizmo98 mupen64plus-audio-omx master')
     fi
     if isPlatform "gles"; then
-        ! isPlatform "rpi" && repos+=('mupen64plus video-glide64mk2')
+        ! isPlatform "rpi" && repos+=('mupen64plus mupen64plus-video-glide64mk2 master')
         if isPlatform "32bit"; then
-            repos+=('ricrpi video-gles2rice pandora-backport')
-            repos+=('ricrpi video-gles2n64')
+            repos+=('ricrpi mupen64plus-video-gles2rice pandora-backport')
+            repos+=('ricrpi mupen64plus-video-gles2n64 master')
         fi
     fi
     if isPlatform "gl"; then
         repos+=(
-            'mupen64plus video-glide64mk2'
-            'mupen64plus rsp-cxd4'
-            'mupen64plus rsp-z64'
+            'mupen64plus mupen64plus-video-glide64mk2 master'
+            'mupen64plus mupen64plus-rsp-cxd4 master'
+            'mupen64plus mupen64plus-rsp-z64 master'
         )
     fi
-    local repo
-    local dir
-    for repo in "${repos[@]}"; do
-        repo=($repo)
-        dir="$md_build/mupen64plus-${repo[1]}"
-        gitPullOrClone "$dir" https://github.com/${repo[0]}/mupen64plus-${repo[1]} ${repo[2]} ${repo[3]}
-    done
+
     local commit=""
     # GLideN64 now requires cmake 3.9 so use an older commit as a workaround for systems with older cmake
     if hasPackage cmake 3.9 lt; then
-        commit="8a9d52b4"
+        commit="8a9d52b41b33d853445f0779dd2b9f5ec4ecdda8"
     fi
-    gitPullOrClone "$md_build/GLideN64" https://github.com/gonetz/GLideN64.git master "$commit"
+    repos+=("gonetz GLideN64 master $commit")
 
-    if [[ -d "GLideN64" ]]; then
-        if isPlatform "videocore"; then
-            # workaround for shader cache crash issue on Raspbian stretch. See: https://github.com/gonetz/GLideN64/issues/1665
-            applyPatch "$md_data/0001-GLideN64-use-emplace.patch"
-        fi
+    local repo
+    for repo in "${repos[@]}"; do
+        echo "$repo"
+    done
+}
+
+function _pkg_info_mupen64plus() {
+    local mode="$1"
+    local repo
+    case "$mode" in
+        get)
+            local hashes=()
+            local hash
+            local date
+            local newest_date
+            while read repo; do
+                repo=($repo)
+                date=$(git -C "$md_build/${repo[1]}" log -1 --format=%aI)
+                hash="$(git -C "$md_build/${repo[1]}" log -1 --format=%H)"
+                hashes+=("$hash")
+                if rp_dateIsNewer "$newest_date" "$date"; then
+                    newest_date="$date"
+                fi
+            done < <(_get_repos_mupen64plus)
+            # store an md5sum of the various last commit hashes to be used to check for changes
+            local hash="$(echo "${hashes[@]}" | md5sum | cut -d" " -f1)"
+            echo "local pkg_repo_date=\"$newest_date\""
+            echo "local pkg_repo_extra=\"$hash\""
+            ;;
+        newer)
+            local hashes=()
+            local hash
+            while read repo; do
+                repo=($repo)
+                # if we have any repos set to a specific git hash (eg GLideN64 then we use that) otherwise check
+                if [[ -n "${repo[3]}" ]]; then
+                    hash="${repo[3]}"
+                else
+                    if ! hash="$(rp_getRemoteRepoHash git https://github.com/${repo[0]}/${repo[1]} ${repo[2]})"; then
+                        __ERRMSGS+=("$hash")
+                        return 3
+                    fi
+                fi
+                hashes+=("$hash")
+            done < <(_get_repos_mupen64plus)
+            # store an md5sum of the various last commit hashes to be used to check for changes
+            local hash="$(echo "${hashes[@]}" | md5sum | cut -d" " -f1)"
+            if [[ "$hash" != "$pkg_repo_extra" ]]; then
+                return 0
+            fi
+            return 1
+            ;;
+        check)
+            local ret=0
+            while read repo; do
+                repo=($repo)
+                out=$(rp_getRemoteRepoHash git https://github.com/${repo[0]}/${repo[1]} ${repo[2]})
+                if [[ -z "$out" ]]; then
+                    printMsgs "console" "$id repository failed - https://github.com/${repo[0]}/${repo[1]} ${repo[2]}"
+                    ret=1
+                fi
+            done < <(_get_repos_mupen64plus)
+            return "$ret"
+            ;;
+    esac
+}
+
+function sources_mupen64plus() {
+    local commit
+    local repo
+    while read repo; do
+        repo=($repo)
+        gitPullOrClone "$md_build/${repo[1]}" https://github.com/${repo[0]}/${repo[1]} ${repo[2]} ${repo[3]}
+    done < <(_get_repos_mupen64plus)
+
+    if isPlatform "videocore"; then
+        # workaround for shader cache crash issue on Raspbian stretch. See: https://github.com/gonetz/GLideN64/issues/1665
+        applyPatch "$md_data/0001-GLideN64-use-emplace.patch"
     fi
 
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)

@@ -13,11 +13,12 @@ rp_module_id="lr-mesen"
 rp_module_desc="High-accuracy NES and Famicom emulator"
 rp_module_help="ROM Extensions: .nes .fds .unf .unif .zip\n\nCopy your NES roms to $romdir/nes\nFamicom roms to $romdir/fds\nCopy the recommended BIOS file disksys.rom to $biosdir"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/sourmesen/mesen/master/LICENSE"
+rp_module_repo="git https://github.com/libretro/Mesen.git master"
 rp_module_section="exp"
 rp_module_flags="!armv6"
 
 function sources_lr-mesen() {
-    gitPullOrClone "$md_build" https://github.com/SourMesen/Mesen.git
+    gitPullOrClone
 }
 
 function build_lr-mesen() {

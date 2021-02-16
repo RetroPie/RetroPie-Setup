@@ -12,6 +12,7 @@
 rp_module_id="ionfury"
 rp_module_desc="Ion Fury - commercial FPS game based on eduke32 source port"
 rp_module_licence="GPL2 http://svn.eduke32.com/eduke32/package/common/gpl-2.0.txt"
+rp_module_repo="git https://voidpoint.io/terminx/eduke32.git master dfc16b08"
 rp_module_section="exp"
 
 function depends_ionfury() {

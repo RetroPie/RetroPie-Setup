@@ -12,6 +12,7 @@
 rp_module_id="quake3"
 rp_module_desc="Quake 3"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/raspberrypi/quake3/master/COPYING.txt"
+rp_module_repo="git https://github.com/raspberrypi/quake3.git master"
 rp_module_section="opt"
 rp_module_flags="!all videocore"
 
@@ -20,7 +21,7 @@ function depends_quake3() {
 }
 
 function sources_quake3() {
-    gitPullOrClone "$md_build" https://github.com/raspberrypi/quake3.git
+    gitPullOrClone
 }
 
 function build_quake3() {

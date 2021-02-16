@@ -12,10 +12,11 @@
 rp_module_id="lr-tyrquake"
 rp_module_desc="Quake 1 engine - Tyrquake port for libretro"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/tyrquake/master/gnu.txt"
+rp_module_repo="git https://github.com/libretro/tyrquake.git master"
 rp_module_section="opt"
 
 function sources_lr-tyrquake() {
-    gitPullOrClone "$md_build" https://github.com/libretro/tyrquake.git
+    gitPullOrClone
 }
 
 function build_lr-tyrquake() {

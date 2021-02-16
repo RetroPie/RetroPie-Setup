@@ -12,7 +12,8 @@
 rp_module_id="hatari"
 rp_module_desc="Atari emulator Hatari"
 rp_module_help="ROM Extensions: .st .stx .img .rom .raw .ipf .ctr .zip\n\nCopy your Atari ST games to $romdir/atarist\n\nCopy Atari ST BIOS (tos.img) to $biosdir"
-rp_module_licence="GPL2 https://hg.tuxfamily.org/mercurialroot/hatari/hatari/file/9ee1235233e9/gpl.txt"
+rp_module_licence="GPL2 https://git.tuxfamily.org/hatari/hatari.git/plain/gpl.txt"
+rp_module_repo="git git://git.tuxfamily.org/gitroot/hatari/hatari.git v2.3.1"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -28,7 +29,7 @@ function _sources_libcapsimage_hatari() {
 
 function sources_hatari() {
     # shallow clone isn't supported via https:// on this repo
-    gitPullOrClone "$md_build" "git://git.tuxfamily.org/gitroot/hatari/hatari.git" "v2.3.1"
+    gitPullOrClone
     _sources_libcapsimage_hatari
 }
 

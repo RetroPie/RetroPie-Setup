@@ -13,10 +13,11 @@ rp_module_id="lr-quicknes"
 rp_module_desc="NES emulator - QuickNES Port for libretro"
 rp_module_help="ROM Extensions: .nes .zip\n\nCopy your NES roms to $romdir/nes"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/QuickNES_Core/master/LICENSE"
+rp_module_repo="git https://github.com/libretro/QuickNES_Core.git master"
 rp_module_section="main"
 
 function sources_lr-quicknes() {
-    gitPullOrClone "$md_build" https://github.com/libretro/QuickNES_Core.git
+    gitPullOrClone
 }
 
 function build_lr-quicknes() {

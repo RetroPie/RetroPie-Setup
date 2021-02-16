@@ -13,6 +13,7 @@ rp_module_id="dosbox"
 rp_module_desc="DOS emulator"
 rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk/COPYING"
+rp_module_repo="svn https://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk - 4252"
 rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
@@ -27,7 +28,7 @@ function sources_dosbox() {
     local revision="$1"
     [[ -z "$revision" ]] && revision="4252"
 
-    svn checkout https://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk "$md_build" -r "$revision"
+    svn checkout "$md_repo_url" "$md_build" -r "$revision"
     applyPatch "$md_data/01-fully-bindable-joystick.diff"
 }
 

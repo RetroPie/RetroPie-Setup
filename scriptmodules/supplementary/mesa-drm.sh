@@ -12,6 +12,7 @@
 rp_module_id="mesa-drm"
 rp_module_desc="libdrm - userspace library for drm"
 rp_module_licence="MIT https://www.mesa3d.org/license.html"
+rp_module_repo="git https://github.com/RetroPie/mesa-drm runcommand_debug"
 rp_module_section="depends"
 rp_module_flags=""
 
@@ -22,7 +23,7 @@ function depends_mesa-drm() {
 }
 
 function sources_mesa-drm() {
-    gitPullOrClone "$md_build" https://github.com/RetroPie/mesa-drm "runcommand_debug"
+    gitPullOrClone
 }
 
 function build_mesa-drm() {

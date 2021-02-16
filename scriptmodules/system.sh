@@ -286,7 +286,7 @@ function get_os_version() {
 }
 
 function get_retropie_depends() {
-    local depends=(git dialog curl gcc g++ build-essential unzip xmlstarlet python3-pyudev ca-certificates dirmngr)
+    local depends=(git subversion dialog curl gcc g++ build-essential unzip xmlstarlet python3-pyudev ca-certificates dirmngr)
 
     [[ -n "$DISTCC_HOSTS" ]] && depends+=(distcc)
 

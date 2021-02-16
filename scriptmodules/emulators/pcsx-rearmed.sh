@@ -13,6 +13,7 @@ rp_module_id="pcsx-rearmed"
 rp_module_desc="Playstation emulator - PCSX (arm optimised)"
 rp_module_help="ROM Extensions: .bin .cue .cbn .img .iso .m3u .mdf .pbp .toc .z .znx\n\nCopy your PSX roms to $romdir/psx\n\nCopy the required BIOS file SCPH1001.BIN to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/notaz/pcsx_rearmed/master/COPYING"
+rp_module_repo="git https://github.com/notaz/pcsx_rearmed.git master"
 rp_module_section="opt"
 rp_module_flags="dispmanx !all videocore"
 
@@ -21,7 +22,7 @@ function depends_pcsx-rearmed() {
 }
 
 function sources_pcsx-rearmed() {
-    gitPullOrClone "$md_build" https://github.com/notaz/pcsx_rearmed.git
+    gitPullOrClone
 }
 
 function build_pcsx-rearmed() {

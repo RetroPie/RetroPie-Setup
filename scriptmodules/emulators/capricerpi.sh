@@ -13,6 +13,7 @@ rp_module_id="capricerpi"
 rp_module_desc="Amstrad CPC emulator - port of Caprice32 for the RPI"
 rp_module_help="ROM Extensions: .cdt .cpc .dsk\n\nCopy your Amstrad CPC games to $romdir/amstradcpc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/KaosOverride/CapriceRPI/master/COPYING.txt"
+rp_module_repo="git https://github.com/KaosOverride/CapriceRPI.git master"
 rp_module_section="opt"
 rp_module_flags="dispmanx !all videocore"
 
@@ -21,7 +22,7 @@ function depends_capricerpi() {
 }
 
 function sources_capricerpi() {
-    gitPullOrClone "$md_build" https://github.com/KaosOverride/CapriceRPI.git
+    gitPullOrClone
     sed -i "s/-lpng12/-lpng/" src/makefile
 }
 

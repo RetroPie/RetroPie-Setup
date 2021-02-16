@@ -13,10 +13,11 @@ rp_module_id="lr-o2em"
 rp_module_desc="Odyssey 2 / Videopac emu - O2EM port for libretro"
 rp_module_help="ROM Extensions: .bin .zip\n\nCopy your Odyssey 2 / Videopac roms to $romdir/videopac\n\nCopy the required BIOS file o2rom.bin to $biosdir"
 rp_module_licence="OTHER"
+rp_module_repo="git https://github.com/libretro/libretro-o2em master"
 rp_module_section="opt"
 
 function sources_lr-o2em() {
-    gitPullOrClone "$md_build" https://github.com/libretro/libretro-o2em
+    gitPullOrClone
 }
 
 function build_lr-o2em() {

@@ -13,6 +13,7 @@ rp_module_id="dosbox-sdl2"
 rp_module_desc="DOS emulator (enhanced DOSBox fork)"
 rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk/COPYING"
+rp_module_repo="git https://github.com/duganchen/dosbox.git master"
 rp_module_section="exp"
 
 function depends_dosbox-sdl2() {
@@ -21,7 +22,7 @@ function depends_dosbox-sdl2() {
 }
 
 function sources_dosbox-sdl2() {
-    gitPullOrClone "$md_build" "https://github.com/duganchen/dosbox.git"
+    gitPullOrClone
     # use custom config filename & path to allow coexistence with regular dosbox
     sed -i "src/misc/cross.cpp" -e 's/~\/.dosbox/~\/.'$md_id'/g' \
        -e 's/DEFAULT_CONFIG_FILE "dosbox-"/DEFAULT_CONFIG_FILE "'$md_id'-"/g'
