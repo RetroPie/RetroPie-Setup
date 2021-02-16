@@ -49,23 +49,6 @@ function install_lr-fbneo() {
 }
 
 function configure_lr-fbneo() {
-    local dir
-    for dir in arcade fba neogeo; do
-        mkRomDir "$dir"
-        ensureSystemretroconfig "$dir"
-    done
-
-    # Create samples directory
-    mkUserDir "$biosdir/fbneo"
-    mkUserDir "$biosdir/fbneo/samples"
-
-    # copy hiscore.dat
-    cp "$md_inst/metadata/hiscore.dat" "$biosdir/fbneo/"
-    chown $user:$user "$biosdir/fbneo/hiscore.dat"
-
-    # Set core options
-    setRetroArchCoreOption "fbneo-diagnostic-input" "Hold Start"
-
     local def=1
     isPlatform "armv6" && def=0
     addEmulator 0 "$md_id" "arcade" "$md_inst/fbneo_libretro.so"
@@ -106,4 +89,23 @@ function configure_lr-fbneo() {
     addSystem "nes"
     addSystem "ngp"
     addSystem "ngpc"
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    local dir
+    for dir in arcade fba neogeo; do
+        mkRomDir "$dir"
+        ensureSystemretroconfig "$dir"
+    done
+
+    # Create samples directory
+    mkUserDir "$biosdir/fbneo"
+    mkUserDir "$biosdir/fbneo/samples"
+
+    # copy hiscore.dat
+    cp "$md_inst/metadata/hiscore.dat" "$biosdir/fbneo/"
+    chown $user:$user "$biosdir/fbneo/hiscore.dat"
+
+    # Set core options
+    setRetroArchCoreOption "fbneo-diagnostic-input" "Hold Start"
 }
