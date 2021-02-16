@@ -417,7 +417,7 @@ function gitPullOrClone() {
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
         runCmd git checkout "$branch"
-        runCmd git pull
+        runCmd git pull --ff-only
         runCmd git submodule update --init --recursive
         popd > /dev/null
     else

@@ -119,7 +119,7 @@ function updatescript_setup()
         return 1
     fi
     local error
-    if ! error=$(su $user -c "git pull 2>&1 >/dev/null"); then
+    if ! error=$(su $user -c "git pull --ff-only 2>&1 >/dev/null"); then
         printMsgs "dialog" "Update failed:\n\n$error"
         popd >/dev/null
         return 1
