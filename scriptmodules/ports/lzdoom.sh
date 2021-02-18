@@ -11,8 +11,8 @@
 
 rp_module_id="lzdoom"
 rp_module_desc="lzdoom - DOOM source port (legacy version of GZDoom)"
-rp_module_licence="GPL3 https://github.com/drfrag666/gzdoom/blob/g3.3mgw/docs/licenses/README.TXT"
-rp_module_repo="git https://github.com/drfrag666/gzdoom 3.86a"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/drfrag666/gzdoom/g3.3mgw/docs/licenses/README.TXT"
+rp_module_repo="git https://github.com/drfrag666/gzdoom 3.87c"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -37,9 +37,8 @@ function build_lzdoom() {
     if isPlatform "armv8"; then
         params+=(-DUSE_ARMV8=On)
     fi
-    # disable unsafe math optimizations to avoid inaccurate hitscan detection, broken doors, omniscient AI, etc.
-    # see: https://forum.zdoom.org/viewtopic.php?f=7&t=57781
-    CFLAGS="${CFLAGS//-funsafe-math-optimizations/}" CXXFLAGS="${CXXFLAGS//-funsafe-math-optimizations/}" cmake "${params[@]}" ..
+    # Note: `-funsafe-math-optimizations` should be avoided, see: https://forum.zdoom.org/viewtopic.php?f=7&t=57781
+    cmake "${params[@]}" ..
     make
     md_ret_require="$md_build/release/$md_id"
 }
