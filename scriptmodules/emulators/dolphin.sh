@@ -13,7 +13,7 @@ rp_module_id="dolphin"
 rp_module_desc="Gamecube/Wii emulator Dolphin"
 rp_module_help="ROM Extensions: .gcm .iso .wbfs .ciso .gcz .rvz\n\nCopy your Gamecube roms to $romdir/gc and Wii roms to $romdir/wii"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dolphin-emu/dolphin/master/license.txt"
-rp_module_repo="git https://github.com/dolphin-emu/dolphin.git master :_get_branch_dolphin"
+rp_module_repo="git https://github.com/dolphin-emu/dolphin.git :_get_branch_dolphin"
 rp_module_section="exp"
 rp_module_flags="!all 64bit"
 
