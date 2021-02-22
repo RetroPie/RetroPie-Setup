@@ -18,7 +18,7 @@ rp_module_section="opt"
 rp_module_flags="dispmanx !mali"
 
 function depends_dosbox() {
-    local depends=(libasound2-dev libpng-dev automake autoconf zlib1g-dev subversion "$@")
+    local depends=(libasound2-dev libpng-dev automake autoconf zlib1g-dev "$@")
     [[ "$md_id" == "dosbox" ]] && depends+=(libsdl1.2-dev libsdl-net1.2-dev libsdl-sound1.2-dev)
     isPlatform "rpi" && depends+=(timidity freepats)
     getDepends "${depends[@]}"
