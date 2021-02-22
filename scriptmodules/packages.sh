@@ -684,13 +684,13 @@ function rp_installBin() {
 function rp_createBin() {
     printHeading "Creating binary archive for $md_desc"
 
-    if [[ ! -d "$rootdir/$md_type/$md_id" ]]; then
-        printMsgs "console" "No install directory $rootdir/$md_type/$md_id - no archive created"
+    if [[ ! -d "$md_inst" ]]; then
+        printMsgs "console" "No install directory $md_inst - no archive created"
         return 1
     fi
 
-    if dirIsEmpty "$rootdir/$md_type/$md_id"; then
-        printMsgs "console" "Empty install directory $rootdir/$md_type/$md_id - no archive created"
+    if dirIsEmpty "$md_inst"; then
+        printMsgs "console" "Empty install directory $md_inst - no archive created"
         return 1
     fi
 
@@ -698,18 +698,23 @@ function rp_createBin() {
     local dest="$__tmpdir/archives/$__binary_path/$md_type"
     mkdir -p "$dest"
     rm -f "$dest/$archive" "$dest/$archive.asc"
+    local ret=1
     if tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"; then
         if [[ -n "$__gpg_signing_key" ]]; then
             if signFile "$dest/$archive"; then
                 chown $user:$user "$dest/$archive" "$dest/$archive.asc"
-                return 0
+                ret=0
             fi
         else
-            return 0
+            ret=0
         fi
     fi
-    rm -f "$dest/$archive"
-    return 1
+    if [[ "$ret" -eq 0 ]]; then
+        cp "$md_inst/retropie.pkg" "$dest/$md_id.pkg"
+    else
+        rm -f "$dest/$archive"
+    fi
+    return "$ret"
 }
 
 function rp_hasModule() {
@@ -834,6 +839,12 @@ function rp_loadPackageInfo() {
 
     local load=0
     local pkg_file="$(rp_getInstallPath $id)/retropie.pkg"
+
+    local builder_pkg_file="$__tmpdir/archives/$__binary_path/${__mod_info[$id/type]}/$id.pkg"
+    # fallback to using package info for built binaries so the binary builder code can update only changed modules
+    if [[ ! -f "$pkg_file" && -f "$builder_pkg_file" ]]; then
+        pkg_file="$builder_pkg_file"
+    fi
 
     # if the pkg file is available, we will load the data in the next loop
     [[ -f "$pkg_file" ]] && load=1
