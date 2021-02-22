@@ -692,14 +692,18 @@ function rp_createBin() {
     local archive="$md_id.tar.gz"
     local dest="$__tmpdir/archives/$__binary_path/$md_type"
     mkdir -p "$dest"
-    rm -f "$dest/$archive"
+    rm -f "$dest/$archive" "$dest/$archive.asc"
     if tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"; then
-        if signFile "$dest/$archive"; then
-            chown $user:$user "$dest/$archive" "$dest/$archive.asc"
+        if [[ -n "$__gpg_signing_key" ]]; then
+            if signFile "$dest/$archive"; then
+                chown $user:$user "$dest/$archive" "$dest/$archive.asc"
+                return 0
+            fi
+        else
             return 0
         fi
     fi
-    rm -f "$dest/$archive" "$dest/$archive.asc"
+    rm -f "$dest/$archive"
     return 1
 }
 
