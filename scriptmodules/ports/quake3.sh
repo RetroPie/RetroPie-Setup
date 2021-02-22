@@ -26,6 +26,7 @@ function sources_quake3() {
 
 function build_quake3() {
     ./build_rpi_raspbian.sh
+    md_ret_require="$md_build/build/release-linux-arm/ioquake3.arm"
 }
 
 function install_quake3() {
