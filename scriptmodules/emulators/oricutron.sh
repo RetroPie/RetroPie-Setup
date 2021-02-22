@@ -33,6 +33,7 @@ function build_oricutron() {
     else
         make SDL_LIB=sdl2
     fi
+    md_ret_require="$md_build/oricutron"
 }
 
 function install_oricutron() {
