@@ -28,6 +28,7 @@ function build_smw() {
     ./configure --prefix="$md_inst"
     make clean
     make
+    md_ret_require="$md_build/smw"
 }
 
 function install_smw() {
