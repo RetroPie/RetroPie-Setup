@@ -124,7 +124,7 @@ _EOF_
 
     local id
     for id in "${__mod_id[@]}"; do
-        if rp_isInstalled "$id" && [[ -n "${__mod_section[$id]}" ]] && ! hasFlag "${__mod_flags[$id]}" "frontend"; then
+        if rp_isInstalled "$id" && [[ -n "${__mod_section[$id]}" ]] && ! hasFlag "${__mod_info[$id/flags]}" "frontend"; then
             rp_callModule "$id" configure
         fi
     done

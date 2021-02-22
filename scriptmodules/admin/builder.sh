@@ -24,7 +24,7 @@ function module_builder() {
     for id in "${ids[@]}"; do
         # don't build binaries for modules with flag nobin
         # eg scraper which fails as go1.8 doesn't work under qemu
-        hasFlag "${__mod_flags[$id]}" "nobin" && continue
+        hasFlag "${__mod_info[$id/flags]}" "nobin" && continue
 
         ! fnExists "install_${id}" && continue
 
