@@ -74,8 +74,14 @@ function conf_binary_vars() {
 
     __archive_url="https://files.retropie.org.uk/archives"
 
-    [[ -z "$__gpg_signing_key" ]] && __gpg_signing_key="retropieproject@gmail.com"
-    if ! gpg --list-keys "$__gpg_signing_key" &>/dev/null; then
+    # set the gpg key used by RetroPie
+    __gpg_retropie_key="retropieproject@gmail.com"
+
+    # if __gpg_signing_key is not set, set to __gpg_retropie_key
+    [[ ! -v __gpg_signing_key ]] && __gpg_signing_key="$__gpg_retropie_key"
+
+    # if the RetroPie public key is not installed, install it.
+    if ! gpg --list-keys "$__gpg_retropie_key" &>/dev/null; then
         gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DC9D77FF8208FFC51D8F50CCF1B030906A3B0D31
     fi
 }
