@@ -26,15 +26,16 @@ function module_builder() {
         # eg scraper which fails as go1.8 doesn't work under qemu
         hasFlag "${__mod_info[$id/flags]}" "nobin" && continue
 
+        # if the module has no install_ function skip to the next module
         ! fnExists "install_${id}" && continue
 
-        # skip already built archives, so we can retry failed modules
-        [[ -f "$__tmpdir/archives/$__binary_path/${__mod_info[$id/type]}/$id.tar.gz" ]] && continue
+        # if there is a not a newer version, skip to the next module
+        ! rp_hasNewerModule "$id" "source" && continue
 
         # build, install and create binary archive.
         # initial clean in case anything was in the build folder when calling
         local mode
-        for mode in clean remove depends sources build install create_bin clean remove "depends remove"; do
+        for mode in clean depends sources build install create_bin clean remove "depends remove"; do
             # continue to next module if not available or an error occurs
             rp_callModule "$id" $mode || break
         done
@@ -108,6 +109,6 @@ function chroot_build_builder() {
                 /home/pi/RetroPie-Setup/retropie_packages.sh builder "$@"
         done
 
-        rsync -av "$md_build/$dist/home/pi/RetroPie-Setup/tmp/archives/" "$home/RetroPie-Setup/tmp/archives/"
+        rsync -av --exclude '*.pkg' "$md_build/$dist/home/pi/RetroPie-Setup/tmp/archives/" "$home/RetroPie-Setup/tmp/archives/"
     done
 }
