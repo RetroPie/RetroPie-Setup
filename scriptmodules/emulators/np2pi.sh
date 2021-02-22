@@ -27,6 +27,7 @@ function sources_np2pi() {
 function build_np2pi() {
     cd sdl
     make -j 1 -f makefile.rpi
+    md_ret_require="$md_build/bin/np2"
 }
 
 function install_np2pi() {

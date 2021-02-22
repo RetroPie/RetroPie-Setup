@@ -29,6 +29,7 @@ function build_linapple() {
     cd src
     make clean
     make
+    md_ret_require="$md_build/linapple"
 }
 
 function install_linapple() {
