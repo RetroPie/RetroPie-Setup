@@ -529,7 +529,7 @@ function rp_getRemoteRepoHash() {
     case "$type" in
         git)
             # when the remote repository uses an annotated git tag, the real commit is found by looking for the
-            # "tag^{}" reference, since the the tag ref will point to the tag object itself, instead of the tagged
+            # "tag^{}" reference, since the tag ref will point to the tag object itself, instead of the tagged
             # commit. See gitrevisions(7).
             cmd=(git ls-remote "$url" "$branch" "$branch^{}")
             # grep to make sure we only return refs/heads/BRANCH and refs/tags/BRANCH in case there are additional
