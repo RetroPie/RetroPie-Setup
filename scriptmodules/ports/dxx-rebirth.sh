@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function _get_commit_dxx-rebirth() {
-    local commit="moooo"
+    local commit=""
     # latest code requires gcc 7+
     compareVersions "$__gcc_version" lt 7 && commit="a1b3a86c"
     echo "$commit"
