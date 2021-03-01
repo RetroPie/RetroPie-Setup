@@ -1003,6 +1003,48 @@ function applyPatch() {
     return 0
 }
 
+## @fn runCurl
+## @params ... commandline arguments to pass to curl
+## @brief Run curl with chosen parameters and handle curl errors
+## @details Runs curl with the provided parameters, whilst also capturing the output and extracting
+## any error message, which is stored in the global variable __NET_ERRMSG. Function returns the return
+## code provided by curl. The environment variable __curl_opts can be set to override default curl
+## parameters, eg - timeouts etc.
+## @retval curl return value
+function runCurl() {
+    local params=("$@")
+    # add any user supplied curl opts - timeouts can be overridden as curl uses the last parameters given
+    [[ -z "$__curl_opts" ]] && params+=($__curl_opts)
+
+    local cmd_err
+    local ret
+
+    # get the last non zero exit status (ignoring tee)
+    set -o pipefail
+
+    # set up additional file descriptor for stdin
+    exec 3>&1
+
+    # capture stderr - while passing both stdout and stderr to terminal
+    # curl like wget outputs the progress meter to stderr, so we will extract the error line later
+    cmd_err=$(curl "${params[@]}" 2>&1 1>&3 | tee /dev/stderr)
+    ret="$?"
+
+    # remove stdin copy
+    exec 3>&-
+
+    set +o pipefail
+
+    # if there was an error, extract it and put in __NET_ERRMSG
+    if [[ "$ret" -ne 0 ]]; then
+        # as we also capture the curl progress output, extract the last line which contains the error
+        __NET_ERRMSG="${cmd_err##*$'\n'}"
+    else
+        __NET_ERRMSG=""
+    fi
+    return "$ret"
+}
+
 ## @fn download()
 ## @param url url of file
 ## @param dest destination name (optional), use - for stdout
@@ -1030,43 +1072,21 @@ function download() {
         printMsgs "console" "Downloading $url to $dest ..."
         params+=(-o "$dest")
     fi
-    params+=(--connect-timeout 60 --speed-limit 1 --speed-time 60)
-    # add any user supplied curl opts - timeouts can be overridden as curl uses the last parameters given
-    [[ -z "$__curl_opts" ]] && params+=($__curl_opts)
+    params+=(--connect-timeout 10 --speed-limit 1 --speed-time 60)
     # add the url
     params+=("$url")
 
-    local cmd_err
     local ret
-
-    # get the last non zero exit status (ignoring tee)
-    set -o pipefail
-
-    # capture stderr - while passing both stdout and stderr to terminal
-    # curl like wget outputs the progress meter to stderr, so we will extract the error line later
-
-    # set up additional file descriptor for stdin
-    exec 3>&1
-
-    cmd_err=$(curl "${params[@]}" 2>&1 1>&3 | tee /dev/stderr)
+    runCurl "${params[@]}"
     ret="$?"
-
-    # remove stdin copy
-    exec 3>&-
-
-    set +o pipefail
 
     # if download failed, remove file, log error and return error code
     if [[ "$ret" -ne 0 ]]; then
         # remove dest if not set to stdout and exists
         [[ "$dest" != "-" && -f "$dest" ]] && rm "$dest"
-        # as we also capture the curl progress output, extract the last line which contains the error
-        cmd_err="${cmd_err##*$'\n'}"
-
-        md_ret_errors+=("URL $url failed to download.\n\n$cmd_err")
-        return "$ret"
+        md_ret_errors+=("URL $url failed to download.\n\n$__NET_ERRMSG")
     fi
-    return 0
+    return "$ret"
 }
 
 ## @fn downloadAndVerify()
@@ -1544,6 +1564,21 @@ function getIPAddress() {
 
     # if an external route was found, report its source address
     [[ -n "$ip_route" ]] && grep -oP "src \K[^\s]+" <<< "$ip_route"
+}
+
+## @fn isConnected()
+## @brief Simple check to see if there is a connection to the Internet.
+## @details Uses the getIPAddress function to check if we have a route to the Internet. Also sets
+## __NET_ERRMSG with an error message for use in packages / setup to display to the user if not.
+## @retval 0 on success
+## @retval 1 on failure
+function isConnected() {
+    local ip="$(getIPAddress)"
+    if [[ -z "$ip" ]]; then
+        __NET_ERRMSG="Not connected to the Internet"
+        return 1
+    fi
+    return 0
 }
 
 ## @fn adminRsync()
