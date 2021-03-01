@@ -424,7 +424,7 @@ function rp_getBinaryUrl() {
 function rp_remoteFileExists() {
     local url="$1"
     local ret
-    curl --max-time 5 -o /dev/null -sfI "$url"
+    curl --max-time 10 -o /dev/null -sfI "$url"
     ret="$?"
     if [[ "$ret" -eq 0 ]]; then
         return 0
