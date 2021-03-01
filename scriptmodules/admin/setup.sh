@@ -179,8 +179,7 @@ function package_setup() {
         local has_binary=0
         local has_net=0
 
-        local ip="$(getIPAddress)"
-        [[ -n "$ip" ]] && has_net=1
+        isConnected && has_net=1
 
         # for modules with nonet flag that don't need to download data, we force has_net to 1, so we get install options
         hasFlag "${__mod_info[$id/flags]}" "nonet" && has_net=1
@@ -253,7 +252,7 @@ function package_setup() {
                 options+=(S "${option_msgs[S]}")
            fi
         else
-            status+="\nInstall options disabled (Unable to access internet)"
+            status+="\nInstall options disabled:\n$__NET_ERRMSG"
         fi
 
         if [[ "$is_installed" -eq 1 ]]; then
@@ -372,9 +371,8 @@ function section_gui_setup() {
         local pkgs=()
 
         status="Please choose a package from below"
-        local ip="$(getIPAddress)"
-        if [[ -z "$ip" ]]; then
-            status+="\nInstall options disabled (Unable to access internet)"
+        if ! isConnected; then
+            status+="\nInstall options disabled ($__NET_ERRMSG)"
             has_net=0
         fi
 
