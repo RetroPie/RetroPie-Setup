@@ -140,8 +140,8 @@ function depends_attractmode() {
 }
 
 function sources_attractmode() {
-    isPlatform "rpi" && gitPullOrClone "$md_build/sfml-pi" "https://github.com/mickelson/sfml-pi"
     gitPullOrClone "$md_build/attract"
+    isPlatform "rpi" && gitPullOrClone "$md_build/sfml-pi" "https://github.com/mickelson/sfml-pi"
 }
 
 function build_attractmode() {
