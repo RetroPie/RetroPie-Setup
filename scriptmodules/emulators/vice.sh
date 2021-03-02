@@ -13,7 +13,7 @@ rp_module_id="vice"
 rp_module_desc="C64 emulator VICE"
 rp_module_help="ROM Extensions: .crt .d64 .g64 .prg .t64 .tap .x64 .zip .vsf\n\nCopy your Commodore 64 games to $romdir/c64"
 rp_module_licence="GPL2 http://svn.code.sf.net/p/vice-emu/code/trunk/vice/COPYING"
-rp_module_repo="svn svn://svn.code.sf.net/p/vice-emu/code/trunk/vice - HEAD"
+rp_module_repo="svn svn://svn.code.sf.net/p/vice-emu/code/tags/v3.5/vice - HEAD"
 rp_module_section="opt"
 rp_module_flags=""
 
