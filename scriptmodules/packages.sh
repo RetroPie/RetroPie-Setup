@@ -540,7 +540,7 @@ function rp_getRemoteRepoHash() {
             ;;
         svn)
             cmd=(svn info -r"$commit" "$url")
-            hash=$("${cmd[@]}" 2>/dev/null | grep -oP "Revision: \K.*")
+            hash=$("${cmd[@]}" 2>/dev/null | grep -oP "Last Changed Rev: \K.*")
             ;;
     esac
     ret="$?"
@@ -594,7 +594,7 @@ function rp_hasNewerModule() {
                     local repo_branch="$(rp_resolveRepoParam "${__mod_info[$id/repo_branch]}")"
                     local repo_commit="$(rp_resolveRepoParam "${__mod_info[$id/repo_commit]}")"
                     # if we are locked to a single commit, then we compare against the current module commit only
-                    if [[ -n "$repo_commit" ]]; then
+                    if [[ -n "$repo_commit" && "$repo_commit" != "HEAD" ]]; then
                         # if we are using git and the module has an 8 character commit hash, then adjust
                         # the package commit to 8 characters also for the comparison
                         if [[ "$repo_type" == "git" && "${#repo_commit}" -eq 8 ]]; then
@@ -785,7 +785,7 @@ function rp_setPackageInfo() {
                 else
                     pkg_repo_date="$(svn info . | grep -oP "Last Changed Date: \K.*")"
                     pkg_repo_date="$(date -Iseconds -d "$pkg_repo_date")"
-                    pkg_repo_commit="$(svn info . | grep -oP "Revision: \K.*")"
+                    pkg_repo_commit="$(svn info . | grep -oP "Last Changed Rev: \K.*")"
                 fi
                 ;;
             file)
