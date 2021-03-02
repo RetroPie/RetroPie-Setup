@@ -19,6 +19,8 @@ declare -A __sections=(
     [depends]="dependency"
 )
 
+__NET_ERRMSG=""
+
 function rp_listFunctions() {
     local id
     local desc
@@ -133,8 +135,7 @@ function rp_callModule() {
             local has_binary=0
             local has_net=0
 
-            local ip="$(getIPAddress)"
-            [[ -n "$ip" ]] && has_net=1
+            isConnected && has_net=1
 
             # for modules with nonet flag that don't need to download data, we force has_net to 1
             hasFlag "${__mod_info[$id/flags]}" "nonet" && has_net=1
@@ -148,7 +149,7 @@ function rp_callModule() {
 
             # fail if we don't seem to be connected
             if [[ "$has_net" -eq 0 ]]; then
-                __ERRMSGS+=("Can't install/update $md_id - unable to connect to the internet")
+                __ERRMSGS+=("Can't install/update $md_id - $__NET_ERRMSG")
                 return 1
             fi
 
@@ -424,7 +425,9 @@ function rp_getBinaryUrl() {
 function rp_remoteFileExists() {
     local url="$1"
     local ret
-    curl --max-time 10 -o /dev/null -sfI "$url"
+    # runCurl will cause stderr to be copied to output so we redirect both stdout/stderr to /dev/null.
+    # any errors will have been captured by runCurl
+    runCurl --max-time 10 --silent --show-error --fail --head "$url" &>/dev/null
     ret="$?"
     if [[ "$ret" -eq 0 ]]; then
         return 0
@@ -468,7 +471,7 @@ function rp_getFileDate() {
     [[ -z "$url" ]] && return 1
 
     # get last-modified date stripping any CR in the output
-    local file_date=$(curl -sfI --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
+    local file_date=$(runCurl --silent --fail --head --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
     # if there is a date set in last-modified header, then convert to iso-8601 format
     if [[ -n "$file_date" ]]; then
         file_date="$(date -Iseconds --date="$file_date")"
