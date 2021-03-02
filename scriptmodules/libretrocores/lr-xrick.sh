@@ -10,7 +10,7 @@
 #
 
 rp_module_id="lr-xrick"
-rp_module_desc="Open source implementation of Rich Dangerous - xrick ported for libretro"
+rp_module_desc="Open source implementation of Rick Dangerous - xrick ported for libretro"
 rp_module_help="Install the xrick data.zip to $romdir/ports/xrick/data.zip"
 rp_module_licence="GPL https://raw.githubusercontent.com/libretro/xrick-libretro/master/README"
 rp_module_repo="git https://github.com/libretro/xrick-libretro.git master"
