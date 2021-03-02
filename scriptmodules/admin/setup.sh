@@ -185,6 +185,7 @@ function package_setup() {
         hasFlag "${__mod_info[$id/flags]}" "nonet" && has_net=1
 
         if [[ "$has_net" -eq 1 ]]; then
+            dialog --backtitle "$__backtitle" --infobox "Checking for updates for $id ..." 3 60 >/dev/tty
             rp_hasBinary "$id"
             local ret="$?"
             [[ "$ret" -eq 0 ]] && has_binary=1
