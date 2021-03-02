@@ -74,6 +74,7 @@ _EOF_
     mkRomDir "c64"
 
     addEmulator 1 "$md_id-x64" "c64" "$md_inst/bin/vice.sh x64 %ROM%"
+    addEmulator 0 "$md_id-x64dtv" "c64" "$md_inst/bin/vice.sh x64dtv %ROM%"
     addEmulator 0 "$md_id-x64sc" "c64" "$md_inst/bin/vice.sh x64sc %ROM%"
     addEmulator 0 "$md_id-x128" "c64" "$md_inst/bin/vice.sh x128 %ROM%"
     addEmulator 0 "$md_id-xpet" "c64" "$md_inst/bin/vice.sh xpet %ROM%"
