@@ -269,7 +269,11 @@ function package_setup() {
 
         local help="${__mod_info[$id/desc]}\n\n${__mod_info[$id/help]}"
         if [[ -n "$help" ]]; then
-            options+=(H "Package Help")
+            options+=(H "Package help")
+        fi
+
+        if [[ "$is_installed" -eq 1 ]]; then
+            options+=(V "Package version information")
         fi
 
         cmd=(dialog --backtitle "$__backtitle" --cancel-label "Back" --default-item "$default" --menu "Choose an option for $id\n$status" 22 76 16)
@@ -328,6 +332,23 @@ function package_setup() {
             H)
                 printMsgs "dialog" "$help"
                 ;;
+            V)
+                local info
+                rp_loadPackageInfo "$id"
+                read -r -d '' info << _EOF_
+Package Origin: ${__mod_info[$id/pkg_origin]}
+Build Date: ${__mod_info[$id/pkg_date]}
+
+Built from source via:
+
+Type: ${__mod_info[$id/pkg_repo_type]}
+URL: ${__mod_info[$id/pkg_repo_url]}
+Branch: ${__mod_info[$id/pkg_repo_branch]}
+Commit: ${__mod_info[$id/pkg_repo_commit]}
+Date: ${__mod_info[$id/pkg_repo_date]}
+_EOF_
+               printMsgs "dialog" "$info"
+               ;;
             Z)
                 rp_callModule "$id" clean
                 printMsgs "dialog" "$__builddir/$id has been removed."
