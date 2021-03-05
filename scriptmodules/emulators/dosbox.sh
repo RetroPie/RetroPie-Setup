@@ -65,6 +65,7 @@ function configure_dosbox() {
     local def=0
     local launcher_name="+Start DOSBox.sh"
     local needs_synth=0
+    local config_dir="$home/.$md_id"
     case "$md_id" in
         dosbox-sdl2)
             launcher_name="+Start DOSBox-SDL2.sh"
@@ -76,6 +77,10 @@ function configure_dosbox() {
             # set dispmanx by default on rpi with fkms
             isPlatform "dispmanx" && ! isPlatform "videocore" && setBackend "$md_id" "dispmanx"
             ;;
+        dosbox-staging)
+            launcher_name="+Start DOSBox-Staging.sh"
+            config_dir="$home/.config/dosbox"
+            ;;
         *)
             return 1
             ;;
@@ -83,7 +88,7 @@ function configure_dosbox() {
 
     mkRomDir "pc"
 
-    moveConfigDir "$home/.$md_id" "$md_conf_root/pc"
+    moveConfigDir "$config_dir" "$md_conf_root/pc"
 
     addEmulator "$def" "$md_id" "pc" "bash $romdir/pc/${launcher_name// /\\ } %ROM%"
     addSystem "pc"
@@ -140,16 +145,18 @@ _EOF_
     chmod +x "$romdir/pc/$launcher_name"
     chown $user:$user "$romdir/pc/$launcher_name"
 
-    local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
-    if [[ -f "$config_path" ]]; then
-        iniConfig " = " "" "$config_path"
-        iniSet "usescancodes" "false"
-        iniSet "core" "dynamic"
-        iniSet "cycles" "max"
-        iniSet "scaler" "none"
-        if isPlatform "rpi" || [[ -n "$(aconnect -o | grep -e TiMidity -e FluidSynth)" ]]; then
-            iniSet "mididevice" "alsa"
-            iniSet "midiconfig" "128:0"
+    if [[ "$md_id" == "dosbox" || "$md_id" == "dosbox-sdl2" ]]; then
+        local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
+        if [[ -f "$config_path" ]]; then
+            iniConfig " = " "" "$config_path"
+            iniSet "usescancodes" "false"
+            iniSet "core" "dynamic"
+            iniSet "cycles" "max"
+            iniSet "scaler" "none"
+            if isPlatform "rpi" || [[ -n "$(aconnect -o | grep -e TiMidity -e FluidSynth)" ]]; then
+                iniSet "mididevice" "alsa"
+                iniSet "midiconfig" "128:0"
+            fi
         fi
     fi
 }
