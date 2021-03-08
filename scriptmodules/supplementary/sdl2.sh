@@ -11,7 +11,7 @@
 
 rp_module_id="sdl2"
 rp_module_desc="SDL (Simple DirectMedia Layer) v2.x"
-rp_module_licence="ZLIB https://hg.libsdl.org/SDL/raw-file/f426dbef4aa0/COPYING.txt"
+rp_module_licence="ZLIB https://raw.githubusercontent.com/libsdl-org/SDL/main/LICENSE.txt"
 rp_module_section="depends"
 rp_module_flags=""
 
@@ -60,7 +60,7 @@ function sources_sdl2() {
     local pkg_ver="$(get_pkg_ver_sdl2)"
     local branch="retropie-${ver}"
 
-    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL-mirror "$branch"
+    gitPullOrClone "$md_build/$pkg_ver" https://github.com/RetroPie/SDL.git "$branch"
     cd "$pkg_ver"
     DEBEMAIL="Jools Wills <buzz@exotica.org.uk>" dch -v "$pkg_ver" "SDL $ver configured for the $__platform"
 }
