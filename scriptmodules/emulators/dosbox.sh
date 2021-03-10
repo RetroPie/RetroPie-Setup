@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games 
 rp_module_licence="GPL2 https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk/COPYING"
 rp_module_repo="svn https://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk - 4252"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_dosbox() {
     local depends=(libasound2-dev libpng-dev automake autoconf zlib1g-dev "$@")
@@ -117,6 +117,9 @@ else
     params+=(-exit)
 fi
 
+# fullscreen when running in X
+[[ -n "\$DISPLAY" ]] && params+=(-fullscreen)
+
 midi_synth start
 "$md_inst/bin/dosbox" "\${params[@]}"
 midi_synth stop
@@ -138,8 +141,8 @@ _EOF_
         fi
     fi
 
-    # default to dispmanx on rpi4/kms
-    isPlatform "mesa" && setDispmanx "$md_id" 1
+    # set dispmanx by default on rpi with fkms
+    isPlatform "dispmanx" && ! isPlatform "videocore" && setBackend "$md_id" "dispmanx"
 
     moveConfigDir "$home/.$md_id" "$md_conf_root/pc"
 
