@@ -647,19 +647,38 @@ function addUdevInputRules() {
     rm -f /etc/udev/rules.d/99-evdev.rules
 }
 
+## @fn setBackend()
+## @param module_id name of module to configure backend for
+## @param backend name of the backend to set
+## @param force set to 1 to force the change
+## @brief Set a backend rendering driver for a module
+## @details Set a backend rendering driver for a module - can be currently default, dispmanx or x11.
+## This function will only set a backend if
+##   - It's not already configured, or
+##   - The 3rd parameter (force) is set to 1
+function setBackend() {
+    local config="$configdir/all/backends.cfg"
+    local id="$1"
+    local mode="$2"
+    local force="$3"
+    iniConfig "=" "\"" "$config"
+    iniGet "$id"
+    if [[ "$force" -eq 1 || -z "$ini_value" ]]; then
+        iniSet "$id" "$mode"
+        chown $user:$user "$config"
+    fi
+}
+
 ## @fn setDispmanx()
 ## @param module_id name of module to add dispmanx flag for
 ## @param status initial status of flag (0 or 1)
-## @brief Sets a dispmanx flag for a module.
+## @brief Sets a dispmanx flag for a module. This function is deprecated.
 ## @details Set a dispmanx flag for a module as to whether it should use the
 ## sdl1 dispmanx backend by default or not (0 for framebuffer, 1 for dispmanx).
+## This function is deprecated and instead setBackend should be used.
 function setDispmanx() {
     isPlatform "dispmanx" || return
-    local mod_id="$1"
-    local status="$2"
-    iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
-    iniSet $mod_id "$status"
-    chown $user:$user "$configdir/all/dispmanx.cfg"
+    setBackend "$1" "dispmanx"
 }
 
 ## @fn iniFileEditor()

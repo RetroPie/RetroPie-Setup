@@ -57,7 +57,7 @@
 ## used as well as other options from the runcommand GUI.
 ##
 ## If SAVE_NAME is included, that is used for loading and saving of video output
-## modes as well as SDL1 dispmanx settings for the current COMMAND. If omitted,
+## modes as well as rendering backend settings for the current COMMAND. If omitted,
 ## the binary name is used as a key for the loading and saving. The savename is
 ## also displayed in the video output menu (detailed below), so for our purposes
 ## we send the emulator module id, which is somewhat descriptive yet short.
@@ -73,7 +73,7 @@ LOG="/dev/shm/runcommand.log"
 RUNCOMMAND_CONF="$CONFIGDIR/all/runcommand.cfg"
 VIDEO_CONF="$CONFIGDIR/all/videomodes.cfg"
 EMU_CONF="$CONFIGDIR/all/emulators.cfg"
-DISPMANX_CONF="$CONFIGDIR/all/dispmanx.cfg"
+BACKENDS_CONF="$CONFIGDIR/all/backends.cfg"
 RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
 
 # modesetting tools
@@ -189,7 +189,7 @@ function get_params() {
         IS_SYS=0
         CONSOLE_OUT=1
         EMULATOR="$3"
-        # if we have an emulator name (such as module_id) we use that for storing/loading parameters for video output/dispmanx
+        # if we have an emulator name (such as module_id) we use that for storing/loading parameters for video mode / backend
         # if the parameter is empty we use the name of the binary (to avoid breakage with out of date emulationstation configs)
         [[ -z "$EMULATOR" ]] && EMULATOR="${COMMAND/% */}"
     fi
@@ -947,6 +947,13 @@ echo "Set mode ${MODE_CUR[2]}x${MODE_CUR[3]}@${MODE_CUR[5]}Hz on \$XRANDR_OUTPUT
 _EOF_
             fi
 
+            if [[ "$XINIT_WM" -eq 1 ]]; then
+                cat >>"$xinitrc" <<_EOF_
+matchbox-window-manager -use_cursor no &
+sleep 0.5
+_EOF_
+            fi
+
             # echo command line for runcommand log
             cat >>"$xinitrc" <<_EOF_
 echo -e "\nExecuting (via xinit): "${COMMAND//\$/\\\$}"\n"
@@ -1029,21 +1036,27 @@ function restore_fb() {
     switch_fb_res "${FB_ORIG[0]}x${FB_ORIG[1]}" "${FB_ORIG[2]}"
 }
 
-function config_dispmanx() {
-    # if we are running under X then don't try and use dispmanx
+function config_backend() {
+    # if we are running under X then don't try and use a different backend
     [[ -n "$DISPLAY" || "$XINIT" -eq 1 ]] && return
     local name="$1"
-    # if we have a dispmanx conf file and $name is in it (as a variable) and set to 1,
+    # if we have a backends.conf file and with an entry for the current emulator name, 
     # change the library path to load dispmanx sdl first
-    if [[ -f "$DISPMANX_CONF" ]]; then
-        iniConfig " = " '"' "$DISPMANX_CONF"
+    if [[ -f "$BACKENDS_CONF" ]]; then
+        iniConfig " = " '"' "$BACKENDS_CONF"
         iniGet "$name"
-        if [[ "$ini_value" == "1" ]]; then
-            if [[ "$HAS_MODESET" == "kms" ]]; then
-                COMMAND="SDL_DISPMANX_WIDTH=${MODE_CUR[2]} SDL_DISPMANX_HEIGHT=${MODE_CUR[3]} $COMMAND"
-            fi
-            COMMAND="SDL1_VIDEODRIVER=dispmanx $COMMAND"
-        fi
+        case "$ini_value" in
+            1|dispmanx)
+                if [[ "$HAS_MODESET" == "kms" ]]; then
+                    COMMAND="SDL_DISPMANX_WIDTH=${MODE_CUR[2]} SDL_DISPMANX_HEIGHT=${MODE_CUR[3]} $COMMAND"
+                fi
+                COMMAND="SDL1_VIDEODRIVER=dispmanx $COMMAND"
+                ;;
+            x11)
+                XINIT=1
+                XINIT_WM=1
+                ;;
+        esac
     fi
 }
 
@@ -1331,7 +1344,7 @@ function runcommand() {
 
     [[ -n "$FB_NEW" ]] && switch_fb_res $FB_NEW
 
-    config_dispmanx "$SAVE_EMU"
+    config_backend "$SAVE_EMU"
 
     # switch to configured cpu scaling governor
     [[ -n "$GOVERNOR" ]] && set_governor "$GOVERNOR"
