@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .int .bin\n\nCopy your Intellivision roms to $ro
 rp_module_licence="GPL2 http://spatula-city.org/%7Eim14u2c/intv/"
 rp_module_repo="file $__archive_url/jzintv-20181225.zip"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_jzintv() {
     getDepends libsdl1.2-dev
@@ -47,9 +47,7 @@ function install_jzintv() {
 function configure_jzintv() {
     mkRomDir "intellivision"
 
-    if ! isPlatform "x11"; then
-        setDispmanx "$md_id" 1
-    fi
+    ! isPlatform "x11" && setBackend "$md_id" "dispmanx"
 
     addEmulator 1 "$md_id" "intellivision" "$md_inst/bin/jzintv -p $biosdir -q %ROM%"
     addSystem "intellivision"

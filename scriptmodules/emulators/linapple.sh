@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .dsk\n\nCopy your Apple 2 games to $romdir/apple
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dabonetn/linapple-pie/master/LICENSE"
 rp_module_repo="git https://github.com/dabonetn/linapple-pie.git master"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_linapple() {
     getDepends libzip-dev libsdl1.2-dev libsdl-image1.2-dev libcurl4-openssl-dev
@@ -59,7 +59,7 @@ function configure_linapple() {
         copyDefaultConfig "$file" "$md_conf_root/apple2/$file"
     done
 
-    setDispmanx "$md_id" 1
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 
     mkUserDir "$md_conf_root/apple2"
     moveConfigDir "$home/.linapple" "$md_conf_root/apple2"
