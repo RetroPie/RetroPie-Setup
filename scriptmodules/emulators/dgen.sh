@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .32x .iso .cue .smd .bin .gen .md .sg .zip\n\nCo
 rp_module_licence="GPL2 https://sourceforge.net/p/dgen/dgen/ci/master/tree/COPYING"
 rp_module_repo="file $__archive_url/dgen-sdl-1.33.tar.gz"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="sdl1 !mali !kms"
 
 function depends_dgen() {
     getDepends libsdl1.2-dev libarchive-dev
@@ -104,5 +104,5 @@ function configure_dgen() {
     iniSet "joy_pad2_mode" "joystick1-button6"
     iniSet "joy_pad2_start" "joystick1-button7"
 
-    setDispmanx "$md_id" 1
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 }

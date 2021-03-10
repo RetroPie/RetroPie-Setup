@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .img .rom\n\nCopy your Macintosh roms mac.rom an
 rp_module_licence="GPL2 https://raw.githubusercontent.com/cebix/macemu/master/BasiliskII/COPYING"
 rp_module_repo="git https://github.com/cebix/macemu.git master"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_basilisk() {
     local depends=(libsdl1.2-dev autoconf automake oss-compat)

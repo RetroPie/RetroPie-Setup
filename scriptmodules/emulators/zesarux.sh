@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd
 rp_module_licence="GPL3 https://raw.githubusercontent.com/chernandezba/zesarux/master/src/LICENSE"
 rp_module_repo="git https://github.com/chernandezba/zesarux.git 9.1"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="!mali"
 
 function depends_zesarux() {
     local depends=(libssl-dev libpthread-stubs0-dev libasound2-dev)
@@ -99,7 +99,7 @@ _EOF_
     copyDefaultConfig "$config" "$md_conf_root/zxspectrum/.zesaruxrc"
     rm "$config"
 
-    setDispmanx "$md_id" 1
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 
     addEmulator 1 "$md_id" "zxspectrum" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh %ROM%"
     addEmulator 1 "$md_id" "samcoupe" "bash $romdir/zxspectrum/+Start\ ZEsarUX.sh --machine sam %ROM%"

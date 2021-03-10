@@ -15,7 +15,7 @@ rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $rom
 rp_module_licence="GPL2 https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
 rp_module_repo="git https://github.com/amadvance/advancemame v3.9"
 rp_module_section="opt"
-rp_module_flags=""
+rp_module_flags="sdl2 sdl1-videocore"
 
 function _update_hook_advmame() {
     # if the non split advmame is installed, make directories for 0.94 / 1.4 so they will be updated

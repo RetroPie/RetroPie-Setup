@@ -14,7 +14,7 @@ rp_module_desc="SHARP X68000 Emulator"
 rp_module_help="You need to copy a X68000 bios file (iplrom30.dat, iplromco.dat, iplrom.dat, or iplromxv.dat), and the font file (cgrom.dat or cgrom.tmp) to $biosdir/keropi. Use F12 to access the in emulator menu."
 rp_module_repo="git https://github.com/hissorii/px68k.git master"
 rp_module_section="exp"
-rp_module_flags="!mali !kms"
+rp_module_flags="sdl1 !mali !kms"
 
 function depends_px68k() {
     getDepends libsdl1.2-dev libsdl-gfx1.2-dev
@@ -50,8 +50,6 @@ function configure_px68k() {
         fi
         ln -sf "$biosdir/keropi/$bios" "$md_conf_root/x68000/$bios"
     done
-
-    setDispmanx "$md_id" 0
 
     addEmulator 1 "$md_id" "x68000" "$md_inst/px68k %ROM%"
     addSystem "x68000"

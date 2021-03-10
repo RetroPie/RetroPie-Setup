@@ -15,7 +15,7 @@ rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/uae4all2/retropie/copying"
 rp_module_repo="git https://github.com/RetroPie/uae4all2.git retropie"
 rp_module_section="opt"
-rp_module_flags="dispmanx !all videocore"
+rp_module_flags="sdl1 !all videocore"
 
 function depends_uae4all() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev
@@ -94,7 +94,7 @@ _EOF_
         chmod a+x "$romdir/amiga/+Start UAE4All.sh"
         chown $user:$user "$romdir/amiga/+Start UAE4All.sh"
 
-        setDispmanx "$md_id" 1
+        isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
     else
         rm -f "$biosdir/aros-amiga-m68k"*
     fi
