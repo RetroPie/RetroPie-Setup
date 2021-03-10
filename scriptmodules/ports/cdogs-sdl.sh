@@ -14,7 +14,7 @@ rp_module_desc="C-Dogs SDL - Classic overhead run-and-gun game"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/cxong/cdogs-sdl/master/COPYING"
 rp_module_repo="git https://github.com/cxong/cdogs-sdl.git 0.7.2"
 rp_module_section="exp"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_cdogs-sdl() {
     getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev
@@ -49,7 +49,7 @@ function configure_cdogs-sdl() {
 
     [[ "$md_mode" == "remove" ]] && return
 
-    setDispmanx "$md_id" 1
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 
     moveConfigDir "$home/.config/cdogs-sdl" "$md_conf_root/cdogs-sdl"
 }

@@ -14,7 +14,7 @@ rp_module_desc="Bombermaaan - Classic bomberman game"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/bjaraujo/Bombermaaan/master/LICENSE.txt"
 rp_module_repo="git https://github.com/bjaraujo/Bombermaaan.git v1.9.7.2126"
 rp_module_section="exp"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_bombermaaan() {
     getDepends cmake libsdl1.2-dev libsdl-mixer1.2-dev
@@ -44,7 +44,7 @@ function install_bombermaaan() {
 function configure_bombermaaan() {
     addPort "$md_id" "bombermaaan" "Bombermaaan" "$md_inst/bombermaaan"
 
-    setDispmanx "$md_id" 1
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 
     local file="$romdir/ports/Bombermaaan.sh"
     cat >"$file" << _EOF_

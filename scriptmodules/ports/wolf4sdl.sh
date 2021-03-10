@@ -14,7 +14,7 @@ rp_module_desc="Wolf4SDL - port of Wolfenstein 3D / Spear of Destiny engine"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/mozzwald/wolf4sdl/master/license-mame.txt"
 rp_module_repo="git https://github.com/mozzwald/wolf4sdl.git master"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_wolf4sdl() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev rename
@@ -144,5 +144,5 @@ _EOF_
 
     moveConfigDir "$home/.wolf4sdl" "$md_conf_root/wolf3d"
 
-    setDispmanx "$md_id" 1
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 }
