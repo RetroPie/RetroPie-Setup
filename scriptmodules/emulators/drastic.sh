@@ -14,7 +14,7 @@ rp_module_desc="NDS emu - DraStic"
 rp_module_help="ROM Extensions: .nds .zip\n\nCopy your Nintendo DS roms to $romdir/nds"
 rp_module_licence="PROP"
 rp_module_section="exp"
-rp_module_flags="!all arm !armv6 !mali"
+rp_module_flags="sdl2 !all arm !armv6 !mali"
 
 function depends_drastic() {
     local depends=(libasound2-dev libsdl2-dev zlib1g-dev)
@@ -36,6 +36,21 @@ function install_bin_drastic() {
 function configure_drastic() {
     mkRomDir "nds"
 
+    addEmulator 1 "$md_id" "nds" "$md_inst/drastic.sh %ROM%"
+    addSystem "nds"
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    isPlatform "kms" && ! isPlatform "x11" && setBackend "$md_id" "x11"
+
+    cat > "$md_inst/drastic.sh" << _EOF_
+#!/bin/bash
+pushd "$md_conf_root/nds/drastic"
+$md_inst/drastic "\$1"
+popd
+_EOF_
+    chmod +x "$md_inst/drastic.sh"
+
     # wrong permissions on game_database.xml
     chmod 644 "$md_inst/game_database.xml"
 
@@ -46,28 +61,4 @@ function configure_drastic() {
     for file in game_database.xml system/drastic_bios_arm7.bin system/drastic_bios_arm9.bin usrcheat.dat drastic_logo_0.raw drastic_logo_1.raw; do
         ln -sfv "$md_inst/$file" "$md_conf_root/nds/drastic/$file"
     done
-
-    if [[ "$md_mode" == "install" ]]; then
-        cat > "$md_inst/drastic.sh" << _EOF_
-#!/bin/bash
-# Don't start a window manager on x11 platforms
-if [[ -n \$DISPLAY && "\$2" == "kms" ]]; then
-    matchbox-window-manager -use_cursor no &
-    sleep 0.5
-fi
-pushd "$md_conf_root/nds/drastic"
-$md_inst/drastic "\$1"
-popd
-_EOF_
-        chmod +x "$md_inst/drastic.sh"
-    fi
-
-    # Launch DraStic in an x11 session for KMS platforms
-    if isPlatform "kms" && ! isPlatform "x11"; then
-        addEmulator 1 "$md_id" "nds" "XINIT:$md_inst/drastic.sh %ROM% kms"
-    else
-        addEmulator 1 "$md_id" "nds" "$md_inst/drastic.sh %ROM%"
-    fi
-
-    addSystem "nds"
 }
