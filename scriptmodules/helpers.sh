@@ -1003,7 +1003,7 @@ function applyPatch() {
     return 0
 }
 
-## @fn runCurl
+## @fn runCurl()
 ## @params ... commandline arguments to pass to curl
 ## @brief Run curl with chosen parameters and handle curl errors
 ## @details Runs curl with the provided parameters, whilst also capturing the output and extracting
