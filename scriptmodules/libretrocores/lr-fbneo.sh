@@ -10,7 +10,7 @@
 #
 
 rp_module_id="lr-fbneo"
-rp_module_desc="Arcade emu - FinalBurn Neo v1.0.0.01 (Upstream) port for libretro"
+rp_module_desc="Arcade emu - FinalBurn Neo (latest version) port for libretro"
 rp_module_help="Previously called lr-fba-next and fbalpha\n\ROM Extension: .zip\n\nCopy your FBA roms to\n$romdir/fba or\n$romdir/neogeo or\n$romdir/arcade\n\nFor NeoGeo games the neogeo.zip BIOS is required and must be placed in the same directory as your FBA roms."
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/FBNeo/master/src/license.txt"
 rp_module_repo="git https://github.com/libretro/FBNeo.git master"
