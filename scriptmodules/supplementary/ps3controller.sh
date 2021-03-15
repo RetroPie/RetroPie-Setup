@@ -16,7 +16,7 @@ rp_module_section="driver"
 
 function depends_ps3controller() {
     depends_bluetooth
-    local depends=(checkinstall libusb-dev libbluetooth-dev joystick)
+    local depends=(libusb-dev libbluetooth-dev joystick)
     getDepends "${depends[@]}"
 }
 
@@ -46,8 +46,7 @@ function install_ps3controller() {
     [[ -z "$branch" ]] && branch="ps3"
 
     cd sixad
-    checkinstall -y --fstrans=no
-
+    make install
     echo "$branch" >"$md_inst/type.txt"
 
     # Disable timeouts
