@@ -68,8 +68,6 @@ function gui_esthemes() {
         'AmadhiX eudora'
         'AmadhiX eudora-bigshot'
         'AmadhiX eudora-concise'
-        'InsecureSpike retroplay-clean-canela'
-        'InsecureSpike retroplay-clean-detail-canela'
         'Omnija simpler-turtlepi'
         'Omnija simpler-turtlemini'
         'Omnija metro'
