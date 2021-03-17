@@ -56,7 +56,29 @@ function install_ps3controller() {
 }
 
 function remove_ps3controller() {
-    dpkg --purge sixad
+    declare -a remove_paths=("
+                /etc/default/sixad"
+                "/etc/systemd/system/sixad.service"
+                "/etc/logrotate.d/sixad"
+                "/usr/bin/sixad"
+                "/usr/sbin/sixad-bin"
+                "/usr/sbin/sixad-sixaxis"
+                "/usr/sbin/sixad-remote"
+                "/usr/sbin/sixad-3in1"
+                "/usr/sbin/sixad-raw"
+                "/usr/sbin/sixpair"
+                "/usr/sbin/sixad-helper"
+                "/etc/udev/rules.d/99-sixad.rules"
+                "/etc/udev/rules.d/10-hci.rules"
+                "/var/lib/sixad/"
+    )
+    for paths in ${remove_paths[@]}; do
+        if [[ -d ${paths} ]]; then
+            sudo rm -rfv ${paths}
+        elif [[ condition ]]; then
+            sudo rm -fv ${paths}
+        fi
+    done
     [[ -f /usr/sbin/bluetoothd ]] && chmod 755 /usr/sbin/bluetoothd
 }
 
