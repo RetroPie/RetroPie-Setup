@@ -74,9 +74,9 @@ function remove_ps3controller() {
     )
     for paths in ${remove_paths[@]}; do
         if [[ -d ${paths} ]]; then
-            sudo rm -rfv ${paths}
-        elif [[ condition ]]; then
-            sudo rm -fv ${paths}
+            rm -rfv ${paths}
+        elif [[ -f ${paths} ]]; then
+            rm -fv ${paths}
         fi
     done
     [[ -f /usr/sbin/bluetoothd ]] && chmod 755 /usr/sbin/bluetoothd
