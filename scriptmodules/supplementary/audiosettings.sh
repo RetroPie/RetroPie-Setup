@@ -195,7 +195,8 @@ function _pulseaudio_audiosettings() {
     done < <(_pa_cmd_audiosettings pacmd list-sinks | \
             awk -F [:=] '/index/ { idx=$2;
                          do {getline} while($0 !~ "alsa.name");
-                         print idx,gensub(/"|bcm2835\s+/,"","g", $2) }'
+                         gsub(/"|bcm2835[^a-zA-Z]+/, "", $2);
+                         print idx,$2 }'
             )
 
     options+=(
@@ -206,10 +207,10 @@ function _pulseaudio_audiosettings() {
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         case "$choice" in
-            [1-9])
+            [0-9])
                 _pa_cmd_audiosettings pactl set-default-sink $choice
                 rm -f "$home/.asoundrc"
-                printMsgs "dialog" "Set audio output to ${options[$((choice*2-1))]}"
+                printMsgs "dialog" "Set audio output to ${options[$((choice*2+1))]}"
                 ;;
             M)
                 alsamixer >/dev/tty </dev/tty
