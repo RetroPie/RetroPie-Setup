@@ -947,9 +947,12 @@ echo "Set mode ${MODE_CUR[2]}x${MODE_CUR[3]}@${MODE_CUR[5]}Hz on \$XRANDR_OUTPUT
 _EOF_
             fi
 
-            if [[ "$XINIT_WM" -eq 1 ]]; then
+            if [[ "$XINIT_WM" -gt 0 ]]; then
+                local params=()
+                [[ "$XINIT_WM" -eq 1 ]] && params+=(-use_cursor no)
+                [[ "$XINIT_WM" -eq 2 ]] && params+=(-use_cursor yes)
                 cat >>"$xinitrc" <<_EOF_
-matchbox-window-manager -use_cursor no &
+matchbox-window-manager ${params[@]} &
 sleep 0.5
 _EOF_
             fi
@@ -1055,6 +1058,10 @@ function config_backend() {
             x11)
                 XINIT=1
                 XINIT_WM=1
+                ;;
+            x11-c)
+                XINIT=1
+                XINIT_WM=2
                 ;;
         esac
     fi
