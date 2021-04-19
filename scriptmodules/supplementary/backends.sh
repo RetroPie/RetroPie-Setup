@@ -31,10 +31,10 @@ function _list_backends() {
     fi
 
     local default
+    local sdl_name="${sdl^^}"
     if [[ "$sdl" == "sdl1" ]]; then
         backends["default"]="SDL1 Framebuffer driver"
         isPlatform "dispmanx" && backends["dispmanx"]="SDL1 DispmanX driver"
-        backends["x11"]="SDL1 on X11/Desktop"
     elif [[ "$sdl" == "sdl2" ]]; then
         if isPlatform "videocore"; then
             default="SDL2 videocore driver"
@@ -42,8 +42,9 @@ function _list_backends() {
             default="SDL2 KMS driver"
         fi
         backends["default"]="$default"
-        backends["x11"]="SDL2 on X11/Desktop"
     fi
+    backends["x11"]="$sdl_name on Desktop"
+    backends["x11-c"]="$sdl_name on Desktop + Cursor"
     return 0
 }
 
@@ -80,7 +81,7 @@ function gui_backends() {
         for id in "${__mod_id[@]}"; do
             valid=0
             if rp_isInstalled "$id"; then
-                if _list_backends "$id"; then
+                if _list_backends "$id" >/dev/null; then
                     backend="$(_get_current_backends "$id")"
                     options+=("$id" "Using ${backends[$backend]}")
                 fi
@@ -106,7 +107,7 @@ function gui_configure_backends() {
         local selected
         local backend
         local flags
-        for backend in "${!backends[@]}"; do
+        for backend in $(echo "${!backends[@]}" | xargs -n1 | sort); do
             selected=""
             [[ "$current" == "$backend" ]] && selected="(Currently selected)"
             options+=("$backend" "${backends[$backend]} $selected")
