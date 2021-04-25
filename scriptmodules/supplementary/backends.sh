@@ -83,7 +83,7 @@ function gui_backends() {
             if rp_isInstalled "$id"; then
                 if _list_backends "$id" >/dev/null; then
                     backend="$(_get_current_backends "$id")"
-                    options+=("$id" "Using ${backends[$backend]}")
+                    options+=("$id" "Using ${backends[$backend]} ($backend)")
                 fi
             fi
         done
