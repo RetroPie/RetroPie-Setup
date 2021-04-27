@@ -23,11 +23,7 @@ function sources_lr-mgba() {
 
 function build_lr-mgba() {
     make -f Makefile.libretro clean
-    if isPlatform "neon"; then
-        make -f Makefile.libretro HAVE_NEON=1
-    else
-        make -f Makefile.libretro
-    fi
+    make -f Makefile.libretro
     md_ret_require="$md_build/mgba_libretro.so"
 }
 
