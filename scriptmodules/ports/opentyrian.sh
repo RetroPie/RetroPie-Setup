@@ -11,7 +11,7 @@
 
 rp_module_id="opentyrian"
 rp_module_desc="Open Tyrian - port of the DOS shoot-em-up Tyrian"
-rp_module_licence="GPL2 https://bitbucket.org/opentyrian/opentyrian/raw/3e3d6b925342a5891d8b937989dc50b563ff83dd/COPYING"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/opentyrian/opentyrian/master/COPYING"
 rp_module_repo="git https://github.com/opentyrian/opentyrian.git master"
 rp_module_section="opt"
 rp_module_flags=""
