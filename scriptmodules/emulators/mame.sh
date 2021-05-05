@@ -21,15 +21,6 @@ function _get_branch_mame() {
     download https://api.github.com/repos/mamedev/mame/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
 }
 
-function _get_binary_name_mame() {
-    # The MAME executable on 64-bit systems is called mame64 instead of mame. Rename it back to mame.
-    if isPlatform "64bit" && ! isPlatform "aarch64"; then
-        echo 'mame64'
-    else
-        echo 'mame'
-    fi
-}
-
 function depends_mame() {
     if compareVersions $__gcc_version lt 7; then
         md_ret_errors+=("Sorry, you need an OS with gcc 7 or newer to compile $md_id")
@@ -56,12 +47,10 @@ function build_mame() {
     # Compile MAME
     local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE PYTHON_EXECUTABLE=python3)
     make "${params[@]}"
-
-    local binary_name="$(_get_binary_name_${md_id})"
-    strip "${binary_name}"
+    strip mame
 
     rpSwap off
-    md_ret_require="$md_build/${binary_name}"
+    md_ret_require="$md_build/mame"
 }
 
 function install_mame() {
@@ -74,7 +63,7 @@ function install_mame() {
         'hlsl'
         'ini'
         'language'
-        "$(_get_binary_name_${md_id})"
+        'mame'
         'plugins'
         'roms'
         'samples'
@@ -158,9 +147,8 @@ function configure_mame() {
         rm "$temp_ini_hiscore"
     fi
 
-    local binary_name="$(_get_binary_name_${md_id})"
-    addEmulator 0 "$md_id" "arcade" "$md_inst/${binary_name} %BASENAME%"
-    addEmulator 1 "$md_id" "$system" "$md_inst/${binary_name} %BASENAME%"
+    addEmulator 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
+    addEmulator 1 "$md_id" "$system" "$md_inst/mame %BASENAME%"
 
     addSystem "arcade"
     addSystem "$system"
