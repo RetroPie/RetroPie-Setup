@@ -17,7 +17,7 @@ rp_module_section="exp"
 rp_module_flags="noinstclean nobin"
 
 function depends_mobilegamepad() {
-    depends_virtualgamepad "$@"
+    getDepends nodejs
 }
 
 function remove_mobilegamepad() {
