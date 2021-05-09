@@ -29,7 +29,7 @@ function depends_mame() {
 
     # Install required libraries required for compilation and running
     # Note: libxi-dev is required as of v0.210, because of flag changes for XInput
-    getDepends libfontconfig1-dev qt5-default libsdl2-ttf-dev libxinerama-dev libxi-dev
+    getDepends libfontconfig1-dev qt5-default libsdl2-ttf-dev libxinerama-dev libxi-dev libpulse-dev
 }
 
 function sources_mame() {
@@ -37,7 +37,7 @@ function sources_mame() {
 }
 
 function build_mame() {
-    # More memory is required for x86 platforms
+    # More memory is required for 64bit platforms
     if isPlatform "64bit"; then
         rpSwap on 8192
     else
