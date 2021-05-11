@@ -1091,7 +1091,7 @@ function download() {
         printMsgs "console" "Downloading $url to $dest ..."
         params+=(-o "$dest")
     fi
-    params+=(--connect-timeout 10 --speed-limit 1 --speed-time 60)
+    params+=(--connect-timeout 10 --speed-limit 1 --speed-time 60 --fail)
     # add the url
     params+=("$url")
 
