@@ -55,3 +55,29 @@ function check_repos_tools() {
     done
     return "$ret"
 }
+
+function check_licences_tools() {
+    local ids
+    if [[ -n "$1" ]]; then
+        ids=("$@")
+    else
+        ids=("${__mod_id[@]}")
+    fi
+    local id
+    local ret=0
+    local licence
+    local url
+    for id in "${ids[@]}"; do
+        eval "$(rp_moduleVars $id)"
+        licence=($md_licence)
+        url="${licence[1]}"
+        if [[ -n "$url" ]]; then
+            printMsgs "console" "Checking $id ($md_licence) ..."
+            if ! download "$url" - &>/dev/null; then
+                printMsgs "console" "... $id licence URL failed ($url)"
+                ret=1
+            fi
+        fi
+    done
+    return "$ret"
+}
