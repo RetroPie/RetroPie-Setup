@@ -78,6 +78,8 @@ function rp_moduleVars() {
         local md_flags="${__mod_info[$id/flags]}"
         local md_path="${__mod_info[$id/path]}"
 
+        local md_licence="${__mod_info[$id/licence]}"
+
         local md_repo_type="${__mod_info[$id/repo_type]}"
         local md_repo_url="${__mod_info[$id/repo_url]}"
         local md_repo_branch="${__mod_info[$id/repo_branch]}"
