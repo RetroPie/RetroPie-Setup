@@ -62,23 +62,36 @@ function install_dosbox() {
 }
 
 function configure_dosbox() {
-    if [[ "$md_id" == "dosbox-sdl2" ]]; then
-        local def="0"
-        local launcher_name="+Start DOSBox-SDL2.sh"
-        local needs_synth="0"
-    else
-        local def="1"
-        local launcher_name="+Start DOSBox.sh"
-        # needs software synth for midi; limit to Pi for now
-        if isPlatform "rpi"; then
-            local needs_synth="1"
-        fi
-    fi
+    local def=0
+    local launcher_name="+Start DOSBox.sh"
+    local needs_synth=0
+    case "$md_id" in
+        dosbox-sdl2)
+            launcher_name="+Start DOSBox-SDL2.sh"
+            ;;
+        dosbox)
+            def=1
+            # needs software synth for midi; limit to Pi for now
+            isPlatform "rpi" && needs_synth=1
+            # set dispmanx by default on rpi with fkms
+            isPlatform "dispmanx" && ! isPlatform "videocore" && setBackend "$md_id" "dispmanx"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
 
     mkRomDir "pc"
+
+    moveConfigDir "$home/.$md_id" "$md_conf_root/pc"
+
+    addEmulator "$def" "$md_id" "pc" "bash $romdir/pc/${launcher_name// /\\ } %ROM%"
+    addSystem "pc"
+
     rm -f "$romdir/pc/$launcher_name"
-    if [[ "$md_mode" == "install" ]]; then
-        cat > "$romdir/pc/$launcher_name" << _EOF_
+    [[ "$md_mode" == "remove" ]] && return
+
+    cat > "$romdir/pc/$launcher_name" << _EOF_
 #!/bin/bash
 
 [[ ! -n "\$(aconnect -o | grep -e TiMidity -e FluidSynth)" ]] && needs_synth="$needs_synth"
@@ -124,28 +137,19 @@ midi_synth start
 "$md_inst/bin/dosbox" "\${params[@]}"
 midi_synth stop
 _EOF_
-        chmod +x "$romdir/pc/$launcher_name"
-        chown $user:$user "$romdir/pc/$launcher_name"
+    chmod +x "$romdir/pc/$launcher_name"
+    chown $user:$user "$romdir/pc/$launcher_name"
 
-        local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
-        if [[ -f "$config_path" ]]; then
-            iniConfig " = " "" "$config_path"
-            iniSet "usescancodes" "false"
-            iniSet "core" "dynamic"
-            iniSet "cycles" "max"
-            iniSet "scaler" "none"
-            if isPlatform "rpi" || [[ -n "$(aconnect -o | grep -e TiMidity -e FluidSynth)" ]]; then
-                iniSet "mididevice" "alsa"
-                iniSet "midiconfig" "128:0"
-            fi
+    local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
+    if [[ -f "$config_path" ]]; then
+        iniConfig " = " "" "$config_path"
+        iniSet "usescancodes" "false"
+        iniSet "core" "dynamic"
+        iniSet "cycles" "max"
+        iniSet "scaler" "none"
+        if isPlatform "rpi" || [[ -n "$(aconnect -o | grep -e TiMidity -e FluidSynth)" ]]; then
+            iniSet "mididevice" "alsa"
+            iniSet "midiconfig" "128:0"
         fi
     fi
-
-    # set dispmanx by default on rpi with fkms
-    isPlatform "dispmanx" && ! isPlatform "videocore" && setBackend "$md_id" "dispmanx"
-
-    moveConfigDir "$home/.$md_id" "$md_conf_root/pc"
-
-    addEmulator "$def" "$md_id" "pc" "bash $romdir/pc/${launcher_name// /\\ } %ROM%"
-    addSystem "pc"
 }
