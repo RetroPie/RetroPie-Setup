@@ -17,10 +17,6 @@ rp_module_repo="git https://github.com/libretro/gpsp.git master"
 rp_module_section="opt arm=main"
 rp_module_flags="!all arm"
 
-function depends_lr-gpsp() {
-    getDepends gcc-6
-}
-
 function sources_lr-gpsp() {
     gitPullOrClone
 }
@@ -30,7 +26,7 @@ function build_lr-gpsp() {
     local params=()
     isPlatform "arm" && params+=(platform=armv)
     make "${params[@]}" clean
-    CC="gcc-6" make "${params[@]}"
+    make "${params[@]}"
     rpSwap off
     md_ret_require="$md_build/gpsp_libretro.so"
 }
