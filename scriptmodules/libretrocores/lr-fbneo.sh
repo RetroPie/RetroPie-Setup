@@ -39,7 +39,7 @@ function build_lr-fbneo() {
 
 function install_lr-fbneo() {
     md_ret_files=(
-        'fba.chm'
+        'fbahelpfilesrc/fbneo.chm'
         'src/burner/libretro/fbneo_libretro.so'
         'gamelist.txt'
         'whatsnew.html'
@@ -72,6 +72,7 @@ function configure_lr-fbneo() {
     addEmulator 0 "$md_id-nes" "nes" "$md_inst/fbneo_libretro.so --subsystem nes"
     addEmulator 0 "$md_id-ngp" "ngp" "$md_inst/fbneo_libretro.so --subsystem ngp"
     addEmulator 0 "$md_id-ngpc" "ngpc" "$md_inst/fbneo_libretro.so --subsystem ngp"
+    addEmulator 0 "$md_id-chf" "channelf" "$md_inst/fbneo_libretro.so --subsystem chf"
 
     addSystem "arcade"
     addSystem "neogeo"
@@ -89,6 +90,7 @@ function configure_lr-fbneo() {
     addSystem "nes"
     addSystem "ngp"
     addSystem "ngpc"
+    addSystem "channelf"
 
     [[ "$md_mode" == "remove" ]] && return
 
@@ -98,8 +100,11 @@ function configure_lr-fbneo() {
         ensureSystemretroconfig "$dir"
     done
 
-    # Create samples directory
+    # Create directories for all support files
     mkUserDir "$biosdir/fbneo"
+    mkUserDir "$biosdir/fbneo/blend"
+    mkUserDir "$biosdir/fbneo/cheats"
+    mkUserDir "$biosdir/fbneo/patched"
     mkUserDir "$biosdir/fbneo/samples"
 
     # copy hiscore.dat
