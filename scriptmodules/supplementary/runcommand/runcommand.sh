@@ -1211,7 +1211,7 @@ function show_launch() {
             "$HOME/RetroPie/roms/$SYSTEM/images/${ROM_BN}-image"
             "$HOME/.emulationstation/downloaded_images/$SYSTEM/${ROM_BN}-image"
             "$HOME/.emulationstation/downloaded_media/$SYSTEM/screenshots/${ROM_BN}"
-            "$HOME/RetroPie/roms/$SYSTEM/media/screenshots/${ROM_BN}"
+            "$HOME/RetroPie/roms/$SYSTEM/.media/screenshots/${ROM_BN}"
         )
     fi
 
