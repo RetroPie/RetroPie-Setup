@@ -472,7 +472,7 @@ function platform_rpi4() {
         __default_cpu_flags="-mcpu=cortex-a72"
         __platform_flags+=(aarch64)
     fi
-    __platform_flags+=(rpi gles gles3)
+    __platform_flags+=(rpi gles gles3 gles31)
 }
 
 function platform_odroid-c1() {
