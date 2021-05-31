@@ -27,7 +27,7 @@ function _get_commit_openmsx() {
 }
 
 function depends_openmsx() {
-    local depends=(libsdl2-dev libsdl2-ttf-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev libasound2-dev)
+    local depends=(libsdl2-dev libsdl2-ttf-dev libao-dev libogg-dev libtheora-dev libxml2-dev libvorbis-dev tcl-dev libasound2-dev libfreetype6-dev)
     isPlatform "x11" && depends+=(libglew-dev)
 
     getDepends "${depends[@]}"
