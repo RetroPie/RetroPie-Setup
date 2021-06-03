@@ -18,7 +18,7 @@ rp_module_section="opt"
 rp_module_flags="!armv6"
 
 function depends_lr-flycast() {
-    local depends=()
+    local depends=(zlib1g-dev)
     isPlatform "videocore" && depends+=(libraspberrypi-dev)
     isPlatform "mesa" && depends+=(libgles2-mesa-dev)
     getDepends "${depends[@]}"
