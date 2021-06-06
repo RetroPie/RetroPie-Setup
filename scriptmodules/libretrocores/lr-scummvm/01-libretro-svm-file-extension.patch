@@ -1,0 +1,22 @@
+--- upstream/backends/platform/libretro/libretro.cpp	2021-06-03 20:25:28.752752783 +0200
++++ backends/platform/libretro/libretro.cpp	2021-06-03 22:26:03.824621401 +0200
+@@ -116,7 +120,7 @@
+ #define GIT_VERSION ""
+ #endif
+    info->library_version = SCUMMVM_VERSION GIT_VERSION;
+-   info->valid_extensions = "scummvm";
++   info->valid_extensions = "svm";
+    info->need_fullpath = true;
+    info->block_extract = false;
+ }
+@@ -298,8 +302,8 @@
+       char* gamedir = dirname(path);
+       char buffer[400];
+ 
+-      // See if we are loading a .scummvm file.
+-      if (strstr(game->path, ".scummvm") != NULL) {
++      // See if we are loading a .svm file.
++      if (strstr(game->path, ".svm") != NULL) {
+          // Open the file.
+          FILE * gamefile = fopen(game->path, "r");
+          if (gamefile == NULL)

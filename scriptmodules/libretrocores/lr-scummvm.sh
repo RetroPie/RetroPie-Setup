@@ -11,13 +11,14 @@
 
 rp_module_id="lr-scummvm"
 rp_module_desc="ScummVM port for libretro"
-rp_module_help="Copy your ScummVM games to $romdir/scummvm\n\nThe name of your game directories must be suffixed with '.svm' for direct launch in EmulationStation."
+rp_module_help="Copy your ScummVM games to $romdir/scummvm\n\nSee https://retropie.org.uk/docs/ScummVM/#example\nfor expected folders and files."
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/scummvm/master/COPYING"
 rp_module_repo="git https://github.com/libretro/scummvm.git master"
 rp_module_section="exp"
 
 function sources_lr-scummvm() {
     gitPullOrClone
+    applyPatch "$md_data/01-libretro-svm-file-extension.patch"
 }
 
 function build_lr-scummvm() {
