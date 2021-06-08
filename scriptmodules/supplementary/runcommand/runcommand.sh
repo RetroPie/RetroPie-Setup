@@ -75,6 +75,7 @@ VIDEO_CONF="$CONFIGDIR/all/videomodes.cfg"
 EMU_CONF="$CONFIGDIR/all/emulators.cfg"
 BACKENDS_CONF="$CONFIGDIR/all/backends.cfg"
 RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
+JOY2KEY="joy2key_sdl.py"
 
 # modesetting tools
 TVSERVICE="/opt/vc/bin/tvservice"
@@ -107,6 +108,8 @@ function get_config() {
         iniGet "image_delay"
         IMAGE_DELAY="$ini_value"
         [[ -z "$IMAGE_DELAY" ]] && IMAGE_DELAY=2
+        iniGet "joy2key_version"
+        [[ "$ini_value" == "0" ]] && JOY2KEY="joy2key.py"
     fi
 
     if [[ -n "$DISPLAY" ]] && $XRANDR &>/dev/null; then
@@ -127,13 +130,13 @@ function start_joy2key() {
     else
         JOY2KEY_DEV="/dev/input/jsX"
     fi
-    # if joy2key.py is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
-    if [[ -f "$ROOTDIR/supplementary/runcommand/joy2key.py" && -n "$JOY2KEY_DEV" ]] && ! pgrep -f joy2key.py >/dev/null; then
+    # if joy2key is installed run it with cursor keys for axis, and enter + tab for buttons 0 and 1
+    if [[ -f "$ROOTDIR/supplementary/runcommand/$JOY2KEY" && -n "$JOY2KEY_DEV" ]] && ! pgrep -f "$JOY2KEY" >/dev/null; then
 
         # call joy2key.py: arguments are curses capability names or hex values starting with '0x'
         # see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
-        "$ROOTDIR/supplementary/runcommand/joy2key.py" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09
-        JOY2KEY_PID=$(pgrep -f joy2key.py)
+        "$ROOTDIR/supplementary/runcommand/$JOY2KEY" "$JOY2KEY_DEV" kcub1 kcuf1 kcuu1 kcud1 0x0a 0x09
+        JOY2KEY_PID=$(pgrep -f "$JOY2KEY")
 
     # ensure coherency between on-screen prompts and actual button mapping functionality
     sleep 0.3
