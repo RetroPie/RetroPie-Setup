@@ -31,6 +31,11 @@ function configure_lr-duckstation() {
     mkRomDir "psx"
     ensureSystemretroconfig "psx"
 
+    if isPlatform "gles" && ! isPlatform "gles3"; then
+        # Hardware renderer not supported on GLES2 devices
+        setRetroArchCoreOption "duckstation_GPU.Renderer" "Software"
+    fi
+
     # dynarec segfaults without redirecting stdin from </dev/null
     addEmulator 0 "$md_id" "psx" "$md_inst/duckstation_libretro.so </dev/null"
     addSystem "psx"
