@@ -635,10 +635,14 @@ function rp_hasNewerModule() {
                     ;;
             esac
 
-            # if we are currently not going to update - check the date of the module code
-            # if it's newer than the install date of the module we force an update
+            # if we are currently not going to update - check the last commit date of the module code
+            # if it's newer than the install date of the module we force an update, in case patches or build
+            # related options have been changed
             if [[ "$ret" -eq 1 && "$__ignore_module_date" -ne 1 ]]; then
-                local module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
+                local vendor="${__mod_info[$id/vendor]}"
+                local repo_dir="$scriptdir"
+                [[ "$vendor" != "RetroPie" ]] && repo_dir+="/ext/$vendor"
+                local module_date="$(git -C "$repo_dir" log -1 --format=%aI -- "${__mod_info[$id/path]}")"
                 if rp_dateIsNewer "$pkg_date" "$module_date"; then
                     ret=0
                 fi
