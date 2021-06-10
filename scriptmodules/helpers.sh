@@ -1086,7 +1086,7 @@ function download() {
 
     local params=(--location)
     if [[ "$dest" == "-" ]]; then
-        params+=(-s)
+        params+=(--silent --no-buffer)
     else
         printMsgs "console" "Downloading $url to $dest ..."
         params+=(-o "$dest")
