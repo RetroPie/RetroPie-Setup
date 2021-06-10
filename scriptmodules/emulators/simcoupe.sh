@@ -22,7 +22,15 @@ function _get_branch_simcoupe() {
     # latest simcoupe requires cmake 3.8.2 - on Stretch older versions throw a cmake error about CXX17
     # dialect support but actually seem to build ok. Lock systems with older cmake to 20200711 tag,
     # which builds ok on Raspbian Stretch and hopefully Ubuntu 18.04.
-    hasPackage cmake 3.8.2 lt && branch="20200711"
+
+    # Test using "apt-cache madison" as this code could be called when cmake isn't yet installed but correct version
+    # is available - eg via update check with builder module which removes dependencies after building.
+    # Multiple versions may be available, so grab the versions via cut, sort by version, take the latest from the top
+    # and pipe to xargs to strip whitespace
+    local cmake_ver=$(apt-cache madison cmake | cut -d\| -f2 | sort --version-sort | head -1 | xargs)
+    if compareVersions "$cmake_ver" lt 3.8.2; then
+        branch="20200711"
+    fi
     echo "$branch"
 }
 
