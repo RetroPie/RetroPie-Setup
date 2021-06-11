@@ -42,8 +42,9 @@ function install_bin_splashscreen() {
 [Unit]
 Description=Show custom splashscreen
 DefaultDependencies=no
-After=console-setup.service
-Wants=console-setup.service
+#Disabled as unneeded (needs testing)
+#After=console-setup.service
+#Wants=console-setup.service
 ConditionPathExists=$md_inst/asplashscreen.sh
 
 [Service]
