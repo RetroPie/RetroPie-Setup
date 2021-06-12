@@ -412,7 +412,8 @@ function rp_hasBinaries() {
 
 function rp_getBinaryUrl() {
     local id="$1"
-    local url="$__binary_url/${__mod_info[$id/type]}/$id.tar.gz"
+    local url=""
+    rp_hasBinaries && url="$__binary_url/${__mod_info[$id/type]}/$id.tar.gz"
     if fnExists "install_bin_${id}"; then
         if fnExists "__binary_url_${id}"; then
             url="$(__binary_url_${id})"
@@ -458,11 +459,11 @@ function rp_hasBinary() {
     [[ -z "$url" ]] && return 1
 
     [[ -n "${__mod_info[$id/has_binary]}" ]] && return "${__mod_info[$id/has_binary]}"
+
     local ret=1
-    if rp_hasBinaries; then
-        rp_remoteFileExists "$url"
-        ret="$?"
-    fi
+    rp_remoteFileExists "$url"
+    ret="$?"
+
     # if there wasn't an error, cache the result
     [[ "$ret" -ne 2 ]] && __mod_info[$id/has_binary]="$ret"
     return "$ret"
