@@ -907,6 +907,9 @@ function setESSystem() {
 ## @param shader set a default shader to use (deprecated)
 ## @brief Creates a default retroarch.cfg for specified system in `/opt/retropie/configs/$system/retroarch.cfg`.
 function ensureSystemretroconfig() {
+    # don't do any config work on module removal
+    [[ "$md_mode" == "remove" ]] && return
+
     local system="$1"
     local shader="$2"
 
