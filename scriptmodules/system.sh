@@ -436,72 +436,89 @@ function set_platform_defaults() {
     __platform_arch=$(uname -m)
 }
 
-function platform_rpi1() {
+function cpu_arm1176() {
     __default_cpu_flags="-mcpu=arm1176jzf-s -mfpu=vfp"
-    __platform_flags+=(arm armv6 rpi gles)
-    # if building in a chroot, what cpu should be set by qemu
-    # make chroot identify as arm6l
+    __platform_flags+=(arm armv6)
     __qemu_cpu=arm1176
 }
 
-function platform_rpi2() {
-    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4"
-    __platform_flags+=(arm armv7 neon rpi gles)
-    __qemu_cpu=cortex-a7
+function cpu_armv7() {
+    local cpu="$1"
+    if [[ -n "$cpu" ]]; then
+        __default_cpu_flags="-mcpu=$cpu -mfpu=neon-vfpv4"
+    else
+        __default_cpu_flags="-march=armv7-a -mfpu=neon-vfpv4"
+        cpu="cortex-a7"
+    fi
+    __platform_flags+=(arm armv7 neon)
+    __qemu_cpu="$cpu"
 }
 
-# note the rpi3 currently uses the rpi2 binaries - for ease of maintenance - rebuilding from source
-# could improve performance with the compiler options below but needs further testing
-function platform_rpi3() {
+function cpu_armv8() {
+    local cpu="$1"
+    __default_cpu_flags="-mcpu=$cpu"
     if isPlatform "32bit"; then
-        __default_cpu_flags="-mcpu=cortex-a53 -mfpu=neon-fp-armv8"
+        __default_cpu_flags+="  -mfpu=neon-fp-armv8"
         __platform_flags+=(arm armv8 neon)
     else
-        __default_cpu_flags="-mcpu=cortex-a53"
         __platform_flags+=(aarch64)
     fi
+    __qemu_cpu="$cpu"
+}
+
+function cpu_arm_state() {
+    if isPlatform "32bit"; then
+        __default_cpu_flags+=" -marm"
+    fi
+}
+
+function platform_conf_glext() {
+   # required for mali-fbdev headers to define GL functions
+    __default_cflags="-DGL_GLEXT_PROTOTYPES"
+}
+
+function platform_rpi1() {
+    cpu_arm1176
     __platform_flags+=(rpi gles)
-    __qemu_cpu=cortex-a53
+}
+
+function platform_rpi2() {
+    cpu_armv7 "cortex-a7"
+    __platform_flags+=(rpi gles)
+}
+
+function platform_rpi3() {
+    cpu_armv8 "cortex-a53"
+    __platform_flags+=(rpi gles)
 }
 
 function platform_rpi4() {
-    if isPlatform "32bit"; then
-        __default_cpu_flags="-mcpu=cortex-a72 -mfpu=neon-fp-armv8"
-        __platform_flags+=(arm armv8 neon)
-    else
-        __default_cpu_flags="-mcpu=cortex-a72"
-        __platform_flags+=(aarch64)
-    fi
+    cpu_armv8 "cortex-a72"
     __platform_flags+=(rpi gles gles3 gles31)
 }
 
 function platform_odroid-c1() {
-    __default_cpu_flags="-marm -mcpu=cortex-a5 -mfpu=neon-vfpv4"
-    __platform_flags+=(arm armv7 neon mali gles)
-    __qemu_cpu=cortex-a9
+    cpu_armv7 "cortex-a5"
+    cpu_arm_state
+    __platform_flags+=(mali gles)
 }
 
 function platform_odroid-c2() {
-    if isPlatform "32bit"; then
-        __default_cpu_flags="-marm -mcpu=cortex-a53 -mfpu=neon-fp-armv8"
-        __platform_flags+=(arm armv8 neon)
-    else
-        __default_cpu_flags="-mcpu=cortex-a53"
-        __platform_flags+=(aarch64)
-    fi
+    cpu_armv8 "cortex-a72"
+    cpu_arm_state
     __platform_flags+=(mali gles)
 }
 
 function platform_odroid-xu() {
-    __default_cpu_flags="-marm -mcpu=cortex-a7 -mfpu=neon-vfpv4"
-    # required for mali-fbdev headers to define GL functions
-    __default_cflags="-DGL_GLEXT_PROTOTYPES"
-    __platform_flags+=(arm armv7 neon mali gles)
+    cpu_armv7 "cortex-a7"
+    cpu_arm_state
+    platform_conf_glext
+    __platform_flags+=(mali gles)
 }
 
 function platform_tegra-x1() {
-    __default_cpu_flags="-mcpu=cortex-a57"
-    __platform_flags+=(aarch64 x11 gl)
+    cpu_armv8 "cortex-a57"
+    __platform_flags+=(x11 gl)
 }
 
 function platform_jetson-nano() {
@@ -509,10 +526,10 @@ function platform_jetson-nano() {
 }
 
 function platform_tinker() {
-    __default_cpu_flags="-marm -mcpu=cortex-a17 -mfpu=neon-vfpv4"
-    # required for mali headers to define GL functions
-    __default_cflags="-DGL_GLEXT_PROTOTYPES"
-    __platform_flags+=(arm armv7 neon kms gles)
+    cpu_armv7 "cortex-a17"
+    cpu_arm_state
+    platform_conf_glext
+    __platform_flags+=(kms gles)
 }
 
 function platform_x86() {
@@ -526,21 +543,20 @@ function platform_x86() {
 }
 
 function platform_generic-x11() {
-    __platform_flags="x11 gl"
+    __platform_flags+=(x11 gl)
 }
 
 function platform_armv7-mali() {
-    __default_cpu_flags="-march=armv7-a -mfpu=neon-vfpv4"
-    __platform_flags+=(arm armv7 neon mali gles)
+    cpu_armv7
+    __platform_flags+=(mali gles)
 }
 
 function platform_imx6() {
-    __default_cpu_flags="-march=armv7-a -mfpu=neon -mtune=cortex-a9"
-    __platform_flags+=(arm armv7 neon)
+    cpu_armv7 "cortex-a9"
 }
 
 function platform_vero4k() {
-    __default_cpu_flags="-mcpu=cortex-a7 -mfpu=neon-vfpv4"
+    cpu_armv7 "cortex-a7"
     __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib"
-    __platform_flags+=(arm armv7 neon mali gles)
+    __platform_flags+=(mali gles)
 }
