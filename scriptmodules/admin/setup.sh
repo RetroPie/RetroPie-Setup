@@ -653,8 +653,8 @@ function reboot_setup()
 
 # retropie-setup main menu
 function gui_setup() {
-    depends_setup
     joy2keyStart
+    depends_setup
     local default
     while true; do
         local commit=$(git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
