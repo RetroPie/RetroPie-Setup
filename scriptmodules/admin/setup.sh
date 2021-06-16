@@ -54,10 +54,11 @@ function rps_logEnd() {
 }
 
 function rps_printInfo() {
+    local log="$1"
     reset
     if [[ ${#__ERRMSGS[@]} -gt 0 ]]; then
         printMsgs "dialog" "${__ERRMSGS[@]}"
-        printMsgs "dialog" "Please see $1 for more in depth information regarding the errors."
+        [[ -n "$log" ]] && printMsgs "dialog" "Please see $log for more in depth information regarding the errors."
     fi
     if [[ ${#__INFMSGS[@]} -gt 0 ]]; then
         printMsgs "dialog" "${__INFMSGS[@]}"
