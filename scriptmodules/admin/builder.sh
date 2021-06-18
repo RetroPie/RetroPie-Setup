@@ -22,15 +22,31 @@ function module_builder() {
 
     local id
     for id in "${ids[@]}"; do
+        printMsgs "heading" "Building module $id"
         # don't build binaries for modules with flag nobin
         # eg scraper which fails as go1.8 doesn't work under qemu
-        hasFlag "${__mod_info[$id/flags]}" "nobin" && continue
+        if hasFlag "${__mod_info[$id/flags]}" "nobin"; then
+            printMsgs "console" "Module has 'nobin' flag set, so not building."
+            continue
+        fi
+
+        # skip modules that are not enabled for the target system
+        if [[ "${__mod_info[$id/enabled]}" -ne 1 ]]; then
+            printMsgs "console" "Module is disabled for this platform ($__platform)."
+            continue
+        fi
 
         # if the module has no install_ function skip to the next module
-        ! fnExists "install_${id}" && continue
+        if ! fnExists "install_${id}"; then
+            printMsgs "console" "Module has no install_${id} function so cannot be pre-built."
+            continue
+        fi
 
-        # if there is a not a newer version, skip to the next module
-        ! rp_hasNewerModule "$id" "source" && continue
+        # if there is no newer version, skip to the next module
+        if ! rp_hasNewerModule "$id" "source"; then
+            printMsgs "console" "No update was found."
+            continue
+        fi
 
         # build, install and create binary archive.
         # initial clean in case anything was in the build folder when calling
