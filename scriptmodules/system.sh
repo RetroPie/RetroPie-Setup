@@ -397,7 +397,7 @@ function get_platform() {
                         "NVIDIA Jetson Nano Developer Kit")
                             __platform="jetson-nano"
                             ;;
-                        icosa)
+                        icosa*)
                             __platform="tegra-x1"
                             ;;
                     esac
