@@ -26,8 +26,6 @@ function depends_lr-parallel-n64() {
 
 function sources_lr-parallel-n64() {
     gitPullOrClone
-    # avoid conflicting typedefs for GLfloat on rpi4/kms
-    isPlatform "kms" && isPlatform "gles" && sed -i "/^typedef GLfloat GLdouble/d" "$md_build/libretro-common/include/glsm/glsm.h"
 }
 
 function build_lr-parallel-n64() {
