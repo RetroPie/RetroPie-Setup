@@ -8,6 +8,8 @@
 # See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
+# Editor's note: You may notice "\c \%" escape sequences, these are needed
+# to avoid the initial % char to be swallowed by doxygen.
 
 ## @file supplementary/runcommand/runcommand.sh
 ## @brief runcommand launching script
@@ -50,19 +52,28 @@
 ## Video mode switching only happens if the monitor reports the modes as available
 ## (via tvservice) and the requested mode differs from the currently active mode
 ##
-## If `_SYS_` or `_PORT_` is provided for the second parameter, the commandline
-## will be extracted from `/opt/retropie/configs/SYSTEM/emulators.cfg` with
-## `%ROM%` `%BASENAME%` being replaced with the ROM parameter. This is the
-## default mode used when launching in RetroPie so the user can switch emulator
-## used as well as other options from the runcommand GUI.
+## Additionally it is possible to pass in the current screen resolution
+## (selectable in the runcommand menu) to the emulator to be launched. The
+## respective variables are \c \%XRES% and \c \%YRES% which will be replaced
+## with the specific values as the placeholders \c \%ROM% and \c \%BASENAME%
+## (see below). For example it is possible to set \c
+## --displaysize=\%XRESx\%YRES% in emulators.cfg` if an emulator has a command
+## line switch to set the resolution.
 ##
-## If SAVE_NAME is included, that is used for loading and saving of video output
-## modes as well as rendering backend settings for the current COMMAND. If omitted,
+## If `_SYS_` or `_PORT_` is provided as the second parameter for the
+## `runcommand.sh` script, the commandline will be extracted from
+## `/opt/retropie/configs/SYSTEM/emulators.cfg` with \c \%ROM%, \c \%BASENAME%
+## being replaced with the `ROM` parameter. This is the default mode used when
+## launching in RetroPie so the user can switch emulator used as well as other
+## options from the runcommand GUI.
+##
+## If `SAVE_NAME` is included, that is used for loading and saving of video output
+## modes as well as rendering backend settings for the current `COMMAND`. If omitted,
 ## the binary name is used as a key for the loading and saving. The savename is
 ## also displayed in the video output menu (detailed below), so for our purposes
 ## we send the emulator module id, which is somewhat descriptive yet short.
 ##
-## On launch this script waits for 2 second for a key or joystick press. If
+## On launch this script waits for two seconds for a key or joystick press. If
 ## pressed the GUI is shown, where a user can set video modes, default emulators
 ## and other options (depending what is being launched).
 
