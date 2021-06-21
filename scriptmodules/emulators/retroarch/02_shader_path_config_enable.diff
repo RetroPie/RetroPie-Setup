@@ -1,8 +1,8 @@
 diff --git a/configuration.c b/configuration.c
-index f0750fb..0128e53 100644
+index 6850178974..0e7d78865f 100644
 --- a/configuration.c
 +++ b/configuration.c
-@@ -1377,6 +1377,8 @@ static struct config_path_setting *populate_settings_path(
+@@ -1380,6 +1380,8 @@ static struct config_path_setting *populate_settings_path(
           settings->paths.directory_resampler, false, NULL, true);
     SETTING_PATH("video_shader_dir",
           settings->paths.directory_video_shader, true, NULL, true);
@@ -11,7 +11,7 @@ index f0750fb..0128e53 100644
     SETTING_PATH("video_filter_dir",
           settings->paths.directory_video_filter, true, NULL, true);
     SETTING_PATH("core_assets_directory",
-@@ -2500,6 +2502,7 @@ void config_set_defaults(void *data)
+@@ -2505,6 +2507,7 @@ void config_set_defaults(void *data)
     *settings->paths.directory_menu_config = '\0';
  #endif
     *settings->paths.directory_video_shader = '\0';
@@ -19,7 +19,7 @@ index f0750fb..0128e53 100644
     *settings->paths.directory_video_filter = '\0';
     *settings->paths.directory_audio_filter = '\0';
  
-@@ -4470,6 +4473,10 @@ bool config_save_overrides(enum override_type type, void *data)
+@@ -4475,6 +4478,10 @@ bool config_save_overrides(enum override_type type, void *data)
  
        for (i = 0; i < (unsigned)path_settings_size; i++)
        {
@@ -31,10 +31,10 @@ index f0750fb..0128e53 100644
              config_set_path(conf, path_overrides[i].ident,
                    path_overrides[i].ptr);
 diff --git a/configuration.h b/configuration.h
-index 0bad72c..9878823 100644
+index 81a2f3cd81..bc3df69c12 100644
 --- a/configuration.h
 +++ b/configuration.h
-@@ -445,6 +445,7 @@ typedef struct settings
+@@ -447,6 +447,7 @@ typedef struct settings
        char directory_autoconfig[PATH_MAX_LENGTH];
        char directory_video_filter[PATH_MAX_LENGTH];
        char directory_video_shader[PATH_MAX_LENGTH];
@@ -43,10 +43,10 @@ index 0bad72c..9878823 100644
        char directory_cursor[PATH_MAX_LENGTH];
        char directory_input_remapping[PATH_MAX_LENGTH];
 diff --git a/retroarch.c b/retroarch.c
-index 0b6da5a..faced13 100644
+index be1fed3a4e..e0f939238f 100644
 --- a/retroarch.c
 +++ b/retroarch.c
-@@ -36609,6 +36609,8 @@ static bool retroarch_load_shader_preset_internal(
+@@ -36672,6 +36672,8 @@ static bool retroarch_load_shader_preset_internal(
        const char *special_name)
  {
     unsigned i;
@@ -55,7 +55,7 @@ index 0b6da5a..faced13 100644
  
     static enum rarch_shader_type types[] =
     {
-@@ -36634,8 +36636,13 @@ static bool retroarch_load_shader_preset_internal(
+@@ -36697,8 +36699,13 @@ static bool retroarch_load_shader_preset_internal(
           if (string_is_empty(special_name))
              break;
  
@@ -71,7 +71,7 @@ index 0b6da5a..faced13 100644
        }
  
        if (path_is_valid(s))
-@@ -36655,7 +36662,9 @@ static bool retroarch_load_shader_preset_internal(
+@@ -36718,7 +36725,9 @@ static bool retroarch_load_shader_preset_internal(
   * core-specific:   $CONFIG_DIR/$CORE_NAME/$CORE_NAME.$PRESET_EXT
   * folder-specific: $CONFIG_DIR/$CORE_NAME/$FOLDER_NAME.$PRESET_EXT
   * game-specific:   $CONFIG_DIR/$CORE_NAME/$GAME_NAME.$PRESET_EXT
@@ -81,7 +81,7 @@ index 0b6da5a..faced13 100644
   * $CONFIG_DIR is expected to be Menu Config directory, or failing that, the
   * directory where retroarch.cfg is stored.
   *
-@@ -36742,6 +36751,14 @@ static bool retroarch_load_shader_preset(struct rarch_state *p_rarch,
+@@ -36805,6 +36814,14 @@ static bool retroarch_load_shader_preset(struct rarch_state *p_rarch,
                 dirs[i], NULL,
                 "global"))
           goto success;
