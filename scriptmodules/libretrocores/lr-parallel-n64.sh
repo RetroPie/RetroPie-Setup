@@ -53,6 +53,7 @@ function install_lr-parallel-n64() {
     md_ret_files=(
         'parallel_n64_libretro.so'
         'README.md'
+        'mupen64plus-core/LICENSES'
     )
 }
 
