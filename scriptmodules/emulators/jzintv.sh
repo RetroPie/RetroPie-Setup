@@ -45,7 +45,7 @@ function build_jzintv() {
     cd jzintv/src
 
     make clean
-    make
+    DISTCC_HOSTS="" make
 
     md_ret_require="$md_build/jzintv/bin/jzintv"
 }
