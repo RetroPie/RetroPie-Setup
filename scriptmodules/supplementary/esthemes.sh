@@ -257,6 +257,7 @@ function gui_esthemes() {
         'KALEL1981 super-arcade1up-5x4'
         'KALEL1981 gold-standard'
         'Elratauru angular-artwork'
+        'cjonasw raspixel-320-240'
     )
     while true; do
         local theme
