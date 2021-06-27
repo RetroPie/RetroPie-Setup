@@ -1319,6 +1319,10 @@ function launch_command() {
     return $ret
 }
 
+function log_info() {
+    echo -e "$SYSTEM\n$EMULATOR\n$ROM\n$COMMAND" >/dev/shm/runcommand.info
+}
+
 function runcommand() {
     get_config
 
@@ -1333,7 +1337,7 @@ function runcommand() {
     clear
 
     rm -f "$LOG"
-    echo -e "$SYSTEM\n$EMULATOR\n$ROM\n$COMMAND" >/dev/shm/runcommand.info
+    log_info
     user_script "runcommand-onstart.sh"
 
     set_save_vars
@@ -1359,6 +1363,9 @@ function runcommand() {
     COMMAND="${COMMAND//\%XRES\%/${MODE_CUR[2]}}"
     COMMAND="${COMMAND//\%YRES\%/${MODE_CUR[3]}}"
     COMMAND="${COMMAND//\%REFRESH\%/${MODE_CUR[5]}}"
+
+    # resave info after menu and resolution replacements so runcommand.info is up to date
+    log_info
 
     [[ -n "$FB_NEW" ]] && switch_fb_res $FB_NEW
 
