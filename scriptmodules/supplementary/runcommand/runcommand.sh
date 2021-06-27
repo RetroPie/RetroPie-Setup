@@ -296,7 +296,7 @@ function get_all_x11_modes()
     while read -r id; do
         # populate CONNECTOR:0xID into an array
         MODE_ID+=($id) # output:id as in (hdmi:0x44)
-        
+
         read -r line
         # array is x/y resolution @ vertical refresh rate ( details )
         MODE[$id]="$line"
@@ -305,36 +305,36 @@ function get_all_x11_modes()
         # true is the "header" (output and id)
         # false is the "description" (Mode: and everything that begins with a space)
         { type = /^[^ \t]+/ }
-        
+
         # Exit after the first output
         type && output {exit} # New header and output set means new output
-        
+
         # many outputs can be connected, but only the ones with the id are in use.
         # output must be connected and have an (id)
         type && / connected/ && /\(0x[0-9a-f]+\)/ {
             output=$1; next
         }
-        
+
         # parse mode and lines
         # If we are in a "description", and output is set (output being what we want)
         # And if $2 is an id, we are in a video mode description line
         !type && output && $2 ~ /^\(0x[0-9a-f]+\)$/ {
             # Print CRTC identifier (CONNECTOR:0xID)
             print output ":" substr($2,2,length($2)-2) # id
-            
+
             # get rid of what we printed
             $1="";$2=""
             sub(/^[ \t]+/,"") # trim spaces
-            
+
             # save rest of the line
             info=$0
 
             # Save width from the 2nd line of the video mode
             getline; width=$3
-            
+
             # Save height & vrefresh from the 3rd line of video mode
             getline; height=$3; vrefresh=$NF
-            
+
             # Print video mode details
             print width "x" height " @ " vrefresh " (" info ")"
         }
@@ -1062,7 +1062,7 @@ function config_backend() {
     # if we are running under X then don't try and use a different backend
     [[ -n "$DISPLAY" || "$XINIT" -eq 1 ]] && return
     local name="$1"
-    # if we have a backends.conf file and with an entry for the current emulator name, 
+    # if we have a backends.conf file and with an entry for the current emulator name,
     # change the library path to load dispmanx sdl first
     if [[ -f "$BACKENDS_CONF" ]]; then
         iniConfig " = " '"' "$BACKENDS_CONF"
