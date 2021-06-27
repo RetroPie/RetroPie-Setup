@@ -1381,6 +1381,8 @@ function runcommand() {
         build_xinitrc build
     fi
 
+    user_script "runcommand-onlaunch.sh"
+
     local ret
     launch_command
     ret=$?
