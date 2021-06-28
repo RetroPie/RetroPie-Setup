@@ -28,11 +28,11 @@ function depends_runcommand() {
 }
 
 function install_bin_runcommand() {
-    cp "$md_data/runcommand.sh" "$md_inst/"
-    cp "$md_data/joy2key.py" "$md_inst/"
-    chmod a+x "$md_inst/runcommand.sh"
-    chmod a+x "$md_inst/joy2key.py"
-    python3 -m compileall "$md_inst/joy2key.py"
+    for file in "runcommand.sh" "joy2key.py" "joy2key_sdl.py"; do
+        cp "$md_data/$file" "$md_inst/"
+        chmod +x "$md_inst/$file"
+    done
+    python3 -m compileall "$md_inst/joy2key.py" "$md_inst/joy2key_sdl.py"
     if [[ ! -f "$configdir/all/runcommand.cfg" ]]; then
         mkUserDir "$configdir/all"
         iniConfig " = " '"' "$configdir/all/runcommand.cfg"
@@ -41,7 +41,15 @@ function install_bin_runcommand() {
         iniSet "governor" ""
         iniSet "disable_menu" "0"
         iniSet "image_delay" "2"
+        if hasPackage "python3-sdl2"; then
+            iniSet "joy2key_version" "1"
+        fi
         chown $user:$user "$configdir/all/runcommand.cfg"
+    fi
+    # if PySDL2 is not installed, force the udev version of joy2key
+    if ! hasPackage "python3-sdl2"; then
+        iniConfig " = " '"' "$configdir/all/runcommand.cfg"
+        iniSet "joy2key_version" "0"
     fi
     if [[ ! -f "$configdir/all/runcommand-launch-dialog.cfg" ]]; then
         dialog --create-rc "$configdir/all/runcommand-launch-dialog.cfg"
@@ -108,6 +116,7 @@ function gui_runcommand() {
             'disable_joystick=0' \
             'image_delay=2' \
             'governor=' \
+            'joy2key_version=1' \
         )"
 
         [[ -z "$governor" ]] && governor="Default: don't change"
@@ -135,6 +144,11 @@ function gui_runcommand() {
 
         options+=(4 "Launch image delay in seconds (currently $image_delay)")
         options+=(5 "CPU governor configuration (currently: $governor)")
+        if [[ "$joy2key_version" -eq 1 ]]; then
+            options+=(6 "Joy2key version (currently: sdl)")
+        else
+            options+=(6 "Joy2key version (currently: udev)")
+        fi
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
@@ -156,6 +170,9 @@ function gui_runcommand() {
                 ;;
             5)
                 governor_runcommand
+                ;;
+            6)
+                iniSet "joy2key_version" "$((joy2key_version ^ 1))"
                 ;;
         esac
     done
