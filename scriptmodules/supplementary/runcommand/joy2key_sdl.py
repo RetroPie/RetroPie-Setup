@@ -510,7 +510,7 @@ def main():
     if LOG.isEnabledFor(logging.DEBUG):
         sdl_ver = version.SDL_version()
         version.SDL_GetVersion(byref(sdl_ver))
-        wrapper_version = '.'.join(str(i) for i in version_info if i is not '')
+        wrapper_version = '.'.join(str(i) for i in version_info)
         LOG.debug(f'Using SDL Version {sdl_ver.major}.{sdl_ver.minor}.{sdl_ver.patch}, PySDL2 version {wrapper_version}')
 
     if joystick.SDL_NumJoysticks() < 1:
