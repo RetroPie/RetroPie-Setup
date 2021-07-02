@@ -12,24 +12,30 @@
 rp_module_id="dxx-rebirth"
 rp_module_desc="DXX-Rebirth (Descent & Descent 2) source port"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/dxx-rebirth/dxx-rebirth/master/COPYING.txt"
+rp_module_repo="git https://github.com/dxx-rebirth/dxx-rebirth master :_get_commit_dxx-rebirth"
 rp_module_section="opt"
 rp_module_flags="!mali"
 
+function _get_commit_dxx-rebirth() {
+    local commit="15bd145d"
+    # latest code requires gcc 7+
+    compareVersions "$__gcc_version" lt 7 && commit="a1b3a86c"
+    echo "$commit"
+}
+
 function depends_dxx-rebirth() {
-    local depends=(libpng-dev libphysfs-dev libsdl1.2-dev libsdl-mixer1.2-dev scons)
+    local depends=(libpng-dev libphysfs-dev scons)
     if isPlatform "videocore"; then
-        depends+=(libraspberrypi-dev)
-    elif isPlatform "gles" && ! isPlatform "mesa"; then
-        depends+=(libgles2-mesa-dev)
+        depends+=(libraspberrypi-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev)
     else
-        depends+=(libgl1-mesa-dev libglu1-mesa-dev libsdl2-dev libsdl2-mixer-dev)
+        depends+=(libgl1-mesa-dev libglu1-mesa-dev libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev)
     fi
 
     getDepends "${depends[@]}"
 }
 
 function sources_dxx-rebirth() {
-    gitPullOrClone "$md_build" https://github.com/dxx-rebirth/dxx-rebirth "master"
+    gitPullOrClone
 }
 
 function build_dxx-rebirth() {
@@ -40,14 +46,12 @@ function build_dxx-rebirth() {
     elif isPlatform "mesa"; then
         # GLES is limited to ES 1 and blocks SDL2; GL works at fullspeed on Pi 3.
         params+=("raspberrypi=mesa" "opengl=1" "opengles=0" "sdl2=1")
-    elif isPlatform "gles";  then
-        params+=("opengl=0" "opengles=1")
     else
         params+=("opengl=1" "opengles=0" "sdl2=1")
     fi
 
     scons -c
-    scons "${params[@]}"
+    scons "${params[@]}" -j$__jobs
     md_ret_require=(
         "$md_build/d1x-rebirth/d1x-rebirth"
         "$md_build/d2x-rebirth/d2x-rebirth"
@@ -77,52 +81,66 @@ function install_dxx-rebirth() {
 }
 
 function game_data_dxx-rebirth() {
-    local D1X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
-    local D2X_SHARE_URL='http://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
-    local D1X_HIGH_TEXTURE_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
-    local D1X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
-    local D2X_OGG_URL='http://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
+    local D1X_SHARE_URL='https://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
+    local D2X_SHARE_URL='https://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
+    local D1X_HIGH_TEXTURE_URL='https://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
+    local D1X_OGG_URL='https://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
+    local D2X_OGG_URL='https://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
 
-    cd "$__tmpdir"
+    local dest_d1="$romdir/ports/descent1"
+    local dest_d2="$romdir/ports/descent2"
+
+    mkUserDir "$dest_d1"
+    mkUserDir "$dest_d2"
 
     # Download / unpack / install Descent shareware files
-    if [[ ! -f "$romdir/ports/descent1/descent.hog" ]]; then
-        downloadAndExtract "$D1X_SHARE_URL" "$romdir/ports/descent1"
+    if [[ ! -f "$dest_d1/descent.hog" ]]; then
+        downloadAndExtract "$D1X_SHARE_URL" "$dest_d1"
     fi
 
     # High Res Texture Pack
-    if [[ ! -f "$romdir/ports/descent1/d1xr-hires.dxa" ]]; then
-        wget -nv -P "$romdir/ports/descent1" "$D1X_HIGH_TEXTURE_URL"
+    if [[ ! -f "$dest_d1/d1xr-hires.dxa" ]]; then
+        download "$D1X_HIGH_TEXTURE_URL" "$dest_d1"
     fi
 
     # Ogg Sound Replacement (Roland Sound Canvas SC-55 MIDI)
-    if [[ ! -f "$romdir/ports/descent1/d1xr-sc55-music.dxa" ]]; then
-        wget -nv -P "$romdir/ports/descent1" "$D1X_OGG_URL"
+    if [[ ! -f "$dest_d1/d1xr-sc55-music.dxa" ]]; then
+        download "$D1X_OGG_URL" "$dest_d1"
     fi
 
     # Download / unpack / install Descent 2 shareware files
-    if [[ ! -f "$romdir/ports/descent2/D2DEMO.HOG" ]]; then
-        downloadAndExtract "$D2X_SHARE_URL" "$romdir/ports/descent2"
+    if [[ ! -f "$dest_d2/D2DEMO.HOG" ]]; then
+        downloadAndExtract "$D2X_SHARE_URL" "$dest_d2"
     fi
 
     # Ogg Sound Replacement (Roland Sound Canvas SC-55 MIDI)
-    if [[ ! -f "$romdir/ports/descent2/d2xr-sc55-music.dxa" ]]; then
-        wget -nv -P "$romdir/ports/descent2" "$D2X_OGG_URL"
+    if [[ ! -f "$dest_d2/d2xr-sc55-music.dxa" ]]; then
+        download "$D2X_OGG_URL" "$dest_d2"
     fi
 
-    chown -R $user:$user "$romdir/ports/descent1" "$romdir/ports/descent2"
+    chown -R $user:$user "$dest_d1" "$dest_d2"
 }
 
 function configure_dxx-rebirth() {
+    local config
     local ver
     local name="Descent Rebirth"
     for ver in 1 2; do
-        mkRomDir "ports/descent${ver}"
         [[ "$ver" -eq 2 ]] && name="Descent 2 Rebirth"
         addPort "$md_id" "descent${ver}" "$name" "$md_inst/d${ver}x-rebirth -hogdir $romdir/ports/descent${ver}"
 
+        # skip folder / config work on removal
+        [[ "$md_mode" == "remove" ]] && continue
+
+        mkRomDir "ports/descent${ver}"
         # copy any existing configs from ~/.d1x-rebirth and symlink the config folder to $md_conf_root/descent1/
         moveConfigDir "$home/.d${ver}x-rebirth" "$md_conf_root/descent${ver}/"
+        if isPlatform "kms"; then
+            config="$md_conf_root/descent${ver}/descent.cfg"
+            iniConfig "=" '' "$config"
+            iniSet "VSync" "1"
+            chown $user:$user "$config"
+        fi
     done
 
     [[ "$md_mode" == "install" ]] && game_data_dxx-rebirth

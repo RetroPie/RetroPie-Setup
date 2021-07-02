@@ -103,7 +103,7 @@ function hasFlag() {
 ## @brief Test for current platform / platform flags.
 function isPlatform() {
     local flag="$1"
-    if hasFlag "$__platform $__platform_flags" "$flag"; then
+    if hasFlag "${__platform_flags[*]}" "$flag"; then
         return 0
     fi
     return 1
@@ -145,16 +145,28 @@ function hasPackage() {
     local req_ver="$2"
     local comp="$3"
     [[ -z "$comp" ]] && comp="ge"
-    local status=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
-    if [[ $? -eq 0 ]]; then
-        local ver="${status##* }"
-        local status="${status% *}"
-        # if status doesn't contain "ok installed" package is not installed
-        if [[ "$status" == *"ok installed" ]]; then
-            # if we didn't request a version number, be happy with any
-            [[ -z "$req_ver" ]] && return 0
-            compareVersions "$ver" "$comp" "$req_ver" && return 0
-        fi
+
+    local ver
+    local status
+    local out=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
+    if [[ "$?" -eq 0 ]]; then
+        ver="${out##* }"
+        status="${out% *}"
+    fi
+
+    local installed=0
+    [[ "$status" == *"ok installed" ]] && installed=1
+    # if we are not checking version
+    if [[ -z "$req_ver" ]]; then
+        # if the package is installed return true
+        [[ "$installed" -eq 1 ]] && return 0
+    else
+        # if checking version and the package is not installed we need to clear "ver" as it may contain
+        # the version number of a removed package and give a false positive with compareVersions.
+        # we still need to do the version check even if not installed due to the varied boolean operators
+        [[ "$installed" -eq 0 ]] && ver=""
+
+        compareVersions "$ver" "$comp" "$req_ver" && return 0
     fi
     return 1
 }
@@ -186,129 +198,153 @@ function aptRemove() {
     return $?
 }
 
+function _mapPackage() {
+    local pkg="$1"
+    case "$pkg" in
+        libraspberrypi-bin)
+            isPlatform "osmc" && pkg="rbp-userland-osmc"
+            isPlatform "xbian" && pkg="xbian-package-firmware"
+            ;;
+        libraspberrypi-dev)
+            isPlatform "osmc" && pkg="rbp-userland-dev-osmc"
+            isPlatform "xbian" && pkg="xbian-package-firmware"
+            ;;
+        mali-fbdev)
+            isPlatform "vero4k" && pkg=""
+            ;;
+        # handle our custom package alias LINUX-HEADERS
+        LINUX-HEADERS)
+            if isPlatform "rpi"; then
+                pkg="raspberrypi-kernel-headers"
+            elif [[ -z "$__os_ubuntu_ver" ]]; then
+                pkg="linux-headers-$(uname -r)"
+            else
+                pkg="linux-headers-generic"
+            fi
+            ;;
+        # map libpng-dev to libpng12-dev for Jessie
+        libpng-dev)
+            compareVersions "$__os_debian_ver" lt 9 && pkg="libpng12-dev"
+            ;;
+        libsdl1.2-dev)
+            rp_hasModule "sdl1" && pkg="RP sdl1 $pkg"
+            ;;
+        libsdl2-dev)
+            if rp_hasModule "sdl2"; then
+                # check whether to use our own sdl2 - can be disabled to resolve issues with
+                # mixing custom 64bit sdl2 and os distributed i386 version on multiarch
+                local own_sdl2=1
+                # default to off for x11 targets due to issues with dependencies with recent
+                # Ubuntu (19.04). eg libavdevice58 requiring exactly 2.0.9 sdl2.
+                isPlatform "x11" && own_sdl2=0
+                iniConfig " = " '"' "$configdir/all/retropie.cfg"
+                iniGet "own_sdl2"
+                if [[ "$ini_value" == "1" ]]; then
+                    own_sdl2=1
+                elif [[ "$ini_value" == "0" ]]; then
+                    own_sdl2=0
+                fi
+                [[ "$own_sdl2" -eq 1 ]] && pkg="RP sdl2 $pkg"
+            fi
+            ;;
+    esac
+    echo "$pkg"
+}
+
 ## @fn getDepends()
 ## @param packages package / space separated list of packages to install
 ## @brief Installs packages if they are not installed.
 ## @retval 0 on success
 ## @retval 1 on failure
 function getDepends() {
-    local required
-    local packages=()
-    local failed=()
-
-    # check whether to use our own sdl2 - can be disabled to resolve issues with
-    # mixing custom 64bit sdl2 and os distributed i386 version on multiarch
-    local own_sdl2=1
-    # default to off for x11 targets due to issues with dependencies with recent
-    # Ubuntu (19.04). eg libavdevice58 requiring exactly 2.0.9 sdl2.
-    isPlatform "x11" && own_sdl2=0
-    iniConfig " = " '"' "$configdir/all/retropie.cfg"
-    iniGet "own_sdl2"
-    [[ "$ini_value" == 1 ]] && own_sdl2=1
-    [[ "$ini_value" == 0 ]] && own_sdl2=0
-
-    for required in $@; do
-
-        # workaround for different package names on osmc / xbian
-        if [[ "$required" == "libraspberrypi-bin" ]]; then
-            isPlatform "osmc" && required="rbp-userland-osmc"
-            isPlatform "xbian" && required="xbian-package-firmware"
-        fi
-        if [[ "$required" == "libraspberrypi-dev" ]]; then
-            isPlatform "osmc" && required="rbp-userland-dev-osmc"
-            isPlatform "xbian" && required="xbian-package-firmware"
-        fi
-
-        # map libpng12-dev to libpng-dev for Stretch+
-        if [[ "$required" == "libpng12-dev" ]] && compareVersions "$__os_debian_ver" ge 9;  then
-            required="libpng-dev"
-            printMsgs "console" "RetroPie module references libpng12-dev and should be changed to libpng-dev"
-        fi
-
-        # map libpng-dev to libpng12-dev for Jessie
-        if [[ "$required" == "libpng-dev" ]] && compareVersions "$__os_debian_ver" lt 9; then
-            required="libpng12-dev"
-        fi
-
-        if [[ "$md_mode" == "install" ]]; then
-            # make sure we have our sdl1 / sdl2 installed
-            if ! isPlatform "x11" && [[ "$required" == "libsdl1.2-dev" ]] && hasPackage libsdl1.2-dev $(get_pkg_ver_sdl1) "ne"; then
-                packages+=("$required")
-                continue
-            fi
-            if [[ "$own_sdl2" -eq 1 && "$required" == "libsdl2-dev" ]] && hasPackage libsdl2-dev $(get_pkg_ver_sdl2) "ne"; then
-                packages+=("$required")
-                continue
-            fi
-
-            # make sure libraspberrypi-dev/libraspberrypi0 is up to date.
-            if [[ "$required" == "libraspberrypi-dev" ]] && hasPackage libraspberrypi-dev 1.20170703-1 "lt"; then
-                packages+=("$required")
-                continue
-            fi
-        fi
-
-        if [[ "$md_mode" == "remove" ]]; then
-            hasPackage "$required" && packages+=("$required")
-        else
-            hasPackage "$required" || packages+=("$required")
-        fi
-    done
-    if [[ ${#packages[@]} -ne 0 ]]; then
-        if [[ "$md_mode" == "remove" ]]; then
-            apt-get remove --purge -y "${packages[@]}"
-            apt-get autoremove --purge -y
-            return 0
-        fi
-        echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
-
-        # workaround to force installation of our fixed libsdl1.2 and custom compiled libsdl2
-        local temp=()
-        for required in ${packages[@]}; do
-            if isPlatform "videocore" && [[ "$required" == "libsdl1.2-dev" ]]; then
-                if [[ "$__has_binaries" -eq 1 ]]; then
-                    rp_callModule sdl1 install_bin
-                else
-                    rp_callModule sdl1
-                fi
-            elif [[ "$required" == "libsdl2-dev" && "$own_sdl2" == "1" ]]; then
-                if [[ "$__has_binaries" -eq 1 ]]; then
-                    rp_callModule sdl2 install_bin
-                else
-                    rp_callModule sdl2
+    local own_pkgs=()
+    local apt_pkgs=()
+    local all_pkgs=()
+    local pkg
+    for pkg in "$@"; do
+        pkg=($(_mapPackage "$pkg"))
+        # manage our custom packages (pkg = "RP module_id pkg_name")
+        if [[ "${pkg[0]}" == "RP" ]]; then
+            # if removing, check if any version is installed and queue for removal via the custom module
+            if [[ "$md_mode" == "remove" ]]; then
+                if hasPackage "${pkg[2]}"; then
+                    own_pkgs+=("${pkg[1]}")
+                    all_pkgs+=("${pkg[2]}(custom)")
                 fi
             else
-                temp+=("$required")
-            fi
-        done
-        packages=("${temp[@]}")
-
-        aptInstall --no-install-recommends "${packages[@]}"
-
-        # check the required packages again rather than return code of apt-get,
-        # as apt-get might fail for other reasons (eg other half installed packages)
-        for required in ${packages[@]}; do
-            if ! hasPackage "$required"; then
-                # workaround for installing samba in a chroot (fails due to failed smbd service restart)
-                # we replace the init.d script with an empty script so the install completes
-                if [[ "$required" == "samba" && "$__chroot" -eq 1 ]]; then
-                    mv /etc/init.d/smbd /etc/init.d/smbd.old
-                    echo "#!/bin/sh" >/etc/init.d/smbd
-                    chmod u+x /etc/init.d/smbd
-                    apt-get -f install
-                    mv /etc/init.d/smbd.old /etc/init.d/smbd
-                else
-                    failed+=("$required")
+                # if installing check if our version is installed and queue for installing via the custom module
+                if hasPackage "${pkg[2]}" $(get_pkg_ver_${pkg[1]}) "ne"; then
+                    own_pkgs+=("${pkg[1]}")
+                    all_pkgs+=("${pkg[2]}(custom)")
                 fi
             fi
-        done
-        if [[ ${#failed[@]} -eq 0 ]]; then
-            printMsgs "console" "Successfully installed package(s): ${packages[*]}."
-        else
-            md_ret_errors+=("Could not install package(s): ${failed[*]}.")
-            return 1
+            continue
         fi
+
+        if [[ "$md_mode" == "remove" ]]; then
+            # add package to apt_pkgs for removal if installed
+            if hasPackage "$pkg"; then
+                apt_pkgs+=("$pkg")
+                all_pkgs+=("$pkg")
+            fi
+        else
+            # add package to apt_pkgs for installation if not installed
+            if ! hasPackage "$pkg"; then
+                apt_pkgs+=("$pkg")
+                all_pkgs+=("$pkg")
+            fi
+        fi
+
+    done
+
+
+    # return if no packages required
+    [[ ${#apt_pkgs[@]} -eq 0 && ${#own_pkgs[@]} -eq 0 ]] && return
+
+    # if we are removing, then remove packages, do an autoremove to clean up additional packages and return
+    if [[ "$md_mode" == "remove" ]]; then
+        printMsgs "console" "Removing dependencies: ${all_pkgs[*]}"
+        for pkg in ${own_pkgs[@]}; do
+            rp_callModule "$pkg" remove
+        done
+        apt-get remove --purge -y "${apt_pkgs[@]}"
+        apt-get autoremove --purge -y
+        return 0
     fi
+
+    printMsgs "console" "Did not find needed dependencies: ${all_pkgs[*]}. Trying to install them now."
+
+    # install any custom packages
+    for pkg in ${own_pkgs[@]}; do
+       rp_callModule "$pkg" _auto_
+    done
+
+    aptInstall --no-install-recommends "${apt_pkgs[@]}"
+
+    local failed=()
+    # check the required packages again rather than return code of apt-get,
+    # as apt-get might fail for other reasons (eg other half installed packages)
+    for pkg in ${apt_pkgs[@]}; do
+        if ! hasPackage "$pkg"; then
+            # workaround for installing samba in a chroot (fails due to failed smbd service restart)
+            # we replace the init.d script with an empty script so the install completes
+            if [[ "$pkg" == "samba" && "$__chroot" -eq 1 ]]; then
+                mv /etc/init.d/smbd /etc/init.d/smbd.old
+                echo "#!/bin/sh" >/etc/init.d/smbd
+                chmod u+x /etc/init.d/smbd
+                apt-get -f install
+                mv /etc/init.d/smbd.old /etc/init.d/smbd
+            else
+                failed+=("$pkg")
+            fi
+        fi
+    done
+
+    if [[ ${#failed[@]} -gt 0 ]]; then
+        md_ret_errors+=("Could not install package(s): ${failed[*]}.")
+        return 1
+    fi
+
     return 0
 }
 
@@ -323,9 +359,8 @@ function rpSwap() {
     case $command in
         on)
             rpSwap off
-            local memory=$(free -t -m | awk '/^Total:/{print $2}')
             local needed=$2
-            local size=$((needed - memory))
+            local size=$((needed - __memory_avail))
             mkdir -p "$__swapdir/"
             if [[ $size -ge 0 ]]; then
                 echo "Adding $size MB of additional swap"
@@ -348,24 +383,47 @@ function rpSwap() {
 ## @param repo repository to clone or pull from
 ## @param branch branch to clone or pull from (optional)
 ## @param commit specific commit to checkout (optional - requires branch to be set)
+## @param depth depth parameter for git. (optional)
 ## @brief Git clones or pulls a repository.
+## @details depth parameter will default to 1 (shallow clone) so long as __persistent_repos isn't set.
+## A depth parameter of 0 will do a full clone with all history.
 function gitPullOrClone() {
     local dir="$1"
+    [[ -z "$dir" ]] && dir="$md_build"
     local repo="$2"
     local branch="$3"
-    [[ -z "$branch" ]] && branch="master"
     local commit="$4"
+    local depth="$5"
+    # if repo is blank then use the rp_module_repo info
+    if [[ -z "$repo" && -n "$md_repo_url" ]]; then
+        repo="$(rp_resolveRepoParam "$md_repo_url")"
+        branch="$(rp_resolveRepoParam "$md_repo_branch")"
+        commit="$(rp_resolveRepoParam "$md_repo_commit")"
+    fi
+    [[ -z "$repo" ]] && return 1
+    [[ -z "$branch" ]] && branch="master"
+    if [[ -z "$depth" && "$__persistent_repos" -ne 1 && -z "$commit" ]]; then
+        depth=1
+    else
+        depth=0
+    fi
+
+    # record the source directory in __mod_info[ID/repo_dir] if not previously set which will be used
+    # by the packaging functions later to grab repository information
+    if [[ -z "${__mod_info[$md_id/repo_dir]}" ]]; then
+        __mod_info[$md_id/repo_dir]="$dir"
+    fi
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
         runCmd git checkout "$branch"
-        runCmd git pull
+        runCmd git pull --ff-only
         runCmd git submodule update --init --recursive
         popd > /dev/null
     else
         local git="git clone --recursive"
-        if [[ "$__persistent_repos" -ne 1 && "$repo" == *github* && -z "$commit" ]]; then
-            git+=" --depth 1"
+        if [[ "$depth" -gt 0 ]]; then
+            git+=" --depth $depth"
         fi
         git+=" --branch $branch"
         printMsgs "console" "$git \"$repo\" \"$dir\""
@@ -401,8 +459,8 @@ function setupDirectories() {
 
     # make sure we have inifuncs.sh in place and that it is up to date
     mkdir -p "$rootdir/lib"
-    local helper_libs=(inifuncs.sh archivefuncs.sh)
-    for helper in "${helper_libs[@]}"; do
+    local helper
+    for helper in inifuncs.sh archivefuncs.sh; do
         if [[ ! -f "$rootdir/lib/$helper" || "$rootdir/lib/$helper" -ot "$scriptdir/scriptmodules/$helper" ]]; then
             cp --preserve=timestamps "$scriptdir/scriptmodules/$helper" "$rootdir/lib/$helper"
         fi
@@ -589,19 +647,38 @@ function addUdevInputRules() {
     rm -f /etc/udev/rules.d/99-evdev.rules
 }
 
+## @fn setBackend()
+## @param module_id name of module to configure backend for
+## @param backend name of the backend to set
+## @param force set to 1 to force the change
+## @brief Set a backend rendering driver for a module
+## @details Set a backend rendering driver for a module - can be currently default, dispmanx or x11.
+## This function will only set a backend if
+##   - It's not already configured, or
+##   - The 3rd parameter (force) is set to 1
+function setBackend() {
+    local config="$configdir/all/backends.cfg"
+    local id="$1"
+    local mode="$2"
+    local force="$3"
+    iniConfig "=" "\"" "$config"
+    iniGet "$id"
+    if [[ "$force" -eq 1 || -z "$ini_value" ]]; then
+        iniSet "$id" "$mode"
+        chown $user:$user "$config"
+    fi
+}
+
 ## @fn setDispmanx()
 ## @param module_id name of module to add dispmanx flag for
 ## @param status initial status of flag (0 or 1)
-## @brief Sets a dispmanx flag for a module.
+## @brief Sets a dispmanx flag for a module. This function is deprecated.
 ## @details Set a dispmanx flag for a module as to whether it should use the
 ## sdl1 dispmanx backend by default or not (0 for framebuffer, 1 for dispmanx).
+## This function is deprecated and instead setBackend should be used.
 function setDispmanx() {
     isPlatform "dispmanx" || return
-    local mod_id="$1"
-    local status="$2"
-    iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
-    iniSet $mod_id "$status"
-    chown $user:$user "$configdir/all/dispmanx.cfg"
+    setBackend "$1" "dispmanx"
 }
 
 ## @fn iniFileEditor()
@@ -830,6 +907,9 @@ function setESSystem() {
 ## @param shader set a default shader to use (deprecated)
 ## @brief Creates a default retroarch.cfg for specified system in `/opt/retropie/configs/$system/retroarch.cfg`.
 function ensureSystemretroconfig() {
+    # don't do any config work on module removal
+    [[ "$md_mode" == "remove" ]] && return
+
     local system="$1"
     local shader="$2"
 
@@ -945,6 +1025,122 @@ function applyPatch() {
     return 0
 }
 
+## @fn runCurl()
+## @params ... commandline arguments to pass to curl
+## @brief Run curl with chosen parameters and handle curl errors
+## @details Runs curl with the provided parameters, whilst also capturing the output and extracting
+## any error message, which is stored in the global variable __NET_ERRMSG. Function returns the return
+## code provided by curl. The environment variable __curl_opts can be set to override default curl
+## parameters, eg - timeouts etc.
+## @retval curl return value
+function runCurl() {
+    local params=("$@")
+    # add any user supplied curl opts - timeouts can be overridden as curl uses the last parameters given
+    [[ -n "$__curl_opts" ]] && params+=($__curl_opts)
+
+    local cmd_err
+    local ret
+
+    # get the last non zero exit status (ignoring tee)
+    set -o pipefail
+
+    # set up additional file descriptor for stdin
+    exec 3>&1
+
+    # capture stderr - while passing both stdout and stderr to terminal
+    # curl like wget outputs the progress meter to stderr, so we will extract the error line later
+    cmd_err=$(curl "${params[@]}" 2>&1 1>&3 | tee /dev/stderr)
+    ret="$?"
+
+    # remove stdin copy
+    exec 3>&-
+
+    set +o pipefail
+
+    # if there was an error, extract it and put in __NET_ERRMSG
+    if [[ "$ret" -ne 0 ]]; then
+        # as we also capture the curl progress output, extract the last line which contains the error
+        __NET_ERRMSG="${cmd_err##*$'\n'}"
+    else
+        __NET_ERRMSG=""
+    fi
+    return "$ret"
+}
+
+## @fn download()
+## @param url url of file
+## @param dest destination name (optional), use - for stdout
+## @brief Download a file
+## @details Download a file - if the dest parameter is omitted, the file will be downloaded to the current directory.
+## If the destination name is a hyphen (-), then the file will be outputted to stdout, for piping to another command
+## or retrieving the contents directly to a variable. If the destination is a folder, extract with the basename from
+## the url to the destination folder.
+## @retval 0 on success
+function download() {
+    local url="$1"
+    local dest="$2"
+    local file="${url##*/}"
+
+    # if no destination, get the basename from the url
+    [[ -z "$dest" ]] && dest="${PWD}/$file"
+
+    # if the destination is a folder, download to that with filename from url
+    [[ -d "$dest" ]] && dest="$dest/$file"
+
+    local params=(--location)
+    if [[ "$dest" == "-" ]]; then
+        params+=(--silent --no-buffer)
+    else
+        printMsgs "console" "Downloading $url to $dest ..."
+        params+=(-o "$dest")
+    fi
+    params+=(--connect-timeout 10 --speed-limit 1 --speed-time 60 --fail)
+    # add the url
+    params+=("$url")
+
+    local ret
+    runCurl "${params[@]}"
+    ret="$?"
+
+    # if download failed, remove file, log error and return error code
+    if [[ "$ret" -ne 0 ]]; then
+        # remove dest if not set to stdout and exists
+        [[ "$dest" != "-" && -f "$dest" ]] && rm "$dest"
+        md_ret_errors+=("URL $url failed to download.\n\n$__NET_ERRMSG")
+    fi
+    return "$ret"
+}
+
+## @fn downloadAndVerify()
+## @param url url of file
+## @param dest destination file (optional)
+## @brief Download a file and a corresponding .asc signature and verify the contents
+## @details Download a file and a corresponding .asc signature and verify the contents.
+## The .asc file will be downloaded to verify the file, but will be removed after downloading.
+## If the dest parameter is omitted, the file will be downloaded to the current directory
+## @retval 0 on success
+function downloadAndVerify() {
+    local url="$1"
+    local dest="$2"
+    local file="${url##*/}"
+
+    # if no destination, get the basename from the url (supported by GNU basename)
+    [[ -z "$dest" ]] && dest="${PWD}/$file"
+
+    local cmd_out
+    local ret=1
+    if download "${url}.asc" "${dest}.asc"; then
+        if download "$url" "$dest"; then
+            cmd_out="$(gpg --verify "${dest}.asc" 2>&1)"
+            ret="$?"
+            if [[ "$ret" -ne 0 ]]; then
+                md_ret_errors+=("$dest failed signature check:\n\n$cmd_out")
+            fi
+        fi
+    fi
+    return "$ret"
+}
+
 ## @fn downloadAndExtract()
 ## @param url url of archive
 ## @param dest destination folder for the archive
@@ -959,37 +1155,29 @@ function downloadAndExtract() {
     local opts=("$@")
 
     local ext="${url##*.}"
-    local cmd=(tar -xv)
-    local is_tar=1
+    local file="${url##*/}"
+
+    local temp="$(mktemp -d)"
+    # download file, removing temporary folder and returning on error
+    if ! download "$url" "$temp/$file"; then
+        rm -rf "$temp"
+        return 1
+    fi
+
+    mkdir -p "$dest"
 
     local ret
     case "$ext" in
-        gz|tgz)
-            cmd+=(-z)
-            ;;
-        bz2)
-            cmd+=(-j)
-            ;;
-        xz)
-            cmd+=(-J)
-            ;;
         exe|zip)
-            is_tar=0
-            local tmp="$(mktemp -d)"
-            local file="${url##*/}"
-            runCmd wget -q -O"$tmp/$file" "$url"
-            runCmd unzip "${opts[@]}" -o "$tmp/$file" -d "$dest"
-            rm -rf "$tmp"
-            ret=$?
+            runCmd unzip "${opts[@]}" -o "$temp/$file" -d "$dest"
+            ;;
+        *)
+            tar -xvf "$temp/$file" -C "$dest" "${opts[@]}"
+            ;;
     esac
+    ret=$?
 
-    if [[ "$is_tar" -eq 1 ]]; then
-        mkdir -p "$dest"
-        cmd+=(-C "$dest" "${opts[@]}")
-
-        runCmd "${cmd[@]}" < <(wget -q -O- "$url")
-        ret=$?
-    fi
+    rm -rf "$temp"
 
     return $ret
 }
@@ -1028,7 +1216,7 @@ _EOF_
 ## @param but2 mapping for button 2
 ## @param but3 mapping for button 3
 ## @param butX mapping for button X ...
-## @brief Start joy2key.py process in background to map joystick presses to keyboard
+## @brief Start joy2key process in background to map joystick presses to keyboard
 ## @details Arguments are curses capability names or hex values starting with '0x'
 ## see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
 function joy2keyStart() {
@@ -1038,18 +1226,30 @@ function joy2keyStart() {
 
     local params=("$@")
     if [[ "${#params[@]}" -eq 0 ]]; then
-        params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20 0x1b)
+        # Default button-to-keyboard mappings:
+        # * cursor keys for axis/dpad
+        # * enter, space and esc for buttons 'a', 'b' and 'x'
+        # * page up/page down for buttons 5,6 (shoulder buttons)
+        params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20 0x1b 0x00 kpp knp)
+    fi
+
+    # Choose the joy2key implementation here, since `runcommand` may not be installed
+    local joy2key="joy2key.py"
+    if hasPackage "python3-sdl2"; then
+        iniConfig " =" '"' "$configdir/all/runcommand.cfg"
+        iniGet "joy2key_version"
+        [[ $ini_value != "0" ]] && joy2key="joy2key_sdl.py"
     fi
 
     # get the first joystick device (if not already set)
     [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/jsX"
 
     # if no joystick device, or joy2key is already running exit
-    [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
+    [[ -z "$__joy2key_dev" ]] || pgrep -f "$joy2key" >/dev/null && return 1
 
-    # if joy2key.py is installed run it with cursor keys for axis/dpad, and enter + space for buttons 0 and 1
-    if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" 2>/dev/null; then
-        __joy2key_pid=$(pgrep -f joy2key.py)
+    # if joy2key is installed, run it
+    if "$scriptdir/scriptmodules/supplementary/runcommand/$joy2key" "$__joy2key_dev" "${params[@]}" 2>/dev/null; then
+        __joy2key_pid=$(pgrep -f "$joy2key")
         return 0
     fi
 
@@ -1093,13 +1293,6 @@ function getPlatformConfig() {
 ## @param exts optional extensions for the frontend (if not present in platforms.cfg)
 ## @details Adds a system to one of the frontend launchers
 function addSystem() {
-    # backward compatibility for old addSystem functionality
-    if [[ $# > 3 ]]; then
-        addEmulator "$@"
-        addSystem "$3"
-        return
-    fi
-
     local system="$1"
     local fullname="$2"
     local exts=($3)
@@ -1109,9 +1302,9 @@ function addSystem() {
     local cmd
     local path
 
-    # check if we are removing the system
-    if [[ "$md_mode" == "remove" ]]; then
-        delSystem "$id" "$system"
+    # if removing and we don't have an emulators.cfg we can remove the system from the frontends
+    if [[ "$md_mode" == "remove" ]] && [[ ! -f "$md_conf_root/$system/emulators.cfg" ]]; then
+        delSystem "$system" "$fullname"
         return
     fi
 
@@ -1157,7 +1350,11 @@ function addSystem() {
 ## @details deletes a system from all frontends.
 function delSystem() {
     local system="$1"
-    local fullname="$(getPlatformConfig "${system}_fullname")"
+    local fullname="$2"
+
+    local temp
+    temp="$(getPlatformConfig "${system}_fullname")"
+    [[ -n "$temp" ]] && fullname="$temp"
 
     local function
     for function in $(compgen -A function _del_system_); do
@@ -1194,13 +1391,16 @@ function addPort() {
         mv "$configdir/$port" "$md_conf_root/"
     fi
 
-    # remove the ports launch script if in remove mode
+    # remove the emulator / port
     if [[ "$md_mode" == "remove" ]]; then
-        rm -f "$file"
         delEmulator "$id" "$port"
+
+        # remove launch script if in remove mode and the ports emulators.cfg is empty
+        [[ ! -f "$md_conf_root/$port/emulators.cfg" ]] && rm -f "$file"
+
         # if there are no more port launch scripts we can remove ports from emulation station
         if [[ "$(find "$romdir/ports" -maxdepth 1 -name "*.sh" | wc -l)" -eq 0 ]]; then
-            delSystem "$id" "ports"
+            delSystem "ports"
         fi
         return
     fi
@@ -1301,13 +1501,6 @@ function delEmulator() {
         grep -q "=" "$config" || rm -f "$config"
     fi
 
-    # if we don't have an emulators.cfg we can remove the system from the frontends
-    if [[ ! -f "$md_conf_root/$system/emulators.cfg" ]]; then
-        local function
-        for function in $(compgen -A function _del_system_); do
-            "$function" "$fullname" "$system"
-        done
-    fi
 }
 
 ## @fn patchVendorGraphics()
@@ -1347,13 +1540,19 @@ function dkmsManager() {
             if dkms status | grep -q "^$module_name"; then
                 dkmsManager remove "$module_name" "$module_ver"
             fi
-            if [[ "$__chroot" -eq 1 ]]; then
-                kernel="$(ls -1 /lib/modules | tail -n -1)"
-            fi
             ln -sf "$md_inst" "/usr/src/${module_name}-${module_ver}"
-            dkms install --force -m "$module_name" -v "$module_ver" -k "$kernel"
-            if dkms status | grep -q "^$module_name"; then
-                md_ret_error+=("Failed to install $md_id")
+            dkms install --no-initrd --force -m "$module_name" -v "$module_ver" -k "$kernel"
+            if ! dkms status "$module_name/$module_ver" -k "$kernel" | grep -q installed; then
+                # Force building for any kernel that has source/headers
+                local k_ver
+                while read k_ver; do
+                    if [[ -d "$(realpath /lib/modules/$k_ver/build)" ]]; then
+                        dkms install --no-initrd --force -m "$module_name/$module_ver" -k "$k_ver"
+                    fi
+                done < <(ls -r1 /lib/modules)
+            fi
+            if ! dkms status "$module_name/$module_ver" | grep -q installed; then
+                md_ret_errors+=("Failed to install $md_id")
                 return 1
             fi
             ;;
@@ -1366,7 +1565,10 @@ function dkmsManager() {
             ;;
         reload)
             dkmsManager unload "$module_name" "$module_ver"
-            modprobe "$module_name"
+            # No reason to load modules in chroot
+            if [[ "$__chroot" -eq 0 ]]; then
+                modprobe "$module_name"
+            fi
             ;;
         unload)
             if [[ -n "$(lsmod | grep ${module_name/-/_})" ]]; then
@@ -1396,4 +1598,60 @@ function getIPAddress() {
 
     # if an external route was found, report its source address
     [[ -n "$ip_route" ]] && grep -oP "src \K[^\s]+" <<< "$ip_route"
+}
+
+## @fn isConnected()
+## @brief Simple check to see if there is a connection to the Internet.
+## @details Uses the getIPAddress function to check if we have a route to the Internet. Also sets
+## __NET_ERRMSG with an error message for use in packages / setup to display to the user if not.
+## @retval 0 on success
+## @retval 1 on failure
+function isConnected() {
+    local ip="$(getIPAddress)"
+    if [[ -z "$ip" ]]; then
+        __NET_ERRMSG="Not connected to the Internet"
+        return 1
+    fi
+    return 0
+}
+
+## @fn adminRsync()
+## @param src src folder on local system - eg "$__tmpdir/stats/"
+## @param dest destination folder on remote system - eg "stats/"
+## @param params additional rsync parameters - eg --delete
+## @brief Rsyncs data to remote host for admin modules
+## @details Used to rsync data to our server for admin modules. Default remote
+## user is retropie, host is $__binary_host and default port is 22. These can be overridden with
+## env vars __upload_user __upload_host and __upload_port
+##
+## The default parameters for rsync are "-av --delay-updates" - more can be added via the 3rd+ argument
+function adminRsync() {
+    local src="$1"
+    local dest="$2"
+    shift 2
+    local params=("$@")
+
+    local remote_user="$__upload_user"
+    [[ -z "$remote_user" ]] && remote_user="retropie"
+    local remote_host="$__upload_host"
+    [[ -z "$remote_host" ]] && remote_host="$__binary_host"
+    local remote_port="$__upload_port"
+    [[ -z "$remote_port" ]] && remote_port=22
+
+    rsync -av --delay-updates -e "ssh -p $remote_port" "${params[@]}" "$src" "$remote_user@$remote_host:$dest"
+}
+
+## @fn signFile()
+## @param file path to file to sign
+## @brief signs file with $__gpg_signing_key
+## @details signs file with $__gpg_signing_key creating corresponding .asc file in the same folder
+function signFile() {
+    local file="$1"
+    local cmd_out
+    cmd_out=$(gpg --default-key "$__gpg_signing_key" --detach-sign --armor --yes "$1" 2>&1)
+    if [[ "$?" -ne 0 ]]; then
+        md_ret_errors+=("Failed to sign $1\n\n$cmd_out")
+        return 1
+    fi
+    return 0
 }

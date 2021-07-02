@@ -12,12 +12,13 @@
 rp_module_id="lr-vba-next"
 rp_module_desc="GBA emulator - VBA-M (optimised) port for libretro"
 rp_module_help="ROM Extensions: .gba .zip\n\nCopy your Game Boy Advance roms to $romdir/gba\n\nCopy the required BIOS file gba_bios.bin to $biosdir"
-rp_module_licence="GPL2"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/vba-next/master/LICENSE"
+rp_module_repo="git https://github.com/libretro/vba-next.git master"
 rp_module_section="main"
 rp_module_flags="!armv6"
 
 function sources_lr-vba-next() {
-    gitPullOrClone "$md_build" https://github.com/libretro/vba-next.git
+    gitPullOrClone
 }
 
 function build_lr-vba-next() {

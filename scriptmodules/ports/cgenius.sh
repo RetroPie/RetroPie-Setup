@@ -12,23 +12,24 @@
 rp_module_id="cgenius"
 rp_module_desc="Commander Genius - Modern Interpreter for the Commander Keen Games (Vorticon and Galaxy Games)"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/gerstrong/Commander-Genius/master/COPYRIGHT"
+rp_module_repo="git https://gitlab.com/Dringgstein/Commander-Genius.git v2.7.7"
 rp_module_section="exp"
 
 function depends_cgenius() {
-    getDepends build-essential cmake libcurl4-openssl-dev libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libboost-dev python3-dev
+    getDepends cmake libcurl4-openssl-dev libvorbis-dev libogg-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 }
 
 function sources_cgenius() {
-    gitPullOrClone "$md_build" https://gitlab.com/Dringgstein/Commander-Genius.git v2.3.1
+    gitPullOrClone
 
     # use -O2 on older GCC due to segmentation fault when compiling with -O3
-    if compareVersions $__gcc_version lt 6.0.0; then
+    if compareVersions $__gcc_version lt 6; then
         sed -i "s/ADD_DEFINITIONS(-O3)/ADD_DEFINITIONS(-O2)/" src/CMakeLists.txt
     fi
 }
 
 function build_cgenius() {
-    cmake -DUSE_SDL2=yes -DCMAKE_INSTALL_PREFIX="$md_inst"
+    cmake -DUSE_SDL2=yes -DCMAKE_INSTALL_PREFIX="$md_inst" -DNOTYPESAVE=on -DUSE_BOOST=no
     make
     md_ret_require="$md_build/src/CGeniusExe"
 }

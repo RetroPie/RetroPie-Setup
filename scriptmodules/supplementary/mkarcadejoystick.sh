@@ -11,13 +11,14 @@
 
 rp_module_id="mkarcadejoystick"
 rp_module_desc="Raspberry Pi GPIO Joystick Driver"
-rp_module_help="Installs the GPIO driver from https://github.com/recalbox/mk_arcade_joystick_rpi"
+rp_module_help="Installs the GPIO driver from https://github.com/cmitu/mk_arcade_joystick_rpi"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/recalbox/mk_arcade_joystick_rpi/master/LICENSE"
+rp_module_repo="git https://github.com/cmitu/mk_arcade_joystick_rpi retropie"
 rp_module_section="driver"
-rp_module_flags="noinstclean !x86 !mali"
+rp_module_flags="noinstclean !all rpi"
 
 function _version_mkarcadejoystick() {
-    echo "0.1.6"
+    echo "0.1.7"
 }
 
 function depends_mkarcadejoystick() {
@@ -25,9 +26,8 @@ function depends_mkarcadejoystick() {
 }
 
 function sources_mkarcadejoystick() {
-    gitPullOrClone "$md_inst" https://github.com/recalbox/mk_arcade_joystick_rpi
+    gitPullOrClone "$md_inst"
     pushd "$md_inst"
-    applyPatch "$md_data/01_kernel_timers_api.diff"
     sed -i "s/\$MKVERSION/$(_version_mkarcadejoystick)/" "$md_inst/dkms.conf"
     popd
 }
@@ -37,7 +37,7 @@ function build_mkarcadejoystick() {
 }
 
 function remove_mkarcadejoystick() {
-    dkmsManager remove mk_arcade_joystick_rpi "$(_version_mkarcadejoystick)"
+    dkmsManager remove mk_arcade_joystick_rpi
     rm -f /etc/modprobe.d/mk_arcade_joystick_rpi.conf
     sed -i "/mk_arcade_joystick_rpi/d" /etc/modules
 }

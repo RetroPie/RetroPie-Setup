@@ -13,7 +13,8 @@ rp_module_id="lr-pcsx-rearmed"
 rp_module_desc="Playstation emulator - PCSX (arm optimised) port for libretro"
 rp_module_help="ROM Extensions: .bin .cue .cbn .img .iso .m3u .mdf .pbp .toc .z .znx\n\nCopy your PSX roms to $romdir/psx\n\nCopy the required BIOS file SCPH1001.BIN to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/pcsx_rearmed/master/COPYING"
-rp_module_section="main"
+rp_module_repo="git https://github.com/libretro/pcsx_rearmed.git master"
+rp_module_section="opt arm=main"
 
 function depends_lr-pcsx-rearmed() {
     local depends=(libpng-dev)
@@ -22,14 +23,14 @@ function depends_lr-pcsx-rearmed() {
 }
 
 function sources_lr-pcsx-rearmed() {
-    gitPullOrClone "$md_build" https://github.com/libretro/pcsx_rearmed.git
+    gitPullOrClone
 }
 
 function build_lr-pcsx-rearmed() {
-    local params=()
+    local params=(THREAD_RENDERING=0)
 
     if isPlatform "arm"; then
-        params+=(ARCH=arm USE_DYNAREC=1)
+        params+=(ARCH=arm DYNAREC=ari64)
         if isPlatform "neon"; then
             params+=(HAVE_NEON=1 BUILTIN_GPU=neon)
         else

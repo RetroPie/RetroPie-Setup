@@ -13,6 +13,7 @@ rp_module_id="lr-mupen64plus"
 rp_module_desc="N64 emu - Mupen64Plus + GLideN64 for libretro"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mupen64plus-libretro/master/LICENSE"
+rp_module_repo="git https://github.com/RetroPie/mupen64plus-libretro.git master"
 rp_module_section="main"
 rp_module_flags="!aarch64"
 
@@ -39,12 +40,15 @@ function depends_lr-mupen64plus() {
 }
 
 function sources_lr-mupen64plus() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mupen64plus-libretro.git
+    gitPullOrClone
 
     # mesa workaround; see: https://github.com/libretro/libretro-common/issues/98
     if hasPackage libgles2-mesa-dev 18.2 ge; then
         applyPatch "$md_data/0001-eliminate-conflicting-typedefs.patch"
     fi
+
+    # Allows GLES3 with rpi
+    applyPatch "$md_data/0002-rpi-gles3.patch"
 }
 
 function build_lr-mupen64plus() {
@@ -59,8 +63,11 @@ function build_lr-mupen64plus() {
     else
         isPlatform "arm" && params+=(WITH_DYNAREC=arm)
         isPlatform "neon" && params+=(HAVE_NEON=1)
-        isPlatform "gles" && params+=(FORCE_GLES=1)
-        isPlatform "kms" && params+=(FORCE_GLES3=1)
+    fi
+    if isPlatform "gles3"; then
+        params+=(FORCE_GLES3=1)
+    elif isPlatform "gles"; then
+        params+=(FORCE_GLES=1)
     fi
     make clean
     make "${params[@]}"

@@ -10,7 +10,7 @@
 #
 
 rp_module_id="customhidsony"
-rp_module_desc="Custom hid-sony driver backported from kernel 4.15"
+rp_module_desc="Custom hid-sony (Sony DualShock) driver with enhanced third-party controller support"
 rp_module_help="Improves support for third-party (Shanwan & Gasia) DualShock 3 controllers.\n\nNote: BlueZ 5.50+ may also be installed via the 'custombluez' module to enable pairing on third-party controllers."
 rp_module_section="driver"
 rp_module_flags="noinstclean"
@@ -48,8 +48,8 @@ _EOF_
 #!/bin/bash
 rpi_kernel_ver="rpi-4.19.y"
 mkdir -p "drivers/hid/" "patches"
-wget https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-sony.c -O "drivers/hid/hid-sony.c"
-wget https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-ids.h -O "drivers/hid/hid-ids.h"
+curl -s https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-sony.c -o "drivers/hid/hid-sony.c"
+curl -s https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-ids.h -o "drivers/hid/hid-ids.h"
 patch -p1 <"patches/0001-hidsony-gasiafix.diff"
 _EOF_
     chmod +x "hidsony_source.sh"

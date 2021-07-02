@@ -12,11 +12,12 @@
 rp_module_id="tyrquake"
 rp_module_desc="Quake 1 engine - TyrQuake port"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/tyrquake/master/gnu.txt"
+rp_module_repo="git https://github.com/RetroPie/tyrquake.git master"
 rp_module_section="opt"
 
 function depends_tyrquake() {
     local depends=(libsdl2-dev)
-    if isPlatform "x11" || isPlatform "mesa"; then
+    if isPlatform "gl" || isPlatform "mesa"; then
         depends+=(libgl1-mesa-dev)
     fi
 
@@ -24,7 +25,8 @@ function depends_tyrquake() {
 }
 
 function sources_tyrquake() {
-    gitPullOrClone "$md_build" https://github.com/RetroPie/tyrquake.git
+    gitPullOrClone
+    isPlatform "kms" && applyPatch "$md_data/0001-force-vsync.patch"
 }
 
 function build_tyrquake() {
@@ -49,7 +51,7 @@ function add_games_tyrquake() {
     local binary="$md_inst/bin/tyr-quake"
 
     isPlatform "kms" && params+=("-width %XRES%" "-height %YRES%")
-    if isPlatform "x11" || isPlatform "mesa"; then
+    if isPlatform "gl" || isPlatform "mesa"; then
         binary="$md_inst/bin/tyr-glquake"
     fi
 

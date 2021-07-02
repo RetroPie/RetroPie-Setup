@@ -12,30 +12,12 @@
 rp_module_id="virtualgamepad"
 rp_module_desc="Virtual Gamepad for Smartphone"
 rp_module_licence="MIT https://raw.githubusercontent.com/miroof/node-virtual-gamepads/master/LICENSE"
+rp_module_repo="git https://github.com/miroof/node-virtual-gamepads.git master"
 rp_module_section="exp"
 rp_module_flags="noinstclean nobin"
 
 function depends_virtualgamepad() {
-    getDepends nodejs
-    # if the system version of nodejs is old or doesn't package npm, we will install manually for armv6 or use nodesource
-    if hasPackage nodejs 4.6 lt || ! which npm >/dev/null; then
-        if isPlatform "armv6"; then
-            getDepends npm
-            if ! hasPackage node; then
-                wget -qO "$__tmpdir/node_latest_armhf.deb" http://node-arm.herokuapp.com/node_latest_armhf.deb
-                dpkg -i "$__tmpdir/node_latest_armhf.deb"
-                rm "$__tmpdir/node_latest_armhf.deb"
-            fi
-        else
-            getDepends curl
-            # remove any old node package - we will use nodesource
-            hasPackage node && aptRemove node
-            curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-            # force aptInstall to get a fresh list before installing
-            __apt_update=0
-            aptInstall nodejs
-        fi
-    fi
+    getDepends nodejs npm
 }
 
 function remove_virtualgamepad() {
@@ -45,7 +27,7 @@ function remove_virtualgamepad() {
 }
 
 function sources_virtualgamepad() {
-    gitPullOrClone "$md_inst" https://github.com/miroof/node-virtual-gamepads.git
+    gitPullOrClone "$md_inst"
     chown -R $user:$user "$md_inst"
 }
 

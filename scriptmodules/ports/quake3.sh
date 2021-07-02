@@ -12,19 +12,21 @@
 rp_module_id="quake3"
 rp_module_desc="Quake 3"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/raspberrypi/quake3/master/COPYING.txt"
+rp_module_repo="git https://github.com/raspberrypi/quake3.git master"
 rp_module_section="opt"
-rp_module_flags="!x86 !mali !kms"
+rp_module_flags="!all videocore"
 
 function depends_quake3() {
     getDepends libsdl1.2-dev libraspberrypi-dev
 }
 
 function sources_quake3() {
-    gitPullOrClone "$md_build" https://github.com/raspberrypi/quake3.git
+    gitPullOrClone
 }
 
 function build_quake3() {
     ./build_rpi_raspbian.sh
+    md_ret_require="$md_build/build/release-linux-arm/ioquake3.arm"
 }
 
 function install_quake3() {
@@ -43,14 +45,12 @@ function game_data_quake3() {
 }
 
 function configure_quake3() {
+    mkRomDir "ports/quake3"
     addPort "$md_id" "quake3" "Quake III Arena" "LD_LIBRARY_PATH=lib $md_inst/ioquake3.arm"
 
-    mkRomDir "ports/quake3"
+    [[ "$md_mode" == "remove" ]] && return
+
+    game_data_quake3
 
     moveConfigDir "$md_inst/baseq3" "$romdir/ports/quake3"
-
-    # Add user for no sudo run
-    usermod -a -G video $user
-
-    [[ "$md_mode" == "install" ]] && game_data_quake3
 }

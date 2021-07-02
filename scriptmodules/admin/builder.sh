@@ -22,35 +22,38 @@ function module_builder() {
 
     local id
     for id in "${ids[@]}"; do
-        # if index get mod_id from array else we look it up
-        local md_id
-        local md_idx
-        if [[ "$id" =~ ^[0-9]+$ ]]; then
-            md_id="$(rp_getIdFromIdx $id)"
-            md_idx="$id"
-        else
-            md_idx="$(rp_getIdxFromId $id)"
-            md_id="$id"
-        fi
-
+        printMsgs "heading" "Building module $id"
         # don't build binaries for modules with flag nobin
         # eg scraper which fails as go1.8 doesn't work under qemu
-        hasFlag "${__mod_flags[$md_idx]}" "nobin" && continue
+        if hasFlag "${__mod_info[$id/flags]}" "nobin"; then
+            printMsgs "console" "Module has 'nobin' flag set, so not building."
+            continue
+        fi
 
-        ! fnExists "install_${md_id}" && continue
+        # skip modules that are not enabled for the target system
+        if [[ "${__mod_info[$id/enabled]}" -ne 1 ]]; then
+            printMsgs "console" "Module is disabled for this platform ($__platform)."
+            continue
+        fi
 
-        # skip already built archives, so we can retry failed modules
-        [[ -f "$__tmpdir/archives/$__os_codename/$__platform/${__mod_type[md_idx]}/$md_id.tar.gz" ]] && continue
+        # if the module has no install_ function skip to the next module
+        if ! fnExists "install_${id}"; then
+            printMsgs "console" "Module has no install_${id} function so cannot be pre-built."
+            continue
+        fi
+
+        # if there is no newer version, skip to the next module
+        if ! rp_hasNewerModule "$id" "source"; then
+            printMsgs "console" "No update was found."
+            continue
+        fi
 
         # build, install and create binary archive.
         # initial clean in case anything was in the build folder when calling
         local mode
-        for mode in clean remove depends sources build install create_bin clean remove "depends remove"; do
-            rp_callModule "$md_id" $mode
-            # return on error
-            [[ $? -eq 1 ]] && return 1
-            # no module found - skip to next module
-            [[ $? -eq 2 ]] && break
+        for mode in clean depends sources build install create_bin clean remove "depends remove"; do
+            # continue to next module if not available or an error occurs
+            rp_callModule "$id" $mode || break
         done
     done
     return 0
@@ -61,7 +64,7 @@ function section_builder() {
 }
 
 function upload_builder() {
-    rsync -av --progress --delay-updates "$__tmpdir/archives/" "retropie@$__binary_host:files/binaries/"
+    adminRsync "$__tmpdir/archives/" "files/binaries/"
 }
 
 function clean_archives_builder() {
@@ -76,44 +79,60 @@ function chroot_build_builder() {
     local ip="$(getIPAddress)"
 
     local dist
-    local dists="$__dists"
-    [[ -z "$dists" ]] && dists="stretch buster"
-    local sys
+    local dists="$__builder_dists"
+    [[ -z "$dists" ]] && dists="buster"
+
+    local platform
+    local platforms="$__builder_platforms"
+    [[ -z "$platforms" ]] && platforms="rpi1 rpi2 rpi4"
 
     for dist in $dists; do
-        local use_distcc=0
+        local chroot_dir="$md_build/$dist"
+        local chroot_rps_dir="$chroot_dir/home/pi/RetroPie-Setup"
+        local archive_dir="tmp/archives/$dist"
+
+        local distcc_hosts="$__builder_distcc_hosts"
         if [[ -d "$rootdir/admin/crosscomp/$dist" ]]; then
-            use_distcc=1
             rp_callModule crosscomp switch_distcc "$dist"
+            [[ -z "$distcc_hosts" ]] && distcc_hosts="$ip"
         fi
 
-        if [[ ! -d "$md_build/$dist" ]]; then
-            rp_callModule image create_chroot "$dist" "$md_build/$dist"
-            git clone "$HOME/RetroPie-Setup" "$md_build/$dist/home/pi/RetroPie-Setup"
-            cat > "$md_build/$dist/home/pi/install.sh" <<_EOF_
-#!/bin/bash
-cd
-sudo apt-get update
-sudo apt-get install -y git
-if [[ "$use_distcc" -eq 1 ]]; then
-    sudo apt-get install -y distcc
-    sudo sed -i s/\+zeroconf/$ip/ /etc/distcc/hosts;
-fi
-_EOF_
-            rp_callModule image chroot "$md_build/$dist" bash /home/pi/install.sh
+        local makeflags="$__builder_makeflags"
+        [[ -z "$makeflags" ]] && makeflags="-j$(nproc)"
+        [[ ! -d "$chroot_dir" ]] && rp_callModule image create_chroot "$dist" "$chroot_dir"
+
+
+        if [[ ! -d "$chroot_rps_dir" ]]; then
+            sudo -u $user git clone "$home/RetroPie-Setup" "$chroot_rps_dir"
+            gpg --export-secret-keys "$__gpg_signing_key" >"$chroot_dir/retropie.key"
+            rp_callModule image chroot "$chroot_dir" bash -c "\
+                sudo gpg --import "/retropie.key"; \
+                sudo rm "/retropie.key"; \
+                sudo apt-get update; \
+                sudo apt-get install -y git; \
+                "
+                # copy existing packages from host if building in a clean chroot to avoid rebuilding everything
+                mkdir -p "$chroot_rps_dir/$archive_dir"
+                rsync -av "$home/RetroPie-Setup/$archive_dir/" "$chroot_rps_dir/$archive_dir/"
         else
-            git -C "$md_build/$dist/home/pi/RetroPie-Setup" pull
+            sudo -u $user git -C "$chroot_rps_dir" pull
         fi
 
-        for sys in rpi1 rpi2; do
-            rp_callModule image chroot "$md_build/$dist" \
+        for platform in $platforms; do
+            if [[ "$dist" == "stretch" && "$platform" == "rpi4" ]]; then
+                printMsgs "heading" "Skipping platform $platform on $dist ..."
+                continue
+            fi
+
+            rp_callModule image chroot "$chroot_dir" \
                 sudo \
-                PATH="/usr/lib/distcc:$PATH" \
-                MAKEFLAGS="-j4 PATH=/usr/lib/distcc:$PATH" \
-                __platform="$sys" \
+                __makeflags="$makeflags" \
+                DISTCC_HOSTS="$distcc_hosts" \
+                __platform="$platform" \
+                __has_binaries="$__chroot_has_binaries" \
                 /home/pi/RetroPie-Setup/retropie_packages.sh builder "$@"
         done
 
-        rsync -av "$md_build/$dist/home/pi/RetroPie-Setup/tmp/archives/" "$HOME/RetroPie-Setup/tmp/archives/"
+        rsync -av "$chroot_rps_dir/$archive_dir/" "$home/RetroPie-Setup/$archive_dir/"
     done
 }

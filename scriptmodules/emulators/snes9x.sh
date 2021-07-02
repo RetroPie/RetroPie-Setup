@@ -13,15 +13,16 @@ rp_module_id="snes9x"
 rp_module_desc="SNES emulator SNES9X-RPi"
 rp_module_help="ROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/RetroPie/snes9x-rpi/master/snes9x.h"
+rp_module_repo="git https://github.com/RetroPie/snes9x-rpi.git retropie"
 rp_module_section="opt"
-rp_module_flags="dispmanx !x86 !mali !kms"
+rp_module_flags="sdl1 !all videocore"
 
 function depends_snes9x() {
     getDepends libsdl1.2-dev libboost-thread-dev libboost-system-dev libsdl-ttf2.0-dev libasound2-dev
 }
 
 function sources_snes9x() {
-    gitPullOrClone "$md_build" https://github.com/RetroPie/snes9x-rpi.git retropie
+    gitPullOrClone
 }
 
 function build_snes9x() {
@@ -44,7 +45,7 @@ function install_snes9x() {
 function configure_snes9x() {
     mkRomDir "snes"
 
-    setDispmanx "$md_id" 1
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 
     addEmulator 0 "$md_id" "snes" "$md_inst/snes9x %ROM%"
     addSystem "snes"

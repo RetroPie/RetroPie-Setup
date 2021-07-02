@@ -11,9 +11,9 @@
 
 rp_module_id="gamecondriver"
 rp_module_desc="Gamecon & Db9 drivers GPIO drivers"
-rp_module_license="GPL2 https://raw.githubusercontent.com/marqs85/gamecon_gpio_rpi/master/gamecon_gpio_rpi-1.4/gamecon_gpio_rpi.c"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/marqs85/gamecon_gpio_rpi/master/gamecon_gpio_rpi-1.4/gamecon_gpio_rpi.c"
 rp_module_section="driver"
-rp_module_flags="!x86 !mali"
+rp_module_flags="!all rpi"
 
 function depends_gamecondriver() {
     # remove any old kernel headers for current kernel

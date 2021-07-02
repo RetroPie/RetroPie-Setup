@@ -12,20 +12,23 @@
 rp_module_id="gemrb"
 rp_module_desc="gemrb - open-source implementation of Infinity Engine"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/gemrb/gemrb/master/COPYING"
+rp_module_repo="git https://github.com/gemrb/gemrb.git v0.8.6"
 rp_module_section="exp"
+rp_module_flags="!mali dispmanx"
 
 function depends_gemrb() {
-    getDepends python-dev libopenal-dev libsdl1.2-dev cmake libpng-dev libfreetype6-dev
+    getDepends python2-dev libopenal-dev cmake libpng-dev libfreetype6-dev libsdl2-dev libvorbis-dev libvlc-dev libvlccore-dev
 }
 
 function sources_gemrb() {
-    gitPullOrClone "$md_build" https://github.com/gemrb/gemrb.git v0.8.4
+    gitPullOrClone
 }
 
 function build_gemrb() {
-    mkdir build
+    mkdir -p build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/
+    make clean
+    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DFREETYPE_INCLUDE_DIRS=/usr/include/freetype2/ -DSDL_BACKEND=SDL2 -DUSE_SDLMIXER=OFF
     make
     md_ret_require="$md_build/build/gemrb/gemrb"
 }

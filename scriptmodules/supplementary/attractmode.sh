@@ -12,8 +12,9 @@
 rp_module_id="attractmode"
 rp_module_desc="Attract Mode emulator frontend"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/mickelson/attract/master/License.txt"
+rp_module_repo="git https://github.com/mickelson/attract master"
 rp_module_section="exp"
-rp_module_flags="!mali !kms frontend"
+rp_module_flags="!mali frontend"
 
 function _get_configdir_attractmode() {
     echo "$configdir/all/attractmode"
@@ -32,7 +33,7 @@ function _add_system_attractmode() {
     local theme="$7"
 
     # replace any / characters in fullname
-    fullname="${fullname//\/ }"
+    fullname="${fullname//\/}"
 
     local config="$attract_dir/emulators/$fullname.cfg"
     iniConfig " " "" "$config"
@@ -83,6 +84,12 @@ function _del_system_attractmode() {
     local fullname="$1"
     local name="$2"
 
+    # Don't remove an empty system
+    [[ -z "$fullname" ]] && return 0
+
+    # replace any / characters in fullname
+    fullname="${fullname//\/}"
+
     rm -rf "$attract_dir/romlists/$fullname.txt"
 
     local tab=$'\t'
@@ -126,20 +133,24 @@ function depends_attractmode() {
         libavformat-dev libavfilter-dev libswscale-dev libavresample-dev
         libfontconfig1-dev
     )
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
+    isPlatform "kms" && depends+=(libegl1-mesa-dev libgl-dev libglu1-mesa-dev libdrm-dev libgbm-dev)
     isPlatform "x11" && depends+=(libsfml-dev)
-    getDepends "${depends[@]}" 
+    getDepends "${depends[@]}"
 }
 
 function sources_attractmode() {
+    gitPullOrClone "$md_build/attract"
     isPlatform "rpi" && gitPullOrClone "$md_build/sfml-pi" "https://github.com/mickelson/sfml-pi"
-    gitPullOrClone "$md_build/attract" "https://github.com/mickelson/attract"
 }
 
 function build_attractmode() {
     if isPlatform "rpi"; then
+        local params
         cd sfml-pi
-        cmake . -DCMAKE_INSTALL_PREFIX="$md_inst/sfml" -DSFML_RPI=1 -DEGL_INCLUDE_DIR=/opt/vc/include -DEGL_LIBRARY=/opt/vc/lib/libbrcmEGL.so -DGLES_INCLUDE_DIR=/opt/vc/include -DGLES_LIBRARY=/opt/vc/lib/libbrcmGLESv2.so
+        isPlatform "videocore" && params="-DSFML_RPI=1 -DEGL_INCLUDE_DIR=/opt/vc/include -DEGL_LIBRARY=/opt/vc/lib/libbrcmEGL.so -DGLES_INCLUDE_DIR=/opt/vc/include -DGLES_LIBRARY=/opt/vc/lib/libbrcmGLESv2.so"
+        isPlatform "kms" && params="-DSFML_DRM=1"
+        cmake . -DCMAKE_INSTALL_PREFIX="$md_inst/sfml" $params
         make clean
         make
         cd ..
@@ -147,7 +158,9 @@ function build_attractmode() {
     cd attract
     make clean
     local params=(prefix="$md_inst")
-    isPlatform "rpi" && params+=(USE_GLES=1 EXTRA_CFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
+    isPlatform "videocore" && params+=(USE_GLES=1 EXTRA_CFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
+    isPlatform "kms" && params+=(USE_DRM=1 EXTRA_CFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
+    isPlatform "rpi" && params+=(USE_MMAL=1)
     make "${params[@]}"
 
     # remove example configs
@@ -181,14 +194,24 @@ function configure_attractmode() {
     mkUserDir "$md_conf_root/all/attractmode/emulators"
     cat >/usr/bin/attract <<_EOF_
 #!/bin/bash
+MODETEST=/opt/retropie/supplementary/mesa-drm/modetest
+if [[ -z "\$DISPLAY" && -f "\$MODETEST" && ! "\$1" =~ build-romlist ]]; then
+    MODELIST="\$(\$MODETEST -r 2>/dev/null)"
+    default_mode="\$(echo "\$MODELIST" | grep -Em1 "^Mode:.*(driver|userdef).*crtc" | cut -f 2 -d ' ')"
+    default_vrefresh="\$(echo "\$MODELIST" | grep -Em1 "^Mode:.*(driver|userdef).*crtc" | cut -f 4 -d ' ')"
+    echo "Using default video mode: \$default_mode @ \$default_vrefresh"
+
+    [[ ! -z "\$default_mode" ]] && export SFML_DRM_MODE="\$default_mode"
+    [[ ! -z "\$default_vrefresh" ]] && export SFML_DRM_REFRESH="\$default_vrefresh"
+fi
 LD_LIBRARY_PATH="$md_inst/sfml/lib" "$md_inst/bin/attract" "\$@"
 _EOF_
     chmod +x "/usr/bin/attract"
 
-    local idx
-    for idx in "${__mod_idx[@]}"; do
-        if rp_isInstalled "$idx" && [[ -n "${__mod_section[$idx]}" ]] && ! hasFlag "${__mod_flags[$idx]}" "frontend"; then
-            rp_callModule "$idx" configure
+    local id
+    for id in "${__mod_id[@]}"; do
+        if rp_isInstalled "$id" && [[ -n "${__mod_info[$id/section]}" ]] && ! hasFlag "${__mod_info[$id/flags]}" "frontend"; then
+            rp_callModule "$id" configure
         fi
     done
 }

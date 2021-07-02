@@ -11,10 +11,10 @@
 
 rp_module_id="pcsx2"
 rp_module_desc="PS2 emulator PCSX2"
-rp_module_help="ROM Extensions: .bin .iso .img .mdf .z .z2 .bz2 .cso .ima .gz\n\nCopy your PS2 roms to $romdir/ps2"
+rp_module_help="ROM Extensions: .bin .iso .img .mdf .z .z2 .bz2 .cso .ima .gz\n\nCopy your PS2 roms to $romdir/ps2\n\nCopy the required BIOS file to $biosdir"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/PCSX2/pcsx2/master/COPYING.GPLv3"
 rp_module_section="exp"
-rp_module_flags="!arm"
+rp_module_flags="!all x86"
 
 function depends_pcsx2() {
     if isPlatform "64bit"; then
@@ -33,20 +33,37 @@ function depends_pcsx2() {
             fi
         fi
     fi
+
+    if [[ "$md_mode" == "install" ]]; then
+        # On Ubuntu, add the PCSX2 PPA to get the latest version
+        [[ -n "${__os_ubuntu_ver}" ]] && add-apt-repository -y ppa:pcsx2-team/pcsx2-daily
+        dpkg --add-architecture i386
+    else
+        rm -f /etc/apt/sources.list.d/pcsx2-team-ubuntu-pcsx2-daily-*.list
+        apt-key del "D7B4 49CF E17E 659E 5A12  EE8E DD6E EEA2 BD74 7717" >/dev/null  
+    fi
 }
 
 function install_bin_pcsx2() {
-    aptInstall pcsx2
+    local version
+    [[ -n "${__os_ubuntu_ver}" ]] && version="-unstable"
+
+    aptInstall "pcsx2$version"
 }
 
 function remove_pcsx2() {
-    aptRemove pcsx2
+    local version
+    [[ -n "${__os_ubuntu_ver}" ]] && version="-unstable"
+
+    aptRemove "pcsx2$version"
+    rp_callModule pcsx2 depends remove
 }
 
 function configure_pcsx2() {
     mkRomDir "ps2"
-
-    addEmulator 0 "$md_id-nogui" "ps2" "PCSX2 %ROM% --fullscreen --nogui"
-    addEmulator 1 "$md_id" "ps2" "PCSX2 %ROM% --windowed"
+    # Windowed option
+    addEmulator 0 "$md_id" "ps2" "/usr/games/PCSX2 %ROM% --windowed"
+    # Fullscreen option with no gui (default, because we can close with `Esc` key, easy to map for gamepads)
+    addEmulator 1 "$md_id-nogui" "ps2" "/usr/games/PCSX2 %ROM% --fullscreen --nogui"
     addSystem "ps2"
 }

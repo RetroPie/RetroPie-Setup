@@ -12,19 +12,18 @@
 rp_module_id="yquake2"
 rp_module_desc="yquake2 - The Yamagi Quake II client"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/yquake2/yquake2/master/LICENSE"
+rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_7_41"
 rp_module_section="exp"
 rp_module_flags=""
 
 function depends_yquake2() {
-    local depends=(libgl1-mesa-dev libglu1-mesa-dev libogg-dev libopenal-dev libsdl2-dev libvorbis-dev zlib1g-dev)
+    local depends=(libgl1-mesa-dev libglu1-mesa-dev libogg-dev libopenal-dev libsdl2-dev libvorbis-dev zlib1g-dev libcurl4-openssl-dev)
 
     getDepends "${depends[@]}"
 }
 
 function sources_yquake2() {
-    gitPullOrClone "$md_build" https://github.com/yquake2/yquake2.git
-    # workaround for hang on startup
-    sed -i "$md_build/src/backends/unix/system.c" -e '/setegid/d' -e '/setreuid/d'
+    gitPullOrClone
 }
 
 function build_yquake2() {
@@ -86,16 +85,16 @@ function game_data_yquake2() {
 function configure_yquake2() {
     local params=()
 
-    if isPlatform "x11"; then
+    if isPlatform "gl3"; then
         params+=("+set vid_renderer gl3")
-    elif isPlatform "mesa"; then
+    elif isPlatform "gl" || isPlatform "mesa"; then
         params+=("+set vid_renderer gl1")
     else
         params+=("+set vid_renderer soft")
     fi
 
     if isPlatform "kms"; then
-        params+=("+set r_mode -1" "+set r_customwidth %XRES%" "+set r_customheight %YRES%")
+        params+=("+set r_mode -1" "+set r_customwidth %XRES%" "+set r_customheight %YRES%" "+set r_vsync 1")
     fi
 
     mkRomDir "ports/quake2"

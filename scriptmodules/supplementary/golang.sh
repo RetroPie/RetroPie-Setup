@@ -6,9 +6,11 @@
 # See the LICENSE.md file at the top-level directory of this distribution and
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
+
 rp_module_id="golang"
 rp_module_desc="Golang binary install"
-rp_module_section=""
+rp_module_licence="BSD https://golang.org/LICENSE"
+rp_module_section="depends"
 rp_module_flags="noinstclean"
 
 function _get_goroot_golang() {

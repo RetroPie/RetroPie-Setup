@@ -13,8 +13,9 @@ rp_module_id="advmame"
 rp_module_desc="AdvanceMAME v3.9"
 rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $romdir/mame-advmame or\n$romdir/arcade"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
+rp_module_repo="git https://github.com/amadvance/advancemame v3.9"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags="sdl2 sdl1-videocore"
 
 function _update_hook_advmame() {
     # if the non split advmame is installed, make directories for 0.94 / 1.4 so they will be updated
@@ -26,19 +27,28 @@ function _update_hook_advmame() {
 }
 
 function depends_advmame() {
-    local depends=(libsdl1.2-dev autoconf automake)
-    isPlatform "x11" && depends+=(libsdl2-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    local depends=(autoconf automake)
+    if isPlatform "videocore"; then
+        depends+=(libsdl1.2-dev libraspberrypi-dev)
+    else
+        depends+=(libsdl2-dev)
+    fi
     getDepends "${depends[@]}"
 }
 
 function sources_advmame() {
-    gitPullOrClone "$md_build" https://github.com/amadvance/advancemame v3.9
+    gitPullOrClone
 }
 
 function build_advmame() {
+    local params=()
+    if isPlatform "videocore"; then
+        params+=(--enable-sdl1 --disable-sdl2 --enable-vc)
+    else
+        params+=(--enable-sdl2 --disable-sdl1 --disable-vc)
+    fi
     ./autogen.sh
-    ./configure CFLAGS="$CFLAGS -fno-stack-protector" --prefix="$md_inst"
+    ./configure CFLAGS="$CFLAGS -fno-stack-protector" --prefix="$md_inst" "${params[@]}"
     make clean
     make
     md_ret_require="$md_build/advmame"
@@ -96,7 +106,7 @@ function configure_advmame() {
         iniSet "dir_snap" "$romdir/mame-advmame/snap"
         iniSet "dir_sta" "$romdir/mame-advmame/nvram"
 
-        if isPlatform "rpi"; then
+        if isPlatform "videocore"; then
             iniSet "device_video" "fb"
             iniSet "device_video_cursor" "off"
             iniSet "device_keyboard" "raw"
@@ -106,6 +116,14 @@ function configure_advmame() {
             iniSet "display_resizeeffect" "none"
             iniSet "display_resize" "integer"
             iniSet "display_magnify" "1"
+        elif isPlatform "kms" || isPlatform "mali"; then
+            iniSet "device_video" "sdl"
+            # need to force keyboard device as auto will choose event driver which doesn't work with sdl
+            iniSet "device_keyboard" "sdl"
+            # default for best performance
+            iniSet "display_magnify" "1"
+            # disable threading to get rid of the crash-on-exit when using SDL, preventing config save
+            iniSet "misc_smp" "no"
         else
             iniSet "device_video_output" "overlay"
             iniSet "display_aspectx" 16

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # This file is part of The RetroPie Project
 # 
@@ -136,14 +136,15 @@ def signal_handler(signum, frame):
     if (js_fds):
         close_fds(js_fds)
     if (tty_fd):
-        tty_fd.close()
+        os.close(tty_fd)
     sys.exit(0)
 
 def get_hex_chars(key_str):
     if (key_str.startswith("0x")):
-        return key_str[2:].decode('hex')
+        out = bytes.fromhex(key_str[2:])
     else:
-        return curses.tigetstr(key_str)
+        out = curses.tigetstr(key_str)
+    return out.decode('utf-8')
 
 def get_devices():
     devs = []
@@ -177,7 +178,7 @@ def read_event(fd):
     while True:
         try:
             event = os.read(fd, event_size)
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.EWOULDBLOCK:
                 return None
             return False
@@ -248,9 +249,9 @@ event_format = 'IhBB'
 event_size = struct.calcsize(event_format)
 
 try:
-    tty_fd = open('/dev/tty', 'a')
+    tty_fd = os.open('/dev/tty', os.O_WRONLY)
 except IOError:
-    print 'Unable to open /dev/tty'
+    print('Unable to open /dev/tty', file = sys.stderr)
     sys.exit(1)
 
 rescan_time = time.time()
@@ -288,7 +289,7 @@ while True:
 
     if time.time() - rescan_time > 2:
         rescan_time = time.time()
-        if cmp(js_devs, get_devices()):
+        if js_devs != get_devices():
             close_fds(js_fds)
             js_fds = []
 

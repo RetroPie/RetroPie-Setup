@@ -13,17 +13,27 @@ rp_module_id="lr-mame2010"
 rp_module_desc="Arcade emu - MAME 0.139 port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2010-libretro/master/docs/license.txt"
+rp_module_repo="git https://github.com/libretro/mame2010-libretro.git master"
 rp_module_section="opt"
 
+function depends_lr-mame2010() {
+    getDepends zlib1g-dev
+}
+
 function sources_lr-mame2010() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mame2010-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-mame2010() {
     rpSwap on 750
     make clean
     local params=()
-    isPlatform "arm" && params+=("VRENDER=soft" "ARM_ENABLED=1")
+    ! isPlatform "x86" && params+=("VRENDER=soft" "FORCE_DRC_C_BACKEND=1")
+    # ARM_ENABLED flag is only used in osinline.h for the YieldProcessor macro and is needed also for aarch64
+    if isPlatform "arm" || isPlatform "aarch64"; then
+        params+=("ARM_ENABLED=1")
+    fi
+    isPlatform "64bit" && params+=("PTR64=1")
     make "${params[@]}" ARCHOPTS="$CFLAGS" buildtools
     make "${params[@]}" ARCHOPTS="$CFLAGS"
     rpSwap off

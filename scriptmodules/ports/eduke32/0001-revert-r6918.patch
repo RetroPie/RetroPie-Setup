@@ -1,0 +1,52 @@
+Index: source/build/src/tilepacker.cpp
+===================================================================
+--- a/source/build/src/tilepacker.cpp	(revision 8090)
++++ b/source/build/src/tilepacker.cpp	(working copy)
+@@ -33,7 +33,6 @@
+ uint32_t rejectQueueHeadIndex = 0;
+ uint32_t numRejected = 0;
+ 
+-#if 0
+ static void maxheap_bubbleUp(uint32_t nodeIndex)
+ {
+     while (true)
+@@ -57,7 +56,6 @@
+         nodeIndex = parentIndex;
+     }
+ }
+-#endif
+ 
+ static void maxheap_bubbleDown(uint32_t nodeIndex)
+ {
+@@ -90,14 +88,6 @@
+     }
+ }
+ 
+-static void maxheap_buildHeap()
+-{
+-    for (int i = (heapNodes-2)/2; i >= 0; --i)
+-    {
+-        maxheap_bubbleDown(i);
+-    }
+-}
+-
+ static TreeNode* maxheap_pop()
+ {
+     if (heapNodes == 0)
+@@ -307,6 +297,7 @@
+                         (TreeNode*) 0,
+                         {0, 0, tileWidth, tileHeight},
+                         tileUID);
++    maxheap_bubbleUp(heapNodes-1);
+ }
+ 
+ char tilepacker_pack(uint32_t tilesheetID)
+@@ -325,8 +316,6 @@
+             rejectQueue_add(pNode);
+         }
+     }
+-
+-    maxheap_buildHeap();
+     for (TreeNode *pNode = maxheap_pop(); pNode != NULL; pNode = maxheap_pop())
+     {
+         char success = kdtree_add(tilesheetID, pNode);

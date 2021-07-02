@@ -1,0 +1,31 @@
+Index: source/build/src/polymost.cpp
+===================================================================
+--- a/source/build/src/polymost.cpp	(revision 8090)
++++ b/source/build/src/polymost.cpp	(working copy)
+@@ -360,7 +360,7 @@
+     }
+ 
+     gltexfiltermode = clamp(gltexfiltermode, 0, NUMGLFILTERMODES-1);
+-    r_useindexedcolortextures = !gltexfiltermode;
++    //r_useindexedcolortextures = !gltexfiltermode;
+ 
+     for (bssize_t i=0; i<=GLTEXCACHEADSIZ-1; i++)
+     {
+@@ -5437,7 +5437,7 @@
+         else if ((nextsectnum < 0) || (!(sector[nextsectnum].floorstat&1)))
+         {
+             //Parallaxing sky... hacked for Ken's mountain texture
+-            if ((usehightile && hicfindsubst(globalpicnum, globalpal, hictinting[globalpal].f & HICTINT_ALWAYSUSEART)))
++            if (!r_useindexedcolortextures || (usehightile && hicfindsubst(globalpicnum, globalpal, hictinting[globalpal].f & HICTINT_ALWAYSUSEART)))
+                 calc_and_apply_fog_factor(sec->floorshade, sec->visibility, sec->floorpal, 0.005f);
+ 
+             globvis2 = globalpisibility;
+@@ -5831,7 +5831,7 @@
+         else if ((nextsectnum < 0) || (!(sector[nextsectnum].ceilingstat&1)))
+         {
+             //Parallaxing sky... hacked for Ken's mountain texture
+-            if ((usehightile && hicfindsubst(globalpicnum, globalpal, hictinting[globalpal].f & HICTINT_ALWAYSUSEART)))
++            if (!r_useindexedcolortextures || (usehightile && hicfindsubst(globalpicnum, globalpal, hictinting[globalpal].f & HICTINT_ALWAYSUSEART)))
+                 calc_and_apply_fog_factor(sec->ceilingshade, sec->visibility, sec->ceilingpal, 0.005f);
+ 
+             globvis2 = globalpisibility;

@@ -11,15 +11,20 @@
 
 rp_module_id="skyscraper"
 rp_module_desc="Scraper for EmulationStation by Lars Muldjord"
-rp_module_licence="GPLv3.0 https://raw.githubusercontent.com/muldjord/skyscraper/master/LICENSE"
-rp_module_section="exp"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/muldjord/skyscraper/master/LICENSE"
+rp_module_repo="git https://github.com/muldjord/skyscraper :_get_branch_skyscraper"
+rp_module_section="opt"
+
+function _get_branch_skyscraper() {
+    download https://api.github.com/repos/muldjord/skyscraper/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
+}
 
 function depends_skyscraper() {
     getDepends qt5-default p7zip-full
 }
 
 function sources_skyscraper() {
-    gitPullOrClone "$md_build" "https://github.com/muldjord/skyscraper" "$(_latest_ver_skyscraper)"
+    gitPullOrClone
 }
 
 function build_skyscraper() {
@@ -46,6 +51,7 @@ function install_skyscraper() {
         'hints.txt'
         'import'
         'resources'
+        'cache/priorities.xml.example'
     )
 }
 
@@ -64,6 +70,8 @@ function _purge_skyscraper() {
     local platform
     local cache_folder=$(_cache_folder_skyscraper)
 
+    [[ ! -d "$configdir/all/skyscraper/$cache_folder" ]] && return
+
     while read platform; do
         # Find any sub-folders of the cache folder and clear them
         _clear_platform_skyscraper "$platform"
@@ -78,9 +86,9 @@ function _clear_platform_skyscraper() {
     [[ ! -d "$configdir/all/skyscraper/$cache_folder/$platform" ]] && return
 
     if [[ $mode == "vacuum" ]]; then
-        sudo -u "$user" stdbuf -o0 $md_inst/Skyscraper --unattend -p "$platform" --cache vacuum
+        sudo -u "$user" stdbuf -o0 $md_inst/Skyscraper --flags unattend -p "$platform" --cache vacuum
     else
-        sudo -u "$user" stdbuf -o0 $md_inst/Skyscraper --unattend -p "$platform" --cache purge:all
+        sudo -u "$user" stdbuf -o0 $md_inst/Skyscraper --flags unattend -p "$platform" --cache purge:all
     fi
     sleep 5
 }
@@ -123,8 +131,13 @@ function _get_ver_skyscraper() {
     fi
 }
 
-function _latest_ver_skyscraper() {
-    wget -qO- https://api.github.com/repos/muldjord/skyscraper/releases/latest | grep -m 1 tag_name | cut -d\" -f4
+function _check_ver_skyscraper() {
+    ver=$(_get_ver_skyscraper)
+    if compareVersions "$ver" lt "3.5" ]]; then
+        printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
+        return 1
+    fi
+    return 0
 }
 
 # List any non-empty systems found in the ROM folder
@@ -184,22 +197,22 @@ function configure_skyscraper() {
 }
 
 function _init_config_skyscraper() {
-    local md_conf_dir="$configdir/all/skyscraper"
+    local scraper_conf_dir="$configdir/all/skyscraper"
 
     # Make sure the `artwork.xml` and other conf file(s) are present, but don't overwrite them on upgrades
     local f_conf
     for f_conf in artwork.xml aliasMap.csv; do
-        if [[ -f "$md_conf_dir/$f_conf" ]]; then
-            cp -f "$md_inst/$f_conf" "$md_conf_dir/$f_conf.default"
+        if [[ -f "$scraper_conf_dir/$f_conf" ]]; then
+            cp -f "$md_inst/$f_conf" "$scraper_conf_dir/$f_conf.default"
         else
-            cp "$md_inst/$f_conf" "$md_conf_dir"
+            cp "$md_inst/$f_conf" "$scraper_conf_dir"
         fi
     done
 
     # If we don't have a previous config.ini file, copy the example one
-    [[ ! -f "$md_conf_dir/config.ini" ]] && cp "$md_inst/config.ini.example" "$md_conf_dir/config.ini"
+    [[ ! -f "$scraper_conf_dir/config.ini" ]] && cp "$md_inst/config.ini.example" "$scraper_conf_dir/config.ini"
 
-    # Try to find the rest of the necesary files from the qmake build file
+    # Try to find the rest of the necessary files from the qmake build file
     # They should be listed in the `unix:examples.file` configuration line
     if [[ $(grep unix:examples.files "$md_build/skyscraper.pro" 2>/dev/null | cut -d= -f2-) ]]; then
         local files=$(grep unix:examples.files "$md_build/skyscraper.pro" | cut -d= -f2-)
@@ -208,29 +221,33 @@ function _init_config_skyscraper() {
         for file in $files; do
             # Copy the files to the configuration folder. Skip config.ini, artwork.xml and aliasMap.csv
             if [[ $file != "artwork.xml" && $file != "config.ini" && $file != "aliasMap.csv" ]]; then
-                cp -f "$md_build/$file" "$md_conf_dir"
+                cp -f "$md_build/$file" "$scraper_conf_dir"
             fi
         done
     else
         # Fallback to the known resource files list
-        cp -f "$md_inst/artwork.xml.example"* "$md_conf_dir"
+        cp -f "$md_inst/artwork.xml.example"* "$scraper_conf_dir"
 
         # Copy resources and readme
         local resource_file
         for resource_file in README.md mameMap.csv tgdb_developers.json tgdb_publishers.json hints.txt; do
-            cp -f "$md_inst/$resource_file" "$md_conf_dir"
+            cp -f "$md_inst/$resource_file" "$scraper_conf_dir"
         done
     fi
 
     # Copy the rest of the folders
-    cp -rf "$md_inst/resources" "$md_conf_dir"
+    cp -rf "$md_inst/resources" "$scraper_conf_dir"
 
     # Create the import folders and add the sample files.
     local folder
     for folder in covers marquees screenshots textual videos wheels; do
-        mkUserDir "$md_conf_dir/import/$folder"
+        mkUserDir "$scraper_conf_dir/import/$folder"
     done
-    cp -rf "$md_inst/import" "$md_conf_dir"
+    cp -rf "$md_inst/import" "$scraper_conf_dir"
+
+    # Create the cache folder and add the sample 'priorities.xml' file to it
+    mkdir -p "$scraper_conf_dir/cache"
+    cp -f "$md_inst/priorities.xml.example" "$scraper_conf_dir/cache"
 }
 
 # Scrape one system, passed as parameter
@@ -242,18 +259,34 @@ function _scrape_skyscraper() {
     iniConfig " = " '"' "$configdir/all/skyscraper.cfg"
     eval $(_load_config_skyscraper)
 
-    local -a params=("--unattend" "--skipped")
+    local -a params=(-p "$system")
+    local flags="unattend,skipped,"
+
+    [[ "$download_videos" -eq 1 ]] && flags+="videos,"
+
+    [[ "$cache_marquees" -eq 0 ]] && flags+="nomarquees,"
+
+    [[ "$cache_covers" -eq 0 ]] && flags+="nocovers,"
+
+    [[ "$cache_screenshots" -eq 0 ]] && flags+="noscreenshots,"
+
+    [[ "$cache_wheels" -eq 0 ]] && flags+="nowheels,"
+
+    [[ "$only_missing" -eq 1 ]] && flags+="onlymissing,"
+
+    [[ "$rom_name" -eq 1 ]] && flags+="forcefilename,"
+
+    [[ "$remove_brackets" -eq 1 ]] && flags+="nobrackets,"
 
     if [[ "$use_rom_folder" -eq 1 ]]; then
         params+=(-g "$romdir/$system")
         params+=(-o "$romdir/$system/media")
         # If we're saving to the ROM folder, then use relative paths in the gamelist
-        params+=(--relative)
+        flags+="relative,"
     else
         params+=(-g "$home/.emulationstation/gamelists/$system")
         params+=(-o "$home/.emulationstation/downloaded_media/$system")
     fi
-
 
     # If 2nd parameter is unset, use the configured scraping source, otherwise scrape from cache.
     # Scraping from cache means we can omit '-s' from the parameter list.
@@ -261,23 +294,12 @@ function _scrape_skyscraper() {
         params+=(-s "$scrape_source")
     fi
 
-    params+=(-p "$system")
-
-    [[ "$download_videos" -eq 1 ]] && params+=(--videos)
-
-    [[ "$cache_marquees" -eq 0 ]] && params+=(--nomarquees)
-
-    [[ "$cache_covers" -eq 0 ]] && params+=(--nocovers)
-
-    [[ "$cache_screenshots" -eq 0 ]] && params+=(--noscreenshots)
-
-    [[ "$cache_wheels" -eq 0 ]] && params+=(--nowheels)
-
-    [[ "$rom_name" -eq 1 ]] && params+=(--forcefilename)
-
-    [[ "$remove_brackets" -eq 1 ]] && params+=(--nobrackets)
-
     [[ "$force_refresh" -eq 1 ]] && params+=(--refresh)
+
+    # There will always be a ',' at the end of $flags, so let's remove it
+    flags=${flags::-1}
+
+    params+=(--flags "$flags")
 
     # trap ctrl+c and return if pressed (rather than exiting retropie-setup etc)
     trap 'trap 2; return 1' INT
@@ -289,6 +311,8 @@ function _scrape_skyscraper() {
 
 # Scrape a list of systems, chosen by the user
 function _scrape_chosen_skyscraper() {
+    ! _check_ver_skyscraper && return 1
+
     local options=()
     local system
     local i=1
@@ -326,6 +350,8 @@ function _scrape_chosen_skyscraper() {
 
 # Generate gamelists for a list of systems, chosen by the user
 function _generate_chosen_skyscraper() {
+    ! _check_ver_skyscraper && return 1
+
     local options=()
     local system
     local i=1
@@ -366,7 +392,8 @@ function _load_config_skyscraper() {
         'cache_screenshots=1' \
         'scrape_source=screenscraper' \
         'remove_brackets=0' \
-        'force_refresh=0'
+        'force_refresh=0' \
+        'only_missing=0'
     )"
 }
 
@@ -483,9 +510,9 @@ function gui_skyscraper() {
         [3]="Options for resource gathering and caching sub-menu.\nClick to open it."
         [4]="Generate EmulationStation game lists.\nRuns the scraper to incorporate downloaded information and media from the local cache and write them to \Zbgamelist.xml\Zn files to be used by EmulationStation."
         [5]="Options for EmulationStation game list generation sub-menu.\nClick to open it and change the options."
-        [V]="Toggle the download and caching of videos.\nThis also toggles whether the videos will be included in the resulting gamelist.\n\nSkyscraper option: \Zb--videos\Zn"
+        [V]="Toggle the download and caching of videos.\nThis also toggles whether the videos will be included in the resulting gamelist.\n\nSkyscraper option: \Zb--flags videos\Zn"
         [A]="Advanced options sub-menu."
-        [U]="Check for an update to Skyscraper\nIf there is a new release, you'll have the option to update."
+        [U]="Check for an update to Skyscraper."
     )
 
     ver=$(_get_ver_skyscraper)
@@ -537,12 +564,7 @@ function gui_skyscraper() {
 
         options+=(A "Advanced options -->")
 
-        # Show different options, depending on the previous check action
-        if [[ -n "$latest_ver" ]] && compareVersions "$latest_ver" gt "$ver" ; then
-            options+=(U "Update to $latest_ver")
-        else 
-            options+=(U "Check for Updates")
-        fi
+        options+=(U "Check for Updates")
 
         # Run the GUI
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -625,12 +647,12 @@ function gui_skyscraper() {
                     ;;
 
                 U)
-                    # Update to lastest release or check for update
-                    if [[ -n "$latest_ver" ]] && compareVersions "$latest_ver" gt "$ver" ; then
-                        rp_callModule "$md_id"
-                    else 
-                        latest_ver=$(_latest_ver_skyscraper)
-                        printMsgs "dialog" "Skyscraper latest released version is $latest_ver"
+                    local latest_ver="$(_get_branch_skyscraper)"
+                    # check for update
+                    if compareVersions "$latest_ver" gt "$ver" ; then
+                        printMsgs "dialog" "There is a new version available. Latest released version is $latest_ver (You are running $ver).\n\nYou can update the package from RetroPie-Setup -> Manage Packages"
+                    else
+                        printMsgs "dialog" "You are running the latest version ($ver)."
                     fi
                     ;;
 
@@ -657,11 +679,12 @@ function _gui_cache_skyscraper() {
     eval $(_load_config_skyscraper)
 
     help_strings_cache=(
-        [1]="Toggle whether screenshots are cached locally when scraping.\n\nSkyscraper option: \Zb--noscreenshots\Zn"
-        [2]="Toggle whether covers are cached locally when scraping.\n\nSkyscraper option: \Zb--nocovers\Zn"
-        [3]="Toggle whether wheels are cached locally when scraping.\n\nSkyscraper option: \Zb--nowheels\Zn"
-        [4]="Toggle whether marquees are cached locally when scraping.\n\nSkyscraper option: \Zb--nomarquees\Zn"
-        [5]="Force the refresh of resources in the local cache when scraping.\n\nSkyscraper option: \Zb--cache refresh\Zn"
+        [1]="Toggle whether screenshots are cached locally when scraping.\n\nSkyscraper option: \Zb--flags noscreenshots\Zn"
+        [2]="Toggle whether covers are cached locally when scraping.\n\nSkyscraper option: \Zb--flags nocovers\Zn"
+        [3]="Toggle whether wheels are cached locally when scraping.\n\nSkyscraper option: \Zb--flags nowheels\Zn"
+        [4]="Toggle whether marquees are cached locally when scraping.\n\nSkyscraper option: \Zb--flags nomarquees\Zn"
+        [5]="Enable this to only scrape files that do not already have data in the Skyscraper resource cache.\n\nSkyscraper option: \Zb--flags onlymissing\Zn"
+        [6]="Force the refresh of resources in the local cache when scraping.\n\nSkyscraper option: \Zb--cache refresh\Zn"
         [P]="Purge \ZbALL\Zn all cached resources for all platforms."
         [S]="Purge all cached resources for a chosen platform.\n\nSkyscraper option: \Zb--cache purge:all\Zn"
         [V]="Removes all non-used cached resources for a chosen platform (vacuum).\n\nSkyscraper option: \Zb--cache vacuum\Zn"
@@ -699,10 +722,16 @@ function _gui_cache_skyscraper() {
             options+=(4 "Cache marquees (Disabled)")
         fi
 
-        if [[ "$force_refresh" -eq 0 ]]; then
-            options+=(5 "Force cache refresh (Disabled)")
+        if [[ "$only_missing" -eq 1 ]]; then
+            options+=(5 "Scrape only missing (Enabled)")
         else
-            options+=(5 "Force cache refresh (Enabled)")
+            options+=(5 "Scrape only missing (Disabled)")
+        fi
+
+        if [[ "$force_refresh" -eq 0 ]]; then
+            options+=(6 "Force cache refresh (Disabled)")
+        else
+            options+=(6 "Force cache refresh (Enabled)")
         fi
 
         options+=("-" "PURGE cache commands")
@@ -738,6 +767,11 @@ function _gui_cache_skyscraper() {
                     ;;
 
                 5)
+                    only_missing="$((only_missing ^ 1))"
+                    iniSet "only_missing" "$only_missing"
+                    ;;
+
+                6)
                     force_refresh="$((force_refresh ^ 1))"
                     iniSet "force_refresh" "$force_refresh"
                     ;;
@@ -777,8 +811,8 @@ function _gui_generate_skyscraper() {
     eval $(_load_config_skyscraper)
 
     help_strings_gen=(
-        [1]="Game name format used in the EmulationStation game list. Available options:\n\n\ZbSource name\Zn: use the name returned by the scraper\n\ZbFilename\Zn: use the filename of the ROM as game name\n\nSkyscraper option: \Zb--forcefilename\Z0"
-        [2]="Game name option to remove/keep the text found between '()' and '[]' in the ROMs filename.\n\nSkyscraper option: \Zb--nobrackets\Zn"
+        [1]="Game name format used in the EmulationStation game list. Available options:\n\n\ZbSource name\Zn: use the name returned by the scraper\n\ZbFilename\Zn: use the filename of the ROM as game name\n\nSkyscraper option: \Zb--flags forcefilename\Z0"
+        [2]="Game name option to remove/keep the text found between '()' and '[]' in the ROMs filename.\n\nSkyscraper option: \Zb--flags nobrackets\Zn"
         [3]="Choose to save the generated 'gamelist.xml' and media in the ROMs folder. Supported options:\n\n\ZbEnabled\Zn saves the 'gamelist.xml' in the ROMs folder and the media in the 'media' sub-folder.\n\n\ZbDisabled\Zn saves the 'gamelist.xml' in \Zu\$HOME/.emulationstation/gamelists/<system>\Zn and the media in \Zu\$HOME/.emulationstation/downloaded_media\Zn.\n\n\Zb\ZrNOTE\Zn: changing this option will not automatically copy the 'gamelist.xml' file and the media to the new location or remove the ones in the old location. You must do this manually.\n\nSkyscraper parameters: \Zb-g <gamelist>\Zn / \Zb-o <path>\Zn"
     )
 

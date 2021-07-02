@@ -12,10 +12,12 @@
 AUDIO_PLUGIN="mupen64plus-audio-sdl"
 VIDEO_PLUGIN="$1"
 ROM="$2"
-RES="$3"
-RSP_PLUGIN="$4"
+[[ "$3" != 0 ]] && RES="$3"
+[[ "$4" -ne 0 ]] && RSP_PLUGIN="$4"
+PARAMS="${@:5}"
 [[ -n "$RES" ]] && RES="--resolution $RES"
 [[ -z "$RSP_PLUGIN" ]] && RSP_PLUGIN="mupen64plus-rsp-hle"
+WINDOW_MODE="--fullscreen $RES"
 
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
@@ -253,14 +255,6 @@ function testCompatibility() {
                 config_version=$(<"$configdir/n64/GLideN64_config_version.ini")
             fi
             iniSet "configVersion" "$config_version"
-            # Size of texture cache in megabytes. Good value is VRAM*3/4
-            iniSet "CacheSize" "50"
-            # Enable FPS Counter. Fixes zelda depth issue
-            iniSet "ShowFPS " "True"
-            iniSet "fontSize" "14"
-            iniSet "fontColor" "1F1F1F"
-            # Enable FBEmulation if necessary
-            iniSet "EnableFBEmulation" "True"
             # Set native resolution factor of 1
             iniSet "UseNativeResolutionFactor" "1"
             for game in "${GLideN64NativeResolution_blacklist[@]}"; do
@@ -331,6 +325,7 @@ function useTexturePacks() {
 function autoset() {
     VIDEO_PLUGIN="mupen64plus-video-GLideN64"
     RES="--resolution 320x240"
+    PARAMS="--set Video-GLideN64[UseNativeResolutionFactor]=1"
 
     local game
     # these games run fine and look better with 640x480
@@ -351,6 +346,7 @@ function autoset() {
     for game in "${highres[@]}"; do
         if [[ "${ROM,,}" == *"$game"* ]]; then
             RES="--resolution 640x480"
+            PARAMS="--set Video-GLideN64[UseNativeResolutionFactor]=2"
             break
         fi
     done
@@ -439,10 +435,13 @@ getAutoConf mupen64plus_compatibility_check && testCompatibility
 getAutoConf mupen64plus_texture_packs && useTexturePacks
 
 if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* ]]; then
+    WINDOW_MODE="--windowed $RES"
+    SDL_VIDEO_RPI_SCALE_MODE=1
     # If a raspberry pi is used lower resolution to 320x240 and enable SDL dispmanx scaling mode 1
-    SDL_VIDEO_RPI_SCALE_MODE=1 "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --windowed $RES --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio ${AUDIO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
 elif [[ -e /opt/vero3/lib/libMali.so  ]]; then
-    SDL_AUDIODRIVER=alsa "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio mupen64plus-audio-sdl.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
+    SDL_AUDIODRIVER=alsa
 else
-    SDL_AUDIODRIVER=pulse "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd --fullscreen --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio mupen64plus-audio-sdl.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
+    SDL_AUDIODRIVER=pulse
 fi
+
+SDL_AUDIODRIVER=${SDL_AUDIODRIVER} SDL_VIDEO_RPI_SCALE_MODE=${SDL_VIDEO_RPI_SCALE_MODE} "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd $PARAMS ${WINDOW_MODE} --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio ${AUDIO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"

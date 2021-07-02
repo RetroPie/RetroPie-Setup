@@ -12,10 +12,11 @@
 rp_module_id="lr-tyrquake"
 rp_module_desc="Quake 1 engine - Tyrquake port for libretro"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/tyrquake/master/gnu.txt"
+rp_module_repo="git https://github.com/libretro/tyrquake.git master"
 rp_module_section="opt"
 
 function sources_lr-tyrquake() {
-    gitPullOrClone "$md_build" https://github.com/libretro/tyrquake.git
+    gitPullOrClone
 }
 
 function build_lr-tyrquake() {
@@ -36,14 +37,16 @@ function install_lr-tyrquake() {
 function game_data_lr-tyrquake() {
     getDepends lhasa
     if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then
-        cd "$__tmpdir"
+        mkUserDir "$romdir/ports"
+        mkUserDir "$romdir/ports/quake"
+        local temp="$(mktemp -d)"
         # download / unpack / install quake shareware files
-        downloadAndExtract "$__archive_url/quake106.zip" "$__tmpdir/quake106"
-        pushd quake106
+        downloadAndExtract "$__archive_url/quake106.zip" "$temp"
+        pushd "$temp"
         lhasa ef resource.1
         cp -rf id1 "$romdir/ports/quake/"
         popd
-        rm -rf quake106
+        rm -rf "$temp"
         chown -R $user:$user "$romdir/ports/quake"
         chmod 644 "$romdir/ports/quake/id1/"*
     fi

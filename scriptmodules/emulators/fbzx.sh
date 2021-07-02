@@ -13,18 +13,23 @@ rp_module_id="fbzx"
 rp_module_desc="ZXSpectrum emulator FBZX"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum to $romdir/zxspectrum"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/rastersoft/fbzx/master/COPYING"
+rp_module_repo="git https://github.com/rastersoft/fbzx :_get_branch_fbzx"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="sdl1 !mali !kms"
 
-function depends_fbzx() {
-    getDepends "libasound2-dev libsdl1.2-dev"
-}
-
-function sources_fbzx() {
+function _get_branch_fbzx() {
     local branch
     # use older version for non x86 systems (faster)
     ! isPlatform "x86" && branch="2.11.1"
-    gitPullOrClone "$md_build" https://github.com/rastersoft/fbzx "$branch"
+    echo "$branch"
+}
+
+function depends_fbzx() {
+    getDepends libasound2-dev libsdl1.2-dev
+}
+
+function sources_fbzx() {
+    gitPullOrClone
     ! isPlatform "x86" && sed -i 's|PREFIX2=$(PREFIX)/usr|PREFIX2=$(PREFIX)|' Makefile
 }
 
@@ -48,6 +53,6 @@ function install_fbzx() {
 function configure_fbzx() {
     mkRomDir "zxspectrum"
 
-    addEmulator 0 "$md_id" "zxspectrum" "pushd $md_inst/share; $md_inst/bin/fbzx %ROM%; popd"
+    addEmulator 0 "$md_id" "zxspectrum" "pushd $md_inst/share; $md_inst/bin/fbzx -fs %ROM%; popd"
     addSystem "zxspectrum"
 }

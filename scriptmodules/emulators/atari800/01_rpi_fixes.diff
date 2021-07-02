@@ -1,6 +1,8 @@
---- a/src/configure.ac	2018-10-10 18:29:51.126739086 +0100
-+++ b/src/configure.ac.new	2018-10-10 18:30:12.246687333 +0100
-@@ -141,7 +141,7 @@
+diff --git a/configure.ac b/configure.ac
+index adb899f..bc9d939 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -148,7 +148,7 @@ if [[ "$a8_target" = "ps2" ]]; then
  fi
  if [[ "$a8_target" = "rpi" ]]; then
      [[ -z "$RPI_SDK" ]] && RPI_SDK="/opt/vc"
@@ -9,14 +11,3 @@
      CFLAGS="$CFLAGS -I${RPI_SDK}/include -I${RPI_SDK}/include/SDL -I${RPI_SDK}/include/interface/vmcs_host/linux -I${RPI_SDK}/include/interface/vcos/pthreads"
      LDFLAGS="$LDFLAGS -Wl,--unresolved-symbols=ignore-in-shared-libs -L${RPI_SDK}/lib"
  fi
-@@ -324,8 +324,8 @@
-         AC_DEFINE(SUPPORTS_PLATFORM_CONFIGSAVE,1,[Save additional config file options.])
-         AC_DEFINE(SUPPORTS_PLATFORM_PALETTEUPDATE,1,[Update the Palette if it changed.])
-         AC_DEFINE(PLATFORM_MAP_PALETTE,1,[Platform-specific mapping of RGB palette to display surface.])
--        A8_NEED_LIB(GLESv2)
--        A8_NEED_LIB(EGL)
-+        A8_NEED_LIB(brcmGLESv2)
-+        A8_NEED_LIB(brcmEGL)
-         A8_NEED_LIB(SDL)
-         A8_NEED_LIB(bcm_host)
-         OBJS="atari_rpi.o gles2/video.o sdl/main.o sdl/input.o"

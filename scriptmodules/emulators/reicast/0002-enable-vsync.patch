@@ -1,0 +1,13 @@
+diff --git a/core/sdl/sdl.cpp b/core/sdl/sdl.cpp
+index 6dc0eea..c161fa1 100644
+--- a/core/sdl/sdl.cpp
++++ b/core/sdl/sdl.cpp
+@@ -272,6 +272,8 @@ void sdl_window_create()
+ bool gl_init(void* wind, void* disp)
+ {
+ 	SDL_GL_MakeCurrent(window, glcontext);
++	SDL_GL_SetSwapInterval(1);
++
+ 	#ifdef GLES
+ 		return true;
+ 	#else

@@ -12,15 +12,17 @@
 rp_module_id="image"
 rp_module_desc="Create/Manage RetroPie images"
 rp_module_section=""
-rp_module_flags="!arm"
+rp_module_flags=""
 
 function depends_image() {
-    getDepends kpartx unzip binfmt-support qemu-user-static rsync parted squashfs-tools dosfstools e2fsprogs
+    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs)
+    isPlatform "x86" && depends+=(qemu-user-static)
+    getDepends "${depends[@]}"
 }
 
 function create_chroot_image() {
-    local version="$1"
-    [[ -z "$version" ]] && version="stretch"
+    local dist="$1"
+    [[ -z "$dist" ]] && dist="stretch"
 
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
@@ -32,7 +34,7 @@ function create_chroot_image() {
 
     local url
     local image
-    case "$version" in
+    case "$dist" in
         jessie)
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip"
             ;;
@@ -40,7 +42,7 @@ function create_chroot_image() {
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip"
             ;;
         buster)
-            url="https://downloads.raspberrypi.org/raspbian_lite_latest"
+            url="https://downloads.raspberrypi.org/raspios_lite_armhf_latest"
             ;;
         *)
             md_ret_errors+=("Unknown/unsupported Raspbian version")
@@ -48,10 +50,10 @@ function create_chroot_image() {
             ;;
     esac
 
-    local base="raspbian-${version}-lite"
+    local base="raspbian-${dist}-lite"
     local image="$base.img"
     if [[ ! -f "$image" ]]; then
-        wget -c -O "$base.zip" "$url"
+        download "$url" "$base.zip"
         unzip -o "$base.zip"
         mv "$(unzip -Z -1 "$base.zip")" "$image"
         rm "$base.zip"
@@ -100,19 +102,22 @@ function install_rp_image() {
         sed -i "s/quiet/quiet loglevel=3 consoleblank=0 plymouth.enable=0 quiet/" "$chroot/boot/cmdline.txt"
     fi
 
-    # set default GPU mem, and overscan_scale so ES scales to overscan settings.
+    # set default GPU mem (videocore only) and overscan_scale so ES scales to overscan settings.
     iniConfig "=" "" "$chroot/boot/config.txt"
-    iniSet "gpu_mem_256" 128
-    iniSet "gpu_mem_512" 256
-    iniSet "gpu_mem_1024" 256
+    if ! [[ "$platform" =~ rpi.*kms|rpi4 ]]; then
+        iniSet "gpu_mem_256" 128
+        iniSet "gpu_mem_512" 256
+        iniSet "gpu_mem_1024" 256
+    fi
     iniSet "overscan_scale" 1
 
+    [[ -z "$__chroot_branch" ]] && __chroot_branch="master"
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
 cd
 sudo apt-get update
 sudo apt-get -y install git dialog xmlstarlet joystick
-git clone https://github.com/RetroPie/RetroPie-Setup.git
+git clone -b "$__chroot_branch" https://github.com/RetroPie/RetroPie-Setup.git
 cd RetroPie-Setup
 modules=(
     'raspbiantools apt_upgrade'
@@ -129,11 +134,10 @@ modules=(
     'xpad'
 )
 for module in "\${modules[@]}"; do
-    # rpi1 platform would use QEMU_CPU set to arm1176, but it seems buggy currently (lots of segfaults)
-    sudo QEMU_CPU=cortex-a15 __platform=$platform __nodialog=1 ./retropie_packages.sh \$module
+    sudo __platform=$platform __nodialog=1 __has_binaries=$__chroot_has_binaries ./retropie_packages.sh \$module
 done
 
-rm -rf tmp
+sudo rm -rf tmp
 sudo apt-get clean
 _EOF_
 
@@ -150,17 +154,18 @@ function _init_chroot_image() {
     # unmount on ctrl+c
     trap "_trap_chroot_image '$chroot'" INT
 
-    # mount special filesytems to chroot
+    # mount special filesystems to chroot
     mkdir -p "$chroot"/dev/pts
-    mount none -t devpts "$chroot"/dev/pts
-    mount -t proc /proc "$chroot"/proc
+    mount none -t devpts "$chroot/dev/pts"
+    mount -t proc /proc "$chroot/proc"
 
     # required for emulated chroot
-    cp "/usr/bin/qemu-arm-static" "$chroot"/usr/bin/
+    isPlatform "x86" && cp "/usr/bin/qemu-arm-static" "$chroot/usr/bin/"
 
-    local nameserver="$(nmcli device show | grep IP4.DNS  | awk '{print $NF; exit}')"
+    local nameserver="$__nameserver"
+    [[ -z "$nameserver" ]] && nameserver="$(nmcli device show | grep IP4.DNS | awk '{print $NF; exit}')"
     # so we can resolve inside the chroot
-    echo "nameserver $nameserver" >"$chroot"/etc/resolv.conf
+    echo "nameserver $nameserver" >"$chroot/etc/resolv.conf"
 
     # move /etc/ld.so.preload out of the way to avoid warnings
     mv "$chroot/etc/ld.so.preload" "$chroot/etc/ld.so.preload.bak"
@@ -173,6 +178,8 @@ function _deinit_chroot_image() {
     trap "" INT
 
     >"$chroot/etc/resolv.conf"
+
+    isPlatform "x86" && rm -f "$chroot/usr/bin/qemu-arm-static"
 
     # restore /etc/ld.so.preload
     mv "$chroot/etc/ld.so.preload.bak" "$chroot/etc/ld.so.preload"
@@ -204,10 +211,8 @@ function create_image() {
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
 
-    image+=".img"
-
     # make image size 300mb larger than contents of chroot
-    local mb_size=$(du -s --block-size 1048576 $chroot 2>/dev/null | cut -f1)
+    local mb_size=$(du -s --block-size 1048576 "$chroot" 2>/dev/null | cut -f1)
     ((mb_size+=492))
 
     # create image
@@ -218,9 +223,10 @@ function create_image() {
     printMsgs "console" "partitioning $image ..."
     parted -s "$image" -- \
         mklabel msdos \
-        mkpart primary fat16 4 256 \
+        unit mib \
+        mkpart primary fat16 4 260 \
         set 1 boot on \
-        mkpart primary 256 -1
+        mkpart primary 260 -1s
 
     # format
     printMsgs "console" "Formatting $image ..."
@@ -267,9 +273,6 @@ function create_image() {
     kpartx -d "$image_name"
 
     trap INT
-
-    printMsgs "console" "Compressing $image ..."
-    gzip -f "$image"
 }
 
 # generate berryboot squashfs from filesystem
@@ -279,8 +282,6 @@ function create_bb_image() {
 
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
-
-    image+="-berryboot.img256"
 
     # replace fstab
     echo "proc            /proc           proc    defaults          0       0" >"$chroot/etc/fstab"
@@ -294,29 +295,88 @@ function create_bb_image() {
 function all_image() {
     local platform
     local image
-    local version="$1"
-    for platform in rpi1 rpi2; do
-        platform_image "$platform" "$version"
+    local dist="$1"
+    local make_bb="$2"
+    for platform in rpi1 rpi2 rpi4; do
+        platform_image "$platform" "$dist" "$make_bb"
     done
+    combine_json_image
 }
 
 function platform_image() {
     local platform="$1"
     local dist="$2"
-    [[ -z "$platform" ]] && exit
+    local make_bb="$3"
+    [[ -z "$platform" ]] && return 1
+
+    if [[ "$dist" == "stretch" && "$platform" == "rpi4" ]]; then
+        printMsgs "console" "Platform $platform on $dist is unsupported."
+        return 1
+    fi
 
     local dest="$__tmpdir/images"
     mkdir -p "$dest"
 
-    local image
-    if [[ "$platform" == "rpi1" ]]; then
-        image="$dest/retropie-${__version}-rpi1_zero"
-    else
-        image="$dest/retropie-${__version}-rpi2_rpi3"
-    fi
+    local image_base="retropie-${dist}-${__version}-"
+    case "$platform" in
+        rpi1)
+            image_base+="rpi1_zero"
+            image_platform="RPI 1/Zero"
+            ;;
+        rpi2)
+            image_base+="rpi2_3"
+            image_platform="RPI 2/3"
+            ;;
+        rpi3)
+            image_base+="rpi3"
+            image_platform="RPI 3"
+            ;;
+        rpi4)
+            image_base+="rpi4_400"
+            image_platform="RPI 4/400"
+            ;;
+        *)
+            fatalError "Unknown platform $platform for image building"
+            ;;
+    esac
+    local image_name="${image_base}.img"
+    local image_file="$dest/$image_name"
 
     rp_callModule image create_chroot "$dist"
     rp_callModule image install_rp "$platform"
-    rp_callModule image create "$image"
-    rp_callModule image create_bb "$image"
+    rp_callModule image create "$image_file"
+    [[ "$make_bb" -eq 1 ]] && rp_callModule image create_bb "$dest/${image_base}-berryboot.img256"
+
+    printMsgs "console" "Compressing ${image_name} ..."
+    gzip -c "$image_file" > "${image_file}.gz"
+
+    printMsgs "console" "Generating JSON data for rpi-imager ..."
+    local template
+    template="$(<"$md_data/template.json")"
+    template="${template/IMG_PATH/$__version\/${image_name}.gz}"
+    template="${template/IMG_EXTRACT_SIZE/$(stat -c %s $image_file)}"
+    template="${template/IMG_SHA256/$(sha256sum $image_file | cut -d" " -f1)}"
+    template="${template/IMG_DOWNLOAD_SIZE/$(stat -c %s ${image_file}.gz)}"
+    template="${template/IMG_VERSION/$__version}"
+    template="${template/IMG_PLATFORM/$image_platform}"
+    template="${template/IMG_DATE/$(date '+%Y-%m-%d')}"
+    echo "$template" >"${image_file}.json"
+
+    rm -f "$image_file"
+}
+
+function combine_json_image() {
+    local dest="$__tmpdir/images"
+    {
+        local template
+        echo -en "{\n    \"os_list\": [\n"
+        local i=0
+        while read file; do
+            [[ "$i" -gt 0 ]] && echo -en ",\n"
+            template="$(<$file)"
+            echo -n "$template"
+            ((i++))
+        done < <(find "$dest" -name "*.img.json" | sort)
+        echo -en "\n    ]\n}\n"
+    } >"$dest/os_list_imagingutility.json"
 }

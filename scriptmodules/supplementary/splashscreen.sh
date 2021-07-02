@@ -12,11 +12,12 @@
 rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
-rp_module_flags="noinstclean !x86 !osmc !xbian !mali !kms"
+rp_module_repo="git https://github.com/RetroPie/retropie-splashscreens.git master"
+rp_module_flags="noinstclean !all rpi !osmc !xbian !aarch64"
 
 function _update_hook_splashscreen() {
     # make sure splashscreen is always up to date if updating just RetroPie-Setup
-    if rp_isInstalled "$md_idx"; then
+    if rp_isInstalled "$md_id"; then
         install_bin_splashscreen
         configure_splashscreen
     fi
@@ -31,7 +32,9 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    getDepends fbi omxplayer insserv
+    local params=(insserv)
+    isPlatform "32bit" && params+=(omxplayer)
+    getDepends "${params[@]}"
 }
 
 function install_bin_splashscreen() {
@@ -39,8 +42,8 @@ function install_bin_splashscreen() {
 [Unit]
 Description=Show custom splashscreen
 DefaultDependencies=no
-Before=local-fs-pre.target
-Wants=local-fs-pre.target
+After=console-setup.service
+Wants=console-setup.service
 ConditionPathExists=$md_inst/asplashscreen.sh
 
 [Service]
@@ -52,7 +55,9 @@ RemainAfterExit=yes
 WantedBy=sysinit.target
 _EOF_
 
-    gitPullOrClone "$md_inst" https://github.com/RetroPie/retropie-splashscreens.git
+    rp_installModule "omxiv" "_autoupdate_"
+
+    gitPullOrClone "$md_inst"
 
     cp "$md_data/asplashscreen.sh" "$md_inst"
 
@@ -61,6 +66,12 @@ _EOF_
     iniSet "DATADIR" "$datadir"
     iniSet "REGEX_IMAGE" "$(_image_exts_splashscreen)"
     iniSet "REGEX_VIDEO" "$(_video_exts_splashscreen)"
+
+    if [[ ! -f "$configdir/all/$md_id.cfg" ]]; then
+        iniConfig "=" '"' "$configdir/all/$md_id.cfg"
+        iniSet "RANDOMIZE" "disabled"
+    fi
+    chown $user:$user "$configdir/all/$md_id.cfg"
 
     mkUserDir "$datadir/splashscreens"
     echo "Place your own splashscreens in here." >"$datadir/splashscreens/README.txt"
@@ -107,6 +118,7 @@ function configure_splashscreen() {
 function remove_splashscreen() {
     enable_plymouth_splashscreen
     disable_splashscreen
+    rp_callModule "omxiv" remove
     rm -f /etc/splashscreen.list /etc/systemd/system/asplashscreen.service
     systemctl daemon-reload
 }
@@ -161,7 +173,7 @@ function choose_splashscreen() {
             options+=("$i" "$splashdir")
             ((i++))
         fi
-    done < <(find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh" | sort)
+    done < <(find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh"  ! -regex ".*\.pkg" | sort)
     if [[ "${#options[@]}" -eq 0 ]]; then
         printMsgs "dialog" "There are no splashscreens installed in $path"
         return
@@ -180,7 +192,9 @@ function randomize_splashscreen() {
     )
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    iniConfig "=" '"' "$md_inst/asplashscreen.sh"
+    iniConfig "=" '"' "$configdir/all/$md_id.cfg"
+    chown $user:$user "$configdir/all/$md_id.cfg"
+
     case "$choice" in
         1)
             iniSet "RANDOMIZE" "retropie"
@@ -210,6 +224,7 @@ function preview_splashscreen() {
 
     local path
     local file
+    local omxiv="/opt/retropie/supplementary/omxiv/omxiv"
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -221,13 +236,13 @@ function preview_splashscreen() {
                 1)
                     file=$(choose_splashscreen "$path" "image")
                     [[ -z "$file" ]] && break
-                    fbi --noverbose --autozoom "$file"
+                    $omxiv -b "$file"
                     ;;
                 2)
                     file=$(mktemp)
                     find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh" | sort > "$file"
                     if [[ -s "$file" ]]; then
-                        fbi --timeout 6 --once --autozoom --list "$file"
+                        $omxiv -t 6 -T blend -b --once -f "$file"
                     else
                         printMsgs "dialog" "There are no splashscreens installed in $path"
                     fi
@@ -237,7 +252,7 @@ function preview_splashscreen() {
                 3)
                     file=$(choose_splashscreen "$path" "video")
                     [[ -z "$file" ]] && break
-                    omxplayer -b --layer 10000 "$file"
+                    omxplayer --no-osd -b --layer 10000 "$file"
                     ;;
             esac
         done
@@ -262,7 +277,7 @@ function gui_splashscreen() {
         local options=(1 "Choose splashscreen")
         if [[ "$enabled" -eq 1 ]]; then
             options+=(2 "Disable splashscreen on boot (Enabled)")
-            iniConfig "=" '"' "$md_inst/asplashscreen.sh"
+            iniConfig "=" '"' "$configdir/all/$md_id.cfg"
             iniGet "RANDOMIZE"
             random=1
             [[ "$ini_value" == "disabled" ]] && random=0
@@ -282,6 +297,15 @@ function gui_splashscreen() {
             8 "Update RetroPie splashscreens"
             9 "Download RetroPie-Extra splashscreens"
         )
+
+        iniConfig "=" '"' "$configdir/all/$md_id.cfg"
+        iniGet "DURATION"
+        # default splashscreen duration is 12 seconds
+        local duration=${ini_value:-12}
+
+        options+=(
+            A "Configure image splashscreen duration ($duration sec)"
+            )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case "$choice" in
@@ -325,6 +349,12 @@ function gui_splashscreen() {
                 9)
                     rp_callModule splashscreen download_extra
                     printMsgs "dialog" "The RetroPie-Extra splashscreens have been downloaded to $datadir/splashscreens/retropie-extra"
+                    ;;
+                A)  
+                    duration=$(dialog --title "Splashscreen duration" --clear --rangebox "Configure how many seconds the splashscreen is active" 0 60 5 100 $duration 2>&1 >/dev/tty)
+                    if [[ -n "$duration" ]]; then
+                        iniSet "DURATION" "${duration//[^[:digit:]]/}"
+                    fi
                     ;;
             esac
         else

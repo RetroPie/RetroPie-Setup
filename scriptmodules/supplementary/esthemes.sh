@@ -24,6 +24,7 @@ function depends_esthemes() {
 function install_theme_esthemes() {
     local theme="$1"
     local repo="$2"
+    local default_branch
     if [[ -z "$repo" ]]; then
         repo="RetroPie"
     fi
@@ -31,8 +32,11 @@ function install_theme_esthemes() {
         theme="carbon"
         repo="RetroPie"
     fi
+    # Get the name of the default branch, fallback to 'master' if not found
+    default_branch=$(runCmd git ls-remote --symref --exit-code "https://github.com/$repo/es-theme-$theme.git" HEAD | grep -oP ".*/\K[^\t]+")
+    [[ -z "$default_branch" ]] && default_branch="master"
     mkdir -p "/etc/emulationstation/themes"
-    gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git"
+    gitPullOrClone "/etc/emulationstation/themes/$theme" "https://github.com/$repo/es-theme-$theme.git" "$default_branch"
 }
 
 function uninstall_theme_esthemes() {
@@ -64,8 +68,6 @@ function gui_esthemes() {
         'AmadhiX eudora'
         'AmadhiX eudora-bigshot'
         'AmadhiX eudora-concise'
-        'InsecureSpike retroplay-clean-canela'
-        'InsecureSpike retroplay-clean-detail-canela'
         'Omnija simpler-turtlepi'
         'Omnija simpler-turtlemini'
         'Omnija metro'
@@ -208,12 +210,28 @@ function gui_esthemes() {
         'RetroHursty69 stirlingness'
         'RetroHursty69 marco'
         'RetroHursty69 swatch'
+        'RetroHursty69 meshy'
+        'RetroHursty69 magazinemadness2'
+        'RetroHursty69 CosmicRise'
+        'RetroHursty69 uniflyered'
+        'RetroHursty69 gametime'
+        'RetroHursty69 CRTBlast'
+        'RetroHursty69 CRTNeonBlast'
+        'RetroHursty69 CRTCabBlast'
+        'RetroHursty69 ComicCRASHB'
+        'RetroHursty69 ComicPACMAN'
+        'RetroHursty69 ComicSONIC'
+        'RetroHursty69 ComicXMEN'
+        'RetroHursty69 ComicZELDA'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
         'lipebello retrorama'
+        'lipebello retrorama-turbo'
         'lipebello strangerstuff'
         'lipebello spaceoddity'
+        'lipebello spaceoddity-43'
+        'lipebello spaceoddity-wide'
         'lipebello swineapple'
         'waweedman pii-wii'
         'waweedman Blade-360'
@@ -222,6 +240,24 @@ function gui_esthemes() {
         'blowfinger77 locomotion'
         'justincaseurskynet Arcade1up-5x4-Horizontal'
         'KALEL1981 Super-Retroboy'
+        'xovox RetroCRT-240p'
+        'xovox RetroCRT-240p-Vertical'
+        'arcadeforge push-a'
+        'arcadeforge push-a-v'
+        'arcadeforge pixel-heaven'
+        'arcadeforge pixel-heaven-text'
+        'arcadeforge 240p_Bubblegum'
+        'arcadeforge 240p-honey'
+        'dionmunk clean'
+        'c64-dev epicnoir'
+        'AndreaMav arcade-crt'
+        'AndreaMav arcade-crt2020'
+        'Zechariel VectorPie'
+        'KALEL1981 nes-box'
+        'KALEL1981 super-arcade1up-5x4'
+        'KALEL1981 gold-standard'
+        'Elratauru angular-artwork'
+        'cjonasw raspixel-320-240'
     )
     while true; do
         local theme

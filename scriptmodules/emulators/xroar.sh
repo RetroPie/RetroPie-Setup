@@ -12,16 +12,18 @@
 rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_help="ROM Extensions: .cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna\n\nCopy your Dragon roms to $romdir/dragon32\n\nCopy your CoCo games to $romdir/coco\n\nCopy the required BIOS files d32.rom (Dragon 32) and bas13.rom (CoCo) to $biosdir"
-rp_module_licence="GPL2 http://www.6809.org.uk/xroar/"
+rp_module_licence="GPL3 http://www.6809.org.uk/xroar/"
+rp_module_repo="git http://www.6809.org.uk/git/xroar.git 0.36"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags=""
 
 function depends_xroar() {
-    getDepends libsdl2-dev automake
+    getDepends libsdl2-dev automake texinfo
 }
 
 function sources_xroar() {
-    gitPullOrClone "$md_build" http://www.6809.org.uk/git/xroar.git 0.35.4
+    gitPullOrClone "$md_build" "$md_repo_url" "$md_repo_branch" "" 0
+
 }
 
 function build_xroar() {
@@ -47,8 +49,9 @@ function configure_xroar() {
     mkdir -p "$md_inst/share/xroar"
     ln -snf "$biosdir" "$md_inst/share/xroar/roms"
 
-    local params=(-fs)
+    local params=()
     ! isPlatform "x11" && params+=(-vo sdl -ccr simple)
+    ! isPlatform "videocore" && params+=(-fs)
     addEmulator 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar ${params[*]} -machine dragon32 -run %ROM%"
     addEmulator 1 "$md_id-cocous" "coco" "$md_inst/bin/xroar ${params[*]} -machine cocous -run %ROM%"
     addEmulator 0 "$md_id-coco" "coco" "$md_inst/bin/xroar ${params[*]} -machine coco -run %ROM%"

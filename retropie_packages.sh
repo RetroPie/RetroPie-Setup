@@ -9,7 +9,7 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-__version="4.5.1"
+__version="4.7.15"
 
 [[ "$__debug" -eq 1 ]] && set -x
 
@@ -71,5 +71,16 @@ else
     rp_printUsageinfo
 fi
 
-printMsgs "console" "${__INFMSGS[@]}"
+if [[ "${#__ERRMSGS[@]}" -gt 0 ]]; then
+    # override return code if ERRMSGS is set - eg in the case of calling basic_install from setup
+    # we won't get the return code, as we don't handle return codes when calling non packaging functions
+    # as it would require all modules functions to handle errors differently, and make things more complicated
+    [[ "$rp_ret" -eq 0 ]] && rp_ret=1
+    printMsgs "console" "Errors:\n${__ERRMSGS[@]}"
+fi
+
+if [[ "${#__INFMSGS[@]}" -gt 0 ]]; then
+    printMsgs "console" "Info:\n${__INFMSGS[@]}"
+fi
+
 exit $rp_ret

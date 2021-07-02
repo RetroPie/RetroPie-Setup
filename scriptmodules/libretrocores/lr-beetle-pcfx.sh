@@ -13,10 +13,11 @@ rp_module_id="lr-beetle-pcfx"
 rp_module_desc="PCFX emulator - Mednafen PCFX Port for libretro"
 rp_module_help="ROM Extensions: .img .iso .ccd .cue\n\nCopy the required BIOS file pcfx.rom to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/beetle-pcfx-libretro/master/COPYING"
+rp_module_repo="git https://github.com/libretro/beetle-pcfx-libretro master"
 rp_module_section="exp"
 
 function sources_lr-beetle-pcfx() {
-    gitPullOrClone "$md_build" https://github.com/libretro/beetle-pcfx-libretro
+    gitPullOrClone
 }
 
 function build_lr-beetle-pcfx() {

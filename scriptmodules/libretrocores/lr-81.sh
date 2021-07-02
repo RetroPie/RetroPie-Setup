@@ -12,11 +12,12 @@
 rp_module_id="lr-81"
 rp_module_desc="Sinclair ZX81 emulator - EightyOne port for libretro"
 rp_module_help="ROM Extensions: .p .tzx .t81\n\nCopy your ZX81 roms to $romdir/zx81"
-rp_module_licence="GPL3 https://github.com/libretro/81-libretro/blob/master/LICENSE"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/81-libretro/master/LICENSE"
+rp_module_repo="git https://github.com/libretro/81-libretro.git master"
 rp_module_section="exp"
 
 function sources_lr-81() {
-    gitPullOrClone "$md_build" https://github.com/libretro/81-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-81() {

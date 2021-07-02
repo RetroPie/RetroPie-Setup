@@ -13,21 +13,22 @@ rp_module_id="vice"
 rp_module_desc="C64 emulator VICE"
 rp_module_help="ROM Extensions: .crt .d64 .g64 .prg .t64 .tap .x64 .zip .vsf\n\nCopy your Commodore 64 games to $romdir/c64"
 rp_module_licence="GPL2 http://svn.code.sf.net/p/vice-emu/code/trunk/vice/COPYING"
+rp_module_repo="svn svn://svn.code.sf.net/p/vice-emu/code/tags/v3.5/vice - HEAD"
 rp_module_section="opt"
 rp_module_flags=""
 
 function depends_vice() {
-    local depends=(libsdl2-dev libmpg123-dev libpng-dev zlib1g-dev libasound2-dev libvorbis-dev libflac-dev libpcap-dev automake bison flex subversion libjpeg-dev portaudio19-dev texinfo xa65)
+    local depends=(libsdl2-dev libsdl2-image-dev libmpg123-dev libpng-dev zlib1g-dev libasound2-dev libvorbis-dev libflac-dev libpcap-dev automake bison flex libjpeg-dev portaudio19-dev xa65 dos2unix)
     isPlatform "x11" && depends+=(libpulse-dev)
     getDepends "${depends[@]}"
 }
 
 function sources_vice() {
-    svn checkout svn://svn.code.sf.net/p/vice-emu/code/trunk/vice/ "$md_build"
+    svn checkout "$md_repo_url" "$md_build"
 }
 
 function build_vice() {
-    local params=(--enable-sdlui2 --without-oss --enable-ethernet --enable-x64)
+    local params=(--enable-sdlui2 --without-oss --enable-ethernet --enable-x64 --disable-pdf-docs --with-fastsid)
     ! isPlatform "x11" && params+=(--disable-catweasel --without-pulse)
     ./autogen.sh
     ./configure --prefix="$md_inst" "${params[@]}"
@@ -73,6 +74,7 @@ _EOF_
     mkRomDir "c64"
 
     addEmulator 1 "$md_id-x64" "c64" "$md_inst/bin/vice.sh x64 %ROM%"
+    addEmulator 0 "$md_id-x64dtv" "c64" "$md_inst/bin/vice.sh x64dtv %ROM%"
     addEmulator 0 "$md_id-x64sc" "c64" "$md_inst/bin/vice.sh x64sc %ROM%"
     addEmulator 0 "$md_id-x128" "c64" "$md_inst/bin/vice.sh x128 %ROM%"
     addEmulator 0 "$md_id-xpet" "c64" "$md_inst/bin/vice.sh xpet %ROM%"
@@ -100,7 +102,9 @@ _EOF_
         iniSet "SDLWindowHeight" "272"
         isPlatform "rpi1" && iniSet "SoundSampleRate" "22050"
         iniSet "SidEngine" "0"
-    else
+    fi
+
+    if isPlatform "x11" || isPlatform "kms"; then
         iniSet "VICIIFullscreen" "1"
     fi
 
@@ -116,5 +120,4 @@ _EOF_
         iniSet "SDLWindowWidth" "384"
         iniSet "SDLWindowHeight" "272"
     fi
-
 }

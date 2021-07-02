@@ -12,14 +12,14 @@
 rp_module_id="raspbiantools"
 rp_module_desc="Raspbian related tools"
 rp_module_section="config"
-rp_module_flags="!x11 !mali"
+rp_module_flags="!all rpi"
 
 function apt_upgrade_raspbiantools() {
+    # install an older kernel/firmware for stretch to resolve newer kernel issues or unhold if updating to a newer release
+    stretch_fix_raspbiantools
+
     aptUpdate
     apt-get -y dist-upgrade
-
-    # install an older kernel/firmware for stretch to resolve sony bt issues
-    stretch_fix_raspbiantools
 }
 
 function lxde_raspbiantools() {
@@ -27,7 +27,7 @@ function lxde_raspbiantools() {
     aptInstall raspberrypi-ui-mods rpi-chromium-mods gvfs
 
     setConfigRoot "ports"
-    addPort "lxde" "lxde" "Desktop" "startx"
+    addPort "lxde" "lxde" "Desktop" "XINIT:startx"
     enable_autostart
 }
 
@@ -43,10 +43,19 @@ function disable_blanker_raspbiantools() {
 }
 
 function stretch_fix_raspbiantools() {
+    # install an older kernel/firmware and hold it for stretch to resolve sony bt, composite
+    # and overscan issues, but also unhold for newer Raspbian versions to allow upgrading.
     local ver="1.20190401-1"
-    # install an older kernel/firmware for stretch to resolve sony bt, composite and overscan issues
-    if isPlatform "rpi" && [[ "$__os_debian_ver" -eq 9 ]] && hasPackage raspberrypi-kernel "$ver" ne; then
-        install_firmware_raspbiantools "$ver" hold
+    # make sure we are on a rpi and have the raspberrypi-kernel package
+    if isPlatform "rpi" && hasPackage raspberrypi-kernel; then
+        if [[ "$__os_debian_ver" -eq 9 ]]; then
+            # for Raspbian 9 (stretch) we want to install / hold the older kernel
+            install_firmware_raspbiantools "$ver" hold
+        elif hasPackage raspberrypi-kernel "$ver" eq; then
+            # if we are not running Raspbian 9 (stretch), but are running the old kernel
+            # we want to unhold it to allow kernel updates again
+            install_firmware_raspbiantools "$ver" unhold
+        fi
     fi
 }
 
@@ -54,20 +63,42 @@ function install_firmware_raspbiantools() {
     local ver="$1"
     local state="$2"
     [[ -z "$ver" ]] && return 1
+
     local url="http://archive.raspberrypi.org/debian/pool/main/r/raspberrypi-firmware"
+
     mkdir -p "$md_build"
     pushd "$md_build" >/dev/null
+
     local pkg
+    local pkgs=(raspberrypi-bootloader libraspberrypi0 libraspberrypi-doc libraspberrypi-dev libraspberrypi-bin raspberrypi-kernel-headers raspberrypi-kernel)
     local deb
-    for pkg in raspberrypi-bootloader libraspberrypi0 libraspberrypi-doc libraspberrypi-dev libraspberrypi-bin raspberrypi-kernel-headers raspberrypi-kernel; do
-        deb="${pkg}_${ver}_armhf.deb"
-        wget -O"$deb" "$url/$deb"
-        dpkg -i "$deb"
-        [[ -n "$state" ]] && apt-mark "$state" "$pkg"
-        rm "$deb"
+
+    # download all packages then install later to reduce issues if interrupted or a networking issue
+    for pkg in "${pkgs[@]}"; do
+        if hasPackage "$pkg" "$ver" ne; then
+            deb="${pkg}_${ver}_armhf.deb"
+            if ! download "$url/$deb"; then
+               md_ret_errors+=("Failed to download $deb")
+               return 1
+            fi
+        fi
     done
+
+    # install packages if needed
+    for pkg in "${pkgs[@]}"; do
+        deb="${pkg}_${ver}_armhf.deb"
+        if hasPackage "$pkg" "$ver" ne && [[ -f "$deb" ]]; then
+            dpkg -i "$deb"
+            rm "$deb"
+        fi
+        # set package state
+        [[ -n "$state" ]] && apt-mark "$state" "$pkg"
+    done
+
     popd >/dev/null
     rm -rf "$md_build"
+
+    return 0
 }
 
 function enable_modules_raspbiantools() {

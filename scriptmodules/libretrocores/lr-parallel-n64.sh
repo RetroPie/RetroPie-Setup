@@ -13,34 +13,37 @@ rp_module_id="lr-parallel-n64"
 rp_module_desc="N64 emu - Highly modified Mupen64Plus port for libretro"
 rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/n64"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/parallel-n64/master/mupen64plus-core/LICENSES"
-rp_module_section="opt"
+rp_module_repo="git https://github.com/RetroPie/parallel-n64.git retropie"
+rp_module_section="exp x86=main"
 
 function depends_lr-parallel-n64() {
     local depends=()
     isPlatform "x11" && depends+=(libgl1-mesa-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
+    isPlatform "kms" && isPlatform "gles" && depends+=(libgles2-mesa-dev)
     getDepends "${depends[@]}"
 }
 
 function sources_lr-parallel-n64() {
-    local branch"master"
-    local commit=""
-    # build from ab155da1 due to https://github.com/libretro/parallel-n64/issues/544
-    isPlatform "arm" && commit="ab155da1"
-    gitPullOrClone "$md_build" https://github.com/libretro/parallel-n64.git "$branch" "$commit"
+    gitPullOrClone
 }
 
 function build_lr-parallel-n64() {
     rpSwap on 1000
-    make clean
     local params=()
-    if isPlatform "rpi" || isPlatform "odroid-c1"; then
+    if isPlatform "videocore" || isPlatform "odroid-c1"; then
         params+=(platform="$__platform")
-    elif isPlatform "tinker"; then
-        params+=(CPUFLAGS="-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE")
-        params+=(GLES=1 HAVE_NEON=1 WITH_DYNAREC=arm)
-        params+=(GL_LIB:=-lGLESv2)
+    else
+        isPlatform "gles" && params+=(GLES=1 GL_LIB:=-lGLESv2)
+        if isPlatform "arm"; then
+            params+=(CPUFLAGS="-DNO_ASM -DARM -D__arm__ -DARM_ASM -D__NEON_OPT -DNOSSE -DARM_FIX")
+            params+=(WITH_DYNAREC=arm)
+            isPlatform "neon" && params+=(HAVE_NEON=1)
+        elif isPlatform "aarch64"; then
+            params+=(CPUFLAGS="-DARM_FIX")
+        fi
     fi
+    make clean
     make "${params[@]}"
     rpSwap off
     md_ret_require="$md_build/parallel_n64_libretro.so"
@@ -50,6 +53,7 @@ function install_lr-parallel-n64() {
     md_ret_files=(
         'parallel_n64_libretro.so'
         'README.md'
+        'mupen64plus-core/LICENSES'
     )
 }
 

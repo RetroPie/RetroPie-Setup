@@ -12,7 +12,7 @@
 rp_module_id="openpht"
 rp_module_desc="OpenPHT is a community driven fork of Plex Home Theater"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RasPlex/OpenPHT/openpht-1.7/LICENSE.GPL"
-rp_module_section="opt"
+rp_module_section="exp"
 rp_module_flags="!arm"
 
 function depends_openpht() {
@@ -23,17 +23,18 @@ function depends_openpht() {
 function install_bin_openpht() {
     local version="1.7.1.137-b604995c"
     local package="openpht_${version}-${__os_codename}_amd64.deb"
-    local getdeb="https://github.com/RasPlex/OpenPHT/releases/download/v$version/$package"
+    local url="https://github.com/RasPlex/OpenPHT/releases/download/v$version/$package"
 
-    wget -nv -O "$__tmpdir/$package" $getdeb
+    local temp="$(mktemp -d)"
+    download "$url" "$temp/$package"
     if hasPackage "apt" "1.1" "ge"; then
-        apt install -y --allow-downgrades "$__tmpdir/$package"
+        apt install -y --allow-downgrades "$temp/$package"
     else
         # Falling back to dpkg
-        dpkg -i "$__tmpdir/$package"
+        dpkg -i "$temp/$package"
         apt-get -f -y install
     fi
-    rm "$__tmpdir/$package"
+    rm -rf "$temp"
 }
 
 function remove_openpht() {

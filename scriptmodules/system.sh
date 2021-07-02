@@ -17,47 +17,133 @@ function setup_env() {
     # if no apt-get we need to fail
     [[ -z "$(which apt-get)" ]] && fatalError "Unsupported OS - No apt-get command found"
 
-    __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
-    __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
-
-    __has_binaries=0
+    test_chroot
 
     get_platform
     get_os_version
+
     get_retropie_depends
 
-    __gcc_version=$(gcc -dumpversion)
+    conf_memory_vars
+    conf_binary_vars
+    conf_build_vars
 
-    # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
-    # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
-    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5.0.0; then
-        __default_cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
+    if [[ -z "$__nodialog" ]]; then
+        __nodialog=0
     fi
+}
 
-    # set location of binary downloads
-    __binary_host="files.retropie.org.uk"
-    [[ "$__has_binaries" -eq 1 ]] && __binary_url="https://$__binary_host/binaries/$__os_codename/$__platform"
-
-    __archive_url="https://files.retropie.org.uk/archives"
-
-    # -pipe is faster but will use more memory - so let's only add it if we have more thans 256M free ram.
-    [[ $__memory_phys -ge 512 ]] && __default_cflags+=" -pipe"
-
-    [[ -z "${CFLAGS}" ]] && export CFLAGS="${__default_cflags}"
-    [[ -z "${CXXFLAGS}" ]] && export CXXFLAGS="${__default_cxxflags}"
-    [[ -z "${ASFLAGS}" ]] && export ASFLAGS="${__default_asflags}"
-    [[ -z "${MAKEFLAGS}" ]] && export MAKEFLAGS="${__default_makeflags}"
-
+function test_chroot() {
     # test if we are in a chroot
     if [[ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]]; then
         [[ -z "$QEMU_CPU" && -n "$__qemu_cpu" ]] && export QEMU_CPU=$__qemu_cpu
         __chroot=1
+    # detect the usage of systemd-nspawn
+    elif [[ -n "$(systemd-detect-virt)" && "$(systemd-detect-virt)" == "systemd-nspawn" ]]; then
+        __chroot=1
     else
         __chroot=0
     fi
+}
 
-    if [[ -z "$__nodialog" ]]; then
-        __nodialog=0
+
+function conf_memory_vars() {
+    __memory_total_kb=$(awk '/^MemTotal:/{print $2}' /proc/meminfo)
+    __memory_total=$(( __memory_total_kb / 1024 ))
+    if grep -q "^MemAvailable:" /proc/meminfo; then
+        __memory_avail_kb=$(awk '/^MemAvailable:/{print $2}' /proc/meminfo)
+    else
+        local mem_free=$(awk '/^MemFree:/{print $2}' /proc/meminfo)
+        local mem_cached=$(awk '/^Cached:/{print $2}' /proc/meminfo)
+        local mem_buffers=$(awk '/^Buffers:/{print $2}' /proc/meminfo)
+        __memory_avail_kb=$((mem_free + mem_cached + mem_buffers))
+    fi
+    __memory_avail=$(( __memory_avail_kb / 1024 ))
+}
+
+function conf_binary_vars() {
+    [[ -z "$__has_binaries" ]] && __has_binaries=0
+
+    # set location of binary downloads
+    __binary_host="files.retropie.org.uk"
+    __binary_base_url="https://$__binary_host/binaries"
+
+    __binary_path="$__os_codename/$__platform"
+    isPlatform "kms" && __binary_path+="/kms"
+    __binary_url="$__binary_base_url/$__binary_path"
+
+    __archive_url="https://files.retropie.org.uk/archives"
+
+    # set the gpg key used by RetroPie
+    __gpg_retropie_key="retropieproject@gmail.com"
+
+    # if __gpg_signing_key is not set, set to __gpg_retropie_key
+    [[ ! -v __gpg_signing_key ]] && __gpg_signing_key="$__gpg_retropie_key"
+
+    # if the RetroPie public key is not installed, install it.
+    if ! gpg --list-keys "$__gpg_retropie_key" &>/dev/null; then
+        gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DC9D77FF8208FFC51D8F50CCF1B030906A3B0D31
+    fi
+}
+
+function conf_build_vars() {
+    __gcc_version=$(gcc -dumpversion)
+
+    # calculate build concurrency based on cores and available memory
+    __jobs=1
+    local unit=512
+    isPlatform "64bit" && unit=$(($unit + 256))
+    if [[ "$(nproc)" -gt 1 ]]; then
+        local nproc="$(nproc)"
+        # max one thread per unit (MB) of ram
+        local max_jobs=$(($__memory_avail / $unit))
+        if [[ "$max_jobs" -gt 0 ]]; then
+            if [[ "$max_jobs" -lt "$nproc" ]]; then
+                __jobs="$max_jobs"
+            else
+                __jobs="$nproc"
+            fi
+        fi
+    fi
+    __default_makeflags="-j${__jobs}"
+
+    # set our default gcc optimisation level
+    if [[ -z "$__opt_flags" ]]; then
+        __opt_flags="$__default_opt_flags"
+    fi
+
+    # set default cpu flags
+    [[ -z "$__cpu_flags" ]] && __cpu_flags="$__default_cpu_flags"
+
+    # if default cxxflags is empty, use our default cflags
+    [[ -z "$__default_cxxflags" ]] && __default_cxxflags="$__default_cflags"
+
+    # add our cpu and optimisation flags
+    __default_cflags+=" $__cpu_flags $__opt_flags"
+    __default_cxxflags+=" $__cpu_flags $__opt_flags"
+
+    # if not overridden by user, configure our compiler flags
+    [[ -z "$__cflags" ]] && __cflags="$__default_cflags"
+    [[ -z "$__cxxflags" ]] && __cxxflags="$__default_cxxflags"
+    [[ -z "$__asflags" ]] && __asflags="$__default_asflags"
+    [[ -z "$__makeflags" ]] && __makeflags="$__default_makeflags"
+
+    # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
+    # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
+    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5; then
+        __cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
+    fi
+
+    # export our compiler flags so all child processes can see them
+    export CFLAGS="$__cflags"
+    export CXXFLAGS="$__cxxflags"
+    export ASFLAGS="$__asflags"
+    export MAKEFLAGS="$__makeflags"
+
+    # if using distcc, add /usr/lib/distcc to PATH/MAKEFLAGS
+    if [[ -n "$DISTCC_HOSTS" ]]; then
+        PATH="/usr/lib/distcc:$PATH"
+        MAKEFLAGS+=" PATH=$PATH"
     fi
 }
 
@@ -67,12 +153,14 @@ function get_os_version() {
 
     # get os distributor id, description, release number and codename
     local os
-    mapfile -t os < <(lsb_release -sidrc)
+    # armbian uses a minimal shell script replacement for lsb_release with basic
+    # parameter parsing that requires the arguments split rather than using -sidrc
+    mapfile -t os < <(lsb_release -s -i -d -r -c)
     __os_id="${os[0]}"
     __os_desc="${os[1]}"
     __os_release="${os[2]}"
     __os_codename="${os[3]}"
-    
+
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
@@ -89,19 +177,28 @@ function get_os_version() {
                 error="You need Raspbian/Debian Stretch or newer"
             fi
 
+            # 64bit Raspberry Pi OS identifies as Debian, but functions (currently) as Raspbian
+            # we will check package sources and set to Raspbian
+            if isPlatform "aarch64" && apt-cache policy | grep -q "archive.raspberrypi.org"; then
+                __os_id="Raspbian"
+            fi
+
             # set a platform flag for osmc
             if grep -q "ID=osmc" /etc/os-release; then
-                __platform_flags+=" osmc"
+                __platform_flags+=(osmc)
             fi
 
             # and for xbian
             if grep -q "NAME=XBian" /etc/os-release; then
-                __platform_flags+=" xbian"
+                __platform_flags+=(xbian)
             fi
 
-            # we provide binaries for RPI on Raspbian 9 only
-            if isPlatform "rpi" && compareVersions "$__os_debian_ver" gt 8 && compareVersions "$__os_debian_ver" lt 10; then
-                __has_binaries=1
+            # we provide binaries for RPI on Raspbian 9/10
+            if isPlatform "rpi" && \
+               isPlatform "32bit" && \
+               compareVersions "$__os_debian_ver" gt 9 && compareVersions "$__os_debian_ver" lt 11; then
+               # only set __has_binaries if not already set
+               [[ -z "$__has_binaries" ]] && __has_binaries=1
             fi
             ;;
         Devuan)
@@ -124,30 +221,35 @@ function get_os_version() {
                     ;;
             esac
             ;;
-        LinuxMint)
+        LinuxMint|Linuxmint)
             if [[ "$__os_desc" != LMDE* ]]; then
                 if compareVersions "$__os_release" lt 18; then
                     error="You need Linux Mint 18 or newer"
                 elif compareVersions "$__os_release" lt 19; then
                     __os_ubuntu_ver="16.04"
-                    __os_debian_ver="9"
-                else
+                    __os_debian_ver="8"
+                elif compareVersions "$__os_release" lt 20; then
                     __os_ubuntu_ver="18.04"
                     __os_debian_ver="10"
+                else
+                    __os_ubuntu_ver="20.04"
+                    __os_debian_ver="11"
                 fi
             fi
             ;;
-        Ubuntu|neon)
+        Ubuntu|[Nn]eon|Pop)
             if compareVersions "$__os_release" lt 16.04; then
                 error="You need Ubuntu 16.04 or newer"
-            # although ubuntu 16.10 reports as being based on stretch it is before some
+            # although ubuntu 16.04/16.10 report as being based on stretch it is before some
             # packages were changed - we map to version 8 to avoid issues (eg libpng-dev name)
-            elif compareVersions "$__os_release" eq 16.10; then
+            elif compareVersions "$__os_release" le 16.10; then
                 __os_debian_ver="8"
             elif compareVersions "$__os_release" lt 18.04; then
                 __os_debian_ver="9"
-            else
+            elif compareVersions "$__os_release" lt 20.04; then
                 __os_debian_ver="10"
+            else
+                __os_debian_ver="11"
             fi
             __os_ubuntu_ver="$__os_release"
             ;;
@@ -182,18 +284,25 @@ function get_os_version() {
             error="Unsupported OS"
             ;;
     esac
-    
-    [[ -n "$error" ]] && fatalError "$error\n\n$(lsb_release -idrc)"
 
-    # add 32bit/64bit to platform flags
-    __platform_flags+=" $(getconf LONG_BIT)bit"
+    [[ -n "$error" ]] && fatalError "$error\n\n$(lsb_release -idrc)"
 
     # configure Raspberry Pi graphics stack
     isPlatform "rpi" && get_rpi_video
 }
 
 function get_retropie_depends() {
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev ca-certificates)
+    local depends=(git subversion dialog curl gcc g++ build-essential unzip xmlstarlet python3-pyudev ca-certificates dirmngr)
+
+    [[ -n "$DISTCC_HOSTS" ]] && depends+=(distcc)
+
+    # 'python3-sdl2' might not be available
+    # it's packaged in Debian starting with version 11 (Bullseye)
+    local p_ver
+    p_ver="$(apt-cache madison python3-sdl2 | cut -d" " -f3 | head -n1)"
+    if [[ -n "$p_ver" ]]; then
+        depends+=(python3-sdl2)
+    fi
 
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
@@ -208,16 +317,29 @@ function get_retropie_depends() {
 function get_rpi_video() {
     local pkgconfig="/opt/vc/lib/pkgconfig"
 
-    # detect driver via inserted module / platform driver setup
-    if [[ -d "/sys/module/vc4" ]]; then
-        __platform_flags+=" mesa kms"
-        [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __platform_flags+=" dispmanx"
-    else
-        __platform_flags+=" videocore dispmanx"
+    if [[ -z "$__has_kms" ]]; then
+        # in chroot, use kms by default for rpi4 target
+        [[ "$__chroot" -eq 1 ]] && isPlatform "rpi4" && __has_kms=1
+        # detect driver via inserted module / platform driver setup
+        [[ -d "/sys/module/vc4" ]] && __has_kms=1
     fi
 
-    # use our supplied fallback pkgconfig if necessary
-    [[ ! -d "$pkgconfig" ]] && pkgconfig="$scriptdir/pkgconfig"
+    if [[ "$__has_kms" -eq 1 ]]; then
+        __platform_flags+=(mesa kms)
+        if [[ -z "$__has_dispmanx" ]]; then
+            # in a chroot, unless __has_dispmanx is set, default to fkms (adding dispmanx flag)
+            [[ "$__chroot" -eq 1 ]] && __has_dispmanx=1
+            # if running fkms driver, add dispmanx flag
+            [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __has_dispmanx=1
+        fi
+        [[ "$__has_dispmanx" -eq 1 ]] && __platform_flags+=(dispmanx)
+    else
+        __platform_flags+=(videocore dispmanx)
+    fi
+
+    # delete legacy pkgconfig that conflicts with Mesa (may be installed via rpi-update)
+    # see: https://github.com/raspberrypi/userland/pull/585
+    rm -rf $pkgconfig/{egl.pc,glesv2.pc,vg.pc}
 
     # set pkgconfig path for vendor libraries
     export PKG_CONFIG_PATH="$pkgconfig"
@@ -246,6 +368,9 @@ function get_platform() {
                         2)
                             __platform="rpi3"
                             ;;
+                        3)
+                            __platform="rpi4"
+                            ;;
                     esac
                 fi
                 ;;
@@ -271,11 +396,26 @@ function get_platform() {
                 __platform="armv7-mali"
                 ;;
             *)
-                case $architecture in
-                    i686|x86_64|amd64)
-                        __platform="x86"
-                        ;;
-                esac
+                # jetson nano and tegra x1 can be identified via /sys/firmware/devicetree/base/model
+                local model_path="/sys/firmware/devicetree/base/model"
+                if [[ -f "$model_path" ]]; then
+                    # ignore end null to avoid bash warning
+                    local model=$(tr -d '\0' <$model_path)
+                    case "$model" in
+                        "NVIDIA Jetson Nano Developer Kit")
+                            __platform="jetson-nano"
+                            ;;
+                        icosa|icosa_emmc)
+                            __platform="tegra-x1"
+                            ;;
+                    esac
+                else
+                    case $architecture in
+                        i686|x86_64|amd64)
+                            __platform="x86"
+                            ;;
+                    esac
+                fi
                 ;;
         esac
     fi
@@ -284,109 +424,147 @@ function get_platform() {
         fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
     fi
 
+    # check if we wish to target kms for platform
+    if [[ -z "$__has_kms" ]]; then
+        iniConfig " = " '"' "$configdir/all/retropie.cfg"
+        iniGet "force_kms"
+        [[ "$ini_value" == 1 ]] && __has_kms=1
+        [[ "$ini_value" == 0 ]] && __has_kms=0
+    fi
+
+    set_platform_defaults
     platform_${__platform}
-    [[ -z "$__default_cxxflags" ]] && __default_cxxflags="$__default_cflags"
 }
 
-function platform_rpi1() {
-    # values to be used for configure/make
-    __default_cflags="-O2 -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
-    __default_asflags=""
-    __default_makeflags=""
-    __platform_flags="arm armv6 rpi gles"
-    # if building in a chroot, what cpu should be set by qemu
-    # make chroot identify as arm6l
+function set_platform_defaults() {
+    __default_opt_flags="-O2"
+
+    # add platform name and 32bit/64bit to platform flags
+    __platform_flags=("$__platform" "$(getconf LONG_BIT)bit")
+    __platform_arch=$(uname -m)
+}
+
+function cpu_arm1176() {
+    __default_cpu_flags="-mcpu=arm1176jzf-s -mfpu=vfp"
+    __platform_flags+=(arm armv6)
     __qemu_cpu=arm1176
 }
 
-function platform_rpi2() {
-    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon rpi gles"
-    __qemu_cpu=cortex-a7
+function cpu_armv7() {
+    local cpu="$1"
+    if [[ -n "$cpu" ]]; then
+        __default_cpu_flags="-mcpu=$cpu -mfpu=neon-vfpv4"
+    else
+        __default_cpu_flags="-march=armv7-a -mfpu=neon-vfpv4"
+        cpu="cortex-a7"
+    fi
+    __platform_flags+=(arm armv7 neon)
+    __qemu_cpu="$cpu"
 }
 
-# note the rpi3 currently uses the rpi2 binaries - for ease of maintenance - rebuilding from source
-# could improve performance with the compiler options below but needs further testing
+function cpu_armv8() {
+    local cpu="$1"
+    __default_cpu_flags="-mcpu=$cpu"
+    if isPlatform "32bit"; then
+        __default_cpu_flags+="  -mfpu=neon-fp-armv8"
+        __platform_flags+=(arm armv8 neon)
+    else
+        __platform_flags+=(aarch64)
+    fi
+    __qemu_cpu="$cpu"
+}
+
+function cpu_arm_state() {
+    if isPlatform "32bit"; then
+        __default_cpu_flags+=" -marm"
+    fi
+}
+
+function platform_conf_glext() {
+   # required for mali-fbdev headers to define GL functions
+    __default_cflags="-DGL_GLEXT_PROTOTYPES"
+}
+
+function platform_rpi1() {
+    cpu_arm1176
+    __platform_flags+=(rpi gles)
+}
+
+function platform_rpi2() {
+    cpu_armv7 "cortex-a7"
+    __platform_flags+=(rpi gles)
+}
+
 function platform_rpi3() {
-    __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j2"
-    __platform_flags="arm armv8 neon rpi gles"
+    cpu_armv8 "cortex-a53"
+    __platform_flags+=(rpi gles)
+}
+
+function platform_rpi4() {
+    cpu_armv8 "cortex-a72"
+    __platform_flags+=(rpi gles gles3 gles31)
 }
 
 function platform_odroid-c1() {
-    __default_cflags="-O2 -mcpu=cortex-a5 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon mali gles"
-    __qemu_cpu=cortex-a9
+    cpu_armv7 "cortex-a5"
+    cpu_arm_state
+    __platform_flags+=(mali gles)
 }
 
 function platform_odroid-c2() {
-    if [[ "$(getconf LONG_BIT)" -eq 32 ]]; then
-        __default_cflags="-O2 -march=armv8-a+crc -mtune=cortex-a53 -mfpu=neon-fp-armv8"
-        __platform_flags="arm armv8 neon mali gles"
-    else
-        __default_cflags="-O2 -march=native"
-        __platform_flags="aarch64 mali gles"
-    fi
-    __default_cflags+=" -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j2"
+    cpu_armv8 "cortex-a72"
+    cpu_arm_state
+    __platform_flags+=(mali gles)
 }
 
 function platform_odroid-xu() {
-    __default_cflags="-O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    # required for mali-fbdev headers to define GL functions
-    __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
-    __default_asflags=""
-    __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon mali gles"
+    cpu_armv7 "cortex-a7"
+    cpu_arm_state
+    platform_conf_glext
+    __platform_flags+=(mali gles)
+}
+
+function platform_tegra-x1() {
+    cpu_armv8 "cortex-a57"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_jetson-nano() {
+    platform_tegra-x1
 }
 
 function platform_tinker() {
-    __default_cflags="-O2 -marm -march=armv7-a -mtune=cortex-a17 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    # required for mali headers to define GL functions
-    __default_cflags+=" -DGL_GLEXT_PROTOTYPES"
-    __default_asflags=""
-    __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon kms gles"
+    cpu_armv7 "cortex-a17"
+    cpu_arm_state
+    platform_conf_glext
+    __platform_flags+=(kms gles)
 }
 
 function platform_x86() {
-    __default_cflags="-O2 -march=native"
-    __default_asflags=""
-    __default_makeflags="-j$(nproc)"
-    __platform_flags="x11 gl"
+    __default_cpu_flags="-march=native"
+    __platform_flags+=(gl)
+    if [[ "$__has_kms" -eq 1 ]]; then
+        __platform_flags+=(kms)
+    else
+        __platform_flags+=(x11)
+    fi
 }
 
 function platform_generic-x11() {
-    __default_cflags="-O2"
-    __default_asflags=""
-    __default_makeflags="-j$(nproc)"
-    __platform_flags="x11 gl"
+    __platform_flags+=(x11 gl)
 }
 
 function platform_armv7-mali() {
-    __default_cflags="-O2 -march=armv7-a -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j$(nproc)"
-    __platform_flags="arm armv7 neon mali gles"
+    cpu_armv7
+    __platform_flags+=(mali gles)
 }
 
 function platform_imx6() {
-    __default_cflags="-O2 -march=armv7-a -mfpu=neon -mtune=cortex-a9 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j2"
-    __platform_flags="arm armv7 neon"
+    cpu_armv7 "cortex-a9"
 }
 
 function platform_vero4k() {
-    __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib -O2 -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
-    __default_asflags=""
-    __default_makeflags="-j4"
-    __platform_flags="arm armv7 neon vero4k gles"
+    cpu_armv7 "cortex-a7"
+    __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib"
+    __platform_flags+=(mali gles)
 }
-

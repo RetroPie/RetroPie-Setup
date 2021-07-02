@@ -13,15 +13,16 @@ rp_module_id="stratagus"
 rp_module_desc="Stratagus - A strategy game engine to play Warcraft I or II, Starcraft, and some similar open-source games"
 rp_module_help="Copy your Stratagus games to $romdir/stratagus"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/Wargus/stratagus/master/COPYING"
+rp_module_repo="git https://github.com/Wargus/stratagus.git v2.4.3"
 rp_module_section="opt"
 rp_module_flags="!mali !kms"
 
 function depends_stratagus() {
-    getDepends libsdl1.2-dev libbz2-dev libogg-dev libvorbis-dev libtheora-dev libpng-dev liblua5.1-0-dev libtolua++5.1-dev libfluidsynth-dev libmikmod-dev
+    getDepends cmake libsdl1.2-dev libbz2-dev libogg-dev libvorbis-dev libtheora-dev libpng-dev liblua5.1-0-dev libtolua++5.1-dev libfluidsynth-dev libmikmod-dev
 }
 
 function sources_stratagus() {
-    gitPullOrClone "$md_build" https://github.com/Wargus/stratagus.git
+    gitPullOrClone
 }
 
 function build_stratagus() {

@@ -10,25 +10,32 @@
 #
 
 rp_module_id="sixaxis"
-rp_module_desc="Helper service to install & configure the latest drivers for official and third-party DualShock controllers (ps3controller replacement)\n\nNote: For Shanwan/GASIA third-party controllers, enable third-party support in the configuration options.\n\nTo pair controllers, use the RetroPie Bluetooth menu, choose 'Register and Connect...', then follow the on-screen instructions."
+rp_module_desc="Helper service for official and third-party DualShock controllers (ps3controller replacement)"
+rp_module_help="For Shanwan/GASIA third-party controllers, enable third-party support in the configuration options.\n\nTo pair controllers, use the RetroPie Bluetooth menu, choose 'Register and Connect...', then follow the on-screen instructions."
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/sixaxis/master/COPYING"
+rp_module_repo="git https://github.com/RetroPie/sixaxis.git master"
 rp_module_section="driver"
 
 function depends_sixaxis() {
     getDepends checkinstall libevdev-tools
 
+    # add special check for presence of sixaxis plugin, and restart bluetooth stack if necessary
+    if ! hasPackage "libbluetooth3"; then
+        getDepends libbluetooth3
+        service bluetooth restart
+    fi
+
     rp_callModule ps3controller remove
 }
 
 function sources_sixaxis() {
-    gitPullOrClone "$md_build/sixaxis" https://github.com/RetroPie/sixaxis.git
+    gitPullOrClone
 }
 
 function build_sixaxis() {
-    cd sixaxis
     make clean
     make
-    md_ret_require="$md_build/sixaxis/bins/sixaxis-timeout"
+    md_ret_require="$md_build/bins/sixaxis-timeout"
 }
 
 function gui_sixaxis() {
@@ -77,7 +84,6 @@ function gui_sixaxis() {
 }
 
 function install_sixaxis() {
-    cd sixaxis
     checkinstall -y --fstrans=no
 }
 

@@ -12,15 +12,16 @@
 rp_module_id="cdogs-sdl"
 rp_module_desc="C-Dogs SDL - Classic overhead run-and-gun game"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/cxong/cdogs-sdl/master/COPYING"
+rp_module_repo="git https://github.com/cxong/cdogs-sdl.git 0.7.2"
 rp_module_section="exp"
-rp_module_flags="!mali !kms"
+rp_module_flags="sdl1 !mali"
 
 function depends_cdogs-sdl() {
-    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev build-essential
+    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev
 }
 
 function sources_cdogs-sdl() {
-    gitPullOrClone "$md_build" https://github.com/cxong/cdogs-sdl.git
+    gitPullOrClone
 }
 
 function build_cdogs-sdl() {
@@ -44,6 +45,11 @@ function install_cdogs-sdl() {
 }
 
 function configure_cdogs-sdl() {
-    moveConfigDir "$home/.config/cdogs-sdl" "$md_conf_root/cdogs-sdl"
     addPort "$md_id" "cdogs-sdl" "C-Dogs SDL" "pushd $md_inst; $md_inst/cdogs-sdl; popd"
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
+
+    moveConfigDir "$home/.config/cdogs-sdl" "$md_conf_root/cdogs-sdl"
 }

@@ -13,10 +13,10 @@ rp_module_id="uqm"
 rp_module_desc="The Ur-Quan Masters (Port of DOS game Star Control 2)"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/davidben/uqm/nacl/COPYING"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags="!mali"
 
 function _get_ver_uqm() {
-    echo "0.6.2.dfsg-9.4"
+    echo "0.6.2.dfsg-9.5"
 }
 
 function _update_hook_uqm() {
@@ -26,7 +26,11 @@ function _update_hook_uqm() {
 
 function depends_uqm() {
     [[ "$__os_id" != "Raspbian" ]] && return 0
-    getDepends debhelper devscripts libmikmod-dev libsdl1.2-dev libopenal-dev libsdl-image1.2-dev libogg-dev libvorbis-dev xz-utils
+    local depends=(debhelper devscripts libmikmod-dev libsdl1.2-dev libopenal-dev libsdl-image1.2-dev libogg-dev libvorbis-dev)
+    isPlatform "gl" || isPlatform "mesa" && depends+=(libgl1-mesa-dev)
+    isPlatform "kms" && depends+=(xorg)
+
+    getDepends "${depends[@]}"
 }
 
 function sources_uqm() {
@@ -34,7 +38,7 @@ function sources_uqm() {
     local ver="$(_get_ver_uqm)"
     local url="http://http.debian.net/debian/pool/contrib/u/uqm"
     for file in uqm_$ver.dsc uqm_0.6.2.dfsg.orig.tar.gz uqm_$ver.debian.tar.xz; do
-        wget -nv -O"$file" "$url/$file"
+        download "$url/$file"
     done
 }
 
@@ -46,9 +50,9 @@ function build_uqm() {
 }
 
 function install_uqm() {
-    cp -v *.deb "$md_inst"
     # uqm is missing on raspbian
     if [[ "$__os_id" == "Raspbian" ]]; then
+        cp -v *.deb "$md_inst"
         dpkg -i *.deb
         aptInstall uqm-content uqm-music uqm-voice
     else
@@ -73,6 +77,14 @@ function remove_uqm() {
 }
 
 function configure_uqm() {
+    local binary="uqm"
+    local params=("-f")
+    if isPlatform "kms"; then
+        # SDL1 needs xinit, and does not have /usr/games in $PATH
+        binary="XINIT:/usr/games/$binary"
+        # OpenGL mode must be also be enabled for high resolution support
+        params+=("-o" "-r %XRES%x%YRES%")
+    fi
     moveConfigDir "$home/.uqm" "$md_conf_root/uqm"
-    addPort "$md_id" "uqm" "Ur-quan Masters" "uqm -f"
+    addPort "$md_id" "uqm" "Ur-quan Masters" "$binary ${params[*]}"
 }

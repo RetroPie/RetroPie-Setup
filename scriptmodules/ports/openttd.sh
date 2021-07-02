@@ -11,9 +11,9 @@
 
 rp_module_id="openttd"
 rp_module_desc="Open Source Simulator Based On Transport Tycoon Deluxe"
-rp_module_licence="GPL2 https://git.openttd.org/?p=trunk.git;a=blob_plain;f=COPYING;hb=HEAD"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/OpenTTD/OpenTTD/master/COPYING.md"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali !kms"
+rp_module_flags="sdl1 !mali"
 
 function _update_hook_openttd() {
     # to show as installed in retropie-setup 4.x
@@ -29,12 +29,16 @@ function remove_openttd() {
 }
 
 function configure_openttd() {
+    addPort "$md_id" "openttd" "OpenTTD" "openttd"
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
+
     local dir
     for dir in .config .local/share; do
         moveConfigDir "$home/$dir/openttd" "$md_conf_root/openttd"
     done
 
     moveConfigDir "$home/.local/openttd" "$md_conf_root/openttd"
-
-    addPort "$md_id" "openttd" "OpenTTD" "openttd"
 }

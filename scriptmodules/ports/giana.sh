@@ -11,8 +11,9 @@
 
 rp_module_id="giana"
 rp_module_desc="Giana's Return"
+rp_module_licence="NONCOM https://www.gianas-return.de/?page_id=6"
 rp_module_section="opt"
-rp_module_flags="!x86 !mali !kms"
+rp_module_flags="!all videocore"
 
 function depends_giana() {
     getDepends libsdl1.2-dev libsdl-mixer1.2-dev libraspberrypi-dev

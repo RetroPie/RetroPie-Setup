@@ -12,10 +12,11 @@
 rp_module_id="retropiemenu"
 rp_module_desc="RetroPie configuration menu for EmulationStation"
 rp_module_section="core"
+rp_module_flags="nonet"
 
 function _update_hook_retropiemenu() {
     # to show as installed when upgrading to retropie-setup 4.x
-    if ! rp_isInstalled "$md_idx" && [[ -f "$home/.emulationstation/gamelists/retropie/gamelist.xml" ]]; then
+    if ! rp_isInstalled "$md_id" && [[ -f "$home/.emulationstation/gamelists/retropie/gamelist.xml" ]]; then
         mkdir -p "$md_inst"
         # to stop older scripts removing when launching from retropie menu in ES due to not using exec or exiting after running retropie-setup from this module
         touch "$md_inst/.retropie"
@@ -76,18 +77,18 @@ function configure_retropiemenu()
 
     local descs=(
         'Configure audio settings. Choose default of auto, 3.5mm jack, or HDMI. Mixer controls, and apply default settings.'
-        'Register and connect to bluetooth devices. Unregister and remove devices, and display registered and connected devices.'
+        'Register and connect to Bluetooth devices. Unregister and remove devices, and display registered and connected devices.'
         'Change common RetroArch options, and manually edit RetroArch configs, global configs, and non-RetroArch configs.'
-        'Install, uninstall, or update EmulationStation themes. Most themes can be previewed at https://github.com/retropie/ RetroPie-Setup/wiki/themes.'
-        'Basic ascii file manager for linux allowing you to browse, copy, delete, and move files.'
-        'Change user password, boot options, internationalization, camera, add your pi to Rastrack, overclock, overscan, memory split, SSH and more.'
+        'Install, uninstall, or update EmulationStation themes. Most themes can be previewed at https://retropie.org.uk/docs/Themes/.'
+        'Basic ASCII file manager for Linux allowing you to browse, copy, delete, and move files.'
+        'Change user password, boot options, internationalization, camera, add your Pi to Rastrack, overclock, overscan, memory split, SSH and more.'
         'Launches the RetroArch GUI so you can change RetroArch options. Note: Changes will not be saved unless you have enabled the "Save Configuration On Exit" option.'
         'Set up RetroArch Netplay options, choose host or client, port, host IP, delay frames, and your nickname.'
-        'Install RetroPie from binary or source, install experimental packages, additional drivers, edit samba shares, custom scraper, as well as other RetroPie-related configurations.'
+        'Install RetroPie from binary or source, install experimental packages, additional drivers, edit Samba shares, custom scraper, as well as other RetroPie-related configurations.'
         'Change what appears on the runcommand screen. Enable or disable the menu, enable or disable box art, and change CPU configuration.'
-        'Displays your current IP address, as well as other information provided by the command, "ip addr show."'
+        'Displays your current IP address, as well as other information provided by the command "ip addr show."'
         'Enable or disable the splashscreen on RetroPie boot. Choose a splashscreen, download new splashscreens, and return splashscreen to default.'
-        'Connect to or disconnect from a wifi network and configure wifi settings.'
+        'Connect to or disconnect from a WiFi network and configure WiFi settings.'
     )
 
     setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"

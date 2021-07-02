@@ -13,7 +13,8 @@ rp_module_id="lr-mame2003"
 rp_module_desc="Arcade emu - MAME 0.78 port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/mame2003-libretro/master/LICENSE.md"
-rp_module_section="main"
+rp_module_repo="git https://github.com/libretro/mame2003-libretro.git master"
+rp_module_section="main armv6=opt"
 
 function _get_dir_name_lr-mame2003() {
     echo "mame2003"
@@ -24,7 +25,7 @@ function _get_so_name_lr-mame2003() {
 }
 
 function sources_lr-mame2003() {
-    gitPullOrClone "$md_build" https://github.com/libretro/mame2003-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-mame2003() {
@@ -47,6 +48,14 @@ function install_lr-mame2003() {
 }
 
 function configure_lr-mame2003() {
+    local so_name="$(_get_so_name_${md_id})"
+    addEmulator 0 "$md_id" "arcade" "$md_inst/${so_name}_libretro.so"
+    addEmulator 1 "$md_id" "mame-libretro" "$md_inst/${so_name}_libretro.so"
+    addSystem "arcade"
+    addSystem "mame-libretro"
+
+    [[ "$md_mode" == "remove" ]] && return
+
     local dir_name="$(_get_dir_name_${md_id})"
 
     local mame_dir
@@ -77,12 +86,4 @@ function configure_lr-mame2003() {
 
     # Set core options
     setRetroArchCoreOption "${dir_name}_skip_disclaimer" "enabled"
-    setRetroArchCoreOption "${dir_name}_dcs-speedhack" "enabled"
-    setRetroArchCoreOption "${dir_name}_samples" "enabled"
-
-    local so_name="$(_get_so_name_${md_id})"
-    addEmulator 0 "$md_id" "arcade" "$md_inst/${so_name}_libretro.so"
-    addEmulator 1 "$md_id" "mame-libretro" "$md_inst/${so_name}_libretro.so"
-    addSystem "arcade"
-    addSystem "mame-libretro"
 }

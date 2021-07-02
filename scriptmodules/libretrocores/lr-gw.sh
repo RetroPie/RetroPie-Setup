@@ -13,10 +13,11 @@ rp_module_id="lr-gw"
 rp_module_desc="Game and Watch simulator"
 rp_module_help="ROM Extension: .mgw\n\nCopy your Game and Watch games to $romdir/gameandwatch"
 rp_module_licence="ZLIB https://raw.githubusercontent.com/libretro/gw-libretro/master/LICENSE"
+rp_module_repo="git https://github.com/libretro/gw-libretro.git master"
 rp_module_section="opt"
 
 function sources_lr-gw() {
-    gitPullOrClone "$md_build" https://github.com/libretro/gw-libretro.git
+    gitPullOrClone
 }
 
 function build_lr-gw() {

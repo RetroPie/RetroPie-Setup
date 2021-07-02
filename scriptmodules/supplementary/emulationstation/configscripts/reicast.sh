@@ -20,7 +20,7 @@ function onstart_reicast_joystick() {
             file="$configdir/dreamcast/mappings/controller_xboxdrv.cfg"
             ;;
         *)
-            file="$configdir/dreamcast/mappings/controller_${DEVICE_NAME// /}.cfg"
+            file="$configdir/dreamcast/mappings/evdev_${DEVICE_NAME//[:><?\"]/-}.cfg"
             ;;
     esac
 
@@ -221,7 +221,7 @@ function onend_reicast_joystick() {
             file="$configdir/dreamcast/mappings/controller_xboxdrv.cfg"
             ;;
         *)
-            file="$configdir/dreamcast/mappings/controller_${DEVICE_NAME// /}.cfg"
+            file="$configdir/dreamcast/mappings/evdev_${DEVICE_NAME//[:><?\"]/-}.cfg"
             ;;
     esac
 

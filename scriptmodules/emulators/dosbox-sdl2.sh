@@ -13,16 +13,17 @@ rp_module_id="dosbox-sdl2"
 rp_module_desc="DOS emulator (enhanced DOSBox fork)"
 rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk/COPYING"
+rp_module_repo="git https://github.com/duganchen/dosbox.git master"
 rp_module_section="exp"
-rp_module_flags="!mali"
+rp_module_flags="sdl2"
 
 function depends_dosbox-sdl2() {
-    local depends=(libsdl2-dev libsdl2-net-dev libfluidsynth-dev fluid-soundfont-gm)
+    local depends=(libsdl2-dev libsdl2-net-dev libfluidsynth-dev fluid-soundfont-gm libglew-dev)
     depends_dosbox "${depends[@]}"
 }
 
 function sources_dosbox-sdl2() {
-    gitPullOrClone "$md_build" "https://github.com/duganchen/dosbox.git"
+    gitPullOrClone
     # use custom config filename & path to allow coexistence with regular dosbox
     sed -i "src/misc/cross.cpp" -e 's/~\/.dosbox/~\/.'$md_id'/g' \
        -e 's/DEFAULT_CONFIG_FILE "dosbox-"/DEFAULT_CONFIG_FILE "'$md_id'-"/g'
@@ -41,7 +42,7 @@ function configure_dosbox-sdl2() {
     if [[ "$md_mode" == "install" ]]; then
         local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
         if [[ -f "$config_path" ]]; then
-            iniConfig " = " "" "$config_path"
+            iniConfig "=" "" "$config_path"
             iniSet "fluid.driver" "alsa"
             iniSet "fluid.soundfont" "/usr/share/sounds/sf2/FluidR3_GM.sf2"
             iniSet "fullresolution" "desktop"
@@ -49,6 +50,7 @@ function configure_dosbox-sdl2() {
             iniSet "mididevice" "fluidsynth"
             iniSet "output" "texture"
             iniDel "usescancodes"
+            isPlatform "kms" && iniSet "vsync" "true"
         fi
     fi
 }

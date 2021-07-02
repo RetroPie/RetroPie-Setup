@@ -13,10 +13,10 @@ rp_module_id="micropolis"
 rp_module_desc="Micropolis - Open Source City Building Game"
 rp_module_licence="GPL https://raw.githubusercontent.com/SimHacker/micropolis/wiki/License.md"
 rp_module_section="opt"
-rp_module_flags="!mali !kms"
+rp_module_flags="!mali"
 
 function depends_micropolis() {
-    ! isPlatform "x11" getDepends xorg matchbox
+    ! isPlatform "x11" getDepends xorg matchbox-window-manager
 }
 
 function install_bin_micropolis() {
@@ -28,11 +28,10 @@ function remove_micropolis() {
 }
 
 function configure_micropolis() {
-    if isPlatform "x11"; then
-        addPort "$md_id" "micropolis" "Micropolis" "/usr/games/micropolis"
-    else
-        addPort "$md_id" "micropolis" "Micropolis" "xinit $md_inst/micropolis.sh"
-    fi
+    local binary="/usr/games/micropolis"
+    ! isPlatform "x11" && binary="XINIT:$md_inst/micropolis.sh"
+
+    addPort "$md_id" "micropolis" "Micropolis" "$binary"
 
     mkdir -p "$md_inst"
     cat >"$md_inst/micropolis.sh" << _EOF_

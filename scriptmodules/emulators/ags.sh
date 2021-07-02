@@ -13,6 +13,7 @@ rp_module_id="ags"
 rp_module_desc="Adventure Game Studio - Adventure game engine"
 rp_module_help="ROM Extension: .exe\n\nCopy your Adventure Game Studio roms to $romdir/ags"
 rp_module_licence="OTHER https://raw.githubusercontent.com/adventuregamestudio/ags/master/License.txt"
+rp_module_repo="git https://github.com/adventuregamestudio/ags.git ags3"
 rp_module_section="opt"
 rp_module_flags="!mali"
 
@@ -21,12 +22,13 @@ function depends_ags() {
 }
 
 function sources_ags() {
-    gitPullOrClone "$md_build" https://github.com/adventuregamestudio/ags.git ags3
+    gitPullOrClone
 }
 
 function build_ags() {
     make -C Engine clean
     make -C Engine
+    md_ret_require="$md_build/Engine/ags"
 }
 
 function install_ags() {
@@ -34,17 +36,18 @@ function install_ags() {
 }
 
 function configure_ags() {
-    local binary="$md_inst/bin/ags"
+    local binary="XINIT:$md_inst/bin/ags"
     local params=("--fullscreen %ROM%")
     if ! isPlatform "x11"; then
-        binary="xinit $binary"
         params+=("--gfxdriver software")
     fi
 
     mkRomDir "ags"
 
     # install Eawpatches GUS patch set (see: http://liballeg.org/digmid.html)
-    [[ "$md_mode" == "install" ]] && wget -qO- "http://www.eglebbk.dds.nl/program/download/digmid.dat" | bzcat >"$md_inst/bin/patches.dat"
+    if [[ "$md_mode" == "install" ]]; then
+        download "http://www.eglebbk.dds.nl/program/download/digmid.dat" - | bzcat >"$md_inst/bin/patches.dat"
+    fi
 
     addEmulator 1 "$md_id" "ags" "$binary ${params[*]}" "Adventure Game Studio" ".exe"
 

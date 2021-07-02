@@ -13,8 +13,9 @@ rp_module_id="fuse"
 rp_module_desc="ZX Spectrum emulator Fuse"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum games to $romdir/zxspectrum"
 rp_module_licence="GPL2 https://sourceforge.net/p/fuse-emulator/fuse/ci/master/tree/COPYING"
+rp_module_repo="file $__archive_url/fuse-1.5.7.tar.gz"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_fuse() {
     getDepends libsdl1.2-dev libpng-dev zlib1g-dev libbz2-dev libaudiofile-dev bison flex
@@ -49,29 +50,31 @@ function install_fuse() {
 function configure_fuse() {
     mkRomDir "zxspectrum"
 
-    mkUserDir "$md_conf_root/zxspectrum"
-
-    moveConfigFile "$home/.fuserc" "$md_conf_root/zxspectrum/.fuserc"
-
-    setDispmanx "$md_id" 1
-    configure_dispmanx_on_fuse
-
-        cat > "$romdir/zxspectrum/+Start Fuse.sh" << _EOF_
-#!/bin/bash
-$md_inst/bin/fuse --machine 128 --full-screen
-_EOF_
-
     addEmulator 0 "$md_id-48k" "zxspectrum" "$md_inst/bin/fuse --machine 48 --full-screen %ROM%"
     addEmulator 0 "$md_id-128k" "zxspectrum" "$md_inst/bin/fuse --machine 128 --full-screen %ROM%"
     addSystem "zxspectrum"
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    mkUserDir "$md_conf_root/zxspectrum"
+    moveConfigFile "$home/.fuserc" "$md_conf_root/zxspectrum/.fuserc"
+
+    # default to dispmanx backend
+    isPlatform "dispmanx" && _backend_set_fuse "dispmanx"
+
+    local script="$romdir/zxspectrum/+Start Fuse.sh"
+    cat > "$script" << _EOF_
+#!/bin/bash
+$md_inst/bin/fuse --machine 128 --full-screen
+_EOF_
+    chown $user:$user "$script"
+    chmod +x "$script"
 }
 
-function configure_dispmanx_on_fuse() {
-    setDispmanx "$md_id-48k" 1
-    setDispmanx "$md_id-128k" 1
-}
-
-function configure_dispmanx_off_fuse() {
-    setDispmanx "$md_id-48k" 0
-    setDispmanx "$md_id-128k" 0
+function _backend_set_fuse() {
+    local mode="$1"
+    local force="$2"
+    setBackend "$md_id" "$mode" "$force"
+    setBackend "$md_id-48k" "$mode" "$force"
+    setBackend "$md_id-128k" "$mode" "$force"
 }

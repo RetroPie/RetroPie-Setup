@@ -12,6 +12,7 @@
 rp_module_id="sdlpop"
 rp_module_desc="SDLPoP - Port of Prince of Persia"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/NagyD/SDLPoP/master/doc/gpl-3.0.txt"
+rp_module_repo="git https://github.com/NagyD/SDLPoP.git master"
 rp_module_section="opt"
 
 function depends_sdlpop() {
@@ -19,7 +20,7 @@ function depends_sdlpop() {
 }
 
 function sources_sdlpop() {
-    gitPullOrClone "$md_build" https://github.com/NagyD/SDLPoP.git
+    gitPullOrClone
 }
 
 function build_sdlpop() {
@@ -40,6 +41,8 @@ function install_sdlpop() {
 
 function configure_sdlpop() {
     addPort "$md_id" "sdlpop" "Prince of Persia" "pushd $md_inst; $md_inst/prince full; popd"
+
+    [[ "$md_mode" == "remove" ]] && return
 
     copyDefaultConfig "$md_inst/SDLPoP.ini.def" "$md_conf_root/$md_id/SDLPoP.ini"
     moveConfigFile "$md_inst/SDLPoP.ini" "$md_conf_root/$md_id/SDLPoP.ini"

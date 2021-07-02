@@ -12,10 +12,11 @@
 rp_module_id="lr-prboom"
 rp_module_desc="Doom/Doom II engine - PrBoom port for libretro"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/libretro-prboom/master/COPYING"
+rp_module_repo="git https://github.com/libretro/libretro-prboom.git master"
 rp_module_section="opt"
 
 function sources_lr-prboom() {
-    gitPullOrClone "$md_build" https://github.com/libretro/libretro-prboom.git
+    gitPullOrClone
 }
 
 function build_lr-prboom() {
@@ -32,42 +33,60 @@ function install_lr-prboom() {
 }
 
 function game_data_lr-prboom() {
-    if [[ ! -f "$romdir/ports/doom/doom1.wad" ]]; then
+    local dest="$romdir/ports/doom"
+    mkUserDir "$dest"
+    if [[ ! -f "$dest/doom1.wad" ]]; then
         # download doom 1 shareware
-        wget -nv -O "$romdir/ports/doom/doom1.wad" "$__archive_url/doom1.wad"
-        chown $user:$user "$romdir/ports/doom/doom1.wad"
+        download "$__archive_url/doom1.wad" "$dest/doom1.wad"
     fi
+
+    if ! echo "e9bf428b73a04423ea7a0e9f4408f71df85ab175 $romdir/ports/doom/freedoom1.wad" | sha1sum -c &>/dev/null; then
+        # download (or update) freedoom
+        downloadAndExtract "https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip" "$dest" -j -LL
+    fi
+
+    mkUserDir "$dest/addon"
+    chown -R $user:$user "$dest"
 }
 
 function _add_games_lr-prboom() {
-    local cmd="$1"
+    local cmd="${@}"
+    local addon="$romdir/ports/doom/addon"
+
     declare -A games=(
-        ['doom1']="Doom"
-        ['doom2']="Doom 2"
-        ['tnt']="TNT - Evilution"
-        ['plutonia']="The Plutonia Experiment"
+        ['doom1.wad']="Doom"
+        ['doom2.wad']="Doom II"
+        ['doomu.wad']="The Ultimate Doom"
+        ['freedoom1.wad']="Freedoom - Phase I"
+        ['freedoom2.wad']="Freedoom - Phase II"
+        ['tnt.wad']="TNT - Evilution"
+        ['plutonia.wad']="The Plutonia Experiment"
     )
 
-    if [[ "$md_id" == "zdoom" ]]; then
+    if [[ "$md_id" =~ "zdoom" ]]; then
         games+=(
-            ['heretic']="Heretic - Shadow of the Serpent Riders"
-            ['hexen']="Hexen - Beyond Heretic"
-            ['hexdd']="Hexen - Deathkings of the Dark Citadel"
-            ['chex3']="Chex Quest 3"
-            ['strife1']="Strife"
+            ['heretic.wad']="Heretic - Shadow of the Serpent Riders"
+            ['hexen.wad']="Hexen - Beyond Heretic"
+            ['hexdd.wad']="Hexen - Deathkings of the Dark Citadel"
+            ['chex3.wad']="Chex Quest 3"
+            ['strife1.wad']="Strife"
         )
     fi
+
     local game
     local doswad
     local wad
     for game in "${!games[@]}"; do
-        doswad="$romdir/ports/doom/${game^^}.WAD"
-        wad="$romdir/ports/doom/$game.wad"
+        doswad="$romdir/ports/doom/${game^^}"
+        wad="$romdir/ports/doom/$game"
         if [[ -f "$doswad" ]]; then
             mv "$doswad" "$wad"
         fi
         if [[ -f "$wad" ]]; then
             addPort "$md_id" "doom" "${games[$game]}" "$cmd" "$wad"
+            if [[ "$md_id" =~ "zdoom" ]]; then
+                addPort "$md_id-addon" "doom" "${games[$game]}" "$cmd -file ${addon}/*" "$wad"
+            fi
         fi
     done
 }

@@ -13,8 +13,9 @@ rp_module_id="moonlight"
 rp_module_desc="Moonlight Embedded - an open source gamestream client for embedded systems"
 rp_module_help="ROM Extensions: .ml\n\nCopy your moonlight launch configurations to $romdir/steam\n\nDon't forget to first pair with your remote host before using moonlight. You can use the configuration menu for pairing/unpairing to/from a remote machine."
 rp_module_licence="GPL3 https://raw.githubusercontent.com/irtimmer/moonlight-embedded/master/LICENSE"
+rp_module_repo="git https://github.com/irtimmer/moonlight-embedded.git master"
 rp_module_section="exp"
-rp_module_flags="!x86"
+rp_module_flags="!all arm"
 
 function _scriptmodule_cfg_file_moonlight() {
     echo "$configdir/all/moonlight/scriptmodule.cfg"
@@ -79,7 +80,7 @@ function depends_moonlight() {
 }
 
 function sources_moonlight() {
-    gitPullOrClone "$md_build" https://github.com/irtimmer/moonlight-embedded.git
+    gitPullOrClone
 }
 
 function build_moonlight() {
@@ -102,7 +103,7 @@ function install_moonlight() {
 function configure_moonlight() {
     addEmulator 1 "$md_id" "steam" "$md_inst/moonlight.sh stream -config %ROM%"
     addSystem "steam" "Steam Game Streaming" ".ml"
-    [[ "$mode" == "remove" ]] && return
+    [[ "$md_mode" == "remove" ]] && return
 
     # ensure rom dir
     mkRomDir "steam"
@@ -120,7 +121,7 @@ _EOF_
         chown $user:$user "$(_global_cfg_file_moonlight)"
     fi
 
-    # create wrapper for moonlight with appropiate directories set
+    # create wrapper for moonlight with appropriate directories set
     # note: moonlight adds /moonlight to XDG_* variables
     cat > "$md_inst/moonlight.sh" << _EOF_
 #!/usr/bin/env bash
@@ -184,6 +185,35 @@ function get_resolution_moonlight() {
         echo "0;0;0"
     fi
 }
+
+function get_host_moonlight() {
+    local sops="true"
+    local unsupported="false"
+
+    iniConfig " = " "" "$(_global_cfg_file_moonlight)"
+    iniGet "sops" && sops="$ini_value"
+    iniGet "unsupported" && unsupported="$ini_value"
+
+    if [[ -n "$sops" && -n "$unsupported" ]]; then
+        echo "$sops;$unsupported"
+    else
+        echo "true;false"
+    fi
+}
+
+function set_host_moonlight() {
+    local -r sops="$1"
+    local -r unsupported="$2"
+
+    [[ -z "$sops" || -z "$unsupported" ]] && return
+
+    iniConfig " = " "" "$(_global_cfg_file_moonlight)"
+    iniSet "sops" "$sops"
+    iniSet "unsupported" "$unsupported"
+
+    chown $user:$user "$(_global_cfg_file_moonlight)"
+}
+
 
 function set_resolution_moonlight() {
     local -r width="$1"
@@ -341,6 +371,47 @@ function apps_gui_moonlight() {
     done
 }
 
+function host_gui_moonlight() {
+    local options=()
+    local default
+    local cmd
+    local choice
+    local tuple
+
+    # get current host options
+    IFS=";" read -r -a tuple < <(get_host_moonlight)
+    default="U"
+    [[ "${tuple[0]}" == "false" && "${tuple[1]}" == "false" ]] && default="1"
+    [[ "${tuple[0]}" == "true"  && "${tuple[1]}" == "true"  ]] && default="2"
+    [[ "${tuple[0]}" == "false" && "${tuple[1]}" == "true"  ]] && default="3"
+
+    # create menu options
+    options=(
+        U "Unset (use default)" "Do not force host compatibility settings"
+        1 "No SOPS" "Don't allow GFE to modify game settings"
+        2 "Allow unsupported" "Try streaming if GFE version or options are unsupported"
+        3 "Open-source host compatibility" "Turn off SOPS and allow unsupported options (for Sunshine/Open-Stream GFE server)"
+    )
+
+    # show main menu
+    cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --item-help --menu "Host Compatibility Options" 16 45 16)
+    choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+    case "$choice" in
+        U)
+            set_host_moonlight "true" "false"
+            ;;
+        1)
+            set_host_moonlight "false" "false"
+            ;;
+        2)
+            set_host_moonlight "true" "true"
+            ;;
+        3)
+            set_host_moonlight "false" "true"
+            ;;
+    esac
+}
+
 function resolution_gui_moonlight() {
     local options=()
     local default
@@ -476,6 +547,7 @@ function gui_moonlight() {
             G "Configure remote apps"
             R "Configure global resolution"
             B "Configure global stream bitrate"
+            H "Configure host compatibility"
             C "Clear all pairing data"
         )
 
@@ -508,6 +580,9 @@ function gui_moonlight() {
                 ;;
             B)
                 bitrate_gui_moonlight
+                ;;
+            H)
+                host_gui_moonlight
                 ;;
             C)
                 if dialog --defaultno --yesno "Are you sure you want to CLEAR ALL pairing data?" 8 40 2>&1 >/dev/tty; then

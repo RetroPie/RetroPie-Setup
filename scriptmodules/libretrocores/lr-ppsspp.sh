@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This file is part of The RetroPie Project
 #
@@ -13,8 +13,9 @@ rp_module_id="lr-ppsspp"
 rp_module_desc="PlayStation Portable emu - PPSSPP port for libretro"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/ppsspp/master/LICENSE.TXT"
+rp_module_repo="git https://github.com/hrydgard/ppsspp.git master"
 rp_module_section="opt"
-rp_module_flags="!aarch64"
+rp_module_flags=""
 
 function depends_lr-ppsspp() {
     depends_ppsspp
@@ -30,8 +31,8 @@ function build_lr-ppsspp() {
 
 function install_lr-ppsspp() {
     md_ret_files=(
-        'lr-ppsspp/lib/ppsspp_libretro.so'
-        'lr-ppsspp/assets'
+        'ppsspp/lib/ppsspp_libretro.so'
+        'ppsspp/assets'
     )
 }
 

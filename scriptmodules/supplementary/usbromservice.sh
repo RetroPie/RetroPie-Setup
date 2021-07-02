@@ -18,7 +18,7 @@ function _get_ver_usbromservice() {
 }
 
 function _update_hook_usbromservice() {
-    ! rp_isInstalled "$md_idx" && return
+    ! rp_isInstalled "$md_id" && return
     [[ ! -f "$md_inst/disabled" ]] && install_scripts_usbromservice
 }
 
@@ -71,7 +71,10 @@ function remove_usbromservice() {
 }
 
 function configure_usbromservice() {
+    [[ "$md_mode" == "remove" ]] && return
+
     iniConfig "=" '"' /etc/usbmount/usbmount.conf
+
     local fs
     for fs in ntfs exfat; do
         iniGet "FILESYSTEMS"
@@ -79,12 +82,18 @@ function configure_usbromservice() {
             iniSet "FILESYSTEMS" "$ini_value $fs"
         fi
     done
-    iniGet "MOUNTOPTIONS"
-    local uid=$(id -u $user)
-    local gid=$(id -g $user)
-    if [[ ! "$ini_value" =~ uid|gid ]]; then
-        iniSet "MOUNTOPTIONS" "$ini_value,uid=$uid,gid=$gid"
-    fi
+
+    # set our mount options (usbmount has sync by default which we don't want)
+    iniSet "MOUNTOPTIONS" "nodev,noexec,noatime"
+
+    # set per filesystem mount options
+    local options="uid=$(id -u $user),gid=$(id -g $user)"
+    local fs_options
+    local fs
+    for fs in vfat hfsplus ntfs exfat; do
+        fs_options+=("-fstype=${fs},${options}")
+    done
+    iniSet "FS_MOUNTOPTIONS" "${fs_options[*]}"
 }
 
 function gui_usbromservice() {
