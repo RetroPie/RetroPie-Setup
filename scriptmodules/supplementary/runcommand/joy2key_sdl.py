@@ -168,6 +168,9 @@ def ra_input_parse(key: str, value: str):
             if value.startswith('h'):
                 input_type = 'hat'
                 hat_value = re.split(r'([0-9]+)', value)[1:]
+                # reject malformed hat values
+                if hat_value[1] not in JS_HAT_VALUES:
+                    raise ValueError('Not a valid hat value')
                 input_index, input_value = int(hat_value[0]), JS_HAT_VALUES[hat_value[1]]
             else:
                 input_type = 'button'
@@ -504,7 +507,7 @@ def main():
     configs = get_all_ra_config(def_buttons)
 
     if SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO) < 0:
-        LOG.error('Error in SDL_Init: {SDL_GetError()}')
+        LOG.error(f'Error in SDL_Init: {SDL_GetError()}')
         exit(2)
 
     if LOG.isEnabledFor(logging.DEBUG):
