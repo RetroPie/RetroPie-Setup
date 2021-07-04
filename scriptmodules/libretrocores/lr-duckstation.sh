@@ -36,6 +36,10 @@ function configure_lr-duckstation() {
         setRetroArchCoreOption "duckstation_GPU.Renderer" "Software"
     fi
 
+    # Pi 4 has occasional slowdown with hardware rendering
+    # e.g. Gran Turismo 2 (Arcade) race start
+    isPlatform "rpi4" && setRetroArchCoreOption "duckstation_GPU.Renderer" "Software"
+
     # dynarec segfaults without redirecting stdin from </dev/null
     addEmulator 0 "$md_id" "psx" "$md_inst/duckstation_libretro.so </dev/null"
     addSystem "psx"
