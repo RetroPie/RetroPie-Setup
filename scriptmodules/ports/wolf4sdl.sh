@@ -11,13 +11,13 @@
 
 rp_module_id="wolf4sdl"
 rp_module_desc="Wolf4SDL - port of Wolfenstein 3D / Spear of Destiny engine"
-rp_module_licence="NONCOM https://raw.githubusercontent.com/mozzwald/wolf4sdl/master/license-mame.txt"
-rp_module_repo="git https://github.com/mozzwald/wolf4sdl.git master"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/AryanWolf3D/Wolf4SDL/master/license-gpl.txt"
+rp_module_repo="git https://github.com/AryanWolf3D/Wolf4SDL.git master"
 rp_module_section="opt"
-rp_module_flags="sdl1 !mali"
+rp_module_flags="sdl2"
 
 function depends_wolf4sdl() {
-    getDepends libsdl1.2-dev libsdl-mixer1.2-dev rename
+    getDepends libsdl2-dev libsdl2-mixer-dev rename
 }
 
 function sources_wolf4sdl() {
@@ -60,14 +60,14 @@ function add_ports_wolf4sdl() {
 }
 
 function build_wolf4sdl() {
-    mkdir "bin"
+    mkdir -p "bin"
     local opt
     while read -r opt; do
         local bin="${opt%% *}"
         local defs="${opt#* }"
         make clean
-        CFLAGS+=" -DVERSIONALREADYCHOSEN $defs" make DATADIR="$romdir/ports/wolf3d/"
-        mv wolf3d "bin/$bin"
+        CFLAGS+=" -DVERSIONALREADYCHOSEN -DGPL $defs" make DATADIR="$romdir/ports/wolf3d/"
+        mv wolf4sdl "bin/$bin"
         md_ret_require+=("bin/$bin")
     done < <(_get_opts_wolf4sdl)
 }
@@ -143,6 +143,4 @@ _EOF_
     add_games_wolf4sdl
 
     moveConfigDir "$home/.wolf4sdl" "$md_conf_root/wolf3d"
-
-    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 }
