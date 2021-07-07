@@ -280,7 +280,7 @@ function _scrape_skyscraper() {
 
     if [[ "$use_rom_folder" -eq 1 ]]; then
         params+=(-g "$romdir/$system")
-        params+=(-o "$romdir/$system/media")
+        params+=(-o "$romdir/$system/.media")
         # If we're saving to the ROM folder, then use relative paths in the gamelist
         flags+="relative,"
     else
