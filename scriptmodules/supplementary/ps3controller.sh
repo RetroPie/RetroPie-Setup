@@ -16,7 +16,7 @@ rp_module_section="driver"
 
 function depends_ps3controller() {
     depends_bluetooth
-    local depends=(checkinstall libusb-dev libbluetooth-dev joystick)
+    local depends=(libusb-dev libbluetooth-dev joystick)
     getDepends "${depends[@]}"
 }
 
@@ -46,8 +46,7 @@ function install_ps3controller() {
     [[ -z "$branch" ]] && branch="ps3"
 
     cd sixad
-    checkinstall -y --fstrans=no
-
+    make install
     echo "$branch" >"$md_inst/type.txt"
 
     # Disable timeouts
@@ -57,7 +56,29 @@ function install_ps3controller() {
 }
 
 function remove_ps3controller() {
-    dpkg --purge sixad
+    declare -a remove_paths=("
+                /etc/default/sixad"
+                "/etc/systemd/system/sixad.service"
+                "/etc/logrotate.d/sixad"
+                "/usr/bin/sixad"
+                "/usr/sbin/sixad-bin"
+                "/usr/sbin/sixad-sixaxis"
+                "/usr/sbin/sixad-remote"
+                "/usr/sbin/sixad-3in1"
+                "/usr/sbin/sixad-raw"
+                "/usr/sbin/sixpair"
+                "/usr/sbin/sixad-helper"
+                "/etc/udev/rules.d/99-sixad.rules"
+                "/etc/udev/rules.d/10-hci.rules"
+                "/var/lib/sixad/"
+    )
+    for paths in ${remove_paths[@]}; do
+        if [[ -d ${paths} ]]; then
+            rm -rfv ${paths}
+        elif [[ -f ${paths} ]]; then
+            rm -fv ${paths}
+        fi
+    done
     [[ -f /usr/sbin/bluetoothd ]] && chmod 755 /usr/sbin/bluetoothd
 }
 
