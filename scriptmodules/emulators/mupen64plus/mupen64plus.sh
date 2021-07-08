@@ -106,10 +106,7 @@ function remap() {
     local j
 
     iniConfig " = " "" "$config"
-    if ! grep -q "\[CoreEvents\]" "$config"; then
-        echo "[CoreEvents]" >> "$config"
-        echo "Version = 1" >> "$config"
-    fi
+    iniSet "Version" "1" "" "[CoreEvents]"
 
     local atebitdo_hack
     for i in {0..2}; do
@@ -128,7 +125,7 @@ function remap() {
         done
         # write hotkey to mupen64plus.cfg
         iniConfig " = " "\"" "$config"
-        iniSet "${hotkeys_m64p[$i]}" "$bind"
+        iniSet "${hotkeys_m64p[$i]}" "$bind" "" "[CoreEvents]"
     done
 }
 
@@ -140,11 +137,7 @@ function setAudio() {
             # use audio omx if we use rpi internal audio device
             AUDIO_PLUGIN="mupen64plus-audio-omx"
             iniConfig " = " "\"" "$config"
-            # create section if necessary
-            if ! grep -q "\[Audio-OMX\]" "$config"; then
-                echo "[Audio-OMX]" >> "$config"
-                echo "Version = 1" >> "$config"
-            fi
+            iniSet "Version" "1" "" "[Audio-OMX]"
             # read output configuration
             local audio_port=$(amixer cget numid=3)
             # set output port
@@ -153,16 +146,16 @@ function setAudio() {
                 # try to find the best solution
                 local video_device=$(tvservice -s)
                 if [[ "$video_device" == *HDMI* ]]; then
-                    iniSet "OUTPUT_PORT" "1"
+                    iniSet "OUTPUT_PORT" "1" "" "[Audio-OMX]"
                 else
-                    iniSet "OUTPUT_PORT" "0"
+                    iniSet "OUTPUT_PORT" "0" "" "[Audio-OMX]"
                 fi
             elif [[ "$audio_port" == *": values=1"* ]]; then
                 # echo "audio jack"
-                iniSet "OUTPUT_PORT" "0"
+                iniSet "OUTPUT_PORT" "0" "" "[Audio-OMX]"
             else
                 # echo "hdmi"
-                iniSet "OUTPUT_PORT" "1"
+                iniSet "OUTPUT_PORT" "1" "" "[Audio-OMX]"
             fi
         fi
     fi
@@ -172,7 +165,7 @@ function testCompatibility() {
     # fallback for glesn64 and rice plugin
     # some roms lead to a black screen of death
     local game
-    
+
     # these games need RSP-LLE
     local blacklist=(
         naboo
@@ -245,29 +238,26 @@ function testCompatibility() {
 
     case "$VIDEO_PLUGIN" in
         "mupen64plus-video-GLideN64")
-            if ! grep -q "\[Video-GLideN64\]" "$config"; then
-                echo "[Video-GLideN64]" >> "$config"
-            fi
             iniConfig " = " "" "$config"
             # Settings version. Don't touch it.
             local config_version="20"
             if [[ -f "$configdir/n64/GLideN64_config_version.ini" ]]; then
                 config_version=$(<"$configdir/n64/GLideN64_config_version.ini")
             fi
-            iniSet "configVersion" "$config_version"
+            iniSet "configVersion" "$config_version" "" "[Video-GLideN64]"
             # Set native resolution factor of 1
-            iniSet "UseNativeResolutionFactor" "1"
+            iniSet "UseNativeResolutionFactor" "1" "" "[Video-GLideN64]"
             for game in "${GLideN64NativeResolution_blacklist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
-                    iniSet "UseNativeResolutionFactor" "0"
+                    iniSet "UseNativeResolutionFactor" "0" "" "[Video-GLideN64]"
                     break
                 fi
             done
             # Disable LegacyBlending if necessary
-            iniSet "EnableLegacyBlending" "True"
+            iniSet "EnableLegacyBlending" "True" "" "[Video-GLideN64]"
             for game in "${GLideN64LegacyBlending_blacklist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
-                    iniSet "EnableLegacyBlending" "False"
+                    iniSet "EnableLegacyBlending" "False" "" "[Video-GLideN64]"
                     break
                 fi
             done
@@ -293,33 +283,23 @@ function testCompatibility() {
 
     # fix Audio-SDL crackle
     iniConfig " = " "\"" "$config"
-    # create section if necessary
-    if ! grep -q "\[Audio-SDL\]" "$config"; then
-        echo "[Audio-SDL]" >> "$config"
-        echo "Version = 1" >> "$config"
-    fi
-    iniSet "RESAMPLE" "src-sinc-fastest"
+    iniSet "Version" "1" "" "[Audio-SDL]"
+    iniSet "RESAMPLE" "src-sinc-fastest" "" "[Audio-SDL]"
 }
 
 function useTexturePacks() {
     # video-GLideN64
-    if ! grep -q "\[Video-GLideN64\]" "$config"; then
-        echo "[Video-GLideN64]" >> "$config"
-    fi
     iniConfig " = " "" "$config"
     # Settings version. Don't touch it.
     local config_version="17"
     if [[ -f "$configdir/n64/GLideN64_config_version.ini" ]]; then
         config_version=$(<"$configdir/n64/GLideN64_config_version.ini")
     fi
-    iniSet "configVersion" "$config_version"
-    iniSet "txHiresEnable" "True"
+    iniSet "configVersion" "$config_version" "" "[Video-GLideN64]"
+    iniSet "txHiresEnable" "True" "" "[Video-GLideN64]"
 
     # video-rice
-    if ! grep -q "\[Video-Rice\]" "$config"; then
-        echo "[Video-Rice]" >> "$config"
-    fi
-    iniSet "LoadHiResTextures" "True"
+    iniSet "LoadHiResTextures" "True" "" "[Video-Rice]"
 }
 
 function autoset() {
@@ -381,16 +361,13 @@ function autoset() {
     done
 }
 
-if ! grep -q "\[Core\]" "$config"; then
-    echo "[Core]" >> "$config"
-    echo "Version = 1.010000" >> "$config"
-fi
 iniConfig " = " "\"" "$config"
+iniSet "Version" "1.010000" "" "[Core]"
 
 function setPath() {
-    iniSet "ScreenshotPath" "$romdir/n64"
-    iniSet "SaveStatePath" "$romdir/n64"
-    iniSet "SaveSRAMPath" "$romdir/n64"
+    iniSet "ScreenshotPath" "$romdir/n64" "" "[Core]"
+    iniSet "SaveStatePath" "$romdir/n64" "" "[Core]"
+    iniSet "SaveSRAMPath" "$romdir/n64" "" "[Core]"
 }
 
 

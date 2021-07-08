@@ -334,30 +334,23 @@ function configure_mupen64plus() {
         iniConfig " = " "" "$config"
         # VSync is mandatory for good performance on KMS
         if isPlatform "kms"; then
-            if ! grep -q "\[Video-General\]" "$config"; then
-                echo "[Video-General]" >> "$config"
-            fi
-            iniSet "VerticalSync" "True"
+            iniSet "VerticalSync" "True" "" "[Video-General]"
         fi
-        # Create GlideN64 section in .cfg
-        if ! grep -q "\[Video-GLideN64\]" "$config"; then
-            echo "[Video-GLideN64]" >> "$config"
-        fi
-        # Settings version. Don't touch it.
-        iniSet "configVersion" "17"
+        # GLideN64 config version number - will be updated on launch
+        iniSet "configVersion" "17" "" "[Video-GlideN64]"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
-        iniSet "bilinearMode" "1"
-        iniSet "EnableFBEmulation" "True"
+        iniSet "bilinearMode" "1" "" "[Video-GLideN64]"
+        iniSet "EnableFBEmulation" "True" "" "[Video-GLideN64]"
         # Use native res
-        iniSet "UseNativeResolutionFactor" "1"
+        iniSet "UseNativeResolutionFactor" "1" "" "[Video-GLideN64]"
         # Enable legacy blending
-        iniSet "EnableLegacyBlending" "True"
+        iniSet "EnableLegacyBlending" "True" "" "[Video-GLideN64]"
         # Enable Threaded GL calls
-        iniSet "ThreadedVideo" "True"
+        iniSet "ThreadedVideo" "True" "" "[Video-GLideN64]"
         # Swap frame buffers On buffer update (most performant)
-        iniSet "BufferSwapMode" "2"
+        iniSet "BufferSwapMode" "2" "" "[Video-GLideN64]"
         # Disable hybrid upscaling filter (needs better GPU)
-        iniSet "EnableHybridFilter" "False"
+        iniSet "EnableHybridFilter" "False" "" "[Video-GLideN64]"
 
         if isPlatform "videocore"; then
             # Disable gles2n64 autores feature and use dispmanx upscaling
