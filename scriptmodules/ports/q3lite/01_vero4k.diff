@@ -1,0 +1,99 @@
+diff --git a/Makefile b/Makefile
+index 35313f78..4441b4c1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -11,6 +11,12 @@ ifeq ($(COMPILE_PLATFORM),sunos)
+   COMPILE_ARCH=$(shell uname -p | sed -e 's/i.86/x86/')
+ endif
+ 
++ifeq ($(shell sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo),Vero4K)
++  # Standard arch test finds non-specific "aarch64" rather than "Vero4K"
++  PLATFORM_TYPE=vero4k
++  COMPILE_ARCH=vero4k
++endif
++
+ ifndef BUILD_STANDALONE
+   BUILD_STANDALONE =
+ endif
+@@ -44,6 +50,10 @@ endif
+ # causing problems with keeping up to date with the repository.
+ #
+ #############################################################################
++
++# macro used by included Makefiles too
++bin_path=$(shell which $(1) 2> /dev/null)
++
+ -include Makefile.q3lite
+ -include Makefile.local
+ 
+@@ -269,8 +279,6 @@ NSISDIR=misc/nsis
+ SDLHDIR=$(MOUNT_DIR)/SDL2
+ LIBSDIR=$(MOUNT_DIR)/libs
+ 
+-bin_path=$(shell which $(1) 2> /dev/null)
+-
+ # We won't need this if we only build the server
+ ifneq ($(BUILD_CLIENT),0)
+   # set PKG_CONFIG_PATH or PKG_CONFIG to influence this, e.g.
+@@ -367,6 +375,9 @@ ifneq (,$(findstring "$(PLATFORM)", "linux" "gnu_kfreebsd" "kfreebsd-gnu" "gnu")
+   ifeq ($(ARCH),armv7l)
+     HAVE_VM_COMPILED=true
+   endif
++  ifeq ($(ARCH),vero4k)
++    HAVE_VM_COMPILED=true
++  endif
+   ifeq ($(ARCH),alpha)
+     # According to http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=410555
+     # -ffast-math will cause the client to die with SIGFPE on Alpha
+@@ -2140,6 +2151,9 @@ ifeq ($(HAVE_VM_COMPILED),true)
+   ifeq ($(ARCH),armv7l)
+     Q3OBJ += $(B)/client/vm_armv7l.o
+   endif
++  ifeq ($(ARCH),vero4k)
++    Q3OBJ += $(B)/client/vm_armv7l.o
++  endif
+ endif
+ 
+ ifdef MINGW
+@@ -2323,6 +2337,9 @@ ifeq ($(HAVE_VM_COMPILED),true)
+   ifeq ($(ARCH),armv7l)
+     Q3DOBJ += $(B)/client/vm_armv7l.o
+   endif
++  ifeq ($(ARCH),vero4k)
++    Q3DOBJ += $(B)/client/vm_armv7l.o
++  endif
+ endif
+ 
+ ifdef MINGW
+diff --git a/Makefile.q3lite b/Makefile.q3lite
+index d8521dec..14609e4e 100644
+--- a/Makefile.q3lite
++++ b/Makefile.q3lite
+@@ -35,6 +35,8 @@
+ ifneq ($(PLATFORM_TYPE),)
+   ifeq ($(shell uname -m),armv7l)
+     override ARCH=armv7l
++  else ifeq ($(shell sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo),Vero4K)
++    override ARCH=vero4k
+   else
+     override ARCH=arm
+   endif
+@@ -149,12 +151,18 @@ endif
+     PI_CFLAGS=-march=armv8-a+crc -mfpu=vfpv4 -mtune=cortex-a53
+   endif
+   CFLAGS += -DHAVE_GLES $(PI_CFLAGS) -mfloat-abi=hard -Ofast -I/opt/vc/include
++  ifeq ($(PLATFORM_TYPE),vero4k) # Vero4k overide all priorCFLAGS
++    CFLAGS =-mcpu=cortex-a7 -mfpu=neon-vfpv4  -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations
++    CFLAGS += -DHAVE_GLES -I/opt/vero3/include
++  endif
+   ifneq ($(wildcard /opt/vc/lib/libbrcmEGL.so),)
+     ifneq ($(wildcard /opt/vc/lib/libbrcmGLESv2.so),)
+       LDFLAGS += -L/opt/vc/lib -lbrcmEGL -lbrcmGLESv2
+     else
+       LDFLAGS += -L/opt/vc/lib -lEGL -lGLESv2
+     endif
++  else ifneq ($(wildcard /opt/vero3/lib/libMali.so),) # Vero4k
++    LDFLAGS += -L/opt/vero3/lib -lMali
+   else
+     LDFLAGS += -L/opt/vc/lib -lEGL -lGLESv2
+   endif
