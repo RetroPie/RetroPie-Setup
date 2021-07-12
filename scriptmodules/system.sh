@@ -396,18 +396,17 @@ function get_platform() {
                 __platform="armv7-mali"
                 ;;
             *)
-                # jetson nano and tegra x1 can be identified via /sys/firmware/devicetree/base/model
-                local model_path="/sys/firmware/devicetree/base/model"
-                if [[ -f "$model_path" ]]; then
-                    # ignore end null to avoid bash warning
-                    local model=$(tr -d '\0' <$model_path)
-                    case "$model" in
-                        "NVIDIA Jetson Nano Developer Kit")
-                            __platform="jetson-nano"
-                            ;;
-                        icosa|icosa_emmc)
-                            __platform="tegra-x1"
-                            ;;
+                # jetsons can be identified by their dtsfilename
+                # see https://github.com/rbonghi/jetson_stats/blob/master/jtop/jetson_variables for similar implementation
+                if [ -f /proc/device-tree/nvidia,dtsfilename ]; then
+                    local jetson_codename=$(tr -d '\0' < /proc/device-tree/nvidia,dtsfilename)
+                    jetson_codename=$(echo ${jetson_codename#*"/hardware/nvidia/platform/"} | tr '/' '\n' | head -2 | tail -1 )
+                    case "$jetson_codename" in
+                        icosa*) __platform="nintendo-switch" ;;
+                        *2180*) __platform="tx1" ;;
+                        P3310*|P3489-0080*|P3489*) __platform="tx2" ;;
+                        P2888-0006*|P2888-0001*|P2888-0004*|P2888*|P3668-0001*|P3668*) __platform="xavier" ;;
+                        P3448-0002*|P3448*) __platform="nano" ;;
                     esac
                 else
                     case $architecture in
@@ -524,13 +523,27 @@ function platform_odroid-xu() {
     __platform_flags+=(mali gles)
 }
 
-function platform_tegra-x1() {
+function platform_tx1() {
     cpu_armv8 "cortex-a57"
     __platform_flags+=(x11 gl)
 }
 
-function platform_jetson-nano() {
-    platform_tegra-x1
+function platform_nano() {
+    platform_tx1
+}
+
+function platform_nintendo-switch() {
+    platform_tx1
+}
+
+function platform_tx2() {
+    cpu_armv8 "native"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_xavier() {
+    cpu_armv8 "native"
+    __platform_flags+=(x11 gl)
 }
 
 function platform_tinker() {
