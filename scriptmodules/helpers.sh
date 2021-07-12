@@ -648,7 +648,7 @@ function addUdevInputRules() {
 }
 
 ## @fn setBackend()
-## @param module_id name of module to configure backend for
+## @param emulator.cfg key to configure backend for
 ## @param backend name of the backend to set
 ## @param force set to 1 to force the change
 ## @brief Set a backend rendering driver for a module
@@ -656,6 +656,10 @@ function addUdevInputRules() {
 ## This function will only set a backend if
 ##   - It's not already configured, or
 ##   - The 3rd parameter (force) is set to 1
+## The emulator.cfg key is usually the module_id but some modules add multiple emulator.cfg entries
+## which are all handled separately. A module can use a _backend_set_MODULE function hook which is called
+## from the backends module to handle calling setBackend for additional emulator.cfg entries.
+## See "fuse" scriptmodule for an example.
 function setBackend() {
     local config="$configdir/all/backends.cfg"
     local id="$1"
@@ -667,6 +671,25 @@ function setBackend() {
         iniSet "$id" "$mode"
         chown $user:$user "$config"
     fi
+}
+
+## @fn getBackend()
+## @param emulator.cfg key to get backend for
+## @brief Get a backend rendering driver for a module
+## @details Get a backend rendering driver for a module
+## The function echos the result so the value can be captured using var=$(getBackend "$module_id")
+function getBackend() {
+    local config="$configdir/all/backends.cfg"
+    local id="$1"
+    iniConfig " = " '"' "$config"
+    iniGet "$id"
+    if [[ -n "$ini_value" ]]; then
+        # translate old value of 1 as dispmanx for backward compatibility
+        [[ "$ini_value" == "1" ]] && ini_value="dispmanx"
+     else
+        ini_value="default"
+     fi
+     echo "$ini_value"
 }
 
 ## @fn setDispmanx()
