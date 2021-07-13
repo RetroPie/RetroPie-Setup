@@ -13,7 +13,7 @@ rp_module_id="dosbox-staging"
 rp_module_desc="modern DOS/x86 emulator focusing on ease of use"
 rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dosbox-staging/dosbox-staging/master/COPYING"
-rp_module_repo="git https://github.com/dosbox-staging/dosbox-staging v0.77.0"
+rp_module_repo="git https://github.com/dosbox-staging/dosbox-staging.git v0.77.0"
 rp_module_section="exp"
 rp_module_flags="sdl2"
 
