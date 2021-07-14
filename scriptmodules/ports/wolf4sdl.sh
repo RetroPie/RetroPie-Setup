@@ -66,7 +66,7 @@ function build_wolf4sdl() {
         local bin="${opt%% *}"
         local defs="${opt#* }"
         make clean
-        CFLAGS+=" -DVERSIONALREADYCHOSEN -DGPL $defs" make DATADIR="$romdir/ports/wolf3d/"
+        CFLAGS+=" -DVERSIONALREADYCHOSEN -DGPL $defs" make
         mv wolf4sdl "bin/$bin"
         md_ret_require+=("bin/$bin")
     done < <(_get_opts_wolf4sdl)
@@ -129,7 +129,9 @@ function launch_wolf4sdl() {
         ['35afda760bea840b547d686a930322dc']="wolf4sdl-spear-sw"
     )
         if [[ "\${game_checksums[\$(get_md5sum \$wad_file)]}" ]] 2>/dev/null; then
+            pushd "$romdir/ports/wolf3d"
             $md_inst/bin/\${game_checksums[\$(get_md5sum \$wad_file)]}
+            popd
         else
             echo "Error: \$wad_file (md5: \$(get_md5sum \$wad_file)) is not a supported version"
         fi
