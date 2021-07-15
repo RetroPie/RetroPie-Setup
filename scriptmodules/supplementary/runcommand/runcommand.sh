@@ -794,7 +794,6 @@ function choose_emulator() {
         mode_desc+="ROM ($ROM_BN)"
     fi
 
-    local default
     local default_id
 
     local options=()
