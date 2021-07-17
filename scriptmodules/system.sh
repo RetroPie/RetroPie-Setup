@@ -402,7 +402,7 @@ function get_platform() {
                     fi
                 elif [[ -e "/sys/devices/soc0/family" ]]; then
                     CHIP="$(tr -d '\0' < /sys/devices/soc0/family)"
-                    elif [[ ${CHIP} =~ "tegra20" ]]; then
+                    if [[ ${CHIP} =~ "tegra20" ]]; then
                         __platform="tegra-2"
                     elif [[ ${CHIP} =~ "tegra30" ]]; then
                         __platform="tegra-3"
