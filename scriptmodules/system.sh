@@ -388,18 +388,33 @@ function get_platform() {
                 __platform="armv7-mali"
                 ;;
             *)
-                # jetsons can be identified by their dtsfilename
-                # see https://github.com/rbonghi/jetson_stats/blob/master/jtop/jetson_variables for similar implementation
-                if [ -f /proc/device-tree/nvidia,dtsfilename ]; then
-                    local jetson_codename=$(tr -d '\0' < /proc/device-tree/nvidia,dtsfilename)
-                    jetson_codename=$(echo ${jetson_codename#*"/hardware/nvidia/platform/"} | tr '/' '\n' | head -2 | tail -1 )
-                    case "$jetson_codename" in
-                        icosa*) __platform="nintendo-switch" ;;
-                        *2180*) __platform="tx1" ;;
-                        P3310*|P3489-0080*|P3489*) __platform="tx2" ;;
-                        P2888-0006*|P2888-0001*|P2888-0004*|P2888*|P3668-0001*|P3668*) __platform="xavier" ;;
-                        P3448-0002*|P3448*) __platform="nano" ;;
-                    esac
+                # jetsons can be identified by device tree or soc0/family (depending on the L4T version used)
+                # the nv.sh script in the L4T DTS for a similar implementation
+
+                if [[ -e "/proc/device-tree/compatible" ]]; then
+                    CHIP="$(tr -d '\0' < /proc/device-tree/compatible)"
+                    if [[ ${CHIP} =~ "tegra186" ]]; then
+                        __platform="tegra-x2"
+                    elif [[ ${CHIP} =~ "tegra210" ]]; then
+                        __platform="tegra-x1"
+                    elif [[ ${CHIP} =~ "tegra194" ]]; then
+                        __platform="xavier"
+                    fi
+                elif [[ -e "/sys/devices/soc0/family" ]]; then
+                    CHIP="$(tr -d '\0' < /sys/devices/soc0/family)"
+                    elif [[ ${CHIP} =~ "tegra20" ]]; then
+                        __platform="tegra-2"
+                    elif [[ ${CHIP} =~ "tegra30" ]]; then
+                        __platform="tegra-3"
+                    elif [[ ${CHIP} =~ "tegra114" ]]; then
+                        __platform="tegra-4"
+                    elif [[ ${CHIP} =~ "tegra124" ]]; then
+                        __platform="tegra-k1-32"
+                    elif [[ ${CHIP} =~ "tegra132" ]]; then
+                        __platform="tegra-k1-64"
+                    elif [[ ${CHIP} =~ "tegra210" ]]; then
+                        __platform="tegra-x1"
+                    fi
                 else
                     case $architecture in
                         i686|x86_64|amd64)
@@ -515,25 +530,42 @@ function platform_odroid-xu() {
     __platform_flags+=(mali gles)
 }
 
-function platform_tx1() {
+function platform_tegra-x1() {
     cpu_armv8 "cortex-a57"
     __platform_flags+=(x11 gl)
 }
 
-function platform_nano() {
-    platform_tx1
-}
-
-function platform_nintendo-switch() {
-    platform_tx1
-}
-
-function platform_tx2() {
+function platform_tegra-x2() {
     cpu_armv8 "native"
     __platform_flags+=(x11 gl)
 }
 
 function platform_xavier() {
+    cpu_armv8 "native"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-2() {
+    cpu_armv7 "cortex-a9"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-3() {
+    cpu_armv7 "cortex-a9"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-4() {
+    cpu_armv7 "cortex-a15"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-k1-32() {
+    cpu_armv7 "cortex-a15"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-k1-64() {
     cpu_armv8 "native"
     __platform_flags+=(x11 gl)
 }
