@@ -304,14 +304,6 @@ function get_retropie_depends() {
 
     [[ "$__use_ccache" -eq 1 ]] && depends+=(ccache)
 
-    # 'python3-sdl2' might not be available
-    # it's packaged in Debian starting with version 11 (Bullseye)
-    local p_ver
-    p_ver="$(apt-cache madison python3-sdl2 | cut -d" " -f3 | head -n1)"
-    if [[ -n "$p_ver" ]]; then
-        depends+=(python3-sdl2)
-    fi
-
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
     fi

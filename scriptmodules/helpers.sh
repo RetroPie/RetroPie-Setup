@@ -1248,44 +1248,21 @@ function joy2keyStart() {
     [[ "$(who -m)" == *\(* ]] && return
 
     local params=("$@")
-    if [[ "${#params[@]}" -eq 0 ]]; then
-        # Default button-to-keyboard mappings:
-        # * cursor keys for axis/dpad
-        # * enter, space and esc for buttons 'a', 'b' and 'x'
-        # * page up/page down for buttons 5,6 (shoulder buttons)
-        params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20 0x1b 0x00 kpp knp)
-    fi
-
-    # Choose the joy2key implementation here, since `runcommand` may not be installed
-    local joy2key="joy2key.py"
-    if hasPackage "python3-sdl2"; then
-        iniConfig " =" '"' "$configdir/all/runcommand.cfg"
-        iniGet "joy2key_version"
-        [[ $ini_value != "0" ]] && joy2key="joy2key_sdl.py"
-    fi
-
-    # get the first joystick device (if not already set)
-    [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/jsX"
-
-    # if no joystick device, or joy2key is already running exit
-    [[ -z "$__joy2key_dev" ]] || pgrep -f "$joy2key" >/dev/null && return 1
 
     # if joy2key is installed, run it
-    if "$scriptdir/scriptmodules/supplementary/runcommand/$joy2key" "$__joy2key_dev" "${params[@]}" 2>/dev/null; then
-        __joy2key_pid=$(pgrep -f "$joy2key")
-        return 0
+    if rp_isInstalled "joy2key"; then
+        "$(rp_getInstallPath joy2key)/joy2key" start "${params[@]}" 2>/dev/null && return 0
     fi
 
     return 1
 }
 
 ## @fn joy2keyStop()
-## @brief Stop previously started joy2key.py process.
+## @brief Stop previously started joy2key process.
 function joy2keyStop() {
-    if [[ -n $__joy2key_pid ]]; then
-        kill $__joy2key_pid 2>/dev/null
-        __joy2key_pid=""
-        sleep 1
+    # if joy2key is installed, stop it
+    if rp_isInstalled "joy2key"; then
+        "$(rp_getInstallPath joy2key)/joy2key" stop
     fi
 }
 
