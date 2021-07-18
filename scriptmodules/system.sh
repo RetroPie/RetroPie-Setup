@@ -388,16 +388,38 @@ function get_platform() {
                 __platform="armv7-mali"
                 ;;
             *)
-                # jetson nano and tegra x1 can be identified via /sys/firmware/devicetree/base/model
-                local model_path="/sys/firmware/devicetree/base/model"
-                if [[ -f "$model_path" ]]; then
-                    # ignore end null to avoid bash warning
-                    local model=$(tr -d '\0' <$model_path)
-                    case "$model" in
-                        "NVIDIA Jetson Nano Developer Kit")
-                            __platform="jetson-nano"
+                # jetsons can be identified by device tree or soc0/family (depending on the L4T version used)
+                # refer to the nv.sh script in the L4T DTS for a similar implementation
+                if [[ -e "/proc/device-tree/compatible" ]]; then
+                    case "$(tr -d '\0' < /proc/device-tree/compatible)" in
+                        *tegra186*)
+                            __platform="tegra-x2"
                             ;;
-                        icosa|icosa_emmc)
+                        *tegra210*)
+                            __platform="tegra-x1"
+                            ;;
+                        *tegra194*)
+                            __platform="xavier"
+                            ;;
+                    esac
+                elif [[ -e "/sys/devices/soc0/family" ]]; then
+                    case "$(tr -d '\0' < /sys/devices/soc0/family)" in
+                        *tegra20*)
+                            __platform="tegra-2"
+                            ;;
+                        *tegra30*)
+                            __platform="tegra-3"
+                            ;;
+                        *tegra114*)
+                            __platform="tegra-4"
+                            ;;
+                        *tegra124*)
+                            __platform="tegra-k1-32"
+                            ;;
+                        *tegra132*)
+                            __platform="tegra-k1-64"
+                            ;;
+                        *tegra210*)
                             __platform="tegra-x1"
                             ;;
                     esac
@@ -521,8 +543,39 @@ function platform_tegra-x1() {
     __platform_flags+=(x11 gl)
 }
 
-function platform_jetson-nano() {
-    platform_tegra-x1
+function platform_tegra-x2() {
+    cpu_armv8 "native"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_xavier() {
+    cpu_armv8 "native"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-2() {
+    cpu_armv7 "cortex-a9"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-3() {
+    cpu_armv7 "cortex-a9"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-4() {
+    cpu_armv7 "cortex-a15"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-k1-32() {
+    cpu_armv7 "cortex-a15"
+    __platform_flags+=(x11 gl)
+}
+
+function platform_tegra-k1-64() {
+    cpu_armv8 "native"
+    __platform_flags+=(x11 gl)
 }
 
 function platform_tinker() {
