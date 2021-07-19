@@ -13,9 +13,13 @@ rp_module_id="dosbox-staging"
 rp_module_desc="modern DOS/x86 emulator focusing on ease of use"
 rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dosbox-staging/dosbox-staging/master/COPYING"
-rp_module_repo="git https://github.com/dosbox-staging/dosbox-staging.git master"
+rp_module_repo="git https://github.com/dosbox-staging/dosbox-staging.git :_get_branch_dosbox-staging"
 rp_module_section="exp"
 rp_module_flags="sdl2"
+
+function _get_branch_dosbox-staging() {
+    download https://api.github.com/repos/dosbox-staging/dosbox-staging/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
+}
 
 function depends_dosbox-staging() {
     getDepends cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev meson ninja-build
