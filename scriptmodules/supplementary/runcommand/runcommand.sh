@@ -296,7 +296,7 @@ function get_all_x11_modes()
     while read -r id; do
         # populate CONNECTOR:0xID into an array
         MODE_ID+=($id) # output:id as in (hdmi:0x44)
-        
+
         read -r line
         # array is x/y resolution @ vertical refresh rate ( details )
         MODE[$id]="$line"
@@ -305,36 +305,36 @@ function get_all_x11_modes()
         # true is the "header" (output and id)
         # false is the "description" (Mode: and everything that begins with a space)
         { type = /^[^ \t]+/ }
-        
+
         # Exit after the first output
         type && output {exit} # New header and output set means new output
-        
+
         # many outputs can be connected, but only the ones with the id are in use.
         # output must be connected and have an (id)
         type && / connected/ && /\(0x[0-9a-f]+\)/ {
             output=$1; next
         }
-        
+
         # parse mode and lines
         # If we are in a "description", and output is set (output being what we want)
         # And if $2 is an id, we are in a video mode description line
         !type && output && $2 ~ /^\(0x[0-9a-f]+\)$/ {
             # Print CRTC identifier (CONNECTOR:0xID)
             print output ":" substr($2,2,length($2)-2) # id
-            
+
             # get rid of what we printed
             $1="";$2=""
             sub(/^[ \t]+/,"") # trim spaces
-            
+
             # save rest of the line
             info=$0
 
             # Save width from the 2nd line of the video mode
             getline; width=$3
-            
+
             # Save height & vrefresh from the 3rd line of video mode
             getline; height=$3; vrefresh=$NF
-            
+
             # Print video mode details
             print width "x" height " @ " vrefresh " (" info ")"
         }
@@ -615,6 +615,7 @@ function main_menu() {
     local save
     local cmd
     local choice
+    local default
 
     local user_menu=0
     [[ -d "$CONFIGDIR/all/runcommand-menu" && -n "$(find "$CONFIGDIR/all/runcommand-menu" -maxdepth 1 -name "*.sh")" ]] && user_menu=1
@@ -629,37 +630,32 @@ function main_menu() {
             local emu_sys="$(default_emulator get emu_sys)"
             local emu_rom="$(default_emulator get emu_rom)"
             options+=(
-                1 "Select default emulator for $SYSTEM ($emu_sys)"
-                2 "Select emulator for ROM ($emu_rom)"
+                ES "Select default emulator for $SYSTEM ($emu_sys)"
+                ER "Select emulator for ROM ($emu_rom)"
             )
-            [[ -n "$emu_rom" ]] && options+=(3 "Remove emulator choice for ROM")
         fi
 
         if [[ -n "$HAS_MODESET" ]]; then
             local vid_emu="$(default_mode get vid_emu)"
             local vid_rom="$(default_mode get vid_rom)"
             options+=(
-                4 "Select default video mode for $EMULATOR ($vid_emu)"
-                5 "Select video mode for $EMULATOR + rom ($vid_rom)"
+                VE "Select video mode for $EMULATOR ($vid_emu)"
+                VR "Select video mode for $EMULATOR + ROM ($vid_rom)"
             )
-            [[ -n "$vid_emu" ]] && options+=(6 "Remove video mode choice for $EMULATOR")
-            [[ -n "$vid_rom" ]] && options+=(7 "Remove video mode choice for $EMULATOR + ROM")
         fi
 
         if [[ "$EMULATOR" == lr-* ]]; then
             if [[ "$HAS_MODESET" == "tvs" ]]; then
-                options+=(8 "Select RetroArch render res for $EMULATOR ($RENDER_RES)")
+                options+=(R "Select RetroArch render res for $EMULATOR ($RENDER_RES)")
             fi
-            options+=(9 "Edit custom RetroArch config for this ROM")
+            options+=(C "Edit custom RetroArch config for this ROM")
         elif [[ "$HAS_MODESET" == "tvs" ]]; then
             local fb_emu="$(default_mode get fb_emu)"
             local fb_rom="$(default_mode get fb_rom)"
             options+=(
-                10 "Select framebuffer res for $EMULATOR ($fb_emu)"
-                11 "Select framebuffer res for $EMULATOR + ROM ($fb_rom)"
+                FE "Select framebuffer res for $EMULATOR ($fb_emu)"
+                FR "Select framebuffer res for $EMULATOR + ROM ($fb_rom)"
             )
-            [[ -n "$fb_emu" ]] && options+=(12 "Remove framebuffer res choice for $EMULATOR")
-            [[ -n "$fb_rom" ]] && options+=(13 "Remove framebuffer res choice for $EMULATOR + ROM")
         fi
 
         options+=(X "Launch")
@@ -681,58 +677,39 @@ function main_menu() {
         else
             temp_mode="n/a"
         fi
-        cmd=(dialog --nocancel --menu "System: $SYSTEM\nEmulator: $EMULATOR\nVideo Mode: $temp_mode\nROM: $ROM_BN"  22 76 16 )
+
+        cmd=(dialog --nocancel --default-item "$default" --menu "System: $SYSTEM\nEmulator: $EMULATOR\nVideo Mode: $temp_mode\nROM: $ROM_BN"  22 76 16 )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+        default="$choice"
+
         case "$choice" in
-            1)
+            ES)
                 choose_emulator "emu_sys" "$emu_sys"
                 ;;
-            2)
+            ER)
                 choose_emulator "emu_rom" "$emu_rom"
                 ;;
-            3)
-                default_emulator "del" "emu_rom"
-                get_sys_command
-                set_save_vars
-                load_mode_defaults
-                ;;
-            4)
+            VE)
                 choose_mode "vid_emu" "$vid_emu"
                 ;;
-            5)
+            VR)
                 choose_mode "vid_rom" "$vid_rom"
                 ;;
-            6)
-                default_mode "del" "vid_emu"
-                load_mode_defaults
-                ;;
-            7)
-                default_mode "del" "vid_rom"
-                load_mode_defaults
-                ;;
-            8)
+            R)
                 choose_render_res "render" "$RENDER_RES"
                 ;;
-            9)
+            C)
                 touch "$ROM.cfg"
                 cmd=(dialog --editbox "$ROM.cfg" 22 76)
                 choice=$("${cmd[@]}" 2>&1 >/dev/tty)
                 [[ -n "$choice" ]] && echo "$choice" >"$ROM.cfg"
                 [[ ! -s "$ROM.cfg" ]] && rm "$ROM.cfg"
                 ;;
-            10)
-                choose_fb_res "fb_emu" "$fb_emu"
+            FE)
+                choose_mode "fb_emu" "$fb_emu"
                 ;;
-            11)
-                choose_fb_res "fb_rom" "$fb_rom"
-                ;;
-            12)
-                default_mode "del" "fb_emu"
-                load_mode_defaults
-                ;;
-            13)
-                default_mode "del" "fb_rom"
-                load_mode_defaults
+            FR)
+                choose_mode "fb_rom" "$fb_rom"
                 ;;
             Z)
                 NETPLAY=1
@@ -763,16 +740,45 @@ function choose_mode() {
     local mode="$1"
     local default="$2"
 
-    local options=()
     local key
-    for key in "${MODE_ID[@]}"; do
-        options+=("$key" "${MODE[$key]}")
-    done
-    local cmd=(dialog --default-item "$default" --menu "Choose video output mode"  22 76 16 )
+    local options=()
+    local mode_desc=""
+
+    options=("X" "Clear / Remove")
+    if [[ "$mode" == vid_* ]]; then
+        mode_desc="video mode for "
+        for key in "${MODE_ID[@]}"; do
+            options+=("$key" "${MODE[$key]}")
+        done
+    elif [[ "$mode" == fb_* ]]; then
+        mode_desc="framebuffer resolution for "
+        for key in $(get_resolutions); do
+            options+=("$key" "$key")
+        done
+    fi
+
+    if [[ "$mode" == *_emu ]]; then
+        mode_desc+="$EMULATOR"
+    else
+        mode_desc+="$EMULATOR + ROM ($ROM_BN)"
+    fi
+
+    local menu_title="Choose $mode_desc\nCurrently: "
+    if [[ -z "$default" ]]; then
+        menu_title+="(not set)"
+    else
+        menu_title+="$default"
+    fi
+
+    local cmd=(dialog --default-item "$default" --menu "$menu_title"  22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
-    default_mode set "$mode" "$choice"
+    if [[ "$choice" == "X" ]]; then
+        default_mode del "$mode"
+    else
+        default_mode set "$mode" "$choice"
+    fi
     load_mode_defaults
 }
 
@@ -781,7 +787,13 @@ function choose_emulator() {
     local default="$2"
     local cancel="$3"
 
-    local default
+    local mode_desc="default emulator for "
+    if [[ "$mode" == "emu_sys" ]]; then
+        mode_desc+="$SYSTEM"
+    else
+        mode_desc+="ROM ($ROM_BN)"
+    fi
+
     local default_id
 
     local options=()
@@ -798,16 +810,29 @@ function choose_emulator() {
         options+=($i "$id")
         ((i++))
     done < <(sort "$EMU_SYS_CONF")
-    if [[ -z "${options[*]}" ]]; then
+    if [[ "${#options[@]}" -eq 0 ]]; then
         dialog --msgbox "No emulator options found for $SYSTEM - Do you have a valid $EMU_SYS_CONF ?" 20 60 >/dev/tty
         stop_joy2key
         exit 1
     fi
-    local cmd=(dialog $cancel --default-item "$default_id" --menu "Choose default emulator"  22 76 16 )
+    [[ "$mode" != "emu_sys" ]] && options=("X" "Clear / Remove" "${options[@]}")
+
+    local menu_title="Choose $mode_desc\nCurrently: "
+    if [[ -z "$default" ]]; then
+        menu_title+="(not set)"
+    else
+        menu_title+="$default"
+    fi
+
+    local cmd=(dialog $cancel --default-item "$default_id" --menu "$menu_title"  22 76 16 )
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
-    default_emulator set "$mode" "${apps[$choice]}"
+    if [[ "$choice" == "X" ]]; then
+        default_emulator del "$mode"
+    else
+        default_emulator set "$mode" "${apps[$choice]}"
+    fi
     get_sys_command
     set_save_vars
     load_mode_defaults
@@ -872,27 +897,6 @@ function choose_render_res() {
             choice="${res[$choice-1]}"
             ;;
     esac
-
-    default_mode set "$mode" "$choice"
-    load_mode_defaults
-}
-
-function choose_fb_res() {
-    local mode="$1"
-    local default="$2"
-
-    local res=($(get_resolutions))
-    local i=1
-    local item
-    local options=()
-    for item in "${res[@]}"; do
-        options+=($i "$item")
-        ((i++))
-    done
-    local cmd=(dialog --default-item "$default" --menu "Choose framebuffer resolution (Useful for X and console apps)" 22 76 16 )
-    local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-    [[ -z "$choice" ]] && return
-    choice="${res[$choice-1]}"
 
     default_mode set "$mode" "$choice"
     load_mode_defaults
@@ -1057,7 +1061,7 @@ function config_backend() {
     # if we are running under X then don't try and use a different backend
     [[ -n "$DISPLAY" || "$XINIT" -eq 1 ]] && return
     local name="$1"
-    # if we have a backends.conf file and with an entry for the current emulator name, 
+    # if we have a backends.conf file and with an entry for the current emulator name,
     # change the library path to load dispmanx sdl first
     if [[ -f "$BACKENDS_CONF" ]]; then
         iniConfig " = " '"' "$BACKENDS_CONF"
