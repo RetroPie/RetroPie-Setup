@@ -103,6 +103,7 @@ function gui_esthemes() {
         'TMNTturtleguy ComicBook_SE-Wheelart'
         'TMNTturtleguy ComicBook_4-3_SE-Wheelart'
         'ChoccyHobNob cygnus'
+        'DTEAM-1 cygnus-blue-flames'
         'dmmarti steampunk'
         'dmmarti hurstyblue'
         'dmmarti maximuspie'
