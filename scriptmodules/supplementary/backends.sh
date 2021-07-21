@@ -48,19 +48,6 @@ function _list_backends() {
     return 0
 }
 
-function _get_current_backends() {
-    local id="$1"
-    iniConfig " = " '"' "$configdir/all/backends.cfg"
-    iniGet "$id"
-    if [[ -n "$ini_value" ]]; then
-        # translate old value of 1 as dispmanx for backward compatibility
-        [[ "$ini_value" == "1" ]] && ini_value="dispmanx"
-     else
-        ini_value="default"
-     fi
-     echo "$ini_value"
-}
-
 function _update_hook_backends() {
     local dispmanx_cfg="$configdir/all/dispmanx.cfg"
     local backends_cfg="$configdir/all/backends.cfg"
@@ -82,7 +69,7 @@ function gui_backends() {
             valid=0
             if rp_isInstalled "$id"; then
                 if _list_backends "$id" >/dev/null; then
-                    backend="$(_get_current_backends "$id")"
+                    backend="$(getBackend "$id")"
                     options+=("$id" "Using ${backends[$backend]} ($backend)")
                 fi
             fi
@@ -102,7 +89,7 @@ function gui_configure_backends() {
     _list_backends "$id"
 
     while true; do
-        local current="$(_get_current_backends "$id")"
+        local current="$(getBackend "$id")"
         local options=()
         local selected
         local backend

@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .a52 .bas .bin .car .xex .atr .xfd .dcm .atr.gz 
 rp_module_licence="GPL2 https://raw.githubusercontent.com/atari800/atari800/master/COPYING"
 rp_module_repo="git https://github.com/atari800/atari800.git ATARI800_4_2_0"
 rp_module_section="opt"
-rp_module_flags="!mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_atari800() {
     local depends=(libsdl1.2-dev autoconf automake zlib1g-dev libpng-dev)
@@ -45,10 +45,34 @@ function install_atari800() {
     make install
 }
 
-function configure_atari800() {
+function _add_emulators_atari800() {
     local params=()
-    isPlatform "kms" && params+=("-fullscreen" "-fs-width %XRES%" "-fs-height %YRES%")
+    local backend="$(getBackend "$md_id")"
+    case "$backend" in
+        x11*)
+            # use fullscreen on x11
+            params+=("-fullscreen")
+            # enable hw acceleration by default if supported
+            if isPlatform "gl" || isPlatform "gles"; then
+                params+=("-video-accel")
+            fi
+            ;;
+        default|x11*)
+            # if backend is set to sdl1 default and we are on kms, we need to set fullscreen
+            # and add width/height params to be filled out by runcommand or else it won't fill the screen
+            isPlatform "kms" && params+=("-fullscreen" "-fs-width %XRES%" "-fs-height %YRES%")
+            ;;
+    esac
 
+    local cmd="$md_inst/atari800.sh %ROM% ${params[*]}"
+    addEmulator 1 "$md_id" "atari800" "$cmd"
+    addEmulator 1 "$md_id-800" "atari800" "$cmd -atari"
+    addEmulator 1 "$md_id-800xl" "atari800" "$cmd -xl"
+    addEmulator 1 "$md_id-130xe" "atari800" "$cmd -xe"
+    addEmulator 1 "$md_id-5200" "atari5200" "$cmd -5200"
+}
+
+function configure_atari800() {
     mkRomDir "atari800"
     mkRomDir "atari5200"
 
@@ -66,11 +90,26 @@ function configure_atari800() {
         chmod a+x "$md_inst/$md_id.sh"
     fi
 
-    addEmulator 1 "atari800" "atari800" "$md_inst/atari800.sh %ROM% ${params[*]}"
-    addEmulator 1 "atari800-800" "atari800" "$md_inst/atari800.sh %ROM% ${params[*]} -atari"
-    addEmulator 1 "atari800-800xl" "atari800" "$md_inst/atari800.sh %ROM% ${params[*]} -xl"
-    addEmulator 1 "atari800-130xe" "atari800" "$md_inst/atari800.sh %ROM% ${params[*]} -xe"
-    addEmulator 1 "atari800-5200" "atari5200" "$md_inst/atari800.sh %ROM% ${params[*]} -5200"
+    local params=()
+    # if we are on fkms, use the sdl1 dispmanx backend by default for good performance without using X11/opengl
+    isPlatform kms && isPlatform "dispmanx" && _backend_set_atari800 "dispmanx"
+
+    # this is split out so we can call it via _backend_set_atari800
+    _add_emulators_atari800
     addSystem "atari800"
     addSystem "atari5200"
+
+}
+
+function _backend_set_atari800() {
+    local mode="$1"
+    local force="$2"
+    setBackend "$md_id" "$mode" "$force"
+    setBackend "$md_id-800" "$mode" "$force"
+    setBackend "$md_id-800xl" "$mode" "$force"
+    setBackend "$md_id-130xe" "$mode" "$force"
+    setBackend "$md_id-5200" "$mode" "$force"
+    # call _add_emulators_atari800 again (unless called from configure_atari800) as the emulator.cfg
+    # entries differ depending on backend
+    [[ "${FUNCNAME[1]}" != "configure_atari800" ]] && _add_emulators_atari800
 }
