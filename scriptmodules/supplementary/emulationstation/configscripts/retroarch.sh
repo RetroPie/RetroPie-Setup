@@ -238,11 +238,14 @@ function map_retroarch_joystick() {
     local key
     local value
     local type
+    declare -A hat_map=([1]="up" [2]="right" [4]="down" [8]="left")
     for key in "${keys[@]}"; do
         case "$input_type" in
             hat)
+                # check if hat input value is correct
+                [[ -z ${hat_map[$input_value]} ]] && return
                 type="btn"
-                value="h$input_id$input_name"
+                value="h$input_id${hat_map[$input_value]}"
                 ;;
             axis)
                 type="axis"
