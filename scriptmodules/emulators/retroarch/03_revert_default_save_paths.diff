@@ -1,5 +1,5 @@
 diff --git a/frontend/drivers/platform_unix.c b/frontend/drivers/platform_unix.c
-index 8cc3231c2c..9932d1b961 100644
+index 44946f9c93..d3b74ee1c9 100644
 --- a/frontend/drivers/platform_unix.c
 +++ b/frontend/drivers/platform_unix.c
 @@ -1928,12 +1928,6 @@ static void frontend_unix_get_env(int *argc,

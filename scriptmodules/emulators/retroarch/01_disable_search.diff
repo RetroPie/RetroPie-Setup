@@ -1,5 +1,5 @@
 diff --git a/retroarch.c b/retroarch.c
-index 4e643c2af7..be1fed3a4e 100644
+index 0642c8c779..b00780047d 100644
 --- a/retroarch.c
 +++ b/retroarch.c
 @@ -2596,7 +2596,8 @@ int generic_menu_entry_action(
