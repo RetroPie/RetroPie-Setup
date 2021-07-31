@@ -97,6 +97,8 @@ function chroot_build_builder() {
             [[ -z "$distcc_hosts" ]] && distcc_hosts="$ip"
         fi
 
+        local use_ccache="$__builder_use_ccache"
+
         local makeflags="$__builder_makeflags"
         [[ -z "$makeflags" ]] && makeflags="-j$(nproc)"
         [[ ! -d "$chroot_dir" ]] && rp_callModule image create_chroot "$dist" "$chroot_dir"
@@ -126,6 +128,7 @@ function chroot_build_builder() {
 
             rp_callModule image chroot "$chroot_dir" \
                 sudo \
+                __use_ccache="$use_ccache" \
                 __makeflags="$makeflags" \
                 DISTCC_HOSTS="$distcc_hosts" \
                 __platform="$platform" \
