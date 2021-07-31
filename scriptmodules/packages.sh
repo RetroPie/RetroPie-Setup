@@ -643,7 +643,7 @@ function rp_hasNewerModule() {
                 local vendor="${__mod_info[$id/vendor]}"
                 local repo_dir="$scriptdir"
                 [[ "$vendor" != "RetroPie" ]] && repo_dir+="/ext/$vendor"
-                local module_date="$(git -C "$repo_dir" log -1 --format=%aI -- "${__mod_info[$id/path]}")"
+                local module_date="$(git -C "$repo_dir" log -1 --format=%cI -- "${__mod_info[$id/path]}")"
                 if rp_dateIsNewer "$pkg_date" "$module_date"; then
                     ret=0
                 fi
@@ -790,7 +790,7 @@ function rp_setPackageInfo() {
                     local repo_dir="${__mod_info[$id/repo_dir]}"
                     [[ -z "$repo_dir" ]] && repo_dir="$md_build"
                     # date cannot understand the default date format of git
-                    pkg_repo_date="$(git -C "$repo_dir" log -1 --format=%aI)"
+                    pkg_repo_date="$(git -C "$repo_dir" log -1 --format=%cI)"
                     pkg_repo_commit="$(git -C "$repo_dir" log -1 --format=%H)"
                 else
                     pkg_repo_date="$(svn info . | grep -oP "Last Changed Date: \K.*")"
