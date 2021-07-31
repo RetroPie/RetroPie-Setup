@@ -145,6 +145,12 @@ function conf_build_vars() {
         PATH="/usr/lib/distcc:$PATH"
         MAKEFLAGS+=" PATH=$PATH"
     fi
+
+    # if __use_ccache is set, then add ccache to PATH/MAKEFLAGS
+    if [[ "$__use_ccache" -eq 1 ]]; then
+        PATH="/usr/lib/ccache:$PATH"
+        MAKEFLAGS+=" PATH=$PATH"
+    fi
 }
 
 function get_os_version() {
@@ -295,6 +301,8 @@ function get_retropie_depends() {
     local depends=(git subversion dialog curl gcc g++ build-essential unzip xmlstarlet python3-pyudev ca-certificates dirmngr)
 
     [[ -n "$DISTCC_HOSTS" ]] && depends+=(distcc)
+
+    [[ "$__use_ccache" -eq 1 ]] && depends+=(ccache)
 
     # 'python3-sdl2' might not be available
     # it's packaged in Debian starting with version 11 (Bullseye)
