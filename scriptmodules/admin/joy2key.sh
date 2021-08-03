@@ -59,11 +59,7 @@ if [[ "\${#params[@]}" -eq 0 ]]; then
     params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20 0x1b 0x09 kpp knp)
 fi
 
-source "$rootdir/lib/inifuncs.sh"
-iniConfig " = " '"' "$configdir/all/runcommand.cfg"
-iniGet "joy2key_version"
 script="joy2key_sdl.py"
-[[ "\$ini_value" == "0" ]] && script="joy2key.py"
 ! python3 -c "import sdl2" 2>/dev/null && script="joy2key.py"
 
 case "\$mode" in
