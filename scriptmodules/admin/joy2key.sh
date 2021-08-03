@@ -77,4 +77,10 @@ esac
 exit 0
 _EOF_
     chmod +x "$wrapper"
+
+    joy2keyStart
+}
+
+function remove_joy2key() {
+    joy2keyStop
 }
