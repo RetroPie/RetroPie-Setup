@@ -12,22 +12,13 @@
 rp_module_id="mame"
 rp_module_desc="MAME emulator"
 rp_module_help="ROM Extensions: .zip .7z\n\nCopy your MAME roms to either $romdir/mame or\n$romdir/arcade"
-rp_module_licence="GPL2 https://github.com/mamedev/mame/blob/master/COPYING"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/mamedev/mame/master/COPYING"
 rp_module_repo="git https://github.com/mamedev/mame.git :_get_branch_mame"
 rp_module_section="exp"
 rp_module_flags="!mali !armv6"
 
 function _get_branch_mame() {
     download https://api.github.com/repos/mamedev/mame/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
-}
-
-function _get_binary_name_mame() {
-    # The MAME executable on 64-bit systems is called mame64 instead of mame. Rename it back to mame.
-    if isPlatform "64bit" && ! isPlatform "aarch64"; then
-        echo 'mame64'
-    else
-        echo 'mame'
-    fi
 }
 
 function depends_mame() {
@@ -38,7 +29,7 @@ function depends_mame() {
 
     # Install required libraries required for compilation and running
     # Note: libxi-dev is required as of v0.210, because of flag changes for XInput
-    getDepends libfontconfig1-dev qt5-default libsdl2-ttf-dev libxinerama-dev libxi-dev
+    getDepends libfontconfig1-dev qt5-default libsdl2-ttf-dev libxinerama-dev libxi-dev libpulse-dev
 }
 
 function sources_mame() {
@@ -46,7 +37,7 @@ function sources_mame() {
 }
 
 function build_mame() {
-    # More memory is required for x86 platforms
+    # More memory is required for 64bit platforms
     if isPlatform "64bit"; then
         rpSwap on 8192
     else
@@ -56,12 +47,10 @@ function build_mame() {
     # Compile MAME
     local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE PYTHON_EXECUTABLE=python3)
     make "${params[@]}"
-
-    local binary_name="$(_get_binary_name_${md_id})"
-    strip "${binary_name}"
+    strip mame
 
     rpSwap off
-    md_ret_require="$md_build/${binary_name}"
+    md_ret_require="$md_build/mame"
 }
 
 function install_mame() {
@@ -74,7 +63,7 @@ function install_mame() {
         'hlsl'
         'ini'
         'language'
-        "$(_get_binary_name_${md_id})"
+        'mame'
         'plugins'
         'roms'
         'samples'
@@ -158,9 +147,8 @@ function configure_mame() {
         rm "$temp_ini_hiscore"
     fi
 
-    local binary_name="$(_get_binary_name_${md_id})"
-    addEmulator 0 "$md_id" "arcade" "$md_inst/${binary_name} %BASENAME%"
-    addEmulator 1 "$md_id" "$system" "$md_inst/${binary_name} %BASENAME%"
+    addEmulator 0 "$md_id" "arcade" "$md_inst/mame %BASENAME%"
+    addEmulator 1 "$md_id" "$system" "$md_inst/mame %BASENAME%"
 
     addSystem "arcade"
     addSystem "$system"

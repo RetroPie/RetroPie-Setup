@@ -15,7 +15,7 @@ rp_module_help="OpenBOR games need to be extracted to function properly. Place y
 rp_module_licence="BSD https://raw.githubusercontent.com/rofl0r/openbor/master/LICENSE"
 rp_module_repo="git https://github.com/rofl0r/openbor.git master"
 rp_module_section="exp"
-rp_module_flags="dispmanx !mali !x11"
+rp_module_flags="sdl1 !mali !x11"
 
 function depends_openbor() {
     getDepends libsdl1.2-dev libsdl-gfx1.2-dev libogg-dev libvorbisidec-dev libvorbis-dev libpng-dev zlib1g-dev
@@ -47,7 +47,7 @@ function configure_openbor() {
     addPort "$md_id" "openbor" "OpenBOR - Beats of Rage Engine" "$md_inst/openbor.sh"
 
     mkRomDir "ports/$md_id"
-    setDispmanx "$md_id" 1
+    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 
     cat >"$md_inst/openbor.sh" << _EOF_
 #!/bin/bash

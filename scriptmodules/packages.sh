@@ -78,6 +78,8 @@ function rp_moduleVars() {
         local md_flags="${__mod_info[$id/flags]}"
         local md_path="${__mod_info[$id/path]}"
 
+        local md_licence="${__mod_info[$id/licence]}"
+
         local md_repo_type="${__mod_info[$id/repo_type]}"
         local md_repo_url="${__mod_info[$id/repo_url]}"
         local md_repo_branch="${__mod_info[$id/repo_branch]}"
@@ -410,7 +412,8 @@ function rp_hasBinaries() {
 
 function rp_getBinaryUrl() {
     local id="$1"
-    local url="$__binary_url/${__mod_info[$id/type]}/$id.tar.gz"
+    local url=""
+    rp_hasBinaries && url="$__binary_url/${__mod_info[$id/type]}/$id.tar.gz"
     if fnExists "install_bin_${id}"; then
         if fnExists "__binary_url_${id}"; then
             url="$(__binary_url_${id})"
@@ -427,7 +430,7 @@ function rp_remoteFileExists() {
     local ret
     # runCurl will cause stderr to be copied to output so we redirect both stdout/stderr to /dev/null.
     # any errors will have been captured by runCurl
-    runCurl --max-time 10 --silent --show-error --fail --head "$url" &>/dev/null
+    runCurl --location --max-time 10 --silent --show-error --fail --head "$url" &>/dev/null
     ret="$?"
     if [[ "$ret" -eq 0 ]]; then
         return 0
@@ -456,11 +459,11 @@ function rp_hasBinary() {
     [[ -z "$url" ]] && return 1
 
     [[ -n "${__mod_info[$id/has_binary]}" ]] && return "${__mod_info[$id/has_binary]}"
+
     local ret=1
-    if rp_hasBinaries; then
-        rp_remoteFileExists "$url"
-        ret="$?"
-    fi
+    rp_remoteFileExists "$url"
+    ret="$?"
+
     # if there wasn't an error, cache the result
     [[ "$ret" -ne 2 ]] && __mod_info[$id/has_binary]="$ret"
     return "$ret"
@@ -471,7 +474,7 @@ function rp_getFileDate() {
     [[ -z "$url" ]] && return 1
 
     # get last-modified date stripping any CR in the output
-    local file_date=$(runCurl --silent --fail --head --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
+    local file_date=$(runCurl --location --silent --fail --head --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
     # if there is a date set in last-modified header, then convert to iso-8601 format
     if [[ -n "$file_date" ]]; then
         file_date="$(date -Iseconds --date="$file_date")"
@@ -633,10 +636,14 @@ function rp_hasNewerModule() {
                     ;;
             esac
 
-            # if we are currently not going to update - check the date of the module code
-            # if it's newer than the install date of the module we force an update
+            # if we are currently not going to update - check the last commit date of the module code
+            # if it's newer than the install date of the module we force an update, in case patches or build
+            # related options have been changed
             if [[ "$ret" -eq 1 && "$__ignore_module_date" -ne 1 ]]; then
-                local module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
+                local vendor="${__mod_info[$id/vendor]}"
+                local repo_dir="$scriptdir"
+                [[ "$vendor" != "RetroPie" ]] && repo_dir+="/ext/$vendor"
+                local module_date="$(git -C "$repo_dir" log -1 --format=%cI -- "${__mod_info[$id/path]}")"
                 if rp_dateIsNewer "$pkg_date" "$module_date"; then
                     ret=0
                 fi
@@ -783,7 +790,7 @@ function rp_setPackageInfo() {
                     local repo_dir="${__mod_info[$id/repo_dir]}"
                     [[ -z "$repo_dir" ]] && repo_dir="$md_build"
                     # date cannot understand the default date format of git
-                    pkg_repo_date="$(git -C "$repo_dir" log -1 --format=%aI)"
+                    pkg_repo_date="$(git -C "$repo_dir" log -1 --format=%cI)"
                     pkg_repo_commit="$(git -C "$repo_dir" log -1 --format=%H)"
                 else
                     pkg_repo_date="$(svn info . | grep -oP "Last Changed Date: \K.*")"

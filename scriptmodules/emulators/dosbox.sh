@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games 
 rp_module_licence="GPL2 https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk/COPYING"
 rp_module_repo="svn https://svn.code.sf.net/p/dosbox/code-0/dosbox/trunk - 4252"
 rp_module_section="opt"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl1 !mali"
 
 function depends_dosbox() {
     local depends=(libasound2-dev libpng-dev automake autoconf zlib1g-dev "$@")
@@ -62,23 +62,41 @@ function install_dosbox() {
 }
 
 function configure_dosbox() {
-    if [[ "$md_id" == "dosbox-sdl2" ]]; then
-        local def="0"
-        local launcher_name="+Start DOSBox-SDL2.sh"
-        local needs_synth="0"
-    else
-        local def="1"
-        local launcher_name="+Start DOSBox.sh"
-        # needs software synth for midi; limit to Pi for now
-        if isPlatform "rpi"; then
-            local needs_synth="1"
-        fi
-    fi
+    local def=0
+    local launcher_name="+Start DOSBox.sh"
+    local needs_synth=0
+    local config_dir="$home/.$md_id"
+    case "$md_id" in
+        dosbox-sdl2)
+            launcher_name="+Start DOSBox-SDL2.sh"
+            ;;
+        dosbox)
+            def=1
+            # needs software synth for midi; limit to Pi for now
+            isPlatform "rpi" && needs_synth=1
+            # set dispmanx by default on rpi with fkms
+            isPlatform "dispmanx" && ! isPlatform "videocore" && setBackend "$md_id" "dispmanx"
+            ;;
+        dosbox-staging)
+            launcher_name="+Start DOSBox-Staging.sh"
+            config_dir="$home/.config/dosbox"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
 
     mkRomDir "pc"
+
+    moveConfigDir "$config_dir" "$md_conf_root/pc"
+
+    addEmulator "$def" "$md_id" "pc" "bash $romdir/pc/${launcher_name// /\\ } %ROM%"
+    addSystem "pc"
+
     rm -f "$romdir/pc/$launcher_name"
-    if [[ "$md_mode" == "install" ]]; then
-        cat > "$romdir/pc/$launcher_name" << _EOF_
+    [[ "$md_mode" == "remove" ]] && return
+
+    cat > "$romdir/pc/$launcher_name" << _EOF_
 #!/bin/bash
 
 [[ ! -n "\$(aconnect -o | grep -e TiMidity -e FluidSynth)" ]] && needs_synth="$needs_synth"
@@ -117,13 +135,17 @@ else
     params+=(-exit)
 fi
 
+# fullscreen when running in X
+[[ -n "\$DISPLAY" ]] && params+=(-fullscreen)
+
 midi_synth start
 "$md_inst/bin/dosbox" "\${params[@]}"
 midi_synth stop
 _EOF_
-        chmod +x "$romdir/pc/$launcher_name"
-        chown $user:$user "$romdir/pc/$launcher_name"
+    chmod +x "$romdir/pc/$launcher_name"
+    chown $user:$user "$romdir/pc/$launcher_name"
 
+    if [[ "$md_id" == "dosbox" || "$md_id" == "dosbox-sdl2" ]]; then
         local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
         if [[ -f "$config_path" ]]; then
             iniConfig " = " "" "$config_path"
@@ -137,12 +159,4 @@ _EOF_
             fi
         fi
     fi
-
-    # default to dispmanx on rpi4/kms
-    isPlatform "mesa" && setDispmanx "$md_id" 1
-
-    moveConfigDir "$home/.$md_id" "$md_conf_root/pc"
-
-    addEmulator "$def" "$md_id" "pc" "bash $romdir/pc/${launcher_name// /\\ } %ROM%"
-    addSystem "pc"
 }

@@ -1,13 +1,13 @@
-diff --git a/menu/menu_driver.c b/menu/menu_driver.c
-index 9e4cc200f0..184fe12885 100644
---- a/menu/menu_driver.c
-+++ b/menu/menu_driver.c
-@@ -514,7 +514,8 @@ int generic_menu_entry_action(
+diff --git a/retroarch.c b/retroarch.c
+index 0642c8c779..b00780047d 100644
+--- a/retroarch.c
++++ b/retroarch.c
+@@ -2596,7 +2596,8 @@ int generic_menu_entry_action(
                    entry->label, entry->type, i, entry->entry_idx);
           break;
        case MENU_ACTION_SEARCH:
 -         menu_input_dialog_start_search();
-+         // Disable search action
++         // disable search action
 +         // menu_input_dialog_start_search();
           break;
        case MENU_ACTION_SCAN:

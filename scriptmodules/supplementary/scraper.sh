@@ -275,8 +275,6 @@ function gui_scraper() {
 
         options+=(W "Max image width ($max_width)")
         options+=(H "Max image height ($max_height)")
-
-        options+=(U "Update scraper to the latest version")
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             default="$choice"
@@ -340,9 +338,6 @@ function gui_scraper() {
                     cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the max image width in pixels" 10 60 "$max_width")
                     max_width=$("${cmd[@]}" 2>&1 >/dev/tty)
                     iniSet "max_width" "$max_width"
-                    ;;
-                U)
-                    rp_callModule "$md_id"
                     ;;
             esac
         else

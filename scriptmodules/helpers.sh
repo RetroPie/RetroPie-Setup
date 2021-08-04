@@ -647,19 +647,61 @@ function addUdevInputRules() {
     rm -f /etc/udev/rules.d/99-evdev.rules
 }
 
+## @fn setBackend()
+## @param emulator.cfg key to configure backend for
+## @param backend name of the backend to set
+## @param force set to 1 to force the change
+## @brief Set a backend rendering driver for a module
+## @details Set a backend rendering driver for a module - can be currently default, dispmanx or x11.
+## This function will only set a backend if
+##   - It's not already configured, or
+##   - The 3rd parameter (force) is set to 1
+## The emulator.cfg key is usually the module_id but some modules add multiple emulator.cfg entries
+## which are all handled separately. A module can use a _backend_set_MODULE function hook which is called
+## from the backends module to handle calling setBackend for additional emulator.cfg entries.
+## See "fuse" scriptmodule for an example.
+function setBackend() {
+    local config="$configdir/all/backends.cfg"
+    local id="$1"
+    local mode="$2"
+    local force="$3"
+    iniConfig "=" "\"" "$config"
+    iniGet "$id"
+    if [[ "$force" -eq 1 || -z "$ini_value" ]]; then
+        iniSet "$id" "$mode"
+        chown $user:$user "$config"
+    fi
+}
+
+## @fn getBackend()
+## @param emulator.cfg key to get backend for
+## @brief Get a backend rendering driver for a module
+## @details Get a backend rendering driver for a module
+## The function echos the result so the value can be captured using var=$(getBackend "$module_id")
+function getBackend() {
+    local config="$configdir/all/backends.cfg"
+    local id="$1"
+    iniConfig " = " '"' "$config"
+    iniGet "$id"
+    if [[ -n "$ini_value" ]]; then
+        # translate old value of 1 as dispmanx for backward compatibility
+        [[ "$ini_value" == "1" ]] && ini_value="dispmanx"
+     else
+        ini_value="default"
+     fi
+     echo "$ini_value"
+}
+
 ## @fn setDispmanx()
 ## @param module_id name of module to add dispmanx flag for
 ## @param status initial status of flag (0 or 1)
-## @brief Sets a dispmanx flag for a module.
+## @brief Sets a dispmanx flag for a module. This function is deprecated.
 ## @details Set a dispmanx flag for a module as to whether it should use the
 ## sdl1 dispmanx backend by default or not (0 for framebuffer, 1 for dispmanx).
+## This function is deprecated and instead setBackend should be used.
 function setDispmanx() {
     isPlatform "dispmanx" || return
-    local mod_id="$1"
-    local status="$2"
-    iniConfig "=" "\"" "$configdir/all/dispmanx.cfg"
-    iniSet $mod_id "$status"
-    chown $user:$user "$configdir/all/dispmanx.cfg"
+    setBackend "$1" "dispmanx"
 }
 
 ## @fn iniFileEditor()
@@ -888,6 +930,9 @@ function setESSystem() {
 ## @param shader set a default shader to use (deprecated)
 ## @brief Creates a default retroarch.cfg for specified system in `/opt/retropie/configs/$system/retroarch.cfg`.
 function ensureSystemretroconfig() {
+    # don't do any config work on module removal
+    [[ "$md_mode" == "remove" ]] && return
+
     local system="$1"
     local shader="$2"
 
@@ -1014,7 +1059,7 @@ function applyPatch() {
 function runCurl() {
     local params=("$@")
     # add any user supplied curl opts - timeouts can be overridden as curl uses the last parameters given
-    [[ -z "$__curl_opts" ]] && params+=($__curl_opts)
+    [[ -n "$__curl_opts" ]] && params+=($__curl_opts)
 
     local cmd_err
     local ret
@@ -1067,12 +1112,12 @@ function download() {
 
     local params=(--location)
     if [[ "$dest" == "-" ]]; then
-        params+=(-s)
+        params+=(--silent --no-buffer)
     else
         printMsgs "console" "Downloading $url to $dest ..."
         params+=(-o "$dest")
     fi
-    params+=(--connect-timeout 10 --speed-limit 1 --speed-time 60)
+    params+=(--connect-timeout 10 --speed-limit 1 --speed-time 60 --fail)
     # add the url
     params+=("$url")
 
@@ -1194,7 +1239,7 @@ _EOF_
 ## @param but2 mapping for button 2
 ## @param but3 mapping for button 3
 ## @param butX mapping for button X ...
-## @brief Start joy2key.py process in background to map joystick presses to keyboard
+## @brief Start joy2key process in background to map joystick presses to keyboard
 ## @details Arguments are curses capability names or hex values starting with '0x'
 ## see: http://pubs.opengroup.org/onlinepubs/7908799/xcurses/terminfo.html
 function joy2keyStart() {
@@ -1203,32 +1248,21 @@ function joy2keyStart() {
     [[ "$(who -m)" == *\(* ]] && return
 
     local params=("$@")
-    if [[ "${#params[@]}" -eq 0 ]]; then
-        params=(kcub1 kcuf1 kcuu1 kcud1 0x0a 0x20 0x1b)
-    fi
 
-    # get the first joystick device (if not already set)
-    [[ -c "$__joy2key_dev" ]] || __joy2key_dev="/dev/input/jsX"
-
-    # if no joystick device, or joy2key is already running exit
-    [[ -z "$__joy2key_dev" ]] || pgrep -f joy2key.py >/dev/null && return 1
-
-    # if joy2key.py is installed run it with cursor keys for axis/dpad, and enter + space for buttons 0 and 1
-    if "$scriptdir/scriptmodules/supplementary/runcommand/joy2key.py" "$__joy2key_dev" "${params[@]}" 2>/dev/null; then
-        __joy2key_pid=$(pgrep -f joy2key.py)
-        return 0
+    # if joy2key is installed, run it
+    if rp_isInstalled "joy2key"; then
+        "$(rp_getInstallPath joy2key)/joy2key" start "${params[@]}" 2>/dev/null && return 0
     fi
 
     return 1
 }
 
 ## @fn joy2keyStop()
-## @brief Stop previously started joy2key.py process.
+## @brief Stop previously started joy2key process.
 function joy2keyStop() {
-    if [[ -n $__joy2key_pid ]]; then
-        kill $__joy2key_pid 2>/dev/null
-        __joy2key_pid=""
-        sleep 1
+    # if joy2key is installed, stop it
+    if rp_isInstalled "joy2key"; then
+        "$(rp_getInstallPath joy2key)/joy2key" stop
     fi
 }
 

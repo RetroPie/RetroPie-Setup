@@ -103,6 +103,7 @@ function gui_esthemes() {
         'TMNTturtleguy ComicBook_SE-Wheelart'
         'TMNTturtleguy ComicBook_4-3_SE-Wheelart'
         'ChoccyHobNob cygnus'
+        'DTEAM-1 cygnus-blue-flames'
         'dmmarti steampunk'
         'dmmarti hurstyblue'
         'dmmarti maximuspie'
@@ -257,6 +258,7 @@ function gui_esthemes() {
         'KALEL1981 super-arcade1up-5x4'
         'KALEL1981 gold-standard'
         'Elratauru angular-artwork'
+        'cjonasw raspixel-320-240'
     )
     while true; do
         local theme

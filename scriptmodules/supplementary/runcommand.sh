@@ -17,6 +17,7 @@ rp_module_flags="nonet"
 function _update_hook_runcommand() {
     # make sure runcommand is always updated when updating retropie-setup
     rp_isInstalled "$md_id" && install_bin_runcommand
+    [[ -f "$md_inst/joy2key.py" ]] && rp_callModule "joy2key"
 }
 
 function depends_runcommand() {
@@ -28,11 +29,9 @@ function depends_runcommand() {
 }
 
 function install_bin_runcommand() {
+    rm -rf "$md_inst"
+    mkdir -p "$md_inst"
     cp "$md_data/runcommand.sh" "$md_inst/"
-    cp "$md_data/joy2key.py" "$md_inst/"
-    chmod a+x "$md_inst/runcommand.sh"
-    chmod a+x "$md_inst/joy2key.py"
-    python3 -m compileall "$md_inst/joy2key.py"
     if [[ ! -f "$configdir/all/runcommand.cfg" ]]; then
         mkUserDir "$configdir/all"
         iniConfig " = " '"' "$configdir/all/runcommand.cfg"

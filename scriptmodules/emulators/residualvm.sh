@@ -15,7 +15,7 @@ rp_module_help="Copy your ResidualVM games to $romdir/residualvm"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/residualvm/residualvm/master/COPYING"
 rp_module_repo="git https://github.com/ResidualVM/ResidualVM.git master"
 rp_module_section="exp"
-rp_module_flags="dispmanx !mali"
+rp_module_flags="sdl2 !mali"
 
 function depends_residualvm() {
     local depends=(
