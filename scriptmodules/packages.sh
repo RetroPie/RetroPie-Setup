@@ -430,7 +430,7 @@ function rp_remoteFileExists() {
     local ret
     # runCurl will cause stderr to be copied to output so we redirect both stdout/stderr to /dev/null.
     # any errors will have been captured by runCurl
-    runCurl --max-time 10 --silent --show-error --fail --head "$url" &>/dev/null
+    runCurl --location --max-time 10 --silent --show-error --fail --head "$url" &>/dev/null
     ret="$?"
     if [[ "$ret" -eq 0 ]]; then
         return 0
@@ -474,7 +474,7 @@ function rp_getFileDate() {
     [[ -z "$url" ]] && return 1
 
     # get last-modified date stripping any CR in the output
-    local file_date=$(runCurl --silent --fail --head --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
+    local file_date=$(runCurl --location --silent --fail --head --no-styled-output "$url" | tr -d "\r" | grep -ioP "last-modified: \K.+")
     # if there is a date set in last-modified header, then convert to iso-8601 format
     if [[ -n "$file_date" ]]; then
         file_date="$(date -Iseconds --date="$file_date")"
