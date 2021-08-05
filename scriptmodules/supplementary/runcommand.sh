@@ -15,9 +15,12 @@ rp_module_section="core"
 rp_module_flags="nonet"
 
 function _update_hook_runcommand() {
-    # make sure runcommand is always updated when updating retropie-setup
-    rp_isInstalled "$md_id" && install_bin_runcommand
-    [[ -f "$md_inst/joy2key.py" ]] && rp_callModule "joy2key"
+    # make sure runcommand is always updated when updating retropie-setup and
+    # install joy2key module when updating if the old joy2key is in place
+    if rp_isInstalled "$md_id"; then
+        [[ -f "$md_inst/joy2key.py" ]] && rp_callModule "joy2key"
+        install_bin_runcommand
+    fi
 }
 
 function depends_runcommand() {
