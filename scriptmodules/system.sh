@@ -412,9 +412,6 @@ function get_platform() {
                     esac
                 elif [[ -e "/sys/devices/soc0/family" ]]; then
                     case "$(tr -d '\0' < /sys/devices/soc0/family)" in
-                        *tegra20*)
-                            __platform="tegra-2"
-                            ;;
                         *tegra30*)
                             __platform="tegra-3"
                             ;;
@@ -561,19 +558,14 @@ function platform_xavier() {
     __platform_flags+=(x11 gl)
 }
 
-function platform_tegra-2() {
-    cpu_armv7 "cortex-a9"
-    __platform_flags+=(x11 gl)
-}
-
 function platform_tegra-3() {
     cpu_armv7 "cortex-a9"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gles)
 }
 
 function platform_tegra-4() {
     cpu_armv7 "cortex-a15"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gles)
 }
 
 function platform_tegra-k1-32() {
