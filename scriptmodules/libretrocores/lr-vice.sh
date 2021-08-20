@@ -66,6 +66,11 @@ function configure_lr-vice() {
 
     [[ "$md_mode" == "remove" ]] && return
 
+    if isPlatform "arm"; then
+        setRetroArchCoreOption "vice_sid_engine" "FastSID"
+        isPlatform "armv6" && setRetroArchCoreOption "vice_sound_sample_rate" "22050"
+    fi
+
     cp -R "$md_inst/data" "$biosdir"
     chown -R $user:$user "$biosdir/data"
 }
