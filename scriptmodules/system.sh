@@ -275,7 +275,7 @@ function get_os_version() {
             fi
             __os_debian_ver="9"
             ;;
-        elementary)
+        Elementary)
             if compareVersions "$__os_release" lt 0.4; then
                 error="You need Elementary OS 0.4 or newer"
             elif compareVersions "$__os_release" eq 0.4; then
