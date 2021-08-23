@@ -175,7 +175,7 @@ function hasPackage() {
 ## @brief Calls apt-get update (if it has not been called before).
 function aptUpdate() {
     if [[ "$__apt_update" != "1" ]]; then
-        apt-get update
+        apt-get update --allow-releaseinfo-change
         __apt_update="1"
     fi
 }
