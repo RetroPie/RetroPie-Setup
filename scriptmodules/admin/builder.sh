@@ -42,8 +42,11 @@ function module_builder() {
             continue
         fi
 
-        # if there is no newer version, skip to the next module
-        if ! rp_hasNewerModule "$id" "source"; then
+        # if there is no newer version, skip to the next module. Returns 1 when update is not required,
+        # but can also return 2, to mean "unknown" in which case we should do an update. Modules like sdl2
+        # will return 2 as they are handled differently, and don't use the package update mechanisms.
+        rp_hasNewerModule "$id" "source"
+        if [[ "$?" -eq 1 ]]; then
             printMsgs "console" "No update was found."
             continue
         fi
