@@ -100,8 +100,11 @@ _EOF_
         iniSet "VICIIVideoCache" "0"
         iniSet "SDLWindowWidth" "384"
         iniSet "SDLWindowHeight" "272"
-        isPlatform "rpi1" && iniSet "SoundSampleRate" "22050"
+    fi
+
+    if isPlatform "arm"; then
         iniSet "SidEngine" "0"
+        isPlatform "armv6" && iniSet "SoundSampleRate" "22050"
     fi
 
     if isPlatform "x11" || isPlatform "kms"; then
