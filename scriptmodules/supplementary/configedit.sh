@@ -232,7 +232,7 @@ function advanced_configedit() {
         "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
         "audio_driver $audio_opts"
         'video_driver gl dispmanx sdl2 vg vulkan glcore gl1'
-        'menu_driver rgui xmb'
+        'menu_driver rgui xmb glui ozone'
         'video_fullscreen_x _string_'
         'video_fullscreen_y _string_'
         'video_frame_delay _string_'
