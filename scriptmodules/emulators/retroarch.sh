@@ -98,8 +98,13 @@ function update_overlays_retroarch() {
     local dir="$configdir/all/retroarch/overlay"
     # remove if not a git repository for fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
-    gitPullOrClone "$configdir/all/retroarch/overlay" https://github.com/libretro/common-overlays.git
+    gitPullOrClone "$dir" https://github.com/libretro/common-overlays.git
     chown -R $user:$user "$dir"
+}
+
+function update_joypad_autoconfigs_retroarch() {
+    gitPullOrClone "$md_build/autoconfigs" https://github.com/libretro/retroarch-joypad-autoconfig.git
+    cp -a "$md_build/autoconfigs/." "$md_inst/autoconfig-presets/"
 }
 
 function update_assets_retroarch() {
@@ -147,6 +152,9 @@ function configure_retroarch() {
 
     # install minimal assets
     install_minimal_assets_retroarch
+
+    # install joypad autoconfig presets
+    update_joypad_autoconfigs_retroarch
 
     local config="$(mktemp)"
 
