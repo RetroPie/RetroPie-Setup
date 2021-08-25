@@ -231,7 +231,7 @@ function advanced_configedit() {
         'input_overlay_enable true false'
         "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
         "audio_driver $audio_opts"
-        'video_driver gl dispmanx sdl2 vg vulkan'
+        'video_driver gl dispmanx sdl2 vg vulkan glcore gl1'
         'menu_driver rgui xmb'
         'video_fullscreen_x _string_'
         'video_fullscreen_y _string_'
