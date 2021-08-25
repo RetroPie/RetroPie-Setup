@@ -251,7 +251,7 @@ function advanced_configedit() {
         'fps_show true false'
         'input_overlay_opacity _string_'
         'input_overlay_scale _string_'
-        'input_joypad_driver udev sdl2 linuxraw'
+        'input_joypad_driver udev sdl2 linuxraw hid'
         'game_specific_options true false'
         'input_player1_joypad_index _string_'
         'input_player2_joypad_index _string_'
