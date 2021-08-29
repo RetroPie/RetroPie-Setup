@@ -29,13 +29,6 @@ function depends_retroarch() {
         depends+=(libavcodec-dev libavformat-dev libavdevice-dev)
     fi
 
-    # only install nvidia-cg-toolkit if it is available (as the non-free repo may not be enabled)
-    if isPlatform "x86"; then
-        if [[ -n "$(apt-cache search --names-only nvidia-cg-toolkit)" ]]; then
-            depends+=(nvidia-cg-toolkit)
-        fi
-    fi
-
     getDepends "${depends[@]}"
 }
 
