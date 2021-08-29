@@ -101,6 +101,10 @@ function update_shaders_retroarch() {
             gitPullOrClone "$dir/$shadersystem" "https://github.com/libretro/$shadersystem-shaders.git" "$branch"
             chown -R $user:$user "$dir/$shadersystem"
         done
+        # remove if not git repository for fresh checkout
+        [[ ! -d "$dir/retropie/.git" ]] && rm -rf "$dir/retropie"
+        gitPullOrClone "$dir/retropie" https://github.com/RetroPie/common-shaders.git "rpi"
+        chown -R $user:$user "$dir/retropie"
     fi
 }
 
