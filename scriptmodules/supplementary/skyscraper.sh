@@ -20,7 +20,7 @@ function _get_branch_skyscraper() {
 }
 
 function depends_skyscraper() {
-    getDepends qt5-default p7zip-full
+    getDepends qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools p7zip-full
 }
 
 function sources_skyscraper() {
