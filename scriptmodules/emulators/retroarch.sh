@@ -21,19 +21,12 @@ function depends_retroarch() {
     isPlatform "gles" && ! isPlatform "vero4k" && depends+=(libgles2-mesa-dev)
     isPlatform "mesa" && depends+=(libx11-xcb-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
-    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev)
+    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev mesa-vulkan-drivers)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
     isPlatform "kms" && depends+=(libgbm-dev)
 
     if compareVersions "$__os_debian_ver" ge 9; then
         depends+=(libavcodec-dev libavformat-dev libavdevice-dev)
-    fi
-
-    # only install nvidia-cg-toolkit if it is available (as the non-free repo may not be enabled)
-    if isPlatform "x86"; then
-        if [[ -n "$(apt-cache search --names-only nvidia-cg-toolkit)" ]]; then
-            depends+=(nvidia-cg-toolkit)
-        fi
     fi
 
     getDepends "${depends[@]}"
