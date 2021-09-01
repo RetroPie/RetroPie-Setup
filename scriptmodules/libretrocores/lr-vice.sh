@@ -63,6 +63,8 @@ function configure_lr-vice() {
         fi
         addEmulator "$def" "$md_id${name}" "c64" "$md_inst/vice_${target}_libretro.so"
     done
+    
+    addSystem "c64"
 
     [[ "$md_mode" == "remove" ]] && return
 
