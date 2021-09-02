@@ -28,7 +28,7 @@ function sources_skyscraper() {
 }
 
 function build_skyscraper() {
-    qmake
+    QT_SELECT=5 qmake
     make
     md_ret_require="$md_build/Skyscraper"
 }
