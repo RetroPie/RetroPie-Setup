@@ -39,6 +39,7 @@ function gui_diagnostics() {
     local tmpdir
     local upload_dir=https://doctor.retropie.org.uk/
     local zipname=`openssl rand -hex 2 | tr [a-z] [A-Z]`_`date -u +"%Y-%m-%d"`.zip
+    local dest_dir
 
     dialog --title "Diagnostic utility" --colors --yes-label "Run" --no-label "Cancel" --yesno "\nThis diagnostic utility will collect various information from your setup and pack it into a single file.\n\nThe information helps diagnose various issues and can by the RetroPie support team or support forums.\n\nAfter collecting the necessary data, you can choose to upload it to the RetroPie file sharing server or save it in order to upload it manually.\n\nPress \ZbRun\ZB and wait a few seconds for the diagnostics file to be generated." 20 60 2>&1 >/dev/tty || exit
 
@@ -69,18 +70,19 @@ function gui_diagnostics() {
                 fi
                 ;;
             2)
-                cp -f /dev/shm/$zipname "$home"
-                printMsgs "dialog" "File $zipname saved in \n\n$home"
+                dest_dir="$home"
                 ;;
             3)
-                cp -f /dev/shm/$zipname "$romdir"
-                printMsgs "dialog" "File $zipname saved in \n\n$romdir"
+                dest_dir="$romdir"
                 ;;
             4)
-                cp -f /dev/shm/$zipname "/boot"
-                printMsgs "dialog" "File $zipname saved in \n\n/boot"
+                dest_dir="/boot"
                 ;;
         esac
+     fi
+     if [[ -n $dest_dir ]]; then
+        cp -f /dev/shm/$zipname "$dest_dir"
+        printMsgs "dialog" "File $zipname saved in \n\n$dest_dir"
      fi
      rm -fr "$tmpdir"
 }
