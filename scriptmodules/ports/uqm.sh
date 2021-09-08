@@ -46,6 +46,7 @@ function build_uqm() {
     ./build.sh uqm clean
     echo "\n" | CHOICE_debug_VALUE="nodebug" INPUT_install_prefix_VALUE="$md_inst" ./build.sh uqm config
     ./build.sh uqm
+    md_ret_require="$md_build/src/uqm"
 }
 
 function install_uqm() {
