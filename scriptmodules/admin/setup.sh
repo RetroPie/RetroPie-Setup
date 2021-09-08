@@ -364,6 +364,23 @@ _EOF_
 
 function section_gui_setup() {
     local section="$1"
+    local ids=()
+    case "$section" in
+        all|inst)
+            name="packages"
+            local id
+            for id in "${__mod_id[@]}"; do
+                # if we are showing installed packaged, skip those that are not installed
+                [[ "$section" == "inst" ]] && ! rp_isInstalled "$id" && continue
+                # don't show packages from depends or modules with no section (admin)
+                ! [[ "${__mod_info[$id/section]}" =~ ^(depends|config|)$ ]] && ids+=("$id")
+            done
+            ;;
+         *)
+            name="${__sections[$section]} packages"
+            ids=($(rp_getSectionIds $section))
+            ;;
+    esac
 
     local default=""
     local status=""
@@ -383,7 +400,7 @@ function section_gui_setup() {
         local info
         local type
         local last_type=""
-        for id in $(rp_getSectionIds $section); do
+        for id in "${ids[@]}"; do
             local type="${__mod_info[$id/vendor]} - ${__mod_info[$id/type]}"
             # do a heading for each origin and module type
             if [[ "$last_type" != "$type" ]]; then
@@ -409,16 +426,17 @@ function section_gui_setup() {
 
         if [[ "$has_net" -eq 1 && "$num_pkgs" -gt 0 ]]; then
             options+=(
-                U "Update all installed ${__sections[$section]} packages" "This will update any installed ${__sections[$section]} packages. The packages will be updated by the method used previously."
+                U "Update all installed $name" "This will update any installed $name. The packages will be updated by the method used previously."
             )
         fi
 
         # allow installing an entire section except for drivers and dependencies - as it's probably a bad idea
         if [[ "$has_net" -eq 1 && "$section" != "driver" && "$section" != "depends" ]]; then
-            options+=(
-                I "Install all ${__sections[$section]} packages" "This will install all ${__sections[$section]} packages. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously"
-                X "Remove all ${__sections[$section]} packages" "X This will remove all $section packages."
-            )
+            # don't show "Install all packages" when we are showing only installed packages
+            if [[ "$section" != "inst" ]]; then
+                options+=(I "Install all $name" "This will install all $name. If a package is not installed, and a pre-compiled binary is available it will be used. If a package is already installed, it will be updated by the method used previously.")
+            fi
+            options+=(X "Remove all installed $name" "X This will remove all installed $name.")
         fi
 
         options+=("${pkgs[@]}")
@@ -445,11 +463,11 @@ function section_gui_setup() {
             U|I)
                 local mode="update"
                 [[ "$choice" == "I" ]] && mode="install"
-                dialog --defaultno --yesno "Are you sure you want to $mode all $section packages?" 22 76 2>&1 >/dev/tty || continue
+                dialog --defaultno --yesno "Are you sure you want to $mode all installed $name?" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     rps_logStart
-                    for id in $(rp_getSectionIds $section); do
+                    for id in "${ids[@]}"; do
                         ! rp_isEnabled "$id" && continue
                         # if we are updating, skip packages that are not installed
                         if [[ "$mode" == "update" ]]; then
@@ -465,13 +483,13 @@ function section_gui_setup() {
                 rps_printInfo "$logfilename"
                 ;;
             X)
-                local text="Are you sure you want to remove all $section packages?"
+                local text="Are you sure you want to remove all installed $name?"
                 [[ "$section" == "core" ]] && text+="\n\nWARNING - core packages are needed for RetroPie to function!"
                 dialog --defaultno --yesno "$text" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     rps_logStart
-                    for id in $(rp_getSectionIds $section); do
+                    for id in "${ids[@]}"; do
                         rp_isInstalled "$id" && rp_callModule "$id" remove
                     done
                     rps_logEnd
@@ -603,8 +621,12 @@ function packages_gui_setup() {
     local options=()
 
     for section in core main opt driver exp depends; do
-        options+=($section "Manage ${__sections[$section]} packages" "$section Choose top install/update/configure packages from the ${__sections[$section]}")
+        options+=("$section" "Manage ${__sections[$section]} packages" "$section Choose to install/update/configure packages from the ${__sections[$section]}")
     done
+
+    options+=("----" "" "")
+    options+=("inst" "Manage all installed packages" "Install/update/remove currently installed packages")
+    options+=("all" "Manage all packages" "Install/update/remove packages from full list")
 
     local cmd
     while true; do
@@ -620,7 +642,7 @@ function packages_gui_setup() {
             printMsgs "dialog" "$choice"
             continue
         fi
-        section_gui_setup "$choice"
+        [[ "$choice" != "----" ]] && section_gui_setup "$choice"
         default="$choice"
     done
 }
