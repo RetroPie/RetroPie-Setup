@@ -70,7 +70,7 @@ function install_lr-flycast() {
 
 function configure_lr-flycast() {
     mkRomDir "dreamcast"
-    ensureSystemretroconfig "dreamcast"
+    defaultRAConfig "dreamcast"
 
     mkUserDir "$biosdir/dc"
 

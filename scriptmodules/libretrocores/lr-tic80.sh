@@ -44,7 +44,7 @@ function install_lr-tic80() {
 
 function configure_lr-tic80() {
     mkRomDir "tic80"
-    ensureSystemretroconfig "tic80"
+    defaultRAConfig "tic80"
     addEmulator 1 "$md_id" "tic80" "$md_inst/tic80_libretro.so"
     addSystem "tic80" "TIC-80"
 }

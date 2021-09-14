@@ -35,7 +35,7 @@ function install_lr-quasi88() {
 
 function configure_lr-quasi88() {
     mkRomDir "pc88"
-    ensureSystemretroconfig "pc88"
+    defaultRAConfig "pc88"
     addEmulator 1 "$md_id" "pc88" "$md_inst/quasi88_libretro.so"
     addSystem "pc88"
 }

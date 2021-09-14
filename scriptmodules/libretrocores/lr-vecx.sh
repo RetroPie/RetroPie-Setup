@@ -48,7 +48,7 @@ function install_lr-vecx() {
 
 function configure_lr-vecx() {
     mkRomDir "vectrex"
-    ensureSystemretroconfig "vectrex"
+    defaultRAConfig "vectrex"
 
     if [[ "$md_mode" == "install" ]]; then
         # Copy bios files

@@ -34,7 +34,7 @@ function install_lr-beetle-supergrafx() {
 
 function configure_lr-beetle-supergrafx() {
     mkRomDir "pcengine"
-    ensureSystemretroconfig "pcengine"
+    defaultRAConfig "pcengine"
 
     addEmulator 0 "$md_id" "pcengine" "$md_inst/mednafen_supergrafx_libretro.so"
     addSystem "pcengine"

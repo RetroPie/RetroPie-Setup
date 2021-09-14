@@ -37,10 +37,10 @@ function install_lr-bluemsx() {
 
 function configure_lr-bluemsx() {
     mkRomDir "msx"
-    ensureSystemretroconfig "msx"
+    defaultRAConfig "msx"
 
     mkRomDir "coleco"
-    ensureSystemretroconfig "coleco"
+    defaultRAConfig "coleco"
 
     # force colecovision system
     local core_config="$md_conf_root/coleco/retroarch-core-options.cfg"

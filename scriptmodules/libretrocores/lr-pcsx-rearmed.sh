@@ -59,7 +59,7 @@ function install_lr-pcsx-rearmed() {
 
 function configure_lr-pcsx-rearmed() {
     mkRomDir "psx"
-    ensureSystemretroconfig "psx"
+    defaultRAConfig "psx"
 
     addEmulator 1 "$md_id" "psx" "$md_inst/pcsx_rearmed_libretro.so"
     addSystem "psx"

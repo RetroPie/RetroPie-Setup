@@ -50,7 +50,7 @@ function configure_lr-mess() {
     local system
     for system in nes gb coleco arcadia crvision; do
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
         addEmulator 0 "$md_id" "$system" "$md_inst/$module"
         addSystem "$system"
     done

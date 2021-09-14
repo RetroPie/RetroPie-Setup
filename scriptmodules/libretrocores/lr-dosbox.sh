@@ -45,7 +45,7 @@ function install_lr-dosbox() {
 
 function configure_lr-dosbox() {
     mkRomDir "pc"
-    ensureSystemretroconfig "pc"
+    defaultRAConfig "pc"
 
     addEmulator 0 "$md_id" "pc" "$md_inst/dosbox_libretro.so"
     addSystem "pc"

@@ -34,7 +34,7 @@ function install_lr-puae2021() {
 
 function configure_lr-puae2021() {
     mkRomDir "amiga"
-    ensureSystemretroconfig "amiga"
+    defaultRAConfig "amiga"
     addEmulator 1 "lr-puae2021" "amiga" "$md_inst/puae2021_libretro.so"
     addSystem "amiga"
 }

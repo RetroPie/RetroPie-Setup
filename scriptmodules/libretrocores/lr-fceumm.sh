@@ -40,8 +40,8 @@ function install_lr-fceumm() {
 function configure_lr-fceumm() {
     mkRomDir "nes"
     mkRomDir "fds"
-    ensureSystemretroconfig "nes"
-    ensureSystemretroconfig "fds"
+    defaultRAConfig "nes"
+    defaultRAConfig "fds"
 
     local def=1
     isPlatform "armv6" && def=0

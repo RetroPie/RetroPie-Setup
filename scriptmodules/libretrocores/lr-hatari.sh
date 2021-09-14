@@ -45,7 +45,7 @@ function install_lr-hatari() {
 
 function configure_lr-hatari() {
     mkRomDir "atarist"
-    ensureSystemretroconfig "atarist"
+    defaultRAConfig "atarist"
 
     # move any old configs to new location
     moveConfigDir "$home/.hatari" "$md_conf_root/atarist"
