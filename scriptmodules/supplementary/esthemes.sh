@@ -21,16 +21,37 @@ function depends_esthemes() {
     fi
 }
 
+function _has_pixel_pos_esthemes() {
+    # get the version of emulationstation installed so we can check whether to show
+    # themes that use the new pixel based positioning capabilities
+    local supp_path="$rootdir/supplementary"
+    local es_path="$supp_path/emulationstation"
+    local esdev_path="${es_path}-dev"
+    # check if emulationstation-dev is installed
+    if [[ -d "$esdev_path" ]]; then
+        es_path="$esdev_path"
+    fi
+    # extract the version number from emulationstation --help
+    local es_ver="$("$es_path/emulationstation" --help | grep -oP "Version \K[^,]+")"
+    # if emulationstation is newer than 2.10 enable pixel based themes
+    compareVersions "$es_ver" ge "2.10" && pixel_pos=1
+    echo "$pixel_pos"
+}
+
 function install_theme_esthemes() {
     local theme="$1"
     local repo="$2"
     local default_branch
+
+    local pixel_pos="$(_has_pixel_pos_esthemes)"
+
     if [[ -z "$repo" ]]; then
         repo="RetroPie"
     fi
     if [[ -z "$theme" ]]; then
         theme="carbon"
         repo="RetroPie"
+        [[ "$pixel_pos" -eq 1 ]] && theme+="-2021"
     fi
     # Get the name of the default branch, fallback to 'master' if not found
     default_branch=$(runCmd git ls-remote --symref --exit-code "https://github.com/$repo/es-theme-$theme.git" HEAD | grep -oP ".*/\K[^\t]+")
@@ -47,7 +68,19 @@ function uninstall_theme_esthemes() {
 }
 
 function gui_esthemes() {
-    local themes=(
+    local themes=()
+
+    local pixel_pos="$(_has_pixel_pos_esthemes)"
+
+    if [[ "$pixel_pos" -eq 1 ]]; then
+        themes+=(
+            'RetroPie carbon-2021'
+            'RetroPie carbon-centered-2021'
+            'RetroPie carbon-nometa-2021'
+        )
+    fi
+
+    local themes+=(
         'RetroPie carbon'
         'RetroPie carbon-centered'
         'RetroPie carbon-nometa'
