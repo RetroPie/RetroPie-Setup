@@ -12,7 +12,7 @@
 rp_module_id="cgenius"
 rp_module_desc="Commander Genius - Modern Interpreter for the Commander Keen Games (Vorticon and Galaxy Games)"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/gerstrong/Commander-Genius/master/COPYRIGHT"
-rp_module_repo="git https://gitlab.com/Dringgstein/Commander-Genius.git v2.7.7"
+rp_module_repo="git https://gitlab.com/Dringgstein/Commander-Genius.git v3.0.8"
 rp_module_section="exp"
 
 function depends_cgenius() {
@@ -29,7 +29,7 @@ function sources_cgenius() {
 }
 
 function build_cgenius() {
-    cmake -DUSE_SDL2=yes -DCMAKE_INSTALL_PREFIX="$md_inst" -DNOTYPESAVE=on -DUSE_BOOST=no
+    cmake -DBUILD_COSMOS=1 -DCMAKE_INSTALL_PREFIX="$md_inst" -DNOTYPESAVE=on
     make
     md_ret_require="$md_build/src/CGeniusExe"
 }
