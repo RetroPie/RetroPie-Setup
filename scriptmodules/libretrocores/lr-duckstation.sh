@@ -11,8 +11,8 @@
 
 rp_module_id="lr-duckstation"
 rp_module_desc="PlayStation emulator - Duckstation for libretro"
-rp_module_help="ROM Extensions: .exe .cue .bin .chd .psf .m3u .pbp\n\nCopy your PlayStation roms to $romdir/psx\n\nCopy compatble BIOS files to $biosdir"
-rp_module_licence="PROP"
+rp_module_help="ROM Extensions: .exe .cue .bin .chd .psf .m3u .pbp\n\nCopy your PlayStation roms to $romdir/psx\n\nCopy compatible BIOS files to $biosdir"
+rp_module_licence="PROP https://creativecommons.org/licenses/by-nc-nd/4.0"
 rp_module_section="exp"
 rp_module_flags="!all arm !armv6 aarch64 64bit"
 
@@ -39,6 +39,9 @@ function configure_lr-duckstation() {
     # Pi 4 has occasional slowdown with hardware rendering
     # e.g. Gran Turismo 2 (Arcade) race start
     isPlatform "rpi4" && setRetroArchCoreOption "duckstation_GPU.Renderer" "Software"
+
+    # Configure the memory card 1 saves through the libretro API
+    setRetroArchCoreOption "duckstation_MemoryCards.Card1Type" "NonPersistent"
 
     # dynarec segfaults without redirecting stdin from </dev/null
     addEmulator 0 "$md_id" "psx" "$md_inst/duckstation_libretro.so </dev/null"
