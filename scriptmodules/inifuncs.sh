@@ -41,6 +41,7 @@ function iniConfig() {
 # @param key ini key to operate on
 # @param value to set
 # @param file optional file to use another file than the one configured with iniConfig
+# @param section optional section header within the file under which the line will be added
 # @brief The main function for setting and deleting from ini files - usually
 # not called directly but via iniSet iniUnset and iniDel
 function iniProcess() {
@@ -48,6 +49,7 @@ function iniProcess() {
     local key="$2"
     local value="$3"
     local file="$4"
+    local section="$5"
     [[ -z "$file" ]] && file="$__ini_cfg_file"
     local delim="$__ini_cfg_delim"
     local quote="$__ini_cfg_quote"
@@ -62,8 +64,16 @@ function iniProcess() {
     local match_re="^[[:space:]#]*$key[[:space:]]*$delim_strip.*$"
 
     local match
+    local file_temp
     if [[ -f "$file" ]]; then
-        match=$(egrep -i "$match_re" "$file" | tail -1)
+        if [[ ! -z "$section" ]]; then
+            # if section header exists, match after header, and before line break
+            file_temp="$(awk "/$(sedQuote "$section")/,/^$/" "$file")"
+            match=$(echo "$file_temp" | egrep -i "$match_re" | head -n 1)
+        else
+            # otherwise, use the last match in the file
+            match=$(egrep -i "$match_re" "$file" | tail -1)
+        fi
     else
         touch "$file"
     fi
@@ -77,12 +87,28 @@ function iniProcess() {
 
     local replace="$key$delim$quote$value$quote"
     if [[ -z "$match" ]]; then
-        # make sure there is a newline then add the key-value pair
-        sed -i --follow-symlinks '$a\' "$file"
-        echo "$replace" >> "$file"
+        # if section passed, add header if not already present
+        if [[ ! -z "$section" ]]; then
+            if ! grep -q -F "$section" "$file"; then
+                # add blank line to signify end of previous section
+                sed -i --follow-symlinks "$a\\" "$file"
+                echo -e "$section" >> "$file"
+            fi
+            # add the key-value pair under the section header
+            sed -i --follow-symlinks "/$(sedQuote "$section")/a$replace" "$file"
+        else
+            # make sure there is a newline then add the key-value pair
+            sed -i --follow-symlinks '$a\' "$file"
+            echo "$replace" >> "$file"
+        fi
     else
         # replace existing key-value pair
-        sed -i --follow-symlinks "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
+        # if section passed, replace within section
+        if [[ ! -z "$section" ]]; then
+            sed -i --follow-symlinks "/$(sedQuote "$section")/,/^$/ s/$(sedQuote "$match")/$(sedQuote "$replace")/" "$file"
+        else
+            sed -i --follow-symlinks "s|$(sedQuote "$match")|$(sedQuote "$replace")|g" "$file"
+        fi
     fi
 
     [[ "$file" =~ retroarch\.cfg$ ]] && retroarchIncludeToEnd "$file"
@@ -93,6 +119,7 @@ function iniProcess() {
 ## @param key ini key to operate on
 ## @param value to Unset (key will be commented out, but the value can be changed also)
 ## @param file optional file to use another file than the one configured with iniConfig
+## @param section optional section header within the file where the key will be found
 ## @brief Unset (comment out) a key / value pair in an ini file.
 ## @details The key does not have to exist - if it doesn't exist a new line will
 ## be added - eg. `# key = "value"`
@@ -101,36 +128,40 @@ function iniProcess() {
 ## to manually enable later or if a configuration is to be disabled but left
 ## as an example.
 function iniUnset() {
-    iniProcess "unset" "$1" "$2" "$3"
+    iniProcess "unset" "$1" "$2" "$3" "$4"
 }
 
 ## @fn iniSet()
 ## @param key ini key to operate on
 ## @param value to set
 ## @param file optional file to use another file than the one configured with iniConfig
+## @param section optional section header within the file under which the line will be added
 ## @brief Set a key / value pair in an ini file.
 ## @details If the key already exists the existing line will be changed. If not
 ## a new line will be created.
 function iniSet() {
-    iniProcess "set" "$1" "$2" "$3"
+    iniProcess "set" "$1" "$2" "$3" "$4"
 }
 
 ## @fn iniDel()
 ## @param key ini key to operate on
 ## @param file optional file to use another file than the one configured with iniConfig
+## @param section optional section header within the file where the key will be found
 ## @brief Delete a key / value pair in an ini file.
 function iniDel() {
-    iniProcess "del" "$1" "" "$2"
+    iniProcess "del" "$1" "" "$2" "$3"
 }
 
 ## @fn iniGet()
 ## @param key ini key to get the value of
 ## @param file optional file to use another file than the one configured with iniConfig
+## @param section optional section header within the file under which the key should be found
 ## @brief Get the value of a key from an ini file.
 ## @details The value of the key will end up in the global ini_value variable.
 function iniGet() {
     local key="$1"
     local file="$2"
+    local section="$3"
     [[ -z "$file" ]] && file="$__ini_cfg_file"
     if [[ ! -f "$file" ]]; then
         ini_value=""
@@ -152,7 +183,14 @@ function iniGet() {
         value_m="\([^\r]*\)"
     fi
 
-    ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m.*/\1/p" "$file" | tail -1)"
+    # if section passed, search within section
+    local file_temp
+    if [[ ! -z "$section" ]]; then
+        file_temp="$(awk "/$(sedQuote "$section")/,/^$/" "$file")"
+        ini_value="$(echo "$file_temp" | sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m.*/\1/p" | tail -1)"
+    else
+        ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m.*/\1/p" "$file" | tail -1)"
+    fi
 }
 
 # @fn retroarchIncludeToEnd()
