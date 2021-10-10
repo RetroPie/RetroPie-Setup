@@ -121,6 +121,7 @@ function conf_build_vars() {
     # add our cpu and optimisation flags
     __default_cflags+=" $__cpu_flags $__opt_flags"
     __default_cxxflags+=" $__cpu_flags $__opt_flags"
+    __default_asflags+=" $__cpu_flags"
 
     # if not overridden by user, configure our compiler flags
     [[ -z "$__cflags" ]] && __cflags="$__default_cflags"
