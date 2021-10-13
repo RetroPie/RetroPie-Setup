@@ -12,7 +12,7 @@
 rp_module_id="yquake2"
 rp_module_desc="yquake2 - The Yamagi Quake II client"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/yquake2/yquake2/master/LICENSE"
-rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_7_41"
+rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_8_00"
 rp_module_section="exp"
 rp_module_flags=""
 
@@ -24,13 +24,24 @@ function depends_yquake2() {
 
 function sources_yquake2() {
     gitPullOrClone
+    # get the add-ons sources
+    local repo
+    for repo in 'xatrix' 'rogue'; do
+        gitPullOrClone "$md_build/$repo" "https://github.com/yquake2/$repo"
+    done
 }
 
 function build_yquake2() {
-    rm -rf release
-    cmake .
     make clean
     make
+    # build the add-ons source
+    local repo
+    for repo in 'xatrix' 'rogue'; do
+        make -C "$repo" clean
+        make -C "$repo"
+        # add-ons: rename the 'release' folder so it's installed under '$repo' by the install func
+        [[ -f "$repo/release/game.so" ]] && mv "$repo/release" "$repo/$repo"
+    done
     md_ret_require="$md_build/release/quake2"
 }
 
@@ -44,6 +55,8 @@ function install_yquake2() {
         'release/ref_soft.so'
         'LICENSE'
         'README.md'
+        'xatrix/xatrix'
+        'rogue/rogue'
     )
 }
 
@@ -66,17 +79,15 @@ function add_games_yquake2() {
 }
 
 function game_data_yquake2() {
-    local unwanted
-
     if [[ ! -f "$romdir/ports/quake2/baseq2/pak1.pak" && ! -f "$romdir/ports/quake2/baseq2/pak0.pak" ]]; then
         # get shareware game data
         downloadAndExtract "https://deponie.yamagi.org/quake2/idstuff/q2-314-demo-x86.exe" "$romdir/ports/quake2/baseq2" -j -LL
+        # remove files that are likely to cause conflicts or unwanted default settings
+        local unwanted
+        for unwanted in $(find "$romdir/ports/quake2" -maxdepth 2 -name "*.so" -o -name "*.cfg" -o -name "*.dll" -o -name "*.exe"); do
+            rm -f "$unwanted"
+        done
     fi
-
-    # remove files that are likely to cause conflicts or unwanted default settings
-    for unwanted in $(find "$romdir/ports/quake2" -maxdepth 2 -name "*.so" -o -name "*.cfg" -o -name "*.dll" -o -name "*.exe"); do
-        rm -f "$unwanted"
-    done
 
     chown -R $user:$user "$romdir/ports/quake2"
 }
