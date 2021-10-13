@@ -435,7 +435,7 @@ function gitPullOrClone() {
     else
         local git="git clone --recursive"
         if [[ "$depth" -gt 0 ]]; then
-            git+=" --depth $depth"
+            git+=" --depth $depth --shallow-submodules"
         fi
         git+=" --branch $branch"
         printMsgs "console" "$git \"$repo\" \"$dir\""
