@@ -18,7 +18,7 @@ rp_module_section="exp"
 rp_module_flags="!all arm aarch64"
 
 function depends_lr-uae4arm() {
-    getDepends libmpg123-dev libflac-dev
+    getDepends zlib1g-dev libmpg123-dev libflac-dev
 }
 
 function sources_lr-uae4arm() {
