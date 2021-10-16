@@ -29,7 +29,7 @@ function depends_mame() {
 
     # Install required libraries required for compilation and running
     # Note: libxi-dev is required as of v0.210, because of flag changes for XInput
-    getDepends libfontconfig1-dev qt5-default libsdl2-ttf-dev libxinerama-dev libxi-dev libpulse-dev
+    getDepends libfontconfig1-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libsdl2-ttf-dev libxinerama-dev libxi-dev libpulse-dev
 }
 
 function sources_mame() {
@@ -46,7 +46,7 @@ function build_mame() {
 
     # Compile MAME
     local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE PYTHON_EXECUTABLE=python3)
-    make "${params[@]}"
+    QT_SELECT=5 make "${params[@]}"
     strip mame
 
     rpSwap off
