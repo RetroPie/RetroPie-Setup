@@ -9,28 +9,28 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="cdogs-sdl"
+rp_module_id="cdogs-sdl-0.7.2"
 rp_module_desc="C-Dogs SDL - Classic overhead run-and-gun game"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/cxong/cdogs-sdl/master/COPYING"
-rp_module_repo="git https://github.com/cxong/cdogs-sdl.git 1.1.1"
+rp_module_repo="git https://github.com/cxong/cdogs-sdl.git 0.7.2"
 rp_module_section="exp"
 rp_module_flags="sdl1 !mali"
 
-function depends_cdogs-sdl() {
-    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libgtk-3-dev protobuf-compiler python3-protobuf
+function depends_cdogs-sdl-0.7.2() {
+    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev
 }
 
-function sources_cdogs-sdl() {
+function sources_cdogs-sdl-0.7.2() {
     gitPullOrClone
 }
 
-function build_cdogs-sdl() {
+function build_cdogs-sdl-0.7.2() {
     cmake . -DCMAKE_INSTALL_PREFIX="$md_inst" -DCDOGS_DATA_DIR="$md_inst/"
     make
     md_ret_require="$md_build/src/cdogs-sdl"
 }
 
-function install_cdogs-sdl() {
+function install_cdogs-sdl-0.7.2() {
     md_ret_files=(
         'data'
         'dogfights'
@@ -44,7 +44,7 @@ function install_cdogs-sdl() {
     )
 }
 
-function configure_cdogs-sdl() {
+function configure_cdogs-sdl-0.7.2() {
     addPort "$md_id" "cdogs-sdl" "C-Dogs SDL" "pushd $md_inst; $md_inst/cdogs-sdl; popd"
 
     [[ "$md_mode" == "remove" ]] && return
