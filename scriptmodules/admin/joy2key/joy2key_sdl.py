@@ -38,7 +38,7 @@ from pwd import getpwnam
 from sdl2 import joystick, events, version, \
     SDL_WasInit, SDL_Init, SDL_QuitSubSystem, SDL_GetError, \
     SDL_INIT_JOYSTICK, SDL_INIT_VIDEO, version_info, \
-    SDL_Event, SDL_PollEvent, SDL_Delay, SDL_Quit, \
+    SDL_Event, SDL_PollEvent, SDL_FlushEvent, SDL_Delay, SDL_Quit, \
     SDL_JOYDEVICEADDED, SDL_JOYDEVICEREMOVED, SDL_QUIT, \
     SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP, SDL_JOYHATMOTION, SDL_JOYAXISMOTION, \
     SDL_GetTicks
@@ -352,6 +352,8 @@ def event_loop(configs, joy_map, tty_fd):
                 if joystick.SDL_JoystickNumAxes(stick) > 0:
                     axis_prev_values[joystick.SDL_JoystickInstanceID(stick)] = [0 for x in range(joystick.SDL_JoystickNumAxes(stick))]
 
+                # Remove any spurious axis movements reported by SDL during initialization
+                SDL_FlushEvent(SDL_JOYAXISMOTION);
                 continue
 
             if event.jdevice.which not in active_devices:
