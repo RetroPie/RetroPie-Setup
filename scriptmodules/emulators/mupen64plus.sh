@@ -358,6 +358,8 @@ function configure_mupen64plus() {
         iniSet "BufferSwapMode" "2"
         # Disable hybrid upscaling filter (needs better GPU)
         iniSet "EnableHybridFilter" "False"
+        # Use fast but less accurate shaders. Can help with low-end GPUs.
+        iniSet "EnableInaccurateTextureCoordinates" "True"
 
         if isPlatform "videocore"; then
             # Disable gles2n64 autores feature and use dispmanx upscaling
