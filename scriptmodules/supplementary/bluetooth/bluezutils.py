@@ -15,7 +15,7 @@ def find_adapter(pattern=None):
 
 def find_adapter_in_objects(objects, pattern=None):
 	bus = dbus.SystemBus()
-	for path, ifaces in objects.iteritems():
+	for path, ifaces in objects.items():
 		adapter = ifaces.get(ADAPTER_INTERFACE)
 		if adapter is None:
 			continue
@@ -35,7 +35,7 @@ def find_device_in_objects(objects, device_address, adapter_pattern=None):
 	if adapter_pattern:
 		adapter = find_adapter_in_objects(objects, adapter_pattern)
 		path_prefix = adapter.object_path
-	for path, ifaces in objects.iteritems():
+	for path, ifaces in objects.items():
 		device = ifaces.get(DEVICE_INTERFACE)
 		if device is None:
 			continue

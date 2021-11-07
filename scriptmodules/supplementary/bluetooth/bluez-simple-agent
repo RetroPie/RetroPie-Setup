@@ -1,16 +1,12 @@
-#!/usr/bin/python
-
-from __future__ import absolute_import, print_function, unicode_literals
+#!/usr/bin/python3
 
 from optparse import OptionParser
 import sys
 import dbus
 import dbus.service
 import dbus.mainloop.glib
-try:
-  from gi.repository import GObject
-except ImportError:
-  import gobject as GObject
+from gi.repository import GLib
+
 import bluezutils
 
 BUS_NAME = 'org.bluez'
@@ -153,7 +149,7 @@ if __name__ == '__main__':
 	path = "/test/agent"
 	agent = Agent(bus, path)
 
-	mainloop = GObject.MainLoop()
+	mainloop = GLib.MainLoop()
 
 	obj = bus.get_object(BUS_NAME, "/org/bluez");
 	manager = dbus.Interface(obj, "org.bluez.AgentManager1")
