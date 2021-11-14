@@ -37,7 +37,7 @@ from configparser import ConfigParser
 from pwd import getpwnam
 from sdl2 import joystick, events, version, \
     SDL_WasInit, SDL_Init, SDL_QuitSubSystem, SDL_GetError, \
-    SDL_INIT_JOYSTICK, SDL_INIT_VIDEO, version_info, \
+    SDL_INIT_JOYSTICK, version_info, \
     SDL_Event, SDL_PollEvent, SDL_FlushEvent, SDL_Delay, SDL_Quit, \
     SDL_JOYDEVICEADDED, SDL_JOYDEVICEREMOVED, SDL_QUIT, \
     SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP, SDL_JOYHATMOTION, SDL_JOYAXISMOTION, \
@@ -331,7 +331,7 @@ def event_loop(configs, joy_map, tty_fd):
                 stick = joystick.SDL_JoystickOpen(event.jdevice.which)
                 name = joystick.SDL_JoystickName(stick).decode('utf-8')
                 guid = create_string_buffer(33)
-                joystick.SDL_JoystickGetGUIDString(joystick.SDL_JoystickGetGUID(stick), guid, 33)
+                _SDL_JoystickGetGUIDString(joystick.SDL_JoystickGetGUID(stick), guid, 33)
                 LOG.debug(f'Joystick #{joystick.SDL_JoystickInstanceID(stick)} {name} added')
                 conf_found = False
                 # try to find a configuration for the joystick
@@ -456,6 +456,23 @@ def get_hex_chars(key_str: str):
         return None
 
 
+def _SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID):
+    """
+    Local method implementing https://github.com/marcusva/py-sdl2/pull/156
+    Prevents a segfault with older (<3.8) Python AND older Py-SDL2 (<0.9.7)
+    """
+    if sys.version_info >= (3, 8, 0, 'final'):
+         joystick.SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID)
+    else:
+         s = ""
+         for g in guid.data:
+              s += "{:x}".format(g >> 4)
+              s += "{:x}".format(g & 0x0F)
+
+         s = s.encode('utf-8')
+         pszGUID.value = s[:(cbGUID * 2)]
+
+
 def main():
     # install a signal handler so the script can stop safely
     def signal_handler(signum, frame):
@@ -516,7 +533,7 @@ def main():
 
     configs = get_all_ra_config(def_buttons)
 
-    if SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO) < 0:
+    if SDL_Init(SDL_INIT_JOYSTICK) < 0:
         LOG.error(f'Error in SDL_Init: {SDL_GetError()}')
         exit(2)
 
