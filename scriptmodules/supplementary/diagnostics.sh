@@ -25,9 +25,9 @@ function _package_info_diagnostics() {
         for id in $(rp_getSectionIds $section); do
             local type="${__mod_info[$id/vendor]}"
             if rp_isInstalled "$id"; then
-                echo "== $id ($type) =="
+                echo "* $id ($type)"
                 local pkg_info="$(rp_getInstallPath $id)/retropie.pkg"
-                [[ -f "$pkg_info" ]] && cat "$pkg_info"
+                [[ -f "$pkg_info" ]] && sed -n 's/^/  /p' "$pkg_info"
             fi
         done
     done
@@ -43,6 +43,7 @@ function gui_diagnostics() {
 
     dialog --title "Diagnostic utility" --colors --yes-label "Run" --no-label "Cancel" --yesno "\nThis diagnostic utility will collect various information from your setup and pack it into a single file.\n\nThe information helps diagnose various issues and can by the RetroPie support team or support forums.\n\nAfter collecting the necessary data, you can choose to upload it to the RetroPie file sharing server or save it in order to upload it manually.\n\nPress \ZbRun\ZB and wait a few seconds for the diagnostics file to be generated." 20 60 2>&1 >/dev/tty || exit
 
+    dialog --backtitle "$__backtitle" --infobox "\nRunning diagnostics.." 5 60 >/dev/tty
     tmpdir="$(TMPDIR=/dev/shm mktemp -d)"
     _generate_diagnostics "$tmpdir" >/dev/null 2>&1
     pushd "$tmpdir"
@@ -147,10 +148,10 @@ function _input_diagnostics() {
 }
 
 function _system_diagnostics() {
-    inxi --audio --repos --usb --machine --system --filter --admin -CSG -c 11 --tty > inxi_sysinfo.txt
+    inxi --audio --repos --usb --machine --system --filter --admin -CSG -c 0 --tty > inxi_sysinfo.txt
     lsmod             > kernel-modules.txt
     cat /proc/cmdline > boot-cmdline.txt
-    dpkg -l           > dpkg-info.txt
+    dpkg -l           > dpkg-inst.txt
     dmesg | _filter_info_diagnostics - > dmesg-filtered.txt
 }
 
