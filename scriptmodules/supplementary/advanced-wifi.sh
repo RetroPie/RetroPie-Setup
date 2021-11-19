@@ -32,7 +32,7 @@ function install_advanced-wifi() {
   mkdir /opt/dev_philcomm
   mv wifi2 /opt/dev_philcomm
   mv wifi2.sh /home/pi/RetroPie/retropiemenu/
-  sudo gem install curses
+  sudo gem install curses require_all
 }
 
 function remove_advanced-wifi() {
