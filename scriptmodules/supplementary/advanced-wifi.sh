@@ -18,7 +18,7 @@ rp_module_repo="git https://github.com/OfficialPhilcomm/retropie-wifi-manager.gi
 rp_module_licence="MIT https://raw.githubusercontent.com/OfficialPhilcomm/retropie-wifi-manager/master/LICENSE.md"
 
 function depends_advanced-wifi() {
-  getDepends ruby ruby-dev
+  getDepends ruby ruby-dev libncurses-dev
 }
 
 function sources_advanced-wifi() {
