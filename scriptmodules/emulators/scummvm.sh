@@ -80,10 +80,16 @@ function configure_scummvm() {
 #!/bin/bash
 game="\$1"
 pushd "$romdir/scummvm" >/dev/null
+
+# Read game ID from .svm file, if present.
+[[ -f "\$game.svm" ]] && game=$(cat "\$game.svm")
+
 $md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" "\$game"
-while read id desc; do
-    echo "\$desc" > "$romdir/scummvm/\$id.svm"
-done < <($md_inst/bin/scummvm --list-targets | tail -n +3)
+
+# Write .svm files.
+while read id title; do
+    echo "\$id" > "/home/pi/RetroPie/roms/scummvm/\$title.svm"
+done < <(/opt/retropie/emulators/scummvm/bin/scummvm --list-targets | tail -n +3 | tr '/' ' ')
 popd >/dev/null
 _EOF_
     chown $user:$user "$romdir/scummvm/+Start $name.sh"
