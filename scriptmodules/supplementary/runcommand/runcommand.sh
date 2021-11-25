@@ -1245,7 +1245,7 @@ function show_launch() {
         else
             fbi -1 -t "$IMAGE_DELAY" -noverbose -a "$image" </dev/tty &>/dev/null
         fi
-    elif [[ "$DISABLE_MENU" -ne 1 && "$USE_ART" -ne 1 ]]; then
+    elif [[ "$DISABLE_MENU" -ne 1 ]]; then
         local launch_name
         if [[ -n "$ROM_BN" ]]; then
             launch_name="$ROM_BN ($EMULATOR)"
