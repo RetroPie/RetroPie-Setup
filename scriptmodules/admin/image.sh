@@ -22,7 +22,7 @@ function depends_image() {
 
 function create_chroot_image() {
     local dist="$1"
-    [[ -z "$dist" ]] && dist="stretch"
+    [[ -z "$dist" ]] && dist="buster"
 
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
@@ -42,6 +42,9 @@ function create_chroot_image() {
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip"
             ;;
         buster)
+            url="https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-05-28/2021-05-07-raspios-buster-armhf-lite.zip"
+            ;;
+        bullseye)
             url="https://downloads.raspberrypi.org/raspios_lite_armhf_latest"
             ;;
         *)
