@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .gcm .iso .wbfs .ciso .gcz .rvz .wad .wbfs\n\nCo
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dolphin-emu/dolphin/master/COPYING"
 rp_module_repo="git https://github.com/dolphin-emu/dolphin.git :_get_branch_dolphin"
 rp_module_section="exp"
-rp_module_flags="!all 64bit aarch64"
+rp_module_flags="!all 64bit"
 
 function _get_branch_dolphin() {
     local branch="master"
