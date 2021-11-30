@@ -25,7 +25,7 @@ function _get_branch_dolphin() {
 }
 
 function depends_dolphin() {
-    local depends=(ca-certificates qtbase5-dev qtbase5-private-dev git cmake make gcc g++ pkg-config udev libudev1 libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libxi-dev libxrandr-dev libudev-dev libevdev-dev libsfml-dev libminiupnpc-dev libmbedtls-dev libcurl4-openssl-dev libhidapi-dev libsystemd-dev libbluetooth-dev libasound2-dev libpulse-dev libpugixml-dev libbz2-dev libzstd-dev liblzo2-dev libpng-dev libusb-1.0-0-dev gettext libao-dev libenet-dev libopenal-dev libreadline-dev libsoil-dev libsoundtouch-dev libxext-dev portaudio19-dev zlib1g-dev libegl1-mesa-dev)
+    local depends=(qtbase5-dev qtbase5-private-dev git cmake pkg-config udev libudev1 libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libxi-dev libxrandr-dev libudev-dev libevdev-dev libsfml-dev libminiupnpc-dev libmbedtls-dev libcurl4-openssl-dev libhidapi-dev libsystemd-dev libbluetooth-dev libasound2-dev libpulse-dev libpugixml-dev libbz2-dev libzstd-dev liblzo2-dev libpng-dev libusb-1.0-0-dev gettext libao-dev libenet-dev libopenal-dev libreadline-dev libsoil-dev libsoundtouch-dev libxext-dev portaudio19-dev zlib1g-dev libegl1-mesa-dev)
     # current HEAD of dolphin doesn't build gtk2 UI anymore
     compareVersions $__gcc_version lt 6 && depends+=(libgtk2.0-dev libwxbase3.0-dev libwxgtk3.0-dev)
     getDepends "${depends[@]}"
@@ -38,9 +38,9 @@ function sources_dolphin() {
 function build_dolphin() {
     mkdir build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-mcpu=native -DCMAKE_C_FLAGS=-mcpu=native -DCMAKE_C_FLAGS_INIT="-static"
+    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_INIT="-static"
     make clean
-    make -j$(nproc)
+    make
     md_ret_require="$md_build/build/Binaries/dolphin-emu"
 }
 
