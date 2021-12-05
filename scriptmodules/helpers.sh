@@ -402,9 +402,11 @@ function gitPullOrClone() {
     fi
     [[ -z "$repo" ]] && return 1
     [[ -z "$branch" ]] && branch="master"
-    if [[ -z "$depth" && "$__persistent_repos" -ne 1 && -z "$commit" ]]; then
-        depth=1
-    else
+
+    # if no depth is provided default to shallow clone (depth 1)
+    [[ -z "$depth" ]] && depth=1
+    # if we are using persistent repos or checking out a specific commit, don't shallow clone
+    if [[ "$__persistent_repos" -eq 1 || -n "$commit" ]]; then
         depth=0
     fi
 
@@ -416,14 +418,24 @@ function gitPullOrClone() {
 
     if [[ -d "$dir/.git" ]]; then
         pushd "$dir" > /dev/null
+        # if we are using persistent repos, fetch the latest remote changes and clean the source so
+        # any patches can be re-applied as needed.
+        if [[ "$__persistent_repos" -eq 1 ]]; then
+            runCmd git fetch
+            runCmd git reset --hard
+            runCmd git clean -f -d
+        fi
         runCmd git checkout "$branch"
-        runCmd git pull --ff-only
-        runCmd git submodule update --init --recursive
+        # only try to pull if we are on a tracking branch
+        if [[ -n "$(git config --get branch.$branch.merge)" ]]; then
+            runCmd git pull --ff-only
+            runCmd git submodule update --init --recursive
+        fi
         popd > /dev/null
     else
         local git="git clone --recursive"
         if [[ "$depth" -gt 0 ]]; then
-            git+=" --depth $depth"
+            git+=" --depth $depth --shallow-submodules"
         fi
         git+=" --branch $branch"
         printMsgs "console" "$git \"$repo\" \"$dir\""
