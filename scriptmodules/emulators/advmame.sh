@@ -43,9 +43,9 @@ function sources_advmame() {
 function build_advmame() {
     local params=()
     if isPlatform "videocore"; then
-        params+=(--enable-sdl1 --disable-sdl2 --enable-vc)
+        params+=(--enable-sdl --disable-sdl2 --enable-vc)
     else
-        params+=(--enable-sdl2 --disable-sdl1 --disable-vc)
+        params+=(--enable-sdl2 --disable-sdl --disable-vc)
     fi
     ./autogen.sh
     ./configure CFLAGS="$CFLAGS -fno-stack-protector" --prefix="$md_inst" "${params[@]}"
