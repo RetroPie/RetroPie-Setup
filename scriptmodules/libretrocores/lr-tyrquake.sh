@@ -27,7 +27,7 @@ function build_lr-tyrquake() {
 
 function install_lr-tyrquake() {
     md_ret_files=(
-        'gnu.txt'
+        'LICENSE.txt'
         'readme-id.txt'
         'readme.txt'
         'tyrquake_libretro.so'
