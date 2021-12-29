@@ -35,8 +35,8 @@ function install_lr-tyrquake() {
 }
 
 function game_data_lr-tyrquake() {
-    getDepends lhasa
     if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then
+        getDepends lhasa
         mkUserDir "$romdir/ports"
         mkUserDir "$romdir/ports/quake"
         local temp="$(mktemp -d)"
