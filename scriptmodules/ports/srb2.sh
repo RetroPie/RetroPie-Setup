@@ -16,7 +16,7 @@ rp_module_repo="git https://github.com/STJr/SRB2.git SRB2_release_2.2.9"
 rp_module_section="exp"
 
 function depends_srb2() {
-    local depends=(cmake libsdl2-dev libsdl2-mixer-dev libgme-dev libpng-dev)
+    local depends=(cmake libsdl2-dev libsdl2-mixer-dev libgme-dev libpng-dev libcurl4-openssl-dev)
     compareVersions "$__os_debian_ver" gt 9 && depends+=(libopenmpt-dev)
     getDepends "${depends[@]}"
 }
