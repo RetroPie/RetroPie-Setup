@@ -12,7 +12,7 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
-rp_module_repo="git https://github.com/libretro/RetroArch.git v1.9.7"
+rp_module_repo="git https://github.com/RetroPie/RetroArch.git retropie-v1.10.0"
 rp_module_section="core"
 
 function depends_retroarch() {
@@ -34,9 +34,6 @@ function depends_retroarch() {
 
 function sources_retroarch() {
     gitPullOrClone
-    applyPatch "$md_data/01_disable_search.diff"
-    applyPatch "$md_data/02_shader_path_config_enable.diff"
-    applyPatch "$md_data/03_revert_default_save_paths.diff"
 }
 
 function build_retroarch() {
