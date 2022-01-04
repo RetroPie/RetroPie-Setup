@@ -32,6 +32,8 @@ function sources_xpad() {
     cd "$md_inst"
     # LED support (as disabled currently in packaged RPI kernel) and allow forcing MAP_TRIGGERS_TO_BUTTONS
     applyPatch "$md_data/01_enable_leds_and_trigmapping.diff"
+    # Tell 'dkms' to use the 'updates' kernel module folder to store the module
+    applyPatch "$md_data/02_dkms_updates_folder.diff"
 }
 
 function build_xpad() {
