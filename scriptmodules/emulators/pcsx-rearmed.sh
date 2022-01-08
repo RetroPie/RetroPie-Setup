@@ -32,9 +32,8 @@ function build_pcsx-rearmed() {
     else
         ./configure --sound-drivers=alsa --disable-neon
     fi
-    make clean
-   
-   make
+    make clean 
+    make
     md_ret_require="$md_build/pcsx"
 }
 
