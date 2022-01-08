@@ -26,13 +26,15 @@ function sources_pcsx-rearmed() {
 }
 
 function build_pcsx-rearmed() {
+    sed -i '67 s|.|//&|' plugins/dfsound/alsa.c
     if isPlatform "neon"; then
         ./configure --sound-drivers=alsa --enable-neon
     else
         ./configure --sound-drivers=alsa --disable-neon
     fi
     make clean
-    make
+   
+   make
     md_ret_require="$md_build/pcsx"
 }
 
