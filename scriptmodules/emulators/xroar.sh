@@ -18,7 +18,7 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function depends_xroar() {
-    local depends=(libsdl2-dev automake libasound-dev texinfo zlib1g-dev)
+    local depends=(libsdl2-dev automake libasound2-dev texinfo zlib1g-dev)
     isPlatform "x11" && depends+=(libpulse-dev)
     getDepends "${depends[@]}"
 }
