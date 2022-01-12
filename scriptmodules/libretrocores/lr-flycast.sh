@@ -10,51 +10,61 @@
 #
 
 rp_module_id="lr-flycast"
-rp_module_desc="Multi-platform Sega Dreamcast, Naomi and Atomiswave emulator derived from Reicast"
-rp_module_help="Dreamcast ROM Extensions: .cdi .gdi .chd .m3u, Naomi/Atomiswave ROM Extension: .zip\n\nCopy your Dreamcast/Naomi roms to $romdir/dreamcast\n\nCopy the required Dreamcast BIOS file dc_boot.bin to $biosdir/dc\n\nCopy the required Naomi/Atomiswave BIOS files naomi.zip and awbios.zip to $biosdir/dc"
-rp_module_licence="GPL2 https://raw.githubusercontent.com/flyinghead/flycast/master/LICENSE"
-rp_module_repo="git https://github.com/flyinghead/flycast.git master"
+rp_module_desc="Dreamcast emulator - Reicast port for libretro"
+rp_module_help="Previously named lr-reicast then lr-beetle-dc\n\nDreamcast ROM Extensions: .cdi .gdi .chd .m3u, Naomi/Atomiswave ROM Extension: .zip\n\nCopy your Dreamcast/Naomi roms to $romdir/dreamcast\n\nCopy the required Dreamcast BIOS files dc_boot.bin and dc_flash.bin to $biosdir/dc\n\nCopy the required Naomi/Atomiswave BIOS files naomi.zip and awbios.zip to $biosdir/dc"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/flycast/master/LICENSE"
+rp_module_repo="git https://github.com/libretro/flycast.git master"
 rp_module_section="opt"
 rp_module_flags="!armv6"
 
 function depends_lr-flycast() {
-    local depends=(cmake zlib1g-dev libzip-dev)
+    local depends=(zlib1g-dev)
     isPlatform "videocore" && depends+=(libraspberrypi-dev)
     isPlatform "mesa" && depends+=(libgles2-mesa-dev)
-    isPlatform "x11" && depends+=(libgl-dev)
     getDepends "${depends[@]}"
+}
+
+function _update_hook_lr-flycast() {
+    renameModule "lr-reicast" "lr-beetle-dc"
+    renameModule "lr-beetle-dc" "lr-flycast"
 }
 
 function sources_lr-flycast() {
     gitPullOrClone
+    # don't override our C/CXXFLAGS and set LDFLAGS to CFLAGS to avoid warnings on linking
+    applyPatch "$md_data/01_flags_fix.diff"
 }
 
 function build_lr-flycast() {
-    local params=("-DLIBRETRO=On -DUSE_HOST_LIBZIP=On -DCMAKE_BUILD_TYPE=Release")
+    local params=("HAVE_LTCG=0")
     local add_flags=()
-    if isPlatform "gles" && ! isPlatform "gles3" ; then
+    if isPlatform "gles"; then
         if isPlatform "videocore"; then
-            add_flags+=("-I/opt/vc/include -DLOW_END")
-            params+=("-DUSE_VIDEOCORE=On")
+            params+=(
+                "GLES=1"
+                "GL_LIB=-L/opt/vc/lib -lbrcmGLESv2")
+            add_flags+=("-I/opt/vc/include -DTARGET_NO_STENCIL -DLOW_END")
+        else
+            params+=("FORCE_GLES=1")
         fi
-        params+=("-DUSE_GLES2=On")
+        if isPlatform "gles3"; then
+            params+=("HAVE_GL3=1")
+        else
+            params+=("HAVE_GL3=0")
+        fi
     fi
-
-    isPlatform "gles3" && params+=("-DUSE_GLES=On")
-    ! isPlatform "x86" && params+=("-DUSE_VULKAN=Off")
-
-    mkdir -p build
-    cd build
-    CFLAGS="$CFLAGS ${add_flags[@]}" CXXFLAGS="$CXXFLAGS ${add_flags}" cmake "${params[@]}" ..
-    make
-    md_ret_require="$md_build/build/flycast_libretro.so"
+    isPlatform "aarch64" && params+=("WITH_DYNAREC=arm64" "HOST_CPU_FLAGS=-DTARGET_LINUX_ARMv8")
+    isPlatform "arm" && params+=("WITH_DYNAREC=arm")
+    ! isPlatform "x86" && params+=("HAVE_GENERIC_JIT=0" "HAVE_VULKAN=0")
+    make "${params[@]}" clean
+    CFLAGS+=" ${add_flags[@]}" make "${params[@]}"
+    md_ret_require="$md_build/flycast_libretro.so"
 }
 
 function install_lr-flycast() {
     md_ret_files=(
-        'build/flycast_libretro.so'
+        'flycast_libretro.so'
         'LICENSE'
-        'README.md'
     )
 }
 
