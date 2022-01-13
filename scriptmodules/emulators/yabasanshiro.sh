@@ -15,10 +15,10 @@ rp_module_help="ROM Extensions: .cue .chd\n\nCopy your SEGA Saturn ios images to
 rp_module_licence="GPL2 https://github.com/devmiyax/yabause/blob/master/LICENSE"
 rp_module_repo="git https://github.com/devmiyax/yabause.git pi4"
 rp_module_section="exp"
-rp_module_flags="rpi gles31"
+rp_module_flags="!all rpi !videocore"
 
 function depends_yabasanshiro() {
-    local depends=(cmake pkg-config python-pip cmake build-essential protobuf-compiler libprotobuf-dev libsecret-1-dev libssl-dev libsdl2-dev libboost-all-dev )
+    local depends=(cmake pkg-config python-pip cmake build-essential protobuf-compiler libprotobuf-dev libsecret-1-dev libssl-dev libsdl2-dev libboost-all-dev)
     getDepends "${depends[@]}"
 }
 
@@ -29,7 +29,7 @@ function sources_yabasanshiro() {
 function build_yabasanshiro() {
     mkdir build
     cd build
-    cmake ../yabause/ -DGIT_EXECUTABLE=/usr/bin/git -DYAB_PORTS=retro_arena -DYAB_WANT_DYNAREC_DEVMIYAX=ON -DYAB_WANT_ARM7=ON -DCMAKE_TOOLCHAIN_FILE=../yabause/src/retro_arena/pi4.cmake -DCMAKE_INSTALL_PREFIX="$md_inst"
+    cmake ../yabause/ -DGIT_EXECUTABLE=/usr/bin/git -DYAB_PORTS=retro_arena -DYAB_WANT_DYNAREC_DEVMIYAX=ON -DYAB_WANT_ARM7=ON -DCMAKE_TOOLCHAIN_FILE=../yabause/src/retro_arena/pi4.cmake -DYAB_WANT_OPENAL=OFF -DCMAKE_INSTALL_PREFIX="$md_inst"
     make clean
     make
     md_ret_require="$md_build/build/src/retro_arena/yabasanshiro"
