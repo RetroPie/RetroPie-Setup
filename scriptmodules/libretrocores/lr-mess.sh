@@ -39,6 +39,7 @@ function install_lr-mess() {
         'COPYING'
         'mess_libretro.so'
         'README.md'
+        'hash'
     )
 }
 
@@ -61,6 +62,6 @@ function configure_lr-mess() {
     setRetroArchCoreOption "mame_boot_from_cli" "enabled"
 
     mkUserDir "$biosdir/mame"
-    cp -rv "$md_build/hash" "$biosdir/mame/"
+    cp -rv "$md_inst/hash" "$biosdir/mame/"
     chown -R $user:$user "$biosdir/mame"
 }
