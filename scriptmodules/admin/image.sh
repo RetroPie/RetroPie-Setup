@@ -327,8 +327,8 @@ function platform_image() {
             image_platform="RPI 1/Zero"
             ;;
         rpi2)
-            image_base+="rpi2_3"
-            image_platform="RPI 2/3"
+            image_base+="rpi2_3_zero2w"
+            image_platform="RPI 2/3/Zero 2 W"
             ;;
         rpi3)
             image_base+="rpi3"
