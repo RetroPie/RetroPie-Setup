@@ -42,7 +42,7 @@ function create_chroot_image() {
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip"
             ;;
         buster)
-            url="https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-05-28/2021-05-07-raspios-buster-armhf-lite.zip"
+            url="https://downloads.raspberrypi.org/raspios_oldstable_lite_armhf_latest"
             ;;
         bullseye)
             url="https://downloads.raspberrypi.org/raspios_lite_armhf_latest"
