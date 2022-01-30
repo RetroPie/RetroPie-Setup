@@ -375,16 +375,16 @@ function get_platform() {
                     esac
                 fi
                 ;;
-            ODROIDC)
+            *ODROIDC)
                 __platform="odroid-c1"
                 ;;
-            ODROID-C2)
+            *ODROID-C2)
                 __platform="odroid-c2"
                 ;;
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
                 __platform="imx6"
                 ;;
-            ODROID-XU[34])
+            *ODROID-XU[34])
                 __platform="odroid-xu"
                 ;;
             "Rockchip (Device Tree)")
