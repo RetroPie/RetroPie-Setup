@@ -39,6 +39,8 @@ function sources_eduke32() {
     isPlatform "gles" && applyPatch "$md_data/0003-replace-gl_red.patch"
     # gcc 6.3.x compiler fix
     applyPatch "$md_data/0004-recast-function.patch"
+    # cherry-picked commit fixing a game bug in E1M4 (shrinker ray stuck)
+    applyPatch "$md_data/0005-e1m4-shrinker-bug.patch"
 }
 
 function build_eduke32() {
