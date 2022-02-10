@@ -299,6 +299,7 @@ function configure_mupen64plus() {
     addSystem "n64"
 
     mkRomDir "n64"
+    moveConfigDir "$home/.local/share/mupen64plus" "$md_conf_root/n64/mupen64plus"
 
     [[ "$md_mode" == "remove" ]] && return
 
