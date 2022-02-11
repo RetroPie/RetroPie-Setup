@@ -266,6 +266,7 @@ function gui_esthemes() {
         'RetroHursty69 supersynthyA1UP'
         'RetroHursty69 HyperCab'
         'RetroHursty69 NeonFantasy'
+        'RetroHursty69 ShadowClean'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
