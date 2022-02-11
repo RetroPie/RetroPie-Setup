@@ -148,7 +148,7 @@ function add_games_eduke32() {
         game_args="game$game[2]"
 
         if [[ -d "$romdir/ports/$portname/${!game_path}" ]]; then
-           addPort "$md_id" "$portname" "${!game_launcher}" "${binary}.sh %ROM%" "-j$romdir/ports/$portname/${game0[1]} -j$romdir/ports/$portname/${!game_path} ${!game_args}"
+           addPort "$md_id" "$portname" "${!game_launcher}" "pushd $md_conf_root/$portname; ${binary}.sh %ROM%; popd" "-j$romdir/ports/$portname/${game0[1]} -j$romdir/ports/$portname/${!game_path} ${!game_args}"
         fi
     done
 
