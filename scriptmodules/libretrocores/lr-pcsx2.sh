@@ -43,10 +43,13 @@ function install_lr-pcsx2() {
 
 function configure_lr-pcsx2() {
     mkRomDir "ps2"
-
     ensureSystemretroconfig "ps2"
 
-    addEmulator 1 "$md_id" "ps2" "$md_inst/pcsx2_libretro.so"
+    if [[ "$md_mode" == "install" ]]; then
+        mkUserDir "$biosdir/pcsx2"
+        mkUserDir "$biosdir/pcsx2/bios"
+    fi
 
+    addEmulator 1 "$md_id" "ps2" "$md_inst/pcsx2_libretro.so"
     addSystem "ps2"
 }
