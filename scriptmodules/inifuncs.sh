@@ -34,7 +34,7 @@ function iniConfig() {
     __ini_cfg_file="$3"
 }
 
-# arg 1: command, arg 2: key, arg 2: value, arg 3: file (optional - uses file from iniConfig if not used)
+# arg 1: command, arg 2: key, arg 3: value, arg 4: file (optional - uses file from iniConfig if not used)
 
 # @fn iniProcess()
 # @param command `set`, `unset` or `del`
