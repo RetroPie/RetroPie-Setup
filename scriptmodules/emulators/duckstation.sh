@@ -65,7 +65,6 @@ function configure_duckstation() {
     fi
     # SettingsVersion = 3 stops overwrite of any settings when version number doesn't match
     iniSet "SettingsVersion" "3"
-    iniSet "ControllerBackend" "evdev"
     if ! grep -q "\[BIOS\]" "$config"; then
         echo "[BIOS]" >> "$config"
     fi
