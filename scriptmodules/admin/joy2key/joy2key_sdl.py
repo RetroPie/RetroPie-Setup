@@ -37,8 +37,8 @@ from configparser import ConfigParser
 from pwd import getpwnam
 from sdl2 import joystick, events, version, \
     SDL_WasInit, SDL_Init, SDL_QuitSubSystem, SDL_GetError, \
-    SDL_INIT_JOYSTICK, SDL_INIT_VIDEO, version_info, \
-    SDL_Event, SDL_PollEvent, SDL_Delay, SDL_Quit, \
+    SDL_INIT_JOYSTICK, version_info, \
+    SDL_Event, SDL_PollEvent, SDL_FlushEvent, SDL_Delay, SDL_Quit, \
     SDL_JOYDEVICEADDED, SDL_JOYDEVICEREMOVED, SDL_QUIT, \
     SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP, SDL_JOYHATMOTION, SDL_JOYAXISMOTION, \
     SDL_GetTicks
@@ -255,7 +255,7 @@ def filter_active_events(event_queue: dict) -> list:
     for e in event_queue:
         if event_queue[e][0] is None:
             continue
-        
+
         last_fire_time = event_queue[e][2]
         repeat_count = event_queue[e][1]
 
@@ -268,7 +268,13 @@ def filter_active_events(event_queue: dict) -> list:
 
     # remove any duplicate events from the list
     return list(set(filtered_events))
-    
+
+"""
+Remove all queued events for a device
+"""
+def remove_events_for_device(event_queue: dict, dev_index: int):
+    return { key:value for (key,value) in event_queue.items() if not key.startswith(f"{dev_index}_")}
+
 def event_loop(configs, joy_map, tty_fd):
     event = SDL_Event()
 
@@ -325,7 +331,7 @@ def event_loop(configs, joy_map, tty_fd):
                 stick = joystick.SDL_JoystickOpen(event.jdevice.which)
                 name = joystick.SDL_JoystickName(stick).decode('utf-8')
                 guid = create_string_buffer(33)
-                joystick.SDL_JoystickGetGUIDString(joystick.SDL_JoystickGetGUID(stick), guid, 33)
+                _SDL_JoystickGetGUIDString(joystick.SDL_JoystickGetGUID(stick), guid, 33)
                 LOG.debug(f'Joystick #{joystick.SDL_JoystickInstanceID(stick)} {name} added')
                 conf_found = False
                 # try to find a configuration for the joystick
@@ -346,6 +352,8 @@ def event_loop(configs, joy_map, tty_fd):
                 if joystick.SDL_JoystickNumAxes(stick) > 0:
                     axis_prev_values[joystick.SDL_JoystickInstanceID(stick)] = [0 for x in range(joystick.SDL_JoystickNumAxes(stick))]
 
+                # Remove any spurious axis movements reported by SDL during initialization
+                SDL_FlushEvent(SDL_JOYAXISMOTION);
                 continue
 
             if event.jdevice.which not in active_devices:
@@ -355,6 +363,8 @@ def event_loop(configs, joy_map, tty_fd):
 
             if event.type == SDL_JOYDEVICEREMOVED:
                 joystick.SDL_JoystickClose(active_devices[event.jdevice.which][1])
+                if event.jdevice.which in active_devices:
+                    event_queue = remove_events_for_device(event_queue, active_devices[event.jdevice.which][0])
                 active_devices.pop(event.jdevice.which, None)
                 axis_prev_values.pop(event.jdevice.which, None)
                 LOG.debug(f'Removed joystick #{event.jdevice.which}')
@@ -446,6 +456,23 @@ def get_hex_chars(key_str: str):
         return None
 
 
+def _SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID):
+    """
+    Local method implementing https://github.com/marcusva/py-sdl2/pull/156
+    Prevents a segfault with older (<3.8) Python AND older Py-SDL2 (<0.9.7)
+    """
+    if sys.version_info >= (3, 8, 0, 'final'):
+         joystick.SDL_JoystickGetGUIDString(guid, pszGUID, cbGUID)
+    else:
+         s = ""
+         for g in guid.data:
+              s += "{:x}".format(g >> 4)
+              s += "{:x}".format(g & 0x0F)
+
+         s = s.encode('utf-8')
+         pszGUID.value = s[:(cbGUID * 2)]
+
+
 def main():
     # install a signal handler so the script can stop safely
     def signal_handler(signum, frame):
@@ -506,7 +533,7 @@ def main():
 
     configs = get_all_ra_config(def_buttons)
 
-    if SDL_Init(SDL_INIT_JOYSTICK | SDL_INIT_VIDEO) < 0:
+    if SDL_Init(SDL_INIT_JOYSTICK) < 0:
         LOG.error(f'Error in SDL_Init: {SDL_GetError()}')
         exit(2)
 

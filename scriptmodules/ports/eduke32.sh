@@ -39,6 +39,8 @@ function sources_eduke32() {
     isPlatform "gles" && applyPatch "$md_data/0003-replace-gl_red.patch"
     # gcc 6.3.x compiler fix
     applyPatch "$md_data/0004-recast-function.patch"
+    # cherry-picked commit fixing a game bug in E1M4 (shrinker ray stuck)
+    applyPatch "$md_data/0005-e1m4-shrinker-bug.patch"
 }
 
 function build_eduke32() {
@@ -146,7 +148,7 @@ function add_games_eduke32() {
         game_args="game$game[2]"
 
         if [[ -d "$romdir/ports/$portname/${!game_path}" ]]; then
-           addPort "$md_id" "$portname" "${!game_launcher}" "${binary}.sh %ROM%" "-j$romdir/ports/$portname/${game0[1]} -j$romdir/ports/$portname/${!game_path} ${!game_args}"
+           addPort "$md_id" "$portname" "${!game_launcher}" "pushd $md_conf_root/$portname; ${binary}.sh %ROM%; popd" "-j$romdir/ports/$portname/${game0[1]} -j$romdir/ports/$portname/${!game_path} ${!game_args}"
         fi
     done
 

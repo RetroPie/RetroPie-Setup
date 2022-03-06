@@ -16,7 +16,7 @@ rp_module_section=""
 rp_module_flags="!arm"
 
 function _default_dist_crosscomp() {
-    echo "stretch"
+    echo "buster"
 }
 
 function depends_crosscomp() {
@@ -74,7 +74,7 @@ function sources_crosscomp() {
             ;;
     esac
 
-    downloadAndExtract "http://isl.gforge.inria.fr/isl-${pkgs[isl]}.tar.bz2" isl --strip-components 1
+    downloadAndExtract "https://libisl.sourceforge.io/isl-${pkgs[isl]}.tar.bz2" isl --strip-components 1
     downloadAndExtract "http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-${pkgs[cloog]}.tar.gz" cloog --strip-components 1
 
     downloadAndExtract "https://ftp.gnu.org/gnu/binutils/binutils-${pkgs[binutils]}.tar.gz" binutils --strip-components 1

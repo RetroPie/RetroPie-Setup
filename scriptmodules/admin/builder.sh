@@ -42,8 +42,11 @@ function module_builder() {
             continue
         fi
 
-        # if there is no newer version, skip to the next module
-        if ! rp_hasNewerModule "$id" "source"; then
+        # if there is no newer version, skip to the next module. Returns 1 when update is not required,
+        # but can also return 2, to mean "unknown" in which case we should do an update. Modules like sdl2
+        # will return 2 as they are handled differently, and don't use the package update mechanisms.
+        rp_hasNewerModule "$id" "source"
+        if [[ "$?" -eq 1 ]]; then
             printMsgs "console" "No update was found."
             continue
         fi
@@ -105,7 +108,7 @@ function chroot_build_builder() {
 
 
         if [[ ! -d "$chroot_rps_dir" ]]; then
-            sudo -u $user git clone "$home/RetroPie-Setup" "$chroot_rps_dir"
+            sudo -u $user git clone "$scriptdir" "$chroot_rps_dir"
             gpg --export-secret-keys "$__gpg_signing_key" >"$chroot_dir/retropie.key"
             rp_callModule image chroot "$chroot_dir" bash -c "\
                 sudo gpg --import "/retropie.key"; \
@@ -113,9 +116,9 @@ function chroot_build_builder() {
                 sudo apt-get update; \
                 sudo apt-get install -y git; \
                 "
-                # copy existing packages from host if building in a clean chroot to avoid rebuilding everything
-                mkdir -p "$chroot_rps_dir/$archive_dir"
-                rsync -av "$home/RetroPie-Setup/$archive_dir/" "$chroot_rps_dir/$archive_dir/"
+            # copy existing packages from host if building in a clean chroot to avoid rebuilding everything
+            mkdir -p "$chroot_rps_dir/$archive_dir"
+            rsync -av "$scriptdir/$archive_dir/" "$chroot_rps_dir/$archive_dir/"
         else
             sudo -u $user git -C "$chroot_rps_dir" pull
         fi
@@ -136,6 +139,6 @@ function chroot_build_builder() {
                 /home/pi/RetroPie-Setup/retropie_packages.sh builder "$@"
         done
 
-        rsync -av "$chroot_rps_dir/$archive_dir/" "$home/RetroPie-Setup/$archive_dir/"
+        rsync -av "$chroot_rps_dir/$archive_dir/" "$scriptdir/$archive_dir/"
     done
 }

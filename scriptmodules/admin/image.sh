@@ -22,7 +22,7 @@ function depends_image() {
 
 function create_chroot_image() {
     local dist="$1"
-    [[ -z "$dist" ]] && dist="stretch"
+    [[ -z "$dist" ]] && dist="buster"
 
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
@@ -42,6 +42,9 @@ function create_chroot_image() {
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip"
             ;;
         buster)
+            url="https://downloads.raspberrypi.org/raspios_oldstable_lite_armhf_latest"
+            ;;
+        bullseye)
             url="https://downloads.raspberrypi.org/raspios_lite_armhf_latest"
             ;;
         *)
@@ -324,8 +327,8 @@ function platform_image() {
             image_platform="RPI 1/Zero"
             ;;
         rpi2)
-            image_base+="rpi2_3"
-            image_platform="RPI 2/3"
+            image_base+="rpi2_3_zero2w"
+            image_platform="RPI 2/3/Zero 2 W"
             ;;
         rpi3)
             image_base+="rpi3"

@@ -1,0 +1,12 @@
+diff --git a/dkms.conf b/dkms.conf
+index 58a1ac2..b56b148 100644
+--- a/dkms.conf
++++ b/dkms.conf
+@@ -2,6 +2,6 @@ PACKAGE_NAME="xpad"
+ PACKAGE_VERSION="0.4"
+ MAKE[0]="make KVERSION=$kernelver"
+ CLEAN="make clean"
+-DEST_MODULE_LOCATION[0]="/extra"
++DEST_MODULE_LOCATION[0]="/updates"
+ BUILT_MODULE_NAME[0]="xpad"
+ AUTOINSTALL="yes"

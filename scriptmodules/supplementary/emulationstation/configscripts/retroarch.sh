@@ -239,6 +239,9 @@ function map_retroarch_joystick() {
     local value
     local type
     declare -A hat_map=([1]="up" [2]="right" [4]="down" [8]="left")
+    iniGet "input_driver"
+    local input_driver="$ini_value"
+    local autoconfig_preset=$(grep -rwl "$rootdir/emulators/retroarch/autoconfig-presets/$input_driver" -e "$DEVICE_NAME" | head -1)
     for key in "${keys[@]}"; do
         case "$input_type" in
             hat)
@@ -260,8 +263,7 @@ function map_retroarch_joystick() {
                 value="$input_id"
 
                 # workaround for mismatched controller mappings
-                iniGet "input_driver"
-                if [[ "$ini_value" == "udev" ]]; then
+                if [[ "$input_driver" == "udev" ]]; then
                     case "$DEVICE_NAME" in
                         "8Bitdo FC30"*|"8Bitdo NES30"*|"8Bitdo SFC30"*|"8Bitdo SNES30"*|"8Bitdo Zero"*)
                             if [[ "$_atebitdo_hack" -eq 1 ]]; then
@@ -277,6 +279,16 @@ function map_retroarch_joystick() {
         fi
         key+="_$type"
         iniSet "$key" "$value"
+
+        # set button labels from autoconfig preset (if available), when binding matches the preset
+        if [[ -f "$autoconfig_preset" ]]; then
+            iniGet "$key" "$autoconfig_preset"
+            if [[ "$ini_value" == "$value" ]]; then
+                key+="_label"
+                iniGet "$key" "$autoconfig_preset"
+                [[ -n "$ini_value" ]] && iniSet "$key" "$ini_value"
+            fi
+        fi
     done
 }
 

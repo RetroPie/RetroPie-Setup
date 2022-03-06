@@ -44,6 +44,11 @@ function configure_lr-ppsspp() {
         mkUserDir "$biosdir/PPSSPP"
         cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
         chown -R $user:$user "$biosdir/PPSSPP"
+
+        # the core needs a save file directory, use the same folder as standalone 'ppsspp'
+        iniConfig " = " "" "$configdir/psp/retroarch.cfg"
+        iniSet "savefile_directory" "$home/.config/ppsspp"
+        mkUserDir "$home/.config/ppsspp"
     fi
 
     addEmulator 1 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"

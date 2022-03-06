@@ -173,13 +173,14 @@ function basic_configedit() {
         '_function_ _video_fullscreen_configedit'
         'video_shader_enable true false'
         "video_shader _file_ *.*p $rootdir/emulators/retroarch/shader"
+        'input_auto_game_focus _id_ off on detect'
         'input_overlay_enable true false'
         "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
         '_function_ _joypad_index_configedit'
-        'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player4_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player4_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
     )
 
     local ini_titles=(
@@ -188,6 +189,7 @@ function basic_configedit() {
         'Render Resolution'
         'Video Shader Enable'
         "Video Shader File"
+        'Auto Enable "Game Focus" Mode'
         'Overlay Enable'
         'Overlay File'
         'Choose joypad order'
@@ -203,13 +205,14 @@ function basic_configedit() {
         'Configure the resolution to render the emulator output at - for better performance on full HD displays choose a lower resolution and it will be upscaled in hardware'
         'Load video_shader on startup. Other shaders can still be loaded later in runtime.'
         'Video shader to use (default none)'
+        'Controls the automatic loading of "Game Focus" mode when starting a game.'
         'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
         'Input overlay to use (default none)'
         'Manual selection of joypad order'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
     )
 
     iniFileEditor " = " '"' "$config"
@@ -231,8 +234,8 @@ function advanced_configedit() {
         'input_overlay_enable true false'
         "input_overlay _file_ *.cfg $rootdir/emulators/retroarch/overlays"
         "audio_driver $audio_opts"
-        'video_driver gl dispmanx sdl2 vg vulkan'
-        'menu_driver rgui xmb'
+        'video_driver gl dispmanx sdl2 vg vulkan glcore gl1'
+        'menu_driver rgui xmb glui ozone'
         'video_fullscreen_x _string_'
         'video_fullscreen_y _string_'
         'video_frame_delay _string_'
@@ -251,7 +254,7 @@ function advanced_configedit() {
         'fps_show true false'
         'input_overlay_opacity _string_'
         'input_overlay_scale _string_'
-        'input_joypad_driver udev sdl2 linuxraw'
+        'input_joypad_driver udev sdl2 linuxraw hid'
         'game_specific_options true false'
         'input_player1_joypad_index _string_'
         'input_player2_joypad_index _string_'
@@ -261,14 +264,14 @@ function advanced_configedit() {
         'input_player6_joypad_index _string_'
         'input_player7_joypad_index _string_'
         'input_player8_joypad_index _string_'
-        'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player4_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player5_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player6_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player7_analog_dpad_mode _id_ disabled left-stick right-stick'
-        'input_player8_analog_dpad_mode _id_ disabled left-stick right-stick'
+        'input_player1_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player2_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player3_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player4_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player5_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player6_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player7_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
+        'input_player8_analog_dpad_mode _id_ disabled left-stick right-stick left-stick-forced right-stick-forced'
 
     )
 
@@ -276,7 +279,7 @@ function advanced_configedit() {
         'Smoothens picture with bilinear filtering. Should be disabled if using pixel shaders.'
         'Aspect ratio to use (default unset - will use core aspect if video_aspect_ratio_auto is true)'
         'Load video_shader on startup. Other shaders can still be loaded later in runtime.'
-        'Video shader to use (default none)'
+        'Video shader to use. Video driver gl supports *.glslp shader presets. Video drivers glcore and vulkan support *.slangp shader presets. (default none)'
         'Load input overlay on startup. Other overlays can still be loaded later in runtime.'
         'Input overlay to use (default none)'
         'Audio driver to use (default is alsathread)'
@@ -310,14 +313,14 @@ function advanced_configedit() {
         'Manual selection of joypad order'
         'Manual selection of joypad order'
         'Manual selection of joypad order'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
-        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
+        'Allow analogue sticks to be used as a d-pad - 0 = disabled, 1 = left stick, 2 = right stick, 3 = left stick forced, 4 = right stick forced'
 
     )
 

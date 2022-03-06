@@ -12,14 +12,14 @@
 rp_module_id="scummvm"
 rp_module_desc="ScummVM"
 rp_module_help="Copy your ScummVM games to $romdir/scummvm"
-rp_module_licence="GPL2 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
-rp_module_repo="git https://github.com/scummvm/scummvm.git v2.2.0"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
+rp_module_repo="git https://github.com/scummvm/scummvm.git master a9418f8f"
 rp_module_section="opt"
 rp_module_flags="sdl2"
 
 function depends_scummvm() {
     local depends=(
-        libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev
+        liba52-0.7.4-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libgif-dev libmad0-dev libpng-dev
         libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
         libjpeg-dev libasound2-dev libcurl4-openssl-dev
     )
@@ -80,7 +80,7 @@ function configure_scummvm() {
 #!/bin/bash
 game="\$1"
 pushd "$romdir/scummvm" >/dev/null
-$md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" \$game
+$md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" "\$game"
 while read id desc; do
     echo "\$desc" > "$romdir/scummvm/\$id.svm"
 done < <($md_inst/bin/scummvm --list-targets | tail -n +3)

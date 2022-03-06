@@ -62,8 +62,8 @@ function remove_pcsx2() {
 function configure_pcsx2() {
     mkRomDir "ps2"
     # Windowed option
-    addEmulator 0 "$md_id" "ps2" "/usr/games/PCSX2 %ROM% --windowed"
+    addEmulator 0 "$md_id" "ps2" "/usr/games/pcsx2 %ROM% --windowed"
     # Fullscreen option with no gui (default, because we can close with `Esc` key, easy to map for gamepads)
-    addEmulator 1 "$md_id-nogui" "ps2" "/usr/games/PCSX2 %ROM% --fullscreen --nogui"
+    addEmulator 1 "$md_id-nogui" "ps2" "/usr/games/pcsx2 %ROM% --fullscreen --nogui"
     addSystem "ps2"
 }

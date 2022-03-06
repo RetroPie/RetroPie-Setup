@@ -59,7 +59,9 @@ function connect_wifi() {
     local options=()
     i=0
     _set_interface_wifi up 2>/dev/null
+    dialog --infobox "\nScanning for WiFi networks..." 5 40 > /dev/tty
     sleep 1
+
     while read essid; read type; do
         essids+=("$essid")
         types+=("$type")
@@ -72,9 +74,12 @@ function connect_wifi() {
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
+    local osk
+    osk="$(rp_getInstallPath joy2key)/osk.py"
+
     local hidden=0
     if [[ "$choice" == "H" ]]; then
-        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the ESSID" 10 60)
+        cmd=(python3 "$osk" --backtitle "$__backtitle" --inputbox "ESSID" --minchars 4)
         essid=$("${cmd[@]}" 2>&1 >/dev/tty)
         [[ -z "$essid" ]] && return
         cmd=(dialog --backtitle "$__backtitle" --nocancel --menu "Please choose the WiFi type" 12 40 6)
@@ -92,19 +97,18 @@ function connect_wifi() {
 
     if [[ "$type" == "wpa" || "$type" == "wep" ]]; then
         local key=""
-        cmd=(dialog --backtitle "$__backtitle" --insecure --passwordbox "Please enter the WiFi key/password for $essid" 10 63)
+        local key_min
+        if [[ "$type" == "wpa" ]]; then
+            key_min=8
+        else
+            key_min=5
+        fi
+
+        cmd=(python3 $osk --backtitle "$__backtitle" --inputbox "WiFi key/password" --minchars $key_min)
         local key_ok=0
         while [[ $key_ok -eq 0 ]]; do
             key=$("${cmd[@]}" 2>&1 >/dev/tty) || return
             key_ok=1
-            if [[ ${#key} -lt 8 || ${#key} -gt 63 ]] && [[ "$type" == "wpa" ]]; then
-                printMsgs "dialog" "Password must be between 8 and 63 characters"
-                key_ok=0
-            fi
-            if [[ -z "$key" && $type == "wep" ]]; then
-                printMsgs "dialog" "Password cannot be empty"
-                key_ok=0
-            fi
         done
     fi
 
@@ -172,7 +176,7 @@ function _check_country_wifi() {
     iniConfig "=" "" /etc/wpa_supplicant/wpa_supplicant.conf
     iniGet "country"
     if [[ -z "$ini_value" ]]; then
-        if dialog --defaultno --yesno "You don't currently have your WiFi country set in /etc/wpa_supplicant/wpa_supplicant.conf\n\nOn a Raspberry Pi 3 Model B+ your WiFI will be disabled until the country is set. You can do this via raspi-config which is available from the RetroPie menu in Emulation Station. Once in raspi-config you can set your country via menu 4 (Localisation Options)\n\nDo you want me to launch raspi-config for you now ?" 22 76 2>&1 >/dev/tty; then
+        if dialog --defaultno --yesno "You don't currently have your WiFi country set in /etc/wpa_supplicant/wpa_supplicant.conf\n\nOn a Raspberry Pi 3B+/4B/400 your WiFI will be disabled until the country is set. You can do this via raspi-config which is available from the RetroPie menu in Emulation Station. Once in raspi-config you can set your country via menu 5 (Localisation Options)\n\nDo you want me to launch raspi-config for you now ?" 22 76 2>&1 >/dev/tty; then
             raspi-config
         fi
     fi
@@ -214,6 +218,8 @@ The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk =
                     connect_wifi
                     ;;
                 2)
+                    dialog --defaultno --yesno "This will remove the WiFi configuration and stop the WiFi.\n\nAre you sure you want to continue ?" 12 35 2>&1 >/dev/tty
+                    [[ $? -ne 0 ]] && continue
                     remove_wifi
                     ;;
                 3)

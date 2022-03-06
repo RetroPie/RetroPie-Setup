@@ -121,6 +121,7 @@ function conf_build_vars() {
     # add our cpu and optimisation flags
     __default_cflags+=" $__cpu_flags $__opt_flags"
     __default_cxxflags+=" $__cpu_flags $__opt_flags"
+    __default_asflags+=" $__cpu_flags"
 
     # if not overridden by user, configure our compiler flags
     [[ -z "$__cflags" ]] && __cflags="$__default_cflags"
@@ -275,7 +276,7 @@ function get_os_version() {
             fi
             __os_debian_ver="9"
             ;;
-        elementary)
+        [eE]lementary)
             if compareVersions "$__os_release" lt 0.4; then
                 error="You need Elementary OS 0.4 or newer"
             elif compareVersions "$__os_release" eq 0.4; then
@@ -374,16 +375,16 @@ function get_platform() {
                     esac
                 fi
                 ;;
-            ODROIDC)
+            *ODROIDC)
                 __platform="odroid-c1"
                 ;;
-            ODROID-C2)
+            *ODROID-C2)
                 __platform="odroid-c2"
                 ;;
             "Freescale i.MX6 Quad/DualLite (Device Tree)")
                 __platform="imx6"
                 ;;
-            ODROID-XU[34])
+            *ODROID-XU[34])
                 __platform="odroid-xu"
                 ;;
             "Rockchip (Device Tree)")
@@ -412,9 +413,6 @@ function get_platform() {
                     esac
                 elif [[ -e "/sys/devices/soc0/family" ]]; then
                     case "$(tr -d '\0' < /sys/devices/soc0/family)" in
-                        *tegra20*)
-                            __platform="tegra-2"
-                            ;;
                         *tegra30*)
                             __platform="tegra-3"
                             ;;
@@ -561,19 +559,14 @@ function platform_xavier() {
     __platform_flags+=(x11 gl)
 }
 
-function platform_tegra-2() {
-    cpu_armv7 "cortex-a9"
-    __platform_flags+=(x11 gl)
-}
-
 function platform_tegra-3() {
     cpu_armv7 "cortex-a9"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gles)
 }
 
 function platform_tegra-4() {
     cpu_armv7 "cortex-a15"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gles)
 }
 
 function platform_tegra-k1-32() {
