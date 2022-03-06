@@ -30,7 +30,7 @@ function build_ikemen-go() {
     "$goroot/bin/go" clean -modcache
     "$goroot/bin/go" build -v -tags al_cmpt -o Ikemen_GO ./src
     # grabs default screenpack and content required for the game to run; note that the screenpack has a CC-BY-NC 3.0 license
-    make elecbyte
+    git clone https://github.com/ikemen-engine/Ikemen_GO-Elecbyte-Screenpack.git elecbyte
     md_ret_require="$md_build/Ikemen_GO"
 }
 
