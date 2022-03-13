@@ -26,7 +26,18 @@ function sources_duckstation() {
 }
 
 function build_duckstation() {
-    cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_DISCORD_PRESENCE=OFF -DUSE_X11=OFF -DUSE_DRMKMS=ON -DBUILD_NOGUI_FRONTEND=ON -DBUILD_QT_FRONTEND=OFF .
+    local params=(-DCMAKE_BUILD_TYPE=Release -DENABLE_DISCORD_PRESENCE=OFF -DBUILD_NOGUI_FRONTEND=ON -DBUILD_QT_FRONTEND=OFF)
+    if isPlatform "x11"; then
+        params+=(-DUSE_X11=ON)
+    else
+        params+=(-DUSE_X11=OFF)
+    fi
+    if isPlatform "kms"; then
+        params+=(-DUSE_DRMKMS=ON)
+    else
+        params+=(-DUSE_DRMKMS=OFF)
+    fi
+    cmake "${params[@]}" .
     make clean
     make
 
@@ -44,9 +55,6 @@ function install_duckstation() {
 function configure_duckstation() {
     mkRomDir "psx"
 
-    # needed?
-    chown -R $user:$user "$md_inst/bin"
-
     local config="$md_conf_root/psx/duckstation.ini"
 
     addEmulator 0 "$md_id" "psx" "$md_inst/bin/duckstation-nogui -portable -settings $config -- %ROM%"
@@ -54,32 +62,32 @@ function configure_duckstation() {
 
     [[ "$md_mode" == "remove" ]] && return
 
-    # create config file
-    touch "$config"
-    chown -R $user:$user "$config"
-
     # set config defaults
-    iniConfig " = " "" "$config"
-    if ! grep -q "\[Main\]" "$config"; then
-        echo "[Main]" >> "$config"
+    local tmp_config="$(mktemp)"
+    iniConfig " = " "" "$tmp_config"
+    if ! grep -q "\[Main\]" "$tmp_config"; then
+        echo "[Main]" >> "$tmp_config"
     fi
     # SettingsVersion = 3 stops overwrite of any settings when version number doesn't match
     iniSet "SettingsVersion" "3"
-    if ! grep -q "\[BIOS\]" "$config"; then
-        echo "[BIOS]" >> "$config"
+    if ! grep -q "\[BIOS\]" "$tmp_config"; then
+        echo "[BIOS]" >> "$tmp_config"
     fi
     iniSet "SearchDirectory" "$biosdir"
-    if ! grep -q "\[MemoryCards\]" "$config"; then
-        echo "[MemoryCards]" >> "$config"
+    if ! grep -q "\[MemoryCards\]" "$tmp_config"; then
+        echo "[MemoryCards]" >> "$tmp_config"
     fi
     iniSet "Directory" "$romdir/psx"
-    if ! grep -q "\[Display\]" "$config"; then
-        echo "[Display]" >> "$config"
+    if ! grep -q "\[Display\]" "$tmp_config"; then
+        echo "[Display]" >> "$tmp_config"
     fi
     iniSet "LinearFiltering" "false"
     iniSet "Directory" "$romdir/psx"
-    if ! grep -q "\[Hotkeys\]" "$config"; then
-        echo "[Hotkeys]" >> "$config"
+    if ! grep -q "\[Hotkeys\]" "$tmp_config"; then
+        echo "[Hotkeys]" >> "$tmp_config"
     fi
     iniSet "OpenQuickMenu" "Keyboard/Escape"
+
+    copyDefaultConfig "$tmp_config" "$config"
+    rm "$tmp_config"
 }
