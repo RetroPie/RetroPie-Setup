@@ -46,7 +46,6 @@ function install_srb2() {
         'assets/installer/player.dta'
         'assets/installer/zones.pk3'
         'assets/installer/srb2.pk3'
-        'assets/installer/patch.pk3'
         'assets/README.txt'
         'assets/LICENSE.txt'
     )
