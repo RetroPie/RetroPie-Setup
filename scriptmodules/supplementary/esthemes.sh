@@ -303,6 +303,7 @@ function gui_esthemes() {
         'KALEL1981 gold-standard'
         'Elratauru angular-artwork'
         'cjonasw raspixel-320-240'
+        'crxone 3twenty2fourty'
     )
     while true; do
         local theme
