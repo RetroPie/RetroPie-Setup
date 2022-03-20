@@ -397,9 +397,9 @@ function get_x11_mode_info() {
 
     if [[ -z "$mode_id" ]]; then
         # determine current output
-        mode_id[0]="$($XRANDR --verbose | awk '/ connected/ { print $1;exit }')"
+        mode_id[0]="$($XRANDR --verbose | awk '/ connected.*\(0x[a-f0-9]{1,}\)/ { print $1;exit }')"
         # determine current mode id & strip brackets
-        mode_id[1]="$($XRANDR --verbose | awk '/ connected/ {print;exit}' | grep -o "(0x[a-f0-9]\{1,\})")"
+        mode_id[1]="$($XRANDR --verbose | awk '/ connected.*\(0x[a-f0-9]{1,}\)/ {print;exit}' | grep -o "(0x[a-f0-9]\{1,\})")"
         mode_id[1]="$(echo ${mode_id[1]:1:-1})"
     fi
 
