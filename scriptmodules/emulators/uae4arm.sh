@@ -11,7 +11,7 @@
 
 rp_module_id="uae4arm"
 rp_module_desc="Amiga emulator with JIT support"
-rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir"
+rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir/amiga"
 rp_module_licence="GPL2"
 rp_module_repo="git https://github.com/Chips-fr/uae4arm-rpi.git master"
 rp_module_section="opt"
@@ -43,67 +43,60 @@ function install_uae4arm() {
 }
 
 function configure_uae4arm() {
+    addEmulator 1 "uae4arm" "amiga" "$md_inst/uae4arm.sh %ROM%"
+    addEmulator 0 "uae4arm-a500" "amiga" "$md_inst/uae4arm.sh %ROM% -config=conf/rp-a500.uae"
+    addEmulator 0 "uae4arm-a1200" "amiga" "$md_inst/uae4arm.sh %ROM% -config=conf/rp-a1200.uae"
+    addSystem "amiga"
+
+    [[ "$md_mode" == "remove" ]] && return
+
     mkRomDir "amiga"
 
-    if [[ "$md_mode" == "install" ]]; then
-        mkUserDir "$md_conf_root/amiga"
-        mkUserDir "$md_conf_root/amiga/$md_id"
+    mkUserDir "$md_conf_root/amiga"
+    mkUserDir "$md_conf_root/amiga/uae4arm"
 
-        # move config / save folders to $md_conf_root/amiga/$md_id
-        local dir
-        for dir in conf savestates screenshots; do
-            moveConfigDir "$md_inst/$dir" "$md_conf_root/amiga/$md_id/$dir"
-        done
+    # move config / save folders to $md_conf_root/amiga/uae4arm
+    local dir
+    for dir in conf savestates screenshots; do
+        moveConfigDir "$md_inst/$dir" "$md_conf_root/amiga/uae4arm/$dir"
+    done
 
-        # and kickstart dir (removing old symlinks first)
-        if [[ ! -h "$md_inst/kickstarts" ]]; then
-            rm -f "$md_inst/kickstarts/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
-        fi
-        moveConfigDir "$md_inst/kickstarts" "$biosdir"
+    moveConfigDir "$md_inst/kickstarts" "$biosdir/amiga"
+    chown -R $user:$user "$biosdir/amiga"
 
-        local conf="$(mktemp)"
-        iniConfig "=" "" "$conf"
-        iniSet "config_description" "RetroPie A500, 68000, OCS, 512KB Chip + 512KB Slow Fast"
-        iniSet "chipmem_size" "1"
-        iniSet "bogomem_size" "2"
-        iniSet "chipset" "ocs"
-        iniSet "cachesize" "0"
-        iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick13.rom"
-        copyDefaultConfig "$conf" "$md_conf_root/amiga/$md_id/conf/rp-a500.uae"
-        rm "$conf"
+    local conf="$(mktemp)"
+    iniConfig "=" "" "$conf"
+    iniSet "config_description" "RetroPie A500, 68000, OCS, 512KB Chip + 512KB Slow Fast"
+    iniSet "chipmem_size" "1"
+    iniSet "bogomem_size" "2"
+    iniSet "chipset" "ocs"
+    iniSet "cachesize" "0"
+    iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick13.rom"
+    copyDefaultConfig "$conf" "$md_conf_root/amiga/uae4arm/conf/rp-a500.uae"
+    rm "$conf"
 
-        conf="$(mktemp)"
-        iniConfig "=" "" "$conf"
-        iniSet "config_description" "RetroPie A1200, 68EC020, AGA, 2MB Chip"
-        iniSet "chipmem_size" "4"
-        iniSet "finegrain_cpu_speed" "1024"
-        iniSet "cpu_type" "68ec020"
-        iniSet "cpu_model" "68020"
-        iniSet "chipset" "aga"
-        iniSet "cachesize" "0"
-        iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick31.rom"
-        copyDefaultConfig "$conf" "$md_conf_root/amiga/$md_id/conf/rp-a1200.uae"
-        rm "$conf"
+    conf="$(mktemp)"
+    iniConfig "=" "" "$conf"
+    iniSet "config_description" "RetroPie A1200, 68EC020, AGA, 2MB Chip"
+    iniSet "chipmem_size" "4"
+    iniSet "finegrain_cpu_speed" "1024"
+    iniSet "cpu_type" "68ec020"
+    iniSet "cpu_model" "68020"
+    iniSet "chipset" "aga"
+    iniSet "cachesize" "0"
+    iniSet "kickstart_rom_file" "\$(FILE_PATH)/kick31.rom"
+    copyDefaultConfig "$conf" "$md_conf_root/amiga/uae4arm/conf/rp-a1200.uae"
+    rm "$conf"
 
-        # copy launch script (used for uae4arm and amiberry)
-        sed "s/EMULATOR/$md_id/" "$scriptdir/scriptmodules/$md_type/uae4arm/uae4arm.sh" >"$md_inst/$md_id.sh"
-        chmod a+x "$md_inst/$md_id.sh"
+    # copy shared uae4arm/amiberry launch script
+    cp "$md_data/uae4arm.sh" "$md_inst/"
+    chmod a+x "$md_inst/uae4arm.sh"
 
-        local script="+Start UAE4Arm.sh"
-        [[ "$md_id" == "amiberry" ]] && script="+Start Amiberry.sh"
-        rm -f "$romdir/amiga/$script"
-        if [[ "$md_mode" == "install" ]]; then
-            cat > "$romdir/amiga/$script" << _EOF_
+    local script="+Start UAE4Arm.sh"
+    cat > "$romdir/amiga/$script" << _EOF_
 #!/bin/bash
-"$md_inst/$md_id.sh"
+"$md_inst/uae4arm.sh"
 _EOF_
-            chmod a+x "$romdir/amiga/$script"
-            chown $user:$user "$romdir/amiga/$script"
-        fi
-    fi
-
-    addEmulator 1 "$md_id" "amiga" "$md_inst/$md_id.sh auto %ROM%"
-    addEmulator 1 "$md_id-a500" "amiga" "$md_inst/$md_id.sh rp-a500.uae %ROM%"
-    addEmulator 1 "$md_id-a1200" "amiga" "$md_inst/$md_id.sh rp-a1200.uae %ROM%"
-    addSystem "amiga"
+    chmod a+x "$romdir/amiga/$script"
+    chown $user:$user "$romdir/amiga/$script"
 }
