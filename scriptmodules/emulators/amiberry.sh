@@ -15,7 +15,7 @@ rp_module_help="ROM Extension: .adf .chd .ipf .lha .zip\n\nCopy your Amiga games
 rp_module_licence="GPL3 https://raw.githubusercontent.com/midwan/amiberry/master/COPYING"
 rp_module_repo="git https://github.com/midwan/amiberry v5.1"
 rp_module_section="opt"
-rp_module_flags="!all arm"
+rp_module_flags="!all arm rpi3 rpi4"
 
 function _update_hook_amiberry() {
     local rom
@@ -29,7 +29,9 @@ function _update_hook_amiberry() {
 
 function _get_platform_amiberry() {
     local platform="$__platform-sdl2"
-    if isPlatform "dispmanx"; then
+    if isPlatform "aarch64" && isPlatform "rpi"; then
+        platform="$__platform-64-sdl2"
+    elif isPlatform "dispmanx"; then
         platform="$__platform"
     elif isPlatform "odroid-xu"; then
         platform="xu4"
