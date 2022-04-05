@@ -25,7 +25,7 @@ function install_bin_supertux() {
 }
 
 function remove_supertux() {
-    aptRemove supertux
+    aptRemove supertux supertux-data
 }
 
 function configure_supertux() {
