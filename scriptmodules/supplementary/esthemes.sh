@@ -287,6 +287,7 @@ function gui_esthemes() {
         'justincaseurskynet Arcade1up-5x4-Horizontal'
         'KALEL1981 Super-Retroboy'
         'xovox RetroCRT-240p'
+        'xovox RetroCRT-240p-Rainbow'
         'xovox RetroCRT-240p-Vertical'
         'arcadeforge push-a'
         'arcadeforge push-a-v'
