@@ -13,21 +13,36 @@ rp_module_id="lr-puae"
 rp_module_desc="P-UAE Amiga emulator port for libretro"
 rp_module_help="ROM Extensions: .adf .uae\n\nCopy your roms to $romdir/amiga and create configs as .uae"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/PUAE/master/COPYING"
-rp_module_repo="git https://github.com/libretro/libretro-uae.git master"
+rp_module_repo="git https://github.com/libretro/libretro-uae.git :_get_branch_lr-puae"
 rp_module_section="opt"
+
+function _get_branch_lr-puae() {
+    if isPlatform "arm" ; then
+        echo "2.6.1"
+    else
+        echo "master"
+    fi
+}
+
+function _get_ver_lr-puae() {
+    if [[ "$(_get_branch_lr-puae)" == "2.6.1" ]]; then
+        echo "2021"
+    fi
+}
 
 function sources_lr-puae() {
     gitPullOrClone
 }
 
 function build_lr-puae() {
+    make clean
     make
-    md_ret_require="$md_build/puae_libretro.so"
+    md_ret_require="$md_build/puae$(_get_ver_lr-puae)_libretro.so"
 }
 
 function install_lr-puae() {
     md_ret_files=(
-        'puae_libretro.so'
+        "puae$(_get_ver_lr-puae)_libretro.so"
         'README.md'
     )
 }
@@ -35,6 +50,6 @@ function install_lr-puae() {
 function configure_lr-puae() {
     mkRomDir "amiga"
     ensureSystemretroconfig "amiga"
-    addEmulator 1 "$md_id" "amiga" "$md_inst/puae_libretro.so"
+    addEmulator 1 "$md_id" "amiga" "$md_inst/puae$(_get_ver_lr-puae)_libretro.so"
     addSystem "amiga"
 }
