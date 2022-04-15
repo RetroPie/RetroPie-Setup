@@ -15,7 +15,7 @@ rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\
 rp_module_licence="GPL2"
 rp_module_repo="git https://github.com/Chips-fr/uae4arm-rpi.git master"
 rp_module_section="opt"
-rp_module_flags="!all videocore"
+rp_module_flags="!all dispmanx"
 
 function depends_uae4arm() {
     getDepends libsdl1.2-dev libsdl-gfx1.2-dev libsdl-ttf2.0-dev libguichan-dev libmpg123-dev libxml2-dev libflac-dev libmpeg2-4-dev
