@@ -69,20 +69,30 @@ function install_lr-flycast() {
 }
 
 function configure_lr-flycast() {
-    mkRomDir "dreamcast"
-    ensureSystemretroconfig "dreamcast"
-
+    local sys
+    for sys in dreamcast arcade; do
+        mkRomDir "$sys"
+        ensureSystemretroconfig "$sys"
+        addSystem "$sys"
+    done
     mkUserDir "$biosdir/dc"
 
     # system-specific
     if isPlatform "gl"; then
-        iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
-        iniSet "video_shared_context" "true"
+        local configs=(
+            "$configdir/dreamcast/retroarch.cfg"
+            "$configdir/all/retroarch/config/Flycast/arcade.cfg"
+        )
+        local configfile
+        for configfile in $configs; do
+            iniConfig " = " "" "$configfile"
+            iniSet "video_shared_context" "true"
+        done
     fi
 
     local def=0
     isPlatform "kms" && def=1
     # segfaults on the rpi without redirecting stdin from </dev/null
     addEmulator $def "$md_id" "dreamcast" "$md_inst/flycast_libretro.so </dev/null"
-    addSystem "dreamcast"
+    addEmulator 0 "$md_id" "arcade" "$md_inst/flycast_libretro.so </dev/null"
 }
