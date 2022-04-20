@@ -74,21 +74,13 @@ function configure_lr-flycast() {
         mkRomDir "$sys"
         ensureSystemretroconfig "$sys"
         addSystem "$sys"
+        # platform-specific
+        if isPlatform "gl"; then
+            iniConfig " = " "" "$configdir/$sys/retroarch.cfg"
+            iniSet "video_shared_context" "true"
+        fi
     done
     mkUserDir "$biosdir/dc"
-
-    # system-specific
-    if isPlatform "gl"; then
-        local configs=(
-            "$configdir/dreamcast/retroarch.cfg"
-            "$configdir/all/retroarch/config/Flycast/arcade.cfg"
-        )
-        local configfile
-        for configfile in $configs; do
-            iniConfig " = " "" "$configfile"
-            iniSet "video_shared_context" "true"
-        done
-    fi
 
     local def=0
     isPlatform "kms" && def=1
