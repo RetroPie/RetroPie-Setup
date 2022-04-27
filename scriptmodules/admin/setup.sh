@@ -38,7 +38,7 @@ function rps_logInit() {
 
 function rps_logStart() {
     echo -e "Log started at: $(date -d @$time_start)\n"
-    echo "RetroPie-Setup version: $__version ($(git -C "$scriptdir" log -1 --pretty=format:%h))"
+    echo "RetroPie-Setup version: $__version ($(sudo -u "$user" git -C "$scriptdir" log -1 --pretty=format:%h))"
     echo "System: $__platform ($__platform_arch) - $__os_desc - $(uname -a)"
 }
 
@@ -120,7 +120,7 @@ function updatescript_setup()
         return 1
     fi
     local error
-    if ! error=$(su $user -c "git pull --ff-only 2>&1 >/dev/null"); then
+    if ! error=$(sudo -u "$user" git pull --ff-only 2>&1 >/dev/null); then
         printMsgs "dialog" "Update failed:\n\n$error"
         popd >/dev/null
         return 1
@@ -680,7 +680,7 @@ function gui_setup() {
     depends_setup
     local default
     while true; do
-        local commit=$(git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
+        local commit=$(sudo -u "$user" git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
 
         cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version - Last Commit: $commit\nSystem: $__platform ($__platform_arch) - running on $__os_desc" 22 76 16)
         options=(
