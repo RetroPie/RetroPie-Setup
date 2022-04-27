@@ -31,11 +31,13 @@ function build_lr-pcsx-rearmed() {
 
     if isPlatform "arm"; then
         params+=(ARCH=arm DYNAREC=ari64)
-        if isPlatform "neon"; then
-            params+=(HAVE_NEON=1 BUILTIN_GPU=neon)
-        else
-            params+=(HAVE_NEON=0 BUILTIN_GPU=peops)
-        fi
+    elif isPlatform "aarch64"; then
+        params+=(ARCH=aarch64 DYNAREC=ari64)
+    fi
+    if isPlatform "neon"; then
+        params+=(HAVE_NEON=1 BUILTIN_GPU=neon)
+    else
+        params+=(HAVE_NEON=0 BUILTIN_GPU=peops)
     fi
 
     make -f Makefile.libretro "${params[@]}" clean
