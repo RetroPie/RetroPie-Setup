@@ -54,18 +54,22 @@ function install_alephone() {
 }
 
 function game_data_alephone() {
-    local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-20150620"
+    local version="20150620"
+    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
+        version="20220115"
+    fi
+    local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-$version"
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon/Shapes.shps" ]]; then
-        downloadAndExtract "$release_url/Marathon-20150620-Data.zip" "$romdir/ports/$md_id"
+        downloadAndExtract "$release_url/Marathon-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon 2/Shapes.shpA" ]]; then
-        downloadAndExtract "$release_url/Marathon2-20150620-Data.zip" "$romdir/ports/$md_id"
+        downloadAndExtract "$release_url/Marathon2-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon Infinity/Shapes.shpA" ]]; then
-        downloadAndExtract "$release_url/MarathonInfinity-20150620-Data.zip" "$romdir/ports/$md_id"
+        downloadAndExtract "$release_url/MarathonInfinity-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
     chown -R $user:$user "$romdir/ports/$md_id"
