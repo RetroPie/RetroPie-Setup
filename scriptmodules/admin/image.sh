@@ -15,7 +15,7 @@ rp_module_section=""
 rp_module_flags=""
 
 function depends_image() {
-    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs)
+    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs xz-utils)
     isPlatform "x86" && depends+=(qemu-user-static)
     getDepends "${depends[@]}"
 }
@@ -34,12 +34,15 @@ function create_chroot_image() {
 
     local url
     local image
+    local fmt=".img.xz"
     case "$dist" in
         jessie)
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip"
+            fmt=".zip"
             ;;
         stretch)
             url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip"
+            fmt=".zip"
             ;;
         buster)
             url="https://downloads.raspberrypi.org/raspios_oldstable_lite_armhf_latest"
@@ -56,11 +59,23 @@ function create_chroot_image() {
     local base="raspbian-${dist}-lite"
     local image="$base.img"
     if [[ ! -f "$image" ]]; then
-        download "$url" "$base.zip"
-        unzip -o "$base.zip"
-        mv "$(unzip -Z -1 "$base.zip")" "$image"
-        rm "$base.zip"
+        local dest="$base$fmt"
+        case "$fmt" in
+            .zip)
+                download "$url" "$dest"
+                unzip -o "$dest"
+                mv "$(unzip -Z -1 "$dest")" "$image"
+                rm "$dest"
+                ;;
+            .img.xz)
+                download "$url" "$dest"
+                xz -d -v "$dest"
+                ;;
+        esac
     fi
+
+    # abort if there is no extracted image present
+    [[ ! -f "$image" ]] && return 1
 
     # mount image
     local partitions=($(kpartx -s -a -v "$image" | awk '{ print "/dev/mapper/"$3 }'))
@@ -82,6 +97,7 @@ function create_chroot_image() {
     kpartx -d "$image"
 
     popd
+    return 0
 }
 
 function install_rp_image() {
