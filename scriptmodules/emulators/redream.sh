@@ -14,10 +14,14 @@ rp_module_desc="Redream Dreamcast emulator"
 rp_module_help="ROM Extensions: .cdi .cue .chd .gdi .iso\n\nCopy your Dreamcast roms to $romdir/dreamcast"
 rp_module_licence="PROP"
 rp_module_section="exp"
-rp_module_flags="noinstclean !all gles31 aarch64"
+rp_module_flags="noinstclean !all gles31 aarch64 x86_64"
 
 function __binary_url_redream() {
-    echo "https://redream.io/download/redream.universal-raspberry-linux-latest.tar.gz"
+    local platf="universal-raspberry"
+    isPlatform "x86_64" && platf="x86_64"
+    local url="https://redream.io/download/redream.${platf}-linux-latest.tar.gz"
+
+    echo "$url"
 }
 
 function install_bin_redream() {
