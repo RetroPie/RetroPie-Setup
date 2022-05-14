@@ -14,7 +14,7 @@ rp_module_id="supertuxkart"
 rp_module_desc="SuperTuxKart SDL2-compatible racing game"
 rp_module_licence="GPL3 https://github.com/supertuxkart/stk-editor/blob/master/LICENSE"
 rp_module_section="exp"
-rp_module_flags="!mali"
+rp_module_flags="!rpi3"
 
 function _update_hook_supertuxkart() {
     # to show as installed in retropie-setup 4.x
