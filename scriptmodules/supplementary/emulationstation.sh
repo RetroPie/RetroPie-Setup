@@ -137,7 +137,7 @@ function depends_emulationstation() {
 
     compareVersions "$__os_debian_ver" gt 8 && depends+=(rapidjson-dev)
     isPlatform "x11" && depends+=(gnome-terminal)
-    if isPlatform "rpi" && isPlatform "32bit" && ! isPlatform "osmc"; then
+    if isPlatform "dispmanx" && ! isPlatform "osmc"; then
         depends+=(omxplayer)
     fi
     getDepends "${depends[@]}"
@@ -170,6 +170,10 @@ function build_emulationstation() {
         local gl_ver=$(sudo -u $user glxinfo | grep -oP "OpenGL version string: \K(\d+)")
         [[ "$gl_ver" -gt 1 ]] && params+=(-DUSE_OPENGL_21=On)
     fi
+    if isPlatform "dispmanx"; then
+        params+=(-DOMX=On)
+    fi
+
     rpSwap on 1000
     cmake . "${params[@]}"
     make clean
