@@ -276,13 +276,13 @@ function gui_splashscreen() {
         [[ -n "$(find "/etc/systemd/system/"*".wants" -type l -name "asplashscreen.service")" ]] && enabled=1
         local options=(1 "Choose splashscreen")
         if [[ "$enabled" -eq 1 ]]; then
-            options+=(2 "Disable splashscreen on boot (Enabled)")
+            options+=(2 "Enable splashscreen on boot (Enabled)")
             iniConfig "=" '"' "$configdir/all/$md_id.cfg"
             iniGet "RANDOMIZE"
             random=1
             [[ "$ini_value" == "disabled" ]] && random=0
             if [[ "$random" -eq 1 ]]; then
-                options+=(3 "Disable splashscreen randomizer (Enabled)")
+                options+=(3 "Enable splashscreen randomizer (Enabled)")
             else
                 options+=(3 "Enable splashscreen randomizer (Disabled)")
             fi
