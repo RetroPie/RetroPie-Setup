@@ -185,6 +185,7 @@ function choose_splashscreen() {
 
 function randomize_splashscreen() {
     options=(
+        0 "Disable splashscreen randomizer"
         1 "Randomize RetroPie splashscreens"
         2 "Randomize own splashscreens (from $datadir/splashscreens)"
         3 "Randomize all splashscreens"
@@ -196,13 +197,17 @@ function randomize_splashscreen() {
     chown $user:$user "$configdir/all/$md_id.cfg"
 
     case "$choice" in
+        0)
+            iniSet "RANDOMIZE" "disabled"
+            printMsgs "dialog" "Splashscreen randomizer disabled."
+            ;;
         1)
             iniSet "RANDOMIZE" "retropie"
-            printMsgs "dialog" "Splashscreen randomizer enabled in directory $path"
+            printMsgs "dialog" "Splashscreen randomizer enabled in directory $rootdir/supplementary/$md_id"
             ;;
         2)
             iniSet "RANDOMIZE" "custom"
-            printMsgs "dialog" "Splashscreen randomizer enabled in directory $path"
+            printMsgs "dialog" "Splashscreen randomizer enabled in directory $datadir/splashscreens"
             ;;
         3)
             iniSet "RANDOMIZE" "all"
@@ -272,22 +277,15 @@ function gui_splashscreen() {
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     while true; do
         local enabled=0
-        local random=0
         [[ -n "$(find "/etc/systemd/system/"*".wants" -type l -name "asplashscreen.service")" ]] && enabled=1
         local options=(1 "Choose splashscreen")
         if [[ "$enabled" -eq 1 ]]; then
-            options+=(2 "Disable splashscreen on boot (Enabled)")
+            options+=(2 "Show splashscreen on boot (currently: Enabled)")
             iniConfig "=" '"' "$configdir/all/$md_id.cfg"
             iniGet "RANDOMIZE"
-            random=1
-            [[ "$ini_value" == "disabled" ]] && random=0
-            if [[ "$random" -eq 1 ]]; then
-                options+=(3 "Disable splashscreen randomizer (Enabled)")
-            else
-                options+=(3 "Enable splashscreen randomizer (Disabled)")
-            fi
+            options+=(3 "Randomizer options (currently: ${ini_value^})")
         else
-            options+=(2 "Enable splashscreen on boot (Disabled)")
+            options+=(2 "Show splashscreen on boot (currently: Disabled)")
         fi
         options+=(
             4 "Use default splashscreen"
@@ -323,15 +321,12 @@ function gui_splashscreen() {
                     fi
                     ;;
                 3)
-                    if [[ "$random" -eq 1 ]]; then
-                        iniSet "RANDOMIZE" "disabled"
-                        printMsgs "dialog" "Splashscreen randomizer disabled."
-                    else
-                        randomize_splashscreen
-                    fi
+                    randomize_splashscreen
                     ;;
                 4)
+                    iniSet "RANDOMIZE" "disabled"
                     default_splashscreen
+                    enable_splashscreen
                     printMsgs "dialog" "Splashscreen set to RetroPie default."
                     ;;
                 5)
