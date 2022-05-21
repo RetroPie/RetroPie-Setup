@@ -11,9 +11,9 @@
 
 rp_module_id="ikemen-go"
 rp_module_desc="I.K.E.M.E.N GO - Clone of M.U.G.E.N to the Go programming language"
-rp_module_licence="MIT https://raw.githubusercontent.com/Windblade-GR01/Ikemen-GO/master/License.txt"
+rp_module_licence="MIT https://raw.githubusercontent.com/ikemen-engine/Ikemen-GO/master/License.txt"
 rp_module_help="Copy characters, stages, screenpacks, etc. to $romdir/ports/ikemen-go\n\nConfig files can be found at $configdir/ports/ikemen-go/save"
-rp_module_repo="git https://github.com/Windblade-GR01/Ikemen-GO.git master"
+rp_module_repo="git https://github.com/ikemen-engine/Ikemen-GO.git master"
 rp_module_section="exp"
 
 function depends_ikemen-go() {
