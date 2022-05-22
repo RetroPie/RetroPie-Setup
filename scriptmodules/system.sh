@@ -430,18 +430,10 @@ function get_platform() {
                             ;;
                     esac
                 else
-                    case $architecture in
-                        i686|x86_64|amd64)
-                            __platform="x86"
-                            ;;
-                    esac
+                    __platform="$architecture"
                 fi
                 ;;
         esac
-    fi
-
-    if ! fnExists "platform_${__platform}"; then
-        fatalError "Unknown platform - please manually set the __platform variable to one of the following: $(compgen -A function platform_ | cut -b10- | paste -s -d' ')"
     fi
 
     # check if we wish to target kms for platform
@@ -453,7 +445,13 @@ function get_platform() {
     fi
 
     set_platform_defaults
-    platform_${__platform}
+
+    # if we have a function for the platform, call it, otherwise use the default "native" one.
+    if fnExists "platform_${__platform}"; then
+        platform_${__platform}
+    else
+        platform_native
+    fi
 }
 
 function set_platform_defaults() {
@@ -586,7 +584,7 @@ function platform_tinker() {
     __platform_flags+=(kms gles)
 }
 
-function platform_x86() {
+function platform_native() {
     __default_cpu_flags="-march=native"
     __platform_flags+=(gl)
     if [[ "$__has_kms" -eq 1 ]]; then
@@ -594,10 +592,8 @@ function platform_x86() {
     else
         __platform_flags+=(x11)
     fi
-}
-
-function platform_generic-x11() {
-    __platform_flags+=(x11 gl)
+    # add x86 platform flag for x86/x86_64 archictures.
+    [[ "$__platform_arch" =~ (i386|i686|x86_64) ]] && __platform_flags+=(x86)
 }
 
 function platform_armv7-mali() {
