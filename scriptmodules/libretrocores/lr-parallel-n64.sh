@@ -59,7 +59,7 @@ function install_lr-parallel-n64() {
 
 function configure_lr-parallel-n64() {
     mkRomDir "n64"
-    ensureSystemretroconfig "n64"
+    defaultRAConfig "n64"
 
     # Set core options
     setRetroArchCoreOption "parallel-n64-gfxplugin" "auto"

@@ -42,7 +42,7 @@ function install_lr-gpsp() {
 
 function configure_lr-gpsp() {
     mkRomDir "gba"
-    ensureSystemretroconfig "gba"
+    defaultRAConfig "gba"
 
     local def=0
     isPlatform "armv6" && def=1

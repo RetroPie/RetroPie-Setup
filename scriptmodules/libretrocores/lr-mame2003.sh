@@ -63,7 +63,7 @@ function configure_lr-mame2003() {
     for mame_dir in arcade mame-libretro; do
         mkRomDir "$mame_dir"
         mkRomDir "$mame_dir/$dir_name"
-        ensureSystemretroconfig "$mame_dir"
+        defaultRAConfig "$mame_dir"
 
         for mame_sub_dir in cfg ctrlr diff hi memcard nvram; do
             mkRomDir "$mame_dir/$dir_name/$mame_sub_dir"

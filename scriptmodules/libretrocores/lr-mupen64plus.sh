@@ -86,7 +86,7 @@ function install_lr-mupen64plus() {
 
 function configure_lr-mupen64plus() {
     mkRomDir "n64"
-    ensureSystemretroconfig "n64"
+    defaultRAConfig "n64"
 
     addEmulator 0 "$md_id" "n64" "$md_inst/mupen64plus_libretro.so"
     addSystem "n64"

@@ -38,7 +38,7 @@ function install_lr-ppsspp() {
 
 function configure_lr-ppsspp() {
     mkRomDir "psp"
-    ensureSystemretroconfig "psp"
+    defaultRAConfig "psp"
 
     if [[ "$md_mode" == "install" ]]; then
         mkUserDir "$biosdir/PPSSPP"

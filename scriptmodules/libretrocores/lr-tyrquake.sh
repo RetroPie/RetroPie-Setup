@@ -82,5 +82,5 @@ function configure_lr-tyrquake() {
 
     add_games_lr-tyrquake
 
-    ensureSystemretroconfig "ports/quake"
+    defaultRAConfig "quake"
 }

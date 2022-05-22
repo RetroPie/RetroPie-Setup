@@ -34,7 +34,7 @@ function install_lr-x1() {
 
 function configure_lr-x1() {
     mkRomDir "x1"
-    ensureSystemretroconfig "x1"
+    defaultRAConfig "x1"
 
     addEmulator 1 "$md_id" "x1" "$md_inst/x1_libretro.so"
     addSystem "x1"

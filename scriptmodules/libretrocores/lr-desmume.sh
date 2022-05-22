@@ -46,7 +46,7 @@ function install_lr-desmume() {
 
 function configure_lr-desmume() {
     mkRomDir "nds"
-    ensureSystemretroconfig "nds"
+    defaultRAConfig "nds"
 
     addEmulator 0 "$md_id" "nds" "$md_inst/desmume_libretro.so"
     addSystem "nds"

@@ -102,7 +102,7 @@ function configure_lr-fbneo() {
 
     for system in "${systems[@]}"; do
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
     done
 
     # Create directories for all support files

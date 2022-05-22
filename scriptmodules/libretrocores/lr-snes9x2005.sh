@@ -39,7 +39,7 @@ function install_lr-snes9x2005() {
 
 function configure_lr-snes9x2005() {
     mkRomDir "snes"
-    ensureSystemretroconfig "snes"
+    defaultRAConfig "snes"
 
     addEmulator 0 "$md_id" "snes" "$md_inst/snes9x2005_libretro.so"
     addSystem "snes"
