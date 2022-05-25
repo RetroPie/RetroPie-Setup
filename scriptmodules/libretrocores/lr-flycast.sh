@@ -69,15 +69,20 @@ function install_lr-flycast() {
 }
 
 function configure_lr-flycast() {
-    local def=0
-    isPlatform "kms" && def=1
-    # segfaults on the rpi without redirecting stdin from </dev/null
-    addEmulator $def "$md_id" "dreamcast" "$md_inst/flycast_libretro.so </dev/null"
-    addSystem "dreamcast"
+    local sys
+    local systems=(dreamcast arcade)
+    local def
+    for sys in "${systems[@]}"; do
+        def=0
+        if isPlatform "kms" && [[ "$sys" == "dreamcast" ]]; then
+            def=1
+        fi
+        # segfaults on the rpi without redirecting stdin from </dev/null
+        addEmulator $def "$md_id" "$sys" "$md_inst/flycast_libretro.so </dev/null"
+        addSystem "$sys"
+    done
 
     [[ "$md_mode" == "remove" ]] && return
-
-    mkRomDir "dreamcast"
 
     local params=()
     # system-specific
@@ -85,7 +90,10 @@ function configure_lr-flycast() {
         params+=("video_shared_context" "true")
     fi
 
-    defaultRAConfig "dreamcast" "${params[@]}"
+    for sys in "${systems[@]}"; do
+        mkRomDir "$sys"
+        defaultRAConfig "$sys" "${params[@]}"
+    done
 
     mkUserDir "$biosdir/dc"
 }
