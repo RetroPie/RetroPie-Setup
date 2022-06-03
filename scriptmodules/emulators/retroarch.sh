@@ -77,11 +77,25 @@ function install_retroarch() {
 function update_shaders_retroarch() {
     local dir="$configdir/all/retroarch/shaders"
     local branch=""
-    isPlatform "rpi" && branch="rpi"
     # remove if not git repository for fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
-    gitPullOrClone "$dir" https://github.com/RetroPie/common-shaders.git "$branch"
-    chown -R $user:$user "$dir"
+    if isPlatform "rpi"; then
+        branch="rpi"
+        gitPullOrClone "$dir" https://github.com/RetroPie/common-shaders.git "$branch"
+        chown -R $user:$user "$dir"
+    else
+        local shadersystem
+        for shadersystem in "glsl" "slang"; do
+            # remove if not git repository for fresh checkout
+            [[ ! -d "$dir/$shadersystem/.git" ]] && rm -rf "$dir/$shadersystem"
+            gitPullOrClone "$dir/$shadersystem" "https://github.com/libretro/$shadersystem-shaders.git" "$branch"
+            chown -R $user:$user "$dir/$shadersystem"
+        done
+        # remove if not git repository for fresh checkout
+        [[ ! -d "$dir/retropie/.git" ]] && rm -rf "$dir/retropie"
+        gitPullOrClone "$dir/retropie" https://github.com/RetroPie/common-shaders.git "rpi"
+        chown -R $user:$user "$dir/retropie"
+    fi
 }
 
 function update_overlays_retroarch() {
