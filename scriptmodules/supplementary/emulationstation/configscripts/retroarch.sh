@@ -325,10 +325,10 @@ function map_retroarch_keyboard() {
             keys=("input_player1_y")
             ;;
         leftbottom|leftshoulder)
-            keys=("input_player1_l")
+            keys=("input_player1_l" "input_load_state")
             ;;
         rightbottom|rightshoulder)
-            keys=("input_player1_r")
+            keys=("input_player1_r" "input_save_state")
             ;;
         lefttop|lefttrigger)
             keys=("input_player1_l2")
