@@ -24,7 +24,7 @@ function get_pkg_ver_sdl1() {
         revision="4"
     elif compareVersions "$__os_debian_ver" eq 10; then
         basever="1.2.15+dfsg2"
-        revision="4"
+        revision="6"
     else
         basever="1.2.15"
         revision="10"
