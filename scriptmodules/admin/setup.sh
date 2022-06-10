@@ -127,7 +127,7 @@ function updatescript_setup()
     fi
     popd >/dev/null
 
-    printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script."
+    [ -n "$IAMSURE" ] || printMsgs "dialog" "Fetched the latest version of the RetroPie Setup script."
     return 0
 }
 
@@ -150,7 +150,7 @@ function post_update_setup() {
     } &> >(_setup_gzip_log "$logfilename")
     rps_printInfo "$logfilename"
 
-    printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nThe pre-built RetroPie image includes software that has non commercial licences. Selling RetroPie images or including RetroPie with your commercial product is not allowed.\n\nNo copyrighted games are included with RetroPie.\n\nIf you have been sold this software, you can let us know about it by emailing retropieproject@gmail.com."
+    [ -n "$IAMSURE" ] || printMsgs "dialog" "NOTICE: The RetroPie-Setup script and pre-made RetroPie SD card images are available to download for free from https://retropie.org.uk.\n\nThe pre-built RetroPie image includes software that has non commercial licences. Selling RetroPie images or including RetroPie with your commercial product is not allowed.\n\nNo copyrighted games are included with RetroPie.\n\nIf you have been sold this software, you can let us know about it by emailing retropieproject@gmail.com."
 
     # return to set return function
     "${return_func[@]}"
@@ -284,7 +284,7 @@ function package_setup() {
 
         case "$choice" in
             U|B|S)
-                dialog --defaultno --yesno "Are you sure you want to ${option_msgs[$choice]}?" 22 76 2>&1 >/dev/tty || continue
+                [ -n "$IAMSURE" ] || dialog --defaultno --yesno "Are you sure you want to ${option_msgs[$choice]}?" 22 76 2>&1 >/dev/tty || continue
                 local mode
                 case "$choice" in
                     U) mode="_auto_" ;;
@@ -463,7 +463,7 @@ function section_gui_setup() {
             U|I)
                 local mode="update"
                 [[ "$choice" == "I" ]] && mode="install"
-                dialog --defaultno --yesno "Are you sure you want to $mode all installed $name?" 22 76 2>&1 >/dev/tty || continue
+                [ -n "$IAMSURE" ] || dialog --defaultno --yesno "Are you sure you want to $mode all installed $name?" 22 76 2>&1 >/dev/tty || continue
                 rps_logInit
                 {
                     rps_logStart
@@ -574,7 +574,7 @@ function update_packages_gui_setup() {
     local update="$1"
     if [[ "$update" != "update" ]]; then
         ! check_connection_gui_setup && return 1
-        dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
+        [ -n "$IAMSURE" ] || dialog --defaultno --yesno "Are you sure you want to update installed packages?" 22 76 2>&1 >/dev/tty || return 1
         updatescript_setup || return 1
         # restart at post_update and then call "update_packages_gui_setup update" afterwards
         joy2keyStop
@@ -582,7 +582,7 @@ function update_packages_gui_setup() {
     fi
 
     local update_os=0
-    dialog --yesno "Would you like to update the underlying OS packages (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && update_os=1
+    [ -n "$IAMSURE" ] || dialog --yesno "Would you like to update the underlying OS packages (eg kernel etc) ?" 22 76 2>&1 >/dev/tty && update_os=1
 
     clear
 
@@ -741,7 +741,7 @@ function gui_setup() {
                 ;;
             S)
                 ! check_connection_gui_setup && continue
-                dialog --defaultno --yesno "Are you sure you want to update the RetroPie-Setup script ?" 22 76 2>&1 >/dev/tty || continue
+                [ -n "$IAMSURE" ] || dialog --defaultno --yesno "Are you sure you want to update the RetroPie-Setup script ?" 22 76 2>&1 >/dev/tty || continue
                 if updatescript_setup; then
                     joy2keyStop
                     exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
