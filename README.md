@@ -27,8 +27,9 @@ The script is executed with:
 
 ```shell
 cd RetroPie-Setup
-sudo ./retropie_setup.sh
+./retropie_setup.sh
 ```
+Note: the script is running as root by default.
 
 When you first run the script it may install some additional packages that are needed.
 
