@@ -9,6 +9,11 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
+if [ $(id -u) -ne 0 ]; then
+  sudo -E "$0"
+  exit $?
+fi
+
 scriptdir="$(dirname "$0")"
 scriptdir="$(cd "$scriptdir" && pwd)"
 
