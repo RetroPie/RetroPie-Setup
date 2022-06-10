@@ -17,5 +17,11 @@ fi
 scriptdir="$(dirname "$0")"
 scriptdir="$(cd "$scriptdir" && pwd)"
 
-"$scriptdir/retropie_packages.sh" setup gui
-
+case "${0##*/}" in
+retropie_update.sh)
+  mode=update_packages
+;;
+retropie_update_script.sh)
+  mode=update_script
+esac
+"$scriptdir/retropie_packages.sh" setup ${mode:-gui}
