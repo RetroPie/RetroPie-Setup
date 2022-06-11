@@ -44,6 +44,8 @@ function build_lr-flycast() {
                 "GLES=1"
                 "GL_LIB=-L/opt/vc/lib -lbrcmGLESv2")
             add_flags+=("-I/opt/vc/include -DTARGET_NO_STENCIL -DLOW_END")
+        elif isPlatform "vero4k"; then
+            params+=("platform=AMLGXL" "ARCH=arm" "ARMV7A_FLAGS=1")
         else
             params+=("FORCE_GLES=1")
         fi
