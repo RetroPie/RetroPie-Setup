@@ -701,6 +701,7 @@ function main_menu() {
                 ;;
             L)
                 COMMAND+=" --verbose"
+                VERBOSE=1
                 return 0
                 ;;
             U)
@@ -1100,6 +1101,14 @@ function retroarch_append_config() {
         iniSet "video_fullscreen_x" "${dim[0]}"
         iniSet "video_fullscreen_y" "${dim[1]}"
     fi
+
+    # set `libretro_directory` to the core parent folder
+    local core_dir=$(echo "$COMMAND" | grep -Eo " $ROOTDIR/libretrocores/.*libretro\.so " | head -n 1)
+    core_dir=$(dirname "$core_dir")
+    [[ -n "$core_dir" ]] && iniSet "libretro_directory" "$core_dir"
+
+    # if verbose logging is on, set core logging to INFO
+    [[ "$VERBOSE" -eq 1 ]] && iniSet "libretro_log_level" "1"
 
     # if the ROM has a custom configuration then append that too
     if [[ -f "$ROM.cfg" ]]; then
