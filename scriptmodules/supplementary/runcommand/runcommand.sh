@@ -1176,8 +1176,8 @@ function get_sys_command() {
     COMMAND="$(default_emulator get emu_cmd)"
 
     # replace tokens
-    COMMAND="${COMMAND//\%ROM\%/\"$ROM\"}"
-    COMMAND="${COMMAND//\%BASENAME\%/\"$ROM_BN\"}"
+    COMMAND="${COMMAND//\%ROM\%/${ROM:+\"${ROM}\"}}"
+    COMMAND="${COMMAND//\%BASENAME\%/${ROM_BN:+\"${ROM_BN}\"}}"
 
     # special case to get the last 2 folders for quake games for the -game parameter
     # remove everything up to /quake/
