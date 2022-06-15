@@ -20,9 +20,21 @@ function install_bashwelcometweak() {
 
 function getIPAddress() {
     local ip_route
-    ip_route=$(ip -4 route get 8.8.8.8 2>/dev/null)
+    declare -a roots_ipv4=(198.41.0.4 199.9.14.201 192.33.4.12 199.7.91.13 192.203.230.10
+                           192.5.5.241 192.112.36.4 198.97.190.53 192.36.148.17 192.58.128.30
+                           193.0.14.129 199.7.83.42 202.12.27.33)
+    declare -a roots_ipv6=(2001:503:ba3e::2:30 2001:500:200::b 2001:500:2::c 2001:500:2d::d
+                           2001:500:a8::e 2001:500:2f::f 2001:500:12::d0d 2001:500:1::53
+                           2001:7fe::53 2001:503:c27::2:30 2001:7fd::1 2001:500:9f::42 2001:dc3::35)
+    for ((i=0;i<13;i++)) {
+        ip_route=$(ip -4 route get ${roots_ipv4[RANDOM%13]} ${dev:+dev $dev} 2>/dev/null) \
+            && break
+    }
     if [[ -z "$ip_route" ]]; then
-        ip_route=$(ip -6 route get 2001:4860:4860::8888 2>/dev/null)
+        for ((i=0;i<13;i++)) {
+            ip_route=$(ip -6 route get ${roots_ipv6[RANDOM%13]} ${dev:+dev $dev} 2>/dev/null) \
+                && break
+        }
     fi
     [[ -n "$ip_route" ]] && grep -oP "src \K[^\s]+" <<< "$ip_route"
 }

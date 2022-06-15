@@ -1618,16 +1618,28 @@ function dkmsManager() {
 ## @details This function first tries to obtain an external IPv4 route and
 ## otherwise tries an IPv6 route if the IPv4 route can not be determined.
 ## If no external route can be determined, nothing will be returned.
-## This function uses Google's DNS servers as the external lookup address.
+## This function uses no proprietary DNS, resorting to root name servers to determine a route.
 function getIPAddress() {
     local dev="$1"
     local ip_route
 
+    declare -a roots_ipv4=(198.41.0.4 199.9.14.201 192.33.4.12 199.7.91.13 192.203.230.10
+                           192.5.5.241 192.112.36.4 198.97.190.53 192.36.148.17 192.58.128.30
+                           193.0.14.129 199.7.83.42 202.12.27.33)
+    declare -a roots_ipv6=(2001:503:ba3e::2:30 2001:500:200::b 2001:500:2::c 2001:500:2d::d
+                           2001:500:a8::e 2001:500:2f::f 2001:500:12::d0d 2001:500:1::53
+                           2001:7fe::53 2001:503:c27::2:30 2001:7fd::1 2001:500:9f::42 2001:dc3::35)
     # first try to obtain an external IPv4 route
-    ip_route=$(ip -4 route get 8.8.8.8 ${dev:+dev $dev} 2>/dev/null)
+    for ((i=0;i<13;i++)) {
+        ip_route=$(ip -4 route get ${roots_ipv4[RANDOM%13]} ${dev:+dev $dev} 2>/dev/null) \
+            && break
+    }
     if [[ -z "$ip_route" ]]; then
         # if there is no IPv4 route, try to obtain an IPv6 route instead
-        ip_route=$(ip -6 route get 2001:4860:4860::8888 ${dev:+dev $dev} 2>/dev/null)
+        for ((i=0;i<13;i++)) {
+            ip_route=$(ip -6 route get ${roots_ipv6[RANDOM%13]} ${dev:+dev $dev} 2>/dev/null) \
+                && break
+        }
     fi
 
     # if an external route was found, report its source address
