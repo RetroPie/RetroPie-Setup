@@ -105,6 +105,14 @@ function update_assets_retroarch() {
     chown -R $user:$user "$dir"
 }
 
+function update_core_info_retroarch() {
+    local dir="$configdir/all/retroarch/cores"
+    # remove if not a git repository and do a fresh checkout
+    [[ ! -d "$dir/.git" ]] && rm -fr "$dir"
+    gitPullOrClone "$configdir/all/retroarch/cores" https://github.com/libretro/libretro-core-info.git
+    chown -R $user:$user "$dir"
+}
+
 function install_minimal_assets_retroarch() {
     local dir="$configdir/all/retroarch/assets"
     [[ -d "$dir/.git" ]] && return
@@ -142,6 +150,9 @@ function configure_retroarch() {
 
     # install minimal assets
     install_minimal_assets_retroarch
+
+    # install core info files
+    update_core_info_retroarch
 
     # install joypad autoconfig presets
     update_joypad_autoconfigs_retroarch
@@ -225,6 +236,8 @@ function configure_retroarch() {
     iniSet "menu_show_core_updater" "false"
     iniSet "menu_show_online_updater" "false"
     iniSet "menu_show_restart_retroarch" "false"
+    # disable the load notification message with core and game info
+    iniSet "menu_show_load_content_animation" "false"
 
     # disable unnecessary xmb menu tabs
     iniSet "xmb_show_add" "false"
@@ -268,6 +281,9 @@ function configure_retroarch() {
 
     # (compat) keep all core options in a single file
     _set_config_option_retroarch "global_core_options" "true"
+
+    # disable the content load info popup with core and game info
+    _set_config_option_retroarch "menu_show_load_content_animation" "false"
 
     # remapping hack for old 8bitdo firmware
     addAutoConf "8bitdo_hack" 0
