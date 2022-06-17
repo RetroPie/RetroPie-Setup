@@ -43,6 +43,7 @@ function install_bin_runcommand() {
         iniSet "governor" ""
         iniSet "disable_menu" "0"
         iniSet "image_delay" "2"
+        iniSet "log_dir" ""
         chown $user:$user "$configdir/all/runcommand.cfg"
     fi
     if [[ ! -f "$configdir/all/runcommand-launch-dialog.cfg" ]]; then
@@ -110,6 +111,7 @@ function gui_runcommand() {
             'disable_joystick=0' \
             'image_delay=2' \
             'governor=' \
+            'log_dir=' \
         )"
 
         [[ -z "$governor" ]] && governor="Default: don't change"
@@ -137,6 +139,7 @@ function gui_runcommand() {
 
         options+=(4 "Launch image delay in seconds (currently $image_delay)")
         options+=(5 "CPU governor configuration (currently: $governor)")
+        options+=(6 "Set log/scratch directory (currently: ${log_dir:-/dev/shm})")
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
@@ -158,6 +161,11 @@ function gui_runcommand() {
                 ;;
             5)
                 governor_runcommand
+                ;;
+            6)
+                cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the log directory" 10 60 "$log_dir")
+                choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+                iniSet "log_dir" "$choice"
                 ;;
         esac
     done
