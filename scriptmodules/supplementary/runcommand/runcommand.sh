@@ -120,7 +120,7 @@ function get_config() {
         [[ -z "$IMAGE_DELAY" ]] && IMAGE_DELAY=2
         iniGet "log_dir"
         LOG_DIR="$ini_value"
-        [[ -z "$LOG_DIR" ]] && LOG_DIR="/dev/shm"
+        [[ -d "$LOG_DIR" ]] && LOG_DIR="/dev/shm"
         LOG="$LOG_DIR/runcommand.log"
     fi
 
