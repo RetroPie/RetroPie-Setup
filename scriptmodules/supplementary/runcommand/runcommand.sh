@@ -1103,7 +1103,7 @@ function retroarch_append_config() {
     fi
 
     # set `libretro_directory` to the core parent folder
-    local core_dir=$(echo "$COMMAND" | grep -Eo " $ROOTDIR/libretrocores/.*libretro\.so " | head -n 1)
+    local core_dir=$(echo "$COMMAND" | grep -Eo "$ROOTDIR/libretrocores/.*libretro\.so" | head -n 1)
     core_dir=$(dirname "$core_dir")
     [[ -n "$core_dir" ]] && iniSet "libretro_directory" "$core_dir"
 
