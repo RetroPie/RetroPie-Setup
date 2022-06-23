@@ -41,5 +41,5 @@ function configure_lr-xrick() {
 
     [[ "$md_mode" == "remove" ]] && return
 
-    ensureSystemretroconfig "ports/xrick"
+    defaultRAConfig "xrick"
 }

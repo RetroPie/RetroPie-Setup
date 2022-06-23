@@ -36,7 +36,7 @@ function install_lr-gw() {
 
 function configure_lr-gw() {
     mkRomDir "gameandwatch"
-    ensureSystemretroconfig "gameandwatch"
+    defaultRAConfig "gameandwatch"
 
     addEmulator 1 "$md_id" "gameandwatch" "$md_inst/gw_libretro.so"
     addSystem "gameandwatch"

@@ -1,0 +1,45 @@
+diff --git a/source/duke3d/src/actors.cpp b/source/duke3d/src/actors.cpp
+index 9a4405b2b..21f2570a4 100644
+--- a/source/duke3d/src/actors.cpp
++++ b/source/duke3d/src/actors.cpp
+@@ -507,25 +507,16 @@ int32_t A_MoveSpriteClipdist(int32_t spriteNum, vec3_t const * const change, uin
+ 
+     int returnValue;
+     int32_t diffZ;
+-    spriteheightofs(spriteNum, &diffZ, 0);
+-    int newZ = pSprite->z - diffZ;
++    spriteheightofs(spriteNum, &diffZ, 1);
+ 
+-    pSprite->z -= diffZ >> 1;
+-    switch (pSprite->statnum)
++    if (pSprite->statnum == STAT_PROJECTILE)
++        returnValue = clipmovex(&pSprite->pos, &newSectnum, change->x << 13, change->y << 13, clipDist, diffZ >> 3, diffZ >> 3, clipType, 1);
++    else
+     {
+-        default:
+-        {
+-            returnValue = clipmove(&pSprite->pos, &newSectnum, change->x << 13, change->y << 13, clipDist, ZOFFSET6, ZOFFSET6, clipType);
+-            break;
+-        }
+-
+-        case STAT_PROJECTILE:
+-        {
+-            returnValue = clipmovex(&pSprite->pos, &newSectnum, change->x << 13, change->y << 13, clipDist, diffZ >> 1, diffZ >> 1, clipType, 1);
+-            break;
+-        }
++        pSprite->z -= diffZ >> 1;
++        returnValue = clipmove(&pSprite->pos, &newSectnum, change->x << 13, change->y << 13, clipDist, ZOFFSET6, ZOFFSET6, clipType);
++        pSprite->z += diffZ >> 1;
+     }
+-    pSprite->z += diffZ >> 1;
+ 
+     // Testing: For some reason the assert below this was tripping for clients
+     EDUKE32_UNUSED int16_t   dbg_ClipMoveSectnum = newSectnum;
+@@ -573,6 +564,7 @@ int32_t A_MoveSpriteClipdist(int32_t spriteNum, vec3_t const * const change, uin
+ 
+     Bassert(newSectnum == pSprite->sectnum);
+ 
++    int newZ = pSprite->z;
+     int32_t ceilhit, florhit;
+     int const doZUpdate = change->z ? A_CheckNeedZUpdate(spriteNum, change->z, &newZ, &ceilhit, &florhit) : 0;
+ 

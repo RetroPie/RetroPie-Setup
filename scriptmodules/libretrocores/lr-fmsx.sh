@@ -36,7 +36,7 @@ function install_lr-fmsx() {
 
 function configure_lr-fmsx() {
     mkRomDir "msx"
-    ensureSystemretroconfig "msx"
+    defaultRAConfig "msx"
 
     # default to MSX2+ core
     setRetroArchCoreOption "fmsx_mode" "MSX2+"

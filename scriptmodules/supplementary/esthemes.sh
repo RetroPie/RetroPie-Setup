@@ -266,6 +266,15 @@ function gui_esthemes() {
         'RetroHursty69 supersynthyA1UP'
         'RetroHursty69 HyperCab'
         'RetroHursty69 NeonFantasy'
+        'RetroHursty69 ShadowClean'
+        'RetroHursty69 shine'
+        'RetroHursty69 Vinyl-Hits'
+        'RetroHursty69 ColorfulExtreme'
+        'RetroHursty69 ColorfulSupreme'
+        'RetroHursty69 CircularEssence'
+        'RetroHursty69 BoomBoxStreet'
+        'RetroHursty69 ShabangCLEAN'
+        'RetroHursty69 ShabangCRT'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
@@ -284,6 +293,7 @@ function gui_esthemes() {
         'justincaseurskynet Arcade1up-5x4-Horizontal'
         'KALEL1981 Super-Retroboy'
         'xovox RetroCRT-240p'
+        'xovox RetroCRT-240p-Rainbow'
         'xovox RetroCRT-240p-Vertical'
         'arcadeforge push-a'
         'arcadeforge push-a-v'
@@ -301,6 +311,7 @@ function gui_esthemes() {
         'KALEL1981 gold-standard'
         'Elratauru angular-artwork'
         'cjonasw raspixel-320-240'
+        'crxone 3twenty2fourty'
     )
     while true; do
         local theme

@@ -31,11 +31,13 @@ function build_lr-pcsx-rearmed() {
 
     if isPlatform "arm"; then
         params+=(ARCH=arm DYNAREC=ari64)
-        if isPlatform "neon"; then
-            params+=(HAVE_NEON=1 BUILTIN_GPU=neon)
-        else
-            params+=(HAVE_NEON=0 BUILTIN_GPU=peops)
-        fi
+    elif isPlatform "aarch64"; then
+        params+=(ARCH=aarch64 DYNAREC=ari64)
+    fi
+    if isPlatform "neon"; then
+        params+=(HAVE_NEON=1 BUILTIN_GPU=neon)
+    else
+        params+=(HAVE_NEON=0 BUILTIN_GPU=peops)
     fi
 
     make -f Makefile.libretro "${params[@]}" clean
@@ -57,7 +59,7 @@ function install_lr-pcsx-rearmed() {
 
 function configure_lr-pcsx-rearmed() {
     mkRomDir "psx"
-    ensureSystemretroconfig "psx"
+    defaultRAConfig "psx"
 
     addEmulator 1 "$md_id" "psx" "$md_inst/pcsx_rearmed_libretro.so"
     addSystem "psx"

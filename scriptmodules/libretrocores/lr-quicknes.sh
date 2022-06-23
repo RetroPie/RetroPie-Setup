@@ -34,7 +34,7 @@ function install_lr-quicknes() {
 
 function configure_lr-quicknes() {
     mkRomDir "nes"
-    ensureSystemretroconfig "nes"
+    defaultRAConfig "nes"
 
     local def=0
     isPlatform "armv6" && def=1

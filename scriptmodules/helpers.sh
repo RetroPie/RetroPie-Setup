@@ -227,10 +227,10 @@ function _mapPackage() {
             compareVersions "$__os_debian_ver" lt 9 && pkg="libpng12-dev"
             ;;
         libsdl1.2-dev)
-            rp_hasModule "sdl1" && pkg="RP sdl1 $pkg"
+            rp_isEnabled "sdl1" && pkg="RP sdl1 $pkg"
             ;;
         libsdl2-dev)
-            if rp_hasModule "sdl2"; then
+            if rp_isEnabled "sdl2"; then
                 # check whether to use our own sdl2 - can be disabled to resolve issues with
                 # mixing custom 64bit sdl2 and os distributed i386 version on multiarch
                 local own_sdl2=1
@@ -939,18 +939,39 @@ function setESSystem() {
 
 ## @fn ensureSystemretroconfig()
 ## @param system system to create retroarch.cfg for
-## @param shader set a default shader to use (deprecated)
-## @brief Creates a default retroarch.cfg for specified system in `/opt/retropie/configs/$system/retroarch.cfg`.
+## @brief Deprecated - use defaultRAConfig
+## @details Creates a default retroarch.cfg for specified system in `$configdir/$system/retroarch.cfg`.
 function ensureSystemretroconfig() {
     # don't do any config work on module removal
     [[ "$md_mode" == "remove" ]] && return
 
-    local system="$1"
-    local shader="$2"
+    # reset "$md_conf_root" to "$configdir" as defaultRAConfig handles this whereas ensureSystemretroconfig
+    # expects system to include any subdirectory in the first parameter such as "ports/$system".
+    local save_conf_root="$md_conf_root"
+    md_conf_root="$configdir"
+    defaultRAConfig "$1"
+    md_conf_root="$save_conf_root"
+}
 
-    if [[ ! -d "$configdir/$system" ]]; then
-        mkUserDir "$configdir/$system"
-    fi
+## @fn defaultRAConfig()
+## @param system system to create retroarch.cfg for
+## @param ... optional key then value parameters to be used in the config
+## @brief Creates a default retroarch.cfg for specified system in `$md_root_dir/$system/retroarch.cfg`.
+## @details Additional default configuration values can be provided as parameters to the function - eg. "fps_show" "true"
+## as two parameters would add a default entry of fps_show = "true" to the default configuration.
+## This function uses $md_conf_root as a base, so there is no need to use "ports/$system" for libretro ports as with
+## the older ensureSystemretroconfig
+function defaultRAConfig() {
+    # don't do any config work on module removal
+    [[ "$md_mode" == "remove" ]] && return
+
+    local system="$1"
+    shift
+    local defaults=("$@")
+
+    local config_path="$md_conf_root/$system"
+
+    [[ ! -d "$config_path" ]] && mkUserDir "$config_path"
 
     local config="$(mktemp)"
     # add the initial comment regarding include order
@@ -958,18 +979,19 @@ function ensureSystemretroconfig() {
 
     # add the per system default settings
     iniConfig " = " '"' "$config"
-    iniSet "input_remapping_directory" "$configdir/$system/"
+    iniSet "input_remapping_directory" "$config_path"
 
-    if [[ -n "$shader" ]]; then
-        iniUnset "video_smooth" "false"
-        iniSet "video_shader" "$emudir/retroarch/shader/$shader"
-        iniUnset "video_shader_enable" "true"
-    fi
+    # add any additional config key / values from function parameters
+    local key
+    local value
+    while read key value; do
+        [[ -n "$key" ]] && iniSet "$key" "$value"
+    done <<< "${defaults[@]}"
 
     # include the main retroarch config
     echo -e "\n#include \"$configdir/all/retroarch.cfg\"" >>"$config"
 
-    copyDefaultConfig "$config" "$configdir/$system/retroarch.cfg"
+    copyDefaultConfig "$config" "$config_path/retroarch.cfg"
     rm "$config"
 }
 

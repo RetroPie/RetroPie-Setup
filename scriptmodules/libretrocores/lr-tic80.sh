@@ -28,7 +28,7 @@ function build_lr-tic80() {
     rm -rf retropie
     mkdir -p retropie
     cd retropie
-    cmake -DBUILD_PLAYER=OFF -DBUILD_SOKOL=OFF -DBUILD_SDL=OFF -DBUILD_DEMO_CARTS=OFF -DBUILD_LIBRETRO=ON ..
+    cmake -DBUILD_PLAYER=OFF -DBUILD_SOKOL=OFF -DBUILD_SDL=OFF -DBUILD_DEMO_CARTS=OFF -DBUILD_LIBRETRO=ON ../core
     make
     md_ret_require="$md_build/retropie/lib/tic80_libretro.so"
 }
@@ -44,7 +44,7 @@ function install_lr-tic80() {
 
 function configure_lr-tic80() {
     mkRomDir "tic80"
-    ensureSystemretroconfig "tic80"
+    defaultRAConfig "tic80"
     addEmulator 1 "$md_id" "tic80" "$md_inst/tic80_libretro.so"
     addSystem "tic80" "TIC-80"
 }
