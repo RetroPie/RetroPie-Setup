@@ -25,6 +25,11 @@ function onstart_retroarch_joystick() {
     iniConfig " = " "\"" "/tmp/tempconfig.cfg"
     iniSet "input_device" "$DEVICE_NAME"
     iniSet "input_driver" "$input_joypad_driver"
+    # add vendor and product ids if non-empty
+    if [[ -n "$VENDOR_ID" && -n "$PRODUCT_ID" ]]; then
+        iniSet "input_vendor_id" "$VENDOR_ID"
+        iniSet "input_product_id" "$PRODUCT_ID"
+    fi
 }
 
 function onstart_retroarch_keyboard() {
