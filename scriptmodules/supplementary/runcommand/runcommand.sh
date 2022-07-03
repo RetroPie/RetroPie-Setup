@@ -1028,6 +1028,7 @@ function mode_switch() {
         # if we have switched mode, switch the framebuffer resolution also
         if [[ "$?" -eq 0 ]]; then
             sleep 1
+            clear
             MODE_CUR=($(get_${HAS_MODESET}_mode_info))
             [[ -z "$FB_NEW" ]] && FB_NEW="${MODE_CUR[2]}x${MODE_CUR[3]}"
             return 0
