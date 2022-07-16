@@ -13,7 +13,7 @@ rp_module_id="ikemen-go"
 rp_module_desc="I.K.E.M.E.N GO - Clone of M.U.G.E.N to the Go programming language"
 rp_module_licence="MIT https://raw.githubusercontent.com/ikemen-engine/Ikemen-GO/master/License.txt"
 rp_module_help="Copy characters, stages, screenpacks, etc. to $romdir/ports/ikemen-go\n\nConfig files can be found at $configdir/ports/ikemen-go/save"
-rp_module_repo="git https://github.com/ikemen-engine/Ikemen-GO.git master"
+rp_module_repo="git https://github.com/SuperFromND/Ikemen-GO.git 98point2"
 rp_module_section="exp"
 
 function depends_ikemen-go() {
@@ -30,7 +30,7 @@ function build_ikemen-go() {
     "$goroot/bin/go" clean -modcache
     "$goroot/bin/go" build -v -tags al_cmpt -o Ikemen_GO ./src
     # grabs default screenpack and content required for the game to run; note that the screenpack has a CC-BY-NC 3.0 license
-    git clone https://github.com/ikemen-engine/Ikemen_GO-Elecbyte-Screenpack.git elecbyte
+    git clone https://github.com/SuperFromND/Ikemen_GO-Elecbyte-Screenpack.git elecbyte
     md_ret_require="$md_build/Ikemen_GO"
 }
 
@@ -74,5 +74,5 @@ xterm -g 1x1+0-0 -e 'cd $md_inst && ./Ikemen_GO'
 _EOF_
     chmod +x "$md_inst/ikemen-go.sh"
     chown -R $user:$user "$md_inst"
-    chown -R $user:$user "$romdir/ports/ikemen-go/."
+    chown -R $user:$user "$romdir/ports/ikemen-go"
 }
