@@ -314,6 +314,7 @@ function gui_esthemes() {
         'Elratauru angular-artwork'
         'cjonasw raspixel-320-240'
         'crxone 3twenty2fourty'
+        'leochely Guilty-Gear'
     )
     while true; do
         local theme
