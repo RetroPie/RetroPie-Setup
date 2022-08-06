@@ -23,6 +23,8 @@ function depends_scraper() {
 function sources_scraper() {
     local goroot="$(_get_goroot_golang)"
     GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" get -u github.com/sselph/scraper
+    # Use an older version of the TGDB go REST bindings, since the new one is not compatible with scraper
+    git -C "$md_build/src/github.com/J-Swift/thegamesdb-swagger-client-go/" checkout 43ed8a0b364ed2d8521d0
     # manually set repo_dir for packaging info / version checking
     __mod_info[$md_id/repo_dir]="$md_build/src/github.com/sselph/scraper"
 }
