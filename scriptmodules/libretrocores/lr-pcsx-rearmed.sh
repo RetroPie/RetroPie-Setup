@@ -35,7 +35,7 @@ function build_lr-pcsx-rearmed() {
         params+=(ARCH=aarch64 DYNAREC=ari64)
     fi
     if isPlatform "neon"; then
-        params+=(HAVE_NEON=1 BUILTIN_GPU=neon)
+        params+=(HAVE_NEON=1 HAVE_NEON_ASM=1 BUILTIN_GPU=neon)
     else
         params+=(HAVE_NEON=0 BUILTIN_GPU=peops)
     fi
