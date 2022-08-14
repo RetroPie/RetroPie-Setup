@@ -31,13 +31,13 @@ function build_lr-mess() {
     make clean
     make "${params[@]}"
     rpSwap off
-    md_ret_require="$md_build/mess_libretro.so"
+    md_ret_require="$md_build/mamemess_libretro.so"
 }
 
 function install_lr-mess() {
     md_ret_files=(
         'COPYING'
-        'mess_libretro.so'
+        'mamemess_libretro.so'
         'README.md'
         'hash'
     )
@@ -45,7 +45,7 @@ function install_lr-mess() {
 
 function configure_lr-mess() {
     local module="$1"
-    [[ -z "$module" ]] && module="mess_libretro.so"
+    [[ -z "$module" ]] && module="mamemess_libretro.so"
 
     local system
     for system in nes gb coleco arcadia crvision; do
