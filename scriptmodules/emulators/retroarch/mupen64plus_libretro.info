@@ -1,0 +1,33 @@
+# Software Information
+display_name = "Nintendo - Nintendo 64 (Mupen64Plus-Legacy)"
+authors = "m4xw|Hacktarux|gonetz|GLideN64 Contributors|Mupen64Plus Team"
+supported_extensions = "n64|v64|z64|bin|u1"
+corename = "Mupen64Plus"
+license = "GPLv2"
+permissions = "dynarec_optional"
+display_version = "1.0"
+categories = "Emulator"
+
+# Hardware Information
+manufacturer = "Nintendo"
+systemname = "Nintendo 64"
+systemid = "nintendo_64"
+
+# Libretro Features
+supports_no_game = "false"
+database = "Nintendo - Nintendo 64"
+hw_render = "true"
+required_hw_api = "OpenGL Core >= 3.3 | OpenGL ES >= 2.0"
+savestate = "true"
+savestate_features = "serialized"
+cheats = "true"
+input_descriptors = "true"
+memory_descriptors = "true"
+libretro_saves = "true"
+core_options = "true"
+load_subsystem = "true"
+needs_fullpath = "false"
+disk_control = "false"
+is_experimental = "false"
+
+description = "The legacy version of the Mupen64Plus N64 emulator, ported to libretro. It uses the GLideN64 plugin as its default graphics plug, though the high-accuracy Angrylion and ParaLLEl-RDP plugins are also available. This core is no longer developed, but it's still useful for low power devices - for other platforms use the Mupen64Plus-Next core"
