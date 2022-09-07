@@ -14,7 +14,7 @@ rp_module_desc="modern DOS/x86 emulator focusing on ease of use"
 rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dosbox-staging/dosbox-staging/master/COPYING"
 rp_module_repo="git https://github.com/dosbox-staging/dosbox-staging.git :_get_branch_dosbox-staging"
-rp_module_section="exp"
+rp_module_section="opt"
 rp_module_flags="sdl2"
 
 function _get_branch_dosbox-staging() {
@@ -22,7 +22,7 @@ function _get_branch_dosbox-staging() {
 }
 
 function depends_dosbox-staging() {
-    getDepends cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev meson ninja-build
+    getDepends cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev libspeexdsp-dev meson ninja-build
 }
 
 function sources_dosbox-staging() {
@@ -30,16 +30,10 @@ function sources_dosbox-staging() {
 }
 
 function build_dosbox-staging() {
-    local params=(-Dbuildtype=release -Ddefault_library=static --prefix="$md_inst")
+    local params=(-Dprefix="$md_inst" -Ddatadir="resources")
 
-    # Fluidsynth (static)
-    cd "$md_build/contrib/static-fluidsynth"
-    make
-    export PKG_CONFIG_PATH="${md_build}/contrib/static-fluidsynth/fluidsynth/build"
-
-    cd "$md_build"
     meson setup "${params[@]}" build
-    ninja -C build
+    meson compile -j${__jobs} -C build
 
     md_ret_require=(
         "$md_build/build/dosbox"
@@ -56,15 +50,25 @@ function configure_dosbox-staging() {
 
     [[ "$md_id" == "remove" ]] && return
 
+    local config_dir="$md_conf_root/pc"
+    chown -R $user: "$config_dir"
+
+    local staging_output="texturenb"
+    if isPlatform "kms"; then
+        staging_output="openglnb"
+    fi
+
     local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [[ -f "$config_path" ]]; then
         iniConfig " = " "" "$config_path"
         if isPlatform "rpi"; then
             iniSet "fullscreen" "true"
-            iniSet "fullresolution" "desktop"
-            iniSet "output" "texturenb"
+            iniSet "fullresolution" "original"
+            iniSet "vsync" "true"
+            iniSet "output" "$staging_output"
             iniSet "core" "dynamic"
-            iniSet "cycles" "25000"
+            iniSet "blocksize" "2048"
+            iniSet "prebuffer" "50"
         fi
     fi
 }
