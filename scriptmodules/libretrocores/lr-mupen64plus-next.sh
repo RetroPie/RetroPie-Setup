@@ -53,6 +53,12 @@ function build_lr-mupen64plus-next() {
         params+=(FORCE_GLES=1)
     fi
 
+    if isPlatform "64bit"; then
+        rpSwap on 2048
+    else
+        rpSwap on 750
+    fi
+
     # use a custom core name to avoid core option name clashes with lr-mupen64plus
     params+=(CORE_NAME=mupen64plus-next)
     make "${params[@]}" clean
@@ -63,6 +69,8 @@ function build_lr-mupen64plus-next() {
     else
         make "${params[@]}"
     fi
+
+    rpSwap off
 
     md_ret_require="$md_build/mupen64plus_next_libretro.so"
 }
