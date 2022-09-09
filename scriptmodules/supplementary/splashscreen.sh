@@ -71,11 +71,11 @@ _EOF_
         iniConfig "=" '"' "$configdir/all/$md_id.cfg"
         iniSet "RANDOMIZE" "disabled"
     fi
-    chown $user:$user "$configdir/all/$md_id.cfg"
+    chown $user: "$configdir/all/$md_id.cfg"
 
     mkUserDir "$datadir/splashscreens"
     echo "Place your own splashscreens in here." >"$datadir/splashscreens/README.txt"
-    chown $user:$user "$datadir/splashscreens/README.txt"
+    chown $user: "$datadir/splashscreens/README.txt"
 }
 
 function enable_plymouth_splashscreen() {
@@ -194,7 +194,7 @@ function randomize_splashscreen() {
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     iniConfig "=" '"' "$configdir/all/$md_id.cfg"
-    chown $user:$user "$configdir/all/$md_id.cfg"
+    chown $user: "$configdir/all/$md_id.cfg"
 
     case "$choice" in
         0)
@@ -266,7 +266,7 @@ function preview_splashscreen() {
 
 function download_extra_splashscreen() {
     gitPullOrClone "$datadir/splashscreens/retropie-extra" https://github.com/HerbFargus/retropie-splashscreens-extra
-    chown -R $user:$user "$datadir/splashscreens/retropie-extra"
+    chown -R $user: "$datadir/splashscreens/retropie-extra"
 }
 
 function gui_splashscreen() {

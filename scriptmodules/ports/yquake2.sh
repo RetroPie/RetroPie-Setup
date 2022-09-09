@@ -87,7 +87,7 @@ function game_data_yquake2() {
         done
     fi
 
-    chown -R $user:$user "$romdir/ports/quake2"
+    chown -R $user: "$romdir/ports/quake2"
 }
 
 

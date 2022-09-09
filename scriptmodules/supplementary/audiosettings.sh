@@ -176,7 +176,7 @@ ctl.!default {
 EOF
 
     mv "$tmpfile" "$home/.asoundrc"
-    chown "$user:$user" "$home/.asoundrc"
+    chown "$user:" "$home/.asoundrc"
 }
 
 function _pulseaudio_audiosettings() {

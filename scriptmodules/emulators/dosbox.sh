@@ -143,7 +143,7 @@ midi_synth start
 midi_synth stop
 _EOF_
     chmod +x "$romdir/pc/$launcher_name"
-    chown $user:$user "$romdir/pc/$launcher_name"
+    chown $user: "$romdir/pc/$launcher_name"
 
     if [[ "$md_id" == "dosbox" || "$md_id" == "dosbox-sdl2" ]]; then
         local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
