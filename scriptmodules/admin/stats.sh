@@ -42,7 +42,7 @@ function build_stats() {
 
     cp -rv "$md_data/licences" "$dest/"
     cp -rv "$md_data/pkgflags" "$dest/"
-    chown -R $user:$user "$dest"
+    chown -R $user: "$dest"
 }
 
 function upload_stats() {

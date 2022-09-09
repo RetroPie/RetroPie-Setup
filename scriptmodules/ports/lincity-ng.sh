@@ -42,6 +42,6 @@ function configure_lincity-ng() {
     if [[ -d "/lincity-ng" ]]; then
         cp -R /lincity-ng "$md_conf_root/"
         rm -rf /lincity-ng
-        chown $user:$user "$md_conf_root/lincity-ng"
+        chown $user: "$md_conf_root/lincity-ng"
     fi
 }

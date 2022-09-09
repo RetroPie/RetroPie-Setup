@@ -28,7 +28,7 @@ function sources_retropie-manager() {
 
 function install_retropie-manager() {
     cd "$md_inst"
-    chown -R $user:$user "$md_inst"
+    chown -R $user: "$md_inst"
     sudo -u $user make install
 }
 

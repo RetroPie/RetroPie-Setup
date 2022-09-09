@@ -62,7 +62,7 @@ function configure_dolphin() {
 FullscreenResolution = Auto
 Fullscreen = True
 _EOF_
-        chown -R $user:$user "$md_conf_root/gc/Config"
+        chown -R $user: "$md_conf_root/gc/Config"
     fi
 
     addEmulator 1 "$md_id" "gc" "$md_inst/bin/dolphin-emu-nogui -e %ROM%"

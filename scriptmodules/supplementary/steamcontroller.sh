@@ -27,7 +27,7 @@ function sources_steamcontroller() {
 
 function install_steamcontroller() {
     cd "$md_inst"
-    chown -R "$user:$user"  "$md_inst"
+    chown -R "$user:"  "$md_inst"
     sudo -u $user bash -c "\
         virtualenv -p python3 --no-site-packages \"$md_inst\"; \
         source bin/activate; \

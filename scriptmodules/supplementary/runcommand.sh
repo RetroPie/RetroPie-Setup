@@ -43,11 +43,11 @@ function install_bin_runcommand() {
         iniSet "governor" ""
         iniSet "disable_menu" "0"
         iniSet "image_delay" "2"
-        chown $user:$user "$configdir/all/runcommand.cfg"
+        chown $user: "$configdir/all/runcommand.cfg"
     fi
     if [[ ! -f "$configdir/all/runcommand-launch-dialog.cfg" ]]; then
         dialog --create-rc "$configdir/all/runcommand-launch-dialog.cfg"
-        chown $user:$user "$configdir/all/runcommand-launch-dialog.cfg"
+        chown $user: "$configdir/all/runcommand-launch-dialog.cfg"
     fi
 
     # needed for KMS modesetting (debian buster or later only)
@@ -90,14 +90,14 @@ function governor_runcommand() {
     if [[ -n "$choice" ]]; then
         governor="${governors[$choice]}"
         iniSet "governor" "$governor"
-        chown $user:$user "$config"
+        chown $user: "$config"
     fi
 }
 
 function gui_runcommand() {
     local config="$configdir/all/runcommand.cfg"
     iniConfig " = " '"' "$config"
-    chown $user:$user "$config"
+    chown $user: "$config"
 
     local cmd
     local option

@@ -28,7 +28,7 @@ function build_wikidocs() {
 
 function install_wikidocs() {
     rsync -a --delete "$md_build/site/" "$__tmpdir/wikidocs/"
-    chown -R $user:$user "$__tmpdir/wikidocs"
+    chown -R $user: "$__tmpdir/wikidocs"
 }
 
 function upload_wikidocs() {

@@ -70,7 +70,7 @@ function configure_cannonball() {
 
     cp -v roms.txt "$romdir/ports/$md_id/"
 
-    chown -R $user:$user "$romdir/ports/$md_id" "$md_conf_root/$md_id"
+    chown -R $user: "$romdir/ports/$md_id" "$md_conf_root/$md_id"
 
     ln -snf "$romdir/ports/$md_id" "$md_inst/roms"
 }

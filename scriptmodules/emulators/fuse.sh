@@ -67,7 +67,7 @@ function configure_fuse() {
 #!/bin/bash
 $md_inst/bin/fuse --machine 128 --full-screen
 _EOF_
-    chown $user:$user "$script"
+    chown $user: "$script"
     chmod +x "$script"
 }
 
