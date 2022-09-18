@@ -136,7 +136,7 @@ function depends_emulationstation() {
     )
 
     compareVersions "$__os_debian_ver" gt 8 && depends+=(rapidjson-dev)
-    isPlatform "x11" && depends+=(gnome-terminal)
+    isPlatform "x11" && depends+=(gnome-terminal mesa-utils)
     if isPlatform "dispmanx" && ! isPlatform "osmc"; then
         depends+=(omxplayer)
     fi
