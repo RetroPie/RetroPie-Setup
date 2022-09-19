@@ -26,7 +26,7 @@ function _get_branch_alephone() {
 }
 
 function depends_alephone() {
-    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake libboost-system-dev libcurl4-openssl-dev)
+    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake libboost-system-dev libcurl4-openssl-dev autoconf-archive)
     if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
         depends+=(libsdl2-dev libsdl2-net-dev libsdl2-image-dev libsdl2-ttf-dev libglu1-mesa-dev libgl1-mesa-dev)
     else
@@ -42,7 +42,14 @@ function sources_alephone() {
 function build_alephone() {
     params=(--prefix="$md_inst")
     isPlatform "arm" && params+=(--with-boost-libdir=/usr/lib/arm-linux-gnueabihf)
-    ./autogen.sh
+
+    # if building an older release, use autogen.sh otherwise use autoreconf
+    if [[ -f "autogen.sh" ]]; then
+        ./autogen.sh
+    else
+        autoreconf -iv
+    fi
+
     ./configure "${params[@]}"
     make clean
     make
