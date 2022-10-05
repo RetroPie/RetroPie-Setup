@@ -410,6 +410,9 @@ function get_platform() {
                         *tegra194*)
                             __platform="xavier"
                             ;;
+                        *rockpro64*)
+                            __platform="rockpro64"
+                            ;;
                     esac
                 elif [[ -e "/sys/devices/soc0/family" ]]; then
                     case "$(tr -d '\0' < /sys/devices/soc0/family)" in
@@ -511,6 +514,11 @@ function platform_rpi1() {
 function platform_rpi2() {
     cpu_armv7 "cortex-a7"
     __platform_flags+=(rpi gles)
+}
+
+function platform_rockpro64() {
+    cpu_armv8 "cortex-a53"
+    __platform_flags+=(gles kms)
 }
 
 function platform_rpi3() {
