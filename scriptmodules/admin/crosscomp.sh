@@ -29,27 +29,12 @@ function sources_crosscomp() {
 
     declare -A pkgs
     case "$dist" in
-        jessie)
-            pkgs=(
-                [binutils]=2.25
-                [cloog]=0.18.1
-                [gcc]=4.9.4
-                [glibc]=2.19
-                [gmp]=6.0.0a
-                [isl]=0.12.2
-                [kernel]=4.9.35
-                [mpfr]=3.1.2
-                [mpc]=1.0.2
-            )
-            ;;
         stretch)
             pkgs=(
                 [binutils]=2.28
-                [cloog]=0.18.4
                 [gcc]=6.4.0
                 [glibc]=2.24
                 [gmp]=6.1.2
-                [isl]=0.18
                 [kernel]=4.9.80
                 [mpfr]=3.1.5
                 [mpc]=1.0.3
@@ -58,11 +43,9 @@ function sources_crosscomp() {
         buster)
             pkgs=(
                 [binutils]=2.31.1
-                [cloog]=0.18.4
                 [gcc]=8.3.0
                 [glibc]=2.28
                 [gmp]=6.1.2
-                [isl]=0.20
                 [kernel]=4.19.50
                 [mpfr]=4.0.2
                 [mpc]=1.1.0
@@ -73,9 +56,6 @@ function sources_crosscomp() {
             return 1
             ;;
     esac
-
-    downloadAndExtract "https://libisl.sourceforge.io/isl-${pkgs[isl]}.tar.bz2" isl --strip-components 1
-    downloadAndExtract "http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-${pkgs[cloog]}.tar.gz" cloog --strip-components 1
 
     downloadAndExtract "https://ftp.gnu.org/gnu/binutils/binutils-${pkgs[binutils]}.tar.gz" binutils --strip-components 1
 
@@ -89,7 +69,7 @@ function sources_crosscomp() {
     downloadAndExtract "https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgs[kernel]}.tar.gz" linux --strip-components 1
 
     local pkg
-    for pkg in cloog gmp isl mpc mpfr; do
+    for pkg in gmp mpc mpfr; do
         ln -sf "../$pkg" "gcc/$pkg"
     done
 }
@@ -189,7 +169,7 @@ function setup_crosscomp() {
 
 function setup_all_crosscomp() {
     local dist
-    for dist in jessie stretch buster; do
+    for dist in stretch buster; do
         setup_crosscomp "$dist"
     done
 }
