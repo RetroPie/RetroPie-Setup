@@ -105,9 +105,12 @@ function build_crosscomp() {
     local target=arm-linux-gnueabihf
     local dest="$md_inst/$dist"
 
-    export PATH="$dest/bin:$PATH"
-    export CFLAGS=""
-    export CXXFLAGS=""
+    local old_path="$PATH"
+    export PATH="$dest/bin:$old_path"
+
+    export ASFLAGS=""
+    export CFLAGS="-O2"
+    export CXXFLAGS="-O2"
 
     # binutils
     printHeading "Building binutils"
@@ -166,6 +169,11 @@ function build_crosscomp() {
     make all
     make install
     cd ..
+
+    export PATH="$old_path"
+    export ASFLAGS="$__asflags"
+    export CFLAGS="$__cflags"
+    export CXXFLAGS="$__cxxflags"
 }
 
 function setup_crosscomp() {
@@ -174,6 +182,7 @@ function setup_crosscomp() {
     
     if rp_callModule crosscomp sources "$dist"; then
         rp_callModule crosscomp build "$dist"
+        rp_callModule crosscomp clean
         rp_callModule crosscomp switch_distcc "$dist"
     fi
 }
