@@ -51,6 +51,17 @@ function sources_crosscomp() {
                 [mpc]=1.1.0
             )
             ;;
+        bullseye)
+            pkgs=(
+                [binutils]=2.35.2
+                [gcc]=10.2.0
+                [glibc]=2.31
+                [gmp]=6.2.1
+                [kernel]=5.15.61
+                [mpfr]=4.1.0
+                [mpc]=1.2.0
+            )
+            ;;
         *)
             md_ret_errors+=("Unsupported distribution $dist")
             return 1
@@ -66,12 +77,19 @@ function sources_crosscomp() {
     downloadAndExtract "https://ftp.gnu.org/gnu/glibc/glibc-${pkgs[glibc]}.tar.bz2" glibc --strip-components 1
     downloadAndExtract "https://ftp.gnu.org/gnu/gcc/gcc-${pkgs[gcc]}/gcc-${pkgs[gcc]}.tar.gz" gcc --strip-components 1
 
-    downloadAndExtract "https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgs[kernel]}.tar.gz" linux --strip-components 1
+    downloadAndExtract "https://www.kernel.org/pub/linux/kernel/v${pkgs[kernel]:0:1}.x/linux-${pkgs[kernel]}.tar.gz" linux --strip-components 1
 
     local pkg
     for pkg in gmp mpc mpfr; do
         ln -sf "../$pkg" "gcc/$pkg"
     done
+
+    # apply glibc patch required when compiling with GCC 10+
+    # see https://sourceware.org/git/gitweb.cgi?p=glibc.git;h=49348beafe9ba150c9bd48595b3f372299bddbb0
+    # as well as a fix for an incorrect header include.
+    if [[ "$dist" == "bullseye" ]]; then
+        applyPatch "$md_data/bullseye.diff"
+    fi
 }
 
 function build_crosscomp() {
@@ -169,7 +187,7 @@ function setup_crosscomp() {
 
 function setup_all_crosscomp() {
     local dist
-    for dist in stretch buster; do
+    for dist in stretch buster bullseye; do
         setup_crosscomp "$dist"
     done
 }
