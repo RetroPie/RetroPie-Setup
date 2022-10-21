@@ -27,6 +27,10 @@ function depends_dosbox-staging() {
 
 function sources_dosbox-staging() {
     gitPullOrClone
+    # patch the dosbox-staging meson.build script to disable neon instructions for older arm
+    if ! isPlatform "neon"; then
+        applyPatch "$md_data/speexdsp_simd_disable.diff"
+    fi
 }
 
 function build_dosbox-staging() {
