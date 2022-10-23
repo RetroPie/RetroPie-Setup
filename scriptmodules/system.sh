@@ -551,12 +551,12 @@ function platform_odroid-xu() {
 }
 
 function platform_tegra-x1() {
-    cpu_armv8 "cortex-a57"
+    cpu_armv8 "cortex-a57+crypto"
     __platform_flags+=(x11 gl)
 }
 
 function platform_tegra-x2() {
-    cpu_armv8 "native"
+    cpu_armv8 "cortex-a57+crypto"
     __platform_flags+=(x11 gl)
 }
 
