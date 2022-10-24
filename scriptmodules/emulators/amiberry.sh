@@ -19,6 +19,7 @@ rp_module_flags="!all arm rpi3 rpi4"
 
 function _update_hook_amiberry() {
     local rom
+    mkUserDir "$biosdir/amiga"
     for rom in kick13.rom kick20.rom kick31.rom; do
         # if we have a kickstart rom in $biosdir, move it to $biosdir/amiga and symlink the old location
         if [[ -f "$biosdir/$rom" && ! -h "$biosdir/$rom" ]]; then
