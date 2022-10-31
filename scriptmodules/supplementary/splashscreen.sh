@@ -32,8 +32,7 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    local params=(insserv vlc)
-    getDepends "${params[@]}"
+    getDepends vlc
 }
 
 function install_bin_splashscreen() {
@@ -104,9 +103,6 @@ function disable_splashscreen() {
 
 function configure_splashscreen() {
     [[ "$md_mode" == "remove" ]] && return
-
-    # remove legacy service
-    [[ -f "/etc/init.d/asplashscreen" ]] && insserv -r asplashscreen && rm -f /etc/init.d/asplashscreen
 
     disable_plymouth_splashscreen
     enable_splashscreen
