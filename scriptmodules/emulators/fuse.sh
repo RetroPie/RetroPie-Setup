@@ -29,6 +29,7 @@ function sources_fuse() {
         applyPatch "$md_data/01_disable_cursor.diff"
     fi
     applyPatch "$md_data/02_sdl_fix.diff"
+    applyPatch "$md_data/03_gcc_10_fix.diff"
 }
 
 function build_fuse() {
