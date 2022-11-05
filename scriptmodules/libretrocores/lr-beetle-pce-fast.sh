@@ -39,9 +39,10 @@ function install_lr-beetle-pce-fast() {
 }
 
 function configure_lr-beetle-pce-fast() {
-    mkRomDir "pcengine"
-    defaultRAConfig "pcengine"
-
-    addEmulator 1 "$md_id" "pcengine" "$md_inst/mednafen_pce_fast_libretro.so"
-    addSystem "pcengine"
+    for system in pcengine pce-cd; do
+	    mkRomDir "$system"
+        defaultRAConfig "$system"
+        addEmulator 1 "$md_id" "$system" "$md_inst/mednafen_pce_fast_libretro.so"
+        addSystem "$system"
+	 done
 }
