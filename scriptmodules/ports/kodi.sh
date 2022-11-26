@@ -57,7 +57,8 @@ function install_bin_kodi() {
 
     # not all the kodi packages may be available depending on repository
     # so we will check and install what's available
-    local all_pkgs=(kodi kodi-peripheral-joystick kodi-inputstream-adaptive kodi-inputstream-rtmp kodi-vfs-libarchive kodi-vfs-sftp kodi-vfs-nfs)
+    local all_pkgs=(kodi kodi-peripheral-joystick kodi-inputstream-adaptive kodi-vfs-libarchive kodi-vfs-sftp kodi-vfs-nfs)
+    compareVersions "$__os_ubuntu_ver" lt 22.04 && all_pkgs+=(kodi-inputstream-rtmp)
     local avail_pkgs=()
     local pkg
     for pkg in "${all_pkgs[@]}"; do
