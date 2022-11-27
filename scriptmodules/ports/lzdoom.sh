@@ -11,8 +11,8 @@
 
 rp_module_id="lzdoom"
 rp_module_desc="lzdoom - DOOM source port (legacy version of GZDoom)"
-rp_module_licence="GPL3 https://raw.githubusercontent.com/drfrag666/gzdoom/g3.3mgw/docs/licenses/README.TXT"
-rp_module_repo="git https://github.com/drfrag666/gzdoom 3.87c"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/drfrag666/gzdoom/master/LICENSE"
+rp_module_repo="git https://github.com/drfrag666/gzdoom 3.88b"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -67,7 +67,7 @@ function add_games_lzdoom() {
 
     # FluidSynth is too memory/CPU intensive
     if isPlatform "arm"; then
-        params+=("+'snd_mididevice -3'")
+        params+=("+snd_mididevice -3")
     fi
 
     if isPlatform "kms"; then
