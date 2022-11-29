@@ -17,6 +17,7 @@ rp_module_section="opt"
 
 function depends_retroscraper() {
     local depends=(python3)
+    getDepends "${depends[@]}"
 }
 
 function sources_retroscraper() {
