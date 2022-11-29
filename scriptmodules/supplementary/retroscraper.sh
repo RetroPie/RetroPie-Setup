@@ -49,12 +49,8 @@ function install_retroscraper() {
     )
 }
 
-function remove_retroscraper() {
-    rp_callModule golang remove
-}
-
 function get_ver_retroscraper() {
-    [[ -f "$md_inst/scraper" ]] && "$md_inst/scraper" -version 2>/dev/null
+    [[ -f "$md_inst/retroscraper.py" ]] && su $user -c 'python3 $md_inst/retroscraper.py --appver' 2>/dev/null
 }
 
 function latest_ver_retroscraper() {
@@ -219,9 +215,9 @@ function gui_retroscraper() {
         return
     fi
 
-    iniConfig " = " '"' "$configdir/all/scraper.cfg"
+    iniConfig " = " '"' "$configdir/all/retroscraper.cfg"
     eval $(_load_config_retroscraper)
-    chown $user:$user "$configdir/all/scraper.cfg"
+    chown $user:$user "$configdir/all/retroscraper.cfg"
 
     local default
     while true; do
