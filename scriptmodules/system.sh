@@ -243,6 +243,15 @@ function get_os_version() {
                     __os_debian_ver="11"
                 fi
             fi
+            if [[ "$__os_desc" == LMDE* ]]; then
+                if compareVersions "$__os_release" lt 4; then
+                    error="You need Linux Mint Debian Edition 4 or newer"
+                elif compareVersions "$__os_release" lt 5; then
+                    __os_debian_ver="10"
+                else
+                    __os_debian_ver="11"
+                fi
+            fi
             ;;
         Ubuntu|[Nn]eon|Pop)
             if compareVersions "$__os_release" lt 16.04; then
