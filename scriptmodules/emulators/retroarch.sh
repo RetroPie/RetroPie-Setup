@@ -25,7 +25,7 @@ function depends_retroarch() {
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
     isPlatform "kms" && depends+=(libgbm-dev)
 
-    if compareVersions "$__os_debian_ver" ge 9; then
+    if [[ "$__os_debian_ver" -ge 9 ]]; then
         depends+=(libavcodec-dev libavformat-dev libavdevice-dev)
     fi
 
@@ -42,7 +42,7 @@ function build_retroarch() {
         params+=(--disable-pulse)
         ! isPlatform "mesa" && params+=(--disable-x11)
     fi
-    if compareVersions "$__os_debian_ver" lt 9; then
+    if [[ "$__os_debian_ver" -lt 9 ]]; then
         params+=(--disable-ffmpeg)
     fi
     isPlatform "gles" && params+=(--enable-opengles)

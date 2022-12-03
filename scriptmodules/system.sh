@@ -180,7 +180,7 @@ function get_os_version() {
             fi
 
             # we still allow Raspbian 8 (jessie) to work (We show an popup in the setup module)
-            if compareVersions "$__os_debian_ver" lt 8; then
+            if [[ "$__os_debian_ver" -lt 8 ]]; then
                 error="You need Raspbian/Debian Stretch or newer"
             fi
 
@@ -203,7 +203,7 @@ function get_os_version() {
             # we provide binaries for RPI on Raspbian 9/10
             if isPlatform "rpi" && \
                isPlatform "32bit" && \
-               compareVersions "$__os_debian_ver" gt 9 && compareVersions "$__os_debian_ver" lt 11; then
+               [[ "$__os_debian_ver" -gt 9 && "$__os_debian_ver" -lt 11 ]]; then
                # only set __has_binaries if not already set
                [[ -z "$__has_binaries" ]] && __has_binaries=1
             fi
