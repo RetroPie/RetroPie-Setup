@@ -328,19 +328,27 @@ function get_rpi_video() {
     local pkgconfig="/opt/vc/lib/pkgconfig"
 
     if [[ -z "$__has_kms" ]]; then
-        # in chroot, use kms by default for rpi4 target
-        [[ "$__chroot" -eq 1 ]] && isPlatform "rpi4" && __has_kms=1
-        # detect driver via inserted module / platform driver setup
-        [[ -d "/sys/module/vc4" ]] && __has_kms=1
+        if [[ "$__chroot" -eq 1 ]]; then
+            # in chroot, use kms by default for rpi4 or Debian 11 (bullseye) or newer
+            if isPlatform "rpi4" || [[ "$__os_debian_ver" -ge 11 ]]; then
+                __has_kms=1
+            fi
+        else
+            # detect driver via inserted module / platform driver setup
+            [[ -d "/sys/module/vc4" ]] && __has_kms=1
+        fi
     fi
 
     if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=(mesa kms)
         if [[ -z "$__has_dispmanx" ]]; then
-            # in a chroot, unless __has_dispmanx is set, default to fkms (adding dispmanx flag)
-            [[ "$__chroot" -eq 1 ]] && __has_dispmanx=1
-            # if running fkms driver, add dispmanx flag
-            [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __has_dispmanx=1
+            if [[ "$__chroot" -eq 1 ]]; then
+                # in a chroot default to fkms (supporting dispmanx) when debian is older than 11 (bullseye)
+                [[ "$__os_debian_ver" -lt 11 ]] && __has_dispmanx=1
+            else
+                # if running fkms driver, add dispmanx flag
+                [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __has_dispmanx=1
+            fi
         fi
         [[ "$__has_dispmanx" -eq 1 ]] && __platform_flags+=(dispmanx)
     else
