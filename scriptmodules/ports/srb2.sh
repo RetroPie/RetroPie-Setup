@@ -17,7 +17,7 @@ rp_module_section="exp"
 
 function depends_srb2() {
     local depends=(cmake libsdl2-dev libsdl2-mixer-dev libgme-dev libpng-dev libcurl4-openssl-dev)
-    compareVersions "$__os_debian_ver" gt 9 && depends+=(libopenmpt-dev)
+    [[ "$__os_debian_ver" -gt 9 ]] && depends+=(libopenmpt-dev)
     getDepends "${depends[@]}"
 }
 
@@ -32,7 +32,7 @@ function build_srb2() {
 
     # Disable OpenMPT on Debian Stretch and old, its version is too old
     local extra
-    compareVersions "$__os_debian_ver" lt 10 && extra="-DSRB2_CONFIG_HAVE_OPENMPT=Off"
+    [[ "$__os_debian_ver" -lt 10 ]] && extra="-DSRB2_CONFIG_HAVE_OPENMPT=Off"
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$md_inst" $extra
     make
     md_ret_require="$md_build/build/bin/lsdlsrb2"
