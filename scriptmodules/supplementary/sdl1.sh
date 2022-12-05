@@ -22,7 +22,7 @@ function get_pkg_ver_sdl1() {
     if [[ "$__os_debian_ver" -eq 9 ]]; then
         basever="1.2.15+dfsg1"
         revision="4"
-    elif [[ "$__os_debian_ver" -eq 10 ]]; then
+    elif [[ "$__os_debian_ver" -ge 10 ]]; then
         basever="1.2.15+dfsg2"
         revision="6"
     else
