@@ -19,7 +19,7 @@ rp_module_flags="!mali"
 
 function _get_branch_alephone() {
     local branch="release-20150620"
-    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
+    if [[ "$__os_debian_ver" -ge 9 ]] || [[ -n "$__os_ubuntu_ver" ]]; then
         branch="master"
     fi
     echo "$branch"
@@ -27,7 +27,7 @@ function _get_branch_alephone() {
 
 function depends_alephone() {
     local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake libboost-system-dev libcurl4-openssl-dev autoconf-archive)
-    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
+    if [[ "$__os_debian_ver" -ge 9 ]] || [[ -n "$__os_ubuntu_ver" ]]; then
         depends+=(libsdl2-dev libsdl2-net-dev libsdl2-image-dev libsdl2-ttf-dev libglu1-mesa-dev libgl1-mesa-dev)
     else
         depends+=(libsdl1.2-dev libsdl-net1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev)
@@ -62,7 +62,7 @@ function install_alephone() {
 
 function game_data_alephone() {
     local version="20150620"
-    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
+    if [[ "$__os_debian_ver" -ge 9 ]] || [[ -n "$__os_ubuntu_ver" ]]; then
         version="20220115"
     fi
     local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-$version"

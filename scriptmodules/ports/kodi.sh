@@ -21,16 +21,18 @@ function _update_hook_kodi() {
 }
 
 function depends_kodi() {
-    # raspbian
+    # Raspberry Pi OS
     if [[ "$__os_id" = "Raspbian" ]] && isPlatform "rpi"; then
-        if [[ "$md_mode" == "install" ]]; then
-            # remove old repository
-            rm -f /etc/apt/sources.list.d/mene.list
-            echo "deb http://pipplware.pplware.pt/pipplware/dists/$__os_codename/main/binary/ ./" >/etc/apt/sources.list.d/pipplware.list
-            download http://pipplware.pplware.pt/pipplware/key.asc - | apt-key add - &>/dev/null
-        else
-            rm -f /etc/apt/sources.list.d/pipplware.list
-            apt-key del 4096R/BAA567BB >/dev/null
+        if [[ "$__os_debian_ver" -le 10 ]]; then
+            if [[ "$md_mode" == "install" ]]; then
+                # remove old repository
+                rm -f /etc/apt/sources.list.d/mene.list
+                echo "deb http://pipplware.pplware.pt/pipplware/dists/$__os_codename/main/binary/ ./" >/etc/apt/sources.list.d/pipplware.list
+                download http://pipplware.pplware.pt/pipplware/key.asc - | apt-key add - &>/dev/null
+            else
+                rm -f /etc/apt/sources.list.d/pipplware.list
+                apt-key del 4096R/BAA567BB >/dev/null
+            fi
         fi
     # ubuntu
     elif [[ -n "$__os_ubuntu_ver" ]] && isPlatform "x86"; then
@@ -57,7 +59,8 @@ function install_bin_kodi() {
 
     # not all the kodi packages may be available depending on repository
     # so we will check and install what's available
-    local all_pkgs=(kodi kodi-peripheral-joystick kodi-inputstream-adaptive kodi-inputstream-rtmp kodi-vfs-libarchive kodi-vfs-sftp kodi-vfs-nfs)
+    local all_pkgs=(kodi kodi-peripheral-joystick kodi-inputstream-adaptive kodi-vfs-libarchive kodi-vfs-sftp kodi-vfs-nfs)
+    compareVersions "$__os_ubuntu_ver" lt 22.04 && all_pkgs+=(kodi-inputstream-rtmp)
     local avail_pkgs=()
     local pkg
     for pkg in "${all_pkgs[@]}"; do

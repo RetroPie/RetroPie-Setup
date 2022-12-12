@@ -180,7 +180,7 @@ function get_os_version() {
             fi
 
             # we still allow Raspbian 8 (jessie) to work (We show an popup in the setup module)
-            if compareVersions "$__os_debian_ver" lt 8; then
+            if [[ "$__os_debian_ver" -lt 8 ]]; then
                 error="You need Raspbian/Debian Stretch or newer"
             fi
 
@@ -203,7 +203,7 @@ function get_os_version() {
             # we provide binaries for RPI on Raspbian 9/10
             if isPlatform "rpi" && \
                isPlatform "32bit" && \
-               compareVersions "$__os_debian_ver" gt 9 && compareVersions "$__os_debian_ver" lt 11; then
+               [[ "$__os_debian_ver" -gt 9 && "$__os_debian_ver" -lt 11 ]]; then
                # only set __has_binaries if not already set
                [[ -z "$__has_binaries" ]] && __has_binaries=1
             fi
@@ -240,6 +240,15 @@ function get_os_version() {
                     __os_debian_ver="10"
                 else
                     __os_ubuntu_ver="20.04"
+                    __os_debian_ver="11"
+                fi
+            fi
+            if [[ "$__os_desc" == LMDE* ]]; then
+                if compareVersions "$__os_release" lt 4; then
+                    error="You need Linux Mint Debian Edition 4 or newer"
+                elif compareVersions "$__os_release" lt 5; then
+                    __os_debian_ver="10"
+                else
                     __os_debian_ver="11"
                 fi
             fi
@@ -319,19 +328,27 @@ function get_rpi_video() {
     local pkgconfig="/opt/vc/lib/pkgconfig"
 
     if [[ -z "$__has_kms" ]]; then
-        # in chroot, use kms by default for rpi4 target
-        [[ "$__chroot" -eq 1 ]] && isPlatform "rpi4" && __has_kms=1
-        # detect driver via inserted module / platform driver setup
-        [[ -d "/sys/module/vc4" ]] && __has_kms=1
+        if [[ "$__chroot" -eq 1 ]]; then
+            # in chroot, use kms by default for rpi4 or Debian 11 (bullseye) or newer
+            if isPlatform "rpi4" || [[ "$__os_debian_ver" -ge 11 ]]; then
+                __has_kms=1
+            fi
+        else
+            # detect driver via inserted module / platform driver setup
+            [[ -d "/sys/module/vc4" ]] && __has_kms=1
+        fi
     fi
 
     if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=(mesa kms)
         if [[ -z "$__has_dispmanx" ]]; then
-            # in a chroot, unless __has_dispmanx is set, default to fkms (adding dispmanx flag)
-            [[ "$__chroot" -eq 1 ]] && __has_dispmanx=1
-            # if running fkms driver, add dispmanx flag
-            [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __has_dispmanx=1
+            if [[ "$__chroot" -eq 1 ]]; then
+                # in a chroot default to fkms (supporting dispmanx) when debian is older than 11 (bullseye)
+                [[ "$__os_debian_ver" -lt 11 ]] && __has_dispmanx=1
+            else
+                # if running fkms driver, add dispmanx flag
+                [[ "$(ls -A /sys/bus/platform/drivers/vc4_firmware_kms/*.firmwarekms 2>/dev/null)" ]] && __has_dispmanx=1
+            fi
         fi
         [[ "$__has_dispmanx" -eq 1 ]] && __platform_flags+=(dispmanx)
     else
