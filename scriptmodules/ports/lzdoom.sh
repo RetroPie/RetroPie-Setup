@@ -27,16 +27,19 @@ function depends_lzdoom() {
 
 function sources_lzdoom() {
     gitPullOrClone
+    if isPlatform "arm"; then
+        # patch the CMake build file to remove the ARMv8 options, we handle `gcc`'s CPU flags ourselves
+        applyPatch "$md_data/01_remove_cmake_arm_options.diff"
+        # patch the 21.06 version of LZMA-SDK to disable the CRC32 ARMv8 intrinsics forced for ARM CPUs
+        applyPatch "$md_data/02_lzma_sdk_dont_force_arm_crc32.diff"
+    fi
 }
 
 function build_lzdoom() {
     rm -rf release
     mkdir -p release
     cd release
-    local params=(-DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release)
-    if isPlatform "armv8"; then
-        params+=(-DUSE_ARMV8=On)
-    fi
+    local params=(-DCMAKE_INSTALL_PREFIX="$md_inst" -DPK3_QUIET_ZIPDIR=ON -DCMAKE_BUILD_TYPE=Release)
     # Note: `-funsafe-math-optimizations` should be avoided, see: https://forum.zdoom.org/viewtopic.php?f=7&t=57781
     cmake "${params[@]}" ..
     make
