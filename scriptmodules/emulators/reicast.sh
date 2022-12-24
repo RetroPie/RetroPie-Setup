@@ -116,7 +116,7 @@ function configure_reicast() {
     # copy default mappings
     cp "$md_inst/share/reicast/mappings/"*.cfg "$md_conf_root/dreamcast/mappings/"
 
-    chown -R $user: "$md_conf_root/dreamcast"
+    chown -R $user:$group "$md_conf_root/dreamcast"
 
     if [[ "$md_mode" == "install" ]]; then
         cat > "$romdir/dreamcast/+Start Reicast.sh" << _EOF_

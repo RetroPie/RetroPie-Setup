@@ -51,7 +51,7 @@ function configure_lr-scummvm() {
 
     # download and extract auxiliary data (theme, extra)
     downloadAndExtract "https://github.com/libretro/scummvm/raw/master/backends/platform/libretro/aux-data/scummvm.zip" "$biosdir"
-    chown -R $user: "$biosdir/scummvm"
+    chown -R $user:$group "$biosdir/scummvm"
 
     # basic initial configuration (if config file not found)
     if [[ ! -f "$biosdir/scummvm.ini" ]]; then

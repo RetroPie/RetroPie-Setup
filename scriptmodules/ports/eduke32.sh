@@ -84,7 +84,7 @@ function game_data_eduke32() {
             unzip -L -o "$temp/3dduke13.zip" -d "$temp" dn3dsw13.shr
             unzip -L -o "$temp/dn3dsw13.shr" -d "$dest" duke3d.grp duke.rts
             rm -rf "$temp"
-            chown -R $user: "$dest"
+            chown -R $user:$group "$dest"
         fi
     fi
 }
@@ -118,7 +118,7 @@ function configure_eduke32() {
         # the VC4 & V3D drivers render menu splash colours incorrectly without this
         isPlatform "mesa" && iniSet "r_useindexedcolortextures" "0"
 
-        chown -R $user: "$config"
+        chown -R $user:$group "$config"
     fi
 }
 

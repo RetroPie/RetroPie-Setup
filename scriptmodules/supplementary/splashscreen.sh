@@ -266,7 +266,7 @@ function preview_splashscreen() {
 
 function download_extra_splashscreen() {
     gitPullOrClone "$datadir/splashscreens/retropie-extra" https://github.com/HerbFargus/retropie-splashscreens-extra
-    chown -R $user: "$datadir/splashscreens/retropie-extra"
+    chown -R $user:$group "$datadir/splashscreens/retropie-extra"
 }
 
 function gui_splashscreen() {

@@ -47,7 +47,7 @@ function game_data_lr-tyrquake() {
         cp -rf id1 "$romdir/ports/quake/"
         popd
         rm -rf "$temp"
-        chown -R $user: "$romdir/ports/quake"
+        chown -R $user:$group "$romdir/ports/quake"
         chmod 644 "$romdir/ports/quake/id1/"*
     fi
 }

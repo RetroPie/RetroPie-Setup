@@ -46,7 +46,7 @@ function game_data_lr-prboom() {
     fi
 
     mkUserDir "$dest/addon"
-    chown -R $user: "$dest"
+    chown -R $user:$group "$dest"
 }
 
 function _add_games_lr-prboom() {

@@ -111,7 +111,7 @@ function depends_setup() {
 function updatescript_setup()
 {
     clear
-    chown -R $user: "$scriptdir"
+    chown -R $user:$group "$scriptdir"
     printHeading "Fetching latest version of the RetroPie Setup Script."
     pushd "$scriptdir" >/dev/null
     if [[ ! -d ".git" ]]; then

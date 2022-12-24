@@ -57,6 +57,6 @@ function configure_lr-bluemsx() {
     defaultRAConfig "coleco" "core_options_path" "$core_config"
 
     cp -rv "$md_inst/"{Databases,Machines} "$biosdir/"
-    chown -R $user: "$biosdir/"{Databases,Machines}
+    chown -R $user:$group "$biosdir/"{Databases,Machines}
 
 }

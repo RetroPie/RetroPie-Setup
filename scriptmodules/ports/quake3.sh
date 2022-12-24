@@ -41,7 +41,7 @@ function game_data_quake3() {
         downloadAndExtract "$__archive_url/Q3DemoPaks.zip" "$romdir/ports/quake3" -j
     fi
     # always chown as moveConfigDir in the configure_ script would move the root owned demo files
-    chown -R $user: "$romdir/ports/quake3"
+    chown -R $user:$group "$romdir/ports/quake3"
 }
 
 function configure_quake3() {

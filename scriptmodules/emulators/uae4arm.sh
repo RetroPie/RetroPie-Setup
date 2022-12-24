@@ -62,7 +62,7 @@ function configure_uae4arm() {
     done
 
     moveConfigDir "$md_inst/kickstarts" "$biosdir/amiga"
-    chown -R $user: "$biosdir/amiga"
+    chown -R $user:$group "$biosdir/amiga"
 
     local conf="$(mktemp)"
     iniConfig "=" "" "$conf"

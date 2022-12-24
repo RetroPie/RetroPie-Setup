@@ -93,7 +93,7 @@ function game_data_wolf4sdl() {
         downloadAndExtract "http://maniacsvault.net/ecwolf/files/shareware/soddemo.zip" "$romdir/ports/wolf3d" -j -LL
     fi
 
-    chown -R $user: "$romdir/ports/wolf3d"
+    chown -R $user:$group "$romdir/ports/wolf3d"
 }
 
 function configure_wolf4sdl() {

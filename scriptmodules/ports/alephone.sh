@@ -79,7 +79,7 @@ function game_data_alephone() {
         downloadAndExtract "$release_url/MarathonInfinity-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
-    chown -R $user: "$romdir/ports/$md_id"
+    chown -R $user:$group "$romdir/ports/$md_id"
 }
 
 function configure_alephone() {

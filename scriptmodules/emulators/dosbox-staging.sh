@@ -55,7 +55,7 @@ function configure_dosbox-staging() {
     [[ "$md_id" == "remove" ]] && return
 
     local config_dir="$md_conf_root/pc"
-    chown -R $user: "$config_dir"
+    chown -R $user:$group "$config_dir"
 
     local staging_output="texturenb"
     if isPlatform "kms"; then

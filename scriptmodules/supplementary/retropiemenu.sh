@@ -38,7 +38,7 @@ function configure_retropiemenu()
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
     cp -Rv "$md_data/icons" "$rpdir/"
-    chown -R $user: "$rpdir"
+    chown -R $user:$group "$rpdir"
 
     isPlatform "rpi" && rm -f "$rpdir/dispmanx.rp"
 

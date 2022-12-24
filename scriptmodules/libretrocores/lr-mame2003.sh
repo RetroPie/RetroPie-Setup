@@ -81,7 +81,7 @@ function configure_lr-mame2003() {
     if [[ "$md_id" == "lr-mame2003-plus" ]]; then
         mkUserDir "$biosdir/$dir_name/artwork"
         cp "$md_inst/metadata/artwork/"* "$biosdir/$dir_name/artwork/"
-        chown -R $user: "$biosdir/$dir_name/artwork"
+        chown -R $user:$group "$biosdir/$dir_name/artwork"
     fi
 
     # Set core options

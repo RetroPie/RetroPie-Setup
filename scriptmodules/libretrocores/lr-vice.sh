@@ -74,5 +74,5 @@ function configure_lr-vice() {
     fi
 
     cp -R "$md_inst/data" "$biosdir"
-    chown -R $user: "$biosdir/data"
+    chown -R $user:$group "$biosdir/data"
 }

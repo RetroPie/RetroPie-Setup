@@ -118,7 +118,7 @@ function game_data_dxx-rebirth() {
         download "$D2X_OGG_URL" "$dest_d2"
     fi
 
-    chown -R $user: "$dest_d1" "$dest_d2"
+    chown -R $user:$group "$dest_d1" "$dest_d2"
 }
 
 function configure_dxx-rebirth() {
