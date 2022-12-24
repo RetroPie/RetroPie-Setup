@@ -483,7 +483,7 @@ function setupDirectories() {
     if [[ ! -f "$config" ]]; then
         echo "# this file can be used to enable/disable retropie autoconfiguration features" >"$config"
     fi
-    chown $user: "$config"
+    chown $user:$group "$config"
 }
 
 ## @fn rmDirExists()
@@ -500,7 +500,7 @@ function rmDirExists() {
 ## @brief Creates a directory owned by the current user.
 function mkUserDir() {
     mkdir -p "$1"
-    chown $user: "$1"
+    chown $user:$group "$1"
 }
 
 ## @fn mkRomDir()
@@ -622,7 +622,7 @@ function copyDefaultConfig() {
         cp "$from" "$to"
     fi
 
-    chown $user: "$to"
+    chown $user:$group "$to"
 }
 
 ## @fn renameModule()
@@ -681,7 +681,7 @@ function setBackend() {
     iniGet "$id"
     if [[ "$force" -eq 1 || -z "$ini_value" ]]; then
         iniSet "$id" "$mode"
-        chown $user: "$config"
+        chown $user:$group "$config"
     fi
 }
 
@@ -1007,7 +1007,7 @@ function setRetroArchCoreOption() {
     if [[ -z "$ini_value" ]]; then
         iniSet "$option" "$value"
     fi
-    chown $user: "$configdir/all/retroarch-core-options.cfg"
+    chown $user:$group "$configdir/all/retroarch-core-options.cfg"
 }
 
 ## @fn setConfigRoot()
@@ -1446,7 +1446,7 @@ function addPort() {
 "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ "$port" "$game"
 _EOF_
 
-    chown $user: "$file"
+    chown $user:$group "$file"
     chmod +x "$file"
 
     [[ -n "$cmd" ]] && addEmulator 1 "$id" "$port" "$cmd"
@@ -1507,7 +1507,7 @@ function addEmulator() {
         if [[ -z "$ini_value" && "$default" -eq 1 ]]; then
             iniSet "default" "$id"
         fi
-        chown $user: "$md_conf_root/$system/emulators.cfg"
+        chown $user:$group "$md_conf_root/$system/emulators.cfg"
     fi
 }
 
