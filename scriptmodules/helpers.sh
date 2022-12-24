@@ -537,7 +537,7 @@ function moveConfigDir() {
     fi
     ln -snf "$to" "$from"
     # set ownership of the actual link to $user
-    chown -h $user: "$from"
+    chown -h $user:$group "$from"
 }
 
 ## @fn moveConfigFile()
@@ -560,7 +560,7 @@ function moveConfigFile() {
     fi
     ln -sf "$to" "$from"
     # set ownership of the actual link to $user
-    chown -h $user: "$from"
+    chown -h $user:$group "$from"
 }
 
 ## @fn diffFiles()
