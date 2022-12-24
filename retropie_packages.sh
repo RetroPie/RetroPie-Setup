@@ -28,6 +28,7 @@ else
     [[ -z "$user" ]] && user="$(id -un)"
 fi
 
+group=$(id -ng $user)
 home="$(eval echo ~$user)"
 datadir="$home/RetroPie"
 biosdir="$datadir/BIOS"
