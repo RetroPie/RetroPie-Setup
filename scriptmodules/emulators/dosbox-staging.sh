@@ -22,22 +22,26 @@ function _get_branch_dosbox-staging() {
 }
 
 function depends_dosbox-staging() {
-    getDepends cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev libspeexdsp-dev meson ninja-build
+    getDepends cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev libsdl2-image-dev libspeexdsp-dev meson ninja-build
 }
 
 function sources_dosbox-staging() {
     gitPullOrClone
-    # patch the dosbox-staging meson.build script to disable neon instructions for older arm
-    if ! isPlatform "neon"; then
-        applyPatch "$md_data/speexdsp_simd_disable.diff"
+    # Check if we have at least meson>=0.57, otherwise install it locally for the build
+    local meson_version="$(meson --version)"
+    if compareVersions "$meson_version" lt 0.57; then
+        downloadAndExtract "https://github.com/mesonbuild/meson/releases/download/0.61.5/meson-0.61.5.tar.gz" meson --strip-components 1
     fi
 }
 
 function build_dosbox-staging() {
     local params=(-Dprefix="$md_inst" -Ddatadir="resources")
+    # use the build local Meson installation if found
+    local meson_cmd="meson"
+    [[ -f "$md_build/meson/meson.py" ]] && meson_cmd="python3 $md_build/meson/meson.py"
 
-    meson setup "${params[@]}" build
-    meson compile -j${__jobs} -C build
+    $meson_cmd setup "${params[@]}" build
+    $meson_cmd compile -j${__jobs} -C build
 
     md_ret_require=(
         "$md_build/build/dosbox"
@@ -45,8 +49,7 @@ function build_dosbox-staging() {
 }
 
 function install_dosbox-staging() {
-    cd "$md_build/build"
-    meson install
+    ninja -C build install
 }
 
 function configure_dosbox-staging() {
