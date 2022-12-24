@@ -49,5 +49,5 @@ function configure_lr-dinothawr() {
 
     cp -Rv "$md_inst/dinothawr" "$romdir/ports"
 
-    chown $user: -R "$romdir/ports/dinothawr"
+    chown $user:$group -R "$romdir/ports/dinothawr"
 }

@@ -41,7 +41,7 @@ function configure_steamlink() {
 
         # create optional streaming_args.txt for user modification
         touch "$valve_dir/SteamLink/streaming_args.txt"
-        chown $user: "$valve_dir/SteamLink/streaming_args.txt"
+        chown $user:$group "$valve_dir/SteamLink/streaming_args.txt"
         moveConfigFile "$valve_dir/SteamLink/streaming_args.txt" "$md_conf_root/$md_id/streaming_args.txt"
 
         cat > "$sl_script" << _EOF_

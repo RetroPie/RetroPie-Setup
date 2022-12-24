@@ -75,7 +75,7 @@ function configure_lr-mame2003() {
 
     # copy hiscore.dat and cheat.dat
     cp "$md_inst/metadata/"{hiscore.dat,cheat.dat} "$biosdir/$dir_name/"
-    chown $user: "$biosdir/$dir_name/"{hiscore.dat,cheat.dat}
+    chown $user:$group "$biosdir/$dir_name/"{hiscore.dat,cheat.dat}
 
     # lr-mame2003-plus also has an artwork folder
     if [[ "$md_id" == "lr-mame2003-plus" ]]; then

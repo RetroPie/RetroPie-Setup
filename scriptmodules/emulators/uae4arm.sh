@@ -98,5 +98,5 @@ function configure_uae4arm() {
 "$md_inst/uae4arm.sh"
 _EOF_
     chmod a+x "$romdir/amiga/$script"
-    chown $user: "$romdir/amiga/$script"
+    chown $user:$group "$romdir/amiga/$script"
 }

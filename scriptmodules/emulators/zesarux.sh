@@ -65,7 +65,7 @@ function configure_zesarux() {
 "$md_inst/bin/zesarux" "\$@"
 _EOF_
     chmod +x "$romdir/zxspectrum/+Start ZEsarUX.sh"
-    chown $user: "$romdir/zxspectrum/+Start ZEsarUX.sh"
+    chown $user:$group "$romdir/zxspectrum/+Start ZEsarUX.sh"
 
     moveConfigFile "$home/.zesaruxrc" "$md_conf_root/zxspectrum/.zesaruxrc"
 

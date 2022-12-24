@@ -57,7 +57,7 @@ function _add_system_attractmode() {
     iniSet "artwork snap" "$path/$snap"
     iniSet "artwork wheel" "$path/wheel"
 
-    chown $user: "$config"
+    chown $user:$group "$config"
 
     # if no gameslist, generate one
     if [[ ! -f "$attract_dir/romlists/$fullname.txt" ]]; then
@@ -73,7 +73,7 @@ display${tab}$fullname
 ${tab}layout               Basic
 ${tab}romlist              $fullname
 _EOF_
-        chown $user: "$config"
+        chown $user:$group "$config"
     fi
 }
 
@@ -123,7 +123,7 @@ function _add_rom_attractmode() {
     fi
 
     echo "$path;$name;$system_fullname;;;;;;;;;;;;;;" >>"$config"
-    chown $user: "$config"
+    chown $user:$group "$config"
 }
 
 function depends_attractmode() {

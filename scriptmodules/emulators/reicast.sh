@@ -124,7 +124,7 @@ function configure_reicast() {
 $md_inst/bin/reicast.sh
 _EOF_
         chmod a+x "$romdir/dreamcast/+Start Reicast.sh"
-        chown $user: "$romdir/dreamcast/+Start Reicast.sh"
+        chown $user:$group "$romdir/dreamcast/+Start Reicast.sh"
     else
         rm "$romdir/dreamcast/+Start Reicast.sh"
     fi
@@ -155,7 +155,7 @@ function input_reicast() {
     iniGet "mapping_name"
     local mapping_file="$configdir/dreamcast/mappings/evdev_${ini_value//[:><?\"]/-}.cfg"
     mv "$temp_file" "$mapping_file"
-    chown $user: "$mapping_file"
+    chown $user:$group "$mapping_file"
 }
 
 function gui_reicast() {

@@ -205,7 +205,7 @@ function gui_scraper() {
 
     iniConfig " = " '"' "$configdir/all/scraper.cfg"
     eval $(_load_config_scraper)
-    chown $user: "$configdir/all/scraper.cfg"
+    chown $user:$group "$configdir/all/scraper.cfg"
 
     local default
     while true; do

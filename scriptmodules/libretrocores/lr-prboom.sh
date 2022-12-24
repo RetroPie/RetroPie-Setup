@@ -106,5 +106,5 @@ function configure_lr-prboom() {
     add_games_lr-prboom
 
     cp prboom.wad "$romdir/ports/doom/"
-    chown $user: "$romdir/ports/doom/prboom.wad"
+    chown $user:$group "$romdir/ports/doom/prboom.wad"
 }

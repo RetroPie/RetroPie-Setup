@@ -139,7 +139,7 @@ function configure_dxx-rebirth() {
             config="$md_conf_root/descent${ver}/descent.cfg"
             iniConfig "=" '' "$config"
             iniSet "VSync" "1"
-            chown $user: "$config"
+            chown $user:$group "$config"
         fi
     done
 

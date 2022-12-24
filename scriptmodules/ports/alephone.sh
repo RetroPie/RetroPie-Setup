@@ -94,7 +94,7 @@ function configure_alephone() {
     if [[ -d "/alephone" ]]; then
         cp -R /alephone "$md_conf_root/"
         rm -rf /alephone
-        chown $user: "$md_conf_root/alephone"
+        chown $user:$group "$md_conf_root/alephone"
     fi
 
     [[ "$md_mode" == "install" ]] && game_data_alephone

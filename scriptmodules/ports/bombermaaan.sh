@@ -53,6 +53,6 @@ pushd "$md_inst"
 "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ bombermaaan ""
 popd
 _EOF_
-    chown $user: "$file"
+    chown $user:$group "$file"
     chmod +x "$file"
 }

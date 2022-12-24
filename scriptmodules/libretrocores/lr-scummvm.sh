@@ -64,7 +64,7 @@ function configure_lr-scummvm() {
         iniSet "subtitles" "true"
         iniSet "multi_midi" "true"
         iniSet "gm_device" "fluidsynth"
-        chown $user: "$biosdir/scummvm.ini"
+        chown $user:$group "$biosdir/scummvm.ini"
     fi
 
     # enable speed hack core option if running in arm platform

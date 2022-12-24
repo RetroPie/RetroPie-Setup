@@ -416,7 +416,7 @@ _EOF_
     esac
     iniConfig "=" '"' "$configdir/all/bluetooth.cfg"
     iniSet "connect_mode" "$mode"
-    chown $user: "$configdir/all/bluetooth.cfg"
+    chown $user:$group "$configdir/all/bluetooth.cfg"
 }
 
 function gui_bluetooth() {

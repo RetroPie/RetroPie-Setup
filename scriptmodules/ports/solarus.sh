@@ -132,7 +132,7 @@ function gui_solarus() {
                     else
                         iniDel "JOYPAD_DEADZONE"
                     fi
-                    chown $user: "$(_options_cfg_file_solarus)"
+                    chown $user:$group "$(_options_cfg_file_solarus)"
                 fi
                 ;;
             Q)
@@ -144,7 +144,7 @@ function gui_solarus() {
                     else
                         iniDel "QUIT_COMBO"
                     fi
-                    chown $user: "$(_options_cfg_file_solarus)"
+                    chown $user:$group "$(_options_cfg_file_solarus)"
                 fi
                 ;;
             *)

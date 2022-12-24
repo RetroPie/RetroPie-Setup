@@ -48,5 +48,5 @@ function configure_lr-fmsx() {
 
     # Copy CARTS.SHA to $biosdir
     cp "$md_inst/CARTS.SHA" "$biosdir/"
-    chown $user: "$biosdir/CARTS.SHA"
+    chown $user:$group "$biosdir/CARTS.SHA"
 }

@@ -140,5 +140,5 @@ function configure_amiberry() {
 "$md_inst/amiberry.sh"
 _EOF_
     chmod a+x "$romdir/amiga/$script"
-    chown $user: "$romdir/amiga/$script"
+    chown $user:$group "$romdir/amiga/$script"
 }
