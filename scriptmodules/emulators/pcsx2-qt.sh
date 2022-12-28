@@ -17,7 +17,7 @@ rp_module_section="exp"
 rp_module_flags="!all x86"
 
 function depends_pcsx2-qt() {
-    getDepends jq
+    getDepends jq libfuse2
 }
 
 function install_bin_pcsx2-qt() {
