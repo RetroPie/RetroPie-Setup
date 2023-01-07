@@ -125,7 +125,7 @@ function _add_rom_emulationstation() {
             -u "/gameList/game[name='$name']/image" -v "$image" \
             "$config"
     fi
-    chown $user:$user "$config"
+    chown $user: "$config"
 }
 
 function depends_emulationstation() {
@@ -219,7 +219,7 @@ function init_input_emulationstation() {
             "$es_config"
     fi
 
-    chown $user:$user "$es_config"
+    chown $user: "$es_config"
 }
 
 function copy_inputscripts_emulationstation() {

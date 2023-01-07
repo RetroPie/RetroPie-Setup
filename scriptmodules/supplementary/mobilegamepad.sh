@@ -28,7 +28,7 @@ function remove_mobilegamepad() {
 
 function sources_mobilegamepad() {
     gitPullOrClone "$md_inst"
-    chown -R $user:$user "$md_inst"
+    chown -R $user: "$md_inst"
 }
 
 function install_mobilegamepad() {

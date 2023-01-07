@@ -92,7 +92,7 @@ pushd "$md_inst"
 popd
 _EOF_
         chmod a+x "$romdir/amiga/+Start UAE4All.sh"
-        chown $user:$user "$romdir/amiga/+Start UAE4All.sh"
+        chown $user: "$romdir/amiga/+Start UAE4All.sh"
 
         isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
     else

@@ -116,7 +116,7 @@ function configure_reicast() {
     # copy default mappings
     cp "$md_inst/share/reicast/mappings/"*.cfg "$md_conf_root/dreamcast/mappings/"
 
-    chown -R $user:$user "$md_conf_root/dreamcast"
+    chown -R $user: "$md_conf_root/dreamcast"
 
     if [[ "$md_mode" == "install" ]]; then
         cat > "$romdir/dreamcast/+Start Reicast.sh" << _EOF_
@@ -124,7 +124,7 @@ function configure_reicast() {
 $md_inst/bin/reicast.sh
 _EOF_
         chmod a+x "$romdir/dreamcast/+Start Reicast.sh"
-        chown $user:$user "$romdir/dreamcast/+Start Reicast.sh"
+        chown $user: "$romdir/dreamcast/+Start Reicast.sh"
     else
         rm "$romdir/dreamcast/+Start Reicast.sh"
     fi
@@ -155,7 +155,7 @@ function input_reicast() {
     iniGet "mapping_name"
     local mapping_file="$configdir/dreamcast/mappings/evdev_${ini_value//[:><?\"]/-}.cfg"
     mv "$temp_file" "$mapping_file"
-    chown $user:$user "$mapping_file"
+    chown $user: "$mapping_file"
 }
 
 function gui_reicast() {

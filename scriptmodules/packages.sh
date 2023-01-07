@@ -712,7 +712,7 @@ function rp_createBin() {
     if tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"; then
         if [[ -n "$__gpg_signing_key" ]]; then
             if signFile "$dest/$archive"; then
-                chown $user:$user "$dest/$archive" "$dest/$archive.asc"
+                chown $user: "$dest/$archive" "$dest/$archive.asc"
                 ret=0
             fi
         else

@@ -39,7 +39,7 @@ fi
 popd
 _EOF_
     chmod +x "$romdir/pc/+Start rpix86.sh"
-    chown $user:$user "$romdir/pc/+Start rpix86.sh"
+    chown $user: "$romdir/pc/+Start rpix86.sh"
     ln -sfn "$romdir/pc" games
 
     addEmulator 0 "$md_id" "pc" "bash $romdir/pc/+Start\ rpix86.sh %ROM%"

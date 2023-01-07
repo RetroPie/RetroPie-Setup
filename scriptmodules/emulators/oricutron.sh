@@ -50,7 +50,7 @@ function game_data_oricutron() {
     if [[ -d "$md_inst/disks" && ! -f "$romdir/oric/barbitoric.dsk" ]]; then
         # copy demo disks
         cp -v "$md_inst/disks/"* "$romdir/oric/"
-        chown -R $user:$user "$romdir/oric"
+        chown -R $user: "$romdir/oric"
     fi
 }
 

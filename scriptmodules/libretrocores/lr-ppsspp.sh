@@ -43,7 +43,7 @@ function configure_lr-ppsspp() {
     if [[ "$md_mode" == "install" ]]; then
         mkUserDir "$biosdir/PPSSPP"
         cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
-        chown -R $user:$user "$biosdir/PPSSPP"
+        chown -R $user: "$biosdir/PPSSPP"
 
         # the core needs a save file directory, use the same folder as standalone 'ppsspp'
         iniConfig " = " "" "$configdir/psp/retroarch.cfg"

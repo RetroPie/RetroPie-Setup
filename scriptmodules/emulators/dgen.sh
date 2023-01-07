@@ -64,7 +64,7 @@ function configure_dgen() {
 
     if [[ ! -f "$md_conf_root/megadrive/dgenrc" ]]; then
         cp "sample.dgenrc" "$md_conf_root/megadrive/dgenrc"
-        chown $user:$user "$md_conf_root/megadrive/dgenrc"
+        chown $user: "$md_conf_root/megadrive/dgenrc"
     fi
 
     iniConfig " = " "" "$md_conf_root/megadrive/dgenrc"

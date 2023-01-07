@@ -53,7 +53,7 @@ function configure_lr-vecx() {
     if [[ "$md_mode" == "install" ]]; then
         # Copy bios files
         cp -v "$md_inst/"{fast.bin,skip.bin,system.bin} "$biosdir/"
-        chown $user:$user "$biosdir/"{fast.bin,skip.bin,system.bin}
+        chown $user: "$biosdir/"{fast.bin,skip.bin,system.bin}
     else
         rm -f "$biosdir/"{fast.bin,skip.bin,system.bin}
     fi

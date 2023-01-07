@@ -118,7 +118,7 @@ function game_data_dxx-rebirth() {
         download "$D2X_OGG_URL" "$dest_d2"
     fi
 
-    chown -R $user:$user "$dest_d1" "$dest_d2"
+    chown -R $user: "$dest_d1" "$dest_d2"
 }
 
 function configure_dxx-rebirth() {
@@ -139,7 +139,7 @@ function configure_dxx-rebirth() {
             config="$md_conf_root/descent${ver}/descent.cfg"
             iniConfig "=" '' "$config"
             iniSet "VSync" "1"
-            chown $user:$user "$config"
+            chown $user: "$config"
         fi
     done
 
