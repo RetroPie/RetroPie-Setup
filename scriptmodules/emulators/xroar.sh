@@ -13,7 +13,7 @@ rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_help="ROM Extensions: .cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna\n\nCopy your Dragon roms to $romdir/dragon32\n\nCopy your CoCo games to $romdir/coco\n\nCopy the required BIOS files d32.rom (Dragon 32), bas13.rom (CoCo), coco3.rom/coco3p.rom (CoCo3) to $biosdir"
 rp_module_licence="GPL3 http://www.6809.org.uk/xroar/"
-rp_module_repo="git http://www.6809.org.uk/git/xroar.git 1.0.9"
+rp_module_repo="git http://www.6809.org.uk/git/xroar.git 1.3"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -31,7 +31,7 @@ function sources_xroar() {
 function build_xroar() {
     local params=(--without-gtk2 --without-gtkgl --without-oss)
     if ! isPlatform "x11"; then
-        params+=(--without-pulse --disable-kbd-translate --without-x)
+        params+=(--without-pulse --without-x)
     fi
     ./autogen.sh
     ./configure --prefix="$md_inst" "${params[@]}"
