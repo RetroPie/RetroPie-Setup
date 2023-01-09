@@ -275,6 +275,8 @@ function gui_esthemes() {
         'RetroHursty69 BoomBoxStreet'
         'RetroHursty69 ShabangCLEAN'
         'RetroHursty69 ShabangCRT'
+        'RetroHursty69 PopCom16x9'
+        'RetroHursty69 PopCom5x4'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
@@ -312,6 +314,7 @@ function gui_esthemes() {
         'Elratauru angular-artwork'
         'cjonasw raspixel-320-240'
         'crxone 3twenty2fourty'
+        'leochely Guilty-Gear'
     )
     while true; do
         local theme

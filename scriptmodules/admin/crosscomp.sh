@@ -29,27 +29,12 @@ function sources_crosscomp() {
 
     declare -A pkgs
     case "$dist" in
-        jessie)
-            pkgs=(
-                [binutils]=2.25
-                [cloog]=0.18.1
-                [gcc]=4.9.4
-                [glibc]=2.19
-                [gmp]=6.0.0a
-                [isl]=0.12.2
-                [kernel]=4.9.35
-                [mpfr]=3.1.2
-                [mpc]=1.0.2
-            )
-            ;;
         stretch)
             pkgs=(
                 [binutils]=2.28
-                [cloog]=0.18.4
                 [gcc]=6.4.0
                 [glibc]=2.24
                 [gmp]=6.1.2
-                [isl]=0.18
                 [kernel]=4.9.80
                 [mpfr]=3.1.5
                 [mpc]=1.0.3
@@ -58,14 +43,23 @@ function sources_crosscomp() {
         buster)
             pkgs=(
                 [binutils]=2.31.1
-                [cloog]=0.18.4
                 [gcc]=8.3.0
                 [glibc]=2.28
                 [gmp]=6.1.2
-                [isl]=0.20
                 [kernel]=4.19.50
                 [mpfr]=4.0.2
                 [mpc]=1.1.0
+            )
+            ;;
+        bullseye)
+            pkgs=(
+                [binutils]=2.35.2
+                [gcc]=10.2.0
+                [glibc]=2.31
+                [gmp]=6.2.1
+                [kernel]=5.15.61
+                [mpfr]=4.1.0
+                [mpc]=1.2.0
             )
             ;;
         *)
@@ -73,9 +67,6 @@ function sources_crosscomp() {
             return 1
             ;;
     esac
-
-    downloadAndExtract "https://libisl.sourceforge.io/isl-${pkgs[isl]}.tar.bz2" isl --strip-components 1
-    downloadAndExtract "http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-${pkgs[cloog]}.tar.gz" cloog --strip-components 1
 
     downloadAndExtract "https://ftp.gnu.org/gnu/binutils/binutils-${pkgs[binutils]}.tar.gz" binutils --strip-components 1
 
@@ -86,12 +77,19 @@ function sources_crosscomp() {
     downloadAndExtract "https://ftp.gnu.org/gnu/glibc/glibc-${pkgs[glibc]}.tar.bz2" glibc --strip-components 1
     downloadAndExtract "https://ftp.gnu.org/gnu/gcc/gcc-${pkgs[gcc]}/gcc-${pkgs[gcc]}.tar.gz" gcc --strip-components 1
 
-    downloadAndExtract "https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgs[kernel]}.tar.gz" linux --strip-components 1
+    downloadAndExtract "https://www.kernel.org/pub/linux/kernel/v${pkgs[kernel]:0:1}.x/linux-${pkgs[kernel]}.tar.gz" linux --strip-components 1
 
     local pkg
-    for pkg in cloog gmp isl mpc mpfr; do
+    for pkg in gmp mpc mpfr; do
         ln -sf "../$pkg" "gcc/$pkg"
     done
+
+    # apply glibc patch required when compiling with GCC 10+
+    # see https://sourceware.org/git/gitweb.cgi?p=glibc.git;h=49348beafe9ba150c9bd48595b3f372299bddbb0
+    # as well as a fix for an incorrect header include.
+    if [[ "$dist" == "bullseye" ]]; then
+        applyPatch "$md_data/bullseye.diff"
+    fi
 }
 
 function build_crosscomp() {
@@ -105,9 +103,12 @@ function build_crosscomp() {
     local target=arm-linux-gnueabihf
     local dest="$md_inst/$dist"
 
-    export PATH="$dest/bin:$PATH"
-    export CFLAGS=""
-    export CXXFLAGS=""
+    local old_path="$PATH"
+    export PATH="$dest/bin:$old_path"
+
+    export ASFLAGS=""
+    export CFLAGS="-O2"
+    export CXXFLAGS="-O2"
 
     # binutils
     printHeading "Building binutils"
@@ -166,6 +167,11 @@ function build_crosscomp() {
     make all
     make install
     cd ..
+
+    export PATH="$old_path"
+    export ASFLAGS="$__asflags"
+    export CFLAGS="$__cflags"
+    export CXXFLAGS="$__cxxflags"
 }
 
 function setup_crosscomp() {
@@ -174,13 +180,14 @@ function setup_crosscomp() {
     
     if rp_callModule crosscomp sources "$dist"; then
         rp_callModule crosscomp build "$dist"
+        rp_callModule crosscomp clean
         rp_callModule crosscomp switch_distcc "$dist"
     fi
 }
 
 function setup_all_crosscomp() {
     local dist
-    for dist in jessie stretch buster; do
+    for dist in stretch buster bullseye; do
         setup_crosscomp "$dist"
     done
 }

@@ -13,12 +13,13 @@ rp_module_id="amiberry"
 rp_module_desc="Amiga emulator with JIT support (forked from uae4arm)"
 rp_module_help="ROM Extension: .adf .chd .ipf .lha .zip\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir/amiga"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/BlitterStudio/amiberry/master/LICENSE"
-rp_module_repo="git https://github.com/BlitterStudio/amiberry v5.3"
+rp_module_repo="git https://github.com/BlitterStudio/amiberry v5.5.1"
 rp_module_section="opt"
 rp_module_flags="!all arm rpi3 rpi4"
 
 function _update_hook_amiberry() {
     local rom
+    mkUserDir "$biosdir/amiga"
     for rom in kick13.rom kick20.rom kick31.rom; do
         # if we have a kickstart rom in $biosdir, move it to $biosdir/amiga and symlink the old location
         if [[ -f "$biosdir/$rom" && ! -h "$biosdir/$rom" ]]; then
@@ -46,7 +47,7 @@ function _get_platform_amiberry() {
 }
 
 function depends_amiberry() {
-    local depends=(autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libmpg123-dev libflac-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev)
+    local depends=(autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libmpg123-dev libflac-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev wget)
 
     isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
@@ -105,12 +106,14 @@ function configure_amiberry() {
 
     # move config / save folders to $md_conf_root/amiga/amiberry
     local dir
-    for dir in conf savestates screenshots; do
+    for dir in conf nvram savestates screenshots; do
         moveConfigDir "$md_inst/$dir" "$md_conf_root/amiga/amiberry/$dir"
     done
 
-    # symlink cd32.nvr from $md_inst/data to "$md_conf_root/amiga/amiberry
-    moveConfigFile "$md_inst/data/cd32.nvr" "$md_conf_root/amiga/amiberry/cd32.nvr"
+    # check for cd32.nvr and move it to $md_conf_root/amiga/amiberry/nvram
+    if [[ -f "$md_conf_root/amiga/amiberry/cd32.nvr" ]]; then
+        mv "$md_conf_root/amiga/amiberry/cd32.nvr" "$md_conf_root/amiga/amiberry/nvram/"
+    fi
 
     moveConfigDir "$md_inst/kickstarts" "$biosdir/amiga"
     chown -R $user:$user "$biosdir/amiga"

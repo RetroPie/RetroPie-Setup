@@ -135,8 +135,8 @@ function depends_emulationstation() {
         libvlc-dev libvlccore-dev vlc
     )
 
-    compareVersions "$__os_debian_ver" gt 8 && depends+=(rapidjson-dev)
-    isPlatform "x11" && depends+=(gnome-terminal)
+    [[ "$__os_debian_ver" -gt 8 ]] && depends+=(rapidjson-dev)
+    isPlatform "x11" && depends+=(gnome-terminal mesa-utils)
     if isPlatform "dispmanx" && ! isPlatform "osmc"; then
         depends+=(omxplayer)
     fi
@@ -145,7 +145,7 @@ function depends_emulationstation() {
 
 function _get_branch_emulationstation() {
     if [[ -z "$branch" ]]; then
-        if compareVersions "$__os_debian_ver" gt 8; then
+        if [[ "$__os_debian_ver" -gt 8 ]]; then
             branch="stable"
         else
             branch="v2.7.6"
@@ -168,7 +168,7 @@ function build_emulationstation() {
         isPlatform "videocore" && params+=(-DUSE_GLES1=On)
     elif isPlatform "x11"; then
         local gl_ver=$(sudo -u $user glxinfo | grep -oP "OpenGL version string: \K(\d+)")
-        [[ "$gl_ver" -gt 1 ]] && params+=(-DUSE_OPENGL_21=On)
+        [[ "$gl_ver" -gt 1 ]] && params+=(-DUSE_GL21=On)
     fi
     if isPlatform "dispmanx"; then
         params+=(-DOMX=On)
@@ -193,7 +193,7 @@ function install_emulationstation() {
     )
 
     # This folder is present only from 2.8.x, don't include it for older releases
-    if compareVersions "$__os_debian_ver" gt 8; then
+    if [[ "$__os_debian_ver" -gt 8 ]]; then
         md_ret_files+=('resources')
     fi
 }

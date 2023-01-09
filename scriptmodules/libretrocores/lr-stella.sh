@@ -21,16 +21,16 @@ function sources_lr-stella() {
 }
 
 function build_lr-stella() {
-    cd src/libretro
+    cd src/os/libretro
     make clean
     make LTO=""
-    md_ret_require="$md_build/src/libretro/stella_libretro.so"
+    md_ret_require="$md_build/src/os/libretro/stella_libretro.so"
 }
 
 function install_lr-stella() {
     md_ret_files=(
         'README.md'
-        'src/libretro/stella_libretro.so'
+        'src/os/libretro/stella_libretro.so'
         'License.txt'
     )
 }

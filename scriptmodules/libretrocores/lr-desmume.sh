@@ -18,7 +18,7 @@ rp_module_section="exp"
 
 function _params_lr-desmume() {
     local params=()
-    isPlatform "arm" && params+=("platform=armvhardfloat")
+    isPlatform "arm" && params+=("platform=unixarmvhardfloat")
     isPlatform "aarch64" && params+=("DESMUME_JIT=0")
     echo "${params[@]}"
 }

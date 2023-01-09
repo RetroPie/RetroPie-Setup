@@ -12,7 +12,7 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
-rp_module_repo="git https://github.com/RetroPie/RetroArch.git retropie-v1.10.0"
+rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.12.0"
 rp_module_section="core"
 
 function depends_retroarch() {
@@ -25,7 +25,7 @@ function depends_retroarch() {
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
     isPlatform "kms" && depends+=(libgbm-dev)
 
-    if compareVersions "$__os_debian_ver" ge 9; then
+    if [[ "$__os_debian_ver" -ge 9 ]]; then
         depends+=(libavcodec-dev libavformat-dev libavdevice-dev)
     fi
 
@@ -42,7 +42,7 @@ function build_retroarch() {
         params+=(--disable-pulse)
         ! isPlatform "mesa" && params+=(--disable-x11)
     fi
-    if compareVersions "$__os_debian_ver" lt 9; then
+    if [[ "$__os_debian_ver" -lt 9 ]]; then
         params+=(--disable-ffmpeg)
     fi
     isPlatform "gles" && params+=(--enable-opengles)
@@ -110,6 +110,8 @@ function update_core_info_retroarch() {
     # remove if not a git repository and do a fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -fr "$dir"
     gitPullOrClone "$configdir/all/retroarch/cores" https://github.com/libretro/libretro-core-info.git
+    # Add the info files for cores/configurations not available upstream
+    cp -f "$md_data/"*.info "$configdir/all/retroarch/cores"
     chown -R $user:$user "$dir"
 }
 
@@ -171,7 +173,6 @@ function configure_retroarch() {
     iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
-    iniSet "rgui_show_start_screen" "false"
     iniSet "rgui_browser_directory" "$romdir"
     iniSet "rgui_switch_icons" "false"
 
@@ -227,6 +228,7 @@ function configure_retroarch() {
     iniSet "auto_remaps_enable" "true"
     iniSet "input_joypad_driver" "udev"
     iniSet "all_users_control_menu" "true"
+    iniSet "remap_save_on_exit" "false"
 
     # rgui by default
     iniSet "menu_driver" "rgui"
@@ -236,6 +238,14 @@ function configure_retroarch() {
     iniSet "menu_show_core_updater" "false"
     iniSet "menu_show_online_updater" "false"
     iniSet "menu_show_restart_retroarch" "false"
+    # disable the search action
+    iniSet "menu_disable_search_button" "true"
+
+    # remove some options from quick menu
+    iniSet "quick_menu_show_close_content" "false"
+    iniSet "quick_menu_show_add_to_favorites" "false"
+    iniSet "menu_show_overlays" "false"
+
     # disable the load notification message with core and game info
     iniSet "menu_show_load_content_animation" "false"
 
@@ -284,6 +294,12 @@ function configure_retroarch() {
 
     # disable the content load info popup with core and game info
     _set_config_option_retroarch "menu_show_load_content_animation" "false"
+
+    # disable search action
+    _set_config_option_retroarch "menu_disable_search_button" "true"
+
+    # don't save input remaps by default
+    _set_config_option_retroarch "remap_save_on_exit" "false"
 
     # remapping hack for old 8bitdo firmware
     addAutoConf "8bitdo_hack" 0

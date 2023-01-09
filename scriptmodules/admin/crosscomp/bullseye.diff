@@ -1,0 +1,148 @@
+# see https://sourceware.org/git/gitweb.cgi?p=glibc.git;h=49348beafe9ba150c9bd48595b3f372299bddbb0
+
+diff --git a/math/Makefile b/math/Makefile
+index 84a8b94c74..0a5a40430e 100644
+--- a/glibc/math/Makefile
++++ b/glibc/math/Makefile
+@@ -644,6 +644,128 @@
+ # We won't compile the `long double' code at all.  Tell the `double' code
+ # to define aliases for the `FUNCl' names.
+ math-CPPFLAGS += -DNO_LONG_DOUBLE
++# GCC 10 diagnoses aliases with types conflicting with built-in
++# functions.
++CFLAGS-w_acos.c += -fno-builtin-acosl
++CFLAGS-w_acosh.c += -fno-builtin-acoshl
++CFLAGS-w_asin.c += -fno-builtin-asinl
++CFLAGS-s_asinh.c += -fno-builtin-asinhl
++CFLAGS-s_atan.c += -fno-builtin-atanl
++CFLAGS-w_atan2.c += -fno-builtin-atan2l
++CFLAGS-w_atanh.c += -fno-builtin-atanhl
++CFLAGS-s_cabs.c += -fno-builtin-cabsl
++CFLAGS-s_cacos.c += -fno-builtin-cacosl
++CFLAGS-s_cacosh.c += -fno-builtin-cacoshl
++CFLAGS-s_canonicalize.c += -fno-builtin-canonicalizel
++CFLAGS-s_carg.c += -fno-builtin-cargl
++CFLAGS-s_casin.c += -fno-builtin-casinl
++CFLAGS-s_casinh.c += -fno-builtin-casinhl
++CFLAGS-s_catan.c += -fno-builtin-catanl
++CFLAGS-s_catanh.c += -fno-builtin-catanhl
++CFLAGS-s_cbrt.c += -fno-builtin-cbrtl
++CFLAGS-s_ccos.c += -fno-builtin-ccosl
++CFLAGS-s_ccosh.c += -fno-builtin-ccoshl
++CFLAGS-s_ceil.c += -fno-builtin-ceill
++CFLAGS-s_cexp.c += -fno-builtin-cexpl
++CFLAGS-s_cimag.c += -fno-builtin-cimagl
++CFLAGS-s_clog.c += -fno-builtin-clogl
++CFLAGS-s_clog10.c += -fno-builtin-clog10l
++CFLAGS-s_conj.c += -fno-builtin-conjl
++CFLAGS-s_copysign.c += -fno-builtin-copysignl
++CFLAGS-s_cos.c += -fno-builtin-cosl
++CFLAGS-w_cosh.c += -fno-builtin-coshl
++CFLAGS-s_cpow.c += -fno-builtin-cpowl
++CFLAGS-s_cproj.c += -fno-builtin-cprojl
++CFLAGS-s_creal.c += -fno-builtin-creall
++CFLAGS-s_csin.c += -fno-builtin-csinl
++CFLAGS-s_csinh.c += -fno-builtin-csinhl
++CFLAGS-s_csqrt.c += -fno-builtin-csqrtl
++CFLAGS-s_ctan.c += -fno-builtin-ctanl
++CFLAGS-s_ctanh.c += -fno-builtin-ctanhl
++CFLAGS-s_dadd.c += -fno-builtin-daddl
++CFLAGS-s_ddiv.c += -fno-builtin-ddivl
++CFLAGS-s_dmul.c += -fno-builtin-dmull
++CFLAGS-s_dsub.c += -fno-builtin-dsubl
++CFLAGS-s_erf.c += -fno-builtin-erfl
++CFLAGS-s_erfc.c += -fno-builtin-erfcl
++CFLAGS-e_exp.c += -fno-builtin-expl
++CFLAGS-w_exp10.c += -fno-builtin-exp10l
++CFLAGS-e_exp2.c += -fno-builtin-exp2l
++CFLAGS-s_expm1.c += -fno-builtin-expm1l
++CFLAGS-s_fabs.c += -fno-builtin-fabsl
++CFLAGS-s_fadd.c += -fno-builtin-faddl
++CFLAGS-s_fdim.c += -fno-builtin-fdiml
++CFLAGS-s_fdiv.c += -fno-builtin-fdivl
++CFLAGS-s_finite.c += -fno-builtin-finitel
++CFLAGS-s_floor.c += -fno-builtin-floorl
++CFLAGS-s_fma.c += -fno-builtin-fmal
++CFLAGS-s_fmax.c += -fno-builtin-fmaxl
++CFLAGS-s_fmaxmag.c += -fno-builtin-fmaxmagl
++CFLAGS-s_fmin.c += -fno-builtin-fminl
++CFLAGS-s_fminmag.c += -fno-builtin-fminmagl
++CFLAGS-w_fmod.c += -fno-builtin-fmodl
++CFLAGS-s_fmul.c += -fno-builtin-fmull
++CFLAGS-s_frexp.c += -fno-builtin-frexpl
++CFLAGS-s_fromfp.c += -fno-builtin-fromfpl
++CFLAGS-s_fromfpx.c += -fno-builtin-fromfpxl
++CFLAGS-s_fsub.c += -fno-builtin-fsubl
++CFLAGS-s_gamma.c += -fno-builtin-gammal
++CFLAGS-s_getpayload.c += -fno-builtin-getpayloadl
++CFLAGS-w_hypot.c += -fno-builtin-hypotl
++CFLAGS-w_ilogb.c += -fno-builtin-ilogbl
++CFLAGS-s_isinf.c += -fno-builtin-isinfl
++CFLAGS-s_isnan.c += -fno-builtin-isnanl
++CFLAGS-w_j0.c += -fno-builtin-j0l
++CFLAGS-w_j1.c += -fno-builtin-j1l
++CFLAGS-w_jn.c += -fno-builtin-jnl
++CFLAGS-s_ldexp.c += -fno-builtin-ldexpl
++CFLAGS-w_lgamma.c += -fno-builtin-lgammal
++CFLAGS-w_lgamma_r.c += -fno-builtin-lgammal_r
++CFLAGS-w_llogb.c += -fno-builtin-llogbl
++CFLAGS-s_llrint.c += -fno-builtin-llrintl
++CFLAGS-s_llround.c += -fno-builtin-llroundl
++CFLAGS-e_log.c += -fno-builtin-logl
++CFLAGS-w_log10.c += -fno-builtin-log10l
++CFLAGS-w_log1p.c += -fno-builtin-log1pl
++CFLAGS-e_log2.c += -fno-builtin-log2l
++CFLAGS-s_logb.c += -fno-builtin-logbl
++CFLAGS-s_lrint.c += -fno-builtin-lrintl
++CFLAGS-s_lround.c += -fno-builtin-lroundl
++CFLAGS-s_modf.c += -fno-builtin-modfl
++CFLAGS-s_nan.c += -fno-builtin-nanl
++CFLAGS-s_nearbyint.c += -fno-builtin-nearbyintl
++CFLAGS-s_nextafter.c += -fno-builtin-nextafterl
++CFLAGS-s_nextdown.c += -fno-builtin-nextdownl
++CFLAGS-s_nexttoward.c += -fno-builtin-nexttoward -fno-builtin-nexttowardl
++CFLAGS-s_nexttowardf.c += -fno-builtin-nexttowardf
++CFLAGS-s_nextup.c += -fno-builtin-nextupl
++CFLAGS-e_pow.c += -fno-builtin-powl
++CFLAGS-w_remainder.c += -fno-builtin-remainderl -fno-builtin-dreml
++CFLAGS-s_remquo.c += -fno-builtin-remquol
++CFLAGS-s_rint.c += -fno-builtin-rintl
++CFLAGS-s_round.c += -fno-builtin-roundl
++CFLAGS-s_roundeven.c += -fno-builtin-roundevenl
++CFLAGS-w_scalb.c += -fno-builtin-scalbl
++CFLAGS-w_scalbln.c += -fno-builtin-scalblnl
++CFLAGS-s_scalbn.c += -fno-builtin-scalbnl
++CFLAGS-s_setpayload.c += -fno-builtin-setpayloadl
++CFLAGS-s_setpayloadsig.c += -fno-builtin-setpayloadsigl
++CFLAGS-s_significand.c += -fno-builtin-significandl
++CFLAGS-s_sin.c += -fno-builtin-sinl
++CFLAGS-s_sincos.c += -fno-builtin-sincosl
++CFLAGS-w_sinh.c += -fno-builtin-sinhl
++CFLAGS-w_sqrt.c += -fno-builtin-sqrtl
++CFLAGS-s_tan.c += -fno-builtin-tanl
++CFLAGS-s_tanh.c += -fno-builtin-tanhl
++CFLAGS-w_tgamma.c += -fno-builtin-tgammal
++CFLAGS-s_totalorder.c += -fno-builtin-totalorderl
++CFLAGS-s_totalordermag.c += -fno-builtin-totalordermagl
++CFLAGS-s_trunc.c += -fno-builtin-truncl
++CFLAGS-s_ufromfp.c += -fno-builtin-ufromfpl
++CFLAGS-s_ufromfpx.c += -fno-builtin-ufromfpxl
++CFLAGS-s_y0.c += -fno-builtin-y0l
++CFLAGS-s_y1.c += -fno-builtin-y1l
++CFLAGS-s_yn.c += -fno-builtin-ynl
+ endif
+ 
+ # These files quiet sNaNs in a way that is optimized away without
+
+# fixes gcc/libsanitizer/asan/asan_linux.cpp:217:21: error: ‘PATH_MAX’ was not declared in this scope
+--- a/gcc/libsanitizer/asan/asan_linux.cpp
++++ b/gcc/libsanitizer/asan/asan_linux.cpp
+@@ -31,7 +31,7 @@
+ #include <sys/types.h>
+ #include <dlfcn.h>
+ #include <fcntl.h>
+-#include <limits.h>
++#include <linux/limits.h>
+ #include <pthread.h>
+ #include <stdio.h>
+ #include <unistd.h>

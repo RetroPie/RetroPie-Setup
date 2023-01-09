@@ -224,7 +224,7 @@ function _mapPackage() {
             ;;
         # map libpng-dev to libpng12-dev for Jessie
         libpng-dev)
-            compareVersions "$__os_debian_ver" lt 9 && pkg="libpng12-dev"
+            [[ "$__os_debian_ver" -lt 9 ]] && pkg="libpng12-dev"
             ;;
         libsdl1.2-dev)
             rp_isEnabled "sdl1" && pkg="RP sdl1 $pkg"
@@ -1545,7 +1545,7 @@ function patchVendorGraphics() {
     local filename="$1"
 
     # patchelf is not available on Raspbian Jessie
-    compareVersions "$__os_debian_ver" lt 9 && return
+    [[ "$__os_debian_ver" -lt 9 ]] && return
 
     getDepends patchelf
     printMsgs "console" "Applying vendor graphics patch: $filename"

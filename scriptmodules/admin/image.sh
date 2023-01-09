@@ -174,7 +174,7 @@ function _init_chroot_image() {
     trap "_trap_chroot_image '$chroot'" INT
 
     # mount special filesystems to chroot
-    mkdir -p "$chroot"/dev/pts
+    mkdir -p "$chroot"{/dev/pts,/proc}
     mount none -t devpts "$chroot/dev/pts"
     mount -t proc /proc "$chroot/proc"
 

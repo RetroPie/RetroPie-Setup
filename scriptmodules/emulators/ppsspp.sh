@@ -13,7 +13,7 @@ rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/hrydgard/ppsspp/master/LICENSE.TXT"
-rp_module_repo="git https://github.com/hrydgard/ppsspp.git v1.12.3"
+rp_module_repo="git https://github.com/hrydgard/ppsspp.git v1.13.2"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -141,9 +141,8 @@ function build_ppsspp() {
         params+=(-DCMAKE_CXX_FLAGS="${CXXFLAGS/-DGL_GLEXT_PROTOTYPES/}")
     elif isPlatform "tinker"; then
         params+=(-DCMAKE_TOOLCHAIN_FILE="$md_data/tinker.armv7.cmake")
-    elif isPlatform "vero4k"; then
-        params+=(-DCMAKE_TOOLCHAIN_FILE="cmake/Toolchains/vero4k.armv8.cmake")
     fi
+    isPlatform "vero4k" && params+=(-DCMAKE_TOOLCHAIN_FILE="cmake/Toolchains/vero4k.armv8.cmake")
     if isPlatform "arm" && ! isPlatform "x11"; then
         params+=(-DARM_NO_VULKAN=ON)
     fi
