@@ -16,8 +16,16 @@ rp_module_licence="GPL3 https://raw.githubusercontent.com/PCSX2/pcsx2/master/COP
 rp_module_section="exp"
 rp_module_flags="!all x86"
 
+function _64bit_available_pcsx2() {
+    # detect if a 64bit version for pcsx2 is available in the Ubuntu PPA
+    if [[ -n "${__os_ubuntu_ver}" ]] && compareVersions "${__os_ubuntu_ver}" ge 21.04; then
+        return 0
+    fi
+
+    return 1
+}
 function depends_pcsx2() {
-    if isPlatform "64bit"; then
+    if isPlatform "64bit" && ! _64bit_available_pcsx2 ; then
         iniConfig " = " '"' "$configdir/all/retropie.cfg"
         iniGet "own_sdl2"
         if [[ "$ini_value" != "0" ]]; then
@@ -37,10 +45,12 @@ function depends_pcsx2() {
     if [[ "$md_mode" == "install" ]]; then
         # On Ubuntu, add the PCSX2 PPA to get the latest version
         [[ -n "${__os_ubuntu_ver}" ]] && add-apt-repository -y ppa:pcsx2-team/pcsx2-daily
-        dpkg --add-architecture i386
+        if ! _64bit_available_pcsx2 ; then
+            dpkg --add-architecture i386
+        fi
     else
         rm -f /etc/apt/sources.list.d/pcsx2-team-ubuntu-pcsx2-daily-*.list
-        apt-key del "D7B4 49CF E17E 659E 5A12  EE8E DD6E EEA2 BD74 7717" >/dev/null  
+        apt-key del "D7B4 49CF E17E 659E 5A12  EE8E DD6E EEA2 BD74 7717" >/dev/null
     fi
 }
 
@@ -61,9 +71,15 @@ function remove_pcsx2() {
 
 function configure_pcsx2() {
     mkRomDir "ps2"
-    # Windowed option
-    addEmulator 0 "$md_id" "ps2" "/usr/games/pcsx2 %ROM% --windowed"
-    # Fullscreen option with no gui (default, because we can close with `Esc` key, easy to map for gamepads)
-    addEmulator 1 "$md_id-nogui" "ps2" "/usr/games/pcsx2 %ROM% --fullscreen --nogui"
+
+    # detect if the new (QT) UI is installed and add the fullscreen/windowed commands
+    if [[ -f /usr/bin/pcsx2-qt ]]; then
+        addEmulator 0 "$md_id" "ps2" "pcsx2-qt -nofullscreen %ROM%"
+        addEmulator 1 "$md_id-nogui" "ps2" "pcsx2-qt -fullscreen -nogui %ROM%"
+    else
+        addEmulator 0 "$md_id" "ps2" "/usr/games/pcsx2 --windowed %ROM%"
+        addEmulator 1 "$md_id-nogui" "ps2" "/usr/games/pcsx2 --fullscreen --nogui %ROM%"
+    fi
+
     addSystem "ps2"
 }
