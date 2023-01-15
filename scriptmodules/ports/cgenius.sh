@@ -12,7 +12,7 @@
 rp_module_id="cgenius"
 rp_module_desc="Commander Genius - Modern Interpreter for the Commander Keen Games (Vorticon and Galaxy Games)"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/gerstrong/Commander-Genius/master/COPYRIGHT"
-rp_module_repo="git https://gitlab.com/Dringgstein/Commander-Genius.git v3.0.8"
+rp_module_repo="git https://gitlab.com/Dringgstein/Commander-Genius.git v3.2.0"
 rp_module_section="exp"
 
 function depends_cgenius() {
@@ -21,23 +21,20 @@ function depends_cgenius() {
 
 function sources_cgenius() {
     gitPullOrClone
-
-    # use -O2 on older GCC due to segmentation fault when compiling with -O3
-    if compareVersions $__gcc_version lt 6; then
-        sed -i "s/ADD_DEFINITIONS(-O3)/ADD_DEFINITIONS(-O2)/" src/CMakeLists.txt
-    fi
 }
 
 function build_cgenius() {
-    cmake -DBUILD_COSMOS=1 -DCMAKE_INSTALL_PREFIX="$md_inst" -DNOTYPESAVE=on
+    rmdir -fr build
+    mkdir -p build && cd build
+    cmake -DBUILD_COSMOS=1 -DNOTYPESAVE=on ..
     make
-    md_ret_require="$md_build/src/CGeniusExe"
+    md_ret_require="$md_build/build/src/CGeniusExe"
 }
 
 function install_cgenius() {
     md_ret_files=(
         'vfsroot'
-        'src/CGeniusExe'
+        'build/src/CGeniusExe'
     )
 }
 
@@ -47,5 +44,18 @@ function configure_cgenius() {
     mkRomDir "ports/$md_id"
 
     moveConfigDir "$home/.CommanderGenius"  "$md_conf_root/$md_id"
-    moveConfigDir "$md_conf_root/$md_id/games"  "$romdir/ports/$md_id"
+
+    [[ $md_mode == "remove" ]] && return
+
+    # Create a minimal config file so the Commander can find the games
+    local config="$(mktemp)"
+    cat > "$config" << _INI_
+[FileHandling]
+EnableLogfile = false
+SearchPath1 = \${HOME}/.CommanderGenius
+SearchPath2 = .
+SearchPath3 = $romdir/ports/$md_id
+_INI_
+    copyDefaultConfig "$config" "$md_conf_root/$md_id/cgenius.cfg"
+
 }
