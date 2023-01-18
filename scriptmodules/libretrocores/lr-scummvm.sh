@@ -16,6 +16,10 @@ rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/scummvm/main/
 rp_module_repo="git https://github.com/libretro/scummvm.git main"
 rp_module_section="exp"
 
+function depends_lr-scummvm() {
+    getDepends zip
+}
+
 function sources_lr-scummvm() {
     gitPullOrClone
 }
