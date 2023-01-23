@@ -167,8 +167,8 @@ function build_emulationstation() {
         # force GLESv1 on videocore due to performance issue with GLESv2
         isPlatform "videocore" && params+=(-DUSE_GLES1=On)
     elif isPlatform "x11"; then
-        local gl_ver=$(sudo -u $user glxinfo | grep -oP "OpenGL version string: \K(\d+)")
-        [[ "$gl_ver" -gt 1 ]] && params+=(-DUSE_GL21=On)
+        local gl_ver=$(sudo -u $user glxinfo -B | grep -oP 'Max compat profile version:\s\K.*')
+        compareVersions $gl_ver gt 2.0 && params+=(-DUSE_GL21=On)
     fi
     if isPlatform "dispmanx"; then
         params+=(-DOMX=On)
