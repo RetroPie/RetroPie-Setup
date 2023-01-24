@@ -430,6 +430,12 @@ function get_platform() {
                         *rockpro64*)
                             __platform="rockpro64"
                             ;;
+                        *imx6dl*)
+                            __platform="imx6"
+                            ;;
+                        *imx6q*)
+                            __platform="imx6"
+                            ;;
                         *imx8mm*)
                             __platform="imx8mm"
                             ;;
@@ -631,6 +637,7 @@ function platform_armv7-mali() {
 
 function platform_imx6() {
     cpu_armv7 "cortex-a9"
+    [[ -d /sys/class/drm/card0/device/driver/etnaviv ]] && __platform_flags+=(x11 gles mesa)
 }
 
 function platform_imx8mm() {
