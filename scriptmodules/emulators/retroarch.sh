@@ -21,7 +21,8 @@ function depends_retroarch() {
     isPlatform "gles" && ! isPlatform "vero4k" && depends+=(libgles2-mesa-dev)
     isPlatform "mesa" && depends+=(libx11-xcb-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
-    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev mesa-vulkan-drivers)
+    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev)
+    isPlatform "vulkan" && depends+=(libvulkan-dev mesa-vulkan-drivers)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
     isPlatform "kms" && depends+=(libgbm-dev)
 
@@ -58,8 +59,8 @@ function build_retroarch() {
     isPlatform "kms" && params+=(--enable-kms --enable-egl)
     isPlatform "arm" && params+=(--enable-floathard)
     isPlatform "neon" && params+=(--enable-neon)
-    isPlatform "x11" && params+=(--enable-vulkan)
-    ! isPlatform "x11" && params+=(--disable-vulkan --disable-wayland)
+    isPlatform "vulkan" && params+=(--enable-vulkan) || params+=(--disable-vulkan)
+    ! isPlatform "x11" && params+=(--disable-wayland)
     isPlatform "vero4k" && params+=(--enable-mali_fbdev --with-opengles_libs='-L/opt/vero3/lib')
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean

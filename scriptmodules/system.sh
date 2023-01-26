@@ -569,37 +569,37 @@ function platform_odroid-xu() {
 
 function platform_tegra-x1() {
     cpu_armv8 "cortex-a57+crypto"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_tegra-x2() {
     cpu_armv8 "cortex-a57+crypto"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_xavier() {
     cpu_armv8 "native"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_tegra-3() {
     cpu_armv7 "cortex-a9"
-    __platform_flags+=(x11 gles)
+    __platform_flags+=(x11 gles vulkan)
 }
 
 function platform_tegra-4() {
     cpu_armv7 "cortex-a15"
-    __platform_flags+=(x11 gles)
+    __platform_flags+=(x11 gles vulkan)
 }
 
 function platform_tegra-k1-32() {
     cpu_armv7 "cortex-a15"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_tegra-k1-64() {
     cpu_armv8 "native"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_tinker() {
@@ -611,7 +611,7 @@ function platform_tinker() {
 
 function platform_native() {
     __default_cpu_flags="-march=native"
-    __platform_flags+=(gl)
+    __platform_flags+=(gl vulkan)
     if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=(kms)
     else
