@@ -18,7 +18,7 @@ rp_module_section="exp"
 rp_module_flags="!all rpi !videocore"
 
 function depends_yabasanshiro() {
-    local depends=(cmake pkg-config python-pip protobuf-compiler libprotobuf-dev libsecret-1-dev libssl-dev libsdl2-dev libboost-all-dev)
+    local depends=(cmake pkg-config protobuf-compiler libprotobuf-dev libsecret-1-dev libssl-dev libsdl2-dev libboost-all-dev)
     getDepends "${depends[@]}"
 }
 
