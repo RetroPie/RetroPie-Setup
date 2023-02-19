@@ -13,12 +13,12 @@ rp_module_id="yabasanshiro"
 rp_module_desc="SEGA Saturn emulator Yaba Sanshiro"
 rp_module_help="ROM Extensions: .cue .chd\n\nCopy your SEGA Saturn ios images to $romdir/saturn"
 rp_module_licence="GPL2 https://github.com/devmiyax/yabause/blob/master/LICENSE"
-rp_module_repo="git https://github.com/devmiyax/yabause.git pi4"
+rp_module_repo="git https://github.com/devmiyax/yabause.git pi4-1-9-0"
 rp_module_section="exp"
 rp_module_flags="!all rpi !videocore"
 
 function depends_yabasanshiro() {
-    local depends=(cmake pkg-config python-pip protobuf-compiler libprotobuf-dev libsecret-1-dev libssl-dev libsdl2-dev libboost-all-dev)
+    local depends=(cmake pkg-config protobuf-compiler libprotobuf-dev libsecret-1-dev libssl-dev libsdl2-dev libboost-all-dev)
     getDepends "${depends[@]}"
 }
 

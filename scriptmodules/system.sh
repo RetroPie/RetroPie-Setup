@@ -430,6 +430,15 @@ function get_platform() {
                         *rockpro64*)
                             __platform="rockpro64"
                             ;;
+                        *imx6dl*)
+                            __platform="imx6"
+                            ;;
+                        *imx6q*)
+                            __platform="imx6"
+                            ;;
+                        *imx8mm*)
+                            __platform="imx8mm"
+                            ;;
                     esac
                 elif [[ -e "/sys/devices/soc0/family" ]]; then
                     case "$(tr -d '\0' < /sys/devices/soc0/family)" in
@@ -569,37 +578,37 @@ function platform_odroid-xu() {
 
 function platform_tegra-x1() {
     cpu_armv8 "cortex-a57+crypto"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_tegra-x2() {
     cpu_armv8 "cortex-a57+crypto"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_xavier() {
     cpu_armv8 "native"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_tegra-3() {
     cpu_armv7 "cortex-a9"
-    __platform_flags+=(x11 gles)
+    __platform_flags+=(x11 gles vulkan)
 }
 
 function platform_tegra-4() {
     cpu_armv7 "cortex-a15"
-    __platform_flags+=(x11 gles)
+    __platform_flags+=(x11 gles vulkan)
 }
 
 function platform_tegra-k1-32() {
     cpu_armv7 "cortex-a15"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_tegra-k1-64() {
     cpu_armv8 "native"
-    __platform_flags+=(x11 gl)
+    __platform_flags+=(x11 gl vulkan)
 }
 
 function platform_tinker() {
@@ -611,7 +620,7 @@ function platform_tinker() {
 
 function platform_native() {
     __default_cpu_flags="-march=native"
-    __platform_flags+=(gl)
+    __platform_flags+=(gl vulkan)
     if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=(kms)
     else
@@ -628,6 +637,13 @@ function platform_armv7-mali() {
 
 function platform_imx6() {
     cpu_armv7 "cortex-a9"
+    [[ -d /sys/class/drm/card0/device/driver/etnaviv ]] && __platform_flags+=(x11 gles mesa)
+}
+
+function platform_imx8mm() {
+    cpu_armv8 "cortex-a53"
+    __platform_flags+=(x11 gles)
+    [[ -d /sys/class/drm/card0/device/driver/etnaviv ]] && __platform_flags+=(mesa)
 }
 
 function platform_vero4k() {

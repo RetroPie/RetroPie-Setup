@@ -59,7 +59,7 @@ function configure_hypseus() {
     mkUserDir "$md_conf_root/daphne"
 
     local dir
-    for dir in ram logs screenshots; do
+    for dir in ram logs screenshots bezels; do
         mkUserDir "$md_conf_root/daphne/$dir"
         ln -snf "$md_conf_root/daphne/$dir" "$md_inst/$dir"
     done
