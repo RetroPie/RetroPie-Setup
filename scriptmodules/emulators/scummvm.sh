@@ -13,7 +13,7 @@ rp_module_id="scummvm"
 rp_module_desc="ScummVM"
 rp_module_help="Copy your ScummVM games to $romdir/scummvm"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
-rp_module_repo="git https://github.com/scummvm/scummvm.git master a9418f8f"
+rp_module_repo="git https://github.com/scummvm/scummvm.git v2.7.0"
 rp_module_section="opt"
 rp_module_flags="sdl2"
 
@@ -44,11 +44,15 @@ function build_scummvm() {
         --disable-debug --disable-eventrecorder --prefix="$md_inst"
     )
     isPlatform "rpi" && isPlatform "32bit" && params+=(--host=raspberrypi)
-    isPlatform "gles" && params+=(--opengl-mode=gles2)
+    isPlatform "rpi" && [[ "$md_id" == "scummvm-sdl1" ]] && params+=(--opengl-mode=none)
     # stop scummvm using arm-linux-gnueabihf-g++ which is v4.6 on
     # wheezy and doesn't like rpi2 cpu flags
     if isPlatform "rpi"; then
-        CC="gcc" CXX="g++" ./configure "${params[@]}"
+        if [[ "$md_id" == "scummvm-sdl1" ]]; then
+            SDL_CONFIG=sdl-config CC="gcc" CXX="g++" ./configure "${params[@]}"
+        else
+            CC="gcc" CXX="g++" ./configure "${params[@]}"
+        fi
     else
         ./configure "${params[@]}"
     fi
