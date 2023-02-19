@@ -513,7 +513,7 @@ function config_gui_setup() {
         local id
         for id in "${__mod_id[@]}"; do
             # show all configuration modules and any installed packages with a gui function
-            if [[ "${__mod_info[$id/section]}" == "config" ]] || rp_isInstalled "$id" && fnExists "gui_$id"; then
+            if [[ "${__mod_info[$id/section]}" == "config" ]] || rp_isInstalled "$id" && rp_isEnabled "$id" && fnExists "gui_$id"; then
                 options+=("${__mod_idx[$id]}" "$id  - ${__mod_info[$id/desc]}" "${__mod_idx[$id]} ${__mod_info[$id/desc]}")
             fi
         done
