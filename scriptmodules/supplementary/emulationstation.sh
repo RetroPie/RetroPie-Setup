@@ -257,7 +257,7 @@ if [[ "\$(uname --machine)" != *86* ]]; then
 fi
 
 # use SDL2 wayland video driver if wayland session is detected
-[[ "$XDG_SESSION_TYPE" == "wayland" ]] && export SDL_VIDEODRIVER=wayland
+[[ "\$WAYLAND_DISPLAY" == wayland* ]] && export SDL_VIDEODRIVER=wayland
 
 # save current tty/vt number for use with X so it can be launched on the correct tty
 TTY=\$(tty)
