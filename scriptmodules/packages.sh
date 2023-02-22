@@ -644,6 +644,8 @@ function rp_hasNewerModule() {
                 local repo_dir="$scriptdir"
                 [[ "$vendor" != "RetroPie" ]] && repo_dir+="/ext/$vendor"
                 local module_date="$(sudo -u "$user" git -C "$repo_dir" log -1 --format=%cI -- "${__mod_info[$id/path]}")"
+                # just in case the module is not known to git, get the file last modified date
+                [[ -z "$module_date" ]] && module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
                 if rp_dateIsNewer "$pkg_date" "$module_date"; then
                     ret=0
                 fi
