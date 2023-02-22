@@ -41,7 +41,8 @@ _EOF_
 }
 
 function restart_samba() {
-    service samba restart || service smbd restart
+    [[ ! -z $(systemctl list-units --full -all | grep smbd.service) ]] && service smbd restart
+    [[ ! -z $(systemctl list-units --full -all | grep samba.service) ]] && service samba restart
 }
 
 function install_shares_samba() {
