@@ -74,13 +74,9 @@ function connect_wifi() {
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
-    local osk
-    osk="$(rp_getInstallPath joy2key)/osk.py"
-
     local hidden=0
     if [[ "$choice" == "H" ]]; then
-        cmd=(python3 "$osk" --backtitle "$__backtitle" --inputbox "ESSID" --minchars 4)
-        essid=$("${cmd[@]}" 2>&1 >/dev/tty)
+        essid=$(inputBox "ESSID" "" 4)
         [[ -z "$essid" ]] && return
         cmd=(dialog --backtitle "$__backtitle" --nocancel --menu "Please choose the WiFi type" 12 40 6)
         options=(
@@ -104,10 +100,10 @@ function connect_wifi() {
             key_min=5
         fi
 
-        cmd=(python3 $osk --backtitle "$__backtitle" --inputbox "WiFi key/password" --minchars $key_min)
+        cmd=(inputBox "WiFi key/password" "" $key_min)
         local key_ok=0
         while [[ $key_ok -eq 0 ]]; do
-            key=$("${cmd[@]}" 2>&1 >/dev/tty) || return
+            key=$("${cmd[@]}") || return
             key_ok=1
         done
     fi
