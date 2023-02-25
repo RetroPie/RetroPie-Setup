@@ -138,17 +138,22 @@ function editFile() {
 ## @param text default text
 ## @param minchars minimum chars to accept
 ## @brief Opens an inputbox dialog and echoes resulting text. Uses the OSK if installed.
+## @details The input dialog has OK/Cancel buttons and can be cancelled by the user.
+## The dialog will enforce the minimum number of characters expected, re-prompting the user.
+## @retval 0 when the user entered the text and chose the OK button
+## @retval != 0 when the user chose the Cancel button
+
 function inputBox() {
     local title="$1"
     local text="$2"
     local minchars="$3"
     [[ -z "$minchars" ]] && minchars=0
-    local params=(--backtitle "$__backtitle" --inputbox "$title")
+    local params=(--backtitle "$__backtitle" --inputbox "Enter the $title")
     local osk="$(rp_getInstallPath joy2key)/osk.py"
 
     if [[ -f "$osk" ]]; then
         params+=(--minchars "$minchars")
-        text=$(python3 "$osk" "${params[@]}" 2>&1 >/dev/tty) || return $?
+        text=$(python3 "$osk" "${params[@]}" "$text" 2>&1 >/dev/tty) || return $?
     else
         while true; do
             text=$(dialog "${params[@]}" 10 60 "$text" 2>&1 >/dev/tty) || return $?
