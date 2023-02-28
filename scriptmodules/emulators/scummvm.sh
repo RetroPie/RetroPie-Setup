@@ -39,6 +39,7 @@ function sources_scummvm() {
 }
 
 function build_scummvm() {
+    rpSwap on 750
     local params=(
         --enable-release --enable-vkeybd
         --disable-debug --disable-eventrecorder --prefix="$md_inst"
@@ -59,6 +60,7 @@ function build_scummvm() {
     make clean
     make
     strip "$md_build/scummvm"
+    rpSwap off
     md_ret_require="$md_build/scummvm"
 }
 
