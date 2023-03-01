@@ -147,9 +147,9 @@ function enable_zram_raspbiantools() {
 
 function disable_zram_raspbiantools() {
     if [[ "$__os_id" == "Raspbian" ]] || [[ "$__os_id" == "Debian" ]]; then
-        apt remove -y zram-tools
+        aptRemove zram-tools
     elif [[ "$__os_id" == "Ubuntu" ]]; then
-        apt remove -y zram-config
+        aptRemove zram-config
     fi
 }
 
