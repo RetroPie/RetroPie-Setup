@@ -72,6 +72,8 @@ function configure_hypseus() {
     ln -sf "$md_conf_root/daphne/hypinput.ini" "$md_inst/hypinput.ini"
 
     local common_args="-framefile \"\$dir/\$name.txt\" -homedir \"$md_inst\" -fullscreen \$params"
+    # prevents SDL doing an internal software conversion since 2.0.16+
+    isPlatform "arm" && common_args="-texturestream $common_args"
 
     cat >"$md_inst/hypseus.sh" <<_EOF_
 #!/bin/bash
