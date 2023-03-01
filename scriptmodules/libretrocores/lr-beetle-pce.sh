@@ -14,7 +14,7 @@ rp_module_desc="PC Engine/CD/SuperGrafx emulator - Mednafen PCE port for libretr
 rp_module_help="ROM Extensions: .7z .ccd .chd .cue .pce .sgx\n\nCopy your PC Engine roms to $romdir/pcengine\n\nCopy the required BIOS file syscard3.pce to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/beetle-pce-libretro/master/COPYING"
 rp_module_repo="git https://github.com/libretro/beetle-pce-libretro.git master"
-rp_module_section="main"
+rp_module_section="opt"
 rp_module_flags="!armv6"
 
 function sources_lr-beetle-pce() {
