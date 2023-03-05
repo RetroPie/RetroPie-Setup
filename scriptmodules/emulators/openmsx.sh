@@ -20,9 +20,9 @@ rp_module_flags=""
 function _get_commit_openmsx() {
     local commit
     # latest code requires at least GCC 8.3 (Debian Buster) for full C++17 support
-    compareVersions $__gcc_version lt 8 && commit="c8d90e70"
+    [[ "$__gcc_version" -lt 8 ]] && commit="c8d90e70"
     # for GCC before 7, build from an earlier commit, before C++17 support was added
-    compareVersions $__gcc_version lt 7 && commit="5ee25b62"
+    [[ "$__gcc_version" -lt 7 ]] && commit="5ee25b62"
     echo "$commit"
 }
 
