@@ -26,7 +26,7 @@ function sources_lr-scummvm() {
 
 function build_lr-scummvm() {
     make clean
-    make HAVE_MT32EMU=1
+    make USE_MT32EMU=1
     make datafiles
     md_ret_require="$md_build/scummvm_libretro.so"
 }
