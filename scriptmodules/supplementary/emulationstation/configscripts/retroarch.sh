@@ -387,7 +387,7 @@ function onend_retroarch_joystick() {
     done < <(grep -Fl "\"$DEVICE_NAME\"" "$dir/"*.cfg 2>/dev/null)
 
     # sanitise filename
-    file="${DEVICE_NAME//[\?\<\>\\\/:\*\|]/}.cfg"
+    file="${DEVICE_NAME//[:><?\"\/\\|*]/}.cfg"
 
     if [[ -f "$dir/$file" ]]; then
         mv "$dir/$file" "$dir/$file.bak"
