@@ -256,8 +256,12 @@ if [[ "\$(uname --machine)" != *86* ]]; then
     fi
 fi
 
-# use SDL2 wayland video driver if wayland session is detected
-[[ "\$WAYLAND_DISPLAY" == wayland* ]] && export SDL_VIDEODRIVER=wayland
+# use SDL2 wayland video driver if wayland session is detected.
+# Emulationstation has focus problems under Ubuntu 22.04's GNOME on Wayland session. Don't use SDL2's wayland driver and run 
+# emulationstation with --fullscreen-borderless if desktop session is GNOME on Wayland.
+if [[ "\$WAYLAND_DISPLAY" == wayland* ]]; then
+    [[ "\$XDG_CURRENT_DESKTOP" == *GNOME ]] && set -- "\$@" "--fullscreen-borderless" || export SDL_VIDEODRIVER=wayland
+fi
 
 # save current tty/vt number for use with X so it can be launched on the correct tty
 TTY=\$(tty)
