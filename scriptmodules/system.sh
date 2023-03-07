@@ -88,6 +88,10 @@ function conf_binary_vars() {
 
 function conf_build_vars() {
     __gcc_version=$(gcc -dumpversion)
+    # extract only the major version
+    # gcc -dumpversion on GCC >= 7 seems to provide the major version but the documentation
+    # suggests this depends on how it's configured
+    __gcc_version="${__gcc_version%%.*}"
 
     # calculate build concurrency based on cores and available memory
     __jobs=1

@@ -18,7 +18,7 @@ rp_module_section="exp"
 rp_module_flags=""
 
 function depends_ti99sim() {
-    if compareVersions $__gcc_version lt 8; then
+    if [[ "$__gcc_version" -lt 8 ]]; then
         md_ret_errors+=("Sorry, you need an OS with gcc 8 or newer to compile $md_id")
         return 1
     fi
