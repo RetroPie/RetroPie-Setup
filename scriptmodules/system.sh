@@ -180,7 +180,7 @@ function get_os_version() {
 
             # Debian unstable is not officially supported though
             if [[ "$__os_release" == "unstable" ]]; then
-                __os_debian_ver=11
+                __os_debian_ver=13
             fi
 
             # we still allow Raspbian 8 (jessie) to work (We show an popup in the setup module)
@@ -268,8 +268,10 @@ function get_os_version() {
                 __os_debian_ver="9"
             elif compareVersions "$__os_release" lt 20.04; then
                 __os_debian_ver="10"
-            else
+            elif compareVersions "$__os_release" lt 22.10; then
                 __os_debian_ver="11"
+            else
+                __os_debian_ver="12"
             fi
             __os_ubuntu_ver="$__os_release"
             ;;
