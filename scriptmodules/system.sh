@@ -176,7 +176,7 @@ function get_os_version() {
 
             # Debian unstable is not officially supported though
             if [[ "$__os_release" == "unstable" ]]; then
-                __os_debian_ver=11
+                __os_debian_ver=13
             fi
 
             # we still allow Raspbian 8 (jessie) to work (We show an popup in the setup module)
