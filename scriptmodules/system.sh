@@ -204,10 +204,10 @@ function get_os_version() {
                 __platform_flags+=(xbian)
             fi
 
-            # we provide binaries for RPI on Raspbian 9/10
+            # we provide binaries for RPI on Raspberry Pi OS 10/11
             if isPlatform "rpi" && \
                isPlatform "32bit" && \
-               [[ "$__os_debian_ver" -gt 9 && "$__os_debian_ver" -lt 11 ]]; then
+               [[ "$__os_debian_ver" -ge 10 && "$__os_debian_ver" -le 11 ]]; then
                # only set __has_binaries if not already set
                [[ -z "$__has_binaries" ]] && __has_binaries=1
             fi
