@@ -1,0 +1,51 @@
+--- a/src/MYOSGLUE.c
++++ b/src/MYOSGLUE.c
+@@ -29,6 +29,24 @@
+ 
+ #include "STRCONST.h"
+ 
++/* SDL2 window */
++SDL_Window *window;
++
++/* SDL2 renderer */
++SDL_Renderer *renderer;
++
++/* SDL2 texture */
++SDL_Texture *texture;
++
++/* SDL2 blitting rects for hw scaling 
++ * ratio correction using SDL_RenderCopy() */
++SDL_Rect src_rect;
++SDL_Rect dst_rect;
++
++/* SDL2 physical screen dimensions */
++int displayWidth;
++int displayHeight;
++
+ /* --- some simple utilities --- */
+ 
+ GLOBALPROC MyMoveBytes(anyp srcPtr, anyp destPtr, si5b byteCount)
+--- a/src/MYOSGLUE.h
++++ b/src/MYOSGLUE.h
+@@ -401,21 +401,3 @@ EXPORTPROC MyEvtQOutDone(void);
+ 
+ #include <SDL2/SDL.h>
+ #include <SDL2/SDL_keycode.h>
+-
+-/* SDL2 window */
+-SDL_Window *window;
+-
+-/* SDL2 renderer */
+-SDL_Renderer *renderer;
+-
+-/* SDL2 texture */
+-SDL_Texture *texture;
+-
+-/* SDL2 blitting rects for hw scaling 
+- * ratio correction using SDL_RenderCopy() */
+-SDL_Rect src_rect;
+-SDL_Rect dst_rect;
+-
+-/* SDL2 physical screen dimensions */
+-int displayWidth;
+-int displayHeight;
