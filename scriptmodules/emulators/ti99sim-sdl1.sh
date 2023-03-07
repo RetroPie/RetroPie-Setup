@@ -23,6 +23,8 @@ function depends_ti99sim-sdl1() {
 
 function sources_ti99sim-sdl1() {
     downloadAndExtract "$md_repo_url" "$md_build" --strip-components 1
+    # add missing include to fix compilation on newer g++
+    applyPatch "$md_data/missing_cstdio.diff"
 }
 
 function build_ti99sim-sdl1() {
