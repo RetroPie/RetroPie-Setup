@@ -241,7 +241,7 @@ function map_retroarch_joystick() {
     declare -A hat_map=([1]="up" [2]="right" [4]="down" [8]="left")
     iniGet "input_driver"
     local input_driver="$ini_value"
-    local autoconfig_preset=$(grep -rwl "$rootdir/emulators/retroarch/autoconfig-presets/$input_driver" -e "$DEVICE_NAME" | head -1)
+    local autoconfig_preset=$(grep -rwFl "$rootdir/emulators/retroarch/autoconfig-presets/$input_driver" -e "$DEVICE_NAME" | head -1)
     for key in "${keys[@]}"; do
         case "$input_type" in
             hat)
@@ -387,7 +387,7 @@ function onend_retroarch_joystick() {
     done < <(grep -Fl "\"$DEVICE_NAME\"" "$dir/"*.cfg 2>/dev/null)
 
     # sanitise filename
-    file="${DEVICE_NAME//[\?\<\>\\\/:\*\|]/}.cfg"
+    file="${DEVICE_NAME//[:><?\"\/\\|*]/}.cfg"
 
     if [[ -f "$dir/$file" ]]; then
         mv "$dir/$file" "$dir/$file.bak"
