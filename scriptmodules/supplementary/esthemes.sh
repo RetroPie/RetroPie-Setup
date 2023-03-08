@@ -315,6 +315,7 @@ function gui_esthemes() {
         'cjonasw raspixel-320-240'
         'crxone 3twenty2fourty'
         'leochely Guilty-Gear'
+        'flpowergamesretro es-theme-flpowergamesretro_v1.0'
     )
     while true; do
         local theme
