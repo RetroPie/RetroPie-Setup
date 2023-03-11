@@ -180,10 +180,10 @@ function hasPackage() {
 
     local ver
     local status
-    local out=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
+    local out=$(dpkg-query -W --showformat='${Status};${Version};' $1 2>/dev/null)
     if [[ "$?" -eq 0 ]]; then
-        ver="${out##* }"
-        status="${out% *}"
+        ver="$(echo ${out} | awk -F';' '{ print $2 }')"
+        status="$(echo ${out} | awk -F';' '{ print $1 }')"
     fi
 
     local installed=0
