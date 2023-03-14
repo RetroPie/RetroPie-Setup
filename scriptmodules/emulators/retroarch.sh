@@ -110,9 +110,11 @@ function update_core_info_retroarch() {
     local dir="$configdir/all/retroarch/cores"
     # remove if not a git repository and do a fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -fr "$dir"
-    gitPullOrClone "$configdir/all/retroarch/cores" https://github.com/libretro/libretro-core-info.git
-    # Add the info files for cores/configurations not available upstream
-    cp -f "$md_data/"*.info "$configdir/all/retroarch/cores"
+    # remove our locally generated `.info` files, just in case upstream adds them
+    [[ -d "$dir/.git" ]] && git -C "$dir" clean -q -f "*.info"
+    gitPullOrClone "$dir" https://github.com/libretro/libretro-core-info.git
+    # add our info files for cores not included in the upstream repo
+    cp --update "$md_data"/*.info "$dir"
     chown -R $user:$user "$dir"
 }
 
