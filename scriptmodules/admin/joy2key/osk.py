@@ -212,18 +212,20 @@ class OSK:
     Main class for the on-screen keyboard application
     """
 
-    def __init__(self, title, input_title, min_chars=0, dim=False):
+    def __init__(self, title, input_title, input_value, min_chars=8, dim=False):
         """
         :param title: the string used in the application heading
         :param input_title: the name of the input string being captured (e.g. Password)
+        :param input_value: existing string to populate the input
         :param min_chars: minimum number of characters for a valid string (default: 8)
         :param dim: optimize for a smaller screen (True/False)
         """
         self._input_title = input_title
+        self._input_value = input_value
         self._min_chars = min_chars
         self.small_display = dim
         self.def_keys = []
-        self.frame = self.setup_frame(title, input_title)
+        self.frame = self.setup_frame(title, input_title, input_value)
         self.pop_up = self.setup_popup("Error")
 
         # Create the main view, overlaying the popup widget with the main view
@@ -231,7 +233,7 @@ class OSK:
 
         self.view = view
 
-    def setup_frame(self, title, input_title):
+    def setup_frame(self, title, input_title, input_value):
         """
         Creates the main view, with a 3 horizontal pane container (Frame)
         """
@@ -252,6 +254,9 @@ class OSK:
 
         # Body frame, containing the input and the OSK widget
         input = Text([('input text', ''), ('prompt', ASCII_BLOCK)])
+        if input_value != '':
+            input.set_text([('input text', input_value), ('prompt', ASCII_BLOCK)])
+
         self.input = input
 
         Key = self.add_osk_key  # alias the key creation function
@@ -351,7 +356,7 @@ class OSK:
         # setup the main OSK area, depending on the screen size
         if self.small_display:
             body = Pile([
-                        Text(f'Enter the {input_title}', align='center'),
+                        Text(f'{input_title}', align='center'),
                         input,
                         Divider(),
                         osk,
@@ -367,7 +372,7 @@ class OSK:
                             GridFlow([ok_btn, cancel_btn], 10, 2, 0, 'center'),
                             bline=None, lline=None, rline=None, tlcorner='─', trcorner='─')
                         ])
-            body = LineBox(body, f'Enter the {input_title}')
+            body = LineBox(body, f'{input_title}')
 
         body = AttrWrap(body, 'body')  # Style the main OSK area
 
@@ -603,18 +608,17 @@ def parse_arguments(args):
         '--minchars', type=int, nargs='?',
         help='Minimum number of characters needed (default: %(default)s)',
         default=8)
-
+    parser.add_argument('input', type=str, help='Input value', default='', nargs='?')
     args = parser.parse_args()
-    return args.backtitle, args.inputbox, args.minchars
+    return args.backtitle, args.inputbox, args.minchars, args.input
 
 
 def main():
-    backtitle, inputbox, minchars = parse_arguments(sys.argv)
-
+    backtitle, inputbox, minchars, value = parse_arguments(sys.argv)
     # get the terminal size to detect small display
     cols, rows = get_terminal_size(0)
 
-    osk = OSK(backtitle, inputbox, minchars, (cols < SMALL_SCREEN_COLS or rows < SMALL_SCREEN_ROWS))
+    osk = OSK(backtitle, inputbox, value, minchars, (cols < SMALL_SCREEN_COLS or rows < SMALL_SCREEN_ROWS))
     exitcode, exitstring = osk.main()
 
     # print the input text when returned by the application

@@ -12,7 +12,7 @@
 rp_module_id="cdogs-sdl"
 rp_module_desc="C-Dogs SDL - Classic overhead run-and-gun game"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/cxong/cdogs-sdl/master/COPYING"
-rp_module_repo="git https://github.com/cxong/cdogs-sdl.git 0.7.2"
+rp_module_repo="git https://github.com/cxong/cdogs-sdl.git 1.4.1"
 rp_module_section="exp"
 rp_module_flags="sdl1 !mali"
 

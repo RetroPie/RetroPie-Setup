@@ -18,7 +18,7 @@ rp_module_section="exp"
 rp_module_flags=""
 
 function depends_ti99sim() {
-    if compareVersions $__gcc_version lt 8; then
+    if [[ "$__gcc_version" -lt 8 ]]; then
         md_ret_errors+=("Sorry, you need an OS with gcc 8 or newer to compile $md_id")
         return 1
     fi
@@ -27,6 +27,8 @@ function depends_ti99sim() {
 
 function sources_ti99sim() {
     downloadAndExtract "$md_repo_url" "$md_build" --strip-components 1
+    # add missing include to fix compilation on newer g++
+    applyPatch "$md_data/missing_cstring.diff"
 }
 
 function build_ti99sim() {

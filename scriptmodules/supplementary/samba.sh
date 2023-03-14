@@ -41,7 +41,7 @@ _EOF_
 }
 
 function restart_samba() {
-    service samba restart || service smbd restart
+    systemctl -q is-active smbd.service && systemctl -q reload-or-restart smbd.service
 }
 
 function install_shares_samba() {

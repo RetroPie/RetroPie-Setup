@@ -143,7 +143,7 @@ function build_ppsspp() {
         params+=(-DCMAKE_TOOLCHAIN_FILE="$md_data/tinker.armv7.cmake")
     fi
     isPlatform "vero4k" && params+=(-DCMAKE_TOOLCHAIN_FILE="cmake/Toolchains/vero4k.armv8.cmake")
-    if isPlatform "arm" && ! isPlatform "x11"; then
+    if isPlatform "arm" && ! isPlatform "vulkan"; then
         params+=(-DARM_NO_VULKAN=ON)
     fi
     if [[ "$md_id" == "lr-ppsspp" ]]; then

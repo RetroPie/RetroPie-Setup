@@ -22,7 +22,7 @@ function _get_branch_mame() {
 }
 
 function depends_mame() {
-    if compareVersions $__gcc_version lt 7; then
+    if [[ "$__gcc_version" -lt 7 ]]; then
         md_ret_errors+=("Sorry, you need an OS with gcc 7 or newer to compile $md_id")
         return 1
     fi

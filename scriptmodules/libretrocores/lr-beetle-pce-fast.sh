@@ -34,6 +34,7 @@ function build_lr-beetle-pce-fast() {
 function install_lr-beetle-pce-fast() {
     md_ret_files=(
         'mednafen_pce_fast_libretro.so'
+        'COPYING'
         'README.md'
     )
 }

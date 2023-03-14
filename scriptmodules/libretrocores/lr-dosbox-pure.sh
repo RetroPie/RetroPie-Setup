@@ -17,6 +17,12 @@ rp_module_repo="git https://github.com/libretro/dosbox-pure.git main"
 rp_module_section="exp"
 rp_module_flags=""
 
+function depends_lr-dosbox-pure() {
+    # lr-dosbox-pure will try and use g++ v9 on arm if the system default is v10 due to bugs
+    # see https://github.com/libretro/dosbox-pure/commit/603b1c7ae
+    isPlatform "arm" && [[ "$__gcc_version" -eq 10 ]] && getDepends g++-9
+}
+
 function sources_lr-dosbox-pure() {
     gitPullOrClone
 }

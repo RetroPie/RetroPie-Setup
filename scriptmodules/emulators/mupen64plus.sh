@@ -345,7 +345,7 @@ function configure_mupen64plus() {
             echo "[Video-GLideN64]" >> "$config"
         fi
         # Settings version. Don't touch it.
-        iniSet "configVersion" "17"
+        iniSet "configVersion" "29"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         iniSet "EnableFBEmulation" "True"
@@ -370,6 +370,13 @@ function configure_mupen64plus() {
             setAutoConf mupen64plus_audio 1
             setAutoConf mupen64plus_compatibility_check 1
         elif isPlatform "mesa"; then
+            # Create Video-Rice section in .cfg
+            if ! grep -q "\[Video-Rice\]" "$config"; then
+                echo "[Video-Rice]" >> "$config"
+            fi
+            # Fix flickering and black screen issues with rice video plugin
+            iniSet "ScreenUpdateSetting" "7"
+
             setAutoConf mupen64plus_audio 0
             setAutoConf mupen64plus_compatibility_check 0
         fi
