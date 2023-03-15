@@ -128,7 +128,7 @@ function _add_rom_attractmode() {
 
 function depends_attractmode() {
     local depends=(
-        cmake libflac-dev libcurl4-openssl-dev libogg-dev libvorbis-dev libopenal-dev libfreetype6-dev
+        cmake fonts-freefont-ttf libflac-dev libcurl4-openssl-dev libogg-dev libvorbis-dev libopenal-dev libfreetype6-dev
         libudev-dev libjpeg-dev libudev-dev libavutil-dev libavcodec-dev
         libavformat-dev libavfilter-dev libswscale-dev libswresample-dev
         libfontconfig1-dev
