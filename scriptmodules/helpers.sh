@@ -180,7 +180,8 @@ function hasPackage() {
 
     local ver
     local status
-    local out=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
+    # extract the first line only (for cases where both amd64 & i386 versions of a package are installed)
+    local out=$(dpkg-query -W --showformat='${Status} ${Version}\n' $1 2>/dev/null | head -n1)
     if [[ "$?" -eq 0 ]]; then
         ver="${out##* }"
         status="${out% *}"
