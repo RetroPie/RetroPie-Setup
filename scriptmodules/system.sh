@@ -369,6 +369,66 @@ function get_rpi_video() {
     export PKG_CONFIG_PATH="$pkgconfig"
 }
 
+function has_video_output_device() {
+    # check if there is a video output device with a connected display
+    if [[ -d /sys/class/drm ]]; then
+        local d
+        for d in /sys/class/drm/*/ ;
+        do
+            [[ -f "$d/status" ]] && [[ $(cat "$d/status") == "connected" ]] && return 0
+        done
+    fi
+    return 1
+}
+
+function has_render_device() {
+    # check if there is a render note
+    [[ -n "$(ls /dev/dri/render*)" ]] && return 0
+    return 1
+}
+
+function get_graphics_platform() {
+    case "$(systemctl get-default)" in
+        multi-user.target)
+            # for kmsdrm we need a card for video output and a render device for gl/gles acceleration
+            has_video_output_device && __platform_flags+=(kms)
+            ;;
+        graphical.target)
+            __platform_flags+=(x11)
+            # Only allow wayland if drm-backend.so can be used. Video output device is mandatory.
+            has_video_output_device && __platform_flags+=(wayland)
+            ;;
+    esac
+}
+
+function get_opengl_target_platform() {
+    if isPlatform "x11"; then
+        # glxinfo only runs under x11
+        ! hasPackage "mesa-utils" && aptInstall mesa-utils
+
+        local gl_info=$(sudo -u $user DISPLAY=:0 glxinfo -B)
+        local glcore_ver=$(echo "$gl_info" | grep -oP 'Max core profile version:\s\K.*')
+        local gl_ver=$(echo "$gl_info" | grep -oP 'Max compat profile version:\s\K.*')
+        local gles_ver=$(echo "$gl_info" | grep -oP 'Max GLES\[23\] profile version:\s\K.*')
+
+        # use $glcore_ver as $gl_ver if version is higher
+        compareVersions "$glcore_ver" gt "$gl_ver" && gl_ver="$glcore_ver"
+        if compareVersions "$gles_ver" gt "1.1" && compareVersions "$gl_ver" lt "4.2"; then
+            compareVersions "$gles_ver" gt "3.1" && __platform_flags+=(gles3 gles31 gles32)
+            __platform_flags+=(gles)
+        else
+            compareVersions "$gl_ver" gt "2.0" && __platform_flags+=(gl2)
+            __platform_flags+=(gl)
+        fi
+    else
+        # Fallback for other platforms
+        # Use GL for x86. Most x86 platforms have better GL support.
+        # Use GLES for arm. Most arm platforms have better GLES support.
+        isPlatform "x86" && __platform_flags+=(gl) || __platform_flags+=(gles)
+        isPlatform "kms" && ! has_render_device && __platform_flags+=(softpipe)
+    fi
+}
+
 function get_platform() {
     local architecture="$(uname --machine)"
     if [[ -z "$__platform" ]]; then
@@ -626,14 +686,15 @@ function platform_tinker() {
 
 function platform_native() {
     __default_cpu_flags="-march=native"
-    __platform_flags+=(gl vulkan)
-    if [[ "$__has_kms" -eq 1 ]]; then
-        __platform_flags+=(kms)
-    else
-        __platform_flags+=(x11)
-    fi
     # add x86 platform flag for x86/x86_64 archictures.
     [[ "$__platform_arch" =~ (i386|i686|x86_64) ]] && __platform_flags+=(x86)
+    # get native video platform flags
+    if [[ "$__has_kms" -eq 1 ]]; then
+        __platform_flags+=(kms gl vulkan)
+    else
+        get_graphics_platform
+        get_opengl_target_platform
+    fi
 }
 
 function platform_armv7-mali() {
