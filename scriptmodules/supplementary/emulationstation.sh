@@ -178,8 +178,10 @@ function build_emulationstation() {
         fi
     elif isPlatform "gles"; then
         params+=(-DGLES=On)
+        ! isPlatform "gles2" && params+=(-DUSE_GLES1=On)
     elif isPlatform "gl"; then
         params+=(-DGL=On)
+        isPlatform "gl2" && params+=(-DUSE_GL21=On)
     fi
     if isPlatform "dispmanx"; then
         params+=(-DOMX=On)
