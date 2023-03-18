@@ -15,7 +15,7 @@ rp_module_section=""
 rp_module_flags=""
 
 function depends_image() {
-    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs xz-utils)
+    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs openssl xz-utils)
     isPlatform "x86" && depends+=(qemu-user-static)
     getDepends "${depends[@]}"
 }
@@ -284,6 +284,13 @@ function create_image() {
     local new_id="$(blkid -s PARTUUID -o value "$part_root" | cut -c -8)"
     sed -i "s/$old_id/$new_id/" "$tmp/boot/cmdline.txt"
     sed -i "s/$old_id/$new_id/g" "$tmp/etc/fstab"
+
+    # pre-set the default username and password on RaspiOS 11
+    # otherwise the 1st time boot will prompt a username/pass change
+    if [[ "$image" == *bullseye* ]]; then
+        local default_pwd="$(echo 'raspberry' | openssl passwd -6 -stdin)"
+        echo "pi:$default_pwd" > "$tmp/boot/userconf.txt"
+    fi
 
     # unmount
     umount -l "$tmp/boot" "$tmp"
