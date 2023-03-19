@@ -37,7 +37,7 @@ function depends_dolphin() {
     if [[ -n "$has_qt6" ]]; then
         depends+=(qt6-base-private-dev)
     else
-        depends+=(qt5-base-private-dev)
+        depends+=(qtbase5-private-dev)
     fi
     getDepends "${depends[@]}"
 }
