@@ -321,6 +321,10 @@ function configure_mupen64plus() {
     # on the rp-dist file. This preserves any user configs from modification and allows us to have
     # a default config for reference
     if [[ -f "$config" ]]; then
+        # patch existing mupen64plus config because Gliden64 overwrites GlideN64 user configs
+        # if configVersion is wrong 
+        grep -q "configVersion" "$config" && iniConfig " = " "" "$config" && iniSet "configVersion" "$(cat $md_inst/share/mupen64plus/GLideN64_config_version.ini)"
+    
         mv "$config" "$config.user"
         su "$user" -c "$cmd"
         mv "$config" "$config.rp-dist"
@@ -345,7 +349,7 @@ function configure_mupen64plus() {
             echo "[Video-GLideN64]" >> "$config"
         fi
         # Settings version. Don't touch it.
-        iniSet "configVersion" "29"
+        iniSet "configVersion" "$(cat $md_inst/share/mupen64plus/GLideN64_config_version.ini)"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         iniSet "EnableFBEmulation" "True"
