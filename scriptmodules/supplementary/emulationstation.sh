@@ -249,13 +249,6 @@ if [[ \$(id -u) -eq 0 ]]; then
     exit 1
 fi
 
-if [[ "\$(uname --machine)" != *86* ]]; then
-    if [[ -n "\$(pidof X)" ]]; then
-        echo "X is running. Please shut down X in order to mitigate problems with losing keyboard input. For example, logout from LXDE."
-        exit 1
-    fi
-fi
-
 # use SDL2 wayland video driver if wayland session is detected.
 # Emulationstation has focus problems under Ubuntu 22.04's GNOME on Wayland session. Don't use SDL2's wayland driver and run 
 # emulationstation with --fullscreen-borderless if desktop session is GNOME on Wayland.
