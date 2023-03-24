@@ -63,7 +63,7 @@ function iniProcess() {
 
     local match
     if [[ -f "$file" ]]; then
-        match=$(egrep -i "$match_re" "$file" | tail -1)
+        match=$(grep -i "$match_re" "$file" | tail -1)
     else
         touch "$file"
     fi
