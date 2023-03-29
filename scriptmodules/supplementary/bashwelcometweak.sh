@@ -114,8 +114,7 @@ function retropie_welcome() {
                 out+="${fgred}Uptime.............: ${UPTIME}"
                 ;;
             6)
-                out+="${fgred}Memory.............: $(grep MemFree /proc/meminfo | awk '$3=="kB"{if ($2>1024^2){$2=$2/1024^2;$3="GB";} else if ($2>1024){$2=$2/1024;$3="MB";}} 1') (Free) \
-/ $(grep MemTotal /proc/meminfo | awk '$3=="kB"{if ($2>1024^2){$2=$2/1024^2;$3="GB";} else if ($2>1024){$2=$2/1024;$3="MB";}} 1') (Total)"
+                out+="${fgred}Memory.............: $(free -h | awk 'NR==2 {printf("%s (Free) / %s (Total)", $4, $2)}')"
                 ;;
             7)
                 out+="${fgred}Running Processes..: $(ps ax | wc -l | tr -d " ")"
