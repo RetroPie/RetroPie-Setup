@@ -13,7 +13,7 @@ rp_module_id="lr-caprice32"
 rp_module_desc="Amstrad CPC emu - Caprice32 port for libretro"
 rp_module_help="ROM Extensions: .cdt .cpc .dsk\n\nCopy your Amstrad CPC games to $romdir/amstradcpc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/libretro-cap32/master/cap32/COPYING.txt"
-rp_module_repo="git https://github.com/libretro/libretro-cap32.git master"
+rp_module_repo="git https://github.com/cmitu/libretro-cap32.git master"
 rp_module_section="main"
 
 function sources_lr-caprice32() {
