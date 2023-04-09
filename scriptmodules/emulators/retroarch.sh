@@ -12,7 +12,7 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
-rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.12.0"
+rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.15.0"
 rp_module_section="core"
 
 function depends_retroarch() {
@@ -176,9 +176,6 @@ function configure_retroarch() {
     iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
-    iniSet "rgui_browser_directory" "$romdir"
-    iniSet "rgui_switch_icons" "false"
-
     if ! isPlatform "x86"; then
         iniSet "video_threaded" "true"
     fi
@@ -236,6 +233,10 @@ function configure_retroarch() {
     # rgui by default
     iniSet "menu_driver" "rgui"
     iniSet "rgui_aspect_ratio_lock" "2"
+    iniSet "rgui_browser_directory" "$romdir"
+    iniSet "rgui_switch_icons" "false"
+    iniSet "menu_rgui_shadows" "true"
+    iniSet "rgui_menu_color_theme" "29" # Tango Dark theme
 
     # hide online updater menu options and the restart option
     iniSet "menu_show_core_updater" "false"
@@ -244,13 +245,18 @@ function configure_retroarch() {
     # disable the search action
     iniSet "menu_disable_search_button" "true"
 
-    # remove some options from quick menu
+    # remove some rarely used entries from the quick menu
     iniSet "quick_menu_show_close_content" "false"
     iniSet "quick_menu_show_add_to_favorites" "false"
+    iniSet "quick_menu_show_replay" "false"
+    iniSet "quick_menu_show_start_recording" "false"
+    iniSet "quick_menu_show_start_streaming" "false"
     iniSet "menu_show_overlays" "false"
 
     # disable the load notification message with core and game info
     iniSet "menu_show_load_content_animation" "false"
+    # disable core cache file
+    iniSet "core_info_cache_enable "false"
 
     # disable unnecessary xmb menu tabs
     iniSet "xmb_show_add" "false"
