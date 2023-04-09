@@ -256,7 +256,7 @@ function configure_retroarch() {
     # disable the load notification message with core and game info
     iniSet "menu_show_load_content_animation" "false"
     # disable core cache file
-    iniSet "core_info_cache_enable "false"
+    iniSet "core_info_cache_enable" "false"
 
     # disable unnecessary xmb menu tabs
     iniSet "xmb_show_add" "false"
