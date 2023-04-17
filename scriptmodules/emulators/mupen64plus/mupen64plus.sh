@@ -99,11 +99,13 @@ function remap() {
     # read retroarch auto config file and use config
     # for mupen64plus.cfg
     local file
-    local bind
+    local hotkeys_bind=( "" "" "" )
     local hotkeys_rp=( "input_exit_emulator" "input_load_state" "input_save_state" )
     local hotkeys_m64p=( "Joy Mapping Stop" "Joy Mapping Load State" "Joy Mapping Save State" )
     local i
     local j
+    local product_id
+    local vendor_id
 
     iniConfig " = " "" "$config"
     if ! grep -q "\[CoreEvents\]" "$config"; then
@@ -112,23 +114,38 @@ function remap() {
     fi
 
     local atebitdo_hack
-    for i in {0..2}; do
-        bind=""
-        for device_num in "${!devices[@]}"; do
-            # get name of retroarch auto config file
-            file=$(grep -lF "\"${devices[$device_num]}\"" "$configdir/all/retroarch-joypads/"*.cfg)
-            atebitdo_hack=0
-            [[ "$file" == *8Bitdo* ]] && getAutoConf "8bitdo_hack" && atebitdo_hack=1
-            if [[ -f "$file" ]]; then
-                if [[ -n "$bind" && "$bind" != *, ]]; then
-                    bind+=","
+    for device_num in "${!devices[@]}"; do
+        # get the name of the retroarch auto config file
+        file=$(grep -lF "\"${devices[$device_num]}\"" "$configdir/all/retroarch-joypads/"*.cfg)
+
+        # if we can't find the profile .cfg by name, try to match it using the vendor/product IDs
+        # handles the situation when joystick's SDL name is different than the udev name (SDL 2.0.14+)
+        if [[ ! -f "$file" ]]; then
+            vendor_id="$(</sys/class/input/js${device_num}/device/id/vendor)"
+            product_id="$(</sys/class/input/js${device_num}/device/id/product)"
+
+            # the IDs are hexadecimal, convert them to decimal
+            vendor_id=$((0x${vendor_id}))
+            product_id=$((0x${product_id}))
+
+            # match both vendor/product in the profile .cfg file(s)
+            file="$(grep -El "^[[:space:]]*input_vendor_id[[:space:]]*=[[:space:]]*\"?${vendor_id}" -- "$configdir/all/retroarch-joypads/"*.cfg \
+               | xargs -d'\n' grep -El "^[[:space:]]*input_product_id[[:space:]]*=[[:space:]]*\"?${product_id}" -- | head -n1)"
+        fi
+        atebitdo_hack=0
+        [[ "$file" == *8Bitdo* ]] && getAutoConf "8bitdo_hack" && atebitdo_hack=1
+        if [[ -f "$file" ]]; then
+            for i in {0..2}; do
+                if [[ -n "${hotkeys_bind[$i]}" && "${hotkeys_bind[i]}" != *, ]]; then
+                    hotkeys_bind[$i]+=","
                 fi
-                bind+=$(getBind "${hotkeys_rp[$i]}" "${device_num}" "$file")
-            fi
-        done
-        # write hotkey to mupen64plus.cfg
-        iniConfig " = " "\"" "$config"
-        iniSet "${hotkeys_m64p[$i]}" "$bind"
+
+                hotkeys_bind[$i]+=$(getBind "${hotkeys_rp[$i]}" "${device_num}" "$file")
+                # write hotkey to mupen64plus.cfg
+                iniConfig " = " "\"" "$config"
+                iniSet "${hotkeys_m64p[$i]}" "${hotkeys_bind[$i]}"
+            done
+        fi
     done
 }
 
@@ -172,7 +189,7 @@ function testCompatibility() {
     # fallback for glesn64 and rice plugin
     # some roms lead to a black screen of death
     local game
-    
+
     # these games need RSP-LLE
     local blacklist=(
         naboo
