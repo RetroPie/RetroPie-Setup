@@ -210,7 +210,10 @@ function _init_config_skyscraper() {
     done
 
     # If we don't have a previous config.ini file, copy the example one
-    [[ ! -f "$scraper_conf_dir/config.ini" ]] && cp "$md_inst/config.ini.example" "$scraper_conf_dir/config.ini"
+    if [[ ! -f "$scraper_conf_dir/config.ini" ]]; then
+        cp "$md_inst/config.ini.example" "$scraper_conf_dir/config.ini"
+        sed -i 's/\[esgamelist\]/[esgamelist]\ncacheScreenshots="false"/' "$scraper_conf_dir/config.ini"
+    fi
 
     # Try to find the rest of the necessary files from the qmake build file
     # They should be listed in the `unix:examples.file` configuration line
