@@ -12,7 +12,7 @@
 rp_module_id="cgenius"
 rp_module_desc="Commander Genius - Modern Interpreter for the Commander Keen Games (Vorticon and Galaxy Games)"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/gerstrong/Commander-Genius/master/COPYRIGHT"
-rp_module_repo="git https://gitlab.com/Dringgstein/Commander-Genius.git v3.2.0"
+rp_module_repo="git https://gitlab.com/Dringgstein/Commander-Genius.git v3.3.0"
 rp_module_section="exp"
 
 function depends_cgenius() {
