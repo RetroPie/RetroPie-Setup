@@ -23,6 +23,8 @@ function depends_minivmac() {
 
 function sources_minivmac() {
     gitPullOrClone
+    # apply fix for building on gcc 10+
+    applyPatch "$md_data/gcc10_fix.diff"
 }
 
 function build_minivmac() {

@@ -29,6 +29,7 @@ function build_lr-beetle-supergrafx() {
 function install_lr-beetle-supergrafx() {
     md_ret_files=(
         'mednafen_supergrafx_libretro.so'
+        'COPYING'
     )
 }
 

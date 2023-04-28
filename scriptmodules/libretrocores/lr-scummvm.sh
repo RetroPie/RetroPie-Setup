@@ -26,7 +26,7 @@ function sources_lr-scummvm() {
 
 function build_lr-scummvm() {
     make clean
-    make HAVE_MT32EMU=1
+    make USE_MT32EMU=1
     make datafiles
     md_ret_require="$md_build/scummvm_libretro.so"
 }
@@ -49,7 +49,7 @@ function configure_lr-scummvm() {
     defaultRAConfig "scummvm"
 
     # unpack the data files to system dir
-    runCmd unzip -q "$md_inst/scummvm.zip" -d "$biosdir"
+    runCmd unzip -q -o "$md_inst/scummvm.zip" -d "$biosdir"
     chown -R $user:$user "$biosdir/scummvm"
 
     # basic initial configuration (if config file not found)

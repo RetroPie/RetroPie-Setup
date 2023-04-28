@@ -88,6 +88,10 @@ function conf_binary_vars() {
 
 function conf_build_vars() {
     __gcc_version=$(gcc -dumpversion)
+    # extract only the major version
+    # gcc -dumpversion on GCC >= 7 seems to provide the major version but the documentation
+    # suggests this depends on how it's configured
+    __gcc_version="${__gcc_version%%.*}"
 
     # calculate build concurrency based on cores and available memory
     __jobs=1
@@ -176,7 +180,7 @@ function get_os_version() {
 
             # Debian unstable is not officially supported though
             if [[ "$__os_release" == "unstable" ]]; then
-                __os_debian_ver=11
+                __os_debian_ver=13
             fi
 
             # we still allow Raspbian 8 (jessie) to work (We show an popup in the setup module)
@@ -200,10 +204,10 @@ function get_os_version() {
                 __platform_flags+=(xbian)
             fi
 
-            # we provide binaries for RPI on Raspbian 9/10
+            # we provide binaries for RPI on Raspberry Pi OS 10/11
             if isPlatform "rpi" && \
                isPlatform "32bit" && \
-               [[ "$__os_debian_ver" -gt 9 && "$__os_debian_ver" -lt 11 ]]; then
+               [[ "$__os_debian_ver" -ge 10 && "$__os_debian_ver" -le 11 ]]; then
                # only set __has_binaries if not already set
                [[ -z "$__has_binaries" ]] && __has_binaries=1
             fi
@@ -264,8 +268,10 @@ function get_os_version() {
                 __os_debian_ver="9"
             elif compareVersions "$__os_release" lt 20.04; then
                 __os_debian_ver="10"
-            else
+            elif compareVersions "$__os_release" lt 22.10; then
                 __os_debian_ver="11"
+            else
+                __os_debian_ver="12"
             fi
             __os_ubuntu_ver="$__os_release"
             ;;

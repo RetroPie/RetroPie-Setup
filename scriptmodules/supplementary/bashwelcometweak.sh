@@ -114,7 +114,7 @@ function retropie_welcome() {
                 out+="${fgred}Uptime.............: ${UPTIME}"
                 ;;
             6)
-                out+="${fgred}Memory.............: $(grep MemFree /proc/meminfo | awk {'print $2'})kB (Free) / $(grep MemTotal /proc/meminfo | awk {'print $2'})kB (Total)"
+                out+="${fgred}Memory.............: $(free -h | awk 'NR==2 {printf("%s (Free) / %s (Total)", $4, $2)}')"
                 ;;
             7)
                 out+="${fgred}Running Processes..: $(ps ax | wc -l | tr -d " ")"

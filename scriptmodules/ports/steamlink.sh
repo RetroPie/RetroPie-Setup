@@ -13,11 +13,11 @@ rp_module_id="steamlink"
 rp_module_desc="Steam Link for Raspberry Pi 3 or later"
 rp_module_licence="PROP https://steamcommunity.com/app/353380/discussions/0/1743353164093954254/"
 rp_module_section="exp"
-rp_module_flags="!all rpi3 rpi4"
+rp_module_flags="!all rpi3 rpi4 !64bit"
 rp_module_help="Stream games from your computer with Steam"
 
 function depends_steamlink() {
-    getDepends python3-dev libinput10 libxkbcommon-x11-0 matchbox-window-manager xorg zenity
+    getDepends libxkbcommon-x11-0 libinput10 libpulse0 libx11-6 libx11-xcb1 cec-utils openssl
 }
 
 function install_bin_steamlink() {
@@ -29,7 +29,6 @@ function remove_steamlink() {
 }
 
 function configure_steamlink() {
-    local sl_script="$md_inst/steamlink_xinit.sh"
     local sl_dir="$home/.local/share/SteamLink"
     local valve_dir="$home/.local/share/Valve Corporation"
 
@@ -43,15 +42,7 @@ function configure_steamlink() {
         touch "$valve_dir/SteamLink/streaming_args.txt"
         chown $user:$user "$valve_dir/SteamLink/streaming_args.txt"
         moveConfigFile "$valve_dir/SteamLink/streaming_args.txt" "$md_conf_root/$md_id/streaming_args.txt"
-
-        cat > "$sl_script" << _EOF_
-#!/bin/bash
-xset -dpms s off s noblank
-matchbox-window-manager &
-/usr/bin/steamlink
-_EOF_
-        chmod +x "$sl_script"
     fi
 
-    addPort "$md_id" "steamlink" "Steam Link" "XINIT:$sl_script"
+    addPort "$md_id" "steamlink" "Steam Link" "steamlink"
 }

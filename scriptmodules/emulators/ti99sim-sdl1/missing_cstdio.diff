@@ -1,0 +1,10 @@
+--- a/include/common.hpp
++++ b/include/common.hpp
+@@ -30,6 +30,7 @@
+ #define COMMON_HPP_
+ 
+ #include <cstdlib>	// For definition of size_t
++#include <cstdio>
+ 
+ //----------------------------------------------------------------------------
+ // Determine platform & OS

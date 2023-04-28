@@ -13,21 +13,32 @@ rp_module_id="dolphin"
 rp_module_desc="Gamecube/Wii emulator Dolphin"
 rp_module_help="ROM Extensions: .gcm .iso .wbfs .ciso .gcz .rvz .wad .wbfs\n\nCopy your Gamecube roms to $romdir/gc and Wii roms to $romdir/wii"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dolphin-emu/dolphin/master/COPYING"
-rp_module_repo="git https://github.com/dolphin-emu/dolphin.git :_get_branch_dolphin"
+rp_module_repo="git https://github.com/dolphin-emu/dolphin.git master :_get_commit_dolphin"
 rp_module_section="exp"
 rp_module_flags="!all 64bit"
 
-function _get_branch_dolphin() {
-    local branch="master"
-    # current HEAD of dolphin doesn't build on Ubuntu 16.04 (with  gcc 5.4)
-    compareVersions $__gcc_version lt 6 && branch="5.0"
-    echo "$branch"
+function _get_commit_dolphin() {
+    local commit
+    # current HEAD of dolphin doesn't build without a C++20 capable compiler
+    [[ "$__gcc_version" -lt 10 ]] && commit="f59f1a2a"
+    # support gcc 8.4.0 for Ubuntu 18.04
+    [[ "$__gcc_version" -lt 9  ]] && commit="1c0ca09e"
+    echo "$commit"
 }
 
 function depends_dolphin() {
-    local depends=(cmake pkg-config libao-dev libasound2-dev libavcodec-dev libavformat-dev libbluetooth-dev libenet-dev liblzo2-dev libminiupnpc-dev libopenal-dev libpulse-dev libreadline-dev libsfml-dev libsoil-dev libsoundtouch-dev libswscale-dev libusb-1.0-0-dev libxext-dev libxi-dev libxrandr-dev portaudio19-dev zlib1g-dev libudev-dev libevdev-dev libmbedtls-dev libcurl4-openssl-dev libegl1-mesa-dev qtbase5-private-dev)
-    # current HEAD of dolphin doesn't build gtk2 UI anymore
-    compareVersions $__gcc_version lt 6 && depends+=(libgtk2.0-dev libwxbase3.0-dev libwxgtk3.0-dev)
+    local depends=(cmake gettext pkg-config libao-dev libasound2-dev libavcodec-dev libavformat-dev libbluetooth-dev libenet-dev liblzo2-dev libminiupnpc-dev libopenal-dev libpulse-dev libreadline-dev libsfml-dev libsoil-dev libsoundtouch-dev libswscale-dev libusb-1.0-0-dev libxext-dev libxi-dev libxrandr-dev portaudio19-dev zlib1g-dev libudev-dev libevdev-dev libmbedtls-dev libcurl4-openssl-dev libegl1-mesa-dev liblzma-dev)
+    if [[ "$__gcc_version" -lt 8 ]]; then
+        md_ret_errors+=("Sorry, you need an OS with gcc 8 or newer to compile $md_id")
+        return 1
+    fi
+    # check if qt6 is available, otherwise use qt5
+    local has_qt6=$(apt-cache madison qt6-base-private-dev 2>/dev/null | cut -d'|' -f1)
+    if [[ -n "$has_qt6" ]]; then
+        depends+=(qt6-base-private-dev)
+    else
+        depends+=(qtbase5-private-dev)
+    fi
     getDepends "${depends[@]}"
 }
 
@@ -38,7 +49,8 @@ function sources_dolphin() {
 function build_dolphin() {
     mkdir build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX="$md_inst"
+    # use the bundled 'speexdsp' libs, distro versions before 1.2.1 produce a 'cmake' error
+    cmake .. -DBUNDLE_SPEEX=ON -DCMAKE_INSTALL_PREFIX="$md_inst"
     make clean
     make
     md_ret_require="$md_build/build/Binaries/dolphin-emu"

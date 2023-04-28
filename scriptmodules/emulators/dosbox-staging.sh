@@ -40,6 +40,9 @@ function build_dosbox-staging() {
     local meson_cmd="meson"
     [[ -f "$md_build/meson/meson.py" ]] && meson_cmd="python3 $md_build/meson/meson.py"
 
+    # disable speexdsp simd support on armv6 devices
+    isPlatform "armv6" && params+=(-Dspeexdsp:simd=false)
+
     $meson_cmd setup "${params[@]}" build
     $meson_cmd compile -j${__jobs} -C build
 

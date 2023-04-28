@@ -133,6 +133,38 @@ function editFile() {
     [[ -n "$choice" ]] && echo "$choice" >"$file"
 }
 
+## @fn inputBox()
+## @param title title of dialog
+## @param text default text
+## @param minchars minimum chars to accept
+## @brief Opens an inputbox dialog and echoes resulting text. Uses the OSK if installed.
+## @details The input dialog has OK/Cancel buttons and can be cancelled by the user.
+## The dialog will enforce the minimum number of characters expected, re-prompting the user.
+## @retval 0 when the user entered the text and chose the OK button
+## @retval != 0 when the user chose the Cancel button
+
+function inputBox() {
+    local title="$1"
+    local text="$2"
+    local minchars="$3"
+    [[ -z "$minchars" ]] && minchars=0
+    local params=(--backtitle "$__backtitle" --inputbox "Enter the $title")
+    local osk="$(rp_getInstallPath joy2key)/osk.py"
+
+    if [[ -f "$osk" ]]; then
+        params+=(--minchars "$minchars")
+        text=$(python3 "$osk" "${params[@]}" "$text" 2>&1 >/dev/tty) || return $?
+    else
+        while true; do
+            text=$(dialog "${params[@]}" 10 60 "$text" 2>&1 >/dev/tty) || return $?
+            [[ "${#text}" -ge "$minchars" ]] && break
+            dialog --msgbox "$title must have at least $minchars characters" 8 60 2>&1 >/dev/tty
+        done
+    fi
+
+    echo "$text"
+}
+
 ## @fn hasPackage()
 ## @param package name of Debian package
 ## @param version requested version (optional)
@@ -148,7 +180,8 @@ function hasPackage() {
 
     local ver
     local status
-    local out=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
+    # extract the first line only (for cases where both amd64 & i386 versions of a package are installed)
+    local out=$(dpkg-query -W --showformat='${Status} ${Version}\n' $1 2>/dev/null | head -n1)
     if [[ "$?" -eq 0 ]]; then
         ver="${out##* }"
         status="${out% *}"
