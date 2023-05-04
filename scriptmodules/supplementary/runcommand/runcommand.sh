@@ -95,6 +95,11 @@ XRANDR="xrandr"
 
 source "$ROOTDIR/lib/inifuncs.sh"
 
+# disable the `patsub_replacement` shell option, it breaks the string substitution when replacement contains '&'
+if shopt -s patsub_replacement 2>/dev/null; then
+    shopt -u patsub_replacement
+fi
+
 function get_config() {
     declare -Ag MODE_MAP
 
