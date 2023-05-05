@@ -12,8 +12,8 @@
 rp_module_id="lr-scummvm"
 rp_module_desc="ScummVM port for libretro"
 rp_module_help="Copy your ScummVM games to $romdir/scummvm\n\nThe name of your game directories must be suffixed with '.svm' for direct launch in EmulationStation."
-rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/scummvm/main/LICENSE"
-rp_module_repo="git https://github.com/libretro/scummvm.git main"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/scummvm/master/COPYING"
+rp_module_repo="git https://github.com/libretro/scummvm.git master"
 rp_module_section="exp"
 
 function depends_lr-scummvm() {
@@ -25,17 +25,18 @@ function sources_lr-scummvm() {
 }
 
 function build_lr-scummvm() {
+    cd backends/platform/libretro
     make clean
     make USE_MT32EMU=1
     make datafiles
-    md_ret_require="$md_build/scummvm_libretro.so"
+    md_ret_require="$md_build/backends/platform/libretro/scummvm_libretro.so"
 }
 
 function install_lr-scummvm() {
     md_ret_files=(
-        "scummvm_libretro.so"
-        "scummvm.zip"
-        "LICENSE"
+        "backends/platform/libretro/scummvm_libretro.so"
+        "backends/platform/libretro/scummvm.zip"
+        "COPYING"
     )
 }
 
