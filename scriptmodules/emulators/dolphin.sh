@@ -19,8 +19,11 @@ rp_module_flags="!all 64bit"
 
 function _get_commit_dolphin() {
     local commit
-    # current HEAD of dolphin doesn't build without a C++20 capable compiler
+    local has_qt6=$(apt-cache madison qt6-base-private-dev 2>/dev/null | cut -d'|' -f1)
+    # current HEAD of dolphin doesn't build without a C++20 capable compiler ..
     [[ "$__gcc_version" -lt 10 ]] && commit="f59f1a2a"
+    # .. and without QT6
+    [[ -z "$has_qt6" ]] && commit="b9a7f577"
     # support gcc 8.4.0 for Ubuntu 18.04
     [[ "$__gcc_version" -lt 9  ]] && commit="1c0ca09e"
     echo "$commit"
