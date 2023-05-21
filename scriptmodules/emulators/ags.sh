@@ -18,7 +18,7 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function depends_ags() {
-    getDepends pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev liballegro4-dev
+    getDepends libsdl2-dev cmake pkg-config libaldmb1-dev libfreetype6-dev libtheora-dev libvorbis-dev libogg-dev liballegro4-dev
 }
 
 function sources_ags() {
