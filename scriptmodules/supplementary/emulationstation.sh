@@ -226,7 +226,7 @@ function init_input_emulationstation() {
             -r "//inputActionTMP" -v "inputAction" "$es_config"
     else
         xmlstarlet ed -L \
-            -u "/inputList/inputAction[@type='onfinish']/command" -v "$md_inst/scripts/inputconfiguration.sh" \
+            -u "/inputList/inputAction[@type='onfinish']/command[1]" -v "$md_inst/scripts/inputconfiguration.sh" \
             "$es_config"
     fi
 
