@@ -16,7 +16,7 @@ rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.15.0"
 rp_module_section="core"
 
 function depends_retroarch() {
-    local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
+    local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev libmbedtls12)
     isPlatform "rpi" && depends+=(libraspberrypi-dev)
     isPlatform "gles" && ! isPlatform "vero4k" && depends+=(libgles2-mesa-dev)
     isPlatform "mesa" && depends+=(libx11-xcb-dev)
