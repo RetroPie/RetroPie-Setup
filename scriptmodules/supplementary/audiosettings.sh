@@ -40,7 +40,24 @@ function gui_audiosettings() {
     fi
 }
 
+function _reset_alsa_audiosettings() {
+    /etc/init.d/alsa-utils reset
+    alsactl store
+    rm -f "$home/.asoundrc" "/etc/alsa/conf.d/99-retropie.conf"
+    printMsgs "dialog" "Audio settings reset to defaults"
+}
+
+function _move_old_config_audiosettings() {
+    if [[ -f "$home/.asoundrc" && ! -f "/etc/alsa/conf.d/99-retropie.conf" ]]; then
+        if dialog --yesno "The ALSA audio configuration for RetroPie has moved from $home/.asoundrc to /etc/alsa/conf.d/99-retropie.conf\n\nYou have a configuration in $home/.asoundrc - do you want to move it to the new location? If $home/.asoundrc contains your own changes you should choose 'No'." 20 76 2>&1 >/dev/tty; then
+            mv "$home/.asoundrc" "/etc/alsa/conf.d/"
+        fi
+    fi
+}
+
 function _bcm2835_alsa_compat_audiosettings() {
+    _move_old_config_audiosettings
+
     local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (ALSA - compat)" 22 86 16)
     local hdmi="HDMI"
 
@@ -89,10 +106,7 @@ function _bcm2835_alsa_compat_audiosettings() {
                 alsactl store
                 ;;
             R)
-                /etc/init.d/alsa-utils reset
-                alsactl store
-                rm -f "$home/.asoundrc"
-                printMsgs "dialog" "Audio settings reset to defaults"
+                _reset_alsa_audiosettings
                 ;;
             P)
                 _toggle_pulseaudio_audiosettings "on"
@@ -103,6 +117,8 @@ function _bcm2835_alsa_compat_audiosettings() {
 }
 
 function _bcm2835_alsa_internal_audiosettings() {
+    _move_old_config_audiosettings
+
     local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (ALSA)" 22 86 16)
     local options=()
     local card_index
@@ -132,10 +148,7 @@ function _bcm2835_alsa_internal_audiosettings() {
                 alsactl store
                 ;;
             R)
-                /etc/init.d/alsa-utils reset
-                alsactl store
-                rm -f "$home/.asoundrc"
-                printMsgs "dialog" "Audio settings reset to defaults"
+                _reset_alsa_audiosettings
                 ;;
             P)
                 _toggle_pulseaudio_audiosettings "on"
@@ -210,9 +223,9 @@ ctl.!default {
 }
 EOF
     fi
-
-    mv "$tmpfile" "$home/.asoundrc"
-    chown "$user:$user" "$home/.asoundrc"
+    local dest="/etc/alsa/conf.d/99-retropie.conf"
+    mv "$tmpfile" "$dest"
+    chmod 644 "$dest"
 }
 
 function _pulseaudio_audiosettings() {
@@ -245,7 +258,8 @@ function _pulseaudio_audiosettings() {
         case "$choice" in
             [0-9])
                 _pa_cmd_audiosettings pactl set-default-sink $choice
-                rm -f "$home/.asoundrc"
+                rm -f "/etc/alsa/conf.d/99-retropie.conf"
+
                 printMsgs "dialog" "Set audio output to ${options[$((choice*2+1))]}"
                 ;;
             M)
