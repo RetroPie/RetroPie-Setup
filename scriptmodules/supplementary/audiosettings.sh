@@ -40,8 +40,25 @@ function gui_audiosettings() {
     fi
 }
 
+function _reset_alsa_audiosettings() {
+    /etc/init.d/alsa-utils reset
+    alsactl store
+    rm -f "$home/.asoundrc" "/etc/alsa/conf.d/99-retropie.conf"
+    printMsgs "dialog" "Audio settings reset to defaults"
+}
+
+function _move_old_config_audiosettings() {
+    if [[ -f "$home/.asoundrc" && ! -f "/etc/alsa/conf.d/99-retropie.conf" ]]; then
+        if dialog --yesno "The ALSA audio configuration for RetroPie has moved from $home/.asoundrc to /etc/alsa/conf.d/99-retropie.conf\n\nYou have a configuration in $home/.asoundrc - do you want to move it to the new location? If $home/.asoundrc contains your own changes you should choose 'No'." 20 76 2>&1 >/dev/tty; then
+            mv "$home/.asoundrc" "/etc/alsa/conf.d/"
+        fi
+    fi
+}
+
 function _bcm2835_alsa_compat_audiosettings() {
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (ALSA - compat)." 22 86 16)
+    _move_old_config_audiosettings
+
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (ALSA - compat)" 22 86 16)
     local hdmi="HDMI"
 
     # the Pi 4 has 2 HDMI ports, so number them
@@ -89,10 +106,7 @@ function _bcm2835_alsa_compat_audiosettings() {
                 alsactl store
                 ;;
             R)
-                /etc/init.d/alsa-utils reset
-                alsactl store
-                rm -f "$home/.asoundrc"
-                printMsgs "dialog" "Audio settings reset to defaults"
+                _reset_alsa_audiosettings
                 ;;
             P)
                 _toggle_pulseaudio_audiosettings "on"
@@ -103,7 +117,9 @@ function _bcm2835_alsa_compat_audiosettings() {
 }
 
 function _bcm2835_alsa_internal_audiosettings() {
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (ALSA)." 22 86 16)
+    _move_old_config_audiosettings
+
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (ALSA)" 22 86 16)
     local options=()
     local card_index
     local card_label
@@ -111,8 +127,7 @@ function _bcm2835_alsa_internal_audiosettings() {
     # Get the list of Pi internal cards
     while read card_no card_label; do
         options+=("$card_no" "$card_label")
-    done < <(aplay -ql | sed -En 's/^card ([0-9]+).*\[bcm2835 ([^]]*)\].*/\1 \2/p')
-
+    done < <(aplay -ql | sed -En -e '/^card/ {s/^card ([0-9]+).*\[(bcm2835 |vc4-)([^]]*)\].*/\1 \3/; s/hdmi[- ]?/HDMI /i; p}')
     options+=(
         M "Mixer - adjust output volume"
         R "Reset to default"
@@ -125,7 +140,7 @@ function _bcm2835_alsa_internal_audiosettings() {
     if [[ -n "$choice" ]]; then
         case "$choice" in
             [0-9])
-                _asoundrc_save_audiosettings $choice
+                _asoundrc_save_audiosettings $choice ${options[$((choice*2+1))]}
                 printMsgs "dialog" "Set audio output to ${options[$((choice*2+1))]}"
                 ;;
             M)
@@ -133,10 +148,7 @@ function _bcm2835_alsa_internal_audiosettings() {
                 alsactl store
                 ;;
             R)
-                /etc/init.d/alsa-utils reset
-                alsactl store
-                rm -f "$home/.asoundrc"
-                printMsgs "dialog" "Audio settings reset to defaults"
+                _reset_alsa_audiosettings
                 ;;
             P)
                 _toggle_pulseaudio_audiosettings "on"
@@ -146,23 +158,59 @@ function _bcm2835_alsa_internal_audiosettings() {
     fi
 }
 
-# configure the default ALSA soundcard based on chosen card #
+# configure the default ALSA soundcard based on chosen card index and type
 function _asoundrc_save_audiosettings() {
     [[ -z "$1" ]] && return
 
     local card_index=$1
+    local card_type=$2
     local tmpfile="$(mktemp)"
 
+    if isPlatform "kms" && ! isPlatform "dispmanx" && [[ $card_type == "HDMI"* ]]; then
+        # when the 'vc4hdmi' driver is used instead of 'bcm2835_audio' for HDMI,
+        # the 'hdmi:vchdmi[-idx]' PCM should be used for converting to the native IEC958 codec
+        # adds a volume control since the default configured mixer doesn't work
+        # (default configuration is at /usr/share/alsa/cards/vc4-hdmi.conf)
+        local card_name="$(cat /proc/asound/card${card_index}/id)"
+        cat << EOF > "$tmpfile"
+pcm.hdmi${card_index} {
+  type asym
+  playback.pcm {
+    type plug
+    slave.pcm "hdmi:${card_name}"
+  }
+}
+ctl.!default {
+  type hw
+  card $card_index
+}
+pcm.softvolume {
+    type           softvol
+    slave.pcm      "hdmi${card_index}"
+    control.name  "HDMI Playback Volume"
+    control.card  ${card_index}
+}
+
+pcm.softmute {
+    type softvol
+    slave.pcm "softvolume"
+    control.name "HDMI Playback Switch"
+    control.card ${card_index}
+    resolution 2
+}
+
+pcm.!default {
+    type plug
+    slave.pcm "softmute"
+}
+EOF
+    else
     cat << EOF > "$tmpfile"
 pcm.!default {
   type asym
   playback.pcm {
     type plug
     slave.pcm "output"
-  }
-  capture.pcm {
-    type plug
-    slave.pcm "input"
   }
 }
 pcm.output {
@@ -174,13 +222,14 @@ ctl.!default {
   card $card_index
 }
 EOF
-
-    mv "$tmpfile" "$home/.asoundrc"
-    chown "$user:$user" "$home/.asoundrc"
+    fi
+    local dest="/etc/alsa/conf.d/99-retropie.conf"
+    mv "$tmpfile" "$dest"
+    chmod 644 "$dest"
 }
 
 function _pulseaudio_audiosettings() {
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (PulseAudio)." 22 86 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (PulseAudio)" 22 86 16)
     local options=()
     local sink_index
     local sink_label
@@ -209,7 +258,8 @@ function _pulseaudio_audiosettings() {
         case "$choice" in
             [0-9])
                 _pa_cmd_audiosettings pactl set-default-sink $choice
-                rm -f "$home/.asoundrc"
+                rm -f "/etc/alsa/conf.d/99-retropie.conf"
+
                 printMsgs "dialog" "Set audio output to ${options[$((choice*2+1))]}"
                 ;;
             M)
