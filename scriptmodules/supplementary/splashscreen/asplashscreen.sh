@@ -20,11 +20,8 @@ do_start () {
     local config="/etc/splashscreen.list"
     local line
     local re="$REGEX_VIDEO\|$REGEX_IMAGE"
-    local omxiv="/opt/retropie/supplementary/omxiv/omxiv"
+    local vlc="vlc --intf dummy --quiet --no-video-title-show --play-and-exit --mmal-layer 10001"
     case "$RANDOMIZE" in
-        disabled)
-            line="$(head -1 "$config")"
-            ;;
         retropie)
             line="$(find "$ROOTDIR/supplementary/splashscreen" -type f | grep "$re" | shuf -n1)"
             ;;
@@ -38,36 +35,34 @@ do_start () {
             line="$(cat "$config" | shuf -n1)"
             ;;
     esac
-    if $(echo "$line" | grep -q "$REGEX_VIDEO"); then
-        # wait for dbus
-        while ! pgrep "dbus" >/dev/null; do
-            sleep 1
-        done
-        omxplayer --no-osd -o both -b --layer 10001 "$line"
-    elif $(echo "$line" | grep -q "$REGEX_IMAGE"); then
-        if [ "$RANDOMIZE" = "disabled" ]; then
-            local count=$(wc -l <"$config")
-        else
-            local count=1
-        fi
-        [ $count -eq 0 ] && count=1
-        [ $count -gt 12 ] && count=12
 
-        # Default duration is 12 seconds, check if configured otherwise
-        [ -z "$DURATION" ] && DURATION=12
-        local delay=$((DURATION/count))
-        if [ "$RANDOMIZE" = "disabled" ]; then
-            "$omxiv" --once -t $delay -b --layer 10001 -f "$config" >/dev/null 2>&1
-        else
-            "$omxiv" --once -t $delay -b --layer 10001 -r "$line" >/dev/null 2>&1
-        fi
+    if [ "$RANDOMIZE" = "disabled" ]; then
+        local count=$(wc -l <"$config")
+    else
+        local count=1
     fi
+
+    [ $count -eq 0 ] && count=1
+    [ $count -gt 12 ] && count=12
+
+    # Default duration is 12 seconds, check if configured otherwise
+    [ -z "$DURATION" ] && DURATION=12
+    local delay=$((DURATION/count))
+
+    vlc="$vlc --image-duration $delay"
+    if [ "$RANDOMIZE" = "disabled" ]; then
+        tr "\n" "\0" <"$config" | xargs -0 $vlc & 2>/dev/null
+    else
+        $vlc "$line" & 2>/dev/null
+    fi
+    echo $! >/tmp/vlc.pid
+
     exit 0
 }
 
 case "$1" in
     start|"")
-        do_start &
+        do_start
         ;;
     restart|reload|force-reload)
         echo "Error: argument '$1' not supported" >&2

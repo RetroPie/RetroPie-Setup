@@ -32,8 +32,7 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    local params=(insserv)
-    isPlatform "32bit" && params+=(omxplayer)
+    local params=(insserv vlc)
     getDepends "${params[@]}"
 }
 
@@ -48,14 +47,13 @@ ConditionPathExists=$md_inst/asplashscreen.sh
 
 [Service]
 Type=oneshot
+User=$user
 ExecStart=$md_inst/asplashscreen.sh
 RemainAfterExit=yes
 
 [Install]
 WantedBy=sysinit.target
 _EOF_
-
-    rp_installModule "omxiv" "_autoupdate_"
 
     gitPullOrClone "$md_inst"
 
@@ -229,7 +227,7 @@ function preview_splashscreen() {
 
     local path
     local file
-    local omxiv="/opt/retropie/supplementary/omxiv/omxiv"
+    local vlc="sudo -u $user vlc --intf dummy --quiet --play-and-exit --image-duration 6"
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -241,13 +239,13 @@ function preview_splashscreen() {
                 1)
                     file=$(choose_splashscreen "$path" "image")
                     [[ -z "$file" ]] && break
-                    $omxiv -b "$file"
+                    $vlc "$file"
                     ;;
                 2)
                     file=$(mktemp)
                     find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh" | sort > "$file"
                     if [[ -s "$file" ]]; then
-                        $omxiv -t 6 -T blend -b --once -f "$file"
+                        tr "\n" "\0" <"$file" | xargs -0 $vlc
                     else
                         printMsgs "dialog" "There are no splashscreens installed in $path"
                     fi
@@ -257,7 +255,7 @@ function preview_splashscreen() {
                 3)
                     file=$(choose_splashscreen "$path" "video")
                     [[ -z "$file" ]] && break
-                    omxplayer --no-osd -b --layer 10000 "$file"
+                    $vlc "$file"
                     ;;
             esac
         done
