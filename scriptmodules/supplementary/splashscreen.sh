@@ -281,10 +281,6 @@ function download_extra_splashscreen() {
 }
 
 function gui_splashscreen() {
-    if [[ ! -d "$md_inst" ]]; then
-        rp_callModule splashscreen depends
-        rp_callModule splashscreen install
-    fi
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     while true; do
         local enabled=0
