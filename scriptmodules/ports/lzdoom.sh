@@ -9,14 +9,14 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-rp_module_id="lzdoom"
-rp_module_desc="lzdoom - DOOM source port (legacy version of GZDoom)"
+rp_module_id="lzdoom-system"
+rp_module_desc="lzdoom-system - DOOM source port (legacy version of GZDoom)"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/drfrag666/gzdoom/master/LICENSE"
 rp_module_repo="git https://github.com/drfrag666/gzdoom 3.88b"
 rp_module_section="opt"
 rp_module_flags=""
 
-function depends_lzdoom() {
+function depends_lzdoom-system() {
     local depends=(
         libev-dev libfluidsynth-dev libgme-dev libsdl2-dev libmpg123-dev libsndfile1-dev zlib1g-dev libbz2-dev
         timidity freepats cmake libopenal-dev libjpeg-dev libgl1-mesa-dev fluid-soundfont-gm
@@ -25,7 +25,7 @@ function depends_lzdoom() {
     getDepends "${depends[@]}"
 }
 
-function sources_lzdoom() {
+function sources_lzdoom-system() {
     gitPullOrClone
     if isPlatform "arm"; then
         # patch the CMake build file to remove the ARMv8 options, we handle `gcc`'s CPU flags ourselves
@@ -35,7 +35,7 @@ function sources_lzdoom() {
     fi
 }
 
-function build_lzdoom() {
+function build_lzdoom-system() {
     rm -rf release
     mkdir -p release
     cd release
@@ -46,7 +46,7 @@ function build_lzdoom() {
     md_ret_require="$md_build/release/$md_id"
 }
 
-function install_lzdoom() {
+function install_lzdoom-system() {
     md_ret_files=(
         'release/brightmaps.pk3'
         'release/lzdoom'
@@ -58,9 +58,9 @@ function install_lzdoom() {
     )
 }
 
-function add_games_lzdoom() {
+function add_games_lzdoom-system() {
     local params=("+fullscreen 1")
-    local launcher_prefix="DOOMWADDIR=$romdir/ports/doom"
+    local launcher_prefix="DOOMWADDIR=$romdir/doom"
 
     if isPlatform "mesa" || isPlatform "gl"; then
         params+=("+vid_renderer 1")
@@ -80,10 +80,13 @@ function add_games_lzdoom() {
     _add_games_lr-prboom "$launcher_prefix $md_inst/$md_id -iwad %ROM% ${params[*]}"
 }
 
-function configure_lzdoom() {
-    mkRomDir "ports/doom"
-
-    moveConfigDir "$home/.config/$md_id" "$md_conf_root/doom"
+function configure_lzdoom-system() {
+    mkRomDir "doom"
+    mkUserDir "$home/.config"
+    setConfigRoot ""
+    addEmulator 1 "lzdoom" "doom" "$md_inst/lzdoom -iwad %ROM%"
+    addSystem "doom" "DOOM" ".pk3 .wad"
+    moveConfigDir "$home/.config/lzdoom" "$md_conf_root/doom"
 
     [[ "$md_mode" == "install" ]] && game_data_lr-prboom
 
