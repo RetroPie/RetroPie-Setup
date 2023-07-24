@@ -23,7 +23,7 @@ function install_bin_golang() {
         local version=$(GOROOT="$md_inst" "$md_inst/bin/go" version | sed 's/.*\(go1[^ ]*\).*/\1/')
     fi
     printMsgs "console" "Current Go version: $version"
-    if [[ ! "${version}" < "go1.8.7" ]]; then
+    if [[ ! "${version}" < "go1.11.13" ]]; then
         return 0
     fi
 
@@ -40,6 +40,6 @@ function install_bin_golang() {
     if isPlatform "aarch64"; then
         arch="arm64"
     fi
-    printMsgs "console" "Downloading go1.8.7.linux-$arch.tar.gz"
-    downloadAndExtract "https://storage.googleapis.com/golang/go1.8.7.linux-$arch.tar.gz" "$md_inst" --strip-components 1
+    printMsgs "console" "Downloading go1.11.13.linux-$arch.tar.gz"
+    downloadAndExtract "https://storage.googleapis.com/golang/go1.11.13.linux-$arch.tar.gz" "$md_inst" --strip-components 1 --exclude="go/test"
 }
