@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
-# This file is part of RetroPie-Extra, a supplement to RetroPie.
-# For more information, please visit:
+# This file is part of The RetroPie Project
 #
-# https://github.com/RetroPie/RetroPie-Setup
-# https://github.com/Exarkuniv/RetroPie-Extra
+# The RetroPie Project is the legal property of its developers, whose names are
+# too numerous to list here. Please refer to the COPYRIGHT.md file distributed with this source.
 #
-# See the LICENSE file distributed with this source and at
-# https://raw.githubusercontent.com/Exarkuniv/RetroPie-Extra/master/LICENSE
+# See the LICENSE.md file at the top-level directory of this distribution and
+# at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
 rp_module_id="rigelengine"
@@ -18,11 +17,9 @@ rp_module_repo="git https://github.com/lethal-guitar/RigelEngine.git v0.9.1"
 rp_module_section="exp"
 rp_module_flags="noinstclean"
 
-
 function depends_rigelengine() {
     getDepends cmake libsdl2-dev libsdl2-mixer-dev
 }
-
 
 function sources_rigelengine() {
     gitPullOrClone
