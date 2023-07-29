@@ -259,8 +259,7 @@ function create_image() {
     parted -s "$image" -- \
         mklabel msdos \
         unit mib \
-        mkpart primary fat16 4 260 \
-        set 1 boot on \
+        mkpart primary fat32 4 260 \
         mkpart primary 260 -1s
 
     # format
@@ -276,7 +275,7 @@ function create_image() {
     local part_boot="${partitions[0]}"
     local part_root="${partitions[1]}"
 
-    mkfs.vfat -F 16 -n boot "$part_boot"
+    mkfs.vfat -F 32 -n boot "$part_boot"
     mkfs.ext4 -O ^metadata_csum,^huge_file -L retropie "$part_root"
 
     parted "$image_name" print
