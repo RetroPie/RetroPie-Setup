@@ -102,10 +102,26 @@ function create_chroot_image() {
 
 function install_rp_image() {
     local platform="$1"
-    [[ -z "$platform" ]] && return
+    if [[ -z "$platform" ]]; then
+        printMsgs "console" "Requires a platform (eg rpi3/rpi4)"
+        return 1
+    fi
 
-    local chroot="$2"
+    local dist="$2"
+    if [[ -z "$dist" ]]; then
+        printMsgs "Requires a distribution name (eg buster/bullseye)"
+        return 1
+    fi
+
+    local chroot="$3"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+
+    if [[ "$dist" == "bullseye" ]]; then
+        # pre-set the default username and password on RaspiOS 11
+        # otherwise the 1st time boot will prompt a username/pass change
+        local default_pwd="$(echo 'raspberry' | openssl passwd -6 -stdin)"
+        echo "pi:$default_pwd" > "$chroot/boot/userconf.txt"
+    fi
 
     # hostname to retropie
     echo "retropie" >"$chroot/etc/hostname"
@@ -285,13 +301,6 @@ function create_image() {
     sed -i "s/$old_id/$new_id/" "$tmp/boot/cmdline.txt"
     sed -i "s/$old_id/$new_id/g" "$tmp/etc/fstab"
 
-    # pre-set the default username and password on RaspiOS 11
-    # otherwise the 1st time boot will prompt a username/pass change
-    if [[ "$image" == *bullseye* ]]; then
-        local default_pwd="$(echo 'raspberry' | openssl passwd -6 -stdin)"
-        echo "pi:$default_pwd" > "$tmp/boot/userconf.txt"
-    fi
-
     # unmount
     umount -l "$tmp/boot" "$tmp"
     rm -rf "$tmp"
@@ -369,7 +378,7 @@ function platform_image() {
     local image_file="$dest/$image_name"
 
     rp_callModule image create_chroot "$dist"
-    rp_callModule image install_rp "$platform"
+    rp_callModule image install_rp "$platform" "$dist" "$md_build/chroot"
     rp_callModule image create "$image_file"
     [[ "$make_bb" -eq 1 ]] && rp_callModule image create_bb "$dest/${image_base}-berryboot.img256"
 
