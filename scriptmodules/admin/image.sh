@@ -139,7 +139,7 @@ function install_rp_image() {
 
     # set default GPU mem (videocore only) and overscan_scale so ES scales to overscan settings.
     iniConfig "=" "" "$chroot/boot/config.txt"
-    if ! [[ "$platform" =~ rpi.*kms|rpi4 ]]; then
+    if [[ "$dist" == "buster" && "platform" != "rpi4" ]]; then
         iniSet "gpu_mem_256" 128
         iniSet "gpu_mem_512" 256
         iniSet "gpu_mem_1024" 256
