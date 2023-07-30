@@ -15,7 +15,7 @@ rp_module_section=""
 rp_module_flags=""
 
 function depends_image() {
-    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs openssl xz-utils)
+    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs xz-utils)
     isPlatform "x86" && depends+=(qemu-user-static)
     getDepends "${depends[@]}"
 }
@@ -116,13 +116,6 @@ function install_rp_image() {
     local chroot="$3"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
 
-    if [[ "$dist" == "bullseye" ]]; then
-        # pre-set the default username and password on RaspiOS 11
-        # otherwise the 1st time boot will prompt a username/pass change
-        local default_pwd="$(echo 'raspberry' | openssl passwd -6 -stdin)"
-        echo "pi:$default_pwd" > "$chroot/boot/userconf.txt"
-    fi
-
     # hostname to retropie
     echo "retropie" >"$chroot/etc/hostname"
     sed -i "s/raspberrypi/retropie/" "$chroot/etc/hosts"
@@ -150,6 +143,11 @@ function install_rp_image() {
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
 cd
+if systemctl is-enabled userconfig &>/dev/null; then
+    echo "pi:raspberry" | sudo chpasswd
+    sudo systemctl disable userconfig
+    sudo systemctl --quiet enable getty@tty1
+fi
 sudo apt-get update
 sudo apt-get -y install git dialog xmlstarlet joystick
 git clone -b "$__chroot_branch" https://github.com/RetroPie/RetroPie-Setup.git
