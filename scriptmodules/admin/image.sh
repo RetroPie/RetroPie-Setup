@@ -139,6 +139,9 @@ function install_rp_image() {
     fi
     iniSet "overscan_scale" 1
 
+    # disable 64bit kernel
+    iniSet "arm_64bit" 0
+
     [[ -z "$__chroot_branch" ]] && __chroot_branch="master"
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
