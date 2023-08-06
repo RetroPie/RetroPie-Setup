@@ -330,11 +330,13 @@ function create_bb_image() {
 }
 
 function all_image() {
-    local platform
-    local image
     local dist="$1"
     local make_bb="$2"
-    for platform in rpi1 rpi2 rpi4; do
+    local platforms="rpi1 rpi2 rpi4"
+    # for bullseye we have a separate rpi3 image
+    [[ "$dist" == "bullseye" ]] && platforms="rpi1 rpi2 rpi3 rpi4"
+    local platform
+    for platform in $platforms; do
         platform_image "$platform" "$dist" "$make_bb"
     done
     combine_json_image
@@ -361,12 +363,17 @@ function platform_image() {
             image_platform="RPI 1/Zero"
             ;;
         rpi2)
-            image_base+="rpi2_3_zero2w"
-            image_platform="RPI 2/3/Zero 2 W"
+            if [[ "$dist" == "bullseye" ]]; then
+                image_base+="rpi2"
+                image_platform="RPI 2"
+            else
+                image_base+="rpi2_3_zero2w"
+                image_platform="RPI 2/3/Zero 2 W"
+            fi
             ;;
         rpi3)
-            image_base+="rpi3"
-            image_platform="RPI 3"
+            image_base+="rpi3_zero2w"
+            image_platform="RPI 3/Zero 2 W"
             ;;
         rpi4)
             image_base+="rpi4_400"
