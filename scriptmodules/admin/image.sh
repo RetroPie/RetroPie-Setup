@@ -85,7 +85,7 @@ function create_chroot_image() {
     umount -l "$tmp/boot" "$tmp"
     rm -rf "$tmp"
 
-    kpartx -d "$image"
+    dmsetup remove "${partitions[@]}"
 
     popd
     return 0
