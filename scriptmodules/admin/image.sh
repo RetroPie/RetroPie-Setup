@@ -20,9 +20,21 @@ function depends_image() {
     getDepends "${depends[@]}"
 }
 
+function _get_info_image() {
+    local dist="$1"
+    local key="$2"
+    local ini="$md_data/dists/${dist}.ini"
+    [[ ! -f "$ini" ]] && fatalError "Definition file $ini does not exist"
+
+    iniConfig "=" "\"" "$ini"
+    iniGet "$key"
+    [[ -z "$ini_value" ]] && fatalError "Unable to locate key '$key' in definition file $ini"
+    echo "$ini_value"
+}
+
 function create_chroot_image() {
     local dist="$1"
-    [[ -z "$dist" ]] && dist="buster"
+    [[ -z "$dist" ]] && return 1
 
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
@@ -32,42 +44,21 @@ function create_chroot_image() {
 
     mkdir -p "$chroot"
 
-    local url
-    local image
-    local fmt=".img.xz"
-    case "$dist" in
-        jessie)
-            url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip"
-            fmt=".zip"
-            ;;
-        stretch)
-            url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip"
-            fmt=".zip"
-            ;;
-        buster)
-            url="https://downloads.raspberrypi.org/raspios_oldstable_lite_armhf_latest"
-            ;;
-        bullseye)
-            url="https://downloads.raspberrypi.org/raspios_lite_armhf_latest"
-            ;;
-        *)
-            md_ret_errors+=("Unknown/unsupported Raspbian version")
-            return 1
-            ;;
-    esac
+    local url=$(_get_info_image "$dist" "url")
+    local format=$(_get_info_image "$dist" "format")
 
     local base="raspbian-${dist}-lite"
-    local image="$base.img"
+    local image="${dist}.img"
+    local dest="${image}.${format}"
     if [[ ! -f "$image" ]]; then
-        local dest="$base$fmt"
-        case "$fmt" in
-            .zip)
+        case "$format" in
+            zip)
                 download "$url" "$dest"
                 unzip -o "$dest"
                 mv "$(unzip -Z -1 "$dest")" "$image"
                 rm "$dest"
                 ;;
-            .img.xz)
+            xz)
                 download "$url" "$dest"
                 xz -d -v "$dest"
                 ;;
@@ -109,12 +100,14 @@ function install_rp_image() {
 
     local dist="$2"
     if [[ -z "$dist" ]]; then
-        printMsgs "Requires a distribution name (eg buster/bullseye)"
+        printMsgs "Requires a distribution name (eg rpios-buster/rpios-bullseye)"
         return 1
     fi
 
     local chroot="$3"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+
+    local dist_version="$(_get_info_image "$dist" "version")"
 
     # hostname to retropie
     echo "retropie" >"$chroot/etc/hostname"
@@ -132,7 +125,7 @@ function install_rp_image() {
 
     # set default GPU mem (videocore only) and overscan_scale so ES scales to overscan settings.
     iniConfig "=" "" "$chroot/boot/config.txt"
-    if [[ "$dist" == "buster" && "platform" != "rpi4" ]]; then
+    if [[ "$dist_version" -lt 11 && "platform" != "rpi4" ]]; then
         iniSet "gpu_mem_256" 128
         iniSet "gpu_mem_512" 256
         iniSet "gpu_mem_1024" 256
@@ -332,10 +325,9 @@ function create_bb_image() {
 function all_image() {
     local dist="$1"
     local make_bb="$2"
-    local platforms="rpi1 rpi2 rpi4"
-    # for bullseye we have a separate rpi3 image
-    [[ "$dist" == "bullseye" ]] && platforms="rpi1 rpi2 rpi3 rpi4"
+    local platforms="$(_get_info_image "$dist" "platforms")"
     local platform
+    printMsgs "heading" "Building $platforms images based on $dist ..."
     for platform in $platforms; do
         platform_image "$platform" "$dist" "$make_bb"
     done
@@ -348,46 +340,22 @@ function platform_image() {
     local make_bb="$3"
     [[ -z "$platform" ]] && return 1
 
-    if [[ "$dist" == "stretch" && "$platform" == "rpi4" ]]; then
-        printMsgs "console" "Platform $platform on $dist is unsupported."
-        return 1
-    fi
-
     local dest="$__tmpdir/images"
     mkdir -p "$dest"
 
-    local image_base="retropie-${dist}-${__version}-"
-    case "$platform" in
-        rpi1)
-            image_base+="rpi1_zero"
-            image_platform="RPI 1/Zero"
-            ;;
-        rpi2)
-            if [[ "$dist" == "bullseye" ]]; then
-                image_base+="rpi2"
-                image_platform="RPI 2"
-            else
-                image_base+="rpi2_3_zero2w"
-                image_platform="RPI 2/3/Zero 2 W"
-            fi
-            ;;
-        rpi3)
-            image_base+="rpi3_zero2w"
-            image_platform="RPI 3/Zero 2 W"
-            ;;
-        rpi4)
-            image_base+="rpi4_400"
-            image_platform="RPI 4/400"
-            ;;
-        *)
-            fatalError "Unknown platform $platform for image building"
-            ;;
-    esac
-    local image_name="${image_base}.img"
-    local image_file="$dest/$image_name"
+    printMsgs "heading" "Building $platform image based on $dist ..."
 
     rp_callModule image create_chroot "$dist"
     rp_callModule image install_rp "$platform" "$dist" "$md_build/chroot"
+
+    local dist_name="$(_get_info_image "$dist" "name")"
+    local file_add="$(_get_info_image "$dist" "file_${platform}")"
+    local image_title="$(_get_info_image "$dist" "title_${platform}")"
+
+    local image_base="retropie-${dist_name}-${__version}-${file_add}"
+    local image_name="${image_base}.img"
+    local image_file="$dest/$image_name"
+
     rp_callModule image create "$image_file"
     [[ "$make_bb" -eq 1 ]] && rp_callModule image create_bb "$dest/${image_base}-berryboot.img256"
 
@@ -402,7 +370,7 @@ function platform_image() {
     template="${template/IMG_SHA256/$(sha256sum $image_file | cut -d" " -f1)}"
     template="${template/IMG_DOWNLOAD_SIZE/$(stat -c %s ${image_file}.gz)}"
     template="${template/IMG_VERSION/$__version}"
-    template="${template/IMG_PLATFORM/$image_platform}"
+    template="${template/IMG_PLATFORM/$image_title}"
     template="${template/IMG_DATE/$(date '+%Y-%m-%d')}"
     echo "$template" >"${image_file}.json"
 
