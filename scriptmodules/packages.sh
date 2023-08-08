@@ -598,6 +598,9 @@ function rp_hasNewerModule() {
                     ;;
                 git|svn)
                     local repo_branch="$(rp_resolveRepoParam "${__mod_info[$id/repo_branch]}")"
+                    if [[ "$repo_type" == "git" ]] && [[ -z "$repo_branch" ]] ; then
+                        repo_branch="master"
+                    fi
                     local repo_commit="$(rp_resolveRepoParam "${__mod_info[$id/repo_commit]}")"
                     # if we are locked to a single commit, then we compare against the current module commit only
                     if [[ -n "$repo_commit" && "$repo_commit" != "HEAD" ]]; then
