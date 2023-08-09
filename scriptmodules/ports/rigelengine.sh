@@ -44,7 +44,7 @@ function install_rigelengine() {
 function game_data_rigelengine() {
     if [[ ! -f "$romdir/ports/duke2/NUKEM2.EXE" ]]; then
         downloadAndExtract "https://github.com/Exarkuniv/game-data/raw/main/duke2.zip" "$romdir/ports/duke2/"
-    chown -R $user:$user "$romdir/ports/duke2"
+        chown -R $user:$user "$romdir/ports/duke2"
     fi
 }
 
