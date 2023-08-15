@@ -269,7 +269,7 @@ function create_image() {
     local part_boot="${partitions[0]}"
     local part_root="${partitions[1]}"
 
-    mkfs.vfat -F 32 -n boot "$part_boot"
+    mkfs.vfat -F 32 -n bootfs "$part_boot"
     # use the mke2fs config from the chroot so we create the filesystem with supported features
     # disable huge_file & 64bit as with the Raspberry Pi OS images
     MKE2FS_CONFIG="$chroot/etc/mke2fs.conf" mkfs.ext4 -O ^huge_file,^64bit -L retropie "$part_root"
