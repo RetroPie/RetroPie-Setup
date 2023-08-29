@@ -23,7 +23,7 @@ function apt_upgrade_raspbiantools() {
 }
 
 function lxde_raspbiantools() {
-    aptInstall --no-install-recommends xorg lxde
+    aptInstall xorg lxde
     aptInstall raspberrypi-ui-mods rpi-chromium-mods gvfs
     # On `buster`, disable PulseAudio since it messes up the audio settings
     # remove the lxpanel plugin for PulseAudio volume, to prevent a crash due to missing PulseAudio

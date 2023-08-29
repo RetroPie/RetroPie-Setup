@@ -218,7 +218,7 @@ function aptUpdate() {
 ## @brief Calls apt-get install with the packages provided.
 function aptInstall() {
     aptUpdate
-    apt-get install -y "$@"
+    apt-get install -y --no-install-recommends "$@"
     return $?
 }
 
@@ -352,7 +352,7 @@ function getDepends() {
        rp_callModule "$pkg" _auto_
     done
 
-    aptInstall --no-install-recommends "${apt_pkgs[@]}"
+    aptInstall "${apt_pkgs[@]}"
 
     local failed=()
     # check the required packages again rather than return code of apt-get,
