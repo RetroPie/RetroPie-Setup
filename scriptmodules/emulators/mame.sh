@@ -44,8 +44,9 @@ function build_mame() {
         rpSwap on 4096
     fi
 
-    # Compile MAME
     local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE PYTHON_EXECUTABLE=python3)
+    # when building on ARM enable 'fsigned-char' for compiled code, fixes crashes in a few drivers
+    isPlatform "arm" || isPlatform "aarch64" && params+=(ARCHOPTS_CXX=-fsigned-char)
     QT_SELECT=5 make "${params[@]}"
     strip mame
 
