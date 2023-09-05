@@ -10,9 +10,9 @@
 #
 
 rp_module_id="ikemen-go"
-rp_module_desc="I.K.E.M.E.N GO - Clone of M.U.G.E.N to the Go programming language"
+rp_module_desc="I.K.E.M.E.N GO - Clone of M.U.G.E.N to the Go programming language (0.98.2)"
 rp_module_licence="MIT https://raw.githubusercontent.com/ikemen-engine/Ikemen-GO/master/License.txt"
-rp_module_help="Copy characters, stages, screenpacks, etc. to $romdir/ports/ikemen-go\n\nConfig files can be found at $configdir/ports/ikemen-go/save"
+rp_module_help="ROM Extensions: .mgn + folder\n\nCopy M.U.G.E.N/I.K.E.M.E.N games or contents to $romdir/mugen/game_name_here\n\nIn order to launch games, create a 'game_name_here.mgn' file in $romdir/mugen\n\n"
 rp_module_repo="git https://github.com/SuperFromND/Ikemen-GO-98point2.git master"
 rp_module_section="exp"
 
@@ -52,27 +52,27 @@ function install_ikemen-go() {
 }
 
 function configure_ikemen-go() {
-    mkRomDir "ports/ikemen-go"
-    addPort "$md_id" "ikemen-go" "I.K.E.M.E.N GO" "XINIT:$md_inst/ikemen-go.sh"
+    addEmulator 0 "$md_id" "mugen" "XINIT:$md_inst/ikemen-go.sh %BASENAME%"
+    addSystem "mugen"
 
-    moveConfigDir "$md_inst/chars" "$romdir/ports/ikemen-go/chars"
-    moveConfigDir "$md_inst/stages" "$romdir/ports/ikemen-go/stages"
-    moveConfigDir "$md_inst/data" "$romdir/ports/ikemen-go/data"
-    moveConfigDir "$md_inst/external" "$romdir/ports/ikemen-go/external"
-    moveConfigDir "$md_inst/font" "$romdir/ports/ikemen-go/font"
+    mkRomDir "mugen"
+    # creates a dummy file; used to launch games
+    touch "$romdir/mugen/ikemen-go.mgn"
 
-    mkUserDir "$romdir/ports/ikemen-go/sound"
-    mkUserDir "$configdir/ports/ikemen-go/save"
-    ln -sf "$romdir/ports/ikemen-go/sound" "$md_inst/sound"
-    ln -sf "$configdir/ports/ikemen-go/save" "$md_inst/save"
+    moveConfigDir "$md_inst/chars" "$romdir/mugen/ikemen-go/chars"
+    moveConfigDir "$md_inst/stages" "$romdir/mugen/ikemen-go/stages"
+    moveConfigDir "$md_inst/data" "$romdir/mugen/ikemen-go/data"
+    moveConfigDir "$md_inst/external" "$romdir/mugen/ikemen-go/external"
+    moveConfigDir "$md_inst/font" "$romdir/mugen/ikemen-go/font"
+    mkUserDir "$romdir/mugen/ikemen-go/sound"
+    mkUserDir "$configdir/mugen/ikemen-go/save"
 
     cat >"$md_inst/ikemen-go.sh" << _EOF_
 #!/bin/bash
+BASENAME=\$1
 export MESA_GL_VERSION_OVERRIDE=2.1
 xset -dpms s off s noblank
-xterm -g 1x1+0-0 -e 'cd $md_inst && ./Ikemen_GO'
+cd "$romdir/mugen/\${BASENAME}" && xterm -g 1x1+0-0 -e '/opt/retropie/ports/ikemen-go/Ikemen_GO'
 _EOF_
     chmod +x "$md_inst/ikemen-go.sh"
-    chown -R $user:$user "$md_inst"
-    chown -R $user:$user "$romdir/ports/ikemen-go"
 }
