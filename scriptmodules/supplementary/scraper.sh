@@ -21,27 +21,23 @@ function depends_scraper() {
 }
 
 function sources_scraper() {
-    local goroot="$(_get_goroot_golang)"
-    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" get -u github.com/sselph/scraper
-    # Use an older version of the TGDB go REST bindings, since the new one is not compatible with scraper
-    git -C "$md_build/src/github.com/J-Swift/thegamesdb-swagger-client-go/" checkout 43ed8a0b364ed2d8521d0
-    # Fix ScreenScraper scraping with the patch from PR-#265
-    git -C "$md_build/src/github.com/sselph/scraper" apply "$md_data/00-fix-screenscraper-response-parsing-265.diff"
-    # manually set repo_dir for packaging info / version checking
-    __mod_info[$md_id/repo_dir]="$md_build/src/github.com/sselph/scraper"
+    gitPullOrClone
+    applyPatch "$md_data/00-fix-screenscraper-response-parsing-265.diff"
 }
 
 function build_scraper() {
     local goroot="$(_get_goroot_golang)"
-    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" build github.com/sselph/scraper
+    GOROOT="$goroot" "$goroot/bin/go" mod init github.com/sselph/scraper
+    GOROOT="$goroot" "$goroot/bin/go" get github.com/J-Swift/thegamesdb-swagger-client-go@43ed8a0b364ed2d8521d0
+    GOROOT="$goroot" "$goroot/bin/go" build -o scraper
 }
 
 function install_scraper() {
     md_ret_files=(
         'scraper'
-        'src/github.com/sselph/scraper/LICENSE'
-        'src/github.com/sselph/scraper/README.md'
-        'src/github.com/sselph/scraper/hash.csv'
+        'LICENSE'
+        'README.md'
+        'hash.csv'
     )
 }
 
