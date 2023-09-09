@@ -14,7 +14,7 @@ rp_module_desc="Playstation emulator - PCSX (arm optimised) port for libretro"
 rp_module_help="ROM Extensions: .bin .cue .cbn .img .iso .m3u .mdf .pbp .toc .z .znx\n\nCopy your PSX roms to $romdir/psx\n\nCopy the required BIOS file SCPH1001.BIN to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/pcsx_rearmed/master/COPYING"
 rp_module_repo="git https://github.com/libretro/pcsx_rearmed.git master"
-rp_module_section="opt arm=main"
+rp_module_section="opt arm=main aarch64=main"
 
 function depends_lr-pcsx-rearmed() {
     local depends=(libpng-dev)
