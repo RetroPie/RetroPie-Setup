@@ -86,7 +86,10 @@ function configure_scummvm() {
 #!/bin/bash
 game="\$1"
 pushd "$romdir/scummvm" >/dev/null
-$md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" "\$game"
+if ! grep -qs extrapath "\$HOME/.config/scummvm/scummvm.ini"; then
+    params="--extrapath="$md_inst/extra""
+fi
+$md_inst/bin/scummvm --fullscreen \$params --joystick=0 "\$game"
 while read id desc; do
     echo "\$desc" > "$romdir/scummvm/\$id.svm"
 done < <($md_inst/bin/scummvm --list-targets | tail -n +3)
