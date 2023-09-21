@@ -38,7 +38,7 @@ function depends_dolphin() {
     # check if qt6 is available, otherwise use qt5
     local has_qt6=$(apt-cache madison qt6-base-private-dev 2>/dev/null | cut -d'|' -f1)
     if [[ -n "$has_qt6" ]]; then
-        depends+=(qt6-base-private-dev)
+        depends+=(qt6-base-private-dev qt6-svg-dev)
     else
         depends+=(qtbase5-private-dev)
     fi
