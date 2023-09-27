@@ -12,7 +12,7 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
-rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.15.0"
+rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.16.0"
 rp_module_section="core"
 
 function depends_retroarch() {
@@ -257,6 +257,8 @@ function configure_retroarch() {
     iniSet "menu_show_load_content_animation" "false"
     # disable core cache file
     iniSet "core_info_cache_enable" "false"
+    # disable game runtime logging
+    iniSet "content_runtime_log" "false"
 
     # disable unnecessary xmb menu tabs
     iniSet "xmb_show_add" "false"
