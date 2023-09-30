@@ -23,7 +23,8 @@ function depends_image() {
 function _get_info_image() {
     local dist="$1"
     local key="$2"
-    local ini="$md_data/dists/${dist}.ini"
+    # don't use $md_data so this function can be used directly from builder.sh
+    local ini="${__mod_info[image/path]%/*}/image/dists/${dist}.ini"
     [[ ! -f "$ini" ]] && fatalError "Definition file $ini does not exist"
 
     iniConfig "=" "\"" "$ini"
@@ -37,7 +38,7 @@ function create_chroot_image() {
     [[ -z "$dist" ]] && return 1
 
     local chroot="$2"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    [[ -z "$chroot" ]] && chroot="$md_build/$dist"
 
     mkdir -p "$md_build"
     pushd "$md_build"
@@ -105,7 +106,7 @@ function install_rp_image() {
     fi
 
     local chroot="$3"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    [[ -z "$chroot" ]] && chroot="$md_build/$dist"
 
     local dist_version="$(_get_info_image "$dist" "version")"
 
@@ -180,6 +181,9 @@ _EOF_
 }
 
 function _init_chroot_image() {
+    local chroot="$1"
+    [[ -z "$chroot" ]] && return 1
+
     # unmount on ctrl+c
     trap "_trap_chroot_image '$chroot'" INT
 
@@ -202,7 +206,7 @@ function _init_chroot_image() {
 
 function _deinit_chroot_image() {
     local chroot="$1"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    [[ -z "$chroot" ]] && return 1
 
     trap "" INT
 
@@ -224,7 +228,7 @@ function _trap_chroot_image() {
 
 function chroot_image() {
     local chroot="$1"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    [[ -z "$chroot" ]] && return 1
     shift
 
     printMsgs "console" "Chrooting to $chroot ..."
@@ -311,7 +315,7 @@ function create_bb_image() {
     [[ -z "$image" ]] && return 1
 
     local chroot="$2"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    [[ -z "$chroot" ]] && return 1
 
     # replace fstab
     echo "proc            /proc           proc    defaults          0       0" >"$chroot/etc/fstab"
@@ -346,7 +350,7 @@ function platform_image() {
     printMsgs "heading" "Building $platform image based on $dist ..."
 
     rp_callModule image create_chroot "$dist"
-    rp_callModule image install_rp "$platform" "$dist" "$md_build/chroot"
+    rp_callModule image install_rp "$platform" "$dist" "$md_build/$dist"
 
     local dist_name="$(_get_info_image "$dist" "name")"
     local file_add="$(_get_info_image "$dist" "file_${platform}")"
