@@ -83,16 +83,17 @@ function chroot_build_builder() {
 
     local dist
     local dists="$__builder_dists"
-    [[ -z "$dists" ]] && dists="buster"
+    [[ -z "$dists" ]] && return 1
 
     local platform
     local platforms="$__builder_platforms"
-    [[ -z "$platforms" ]] && platforms="rpi1 rpi2 rpi4"
 
     for dist in $dists; do
+        [[ -z "$platforms" ]] && platforms="$(_get_info_image "$dist" "platforms")"
+
         local chroot_dir="$md_build/$dist"
         local chroot_rps_dir="$chroot_dir/home/pi/RetroPie-Setup"
-        local archive_dir="tmp/archives/$dist"
+        local archive_dir="tmp/archives/$(_get_info_image "$dist" "name")"
 
         local distcc_hosts="$__builder_distcc_hosts"
         if [[ -d "$rootdir/admin/crosscomp/$dist" ]]; then
@@ -117,18 +118,13 @@ function chroot_build_builder() {
                 sudo apt-get install -y git; \
                 "
             # copy existing packages from host if building in a clean chroot to avoid rebuilding everything
-            mkdir -p "$chroot_rps_dir/$archive_dir"
+            mkdir -p "$scriptdir/$archive_dir/" "$chroot_rps_dir/$archive_dir"
             rsync -av "$scriptdir/$archive_dir/" "$chroot_rps_dir/$archive_dir/"
         else
             sudo -u $user git -C "$chroot_rps_dir" pull
         fi
 
         for platform in $platforms; do
-            if [[ "$dist" == "stretch" && "$platform" == "rpi4" ]]; then
-                printMsgs "heading" "Skipping platform $platform on $dist ..."
-                continue
-            fi
-
             rp_callModule image chroot "$chroot_dir" \
                 sudo \
                 __use_ccache="$use_ccache" \
