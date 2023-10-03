@@ -109,19 +109,19 @@ function chroot_build_builder() {
 
 
         if [[ ! -d "$chroot_rps_dir" ]]; then
-            sudo -u $user git clone "$scriptdir" "$chroot_rps_dir"
             gpg --export-secret-keys "$__gpg_signing_key" >"$chroot_dir/retropie.key"
-            rp_callModule image chroot "$chroot_dir" bash -c "\
-                sudo gpg --import "/retropie.key"; \
-                sudo rm "/retropie.key"; \
-                sudo apt-get update; \
-                sudo apt-get install -y git; \
+            rp_callModule image chroot "$chroot_dir" bash -c "
+                sudo gpg --import /retropie.key
+                sudo rm /retropie.key
+                sudo apt-get update; sudo apt-get install -y git
+                cd
+                git clone https://github.com/RetroPie/RetroPie-Setup.git
                 "
             # copy existing packages from host if building in a clean chroot to avoid rebuilding everything
-            mkdir -p "$scriptdir/$archive_dir/" "$chroot_rps_dir/$archive_dir"
+            mkdir -p "$scriptdir/$archive_dir" "$chroot_rps_dir/$archive_dir"
             rsync -av "$scriptdir/$archive_dir/" "$chroot_rps_dir/$archive_dir/"
         else
-            sudo -u $user git -C "$chroot_rps_dir" pull
+            rp_callModule image chroot "$chroot_dir" git -C /home/pi/RetroPie-Setup pull
         fi
 
         for platform in $platforms; do
