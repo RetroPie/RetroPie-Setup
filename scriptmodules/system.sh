@@ -252,8 +252,10 @@ function get_os_version() {
                     error="You need Linux Mint Debian Edition 4 or newer"
                 elif compareVersions "$__os_release" lt 5; then
                     __os_debian_ver="10"
-                else
+                elif compareVersions "$__os_release" lt 6; then
                     __os_debian_ver="11"
+                else
+                    __os_debian_ver="12"
                 fi
             fi
             ;;
