@@ -14,51 +14,88 @@ rp_module_desc="Configure WiFi"
 rp_module_section="config"
 rp_module_flags="!x11"
 
+function _get_interface_wifi() {
+    local iface
+    # look for the first wireless interface present
+    for iface in /sys/class/net/*; do
+        if [[ -d "$iface/wireless" ]]; then
+            echo "$(basename $iface)"
+            return 0
+        fi
+    done
+    return 1
+}
+
+function _get_mgmt_tool_wifi() {
+    # get the WiFi connection manager
+    if systemctl -q is-active NetworkManager.service; then
+        echo "nm"
+    else
+        echo "wpasupplicant"
+    fi
+}
 function _set_interface_wifi() {
-    local state="$1"
+    local iface="$1"
+    local state="$2"
 
     if [[ "$state" == "up" ]]; then
-        if ! ifup wlan0; then
-            ip link set wlan0 up
+        if ! ifup $iface; then
+            ip link set $iface up
         fi
     elif [[ "$state" == "down" ]]; then
-        if ! ifdown wlan0; then
-            ip link set wlan0 down
+        if ! ifdown $iface; then
+            ip link set $iface down
         fi
     fi
 }
 
-function remove_wifi() {
+function remove_nm_wifi() {
+    local iface="$1"
+    # delete the NM connection named RetroPie-WiFi
+    nmcli connection delete RetroPie-WiFi
+    _set_interface_wifi $iface down 2>/dev/null
+}
+
+function remove_wpasupplicant_wifi() {
+    local iface="$1"
     sed -i '/RETROPIE CONFIG START/,/RETROPIE CONFIG END/d' "/etc/wpa_supplicant/wpa_supplicant.conf"
-    _set_interface_wifi down 2>/dev/null
+    _set_interface_wifi $iface down 2>/dev/null
 }
 
 function list_wifi() {
     local line
     local essid
     local type
+    local iface="$1"
+
     while read line; do
         [[ "$line" =~ ^Cell && -n "$essid" ]] && echo -e "$essid\n$type"
         [[ "$line" =~ ^ESSID ]] && essid=$(echo "$line" | cut -d\" -f2)
         [[ "$line" == "Encryption key:off" ]] && type="open"
         [[ "$line" == "Encryption key:on" ]] && type="wep"
         [[ "$line" =~ ^IE:.*WPA ]] && type="wpa"
-    done < <(iwlist wlan0 scan | grep -o "Cell .*\|ESSID:\".*\"\|IE: .*WPA\|Encryption key:.*")
+    done < <(iwlist $iface scan | grep -o "Cell .*\|ESSID:\".*\"\|IE: .*WPA\|Encryption key:.*")
     echo -e "$essid\n$type"
 }
 
 function connect_wifi() {
-    if [[ ! -d "/sys/class/net/wlan0/" ]]; then
-        printMsgs "dialog" "No wlan0 interface detected"
+    local iface
+    local mgmt_tool="wpasupplicant"
+
+    iface="$(_get_interface_wifi)"
+    if [[ -z "$iface" ]]; then
+        printMsgs "dialog" "No wireless interfaces detected"
         return 1
     fi
+    mgmt_tool="$(_get_mgmt_tool_wifi)"
+
     local essids=()
     local essid
     local types=()
     local type
     local options=()
     i=0
-    _set_interface_wifi up 2>/dev/null
+    _set_interface_wifi $iface up 2>/dev/null
     dialog --infobox "\nScanning for WiFi networks..." 5 40 > /dev/tty
     sleep 1
 
@@ -67,10 +104,10 @@ function connect_wifi() {
         types+=("$type")
         options+=("$i" "$essid")
         ((i++))
-    done < <(list_wifi)
+    done < <(list_wifi $iface)
     options+=("H" "Hidden ESSID")
 
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the network you would like to connect to" 22 76 16)
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Please choose the WiFi network you would like to connect to" 22 76 16)
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     [[ -z "$choice" ]] && return
 
@@ -108,15 +145,46 @@ function connect_wifi() {
         done
     fi
 
-    create_config_wifi "$type" "$essid" "$key"
-
-    gui_connect_wifi
+    create_${mgmt_tool}_config_wifi "$type" "$essid" "$key" "$iface"
+    gui_connect_wifi "$iface"
 }
 
-function create_config_wifi() {
+function create_nm_config_wifi() {
     local type="$1"
     local essid="$2"
     local key="$3"
+    local dev="$4"
+    local con="RetroPie-WiFi"
+
+    remove_nm_wifi
+    nmcli connection add type wifi ifname "$dev" ssid "$essid" con-name "$con" autoconnect yes
+    # configure security for the connection
+    case $type in
+        wpa)
+            nmcli connection modify "$con" \
+                wifi-sec.key-mgmt wpa-psk  \
+                wifi-sec.psk-flags 0       \
+                wifi-sec.psk "$key"
+            ;;
+        wep)
+            nmcli connection modify "$con" \
+                wifi-sec.key-mgmt none     \
+                wifi-sec.wep-key-flags 0   \
+                wifi-sec.wep-key-type 2    \
+                wifi-sec.wep-key0 "$key"
+            ;;
+        open)
+            ;;
+    esac
+
+    [[ $hidden -eq 1 ]] && nmcli connection modify "$con" wifi.hidden yes
+}
+
+function create_wpasupplicant_config_wifi() {
+    local type="$1"
+    local essid="$2"
+    local key="$3"
+    local dev="$4"
 
     local wpa_config
     wpa_config+="\tssid=\"$essid\"\n"
@@ -136,7 +204,7 @@ function create_config_wifi() {
 
     [[ $hidden -eq 1 ]] &&  wpa_config+="\tscan_ssid=1\n"
 
-    remove_wifi
+    remove_wpasupplicant_wifi
     wpa_config=$(echo -e "$wpa_config")
     cat >> "/etc/wpa_supplicant/wpa_supplicant.conf" <<_EOF_
 # RETROPIE CONFIG START
@@ -148,11 +216,22 @@ _EOF_
 }
 
 function gui_connect_wifi() {
-    _set_interface_wifi down 2>/dev/null
-    _set_interface_wifi up 2>/dev/null
-    # BEGIN workaround for dhcpcd trigger failure on Raspbian stretch
-    systemctl restart dhcpcd &>/dev/null
-    # END workaround
+    local iface="$1"
+    local mgmt_tool
+
+    mgmt_tool="$(_get_mgmt_tool_wifi)"
+    _set_interface_wifi $iface down 2>/dev/null
+    _set_interface_wifi $iface up 2>/dev/null
+
+    if [[ "$mgmt_tool" == "wpasupplicant" ]]; then
+        # BEGIN workaround for dhcpcd trigger failure on Raspbian stretch
+        systemctl restart dhcpcd &>/dev/null
+        # END workaround
+    fi
+    if [[ "$mgmt_tool" == "nm" ]]; then
+        nmcli -w 0 connection up RetroPie-WiFi
+    fi
+
     dialog --backtitle "$__backtitle" --infobox "\nConnecting ..." 5 40 >/dev/tty
     local id=""
     i=0
@@ -163,16 +242,15 @@ function gui_connect_wifi() {
     done
     if [[ -z "$id" ]]; then
         printMsgs "dialog" "Unable to connect to network $essid"
-        _set_interface_wifi down 2>/dev/null
+        _set_interface_wifi $iface down 2>/dev/null
     fi
 }
 
 function _check_country_wifi() {
-    [[ ! -f /etc/wpa_supplicant/wpa_supplicant.conf ]] && return
-    iniConfig "=" "" /etc/wpa_supplicant/wpa_supplicant.conf
-    iniGet "country"
-    if [[ -z "$ini_value" ]]; then
-        if dialog --defaultno --yesno "You don't currently have your WiFi country set in /etc/wpa_supplicant/wpa_supplicant.conf\n\nOn a Raspberry Pi 3B+/4B/400 your WiFI will be disabled until the country is set. You can do this via raspi-config which is available from the RetroPie menu in Emulation Station. Once in raspi-config you can set your country via menu 5 (Localisation Options)\n\nDo you want me to launch raspi-config for you now ?" 22 76 2>&1 >/dev/tty; then
+    local country
+    country="$(raspi-config nonint get_wifi_country)"
+    if [[ -z "$country" ]]; then
+        if dialog --defaultno --yesno "You don't currently have your WiFi country set.\n\nOn a Raspberry Pi 3B+ and later your WiFi will be disabled until the country is set. You can do this via raspi-config which is available from the RetroPie menu in Emulation Station. Once in raspi-config you can set your country via menu 5 (Localisation Options)\n\nDo you want me to launch raspi-config for you now ?" 22 76 2>&1 >/dev/tty; then
             raspi-config
         fi
     fi
@@ -183,10 +261,16 @@ function gui_wifi() {
     isPlatform "rpi" && _check_country_wifi
 
     local default
+    local iface
+    local mgmt_tool
+
+    iface="$(_get_interface_wifi)"
+    mgmt_tool="$(_get_mgmt_tool_wifi)"
+
     while true; do
         local ip_current="$(getIPAddress)"
-        local ip_wlan="$(getIPAddress wlan0)"
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Configure WiFi\nCurrent IP: ${ip_current:-(unknown)}\nWireless IP: ${ip_wlan:-(unknown)}\nWireless ESSID: $(iwgetid -r)" 22 76 16)
+        local ip_wlan="$(getIPAddress $iface)"
+        local cmd=(dialog --backtitle "$__backtitle" --colors --cancel-label "Exit" --item-help --help-button --default-item "$default" --title "Configure WiFi" --menu "Current IP: \Zb${ip_current:-(unknown)}\ZB\nWireless IP: \Zb${ip_wlan:-(unknown)}\ZB\nWireless ESSID: \Zb$(iwgetid -r || echo "none")\ZB" 22 76 16)
         local options=(
             1 "Connect to WiFi network"
             "1 Connect to your WiFi network"
@@ -211,12 +295,12 @@ The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk =
         if [[ -n "$choice" ]]; then
             case "$choice" in
                 1)
-                    connect_wifi
+                    connect_wifi $iface
                     ;;
                 2)
-                    dialog --defaultno --yesno "This will remove the WiFi configuration and stop the WiFi.\n\nAre you sure you want to continue ?" 12 35 2>&1 >/dev/tty
+                    dialog --defaultno --yesno "This will remove the WiFi configuration and stop the WiFi.\n\nAre you sure you want to continue ?" 12 60 2>&1 >/dev/tty
                     [[ $? -ne 0 ]] && continue
-                    remove_wifi
+                    remove_${mgmt_tool}_wifi $iface
                     ;;
                 3)
                     if [[ -f "/boot/wifikeyfile.txt" ]]; then
@@ -225,8 +309,8 @@ The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk =
                         local ssid="$ini_value"
                         iniGet "psk"
                         local psk="$ini_value"
-                        create_config_wifi "wpa" "$ssid" "$psk"
-                        gui_connect_wifi
+                        create_${mgmt_tool}_config_wifi "wpa" "$ssid" "$psk" "$iface"
+                        gui_connect_wifi "$iface"
                     else
                         printMsgs "dialog" "No /boot/wifikeyfile.txt found"
                     fi
