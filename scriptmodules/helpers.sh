@@ -280,6 +280,9 @@ function _mapPackage() {
                 [[ "$own_sdl2" -eq 1 ]] && pkg="RP sdl2 $pkg"
             fi
             ;;
+        libfreetype6-dev)
+            [[ "$__os_debian_ver" -gt 10 ]] || compareVersions "$__os_ubuntu_ver" gt 23.04 && pkg="libfreetype-dev"
+            ;;
     esac
     echo "$pkg"
 }
