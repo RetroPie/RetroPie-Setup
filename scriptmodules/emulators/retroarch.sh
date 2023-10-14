@@ -281,6 +281,9 @@ function configure_retroarch() {
     # enable video shaders
     iniSet "video_shader_enable" "true"
 
+    # disable cheevos hardcore mode
+    iniSet "cheevos_hardcore_mode_enable" "false"
+
     copyDefaultConfig "$config" "$configdir/all/retroarch.cfg"
     rm "$config"
 
@@ -299,6 +302,9 @@ function configure_retroarch() {
 
     # enable video shaders on existing configs
     _set_config_option_retroarch "video_shader_enable" "true"
+
+    # disable hardcore mode on existing configs
+    _set_config_option_retroarch "cheevos_hardcore_mode_enable" "false"
 
     # (compat) keep all core options in a single file
     _set_config_option_retroarch "global_core_options" "true"
