@@ -34,29 +34,45 @@ function build_skyscraper() {
 }
 
 function install_skyscraper() {
+    local config_files=($(_config_files_skyscraper))
+
     md_ret_files=(
-        'Skyscraper'
+        'docs'
         'LICENSE'
         'README.md'
-        'config.ini.example'
-        'artwork.xml'
+        'Skyscraper'
+        'supplementary/scraperdata/check_screenscraper_json_to_idmap.py'
+        'supplementary/scraperdata/convert_platforms_json.py'
+        'supplementary/scraperdata/peas_and_idmap_verify.py'
+    )
+    md_ret_files+=("${config_files[@]}")
+}
+
+
+function _config_files_skyscraper() {
+    local config_files=(
+        'aliasMap.csv'
         'artwork.xml.example1'
         'artwork.xml.example2'
         'artwork.xml.example3'
         'artwork.xml.example4'
-        'platforms.json'
-        'screenscraper.json'
-        'mobygames.json'
-        'tgdb_developers.json'
-        'tgdb_publishers.json'
-        'mameMap.csv'
-        'aliasMap.csv'
-        'hints.xml'
-        'docs'
-        'import'
-        'resources'
+        'artwork.xml'
         'cache/priorities.xml.example'
+        'config.ini.example'
+        'hints.xml'
+        'import'
+        'mameMap.csv'
+        'mobygames_platforms.json'
+        'peas.json'
+        'platforms_idmap.csv'
+        'resources'
+        'screenscraper_platforms.json'
+        'tgdb_developers.json'
+        'tgdb_genres.json'
+        'tgdb_platforms.json'
+        'tgdb_publishers.json'
     )
+    echo "${config_files[@]}"
 }
 
 # Get the location of the cached resources folder. In v3+, this changed to 'cache'.
@@ -112,7 +128,7 @@ function _purge_platform_skyscraper() {
     done < <(find "$configdir/all/skyscraper/$cache_folder" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
 
     # If not folders are found, show an info message instead of the selection list
-    if [[ ${#options[@]} -eq 0 ]] ; then
+    if [[ ${#options[@]} -eq 0 ]]; then
         printMsgs "dialog" "Nothing to delete ! No cached platforms found in \n$configdir/all/skyscraper/$cache_folder."
         return
     fi
@@ -171,13 +187,13 @@ function configure_skyscraper() {
         local cache_folder="dbs"
         [[ -d "$home/.skyscraper/cache" ]] && cache_folder="cache"
 
-        f_size=$(du --total -sm "$home/.skyscraper/$cache_folder" "$home/.skyscraper/import" 2>/dev/null | tail -n 1 | cut -f 1 )
+        f_size=$(du --total -sm "$home/.skyscraper/$cache_folder" "$home/.skyscraper/import" 2>/dev/null | tail -n 1 | cut -f 1)
         printMsgs "console" "INFO: Moving the Cache and Import folders to new configuration folder (total: $f_size Mb)"
 
         local folder
         for folder in $cache_folder import; do
-            mv "$home/.skyscraper/$folder" "$home/.skyscraper-$folder" && \
-                printMsgs "console" "INFO: Moved "$home/.skyscraper/$folder" to "$home/.skyscraper-$folder""
+            mv "$home/.skyscraper/$folder" "$home/.skyscraper-$folder" &&
+                printMsgs "console" "INFO: Moved $home/.skyscraper/$folder to $home/.skyscraper-$folder"
         done
 
         # When having an existing installation, chances are the gamelist is generated in the ROMs folder
@@ -192,7 +208,7 @@ function configure_skyscraper() {
     for folder in $cache_folder import; do
         if [[ -d "$home/.skyscraper-$folder" ]]; then
             printMsgs "console" "INFO: Moving "$home/.skyscraper-$folder" back to configuration folder"
-            mv  "$home/.skyscraper-$folder" "$configdir/all/skyscraper/$folder"
+            mv "$home/.skyscraper-$folder" "$configdir/all/skyscraper/$folder"
         fi
     done
 
@@ -201,39 +217,64 @@ function configure_skyscraper() {
 }
 
 function _init_config_skyscraper() {
+
+    local config_files=($(_config_files_skyscraper))
+
+    # assume new(er) install
+    mkdir -p .pristine_cfgs
+    for cf in "${config_files[@]}"; do
+        bn=${cf#*/} # cut off cache/
+        if [[ -e "$md_inst/$bn" ]]; then
+            cp -rf "$md_inst/$bn" ".pristine_cfgs/"
+            rm -rf "$md_inst/$bn"
+        fi
+    done
+
     local scraper_conf_dir="$configdir/all/skyscraper"
 
     # Make sure the `artwork.xml` and other conf file(s) are present, but don't overwrite them on upgrades
     local f_conf
-    for f_conf in artwork.xml aliasMap.csv platforms.json screenscraper.json; do
-        copyDefaultConfig "$md_inst/$f_conf" "$scraper_conf_dir/$f_conf"
+    for f_conf in artwork.xml aliasMap.csv peas.json platforms_idmap.csv; do
+        copyDefaultConfig "$md_inst/.pristine_cfgs/$f_conf" "$scraper_conf_dir/$f_conf"
     done
 
     # If we don't have a previous config.ini file, copy the example one
-    [[ ! -f "$scraper_conf_dir/config.ini" ]] && cp "$md_inst/config.ini.example" "$scraper_conf_dir/config.ini"
+    if [[ ! -f "$scraper_conf_dir/config.ini" ]]; then
+        cp "$md_inst/.pristine_cfgs/config.ini.example" "$scraper_conf_dir/config.ini"
+    fi
 
-    # Artwork example files
-    cp -f "$md_inst/artwork.xml.example"* "$scraper_conf_dir"
+    # Artwork example files, always overwrite
+    cp -f "$md_inst/.pristine_cfgs/artwork.xml.example"* "$scraper_conf_dir"
 
-    # Copy remaining resources
+    # Copy remaining resources, always overwrite
+    local resource_files=(
+        'hints.xml'
+        'mameMap.csv'
+        'mobygames_platforms.json'
+        'screenscraper_platforms.json'
+        'tgdb_developers.json'
+        'tgdb_genres.json'
+        'tgdb_platforms.json'
+        'tgdb_publishers.json'
+    )
     local resource_file
-    for resource_file in mameMap.csv tgdb_developers.json tgdb_publishers.json hints.xml mobygames.json; do
-        cp -f "$md_inst/$resource_file" "$scraper_conf_dir"
+    for resource_file in "${resource_files[@]}"; do
+        cp -f "$md_inst/.pristine_cfgs/$resource_file" "$scraper_conf_dir"
     done
 
-    # Copy the rest of the folders
-    cp -rf "$md_inst/resources" "$scraper_conf_dir"
+    # Copy the resource folder
+    cp -rf "$md_inst/.pristine_cfgs/resources" "$scraper_conf_dir"
 
-    # Create the import folders and add the sample files.
+    # Create the import folders and add the definition template examples.
     local folder
     for folder in covers marquees screenshots textual videos wheels; do
         mkUserDir "$scraper_conf_dir/import/$folder"
     done
-    cp -rf "$md_inst/import" "$scraper_conf_dir"
+    cp -rf "$md_inst/.pristine_cfgs/import" "$scraper_conf_dir"
 
     # Create the cache folder and add the sample 'priorities.xml' file to it
     mkUserDir "$scraper_conf_dir/cache"
-    cp -f "$md_inst/priorities.xml.example" "$scraper_conf_dir/cache"
+    cp -f "$md_inst/.pristine_cfgs/priorities.xml.example" "$scraper_conf_dir/cache"
 }
 
 # Scrape one system, passed as parameter
@@ -506,7 +547,7 @@ function gui_skyscraper() {
     while true; do
         [[ -z "$ver" ]] && ver="v(Git)"
 
-        local cmd=(dialog --backtitle "$__backtitle"  --colors --cancel-label "Exit" --help-button --no-collapse --cr-wrap --default-item "$default" --menu "   Skyscraper: game scraper for EmulationStation ($ver)\\n \\n" 22 60 12)
+        local cmd=(dialog --backtitle "$__backtitle" --colors --cancel-label "Exit" --help-button --no-collapse --cr-wrap --default-item "$default" --menu "   Skyscraper: game scraper for EmulationStation ($ver)\\n \\n" 22 60 12)
 
         local options=(
             "-" "GATHER and cache resources"
