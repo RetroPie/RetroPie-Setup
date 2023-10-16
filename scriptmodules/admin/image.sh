@@ -360,7 +360,7 @@ function platform_image() {
     local image_name="${image_base}.img"
     local image_file="$dest/$image_name"
 
-    rp_callModule image create "$image_file"
+    rp_callModule image create "$image_file" "$md_build/$dist"
     [[ "$make_bb" -eq 1 ]] && rp_callModule image create_bb "$dest/${image_base}-berryboot.img256"
 
     printMsgs "console" "Compressing ${image_name} ..."
