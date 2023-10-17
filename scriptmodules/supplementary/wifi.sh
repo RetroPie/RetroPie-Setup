@@ -276,8 +276,8 @@ function gui_wifi() {
             "1 Connect to your WiFi network"
             2 "Disconnect/Remove WiFi config"
             "2 Disconnect and remove any WiFi configuration"
-            3 "Import WiFi credentials from /boot/wifikeyfile.txt"
-            "3 Will import the SSID (network name) and PSK (password) from a file at /boot/wifikeyfile.txt
+            3 "Import WiFi credentials from wifikeyfile.txt"
+            "3 Will import the SSID (network name) and PSK (password) from the 'wifikeyfile.txt' file on the boot partition
 
 The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk = \"YOUR PASSWORD\""
         )
@@ -303,8 +303,12 @@ The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk =
                     remove_${mgmt_tool}_wifi $iface
                     ;;
                 3)
-                    if [[ -f "/boot/wifikeyfile.txt" ]]; then
-                        iniConfig " = " "\"" "/boot/wifikeyfile.txt"
+                    # check in `/boot/` (pre-bookworm) and `/boot/firmware` (bookworm and later) for the file
+                    local file="/boot/wifikeyfile.txt"
+                    [[ ! -f "$file" ]] && file="/boot/firmware/wifikeyfile.txt"
+
+                    if [[ -f "$file" ]]; then
+                        iniConfig " = " "\"" "$file"
                         iniGet "ssid"
                         local ssid="$ini_value"
                         iniGet "psk"
@@ -312,7 +316,7 @@ The file should contain two lines as follows\n\nssid = \"YOUR WIFI SSID\"\npsk =
                         create_${mgmt_tool}_config_wifi "wpa" "$ssid" "$psk" "$iface"
                         gui_connect_wifi "$iface"
                     else
-                        printMsgs "dialog" "No /boot/wifikeyfile.txt found"
+                        printMsgs "dialog" "File 'wifikeyfile.txt' not found on the boot partition!"
                     fi
                     ;;
             esac
