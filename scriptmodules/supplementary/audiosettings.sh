@@ -30,8 +30,8 @@ function gui_audiosettings() {
     # The list of ALSA cards/devices depends on the 'snd-bcm2385' module parameter 'enable_compat_alsa'
     # * enable_compat_alsa: true  - single soundcard, output is routed based on the `numid` control
     # * enable_compat_alsa: false - one soundcard per output type (HDMI/Headphones)
-    # If PulseAudio is enabled, then try to configure it and leave ALSA alone
-    if _pa_cmd_audiosettings systemctl -q --user is-enabled pulseaudio.socket; then
+    # When PulseAudio/PipeWire is enabled, try to configure it and leave ALSA alone
+    if _pa_cmd_audiosettings systemctl -q --user is-enabled {pulseaudio,pipewire-pulse}.socket; then
         _pulseaudio_audiosettings
     elif aplay -l | grep -q "bcm2835 ALSA"; then
         _bcm2835_alsa_compat_audiosettings
@@ -76,9 +76,13 @@ function _bcm2835_alsa_compat_audiosettings() {
         M "Mixer - adjust output volume"
         R "Reset to default"
     )
-    # If PulseAudio is installed, add an option to enable it
-    hasPackage "pulseaudio" && options+=(P "Enable PulseAudio")
-
+    # If PulseAudio (PipeWire) is installed, add an option to enable it
+    local sound_server="PulseAudio"
+    if hasPackage "wireplumber"; then
+        options+=(P "Enable PipeWire")
+    else
+        hasPackage "pulseaudio" && options+=(P "Enable PulseAudio")
+    fi
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         case "$choice" in
@@ -110,8 +114,8 @@ function _bcm2835_alsa_compat_audiosettings() {
                 _reset_alsa_audiosettings
                 ;;
             P)
-                _toggle_pulseaudio_audiosettings "on"
-                printMsgs "dialog" "PulseAudio enabled"
+                _toggle_${sound_server,,} audiosettings "on"
+                printMsgs "dialog" "${sound_server} enabled"
                 ;;
         esac
     fi
@@ -134,8 +138,14 @@ function _bcm2835_alsa_internal_audiosettings() {
         R "Reset to default"
     )
 
-    # If PulseAudio is installed, add an option to enable it
-    hasPackage "pulseaudio" && options+=(P "Enable PulseAudio")
+    # If PulseAudio (PipeWire) is installed, add an option to enable it
+    local sound_server="PulseAudio"
+    if hasPackage "wireplumber"; then
+        options+=(P "Enable PipeWire")
+        sound_server="PipeWire"
+    else
+        hasPackage "pulseaudio" && options+=(P "Enable PulseAudio")
+    fi
 
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
@@ -152,8 +162,8 @@ function _bcm2835_alsa_internal_audiosettings() {
                 _reset_alsa_audiosettings
                 ;;
             P)
-                _toggle_pulseaudio_audiosettings "on"
-                printMsgs "dialog" "PulseAudio enabled"
+                _toggle_${sound_server,,}_audiosettings "on"
+                printMsgs "dialog" "$sound_server enabled"
                 ;;
         esac
     fi
@@ -231,29 +241,31 @@ EOF
 }
 
 function _pulseaudio_audiosettings() {
-    local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (PulseAudio)" 22 86 16)
     local options=()
     local sink_index
     local sink_label
+    local sound_server="PulseAudio"
 
-    # Check if PulseAudio is running, otherwise 'pacmd' will not work
-    if ! _pa_cmd_audiosettings pacmd stat>/dev/null; then
-        printMsgs "dialog" "PulseAudio is enabled, but not running\nAudio settings cannot be set right now"
+    # Check if PulseAudio is running, otherwise 'pactl' will not work
+    if ! _pa_cmd_audiosettings pactl info >/dev/null; then
+        printMsgs "dialog" "PulseAudio is present, but not running.\nAudio settings cannot be set right now."
         return
     fi
     while read sink_index sink_label; do
         options+=("$sink_index" "$sink_label")
-    done < <(_pa_cmd_audiosettings pacmd list-sinks | \
-            awk -F [:=] '/index/ { idx=$2;
+    done < <(_pa_cmd_audiosettings pactl list sinks | \
+            awk -F [:=] 'BEGIN {idx=0}; /Name:/ {
                          do {getline} while($0 !~ "alsa.name");
                          gsub(/"|bcm2835[^a-zA-Z]+/, "", $2);
-                         print idx,$2 }'
+                         print idx,$2;
+                         idx++}'
             )
-
+    _pa_cmd_audiosettings pactl info | grep -i pipewire >/dev/null && sound_server="PipeWire"
+    local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output ($sound_server)" 22 86 16)
     options+=(
         M "Mixer - adjust output volume"
         R "Reset to default"
-        P "Disable PulseAudio"
+        P "Disable $sound_server"
     )
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
@@ -275,8 +287,8 @@ function _pulseaudio_audiosettings() {
                 printMsgs "dialog" "Audio settings reset to defaults"
                 ;;
             P)
-                _toggle_pulseaudio_audiosettings "off"
-                printMsgs "dialog" "PulseAudio disabled"
+                _toggle_${sound_server,,}_audiosettings "off"
+                printMsgs "dialog" "${sound_server} disabled"
                 ;;
         esac
     fi
@@ -294,6 +306,20 @@ function _toggle_pulseaudio_audiosettings() {
         _pa_cmd_audiosettings systemctl --user mask pulseaudio.socket
         _pa_cmd_audiosettings systemctl --user stop pulseaudio.service
     fi
+}
+
+function _toggle_pipewire_audiosettings() {
+    local state=$1
+
+    if [[ "$state" == "on" ]]; then
+        _pa_cmd_audiosettings systemctl --user unmask pipewire-pulse.socket pipewire.socket
+        _pa_cmd_audiosettings systemctl --user start  pipewire.service pipewire-pulse.service wireplumber.service
+    fi
+
+    if [[ "$state" == "off" ]]; then
+        _pa_cmd_audiosettings systemctl --user mask pipewire-pulse.socket pipewire.socket
+        _pa_cmd_audiosettings systemctl --user stop pipewire.service pipewire-pulse.service wireplumber.service
+     fi
 }
 
 # Run PulseAudio commands as the calling user
