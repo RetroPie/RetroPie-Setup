@@ -311,6 +311,11 @@ function get_os_version() {
 
     [[ -n "$error" ]] && fatalError "$error\n\n$(lsb_release -idrc)"
 
+    # check for Armbian, which can be built on Debian/Ubuntu
+    if [[ -f /etc/armbian-release ]]; then
+        __platform_flags+=("armbian")
+    fi
+
     # configure Raspberry Pi graphics stack
     isPlatform "rpi" && get_rpi_video
 }

@@ -164,8 +164,10 @@ function gui_raspbiantools() {
             3 "Remove some unneeded packages (pulseaudio / cups / wolfram)"
             4 "Disable screen blanker"
             5 "Enable needed kernel module uinput"
-            6 "$zram_status compressed memory (ZRAM)"
         )
+        # exclude ZRAM config for Armbian, it is handled by `armbian-config`
+        ! isPlatform "armbian" && options+=(6 "$zram_status compressed memory (ZRAM)")
+
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case "$choice" in

@@ -261,6 +261,10 @@ function _mapPackage() {
                         isPlatform "rpi5" && pkg="linux-headers-rpi-2712"
                     fi
                 fi
+            elif isPlatform "armbian"; then
+                local branch="$(grep -oP "BRANCH=\K.*"      /etc/armbian-release)"
+                local family="$(grep -oP "LINUXFAMILY=\K.*" /etc/armbian-release)"
+                pkg="linux-headers-${branch}-${family}"
             elif [[ -z "$__os_ubuntu_ver" ]]; then
                 pkg="linux-headers-$(uname -r)"
             else
