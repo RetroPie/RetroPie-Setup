@@ -132,7 +132,6 @@ function gui_xboxdrv() {
             rp_callModule "$md_id"
         fi
     fi
-    iniConfig "=" "" "/boot/config.txt"
 
     local controllers="$(def_controllers_xboxdrv)"
     local deadzone="$(def_deadzone_xboxdrv)"
@@ -145,8 +144,6 @@ function gui_xboxdrv() {
             2 "Disable xboxdrv"
             3 "Set number of controllers to enable (currently $controllers)"
             4 "Set analog stick deadzone (currently $deadzone)"
-            5 "Set dwc_otg.speed=1 in /boot/config.txt"
-            6 "Remove dwc_otg.speed=1 from /boot/config.txt"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -163,14 +160,6 @@ function gui_xboxdrv() {
                     ;;
                 4)
                     deadzone=$(deadzone_xboxdrv $deadzone)
-                    ;;
-                5)
-                    iniSet "dwc_otg.speed" "1"
-                    printMsgs "dialog" "dwc_otg.speed=1 has been set in /boot/config.txt"
-                    ;;
-                6)
-                    iniDel "dwc_otg.speed"
-                    printMsgs "dialog" "dwc_otg.speed=1 has been removed from /boot/config.txt"
                     ;;
             esac
         else
