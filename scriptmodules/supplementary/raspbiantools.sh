@@ -34,8 +34,14 @@ function lxde_raspbiantools() {
        aptInstall lxplug-volume
     fi
 
+    # Firefox is supported starting with Bookworm, install it along with Chromium
+    [[ "$__os_debian_ver" -ge 12 ]] && aptInstall --no-install-recommends firefox rpi-firefox-mods
+
     setConfigRoot "ports"
     addPort "lxde" "lxde" "Desktop" "XINIT:startx"
+    if (isPlatform "rpi4" || isPlatform "rpi5")  && [[ "$__os_debian_ver" -ge 12 ]]; then
+        addPort "wayfire" "wayfire" "Desktop (Wayland)" "wayfire-pi"
+    fi
     enable_autostart
 }
 
