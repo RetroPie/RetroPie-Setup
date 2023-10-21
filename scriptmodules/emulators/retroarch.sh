@@ -278,6 +278,9 @@ function configure_retroarch() {
     # disable 'press twice to quit'
     iniSet "quit_press_twice" "false"
 
+    # enable srm check saving at intervals rather than upon exit
+    iniSet "autosave_interval" = "10"
+
     # enable video shaders
     iniSet "video_shader_enable" "true"
 
