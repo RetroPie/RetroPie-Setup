@@ -62,16 +62,16 @@ function _bcm2835_alsa_compat_audiosettings() {
     local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output (ALSA - compat)" 22 86 16)
     local hdmi="HDMI"
 
-    # the Pi 4 has 2 HDMI ports, so number them
-    isPlatform "rpi4" && hdmi="HDMI 1"
+    # the Pi 4/5 have 2 HDMI ports, so number them
+    (isPlatform "rpi4" || isPlatform "rpi5") && hdmi="HDMI 1"
 
     local options=(
         1 "Auto"
         2 "Headphones - 3.5mm jack"
         3 "$hdmi"
     )
-    # add 2nd HDMI port on the Pi4
-    isPlatform "rpi4" && options+=(4 "HDMI 2")
+    # add 2nd HDMI port on the Pi 4/5
+    (isPlatform "rpi4" || isPlatform "rpi5") && options+=(4 "HDMI 2")
     options+=(
         M "Mixer - adjust output volume"
         R "Reset to default"
