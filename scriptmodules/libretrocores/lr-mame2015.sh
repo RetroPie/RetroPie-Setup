@@ -23,6 +23,7 @@ function _update_hook_lr-mame2015() {
 
 function sources_lr-mame2015() {
     gitPullOrClone
+    applyPatch "$md_data/01-python3-irgen.diff"
 }
 
 function build_lr-mame2015() {
