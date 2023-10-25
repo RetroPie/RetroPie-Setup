@@ -75,7 +75,7 @@ function depends_setup() {
         exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
     fi
 
-    if isPlatform "rpi" && isPlatform "mesa" && ! isPlatform "rpi4"; then
+    if  [[ "$__os_debian_ver" -le 10 ]] && isPlatform "rpi" && isPlatform "mesa" && ! isPlatform "rpi4"; then
         printMsgs "dialog" "WARNING: You have the experimental desktop GL driver enabled. This is NOT supported by RetroPie, and Emulation Station as well as emulators may fail to launch.\n\nPlease disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
     fi
 
