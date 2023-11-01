@@ -1,0 +1,12 @@
+# fixes gcc/libsanitizer/asan/asan_linux.cpp:217:21: error: ‘PATH_MAX’ was not declared in this scope
+--- a/gcc/libsanitizer/asan/asan_linux.cpp
++++ b/gcc/libsanitizer/asan/asan_linux.cpp
+@@ -31,7 +31,7 @@
+ #include <sys/types.h>
+ #include <dlfcn.h>
+ #include <fcntl.h>
+-#include <limits.h>
++#include <linux/limits.h>
+ #include <pthread.h>
+ #include <stdio.h>
+ #include <unistd.h>

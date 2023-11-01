@@ -62,6 +62,17 @@ function sources_crosscomp() {
                 [mpc]=1.2.0
             )
             ;;
+        bookworm)
+            pkgs=(
+                [binutils]=2.40
+                [gcc]=12.2.0
+                [glibc]=2.36
+                [gmp]=6.2.1
+                [kernel]=6.1
+                [mpfr]=4.2.0
+                [mpc]=1.3.1
+            )
+            ;;
         *)
             md_ret_errors+=("Unsupported distribution $dist")
             return 1
@@ -86,10 +97,14 @@ function sources_crosscomp() {
 
     # apply glibc patch required when compiling with GCC 10+
     # see https://sourceware.org/git/gitweb.cgi?p=glibc.git;h=49348beafe9ba150c9bd48595b3f372299bddbb0
-    # as well as a fix for an incorrect header include.
     if [[ "$dist" == "bullseye" ]]; then
         applyPatch "$md_data/bullseye.diff"
     fi
+    # fix incorrect limits.h include.
+    if compareVersions "${pkgs[gcc]}" ge 10; then
+        applyPatch "$md_data/asan_limits.diff"
+    fi
+
 }
 
 function build_crosscomp() {
