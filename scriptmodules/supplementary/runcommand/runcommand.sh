@@ -1312,11 +1312,11 @@ function launch_command() {
     if [[ "$CONSOLE_OUT" -eq 1 ]]; then
         # turn cursor on
         tput cnorm
-        eval $COMMAND </dev/tty 2>>"$LOG"
+        eval "$COMMAND" </dev/tty 2>>"$LOG"
         ret=$?
         tput civis
     else
-        eval $COMMAND </dev/tty &>>"$LOG"
+        eval "$COMMAND" </dev/tty &>>"$LOG"
         ret=$?
     fi
     return $ret
