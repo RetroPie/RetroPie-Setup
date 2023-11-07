@@ -22,7 +22,7 @@ function depends_audiosettings() {
 
 function gui_audiosettings() {
     # Check if the internal audio is enabled
-    if [[ `aplay -ql | grep bcm2835 | wc -l` < 1 ]]; then
+    if [[ `aplay -ql | grep -e bcm2835 -e vc4hdmi | wc -l` < 1 ]]; then
         printMsgs "dialog" "On-board audio disabled or not present"
         return
     fi
@@ -31,7 +31,7 @@ function gui_audiosettings() {
     # * enable_compat_alsa: true  - single soundcard, output is routed based on the `numid` control
     # * enable_compat_alsa: false - one soundcard per output type (HDMI/Headphones)
     # When PulseAudio/PipeWire is enabled, try to configure it and leave ALSA alone
-    if _pa_cmd_audiosettings systemctl -q --user is-enabled {pulseaudio,pipewire-pulse}.socket; then
+    if _pa_cmd_audiosettings systemctl -q --user is-enabled {pulseaudio,pipewire-pulse}.service; then
         _pulseaudio_audiosettings
     elif aplay -l | grep -q "bcm2835 ALSA"; then
         _bcm2835_alsa_compat_audiosettings
@@ -255,10 +255,13 @@ function _pulseaudio_audiosettings() {
         options+=("$sink_index" "$sink_label")
     done < <(_pa_cmd_audiosettings pactl list sinks | \
             awk -F [:=] 'BEGIN {idx=0}; /Name:/ {
-                         do {getline} while($0 !~ "alsa.name");
-                         gsub(/"|bcm2835[^a-zA-Z]+/, "", $2);
-                         print idx,$2;
-                         idx++}'
+                         do {getline} while($0 !~ "alsa.name" && $0 !~ "Formats");
+                         if ( $2 != "" ) {
+                            gsub(/"|bcm2835[^a-zA-Z]+/, "", $2);
+                            print idx,$2;
+                            idx++
+                         }
+                         }'
             )
     _pa_cmd_audiosettings pactl info | grep -i pipewire >/dev/null && sound_server="PipeWire"
     local cmd=(dialog --backtitle "$__backtitle" --menu "Set audio output ($sound_server)" 22 86 16)
