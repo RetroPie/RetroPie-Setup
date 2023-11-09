@@ -147,7 +147,7 @@ function _purge_platform_skyscraper() {
 
 function _get_ver_skyscraper() {
     if [[ -f "$md_inst/Skyscraper" ]]; then
-        echo $("$md_inst/Skyscraper" -h | grep 'Running Skyscraper'  | cut -d' '  -f 3 | tr -d v 2>/dev/null)
+        echo $(sudo -u "$user" "$md_inst/Skyscraper" --version | cut -d' ' -f2 2>/dev/null)
     fi
 }
 
