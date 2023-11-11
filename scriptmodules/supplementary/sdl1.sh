@@ -11,9 +11,9 @@
 
 rp_module_id="sdl1"
 rp_module_desc="SDL 1.2.15 with rpi fixes and dispmanx"
-rp_module_licence="GPL2 https://hg.libsdl.org/SDL/raw-file/7676476631ce/COPYING"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libsdl-org/SDL-1.2/main/COPYING"
 rp_module_section="depends"
-rp_module_flags="!all rpi"
+rp_module_flags="!all rpi dispmanx"
 
 function get_pkg_ver_sdl1() {
     local basever

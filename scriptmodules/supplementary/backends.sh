@@ -18,6 +18,9 @@ function _list_backends() {
     local id="$1"
     backends=()
 
+    # skip the 'depends' packages
+    [[ ${__mod_info[$id/section]} == "depends" ]] && return 1
+
     local flags="${__mod_info[$id/flags]}"
     local sdl
     if isPlatform "videocore" && hasFlag "$flags" "sdl1-videocore"; then
@@ -35,6 +38,7 @@ function _list_backends() {
     if [[ "$sdl" == "sdl1" ]]; then
         backends["default"]="SDL1 Framebuffer driver"
         isPlatform "dispmanx" && backends["dispmanx"]="SDL1 DispmanX driver"
+        isPlatform "kms" && ! isPlatform "dispmanx" && backends["sdl12-compat"]="SDL1 Compat driver"
     elif [[ "$sdl" == "sdl2" ]]; then
         if isPlatform "videocore"; then
             default="SDL2 videocore driver"
@@ -108,6 +112,9 @@ function gui_configure_backends() {
                 else
                     continue
                 fi
+            fi
+            if [[ "$choice" == "sdl12-compat" ]] && ! rp_isInstalled "sdl12-compat"; then
+                rp_callModule "sdl12-compat" _auto_
             fi
             local func="_backend_set_$id"
             if fnExists "$func"; then
