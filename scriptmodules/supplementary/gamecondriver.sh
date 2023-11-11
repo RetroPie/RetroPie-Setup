@@ -16,12 +16,7 @@ rp_module_section="driver"
 rp_module_flags="!all rpi"
 
 function depends_gamecondriver() {
-    # remove any old kernel headers for current kernel
-    local kernel_ver="$(uname -r)"
-    if hasPackage linux-headers-"${kernel_ver}" "${kernel_ver}-2" "eq"; then
-        aptRemove "linux-headers-${kernel_ver}"
-    fi
-    getDepends dkms raspberrypi-kernel-headers
+    getDepends dkms LINUX-HEADERS
 }
 
 function _gamecon_version() {
