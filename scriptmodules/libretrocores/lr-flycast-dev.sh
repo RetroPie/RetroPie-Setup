@@ -58,7 +58,7 @@ function install_lr-flycast-dev() {
 function configure_lr-flycast-dev() {
     local sys
     local def
-    for sys in "arcade" "dreamcast"; do
+    for sys in "arcade" "atomiswave" "naomi" "dreamcast"; do
         def=0
         isPlatform "kms" && [[ "$sys" == "dreamcast" ]] && def=1
         # segfaults on the rpi without redirecting stdin from </dev/null
@@ -68,7 +68,7 @@ function configure_lr-flycast-dev() {
 
     [[ "$md_mode" == "remove" ]] && return
 
-    for sys in "arcade" "dreamcast"; do
+    for sys in "arcade" "atomiswave" "naomi" "dreamcast"; do
         mkRomDir "$sys"
         defaultRAConfig "$sys"
     done
