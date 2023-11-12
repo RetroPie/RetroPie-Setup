@@ -42,7 +42,7 @@ function install_lr-picodrive() {
         'AUTHORS'
         'COPYING'
         'picodrive_libretro.so'
-        'README'
+        'README.md'
     )
 }
 
