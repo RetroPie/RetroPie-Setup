@@ -77,7 +77,7 @@ function install_eduke32() {
 function game_data_eduke32() {
     local dest="$romdir/ports/duke3d"
     if [[ "$md_id" == "eduke32" ]]; then
-        if [[ ! -f "$dest/duke3d.grp" ]]; then
+        if [[ ! -n $(find $dest -maxdepth 1 -iname duke3d.grp) ]]; then
             mkUserDir "$dest"
             local temp="$(mktemp -d)"
             download "$__archive_url/3dduke13.zip" "$temp"
