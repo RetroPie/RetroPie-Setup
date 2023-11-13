@@ -1,0 +1,161 @@
+diff -u -r famicom-mini-master/layouts/1024x768.xml famicom-mini-mod/layouts/1024x768.xml
+--- famicom-mini-master/layouts/1024x768.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/1024x768.xml	2023-11-19 20:50:59.665662200 +0200
+@@ -10,10 +10,10 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.573 0.5481481481481481</size>
+-			<pos>0.38 0.2185185185185185</pos>			
++			<size>0.5715 0.630208333333333</size>
++			<pos>0.3807 0.1860</pos>
+ 			<lineSpacing>1.39</lineSpacing>
+-			<selectorHeight>0.0740740740740741</selectorHeight>
++			<selectorHeight>0.0795</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+ 			<horizontalMargin>0.0166666666666667</horizontalMargin>
+ 		</textlist>
+diff -u -r famicom-mini-master/layouts/1280x720.xml famicom-mini-mod/layouts/1280x720.xml
+--- famicom-mini-master/layouts/1280x720.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/1280x720.xml	2023-11-19 20:18:09.217099000 +0200
+@@ -8,8 +8,8 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<pos>0.2854166666666667 0.2185185185185185</pos>
+-			<size>0.4291666666666667 0.5481481481481481</size>
++			<pos>0.2854166666666667 0.1890</pos>
++			<size>0.4291666666666667 0.629166666666667</size>
+ 			<lineSpacing>1.3975</lineSpacing>
+ 			<selectorHeight>0.0740740740740741</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+diff -u -r famicom-mini-master/layouts/1280x960.xml famicom-mini-mod/layouts/1280x960.xml
+--- famicom-mini-master/layouts/1280x960.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/1280x960.xml	2023-11-19 20:55:57.216498200 +0200
+@@ -10,10 +10,10 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5725 0.5481481481481481</size>
+-			<pos>0.3805555555555556 0.2185185185185185</pos>			
++			<size>0.5715 0.630208333333333</size>
++			<pos>0.3807 0.1860</pos>
+ 			<lineSpacing>1.395</lineSpacing>
+-			<selectorHeight>0.0740740740740741</selectorHeight>
++			<selectorHeight>0.0795</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+ 			<horizontalMargin>0.0166666666666667</horizontalMargin>
+ 		</textlist>
+diff -u -r famicom-mini-master/layouts/1366x768.xml famicom-mini-mod/layouts/1366x768.xml
+--- famicom-mini-master/layouts/1366x768.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/1366x768.xml	2023-11-19 20:33:51.952952100 +0200
+@@ -8,8 +8,8 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<pos>0.2854166666666667 0.2185185185185185</pos>		
+-			<size>0.4291666666666667 0.5481481481481481</size>
++			<pos>0.2854166666666667 0.1890</pos>
++			<size>0.4291666666666667 0.629166666666667</size>
+ 			<lineSpacing>1.39</lineSpacing>
+ 			<selectorHeight>0.0740740740740741</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+diff -u -r famicom-mini-master/layouts/1440x1080.xml famicom-mini-mod/layouts/1440x1080.xml
+--- famicom-mini-master/layouts/1440x1080.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/1440x1080.xml	2023-11-19 20:56:45.019045900 +0200
+@@ -10,10 +10,10 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5722222222222222 0.5481481481481481</size>
+-			<pos>0.3805555555555556 0.2185185185185185</pos>			
++			<size>0.5715 0.630208333333333</size>
++			<pos>0.3807 0.1860</pos>
+ 			<lineSpacing>1.375</lineSpacing>
+-			<selectorHeight>0.0740740740740741</selectorHeight>
++			<selectorHeight>0.0795</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+ 			<horizontalMargin>0.0166666666666667</horizontalMargin>
+ 		</textlist>
+diff -u -r famicom-mini-master/layouts/1920x1080.xml famicom-mini-mod/layouts/1920x1080.xml
+--- famicom-mini-master/layouts/1920x1080.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/1920x1080.xml	2023-11-19 20:18:27.434632200 +0200
+@@ -8,8 +8,8 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<pos>0.2854166666666667 0.2185185185185185</pos>		
+-			<size>0.4291666666666667 0.5481481481481481</size>
++			<pos>0.2854166666666667 0.1890</pos>		
++			<size>0.4291666666666667 0.629166666666667</size>
+ 			<lineSpacing>1.375</lineSpacing>
+ 			<selectorHeight>0.0740740740740741</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+diff -u -r famicom-mini-master/layouts/320x240.xml famicom-mini-mod/layouts/320x240.xml
+--- famicom-mini-master/layouts/320x240.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/320x240.xml	2023-11-19 20:53:08.112267000 +0200
+@@ -10,10 +10,10 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5722222222222222 0.5481481481481481</size>
+-			<pos>0.3805555555555556 0.2185185185185185</pos>			
++			<size>0.5715 0.6302</size>
++			<pos>0.3807 0.1860</pos>
+ 			<lineSpacing>1.395</lineSpacing>
+-			<selectorHeight>0.0740740740740741</selectorHeight>
++			<selectorHeight>0.0795</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+ 			<horizontalMargin>0.0166666666666667</horizontalMargin>
+ 		</textlist>
+diff -u -r famicom-mini-master/layouts/640x480.xml famicom-mini-mod/layouts/640x480.xml
+--- famicom-mini-master/layouts/640x480.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/640x480.xml	2023-11-19 20:53:09.551257200 +0200
+@@ -10,10 +10,10 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.575 0.5481481481481481</size>
+-			<pos>0.378 0.2185185185185185</pos>			
++			<size>0.5715 0.6302</size>
++			<pos>0.3807 0.1860</pos>
+ 			<lineSpacing>1.395</lineSpacing>
+-			<selectorHeight>0.0740740740740741</selectorHeight>
++			<selectorHeight>0.0795</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+ 			<horizontalMargin>0.0166666666666667</horizontalMargin>
+ 		</textlist>
+diff -u -r famicom-mini-master/layouts/800x600.xml famicom-mini-mod/layouts/800x600.xml
+--- famicom-mini-master/layouts/800x600.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/800x600.xml	2023-11-19 20:51:45.383240000 +0200
+@@ -10,10 +10,10 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5722222222222222 0.5481481481481481</size>
+-			<pos>0.3805555555555556 0.2185185185185185</pos>			
++			<size>0.5715 0.6302</size>
++			<pos>0.3807 0.1860</pos>
+ 			<lineSpacing>1.395</lineSpacing>
+-			<selectorHeight>0.0740740740740741</selectorHeight>
++			<selectorHeight>0.0795</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+ 			<horizontalMargin>0.0166666666666667</horizontalMargin>
+ 		</textlist>
+diff -u -r famicom-mini-master/layouts/ntsc.xml famicom-mini-mod/layouts/ntsc.xml
+--- famicom-mini-master/layouts/ntsc.xml	2017-08-07 02:15:59.000000000 +0300
++++ famicom-mini-mod/layouts/ntsc.xml	2023-11-19 20:59:02.098705000 +0200
+@@ -10,10 +10,10 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5722222222222222 0.5481481481481481</size>
+-			<pos>0.3805555555555556 0.2185185185185185</pos>			
++			<size>0.5715 0.630208333333333</size>
++			<pos>0.3807 0.1860</pos>
+ 			<lineSpacing>1.395</lineSpacing>
+-			<selectorHeight>0.0740740740740741</selectorHeight>
++			<selectorHeight>0.0795</selectorHeight>
+ 			<selectorOffsetY>0</selectorOffsetY>
+ 			<horizontalMargin>0.0166666666666667</horizontalMargin>
+ 		</textlist>
