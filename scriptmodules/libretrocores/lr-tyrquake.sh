@@ -11,7 +11,7 @@
 
 rp_module_id="lr-tyrquake"
 rp_module_desc="Quake 1 engine - Tyrquake port for libretro"
-rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/tyrquake/master/gnu.txt"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/tyrquake/master/LICENSE.txt"
 rp_module_repo="git https://github.com/libretro/tyrquake.git master"
 rp_module_section="opt"
 
@@ -27,7 +27,7 @@ function build_lr-tyrquake() {
 
 function install_lr-tyrquake() {
     md_ret_files=(
-        'gnu.txt'
+        'LICENSE.txt'
         'readme-id.txt'
         'readme.txt'
         'tyrquake_libretro.so'
@@ -35,8 +35,8 @@ function install_lr-tyrquake() {
 }
 
 function game_data_lr-tyrquake() {
-    getDepends lhasa
     if [[ ! -f "$romdir/ports/quake/id1/pak0.pak" ]]; then
+        getDepends lhasa
         mkUserDir "$romdir/ports"
         mkUserDir "$romdir/ports/quake"
         local temp="$(mktemp -d)"
@@ -82,5 +82,5 @@ function configure_lr-tyrquake() {
 
     add_games_lr-tyrquake
 
-    ensureSystemretroconfig "ports/quake"
+    defaultRAConfig "quake"
 }

@@ -10,13 +10,13 @@
 #
 
 rp_module_id="skyscraper"
-rp_module_desc="Scraper for EmulationStation by Lars Muldjord"
-rp_module_licence="GPL3 https://raw.githubusercontent.com/muldjord/skyscraper/master/LICENSE"
-rp_module_repo="git https://github.com/muldjord/skyscraper :_get_branch_skyscraper"
+rp_module_desc="Scraper for EmulationStation"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/Gemba/skyscraper/master/LICENSE"
+rp_module_repo="git https://github.com/Gemba/skyscraper :_get_branch_skyscraper"
 rp_module_section="opt"
 
 function _get_branch_skyscraper() {
-    download https://api.github.com/repos/muldjord/skyscraper/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
+    download https://api.github.com/repos/Gemba/skyscraper/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
 }
 
 function depends_skyscraper() {
@@ -34,25 +34,45 @@ function build_skyscraper() {
 }
 
 function install_skyscraper() {
+    local config_files=($(_config_files_skyscraper))
+
     md_ret_files=(
-        'Skyscraper'
+        'docs'
         'LICENSE'
         'README.md'
-        'config.ini.example'
-        'artwork.xml'
+        'Skyscraper'
+        'supplementary/scraperdata/check_screenscraper_json_to_idmap.py'
+        'supplementary/scraperdata/convert_platforms_json.py'
+        'supplementary/scraperdata/peas_and_idmap_verify.py'
+    )
+    md_ret_files+=("${config_files[@]}")
+}
+
+
+function _config_files_skyscraper() {
+    local config_files=(
+        'aliasMap.csv'
         'artwork.xml.example1'
         'artwork.xml.example2'
         'artwork.xml.example3'
         'artwork.xml.example4'
-        'tgdb_developers.json'
-        'tgdb_publishers.json'
-        'mameMap.csv'
-        'aliasMap.csv'
-        'hints.txt'
-        'import'
-        'resources'
+        'artwork.xml'
         'cache/priorities.xml.example'
+        'config.ini.example'
+        'hints.xml'
+        'import'
+        'mameMap.csv'
+        'mobygames_platforms.json'
+        'peas.json'
+        'platforms_idmap.csv'
+        'resources'
+        'screenscraper_platforms.json'
+        'tgdb_developers.json'
+        'tgdb_genres.json'
+        'tgdb_platforms.json'
+        'tgdb_publishers.json'
     )
+    echo "${config_files[@]}"
 }
 
 # Get the location of the cached resources folder. In v3+, this changed to 'cache'.
@@ -108,7 +128,7 @@ function _purge_platform_skyscraper() {
     done < <(find "$configdir/all/skyscraper/$cache_folder" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;)
 
     # If not folders are found, show an info message instead of the selection list
-    if [[ ${#options[@]} -eq 0 ]] ; then
+    if [[ ${#options[@]} -eq 0 ]]; then
         printMsgs "dialog" "Nothing to delete ! No cached platforms found in \n$configdir/all/skyscraper/$cache_folder."
         return
     fi
@@ -127,13 +147,13 @@ function _purge_platform_skyscraper() {
 
 function _get_ver_skyscraper() {
     if [[ -f "$md_inst/Skyscraper" ]]; then
-        echo $("$md_inst/Skyscraper" -h | grep 'Running Skyscraper'  | cut -d' '  -f 3 | tr -d v 2>/dev/null)
+        echo $(sudo -u "$user" "$md_inst/Skyscraper" --version | cut -d' ' -f2 2>/dev/null)
     fi
 }
 
 function _check_ver_skyscraper() {
     ver=$(_get_ver_skyscraper)
-    if compareVersions "$ver" lt "3.5" ]]; then
+    if compareVersions "$ver" lt "3.5"; then
         printMsgs "dialog" "The version of Skyscraper you currently have installed is incompatible with options used by this script. Please update Skyscraper to the latest version to continue."
         return 1
     fi
@@ -167,13 +187,13 @@ function configure_skyscraper() {
         local cache_folder="dbs"
         [[ -d "$home/.skyscraper/cache" ]] && cache_folder="cache"
 
-        f_size=$(du --total -sm "$home/.skyscraper/$cache_folder" "$home/.skyscraper/import" 2>/dev/null | tail -n 1 | cut -f 1 )
+        f_size=$(du --total -sm "$home/.skyscraper/$cache_folder" "$home/.skyscraper/import" 2>/dev/null | tail -n 1 | cut -f 1)
         printMsgs "console" "INFO: Moving the Cache and Import folders to new configuration folder (total: $f_size Mb)"
 
         local folder
         for folder in $cache_folder import; do
-            mv "$home/.skyscraper/$folder" "$home/.skyscraper-$folder" && \
-                printMsgs "console" "INFO: Moved "$home/.skyscraper/$folder" to "$home/.skyscraper-$folder""
+            mv "$home/.skyscraper/$folder" "$home/.skyscraper-$folder" &&
+                printMsgs "console" "INFO: Moved $home/.skyscraper/$folder to $home/.skyscraper-$folder"
         done
 
         # When having an existing installation, chances are the gamelist is generated in the ROMs folder
@@ -188,7 +208,7 @@ function configure_skyscraper() {
     for folder in $cache_folder import; do
         if [[ -d "$home/.skyscraper-$folder" ]]; then
             printMsgs "console" "INFO: Moving "$home/.skyscraper-$folder" back to configuration folder"
-            mv  "$home/.skyscraper-$folder" "$configdir/all/skyscraper/$folder"
+            mv "$home/.skyscraper-$folder" "$configdir/all/skyscraper/$folder"
         fi
     done
 
@@ -197,57 +217,64 @@ function configure_skyscraper() {
 }
 
 function _init_config_skyscraper() {
+
+    local config_files=($(_config_files_skyscraper))
+
+    # assume new(er) install
+    mkdir -p .pristine_cfgs
+    for cf in "${config_files[@]}"; do
+        bn=${cf#*/} # cut off cache/
+        if [[ -e "$md_inst/$bn" ]]; then
+            cp -rf "$md_inst/$bn" ".pristine_cfgs/"
+            rm -rf "$md_inst/$bn"
+        fi
+    done
+
     local scraper_conf_dir="$configdir/all/skyscraper"
 
     # Make sure the `artwork.xml` and other conf file(s) are present, but don't overwrite them on upgrades
     local f_conf
-    for f_conf in artwork.xml aliasMap.csv; do
-        if [[ -f "$scraper_conf_dir/$f_conf" ]]; then
-            cp -f "$md_inst/$f_conf" "$scraper_conf_dir/$f_conf.default"
-        else
-            cp "$md_inst/$f_conf" "$scraper_conf_dir"
-        fi
+    for f_conf in artwork.xml aliasMap.csv peas.json platforms_idmap.csv; do
+        copyDefaultConfig "$md_inst/.pristine_cfgs/$f_conf" "$scraper_conf_dir/$f_conf"
     done
 
     # If we don't have a previous config.ini file, copy the example one
-    [[ ! -f "$scraper_conf_dir/config.ini" ]] && cp "$md_inst/config.ini.example" "$scraper_conf_dir/config.ini"
-
-    # Try to find the rest of the necessary files from the qmake build file
-    # They should be listed in the `unix:examples.file` configuration line
-    if [[ $(grep unix:examples.files "$md_build/skyscraper.pro" 2>/dev/null | cut -d= -f2-) ]]; then
-        local files=$(grep unix:examples.files "$md_build/skyscraper.pro" | cut -d= -f2-)
-        local file
-
-        for file in $files; do
-            # Copy the files to the configuration folder. Skip config.ini, artwork.xml and aliasMap.csv
-            if [[ $file != "artwork.xml" && $file != "config.ini" && $file != "aliasMap.csv" ]]; then
-                cp -f "$md_build/$file" "$scraper_conf_dir"
-            fi
-        done
-    else
-        # Fallback to the known resource files list
-        cp -f "$md_inst/artwork.xml.example"* "$scraper_conf_dir"
-
-        # Copy resources and readme
-        local resource_file
-        for resource_file in README.md mameMap.csv tgdb_developers.json tgdb_publishers.json hints.txt; do
-            cp -f "$md_inst/$resource_file" "$scraper_conf_dir"
-        done
+    if [[ ! -f "$scraper_conf_dir/config.ini" ]]; then
+        cp "$md_inst/.pristine_cfgs/config.ini.example" "$scraper_conf_dir/config.ini"
     fi
 
-    # Copy the rest of the folders
-    cp -rf "$md_inst/resources" "$scraper_conf_dir"
+    # Artwork example files, always overwrite
+    cp -f "$md_inst/.pristine_cfgs/artwork.xml.example"* "$scraper_conf_dir"
 
-    # Create the import folders and add the sample files.
+    # Copy remaining resources, always overwrite
+    local resource_files=(
+        'hints.xml'
+        'mameMap.csv'
+        'mobygames_platforms.json'
+        'screenscraper_platforms.json'
+        'tgdb_developers.json'
+        'tgdb_genres.json'
+        'tgdb_platforms.json'
+        'tgdb_publishers.json'
+    )
+    local resource_file
+    for resource_file in "${resource_files[@]}"; do
+        cp -f "$md_inst/.pristine_cfgs/$resource_file" "$scraper_conf_dir"
+    done
+
+    # Copy the resource folder
+    cp -rf "$md_inst/.pristine_cfgs/resources" "$scraper_conf_dir"
+
+    # Create the import folders and add the definition template examples.
     local folder
     for folder in covers marquees screenshots textual videos wheels; do
         mkUserDir "$scraper_conf_dir/import/$folder"
     done
-    cp -rf "$md_inst/import" "$scraper_conf_dir"
+    cp -rf "$md_inst/.pristine_cfgs/import" "$scraper_conf_dir"
 
     # Create the cache folder and add the sample 'priorities.xml' file to it
-    mkdir -p "$scraper_conf_dir/cache"
-    cp -f "$md_inst/priorities.xml.example" "$scraper_conf_dir/cache"
+    mkUserDir "$scraper_conf_dir/cache"
+    cp -f "$md_inst/.pristine_cfgs/priorities.xml.example" "$scraper_conf_dir/cache"
 }
 
 # Scrape one system, passed as parameter
@@ -339,7 +366,7 @@ function _scrape_chosen_skyscraper() {
     # Confirm with the user that scraping can start
     dialog --clear --colors --yes-label "Proceed" --no-label "Abort" --yesno "This will start the gathering process, which can take a long time if you have a large game collection.\n\nYou can interrupt this process anytime by pressing \ZbCtrl+C\Zn.\nProceed ?" 12 70 2>&1 >/dev/tty
     [[ ! $? -eq 0 ]] && return 1
-    
+
     local choice
 
     for choice in "${choices[@]}"; do
@@ -368,7 +395,7 @@ function _generate_chosen_skyscraper() {
     fi
 
     local choices
-    local cmd=(dialog --backtitle "$__backtitle" --ok-label "Start" --cancel-label "Back" --checklist " Select platforms for gamelist(s) generation\n\n" 22 60 16) 
+    local cmd=(dialog --backtitle "$__backtitle" --ok-label "Start" --cancel-label "Back" --checklist " Select platforms for gamelist(s) generation\n\n" 22 60 16)
 
     choices=($("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty))
 
@@ -520,7 +547,7 @@ function gui_skyscraper() {
     while true; do
         [[ -z "$ver" ]] && ver="v(Git)"
 
-        local cmd=(dialog --backtitle "$__backtitle"  --colors --cancel-label "Exit" --help-button --no-collapse --cr-wrap --default-item "$default" --menu "   Skyscraper: game scraper by Lars Muldjord ($ver)\\n \\n" 22 60 12)
+        local cmd=(dialog --backtitle "$__backtitle" --colors --cancel-label "Exit" --help-button --no-collapse --cr-wrap --default-item "$default" --menu "   Skyscraper: game scraper for EmulationStation ($ver)\\n \\n" 22 60 12)
 
         local options=(
             "-" "GATHER and cache resources"

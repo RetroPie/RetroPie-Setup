@@ -25,6 +25,11 @@ function onstart_retroarch_joystick() {
     iniConfig " = " "\"" "/tmp/tempconfig.cfg"
     iniSet "input_device" "$DEVICE_NAME"
     iniSet "input_driver" "$input_joypad_driver"
+    # add vendor and product ids if non-empty
+    if [[ -n "$VENDOR_ID" && -n "$PRODUCT_ID" ]]; then
+        iniSet "input_vendor_id" "$VENDOR_ID"
+        iniSet "input_product_id" "$PRODUCT_ID"
+    fi
 }
 
 function onstart_retroarch_keyboard() {
@@ -241,7 +246,7 @@ function map_retroarch_joystick() {
     declare -A hat_map=([1]="up" [2]="right" [4]="down" [8]="left")
     iniGet "input_driver"
     local input_driver="$ini_value"
-    local autoconfig_preset=$(grep -rwl "$rootdir/emulators/retroarch/autoconfig-presets/$input_driver" -e "$DEVICE_NAME" | head -1)
+    local autoconfig_preset=$(grep -rwFl "$rootdir/emulators/retroarch/autoconfig-presets/$input_driver" -e "$DEVICE_NAME" | head -1)
     for key in "${keys[@]}"; do
         case "$input_type" in
             hat)
@@ -325,10 +330,10 @@ function map_retroarch_keyboard() {
             keys=("input_player1_y")
             ;;
         leftbottom|leftshoulder)
-            keys=("input_player1_l")
+            keys=("input_player1_l" "input_load_state")
             ;;
         rightbottom|rightshoulder)
-            keys=("input_player1_r")
+            keys=("input_player1_r" "input_save_state")
             ;;
         lefttop|lefttrigger)
             keys=("input_player1_l2")
@@ -387,7 +392,7 @@ function onend_retroarch_joystick() {
     done < <(grep -Fl "\"$DEVICE_NAME\"" "$dir/"*.cfg 2>/dev/null)
 
     # sanitise filename
-    file="${DEVICE_NAME//[\?\<\>\\\/:\*\|]/}.cfg"
+    file="${DEVICE_NAME//[:><?\"\/\\|*]/}.cfg"
 
     if [[ -f "$dir/$file" ]]; then
         mv "$dir/$file" "$dir/$file.bak"

@@ -12,7 +12,7 @@
 rp_module_id="yquake2"
 rp_module_desc="yquake2 - The Yamagi Quake II client"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/yquake2/yquake2/master/LICENSE"
-rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_8_00"
+rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_8_30"
 rp_module_section="exp"
 rp_module_flags=""
 
@@ -25,10 +25,8 @@ function depends_yquake2() {
 function sources_yquake2() {
     gitPullOrClone
     # get the add-ons sources
-    local repo
-    for repo in 'xatrix' 'rogue'; do
-        gitPullOrClone "$md_build/$repo" "https://github.com/yquake2/$repo"
-    done
+    gitPullOrClone "$md_build/xatrix" "https://github.com/yquake2/xatrix" "XATRIX_2_12"
+    gitPullOrClone "$md_build/rogue" "https://github.com/yquake2/rogue" "ROGUE_2_11"
 }
 
 function build_yquake2() {

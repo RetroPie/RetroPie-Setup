@@ -42,7 +42,7 @@ function install_lr-picodrive() {
         'AUTHORS'
         'COPYING'
         'picodrive_libretro.so'
-        'README'
+        'README.md'
     )
 }
 
@@ -54,7 +54,7 @@ function configure_lr-picodrive() {
         # default on megadrive / mastersystem only on armv6 for performance
         [[ "$system" =~ megadrive|mastersystem ]] && isPlatform "arm6" && def=1
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
         addEmulator $def "$md_id" "$system" "$md_inst/picodrive_libretro.so"
         addSystem "$system"
     done

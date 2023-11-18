@@ -25,6 +25,8 @@ function depends_advmame-0.94() {
 function sources_advmame-0.94() {
     downloadAndExtract "$md_repo_url" "$md_build" --strip-components 1
     _sources_patch_advmame-1.4
+    # Fix the global vars missing the 'external' qualifier, needed for gcc > 10
+    applyPatch "${md_path%/*}/advmame/02_fix_extern_globals_0_94.diff"
 }
 
 function build_advmame-0.94() {

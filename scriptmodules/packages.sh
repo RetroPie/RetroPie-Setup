@@ -601,10 +601,10 @@ function rp_hasNewerModule() {
                     local repo_commit="$(rp_resolveRepoParam "${__mod_info[$id/repo_commit]}")"
                     # if we are locked to a single commit, then we compare against the current module commit only
                     if [[ -n "$repo_commit" && "$repo_commit" != "HEAD" ]]; then
-                        # if we are using git and the module has an 8 character commit hash, then adjust
-                        # the package commit to 8 characters also for the comparison
-                        if [[ "$repo_type" == "git" && "${#repo_commit}" -eq 8 ]]; then
-                            pkg_repo_commit="${pkg_repo_commit::8}"
+                        # if we are using git and the module has a commit hash, then adjust
+                        # the package commit length for the comparison
+                        if [[ "$repo_type" == "git" && "${#repo_commit}" -ge 4 ]]; then
+                            pkg_repo_commit="${pkg_repo_commit::${#repo_commit}}"
                         fi
                         if [[ "$pkg_repo_commit" != "$repo_commit" ]]; then
                             ret=0
@@ -643,7 +643,9 @@ function rp_hasNewerModule() {
                 local vendor="${__mod_info[$id/vendor]}"
                 local repo_dir="$scriptdir"
                 [[ "$vendor" != "RetroPie" ]] && repo_dir+="/ext/$vendor"
-                local module_date="$(git -C "$repo_dir" log -1 --format=%cI -- "${__mod_info[$id/path]}")"
+                local module_date="$(sudo -u "$user" git -C "$repo_dir" log -1 --format=%cI -- "${__mod_info[$id/path]}")"
+                # just in case the module is not known to git, get the file last modified date
+                [[ -z "$module_date" ]] && module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
                 if rp_dateIsNewer "$pkg_date" "$module_date"; then
                     ret=0
                 fi

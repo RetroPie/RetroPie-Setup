@@ -1,0 +1,36 @@
+From f8688cae05799a30cd5337e626a07fa9f004c0a3 Mon Sep 17 00:00:00 2001
+From: Andrea Mazzoleni <amadvance@gmail.com>
+Date: Fri, 23 Oct 2020 21:29:41 +0200
+Subject: [PATCH] Fix build errors due new gcc 10 default for -fno-common
+
+---
+ src/drivers/cavepgm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/drivers/cavepgm.c b/src/drivers/cavepgm.c
+index 38d3dae8..df6e97ab 100644
+--- a/src/drivers/cavepgm.c
++++ b/src/drivers/cavepgm.c
+@@ -287,7 +287,7 @@ Notes:
+ #include "timer.h"
+ 
+ 
+-UINT16 *pgm_mainram, *pgm_bg_videoram, *pgm_tx_videoram, *pgm_videoregs, *pgm_rowscrollram;
++extern UINT16 *pgm_mainram, *pgm_bg_videoram, *pgm_tx_videoram, *pgm_videoregs, *pgm_rowscrollram;
+ static UINT8 *z80_mainram;
+ static UINT32 *arm7_shareram;
+ static UINT32 arm7_latch;
+@@ -852,8 +852,8 @@ static void expand_32x32x5bpp(void)
+ /* This function expands the sprite colour data (in the A Roms) from 3 pixels
+    in each word to a byte per pixel making it easier to use */
+ 
+-UINT8 *pgm_sprite_a_region;
+-size_t	pgm_sprite_a_region_allocate;
++extern UINT8 *pgm_sprite_a_region;
++extern size_t	pgm_sprite_a_region_allocate;
+ 
+ static void expand_colourdata(void)
+ {
+-- 
+2.32.0
+

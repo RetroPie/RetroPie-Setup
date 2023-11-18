@@ -15,52 +15,59 @@ rp_module_section=""
 rp_module_flags=""
 
 function depends_image() {
-    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs)
+    local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs xz-utils)
     isPlatform "x86" && depends+=(qemu-user-static)
     getDepends "${depends[@]}"
 }
 
+function _get_info_image() {
+    local dist="$1"
+    local key="$2"
+    # don't use $md_data so this function can be used directly from builder.sh
+    local ini="${__mod_info[image/path]%/*}/image/dists/${dist}.ini"
+    [[ ! -f "$ini" ]] && fatalError "Definition file $ini does not exist"
+
+    iniConfig "=" "\"" "$ini"
+    iniGet "$key"
+    [[ -z "$ini_value" ]] && fatalError "Unable to locate key '$key' in definition file $ini"
+    echo "$ini_value"
+}
+
 function create_chroot_image() {
     local dist="$1"
-    [[ -z "$dist" ]] && dist="buster"
+    [[ -z "$dist" ]] && return 1
 
     local chroot="$2"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    [[ -z "$chroot" ]] && chroot="$md_build/$dist"
 
     mkdir -p "$md_build"
     pushd "$md_build"
 
     mkdir -p "$chroot"
 
-    local url
-    local image
-    case "$dist" in
-        jessie)
-            url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip"
-            ;;
-        stretch)
-            url="https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/2019-04-08-raspbian-stretch-lite.zip"
-            ;;
-        buster)
-            url="https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-05-28/2021-05-07-raspios-buster-armhf-lite.zip"
-            ;;
-        bullseye)
-            url="https://downloads.raspberrypi.org/raspios_lite_armhf_latest"
-            ;;
-        *)
-            md_ret_errors+=("Unknown/unsupported Raspbian version")
-            return 1
-            ;;
-    esac
+    local url=$(_get_info_image "$dist" "url")
+    local format=$(_get_info_image "$dist" "format")
 
     local base="raspbian-${dist}-lite"
-    local image="$base.img"
+    local image="${dist}.img"
+    local dest="${image}.${format}"
     if [[ ! -f "$image" ]]; then
-        download "$url" "$base.zip"
-        unzip -o "$base.zip"
-        mv "$(unzip -Z -1 "$base.zip")" "$image"
-        rm "$base.zip"
+        case "$format" in
+            zip)
+                download "$url" "$dest"
+                unzip -o "$dest"
+                mv "$(unzip -Z -1 "$dest")" "$image"
+                rm "$dest"
+                ;;
+            xz)
+                download "$url" "$dest"
+                xz -d -v "$dest"
+                ;;
+        esac
     fi
+
+    # abort if there is no extracted image present
+    [[ ! -f "$image" ]] && return 1
 
     # mount image
     local partitions=($(kpartx -s -a -v "$image" | awk '{ print "/dev/mapper/"$3 }'))
@@ -79,17 +86,29 @@ function create_chroot_image() {
     umount -l "$tmp/boot" "$tmp"
     rm -rf "$tmp"
 
-    kpartx -d "$image"
+    dmsetup remove "${partitions[@]}"
 
     popd
+    return 0
 }
 
 function install_rp_image() {
     local platform="$1"
-    [[ -z "$platform" ]] && return
+    if [[ -z "$platform" ]]; then
+        printMsgs "console" "Requires a platform (eg rpi3/rpi4)"
+        return 1
+    fi
 
-    local chroot="$2"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    local dist="$2"
+    if [[ -z "$dist" ]]; then
+        printMsgs "Requires a distribution name (eg rpios-buster/rpios-bullseye)"
+        return 1
+    fi
+
+    local chroot="$3"
+    [[ -z "$chroot" ]] && chroot="$md_build/$dist"
+
+    local dist_version="$(_get_info_image "$dist" "version")"
 
     # hostname to retropie
     echo "retropie" >"$chroot/etc/hostname"
@@ -107,17 +126,25 @@ function install_rp_image() {
 
     # set default GPU mem (videocore only) and overscan_scale so ES scales to overscan settings.
     iniConfig "=" "" "$chroot/boot/config.txt"
-    if ! [[ "$platform" =~ rpi.*kms|rpi4 ]]; then
+    if [[ "$dist_version" -lt 11 && "platform" != "rpi4" ]]; then
         iniSet "gpu_mem_256" 128
         iniSet "gpu_mem_512" 256
         iniSet "gpu_mem_1024" 256
     fi
     iniSet "overscan_scale" 1
 
+    # disable 64bit kernel
+    iniSet "arm_64bit" 0
+
     [[ -z "$__chroot_branch" ]] && __chroot_branch="master"
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
 cd
+if systemctl is-enabled userconfig &>/dev/null; then
+    echo "pi:raspberry" | sudo chpasswd
+    sudo systemctl disable userconfig
+    sudo systemctl --quiet enable getty@tty1
+fi
 sudo apt-get update
 sudo apt-get -y install git dialog xmlstarlet joystick
 git clone -b "$__chroot_branch" https://github.com/RetroPie/RetroPie-Setup.git
@@ -154,11 +181,14 @@ _EOF_
 }
 
 function _init_chroot_image() {
+    local chroot="$1"
+    [[ -z "$chroot" ]] && return 1
+
     # unmount on ctrl+c
     trap "_trap_chroot_image '$chroot'" INT
 
     # mount special filesystems to chroot
-    mkdir -p "$chroot"/dev/pts
+    mkdir -p "$chroot"{/dev/pts,/proc}
     mount none -t devpts "$chroot/dev/pts"
     mount -t proc /proc "$chroot/proc"
 
@@ -176,7 +206,7 @@ function _init_chroot_image() {
 
 function _deinit_chroot_image() {
     local chroot="$1"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    [[ -z "$chroot" ]] && return 1
 
     trap "" INT
 
@@ -198,7 +228,7 @@ function _trap_chroot_image() {
 
 function chroot_image() {
     local chroot="$1"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    [[ -z "$chroot" ]] && return 1
     shift
 
     printMsgs "console" "Chrooting to $chroot ..."
@@ -227,8 +257,7 @@ function create_image() {
     parted -s "$image" -- \
         mklabel msdos \
         unit mib \
-        mkpart primary fat16 4 260 \
-        set 1 boot on \
+        mkpart primary fat32 4 260 \
         mkpart primary 260 -1s
 
     # format
@@ -244,8 +273,10 @@ function create_image() {
     local part_boot="${partitions[0]}"
     local part_root="${partitions[1]}"
 
-    mkfs.vfat -F 16 -n boot "$part_boot"
-    mkfs.ext4 -O ^metadata_csum,^huge_file -L retropie "$part_root"
+    mkfs.vfat -F 32 -n bootfs "$part_boot"
+    # use the mke2fs config from the chroot so we create the filesystem with supported features
+    # disable huge_file & 64bit as with the Raspberry Pi OS images
+    MKE2FS_CONFIG="$chroot/etc/mke2fs.conf" mkfs.ext4 -O ^huge_file,^64bit -L retropie "$part_root"
 
     parted "$image_name" print
 
@@ -284,7 +315,7 @@ function create_bb_image() {
     [[ -z "$image" ]] && return 1
 
     local chroot="$2"
-    [[ -z "$chroot" ]] && chroot="$md_build/chroot"
+    [[ -z "$chroot" ]] && return 1
 
     # replace fstab
     echo "proc            /proc           proc    defaults          0       0" >"$chroot/etc/fstab"
@@ -296,11 +327,12 @@ function create_bb_image() {
 }
 
 function all_image() {
-    local platform
-    local image
     local dist="$1"
     local make_bb="$2"
-    for platform in rpi1 rpi2 rpi4; do
+    local platforms="$(_get_info_image "$dist" "platforms")"
+    local platform
+    printMsgs "heading" "Building $platforms images based on $dist ..."
+    for platform in $platforms; do
         platform_image "$platform" "$dist" "$make_bb"
     done
     combine_json_image
@@ -312,42 +344,23 @@ function platform_image() {
     local make_bb="$3"
     [[ -z "$platform" ]] && return 1
 
-    if [[ "$dist" == "stretch" && "$platform" == "rpi4" ]]; then
-        printMsgs "console" "Platform $platform on $dist is unsupported."
-        return 1
-    fi
-
     local dest="$__tmpdir/images"
     mkdir -p "$dest"
 
-    local image_base="retropie-${dist}-${__version}-"
-    case "$platform" in
-        rpi1)
-            image_base+="rpi1_zero"
-            image_platform="RPI 1/Zero"
-            ;;
-        rpi2)
-            image_base+="rpi2_3"
-            image_platform="RPI 2/3"
-            ;;
-        rpi3)
-            image_base+="rpi3"
-            image_platform="RPI 3"
-            ;;
-        rpi4)
-            image_base+="rpi4_400"
-            image_platform="RPI 4/400"
-            ;;
-        *)
-            fatalError "Unknown platform $platform for image building"
-            ;;
-    esac
+    printMsgs "heading" "Building $platform image based on $dist ..."
+
+    rp_callModule image create_chroot "$dist"
+    rp_callModule image install_rp "$platform" "$dist" "$md_build/$dist"
+
+    local dist_name="$(_get_info_image "$dist" "name")"
+    local file_add="$(_get_info_image "$dist" "file_${platform}")"
+    local image_title="$(_get_info_image "$dist" "title_${platform}")"
+
+    local image_base="retropie-${dist_name}-${__version}-${file_add}"
     local image_name="${image_base}.img"
     local image_file="$dest/$image_name"
 
-    rp_callModule image create_chroot "$dist"
-    rp_callModule image install_rp "$platform"
-    rp_callModule image create "$image_file"
+    rp_callModule image create "$image_file" "$md_build/$dist"
     [[ "$make_bb" -eq 1 ]] && rp_callModule image create_bb "$dest/${image_base}-berryboot.img256"
 
     printMsgs "console" "Compressing ${image_name} ..."
@@ -361,7 +374,7 @@ function platform_image() {
     template="${template/IMG_SHA256/$(sha256sum $image_file | cut -d" " -f1)}"
     template="${template/IMG_DOWNLOAD_SIZE/$(stat -c %s ${image_file}.gz)}"
     template="${template/IMG_VERSION/$__version}"
-    template="${template/IMG_PLATFORM/$image_platform}"
+    template="${template/IMG_PLATFORM/$image_title}"
     template="${template/IMG_DATE/$(date '+%Y-%m-%d')}"
     echo "$template" >"${image_file}.json"
 

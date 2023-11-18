@@ -135,9 +135,9 @@ function depends_emulationstation() {
         libvlc-dev libvlccore-dev vlc
     )
 
-    compareVersions "$__os_debian_ver" gt 8 && depends+=(rapidjson-dev)
-    isPlatform "x11" && depends+=(gnome-terminal)
-    if isPlatform "rpi" && isPlatform "32bit" && ! isPlatform "osmc"; then
+    [[ "$__os_debian_ver" -gt 8 ]] && depends+=(rapidjson-dev)
+    isPlatform "x11" && depends+=(gnome-terminal mesa-utils)
+    if isPlatform "dispmanx" && ! isPlatform "osmc"; then
         depends+=(omxplayer)
     fi
     getDepends "${depends[@]}"
@@ -145,7 +145,7 @@ function depends_emulationstation() {
 
 function _get_branch_emulationstation() {
     if [[ -z "$branch" ]]; then
-        if compareVersions "$__os_debian_ver" gt 8; then
+        if [[ "$__os_debian_ver" -gt 8 ]]; then
             branch="stable"
         else
             branch="v2.7.6"
@@ -163,13 +163,28 @@ function build_emulationstation() {
     if isPlatform "rpi"; then
         params+=(-DRPI=On)
         # use OpenGL on RPI/KMS for now
-        isPlatform "mesa" && params+=(-DGL=On)
+        isPlatform "mesa" && params+=("-DGL=On" "-DUSE_GL21=On")
         # force GLESv1 on videocore due to performance issue with GLESv2
         isPlatform "videocore" && params+=(-DUSE_GLES1=On)
     elif isPlatform "x11"; then
-        local gl_ver=$(sudo -u $user glxinfo | grep -oP "OpenGL version string: \K(\d+)")
-        [[ "$gl_ver" -gt 1 ]] && params+=(-DUSE_OPENGL_21=On)
+        if isPlatform "gles"; then
+            params+=(-DGLES=On)
+            local gles_ver=$(sudo -u $user glxinfo -B | grep -oP 'Max GLES[23] profile version:\s\K.*')
+            compareVersions $gles_ver lt 2.0  && params+=(-DUSE_GLES1=On)
+        else
+            params+=(-DGL=On)
+            local gl_ver=$(sudo -u $user glxinfo -B | grep -oP 'Max compat profile version:\s\K.*')
+            compareVersions $gl_ver gt 2.0 && params+=(-DUSE_GL21=On)
+        fi
+    elif isPlatform "gles"; then
+        params+=(-DGLES=On)
+    elif isPlatform "gl"; then
+        params+=(-DGL=On)
     fi
+    if isPlatform "dispmanx"; then
+        params+=(-DOMX=On)
+    fi
+
     rpSwap on 1000
     cmake . "${params[@]}"
     make clean
@@ -189,7 +204,7 @@ function install_emulationstation() {
     )
 
     # This folder is present only from 2.8.x, don't include it for older releases
-    if compareVersions "$__os_debian_ver" gt 8; then
+    if [[ "$__os_debian_ver" -gt 8 ]]; then
         md_ret_files+=('resources')
     fi
 }
@@ -211,7 +226,7 @@ function init_input_emulationstation() {
             -r "//inputActionTMP" -v "inputAction" "$es_config"
     else
         xmlstarlet ed -L \
-            -u "/inputList/inputAction[@type='onfinish']/command" -v "$md_inst/scripts/inputconfiguration.sh" \
+            -u "/inputList/inputAction[@type='onfinish']/command[1]" -v "$md_inst/scripts/inputconfiguration.sh" \
             "$es_config"
     fi
 
@@ -234,11 +249,11 @@ if [[ \$(id -u) -eq 0 ]]; then
     exit 1
 fi
 
-if [[ "\$(uname --machine)" != *86* ]]; then
-    if [[ -n "\$(pidof X)" ]]; then
-        echo "X is running. Please shut down X in order to mitigate problems with losing keyboard input. For example, logout from LXDE."
-        exit 1
-    fi
+# use SDL2 wayland video driver if wayland session is detected.
+# Emulationstation has focus problems under Ubuntu 22.04's GNOME on Wayland session. Don't use SDL2's wayland driver and run 
+# emulationstation with --fullscreen-borderless if desktop session is GNOME on Wayland.
+if [[ "\$WAYLAND_DISPLAY" == wayland* ]]; then
+    [[ "\$XDG_CURRENT_DESKTOP" == *GNOME ]] && set -- "\$@" "--fullscreen-borderless" || export SDL_VIDEODRIVER=wayland
 fi
 
 # save current tty/vt number for use with X so it can be launched on the correct tty

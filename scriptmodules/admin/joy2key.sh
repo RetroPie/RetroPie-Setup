@@ -15,11 +15,11 @@ rp_module_section="core"
 
 function _update_hook_joy2key() {
     # make sure joy2key is always updated when updating retropie-setup
-    rp_isInstalled "$md_id" && install_bin_joy2key
+    rp_isInstalled "$md_id" && rp_callModule "$md_id"
 }
 
 function depends_joy2key() {
-    local depends=()
+    local depends=(python3-urwid)
     # 'python3-sdl2' might not be available
     # it's packaged in Debian starting with version 11 (Bullseye)
     local p_ver
@@ -33,7 +33,7 @@ function depends_joy2key() {
 
 function install_bin_joy2key() {
     local file
-    for file in "joy2key.py" "joy2key_sdl.py"; do
+    for file in "joy2key.py" "joy2key_sdl.py" "osk.py"; do
         cp "$md_data/$file" "$md_inst/"
         chmod +x "$md_inst/$file"
         python3 -m compileall "$md_inst/$file"

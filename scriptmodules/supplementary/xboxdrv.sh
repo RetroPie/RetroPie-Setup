@@ -12,7 +12,7 @@
 rp_module_id="xboxdrv"
 rp_module_desc="Xbox / Xbox 360 gamepad driver"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/zerojay/xboxdrv/stable/COPYING"
-rp_module_repo="git https://github.com/zerojay/xboxdrv.git stable"
+rp_module_repo="git https://github.com/retropie/xboxdrv.git retropie-stable"
 rp_module_section="driver"
 
 function def_controllers_xboxdrv() {
@@ -24,7 +24,7 @@ function def_deadzone_xboxdrv() {
 }
 
 function depends_xboxdrv() {
-    getDepends libboost-dev libusb-1.0-0-dev libudev-dev libx11-dev scons pkg-config x11proto-core-dev libdbus-glib-1-dev
+    getDepends libboost-dev libusb-1.0-0-dev libudev-dev libx11-dev scons pkg-config python3 x11proto-core-dev libdbus-glib-1-dev
 }
 
 function sources_xboxdrv() {
@@ -32,7 +32,7 @@ function sources_xboxdrv() {
 }
 
 function build_xboxdrv() {
-    scons
+    python3 /usr/bin/scons
 }
 
 function install_xboxdrv() {
@@ -132,7 +132,6 @@ function gui_xboxdrv() {
             rp_callModule "$md_id"
         fi
     fi
-    iniConfig "=" "" "/boot/config.txt"
 
     local controllers="$(def_controllers_xboxdrv)"
     local deadzone="$(def_deadzone_xboxdrv)"
@@ -145,8 +144,6 @@ function gui_xboxdrv() {
             2 "Disable xboxdrv"
             3 "Set number of controllers to enable (currently $controllers)"
             4 "Set analog stick deadzone (currently $deadzone)"
-            5 "Set dwc_otg.speed=1 in /boot/config.txt"
-            6 "Remove dwc_otg.speed=1 from /boot/config.txt"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
@@ -163,14 +160,6 @@ function gui_xboxdrv() {
                     ;;
                 4)
                     deadzone=$(deadzone_xboxdrv $deadzone)
-                    ;;
-                5)
-                    iniSet "dwc_otg.speed" "1"
-                    printMsgs "dialog" "dwc_otg.speed=1 has been set in /boot/config.txt"
-                    ;;
-                6)
-                    iniDel "dwc_otg.speed"
-                    printMsgs "dialog" "dwc_otg.speed=1 has been removed from /boot/config.txt"
                     ;;
             esac
         else

@@ -12,12 +12,12 @@
 rp_module_id="srb2"
 rp_module_desc="Sonic Robo Blast 2 - 3D Sonic the Hedgehog fan-game built using a modified version of the Doom Legacy source port of Doom"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/STJr/SRB2/master/LICENSE"
-rp_module_repo="git https://github.com/STJr/SRB2.git SRB2_release_2.2.2"
+rp_module_repo="git https://github.com/STJr/SRB2.git SRB2_release_2.2.9"
 rp_module_section="exp"
 
 function depends_srb2() {
-    local depends=(cmake libsdl2-dev libsdl2-mixer-dev libgme-dev libpng-dev)
-    compareVersions "$__os_debian_ver" gt 9 && depends+=(libopenmpt-dev)
+    local depends=(cmake libsdl2-dev libsdl2-mixer-dev libgme-dev libpng-dev libcurl4-openssl-dev)
+    [[ "$__os_debian_ver" -gt 9 ]] && depends+=(libopenmpt-dev)
     getDepends "${depends[@]}"
 }
 
@@ -32,7 +32,7 @@ function build_srb2() {
 
     # Disable OpenMPT on Debian Stretch and old, its version is too old
     local extra
-    compareVersions "$__os_debian_ver" lt 10 && extra="-DSRB2_CONFIG_HAVE_OPENMPT=Off"
+    [[ "$__os_debian_ver" -lt 10 ]] && extra="-DSRB2_CONFIG_HAVE_OPENMPT=Off"
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$md_inst" $extra
     make
     md_ret_require="$md_build/build/bin/lsdlsrb2"

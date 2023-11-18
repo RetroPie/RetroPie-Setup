@@ -12,7 +12,7 @@
 rp_module_id="lr-freeintv"
 rp_module_desc="Intellivision emulator for libretro"
 rp_module_help="ROM Extensions: .int .bin\n\nCopy your Intellivision roms to $romdir/intellivision\n\nCopy the required BIOS files exec.bin and grom.bin to $biosdir"
-rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/FreeIntv/master/LICENSE"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/FreeIntv/master/LICENSE"
 rp_module_repo="git https://github.com/libretro/FreeIntv.git master"
 rp_module_section="opt"
 
@@ -36,7 +36,7 @@ function install_lr-freeintv() {
 
 function configure_lr-freeintv() {
     mkRomDir "intellivision"
-    ensureSystemretroconfig "intellivision"
+    defaultRAConfig "intellivision"
 
     addEmulator 1 "$md_id" "intellivision" "$md_inst/freeintv_libretro.so"
     addSystem "intellivision"

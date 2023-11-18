@@ -17,7 +17,7 @@ rp_module_section="exp"
 rp_module_flags=""
 
 function depends_openblok() {
-    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+    getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev gettext
 }
 
 function sources_openblok() {

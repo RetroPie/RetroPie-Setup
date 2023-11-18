@@ -41,7 +41,7 @@ _EOF_
 }
 
 function restart_samba() {
-    service samba restart || service smbd restart
+    systemctl -q is-active smbd.service && systemctl -q reload-or-restart smbd.service
 }
 
 function install_shares_samba() {
@@ -50,6 +50,12 @@ function install_shares_samba() {
     add_share_samba "bios" "$home/RetroPie/BIOS"
     add_share_samba "configs" "$configdir"
     add_share_samba "splashscreens" "$datadir/splashscreens"
+
+    # Add `wsdd` so that RetroPie is easily discovered by Windows clients
+    # Only available on Debian 12/Ubuntu 22.04 and later
+    if apt-cache -qq madison wsdd; then
+        aptInstall wsdd
+    fi
     restart_samba
 }
 

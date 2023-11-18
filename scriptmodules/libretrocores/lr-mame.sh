@@ -24,7 +24,7 @@ function _get_params_lr-mame() {
 }
 
 function depends_lr-mame() {
-    if compareVersions $__gcc_version lt 7; then
+    if [[ "$__gcc_version" -lt 7 ]]; then
         md_ret_errors+=("Sorry, you need an OS with gcc 7 or newer to compile $md_id")
         return 1
     fi
@@ -59,7 +59,7 @@ function configure_lr-mame() {
     local system
     for system in arcade mame-libretro; do
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
         addEmulator 0 "$md_id" "$system" "$md_inst/mamearcade_libretro.so"
         addSystem "$system"
     done

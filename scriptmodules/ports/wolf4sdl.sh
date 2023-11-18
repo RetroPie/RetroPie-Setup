@@ -126,6 +126,7 @@ function launch_wolf4sdl() {
         ['b1dac0a8786c7cdbb09331a4eba00652']="wolf4sdl-spear --mission 1"
         ['25d92ac0ba012a1e9335c747eb4ab177']="wolf4sdl-spear --mission 2"
         ['94aeef7980ef640c448087f92be16d83']="wolf4sdl-spear --mission 3"
+        ['e3e87518f51414872c454b7d72a45af6']="wolf4sdl-spear --mission 3"
         ['35afda760bea840b547d686a930322dc']="wolf4sdl-spear-sw"
     )
         if [[ "\${game_checksums[\$(get_md5sum \$wad_file)]}" ]] 2>/dev/null; then

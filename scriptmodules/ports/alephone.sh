@@ -19,15 +19,15 @@ rp_module_flags="!mali"
 
 function _get_branch_alephone() {
     local branch="release-20150620"
-    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
+    if [[ "$__os_debian_ver" -ge 9 ]] || [[ -n "$__os_ubuntu_ver" ]]; then
         branch="master"
     fi
     echo "$branch"
 }
 
 function depends_alephone() {
-    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake libboost-system-dev libcurl4-openssl-dev)
-    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
+    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake libboost-system-dev libcurl4-openssl-dev autoconf-archive libopenal-dev libsndfile1-dev)
+    if [[ "$__os_debian_ver" -ge 9 ]] || [[ -n "$__os_ubuntu_ver" ]]; then
         depends+=(libsdl2-dev libsdl2-net-dev libsdl2-image-dev libsdl2-ttf-dev libglu1-mesa-dev libgl1-mesa-dev)
     else
         depends+=(libsdl1.2-dev libsdl-net1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev)
@@ -42,7 +42,14 @@ function sources_alephone() {
 function build_alephone() {
     params=(--prefix="$md_inst")
     isPlatform "arm" && params+=(--with-boost-libdir=/usr/lib/arm-linux-gnueabihf)
-    ./autogen.sh
+
+    # if building an older release, use autogen.sh otherwise use autoreconf
+    if [[ -f "autogen.sh" ]]; then
+        ./autogen.sh
+    else
+        autoreconf -iv
+    fi
+
     ./configure "${params[@]}"
     make clean
     make
@@ -54,27 +61,31 @@ function install_alephone() {
 }
 
 function game_data_alephone() {
-    local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-20150620"
+    local version="20150620"
+    if [[ "$__os_debian_ver" -ge 9 ]] || [[ -n "$__os_ubuntu_ver" ]]; then
+        version="20220115"
+    fi
+    local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-$version"
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon/Shapes.shps" ]]; then
-        downloadAndExtract "$release_url/Marathon-20150620-Data.zip" "$romdir/ports/$md_id"
+        downloadAndExtract "$release_url/Marathon-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon 2/Shapes.shpA" ]]; then
-        downloadAndExtract "$release_url/Marathon2-20150620-Data.zip" "$romdir/ports/$md_id"
+        downloadAndExtract "$release_url/Marathon2-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon Infinity/Shapes.shpA" ]]; then
-        downloadAndExtract "$release_url/MarathonInfinity-20150620-Data.zip" "$romdir/ports/$md_id"
+        downloadAndExtract "$release_url/MarathonInfinity-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
     chown -R $user:$user "$romdir/ports/$md_id"
 }
 
 function configure_alephone() {
-    addPort "$md_id" "marathon" "Aleph One Engine - Marathon" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon/'"
-    addPort "$md_id" "marathon2" "Aleph One Engine - Marathon 2" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon 2/'"
-    addPort "$md_id" "marathoninfinity" "Aleph One Engine - Marathon Infinity" "'$md_inst/bin/alephone' '$romdir/ports/$md_id/Marathon Infinity/'"
+    addPort "$md_id" "alephone" "Aleph One Engine - Marathon" "$md_inst/bin/alephone %ROM%" "$romdir/ports/$md_id/Marathon/"
+    addPort "$md_id" "alephone" "Aleph One Engine - Marathon 2" "$md_inst/bin/alephone %ROM%" "$romdir/ports/$md_id/Marathon 2/"
+    addPort "$md_id" "alephone" "Aleph One Engine - Marathon Infinity" "$md_inst/bin/alephone %ROM%" "$romdir/ports/$md_id/Marathon Infinity/"
 
     mkRomDir "ports/$md_id"
 

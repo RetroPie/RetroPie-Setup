@@ -42,7 +42,7 @@ function install_lr-kronos() {
 
 function configure_lr-kronos() {
     mkRomDir "saturn"
-    ensureSystemretroconfig "saturn"
+    defaultRAConfig "saturn"
 
     addEmulator 1 "$md_id" "saturn" "$md_inst/kronos_libretro.so"
     addSystem "saturn"

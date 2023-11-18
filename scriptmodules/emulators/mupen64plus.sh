@@ -170,6 +170,8 @@ function build_mupen64plus() {
             isPlatform "armv6" && params+=("HOST_CPU=armv6")
             isPlatform "armv7" && params+=("HOST_CPU=armv7")
             isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
+            # we don't ship a Vulkan enabled front-end, so disable Vulkan in the core project
+            params+=("VULKAN=0")
 
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             make -C "$dir/projects/unix" "${params[@]}" clean
@@ -244,6 +246,8 @@ function install_mupen64plus() {
             isPlatform "armv7" && params+=("HOST_CPU=armv7")
             isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
             isPlatform "x86" && params+=("SSE=SSE2")
+            # disable VULKAN for the core project
+            params+=("VULKAN=0")
             make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
         fi
     done
@@ -266,7 +270,7 @@ function configure_mupen64plus() {
             addEmulator 0 "${md_id}-GLideN64-highres" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-GLideN64 %ROM% $res 0 --set Video-GLideN64[UseNativeResolutionFactor]\=2"
             addEmulator 0 "${md_id}-gles2n64" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-n64 %ROM%"
             if isPlatform "32bit"; then
-                addEmulator 0 "${md_id}-gles2rice$name" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
+                addEmulator 0 "${md_id}-gles2rice" "n64" "$md_inst/bin/mupen64plus.sh mupen64plus-video-rice %ROM% $res"
             fi
         else
             for res in "${resolutions[@]}"; do
@@ -299,6 +303,7 @@ function configure_mupen64plus() {
     addSystem "n64"
 
     mkRomDir "n64"
+    moveConfigDir "$home/.local/share/mupen64plus" "$md_conf_root/n64/mupen64plus"
 
     [[ "$md_mode" == "remove" ]] && return
 
@@ -344,7 +349,7 @@ function configure_mupen64plus() {
             echo "[Video-GLideN64]" >> "$config"
         fi
         # Settings version. Don't touch it.
-        iniSet "configVersion" "17"
+        iniSet "configVersion" "29"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         iniSet "EnableFBEmulation" "True"
@@ -369,6 +374,13 @@ function configure_mupen64plus() {
             setAutoConf mupen64plus_audio 1
             setAutoConf mupen64plus_compatibility_check 1
         elif isPlatform "mesa"; then
+            # Create Video-Rice section in .cfg
+            if ! grep -q "\[Video-Rice\]" "$config"; then
+                echo "[Video-Rice]" >> "$config"
+            fi
+            # Fix flickering and black screen issues with rice video plugin
+            iniSet "ScreenUpdateSetting" "7"
+
             setAutoConf mupen64plus_audio 0
             setAutoConf mupen64plus_compatibility_check 0
         fi

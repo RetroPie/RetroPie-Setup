@@ -128,9 +128,9 @@ function _add_rom_attractmode() {
 
 function depends_attractmode() {
     local depends=(
-        cmake libflac-dev libogg-dev libvorbis-dev libopenal-dev libfreetype6-dev
+        cmake fonts-freefont-ttf libflac-dev libcurl4-openssl-dev libogg-dev libvorbis-dev libopenal-dev libfreetype6-dev
         libudev-dev libjpeg-dev libudev-dev libavutil-dev libavcodec-dev
-        libavformat-dev libavfilter-dev libswscale-dev libavresample-dev
+        libavformat-dev libavfilter-dev libswscale-dev libswresample-dev
         libfontconfig1-dev
     )
     isPlatform "videocore" && depends+=(libraspberrypi-dev)
@@ -158,8 +158,8 @@ function build_attractmode() {
     cd attract
     make clean
     local params=(prefix="$md_inst")
-    isPlatform "videocore" && params+=(USE_GLES=1 EXTRA_CFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
-    isPlatform "kms" && params+=(USE_DRM=1 EXTRA_CFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
+    isPlatform "videocore" && params+=(USE_GLES=1 EXTRA_CXXFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
+    isPlatform "kms" && params+=(USE_DRM=1 EXTRA_CXXFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
     isPlatform "rpi" && params+=(USE_MMAL=1)
     make "${params[@]}"
 

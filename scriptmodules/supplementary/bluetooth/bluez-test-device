@@ -1,21 +1,17 @@
-#!/usr/bin/python
-
-from __future__ import absolute_import, print_function, unicode_literals
+#!/usr/bin/python3
 
 from optparse import OptionParser, make_option
 import re
 import sys
 import dbus
 import dbus.mainloop.glib
-try:
-  from gi.repository import GObject
-except ImportError:
-  import gobject as GObject
+from gi.repository import GLib
+
 import bluezutils
 
 dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 bus = dbus.SystemBus()
-mainloop = GObject.MainLoop()
+mainloop = GLib.MainLoop()
 
 option_list = [
 		make_option("-i", "--device", action="store",
@@ -48,7 +44,7 @@ if (args[0] == "list"):
 					"org.freedesktop.DBus.ObjectManager")
 	objects = om.GetManagedObjects()
 
-	for path, interfaces in objects.iteritems():
+	for path, interfaces in objects.items():
 		if "org.bluez.Device1" not in interfaces:
 			continue
 		properties = interfaces["org.bluez.Device1"]

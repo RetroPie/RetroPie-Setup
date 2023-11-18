@@ -16,11 +16,6 @@ rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/stella2014-li
 rp_module_repo="git https://github.com/libretro/stella2014-libretro.git master"
 rp_module_section="main"
 
-function _update_hook_lr-stella2014() {
-    # rename lr-stella to lr-stella2014
-    renameModule "lr-stella" "lr-stella2014"
-}
-
 function sources_lr-stella2014() {
     gitPullOrClone
 }
@@ -41,7 +36,7 @@ function install_lr-stella2014() {
 
 function configure_lr-stella2014() {
     mkRomDir "atari2600"
-    ensureSystemretroconfig "atari2600"
+    defaultRAConfig "atari2600"
 
     addEmulator 1 "$md_id" "atari2600" "$md_inst/stella2014_libretro.so"
     addSystem "atari2600"

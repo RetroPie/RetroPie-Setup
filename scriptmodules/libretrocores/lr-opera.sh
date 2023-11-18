@@ -38,7 +38,7 @@ function install_lr-opera() {
 
 function configure_lr-opera() {
     mkRomDir "3do"
-    ensureSystemretroconfig "3do"
+    defaultRAConfig "3do"
 
     addEmulator 1 "$md_id" "3do" "$md_inst/opera_libretro.so"
     addSystem "3do"

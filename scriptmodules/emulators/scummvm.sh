@@ -12,8 +12,8 @@
 rp_module_id="scummvm"
 rp_module_desc="ScummVM"
 rp_module_help="Copy your ScummVM games to $romdir/scummvm"
-rp_module_licence="GPL2 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
-rp_module_repo="git https://github.com/scummvm/scummvm.git v2.5.0"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
+rp_module_repo="git https://github.com/scummvm/scummvm.git v2.7.1"
 rp_module_section="opt"
 rp_module_flags="sdl2"
 
@@ -39,22 +39,28 @@ function sources_scummvm() {
 }
 
 function build_scummvm() {
+    rpSwap on 750
     local params=(
         --enable-release --enable-vkeybd
         --disable-debug --disable-eventrecorder --prefix="$md_inst"
     )
     isPlatform "rpi" && isPlatform "32bit" && params+=(--host=raspberrypi)
-    isPlatform "gles" && params+=(--opengl-mode=gles2)
+    isPlatform "rpi" && [[ "$md_id" == "scummvm-sdl1" ]] && params+=(--opengl-mode=none)
     # stop scummvm using arm-linux-gnueabihf-g++ which is v4.6 on
     # wheezy and doesn't like rpi2 cpu flags
     if isPlatform "rpi"; then
-        CC="gcc" CXX="g++" ./configure "${params[@]}"
+        if [[ "$md_id" == "scummvm-sdl1" ]]; then
+            SDL_CONFIG=sdl-config CC="gcc" CXX="g++" ./configure "${params[@]}"
+        else
+            CC="gcc" CXX="g++" ./configure "${params[@]}"
+        fi
     else
         ./configure "${params[@]}"
     fi
     make clean
     make
     strip "$md_build/scummvm"
+    rpSwap off
     md_ret_require="$md_build/scummvm"
 }
 
@@ -80,7 +86,10 @@ function configure_scummvm() {
 #!/bin/bash
 game="\$1"
 pushd "$romdir/scummvm" >/dev/null
-$md_inst/bin/scummvm --fullscreen --joystick=0 --extrapath="$md_inst/extra" "\$game"
+if ! grep -qs extrapath "\$HOME/.config/scummvm/scummvm.ini"; then
+    params="--extrapath="$md_inst/extra""
+fi
+$md_inst/bin/scummvm --fullscreen \$params --joystick=0 "\$game"
 while read id desc; do
     echo "\$desc" > "$romdir/scummvm/\$id.svm"
 done < <($md_inst/bin/scummvm --list-targets | tail -n +3)

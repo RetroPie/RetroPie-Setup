@@ -36,7 +36,7 @@ function install_lr-prosystem() {
 function configure_lr-prosystem() {
     mkRomDir "atari7800"
 
-    ensureSystemretroconfig "atari7800"
+    defaultRAConfig "atari7800"
 
     addEmulator 1 "$md_id" "atari7800" "$md_inst/prosystem_libretro.so"
     addSystem "atari7800"

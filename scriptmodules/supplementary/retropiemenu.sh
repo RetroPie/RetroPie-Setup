@@ -24,7 +24,7 @@ function _update_hook_retropiemenu() {
 }
 
 function depends_retropiemenu() {
-    getDepends mc
+    getDepends mc p7zip
 }
 
 function install_bin_retropiemenu() {
@@ -138,7 +138,7 @@ function launch_retropiemenu() {
             joy2keyStop
             cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
             chown $user:$user "$configdir/all/retroarch.cfg.bak"
-            su $user -c "\"$emudir/retroarch/bin/retroarch\" --menu --config \"$configdir/all/retroarch.cfg\""
+            su $user -c "XDG_RUNTIME_DIR=/run/user/$SUDO_UID \"$emudir/retroarch/bin/retroarch\" --menu --config \"$configdir/all/retroarch.cfg\""
             iniConfig " = " '"' "$configdir/all/retroarch.cfg"
             iniSet "config_save_on_exit" "false"
             ;;

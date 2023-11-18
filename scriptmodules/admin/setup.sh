@@ -38,7 +38,7 @@ function rps_logInit() {
 
 function rps_logStart() {
     echo -e "Log started at: $(date -d @$time_start)\n"
-    echo "RetroPie-Setup version: $__version ($(git -C "$scriptdir" log -1 --pretty=format:%h))"
+    echo "RetroPie-Setup version: $__version ($(sudo -u "$user" git -C "$scriptdir" log -1 --pretty=format:%h))"
     echo "System: $__platform ($__platform_arch) - $__os_desc - $(uname -a)"
 }
 
@@ -75,7 +75,7 @@ function depends_setup() {
         exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
     fi
 
-    if isPlatform "rpi" && isPlatform "mesa" && ! isPlatform "rpi4"; then
+    if  [[ "$__os_debian_ver" -le 10 ]] && isPlatform "rpi" && isPlatform "mesa" && ! isPlatform "rpi4"; then
         printMsgs "dialog" "WARNING: You have the experimental desktop GL driver enabled. This is NOT supported by RetroPie, and Emulation Station as well as emulators may fail to launch.\n\nPlease disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
     fi
 
@@ -120,7 +120,7 @@ function updatescript_setup()
         return 1
     fi
     local error
-    if ! error=$(su $user -c "git pull --ff-only 2>&1 >/dev/null"); then
+    if ! error=$(sudo -u "$user" git pull --ff-only 2>&1 >/dev/null); then
         printMsgs "dialog" "Update failed:\n\n$error"
         popd >/dev/null
         return 1
@@ -513,7 +513,7 @@ function config_gui_setup() {
         local id
         for id in "${__mod_id[@]}"; do
             # show all configuration modules and any installed packages with a gui function
-            if [[ "${__mod_info[$id/section]}" == "config" ]] || rp_isInstalled "$id" && fnExists "gui_$id"; then
+            if [[ "${__mod_info[$id/section]}" == "config" ]] || rp_isInstalled "$id" && rp_isEnabled "$id" && fnExists "gui_$id"; then
                 options+=("${__mod_idx[$id]}" "$id  - ${__mod_info[$id/desc]}" "${__mod_idx[$id]} ${__mod_info[$id/desc]}")
             fi
         done
@@ -680,7 +680,7 @@ function gui_setup() {
     depends_setup
     local default
     while true; do
-        local commit=$(git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
+        local commit=$(sudo -u "$user" git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
 
         cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version - Last Commit: $commit\nSystem: $__platform ($__platform_arch) - running on $__os_desc" 22 76 16)
         options=(

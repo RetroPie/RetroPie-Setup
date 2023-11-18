@@ -12,7 +12,7 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
-rp_module_repo="git https://github.com/libretro/RetroArch.git v1.9.7"
+rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.16.0"
 rp_module_section="core"
 
 function depends_retroarch() {
@@ -21,11 +21,12 @@ function depends_retroarch() {
     isPlatform "gles" && ! isPlatform "vero4k" && depends+=(libgles2-mesa-dev)
     isPlatform "mesa" && depends+=(libx11-xcb-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
-    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libvulkan-dev mesa-vulkan-drivers)
+    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev)
+    isPlatform "vulkan" && depends+=(libvulkan-dev mesa-vulkan-drivers)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
     isPlatform "kms" && depends+=(libgbm-dev)
 
-    if compareVersions "$__os_debian_ver" ge 9; then
+    if [[ "$__os_debian_ver" -ge 9 ]]; then
         depends+=(libavcodec-dev libavformat-dev libavdevice-dev)
     fi
 
@@ -34,9 +35,6 @@ function depends_retroarch() {
 
 function sources_retroarch() {
     gitPullOrClone
-    applyPatch "$md_data/01_disable_search.diff"
-    applyPatch "$md_data/02_shader_path_config_enable.diff"
-    applyPatch "$md_data/03_revert_default_save_paths.diff"
 }
 
 function build_retroarch() {
@@ -45,7 +43,7 @@ function build_retroarch() {
         params+=(--disable-pulse)
         ! isPlatform "mesa" && params+=(--disable-x11)
     fi
-    if compareVersions "$__os_debian_ver" lt 9; then
+    if [[ "$__os_debian_ver" -lt 9 ]]; then
         params+=(--disable-ffmpeg)
     fi
     isPlatform "gles" && params+=(--enable-opengles)
@@ -61,8 +59,8 @@ function build_retroarch() {
     isPlatform "kms" && params+=(--enable-kms --enable-egl)
     isPlatform "arm" && params+=(--enable-floathard)
     isPlatform "neon" && params+=(--enable-neon)
-    isPlatform "x11" && params+=(--enable-vulkan)
-    ! isPlatform "x11" && params+=(--disable-vulkan --disable-wayland)
+    isPlatform "vulkan" && params+=(--enable-vulkan) || params+=(--disable-vulkan)
+    ! isPlatform "x11" && params+=(--disable-wayland)
     isPlatform "vero4k" && params+=(--enable-mali_fbdev --with-opengles_libs='-L/opt/vero3/lib')
     ./configure --prefix="$md_inst" "${params[@]}"
     make clean
@@ -108,6 +106,18 @@ function update_assets_retroarch() {
     chown -R $user:$user "$dir"
 }
 
+function update_core_info_retroarch() {
+    local dir="$configdir/all/retroarch/cores"
+    # remove if not a git repository and do a fresh checkout
+    [[ ! -d "$dir/.git" ]] && rm -fr "$dir"
+    # remove our locally generated `.info` files, just in case upstream adds them
+    [[ -d "$dir/.git" ]] && git -C "$dir" clean -q -f "*.info"
+    gitPullOrClone "$dir" https://github.com/libretro/libretro-core-info.git
+    # add our info files for cores not included in the upstream repo
+    cp --update "$md_data"/*.info "$dir"
+    chown -R $user:$user "$dir"
+}
+
 function install_minimal_assets_retroarch() {
     local dir="$configdir/all/retroarch/assets"
     [[ -d "$dir/.git" ]] && return
@@ -146,6 +156,9 @@ function configure_retroarch() {
     # install minimal assets
     install_minimal_assets_retroarch
 
+    # install core info files
+    update_core_info_retroarch
+
     # install joypad autoconfig presets
     update_joypad_autoconfigs_retroarch
 
@@ -163,10 +176,6 @@ function configure_retroarch() {
     iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
-    iniSet "rgui_show_start_screen" "false"
-    iniSet "rgui_browser_directory" "$romdir"
-    iniSet "rgui_switch_icons" "false"
-
     if ! isPlatform "x86"; then
         iniSet "video_threaded" "true"
     fi
@@ -219,15 +228,37 @@ function configure_retroarch() {
     iniSet "auto_remaps_enable" "true"
     iniSet "input_joypad_driver" "udev"
     iniSet "all_users_control_menu" "true"
+    iniSet "remap_save_on_exit" "false"
 
     # rgui by default
     iniSet "menu_driver" "rgui"
     iniSet "rgui_aspect_ratio_lock" "2"
+    iniSet "rgui_browser_directory" "$romdir"
+    iniSet "rgui_switch_icons" "false"
+    iniSet "menu_rgui_shadows" "true"
+    iniSet "rgui_menu_color_theme" "29" # Tango Dark theme
 
     # hide online updater menu options and the restart option
     iniSet "menu_show_core_updater" "false"
     iniSet "menu_show_online_updater" "false"
     iniSet "menu_show_restart_retroarch" "false"
+    # disable the search action
+    iniSet "menu_disable_search_button" "true"
+
+    # remove some rarely used entries from the quick menu
+    iniSet "quick_menu_show_close_content" "false"
+    iniSet "quick_menu_show_add_to_favorites" "false"
+    iniSet "quick_menu_show_replay" "false"
+    iniSet "quick_menu_show_start_recording" "false"
+    iniSet "quick_menu_show_start_streaming" "false"
+    iniSet "menu_show_overlays" "false"
+
+    # disable the load notification message with core and game info
+    iniSet "menu_show_load_content_animation" "false"
+    # disable core cache file
+    iniSet "core_info_cache_enable" "false"
+    # disable game runtime logging
+    iniSet "content_runtime_log" "false"
 
     # disable unnecessary xmb menu tabs
     iniSet "xmb_show_add" "false"
@@ -271,6 +302,15 @@ function configure_retroarch() {
 
     # (compat) keep all core options in a single file
     _set_config_option_retroarch "global_core_options" "true"
+
+    # disable the content load info popup with core and game info
+    _set_config_option_retroarch "menu_show_load_content_animation" "false"
+
+    # disable search action
+    _set_config_option_retroarch "menu_disable_search_button" "true"
+
+    # don't save input remaps by default
+    _set_config_option_retroarch "remap_save_on_exit" "false"
 
     # remapping hack for old 8bitdo firmware
     addAutoConf "8bitdo_hack" 0

@@ -18,10 +18,10 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function _get_branch_simcoupe() {
-    local branch="master"
-    # latest simcoupe requires cmake 3.8.2 - on Stretch older versions throw a cmake error about CXX17
+    local branch="main"
+    # latest simcoupe requires cmake 3.14 - on Stretch older versions throw a cmake error about CXX17
     # dialect support but actually seem to build ok. Lock systems with older cmake to 20200711 tag,
-    # which builds ok on Raspbian Stretch and hopefully Ubuntu 18.04.
+    # which builds ok on Raspbian Stretch, and systems with cmake 3.12 to 20210501, which builds ok on Ubuntu 18.04.
 
     # Test using "apt-cache madison" as this code could be called when cmake isn't yet installed but correct version
     # is available - eg via update check with builder module which removes dependencies after building.
@@ -30,6 +30,8 @@ function _get_branch_simcoupe() {
     local cmake_ver=$(apt-cache madison cmake | cut -d\| -f2 | sort --version-sort | head -1 | xargs)
     if compareVersions "$cmake_ver" lt 3.8.2; then
         branch="20200711"
+    elif compareVersions "$cmake_ver" lt 3.14; then
+        branch="20210501"
     fi
     echo "$branch"
 }
@@ -44,6 +46,8 @@ function sources_simcoupe() {
 
 function build_simcoupe() {
     cmake -DCMAKE_INSTALL_PREFIX="$md_inst" .
+    # force the downloaded 'SAAsound' dependency to be statically linked
+    sed -i 's/ SHARED//' _deps/saasound-src/CMakeLists.txt
     make clean
     make
     md_ret_require="$md_build/simcoupe"

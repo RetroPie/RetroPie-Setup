@@ -99,7 +99,7 @@ function configure_lr-prboom() {
     setConfigRoot "ports"
 
     mkRomDir "ports/doom"
-    ensureSystemretroconfig "ports/doom"
+    defaultRAConfig "doom"
 
     [[ "$md_mode" == "install" ]] && game_data_lr-prboom
 

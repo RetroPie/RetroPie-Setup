@@ -12,30 +12,30 @@
 rp_module_id="lr-scummvm"
 rp_module_desc="ScummVM port for libretro"
 rp_module_help="Copy your ScummVM games to $romdir/scummvm\n\nThe name of your game directories must be suffixed with '.svm' for direct launch in EmulationStation."
-rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/scummvm/master/COPYING"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/scummvm/master/COPYING"
 rp_module_repo="git https://github.com/libretro/scummvm.git master"
 rp_module_section="exp"
+
+function depends_lr-scummvm() {
+    getDepends zip
+}
 
 function sources_lr-scummvm() {
     gitPullOrClone
 }
 
 function build_lr-scummvm() {
-    make clean -C backends/platform/libretro/build
-
-    local params=(HAVE_MT32EMU=1)
-    local platform
-    isPlatform "arm" && platform+="armv"
-    isPlatform "neon" && platform+="neon"
-    [[ -n "$platform" ]] && params+=(platform="$platform")
-
-    make "${params[@]}" -C backends/platform/libretro/build
-    md_ret_require="$md_build/backends/platform/libretro/build/scummvm_libretro.so"
+    cd backends/platform/libretro
+    make clean
+    make USE_MT32EMU=1
+    make datafiles
+    md_ret_require="$md_build/backends/platform/libretro/scummvm_libretro.so"
 }
 
 function install_lr-scummvm() {
     md_ret_files=(
-        "backends/platform/libretro/build/scummvm_libretro.so"
+        "backends/platform/libretro/scummvm_libretro.so"
+        "backends/platform/libretro/scummvm.zip"
         "COPYING"
     )
 }
@@ -47,10 +47,10 @@ function configure_lr-scummvm() {
 
     # ensure rom dir and system retroconfig
     mkRomDir "scummvm"
-    ensureSystemretroconfig "scummvm"
+    defaultRAConfig "scummvm"
 
-    # download and extract auxiliary data (theme, extra)
-    downloadAndExtract "https://github.com/libretro/scummvm/raw/master/backends/platform/libretro/aux-data/scummvm.zip" "$biosdir"
+    # unpack the data files to system dir
+    runCmd unzip -q -o "$md_inst/scummvm.zip" -d "$biosdir"
     chown -R $user:$user "$biosdir/scummvm"
 
     # basic initial configuration (if config file not found)
@@ -60,7 +60,7 @@ function configure_lr-scummvm() {
         iniSet "extrapath" "$biosdir/scummvm/extra"
         iniSet "themepath" "$biosdir/scummvm/theme"
         iniSet "soundfont" "$biosdir/scummvm/extra/Roland_SC-55.sf2"
-        iniSet "gui_theme" "scummmodern"
+        iniSet "gui_theme" "scummremastered"
         iniSet "subtitles" "true"
         iniSet "multi_midi" "true"
         iniSet "gm_device" "fluidsynth"

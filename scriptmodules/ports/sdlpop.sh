@@ -11,7 +11,7 @@
 
 rp_module_id="sdlpop"
 rp_module_desc="SDLPoP - Port of Prince of Persia"
-rp_module_licence="GPL3 https://raw.githubusercontent.com/NagyD/SDLPoP/master/doc/gpl-3.0.txt"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/NagyD/SDLPoP/master/COPYING"
 rp_module_repo="git https://github.com/NagyD/SDLPoP.git master"
 rp_module_section="opt"
 
@@ -34,6 +34,7 @@ function install_sdlpop() {
         'prince'
         'data'
         'doc'
+        'COPYING'
     )
     cp -v "SDLPoP.ini" "$md_inst/SDLPoP.ini.def"
     sed -i "s/use_correct_aspect_ratio = false/use_correct_aspect_ratio = true/" "$md_inst/SDLPoP.ini.def"

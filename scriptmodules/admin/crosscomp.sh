@@ -16,7 +16,7 @@ rp_module_section=""
 rp_module_flags="!arm"
 
 function _default_dist_crosscomp() {
-    echo "stretch"
+    echo "buster"
 }
 
 function depends_crosscomp() {
@@ -29,27 +29,12 @@ function sources_crosscomp() {
 
     declare -A pkgs
     case "$dist" in
-        jessie)
-            pkgs=(
-                [binutils]=2.25
-                [cloog]=0.18.1
-                [gcc]=4.9.4
-                [glibc]=2.19
-                [gmp]=6.0.0a
-                [isl]=0.12.2
-                [kernel]=4.9.35
-                [mpfr]=3.1.2
-                [mpc]=1.0.2
-            )
-            ;;
         stretch)
             pkgs=(
                 [binutils]=2.28
-                [cloog]=0.18.4
                 [gcc]=6.4.0
                 [glibc]=2.24
                 [gmp]=6.1.2
-                [isl]=0.18
                 [kernel]=4.9.80
                 [mpfr]=3.1.5
                 [mpc]=1.0.3
@@ -58,14 +43,34 @@ function sources_crosscomp() {
         buster)
             pkgs=(
                 [binutils]=2.31.1
-                [cloog]=0.18.4
                 [gcc]=8.3.0
                 [glibc]=2.28
                 [gmp]=6.1.2
-                [isl]=0.20
                 [kernel]=4.19.50
                 [mpfr]=4.0.2
                 [mpc]=1.1.0
+            )
+            ;;
+        bullseye)
+            pkgs=(
+                [binutils]=2.35.2
+                [gcc]=10.2.0
+                [glibc]=2.31
+                [gmp]=6.2.1
+                [kernel]=5.15.61
+                [mpfr]=4.1.0
+                [mpc]=1.2.0
+            )
+            ;;
+        bookworm)
+            pkgs=(
+                [binutils]=2.40
+                [gcc]=12.2.0
+                [glibc]=2.36
+                [gmp]=6.2.1
+                [kernel]=6.1
+                [mpfr]=4.2.0
+                [mpc]=1.3.1
             )
             ;;
         *)
@@ -73,9 +78,6 @@ function sources_crosscomp() {
             return 1
             ;;
     esac
-
-    downloadAndExtract "http://isl.gforge.inria.fr/isl-${pkgs[isl]}.tar.bz2" isl --strip-components 1
-    downloadAndExtract "http://www.bastoul.net/cloog/pages/download/count.php3?url=./cloog-${pkgs[cloog]}.tar.gz" cloog --strip-components 1
 
     downloadAndExtract "https://ftp.gnu.org/gnu/binutils/binutils-${pkgs[binutils]}.tar.gz" binutils --strip-components 1
 
@@ -86,12 +88,23 @@ function sources_crosscomp() {
     downloadAndExtract "https://ftp.gnu.org/gnu/glibc/glibc-${pkgs[glibc]}.tar.bz2" glibc --strip-components 1
     downloadAndExtract "https://ftp.gnu.org/gnu/gcc/gcc-${pkgs[gcc]}/gcc-${pkgs[gcc]}.tar.gz" gcc --strip-components 1
 
-    downloadAndExtract "https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgs[kernel]}.tar.gz" linux --strip-components 1
+    downloadAndExtract "https://www.kernel.org/pub/linux/kernel/v${pkgs[kernel]:0:1}.x/linux-${pkgs[kernel]}.tar.gz" linux --strip-components 1
 
     local pkg
-    for pkg in cloog gmp isl mpc mpfr; do
+    for pkg in gmp mpc mpfr; do
         ln -sf "../$pkg" "gcc/$pkg"
     done
+
+    # apply glibc patch required when compiling with GCC 10+
+    # see https://sourceware.org/git/gitweb.cgi?p=glibc.git;h=49348beafe9ba150c9bd48595b3f372299bddbb0
+    if [[ "$dist" == "bullseye" ]]; then
+        applyPatch "$md_data/bullseye.diff"
+    fi
+    # fix incorrect limits.h include.
+    if compareVersions "${pkgs[gcc]}" ge 10; then
+        applyPatch "$md_data/asan_limits.diff"
+    fi
+
 }
 
 function build_crosscomp() {
@@ -105,9 +118,12 @@ function build_crosscomp() {
     local target=arm-linux-gnueabihf
     local dest="$md_inst/$dist"
 
-    export PATH="$dest/bin:$PATH"
-    export CFLAGS=""
-    export CXXFLAGS=""
+    local old_path="$PATH"
+    export PATH="$dest/bin:$old_path"
+
+    export ASFLAGS=""
+    export CFLAGS="-O2"
+    export CXXFLAGS="-O2"
 
     # binutils
     printHeading "Building binutils"
@@ -166,6 +182,11 @@ function build_crosscomp() {
     make all
     make install
     cd ..
+
+    export PATH="$old_path"
+    export ASFLAGS="$__asflags"
+    export CFLAGS="$__cflags"
+    export CXXFLAGS="$__cxxflags"
 }
 
 function setup_crosscomp() {
@@ -174,36 +195,54 @@ function setup_crosscomp() {
     
     if rp_callModule crosscomp sources "$dist"; then
         rp_callModule crosscomp build "$dist"
-        rp_callModule crosscomp switch_distcc "$dist"
+        rp_callModule crosscomp clean
     fi
 }
 
 function setup_all_crosscomp() {
     local dist
-    for dist in jessie stretch buster; do
+    for dist in stretch buster bullseye; do
         setup_crosscomp "$dist"
     done
 }
 
-function switch_distcc_crosscomp() {
+function configure_distcc_crosscomp() {
     local dist="$1"
     [[ -z "$dist" ]] && return 1
 
-    bins="$md_inst/bin"
-    mkdir -p "$bins"
+    local port="$2"
+    [[ -z "$port" ]] && return 1
 
-    # symlink the gcc/g++ binaries that match the distro we are cross compiling for
+    local bin_dir="$md_inst/$dist/bin"
+
+    # add additional symlinks for cc/gcc/c++/g++
     local name
-    for name in cc gcc arm-linux-gnueabihf-gcc; do
-        ln -sfv "$md_inst/$dist/bin/arm-linux-gnueabihf-gcc" "$bins/$name"
+    for name in cc gcc; do
+        ln -sfv "arm-linux-gnueabihf-gcc" "$bin_dir/$name"
     done
 
-    for name in c++ g++ arm-linux-gnueabihf-g++; do
-        ln -sfv "$md_inst/$dist/bin/arm-linux-gnueabihf-g++" "$bins/$name"
+    for name in c++ g++; do
+        ln -sfv "arm-linux-gnueabihf-g++" "$bin_dir/$name"
     done
 
-    # make sure the path added to the distcc init.d script
-    sed -i "s#^PATH=.*#PATH=$bins:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin#" /etc/init.d/distcc
+    local initd_script="/etc/init.d/distcc-$dist"
+
+    # duplicate distcc init.d script
+    cp /etc/init.d/distcc "$initd_script"
+
+    # add dist to NAME in new init.d
+    sed -i "s/NAME=distccd/NAME=distccd-$dist/" "$initd_script"
+
+    # add custom port to new init.d
+    sed -i "s/--daemon\"/--daemon --port $port\"/" "$initd_script"
+
+    # add the $dist cross compiler bin path to new init.d
+    sed -i "s#^PATH=.*#PATH=$bin_dir:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin#" "$initd_script"
+
+    # create log file
+    local log="/var/log/distccd-$dist.log"
+    touch "$log"
+    chown distccd:nogroup "$log"
 
     # restart distcc
     systemctl daemon-reload

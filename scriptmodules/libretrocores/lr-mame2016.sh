@@ -23,6 +23,7 @@ function depends_lr-mame2016() {
 
 function sources_lr-mame2016() {
     gitPullOrClone
+    applyPatch "${md_path%/*}/lr-mame2016/01-python3-irgen.diff"
 }
 
 function build_lr-mame2016() {
@@ -44,7 +45,7 @@ function configure_lr-mame2016() {
     local system
     for system in arcade mame-libretro; do
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
         addEmulator 0 "$md_id" "$system" "$md_inst/mamearcade2016_libretro.so"
         addSystem "$system"
     done

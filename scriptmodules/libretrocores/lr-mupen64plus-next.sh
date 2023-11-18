@@ -77,7 +77,7 @@ function install_lr-mupen64plus-next() {
 
 function configure_lr-mupen64plus-next() {
     mkRomDir "n64"
-    ensureSystemretroconfig "n64"
+    defaultRAConfig "n64"
 
     if isPlatform "rpi"; then
         # Disable hybrid upscaling filter (needs better GPU)

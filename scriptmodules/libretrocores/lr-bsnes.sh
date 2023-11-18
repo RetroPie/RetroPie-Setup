@@ -18,7 +18,7 @@ rp_module_section="opt"
 rp_module_flags="!armv6"
 
 function depends_lr-bsnes() {
-    if compareVersions $__gcc_version lt 7; then
+    if [[ "$__gcc_version" -lt 7 ]]; then
         md_ret_errors+=("You need an OS with gcc 7 or newer to compile $md_id")
         return 1
     fi
@@ -47,7 +47,7 @@ function install_lr-bsnes() {
 
 function configure_lr-bsnes() {
     mkRomDir "snes"
-    ensureSystemretroconfig "snes"
+    defaultRAConfig "snes"
 
     addEmulator 1 "$md_id" "snes" "$md_inst/bsnes_libretro.so"
     addSystem "snes"

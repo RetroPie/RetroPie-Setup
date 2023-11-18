@@ -36,13 +36,12 @@ function install_lr-gpsp() {
         'gpsp_libretro.so'
         'COPYING'
         'readme.txt'
-        'game_config.txt'
     )
 }
 
 function configure_lr-gpsp() {
     mkRomDir "gba"
-    ensureSystemretroconfig "gba"
+    defaultRAConfig "gba"
 
     local def=0
     isPlatform "armv6" && def=1
