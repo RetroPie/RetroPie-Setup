@@ -22,7 +22,7 @@ function module_builder() {
 
     local id
     for id in "${ids[@]}"; do
-        printMsgs "heading" "Building module $id"
+        printMsgs "console" "Checking module $id ..."
         # don't build binaries for modules with flag nobin
         # eg scraper which fails as go1.8 doesn't work under qemu
         if hasFlag "${__mod_info[$id/flags]}" "nobin"; then
@@ -49,6 +49,8 @@ function module_builder() {
         if [[ "$?" -eq 1 ]]; then
             printMsgs "console" "No update was found."
             continue
+        else
+            printMsgs "console" "Update found."
         fi
 
         # build, install and create binary archive.
