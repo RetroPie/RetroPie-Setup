@@ -52,6 +52,7 @@ function build_retroarch() {
         isPlatform "gles31" && params+=(--enable-opengles3_1)
         isPlatform "gles32" && params+=(--enable-opengles3_2)
     fi
+    isPlatform "videocore" && params+=(--disable-crtswitchres)
     isPlatform "rpi" && isPlatform "mesa" && params+=(--disable-videocore)
     # Temporarily block dispmanx support for fkms until upstream support is fixed
     isPlatform "dispmanx" && ! isPlatform "kms" && params+=(--enable-dispmanx --disable-opengl1)
