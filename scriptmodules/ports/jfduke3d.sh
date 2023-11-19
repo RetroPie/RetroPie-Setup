@@ -12,7 +12,7 @@
 rp_module_id="jfduke3d"
 rp_module_desc="lightweight Duke3D source port by JonoF"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/jonof/jfduke3d/master/GPL.TXT"
-rp_module_repo="git https://github.com/jonof/jfduke3d.git master 41cd46bc"
+rp_module_repo="git https://github.com/jonof/jfduke3d.git master"
 rp_module_section="exp"
 rp_module_flags=""
 
@@ -32,7 +32,16 @@ function sources_jfduke3d() {
 }
 
 function build_jfduke3d() {
-    local params=(DATADIR=$romdir/ports/duke3d RELEASE=1)
+    local gamedir="duke3d"
+    local require="duke3d"
+    local params=(RELEASE=1)
+
+    if [[ ! -z "$1" ]] && [[ ! -z "$2" ]]; then
+        gamedir=$1
+        require=$2
+    fi
+
+    params+=(DATADIR=$romdir/ports/$gamedir)
 
     ! isPlatform "x86" && params+=(USE_ASM=0)
     ! isPlatform "x11" && params+=(WITHOUT_GTK=1)
@@ -49,16 +58,21 @@ function build_jfduke3d() {
     make clean veryclean
     make "${params[@]}"
 
-    md_ret_require="$md_build/duke3d"
+    md_ret_require="$md_build/$require"
 }
 
 function install_jfduke3d() {
     md_ret_files=(
-        'duke3d'
         'build'
         'README.md'
         'GPL.TXT'
     )
+
+    if [[ ! -z "$1" ]]; then
+        md_ret_files+=("$1")
+    else
+        md_ret_files+=('duke3d')
+    fi
 }
 
 function game_data_jfduke3d() {
@@ -74,21 +88,9 @@ function game_data_jfduke3d() {
     fi
 }
 
-function configure_jfduke3d() {
-    local config="$md_conf_root/jfduke3d/duke3d.cfg"
-
-    mkRomDir "ports/duke3d"
-    moveConfigDir "$home/.jfduke3d" "$md_conf_root/jfduke3d"
-
-    # params are just for parity with eduke32, last one is not supported
-    addPort "$md_id" "duke3d" "Duke Nukem 3D" "$md_inst/duke3d" "-j$romdir/ports/duke3d -addon 0"
-
-    if [[ "$md_mode" != "install" ]]; then
-        return
-    fi
-    game_data_jfduke3d
-
-    if [[ -f "$config" ]]; then
+function config_file_jfduke3d() {
+    local config="$1"
+    if [[ -f "$config" ]] || isPlatform "x86"; then
         return
     fi
 
@@ -99,4 +101,18 @@ function configure_jfduke3d() {
 MusicParams = "audio.driver=alsa"
 _EOF_
     chown -R $user:$user "$config"
+}
+
+function configure_jfduke3d() {
+    mkRomDir "ports/duke3d"
+    moveConfigDir "$home/.jfduke3d" "$md_conf_root/jfduke3d"
+
+    # params are just for parity with eduke32, last one is not supported
+    addPort "$md_id" "duke3d" "Duke Nukem 3D" "$md_inst/duke3d" "-j$romdir/ports/duke3d -addon 0"
+
+    if [[ "$md_mode" != "install" ]]; then
+        return
+    fi
+    game_data_jfduke3d
+    config_file_jfduke3d "$md_conf_root/jfduke3d/duke3d.cfg"
 }
