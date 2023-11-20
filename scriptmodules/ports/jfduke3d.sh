@@ -23,7 +23,7 @@ function depends_jfduke3d() {
 
     isPlatform "x86" && depends+=(nasm)
     isPlatform "gl" || isPlatform "mesa" && depends+=(libgl1-mesa-dev libglu1-mesa-dev)
-    isPlatform "x11" && depends+=(libgtk3.0-dev)
+    isPlatform "x11" && depends+=(libgtk-3-dev)
     getDepends "${depends[@]}"
 }
 
@@ -75,19 +75,6 @@ function install_jfduke3d() {
     fi
 }
 
-function game_data_jfduke3d() {
-    local dest="$romdir/ports/duke3d"
-    if [[ ! -n $(find $dest -maxdepth 1 -iname duke3d.grp) ]]; then
-        mkUserDir "$dest"
-        local temp="$(mktemp -d)"
-        download "$__archive_url/3dduke13.zip" "$temp"
-        unzip -L -o "$temp/3dduke13.zip" -d "$temp" dn3dsw13.shr
-        unzip -L -o "$temp/dn3dsw13.shr" -d "$dest" duke3d.grp duke.rts
-        rm -rf "$temp"
-        chown -R $user:$user "$dest"
-    fi
-}
-
 function config_file_jfduke3d() {
     local config="$1"
     if [[ -f "$config" ]] || isPlatform "x86"; then
@@ -113,6 +100,6 @@ function configure_jfduke3d() {
     if [[ "$md_mode" != "install" ]]; then
         return
     fi
-    game_data_jfduke3d
+    game_data_eduke32
     config_file_jfduke3d "$md_conf_root/jfduke3d/duke3d.cfg"
 }
