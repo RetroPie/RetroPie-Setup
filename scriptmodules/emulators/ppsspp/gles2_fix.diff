@@ -1,0 +1,33 @@
+diff --git a/Common/GPU/OpenGL/DataFormatGL.cpp b/Common/GPU/OpenGL/DataFormatGL.cpp
+index 425f247..ea690d8 100644
+--- a/Common/GPU/OpenGL/DataFormatGL.cpp
++++ b/Common/GPU/OpenGL/DataFormatGL.cpp
+@@ -146,12 +146,14 @@ bool Thin3DFormatToGLFormatAndType(DataFormat fmt, GLuint &internalFormat, GLuin
+ 		alignment = 16;
+ 		break;
+ 
++#ifdef GL_COMPRESSED_RGBA_ASTC_4x4_KHR
+ 	case DataFormat::ASTC_4x4_UNORM_BLOCK:
+ 		internalFormat = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
+ 		format = GL_RGBA;
+ 		type = GL_FLOAT;
+ 		alignment = 16;
+ 		break;
++#endif
+ 
+ 	default:
+ 		return false;
+diff --git a/Common/GPU/OpenGL/GLFeatures.cpp b/Common/GPU/OpenGL/GLFeatures.cpp
+index c17f1d1..fa3463e 100644
+--- a/Common/GPU/OpenGL/GLFeatures.cpp
++++ b/Common/GPU/OpenGL/GLFeatures.cpp
+@@ -592,7 +592,9 @@ bool CheckGLExtensions() {
+ 		for (int i = 0; i < numCompressedFormats; i++) {
+ 			switch (compressedFormats[i]) {
+ 			case GL_COMPRESSED_RGB8_ETC2: gl_extensions.supportsETC2 = true; break;
++#ifdef GL_COMPRESSED_RGBA_ASTC_4x4_KHR
+ 			case GL_COMPRESSED_RGBA_ASTC_4x4_KHR: gl_extensions.supportsASTC = true; break;
++#endif
+ #ifndef USING_GLES2
+ 			case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT: gl_extensions.supportsBC123 = true; break;
+ 			case GL_COMPRESSED_RGBA_BPTC_UNORM: gl_extensions.supportsBC7 = true; break;
