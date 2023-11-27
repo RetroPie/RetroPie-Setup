@@ -58,6 +58,11 @@ function sources_ppsspp() {
         applyPatch "$md_data/gles2_fix.diff"
     fi
 
+    # fix missing exported symbol for libretro on v1.13.2
+    if [[ "$md_id" == "lr-ppsspp" && "$(_get_release_ppsspp)" == "v1.13.2" ]]; then
+        applyPatch "$md_data/v13-libretro_fix.diff"
+    fi
+
     if hasPackage cmake 3.6 lt; then
         cd ..
         mkdir -p cmake
