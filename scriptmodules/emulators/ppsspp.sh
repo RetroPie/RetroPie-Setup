@@ -53,9 +53,9 @@ function sources_ppsspp() {
     # ensure Pi vendor libraries are available for linking of shared library
     sed -n -i "p; s/^set(CMAKE_EXE_LINKER_FLAGS/set(CMAKE_SHARED_LINKER_FLAGS/p" cmake/Toolchains/raspberry.armv?.cmake
 
-    # fix missing defines on opengles2 on v1.16.6
-    if [[ "$md_id" == "ppsspp" && "$(_get_release_ppsspp)" == "v1.16.6" ]]; then
-        applyPatch "$md_data/gles2_fix.diff"
+    # fix missing defines on opengles2 on v1.16.6 lr-ppsspp/ppsspp
+    if [[ "$md_id" =~ ^(lr-)?ppsspp$ && "$(_get_release_ppsspp)" == "v1.16.6" ]]; then
+        applyPatch "${__mod_info[ppsspp/path]%/*}/ppsspp/gles2_fix.diff"
     fi
 
     # fix missing exported symbol for libretro on v1.13.2
