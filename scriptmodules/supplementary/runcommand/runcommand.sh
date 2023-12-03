@@ -1213,6 +1213,8 @@ function get_sys_command() {
         # remove XINIT:
         COMMAND="${COMMAND:6}"
         XINIT=1
+        # start with a window manager and hide the cursor by default
+        XINIT_WM=1
     fi
 }
 
