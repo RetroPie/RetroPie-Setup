@@ -49,7 +49,7 @@ function game_data_rigelengine() {
 }
 
 function configure_rigelengine() {
-    addPort "$md_id" "rigelengine" "RigelEngine - Duke Nukem 2 source port" "$md_inst/RigelEngine /home/pi/RetroPie/roms/ports/duke2"
+    addPort "$md_id" "rigelengine" "RigelEngine - Duke Nukem 2 source port" "$md_inst/RigelEngine $romdir/ports/duke2"
     mkRomDir "ports/duke2"
     [[ "$md_mode" == "install" ]] && game_data_rigelengine
 }
