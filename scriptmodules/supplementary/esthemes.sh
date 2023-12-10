@@ -287,6 +287,8 @@ function gui_esthemes() {
         'RetroHursty69 ToggleBobble'
         'RetroHursty69 Sheeny'
         'RetroHursty69 ballsy'
+        'RetroHursty69 AIGEN'
+        'RetroHursty69 AIGEN_PLUS'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
