@@ -25,7 +25,7 @@ function _update_hook_runcommand() {
 
 function depends_runcommand() {
     local depends=()
-    isPlatform "rpi" && depends+=(libraspberrypi-bin)
+    isPlatform "rpi" && isPlatform "dispmanx" && depends+=(libraspberrypi-bin)
     isPlatform "rpi" || isPlatform "kms" && depends+=(fbi fbset)
     isPlatform "x11" && depends+=(feh)
     getDepends "${depends[@]}"
