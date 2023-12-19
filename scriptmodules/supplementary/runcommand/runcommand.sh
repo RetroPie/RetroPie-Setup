@@ -1211,12 +1211,20 @@ function get_sys_command() {
             CON)
                 CONSOLE_OUT=1
                 ;;
-            # if it starts with XINIT: it is an X11 application (so we need to launch via xinit)
+            # if it starts with XINIT it is an X11 application (so we need to launch via xinit)
             XINIT*)
                 XINIT=1
+                ;;&
+            # if it starts with XINIT-WM or XINIT-WMC (with cursor) it is an X11 application needing a window manager
+            XINIT-WM)
+                XINIT_WM=1
+                ;;
+            XINIT-WMC)
+                XINIT_WM=2
                 ;;
         esac
     fi
+
 }
 
 function show_launch() {
