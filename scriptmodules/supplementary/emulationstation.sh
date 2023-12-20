@@ -166,20 +166,12 @@ function build_emulationstation() {
         isPlatform "mesa" && params+=("-DGL=On" "-DUSE_GL21=On")
         # force GLESv1 on videocore due to performance issue with GLESv2
         isPlatform "videocore" && params+=(-DUSE_GLES1=On)
-    elif isPlatform "x11"; then
-        if isPlatform "gles"; then
-            params+=(-DGLES=On)
-            local gles_ver=$(sudo -u $user glxinfo -B | grep -oP 'Max GLES[23] profile version:\s\K.*')
-            compareVersions $gles_ver lt 2.0  && params+=(-DUSE_GLES1=On)
-        else
-            params+=(-DGL=On)
-            local gl_ver=$(sudo -u $user glxinfo -B | grep -oP 'Max compat profile version:\s\K.*')
-            compareVersions $gl_ver gt 2.0 && params+=(-DUSE_GL21=On)
-        fi
     elif isPlatform "gles"; then
         params+=(-DGLES=On)
+        ! isPlatform "gles2" && params+=(-DUSE_GLES1=On)
     elif isPlatform "gl"; then
         params+=(-DGL=On)
+        isPlatform "gl2" && params+=(-DUSE_GL21=On)
     fi
     if isPlatform "dispmanx"; then
         params+=(-DOMX=On)
