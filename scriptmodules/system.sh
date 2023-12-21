@@ -458,6 +458,9 @@ function get_platform() {
                         *rk3588*)
                             __platform="rk3588"
                             ;;
+                        *bcm2712*)
+                            __platform="rpi5"
+                            ;;
                     esac
                 elif [[ -e "/sys/devices/soc0/family" ]]; then
                     case "$(tr -d '\0' < /sys/devices/soc0/family)" in
