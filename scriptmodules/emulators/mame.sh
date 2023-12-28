@@ -34,6 +34,8 @@ function depends_mame() {
 
 function sources_mame() {
     gitPullOrClone
+    # lzma assumes hardware crc support on arm which breaks when building on armv7
+    isPlatform "armv7" && applyPatch "$md_data/lzma_armv7_crc.diff"
 }
 
 function build_mame() {

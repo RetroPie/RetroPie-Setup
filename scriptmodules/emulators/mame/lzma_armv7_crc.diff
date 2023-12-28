@@ -1,0 +1,12 @@
+diff --git a/3rdparty/lzma/C/7zCrc.c b/3rdparty/lzma/C/7zCrc.c
+index f186324d..f39fe1c9 100644
+--- a/3rdparty/lzma/C/7zCrc.c
++++ b/3rdparty/lzma/C/7zCrc.c
+@@ -71,7 +71,7 @@ UInt32 MY_FAST_CALL CrcUpdateT1(UInt32 v, const void *data, size_t size, const U
+ 
+ #ifdef MY_CPU_LE
+ 
+-#if defined(MY_CPU_ARM_OR_ARM64)
++#if defined(MY_CPU_ARM_OR_ARM64) && 0
+ 
+ // #pragma message("ARM*")
