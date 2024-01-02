@@ -13,7 +13,7 @@ rp_module_id="scummvm"
 rp_module_desc="ScummVM"
 rp_module_help="Copy your ScummVM games to $romdir/scummvm"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/scummvm/scummvm/master/COPYING"
-rp_module_repo="git https://github.com/scummvm/scummvm.git v2.7.1"
+rp_module_repo="git https://github.com/scummvm/scummvm.git v2.8.0"
 rp_module_section="opt"
 rp_module_flags="sdl2"
 
@@ -21,7 +21,7 @@ function depends_scummvm() {
     local depends=(
         liba52-0.7.4-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libgif-dev libmad0-dev libpng-dev
         libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev
-        libjpeg-dev libasound2-dev libcurl4-openssl-dev
+        libjpeg-dev libasound2-dev libcurl4-openssl-dev libmikmod-dev libvpx-dev
     )
     if isPlatform "vero4k"; then
         depends+=(vero3-userland-dev-osmc)
@@ -41,8 +41,9 @@ function sources_scummvm() {
 function build_scummvm() {
     rpSwap on 750
     local params=(
+        --prefix="$md_inst"
         --enable-release --enable-vkeybd
-        --disable-debug --disable-eventrecorder --prefix="$md_inst"
+        --disable-debug --disable-eventrecorder --disable-sonivox
     )
     isPlatform "rpi" && isPlatform "32bit" && params+=(--host=raspberrypi)
     isPlatform "rpi" && [[ "$md_id" == "scummvm-sdl1" ]] && params+=(--opengl-mode=none)
