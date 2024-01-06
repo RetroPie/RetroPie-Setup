@@ -18,8 +18,11 @@ function apt_upgrade_raspbiantools() {
     # install an older kernel/firmware for stretch to resolve newer kernel issues or unhold if updating to a newer release
     stretch_fix_raspbiantools
 
+    # on Buster, always install the Bluez package from the RPI repos
+    buster_bluez_pin_raspbiantools
+
     aptUpdate
-    apt-get -y dist-upgrade
+    apt-get -y dist-upgrade --allow-downgrades
 }
 
 function lxde_raspbiantools() {
@@ -70,6 +73,19 @@ function stretch_fix_raspbiantools() {
             # we want to unhold it to allow kernel updates again
             install_firmware_raspbiantools "$ver" unhold
         fi
+    fi
+}
+
+function buster_bluez_pin_raspbiantools() {
+    # pin the 'bluez' package to the RPI repos to prevent any Debian updates overwriting it
+    # use Priority 1001 to force the the installation even when the Debian package is installed
+    local pin_file="/etc/apt/preferences.d/01-bluez-pin"
+    if isPlatform "rpi" && [[ "$__os_debian_ver" -eq 10 && ! -f "$pin_file" ]] ; then
+        cat << PIN_EOF > "$pin_file"
+Package: bluez
+Pin: origin archive.raspberrypi.org
+Pin-Priority: 1001
+PIN_EOF
     fi
 }
 
