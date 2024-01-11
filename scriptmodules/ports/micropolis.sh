@@ -29,7 +29,7 @@ function remove_micropolis() {
 
 function configure_micropolis() {
     local binary="/usr/games/micropolis"
-    ! isPlatform "x11" && binary="XINIT-WM:/usr/bin/micropolis"
+    ! isPlatform "x11" && binary="XINIT-WMC:/usr/games/micropolis"
 
     addPort "$md_id" "micropolis" "Micropolis" "$binary"
 }
