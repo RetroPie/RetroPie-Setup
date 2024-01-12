@@ -23,6 +23,16 @@ function depends_lr-ppsspp() {
 
 function sources_lr-ppsspp() {
     sources_ppsspp
+
+    # fix missing defines on opengles2 on v1.16.6 lr-ppsspp
+    if [[ "$(_get_release_ppsspp)" == "v1.16.6" ]]; then
+        applyPatch "${__mod_info[ppsspp/path]%/*}/ppsspp/gles2_fix.diff"
+    fi
+
+    # fix missing exported symbol for libretro on v1.13.2
+    if [[ "$(_get_release_ppsspp)" == "v1.13.2" ]]; then
+        applyPatch "$md_data/v13-libretro_fix.diff"
+    fi
 }
 
 function build_lr-ppsspp() {
