@@ -959,6 +959,7 @@ _EOF_
                 cat >>"$xinitrc" <<_EOF_
 matchbox-window-manager ${params[@]} &
 sleep 0.5
+xset -dpms s off s noblank
 _EOF_
             fi
 
