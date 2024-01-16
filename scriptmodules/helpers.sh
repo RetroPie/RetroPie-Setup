@@ -299,6 +299,13 @@ function _mapPackage() {
         libfreetype6-dev)
             [[ "$__os_debian_ver" -gt 10 ]] || compareVersions "$__os_ubuntu_ver" gt 23.04 && pkg="libfreetype-dev"
             ;;
+        xorg)
+            # outside X11, don't install the 'xserver-xorg-legacy' package, even if recommended by 'apt'
+            # since it breaks launching x11 apps with 'runcommand'
+            ! isPlatform "x11" && pkg+=" xserver-xorg-legacy-"
+            # Pi5 needs an additional package for xserver to start
+            isPlatform "rpi5" && pkg+=" gldriver-test"
+            ;;
     esac
     echo "$pkg"
 }
