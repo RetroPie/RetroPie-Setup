@@ -129,7 +129,7 @@ function get_config() {
     if [[ -n "$DISPLAY" ]] && $XRANDR &>/dev/null; then
         HAS_MODESET="x11"
     # copy kms tool output to global variable to avoid multiple invocations
-    elif KMS_BUFFER="$($KMSTOOL -r 2>/dev/null)"; then
+    elif [[ -c /dev/dri/card0 ]] && KMS_BUFFER="$($KMSTOOL -r 2>/dev/null)"; then
         HAS_MODESET="kms"
     elif [[ -f "$TVSERVICE" ]]; then
         HAS_MODESET="tvs"
