@@ -49,7 +49,14 @@ function build_mame() {
     local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE PYTHON_EXECUTABLE=python3)
     # when building on ARM enable 'fsigned-char' for compiled code, fixes crashes in a few drivers
     isPlatform "arm" || isPlatform "aarch64" && params+=(ARCHOPTS_CXX=-fsigned-char)
-    QT_SELECT=5 make "${params[@]}"
+
+    # workaround for linker crash on bullseye (use gold linker)
+    if [[ "$__os_debian_ver" -eq 11 ]] && isPlatform "arm"; then
+        QT_SELECT=5 LDFLAGS+=" -fuse-ld=gold -Wl,--long-plt" make "${params[@]}"
+    else
+        QT_SELECT=5 make "${params[@]}"
+    fi
+
     strip mame
 
     rpSwap off
