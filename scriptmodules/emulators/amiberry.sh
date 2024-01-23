@@ -13,7 +13,7 @@ rp_module_id="amiberry"
 rp_module_desc="Amiga emulator with JIT support (forked from uae4arm)"
 rp_module_help="ROM Extension: .adf .chd .ipf .lha .zip\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir/amiga"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/BlitterStudio/amiberry/master/LICENSE"
-rp_module_repo="git https://github.com/BlitterStudio/amiberry v5.6.4"
+rp_module_repo="git https://github.com/BlitterStudio/amiberry v5.6.6"
 rp_module_section="opt"
 rp_module_flags="!all arm rpi3 rpi4 rpi5"
 
@@ -47,7 +47,7 @@ function _get_platform_amiberry() {
 }
 
 function depends_amiberry() {
-    local depends=(autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libmpg123-dev libflac-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libserialport-dev wget)
+    local depends=(cmake autoconf libpng-dev libmpeg2-4-dev zlib1g-dev libmpg123-dev libflac-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libserialport-dev wget libportmidi-dev)
 
     isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
