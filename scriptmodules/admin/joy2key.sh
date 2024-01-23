@@ -70,8 +70,9 @@ case "\$mode" in
         "$md_inst/\$script" "\$device" "\${params[@]}" || exit 1
         ;;
     stop)
-        pkill -f "\$script"
-        sleep 1
+        if pid=\$(pgrep -f "\$script"); then
+            /sbin/start-stop-daemon --stop --oknodo --pid \$pid --retry 1
+        fi
         ;;
 esac
 exit 0
