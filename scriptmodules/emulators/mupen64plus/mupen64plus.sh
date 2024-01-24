@@ -133,11 +133,11 @@ function remap() {
 }
 
 function setAudio() {
-    if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == *BCM* ]]; then
-        # If a raspberry pi is used try to set the right output and use audio omx if possible
-        local audio_device=$(amixer)
-        if [[ "$audio_device" == *PCM* ]]; then
-            # use audio omx if we use rpi internal audio device
+    if tr -d '\0' < /proc/device-tree/compatible | grep -Eq raspberrypi,[0-4]; then
+        # If a Raspberry Pi is used, try to set the right output and use audio OMX if possible
+        # check for the presence of the non-KMS audio driver
+        if aplay -l | grep -qm1 "bcm2835 HDMI"; then
+            # use audio OMX when the RPI has enabled the internal audio cards
             AUDIO_PLUGIN="mupen64plus-audio-omx"
             iniConfig " = " "\"" "$config"
             # create section if necessary
@@ -145,24 +145,12 @@ function setAudio() {
                 echo "[Audio-OMX]" >> "$config"
                 echo "Version = 1" >> "$config"
             fi
-            # read output configuration
-            local audio_port=$(amixer cget numid=3)
-            # set output port
-            if [[ "$audio_port" == *": values=0"* ]]; then
-                # echo "auto configuration"
-                # try to find the best solution
-                local video_device=$(tvservice -s)
-                if [[ "$video_device" == *HDMI* ]]; then
-                    iniSet "OUTPUT_PORT" "1"
-                else
-                    iniSet "OUTPUT_PORT" "0"
-                fi
-            elif [[ "$audio_port" == *": values=1"* ]]; then
-                # echo "audio jack"
-                iniSet "OUTPUT_PORT" "0"
-            else
-                # echo "hdmi"
+            # try to find which audio card is default by looking at the mixer's volume control name
+            if amixer -Ddefault cget numid=1 | grep -qm1 HDMI; then
                 iniSet "OUTPUT_PORT" "1"
+            fi
+            if amixer -Ddefault cget numid=1 | grep -qm1 Headphones; then
+                iniSet "OUTPUT_PORT" "0"
             fi
         fi
     fi
@@ -172,7 +160,7 @@ function testCompatibility() {
     # fallback for glesn64 and rice plugin
     # some roms lead to a black screen of death
     local game
-    
+
     # these games need RSP-LLE
     local blacklist=(
         naboo
@@ -434,14 +422,13 @@ getAutoConf mupen64plus_audio && setAudio
 getAutoConf mupen64plus_compatibility_check && testCompatibility
 getAutoConf mupen64plus_texture_packs && useTexturePacks
 
-if [[ "$(sed -n '/^Hardware/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo)" == BCM* ]]; then
+if tr -d '\0' < /proc/device-tree/compatible | grep -Eq raspberrypi,[0-4]; then
     WINDOW_MODE="--windowed $RES"
     SDL_VIDEO_RPI_SCALE_MODE=1
-    # If a raspberry pi is used lower resolution to 320x240 and enable SDL dispmanx scaling mode 1
-elif [[ -e /opt/vero3/lib/libMali.so  ]]; then
+    # If a Raspberry Pi (<5) device is used, lower resolution to 320x240 and enable SDL dispmanx scaling mode 1
+fi
+if [[ -e /opt/vero3/lib/libMali.so  ]]; then
     SDL_AUDIODRIVER=alsa
-else
-    SDL_AUDIODRIVER=pulse
 fi
 
 SDL_AUDIODRIVER=${SDL_AUDIODRIVER} SDL_VIDEO_RPI_SCALE_MODE=${SDL_VIDEO_RPI_SCALE_MODE} "$rootdir/emulators/mupen64plus/bin/mupen64plus" --noosd $PARAMS ${WINDOW_MODE} --rsp ${RSP_PLUGIN}.so --gfx ${VIDEO_PLUGIN}.so --audio ${AUDIO_PLUGIN}.so --configdir "$configdir/n64" --datadir "$configdir/n64" "$ROM"
