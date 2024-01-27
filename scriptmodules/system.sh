@@ -316,6 +316,10 @@ function get_os_version() {
         __platform_flags+=("armbian")
     fi
 
+    if [[ -f /etc/orangepi-release ]]; then
+        __platform_flags+=("armbian")
+    fi
+
     # configure Raspberry Pi graphics stack
     isPlatform "rpi" && get_rpi_video
 }
@@ -465,6 +469,9 @@ function get_platform() {
                             ;;
                         *rk3588*)
                             __platform="rk3588"
+                            ;;
+                        *sun50i-h616*)
+                            __platform="sun50i-h616"
                             ;;
                     esac
                 elif [[ -e "/sys/devices/soc0/family" ]]; then
@@ -687,4 +694,9 @@ function platform_vero4k() {
     cpu_armv7 "cortex-a7"
     __default_cflags="-I/opt/vero3/include -L/opt/vero3/lib"
     __platform_flags+=(mali gles)
+}
+
+function platform_sun50i-h616() {
+    cpu_armv8 "cortex-a53"
+    __platform_flags+=(kms gles gles3 gles31)
 }
