@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .a52 .bas .bin .car .xex .atr .xfd .dcm .atr.gz 
 rp_module_licence="GPL2 https://raw.githubusercontent.com/atari800/atari800/master/COPYING"
 rp_module_repo="git https://github.com/atari800/atari800.git ATARI800_5_2_0"
 rp_module_section="opt"
-rp_module_flags="sdl1 !mali"
+rp_module_flags="sdl1"
 
 function depends_atari800() {
     local depends=(libsdl1.2-dev autoconf automake zlib1g-dev libpng-dev)
@@ -93,6 +93,9 @@ function configure_atari800() {
     local params=()
     # if we are on fkms, use the sdl1 dispmanx backend by default for good performance without using X11/opengl
     isPlatform kms && isPlatform "dispmanx" && _backend_set_atari800 "dispmanx"
+
+    # when no dispmanx is available, but still on KMS, use 'sdl12-compat' and go through SDL2
+    isPlatform "kms" && ! isPlatform "dispmanx" _&& _backend_set_atari800 "sdl12-compat"
 
     # this is split out so we can call it via _backend_set_atari800
     _add_emulators_atari800
