@@ -486,8 +486,8 @@ function get_platform() {
                         *rk3588*)
                             __platform="rk3588"
                             ;;
-                        *sun50i-h616*)
-                            __platform="sun50i-h616"
+                        *h616*)
+                            __platform="h616"
                             ;;
                     esac
                 elif [[ -e "/sys/devices/soc0/family" ]]; then
@@ -712,7 +712,7 @@ function platform_vero4k() {
     __platform_flags+=(mali gles)
 }
 
-function platform_sun50i-h616() {
+function platform_h616() {
     cpu_armv8 "cortex-a53"
     __platform_flags+=(gles gles3 gles31)
 }
