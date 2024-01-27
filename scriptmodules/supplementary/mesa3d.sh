@@ -27,8 +27,6 @@ function sources_mesa3d() {
 }
 
 function build_mesa3d() {
-    rp_installModule "libdrm" "_autoupdate_"
-
     meson builddir -Dprefix=/usr/local -Doptimization=3 --buildtype=release -Db_pie=false -Dstrip=false -Dgallium-omx=disabled -Dpower8=disabled -Dcpp_rtti=false -Ddri3=disabled -Dllvm=disabled -Dgallium-opencl=disabled -Dglx=disabled -Dgallium-xa=disabled -Dshared-glapi=enabled -Dgallium-drivers=panfrost,lima -Dgallium-extra-hud=true -Ddri-drivers= -Dvulkan-drivers= -Dosmesa=false -Dopengl=true -Dplatforms= -Dgbm=enabled -Degl=enabled -Dgles1=enabled -Dgles2=enabled -Dgallium-xvmc=disabled -Dvalgrind=disabled -Dlibunwind=disabled -Dgallium-vdpau=disabled -Dlmsensors=disabled -Dzstd=enabled -Dglvnd=false
     ninja -C builddir
 
