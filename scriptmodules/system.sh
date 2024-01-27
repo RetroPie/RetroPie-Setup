@@ -383,17 +383,7 @@ function get_rpi_video() {
 
 function get_armbian_video() {
     # Check if KMS is enabled
-    if [[ -z "$__has_kms" ]]; then
-        if [[ "$__chroot" -eq 1 ]]; then
-            __has_kms=1
-        elif lsmod | grep -i drm; then
-            __has_kms=1
-        fi
-    fi
-
-    if [[ "$__has_kms" -eq 1 ]]; then
-        __platform_flags+=(mesa kms)
-    fi
+    __platform_flags+=(mesa kms)
 }
 
 function get_rpi_model() {
