@@ -1,0 +1,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 83c52bc..98deb4f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -229,7 +229,7 @@ if(ENABLE_SDL)
+ 	add_definitions(-DQUASI88_SDL)
+ 	find_package(SDL2 CONFIG REQUIRED)
+ 
+-	list(APPEND SDL_LIBS SDL2::SDL2 SDL2::SDL2main)
++	list(APPEND SDL_LIBS ${SDL2_LIBRARIES})
+ 	list(APPEND SDL_INCLUDES
+ 		src/SDL
+ 	)
+@@ -257,6 +257,7 @@ if(ENABLE_SDL)
+ 	)
+ 	target_include_directories(${PROJECT_NAME}.sdl PRIVATE ${SDL_INCLUDES})
+ 	target_link_libraries(${PROJECT_NAME}.sdl ${COMMON_LIBS} ${SDL_LIBS})
++	target_link_libraries(${PROJECT_NAME}.sdl $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>)
+ 
+ 	#### macOS needs rpath set if using a Framework
+ 	if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
