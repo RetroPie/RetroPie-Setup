@@ -322,6 +322,7 @@ function get_os_version() {
 
     # configure Raspberry Pi graphics stack
     isPlatform "rpi" && get_rpi_video
+    isPlatform "armbian" && get_armbian_video
 }
 
 function get_retropie_depends() {
@@ -378,6 +379,21 @@ function get_rpi_video() {
 
     # set pkgconfig path for vendor libraries
     export PKG_CONFIG_PATH="$pkgconfig"
+}
+
+function get_armbian_video() {
+    # Check if KMS is enabled
+    if [[ -z "$__has_kms" ]]; then
+        if [[ "$__chroot" -eq 1 ]]; then
+            __has_kms=1
+        elif lsmod | grep -i drm; then
+            __has_kms=1
+        fi
+    fi
+
+    if [[ "$__has_kms" -eq 1 ]]; then
+        __platform_flags+=(mesa kms)
+    fi
 }
 
 function get_rpi_model() {
@@ -698,5 +714,5 @@ function platform_vero4k() {
 
 function platform_sun50i-h616() {
     cpu_armv8 "cortex-a53"
-    __platform_flags+=(kms gles gles3 gles31)
+    __platform_flags+=(gles gles3 gles31)
 }
