@@ -18,7 +18,7 @@ rp_module_section="exp"
 rp_module_flags="sdl2"
 
 function depends_hypseus() {
-    getDepends libvorbis-dev libogg-dev zlib1g-dev libmpeg2-4-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev cmake
+    getDepends libvorbis-dev libogg-dev zlib1g-dev libzip-dev libmpeg2-4-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev cmake
 }
 
 function sources_hypseus() {

@@ -23,6 +23,7 @@ function depends_lr-mame2016() {
 
 function sources_lr-mame2016() {
     gitPullOrClone
+    applyPatch "${md_path%/*}/lr-mame2016/01-python3-irgen.diff"
 }
 
 function build_lr-mame2016() {

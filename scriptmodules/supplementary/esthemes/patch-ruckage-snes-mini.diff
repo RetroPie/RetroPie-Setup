@@ -1,0 +1,144 @@
+diff --git a/layouts/1024x768.xml b/layouts/1024x768.xml
+index 0fa2e6d..2b29a33 100644
+--- a/layouts/1024x768.xml
++++ b/layouts/1024x768.xml
+@@ -10,12 +10,12 @@ author:			ruckage
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5611111111111111 0.5481481481481481</size>
+-			<pos>0.9861111111111111 0.2259259259259259</pos>			
++			<size>0.5615234375 0.630208333333333</size>
++			<pos>0.986328125 0.1953125</pos>			
+ 			<lineSpacing>1.39</lineSpacing>
+ 			<origin>1 0</origin>
+-			<selectorHeight>0.0814814814814815</selectorHeight>
+-			<selectorOffsetY>-0.0111111111111111</selectorOffsetY>
++			<selectorHeight>0.08203125</selectorHeight>
++			<selectorOffsetY>-0.01171875</selectorOffsetY>
+ 		</textlist>
+ 		
+ 	</view>
+diff --git a/layouts/1280x720.xml b/layouts/1280x720.xml
+index f7fae91..0ad84f2 100644
+--- a/layouts/1280x720.xml
++++ b/layouts/1280x720.xml
+@@ -8,10 +8,10 @@ author:			ruckage
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<pos>${listx} 0.2259259259259259</pos>		
+-			<size>${listWidth} 0.5481481481481481</size>
++			<pos>${listx} 0.195833333333333</pos>		
++			<size>${listWidth} 0.629166666666667</size>
+ 			<lineSpacing>1.395</lineSpacing>
+-			<selectorHeight>0.0814814814814815</selectorHeight>
++			<selectorHeight>0.081944444444444</selectorHeight>
+ 			<selectorOffsetY>-0.0111111111111111</selectorOffsetY>
+ 		</textlist>
+ 		
+diff --git a/layouts/1280x960.xml b/layouts/1280x960.xml
+index acb687f..dc17453 100644
+--- a/layouts/1280x960.xml
++++ b/layouts/1280x960.xml
+@@ -10,12 +10,12 @@ author:			ruckage
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5611111111111111 0.5481481481481481</size>
+-			<pos>0.9861111111111111 0.2259259259259259</pos>			
++			<size>0.5611111111111111 0.630208333333333</size>
++			<pos>0.9861111111111111 0.195833333333333</pos>			
+ 			<lineSpacing>1.4</lineSpacing>
+ 			<origin>1 0</origin>
+-			<selectorHeight>0.0814814814814815</selectorHeight>
+-			<selectorOffsetY>-0.0111111111111111</selectorOffsetY>
++			<selectorHeight>0.08125</selectorHeight>
++			<selectorOffsetY>-0.011458333333333</selectorOffsetY>
+ 		</textlist>
+ 		
+ 	</view>
+diff --git a/layouts/1366x768.xml b/layouts/1366x768.xml
+index 0c268c3..6131217 100644
+--- a/layouts/1366x768.xml
++++ b/layouts/1366x768.xml
+@@ -8,11 +8,11 @@ author:			ruckage
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<pos>${listx} 0.2259259259259259</pos>		
+-			<size>${listWidth} 0.5481481481481481</size>
++			<pos>${listx} 0.1953125</pos>		
++			<size>${listWidth} 0.630208333333333</size>
+ 			<lineSpacing>1.39</lineSpacing>
+-			<selectorHeight>0.0814814814814815</selectorHeight>
+-			<selectorOffsetY>-0.0111111111111111</selectorOffsetY>
++			<selectorHeight>0.08203125</selectorHeight>
++			<selectorOffsetY>-0.01171875</selectorOffsetY>
+ 		</textlist>
+ 		
+ 	</view>
+diff --git a/layouts/1440x1080.xml b/layouts/1440x1080.xml
+index 044758d..f3d6fe4 100644
+--- a/layouts/1440x1080.xml
++++ b/layouts/1440x1080.xml
+@@ -10,8 +10,8 @@ author:			ruckage
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5611111111111111 0.5481481481481481</size>
+-			<pos>0.9861111111111111 0.2259259259259259</pos>			
++			<size>0.5611111111111111 0.62962962962963</size>
++			<pos>0.9861111111111111 0.19537037037037</pos>			
+ 			<lineSpacing>1.375</lineSpacing>
+ 			<origin>1 0</origin>
+ 			<selectorHeight>0.0814814814814815</selectorHeight>
+diff --git a/layouts/1920x1080.xml b/layouts/1920x1080.xml
+index f4c55ef..13008ed 100644
+--- a/layouts/1920x1080.xml
++++ b/layouts/1920x1080.xml
+@@ -8,8 +8,8 @@ author:			ruckage
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<pos>${listx} 0.2259259259259259</pos>		
+-			<size>${listWidth} 0.5481481481481481</size>
++			<pos>${listx} 0.19537037037037</pos>		
++			<size>${listWidth} 0.62962962962963</size>
+ 			<lineSpacing>1.375</lineSpacing>
+ 			<selectorHeight>0.0814814814814815</selectorHeight>
+ 			<selectorOffsetY>-0.0111111111111111</selectorOffsetY>
+diff --git a/layouts/640x480.xml b/layouts/640x480.xml
+index c58ca21..05f0a24 100644
+--- a/layouts/640x480.xml
++++ b/layouts/640x480.xml
+@@ -10,11 +10,11 @@ author:			ruckage
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5611111111111111 0.5481481481481481</size>
+-			<pos>0.9861111111111111 0.2259259259259259</pos>			
++			<size>0.5609375 0.629166666666667</size>
++			<pos>0.9859375 0.195833333333333</pos>			
+ 			<lineSpacing>1.395</lineSpacing>
+ 			<origin>1 0</origin>
+-			<selectorHeight>0.0814814814814815</selectorHeight>
++			<selectorHeight>0.08125</selectorHeight>
+ 			<selectorOffsetY>-0.0111111111111111</selectorOffsetY>
+ 		</textlist>
+ 		
+diff --git a/layouts/800x600.xml b/layouts/800x600.xml
+index c58ca21..c32d8af 100644
+--- a/layouts/800x600.xml
++++ b/layouts/800x600.xml
+@@ -10,8 +10,8 @@ author:			ruckage
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5611111111111111 0.5481481481481481</size>
+-			<pos>0.9861111111111111 0.2259259259259259</pos>			
++			<size>0.5611111111111111 0.63</size>
++			<pos>0.9861111111111111 0.195</pos>			
+ 			<lineSpacing>1.395</lineSpacing>
+ 			<origin>1 0</origin>
+ 			<selectorHeight>0.0814814814814815</selectorHeight>

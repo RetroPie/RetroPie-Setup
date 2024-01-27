@@ -24,7 +24,7 @@ function _update_hook_retropiemenu() {
 }
 
 function depends_retropiemenu() {
-    getDepends mc
+    getDepends mc p7zip
 }
 
 function install_bin_retropiemenu() {

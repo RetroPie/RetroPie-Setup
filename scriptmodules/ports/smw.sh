@@ -10,14 +10,14 @@
 #
 
 rp_module_id="smw"
-rp_module_desc="Super Mario War"
-rp_module_licence="GPL http://supermariowar.supersanctuary.net/"
-rp_module_repo="git https://github.com/HerbFargus/Super-Mario-War.git master"
+rp_module_desc="Super Mario War - A fan-made multiplayer Super Mario Bros. style deathmatch game"
+rp_module_licence="GPL2 https://smwstuff.net"
+rp_module_repo="git https://github.com/mmatyas/supermariowar master"
 rp_module_section="opt"
-rp_module_flags="sdl1 !mali"
+rp_module_flags="sdl2"
 
 function depends_smw() {
-    getDepends libsdl1.2-dev libsdl-mixer1.2-dev libsdl-image1.2-dev
+    getDepends cmake libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev zlib1g-dev
 }
 
 function sources_smw() {
@@ -25,14 +25,23 @@ function sources_smw() {
 }
 
 function build_smw() {
-    ./configure --prefix="$md_inst"
-    make clean
-    make
-    md_ret_require="$md_build/smw"
+    local params=(-DUSE_SDL2_LIBS=ON -DSMW_INSTALL_PORTABLE=ON)
+    isPlatform "gles2" && params+=(-DSDL2_FORCE_GLES=ON)
+    rm -fr build
+    mkdir -p build && cd build
+    cmake .. "${params[@]}"
+    make smw
+    md_ret_require="$md_build/build/smw"
 }
 
 function install_smw() {
-    make install
+    md_ret_files=(
+        "build/smw"
+        "data"
+        "docs"
+        "README.md"
+        "CREDITS"
+    )
 }
 
 function configure_smw() {
@@ -40,7 +49,9 @@ function configure_smw() {
 
     [[ "$md_mode" == "remove" ]] && return
 
-    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
-
-    moveConfigFile "$home/.smw.options.bin" "$md_conf_root/smw/.smw.options.bin"
+    moveConfigDir "$home/.smw" "$md_conf_root/smw"
+    # try to migrate existing settings to the new conf folder
+    if [[ -f "$md_conf_root/smw/.smw.options.bin" ]] ; then
+         mv "$md_conf_root/smw/.smw.options.bin" "$md_conf_root/smw/options.bin"
+    fi
 }

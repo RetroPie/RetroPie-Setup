@@ -13,7 +13,7 @@ rp_module_id="lr-ppsspp"
 rp_module_desc="PlayStation Portable emu - PPSSPP port for libretro"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/ppsspp/master/LICENSE.TXT"
-rp_module_repo="git https://github.com/hrydgard/ppsspp.git v1.12.3"
+rp_module_repo="git https://github.com/hrydgard/ppsspp.git :_get_release_ppsspp"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -23,6 +23,16 @@ function depends_lr-ppsspp() {
 
 function sources_lr-ppsspp() {
     sources_ppsspp
+
+    # fix missing defines on opengles2 on v1.16.6 lr-ppsspp
+    if [[ "$(_get_release_ppsspp)" == "v1.16.6" ]]; then
+        applyPatch "${__mod_info[ppsspp/path]%/*}/ppsspp/gles2_fix.diff"
+    fi
+
+    # fix missing exported symbol for libretro on v1.13.2
+    if [[ "$(_get_release_ppsspp)" == "v1.13.2" ]]; then
+        applyPatch "$md_data/v13-libretro_fix.diff"
+    fi
 }
 
 function build_lr-ppsspp() {

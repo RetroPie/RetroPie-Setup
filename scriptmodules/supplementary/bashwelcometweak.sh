@@ -44,8 +44,8 @@ function retropie_welcome() {
         cpuTempC=$(($(cat /sys/class/thermal/thermal_zone0/temp)/1000)) && cpuTempF=$((cpuTempC*9/5+32))
     fi
 
-    if [[ -f "/opt/vc/bin/vcgencmd" ]]; then
-        if gpuTempC=$(/opt/vc/bin/vcgencmd measure_temp); then
+    if [[ -n $(command -v vcgencmd) ]]; then
+        if gpuTempC=$(vcgencmd measure_temp); then
             gpuTempC=${gpuTempC:5:2}
             gpuTempF=$((gpuTempC*9/5+32))
         else
@@ -114,7 +114,7 @@ function retropie_welcome() {
                 out+="${fgred}Uptime.............: ${UPTIME}"
                 ;;
             6)
-                out+="${fgred}Memory.............: $(grep MemFree /proc/meminfo | awk {'print $2'})kB (Free) / $(grep MemTotal /proc/meminfo | awk {'print $2'})kB (Total)"
+                out+="${fgred}Memory.............: $(free -h | awk 'NR==2 {printf("%s (Free) / %s (Total)", $4, $2)}')"
                 ;;
             7)
                 out+="${fgred}Running Processes..: $(ps ax | wc -l | tr -d " ")"

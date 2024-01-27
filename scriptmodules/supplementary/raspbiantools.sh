@@ -18,8 +18,11 @@ function apt_upgrade_raspbiantools() {
     # install an older kernel/firmware for stretch to resolve newer kernel issues or unhold if updating to a newer release
     stretch_fix_raspbiantools
 
+    # on Buster, always install the Bluez package from the RPI repos
+    buster_bluez_pin_raspbiantools
+
     aptUpdate
-    apt-get -y dist-upgrade
+    apt-get -y dist-upgrade --allow-downgrades
 }
 
 function lxde_raspbiantools() {
@@ -34,8 +37,14 @@ function lxde_raspbiantools() {
        aptInstall lxplug-volume
     fi
 
+    # Firefox is supported starting with Bookworm, install it along with Chromium
+    [[ "$__os_debian_ver" -ge 12 ]] && aptInstall --no-install-recommends firefox rpi-firefox-mods
+
     setConfigRoot "ports"
     addPort "lxde" "lxde" "Desktop" "XINIT:startx"
+    if (isPlatform "rpi4" || isPlatform "rpi5")  && [[ "$__os_debian_ver" -ge 12 ]]; then
+        addPort "wayfire" "wayfire" "Desktop (Wayland)" "wayfire-pi"
+    fi
     enable_autostart
 }
 
@@ -64,6 +73,19 @@ function stretch_fix_raspbiantools() {
             # we want to unhold it to allow kernel updates again
             install_firmware_raspbiantools "$ver" unhold
         fi
+    fi
+}
+
+function buster_bluez_pin_raspbiantools() {
+    # pin the 'bluez' package to the RPI repos to prevent any Debian updates overwriting it
+    # use Priority 1001 to force the the installation even when the Debian package is installed
+    local pin_file="/etc/apt/preferences.d/01-bluez-pin"
+    if isPlatform "rpi" && [[ "$__os_debian_ver" -eq 10 && ! -f "$pin_file" ]] ; then
+        cat << PIN_EOF > "$pin_file"
+Package: bluez
+Pin: origin archive.raspberrypi.org
+Pin-Priority: 1001
+PIN_EOF
     fi
 }
 
@@ -164,8 +186,10 @@ function gui_raspbiantools() {
             3 "Remove some unneeded packages (pulseaudio / cups / wolfram)"
             4 "Disable screen blanker"
             5 "Enable needed kernel module uinput"
-            6 "$zram_status compressed memory (ZRAM)"
         )
+        # exclude ZRAM config for Armbian, it is handled by `armbian-config`
+        ! isPlatform "armbian" && options+=(6 "$zram_status compressed memory (ZRAM)")
+
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             case "$choice" in

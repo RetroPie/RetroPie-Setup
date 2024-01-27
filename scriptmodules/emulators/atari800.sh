@@ -13,7 +13,7 @@ rp_module_id="atari800"
 rp_module_desc="Atari 8-bit/800/5200 emulator"
 rp_module_help="ROM Extensions: .a52 .bas .bin .car .xex .atr .xfd .dcm .atr.gz .xfd.gz\n\nCopy your Atari800 games to $romdir/atari800\n\nCopy your Atari 5200 roms to $romdir/atari5200 You need to copy the Atari 800/5200 BIOS files (5200.ROM, ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/atari800/atari800/master/COPYING"
-rp_module_repo="git https://github.com/atari800/atari800.git ATARI800_4_2_0"
+rp_module_repo="git https://github.com/atari800/atari800.git ATARI800_5_2_0"
 rp_module_section="opt"
 rp_module_flags="sdl1 !mali"
 

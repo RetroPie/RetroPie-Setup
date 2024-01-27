@@ -19,8 +19,11 @@ rp_module_flags="!all 64bit"
 
 function _get_commit_dolphin() {
     local commit
-    # current HEAD of dolphin doesn't build without a C++20 capable compiler
+    local has_qt6=$(apt-cache -qq madison qt6-base-private-dev | cut -d'|' -f1)
+    # current HEAD of dolphin doesn't build without a C++20 capable compiler ..
     [[ "$__gcc_version" -lt 10 ]] && commit="f59f1a2a"
+    # .. and without QT6
+    [[ -z "$has_qt6" ]] && commit="b9a7f577"
     # support gcc 8.4.0 for Ubuntu 18.04
     [[ "$__gcc_version" -lt 9  ]] && commit="1c0ca09e"
     echo "$commit"
@@ -33,11 +36,17 @@ function depends_dolphin() {
         return 1
     fi
     # check if qt6 is available, otherwise use qt5
-    local has_qt6=$(apt-cache madison qt6-base-private-dev 2>/dev/null | cut -d'|' -f1)
+    local has_qt6=$(apt-cache -qq madison qt6-base-private-dev | cut -d'|' -f1)
     if [[ -n "$has_qt6" ]]; then
         depends+=(qt6-base-private-dev)
+        # Older Ubuntu versions provide libqt6svg6-dev instead of Debian's qt6-svg-dev
+        if [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" lt 23.04; then
+            depends+=(libqt6svg6-dev)
+        else
+            depends+=(qt6-svg-dev)
+        fi
     else
-        depends+=(qt5-base-private-dev)
+        depends+=(qtbase5-private-dev)
     fi
     getDepends "${depends[@]}"
 }

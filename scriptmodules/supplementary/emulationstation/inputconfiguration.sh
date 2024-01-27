@@ -15,12 +15,13 @@
 ## @details
 ## @par global variables
 ##
-## There are 3 global variables which are set to the current device being processed
+## There are 5 global variables which are set to the current device being processed
 ##
 ## `DEVICE_TYPE` = device type is currently either joystick, keyboard or cec
 ## `DEVICE_NAME` = name of the device
 ## `DEVICE_GUID` = SDL2 joystick GUID of the device (-1 for keyboard, -2 for cec)
-##
+## `VENDOR_ID`   = the USB vendor ID of the device
+## `PRODUCT_ID`  = the USB product ID of the device
 ## @par Interface functions
 ##
 ## each input configuration module can have an optional function
@@ -80,6 +81,8 @@ function inputconfiguration() {
     DEVICE_TYPE=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@type" "$es_conf")
     DEVICE_NAME=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceName" "$es_conf")
     DEVICE_GUID=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@deviceGUID" "$es_conf")
+    VENDOR_ID=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@vendorId" "$es_conf")
+    PRODUCT_ID=$(xmlstarlet sel --text -t -v "/inputList/inputConfig/@productId" "$es_conf")
 
     echo "Input type is '$DEVICE_TYPE'."
 

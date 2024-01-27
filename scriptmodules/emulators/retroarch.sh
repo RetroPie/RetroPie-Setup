@@ -12,7 +12,7 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
-rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.12.0"
+rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.16.0"
 rp_module_section="core"
 
 function depends_retroarch() {
@@ -52,6 +52,7 @@ function build_retroarch() {
         isPlatform "gles31" && params+=(--enable-opengles3_1)
         isPlatform "gles32" && params+=(--enable-opengles3_2)
     fi
+    isPlatform "videocore" && params+=(--disable-crtswitchres)
     isPlatform "rpi" && isPlatform "mesa" && params+=(--disable-videocore)
     # Temporarily block dispmanx support for fkms until upstream support is fixed
     isPlatform "dispmanx" && ! isPlatform "kms" && params+=(--enable-dispmanx --disable-opengl1)
@@ -110,9 +111,11 @@ function update_core_info_retroarch() {
     local dir="$configdir/all/retroarch/cores"
     # remove if not a git repository and do a fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -fr "$dir"
-    gitPullOrClone "$configdir/all/retroarch/cores" https://github.com/libretro/libretro-core-info.git
-    # Add the info files for cores/configurations not available upstream
-    cp -f "$md_data/"*.info "$configdir/all/retroarch/cores"
+    # remove our locally generated `.info` files, just in case upstream adds them
+    [[ -d "$dir/.git" ]] && git -C "$dir" clean -q -f "*.info"
+    gitPullOrClone "$dir" https://github.com/libretro/libretro-core-info.git
+    # add our info files for cores not included in the upstream repo
+    cp --update "$md_data"/*.info "$dir"
     chown -R $user:$user "$dir"
 }
 
@@ -174,9 +177,6 @@ function configure_retroarch() {
     iniSet "system_directory" "$biosdir"
     iniSet "config_save_on_exit" "false"
     iniSet "video_aspect_ratio_auto" "true"
-    iniSet "rgui_browser_directory" "$romdir"
-    iniSet "rgui_switch_icons" "false"
-
     if ! isPlatform "x86"; then
         iniSet "video_threaded" "true"
     fi
@@ -234,6 +234,10 @@ function configure_retroarch() {
     # rgui by default
     iniSet "menu_driver" "rgui"
     iniSet "rgui_aspect_ratio_lock" "2"
+    iniSet "rgui_browser_directory" "$romdir"
+    iniSet "rgui_switch_icons" "false"
+    iniSet "menu_rgui_shadows" "true"
+    iniSet "rgui_menu_color_theme" "29" # Tango Dark theme
 
     # hide online updater menu options and the restart option
     iniSet "menu_show_core_updater" "false"
@@ -242,13 +246,20 @@ function configure_retroarch() {
     # disable the search action
     iniSet "menu_disable_search_button" "true"
 
-    # remove some options from quick menu
+    # remove some rarely used entries from the quick menu
     iniSet "quick_menu_show_close_content" "false"
     iniSet "quick_menu_show_add_to_favorites" "false"
+    iniSet "quick_menu_show_replay" "false"
+    iniSet "quick_menu_show_start_recording" "false"
+    iniSet "quick_menu_show_start_streaming" "false"
     iniSet "menu_show_overlays" "false"
 
     # disable the load notification message with core and game info
     iniSet "menu_show_load_content_animation" "false"
+    # disable core cache file
+    iniSet "core_info_cache_enable" "false"
+    # disable game runtime logging
+    iniSet "content_runtime_log" "false"
 
     # disable unnecessary xmb menu tabs
     iniSet "xmb_show_add" "false"

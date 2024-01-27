@@ -32,7 +32,7 @@ function build_ioquake3() {
 
 function _arch_ioquake3() {
     # exact parsing from Makefile
-    echo "$(uname -m | sed -e 's/i.86/x86/' | sed -e 's/^arm.*/arm/')"
+    echo "$(uname -m | sed -e 's/i.86/x86/' | sed -e 's/^arm.*/arm/' | sed -e 's/aarch64/arm64/')"
 }
 
 function install_ioquake3() {

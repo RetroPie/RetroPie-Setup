@@ -134,15 +134,3 @@ index 84a8b94c74..0a5a40430e 100644
  
  # These files quiet sNaNs in a way that is optimized away without
 
-# fixes gcc/libsanitizer/asan/asan_linux.cpp:217:21: error: ‘PATH_MAX’ was not declared in this scope
---- a/gcc/libsanitizer/asan/asan_linux.cpp
-+++ b/gcc/libsanitizer/asan/asan_linux.cpp
-@@ -31,7 +31,7 @@
- #include <sys/types.h>
- #include <dlfcn.h>
- #include <fcntl.h>
--#include <limits.h>
-+#include <linux/limits.h>
- #include <pthread.h>
- #include <stdio.h>
- #include <unistd.h>

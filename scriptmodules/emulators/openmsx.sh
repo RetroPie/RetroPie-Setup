@@ -13,13 +13,15 @@ rp_module_id="openmsx"
 rp_module_desc="MSX emulator OpenMSX"
 rp_module_help="ROM Extensions: .cas .rom .mx1 .mx2 .col .dsk .zip\n\nCopy your MSX/MSX2 games to $romdir/msx\nCopy the BIOS files to $biosdir/openmsx"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/openMSX/openMSX/master/doc/GPL.txt"
-rp_module_repo="git https://github.com/openMSX/openMSX.git RELEASE_17_0 :_get_commit_openmsx"
+rp_module_repo="git https://github.com/openMSX/openMSX.git RELEASE_19_1 :_get_commit_openmsx"
 rp_module_section="opt"
 rp_module_flags=""
 
 function _get_commit_openmsx() {
     local commit
-    # latest code requires at least GCC 8.3 (Debian Buster) for full C++17 support
+    # latest code requires a C++ compiler with C++23 support (Debian Bullseye)
+    [[ "$__gcc_version" -lt 9 ]] && commit="127e2826"
+    # use a commit after release 17 for older GCC versions (gcc 8.x, Debian Buster)
     [[ "$__gcc_version" -lt 8 ]] && commit="c8d90e70"
     # for GCC before 7, build from an earlier commit, before C++17 support was added
     [[ "$__gcc_version" -lt 7 ]] && commit="5ee25b62"
