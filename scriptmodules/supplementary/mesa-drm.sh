@@ -30,7 +30,7 @@ function build_mesa-drm() {
     local params=()
 
     # for RPI, disable all but VC4 driver to minimize startup delay
-    isPlatform "rpi" && params+=(-Dintel=false -Dradeon=false \
+    isPlatform "rpi" || isPlatform "armbian" && params+=(-Dintel=false -Dradeon=false \
                            -Damdgpu=false -Dexynos=false \
                            -Dnouveau=false -Dvmwgfx=false \
                            -Domap=false -Dfreedreno=false \
