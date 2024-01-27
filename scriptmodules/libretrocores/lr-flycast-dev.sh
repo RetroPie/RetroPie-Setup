@@ -22,7 +22,7 @@ function depends_lr-flycast-dev() {
         md_ret_errors+=("Sorry, you need an OS with gcc 9 or newer to compile $md_id")
         return 1
     fi
-    local depends=(zlib1g-dev libgl-dev)
+    local depends=(zlib1g-dev libgl-dev cmake)
     getDepends "${depends[@]}"
 }
 
