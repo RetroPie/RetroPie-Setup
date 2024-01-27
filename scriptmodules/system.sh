@@ -383,7 +383,7 @@ function get_rpi_video() {
 
 function get_armbian_video() {
     # Check if KMS is enabled
-    __platform_flags+=(mesa kms)
+    __platform_flags+=(kms)
 }
 
 function get_rpi_model() {
