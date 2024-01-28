@@ -86,7 +86,6 @@ function build_sdl2() {
         # disable vulkan and X11 video support
         conf_flags+=("--disable-video-x11")
     fi
-    isPlatform "armbian" && conf_flags+=("--disable-video-x11")
     isPlatform "vulkan" && conf_flags+=("--enable-video-vulkan") || conf_flags+=("--disable-video-vulkan")
     isPlatform "mali" && conf_flags+=("--enable-video-mali" "--disable-video-opengl")
     isPlatform "rpi" && conf_flags+=("--enable-video-rpi")

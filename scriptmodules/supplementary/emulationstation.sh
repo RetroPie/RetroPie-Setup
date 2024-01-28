@@ -178,7 +178,6 @@ function build_emulationstation() {
         fi
     elif isPlatform "gles"; then
         params+=(-DGLES=On)
-        isPlatform "h616" && params+=(-DUSE_GLES1=On)
     elif isPlatform "gl"; then
         params+=(-DGL=On)
     fi
