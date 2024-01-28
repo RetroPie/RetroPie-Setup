@@ -237,7 +237,14 @@ function configure_distcc_crosscomp() {
     sed -i "s/--daemon\"/--daemon --port $port\"/" "$initd_script"
 
     # add the $dist cross compiler bin path to new init.d
-    sed -i "s#^PATH=.*#PATH=$bin_dir:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin#" "$initd_script"
+    local replace="PATH=$bin_dir:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+    # if the PATH line exists, replace it (older distcc init.d script)
+    if grep -q "PATH=" "$initd_script"; then
+        sed -i "s#^PATH=.*#$replace#" "$initd_script"
+    # otherwise, insert it before the DAEMON= line (newer distcc init.d script)
+    else
+        sed -i "/^DAEMON=.*/i $replace" "$initd_script"
+    fi
 
     # create log file
     local log="/var/log/distccd-$dist.log"
