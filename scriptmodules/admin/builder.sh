@@ -102,10 +102,6 @@ function chroot_build_builder() {
         local archive_dir="tmp/archives/$(_get_info_image "$dist" "name")"
 
         local distcc_hosts="$__builder_distcc_hosts"
-        if [[ -d "$rootdir/admin/crosscomp/$dist" ]]; then
-            rp_callModule crosscomp switch_distcc "$dist"
-            [[ -z "$distcc_hosts" ]] && distcc_hosts="$ip"
-        fi
 
         local use_ccache="$__builder_use_ccache"
 
@@ -127,7 +123,24 @@ function chroot_build_builder() {
             mkdir -p "$scriptdir/$archive_dir" "$chroot_rps_dir/$archive_dir"
             rsync -av "$scriptdir/$archive_dir/" "$chroot_rps_dir/$archive_dir/"
         else
-            rp_callModule image chroot "$chroot_dir" git -C /home/pi/RetroPie-Setup pull
+            rp_callModule image chroot "$chroot_dir" bash -c "
+                cd ~/RetroPie-Setup
+                git checkout master
+                git pull
+                if git remote | grep -q builder; then
+                    git branch -D builder-branch
+                    git remote remove builder
+                fi
+            "
+            # if we have a __builder_repo and __builder_branch set, check out the branch and use that
+            if [[ -n "$__builder_repo" && "$__builder_branch" ]]; then
+                rp_callModule image chroot "$chroot_dir" bash -c "
+                    cd ~/RetroPie-Setup
+                    git remote add builder $__builder_repo
+                    git fetch -q builder
+                    git checkout builder/$__builder_branch -b builder-branch
+                    "
+            fi
         fi
 
         for platform in $platforms; do
