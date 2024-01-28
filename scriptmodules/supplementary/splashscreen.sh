@@ -63,6 +63,9 @@ _EOF_
     iniSet "DATADIR" "$datadir"
     iniSet "REGEX_IMAGE" "$(_image_exts_splashscreen)"
     iniSet "REGEX_VIDEO" "$(_video_exts_splashscreen)"
+    if isPlatform "videocore"; then
+        iniSet "VLC_OPTS" "--mmal-layer 10001"
+    fi
 
     if [[ ! -f "$configdir/all/$md_id.cfg" ]]; then
         iniConfig "=" '"' "$configdir/all/$md_id.cfg"

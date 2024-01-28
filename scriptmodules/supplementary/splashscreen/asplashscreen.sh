@@ -4,6 +4,7 @@ ROOTDIR=""
 DATADIR=""
 REGEX_VIDEO=""
 REGEX_IMAGE=""
+VLC_OPTS=""
 
 # Load user settings
 . /opt/retropie/configs/all/splashscreen.cfg
@@ -12,7 +13,7 @@ do_start () {
     local config="/etc/splashscreen.list"
     local line
     local re="$REGEX_VIDEO\|$REGEX_IMAGE"
-    local vlc="vlc --intf dummy --quiet --no-video-title-show --play-and-exit --mmal-layer 10001"
+    local vlc="vlc --intf dummy --quiet --no-video-title-show --play-and-exit "
     case "$RANDOMIZE" in
         retropie)
             line="$(find "$ROOTDIR/supplementary/splashscreen" -type f | grep "$re" | shuf -n1)"
