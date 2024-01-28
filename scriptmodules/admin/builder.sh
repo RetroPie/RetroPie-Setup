@@ -102,10 +102,6 @@ function chroot_build_builder() {
         local archive_dir="tmp/archives/$(_get_info_image "$dist" "name")"
 
         local distcc_hosts="$__builder_distcc_hosts"
-        if [[ -d "$rootdir/admin/crosscomp/$dist" ]]; then
-            rp_callModule crosscomp switch_distcc "$dist"
-            [[ -z "$distcc_hosts" ]] && distcc_hosts="$ip"
-        fi
 
         local use_ccache="$__builder_use_ccache"
 
