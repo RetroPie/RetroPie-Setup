@@ -176,7 +176,7 @@ function build_emulationstation() {
             local gl_ver=$(sudo -u $user glxinfo -B | grep -oP 'Max compat profile version:\s\K.*')
             compareVersions $gl_ver gt 2.0 && params+=(-DUSE_GL21=On)
         fi
-    elif isPlatform "g31"; then
+    elif isPlatform "mali-g31"; then
         params+=(-DUSE_GLES1=On)
     elif isPlatform "gles"; then
         params+=(-DGLES=On)
