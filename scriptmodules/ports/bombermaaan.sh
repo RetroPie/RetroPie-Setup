@@ -11,13 +11,13 @@
 
 rp_module_id="bombermaaan"
 rp_module_desc="Bombermaaan - Classic bomberman game"
-rp_module_licence="GPL3 https://raw.githubusercontent.com/bjaraujo/Bombermaaan/master/LICENSE.txt"
-rp_module_repo="git https://github.com/bjaraujo/Bombermaaan.git v1.9.7.2126"
+rp_module_licence="GPL3 https://raw.githubusercontent.com/bjaraujo/Bombermaaan/master/COPYING.txt"
+rp_module_repo="git https://github.com/bjaraujo/Bombermaaan.git master"
 rp_module_section="exp"
-rp_module_flags="sdl1 !mali"
+rp_module_flags="sdl2"
 
 function depends_bombermaaan() {
-    getDepends cmake libsdl1.2-dev libsdl-mixer1.2-dev
+    getDepends cmake libsdl2-dev libsdl2-mixer-dev
 }
 
 function sources_bombermaaan() {
@@ -33,7 +33,7 @@ function build_bombermaaan() {
 }
 
 function install_bombermaaan() {
-    md_ret_files=(        
+    md_ret_files=(
         'trunk/bombermaaan'
         'trunk/levels'
         'trunk/res/images'
@@ -44,11 +44,11 @@ function install_bombermaaan() {
 function configure_bombermaaan() {
     addPort "$md_id" "bombermaaan" "Bombermaaan" "$md_inst/bombermaaan"
 
-    isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
+    [[ "$mode" == "remove" ]] && return
 
     local file="$romdir/ports/Bombermaaan.sh"
     cat >"$file" << _EOF_
-#!/bin/bash
+#!/usr/bin/env bash
 pushd "$md_inst"
 "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ bombermaaan ""
 popd
