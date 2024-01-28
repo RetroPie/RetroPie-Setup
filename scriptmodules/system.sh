@@ -204,12 +204,13 @@ function get_os_version() {
                 __platform_flags+=(xbian)
             fi
 
-            # we provide binaries for RPI on Raspberry Pi OS 10/11
-            if isPlatform "rpi" && \
-               isPlatform "32bit" && \
-               [[ "$__os_debian_ver" -ge 10 && "$__os_debian_ver" -le 11 ]]; then
-               # only set __has_binaries if not already set
-               [[ -z "$__has_binaries" ]] && __has_binaries=1
+            # if __has_binaries is not set, and we are on the Raspberry Pi, check if we support binaries
+            if [[ -z "$__has_binaries" ]] && isPlatform "rpi"; then
+                # we currently support 32bit binaries on Raspberry Pi OS 10 & 11 and both 32/64bit binaries on Raspberry Pi OS 12
+                if ([[ "$__os_debian_ver" -ge 10 && "$__os_debian_ver" -le 11 ]] && isPlatform "32bit") \
+                    || [[ "$__os_debian_ver" -eq 12 ]]; then
+                    __has_binaries=1
+                fi
             fi
             ;;
         Devuan)
