@@ -57,6 +57,10 @@ function module_builder() {
         # initial clean in case anything was in the build folder when calling
         local mode
         for mode in clean depends sources build install create_bin clean remove "depends remove"; do
+            # don't try and create binary archives for modules with an install_bin such as sdl1/sdl2
+            if [[ "$mode" == "create_bin" ]] && fnExists "install_bin_${id}"; then
+                continue
+            fi
             # continue to next module if not available or an error occurs
             rp_callModule "$id" $mode || break
         done
