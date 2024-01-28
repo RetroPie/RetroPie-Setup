@@ -190,7 +190,7 @@ function get_os_version() {
 
             # 64bit Raspberry Pi OS identifies as Debian, but functions (currently) as Raspbian
             # we will check package sources and set to Raspbian
-            if isPlatform "aarch64" && apt-cache policy | grep -q "archive.raspberrypi.org"; then
+            if isPlatform "aarch64" && apt-cache policy | grep -qE "archive.raspberrypi.(com|org)"; then
                 __os_id="Raspbian"
             fi
 

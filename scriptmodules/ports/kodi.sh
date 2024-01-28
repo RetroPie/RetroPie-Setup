@@ -34,6 +34,14 @@ function depends_kodi() {
                 apt-key del 4096R/BAA567BB >/dev/null
             fi
         fi
+        if [[ "$__os_debian_ver" -gt 10 ]]; then
+            # install Kodi from the RPI repos directly
+            # make sure we're not installing Debian/Raspbian version by pinning the origin of the packages
+            local apt_pin_file="/etc/apt/preferences.d/01-rpie-pin-kodi"
+            if [[ ! -f "$apt_pin_file" ]]; then
+                echo -e "Package: kodi*\nPin: release o=Raspberry Pi Foundation\nPin-Priority: 900" > "$apt_pin_file"
+            fi
+        fi
     # ubuntu
     elif [[ -n "$__os_ubuntu_ver" ]] && isPlatform "x86"; then
         if [[ "$md_mode" == "install" ]]; then
