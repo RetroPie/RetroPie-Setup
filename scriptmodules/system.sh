@@ -704,5 +704,5 @@ function platform_vero4k() {
 
 function platform_h616() {
     cpu_armv8 "cortex-a53"
-    __platform_flags+=(gles gles3 gles31)
+    __platform_flags+=(g31 gles gles3 gles31)
 }
