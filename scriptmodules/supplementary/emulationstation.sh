@@ -177,7 +177,11 @@ function build_emulationstation() {
             compareVersions $gl_ver gt 2.0 && params+=(-DUSE_GL21=On)
         fi
     elif isPlatform "gles"; then
-        params+=(-DGLES=On)
+        if isPlatform "h616"; then
+            params+=(-DUSE_GLES1=On)
+        else
+            params+=(-DGLES=On)
+        fi
     elif isPlatform "gl"; then
         params+=(-DGL=On)
     fi
