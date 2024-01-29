@@ -60,5 +60,4 @@ function configure_openlara() {
 }
 function remove_openlara() {
  	rm /home/pi/.openlara
-	rm /home/pi/RetroPie/roms/ports/openlara/OpenLara
 }
