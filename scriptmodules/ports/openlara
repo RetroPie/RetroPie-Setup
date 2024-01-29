@@ -45,9 +45,6 @@ function install_openlara() {
 
 function game_data_openlara() {
     mkdir "$home/.openlara"
-    downloadAndExtract "https://raidingtheglobe.com/downloads/tomb-raider-1/5-tomb-raider-1-demo/file" "$romdir/ports/tombraider/ -j -LL
-    mv "$romdir/ports/tombraider/Tomb Raider 1 demo/DATA" "$romdir/ports/tombraider/"
-    rm -rf "$romdir/ports/tombraider/Tomb Raider 1 demo"
     chown -R $user:$user "$romdir/ports/tombraider"
     chown -R $user:$user "$md_conf_root/openlara"
 }
