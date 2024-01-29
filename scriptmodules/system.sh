@@ -354,7 +354,7 @@ function get_rpi_video() {
 
     if [[ "$__has_kms" -eq 1 ]]; then
         __platform_flags+=(mesa kms)
-        if [[ -z "$__has_dispmanx" ]]; then
+        if ! isPlatform "aarm64" && [[ -z "$__has_dispmanx" ]]; then
             if [[ "$__chroot" -eq 1 ]]; then
                 # in a chroot default to fkms (supporting dispmanx) when debian is older than 11 (bullseye)
                 [[ "$__os_debian_ver" -lt 11 ]] && __has_dispmanx=1
@@ -365,7 +365,10 @@ function get_rpi_video() {
         fi
         [[ "$__has_dispmanx" -eq 1 ]] && __platform_flags+=(dispmanx)
     else
-        __platform_flags+=(videocore dispmanx)
+        __platform_flags+=(videocore)
+        if ! isPlatform "aarm64"; then
+            __platform_flags+=(dispmanx)
+        fi
     fi
 
     # delete legacy pkgconfig that conflicts with Mesa (may be installed via rpi-update)
