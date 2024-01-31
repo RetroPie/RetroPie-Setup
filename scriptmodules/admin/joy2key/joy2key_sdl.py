@@ -196,8 +196,8 @@ def get_all_ra_config(def_buttons: list) -> list:
     generic_dev = InputDev("*", "*")
     generic_dev.add_mappings(
         {},  # no axis
-        {0: [(1, 'up'), (8, 'left'), (4, 'down'), (2, 'right')]},  # D-Pad as 'hat0'
-        {0: 'b', 1: 'a', 3: 'y', 4: 'x'}  # 4 buttons
+        {0: 'b', 1: 'a', 3: 'y', 4: 'x'},  # 4 buttons
+        {0: [(1, 'up'), (8, 'left'), (4, 'down'), (2, 'right')]}  # 1 D-Pad as 'hat0'
     )
     ra_config_list.append(generic_dev)
     js_cfg_dir = CONFIG_DIR + '/all/retroarch-joypads/'
