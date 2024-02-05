@@ -14,7 +14,7 @@ rp_module_desc="C-Dogs SDL - Classic overhead run-and-gun game"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/cxong/cdogs-sdl/master/COPYING"
 rp_module_repo="git https://github.com/cxong/cdogs-sdl.git 1.4.1"
 rp_module_section="exp"
-rp_module_flags="sdl1 !mali"
+rp_module_flags="sdl2"
 
 function depends_cdogs-sdl() {
     getDepends cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev
