@@ -48,6 +48,12 @@ function depends_dolphin() {
     else
         depends+=(qtbase5-private-dev)
     fi
+    # on KMS use x11 to start the emulator
+    isPlatform "kms" && depends+=(xorg matchbox-window-manager)
+
+    # if using the latest version, add SDL2 as dependency, since it's mandatory
+    [[ "$(_get_commit_dolphin)" == "" ]] && depends+=(libsdl2-dev)
+
     getDepends "${depends[@]}"
 }
 
@@ -58,8 +64,8 @@ function sources_dolphin() {
 function build_dolphin() {
     mkdir build
     cd build
-    # use the bundled 'speexdsp' libs, distro versions before 1.2.1 produce a 'cmake' error
-    cmake .. -DBUNDLE_SPEEX=ON -DCMAKE_INSTALL_PREFIX="$md_inst"
+    # use the bundled 'speexdsp' libs, distro versions before 1.2.1 trigger a 'cmake' error
+    cmake .. -DBUNDLE_SPEEX=ON -DENABLE_AUTOUPDATE=OFF -DENABLE_ANALYTICS=OFF  -DUSE_DISCORD_PRESENCE=OFF -DCMAKE_INSTALL_PREFIX="$md_inst"
     make clean
     make
     md_ret_require="$md_build/build/Binaries/dolphin-emu"
@@ -74,23 +80,40 @@ function configure_dolphin() {
     mkRomDir "gc"
     mkRomDir "wii"
 
-    moveConfigDir "$home/.dolphin-emu" "$md_conf_root/gc"
+    local launch_prefix
+    isPlatform "kms" && launch_prefix="XINIT-WM:"
 
-    if [[ ! -f "$md_conf_root/gc/Config/Dolphin.ini" ]]; then
-        mkdir -p "$md_conf_root/gc/Config"
-        cat >"$md_conf_root/gc/Config/Dolphin.ini" <<_EOF_
-[Display]
-FullscreenResolution = Auto
-Fullscreen = True
-_EOF_
-        chown -R $user:$user "$md_conf_root/gc/Config"
-    fi
-
-    addEmulator 1 "$md_id" "gc" "$md_inst/bin/dolphin-emu-nogui -e %ROM%"
-    addEmulator 0 "$md_id-gui" "gc" "$md_inst/bin/dolphin-emu -b -e %ROM%"
-    addEmulator 1 "$md_id" "wii" "$md_inst/bin/dolphin-emu-nogui -e %ROM%"
-    addEmulator 0 "$md_id-gui" "wii" "$md_inst/bin/dolphin-emu -b -e %ROM%"
+    addEmulator 0 "$md_id" "gc" "$launch_prefix$md_inst/bin/dolphin-emu-nogui -e %ROM%"
+    addEmulator 1 "$md_id-gui" "gc" "$launch_prefix$md_inst/bin/dolphin-emu -b -e %ROM%"
+    addEmulator 0 "$md_id" "wii" "$launch_prefix$md_inst/bin/dolphin-emu-nogui -e %ROM%"
+    addEmulator 1 "$md_id-gui" "wii" "$launch_prefix$md_inst/bin/dolphin-emu -b -e %ROM%"
 
     addSystem "gc"
     addSystem "wii"
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    moveConfigDir "$home/.config/dolphin-emu" "$md_conf_root/gc/Config"
+    mkUserDir "$md_conf_root/gc/Config"
+    # preset a few options on a first installation
+    if [[ ! -f "$md_conf_root/gc/Config/Dolphin.ini" ]]; then
+        cat >"$md_conf_root/gc/Config/Dolphin.ini" <<_EOF_
+[Display]
+FullscreenDisplayRes = Auto
+Fullscreen = True
+RenderToMain = True
+KeepWindowOnTop = True
+[Interface]
+ConfirmStop = False
+_EOF_
+    fi
+    # use the GLES(3) render path on platforms where it's available
+    if [[ ! -f "$md_conf_root/gc/Config/GFX.ini" ]] && isPlatform "gles3"; then
+        cat >"$md_conf_root/gc/Config/GFX.ini" <<_EOF2_
+[Settings]
+PreferGLES = True
+_EOF2_
+    fi
+
+    chown -R $user:$user "$md_conf_root/gc/Config"
 }
