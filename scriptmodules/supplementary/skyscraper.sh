@@ -66,6 +66,7 @@ function _config_files_skyscraper() {
         'peas.json'
         'platforms_idmap.csv'
         'resources'
+        'supplementary/bash-completion/Skyscraper.bash'
         'screenscraper_platforms.json'
         'tgdb_developers.json'
         'tgdb_genres.json'
@@ -217,13 +218,12 @@ function configure_skyscraper() {
 }
 
 function _init_config_skyscraper() {
-
     local config_files=($(_config_files_skyscraper))
 
     # assume new(er) install
     mkdir -p .pristine_cfgs
     for cf in "${config_files[@]}"; do
-        bn=${cf#*/} # cut off cache/
+        bn=${cf##*/} # cut off all folders
         if [[ -e "$md_inst/$bn" ]]; then
             cp -rf "$md_inst/$bn" ".pristine_cfgs/"
             rm -rf "$md_inst/$bn"
@@ -275,6 +275,11 @@ function _init_config_skyscraper() {
     # Create the cache folder and add the sample 'priorities.xml' file to it
     mkUserDir "$scraper_conf_dir/cache"
     cp -f "$md_inst/.pristine_cfgs/priorities.xml.example" "$scraper_conf_dir/cache"
+
+    # Deploy programmable completion script
+    mkUserDir "$home/.bash_completion.d"
+    cp -f "$md_inst/.pristine_cfgs/Skyscraper.bash" "$home/.bash_completion.d"
+    chown $user:$user "$home/.bash_completion.d/Skyscraper.bash"
 }
 
 # Scrape one system, passed as parameter
