@@ -76,6 +76,10 @@ function _config_files_skyscraper() {
     echo "${config_files[@]}"
 }
 
+function remove_skyscraper() {
+    rm -f "$home/.bash_completion.d/Skyscraper.bash"
+}
+
 # Get the location of the cached resources folder. In v3+, this changed to 'cache'.
 # Note: the cache folder might be unavailable during first time installations
 function _cache_folder_skyscraper() {
