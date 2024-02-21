@@ -13,12 +13,12 @@ rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_help="ROM Extensions: .cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna\n\nCopy your Dragon roms to $romdir/dragon32\n\nCopy your CoCo games to $romdir/coco\n\nCopy the required BIOS files d32.rom (Dragon 32), bas13.rom (CoCo), coco3.rom/coco3p.rom (CoCo3) to $biosdir"
 rp_module_licence="GPL3 http://www.6809.org.uk/xroar/"
-rp_module_repo="git http://www.6809.org.uk/git/xroar.git 1.3"
+rp_module_repo="git http://www.6809.org.uk/git/xroar.git 1.5.3"
 rp_module_section="opt"
 rp_module_flags=""
 
 function depends_xroar() {
-    local depends=(libsdl2-dev automake libasound2-dev texinfo zlib1g-dev)
+    local depends=(libsdl2-dev automake libasound2-dev libsndfile1-dev texinfo zlib1g-dev)
     isPlatform "x11" && depends+=(libpulse-dev)
     getDepends "${depends[@]}"
 }
