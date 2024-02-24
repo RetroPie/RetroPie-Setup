@@ -77,7 +77,7 @@ function _config_files_skyscraper() {
 }
 
 function remove_skyscraper() {
-    rm -f "$home/.bash_completion.d/Skyscraper.bash"
+    rm -f "$home/.local/share/bash-completion/completions/Skyscraper.bash"
 }
 
 # Get the location of the cached resources folder. In v3+, this changed to 'cache'.
@@ -281,9 +281,9 @@ function _init_config_skyscraper() {
     cp -f "$md_inst/.pristine_cfgs/priorities.xml.example" "$scraper_conf_dir/cache"
 
     # Deploy programmable completion script
-    mkUserDir "$home/.bash_completion.d"
-    cp -f "$md_inst/.pristine_cfgs/Skyscraper.bash" "$home/.bash_completion.d"
-    chown $user:$user "$home/.bash_completion.d/Skyscraper.bash"
+    mkdir -p "$home/.local/share/bash-completion/completions"
+    cp -f "$md_inst/.pristine_cfgs/Skyscraper.bash" "$home/.local/share/bash-completion/completions"
+    chown -R $user:$user "$home/.local/share/bash-completion"
 }
 
 # Scrape one system, passed as parameter
