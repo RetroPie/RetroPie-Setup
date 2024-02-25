@@ -18,7 +18,7 @@ rp_module_section="opt"
 function depends_eduke32() {
     local depends=(
         flac libflac-dev libvorbis-dev libpng-dev libvpx-dev freepats
-        libsdl2-dev libsdl2-mixer-dev
+        libsdl2-dev libsdl2-mixer-dev rename
     )
 
     isPlatform "x86" && depends+=(nasm)
@@ -77,8 +77,11 @@ function install_eduke32() {
 function game_data_eduke32() {
     local dest="$romdir/ports/duke3d"
     if [[ "$md_id" == "eduke32" ]]; then
+        mkUserDir "$dest"
+        pushd "$dest"
+        rename 'y/A-Z/a-z/' *
+        popd
         if [[ ! -f "$dest/duke3d.grp" ]]; then
-            mkUserDir "$dest"
             local temp="$(mktemp -d)"
             download "$__archive_url/3dduke13.zip" "$temp"
             unzip -L -o "$temp/3dduke13.zip" -d "$temp" dn3dsw13.shr
