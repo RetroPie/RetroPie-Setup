@@ -23,13 +23,17 @@ function _get_branch_mame() {
 
 function depends_mame() {
     if [[ "$__gcc_version" -lt 7 ]]; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 7 or newer to compile $md_id")
+        md_ret_errors+=("Sorry, you need an OS with gcc 7.2 or newer to compile $md_id")
         return 1
     fi
 
     # Install required libraries required for compilation and running
     # Note: libxi-dev is required as of v0.210, because of flag changes for XInput
-    getDepends libfontconfig1-dev qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libsdl2-ttf-dev libxinerama-dev libxi-dev libpulse-dev
+    local depends=(libfontconfig1-dev libsdl2-ttf-dev libflac-dev libxinerama-dev libxi-dev libpulse-dev libzstd-dev)
+    # build the MAME debugger only on X11 (desktop) platforms
+    isPlatform "x11" && depends+=(qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools)
+
+    getDepends "${depends[@]}"
 }
 
 function sources_mame() {
@@ -41,23 +45,25 @@ function sources_mame() {
 function build_mame() {
     # More memory is required for 64bit platforms
     if isPlatform "64bit"; then
-        rpSwap on 8192
+        rpSwap on 10240
     else
-        rpSwap on 4096
+        rpSwap on 8192
     fi
 
-    local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE PYTHON_EXECUTABLE=python3)
+    local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE PYTHON_EXECUTABLE=python3 OPTIMIZE=2 USE_SYSTEM_LIB_FLAC=1 USE_SYSTEM_LIB_ZSTD=1)
+    isPlatform "x11" && params+=(USE_QTDEBUG=1) || params+=(USE_QTDEBUG=0)
     # when building on ARM enable 'fsigned-char' for compiled code, fixes crashes in a few drivers
     isPlatform "arm" || isPlatform "aarch64" && params+=(ARCHOPTS_CXX=-fsigned-char)
 
+    # tell the linker to remove debugging info
+    LDFLAGS+=" -s"
+
     # workaround for linker crash on bullseye (use gold linker)
     if [[ "$__os_debian_ver" -eq 11 ]] && isPlatform "arm"; then
-        QT_SELECT=5 LDFLAGS+=" -fuse-ld=gold -Wl,--long-plt" make "${params[@]}"
+        LDFLAGS+=" -fuse-ld=gold -Wl,--long-plt" make "${params[@]}"
     else
         QT_SELECT=5 make "${params[@]}"
     fi
-
-    strip mame
 
     rpSwap off
     md_ret_require="$md_build/mame"
