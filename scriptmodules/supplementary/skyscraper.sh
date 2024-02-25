@@ -172,6 +172,8 @@ function remove_skyscraper() {
 }
 
 function configure_skyscraper() {
+    # Remove old bash completion script
+    [[ -f "$home/.bash_completion.d/Skyscraper.bash" ]] && rm -f "$home/bash_completion.d/Skyscraper.bash"
     if [[ "$md_mode" == "remove" ]]; then
         return
     fi
