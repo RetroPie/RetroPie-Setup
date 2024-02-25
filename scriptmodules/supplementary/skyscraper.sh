@@ -77,7 +77,24 @@ function _config_files_skyscraper() {
 }
 
 function remove_skyscraper() {
+    local ret
+    local msg
+
+    # Prompt for cache clearing
+    msg="\nRemove also Skyscraper's cache data for all platforms:"
+    msg+="\nvideos, screenshots, descriptions, ... ?"
+    msg+="\n\nThis will only remove files in ~/.skyscraper/cache/."
+    msg+="\n\nIf unsure select 'No'."
+    dialog --clear --colors --defaultno --title "Remove Skyscraper" --yesno "$msg" 12 60 2>&1 >/dev/tty
+    ret=$?
+
+    [[ $ret -eq 0 ]] && _purge_skyscraper
+
+    # Remove possible per-user deployment introduced with v3.9.3
     rm -f "$home/.bash_completion.d/Skyscraper.bash"
+
+    rm -f "/etc/bash_completion.d/Skyscraper.bash"
+    rm -f "/usr/local/bin/Skyscraper"
 }
 
 # Get the location of the cached resources folder. In v3+, this changed to 'cache'.
@@ -168,11 +185,6 @@ function _check_ver_skyscraper() {
 # List any non-empty systems found in the ROM folder
 function _list_systems_skyscraper() {
     find -L "$romdir/" -mindepth 1 -maxdepth 1 -type d -not -empty | sort -u
-}
-
-function remove_skyscraper() {
-    # On removal of the package, purge the cache
-    _purge_skyscraper
 }
 
 function configure_skyscraper() {
@@ -281,9 +293,12 @@ function _init_config_skyscraper() {
     cp -f "$md_inst/.pristine_cfgs/priorities.xml.example" "$scraper_conf_dir/cache"
 
     # Deploy programmable completion script
-    mkUserDir "$home/.bash_completion.d"
-    cp -f "$md_inst/.pristine_cfgs/Skyscraper.bash" "$home/.bash_completion.d"
-    chown $user:$user "$home/.bash_completion.d/Skyscraper.bash"
+    cp -f "$md_inst/.pristine_cfgs/Skyscraper.bash" "/etc/bash_completion.d/"
+    # Ease of use but also needed for proper completion
+    ln -sf "$md_inst/Skyscraper" "/usr/local/bin/Skyscraper"
+
+    # Remove possible per-user deployment introduced with v3.9.3
+    rm -f "$home/.bash_completion.d/Skyscraper.bash"
 }
 
 # Scrape one system, passed as parameter
