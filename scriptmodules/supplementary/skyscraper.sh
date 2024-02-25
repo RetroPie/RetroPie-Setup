@@ -166,7 +166,7 @@ function _list_systems_skyscraper() {
 }
 
 function remove_skyscraper() {
-    rm -f "/etc/bash_completion.d/Skyscraper.bash"
+    [[ -f "/etc/bash_completion.d/Skyscraper.bash" ]] && rm -f "/etc/bash_completion.d/Skyscraper.bash"
     # On removal of the package, purge the cache
     _purge_skyscraper
 }
@@ -279,7 +279,7 @@ function _init_config_skyscraper() {
     cp -f "$md_inst/.pristine_cfgs/priorities.xml.example" "$scraper_conf_dir/cache"
 
     # Deploy programmable completion script
-    cp -f "$md_inst/.pristine_cfgs/Skyscraper.bash" "/etc/bash_completion.d"
+    [[ -d "/etc/bash_completion.d" ]] && cp -f "$md_inst/.pristine_cfgs/Skyscraper.bash" "/etc/bash_completion.d"
 }
 
 # Scrape one system, passed as parameter
