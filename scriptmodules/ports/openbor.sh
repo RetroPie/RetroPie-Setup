@@ -48,6 +48,7 @@ function configure_openbor() {
 
     mkRomDir "ports/$md_id"
     isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
+    ! isPlatform "dispmanx" && isPlatform "kms" && setBackend "$md_id" "sdl12-compat"
 
     cat >"$md_inst/openbor.sh" << _EOF_
 #!/bin/bash

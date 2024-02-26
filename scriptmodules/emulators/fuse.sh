@@ -63,6 +63,9 @@ function configure_fuse() {
     # default to dispmanx backend
     isPlatform "dispmanx" && _backend_set_fuse "dispmanx"
 
+    # without dispmanx, but with KMS, then use sdl12-compat
+    ! isPlatform "dispmanx" && isPlatform "kms" && _backend_set_fuse "sdl12-compat"
+
     local script="$romdir/zxspectrum/+Start Fuse.sh"
     cat > "$script" << _EOF_
 #!/bin/bash

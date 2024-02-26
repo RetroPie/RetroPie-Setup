@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd
 rp_module_licence="GPL3 https://raw.githubusercontent.com/rastersoft/fbzx/master/COPYING"
 rp_module_repo="git https://github.com/rastersoft/fbzx :_get_branch_fbzx"
 rp_module_section="opt"
-rp_module_flags="sdl1 !mali !kms"
+rp_module_flags="sdl1"
 
 function _get_branch_fbzx() {
     local branch
@@ -55,4 +55,6 @@ function configure_fbzx() {
 
     addEmulator 0 "$md_id" "zxspectrum" "pushd $md_inst/share; $md_inst/bin/fbzx -fs %ROM%; popd"
     addSystem "zxspectrum"
+
+    ! isPlatform "dispmanx" && isPlatform "kms" && setBackend "$md_id" "sdl12-compat"
 }

@@ -1062,6 +1062,9 @@ function config_backend() {
                 fi
                 COMMAND="SDL1_VIDEODRIVER=dispmanx $COMMAND"
                 ;;
+            sdl12-compat)
+                COMMAND="LD_PRELOAD=\"$ROOTDIR/supplementary/sdl12-compat/libSDL-1.2.so.0\" $COMMAND"
+                ;;
             x11)
                 XINIT=1
                 XINIT_WM=1
