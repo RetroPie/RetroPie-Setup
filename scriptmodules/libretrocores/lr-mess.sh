@@ -26,7 +26,11 @@ function sources_lr-mess() {
 }
 
 function build_lr-mess() {
-    rpSwap on 4096
+    if isPlatform "64bit"; then
+        rpSwap on 10240
+    else
+        rpSwap on 6144
+    fi
     local params=($(_get_params_lr-mame) SUBTARGET=mess)
     make clean
     make "${params[@]}"
