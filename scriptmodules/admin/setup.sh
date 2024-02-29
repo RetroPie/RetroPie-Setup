@@ -650,7 +650,7 @@ function packages_gui_setup() {
 function uninstall_setup()
 {
     dialog --defaultno --yesno "Are you sure you want to uninstall RetroPie?" 22 76 2>&1 >/dev/tty || return 0
-    dialog --defaultno --yesno "Are you REALLY sure you want to uninstall RetroPie?\n\n$rootdir will be removed - this includes configuration files for all RetroPie components." 22 76 2>&1 >/dev/tty || return 0
+    dialog --defaultno --colors --yesno "Are you \ZbREALLY\Zn sure you want to uninstall RetroPie?\n\nThe \Z4\Zb$rootdir\Zn folder will be removed - this includes configuration files for all RetroPie components. If you wish to keep any config files of the emulators/ports that RetroPie used, then choose \ZrNo\Zn now and save it first." 22 76 2>&1 >/dev/tty || return 0
     clear
     printHeading "Uninstalling RetroPie"
     for id in "${__mod_id[@]}"; do
