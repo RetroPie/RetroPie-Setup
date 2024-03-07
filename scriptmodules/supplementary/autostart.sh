@@ -10,7 +10,7 @@
 #
 
 rp_module_id="autostart"
-rp_module_desc="Auto-start Emulation Station / Kodi on boot"
+rp_module_desc="Auto-start Emulation Station / Pegasus / Kodi on boot"
 rp_module_section="config"
 
 function _update_hook_autostart() {
@@ -41,6 +41,9 @@ _EOF_
     case "$mode" in
         kodi)
             echo -e "kodi-standalone #auto\nemulationstation #auto" >>"$script"
+            ;;
+        pegasus)
+            echo "pegasus-fe #auto" >> "$script"
             ;;
         es|*)
             echo "emulationstation #auto" >>"$script"
@@ -102,6 +105,12 @@ function remove_autostart() {
 
 function gui_autostart() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 76 16)
+    local has_pegasus=0
+    local has_kodi=0
+
+    command -v pegasus-fe >/dev/null && has_pegasus=1
+    command -v kodi-standalone >/dev/null && has_kodi=1
+
     while true; do
         if isPlatform "x11"; then
             local x11_autostart
@@ -115,7 +124,10 @@ function gui_autostart() {
         else
             options=(
                 1 "Start Emulation Station at boot"
-                2 "Start Kodi at boot (exit for Emulation Station)"
+            )
+            [[ "$has_kodi" -eq 1 ]] && options+=(2 "Start Kodi at boot (exit starts Emulation Station)")
+            [[ "$has_pegasus" -eq 1 ]] && options+=(3 "Start Pegasus at boot")
+            options+=(
                 E "Manually edit $configdir/all/autostart.sh"
             )
             if [[ "$__os_id" == "Raspbian" ]]; then
@@ -150,6 +162,10 @@ function gui_autostart() {
                 2)
                     enable_autostart kodi
                     printMsgs "dialog" "Kodi is set to launch at boot."
+                    ;;
+                3)
+                    enable_autostart pegasus
+                    printMsgs "dialog" "Pegasus is set to launch at boot."
                     ;;
                 E)
                     editFile "$configdir/all/autostart.sh"
