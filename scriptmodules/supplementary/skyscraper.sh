@@ -77,18 +77,7 @@ function _config_files_skyscraper() {
 }
 
 function remove_skyscraper() {
-    local ret
-    local msg
-
-    # Prompt for cache clearing
-    msg="\nRemove also Skyscraper's cache data for all platforms:"
-    msg+="\nvideos, screenshots, descriptions, ... ?"
-    msg+="\n\nThis will only remove files in ~/.skyscraper/cache/."
-    msg+="\n\nIf unsure select 'No'."
-    dialog --clear --colors --defaultno --title "Remove Skyscraper" --yesno "$msg" 12 60 2>&1 >/dev/tty
-    ret=$?
-
-    [[ $ret -eq 0 ]] && _purge_skyscraper
+    md_ret_info+=("Skyscraper's cache in ~/.skyscraper/cache/ is not empty and is not removed.")
 
     # Remove possible per-user deployment introduced with v3.9.3
     rm -f "$home/.bash_completion.d/Skyscraper.bash"
