@@ -10,7 +10,7 @@
 #
 
 rp_module_id="autostart"
-rp_module_desc="Auto-start Emulation Station / Pegasus / Kodi on boot"
+rp_module_desc="Auto-start EmulationStation / Pegasus / Kodi on boot"
 rp_module_section="config"
 
 function _update_hook_autostart() {
@@ -115,17 +115,17 @@ function gui_autostart() {
         if isPlatform "x11"; then
             local x11_autostart
             if [[ -f "$home/.config/autostart/retropie.desktop" ]]; then
-                options=(1 "Autostart Emulation Station after login (Enabled)")
+                options=(1 "Autostart EmulationStation after login (Enabled)")
                 x11_autostart=1
             else
-                options=(1 "Autostart Emulation Station after login (Disabled)")
+                options=(1 "Autostart EmulationStation after login (Disabled)")
                 x11_autostart=0
             fi
         else
             options=(
-                1 "Start Emulation Station at boot"
+                1 "Start EmulationStation at boot"
             )
-            [[ "$has_kodi" -eq 1 ]] && options+=(2 "Start Kodi at boot (exit starts Emulation Station)")
+            [[ "$has_kodi" -eq 1 ]] && options+=(2 "Start Kodi at boot (exit starts EmulationStation)")
             [[ "$has_pegasus" -eq 1 ]] && options+=(3 "Start Pegasus at boot")
             options+=(
                 E "Manually edit $configdir/all/autostart.sh"
@@ -148,15 +148,15 @@ function gui_autostart() {
                     if isPlatform "x11"; then
                         if [[ "$x11_autostart" -eq 0 ]]; then
                             enable_autostart
-                            printMsgs "dialog" "Emulation Station is set to autostart after login."
+                            printMsgs "dialog" "EmulationStation is set to autostart after login."
                         else
                             disable_autostart
-                            printMsgs "dialog" "Autostarting of Emulation Station is disabled."
+                            printMsgs "dialog" "Autostarting of EmulationStation is disabled."
                         fi
                         x11_autostart=$((x11_autostart ^ 1))
                     else
                         enable_autostart
-                        printMsgs "dialog" "Emulation Station is set to launch at boot."
+                        printMsgs "dialog" "EmulationStation is set to launch at boot."
                     fi
                     ;;
                 2)
