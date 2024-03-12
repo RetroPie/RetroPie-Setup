@@ -18,7 +18,7 @@ rp_module_section="exp"
 rp_module_flags=""
 
 function _get_params_lr-mame() {
-    local params=(OSD=retro RETRO=1 NOWERROR=1 OS=linux TARGETOS=linux CONFIG=libretro NO_USE_MIDI=1 TARGET=mame PYTHON_EXECUTABLE=python3)
+    local params=(OSD=retro RETRO=1 NOWERROR=1 OS=linux OPTIMIZE=2 TARGETOS=linux CONFIG=libretro NO_USE_MIDI=1 NO_USE_PORTAUDIO=1 TARGET=mame)
     isPlatform "64bit" && params+=(PTR64=1)
     echo "${params[@]}"
 }
