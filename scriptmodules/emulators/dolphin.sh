@@ -105,6 +105,10 @@ RenderToMain = True
 KeepWindowOnTop = True
 [Interface]
 ConfirmStop = False
+[General]
+ISOPath0 = "$home/RetroPie/roms/gc"
+[Core]
+AutoDiscChange = True
 _EOF_
     fi
     # use the GLES(3) render path on platforms where it's available
