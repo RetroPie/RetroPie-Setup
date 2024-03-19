@@ -13,7 +13,7 @@ rp_module_id="advmame"
 rp_module_desc="AdvanceMAME"
 rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $romdir/mame-advmame or\n$romdir/arcade"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
-rp_module_repo="git https://github.com/amadvance/advancemame master"
+rp_module_repo="git https://github.com/amadvance/advancemame v3.10"
 rp_module_section="opt"
 rp_module_flags="sdl2 sdl1-videocore"
 
