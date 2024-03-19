@@ -1,0 +1,11 @@
+--- a/libraries/lzma/C/7zCrc.c
++++ b/libraries/lzma/C/7zCrc.c
+@@ -71,7 +71,7 @@
+ 
+ #ifdef MY_CPU_LE
+ 
+-#if defined(MY_CPU_ARM_OR_ARM64)
++#if defined(MY_CPU_ARM_OR_ARM64) && 0
+ 
+ // #pragma message("ARM*")
+ 
