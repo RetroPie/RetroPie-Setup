@@ -13,7 +13,7 @@ rp_module_id="love"
 rp_module_desc="Love - 2d Game Engine"
 rp_module_help="Copy your Love games to $romdir/love"
 rp_module_licence="ZLIB https://raw.githubusercontent.com/love2d/love/master/license.txt"
-rp_module_repo="git https://github.com/love2d/love main"
+rp_module_repo="git https://github.com/love2d/love 11.5"
 rp_module_section="opt"
 rp_module_flags="!aarch64"
 
