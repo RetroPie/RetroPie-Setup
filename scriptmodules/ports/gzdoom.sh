@@ -41,6 +41,8 @@ function sources_gzdoom() {
     gitPullOrClone zmusic https://github.com/ZDoom/ZMusic
     # workaround for Ubuntu 20.04 older vpx/wepm dev libraries
     sed -i 's/IMPORTED_TARGET libw/IMPORTED_TARGET GLOBAL libw/' CMakeLists.txt
+    # lzma assumes hardware crc support on arm which breaks when building on armv7
+    isPlatform "armv7" && applyPatch "$md_data/lzma_armv7_crc.diff"
 }
 
 function build_gzdoom() {
