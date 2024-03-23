@@ -42,14 +42,10 @@ function build_xpad() {
 
 function remove_xpad() {
     dkmsManager remove xpad "$(_version_xpad)"
-    rm -f /etc/modprobe.d/xpad.conf
 }
 
 function configure_xpad() {
     [[ "$md_mode" == "remove" ]] && return
 
-    if [[ ! -f /etc/modprobe.d/xpad.conf ]]; then
-        echo "options xpad triggers_to_buttons=1" >/etc/modprobe.d/xpad.conf
-    fi
     dkmsManager reload xpad "$(_version_xpad)"
 }
