@@ -52,7 +52,7 @@ function install_bin_runcommand() {
 
     # needed for KMS modesetting (debian buster or later only)
     if [[ "$__os_debian_ver" -ge 10 ]]; then
-        rp_installModule "mesa-drm" "_autoupdate_"
+        rp_installModule "kmsxx" "_autoupdate_"
     fi
 
     md_ret_require="$md_inst/runcommand.sh"
