@@ -25,6 +25,12 @@ function depends_pegasus-fe() {
         libsdl2-dev
         policykit-1
     )
+    isPlatform "aarch64" && depends+=(
+        gstreamer1.0-alsa:armhf
+        gstreamer1.0-libav:armhf
+        gstreamer1.0-plugins-good:armhf
+        libsdl2-dev:armhf
+    )
 
     getDepends "${depends[@]}"
 }
