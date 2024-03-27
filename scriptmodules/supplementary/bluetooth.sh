@@ -103,6 +103,11 @@ function list_available_bluetooth() {
 
     # sixaxis: add USB pairing information
     [[ -n "$(lsmod | grep hid_sony)" ]] && info_text="Searching ...\n\nDualShock registration: while this text is visible, unplug the controller, press the PS/SHARE button, and then replug the controller."
+    # sixaxis: configure workaround for PS3 when we detect one
+    if cat /proc/bus/input/devices | grep Name | grep -qE "(Sony )?PLAY.*3" ; then
+        _bonded_fix_bluetooth "add"
+        systemctl -q is-active bluetooth.service && systemctl restart bluetooth.service
+    fi
 
     dialog --backtitle "$__backtitle" --infobox "$info_text" 7 60 >/dev/tty
     if hasPackage bluez 5; then
@@ -208,7 +213,12 @@ function remove_device_bluetooth() {
         local out
         out=$(bt-device --remove "$choice" 2>&1)
         if [[ "$?" -eq 0 ]] ; then
-            printMsgs "dialog" "Device removed"
+            printMsgs "dialog" "Device ${devices[$choice]} removed"
+            # remove Bluez workaround if it's the last PS3 device
+            if [[ "${devices[$choice]}" == *PLAY*3* ]]; then
+                list_paired_bluetooth | grep -qE "(Sony )?PLAY.*3"
+                [[ ! $? -eq 0 ]] && _bonded_fix_bluetooth "remove"
+            fi
         else
             printMsgs "dialog" "Error removing device:\n\n$out"
         fi
@@ -478,4 +488,23 @@ function gui_bluetooth() {
             break
         fi
     done
+}
+
+function _bonded_fix_bluetooth() {
+    local mode=$1
+    # exit when we don't have an op mode (install/remove) or a config file
+    [[ -z "$mode" ]] && return
+    [[ ! -f "/etc/bluetooth/input.conf" ]] && return
+
+    if [[ "$mode" == "add" ]]; then
+        # configure the workaround
+        iniConfig "=" '' "/etc/bluetooth/input.conf"
+        iniSet "ClassicBondedOnly" "false"
+    fi
+
+    if [[ "$mode" == "remove" ]]; then
+        # remove the workaround
+        iniConfig "=" '' "/etc/bluetooth/input.conf"
+        iniSet "ClassicBondedOnly" "true"
+    fi
 }
