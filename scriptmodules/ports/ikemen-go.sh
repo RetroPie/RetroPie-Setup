@@ -18,7 +18,7 @@ rp_module_section="exp"
 
 function depends_ikemen-go() {
     rp_callModule golang-1.17 install_bin
-    getDepends libgl1-mesa-dev xinit xorg libopenal-dev libgtk-3-dev libasound2-dev
+    getDepends libgl1-mesa-dev xinit xterm xorg libopenal-dev libgtk-3-dev libasound2-dev
 }
 
 function sources_ikemen-go() {
