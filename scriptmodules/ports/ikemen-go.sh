@@ -10,9 +10,9 @@
 #
 
 rp_module_id="ikemen-go"
-rp_module_desc="I.K.E.M.E.N GO - Clone of M.U.G.E.N to the Go programming language (0.98.2)"
+rp_module_desc="Ikemen GO - Clone of M.U.G.E.N to the Go programming language (0.98.2)"
 rp_module_licence="MIT https://raw.githubusercontent.com/ikemen-engine/Ikemen-GO/master/License.txt"
-rp_module_help="ROM Extensions: .mgn + folder\n\nCopy M.U.G.E.N/I.K.E.M.E.N games or contents to $romdir/mugen/game_name_here\n\nIn order to launch games, create a 'game_name_here.mgn' file in $romdir/mugen\n\n"
+rp_module_help="ROM Extensions: .mgn + folder\n\nCopy M.U.G.E.N/Ikemen games or contents to $romdir/mugen/game_name_here\n\nIn order to launch games, create a 'game_name_here.mgn' file in $romdir/mugen\n\n"
 rp_module_repo="git https://github.com/SuperFromND/Ikemen-GO-98point2.git master"
 rp_module_section="exp"
 
@@ -52,10 +52,10 @@ function install_ikemen-go() {
 }
 
 function configure_ikemen-go() {
-    addEmulator 0 "$md_id" "mugen" "XINIT:$md_inst/ikemen-go.sh %BASENAME%"
-    addSystem "mugen"
-
     mkRomDir "mugen"
+    addEmulator 0 "$md_id" "mugen" "XINIT:$md_inst/ikemen-go.sh %BASENAME%"
+    addSystem "mugen" "M.U.G.E.N" ".mgn"
+
     # creates a dummy file; used to launch games
     touch "$romdir/mugen/ikemen-go.mgn"
 
@@ -75,4 +75,6 @@ xset -dpms s off s noblank
 cd "$romdir/mugen/\${BASENAME}" && xterm -g 1x1+0-0 -e '/opt/retropie/ports/ikemen-go/Ikemen_GO'
 _EOF_
     chmod +x "$md_inst/ikemen-go.sh"
+    chown -R $user:$user "$md_inst"
+    chown -R $user:$user "$romdir/mugen/ikemen-go"
 }
