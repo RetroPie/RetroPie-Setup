@@ -76,5 +76,5 @@ cd "$romdir/mugen/\${BASENAME}" && xterm -g 1x1+0-0 -e '/opt/retropie/ports/ikem
 _EOF_
     chmod +x "$md_inst/ikemen-go.sh"
     chown -R $user:$user "$md_inst"
-    chown -R $user:$user "$romdir/mugen/ikemen-go"
+    chown -R $user:$user "$romdir/mugen/"
 }
