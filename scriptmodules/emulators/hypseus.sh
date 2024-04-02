@@ -86,11 +86,16 @@ if [[ -f "\$dir/\$name.commands" ]]; then
 fi
 
 if [[ -f "\$dir/\$name.singe" ]]; then
-    "$md_inst/hypseus.bin" singe vldp -retropath -manymouse -script "\$dir/\$name.singe" $common_args
+    singerom="\$dir/\$name.singe"
+elif [[ -f "\$dir/\$name.zip" ]]; then
+    singerom="\$dir/\$name.zip"
+fi
+
+if [[ -n "\$singerom" ]]; then
+    "$md_inst/hypseus.bin" singe vldp -retropath -manymouse -script "\$singerom" $common_args
 else
     "$md_inst/hypseus.bin" "\$name" vldp $common_args
 fi
 _EOF_
     chmod +x "$md_inst/hypseus.sh"
-    mkdir -p "$md_inst/framefile"
 }
