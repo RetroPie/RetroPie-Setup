@@ -85,13 +85,13 @@ if [[ -f "\$dir/\$name.commands" ]]; then
     params=\$(<"\$dir/\$name.commands")
 fi
 
-if [[ -f "$dir/$name.singe" ]]; then
-    singerom="$dir/$name.singe"
-elif [[ -f "$dir/$name.zip" ]]; then
-    singerom="$dir/$name.zip"
+if [[ -f "\$dir/\$name.singe" ]]; then
+    singerom="\$dir/\$name.singe"
+elif [[ -f "\$dir/\$name.zip" ]]; then
+    singerom="\$dir/\$name.zip"
 fi
 
-if [[ -v singerom ]]; then
+if [[ -n "$singerom" ]]; then
     "$md_inst/hypseus.bin" singe vldp -retropath -manymouse -script "\$singerom" $common_args
 else
     "$md_inst/hypseus.bin" "\$name" vldp $common_args
