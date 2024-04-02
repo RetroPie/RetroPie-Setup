@@ -92,7 +92,7 @@ elif [[ -f "$dir/$name.zip" ]]; then
 fi
 
 if [[ -v singerom ]]; then
-    "$md_inst/hypseus.bin" singe vldp -retropath -manymouse -script "$singerom" $common_args
+    "$md_inst/hypseus.bin" singe vldp -retropath -manymouse -script "\$singerom" $common_args
 else
     "$md_inst/hypseus.bin" "\$name" vldp $common_args
 fi
