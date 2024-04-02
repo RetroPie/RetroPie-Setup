@@ -36,6 +36,7 @@ function install_lr-dirksimple() {
     md_ret_files=(
         'build/dirksimple_libretro.so'
         'data'
+        'LICENSE.txt'
     )
 }
 
