@@ -11,14 +11,13 @@
 
 rp_module_id="lr-dirksimple"
 rp_module_desc="laserdisc emu - DirkSimple"
-rp_module_help="ROM Extensions: .ogv .dirksimple\n\nCopy your laserdisc movies in Ogg Theora format to $romdir/dirksimple"
+rp_module_help="ROM Extensions: .ogv .dirksimple\n\nCopy your laserdisc movies in Ogg Theora format to $romdir/daphne"
 rp_module_licence="zlib https://raw.githubusercontent.com/icculus/DirkSimple/main/LICENSE.txt"
 rp_module_repo="git https://github.com/icculus/DirkSimple.git main"
 rp_module_section="exp"
 
 function depends_lr-dirksimple() {
-    local depends=(cmake)
-    getDepends "${depends[@]}"
+    getDepends cmake
 }
 
 function sources_lr-dirksimple() {
@@ -26,18 +25,9 @@ function sources_lr-dirksimple() {
 }
 
 function build_lr-dirksimple() {
-    local params=(
-        '-DDIRKSIMPLE_LIBRETRO=ON'
-        '-DDIRKSIMPLE_SDL=OFF'
-        '-DCMAKE_BUILD_TYPE=Release'
-    )
-
-    isPlatform "neon" && params+=' -DCMAKE_C_FLAGS="-mfpu=neon"'
-
     rm -fr build && mkdir build
     cd build
-    echo "cmake" "${params[@]}" ..
-    cmake "${params[@]}" ..
+    cmake -DDIRKSIMPLE_LIBRETRO=ON -DDIRKSIMPLE_SDL=OFF ..
     make dirksimple_libretro
     md_ret_require="$md_build/build/dirksimple_libretro.so"
 }
@@ -45,19 +35,20 @@ function build_lr-dirksimple() {
 function install_lr-dirksimple() {
     md_ret_files=(
         'build/dirksimple_libretro.so'
+        'data'
     )
-
-    rm -rf "$biosdir/DirkSimple"
-    mkUserDir "$biosdir/DirkSimple"
-    cp -rf "$md_build/data" "$biosdir/DirkSimple/"
-    chown -R $user:$user "$biosdir/DirkSimple"
 }
 
 function configure_lr-dirksimple() {
-    mkRomDir "dirksimple"
-    defaultRAConfig "dirksimple"
+    mkRomDir "daphne"
+    defaultRAConfig "daphne"
 
-    addEmulator 0 "$md_id" "dirksimple" "$md_inst/dirksimple_libretro.so"
-    addSystem "dirksimple"
+    rm -rf "$biosdir/DirkSimple"
+    mkUserDir "$biosdir/DirkSimple"
+    cp -rf "$md_inst/data" "$biosdir/DirkSimple/"
+    chown -R $user:$user "$biosdir/DirkSimple"
+
+    addEmulator 0 "$md_id" "daphne" "$md_inst/dirksimple_libretro.so"
+    addSystem "daphne"
 }
 
