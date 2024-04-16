@@ -112,6 +112,16 @@ function rp_callModule() {
         return 3
     fi
 
+    # skip for modules 'builder' and 'setup' so that distcc settings do not propagate from them
+    if [[ "$md_id" != "builder" && "$md_id" != "setup" ]]; then
+        # if distcc is used and the module doesn't exclude it, add /usr/lib/distcc to PATH and MAKEFLAGS
+        if [[ -n "$DISTCC_HOSTS" ]] && ! hasFlag "${__mod_info[$md_id/flags]}" "nodistcc"; then
+            # use local variables so they are available to all child functions without changing the globals 
+            local PATH="/usr/lib/distcc:$PATH"
+            local MAKEFLAGS="$MAKEFLAGS PATH=$PATH"
+        fi
+    fi
+
     # parameters _auto_ _binary or _source_ (_source_ is used if no parameters are given for a module)
     case "$mode" in
         # install the module if not installed, and update if it is
