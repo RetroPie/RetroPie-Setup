@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/
 rp_module_licence="GPL2 https://raw.githubusercontent.com/mupen64plus/mupen64plus-core/master/LICENSES"
 rp_module_repo=":_pkg_info_mupen64plus"
 rp_module_section="main"
-rp_module_flags="sdl2"
+rp_module_flags="sdl2 nodistcc"
 
 function depends_mupen64plus() {
     local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng-dev libfreetype6-dev fonts-freefont-ttf libboost-filesystem-dev)
@@ -175,8 +175,7 @@ function build_mupen64plus() {
 
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             make -C "$dir/projects/unix" "${params[@]}" clean
-            # temporarily disable distcc due to segfaults with cross compiler and lto
-            DISTCC_HOSTS="" make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -O3 -flto"
+            make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -O3 -flto"
         fi
     done
 
