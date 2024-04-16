@@ -18,6 +18,11 @@ rp_module_section="opt"
 rp_module_flags="sdl2"
 
 function _get_branch_dosbox-staging() {
+    # use 0.80.1 for VideoCore devices, 0.81 and later require OpenGL
+    if isPlatform "videocore"; then
+        echo "v0.80.1"
+        return
+    fi
     download https://api.github.com/repos/dosbox-staging/dosbox-staging/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
 }
 
