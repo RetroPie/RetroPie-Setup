@@ -108,6 +108,7 @@ ConfirmStop = False
 [General]
 ISOPath0 = "$home/RetroPie/roms/gc"
 ISOPath1 = "$home/RetroPie/roms/wii"
+ISOPaths = 2
 [Core]
 AutoDiscChange = True
 _EOF_
