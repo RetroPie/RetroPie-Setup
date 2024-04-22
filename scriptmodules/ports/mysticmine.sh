@@ -15,6 +15,13 @@ rp_module_licence="MIT https://raw.githubusercontent.com/dewitters/MysticMine/ma
 rp_module_repo="git https://github.com/dewitters/MysticMine.git master"
 rp_module_section="exp"
 
+function _supported_mysticmine() {
+    # requires Debian Buster or older
+    if [[ "$__os_debian_ver" -gt 10 ]]; then
+        return 1
+    fi
+}
+
 function depends_mysticmine() {
     getDepends python-pyrex python-numpy python-pygame
 }
