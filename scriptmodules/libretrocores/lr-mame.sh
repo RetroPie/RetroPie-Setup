@@ -23,11 +23,13 @@ function _get_params_lr-mame() {
     echo "${params[@]}"
 }
 
-function depends_lr-mame() {
+function _supported_lr-mame() {
     if [[ "$__gcc_version" -lt 7 ]]; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 7 or newer to compile $md_id")
         return 1
     fi
+}
+
+function depends_lr-mame() {
     local depends=(libasound2-dev)
     isPlatform "gles" && depends+=(libgles2-mesa-dev)
     isPlatform "gl" && depends+=(libglu1-mesa-dev)

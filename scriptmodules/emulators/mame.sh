@@ -21,12 +21,13 @@ function _get_branch_mame() {
     download https://api.github.com/repos/mamedev/mame/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
 }
 
-function depends_mame() {
+function _supported_mame() {
     if [[ "$__gcc_version" -lt 7 ]]; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 7.2 or newer to compile $md_id")
         return 1
     fi
+}
 
+function depends_mame() {
     # Install required libraries required for compilation and running
     # Note: libxi-dev is required as of v0.210, because of flag changes for XInput
     local depends=(libfontconfig1-dev libsdl2-ttf-dev libflac-dev libxinerama-dev libxi-dev libpulse-dev)

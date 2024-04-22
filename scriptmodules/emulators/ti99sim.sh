@@ -17,11 +17,13 @@ rp_module_repo="file $__archive_url/ti99sim-0.16.0.src.tar.gz"
 rp_module_section="exp"
 rp_module_flags=""
 
-function depends_ti99sim() {
+function _supported_ti99sim() {
     if [[ "$__gcc_version" -lt 8 ]]; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 8 or newer to compile $md_id")
         return 1
     fi
+}
+
+function depends_ti99sim() {
     getDepends libsdl2-dev libssl-dev
 }
 
