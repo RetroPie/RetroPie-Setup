@@ -145,12 +145,6 @@ function conf_build_vars() {
     export ASFLAGS="$__asflags"
     export MAKEFLAGS="$__makeflags"
 
-    # if using distcc, add /usr/lib/distcc to PATH/MAKEFLAGS
-    if [[ -n "$DISTCC_HOSTS" ]]; then
-        PATH="/usr/lib/distcc:$PATH"
-        MAKEFLAGS+=" PATH=$PATH"
-    fi
-
     # if __use_ccache is set, then add ccache to PATH/MAKEFLAGS
     if [[ "$__use_ccache" -eq 1 ]]; then
         PATH="/usr/lib/ccache:$PATH"

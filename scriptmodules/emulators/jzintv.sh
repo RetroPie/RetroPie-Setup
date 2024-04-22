@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .int .bin .rom\n\nCopy your Intellivision roms t
 rp_module_licence="GPL2 http://spatula-city.org/%7Eim14u2c/intv/"
 rp_module_repo="file $__archive_url/jzintv-20200712-src.zip"
 rp_module_section="opt"
-rp_module_flags="sdl2"
+rp_module_flags="sdl2 nodistcc"
 
 function depends_jzintv() {
     getDepends libsdl2-dev libreadline-dev
@@ -45,7 +45,7 @@ function build_jzintv() {
     cd jzintv/src
 
     make clean
-    DISTCC_HOSTS="" make
+    make
 
     md_ret_require="$md_build/jzintv/bin/jzintv"
 }
