@@ -949,6 +949,22 @@ function rp_registerModule() {
                 enabled=0
                 continue
             fi
+            # enable or disable based on a comparison in the format :\$var:cmp:val or !:\$var:cmp:val
+            # eg. :\$__gcc_version:-lt:7 would be evaluated as [[ $__gcc_version -lt 7 ]]
+            # this would enable a module if the comparison was true
+            # !:\$__gcc_version:-lt:7 would disable if the comparison was true
+
+            # match and extract the parameters
+            if [[ "$flag" =~ ^(\!?):([^:]+):([^:]+):(.+)$ ]]; then
+                # enable or disable based on the first parameter (!)
+                local e=1
+                [[ ${BASH_REMATCH[1]} == "!" ]] && e=0
+                # evaluate the comparison
+                if eval "[[ ${BASH_REMATCH[2]} ${BASH_REMATCH[3]} ${BASH_REMATCH[4]} ]]"; then
+                    enabled=$e
+                fi
+                continue
+            fi
         done
     fi
 
