@@ -9,7 +9,7 @@
 # at https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/LICENSE.md
 #
 
-__version="4.8.6"
+__version="4.8.7"
 
 [[ "$__debug" -eq 1 ]] && set -x
 
