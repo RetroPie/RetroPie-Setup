@@ -15,14 +15,7 @@ rp_module_help="ROM Extensions: .bml .smc .sfc .zip\n\nCopy your SNES roms to $r
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/bsnes/master/LICENSE.txt"
 rp_module_repo="git https://github.com/libretro/bsnes.git master"
 rp_module_section="opt"
-rp_module_flags="!armv6"
-
-function depends_lr-bsnes() {
-    if [[ "$__gcc_version" -lt 7 ]]; then
-        md_ret_errors+=("You need an OS with gcc 7 or newer to compile $md_id")
-        return 1
-    fi
-}
+rp_module_flags="!armv6 !:\$__gcc_version:-lt:7"
 
 function sources_lr-bsnes() {
     gitPullOrClone

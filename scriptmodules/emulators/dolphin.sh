@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .gcm .iso .wbfs .ciso .gcz .rvz .wad .wbfs\n\nCo
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dolphin-emu/dolphin/master/COPYING"
 rp_module_repo="git https://github.com/dolphin-emu/dolphin.git master :_get_commit_dolphin"
 rp_module_section="exp"
-rp_module_flags="!all 64bit"
+rp_module_flags="!all 64bit !:\$__gcc_version:-lt:8"
 
 function _get_commit_dolphin() {
     local commit
@@ -31,10 +31,6 @@ function _get_commit_dolphin() {
 
 function depends_dolphin() {
     local depends=(cmake gettext pkg-config libao-dev libasound2-dev libavcodec-dev libavformat-dev libbluetooth-dev libenet-dev liblzo2-dev libminiupnpc-dev libopenal-dev libpulse-dev libreadline-dev libsfml-dev libsoil-dev libsoundtouch-dev libswscale-dev libusb-1.0-0-dev libxext-dev libxi-dev libxrandr-dev portaudio19-dev zlib1g-dev libudev-dev libevdev-dev libmbedtls-dev libcurl4-openssl-dev libegl1-mesa-dev liblzma-dev)
-    if [[ "$__gcc_version" -lt 8 ]]; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 8 or newer to compile $md_id")
-        return 1
-    fi
     # check if qt6 is available, otherwise use qt5
     local has_qt6=$(apt-cache -qq madison qt6-base-private-dev | cut -d'|' -f1)
     if [[ -n "$has_qt6" ]]; then
