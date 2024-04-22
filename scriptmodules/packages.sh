@@ -952,6 +952,15 @@ function rp_registerModule() {
         done
     fi
 
+    # if there is a custom _supported_ID function, then call it
+    # the function should return 1 if the module is not supported
+    local supported_func="_supported_${rp_module_id}"
+    if fnExists "$supported_func"; then
+        if ! "$supported_func"; then
+            enabled=0
+        fi
+    fi
+
     local sections=($rp_module_section)
     # get default section
     rp_module_section="${sections[0]}"
