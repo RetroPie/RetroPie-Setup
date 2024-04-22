@@ -27,7 +27,11 @@ function _get_branch_dosbox-staging() {
 }
 
 function depends_dosbox-staging() {
-    getDepends cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev libsdl2-image-dev libspeexdsp-dev meson ninja-build
+    local depends
+    depends=(cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev libspeexdsp-dev meson ninja-build zlib1g-dev)
+    [[ "$__os_debian_ver" -ge 11 ]] && depends+=(libslirp-dev libfluidsynth-dev)
+
+    getDepends "${depends[@]}"
 }
 
 function sources_dosbox-staging() {
@@ -40,7 +44,7 @@ function sources_dosbox-staging() {
 }
 
 function build_dosbox-staging() {
-    local params=(-Dprefix="$md_inst" -Ddatadir="resources")
+    local params=(-Dprefix="$md_inst" -Ddatadir="resources" -Dtry_static_libs="iir,mt32emu")
     # use the build local Meson installation if found
     local meson_cmd="meson"
     [[ -f "$md_build/meson/meson.py" ]] && meson_cmd="python3 $md_build/meson/meson.py"
