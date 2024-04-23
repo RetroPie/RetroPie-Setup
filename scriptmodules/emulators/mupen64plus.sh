@@ -169,6 +169,7 @@ function build_mupen64plus() {
             isPlatform "x86" && params+=("SSE=SSE2")
             isPlatform "armv6" && params+=("HOST_CPU=armv6")
             isPlatform "armv7" && params+=("HOST_CPU=armv7")
+            isPlatform "armv8" && params+=("HOST_CPU=armv8")
             isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
             # we don't ship a Vulkan enabled front-end, so disable Vulkan in the core project
             params+=("VULKAN=0")
