@@ -17,7 +17,12 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function _get_commit_dxx-rebirth() {
-    local commit="15bd145d"
+    local commit=""
+    # last version to build on gcc 10
+    [[ "$__gcc_version" -le 10 ]] && commit="ec41384d"
+    # last version to build on Debian Buster due to pkg-config issue with physfs
+    # newer versions also have incompatible scons changes
+    [[ "$__os_debian_ver" -le 10 ]] && commit="15bd145d"
     # latest code requires gcc 7+
     [[ "$__gcc_version" -lt 7 ]] && commit="a1b3a86c"
     echo "$commit"
