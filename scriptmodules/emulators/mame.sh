@@ -18,6 +18,11 @@ rp_module_section="exp"
 rp_module_flags="!mali !armv6"
 
 function _get_branch_mame() {
+    # starting with 0.265, GCC 10.3 or later is required for full C++17 support
+    if [[ "$__gcc_version" -lt 10 ]]; then
+        echo "mame0264"
+        return
+    fi
     download https://api.github.com/repos/mamedev/mame/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
 }
 
