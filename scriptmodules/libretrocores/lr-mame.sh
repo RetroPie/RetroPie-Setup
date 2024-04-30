@@ -13,10 +13,17 @@ rp_module_id="lr-mame"
 rp_module_desc="MAME emulator - MAME (current) port for libretro"
 rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mame-libretro or\n$romdir/arcade"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mame/master/COPYING"
-rp_module_repo="git https://github.com/libretro/mame.git master"
+rp_module_repo="git https://github.com/libretro/mame.git master :_get_version_lr-mame"
 rp_module_section="exp"
 rp_module_flags=""
 
+function _get_version_lr-mame() {
+    local tagname
+    if [[ "$__gcc_version" -lt 10 ]]; then
+        tagname="lrmame0264"
+    fi
+    echo "$tagname"
+}
 function _get_params_lr-mame() {
     local params=(OSD=retro RETRO=1 NOWERROR=1 OS=linux OPTIMIZE=2 TARGETOS=linux CONFIG=libretro NO_USE_MIDI=1 NO_USE_PORTAUDIO=1 TARGET=mame)
     isPlatform "64bit" && params+=(PTR64=1)
