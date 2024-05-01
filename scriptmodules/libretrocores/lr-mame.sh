@@ -25,7 +25,7 @@ function _get_version_lr-mame() {
     echo "$tagname"
 }
 function _get_params_lr-mame() {
-    local params=(OSD=retro RETRO=1 NOWERROR=1 OS=linux OPTIMIZE=2 TARGETOS=linux CONFIG=libretro NO_USE_MIDI=1 NO_USE_PORTAUDIO=1 TARGET=mame)
+    local params=(OSD=retro RETRO=1 PYTHON_EXECUTABLE=python3 NOWERROR=1 OS=linux OPTIMIZE=2 TARGETOS=linux CONFIG=libretro NO_USE_MIDI=1 NO_USE_PORTAUDIO=1 TARGET=mame)
     isPlatform "64bit" && params+=(PTR64=1)
     echo "${params[@]}"
 }
