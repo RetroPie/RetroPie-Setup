@@ -173,7 +173,10 @@ function build_emulationstation() {
             compareVersions $gles_ver lt 2.0  && params+=(-DUSE_GLES1=On)
         else
             params+=(-DGL=On)
+            # mesa specific check of OpenGL version
             local gl_ver=$(sudo -u $user glxinfo -B | grep -oP 'Max compat profile version:\s\K.*')
+            # generic fallback check of OpenGL version
+            [[ -z "$gl_ver" ]] && gl_ver=$(sudo -u $user glxinfo -B | grep -oP "OpenGL version string: \K[^ ]+")
             compareVersions $gl_ver gt 2.0 && params+=(-DUSE_GL21=On)
         fi
     elif isPlatform "gles"; then
