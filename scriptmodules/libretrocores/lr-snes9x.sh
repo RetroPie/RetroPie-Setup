@@ -14,7 +14,8 @@ rp_module_desc="Super Nintendo emu - Snes9x (current) port for libretro"
 rp_module_help="ROM Extensions: .bin .smc .sfc .fig .swc .mgd .zip\n\nCopy your SNES roms to $romdir/snes"
 rp_module_licence="NONCOM https://raw.githubusercontent.com/libretro/snes9x/master/LICENSE"
 rp_module_repo="git https://github.com/libretro/snes9x.git master"
-rp_module_section="main armv6=opt armv7=opt nodistcc"
+rp_module_section="main armv6=opt armv7=opt"
+rp_module_flags="nodistcc"
 
 function sources_lr-snes9x() {
     gitPullOrClone
