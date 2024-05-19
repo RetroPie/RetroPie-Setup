@@ -124,7 +124,7 @@ function game_data_dxx-rebirth() {
     fi
 
     # Download / unpack / install Descent 2 shareware files
-    if [[ ! -f "$dest_d2/D2DEMO.HOG" ]]; then
+    if [[ ! -f "$dest_d2/D2DEMO.HOG" && ! -f "$dest_d2/DESCENT2.HOG" ]]; then
         downloadAndExtract "$D2X_SHARE_URL" "$dest_d2"
     fi
 
