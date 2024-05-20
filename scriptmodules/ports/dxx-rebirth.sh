@@ -43,6 +43,11 @@ function sources_dxx-rebirth() {
     gitPullOrClone
 }
 
+function _get_build_path_dxx-rebirth() {
+    # later versions use a build subfolder
+    [[ -d "$md_build/build" ]] && echo "build"
+}
+
 function build_dxx-rebirth() {
     local params=()
     isPlatform "arm" && params+=("words_need_alignment=1")
@@ -57,9 +62,11 @@ function build_dxx-rebirth() {
 
     scons -c
     scons "${params[@]}" -j$__jobs
+
+    local build_path="$md_build/$(_get_build_path_dxx-rebirth)"
     md_ret_require=(
-        "$md_build/d1x-rebirth/d1x-rebirth"
-        "$md_build/d2x-rebirth/d2x-rebirth"
+        "$build_path/d1x-rebirth/d1x-rebirth"
+        "$build_path/d2x-rebirth/d2x-rebirth"
     )
 }
 
@@ -70,15 +77,17 @@ function install_dxx-rebirth() {
     mv -f "$md_build/d2x-rebirth/INSTALL.txt" "$md_build/d2x-rebirth/D2X-INSTALL.txt"
     mv -f "$md_build/d2x-rebirth/RELEASE-NOTES.txt" "$md_build/d2x-rebirth/D2X-RELEASE-NOTES.txt"
 
+    local build_path="$(_get_build_path_dxx-rebirth)"
+
     md_ret_files=(
         'COPYING.txt'
         'GPL-3.txt'
         'd1x-rebirth/README.RPi'
-        'd1x-rebirth/d1x-rebirth'
+        "$build_path/d1x-rebirth/d1x-rebirth"
         'd1x-rebirth/d1x.ini'
         'd1x-rebirth/D1X-INSTALL.txt'
         'd1x-rebirth/D1X-RELEASE-NOTES.txt'
-        'd2x-rebirth/d2x-rebirth'
+        "$build_path/d2x-rebirth/d2x-rebirth"
         'd2x-rebirth/d2x.ini'
         'd2x-rebirth/D2X-INSTALL.txt'
         'd2x-rebirth/D2X-RELEASE-NOTES.txt'
