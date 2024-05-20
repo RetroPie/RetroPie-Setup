@@ -95,11 +95,12 @@ function install_dxx-rebirth() {
 }
 
 function game_data_dxx-rebirth() {
-    local D1X_SHARE_URL='https://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
-    local D2X_SHARE_URL='https://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
-    local D1X_HIGH_TEXTURE_URL='https://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
-    local D1X_OGG_URL='https://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
-    local D2X_OGG_URL='https://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
+    local base_url="$__archive_url/descent"
+    local D1X_SHARE_URL="$base_url/descent-pc-shareware.zip"
+    local D2X_SHARE_URL="$base_url/descent2-pc-demo.zip"
+    local D1X_HIGH_TEXTURE_URL="$base_url/d1xr-hires.dxa"
+    local D1X_OGG_URL="$base_url/d1xr-sc55-music.dxa"
+    local D2X_OGG_URL="$base_url/d2xr-sc55-music.dxa"
 
     local dest_d1="$romdir/ports/descent1"
     local dest_d2="$romdir/ports/descent2"
