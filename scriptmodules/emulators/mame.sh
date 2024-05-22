@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .zip .7z\n\nCopy your MAME roms to either $romdi
 rp_module_licence="GPL2 https://raw.githubusercontent.com/mamedev/mame/master/COPYING"
 rp_module_repo="git https://github.com/mamedev/mame.git :_get_branch_mame"
 rp_module_section="exp"
-rp_module_flags="!mali !armv6"
+rp_module_flags="!mali !armv6 !:\$__gcc_version:-lt:7"
 
 function _get_branch_mame() {
     # starting with 0.265, GCC 10.3 or later is required for full C++17 support
@@ -27,11 +27,6 @@ function _get_branch_mame() {
 }
 
 function depends_mame() {
-    if [[ "$__gcc_version" -lt 7 ]]; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 7.2 or newer to compile $md_id")
-        return 1
-    fi
-
     # Install required libraries required for compilation and running
     # Note: libxi-dev is required as of v0.210, because of flag changes for XInput
     local depends=(libfontconfig1-dev libsdl2-ttf-dev libflac-dev libxinerama-dev libxi-dev libpulse-dev)

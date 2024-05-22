@@ -15,7 +15,7 @@ rp_module_help="ROM Extension: .zip\n\nCopy your MAME roms to either $romdir/mam
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mame/master/COPYING"
 rp_module_repo="git https://github.com/libretro/mame.git master :_get_version_lr-mame"
 rp_module_section="exp"
-rp_module_flags=""
+rp_module_flags="!:\$__gcc_version:-lt:7"
 
 function _get_version_lr-mame() {
     local tagname
@@ -31,10 +31,6 @@ function _get_params_lr-mame() {
 }
 
 function depends_lr-mame() {
-    if [[ "$__gcc_version" -lt 7 ]]; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 7 or newer to compile $md_id")
-        return 1
-    fi
     local depends=(libasound2-dev)
     isPlatform "gles" && depends+=(libgles2-mesa-dev)
     isPlatform "gl" && depends+=(libglu1-mesa-dev)

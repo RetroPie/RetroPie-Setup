@@ -15,13 +15,9 @@ rp_module_help="Dreamcast ROM Extensions: .cdi .gdi .chd .m3u, Naomi/Atomiswave 
 rp_module_licence="GPL2 https://raw.githubusercontent.com/flyinghead/flycast/master/LICENSE"
 rp_module_repo="git https://github.com/flyinghead/flycast.git master"
 rp_module_section="exp"
-rp_module_flags="!armv6 !videocore"
+rp_module_flags="!armv6 !videocore !:\$__gcc_version:-lt:9"
 
 function depends_lr-flycast-dev() {
-    if [[ "$__gcc_version" -lt 9 ]]; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 9 or newer to compile $md_id")
-        return 1
-    fi
     local depends=(zlib1g-dev libgl-dev cmake)
     getDepends "${depends[@]}"
 }

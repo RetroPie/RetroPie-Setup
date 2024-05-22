@@ -15,13 +15,9 @@ rp_module_help="ROM Extension: .ctg\n\nCopy your TI-99 games to $romdir/ti99\n\n
 rp_module_licence="GPL2 https://www.mrousseau.org/programs/ti99sim"
 rp_module_repo="file $__archive_url/ti99sim-0.16.0.src.tar.gz"
 rp_module_section="exp"
-rp_module_flags=""
+rp_module_flags="!:\$__gcc_version:-lt:8"
 
 function depends_ti99sim() {
-    if [[ "$__gcc_version" -lt 8 ]]; then
-        md_ret_errors+=("Sorry, you need an OS with gcc 8 or newer to compile $md_id")
-        return 1
-    fi
     getDepends libsdl2-dev libssl-dev
 }
 
