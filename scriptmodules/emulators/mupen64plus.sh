@@ -65,6 +65,8 @@ function _get_repos_mupen64plus() {
     if compareVersions "$cmake_ver" lt 3.9; then
         commit="8a9d52b41b33d853445f0779dd2b9f5ec4ecdda8"
     fi
+    # avoid a GLideN64 regression introduced in 1a0621d
+    isPlatform "gles" && commit="5bbf55df"
     repos+=("gonetz GLideN64 master $commit")
 
     local repo
