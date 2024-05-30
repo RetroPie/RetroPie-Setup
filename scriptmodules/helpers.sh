@@ -1383,8 +1383,8 @@ function addSystem() {
     local fullname="$2"
     local exts=($3)
 
-    # these can all be set manually in platfomrs.cfg
-    # they can be used to link to ther systems and default to $sysetem
+    # these can all be set manually in platforms.cfg
+    # they can be used to link to other systems and default to $sysetem
     local platform
     local theme
     local cmd
