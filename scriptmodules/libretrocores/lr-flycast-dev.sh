@@ -54,7 +54,7 @@ function install_lr-flycast-dev() {
 function configure_lr-flycast-dev() {
     local sys
     local def
-    for sys in "arcade" "dreamcast"; do
+    for sys in "arcade" "dreamcast" "naomi" "atomiswave"; do
         def=0
         isPlatform "kms" && [[ "$sys" == "dreamcast" ]] && def=1
         # segfaults on the rpi without redirecting stdin from </dev/null
