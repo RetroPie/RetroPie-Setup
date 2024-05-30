@@ -1383,14 +1383,10 @@ function addSystem() {
     local fullname="$2"
     local exts=($3)
 
-    # these can all be set manually in platfomrs.cfg
-    # they can be used to link to ther systems and default to $sysetem
-    local platform
-    local theme
+    local platform="$system"
+    local theme="$system"
     local cmd
     local path
-
-    local temp
 
     # if removing and we don't have an emulators.cfg we can remove the system from the frontends
     if [[ "$md_mode" == "remove" ]] && [[ ! -f "$md_conf_root/$system/emulators.cfg" ]]; then
@@ -1403,24 +1399,13 @@ function addSystem() {
         cmd="bash %ROM%"
         path="$romdir/ports"
     else
-        
-        # Support for custom system launch command associations in platforms.cfg
-        temp="$(getPlatformConfig "${system}_cmd")"
-        if ! [[ -n "$temp" ]]; then
-            temp="$system"
-        fi
-        cmd="$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $temp %ROM%"
-
-        # Support for custom rom directory associations in platforms.cfg
-        temp="$(getPlatformConfig "${system}_path")"
-        if ! [[ -n "$temp" ]]; then
-            temp="$system"
-        fi
-        path="$romdir/$temp"
+        cmd="$rootdir/supplementary/runcommand/runcommand.sh 0 _SYS_ $system %ROM%"
+        path="$romdir/$system"
     fi
 
     exts+=("$(getPlatformConfig "${system}_exts")")
 
+    local temp
     temp="$(getPlatformConfig "${system}_theme")"
     if [[ -n "$temp" ]]; then
         theme="$temp"
