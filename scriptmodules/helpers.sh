@@ -1405,7 +1405,7 @@ function addSystem() {
     else
         
         # Support for custom system launch command associations in platforms.cfg
-        temp="$(getPlatformConfig "${system}_command")"
+        temp="$(getPlatformConfig "${system}_cmd")"
         if ! [[ -n "$temp" ]]; then
             temp="$system"
         fi
