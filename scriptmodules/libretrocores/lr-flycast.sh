@@ -73,7 +73,7 @@ function install_lr-flycast() {
 
 function configure_lr-flycast() {
     local sys
-    local systems=(dreamcast arcade naomi atomiswave)
+    local systems=(dreamcast naomi atomiswave)
     local def
     for sys in "${systems[@]}"; do
         def=0
