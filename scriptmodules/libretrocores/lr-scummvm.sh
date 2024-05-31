@@ -25,9 +25,11 @@ function sources_lr-scummvm() {
 }
 
 function build_lr-scummvm() {
+    local gl_platform=OPENGL
+    isPlatform "gles" && gl_platform=OPENGLES2
     cd backends/platform/libretro
     make clean
-    make USE_MT32EMU=1
+    make USE_MT32EMU=1 FORCE_${gl_platform}=1
     make datafiles
     md_ret_require="$md_build/backends/platform/libretro/scummvm_libretro.so"
 }
