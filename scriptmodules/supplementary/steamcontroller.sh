@@ -56,6 +56,7 @@ function enable_steamcontroller() {
 function disable_steamcontroller() {
     sed -i "/bin\/sc-.*.py/d" /etc/rc.local           # previous version
     sed -i "/bin\/scc-daemon.*start/d" /etc/rc.local  # current version
+    $md_inst/bin/scc-daemon stop
 }
 
 function remove_steamcontroller() {
@@ -64,7 +65,7 @@ function remove_steamcontroller() {
 }
 
 function configure_steamcontroller() {
-    cat >/etc/udev/rules.d/99-steam-controller.rules <<\_EOF_
+    cat >/etc/udev/rules.d/99-steam-controller.rules <<_EOF_
 # Steam controller keyboard/mouse mode
 SUBSYSTEM=="usb", ATTRS{idVendor}=="28de", GROUP="input", MODE="0660"
 
