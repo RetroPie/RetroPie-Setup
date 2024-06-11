@@ -74,7 +74,7 @@ function configure_supermodel3() {
 
     # launch the emulator with an X11 backend, has better scaling and mouse/lightgun support
     isPlatform "kms" && setBackend "$md_id" "x11"
-    isPlatform "lms" && setBackend "$md_id-scaled" "x11"
+    isPlatform "kms" && setBackend "$md_id-scaled" "x11"
 
     # on upgrades keep the local config, but overwrite the game configs
     copyDefaultConfig "$md_inst/Config/Supermodel.ini" "$conf_dir/Config/Supermodel.ini"
