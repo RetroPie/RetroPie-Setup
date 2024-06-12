@@ -109,7 +109,7 @@ function game_data_dxx-rebirth() {
     mkUserDir "$dest_d2"
 
     # Download / unpack / install Descent shareware files
-    if [[ ! -f "$dest_d1/descent.hog" ]]; then
+    if [[ -z "$(find "$dest_d1" -maxdepth 1 -iname descent.hog)" ]]; then
         downloadAndExtract "$D1X_SHARE_URL" "$dest_d1"
     fi
 
@@ -124,7 +124,7 @@ function game_data_dxx-rebirth() {
     fi
 
     # Download / unpack / install Descent 2 shareware files
-    if [[ ! -f "$dest_d2/D2DEMO.HOG" ]]; then
+    if [[ -z "$(find "$dest_d2" -maxdepth 1 \( -iname D2DEMO.HOG -o -iname DESCENT2.HOG \))" ]]; then
         downloadAndExtract "$D2X_SHARE_URL" "$dest_d2"
     fi
 
