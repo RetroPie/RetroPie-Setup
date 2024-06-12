@@ -233,32 +233,27 @@ function testCompatibility() {
 
     case "$VIDEO_PLUGIN" in
         "mupen64plus-video-GLideN64")
-            if ! grep -q "\[Video-GLideN64\]" "$config"; then
-                echo "[Video-GLideN64]" >> "$config"
-            fi
             iniConfig " = " "" "$config"
-            # Settings version. Don't touch it.
-            local config_version="20"
-            if [[ -f "$configdir/n64/GLideN64_config_version.ini" ]]; then
-                config_version=$(<"$configdir/n64/GLideN64_config_version.ini")
+            if grep -q "UseNativeResolutionFactor" "$config"; then
+                # Set native resolution factor of 1
+                iniSet "UseNativeResolutionFactor" "1"
+                for game in "${GLideN64NativeResolution_blacklist[@]}"; do
+                    if [[ "${ROM,,}" == *"$game"* ]]; then
+                        iniSet "UseNativeResolutionFactor" "0"
+                        break
+                    fi
+                done
             fi
-            iniSet "configVersion" "$config_version"
-            # Set native resolution factor of 1
-            iniSet "UseNativeResolutionFactor" "1"
-            for game in "${GLideN64NativeResolution_blacklist[@]}"; do
-                if [[ "${ROM,,}" == *"$game"* ]]; then
-                    iniSet "UseNativeResolutionFactor" "0"
-                    break
-                fi
-            done
-            # Disable LegacyBlending if necessary
-            iniSet "EnableLegacyBlending" "True"
-            for game in "${GLideN64LegacyBlending_blacklist[@]}"; do
-                if [[ "${ROM,,}" == *"$game"* ]]; then
-                    iniSet "EnableLegacyBlending" "False"
-                    break
-                fi
-            done
+            if grep -q "EnableLegacyBlending" "$config"; then
+                # Disable LegacyBlending if necessary
+                iniSet "EnableLegacyBlending" "True"
+                for game in "${GLideN64LegacyBlending_blacklist[@]}"; do
+                    if [[ "${ROM,,}" == *"$game"* ]]; then
+                        iniSet "EnableLegacyBlending" "False"
+                        break
+                    fi
+                done
+            fi
             for game in "${gliden64_blacklist[@]}"; do
                 if [[ "${ROM,,}" == *"$game"* ]]; then
                     VIDEO_PLUGIN="mupen64plus-video-rice"
@@ -290,24 +285,16 @@ function testCompatibility() {
 }
 
 function useTexturePacks() {
-    # video-GLideN64
-    if ! grep -q "\[Video-GLideN64\]" "$config"; then
-        echo "[Video-GLideN64]" >> "$config"
-    fi
     iniConfig " = " "" "$config"
-    # Settings version. Don't touch it.
-    local config_version="17"
-    if [[ -f "$configdir/n64/GLideN64_config_version.ini" ]]; then
-        config_version=$(<"$configdir/n64/GLideN64_config_version.ini")
+    # video-GLideN64
+    if grep -q "txHiresEnable" "$config"; then
+        iniSet "txHiresEnable" "True"
     fi
-    iniSet "configVersion" "$config_version"
-    iniSet "txHiresEnable" "True"
 
     # video-rice
-    if ! grep -q "\[Video-Rice\]" "$config"; then
-        echo "[Video-Rice]" >> "$config"
+    if grep -q "LoadHiResTextures" "$config"; then
+        iniSet "LoadHiResTextures" "True"
     fi
-    iniSet "LoadHiResTextures" "True"
 }
 
 function autoset() {
