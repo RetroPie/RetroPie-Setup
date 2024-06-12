@@ -39,7 +39,7 @@ function install_cgenius() {
 }
 
 function configure_cgenius() {
-    addPort "$md_id" "cgenius" "Commander Genius" "pushd $md_inst; ./CGeniusExe; popd"
+    addPort "$md_id" "cgenius" "Commander Genius" "pushd $md_inst; ./CGeniusExe dir=%ROM%; popd"
 
     mkRomDir "ports/$md_id"
 
