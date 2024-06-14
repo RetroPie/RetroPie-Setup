@@ -12,7 +12,7 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
-rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.18.0"
+rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.19.0"
 rp_module_section="core"
 
 function depends_retroarch() {

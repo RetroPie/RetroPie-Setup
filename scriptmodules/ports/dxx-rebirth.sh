@@ -17,7 +17,12 @@ rp_module_section="opt"
 rp_module_flags="!mali"
 
 function _get_commit_dxx-rebirth() {
-    local commit="15bd145d"
+    local commit=""
+    # last version to build on gcc 10
+    [[ "$__gcc_version" -le 10 ]] && commit="ec41384d"
+    # last version to build on Debian Buster due to pkg-config issue with physfs
+    # newer versions also have incompatible scons changes
+    [[ "$__os_debian_ver" -le 10 ]] && commit="15bd145d"
     # latest code requires gcc 7+
     [[ "$__gcc_version" -lt 7 ]] && commit="a1b3a86c"
     echo "$commit"
@@ -38,6 +43,11 @@ function sources_dxx-rebirth() {
     gitPullOrClone
 }
 
+function _get_build_path_dxx-rebirth() {
+    # later versions use a build subfolder
+    [[ -d "$md_build/build" ]] && echo "build"
+}
+
 function build_dxx-rebirth() {
     local params=()
     isPlatform "arm" && params+=("words_need_alignment=1")
@@ -52,9 +62,11 @@ function build_dxx-rebirth() {
 
     scons -c
     scons "${params[@]}" -j$__jobs
+
+    local build_path="$md_build/$(_get_build_path_dxx-rebirth)"
     md_ret_require=(
-        "$md_build/d1x-rebirth/d1x-rebirth"
-        "$md_build/d2x-rebirth/d2x-rebirth"
+        "$build_path/d1x-rebirth/d1x-rebirth"
+        "$build_path/d2x-rebirth/d2x-rebirth"
     )
 }
 
@@ -65,15 +77,17 @@ function install_dxx-rebirth() {
     mv -f "$md_build/d2x-rebirth/INSTALL.txt" "$md_build/d2x-rebirth/D2X-INSTALL.txt"
     mv -f "$md_build/d2x-rebirth/RELEASE-NOTES.txt" "$md_build/d2x-rebirth/D2X-RELEASE-NOTES.txt"
 
+    local build_path="$(_get_build_path_dxx-rebirth)"
+
     md_ret_files=(
         'COPYING.txt'
         'GPL-3.txt'
         'd1x-rebirth/README.RPi'
-        'd1x-rebirth/d1x-rebirth'
+        "$build_path/d1x-rebirth/d1x-rebirth"
         'd1x-rebirth/d1x.ini'
         'd1x-rebirth/D1X-INSTALL.txt'
         'd1x-rebirth/D1X-RELEASE-NOTES.txt'
-        'd2x-rebirth/d2x-rebirth'
+        "$build_path/d2x-rebirth/d2x-rebirth"
         'd2x-rebirth/d2x.ini'
         'd2x-rebirth/D2X-INSTALL.txt'
         'd2x-rebirth/D2X-RELEASE-NOTES.txt'
@@ -81,11 +95,12 @@ function install_dxx-rebirth() {
 }
 
 function game_data_dxx-rebirth() {
-    local D1X_SHARE_URL='https://www.dxx-rebirth.com/download/dxx/content/descent-pc-shareware.zip'
-    local D2X_SHARE_URL='https://www.dxx-rebirth.com/download/dxx/content/descent2-pc-demo.zip'
-    local D1X_HIGH_TEXTURE_URL='https://www.dxx-rebirth.com/download/dxx/res/d1xr-hires.dxa'
-    local D1X_OGG_URL='https://www.dxx-rebirth.com/download/dxx/res/d1xr-sc55-music.dxa'
-    local D2X_OGG_URL='https://www.dxx-rebirth.com/download/dxx/res/d2xr-sc55-music.dxa'
+    local base_url="$__archive_url/descent"
+    local D1X_SHARE_URL="$base_url/descent-pc-shareware.zip"
+    local D2X_SHARE_URL="$base_url/descent2-pc-demo.zip"
+    local D1X_HIGH_TEXTURE_URL="$base_url/d1xr-hires.dxa"
+    local D1X_OGG_URL="$base_url/d1xr-sc55-music.dxa"
+    local D2X_OGG_URL="$base_url/d2xr-sc55-music.dxa"
 
     local dest_d1="$romdir/ports/descent1"
     local dest_d2="$romdir/ports/descent2"
@@ -94,7 +109,7 @@ function game_data_dxx-rebirth() {
     mkUserDir "$dest_d2"
 
     # Download / unpack / install Descent shareware files
-    if [[ ! -f "$dest_d1/descent.hog" ]]; then
+    if [[ -z "$(find "$dest_d1" -maxdepth 1 -iname descent.hog)" ]]; then
         downloadAndExtract "$D1X_SHARE_URL" "$dest_d1"
     fi
 
@@ -109,7 +124,7 @@ function game_data_dxx-rebirth() {
     fi
 
     # Download / unpack / install Descent 2 shareware files
-    if [[ ! -f "$dest_d2/D2DEMO.HOG" ]]; then
+    if [[ -z "$(find "$dest_d2" -maxdepth 1 \( -iname D2DEMO.HOG -o -iname DESCENT2.HOG \))" ]]; then
         downloadAndExtract "$D2X_SHARE_URL" "$dest_d2"
     fi
 

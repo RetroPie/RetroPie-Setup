@@ -13,7 +13,7 @@ rp_module_id="amiberry"
 rp_module_desc="Amiga emulator with JIT support (forked from uae4arm)"
 rp_module_help="ROM Extension: .adf .chd .ipf .lha .zip\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir/amiga"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/BlitterStudio/amiberry/master/LICENSE"
-rp_module_repo="git https://github.com/BlitterStudio/amiberry v5.6.6"
+rp_module_repo="git https://github.com/BlitterStudio/amiberry :_get_branch_amiberry"
 rp_module_section="opt"
 rp_module_flags="!all arm rpi3 rpi4 rpi5"
 
@@ -26,6 +26,14 @@ function _update_hook_amiberry() {
             moveConfigFile "$biosdir/$rom" "$biosdir/amiga/$rom"
         fi
     done
+}
+
+function _get_branch_amiberry() {
+    if isPlatform "dispmanx"; then
+        echo "v5.7.1"
+    else
+        echo "v5.7.2"
+    fi
 }
 
 function _get_platform_amiberry() {
@@ -58,6 +66,11 @@ function depends_amiberry() {
 function sources_amiberry() {
     gitPullOrClone
     applyPatch "$md_data/01_preserve_env.diff"
+    # Dispmanx is locked on v5.7.1, apply some critical fixes on top of it
+    if isPlatform "dispmanx"; then
+        applyPatch "$md_data/02_fix_uae_config_load.diff"
+        applyPatch "$md_data/03_fix_crash_saving.diff"
+    fi
     # use our default optimisation level
     sed -i "/CFLAGS += -O3/d" "$md_build/Makefile"
 }

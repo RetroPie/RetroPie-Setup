@@ -1,18 +1,18 @@
-diff --git i/Makefile w/Makefile
-index cff286e2..40e3c05f 100644
---- i/Makefile
-+++ w/Makefile
+diff --git a/Makefile b/Makefile
+index 9747718..dcdfb2f 100644
+--- a/Makefile
++++ b/Makefile
 @@ -43,10 +43,10 @@ SDL_CONFIG ?= sdl2-config
  export SDL_CFLAGS := $(shell $(SDL_CONFIG) --cflags)
  export SDL_LDFLAGS := $(shell $(SDL_CONFIG) --libs)
  
--CPPFLAGS = -MD -MT $@ -MF $(@:%.o=%.d) $(SDL_CFLAGS) -Iexternal/libguisan/include -Isrc -Isrc/osdep -Isrc/threaddep -Isrc/include -Isrc/archivers -Isrc/floppybridge -Iexternal/mt32emu/src -D_FILE_OFFSET_BITS=64
+-CPPFLAGS = -MD -MT $@ -MF $(@:%.o=%.d) $(SDL_CFLAGS) -Iexternal/libguisan/include -Isrc -Isrc/osdep -Isrc/threaddep -Isrc/include -Isrc/archivers -Iexternal/floppybridge/src -Iexternal/mt32emu/src -D_FILE_OFFSET_BITS=64
 -CFLAGS=-pipe -Wno-shift-overflow -Wno-narrowing -fno-pie
-+CPPFLAGS += -MD -MT $@ -MF $(@:%.o=%.d) $(SDL_CFLAGS) -Iexternal/libguisan/include -Isrc -Isrc/osdep -Isrc/threaddep -Isrc/include -Isrc/archivers -Isrc/floppybridge -Iexternal/mt32emu/src -D_FILE_OFFSET_BITS=64
-+CFLAGS +=-pipe -Wno-shift-overflow -Wno-narrowing -fno-pie
- USE_LD ?= gold
++CPPFLAGS += -MD -MT $@ -MF $(@:%.o=%.d) $(SDL_CFLAGS) -Iexternal/libguisan/include -Isrc -Isrc/osdep -Isrc/threaddep -Isrc/include -Isrc/archivers -Iexternal/floppybridge/src -Iexternal/mt32emu/src -D_FILE_OFFSET_BITS=64
++CFLAGS += -pipe -Wno-shift-overflow -Wno-narrowing -fno-pie
+ 
 -LDFLAGS = $(SDL_LDFLAGS) -lSDL2_image -lSDL2_ttf -lserialport -lportmidi -lguisan -Lexternal/libguisan/lib -lmt32emu -Lexternal/mt32emu
 +LDFLAGS += $(SDL_LDFLAGS) -lSDL2_image -lSDL2_ttf -lserialport -lportmidi -lguisan -Lexternal/libguisan/lib -lmt32emu -Lexternal/mt32emu
- ifneq ($(strip $(USE_LD)),)
- 	LDFLAGS += -fuse-ld=$(USE_LD)
- endif
+ LDFLAGS += -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -lpthread -lz -lpng -lrt -lFLAC -lmpg123 -ldl -lmpeg2convert -lmpeg2 -lstdc++fs -no-pie
+ 
+ ifdef USE_OPENGL
