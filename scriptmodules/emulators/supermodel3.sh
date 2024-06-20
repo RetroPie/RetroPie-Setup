@@ -56,9 +56,13 @@ function configure_supermodel3() {
     mkRomDir "arcade"
     addSystem "arcade"
 
-    local game_args="-fullscreen -vsync"
-    addEmulator 0 "$md_id" "arcade" "$md_inst/supermodel.sh %ROM% $game_args"
-    addEmulator 0 "$md_id-scaled" "arcade" "$md_inst/supermodel.sh %ROM% $game_args -res=%XRES%,%YRES%"
+    local game_args="-vsync"
+    local launch_prefix=""
+    # launch the emulator with an X11 backend, has better scaling and mouse/lightgun support
+    isPlatform "kms" && launch_prefix="XINIT:"
+
+    addEmulator 0 "$md_id" "arcade" "${launch_prefix}$md_inst/supermodel.sh %ROM% $game_args"
+    addEmulator 0 "$md_id-scaled" "arcade" "${launch_prefix}$md_inst/supermodel.sh %ROM% $game_args -res=%XRES%,%YRES%"
     if isPlatform "x86"; then
         # add a legacy3d entry for less powerful PC systems
         addEmulator 0 "$md_id-legacy3d" "arcade" "$md_inst/supermodel.sh %ROM% -legacy3d $game_args"
@@ -71,10 +75,6 @@ function configure_supermodel3() {
     mkUserDir "$conf_dir/NVRAM"
     mkUserDir "$conf_dir/Saves"
     mkUserDir "$conf_dir/Config"
-
-    # launch the emulator with an X11 backend, has better scaling and mouse/lightgun support
-    isPlatform "kms" && setBackend "$md_id" "x11"
-    isPlatform "kms" && setBackend "$md_id-scaled" "x11"
 
     # on upgrades keep the local config, but overwrite the game configs
     copyDefaultConfig "$md_inst/Config/Supermodel.ini" "$conf_dir/Config/Supermodel.ini"
