@@ -15,7 +15,7 @@ rp_module_help="ROM Extension: .adf .chd .ipf .lha .zip\n\nCopy your Amiga games
 rp_module_licence="GPL3 https://raw.githubusercontent.com/BlitterStudio/amiberry/master/LICENSE"
 rp_module_repo="git https://github.com/BlitterStudio/amiberry :_get_branch_amiberry"
 rp_module_section="opt"
-rp_module_flags="!all arm rpi3 rpi4 rpi5"
+rp_module_flags=""
 
 function _update_hook_amiberry() {
     local rom
@@ -50,6 +50,8 @@ function _get_platform_amiberry() {
         platform="tinker"
     elif isPlatform "vero4k"; then
         platform="vero4k"
+    elif isPlatform "x86"; then
+        platform="x86-64"
     fi
     echo "$platform"
 }
