@@ -262,6 +262,15 @@ fi
 TTY=\$(tty)
 export TTY="\${TTY:8:1}"
 
+# exit vlc before launching on kms or ES won't be able to open the display (not required on legacy drivers or fkms)
+if [[ -d /sys/module/vc4 ]] && grep -q "okay" /proc/device-tree/soc/hvs@7e400000/status 2>/dev/null; then
+    vlc_pid="/tmp/vlc.pid"
+    if [[ -f "\$vlc_pid" ]]; then
+        kill \$(<\$vlc_pid)
+        rm "\$vlc_pid"
+    fi
+fi
+
 clear
 tput civis
 "$md_inst/emulationstation.sh" "\$@"
