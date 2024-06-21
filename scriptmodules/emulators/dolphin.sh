@@ -89,11 +89,15 @@ function configure_dolphin() {
 
     [[ "$md_mode" == "remove" ]] && return
 
-    moveConfigDir "$home/.config/dolphin-emu" "$md_conf_root/gc/Config"
-    mkUserDir "$md_conf_root/gc/Config"
+    # Move the other dolphin-emu options, memory card saves etc
+    moveConfigDir "$home/.local/share/dolphin-emu" "$md_conf_root/gc/dolphin-emu"
+    mkUserDir "$md_conf_root/gc/dolphin-emu"
+
+    moveConfigDir "$home/.config/dolphin-emu" "$md_conf_root/gc/dolphin-emu/Config"
+    mkUserDir "$md_conf_root/gc/dolphin-emu/Config"
     # preset a few options on a first installation
-    if [[ ! -f "$md_conf_root/gc/Config/Dolphin.ini" ]]; then
-        cat >"$md_conf_root/gc/Config/Dolphin.ini" <<_EOF_
+    if [[ ! -f "$md_conf_root/gc/dolphin-emu/Config/Dolphin.ini" ]]; then
+        cat >"$md_conf_root/gc/dolphin-emu/Config/Dolphin.ini" <<_EOF_
 [Display]
 FullscreenDisplayRes = Auto
 Fullscreen = True
