@@ -40,9 +40,9 @@ function game_data_lr-prboom() {
         download "$__archive_url/doom1.wad" "$dest/doom1.wad"
     fi
 
-    if ! echo "e9bf428b73a04423ea7a0e9f4408f71df85ab175 $romdir/ports/doom/freedoom1.wad" | sha1sum -c &>/dev/null; then
+    if ! echo "97bb88094a51457a8dcad98c58be22a2d0fa9a37 $romdir/ports/doom/freedoom1.wad" | sha1sum -c &>/dev/null; then
         # download (or update) freedoom
-        downloadAndExtract "https://github.com/freedoom/freedoom/releases/download/v0.12.1/freedoom-0.12.1.zip" "$dest" -j -LL
+        downloadAndExtract "https://github.com/freedoom/freedoom/releases/download/v0.13.0/freedoom-0.13.0.zip" "$dest" -j -LL
     fi
 
     mkUserDir "$dest/addon"
