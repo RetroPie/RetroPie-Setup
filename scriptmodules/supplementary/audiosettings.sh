@@ -242,6 +242,7 @@ EOF
 
 function _pulseaudio_audiosettings() {
     local options=()
+    local sinks=()
     local sink_index
     local sink_label
     local sound_server="PulseAudio"
@@ -251,16 +252,20 @@ function _pulseaudio_audiosettings() {
         printMsgs "dialog" "PulseAudio is present, but not running.\nAudio settings cannot be set right now."
         return
     fi
-    while read sink_index sink_label; do
+    while read sink_index sink_label sink_id; do
         options+=("$sink_index" "$sink_label")
+        sinks[$sink_index]=$sink_id
     done < <(_pa_cmd_audiosettings pactl list sinks | \
-            awk -F [:=] 'BEGIN {idx=0}; /Name:/ {
-                         do {getline} while($0 !~ "alsa.name" && $0 !~ "Formats");
-                         if ( $2 != "" ) {
-                            gsub(/"|bcm2835[^a-zA-Z]+/, "", $2);
-                            print idx,$2;
-                            idx++
-                         }
+            awk -F [:=#] 'BEGIN {idx=0} /Sink/ {
+                             ctl_index=$2
+                             do {getline} while($0 !~ /card.name/ && $0 !~ /Formats/);
+                             if ( $2 != "" ) {
+                                gsub(/"|bcm2835[^a-zA-Z]+/, "", $2); # strip bcm2835 suffix on analog output
+                                gsub(/vc4[-]?/ , "", $2); # strip the vc4 suffix on HDMI output(s)
+                                if ( $2 ~ /hdmi/ ) $2=toupper($2)
+                                print idx,$2,ctl_index
+                                idx++
+                             }
                          }'
             )
     _pa_cmd_audiosettings pactl info | grep -i pipewire >/dev/null && sound_server="PipeWire"
@@ -273,14 +278,14 @@ function _pulseaudio_audiosettings() {
     choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     if [[ -n "$choice" ]]; then
         case "$choice" in
-            [0-9])
-                _pa_cmd_audiosettings pactl set-default-sink $choice
+            [0-9]*)
+                _pa_cmd_audiosettings pactl set-default-sink ${sinks[$choice]}
                 rm -f "/etc/alsa/conf.d/99-retropie.conf"
 
                 printMsgs "dialog" "Set audio output to ${options[$((choice*2+1))]}"
                 ;;
             M)
-                alsamixer >/dev/tty </dev/tty
+                _pa_cmd_audiosettings alsamixer >/dev/tty </dev/tty
                 alsactl store
                 ;;
             R)
