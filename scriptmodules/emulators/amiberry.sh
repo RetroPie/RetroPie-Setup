@@ -15,7 +15,7 @@ rp_module_help="ROM Extension: .adf .chd .ipf .lha .zip\n\nCopy your Amiga games
 rp_module_licence="GPL3 https://raw.githubusercontent.com/BlitterStudio/amiberry/master/LICENSE"
 rp_module_repo="git https://github.com/BlitterStudio/amiberry :_get_branch_amiberry"
 rp_module_section="opt"
-rp_module_flags=""
+rp_module_flags="!all arm rpi3 rpi4 rpi5 x86"
 
 function _update_hook_amiberry() {
     local rom
@@ -31,6 +31,8 @@ function _update_hook_amiberry() {
 function _get_branch_amiberry() {
     if isPlatform "dispmanx"; then
         echo "v5.7.1"
+    elif isPlatform "x86"; then
+        echo "v6.3.3"
     else
         echo "v5.7.2"
     fi
