@@ -15,7 +15,7 @@ rp_module_help="Copy your Solarus quests (games) to $romdir/solarus"
 rp_module_licence="GPL3 https://gitlab.com/solarus-games/solarus/raw/dev/license.txt"
 rp_module_repo="git https://gitlab.com/solarus-games/solarus.git master"
 rp_module_section="opt"
-rp_module_flags="!aarch64"
+#rp_module_flags="!aarch64"
 
 function _options_cfg_file_solarus() {
     echo "$configdir/solarus/options.cfg"
