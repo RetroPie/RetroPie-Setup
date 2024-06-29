@@ -32,7 +32,7 @@ function _get_branch_amiberry() {
     if isPlatform "dispmanx"; then
         echo "v5.7.1"
     elif isPlatform "x86"; then
-        echo "v6.3.3"
+        echo "preview-v6.3.3"
     else
         echo "v5.7.2"
     fi
@@ -69,7 +69,9 @@ function depends_amiberry() {
 
 function sources_amiberry() {
     gitPullOrClone
-    applyPatch "$md_data/01_preserve_env.diff"
+    if ! isPlatform "x86"; then
+        applyPatch "$md_data/01_preserve_env.diff"
+    fi
     # Dispmanx is locked on v5.7.1, apply some critical fixes on top of it
     if isPlatform "dispmanx"; then
         applyPatch "$md_data/02_fix_uae_config_load.diff"
@@ -86,6 +88,7 @@ function build_amiberry() {
     ./configure
     make clean
     make
+    cp "*capsimg.so" "$md_build/plugins"
     cd "$md_build"
     make clean
     make PLATFORM="$platform" CPUFLAGS="$__cpu_flags"
@@ -97,7 +100,7 @@ function install_amiberry() {
         'abr'
         'amiberry'
         'data'
-        'external/capsimg/capsimg.so'
+        'plugins'
         'kickstarts'
     )
 
@@ -126,6 +129,15 @@ function configure_amiberry() {
     for dir in conf nvram savestates screenshots; do
         moveConfigDir "$md_inst/$dir" "$md_conf_root/amiga/amiberry/$dir"
     done
+
+    # set various media paths to the 'amiga' rom folder
+    if [ -f "$md_inst/conf/amiberry.conf" ]; then
+        iniConfig "=" "" "$md_inst/conf/amiberry.conf"
+        iniSet "floppy_path" "$romdir/amiga"
+        iniSet "harddrive_path" "$romdir/amiga"
+        iniSet "cdrom_path" "$romdir/amiga"
+        iniSet "lha_path" "$romdir/amiga"
+    fi
 
     # check for cd32.nvr and move it to $md_conf_root/amiga/amiberry/nvram
     if [[ -f "$md_conf_root/amiga/amiberry/cd32.nvr" ]]; then
