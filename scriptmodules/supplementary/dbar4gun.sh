@@ -15,10 +15,10 @@ rp_module_help="dbar4gun dvr from https://github.com/lowlevel-1989/dbar4gun"
 rp_module_licence="MIT https://raw.githubusercontent.com/lowlevel-1989/dbar4gun/master/LICENSE"
 rp_module_repo="git https://github.com/lowlevel-1989/dbar4gun master"
 rp_module_section="driver"
-rp_module_flags="!all rpi3 rpi4 rpi5"
+# rp_module_flags="!all rpi3 rpi4 rpi5"
 
 function depends_dbar4gun() {
-    getDepends python3 python3-dev python3-setuptools
+    getDepends python3 python3-dev python3-setuptools python3-virtualenv
 }
 
 function sources_dbar4gun() {
@@ -26,7 +26,7 @@ function sources_dbar4gun() {
 }
 
 function install_dbar4gun() {
-    python3 -m venv "$md_inst"
+    virtualenv -p python3 "$md_inst"
     source "$md_inst/bin/activate"
     pip3 install .
     deactivate
@@ -47,20 +47,20 @@ ExecStart=$md_inst/bin/dbar4gun --width $1 --height $2
 [Install]
 WantedBy=multi-user.target
 _EOF_
+    systemctl daemon-reload
 
-    systemctl enable dbar4gun
-    systemctl start  dbar4gun
+    systemctl enable dbar4gun --now
     printMsgs "dialog" "dbar4gun enabled."
 }
 
 function disable_dbar4gun() {
-    systemctl stop    dbar4gun
-    systemctl disable dbar4gun
+    systemctl disable dbar4gun --now
 }
 
 function remove_dbar4gun() {
     disable_dbar4gun
     rm -rf "/etc/systemd/system/dbar4gun.service"
+    systemctl daemon-reload
 }
 
 function gui_dbar4gun() {
