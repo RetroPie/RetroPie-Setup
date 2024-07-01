@@ -10,7 +10,7 @@
 #
 
 rp_module_id="dbar4gun"
-rp_module_desc="dbar4gun is a Linux userspace driver for the DolphinBar."
+rp_module_desc="dbar4gun is a Linux userspace driver for the wiimote with DolphinBar support."
 rp_module_help="dbar4gun dvr from https://github.com/lowlevel-1989/dbar4gun"
 rp_module_licence="MIT https://raw.githubusercontent.com/lowlevel-1989/dbar4gun/master/LICENSE"
 rp_module_repo="git https://github.com/lowlevel-1989/dbar4gun master"
