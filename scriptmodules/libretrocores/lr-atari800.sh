@@ -18,6 +18,7 @@ rp_module_section="main"
 
 function sources_lr-atari800() {
     gitPullOrClone
+    applyPatch "$md_data/01_fix_audio_volume.diff"
 }
 
 function build_lr-atari800() {
