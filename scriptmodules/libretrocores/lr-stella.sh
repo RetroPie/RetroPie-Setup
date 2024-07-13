@@ -13,8 +13,15 @@ rp_module_id="lr-stella"
 rp_module_desc="Atari 2600 emulator - Stella core for libretro"
 rp_module_help="ROM Extensions: .a26 .bin .rom .zip .gz\n\nCopy your Atari 2600 roms to $romdir/atari2600"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/stella-emu/stella/master/License.txt"
-rp_module_repo="git https://github.com/stella-emu/stella.git master"
+rp_module_repo="git https://github.com/stella-emu/stella.git master :_get_commit_lr-stella"
 rp_module_section="exp"
+
+function _get_commit_lr-stella() {
+    # GCC 11 is required after fd35ce62
+    if [[ "$__gcc_version" -lt 11 ]]; then
+        echo "fd35ce62"
+    fi
+}
 
 function sources_lr-stella() {
     gitPullOrClone
