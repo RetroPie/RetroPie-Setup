@@ -19,7 +19,7 @@ rp_module_flags="!mali !armv6 !:\$__gcc_version:-lt:7"
 
 function _get_branch_mame() {
     # starting with 0.265, GCC 10.3 or later is required for full C++17 support
-    if [[ "$__gcc_version" -lt 10 ]]; then
+    if compareVersions "$(gcc -dumpfullversion)" lt 10.3.0; then
         echo "mame0264"
         return
     fi
