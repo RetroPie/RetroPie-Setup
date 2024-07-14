@@ -233,6 +233,7 @@ function build_mupen64plus() {
 }
 
 function install_mupen64plus() {
+    local source
     for source in *; do
         if [[ -f "$source/projects/unix/Makefile" ]]; then
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
@@ -322,11 +323,20 @@ function configure_mupen64plus() {
     local config="$md_conf_root/n64/mupen64plus.cfg"
     local cmd="$md_inst/bin/mupen64plus --configdir $md_conf_root/n64 --datadir $md_conf_root/n64"
 
+    # extract the previously saved GLideN64 config version
+    local gliden64_ver=$(<"$md_inst/share/mupen64plus/GLideN64_config_version.ini")
+
     # if the user has an existing mupen64plus config we back it up, generate a new configuration
     # copy that to rp-dist and put the original config back again. We then make any ini changes
     # on the rp-dist file. This preserves any user configs from modification and allows us to have
     # a default config for reference
     if [[ -f "$config" ]]; then
+        # make sure we always update configVersion for GLideN64 in the existing config
+        if grep -q "configVersion" "$config"; then
+            iniConfig " = " "" "$config"
+            iniSet "configVersion" "$gliden64_ver"
+        fi
+
         mv "$config" "$config.user"
         su "$user" -c "$cmd"
         mv "$config" "$config.rp-dist"
@@ -336,9 +346,9 @@ function configure_mupen64plus() {
         su "$user" -c "$cmd"
     fi
 
-    # RPI main/GLideN64 settings
+    iniConfig " = " "" "$config"
+    # RPI main settings
     if isPlatform "rpi"; then
-        iniConfig " = " "" "$config"
         # VSync is mandatory for good performance on KMS
         if isPlatform "kms"; then
             if ! grep -q "\[Video-General\]" "$config"; then
@@ -346,19 +356,25 @@ function configure_mupen64plus() {
             fi
             iniSet "VerticalSync" "True"
         fi
-        # Create GlideN64 section in .cfg
-        if ! grep -q "\[Video-GLideN64\]" "$config"; then
-            echo "[Video-GLideN64]" >> "$config"
-        fi
-        # Settings version. Don't touch it.
-        iniSet "configVersion" "29"
+    fi
+
+    # Create GlideN64 section in .cfg
+    if ! grep -q "\[Video-GLideN64\]" "$config"; then
+        echo "[Video-GLideN64]" >> "$config"
+    fi
+    # Settings version
+    iniSet "configVersion" "$gliden64_ver"
+    # Use native res
+    iniSet "UseNativeResolutionFactor" "1"
+    # Enable legacy blending
+    iniSet "EnableLegacyBlending" "True"
+    # Use high resolution texture packs if available.
+    iniSet "txHiresEnable" "True"
+
+    if isPlatform "rpi"; then
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         iniSet "EnableFBEmulation" "True"
-        # Use native res
-        iniSet "UseNativeResolutionFactor" "1"
-        # Enable legacy blending
-        iniSet "EnableLegacyBlending" "True"
         # Enable Threaded GL calls
         iniSet "ThreadedVideo" "True"
         # Swap frame buffers On buffer update (most performant)
@@ -367,32 +383,41 @@ function configure_mupen64plus() {
         iniSet "EnableHybridFilter" "False"
         # Use fast but less accurate shaders. Can help with low-end GPUs.
         iniSet "EnableInaccurateTextureCoordinates" "True"
+    fi
 
+    # Create Video-Rice section in .cfg
+    if ! grep -q "\[Video-Rice\]" "$config"; then
+        echo "[Video-Rice]" >> "$config"
+    fi
+    iniSet "LoadHiResTextures" "True"
+
+    if isPlatform "rpi" && isPlatform "mesa"; then
+        # Fix flickering and black screen issues with rice video plugin
+        iniSet "ScreenUpdateSetting" "7"
+    fi
+
+    # gles2n64.conf
+    if isPlatform "videocore"; then
+        # Disable gles2n64 autores feature and use dispmanx upscaling
+        iniConfig "=" "" "$md_conf_root/n64/gles2n64.conf"
+        iniSet "auto resolution" "0"
+    fi
+
+    addAutoConf mupen64plus_audio 0
+    addAutoConf mupen64plus_compatibility_check 0
+    addAutoConf mupen64plus_hotkeys 1
+    addAutoConf mupen64plus_texture_packs 1
+
+    # force autoconf.ini values for rpi
+    if isPlatform "rpi"; then
         if isPlatform "videocore"; then
-            # Disable gles2n64 autores feature and use dispmanx upscaling
-            iniConfig "=" "" "$md_conf_root/n64/gles2n64.conf"
-            iniSet "auto resolution" "0"
-
             setAutoConf mupen64plus_audio 1
             setAutoConf mupen64plus_compatibility_check 1
-        elif isPlatform "mesa"; then
-            # Create Video-Rice section in .cfg
-            if ! grep -q "\[Video-Rice\]" "$config"; then
-                echo "[Video-Rice]" >> "$config"
-            fi
-            # Fix flickering and black screen issues with rice video plugin
-            iniSet "ScreenUpdateSetting" "7"
-
+        else
             setAutoConf mupen64plus_audio 0
             setAutoConf mupen64plus_compatibility_check 0
         fi
-    else
-        addAutoConf mupen64plus_audio 0
-        addAutoConf mupen64plus_compatibility_check 0
     fi
-
-    addAutoConf mupen64plus_hotkeys 1
-    addAutoConf mupen64plus_texture_packs 1
 
     chown -R $user:$user "$md_conf_root/n64"
 }
