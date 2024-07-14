@@ -36,10 +36,12 @@ function sources_uqm() {
     downloadAndExtract "$(rp_resolveRepoParam "$md_repo_url")" "$md_build" --strip-components 1
     local packages="$md_build/content/packages"
     mkdir -p "$packages"
+    local addons="$md_build/content/addons"
+    mkdir -p "$addons"
     local ver="$(_get_ver_uqm)"
     download "$__archive_url/uqm-${ver}-content.uqm" "$packages"
-    download "$__archive_url/uqm-${ver}-voice.uqm" "$packages"
-    download "$__archive_url/uqm-${ver}-3domusic.uqm" "$packages"
+    download "$__archive_url/uqm-${ver}-voice.uqm" "$addons"
+    download "$__archive_url/uqm-${ver}-3domusic.uqm" "$addons"
 }
 
 function build_uqm() {
