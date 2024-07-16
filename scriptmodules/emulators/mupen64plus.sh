@@ -66,7 +66,7 @@ function _get_repos_mupen64plus() {
         commit="8a9d52b41b33d853445f0779dd2b9f5ec4ecdda8"
     fi
     # avoid a GLideN64 regression introduced in 1a0621d
-    isPlatform "gles" && commit="5bbf55df"
+    isPlatform "gles" && commit="5bbf55df8c61ab86b5e41a97906bc99ce9b00a36"
     repos+=("gonetz GLideN64 master $commit")
 
     local repo
