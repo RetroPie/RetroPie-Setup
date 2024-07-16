@@ -29,7 +29,12 @@ function _get_branch_dosbox-staging() {
 function depends_dosbox-staging() {
     local depends
     depends=(cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev libspeexdsp-dev meson ninja-build zlib1g-dev)
-    [[ "$__os_debian_ver" -ge 11 ]] && depends+=(libslirp-dev libfluidsynth-dev)
+    if [[ "$__os_debian_ver" -ge 11 ]]; then
+        depends+=(libslirp-dev libfluidsynth-dev)
+    else
+        # the slirp subproject requires libsdl2-image-dev to build
+        depends+=(libsdl2-image-dev)
+    fi
 
     getDepends "${depends[@]}"
 }
