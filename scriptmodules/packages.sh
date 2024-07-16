@@ -150,7 +150,7 @@ function rp_callModule() {
             isConnected && has_net=1
 
             # for modules with nonet flag that don't need to download data, we force has_net to 1
-            hasFlag "${__mod_info[$id/flags]}" "nonet" && has_net=1
+            hasFlag "${__mod_info[$md_id/flags]}" "nonet" && has_net=1
 
             if [[ "$has_net" -eq 1 ]]; then
                 rp_hasBinary "$md_id"
