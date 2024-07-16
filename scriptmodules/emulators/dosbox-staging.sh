@@ -72,7 +72,7 @@ function install_dosbox-staging() {
 function configure_dosbox-staging() {
     configure_dosbox
 
-    [[ "$md_id" == "remove" ]] && return
+    [[ "$md_mode" == "remove" ]] && return
 
     local config_dir="$md_conf_root/pc"
     chown -R $user: "$config_dir"
