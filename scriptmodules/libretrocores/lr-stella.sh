@@ -17,9 +17,9 @@ rp_module_repo="git https://github.com/stella-emu/stella.git master :_get_commit
 rp_module_section="exp"
 
 function _get_commit_lr-stella() {
-    # GCC 11 is required after fd35ce62
+    # GCC 11 is required after 2d57f9e0
     if [[ "$__gcc_version" -lt 11 ]]; then
-        echo "fd35ce62"
+        echo "2d57f9e0"
     fi
 }
 
