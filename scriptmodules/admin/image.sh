@@ -364,15 +364,15 @@ function platform_image() {
     [[ "$make_bb" -eq 1 ]] && rp_callModule image create_bb "$dest/${image_base}-berryboot.img256"
 
     printMsgs "console" "Compressing ${image_name} ..."
-    gzip -c "$image_file" > "${image_file}.gz"
+    xz -v --compress --stdout "$image_file" > "${image_file}.xz"
 
     printMsgs "console" "Generating JSON data for rpi-imager ..."
     local template
     template="$(<"$md_data/template.json")"
-    template="${template/IMG_PATH/$__version\/${image_name}.gz}"
+    template="${template/IMG_PATH/$__version\/${image_name}.xz}"
     template="${template/IMG_EXTRACT_SIZE/$(stat -c %s $image_file)}"
     template="${template/IMG_SHA256/$(sha256sum $image_file | cut -d" " -f1)}"
-    template="${template/IMG_DOWNLOAD_SIZE/$(stat -c %s ${image_file}.gz)}"
+    template="${template/IMG_DOWNLOAD_SIZE/$(stat -c %s ${image_file}.xz)}"
     template="${template/IMG_VERSION/$__version}"
     template="${template/IMG_PLATFORM/$image_title}"
     template="${template/IMG_DATE/$(date '+%Y-%m-%d')}"
