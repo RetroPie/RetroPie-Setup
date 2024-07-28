@@ -76,6 +76,12 @@ function configure_supermodel3() {
     mkUserDir "$conf_dir/Saves"
     mkUserDir "$conf_dir/Config"
 
+    if isPlatform "x86"; then
+        # "main" repo has an Assets folder for custom crosshairs
+        mkUserDir "$conf_dir/Assets"
+        cp -f "$md_inst/Assets/*" "$conf_dir/Assets/"
+    fi
+
     # on upgrades keep the local config, but overwrite the game configs
     copyDefaultConfig "$md_inst/Config/Supermodel.ini" "$conf_dir/Config/Supermodel.ini"
     cp -f "$md_inst/Config/Games.xml" "$conf_dir/Config/"
