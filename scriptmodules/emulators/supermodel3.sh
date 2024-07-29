@@ -49,6 +49,7 @@ function install_supermodel3() {
         'Docs/LICENSE.txt'
         'Docs/README.txt'
     )
+    isPlatform "x86" && md_ret_files+=("Assets")
 }
 
 function configure_supermodel3() {
@@ -75,10 +76,12 @@ function configure_supermodel3() {
     mkUserDir "$conf_dir/NVRAM"
     mkUserDir "$conf_dir/Saves"
     mkUserDir "$conf_dir/Config"
+    isPlatform "x86" && mkUserDir "$conf_dir/Assets"
 
     # on upgrades keep the local config, but overwrite the game configs
     copyDefaultConfig "$md_inst/Config/Supermodel.ini" "$conf_dir/Config/Supermodel.ini"
     cp -f "$md_inst/Config/Games.xml" "$conf_dir/Config/"
+    isPlatform "x86" && cp -fr "$md_inst/Assets" "$conf_dir"
     chown -R "$user:$user" "$conf_dir"
 
     cat >"$md_inst/supermodel.sh" <<_EOF_
