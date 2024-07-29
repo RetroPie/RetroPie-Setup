@@ -79,7 +79,10 @@ function configure_supermodel3() {
     if isPlatform "x86"; then
         # "main" repo has an Assets folder for custom crosshairs
         mkUserDir "$conf_dir/Assets"
-        cp -f "$md_inst/Assets/*" "$conf_dir/Assets/"
+        # If the folder is empty, populate it.
+        if [ -z "$(ls -A $conf_dir/Assets)" ]; then  
+            cp -f "$md_inst/Assets/*" "$conf_dir/Assets/"
+        fi   
     fi
 
     # on upgrades keep the local config, but overwrite the game configs
