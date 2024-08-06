@@ -12,7 +12,7 @@
 ## config / defaults
 user="USERTOBECHOSEN"
 
-home="$(eval echo ~$user)"
+home="$(eval echo ~$__user)"
 retropie_path="$home/RetroPie"
 
 usb_path="$UM_MOUNTPOINT/retropie-mount"

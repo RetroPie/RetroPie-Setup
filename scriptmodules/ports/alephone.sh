@@ -79,7 +79,7 @@ function game_data_alephone() {
         downloadAndExtract "$release_url/MarathonInfinity-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
-    chown -R $user:$user "$romdir/ports/$md_id"
+    chown -R "$__user":"$__group" "$romdir/ports/$md_id"
 }
 
 function configure_alephone() {
@@ -94,7 +94,7 @@ function configure_alephone() {
     if [[ -d "/alephone" ]]; then
         cp -R /alephone "$md_conf_root/"
         rm -rf /alephone
-        chown $user:$user "$md_conf_root/alephone"
+        chown "$__user":"$__group" "$md_conf_root/alephone"
     fi
 
     [[ "$md_mode" == "install" ]] && game_data_alephone

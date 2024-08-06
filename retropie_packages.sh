@@ -25,10 +25,13 @@ if [[ -n "$__user" ]]; then
     fi
 else
     user="$SUDO_USER"
+    __user="$SUDO_USER"
     [[ -z "$user" ]] && user="$(id -un)"
+    [[ -z "$__user" ]] && __user="$(id -un $SUDO_USER)"
+    [[ -z "$__group" ]] && __group="$(id -gn $SUDO_USER)"
 fi
 
-home="$(eval echo ~$user)"
+home="$(eval echo ~$__user)"
 datadir="$home/RetroPie"
 biosdir="$datadir/BIOS"
 romdir="$datadir/roms"
@@ -49,7 +52,7 @@ if [[ "$(id -u)" -ne 0 ]]; then
     exit 1
 fi
 
-__backtitle="retropie.org.uk - RetroPie Setup. Installation folder: $rootdir for user $user"
+__backtitle="retropie.org.uk - RetroPie Setup. Installation folder: $rootdir for user $__user"
 
 source "$scriptdir/scriptmodules/system.sh"
 source "$scriptdir/scriptmodules/helpers.sh"

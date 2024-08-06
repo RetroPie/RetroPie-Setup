@@ -138,7 +138,7 @@ function scrape_scraper() {
 
     # trap ctrl+c and return if pressed (rather than exiting retropie-setup etc)
     trap 'trap 2; return 1' INT
-    sudo -u $user "$md_inst/scraper" ${params[@]}
+    sudo -u "$__user" "$md_inst/scraper" ${params[@]}
     trap 2
 }
 
@@ -201,7 +201,7 @@ function gui_scraper() {
 
     iniConfig " = " '"' "$configdir/all/scraper.cfg"
     eval $(_load_config_scraper)
-    chown $user:$user "$configdir/all/scraper.cfg"
+    chown "$__user":"$__group" "$configdir/all/scraper.cfg"
 
     local default
     while true; do

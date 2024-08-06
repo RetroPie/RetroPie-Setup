@@ -198,7 +198,7 @@ function addAutoConf() {
     ini_value="${ini_value// /}"
     if [[ -z "$ini_value" ]]; then
         iniSet "$key" "$default"
-        chown $user:$user "$file"
+        chown "$__user":"$__group" "$file"
     fi
 }
 
@@ -210,7 +210,7 @@ function setAutoConf() {
 
     iniConfig " = " '"' "$file"
     iniSet "$key" "$value"
-    chown $user:$user "$file"
+    chown "$__user":"$__group" "$file"
 }
 
 # arg 1: key

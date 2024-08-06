@@ -118,7 +118,7 @@ function configure_moonlight() {
 # global config file for moonlight
 quitappafter = true
 _EOF_
-        chown $user:$user "$(_global_cfg_file_moonlight)"
+        chown "$__user":"$__group" "$(_global_cfg_file_moonlight)"
     fi
 
     # create wrapper for moonlight with appropriate directories set
@@ -166,7 +166,7 @@ function set_scriptmodule_cfg_moonlight() {
     iniSet "wipe" "$wipe"
     iniSet "mangle" "$mangle"
 
-    chown $user:$user "$(_scriptmodule_cfg_file_moonlight)"
+    chown "$__user":"$__group" "$(_scriptmodule_cfg_file_moonlight)"
 }
 
 function get_resolution_moonlight() {
@@ -211,7 +211,7 @@ function set_host_moonlight() {
     iniSet "sops" "$sops"
     iniSet "unsupported" "$unsupported"
 
-    chown $user:$user "$(_global_cfg_file_moonlight)"
+    chown "$__user":"$__group" "$(_global_cfg_file_moonlight)"
 }
 
 
@@ -233,7 +233,7 @@ function set_resolution_moonlight() {
         iniDel "fps"
     fi
 
-    chown $user:$user "$(_global_cfg_file_moonlight)"
+    chown "$__user":"$__group" "$(_global_cfg_file_moonlight)"
 }
 
 function get_bitrate_moonlight() {
@@ -261,12 +261,12 @@ function set_bitrate_moonlight() {
         iniDel "bitrate"
     fi
 
-    chown $user:$user "$(_global_cfg_file_moonlight)"
+    chown "$__user":"$__group" "$(_global_cfg_file_moonlight)"
 }
 
 function exec_moonlight() {
     trap "trap INT; echo; return" INT
-    sudo -u $user "$md_inst/moonlight.sh" "$@"
+    sudo -u "$__user" "$md_inst/moonlight.sh" "$@"
     trap INT
 }
 
@@ -317,7 +317,7 @@ function gen_configs_moonlight() {
         iniSet "config" "$(_global_cfg_file_moonlight)"
         [[ -n "${config[0]}" ]] && iniSet "address" "${config[0]}"
         iniSet "app" "$app"
-        chown $user:$user "$romdir/steam/$fname.ml" 2>/dev/null
+        chown "$__user":"$__group" "$romdir/steam/$fname.ml" 2>/dev/null
     done
 }
 

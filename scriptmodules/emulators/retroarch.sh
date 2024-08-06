@@ -83,7 +83,7 @@ function update_shaders_retroarch() {
     # remove if not git repository for fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
     gitPullOrClone "$dir" https://github.com/RetroPie/common-shaders.git "$branch"
-    chown -R $user:$user "$dir"
+    chown -R "$__user":"$__group" "$dir"
 }
 
 function update_overlays_retroarch() {
@@ -91,7 +91,7 @@ function update_overlays_retroarch() {
     # remove if not a git repository for fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
     gitPullOrClone "$dir" https://github.com/libretro/common-overlays.git
-    chown -R $user:$user "$dir"
+    chown -R "$__user":"$__group" "$dir"
 }
 
 function update_joypad_autoconfigs_retroarch() {
@@ -104,7 +104,7 @@ function update_assets_retroarch() {
     # remove if not a git repository for fresh checkout
     [[ ! -d "$dir/.git" ]] && rm -rf "$dir"
     gitPullOrClone "$dir" https://github.com/libretro/retroarch-assets.git
-    chown -R $user:$user "$dir"
+    chown -R "$__user":"$__group" "$dir"
 }
 
 function update_core_info_retroarch() {
@@ -116,7 +116,7 @@ function update_core_info_retroarch() {
     gitPullOrClone "$dir" https://github.com/libretro/libretro-core-info.git
     # add our info files for cores not included in the upstream repo
     cp --update "$md_data"/*.info "$dir"
-    chown -R $user:$user "$dir"
+    chown -R "$__user":"$__group" "$dir"
 }
 
 function install_minimal_assets_retroarch() {
@@ -124,7 +124,7 @@ function install_minimal_assets_retroarch() {
     [[ -d "$dir/.git" ]] && return
     [[ ! -d "$dir" ]] && mkUserDir "$dir"
     downloadAndExtract "$__binary_base_url/retroarch-minimal-assets.tar.gz" "$dir"
-    chown -R $user:$user "$dir"
+    chown -R "$__user":"$__group" "$dir"
 }
 
 function _package_minimal_assets_retroarch() {

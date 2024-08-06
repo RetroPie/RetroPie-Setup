@@ -125,7 +125,7 @@ function _add_rom_emulationstation() {
             -u "/gameList/game[name='$name']/image" -v "$image" \
             "$config"
     fi
-    chown $user:$user "$config"
+    chown "$__user":"$__group" "$config"
 }
 
 function depends_emulationstation() {
@@ -169,14 +169,14 @@ function build_emulationstation() {
     elif isPlatform "x11"; then
         if isPlatform "gles"; then
             params+=(-DGLES=On)
-            local gles_ver=$(sudo -u $user glxinfo -B | grep -oP 'Max GLES[23] profile version:\s\K.*')
+            local gles_ver=$(sudo -u $__user glxinfo -B | grep -oP 'Max GLES[23] profile version:\s\K.*')
             compareVersions $gles_ver lt 2.0  && params+=(-DUSE_GLES1=On)
         else
             params+=(-DGL=On)
             # mesa specific check of OpenGL version
-            local gl_ver=$(sudo -u $user glxinfo -B | grep -oP 'Max compat profile version:\s\K.*')
+            local gl_ver=$(sudo -u $__user glxinfo -B | grep -oP 'Max compat profile version:\s\K.*')
             # generic fallback check of OpenGL version
-            [[ -z "$gl_ver" ]] && gl_ver=$(sudo -u $user glxinfo -B | grep -oP "OpenGL version string: \K[^ ]+")
+            [[ -z "$gl_ver" ]] && gl_ver=$(sudo -u $__user glxinfo -B | grep -oP "OpenGL version string: \K[^ ]+")
             compareVersions $gl_ver gt 2.0 && params+=(-DUSE_GL21=On)
         fi
     elif isPlatform "gles"; then
@@ -233,7 +233,7 @@ function init_input_emulationstation() {
             "$es_config"
     fi
 
-    chown $user:$user "$es_config"
+    chown "$__user":"$__group" "$es_config"
 }
 
 function copy_inputscripts_emulationstation() {

@@ -96,7 +96,7 @@ while read id desc; do
 done < <($md_inst/bin/scummvm --list-targets | tail -n +3)
 popd >/dev/null
 _EOF_
-    chown $user:$user "$romdir/scummvm/+Start $name.sh"
+    chown "$__user":"$__group" "$romdir/scummvm/+Start $name.sh"
     chmod u+x "$romdir/scummvm/+Start $name.sh"
 
     addEmulator 1 "$md_id" "scummvm" "bash $romdir/scummvm/+Start\ $name.sh %BASENAME%"

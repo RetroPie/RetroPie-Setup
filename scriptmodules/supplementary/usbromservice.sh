@@ -46,7 +46,7 @@ function install_scripts_usbromservice() {
     local dest
     for file in "$md_data/"*; do
         dest="/etc/usbmount/mount.d/${file##*/}"
-        sed "s/USERTOBECHOSEN/$user/g" "$file" >"$dest"
+        sed "s/USERTOBECHOSEN/$__user/g" "$file" >"$dest"
         chmod +x "$dest"
     done
 }
@@ -87,7 +87,7 @@ function configure_usbromservice() {
     iniSet "MOUNTOPTIONS" "nodev,noexec,noatime"
 
     # set per filesystem mount options
-    local options="uid=$(id -u $user),gid=$(id -g $user)"
+    local options="uid=$(id -u $__user),gid=$(id -g $__user)"
     local fs_options
     local fs
     for fs in vfat hfsplus ntfs exfat; do

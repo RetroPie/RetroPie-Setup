@@ -20,7 +20,7 @@ function _setup_gzip_log() {
 function rps_logInit() {
     if [[ ! -d "$__logdir" ]]; then
         if mkdir -p "$__logdir"; then
-            chown $user:$user "$__logdir"
+            chown "$__user":"$__group" "$__logdir"
         else
             fatalError "Couldn't make directory $__logdir"
         fi
@@ -32,13 +32,13 @@ function rps_logInit() {
     local now=$(date +'%Y-%m-%d_%H%M%S')
     logfilename="$__logdir/rps_$now.log.gz"
     touch "$logfilename"
-    chown $user:$user "$logfilename"
+    chown "$__user":"$__group" "$logfilename"
     time_start=$(date +"%s")
 }
 
 function rps_logStart() {
     echo -e "Log started at: $(date -d @$time_start)\n"
-    echo "RetroPie-Setup version: $__version ($(sudo -u "$user" git -C "$scriptdir" log -1 --pretty=format:%h))"
+    echo "RetroPie-Setup version: $__version ($(sudo -u "$__user" git -C "$scriptdir" log -1 --pretty=format:%h))"
     echo "System: $__platform ($__platform_arch) - $__os_desc - $(uname -a)"
 }
 
@@ -95,8 +95,8 @@ function depends_setup() {
     if ! isPlatform "x11"; then
         local group
         for group in input video; do
-            if ! hasFlag "$(groups $user)" "$group"; then
-                dialog --yesno "Your user '$user' is not a member of the system group '$group'.\n\nThis is needed for RetroPie to function correctly. May I add '$user' to group '$group'?\n\nYou will need to restart for these changes to take effect." 22 76 2>&1 >/dev/tty && usermod -a -G "$group" "$user"
+            if ! hasFlag "$(groups $__user)" "$group"; then
+                dialog --yesno "Your user '$__user' is not a member of the system group '$group'.\n\nThis is needed for RetroPie to function correctly. May I add '$__user' to group '$group'?\n\nYou will need to restart for these changes to take effect." 22 76 2>&1 >/dev/tty && usermod -a -G "$group" "$__user"
             fi
         done
     fi
@@ -111,7 +111,7 @@ function depends_setup() {
 function updatescript_setup()
 {
     clear
-    chown -R $user:$user "$scriptdir"
+    chown -R "$__user":"$__group" "$scriptdir"
     printHeading "Fetching latest version of the RetroPie Setup Script."
     pushd "$scriptdir" >/dev/null
     if [[ ! -d ".git" ]]; then
@@ -120,7 +120,7 @@ function updatescript_setup()
         return 1
     fi
     local error
-    if ! error=$(sudo -u "$user" git pull --ff-only 2>&1 >/dev/null); then
+    if ! error=$(sudo -u "$__user" git pull --ff-only 2>&1 >/dev/null); then
         printMsgs "dialog" "Update failed:\n\n$error"
         popd >/dev/null
         return 1
@@ -680,7 +680,7 @@ function gui_setup() {
     depends_setup
     local default
     while true; do
-        local commit=$(sudo -u "$user" git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
+        local commit=$(sudo -u "$__user" git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
 
         cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version - Last Commit: $commit\nSystem: $__platform ($__platform_arch) - running on $__os_desc" 22 76 16)
         options=(

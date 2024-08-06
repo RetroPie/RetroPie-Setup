@@ -79,7 +79,7 @@ fi
 _EOF_
     chmod +x "$md_inst/daphne.sh"
 
-    chown -R $user:$user "$md_inst"
-    chown -R $user:$user "$md_conf_root/daphne/dapinput.ini"
+    chown -R "$__user":"$__group" "$md_inst"
+    chown -R "$__user":"$__group" "$md_conf_root/daphne/dapinput.ini"
 
 }

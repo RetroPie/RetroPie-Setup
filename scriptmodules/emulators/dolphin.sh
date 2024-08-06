@@ -121,5 +121,5 @@ PreferGLES = True
 _EOF2_
     fi
 
-    chown -R $user:$user "$md_conf_root/gc/Config"
+    chown -R "$__user":"$__group" "$md_conf_root/gc/Config"
 }

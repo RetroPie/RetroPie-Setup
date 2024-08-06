@@ -46,7 +46,7 @@ function game_data_lr-prboom() {
     fi
 
     mkUserDir "$dest/addon"
-    chown -R $user:$user "$dest"
+    chown -R "$__user":"$__group" "$dest"
 }
 
 function _add_games_lr-prboom() {
@@ -106,5 +106,5 @@ function configure_lr-prboom() {
     add_games_lr-prboom
 
     cp prboom.wad "$romdir/ports/doom/"
-    chown $user:$user "$romdir/ports/doom/prboom.wad"
+    chown "$__user":"$__group" "$romdir/ports/doom/prboom.wad"
 }
