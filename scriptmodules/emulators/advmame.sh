@@ -89,7 +89,7 @@ function configure_advmame() {
 
     if [[ "$md_mode" == "install" && ! -f "$md_conf_root/mame-advmame/$md_id.rc" ]]; then
 
-        su "$user" -c "$md_inst/bin/advmame --default"
+        su "$__user" -c "$md_inst/bin/advmame --default"
 
         iniConfig " " "" "$md_conf_root/mame-advmame/$md_id.rc"
 

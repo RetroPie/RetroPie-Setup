@@ -40,7 +40,7 @@ function install_dosbox-sdl2() {
 function configure_dosbox-sdl2() {
     configure_dosbox
     if [[ "$md_mode" == "install" ]]; then
-        local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
+        local config_path=$(su "$__user" -c "\"$md_inst/bin/dosbox\" -printconf")
         if [[ -f "$config_path" ]]; then
             iniConfig "=" "" "$config_path"
             iniSet "fluid.driver" "alsa"

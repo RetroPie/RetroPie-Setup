@@ -653,7 +653,7 @@ function rp_hasNewerModule() {
                 local vendor="${__mod_info[$id/vendor]}"
                 local repo_dir="$scriptdir"
                 [[ "$vendor" != "RetroPie" ]] && repo_dir+="/ext/$vendor"
-                local module_date="$(sudo -u "$user" git -C "$repo_dir" log -1 --format=%cI -- "${__mod_info[$id/path]}")"
+                local module_date="$(sudo -u "$__user" git -C "$repo_dir" log -1 --format=%cI -- "${__mod_info[$id/path]}")"
                 # just in case the module is not known to git, get the file last modified date
                 [[ -z "$module_date" ]] && module_date="$(date -Iseconds -r "${__mod_info[$id/path]}")"
                 if rp_dateIsNewer "$pkg_date" "$module_date"; then
@@ -724,7 +724,7 @@ function rp_createBin() {
     if tar cvzf "$dest/$archive" -C "$rootdir/$md_type" "$md_id"; then
         if [[ -n "$__gpg_signing_key" ]]; then
             if signFile "$dest/$archive"; then
-                chown $user:$user "$dest/$archive" "$dest/$archive.asc"
+                chown "$__user":"$__group" "$dest/$archive" "$dest/$archive.asc"
                 ret=0
             fi
         else

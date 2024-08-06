@@ -67,5 +67,5 @@ function configure_lr-mess() {
 
     mkUserDir "$biosdir/mame"
     cp -rv "$md_inst/hash" "$biosdir/mame/"
-    chown -R $user:$user "$biosdir/mame"
+    chown -R "$__user":"$__group" "$biosdir/mame"
 }

@@ -81,7 +81,7 @@ function configure_openmsx() {
 
     # Add an autostart script, used for joypad configuration
     cp "$md_data/retropie-init.tcl" "$home/.openMSX/share/scripts"
-    chown -R "$user:$user" "$home/.openMSX/share/scripts"
+    chown -R "$__user":"$__group" "$home/.openMSX/share/scripts"
 }
 
 function _default_settings_openmsx() {

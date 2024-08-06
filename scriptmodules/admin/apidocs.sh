@@ -47,7 +47,7 @@ function build_apidocs() {
 
 function install_apidocs() {
     rsync -a --delete "$md_build/html/" "$__tmpdir/apidocs/"
-    chown -R $user:$user "$__tmpdir/apidocs"
+    chown -R "$__user":"$__group" "$__tmpdir/apidocs"
 }
 
 function upload_apidocs() {

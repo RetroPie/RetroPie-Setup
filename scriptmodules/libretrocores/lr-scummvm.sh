@@ -53,7 +53,7 @@ function configure_lr-scummvm() {
 
     # unpack the data files to system dir
     runCmd unzip -q -o "$md_inst/scummvm.zip" -d "$biosdir"
-    chown -R $user:$user "$biosdir/scummvm"
+    chown -R "$__user":"$__group" "$biosdir/scummvm"
 
     # basic initial configuration (if config file not found)
     if [[ ! -f "$biosdir/scummvm.ini" ]]; then
@@ -66,7 +66,7 @@ function configure_lr-scummvm() {
         iniSet "subtitles" "true"
         iniSet "multi_midi" "true"
         iniSet "gm_device" "fluidsynth"
-        chown $user:$user "$biosdir/scummvm.ini"
+        chown "$__user":"$__group" "$biosdir/scummvm.ini"
     fi
 
     # enable speed hack core option if running in arm platform

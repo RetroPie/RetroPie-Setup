@@ -51,12 +51,12 @@ function configure_lr-bluemsx() {
     local core_config="$md_conf_root/coleco/retroarch-core-options.cfg"
     iniConfig " = " '"' "$core_config"
     iniSet "bluemsx_msxtype" "ColecoVision" "$core_config"
-    chown $user:$user "$core_config"
+    chown "$__user":"$__group" "$core_config"
 
     mkRomDir "coleco"
     defaultRAConfig "coleco" "core_options_path" "$core_config"
 
     cp -rv "$md_inst/"{Databases,Machines} "$biosdir/"
-    chown -R $user:$user "$biosdir/"{Databases,Machines}
+    chown -R "$__user":"$__group" "$biosdir/"{Databases,Machines}
 
 }

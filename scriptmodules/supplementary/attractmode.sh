@@ -57,11 +57,11 @@ function _add_system_attractmode() {
     iniSet "artwork snap" "$path/$snap"
     iniSet "artwork wheel" "$path/wheel"
 
-    chown $user:$user "$config"
+    chown "$__user":"$__group" "$config"
 
     # if no gameslist, generate one
     if [[ ! -f "$attract_dir/romlists/$fullname.txt" ]]; then
-        sudo -u $user attract --build-romlist "$fullname" -o "$fullname"
+        sudo -u "$__user" attract --build-romlist "$fullname" -o "$fullname"
     fi
 
     local config="$attract_dir/attract.cfg"
@@ -73,7 +73,7 @@ display${tab}$fullname
 ${tab}layout               Basic
 ${tab}romlist              $fullname
 _EOF_
-        chown $user:$user "$config"
+        chown "$__user":"$__group" "$config"
     fi
 }
 
@@ -123,7 +123,7 @@ function _add_rom_attractmode() {
     fi
 
     echo "$path;$name;$system_fullname;;;;;;;;;;;;;;" >>"$config"
-    chown $user:$user "$config"
+    chown "$__user":"$__group" "$config"
 }
 
 function depends_attractmode() {

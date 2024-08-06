@@ -72,5 +72,5 @@ function configure_px68k() {
         # when fluidsynth is enabled, add the soundfont path
         [[ "$__os_debian_ver" -gt 10 ]] && echo "SoundFontFile=/usr/share/sounds/sf2/TimGM6mb.sf2" >> "$conf"
     fi
-    chown $user:$user "$conf"
+    chown "$__user":"$__group" "$conf"
 }

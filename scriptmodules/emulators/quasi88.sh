@@ -68,6 +68,6 @@ cat > "$conf" << EOF
 -diskdir "$romdir/pc88"
 -tapedir "$romdir/pc88"
 EOF
-    chown $user:$user "$conf"
+    chown "$__user":"$__group" "$conf"
     fi
 }

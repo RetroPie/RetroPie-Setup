@@ -208,8 +208,8 @@ function sdl1_map() {
 
 ###### main ######
 
-user=$(id -un)
-home="$(eval echo ~$user)"
+__user=$(id -un)
+home="$(eval echo ~$__user)"
 
 rootdir="/opt/retropie"
 configdir="$rootdir/configs"
