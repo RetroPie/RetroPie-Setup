@@ -268,7 +268,7 @@ function gui_dbar4gun() {
     local options=(
         1 "Enable dbar4gun"
         2 "Disable dbar4gun"
-        3 "Debug Calibratrion"
+        3 "Debug"
     )
 
     iniConfig " = " '"' "$configdir/all/dbar4gun.cfg"
@@ -285,7 +285,7 @@ function gui_dbar4gun() {
                     disable_dbar4gun
                     ;;
                 3)
-                    python3 $md_inst/lib/python3.11/site-packages/dbar4gun/command.py gui --width 640 --height 480 --port $db_port
+                    $md_inst/bin/dbar4gun gui --width 640 --height 480 --port $db_port
                     ;;
             esac
         else
