@@ -124,22 +124,22 @@ function _menu_start_dbar4gun() {
         if [[ -n "$choice" ]]; then
             case "$choice" in
                 1)
-                    cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Please enter the width" 10 60 "$db_width")
+                    local cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Please enter the width" 10 60 "$db_width")
                     db_width=$("${cmd_in[@]}" 2>&1 >/dev/tty)
                     iniSet "db_width" "$db_width"
                     ;;
                 2)
-                    cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Please enter the height" 10 60 "$db_height")
+                    local cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Please enter the height" 10 60 "$db_height")
                     db_height=$("${cmd_in[@]}" 2>&1 >/dev/tty)
                     iniSet "db_height" "$db_height"
                     ;;
                 3)
-                    cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Please enter the smoothing level" 10 60 "$db_smoothing_level")
+                    local cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Please enter the smoothing level" 10 60 "$db_smoothing_level")
                     db_smoothing_level=$("${cmd_in[@]}" 2>&1 >/dev/tty)
                     iniSet "db_smoothing_level" "$db_smoothing_level"
                     ;;
                 4)
-                    cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Please enter the debug port" 10 60 "$db_port")
+                    local cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Please enter the debug port" 10 60 "$db_port")
                     db_port=$("${cmd_in[@]}" 2>&1 >/dev/tty)
                     iniSet "db_port" "$db_port"
                     ;;
