@@ -76,16 +76,14 @@ function install_eduke32() {
 
 function game_data_eduke32() {
     local dest="$romdir/ports/duke3d"
-    if [[ "$md_id" == "eduke32" ]]; then
-        if [[ ! -f "$dest/duke3d.grp" ]]; then
-            mkUserDir "$dest"
-            local temp="$(mktemp -d)"
-            download "$__archive_url/3dduke13.zip" "$temp"
-            unzip -L -o "$temp/3dduke13.zip" -d "$temp" dn3dsw13.shr
-            unzip -L -o "$temp/dn3dsw13.shr" -d "$dest" duke3d.grp duke.rts
-            rm -rf "$temp"
-            chown -R $user:$user "$dest"
-        fi
+    if [[ ! -n $(find $dest -maxdepth 1 -iname duke3d.grp) ]]; then
+        mkUserDir "$dest"
+        local temp="$(mktemp -d)"
+        download "$__archive_url/3dduke13.zip" "$temp"
+        unzip -L -o "$temp/3dduke13.zip" -d "$temp" dn3dsw13.shr
+        unzip -L -o "$temp/dn3dsw13.shr" -d "$dest" duke3d.grp duke.rts
+        rm -rf "$temp"
+        chown -R $user:$user "$dest"
     fi
 }
 
@@ -107,7 +105,7 @@ function configure_eduke32() {
     rm -f "$romdir/ports/Duke3D Shareware.sh"
 
     if [[ "$md_mode" == "install" ]]; then
-        game_data_eduke32
+        [[ "$md_id" == "eduke32" ]] && game_data_eduke32
 
         touch "$config"
         iniConfig " " '"' "$config"
