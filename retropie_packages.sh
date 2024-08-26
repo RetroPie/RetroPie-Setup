@@ -16,20 +16,33 @@ __version="4.8.8"
 # main retropie install location
 rootdir="/opt/retropie"
 
-# if __user is set, try and install for that user, else use SUDO_USER
-if [[ -n "$__user" ]]; then
-    user="$__user"
-    if ! id -u "$__user" &>/dev/null; then
-        echo "User $__user not exist"
-        exit 1
-    fi
-else
-    user="$SUDO_USER"
+# if no user is specified
+if [[ -z "$__user" ]]; then
+    # get the calling user from sudo env
     __user="$SUDO_USER"
-    [[ -z "$user" ]] && user="$(id -un)"
-    [[ -z "$__user" ]] && __user="$(id -un $SUDO_USER)"
-    [[ -z "$__group" ]] && __group="$(id -gn $SUDO_USER)"
+    # if not called from sudo get the current user
+    [[ -z "$__user" ]] && __user="$(id -un)"
 fi
+
+# check if the user exists
+if [[ -z "$(getent passwd "$__user")" ]]; then
+    echo "User $__user does not exist."
+    exit 1
+fi
+
+# if no group is specified get the users primary group
+if [[ -z "$__group" ]]; then
+    __group="$(id -gn "$__user")"
+fi
+
+# check if the group exists
+if [[ -z "$(getent group "$__group")" ]]; then
+    echo "Group $__group does not exist."
+    exit 1
+fi
+
+# backwards compatibility
+user="$__user"
 
 home="$(eval echo ~$__user)"
 datadir="$home/RetroPie"
