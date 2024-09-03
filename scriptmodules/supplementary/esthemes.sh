@@ -24,9 +24,9 @@ function depends_esthemes() {
 function _has_pixel_pos_esthemes() {
     local pixel_pos=0
     # get the version of emulationstation installed so we can check whether to show
-    # themes that use the new pixel based positioning - we run as $user as the
+    # themes that use the new pixel based positioning - we run as $__user as the
     # emulationstation launch script will exit if run as root
-    local es_ver="$(sudo -u $user /usr/bin/emulationstation --help | grep -oP "Version \K[^,]+")"
+    local es_ver="$(sudo -u $__user /usr/bin/emulationstation --help | grep -oP "Version \K[^,]+")"
     # if emulationstation is newer than 2.10, enable pixel based themes
     compareVersions "$es_ver" ge "2.10" && pixel_pos=1
     echo "$pixel_pos"

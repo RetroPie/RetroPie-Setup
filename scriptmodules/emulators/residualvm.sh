@@ -82,7 +82,7 @@ while read id desc; do
 done < <($md_inst/bin/residualvm --list-targets | tail -n +3)
 popd >/dev/null
 _EOF_
-    chown $user:$user "$romdir/residualvm/+Start ResidualVM.sh"
+    chown "$__user":"$__group" "$romdir/residualvm/+Start ResidualVM.sh"
     chmod u+x "$romdir/residualvm/+Start ResidualVM.sh"
 
     addEmulator 0 "$md_id" "residualvm" "bash $romdir/residualvm/+Start\ ResidualVM.sh opengl_shaders %BASENAME%"

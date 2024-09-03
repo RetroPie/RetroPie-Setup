@@ -145,7 +145,7 @@ function configure_amiberry() {
     fi
 
     moveConfigDir "$md_inst/kickstarts" "$biosdir/amiga"
-    chown -R $user:$user "$biosdir/amiga"
+    chown -R "$__user":"$__group" "$biosdir/amiga"
 
     # symlink the retroarch config / autoconfigs for amiberry to use
     ln -sf "$configdir/all/retroarch/autoconfig" "$md_inst/controllers"
@@ -159,7 +159,7 @@ function configure_amiberry() {
     # copy game-data, save-data folders, boot-data.zip and WHDLoad
     cp -R "$md_inst/whdboot-dist/"{game-data,save-data,boot-data.zip,WHDLoad} "$config_dir/whdboot/"
 
-    chown -R $user:$user "$config_dir/whdboot"
+    chown -R "$__user":"$__group" "$config_dir/whdboot"
 
     # copy shared uae4arm/amiberry launch script while setting is_amiberry=1
     sed "s/is_amiberry=0/is_amiberry=1/" "$md_data/../uae4arm/uae4arm.sh" >"$md_inst/amiberry.sh"
@@ -171,5 +171,5 @@ function configure_amiberry() {
 "$md_inst/amiberry.sh"
 _EOF_
     chmod a+x "$romdir/amiga/$script"
-    chown $user:$user "$romdir/amiga/$script"
+    chown "$__user":"$__group" "$romdir/amiga/$script"
 }

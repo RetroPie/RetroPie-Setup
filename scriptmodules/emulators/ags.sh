@@ -84,6 +84,6 @@ echo "ROM parameter for AGS engine: \$ROM" >> /dev/shm/runcommand.log
 $binary "${params[*]}" "\$ROM"
 _EOF_
 
-    chown "$user":"$user" "$launcher"
+    chown "$__user":"$__group" "$launcher"
     chmod u+x "$launcher"
 }

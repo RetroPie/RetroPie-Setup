@@ -117,9 +117,9 @@ function _clear_platform_skyscraper() {
     [[ ! -d "$configdir/all/skyscraper/$cache_folder/$platform" ]] && return
 
     if [[ $mode == "vacuum" ]]; then
-        sudo -u "$user" stdbuf -o0 $md_inst/Skyscraper --flags unattend -p "$platform" --cache vacuum
+        sudo -u "$__user" stdbuf -o0 $md_inst/Skyscraper --flags unattend -p "$platform" --cache vacuum
     else
-        sudo -u "$user" stdbuf -o0 $md_inst/Skyscraper --flags unattend -p "$platform" --cache purge:all
+        sudo -u "$__user" stdbuf -o0 $md_inst/Skyscraper --flags unattend -p "$platform" --cache purge:all
     fi
     sleep 5
 }
@@ -158,7 +158,7 @@ function _purge_platform_skyscraper() {
 
 function _get_ver_skyscraper() {
     if [[ -f "$md_inst/Skyscraper" ]]; then
-        echo $(sudo -u "$user" "$md_inst/Skyscraper" -h | grep 'Running Skyscraper' | cut -d' ' -f 3 | tr -d v 2>/dev/null)
+        echo $(sudo -u "$__user" "$md_inst/Skyscraper" -h | grep 'Running Skyscraper' | cut -d' ' -f 3 | tr -d v 2>/dev/null)
     fi
 }
 
@@ -219,7 +219,7 @@ function configure_skyscraper() {
     done
 
     _init_config_skyscraper
-    chown -R $user:$user "$configdir/all/skyscraper"
+    chown -R "$__user":"$__group" "$configdir/all/skyscraper"
 }
 
 function _init_config_skyscraper() {
@@ -360,7 +360,7 @@ function _scrape_skyscraper() {
     declare -a "params_arr=($params)"
     # trap ctrl+c and return if pressed (rather than exiting retropie-setup etc)
     trap 'trap 2; return 1' INT
-        sudo -u "$user" stdbuf -o0 "$md_inst/Skyscraper" "${params_arr[@]}"
+        sudo -u "$__user" stdbuf -o0 "$md_inst/Skyscraper" "${params_arr[@]}"
         echo -e "\nCOMMAND LINE USED:\n $md_inst/Skyscraper" "${params}"
         sleep 2
     trap 2
@@ -469,10 +469,10 @@ function _open_editor_skyscraper() {
     local editor
 
     if [[ -n $(command -v sensible-editor) ]]; then
-        sudo -u "$user" sensible-editor "$1" > /dev/tty < /dev/tty
+        sudo -u "$__user" sensible-editor "$1" > /dev/tty < /dev/tty
     else
         editor="${EDITOR:-nano}"
-        sudo -u "$user" $editor "$1" > /dev/tty < /dev/tty
+        sudo -u "$__user" $editor "$1" > /dev/tty < /dev/tty
     fi
 }
 
@@ -537,7 +537,7 @@ function gui_skyscraper() {
 
     iniConfig " = " '"' "$configdir/all/skyscraper.cfg"
     eval $(_load_config_skyscraper)
-    chown "$user":"$user" "$configdir/all/skyscraper.cfg"
+    chown "$__user":"$__group" "$configdir/all/skyscraper.cfg"
 
     local -a s_source
     local -a s_source_names

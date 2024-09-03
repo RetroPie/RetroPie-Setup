@@ -328,12 +328,12 @@ function configure_mupen64plus() {
     # a default config for reference
     if [[ -f "$config" ]]; then
         mv "$config" "$config.user"
-        su "$user" -c "$cmd"
+        su "$__user" -c "$cmd"
         mv "$config" "$config.rp-dist"
         mv "$config.user" "$config"
         config+=".rp-dist"
     else
-        su "$user" -c "$cmd"
+        su "$__user" -c "$cmd"
     fi
 
     # RPI main/GLideN64 settings
@@ -394,5 +394,5 @@ function configure_mupen64plus() {
     addAutoConf mupen64plus_hotkeys 1
     addAutoConf mupen64plus_texture_packs 1
 
-    chown -R $user:$user "$md_conf_root/n64"
+    chown -R "$__user":"$__group" "$md_conf_root/n64"
 }

@@ -28,7 +28,7 @@ function _autostart_script_autostart() {
 
     cat >/etc/profile.d/10-retropie.sh <<_EOF_
 # launch our autostart apps (if we are on the correct tty and not in X)
-if [ "\`tty\`" = "/dev/tty1" ] && [ -z "\$DISPLAY" ] && [ "\$USER" = "$user" ]; then
+if [ "\`tty\`" = "/dev/tty1" ] && [ -z "\$DISPLAY" ] && [ "\$USER" = "$__user" ]; then
     bash "$script"
 fi
 _EOF_
@@ -49,7 +49,7 @@ _EOF_
             echo "emulationstation #auto" >>"$script"
             ;;
     esac
-    chown $user:$user "$script"
+    chown "$__user":"$__group" "$script"
 }
 
 function enable_autostart() {
@@ -68,7 +68,7 @@ function enable_autostart() {
             cat >/etc/systemd/system/getty@tty1.service.d/autologin.conf <<_EOF_
 [Service]
 ExecStart=
-ExecStart=-/sbin/agetty --autologin $user --noclear %I \$TERM
+ExecStart=-/sbin/agetty --autologin $__user --noclear %I \$TERM
 _EOF_
         fi
 
@@ -133,12 +133,12 @@ function gui_autostart() {
             if [[ "$__os_id" == "Raspbian" ]]; then
                 options+=(
                     CL "Boot to text console (require login)"
-                    CA "Boot to text console (auto login as $user)"
+                    CA "Boot to text console (auto login as $__user)"
                 )
             fi
             options+=(DL "Boot to desktop (require login)")
             if [[ "$__os_id" == "Raspbian" ]]; then
-                options+=(DA "Boot to desktop (auto login as $user)")
+                options+=(DA "Boot to desktop (auto login as $__user)")
             fi
         fi
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -176,7 +176,7 @@ function gui_autostart() {
                     ;;
                 CA)
                     disable_autostart B2
-                    printMsgs "dialog" "Booting to text console (auto login as $user)."
+                    printMsgs "dialog" "Booting to text console (auto login as $__user)."
                     ;;
                 DL)
                     disable_autostart B3
@@ -184,7 +184,7 @@ function gui_autostart() {
                     ;;
                 DA)
                     disable_autostart B4
-                    printMsgs "dialog" "Booting to desktop (auto login as $user)."
+                    printMsgs "dialog" "Booting to desktop (auto login as $__user)."
                     ;;
             esac
         else

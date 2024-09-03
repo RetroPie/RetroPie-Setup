@@ -75,14 +75,14 @@ function configure_dosbox-staging() {
     [[ "$md_mode" == "remove" ]] && return
 
     local config_dir="$md_conf_root/pc"
-    chown -R $user: "$config_dir"
+    chown -R "$__user":"$__group" "$config_dir"
 
     local staging_output="texturenb"
     if isPlatform "kms"; then
         staging_output="openglnb"
     fi
 
-    local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
+    local config_path=$(su "$__user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [[ -f "$config_path" ]]; then
         iniConfig " = " "" "$config_path"
         if isPlatform "rpi"; then

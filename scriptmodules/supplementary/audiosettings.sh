@@ -332,5 +332,5 @@ function _toggle_pipewire_audiosettings() {
 
 # Run PulseAudio commands as the calling user
 function _pa_cmd_audiosettings() {
-    [[ -n "$@" ]] && sudo -u "$user" XDG_RUNTIME_DIR=/run/user/$SUDO_UID "$@" 2>/dev/null
+    [[ -n "$@" ]] && sudo -u "$__user" XDG_RUNTIME_DIR=/run/user/$SUDO_UID "$@" 2>/dev/null
 }

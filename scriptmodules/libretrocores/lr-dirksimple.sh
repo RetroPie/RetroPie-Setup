@@ -47,7 +47,7 @@ function configure_lr-dirksimple() {
     rm -rf "$biosdir/DirkSimple"
     mkUserDir "$biosdir/DirkSimple"
     cp -rf "$md_inst/data" "$biosdir/DirkSimple/"
-    chown -R $user:$user "$biosdir/DirkSimple"
+    chown -R "$__user":"$__group" "$biosdir/DirkSimple"
 
     addEmulator 0 "$md_id" "daphne" "$md_inst/dirksimple_libretro.so"
     addSystem "daphne"
