@@ -194,11 +194,13 @@ function configure_attractmode() {
     mkUserDir "$md_conf_root/all/attractmode/emulators"
     cat >/usr/bin/attract <<_EOF_
 #!/bin/bash
-MODETEST=/opt/retropie/supplementary/mesa-drm/modetest
-if [[ -z "\$DISPLAY" && -f "\$MODETEST" && ! "\$1" =~ build-romlist ]]; then
-    MODELIST="\$(\$MODETEST -r 2>/dev/null)"
-    default_mode="\$(echo "\$MODELIST" | grep -Em1 "^Mode:.*(driver|userdef).*crtc" | cut -f 2 -d ' ')"
-    default_vrefresh="\$(echo "\$MODELIST" | grep -Em1 "^Mode:.*(driver|userdef).*crtc" | cut -f 4 -d ' ')"
+MODELIST=/opt/retropie/supplementary/kmsxx/kmsprint-rp
+if [[ -z "\$DISPLAY" && -f "\$MODELIST" && ! "\$1" =~ build-romlist ]]; then
+    MODELIST="\$(\$MODELIST 2>/dev/null)"
+    default_mode="\$(echo "\$MODELIST" | grep -Em1 "^Mode: [0-9]+ crtc" | grep -oE [0-9]+x[0-9]+)"
+    default_vrefresh="\$(echo "\$MODELIST" | grep -Em1 "^Mode: [0-9]+ crtc" | grep -oE [0-9]+Hz)"
+    # Strip Hz from the refresh rate
+    default_vrefresh="\${default_vrefresh%Hz}"
     echo "Using default video mode: \$default_mode @ \$default_vrefresh"
 
     [[ ! -z "\$default_mode" ]] && export SFML_DRM_MODE="\$default_mode"
