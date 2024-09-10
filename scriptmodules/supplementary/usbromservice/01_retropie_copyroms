@@ -9,7 +9,8 @@
 #
 
 ## config / defaults
-user="USERTOBECHOSEN"
+user="USER"
+group="GROUP"
 
 home="$(eval echo ~$user)"
 rootdir="/opt/retropie"
@@ -68,7 +69,7 @@ find "$retropie_path/roms" -mindepth 1 -maxdepth 1 -type d -printf "$usb_path/ro
 for dir in roms BIOS; do
     log info "Syncing $dir ..."
     log_cmd rsync -rtu --exclude '._*' --max-delete=-1 "$usb_path/$dir" "$retropie_path/"
-    chown -R $user:$user "$retropie_path/$dir"
+    chown -R "$user":"$group" "$retropie_path/$dir"
 done
 
 log info "Syncing configs ..."
@@ -85,7 +86,7 @@ for from in $(find "$usb_path_to_rp/" -mindepth 1 -maxdepth 1); do
     to=${path_mapping[$from_bn]}
     if [[ -n "$to" ]]; then
         log_cmd rsync -rtu --exclude '._*' --max-delete=-1 "$from/" "$to/"
-        chown -R $user:$user "$to"
+        chown -R "$user":"$group" "$to"
     fi
 done
 

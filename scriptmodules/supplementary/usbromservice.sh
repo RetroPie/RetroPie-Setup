@@ -46,7 +46,7 @@ function install_scripts_usbromservice() {
     local dest
     for file in "$md_data/"*; do
         dest="/etc/usbmount/mount.d/${file##*/}"
-        sed "s/USERTOBECHOSEN/$__user/g" "$file" >"$dest"
+        sed -e "s/USER/$__user/g" -e "s/GROUP/$__group/g" "$file" >"$dest"
         chmod +x "$dest"
     done
 }
