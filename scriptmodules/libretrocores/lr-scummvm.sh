@@ -72,6 +72,9 @@ function configure_lr-scummvm() {
     # enable speed hack core option if running in arm platform
     isPlatform "arm" && setRetroArchCoreOption "scummvm_speed_hack" "enabled"
 
+    # on videocore platforms, disable the HW GL context since it leads to a crash
+    isPlatform "videocore" && setRetroArchCoreOption "scummvm_video_hw_acceleration" "disabled"
+
     # create retroarch launcher for lr-scummvm with support for rom directories
     # containing svm files inside (for direct game directory launching in ES)
     cat > "$md_inst/romdir-launcher.sh" << _EOF_
