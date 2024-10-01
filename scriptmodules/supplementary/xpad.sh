@@ -34,6 +34,11 @@ function sources_xpad() {
     applyPatch "$md_data/01_enable_leds_and_trigmapping.diff"
     # Tell 'dkms' to use the 'updates' kernel module folder to store the module
     applyPatch "$md_data/02_dkms_updates_folder.diff"
+
+    # Force a module version, otherwise 'dkms' refuses to override the built-in module
+    if ! grep -q MODULE_VERSION xpad.c; then
+        applyPatch "$md_data/03_xpad_add_version.diff"
+    fi
 }
 
 function build_xpad() {
