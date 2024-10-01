@@ -131,16 +131,17 @@ function chroot_build_builder() {
                     git branch -D builder-branch
                     git remote remove builder
                 fi
-            "
-            # if we have a __builder_repo and __builder_branch set, check out the branch and use that
-            if [[ -n "$__builder_repo" && "$__builder_branch" ]]; then
-                rp_callModule image chroot "$chroot_dir" bash -c "
-                    cd ~/RetroPie-Setup
-                    git remote add builder $__builder_repo
-                    git fetch -q builder
-                    git checkout builder/$__builder_branch -b builder-branch
-                    "
-            fi
+                "
+        fi
+
+        # if we have a __builder_repo and __builder_branch set, check out the branch and use that
+        if [[ -n "$__builder_repo" && "$__builder_branch" ]]; then
+            rp_callModule image chroot "$chroot_dir" bash -c "
+                cd ~/RetroPie-Setup
+                git remote add builder $__builder_repo
+                git fetch -q builder
+                git checkout builder/$__builder_branch -b builder-branch
+                "
         fi
 
         for platform in $platforms; do
