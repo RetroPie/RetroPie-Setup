@@ -83,14 +83,14 @@ function sources_amiberry() {
 
 function build_amiberry() {
     local platform=$(_get_platform_amiberry)
+    make clean
     cd external/capsimg
     ./bootstrap
     ./configure
     make clean
     make
-    cp "*capsimg.so" "$md_build/plugins"
+    cp capsimg.so "$md_build/plugins"
     cd "$md_build"
-    make clean
     make PLATFORM="$platform" CPUFLAGS="$__cpu_flags"
     md_ret_require="$md_build/amiberry"
 }
