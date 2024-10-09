@@ -39,11 +39,6 @@ function sources_xpad() {
     if ! grep -q MODULE_VERSION xpad.c; then
         applyPatch "$md_data/03_xpad_add_version.diff"
     fi
-
-    # Fix building Buster, which has an older kernel
-    if [[ "$__os_debian_ver" -le 10 ]];  then
-        applyPatch "$md_data/04_fix_build_with_buster.diff"
-    fi
 }
 
 function build_xpad() {
