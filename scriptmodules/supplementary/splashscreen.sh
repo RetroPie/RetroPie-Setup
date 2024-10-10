@@ -67,9 +67,11 @@ _EOF_
 
     iniConfig "=" '"' "$md_inst/asplashscreen.sh"
 
-    if isPlatform "videocore"; then
-        # set vlc mmal layer for videocore
+    if [[ "$__os_debian_ver" -le 10 ]]; then
+        # set vlc mmal layer for Raspberry Pi OS 10 (Buster) or below.
         iniSet "CMD_OPTS" " --mmal-layer 10001"
+        # remove 05-splash.sh if present due to previous splashscreen module installing this on rpi4 on Buster
+        rm -f /etc/profile.d/05-splash.sh
     else
         # install script to kill splashscreen before running autostart scripts when using kms
         cp "$md_data/05-splash.sh" /etc/profile.d/
