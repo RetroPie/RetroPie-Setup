@@ -17,7 +17,7 @@ rp_module_flags=""
 
 function get_ver_sdl2() {
     if [[ "$__os_debian_ver" -ge 11 ]]; then
-        echo "2.26.3"
+        echo "2.30.8"
     else
         echo "2.0.10"
     fi
