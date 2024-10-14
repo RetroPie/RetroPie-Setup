@@ -20,11 +20,11 @@ function depends_gamecondriver() {
 }
 
 function _gamecon_version() {
-    echo "1.4"
+    echo "1.5"
 }
 
 function _db9_version() {
-    echo "1.2"
+    echo "1.3"
 }
 function install_bin_gamecondriver() {
     # install both modules
@@ -39,18 +39,10 @@ function install_bin_gamecondriver() {
     pushd "$md_inst"
     for module_name in "${!modules[@]}"; do
         local module_ver="${modules[$module_name]}"
-        gitPullOrClone "$module_name" "$github_url/$module_name"
+        local package_name="${module_name//_/-}-dkms_${module_ver}_all.deb"
 
-        pushd "$module_name"
-        dkmsManager remove "$module_name" 
-        ln -sfn "`pwd`/$module_name-$module_ver" /usr/src/"$module_name-$module_ver"
-        dkms install --force -m "$module_name" -v "$module_ver"
-        popd
-
-        # test if module installation is OK
-        if ! dkms status | grep -q "^$module_name"; then
-            md_ret_errors+=("$module_name driver installation FAILED")
-        fi
+        wget ${github_url}/${module_name}/releases/download/v${module_ver}/${package_name} -P /tmp/
+        dpkg -i /tmp/${package_name}
     done
     popd
 }
@@ -183,10 +175,10 @@ function gui_gamecondriver() {
                     dual_snes_gamecondriver
                     ;;
                 2)
-                    dialog --msgbox "$(cat "$md_inst/gamecon_gpio_rpi/gamecon_gpio_rpi-$(_gamecon_version)/README")" 22 80 >/dev/tty
+                    dialog --msgbox "$(zcat "/usr/share/doc/gamecon_gpio_rpi/README.gz")" 22 80 >/dev/tty
                     ;;
                 3)
-                    dialog --msgbox "$(cat "$md_inst/db9_gpio_rpi/db9_gpio_rpi-$(_db9_version)/README")" 22 80 >/dev/tty
+                    dialog --msgbox "$(zcat "/usr/share/doc/db9_gpio_rpi/README.gz")" 22 80 >/dev/tty
                     ;;
             esac
         else
