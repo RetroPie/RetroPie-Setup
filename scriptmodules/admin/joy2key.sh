@@ -81,6 +81,10 @@ _EOF_
     if ! grep -q "uinput" /etc/modules; then
         addLineToFile "uinput" "/etc/modules"
     fi
+    # add an udev rule to give 'input' group write access to `/dev/uinput`
+    echo 'KERNEL=="uinput", MODE="0660", GROUP="input"' > /etc/udev/rules.d/80-rpi-uinput.rules
+    udevadm control --reload
+
     modprobe uinput
 
     # make sure the install user is part of 'input' group
