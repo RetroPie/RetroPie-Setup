@@ -82,6 +82,10 @@ _EOF_
         addLineToFile "uinput" "/etc/modules"
     fi
     modprobe uinput
+
+    # make sure the install user is part of 'input' group
+    usermod -a -G input "$__user"
+
     joy2keyStart
 }
 
