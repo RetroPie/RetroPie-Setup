@@ -137,6 +137,7 @@ function install_rp_image() {
     # disable 64bit kernel
     iniSet "arm_64bit" 0
 
+    [[ -z "$__chroot_repo" ]] && __chroot_repo="https://github.com/RetroPie/RetroPie-Setup.git"
     [[ -z "$__chroot_branch" ]] && __chroot_branch="master"
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
@@ -148,7 +149,7 @@ if systemctl is-enabled userconfig &>/dev/null; then
 fi
 sudo apt-get update
 sudo apt-get -y install git dialog xmlstarlet joystick
-git clone -b "$__chroot_branch" https://github.com/RetroPie/RetroPie-Setup.git
+git clone -b "$__chroot_branch" "$__chroot_repo"
 cd RetroPie-Setup
 modules=(
     'raspbiantools apt_upgrade'
