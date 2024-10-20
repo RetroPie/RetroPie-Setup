@@ -25,12 +25,15 @@ function _get_info_image() {
     local key="$2"
     # don't use $md_data so this function can be used directly from builder.sh
     local ini="${__mod_info[image/path]%/*}/image/dists/${dist}.ini"
-    [[ ! -f "$ini" ]] && fatalError "Definition file $ini does not exist"
 
-    iniConfig "=" "\"" "$ini"
-    iniGet "$key"
-    [[ -z "$ini_value" ]] && fatalError "Unable to locate key '$key' in definition file $ini"
-    echo "$ini_value"
+    # if the file is found try and extract the value else echo an empty string
+    if [[ -f "$ini" ]]; then
+        iniConfig "=" "\"" "$ini"
+        iniGet "$key"
+        echo "$ini_value"
+    else
+        echo ""
+    fi
 }
 
 function create_chroot_image() {
@@ -46,7 +49,10 @@ function create_chroot_image() {
     mkdir -p "$chroot"
 
     local url=$(_get_info_image "$dist" "url")
+    [[ -z "$url" ]] && fatalError "Unable to get url information for $dist"
+
     local format=$(_get_info_image "$dist" "format")
+    [[ -z "$format" ]] && fatalError "Unable to get format information for $dist"
 
     local base="raspbian-${dist}-lite"
     local image="${dist}.img"
@@ -110,6 +116,7 @@ function install_rp_image() {
     [[ -z "$chroot" ]] && chroot="$md_build/$dist"
 
     local dist_version="$(_get_info_image "$dist" "version")"
+    [[ -z "$dist_version" ]] && fatalError "Unable to get version information for $dist"
 
     # hostname to retropie
     echo "retropie" >"$chroot/etc/hostname"
@@ -339,6 +346,8 @@ function all_image() {
     local dist="$1"
     local make_bb="$2"
     local platforms="$(_get_info_image "$dist" "platforms")"
+    [[ -z "$platforms" ]] && fatalError "Unable to get platforms information for $dist"
+
     local platform
     printMsgs "heading" "Building $platforms images based on $dist ..."
     for platform in $platforms; do
@@ -362,8 +371,13 @@ function platform_image() {
     rp_callModule image install_rp "$platform" "$dist" "$md_build/$dist"
 
     local dist_name="$(_get_info_image "$dist" "name")"
+    [[ -z "$dist_name" ]] && fatalError "Unable to get name information for $dist"
+
     local file_add="$(_get_info_image "$dist" "file_${platform}")"
+    [[ -z "$file_add" ]] && fatalError "Unable to get file_* information for $dist"
+
     local image_title="$(_get_info_image "$dist" "title_${platform}")"
+    [[ -z "$image_title" ]] && fatalError "Unable to get image_title information for $dist"
 
     local image_base="retropie-${dist_name}-${__version}-${file_add}"
     local image_name="${image_base}.img"
