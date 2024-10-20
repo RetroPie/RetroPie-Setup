@@ -134,8 +134,11 @@ function install_rp_image() {
     fi
     iniSet "overscan_scale" 1
 
-    # disable 64bit kernel
-    iniSet "arm_64bit" 0
+    # disable 64bit kernel on 32bit userland OSs (to disable rpi4 defaulting to 64bit kernel)
+    # 64 bit distros end in -64
+    if [[ "$dist" != *-64 ]]; then
+        iniSet "arm_64bit" 0
+    fi
 
     [[ -z "$__chroot_repo" ]] && __chroot_repo="https://github.com/RetroPie/RetroPie-Setup.git"
     [[ -z "$__chroot_branch" ]] && __chroot_branch="master"
