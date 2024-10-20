@@ -145,6 +145,9 @@ function install_rp_image() {
     # 64 bit distros end in -64
     if [[ "$dist" != *-64 ]]; then
         iniSet "arm_64bit" 0
+    # otherwise if on 64bit switch to using the 4k page size kernel
+    else
+        iniSet "kernel" "kernel8.img"
     fi
 
     [[ -z "$__chroot_repo" ]] && __chroot_repo="https://github.com/RetroPie/RetroPie-Setup.git"
