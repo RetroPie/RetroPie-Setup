@@ -28,6 +28,9 @@ import signal
 import re
 import os
 import uinput
+import curses
+import fcntl
+import termios
 
 from argparse import ArgumentParser
 from ctypes import create_string_buffer, byref
@@ -102,7 +105,7 @@ TERM_EVENTS = {
 # Copy the one defined in 'uinput', so we can extend it since it's missing some entries
 CHAR_MAP = { ord(x):y[1] for (x,y) in uinput._CHAR_MAP.items() }
 # add our entries to the map, so we can translate them
-CHAR_MAP[27]  = 1   # Escape 
+CHAR_MAP[27]  = 1   # Escape
 CHAR_MAP[61]  = 13  # Equals (=)
 CHAR_MAP[43]  = 12  # Minus (-)
 CHAR_MAP[91]  = 26  # Left bracket ([)
@@ -309,7 +312,7 @@ Remove all queued events for a device
 def remove_events_for_device(event_queue: dict, dev_index: int):
     return { key:value for (key,value) in event_queue.items() if not key.startswith(f"{dev_index}_")}
 
-def event_loop(configs, joy_map):
+def event_loop(configs, joy_map, tty_fd=None):
     event = SDL_Event()
 
     # keep of dict of active joystick devices as a dict of
@@ -328,10 +331,14 @@ def event_loop(configs, joy_map):
     # keep track of axis previous values
     axis_prev_values = {}
 
-    # instantiate a keyboard device with uinput to send the translated joypad inputs as keys
-    keyboard_events = [ (0x1,code) for code in joy_map.values() ]
-    LOG.debug(f'Creating uinput keyboard devices with events: {keyboard_events}')
-    kbd = uinput.Device(events=keyboard_events, name="Joy2Key Keyboard")
+    if tty_fd:
+        emit_click = lambda c: fcntl.ioctl(tty_fd, termios.TIOCSTI, c)
+    else:
+        # instantiate a keyboard device with uinput to send the translated joypad inputs as keys
+        keyboard_events = [ (0x1,code) for code in joy_map.values() ]
+        LOG.debug(f'Creating uinput keyboard devices with events: {keyboard_events}')
+        kbd = uinput.Device(events=keyboard_events, name="Joy2Key Keyboard")
+        emit_click = lambda c: kbd.emit_click( (0x1,c) )
 
     def handle_new_input(e: SDL_Event, axis_norm_value: int = 0) -> bool:
         """
@@ -444,9 +451,10 @@ def event_loop(configs, joy_map):
             # send the events mapped key code(s) to the terminal
             for k in emitted_events:
                 if k in joy_map:
-                    c = joy_map[k]
-                    LOG.debug(f'Emitting input code {c}')
-                    kbd.emit_click( (0x1,c) )
+                    codes = joy_map[k]
+                    for c in [codes] if isinstance(codes, int) else codes:
+                        LOG.debug(f'Emitting input code {repr(c)}')
+                        emit_click(c)
 
         SDL_Delay(JS_POLL_DELAY)
 
@@ -461,12 +469,17 @@ def parse_arguments(args):
         help='print debugging messages',
         default=False)
     parser.add_argument(
+        '-t', '--legacy-tiocsti',
+        action='store_true',
+        help='use legacy TIOCSTI to send events to the controlling terminal',
+        default=False)
+    parser.add_argument(
         'hex_chars', type=str, nargs='+',
         metavar='0xHEX',
         help='list of mapped character codes to translate')
 
     args = parser.parse_args()
-    return args.debug, args.hex_chars
+    return args.debug, args.legacy_tiocsti, args.hex_chars
 
 
 def ra_btn_swap_config():
@@ -482,6 +495,21 @@ def ra_btn_swap_config():
             menu_swap = False
 
     return menu_swap
+
+def get_termios_chars(key_str: str):
+    if key_str.startswith('/'):
+        # ignore any device name - they're not part of our assignment
+        return None
+
+    try:
+        if key_str.startswith('0x'):
+            out = bytes.fromhex(key_str[2:])
+        else:
+            out = curses.tigetstr(key_str)
+        return out.decode('utf-8')
+    except Exception as e:
+        LOG.debug(f'Cannot get hex chars from {key_str}, value ignored')
+        return None
 
 def get_uinput_event(key_str: str):
     """
@@ -534,14 +562,15 @@ def main():
     def signal_handler(signum, frame):
         signal.signal(signal.SIGINT, signal.SIG_IGN)
         signal.signal(signal.SIGTERM, signal.SIG_IGN)
-
+        if tty_fd:
+            os.close(tty_fd)
         if SDL_WasInit(SDL_INIT_JOYSTICK) == SDL_INIT_JOYSTICK:
             SDL_QuitSubSystem(SDL_INIT_JOYSTICK)
         SDL_Quit()
         LOG.debug(f'{sys.argv[0]} exiting cleanly')
         sys.exit(0)
 
-    debug_flag, hex_chars = parse_arguments(sys.argv)
+    debug_flag, legacy_tiocsti, hex_chars = parse_arguments(sys.argv)
     if debug_flag:
         LOG.setLevel(logging.DEBUG)
 
@@ -554,7 +583,22 @@ def main():
     else:
         LOG.debug(f'Debugging enabled, running in foreground')
 
-    mapped_chars = [get_uinput_event(code) for code in hex_chars if get_uinput_event(code) is not None]
+    # Newer Linux kernels (6.2+) allow disabling TIOCSTI but, when present, using TIOCSTI allows
+    # sending keyboard events to the controlling terminal only, instead of the foreground window.
+    if legacy_tiocsti or os.environ.get('JOY2KEY_USE_LEGACY_TIOCSTI', '0').lower() in ('1', 'true'):
+        LOG.debug('Using legacy TIOCSTI to emit keyboard events')
+        try:
+            tty_fd = os.open('/dev/tty', os.O_WRONLY)
+        except IOError:
+            LOG.error('Unable to open /dev/tty', file=sys.stderr)
+            sys.exit(1)
+
+        curses.setupterm()
+        mapped_chars = [get_termios_chars(code) for code in hex_chars if get_termios_chars(code) is not None]
+    else:
+        tty_fd = None
+        mapped_chars = [get_uinput_event(code) for code in hex_chars if get_uinput_event(code) is not None]
+
     def_buttons = ['left', 'right', 'up', 'down', 'a', 'b', 'x', 'y', 'pageup', 'pagedown']
     joy_map = {}
     # add for each button the mapped keycode, based on the arguments received
@@ -597,7 +641,7 @@ def main():
     if joystick.SDL_NumJoysticks() < 1:
         LOG.debug(f'No available joystick devices found on startup')
 
-    event_loop(configs, joy_map)
+    event_loop(configs, joy_map, tty_fd)
 
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK)
     SDL_Quit()
