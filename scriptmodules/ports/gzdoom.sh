@@ -18,7 +18,7 @@ rp_module_flags="sdl2 !armv6"
 
 function _get_version_gzdoom() {
     # default GZDoom version
-    local gzdoom_version="g4.13.0"
+    local gzdoom_version="g4.13.1"
 
     # 32 bit is no longer supported since g4.8.1
     isPlatform "32bit" && gzdoom_version="g4.8.0"
