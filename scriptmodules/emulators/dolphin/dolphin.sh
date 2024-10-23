@@ -32,17 +32,17 @@ function find_game_controllers {
             echo "Detected Game Controller: $device_name ($js_device)"
             
             # Create the .ini file if it doesn't exist
-            check_and_create_ini "$device_name"
+            check_and_read_ini "$device_name"
 
             # Store the profile name in an array
             js_profile_names+=("$device_name")
 
-            # Update hotkeys for each controller found
-            check_and_update_hotkeys "$device_name"
+#            # Update hotkeys for each controller found
+#            update_hotkeys_file "$device_name"
         fi
     done < /proc/bus/input/devices
 
-    # If no joysticks were found, notify the user
+    # If no joysticks were found, echo into log
     if [[ ${#js_profile_names[@]} -eq 0 ]]; then
         echo "No joystick found (js0 to js8)."
     else
@@ -50,82 +50,66 @@ function find_game_controllers {
     fi
 }
 
-
-# This function checks if an .ini file exists for a controller and creates it if not.
-function check_and_create_ini {
+function check_and_read_ini {
     local controller_name="$1"
     local ini_file="$profile_dir/$controller_name.ini"
     
     # Check if the .ini file exists
     if [[ ! -f "$ini_file" ]]; then
-        echo "Creating .ini file for $controller_name..."
+        echo "No .ini file for $controller_name exists..."
         
-        # Create the .ini file with the modified template content
-        cat <<EOF > "$ini_file"
-[Profile]
-Device = evdev/0/$controller_name
-Buttons/A = SOUTH
-Buttons/B = EAST
-Buttons/X = NORTH
-Buttons/Y = WEST
-Buttons/Z = TR2
-Buttons/Start = \`START\`
-Main Stick/Up = \`Axis 1-\`
-Main Stick/Down = \`Axis 1+\`
-Main Stick/Left = \`Axis 0-\`
-Main Stick/Right = \`Axis 0+\`
-Main Stick/Modifier = \`Shift\`
-Main Stick/Calibration = 100.00 141.42 100.00 141.42 100.00 141.42 100.00 141.42
-C-Stick/Up = \`Axis 3-\`
-C-Stick/Down = \`Axis 3+\`
-C-Stick/Left = \`Axis 2-\`
-C-Stick/Right = \`Axis 2+\`
-C-Stick/Modifier = \`Ctrl\`
-C-Stick/Calibration = 100.00 141.42 100.00 141.42 100.00 141.42 100.00 141.42
-Triggers/L = TL
-Triggers/R = TR
-D-Pad/Up = \`Axis 7-\`
-D-Pad/Down = \`Axis 7+\`
-D-Pad/Left = \`Axis 6-\`
-D-Pad/Right = \`Axis 6+\`
-EOF
-        echo "Created: $ini_file"
     else
         echo ".ini file for $controller_name already exists."
+
+        # Read Hotkey and Buttons/Start values from the .ini file
+        local hotkey_button
+        local start_button
+
+        # Extract Hotkey and Start buttons using grep and awk
+        hotkey_button=$(grep -E "^Hotkey" "$ini_file" | awk -F' = ' '{print $2}')
+        start_button=$(grep -E "^Buttons/Start" "$ini_file" | awk -F' = ' '{print $2}')
+
+        # Remove backticks if they exist
+        hotkey_button=$(echo "$hotkey_button" | sed 's/`//g')
+        start_button=$(echo "$start_button" | sed 's/`//g')
+
+        # Trim leading and trailing spaces
+        hotkey_button=$(echo "$hotkey_button" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        start_button=$(echo "$start_button" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        
+
+        # Use the variables to update Hotkeys.ini
+        update_hotkeys_file "$controller_name" "$hotkey_button" "$start_button"
     fi
 }
 
-# This function checks and updates the Hotkeys.ini file
-function check_and_update_hotkeys {
+function update_hotkeys_file {
     local controller_name="$1"
-    local new_entry="\`evdev/0/$controller_name:SELECT\` & \`evdev/0/$controller_name:START\`"
-    
-    # Path to Hotkeys.ini file
-    local hotkeys_file="/opt/retropie/configs/gc/Config/Hotkeys.ini"
-    
-    # Check if the Hotkeys file exists
-    if [[ ! -f "$hotkeys_file" ]]; then
-        echo "Hotkeys.ini file not found: $hotkeys_file"
-        return
+    local hotkey_button="$2"
+    local start_button="$3"
+
+    # Create a .bak backup of the hotkeys file if it exists
+    if [[ -f "$hotkeys_file" ]]; then
+        cp "$hotkeys_file" "${hotkeys_file}.bak"
+        echo "Backup created: ${hotkeys_file}.bak"
+    else
+        # Create the file if it doesn't exist
+        touch "$hotkeys_file"
+        echo "Hotkeys file created: $hotkeys_file"
     fi
 
-    # Create a backup of the file
-    cp "$hotkeys_file" "$hotkeys_file.bak"
+    # Prepare the replacement line
+    local new_exit_line="\`evdev/0/$controller_name:$hotkey_button\` & \`evdev/0/$controller_name:$start_button\`"
 
-    # Use grep to check if the controller name is already in the General/Exit line
-    if grep -q "^General/Exit = .*evdev/0/$controller_name" "$hotkeys_file"; then
-        echo "The controller $controller_name is already in the General/Exit line. Skipping addition."
+    # Check if the General/Exit = line exists, and replace it
+    if grep -q "^General/Exit =" "$hotkeys_file"; then
+        # Remove the original line and replace it with the new line
+        sed -i "/^General\/Exit =/c General/Exit = $new_exit_line" "$hotkeys_file"
+        echo "Replaced General/Exit line with: General/Exit = $new_exit_line"
     else
-        # If the General/Exit line exists, append the new entry with an OR operator
-        if grep -q "^General/Exit = " "$hotkeys_file"; then
-            # Escape special characters in sed and append new_entry with pipe separator
-            sed -i "/^General\/Exit = /s/$/ \| $(echo "$new_entry" | sed 's/[\/&|]/\\&/g')/" "$hotkeys_file"
-        else
-            # If the General/Exit line does not exist, add it with backticks
-            echo "General/Exit = $new_entry" >> "$hotkeys_file"
-        fi
-
-        echo "Added new entry for $controller_name to the General/Exit line."
+        # If General/Exit line doesn't exist, append it
+        echo "General/Exit = $new_exit_line" >> "$hotkeys_file"
+        echo "Added new General/Exit line: General/Exit = $new_exit_line"
     fi
 }
 
