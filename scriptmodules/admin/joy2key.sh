@@ -60,7 +60,7 @@ if [[ "\${#params[@]}" -eq 0 ]]; then
 fi
 
 script="joy2key_sdl.py"
-! python3 -c "import sdl2" 2>/dev/null && script="joy2key.py"
+grep --basic-regexp --quiet --no-messages '^legacy_joy2key[[:space:]]*=[[:space:]]*"\?1"\?' $configdir/all/runcommand.cfg && script="joy2key.py"
 
 case "\$mode" in
     start)
