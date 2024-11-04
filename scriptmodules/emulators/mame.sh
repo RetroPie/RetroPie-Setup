@@ -58,6 +58,9 @@ function build_mame() {
     # tell the linker to remove debugging info
     LDFLAGS+=" -s"
 
+    # force arm on arm platform - fixes building mame on when using 32bit arm userland with aarch64 kernel
+    isPlatform "arm" && params+=(PLATFORM=arm)
+
     # workaround for linker crash on bullseye (use gold linker)
     if [[ "$__os_debian_ver" -eq 11 ]] && isPlatform "arm"; then
         LDFLAGS+=" -fuse-ld=gold -Wl,--long-plt" make "${params[@]}"
