@@ -25,6 +25,8 @@ function _get_version_lr-mame() {
 function _get_params_lr-mame() {
     local params=(OSD=retro RETRO=1 PYTHON_EXECUTABLE=python3 NOWERROR=1 OS=linux OPTIMIZE=2 TARGETOS=linux CONFIG=libretro NO_USE_MIDI=1 NO_USE_PORTAUDIO=1 TARGET=mame)
     isPlatform "64bit" && params+=(PTR64=1)
+    # force arm on arm platform - fixes building mame on when using 32bit arm userland with aarch64 kernel
+    isPlatform "arm" && params+=(PLATFORM=arm)
     echo "${params[@]}"
 }
 
