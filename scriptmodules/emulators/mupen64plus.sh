@@ -153,6 +153,27 @@ function sources_mupen64plus() {
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
 }
 
+function _params_mupen64plus() {
+    local dir="$1"
+    local params=()
+
+    isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1")
+    isPlatform "videocore" || [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
+    if isPlatform "mesa" || isPlatform "mali"; then
+        params+=("USE_GLES=1")
+    fi
+    isPlatform "neon" && params+=("NEON=1")
+    isPlatform "x11" && params+=("OSD=1" "PIE=1")
+    isPlatform "x86" && params+=("SSE=SSE2")
+    isPlatform "armv6" && params+=("HOST_CPU=armv6")
+    isPlatform "armv7" && params+=("HOST_CPU=armv7")
+    isPlatform "armv8" && params+=("HOST_CPU=armv8")
+    isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
+    # we don't ship a Vulkan enabled front-end, so disable Vulkan in the core project
+    params+=("VULKAN=0")
+    echo "${params[@]}"
+}
+
 function build_mupen64plus() {
     rpSwap on 750
 
@@ -160,21 +181,8 @@ function build_mupen64plus() {
     local params=()
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
-            params=()
-            isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1")
-            isPlatform "videocore" || [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
-            if isPlatform "mesa" || isPlatform "mali"; then
-                params+=("USE_GLES=1")
-            fi
-            isPlatform "neon" && params+=("NEON=1")
-            isPlatform "x11" && params+=("OSD=1" "PIE=1")
-            isPlatform "x86" && params+=("SSE=SSE2")
-            isPlatform "armv6" && params+=("HOST_CPU=armv6")
-            isPlatform "armv7" && params+=("HOST_CPU=armv7")
-            isPlatform "armv8" && params+=("HOST_CPU=armv8")
-            isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
-            # we don't ship a Vulkan enabled front-end, so disable Vulkan in the core project
-            params+=("VULKAN=0")
+            # get make parameters
+            params=($(_params_mupen64plus $dir))
 
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             make -C "$dir/projects/unix" "${params[@]}" clean
@@ -233,24 +241,13 @@ function build_mupen64plus() {
 }
 
 function install_mupen64plus() {
-    for source in *; do
-        if [[ -f "$source/projects/unix/Makefile" ]]; then
+    local dir
+    for dir in *; do
+        if [[ -f "$dir/projects/unix/Makefile" ]]; then
+            # get make parameters
+            local params=($(_params_mupen64plus $dir))
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
-            local params=()
-            isPlatform "videocore" || [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
-            if isPlatform "mesa" || isPlatform "mali"; then
-                params+=("USE_GLES=1")
-            fi
-            isPlatform "neon" && params+=("NEON=1")
-            isPlatform "x11" && params+=("OSD=1" "PIE=1")
-            isPlatform "x86" && params+=("SSE=SSE2")
-            isPlatform "armv6" && params+=("HOST_CPU=armv6")
-            isPlatform "armv7" && params+=("HOST_CPU=armv7")
-            isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
-            isPlatform "x86" && params+=("SSE=SSE2")
-            # disable VULKAN for the core project
-            params+=("VULKAN=0")
-            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
+            make -C "$dir/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
         fi
     done
     cp "$md_build/GLideN64/ini/GLideN64.custom.ini" "$md_inst/share/mupen64plus/"
