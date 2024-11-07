@@ -149,6 +149,11 @@ function sources_mupen64plus() {
         applyPatch "$md_data/0001-GLideN64-use-emplace.patch"
     fi
 
+    if isPlatform "armv8"; then
+        # remove -ffast-math as it causes build errors building on cortex-a76 (rpi5)
+        applyPatch "$md_data/remove_fast_math.diff"
+    fi
+
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
 }
@@ -178,7 +183,7 @@ function build_mupen64plus() {
     rpSwap on 750
 
     local dir
-    local params=()
+    local params
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
             # get make parameters
@@ -242,10 +247,11 @@ function build_mupen64plus() {
 
 function install_mupen64plus() {
     local dir
+    local params
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
             # get make parameters
-            local params=($(_params_mupen64plus $dir))
+            params=($(_params_mupen64plus $dir))
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
             make -C "$dir/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
         fi
