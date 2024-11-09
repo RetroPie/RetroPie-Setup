@@ -1,0 +1,66 @@
+--- a/mupen64plus-audio-sdl/projects/unix/Makefile
++++ b/mupen64plus-audio-sdl/projects/unix/Makefile
+@@ -99,7 +99,7 @@ OBJDIR = _obj$(POSTFIX)
+ # base CFLAGS, LDLIBS, and LDFLAGS
+ OPTFLAGS ?= -O3 -flto
+ WARNFLAGS ?= -Wall
+-CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fvisibility=hidden -I$(SRCDIR)
++CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -fvisibility=hidden -I$(SRCDIR)
+ LDFLAGS += $(SHARED)
+ 
+ # Since we are building a shared library, we must compile with -fPIC on some architectures
+--- a/mupen64plus-input-sdl/projects/unix/Makefile
++++ b/mupen64plus-input-sdlprojects/unix/Makefile
+@@ -96,7 +96,7 @@ OBJDIR = _obj$(POSTFIX)
+ # base CFLAGS, LDLIBS, and LDFLAGS
+ OPTFLAGS ?= -O3 -flto
+ WARNFLAGS ?= -Wall
+-CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fvisibility=hidden -I$(SRCDIR) -D_GNU_SOURCE=1
++CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -fvisibility=hidden -I$(SRCDIR) -D_GNU_SOURCE=1
+ LDFLAGS += $(SHARED)
+ LDLIBS += -lm
+ 
+--- a/mupen64plus-rsp-hle/projects/unix/Makefile
++++ b/mupen64plus-rsp-hle/projects/unix/Makefile
+@@ -147,7 +147,7 @@ OBJDIR = _obj$(POSTFIX)
+ # base CFLAGS, LDLIBS, and LDFLAGS
+ OPTFLAGS ?= -O3 -flto
+ WARNFLAGS ?= -Wall
+-CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fvisibility=hidden -I$(SRCDIR)
++CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -fvisibility=hidden -I$(SRCDIR)
+ LDFLAGS += $(SHARED)
+ 
+ # Since we are building a shared library, we must compile with -fPIC on some architectures
+--- a/mupen64plus-ui-console/projects/unix/Makefile
++++ b/mupen64plus-ui-console/projects/unix/Makefile
+@@ -74,7 +74,7 @@ OBJDIR = _obj$(POSTFIX)
+ OPTFLAGS ?= -O3 -flto
+ WARNFLAGS ?= -Wall
+ 
+-CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -I$(SRCDIR)
++CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -I$(SRCDIR)
+ ifeq ($(OS), MINGW)
+   CFLAGS += -lpthread
+   LDLIBS += -lpthread
+--- a/mupen64plus-video-gles2n64/projects/unix/Makefile
++++ b/mupen64plus-video-gles2n64/projects/unix/Makefile
+@@ -132,7 +132,7 @@ endif
+ # base CFLAGS, LDLIBS, and LDFLAGS
+ OPTFLAGS ?= -O3 -flto
+ WARNFLAGS ?= -Wall
+-CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fno-strict-aliasing -fvisibility=hidden -I../../src -DSDL_VIDEO_OPENGL_ES2=1 -DSDL_VIDEO_OPENGL=0     
++CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -fno-strict-aliasing -fvisibility=hidden -I../../src -DSDL_VIDEO_OPENGL_ES2=1 -DSDL_VIDEO_OPENGL=0     
+ CXXFLAGS += $(OPTFLAGS) -std=c++11 -fvisibility-inlines-hidden -DSDL_VIDEO_OPENGL_ES2=1 -DSDL_VIDEO_OPENGL=0    
+ LDFLAGS += $(SHARED)
+ 
+--- a/mupen64plus-video-gles2rice/projects/unix/Makefile
++++ b/mupen64plus-video-gles2rice/projects/unix/Makefile
+@@ -133,7 +133,7 @@ endif
+ # base CFLAGS, LDLIBS, and LDFLAGS
+ OPTFLAGS ?= -flto
+ WARNFLAGS ?= -Wall
+-CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -ffast-math -fsingle-precision-constant -fno-strict-aliasing -fvisibility=hidden -I../../src -DSDL_VIDEO_OPENGL_ES2=1 -DSDL_VIDEO_OPENGL=0
++CFLAGS += $(OPTFLAGS) $(WARNFLAGS) -fsingle-precision-constant -fno-strict-aliasing -fvisibility=hidden -I../../src -DSDL_VIDEO_OPENGL_ES2=1 -DSDL_VIDEO_OPENGL=0
+ CXXFLAGS += -fvisibility-inlines-hidden -DSDL_VIDEO_OPENGL_ES2=1 -DSDL_VIDEO_OPENGL=0
+ LDFLAGS += $(SHARED)
+ 
