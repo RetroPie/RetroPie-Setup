@@ -7,6 +7,15 @@ REGEX_IMAGE=""
 CMD="vlc --intf dummy --quiet --no-video-title-show --play-and-exit"
 CMD_OPTS=""
 
+# VLC doesn't detect the connected HDMI port, defaulting to output on the 1st port
+# do the detection ourselves and pass the HDMI port as a parameter
+case "$CMD_OPTS" in
+    *mmal*)
+        HDMI_PORT="$(tvservice -l | grep -o -P -m1 "HDMI \K(.*)")"
+        [ -n "$HDMI_PORT" ] && CMD_OPTS="$CMD_OPTS --mmal-display hdmi-$(($HDMI_PORT+1))"
+        ;;
+esac
+
 # Load user settings
 . /opt/retropie/configs/all/splashscreen.cfg
 
