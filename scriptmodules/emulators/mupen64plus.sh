@@ -180,7 +180,11 @@ function _params_mupen64plus() {
 }
 
 function build_mupen64plus() {
-    rpSwap on 750
+    if isPlatform "64bit"; then
+        rpSwap on 2048
+    else
+        rpSwap on 750
+    fi
 
     local dir
     local params
