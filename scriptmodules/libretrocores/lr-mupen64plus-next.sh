@@ -53,16 +53,22 @@ function build_lr-mupen64plus-next() {
         params+=(FORCE_GLES=1)
     fi
 
+    # force ARCH=armv7 on arm platforms to fix building with 32bit arm userland on aarch64 kernel
+    isPlatform "arm" && params+=(ARCH=armv7l)
+
+    local add_cflags=()
+
+    # workaround for linkage_arm.S including some armv7 instructions without this
+    isPlatform "armv6" && add_cflags+=(-DARMv5_ONLY)
+
+    # fix building on armv8.2 (rpi5) on 32bit arm bookworm.
+    isPlatform "armv8" && add_cflags+=(-mfp16-format=ieee)
+
     # use a custom core name to avoid core option name clashes with lr-mupen64plus
     params+=(CORE_NAME=mupen64plus-next)
     make "${params[@]}" clean
 
-    # workaround for linkage_arm.S including some armv7 instructions without this
-    if isPlatform "armv6"; then
-        CFLAGS="$CFLAGS -DARMv5_ONLY" make "${params[@]}"
-    else
-        make "${params[@]}"
-    fi
+    CFLAGS="$CFLAGS ${add_cflags[*]}" make "${params[@]}"
 
     md_ret_require="$md_build/mupen64plus_next_libretro.so"
 }
