@@ -59,6 +59,7 @@ function install_lr-mame() {
         'COPYING'
         'mamearcade_libretro.so'
         'README.md'
+        'plugins'
     )
 }
 
@@ -70,4 +71,29 @@ function configure_lr-mame() {
         addEmulator 0 "$md_id" "$system" "$md_inst/mamearcade_libretro.so"
         addSystem "$system"
     done
+
+    [[ "$md_mode" == "remove" ]] && return
+
+    mkUserDir "$biosdir/mame"
+    mkUserDir "$biosdir/mame/ini"
+
+    # Create new INI files if they do not already exist
+
+    # Create mame.ini
+    local temp_ini_mame="$(mktemp)"
+    iniConfig " " "" "$temp_ini_mame"
+    iniSet "pluginspath" "$biosdir/mame/plugins"
+    copyDefaultConfig "$temp_ini_mame" "$biosdir/mame/ini/mame.ini"
+
+    # Create plugin.ini
+    local temp_ini_plugin="$(mktemp)"
+    iniConfig " " "" "$temp_ini_plugin"
+    iniSet "hiscore" "1"
+    copyDefaultConfig "$temp_ini_plugin" "$biosdir/mame/ini/plugin.ini"
+
+    # Copy plugins to BIOS directory
+    cp -R "$md_inst/plugins" "$biosdir/mame/"
+
+    # Set permissions
+    chown "$__user":"$__group" -R "$biosdir/mame/"
 }
