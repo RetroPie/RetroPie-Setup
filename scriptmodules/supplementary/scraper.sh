@@ -22,7 +22,6 @@ function depends_scraper() {
 
 function sources_scraper() {
     gitPullOrClone
-    applyPatch "$md_data/00-fix-screenscraper-response-parsing-265.diff"
 }
 
 function build_scraper() {
