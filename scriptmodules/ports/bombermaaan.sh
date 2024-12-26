@@ -22,7 +22,6 @@ function depends_bombermaaan() {
 
 function sources_bombermaaan() {
     gitPullOrClone
-    applyPatch "$md_data/01-cmake-sdl-mixer.diff"
 }
 
 function build_bombermaaan() {
