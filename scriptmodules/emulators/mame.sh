@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .zip .7z\n\nCopy your MAME roms to either $romdi
 rp_module_licence="GPL2 https://raw.githubusercontent.com/mamedev/mame/master/COPYING"
 rp_module_repo="git https://github.com/mamedev/mame.git :_get_branch_mame"
 rp_module_section="exp"
-rp_module_flags="!mali !armv6 !:\$__gcc_version:-lt:7"
+rp_module_flags="!mali !armv6 !:\$__gcc_version:-lt:7 nodistcc"
 
 function _get_branch_mame() {
     # starting with 0.265, GCC 10.3 or later is required for full C++17 support
