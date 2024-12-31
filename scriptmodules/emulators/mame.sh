@@ -50,13 +50,10 @@ function build_mame() {
         rpSwap on 8192
     fi
 
-    local params=(NOWERROR=1 ARCHOPTS=-U_FORTIFY_SOURCE PYTHON_EXECUTABLE=python3 OPTIMIZE=2 USE_SYSTEM_LIB_FLAC=1)
+    local params=(NOWERROR=1 ARCHOPTS="-U_FORTIFY_SOURCE -Wl,-s" PYTHON_EXECUTABLE=python3 OPTIMIZE=2 USE_SYSTEM_LIB_FLAC=1)
     isPlatform "x11" && params+=(USE_QTDEBUG=1) || params+=(USE_QTDEBUG=0)
     # when building on ARM enable 'fsigned-char' for compiled code, fixes crashes in a few drivers
     isPlatform "arm" || isPlatform "aarch64" && params+=(ARCHOPTS_CXX=-fsigned-char)
-
-    # tell the linker to remove debugging info
-    LDFLAGS+=" -s"
 
     # force arm on arm platform - fixes building mame on when using 32bit arm userland with aarch64 kernel
     isPlatform "arm" && params+=(PLATFORM=arm)
