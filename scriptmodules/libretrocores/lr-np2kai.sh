@@ -13,7 +13,7 @@ rp_module_id="lr-np2kai"
 rp_module_desc="PC98 emu - Modified Neko Project II port for libretro"
 rp_module_help="ROM Extensions: .d88 .d98 .88d .98d .fdi .xdf .hdm .dup .2hd .tfd .hdi .thd .nhd .hdd\n\nCopy your pc98 games to to $romdir/pc98\n\nCopy bios files 2608_bd.wav, 2608_hh.wav, 2608_rim.wav, 2608_sd.wav, 2608_tom.wav 2608_top.wav, bios.rom, FONT.ROM and sound.rom to $biosdir/np2kai"
 rp_module_licence="MIT https://raw.githubusercontent.com/libretro/NP2kai/master/LICENSE"
-rp_module_repo="git https://github.com/AZO234/NP2kai.git master"
+rp_module_repo="git https://github.com/AZO234/NP2kai.git master 701092a"
 rp_module_section="exp"
 
 function sources_lr-np2kai() {
