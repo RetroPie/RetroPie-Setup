@@ -13,9 +13,18 @@ rp_module_id="stella"
 rp_module_desc="Atari2600 emulator STELLA"
 rp_module_help="ROM Extensions: .a26 .bin .rom .zip .gz\n\nCopy your Atari 2600 roms to $romdir/atari2600"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/stella-emu/stella/master/License.txt"
-rp_module_repo="git https://github.com/stella-emu/stella.git 6.7"
+rp_module_repo="git https://github.com/stella-emu/stella.git :_get_version_stella"
 rp_module_section="opt"
 rp_module_flags=""
+
+function _get_version_stella() {
+    if [[ "$__gcc_version" -lt 11 ]]; then
+        echo "6.7"
+    else
+        # latest version needs C++-20 support
+        echo "7.0"
+    fi
+}
 
 function depends_stella() {
     getDepends libsdl2-dev libpng-dev zlib1g-dev
