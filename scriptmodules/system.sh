@@ -236,9 +236,15 @@ function get_os_version() {
                 elif compareVersions "$__os_release" lt 20; then
                     __os_ubuntu_ver="18.04"
                     __os_debian_ver="10"
-                else
+                elif compareVersions "$__os_release" lt 21; then
                     __os_ubuntu_ver="20.04"
+                    __os_debian_ver="10"
+                elif compareVersions "$__os_release" lt 22; then
+                    __os_ubuntu_ver="22.04"
                     __os_debian_ver="11"
+                else
+                    __os_ubuntu_ver="24.04"
+                    __os_debian_ver="12"
                 fi
             fi
             if [[ "$__os_desc" == LMDE* ]]; then
