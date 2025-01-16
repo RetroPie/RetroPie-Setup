@@ -25,7 +25,7 @@ function sources_dbar4gun() {
 }
 
 function install_dbar4gun() {
-    virtualenv -p python3 "$md_inst"
+    python3 -m venv "$md_inst"
     source "$md_inst/bin/activate"
     pip3 install .
     deactivate
