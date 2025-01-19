@@ -131,13 +131,13 @@ function configure_amiberry() {
     done
 
     # set various media paths to the 'amiga' rom folder
-    if [ -f "$md_inst/conf/amiberry.conf" ]; then
-        iniConfig "=" "" "$md_inst/conf/amiberry.conf"
-        iniSet "floppy_path" "$romdir/amiga"
-        iniSet "harddrive_path" "$romdir/amiga"
-        iniSet "cdrom_path" "$romdir/amiga"
-        iniSet "lha_path" "$romdir/amiga"
-    fi
+    iniConfig "=" "" "$md_inst/conf/amiberry.conf"
+    iniSet "rom_path" "$biosdir/amiga"
+    iniSet "floppy_path" "$romdir/amiga"
+    iniSet "harddrive_path" "$romdir/amiga"
+    iniSet "cdrom_path" "$romdir/amiga"
+    iniSet "lha_path" "$romdir/amiga"
+    chown "$__user":"$__group" "$md_inst/conf/amiberry.conf"
 
     # check for cd32.nvr and move it to $md_conf_root/amiga/amiberry/nvram
     if [[ -f "$md_conf_root/amiga/amiberry/cd32.nvr" ]]; then
