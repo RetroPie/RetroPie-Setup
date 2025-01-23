@@ -52,8 +52,26 @@ function build_mame() {
 
     local params=(NOWERROR=1 ARCHOPTS="-U_FORTIFY_SOURCE -Wl,-s" PYTHON_EXECUTABLE=python3 OPTIMIZE=2 USE_SYSTEM_LIB_FLAC=1)
     isPlatform "x11" && params+=(USE_QTDEBUG=1) || params+=(USE_QTDEBUG=0)
+
+    # array for storing ARCHOPTS_CXX parameters
+    local arch_opts_cxx=()
+
     # when building on ARM enable 'fsigned-char' for compiled code, fixes crashes in a few drivers
-    isPlatform "arm" || isPlatform "aarch64" && params+=(ARCHOPTS_CXX=-fsigned-char)
+    isPlatform "arm" || isPlatform "aarch64" && arch_opts_cxx+=(-fsigned-char)
+
+    # workaround g++-12 compiler bug/compilation issue on 32bit arm userland with aarch64 kernel on the rpi3 (cortex-a53)
+    # disabling -ftree-slp-vectorize works around the issue:
+    # {standard input}: Assembler messages:
+    # {standard input}:4045: Error: co-processor offset out of range
+    # make[2]: *** [skeleton.make:2727: obj/Release/src/mame/skeleton/scopus.o] Error 1
+    if [[ "$__gcc_version" -eq 12 ]] && isPlatform "rpi3" && isPlatform "32bit" && [[ "$(uname -m)" == "aarch64" ]]; then
+        arch_opts_cxx+=(-fno-tree-slp-vectorize)
+    fi
+
+    # if we have any arch opts set, add them
+    if [[ ${#arch_opts_cxx[@]} -gt 0 ]]; then
+        params+=(ARCHOPTS_CXX="${arch_opts_cxx[*]}")
+    fi
 
     # force arm on arm platform - fixes building mame on when using 32bit arm userland with aarch64 kernel
     isPlatform "arm" && params+=(PLATFORM=arm)
