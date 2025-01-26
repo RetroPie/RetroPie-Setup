@@ -19,7 +19,6 @@ sudo apt-get install git
 Then you can download the latest RetroPie setup script with:
 
 ```shell
-cd
 git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
 ```
 
