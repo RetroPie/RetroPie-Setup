@@ -13,7 +13,7 @@ rp_module_id="xpad"
 rp_module_desc="Updated Xpad Linux Kernel driver"
 rp_module_help="This is the latest Xpad driver from https://github.com/paroj/xpad\n\nThe driver has been patched to allow the triggers to map to buttons for any controller and this has been enabled by default.\n\nThis fixes mapping the triggers in Emulation Station.\n\nIf you want the previous trigger behaviour please edit /etc/modprobe.d/xpad.conf and set triggers_to_buttons=0"
 rp_module_licence="GPL2 https://www.kernel.org/pub/linux/kernel/COPYING"
-rp_module_repo="git https://github.com/paroj/xpad.git master af6ff9b"
+rp_module_repo="git https://github.com/paroj/xpad.git master"
 rp_module_section="driver"
 rp_module_flags="noinstclean !mali"
 
@@ -39,9 +39,6 @@ function sources_xpad() {
     if ! grep -q MODULE_VERSION xpad.c; then
         applyPatch "$md_data/03_xpad_add_version.diff"
     fi
-
-    # Revert an upstream (6.5+) modification for the locking mechanism
-    applyPatch "$md_data/04-revert-guard-usage.diff"
 }
 
 function build_xpad() {
