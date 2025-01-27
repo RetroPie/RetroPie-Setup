@@ -43,8 +43,6 @@ function install_vvvvvv() {
 }
 
 function configure_vvvvvv() {
-    local script
-    setConfigRoot "ports"
 
     addPort "$md_id" "vvvvvv" "VVVVVV" "$md_inst/VVVVVV"
     local file="$romdir/ports/VVVVVV.sh"
