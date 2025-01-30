@@ -28,6 +28,7 @@ function sources_skyscraper() {
 }
 
 function build_skyscraper() {
+    rm --force .qmake.stash
     QT_SELECT=5 qmake
     make
     md_ret_require="$md_build/Skyscraper"
@@ -43,6 +44,7 @@ function install_skyscraper() {
         'Skyscraper'
         'supplementary/scraperdata/check_screenscraper_json_to_idmap.py'
         'supplementary/scraperdata/convert_platforms_json.py'
+        'supplementary/scraperdata/deepdiff_peas_jsonfiles.py'
         'supplementary/scraperdata/peas_and_idmap_verify.py'
     )
     md_ret_files+=("${config_files[@]}")
@@ -220,13 +222,14 @@ function configure_skyscraper() {
 
     _init_config_skyscraper
     chown -R "$__user":"$__group" "$configdir/all/skyscraper"
+    chmod a+x "$md_inst"/*.py
 }
 
 function _init_config_skyscraper() {
     local config_files=($(_config_files_skyscraper))
 
-    # assume new(er) install
     mkdir -p .pristine_cfgs
+    # assume new(er) install
     for cf in "${config_files[@]}"; do
         bn=${cf##*/} # cut off all folders
         if [[ -e "$md_inst/$bn" ]]; then
@@ -237,7 +240,7 @@ function _init_config_skyscraper() {
 
     local scraper_conf_dir="$configdir/all/skyscraper"
 
-    # Make sure the `artwork.xml` and other conf file(s) are present, but don't overwrite them on upgrades
+    # Make sure the 'artwork.xml' and other conf file(s) are present, but don't overwrite them on upgrades
     local f_conf
     for f_conf in artwork.xml aliasMap.csv peas.json platforms_idmap.csv; do
         copyDefaultConfig "$md_inst/.pristine_cfgs/$f_conf" "$scraper_conf_dir/$f_conf"
