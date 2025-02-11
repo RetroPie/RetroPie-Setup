@@ -18,7 +18,7 @@ rp_module_section="exp"
 rp_module_flags="sdl2"
 
 function depends_hypseus() {
-    getDepends libvorbis-dev libogg-dev zlib1g-dev libzip-dev libmpeg2-4-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev cmake
+    getDepends libvorbis-dev libogg-dev zlib1g-dev libzip-dev libmpeg2-4-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev cmake
 }
 
 function sources_hypseus() {
@@ -40,6 +40,7 @@ function build_hypseus() {
 function install_hypseus() {
     md_ret_files=(
         'sound'
+        'midi'
         'pics'
         'fonts'
         'hypseus.bin'
@@ -52,7 +53,7 @@ function configure_hypseus() {
     mkRomDir "daphne/roms"
 
     addEmulator 0 "$md_id" "daphne" "$md_inst/hypseus.sh %ROM%"
-    addSystem "daphne"
+    addSystem "daphne" "Hypseus" ".zlua"
 
     [[ "$md_mode" == "remove" ]] && return
 
@@ -78,17 +79,27 @@ function configure_hypseus() {
     cat >"$md_inst/hypseus.sh" <<_EOF_
 #!/bin/bash
 dir="\$1"
-name="\${dir##*/}"
-name="\${name%.*}"
+path=\$(dirname "\$dir")
+name=\$(basename "\${dir%.*}")
+ext="\${dir##*.}"
 
-if [[ -f "\$dir/\$name.commands" ]]; then
-    params=\$(<"\$dir/\$name.commands")
+if [[ "\$ext" == "zlua" ]]; then
+    parent=\$(awk '{\$1=\$1; print}' < "\$1")
+    dir="\$path/\$parent"
+    parent="\${parent##*/}"
+    params="-usealt \$name"
+else
+    parent="\$name"
 fi
 
-if [[ -f "\$dir/\$name.singe" ]]; then
-    singerom="\$dir/\$name.singe"
-elif [[ -f "\$dir/\$name.zip" ]]; then
-    singerom="\$dir/\$name.zip"
+if [[ -f "\$dir/\$name.commands" ]]; then
+    params="\${params:+\$params }\$(<"\$dir/\$name.commands")"
+fi
+
+if [[ -f "\$dir/\$parent.singe" ]]; then
+    singerom="\$dir/\$parent.singe"
+elif [[ -f "\$dir/\$parent.zip" ]]; then
+    singerom="\$dir/\$parent.zip"
 fi
 
 if [[ -n "\$singerom" ]]; then
