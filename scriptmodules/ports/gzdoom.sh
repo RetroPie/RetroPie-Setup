@@ -43,6 +43,8 @@ function sources_gzdoom() {
     sed -i 's/IMPORTED_TARGET libw/IMPORTED_TARGET GLOBAL libw/' CMakeLists.txt
     # lzma assumes hardware crc support on arm which breaks when building on armv7
     isPlatform "armv7" && applyPatch "$md_data/lzma_armv7_crc.diff"
+    # fix build with gcc 12 for armv8 on aarch64 kernel due to -ffast-math options
+    isPlatform "armv8" && [[ "$__gcc_version" -eq 12 ]] && applyPatch "$md_data/armv8_gcc12_fix.diff"
 }
 
 function build_gzdoom() {
