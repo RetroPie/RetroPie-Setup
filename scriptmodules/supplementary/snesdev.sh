@@ -15,21 +15,77 @@ rp_module_section="driver"
 rp_module_repo="git https://github.com/MonsterJoysticks/SNESDev-RPi-Wiring-Pi.git master"
 rp_module_flags="noinstclean !all rpi"
 
+# install the latest version of WiringPi
+function _wiringpi_snesdev() {
+    pushd "$md_build"
+    gitPullOrClone wiringpi https://github.com/WiringPi/WiringPi.git
+    cd wiringpi
+    applyPatch "$md_data/001-wiringpi-static.diff"
+    make -C wiringPi libwiringPi.a
+    popd
+}
+
 function sources_snesdev() {
-    gitPullOrClone "$md_inst"
+    gitPullOrClone
 }
 
 function build_snesdev() {
+    local wiringpi_version
+    wiringpi_version="$(dpkg-query -f='${Version} ${Status}' -W wiringpi 2>/dev/null | grep installed | cut -f1)"
+
     cd "$md_inst"
-    make -j1
-    md_ret_require="$md_inst/src/SNESDev"
+    if [[ -z "$wiringpi_version" ]] || compareVersions "$wiringpi_version" lt 3.14; then
+        # when there's no WiringPi installed or there's an old version, build a static version and use it
+        printMsgs console "Using locally built WiringPi library"
+        _wiringpi_snesdev
+        make LDFLAGS=" -L"$md_build/wiringpi/wiringPi"" CFLAGS="$CFLAGS -I"$md_build/wiringpi/wiringPi""
+    else
+        make
+    fi
+    md_ret_require="$md_build/src/SNESDev"
 }
 
 function install_snesdev() {
-    cd "$md_inst"
-    make install
+    md_ret_files=(
+        "src/SNESDev"
+        "README.md"
+        "supplementary/snesdev.cfg"
+    )
 }
 
+function configure_snesdev() {
+    if [[ "$md_mode" == "install" ]]; then
+        install -m 0755 "$md_inst/snesdev.cfg" "/etc/snesdev.cfg"
+        # remove old drivers and service
+        [[ -f "/usr/local/bin/SNESDev" ]] && rm -f "/usr/local/bin/SNESDev"
+        update-rc.d SNESDev remove
+        rm -f /etc/init.d/SNESDev
+    fi
+}
+
+function _systemd_install_snesdev() {
+cat > /etc/systemd/system/snesdev.service << _EOF_
+[Unit]
+Description=Userspace SNES GPIO Driver
+
+[Service]
+ExecStart=$md_inst/SNESDev
+
+[Install]
+WantedBy=multi-user.target
+_EOF_
+
+    systemctl daemon-reload
+    systemctl -q enable snesdev.service
+}
+
+function _systemd_uninstall_snesdev() {
+    if systemctl -q is-enabled snesdev.service 2>/dev/null; then
+        systemctl stop snesdev.service
+        systemctl -q disable snesdev.service
+    fi
+    [[ -f "/etc/systemd/system/snesdev.service" ]] && rm "/etc/systemd/system/snesdev.service"
+}
 # start SNESDev on boot and configure RetroArch input settings
 function enable_at_start_snesdev() {
     local mode="$1"
@@ -42,16 +98,19 @@ function enable_at_start_snesdev() {
             iniSet "button_enabled" "0"
             iniSet "gamepad1_enabled" "1"
             iniSet "gamepad2_enabled" "1"
+            _systemd_install_snesdev
             ;;
         2)
             iniSet "button_enabled" "1"
             iniSet "gamepad1_enabled" "0"
             iniSet "gamepad2_enabled" "0"
+            _systemd_install_snesdev
             ;;
         3)
             iniSet "button_enabled" "1"
             iniSet "gamepad1_enabled" "1"
             iniSet "gamepad2_enabled" "1"
+            _systemd_install_snesdev
             ;;
         *)
             echo "[enable_at_start_snesdev] I do not understand what is going on here."
@@ -71,8 +130,9 @@ function set_adapter_version_snesdev() {
 }
 
 function remove_snesdev() {
-    make -C "$md_inst" uninstallservice
-    make -C "$md_inst" uninstall
+    _systemd_uninstall_snesdev
+    # remove old versions if found
+    [[ -f "/usr/local/bin/SNESDev" ]] && rm -f "/usr/local/bin/SNESDev"
 }
 
 function gui_snesdev() {
@@ -90,17 +150,14 @@ function gui_snesdev() {
         case "$choice" in
             1)
                 enable_at_start_snesdev 3
-                make -C "$md_inst" installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling pads and button)."
                 ;;
             2)
                 enable_at_start_snesdev 1
-                make -C "$md_inst" installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only pads)."
                 ;;
             3)
                 enable_at_start_snesdev 2
-                make -C "$md_inst" installservice
                 printMsgs "dialog" "Enabled SNESDev on boot (polling only button)."
                 ;;
             4)
@@ -112,7 +169,7 @@ function gui_snesdev() {
                 printMsgs "dialog" "Switched to adapter version 2.X."
                 ;;
             D)
-                make -C "$md_inst" uninstallservice
+                _systemd_uninstall_snesdev
                 printMsgs "dialog" "Disabled SNESDev on boot."
                 ;;
         esac
