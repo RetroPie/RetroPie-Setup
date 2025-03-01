@@ -87,6 +87,7 @@ EMU_CONF="$CONFIGDIR/all/emulators.cfg"
 BACKENDS_CONF="$CONFIGDIR/all/backends.cfg"
 RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
 JOY2KEY="$ROOTDIR/admin/joy2key/joy2key"
+SDL2_MAPPINGS="$CONFIGDIR/all/sdl2_gamecontrollerdb.txt"
 
 # modesetting tools
 TVSERVICE="/opt/vc/bin/tvservice"
@@ -1394,6 +1395,12 @@ function runcommand() {
     fi
 
     user_script "runcommand-onlaunch.sh"
+
+    # include our SDL gamecontroller mappings in the environment
+    # but check if the environment doesn't already have the SDL GameController mapping hint
+    if [[ -z $SDL_GAMECONTROLLERCONFIG && -f "$SDL2_MAPPINGS" ]]; then
+        export SDL_GAMECONTROLLERCONFIG="$(cat "$SDL2_MAPPINGS")"
+    fi
 
     local ret
     launch_command
