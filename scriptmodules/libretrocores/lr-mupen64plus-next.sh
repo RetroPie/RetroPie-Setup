@@ -19,7 +19,6 @@ rp_module_flags=""
 
 function depends_lr-mupen64plus-next() {
     local depends=()
-    isPlatform "x11" && depends+=(libglew-dev libglu1-mesa-dev)
     isPlatform "x86" && depends+=(nasm)
     isPlatform "videocore" && depends+=(libraspberrypi-dev)
     isPlatform "mesa" && depends+=(libgles2-mesa-dev)
