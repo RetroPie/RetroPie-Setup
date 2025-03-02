@@ -1,0 +1,24 @@
+diff --git a/wiringPi/Makefile b/wiringPi/Makefile
+index 88fc48e..ee5dc9f 100644
+--- a/wiringPi/Makefile
++++ b/wiringPi/Makefile
+@@ -78,6 +78,10 @@ $(DYNAMIC):	$(OBJ)
+ 	$Q echo "[Link (Dynamic)]"
+ 	$Q $(CC) -shared -Wl,-soname,libwiringPi.so$(WIRINGPI_SONAME_SUFFIX) -o libwiringPi.so.$(VERSION) $(OBJ) $(LIBS)
+ 
++$(STATIC):	$(OBJ)
++	$Q echo "[Link (Static)]"
++	$Q $(AR) -rcs $(STATIC) $(OBJ)
++
+ .c.o:
+ 	$Q echo [Compile] $<
+ 	$Q $(CC) -c $(CFLAGS) $< -o $@
+@@ -86,7 +90,7 @@ $(DYNAMIC):	$(OBJ)
+ .PHONY:	clean
+ clean:
+ 	$Q echo "[Clean]"
+-	$Q rm -f $(OBJ) $(OBJ_I2C) *~ core tags Makefile.bak libwiringPi.*
++	$Q rm -f $(OBJ) $(OBJ_I2C) *~ core tags Makefile.bak libwiringPi.* $(STATIC)
+ 
+ .PHONY:	tags
+ tags:	$(SRC)
