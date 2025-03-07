@@ -87,14 +87,19 @@ function map_sdl2_joystick() {
 
     case "$input_type" in
        axis)
-           if [[ "$input_value" == "-1" ]]; then
-               echo "$sdl2_mapped_input:-a${input_id}" >> "$input_temp_map"
-           else
-               echo "$sdl2_mapped_input:+a${input_id}" >> "$input_temp_map"
-           fi
+           # add the direction for D-Pads only
+           if [[ "$sdl2_mapped_input" == "dp"* ]]; then
+               if [[ "$input_value" == "-1" ]]; then
+                   echo "$sdl2_mapped_input:-a${input_id}" >> "$input_temp_map"
+               else
+                   echo "$sdl2_mapped_input:+a${input_id}" >> "$input_temp_map"
+               fi
+            else
+                 echo "$sdl2_mapped_input:a${input_id}" >> "$input_temp_map"
+            fi
            ;;
        hat)
-           echo "$sdl2_mapped_input:hat${input_id}.${input_value}" >> "$input_temp_map"
+           echo "$sdl2_mapped_input:h${input_id}.${input_value}" >> "$input_temp_map"
            ;;
        button)
            echo "$sdl2_mapped_input:b${input_id}" >> "$input_temp_map"
