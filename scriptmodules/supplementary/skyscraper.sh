@@ -20,7 +20,7 @@ function _get_branch_skyscraper() {
 }
 
 function depends_skyscraper() {
-    getDepends qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools p7zip-full
+    getDepends qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5sql5-sqlite p7zip-full
 }
 
 function sources_skyscraper() {
@@ -45,6 +45,7 @@ function install_skyscraper() {
         'supplementary/scraperdata/check_screenscraper_json_to_idmap.py'
         'supplementary/scraperdata/convert_platforms_json.py'
         'supplementary/scraperdata/deepdiff_peas_jsonfiles.py'
+        'supplementary/scraperdata/mdb2sqlite.sh'
         'supplementary/scraperdata/peas_and_idmap_verify.py'
     )
     md_ret_files+=("${config_files[@]}")
