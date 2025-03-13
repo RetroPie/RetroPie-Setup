@@ -79,7 +79,7 @@ function configure_supermodel3() {
     isPlatform "x86" && mkUserDir "$conf_dir/Assets"
 
     # on upgrades keep the local config, but overwrite the game configs
-    ! isPlatform "x86" copyDefaultConfig "$md_inst/Config/Supermodel.ini" "$conf_dir/Config/Supermodel.ini"
+    ! isPlatform "x86" && copyDefaultConfig "$md_inst/Config/Supermodel.ini" "$conf_dir/Config/Supermodel.ini"
     cp -f "$md_inst/Config/Games.xml" "$conf_dir/Config/"
     isPlatform "x86" && cp -fr "$md_inst/Assets" "$conf_dir"
     chown -R "$__user":"$__group" "$conf_dir"
