@@ -17,7 +17,7 @@ rp_module_repo="git https://github.com/mittonk/dice-libretro.git main"
 rp_module_section="exp"
 
 function depends_lr-dice() {
-    getDepends zip
+    getDepends zlib1g-dev
 }
 
 function sources_lr-dice() {
