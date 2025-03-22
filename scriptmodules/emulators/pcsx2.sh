@@ -77,8 +77,10 @@ function configure_pcsx2() {
         addEmulator 0 "$md_id" "ps2" "pcsx2-qt -nofullscreen %ROM%"
         addEmulator 1 "$md_id-nogui" "ps2" "pcsx2-qt -fullscreen -nogui %ROM%"
     else
-        addEmulator 0 "$md_id" "ps2" "/usr/games/pcsx2 --windowed %ROM%"
-        addEmulator 1 "$md_id-nogui" "ps2" "/usr/games/pcsx2 --fullscreen --nogui %ROM%"
+        local emu_path="/usr/games/PCSX2"
+        [[ -f "/usr/games/pcsx2" ]] && emu_path="/usr/games/pcsx2"
+        addEmulator 0 "$md_id" "ps2" "$emu_path --windowed %ROM%"
+        addEmulator 1 "$md_id-nogui" "ps2" "$emu_path --fullscreen --nogui %ROM%"
     fi
 
     addSystem "ps2"
