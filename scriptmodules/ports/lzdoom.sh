@@ -39,7 +39,7 @@ function build_lzdoom() {
     rm -rf release
     mkdir -p release
     cd release
-    local params=(-DCMAKE_INSTALL_PREFIX="$md_inst" -DPK3_QUIET_ZIPDIR=ON -DCMAKE_BUILD_TYPE=Release)
+    local params=(-DNO_GTK=On -DCMAKE_INSTALL_PREFIX="$md_inst" -DPK3_QUIET_ZIPDIR=ON -DCMAKE_BUILD_TYPE=Release)
     # Note: `-funsafe-math-optimizations` should be avoided, see: https://forum.zdoom.org/viewtopic.php?f=7&t=57781
     cmake "${params[@]}" ..
     make
