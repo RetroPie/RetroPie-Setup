@@ -36,6 +36,7 @@ function add_games_wolf4sdl() {
     declare -A -g games_wolf4sdl=(
         ['vswap.wl1']="Wolfenstein 3D demo"
         ['vswap.wl6']="Wolfenstein 3D"
+        ['vswap.sod']="Wolfenstein 3D - Spear of Destiny"
         ['vswap.sd1']="Wolfenstein 3D - Spear of Destiny Ep 1"
         ['vswap.sd2']="Wolfenstein 3D - Spear of Destiny Ep 2"
         ['vswap.sd3']="Wolfenstein 3D - Spear of Destiny Ep 3"
@@ -87,7 +88,7 @@ function game_data_wolf4sdl() {
         # Get shareware game data
         downloadAndExtract "http://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip" "$romdir/ports/wolf3d" -j -LL
     fi
-    if [[ ! -f "$romdir/ports/wolf3d/vswap.sdm" && ! -f "$romdir/ports/wolf3d/vswap.sod" ]]; then
+    if [[ ! -f "$romdir/ports/wolf3d/vswap.sdm" && ! -f "$romdir/ports/wolf3d/vswap.sod" && ! -f "$romdir/ports/wolf3d/vswap.sd1" ]]; then
         cd "$__tmpdir"
         # Get shareware game data
         downloadAndExtract "http://maniacsvault.net/ecwolf/files/shareware/soddemo.zip" "$romdir/ports/wolf3d" -j -LL
@@ -129,6 +130,7 @@ function launch_wolf4sdl() {
         ['e3e87518f51414872c454b7d72a45af6']="wolf4sdl-spear --mission 3"
         ['35afda760bea840b547d686a930322dc']="wolf4sdl-spear-sw"
     )
+        [[ "\${wad_file##*/}" == "vswap.sod" ]] && game_checksums['b1dac0a8786c7cdbb09331a4eba00652']="wolf4sdl-spear"
         if [[ "\${game_checksums[\$(get_md5sum \$wad_file)]}" ]] 2>/dev/null; then
             pushd "$romdir/ports/wolf3d"
             $md_inst/bin/\${game_checksums[\$(get_md5sum \$wad_file)]}
