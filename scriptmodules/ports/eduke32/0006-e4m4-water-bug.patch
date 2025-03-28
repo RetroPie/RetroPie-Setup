@@ -1,0 +1,29 @@
+diff --git a/source/build/src/clip.cpp b/source/build/src/clip.cpp
+index 24eb02368..1a7b57bb5 100644
+--- a/source/build/src/clip.cpp
++++ b/source/build/src/clip.cpp
+@@ -945,14 +945,22 @@ static int get_floorspr_clipyou(vec2_t const v1, vec2_t const v2, vec2_t const v
+     return clipyou;
+ }
+ 
+-static void clipupdatesector(vec2_t const pos, int16_t * const sectnum, int const walldist)
++static void clipupdatesector(vec2_t const pos, int16_t * const sectnum, int walldist)
+ {
+     if (inside_p(pos.x, pos.y, *sectnum))
+         return;
+ 
++    int16_t nsecs = min<int16_t>(getsectordist(pos, *sectnum), INT16_MAX);
++
++    if (nsecs > (walldist + 8))
++    {
++        OSD_Printf("%s():%d shortest distance between origin point (%d, %d) and sector %d is %d. Sector may be corrupt!\n",
++                   EDUKE32_FUNCTION, __LINE__, pos.x, pos.y, *sectnum, nsecs);
++        walldist = 0x7fff;
++    }
++
+     static int16_t sectlist[MAXSECTORS];
+     static uint8_t sectbitmap[(MAXSECTORS+7)>>3];
+-    int16_t        nsecs;
+ 
+     bfirst_search_init(sectlist, sectbitmap, &nsecs, MAXSECTORS, *sectnum);
+ 

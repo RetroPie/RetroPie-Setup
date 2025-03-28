@@ -41,6 +41,8 @@ function sources_eduke32() {
     applyPatch "$md_data/0004-recast-function.patch"
     # cherry-picked commit fixing a game bug in E1M4 (shrinker ray stuck)
     applyPatch "$md_data/0005-e1m4-shrinker-bug.patch"
+    # two more commits r8241 + r8247 fixing a bug in E4M4 (instant death in water)
+    applyPatch "$md_data/0006-e4m4-water-bug.patch"
 }
 
 function build_eduke32() {
