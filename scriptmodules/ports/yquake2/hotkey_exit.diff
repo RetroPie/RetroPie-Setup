@@ -1,0 +1,91 @@
+diff --git a/src/client/input/sdl2.c b/src/client/input/sdl2.c
+index 7ea263a4..4e16892e 100644
+--- a/src/client/input/sdl2.c
++++ b/src/client/input/sdl2.c
+@@ -79,11 +79,12 @@ typedef enum
+ // IN_Update() called at the beginning of a frame to the
+ // actual movement functions called at a later time.
+ static float mouse_x, mouse_y;
+-static unsigned char joy_escbutton = SDL_CONTROLLER_BUTTON_START;
+ static int joystick_left_x, joystick_left_y, joystick_right_x, joystick_right_y;
+ static float gyro_yaw, gyro_pitch;
+ static qboolean mlooking;
+ 
++static qboolean hotkey_back = false;	// RetroPie Hotkey is Back instead of Guide
++
+ // The last time input events were processed.
+ // Used throughout the client.
+ int sys_frame_time;
+@@ -652,6 +653,7 @@ IN_Update(void)
+ 	static qboolean left_trigger = false;
+ 	static qboolean right_trigger = false;
+ 	static qboolean left_stick[4] = {false, false, false, false};   // left, right, up, down virtual keys
++	static qboolean hotkey_pressed = false;	// is Hotkey in RetroPie pressed
+ 
+ 	static int consoleKeyCode = 0;
+ 
+@@ -852,9 +854,22 @@ IN_Update(void)
+ 				qboolean down = (event.type == SDL_CONTROLLERBUTTONDOWN);
+ 				unsigned char btn = event.cbutton.button;
+ 
+-				// Handle Esc button first, to override its original key
+-				Key_Event( (btn == joy_escbutton)? K_ESCAPE : K_JOY_FIRST_BTN + btn,
+-					down, true );
++				switch (btn)
++				{
++					case SDL_CONTROLLER_BUTTON_START:
++						if (hotkey_pressed && down)
++							Cbuf_AddText("quit");
++						else
++							Key_Event( K_ESCAPE, down, true );
++						break;
++
++					case SDL_CONTROLLER_BUTTON_BACK:
++						if (hotkey_back)
++					case SDL_CONTROLLER_BUTTON_GUIDE:
++							hotkey_pressed = down;
++					default:
++						Key_Event( K_JOY_FIRST_BTN + btn, down, true );
++				}
+ 				break;
+ 			}
+ 
+@@ -2204,22 +2219,6 @@ IN_Controller_Init(qboolean notify_user)
+ 	SDL_Joystick *joystick = NULL;
+ 	SDL_bool is_controller = SDL_FALSE;
+ 
+-	cvar = Cvar_Get("joy_escbutton", "0", CVAR_ARCHIVE);
+-	if (cvar)
+-	{
+-		switch ((int)cvar->value)
+-		{
+-			case 1:
+-				joy_escbutton = SDL_CONTROLLER_BUTTON_BACK;
+-				break;
+-			case 2:
+-				joy_escbutton = SDL_CONTROLLER_BUTTON_GUIDE;
+-				break;
+-			default:
+-				joy_escbutton = SDL_CONTROLLER_BUTTON_START;
+-		}
+-	}
+-
+ 	cvar = Cvar_Get("in_initjoy", "1", CVAR_NOSET);
+ 	if (!cvar->value)
+ 	{
+@@ -2365,6 +2364,7 @@ IN_Controller_Init(qboolean notify_user)
+ 
+ 			show_gamepad = true;
+ 			Com_Printf("Enabled as Game Controller, settings:\n%s\n", SDL_GameControllerMapping(controller));
++			hotkey_back = ( !strstr(SDL_GameControllerMapping(controller), "guide:") );
+ 
+ #ifndef NO_SDL_GYRO
+ 
+@@ -2540,6 +2540,7 @@ IN_Controller_Shutdown(qboolean notify_user)
+ 	show_gamepad = show_gyro = show_haptic = false;
+ 	joystick_left_x = joystick_left_y = joystick_right_x = joystick_right_y = 0;
+ 	gyro_yaw = gyro_pitch = 0;
++	hotkey_back = false;
+ 
+ #ifdef NO_SDL_GYRO
+ 	if (imu_joystick)
