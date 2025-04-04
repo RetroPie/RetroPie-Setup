@@ -20,7 +20,7 @@ function _default_dist_crosscomp() {
 }
 
 function depends_crosscomp() {
-    getDepends distcc
+    getDepends distcc texinfo bison
 }
 
 function sources_crosscomp() {
