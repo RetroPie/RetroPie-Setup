@@ -19,6 +19,14 @@ function _default_dist_crosscomp() {
     echo "buster"
 }
 
+function _get_target_crosscomp() {
+    if [[ "$1" == *-64 ]]; then
+        echo "aarch64-linux-gnu"
+    else
+        echo "arm-linux-gnueabihf"
+    fi
+}
+
 function depends_crosscomp() {
     getDepends distcc texinfo bison
 }
@@ -62,7 +70,7 @@ function sources_crosscomp() {
                 [mpc]=1.2.0
             )
             ;;
-        bookworm)
+        bookworm|bookworm-64)
             pkgs=(
                 [binutils]=2.40
                 [gcc]=12.2.0
@@ -114,8 +122,20 @@ function build_crosscomp() {
     # remove old build directories
     rm -rf "$md_build/build-"*
 
-    local params=(--with-arch=armv6 --with-fpu=vfp --with-float=hard)
-    local target=arm-linux-gnueabihf
+    local gcc_params=()
+    local target="$(_get_target_crosscomp "$dist")"
+
+    local kernel_arch
+    # set binutils/gcc configure parameters
+    if [[ "$dist" == *-64 ]]; then
+        # for aarch64
+        kernel_arch=arm64
+    else
+        # for arm with hardfloat
+        kernel_arch=arm
+        gcc_params+=(--with-arch=armv6 --with-fpu=vfp --with-float=hard)
+    fi
+
     local dest="$md_inst/$dist"
 
     local old_path="$PATH"
@@ -129,7 +149,7 @@ function build_crosscomp() {
     printHeading "Building binutils"
     mkdir -p build-binutils
     cd build-binutils
-    ../binutils/configure --prefix="$dest" --target="$target" "${params[@]}"
+    ../binutils/configure --prefix="$dest" --target="$target" "${gcc_params[@]}"
     make
     make install
     cd ..
@@ -137,14 +157,14 @@ function build_crosscomp() {
     # kernel headers
     printHeading "Installing kernel headers"
     cd linux
-    make ARCH=arm INSTALL_HDR_PATH="$dest/$target" headers_install
+    make ARCH=$kernel_arch INSTALL_HDR_PATH="$dest/$target" headers_install
     cd ..
 
     # gcc
     printHeading "Building gcc"
     mkdir -p build-gcc
     cd build-gcc
-    ../gcc/configure --prefix="$dest" --target="$target" --enable-languages=c,c++ --disable-multilib --disable-werror "${params[@]}" 
+    ../gcc/configure --prefix="$dest" --target="$target" --enable-languages=c,c++ --disable-multilib --disable-werror "${gcc_params[@]}"
     make all-gcc
     make install-gcc
     cd ..
@@ -201,7 +221,7 @@ function setup_crosscomp() {
 
 function setup_all_crosscomp() {
     local dist
-    for dist in stretch buster bullseye; do
+    for dist in buster bullseye bookworm bookworm-64; do
         setup_crosscomp "$dist"
     done
 }
@@ -218,11 +238,11 @@ function configure_distcc_crosscomp() {
     # add additional symlinks for cc/gcc/c++/g++
     local name
     for name in cc gcc; do
-        ln -sfv "arm-linux-gnueabihf-gcc" "$bin_dir/$name"
+        ln -sfv "$(_get_target_crosscomp "$dist")-gcc" "$bin_dir/$name"
     done
 
     for name in c++ g++; do
-        ln -sfv "arm-linux-gnueabihf-g++" "$bin_dir/$name"
+        ln -sfv "$(_get_target_crosscomp "$dist")-g++" "$bin_dir/$name"
     done
 
     local initd_script="/etc/init.d/distcc-$dist"
@@ -253,5 +273,6 @@ function configure_distcc_crosscomp() {
 
     # restart distcc
     systemctl daemon-reload
-    service distcc restart
+    systemctl enable distcc-$dist
+    systemctl start distcc-$dist
 }
