@@ -96,24 +96,30 @@ function game_data_yquake2() {
 
 
 function configure_yquake2() {
-    local params=()
-
-    if isPlatform "gl3"; then
-        params+=("+set vid_renderer gl3")
-    elif isPlatform "gles"; then
-        params+=("+set vid_renderer gles1")
-    elif isPlatform "gl" || isPlatform "mesa"; then
-        params+=("+set vid_renderer gl1")
-    else
-        params+=("+set vid_renderer soft")
-    fi
+    local config="$md_conf_root/quake2/yquake2/baseq2/yq2.cfg"
+    local renderer="soft"
 
     mkRomDir "ports/quake2"
 
     moveConfigDir "$home/.yq2" "$md_conf_root/quake2/yquake2"
     mkUserDir "$md_conf_root/quake2/yquake2/baseq2"
-    copyDefaultConfig "$md_data/yq2.cfg" "$md_conf_root/quake2/yquake2/baseq2/yq2.cfg"
+
+    copyDefaultConfig "$md_data/yq2.cfg" "$config"
+    iniConfig " " '"' "$config"
+
+    if isPlatform "gl3"; then
+        renderer="gl3"
+    elif isPlatform "gles3"; then
+        renderer="gles3"
+    elif isPlatform "gles" && [[ "$__os_debian_ver" -lt 11 ]]; then
+        renderer="gles1"
+        iniSet "set gl1_pointparameters" "1"
+    elif isPlatform "gl" || isPlatform "mesa"; then
+        renderer="gl1"
+    fi
+
+    iniSet "set vid_renderer" "$renderer"
 
     [[ "$md_mode" == "install" ]] && game_data_yquake2
-    add_games_yquake2 "$md_inst/quake2 -datadir $romdir/ports/quake2 ${params[*]} +set game %ROM%"
+    add_games_yquake2 "$md_inst/quake2 -datadir $romdir/ports/quake2 +set game %ROM%"
 }
