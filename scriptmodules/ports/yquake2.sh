@@ -34,10 +34,18 @@ function sources_yquake2() {
 }
 
 function build_yquake2() {
-    make clean
-    make with_gles1
-    # build the add-ons source
+    local params=(config client game ref_soft)
     local repo
+
+    isPlatform "gl" || isPlatform "mesa" && params+=(ref_gl1)
+    isPlatform "gl3" && params+=(ref_gl3)
+    isPlatform "gles" && [[ "$__os_debian_ver" -lt 12 ]] && params+=(ref_gles1)
+    isPlatform "gles3" && params+=(ref_gles3)
+
+    make clean
+    make ${params[@]}
+
+    # build the add-ons source
     for repo in 'xatrix' 'rogue'; do
         make -C "$repo" clean
         make -C "$repo"
@@ -50,18 +58,18 @@ function build_yquake2() {
 function install_yquake2() {
     md_ret_files=(
         'release/baseq2'
-        'release/q2ded'
         'release/quake2'
-        'release/ref_gl1.so'
-        'release/ref_gl3.so'
-        'release/ref_gles1.so'
-        'release/ref_gles3.so'
         'release/ref_soft.so'
         'LICENSE'
         'README.md'
         'xatrix/xatrix'
         'rogue/rogue'
     )
+
+    isPlatform "gl" || isPlatform "mesa" && md_ret_files+=('release/ref_gl1.so')
+    isPlatform "gl3" && md_ret_files+=('release/ref_gl3.so')
+    isPlatform "gles" && [[ "$__os_debian_ver" -lt 12 ]] && md_ret_files+=('release/ref_gles1.so')
+    isPlatform "gles3" && md_ret_files+=('release/ref_gles3.so')
 }
 
 function add_games_yquake2() {
