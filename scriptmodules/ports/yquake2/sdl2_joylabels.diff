@@ -1,0 +1,49 @@
+diff --git a/src/client/cl_keyboard.c b/src/client/cl_keyboard.c
+index 20ba3fcc..c9b24c41 100644
+--- a/src/client/cl_keyboard.c
++++ b/src/client/cl_keyboard.c
+@@ -216,10 +216,10 @@ static char *gamepadbtns[] =
+ 	// It is imperative that this list of buttons follow EXACTLY the order they
+ 	// appear in QKEYS enum in keyboard.h, which in turn is the same order as
+ 	// they appear in SDL_GamepadButton / SDL_GameControllerButton enum.
+-	"BTN_SOUTH",
+-	"BTN_EAST",
+-	"BTN_WEST",
+-	"BTN_NORTH",
++	"BTN_A",
++	"BTN_B",
++	"BTN_X",
++	"BTN_Y",
+ 	"BTN_BACK",
+ 	"BTN_GUIDE",
+ 	"BTN_START",
+@@ -245,10 +245,10 @@ static char *gamepadbtns[] =
+ 	"TRIG_LEFT",
+ 	"TRIG_RIGHT",
+ 	// Same with _ALT buttons ( button + 'alt modifier' pressed )
+-	"BTN_SOUTH_ALT",
+-	"BTN_EAST_ALT",
+-	"BTN_WEST_ALT",
+-	"BTN_NORTH_ALT",
++	"BTN_A_ALT",
++	"BTN_B_ALT",
++	"BTN_X_ALT",
++	"BTN_Y_ALT",
+ 	"BTN_BACK_ALT",
+ 	"BTN_GUIDE_ALT",
+ 	"BTN_START_ALT",
+diff --git a/src/client/input/sdl2.c b/src/client/input/sdl2.c
+index a4fa5e25..8a4fa52f 100644
+--- a/src/client/input/sdl2.c
++++ b/src/client/input/sdl2.c
+@@ -2467,8 +2467,8 @@ IN_Init(void)
+ 	joy_forwardsensitivity = Cvar_Get("joy_forwardsensitivity", "1.0", CVAR_ARCHIVE);
+ 	joy_sidesensitivity = Cvar_Get("joy_sidesensitivity", "1.0", CVAR_ARCHIVE);
+ 
+-	joy_labels = Cvar_Get("joy_labels", "-1", CVAR_ARCHIVE);
+-	joy_confirm = Cvar_Get("joy_confirm", "-1", CVAR_ARCHIVE);
++	joy_labels = Cvar_Get("joy_labels", "0", CVAR_ARCHIVE);
++	joy_confirm = Cvar_Get("joy_confirm", "0", CVAR_ARCHIVE);
+ 	joy_layout = Cvar_Get("joy_layout", "0", CVAR_ARCHIVE);
+ 	joy_left_expo = Cvar_Get("joy_left_expo", "2.0", CVAR_ARCHIVE);
+ 	joy_left_snapaxis = Cvar_Get("joy_left_snapaxis", "0.15", CVAR_ARCHIVE);
