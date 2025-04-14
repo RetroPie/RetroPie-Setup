@@ -31,6 +31,7 @@ function depends_ppsspp() {
     isPlatform "videocore" && depends+=(libraspberrypi-dev)
     isPlatform "mesa" && depends+=(libgles2-mesa-dev)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
+    isPlatform "vulkan" && depends+=(mesa-vulkan-drivers)
     getDepends "${depends[@]}"
 }
 
