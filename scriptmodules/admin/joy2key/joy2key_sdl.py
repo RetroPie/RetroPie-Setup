@@ -30,7 +30,7 @@ import os
 import uinput
 
 from argparse import ArgumentParser
-from ctypes import create_string_buffer, byref, POINTER, c_int
+from ctypes import create_string_buffer, byref
 from configparser import ConfigParser
 from sdl2 import joystick, events, version, \
     SDL_WasInit, SDL_Init, SDL_QuitSubSystem, SDL_GetError, \
@@ -39,8 +39,6 @@ from sdl2 import joystick, events, version, \
     SDL_JOYDEVICEADDED, SDL_JOYDEVICEREMOVED, SDL_QUIT, \
     SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP, SDL_JOYHATMOTION, SDL_JOYAXISMOTION, \
     SDL_GetTicks
-from sdl2.dll import _bind, nullfunc
-from sdl2.stdinc import Uint16
 
 logging.basicConfig(level=logging.INFO, format=u"%(asctime)s %(levelname)-6s %(message)s")
 LOG = logging.getLogger(__name__)
@@ -120,19 +118,15 @@ class InputDev(object):
     Class representing a joystick device config.
     Maps the inputs of the device to event names
     name: the device's name
-    guid: the GUID, as returned by SDL
-    pid: the ProductID of the device
-    vid: the VendorID of the device
+    guid: the GUID, as retuned by SDL
     hats - a dictionary of { <HatNo>: list(<HatValue>, <Event>) }
     buttons - a dict of { <ButtonNo>: <Event> }
     axis - a dict of { <AxisNo>: list(<AxisDirection>, <Event>) }
     """
 
-    def __init__(self, _name: str, _vid: int, _pid: int):
+    def __init__(self, _name: str, _guid: str):
         self.name = _name
-        self.guid = None
-        self.vid = _vid
-        self.pid = _pid
+        self.guid = _guid
         self.axis = {}
         self.buttons = {}
         self.hats = {}
@@ -159,7 +153,7 @@ class InputDev(object):
             return None
 
     def __str__(self) -> str:
-        return str(f'{self.name} (P:{self.pid}, V:{self.vid}), hats: {self.hats}, buttons: {self.buttons}, axis: {self.axis}')
+        return str(f'{self.name}, hats: {self.hats}, buttons: {self.buttons}, axis: {self.axis}')
 
 
 def generic_event_map(input: str, event_map: dict) -> str:
@@ -233,7 +227,7 @@ def get_all_ra_config(def_buttons: list) -> list:
     """
     ra_config_list = []
     # add a generic mapping at index 0, to be used for un-configured joysticks
-    generic_dev = InputDev("*", None, None)
+    generic_dev = InputDev("*", "*")
     generic_dev.add_mappings(
         {},  # no axis
         {0: 'b', 1: 'a', 3: 'y', 4: 'x'},  # 4 buttons
@@ -242,7 +236,7 @@ def get_all_ra_config(def_buttons: list) -> list:
     ra_config_list.append(generic_dev)
     js_cfg_dir = CONFIG_DIR + '/all/retroarch-joypads/'
 
-    config = ConfigParser(delimiters="=", strict=False, interpolation=None, converters={'int': (lambda s: s.strip('"'))})
+    config = ConfigParser(delimiters="=", strict=False, interpolation=None)
     for file in os.listdir(js_cfg_dir):
         # skip non '.cfg' files
         if not file.endswith('.cfg') or file.startswith('.'):
@@ -253,12 +247,8 @@ def get_all_ra_config(def_buttons: list) -> list:
                 config.clear()
                 # ConfigParser needs a section, make up a section to appease it
                 config.read_string('[device]\n' + cfg_file.read())
-                LOG.debug(f'Parsing config "{file}"')
                 conf_vals = config['device']
                 dev_name = conf_vals['input_device'].strip('"')
-                # fallback to None if there are no PID/VID in the configuration
-                dev_vid = conf_vals.getint('input_vendor_id', None)
-                dev_pid = conf_vals.getint('input_product_id', None)
 
                 # translate the RetroArch inputs from the configuration file
                 axis, buttons, hats = {}, {}, {}
@@ -278,10 +268,9 @@ def get_all_ra_config(def_buttons: list) -> list:
                             axis.setdefault(input_index, []).append((input_value, event_name))
                         else:
                             continue
-                ra_dev_config = InputDev(dev_name, dev_vid, dev_pid)
+                ra_dev_config = InputDev(dev_name, None)
                 ra_dev_config.add_mappings(axis, buttons, hats)
                 ra_config_list.append(ra_dev_config)
-                LOG.debug(f'Added config for "{dev_name}" from "{file}"')
             except Exception as e:
                 LOG.warning(f'Parsing error for {file}: {e}')
                 continue
@@ -381,16 +370,12 @@ def event_loop(configs, joy_map):
                 stick = joystick.SDL_JoystickOpen(event.jdevice.which)
                 name = joystick.SDL_JoystickName(stick).decode('utf-8')
                 guid = create_string_buffer(33)
-                vid = joystick.SDL_JoystickGetVendor(stick)
-                pid = joystick.SDL_JoystickGetProduct(stick)
-
                 _SDL_JoystickGetGUIDString(joystick.SDL_JoystickGetGUID(stick), guid, 33)
-                LOG.debug(f'Joystick #{joystick.SDL_JoystickInstanceID(stick)} {name} (P:{pid}, V:{vid}) added')
+                LOG.debug(f'Joystick #{joystick.SDL_JoystickInstanceID(stick)} {name} added')
                 conf_found = False
-                # try to find a configuration for the joystick, based on name, GUID and Vendor/Product IDs
+                # try to find a configuration for the joystick
                 for key, dev_conf in enumerate(configs):
-                    if dev_conf.name == str(name) or dev_conf.guid == guid.value.decode() or \
-                       (dev_conf.pid == str(pid) and dev_conf.vid == str(vid)):
+                    if dev_conf.name == str(name) or dev_conf.guid == guid.value.decode():
                         # Add the matching joystick configuration to the watched list
                         active_devices[joystick.SDL_JoystickInstanceID(stick)] = (key, stick)
                         LOG.debug(f'Added configuration for known device {configs[key]}')
@@ -611,16 +596,6 @@ def main():
 
     if joystick.SDL_NumJoysticks() < 1:
         LOG.debug(f'No available joystick devices found on startup')
-
-    # 'SDL_JoystickGetVendor' and 'SDL_JoystickGetProduct' are not in PySDL2 before 0.9.6
-    # so add a local implementation for them when they're not found
-    if 'SDL_JoystickGetVendor' not in dir(joystick):
-        LOG.debug(f'Function "SDL_JoystickGetVendor" not found in PySDL2 {wrapper_version}, adding a local definition for it')
-        joystick.SDL_JoystickGetVendor = _bind("SDL_JoystickGetVendor", [POINTER(joystick.SDL_Joystick)], Uint16, nullfunc)
-
-    if 'SDL_JoystickGetProduct' not in dir(joystick):
-        LOG.debug(f'Function "SDL_JoystickGetProduct" not found in PySDL2 {wrapper_version}, adding a local definition for it')
-        joystick.SDL_JoystickGetProduct = _bind("SDL_JoystickGetProduct", [POINTER(joystick.SDL_Joystick)], Uint16, nullfunc)
 
     event_loop(configs, joy_map)
 
