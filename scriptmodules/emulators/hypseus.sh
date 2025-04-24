@@ -66,11 +66,13 @@ function configure_hypseus() {
     done
 
     copyDefaultConfig "$md_data/hypinput.ini" "$md_conf_root/daphne/hypinput.ini"
+    copyDefaultConfig "$md_data/hypinput_gamepad.ini" "$md_conf_root/daphne/hypinput_gamepad.ini"
 
     ln -snf "$romdir/daphne/roms" "$md_inst/roms"
     ln -snf "$romdir/daphne/roms" "$md_inst/singe"
 
     ln -sf "$md_conf_root/daphne/hypinput.ini" "$md_inst/hypinput.ini"
+    ln -sf "$md_conf_root/daphne/hypinput_gamepad.ini" "$md_inst/hypinput_gamepad.ini"
 
     local common_args="-framefile \"\$dir/\$name.txt\" -homedir \"$md_inst\" -fullscreen \$params"
     # prevents SDL doing an internal software conversion since 2.0.16+
