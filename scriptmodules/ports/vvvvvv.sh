@@ -49,8 +49,8 @@ function configure_vvvvvv() {
     # add a check to launch script - if the data file is not found, inform user
     cat >"$file" << _EOF_
 #!/bin/bash
-if [[ ! -f "$romdir/ports/vvvvvvv/data.zip" ]]; then
-    dialog --no-cancel --pause "The data.zip file is missing. Please ensure it is placed in $romdir/ports/vvvvvvv/." 22 76 15
+if [[ ! -f "$romdir/ports/vvvvvv/data.zip" ]]; then
+    dialog --no-cancel --pause "The data.zip file is missing. Please ensure it is placed in $romdir/ports/vvvvvv/." 22 76 15
 else
     "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ vvvvvv "$md_inst/VVVVVV"
 fi
