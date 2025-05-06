@@ -12,16 +12,16 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
-rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.19.0"
+rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.22.4"
 rp_module_section="core"
 
 function depends_retroarch() {
     local depends=(libudev-dev libxkbcommon-dev libsdl2-dev libasound2-dev libusb-1.0-0-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     isPlatform "gles" && ! isPlatform "vero4k" && depends+=(libgles2-mesa-dev)
     isPlatform "mesa" && depends+=(libx11-xcb-dev)
     isPlatform "mali" && depends+=(mali-fbdev)
-    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev)
+    isPlatform "x11" && depends+=(libx11-xcb-dev libpulse-dev libpipewire-0.3-dev)
     isPlatform "vulkan" && depends+=(libvulkan-dev mesa-vulkan-drivers)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc zlib1g-dev libfreetype6-dev)
     isPlatform "kms" && depends+=(libgbm-dev)
@@ -40,7 +40,7 @@ function sources_retroarch() {
 function build_retroarch() {
     local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack --disable-qt)
     if ! isPlatform "x11"; then
-        params+=(--disable-pulse)
+        params+=(--disable-pulse --disable-pipewire)
         ! isPlatform "mesa" && params+=(--disable-x11)
     fi
     if [[ "$__os_debian_ver" -lt 9 ]]; then
@@ -48,7 +48,7 @@ function build_retroarch() {
     fi
     isPlatform "gles" && params+=(--enable-opengles)
     if isPlatform "gles3"; then
-        params+=(--enable-opengles3)
+        params+=(--enable-opengles3 --disable-opengl1)
         isPlatform "gles31" && params+=(--enable-opengles3_1)
         isPlatform "gles32" && params+=(--enable-opengles3_2)
     fi
@@ -230,18 +230,22 @@ function configure_retroarch() {
     iniSet "input_joypad_driver" "udev"
     iniSet "all_users_control_menu" "true"
     iniSet "remap_save_on_exit" "false"
+    # saves remaps under a gamepad-named folder
+    iniSet "input_remap_sort_by_controller_enable" "true"
 
-    # rgui by default
+    # use the RGUI menu by default
     iniSet "menu_driver" "rgui"
-    iniSet "rgui_aspect_ratio_lock" "2"
+    iniSet "rgui_border_filler_enable" "false" # disable the border
+    iniSet "rgui_aspect_ratio_lock" "2" # 4:3
+    iniSet "rgui_aspect_ratio" "11" # Auto
     iniSet "rgui_browser_directory" "$romdir"
     iniSet "rgui_switch_icons" "false"
     iniSet "menu_rgui_shadows" "true"
     iniSet "rgui_menu_color_theme" "29" # Tango Dark theme
+    iniSet "menu_linear_filter" "false" # disable linear scaling, looks bad on RGUI
 
-    # hide online updater menu options and the restart option
+    # hide online core updater menu options and the restart option
     iniSet "menu_show_core_updater" "false"
-    iniSet "menu_show_online_updater" "false"
     iniSet "menu_show_restart_retroarch" "false"
     # disable the search action
     iniSet "menu_disable_search_button" "true"
@@ -260,6 +264,11 @@ function configure_retroarch() {
     iniSet "core_info_cache_enable" "false"
     # disable game runtime logging
     iniSet "content_runtime_log" "false"
+    # disable history file
+    iniSet "history_list_enable" "false"
+    # .. and also favorites
+    iniSet "content_favorites_size" "0"
+    iniSet "content_show_favorites" "false"
 
     # disable unnecessary xmb menu tabs
     iniSet "xmb_show_add" "false"
@@ -276,8 +285,9 @@ function configure_retroarch() {
     # enable menu_unified_controls by default (see below for more info)
     iniSet "menu_unified_controls" "true"
 
-    # disable 'press twice to quit'
-    iniSet "quit_press_twice" "false"
+    # disable 'press twice to quit/reset'
+    iniSet "confirm_quit" "false"
+    iniSet "confirm_reset" "false"
 
     # enable video shaders
     iniSet "video_shader_enable" "true"
@@ -297,13 +307,16 @@ function configure_retroarch() {
 
     # set RGUI aspect ratio to "Integer Scaling" to prevent stretching
     _set_config_option_retroarch "rgui_aspect_ratio_lock" "2"
+    # disable linear filtering, looks bad for RGUI
+    _set_config_option_retroarch "menu_linear_filter" "false"
 
     # if no menu_unified_controls is set, force it on so that keyboard player 1 can control
     # the RGUI menu which is important for arcade sticks etc that map to keyboard inputs
     _set_config_option_retroarch "menu_unified_controls" "true"
 
-    # disable `quit_press_twice` on existing configs
-    _set_config_option_retroarch "quit_press_twice" "false"
+    # disable confirmation for quit/reset
+    _set_config_option_retroarch "confirm_quit" "false"
+    _set_config_option_retroarch "confirm_reset" "false"
 
     # enable video shaders on existing configs
     _set_config_option_retroarch "video_shader_enable" "true"
