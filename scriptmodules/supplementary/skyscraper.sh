@@ -20,7 +20,13 @@ function _get_branch_skyscraper() {
 }
 
 function depends_skyscraper() {
-    getDepends qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5sql5-sqlite p7zip-full
+    local deps=(p7zip-full)
+    if [[ "$__os_debian_ver" -ge 12 ]]; then
+        deps+=(qt6-base-dev qmake6 qt6-base-dev-tools libqt6sql6-sqlite)
+    else
+        deps+=(qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5sql5-sqlite)
+    fi
+    getDepends "${deps[@]}"
 }
 
 function sources_skyscraper() {
@@ -29,7 +35,11 @@ function sources_skyscraper() {
 
 function build_skyscraper() {
     rm --force .qmake.stash
-    QT_SELECT=5 qmake
+    if [[ "$__os_debian_ver" -ge 12 ]]; then
+        qmake6
+    else
+        QT_SELECT=5 qmake
+    fi
     make
     md_ret_require="$md_build/Skyscraper"
 }
@@ -47,6 +57,7 @@ function install_skyscraper() {
         'supplementary/scraperdata/deepdiff_peas_jsonfiles.py'
         'supplementary/scraperdata/mdb2sqlite.sh'
         'supplementary/scraperdata/peas_and_idmap_verify.py'
+        'supplementary/scraperdata/README-Skyscraper-Scripts.md'
     )
     md_ret_files+=("${config_files[@]}")
 }
