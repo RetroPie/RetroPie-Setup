@@ -9,6 +9,24 @@ Icon?
 ehthumbs.db
 Thumbs.db
 
+# Editor Artifacts & Configuration
+
+## PyCharm
+.idea/
+*.iml
+
+## VS Code
+.vscode/
+*.code-workspace
+
+## Spyder
+.spyderproject
+.spyproject
+
+## Sublime Text
+*.sublime-project
+*.sublime-workspace
+
 # Generated Files
 logs/
 tmp/
