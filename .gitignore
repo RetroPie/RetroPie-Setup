@@ -39,6 +39,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# C/C++ Artifacts
+*.so
+
 # Virtual Environments
 venv/
 env/
