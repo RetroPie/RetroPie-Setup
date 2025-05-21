@@ -48,3 +48,24 @@ env/
 ENV/
 .env/
 .venv/
+
+# Binary Archives
+*.tar
+*.zip
+*.rar
+*.7z
+*.lha
+*.cpio
+*.gz
+*.bz2
+*.xz
+*.lz
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.lz
+*.tgz
+*.tbz2
+*.txz
+*.tpxz
+*.tlz
