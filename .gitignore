@@ -33,3 +33,8 @@ tmp/
 
 # 3rd Party Repos
 ext/*
+
+# Python Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
