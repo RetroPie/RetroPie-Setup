@@ -1,4 +1,4 @@
-# OS generated files #
+# OS Generated Files #
 ######################
 .DS_Store
 .DS_Store?
@@ -9,7 +9,7 @@ Icon?
 ehthumbs.db
 Thumbs.db
 
-# Generated files
+# Generated Files
 logs/
 tmp/
 
