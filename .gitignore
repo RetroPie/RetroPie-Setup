@@ -61,12 +61,15 @@ ENV/
 *.bz2
 *.xz
 *.lz
+*.lrz
 *.tar.gz
 *.tar.bz2
 *.tar.xz
 *.tar.lz
+*.tar.lrz
 *.tgz
 *.tbz2
 *.txz
 *.tpxz
 *.tlz
+*.tlrz
