@@ -38,3 +38,10 @@ ext/*
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.env/
+.venv/
