@@ -1,0 +1,14 @@
+diff --git a/win32api/peace.c b/win32api/peace.c
+index 86989db..8a09337 100755
+--- a/win32api/peace.c
++++ b/win32api/peace.c
+@@ -69,8 +69,8 @@ enum {
+ 	HTYPE_CONSOLE,
+ 	HTYPE_KEY,
+ };
+-#ifdef _WIN32
+ typedef unsigned int u_int;
++#ifdef _WIN32
+ #define bzero(s,d) memset(s,0,d)
+ #endif
+ struct internal_handle {

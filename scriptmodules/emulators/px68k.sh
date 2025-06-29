@@ -17,7 +17,7 @@ rp_module_section="exp"
 rp_module_flags="sdl2"
 
 function depends_px68k() {
-    local depends=(cmake libsdl2-dev)
+    local depends=(cmake libsdl2-dev libsdl2-ttf-dev)
     # MIDI support is through Fluidsynth, but it needs version 2 of the library
     [[ "$__os_debian_ver" -gt 10 ]] && depends+=(libfluidsynth-dev timgm6mb-soundfont)
     getDepends "${depends[@]}"
@@ -25,6 +25,7 @@ function depends_px68k() {
 
 function sources_px68k() {
     gitPullOrClone
+    applyPatch "$md_data/001-missing-typedef.diff"
 }
 
 function build_px68k() {
