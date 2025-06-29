@@ -23,6 +23,11 @@ function _get_branch_dosbox-staging() {
         echo "v0.80.1"
         return
     fi
+    # gcc in Debian 10 (buster) cannot compile 0.82 and later
+    if [[ "$__os_debian_ver" -lt 11 ]]; then
+        echo "v0.81.2"
+        return
+    fi
     download https://api.github.com/repos/dosbox-staging/dosbox-staging/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
 }
 
