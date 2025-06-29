@@ -1403,6 +1403,7 @@ function runcommand() {
     fi
 
     local ret
+    clear
     launch_command
     ret=$?
 
