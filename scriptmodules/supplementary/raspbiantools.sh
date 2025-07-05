@@ -21,6 +21,11 @@ function apt_upgrade_raspbiantools() {
     # on Buster, always install the Bluez package from the RPI repos
     buster_bluez_pin_raspbiantools
 
+    # remove our own SDL1 package for non-dispmanx/non-videocore platforms
+    if isPlatform "rpi" && ! isPlatform "dispmanx"; then
+        sdl1_replace_raspbiantools
+    fi
+
     aptUpdate
     apt-get -y dist-upgrade --allow-downgrades
 }
@@ -87,6 +92,17 @@ Pin: origin archive.raspberrypi.org
 Pin-Priority: 1001
 PIN_EOF
     fi
+}
+
+function sdl1_replace_raspbiantools() {
+    local inst_ver="$(dpkg-query --show --showformat '${Version}' libsdl1.2-dev)"
+    local sdl1_ver="$(get_pkg_ver_sdl1)"
+    local repo_ver="$(apt-cache madison libsdl1.2-dev | head -n 1 | cut -d'|' -f 2 | tr -d '[:blank:]')"
+    # check if the version installed is our own
+    [[ -z "$inst_ver" || ! "$inst_ver" == "$sdl1_ver" || -z "$repo_ver" ]] && return
+    printMsgs "console" "Replacing RetroPie SDL1 version since it's not needed anymore"
+    apt-get -y --allow-downgrades --allow-change-held-packages install libsdl1.2debian=$repo_ver libsdl1.2-dev=$repo_ver
+
 }
 
 function install_firmware_raspbiantools() {
