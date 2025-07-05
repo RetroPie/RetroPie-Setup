@@ -18,7 +18,7 @@ rp_module_section="opt"
 
 function depends_cannonball() {
     local depends=(cmake libsdl2-dev libboost-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     isPlatform "mesa" && depends+=(libgles2-mesa-dev)
     getDepends "${depends[@]}"
 }

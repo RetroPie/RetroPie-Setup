@@ -19,7 +19,7 @@ rp_module_flags="sdl1"
 
 function depends_atari800() {
     local depends=(libsdl1.2-dev autoconf automake zlib1g-dev libpng-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
@@ -33,7 +33,7 @@ function sources_atari800() {
 function build_atari800() {
     local params=()
     ./autogen.sh
-    isPlatform "videocore" && params+=(--target=rpi)
+    isPlatform "dispmanx" && params+=(--target=rpi)
     ./configure --prefix="$md_inst" ${params[@]}
     make clean
     make

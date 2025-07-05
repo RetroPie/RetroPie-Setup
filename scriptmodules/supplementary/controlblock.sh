@@ -19,7 +19,7 @@ rp_module_flags="noinstclean !all rpi"
 
 function depends_controlblock() {
     local depends=(cmake doxygen gpiod libgpiod-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
 
     getDepends "${depends[@]}"
 }
