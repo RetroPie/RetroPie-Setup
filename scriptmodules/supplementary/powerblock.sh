@@ -18,7 +18,7 @@ rp_module_flags="noinstclean !all rpi"
 
 function depends_powerblock() {
     local depends=(cmake doxygen)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
 
     getDepends "${depends[@]}"
 }

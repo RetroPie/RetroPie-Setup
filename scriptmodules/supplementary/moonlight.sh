@@ -71,7 +71,7 @@ function depends_moonlight() {
     depends+=(avahi-daemon libnss-mdns)
 
     # platform-specific dependencies
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     isPlatform "osmc" && depends+=(rbp-userland-dev-osmc)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
 
