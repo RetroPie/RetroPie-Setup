@@ -14,7 +14,7 @@ rp_module_desc="Hypseus Singe - Laserdisc Emulator"
 rp_module_help="ROM Extension: .daphne\n\nCopy your Daphne roms to $romdir/daphne"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/DirtBagXon/hypseus-singe/master/LICENSE"
 rp_module_repo="git https://github.com/DirtBagXon/hypseus-singe.git RetroPie"
-rp_module_section="exp"
+rp_module_section="opt"
 rp_module_flags="sdl2"
 
 function depends_hypseus() {
