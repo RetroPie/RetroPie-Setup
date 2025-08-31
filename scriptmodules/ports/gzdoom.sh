@@ -18,7 +18,7 @@ rp_module_flags="sdl2 !armv6"
 
 function _get_version_gzdoom() {
     # default GZDoom version
-    local gzdoom_version="g4.13.1"
+    local gzdoom_version="g4.14.2"
 
     # 32 bit is no longer supported since g4.8.1
     isPlatform "32bit" && gzdoom_version="g4.8.0"
@@ -76,7 +76,7 @@ function install_gzdoom() {
         'release/game_widescreen_gfx.pk3'
         'release/soundfonts'
         "release/zmusic/lib/libzmusic.so.1"
-        "release/zmusic/lib/libzmusic.so.1.1.14"
+        "release/zmusic/lib/libzmusic.so.1.2.0"
         'README.md'
     )
 }
