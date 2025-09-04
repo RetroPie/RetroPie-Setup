@@ -87,6 +87,7 @@ function create_chroot_image() {
     rm -rf "$tmp"
 
     dmsetup remove "${partitions[@]}"
+    kpartx -d "$image"
 
     popd
     return 0
@@ -126,7 +127,7 @@ function install_rp_image() {
 
     # set default GPU mem (videocore only) and overscan_scale so ES scales to overscan settings.
     iniConfig "=" "" "$chroot/boot/config.txt"
-    if [[ "$dist_version" -lt 11 && "platform" != "rpi4" ]]; then
+    if [[ "$dist_version" -lt 11 && ("$platform" != "rpi4" && "$platform" != "rpi5") ]]; then
         iniSet "gpu_mem_256" 128
         iniSet "gpu_mem_512" 256
         iniSet "gpu_mem_1024" 256
