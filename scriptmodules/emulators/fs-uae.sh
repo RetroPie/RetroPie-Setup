@@ -17,50 +17,52 @@ rp_module_section="exp"
 rp_module_flags="!all !arm x11"
 
 function depends_fs-uae() {
+    local apt_file="/etc/apt/sources.list.d/fsuae-stable.list"
+    local key_file="/etc/apt/trusted.gpg.d/home_FrodeSolheim_stable.gpg"
+
+    if [[ "$md_mode" == "remove" ]]; then
+        rm -f "$apt_file"
+        # remove old keys
+        gpg --keyring /etc/apt/trusted.gpg --batch --yes --delete-keys "home:FrodeSolheim@build.opensuse.org" &>/dev/null$
+        rm -f "$key_file"
+        return
+    fi
+
+    [[ "$md_mode" != "install*" ]] && return
+    # handle installation for Debian or Ubuntu
     case "$__os_id" in
         Debian)
-            local apt_file="/etc/apt/sources.list.d/fsuae-stable.list"
-            if [[ "$md_mode" == "install" ]]; then
-                local name
-                case "$__os_debian_ver" in
-                    9)
-                        name="Debian_9.0"
-                        ;;
-                    10)
-                        name="Debian_10"
-                        ;;
-                    *)
-                        md_ret_errors+=("Sorry, fs-uae isn't currently available for Debian $__os_debian_ver")
-                        return 1
-                        ;;
-                esac
-                # add repository and key
-                local repo="http://download.opensuse.org/repositories/home:/FrodeSolheim:/stable/$name"
-                echo "deb $repo/ /" > "$apt_file"
-                download "$repo/Release.key" - | apt-key add -
-            else
-                # remove repository and key
-                rm -f "$apt_file"
-                # remove key by email
-                gpg --keyring /etc/apt/trusted.gpg --batch --yes --delete-keys "home:FrodeSolheim@build.opensuse.org" &>/dev/null
-            fi
-            aptUpdate
+            case "$__os_debian_ver" in
+                11|12)
+                    name="Debian_${__os_debian_ver}"
+                    ;;
+                 *)
+                    md_ret_errors+=("Sorry, fs-uae isn't currently available for Debian $__os_debian_ver")
+                    return 1
+                    ;;
+            esac
+            ;;
+        Ubuntu)
+            case "$__os_ubuntu_ver" in
+                20.04|22.04|24.04|24.10|25.04)
+                    name="xUbuntu_${__os_ubuntu_ver}"
+                    ;;
+                *)
+                     md_ret_errors+=("Sorry, fs-uae isn't currently available for Ubuntu $__os_ubuntu_ver")
+                     return 1
+                     ;;
+            esac
             ;;
         *)
-            # check if we are running on an Ubuntu based OS.
-            if [[ -n "$__os_ubuntu_ver" ]]; then
-                if [[ "$md_mode" == "install" ]]; then
-                    apt-add-repository -y ppa:fengestad/stable
-                else
-                    apt-add-repository -r -y ppa:fengestad/stable
-                fi
-                aptUpdate
-            else
-                md_ret_errors+=("Sorry, but $__os_id is not supported by fs-uae")
-                return 1
-            fi
+            md_ret_errors+=("Sorry, fs-uae isn't currently available for your system")
+            return 1
             ;;
     esac
+
+    # configure the APT repo and key
+    local repo="http://download.opensuse.org/repositories/home:/FrodeSolheim:/stable/$name"
+    echo "deb $repo/ /" > "$apt_file"
+    download "$repo/Release.key" - | gpg --dearmor | tee "$key_file" >/dev/null
 }
 
 function install_bin_fs-uae() {
@@ -73,6 +75,11 @@ function remove_fs-uae() {
 
 function configure_fs-uae() {
     mkRomDir "amiga"
+
+    addEmulator 1 "$md_id" "amiga" "CON:bash $md_inst/bin/fs-uae.sh %ROM%"
+    addSystem "amiga"
+
+    [[ "$md_mode" == "remove" ]] && return
 
     # copy configuring start script
     mkdir "$md_inst/bin"
@@ -95,7 +102,4 @@ function configure_fs-uae() {
     iniSet "floppy_drive_speed" "100"
     copyDefaultConfig "$config" "$md_conf_root/amiga/fs-uae/Default.fs-uae"
     rm "$config"
-
-    addEmulator 1 "$md_id" "amiga" "CON:bash $md_inst/bin/fs-uae.sh %ROM%"
-    addSystem "amiga"
 }
