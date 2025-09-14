@@ -33,10 +33,10 @@ index 20ba3fcc..c9b24c41 100644
  	"BTN_GUIDE_ALT",
  	"BTN_START_ALT",
 diff --git a/src/client/input/sdl2.c b/src/client/input/sdl2.c
-index a4fa5e25..ac14e768 100644
+index 1c693749..2921a498 100644
 --- a/src/client/input/sdl2.c
 +++ b/src/client/input/sdl2.c
-@@ -2239,9 +2239,6 @@ IN_Controller_Init(qboolean notify_user)
+@@ -2559,9 +2559,6 @@ IN_Controller_Init(qboolean notify_user)
  #ifdef SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE
  		SDL_SetHint( SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE, "1" );
  #endif
@@ -46,7 +46,7 @@ index a4fa5e25..ac14e768 100644
  
  		if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) == -1)
  		{
-@@ -2467,8 +2464,8 @@ IN_Init(void)
+@@ -2878,8 +2875,8 @@ IN_Init(void)
  	joy_forwardsensitivity = Cvar_Get("joy_forwardsensitivity", "1.0", CVAR_ARCHIVE);
  	joy_sidesensitivity = Cvar_Get("joy_sidesensitivity", "1.0", CVAR_ARCHIVE);
  

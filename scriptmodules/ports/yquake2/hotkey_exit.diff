@@ -1,14 +1,13 @@
 diff --git a/src/client/input/sdl2.c b/src/client/input/sdl2.c
-index 7ea263a4..4e16892e 100644
+index 527e3f5c..1c693749 100644
 --- a/src/client/input/sdl2.c
 +++ b/src/client/input/sdl2.c
-@@ -79,11 +79,12 @@ typedef enum
+@@ -94,10 +94,11 @@ typedef enum
  // IN_Update() called at the beginning of a frame to the
  // actual movement functions called at a later time.
  static float mouse_x, mouse_y;
 -static unsigned char joy_escbutton = SDL_CONTROLLER_BUTTON_START;
  static int joystick_left_x, joystick_left_y, joystick_right_x, joystick_right_y;
- static float gyro_yaw, gyro_pitch;
  static qboolean mlooking;
  
 +static qboolean hotkey_back = false;	// RetroPie Hotkey is Back instead of Guide
@@ -16,7 +15,7 @@ index 7ea263a4..4e16892e 100644
  // The last time input events were processed.
  // Used throughout the client.
  int sys_frame_time;
-@@ -652,6 +653,7 @@ IN_Update(void)
+@@ -857,6 +858,7 @@ IN_Update(void)
  	static qboolean left_trigger = false;
  	static qboolean right_trigger = false;
  	static qboolean left_stick[4] = {false, false, false, false};   // left, right, up, down virtual keys
@@ -24,7 +23,7 @@ index 7ea263a4..4e16892e 100644
  
  	static int consoleKeyCode = 0;
  
-@@ -852,9 +854,22 @@ IN_Update(void)
+@@ -1057,9 +1059,22 @@ IN_Update(void)
  				qboolean down = (event.type == SDL_CONTROLLERBUTTONDOWN);
  				unsigned char btn = event.cbutton.button;
  
@@ -50,7 +49,7 @@ index 7ea263a4..4e16892e 100644
  				break;
  			}
  
-@@ -2204,22 +2219,6 @@ IN_Controller_Init(qboolean notify_user)
+@@ -2524,22 +2539,6 @@ IN_Controller_Init(qboolean notify_user)
  	SDL_Joystick *joystick = NULL;
  	SDL_bool is_controller = SDL_FALSE;
  
@@ -73,7 +72,7 @@ index 7ea263a4..4e16892e 100644
  	cvar = Cvar_Get("in_initjoy", "1", CVAR_NOSET);
  	if (!cvar->value)
  	{
-@@ -2365,6 +2364,7 @@ IN_Controller_Init(qboolean notify_user)
+@@ -2685,6 +2684,7 @@ IN_Controller_Init(qboolean notify_user)
  
  			show_gamepad = true;
  			Com_Printf("Enabled as Game Controller, settings:\n%s\n", SDL_GameControllerMapping(controller));
@@ -81,10 +80,10 @@ index 7ea263a4..4e16892e 100644
  
  #ifndef NO_SDL_GYRO
  
-@@ -2540,6 +2540,7 @@ IN_Controller_Shutdown(qboolean notify_user)
- 	show_gamepad = show_gyro = show_haptic = false;
+@@ -2960,6 +2960,7 @@ IN_Controller_Shutdown(qboolean notify_user)
  	joystick_left_x = joystick_left_y = joystick_right_x = joystick_right_y = 0;
- 	gyro_yaw = gyro_pitch = 0;
+ 	joy_active_layout = LAYOUT_NONE;
+ 	gyro_enabled = false;
 +	hotkey_back = false;
  
  #ifdef NO_SDL_GYRO

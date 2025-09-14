@@ -12,7 +12,7 @@
 rp_module_id="yquake2"
 rp_module_desc="yquake2 - The Yamagi Quake II client"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/yquake2/yquake2/master/LICENSE"
-rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_8_51"
+rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_8_60"
 rp_module_section="exp"
 rp_module_flags="sdl2"
 
@@ -25,8 +25,8 @@ function depends_yquake2() {
 function sources_yquake2() {
     gitPullOrClone
     # get the add-ons sources
-    gitPullOrClone "$md_build/xatrix" "https://github.com/yquake2/xatrix" "XATRIX_2_15"
-    gitPullOrClone "$md_build/rogue" "https://github.com/yquake2/rogue" "ROGUE_2_14"
+    gitPullOrClone "$md_build/xatrix" "https://github.com/yquake2/xatrix" "XATRIX_2_16"
+    gitPullOrClone "$md_build/rogue" "https://github.com/yquake2/rogue" "ROGUE_2_15"
 
     # 1st enables Guide+Start to quit. 2nd restores buttons to SDL2 style (from SDL3).
     applyPatch "$md_data/hotkey_exit.diff"
@@ -120,6 +120,7 @@ function configure_yquake2() {
         iniSet "set gl1_discardfb" "0"
         iniSet "set gl1_lightmapcopies" "0"
         iniSet "set gl1_pointparameters" "1"
+        iniSet "set s_openal" "1"
     fi
 
     # Select most efficient renderer as default
