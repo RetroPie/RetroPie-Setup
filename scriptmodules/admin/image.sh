@@ -16,8 +16,23 @@ rp_module_flags=""
 
 function depends_image() {
     local depends=(kpartx unzip binfmt-support rsync parted squashfs-tools dosfstools e2fsprogs xz-utils)
-    isPlatform "x86" && depends+=(qemu-user-static)
+    isPlatform "x86" && depends+=(qemu-user-binfmt)
     getDepends "${depends[@]}"
+
+    # enable C flag in qemu-aarch64/qemu-arm binfmt_misc override to allow suid binaries in emulated chroot
+    if isPlatform "x86"; then
+        local platform
+        for platform in arm aarch64; do
+            local config="qemu-$platform.conf"
+            local src_config="/usr/lib/binfmt.d/$config"
+            local dest_config="/etc/binfmt.d/$config"
+            if [[ ! -f "$dest_config" ]]; then
+                printMsgs "console" "Adding C flag to $src_config (overriding in $dest_config)"
+                sed "s/$/C/" "/usr/lib/binfmt.d/$config" >"/etc/binfmt.d/$config"
+            fi
+        done
+        systemctl restart systemd-binfmt
+    fi
 }
 
 function _get_info_image() {
@@ -207,9 +222,6 @@ function _init_chroot_image() {
     mount none -t devpts "$chroot/dev/pts"
     mount -t proc /proc "$chroot/proc"
 
-    # required for emulated chroot
-    isPlatform "x86" && cp "/usr/bin/qemu-arm-static" "$chroot/usr/bin/"
-
     local nameserver="$__nameserver"
     [[ -z "$nameserver" ]] && nameserver="$(nmcli device show | grep IP4.DNS | awk '{print $NF; exit}')"
     # so we can resolve inside the chroot
@@ -228,8 +240,6 @@ function _deinit_chroot_image() {
     trap "" INT
 
     >"$chroot/etc/resolv.conf"
-
-    isPlatform "x86" && rm -f "$chroot/usr/bin/qemu-arm-static"
 
     # restore /etc/ld.so.preload if backup present
     if [[ -f "$chroot/etc/ld.so.preload.bak" ]]; then
