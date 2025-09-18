@@ -219,6 +219,9 @@ for module in "\${modules[@]}"; do
     sudo __platform=$platform __nodialog=1 __has_binaries=$__chroot_has_binaries ./retropie_packages.sh \$module
 done
 
+# Remove any generated ssh host keys, which can happen if there is an update to openssh-server since the last raspberrypi os image
+sudo rm /etc/ssh/*_key*
+
 sudo rm -rf tmp
 sudo apt-get clean
 _EOF_
