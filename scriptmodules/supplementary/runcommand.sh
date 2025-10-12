@@ -21,7 +21,7 @@ function _update_hook_runcommand() {
         [[ -f "$md_inst/joy2key.py" ]] && rp_callModule "joy2key"
         install_bin_runcommand
     fi
-    if hasFlag "armv6"; then
+    if hasFlag "armv6" && [[ "$__os_debian_ver" -le 12 ]]; then
         iniConfig " = " '"' "$configdir/all/runcommand.cfg"
         iniSet "legacy_joy2key" "1"
     fi
