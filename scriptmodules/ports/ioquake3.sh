@@ -17,7 +17,7 @@ rp_module_section="opt"
 rp_module_flags="!videocore"
 
 function depends_ioquake3() {
-    getDepends libsdl2-dev libgl1-mesa-dev
+    getDepends cmake libsdl2-dev libgl1-mesa-dev
 }
 
 function sources_ioquake3() {
@@ -25,27 +25,22 @@ function sources_ioquake3() {
 }
 
 function build_ioquake3() {
-    make clean
-    make
-    md_ret_require="$md_build/build/release-linux-$(_arch_ioquake3)/ioquake3.$(_arch_ioquake3)"
-}
-
-function _arch_ioquake3() {
-    # exact parsing from Makefile
-    echo "$(uname -m | sed -e 's/i.86/x86/' | sed -e 's/^arm.*/arm/' | sed -e 's/aarch64/arm64/')"
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+    cmake --build build --clean-first
+    md_ret_require="$md_build/build/Release/ioquake3"
 }
 
 function install_ioquake3() {
     md_ret_files=(
-        "build/release-linux-$(_arch_ioquake3)/ioq3ded.$(_arch_ioquake3)"
-        "build/release-linux-$(_arch_ioquake3)/ioquake3.$(_arch_ioquake3)"
-        "build/release-linux-$(_arch_ioquake3)/renderer_opengl1_$(_arch_ioquake3).so"
-        "build/release-linux-$(_arch_ioquake3)/renderer_opengl2_$(_arch_ioquake3).so"
+        "build/Release/ioq3ded"
+        "build/Release/ioquake3"
+        "build/Release/renderer_opengl1.so"
+        "build/Release/renderer_opengl2.so"
     )
 }
 
 function configure_ioquake3() {
-    local launcher=("$md_inst/ioquake3.$(_arch_ioquake3)")
+    local launcher=("$md_inst/ioquake3")
     isPlatform "mesa" && launcher+=("+set cl_renderer opengl1")
     isPlatform "kms" && launcher+=("+set r_mode -1" "+set r_customwidth %XRES%" "+set r_customheight %YRES%" "+set r_swapInterval 1")
 
