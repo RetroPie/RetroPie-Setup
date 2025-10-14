@@ -25,12 +25,15 @@ function _get_info_image() {
     local key="$2"
     # don't use $md_data so this function can be used directly from builder.sh
     local ini="${__mod_info[image/path]%/*}/image/dists/${dist}.ini"
-    [[ ! -f "$ini" ]] && fatalError "Definition file $ini does not exist"
 
-    iniConfig "=" "\"" "$ini"
-    iniGet "$key"
-    [[ -z "$ini_value" ]] && fatalError "Unable to locate key '$key' in definition file $ini"
-    echo "$ini_value"
+    # if the file is found try and extract the value else echo an empty string
+    if [[ -f "$ini" ]]; then
+        iniConfig "=" "\"" "$ini"
+        iniGet "$key"
+        echo "$ini_value"
+    else
+        echo ""
+    fi
 }
 
 function create_chroot_image() {
@@ -46,7 +49,10 @@ function create_chroot_image() {
     mkdir -p "$chroot"
 
     local url=$(_get_info_image "$dist" "url")
+    [[ -z "$url" ]] && fatalError "Unable to get url information for $dist"
+
     local format=$(_get_info_image "$dist" "format")
+    [[ -z "$format" ]] && fatalError "Unable to get format information for $dist"
 
     local base="raspbian-${dist}-lite"
     local image="${dist}.img"
@@ -110,6 +116,7 @@ function install_rp_image() {
     [[ -z "$chroot" ]] && chroot="$md_build/$dist"
 
     local dist_version="$(_get_info_image "$dist" "version")"
+    [[ -z "$dist_version" ]] && fatalError "Unable to get version information for $dist"
 
     # hostname to retropie
     echo "retropie" >"$chroot/etc/hostname"
@@ -134,9 +141,16 @@ function install_rp_image() {
     fi
     iniSet "overscan_scale" 1
 
-    # disable 64bit kernel
-    iniSet "arm_64bit" 0
+    # disable 64bit kernel on 32bit userland OSs (to disable rpi4 defaulting to 64bit kernel)
+    # 64 bit distros end in -64
+    if [[ "$dist" != *-64 ]]; then
+        iniSet "arm_64bit" 0
+    # otherwise if on 64bit switch to using the 4k page size kernel
+    else
+        iniSet "kernel" "kernel8.img"
+    fi
 
+    [[ -z "$__chroot_repo" ]] && __chroot_repo="https://github.com/RetroPie/RetroPie-Setup.git"
     [[ -z "$__chroot_branch" ]] && __chroot_branch="master"
     cat > "$chroot/home/pi/install.sh" <<_EOF_
 #!/bin/bash
@@ -148,7 +162,7 @@ if systemctl is-enabled userconfig &>/dev/null; then
 fi
 sudo apt-get update
 sudo apt-get -y install git dialog xmlstarlet joystick
-git clone -b "$__chroot_branch" https://github.com/RetroPie/RetroPie-Setup.git
+git clone -b "$__chroot_branch" "$__chroot_repo"
 cd RetroPie-Setup
 modules=(
     'raspbiantools apt_upgrade'
@@ -202,7 +216,9 @@ function _init_chroot_image() {
     echo "nameserver $nameserver" >"$chroot/etc/resolv.conf"
 
     # move /etc/ld.so.preload out of the way to avoid warnings
-    mv "$chroot/etc/ld.so.preload" "$chroot/etc/ld.so.preload.bak"
+    if [[ -f "$chroot/etc/ld.so.preload" ]]; then
+        mv "$chroot/etc/ld.so.preload" "$chroot/etc/ld.so.preload.bak"
+    fi
 }
 
 function _deinit_chroot_image() {
@@ -215,8 +231,10 @@ function _deinit_chroot_image() {
 
     isPlatform "x86" && rm -f "$chroot/usr/bin/qemu-arm-static"
 
-    # restore /etc/ld.so.preload
-    mv "$chroot/etc/ld.so.preload.bak" "$chroot/etc/ld.so.preload"
+    # restore /etc/ld.so.preload if backup present
+    if [[ -f "$chroot/etc/ld.so.preload.bak" ]]; then
+        mv "$chroot/etc/ld.so.preload.bak" "$chroot/etc/ld.so.preload"
+    fi
 
     umount -l "$chroot/proc" "$chroot/dev/pts"
     trap INT
@@ -245,21 +263,28 @@ function create_image() {
     local chroot="$2"
     [[ -z "$chroot" ]] && chroot="$md_build/chroot"
 
-    # make image size 300mb larger than contents of chroot
-    local mb_size=$(du -s --block-size 1048576 "$chroot" 2>/dev/null | cut -f1)
-    ((mb_size+=492))
+    local boot_size_mib="$3"
+    # if not specified default the boot size partition to 512MiB
+    [[ -z "$boot_size_mib" ]] && boot_size_mib=512
+
+    # get size of files in MiB
+    local chroot_size_mib=$(du -s -m "$chroot" 2>/dev/null | cut -f1)
+    # make image size 256MiB larger than contents of chroot and boot partition
+    local image_size_mib=$((boot_size_mib + chroot_size_mib + 256))
 
     # create image
     printMsgs "console" "Creating image $image ..."
-    dd if=/dev/zero of="$image" bs=1M count="$mb_size"
+    dd if=/dev/zero of="$image" bs=1M count="$image_size_mib"
 
     # partition
     printMsgs "console" "partitioning $image ..."
+    local boot_start_mib=8
+    local boot_end_mib=$((boot_start_mib + boot_size_mib))
     parted -s "$image" -- \
         mklabel msdos \
         unit mib \
-        mkpart primary fat32 4 260 \
-        mkpart primary 260 -1s
+        mkpart primary fat32 $boot_start_mib $boot_end_mib \
+        mkpart primary $boot_end_mib -1s
 
     # format
     printMsgs "console" "Formatting $image ..."
@@ -331,6 +356,8 @@ function all_image() {
     local dist="$1"
     local make_bb="$2"
     local platforms="$(_get_info_image "$dist" "platforms")"
+    [[ -z "$platforms" ]] && fatalError "Unable to get platforms information for $dist"
+
     local platform
     printMsgs "heading" "Building $platforms images based on $dist ..."
     for platform in $platforms; do
@@ -354,14 +381,28 @@ function platform_image() {
     rp_callModule image install_rp "$platform" "$dist" "$md_build/$dist"
 
     local dist_name="$(_get_info_image "$dist" "name")"
+    [[ -z "$dist_name" ]] && fatalError "Unable to get name information for $dist"
+
+    local dist_version="$(_get_info_image "$dist" "version")"
+    [[ -z "$dist_version" ]] && fatalError "Unable to get version information for $dist"
+
     local file_add="$(_get_info_image "$dist" "file_${platform}")"
+    [[ -z "$file_add" ]] && fatalError "Unable to get file_* information for $dist"
+
     local image_title="$(_get_info_image "$dist" "title_${platform}")"
+    [[ -z "$image_title" ]] && fatalError "Unable to get image_title information for $dist"
 
     local image_base="retropie-${dist_name}-${__version}-${file_add}"
     local image_name="${image_base}.img"
     local image_file="$dest/$image_name"
 
-    rp_callModule image create "$image_file" "$md_build/$dist"
+    local boot_size_mib=512
+    # use a 256MiB boot partition for Raspberry Pi OS lower than 12 (Bullseye and below)
+    if [[ "$dist_version" -lt 12 ]]; then
+        boot_size_mib=256
+    fi
+
+    rp_callModule image create "$image_file" "$md_build/$dist" $boot_size_mib
     [[ "$make_bb" -eq 1 ]] && rp_callModule image create_bb "$dest/${image_base}-berryboot.img256"
 
     printMsgs "console" "Compressing ${image_name} ..."
