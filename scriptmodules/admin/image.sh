@@ -80,16 +80,23 @@ function create_chroot_image() {
     local part_boot="${partitions[0]}"
     local part_root="${partitions[1]}"
 
+    # get temporary directory
     local tmp="$(mktemp -d -p "$md_build")"
-    mkdir -p "$tmp/boot"
 
+    # mount root partition
     mount "$part_root" "$tmp"
-    mount "$part_boot" "$tmp/boot"
+
+    # get the mount location of the boot partition from etc/fstab
+    local boot_path="$(_get_boot_path_image "$tmp")"
+
+    # create the boot partition mountpoint and mount
+    mkdir -p "$tmp$boot_path"
+    mount "$part_boot" "$tmp$boot_path"
 
     printMsgs "console" "Creating chroot from $image ..."
     rsync -aAHX --numeric-ids --delete "$tmp/" "$chroot/"
 
-    umount -l "$tmp/boot" "$tmp"
+    umount -l "$tmp$boot_path" "$tmp"
     rm -rf "$tmp"
 
     dmsetup remove "${partitions[@]}"
@@ -97,6 +104,12 @@ function create_chroot_image() {
 
     popd
     return 0
+}
+
+function _get_boot_path_image() {
+    local chroot="$1"
+    # extract boot partition mount location from fstab
+    awk '$3=="vfat" {print $2}' "$chroot/etc/fstab"
 }
 
 function install_rp_image() {
@@ -122,23 +135,26 @@ function install_rp_image() {
     echo "retropie" >"$chroot/etc/hostname"
     sed -i "s/raspberrypi/retropie/" "$chroot/etc/hosts"
 
+    local boot_path="$(_get_boot_path_image "$chroot")"
+
     # quieter boot / disable plymouth (as without the splash parameter it
     # causes all boot messages to be displayed and interferes with people
     # using tty3 to make the boot even quieter)
-    if ! grep -q consoleblank "$chroot/boot/cmdline.txt"; then
+    if ! grep -q consoleblank "$chroot$boot_path/cmdline.txt"; then
         # extra quiet as the raspbian usr/lib/raspi-config/init_resize.sh does
         # sed -i 's/ quiet init=.*$//' /boot/cmdline.txt so this will remove the last quiet
         # and the init line but leave ours intact
         sed -i "s/quiet/quiet loglevel=3 consoleblank=0 plymouth.enable=0 quiet/" "$chroot/boot/cmdline.txt"
     fi
 
-    # set default GPU mem (videocore only) and overscan_scale so ES scales to overscan settings.
-    iniConfig "=" "" "$chroot/boot/config.txt"
-    if [[ "$dist_version" -lt 11 && ("$platform" != "rpi4" && "$platform" != "rpi5") ]]; then
+    iniConfig "=" "" "$chroot$boot_path/config.txt"
+    # set default GPU mem (videocore only)
+    if [[ "$dist_version" -lt 11 && "$platform" == rpi[123] ]]; then
         iniSet "gpu_mem_256" 128
         iniSet "gpu_mem_512" 256
         iniSet "gpu_mem_1024" 256
     fi
+    # set overscan_scale so ES scales to overscan settings.
     iniSet "overscan_scale" 1
 
     # disable 64bit kernel on 32bit userland OSs (to disable rpi4 defaulting to 64bit kernel)
@@ -311,23 +327,32 @@ function create_image() {
 
     # mount
     printMsgs "console" "Mounting $image_name ..."
+
+    # get temporary directory
     local tmp="$(mktemp -d -p "$md_build")"
+
+    # mount root partition
     mount "$part_root" "$tmp"
-    mkdir -p "$tmp/boot"
-    mount "$part_boot" "$tmp/boot"
+
+    # get the mount location of the boot partition from etc/fstab
+    local boot_path="$(_get_boot_path_image "$chroot")"
+
+    # create the boot partition mountpoint and mount
+    mkdir -p "$tmp$boot_path"
+    mount "$part_boot" "$tmp$boot_path"
 
     # copy files
     printMsgs "console" "Rsyncing chroot to $image_name ..."
     rsync -aAHX --numeric-ids "$chroot/" "$tmp/"
 
     # we need to fix up the UUIDS for /boot/cmdline.txt and /etc/fstab
-    local old_id="$(sed "s/.*PARTUUID=\([^-]*\).*/\1/" $tmp/boot/cmdline.txt)"
+    local old_id="$(sed "s/.*PARTUUID=\([^-]*\).*/\1/" $tmp$boot_path/cmdline.txt)"
     local new_id="$(blkid -s PARTUUID -o value "$part_root" | cut -c -8)"
-    sed -i "s/$old_id/$new_id/" "$tmp/boot/cmdline.txt"
+    sed -i "s/$old_id/$new_id/" "$tmp$boot_path/cmdline.txt"
     sed -i "s/$old_id/$new_id/g" "$tmp/etc/fstab"
 
     # unmount
-    umount -l "$tmp/boot" "$tmp"
+    umount -l "$tmp$boot_path" "$tmp"
     rm -rf "$tmp"
 
     kpartx -d "$image_name"
