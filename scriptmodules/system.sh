@@ -74,7 +74,7 @@ function conf_binary_vars() {
     # add platform folder (eg. rpi4)
     __binary_path="$__os_binaries/$__platform"
 
-	# add kms folder when building for kms drivers
+    # add kms folder when building for kms drivers
     isPlatform "kms" && __binary_path+="/kms"
     __binary_url="$__binary_base_url/$__binary_path"
 
