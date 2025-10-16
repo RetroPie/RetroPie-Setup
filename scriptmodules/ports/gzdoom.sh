@@ -25,6 +25,10 @@ function _get_version_gzdoom() {
     echo $gzdoom_version
 }
 
+function _get_version_zmusic_gzdoom() {
+    echo "1.3.0"
+}
+
 function depends_gzdoom() {
     local depends=(
         cmake libfluidsynth-dev libsdl2-dev libmpg123-dev libsndfile1-dev libbz2-dev
@@ -38,7 +42,7 @@ function sources_gzdoom() {
     gitPullOrClone
     # add 'ZMusic' repo
     cd "$md_build"
-    gitPullOrClone zmusic https://github.com/ZDoom/ZMusic
+    gitPullOrClone zmusic https://github.com/ZDoom/ZMusic $(_get_version_zmusic_gzdoom)
     # workaround for Ubuntu 20.04 older vpx/wepm dev libraries
     sed -i 's/IMPORTED_TARGET libw/IMPORTED_TARGET GLOBAL libw/' CMakeLists.txt
     # lzma assumes hardware crc support on arm which breaks when building on armv7
@@ -76,7 +80,7 @@ function install_gzdoom() {
         'release/game_widescreen_gfx.pk3'
         'release/soundfonts'
         "release/zmusic/lib/libzmusic.so.1"
-        "release/zmusic/lib/libzmusic.so.1.2.0"
+        "release/zmusic/lib/libzmusic.so.$(_get_version_zmusic_gzdoom)"
         'README.md'
     )
 }
