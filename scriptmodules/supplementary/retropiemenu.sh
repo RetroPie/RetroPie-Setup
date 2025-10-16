@@ -91,7 +91,12 @@ function configure_retropiemenu()
         'Connect to or disconnect from a WiFi network and configure WiFi settings.'
     )
 
-    setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
+    # 'legacy' joy2key uses direct tty I/O and needs the extra redirection arguments
+    iniConfig " = " '"' "$configdir/all/runcommand.cfg"
+    iniGet "legacy_joy2key"
+    local tty_args
+    [[ "$ini_value" == "1" ]] && tty_args=" </dev/tty >/dev/tty"
+    setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% $tty_args" "" "retropie"
 
     local file
     local name
