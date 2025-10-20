@@ -299,6 +299,8 @@ function _mapPackage() {
         libfreetype6-dev)
             [[ "$__os_debian_ver" -gt 10 ]] || compareVersions "$__os_ubuntu_ver" gt 23.04 && pkg="libfreetype-dev"
             ;;
+        polkitd)
+            [[ "$__os_debian_ver" -lt 13 ]] || compareVersions "$_os_ubuntu_ver" lt 24.04 && pkg="policykit-1"
     esac
     echo "$pkg"
 }

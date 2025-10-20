@@ -11,7 +11,7 @@
 
 rp_module_id="pegasus-fe-dev"
 rp_module_desc="Pegasus: A cross platform, customizable graphical frontend (lastest master)"
-rp_module_help="Pegasus is a cross platform, customizable graphical frontend for launching emulators and managing your game collection.\nThis package provides source installation on platforms not covered by the upstream project pre-built binaries (i.e. ARM 64bit)."
+rp_module_help="Pegasus is a cross platform, customizable graphical frontend for launching emulators and managing your game collection.\nThis package provides source installation on platforms not covered by the upstream project pre-built binaries (i.e. ARM 64bit, Ubuntu 22.04 or later, Debian 11 or later)."
 rp_module_licence="GPL3 https://raw.githubusercontent.com/mmatyas/pegasus-frontend/master/LICENSE.md"
 rp_module_section="exp"
 rp_module_repo="git https://github.com/mmatyas/pegasus-frontend master"
@@ -36,7 +36,7 @@ function depends_pegasus-fe-dev() {
         libqt5multimedia5-plugins
         libsdl2-dev
         pkg-config
-        policykit-1
+        polkitd
         qml-module-qtgraphicaleffects qml-module-qtmultimedia qml-module-qtqml
         qml-module-qtqml-models2
         qml-module-qtquick-controls qml-module-qtquick-controls2
