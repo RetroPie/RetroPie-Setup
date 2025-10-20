@@ -320,12 +320,12 @@ function _toggle_pipewire_audiosettings() {
     local state=$1
 
     if [[ "$state" == "on" ]]; then
-        _pa_cmd_audiosettings systemctl --user unmask pipewire-pulse.socket pipewire.socket
+        _pa_cmd_audiosettings systemctl --user unmask {pipewire,pipewire-pulse}.{socket,service}
         _pa_cmd_audiosettings systemctl --user start  pipewire.service pipewire-pulse.service wireplumber.service
     fi
 
     if [[ "$state" == "off" ]]; then
-        _pa_cmd_audiosettings systemctl --user mask pipewire-pulse.socket pipewire.socket
+        _pa_cmd_audiosettings systemctl --user mask {pipewire,pipewire-pulse}.{socket,service}
         _pa_cmd_audiosettings systemctl --user stop pipewire.service pipewire-pulse.service wireplumber.service
      fi
 }
