@@ -15,7 +15,6 @@ rp_module_help="Copy your Love games to $romdir/love"
 rp_module_licence="ZLIB https://raw.githubusercontent.com/love2d/love/master/license.txt"
 rp_module_repo="git https://github.com/love2d/love 11.5"
 rp_module_section="opt"
-rp_module_flags="!aarch64"
 
 function depends_love() {
     local depends=(autotools-dev automake libtool pkg-config libfreetype6-dev libluajit-5.1-dev libphysfs-dev libsdl2-dev libopenal-dev libogg-dev libtheora-dev libvorbis-dev libflac-dev libflac++-dev libmodplug-dev libmpg123-dev libmng-dev libjpeg-dev)
