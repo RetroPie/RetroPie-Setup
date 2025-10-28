@@ -12,14 +12,26 @@
 rp_module_id="dsda-doom"
 rp_module_desc="DOOM source port based on PrBoom+, focused on speedrunning and QoL"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/kraflab/dsda-doom/master/prboom2/COPYING"
-rp_module_repo="git https://github.com/kraflab/dsda-doom master"
+rp_module_repo="git https://github.com/kraflab/dsda-doom :_get_branch_dsda-doom"
 rp_module_section="exp"
 rp_module_flags="sdl2"
+
+function _get_branch_dsda-doom() {
+    local branch="v0.29.4"
+    if [[ "$__os_debian_ver" -lt 11 ]]; then
+        branch="v0.29.3"
+    fi
+    echo "$branch"
+}
+
+function _check_fluidsynth_dsda-doom() {
+    dpkg-query -W -f '${Version}' libfluidsynth1 2>/dev/null
+}
 
 function depends_dsda-doom() {
     local depends=(cmake libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libogg-dev libmad0-dev libvorbis-dev libzip-dev zlib1g-dev zipcmp zipmerge ziptool)
     # we need Fluidsynth 2+, check whether the platform has the older libfluidsynth1
-    [[ -z "$(dpkg-query -W -f '${Version}' libfluidsynth1)" ]] && depends+=(libfluidsynth-dev fluidsynth)
+    [[ -z "$(_check_fluidsynth_dsda-doom)" ]] && depends+=(libfluidsynth-dev fluidsynth libsndfile1-dev)
 
     getDepends "${depends[@]}"
 }
@@ -33,7 +45,7 @@ function build_dsda-doom() {
     cd release
     local params=(-DCMAKE_INSTALL_PREFIX="$md_inst" -DCMAKE_BUILD_TYPE=Release -DWITH_PORTMIDI=OFF)
     # disable fluidsynth when the v1 is found
-    [[ -n "$(dpkg-query -W -f '${Version}' libfluidsynth1)" ]] && params+=(-DWITH_FLUIDSYNTH=OFF)
+    [[ -n "$(_check_fluidsynth_dsda-doom)" ]] && params+=(-DWITH_FLUIDSYNTH=OFF)
     cmake "${params[@]}" ../prboom2
     make
     md_ret_require="$md_build/release/dsda-doom"
