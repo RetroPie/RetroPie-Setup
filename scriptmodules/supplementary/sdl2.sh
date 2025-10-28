@@ -145,15 +145,15 @@ function install_sdl2() {
 }
 
 function __binary_url_sdl2() {
-    rp_hasBinaries && echo "$__binary_url/libsdl2-dev_$(get_pkg_ver_sdl2)_armhf.deb"
+    rp_hasBinaries && echo "$__binary_url/libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb"
 }
 
 function install_bin_sdl2() {
     local tmp="$(mktemp -d)"
     pushd "$tmp" >/dev/null
     local ret=1
-    if downloadAndVerify "$__binary_url/libsdl2-dev_$(get_pkg_ver_sdl2)_armhf.deb" && \
-       downloadAndVerify "$__binary_url/libsdl2-2.0-0_$(get_pkg_ver_sdl2)_armhf.deb"; then
+    if downloadAndVerify "$__binary_url/libsdl2-dev_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb" && \
+       downloadAndVerify "$__binary_url/libsdl2-2.0-0_$(get_pkg_ver_sdl2)_$(get_arch_sdl2).deb"; then
         install_sdl2
         ret=0
     fi
