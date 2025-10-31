@@ -13,7 +13,7 @@ rp_module_id="solarus"
 rp_module_desc="Solarus - A lightweight, free and open-source game engine for Action-RPGs"
 rp_module_help="Copy your Solarus quests (games) to $romdir/solarus"
 rp_module_licence="GPL3 https://gitlab.com/solarus-games/solarus/-/raw/dev/license"
-rp_module_repo="git https://gitlab.com/solarus-games/solarus.git master"
+rp_module_repo="git https://gitlab.com/solarus-games/solarus.git release-2.0.1"
 rp_module_section="opt"
 
 function _options_cfg_file_solarus() {
@@ -52,7 +52,7 @@ function build_solarus() {
     cmake "${params[@]}" ..
     make
     md_ret_require=(
-        "$md_build/build/solarus-run"
+        "$md_build/build/cli/solarus-run"
     )
 }
 
