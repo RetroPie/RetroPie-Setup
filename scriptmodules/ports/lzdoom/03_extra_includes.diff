@@ -1,0 +1,169 @@
+diff --git a/libraries/music_common/fileio.h b/libraries/music_common/fileio.h
+index dcea971..8affc3b 100644
+--- a/libraries/music_common/fileio.h
++++ b/libraries/music_common/fileio.h
+@@ -27,6 +27,7 @@
+ #include <string.h>
+ #include <vector>
+ #include <string>
++#include <cstdint>
+ 
+ #if defined _WIN32 && !defined _WINDOWS_	// only define this if windows.h is not included.
+ 	// I'd rather not include Windows.h for just this. This header is not supposed to pollute everything it touches.
+diff --git a/libraries/zmusic/mididevices/music_adlmidi_mididevice.cpp b/libraries/zmusic/mididevices/music_adlmidi_mididevice.cpp
+index 4d1f844..6c5e6b3 100644
+--- a/libraries/zmusic/mididevices/music_adlmidi_mididevice.cpp
++++ b/libraries/zmusic/mididevices/music_adlmidi_mididevice.cpp
+@@ -35,6 +35,7 @@
+ // HEADER FILES ------------------------------------------------------------
+ 
+ #include <stdlib.h>
++#include <stdexcept>
+ 
+ #include "zmusic/zmusic_internal.h"
+ #include "mididevice.h"
+diff --git a/libraries/zmusic/mididevices/music_fluidsynth_mididevice.cpp b/libraries/zmusic/mididevices/music_fluidsynth_mididevice.cpp
+index 4e0edf4..7196830 100644
+--- a/libraries/zmusic/mididevices/music_fluidsynth_mididevice.cpp
++++ b/libraries/zmusic/mididevices/music_fluidsynth_mididevice.cpp
+@@ -41,6 +41,7 @@
+ #include "mididevice.h"
+ #include "zmusic/mus2midi.h"
+ 
++#include <stdexcept>
+ // FluidSynth implementation of a MIDI device -------------------------------
+ 
+ FluidConfig fluidConfig;
+diff --git a/libraries/zmusic/mididevices/music_opl_mididevice.cpp b/libraries/zmusic/mididevices/music_opl_mididevice.cpp
+index 8ed7446..5e17edc 100644
+--- a/libraries/zmusic/mididevices/music_opl_mididevice.cpp
++++ b/libraries/zmusic/mididevices/music_opl_mididevice.cpp
+@@ -39,6 +39,8 @@
+ #include "mididevice.h"
+ #include "zmusic/mus2midi.h"
+ 
++#include <stdexcept>
++
+ #ifdef HAVE_OPL
+ #include "oplsynth/opl.h"
+ #include "oplsynth/opl_mus_player.h"
+@@ -333,4 +335,4 @@ MIDIDevice* CreateOplMIDIDevice(const char* Args)
+ {
+ 	throw std::runtime_error("OPL device not supported in this configuration");
+ }
+-#endif
+\ No newline at end of file
++#endif
+diff --git a/libraries/zmusic/mididevices/music_opnmidi_mididevice.cpp b/libraries/zmusic/mididevices/music_opnmidi_mididevice.cpp
+index fece81a..30447a7 100644
+--- a/libraries/zmusic/mididevices/music_opnmidi_mididevice.cpp
++++ b/libraries/zmusic/mididevices/music_opnmidi_mididevice.cpp
+@@ -37,6 +37,8 @@
+ #include "mididevice.h"
+ #include "zmusic/zmusic_internal.h"
+ 
++#include <stdexcept>
++
+ #ifdef HAVE_OPN
+ #include "opnmidi.h"
+ 
+diff --git a/libraries/zmusic/mididevices/music_timidity_mididevice.cpp b/libraries/zmusic/mididevices/music_timidity_mididevice.cpp
+index 2d22192..0538d3d 100644
+--- a/libraries/zmusic/mididevices/music_timidity_mididevice.cpp
++++ b/libraries/zmusic/mididevices/music_timidity_mididevice.cpp
+@@ -38,6 +38,7 @@
+ #include "mididevice.h"
+ #include "zmusic/zmusic_internal.h"
+ 
++#include <stdexcept>
+ #ifdef HAVE_GUS
+ 
+ #include "timidity/timidity.h"
+diff --git a/libraries/zmusic/mididevices/music_timiditypp_mididevice.cpp b/libraries/zmusic/mididevices/music_timiditypp_mididevice.cpp
+index 825e80e..342d642 100644
+--- a/libraries/zmusic/mididevices/music_timiditypp_mididevice.cpp
++++ b/libraries/zmusic/mididevices/music_timiditypp_mididevice.cpp
+@@ -35,6 +35,8 @@
+ #include "mididevice.h"
+ #include "zmusic/zmusic_internal.h"
+ 
++#include <stdexcept>
++
+ #ifdef HAVE_TIMIDITY
+ 
+ #include "timiditypp/timidity.h"
+@@ -239,4 +241,4 @@ MIDIDevice* CreateTimidityPPMIDIDevice(const char* Args, int samplerate)
+ {
+ 	throw std::runtime_error("Timidity++ device not supported in this configuration");
+ }
+-#endif
+\ No newline at end of file
++#endif
+diff --git a/libraries/zmusic/mididevices/music_wavewriter_mididevice.cpp b/libraries/zmusic/mididevices/music_wavewriter_mididevice.cpp
+index d610566..a2e1809 100644
+--- a/libraries/zmusic/mididevices/music_wavewriter_mididevice.cpp
++++ b/libraries/zmusic/mididevices/music_wavewriter_mididevice.cpp
+@@ -40,6 +40,7 @@
+ #include "../music_common/fileio.h"
+ #include <errno.h>
+ 
++#include <stdexcept>
+ // MACROS ------------------------------------------------------------------
+ 
+ // TYPES -------------------------------------------------------------------
+diff --git a/libraries/zmusic/mididevices/music_wildmidi_mididevice.cpp b/libraries/zmusic/mididevices/music_wildmidi_mididevice.cpp
+index 2146830..685bbe1 100644
+--- a/libraries/zmusic/mididevices/music_wildmidi_mididevice.cpp
++++ b/libraries/zmusic/mididevices/music_wildmidi_mididevice.cpp
+@@ -37,6 +37,7 @@
+ #include "mididevice.h"
+ #include "zmusic/zmusic_internal.h"
+ 
++#include <stdexcept>
+ #ifdef HAVE_WILDMIDI
+ 
+ #include "wildmidi/wildmidi_lib.h"
+@@ -284,4 +285,4 @@ MIDIDevice* CreateWildMIDIDevice(const char* Args, int samplerate)
+ {
+ 	throw std::runtime_error("WildMidi device not supported in this configuration");
+ }
+-#endif
+\ No newline at end of file
++#endif
+diff --git a/libraries/zmusic/musicformats/music_midi.cpp b/libraries/zmusic/musicformats/music_midi.cpp
+index 6c261f9..e693dca 100644
+--- a/libraries/zmusic/musicformats/music_midi.cpp
++++ b/libraries/zmusic/musicformats/music_midi.cpp
+@@ -36,6 +36,7 @@
+ 
+ #include <string>
+ #include <algorithm>
++#include <stdexcept>
+ #include <assert.h>
+ #include "zmusic/zmusic_internal.h"
+ #include "zmusic/musinfo.h"
+diff --git a/libraries/zmusic/streamsources/music_gme.cpp b/libraries/zmusic/streamsources/music_gme.cpp
+index 16fdc77..4ae886e 100644
+--- a/libraries/zmusic/streamsources/music_gme.cpp
++++ b/libraries/zmusic/streamsources/music_gme.cpp
+@@ -43,6 +43,7 @@
+ #include <mutex>
+ #include "../..//libraries/music_common/fileio.h"
+ 
++#include <stdexcept>
+ // MACROS ------------------------------------------------------------------
+ 
+ // TYPES -------------------------------------------------------------------
+diff --git a/libraries/zmusic/streamsources/music_opl.cpp b/libraries/zmusic/streamsources/music_opl.cpp
+index 87f2723..90e5388 100644
+--- a/libraries/zmusic/streamsources/music_opl.cpp
++++ b/libraries/zmusic/streamsources/music_opl.cpp
+@@ -37,7 +37,7 @@
+ #include "../../libraries/music_common/fileio.h"
+ #include "zmusic/midiconfig.h"
+ 
+-
++#include <stdexcept>
+ //==========================================================================
+ //
+ // OPL file played by a software OPL2 synth and streamed through the sound system

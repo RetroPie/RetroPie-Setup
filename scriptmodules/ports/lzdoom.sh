@@ -33,6 +33,7 @@ function sources_lzdoom() {
         # patch the 21.06 version of LZMA-SDK to disable the CRC32 ARMv8 intrinsics forced for ARM CPUs
         applyPatch "$md_data/02_lzma_sdk_dont_force_arm_crc32.diff"
     fi
+    applyPatch "$md_data/03_extra_includes.diff"
 }
 
 function build_lzdoom() {
