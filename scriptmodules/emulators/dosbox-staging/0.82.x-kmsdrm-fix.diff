@@ -1,0 +1,22 @@
+# Workaround backported to 0.82.x from 
+# https://github.com/dosbox-staging/dosbox-staging/pull/4589/commits/525e98ca3403ef548ba500bcf79a9e797929655c 
+# 
+diff --git a/src/gui/sdlmain.cpp b/src/gui/sdlmain.cpp
+index 04b7641..d17c2e6 100644
+--- a/src/gui/sdlmain.cpp
++++ b/src/gui/sdlmain.cpp
+@@ -1361,6 +1361,14 @@ static SDL_Window* SetWindowMode(const RenderingBackend rendering_backend,
+ 
+ 		assert(sdl.window == nullptr); // enusre we don't leak
+ 		sdl.window = SDL_CreateWindow("", pos.x, pos.y, width, height, flags);
++		if (!sdl.window) {
++			// Try again without sRGB. This has been a problem with KMSDRM.
++			SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 0);
++			sdl.window = SDL_CreateWindow("", pos.x, pos.y, width, height, flags);
++			if (sdl.window) {
++				LOG_ERR("OPENGL: Failed to create an sRGB framebuffer. Falling back to non-sRGB.");
++			}
++		}
+ 		if (!sdl.window) {
+ 			LOG_ERR("SDL: Failed to create window: %s", SDL_GetError());
+ 			return nullptr;
