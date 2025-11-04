@@ -13,8 +13,16 @@ rp_module_id="solarus"
 rp_module_desc="Solarus - A lightweight, free and open-source game engine for Action-RPGs"
 rp_module_help="Copy your Solarus quests (games) to $romdir/solarus"
 rp_module_licence="GPL3 https://gitlab.com/solarus-games/solarus/-/raw/dev/license"
-rp_module_repo="git https://gitlab.com/solarus-games/solarus.git release-2.0.1"
+rp_module_repo="git https://gitlab.com/solarus-games/solarus.git :_get_branch_solarus"
 rp_module_section="opt"
+
+function _get_branch_solarus() {
+    local branch="release-2.0.1"
+    if [[ "$__os_debian_ver" -lt 11 ]]; then
+        branch="release-1.6.5"
+    fi
+    echo "$branch"
+}
 
 function _options_cfg_file_solarus() {
     echo "$configdir/solarus/options.cfg"
@@ -51,8 +59,11 @@ function build_solarus() {
     cd build
     cmake "${params[@]}" ..
     make
+    # solarus v2.x moved the executable to build/cli
+    local exe_path="$md_build/build"
+    [[ -d "$exe_path/cli" ]] && exe_path="$exe_path/cli"
     md_ret_require=(
-        "$md_build/build/cli/solarus-run"
+        "$exe_path/solarus-run"
     )
 }
 
