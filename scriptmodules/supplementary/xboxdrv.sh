@@ -54,18 +54,34 @@ function enable_xboxdrv() {
         config+=" --id $i --led $((i+2)) --deadzone $deadzone --silent --trigger-as-button"
     done
 
-    if grep -q "xboxdrv" /etc/rc.local; then
-        dialog --yesno "xboxdrv is already enabled in /etc/rc.local with the following config. Do you want to update it ?\n\n$(grep "xboxdrv" /etc/rc.local)" 22 76 2>&1 >/dev/tty || return
-    fi
+    # remove any previously start-up commands in /etc/rc.local
+    [[ -f /etc/rc.local ]] && sed -i "/xboxdrv/d" /etc/rc.local
 
-    sed -i "/xboxdrv/d" /etc/rc.local
-    sed -i "s|^exit 0$|${config}\\nexit 0|" /etc/rc.local
-    printMsgs "dialog" "xboxdrv enabled in /etc/rc.local with the following config\n\n$config\n\nIt will be started on next boot."
+    cat > /etc/systemd/system/xboxdrv.service << _EOF_
+[Unit]
+Description=Userspace Xbox gamepad driver and input remapper
+ConditionPathExists=$md_inst/bin/xboxdrv
+
+[Service]
+Type=forking
+PIDFile=/run/xboxdrv.pid
+ExecStart=$config --pid-file /run/xboxdrv.pid
+
+[Install]
+WantedBy=multi-user.target
+_EOF_
+    systemctl daemon-reload
+    systemctl -q start xboxdrv
+    systemctl enable xboxdrv
+    printMsgs "dialog" "xboxdrv has been enabled and started"
 }
 
 function disable_xboxdrv() {
-    sed -i "/xboxdrv/d" /etc/rc.local
-    printMsgs "dialog" "xboxdrv configuration in /etc/rc.local has been removed."
+    [[ -f /etc/rc.local ]] && sed -i "/xboxdrv/d" /etc/rc.local
+    systemctl -q is-enabled xboxdrv 2>/dev/null && systemctl disable xboxdrv
+    systemctl -q is-active xboxdrv 2>/dev/null && systemctl stop xboxdrv
+
+    printMsgs "dialog" "xboxdrv auto-start has been disabled"
 }
 
 function controllers_xboxdrv() {
@@ -117,9 +133,14 @@ function deadzone_xboxdrv() {
     echo "$deadzone"
 }
 
-function configure_xboxdrv() {
-    # make sure existing configs will point to the new xboxdrv
-    sed -i "s|^xboxdrv|\"$md_inst/bin/xboxdrv\"|" /etc/rc.local
+function remove_xboxdrv()
+{
+    disable_xboxdrv
+
+    if [[ -f "/etc/systemd/system/xboxdrv.service" ]]; then
+        rm -f "/etc/systemd/system/xboxdrv.service"
+        systemctl daemon-reload
+    fi
 }
 
 function gui_xboxdrv() {
@@ -127,7 +148,6 @@ function gui_xboxdrv() {
         if [[ $__has_binaries -eq 1 ]]; then
             rp_callModule "$md_id" depends
             rp_callModule "$md_id" install_bin
-            rp_callModule "$md_id" configure
         else
             rp_callModule "$md_id"
         fi
@@ -135,30 +155,32 @@ function gui_xboxdrv() {
 
     local controllers="$(def_controllers_xboxdrv)"
     local deadzone="$(def_deadzone_xboxdrv)"
+    local is_enabled="disabled"
+    local operation="Enable"
+    systemctl -q is-enabled xboxdrv && is_enabled="enabled" && operation="Disable"
 
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
-
     while true; do
         local options=(
-            1 "Enable xboxdrv"
-            2 "Disable xboxdrv"
-            3 "Set number of controllers to enable (currently $controllers)"
-            4 "Set analog stick deadzone (currently $deadzone)"
+            1 "$operation xboxdrv (currently: $is_enabled)"
+            2 "Set number of controllers to enable (currently $controllers)"
+            3 "Set analog stick deadzone (currently $deadzone)"
         )
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
 
             case "$choice" in
                 1)
-                    enable_xboxdrv "$controllers" "$deadzone"
+                    if [[ $is_enabled == "disabled" ]]; then
+                        enable_xboxdrv "$controllers" "$deadzone"
+                    else
+                        disable_xboxdrv
+                    fi
                     ;;
                 2)
-                    disable_xboxdrv
-                    ;;
-                3)
                     controllers=$(controllers_xboxdrv $controllers)
                     ;;
-                4)
+                3)
                     deadzone=$(deadzone_xboxdrv $deadzone)
                     ;;
             esac
