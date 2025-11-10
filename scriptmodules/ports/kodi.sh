@@ -56,7 +56,7 @@ function depends_kodi() {
     fi
 
     # required for reboot/shutdown options. Don't try and remove if removing dependencies
-    [[ "$md_mode" == "install" ]] && getDepends policykit-1
+    [[ "$md_mode" == "install" ]] && getDepends polkitd
 
     addUdevInputRules
 }

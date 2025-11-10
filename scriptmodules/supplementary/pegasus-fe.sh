@@ -24,7 +24,7 @@ function depends_pegasus-fe() {
         gstreamer1.0-plugins-good
         jq
         libsdl2-dev
-        policykit-1
+        polkitd
     )
     # show an error on 64bit ARMs, since there are no pre-built packages for it
     if isPlatform "arm" && hasFlag "64bit"; then
