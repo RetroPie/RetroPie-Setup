@@ -18,17 +18,20 @@ rp_module_section="opt"
 rp_module_flags="sdl2"
 
 function _get_branch_dosbox-staging() {
+    local branch="v0.82.2"
+
     # use 0.80.1 for VideoCore devices, 0.81 and later require OpenGL
     if isPlatform "videocore"; then
-        echo "v0.80.1"
-        return
+        branch="v0.80.1"
+    # v0.81.2 is the last version that can build on gcc < 10
+    elif [[ "$__gcc_version" -lt 10 ]]; then
+        branch="v0.81.2"
+    # v0.82.0 is the last version that can build on gcc < 11
+    elif [[ "$__gcc_version" -lt 11 ]]; then
+        branch="v0.82.0"
     fi
-    # gcc in Debian 10 (buster) cannot compile 0.82 and later
-    if [[ "$__os_debian_ver" -lt 11 ]]; then
-        echo "v0.81.2"
-        return
-    fi
-    download https://api.github.com/repos/dosbox-staging/dosbox-staging/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
+
+    echo "$branch"
 }
 
 function depends_dosbox-staging() {
@@ -46,6 +49,10 @@ function depends_dosbox-staging() {
 
 function sources_dosbox-staging() {
     gitPullOrClone
+    # patch 0.81.x/0.82.x series with fix for kmsdrm
+    if [[ "$(_get_branch_dosbox-staging)" == v0.8[12].*  ]]; then
+        applyPatch "$md_data/0.82.x-kmsdrm-fix.diff"
+    fi
     # Check if we have at least meson>=0.57, otherwise install it locally for the build
     local meson_version="$(meson --version)"
     if compareVersions "$meson_version" lt 0.57; then
