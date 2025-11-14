@@ -14,8 +14,7 @@ rp_module_desc="Generate mkdocs documentation from wiki"
 rp_module_section=""
 
 function depends_wikidocs() {
-    getDepends python3 python3-pip libyaml-dev python3-setuptools python3-wheel
-    pip3 install --upgrade mkdocs mkdocs-material mdx_truly_sane_lists git+https://github.com/cmitu/mkdocs-altlink-plugin
+    getDepends python3 python3-pip libyaml-dev python3-setuptools python3-wheel python3-virtualenv
 }
 
 function sources_wikidocs() {
@@ -23,7 +22,11 @@ function sources_wikidocs() {
 }
 
 function build_wikidocs() {
+    python3 -m venv "$md_inst"
+    source "$md_inst/bin/activate"
+    pip3 install --upgrade mkdocs mkdocs-material mdx_truly_sane_lists git+https://github.com/cmitu/mkdocs-altlink-plugin
     mkdocs build
+    deactivate
 }
 
 function install_wikidocs() {
