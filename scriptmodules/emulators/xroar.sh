@@ -13,7 +13,7 @@ rp_module_id="xroar"
 rp_module_desc="Dragon / CoCo emulator XRoar"
 rp_module_help="ROM Extensions: .bin .cas .wav .bas .asc .dmk .jvc .os9 .dsk .vdk .rom .ccc .sna\n\nCopy your Dragon roms to $romdir/dragon32\n\nCopy your CoCo games to $romdir/coco\n\nCopy the required BIOS files d32.rom (Dragon 32), bas13.rom (CoCo), coco3.rom/coco3p.rom (CoCo3) to $biosdir"
 rp_module_licence="GPL3 http://www.6809.org.uk/xroar/"
-rp_module_repo="git http://www.6809.org.uk/git/xroar.git fixes-1.8"
+rp_module_repo="git http://www.6809.org.uk/git/xroar.git 1.10"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -54,6 +54,7 @@ function configure_xroar() {
     local params=()
     ! isPlatform "x11" && params+=(-vo sdl -ccr simple)
     ! isPlatform "videocore" && params+=(-fs)
+    isPlatform "kms" && params+=(-vo-vsync)
     addEmulator 1 "$md_id-dragon32" "dragon32" "$md_inst/bin/xroar ${params[*]} -machine dragon32 -run %ROM%"
     addEmulator 1 "$md_id-cocous" "coco" "$md_inst/bin/xroar ${params[*]} -machine cocous -run %ROM%"
     addEmulator 0 "$md_id-coco" "coco" "$md_inst/bin/xroar ${params[*]} -machine coco -run %ROM%"
