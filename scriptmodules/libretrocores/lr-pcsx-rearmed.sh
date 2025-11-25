@@ -53,7 +53,6 @@ function install_lr-pcsx-rearmed() {
         'pcsx_rearmed_libretro.so'
         'NEWS'
         'README.md'
-        'readme.txt'
     )
 }
 
