@@ -18,6 +18,9 @@ function apt_upgrade_raspbiantools() {
     # install an older kernel/firmware for stretch to resolve newer kernel issues or unhold if updating to a newer release
     stretch_fix_raspbiantools
 
+    # on Buster, use the legacy Raspbian archive for package installation
+    buster_fix_apt_raspbiantools
+
     # on Buster, always install the Bluez package from the RPI repos
     buster_bluez_pin_raspbiantools
 
@@ -78,6 +81,12 @@ function stretch_fix_raspbiantools() {
             # we want to unhold it to allow kernel updates again
             install_firmware_raspbiantools "$ver" unhold
         fi
+    fi
+}
+
+function buster_fix_apt_raspbiantools() {
+    if isPlatform "rpi" && [[ "$__os_debian_ver" -eq 10 ]]; then
+        sed -i 's/raspbian\.raspberrypi\.org/legacy.raspbian.org/' /etc/apt/sources.list
     fi
 }
 
