@@ -42,5 +42,5 @@ function install_bin_golang() {
         arch="arm64"
     fi
     printMsgs "console" "Downloading go$target_version.linux-$arch.tar.gz"
-    downloadAndExtract "https://storage.googleapis.com/golang/go${target_version}.linux-$arch.tar.gz" "$md_inst" --strip-components 1 --exclude="go/test"
+    downloadAndExtract "https://go.dev/dl/go${target_version}.linux-$arch.tar.gz" "$md_inst" --strip-components 1 --exclude="go/test"
 }
