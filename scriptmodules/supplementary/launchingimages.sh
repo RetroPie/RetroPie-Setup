@@ -17,12 +17,17 @@ rp_module_section="exp"
 rp_module_flags="noinstclean"
 
 function depends_launchingimages() {
-    local depends=(imagemagick librsvg2-bin)
+    # NOTE:
+    # On some "generic-x11" installs, users still run EmulationStation from TTY (no X/ no DISPLAY).
+    # So we install BOTH viewers and decide at runtime:
+    #   - feh when X is really available
+    #   - fbi when running in TTY/framebuffer
+    local depends=(imagemagick librsvg2-bin fbi)
+
     if isPlatform "x11"; then
         depends+=(feh)
-    else
-        depends+=(fbi)
     fi
+
     getDepends "${depends[@]}"
 }
 
@@ -43,7 +48,20 @@ function _show_images_launchingimages() {
     [[ -f "$1" ]] || return 1
     image="$1"
 
-    if isPlatform "x11"; then
+    # Runtime detection:
+    # - Even if platform is "x11", we may be in pure TTY (no DISPLAY / no X server),
+    #   where feh would show a black screen.
+    local use_feh=0
+    if isPlatform "x11" && [[ -n "$DISPLAY" ]] && command -v feh >/dev/null 2>&1; then
+        # If xset is available, verify X is responding; otherwise assume DISPLAY is valid.
+        if command -v xset >/dev/null 2>&1; then
+            xset q >/dev/null 2>&1 && use_feh=1
+        else
+            use_feh=1
+        fi
+    fi
+
+    if [[ "$use_feh" -eq 1 ]]; then
         feh \
             --cycle-once \
             --hide-pointer \
@@ -55,6 +73,7 @@ function _show_images_launchingimages() {
             $([[ "$is_list" -eq 1 ]] && echo --filelist) \
             "$image"
     else
+        # Framebuffer/TTY viewer
         fbi \
             --once \
             --timeout "$timeout" \
@@ -244,7 +263,7 @@ function _settings_launchingimages() {
     while true; do
         eval $(_load_config_launchingimages)
 
-        options=( 
+        options=(
             config_file "$(
                [[ "$config_file" == *"$theme.cfg" ]] && echo "$(basename "$config_file")"
             )"
@@ -379,7 +398,7 @@ function gui_launchingimages() {
     rm -f "$current_cfg"
     while true; do
         cmd=(dialog --backtitle "$__backtitle" --title " runcommand launching images generation " --menu "Choose an option." 22 86 16)
-        options=( 
+        options=(
             1 "Image generation settings"
             2 "Generate launching images"
             3 "View slideshow of all current launching images"
