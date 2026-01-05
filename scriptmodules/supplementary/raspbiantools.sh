@@ -29,6 +29,11 @@ function apt_upgrade_raspbiantools() {
         sdl1_replace_raspbiantools
     fi
 
+    # on RaspiOS Trixie, disable the 'fluidsynth' user service starting automatically
+    if isPlatform "rpi" && [[ "$__os_debian_ver" -eq 13 ]]; then
+        fluidsynth_service_raspbiantools off
+    fi
+
     aptUpdate
     apt-get -y dist-upgrade --allow-downgrades
 }
@@ -200,6 +205,20 @@ function disable_zram_raspbiantools() {
     fi
 }
 
+function fluidsynth_service_raspbiantools() {
+    # use the 1st parameter as service state
+    local state=${1:-on}
+
+    if [[ "$state" == "on" ]]; then
+        rm "${home}/.config/systemd/user/fluidsynth.service"
+    fi
+
+    if [[ "$state" == "off" ]]; then
+       mkdir -p "${home}/.config/systemd/user"
+       ln -sf /dev/null "${home}/.config/systemd/user/fluidsynth.service"
+       chown -R "$__user":"$__group" "${home}/.config/systemd/user"
+    fi
+}
 function gui_raspbiantools() {
     while true; do
         local zram_status="Enable"
