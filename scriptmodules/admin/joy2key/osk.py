@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 This file is part of The RetroPie Project
 The RetroPie Project is the legal property of its developers, whose names are
@@ -34,7 +35,7 @@ from argparse import ArgumentParser
 
 import urwid
 from urwid.widget import Text, Divider
-from urwid.container import Columns, Frame, GridFlow, Overlay, Pile, WidgetWrap
+from urwid.container import Columns, Frame, GridFlow, Overlay, Pile
 from urwid.decoration import AttrMap, AttrWrap, Filler, Padding
 from urwid.graphics import LineBox
 from urwid.signals import connect_signal
@@ -78,7 +79,7 @@ PALETTE = [
 ]
 
 
-class CenteredButton(WidgetWrap):
+class CenteredButton(urwid.WidgetWrap):
     """
     Custom button class that:
       * centers the label text
