@@ -34,7 +34,7 @@ from os import get_terminal_size
 from argparse import ArgumentParser
 
 import urwid
-from urwid.widget import Text, Divider
+from urwid.widget import Text, Divider, FLOW
 from urwid.container import Columns, Frame, GridFlow, Overlay, Pile
 from urwid.decoration import AttrMap, AttrWrap, Filler, Padding
 from urwid.graphics import LineBox
@@ -108,7 +108,7 @@ class CenteredButton(urwid.WidgetWrap):
         else:
             cols = self._label
 
-        self.__super.__init__(cols)
+        super().__init__(cols)
 
         if on_press:
             connect_signal(self, 'click', on_press, user_data)
@@ -139,7 +139,7 @@ class KeyButton(CenteredButton):
     It has primary and secondary key values, returned based on the shift state
     """
     def __init__(self, text, primary=None, secondary=None, on_press=None, user_data=None):
-        self.__super.__init__(text, on_press, user_data, delimiters=False)
+        super().__init__(text, on_press, user_data, delimiters=False)
 
         # store the primary and secondary key values
         if primary is None:
