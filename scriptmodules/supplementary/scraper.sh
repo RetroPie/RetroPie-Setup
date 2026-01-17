@@ -21,23 +21,22 @@ function depends_scraper() {
 }
 
 function sources_scraper() {
-    local goroot="$(_get_goroot_golang)"
-    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" get -u github.com/sselph/scraper
-    # manually set repo_dir for packaging info / version checking
-    __mod_info[$md_id/repo_dir]="$md_build/src/github.com/sselph/scraper"
+    gitPullOrClone
 }
 
 function build_scraper() {
     local goroot="$(_get_goroot_golang)"
-    GOPATH="$md_build" GOROOT="$goroot" "$goroot/bin/go" build github.com/sselph/scraper
+    GOROOT="$goroot" "$goroot/bin/go" mod init github.com/sselph/scraper
+    GOROOT="$goroot" "$goroot/bin/go" get github.com/J-Swift/thegamesdb-swagger-client-go@43ed8a0b364ed2d8521d0
+    GOROOT="$goroot" "$goroot/bin/go" build -o scraper
 }
 
 function install_scraper() {
     md_ret_files=(
         'scraper'
-        'src/github.com/sselph/scraper/LICENSE'
-        'src/github.com/sselph/scraper/README.md'
-        'src/github.com/sselph/scraper/hash.csv'
+        'LICENSE'
+        'README.md'
+        'hash.csv'
     )
 }
 
@@ -138,7 +137,7 @@ function scrape_scraper() {
 
     # trap ctrl+c and return if pressed (rather than exiting retropie-setup etc)
     trap 'trap 2; return 1' INT
-    sudo -u $user "$md_inst/scraper" ${params[@]}
+    sudo -u "$__user" "$md_inst/scraper" ${params[@]}
     trap 2
 }
 
@@ -201,7 +200,7 @@ function gui_scraper() {
 
     iniConfig " = " '"' "$configdir/all/scraper.cfg"
     eval $(_load_config_scraper)
-    chown $user:$user "$configdir/all/scraper.cfg"
+    chown "$__user":"$__group" "$configdir/all/scraper.cfg"
 
     local default
     while true; do

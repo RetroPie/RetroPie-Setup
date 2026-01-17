@@ -42,9 +42,6 @@ function configure_lr-retro8() {
 
     [[ "$md_mode" == "remove" ]] && return
 
-    ensureSystemretroconfig "pico8"
-
     # disable retroarch built-in imageviewer so we can run .p8.png files
-    iniConfig " = " '"' "$md_conf_root/pico8/retroarch.cfg"
-    iniSet "builtin_imageviewer_enable" "false"
+    defaultRAConfig "pico8" "builtin_imageviewer_enable" "false"
 }

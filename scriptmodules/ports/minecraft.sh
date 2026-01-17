@@ -29,13 +29,5 @@ function remove_minecraft() {
 }
 
 function configure_minecraft() {
-    addPort "$md_id" "minecraft" "Minecraft" "XINIT:$md_inst/Minecraft.sh"
-
-    cat >"$md_inst/Minecraft.sh" << _EOF_
-#!/bin/bash
-xset -dpms s off s noblank
-matchbox-window-manager &
-/usr/bin/minecraft-pi
-_EOF_
-    chmod +x "$md_inst/Minecraft.sh"
+    addPort "$md_id" "minecraft" "Minecraft" "XINIT-WM:/usr/bin/minecraft-pi"
 }

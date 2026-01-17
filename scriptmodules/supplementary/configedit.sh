@@ -391,7 +391,7 @@ function advanced_menu_configedit() {
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         local file="-"
         if [[ -n "$choice" ]]; then
-            local ra_exclude='.*/all/retroarch/\(assets\|shaders\)/.*'
+            local ra_exclude='.*/all/retroarch/\(assets\|shaders\|thumbnails\)/.*'
             while [[ -n "$file" ]]; do
                 case "$choice" in
                     1)

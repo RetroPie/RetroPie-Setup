@@ -29,12 +29,13 @@ function build_lr-beetle-supergrafx() {
 function install_lr-beetle-supergrafx() {
     md_ret_files=(
         'mednafen_supergrafx_libretro.so'
+        'COPYING'
     )
 }
 
 function configure_lr-beetle-supergrafx() {
     mkRomDir "pcengine"
-    ensureSystemretroconfig "pcengine"
+    defaultRAConfig "pcengine"
 
     addEmulator 0 "$md_id" "pcengine" "$md_inst/mednafen_supergrafx_libretro.so"
     addSystem "pcengine"

@@ -1,5 +1,5 @@
 The RetroPie Project
-Copyright (C) 2012-2017 by the following:
+Copyright (C) 2012-2025 by the following:
 
 If you have contributed to this project then you deserve to be on this
 list. Contact us (see: AUTHORS) and we'll add you.

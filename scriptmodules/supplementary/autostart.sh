@@ -10,7 +10,7 @@
 #
 
 rp_module_id="autostart"
-rp_module_desc="Auto-start Emulation Station / Kodi on boot"
+rp_module_desc="Auto-start EmulationStation / Pegasus / Kodi on boot"
 rp_module_section="config"
 
 function _update_hook_autostart() {
@@ -28,7 +28,7 @@ function _autostart_script_autostart() {
 
     cat >/etc/profile.d/10-retropie.sh <<_EOF_
 # launch our autostart apps (if we are on the correct tty and not in X)
-if [ "\`tty\`" = "/dev/tty1" ] && [ -z "\$DISPLAY" ] && [ "\$USER" = "$user" ]; then
+if [ "\`tty\`" = "/dev/tty1" ] && [ -z "\$DISPLAY" ] && [ "\$USER" = "$__user" ]; then
     bash "$script"
 fi
 _EOF_
@@ -42,11 +42,14 @@ _EOF_
         kodi)
             echo -e "kodi-standalone #auto\nemulationstation #auto" >>"$script"
             ;;
+        pegasus)
+            echo "pegasus-fe #auto" >> "$script"
+            ;;
         es|*)
             echo "emulationstation #auto" >>"$script"
             ;;
     esac
-    chown $user:$user "$script"
+    chown "$__user":"$__group" "$script"
 }
 
 function enable_autostart() {
@@ -65,7 +68,7 @@ function enable_autostart() {
             cat >/etc/systemd/system/getty@tty1.service.d/autologin.conf <<_EOF_
 [Service]
 ExecStart=
-ExecStart=-/sbin/agetty --autologin $user --noclear %I \$TERM
+ExecStart=-/sbin/agetty --autologin $__user --noclear %I \$TERM
 _EOF_
         fi
 
@@ -102,31 +105,40 @@ function remove_autostart() {
 
 function gui_autostart() {
     cmd=(dialog --backtitle "$__backtitle" --menu "Choose the desired boot behaviour." 22 76 16)
+    local has_pegasus=0
+    local has_kodi=0
+
+    command -v pegasus-fe >/dev/null && has_pegasus=1
+    command -v kodi-standalone >/dev/null && has_kodi=1
+
     while true; do
         if isPlatform "x11"; then
             local x11_autostart
             if [[ -f "$home/.config/autostart/retropie.desktop" ]]; then
-                options=(1 "Autostart Emulation Station after login (Enabled)")
+                options=(1 "Autostart EmulationStation after login (Enabled)")
                 x11_autostart=1
             else
-                options=(1 "Autostart Emulation Station after login (Disabled)")
+                options=(1 "Autostart EmulationStation after login (Disabled)")
                 x11_autostart=0
             fi
         else
             options=(
-                1 "Start Emulation Station at boot"
-                2 "Start Kodi at boot (exit for Emulation Station)"
+                1 "Start EmulationStation at boot"
+            )
+            [[ "$has_kodi" -eq 1 ]] && options+=(2 "Start Kodi at boot (exit starts EmulationStation)")
+            [[ "$has_pegasus" -eq 1 ]] && options+=(3 "Start Pegasus at boot")
+            options+=(
                 E "Manually edit $configdir/all/autostart.sh"
             )
             if [[ "$__os_id" == "Raspbian" ]]; then
                 options+=(
                     CL "Boot to text console (require login)"
-                    CA "Boot to text console (auto login as $user)"
+                    CA "Boot to text console (auto login as $__user)"
                 )
             fi
             options+=(DL "Boot to desktop (require login)")
             if [[ "$__os_id" == "Raspbian" ]]; then
-                options+=(DA "Boot to desktop (auto login as $user)")
+                options+=(DA "Boot to desktop (auto login as $__user)")
             fi
         fi
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -136,20 +148,24 @@ function gui_autostart() {
                     if isPlatform "x11"; then
                         if [[ "$x11_autostart" -eq 0 ]]; then
                             enable_autostart
-                            printMsgs "dialog" "Emulation Station is set to autostart after login."
+                            printMsgs "dialog" "EmulationStation is set to autostart after login."
                         else
                             disable_autostart
-                            printMsgs "dialog" "Autostarting of Emulation Station is disabled."
+                            printMsgs "dialog" "Autostarting of EmulationStation is disabled."
                         fi
                         x11_autostart=$((x11_autostart ^ 1))
                     else
                         enable_autostart
-                        printMsgs "dialog" "Emulation Station is set to launch at boot."
+                        printMsgs "dialog" "EmulationStation is set to launch at boot."
                     fi
                     ;;
                 2)
                     enable_autostart kodi
                     printMsgs "dialog" "Kodi is set to launch at boot."
+                    ;;
+                3)
+                    enable_autostart pegasus
+                    printMsgs "dialog" "Pegasus is set to launch at boot."
                     ;;
                 E)
                     editFile "$configdir/all/autostart.sh"
@@ -160,7 +176,7 @@ function gui_autostart() {
                     ;;
                 CA)
                     disable_autostart B2
-                    printMsgs "dialog" "Booting to text console (auto login as $user)."
+                    printMsgs "dialog" "Booting to text console (auto login as $__user)."
                     ;;
                 DL)
                     disable_autostart B3
@@ -168,7 +184,7 @@ function gui_autostart() {
                     ;;
                 DA)
                     disable_autostart B4
-                    printMsgs "dialog" "Booting to desktop (auto login as $user)."
+                    printMsgs "dialog" "Booting to desktop (auto login as $__user)."
                     ;;
             esac
         else

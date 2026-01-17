@@ -1,0 +1,26 @@
+diff --git a/cmake/Modules/Findlibopenmpt.cmake b/cmake/Modules/Findlibopenmpt.cmake
+index 96cc310..d509c25 100644
+--- a/cmake/Modules/Findlibopenmpt.cmake
++++ b/cmake/Modules/Findlibopenmpt.cmake
+@@ -26,7 +26,7 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(libopenmpt
+     REQUIRED_VARS libopenmpt_LIBRARY libopenmpt_INCLUDE_DIR)
+ 
+ if(libopenmpt_FOUND AND NOT TARGET openmpt)
+-	add_library(openmpt UNKNOWN IMPORTED)
++	add_library(openmpt UNKNOWN IMPORTED GLOBAL)
+ 	set_target_properties(
+ 		openmpt
+ 		PROPERTIES
+diff --git a/cmake/Modules/Findminiupnpc.cmake b/cmake/Modules/Findminiupnpc.cmake
+index f4931ad..eb12927 100644
+--- a/cmake/Modules/Findminiupnpc.cmake
++++ b/cmake/Modules/Findminiupnpc.cmake
+@@ -26,7 +26,7 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(miniupnpc
+     REQUIRED_VARS libminiupnpc_LIBRARY libminiupnpc_INCLUDE_DIR)
+ 
+ if(miniupnpc_FOUND AND NOT TARGET miniupnpc)
+-	add_library(miniupnpc UNKNOWN IMPORTED)
++	add_library(miniupnpc UNKNOWN IMPORTED GLOBAL)
+ 	set_target_properties(
+ 		miniupnpc
+ 		PROPERTIES

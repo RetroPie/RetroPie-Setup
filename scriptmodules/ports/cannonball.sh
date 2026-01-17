@@ -18,7 +18,7 @@ rp_module_section="opt"
 
 function depends_cannonball() {
     local depends=(cmake libsdl2-dev libboost-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     isPlatform "mesa" && depends+=(libgles2-mesa-dev)
     getDepends "${depends[@]}"
 }
@@ -70,7 +70,7 @@ function configure_cannonball() {
 
     cp -v roms.txt "$romdir/ports/$md_id/"
 
-    chown -R $user:$user "$romdir/ports/$md_id" "$md_conf_root/$md_id"
+    chown -R "$__user":"$__group" "$romdir/ports/$md_id" "$md_conf_root/$md_id"
 
     ln -snf "$romdir/ports/$md_id" "$md_inst/roms"
 }

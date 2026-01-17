@@ -31,6 +31,7 @@ function build_lr-dosbox() {
         fi
     fi
     make clean
+    [[ "$__gcc_version" -gt 10 ]] && CXXFLAGS="$CXXFLAGS -std=gnu++11"
     make "${params[@]}"
     md_ret_require="$md_build/dosbox_libretro.so"
 }
@@ -45,7 +46,7 @@ function install_lr-dosbox() {
 
 function configure_lr-dosbox() {
     mkRomDir "pc"
-    ensureSystemretroconfig "pc"
+    defaultRAConfig "pc"
 
     addEmulator 0 "$md_id" "pc" "$md_inst/dosbox_libretro.so"
     addSystem "pc"

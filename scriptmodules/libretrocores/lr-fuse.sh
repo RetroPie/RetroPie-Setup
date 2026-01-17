@@ -36,7 +36,7 @@ function install_lr-fuse() {
 
 function configure_lr-fuse() {
     mkRomDir "zxspectrum"
-    ensureSystemretroconfig "zxspectrum"
+    defaultRAConfig "zxspectrum"
 
     # default to 128k spectrum
     setRetroArchCoreOption "fuse_machine" "Spectrum 128K"

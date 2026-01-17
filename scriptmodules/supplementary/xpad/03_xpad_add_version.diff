@@ -1,0 +1,7 @@
+diff --git a/xpad.c b/xpad.c
+index 43985dd..8ea2991 100644
+@@ -2497,3 +2500,4 @@ module_usb_driver(xpad_driver);
+ MODULE_AUTHOR("Marko Friedemann <mfr@bmx-chemnitz.de>");
+ MODULE_DESCRIPTION("X-Box pad driver");
+ MODULE_LICENSE("GPL");
++MODULE_VERSION("0.4");

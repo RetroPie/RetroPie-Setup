@@ -19,7 +19,7 @@ function _update_hook_joy2key() {
 }
 
 function depends_joy2key() {
-    local depends=(python3-urwid)
+    local depends=(python3-urwid python3-uinput)
     # 'python3-sdl2' might not be available
     # it's packaged in Debian starting with version 11 (Bullseye)
     local p_ver
@@ -60,7 +60,7 @@ if [[ "\${#params[@]}" -eq 0 ]]; then
 fi
 
 script="joy2key_sdl.py"
-! python3 -c "import sdl2" 2>/dev/null && script="joy2key.py"
+grep --basic-regexp --quiet --no-messages '^legacy_joy2key[[:space:]]*=[[:space:]]*"\?1"\?' $configdir/all/runcommand.cfg && script="joy2key.py"
 
 case "\$mode" in
     start)
@@ -70,13 +70,25 @@ case "\$mode" in
         "$md_inst/\$script" "\$device" "\${params[@]}" || exit 1
         ;;
     stop)
-        pkill -f "\$script"
-        sleep 1
+        if pid=\$(pgrep -f "\$script"); then
+            /sbin/start-stop-daemon --stop --oknodo --pid \$pid --retry 1
+        fi
         ;;
 esac
 exit 0
 _EOF_
     chmod +x "$wrapper"
+    if ! grep -q "uinput" /etc/modules; then
+        addLineToFile "uinput" "/etc/modules"
+    fi
+    # add an udev rule to give 'input' group write access to `/dev/uinput`
+    echo 'KERNEL=="uinput", MODE="0660", GROUP="input"' > /etc/udev/rules.d/80-rpi-uinput.rules
+    udevadm control --reload
+
+    modprobe uinput
+
+    # make sure the install user is part of 'input' group
+    usermod -a -G input "$__user"
 
     joy2keyStart
 }

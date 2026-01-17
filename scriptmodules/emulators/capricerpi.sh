@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .cdt .cpc .dsk\n\nCopy your Amstrad CPC games to
 rp_module_licence="GPL2 https://raw.githubusercontent.com/KaosOverride/CapriceRPI/master/COPYING.txt"
 rp_module_repo="git https://github.com/KaosOverride/CapriceRPI.git master"
 rp_module_section="opt"
-rp_module_flags="sdl1 !all videocore"
+rp_module_flags="sdl1"
 
 function depends_capricerpi() {
     getDepends libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev zlib1g-dev libpng-dev
@@ -44,4 +44,8 @@ function configure_capricerpi() {
 
     addEmulator 0 "$md_id" "amstradcpc" "$md_inst/capriceRPI %ROM%"
     addSystem "amstradcpc"
+
+    [[ $mode == "remove" ]] && return
+    # use sdl12-compat backend on KMS
+    ! isPlatform "dispmanx" && isPlatform "kms" && setBackend "$md_id" "sdl12-compat"
 }

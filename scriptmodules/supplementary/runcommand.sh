@@ -21,11 +21,15 @@ function _update_hook_runcommand() {
         [[ -f "$md_inst/joy2key.py" ]] && rp_callModule "joy2key"
         install_bin_runcommand
     fi
+    if hasFlag "armv6" && [[ "$__os_debian_ver" -le 12 ]]; then
+        iniConfig " = " '"' "$configdir/all/runcommand.cfg"
+        iniSet "legacy_joy2key" "1"
+    fi
 }
 
 function depends_runcommand() {
     local depends=()
-    isPlatform "rpi" && depends+=(libraspberrypi-bin)
+    isPlatform "rpi" && isPlatform "dispmanx" && depends+=(libraspberrypi-bin)
     isPlatform "rpi" || isPlatform "kms" && depends+=(fbi fbset)
     isPlatform "x11" && depends+=(feh)
     getDepends "${depends[@]}"
@@ -43,16 +47,18 @@ function install_bin_runcommand() {
         iniSet "governor" ""
         iniSet "disable_menu" "0"
         iniSet "image_delay" "2"
-        chown $user:$user "$configdir/all/runcommand.cfg"
+        # weaker systems should use the old Joy2Key version
+        hasFlag "armv6" && iniSet "legacy_joy2key" "1"
+        chown "$__user":"$__group" "$configdir/all/runcommand.cfg"
     fi
     if [[ ! -f "$configdir/all/runcommand-launch-dialog.cfg" ]]; then
         dialog --create-rc "$configdir/all/runcommand-launch-dialog.cfg"
-        chown $user:$user "$configdir/all/runcommand-launch-dialog.cfg"
+        chown "$__user":"$__group" "$configdir/all/runcommand-launch-dialog.cfg"
     fi
 
     # needed for KMS modesetting (debian buster or later only)
-    if compareVersions "$__os_debian_ver" ge 10; then
-        rp_installModule "mesa-drm" "_autoupdate_"
+    if [[ "$__os_debian_ver" -ge 10 ]]; then
+        rp_installModule "kmsxx" "_autoupdate_"
     fi
 
     md_ret_require="$md_inst/runcommand.sh"
@@ -90,14 +96,14 @@ function governor_runcommand() {
     if [[ -n "$choice" ]]; then
         governor="${governors[$choice]}"
         iniSet "governor" "$governor"
-        chown $user:$user "$config"
+        chown "$__user":"$__group" "$config"
     fi
 }
 
 function gui_runcommand() {
     local config="$configdir/all/runcommand.cfg"
     iniConfig " = " '"' "$config"
-    chown $user:$user "$config"
+    chown "$__user":"$__group" "$config"
 
     local cmd
     local option
@@ -110,9 +116,11 @@ function gui_runcommand() {
             'disable_joystick=0' \
             'image_delay=2' \
             'governor=' \
+            'legacy_joy2key=' \
         )"
 
         [[ -z "$governor" ]] && governor="Default: don't change"
+        [[ -z "$legacy_joy2key" ]] && legacy_joy2key="0"
 
         cmd=(dialog --backtitle "$__backtitle" --cancel-label "Exit" --default-item "$default" --menu "Choose an option." 22 86 16)
         options=()
@@ -138,6 +146,12 @@ function gui_runcommand() {
         options+=(4 "Launch image delay in seconds (currently $image_delay)")
         options+=(5 "CPU governor configuration (currently: $governor)")
 
+        if [[ "$legacy_joy2key" -eq 1 ]]; then
+            options+=(6 "Use old Joy2Key for joystick control (currently: Enabled)")
+        else
+            options+=(6 "Use old Joy2Key for joystick control (currently: Disabled)")
+        fi
+
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         [[ -z "$choice" ]] && break
         default="$choice"
@@ -158,6 +172,9 @@ function gui_runcommand() {
                 ;;
             5)
                 governor_runcommand
+                ;;
+            6)
+                iniSet "legacy_joy2key" "$((legacy_joy2key ^ 1))"
                 ;;
         esac
     done

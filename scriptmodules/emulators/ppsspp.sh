@@ -13,9 +13,18 @@ rp_module_id="ppsspp"
 rp_module_desc="PlayStation Portable emulator PPSSPP"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/hrydgard/ppsspp/master/LICENSE.TXT"
-rp_module_repo="git https://github.com/hrydgard/ppsspp.git master"
+rp_module_repo="git https://github.com/hrydgard/ppsspp.git :_get_release_ppsspp"
 rp_module_section="opt"
 rp_module_flags=""
+
+function _get_release_ppsspp() {
+    local tagged_version="v1.16.6"
+    #  the V3D Mesa driver before 21.x has issues with v1.14 and later
+    if [[ "$__os_debian_ver" -lt 11 ]] && isPlatform "kms" && isPlatform "rpi"; then
+        tagged_version="v1.13.2"
+    fi
+    echo $tagged_version
+}
 
 function depends_ppsspp() {
     local depends=(cmake libsdl2-dev libsnappy-dev libzip-dev zlib1g-dev)
@@ -44,6 +53,11 @@ function sources_ppsspp() {
     # ensure Pi vendor libraries are available for linking of shared library
     sed -n -i "p; s/^set(CMAKE_EXE_LINKER_FLAGS/set(CMAKE_SHARED_LINKER_FLAGS/p" cmake/Toolchains/raspberry.armv?.cmake
 
+    # fix missing defines on opengles2 on v1.16.6 lr-ppsspp/ppsspp
+    if [[ "$md_id" == "ppsspp" && "$(_get_release_ppsspp)" == "v1.16.6" ]]; then
+        applyPatch "${__mod_info[ppsspp/path]%/*}/ppsspp/gles2_fix.diff"
+    fi
+
     if hasPackage cmake 3.6 lt; then
         cd ..
         mkdir -p cmake
@@ -69,7 +83,8 @@ function build_ffmpeg_ppsspp() {
     elif isPlatform "aarch64"; then
         arch="aarch64"
     fi
-    isPlatform "vero4k" && local extra_params='--arch=arm'
+    # force to arm arch on arm - fixes building on 32bit arm userland with aarch64 kernel
+    isPlatform "arm" && local extra_params='--arch=arm'
 
     local MODULES
     local VIDEO_DECODERS
@@ -134,6 +149,14 @@ function build_ppsspp() {
         fi
     elif isPlatform "mesa"; then
         params+=(-DUSING_GLES2=ON -DUSING_EGL=OFF)
+        # force arm target on arm platforms to fix building on arm 32bit userland with aarch64 kernel
+        if isPlatform "arm"; then
+            if isPlatform "armv6"; then
+                params+=(-DFORCED_CPU=armv6)
+            else
+                params+=(-DFORCED_CPU=armv7)
+            fi
+        fi
     elif isPlatform "mali"; then
         params+=(-DUSING_GLES2=ON -DUSING_FBDEV=ON)
         # remove -DGL_GLEXT_PROTOTYPES on odroid-xu/tinker to avoid errors due to header prototype differences
@@ -141,10 +164,9 @@ function build_ppsspp() {
         params+=(-DCMAKE_CXX_FLAGS="${CXXFLAGS/-DGL_GLEXT_PROTOTYPES/}")
     elif isPlatform "tinker"; then
         params+=(-DCMAKE_TOOLCHAIN_FILE="$md_data/tinker.armv7.cmake")
-    elif isPlatform "vero4k"; then
-        params+=(-DCMAKE_TOOLCHAIN_FILE="cmake/Toolchains/vero4k.armv8.cmake")
     fi
-    if isPlatform "arm" && ! isPlatform "x11"; then
+    isPlatform "vero4k" && params+=(-DCMAKE_TOOLCHAIN_FILE="cmake/Toolchains/vero4k.armv8.cmake")
+    if isPlatform "arm" && ! isPlatform "vulkan"; then
         params+=(-DARM_NO_VULKAN=ON)
     fi
     if [[ "$md_id" == "lr-ppsspp" ]]; then
@@ -172,10 +194,19 @@ function configure_ppsspp() {
     fi
 
     mkRomDir "psp"
-    moveConfigDir "$home/.config/ppsspp" "$md_conf_root/psp"
-    mkUserDir "$md_conf_root/psp/PSP"
-    ln -snf "$romdir/psp" "$md_conf_root/psp/PSP/GAME"
+    if [[ "$md_mode" == "install" ]]; then
+        moveConfigDir "$home/.config/ppsspp" "$md_conf_root/psp"
+        mkUserDir "$md_conf_root/psp/PSP"
+        ln -snf "$romdir/psp" "$md_conf_root/psp/PSP/GAME"
+    fi
 
     addEmulator 0 "$md_id" "psp" "pushd $md_inst; $md_inst/PPSSPPSDL ${extra_params[*]} %ROM%; popd"
     addSystem "psp"
+
+    # if we are removing the last remaining psp emu - remove the symlink
+    if [[ "$md_mode" == "remove" ]]; then
+        if [[ -h "$home/.config/ppsspp" && ! -f "$md_conf_root/psp/emulators.cfg" ]]; then
+            rm -f "$home/.config/ppsspp"
+        fi
+    fi
 }

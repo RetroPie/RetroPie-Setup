@@ -11,25 +11,20 @@
 
 rp_module_id="gamecondriver"
 rp_module_desc="Gamecon & Db9 drivers GPIO drivers"
-rp_module_licence="GPL2 https://raw.githubusercontent.com/marqs85/gamecon_gpio_rpi/master/gamecon_gpio_rpi-1.4/gamecon_gpio_rpi.c"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/marqs85/gamecon_gpio_rpi/master/gamecon_gpio_rpi/gamecon_gpio_rpi.c"
 rp_module_section="driver"
-rp_module_flags="!all rpi"
+rp_module_flags="!all rpi !rpi5"
 
 function depends_gamecondriver() {
-    # remove any old kernel headers for current kernel
-    local kernel_ver="$(uname -r)"
-    if hasPackage linux-headers-"${kernel_ver}" "${kernel_ver}-2" "eq"; then
-        aptRemove "linux-headers-${kernel_ver}"
-    fi
-    getDepends dkms raspberrypi-kernel-headers
+    getDepends dkms LINUX-HEADERS
 }
 
 function _gamecon_version() {
-    echo "1.4"
+    echo "1.5"
 }
 
 function _db9_version() {
-    echo "1.2"
+    echo "1.3"
 }
 function install_bin_gamecondriver() {
     # install both modules
@@ -48,7 +43,7 @@ function install_bin_gamecondriver() {
 
         pushd "$module_name"
         dkmsManager remove "$module_name" 
-        ln -sfn "`pwd`/$module_name-$module_ver" /usr/src/"$module_name-$module_ver"
+        ln -sfn "`pwd`/$module_name" /usr/src/"$module_name-$module_ver"
         dkms install --force -m "$module_name" -v "$module_ver"
         popd
 
@@ -71,7 +66,7 @@ function _remove_gamecondriver_files()
     dkmsManager remove gamecon_gpio_rpi
     dkmsManager remove db9_gpio_rpi
 
-    # Remove older version of the driver, installed as Debian packages
+    # remove older version of the driver, installed as Debian packages
     hasPackage gamecon-gpio-rpi-dkms && aptRemove gamecon-gpio-rpi-dkms
     hasPackage db9-gpio-rpi-dkms && aptRemove db9-gpio-rpi-dkms
 }

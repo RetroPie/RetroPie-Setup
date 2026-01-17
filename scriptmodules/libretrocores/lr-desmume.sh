@@ -18,7 +18,7 @@ rp_module_section="exp"
 
 function _params_lr-desmume() {
     local params=()
-    isPlatform "arm" && params+=("platform=armvhardfloat")
+    isPlatform "arm" && params+=("platform=unixarmvhardfloat")
     isPlatform "aarch64" && params+=("DESMUME_JIT=0")
     echo "${params[@]}"
 }
@@ -46,7 +46,7 @@ function install_lr-desmume() {
 
 function configure_lr-desmume() {
     mkRomDir "nds"
-    ensureSystemretroconfig "nds"
+    defaultRAConfig "nds"
 
     addEmulator 0 "$md_id" "nds" "$md_inst/desmume_libretro.so"
     addSystem "nds"

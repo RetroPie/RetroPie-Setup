@@ -45,9 +45,9 @@ function configure_lr-dinothawr() {
     addPort "$md_id" "dinothawr" "Dinothawr" "$md_inst/dinothawr_libretro.so" "$romdir/ports/dinothawr/dinothawr.game"
 
     mkRomDir "ports/dinothawr"
-    ensureSystemretroconfig "ports/dinothawr"
+    defaultRAConfig "dinothawr"
 
     cp -Rv "$md_inst/dinothawr" "$romdir/ports"
 
-    chown $user:$user -R "$romdir/ports/dinothawr"
+    chown -R "$__user":"$__group" "$romdir/ports/dinothawr"
 }

@@ -1,0 +1,42 @@
+diff --git a/Core/HLE/__sceAudio.cpp b/Core/HLE/__sceAudio.cpp
+index 3176d26..f05ad9d 100644
+--- a/Core/HLE/__sceAudio.cpp
++++ b/Core/HLE/__sceAudio.cpp
+@@ -82,6 +82,11 @@ static bool m_logAudio;
+ static int chanQueueMaxSizeFactor;
+ static int chanQueueMinSizeFactor;
+ 
++// Accessor for libretro
++int __AudioGetHostAttemptBlockSize() {
++	return hostAttemptBlockSize;
++}
++
+ static void hleAudioUpdate(u64 userdata, int cyclesLate) {
+ 	// Schedule the next cycle first.  __AudioUpdate() may consume cycles.
+ 	CoreTiming::ScheduleEvent(audioIntervalCycles - cyclesLate, eventAudioUpdate, 0);
+diff --git a/Core/HLE/__sceAudio.h b/Core/HLE/__sceAudio.h
+index ae9ca35..f26ae0d 100644
+--- a/Core/HLE/__sceAudio.h
++++ b/Core/HLE/__sceAudio.h
+@@ -50,6 +50,8 @@ int __AudioMix(short *outstereo, int numSamples, int sampleRate);
+ void __AudioGetDebugStats(char *buf, size_t bufSize);
+ void __PushExternalAudio(const s32 *audio, int numSamples);  // Should not be used in-game, only at the menu!
+ 
++int __AudioGetHostAttemptBlockSize();
++
+ // Audio Dumping stuff
+ void __StartLogAudio(const Path &filename);
+ void __StopLogAudio();
+diff --git a/libretro/libretro.cpp b/libretro/libretro.cpp
+index eacbca2..26f2cf6 100644
+--- a/libretro/libretro.cpp
++++ b/libretro/libretro.cpp
+@@ -379,7 +379,7 @@ class LibretroHost : public Host
+       void InitSound() override {}
+       void UpdateSound() override
+       {
+-         extern int hostAttemptBlockSize;
++         int hostAttemptBlockSize = __AudioGetHostAttemptBlockSize();
+          const int blockSizeMax = 512;
+          static int16_t audio[blockSizeMax * 2];
+          assert(hostAttemptBlockSize <= blockSizeMax);

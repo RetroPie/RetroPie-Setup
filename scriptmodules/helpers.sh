@@ -133,6 +133,38 @@ function editFile() {
     [[ -n "$choice" ]] && echo "$choice" >"$file"
 }
 
+## @fn inputBox()
+## @param title title of dialog
+## @param text default text
+## @param minchars minimum chars to accept
+## @brief Opens an inputbox dialog and echoes resulting text. Uses the OSK if installed.
+## @details The input dialog has OK/Cancel buttons and can be cancelled by the user.
+## The dialog will enforce the minimum number of characters expected, re-prompting the user.
+## @retval 0 when the user entered the text and chose the OK button
+## @retval != 0 when the user chose the Cancel button
+
+function inputBox() {
+    local title="$1"
+    local text="$2"
+    local minchars="$3"
+    [[ -z "$minchars" ]] && minchars=0
+    local params=(--backtitle "$__backtitle" --inputbox "Enter the $title")
+    local osk="$(rp_getInstallPath joy2key)/osk.py"
+
+    if [[ -f "$osk" ]]; then
+        params+=(--minchars "$minchars")
+        text=$(python3 "$osk" "${params[@]}" "$text" 2>&1 >/dev/tty) || return $?
+    else
+        while true; do
+            text=$(dialog "${params[@]}" 10 60 "$text" 2>&1 >/dev/tty) || return $?
+            [[ "${#text}" -ge "$minchars" ]] && break
+            dialog --msgbox "$title must have at least $minchars characters" 8 60 2>&1 >/dev/tty
+        done
+    fi
+
+    echo "$text"
+}
+
 ## @fn hasPackage()
 ## @param package name of Debian package
 ## @param version requested version (optional)
@@ -148,7 +180,8 @@ function hasPackage() {
 
     local ver
     local status
-    local out=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
+    # extract the first line only (for cases where both amd64 & i386 versions of a package are installed)
+    local out=$(dpkg-query -W --showformat='${Status} ${Version}\n' $1 2>/dev/null | head -n1)
     if [[ "$?" -eq 0 ]]; then
         ver="${out##* }"
         status="${out% *}"
@@ -215,7 +248,23 @@ function _mapPackage() {
         # handle our custom package alias LINUX-HEADERS
         LINUX-HEADERS)
             if isPlatform "rpi"; then
-                pkg="raspberrypi-kernel-headers"
+                if [[ "$__os_debian_ver" -lt 12 ]]; then
+                    pkg="raspberrypi-kernel-headers"
+                else
+                    # on RaspiOS bookworm and later, kernel packages are separated by arch and model
+                    isPlatform "rpi0" || isPlatform "rpi1" && pkg="linux-headers-rpi-v6"
+                    if isPlatform "32bit"; then
+                        isPlatform "rpi2" || isPlatform "rpi3" && pkg="linux-headers-rpi-v7"
+                        isPlatform "rpi4" && pkg="linux-headers-rpi-v7l"
+                    else
+                        isPlatform "rpi3" || isPlatform "rpi4" && pkg="linux-headers-rpi-v8"
+                        isPlatform "rpi5" && pkg="linux-headers-rpi-2712"
+                    fi
+                fi
+            elif isPlatform "armbian"; then
+                local branch="$(grep -oP "BRANCH=\K.*"      /etc/armbian-release)"
+                local family="$(grep -oP "LINUXFAMILY=\K.*" /etc/armbian-release)"
+                pkg="linux-headers-${branch}-${family}"
             elif [[ -z "$__os_ubuntu_ver" ]]; then
                 pkg="linux-headers-$(uname -r)"
             else
@@ -224,13 +273,13 @@ function _mapPackage() {
             ;;
         # map libpng-dev to libpng12-dev for Jessie
         libpng-dev)
-            compareVersions "$__os_debian_ver" lt 9 && pkg="libpng12-dev"
+            [[ "$__os_debian_ver" -lt 9 ]] && pkg="libpng12-dev"
             ;;
         libsdl1.2-dev)
-            rp_hasModule "sdl1" && pkg="RP sdl1 $pkg"
+            rp_isEnabled "sdl1" && pkg="RP sdl1 $pkg"
             ;;
         libsdl2-dev)
-            if rp_hasModule "sdl2"; then
+            if rp_isEnabled "sdl2"; then
                 # check whether to use our own sdl2 - can be disabled to resolve issues with
                 # mixing custom 64bit sdl2 and os distributed i386 version on multiarch
                 local own_sdl2=1
@@ -246,6 +295,13 @@ function _mapPackage() {
                 fi
                 [[ "$own_sdl2" -eq 1 ]] && pkg="RP sdl2 $pkg"
             fi
+            ;;
+        libfreetype6-dev)
+            [[ "$__os_debian_ver" -gt 10 ]] || compareVersions "$__os_ubuntu_ver" gt 23.04 && pkg="libfreetype-dev"
+            ;;
+        polkitd)
+            [[ "$__os_debian_ver" -lt 13 ]] && pkg="policykit-1"
+            [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" lt 24.04 && pkg="policykit-1"
             ;;
     esac
     echo "$pkg"
@@ -478,12 +534,12 @@ function setupDirectories() {
         fi
     done
 
-    # create template for autoconf.cfg and make sure it is owned by $user
+    # create template for autoconf.cfg and make sure it is owned by $__user
     local config="$configdir/all/autoconf.cfg"
     if [[ ! -f "$config" ]]; then
         echo "# this file can be used to enable/disable retropie autoconfiguration features" >"$config"
     fi
-    chown $user:$user "$config"
+    chown "$__user":"$__group" "$config"
 }
 
 ## @fn rmDirExists()
@@ -500,7 +556,7 @@ function rmDirExists() {
 ## @brief Creates a directory owned by the current user.
 function mkUserDir() {
     mkdir -p "$1"
-    chown $user:$user "$1"
+    chown "$__user":"$__group" "$1"
 }
 
 ## @fn mkRomDir()
@@ -509,9 +565,11 @@ function mkUserDir() {
 function mkRomDir() {
     mkUserDir "$romdir/$1"
     if [[ "$1" == "megadrive" ]]; then
-        pushd "$romdir"
-        ln -snf "$1" "genesis"
-        popd
+        if [[ ! -e "$romdir/genesis" ]]; then
+            pushd "$romdir"
+            ln -snf "$1" "genesis"
+            popd
+        fi
     fi
 }
 
@@ -536,8 +594,8 @@ function moveConfigDir() {
         rm -rf "$from"
     fi
     ln -snf "$to" "$from"
-    # set ownership of the actual link to $user
-    chown -h $user:$user "$from"
+    # set ownership of the actual link to $__user
+    chown -h "$__user":"$__group" "$from"
 }
 
 ## @fn moveConfigFile()
@@ -559,8 +617,8 @@ function moveConfigFile() {
         mv "$from" "$to"
     fi
     ln -sf "$to" "$from"
-    # set ownership of the actual link to $user
-    chown -h $user:$user "$from"
+    # set ownership of the actual link to $__user
+    chown -h "$__user":"$__group" "$from"
 }
 
 ## @fn diffFiles()
@@ -622,7 +680,7 @@ function copyDefaultConfig() {
         cp "$from" "$to"
     fi
 
-    chown $user:$user "$to"
+    chown "$__user":"$__group" "$to"
 }
 
 ## @fn renameModule()
@@ -681,7 +739,7 @@ function setBackend() {
     iniGet "$id"
     if [[ "$force" -eq 1 || -z "$ini_value" ]]; then
         iniSet "$id" "$mode"
-        chown $user:$user "$config"
+        chown "$__user":"$__group" "$config"
     fi
 }
 
@@ -939,18 +997,39 @@ function setESSystem() {
 
 ## @fn ensureSystemretroconfig()
 ## @param system system to create retroarch.cfg for
-## @param shader set a default shader to use (deprecated)
-## @brief Creates a default retroarch.cfg for specified system in `/opt/retropie/configs/$system/retroarch.cfg`.
+## @brief Deprecated - use defaultRAConfig
+## @details Creates a default retroarch.cfg for specified system in `$configdir/$system/retroarch.cfg`.
 function ensureSystemretroconfig() {
     # don't do any config work on module removal
     [[ "$md_mode" == "remove" ]] && return
 
-    local system="$1"
-    local shader="$2"
+    # reset "$md_conf_root" to "$configdir" as defaultRAConfig handles this whereas ensureSystemretroconfig
+    # expects system to include any subdirectory in the first parameter such as "ports/$system".
+    local save_conf_root="$md_conf_root"
+    md_conf_root="$configdir"
+    defaultRAConfig "$1"
+    md_conf_root="$save_conf_root"
+}
 
-    if [[ ! -d "$configdir/$system" ]]; then
-        mkUserDir "$configdir/$system"
-    fi
+## @fn defaultRAConfig()
+## @param system system to create retroarch.cfg for
+## @param ... optional key then value parameters to be used in the config
+## @brief Creates a default retroarch.cfg for specified system in `$md_root_dir/$system/retroarch.cfg`.
+## @details Additional default configuration values can be provided as parameters to the function - eg. "fps_show" "true"
+## as two parameters would add a default entry of fps_show = "true" to the default configuration.
+## This function uses $md_conf_root as a base, so there is no need to use "ports/$system" for libretro ports as with
+## the older ensureSystemretroconfig
+function defaultRAConfig() {
+    # don't do any config work on module removal
+    [[ "$md_mode" == "remove" ]] && return
+
+    local system="$1"
+    shift
+    local defaults=("$@")
+
+    local config_path="$md_conf_root/$system"
+
+    [[ ! -d "$config_path" ]] && mkUserDir "$config_path"
 
     local config="$(mktemp)"
     # add the initial comment regarding include order
@@ -958,18 +1037,19 @@ function ensureSystemretroconfig() {
 
     # add the per system default settings
     iniConfig " = " '"' "$config"
-    iniSet "input_remapping_directory" "$configdir/$system/"
+    iniSet "input_remapping_directory" "$config_path"
 
-    if [[ -n "$shader" ]]; then
-        iniUnset "video_smooth" "false"
-        iniSet "video_shader" "$emudir/retroarch/shader/$shader"
-        iniUnset "video_shader_enable" "true"
-    fi
+    # add any additional config key / values from function parameters
+    local key
+    local value
+    while read key value; do
+        [[ -n "$key" ]] && iniSet "$key" "$value"
+    done <<< "${defaults[@]}"
 
     # include the main retroarch config
     echo -e "\n#include \"$configdir/all/retroarch.cfg\"" >>"$config"
 
-    copyDefaultConfig "$config" "$configdir/$system/retroarch.cfg"
+    copyDefaultConfig "$config" "$config_path/retroarch.cfg"
     rm "$config"
 }
 
@@ -985,7 +1065,7 @@ function setRetroArchCoreOption() {
     if [[ -z "$ini_value" ]]; then
         iniSet "$option" "$value"
     fi
-    chown $user:$user "$configdir/all/retroarch-core-options.cfg"
+    chown "$__user":"$__group" "$configdir/all/retroarch-core-options.cfg"
 }
 
 ## @fn setConfigRoot()
@@ -1424,7 +1504,7 @@ function addPort() {
 "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ "$port" "$game"
 _EOF_
 
-    chown $user:$user "$file"
+    chown "$__user":"$__group" "$file"
     chmod +x "$file"
 
     [[ -n "$cmd" ]] && addEmulator 1 "$id" "$port" "$cmd"
@@ -1485,7 +1565,7 @@ function addEmulator() {
         if [[ -z "$ini_value" && "$default" -eq 1 ]]; then
             iniSet "default" "$id"
         fi
-        chown $user:$user "$md_conf_root/$system/emulators.cfg"
+        chown "$__user":"$__group" "$md_conf_root/$system/emulators.cfg"
     fi
 }
 
@@ -1523,7 +1603,7 @@ function patchVendorGraphics() {
     local filename="$1"
 
     # patchelf is not available on Raspbian Jessie
-    compareVersions "$__os_debian_ver" lt 9 && return
+    [[ "$__os_debian_ver" -lt 9 ]] && return
 
     getDepends patchelf
     printMsgs "console" "Applying vendor graphics patch: $filename"
@@ -1569,7 +1649,7 @@ function dkmsManager() {
             fi
             ;;
         remove)
-            for ver in $(dkms status "$module_name" | cut -d"," -f2 | cut -d":" -f1); do
+            for ver in $(dkms status "$module_name" | awk -F'[/,:]' '{print $2}'); do
                 dkms remove -m "$module_name" -v "$ver" --all
                 rm -f "/usr/src/${module_name}-${ver}"
             done

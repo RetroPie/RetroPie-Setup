@@ -17,6 +17,12 @@ rp_module_repo="git https://github.com/libretro/dosbox-pure.git main"
 rp_module_section="exp"
 rp_module_flags=""
 
+function depends_lr-dosbox-pure() {
+    # lr-dosbox-pure will try and use g++ v9 on arm if the system default is v10 due to bugs
+    # see https://github.com/libretro/dosbox-pure/commit/603b1c7ae
+    isPlatform "arm" && [[ "$__gcc_version" -eq 10 ]] && getDepends g++-9
+}
+
 function sources_lr-dosbox-pure() {
     gitPullOrClone
 }
@@ -37,7 +43,7 @@ function install_lr-dosbox-pure() {
 
 function configure_lr-dosbox-pure() {
     mkRomDir "pc"
-    ensureSystemretroconfig "pc"
+    defaultRAConfig "pc"
 
     addEmulator 0 "$md_id" "pc" "$md_inst/dosbox_pure_libretro.so"
     addSystem "pc"

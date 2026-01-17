@@ -144,9 +144,9 @@ CD1=$romdir/ports/planescape/data/
 CachePath=$romdir/ports/cache/
 _EOF_
 
-    chown $user:$user "$md_conf_root/baldursgate1/GemRB.cfg"
-    chown $user:$user "$md_conf_root/baldursgate2/GemRB.cfg"
-    chown $user:$user "$md_conf_root/icewind1/GemRB.cfg"
-    chown $user:$user "$md_conf_root/icewind2/GemRB.cfg"
-    chown $user:$user "$md_conf_root/planescape/GemRB.cfg"
+    chown "$__user":"$__group" "$md_conf_root/baldursgate1/GemRB.cfg"
+    chown "$__user":"$__group" "$md_conf_root/baldursgate2/GemRB.cfg"
+    chown "$__user":"$__group" "$md_conf_root/icewind1/GemRB.cfg"
+    chown "$__user":"$__group" "$md_conf_root/icewind2/GemRB.cfg"
+    chown "$__user":"$__group" "$md_conf_root/planescape/GemRB.cfg"
 }

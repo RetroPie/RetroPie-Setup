@@ -36,7 +36,7 @@ function install_lr-fmsx() {
 
 function configure_lr-fmsx() {
     mkRomDir "msx"
-    ensureSystemretroconfig "msx"
+    defaultRAConfig "msx"
 
     # default to MSX2+ core
     setRetroArchCoreOption "fmsx_mode" "MSX2+"
@@ -48,5 +48,5 @@ function configure_lr-fmsx() {
 
     # Copy CARTS.SHA to $biosdir
     cp "$md_inst/CARTS.SHA" "$biosdir/"
-    chown $user:$user "$biosdir/CARTS.SHA"
+    chown "$__user":"$__group" "$biosdir/CARTS.SHA"
 }

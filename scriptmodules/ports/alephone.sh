@@ -17,21 +17,21 @@ rp_module_repo="git https://github.com/Aleph-One-Marathon/alephone.git :_get_bra
 rp_module_section="opt"
 rp_module_flags="!mali"
 
-function _get_branch_alephone() {
-    local branch="release-20150620"
-    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
-        branch="master"
+function _get_version_alephone() {
+    local version="20250829"
+    # newer versions need libboost 1.69.0+
+    if [[ "$__os_debian_ver" -lt 11 ]]; then
+        version="20250302"
     fi
-    echo "$branch"
+    echo "$version"
+}
+
+function _get_branch_alephone() {
+    echo "release-$(_get_version_alephone)"
 }
 
 function depends_alephone() {
-    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake libboost-system-dev libcurl4-openssl-dev)
-    if compareVersions "$__os_debian_ver" ge 9 || [[ -n "$__os_ubuntu_ver" ]]; then
-        depends+=(libsdl2-dev libsdl2-net-dev libsdl2-image-dev libsdl2-ttf-dev libglu1-mesa-dev libgl1-mesa-dev)
-    else
-        depends+=(libsdl1.2-dev libsdl-net1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev)
-    fi
+    local depends=(libboost-all-dev libspeexdsp-dev libzzip-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev autoconf automake libboost-system-dev libcurl4-openssl-dev autoconf-archive libopenal-dev libsndfile1-dev libsdl2-dev libsdl2-net-dev libsdl2-image-dev libsdl2-ttf-dev libglu1-mesa-dev libgl1-mesa-dev libasio-dev) 
     getDepends "${depends[@]}"
 }
 
@@ -42,7 +42,9 @@ function sources_alephone() {
 function build_alephone() {
     params=(--prefix="$md_inst")
     isPlatform "arm" && params+=(--with-boost-libdir=/usr/lib/arm-linux-gnueabihf)
-    ./autogen.sh
+
+    autoreconf -iv
+
     ./configure "${params[@]}"
     make clean
     make
@@ -54,21 +56,22 @@ function install_alephone() {
 }
 
 function game_data_alephone() {
-    local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-20150620"
+    local version="$(_get_version_alephone)"
+    local release_url="https://github.com/Aleph-One-Marathon/alephone/releases/download/release-$version"
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon/Shapes.shps" ]]; then
-        downloadAndExtract "$release_url/Marathon-20150620-Data.zip" "$romdir/ports/$md_id"
+        downloadAndExtract "$release_url/Marathon-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon 2/Shapes.shpA" ]]; then
-        downloadAndExtract "$release_url/Marathon2-20150620-Data.zip" "$romdir/ports/$md_id"
+        downloadAndExtract "$release_url/Marathon2-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
     if [[ ! -f "$romdir/ports/$md_id/Marathon Infinity/Shapes.shpA" ]]; then
-        downloadAndExtract "$release_url/MarathonInfinity-20150620-Data.zip" "$romdir/ports/$md_id"
+        downloadAndExtract "$release_url/MarathonInfinity-$version-Data.zip" "$romdir/ports/$md_id"
     fi
 
-    chown -R $user:$user "$romdir/ports/$md_id"
+    chown -R "$__user":"$__group" "$romdir/ports/$md_id"
 }
 
 function configure_alephone() {
@@ -79,12 +82,6 @@ function configure_alephone() {
     mkRomDir "ports/$md_id"
 
     moveConfigDir "$home/.alephone" "$md_conf_root/alephone"
-    # fix for wrong config location
-    if [[ -d "/alephone" ]]; then
-        cp -R /alephone "$md_conf_root/"
-        rm -rf /alephone
-        chown $user:$user "$md_conf_root/alephone"
-    fi
 
     [[ "$md_mode" == "install" ]] && game_data_alephone
 }

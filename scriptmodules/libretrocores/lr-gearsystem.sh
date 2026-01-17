@@ -39,7 +39,7 @@ function configure_lr-gearsystem() {
     local system
     for system in gamegear mastersystem sg-1000; do
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
         addEmulator 0 "$md_id" "$system" "$md_inst/gearsystem_libretro.so"
         addSystem "$system"
     done

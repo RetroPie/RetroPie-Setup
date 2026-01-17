@@ -34,6 +34,11 @@ function sources_xpad() {
     applyPatch "$md_data/01_enable_leds_and_trigmapping.diff"
     # Tell 'dkms' to use the 'updates' kernel module folder to store the module
     applyPatch "$md_data/02_dkms_updates_folder.diff"
+
+    # Force a module version, otherwise 'dkms' refuses to override the built-in module
+    if ! grep -q MODULE_VERSION xpad.c; then
+        applyPatch "$md_data/03_xpad_add_version.diff"
+    fi
 }
 
 function build_xpad() {
@@ -42,14 +47,10 @@ function build_xpad() {
 
 function remove_xpad() {
     dkmsManager remove xpad "$(_version_xpad)"
-    rm -f /etc/modprobe.d/xpad.conf
 }
 
 function configure_xpad() {
     [[ "$md_mode" == "remove" ]] && return
 
-    if [[ ! -f /etc/modprobe.d/xpad.conf ]]; then
-        echo "options xpad triggers_to_buttons=1" >/etc/modprobe.d/xpad.conf
-    fi
     dkmsManager reload xpad "$(_version_xpad)"
 }

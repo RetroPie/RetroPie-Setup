@@ -11,20 +11,20 @@
 
 rp_module_id="sdl1"
 rp_module_desc="SDL 1.2.15 with rpi fixes and dispmanx"
-rp_module_licence="GPL2 https://hg.libsdl.org/SDL/raw-file/7676476631ce/COPYING"
+rp_module_licence="GPL2 https://raw.githubusercontent.com/libsdl-org/SDL-1.2/main/COPYING"
 rp_module_section="depends"
-rp_module_flags="!all rpi"
+rp_module_flags="!all dispmanx"
 
 function get_pkg_ver_sdl1() {
     local basever
     local revision
 
-    if compareVersions "$__os_debian_ver" eq 9; then
+    if [[ "$__os_debian_ver" -eq 9 ]]; then
         basever="1.2.15+dfsg1"
         revision="4"
-    elif compareVersions "$__os_debian_ver" eq 10; then
+    elif [[ "$__os_debian_ver" -ge 10 ]]; then
         basever="1.2.15+dfsg2"
-        revision="4"
+        revision="6"
     else
         basever="1.2.15"
         revision="10"
@@ -50,7 +50,7 @@ function depends_sdl1() {
 
 function sources_sdl1() {
     local files=()
-    if compareVersions "$__os_debian_ver" eq 9; then
+    if [[ "$__os_debian_ver" -eq 9 ]]; then
         files+=(libsdl1.2_$(get_pkg_ver_sdl1 base).orig.tar.xz)
     else
         files+=(libsdl1.2_$(get_pkg_ver_sdl1 base).orig.tar.gz)

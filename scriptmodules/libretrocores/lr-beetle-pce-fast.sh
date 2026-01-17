@@ -34,13 +34,14 @@ function build_lr-beetle-pce-fast() {
 function install_lr-beetle-pce-fast() {
     md_ret_files=(
         'mednafen_pce_fast_libretro.so'
+        'COPYING'
         'README.md'
     )
 }
 
 function configure_lr-beetle-pce-fast() {
     mkRomDir "pcengine"
-    ensureSystemretroconfig "pcengine"
+    defaultRAConfig "pcengine"
 
     addEmulator 1 "$md_id" "pcengine" "$md_inst/mednafen_pce_fast_libretro.so"
     addSystem "pcengine"

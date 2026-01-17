@@ -38,7 +38,7 @@ function install_lr-theodore() {
 
 function configure_lr-theodore() {
     mkRomDir "moto"
-    ensureSystemretroconfig "moto"
+    defaultRAConfig "moto"
 
     addEmulator 1 "$md_id" "moto" "$md_inst/theodore_libretro.so"
     addSystem "moto"

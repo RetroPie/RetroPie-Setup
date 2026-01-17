@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: RetroPie Forums
+    url: https://retropie.org.uk/forum
+    about: Community for discussion and support
+  
+  - name: Documentation
+    url: https://retropie.org.uk/docs
+    about: Official RetroPie Documentation

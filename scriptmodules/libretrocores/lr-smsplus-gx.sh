@@ -38,7 +38,7 @@ function configure_lr-smsplus-gx() {
     local system
     for system in gamegear mastersystem; do
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
         addEmulator 0 "$md_id" "$system" "$md_inst/smsplus_libretro.so"
         addSystem "$system"
     done

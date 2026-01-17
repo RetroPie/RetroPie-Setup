@@ -40,8 +40,8 @@ function install_lr-beetle-wswan() {
 function configure_lr-beetle-wswan() {
     mkRomDir "wonderswan"
     mkRomDir "wonderswancolor"
-    ensureSystemretroconfig "wonderswan"
-    ensureSystemretroconfig "wonderswancolor"
+    defaultRAConfig "wonderswan"
+    defaultRAConfig "wonderswancolor"
 
     addEmulator 1 "$md_id" "wonderswan" "$md_inst/mednafen_wswan_libretro.so"
     addEmulator 1 "$md_id" "wonderswancolor" "$md_inst/mednafen_wswan_libretro.so"

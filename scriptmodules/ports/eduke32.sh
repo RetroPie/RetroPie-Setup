@@ -41,6 +41,8 @@ function sources_eduke32() {
     applyPatch "$md_data/0004-recast-function.patch"
     # cherry-picked commit fixing a game bug in E1M4 (shrinker ray stuck)
     applyPatch "$md_data/0005-e1m4-shrinker-bug.patch"
+    # two more commits r8241 + r8247 fixing a bug in E4M4 (instant death in water)
+    applyPatch "$md_data/0006-e4m4-water-bug.patch"
 }
 
 function build_eduke32() {
@@ -77,14 +79,14 @@ function install_eduke32() {
 function game_data_eduke32() {
     local dest="$romdir/ports/duke3d"
     if [[ "$md_id" == "eduke32" ]]; then
-        if [[ ! -f "$dest/duke3d.grp" ]]; then
-            mkUserDir "$dest"
+        mkUserDir "$dest"
+        if [[ -z "$(find "$dest" -maxdepth 1 -iname duke3d.grp)" ]]; then
             local temp="$(mktemp -d)"
             download "$__archive_url/3dduke13.zip" "$temp"
             unzip -L -o "$temp/3dduke13.zip" -d "$temp" dn3dsw13.shr
             unzip -L -o "$temp/dn3dsw13.shr" -d "$dest" duke3d.grp duke.rts
             rm -rf "$temp"
-            chown -R $user:$user "$dest"
+            chown -R "$__user":"$__group" "$dest"
         fi
     fi
 }
@@ -118,7 +120,7 @@ function configure_eduke32() {
         # the VC4 & V3D drivers render menu splash colours incorrectly without this
         isPlatform "mesa" && iniSet "r_useindexedcolortextures" "0"
 
-        chown -R $user:$user "$config"
+        chown -R "$__user":"$__group" "$config"
     fi
 }
 

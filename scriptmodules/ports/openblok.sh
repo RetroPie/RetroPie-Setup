@@ -12,7 +12,7 @@
 rp_module_id="openblok"
 rp_module_desc="OpenBlok: A Block Dropping Game"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/mmatyas/openblok/master/LICENSE.md"
-rp_module_repo="git https://github.com/mmatyas/openblok.git master"
+rp_module_repo="git https://github.com/mmatyas/openblok.git v0.8.7"
 rp_module_section="exp"
 rp_module_flags=""
 

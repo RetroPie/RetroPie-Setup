@@ -24,9 +24,9 @@ function depends_esthemes() {
 function _has_pixel_pos_esthemes() {
     local pixel_pos=0
     # get the version of emulationstation installed so we can check whether to show
-    # themes that use the new pixel based positioning - we run as $user as the
+    # themes that use the new pixel based positioning - we run as $__user as the
     # emulationstation launch script will exit if run as root
-    local es_ver="$(sudo -u $user /usr/bin/emulationstation --help | grep -oP "Version \K[^,]+")"
+    local es_ver="$(sudo -u $__user /usr/bin/emulationstation --help | grep -oP "Version \K[^,]+")"
     # if emulationstation is newer than 2.10, enable pixel based themes
     compareVersions "$es_ver" ge "2.10" && pixel_pos=1
     echo "$pixel_pos"
@@ -61,6 +61,13 @@ function install_theme_esthemes() {
 
     mkdir -p "/etc/emulationstation/themes"
     gitPullOrClone "/etc/emulationstation/themes/$name" "https://github.com/$repo/es-theme-$theme.git" "$branch"
+
+    # apply any patches for themes broken due to ES fixes
+    if [[ "$pixel_pos" == 1 && -f "$md_data/patch-$repo-$theme.diff" ]]; then
+        pushd "/etc/emulationstation/themes/$name"
+        applyPatch "$md_data/patch-$repo-$theme.diff"
+        popd
+    fi
 }
 
 function uninstall_theme_esthemes() {
@@ -269,6 +276,19 @@ function gui_esthemes() {
         'RetroHursty69 ShadowClean'
         'RetroHursty69 shine'
         'RetroHursty69 Vinyl-Hits'
+        'RetroHursty69 ColorfulExtreme'
+        'RetroHursty69 ColorfulSupreme'
+        'RetroHursty69 CircularEssence'
+        'RetroHursty69 BoomBoxStreet'
+        'RetroHursty69 ShabangCLEAN'
+        'RetroHursty69 ShabangCRT'
+        'RetroHursty69 PopCom16x9'
+        'RetroHursty69 PopCom5x4'
+        'RetroHursty69 ToggleBobble'
+        'RetroHursty69 Sheeny'
+        'RetroHursty69 ballsy'
+        'RetroHursty69 AIGEN'
+        'RetroHursty69 AIGEN_PLUS'
         'Saracade scv720'
         'chicueloarcade Chicuelo'
         'SuperMagicom nostalgic'
@@ -287,6 +307,7 @@ function gui_esthemes() {
         'justincaseurskynet Arcade1up-5x4-Horizontal'
         'KALEL1981 Super-Retroboy'
         'xovox RetroCRT-240p'
+        'xovox RetroCRT-240p-Rainbow'
         'xovox RetroCRT-240p-Vertical'
         'arcadeforge push-a'
         'arcadeforge push-a-v'
@@ -305,6 +326,8 @@ function gui_esthemes() {
         'Elratauru angular-artwork'
         'cjonasw raspixel-320-240'
         'crxone 3twenty2fourty'
+        'leochely Guilty-Gear'
+        'flpowergamesretro-rtp ffarts'
     )
     while true; do
         local theme

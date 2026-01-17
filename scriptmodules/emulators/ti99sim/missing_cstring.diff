@@ -1,0 +1,10 @@
+--- a/src/core/device-support.cpp
++++ b/src/core/device-support.cpp
+@@ -26,6 +26,7 @@
+ //
+ //----------------------------------------------------------------------------
+ 
++#include <cstring>
+ #include <regex>
+ #include "idevice.hpp"
+ #include "icomputer.hpp"

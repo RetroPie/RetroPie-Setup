@@ -43,7 +43,7 @@ function game_data_opentyrian() {
         cd "$__tmpdir"
         # get Tyrian 2.1 (freeware game data)
         downloadAndExtract "$__archive_url/tyrian21.zip" "$romdir/ports/opentyrian/data" -j
-        chown -R $user:$user "$romdir/ports/opentyrian"
+        chown -R "$__user":"$__group" "$romdir/ports/opentyrian"
     fi
 }
 

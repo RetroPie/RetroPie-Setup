@@ -37,8 +37,8 @@ function configure_lr-atari800() {
     mkRomDir "atari800"
     mkRomDir "atari5200"
 
-    ensureSystemretroconfig "atari800"
-    ensureSystemretroconfig "atari5200"
+    defaultRAConfig "atari800"
+    defaultRAConfig "atari5200"
 
     mkUserDir "$md_conf_root/atari800"
     moveConfigFile "$home/.lr-atari800.cfg" "$md_conf_root/atari800/lr-atari800.cfg"

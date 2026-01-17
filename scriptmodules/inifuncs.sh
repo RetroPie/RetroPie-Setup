@@ -63,7 +63,7 @@ function iniProcess() {
 
     local match
     if [[ -f "$file" ]]; then
-        match=$(egrep -i "$match_re" "$file" | tail -1)
+        match=$(grep -i "$match_re" "$file" | tail -1)
     else
         touch "$file"
     fi
@@ -152,7 +152,7 @@ function iniGet() {
         value_m="\([^\r]*\)"
     fi
 
-    ini_value="$(sed -n "s/^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m.*/\1/p" "$file" | tail -1)"
+    ini_value="$(sed -n "s#^[ |\t]*$key[ |\t]*$delim_strip[ |\t]*$value_m.*#\1#p" "$file" | tail -1)"
 }
 
 # @fn retroarchIncludeToEnd()
@@ -198,7 +198,7 @@ function addAutoConf() {
     ini_value="${ini_value// /}"
     if [[ -z "$ini_value" ]]; then
         iniSet "$key" "$default"
-        chown $user:$user "$file"
+        chown "$__user":"$__group" "$file"
     fi
 }
 
@@ -210,7 +210,7 @@ function setAutoConf() {
 
     iniConfig " = " '"' "$file"
     iniSet "$key" "$value"
-    chown $user:$user "$file"
+    chown "$__user":"$__group" "$file"
 }
 
 # arg 1: key

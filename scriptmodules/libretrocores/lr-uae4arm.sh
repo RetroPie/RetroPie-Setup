@@ -43,7 +43,7 @@ function install_lr-uae4arm() {
 
 function configure_lr-uae4arm() {
     mkRomDir "amiga"
-    ensureSystemretroconfig "amiga"
+    defaultRAConfig "amiga"
     addEmulator 1 "$md_id" "amiga" "$md_inst/uae4arm_libretro.so"
     addSystem "amiga"
 }

@@ -29,16 +29,7 @@ function remove_micropolis() {
 
 function configure_micropolis() {
     local binary="/usr/games/micropolis"
-    ! isPlatform "x11" && binary="XINIT:$md_inst/micropolis.sh"
+    ! isPlatform "x11" && binary="XINIT-WMC:/usr/games/micropolis"
 
     addPort "$md_id" "micropolis" "Micropolis" "$binary"
-
-    mkdir -p "$md_inst"
-    cat >"$md_inst/micropolis.sh" << _EOF_
-#!/bin/bash
-xset -dpms s off s noblank
-matchbox-window-manager &
-/usr/games/micropolis
-_EOF_
-    chmod +x "$md_inst/micropolis.sh"
 }

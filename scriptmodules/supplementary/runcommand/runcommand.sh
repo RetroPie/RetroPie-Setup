@@ -87,13 +87,19 @@ EMU_CONF="$CONFIGDIR/all/emulators.cfg"
 BACKENDS_CONF="$CONFIGDIR/all/backends.cfg"
 RETRONETPLAY_CONF="$CONFIGDIR/all/retronetplay.cfg"
 JOY2KEY="$ROOTDIR/admin/joy2key/joy2key"
+SDL2_MAPPINGS="$CONFIGDIR/all/sdl2_gamecontrollerdb.txt"
 
 # modesetting tools
 TVSERVICE="/opt/vc/bin/tvservice"
-KMSTOOL="$ROOTDIR/supplementary/mesa-drm/modetest"
+KMSTOOL="$ROOTDIR/supplementary/kmsxx/kmsprint-rp"
 XRANDR="xrandr"
 
 source "$ROOTDIR/lib/inifuncs.sh"
+
+# disable the `patsub_replacement` shell option, it breaks the string substitution when replacement contains '&'
+if shopt -s patsub_replacement 2>/dev/null; then
+    shopt -u patsub_replacement
+fi
 
 function get_config() {
     declare -Ag MODE_MAP
@@ -119,12 +125,15 @@ function get_config() {
         iniGet "image_delay"
         IMAGE_DELAY="$ini_value"
         [[ -z "$IMAGE_DELAY" ]] && IMAGE_DELAY=2
+        iniGet "legacy_joy2key"
+        LEGACY_JOY2KEY="$ini_value"
+        [[ -z "$LEGACY_JOY2KEY" ]] && LEGACY_JOY2KEY=0
     fi
 
     if [[ -n "$DISPLAY" ]] && $XRANDR &>/dev/null; then
         HAS_MODESET="x11"
     # copy kms tool output to global variable to avoid multiple invocations
-    elif KMS_BUFFER="$($KMSTOOL -r 2>/dev/null)"; then
+    elif [[ -c /dev/dri/card0 ]] && KMS_BUFFER="$($KMSTOOL 2>/dev/null)"; then
         HAS_MODESET="kms"
     elif [[ -f "$TVSERVICE" ]]; then
         HAS_MODESET="tvs"
@@ -236,37 +245,23 @@ function get_all_tvs_modes() {
 
 function get_all_kms_modes() {
     declare -Ag MODE
-    local default_mode="$(echo "$KMS_BUFFER" | grep -Em1 "^Mode:.*(driver|userdef).*crtc")"
-    local crtc="$(echo "$default_mode" | awk '{ print $(NF-1) }')"
-    local crtc_encoder="$(echo "$KMS_BUFFER" | grep "Encoder map:" | awk -v crtc="$crtc" '$5 == crtc { print $3 }')"
-
-    local info
-    local line
-    local mode_id
+    default_mode="$(echo "$KMS_BUFFER" | grep -Em1 "^Mode: [0-9]+ crtc")"
+    crtc="$(echo "$default_mode" | cut -d' ' -f  4)"
+    crtc_encoder="$(echo "$KMS_BUFFER" | grep "Encoder map:" | awk -v crtc="$crtc" '$5 == crtc { print $3 }')"
 
     # add default mode as fallback in case real mode cannot be mapped
-    MODE[def-def]="$(echo "$default_mode" | awk '{--NF --NF --NF; print}' | cut -c7-)"
+    MODE[def-def]="$(echo "$default_mode" | cut -d' ' -f5-)"
 
-    while read -r line; do
-        # encoder id
-        encoder_id="$(echo "$line" | awk '{ print $(NF-1) }')"
+    # parse only the video modes connected to the current active crtc
+    while read -r mode_str mode_id con encoder_id info; do
+           # we only need 2nd column (mode index) and the 5+ columns (resolution info)
+           # populate resolution info into arrays (using mapped crtc encoder value)
+           MODE_ID+=($crtc-$mode_id)
+           MODE[$crtc-$mode_id]="$info"
 
-        # only match encoders that are linked to the currently active crtc
-        if [[ "$encoder_id" == "$crtc_encoder" ]]; then
-            # mode id
-            mode_id="$(echo "$line" | awk '{ print $NF }')"
-
-            # make output more human-readable
-            info="$(echo "$line" | awk '{--NF --NF --NF; print}' | cut -c7-)"
-
-            # populate resolution into arrays (using mapped crtc encoder value)
-            MODE_ID+=($crtc-$mode_id)
-            MODE[$crtc-$mode_id]="$info"
-
-            # if string matches default mode, add a special mapped entry
-            [[ "$default_mode" =~ "$info" ]] && MODE[map-map]="$crtc $mode_id"
-        fi
-    done < <(echo "$KMS_BUFFER" | grep "Mode:" | grep "connector")
+           # if string matches default mode, add a special mapped entry
+           [[ "$default_mode" =~ "$info" ]] && MODE[map-map]="$crtc $mode_id"
+    done < <(echo "$KMS_BUFFER" | grep -E "^Mode: [0-9]+ connector $crtc_encoder")
 }
 
 function get_all_x11_modes()
@@ -368,7 +363,7 @@ function get_kms_mode_info() {
         fi
     fi
 
-    # split resolution
+    # split resolution (1st column)
     status=(${MODE[${mode_id[0]}-${mode_id[1]}]/x/ })
 
     # get crtc id
@@ -379,13 +374,14 @@ function get_kms_mode_info() {
 
     # get mode resolution
     mode_info[2]="${status[0]}"
-    mode_info[3]="${status[1]}"
+    # yres may have an ending 'i'(nterlace) flag
+    mode_info[3]="${status[1]/i/}"
 
-    # get aspect ratio
+    # get aspect ratio (5th column)
     mode_info[4]="${status[5]}"
 
-    # get refresh rate
-    mode_info[5]="${status[3]}"
+    # get refresh rate (4th column, remove surrounding brackets)
+    mode_info[5]="${status[4]//[()]/}"
 
     echo "${mode_info[@]}"
 }
@@ -701,6 +697,7 @@ function main_menu() {
                 ;;
             L)
                 COMMAND+=" --verbose"
+                VERBOSE=1
                 return 0
                 ;;
             U)
@@ -953,6 +950,7 @@ _EOF_
                 cat >>"$xinitrc" <<_EOF_
 matchbox-window-manager ${params[@]} &
 sleep 0.5
+xset -dpms s off s noblank
 _EOF_
             fi
 
@@ -1024,6 +1022,7 @@ function mode_switch() {
         # if we have switched mode, switch the framebuffer resolution also
         if [[ "$?" -eq 0 ]]; then
             sleep 1
+            clear
             MODE_CUR=($(get_${HAS_MODESET}_mode_info))
             [[ -z "$FB_NEW" ]] && FB_NEW="${MODE_CUR[2]}x${MODE_CUR[3]}"
             return 0
@@ -1054,6 +1053,9 @@ function config_backend() {
                 fi
                 COMMAND="SDL1_VIDEODRIVER=dispmanx $COMMAND"
                 ;;
+            sdl12-compat)
+                COMMAND="LD_PRELOAD=\"$ROOTDIR/supplementary/sdl12-compat/libSDL-1.2.so.0\" $COMMAND"
+                ;;
             x11)
                 XINIT=1
                 XINIT_WM=1
@@ -1080,7 +1082,8 @@ function retroarch_append_config() {
     touch "$conf"
     iniConfig " = " '"' "$conf"
 
-    if [[ -n "$HAS_MODESET" && "${MODE_CUR[5]}" -gt 0 ]]; then
+    # strip any suffix decimals appearing in refresh rate, just for comparison
+    if [[ -n "$HAS_MODESET" && "${MODE_CUR[5]%.*}" -gt 0 ]]; then
         # set video_refresh_rate in our config to the same as the screen refresh
         iniSet "video_refresh_rate" "${MODE_CUR[5]}"
     fi
@@ -1100,6 +1103,14 @@ function retroarch_append_config() {
         iniSet "video_fullscreen_x" "${dim[0]}"
         iniSet "video_fullscreen_y" "${dim[1]}"
     fi
+
+    # set `libretro_directory` to the core parent folder
+    local core_dir=$(echo "$COMMAND" | grep -Eo "$ROOTDIR/libretrocores/.*libretro\.so" | head -n 1)
+    core_dir=$(dirname "$core_dir")
+    [[ -n "$core_dir" ]] && iniSet "libretro_directory" "$core_dir"
+
+    # if verbose logging is on, set core logging to INFO
+    [[ "$VERBOSE" -eq 1 ]] && iniSet "libretro_log_level" "1"
 
     # if the ROM has a custom configuration then append that too
     if [[ -f "$ROM.cfg" ]]; then
@@ -1186,19 +1197,30 @@ function get_sys_command() {
     quake_dir="${quake_dir%/*}"
     COMMAND="${COMMAND//\%QUAKEDIR\%/\"$quake_dir\"}"
 
-    # if it starts with CON: it is a console application (so we don't redirect stdout later)
-    if [[ "$COMMAND" == CON:* ]]; then
-        # remove CON:
-        COMMAND="${COMMAND:4}"
-        CONSOLE_OUT=1
+    # check if COMMAND starts with a launch OPTION:
+    if [[ "$COMMAND" =~ ^([A-Z\-]+?):(.*)$ ]]; then
+        # extract the command
+        COMMAND="${BASH_REMATCH[2]}"
+
+        case "${BASH_REMATCH[1]}" in
+            # if it starts with CON: it is a console application (so we don't redirect stdout later)
+            CON)
+                CONSOLE_OUT=1
+                ;;
+            # if it starts with XINIT it is an X11 application (so we need to launch via xinit)
+            XINIT*)
+                XINIT=1
+                ;;&
+            # if it starts with XINIT-WM or XINIT-WMC (with cursor) it is an X11 application needing a window manager
+            XINIT-WM)
+                XINIT_WM=1
+                ;;
+            XINIT-WMC)
+                XINIT_WM=2
+                ;;
+        esac
     fi
 
-    # if it starts with XINIT: it is an X11 application (so we need to launch via xinit)
-    if [[ "$COMMAND" == XINIT:* ]]; then
-        # remove XINIT:
-        COMMAND="${COMMAND:6}"
-        XINIT=1
-    fi
 }
 
 function show_launch() {
@@ -1242,6 +1264,9 @@ function show_launch() {
             feh -F -N -Z -Y -q "$image" & &>/dev/null
             IMG_PID=$!
             sleep "$IMAGE_DELAY"
+            # if we're not using the old Joy2Key script, we need feh to stop after the delay
+            # otherwise the menu will not be triggered due to terminal being out of focus
+            [[ "$LEGACY_JOY2KEY" -eq 0 && "DISABLE_MENU" -ne 1 ]] && kill -SIGINT "$IMG_PID"
         else
             fbi -1 -t "$IMAGE_DELAY" -noverbose -a "$image" </dev/tty &>/dev/null
         fi
@@ -1297,11 +1322,11 @@ function launch_command() {
     if [[ "$CONSOLE_OUT" -eq 1 ]]; then
         # turn cursor on
         tput cnorm
-        eval $COMMAND </dev/tty 2>>"$LOG"
+        eval "$COMMAND" </dev/tty 2>>"$LOG"
         ret=$?
         tput civis
     else
-        eval $COMMAND </dev/tty &>>"$LOG"
+        eval "$COMMAND" </dev/tty &>>"$LOG"
         ret=$?
     fi
     return $ret
@@ -1371,7 +1396,14 @@ function runcommand() {
 
     user_script "runcommand-onlaunch.sh"
 
+    # include our SDL gamecontroller mappings in the environment
+    # but check if the environment doesn't already have the SDL GameController mapping hint
+    if [[ -z $SDL_GAMECONTROLLERCONFIG && -f "$SDL2_MAPPINGS" ]]; then
+        export SDL_GAMECONTROLLERCONFIG="$(cat "$SDL2_MAPPINGS")"
+    fi
+
     local ret
+    clear
     launch_command
     ret=$?
 

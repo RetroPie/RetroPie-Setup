@@ -15,7 +15,7 @@ rp_module_help="ROM Extensions: .gba .zip\n\nCopy your Game Boy Advance roms to 
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/gpsp/master/COPYING"
 rp_module_repo="git https://github.com/libretro/gpsp.git master"
 rp_module_section="opt arm=main"
-rp_module_flags="!all arm"
+rp_module_flags=""
 
 function sources_lr-gpsp() {
     gitPullOrClone
@@ -35,14 +35,14 @@ function install_lr-gpsp() {
     md_ret_files=(
         'gpsp_libretro.so'
         'COPYING'
-        'readme.txt'
-        'game_config.txt'
+        'original_readme.txt'
+        'README.md'
     )
 }
 
 function configure_lr-gpsp() {
     mkRomDir "gba"
-    ensureSystemretroconfig "gba"
+    defaultRAConfig "gba"
 
     local def=0
     isPlatform "armv6" && def=1

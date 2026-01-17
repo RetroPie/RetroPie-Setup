@@ -13,7 +13,7 @@ rp_module_id="splashscreen"
 rp_module_desc="Configure Splashscreen"
 rp_module_section="main"
 rp_module_repo="git https://github.com/RetroPie/retropie-splashscreens.git master"
-rp_module_flags="noinstclean !all rpi !osmc !xbian !aarch64"
+rp_module_flags="noinstclean !all rpi !osmc !xbian"
 
 function _update_hook_splashscreen() {
     # make sure splashscreen is always up to date if updating just RetroPie-Setup
@@ -32,9 +32,14 @@ function _video_exts_splashscreen() {
 }
 
 function depends_splashscreen() {
-    local params=(insserv)
-    isPlatform "32bit" && params+=(omxplayer)
-    getDepends "${params[@]}"
+    # pin archive.raspberrypi.org version of VLC on buster as updated "security" vanilla version doesn't have mmal output
+    if [[ "$__os_debian_ver" -lt 11 ]]; then
+        cp "$md_data/rp-vlc" /etc/apt/preferences.d/
+        # try and install vlc to force downgrade
+        aptInstall --allow-downgrades vlc
+    else
+        getDepends vlc
+    fi
 }
 
 function install_bin_splashscreen() {
@@ -48,6 +53,7 @@ ConditionPathExists=$md_inst/asplashscreen.sh
 
 [Service]
 Type=oneshot
+User=$__user
 ExecStart=$md_inst/asplashscreen.sh
 RemainAfterExit=yes
 
@@ -55,13 +61,22 @@ RemainAfterExit=yes
 WantedBy=sysinit.target
 _EOF_
 
-    rp_installModule "omxiv" "_autoupdate_"
-
     gitPullOrClone "$md_inst"
 
     cp "$md_data/asplashscreen.sh" "$md_inst"
 
     iniConfig "=" '"' "$md_inst/asplashscreen.sh"
+
+    if [[ "$__os_debian_ver" -le 10 ]]; then
+        # set vlc mmal layer for Raspberry Pi OS 10 (Buster) or below.
+        iniSet "CMD_OPTS" " --mmal-layer 10001"
+        # remove 05-splash.sh if present due to previous splashscreen module installing this on rpi4 on Buster
+        rm -f /etc/profile.d/05-splash.sh
+    else
+        # install script to kill splashscreen before running autostart scripts when using kms
+        cp "$md_data/05-splash.sh" /etc/profile.d/
+    fi
+
     iniSet "ROOTDIR" "$rootdir"
     iniSet "DATADIR" "$datadir"
     iniSet "REGEX_IMAGE" "$(_image_exts_splashscreen)"
@@ -71,11 +86,11 @@ _EOF_
         iniConfig "=" '"' "$configdir/all/$md_id.cfg"
         iniSet "RANDOMIZE" "disabled"
     fi
-    chown $user:$user "$configdir/all/$md_id.cfg"
+    chown "$__user":"$__group" "$configdir/all/$md_id.cfg"
 
     mkUserDir "$datadir/splashscreens"
     echo "Place your own splashscreens in here." >"$datadir/splashscreens/README.txt"
-    chown $user:$user "$datadir/splashscreens/README.txt"
+    chown "$__user":"$__group" "$datadir/splashscreens/README.txt"
 }
 
 function enable_plymouth_splashscreen() {
@@ -107,9 +122,6 @@ function disable_splashscreen() {
 function configure_splashscreen() {
     [[ "$md_mode" == "remove" ]] && return
 
-    # remove legacy service
-    [[ -f "/etc/init.d/asplashscreen" ]] && insserv -r asplashscreen && rm -f /etc/init.d/asplashscreen
-
     disable_plymouth_splashscreen
     enable_splashscreen
     [[ ! -f /etc/splashscreen.list ]] && default_splashscreen
@@ -118,8 +130,9 @@ function configure_splashscreen() {
 function remove_splashscreen() {
     enable_plymouth_splashscreen
     disable_splashscreen
-    rp_callModule "omxiv" remove
     rm -f /etc/splashscreen.list /etc/systemd/system/asplashscreen.service
+    rm -f /etc/apt/preferences.d/rp-vlc
+    rm -f /etc/profile.d/05-splash.sh
     systemctl daemon-reload
 }
 
@@ -185,6 +198,7 @@ function choose_splashscreen() {
 
 function randomize_splashscreen() {
     options=(
+        0 "Disable splashscreen randomizer"
         1 "Randomize RetroPie splashscreens"
         2 "Randomize own splashscreens (from $datadir/splashscreens)"
         3 "Randomize all splashscreens"
@@ -193,16 +207,20 @@ function randomize_splashscreen() {
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
     iniConfig "=" '"' "$configdir/all/$md_id.cfg"
-    chown $user:$user "$configdir/all/$md_id.cfg"
+    chown "$__user":"$__group" "$configdir/all/$md_id.cfg"
 
     case "$choice" in
+        0)
+            iniSet "RANDOMIZE" "disabled"
+            printMsgs "dialog" "Splashscreen randomizer disabled."
+            ;;
         1)
             iniSet "RANDOMIZE" "retropie"
-            printMsgs "dialog" "Splashscreen randomizer enabled in directory $path"
+            printMsgs "dialog" "Splashscreen randomizer enabled in directory $rootdir/supplementary/$md_id"
             ;;
         2)
             iniSet "RANDOMIZE" "custom"
-            printMsgs "dialog" "Splashscreen randomizer enabled in directory $path"
+            printMsgs "dialog" "Splashscreen randomizer enabled in directory $datadir/splashscreens"
             ;;
         3)
             iniSet "RANDOMIZE" "all"
@@ -224,7 +242,7 @@ function preview_splashscreen() {
 
     local path
     local file
-    local omxiv="/opt/retropie/supplementary/omxiv/omxiv"
+    local splash_cmd="sudo -u $__user XDG_RUNTIME_DIR=/run/user/$SUDO_UID vlc --intf dummy --quiet --play-and-exit --image-duration 6"
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -236,13 +254,13 @@ function preview_splashscreen() {
                 1)
                     file=$(choose_splashscreen "$path" "image")
                     [[ -z "$file" ]] && break
-                    $omxiv -b "$file"
+                    $splash_cmd "$file"
                     ;;
                 2)
                     file=$(mktemp)
                     find "$path" -type f ! -regex ".*/\..*" ! -regex ".*LICENSE" ! -regex ".*README.*" ! -regex ".*\.sh" | sort > "$file"
                     if [[ -s "$file" ]]; then
-                        $omxiv -t 6 -T blend -b --once -f "$file"
+                        tr "\n" "\0" <"$file" | xargs -0 $splash_cmd
                     else
                         printMsgs "dialog" "There are no splashscreens installed in $path"
                     fi
@@ -252,7 +270,7 @@ function preview_splashscreen() {
                 3)
                     file=$(choose_splashscreen "$path" "video")
                     [[ -z "$file" ]] && break
-                    omxplayer --no-osd -b --layer 10000 "$file"
+                    $splash_cmd "$file"
                     ;;
             esac
         done
@@ -261,33 +279,22 @@ function preview_splashscreen() {
 
 function download_extra_splashscreen() {
     gitPullOrClone "$datadir/splashscreens/retropie-extra" https://github.com/HerbFargus/retropie-splashscreens-extra
-    chown -R $user:$user "$datadir/splashscreens/retropie-extra"
+    chown -R "$__user":"$__group" "$datadir/splashscreens/retropie-extra"
 }
 
 function gui_splashscreen() {
-    if [[ ! -d "$md_inst" ]]; then
-        rp_callModule splashscreen depends
-        rp_callModule splashscreen install
-    fi
     local cmd=(dialog --backtitle "$__backtitle" --menu "Choose an option." 22 86 16)
     while true; do
         local enabled=0
-        local random=0
         [[ -n "$(find "/etc/systemd/system/"*".wants" -type l -name "asplashscreen.service")" ]] && enabled=1
         local options=(1 "Choose splashscreen")
         if [[ "$enabled" -eq 1 ]]; then
-            options+=(2 "Disable splashscreen on boot (Enabled)")
+            options+=(2 "Show splashscreen on boot (currently: Enabled)")
             iniConfig "=" '"' "$configdir/all/$md_id.cfg"
             iniGet "RANDOMIZE"
-            random=1
-            [[ "$ini_value" == "disabled" ]] && random=0
-            if [[ "$random" -eq 1 ]]; then
-                options+=(3 "Disable splashscreen randomizer (Enabled)")
-            else
-                options+=(3 "Enable splashscreen randomizer (Disabled)")
-            fi
+            options+=(3 "Randomizer options (currently: ${ini_value^})")
         else
-            options+=(2 "Enable splashscreen on boot (Disabled)")
+            options+=(2 "Show splashscreen on boot (currently: Disabled)")
         fi
         options+=(
             4 "Use default splashscreen"
@@ -323,15 +330,12 @@ function gui_splashscreen() {
                     fi
                     ;;
                 3)
-                    if [[ "$random" -eq 1 ]]; then
-                        iniSet "RANDOMIZE" "disabled"
-                        printMsgs "dialog" "Splashscreen randomizer disabled."
-                    else
-                        randomize_splashscreen
-                    fi
+                    randomize_splashscreen
                     ;;
                 4)
+                    iniSet "RANDOMIZE" "disabled"
                     default_splashscreen
+                    enable_splashscreen
                     printMsgs "dialog" "Splashscreen set to RetroPie default."
                     ;;
                 5)

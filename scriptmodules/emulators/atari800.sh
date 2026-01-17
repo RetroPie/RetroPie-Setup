@@ -13,13 +13,13 @@ rp_module_id="atari800"
 rp_module_desc="Atari 8-bit/800/5200 emulator"
 rp_module_help="ROM Extensions: .a52 .bas .bin .car .xex .atr .xfd .dcm .atr.gz .xfd.gz\n\nCopy your Atari800 games to $romdir/atari800\n\nCopy your Atari 5200 roms to $romdir/atari5200 You need to copy the Atari 800/5200 BIOS files (5200.ROM, ATARIBAS.ROM, ATARIOSB.ROM and ATARIXL.ROM) to the folder $biosdir and then on first launch configure it to scan that folder for roms (F1 -> Emulator Configuration -> System Rom Settings)"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/atari800/atari800/master/COPYING"
-rp_module_repo="git https://github.com/atari800/atari800.git ATARI800_4_2_0"
+rp_module_repo="git https://github.com/atari800/atari800.git ATARI800_5_2_0"
 rp_module_section="opt"
-rp_module_flags="sdl1 !mali"
+rp_module_flags="sdl1"
 
 function depends_atari800() {
     local depends=(libsdl1.2-dev autoconf automake zlib1g-dev libpng-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-dev)
+    isPlatform "dispmanx" && depends+=(libraspberrypi-dev)
     getDepends "${depends[@]}"
 }
 
@@ -33,7 +33,7 @@ function sources_atari800() {
 function build_atari800() {
     local params=()
     ./autogen.sh
-    isPlatform "videocore" && params+=(--target=rpi)
+    isPlatform "dispmanx" && params+=(--target=rpi)
     ./configure --prefix="$md_inst" ${params[@]}
     make clean
     make
@@ -93,6 +93,9 @@ function configure_atari800() {
     local params=()
     # if we are on fkms, use the sdl1 dispmanx backend by default for good performance without using X11/opengl
     isPlatform kms && isPlatform "dispmanx" && _backend_set_atari800 "dispmanx"
+
+    # when no dispmanx is available, but still on KMS, use 'sdl12-compat' and go through SDL2
+    isPlatform "kms" && ! isPlatform "dispmanx" _&& _backend_set_atari800 "sdl12-compat"
 
     # this is split out so we can call it via _backend_set_atari800
     _add_emulators_atari800

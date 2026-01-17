@@ -49,7 +49,7 @@ function install_lr-vice() {
 
 function configure_lr-vice() {
     mkRomDir "c64"
-    ensureSystemretroconfig "c64"
+    defaultRAConfig "c64"
 
     local target
     local name
@@ -74,5 +74,5 @@ function configure_lr-vice() {
     fi
 
     cp -R "$md_inst/data" "$biosdir"
-    chown -R $user:$user "$biosdir/data"
+    chown -R "$__user":"$__group" "$biosdir/data"
 }

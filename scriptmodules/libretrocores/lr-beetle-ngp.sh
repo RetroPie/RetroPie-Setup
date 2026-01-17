@@ -41,7 +41,7 @@ function configure_lr-beetle-ngp() {
     local system
     for system in ngp ngpc; do
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
         addEmulator 1 "$md_id" "$system" "$md_inst/mednafen_ngp_libretro.so"
         addSystem "$system"
     done

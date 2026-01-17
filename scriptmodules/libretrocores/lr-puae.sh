@@ -34,7 +34,7 @@ function install_lr-puae() {
 
 function configure_lr-puae() {
     mkRomDir "amiga"
-    ensureSystemretroconfig "amiga"
+    defaultRAConfig "amiga"
     addEmulator 1 "$md_id" "amiga" "$md_inst/puae_libretro.so"
     addSystem "amiga"
 }

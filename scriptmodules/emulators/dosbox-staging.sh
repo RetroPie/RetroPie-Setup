@@ -14,32 +14,63 @@ rp_module_desc="modern DOS/x86 emulator focusing on ease of use"
 rp_module_help="ROM Extensions: .bat .com .exe .sh .conf\n\nCopy your DOS games to $romdir/pc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/dosbox-staging/dosbox-staging/master/COPYING"
 rp_module_repo="git https://github.com/dosbox-staging/dosbox-staging.git :_get_branch_dosbox-staging"
-rp_module_section="exp"
+rp_module_section="opt"
 rp_module_flags="sdl2"
 
 function _get_branch_dosbox-staging() {
-    download https://api.github.com/repos/dosbox-staging/dosbox-staging/releases/latest - | grep -m 1 tag_name | cut -d\" -f4
+    local branch="v0.82.2"
+
+    # use 0.80.1 for VideoCore devices, 0.81 and later require OpenGL
+    if isPlatform "videocore"; then
+        branch="v0.80.1"
+    # v0.81.2 is the last version that can build on gcc < 10
+    elif [[ "$__gcc_version" -lt 10 ]]; then
+        branch="v0.81.2"
+    # v0.82.0 is the last version that can build on gcc < 11
+    elif [[ "$__gcc_version" -lt 11 ]]; then
+        branch="v0.82.0"
+    fi
+
+    echo "$branch"
 }
 
 function depends_dosbox-staging() {
-    getDepends cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev meson ninja-build
+    local depends
+    depends=(cmake libasound2-dev libglib2.0-dev libopusfile-dev libpng-dev libsdl2-dev libsdl2-net-dev libspeexdsp-dev meson ninja-build zlib1g-dev)
+    if [[ "$__os_debian_ver" -ge 11 ]]; then
+        depends+=(libslirp-dev libfluidsynth-dev)
+    else
+        # the slirp subproject requires libsdl2-image-dev to build
+        depends+=(libsdl2-image-dev)
+    fi
+
+    getDepends "${depends[@]}"
 }
 
 function sources_dosbox-staging() {
     gitPullOrClone
+    # patch 0.81.x/0.82.x series with fix for kmsdrm
+    if [[ "$(_get_branch_dosbox-staging)" == v0.8[12].*  ]]; then
+        applyPatch "$md_data/0.82.x-kmsdrm-fix.diff"
+    fi
+    # Check if we have at least meson>=0.57, otherwise install it locally for the build
+    local meson_version="$(meson --version)"
+    if compareVersions "$meson_version" lt 0.57; then
+        downloadAndExtract "https://github.com/mesonbuild/meson/releases/download/0.61.5/meson-0.61.5.tar.gz" meson --strip-components 1
+    fi
 }
 
 function build_dosbox-staging() {
-    local params=(-Dbuildtype=release -Ddefault_library=static --prefix="$md_inst")
+    local params=(-Dprefix="$md_inst" -Ddatadir="resources" -Dtry_static_libs="iir,mt32emu")
+    # use the build local Meson installation if found
+    local meson_cmd="meson"
+    [[ -f "$md_build/meson/meson.py" ]] && meson_cmd="python3 $md_build/meson/meson.py"
 
-    # Fluidsynth (static)
-    cd "$md_build/contrib/static-fluidsynth"
-    make
-    export PKG_CONFIG_PATH="${md_build}/contrib/static-fluidsynth/fluidsynth/build"
+    # disable speexdsp simd support on armv6 devices
+    isPlatform "armv6" && params+=(-Dspeexdsp:simd=false)
 
-    cd "$md_build"
-    meson setup "${params[@]}" build
-    ninja -C build
+    $meson_cmd setup "${params[@]}" build
+    $meson_cmd compile -j${__jobs} -C build
 
     md_ret_require=(
         "$md_build/build/dosbox"
@@ -47,24 +78,33 @@ function build_dosbox-staging() {
 }
 
 function install_dosbox-staging() {
-    cd "$md_build/build"
-    meson install
+    ninja -C build install
 }
 
 function configure_dosbox-staging() {
     configure_dosbox
 
-    [[ "$md_id" == "remove" ]] && return
+    [[ "$md_mode" == "remove" ]] && return
 
-    local config_path=$(su "$user" -c "\"$md_inst/bin/dosbox\" -printconf")
+    local config_dir="$md_conf_root/pc"
+    chown -R "$__user":"$__group" "$config_dir"
+
+    local staging_output="texturenb"
+    if isPlatform "kms"; then
+        staging_output="openglnb"
+    fi
+
+    local config_path=$(su "$__user" -c "\"$md_inst/bin/dosbox\" -printconf")
     if [[ -f "$config_path" ]]; then
         iniConfig " = " "" "$config_path"
         if isPlatform "rpi"; then
             iniSet "fullscreen" "true"
-            iniSet "fullresolution" "desktop"
-            iniSet "output" "texturenb"
+            iniSet "fullresolution" "original"
+            iniSet "vsync" "true"
+            iniSet "output" "$staging_output"
             iniSet "core" "dynamic"
-            iniSet "cycles" "25000"
+            iniSet "blocksize" "2048"
+            iniSet "prebuffer" "50"
         fi
     fi
 }

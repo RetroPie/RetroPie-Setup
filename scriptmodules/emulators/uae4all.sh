@@ -11,7 +11,7 @@
 
 rp_module_id="uae4all"
 rp_module_desc="Amiga emulator UAE4All"
-rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir"
+rp_module_help="ROM Extension: .adf\n\nCopy your Amiga games to $romdir/amiga\n\nCopy the required BIOS files\nkick13.rom\nkick20.rom\nkick31.rom\nto $biosdir/amiga"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/uae4all2/retropie/copying"
 rp_module_repo="git https://github.com/RetroPie/uae4all2.git retropie"
 rp_module_section="opt"
@@ -76,13 +76,13 @@ function configure_uae4all() {
     if [[ ! -h "$md_inst/kickstarts" ]]; then
         rm -f "$md_inst/kickstarts/"{kick12.rom,kick13.rom,kick20.rom,kick31.rom}
     fi
-    moveConfigDir "$md_inst/kickstarts" "$biosdir"
+    moveConfigDir "$md_inst/kickstarts" "$biosdir/amiga"
 
     rm -f "$romdir/amiga/+Start UAE4All.sh"
     if [[ "$md_mode" == "install" ]]; then
         if [[ ! -f "$biosdir/aros-amiga-m68k-ext.bin" ]]; then
             # unpack aros kickstart
-            unzip -j "aros20140110.zip" -d "$biosdir"
+            unzip -j "aros20140110.zip" -d "$biosdir/amiga"
         fi
 
         cat > "$romdir/amiga/+Start UAE4All.sh" << _EOF_
@@ -92,7 +92,7 @@ pushd "$md_inst"
 popd
 _EOF_
         chmod a+x "$romdir/amiga/+Start UAE4All.sh"
-        chown $user:$user "$romdir/amiga/+Start UAE4All.sh"
+        chown "$__user":"$__group" "$romdir/amiga/+Start UAE4All.sh"
 
         isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
     else

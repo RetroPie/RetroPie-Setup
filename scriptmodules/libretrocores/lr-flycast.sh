@@ -44,6 +44,8 @@ function build_lr-flycast() {
                 "GLES=1"
                 "GL_LIB=-L/opt/vc/lib -lbrcmGLESv2")
             add_flags+=("-I/opt/vc/include -DTARGET_NO_STENCIL -DLOW_END")
+        elif isPlatform "vero4k"; then
+            params+=("platform=AMLGXL" "ARCH=arm" "ARMV7A_FLAGS=1")
         else
             params+=("FORCE_GLES=1")
         fi
@@ -55,7 +57,8 @@ function build_lr-flycast() {
     fi
     isPlatform "aarch64" && params+=("WITH_DYNAREC=arm64" "HOST_CPU_FLAGS=-DTARGET_LINUX_ARMv8")
     isPlatform "arm" && params+=("WITH_DYNAREC=arm")
-    ! isPlatform "x86" && params+=("HAVE_GENERIC_JIT=0" "HAVE_VULKAN=0")
+    ! isPlatform "x86" && params+=("HAVE_GENERIC_JIT=0")
+    isPlatform "vulkan" && params+=("HAVE_VULKAN=1") || params+=("HAVE_VULKAN=0")
     make "${params[@]}" clean
     CFLAGS+=" ${add_flags[@]}" make "${params[@]}"
     md_ret_require="$md_build/flycast_libretro.so"
@@ -69,20 +72,31 @@ function install_lr-flycast() {
 }
 
 function configure_lr-flycast() {
-    mkRomDir "dreamcast"
-    ensureSystemretroconfig "dreamcast"
+    local sys
+    local systems=(dreamcast arcade)
+    local def
+    for sys in "${systems[@]}"; do
+        def=0
+        if isPlatform "kms" && [[ "$sys" == "dreamcast" ]]; then
+            def=1
+        fi
+        # segfaults on the rpi without redirecting stdin from </dev/null
+        addEmulator $def "$md_id" "$sys" "$md_inst/flycast_libretro.so </dev/null"
+        addSystem "$sys"
+    done
 
-    mkUserDir "$biosdir/dc"
+    [[ "$md_mode" == "remove" ]] && return
 
+    local params=()
     # system-specific
     if isPlatform "gl"; then
-        iniConfig " = " "" "$configdir/dreamcast/retroarch.cfg"
-        iniSet "video_shared_context" "true"
+        params+=("video_shared_context" "true")
     fi
 
-    local def=0
-    isPlatform "kms" && def=1
-    # segfaults on the rpi without redirecting stdin from </dev/null
-    addEmulator $def "$md_id" "dreamcast" "$md_inst/flycast_libretro.so </dev/null"
-    addSystem "dreamcast"
+    for sys in "${systems[@]}"; do
+        mkRomDir "$sys"
+        defaultRAConfig "$sys" "${params[@]}"
+    done
+
+    mkUserDir "$biosdir/dc"
 }

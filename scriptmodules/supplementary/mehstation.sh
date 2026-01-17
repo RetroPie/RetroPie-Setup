@@ -110,7 +110,7 @@ function configure_mehstation() {
     if [[ ! -f "$db" ]]; then
         local sql
         while read -r sql; do
-            sudo -u $user SCHEMA="$sql" "$md_inst/bin/mehtadata" -db="$db" -init
+            sudo -u "$__user" SCHEMA="$sql" "$md_inst/bin/mehtadata" -db="$db" -init
         done < <(find "$md_inst/share/res" -name "*.sql" | sort)
     fi
 

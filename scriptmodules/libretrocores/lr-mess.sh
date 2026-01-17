@@ -13,7 +13,7 @@ rp_module_id="lr-mess"
 rp_module_desc="MESS emulator - MESS Port for libretro"
 rp_module_help="see wiki for detailed explanation"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/mame/master/COPYING"
-rp_module_repo="git https://github.com/libretro/mame.git master"
+rp_module_repo="git https://github.com/libretro/mame.git :_get_version_lr-mame"
 rp_module_section="exp"
 rp_module_flags=""
 
@@ -26,18 +26,22 @@ function sources_lr-mess() {
 }
 
 function build_lr-mess() {
-    rpSwap on 4096
+    if isPlatform "64bit"; then
+        rpSwap on 10240
+    else
+        rpSwap on 6144
+    fi
     local params=($(_get_params_lr-mame) SUBTARGET=mess)
     make clean
     make "${params[@]}"
     rpSwap off
-    md_ret_require="$md_build/mess_libretro.so"
+    md_ret_require="$md_build/mamemess_libretro.so"
 }
 
 function install_lr-mess() {
     md_ret_files=(
         'COPYING'
-        'mess_libretro.so'
+        'mamemess_libretro.so'
         'README.md'
         'hash'
     )
@@ -45,12 +49,12 @@ function install_lr-mess() {
 
 function configure_lr-mess() {
     local module="$1"
-    [[ -z "$module" ]] && module="mess_libretro.so"
+    [[ -z "$module" ]] && module="mamemess_libretro.so"
 
     local system
     for system in nes gb coleco arcadia crvision; do
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
         addEmulator 0 "$md_id" "$system" "$md_inst/$module"
         addSystem "$system"
     done
@@ -63,5 +67,5 @@ function configure_lr-mess() {
 
     mkUserDir "$biosdir/mame"
     cp -rv "$md_inst/hash" "$biosdir/mame/"
-    chown -R $user:$user "$biosdir/mame"
+    chown -R "$__user":"$__group" "$biosdir/mame"
 }

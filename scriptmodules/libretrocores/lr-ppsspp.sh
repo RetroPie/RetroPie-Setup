@@ -13,7 +13,7 @@ rp_module_id="lr-ppsspp"
 rp_module_desc="PlayStation Portable emu - PPSSPP port for libretro"
 rp_module_help="ROM Extensions: .iso .pbp .cso\n\nCopy your PlayStation Portable roms to $romdir/psp"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/RetroPie/ppsspp/master/LICENSE.TXT"
-rp_module_repo="git https://github.com/hrydgard/ppsspp.git master"
+rp_module_repo="git https://github.com/hrydgard/ppsspp.git :_get_release_ppsspp"
 rp_module_section="opt"
 rp_module_flags=""
 
@@ -23,6 +23,16 @@ function depends_lr-ppsspp() {
 
 function sources_lr-ppsspp() {
     sources_ppsspp
+
+    # fix missing defines on opengles2 on v1.16.6 lr-ppsspp
+    if [[ "$(_get_release_ppsspp)" == "v1.16.6" ]]; then
+        applyPatch "${__mod_info[ppsspp/path]%/*}/ppsspp/gles2_fix.diff"
+    fi
+
+    # fix missing exported symbol for libretro on v1.13.2
+    if [[ "$(_get_release_ppsspp)" == "v1.13.2" ]]; then
+        applyPatch "$md_data/v13-libretro_fix.diff"
+    fi
 }
 
 function build_lr-ppsspp() {
@@ -38,19 +48,26 @@ function install_lr-ppsspp() {
 
 function configure_lr-ppsspp() {
     mkRomDir "psp"
-    ensureSystemretroconfig "psp"
+    defaultRAConfig "psp"
 
     if [[ "$md_mode" == "install" ]]; then
         mkUserDir "$biosdir/PPSSPP"
         cp -Rv "$md_inst/assets/"* "$biosdir/PPSSPP/"
-        chown -R $user:$user "$biosdir/PPSSPP"
+        chown -R "$__user":"$__group" "$biosdir/PPSSPP"
 
         # the core needs a save file directory, use the same folder as standalone 'ppsspp'
         iniConfig " = " "" "$configdir/psp/retroarch.cfg"
         iniSet "savefile_directory" "$home/.config/ppsspp"
-        mkUserDir "$home/.config/ppsspp"
+        moveConfigDir "$home/.config/ppsspp" "$md_conf_root/psp"
     fi
 
     addEmulator 1 "$md_id" "psp" "$md_inst/ppsspp_libretro.so"
     addSystem "psp"
+
+    # if we are removing the last remaining psp emu - remove the symlink
+    if [[ "$md_mode" == "remove" ]]; then
+        if [[ -h "$home/.config/ppsspp" && ! -f "$md_conf_root/psp/emulators.cfg" ]]; then
+            rm -f "$home/.config/ppsspp"
+        fi
+    fi
 }

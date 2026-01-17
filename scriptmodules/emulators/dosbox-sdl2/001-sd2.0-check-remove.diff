@@ -1,0 +1,25 @@
+diff --git a/configure.ac b/configure.ac
+index 407d553..731d960 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -31,20 +31,6 @@ EXULT_CHECK_SDL(:,AC_MSG_ERROR([[*** SDL not found!]]))
+ LIBS="$LIBS $SDL_LIBS"
+ CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
+ 
+-dnl Check if SDL is 2.0.x
+-AC_MSG_CHECKING([for SDL version being 2.0.x])
+-AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+-#include "SDL.h"
+-void blah(){
+-#if !((SDL_MAJOR_VERSION == 2) && (SDL_MINOR_VERSION == 0))
+-#error "Only SDL 2.0 supported"
+-#endif
+-;
+-}
+-])],AC_MSG_RESULT([yes]),[
+- AC_MSG_RESULT([no]) 
+- AC_MSG_ERROR([Only libSDL 2.0.x supported])])
+-
+ dnl Checks for header files.
+ 
+ dnl Checks for typedefs, structures, and compiler characteristics.

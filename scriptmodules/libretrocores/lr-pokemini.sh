@@ -34,7 +34,7 @@ function install_lr-pokemini() {
 
 function configure_lr-pokemini() {
     mkRomDir "pokemini"
-    ensureSystemretroconfig "pokemini"
+    defaultRAConfig "pokemini"
 
     addEmulator 1 "$md_id" "pokemini" "$md_inst/pokemini_libretro.so"
     addSystem "pokemini"

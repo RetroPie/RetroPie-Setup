@@ -29,6 +29,7 @@ function sources_fuse() {
         applyPatch "$md_data/01_disable_cursor.diff"
     fi
     applyPatch "$md_data/02_sdl_fix.diff"
+    applyPatch "$md_data/03_gcc_10_fix.diff"
 }
 
 function build_fuse() {
@@ -62,12 +63,15 @@ function configure_fuse() {
     # default to dispmanx backend
     isPlatform "dispmanx" && _backend_set_fuse "dispmanx"
 
+    # without dispmanx, but with KMS, then use sdl12-compat
+    ! isPlatform "dispmanx" && isPlatform "kms" && _backend_set_fuse "sdl12-compat"
+
     local script="$romdir/zxspectrum/+Start Fuse.sh"
     cat > "$script" << _EOF_
 #!/bin/bash
 $md_inst/bin/fuse --machine 128 --full-screen
 _EOF_
-    chown $user:$user "$script"
+    chown "$__user":"$__group" "$script"
     chmod +x "$script"
 }
 

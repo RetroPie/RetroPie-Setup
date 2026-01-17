@@ -1,0 +1,68 @@
+diff --git a/src/osdep/amiberry_whdbooter.cpp b/src/osdep/amiberry_whdbooter.cpp
+index 8a03e732..939b26b8 100644
+--- a/src/osdep/amiberry_whdbooter.cpp
++++ b/src/osdep/amiberry_whdbooter.cpp
+@@ -1180,6 +1180,7 @@ void set_booter_drives(uae_prefs* prefs, const char* filepath)
+ 
+ void whdload_auto_prefs(uae_prefs* prefs, const char* filepath)
+ {
++	bool custom_config_loaded = false;
+ 	write_log("WHDBooter Launched\n");
+ 
+ 	if (lstAvailableROMs.empty())
+@@ -1207,18 +1208,7 @@ void whdload_auto_prefs(uae_prefs* prefs, const char* filepath)
+ 	const std::string filename_no_extension = get_game_filename(filepath);
+ 	whdload_prefs.filename = filename_no_extension;
+ 
+-	// LOAD GAME SPECIFICS FOR EXISTING .UAE - USE SHA1 IF AVAILABLE
+-	//  CONFIG LOAD IF .UAE IS IN CONFIG PATH
+-	build_uae_config_filename(whdload_prefs.filename);
+-
+-	// If we have a config file, we use that first
+-	if (std::filesystem::exists(uae_config))
+-	{
+-		write_log("WHDBooter -  %s found. Loading Config for WHDLoad options.\n", uae_config.c_str());
+-		target_cfgfile_load(prefs, uae_config.c_str(), CONFIG_TYPE_DEFAULT, 0);
+-	}
+-
+-	// setups for tmp folder.
++	// setup for tmp folder.
+ 	std::filesystem::create_directories("/tmp/amiberry/s");
+ 	std::filesystem::create_directories("/tmp/amiberry/c");
+ 	std::filesystem::create_directories("/tmp/amiberry/devs");
+@@ -1234,7 +1224,6 @@ void whdload_auto_prefs(uae_prefs* prefs, const char* filepath)
+ 	// LOAD GAME SPECIFICS
+ 	whd_path = whdbooter_path / "game-data";
+ 	game_hardware_options game_detail;
+-
+ 	whd_config = whd_path / "whdload_db.xml";
+ 
+ 	if (std::filesystem::exists(whd_config))
+@@ -1243,7 +1232,17 @@ void whdload_auto_prefs(uae_prefs* prefs, const char* filepath)
+ 	}
+ 	else
+ 	{
+-		write_log("WHDBooter -  Could not load whdload_db.xml - does not exist?\n");
++		write_log("WHDBooter - Could not load whdload_db.xml - does not exist?\n");
++	}
++
++	// LOAD CUSTOM CONFIG
++	build_uae_config_filename(whdload_prefs.filename);
++	// If we have a config file, we will load that on top of the XML settings
++	if (std::filesystem::exists(uae_config))
++	{
++		write_log("WHDBooter - %s found. Loading Config for WHDLoad options.\n", uae_config.c_str());
++		target_cfgfile_load(prefs, uae_config.c_str(), CONFIG_TYPE_DEFAULT, 0);
++		custom_config_loaded = true;
+ 	}
+ 
+ 	// If we have a slave, create a startup-sequence
+@@ -1308,7 +1307,7 @@ void whdload_auto_prefs(uae_prefs* prefs, const char* filepath)
+ #endif
+ 
+ 	// if we already loaded a .uae config, we don't need to do the below manual setup for hardware
+-	if (std::filesystem::exists(uae_config))
++	if (custom_config_loaded)
+ 	{
+ 		write_log("WHDBooter - %s found; ignoring WHD Quickstart setup.\n", uae_config.c_str());
+ 		return;

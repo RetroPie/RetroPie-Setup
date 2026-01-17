@@ -12,10 +12,17 @@
 rp_module_id="solarus"
 rp_module_desc="Solarus - A lightweight, free and open-source game engine for Action-RPGs"
 rp_module_help="Copy your Solarus quests (games) to $romdir/solarus"
-rp_module_licence="GPL3 https://gitlab.com/solarus-games/solarus/raw/dev/license.txt"
-rp_module_repo="git https://gitlab.com/solarus-games/solarus.git master"
+rp_module_licence="GPL3 https://gitlab.com/solarus-games/solarus/-/raw/dev/license"
+rp_module_repo="git https://gitlab.com/solarus-games/solarus.git :_get_branch_solarus"
 rp_module_section="opt"
-rp_module_flags="!aarch64"
+
+function _get_branch_solarus() {
+    local branch="release-2.0.1"
+    if [[ "$__os_debian_ver" -lt 11 ]]; then
+        branch="release-1.6.5"
+    fi
+    echo "$branch"
+}
 
 function _options_cfg_file_solarus() {
     echo "$configdir/solarus/options.cfg"
@@ -52,8 +59,11 @@ function build_solarus() {
     cd build
     cmake "${params[@]}" ..
     make
+    # solarus v2.x moved the executable to build/cli
+    local exe_path="$md_build/build"
+    [[ -d "$exe_path/cli" ]] && exe_path="$exe_path/cli"
     md_ret_require=(
-        "$md_build/build/solarus-run"
+        "$exe_path/solarus-run"
     )
 }
 
@@ -132,7 +142,7 @@ function gui_solarus() {
                     else
                         iniDel "JOYPAD_DEADZONE"
                     fi
-                    chown $user:$user "$(_options_cfg_file_solarus)"
+                    chown "$__user":"$__group" "$(_options_cfg_file_solarus)"
                 fi
                 ;;
             Q)
@@ -144,7 +154,7 @@ function gui_solarus() {
                     else
                         iniDel "QUIT_COMBO"
                     fi
-                    chown $user:$user "$(_options_cfg_file_solarus)"
+                    chown "$__user":"$__group" "$(_options_cfg_file_solarus)"
                 fi
                 ;;
             *)

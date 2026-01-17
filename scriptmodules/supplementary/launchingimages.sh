@@ -366,7 +366,7 @@ function _generate_launchingimages() {
     fi
 
     for file in $(_get_all_launchingimages); do
-        chown $user:$user "$file"
+        chown "$__user":"$__group" "$file"
     done
 }
 

@@ -44,7 +44,6 @@ function install_pcsx-rearmed() {
         'ChangeLog.df'
         'NEWS'
         'README.md'
-        'readme.txt'
         'pcsx'
     )
     mkdir "$md_inst/plugins"

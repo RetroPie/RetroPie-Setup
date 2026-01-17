@@ -24,7 +24,7 @@ function _update_hook_retropiemenu() {
 }
 
 function depends_retropiemenu() {
-    getDepends mc
+    getDepends mc p7zip
 }
 
 function install_bin_retropiemenu() {
@@ -38,7 +38,7 @@ function configure_retropiemenu()
     local rpdir="$home/RetroPie/retropiemenu"
     mkdir -p "$rpdir"
     cp -Rv "$md_data/icons" "$rpdir/"
-    chown -R $user:$user "$rpdir"
+    chown -R "$__user":"$__group" "$rpdir"
 
     isPlatform "rpi" && rm -f "$rpdir/dispmanx.rp"
 
@@ -91,7 +91,12 @@ function configure_retropiemenu()
         'Connect to or disconnect from a WiFi network and configure WiFi settings.'
     )
 
-    setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% </dev/tty >/dev/tty" "" "retropie"
+    # 'legacy' joy2key uses direct tty I/O and needs the extra redirection arguments
+    iniConfig " = " '"' "$configdir/all/runcommand.cfg"
+    iniGet "legacy_joy2key"
+    local tty_args
+    [[ "$ini_value" == "1" ]] && tty_args=" </dev/tty >/dev/tty"
+    setESSystem "RetroPie" "retropie" "$rpdir" ".rp .sh" "sudo $scriptdir/retropie_packages.sh retropiemenu launch %ROM% $tty_args" "" "retropie"
 
     local file
     local name
@@ -137,8 +142,8 @@ function launch_retropiemenu() {
         retroarch.rp)
             joy2keyStop
             cp "$configdir/all/retroarch.cfg" "$configdir/all/retroarch.cfg.bak"
-            chown $user:$user "$configdir/all/retroarch.cfg.bak"
-            su $user -c "XDG_RUNTIME_DIR=/run/user/$SUDO_UID \"$emudir/retroarch/bin/retroarch\" --menu --config \"$configdir/all/retroarch.cfg\""
+            chown "$__user":"$__group" "$configdir/all/retroarch.cfg.bak"
+            su "$__user" -c "XDG_RUNTIME_DIR=/run/user/$SUDO_UID \"$emudir/retroarch/bin/retroarch\" --menu --config \"$configdir/all/retroarch.cfg\""
             iniConfig " = " '"' "$configdir/all/retroarch.cfg"
             iniSet "config_save_on_exit" "false"
             ;;
@@ -165,7 +170,7 @@ function launch_retropiemenu() {
             ;;
         *.sh)
             cd "$home/RetroPie/retropiemenu"
-            sudo -u "$user" bash "$command"
+            sudo -u "$__user" bash "$command"
             ;;
     esac
     joy2keyStop

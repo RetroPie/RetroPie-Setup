@@ -73,6 +73,7 @@ function configure_lr-fbneo() {
     addEmulator 0 "$md_id-ngp" "ngp" "$md_inst/fbneo_libretro.so --subsystem ngp"
     addEmulator 0 "$md_id-ngpc" "ngpc" "$md_inst/fbneo_libretro.so --subsystem ngp"
     addEmulator 0 "$md_id-chf" "channelf" "$md_inst/fbneo_libretro.so --subsystem chf"
+    addEmulator 0 "$md_id-snes" "snes" "$md_inst/fbneo_libretro.so --subsystem snes"
 
     local systems=(
         "arcade"
@@ -91,6 +92,7 @@ function configure_lr-fbneo() {
         "ngp"
         "ngpc"
         "channelf"
+        "snes"
     )
 
     local system
@@ -102,7 +104,7 @@ function configure_lr-fbneo() {
 
     for system in "${systems[@]}"; do
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
     done
 
     # Create directories for all support files
@@ -111,10 +113,12 @@ function configure_lr-fbneo() {
     mkUserDir "$biosdir/fbneo/cheats"
     mkUserDir "$biosdir/fbneo/patched"
     mkUserDir "$biosdir/fbneo/samples"
+    mkUserDir "$biosdir/fbneo/ips"
+    mkUserDir "$biosdir/fbneo/romdata"
 
     # copy hiscore.dat
     cp "$md_inst/metadata/hiscore.dat" "$biosdir/fbneo/"
-    chown $user:$user "$biosdir/fbneo/hiscore.dat"
+    chown "$__user":"$__group" "$biosdir/fbneo/hiscore.dat"
 
     # Set core options
     setRetroArchCoreOption "fbneo-diagnostic-input" "Hold Start"

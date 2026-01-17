@@ -20,7 +20,7 @@ function _setup_gzip_log() {
 function rps_logInit() {
     if [[ ! -d "$__logdir" ]]; then
         if mkdir -p "$__logdir"; then
-            chown $user:$user "$__logdir"
+            chown "$__user":"$__group" "$__logdir"
         else
             fatalError "Couldn't make directory $__logdir"
         fi
@@ -32,13 +32,13 @@ function rps_logInit() {
     local now=$(date +'%Y-%m-%d_%H%M%S')
     logfilename="$__logdir/rps_$now.log.gz"
     touch "$logfilename"
-    chown $user:$user "$logfilename"
+    chown "$__user":"$__group" "$logfilename"
     time_start=$(date +"%s")
 }
 
 function rps_logStart() {
     echo -e "Log started at: $(date -d @$time_start)\n"
-    echo "RetroPie-Setup version: $__version ($(git -C "$scriptdir" log -1 --pretty=format:%h))"
+    echo "RetroPie-Setup version: $__version ($(sudo -u "$__user" git -C "$scriptdir" log -1 --pretty=format:%h))"
     echo "System: $__platform ($__platform_arch) - $__os_desc - $(uname -a)"
 }
 
@@ -75,12 +75,8 @@ function depends_setup() {
         exec "$scriptdir/retropie_packages.sh" setup post_update gui_setup
     fi
 
-    if isPlatform "rpi" && isPlatform "mesa" && ! isPlatform "rpi4"; then
+    if  [[ "$__os_debian_ver" -le 10 ]] && isPlatform "rpi" && isPlatform "mesa" && ! isPlatform "rpi4"; then
         printMsgs "dialog" "WARNING: You have the experimental desktop GL driver enabled. This is NOT supported by RetroPie, and Emulation Station as well as emulators may fail to launch.\n\nPlease disable the experimental desktop GL driver from the raspi-config 'Advanced Options' menu."
-    fi
-
-    if isPlatform "rpi" && isPlatform "64bit"; then
-        printMsgs "dialog" "WARNING: 64bit support on the Raspberry Pi is not yet officially supported, although the main emulator package selection should work ok."
     fi
 
     if [[ "$__os_debian_ver" -eq 8 ]]; then
@@ -95,8 +91,8 @@ function depends_setup() {
     if ! isPlatform "x11"; then
         local group
         for group in input video; do
-            if ! hasFlag "$(groups $user)" "$group"; then
-                dialog --yesno "Your user '$user' is not a member of the system group '$group'.\n\nThis is needed for RetroPie to function correctly. May I add '$user' to group '$group'?\n\nYou will need to restart for these changes to take effect." 22 76 2>&1 >/dev/tty && usermod -a -G "$group" "$user"
+            if ! hasFlag "$(groups $__user)" "$group"; then
+                dialog --yesno "Your user '$__user' is not a member of the system group '$group'.\n\nThis is needed for RetroPie to function correctly. May I add '$__user' to group '$group'?\n\nYou will need to restart for these changes to take effect." 22 76 2>&1 >/dev/tty && usermod -a -G "$group" "$__user"
             fi
         done
     fi
@@ -111,7 +107,7 @@ function depends_setup() {
 function updatescript_setup()
 {
     clear
-    chown -R $user:$user "$scriptdir"
+    chown -R "$__user":"$__group" "$scriptdir"
     printHeading "Fetching latest version of the RetroPie Setup Script."
     pushd "$scriptdir" >/dev/null
     if [[ ! -d ".git" ]]; then
@@ -120,7 +116,7 @@ function updatescript_setup()
         return 1
     fi
     local error
-    if ! error=$(su $user -c "git pull --ff-only 2>&1 >/dev/null"); then
+    if ! error=$(sudo -u "$__user" git pull --ff-only 2>&1 >/dev/null); then
         printMsgs "dialog" "Update failed:\n\n$error"
         popd >/dev/null
         return 1
@@ -513,7 +509,7 @@ function config_gui_setup() {
         local id
         for id in "${__mod_id[@]}"; do
             # show all configuration modules and any installed packages with a gui function
-            if [[ "${__mod_info[$id/section]}" == "config" ]] || rp_isInstalled "$id" && fnExists "gui_$id"; then
+            if [[ "${__mod_info[$id/section]}" == "config" ]] || rp_isInstalled "$id" && rp_isEnabled "$id" && fnExists "gui_$id"; then
                 options+=("${__mod_idx[$id]}" "$id  - ${__mod_info[$id/desc]}" "${__mod_idx[$id]} ${__mod_info[$id/desc]}")
             fi
         done
@@ -650,7 +646,7 @@ function packages_gui_setup() {
 function uninstall_setup()
 {
     dialog --defaultno --yesno "Are you sure you want to uninstall RetroPie?" 22 76 2>&1 >/dev/tty || return 0
-    dialog --defaultno --yesno "Are you REALLY sure you want to uninstall RetroPie?\n\n$rootdir will be removed - this includes configuration files for all RetroPie components." 22 76 2>&1 >/dev/tty || return 0
+    dialog --defaultno --colors --yesno "Are you \ZbREALLY\Zn sure you want to uninstall RetroPie?\n\nThe \Z4\Zb$rootdir\Zn folder will be removed - this includes configuration files for all RetroPie components. If you wish to keep any config files of the emulators/ports that RetroPie used, then choose \ZrNo\Zn now and save it first." 22 76 2>&1 >/dev/tty || return 0
     clear
     printHeading "Uninstalling RetroPie"
     for id in "${__mod_id[@]}"; do
@@ -680,7 +676,7 @@ function gui_setup() {
     depends_setup
     local default
     while true; do
-        local commit=$(git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
+        local commit=$(sudo -u "$__user" git -C "$scriptdir" log -1 --pretty=format:"%cr (%h)")
 
         cmd=(dialog --backtitle "$__backtitle" --title "RetroPie-Setup Script" --cancel-label "Exit" --item-help --help-button --default-item "$default" --menu "Version: $__version - Last Commit: $commit\nSystem: $__platform ($__platform_arch) - running on $__os_desc" 22 76 16)
         options=(

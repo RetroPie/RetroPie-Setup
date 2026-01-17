@@ -34,7 +34,7 @@ function install_lr-caprice32() {
 
 function configure_lr-caprice32() {
     mkRomDir "amstradcpc"
-    ensureSystemretroconfig "amstradcpc"
+    defaultRAConfig "amstradcpc"
 
     setRetroArchCoreOption "cap32_autorun" "enabled"
     setRetroArchCoreOption "cap32_Model" "6128"

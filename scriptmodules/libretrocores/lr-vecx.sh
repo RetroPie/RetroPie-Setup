@@ -48,12 +48,12 @@ function install_lr-vecx() {
 
 function configure_lr-vecx() {
     mkRomDir "vectrex"
-    ensureSystemretroconfig "vectrex"
+    defaultRAConfig "vectrex"
 
     if [[ "$md_mode" == "install" ]]; then
         # Copy bios files
         cp -v "$md_inst/"{fast.bin,skip.bin,system.bin} "$biosdir/"
-        chown $user:$user "$biosdir/"{fast.bin,skip.bin,system.bin}
+        chown "$__user":"$__group" "$biosdir/"{fast.bin,skip.bin,system.bin}
     else
         rm -f "$biosdir/"{fast.bin,skip.bin,system.bin}
     fi

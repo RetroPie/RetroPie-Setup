@@ -1,0 +1,22 @@
+ Fails to build with gcc 12 for armv8 on aarch64 kernel due to -ffast-math options. Enabling -fmath-errno resolves it.
+
+ Fixes:
+ /usr/lib/gcc/arm-linux-gnueabihf/12/include/arm_neon.h: In function ‘float16x8_t vmulq_n_f16(float16x8_t, float16_t)’:
+ /usr/lib/gcc/arm-linux-gnueabihf/12/include/arm_neon.h:17784:14: error: conversion of scalar ‘float’ to vector ‘float16x8_t’ involves truncation
+ 17784 |   return __a * __b;
+       |          ~~~~^~~~~
+ make[2]: *** [src/CMakeFiles/zdoom.dir/build.make:685: src/CMakeFiles/zdoom.dir/common/rendering/gles/gles_renderer.cpp.o] Error 1
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c6ba69a..b4ef587 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -158,7 +158,7 @@ endif()
+ # Fast math flags, required by some subprojects
+ set( ZD_FASTMATH_FLAG "" )
+ if( DEM_CMAKE_COMPILER_IS_GNUCXX_COMPATIBLE )
+-	set( ZD_FASTMATH_FLAG "-ffast-math -ffp-contract=fast" )
++	set( ZD_FASTMATH_FLAG "-ffast-math -ffp-contract=fast -fmath-errno" )
+ elseif( MSVC )
+ 	set( ZD_FASTMATH_FLAG "/fp:fast" )
+ endif()

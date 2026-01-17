@@ -13,7 +13,7 @@ rp_module_id="zesarux"
 rp_module_desc="ZX Spectrum emulator ZEsarUX"
 rp_module_help="ROM Extensions: .sna .szx .z80 .tap .tzx .gz .udi .mgt .img .trd .scl .dsk .zip\n\nCopy your ZX Spectrum games to $romdir/zxspectrum"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/chernandezba/zesarux/master/src/LICENSE"
-rp_module_repo="git https://github.com/chernandezba/zesarux.git 9.1"
+rp_module_repo="git https://github.com/chernandezba/zesarux.git ZEsarUX-12.1"
 rp_module_section="opt"
 rp_module_flags="sdl2 sdl1-videocore"
 
@@ -65,7 +65,7 @@ function configure_zesarux() {
 "$md_inst/bin/zesarux" "\$@"
 _EOF_
     chmod +x "$romdir/zxspectrum/+Start ZEsarUX.sh"
-    chown $user:$user "$romdir/zxspectrum/+Start ZEsarUX.sh"
+    chown "$__user":"$__group" "$romdir/zxspectrum/+Start ZEsarUX.sh"
 
     moveConfigFile "$home/.zesaruxrc" "$md_conf_root/zxspectrum/.zesaruxrc"
 

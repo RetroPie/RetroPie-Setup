@@ -1,0 +1,23 @@
+name: Create Issue
+description: |
+ Report a bug with RetroPie-Setup scripts
+body:
+
+  - type: markdown
+    id: info
+    attributes:
+     value: |
+       #### Important
+       Only RetroPie-Setup **bugs** should be reported here as an Issue.
+       For general support questions, games troubleshooting and enhancement requests please use the [RetroPie Forums](https://retropie.org.uk/forum).
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      placeholder: describe the problem/bug in RetroPie's scripts
+    validations:
+      required: true
+

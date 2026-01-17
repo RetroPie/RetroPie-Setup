@@ -47,8 +47,8 @@ else
     "$rootdir/supplementary/runcommand/runcommand.sh" 0 _PORT_ cavestory "$romdir/ports/CaveStory/Doukutsu.exe"
 fi
 _EOF_
-    chown $user:$user "$file"
+    chown "$__user":"$__group" "$file"
     chmod +x "$file"
 
-    ensureSystemretroconfig "ports/cavestory"
+    defaultRAConfig "cavestory"
 }

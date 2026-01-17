@@ -20,9 +20,9 @@ __netplaymode="$__netplaymode"
 __netplayport="$__netplayport"
 __netplayhostip="$__netplayhostip"
 __netplayhostip_cfile="$__netplayhostip_cfile"
-__netplaynickname="'$__netplaynickname'"
+__netplaynickname="$__netplaynickname"
 _EOF_
-    chown $user:$user "$conf"
+    chown "$__user":"$__group" "$conf"
     printMsgs "dialog" "Configuration has been saved to $conf"
 }
 
@@ -57,16 +57,14 @@ function rps_retronet_mode() {
 }
 
 function rps_retronet_port() {
-    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the port to be used for netplay (default: 55435)." 22 76 $__netplayport)
-    choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+    choice=$(inputBox "Port for netplay" "$__netplayport" 4)
     if [[ -n "$choice" ]]; then
         __netplayport="$choice"
     fi
 }
 
 function rps_retronet_hostip() {
-    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the IP address of the host." 22 76 $__netplayhostip)
-    choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+    choice=$(inputBox "IP Address of the host" "$__netplayhostip" 8)
     if [[ -n "$choice" ]]; then
         __netplayhostip="$choice"
         if [[ $__netplaymode == "H" ]]; then
@@ -78,8 +76,7 @@ function rps_retronet_hostip() {
 }
 
 function rps_retronet_nickname() {
-    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please enter the nickname you wish to use (default: RetroPie)" 22 76 $__netplaynickname)
-    choice=$("${cmd[@]}" 2>&1 >/dev/tty)
+    choice=$(inputBox "Nickname you wish to use" "$__netplaynickname" 4)
     if [[ -n "$choice" ]]; then
         __netplaynickname="$choice"
     fi
@@ -89,15 +86,15 @@ function gui_retronetplay() {
     rps_retronet_loadconfig
 
     local ip_int=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
-    local ip_ext=$(download http://ipecho.net/plain -)
+    local ip_ext=$(curl -4 http://ipecho.net/plain)
 
     while true; do
-        cmd=(dialog --backtitle "$__backtitle" --menu "Configure RetroArch Netplay.\nInternal IP: $ip_int External IP: $ip_ext" 22 76 16)
+        cmd=(dialog --backtitle "$__backtitle" --cancel-label "Exit" --menu "Configure RetroArch Netplay.\nInternal IP: $ip_int External IP: $ip_ext" 22 76 16)
         options=(
             1 "Set mode, (H)ost or (C)lient. Currently: $__netplaymode"
             2 "Set port. Currently: $__netplayport"
             3 "Set host IP address (for client mode). Currently: $__netplayhostip"
-            4 "Set netplay nickname. Currently: $__netplaynickname"
+            4 "Set netplay nickname. Currently: '$__netplaynickname'"
             5 "Save configuration"
         )
         choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)

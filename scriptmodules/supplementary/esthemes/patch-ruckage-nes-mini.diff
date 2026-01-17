@@ -1,0 +1,115 @@
+--- nes-mini/layouts/1024x768.xml	Wed May  2 15:18:27 2018
++++ nes-mini/layouts/1024x768.xml	Mon Nov 20 16:04:57 2023
+@@ -10,8 +10,8 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.544 0.5481481481481481</size>
+-			<pos>0.3944444444444444 0.2185185185185185</pos>			
++			<size>0.5443  0.6302</size>
++			<pos>0.3942 0.1890</pos>
+ 			<lineSpacing>1.39</lineSpacing>
+ 			<selectorHeight>0.0592592592592593</selectorHeight>
+ 			<selectorOffsetY>0.0074074074074074</selectorOffsetY>
+--- nes-mini/layouts/1280x720.xml	Wed May  2 15:18:27 2018
++++ nes-mini/layouts/1280x720.xml	Mon Nov 20 15:56:00 2023
+@@ -8,8 +8,8 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<pos>0.2958333333333333 0.2185185185185185</pos>
+-			<size>0.408 0.5481481481481481</size>
++			<size>0.408 0.629166666666667</size>
++			<pos>0.2960 0.1890</pos>
+ 			<lineSpacing>1.3975</lineSpacing>
+ 			<selectorHeight>0.0592592592592593</selectorHeight>
+ 			<selectorOffsetY>0.0074074074074074</selectorOffsetY>
+--- nes-mini/layouts/1280x960.xml	Wed May  2 15:18:27 2018
++++ nes-mini/layouts/1280x960.xml	Mon Nov 20 16:03:07 2023
+@@ -10,8 +10,8 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.5444444444444444 0.5481481481481481</size>
+-			<pos>0.3944444444444444 0.2185185185185185</pos>			
++			<size>0.5443  0.6302</size>
++			<pos>0.3942 0.1890</pos>
+ 			<lineSpacing>1.396</lineSpacing>
+ 			<selectorHeight>0.0592592592592593</selectorHeight>
+ 			<selectorOffsetY>0.0074074074074074</selectorOffsetY>
+--- nes-mini/layouts/1366x768.xml	Wed May  2 15:18:27 2018
++++ nes-mini/layouts/1366x768.xml	Mon Nov 20 15:56:46 2023
+@@ -8,8 +8,8 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<pos>0.2958333333333333 0.2185185185185185</pos>		
+-			<size>0.408 0.5481481481481481</size>
++			<size>0.408 0.629166666666667</size>
++			<pos>0.2960 0.1890</pos>
+ 			<lineSpacing>1.39</lineSpacing>
+ 			<selectorHeight>0.0592592592592593</selectorHeight>
+ 			<selectorOffsetY>0.0074074074074074</selectorOffsetY>
+--- nes-mini/layouts/1920x1080.xml	Wed May  2 15:18:27 2018
++++ nes-mini/layouts/1920x1080.xml	Mon Nov 20 15:57:24 2023
+@@ -8,8 +8,8 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<pos>0.2958333333333333 0.2185185185185185</pos>		
+-			<size>0.4083333333333333 0.5481481481481481</size>
++			<pos>0.2960 0.1890</pos>
++			<size>0.408 0.629166666666667</size>
+ 			<lineSpacing>1.375</lineSpacing>
+ 			<selectorHeight>0.0592592592592593</selectorHeight>
+ 			<selectorOffsetY>0.0074074074074074</selectorOffsetY>
+--- nes-mini/layouts/320x240.xml	Wed May  2 15:18:27 2018
++++ nes-mini/layouts/320x240.xml	Tue Nov 21 14:08:33 2023
+@@ -10,11 +10,11 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.546 0.5481481481481481</size>
+-			<pos>0.3944444444444444 0.2185185185185185</pos>			
++			<size>0.5475 0.6310</size>
++			<pos>0.3935 0.1878</pos>
+ 			<lineSpacing>1.395</lineSpacing>
+-			<selectorHeight>0.064</selectorHeight>
+-			<selectorOffsetY>0.007</selectorOffsetY>
++			<selectorHeight>0.060</selectorHeight>
++			<selectorOffsetY>0.008</selectorOffsetY>
+ 		</textlist>
+ 		
+ 	</view>
+--- nes-mini/layouts/640x480.xml	Wed May  2 15:18:27 2018
++++ nes-mini/layouts/640x480.xml	Tue Nov 21 08:39:50 2023
+@@ -10,10 +10,10 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.546 0.5481481481481481</size>
+-			<pos>0.394 0.2185185185185185</pos>			
++			<size>0.5452 0.6310</size>
++			<pos>0.3941 0.1882</pos>
+ 			<lineSpacing>1.395</lineSpacing>
+-			<selectorHeight>0.06</selectorHeight>
++			<selectorHeight>0.0615</selectorHeight>
+ 			<selectorOffsetY>0.007</selectorOffsetY>
+ 		</textlist>
+ 		
+--- nes-mini/layouts/800x600.xml	Wed May  2 15:18:27 2018
++++ nes-mini/layouts/800x600.xml	Wed Nov 22 13:54:40 2023
+@@ -10,10 +10,10 @@
+     <view name="basic, detailed,video">
+ 
+ 		<textlist name="gamelist">
+-			<size>0.544 0.5481481481481481</size>
+-			<pos>0.3944444444444444 0.2185185185185185</pos>			
++			<size>0.5443 0.6302</size>
++			<pos>0.3954 0.1882</pos>
+ 			<lineSpacing>1.4</lineSpacing>
+-			<selectorHeight>0.06</selectorHeight>
++			<selectorHeight>0.0592</selectorHeight>
+ 			<selectorOffsetY>0.0074074074074074</selectorOffsetY>
+ 		</textlist>
+ 		

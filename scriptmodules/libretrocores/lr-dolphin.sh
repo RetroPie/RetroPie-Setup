@@ -44,8 +44,8 @@ function configure_lr-dolphin() {
     mkRomDir "gc"
     mkRomDir "wii"
 
-    ensureSystemretroconfig "gc"
-    ensureSystemretroconfig "wii"
+    defaultRAConfig "gc"
+    defaultRAConfig "wii"
 
     addEmulator 1 "$md_id" "gc" "$md_inst/dolphin_libretro.so"
     addEmulator 1 "$md_id" "wii" "$md_inst/dolphin_libretro.so"

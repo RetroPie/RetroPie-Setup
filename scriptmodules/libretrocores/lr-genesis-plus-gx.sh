@@ -44,7 +44,7 @@ function configure_lr-genesis-plus-gx() {
         # always default emulator for non armv6
         ! isPlatform "armv6" && def=1
         mkRomDir "$system"
-        ensureSystemretroconfig "$system"
+        defaultRAConfig "$system"
         addEmulator "$def" "$md_id" "$system" "$md_inst/genesis_plus_gx_libretro.so"
         addSystem "$system"
     done

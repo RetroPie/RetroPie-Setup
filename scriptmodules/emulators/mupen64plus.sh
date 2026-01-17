@@ -15,13 +15,12 @@ rp_module_help="ROM Extensions: .z64 .n64 .v64\n\nCopy your N64 roms to $romdir/
 rp_module_licence="GPL2 https://raw.githubusercontent.com/mupen64plus/mupen64plus-core/master/LICENSES"
 rp_module_repo=":_pkg_info_mupen64plus"
 rp_module_section="main"
-rp_module_flags="sdl2"
+rp_module_flags="sdl2 nodistcc"
 
 function depends_mupen64plus() {
-    local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng-dev libfreetype6-dev fonts-freefont-ttf libboost-filesystem-dev)
-    isPlatform "rpi" && depends+=(libraspberrypi-bin libraspberrypi-dev)
+    local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng-dev libfreetype6-dev fonts-freefont-ttf libboost-filesystem-dev libglu1-mesa-dev)
+    isPlatform "videocore" && depends+=(libraspberrypi-dev)
     isPlatform "mesa" && depends+=(libgles2-mesa-dev)
-    isPlatform "gl" && depends+=(libglew-dev libglu1-mesa-dev)
     isPlatform "x86" && depends+=(nasm)
     isPlatform "vero4k" && depends+=(vero3-userland-dev-osmc)
     # was a vero4k only line - I think it's not needed or can use a smaller subset of boost
@@ -65,6 +64,8 @@ function _get_repos_mupen64plus() {
     if compareVersions "$cmake_ver" lt 3.9; then
         commit="8a9d52b41b33d853445f0779dd2b9f5ec4ecdda8"
     fi
+    # avoid a GLideN64 regression introduced in 1a0621d
+    isPlatform "gles" && commit="5bbf55df8c61ab86b5e41a97906bc99ce9b00a36"
     repos+=("gonetz GLideN64 master $commit")
 
     local repo
@@ -147,34 +148,49 @@ function sources_mupen64plus() {
         applyPatch "$md_data/0001-GLideN64-use-emplace.patch"
     fi
 
+    if isPlatform "armv8"; then
+        # remove -ffast-math as it causes build errors building on cortex-a76 (rpi5)
+        applyPatch "$md_data/remove_fast_math.diff"
+    fi
+
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
+}
+
+function _params_mupen64plus() {
+    local dir="$1"
+    local params=()
+
+    isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1")
+    isPlatform "videocore" || [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
+    if isPlatform "mesa" || isPlatform "mali"; then
+        params+=("USE_GLES=1")
+    fi
+    isPlatform "neon" && params+=("NEON=1")
+    isPlatform "x11" && params+=("OSD=1" "PIE=1")
+    isPlatform "x86" && params+=("SSE=SSE2")
+    isPlatform "armv6" && params+=("HOST_CPU=armv6")
+    isPlatform "armv7" && params+=("HOST_CPU=armv7")
+    isPlatform "armv8" && params+=("HOST_CPU=armv8")
+    isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
+    # we don't ship a Vulkan enabled front-end, so disable Vulkan in the core project
+    params+=("VULKAN=0")
+    echo "${params[@]}"
 }
 
 function build_mupen64plus() {
     rpSwap on 750
 
     local dir
-    local params=()
+    local params
     for dir in *; do
         if [[ -f "$dir/projects/unix/Makefile" ]]; then
-            params=()
-            isPlatform "rpi1" && params+=("VFP=1" "VFP_HARD=1")
-            isPlatform "videocore" || [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
-            if isPlatform "mesa" || isPlatform "mali"; then
-                params+=("USE_GLES=1")
-            fi
-            isPlatform "neon" && params+=("NEON=1")
-            isPlatform "x11" && params+=("OSD=1" "PIE=1")
-            isPlatform "x86" && params+=("SSE=SSE2")
-            isPlatform "armv6" && params+=("HOST_CPU=armv6")
-            isPlatform "armv7" && params+=("HOST_CPU=armv7")
-            isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
+            # get make parameters
+            params=($(_params_mupen64plus $dir))
 
             [[ "$dir" == "mupen64plus-ui-console" ]] && params+=("COREDIR=$md_inst/lib/" "PLUGINDIR=$md_inst/lib/mupen64plus/")
             make -C "$dir/projects/unix" "${params[@]}" clean
-            # temporarily disable distcc due to segfaults with cross compiler and lto
-            DISTCC_HOSTS="" make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -O3 -flto"
+            make -C "$dir/projects/unix" all "${params[@]}" OPTFLAGS="$CFLAGS -O3 -flto"
         fi
     done
 
@@ -229,22 +245,14 @@ function build_mupen64plus() {
 }
 
 function install_mupen64plus() {
-    for source in *; do
-        if [[ -f "$source/projects/unix/Makefile" ]]; then
+    local dir
+    local params
+    for dir in *; do
+        if [[ -f "$dir/projects/unix/Makefile" ]]; then
+            # get make parameters
+            params=($(_params_mupen64plus $dir))
             # optflags is needed due to the fact the core seems to rebuild 2 files and relink during install stage most likely due to a buggy makefile
-            local params=()
-            isPlatform "videocore" || [[ "$dir" == "mupen64plus-audio-omx" ]] && params+=("VC=1")
-            if isPlatform "mesa" || isPlatform "mali"; then
-                params+=("USE_GLES=1")
-            fi
-            isPlatform "neon" && params+=("NEON=1")
-            isPlatform "x11" && params+=("OSD=1" "PIE=1")
-            isPlatform "x86" && params+=("SSE=SSE2")
-            isPlatform "armv6" && params+=("HOST_CPU=armv6")
-            isPlatform "armv7" && params+=("HOST_CPU=armv7")
-            isPlatform "aarch64" && params+=("HOST_CPU=aarch64")
-            isPlatform "x86" && params+=("SSE=SSE2")
-            make -C "$source/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
+            make -C "$dir/projects/unix" PREFIX="$md_inst" OPTFLAGS="$CFLAGS -O3 -flto" "${params[@]}" install
         fi
     done
     cp "$md_build/GLideN64/ini/GLideN64.custom.ini" "$md_inst/share/mupen64plus/"
@@ -322,12 +330,12 @@ function configure_mupen64plus() {
     # a default config for reference
     if [[ -f "$config" ]]; then
         mv "$config" "$config.user"
-        su "$user" -c "$cmd"
+        su "$__user" -c "$cmd"
         mv "$config" "$config.rp-dist"
         mv "$config.user" "$config"
         config+=".rp-dist"
     else
-        su "$user" -c "$cmd"
+        su "$__user" -c "$cmd"
     fi
 
     # RPI main/GLideN64 settings
@@ -345,7 +353,7 @@ function configure_mupen64plus() {
             echo "[Video-GLideN64]" >> "$config"
         fi
         # Settings version. Don't touch it.
-        iniSet "configVersion" "17"
+        iniSet "configVersion" "29"
         # Bilinear filtering mode (0=N64 3point, 1=standard)
         iniSet "bilinearMode" "1"
         iniSet "EnableFBEmulation" "True"
@@ -370,6 +378,13 @@ function configure_mupen64plus() {
             setAutoConf mupen64plus_audio 1
             setAutoConf mupen64plus_compatibility_check 1
         elif isPlatform "mesa"; then
+            # Create Video-Rice section in .cfg
+            if ! grep -q "\[Video-Rice\]" "$config"; then
+                echo "[Video-Rice]" >> "$config"
+            fi
+            # Fix flickering and black screen issues with rice video plugin
+            iniSet "ScreenUpdateSetting" "7"
+
             setAutoConf mupen64plus_audio 0
             setAutoConf mupen64plus_compatibility_check 0
         fi
@@ -381,5 +396,5 @@ function configure_mupen64plus() {
     addAutoConf mupen64plus_hotkeys 1
     addAutoConf mupen64plus_texture_packs 1
 
-    chown -R $user:$user "$md_conf_root/n64"
+    chown -R "$__user":"$__group" "$md_conf_root/n64"
 }
