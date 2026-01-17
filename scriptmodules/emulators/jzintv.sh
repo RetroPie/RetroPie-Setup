@@ -18,7 +18,7 @@ rp_module_section="opt"
 rp_module_flags="sdl2 nodistcc"
 
 function depends_jzintv() {
-    getDepends libsdl2-dev libreadline-dev
+    getDepends libsdl2-dev libreadline-dev dos2unix
 }
 
 function sources_jzintv() {
@@ -27,6 +27,12 @@ function sources_jzintv() {
     # jzintv-YYYYMMDD/ --> jzintv/
     mv jzintv-[0-9]* jzintv
     cd jzintv/src
+
+    if isPlatform "rpi" ; then
+        dos2unix $(find "$md_data" -iname "*.patch" -exec grep -h "^+++" {} \+ | cut -f2- -d '/' | uniq | xargs)
+        applyPatch "$md_data/01_rpi_hide_cursor_sdl2.patch"
+        applyPatch "$md_data/01_rpi_pillar_boxing_black_background_sdl2.patch"
+    fi
 
     # Add source release date information to build
     mv buildcfg/90-svn.mak buildcfg/90-svn.mak.txt
@@ -44,6 +50,11 @@ function build_jzintv() {
     mkdir -p jzintv/bin
     cd jzintv/src
 
+    if isPlatform "rpi" ; then
+        local -r extra='EXTRA=-DPLAT_LINUX_RPI'
+    else
+        local -r extra=''
+    fi
     make clean
     make
 
@@ -63,15 +74,53 @@ function install_jzintv() {
 function configure_jzintv() {
     mkRomDir "intellivision"
 
-    local options=(
-        --displaysize="%XRES%x%YRES%"
-        --quiet
-        --rom-path="$biosdir"
-        --voice=1
-    )
+    local -r start_script="$md_inst/jzintv_launcher.sh"
+    cat > "$start_script" << _EOF_
+#! /usr/bin/env bash
 
-    addEmulator 1 "$md_id" "intellivision" "$md_inst/bin/jzintv ${options[*]} %ROM%"
-    options+=(--ecs=1)
-    addEmulator 0 "${md_id}-ecs" "intellivision" "$md_inst/bin/jzintv ${options[*]} %ROM%"
+# \$1: width of display
+# \$2: height of display
+# \$3: --ecs=1, optional
+# \$4,5,6...: more optional parameters
+# last parameter: %ROM%
+
+jzintv_bin="$md_inst/bin/jzintv"
+
+# regular case: w>=h (rotation 90/270 not supported by jzintv)
+disp_w=\$1; shift
+disp_h=\$1; shift
+
+ratio="4/3"
+do_pillarboxing='\$(python3 -c "print(\$disp_w / \$disp_h >= \$ratio)")'
+if [[ "\$do_pillarboxing" == "True" ]] ; then
+    # le/ri padding
+    intv_w=\$(python3 -c "print(round(\$disp_h * \$ratio))")
+    intv_h=\$disp_h
+else
+    # top/btm padding (letterboxing; e.g., on 5:4 displays)
+    intv_w=\$disp_w
+    intv_h=\$(python3 -c "print(round(\$disp_w / (\$ratio)))")
+fi
+
+# set --gfx-verbose instead of --quiet for verbose output
+options=(
+    -f1 # fullscreen
+    --quiet
+#    --gfx-verbose
+    --displaysize="\${intv_w}x\${intv_h}"
+    --rom-path="$biosdir"
+    --voice=1
+)
+
+echo "Launching: \$jzintv_bin \${options[@]} \"\$@\"" >> /dev/shm/runcommand.log
+pushd "$romdir/intellivision" > /dev/null
+\$jzintv_bin \${options[@]} "\$@"
+popd
+_EOF_
+    chown $user:$user "$start_script"
+    chmod u+x "$start_script"
+
+    addEmulator 1 "$md_id"     "intellivision" "'$start_script' %XRES% %YRES% %ROM%"
+    addEmulator 0 "$md_id-ecs" "intellivision" "'$start_script' %XRES% %YRES% --ecs=1 %ROM%"
     addSystem "intellivision"
 }
