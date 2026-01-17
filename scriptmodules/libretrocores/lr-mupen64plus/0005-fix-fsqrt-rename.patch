@@ -1,0 +1,16 @@
+--- a/mupen64plus-core/src/r4300/x86/assemble.h
++++ b/mupen64plus-core/src/r4300/x86/assemble.h
+@@
+-extern void fsqrt(void);
++extern void fsqrt_emu(void);
+--- a/mupen64plus-core/src/r4300/x86_64/assemble.h
++++ b/mupen64plus-core/src/r4300/x86_64/assemble.h
+@@
+-extern void fsqrt(void);
++extern void fsqrt_emu(void);
+--- a/mupen64plus-core/src/r4300/x86_64/gcop1_d.c
++++ b/mupen64plus-core/src/r4300/x86_64/gcop1_d.c
+@@
+-    fsqrt();
++    fsqrt_emu();
+*** End Patch

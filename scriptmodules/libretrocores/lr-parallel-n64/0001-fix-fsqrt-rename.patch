@@ -1,0 +1,19 @@
+--- a/mupen64plus-core/src/r4300/hacktarux_dynarec/assemble.h
++++ b/mupen64plus-core/src/r4300/hacktarux_dynarec/assemble.h
+@@
+-static INLINE void fsqrt(void)
+-{
+-   put8(0xD9);
+-   put8(0xFA);
+-}
++static INLINE void fsqrt_emu(void)
++{
++   put8(0xD9);
++   put8(0xFA);
++}
+--- a/mupen64plus-core/src/r4300/hacktarux_dynarec/hacktarux_dynarec.c
++++ b/mupen64plus-core/src/r4300/hacktarux_dynarec/hacktarux_dynarec.c
+@@
+-   fsqrt();
++   fsqrt_emu();
+*** End Patch

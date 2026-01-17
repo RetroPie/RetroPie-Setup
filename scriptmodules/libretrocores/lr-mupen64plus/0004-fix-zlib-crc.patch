@@ -1,0 +1,18 @@
+--- a/mupen64plus-core/src/main/zip/crypt.h
++++ b/mupen64plus-core/src/main/zip/crypt.h
+@@
+-extern void crypt_init(unsigned long *pcrc_32_tab);
++extern void crypt_init(const z_crc_t *pcrc_32_tab);
+@@
+-extern void crypt_set_method(/* ... */, unsigned long *pcrc_32_tab);
++extern void crypt_set_method(/* ... */, const z_crc_t *pcrc_32_tab);
+--- a/mupen64plus-core/src/main/zip/zip.c
++++ b/mupen64plus-core/src/main/zip/zip.c
+@@
+-    ci.pcrc_32_tab = (unsigned long*)get_crc_table();
++    ci.pcrc_32_tab = (const z_crc_t*)get_crc_table();
+--- a/mupen64plus-core/src/main/zip/unzip.c
++++ b/mupen64plus-core/src/main/zip/unzip.c
+@@
+-    const unsigned long *pcrc_32_tab = (const unsigned long *)get_crc_table();
++    const z_crc_t *pcrc_32_tab = (const z_crc_t *)get_crc_table();
