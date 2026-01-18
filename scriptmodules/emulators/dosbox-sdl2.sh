@@ -18,7 +18,7 @@ rp_module_section="exp"
 rp_module_flags="sdl2"
 
 function depends_dosbox-sdl2() {
-    local depends=(libsdl2-dev libsdl2-net-dev libfluidsynth-dev fluid-soundfont-gm libglew-dev)
+    local depends=(alsa-utils libsdl2-dev libsdl2-net-dev libfluidsynth-dev fluid-soundfont-gm libglew-dev)
     depends_dosbox "${depends[@]}"
 }
 
