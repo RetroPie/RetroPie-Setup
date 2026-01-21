@@ -1,0 +1,78 @@
+diff --git a/mupen64plus-core/src/r4300/x86/assemble.h b/mupen64plus-core/src/r4300/x86/assemble.h
+index 19edb19..0cd77aa 100644
+--- a/mupen64plus-core/src/r4300/x86/assemble.h
++++ b/mupen64plus-core/src/r4300/x86/assemble.h
+@@ -807,7 +807,7 @@ static osal_inline void fmul_preg32_qword(int reg32)
+    put8(0x08 + reg32);
+ }
+
+-static osal_inline void fsqrt(void)
++static osal_inline void fsqrt_(void)
+ {
+    put8(0xD9);
+    put8(0xFA);
+diff --git a/mupen64plus-core/src/r4300/x86/gcop1_d.c b/mupen64plus-core/src/r4300/x86/gcop1_d.c
+index fadcbb5..519c36e 100644
+--- a/mupen64plus-core/src/r4300/x86/gcop1_d.c
++++ b/mupen64plus-core/src/r4300/x86/gcop1_d.c
+@@ -96,7 +96,7 @@ void gensqrt_d(void)
+    gencheck_cop1_unusable();
+    mov_eax_memoffs32((unsigned int *)(&reg_cop1_double[dst->f.cf.fs]));
+    fld_preg32_qword(EAX);
+-   fsqrt();
++   fsqrt_();
+    mov_eax_memoffs32((unsigned int *)(&reg_cop1_double[dst->f.cf.fd]));
+    fstp_preg32_qword(EAX);
+ #endif
+diff --git a/mupen64plus-core/src/r4300/x86/gcop1_s.c b/mupen64plus-core/src/r4300/x86/gcop1_s.c
+index 699622d..96462c1 100644
+--- a/mupen64plus-core/src/r4300/x86/gcop1_s.c
++++ b/mupen64plus-core/src/r4300/x86/gcop1_s.c
+@@ -97,7 +97,7 @@ void gensqrt_s(void)
+    gencheck_cop1_unusable();
+    mov_eax_memoffs32((unsigned int *)(&reg_cop1_simple[dst->f.cf.fs]));
+    fld_preg32_dword(EAX);
+-   fsqrt();
++   fsqrt_();
+    mov_eax_memoffs32((unsigned int *)(&reg_cop1_simple[dst->f.cf.fd]));
+    fstp_preg32_dword(EAX);
+ #endif
+diff --git a/mupen64plus-core/src/r4300/x86_64/assemble.h b/mupen64plus-core/src/r4300/x86_64/assemble.h
+index 479843a..896233a 100644
+--- a/mupen64plus-core/src/r4300/x86_64/assemble.h
++++ b/mupen64plus-core/src/r4300/x86_64/assemble.h
+@@ -1154,7 +1154,7 @@ static osal_inline void fmul_preg64_qword(int reg64)
+    put8(0x08 + reg64);
+ }
+
+-static osal_inline void fsqrt(void)
++static osal_inline void fsqrt_(void)
+ {
+    put8(0xD9);
+    put8(0xFA);
+diff --git a/mupen64plus-core/src/r4300/x86_64/gcop1_d.c b/mupen64plus-core/src/r4300/x86_64/gcop1_d.c
+index af97347..4700206 100644
+--- a/mupen64plus-core/src/r4300/x86_64/gcop1_d.c
++++ b/mupen64plus-core/src/r4300/x86_64/gcop1_d.c
+@@ -117,7 +117,7 @@ void gensqrt_d(void)
+    gencheck_cop1_unusable();
+    mov_xreg64_m64rel(RAX, (unsigned long long *)(&reg_cop1_double[dst->f.cf.fs]));
+    fld_preg64_qword(RAX);
+-   fsqrt();
++   fsqrt_();
+    mov_xreg64_m64rel(RAX, (unsigned long long *)(&reg_cop1_double[dst->f.cf.fd]));
+    fstp_preg64_qword(RAX);
+ #endif
+diff --git a/mupen64plus-core/src/r4300/x86_64/gcop1_s.c b/mupen64plus-core/src/r4300/x86_64/gcop1_s.c
+index 63f4c9e..2f0c01c 100644
+--- a/mupen64plus-core/src/r4300/x86_64/gcop1_s.c
++++ b/mupen64plus-core/src/r4300/x86_64/gcop1_s.c
+@@ -118,7 +118,7 @@ void gensqrt_s(void)
+    gencheck_cop1_unusable();
+    mov_xreg64_m64rel(RAX, (unsigned long long *)(&reg_cop1_simple[dst->f.cf.fs]));
+    fld_preg64_dword(RAX);
+-   fsqrt();
++   fsqrt_();
+    mov_xreg64_m64rel(RAX, (unsigned long long *)(&reg_cop1_simple[dst->f.cf.fd]));
+    fstp_preg64_dword(RAX);
+ #endif

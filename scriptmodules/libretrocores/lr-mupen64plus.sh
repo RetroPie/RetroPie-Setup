@@ -49,6 +49,9 @@ function sources_lr-mupen64plus() {
 
     # Allows GLES3 with rpi
     applyPatch "$md_data/0002-rpi-gles3.patch"
+
+    # Fix building with GCC 15
+    applyPatch "$md_data/0003-fix-fsqrt-conflict.patch"
 }
 
 function build_lr-mupen64plus() {
@@ -69,6 +72,8 @@ function build_lr-mupen64plus() {
     elif isPlatform "gles"; then
         params+=(FORCE_GLES=1)
     fi
+    # for GCC 15 and up
+    CFLAGS+=" -Wno-incompatible-pointer-types"
     make clean
     make "${params[@]}"
     rpSwap off
