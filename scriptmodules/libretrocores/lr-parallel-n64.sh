@@ -26,6 +26,8 @@ function depends_lr-parallel-n64() {
 
 function sources_lr-parallel-n64() {
     gitPullOrClone
+    # fix building with gcc 15
+    applyPatch "$md_data/01-fix-fsqrt-conflicts.diff"
 }
 
 function build_lr-parallel-n64() {
