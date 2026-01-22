@@ -1,0 +1,15 @@
+--- a/gfx/gfx_sdl2.c
++++ b/gfx/gfx_sdl2.c
+@@ -420,7 +420,12 @@ LOCAL int gfx_setup_sdl_display
+     /*  Hide the mouse if full screen.                                      */
+     /* -------------------------------------------------------------------- */
+     SDL_ShowCursor(
++#ifndef PLAT_LINUX_RPI
++        /* SDL_GetNumVideoDisplays() may return two on rpi3, thus disable   */
++        /* this clause on rpi. This is not only cosmetic, it fixes the      */
++        /* UI freeze (not of jzintv itself), if mouse is attached and moved.*/
+         SDL_GetNumVideoDisplays() == 1 &&
++#endif
+         (act_wind_flags & SDL_WINDOW_FULLSCREEN) ? SDL_DISABLE : SDL_ENABLE);
+ 
+     SDL_PumpEvents();

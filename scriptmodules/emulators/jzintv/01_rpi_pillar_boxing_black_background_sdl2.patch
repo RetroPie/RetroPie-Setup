@@ -1,0 +1,11 @@
+--- a/gfx/gfx_sdl2.c
++++ b/gfx/gfx_sdl2.c
+@@ -511,7 +511,7 @@ LOCAL int gfx_flip(const gfx_t *const gfx)
+     /*  need to clear the backdrop to our border color before copying the   */
+     /*  texture to the display.                                             */
+     /* -------------------------------------------------------------------- */
+-    SDL_SetRenderDrawColor(rend, bord_color.r, bord_color.g, bord_color.b, 255);
++    SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
+     SDL_RenderClear(rend);
+     if (pvt->vid_enable || gfx->debug_blank)
+         SDL_RenderCopy(rend, text, NULL,
