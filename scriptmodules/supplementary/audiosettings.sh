@@ -169,6 +169,36 @@ function _bcm2835_alsa_internal_audiosettings() {
     fi
 }
 
+# Adds a service to generate the ALSA configuration on HDMI 0 for a vc4-hdmi device (RPI configured with 'vc4-kms-v3d').
+# The service will disable itself afterwards, but can be enabled if re-running the configuration is desired.
+# If the RetroPie ALSA configuration is found, the service will not overwrite it.
+function alsa_defaults_service_audiosettings() {
+    local service="retropie-alsa-config.service"
+
+    mkdir -p "$md_inst"
+    cp -f "$md_data/alsa-defaults.sh" "$md_inst"
+    cat << EOF > "/usr/lib/systemd/system/$service"
+[Unit]
+Description=Configure ALSA default card on HDMI 0
+ConditionPathExists=!/etc/alsa/conf.d/99-retropie.conf
+Before=getty.target
+After=sound.target
+
+[Service]
+Type=oneshot
+TimeoutSec=120
+ExecStart=$md_inst/alsa-defaults.sh
+ExecStartPost=/usr/bin/systemctl disable $service
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    # remove the RetroPie ALSA config file so it's created on next boot by the service
+    rm -f /etc/alsa/conf.d/99-retropie.conf
+    systemctl -q enable $service
+    printMsgs "console" "Installed the ALSA configuration service ($service)"
+
+}
 # configure the default ALSA soundcard based on chosen card index and type
 function _asoundrc_save_audiosettings() {
     [[ -z "$1" ]] && return
