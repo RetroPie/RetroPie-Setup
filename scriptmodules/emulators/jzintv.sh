@@ -90,17 +90,19 @@ disp_w=\$1; shift
 disp_h=\$1; shift
 
 ratio="4/3"
-do_pillarboxing='\$(python3 -c "print(\$disp_w / \$disp_h >= \$ratio)")'
-if [[ "\$do_pillarboxing" == "True" ]] ; then
-    # le/ri padding
-    intv_w=\$(python3 -c "print(round(\$disp_h * \$ratio))")
+read intv_w intv_h < <(python3 <<PYSCRIPT
+if (\$disp_w / \$disp_h >= \$ratio):
+    # left/right padding
+    intv_w=round(\$disp_h * \$ratio)
     intv_h=\$disp_h
-else
-    # top/btm padding (letterboxing; e.g., on 5:4 displays)
+else:
+    # top/bottom padding (letterboxing; e.g., on 5:4 displays)
     intv_w=\$disp_w
-    intv_h=\$(python3 -c "print(round(\$disp_w / (\$ratio)))")
-fi
+    intv_h=round(\$disp_w / (\$ratio))
 
+print(intv_w,intv_h)
+PYSCRIPT
+)
 # set --gfx-verbose instead of --quiet for verbose output
 options=(
     -f1 # fullscreen
@@ -111,10 +113,8 @@ options=(
     --voice=1
 )
 
-echo "Launching: \$jzintv_bin \${options[@]} \"\$@\"" >> /dev/shm/runcommand.log
-pushd "$romdir/intellivision" > /dev/null
+echo "Launching: \$jzintv_bin \${options[@]} \$@"
 \$jzintv_bin \${options[@]} "\$@"
-popd
 _EOF_
     chown $user:$user "$start_script"
     chmod u+x "$start_script"
