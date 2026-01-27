@@ -38,7 +38,7 @@ function sources_retroarch() {
 }
 
 function build_retroarch() {
-    local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack --disable-qt)
+    local params=(--disable-sdl --enable-sdl2 --disable-oss --disable-al --disable-jack --disable-qt --enable-builtinmbedtls)
     if ! isPlatform "x11"; then
         params+=(--disable-pulse)
         ! isPlatform "mesa" && params+=(--disable-x11)
