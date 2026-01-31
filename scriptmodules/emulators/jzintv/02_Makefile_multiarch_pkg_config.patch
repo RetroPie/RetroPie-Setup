@@ -1,0 +1,14 @@
+--- a/Makefile
++++ a/Makefile
+@@ -39,8 +39,8 @@
+ GNU_READLINE ?= 1
+ 
+ # Get SDL2 related build flags.
+-SDL2_CFLAGS := $(shell sdl2-config --cflags) -DUSE_SDL2
+-SDL2_LFLAGS := $(shell sdl2-config --static-libs || sdl2-config --libs)
++SDL2_CFLAGS := $(shell pkg-config --cflags sdl2) -DUSE_SDL2
++SDL2_LFLAGS := $(shell pkg-config --libs --static --keep-system-libs sdl2 || pkg-config --libs sdl2)
+ 
+ # Override these in a .mak file. See buidlcfg/00-compiler*.txt for examples.
+ #
+
