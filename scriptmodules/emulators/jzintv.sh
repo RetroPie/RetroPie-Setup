@@ -32,6 +32,7 @@ function sources_jzintv() {
         applyPatch "$md_data/01_rpi_hide_cursor_sdl2.patch"
         applyPatch "$md_data/01_rpi_pillar_boxing_black_background_sdl2.patch"
     fi
+    applyPatch "$md_data/02_Makefile_multiarch_pkg_config.patch"
 
     # Add source release date information to build
     mv buildcfg/90-svn.mak buildcfg/90-svn.mak.txt
