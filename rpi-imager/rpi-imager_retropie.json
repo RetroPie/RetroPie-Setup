@@ -1,0 +1,52 @@
+{
+    "os_list": [
+        {
+            "name": "RetroPie 4.8 for RPi 4/400",
+            "description": "RetroPie 4.8 for RPi 4/400",
+            "url": "https://github.com/RetroPie/RetroPie-Setup/releases/download/4.8/retropie-buster-4.8-rpi4_400.img.gz",
+            "icon": "https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/rpi-imager/rpi-imager_retropie_logo.png",
+            "init_format": "none",
+            "website": "https://retropie.org.uk",
+            "extract_size": 3148873728,
+            "extract_sha256": "6dce096a7d83361077a3444025ea50ae267fb5cff947ed6fd046c94f4b816b89",
+            "image_download_size": 900728157,
+            "image_download_sha256": "067e9b995b339ac85f7f2909cd8626328ddda5e593d7c80eeee3e6fbe3f5ef8e",
+            "release_date": "2022-03-13",
+            "devices": [
+                "pi4-64bit", "pi4-32bit"
+            ]
+        },
+        {
+            "name": "RetroPie 4.8 for RPi 2/3/Zero 2 W",
+            "description": "RetroPie 4.8 for RPi 2/3/Zero 2 W",
+            "url": "https://github.com/RetroPie/RetroPie-Setup/releases/download/4.8/retropie-buster-4.8-rpi2_3_zero2w.img.gz",
+            "icon": "https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/rpi-imager/rpi-imager_retropie_logo.png",
+            "init_format": "none",
+            "website": "https://retropie.org.uk",
+            "extract_size": 3138387968,
+            "extract_sha256": "26f50f64def4f9400bbe412f9ec2a501868dc23b7298c67dadfc871dae2d7a0f",
+            "image_download_size": 896752019,
+            "image_download_sha256": "3c33647e7ef7b0f4b034bf51416b32f56e8b83d0c8cf0d16248d1a8da7c9105f",
+            "release_date": "2022-03-13",
+            "devices": [
+                "pi3-64bit", "pi3-32bit", "pi2-32bit"
+            ]
+        },
+        {
+            "name": "RetroPie 4.8 for RPi 1/Zero",
+            "description": "RetroPie 4.8 for RPi 1/Zero",
+            "url": "https://github.com/RetroPie/RetroPie-Setup/releases/download/4.8/retropie-buster-4.8-rpi1_zero.img.gz",
+            "icon": "https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/rpi-imager/rpi-imager_retropie_logo.png",
+            "init_format": "none",
+            "website": "https://retropie.org.uk",
+            "extract_size": 3066036224,
+            "extract_sha256": "e061b880df2352bff79e7760655a71f7ae7a0bc7dd1922b3ecec4a51420ce169",
+            "image_download_size": 888455268,
+            "image_download_sha256": "b7dd2ab68ba34259b24e2ef09ae442e2bd825506a967d50b05c27c1016aad9f1",
+            "release_date": "2022-03-13",
+            "devices": [
+                "pi1-32bit"
+            ]
+        }
+    ]
+}
