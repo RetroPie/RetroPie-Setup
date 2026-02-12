@@ -111,6 +111,11 @@ function create_chroot_image() {
     printMsgs "console" "Creating chroot from $image ..."
     rsync -aAHX --numeric-ids --delete "$tmp/" "$chroot/"
 
+    # fix up raspberry pi repos for buster image building (see buster_fix_apt_raspbiantools in raspbiantools.sh scriptmodule)
+    if [[ "$dist" == "rpios-buster" ]]; then
+        sed -i "s/raspbian\.raspberrypi\.org/legacy.raspbian.org/" "$chroot/etc/apt/sources.list"
+    fi
+
     umount -l "$tmp$boot_path" "$tmp"
     rm -rf "$tmp"
 
@@ -183,11 +188,6 @@ function install_rp_image() {
 
     [[ -z "$__chroot_repo" ]] && __chroot_repo="https://github.com/RetroPie/RetroPie-Setup.git"
     [[ -z "$__chroot_branch" ]] && __chroot_branch="master"
-
-    # fix up raspberry pi repos for buster image building (see buster_fix_apt_raspbiantools in raspbiantools.sh scriptmodule)
-    if [[ "$dist" == "rpios-buster" ]]; then
-        sed -i "s/raspbian\.raspberrypi\.org/legacy.raspbian.org/" "$chroot/etc/apt/sources.list"
-    fi
 
     # fix up initramfs-tools installation in a chroot (can't find root partition, workaround is to use MODULES=most)
     local config="$chroot/etc/initramfs-tools/initramfs.conf"
