@@ -1,0 +1,12 @@
+diff --git a/libretro/libretro.cpp b/libretro/libretro.cpp
+index 5a2f9104f1..5eabd5e54e 100644
+--- a/libretro/libretro.cpp
++++ b/libretro/libretro.cpp
+@@ -6,6 +6,7 @@
+ #include <vector>
+ #include <cstdlib>
+ #include <mutex>
++#include <algorithm>
+ 
+ #include "Common/CPUDetect.h"
+ #include "Common/Log.h"
