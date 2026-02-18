@@ -63,10 +63,12 @@ function build_lr-mupen64plus() {
         params+=(platform="$__platform-mesa")
     elif isPlatform "mali"; then
         params+=(platform="odroid")
-    else
-        isPlatform "arm" && params+=(WITH_DYNAREC=arm)
-        isPlatform "neon" && params+=(HAVE_NEON=1)
     fi
+
+    # set these ourselves, to fix missing platforms in the Makefile (eg. rpi5)
+    isPlatform "arm" && params+=(WITH_DYNAREC=arm)
+    isPlatform "neon" && params+=(HAVE_NEON=1)
+
     if isPlatform "gles3"; then
         params+=(FORCE_GLES3=1)
     elif isPlatform "gles"; then
