@@ -920,7 +920,7 @@ function rp_registerModule() {
     local var
     for var in rp_module_id rp_module_desc; do
         if [[ -z "${!var}" ]]; then
-            echo "Module $module_path is missing valid $var"
+            echo "Module $path is missing valid $var"
             error=1
         fi
     done
