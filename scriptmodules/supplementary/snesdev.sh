@@ -30,6 +30,8 @@ function sources_snesdev() {
 }
 
 function build_snesdev() {
+    aptInstall libconfuse-dev
+
     local wiringpi_version
     wiringpi_version="$(dpkg-query -f='${Version} ${Status}' -W wiringpi 2>/dev/null | grep installed | cut -f1)"
 
