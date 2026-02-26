@@ -24,7 +24,7 @@ function sources_wikidocs() {
 function build_wikidocs() {
     python3 -m venv "$md_inst"
     source "$md_inst/bin/activate"
-    pip3 install --upgrade mkdocs mkdocs-material mdx_truly_sane_lists git+https://github.com/cmitu/mkdocs-altlink-plugin
+    pip3 install --upgrade mkdocs-material mdx_truly_sane_lists git+https://github.com/cmitu/mkdocs-altlink-plugin
     mkdocs build
     deactivate
 }
