@@ -25,15 +25,19 @@ function _wiringpi_snesdev() {
     popd
 }
 
+function depends_snesdev() {
+    getDepends libconfuse-dev
+}
+
 function sources_snesdev() {
     gitPullOrClone
 }
 
 function build_snesdev() {
     local wiringpi_version
-    wiringpi_version="$(dpkg-query -f='${Version} ${Status}' -W wiringpi 2>/dev/null | grep installed | cut -f1)"
+    wiringpi_version="$(dpkg-query -f='${Version} ${Status}' -W wiringpi 2>/dev/null | grep installed | cut -f1 -d' ')"
 
-    cd "$md_inst"
+    CFLAGS+=" -Wno-incompatible-pointer-types"
     if [[ -z "$wiringpi_version" ]] || compareVersions "$wiringpi_version" lt 3.14; then
         # when there's no WiringPi installed or there's an old version, build a static version and use it
         printMsgs console "Using locally built WiringPi library"
