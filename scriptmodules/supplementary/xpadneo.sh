@@ -12,12 +12,17 @@
 rp_module_id="xpadneo"
 rp_module_desc="Advanced Linux driver for Xbox One wireless gamepads"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/atar-axis/xpadneo/master/LICENSE"
-rp_module_repo="git https://github.com/atar-axis/xpadneo.git v0.9.7"
+rp_module_repo="git https://github.com/atar-axis/xpadneo.git :_version_xpadneo"
 rp_module_section="driver"
 rp_module_flags="nobin"
 
 function _version_xpadneo() {
-    cat "$md_inst/VERSION"
+    local build_version=v0.10
+
+    # buster and eariler get the v0.9.x version, due to v0.10 needing a newer Linux kernel
+    [[ "$__os_debian_ver" -lt 11 ]] && build_version=v0.9.8
+
+    echo "$build_version"
 }
 
 function depends_xpadneo() {
@@ -42,7 +47,16 @@ function remove_xpadneo() {
 }
 
 function configure_xpadneo() {
-    [[ "$md_mode" == "remove" ]] && return
+    if [[ "$md_mode" == "remove" ]]; then
+        rm -f /etc/modprobe.d/xpadneo-rpie.conf
+        return
+    fi
 
     dkmsManager reload hid-xpadneo "$(_version_xpadneo)"
+
+    # on v0.10 and later - disable shift mode key for the home/guide button
+    local num_ver="$(_version_xpadneo | tr -d v)"
+    if compareVersions "$num_ver" ge 0.10 && [[ ! -f "/etc/modprobe.d/xpadneo-rpie.conf" ]]; then
+        echo "options hid-xpadneo disable_shift_mode=1" > /etc/modprobe.d/xpadneo-rpie.conf
+    fi
 }
