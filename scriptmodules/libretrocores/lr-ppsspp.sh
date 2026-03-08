@@ -42,8 +42,8 @@ function build_lr-ppsspp() {
 
 function install_lr-ppsspp() {
     md_ret_files=(
-        'ppsspp/lib/ppsspp_libretro.so'
-        'ppsspp/assets'
+        'ppsspp/build/lib/ppsspp_libretro.so'
+        'ppsspp/build/assets'
     )
 }
 
