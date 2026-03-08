@@ -331,7 +331,7 @@ function get_os_version() {
 }
 
 function get_retropie_depends() {
-    local depends=(git subversion dialog curl gcc g++ build-essential unzip xmlstarlet python3-pyudev ca-certificates dirmngr)
+    local depends=(git gpg subversion dialog curl gcc g++ build-essential unzip xmlstarlet python3-pyudev ca-certificates dirmngr)
     # on RaspiOS, install an extra package for X11 support on Pi5
     if isPlatform "rpi5" && [[ "$__os_id" == "Raspbian" ]]; then
         depends+=(gldriver-test)
