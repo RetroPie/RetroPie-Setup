@@ -59,6 +59,13 @@ function install_skyscraper() {
         'supplementary/scraperdata/peas_and_idmap_verify.py'
         'supplementary/scraperdata/README-Skyscraper-Scripts.md'
     )
+    local ver=$(_get_branch_skyscraper)
+    if compareVersions "$ver" ge "3.19.0"; then
+        md_ret_files+=(
+            'supplementary/scraperdata/peas-schema.json'
+            'supplementary/scraperdata/peas_validate_with_json_schema.py'
+        )
+    fi
     md_ret_files+=("${config_files[@]}")
 }
 
