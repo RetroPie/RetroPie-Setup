@@ -14,10 +14,37 @@ rp_module_desc="Scraper for EmulationStation by Steven Selph"
 rp_module_licence="MIT https://raw.githubusercontent.com/sselph/scraper/master/LICENSE"
 rp_module_repo="git https://github.com/sselph/scraper.git master"
 rp_module_section="opt"
-rp_module_flags="nobin"
+rp_module_flags=""
 
-function depends_scraper() {
-    rp_callModule golang install_bin
+function _update_hook_scraper() {
+    # remove previously installed 'golang' module 
+    rm -fr "$rootdir/supplementary/golang"
+}
+
+function _golang_scraper() {
+    local target_version=1.13.15
+    local goroot="$1"
+
+    if [[ -z "$1" ]]; then
+        __ERRMSGS+=("Missing installation folder for 'go' !")
+        return 1
+    fi
+
+    rm -rf "$goroot"
+    mkdir -p "$goroot"
+    local arch="armv6l"
+    if isPlatform "x86"; then
+        if isPlatform "64bit"; then
+            arch="amd64"
+        else
+            arch="386"
+        fi
+    fi
+    if isPlatform "aarch64"; then
+        arch="arm64"
+    fi
+    printMsgs "console" "Downloading go$target_version.linux-$arch.tar.gz"
+    downloadAndExtract "https://go.dev/dl/go${target_version}.linux-$arch.tar.gz" "$goroot" --strip-components 1 --exclude="go/test"
 }
 
 function sources_scraper() {
@@ -25,10 +52,22 @@ function sources_scraper() {
 }
 
 function build_scraper() {
-    local goroot="$(_get_goroot_golang)"
-    GOROOT="$goroot" "$goroot/bin/go" mod init github.com/sselph/scraper
-    GOROOT="$goroot" "$goroot/bin/go" get github.com/J-Swift/thegamesdb-swagger-client-go@43ed8a0b364ed2d8521d0
-    GOROOT="$goroot" "$goroot/bin/go" build -o scraper
+    local goroot="$md_build/goinst"
+
+    # install a local 'golang' version
+    _golang_scraper "$goroot"
+
+    rm -f go.mod
+    (
+        # use a subshell so the env vars here do not propagate globally
+        export GOROOT="$goroot"
+        export GOMODCACHE="$goroot/pkg-cache"
+        export GOCACHE="$goroot/build-cache"
+        "$goroot/bin/go" mod init github.com/sselph/scraper
+        "$goroot/bin/go" mod tidy
+        "$goroot/bin/go" get github.com/J-Swift/thegamesdb-swagger-client-go@43ed8a0b364ed2d8521d0
+        "$goroot/bin/go" build -o scraper
+    )
 }
 
 function install_scraper() {
@@ -38,10 +77,6 @@ function install_scraper() {
         'README.md'
         'hash.csv'
     )
-}
-
-function remove_scraper() {
-    rp_callModule golang remove
 }
 
 function get_ver_scraper() {
