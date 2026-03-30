@@ -18,7 +18,7 @@ rp_module_section="opt"
 rp_module_flags=""
 
 function _get_release_ppsspp() {
-    local tagged_version="v1.20.1"
+    local tagged_version="v1.20.3"
     # buster and older can't compile recent PPSSPP
     if [[ "$__os_debian_ver" -lt 11 ]]; then
         #  the V3D Mesa driver before 21.x has issues with v1.14 and later
@@ -32,9 +32,10 @@ function _get_release_ppsspp() {
 }
 
 function depends_ppsspp() {
-    local depends=(cmake libbrotli-dev libsnappy-dev libbz2-dev libzip-dev zlib1g-dev libzstd-dev libminiupnpc-dev)
-    [[ $md_id != "lr-ppsspp" ]] && depends+=(libsdl2-dev libsdl2-ttf-dev libfontconfig-dev)
+    local depends=(cmake libsnappy-dev libbz2-dev libzip-dev zlib1g-dev libminiupnpc-dev)
+    [[ $md_id != "lr-ppsspp" ]] && depends+=(libsdl2-dev libsdl2-ttf-dev)
     [[ $md_id != "lr-ppsspp" ]] && isPlatform "x11" && depends+=(libx11-dev wayland-protocols libwayland-dev)
+    [[ "$__os_debian_ver" -ge 12 ]] && depends+=(libfontconfig-dev libbrotli-dev libzstd-dev)
     isPlatform "x86" && depends+=(nasm)
     isPlatform "videocore" && depends+=(libraspberrypi-dev)
     isPlatform "mesa" && depends+=(libgles2-mesa-dev)
