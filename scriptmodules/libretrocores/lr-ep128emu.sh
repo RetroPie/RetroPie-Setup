@@ -33,15 +33,11 @@ function install_lr-ep128emu() {
 }
 
 function configure_lr-ep128emu() {
-    mkRomDir "enterprise"
-    ensureSystemretroconfig "enterprise"
-
-    addEmulator 1 "$md_id" "enterprise" "$md_inst/ep128emu_core_libretro.so"
-    addSystem "enterprise"
-
-    mkRomDir "tvc"
-    ensureSystemretroconfig "tvc"
-
-    addEmulator 1 "$md_id" "tvc" "$md_inst/ep128emu_core_libretro.so"
-    addSystem "tvc"
+    local system
+    for system in "enterprise" "tvc"; do
+        addSystem "$system"
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
+        addEmulator 1 "$md_id" "$system" "$md_inst/ep128emu_core_libretro.so"
+    done
 }
