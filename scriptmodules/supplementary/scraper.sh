@@ -49,6 +49,9 @@ function _golang_scraper() {
 
 function sources_scraper() {
     gitPullOrClone
+    # patch the TGDB API key since upstream's key is expired
+    local tgdb_api_key="b76d00f4dbf3449267b06086426df3bd8cb4c19fdc64b3224fa619ec4cd57e25"
+    sed -i "s/defaultGamesDbAPIKey = .*/defaultGamesDbAPIKey = \"$tgdb_api_key\"/" "$md_build/scraper.go"
 }
 
 function build_scraper() {
