@@ -12,8 +12,8 @@
 rp_module_id="advmame"
 rp_module_desc="AdvanceMAME"
 rp_module_help="ROM Extension: .zip\n\nCopy your AdvanceMAME roms to either $romdir/mame-advmame or\n$romdir/arcade"
-rp_module_licence="GPL2 https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
-rp_module_repo="git https://github.com/amadvance/advancemame v3.10"
+rp_module_licence="NONCOM https://raw.githubusercontent.com/amadvance/advancemame/master/COPYING"
+rp_module_repo="git https://github.com/amadvance/advancemame"
 rp_module_section="opt"
 rp_module_flags="sdl2 sdl1-videocore"
 
@@ -27,7 +27,7 @@ function _update_hook_advmame() {
 }
 
 function depends_advmame() {
-    local depends=(autoconf automake)
+    local depends=(autoconf automake libexpat1-dev zlib1g-dev libfreetype6-dev libasound2-dev libncurses-dev)
     if isPlatform "videocore"; then
         depends+=(libsdl1.2-dev libraspberrypi-dev)
     else
@@ -47,8 +47,9 @@ function build_advmame() {
     else
         params+=(--enable-sdl2 --disable-sdl --disable-vc)
     fi
-    ./autogen.sh
-    ./configure CFLAGS="$CFLAGS -fno-stack-protector" --prefix="$md_inst" "${params[@]}"
+    autoreconf -vfi
+    isPlatform "arm" && CFLAGS="$CFLAGS -fsigned-char"
+    ./configure CFLAGS="$CFLAGS -fno-stack-protector" --disable-slang --disable-oss --prefix="$md_inst" "${params[@]}"
     make clean
     make
     md_ret_require="$md_build/advmame"
