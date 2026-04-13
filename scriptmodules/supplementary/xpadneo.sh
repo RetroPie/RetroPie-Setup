@@ -17,7 +17,7 @@ rp_module_section="driver"
 rp_module_flags="nobin"
 
 function _version_xpadneo() {
-    local build_version=v0.10
+    local build_version=v0.10.2
 
     # buster and eariler get the v0.9.x version, due to v0.10 needing a newer Linux kernel
     [[ "$__os_debian_ver" -lt 11 ]] && build_version=v0.9.8
