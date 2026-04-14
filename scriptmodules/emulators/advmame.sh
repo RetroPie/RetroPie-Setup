@@ -48,6 +48,8 @@ function build_advmame() {
         params+=(--enable-sdl2 --disable-sdl --disable-vc)
     fi
     autoreconf -vfi
+    # Buster needs an extra `automake`
+    automake --force-missing --add-missing
     isPlatform "arm" && CFLAGS="$CFLAGS -fsigned-char"
     ./configure CFLAGS="$CFLAGS -fno-stack-protector" --disable-slang --disable-oss --prefix="$md_inst" "${params[@]}"
     make clean
