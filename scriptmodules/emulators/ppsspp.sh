@@ -174,8 +174,12 @@ function build_ppsspp() {
         params+=(-DLIBRETRO=On)
         ppsspp_binary="lib/ppsspp_libretro.so"
     fi
-    params+=(-DUSE_SYSTEM_SNAPPY=ON -DUSE_SYSTEM_ZSTD=ON -DUSE_SYSTEM_LIBZIP=ON -DUSE_SYSTEM_LIBSDL2=ON -DUSE_SYSTEM_ZSTD=ON -DUSE_SYSTEM_MINIUPNPC=ON)
-    params+=(-DUSE_DISCORD=OFF)
+    params+=(-DUSE_DISCORD=OFF -DDUSE_SYSTEM_SNAPPY=ON -DUSE_SYSTEM_LIBZIP=ON -DUSE_SYSTEM_LIBSDL2=ON -DUSE_SYSTEM_MINIUPNPC=ON)
+    if [[ "$__os_debian_ver" -ge 12 ]]; then
+        params+=(-DUSE_SYSTEM_ZSTD=ON)
+    else
+        params+=(-DUSE_SYSTEM_ZSTD=OFF)
+    fi
     cmake "${params[@]}" ..
     make clean
     make
