@@ -147,20 +147,21 @@ function sources_attractmode() {
 function build_attractmode() {
     if isPlatform "rpi"; then
         local params
-        cd sfml-pi
+        cd "$md_build/sfml-pi"
         isPlatform "videocore" && params="-DSFML_RPI=1 -DEGL_INCLUDE_DIR=/opt/vc/include -DEGL_LIBRARY=/opt/vc/lib/libbrcmEGL.so -DGLES_INCLUDE_DIR=/opt/vc/include -DGLES_LIBRARY=/opt/vc/lib/libbrcmGLESv2.so"
         isPlatform "kms" && params="-DSFML_DRM=1"
-        cmake . -DCMAKE_INSTALL_PREFIX="$md_inst/sfml" $params
+        cmake . -DCMAKE_INSTALL_PREFIX="$md_inst/sfml" -DSFML_INSTALL_PKGCONFIG_FILES=Yes $params
         make clean
         make
-        cd ..
+        make install
+        export PKG_CONFIG_PATH="$md_inst/sfml"
     fi
-    cd attract
+    cd "$md_build/attract"
     make clean
     local params=(prefix="$md_inst")
-    isPlatform "videocore" && params+=(USE_GLES=1 EXTRA_CXXFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
-    isPlatform "kms" && params+=(USE_DRM=1 EXTRA_CXXFLAGS="$CFLAGS -I$md_build/sfml-pi/include -L$md_build/sfml-pi/lib")
-    isPlatform "rpi" && params+=(USE_MMAL=1)
+    isPlatform "videocore" && params+=(USE_MMAL=1)
+    isPlatform "kms" && params+=(USE_DRM=1)
+    isPlatform "gles" && params+=(USE_GLES=1)
     make "${params[@]}"
 
     # remove example configs
