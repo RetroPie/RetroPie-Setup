@@ -13,7 +13,7 @@ rp_module_id="supermodel3"
 rp_module_desc="Super Model 3 Emulator"
 rp_module_help="Copy your Sega Model 3 roms to $romdir/arcade"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/DirtBagXon/model3emu-code-sinden/main/Docs/LICENSE.txt"
-rp_module_repo="git https://github.com/DirtBagXon/model3emu-code-sinden.git :_get_branch_supermodel3"
+rp_module_repo="git https://github.com/DirtBagXon/model3emu-code-sinden.git :_get_branch_supermodel3 :_get_commit_supermodel3"
 rp_module_section="exp"
 rp_module_flags="all !armv6 !armv7"
 
@@ -22,6 +22,17 @@ function _get_branch_supermodel3() {
         echo "main"
     else
         echo "arm"
+    fi
+}
+
+function _get_commit_supermodel3() {
+    # needed for old SDL2 versions (i.e. Debian 10 'buster')
+    local sdl_ver
+    sdl_ver="$(apt-cache madison libsdl2-2.0-0 | cut -d" " -f3 | head -n1)"
+    if ! isPlatform "x86" && compareVersions "$sdl_ver" le 2.0.22; then
+        echo "454ed3f"
+    else
+        echo ""
     fi
 }
 
