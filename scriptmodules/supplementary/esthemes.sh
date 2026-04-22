@@ -325,6 +325,7 @@ function gui_esthemes() {
         'KALEL1981 gold-standard'
         'Elratauru angular-artwork'
         'cjonasw raspixel-320-240'
+        'ColtonMyers1995 PIXEL-OS'
         'crxone 3twenty2fourty'
         'leochely Guilty-Gear'
         'flpowergamesretro-rtp ffarts'
