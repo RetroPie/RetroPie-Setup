@@ -327,8 +327,8 @@ function gui_esthemes() {
         'cjonasw raspixel-320-240'
         'crxone 3twenty2fourty'
         'leochely Guilty-Gear'
-        'flpowergamesretro-rtp ffarts'
         'ColtonMyers1995 PIXEL-OS'
+        'flpowergamesretro-rtp ffarts'
     )
     while true; do
         local theme
