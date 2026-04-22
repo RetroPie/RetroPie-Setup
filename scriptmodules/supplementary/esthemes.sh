@@ -328,6 +328,7 @@ function gui_esthemes() {
         'crxone 3twenty2fourty'
         'leochely Guilty-Gear'
         'flpowergamesretro-rtp ffarts'
+        'ColtonMyers1995 PIXEL-OS'
     )
     while true; do
         local theme
