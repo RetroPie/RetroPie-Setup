@@ -22,8 +22,10 @@ function sources_lr-virtualjaguar() {
 }
 
 function build_lr-virtualjaguar() {
+    local build_args
     make clean
-    make
+    isPlatform "neon" && build_flags+=" HAVE_NEON=1"
+    make $build_flags
     md_ret_require="$md_build/virtualjaguar_libretro.so"
 }
 
