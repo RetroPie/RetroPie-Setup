@@ -33,6 +33,9 @@ function sources_lr-flycast() {
     gitPullOrClone
     # don't override our C/CXXFLAGS and set LDFLAGS to CFLAGS to avoid warnings on linking
     applyPatch "$md_data/01_flags_fix.diff"
+    # glibc >= 2.40 (Ubuntu 26.04+) requires explicit unistd.h for POSIX functions
+    applyPatch "$md_data/02_getpid_fix.diff"
+    applyPatch "$md_data/03_zip_close_fix.diff"
 }
 
 function build_lr-flycast() {
