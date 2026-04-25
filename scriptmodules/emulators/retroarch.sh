@@ -35,6 +35,10 @@ function depends_retroarch() {
 
 function sources_retroarch() {
     gitPullOrClone
+    # Fix build with FFmpeg 7+ (libavcodec >= 61.3.100): avcodec_close() and
+    # AV_INPUT_BUFFER_MIN_SIZE were removed. Affects Ubuntu 26.04 and other
+    # distros shipping FFmpeg 7.x.
+    applyPatch "$md_data/01-ffmpeg7-api-compat.diff"
 }
 
 function build_retroarch() {
