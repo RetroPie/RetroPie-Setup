@@ -1,0 +1,73 @@
+diff --git a/cores/libretro-ffmpeg/ffmpeg_core.c b/cores/libretro-ffmpeg/ffmpeg_core.c
+index 08bee25..b5edd49 100644
+--- a/cores/libretro-ffmpeg/ffmpeg_core.c
++++ b/cores/libretro-ffmpeg/ffmpeg_core.c
+@@ -2088,19 +2088,28 @@ void CORE_PREFIX(retro_unload_game)(void)
+ 
+    for (i = 0; i < MAX_STREAMS; i++)
+    {
++#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 3, 100)
++      avcodec_free_context(&sctx[i]);
++      avcodec_free_context(&actx[i]);
++#else
+       if (sctx[i])
+          avcodec_close(sctx[i]);
+       if (actx[i])
+          avcodec_close(actx[i]);
+       sctx[i] = NULL;
+       actx[i] = NULL;
++#endif
+    }
+ 
++#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 3, 100)
++   avcodec_free_context(&vctx);
++#else
+    if (vctx)
+    {
+       avcodec_close(vctx);
+       vctx = NULL;
+    }
++#endif
+ 
+    if (fctx)
+    {
+diff --git a/record/drivers/record_ffmpeg.c b/record/drivers/record_ffmpeg.c
+index 0af5499..36c566a 100644
+--- a/record/drivers/record_ffmpeg.c
++++ b/record/drivers/record_ffmpeg.c
+@@ -71,6 +71,10 @@ extern "C" {
+ 
+ #define FFMPEG3 (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(58, 10, 100))
+ #define HAVE_CH_LAYOUT (LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100))
++/* AV_INPUT_BUFFER_MIN_SIZE removed in FFmpeg 7.0 (libavcodec 61.3.100) */
++#ifndef AV_INPUT_BUFFER_MIN_SIZE
++#define AV_INPUT_BUFFER_MIN_SIZE 16384
++#endif
+ 
+ struct ff_video_info
+ {
+@@ -949,16 +953,24 @@ static void ffmpeg_free(void *data)
+ 
+    if (handle->audio.codec)
+    {
++#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 3, 100)
++      avcodec_free_context(&handle->audio.codec);
++#else
+       avcodec_close(handle->audio.codec);
+       av_free(handle->audio.codec);
++#endif
+    }
+ 
+    av_free(handle->audio.buffer);
+ 
+    if (handle->video.codec)
+    {
++#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 3, 100)
++      avcodec_free_context(&handle->video.codec);
++#else
+       avcodec_close(handle->video.codec);
+       av_free(handle->video.codec);
++#endif
+    }
+ 
+    av_frame_free(&handle->video.conv_frame);
