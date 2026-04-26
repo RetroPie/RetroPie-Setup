@@ -24,7 +24,12 @@ function _update_hook_retropiemenu() {
 }
 
 function depends_retropiemenu() {
-    getDepends mc p7zip
+    local p7zip_pkg="p7zip"
+    # Ubuntu 26.04+ renamed p7zip to 7zip
+    if [[ "$__os_id" == "Ubuntu" ]] && compareVersions "$__os_ubuntu_ver" ge "26.04"; then
+        p7zip_pkg="7zip"
+    fi
+    getDepends mc "$p7zip_pkg"
 }
 
 function install_bin_retropiemenu() {
