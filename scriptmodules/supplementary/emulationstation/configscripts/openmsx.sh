@@ -104,10 +104,10 @@ function map_openmsx_joystick() {
             msx_key="RIGHT"
             ;;
         x)
-            emu_key="keymatrixdown 6 0x40" # F1
+            emu_key="keymatrixdown 6 0x20" # F1
             ;;
         y)
-            emu_key="keymatrixdown 6 0x20" # F2
+            emu_key="keymatrixdown 6 0x40" # F2
             ;;
         lefttop|leftshoulder|pageup)
             emu_key="keymatrixdown 6 0x80" # F3
