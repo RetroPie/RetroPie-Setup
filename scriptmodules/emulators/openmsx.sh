@@ -89,7 +89,7 @@ function _default_settings_openmsx() {
     local body
     local conf_reverse
 
-    read -r -d '' header <<_EOF_
+    IFS= read -r -d '' header <<_EOF_
 <!DOCTYPE settings SYSTEM 'settings.dtd'>
 <settings>
   <settings>
@@ -112,6 +112,6 @@ _EOF_
 _EOF_
     fi
 
-    ! isPlatform "x86" && conf_reverse="    <setting id=\"auto_enable_reverse\">off</setting\n"
+    ! isPlatform "x86" && conf_reverse="    <setting id=\"auto_enable_reverse\">off</setting>\n"
     echo -e "${header}${body}${conf_reverse}  </settings>\n</settings>"
 }
