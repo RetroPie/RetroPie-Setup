@@ -12,7 +12,7 @@
 rp_module_id="yquake2"
 rp_module_desc="yquake2 - The Yamagi Quake II client"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/yquake2/yquake2/master/LICENSE"
-rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_8_60"
+rp_module_repo="git https://github.com/yquake2/yquake2.git QUAKE2_8_70"
 rp_module_section="exp"
 rp_module_flags="sdl2"
 
@@ -25,8 +25,8 @@ function depends_yquake2() {
 function sources_yquake2() {
     gitPullOrClone
     # get the add-ons sources
-    gitPullOrClone "$md_build/xatrix" "https://github.com/yquake2/xatrix" "XATRIX_2_16"
-    gitPullOrClone "$md_build/rogue" "https://github.com/yquake2/rogue" "ROGUE_2_15"
+    gitPullOrClone "$md_build/xatrix" "https://github.com/yquake2/xatrix" "XATRIX_2_17"
+    gitPullOrClone "$md_build/rogue" "https://github.com/yquake2/rogue" "ROGUE_2_16"
 
     # 1st enables Guide+Start to quit. 2nd restores buttons to SDL2 style (from SDL3).
     applyPatch "$md_data/hotkey_exit.diff"
@@ -34,7 +34,7 @@ function sources_yquake2() {
 }
 
 function build_yquake2() {
-    local params=(config client game ref_soft)
+    local params=(WITH_SDL3=no WITH_XDG=no config client game ref_soft)
     local repo
 
     isPlatform "gl" || isPlatform "mesa" && params+=(ref_gl1)
@@ -42,7 +42,7 @@ function build_yquake2() {
     isPlatform "gles" && [[ "$__os_debian_ver" -lt 12 ]] && params+=(ref_gles1)
     isPlatform "gles3" && params+=(ref_gles3)
 
-    make clean
+    make clean WITH_SDL3=no
     make ${params[@]}
 
     # build the add-ons source
