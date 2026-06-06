@@ -15,6 +15,7 @@ rp_module_help="https://github.com/lowlevel-1989/dbar4gun"
 rp_module_licence="MIT https://raw.githubusercontent.com/lowlevel-1989/dbar4gun/master/LICENSE"
 rp_module_repo="git https://github.com/lowlevel-1989/dbar4gun master"
 rp_module_section="driver"
+rp_module_flags="!:\$__os_debian_ver:-lt:13"
 
 function depends_dbar4gun() {
     getDepends python3 python3-dev python3-setuptools python3-virtualenv python3-pygame
