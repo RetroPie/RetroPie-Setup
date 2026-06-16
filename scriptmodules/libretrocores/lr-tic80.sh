@@ -30,13 +30,13 @@ function build_lr-tic80() {
     cd retropie
     cmake -DBUILD_PLAYER=OFF -DBUILD_SOKOL=OFF -DBUILD_SDL=OFF -DBUILD_DEMO_CARTS=OFF -DBUILD_LIBRETRO=ON ../core
     make
-    md_ret_require="$md_build/retropie/lib/tic80_libretro.so"
+    md_ret_require="$md_build/retropie/bin/tic80_libretro.so"
 }
 
 
 function install_lr-tic80() {
     md_ret_files=(
-        'retropie/lib/tic80_libretro.so'
+        'retropie/bin/tic80_libretro.so'
         'README.md'
         'LICENSE'
     )
