@@ -20,6 +20,9 @@ function _get_commit_lr-stella() {
     # GCC 11 is required after 2d57f9e0
     if [[ "$__gcc_version" -lt 11 ]]; then
         echo "2d57f9e0"
+    # GCC 13 is required since the last 7.0 tag (7.0c)
+    elif [[ "$__gcc_version" -lt 13 ]]; then
+        echo "7.0c"
     fi
 }
 
