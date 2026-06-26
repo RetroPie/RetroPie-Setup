@@ -378,6 +378,10 @@ function get_rpi_video() {
             fi
         fi
         [[ "$__has_dispmanx" -eq 1 ]] && __platform_flags+=(dispmanx)
+        # Pi4/5 have Vulkan working under KMS on Debian 12 (bookworm) or newer
+        if (isPlatform "rpi4" || isPlatform "rpi5")  && [[ "$__os_debian_ver" -ge 12 ]]; then
+            __platform_flags+=(vulkan)
+        fi
     else
         __platform_flags+=(videocore)
         if ! isPlatform "aarch64"; then
