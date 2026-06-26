@@ -80,12 +80,16 @@ function configure_dolphin() {
     isPlatform "kms" && launch_prefix="XINIT-WM:"
 
     addEmulator 0 "$md_id" "gc" "$launch_prefix$md_inst/bin/dolphin-emu-nogui -e %ROM%"
-    addEmulator 1 "$md_id-gui" "gc" "$launch_prefix$md_inst/bin/dolphin-emu -b -e %ROM%"
+    addEmulator 1 "$md_id-gui" "gc" "$launch_prefix$md_inst/bin/dolphin.sh %ROM%"
     addEmulator 0 "$md_id" "wii" "$launch_prefix$md_inst/bin/dolphin-emu-nogui -e %ROM%"
     addEmulator 1 "$md_id-gui" "wii" "$launch_prefix$md_inst/bin/dolphin-emu -b -e %ROM%"
 
     addSystem "gc"
     addSystem "wii"
+
+    # copy hotkey remapping start script
+    cp "$md_data/dolphin.sh" "$md_inst/bin/"
+    chmod +x "$md_inst/bin/dolphin.sh"
 
     [[ "$md_mode" == "remove" ]] && return
 
