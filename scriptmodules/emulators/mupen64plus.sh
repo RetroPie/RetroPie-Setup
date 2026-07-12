@@ -18,7 +18,7 @@ rp_module_section="main"
 rp_module_flags="sdl2 nodistcc"
 
 function depends_mupen64plus() {
-    local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng-dev libfreetype6-dev fonts-freefont-ttf libboost-filesystem-dev libglu1-mesa-dev)
+    local depends=(cmake libsamplerate0-dev libspeexdsp-dev libsdl2-dev libpng-dev libzstd-dev libfreetype6-dev fonts-freefont-ttf libboost-filesystem-dev libglu1-mesa-dev)
     isPlatform "videocore" && depends+=(libraspberrypi-dev)
     isPlatform "mesa" && depends+=(libgles2-mesa-dev)
     isPlatform "x86" && depends+=(nasm)
@@ -153,6 +153,8 @@ function sources_mupen64plus() {
         applyPatch "$md_data/remove_fast_math.diff"
     fi
 
+    # fix CMake detection for zstd
+    sed -i 's/ZSTD REQUIRED/zstd REQUIRED/g' GLideN64/src/GLideNHQ/CMakeLists.txt
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
 }
