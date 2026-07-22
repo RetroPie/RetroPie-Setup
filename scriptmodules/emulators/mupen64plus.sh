@@ -155,6 +155,11 @@ function sources_mupen64plus() {
 
     # fix CMake detection for zstd
     sed -i 's/ZSTD REQUIRED/zstd REQUIRED/g' GLideN64/src/GLideNHQ/CMakeLists.txt
+    # on Ubuntu 24.04, link to the `zstd` shared libs instead of the static ones, because of LP#2086543
+    if [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" eq 24.04; then
+        sed -i 's/zstd::libzstd_static/zstd::libzstd_shared/g' GLideN64/src/GLideNHQ/CMakeLists.txt
+    fi
+
     local config_version=$(grep -oP '(?<=CONFIG_VERSION_CURRENT ).+?(?=U)' GLideN64/src/Config.h)
     echo "$config_version" > "$md_build/GLideN64_config_version.ini"
 }
