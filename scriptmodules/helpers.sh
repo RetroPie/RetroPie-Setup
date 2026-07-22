@@ -303,6 +303,9 @@ function _mapPackage() {
             [[ "$__os_debian_ver" -lt 13 ]] && pkg="policykit-1"
             [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" lt 24.04 && pkg="policykit-1"
             ;;
+        p7zip|p7zip-full)
+            [[ -n "$__os_ubuntu_ver" ]] && compareVersions "$__os_ubuntu_ver" ge 26.04 && pkg="7zip"
+            [[ "$__os_debian_ver" -ge 13 ]] && pkg="7zip"
     esac
     echo "$pkg"
 }
