@@ -20,6 +20,8 @@ rp_module_flags="!:\$__gcc_version:-lt:7"
 function _get_version_lr-mame() {
     if compareVersions "$(gcc -dumpfullversion)" lt 10.3.0; then
         echo "lrmame0264"
+    else
+        echo "master"
     fi
 }
 function _get_params_lr-mame() {
