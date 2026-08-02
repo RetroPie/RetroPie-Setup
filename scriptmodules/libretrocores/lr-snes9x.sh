@@ -34,7 +34,7 @@ function build_lr-snes9x() {
 function install_lr-snes9x() {
     md_ret_files=(
         'libretro/snes9x_libretro.so'
-        'docs'
+        'LICENSE'
     )
 }
 
