@@ -12,7 +12,7 @@
 rp_module_id="retroarch"
 rp_module_desc="RetroArch - frontend to the libretro emulator cores - required by all lr-* emulators"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/RetroArch/master/COPYING"
-rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.19.0"
+rp_module_repo="git https://github.com/retropie/RetroArch.git retropie-v1.21.0"
 rp_module_section="core"
 
 function depends_retroarch() {
@@ -233,7 +233,8 @@ function configure_retroarch() {
 
     # rgui by default
     iniSet "menu_driver" "rgui"
-    iniSet "rgui_aspect_ratio_lock" "2"
+    # RGUI aspect ratio - set it to 4:3 for non-KMS platforms due to RA issue #17650)
+    ! isPlatform "kms" && iniSet "rgui_aspect_ratio_lock" "2"
     iniSet "rgui_browser_directory" "$romdir"
     iniSet "rgui_switch_icons" "false"
     iniSet "menu_rgui_shadows" "true"
@@ -295,8 +296,13 @@ function configure_retroarch() {
     # if no menu_driver is set, force RGUI, as the default has now changed to XMB.
     _set_config_option_retroarch "menu_driver" "rgui"
 
-    # set RGUI aspect ratio to "Integer Scaling" to prevent stretching
-    _set_config_option_retroarch "rgui_aspect_ratio_lock" "2"
+    # set RGUI aspect ratio to "Auto" on KMS (due to issue RA#17650) or 'Integer Scaling' for other platforms,
+    # the latter prevents the resizing of the menu to the core viewport size
+    if isPlatform "kms"; then
+        iniSet "rgui_aspect_ratio_lock" "0"
+    else
+        _set_config_option_retroarch "rgui_aspect_ratio_lock" "2"
+    fi
 
     # if no menu_unified_controls is set, force it on so that keyboard player 1 can control
     # the RGUI menu which is important for arcade sticks etc that map to keyboard inputs
