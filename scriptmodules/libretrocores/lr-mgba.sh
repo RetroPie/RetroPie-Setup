@@ -17,19 +17,25 @@ rp_module_repo="git https://github.com/libretro/mgba.git master"
 rp_module_section="main"
 rp_module_flags=""
 
+function depends_lr-mgba() {
+    getDepends cmake
+}
+
 function sources_lr-mgba() {
     gitPullOrClone
 }
 
 function build_lr-mgba() {
-    make -f Makefile.libretro clean
-    make -f Makefile.libretro
-    md_ret_require="$md_build/mgba_libretro.so"
+    rm -fr build && mkdir build
+    cd build
+    cmake -S "$md_build" -DBUILD_LIBRETRO=ON -DCMAKE_BUILD_TYPE=Release -DLIBMGBA_ONLY=ON
+    make
+    md_ret_require="$md_build/build/mgba_libretro.so"
 }
 
 function install_lr-mgba() {
     md_ret_files=(
-        'mgba_libretro.so'
+        'build/mgba_libretro.so'
         'CHANGES'
         'LICENSE'
         'README.md'
