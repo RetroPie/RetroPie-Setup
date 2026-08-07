@@ -52,6 +52,11 @@ function build_lr-mupen64plus-next() {
         params+=(FORCE_GLES=1)
     fi
 
+    # enable ParaLLEl RDP and RSP on x86 platform
+    if isPlatform "x86"; then
+        params+=(HAVE_PARALLEL_RDP=1 HAVE_PARALLEL_RSP=1)
+    fi
+
     # force ARCH=armv7 on arm platforms to fix building with 32bit arm userland on aarch64 kernel
     isPlatform "arm" && params+=(ARCH=armv7l)
 
