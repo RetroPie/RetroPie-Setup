@@ -223,7 +223,7 @@ function advanced_configedit() {
 
     local audio_opts="alsa alsathread sdl2"
     if isPlatform "x11"; then
-        audio_opts+=" pulse"
+        audio_opts+=" pulse pipewire"
     fi
 
     local ini_options=(
