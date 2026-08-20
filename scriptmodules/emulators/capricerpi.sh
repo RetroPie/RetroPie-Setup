@@ -41,8 +41,23 @@ function install_capricerpi() {
 
 function configure_capricerpi() {
     mkRomDir "amstradcpc"
+       rm -f "$romdir/amstradcpc/capriceRPI.sh" "$romdir/amstradcpc/+Start.txt"
+    cat > "$romdir/amstradcpc/+Start capriceRPI.sh" << _EOF_
+#!/bin/bash
+params=("\$@")
+pushd "$md_inst"
+if [[ "\${params[0]}" == *.sh ]]; then
+    bash "\${params[@]}"
+else
+    ./capriceRPI --render 1 --video 2 "\${params[@]}"
+fi
+popd
+_EOF_
+    chmod +x "$romdir/amstradcpc/+Start capriceRPI.sh"
+    chown $user:$user "$romdir/amstradcpc/+Start capriceRPI.sh"
+    ln -sfn "$romdir/amstradcpc" games
 
-    addEmulator 0 "$md_id" "amstradcpc" "$md_inst/capriceRPI %ROM%"
+    addEmulator 0 "$md_id" "amstradcpc" "bash $romdir/amstradcpcp/+Start\ capriceRPI.sh %ROM%"
     addSystem "amstradcpc"
 
     [[ $mode == "remove" ]] && return
