@@ -314,8 +314,8 @@ function create_image() {
     # Get file size in MiB: use --apparent-size to avoid underestimating
     # file sizes on a compressed filesystem (e.g. ZFS + compression)
     local chroot_size_mib=$(du -s -m --apparent-size "$chroot" 2>/dev/null | cut -f1)
-    # make image size 384MiB larger than contents of chroot and boot partition
-    local image_size_mib=$((boot_size_mib + chroot_size_mib + 384))
+    # make image size 512MiB larger than contents of chroot and boot partition
+    local image_size_mib=$((boot_size_mib + chroot_size_mib + 512))
 
     # create image
     printMsgs "console" "Creating image $image ..."
