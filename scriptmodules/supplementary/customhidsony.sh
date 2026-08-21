@@ -29,6 +29,8 @@ function sources_customhidsony() {
 
     cat > "Makefile" << _EOF_
 obj-m := drivers/hid/hid-sony.o
+# kernel >= 6.x changed report_fixup return type to const u8*; suppress the pointer-type error
+ccflags-y += -Wno-error=incompatible-pointer-types
 _EOF_
 
     cat > "dkms.conf" << _EOF_
@@ -48,6 +50,13 @@ mkdir -p "drivers/hid/" "patches"
 curl -s https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-sony.c -o "drivers/hid/hid-sony.c"
 curl -s https://raw.githubusercontent.com/raspberrypi/linux/"\$rpi_kernel_ver"/drivers/hid/hid-ids.h -o "drivers/hid/hid-ids.h"
 patch -p1 <"patches/0001-hidsony-gasiafix.diff"
+# kernel >= 6.12 removed asm/unaligned.h; replaced by linux/unaligned.h
+KVER="\${kernelver:-\$(uname -r)}"
+KMAJ=\$(echo "\$KVER" | cut -d. -f1)
+KMIN=\$(echo "\$KVER" | cut -d. -f2 | cut -d- -f1)
+if [ "\$KMAJ" -gt 6 ] || { [ "\$KMAJ" -eq 6 ] && [ "\$KMIN" -ge 12 ]; }; then
+    sed -i 's|#include <asm/unaligned.h>|#include <linux/unaligned.h>|g' drivers/hid/hid-sony.c
+fi
 _EOF_
     chmod +x "hidsony_source.sh"
 
