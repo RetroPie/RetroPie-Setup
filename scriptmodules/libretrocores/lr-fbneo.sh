@@ -59,6 +59,7 @@ function configure_lr-fbneo() {
     addEmulator 0 "$md_id-neocd" "fba" "$md_inst/fbneo_libretro.so --subsystem neocd"
 
     addEmulator 0 "$md_id-pce" "pcengine" "$md_inst/fbneo_libretro.so --subsystem pce"
+    addEmulator 0 "$md_id-pcecd" "pcengine" "$md_inst/fbneo_libretro.so --subsystem pcecd"
     addEmulator 0 "$md_id-sgx" "pcengine" "$md_inst/fbneo_libretro.so --subsystem sgx"
     addEmulator 0 "$md_id-tg" "pcengine" "$md_inst/fbneo_libretro.so --subsystem tg"
     addEmulator 0 "$md_id-gg" "gamegear" "$md_inst/fbneo_libretro.so --subsystem gg"
@@ -74,6 +75,7 @@ function configure_lr-fbneo() {
     addEmulator 0 "$md_id-ngpc" "ngpc" "$md_inst/fbneo_libretro.so --subsystem ngp"
     addEmulator 0 "$md_id-chf" "channelf" "$md_inst/fbneo_libretro.so --subsystem chf"
     addEmulator 0 "$md_id-snes" "snes" "$md_inst/fbneo_libretro.so --subsystem snes"
+    addEmulator 0 "$md_id-gba" "gba" "$md_inst/fbneo_libretro.so --subsystem gba"
 
     local systems=(
         "arcade"
@@ -93,6 +95,7 @@ function configure_lr-fbneo() {
         "ngpc"
         "channelf"
         "snes"
+        "gba"
     )
 
     local system
@@ -115,6 +118,7 @@ function configure_lr-fbneo() {
     mkUserDir "$biosdir/fbneo/samples"
     mkUserDir "$biosdir/fbneo/ips"
     mkUserDir "$biosdir/fbneo/romdata"
+    mkUserDir "$biosdir/fbneo/snesmsu1"
 
     # copy hiscore.dat
     cp "$md_inst/metadata/hiscore.dat" "$biosdir/fbneo/"
