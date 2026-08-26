@@ -1,0 +1,33 @@
+diff --git a/core/libretro-common/glsm/glsm.c b/core/libretro-common/glsm/glsm.c
+index 289bca7..6f731c2 100644
+--- a/core/libretro-common/glsm/glsm.c
++++ b/core/libretro-common/glsm/glsm.c
+@@ -2746,15 +2746,15 @@ static void glsm_state_setup(void)
+    gl_state.colorlogicop                = GL_COPY;
+ #endif
+ 
+ #ifdef CORE
+-   glGenVertexArrays(1, &gl_state.vao);
++   rglGenVertexArrays(1, &gl_state.vao);
+ #endif
+ }
+ 
+ static void glsm_state_bind(void)
+ {
+    unsigned i;
+ #ifdef CORE
+-   glBindVertexArray(gl_state.vao);
++   rglBindVertexArray(gl_state.vao);
+ #endif
+    glBindBuffer(GL_ARRAY_BUFFER, gl_state.array_buffer);
+@@ -2870,9 +2870,9 @@ static void glsm_state_unbind(void)
+ static void glsm_state_unbind(void)
+ {
+    unsigned i;
+ #ifdef CORE
+-   glBindVertexArray(0);
++   rglBindVertexArray(0);
+ #endif
+    for (i = 0; i < SGL_CAP_MAX; i ++)
+    {
+       if (gl_state.cap_state[i])
