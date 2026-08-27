@@ -42,7 +42,9 @@ function get_arch_sdl2() {
 function _list_depends_sdl2() {
     # Dependencies from the debian package control + additional dependencies for the pi (some are excluded like dpkg-dev as they are
     # already covered by the build-essential package retropie relies on.
-    local depends=(libasound2-dev libudev-dev libibus-1.0-dev libdbus-1-dev fcitx-libs-dev libsndio-dev libsamplerate0-dev)
+    local depends=(libasound2-dev libudev-dev libibus-1.0-dev libdbus-1-dev libsndio-dev libsamplerate0-dev)
+    # fcitx-libs-dev (Fcitx 4) conflicts with fcitx5 on Debian 12+ / Ubuntu 24.04+
+    [[ "$__os_debian_ver" -le 11 ]] && depends+=(fcitx-libs-dev)
     # these were removed by a PR for vero4k support (cannot test). Needed though at least for for RPI and X11
     ! isPlatform "vero4k" && depends+=(libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxkbcommon-dev libxrandr-dev libxss-dev libxt-dev libxv-dev libxxf86vm-dev libgl1-mesa-dev)
     isPlatform "gles" || isPlatform "gl" && depends+=(libegl1-mesa-dev libgles2-mesa-dev)
