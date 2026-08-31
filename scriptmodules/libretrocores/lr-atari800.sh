@@ -30,6 +30,7 @@ function install_lr-atari800() {
     md_ret_files=(
         'atari800_libretro.so'
         'atari800/COPYING'
+        'atari800/act'
     )
 }
 
@@ -42,6 +43,9 @@ function configure_lr-atari800() {
 
     mkUserDir "$md_conf_root/atari800"
     moveConfigFile "$home/.lr-atari800.cfg" "$md_conf_root/atari800/lr-atari800.cfg"
+
+    cp -rv "$md_inst/act" "$md_conf_root/atari800"
+    chown -R $user:$user "$md_conf_root/atari800/act"
 
     addEmulator 1 "lr-atari800" "atari800" "$md_inst/atari800_libretro.so"
     addEmulator 1 "lr-atari800" "atari5200" "$md_inst/atari800_libretro.so"
