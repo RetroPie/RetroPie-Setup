@@ -50,6 +50,8 @@ function depends_dolphin() {
     # if using the latest version, add SDL2 as dependency, since it's mandatory
     [[ "$(_get_commit_dolphin)" == "" ]] && depends+=(libsdl2-dev)
 
+    # install Vulkan drivers when needed
+    isPlatform "vulkan" && depends+=(mesa-vulkan-drivers)
     getDepends "${depends[@]}"
 }
 
