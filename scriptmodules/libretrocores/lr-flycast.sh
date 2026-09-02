@@ -33,6 +33,8 @@ function sources_lr-flycast() {
     gitPullOrClone
     # don't override our C/CXXFLAGS and set LDFLAGS to CFLAGS to avoid warnings on linking
     applyPatch "$md_data/01_flags_fix.diff"
+    applyPatch "$md_data/02_gcc14_unistd_fix.diff"
+    applyPatch "$md_data/03_gcc14_glsm_fix.diff"
 }
 
 function build_lr-flycast() {
