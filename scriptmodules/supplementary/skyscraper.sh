@@ -35,11 +35,16 @@ function sources_skyscraper() {
 
 function build_skyscraper() {
     rm --force .qmake.stash
+    params=()
+    # make smaller Skyscraper binary on RetroPie
+    hasFlag "rpi" && params+=(RPI_BUILD=1)
     if [[ "$__os_debian_ver" -ge 12 ]]; then
-        qmake6
+        params+=(qmake6)
     else
-        QT_SELECT=5 qmake
+        params+=(QT_SELECT=5)
+        params+=(qmake)
     fi
+    eval "${params[*]}"
     make
     md_ret_require="$md_build/Skyscraper"
 }
