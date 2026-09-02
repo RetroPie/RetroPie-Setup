@@ -192,9 +192,15 @@ function _check_ver_skyscraper() {
     return 0
 }
 
-# List any non-empty systems found in the ROM folder
+# List the systems configured according to ES frontend
 function _list_systems_skyscraper() {
-    find -L "$romdir/" -mindepth 1 -maxdepth 1 -type d -not -empty | sort -u
+    local es_cfg="emulationstation/es_systems.cfg"
+    if [[ -f "$home/.$es_cfg" ]]; then
+        es_cfg="$home/.$es_cfg"
+    else
+        es_cfg="/etc/$es_cfg"
+    fi
+    xmlstarlet select --template --value-of "/systemList/system/name/text()" "$es_cfg" | sed -e /retropie/d | sort -u
 }
 
 function configure_skyscraper() {
