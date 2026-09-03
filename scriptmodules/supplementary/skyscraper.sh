@@ -572,25 +572,27 @@ function gui_skyscraper() {
         [4]=mobygames
         [5]=openretro
         [6]=igdb
-        [7]=worldofspectrum
+        [7]=zxinfo
     )
     s_source+=(
         [10]=esgamelist
         [11]=import
+        [12]=gamebase
     )
 
     s_source_names=(
         [1]=ScreenScraper
-        [2]=ArcadeDB
-        [3]=TheGamesDB
+        [2]="Arcade DB"
+        [3]="TheGames DB"
         [4]=MobyGames
         [5]=OpenRetro
         [6]="Internet Game Database"
-        [7]="World of Spectrum"
+        [7]="ZX-Info"
     )
     s_source_names+=(
         [10]="EmulationStation Gamelist"
-        [11]="Import Folder"
+        [11]="Import Folder (see docs)"
+        [12]="Gamebase DB file (see docs)"
     )
 
     local ver
