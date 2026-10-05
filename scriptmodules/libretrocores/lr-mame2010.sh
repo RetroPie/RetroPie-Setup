@@ -22,6 +22,8 @@ function depends_lr-mame2010() {
 
 function sources_lr-mame2010() {
     gitPullOrClone
+    # fix for the MAME input configuration crash on `armhf` 
+    isPlatform "arm" && applyPatch "$md_data/001-input-config-crash.diff"
 }
 
 function build_lr-mame2010() {
