@@ -49,6 +49,7 @@ function _list_depends_sdl2() {
     isPlatform "gl" || isPlatform "rpi" && depends+=(libgl1-mesa-dev libglu1-mesa-dev)
     isPlatform "kms" || isPlatform "rpi" && depends+=(libdrm-dev libgbm-dev)
     isPlatform "x11" && depends+=(libpulse-dev libwayland-dev)
+    isPlatform "vulkan" && depends+=(libvulkan-dev)
 
     echo "${depends[@]}"
 }
