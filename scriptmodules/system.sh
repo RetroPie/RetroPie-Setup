@@ -483,6 +483,10 @@ function get_platform() {
                         *imx8mm*)
                             __platform="imx8mm"
                             ;;
+                        # ArmSoM Sige5 vendor DTs may include rk3588 in the board name.
+                        *rk3576*)
+                            __platform="rk3576"
+                            ;;
                         *rk3588*)
                             __platform="rk3588"
                             ;;
@@ -696,6 +700,11 @@ function platform_imx8mm() {
     cpu_armv8 "cortex-a53"
     __platform_flags+=(x11 gles)
     [[ -d /sys/class/drm/card0/device/driver/etnaviv ]] && __platform_flags+=(mesa)
+}
+
+function platform_rk3576() {
+    cpu_armv8 "cortex-a72.cortex-a53"
+    __platform_flags+=(x11 gles gles3 gles31)
 }
 
 function platform_rk3588() {
