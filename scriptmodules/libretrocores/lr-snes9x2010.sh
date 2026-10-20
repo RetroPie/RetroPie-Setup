@@ -28,13 +28,20 @@ function sources_lr-snes9x2010() {
 function build_lr-snes9x2010() {
     make -f Makefile.libretro clean
     local platform=""
-    isPlatform "arm" && platform+="armv"
-    isPlatform "neon" && platform+="neon"
-    if [[ -n "$platform" ]]; then
-        make -f Makefile.libretro platform="$platform"
-    else
-        make -f Makefile.libretro
+    if isPlatform "rpi4"; then
+        isPlatform "64bit" && platform="rpi4_64" || platform="rpi4"
+    elif isPlatform "rpi3"; then
+        isPlatform "64bit" && platform="rpi3_64" || platform="rpi3"
+    elif isPlatform "rpi2"; then
+        platform="rpi2"
+    elif isPlatform "arm"; then
+        platform="armv"
+        isPlatform "neon" && platform+="neon"
     fi
+    local args=()
+    [[ -n "$platform" ]] && args+=("platform=$platform")
+    [[ "$platform" == rpi* ]] && args+=("LDFLAGS=-lpthread")
+    make -f Makefile.libretro "${args[@]}"
     md_ret_require="$md_build/snes9x2010_libretro.so"
 }
 
