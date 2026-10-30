@@ -1041,6 +1041,7 @@ function config_backend() {
     # if we are running under X then don't try and use a different backend
     [[ -n "$DISPLAY" || "$XINIT" -eq 1 ]] && return
     local name="$1"
+    local prefix
     # if we have a backends.conf file and with an entry for the current emulator name,
     # change the library path to load dispmanx sdl first
     if [[ -f "$BACKENDS_CONF" ]]; then
@@ -1049,12 +1050,12 @@ function config_backend() {
         case "$ini_value" in
             1|dispmanx)
                 if [[ "$HAS_MODESET" == "kms" ]]; then
-                    COMMAND="SDL_DISPMANX_WIDTH=${MODE_CUR[2]} SDL_DISPMANX_HEIGHT=${MODE_CUR[3]} $COMMAND"
+                    prefix="SDL_DISPMANX_WIDTH=${MODE_CUR[2]} SDL_DISPMANX_HEIGHT=${MODE_CUR[3]} "
                 fi
-                COMMAND="SDL1_VIDEODRIVER=dispmanx $COMMAND"
+                prefix+="SDL1_VIDEODRIVER=dispmanx"
                 ;;
             sdl12-compat)
-                COMMAND="LD_PRELOAD=\"$ROOTDIR/supplementary/sdl12-compat/libSDL-1.2.so.0\" $COMMAND"
+                prefix="LD_PRELOAD=\"$ROOTDIR/supplementary/sdl12-compat/libSDL-1.2.so.0\""
                 ;;
             x11)
                 XINIT=1
@@ -1066,6 +1067,9 @@ function config_backend() {
                 ;;
         esac
     fi
+    # export in a subshell, so the variables reach every part of a command
+    # such as "pushd dir; ./emulator; popd", and not only the first one
+    [[ -n "$prefix" ]] && COMMAND="(export $prefix; $COMMAND)"
 }
 
 function retroarch_append_config() {
