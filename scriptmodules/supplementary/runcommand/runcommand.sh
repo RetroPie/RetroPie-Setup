@@ -1067,9 +1067,9 @@ function config_backend() {
                 ;;
         esac
     fi
-    # export in a subshell, so the variables reach every part of a command
-    # such as "pushd dir; ./emulator; popd", and not only the first one
-    [[ -n "$prefix" ]] && COMMAND="(export $prefix; $COMMAND)"
+    # export, so the variables reach every part of a command such as
+    # "pushd dir; ./emulator; popd", and not only the first one
+    [[ -n "$prefix" ]] && COMMAND="export $prefix; $COMMAND"
 }
 
 function retroarch_append_config() {
