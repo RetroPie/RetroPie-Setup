@@ -75,7 +75,7 @@ function install_lr-flycast() {
 
 function configure_lr-flycast() {
     local sys
-    local systems=(dreamcast arcade)
+    local systems=(dreamcast naomi arcade)
     local def
     for sys in "${systems[@]}"; do
         def=0
