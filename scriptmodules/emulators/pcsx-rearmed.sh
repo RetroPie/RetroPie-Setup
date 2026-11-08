@@ -66,6 +66,8 @@ function configure_pcsx-rearmed() {
 
     isPlatform "dispmanx" && setBackend "$md_id" "dispmanx"
 
-    addEmulator 0 "$md_id" "psx" "pushd $md_inst; ./pcsx -cdfile %ROM%; popd"
+    # scale to 4:3, not the PSX framebuffer ratio (e.g. 256x240 gives a small, narrow picture);
+    # only the SDL1 dispmanx driver reads it
+    addEmulator 0 "$md_id" "psx" "pushd $md_inst; SDL_DISPMANX_RATIO=1.3333 ./pcsx -cdfile %ROM%; popd"
     addSystem "psx"
 }
