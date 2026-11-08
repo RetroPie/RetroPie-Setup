@@ -265,6 +265,10 @@ function _init_chroot_image() {
     if [[ -f "$chroot/etc/ld.so.preload" ]]; then
         mv "$chroot/etc/ld.so.preload" "$chroot/etc/ld.so.preload.bak"
     fi
+
+    # disable password for sudo in chroot
+    echo "pi ALL=(ALL) NOPASSWD: ALL" > "$chroot/etc/sudoers.d/99-retropie"
+    chmod 440 "$chroot/etc/sudoers.d/99-retropie"
 }
 
 function _deinit_chroot_image() {
@@ -279,6 +283,9 @@ function _deinit_chroot_image() {
     if [[ -f "$chroot/etc/ld.so.preload.bak" ]]; then
         mv "$chroot/etc/ld.so.preload.bak" "$chroot/etc/ld.so.preload"
     fi
+
+    # remove passwordless sudo config
+    rm -f "$chroot/etc/sudoers.d/99-retropie"
 
     umount -l "$chroot/proc" "$chroot/dev/pts" "$chroot/sys"
     trap INT
