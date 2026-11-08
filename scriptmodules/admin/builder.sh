@@ -116,10 +116,8 @@ function chroot_build_builder() {
     local dists="$__builder_dists"
     [[ -z "$dists" ]] && return 1
 
-    local platform
-    local platforms="$__builder_platforms"
-
     for dist in $dists; do
+        local platforms="$__builder_platforms"
         [[ -z "$platforms" ]] && platforms="$(_get_info_image "$dist" "platforms")"
         [[ -z "$platforms" ]] && fatalError "Unable to get platforms information for $dist"
 
@@ -180,6 +178,7 @@ function chroot_build_builder() {
                 "
         fi
 
+        local platform
         for platform in $platforms; do
             rp_callModule image chroot "$chroot_dir" \
                 sudo \
