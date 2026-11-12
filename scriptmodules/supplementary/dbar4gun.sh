@@ -15,10 +15,9 @@ rp_module_help="https://github.com/lowlevel-1989/dbar4gun"
 rp_module_licence="MIT https://raw.githubusercontent.com/lowlevel-1989/dbar4gun/master/LICENSE"
 rp_module_repo="git https://github.com/lowlevel-1989/dbar4gun master"
 rp_module_section="driver"
-rp_module_flags="!:\$__os_debian_ver:-lt:13"
 
 function depends_dbar4gun() {
-    getDepends python3 python3-dev python3-setuptools python3-virtualenv python3-pygame
+    getDepends python3 python3-dev python3-setuptools python3-venv python3-pygame
 }
 
 function sources_dbar4gun() {
@@ -26,7 +25,8 @@ function sources_dbar4gun() {
 }
 
 function install_dbar4gun() {
-    python3 -m venv "$md_inst"
+    # --system-site-packages: the calibrator uses python3-pygame from apt
+    python3 -m venv --system-site-packages "$md_inst"
     source "$md_inst/bin/activate"
     pip3 install .
     deactivate
@@ -42,20 +42,84 @@ function configure_dbar4gun() {
     iniConfig " = " '"' "$configdir/all/dbar4gun.cfg"
 }
 
+function _params_dbar4gun() {
+    local dbar4gun_params="--width $db_width --height $db_height"
+    dbar4gun_params="$dbar4gun_params --calibration $db_calibration"
+    dbar4gun_params="$dbar4gun_params --setup $db_setup"
+    dbar4gun_params="$dbar4gun_params --port $db_port"
+    dbar4gun_params="$dbar4gun_params --smoothing-level $db_smoothing_level"
+    dbar4gun_params="$dbar4gun_params --area $db_area"
+    dbar4gun_params="$dbar4gun_params --useful-zone $db_useful_zone"
+    dbar4gun_params="$dbar4gun_params --config-dir $configdir/all/dbar4gun"
+
+    if [[ "$db_disable_tilt_correction" -eq 1 ]]; then
+        dbar4gun_params="$dbar4gun_params --disable-tilt-correction"
+    fi
+
+    if [[ "$db_distance_compensation" -eq 0 ]]; then
+        dbar4gun_params="$dbar4gun_params --no-distance-compensation"
+    fi
+
+    echo "$dbar4gun_params"
+}
+
+# calibrator command; db_calibrator_size "native" or "WIDTHxHEIGHT",
+# db_calibrator_lang "en" or "es"
+function _calibrator_cmd_dbar4gun() {
+    local cmd="$md_inst/bin/dbar4gun gui --port $db_port"
+    if [[ "$db_calibrator_size" =~ ^([0-9]+)x([0-9]+)$ ]]; then
+        cmd+=" --width ${BASH_REMATCH[1]} --height ${BASH_REMATCH[2]}"
+    fi
+    if [[ "$db_calibrator_lang" == "es" ]]; then
+        cmd+=" --lang es"
+    fi
+    echo "$cmd"
+}
+
+# The calibrator goes to Ports, like the "Desktop" entry of raspbiantools.
+# addPort creates "$romdir/ports/dbar4gun calibrator.sh", which runs it with
+# runcommand as the user (no sudo, so it also works when sudo needs a password,
+# where the RetroPie menu cannot launch anything), and stores the command in
+# $configdir/ports/dbar4gun/emulators.cfg
+function _calibrator_entry_dbar4gun() {
+    # the entry of older versions in the RetroPie menu
+    rm -f "$datadir/retropiemenu/dbar4gun-calibrator.sh"
+    setConfigRoot "ports"
+    if [[ "$1" == "install" ]]; then
+        addPort "$md_id" "dbar4gun" "dbar4gun calibrator" "$(_calibrator_cmd_dbar4gun)"
+    else
+        local md_mode="remove"
+        addPort "$md_id" "dbar4gun" "dbar4gun calibrator"
+    fi
+}
+
+# runcommand hooks (area profile per system/emulator)
+function _hooks_dbar4gun() {
+    if [[ "$1" == "install" ]]; then
+        "$md_inst/bin/dbar4gun" hooks install --configs-dir "$configdir/all" --bin "$md_inst/bin/dbar4gun"
+    else
+        [[ -x "$md_inst/bin/dbar4gun" ]] && "$md_inst/bin/dbar4gun" hooks uninstall --configs-dir "$configdir/all"
+    fi
+}
+
 function enable_dbar4gun() {
     local config="/etc/systemd/system/dbar4gun.service"
 
     iniConfig " = " '"' "$configdir/all/dbar4gun.cfg"
     eval $(_loadconfig_dbar4gun)
 
-    local dbar4gun_params="--width $db_width --height $db_height"
-    dbar4gun_params="$dbar4gun_params --calibration $db_calibration"
-    dbar4gun_params="$dbar4gun_params --setup $db_setup"
-    dbar4gun_params="$dbar4gun_params --port $db_port"
-    dbar4gun_params="$dbar4gun_params --smoothing-level $db_smoothing_level"
+    local dbar4gun_params="$(_params_dbar4gun)"
 
-    if [[ "$db_disable_tilt_correction" -eq 1 ]]; then
-        dbar4gun_params="$dbar4gun_params --disable-tilt-correction"
+    if [[ "$db_calibrator_entry" -eq 1 ]]; then
+        _calibrator_entry_dbar4gun install
+    else
+        _calibrator_entry_dbar4gun remove
+    fi
+
+    if [[ "$db_runcommand_hooks" -eq 1 ]]; then
+        _hooks_dbar4gun install
+    else
+        _hooks_dbar4gun remove
     fi
 
     disable_dbar4gun
@@ -82,8 +146,44 @@ function disable_dbar4gun() {
 
 function remove_dbar4gun() {
     disable_dbar4gun
+    _calibrator_entry_dbar4gun remove
+    _hooks_dbar4gun remove
     rm -rf "/etc/systemd/system/dbar4gun.service"
     systemctl daemon-reload
+}
+
+# validated with dbar4gun before saving: an invalid value in ExecStart would
+# stop the service from starting
+function _set_area_dbar4gun() {
+    local error
+    if error=$("$md_inst/bin/dbar4gun" check --area "$1" 2>&1); then
+        db_area="$1"
+        iniSet "db_area" "$db_area"
+        return 0
+    fi
+    printMsgs "dialog" "Invalid area profile '$1': $error"
+    return 1
+}
+
+function _set_useful_zone_dbar4gun() {
+    local error
+    if error=$("$md_inst/bin/dbar4gun" check --area full --useful-zone "$1" 2>&1); then
+        db_useful_zone="$1"
+        iniSet "db_useful_zone" "$db_useful_zone"
+        return 0
+    fi
+    printMsgs "dialog" "Invalid useful zone '$1': $error"
+    return 1
+}
+
+function _set_calibrator_size_dbar4gun() {
+    if [[ "$1" == "native" || "$1" =~ ^[0-9]+x[0-9]+$ ]]; then
+        db_calibrator_size="$1"
+        iniSet "db_calibrator_size" "$db_calibrator_size"
+        return 0
+    fi
+    printMsgs "dialog" "Invalid calibrator resolution '$1': native or WIDTHxHEIGHT"
+    return 1
 }
 
 function _loadconfig_dbar4gun() {
@@ -94,7 +194,14 @@ function _loadconfig_dbar4gun() {
         'db_setup=1' \
         'db_port=35460' \
         'db_calibration=2' \
-        'db_smoothing_level=3'
+        'db_smoothing_level=3' \
+        'db_area=full' \
+        'db_useful_zone=0.85' \
+        'db_distance_compensation=1' \
+        'db_calibrator_entry=1' \
+        'db_calibrator_size=native' \
+        'db_calibrator_lang=en' \
+        'db_runcommand_hooks=1'
     )"
 }
 
@@ -117,6 +224,30 @@ function _menu_start_dbar4gun() {
             options+=(5 "enable tilt correction")
         else
             options+=(5 "disable tilt correction")
+        fi
+
+        options+=(7 "default area profile: $db_area")
+        options+=(8 "useful zone: $db_useful_zone")
+
+        if [[ "$db_distance_compensation" -eq 1 ]]; then
+            options+=(9 "disable distance compensation")
+        else
+            options+=(9 "enable distance compensation")
+        fi
+
+        if [[ "$db_calibrator_entry" -eq 1 ]]; then
+            options+=(10 "remove calibrator from Ports")
+        else
+            options+=(10 "add calibrator to Ports")
+        fi
+
+        options+=(12 "calibrator resolution: $db_calibrator_size")
+        options+=(13 "calibrator language: $db_calibrator_lang")
+
+        if [[ "$db_runcommand_hooks" -eq 1 ]]; then
+            options+=(11 "disable area profiles per game (runcommand)")
+        else
+            options+=(11 "enable area profiles per game (runcommand)")
         fi
 
         options+=(6 "dbar4gun start")
@@ -151,6 +282,42 @@ function _menu_start_dbar4gun() {
                 6)
                     enable_dbar4gun
                     break
+                    ;;
+                7)
+                    local cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Default area profile: full, 4:3 or custom:x0,y0,w,h (per game profiles: $configdir/all/dbar4gun/profiles.cfg)" 12 70 "$db_area")
+                    local value
+                    # Cancel: keep the previous value
+                    value=$("${cmd_in[@]}" 2>&1 >/dev/tty) && _set_area_dbar4gun "$value"
+                    ;;
+                8)
+                    local cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Useful zone: fraction of the screen height with targets (0.3 - 1.0)" 10 70 "$db_useful_zone")
+                    local value
+                    value=$("${cmd_in[@]}" 2>&1 >/dev/tty) && _set_useful_zone_dbar4gun "$value"
+                    ;;
+                9)
+                    db_distance_compensation="$((db_distance_compensation ^ 1))"
+                    iniSet "db_distance_compensation" "$db_distance_compensation"
+                    ;;
+                10)
+                    db_calibrator_entry="$((db_calibrator_entry ^ 1))"
+                    iniSet "db_calibrator_entry" "$db_calibrator_entry"
+                    ;;
+                11)
+                    db_runcommand_hooks="$((db_runcommand_hooks ^ 1))"
+                    iniSet "db_runcommand_hooks" "$db_runcommand_hooks"
+                    ;;
+                12)
+                    local cmd_in=(dialog --backtitle "$__backtitle" --inputbox "Calibrator resolution: native, or WIDTHxHEIGHT (e.g. 1280x720) if it is slow on the TV" 10 70 "$db_calibrator_size")
+                    local value
+                    value=$("${cmd_in[@]}" 2>&1 >/dev/tty) && _set_calibrator_size_dbar4gun "$value"
+                    ;;
+                13)
+                    if [[ "$db_calibrator_lang" == "es" ]]; then
+                        db_calibrator_lang="en"
+                    else
+                        db_calibrator_lang="es"
+                    fi
+                    iniSet "db_calibrator_lang" "$db_calibrator_lang"
                     ;;
             esac
         else
@@ -269,7 +436,7 @@ function gui_dbar4gun() {
     local options=(
         1 "Enable dbar4gun"
         2 "Disable dbar4gun"
-        3 "Debug"
+        3 "Calibrator"
     )
 
     iniConfig " = " '"' "$configdir/all/dbar4gun.cfg"
@@ -286,7 +453,7 @@ function gui_dbar4gun() {
                     disable_dbar4gun
                     ;;
                 3)
-                    $md_inst/bin/dbar4gun gui --width 640 --height 480 --port $db_port
+                    $(_calibrator_cmd_dbar4gun)
                     ;;
             esac
         else
