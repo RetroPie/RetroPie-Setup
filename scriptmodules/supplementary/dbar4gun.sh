@@ -362,7 +362,8 @@ function _menu_calibration_mode() {
     local options=(
         1 "TopLeft, TopRight, BottomCenter"
         2 "Center,  TopLeft"
-        3 "disabled"
+        3 "TopLeft, TopRight, BottomRight, BottomLeft (better when playing from a side)"
+        4 "disabled"
     )
 
     while true; do
@@ -380,6 +381,11 @@ function _menu_calibration_mode() {
                     break
                     ;;
                 3)
+                    iniSet "db_calibration" "3"
+                    _menu_start_dbar4gun
+                    break
+                    ;;
+                4)
                     iniSet "db_calibration" "0"
                     _menu_start_dbar4gun
                     break
