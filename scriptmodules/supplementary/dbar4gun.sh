@@ -45,7 +45,6 @@ function configure_dbar4gun() {
 function _params_dbar4gun() {
     local dbar4gun_params="--width $db_width --height $db_height"
     dbar4gun_params="$dbar4gun_params --calibration $db_calibration"
-    dbar4gun_params="$dbar4gun_params --setup $db_setup"
     dbar4gun_params="$dbar4gun_params --port $db_port"
     dbar4gun_params="$dbar4gun_params --smoothing-level $db_smoothing_level"
     dbar4gun_params="$dbar4gun_params --area $db_area"
@@ -191,7 +190,6 @@ function _loadconfig_dbar4gun() {
         'db_width=1920' \
         'db_height=1080' \
         'db_disable_tilt_correction=0' \
-        'db_setup=1' \
         'db_port=35460' \
         'db_calibration=2' \
         'db_smoothing_level=3' \
@@ -327,32 +325,6 @@ function _menu_start_dbar4gun() {
 
 }
 
-function _menu_ir_setup() {
-    local cmd=(dialog --backtitle "$__backtitle" --menu "IR Setup" 22 86 16)
-
-    iniConfig " = " '"' "$configdir/all/dbar4gun.cfg"
-    eval $(_loadconfig_dbar4gun)
-
-    local options=(
-        1 "Standard"
-    )
-
-    while true; do
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            case "$choice" in
-                1)
-                    iniSet "db_setup" "1"
-                    _menu_calibration_mode
-                    break
-                    ;;
-            esac
-        else
-            break
-        fi
-    done
-}
-
 function _menu_calibration_mode() {
     local cmd=(dialog --backtitle "$__backtitle" --menu "Calibration Mode" 22 86 16)
 
@@ -416,17 +388,17 @@ function _menu_set_resolution() {
                 1)
                     iniSet "db_width" "1920"
                     iniSet "db_height" "1080"
-                    _menu_ir_setup
+                    _menu_calibration_mode
                     break
                     ;;
                 2)
                     iniSet "db_width" "1280"
                     iniSet "db_height" "720"
-                    _menu_ir_setup
+                    _menu_calibration_mode
                     break
                     ;;
                 3)
-                    _menu_ir_setup
+                    _menu_calibration_mode
                     break
                     ;;
             esac
