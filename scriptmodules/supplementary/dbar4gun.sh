@@ -362,7 +362,7 @@ function _menu_calibration_mode() {
     local options=(
         1 "TopLeft, TopRight, BottomCenter"
         2 "Center,  TopLeft"
-        3 "TopLeft, TopRight, BottomRight, BottomLeft (better when playing from a side)"
+        3 "TopLeft, TopRight, BottomRight, BottomLeft (playing from a side)"
         4 "disabled"
     )
 
