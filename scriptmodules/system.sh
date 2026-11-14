@@ -540,6 +540,11 @@ function set_platform_defaults() {
     # add platform name and 32bit/64bit to platform flags
     __platform_flags=("$__platform" "$(getconf LONG_BIT)bit")
     __platform_arch=$(uname -m)
+
+    # set arm32on64 for 32bit arm userland running on 64bit aarch64 kernel
+    if [[ "$(getconf LONG_BIT)" == "32" ]] && [[ "$__platform_arch" == "aarch64" ]]; then
+        __platform_flags+=("arm32on64")
+    fi
 }
 
 function cpu_arm1176() {
