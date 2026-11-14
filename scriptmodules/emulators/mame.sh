@@ -64,7 +64,7 @@ function build_mame() {
     # {standard input}: Assembler messages:
     # {standard input}:4045: Error: co-processor offset out of range
     # make[2]: *** [skeleton.make:2727: obj/Release/src/mame/skeleton/scopus.o] Error 1
-    if [[ "$__gcc_version" -eq 12 ]] && isPlatform "rpi3" && isPlatform "32bit" && [[ "$(uname -m)" == "aarch64" ]]; then
+    if [[ "$__gcc_version" -eq 12 ]] && isPlatform "rpi3" && isPlatform "arm32on64"; then
         arch_opts_cxx+=(-fno-tree-slp-vectorize)
     fi
 
