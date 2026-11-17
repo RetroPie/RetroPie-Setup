@@ -30,8 +30,9 @@ function _get_version_openmsx() {
     [[ "$__gcc_version" -lt 11 ]] && version="19"
     # RELEASE_19_0 & RELEASE_19_1 require g++-10 (Debian Bullseye)
     [[ "$__gcc_version" -lt 10 ]] && version="18"
-    # RELEASE_18_0 requires C++20 / g++ 9
+    # RELEASE_18_0 requires C++20 / g++-9
     [[ "$__gcc_version" -lt 9 ]] && version="17"
+    # RELEASE_17_0 requires C++17 / g++-8 (Debian Buster / Ubuntu 20.04)
 
     echo "$version"
 }
@@ -53,7 +54,7 @@ function _get_commit_openmsx() {
     local version="$(_get_version_openmsx)"
     case "$version" in
         "17")
-            commit="127e2826";; # shortly after 17_0
+            commit="127e2826";; # shortly after RELEASE_17_0. Kept for legacy/regression-preventing purposes.
     esac
     echo "$commit"
 }
