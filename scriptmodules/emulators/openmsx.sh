@@ -13,40 +13,25 @@ rp_module_id="openmsx"
 rp_module_desc="MSX emulator OpenMSX"
 rp_module_help="ROM Extensions: .cas .rom .mx1 .mx2 .col .dsk .zip\n\nCopy your MSX/MSX2 games to $romdir/msx\nCopy the BIOS files to $biosdir/openmsx"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/openMSX/openMSX/master/doc/GPL.txt"
-rp_module_repo="git https://github.com/openMSX/openMSX.git :_get_branch_openmsx :_get_commit_openmsx"
+rp_module_repo="git https://github.com/openMSX/openMSX.git RELEASE_22_0 :_get_commit_openmsx"
 rp_module_section="opt"
 rp_module_flags="!:\$__gcc_version:-lt:8"
 
 function _get_version_openmsx() {
     local version="22"
 
-    # RELEASE_22_0 requires g++-13 (Debian Trixie)
-    [[ "$__gcc_version" -lt 13 ]] && version="21"
-    # RELEASE_21_0 requires g++-12 (Debian Bookworm)
+    # RELEASE_22_0 requires g++-13 (Debian Trixie/13)
+    [[ "$__gcc_version" -lt 13 ]] && version="19"
+    # RELEASE_19_0 & RELEASE_19_1 require g++-10 (Debian Bullseye/11)
+    # RELEASE_20_0 requires g++-11
+    # RELEASE_21_0 requires g++-12 (Debian Bookworm/12)
     # v20.0 introduces a breaking change in joystick mapping
     # this was resolved in v22, and requires updated tcl scripts
-    [[ "$__gcc_version" -lt 12 ]] && version="20"
-    # RELEASE_20_0 requires g++-11
-    [[ "$__gcc_version" -lt 11 ]] && version="19"
-    # RELEASE_19_0 & RELEASE_19_1 require g++-10 (Debian Bullseye)
-    [[ "$__gcc_version" -lt 10 ]] && version="18"
+    [[ "$__gcc_version" -lt 10 ]] && version="17"
+    # RELEASE_17_0 requires C++17 / g++-8 (Debian Buster/10 / Ubuntu 20.04)
     # RELEASE_18_0 requires C++20 / g++-9
-    [[ "$__gcc_version" -lt 9 ]] && version="17"
-    # RELEASE_17_0 requires C++17 / g++-8 (Debian Buster / Ubuntu 20.04)
 
     echo "$version"
-}
-
-function _get_branch_openmsx() {
-    local branch
-    local version="$(_get_version_openmsx)"
-    case "$version" in
-        "22"|"21"|"20"|"18")
-            branch="RELEASE_${version}_0";;
-        "19")
-            branch="RELEASE_${version}_1";;
-    esac
-    echo "$branch"
 }
 
 function _get_commit_openmsx() {
@@ -55,6 +40,8 @@ function _get_commit_openmsx() {
     case "$version" in
         "17")
             commit="127e2826";; # shortly after RELEASE_17_0. Kept for legacy/regression-preventing purposes.
+        "19")
+            commit="a037c4db";; # last commit in RELEASE_19_1.
     esac
     echo "$commit"
 }
