@@ -1,0 +1,19 @@
+diff --git a/src/osdep/gui/PanelPaths.cpp b/src/osdep/gui/PanelPaths.cpp
+index a4152c6..d0bbb24 100644
+--- a/src/osdep/gui/PanelPaths.cpp
++++ b/src/osdep/gui/PanelPaths.cpp
+@@ -314,12 +314,12 @@ public:
+ 		//  download WHDLoad executable
+ 		destination = prefix_with_whdboot_path("WHDLoad");
+ 		write_log("Downloading %s ...\n", destination.c_str());
+-		download_file("https://github.com/midwan/amiberry/blob/master/whdboot/WHDLoad?raw=true", destination, false);
++		download_file("https://github.com/BlitterStudio/amiberry/raw/refs/tags/$VERSION/whdboot/WHDLoad", destination, false);
+ 
+ 		//  download boot-data.zip
+ 		destination = prefix_with_whdboot_path("boot-data.zip");
+ 		write_log("Downloading %s ...\n", destination.c_str());
+-		download_file("https://github.com/midwan/amiberry/blob/master/whdboot/boot-data.zip?raw=true", destination, false);
++		download_file("https://github.com/BlitterStudio/amiberry/blob/$VERSION/whdboot/boot-data.zip", destination, false);
+ 
+ 		// download kickstart RTB files for maximum compatibility
+ 		download_rtb("kick33180.A500.RTB");
