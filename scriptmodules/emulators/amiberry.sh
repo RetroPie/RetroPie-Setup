@@ -77,6 +77,13 @@ function sources_amiberry() {
         applyPatch "$md_data/02_fix_uae_config_load.diff"
         applyPatch "$md_data/03_fix_crash_saving.diff"
     fi
+
+    # fix the download URLs for WHDLoad/WHD boot data, they're not in the 'main' branch anymore
+    local ami_version="$(_get_branch_amiberry)"
+    sed "s/\$VERSION/$ami_version/g" "$md_data/04_fix_whd_download.diff" > "$__tmpdir/04_fix_whd_download.diff"
+    applyPatch "$__tmpdir/04_fix_whd_download.diff"
+    rm "$__tmpdir/04_fix_whd_download.diff"
+
     # use our default optimisation level
     sed -i "/CFLAGS += -O3/d" "$md_build/Makefile"
 }
